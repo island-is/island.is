@@ -24,7 +24,7 @@ import { Table } from '@island.is/judicial-system-web/src/components'
 import { core, requests } from '@island.is/judicial-system-web/messages'
 
 import { getAppealDate, mapCaseStateToTagVariant } from './utils'
-import * as styles from './Requests.css'
+import * as styles from './Cases.css'
 
 interface Props {
   cases: Case[]

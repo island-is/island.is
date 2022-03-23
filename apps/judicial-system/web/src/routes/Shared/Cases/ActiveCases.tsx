@@ -32,7 +32,7 @@ import { core, requests } from '@island.is/judicial-system-web/messages'
 import type { Case } from '@island.is/judicial-system/types'
 
 import { mapCaseStateToTagVariant } from './utils'
-import * as styles from './Requests.css'
+import * as styles from './Cases.css'
 
 interface Props {
   cases: Case[]
