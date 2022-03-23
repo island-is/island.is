@@ -87,7 +87,7 @@ const Confirmation: React.FC<Props> = (props) => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${Constants.IC_COURT_RECORD_ROUTE}/${workingCase.id}`}
-          nextUrl={Constants.REQUEST_LIST_ROUTE}
+          nextUrl={Constants.CASE_LIST_ROUTE}
           nextIsLoading={isLoading}
           nextButtonText={formatMessage(
             workingCase.decision === CaseDecision.ACCEPTING

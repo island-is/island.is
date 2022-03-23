@@ -118,7 +118,7 @@ const ReceptionAndAssignment = () => {
       />
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={Constants.REQUEST_LIST_ROUTE}
+          previousUrl={Constants.CASE_LIST_ROUTE}
           nextUrl={`${Constants.IC_OVERVIEW_ROUTE}/${id}`}
           nextIsDisabled={!isReceptionAndAssignmentStepValidIC(workingCase)}
         />

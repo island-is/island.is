@@ -312,7 +312,7 @@ const DefendantForm: React.FC<Props> = (props) => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${constants.REQUEST_LIST_ROUTE}`}
+          previousUrl={`${constants.CASE_LIST_ROUTE}`}
           onNextButtonClick={() => handleNextButtonClick(workingCase)}
           nextIsDisabled={!isDefendantStepValidIC(workingCase)}
           nextIsLoading={isLoading}

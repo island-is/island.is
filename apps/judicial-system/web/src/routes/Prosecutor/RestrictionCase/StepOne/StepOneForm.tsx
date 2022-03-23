@@ -168,7 +168,7 @@ export const StepOneForm: React.FC<Props> = (props) => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={Constants.REQUEST_LIST_ROUTE}
+          previousUrl={Constants.CASE_LIST_ROUTE}
           onNextButtonClick={async () =>
             await handleNextButtonClick(workingCase)
           }

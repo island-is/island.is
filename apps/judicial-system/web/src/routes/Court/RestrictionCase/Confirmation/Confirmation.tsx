@@ -140,7 +140,7 @@ export const Confirmation: React.FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${Constants.COURT_RECORD_ROUTE}/${workingCase.id}`}
-          nextUrl={Constants.REQUEST_LIST_ROUTE}
+          nextUrl={Constants.CASE_LIST_ROUTE}
           nextButtonText={formatMessage(
             workingCase.decision === CaseDecision.ACCEPTING
               ? m.footer.accepting.continueButtonText

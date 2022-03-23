@@ -430,13 +430,13 @@ export const Overview: React.FC = () => {
                   : 'farbann',
             })}
             text={modalText}
-            handleClose={() => router.push(Constants.REQUEST_LIST_ROUTE)}
+            handleClose={() => router.push(Constants.CASE_LIST_ROUTE)}
             handlePrimaryButtonClick={() => {
               window.open(Constants.FEEDBACK_FORM_URL, '_blank')
-              router.push(Constants.REQUEST_LIST_ROUTE)
+              router.push(Constants.CASE_LIST_ROUTE)
             }}
             handleSecondaryButtonClick={() => {
-              router.push(Constants.REQUEST_LIST_ROUTE)
+              router.push(Constants.CASE_LIST_ROUTE)
             }}
             primaryButtonText="Senda ábendingu"
             secondaryButtonText="Loka glugga"
