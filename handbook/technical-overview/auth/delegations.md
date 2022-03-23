@@ -38,26 +38,27 @@ SPs which integrate with delegations SHOULD keep an audit log which tracks both 
 
 We RECOMMEND including these fields in your audit log:
 
-- `subject` - The national id of the active identity from the access token. Can be the authenticated user, a company or another person. This can be  `national_id` claim.
+- `subject` - The national id of the active identity from the access token. Can be the authenticated user, a company or another person. This can be `national_id` claim.
 - `actor` - The national id of the authenticated user. This is the `actor.national_id` claim if the `actor` claim is defined, otherwise it is the root `national_id` claim, same as the subject.
 - `client` - IAS clients involved with the request. This SHOULD be an array to audit a chain of clients using token exchange.
+
   - <details><summary>Example code to unwrap client chain from access token claims.</summary>
 
-      ```jsx
-      /**
-       * Accepts a decoded access token JWT. Returns an array of client ids
-       * in authentication order.
-       */
-      function getClients(auth) {
-        const clients = []
-        let act = auth.act
-        while (act) {
-          clients.unshift(act.client_id)
-          act = act.act
-        }
-        clients.unshift(auth.client_id)
-        return clients
+    ```jsx
+    /**
+     * Accepts a decoded access token JWT. Returns an array of client ids
+     * in authentication order.
+     */
+    function getClients(auth) {
+      const clients = []
+      let act = auth.act
+      while (act) {
+        clients.unshift(act.client_id)
+        act = act.act
       }
-      ```
-    
+      clients.unshift(auth.client_id)
+      return clients
+    }
+    ```
+
   </details>

@@ -13,13 +13,13 @@ A full documentation of Open ID Connect (OIDC) and OAuth2 is outside the scope o
 
 ## Table of contents
 
-* [Terminology](./terminology.md)
-* [Integration options](./integration-options.md)
-* [Authentication flows](./authentication-flows.md)
-* [Authorising API endpoints](./authorising-apis.md)
-* [Session lifecycle](./session-lifecycle.md)
-* [Scopes and tokens](./scopes-and-tokens.md)
-* [Delegations (BETA)](./delegations.md)
-* [Configuring clients and scopes](./configuration.md)
-* [Tools and integration examples](./integration-guidance.md)
-* [Environments](./environments.md)
+- [Terminology](./terminology.md)
+- [Integration options](./integration-options.md)
+- [Authentication flows](./authentication-flows.md)
+- [Authorising API endpoints](./authorising-apis.md)
+- [Session lifecycle](./session-lifecycle.md)
+- [Scopes and tokens](./scopes-and-tokens.md)
+- [Delegations (BETA)](./delegations.md)
+- [Configuring clients and scopes](./configuration.md)
+- [Tools and integration examples](./integration-guidance.md)
+- [Environments](./environments.md)

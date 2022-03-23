@@ -58,7 +58,7 @@ Refresh Tokens issued by IAS are configured with Refresh Token rotation. This me
 4. The client uses the new AT2 to request data from the API.
 5. The API sees that AT2 is valid and returns resources.
 
-Behind the scenes, each authentication forms a chain of Refresh Tokens. If the same Refresh Token is used to request an Access Token for a second time, that request will fail and IAS will revoke that complete chain of Refresh Tokens.  the user is forced to re-authenticate.
+Behind the scenes, each authentication forms a chain of Refresh Tokens. If the same Refresh Token is used to request an Access Token for a second time, that request will fail and IAS will revoke that complete chain of Refresh Tokens. the user is forced to re-authenticate.
 
 This means that if an adversary gets access to a Refresh Token in any way, that access will be blocked, either immediately, or the next time the real Client refreshes its token. The real user will notice this by the fact that they’ve been signed out.
 
