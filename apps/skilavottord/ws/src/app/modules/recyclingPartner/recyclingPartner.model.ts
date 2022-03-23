@@ -61,8 +61,9 @@ export class RecyclingPartnerModel extends Model<RecyclingPartnerModel> {
   @Column({
     type: DataType.STRING,
     allowNull: false,
+    field: 'national_id',
   })
-  national_id!: string
+  nationalId!: string
 
   @Field()
   @Column({
