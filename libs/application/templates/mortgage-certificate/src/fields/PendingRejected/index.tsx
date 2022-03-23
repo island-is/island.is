@@ -26,7 +26,6 @@ export const PendingRejected: FC<FieldBaseProps> = ({ application }) => {
 
   useEffect(() => {
     document.title = 'Beiðni um vinnslu'
-    console.log(application)
   }, [])
 
   const handleStateChange = (newRunEvent: string) => {
