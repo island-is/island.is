@@ -74,7 +74,7 @@ export const FamilyMemberCard: FC<Props> = ({
       cta={{
         label: formatMessage({
           id: 'sp.family:see-info',
-          defaultMessage: 'Skoða upplýsingar',
+          defaultMessage: 'Skoða nánar',
         }),
         variant: 'text',
         onClick: () => handleClick(),

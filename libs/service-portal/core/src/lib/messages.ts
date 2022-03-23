@@ -513,6 +513,10 @@ export const m = defineMessages({
     id: 'service.portal:marital-status',
     defaultMessage: 'Hjúskaparstaða',
   },
+  banMarking: {
+    id: 'service.portal:banmarking',
+    defaultMessage: 'Bannmerking',
+  },
   religion: {
     id: 'service.portal:religion',
     defaultMessage: 'Trúfélag / lífsskoðunarfélag',

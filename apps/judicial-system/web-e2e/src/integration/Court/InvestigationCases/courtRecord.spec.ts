@@ -98,7 +98,6 @@ describe(`${IC_COURT_RECORD_ROUTE}/:id`, () => {
       type: CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION,
       prosecutor: makeProsecutor(),
       sessionArrangements: SessionArrangements.ALL_PRESENT_SPOKESPERSON,
-      defenderIsSpokesperson: true,
     }
 
     cy.stubAPIResponses()

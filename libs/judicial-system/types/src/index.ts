@@ -68,3 +68,5 @@ export type {
   UploadPoliceCaseFile,
   UploadPoliceCaseFileResponse,
 } from './lib/policeFile'
+
+export type { CourtDocument } from './lib/courtDocument'

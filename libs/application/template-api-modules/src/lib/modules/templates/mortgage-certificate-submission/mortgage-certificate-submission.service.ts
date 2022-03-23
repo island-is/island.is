@@ -125,6 +125,9 @@ export class MortgageCertificateSubmissionService {
     application: Application,
     document: MortgageCertificate,
   ) {
+    const { propertyNumber } = application.answers.selectProperty as {
+      propertyNumber: string
+    }
     const nationalRegistryData = application.externalData.nationalRegistry
       ?.data as NationalRegistry
     const userProfileData = application.externalData.userProfile
@@ -149,7 +152,9 @@ export class MortgageCertificateSubmissionService {
       content: document.contentBase64,
     }
 
-    const extraData: { [key: string]: string } = {}
+    const extraData: { [key: string]: string } = {
+      propertyNumber: propertyNumber,
+    }
 
     const uploadDataName = 'Umsókn um veðbókarvottorð frá Ísland.is'
     const uploadDataId = 'Vedbokavottord1.0'
@@ -168,10 +173,14 @@ export class MortgageCertificateSubmissionService {
   async submitRequestToSyslumenn({
     application,
   }: TemplateApiModuleActionProps): Promise<SubmitRequestToSyslumennResult> {
+    const { propertyNumber } = application.answers.selectProperty as {
+      propertyNumber: string
+    }
     const nationalRegistryData = application.externalData.nationalRegistry
       ?.data as NationalRegistry
     const userProfileData = application.externalData.userProfile
       ?.data as UserProfile
+
     const person: Person = {
       name: nationalRegistryData?.fullName,
       ssn: nationalRegistryData?.nationalId,
@@ -184,10 +193,15 @@ export class MortgageCertificateSubmissionService {
       type: PersonType.MortgageCertificateApplicant,
     }
     const persons: Person[] = [person]
-    const extraData: { [key: string]: string } = {}
+
+    const extraData: { [key: string]: string } = {
+      propertyNumber: propertyNumber,
+    }
+
     const uploadDataName =
       'Umsókn um lagfæringu á veðbókarvottorði frá Ísland.is'
     const uploadDataId = 'VedbokavottordVilla1.0'
+
     await this.syslumennService
       .uploadData(persons, undefined, extraData, uploadDataName, uploadDataId)
       .catch(async () => {

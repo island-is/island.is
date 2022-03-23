@@ -21,6 +21,7 @@ import {
   CaseDecision,
   CaseType,
   SessionArrangements,
+  CourtDocument,
 } from '@island.is/judicial-system/types'
 
 import { CaseFile } from '../../file'
@@ -148,17 +149,6 @@ export class Case extends Model<Case> {
   })
   @ApiProperty()
   sendRequestToDefender?: boolean
-
-  /**********
-   * Indicates whether the accused was assigned a spokesperson rather than a defender -
-   * optional
-   **********/
-  @Column({
-    type: DataType.BOOLEAN,
-    allowNull: true,
-  })
-  @ApiProperty()
-  defenderIsSpokesperson?: boolean
 
   /**********
    * Indicates whether the secutity level of the case has been heightened -
@@ -528,11 +518,11 @@ export class Case extends Model<Case> {
    * A list of additional court documents - optional
    **********/
   @Column({
-    type: DataType.ARRAY(DataType.STRING),
+    type: DataType.ARRAY(DataType.JSON),
     allowNull: true,
   })
   @ApiProperty()
-  courtDocuments?: string[]
+  courtDocuments?: CourtDocument[]
 
   /**********
    * Bookings during court session

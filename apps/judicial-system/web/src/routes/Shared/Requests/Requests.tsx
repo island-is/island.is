@@ -24,6 +24,8 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { CaseData } from '@island.is/judicial-system-web/src/types'
 import { requests as m } from '@island.is/judicial-system-web/messages/Core/requests'
 import useSections from '@island.is/judicial-system-web/src/utils/hooks/useSections'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
 import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system/consts'
 
@@ -79,10 +81,6 @@ export const Requests: React.FC = () => {
   const resCases = data?.cases
 
   useEffect(() => {
-    document.title = 'Öll mál - Réttarvörslugátt'
-  }, [])
-
-  useEffect(() => {
     if (resCases && !activeCases) {
       // Remove deleted cases
       const casesWithoutDeleted = resCases.filter((c: Case) => {
@@ -125,12 +123,6 @@ export const Requests: React.FC = () => {
     ) {
       await sendNotification(caseToDelete.id, NotificationType.REVOKED)
       await transitionCase(caseToDelete, CaseTransition.DELETE)
-
-      setActiveCases(
-        activeCases?.filter((c: Case) => {
-          return c !== caseToDelete
-        }),
-      )
     }
   }
 
@@ -188,6 +180,7 @@ export const Requests: React.FC = () => {
 
   return (
     <div className={styles.requestsContainer}>
+      <PageHeader title={formatMessage(titles.shared.cases)} />
       {loading ? (
         <TableSkeleton />
       ) : (
@@ -255,6 +248,7 @@ export const Requests: React.FC = () => {
                         isTransitioningCase || isSendingNotification
                       }
                       onDeleteCase={deleteCase}
+                      setActiveCases={setActiveCases}
                     />
                   )
                 ) : (
