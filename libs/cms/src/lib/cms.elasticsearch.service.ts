@@ -19,6 +19,8 @@ import { GetMenuInput } from './dto/getMenu.input'
 import { GetSingleMenuInput } from './dto/getSingleMenu.input'
 import { GetOrganizationSubpageInput } from './dto/getOrganizationSubpage.input'
 import { OrganizationSubpage } from './models/organizationSubpage.model'
+import { GetPublishedMaterialInput } from './dto/getPublishedMaterial.input'
+import { EnhancedAsset } from './models/enhancedAsset.model'
 
 @Injectable()
 export class CmsElasticsearchService {
@@ -225,5 +227,26 @@ export class CmsElasticsearchService {
     const menuResponse = await this.elasticService.findById(index, id)
     const response = menuResponse.body?._source?.response
     return response ? JSON.parse(response) : null
+  }
+
+  async getPublishedMaterial(
+    index: string,
+    { organizationSlug, searchString, page, size }: GetPublishedMaterialInput,
+  ): Promise<EnhancedAsset[]> {
+    const query = {
+      types: ['webEnhancedAsset'],
+      tags: organizationSlug
+        ? [{ type: 'organization', key: organizationSlug }]
+        : [],
+      queryString: searchString,
+      page,
+      size,
+    }
+
+    const enhancedAssetResponse = await this.elasticService.search(index, query)
+
+    return enhancedAssetResponse.body.hits.hits.map((item) =>
+      JSON.parse(item._source.response ?? '{}'),
+    )
   }
 }

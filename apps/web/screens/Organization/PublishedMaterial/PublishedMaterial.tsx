@@ -315,6 +315,9 @@ PublishedMaterial.getInitialProps = async ({ apolloClient, locale, query }) => {
         input: {
           lang: locale as ContentLanguage,
           organizationSlug: query.slug as string,
+          page: 1,
+          size: 10,
+          searchString: 'bla',
         },
       },
     }),

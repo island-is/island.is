@@ -467,7 +467,10 @@ export class CmsResolver {
   getPublishedMaterial(
     @Args('input') input: GetPublishedMaterialInput,
   ): Promise<EnhancedAsset[]> {
-    return this.cmsContentfulService.getPublishedMaterial(input)
+    return this.cmsElasticsearchService.getPublishedMaterial(
+      getElasticsearchIndex(input.lang),
+      input,
+    )
   }
 }
 
