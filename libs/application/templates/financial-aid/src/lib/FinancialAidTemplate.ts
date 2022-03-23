@@ -137,6 +137,9 @@ const FinancialAidTemplate: ApplicationTemplate<
             },
           ],
         },
+        on: {
+          SUBMIT: [{ target: ApplicationStates.SUBMITTED }],
+        },
       },
       [ApplicationStates.SUBMITTED]: {
         meta: {
@@ -144,7 +147,16 @@ const FinancialAidTemplate: ApplicationTemplate<
           lifecycle: oneMonthLifeCycle,
           roles: [
             {
-              id: Roles.APPLICANT || Roles.SPOUSE,
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/Submitted').then((module) =>
+                  Promise.resolve(module.Submitted),
+                ),
+              // TODO: Limit this
+              read: 'all',
+            },
+            {
+              id: Roles.SPOUSE,
               formLoader: () =>
                 import('../forms/Submitted').then((module) =>
                   Promise.resolve(module.Submitted),

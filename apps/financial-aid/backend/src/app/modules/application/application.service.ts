@@ -62,7 +62,7 @@ export class ApplicationService {
     private readonly emailService: EmailService,
     private readonly municipalityService: MunicipalityService,
     private readonly directTaxPaymentService: DirectTaxPaymentService,
-  ) {}
+  ) { }
 
   async getSpouseInfo(spouseNationalId: string): Promise<SpouseResponse> {
     const application = await this.applicationModel.findOne({
@@ -74,9 +74,9 @@ export class ApplicationService {
 
     const files = application
       ? await this.fileService.getApplicationFilesByType(
-          application.id,
-          FileType.SPOUSEFILES,
-        )
+        application.id,
+        FileType.SPOUSEFILES,
+      )
       : false
 
     return {
@@ -147,14 +147,14 @@ export class ApplicationService {
       where:
         stateUrl === ApplicationStateUrl.MYCASES
           ? {
-              state: { [Op.in]: getStateFromUrl[stateUrl] },
-              staffId,
-              municipalityCode,
-            }
+            state: { [Op.in]: getStateFromUrl[stateUrl] },
+            staffId,
+            municipalityCode,
+          }
           : {
-              state: { [Op.in]: getStateFromUrl[stateUrl] },
-              municipalityCode,
-            },
+            state: { [Op.in]: getStateFromUrl[stateUrl] },
+            municipalityCode,
+          },
       order: [['modified', 'DESC']],
       include: [{ model: StaffModel, as: 'staff' }],
     })
@@ -264,8 +264,8 @@ export class ApplicationService {
     }
 
     const appModel = await this.applicationModel.create({
-      nationalId: user.nationalId,
       ...application,
+      nationalId: application.nationalId || user.nationalId,
     })
 
     await Promise.all([

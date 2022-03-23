@@ -1,6 +1,8 @@
-import React from 'react'
+import React, { useState } from 'react'
+import cn from 'classnames'
+import { useIntl } from 'react-intl'
 
-import { Box } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 
 import * as m from '../../lib/messages'
 import {
@@ -12,9 +14,35 @@ import { Routes } from '../../lib/constants'
 import { DescriptionText } from '../index'
 import { formatAddress, spouseFormItems } from '../../lib/formatters'
 import { FormInfo, SummaryComment, UserInfo, ContactInfo, Files } from './index'
+import useApplication from '../../lib/hooks/useApplication'
+import * as styles from '../Shared.css'
 
-const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
+const SpouseSummaryForm = ({
+  application,
+  goToScreen,
+  setBeforeSubmitCallback,
+}: FAFieldBaseProps) => {
+  const { formatMessage } = useIntl()
+  const { createApplication } = useApplication()
+  const [formError, setFormError] = useState(false)
   const { id, answers, externalData } = application
+
+  if (setBeforeSubmitCallback) {
+    setBeforeSubmitCallback(async () => {
+      const createApp = await createApplication(application)
+        .then(() => {
+          return true
+        })
+        .catch(() => {
+          setFormError(true)
+          return false
+        })
+      if (createApp) {
+        return [true, null]
+      }
+      return [false, 'Failed to create application']
+    })
+  }
 
   return (
     <>
@@ -55,8 +83,18 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
         commentId={SummaryCommentType.SPOUSEFORMCOMMENT}
         comment={answers?.spouseFormComment}
       />
+
+      <Box
+        className={cn(styles.errorMessage, {
+          [`${styles.showErrorMessage}`]: formError,
+        })}
+      >
+        <Text color="red600" fontWeight="semiBold" variant="small">
+          {formatMessage(m.summaryForm.general.errorMessage)}
+        </Text>
+      </Box>
     </>
   )
 }
 
-export default SummaryForm
+export default SpouseSummaryForm
