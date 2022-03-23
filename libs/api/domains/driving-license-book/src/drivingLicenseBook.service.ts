@@ -11,7 +11,10 @@ import { DrivingLicenseBookStudentsInput } from './dto/students.input'
 import { User } from '@island.is/auth-nest-tools'
 import { DrivingLicenseBookStudentForTeacher } from './models/studentsTeacherNationalId.response'
 import { DrivingLicenseBookStudentOverview } from './models/drivingBookStudentOverview.response'
-import { LICENSE_CATEGORY } from './drivinLicenceBook.type'
+import {
+  LICENSE_CATEGORY,
+  DrivingLicenseBookStudentForTeacherResponse,
+} from './drivinLicenceBook.type'
 import { DrivingLicenseBookStudent } from './models/drivingLicenseBookStudent.response'
 import { PracticalDrivingLesson } from './models/practicalDrivingLesson.response'
 import { DrivingLicenseBookStudentInput } from './dto/student.input'
@@ -140,12 +143,19 @@ export class DrivingLicenseBookService {
         `Students for teacher with nationalId ${user.nationalId} not found`,
       )
     }
-    return data.map((student) => ({
-      id: student?.studentId || undefined,
-      nationalId: student?.ssn || undefined,
-      name: student?.name || undefined,
-      totalLessonCount: student.totalLessonCount || undefined,
-    }))
+    // Remove nullish students, then map the students' fields to sane non-nullish values.
+    // Note that id and nationalId are never missing in practice.
+    return data
+      .filter(
+        (student) =>
+          (student ?? false) && !!student && student.ssn && !!student.studentId,
+      )
+      .map((student) => ({
+        id: student.studentId ?? '-1',
+        nationalId: student.ssn ?? '',
+        name: student.name ?? '',
+        totalLessonCount: student.totalLessonCount ?? 0,
+      }))
   }
 
   async getStudent({
