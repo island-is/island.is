@@ -28,6 +28,8 @@ import { FormContext } from '@island.is/judicial-system-web/src/components/FormP
 import DefenderInfo from '@island.is/judicial-system-web/src/components/DefenderInfo/DefenderInfo'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { rcHearingArrangements as m } from '@island.is/judicial-system-web/messages'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
 import * as Constants from '@island.is/judicial-system/consts'
 
 export const HearingArrangements: React.FC = () => {
@@ -52,10 +54,6 @@ export const HearingArrangements: React.FC = () => {
     isSendingNotification,
   } = useCase()
   const { formatMessage } = useIntl()
-
-  useEffect(() => {
-    document.title = 'Fyrirtaka - Réttarvörslugátt'
-  }, [])
 
   useEffect(() => {
     if (isCaseUpToDate) {
@@ -91,6 +89,9 @@ export const HearingArrangements: React.FC = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
+      <PageHeader
+        title={formatMessage(titles.court.restrictionCases.hearingArrangements)}
+      />
       <FormContentContainer>
         {workingCase.comments && (
           <Box marginBottom={5}>
