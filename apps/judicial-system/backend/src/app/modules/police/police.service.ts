@@ -52,61 +52,60 @@ export class PoliceService {
   private async throttleUploadPoliceCaseFile(
     caseId: string,
     uploadPoliceCaseFile: UploadPoliceCaseFileDto,
+    user: User,
   ): Promise<UploadPoliceCaseFileResponse> {
-    this.logger.debug(
-      `Waiting to upload police case file ${uploadPoliceCaseFile.id} of case ${caseId}`,
-    )
-
     await this.throttle.catch((reason) => {
       this.logger.info('Previous upload failed', { reason })
     })
 
-    this.logger.debug(
-      `Starting to upload police case file ${uploadPoliceCaseFile.id} of case ${caseId}`,
+    const pdf = await fetch(
+      `${this.xRoadPath}/api/Documents/GetPDFDocumentByID/${uploadPoliceCaseFile.id}`,
+      {
+        headers: { 'X-Road-Client': environment.xRoad.clientId },
+        agent: this.agent,
+      } as RequestInit,
     )
+      .then(async (res) => {
+        if (res.ok) {
+          const response = await res.json()
 
-    let res: Response
+          return Base64.atob(response)
+        }
 
-    try {
-      res = await fetch(
-        `${this.xRoadPath}/api/Documents/GetPDFDocumentByID/${uploadPoliceCaseFile.id}`,
-        {
-          headers: { 'X-Road-Client': environment.xRoad.clientId },
-          agent: this.agent,
-        } as RequestInit,
-      )
-    } catch (error) {
-      this.logger.error(
-        `Failed to get police case file ${uploadPoliceCaseFile.id} of case ${caseId}`,
-        { error },
-      )
+        const reason = await res.text()
 
-      throw new BadGatewayException(
-        `Failed to get police case file ${uploadPoliceCaseFile.id} of case ${caseId}`,
-      )
-    }
+        throw new NotFoundException({
+          message: `Police case file ${uploadPoliceCaseFile.id} of case ${caseId} not found`,
+          detail: reason,
+        })
+      })
+      .catch((reason) => {
+        if (reason instanceof NotFoundException) {
+          throw reason
+        }
 
-    if (!res.ok) {
-      this.logger.info(
-        `Failed to get police case file ${uploadPoliceCaseFile.id} of case ${caseId}`,
-        { res },
-      )
+        this.eventService.postErrorEvent(
+          'Failed to get police case file',
+          {
+            caseId,
+            actor: user.name,
+            institution: user.institution?.name,
+            caseFileId: uploadPoliceCaseFile.id,
+            name: uploadPoliceCaseFile.name,
+          },
+          reason,
+        )
 
-      throw new NotFoundException(
-        `Police case file ${uploadPoliceCaseFile.id} of case ${caseId} not found`,
-      )
-    }
-
-    const base64 = await res.json()
-    const pdf = Base64.atob(base64)
+        throw new BadGatewayException({
+          ...reason,
+          message: `Failed to get police case file ${uploadPoliceCaseFile.id} of case ${caseId}`,
+          detail: reason.message,
+        })
+      })
 
     const key = `uploads/${caseId}/${uuid()}/${uploadPoliceCaseFile.name}`
 
     await this.awsS3Service.putObject(key, pdf)
-
-    this.logger.debug(
-      `Done uploading police case file ${uploadPoliceCaseFile.id} of case ${caseId}`,
-    )
 
     return { key, size: pdf.length }
   }
@@ -169,10 +168,12 @@ export class PoliceService {
   async uploadPoliceCaseFile(
     caseId: string,
     uploadPoliceCaseFile: UploadPoliceCaseFileDto,
+    user: User,
   ): Promise<UploadPoliceCaseFileResponse> {
     this.throttle = this.throttleUploadPoliceCaseFile(
       caseId,
       uploadPoliceCaseFile,
+      user,
     )
 
     return this.throttle

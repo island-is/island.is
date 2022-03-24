@@ -75,12 +75,17 @@ export class PoliceController {
   })
   uploadPoliceCaseFile(
     @Param('caseId') caseId: string,
+    @CurrentHttpUser() user: User,
     @Body() uploadPoliceCaseFile: UploadPoliceCaseFileDto,
   ): Promise<UploadPoliceCaseFileResponse> {
     this.logger.debug(
       `Uploading police file ${uploadPoliceCaseFile.id} of case ${caseId} to AWS S3`,
     )
 
-    return this.policeService.uploadPoliceCaseFile(caseId, uploadPoliceCaseFile)
+    return this.policeService.uploadPoliceCaseFile(
+      caseId,
+      uploadPoliceCaseFile,
+      user,
+    )
   }
 }
