@@ -26,4 +26,7 @@ export class GetPublishedMaterialInput {
   @Field(() => String)
   @IsString()
   searchString = ''
+
+  @Field(() => [String])
+  tags!: string[]
 }

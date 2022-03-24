@@ -21,6 +21,31 @@ import { GetOrganizationSubpageInput } from './dto/getOrganizationSubpage.input'
 import { OrganizationSubpage } from './models/organizationSubpage.model'
 import { GetPublishedMaterialInput } from './dto/getPublishedMaterial.input'
 import { EnhancedAssetSearchResult } from './models/enhancedAssetSearchResult.model'
+import { ApiResponse } from '@elastic/elasticsearch'
+import { SearchResponse } from 'elastic'
+import { MappedData } from '@island.is/content-search-indexer/types'
+
+const tagQuery = (tag: elasticTagField) => ({
+  nested: {
+    path: 'tags',
+    query: {
+      bool: {
+        must: [
+          {
+            term: {
+              'tags.key': tag.key,
+            },
+          },
+          {
+            term: {
+              'tags.type': tag.type,
+            },
+          },
+        ],
+      },
+    },
+  },
+})
 
 @Injectable()
 export class CmsElasticsearchService {
@@ -231,37 +256,74 @@ export class CmsElasticsearchService {
 
   async getPublishedMaterial(
     index: string,
-    { organizationSlug, searchString, page, size }: GetPublishedMaterialInput,
+    {
+      organizationSlug,
+      searchString,
+      page = 1,
+      size = 10,
+      tags,
+    }: GetPublishedMaterialInput,
   ): Promise<EnhancedAssetSearchResult> {
     const query = {
       types: ['webEnhancedAsset'],
       tags: organizationSlug
-        ? [{ type: 'organization', key: organizationSlug }]
-        : [],
+        ? [
+            { type: 'organization', key: organizationSlug },
+            ...tags.map((t) => ({ type: 'genericTag', key: t })),
+          ]
+        : [...tags.map((t) => ({ type: 'genericTag', key: t }))],
       queryString: searchString,
       page,
       size,
     }
 
-    if (!searchString) {
-      const enhancedAssetResponse = await this.elasticService.getDocumentsByMetaData(
-        index,
-        query,
-      )
-      return {
-        total: enhancedAssetResponse.hits.total.value,
-        items: enhancedAssetResponse.hits.hits.map((item) =>
-          JSON.parse(item._source.response ?? '{}'),
-        ),
-      }
-    }
+    // if (!searchString) {
+    //   const enhancedAssetResponse = await this.elasticService.getDocumentsByMetaData(
+    //     index,
+    //     query,
+    //   )
+    //   return {
+    //     total: enhancedAssetResponse.hits.total.value,
+    //     items: enhancedAssetResponse.hits.hits.map((item) =>
+    //       JSON.parse(item._source.response ?? '{}'),
+    //     ),
+    //   }
+    // }
 
-    const enhancedAssetResponse = await this.elasticService.search(index, query)
+    const enhancedAssetResponse: ApiResponse = await this.elasticService.findByQuery(
+      index,
+      {
+        query: {
+          bool: {
+            should: [
+              {
+                wildcard: {
+                  title: !searchString ? '*' : `*${searchString}*`,
+                },
+              },
+              {
+                term: {
+                  type: {
+                    value: 'webEnhancedAsset',
+                    boost: 1,
+                  },
+                },
+              },
+            ],
+            must: query.tags.map((t) => tagQuery(t)),
+            minimum_should_match: 2,
+          },
+        },
+        size,
+        from: (page - 1) * size,
+      },
+    )
 
     return {
       total: enhancedAssetResponse.body.hits.total.value,
-      items: enhancedAssetResponse.body.hits.hits.map((item) =>
-        JSON.parse(item._source.response ?? '{}'),
+      items: enhancedAssetResponse.body.hits.hits.map(
+        (item: { _source: { response: any } }) =>
+          JSON.parse(item._source.response ?? '{}'),
       ),
     }
   }

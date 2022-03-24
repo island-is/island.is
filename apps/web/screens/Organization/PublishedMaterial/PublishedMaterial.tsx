@@ -1,6 +1,8 @@
+import { useQuery } from '@apollo/client'
 import { GenericTagGroup } from '@island.is/api/schema'
 import {
   Box,
+  Button,
   Filter,
   FilterInput,
   FilterMultiChoice,
@@ -8,6 +10,7 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
+  LoadingDots,
   NavigationItem,
   Tag,
   Text,
@@ -28,10 +31,12 @@ import { linkResolver, useNamespace } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
+import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { useRouter } from 'next/router'
 import React, { useEffect, useMemo, useState } from 'react'
+import { useDebounce } from 'react-use'
 import { Screen } from '../../../types'
 import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_PAGE_QUERY } from '../../queries'
 import { GET_PUBLISHED_MATERIAL_QUERY } from '../../queries/PublishedMaterial'
@@ -125,13 +130,11 @@ const PublishedMaterialItem = ({ item }: { item: EnhancedAsset }) => {
 
 interface PublishedMaterialProps {
   organizationPage: Query['getOrganizationPage']
-  publishedMaterial: Query['getPublishedMaterial']
   namespace: Record<string, string>
 }
 
 const PublishedMaterial: Screen<PublishedMaterialProps> = ({
   organizationPage,
-  publishedMaterial,
   namespace,
 }) => {
   const router = useRouter()
@@ -141,6 +144,7 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
 
   useContentfulId(organizationPage.id)
   useLocalLinkTypeResolver()
+  const { activeLocale } = useI18n()
 
   const pageUrl = `${organizationPage.slug}/${router.asPath.split('/').pop()}`
 
@@ -159,15 +163,81 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
     }),
   )
 
-  const initialFilterCategories = useMemo(
-    () => getFilterCategories(publishedMaterial.items),
-    [publishedMaterial],
+  const [page, setPage] = useState(1)
+  const [parameters, setParameters] = useState<Record<string, string[]>>({})
+
+  const { data, loading, error, fetchMore, refetch } = useQuery<
+    Query,
+    QueryGetPublishedMaterialArgs
+  >(GET_PUBLISHED_MATERIAL_QUERY, {
+    variables: {
+      input: {
+        lang: activeLocale,
+        organizationSlug: (router.query.slug as string) ?? '',
+        tags: [],
+        page: page,
+        searchString: searchValue,
+        size: ASSETS_PER_PAGE,
+      },
+    },
+  })
+
+  const loadMore = () => {
+    const p = page + 1
+    setPage(p)
+    fetchMore({
+      variables: {
+        input: {
+          lang: activeLocale,
+          organizationSlug: (router.query.slug as string) ?? '',
+          tags: [],
+          page: p,
+          searchString: searchValue,
+          size: ASSETS_PER_PAGE,
+        },
+      },
+      updateQuery: (prevResult, { fetchMoreResult }) => {
+        fetchMoreResult.getPublishedMaterial.items = [
+          ...prevResult.getPublishedMaterial.items,
+          ...fetchMoreResult.getPublishedMaterial.items,
+        ]
+        return fetchMoreResult
+      },
+    })
+  }
+
+  // useEffect(() => {
+
+  // }, [parameters, activeLocale, searchValue, router.query?.slug, refetch])
+
+  useDebounce(
+    () => {
+      setPage(1)
+      refetch({
+        input: {
+          lang: activeLocale,
+          organizationSlug: (router.query.slug as string) ?? '',
+          tags: [],
+          page: 1,
+          searchString: searchValue,
+          size: ASSETS_PER_PAGE,
+        },
+      })
+    },
+    2500,
+    [parameters, page, activeLocale, searchValue, refetch],
   )
+
+  const initialFilterCategories = useMemo(
+    () => getFilterCategories(data?.getPublishedMaterial?.items ?? []),
+    [data?.getPublishedMaterial],
+  )
+
+  console.log(getFilterCategories(data?.getPublishedMaterial?.items ?? []))
 
   const [filterCategories, setFilterCategories] = useState<FilterCategory[]>(
     initialFilterCategories,
   )
-  const [parameters, setParameters] = useState<Record<string, string[]>>({})
 
   useEffect(() => {
     setParameters(getInitialParameters(initialFilterCategories))
@@ -190,7 +260,7 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
     (key) => parameters[key]?.length === 0,
   )
 
-  const filteredItems = publishedMaterial.items.filter(
+  const filteredItems = (data?.getPublishedMaterial?.items ?? []).filter(
     (item) =>
       item.file?.url &&
       item.title.toLowerCase().indexOf(searchValue.toLowerCase()) !== -1 &&
@@ -202,7 +272,9 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
         )),
   )
 
-  console.log(publishedMaterial)
+  const numberOfItemsThatCouldBeLoaded =
+    (data?.getPublishedMaterial?.total ?? page * ASSETS_PER_PAGE) -
+    page * ASSETS_PER_PAGE
 
   return (
     <OrganizationWrapper
@@ -249,7 +321,9 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
                 )}
                 name="filterInput"
                 value={searchValue}
-                onChange={setSearchValue}
+                onChange={(value) => {
+                  setSearchValue(value)
+                }}
               />
             }
             onFilterClear={() => {
@@ -259,35 +333,53 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
           >
             <FilterMultiChoice
               labelClear={n('clearSelection', 'Hreinsa val')}
-              onChange={({ categoryId, selected }) =>
+              onChange={({ categoryId, selected }) => {
                 setParameters((prevParameters) => ({
                   ...prevParameters,
                   [categoryId]: selected,
                 }))
-              }
-              onClear={(categoryId) =>
+              }}
+              onClear={(categoryId) => {
                 setParameters((prevParameters) => ({
                   ...prevParameters,
                   [categoryId]: [],
                 }))
-              }
+              }}
               categories={filterCategories}
             ></FilterMultiChoice>
           </Filter>
         </GridRow>
 
         <GridContainer>
-          {filteredItems.map((item, index) => {
-            return (
-              <GridRow
-                key={item.id}
-                marginTop={index === 0 ? 6 : 2}
-                marginBottom={2}
+          <GridColumn span="12/12">
+            <GridRow marginTop={3} align="center">
+              <Box
+                style={{
+                  visibility: loading ? 'visible' : 'hidden',
+                }}
               >
-                <PublishedMaterialItem item={item} />
+                <LoadingDots />
+              </Box>
+            </GridRow>
+            {filteredItems.map((item, index) => {
+              return (
+                <GridRow
+                  key={`${item.id}-${index}`}
+                  marginTop={2}
+                  marginBottom={2}
+                >
+                  <PublishedMaterialItem item={item} />
+                </GridRow>
+              )
+            })}
+            {numberOfItemsThatCouldBeLoaded > 0 && (
+              <GridRow align="center">
+                <Button onClick={loadMore} disabled={loading}>
+                  {n('seeMore', 'Sjá meira')} ({numberOfItemsThatCouldBeLoaded})
+                </Button>
               </GridRow>
-            )
-          })}
+            )}
+          </GridColumn>
         </GridContainer>
       </GridContainer>
     </OrganizationWrapper>
@@ -299,9 +391,6 @@ PublishedMaterial.getInitialProps = async ({ apolloClient, locale, query }) => {
     {
       data: { getOrganizationPage },
     },
-    {
-      data: { getPublishedMaterial },
-    },
     namespace,
   ] = await Promise.all([
     apolloClient.query<Query, QueryGetOrganizationPageArgs>({
@@ -310,18 +399,6 @@ PublishedMaterial.getInitialProps = async ({ apolloClient, locale, query }) => {
         input: {
           slug: query.slug as string,
           lang: locale as ContentLanguage,
-        },
-      },
-    }),
-    apolloClient.query<Query, QueryGetPublishedMaterialArgs>({
-      query: GET_PUBLISHED_MATERIAL_QUERY,
-      variables: {
-        input: {
-          lang: locale as ContentLanguage,
-          organizationSlug: query.slug as string,
-          page: 1,
-          size: 10,
-          searchString: 'a',
         },
       },
     }),
@@ -347,7 +424,6 @@ PublishedMaterial.getInitialProps = async ({ apolloClient, locale, query }) => {
 
   return {
     organizationPage: getOrganizationPage,
-    publishedMaterial: getPublishedMaterial,
     namespace,
     ...getThemeConfig(getOrganizationPage.theme),
   }
