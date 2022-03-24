@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react'
 import useSWR from 'swr'
+import { useIntl } from 'react-intl'
 
 import { toast } from '@island.is/island-ui/core'
 import type { Lawyer } from '@island.is/judicial-system-web/src/types'
+import { errors as errorMessages } from '@island.is/judicial-system-web/messages'
 
 const useLawyers = (): Lawyer[] => {
+  const { formatMessage } = useIntl()
   const [mounted, setMounted] = useState(false)
   useEffect(() => setMounted(true), [])
 
@@ -14,7 +17,7 @@ const useLawyers = (): Lawyer[] => {
   )
 
   if (error) {
-    toast.error('Failed to get lawyers')
+    toast.error(formatMessage(errorMessages.fetchLawyers))
     return []
   }
 
