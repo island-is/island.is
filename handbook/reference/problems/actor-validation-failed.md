@@ -1,7 +1,7 @@
 # 400 Actor Validation Failed
 
 The server will not process the request due to validation issues around actor delegations.
-This error should be thrown when user (actor) tries to access a resource that they do not have access to but someone they have delegation rights for (subject) has access to.
+This error should be thrown when a user (actor) tries to access a resource that they do not have access to but someone they have delegation rights for (subject) has access to.
 The error should contain the national id of the subject that is assigned to the resource and the types of delegations the actor has for the subject.
 Handling this error could then involve allowing the user to delegate to the subject assigned to the resource so that they can access it as an actor.
 
