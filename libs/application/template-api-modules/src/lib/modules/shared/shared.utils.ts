@@ -9,11 +9,13 @@ export const createAssignToken = (
   application: Application,
   secret: string,
   expiresIn: number,
+  nonce: string,
 ) => {
   const token = jwt.sign(
     {
       applicationId: application.id,
       state: application.state,
+      nonce,
     },
     secret,
     { expiresIn },

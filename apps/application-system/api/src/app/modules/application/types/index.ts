@@ -3,6 +3,7 @@ import { ApplicationWithAttachments as Application } from '@island.is/applicatio
 export interface DecodedAssignmentToken {
   applicationId: string
   state: string
+  nonce: string
 }
 
 export interface StateChangeResult {

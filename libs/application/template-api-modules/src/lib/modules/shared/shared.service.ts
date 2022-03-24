@@ -69,10 +69,15 @@ export class SharedTemplateApiService {
     expiresIn: number,
     locale = 'is',
   ) {
+    const nonce = await this.applicationService.storeNonceForApplication(
+      application,
+    )
+
     const token = createAssignToken(
       application,
       getConfigValue(this.configService, 'jwtSecret'),
       expiresIn,
+      nonce,
     )
 
     const clientLocationOrigin = getConfigValue(

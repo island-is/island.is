@@ -326,13 +326,13 @@ export class ApplicationController {
       return existingApplication
     }
 
+    if (!existingApplication.assignNonces.includes(decodedToken.nonce)) {
+      throw new NotFoundException('Token no longer usable.')
+    }
+
     if (existingApplication.state !== decodedToken.state) {
       throw new NotFoundException('Application no longer in assignable state')
     }
-
-    // TODO check if assignee is still the same?
-    // decodedToken.assignedEmail === get(existingApplication.answers, decodedToken.emailPath)
-    // throw new BadRequestException('Invalid token')
 
     const templateId = existingApplication.typeId as ApplicationTypes
     const template = await getApplicationTemplateByTypeId(templateId)

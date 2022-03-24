@@ -88,4 +88,6 @@ export abstract class BaseTemplateApiApplicationService {
       ContentEncoding?: string
     },
   ): Promise<string>
+
+  abstract storeNonceForApplication(application: Application): Promise<string>
 }

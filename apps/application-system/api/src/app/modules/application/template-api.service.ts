@@ -1,10 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { ApplicationWithAttachments } from '@island.is/application/core'
+import {
+  ApplicationWithAttachments,
+  Application,
+} from '@island.is/application/core'
 import {
   BaseTemplateApiApplicationService,
   TemplateAPIConfig,
 } from '@island.is/application/template-api-modules'
 import { ApplicationService } from '@island.is/application/api/core'
+
 import { AwsService } from '@island.is/nest/aws'
 import { ConfigService } from '@nestjs/config'
 import { uuid } from 'uuidv4'
@@ -51,5 +55,21 @@ export class TemplateApiApplicationService extends BaseTemplateApiApplicationSer
     })
 
     return attachmentKey
+  }
+
+  async storeNonceForApplication(application: Application): Promise<string> {
+    const nonce = uuid()
+
+    const updatedApplication = await this.applicationService.findOneById(
+      application.id,
+    )
+
+    if (!updatedApplication) throw new Error('Application not found')
+
+    await this.applicationService.update(application.id, {
+      assignNonces: [...updatedApplication.assignNonces, nonce],
+    })
+
+    return nonce
   }
 }
