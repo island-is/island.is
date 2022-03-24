@@ -5,8 +5,11 @@ import { Box } from '@island.is/island-ui/core'
 import { IntroHeader, m } from '@island.is/service-portal/core'
 
 import { Accesses } from '../../components'
+import { useNamespaces } from '@island.is/localization'
 
 function AccessControl(): JSX.Element {
+  useNamespaces('sp.settings-access-control')
+
   return (
     <Box>
       <IntroHeader
@@ -14,7 +17,7 @@ function AccessControl(): JSX.Element {
         intro={defineMessage({
           id: 'sp.settings-access-control:home-intro',
           defaultMessage:
-            'Hér birtist listi yfir þau umboð sem þú hefur gefið öðrum á Mínum síðum Ísland.is. Þú getur veitt umboð fyrir þín gögn til að mynda Pósthólf og Fjármál. Þú getur líka eytt umboðum, bætt við nýjum og stýrt tímalengd þeirra.',
+            'Hérna kemur listi yfir þau umboð sem þú hefur gefið öðrum. Þú getur eytt umboðum eða bætt við nýjum.',
         })}
         img="./assets/images/educationDegree.svg"
       />

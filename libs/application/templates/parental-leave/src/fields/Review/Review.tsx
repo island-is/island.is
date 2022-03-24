@@ -19,6 +19,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import {
   DataValue,
+  formatBankInfo,
   handleServerError,
   Label,
   RadioValue,
@@ -544,7 +545,7 @@ export const Review: FC<ReviewScreenProps> = ({
                 label={formatMessage(
                   parentalLeaveFormMessages.shared.paymentInformationBank,
                 )}
-                value={bank}
+                value={formatBankInfo(bank)}
               />
             </GridColumn>
           </GridRow>
