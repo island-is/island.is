@@ -390,6 +390,14 @@ export const m = defineMessages({
     id: 'service.portal:finance-schedules',
     defaultMessage: 'Greiðsluáætlun',
   },
+  financeSchedules: {
+    id: 'service.portal:finance-schedules',
+    defaultMessage: 'Greiðsluáætlanir',
+  },
+  financeScheduleApplication: {
+    id: 'service.portal:finance-schedules',
+    defaultMessage: 'Gera greiðsluáætlun',
+  },
   financeEmployeeClaims: {
     id: 'service.portal:finance-employee-claims',
     defaultMessage: 'Laungreiðendakröfur',

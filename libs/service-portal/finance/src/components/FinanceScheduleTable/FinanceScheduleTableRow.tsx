@@ -44,6 +44,7 @@ const FinanceScheduleTableRow: FC<Props> = ({ paymentSchedule }) => {
     detailsQuery?.data?.getPaymentScheduleById.myDetailedSchedules
       .myDetailedSchedule || []
 
+  console.log(paymentDetailData)
   const getType = (type: string) => {
     switch (type) {
       case 'S':

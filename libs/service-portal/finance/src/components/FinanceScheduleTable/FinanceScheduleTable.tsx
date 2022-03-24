@@ -77,7 +77,8 @@ const FinanceScheduleTable: FC<Props> = ({ recordsArray }) => {
                     text={formatMessage({
                       id:
                         'sp.finance-schedule:amount-left-without-interest-info',
-                      defaultMessage: 'Upplýsingar um eftirstöðvar án vaxta',
+                      defaultMessage:
+                        'Eftirstöðvar án vaxta innihalda þó vexti fram að þeim degi sem greiðsluáætlunin er gerð ef gjöld bera vexti.',
                     })}
                   />
                 </Box>

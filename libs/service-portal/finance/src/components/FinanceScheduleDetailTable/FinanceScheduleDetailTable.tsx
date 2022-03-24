@@ -1,4 +1,4 @@
-import React, { FC, ReactElement } from 'react'
+import React, { FC } from 'react'
 import { Icon, Table as T, Tooltip } from '@island.is/island-ui/core'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -6,13 +6,12 @@ import { m } from '@island.is/service-portal/core'
 import cn from 'classnames'
 import * as styles from './FinanceScheduleDetailTable.css'
 import { tableStyles } from '@island.is/service-portal/core'
-import { AccumulatedPayments, DetailedSchedule } from '@island.is/api/schema'
+import { DetailedSchedule } from '@island.is/api/schema'
 import { dateFormat } from '@island.is/shared/constants'
 import { dateParse } from '../../utils/dateUtils'
 import format from 'date-fns/format'
 import amountFormat from '../../utils/amountFormat'
-import compare from 'date-fns/compareAsc'
-import { parseWithOptions } from 'date-fns/fp'
+
 interface Props {
   data: Array<DetailedSchedule>
 }
@@ -20,73 +19,11 @@ interface Props {
 type DetailData = Array<
   DetailedSchedule & {
     paid: boolean
-    paymentsElement: ReactElement[] | undefined | null
   }
 >
 
 const FinanceScheduleDetailTable: FC<Props> = ({ data }) => {
   const { formatMessage } = useLocale()
-
-  const payments = (payments: AccumulatedPayments[] | undefined) => {
-    if (!payments || payments.length < 2) return
-
-    return payments.map((payment, i) => {
-      const borderColor = i === payments.length - 1 ? 'blue200' : 'transparent'
-      return (
-        <T.Row key={i + payment.payDate}>
-          <T.Data
-            borderColor={borderColor}
-            box={{ paddingX: 2 }}
-            style={tableStyles}
-          ></T.Data>
-          <T.Data
-            borderColor={borderColor}
-            box={{ paddingX: 2 }}
-            style={tableStyles}
-          ></T.Data>
-          {payment.payExplanation && payment.payExplanation !== 'Greiðsla' ? (
-            <T.Data
-              borderColor={borderColor}
-              box={{ paddingX: 2 }}
-              style={tableStyles}
-            >
-              <Text variant="medium" fontWeight="semiBold">
-                Skýring
-              </Text>
-              <Text variant="medium">{payment.payExplanation}</Text>
-            </T.Data>
-          ) : (
-            <T.Data
-              borderColor={borderColor}
-              box={{ paddingX: 2 }}
-              style={tableStyles}
-            ></T.Data>
-          )}
-          <T.Data
-            borderColor={borderColor}
-            box={{ paddingX: 2 }}
-            style={tableStyles}
-          >
-            <Text variant="medium">{amountFormat(payment.payAmount)}</Text>
-          </T.Data>
-          <T.Data
-            borderColor={borderColor}
-            box={{ paddingX: 2 }}
-            style={tableStyles}
-          >
-            <Text variant="medium">
-              {format(dateParse(payment.payDate), dateFormat.is)}
-            </Text>
-          </T.Data>
-          <T.Data
-            borderColor={borderColor}
-            box={{ paddingX: 2 }}
-            style={tableStyles}
-          ></T.Data>
-        </T.Row>
-      )
-    })
-  }
 
   const arr: DetailData = data.map((x, i) => {
     const sum =
@@ -98,8 +35,6 @@ const FinanceScheduleDetailTable: FC<Props> = ({ data }) => {
     return {
       ...data[i],
       paid: sum >= x.plannedAmount ? true : false,
-      paymentsElement:
-        data[i].payments && payments(data[i].payments ?? undefined),
     }
   })
   const headerArray = [
@@ -166,94 +101,92 @@ const FinanceScheduleDetailTable: FC<Props> = ({ data }) => {
         </T.Head>
         <T.Body>
           {arr?.map((row, i) => (
-            <>
-              <T.Row key={i + row.paymentNumber}>
-                {[
-                  {
-                    value: format(dateParse(row.plannedDate), dateFormat.is),
-                    align: 'left',
-                    border: !row.paidDate.includes('*'),
-                  },
-                  {
-                    value: (
-                      <Box display="flex">
-                        {amountFormat(row.plannedAmount)}
-                        {i === arr.length - 1 ? (
-                          <Tooltip
-                            placement="bottom"
-                            text={formatMessage({
-                              id: 'sp.finance-schedule:last-payment-info',
-                              defaultMessage:
-                                'Síðasta greiðslan mun safna á sig vöxtum.',
-                            })}
-                          />
-                        ) : null}
-                      </Box>
-                    ),
-                    element: true,
-                    align: 'left',
-                    border: !row.paidDate.includes('*'),
-                  },
-                  { value: '', border: !row.paidDate.includes('*') },
-                  {
-                    value:
-                      row.paidAmount === 0 ? '' : amountFormat(row.paidAmount),
-                    align: 'left',
-                    border: !row.paidDate.includes('*'),
-                  },
-                  {
-                    value: row.paidDate.includes('*')
-                      ? row.paidDate
-                      : row.paidDate.length <= 0
-                      ? ''
-                      : format(dateParse(row.paidDate), dateFormat.is),
-                    align: 'left',
-                    border: !row.paidDate.includes('*'),
-                  },
-                  {
-                    value: row.paid ? (
-                      <Box
-                        marginRight={1}
-                        display="flex"
-                        alignItems="center"
-                        justifyContent="center"
-                        textAlign="center"
-                      >
-                        <Icon
-                          icon="checkmarkCircle"
-                          color="mint600"
-                          type="filled"
+            <T.Row key={i + row.paymentNumber}>
+              {[
+                {
+                  value: format(dateParse(row.plannedDate), dateFormat.is),
+                  align: 'left',
+                },
+                {
+                  value: (
+                    <Box display="flex">
+                      {amountFormat(row.plannedAmount)}
+                      {i === arr.length - 1 ? (
+                        <Tooltip
+                          placement="bottom"
+                          text={formatMessage({
+                            id: 'sp.finance-schedule:last-payment-info',
+                            defaultMessage:
+                              'Vextir uppfærast daglega á líftíma greiðsluáætlunarinnar en eru greiddir á síðasta gjalddaga.',
+                          })}
                         />
-                      </Box>
-                    ) : (
-                      ''
-                    ),
-                    element: true,
-                    align: 'center',
-                    border: !row.paidDate.includes('*'),
-                  },
-                ].map((item, ii) => (
-                  <T.Data
-                    box={{ paddingRight: 2, paddingLeft: 2 }}
-                    key={ii.toString() + item.value}
-                    style={tableStyles}
-                    borderColor={item.border ? 'blue200' : 'transparent'}
-                  >
-                    <div
-                      className={cn(styles.td, {
-                        [styles.alignTd]: item.align === 'right',
-                        [styles.alignCenter]: item.align === 'center',
-                      })}
+                      ) : null}
+                    </Box>
+                  ),
+                  element: true,
+                  align: 'left',
+                },
+                { value: '' },
+                {
+                  value:
+                    row.paidAmount === 0 ? '' : amountFormat(row.paidAmount),
+                  align: 'left',
+                },
+                {
+                  value: row.paidDate.includes('*')
+                    ? row.payments &&
+                      format(
+                        dateParse(
+                          row.payments[row.payments.length - 1].payDate,
+                        ),
+                        dateFormat.is,
+                      )
+                    : row.paidDate.length <= 0
+                    ? ''
+                    : format(dateParse(row.paidDate), dateFormat.is),
+                  align: 'left',
+                },
+                {
+                  value: row.paid ? (
+                    <Box
+                      marginRight={1}
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="center"
+                      textAlign="center"
                     >
-                      <Text variant="medium" as={item.element ? 'span' : 'p'}>
-                        {item.value}
-                      </Text>
-                    </div>
-                  </T.Data>
-                ))}
-              </T.Row>
-              {row.paymentsElement && row.paymentsElement}
-            </>
+                      <Icon
+                        icon="checkmarkCircle"
+                        color="mint600"
+                        type="filled"
+                      />
+                    </Box>
+                  ) : (
+                    ''
+                  ),
+                  element: true,
+                  align: 'center',
+                },
+              ].map((item, ii) => (
+                <T.Data
+                  box={{ paddingRight: 2, paddingLeft: 2 }}
+                  key={ii.toString() + item.value}
+                  style={tableStyles}
+                  borderColor="blue200"
+                >
+                  <div
+                    className={cn(styles.td, {
+                      [styles.alignTd]: item.align === 'right',
+                      [styles.alignCenter]: item.align === 'center',
+                    })}
+                  >
+                    <Text variant="medium" as={item.element ? 'span' : 'p'}>
+                      {item.value}
+                    </Text>
+                  </div>
+                </T.Data>
+              ))}
+            </T.Row>
           ))}
         </T.Body>
       </T.Table>

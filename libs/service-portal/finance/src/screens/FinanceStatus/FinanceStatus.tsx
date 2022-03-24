@@ -1,7 +1,11 @@
 import React from 'react'
 import flatten from 'lodash/flatten'
 import { gql, useQuery } from '@apollo/client'
-import { ServicePortalModuleComponent, m } from '@island.is/service-portal/core'
+import {
+  ServicePortalModuleComponent,
+  m,
+  ServicePortalPath,
+} from '@island.is/service-portal/core'
 import { GridColumn, GridRow, Table as T } from '@island.is/island-ui/core'
 import subYears from 'date-fns/subYears'
 import { Query } from '@island.is/api/schema'
@@ -25,6 +29,7 @@ import amountFormat from '../../utils/amountFormat'
 import { exportGreidslustadaFile } from '../../utils/filesGreidslustada'
 import DropdownExport from '../../components/DropdownExport/DropdownExport'
 import FinanceStatusTableRow from '../../components/FinanceStatusTableRow/FinanceStatusTableRow'
+import { Link } from 'react-router-dom'
 
 const GetFinanceStatusQuery = gql`
   query GetFinanceStatusQuery {
@@ -74,7 +79,7 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
           })}
         </Text>
         <GridRow>
-          <GridColumn span={['12/12', '8/12']}>
+          <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
             <Text variant="default">
               {formatMessage({
                 id: 'sp.finance-status:intro',
@@ -84,22 +89,37 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
             </Text>
           </GridColumn>
           {financeStatusData.organizations?.length > 0 || financeStatusZero ? (
-            <Box display="flex" marginLeft="auto" marginTop={1}>
-              <GridColumn>
-                <Button
-                  colorScheme="default"
-                  icon="print"
-                  iconType="filled"
-                  onClick={() => window.print()}
-                  preTextIconType="filled"
-                  size="default"
-                  type="button"
-                  variant="utility"
-                >
-                  {formatMessage(m.print)}
-                </Button>
-              </GridColumn>
-              <GridColumn>
+            <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+              <Box display="flex" justifyContent="flexEnd" marginTop={1}>
+                <Box paddingRight={2}>
+                  <Link to={ServicePortalPath.FinanceSchedule}>
+                    <Button
+                      colorScheme="default"
+                      icon="document"
+                      iconType="filled"
+                      preTextIconType="filled"
+                      size="default"
+                      type="button"
+                      variant="utility"
+                    >
+                      {formatMessage(m.financeSchedules)}
+                    </Button>
+                  </Link>
+                </Box>
+                <Box paddingRight={2}>
+                  <Button
+                    colorScheme="default"
+                    icon="print"
+                    iconType="filled"
+                    onClick={() => window.print()}
+                    preTextIconType="filled"
+                    size="default"
+                    type="button"
+                    variant="utility"
+                  >
+                    {formatMessage(m.print)}
+                  </Button>
+                </Box>
                 <DropdownExport
                   onGetCSV={() =>
                     exportGreidslustadaFile(financeStatusData, 'csv')
@@ -130,8 +150,8 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
                     },
                   ]}
                 />
-              </GridColumn>
-            </Box>
+              </Box>
+            </GridColumn>
           ) : null}
         </GridRow>
         <Box marginTop={[3, 4, 4, 4, 5]}>

@@ -12,6 +12,7 @@ import {
   GridColumn,
   SkeletonLoader,
   AlertBanner,
+  Button,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import FinanceScheduleTable from '../../components/FinanceScheduleTable/FinanceScheduleTable'
@@ -78,7 +79,7 @@ const FinanceSchedule: ServicePortalModuleComponent = () => {
           })}
         </Text>
         <GridRow>
-          <GridColumn span={['11/12', '6/12']}>
+          <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
             <Text variant="default">
               {formatMessage({
                 id: 'sp.finance-schedule:intro',
@@ -87,9 +88,36 @@ const FinanceSchedule: ServicePortalModuleComponent = () => {
               })}
             </Text>
           </GridColumn>
+          <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+            <Box
+              paddingRight={2}
+              display="flex"
+              justifyContent="flexEnd"
+              alignItems="flexEnd"
+              height="full"
+            >
+              <a
+                href="https://island.is/umsoknir/greidsluaaetlun/"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <Button
+                  colorScheme="default"
+                  icon="open"
+                  iconType="outline"
+                  preTextIconType="outline"
+                  size="default"
+                  type="button"
+                  variant="utility"
+                >
+                  {formatMessage(m.financeScheduleApplication)}
+                </Button>
+              </a>
+            </Box>
+          </GridColumn>
         </GridRow>
 
-        <Box marginTop={2}>
+        <Box marginTop={4}>
           {paymentSchedulesError && (
             <AlertBanner
               description={formatMessage(m.errorFetch)}
@@ -112,6 +140,7 @@ const FinanceSchedule: ServicePortalModuleComponent = () => {
           {/* {debtData.length > 0 ? (
             <FinanceDebtStatus debtStatusData={debtData[0]} />
           ) : null} */}
+
           {recordsData.length > 0 ? (
             <FinanceScheduleTable recordsArray={recordsData} />
           ) : null}
