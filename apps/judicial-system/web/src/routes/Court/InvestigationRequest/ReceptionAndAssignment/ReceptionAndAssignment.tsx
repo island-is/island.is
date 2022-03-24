@@ -1,4 +1,5 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useState } from 'react'
+import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/client'
 
@@ -22,13 +23,16 @@ import {
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isReceptionAndAssignmentStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
+
 import * as Constants from '@island.is/judicial-system/consts'
 import ReceptionAndAssignmentForm from './ReceptionAndAssignmentForm'
 
 const ReceptionAndAssignment = () => {
   const router = useRouter()
   const id = router.query.id
-
+  const { formatMessage } = useIntl()
   const [courtCaseNumberEM, setCourtCaseNumberEM] = useState('')
   const [createCourtCaseSuccess, setCreateCourtCaseSuccess] = useState<boolean>(
     false,
@@ -48,10 +52,6 @@ const ReceptionAndAssignment = () => {
     isTransitioningCase,
     sendNotification,
   } = useCase()
-
-  useEffect(() => {
-    document.title = 'Móttaka - Réttarvörslugátt'
-  }, [])
 
   const { data: userData, loading: userLoading } = useQuery<UserData>(
     UsersQuery,
@@ -99,6 +99,11 @@ const ReceptionAndAssignment = () => {
       isLoading={isLoadingWorkingCase || userLoading}
       notFound={caseNotFound}
     >
+      <PageHeader
+        title={formatMessage(
+          titles.court.investigationCases.receptionAndAssignment,
+        )}
+      />
       <ReceptionAndAssignmentForm
         workingCase={workingCase}
         setWorkingCase={setWorkingCase}
