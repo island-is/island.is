@@ -67,8 +67,7 @@ export default async function handler(
   /* Max age is 30 minutes, revalided if repeated within 30 sec*/
   res.setHeader(
     'Cache-Control',
-    // 'public, s-maxage=1800, stale-while-revalidate=30',
-    'public, s-maxage=1800, immutable',
+    'public, s-maxage=1800, stale-while-revalidate=30',
   )
   res.status(200).json(laywers)
 }
