@@ -64,4 +64,10 @@ export class UpdateRecyclingPartnerInput {
 
   @Field()
   active!: boolean
+
+  @Field()
+  nationalId!: string
+
+  @Field()
+  email!: string
 }
