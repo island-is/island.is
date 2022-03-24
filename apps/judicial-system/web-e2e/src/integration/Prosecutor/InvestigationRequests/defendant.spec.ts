@@ -87,6 +87,7 @@ describe(NEW_IC_ROUTE, () => {
     cy.getByTestid('select-defendantGender').click()
     cy.get('#react-select-defendantGender-option-0').click()
     cy.getByTestid('continueButton').should('not.be.disabled')
+
     cy.getByTestid('defenderEmail').type('ill formed email address')
     cy.getByTestid('continueButton').should('be.disabled')
     cy.getByTestid('defenderEmail').clear()
@@ -94,5 +95,17 @@ describe(NEW_IC_ROUTE, () => {
     cy.getByTestid('continueButton').should('be.disabled')
     cy.getByTestid('defenderPhoneNumber').clear().type('1234567')
     cy.getByTestid('continueButton').should('not.be.disabled')
+  })
+
+  it('should be able to select defender', () => {
+    cy.wait('@lawyers')
+    cy.getByTestid('creatable-select-defenderName')
+      .click()
+      .find('input')
+      .get('.island-select__option')
+      .should('contain', 'L√∂gma√∞ur 1')
+      .click()
+    cy.getByTestid('defenderEmail').should('have.value', 'logmadur@logmenn.is')
+    cy.getByTestid('defenderPhoneNumber').should('have.value', '666-6666')
   })
 })
