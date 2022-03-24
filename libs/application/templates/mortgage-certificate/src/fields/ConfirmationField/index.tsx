@@ -101,7 +101,6 @@ export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
 
         <PdfViewer
           file={`data:application/pdf;base64,${externalData.getMortgageCertificate.data.contentBase64}`}
-          renderMode="canvas"
         />
         {renderFooter()}
       </>
