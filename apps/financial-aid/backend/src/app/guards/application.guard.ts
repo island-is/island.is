@@ -26,10 +26,9 @@ export class ApplicationGuard implements CanActivate {
 
     if (user.service === RolesRule.VEITA) {
       const staff = await this.staffService.findByNationalId(user.nationalId)
-      return true
-      // if (!staff.municipalityIds.includes(application.municipalityCode)) {
-      //   return false
-      // }
+      if (!staff.municipalityIds.includes(application.municipalityCode)) {
+        return false
+      }
     } else if (user.service === RolesRule.OSK) {
       if (
         application.nationalId !== user.nationalId &&

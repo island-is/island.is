@@ -109,7 +109,8 @@ export class StaffController {
     return await this.staffService.createStaff(
       createStaffInput,
       {
-        municipalityId: createStaffInput.municipalityId ?? '1400',
+        municipalityId:
+          createStaffInput.municipalityId ?? staff.municipalityIds[0],
         municipalityName:
           createStaffInput.municipalityName ?? staff.municipalityName,
       },

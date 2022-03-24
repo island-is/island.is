@@ -105,24 +105,23 @@ export class MunicipalityService {
   }
 
   async updateMunicipality(
-    municipalityId: string,
     municipality: UpdateMunicipalityDto,
   ): Promise<MunicipalityModel> {
     try {
       await this.sequelize.transaction((t) => {
         return Promise.all([
           this.municipalityModel.update(municipality, {
-            where: { municipalityId },
+            where: { municipalityId: municipality.municipalityId },
             transaction: t,
           }),
           this.aidService.updateAid(
             municipality.individualAid,
-            municipalityId,
+            municipality.municipalityId,
             t,
           ),
           this.aidService.updateAid(
             municipality.cohabitationAid,
-            municipalityId,
+            municipality.municipalityId,
             t,
           ),
         ])
@@ -132,7 +131,7 @@ export class MunicipalityService {
       throw new NotFoundException(`Error while updating municipality`)
     }
 
-    return await this.findByMunicipalityId(municipalityId)
+    return await this.findByMunicipalityId(municipality.municipalityId)
   }
 
   async getAll(): Promise<MunicipalityModel[]> {

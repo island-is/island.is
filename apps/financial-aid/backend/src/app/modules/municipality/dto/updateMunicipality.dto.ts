@@ -28,4 +28,8 @@ export class UpdateMunicipalityDto {
   @IsString()
   @ApiProperty()
   readonly email?: string
+
+  @IsString()
+  @ApiProperty()
+  readonly municipalityId: string
 }

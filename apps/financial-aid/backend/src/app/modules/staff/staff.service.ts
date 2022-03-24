@@ -46,7 +46,7 @@ export class StaffService {
   async findByMunicipalityId(municipalityIds: string[]): Promise<StaffModel[]> {
     return await this.staffModel.findAll({
       where: {
-        municipalityId: { [Op.in]: municipalityIds },
+        municipalityIds: { [Op.overlap]: municipalityIds },
       },
       order: [
         ['active', 'DESC'],
@@ -144,7 +144,7 @@ export class StaffService {
         {
           nationalId: input.nationalId,
           name: input.name,
-          municipalityId: municipality.municipalityId,
+          municipalityIds: [municipality.municipalityId],
           email: input.email,
           roles: input.roles,
           active: true,
