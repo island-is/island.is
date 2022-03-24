@@ -64,13 +64,7 @@ export const generateAssignOtherParentApplicationEmail: EmailTemplateGenerator =
         {
           component: 'Copy',
           context: {
-            copy: `Ef þú áttir von á þessum tölvupósti þá getur þú annaðhvort smellt á hnappinn hér að neðan eða, ef hnappur virkar ekki, afritað hlekkinn hér að neðan og límt hann inn í vafrann þinn.`,
-          },
-        },
-        {
-          component: 'Copy',
-          context: {
-            copy: link,
+            copy: `Ef þú áttir von á þessum tölvupósti þá getur þú smellt á takkann hér fyrir neðan.`,
           },
         },
         {
@@ -78,6 +72,19 @@ export const generateAssignOtherParentApplicationEmail: EmailTemplateGenerator =
           context: {
             copy: 'Skoða umsókn',
             href: link,
+          },
+        },
+        {
+          component: 'Copy',
+          context: {
+            copy: `Athugið! Ef hnappur virkar ekki, getur þú afritað hlekkinn hér að neðan og límt hann inn í vafrann þinn.`,
+          },
+        },
+        {
+          component: 'Copy',
+          context: {
+            copy: link,
+            small: true,
           },
         },
       ],

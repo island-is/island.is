@@ -58,13 +58,7 @@ export const generateAssignEmployerApplicationEmail: AssignmentEmailTemplateGene
         {
           component: 'Copy',
           context: {
-            copy: `Ef þú áttir von á þessum tölvupósti þá getur þú annaðhvort smellt á hnappinn hér að neðan eða, ef hnappur virkar ekki, afritað hlekkinn hér að neðan og límt hann inn í vafrann þinn.`,
-          },
-        },
-        {
-          component: 'Copy',
-          context: {
-            copy: assignLink,
+            copy: `Ef þú áttir von á þessum tölvupósti þá getur þú smellt á takkann hér fyrir neðan.`,
           },
         },
         {
@@ -72,6 +66,26 @@ export const generateAssignEmployerApplicationEmail: AssignmentEmailTemplateGene
           context: {
             copy: 'Yfirfara umsókn',
             href: assignLink,
+          },
+        },
+        {
+          component: 'Copy',
+          context: {
+            copy: `Athugið! Ef hnappur virkar ekki, getur þú afritað hlekkinn hér að neðan og límt hann inn í vafrann þinn.`,
+          },
+        },
+        {
+          component: 'Copy',
+          context: {
+            copy: assignLink,
+            small: true,
+          },
+        },
+        {
+          component: 'Copy',
+          context: {
+            copy: `<br />`,
+            small: true,
           },
         },
         { component: 'Copy', context: { copy: 'Með kveðju,' } },
