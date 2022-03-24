@@ -57,7 +57,7 @@ export const servicePortalSubmitOnBoardingModal = (location: string) => {
 // Event sent when user pushes save button when giving other user access in the service portal
 export const servicePortalSaveAccessControl = (location: string) => {
   const event: BaseEvent = {
-    eventName: 'Submit On Boarding Modal',
+    eventName: 'Pushing save button for Access Control',
     featureName: 'service-portal',
     params: {
       location,
