@@ -108,7 +108,7 @@ export const Spouse: Form = buildForm({
       title: m.confirmation.general.sectionTitle,
       children: [
         buildCustomField({
-          id: 'confirmation',
+          id: Routes.SPOUSECONFIRMATION,
           title: m.confirmation.general.pageTitle,
           component: 'Confirmation',
         }),

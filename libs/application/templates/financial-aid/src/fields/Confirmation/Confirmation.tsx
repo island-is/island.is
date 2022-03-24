@@ -1,14 +1,28 @@
 import React from 'react'
-import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
-import { FAFieldBaseProps } from '../../lib/types'
 import { useIntl } from 'react-intl'
+
+import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
+import { ApproveOptions, FAFieldBaseProps, UploadFileType } from '../../lib/types'
 import { confirmation, copyUrl } from '../../lib/messages'
 import { DescriptionText, ConfirmationSectionImage, CopyUrl } from '..'
-import { hasSpouse } from '../../lib/utils'
+import { hasFiles, hasSpouse } from '../../lib/utils'
+import { Routes } from '../../lib/constants'
 
-const Confirmation = ({ application }: FAFieldBaseProps) => {
+const Confirmation = ({ application, field }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
   const { answers, externalData } = application
+  const { id } = field
+
+  let incomeFileType: UploadFileType
+  let hasIncome
+  if (id === Routes.CONFIRMATION) {
+    incomeFileType = 'incomeFiles'
+    hasIncome = answers.income === ApproveOptions.Yes
+  } else {
+    incomeFileType = 'spouseIncomeFiles'
+    hasIncome = answers.spouseIncome === ApproveOptions.Yes
+  }
+
   return (
     <>
       <Box marginTop={[4, 4, 5]}>
@@ -18,14 +32,15 @@ const Confirmation = ({ application }: FAFieldBaseProps) => {
             title={formatMessage(confirmation.alertMessages.success)}
           />
         </Box>
-        <Box marginTop={[2, 2, 3]}>
-          {/* //Todo customize alert message depending on applicant */}
-          <AlertMessage
-            type="warning"
-            title={formatMessage(confirmation.alertMessages.dataNeeded)}
-            message={formatMessage(confirmation.alertMessages.dataNeededText)}
-          />
-        </Box>
+        {hasIncome && !hasFiles(incomeFileType, answers) &&
+          <Box marginTop={[2, 2, 3]}>
+            <AlertMessage
+              type="warning"
+              title={formatMessage(confirmation.alertMessages.dataNeeded)}
+              message={formatMessage(confirmation.alertMessages.dataNeededText)}
+            />
+          </Box>
+        }
       </Box>
       <Text as="h3" variant="h3" marginTop={[4, 4, 5]}>
         {formatMessage(confirmation.nextSteps.title)}
@@ -55,6 +70,7 @@ const Confirmation = ({ application }: FAFieldBaseProps) => {
       <Box marginTop={2}>
         <DescriptionText
           text={confirmation.links.content}
+          textProps={{ variant: "small" }}
           format={{
             statusPage: window.location.href,
             homePage:
@@ -64,7 +80,7 @@ const Confirmation = ({ application }: FAFieldBaseProps) => {
         />
       </Box>
 
-      <Box marginTop={[4, 4, 5]}>
+      <Box marginTop={[4, 4, 6]}>
         <ConfirmationSectionImage />
       </Box>
     </>
