@@ -115,21 +115,21 @@ export const UserDropdown = ({
             {/* Check if actor is company - display company icon
              * kennitala function is buggy - temp removal
              */}
-            {isCompany ? (
-              <Box
-                borderRadius="circle"
-                background="blue100"
-                display="flex"
-                alignItems="center"
-                justifyContent="center"
-                className={styles.companyIconSize}
+            {/* {isDelegationCompany ? (
+            <Box
+              borderRadius="circle"
+              background="blue100"
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              className={styles.companyIconSize}
               >
-                <Icon icon="business" type="filled" color="blue400" />
+              <Icon icon="business" type="filled" color="blue400" />
               </Box>
-            ) : (
-              <UserAvatar username={isDelegation ? actorName : userName} />
-            )}
-            {/* <UserAvatar username={isDelegation ? actorName : userName} /> */}
+              ) : (
+                <UserAvatar username={isDelegation ? actorName : userName} />
+          )} */}
+            <UserAvatar username={isDelegation ? actorName : userName} />
 
             <Box marginLeft={1} marginRight={4}>
               <Text variant="h4" as="h4">
