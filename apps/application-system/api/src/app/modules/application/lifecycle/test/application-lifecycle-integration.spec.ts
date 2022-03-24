@@ -12,6 +12,8 @@ import { EmailService } from '@island.is/email-service'
 import { ContentfulRepository } from '@island.is/cms'
 import { ApplicationLifecycleModule } from '../application-lifecycle.module'
 import { AppModule } from '../../../../app.module'
+import { FeatureFlagService } from '@island.is/nest/feature-flags'
+import { MockFeatureFlagService } from '../../e2e/mockFeatureFlagService'
 
 let app: INestApplication
 let server: request.SuperTest<request.Test>
@@ -60,6 +62,8 @@ beforeAll(async () => {
       builder
         .overrideProvider(ContentfulRepository)
         .useClass(MockContentfulRepository)
+        .overrideProvider(FeatureFlagService)
+        .useClass(MockFeatureFlagService)
         .overrideProvider(EmailService)
         .useClass(MockEmailService)
         .overrideGuard(IdsUserGuard)
