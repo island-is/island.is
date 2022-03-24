@@ -14,16 +14,21 @@ import {
 import { Routes } from '../../lib/constants'
 import { DescriptionText } from '../index'
 import { formatAddress, spouseFormItems } from '../../lib/formatters'
-import { FormInfo, SummaryComment, UserInfo, ContactInfo, Files } from './index'
+import {
+  FormInfo,
+  SummaryComment,
+  UserInfo,
+  ContactInfo,
+  Files,
+  FormError,
+} from './index'
 import useApplication from '../../lib/hooks/useApplication'
-import * as styles from '../Shared.css'
 
 const SpouseSummaryForm = ({
   application,
   goToScreen,
   setBeforeSubmitCallback,
 }: FAFieldBaseProps) => {
-  const { formatMessage } = useIntl()
   const { getValues } = useFormContext()
   const { createApplication } = useApplication()
   const [formError, setFormError] = useState(false)
@@ -88,15 +93,7 @@ const SpouseSummaryForm = ({
         comment={answers?.spouseFormComment}
       />
 
-      <Box
-        className={cn(styles.errorMessage, {
-          [`${styles.showErrorMessage}`]: formError,
-        })}
-      >
-        <Text color="red600" fontWeight="semiBold" variant="small">
-          {formatMessage(m.summaryForm.general.errorMessage)}
-        </Text>
-      </Box>
+      <FormError error={formError} />
     </>
   )
 }

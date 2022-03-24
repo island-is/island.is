@@ -1,6 +1,5 @@
 import React, { useState, useMemo } from 'react'
 import { useIntl } from 'react-intl'
-import cn from 'classnames'
 import { useFormContext } from 'react-hook-form'
 
 import { Text, Box } from '@island.is/island-ui/core'
@@ -22,9 +21,15 @@ import { Routes } from '../../lib/constants'
 import { DescriptionText, Breakdown } from '../index'
 import { formatAddress, formItems } from '../../lib/formatters'
 import useApplication from '../../lib/hooks/useApplication'
-import * as styles from '../Shared.css'
 import { hasSpouse } from '../../lib/utils'
-import { FormInfo, SummaryComment, UserInfo, ContactInfo, Files } from './index'
+import {
+  FormInfo,
+  SummaryComment,
+  UserInfo,
+  ContactInfo,
+  Files,
+  FormError,
+} from './index'
 
 const SummaryForm = ({
   application,
@@ -148,15 +153,7 @@ const SummaryForm = ({
         comment={answers?.formComment}
       />
 
-      <Box
-        className={cn(styles.errorMessage, {
-          [`${styles.showErrorMessage}`]: formError,
-        })}
-      >
-        <Text color="red600" fontWeight="semiBold" variant="small">
-          {formatMessage(m.summaryForm.general.errorMessage)}
-        </Text>
-      </Box>
+      <FormError error={formError} />
     </>
   )
 }
