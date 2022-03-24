@@ -58,7 +58,13 @@ export const generateAssignEmployerApplicationEmail: AssignmentEmailTemplateGene
         {
           component: 'Copy',
           context: {
-            copy: `Ef þú áttir von á þessum tölvupósti þá getur þú smellt á takkann hér fyrir neðan.`,
+            copy: `Ef þú áttir von á þessum tölvupósti þá getur þú annaðhvort smellt á hnappinn hér að neðan eða, ef hnappur virkar ekki, afritað hlekkinn hér að neðan og límt hann inn í vafrann þinn.`,
+          },
+        },
+        {
+          component: 'Copy',
+          context: {
+            copy: assignLink,
           },
         },
         {
