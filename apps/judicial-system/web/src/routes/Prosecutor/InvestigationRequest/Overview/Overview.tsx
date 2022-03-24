@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 import { AnimatePresence } from 'framer-motion'
@@ -27,6 +27,8 @@ import { createCaseResentExplanation } from '@island.is/judicial-system-web/src/
 import * as Constants from '@island.is/judicial-system/consts'
 
 import OverviewForm from './OverviewForm'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
 
 export const Overview: React.FC = () => {
   const router = useRouter()
@@ -47,10 +49,6 @@ export const Overview: React.FC = () => {
     isSendingNotification,
     updateCase,
   } = useCase()
-
-  useEffect(() => {
-    document.title = 'Yfirlit kröfu - Réttarvörslugátt'
-  }, [])
 
   const { formatMessage } = useIntl()
 
@@ -100,6 +98,9 @@ export const Overview: React.FC = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
+      <PageHeader
+        title={formatMessage(titles.prosecutor.investigationCases.overview)}
+      />
       <OverviewForm
         workingCase={workingCase}
         handleNextButtonClick={
