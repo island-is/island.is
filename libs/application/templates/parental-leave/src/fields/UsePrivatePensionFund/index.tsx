@@ -26,11 +26,7 @@ export const UsePrivatePensionFund: FC<FieldBaseProps> = ({
   return (
     <Box paddingTop={6}>
       <Text variant="h4" as="h4">
-        {formatText(
-          parentalLeaveFormMessages.shared.unionName,
-          application,
-          formatMessage,
-        )}
+        {formatText(title, application, formatMessage)}
       </Text>
       <RadioFormField
         error={errors && getErrorViaPath(errors, id)}
