@@ -153,7 +153,7 @@ const SummaryForm = ({
         comment={answers?.formComment}
       />
 
-      <SummaryError error={true} />
+      <SummaryError error={formError} />
     </>
   )
 }
