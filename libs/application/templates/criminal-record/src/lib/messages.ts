@@ -206,7 +206,7 @@ export const m = defineMessages({
   },
   criminalRecordInboxText: {
     id: 'cr.application:criminalRecordInboxText',
-    defaultMessage: 'Þú getur einning fundið sakavottorðið í pósthólfinu þínu',
+    defaultMessage: 'Sakavottorðið geturðu einnig fundið í pósthólfinu þínu',
     description: 'You can also find the criminal record in your inbox',
   },
   criminalRecordInboxLink: {

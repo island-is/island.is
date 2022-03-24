@@ -145,12 +145,6 @@ export const m = defineMessages({
     defaultMessage: 'Reyndu aftur síðar',
     description: 'Unhandled error in data provider',
   },
-  mortgageCertificateNoPropertyRegistered: {
-    id: 'mc.application:mortgageCertificate.noPropertyRegistered',
-    defaultMessage: 'Ekki fannst skráð eign á þessari kennitölu',
-    description:
-      'No registered property was found on this social security number',
-  },
   mortgageCertificateInformationTitle: {
     id: 'mc.application:mortgageCertificate.title',
     defaultMessage: 'Upplýsingar úr veðbókarskrá',
@@ -230,7 +224,7 @@ export const m = defineMessages({
   mortgageCertificateInboxText: {
     id: 'mc.application:mortgageCertificateInboxText',
     defaultMessage:
-      'Þú getur einning fundið veðbókarvottorðið í pósthólfinu þínu',
+      'Veðbókarvottorðið geturðu einnig fundið í pósthólfinu þínu',
     description: 'You can also find the mortgage certificate in your inbox',
   },
   mortgageCertificateInboxLink: {
