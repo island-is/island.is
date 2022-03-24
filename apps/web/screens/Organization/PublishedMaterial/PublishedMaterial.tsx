@@ -41,7 +41,8 @@ import { Screen } from '../../../types'
 import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_PAGE_QUERY } from '../../queries'
 import { GET_PUBLISHED_MATERIAL_QUERY } from '../../queries/PublishedMaterial'
 
-const ASSETS_PER_PAGE = 30
+const ASSETS_PER_PAGE = 20
+const DEBOUNCE_TIME_IN_MS = 300
 
 interface FilterCategory {
   id: string
@@ -163,13 +164,10 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
     }),
   )
 
+  const [isTyping, setIsTyping] = useState(false)
   const [page, setPage] = useState(1)
   const [parameters, setParameters] = useState<Record<string, string[]>>({})
-
-  const { data, loading, error, fetchMore, refetch } = useQuery<
-    Query,
-    QueryGetPublishedMaterialArgs
-  >(GET_PUBLISHED_MATERIAL_QUERY, {
+  const [queryVariables, setQueryVariables] = useState({
     variables: {
       input: {
         lang: activeLocale,
@@ -182,16 +180,21 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
     },
   })
 
+  const { data, loading, fetchMore } = useQuery<
+    Query,
+    QueryGetPublishedMaterialArgs
+  >(GET_PUBLISHED_MATERIAL_QUERY, queryVariables)
+
   const loadMore = () => {
-    const p = page + 1
-    setPage(p)
+    const nextPage = page + 1
+    setPage(nextPage)
     fetchMore({
       variables: {
         input: {
           lang: activeLocale,
           organizationSlug: (router.query.slug as string) ?? '',
           tags: [],
-          page: p,
+          page: nextPage,
           searchString: searchValue,
           size: ASSETS_PER_PAGE,
         },
@@ -206,71 +209,50 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
     })
   }
 
-  // useEffect(() => {
-
-  // }, [parameters, activeLocale, searchValue, router.query?.slug, refetch])
-
-  useDebounce(
-    () => {
-      setPage(1)
-      refetch({
-        input: {
-          lang: activeLocale,
-          organizationSlug: (router.query.slug as string) ?? '',
-          tags: [],
-          page: 1,
-          searchString: searchValue,
-          size: ASSETS_PER_PAGE,
-        },
-      })
-    },
-    2500,
-    [parameters, page, activeLocale, searchValue, refetch],
-  )
-
   const initialFilterCategories = useMemo(
     () => getFilterCategories(data?.getPublishedMaterial?.items ?? []),
-    [data?.getPublishedMaterial],
+    [data?.getPublishedMaterial?.items],
   )
 
-  console.log(getFilterCategories(data?.getPublishedMaterial?.items ?? []))
-
-  const [filterCategories, setFilterCategories] = useState<FilterCategory[]>(
-    initialFilterCategories,
-  )
+  const filterCategories = initialFilterCategories.map((category) => ({
+    ...category,
+    selected: parameters[category.id] ?? category.selected,
+  }))
 
   useEffect(() => {
     setParameters(getInitialParameters(initialFilterCategories))
   }, [initialFilterCategories])
 
-  useEffect(() => {
-    setFilterCategories((prev) =>
-      prev.map((category) => ({
-        ...category,
-        selected: parameters[category.id] ?? category.selected,
-      })),
-    )
-  }, [parameters])
+  useDebounce(
+    () => {
+      setPage(1)
+
+      const selectedCategories: string[] = []
+      filterCategories.forEach((c) =>
+        c.selected.forEach((t) => selectedCategories.push(t)),
+      )
+
+      setQueryVariables({
+        variables: {
+          input: {
+            lang: activeLocale,
+            organizationSlug: (router.query.slug as string) ?? '',
+            tags: selectedCategories,
+            page: 1,
+            searchString: searchValue,
+            size: ASSETS_PER_PAGE,
+          },
+        },
+      })
+      setIsTyping(false)
+    },
+    DEBOUNCE_TIME_IN_MS,
+    [parameters, activeLocale, searchValue],
+  )
 
   const pageTitle = n('pageTitle', 'Útgefið efni')
 
   const isMobile = width < theme.breakpoints.md
-
-  const isAnyFilterSelected = !Object.keys(parameters).every(
-    (key) => parameters[key]?.length === 0,
-  )
-
-  const filteredItems = (data?.getPublishedMaterial?.items ?? []).filter(
-    (item) =>
-      item.file?.url &&
-      item.title.toLowerCase().indexOf(searchValue.toLowerCase()) !== -1 &&
-      (!isAnyFilterSelected ||
-        item.genericTags.some((tag) =>
-          filterCategories.some((category) =>
-            category.selected.includes(tag.slug),
-          ),
-        )),
-  )
 
   const numberOfItemsThatCouldBeLoaded =
     (data?.getPublishedMaterial?.total ?? page * ASSETS_PER_PAGE) -
@@ -323,23 +305,27 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
                 value={searchValue}
                 onChange={(value) => {
                   setSearchValue(value)
+                  setIsTyping(true)
                 }}
               />
             }
             onFilterClear={() => {
               setParameters(getInitialParameters(filterCategories))
               setSearchValue('')
+              setIsTyping(true)
             }}
           >
             <FilterMultiChoice
               labelClear={n('clearSelection', 'Hreinsa val')}
               onChange={({ categoryId, selected }) => {
+                setIsTyping(true)
                 setParameters((prevParameters) => ({
                   ...prevParameters,
                   [categoryId]: selected,
                 }))
               }}
               onClear={(categoryId) => {
+                setIsTyping(true)
                 setParameters((prevParameters) => ({
                   ...prevParameters,
                   [categoryId]: [],
@@ -355,13 +341,13 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
             <GridRow marginTop={3} align="center">
               <Box
                 style={{
-                  visibility: loading ? 'visible' : 'hidden',
+                  visibility: loading || isTyping ? 'visible' : 'hidden',
                 }}
               >
                 <LoadingDots />
               </Box>
             </GridRow>
-            {filteredItems.map((item, index) => {
+            {(data?.getPublishedMaterial?.items ?? []).map((item, index) => {
               return (
                 <GridRow
                   key={`${item.id}-${index}`}
@@ -373,7 +359,7 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
               )
             })}
             {numberOfItemsThatCouldBeLoaded > 0 && (
-              <GridRow align="center">
+              <GridRow marginTop={8} align="center">
                 <Button onClick={loadMore} disabled={loading}>
                   {n('seeMore', 'Sjá meira')} ({numberOfItemsThatCouldBeLoaded})
                 </Button>

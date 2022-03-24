@@ -25,28 +25,6 @@ import { ApiResponse } from '@elastic/elasticsearch'
 import { SearchResponse } from 'elastic'
 import { MappedData } from '@island.is/content-search-indexer/types'
 
-const tagQuery = (tag: elasticTagField) => ({
-  nested: {
-    path: 'tags',
-    query: {
-      bool: {
-        must: [
-          {
-            term: {
-              'tags.key': tag.key,
-            },
-          },
-          {
-            term: {
-              'tags.type': tag.type,
-            },
-          },
-        ],
-      },
-    },
-  },
-})
-
 @Injectable()
 export class CmsElasticsearchService {
   constructor(private elasticService: ElasticService) {}
@@ -264,66 +242,64 @@ export class CmsElasticsearchService {
       tags,
     }: GetPublishedMaterialInput,
   ): Promise<EnhancedAssetSearchResult> {
-    const query = {
-      types: ['webEnhancedAsset'],
-      tags: organizationSlug
-        ? [
-            { type: 'organization', key: organizationSlug },
-            ...tags.map((t) => ({ type: 'genericTag', key: t })),
-          ]
-        : [...tags.map((t) => ({ type: 'genericTag', key: t }))],
-      queryString: searchString,
-      page,
-      size,
-    }
+    const mappedTags = organizationSlug
+      ? [
+          { type: 'organization', key: organizationSlug },
+          ...tags.map((t) => ({ type: 'genericTag', key: t })),
+        ]
+      : [...tags.map((t) => ({ type: 'genericTag', key: t }))]
 
-    // if (!searchString) {
-    //   const enhancedAssetResponse = await this.elasticService.getDocumentsByMetaData(
-    //     index,
-    //     query,
-    //   )
-    //   return {
-    //     total: enhancedAssetResponse.hits.total.value,
-    //     items: enhancedAssetResponse.hits.hits.map((item) =>
-    //       JSON.parse(item._source.response ?? '{}'),
-    //     ),
-    //   }
-    // }
-
-    const enhancedAssetResponse: ApiResponse = await this.elasticService.findByQuery(
-      index,
-      {
-        query: {
-          bool: {
-            should: [
-              {
-                wildcard: {
-                  title: !searchString ? '*' : `*${searchString}*`,
+    const enhancedAssetResponse: ApiResponse<
+      SearchResponse<MappedData>
+    > = await this.elasticService.findByQuery(index, {
+      query: {
+        bool: {
+          should: [
+            {
+              wildcard: {
+                title: !searchString ? '*' : `*${searchString.toLowerCase()}*`,
+              },
+            },
+            {
+              term: {
+                type: {
+                  value: 'webEnhancedAsset',
                 },
               },
-              {
-                term: {
-                  type: {
-                    value: 'webEnhancedAsset',
-                    boost: 1,
-                  },
+            },
+          ],
+          must: mappedTags.map((tag) => ({
+            nested: {
+              path: 'tags',
+              query: {
+                bool: {
+                  must: [
+                    {
+                      term: {
+                        'tags.key': tag.key,
+                      },
+                    },
+                    {
+                      term: {
+                        'tags.type': tag.type,
+                      },
+                    },
+                  ],
                 },
               },
-            ],
-            must: query.tags.map((t) => tagQuery(t)),
-            minimum_should_match: 2,
-          },
+            },
+          })),
+          minimum_should_match: 2,
         },
-        size,
-        from: (page - 1) * size,
       },
-    )
+      size,
+      from: (page - 1) * size,
+    })
 
     return {
       total: enhancedAssetResponse.body.hits.total.value,
-      items: enhancedAssetResponse.body.hits.hits.map(
-        (item: { _source: { response: any } }) =>
-          JSON.parse(item._source.response ?? '{}'),
+      items: enhancedAssetResponse.body.hits.hits.map((item) =>
+        JSON.parse(item._source.response ?? '{}'),
       ),
     }
   }
