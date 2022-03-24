@@ -31,6 +31,12 @@ export class CreateRecyclingPartnerInput {
 
   @Field()
   active!: boolean
+
+  @Field()
+  nationalId!: string
+
+  @Field()
+  email!: string
 }
 
 @InputType()
