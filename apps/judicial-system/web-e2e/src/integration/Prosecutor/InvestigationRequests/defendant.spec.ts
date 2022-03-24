@@ -103,7 +103,7 @@ describe(NEW_IC_ROUTE, () => {
       .click()
       .find('input')
       .get('.island-select__option')
-      .should('contain', 'L√∂gma√∞ur 1')
+      .should('contain', 'Logmadur')
       .click()
     cy.getByTestid('defenderEmail').should('have.value', 'logmadur@logmenn.is')
     cy.getByTestid('defenderPhoneNumber').should('have.value', '666-6666')
