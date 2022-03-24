@@ -1,6 +1,7 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 
+import { getNextPeriod } from '@island.is/financial-aid/shared/lib'
 import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import { ApproveOptions, FAFieldBaseProps, UploadFileType } from '../../lib/types'
 import { confirmation, copyUrl } from '../../lib/messages'
@@ -46,7 +47,7 @@ const Confirmation = ({ application, field }: FAFieldBaseProps) => {
         {formatMessage(confirmation.nextSteps.title)}
       </Text>
       <Box marginTop={2}>
-        <DescriptionText text={confirmation.nextSteps.content} />
+        <DescriptionText text={confirmation.nextSteps.content} format={{ nextMonth: getNextPeriod.month }} />
       </Box>
 
       {hasSpouse(answers, externalData) && (
