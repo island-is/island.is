@@ -1,6 +1,9 @@
-import React from 'react'
+import React, { useState } from 'react'
+import cn from 'classnames'
+import { useIntl } from 'react-intl'
+import { useFormContext } from 'react-hook-form'
 
-import { Box } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 
 import * as m from '../../lib/messages'
 import {
@@ -11,10 +14,44 @@ import {
 import { Routes } from '../../lib/constants'
 import { DescriptionText } from '../index'
 import { formatAddress, spouseFormItems } from '../../lib/formatters'
-import { FormInfo, SummaryComment, UserInfo, ContactInfo, Files } from './index'
+import {
+  FormInfo,
+  SummaryComment,
+  UserInfo,
+  ContactInfo,
+  Files,
+  SummaryError,
+} from './index'
+import useApplication from '../../lib/hooks/useApplication'
 
-const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
+const SpouseSummaryForm = ({
+  application,
+  goToScreen,
+  setBeforeSubmitCallback,
+}: FAFieldBaseProps) => {
+  const { getValues } = useFormContext()
+  const { createApplication } = useApplication()
+  const [formError, setFormError] = useState(false)
   const { id, answers, externalData } = application
+  const summaryCommentType = SummaryCommentType.SPOUSEFORMCOMMENT
+
+  if (setBeforeSubmitCallback) {
+    setBeforeSubmitCallback(async () => {
+      application.answers.spouseFormComment = getValues(summaryCommentType)
+      const createApp = await createApplication(application)
+        .then(() => {
+          return true
+        })
+        .catch(() => {
+          setFormError(true)
+          return false
+        })
+      if (createApp) {
+        return [true, null]
+      }
+      return [false, 'Failed to create application']
+    })
+  }
 
   return (
     <>
@@ -52,11 +89,13 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
       />
 
       <SummaryComment
-        commentId={SummaryCommentType.SPOUSEFORMCOMMENT}
+        commentId={summaryCommentType}
         comment={answers?.spouseFormComment}
       />
+
+      <SummaryError error={formError} />
     </>
   )
 }
 
-export default SummaryForm
+export default SpouseSummaryForm

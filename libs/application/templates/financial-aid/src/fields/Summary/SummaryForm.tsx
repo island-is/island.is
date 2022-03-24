@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react'
 import { useIntl } from 'react-intl'
-import cn from 'classnames'
+import { useFormContext } from 'react-hook-form'
 
 import { Text, Box } from '@island.is/island-ui/core'
 import {
@@ -21,9 +21,15 @@ import { Routes } from '../../lib/constants'
 import { DescriptionText, Breakdown } from '../index'
 import { formatAddress, formItems } from '../../lib/formatters'
 import useApplication from '../../lib/hooks/useApplication'
-import * as styles from '../Shared.css'
 import { hasSpouse } from '../../lib/utils'
-import { FormInfo, SummaryComment, UserInfo, ContactInfo, Files } from './index'
+import {
+  FormInfo,
+  SummaryComment,
+  UserInfo,
+  ContactInfo,
+  Files,
+  SummaryError,
+} from './index'
 
 const SummaryForm = ({
   application,
@@ -31,9 +37,11 @@ const SummaryForm = ({
   setBeforeSubmitCallback,
 }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
+  const { getValues } = useFormContext()
   const { createApplication } = useApplication()
   const [formError, setFormError] = useState(false)
   const { id, answers, externalData } = application
+  const summaryCommentType = SummaryCommentType.FORMCOMMENT
 
   const aidAmount = useMemo(() => {
     if (
@@ -54,6 +62,7 @@ const SummaryForm = ({
   if (!hasSpouse(answers, externalData)) {
     setBeforeSubmitCallback &&
       setBeforeSubmitCallback(async () => {
+        application.answers.formComment = getValues(summaryCommentType)
         const createApp = await createApplication(application)
           .then(() => {
             return true
@@ -140,19 +149,11 @@ const SummaryForm = ({
       />
 
       <SummaryComment
-        commentId={SummaryCommentType.FORMCOMMENT}
+        commentId={summaryCommentType}
         comment={answers?.formComment}
       />
 
-      <Box
-        className={cn(styles.errorMessage, {
-          [`${styles.showErrorMessage}`]: formError,
-        })}
-      >
-        <Text color="red600" fontWeight="semiBold" variant="small">
-          {formatMessage(m.summaryForm.general.errorMessage)}
-        </Text>
-      </Box>
+      <SummaryError error={formError} />
     </>
   )
 }

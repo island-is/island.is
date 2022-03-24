@@ -1,7 +1,10 @@
 import {
   buildCustomField,
   buildForm,
+  buildMultiField,
   buildSection,
+  buildSubmitField,
+  DefaultEvents,
   Form,
   FormModes,
 } from '@island.is/application/core'
@@ -72,15 +75,42 @@ export const Spouse: Form = buildForm({
         }),
       ],
     }),
-    // TODO: implement submit spouse application
     buildSection({
       id: 'summaryForm',
       title: m.summaryForm.general.sectionTitle,
       children: [
-        buildCustomField({
-          id: 'spouseSummaryForm',
+        buildMultiField({
+          id: 'summaryForm',
           title: m.summaryForm.general.pageTitle,
-          component: 'SpouseSummaryForm',
+          children: [
+            buildCustomField({
+              id: 'spouseSummaryForm',
+              title: m.summaryForm.general.pageTitle,
+              component: 'SpouseSummaryForm',
+            }),
+            buildSubmitField({
+              id: 'submitApplication',
+              title: '',
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: m.summaryForm.general.submit,
+                  type: 'primary',
+                },
+              ],
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'confirmation',
+      title: m.confirmation.general.sectionTitle,
+      children: [
+        buildCustomField({
+          id: 'confirmation',
+          title: m.confirmation.general.pageTitle,
+          component: 'Confirmation',
         }),
       ],
     }),

@@ -264,8 +264,8 @@ export class ApplicationService {
     }
 
     const appModel = await this.applicationModel.create({
-      nationalId: user.nationalId,
       ...application,
+      nationalId: application.nationalId || user.nationalId,
     })
 
     await Promise.all([

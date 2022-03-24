@@ -18,6 +18,10 @@ export class CreateMunicipalitiesApplicationInput {
   readonly name!: string
 
   @Allow()
+  @Field()
+  readonly nationalId!: string
+
+  @Allow()
   @Field({ nullable: true })
   readonly phoneNumber!: string
 
@@ -100,6 +104,14 @@ export class CreateMunicipalitiesApplicationInput {
   @Allow()
   @Field({ nullable: true })
   readonly spouseEmail!: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly spousePhoneNumber!: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly spouseFormComment!: string
 
   @Allow()
   @Field(() => String)
