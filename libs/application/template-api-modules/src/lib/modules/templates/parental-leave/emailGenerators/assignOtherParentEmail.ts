@@ -64,7 +64,7 @@ export const generateAssignOtherParentApplicationEmail: EmailTemplateGenerator =
         {
           component: 'Copy',
           context: {
-            copy: `Ef þú áttir von á þessum tölvupósti þá getur þú annaðhvort smellt á hnappinn hér að neðan eða, ef hnappur virkar ekki, afritað hlekkinn hér að neðan og límt hann inn í vafrann þinn.`
+            copy: `Ef þú áttir von á þessum tölvupósti þá getur þú annaðhvort smellt á hnappinn hér að neðan eða, ef hnappur virkar ekki, afritað hlekkinn hér að neðan og límt hann inn í vafrann þinn.`,
           },
         },
         {
