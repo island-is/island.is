@@ -200,7 +200,9 @@ export class ApplicationController {
         application.typeId,
       )
 
-      if (this.validationService.isTemplateReady(user, applicationTemplate)) {
+      if (
+        await this.validationService.isTemplateReady(user, applicationTemplate)
+      ) {
         templateTypeToIsReady[application.typeId] = true
         filteredApplications.push(application)
       } else {

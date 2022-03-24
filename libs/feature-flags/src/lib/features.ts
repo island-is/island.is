@@ -10,6 +10,6 @@ export enum Features {
   personalInformation = 'isServicePortalPersonalInformationModuleEnabled',
 
   // Application visibility flags
-  exampleApplication = 'isExampleApplicationEnable',
+  exampleApplication = 'isExampleApplicationEnabled',
   accidentNotification = 'isAccidentNotificationEnabled',
 }

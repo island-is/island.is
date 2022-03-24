@@ -15,7 +15,7 @@ import { environment } from '../../../../environments'
 import { FileService } from '../files/file.service'
 import { AppModule } from '../../../app.module'
 import { FeatureFlagService } from '@island.is/nest/feature-flags'
-import type { User } from '@island.is/auth-nest-tools'
+import { MockFeatureFlagService } from './mockFeatureFlagService'
 
 let app: INestApplication
 
@@ -66,6 +66,8 @@ beforeAll(async () => {
         .useClass(MockFeatureFlagService)
         .overrideProvider(ContentfulRepository)
         .useClass(MockContentfulRepository)
+        .overrideProvider(FeatureFlagService)
+        .useClass(MockFeatureFlagService)
         .overrideProvider(EmailService)
         .useClass(MockEmailService)
         .overrideGuard(IdsUserGuard)
