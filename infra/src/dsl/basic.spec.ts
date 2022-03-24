@@ -1,4 +1,4 @@
-import { service } from './dsl'
+import { postgres, service } from './dsl'
 import { UberChart } from './uber-chart'
 import { serializeService } from './map-to-values'
 import { SerializeSuccess } from './types/output-types'
@@ -42,7 +42,7 @@ describe('Basic serialization', () => {
         paths: ['/api'],
       },
     })
-    .postgres()
+    .infrastructure(postgres())
   const result = serializeService(
     sut,
     new UberChart(Staging),

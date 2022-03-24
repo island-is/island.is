@@ -1,5 +1,5 @@
 import { dump, load } from 'js-yaml'
-import { postgresIdentifier, serializeService } from './map-to-values'
+import { serializeService } from './map-to-values'
 import { PostgresInfo, Service } from './types/input-types'
 import { UberChart } from './uber-chart'
 import { ValueFile, FeatureKubeJob, Services } from './types/output-types'
@@ -134,16 +134,16 @@ export function featureSpecificServiceDef(
     })
   })
   featureSpecificServices.forEach((s) => {
-    s.serviceDef.postgres = getPostgresInfoForFeature(
-      feature,
-      s.serviceDef.postgres,
-    )
-    if (s.serviceDef.initContainers) {
-      s.serviceDef.initContainers.postgres = getPostgresInfoForFeature(
-        feature,
-        s.serviceDef.initContainers.postgres,
-      )
-    }
+    // s.serviceDef.postgres = getPostgresInfoForFeature(
+    //   feature,
+    //   s.serviceDef.postgres,
+    // )
+    // if (s.serviceDef.initContainers) {
+    //   s.serviceDef.initContainers.postgres = getPostgresInfoForFeature(
+    //     feature,
+    //     s.serviceDef.initContainers.postgres,
+    //   )
+    // }
   })
 }
 
@@ -189,27 +189,4 @@ export const resolveWithMaxLength = (str: string, max: number) => {
     return `${str.substr(0, Math.ceil(max / 3))}${str.substr((-max / 3) * 2)}`
   }
   return str
-}
-
-export const getPostgresInfoForFeature = (
-  feature: string,
-  postgres?: PostgresInfo,
-): PostgresInfo | undefined => {
-  if (postgres) {
-    const postgresCopy = { ...postgres }
-    postgresCopy.passwordSecret = postgres.passwordSecret?.replace(
-      '/k8s/',
-      `/k8s/feature-${feature}-`,
-    )
-    postgresCopy.name = resolveWithMaxLength(
-      `feature_${postgresIdentifier(feature)}_${postgres.name}`,
-      60,
-    )
-    postgresCopy.username = resolveWithMaxLength(
-      `feature_${postgresIdentifier(feature)}_${postgres.username}`,
-      60,
-    )
-    return postgresCopy
-  }
-  return postgres
 }

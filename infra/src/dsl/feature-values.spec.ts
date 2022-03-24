@@ -1,8 +1,6 @@
 import { generateYamlForFeature } from './serialize-to-yaml'
-import { ref, service, ServiceBuilder } from './dsl'
+import { postgres, ref, service, ServiceBuilder } from './dsl'
 import { UberChart } from './uber-chart'
-import { serializeService } from './map-to-values'
-import { SerializeSuccess } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
 
 const Dev: EnvironmentConfig = {
@@ -41,7 +39,7 @@ describe('Feature-deployment support', () => {
         paths: ['/'],
       },
     })
-    .postgres()
+    .infrastructure(postgres())
 
   const chart = new UberChart(Dev)
   const values = generateYamlForFeature(

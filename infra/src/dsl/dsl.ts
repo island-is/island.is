@@ -1,22 +1,27 @@
 import {
+  Context,
+  EnvironmentVariables,
+  ExtraValues,
+  Features,
+  HealthProbe,
+  InfrastructureResource,
   Ingress,
   InitContainers,
-  EnvironmentVariables,
-  Context,
+  MountedFile,
+  PostgresInfo,
+  ReplicaCount,
+  Resources,
+  Secrets,
   Service,
   ServiceDefinition,
-  ExtraValues,
-  Resources,
-  ReplicaCount,
-  PostgresInfo,
-  HealthProbe,
-  Features,
-  Secrets,
   ValueType,
   XroadConfig,
-  MountedFile,
 } from './types/input-types'
+import { Postgres } from './postgres'
 
+export function postgres(postgres?: PostgresInfo): InfrastructureResource {
+  return new Postgres(postgres)
+}
 export class ServiceBuilder<ServiceType> implements Service {
   extraAttributes(attr: ExtraValues) {
     this.serviceDef.extraAttributes = attr
@@ -60,6 +65,7 @@ export class ServiceBuilder<ServiceType> implements Service {
       grantNamespacesEnabled: false,
       secrets: { CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY' },
       ingress: {},
+      infraResource: [],
       namespace: 'islandis',
       serviceAccountEnabled: false,
       securityContext: {
@@ -157,7 +163,7 @@ export class ServiceBuilder<ServiceType> implements Service {
    * To perform maintenance before deploying the main service(database migrations, etc.), create an `initContainer` (optional). It maps to a Pod specification for an [initContainer](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/).
    * @param ic initContainer definitions
    */
-  initContainer(ic: InitContainers) {
+  initContainer(ic: InitContainers, ...resources: InfrastructureResource[]) {
     if (ic.postgres) {
       ic.postgres = this.withDefaults(ic.postgres)
     }
@@ -167,7 +173,7 @@ export class ServiceBuilder<ServiceType> implements Service {
         'For multiple init containers, you must set a unique name for each container.',
       )
     }
-    this.serviceDef.initContainers = ic
+    this.serviceDef.initContainers = { ...ic, infraResource: resources }
     return this
   }
 
@@ -216,6 +222,11 @@ export class ServiceBuilder<ServiceType> implements Service {
 
   postgres(postgres?: PostgresInfo) {
     this.serviceDef.postgres = this.withDefaults(postgres ?? {})
+    return this
+  }
+
+  infrastructure(resource: InfrastructureResource) {
+    this.serviceDef.infraResource.push(resource)
     return this
   }
 

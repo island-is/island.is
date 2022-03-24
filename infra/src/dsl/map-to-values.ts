@@ -1,17 +1,15 @@
 import {
-  Service,
   EnvironmentVariables,
-  Ingress,
-  ServiceDefinition,
-  ValueType,
-  MissingSetting,
-  Resources,
-  Hash,
   ExtraValues,
-  EnvironmentVariableValue,
-  PostgresInfo,
   Feature,
   Features,
+  Hash,
+  InfrastructureResource,
+  Ingress,
+  MissingSetting,
+  Resources,
+  Service,
+  ServiceDefinition,
 } from './types/input-types'
 import {
   ContainerEnvironmentVariables,
@@ -22,6 +20,29 @@ import {
 } from './types/output-types'
 import { EnvironmentConfig, UberChartType } from './types/charts'
 import { FeatureNames } from './features'
+import { serializeEnvironmentVariables } from './serialize-environment-variables'
+
+function serializeInfrastructureResources(
+  serviceDef: ServiceDefinition,
+  uberChart: UberChartType,
+  service: Service,
+  resource: InfrastructureResource,
+): {
+  env: { [name: string]: string }
+  secrets: { [name: string]: string }
+  errors: string[]
+} {
+  const { env, secrets } = resource.prodDeploymentConfig(
+    serviceDef,
+    uberChart,
+    service,
+  )
+  return {
+    env: env,
+    secrets: secrets,
+    errors: [],
+  }
+}
 
 /**
  * Transforms our definition of a service to a Helm values object
@@ -218,18 +239,30 @@ export const serializeService: SerializeMethod = (
       if (typeof serviceDef.initContainers.secrets !== 'undefined') {
         result.initContainer.secrets = serviceDef.initContainers.secrets
       }
-      if (serviceDef.initContainers.postgres) {
-        const { env, secrets, errors } = serializePostgres(
+
+      // if (serviceDef.initContainers.postgres) {
+      // const { env, secrets, errors } = serializePostgres(
+      //   serviceDef,
+      //   uberChart,
+      //   service,
+      //   serviceDef.initContainers.postgres,
+      // )
+      //
+      // mergeObjects(result.initContainer.env, env)
+      // mergeObjects(result.initContainer.secrets, secrets)
+      // addToErrors(errors)
+      // }
+      for (const resource of serviceDef.initContainers.infraResource) {
+        const { env, secrets, errors } = resource.prodDeploymentConfig(
           serviceDef,
           uberChart,
           service,
-          serviceDef.initContainers.postgres,
         )
-
         mergeObjects(result.initContainer.env, env)
         mergeObjects(result.initContainer.secrets, secrets)
         addToErrors(errors)
       }
+
       if (serviceDef.initContainers.features) {
         const {
           envs: featureEnvs,
@@ -275,53 +308,31 @@ export const serializeService: SerializeMethod = (
     )
   }
 
-  if (serviceDef.postgres) {
-    const { env, secrets, errors } = serializePostgres(
+  // if (serviceDef.postgres) {
+  // const { env, secrets, errors } = serializePostgres(
+  //   serviceDef,
+  //   uberChart,
+  //   service,
+  //   serviceDef.postgres,
+  // )
+
+  for (const resource of serviceDef.infraResource) {
+    const { env, secrets, errors } = resource.prodDeploymentConfig(
       serviceDef,
       uberChart,
       service,
-      serviceDef.postgres,
     )
-
     mergeObjects(result.env, env)
     mergeObjects(result.secrets, secrets)
     addToErrors(errors)
   }
+  // }
 
   checkCollisions(result.secrets, result.env)
 
   return allErrors.length === 0
     ? { type: 'success', serviceDef: result }
     : { type: 'error', errors: allErrors }
-}
-
-export const postgresIdentifier = (id: string) => id.replace(/[\W\s]/gi, '_')
-export const resolveDbHost = (
-  postgres: PostgresInfo,
-  uberChart: UberChartType,
-  service: Service,
-) => {
-  if (postgres.host) {
-    const resolved = resolveVariable(
-      postgres.host?.[uberChart.env.type],
-      uberChart,
-      service,
-    )
-    switch (resolved.type) {
-      case 'error': {
-        throw new Error()
-        break
-      }
-      case 'success': {
-        return { writer: resolved.value, reader: resolved.value }
-      }
-    }
-  } else {
-    return {
-      writer: uberChart.env.auroraHost,
-      reader: uberChart.env.auroraReplica ?? uberChart.env.auroraHost,
-    }
-  }
 }
 
 function addFeaturesConfig(
@@ -367,31 +378,6 @@ function addFeaturesConfig(
       [] as string[],
     ),
   }
-}
-
-function serializePostgres(
-  serviceDef: ServiceDefinition,
-  uberChart: UberChartType,
-  service: Service,
-  postgres: PostgresInfo,
-) {
-  const env: { [name: string]: string } = {}
-  const secrets: { [name: string]: string } = {}
-  const errors: string[] = []
-  env['DB_USER'] = postgres.username ?? postgresIdentifier(serviceDef.name)
-  env['DB_NAME'] = postgres.name ?? postgresIdentifier(serviceDef.name)
-  try {
-    const { reader, writer } = resolveDbHost(postgres, uberChart, service)
-    env['DB_HOST'] = writer
-    env['DB_REPLICAS_HOST'] = reader
-  } catch (e) {
-    errors.push(
-      `Could not resolve DB_HOST variable for service: ${serviceDef.name}`,
-    )
-  }
-  secrets['DB_PASS'] =
-    postgres.passwordSecret ?? `/k8s/${serviceDef.name}/DB_PASSWORD`
-  return { env, secrets, errors }
 }
 
 function serializeIngress(
@@ -463,23 +449,6 @@ function serializeContainerRuns(
   })
 }
 
-function serializeValueType(
-  value: ValueType,
-  uberChart: UberChartType,
-  service: Service,
-): { type: 'error' } | { type: 'success'; value: string } {
-  if (value === MissingSetting) return { type: 'error' }
-  const result =
-    typeof value === 'string'
-      ? value
-      : value({
-          env: uberChart.env,
-          featureName: uberChart.env.feature,
-          svc: (dep) => uberChart.ref(service, dep),
-        })
-  return { type: 'success', value: result }
-}
-
 function serializeExtraVariables(
   service: Service,
   uberChart: UberChartType,
@@ -498,36 +467,6 @@ function serializeExtraVariables(
   }
 }
 
-function serializeEnvironmentVariables(
-  service: Service,
-  uberChart: UberChartType,
-  envs: EnvironmentVariables,
-): { errors: string[]; envs: ContainerEnvironmentVariables } {
-  return Object.entries(envs).reduce(
-    (acc, [name, value]) => {
-      const r = resolveVariable(value, uberChart, service)
-      switch (r.type) {
-        case 'error':
-          return {
-            errors: acc.errors.concat([
-              `Missing settings for service ${service.serviceDef.name} in env ${uberChart.env.type}. Keys of missing settings: ${name}`,
-            ]),
-            envs: acc.envs,
-          }
-        case 'success':
-          return {
-            errors: acc.errors,
-            envs: {
-              ...acc.envs,
-              [name]: r.value,
-            },
-          }
-      }
-    },
-    { errors: [] as string[], envs: {} as ContainerEnvironmentVariables },
-  )
-}
-
 const hostFullName = (host: string, env: EnvironmentConfig) => {
   if (host === '') {
     return env.domain
@@ -538,13 +477,3 @@ const hostFullName = (host: string, env: EnvironmentConfig) => {
 }
 const internalHostFullName = (host: string, env: EnvironmentConfig) =>
   host.indexOf('.') < 0 ? `${host}.internal.${env.domain}` : host
-
-function resolveVariable(
-  value: EnvironmentVariableValue,
-  uberChart: UberChartType,
-  service: Service,
-) {
-  return typeof value === 'object'
-    ? serializeValueType(value[uberChart.env.type], uberChart, service)
-    : serializeValueType(value, uberChart, service)
-}

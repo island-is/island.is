@@ -1,5 +1,5 @@
 import { FeatureNames } from '../features'
-import { EnvironmentConfig } from './charts'
+import { EnvironmentConfig, UberChartType } from './charts'
 
 export type OpsEnv = 'dev' | 'staging' | 'prod'
 export const MissingSetting = 'Missing setting'
@@ -51,16 +51,43 @@ export type Feature = {
 export type Features = { [name in FeatureNames]: Feature }
 export type MountedFile = { filename: string; env: string }
 
+export type InfrastructureResource = {
+  featureDeploymentProvision(): Promise<void>
+  featureDeploymentConfig(): object[]
+  featureDeploymentCleanup(): Promise<void>
+  prodDeploymentConfig(
+    serviceDef: ServiceDefinition,
+    uberChart: UberChartType,
+    service: Service,
+  ): {
+    env: { [name: string]: string }
+    secrets: { [name: string]: string }
+    errors: string[]
+  }
+}
+
 export type ServiceDefinition = {
   liveness: HealthProbe
   readiness: HealthProbe
   port?: number
-  initContainers?: InitContainers
+  initContainers?: {
+    envs?: EnvironmentVariables
+    secrets?: Secrets
+    features?: Partial<Features>
+    containers: {
+      command: string
+      args?: string[]
+      name?: string
+      resources?: Resources
+    }[]
+    infraResource: InfrastructureResource[]
+  }
   env: EnvironmentVariables
   secrets: Secrets
   ingress: { [name: string]: Ingress }
   features: Partial<Features>
   postgres?: PostgresInfo
+  infraResource: InfrastructureResource[]
   namespace: string
   grantNamespaces: string[]
   grantNamespacesEnabled: boolean

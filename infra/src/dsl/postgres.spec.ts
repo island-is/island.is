@@ -1,4 +1,4 @@
-import { service } from './dsl'
+import { postgres, service } from './dsl'
 import { UberChart } from './uber-chart'
 import { serializeService } from './map-to-values'
 import { SerializeErrors, SerializeSuccess } from './types/output-types'
@@ -18,7 +18,7 @@ const Staging: EnvironmentConfig = {
 
 describe('Postgres', () => {
   describe('identifier fixes', () => {
-    const sut = service('service-portal-api').postgres()
+    const sut = service('service-portal-api').infrastructure(postgres())
     const result = serializeService(
       sut,
       new UberChart(Staging),
@@ -37,7 +37,7 @@ describe('Postgres', () => {
   })
   describe('error reporting', () => {
     const sut = service('service-portal-api')
-      .postgres()
+      .infrastructure(postgres())
       .secrets({ DB_PASS: 'aaa' })
       .env({ DB_USER: 'aaa', DB_HOST: 'a', DB_NAME: '' })
     const result = serializeService(
