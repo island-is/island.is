@@ -43,10 +43,10 @@ export class StaffService {
     })
   }
 
-  async findByMunicipalityId(municipalityId: string): Promise<StaffModel[]> {
+  async findByMunicipalityId(municipalityIds: string[]): Promise<StaffModel[]> {
     return await this.staffModel.findAll({
       where: {
-        municipalityId,
+        municipalityId: { [Op.in]: municipalityIds },
       },
       order: [
         ['active', 'DESC'],

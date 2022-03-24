@@ -71,7 +71,7 @@ export class StaffController {
   async getStaffForMunicipality(
     @CurrentStaff() staff: Staff,
   ): Promise<StaffModel[]> {
-    return await this.staffService.findByMunicipalityId(staff.municipalityId)
+    return await this.staffService.findByMunicipalityId(staff.municipalityIds)
   }
 
   @Put('id/:id')
@@ -105,10 +105,11 @@ export class StaffController {
     @CurrentStaff() staff: Staff,
     @Body() createStaffInput: CreateStaffDto,
   ): Promise<StaffModel> {
+    //TODO
     return await this.staffService.createStaff(
       createStaffInput,
       {
-        municipalityId: createStaffInput.municipalityId ?? staff.municipalityId,
+        municipalityId: createStaffInput.municipalityId ?? '1400',
         municipalityName:
           createStaffInput.municipalityName ?? staff.municipalityName,
       },

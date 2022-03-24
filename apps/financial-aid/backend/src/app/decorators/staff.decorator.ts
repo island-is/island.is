@@ -12,7 +12,6 @@ export const CurrentStaff = createParamDecorator(
     const req = context.switchToHttp().getRequest()
 
     const staff = req.staff
-
     if (!staff) {
       logger.warn(
         'No user staff found. Did you forget to add IdsUserGuard or StaffGuard?',

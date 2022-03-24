@@ -95,10 +95,8 @@ export class MunicipalityController {
     @CurrentStaff() staff: Staff,
     @Body() input: UpdateMunicipalityDto,
   ): Promise<MunicipalityModel> {
-    return await this.municipalityService.updateMunicipality(
-      staff.municipalityId,
-      input,
-    )
+    //TODO!!!!
+    return await this.municipalityService.updateMunicipality('1400', input)
   }
 
   @Put('activity/:id')
