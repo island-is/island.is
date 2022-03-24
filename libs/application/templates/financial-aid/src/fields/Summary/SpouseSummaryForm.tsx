@@ -20,7 +20,7 @@ import {
   UserInfo,
   ContactInfo,
   Files,
-  FormError,
+  SummaryError,
 } from './index'
 import useApplication from '../../lib/hooks/useApplication'
 
@@ -93,7 +93,7 @@ const SpouseSummaryForm = ({
         comment={answers?.spouseFormComment}
       />
 
-      <FormError error={formError} />
+      <SummaryError error={formError} />
     </>
   )
 }

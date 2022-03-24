@@ -10,7 +10,7 @@ interface Props {
   error: boolean
 }
 
-const FormError = ({ error }: Props) => {
+const SummaryError = ({ error }: Props) => {
   const { formatMessage } = useIntl()
 
   return (
@@ -26,4 +26,4 @@ const FormError = ({ error }: Props) => {
   )
 }
 
-export default FormError
+export default SummaryError

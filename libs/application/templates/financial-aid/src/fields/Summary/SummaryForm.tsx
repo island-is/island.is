@@ -28,7 +28,7 @@ import {
   UserInfo,
   ContactInfo,
   Files,
-  FormError,
+  SummaryError,
 } from './index'
 
 const SummaryForm = ({
@@ -153,7 +153,7 @@ const SummaryForm = ({
         comment={answers?.formComment}
       />
 
-      <FormError error={formError} />
+      <SummaryError error={true} />
     </>
   )
 }
