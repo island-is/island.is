@@ -1,4 +1,5 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext } from 'react'
+import { useIntl } from 'react-intl'
 
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
 import {
@@ -6,6 +7,9 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import { useRulingAutofill } from '@island.is/judicial-system-web/src/components/RulingInput/RulingInput'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
 
 import OverviewForm from './OverviewForm'
 
@@ -17,10 +21,9 @@ const Overview = () => {
     caseNotFound,
     isCaseUpToDate,
   } = useContext(FormContext)
+  const { formatMessage } = useIntl()
 
-  useEffect(() => {
-    document.title = 'Yfirlit kröfu - Réttarvörslugátt'
-  }, [])
+  useRulingAutofill(isCaseUpToDate, workingCase)
 
   return (
     <PageLayout
@@ -32,11 +35,13 @@ const Overview = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
+      <PageHeader
+        title={formatMessage(titles.court.investigationCases.overview)}
+      />
       <OverviewForm
         workingCase={workingCase}
         setWorkingCase={setWorkingCase}
         isLoading={isLoadingWorkingCase}
-        isCaseUpToDate={isCaseUpToDate}
       />
     </PageLayout>
   )

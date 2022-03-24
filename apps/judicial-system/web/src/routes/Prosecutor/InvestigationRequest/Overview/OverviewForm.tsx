@@ -134,8 +134,8 @@ const OverviewForm: React.FC<Props> = (props) => {
               name: workingCase.defenderName ?? '',
               email: workingCase.defenderEmail,
               phoneNumber: workingCase.defenderPhoneNumber,
-              defenderIsSpokesperson: workingCase.defenderIsSpokesperson,
             }}
+            sessionArrangement={workingCase.sessionArrangements}
           />
         </Box>
         {workingCase.description && (
@@ -209,8 +209,9 @@ const OverviewForm: React.FC<Props> = (props) => {
                 />
               </Box>
             </AccordionItem>
-            {(Boolean(workingCase.comments) ||
-              Boolean(workingCase.caseFilesComments)) && (
+            {(workingCase.comments ||
+              workingCase.caseFilesComments ||
+              workingCase.caseResentExplanation) && (
               <CommentsAccordionItem workingCase={workingCase} />
             )}
           </Accordion>

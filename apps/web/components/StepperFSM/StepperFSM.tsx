@@ -7,6 +7,9 @@ import {
   RadioButton,
   Select,
   Link,
+  GridColumn,
+  GridRow,
+  GridContainer,
 } from '@island.is/island-ui/core'
 
 import { Stepper } from '@island.is/api/schema'
@@ -48,7 +51,9 @@ interface StepperProps {
   startAgainLabel?: string
   answerLabel?: string
   backLabel?: string
-  optionsFromNamespace: { slug: string; data: [] }[]
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  optionsFromNamespace: { slug: string; data: Record<string, any>[] }[]
+  scrollUpWhenNextStepAppears?: boolean
 }
 
 interface StepOptionSelectItem {
@@ -125,13 +130,11 @@ const StepperFSMWrapper = (
       errors: validateStepConfig(step),
     }))
 
-    const showStepperConfigHelper = STEPPER_HELPER_ENABLED
-
     if (
       configErrors.size > 0 ||
       stepConfigErrors.some(({ errors }) => errors.size > 0)
     ) {
-      return showStepperConfigHelper
+      return STEPPER_HELPER_ENABLED
         ? renderStepperAndStepConfigErrors(
             props.stepper,
             configErrors,
@@ -146,7 +149,11 @@ const StepperFSMWrapper = (
   return Component
 }
 
-const StepperFSM = ({ stepper, optionsFromNamespace }: StepperProps) => {
+const StepperFSM = ({
+  stepper,
+  optionsFromNamespace,
+  scrollUpWhenNextStepAppears = true,
+}: StepperProps) => {
   const router = useRouter()
   const { activeLocale } = useI18n()
 
@@ -320,7 +327,9 @@ const StepperFSM = ({ stepper, optionsFromNamespace }: StepperProps) => {
                   answers: `${previousAnswers}${selectedOption.slug}`,
                 },
               })
-              .then(() => window.scrollTo(0, 0))
+              .then(() => {
+                if (scrollUpWhenNextStepAppears) window.scrollTo(0, 0)
+              })
 
             if (!transitionWorked) {
               setTransitionErrorMessage(
@@ -335,6 +344,7 @@ const StepperFSM = ({ stepper, optionsFromNamespace }: StepperProps) => {
             return newState
           })
         }}
+        size="small"
       >
         {activeLocale === 'en' ? 'Continue' : 'Áfram'}
       </Button>
@@ -343,7 +353,6 @@ const StepperFSM = ({ stepper, optionsFromNamespace }: StepperProps) => {
 
   const QuestionTitle = () => (
     <Box
-      marginTop={currentStep.stepType === STEP_TYPES.ANSWER ? 8 : 0}
       marginBottom={3}
       onClick={(ev) => {
         // If the user clicks four times in a row on the question title, we enable the helper if we're not in production
@@ -365,46 +374,53 @@ const StepperFSM = ({ stepper, optionsFromNamespace }: StepperProps) => {
       return stepOptions.map(function (option, i) {
         const key = `step-option-${i}`
         return (
-          <RadioButton
-            key={key}
-            name={key}
-            large={true}
-            hasError={
-              hasClickedContinueWithoutSelecting && selectedOption === null
-            }
-            label={option.label}
-            checked={option.slug === selectedOption?.slug}
-            onChange={() => setSelectedOption(option)}
-          />
+          <Box key={key} marginBottom={3}>
+            <RadioButton
+              name={key}
+              hasError={
+                hasClickedContinueWithoutSelecting && selectedOption === null
+              }
+              label={option.label}
+              checked={option.slug === selectedOption?.slug}
+              onChange={() => setSelectedOption(option)}
+            />
+          </Box>
         )
       })
 
     if (currentStepType === STEP_TYPES.QUESTION_DROPDOWN)
       return (
-        <Select
-          name="step-option-select"
-          noOptionsMessage={
-            activeLocale === 'en' ? 'No options' : 'Enginn valmöguleiki'
-          }
-          value={{
-            label: selectedOption?.label ?? '',
-            value: selectedOption?.slug ?? '',
-          }}
-          onChange={(option: ValueType<StepOptionSelectItem>) => {
-            const stepOptionSelectItem = option as StepOptionSelectItem
-            const newSelectedOption = {
-              label: stepOptionSelectItem.label,
-              slug: stepOptionSelectItem.value,
-              transition: stepOptionSelectItem.transition,
-            }
-            setSelectedOption(newSelectedOption)
-          }}
-          options={stepOptions.map((option) => ({
-            label: option.label,
-            value: option.slug,
-            transition: option.transition,
-          }))}
-        />
+        <GridContainer>
+          <GridRow>
+            <GridColumn span={['12/12', '12/12', '10/12', '8/12']}>
+              <Select
+                size="sm"
+                name="step-option-select"
+                noOptionsMessage={
+                  activeLocale === 'en' ? 'No options' : 'Enginn valmöguleiki'
+                }
+                value={{
+                  label: selectedOption?.label ?? '',
+                  value: selectedOption?.slug ?? '',
+                }}
+                onChange={(option: ValueType<StepOptionSelectItem>) => {
+                  const stepOptionSelectItem = option as StepOptionSelectItem
+                  const newSelectedOption = {
+                    label: stepOptionSelectItem.label,
+                    slug: stepOptionSelectItem.value,
+                    transition: stepOptionSelectItem.transition,
+                  }
+                  setSelectedOption(newSelectedOption)
+                }}
+                options={stepOptions.map((option) => ({
+                  label: option.label,
+                  value: option.slug,
+                  transition: option.transition,
+                }))}
+              />
+            </GridColumn>
+          </GridRow>
+        </GridContainer>
       )
   }
 

@@ -6,7 +6,8 @@ const devConfig = {
     fromName: 'island.is',
     replyToEmail: 'noreply@island.is',
     replyToName: 'island.is',
-    servicePortalBaseUrl: 'http://localhost:4200',
+    servicePortalBaseUrl:
+      process.env.SERVICE_PORTAL_BASE_URL ?? 'http://localhost:4200',
   },
   smsOptions: {
     url: 'https://smsapi.devnova.is',
@@ -15,10 +16,7 @@ const devConfig = {
   },
   emailOptions: {
     useTestAccount: true,
-  },
-  sentry: {
-    dsn:
-      'https://3c45a55273774b91a897b85e0a1243d1@o406638.ingest.sentry.io/5501494',
+    useNodemailerApp: process.env.USE_NODEMAILER_APP === 'true' ?? false,
   },
   audit: {
     defaultNamespace: '@island.is/user-profile',
@@ -47,9 +45,6 @@ const prodConfig = {
     options: {
       region: process.env.EMAIL_REGION,
     },
-  },
-  sentry: {
-    dsn: process.env.SENTRY_DSN,
   },
   audit: {
     defaultNamespace: '@island.is/user-profile',

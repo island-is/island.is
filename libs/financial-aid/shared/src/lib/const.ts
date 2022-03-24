@@ -38,6 +38,7 @@ export const Routes = {
   userProfile: (id: string) => `/notendur/${id}`,
   municipalityProfile: (id: string) => `/sveitarfelog/${id}`,
   applicationProfile: (id: string) => `/umsokn/${id}`,
+  printApplicationProfile: (id: string) => `/umsokn/${id}/print`,
 }
 
 export const months = [

@@ -3,10 +3,10 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { EmailVerification } from './emailVerification.model'
-import { randomInt, randomBytes } from 'crypto'
+import { randomInt } from 'crypto'
 import addMilliseconds from 'date-fns/addMilliseconds'
 import { ConfirmEmailDto } from './dto/confirmEmailDto'
-import { UserProfile } from '../user-profile/userProfile.model'
+import { join } from 'path'
 import { UserProfileService } from '../user-profile/userProfile.service'
 import { SmsVerification } from './smsVerification.model'
 import { CreateUserProfileDto } from '../user-profile/dto/createUserProfileDto'
@@ -217,16 +217,45 @@ export class VerificationService {
             address: verification.email,
           },
         ],
-        subject: `Staðfesting netfangs á Ísland.is`,
-        html: `Þú hefur skráð netfangið þitt á Mínum síðum á Ísland.is. Vinsamlegast staðfestu
-        skráninguna með því að afrita kóðann hér að neðan yfir á skráningarsíðuna:
-        <br /><br /><span
-          style="font-size: 18px; padding: 3px; border-style: 1px solid #D1D1D1"
-          >${verification.hash}</span
-        ><br />
-        <br />Ef kóðinn er ekki lengur í gildi biðjum við þig að endurtaka
-        skráninguna á Ísland.is. <br /><br />Ef þú kannast ekki við að hafa sett inn
-        þetta netfang, vinsamlegast hunsaðu þennan póst.`,
+        subject: `Staðfesting á netfangi á Ísland.is`,
+        template: {
+          title: 'Staðfesting á netfangi',
+          body: [
+            {
+              component: 'Image',
+              context: {
+                src: join(__dirname, `./assets/images/logois.jpg`),
+                alt: 'Ísland.is logo',
+              },
+            },
+            {
+              component: 'Heading',
+              context: { copy: 'Staðfesting á netfangi', small: true },
+            },
+            {
+              component: 'Copy',
+              context: { copy: 'Öryggiskóðinn þinn', small: true },
+            },
+            {
+              component: 'Heading',
+              context: { copy: verification.hash },
+            },
+            {
+              component: 'Copy',
+              context: {
+                copy:
+                  'Þetta er öryggiskóðinn þinn til staðfestingar á netfangi. Hann eyðist sjálfkrafa eftir 5 mínútur, eftir þann tíma þarftu að láta senda nýjan í sama ferli og þú varst að fara gegnum.',
+              },
+            },
+            {
+              component: 'Copy',
+              context: {
+                copy:
+                  'Vinsamlegst hunsaðu þennan póst ef þú varst ekki að skrá netfangið þitt á Mínum síðum.',
+              },
+            },
+          ],
+        },
       })
     } catch (exception) {
       this.logger.error(exception)

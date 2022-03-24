@@ -1,4 +1,5 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext } from 'react'
+import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import {
@@ -11,8 +12,15 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import {
+  UploadState,
+  useCourtUpload,
+} from '@island.is/judicial-system-web/src/utils/hooks/useCourtUpload'
+import { useRulingAutofill } from '@island.is/judicial-system-web/src/components/RulingInput/RulingInput'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
 import * as Constants from '@island.is/judicial-system/consts'
-import DraftConclusionModal from '../../SharedComponents/DraftConclusionModal/DraftConclusionModal'
+
 import OverviewForm from './OverviewForm'
 
 export const JudgeOverview: React.FC = () => {
@@ -23,14 +31,12 @@ export const JudgeOverview: React.FC = () => {
     caseNotFound,
     isCaseUpToDate,
   } = useContext(FormContext)
-  const [isDraftingConclusion, setIsDraftingConclusion] = useState<boolean>()
-
+  const { formatMessage } = useIntl()
   const router = useRouter()
   const id = router.query.id
 
-  useEffect(() => {
-    document.title = 'Yfirlit kröfu - Réttarvörslugátt'
-  }, [])
+  useRulingAutofill(isCaseUpToDate, workingCase)
+  const { uploadState } = useCourtUpload(workingCase, setWorkingCase)
 
   return (
     <PageLayout
@@ -42,24 +48,17 @@ export const JudgeOverview: React.FC = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
-      <OverviewForm
-        workingCase={workingCase}
-        setWorkingCase={setWorkingCase}
-        setIsDraftingConclusion={setIsDraftingConclusion}
+      <PageHeader
+        title={formatMessage(titles.court.restrictionCases.overview)}
       />
+      <OverviewForm workingCase={workingCase} setWorkingCase={setWorkingCase} />
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${Constants.RECEPTION_AND_ASSIGNMENT_ROUTE}/${id}`}
           nextUrl={`${Constants.HEARING_ARRANGEMENTS_ROUTE}/${id}`}
+          nextIsDisabled={uploadState === UploadState.UPLOADING}
         />
       </FormContentContainer>
-      <DraftConclusionModal
-        workingCase={workingCase}
-        setWorkingCase={setWorkingCase}
-        isCaseUpToDate={isCaseUpToDate}
-        isDraftingConclusion={isDraftingConclusion}
-        setIsDraftingConclusion={setIsDraftingConclusion}
-      />
     </PageLayout>
   )
 }

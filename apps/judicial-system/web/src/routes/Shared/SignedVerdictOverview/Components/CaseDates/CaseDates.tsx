@@ -31,14 +31,6 @@ const CaseDates: React.FC<Props> = (props) => {
 
   return (
     <Box>
-      <Box marginBottom={3}>
-        <Text variant="h5">
-          {`Úrskurðað ${formatDate(
-            workingCase.courtEndTime,
-            'PPP',
-          )} kl. ${formatDate(workingCase.courtEndTime, TIME_FORMAT)}`}
-        </Text>
-      </Box>
       {workingCase.state === CaseState.ACCEPTED &&
         isRestrictionCase(workingCase.type) && (
           <div className={styles.caseDateContainer}>

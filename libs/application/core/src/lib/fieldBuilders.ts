@@ -23,6 +23,7 @@ import {
   AsyncSelectField,
   RecordObject,
   Field,
+  CompanySearchField,
 } from '../types/Fields'
 import { CallToAction } from '../types/StateMachine'
 import { FormText, FormTextArray } from '../types/Form'
@@ -180,6 +181,20 @@ export function buildAsyncSelectField(
     onSelect,
     backgroundColor,
     isSearchable,
+  }
+}
+
+export function buildCompanySearchField(
+  data: Omit<CompanySearchField, 'type' | 'component' | 'children'>,
+): CompanySearchField {
+  const { placeholder } = data
+
+  return {
+    ...extractCommonFields(data),
+    children: undefined,
+    placeholder,
+    type: FieldTypes.COMPANY_SEARCH,
+    component: FieldComponents.COMPANY_SEARCH,
   }
 }
 

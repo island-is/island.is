@@ -11,6 +11,7 @@ import {
 import { CaseType, UserRole, Case } from '@island.is/judicial-system/types'
 import { Sections } from '@island.is/judicial-system-web/src/types'
 import * as Constants from '@island.is/judicial-system/consts'
+
 import { UserContext } from '../UserProvider/UserProvider'
 import Logo from '../Logo/Logo'
 import Skeleton from '../Skeleton/Skeleton'

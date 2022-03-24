@@ -28,7 +28,10 @@ import { FormContext } from '@island.is/judicial-system-web/src/components/FormP
 import DefenderInfo from '@island.is/judicial-system-web/src/components/DefenderInfo/DefenderInfo'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { rcHearingArrangements as m } from '@island.is/judicial-system-web/messages'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
 import * as Constants from '@island.is/judicial-system/consts'
+
 export const HearingArrangements: React.FC = () => {
   const {
     workingCase,
@@ -53,10 +56,6 @@ export const HearingArrangements: React.FC = () => {
   const { formatMessage } = useIntl()
 
   useEffect(() => {
-    document.title = 'Fyrirtaka - Réttarvörslugátt'
-  }, [])
-
-  useEffect(() => {
     if (isCaseUpToDate) {
       const theCase = workingCase
 
@@ -74,7 +73,7 @@ export const HearingArrangements: React.FC = () => {
         (notification) => notification.type === NotificationType.COURT_DATE,
       )
     ) {
-      router.push(`${Constants.COURT_RECORD_ROUTE}/${workingCase.id}`)
+      router.push(`${Constants.RULING_ROUTE}/${workingCase.id}`)
     } else {
       setModalVisible(true)
     }
@@ -90,6 +89,9 @@ export const HearingArrangements: React.FC = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
+      <PageHeader
+        title={formatMessage(titles.court.restrictionCases.hearingArrangements)}
+      />
       <FormContentContainer>
         {workingCase.comments && (
           <Box marginBottom={5}>
@@ -194,7 +196,7 @@ export const HearingArrangements: React.FC = () => {
           handleSecondaryButtonClick={() => {
             sendNotification(workingCase.id, NotificationType.COURT_DATE, true)
 
-            router.push(`${Constants.COURT_RECORD_ROUTE}/${id}`)
+            router.push(`${Constants.RULING_ROUTE}/${id}`)
           }}
           handlePrimaryButtonClick={async () => {
             const notificationSent = await sendNotification(
@@ -203,7 +205,7 @@ export const HearingArrangements: React.FC = () => {
             )
 
             if (notificationSent) {
-              router.push(`${Constants.COURT_RECORD_ROUTE}/${id}`)
+              router.push(`${Constants.RULING_ROUTE}/${id}`)
             }
           }}
           primaryButtonText={formatMessage(m.modal.shared.primaryButtonText)}

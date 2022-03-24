@@ -6,7 +6,6 @@ import router from 'next/router'
 import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import {
   DropdownMenu,
-  Loading,
   Logo,
 } from '@island.is/judicial-system-web/src/components'
 import {
@@ -25,10 +24,14 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { CaseData } from '@island.is/judicial-system-web/src/types'
 import { requests as m } from '@island.is/judicial-system-web/messages/Core/requests'
 import useSections from '@island.is/judicial-system-web/src/utils/hooks/useSections'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
 import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system/consts'
+
 import ActiveRequests from './ActiveRequests'
 import PastRequests from './PastRequests'
+import TableSkeleton from './TableSkeleton'
 import * as styles from './Requests.css'
 
 // Credit for sorting solution: https://www.smashingmagazine.com/2020/03/sortable-tables-react/
@@ -78,10 +81,6 @@ export const Requests: React.FC = () => {
   const resCases = data?.cases
 
   useEffect(() => {
-    document.title = 'Allar kröfur - Réttarvörslugátt'
-  }, [])
-
-  useEffect(() => {
     if (resCases && !activeCases) {
       // Remove deleted cases
       const casesWithoutDeleted = resCases.filter((c: Case) => {
@@ -124,12 +123,6 @@ export const Requests: React.FC = () => {
     ) {
       await sendNotification(caseToDelete.id, NotificationType.REVOKED)
       await transitionCase(caseToDelete, CaseTransition.DELETE)
-
-      setActiveCases(
-        activeCases?.filter((c: Case) => {
-          return c !== caseToDelete
-        }),
-      )
     }
   }
 
@@ -187,31 +180,36 @@ export const Requests: React.FC = () => {
 
   return (
     <div className={styles.requestsContainer}>
-      {user && (
-        <div className={styles.logoContainer}>
-          <Logo />
-          {isProsecutor && (
-            <DropdownMenu
-              menuLabel="Tegund kröfu"
-              icon="add"
-              items={[
-                {
-                  href: Constants.STEP_ONE_CUSTODY_REQUEST_ROUTE,
-                  title: 'Gæsluvarðhald',
-                },
-                {
-                  href: Constants.STEP_ONE_NEW_TRAVEL_BAN_ROUTE,
-                  title: 'Farbann',
-                },
-                {
-                  href: Constants.NEW_IC_ROUTE,
-                  title: 'Rannsóknarheimild',
-                },
-              ]}
-              title="Stofna nýja kröfu"
-            />
-          )}
-        </div>
+      <PageHeader title={formatMessage(titles.shared.cases)} />
+      {loading ? (
+        <TableSkeleton />
+      ) : (
+        user && (
+          <div className={styles.logoContainer}>
+            <Logo />
+            {isProsecutor && (
+              <DropdownMenu
+                menuLabel="Tegund kröfu"
+                icon="add"
+                items={[
+                  {
+                    href: Constants.STEP_ONE_CUSTODY_REQUEST_ROUTE,
+                    title: 'Gæsluvarðhald',
+                  },
+                  {
+                    href: Constants.STEP_ONE_NEW_TRAVEL_BAN_ROUTE,
+                    title: 'Farbann',
+                  },
+                  {
+                    href: Constants.NEW_IC_ROUTE,
+                    title: 'Rannsóknarheimild',
+                  },
+                ]}
+                title="Stofna nýja kröfu"
+              />
+            )}
+          </div>
+        )
       )}
       {activeCases || pastCases ? (
         <>
@@ -223,7 +221,7 @@ export const Requests: React.FC = () => {
                  * Safari has a bug that doesn't allow that. See more
                  * https://stackoverflow.com/questions/49855899/solution-for-jumping-safari-table-caption
                  */}
-                <Text variant="h3" id="activeRequestsTableCaption">
+                <Text variant="h3" id="activeCasesTableCaption">
                   {formatMessage(
                     isPrisonUser
                       ? m.sections.activeRequests.prisonStaffUsers.title
@@ -250,6 +248,7 @@ export const Requests: React.FC = () => {
                         isTransitioningCase || isSendingNotification
                       }
                       onDeleteCase={deleteCase}
+                      setActiveCases={setActiveCases}
                     />
                   )
                 ) : (
@@ -280,7 +279,7 @@ export const Requests: React.FC = () => {
              * Safari has a bug that doesn't allow that. See more
              * https://stackoverflow.com/questions/49855899/solution-for-jumping-safari-table-caption
              */}
-            <Text variant="h3" id="activeRequestsTableCaption">
+            <Text variant="h3" id="activeCasesTableCaption">
               {formatMessage(
                 isHighCourtUser
                   ? m.sections.pastRequests.highCourtUsers.title
@@ -329,10 +328,6 @@ export const Requests: React.FC = () => {
             type="error"
           />
         </div>
-      ) : loading ? (
-        <Box className={styles.table}>
-          <Loading />
-        </Box>
       ) : null}
     </div>
   )

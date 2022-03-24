@@ -3,6 +3,7 @@ import type { Institution } from './institution'
 import type { Notification } from './notification'
 import type { CaseFile } from './file'
 import type { User } from './user'
+import type { CourtDocument } from './courtDocument'
 
 export enum CaseType {
   CUSTODY = 'CUSTODY',
@@ -19,6 +20,7 @@ export enum CaseType {
   INTERNET_USAGE = 'INTERNET_USAGE',
   RESTRAINING_ORDER = 'RESTRAINING_ORDER',
   ELECTRONIC_DATA_DISCOVERY_INVESTIGATION = 'ELECTRONIC_DATA_DISCOVERY_INVESTIGATION',
+  VIDEO_RECORDING_EQUIPMENT = 'VIDEO_RECORDING_EQUIPMENT',
   OTHER = 'OTHER',
 }
 
@@ -28,6 +30,7 @@ export const caseTypesWithMultipleDefendants = [
   CaseType.SOUND_RECORDING_EQUIPMENT,
   CaseType.PHONE_TAPPING,
   CaseType.TRACKING_EQUIPMENT,
+  CaseType.VIDEO_RECORDING_EQUIPMENT,
 ]
 
 export enum CaseState {
@@ -70,7 +73,6 @@ export enum CaseCustodyRestrictions {
   COMMUNICATION = 'COMMUNICATION',
   MEDIA = 'MEDIA',
   ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION = 'ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION',
-  ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT = 'ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT',
   WORKBAN = 'WORKBAN',
 }
 
@@ -141,9 +143,10 @@ export interface Case {
   isClosedCourtHidden?: boolean
   courtAttendees?: string
   prosecutorDemands?: string
-  courtDocuments?: string[]
+  courtDocuments?: CourtDocument[]
   sessionBookings?: string
   courtCaseFacts?: string
+  introduction?: string
   courtLegalArguments?: string
   ruling?: string
   decision?: CaseDecision
@@ -172,6 +175,7 @@ export interface Case {
   notifications?: Notification[]
   caseFiles?: CaseFile[]
   caseModifiedExplanation?: string
+  caseResentExplanation?: string
 }
 
 export interface CreateCase {
@@ -223,11 +227,13 @@ export interface UpdateCase {
   courtRoom?: string
   courtStartDate?: string
   courtEndTime?: string
+  isClosedCourtHidden?: boolean
   courtAttendees?: string
   prosecutorDemands?: string
-  courtDocuments?: string[]
+  courtDocuments?: CourtDocument[]
   sessionBookings?: string
   courtCaseFacts?: string
+  introduction?: string
   courtLegalArguments?: string
   ruling?: string
   decision?: CaseDecision
@@ -245,6 +251,7 @@ export interface UpdateCase {
   registrarId?: string
   judgeId?: string
   caseModifiedExplanation?: string
+  caseResentExplanation?: string
 }
 
 export interface TransitionCase {
@@ -278,6 +285,7 @@ export const investigationCases = [
   CaseType.INTERNET_USAGE,
   CaseType.RESTRAINING_ORDER,
   CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION,
+  CaseType.VIDEO_RECORDING_EQUIPMENT,
   CaseType.OTHER,
 ]
 

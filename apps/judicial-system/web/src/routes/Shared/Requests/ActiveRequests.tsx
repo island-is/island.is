@@ -4,6 +4,12 @@ import cn from 'classnames'
 import localeIS from 'date-fns/locale/is'
 import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
+import {
+  AnimatePresence,
+  AnimateSharedLayout,
+  motion,
+  useAnimation,
+} from 'framer-motion'
 
 import { Box, Text, Tag, Icon, Button } from '@island.is/island-ui/core'
 import {
@@ -33,10 +39,26 @@ interface Props {
   onRowClick: (id: string) => void
   isDeletingCase: boolean
   onDeleteCase?: (caseToDelete: Case) => Promise<void>
+  setActiveCases?: React.Dispatch<React.SetStateAction<Case[] | undefined>>
 }
 
 const ActiveRequests: React.FC<Props> = (props) => {
-  const { cases, onRowClick, isDeletingCase, onDeleteCase } = props
+  const {
+    cases,
+    onRowClick,
+    isDeletingCase,
+    onDeleteCase,
+    setActiveCases,
+  } = props
+
+  const controls = useAnimation()
+
+  const variants = {
+    isDeleting: (custom: number) =>
+      custom === requestToRemoveIndex ? { x: '-150px' } : { x: '0px' },
+    isNotDeleting: { x: 0 },
+    deleted: { opacity: 0, scale: 0.8 },
+  }
 
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
@@ -108,7 +130,7 @@ const ActiveRequests: React.FC<Props> = (props) => {
   return (
     <table
       className={styles.table}
-      data-testid="custody-request-table"
+      data-testid="activeCasesTable"
       aria-describedby="activeRequestsTableCaption"
     >
       <thead className={styles.thead}>
@@ -194,171 +216,191 @@ const ActiveRequests: React.FC<Props> = (props) => {
           <th></th>
         </tr>
       </thead>
-      <tbody>
-        {cases.map((c, i) => (
-          <tr
-            key={i}
-            className={cn(
-              styles.tableRowContainer,
-              requestToRemoveIndex === i && 'isDeleting',
-            )}
-            data-testid="custody-requests-table-row"
-            role="button"
-            aria-label="Opna kröfu"
-            onClick={() => {
-              user?.role && onRowClick(c.id)
-            }}
-          >
-            <td className={styles.td}>
-              {c.courtCaseNumber ? (
-                <>
-                  <Box component="span" className={styles.blockColumn}>
-                    <Text as="span">{c.courtCaseNumber}</Text>
-                  </Box>
-                  <Text as="span" variant="small" color="dark400">
-                    {c.policeCaseNumber}
-                  </Text>
-                </>
-              ) : (
-                <Text as="span">{c.policeCaseNumber || '-'}</Text>
-              )}
-            </td>
-            <td className={cn(styles.td, styles.largeColumn)}>
-              {c.defendants && c.defendants.length > 0 ? (
-                <>
-                  <Text>
-                    <Box component="span" className={styles.blockColumn}>
-                      {c.defendants[0].name ?? '-'}
-                    </Box>
-                  </Text>
-                  {c.defendants.length === 1 ? (
-                    <Text>
-                      <Text as="span" variant="small" color="dark400">
-                        {`${c.defendants[0].noNationalId ? 'fd.' : 'kt.'} ${
-                          c.defendants[0].nationalId
-                            ? c.defendants[0].noNationalId
-                              ? c.defendants[0].nationalId
-                              : formatNationalId(c.defendants[0].nationalId)
-                            : '-'
-                        }`}
-                      </Text>
-                    </Text>
-                  ) : (
-                    <Text as="span" variant="small" color="dark400">
-                      {`+ ${c.defendants.length - 1}`}
-                    </Text>
-                  )}
-                </>
-              ) : (
-                <Text>-</Text>
-              )}
-            </td>
-            <td className={styles.td}>
-              <Box component="span" display="flex" flexDirection="column">
-                <Text as="span">{capitalize(caseTypes[c.type])}</Text>
-                {c.parentCase && (
-                  <Text as="span" variant="small" color="dark400">
-                    Framlenging
-                  </Text>
-                )}
-              </Box>
-            </td>
-            <td className={styles.td} data-testid="tdTag">
-              <Tag
-                variant={
-                  mapCaseStateToTagVariant(
-                    c.state,
-                    isCourtRole,
-                    isInvestigationCase(c.type),
-                    c.isValidToDateInThePast,
-                    c.courtDate,
-                  ).color
-                }
-                outlined
-                disabled
-              >
-                {
-                  mapCaseStateToTagVariant(
-                    c.state,
-                    isCourtRole,
-                    isInvestigationCase(c.type),
-                    c.isValidToDateInThePast,
-                    c.courtDate,
-                  ).text
-                }
-              </Tag>
-            </td>
-            <td className={styles.td}>
-              {c.courtDate ? (
-                <>
-                  <Text>
-                    <Box component="span" className={styles.blockColumn}>
-                      {capitalize(
-                        format(parseISO(c.courtDate), 'EEEE d. LLLL y', {
-                          locale: localeIS,
-                        }),
-                      ).replace('dagur', 'd.')}
-                    </Box>
-                  </Text>
-                  <Text as="span" variant="small">
-                    kl. {format(parseISO(c.courtDate), 'kk:mm')}
-                  </Text>
-                </>
-              ) : (
-                <Text as="span">
-                  {format(parseISO(c.created), 'd.M.y', {
-                    locale: localeIS,
-                  })}
-                </Text>
-              )}
-            </td>
-            <td className={cn(styles.td, 'secondLast')}>
-              {isProsecutor &&
-                (c.state === CaseState.NEW ||
-                  c.state === CaseState.DRAFT ||
-                  c.state === CaseState.SUBMITTED ||
-                  c.state === CaseState.RECEIVED) && (
-                  <Box
-                    data-testid="deleteCase"
-                    component="button"
-                    aria-label="Viltu afturkalla kröfu?"
-                    className={styles.deleteButton}
-                    onClick={(evt) => {
-                      evt.stopPropagation()
-                      setRequestToRemoveIndex(
-                        requestToRemoveIndex === i ? undefined : i,
-                      )
-                    }}
-                  >
-                    <Icon icon="close" color="blue400" />
-                  </Box>
-                )}
-            </td>
-            <td
-              className={cn(
-                styles.deleteButtonContainer,
-                styles.td,
-                requestToRemoveIndex === i && 'open',
-              )}
-            >
-              <Button
-                colorScheme="destructive"
-                size="small"
-                loading={isDeletingCase}
-                onClick={(evt) => {
-                  evt.stopPropagation()
-                  setRequestToRemoveIndex(undefined)
-                  onDeleteCase && onDeleteCase(cases[i])
+      <AnimateSharedLayout>
+        <tbody>
+          <AnimatePresence>
+            {cases.map((c, i) => (
+              <motion.tr
+                key={c.id}
+                animate={controls}
+                exit="deleted"
+                variants={variants}
+                custom={i}
+                className={cn(styles.tableRowContainer)}
+                layout
+                data-testid="custody-requests-table-row"
+                role="button"
+                aria-label="Opna kröfu"
+                onClick={() => {
+                  user?.role && onRowClick(c.id)
                 }}
               >
-                <Box as="span" className={styles.deleteButtonText}>
-                  Afturkalla
-                </Box>
-              </Button>
-            </td>
-          </tr>
-        ))}
-      </tbody>
+                <td className={styles.td}>
+                  {c.courtCaseNumber ? (
+                    <>
+                      <Box component="span" className={styles.blockColumn}>
+                        <Text as="span">{c.courtCaseNumber}</Text>
+                      </Box>
+                      <Text as="span" variant="small" color="dark400">
+                        {c.policeCaseNumber}
+                      </Text>
+                    </>
+                  ) : (
+                    <Text as="span">{c.policeCaseNumber || '-'}</Text>
+                  )}
+                </td>
+                <td className={cn(styles.td, styles.largeColumn)}>
+                  {c.defendants && c.defendants.length > 0 ? (
+                    <>
+                      <Text>
+                        <Box component="span" className={styles.blockColumn}>
+                          {c.defendants[0].name ?? '-'}
+                        </Box>
+                      </Text>
+                      {c.defendants.length === 1 ? (
+                        <Text>
+                          <Text as="span" variant="small" color="dark400">
+                            {`${c.defendants[0].noNationalId ? 'fd.' : 'kt.'} ${
+                              c.defendants[0].nationalId
+                                ? c.defendants[0].noNationalId
+                                  ? c.defendants[0].nationalId
+                                  : formatNationalId(c.defendants[0].nationalId)
+                                : '-'
+                            }`}
+                          </Text>
+                        </Text>
+                      ) : (
+                        <Text as="span" variant="small" color="dark400">
+                          {`+ ${c.defendants.length - 1}`}
+                        </Text>
+                      )}
+                    </>
+                  ) : (
+                    <Text>-</Text>
+                  )}
+                </td>
+                <td className={styles.td}>
+                  <Box component="span" display="flex" flexDirection="column">
+                    <Text as="span">{capitalize(caseTypes[c.type])}</Text>
+                    {c.parentCase && (
+                      <Text as="span" variant="small" color="dark400">
+                        Framlenging
+                      </Text>
+                    )}
+                  </Box>
+                </td>
+                <td className={styles.td} data-testid="tdTag">
+                  <Tag
+                    variant={
+                      mapCaseStateToTagVariant(
+                        c.state,
+                        isCourtRole,
+                        isInvestigationCase(c.type),
+                        c.isValidToDateInThePast,
+                        c.courtDate,
+                      ).color
+                    }
+                    outlined
+                    disabled
+                  >
+                    {
+                      mapCaseStateToTagVariant(
+                        c.state,
+                        isCourtRole,
+                        isInvestigationCase(c.type),
+                        c.isValidToDateInThePast,
+                        c.courtDate,
+                      ).text
+                    }
+                  </Tag>
+                </td>
+                <td className={styles.td}>
+                  {c.courtDate ? (
+                    <>
+                      <Text>
+                        <Box component="span" className={styles.blockColumn}>
+                          {capitalize(
+                            format(parseISO(c.courtDate), 'EEEE d. LLLL y', {
+                              locale: localeIS,
+                            }),
+                          ).replace('dagur', 'd.')}
+                        </Box>
+                      </Text>
+                      <Text as="span" variant="small">
+                        kl. {format(parseISO(c.courtDate), 'kk:mm')}
+                      </Text>
+                    </>
+                  ) : (
+                    <Text as="span">
+                      {format(parseISO(c.created), 'd.M.y', {
+                        locale: localeIS,
+                      })}
+                    </Text>
+                  )}
+                </td>
+                <td className={cn(styles.td, 'secondLast')}>
+                  {isProsecutor &&
+                    (c.state === CaseState.NEW ||
+                      c.state === CaseState.DRAFT ||
+                      c.state === CaseState.SUBMITTED ||
+                      c.state === CaseState.RECEIVED) && (
+                      <Box
+                        data-testid="deleteCase"
+                        component="button"
+                        aria-label="Viltu afturkalla kröfu?"
+                        className={styles.deleteButton}
+                        onClick={async (evt) => {
+                          evt.stopPropagation()
+
+                          await new Promise((resolve) => {
+                            setRequestToRemoveIndex(
+                              requestToRemoveIndex === i ? undefined : i,
+                            )
+
+                            resolve(true)
+                          })
+
+                          await controls.start('isDeleting')
+                        }}
+                      >
+                        <Icon icon="close" color="blue400" />
+                      </Box>
+                    )}
+                </td>
+                <td className={cn(styles.deleteButtonContainer, styles.td)}>
+                  <Button
+                    colorScheme="destructive"
+                    size="small"
+                    loading={isDeletingCase}
+                    onClick={async (evt) => {
+                      if (onDeleteCase && setActiveCases) {
+                        evt.stopPropagation()
+
+                        await onDeleteCase(cases[i])
+
+                        controls
+                          .start('isNotDeleting')
+                          .then(() => {
+                            setRequestToRemoveIndex(undefined)
+                          })
+                          .then(() => {
+                            setActiveCases(
+                              cases.filter((c: Case) => c !== cases[i]),
+                            )
+                          })
+                      }
+                    }}
+                  >
+                    <Box as="span" className={styles.deleteButtonText}>
+                      Afturkalla
+                    </Box>
+                  </Button>
+                </td>
+              </motion.tr>
+            ))}
+          </AnimatePresence>
+        </tbody>
+      </AnimateSharedLayout>
     </table>
   )
 }

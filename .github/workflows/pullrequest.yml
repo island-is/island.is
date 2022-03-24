@@ -10,7 +10,7 @@ env:
 
 jobs:
   prepare:
-    runs-on: self-hosted
+    runs-on: kubernetes-runner
     timeout-minutes: 25
 
     env:
@@ -37,13 +37,28 @@ jobs:
 
       - name: Check node version
         run: |
-          node -v 
+          node -v
           ls -l `which node`
 
-      - run: |
-          echo "HEAD=$GITHUB_SHA" >> $GITHUB_ENV
-          echo "BASE=$(git merge-base origin/main $GITHUB_SHA)" >> $GITHUB_ENV
-        name: Preparing HEAD and BASE tags
+      - name: Checking out relevant branches
+        run: |
+          git checkout $GITHUB_HEAD_REF
+          git checkout $GITHUB_BASE_REF
+          git checkout $GITHUB_SHA
+          git config --global user.email "ci@island.is"
+          git config --global user.name "CI Bot"
+
+          BASE_SHA=$(git merge-base HEAD $GITHUB_BASE_REF)
+          HEAD_SHA=$(git merge-base HEAD $GITHUB_HEAD_REF)
+          echo Current base SHA is $BASE_SHA and head SHA is $HEAD_SHA
+          echo "{\"base_sha\": \"$BASE_SHA\", \"head_sha\":\"$HEAD_SHA\"}" > event.json
+
+      - name: Keep PR run event
+        uses: actions/upload-artifact@v2
+        with:
+          name: pr-event
+          path: event.json
+          retention-days: 60
 
       - name: Calculate cache key for node_modules
         id: calculate_node_modules_hash
@@ -76,6 +91,23 @@ jobs:
       - name: Building NodeJS dependencies
         if: steps.node-modules.outputs.cache-hit != 'true'
         run: ./scripts/ci/10_prepare-host-deps.sh
+
+      - run: |
+          echo "HEAD=$GITHUB_SHA" >> $GITHUB_ENV
+          export HEAD_REF="$GITHUB_HEAD_REF"
+          export BASE_REF="$GITHUB_BASE_REF"
+          export PR_REF=$GITHUB_SHA
+          export SHELL=/usr/bin/bash
+          export WORKFLOW_ID=pullrequest
+          source ./scripts/ci/00_prepare-base-tags.sh
+          git checkout $GITHUB_SHA
+          echo "BASE=$BASE" >> $GITHUB_ENV
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HTML_URL: ${{ github.event.pull_request.html_url }}
+          ISSUE_REPORTING_SLACK_WEBHOOK_URL: ${{ secrets.SLACK_BUILD_ISSUES_REPORTING_WEBHOOK_URL }}
+        name: Preparing HEAD and BASE tags
+        shell: bash
 
       - name: Cache for cypress
         id: cypress
@@ -161,7 +193,7 @@ jobs:
     needs:
       - prepare
     if: needs.prepare.outputs.TEST_CHUNKS
-    runs-on: self-hosted
+    runs-on: kubernetes-runner
     timeout-minutes: 25
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
@@ -211,7 +243,7 @@ jobs:
     needs:
       - prepare
     if: needs.prepare.outputs.E2E_CHUNKS
-    runs-on: self-hosted
+    runs-on: kubernetes-runner
     timeout-minutes: 25
     env:
       AFFECTED_PROJECT: ${{ matrix.projects }}
@@ -271,7 +303,7 @@ jobs:
   linting-workspace:
     needs:
       - prepare
-    runs-on: self-hosted
+    runs-on: kubernetes-runner
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v2
@@ -295,7 +327,7 @@ jobs:
   formatting:
     needs:
       - prepare
-    runs-on: self-hosted
+    runs-on: kubernetes-runner
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v2
@@ -314,7 +346,7 @@ jobs:
   linting:
     needs:
       - prepare
-    runs-on: self-hosted
+    runs-on: kubernetes-runner
     timeout-minutes: 25
     if: needs.prepare.outputs.LINT_CHUNKS
     env:
@@ -358,7 +390,7 @@ jobs:
   build:
     needs:
       - prepare
-    runs-on: self-hosted
+    runs-on: kubernetes-runner
     timeout-minutes: 25
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
@@ -399,7 +431,7 @@ jobs:
         run: ./scripts/ci/run-in-parallel-native.sh build
 
   success:
-    runs-on: self-hosted
+    runs-on: kubernetes-runner
     if: always()
     needs:
       - prepare

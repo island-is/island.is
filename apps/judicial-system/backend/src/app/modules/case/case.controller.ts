@@ -24,7 +24,6 @@ import {
   DokobitError,
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
-import { IntegratedCourts } from '@island.is/judicial-system/consts'
 import { CaseState, CaseType, UserRole } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 import {
@@ -174,17 +173,6 @@ export class CaseController {
       caseId,
       caseToUpdate,
     )) as Case
-
-    if (
-      theCase.courtId &&
-      IntegratedCourts.includes(theCase.courtId) &&
-      Boolean(caseToUpdate.courtCaseNumber) &&
-      caseToUpdate.courtCaseNumber !== theCase.courtCaseNumber
-    ) {
-      // TODO: Find a better place for this
-      // No need to wait for the upload
-      this.caseService.uploadRequestPdfToCourt(updatedCase)
-    }
 
     return updatedCase
   }
@@ -487,6 +475,7 @@ export class CaseController {
 
     return this.caseService.getRulingSignatureConfirmation(
       theCase,
+      user,
       documentToken,
     )
   }
@@ -525,10 +514,11 @@ export class CaseController {
   })
   async createCourtCase(
     @Param('caseId') caseId: string,
+    @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
   ): Promise<Case> {
     this.logger.debug(`Creating a court case for case ${caseId}`)
 
-    return this.caseService.createCourtCase(theCase)
+    return this.caseService.createCourtCase(theCase, user)
   }
 }
