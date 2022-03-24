@@ -1,4 +1,4 @@
-import { service } from './dsl'
+import { postgres, service } from './dsl'
 import { UberChart } from './uber-chart'
 import { serializeService } from './map-to-values'
 import { SerializeErrors, SerializeSuccess } from './types/output-types'
@@ -18,36 +18,38 @@ const Staging: EnvironmentConfig = {
 
 describe('Init-container definitions', () => {
   it('Basic setup', () => {
-    const sut = service('api').initContainer({
-      containers: [
-        {
-          command: 'migration',
-          name: 'migration',
-          args: ['all'],
-          resources: {
-            limits: { cpu: '100m', memory: '1024Mi' },
-            requests: { cpu: '100m', memory: '1024Mi' },
+    const sut = service('api').initContainer(
+      {
+        containers: [
+          {
+            command: 'migration',
+            name: 'migration',
+            args: ['all'],
+            resources: {
+              limits: { cpu: '100m', memory: '1024Mi' },
+              requests: { cpu: '100m', memory: '1024Mi' },
+            },
+          },
+          {
+            command: 'seed',
+            name: 'seedation',
+            args: ['all'],
+          },
+        ],
+        envs: {
+          A: 'B',
+          B: {
+            dev: 'a',
+            staging: 'b',
+            prod: 'c',
           },
         },
-        {
-          command: 'seed',
-          name: 'seedation',
-          args: ['all'],
-        },
-      ],
-      envs: {
-        A: 'B',
-        B: {
-          dev: 'a',
-          staging: 'b',
-          prod: 'c',
+        secrets: {
+          S1: '/as/dfadf',
         },
       },
-      secrets: {
-        S1: '/as/dfadf',
-      },
-      postgres: {},
-    })
+      postgres(),
+    )
     const result = serializeService(
       sut,
       new UberChart(Staging),
