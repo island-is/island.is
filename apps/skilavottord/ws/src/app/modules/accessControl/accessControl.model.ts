@@ -41,8 +41,6 @@ export class AccessControlModel extends Model<AccessControlModel> {
   })
   role!: AccessControlRoleType
   
-//////////////
-
   @Field({ nullable: true })
   @Column({
     type: DataType.STRING,
@@ -60,9 +58,10 @@ export class AccessControlModel extends Model<AccessControlModel> {
   @Field({ nullable: true })
   @Column({
     type: DataType.STRING,
+    field: 'partner_national_id',
     allowNull: true,
   })
-  partner_national_id!: string
+  partnerNationalId!: string
 
   @ForeignKey(() => RecyclingPartnerModel)
   @Column({

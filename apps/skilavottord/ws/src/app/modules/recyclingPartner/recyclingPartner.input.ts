@@ -36,7 +36,7 @@ export class CreateRecyclingPartnerInput {
   nationalId!: string
 
   @Field()
-  email!: string
+  email?: string
 }
 
 @InputType()
@@ -69,5 +69,5 @@ export class UpdateRecyclingPartnerInput {
   nationalId!: string
 
   @Field()
-  email!: string
+  email?: string
 }
