@@ -33,7 +33,7 @@ const LogoMunicipality = ({ className }: LogoProps) => {
         >
           <LogoSvg
             name={
-              logoKeyFromMunicipalityCode[admin.staff?.municipalityId ?? '']
+              logoKeyFromMunicipalityCode[admin.staff?.municipalityIds[0] ?? '']
             }
           />
         </a>
