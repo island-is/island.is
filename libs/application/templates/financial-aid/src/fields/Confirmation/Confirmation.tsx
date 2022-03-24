@@ -13,6 +13,7 @@ const Confirmation = ({ application, field }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
   const { answers, externalData } = application
   const { id } = field
+  const isApplicant = id === Routes.CONFIRMATION
 
   let incomeFileType: UploadFileType
   let hasIncome
@@ -24,6 +25,18 @@ const Confirmation = ({ application, field }: FAFieldBaseProps) => {
     hasIncome = answers.spouseIncome === ApproveOptions.Yes
   }
 
+  const missingIncomeFiles = hasIncome && !hasFiles(incomeFileType, answers)
+  const applicantHasSpouse = isApplicant && hasSpouse(answers, externalData)
+
+  let firstStepText
+  if (applicantHasSpouse && missingIncomeFiles) {
+    firstStepText = confirmation.nextSteps.contentBothMissingFiles
+  } else if (applicantHasSpouse) {
+    firstStepText = confirmation.nextSteps.contentSpouseMissingFiles
+  } else if (missingIncomeFiles) {
+    firstStepText = confirmation.nextSteps.contentMissingFiles
+  }
+
   return (
     <>
       <Box marginTop={[4, 4, 5]}>
@@ -33,7 +46,7 @@ const Confirmation = ({ application, field }: FAFieldBaseProps) => {
             title={formatMessage(confirmation.alertMessages.success)}
           />
         </Box>
-        {hasIncome && !hasFiles(incomeFileType, answers) &&
+        {missingIncomeFiles &&
           <Box marginTop={[2, 2, 3]}>
             <AlertMessage
               type="warning"
@@ -47,10 +60,13 @@ const Confirmation = ({ application, field }: FAFieldBaseProps) => {
         {formatMessage(confirmation.nextSteps.title)}
       </Text>
       <Box marginTop={2}>
-        <DescriptionText text={confirmation.nextSteps.content} format={{ nextMonth: getNextPeriod.month }} />
+        {firstStepText && <DescriptionText text={firstStepText} />}
+        <Box marginTop={2}>
+          <DescriptionText text={confirmation.nextSteps.content} format={{ nextMonth: getNextPeriod.month }} />
+        </Box>
       </Box>
 
-      {hasSpouse(answers, externalData) && (
+      {applicantHasSpouse && (
         <>
           <Text as="h3" variant="h3" marginTop={[4, 4, 5]}>
             {formatMessage(confirmation.sharedLink.title)}
