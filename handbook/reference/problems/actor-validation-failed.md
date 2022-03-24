@@ -9,7 +9,7 @@ Handeling this error could then involve allowing the user to delegate to the sub
 
 A JSON object where delegatedUser is the national id of the subject that is assigned to the resource that the actor is trying to access.
 The delegations array contains delegations that the actor has for the subject assigned to the resource.
-The delegation object contain the name of the subject, the subjects national id as well as the type of delegation the actor has for the subject.
+The delegation object contains the name of the subject, the subject's national id as well as the type of delegation the actor has for the subject.
 
 ## Example
 
