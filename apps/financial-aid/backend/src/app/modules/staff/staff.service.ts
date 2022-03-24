@@ -169,7 +169,7 @@ export class StaffService {
   async numberOfUsersForMunicipality(municipalityId: string): Promise<number> {
     return await this.staffModel.count({
       where: {
-        municipalityId,
+        municipalityIds: { [Op.contains]: [municipalityId] },
       },
     })
   }
@@ -177,7 +177,7 @@ export class StaffService {
   async getUsers(municipalityId: string): Promise<StaffModel[]> {
     return await this.staffModel.findAll({
       where: {
-        municipalityId,
+        municipalityIds: { [Op.contains]: [municipalityId] },
         roles: { [Op.contains]: [StaffRole.ADMIN] },
       },
     })
