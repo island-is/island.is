@@ -1,17 +1,16 @@
+import type { History } from 'history'
 import React, {
   SyntheticEvent,
   useCallback,
+  useEffect,
   useReducer,
   useState,
-  useEffect,
 } from 'react'
 import { useHistory } from 'react-router-dom'
 
+import { AuthSettings } from '../AuthSettings'
 import { getAuthSettings, getUserManager } from '../userManager'
 import { ActionType, initialState, reducer } from './Authenticator.state'
-
-import type { History } from 'history'
-import { AuthSettings } from '../AuthSettings'
 
 export interface SessionInfo {
   // Message detailing if the request was processed OK, no session detected or with failure.
@@ -22,6 +21,10 @@ export interface SessionInfo {
 
   // Boolean flag to indicated if the Expires time is passed.
   isExpired?: boolean
+}
+
+interface SessionInfoMessage {
+  type: 'SessionInfo'
 }
 
 const messageEventName = 'message'
@@ -59,10 +62,12 @@ export const CheckIdpSession = () => {
   )
 
   const onLoadHandler = (event: SyntheticEvent<HTMLIFrameElement>) => {
-    event?.currentTarget?.contentWindow?.postMessage(
-      {},
-      authSettings.authority ?? '',
-    )
+    if (authSettings.authority) {
+      event?.currentTarget?.contentWindow?.postMessage(
+        { type: 'SessionInfo' } as SessionInfoMessage,
+        authSettings.authority,
+      )
+    }
   }
 
   const checkIdpSessionIframe = (
@@ -79,7 +84,14 @@ export const CheckIdpSession = () => {
     />
   )
 
-  const messageHandler = async ({ data }: MessageEvent): Promise<void> => {
+  const messageHandler = async ({
+    data,
+    origin,
+  }: MessageEvent): Promise<void> => {
+    if (origin !== authSettings.authority) {
+      return
+    }
+
     const sessionInfo = data as SessionInfo
 
     if (sessionInfo && sessionInfo.message === 'OK') {
