@@ -70,6 +70,12 @@ export const GET_PROJECT_PAGE_QUERY = gql`
         width
         height
       }
+      defaultHeaderImage {
+        url
+        contentType
+        width
+        height
+      }
     }
   }
   ${slices}

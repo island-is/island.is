@@ -21,30 +21,39 @@ export const DefaultProjectHeader = ({
   const { linkResolver } = useLinkResolver()
 
   return (
-    <Box className={styles.headerBg}>
-      <GridContainer>
-        <GridRow>
-          <GridColumn
-            span={['12/12', '12/12', '10/12', '7/12', '6/12']}
-            offset={['0', '0', '1/12', '1/12', '1/12']}
-          >
-            <Text variant="eyebrow" color="white" marginTop={5}>
-              Ísland.is
-            </Text>
-            <Link href={linkResolver('projectpage', [projectPage.slug]).href}>
-              <Text variant="h1" color="white" marginTop={2}>
-                {projectPage.title}
+    <Box className={styles.headerWrapper}>
+      <Box className={styles.headerBg}>
+        <GridContainer>
+          <GridRow>
+            <GridColumn
+              span={['12/12', '12/12', '10/12', '7/12', '6/12']}
+              offset={['0', '0', '1/12', '1/12', '1/12']}
+            >
+              <Text variant="eyebrow" color="white" marginTop={5}>
+                Ísland.is
               </Text>
-            </Link>
-            <Text variant="intro" color="white" marginTop={3}>
-              {projectPage.subtitle}
-            </Text>
-            <Text color="white" marginTop={3}>
-              {projectPage.intro}
-            </Text>
-          </GridColumn>
-        </GridRow>
-      </GridContainer>
+              <Link href={linkResolver('projectpage', [projectPage.slug]).href}>
+                <Text variant="h1" color="white" marginTop={2}>
+                  {projectPage.title}
+                </Text>
+              </Link>
+              <Text variant="intro" color="white" marginTop={3}>
+                {projectPage.subtitle}
+              </Text>
+              <Text color="white" marginTop={3}>
+                {projectPage.intro}
+              </Text>
+            </GridColumn>
+          </GridRow>
+        </GridContainer>
+      </Box>
+      {projectPage.defaultHeaderImage && projectPage.defaultHeaderImage.url && (
+        <img
+          className={styles.headerImage}
+          src={projectPage.defaultHeaderImage.url}
+          alt="header"
+        ></img>
+      )}
     </Box>
   )
 }

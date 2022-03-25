@@ -49,7 +49,7 @@ import slugify from '@sindresorhus/slugify'
 import { getStepOptionsFromUIConfiguration } from '../../components/StepperFSM/StepperFSMUtils'
 import StepperFSM from '../../components/StepperFSM/StepperFSM'
 
-const lightThemes = ['traveling-to-iceland', 'election', 'ukraine']
+const lightThemes = ['traveling-to-iceland', 'election', 'ukraine', 'default']
 
 const getThemeConfig = (
   theme: string,
@@ -245,6 +245,8 @@ const ProjectPage: Screen<PageProps> = ({
       setSelectedSliceTab(slice)
     }
   }, [renderSlicesAsTabs, subpage, router.asPath])
+
+  console.log(projectPage)
 
   return (
     <>

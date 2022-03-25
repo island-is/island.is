@@ -2206,6 +2206,9 @@ export interface IProjectPageFields {
 
   /** Featured Image */
   featuredImage?: Asset | undefined
+
+  /** Default Header Image */
+  defaultHeaderImage?: Asset | undefined
 }
 
 export interface IProjectPage extends Entry<IProjectPageFields> {
