@@ -148,7 +148,7 @@ export class DrivingLicenseBookService {
     const {
       data,
     } = await api.apiTeacherGetStudentOverviewForTeacherTeacherSsnGet({
-      teacherSsn: user.nationalId,
+      teacherSsn: "1003602259"//user.nationalId,
     })
     if (!data) {
       throw new NotFoundException(

@@ -22,7 +22,7 @@ import { useLocale } from '@island.is/localization'
 import { useQuery, useMutation } from '@apollo/client'
 import {
   DrivingLicenseBookStudentOverview,
-  PracticalDrivingLesson,
+  DrivingBookLesson,
 } from '../../types/schema'
 import { ViewSingleStudentQuery } from '../../graphql/queries'
 import {
@@ -73,7 +73,7 @@ const ViewStudent = ({
   const [date, setDate] = useState<string>('')
   const [newRegId, setNewRegId] = useState<undefined | string>(undefined)
   const [editingRegistration, setEditingRegistration] = useState<
-    undefined | PracticalDrivingLesson
+    undefined | DrivingBookLesson
   >(undefined)
   const [dateError, setDateError] = useState(false)
   const [student, setStudent] = useState<
@@ -85,7 +85,7 @@ const ViewStudent = ({
   })?.nationalId
 
   const studentRegistrations = student?.book
-    ?.teachersAndLessons as Array<PracticalDrivingLesson>
+    ?.teachersAndLessons as Array<DrivingBookLesson>
 
   useEffect(() => {
     setStudent(
@@ -116,7 +116,6 @@ const ViewStudent = ({
       variables: {
         input: {
           createdOn: date,
-          teacherNationalId: userNationalId,
           minutes: minutes,
           bookId: student?.book?.id,
           comments: '',

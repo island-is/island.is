@@ -46,9 +46,9 @@ const StudentsOverview = ({ application }: Data) => {
   const [showTable, setShowTable] = useState(true)
   const [studentId, setStudentId] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
-  const [filteredStudents, setFilteredStudents] = useState<Array<object>>()
+  const [filteredStudents, setFilteredStudents] = useState<Array<Student>>()
 
-  const handlePagination = (page: number, students: Array<object>) => {
+  const handlePagination = (page: number, students: Array<Student>) => {
     setPage(page)
     setTotalPages(pages(students?.length))
     setFilteredStudents(students)
