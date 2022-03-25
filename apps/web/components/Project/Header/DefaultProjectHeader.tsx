@@ -20,8 +20,11 @@ export const DefaultProjectHeader = ({
 }: DefaultProjectHeaderProps) => {
   const { linkResolver } = useLinkResolver()
 
+  const defaultImageIsProvided =
+    projectPage.defaultHeaderImage && projectPage.defaultHeaderImage.url
+
   return (
-    <Box className={styles.headerWrapper}>
+    <Box className={defaultImageIsProvided ? styles.headerWrapper : undefined}>
       <Box className={styles.headerBg}>
         <GridContainer>
           <GridRow>
@@ -47,7 +50,7 @@ export const DefaultProjectHeader = ({
           </GridRow>
         </GridContainer>
       </Box>
-      {projectPage.defaultHeaderImage && projectPage.defaultHeaderImage.url && (
+      {defaultImageIsProvided && (
         <img
           className={styles.headerImage}
           src={projectPage.defaultHeaderImage.url}
