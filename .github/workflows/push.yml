@@ -254,6 +254,7 @@ jobs:
           key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-yarn
 
       - name: Check cache success
+        shell: bash
         run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Building NodeJS dependencies
@@ -305,6 +306,7 @@ jobs:
           key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-docker-deps-1
 
       - name: Check cache success
+        shell: bash
         run: '[[ "${{ steps.cache-deps.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Cache for NodeJS dependencies - Docker layer
@@ -316,6 +318,7 @@ jobs:
           key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-docker-output-base-1
 
       - name: Check cache success
+        shell: bash
         run: '[[ "${{ steps.cache-deps-base.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Building NodeJS dependencies
@@ -334,6 +337,7 @@ jobs:
           key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
 
       - name: Check cache success
+        shell: bash
         run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Generate schemas
@@ -405,6 +409,7 @@ jobs:
           key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
 
       - name: Check cache success
+        shell: bash
         run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Cache for generated files
@@ -416,6 +421,7 @@ jobs:
           key: ${{ needs.prepare.outputs.generated-files-cache-key }}
 
       - name: Check cache success
+        shell: bash
         run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Untar generated files
@@ -470,6 +476,7 @@ jobs:
           key: ${{ needs.prepare.outputs.generated-files-cache-key }}
 
       - name: Check cache success
+        shell: bash
         run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Untar generated files
@@ -486,6 +493,7 @@ jobs:
           key: ${{ needs.prepare.outputs.node-modules-hash }}-docker-output-base-1
 
       - name: Check cache success
+        shell: bash
         run: '[[ "${{ steps.cache-deps-base.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Cache for NodeJS dependencies - Docker layer
@@ -498,6 +506,7 @@ jobs:
           key: ${{ needs.prepare.outputs.node-modules-hash }}-docker-deps-1
 
       - name: Check cache success
+        shell: bash
         run: '[[ "${{ steps.cache-deps.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Docker login to ECR repo

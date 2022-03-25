@@ -91,6 +91,7 @@ jobs:
           key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-yarn
 
       - name: Check cache success
+        shell: bash
         run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Building NodeJS dependencies
@@ -123,6 +124,7 @@ jobs:
           key: cypress-cache-${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
 
       - name: Check cache success
+        shell: bash
         run: '[[ "${{ steps.cypress.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Verify cypress
@@ -143,6 +145,7 @@ jobs:
           key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
 
       - name: Check cache success
+        shell: bash
         run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Generate schemas
@@ -222,6 +225,7 @@ jobs:
           key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
 
       - name: Check cache success
+        shell: bash
         run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Cache for generated files
@@ -233,6 +237,7 @@ jobs:
           key: ${{ needs.prepare.outputs.generated-files-cache-key }}
 
       - name: Check cache success
+        shell: bash
         run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Untar generated files
@@ -276,6 +281,7 @@ jobs:
           key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
 
       - name: Check cache success
+        shell: bash
         run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Cache for cypress
@@ -287,6 +293,7 @@ jobs:
           key: cypress-cache-${{ needs.prepare.outputs.node-modules-hash }}
 
       - name: Check cache success
+        shell: bash
         run: '[[ "${{ steps.cypress.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Cache for generated files
@@ -298,6 +305,7 @@ jobs:
           key: ${{ needs.prepare.outputs.generated-files-cache-key }}
 
       - name: Check cache success
+        shell: bash
         run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Untar generated files
@@ -329,8 +337,11 @@ jobs:
           path: node_modules
           key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
       - name: Check cache success
+        shell: bash
         run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
+      
       - name: Linting workspace
+        shell: bash
         run: ./scripts/ci/20_lint-workspace.sh
   
   shellcheck:
@@ -367,8 +378,10 @@ jobs:
           path: node_modules
           key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
       - name: Check cache success
+        shell: bash
         run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
       - name: Check formatting
+        shell: bash
         run: ./scripts/ci/20_check-formatting.sh
 
   linting:
@@ -398,6 +411,7 @@ jobs:
           key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
 
       - name: Check cache success
+        shell: bash
         run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Cache for generated files
@@ -409,12 +423,14 @@ jobs:
           key: ${{ needs.prepare.outputs.generated-files-cache-key }}
 
       - name: Check cache success
+        shell: bash
         run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Untar generated files
         run: tar zxvf generated_files.tar.gz
 
       - name: Linting
+        shell: bash
         run: ./scripts/ci/run-in-parallel-native.sh lint
 
   build:
@@ -443,6 +459,7 @@ jobs:
           key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
 
       - name: Check cache success
+        shell: bash
         run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Cache for generated files
@@ -454,6 +471,7 @@ jobs:
           key: ${{ needs.prepare.outputs.generated-files-cache-key }}
 
       - name: Check cache success
+        shell: bash
         run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Untar generated files
