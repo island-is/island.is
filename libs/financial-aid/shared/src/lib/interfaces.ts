@@ -15,6 +15,10 @@ export interface GetSignedUrl {
   fileName: string
 }
 
+export interface GetSignedUrlForAllFiles {
+  getSignedUrlForAllFilesId: SignedUrl[]
+}
+
 export interface SignedUrl {
   url: string
   key: string
@@ -365,4 +369,13 @@ export interface CreateStaffMunicipality {
 export interface Calculations {
   title: string
   calculation: string
+}
+
+export interface ApplicationProfileInfo {
+  title: string
+  content?: string
+  link?: string
+  onclick?: () => void
+  other?: string
+  fullWidth?: boolean
 }

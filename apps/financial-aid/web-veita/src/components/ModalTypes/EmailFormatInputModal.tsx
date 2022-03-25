@@ -1,8 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useContext } from 'react'
 
 import { InputModal } from '@island.is/financial-aid-web/veita/src/components'
 import { Text, Box } from '@island.is/island-ui/core'
 import * as styles from './ModalTypes.css'
+import { AdminContext } from '../AdminProvider/AdminProvider'
+import { ApplicationState } from '@island.is/financial-aid/shared/lib'
 
 interface Props {
   onCancel: (event: React.MouseEvent<HTMLButtonElement>) => void
@@ -13,6 +15,7 @@ interface Props {
   errorMessage: string
   prefixText: string
   postfixText: string
+  state: ApplicationState
 }
 
 const EmailFormatInputModal = ({
@@ -24,9 +27,12 @@ const EmailFormatInputModal = ({
   errorMessage,
   prefixText,
   postfixText,
+  state,
 }: Props) => {
   const ref = useRef<HTMLSpanElement>(null)
   const [hasError, setHasError] = useState(false)
+
+  const { municipality } = useContext(AdminContext)
 
   useEffect(() => {
     if (hasError) {
@@ -40,6 +46,15 @@ const EmailFormatInputModal = ({
       })
     }
   }, [hasError])
+
+  const onPaste = (event: any) => {
+    document.execCommand(
+      'insertText',
+      false,
+      event?.clipboardData?.getData('text/plain'),
+    )
+    event?.preventDefault()
+  }
 
   return (
     <InputModal
@@ -57,18 +72,54 @@ const EmailFormatInputModal = ({
       hasError={hasError}
       errorMessage={errorMessage}
     >
-      <Box marginBottom={[5, 5, 10]}>
+      <Box
+        marginBottom={
+          state === ApplicationState.REJECTED ? [5, 5, 6] : [5, 5, 10]
+        }
+      >
         <Text variant="intro">
           {prefixText}
           {` `}
           <span
             ref={ref}
             contentEditable="true"
+            onPaste={onPaste}
             className={styles.rejectionEditable}
           />
           .{` `}
           {postfixText}
         </Text>
+
+        {state === ApplicationState.REJECTED && (
+          <>
+            <Text
+              marginTop={3}
+              marginBottom={3}
+              fontWeight="semiBold"
+              variant="intro"
+            >
+              Málskot
+            </Text>
+
+            <Text variant="intro">
+              Bent skal á að unnt er að skjóta ákvörðun þessari til
+              áfrýjunarnefndar þíns sveitarfélags. Skal það gert skriflega og
+              innan fjögurra vikna. Fyrir frekari upplýsingar um málskot hafðu
+              samband með tölvupósti á netfangið{' '}
+              <a
+                href={`mailto:${municipality?.email}`}
+                rel="noreferrer noopener"
+              >
+                <span className="linkInText">{municipality?.email}</span>
+              </a>
+              . 
+              <br />
+              <br />
+              Ákvörðun ráðsins má síðan skjóta til úrskurðarnefndar
+              velferðarmála, Katrínartúni 2, 105 Reykjavík innan þriggja mánaða.
+            </Text>
+          </>
+        )}
       </Box>
     </InputModal>
   )

@@ -324,8 +324,8 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
             name: workingCase.defenderName ?? '',
             email: workingCase.defenderEmail,
             phoneNumber: workingCase.defenderPhoneNumber,
-            defenderIsSpokesperson: workingCase.defenderIsSpokesperson,
           }}
+          sessionArrangement={workingCase.sessionArrangements}
         />
       </Box>
       {(workingCase.accusedAppealDecision === CaseAppealDecision.POSTPONE ||
@@ -358,7 +358,9 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
                   user={user}
                 />
               )}
-              {(workingCase.comments || workingCase.caseFilesComments) && (
+              {(workingCase.comments ||
+                workingCase.caseFilesComments ||
+                workingCase.caseResentExplanation) && (
                 <CommentsAccordionItem workingCase={workingCase} />
               )}
             </Accordion>

@@ -47,6 +47,23 @@ export class FileController {
   }
 
   @Scopes(
+    MunicipalitiesFinancialAidScope.read,
+    MunicipalitiesFinancialAidScope.employee,
+  )
+  @UseGuards(StaffGuard)
+  @Get(':applicationId')
+  @Scopes(MunicipalitiesFinancialAidScope.read)
+  @ApiCreatedResponse({
+    type: SignedUrlModel,
+    description: 'Creates a new signed url for all files for application id',
+  })
+  async createSignedUrlForAllFiles(
+    @Param('applicationId') applicationId: string,
+  ): Promise<SignedUrlModel[]> {
+    return this.fileService.createSignedUrlForAllFilesId(applicationId)
+  }
+
+  @Scopes(
     MunicipalitiesFinancialAidScope.applicant,
     MunicipalitiesFinancialAidScope.write,
   )

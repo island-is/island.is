@@ -1,50 +1,57 @@
-import React, { FC, useState } from 'react'
-import { FieldBaseProps, DefaultEvents } from '@island.is/application/core'
+import React, { FC, useEffect, useState } from 'react'
+import { DefaultEvents, FieldBaseProps } from '@island.is/application/core'
 import {
   Box,
   Text,
   AlertMessage,
+  SkeletonLoader,
   Button,
-  Divider,
+  Link,
 } from '@island.is/island-ui/core'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
-import { useMutation } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client'
 import { PropertyDetail } from '../../types/schema'
-import { gql, useLazyQuery } from '@apollo/client'
+import { gql } from '@apollo/client'
 import { VALIDATE_MORTGAGE_CERTIFICATE_QUERY } from '../../graphql/queries'
-import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
-
-export const validateCertificateMutation = gql`
+import { useLocale } from '@island.is/localization'
+export const validateCertificateQuery = gql`
   ${VALIDATE_MORTGAGE_CERTIFICATE_QUERY}
 `
 
 export const PendingRejectedTryAgain: FC<FieldBaseProps> = ({
   application,
-  field,
   refetch,
 }) => {
   const { externalData } = application
-
   const { formatMessage } = useLocale()
   const [showErrorMsg, setShowErrorMsg] = useState<boolean>(false)
-  const [runEvent, setRunEvent] = useState<string | undefined>(undefined)
+  const [hasChangedState, setHasChangedState] = useState<boolean>(false)
+  const [continuePolling, setContinuePolling] = useState(true)
   const [submitApplication] = useMutation(SUBMIT_APPLICATION, {
     onError: (e) => console.error(e.message),
   })
 
-  const selectedProperty = externalData.getPropertyDetails
-    ?.data as PropertyDetail
+  useEffect(() => {
+    document.title = 'Beiðni um vinnslu'
+  }, [])
 
-  const handleStateChangeAndRefetch = (newRunEvent: string) => {
-    if (runEvent !== newRunEvent) {
-      setRunEvent(newRunEvent)
+  const { propertyDetails, validation } = externalData
+    .validateMortgageCertificate?.data as {
+    propertyDetails: PropertyDetail
+    validation: { propertyNumber: string; isFromSearch: boolean }
+  }
 
+  const handleStateChangeAndRefetch = () => {
+    if (!hasChangedState) {
+      setHasChangedState(true)
+
+      // Go to States.PAYMENT_INFO
       submitApplication({
         variables: {
           input: {
             id: application.id,
-            event: newRunEvent,
+            event: DefaultEvents.SUBMIT,
             answers: application.answers,
           },
         },
@@ -59,34 +66,44 @@ export const PendingRejectedTryAgain: FC<FieldBaseProps> = ({
     }
   }
 
-  const [runQuery, { loading }] = useLazyQuery(validateCertificateMutation, {
+  // Note: we will validate on load here to display the error message,
+  // because we cant trust that externalData.validateMortgageCertificate is recent enough.
+  // But we will also use condition guard on "next" button to validate again
+  // to control if user can continue
+  const { data, error, loading } = useQuery(validateCertificateQuery, {
     variables: {
       input: {
-        propertyNumber: selectedProperty?.propertyNumber,
+        propertyNumber: validation?.propertyNumber,
+        isFromSearch: validation?.isFromSearch,
       },
     },
-    onCompleted(result) {
-      setShowErrorMsg(false)
-
-      const { exists, hasKMarking } = result.validateMortgageCertificate as {
-        exists: boolean
-        hasKMarking: boolean
-      }
-
-      if (!exists || !hasKMarking) {
-        setShowErrorMsg(true)
-      } else {
-        handleStateChangeAndRefetch(DefaultEvents.PAYMENT)
-      }
-    },
-    onError() {
-      setShowErrorMsg(true)
-    },
+    skip: !continuePolling,
     fetchPolicy: 'no-cache',
   })
 
-  const handleClickValidateMortgageCertificate = () => {
-    runQuery()
+  const validationData = data?.validateMortgageCertificate as {
+    propertyNumber: string
+    exists: boolean
+    hasKMarking: boolean
+  }
+
+  useEffect(() => {
+    if (!validationData?.propertyNumber) {
+      return
+    }
+
+    setShowErrorMsg(false)
+    setContinuePolling(false)
+
+    if (validationData.exists && validationData.hasKMarking) {
+      handleStateChangeAndRefetch()
+    } else {
+      setShowErrorMsg(true)
+    }
+  }, [validationData])
+
+  if (error) {
+    setShowErrorMsg(true)
   }
 
   return (
@@ -100,33 +117,29 @@ export const PendingRejectedTryAgain: FC<FieldBaseProps> = ({
       >
         <Text fontWeight="semiBold">Valin fasteign</Text>
         <Text>
-          {selectedProperty?.propertyNumber}{' '}
-          {selectedProperty?.defaultAddress?.display}
+          {propertyDetails?.propertyNumber}
+          {' - '}
+          {propertyDetails?.defaultAddress?.display}
         </Text>
       </Box>
-      <Box paddingBottom={3} hidden={loading || !showErrorMsg}>
-        <AlertMessage
-          type="error"
-          title="Ekki gekk að sækja vottorð fyrir þessa eign"
-          message="Vinsamlega hafðu samband við sýslumann, það er búið að senda inn beiðni um leiðréttingu"
-        />
-      </Box>
-
-      <Divider />
-      <Box
-        paddingTop={5}
-        paddingBottom={5}
-        justifyContent="flexEnd"
-        display="flex"
-      >
-        <Button
-          onClick={() => handleClickValidateMortgageCertificate()}
-          disabled={loading}
-          icon="arrowForward"
-        >
-          {formatMessage(m.continue)}
-        </Button>
-      </Box>
+      {!loading && showErrorMsg ? (
+        <Box paddingBottom={3}>
+          <AlertMessage
+            type="error"
+            title={formatMessage(m.propertyCertificateError)}
+            message={formatMessage(m.propertyCertificateErrorContactSheriff)}
+          />
+          <Box marginY={5}>
+            <Link href={formatMessage(m.mortgageCertificateInboxLink)}>
+              <Button>{formatMessage(m.mysites)}</Button>
+            </Link>
+          </Box>
+        </Box>
+      ) : (
+        <Box>
+          <SkeletonLoader repeat={3} space={2} />
+        </Box>
+      )}
     </Box>
   )
 }

@@ -39,7 +39,7 @@ const courtClaimPrefill: Partial<
   >
 > = {
   [CaseType.SEARCH_WARRANT]: {
-    text: icDemands.sections.demands.prefill.searchWarrant,
+    text: icDemands.sections.demands.prefill.searchWarrant2,
     format: {
       court: true,
       accused: true,
@@ -49,25 +49,31 @@ const courtClaimPrefill: Partial<
     },
   },
   [CaseType.BANKING_SECRECY_WAIVER]: {
-    text: icDemands.sections.demands.prefill.bankingSecrecyWaiver,
+    text: icDemands.sections.demands.prefill.bankingSecrecyWaiver2,
     format: { court: true, accused: true },
   },
   [CaseType.PHONE_TAPPING]: {
-    text: icDemands.sections.demands.prefill.phoneTapping,
+    text: icDemands.sections.demands.prefill.phoneTapping2,
     format: { court: true, institution: true, accused: true },
   },
   [CaseType.TELECOMMUNICATIONS]: {
-    text: icDemands.sections.demands.prefill.teleCommunications,
+    text: icDemands.sections.demands.prefill.teleCommunications2,
     format: { court: true, institution: true, accused: true },
   },
   [CaseType.TRACKING_EQUIPMENT]: {
-    text: icDemands.sections.demands.prefill.trackingEquipment,
+    text: icDemands.sections.demands.prefill.trackingEquipment2,
     format: { court: true, institution: true, accused: true },
   },
   [CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION]: {
     text:
       icDemands.sections.demands.prefill.electronicDataDiscoveryInvestigation,
-    format: { court: true, institution: true, address: true, year: true },
+    format: {
+      court: true,
+      institution: true,
+      accused: true,
+      address: true,
+      year: true,
+    },
   },
 }
 
@@ -146,12 +152,13 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
                 live: workingCase.defendants.length,
               }),
               ...(courtClaim.format?.year && {
-                institution: new Date().getFullYear(),
+                year: new Date().getFullYear(),
               }),
             })
           : ''
 
         autofill('demands', courtClaimText, workingCase)
+
         setWorkingCase(workingCase)
       }
     }

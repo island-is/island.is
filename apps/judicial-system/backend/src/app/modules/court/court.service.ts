@@ -258,4 +258,46 @@ export class CourtService {
         throw reason
       })
   }
+
+  async createEmail(
+    user: User,
+    caseId: string,
+    courtId: string,
+    courtCaseNumber: string,
+    subject: string,
+    body: string,
+    recipients: string,
+    fromEmail: string,
+    fromName: string,
+  ): Promise<string> {
+    return this.courtClientService
+      .createEmail(courtId, {
+        caseNumber: courtCaseNumber,
+        subject,
+        body,
+        recipients,
+        fromEmail,
+        fromName,
+      })
+      .catch((reason) => {
+        this.eventService.postErrorEvent(
+          'Failed to create an email',
+          {
+            caseId,
+            actor: user.name,
+            institution: user.institution?.name,
+            courtId,
+            courtCaseNumber,
+            subject,
+            body,
+            recipients,
+            fromEmail,
+            fromName,
+          },
+          reason,
+        )
+
+        throw reason
+      })
+  }
 }

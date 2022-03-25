@@ -80,7 +80,7 @@ export class DelegationScope extends Model<DelegationScope> {
     type: DataType.DATE,
     allowNull: true,
   })
-  validTo?: Date
+  validTo!: Date
 
   @CreatedAt
   @ApiProperty()

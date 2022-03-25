@@ -86,9 +86,7 @@ export const StepFiveForm: React.FC<Props> = (props) => {
         (p) => {
           const xFiles = files as CaseFile[]
 
-          return !xFiles.find(
-            (f) => f.name === p.name && f.state === CaseFileState.STORED_IN_RVG,
-          )
+          return !xFiles.find((f) => f.name === p.name && f.key)
         },
       )
 

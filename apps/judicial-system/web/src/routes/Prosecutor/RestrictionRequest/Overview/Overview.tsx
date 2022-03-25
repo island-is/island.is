@@ -1,13 +1,21 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
+import { AnimatePresence } from 'framer-motion'
 
-import { Box, Text, Accordion, AccordionItem } from '@island.is/island-ui/core'
+import {
+  Box,
+  Text,
+  Accordion,
+  AccordionItem,
+  Input,
+} from '@island.is/island-ui/core'
 import {
   NotificationType,
   CaseState,
   CaseType,
   CaseTransition,
+  completedCaseStates,
 } from '@island.is/judicial-system/types'
 import { formatDate, capitalize } from '@island.is/judicial-system/formatters'
 import {
@@ -36,6 +44,9 @@ import {
 } from '@island.is/judicial-system-web/messages'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import CommentsAccordionItem from '@island.is/judicial-system-web/src/components/AccordionItems/CommentsAccordionItem/CommentsAccordionItem'
+import { createCaseResentExplanation } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
 import type { CaseLegalProvisions } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system/consts'
 
@@ -43,6 +54,8 @@ import * as styles from './Overview.css'
 
 export const Overview: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false)
+  const [resendCaseModalVisible, setResendCaseModalVisible] = useState(false)
+  const [caseResentExplanation, setCaseResentExplanation] = useState('')
   const [modalText, setModalText] = useState('')
   const {
     workingCase,
@@ -52,8 +65,12 @@ export const Overview: React.FC = () => {
   } = useContext(FormContext)
 
   const router = useRouter()
-
-  const { transitionCase, sendNotification, isSendingNotification } = useCase()
+  const {
+    transitionCase,
+    sendNotification,
+    isSendingNotification,
+    updateCase,
+  } = useCase()
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
 
@@ -79,12 +96,19 @@ export const Overview: React.FC = () => {
       setModalText(formatMessage(rcOverview.sections.modal.notificationNotSent))
     }
 
+    if (workingCase.state === CaseState.RECEIVED) {
+      updateCase(workingCase.id, {
+        caseResentExplanation: createCaseResentExplanation(
+          workingCase,
+          caseResentExplanation,
+        ),
+      })
+
+      setResendCaseModalVisible(false)
+    }
+
     setModalVisible(true)
   }
-
-  useEffect(() => {
-    document.title = 'Yfirlit kröfu - Réttarvörslugátt'
-  }, [])
 
   return (
     <PageLayout
@@ -96,6 +120,9 @@ export const Overview: React.FC = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
+      <PageHeader
+        title={formatMessage(titles.prosecutor.restrictionCases.overview)}
+      />
       <FormContentContainer>
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
@@ -219,6 +246,7 @@ export const Overview: React.FC = () => {
               email: workingCase.defenderEmail,
               phoneNumber: workingCase.defenderPhoneNumber,
             }}
+            sessionArrangement={workingCase.sessionArrangements}
           />
         </Box>
         <Box component="section" marginBottom={5} data-testid="demands">
@@ -305,10 +333,15 @@ export const Overview: React.FC = () => {
                 <CaseFileList
                   caseId={workingCase.id}
                   files={workingCase.caseFiles ?? []}
+                  isCaseCompleted={completedCaseStates.includes(
+                    workingCase.state,
+                  )}
                 />
               </Box>
             </AccordionItem>
-            {(workingCase.comments || workingCase.caseFilesComments) && (
+            {(workingCase.comments ||
+              workingCase.caseFilesComments ||
+              workingCase.caseResentExplanation) && (
               <CommentsAccordionItem workingCase={workingCase} />
             )}
           </Accordion>
@@ -337,31 +370,79 @@ export const Overview: React.FC = () => {
               ? 'Senda kröfu á héraðsdóm'
               : 'Endursenda kröfu á héraðsdóm'
           }
-          nextIsLoading={isSendingNotification}
-          onNextButtonClick={handleNextButtonClick}
+          nextIsLoading={
+            workingCase.state !== CaseState.RECEIVED && isSendingNotification
+          }
+          onNextButtonClick={
+            workingCase.state === CaseState.RECEIVED
+              ? () => {
+                  setResendCaseModalVisible(true)
+                }
+              : handleNextButtonClick
+          }
         />
       </FormContentContainer>
-      {modalVisible && (
-        <Modal
-          title={formatMessage(rcOverview.sections.modal.heading, {
-            caseType:
-              workingCase.type === CaseType.CUSTODY
-                ? 'gæsluvarðhald'
-                : 'farbann',
-          })}
-          text={modalText}
-          handleClose={() => router.push(Constants.REQUEST_LIST_ROUTE)}
-          handlePrimaryButtonClick={() => {
-            window.open(Constants.FEEDBACK_FORM_URL, '_blank')
-            router.push(Constants.REQUEST_LIST_ROUTE)
-          }}
-          handleSecondaryButtonClick={() => {
-            router.push(Constants.REQUEST_LIST_ROUTE)
-          }}
-          primaryButtonText="Senda ábendingu"
-          secondaryButtonText="Loka glugga"
-        />
-      )}
+      <AnimatePresence>
+        {resendCaseModalVisible && (
+          <Modal
+            title={formatMessage(rcOverview.sections.caseResentModal.heading)}
+            text={formatMessage(rcOverview.sections.caseResentModal.text)}
+            handleClose={() => setResendCaseModalVisible(false)}
+            primaryButtonText={formatMessage(
+              rcOverview.sections.caseResentModal.primaryButtonText,
+            )}
+            secondaryButtonText={formatMessage(
+              rcOverview.sections.caseResentModal.secondaryButtonText,
+            )}
+            handleSecondaryButtonClick={() => {
+              setResendCaseModalVisible(false)
+            }}
+            handlePrimaryButtonClick={() => {
+              handleNextButtonClick()
+            }}
+            isPrimaryButtonLoading={isSendingNotification}
+            isPrimaryButtonDisabled={!caseResentExplanation}
+          >
+            <Box marginBottom={10}>
+              <Input
+                name="caseResentExplanation"
+                label={formatMessage(
+                  rcOverview.sections.caseResentModal.input.label,
+                )}
+                placeholder={formatMessage(
+                  rcOverview.sections.caseResentModal.input.placeholder,
+                )}
+                onChange={(evt) => setCaseResentExplanation(evt.target.value)}
+                textarea
+                rows={7}
+              />
+            </Box>
+          </Modal>
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {modalVisible && (
+          <Modal
+            title={formatMessage(rcOverview.sections.modal.heading, {
+              caseType:
+                workingCase.type === CaseType.CUSTODY
+                  ? 'gæsluvarðhald'
+                  : 'farbann',
+            })}
+            text={modalText}
+            handleClose={() => router.push(Constants.REQUEST_LIST_ROUTE)}
+            handlePrimaryButtonClick={() => {
+              window.open(Constants.FEEDBACK_FORM_URL, '_blank')
+              router.push(Constants.REQUEST_LIST_ROUTE)
+            }}
+            handleSecondaryButtonClick={() => {
+              router.push(Constants.REQUEST_LIST_ROUTE)
+            }}
+            primaryButtonText="Senda ábendingu"
+            secondaryButtonText="Loka glugga"
+          />
+        )}
+      </AnimatePresence>
     </PageLayout>
   )
 }

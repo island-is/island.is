@@ -3,9 +3,9 @@ import * as z from 'zod'
 
 const schema = z.object({
   xRoadServicePath: z.string(),
-  fetch: z.object({
-    timeout: z.number().int(),
-  }),
+  fetchTimeout: z.number().int(),
+  tokenExchangeScope: z.array(z.string()),
+  requestActorToken: z.boolean(),
   redis: z.object({
     nodes: z.array(z.string()),
     ssl: z.boolean(),
@@ -21,9 +21,13 @@ export const NationalRegistryClientConfig = defineConfig({
         'XROAD_NATIONAL_REGISTRY_SERVICE_PATH',
         'IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1',
       ),
-      fetch: {
-        timeout: env.optionalJSON('XROAD_NATIONAL_REGISTRY_TIMEOUT') ?? 10000,
-      },
+      fetchTimeout:
+        env.optionalJSON('XROAD_NATIONAL_REGISTRY_TIMEOUT') ?? 10000,
+      tokenExchangeScope: env.optionalJSON('XROAD_NATIONAL_REGISTRY_SCOPE') ?? [
+        '@skra.is/individuals',
+      ],
+      requestActorToken:
+        env.optionalJSON('XROAD_NATIONAL_REGISTRY_ACTOR_TOKEN') ?? false,
       redis: {
         nodes: env.optionalJSON('XROAD_NATIONAL_REGISTRY_REDIS_NODES') ?? [],
         ssl:
