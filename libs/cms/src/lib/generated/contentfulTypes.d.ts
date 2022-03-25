@@ -1912,6 +1912,9 @@ export interface IOrganizationFields {
 
   /** Service Web Featured Image */
   serviceWebFeaturedImage?: Asset | undefined
+
+  /** Published Material Search Filter Generic Tags */
+  publishedMaterialSearchFilterGenericTags?: IGenericTag[] | undefined
 }
 
 export interface IOrganization extends Entry<IOrganizationFields> {

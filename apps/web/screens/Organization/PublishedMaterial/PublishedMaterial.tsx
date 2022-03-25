@@ -38,7 +38,11 @@ import { useRouter } from 'next/router'
 import React, { useEffect, useMemo, useState } from 'react'
 import { useDebounce } from 'react-use'
 import { Screen } from '../../../types'
-import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_PAGE_QUERY } from '../../queries'
+import {
+  GET_NAMESPACE_QUERY,
+  GET_ORGANIZATION_PAGE_QUERY,
+  GET_ORGANIZATION_QUERY,
+} from '../../queries'
 import { GET_PUBLISHED_MATERIAL_QUERY } from '../../queries/PublishedMaterial'
 
 const ASSETS_PER_PAGE = 20
@@ -54,39 +58,25 @@ interface FilterCategory {
   }[]
 }
 
-const getAllGenericTags = (publishedMaterial: EnhancedAsset[]) => {
-  const genericTagObject: Record<string, GenericTag> = {}
-  publishedMaterial.forEach(({ genericTags }) =>
-    genericTags.forEach((tag) => (genericTagObject[tag.id] = tag)),
-  )
-  return Object.keys(genericTagObject).map((key) => genericTagObject[key])
-}
-
-const getAllGenericTagGroups = (publishedMaterial: EnhancedAsset[]) => {
+const getAllGenericTagGroups = (genericTags: GenericTag[]) => {
   const genericTagGroupObject: Record<string, GenericTagGroup> = {}
-  publishedMaterial.forEach(({ genericTags }) =>
-    genericTags.forEach(
-      (tag) =>
-        (genericTagGroupObject[tag.genericTagGroup.id] = tag.genericTagGroup),
-    ),
+  genericTags.forEach(
+    (tag) =>
+      (genericTagGroupObject[tag.genericTagGroup.id] = tag.genericTagGroup),
   )
   return Object.keys(genericTagGroupObject).map(
     (key) => genericTagGroupObject[key],
   )
 }
 
-const getFilterCategories = (
-  publishedMaterial: EnhancedAsset[],
-): FilterCategory[] => {
-  const tagGroups = getAllGenericTagGroups(publishedMaterial)
-  const tags = getAllGenericTags(publishedMaterial)
-
-  return tagGroups.map((tagGroup) => {
+const getFilterCategories = (genericTags: GenericTag[]): FilterCategory[] => {
+  const genericTagGroups = getAllGenericTagGroups(genericTags)
+  return genericTagGroups.map((tagGroup) => {
     return {
       id: tagGroup.slug,
       label: tagGroup.title,
       selected: [],
-      filters: tags
+      filters: genericTags
         .filter((tag) => tag.genericTagGroup?.id === tagGroup.id)
         .map((tag) => ({ value: tag.slug, label: tag.title })),
     }
@@ -131,11 +121,13 @@ const PublishedMaterialItem = ({ item }: { item: EnhancedAsset }) => {
 
 interface PublishedMaterialProps {
   organizationPage: Query['getOrganizationPage']
+  genericTagFilters: GenericTag[]
   namespace: Record<string, string>
 }
 
 const PublishedMaterial: Screen<PublishedMaterialProps> = ({
   organizationPage,
+  genericTagFilters,
   namespace,
 }) => {
   const router = useRouter()
@@ -210,8 +202,8 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
   }
 
   const initialFilterCategories = useMemo(
-    () => getFilterCategories(data?.getPublishedMaterial?.items ?? []),
-    [data?.getPublishedMaterial?.items],
+    () => getFilterCategories(genericTagFilters),
+    [genericTagFilters],
   )
 
   const filterCategories = initialFilterCategories.map((category) => ({
@@ -377,10 +369,22 @@ PublishedMaterial.getInitialProps = async ({ apolloClient, locale, query }) => {
     {
       data: { getOrganizationPage },
     },
+    {
+      data: { getOrganization },
+    },
     namespace,
   ] = await Promise.all([
     apolloClient.query<Query, QueryGetOrganizationPageArgs>({
       query: GET_ORGANIZATION_PAGE_QUERY,
+      variables: {
+        input: {
+          slug: query.slug as string,
+          lang: locale as ContentLanguage,
+        },
+      },
+    }),
+    apolloClient.query<Query, QueryGetOrganizationPageArgs>({
+      query: GET_ORGANIZATION_QUERY,
       variables: {
         input: {
           slug: query.slug as string,
@@ -404,12 +408,14 @@ PublishedMaterial.getInitialProps = async ({ apolloClient, locale, query }) => {
       }),
   ])
 
-  if (!getOrganizationPage) {
+  if (!getOrganizationPage || !getOrganization) {
     throw new CustomNextError(404, 'Organization page not found')
   }
 
   return {
     organizationPage: getOrganizationPage,
+    genericTagFilters:
+      getOrganization.publishedMaterialSearchFilterGenericTags ?? [],
     namespace,
     ...getThemeConfig(getOrganizationPage.theme),
   }
