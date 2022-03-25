@@ -33,7 +33,6 @@ const IdentityQuery = gql`
     }
   }
 `
-
 interface ElectPersonFieldBaseProps extends FieldBaseProps {
   errors: FieldErrors<FieldValues>
 }
@@ -146,6 +145,7 @@ const ElectPerson: FC<ElectPersonFieldBaseProps> = ({
 
   useEffect(() => {
     const name = queryData?.identity?.name
+    console.log(queryData)
 
     if (name) {
       setValue(fieldNames.electedPersonName, name)
