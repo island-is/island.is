@@ -1,6 +1,7 @@
-import { IdsUserGuard } from '@island.is/auth-nest-tools'
+import { IdsUserGuard, ScopesGuard } from '@island.is/auth-nest-tools'
 import { CanActivate } from '@nestjs/common'
-import { RolesGuard } from '../../../guards/roles.guard'
+import { ApplicationGuard } from '../../../guards/application.guard'
+import { StaffGuard } from '../../../guards/staff.guard'
 
 import { ApplicationController } from '../application.controller'
 
@@ -11,8 +12,8 @@ describe('ApplicationController - guards', () => {
     guards = Reflect.getMetadata('__guards__', ApplicationController)
   })
 
-  it('should have one guard', () => {
-    expect(guards).toHaveLength(1)
+  it('should have two guards', () => {
+    expect(guards).toHaveLength(2)
   })
 
   describe('IdsUserGuard', () => {
@@ -22,89 +23,20 @@ describe('ApplicationController - guards', () => {
       guard = new guards[0]()
     })
 
-    it('should have IdsUserGuard as quard 0', () => {
+    it('should have IdsUserGuard as guard 0', () => {
       expect(guard).toBeInstanceOf(IdsUserGuard)
     })
   })
-})
 
-describe('ApplicationController - Checks if user has a current application for this period guards', () => {
-  let guards: any[]
-
-  beforeEach(() => {
-    guards = Reflect.getMetadata(
-      '__guards__',
-      ApplicationController.prototype.getCurrentApplication,
-    )
-  })
-
-  it('should have one guard', () => {
-    expect(guards).toHaveLength(1)
-  })
-
-  describe('RolesGuard', () => {
+  describe('ScopesGuard', () => {
     let guard: CanActivate
 
     beforeEach(() => {
-      guard = new guards[0]()
+      guard = new guards[1]()
     })
 
-    it('should have RolesGuard as quard 0', () => {
-      expect(guard).toBeInstanceOf(RolesGuard)
-    })
-  })
-})
-
-describe('ApplicationController - Searches for application by nationalId guards', () => {
-  let guards: any[]
-
-  beforeEach(() => {
-    guards = Reflect.getMetadata(
-      '__guards__',
-      ApplicationController.prototype.findApplication,
-    )
-  })
-
-  it('should have two guards', () => {
-    expect(guards).toHaveLength(2)
-  })
-
-  describe('RolesGuard', () => {
-    let guard: CanActivate
-
-    beforeEach(() => {
-      guard = new guards[0]()
-    })
-
-    it('should have RolesGuard as quard 0', () => {
-      expect(guard).toBeInstanceOf(RolesGuard)
-    })
-  })
-})
-
-describe('ApplicationController - Checking if user is spouse guards', () => {
-  let guards: any[]
-
-  beforeEach(() => {
-    guards = Reflect.getMetadata(
-      '__guards__',
-      ApplicationController.prototype.spouse,
-    )
-  })
-
-  it('should have one guard', () => {
-    expect(guards).toHaveLength(1)
-  })
-
-  describe('RolesGuard', () => {
-    let guard: CanActivate
-
-    beforeEach(() => {
-      guard = new guards[0]()
-    })
-
-    it('should have RolesGuard as quard 0', () => {
-      expect(guard).toBeInstanceOf(RolesGuard)
+    it('should have ScopesGuard as guard 1', () => {
+      expect(guard).toBeInstanceOf(ScopesGuard)
     })
   })
 })
@@ -119,19 +51,19 @@ describe('ApplicationController - Gets all existing applications guards', () => 
     )
   })
 
-  it('should have two guards', () => {
-    expect(guards).toHaveLength(2)
+  it('should have one guard', () => {
+    expect(guards).toHaveLength(1)
   })
 
-  describe('RolesGuard', () => {
+  describe('StaffGuard', () => {
     let guard: CanActivate
 
     beforeEach(() => {
       guard = new guards[0]()
     })
 
-    it('should have RolesGuard as quard 0', () => {
-      expect(guard).toBeInstanceOf(RolesGuard)
+    it('should have StaffGuard as guard 0', () => {
+      expect(guard).toBeInstanceOf(StaffGuard)
     })
   })
 })
@@ -149,6 +81,18 @@ describe('ApplicationController - Get application guards', () => {
   it('should have one guard', () => {
     expect(guards).toHaveLength(1)
   })
+
+  describe('ApplicationGuard', () => {
+    let guard: CanActivate
+
+    beforeEach(() => {
+      guard = new guards[0]()
+    })
+
+    it('should have ApplicationGuard as guard 0', () => {
+      expect(guard).toBeInstanceOf(ApplicationGuard)
+    })
+  })
 })
 
 describe('ApplicationController - Gets all existing applications filters guards', () => {
@@ -161,19 +105,19 @@ describe('ApplicationController - Gets all existing applications filters guards'
     )
   })
 
-  it('should have two guards', () => {
-    expect(guards).toHaveLength(2)
+  it('should have one guard', () => {
+    expect(guards).toHaveLength(1)
   })
 
-  describe('RolesGuard', () => {
+  describe('StaffGuard', () => {
     let guard: CanActivate
 
     beforeEach(() => {
       guard = new guards[0]()
     })
 
-    it('should have RolesGuard as quard 0', () => {
-      expect(guard).toBeInstanceOf(RolesGuard)
+    it('should have StaffGuard as guard 0', () => {
+      expect(guard).toBeInstanceOf(StaffGuard)
     })
   })
 })
@@ -188,46 +132,19 @@ describe('ApplicationController - Updates an existing application and returns ap
     )
   })
 
-  it('should have two guards', () => {
-    expect(guards).toHaveLength(2)
-  })
-
-  describe('RolesGuard', () => {
-    let guard: CanActivate
-
-    beforeEach(() => {
-      guard = new guards[0]()
-    })
-
-    it('should have RolesGuard as quard 0', () => {
-      expect(guard).toBeInstanceOf(RolesGuard)
-    })
-  })
-})
-
-describe('ApplicationController - Creates a new application guards', () => {
-  let guards: any[]
-
-  beforeEach(() => {
-    guards = Reflect.getMetadata(
-      '__guards__',
-      ApplicationController.prototype.create,
-    )
-  })
-
   it('should have one guard', () => {
     expect(guards).toHaveLength(1)
   })
 
-  describe('RolesGuard', () => {
+  describe('StaffGuard', () => {
     let guard: CanActivate
 
     beforeEach(() => {
       guard = new guards[0]()
     })
 
-    it('should have RolesGuard as quard 0', () => {
-      expect(guard).toBeInstanceOf(RolesGuard)
+    it('should have StaffGuard as guard 0', () => {
+      expect(guard).toBeInstanceOf(StaffGuard)
     })
   })
 })

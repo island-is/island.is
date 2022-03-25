@@ -1,6 +1,6 @@
-import { IdsUserGuard } from '@island.is/auth-nest-tools'
+import { IdsUserGuard, ScopesGuard } from '@island.is/auth-nest-tools'
 import { CanActivate } from '@nestjs/common'
-import { RolesGuard } from '../../../guards/roles.guard'
+import { StaffGuard } from '../../../guards/staff.guard'
 
 import { StaffController } from '../staff.controller'
 
@@ -27,15 +27,27 @@ describe('StaffController - Get guards', () => {
     })
   })
 
-  describe('RolesGuard', () => {
+  describe('ScopesGuard', () => {
     let guard: CanActivate
 
     beforeEach(() => {
       guard = new guards[1]()
     })
 
-    it('should have RolesGuard as guard 1', () => {
-      expect(guard).toBeInstanceOf(RolesGuard)
+    it('should have ScopesGuard as guard 1', () => {
+      expect(guard).toBeInstanceOf(ScopesGuard)
+    })
+  })
+
+  describe('StaffGuard', () => {
+    let guard: CanActivate
+
+    beforeEach(() => {
+      guard = new guards[2]()
+    })
+
+    it('should have StaffGuard as guard 2', () => {
+      expect(guard).toBeInstanceOf(StaffGuard)
     })
   })
 })
