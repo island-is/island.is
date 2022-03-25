@@ -103,6 +103,9 @@ jobs:
           echo "::set-output name=PRE_CHECK::push"
 
   prepare:
+    defaults:
+      run:
+        shell: bash
     runs-on: ec2-runners
     container: 
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
@@ -191,6 +194,7 @@ jobs:
           retention-days: 60
 
       - name: Generate docker image tag
+        shell: bash
         id: docker_tags
         run: |
           export DOCKER_BRANCH_TAG=$(echo ${GIT_BRANCH:0:45} | tr "/." "-" )
