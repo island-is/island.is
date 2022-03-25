@@ -71,11 +71,14 @@ const StudentsOverview = ({ application }: Data) => {
 
   useDebounce(
     () => {
-      filter(searchTerm)
+      if (data) {
+        filter(searchTerm)
+      }
     },
     500,
     [data?.drivingLicenseBookStudentsForTeacher, searchTerm],
   )
+  console.log(data, loading, pageStudents)
 
   return (
     <Box marginBottom={10}>
