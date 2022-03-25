@@ -55,13 +55,14 @@ export class AccessControlModel extends Model<AccessControlModel> {
   })
   phone!: string
 
-  @Field({ nullable: true })
-  @Column({
-    type: DataType.STRING,
-    field: 'partner_national_id',
-    allowNull: true,
-  })
-  partnerNationalId!: string
+  // //ATH
+  // @Field({ nullable: true })
+  // @Column({
+  //   type: DataType.STRING,
+  //   field: 'partner_national_id',
+  //   allowNull: true,
+  // })
+  // partnerNationalId!: string
 
   @ForeignKey(() => RecyclingPartnerModel)
   @Column({

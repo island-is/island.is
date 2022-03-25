@@ -22,10 +22,6 @@ export class CreateAccessControlInput {
   
   @Field()
   phone!: string 
-
-  @Field()
-  partnerNationalId!: string
-
 }
 
 @InputType()
@@ -47,9 +43,6 @@ export class UpdateAccessControlInput {
   
   @Field()
   phone!: string 
-
-  @Field()
-  partnerNationalId!: string
 
 }
 
