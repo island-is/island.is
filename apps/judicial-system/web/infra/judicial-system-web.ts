@@ -16,6 +16,7 @@ export const serviceSetup = (services: {
     .secrets({
       NATIONAL_REGISTRY_API_KEY:
         '/k8s/judicial-system/NATIONAL_REGISTRY_API_KEY',
+      LAWYERS_ICELAND: '/k8s/judicial-system/LAWYERS_ICELAND',
     })
     .liveness('/liveness')
     .readiness('/readiness')
