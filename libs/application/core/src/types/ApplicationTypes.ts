@@ -19,6 +19,7 @@ export enum ApplicationTypes {
   CRIMINAL_RECORD = 'CriminalRecord',
   EXAMPLE_PAYMENT = 'ExamplePayment',
   MORTGAGE_CERTIFICATE = 'MortgageCertificate',
+  MARRIAGE_CONDITIONS = 'MarriageConditions',
 }
 
 export const ApplicationConfigurations = {
@@ -100,6 +101,10 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.MORTGAGE_CERTIFICATE]: {
     slug: 'vedbokarvottord',
+    translation: 'mc.application',
+  },
+  [ApplicationTypes.MARRIAGE_CONDITIONS]: {
+    slug: 'hjonavigsla',
     translation: 'mc.application',
   },
 }

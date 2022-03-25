@@ -41,6 +41,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/example-payment'),
   [ApplicationTypes.MORTGAGE_CERTIFICATE]: () =>
     import('@island.is/application/templates/mortgage-certificate'),
+  [ApplicationTypes.MARRIAGE_CONDITIONS]: () =>
+    import('@island.is/application/templates/marriage-conditions'),
 }
 
 export default templates

@@ -197,6 +197,9 @@
       "@island.is/application/templates/login-service": [
         "libs/application/templates/login-service/src/index.ts"
       ],
+      "@island.is/application/templates/marriage-conditions": [
+        "libs/application/templates/marriage-conditions/src/index.ts"
+      ],
       "@island.is/application/templates/meta-application": [
         "libs/application/templates/meta-application/src/index.ts"
       ],
