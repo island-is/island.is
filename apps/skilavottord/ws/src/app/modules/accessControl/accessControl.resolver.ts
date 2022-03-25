@@ -44,6 +44,16 @@ export class AccessControlResolver {
     return this.accessControlService.findAll(isDeveloper)
   }
 
+  //ath accesscontrol
+  @Query(() => [AccessControlModel])
+  async skilavottordAccessControlsByRecyclingPartner(
+    @CurrentUser() user: User,
+    @Args('recyclingPartnerId') recyclingPartnerId: string,
+  ): Promise<AccessControlModel[]> {
+    //recyclingPartnerId = user.partnerId ath
+    return this.accessControlService.findByRecyclingPartner(recyclingPartnerId)
+  }
+
   @Mutation(() => AccessControlModel)
   async createSkilavottordAccessControl(
     @Args('input', { type: () => CreateAccessControlInput })
