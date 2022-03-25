@@ -51,6 +51,11 @@ export const GET_SUPPORT_QNAS_IN_CATEGORY = gql`
       answer {
         ...AllSlices
       }
+      relatedLinks {
+        url
+        text
+      }
+      contactLink
     }
   }
   ${slices}
@@ -73,6 +78,9 @@ export const GET_SUPPORT_CATEGORIES = gql`
       slug
       organization {
         slug
+        namespace {
+          fields
+        }
       }
       importance
     }
@@ -161,6 +169,17 @@ export const GET_SERVICE_WEB_ORGANIZATION = gql`
       email
       serviceWebTitle
       serviceWebEnabled
+      namespace {
+        fields
+      }
+      serviceWebFeaturedImage {
+        url
+        title
+        width
+        height
+        contentType
+        id
+      }
     }
   }
 `

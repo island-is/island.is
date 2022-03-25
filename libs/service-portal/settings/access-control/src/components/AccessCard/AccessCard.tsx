@@ -11,7 +11,7 @@ import {
   Inline,
   Icon,
 } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 
 interface PropTypes {
   title: string
@@ -30,6 +30,7 @@ function AccessCard({
   tags,
   validTo,
 }: PropTypes) {
+  useNamespaces('sp.settings-access-control')
   const { formatMessage } = useLocale()
 
   return (
@@ -55,7 +56,7 @@ function AccessCard({
             {validTo
               ? format(new Date(validTo), 'dd.MM.yyyy')
               : formatMessage({
-                  id: 'service.portal.settings.accessControl:home-view-varies',
+                  id: 'sp.settings-access-control:home-view-varies',
                   defaultMessage: 'Breytilegur',
                 })}
           </Text>
@@ -73,7 +74,7 @@ function AccessCard({
           <Link to={href}>
             <ArrowLink>
               {formatMessage({
-                id: 'service.portal.settings.accessControl:home-view-access',
+                id: 'sp.settings-access-control:home-view-access',
                 defaultMessage: 'Skoða aðgang',
               })}
             </ArrowLink>

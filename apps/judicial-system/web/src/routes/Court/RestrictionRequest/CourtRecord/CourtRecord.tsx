@@ -52,6 +52,7 @@ import {
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   rcCourtRecord as m,
+  courtDocuments,
   closedCourt,
   core,
 } from '@island.is/judicial-system-web/messages'
@@ -59,7 +60,8 @@ import { parseString } from '@island.is/judicial-system-web/src/utils/formatters
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
-import type { Case } from '@island.is/judicial-system/types'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
 import * as Constants from '@island.is/judicial-system/consts'
 
 import { isCourtRecordStepValidRC } from '../../../../utils/validate'
@@ -97,10 +99,6 @@ export const CourtRecord: React.FC = () => {
   useDeb(workingCase, 'accusedAppealAnnouncement')
   useDeb(workingCase, 'prosecutorAppealAnnouncement')
   useDeb(workingCase, 'endOfSessionBookings')
-
-  useEffect(() => {
-    document.title = 'Þingbók - Réttarvörslugátt'
-  }, [])
 
   useEffect(() => {
     if (isCaseUpToDate) {
@@ -258,6 +256,9 @@ export const CourtRecord: React.FC = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
+      <PageHeader
+        title={formatMessage(titles.court.restrictionCases.courtRecord)}
+      />
       <FormContentContainer>
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
@@ -371,14 +372,19 @@ export const CourtRecord: React.FC = () => {
         <Box component="section" marginBottom={8}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
-              Dómskjöl
+              {formatMessage(m.sections.courtDocuments.title)}
             </Text>
           </Box>
           <CourtDocuments
-            title={`Krafa um ${caseTypes[workingCase.type]}`}
-            tagText="Þingmerkt nr. 1"
+            title={formatMessage(
+              m.sections.courtDocuments.firstDocument.title,
+              {
+                caseType: caseTypes[workingCase.type],
+              },
+            )}
+            tagText={formatMessage(courtDocuments.tag, { index: 1 })}
             tagVariant="darkerBlue"
-            text="Rannsóknargögn málsins liggja frammi."
+            text={formatMessage(m.sections.courtDocuments.firstDocument.label)}
             caseId={workingCase.id}
             selectedCourtDocuments={workingCase.courtDocuments ?? []}
             onUpdateCase={updateCase}

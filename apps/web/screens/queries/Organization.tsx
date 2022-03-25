@@ -39,6 +39,9 @@ export const GET_ORGANIZATION_QUERY = gql`
         title
       }
       description
+      namespace {
+        fields
+      }
     }
   }
 `

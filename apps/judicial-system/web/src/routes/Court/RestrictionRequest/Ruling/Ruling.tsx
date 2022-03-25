@@ -27,6 +27,7 @@ import {
   CaseCustodyRestrictions,
   CaseDecision,
   CaseType,
+  completedCaseStates,
   Gender,
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
@@ -52,8 +53,10 @@ import {
   formatNationalId,
 } from '@island.is/judicial-system/formatters'
 import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
-import * as Constants from '@island.is/judicial-system/consts'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
 import { autofillRuling } from '@island.is/judicial-system-web/src/components/RulingInput/RulingInput'
+import * as Constants from '@island.is/judicial-system/consts'
 
 export const Ruling: React.FC = () => {
   const {
@@ -92,10 +95,6 @@ export const Ruling: React.FC = () => {
   useDeb(workingCase, 'courtCaseFacts')
   useDeb(workingCase, 'courtLegalArguments')
   useDeb(workingCase, 'conclusion')
-
-  useEffect(() => {
-    document.title = 'Úrskurður - Réttarvörslugátt'
-  }, [])
 
   useEffect(() => {
     const theCase = workingCase
@@ -271,6 +270,7 @@ export const Ruling: React.FC = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
+      <PageHeader title={formatMessage(titles.court.restrictionCases.ruling)} />
       <FormContentContainer>
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
@@ -297,6 +297,9 @@ export const Ruling: React.FC = () => {
                   (workingCase.registrar !== null &&
                     workingCase.registrar?.id === user?.id)
                 }
+                isCaseCompleted={completedCaseStates.includes(
+                  workingCase.state,
+                )}
               />
             </AccordionItem>
           </Accordion>

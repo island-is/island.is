@@ -23,7 +23,6 @@ export const CaseQuery = gql`
       defenderEmail
       defenderPhoneNumber
       sendRequestToDefender
-      defenderIsSpokesperson
       isHeightenedSecurityLevel
       court {
         id
@@ -136,6 +135,7 @@ export const CaseQuery = gql`
         size
         created
         state
+        key
       }
       isAppealDeadlineExpired
       isAppealGracePeriodExpired

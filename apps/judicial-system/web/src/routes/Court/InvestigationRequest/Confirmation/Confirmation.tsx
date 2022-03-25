@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
+import { useIntl } from 'react-intl'
 
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
 import {
@@ -9,6 +10,8 @@ import SigningModal from '@island.is/judicial-system-web/src/components/SigningM
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import type { RequestSignatureResponse } from '@island.is/judicial-system/types'
 
 import ConfirmationForm from './ConfirmationForm'
@@ -20,7 +23,7 @@ const Confirmation = () => {
     isLoadingWorkingCase,
     caseNotFound,
   } = useContext(FormContext)
-
+  const { formatMessage } = useIntl()
   const [modalVisible, setModalVisible] = useState<boolean>(false)
   const [
     requestRulingSignatureResponse,
@@ -29,10 +32,6 @@ const Confirmation = () => {
 
   const { user } = useContext(UserContext)
   const { requestRulingSignature, isRequestingRulingSignature } = useCase()
-
-  useEffect(() => {
-    document.title = 'Yfirlit úrskurðar - Réttarvörslugátt'
-  }, [])
 
   useEffect(() => {
     if (!modalVisible) {
@@ -67,6 +66,9 @@ const Confirmation = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
+      <PageHeader
+        title={formatMessage(titles.court.investigationCases.conclusion)}
+      />
       {user && (
         <>
           <ConfirmationForm

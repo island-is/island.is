@@ -7,6 +7,9 @@ export const options: Record<BackgroundVariations, Options> = {
   'stafraent-island': {
     textMode: 'dark',
   },
+  mannaudstorg: {
+    textMode: 'light',
+  },
   default: {
     textMode: 'dark',
   },

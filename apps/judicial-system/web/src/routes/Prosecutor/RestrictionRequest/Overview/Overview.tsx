@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 import { AnimatePresence } from 'framer-motion'
@@ -15,6 +15,7 @@ import {
   CaseState,
   CaseType,
   CaseTransition,
+  completedCaseStates,
 } from '@island.is/judicial-system/types'
 import { formatDate, capitalize } from '@island.is/judicial-system/formatters'
 import {
@@ -43,11 +44,13 @@ import {
 } from '@island.is/judicial-system-web/messages'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import CommentsAccordionItem from '@island.is/judicial-system-web/src/components/AccordionItems/CommentsAccordionItem/CommentsAccordionItem'
+import { createCaseResentExplanation } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
 import type { CaseLegalProvisions } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system/consts'
 
 import * as styles from './Overview.css'
-import { createCaseResentExplanation } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
 export const Overview: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false)
@@ -107,10 +110,6 @@ export const Overview: React.FC = () => {
     setModalVisible(true)
   }
 
-  useEffect(() => {
-    document.title = 'Yfirlit kröfu - Réttarvörslugátt'
-  }, [])
-
   return (
     <PageLayout
       workingCase={workingCase}
@@ -121,6 +120,9 @@ export const Overview: React.FC = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
+      <PageHeader
+        title={formatMessage(titles.prosecutor.restrictionCases.overview)}
+      />
       <FormContentContainer>
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
@@ -244,6 +246,7 @@ export const Overview: React.FC = () => {
               email: workingCase.defenderEmail,
               phoneNumber: workingCase.defenderPhoneNumber,
             }}
+            sessionArrangement={workingCase.sessionArrangements}
           />
         </Box>
         <Box component="section" marginBottom={5} data-testid="demands">
@@ -330,6 +333,9 @@ export const Overview: React.FC = () => {
                 <CaseFileList
                   caseId={workingCase.id}
                   files={workingCase.caseFiles ?? []}
+                  isCaseCompleted={completedCaseStates.includes(
+                    workingCase.state,
+                  )}
                 />
               </Box>
             </AccordionItem>

@@ -14,6 +14,8 @@ import {
 } from '@island.is/judicial-system-web/messages'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
 
 import CourtRecordForm from './CourtRecordForm'
 
@@ -28,10 +30,6 @@ const CourtRecord = () => {
     isCaseUpToDate,
   } = useContext(FormContext)
   const { user } = useContext(UserContext)
-
-  useEffect(() => {
-    document.title = 'Þingbók - Réttarvörslugátt'
-  }, [])
 
   useEffect(() => {
     if (isCaseUpToDate) {
@@ -135,8 +133,7 @@ const CourtRecord = () => {
         autofill('sessionBookings', autofillSessionBookings, theCase)
       } else if (
         theCase.sessionArrangements ===
-          SessionArrangements.ALL_PRESENT_SPOKESPERSON &&
-        theCase.defenderIsSpokesperson
+        SessionArrangements.ALL_PRESENT_SPOKESPERSON
       ) {
         autofill(
           'sessionBookings',
@@ -167,6 +164,9 @@ const CourtRecord = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
+      <PageHeader
+        title={formatMessage(titles.court.investigationCases.courtRecord)}
+      />
       <CourtRecordForm
         workingCase={workingCase}
         setWorkingCase={setWorkingCase}
