@@ -1,5 +1,4 @@
 {
-  "allowJs": true,
   "extends": "../../../tsconfig.base.json",
   "files": [],
   "include": [],
