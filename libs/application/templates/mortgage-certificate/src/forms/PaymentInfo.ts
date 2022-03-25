@@ -15,6 +15,7 @@ export const PaymentInfo: Form = buildForm({
   id: 'PaymentInfo',
   title: '',
   mode: FormModes.APPLYING,
+  renderLastScreenButton: true,
   children: [
     buildSection({
       id: 'externalData',
@@ -35,6 +36,11 @@ export const PaymentInfo: Form = buildForm({
           title: m.payment,
           space: 1,
           children: [
+            buildCustomField({
+              id: 'payment.over',
+              title: '',
+              component: 'OverviewPaymentCharge',
+            }),
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
@@ -48,21 +54,7 @@ export const PaymentInfo: Form = buildForm({
                 },
               ],
             }),
-            buildCustomField({
-              id: 'payment.over',
-              title: '',
-              component: 'OverviewPaymentCharge',
-            }),
           ],
-        }),
-        buildDescriptionField({
-          id: 'final',
-          title: 'Takk',
-          description: () => {
-            return {
-              ...m.outroMessage,
-            }
-          },
         }),
       ],
     }),

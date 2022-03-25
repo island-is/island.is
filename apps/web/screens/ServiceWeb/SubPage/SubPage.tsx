@@ -133,6 +133,7 @@ const SubPage: Screen<SubPageProps> = ({
   return (
     <ServiceWebWrapper
       pageTitle={pageTitle}
+      pageDescription={o('serviceWebFeaturedDescription', '')}
       headerTitle={o(
         'serviceWebHeaderTitle',
         n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is'),
