@@ -495,16 +495,23 @@ jobs:
       - build
     steps:
       - name: Check prepare success
+        shell: bash
         run: '[[ ${{ needs.prepare.result }} == "success" ]] || exit 1'
       - name: Check tests success
+        shell: bash
         run: '[[ ${{ needs.tests.result }} != "failure" ]] || exit 1'
       - name: Check e2e success
+        shell: bash
         run: '[[ ${{ needs.e2e.result }} != "failure" ]] || exit 1'
       - name: Check linting success
+        shell: bash
         run: '[[ ${{ needs.linting.result }} != "failure" ]] || exit 1'
       - name: Check formatting success
+        shell: bash
         run: '[[ ${{ needs.formatting.result }} != "failure" ]] || exit 1'
       - name: Check build success
+        shell: bash
         run: '[[ ${{ needs.build.result }} != "failure" ]] || exit 1'
       - name: Announce success
+        shell: bash
         run: echo "Build is successful"
