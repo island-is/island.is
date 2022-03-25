@@ -193,3 +193,10 @@ export interface NationalRegistryResponseBusiness {
   meta?: NationalRegistryMeta
   error?: string
 }
+
+export interface Lawyer {
+  name: string
+  practice: string
+  email: string
+  phoneNr: string
+}
