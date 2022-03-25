@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { useDebounce } from 'react-use'
 import {
   Button,
@@ -17,20 +17,14 @@ import FindStudentModal from '../FindStudentModal/index'
 import { useQuery } from '@apollo/client'
 import { InstructorsStudentsQuery } from '../../graphql/queries'
 import Skeleton from './Skeleton'
+import { DrivingLicenseBookStudentForTeacher as Student } from '../../types/schema'
 import * as styles from '../style.css'
 
-interface Data {
+interface Props {
   application: Application
 }
 
-interface Student {
-  id: string
-  name: string
-  nationalId: string
-  totalLessonCount: number
-}
-
-const StudentsOverview = ({ application }: Data) => {
+const StudentsOverview = ({ application }: Props) => {
   const { formatMessage } = useLocale()
 
   /* table pagination */
@@ -57,7 +51,7 @@ const StudentsOverview = ({ application }: Data) => {
 
   const filter = (searchTerm: string) => {
     if (searchTerm.length) {
-      const filteredList = data.drivingLicenseBookStudentsForTeacher?.filter(
+      const filteredList = data?.drivingLicenseBookStudentsForTeacher?.filter(
         (student: Student) =>
           student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
           student.nationalId.includes(searchTerm),
@@ -71,14 +65,11 @@ const StudentsOverview = ({ application }: Data) => {
 
   useDebounce(
     () => {
-      if (data) {
-        filter(searchTerm)
-      }
+      filter(searchTerm)
     },
     500,
     [data?.drivingLicenseBookStudentsForTeacher, searchTerm],
   )
-  console.log(data, loading, pageStudents)
 
   return (
     <Box marginBottom={10}>
@@ -120,7 +111,7 @@ const StudentsOverview = ({ application }: Data) => {
                 <T.HeadData></T.HeadData>
               </T.Row>
             </T.Head>
-            {loading ? (
+            {loading || (data && !pageStudents) ? (
               <Skeleton />
             ) : (
               <T.Body>

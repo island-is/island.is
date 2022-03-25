@@ -12,7 +12,7 @@ export function paginate(
   pageSize: number,
   pageNumber: number,
 ) {
-  return students.slice((pageNumber - 1) * pageSize, pageNumber * pageSize)
+  return students?.slice((pageNumber - 1) * pageSize, pageNumber * pageSize)
 }
 
 export function pages(studentsLength: number) {
