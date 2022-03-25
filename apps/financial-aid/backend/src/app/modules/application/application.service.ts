@@ -193,7 +193,6 @@ export class ApplicationService {
           include: [{ model: DeductionFactorsModel, as: 'deductionFactors' }],
           separate: true,
           order: [['created', 'DESC']],
-          limit: 1,
         },
         {
           model: DirectTaxPaymentModel,
@@ -379,6 +378,7 @@ export class ApplicationService {
 
     if (update.amount) {
       const amount = await this.amountService.create(update.amount)
+      // console.log(amount)
       updatedApplication?.setDataValue('amount', amount)
     }
 

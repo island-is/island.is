@@ -25,6 +25,7 @@ const AidAmountModal = ({
   const closeModal = (): void => {
     onVisibilityChange(false)
   }
+  console.log(calculations)
 
   return (
     <ModalBase

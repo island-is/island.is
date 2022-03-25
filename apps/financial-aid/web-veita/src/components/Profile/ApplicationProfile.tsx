@@ -11,6 +11,8 @@ import {
   getAidAmountModalInfo,
   UserType,
   ApplicationProfileInfo,
+  estimatedBreakDown,
+  acceptedAmountBreakDown,
 } from '@island.is/financial-aid/shared/lib'
 
 import format from 'date-fns/format'
@@ -107,7 +109,7 @@ const ApplicationProfile = ({
 
   if (application.state === ApplicationState.APPROVED) {
     applicationInfo.push({
-      title: 'Veitt',
+      title: 'Veitt aðstoð',
       content: `${application.amount?.finalAmount.toLocaleString('de-DE')} kr.`,
       onclick: () => {
         setCalculationsModal({ visible: true, type: AmountModal.PROVIDED })
@@ -258,7 +260,11 @@ const ApplicationProfile = ({
 
       <AidAmountModal
         headline={modalInfo.headline}
-        calculations={modalInfo.calculations}
+        calculations={
+          calculationsModal.type === AmountModal.ESTIMATED
+            ? estimatedBreakDown(aidAmount, application.usePersonalTaxCredit)
+            : acceptedAmountBreakDown(application?.amount)
+        }
         isVisible={calculationsModal.visible}
         onVisibilityChange={() => {
           setCalculationsModal({ ...calculationsModal, visible: false })
