@@ -8,6 +8,37 @@ import {
   NationalRegistryUser,
 } from '../../../nationalRegistry'
 import { FlightService } from '../../../flight'
+import { Fund, User } from '@island.is/air-discount-scheme/types'
+import type { User as AuthUser } from '@island.is/auth-nest-tools'
+
+function createTestUser(
+  postalCode: number = 600,
+  fund: Fund = {
+    credit: 6,
+    total: 6,
+    used: 0,
+  },
+  nationalId: string = '0101302399',
+): User {
+  return {
+    postalcode: postalCode,
+    address: 'Testvík 2',
+    city: 'Prufuborg',
+    firstName: 'Prófi',
+    fund: fund,
+    gender: 'kk',
+    lastName: 'Prófsson',
+    middleName: 'Júnitt',
+    nationalId: nationalId,
+  }
+}
+
+const auth: AuthUser = {
+  nationalId: '1326487905',
+  scope: ['@vegagerdin.is/air-discount-scheme-scope'],
+  authorization: '',
+  client: '',
+}
 
 describe('DiscountController', () => {
   let privateDiscountController: PrivateDiscountController
@@ -54,7 +85,13 @@ describe('DiscountController', () => {
     it('should return discount', async () => {
       const nationalId = '1234567890'
       const discountCode = 'ABCDEFG'
-      const discount = new Discount(discountCode, [], nationalId, 0)
+      const discount = new Discount(
+        createTestUser(),
+        discountCode,
+        [],
+        nationalId,
+        0,
+      )
       const getDiscountByNationalIdSpy = jest
         .spyOn(discountService, 'getDiscountByNationalId')
         .mockImplementation(() => Promise.resolve(discount))
@@ -72,7 +109,13 @@ describe('DiscountController', () => {
     it('should return discount', async () => {
       const nationalId = '1234567890'
       const discountCode = 'ABCDEFG'
-      const discount = new Discount(discountCode, [], nationalId, 0)
+      const discount = new Discount(
+        createTestUser(),
+        discountCode,
+        [],
+        nationalId,
+        0,
+      )
       const user: NationalRegistryUser = {
         nationalId,
         firstName: 'Jón',
@@ -90,9 +133,12 @@ describe('DiscountController', () => {
         .spyOn(discountService, 'createDiscountCode')
         .mockImplementation(() => Promise.resolve(discount))
 
-      const result = await privateDiscountController.createDiscountCode({
-        nationalId,
-      })
+      const result = await privateDiscountController.createDiscountCode(
+        {
+          nationalId,
+        },
+        auth,
+      )
 
       expect(getUserSpy).toHaveBeenCalledWith(nationalId)
       expect(createDiscountCodeSpy).toHaveBeenCalledWith(nationalId, 0)
@@ -110,9 +156,12 @@ describe('DiscountController', () => {
       )
 
       try {
-        await privateDiscountController.createDiscountCode({
-          nationalId,
-        })
+        await privateDiscountController.createDiscountCode(
+          {
+            nationalId,
+          },
+          auth,
+        )
         expect('This should not happen').toEqual('')
       } catch (e) {
         expect(getUserSpy).toHaveBeenCalledWith(nationalId)

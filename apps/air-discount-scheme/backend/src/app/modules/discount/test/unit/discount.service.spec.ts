@@ -2,6 +2,29 @@ import { Test } from '@nestjs/testing'
 import { CACHE_MANAGER } from '@nestjs/common'
 
 import { DiscountService, DISCOUNT_CODE_LENGTH } from '../../discount.service'
+import { Fund, User } from '@island.is/air-discount-scheme/types'
+
+function createTestUser(
+  postalCode: number = 600,
+  fund: Fund = {
+    credit: 6,
+    total: 6,
+    used: 0,
+  },
+  nationalId: string = '0101302399',
+): User {
+  return {
+    postalcode: postalCode,
+    address: 'Testvík 2',
+    city: 'Prufuborg',
+    firstName: 'Prófi',
+    fund: fund,
+    gender: 'kk',
+    lastName: 'Prófsson',
+    middleName: 'Júnitt',
+    nationalId: nationalId,
+  }
+}
 
 describe('DiscountService', () => {
   let discountService: DiscountService
@@ -32,7 +55,11 @@ describe('DiscountService', () => {
       const nationalId = '1234567890'
       const cacheManagerSpy = jest.spyOn(cacheManager, 'set')
 
-      const result = await discountService.createDiscountCode(nationalId, [])
+      const result = await discountService.createDiscountCode(
+        createTestUser(),
+        nationalId,
+        [],
+      )
 
       const uuid = cacheManagerSpy.mock.calls[0][0]
       expect(cacheManagerSpy.mock.calls[1][1]).toBe(uuid)

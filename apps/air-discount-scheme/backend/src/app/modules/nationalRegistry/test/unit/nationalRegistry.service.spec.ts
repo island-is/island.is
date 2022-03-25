@@ -16,6 +16,13 @@ import {
   NationalRegistryUser,
 } from '../../nationalRegistry.types'
 
+import type { User as AuthUser } from '@island.is/auth-nest-tools'
+import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
+import {
+  NationalRegistryClientConfig,
+  NationalRegistryClientModule,
+} from '@island.is/clients/national-registry-v2'
+
 const { nationalRegistry } = environment
 
 const nationalRegistryGeneralLookupResponse: NationalRegistryGeneralLookupResponse = {
@@ -106,6 +113,13 @@ const children: string[] = [
   nationalRegistryFamilyLookupResponse.results[2].ssn,
 ]
 
+const auth: AuthUser = {
+  nationalId: '1326487905',
+  scope: ['@vegagerdin.is/air-discount-scheme-scope'],
+  authorization: '',
+  client: '',
+}
+
 describe('NationalRegistryService', () => {
   let nationalRegistryService: NationalRegistryService
   let httpService: HttpService
@@ -113,7 +127,14 @@ describe('NationalRegistryService', () => {
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
-      imports: [HttpModule],
+      imports: [
+        HttpModule,
+        ConfigModule.forRoot({
+          isGlobal: true,
+          load: [XRoadConfig, NationalRegistryClientConfig],
+        }),
+        NationalRegistryClientModule,
+      ],
       providers: [
         NationalRegistryService,
         {
@@ -151,7 +172,10 @@ describe('NationalRegistryService', () => {
         .spyOn(cacheManager, 'set')
         .mockImplementation(() => Promise.resolve(null))
 
-      const result = await nationalRegistryService.getUser(user.nationalId)
+      const result = await nationalRegistryService.getUser(
+        user.nationalId,
+        auth,
+      )
 
       expect(cacheManagerGetSpy).toHaveBeenCalledWith(
         `${CACHE_KEY}_${user.nationalId}_user`,
@@ -174,7 +198,10 @@ describe('NationalRegistryService', () => {
       const httpServiceSpy = jest.spyOn(httpService, 'get')
       const cacheManagerSetSpy = jest.spyOn(cacheManager, 'set')
 
-      const result = await nationalRegistryService.getUser(user.nationalId)
+      const result = await nationalRegistryService.getUser(
+        user.nationalId,
+        auth,
+      )
 
       expect(cacheManagerGetSpy).toHaveBeenCalledWith(
         `${CACHE_KEY}_${user.nationalId}_user`,
@@ -203,7 +230,10 @@ describe('NationalRegistryService', () => {
         .mockImplementation(() => Promise.resolve(null))
       const cacheManagerSetSpy = jest.spyOn(cacheManager, 'set')
 
-      const result = await nationalRegistryService.getUser(user.nationalId)
+      const result = await nationalRegistryService.getUser(
+        user.nationalId,
+        auth,
+      )
 
       expect(cacheManagerGetSpy).toHaveBeenCalledWith(
         `${CACHE_KEY}_${user.nationalId}_user`,
@@ -216,6 +246,8 @@ describe('NationalRegistryService', () => {
     })
   })
 
+  // AIRTODO: replace with forsjá?
+  /*
   describe('getRelatedChildren', () => {
     it('should fetch family from the nationalregistry, filter for children and cache them', async () => {
       const cacheManagerGetSpy = jest
@@ -324,4 +356,5 @@ describe('NationalRegistryService', () => {
       expect(result).toEqual([])
     })
   })
+  */
 })

@@ -11,6 +11,29 @@ import {
   NationalRegistryUser,
 } from '../../../nationalRegistry'
 import { CACHE_MANAGER } from '@nestjs/common'
+import { Fund, User } from '@island.is/air-discount-scheme/types'
+
+function createTestUser(
+  postalCode: number = 600,
+  fund: Fund = {
+    credit: 6,
+    total: 6,
+    used: 0,
+  },
+  nationalId: string = '0101302399',
+): User {
+  return {
+    postalcode: postalCode,
+    address: 'Testvík 2',
+    city: 'Prufuborg',
+    firstName: 'Prófi',
+    fund: fund,
+    gender: 'kk',
+    lastName: 'Prófsson',
+    middleName: 'Júnitt',
+    nationalId: nationalId,
+  }
+}
 
 describe('PublicFlightController', () => {
   let publicFlightController: PublicFlightController
@@ -95,7 +118,13 @@ describe('PublicFlightController', () => {
 
   describe('create', () => {
     const discountCode = 'ABCDEFG'
-    const discount = new Discount(discountCode, [], nationalId, 0)
+    const discount = new Discount(
+      createTestUser(),
+      discountCode,
+      [],
+      nationalId,
+      0,
+    )
     const flightDto: CreateFlightBody = {
       bookingDate: new Date('2020-10-05T14:48:00.000Z'),
       flightLegs: [
