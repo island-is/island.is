@@ -22,11 +22,14 @@ export class AnnouncementOfDeathSubmissionService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {}
 
-  async submitApplication({ application }: TemplateApiModuleActionProps) {
+  async sendTestEmail({ application }: TemplateApiModuleActionProps) {
     await this.sharedTemplateAPIService.sendEmail(
       generateTestEmail,
       application,
     )
+  }
+
+  async submitApplication({ application }: TemplateApiModuleActionProps) {
     return { success: true }
   }
 }
