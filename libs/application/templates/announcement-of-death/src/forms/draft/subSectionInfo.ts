@@ -6,6 +6,7 @@ import {
   buildSubSection,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
+import { Application } from '../../types/schema'
 
 export const subSectionInfo = buildSubSection({
   id: 'infoStep',
@@ -25,18 +26,25 @@ export const subSectionInfo = buildSubSection({
           backgroundColor: 'white',
           width: 'half',
           readOnly: true,
+          defaultValue: (application: Application) =>
+            application.externalData?.nationalRegistry?.data?.fullName ?? '',
         }),
         buildTextField({
           id: 'applicantPhone',
           title: 'Símanúmer',
           placeholder: '',
           width: 'half',
+          defaultValue: (application: Application) =>
+            application.externalData?.userProfile?.data?.mobilePhoneNumber ??
+            '',
         }),
         buildTextField({
           id: 'applicantEmail',
           title: 'Netfang',
           placeholder: '',
           width: 'half',
+          defaultValue: (application: Application) =>
+            application.externalData?.userProfile?.data?.email ?? '',
         }),
         buildSelectField({
           id: 'applicantRelation',
