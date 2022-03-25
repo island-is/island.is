@@ -50,12 +50,19 @@ async function getLawyers(): Promise<Lawyer[]> {
   const response = await fetch('https://lmfi.is/api/lawyers', {
     headers: {
       Authorization: `Basic ${process.env.LAWYERS_ICELAND_API_KEY}`,
+      Accept: 'application/json',
     },
   })
-    .then((response) => response.json())
-    .then((laywers) => laywers.map(mapToLawyer))
 
-  return response
+  if (response.ok) {
+    const lawyers = await response.json()
+    const lawyersMapped = (lawyers || []).map(mapToLawyer)
+    return lawyersMapped
+  }
+
+  const reason = await response.text()
+  console.error('Failed to get lawyers:', reason)
+  throw new Error(reason)
 }
 
 export default async function handler(
