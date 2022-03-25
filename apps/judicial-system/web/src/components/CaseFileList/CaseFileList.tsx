@@ -17,6 +17,7 @@ interface Props {
   hideIcons?: boolean
   canOpenFiles?: boolean
   handleRetryClick?: (id: string) => void
+  isCaseCompleted: boolean
 }
 
 const CaseFileList: React.FC<Props> = (props) => {
@@ -26,6 +27,7 @@ const CaseFileList: React.FC<Props> = (props) => {
     hideIcons = true,
     canOpenFiles = true,
     handleRetryClick,
+    isCaseCompleted,
   } = props
 
   const { handleOpenFile, fileNotFound, dismissFileNotFound } = useFileList({
@@ -44,17 +46,19 @@ const CaseFileList: React.FC<Props> = (props) => {
               file={file as TCaseFile}
               showFileSize={true}
               defaultBackgroundColor={
-                file.state === CaseFileState.BOKEN_LINK ? 'dark100' : 'blue100'
+                file.status === 'broken' ? 'dark100' : 'blue100'
               }
               doneIcon="checkmark"
               hideIcons={
-                hideIcons ||
-                file.state === CaseFileState.BOKEN_LINK ||
-                (file.state === CaseFileState.STORED_IN_RVG &&
-                  file.status !== 'error')
+                hideIcons || file.status === 'broken' || file.status !== 'error'
               }
               onOpenFile={
-                canOpenFiles && file.state === CaseFileState.STORED_IN_RVG
+                canOpenFiles &&
+                file.key &&
+                !(
+                  isCaseCompleted &&
+                  file.state === CaseFileState.STORED_IN_COURT
+                )
                   ? (file: UploadFile) => {
                       if (file.id) {
                         handleOpenFile(file.id)
