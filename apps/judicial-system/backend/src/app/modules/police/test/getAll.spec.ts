@@ -109,7 +109,6 @@ describe('PoliceController - Get all', () => {
       expect(then.error.message).toBe(
         `No police case files found for case ${originalAncestorCaseId}`,
       )
-      console.log(then)
     })
   })
 

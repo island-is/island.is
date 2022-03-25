@@ -106,10 +106,7 @@ export class CaseController {
   ): Promise<Case> {
     this.logger.debug('Creating a new case')
 
-    const createdCase = await this.caseService.internalCreate({
-      ...caseToCreate,
-      origin: CaseOrigin.LOKE,
-    } as InternalCreateCaseDto)
+    const createdCase = await this.caseService.internalCreate(caseToCreate)
 
     this.eventService.postEvent(CaseEvent.CREATE_XRD, createdCase as Case)
 
@@ -126,10 +123,7 @@ export class CaseController {
   ): Promise<Case> {
     this.logger.debug('Creating a new case')
 
-    const createdCase = await this.caseService.create(
-      { ...caseToCreate, origin: CaseOrigin.RVG } as CreateCaseDto,
-      user.id,
-    )
+    const createdCase = await this.caseService.create(caseToCreate, user.id)
 
     this.eventService.postEvent(CaseEvent.CREATE, createdCase as Case)
 
