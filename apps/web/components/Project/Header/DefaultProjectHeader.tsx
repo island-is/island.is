@@ -11,6 +11,12 @@ import * as styles from './DefaultProjectHeader.css'
 import { ProjectPage } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
+const getTextBackgroundColor = (projectPage: ProjectPage) => {
+  if (projectPage.defaultHeaderBackgroundColor)
+    return projectPage.defaultHeaderBackgroundColor
+  return 'linear-gradient(94.09deg, #0044B3 0%, #4783E4 100%)'
+}
+
 interface DefaultProjectHeaderProps {
   projectPage: ProjectPage
 }
@@ -23,9 +29,14 @@ export const DefaultProjectHeader = ({
   const defaultImageIsProvided =
     projectPage.defaultHeaderImage && projectPage.defaultHeaderImage.url
 
+  const textBackgroundColor = getTextBackgroundColor(projectPage)
+
   return (
     <Box className={defaultImageIsProvided ? styles.headerWrapper : undefined}>
-      <Box className={styles.headerBg}>
+      <Box
+        className={styles.headerBg}
+        style={{ background: textBackgroundColor }}
+      >
         <GridContainer>
           <GridRow>
             <GridColumn

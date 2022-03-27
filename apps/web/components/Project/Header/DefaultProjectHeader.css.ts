@@ -2,7 +2,6 @@ import { themeUtils } from '@island.is/island-ui/theme'
 import { style } from '@vanilla-extract/css'
 
 export const headerBg = style({
-  background: 'linear-gradient(94.09deg, #0044B3 0%, #4783E4 100%)',
   height: '300px',
   order: 1,
   ...themeUtils.responsiveStyle({

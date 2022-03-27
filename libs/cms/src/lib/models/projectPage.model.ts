@@ -58,6 +58,9 @@ export class ProjectPage {
 
   @Field(() => Image, { nullable: true })
   defaultHeaderImage!: Image | null
+
+  @Field()
+  defaultHeaderBackgroundColor!: string
 }
 
 export const mapProjectPage = ({ sys, fields }: IProjectPage): ProjectPage => ({
@@ -80,4 +83,5 @@ export const mapProjectPage = ({ sys, fields }: IProjectPage): ProjectPage => ({
   defaultHeaderImage: fields.defaultHeaderImage
     ? mapImage(fields.defaultHeaderImage)
     : null,
+  defaultHeaderBackgroundColor: fields.defaultHeaderBackgroundColor ?? '',
 })
