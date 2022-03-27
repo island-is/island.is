@@ -246,8 +246,6 @@ const ProjectPage: Screen<PageProps> = ({
     }
   }, [renderSlicesAsTabs, subpage, router.asPath])
 
-  console.log(projectPage)
-
   return (
     <>
       <HeadWithSocialSharing

@@ -7,9 +7,9 @@ import {
   GridColumn,
   Link,
 } from '@island.is/island-ui/core'
-import * as styles from './DefaultProjectHeader.css'
 import { ProjectPage } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import * as styles from './DefaultProjectHeader.css'
 
 const getTextBackgroundColor = (projectPage: ProjectPage) => {
   if (projectPage.defaultHeaderBackgroundColor)
