@@ -68,8 +68,10 @@ const FinancialAidTemplate: ApplicationTemplate<
         on: {
           SUBMIT: [
             //TODO check if works when national registry works
-            { target: ApplicationStates.DRAFT, cond: isMuncipalityRegistered },
-            { target: ApplicationStates.MUNCIPALITYNOTREGISTERED },
+            {
+              target: ApplicationStates.MUNCIPALITYNOTREGISTERED,
+              cond: isMuncipalityRegistered,
+            },
             {
               target: ApplicationStates.DRAFT,
               cond: hasActiveCurrentApplication,
