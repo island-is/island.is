@@ -135,6 +135,7 @@ export const CaseQuery = gql`
         size
         created
         state
+        key
       }
       isAppealDeadlineExpired
       isAppealGracePeriodExpired

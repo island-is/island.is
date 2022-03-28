@@ -1,3 +1,3 @@
-import Requests from '@island.is/judicial-system-web/src/routes/Shared/Requests/Requests'
+import Cases from '@island.is/judicial-system-web/src/routes/Shared/Cases/Cases'
 
-export default Requests
+export default Cases

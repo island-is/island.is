@@ -19,6 +19,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import {
   DataValue,
+  formatBankInfo,
   handleServerError,
   Label,
   RadioValue,
@@ -42,7 +43,14 @@ import {
 // import PaymentsTable from '../PaymentSchedule/PaymentsTable'
 // import { getEstimatedPayments } from '../PaymentSchedule/estimatedPaymentsQuery'
 import { parentalLeaveFormMessages } from '../../lib/messages'
-import { YES, NO, MANUAL, SPOUSE, ParentalRelations } from '../../constants'
+import {
+  YES,
+  NO,
+  MANUAL,
+  SPOUSE,
+  ParentalRelations,
+  NO_UNION,
+} from '../../constants'
 import { YesOrNo } from '../../types'
 import { SummaryTimeline } from '../components/SummaryTimeline/SummaryTimeline'
 import { SummaryRights } from '../Rights/SummaryRights'
@@ -407,7 +415,7 @@ export const Review: FC<ReviewScreenProps> = ({
                 ]}
                 onSelect={(s: string) => {
                   setStateful((prev) => {
-                    const union = s === NO ? '' : prev.union
+                    const union = s === NO ? NO_UNION : prev.union
                     setValue('payments.union', union)
                     return {
                       ...prev,
@@ -544,7 +552,7 @@ export const Review: FC<ReviewScreenProps> = ({
                 label={formatMessage(
                   parentalLeaveFormMessages.shared.paymentInformationBank,
                 )}
-                value={bank}
+                value={formatBankInfo(bank)}
               />
             </GridColumn>
           </GridRow>
