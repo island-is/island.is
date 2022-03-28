@@ -98,10 +98,6 @@ jobs:
         if: steps.node-modules.outputs.cache-hit != 'true'
         run: ./scripts/ci/10_prepare-host-deps.sh
 
-      - name: Run Usermod for user
-        shell: bash
-        run:  sudo usermod -a -G docker ec2-user
-
       - run: |
           echo "HEAD=$GITHUB_SHA" >> $GITHUB_ENV
           export HEAD_REF="$GITHUB_HEAD_REF"
