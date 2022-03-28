@@ -2,6 +2,7 @@ import { StaffModel } from '../models/staff.model'
 
 import { createTestingStaffModule } from './createTestingStaffModule'
 import { Staff, StaffRole } from '@island.is/financial-aid/shared/lib'
+import { Op } from 'sequelize'
 
 interface Then {
   result: StaffModel[]
@@ -36,7 +37,7 @@ describe('StaffController - Get staff for municipality', () => {
       id: '0',
       nationalId: '0000000000',
       name: 'Test name',
-      municipalityId: '0',
+      municipalityIds: ['0'],
       roles: [StaffRole.EMPLOYEE],
       active: true,
       municipalityName: 'here',
@@ -52,7 +53,7 @@ describe('StaffController - Get staff for municipality', () => {
     it('should request staff by municipality id from the database', () => {
       expect(mockFindByMunicipalityId).toHaveBeenCalledWith({
         where: {
-          municipalityId: staff.municipalityId,
+          municipalityIds: { [Op.contains]: staff.municipalityIds },
         },
         order: [
           ['active', 'DESC'],
@@ -68,7 +69,7 @@ describe('StaffController - Get staff for municipality', () => {
       id: '0',
       nationalId: '0000000000',
       name: 'Test name',
-      municipalityId: '0',
+      municipalityIds: ['0'],
       roles: [StaffRole.EMPLOYEE],
       active: true,
       municipalityName: 'here',
@@ -79,7 +80,7 @@ describe('StaffController - Get staff for municipality', () => {
         id: '1',
         nationalId: '0000000001',
         name: 'Test name 1',
-        municipalityId: '0',
+        municipalityIds: ['0'],
         roles: [StaffRole.EMPLOYEE],
         active: true,
         municipalityName: 'here',
@@ -88,7 +89,7 @@ describe('StaffController - Get staff for municipality', () => {
         id: '2',
         nationalId: '0000000002',
         name: 'Test name 2',
-        municipalityId: '0',
+        municipalityIds: ['0'],
         roles: [StaffRole.EMPLOYEE],
         active: true,
         municipalityName: 'here',
@@ -117,7 +118,7 @@ describe('StaffController - Get staff for municipality', () => {
       id: '0',
       nationalId: '0000000000',
       name: 'Test name',
-      municipalityId: '0',
+      municipalityIds: ['0'],
       roles: [StaffRole.EMPLOYEE],
       active: true,
       municipalityName: 'here',
