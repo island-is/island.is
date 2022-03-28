@@ -44,8 +44,6 @@ export class MunicipalityController {
   async getById(@Param('id') id: string): Promise<MunicipalityModel> {
     const municipality = await this.municipalityService.findByMunicipalityId(id)
 
-    console.log('ferdu hingad?')
-
     if (!municipality) {
       throw new NotFoundException(`municipality ${id} not found`)
     }

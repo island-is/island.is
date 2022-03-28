@@ -11,8 +11,6 @@ import {
   getAidAmountModalInfo,
   UserType,
   ApplicationProfileInfo,
-  estimatedBreakDown,
-  acceptedAmountBreakDown,
 } from '@island.is/financial-aid/shared/lib'
 
 import format from 'date-fns/format'

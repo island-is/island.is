@@ -36,8 +36,6 @@ export class AmountService {
           ).then((deductionFactors) => {
             amountResponse?.setDataValue('deductionFactors', deductionFactors)
           })
-          // console.log(deductionFactors, amountResponse, 'blasdlasdl')
-          // amountResponse.setDataValue('deductionFactors', deductionFactors)
           return amountResponse
         })
     })
