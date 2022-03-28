@@ -14,6 +14,7 @@ export class TeachersProvider extends BasicDataProvider {
       query DrivingLicenseTeachers {
         drivingLicenseTeachers {
           name
+          nationalId
         }
       }
     `
