@@ -187,7 +187,12 @@ export const InputPhone: FC<Props> = ({
         )}
       >
         <Box display="flex" flexWrap="wrap" alignItems="center">
-          <Box marginRight={3} width="full" className={styles.formContainer}>
+          <Box
+            marginRight={3}
+            width="full"
+            className={styles.formContainer}
+            id="tel-container"
+          >
             <Columns>
               <Column width="content">
                 <Box className={styles.countryCodeInput}>

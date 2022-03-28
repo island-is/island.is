@@ -182,7 +182,12 @@ export const InputEmail: FC<Props> = ({
         )}
       >
         <Box display="flex" flexWrap="wrap" alignItems="center">
-          <Box marginRight={3} width="full" className={styles.formContainer}>
+          <Box
+            id="email-container"
+            marginRight={3}
+            width="full"
+            className={styles.formContainer}
+          >
             <InputController
               control={control}
               backgroundColor="blue"

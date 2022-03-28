@@ -23,6 +23,8 @@ if (userMocked) {
       ApiScope.financeSalary,
       ApiScope.internal,
       ApiScope.meDetails,
+      UserProfileScope.read,
+      UserProfileScope.write,
     ],
   })
 } else {

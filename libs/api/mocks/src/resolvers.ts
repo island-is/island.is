@@ -6,6 +6,7 @@ import { resolvers as searchResolvers } from './domains/search'
 import { resolvers as applicationsResolvers } from './domains/applications'
 import { resolvers as assetResolvers } from './domains/assets'
 import { resolvers as financeResolvers } from './domains/finance'
+import { resolvers as userprofileResolvers } from './domains/userprofile'
 
 export const resolvers = createResolvers<Resolvers>(
   merge(
@@ -15,5 +16,6 @@ export const resolvers = createResolvers<Resolvers>(
     applicationsResolvers,
     assetResolvers,
     financeResolvers,
+    userprofileResolvers,
   ),
 )
