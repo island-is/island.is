@@ -306,6 +306,10 @@ jobs:
         shell: bash
         run: sudo usermod -a -G docker runner
 
+      - name: Set Usermod on machine
+        shell: bash
+        run: sudo usermod -a -G docker ec2-user
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
         with:
