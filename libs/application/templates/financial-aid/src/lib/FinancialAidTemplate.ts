@@ -16,7 +16,7 @@ import { application } from './messages'
 import { dataSchema } from './dataSchema'
 import {
   hasSpouse,
-  isMuncipalityRegistered,
+  isMuncipalityNotRegistered,
   hasActiveCurrentApplication,
   hasSpouseCheck,
 } from './utils'
@@ -70,7 +70,7 @@ const FinancialAidTemplate: ApplicationTemplate<
             //TODO check if works when national registry works
             {
               target: ApplicationStates.MUNCIPALITYNOTREGISTERED,
-              cond: isMuncipalityRegistered,
+              cond: isMuncipalityNotRegistered,
             },
             {
               target: ApplicationStates.DRAFT,
