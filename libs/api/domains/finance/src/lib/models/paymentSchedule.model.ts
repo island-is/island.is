@@ -22,6 +22,18 @@ export class PaymentSchedule {
 
   @Field()
   totalAmount!: number
+
+  @Field()
+  unpaidAmount!: number
+
+  @Field()
+  unpaidCount!: string
+
+  @Field()
+  downloadServiceURL!: string
+
+  @Field({ nullable: true })
+  documentID?: string
 }
 @ObjectType()
 export class PaymentScheduleData {

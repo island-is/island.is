@@ -155,7 +155,23 @@ export class FinanceResolver {
   @Query(() => PaymentScheduleModel)
   @Audit()
   async getPaymentSchedule(@CurrentUser() user: User) {
-    return this.financeService.getPaymentSchedules(user.nationalId, user)
+    const res = await this.financeService.getPaymentSchedules(
+      user.nationalId,
+      user,
+    )
+    const data = res?.myPaymentSchedule.paymentSchedules.map((item) => {
+      return {
+        ...item,
+        downloadServiceURL: `${this.downloadServiceConfig.baseUrl}/download/v1/finance/${item.documentID}`,
+      }
+    })
+
+    return {
+      myPaymentSchedule: {
+        nationalId: res?.myPaymentSchedule.nationalId,
+        paymentSchedules: data,
+      },
+    }
   }
 
   @Query(() => graphqlTypeJson)

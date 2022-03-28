@@ -92,19 +92,23 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
             <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
               <Box display="flex" justifyContent="flexEnd" marginTop={1}>
                 <Box paddingRight={2}>
-                  <Link to={ServicePortalPath.FinanceSchedule}>
+                  <a
+                    href="https://island.is/umsoknir/greidsluaaetlun/"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
                     <Button
                       colorScheme="default"
-                      icon="document"
-                      iconType="filled"
-                      preTextIconType="filled"
+                      icon="open"
+                      iconType="outline"
+                      preTextIconType="outline"
                       size="default"
                       type="button"
                       variant="utility"
                     >
-                      {formatMessage(m.financeSchedules)}
+                      {formatMessage(m.financeScheduleApplication)}
                     </Button>
-                  </Link>
+                  </a>
                 </Box>
                 <Box paddingRight={2}>
                   <Button

@@ -36,6 +36,10 @@ export const GET_FINANCE_PAYMENT_SCHEDULES = gql`
           scheduleStatus
           scheduleType
           totalAmount
+          unpaidAmount
+          unpaidCount
+          documentID
+          downloadServiceURL
         }
       }
     }
@@ -45,12 +49,6 @@ export const GET_FINANCE_PAYMENT_SCHEDULES = gql`
 const FinanceSchedule: ServicePortalModuleComponent = () => {
   useNamespaces('sp.finance-schedule')
   const { formatMessage } = useLocale()
-
-  // const {
-  //   data: debtStatusData,
-  //   loading: debtStatusLoading,
-  //   error: debtStatusError,
-  // } = useQuery<Query>(GET_FINANCE_DEBT_STATUS)
 
   const {
     data: paymentSchedulesData,

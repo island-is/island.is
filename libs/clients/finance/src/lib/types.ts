@@ -92,6 +92,9 @@ export type PaymentSchedule = {
   scheduleStatus: ScheduleStatus
   scheduleNumber: string
   totalAmount: number
+  unpaidAmount: number
+  unpaidCount: string
+  documentID: string
 }
 
 export type PaymentScheduleType = {
