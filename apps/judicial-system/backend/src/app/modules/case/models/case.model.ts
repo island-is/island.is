@@ -22,6 +22,7 @@ import {
   CaseType,
   SessionArrangements,
   CourtDocument,
+  CaseOrigin,
 } from '@island.is/judicial-system/types'
 
 import { CaseFile } from '../../file'
@@ -59,6 +60,16 @@ export class Case extends Model<Case> {
   @UpdatedAt
   @ApiProperty()
   modified!: Date
+
+  /**********
+   * The case origin - example: RVG
+   **********/
+  @Column({
+    type: DataType.ENUM,
+    allowNull: false,
+    values: Object.values(CaseOrigin),
+  })
+  origin!: CaseOrigin
 
   /**********
    * The case type - example: CUSTODY
