@@ -8,12 +8,11 @@ import { errors as errorMessages } from '@island.is/judicial-system-web/messages
 
 const useLawyers = (): Lawyer[] => {
   const { formatMessage } = useIntl()
-  const [mounted, setMounted] = useState(false)
-  useEffect(() => setMounted(true), [])
 
   const { data, error } = useSWR<Lawyer[]>(
-    mounted ? '/api/lawyers' : null,
+    '/api/lawyers',
     (url: string) => fetch(url).then((res) => res.json()),
+    { revalidateOnMount: true, errorRetryCount: 2 },
   )
 
   if (error) {
