@@ -66,11 +66,7 @@ describe('FileController - Upload case file to court', () => {
     const theCase = { id: caseId } as Case
     const fileId = uuid()
     const key = `uploads/${caseId}/${uuid()}/test.txt`
-    const caseFile = {
-      id: fileId,
-      state: CaseFileState.STORED_IN_RVG,
-      key,
-    } as CaseFile
+    const caseFile = { id: fileId, key } as CaseFile
     let mockObjectExists: jest.Mock
 
     beforeEach(async () => {
@@ -90,11 +86,7 @@ describe('FileController - Upload case file to court', () => {
     const theCase = { id: caseId } as Case
     const fileId = uuid()
     const key = `uploads/${caseId}/${uuid()}/test.txt`
-    const caseFile = {
-      id: fileId,
-      state: CaseFileState.STORED_IN_RVG,
-      key,
-    } as CaseFile
+    const caseFile = { id: fileId, key } as CaseFile
     let mockGetObject: jest.Mock
 
     beforeEach(async () => {
@@ -117,13 +109,14 @@ describe('FileController - Upload case file to court', () => {
     const courtCaseNumber = 'R-999/2021'
     const theCase = { id: caseId, courtId, courtCaseNumber } as Case
     const fileId = uuid()
+    const key = `uploads/${caseId}/${uuid()}/test.txt`
     const fileName = 'test.txt'
     const fileType = 'text/plain'
     const caseFile = {
       id: fileId,
+      key,
       name: fileName,
       type: fileType,
-      state: CaseFileState.STORED_IN_RVG,
     } as CaseFile
     const content = Buffer.from('Test content')
     let mockCreateDocument: jest.Mock
@@ -157,10 +150,8 @@ describe('FileController - Upload case file to court', () => {
     const caseId = uuid()
     const theCase = { id: caseId } as Case
     const fileId = uuid()
-    const caseFile = {
-      id: fileId,
-      state: CaseFileState.STORED_IN_RVG,
-    } as CaseFile
+    const key = `uploads/${caseId}/${uuid()}/test.txt`
+    const caseFile = { id: fileId, key } as CaseFile
     const content = Buffer.from('Test content')
     const documentId = uuid()
     let mockUpdate: jest.Mock
@@ -179,40 +170,9 @@ describe('FileController - Upload case file to court', () => {
 
     it('should update case file state', () => {
       expect(mockUpdate).toHaveBeenCalledWith(
-        { state: CaseFileState.STORED_IN_COURT, key: documentId },
+        { state: CaseFileState.STORED_IN_COURT },
         { where: { id: fileId } },
       )
-    })
-  })
-
-  describe('AWS S3 delete file', () => {
-    const user = {} as User
-    const caseId = uuid()
-    const theCase = { id: caseId } as Case
-    const fileId = uuid()
-    const key = `uploads/${caseId}/${uuid()}/test.txt`
-    const caseFile = {
-      id: fileId,
-      state: CaseFileState.STORED_IN_RVG,
-      key,
-    } as CaseFile
-    const content = Buffer.from('Test content')
-    let mockDeleteObject: jest.Mock
-
-    beforeEach(async () => {
-      mockDeleteObject = mockAwsS3Service.deleteObject as jest.Mock
-      const mockObjectExists = mockAwsS3Service.objectExists as jest.Mock
-      mockObjectExists.mockResolvedValueOnce(true)
-      const mockGetObject = mockAwsS3Service.getObject as jest.Mock
-      mockGetObject.mockResolvedValueOnce(content)
-      const mockUpdate = mockFileModel.update as jest.Mock
-      mockUpdate.mockResolvedValueOnce([1])
-
-      await givenWhenThen(caseId, fileId, user, theCase, caseFile)
-    })
-
-    it('should attempt to delete the file from AWS S3', () => {
-      expect(mockDeleteObject).toHaveBeenCalledWith(key)
     })
   })
 
@@ -221,10 +181,8 @@ describe('FileController - Upload case file to court', () => {
     const caseId = uuid()
     const theCase = { id: caseId } as Case
     const fileId = uuid()
-    const caseFile = {
-      id: fileId,
-      state: CaseFileState.STORED_IN_RVG,
-    } as CaseFile
+    const key = `uploads/${caseId}/${uuid()}/test.txt`
+    const caseFile = { id: fileId, key } as CaseFile
     const content = Buffer.from('Test content')
     let then: Then
 
@@ -251,10 +209,8 @@ describe('FileController - Upload case file to court', () => {
     const caseId = uuid()
     const theCase = { id: caseId } as Case
     const fileId = uuid()
-    const caseFile = {
-      id: fileId,
-      state: CaseFileState.STORED_IN_RVG,
-    } as CaseFile
+    const key = `uploads/${caseId}/${uuid()}/test.txt`
+    const caseFile = { id: fileId, key } as CaseFile
     const content = Buffer.from('Test content')
     let then: Then
 
@@ -302,9 +258,7 @@ describe('FileController - Upload case file to court', () => {
     const caseId = uuid()
     const theCase = { id: caseId } as Case
     const fileId = uuid()
-    const caseFile = {
-      id: fileId,
-    } as CaseFile
+    const caseFile = { id: fileId } as CaseFile
     let then: Then
 
     beforeEach(async () => {
@@ -324,10 +278,8 @@ describe('FileController - Upload case file to court', () => {
     const caseId = uuid()
     const theCase = { id: caseId } as Case
     const fileId = uuid()
-    const caseFile = {
-      id: fileId,
-      state: CaseFileState.STORED_IN_RVG,
-    } as CaseFile
+    const key = `uploads/${caseId}/${uuid()}/test.txt`
+    const caseFile = { id: fileId, key } as CaseFile
     let mockUpdate: jest.Mock
     let then: Then
 
@@ -339,9 +291,9 @@ describe('FileController - Upload case file to court', () => {
       then = await givenWhenThen(caseId, fileId, user, theCase, caseFile)
     })
 
-    it('should set as broken link', () => {
+    it('should remove the key', () => {
       expect(mockUpdate).toHaveBeenCalledWith(
-        { state: CaseFileState.BOKEN_LINK },
+        { key: null },
         { where: { id: fileId } },
       )
     })
@@ -359,10 +311,8 @@ describe('FileController - Upload case file to court', () => {
     const caseId = uuid()
     const theCase = { id: caseId } as Case
     const fileId = uuid()
-    const caseFile = {
-      id: fileId,
-      state: CaseFileState.STORED_IN_RVG,
-    } as CaseFile
+    const key = `uploads/${caseId}/${uuid()}/test.txt`
+    const caseFile = { id: fileId, key } as CaseFile
     let then: Then
 
     beforeEach(async () => {
@@ -383,10 +333,8 @@ describe('FileController - Upload case file to court', () => {
     const caseId = uuid()
     const theCase = { id: caseId } as Case
     const fileId = uuid()
-    const caseFile = {
-      id: fileId,
-      state: CaseFileState.STORED_IN_RVG,
-    } as CaseFile
+    const key = `uploads/${caseId}/${uuid()}/test.txt`
+    const caseFile = { id: fileId, key } as CaseFile
     let then: Then
 
     beforeEach(async () => {
@@ -409,10 +357,8 @@ describe('FileController - Upload case file to court', () => {
     const caseId = uuid()
     const theCase = { id: caseId } as Case
     const fileId = uuid()
-    const caseFile = {
-      id: fileId,
-      state: CaseFileState.STORED_IN_RVG,
-    } as CaseFile
+    const key = `uploads/${caseId}/${uuid()}/test.txt`
+    const caseFile = { id: fileId, key } as CaseFile
     const content = Buffer.from('Test content')
     let then: Then
 
@@ -438,10 +384,8 @@ describe('FileController - Upload case file to court', () => {
     const caseId = uuid()
     const theCase = { id: caseId } as Case
     const fileId = uuid()
-    const caseFile = {
-      id: fileId,
-      state: CaseFileState.STORED_IN_RVG,
-    } as CaseFile
+    const key = `uploads/${caseId}/${uuid()}/test.txt`
+    const caseFile = { id: fileId, key } as CaseFile
     const content = Buffer.from('Test content')
     let then: Then
 

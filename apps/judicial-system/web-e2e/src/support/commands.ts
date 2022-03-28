@@ -77,6 +77,10 @@ Cypress.Commands.add('stubAPIResponses', () => {
     },
   ).as('getPersonByNationalId')
 
+  cy.intercept('GET', '**/api/lawyers', (req) => {
+    req.reply({ fixture: 'lawyersResponse' })
+  }).as('lawyers')
+
   cy.intercept('POST', '**/api/graphql', (req) => {
     req.reply(getFixtureFor(req))
   })
