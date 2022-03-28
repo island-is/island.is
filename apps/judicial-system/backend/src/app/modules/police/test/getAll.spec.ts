@@ -3,6 +3,8 @@ import { uuid } from 'uuidv4'
 
 import { BadGatewayException, NotFoundException } from '@nestjs/common'
 
+import { User } from '@island.is/judicial-system/types'
+
 import { Case } from '../../case'
 import { PoliceCaseFile } from '../models/policeCaseFile.model'
 import { createTestingPoliceModule } from './createTestingPoliceModule'
@@ -11,10 +13,14 @@ jest.mock('isomorphic-fetch')
 
 interface Then {
   result: PoliceCaseFile[]
-  error: Error
+  error: Error & { detail: string }
 }
 
-type GivenWhenThen = (caseId: string, theCase: Case) => Promise<Then>
+type GivenWhenThen = (
+  caseId: string,
+  user: User,
+  theCase: Case,
+) => Promise<Then>
 
 describe('PoliceController - Get all', () => {
   let givenWhenThen: GivenWhenThen
@@ -22,11 +28,15 @@ describe('PoliceController - Get all', () => {
   beforeEach(async () => {
     const { policeController } = await createTestingPoliceModule()
 
-    givenWhenThen = async (caseId: string, theCase: Case): Promise<Then> => {
+    givenWhenThen = async (
+      caseId: string,
+      user: User,
+      theCase: Case,
+    ): Promise<Then> => {
       const then = {} as Then
 
       await policeController
-        .getAll(caseId, theCase)
+        .getAll(caseId, user, theCase)
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 
@@ -35,11 +45,12 @@ describe('PoliceController - Get all', () => {
   })
 
   describe('remote call', () => {
+    const user = {} as User
     const originalAncestorCaseId = uuid()
     const theCsae = { id: originalAncestorCaseId } as Case
 
     beforeEach(async () => {
-      await givenWhenThen(uuid(), theCsae)
+      await givenWhenThen(uuid(), user, theCsae)
     })
 
     it('should request police files for the correct case', () => {
@@ -55,6 +66,8 @@ describe('PoliceController - Get all', () => {
   })
 
   describe('police files found', () => {
+    const theUser = {} as User
+    const theCase = {} as Case
     let then: Then
 
     beforeEach(async () => {
@@ -67,7 +80,7 @@ describe('PoliceController - Get all', () => {
         ],
       })
 
-      then = await givenWhenThen(uuid(), {} as Case)
+      then = await givenWhenThen(uuid(), theUser, theCase)
     })
 
     it('should return police case files', () => {
@@ -79,14 +92,16 @@ describe('PoliceController - Get all', () => {
   })
 
   describe('police files not found', () => {
+    const user = {} as User
     const originalAncestorCaseId = uuid()
+    const theCase = { id: originalAncestorCaseId } as Case
     let then: Then
 
     beforeEach(async () => {
       const mockFetch = fetch as jest.Mock
-      mockFetch.mockResolvedValueOnce({ ok: false })
+      mockFetch.mockResolvedValueOnce({ ok: false, text: () => 'Some error' })
 
-      then = await givenWhenThen(uuid(), { id: originalAncestorCaseId } as Case)
+      then = await givenWhenThen(uuid(), user, theCase)
     })
 
     it('should throw not found exception', () => {
@@ -98,14 +113,16 @@ describe('PoliceController - Get all', () => {
   })
 
   describe('remote call fails', () => {
+    const user = {} as User
     const originalAncestorCaseId = uuid()
+    const theCase = { id: originalAncestorCaseId } as Case
     let then: Then
 
     beforeEach(async () => {
       const mockFetch = fetch as jest.Mock
       mockFetch.mockRejectedValueOnce(new Error('Some error'))
 
-      then = await givenWhenThen(uuid(), { id: originalAncestorCaseId } as Case)
+      then = await givenWhenThen(uuid(), user, theCase)
     })
 
     it('should throw bad gateway exception', () => {
