@@ -108,6 +108,15 @@ npx sequelize-cli migration:generate --name update-case
 
 this will generate a migration file with empty exports for up (Altering commands) and down (Reverting commands).
 
+To run the migrations on the local database run:
+
+```
+# for UP migrations
+yarn nx run judicial-system-backend:migrate
+# for DOWN migrations
+yarn nx run judicial-system-backend:migrate/undo
+```
+
 ## Web
 
 A platform for the exchange of data, information, formal decisions and notifications between parties in the Icelandic judicial system.
