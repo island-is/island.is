@@ -12,6 +12,7 @@ export const serviceSetup = (services: {
     .secrets({
       SECRET_TOKEN: '/k8s/judicial-system/SECRET_TOKEN',
     })
+    .replicaCount({ min: 1, max: 1, default: 1 })
     .command('node')
     .args('main.js')
     .extraAttributes({
