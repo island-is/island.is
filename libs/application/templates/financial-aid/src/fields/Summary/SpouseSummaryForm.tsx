@@ -55,7 +55,7 @@ const SpouseSummaryForm = ({
 
   return (
     <>
-      <Box marginTop={[4, 4, 5]}>
+      <Box>
         <DescriptionText text={m.summaryForm.general.calculationsOverview} />
       </Box>
 

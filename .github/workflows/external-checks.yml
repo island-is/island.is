@@ -7,7 +7,7 @@ on:
 jobs:
   codeowners-check:
     name: Lint CODEOWNERS
-    runs-on: ubuntu-20.04
+    runs-on: kubernetes-runner
 
     steps:
       - uses: actions/checkout@v2
@@ -42,7 +42,7 @@ jobs:
 
   gitbook-check:
     name: Lint gitbook
-    runs-on: ubuntu-20.04
+    runs-on: kubernetes-runner
 
     steps:
       - uses: actions/checkout@v2

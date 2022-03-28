@@ -49,7 +49,7 @@ function mapToLawyer(lawyer: LawyerFull): Lawyer {
 async function getLawyers(): Promise<Lawyer[]> {
   const response = await fetch('https://lmfi.is/api/lawyers', {
     headers: {
-      Authorization: `Basic ${process.env.LAWYERS_ICELAND}`,
+      Authorization: `Basic ${process.env.LAWYERS_ICELAND_API_KEY}`,
     },
   })
     .then((response) => response.json())

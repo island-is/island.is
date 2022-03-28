@@ -21,6 +21,7 @@ import {
 } from '@island.is/dokobit-signing'
 import { EmailService } from '@island.is/email-service'
 import {
+  CaseOrigin,
   isRestrictionCase,
   SessionArrangements,
   UserRole,
@@ -543,7 +544,10 @@ export class CaseService {
     return this.sequelize
       .transaction(async (transaction) => {
         const caseId = await this.createCase(
-          caseToCreate,
+          {
+            ...caseToCreate,
+            origin: CaseOrigin.LOKE,
+          } as InternalCreateCaseDto,
           prosecutorId,
           transaction,
         )
@@ -571,7 +575,7 @@ export class CaseService {
     return this.sequelize
       .transaction(async (transaction) => {
         const caseId = await this.createCase(
-          caseToCreate,
+          { ...caseToCreate, origin: CaseOrigin.RVG } as CreateCaseDto,
           prosecutorId,
           transaction,
         )
@@ -795,6 +799,7 @@ export class CaseService {
       .transaction(async (transaction) => {
         const caseId = await this.createCase(
           {
+            origin: theCase.origin,
             type: theCase.type,
             description: theCase.description,
             policeCaseNumber: theCase.policeCaseNumber,

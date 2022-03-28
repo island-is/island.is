@@ -8,8 +8,9 @@ import {
   DefaultEvents,
   StaticText,
   buildSubSection,
+  getValueViaPath,
 } from '@island.is/application/core'
-import { NationalRegistryUser, UserProfile } from '../../types/schema'
+import { NationalRegistryUser, Teacher, UserProfile } from '../../types/schema'
 import { m } from '../../lib/messages'
 import { format as formatKennitala } from 'kennitala'
 import { StudentAssessment } from '@island.is/api/schema'
@@ -97,8 +98,22 @@ export const subSectionSummary = buildSubSection({
         buildKeyValueField({
           label: m.overviewTeacher,
           width: 'half',
-          value: ({ externalData: { studentAssessment } }) =>
-            (studentAssessment.data as StudentAssessment).teacherName,
+          value: ({
+            externalData: {
+              studentAssessment,
+              teachers: { data },
+            },
+            answers,
+          }) => {
+            if (answers.applicationFor === B_TEMP) {
+              const teacher = (data as Teacher[]).find(
+                ({ nationalId }) =>
+                  getValueViaPath(answers, 'drivingInstructor') === nationalId,
+              )
+              return teacher?.name
+            }
+            return (studentAssessment.data as StudentAssessment).teacherName
+          },
         }),
         buildDividerField({
           condition: (answers) => hasYes(answers?.healthDeclaration || []),

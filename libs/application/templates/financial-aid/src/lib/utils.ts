@@ -46,14 +46,14 @@ export const hasSpouse = (
   )
 }
 
-export function isMuncipalityRegistered(context: ApplicationContext) {
+export function isMuncipalityNotRegistered(context: ApplicationContext) {
   const { externalData } = context.application
 
   const municipality = getValueViaPath(
     externalData,
     `nationalRegistry.data.municipality.`,
   ) as Municipality | null
-  return municipality != null
+  return municipality == null
 }
 
 export const encodeFilenames = (filename: string) =>
