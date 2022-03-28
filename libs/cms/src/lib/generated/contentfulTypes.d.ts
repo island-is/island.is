@@ -1843,6 +1843,9 @@ export interface IOrganizationFields {
 
   /** Namespace */
   namespace?: IUiConfiguration | undefined
+
+  /** Service Web Featured Image */
+  serviceWebFeaturedImage?: Asset | undefined
 }
 
 export interface IOrganization extends Entry<IOrganizationFields> {
