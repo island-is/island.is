@@ -97,13 +97,6 @@ export class StaffModel extends Model<Staff> {
     allowNull: true,
   })
   @ApiProperty()
-  municipalityHomepage: string
-
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiProperty()
   nickname: string
 
   @Column({

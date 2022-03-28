@@ -6,6 +6,7 @@ import {
   FinanceClientConfig,
   FinanceClientModule,
 } from '@island.is/clients/finance'
+import { AuditModule } from '@island.is/nest/audit'
 import {
   ConfigModule,
   IdsClientConfig,
@@ -24,6 +25,7 @@ import { environment } from '../environments'
     FinanceDocumentController,
   ],
   imports: [
+    AuditModule.forRoot(environment.audit),
     AuthModule.register(environment.auth),
     DocumentsClientModule.register({
       basePath: environment.documentService.basePath,

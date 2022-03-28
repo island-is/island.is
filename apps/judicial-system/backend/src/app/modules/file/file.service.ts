@@ -45,12 +45,19 @@ export class FileService {
   private async deleteFileFromDatabase(fileId: string): Promise<boolean> {
     this.logger.debug(`Deleting file ${fileId} from the database`)
 
-    const [nrOfRowsUpdated] = await this.fileModel.update(
-      { state: CaseFileState.DELETED },
+    const [numberOfAffectedRows] = await this.fileModel.update(
+      { state: CaseFileState.DELETED, key: null },
       { where: { id: fileId } },
     )
 
-    return nrOfRowsUpdated > 0
+    if (numberOfAffectedRows !== 1) {
+      // Tolerate failure, but log error
+      this.logger.error(
+        `Unexpected number of rows (${numberOfAffectedRows}) affected when deleting case file ${fileId}`,
+      )
+    }
+
+    return numberOfAffectedRows > 0
   }
 
   private tryDeleteFileFromS3(key: string) {
@@ -73,7 +80,7 @@ export class FileService {
       this.logger.info('Previous upload failed', { reason })
     })
 
-    const content = await this.awsS3Service.getObject(file.key)
+    const content = await this.awsS3Service.getObject(file.key ?? '')
 
     if (!environment.production) {
       writeFile(`${file.name}`, content)
@@ -93,11 +100,7 @@ export class FileService {
 
   async findById(fileId: string, caseId: string): Promise<CaseFile> {
     const caseFile = await this.fileModel.findOne({
-      where: {
-        id: fileId,
-        caseId,
-        state: { [Op.not]: CaseFileState.DELETED },
-      },
+      where: { id: fileId, caseId, state: { [Op.not]: CaseFileState.DELETED } },
     })
 
     if (!caseFile) {
@@ -137,6 +140,7 @@ export class FileService {
 
     return this.fileModel.create({
       ...createFile,
+      state: CaseFileState.STORED_IN_RVG,
       caseId,
       name: createFile.key.slice(NAME_BEGINS_INDEX),
     })
@@ -144,16 +148,13 @@ export class FileService {
 
   async getAllCaseFiles(caseId: string): Promise<CaseFile[]> {
     return this.fileModel.findAll({
-      where: {
-        caseId,
-        state: { [Op.not]: CaseFileState.DELETED },
-      },
+      where: { caseId, state: { [Op.not]: CaseFileState.DELETED } },
       order: [['created', 'DESC']],
     })
   }
 
   async getCaseFileSignedUrl(file: CaseFile): Promise<SignedUrl> {
-    if (file.state !== CaseFileState.STORED_IN_RVG) {
+    if (!file.key) {
       throw new NotFoundException(`File ${file.id} does not exists in AWS S3`)
     }
 
@@ -161,10 +162,7 @@ export class FileService {
 
     if (!exists) {
       // Fire and forget, no need to wait for the result
-      this.fileModel.update(
-        { state: CaseFileState.BOKEN_LINK },
-        { where: { id: file.id } },
-      )
+      this.fileModel.update({ key: null }, { where: { id: file.id } })
 
       throw new NotFoundException(`File ${file.id} does not exists in AWS S3`)
     }
@@ -175,7 +173,7 @@ export class FileService {
   async deleteCaseFile(file: CaseFile): Promise<DeleteFileResponse> {
     const success = await this.deleteFileFromDatabase(file.id)
 
-    if (success && file.state === CaseFileState.STORED_IN_RVG) {
+    if (success && file.key) {
       // Fire and forget, no need to wait for the result
       this.tryDeleteFileFromS3(file.key)
     }
@@ -196,7 +194,7 @@ export class FileService {
       )
     }
 
-    if (file.state !== CaseFileState.STORED_IN_RVG) {
+    if (!file.key) {
       throw new NotFoundException(`File ${file.id} does not exists in AWS S3`)
     }
 
@@ -204,10 +202,7 @@ export class FileService {
 
     if (!exists) {
       // Fire and forget, no need to wait for the result
-      this.fileModel.update(
-        { state: CaseFileState.BOKEN_LINK },
-        { where: { id: file.id } },
-      )
+      this.fileModel.update({ key: null }, { where: { id: file.id } })
 
       throw new NotFoundException(`File ${file.id} does not exists in AWS S3`)
     }
@@ -220,21 +215,21 @@ export class FileService {
       courtCaseNumber,
     )
 
-    const documentId = await this.throttle
+    await this.throttle
 
-    const s3Key = file.key
-
-    const [nrOfRowsUpdated] = await this.fileModel.update(
-      { state: CaseFileState.STORED_IN_COURT, key: documentId },
+    const [numberOfAffectedRows] = await this.fileModel.update(
+      { state: CaseFileState.STORED_IN_COURT },
       { where: { id: file.id } },
     )
 
-    const success = nrOfRowsUpdated > 0
-
-    if (success) {
-      // Fire and forget, no need to wait for the result
-      this.tryDeleteFileFromS3(s3Key)
+    if (numberOfAffectedRows !== 1) {
+      // Tolerate failure, but log error
+      this.logger.error(
+        `Unexpected number of rows (${numberOfAffectedRows}) affected when updating case file ${file.id}`,
+      )
     }
+
+    const success = numberOfAffectedRows > 0
 
     return { success }
   }

@@ -33,6 +33,33 @@ describe(`${IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
     cy.contains(comment)
   })
 
+  it('should ask for defender info depending on selected session arrangement', () => {
+    const caseData = makeInvestigationCase()
+    const caseDataAddition: Case = {
+      ...caseData,
+      court: makeCourt(),
+      requestedCourtDate: '2020-09-16T19:50:08.033Z',
+      state: CaseState.RECEIVED,
+    }
+
+    intercept(caseDataAddition)
+
+    cy.get('[name="session-arrangements-all-present"]').click()
+    cy.get('[name="defenderName"]').should('exist')
+    cy.get('[name="defenderEmail"]').should('exist')
+    cy.get('[name="defenderPhoneNumber"]').should('exist')
+
+    cy.get('[name="session-arrangements-all-present_spokesperson"]').click()
+    cy.get('[name="defenderName"]').should('exist')
+    cy.get('[name="defenderEmail"]').should('exist')
+    cy.get('[name="defenderPhoneNumber"]').should('exist')
+
+    cy.get('[name="session-arrangements-prosecutor-present"]').click()
+    cy.get('[name="defenderName"]').should('not.exist')
+    cy.get('[name="defenderEmail"]').should('not.exist')
+    cy.get('[name="defenderPhoneNumber"]').should('not.exist')
+  })
+
   it('should allow users to choose if they send COURT_DATE notification', () => {
     const caseData = makeInvestigationCase()
     const caseDataAddition: Case = {

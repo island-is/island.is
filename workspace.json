@@ -990,6 +990,13 @@
             "passWithNoTests": true
           },
           "outputs": ["coverage/libs/api/domains/driving-license"]
+        },
+        "dev": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": ["scripts/run-xroad-proxy.sh"],
+            "parallel": true
+          }
         }
       }
     },
@@ -1764,7 +1771,33 @@
             "cwd": "apps/application-system/api"
           }
         },
-        "docker-express": {}
+        "docker-express": {},
+        "dev/init": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "yarn dev-services application-system-api",
+              "yarn nx run application-system-api:migrate",
+              "yarn nx schemas/build-openapi application-system-api",
+              "yarn nx schemas/openapi-generator api-domains-application",
+              "yarn nx schemas/build-graphql-schema api"
+            ],
+            "parallel": false
+          }
+        },
+        "dev": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "yarn start api",
+              "yarn start application-system-api",
+              "yarn start application-system-form",
+              "scripts/run-soffia-proxy.sh",
+              "scripts/run-xroad-proxy.sh"
+            ],
+            "parallel": true
+          }
+        }
       }
     },
     "application-system-form": {
@@ -3289,6 +3322,16 @@
               "yarn openapi-generator -o libs/clients/driving-license/gen/fetch/v1 -i libs/clients/driving-license/src/v1/clientConfig.json",
               "yarn openapi-generator -o libs/clients/driving-license/gen/fetch/v2 -i libs/clients/driving-license/src/v2/clientConfig.json"
             ]
+          }
+        },
+        "dev": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "yarn nx run clients-driving-license:update-openapi-document --apiVersion=v2",
+              "yarn nx run clients-driving-license:schemas/external-openapi-generator"
+            ],
+            "parallel": false
           }
         }
       }
@@ -7613,6 +7656,12 @@
           "options": {
             "jestConfig": "libs/service-portal/settings/access-control/jest.config.js",
             "passWithNoTests": true
+          }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/service-portal/settings/access-control/src/{screens,components}/**/*.{js,ts,tsx}'"
           }
         }
       }

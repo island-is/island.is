@@ -30,6 +30,7 @@ export const spacing = {
   28: UNIT * 28,
   29: UNIT * 29,
   30: UNIT * 30,
+  31: UNIT * 31,
   none: UNIT * 0,
   smallGutter: UNIT * 0.5,
   gutter: UNIT * 2,

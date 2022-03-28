@@ -234,7 +234,6 @@ export const CurrentUserQuery = gql`
         roles
         active
         nickname
-        municipalityHomepage
         email
         usePseudoName
       }
@@ -416,7 +415,6 @@ export const UpdateStaffMutation = gql`
       roles
       active
       nickname
-      municipalityHomepage
       email
       usePseudoName
     }
@@ -497,6 +495,15 @@ export const SupervisorsQuery = gql`
       name
       roles
       active
+    }
+  }
+`
+
+export const GetAllSignedUrlQuery = gql`
+  query GetAllSignedUrlQuery($input: GetSignedUrlForIdInput!) {
+    getSignedUrlForAllFilesId(input: $input) {
+      url
+      key
     }
   }
 `

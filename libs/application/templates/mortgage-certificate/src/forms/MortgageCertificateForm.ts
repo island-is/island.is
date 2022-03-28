@@ -8,6 +8,8 @@ import {
   buildExternalDataProvider,
   buildDataProviderItem,
   buildCustomField,
+  buildSubmitField,
+  DefaultEvents,
 } from '@island.is/application/core'
 import { m } from '../lib/messages'
 
@@ -15,6 +17,7 @@ export const MortgageCertificateForm: Form = buildForm({
   id: 'MortgageCertificateFormDraft',
   title: '',
   mode: FormModes.APPLYING,
+  renderLastScreenButton: true,
   children: [
     buildSection({
       id: 'externalData',
@@ -71,6 +74,19 @@ export const MortgageCertificateForm: Form = buildForm({
               id: 'selectProperty',
               title: '',
               component: 'SelectProperty',
+            }),
+            buildSubmitField({
+              id: 'submit',
+              placement: 'footer',
+              title: m.confirm,
+              refetchApplicationAfterSubmit: true,
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: m.confirm,
+                  type: 'primary',
+                },
+              ],
             }),
           ],
         }),

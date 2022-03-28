@@ -32,9 +32,6 @@ export class StaffModel implements Staff {
   readonly phoneNumber?: string
 
   @Field({ nullable: true })
-  readonly municipalityHomepage?: string
-
-  @Field({ nullable: true })
   readonly nickname?: string
 
   @Field({ nullable: true })

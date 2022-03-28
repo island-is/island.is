@@ -52,7 +52,6 @@ describe('StaffController - createStaff', () => {
     const staff: Staff = {
       municipalityId: '0',
       municipalityName: 'Saturn',
-      municipalityHomepage: '...',
       id: '',
       nationalId: '',
       name: '',
@@ -77,7 +76,6 @@ describe('StaffController - createStaff', () => {
           roles: input.roles,
           active: true,
           municipalityName: input.municipalityName,
-          municipalityHomepage: staff.municipalityHomepage,
         },
         { transaction: undefined },
       )
@@ -97,7 +95,6 @@ describe('StaffController - createStaff', () => {
     const staff: Staff = {
       municipalityId: '10',
       municipalityName: 'Here',
-      municipalityHomepage: 'mypage',
       id: '',
       nationalId: '',
       name: '',
@@ -122,7 +119,6 @@ describe('StaffController - createStaff', () => {
           roles: input.roles,
           active: true,
           municipalityName: staff.municipalityName,
-          municipalityHomepage: staff.municipalityHomepage,
         },
         { transaction: undefined },
       )
@@ -142,7 +138,6 @@ describe('StaffController - createStaff', () => {
     const staff: Staff = {
       municipalityId: '0',
       municipalityName: 'Saturn',
-      municipalityHomepage: '...',
       id: '',
       nationalId: '',
       name: '',
@@ -175,7 +170,6 @@ describe('StaffController - createStaff', () => {
     const staff: Staff = {
       municipalityId: '0',
       municipalityName: 'Saturn',
-      municipalityHomepage: '...',
       id: '',
       nationalId: '',
       name: '',

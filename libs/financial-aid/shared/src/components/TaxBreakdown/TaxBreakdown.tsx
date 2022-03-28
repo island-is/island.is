@@ -40,7 +40,7 @@ const TaxBreakdown = ({ items }: Props) => {
         {items.map((i, index) => {
           return (
             <TaxBreakdownItem
-              headline={`${getMonth(i.month + 1)} ${i.year}`}
+              headline={`${getMonth(i.month - 1)} ${i.year}`}
               key={`${index}-taxbreakDown-${i.payerNationalId}-${i.userType}`}
               items={[
                 formatNationalId(i.payerNationalId),

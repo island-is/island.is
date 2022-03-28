@@ -111,7 +111,6 @@ export class StaffController {
         municipalityId: createStaffInput.municipalityId ?? staff.municipalityId,
         municipalityName:
           createStaffInput.municipalityName ?? staff.municipalityName,
-        municipalityHomepage: staff?.municipalityHomepage,
       },
       staff,
     )

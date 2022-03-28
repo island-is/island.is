@@ -8,6 +8,7 @@ import {
   PaymentSchedule,
   CriminalRecord,
   DataProtectionComplaint,
+  NationalRegistry,
 } from '../../../../infra/src/dsl/xroad'
 import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 import { PostgresInfo } from '../../../../infra/src/dsl/types/input-types'
@@ -154,6 +155,7 @@ export const serviceSetup = (services: {
       Client,
       Labor,
       HealthInsurance,
+      NationalRegistry,
       Payment,
       DrivingLicense,
       PaymentSchedule,

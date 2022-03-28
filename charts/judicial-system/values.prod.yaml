@@ -26,7 +26,7 @@ judicial-system-api:
     XROAD_BASE_PATH: 'http://securityserver.island.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.island.is/r1/IS'
     XROAD_CLIENT_ID: 'IS/GOV/5804170510/Rettarvorslugatt-Client'
-    XROAD_COURT_API_PATH: '/Domstolasyslan-Private/JusticePortal-v1'
+    XROAD_COURT_API_PATH: '/Domstolasyslan/JusticePortal-v1'
     XROAD_COURT_MEMBER_CODE: '4707171140'
     XROAD_POLICE_API_PATH: '/Logreglan-Private/loke-api-v1'
     XROAD_POLICE_MEMBER_CODE: '5309672079'
@@ -110,7 +110,7 @@ judicial-system-backend:
     XROAD_BASE_PATH: 'http://securityserver.island.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.island.is/r1/IS'
     XROAD_CLIENT_ID: 'IS/GOV/5804170510/Rettarvorslugatt-Client'
-    XROAD_COURT_API_PATH: '/Domstolasyslan-Private/JusticePortal-v1'
+    XROAD_COURT_API_PATH: '/Domstolasyslan/JusticePortal-v1'
     XROAD_COURT_MEMBER_CODE: '4707171140'
     XROAD_POLICE_API_PATH: '/Logreglan-Private/loke-api-v1'
     XROAD_POLICE_MEMBER_CODE: '5309672079'
@@ -241,6 +241,7 @@ judicial-system-web:
       memory: '128Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    LAWYERS_ICELAND_API_KEY: '/k8s/judicial-system/LAWYERS_ICELAND_API_KEY'
     NATIONAL_REGISTRY_API_KEY: '/k8s/judicial-system/NATIONAL_REGISTRY_API_KEY'
   securityContext:
     allowPrivilegeEscalation: false
