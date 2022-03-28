@@ -95,7 +95,7 @@ export class StaffController {
     return updatedStaff
   }
 
-  @StaffRolesRules(StaffRole.ADMIN)
+  @StaffRolesRules(StaffRole.ADMIN, StaffRole.SUPERADMIN)
   @Post('')
   @ApiOkResponse({
     type: StaffModel,

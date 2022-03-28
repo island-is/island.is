@@ -220,7 +220,7 @@ export class ApplicationService {
       ApplicationState.REJECTED,
       ApplicationState.APPROVED,
     ]
-    //TODO
+
     const countPromises = statesToCount.map((item) =>
       this.applicationModel.count({
         where: {
