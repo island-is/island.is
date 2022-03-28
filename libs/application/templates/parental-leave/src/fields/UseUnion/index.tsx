@@ -12,7 +12,7 @@ import {
 import { RadioFormField } from '@island.is/application/ui-fields'
 import { useLocale } from '@island.is/localization'
 
-import { NO, YES } from '../../constants'
+import { NO, YES, NO_UNION } from '../../constants'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 
 export const UseUnion: FC<FieldBaseProps> = ({ application, field }) => {
@@ -48,7 +48,7 @@ export const UseUnion: FC<FieldBaseProps> = ({ application, field }) => {
           ],
           onSelect: (s: string) => {
             if (s === NO) {
-              setValue('payments.union', '')
+              setValue('payments.union', NO_UNION)
             }
           },
         }}
