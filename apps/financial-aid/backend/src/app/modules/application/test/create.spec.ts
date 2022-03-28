@@ -104,6 +104,8 @@ describe('ApplicationController - Create', () => {
       spouseName: '',
       spouseNationalId: '',
       spouseEmail: '',
+      spousePhoneNumber: '',
+      spouseFormComment: '',
       familyStatus: FamilyStatus.COHABITATION,
       city: '',
       postalCode: '',
@@ -112,6 +114,7 @@ describe('ApplicationController - Create', () => {
       homeCircumstancesCustom: '',
       directTaxPayments: [],
       applicationSystemId: '',
+      nationalId: user.nationalId,
     }
 
     beforeEach(async () => {
@@ -178,6 +181,8 @@ describe('ApplicationController - Create', () => {
       spouseName: '',
       spouseNationalId: undefined,
       spouseEmail: '',
+      spousePhoneNumber: '',
+      spouseFormComment: '',
       familyStatus: FamilyStatus.COHABITATION,
       city: '',
       postalCode: '',
@@ -187,6 +192,7 @@ describe('ApplicationController - Create', () => {
       employmentCustom: '',
       directTaxPayments: [],
       applicationSystemId: '',
+      nationalId: user.nationalId,
     }
 
     const municipality: Municipality = {
@@ -292,6 +298,8 @@ describe('ApplicationController - Create', () => {
       spouseName: 'Spouse name',
       spouseNationalId: '9999999999',
       spouseEmail: 'spouse email',
+      spousePhoneNumber: '5555555',
+      spouseFormComment: 'Spouse comment',
       familyStatus: FamilyStatus.COHABITATION,
       city: '',
       postalCode: '',
@@ -301,6 +309,7 @@ describe('ApplicationController - Create', () => {
       employmentCustom: '',
       directTaxPayments: [],
       applicationSystemId: '',
+      nationalId: user.nationalId,
     }
 
     const municipality: Municipality = {
@@ -399,6 +408,8 @@ describe('ApplicationController - Create', () => {
       spouseName: undefined,
       spouseNationalId: undefined,
       spouseEmail: undefined,
+      spousePhoneNumber: undefined,
+      spouseFormComment: undefined,
       familyStatus: FamilyStatus.COHABITATION,
       city: '',
       postalCode: '',
@@ -408,6 +419,7 @@ describe('ApplicationController - Create', () => {
       employmentCustom: '',
       directTaxPayments: [],
       applicationSystemId: '',
+      nationalId: user.nationalId,
     }
 
     const appModel = {
@@ -470,6 +482,8 @@ describe('ApplicationController - Create', () => {
       spouseName: undefined,
       spouseNationalId: undefined,
       spouseEmail: undefined,
+      spousePhoneNumber: undefined,
+      spouseFormComment: undefined,
       familyStatus: FamilyStatus.COHABITATION,
       city: '',
       postalCode: '',
@@ -498,6 +512,7 @@ describe('ApplicationController - Create', () => {
         },
       ],
       applicationSystemId: '',
+      nationalId: '',
     }
     const user: User = {
       nationalId: '0000000000',
@@ -575,6 +590,8 @@ describe('ApplicationController - Create', () => {
       spouseName: undefined,
       spouseNationalId: undefined,
       spouseEmail: undefined,
+      spousePhoneNumber: undefined,
+      spouseFormComment: undefined,
       familyStatus: FamilyStatus.COHABITATION,
       city: '',
       postalCode: '',
@@ -584,6 +601,7 @@ describe('ApplicationController - Create', () => {
       employmentCustom: '',
       directTaxPayments: [],
       applicationSystemId: '',
+      nationalId: user.nationalId,
     }
 
     const appModel = {
@@ -634,6 +652,8 @@ describe('ApplicationController - Create', () => {
       spouseName: '',
       spouseNationalId: '',
       spouseEmail: '',
+      spousePhoneNumber: '',
+      spouseFormComment: '',
       familyStatus: FamilyStatus.COHABITATION,
       city: '',
       postalCode: '',
@@ -643,6 +663,7 @@ describe('ApplicationController - Create', () => {
       employmentCustom: '',
       directTaxPayments: [],
       applicationSystemId: '',
+      nationalId: user.nationalId,
     }
 
     beforeEach(async () => {

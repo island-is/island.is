@@ -80,12 +80,7 @@ const SummaryForm = ({
 
   return (
     <>
-      <Box
-        display="flex"
-        alignItems="center"
-        flexWrap="wrap"
-        marginTop={[2, 2, 4]}
-      >
+      <Box display="flex" alignItems="center" flexWrap="wrap">
         <Box marginRight={1}>
           <Text as="h3" variant="h3">
             {formatMessage(m.summaryForm.general.descriptionTitle)}
