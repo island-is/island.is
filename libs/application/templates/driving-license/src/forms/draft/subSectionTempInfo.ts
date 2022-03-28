@@ -94,8 +94,8 @@ export const subSectionTempInfo = buildSubSection({
               teachers: { data },
             },
           }) => {
-            return (data as Teacher[]).map(({ name }) => ({
-              value: name,
+            return (data as Teacher[]).map(({ name, nationalId }) => ({
+              value: nationalId,
               label: name,
             }))
           },

@@ -14,11 +14,11 @@ export enum Sections {
 }
 
 export enum ProsecutorSubsections {
-  CUSTODY_REQUEST_STEP_ONE = 0,
-  CUSTODY_REQUEST_STEP_TWO = 1,
-  CUSTODY_REQUEST_STEP_THREE = 2,
-  CUSTODY_REQUEST_STEP_FOUR = 3,
-  CUSTODY_REQUEST_STEP_FIVE = 4,
+  STEP_ONE = 0,
+  STEP_TWO = 1,
+  STEP_THREE = 2,
+  STEP_FOUR = 3,
+  STEP_FIVE = 4,
   PROSECUTOR_OVERVIEW = 5,
 }
 
@@ -192,4 +192,11 @@ export interface NationalRegistryResponseBusiness {
   items?: NationalRegistryBusiness[]
   meta?: NationalRegistryMeta
   error?: string
+}
+
+export interface Lawyer {
+  name: string
+  practice: string
+  email: string
+  phoneNr: string
 }
