@@ -4,11 +4,13 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { SharedAuthModule } from '@island.is/judicial-system/auth'
 
 import { environment } from '../../../../environments'
+import { EventService } from '../../event'
 import { AwsS3Service } from '../../aws-s3'
 import { CaseService } from '../../case'
 import { PoliceService } from '../police.service'
 import { PoliceController } from '../police.controller'
 
+jest.mock('../../event/event.service')
 jest.mock('../../aws-s3/awsS3.service.ts')
 jest.mock('../../case/case.service.ts')
 
@@ -22,6 +24,7 @@ export const createTestingPoliceModule = async () => {
     ],
     controllers: [PoliceController],
     providers: [
+      EventService,
       AwsS3Service,
       CaseService,
       PoliceService,
