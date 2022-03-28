@@ -1,19 +1,19 @@
 import { DynamicModule } from '@nestjs/common'
 import { SyslumennClientModule } from '@island.is/clients/syslumenn'
-import { AnnouncementOfDeathSubmissionService } from './announcement-of-death.service'
+import { AnnouncementOfDeathService } from './announcement-of-death.service'
 import { SharedTemplateAPIModule } from '../../shared'
 import { BaseTemplateAPIModuleConfig } from '../../../types'
 
-export class AnnouncementOfDeathSubmissionModule {
+export class AnnouncementOfDeathModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
     return {
-      module: AnnouncementOfDeathSubmissionModule,
+      module: AnnouncementOfDeathModule,
       imports: [
         SyslumennClientModule,
         SharedTemplateAPIModule.register(config),
       ],
-      providers: [AnnouncementOfDeathSubmissionService],
-      exports: [AnnouncementOfDeathSubmissionService],
+      providers: [AnnouncementOfDeathService],
+      exports: [AnnouncementOfDeathService],
     }
   }
 }

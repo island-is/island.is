@@ -16,7 +16,7 @@ import { SharedTemplateApiService } from '../../shared'
 import { generateTestEmail } from './emailGenerators'
 
 @Injectable()
-export class AnnouncementOfDeathSubmissionService {
+export class AnnouncementOfDeathService {
   constructor(
     private readonly syslumennService: SyslumennService,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,

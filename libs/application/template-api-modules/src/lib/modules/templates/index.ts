@@ -13,7 +13,7 @@ import { GeneralPetitionModule } from './general-petition/general-petition.modul
 import { CriminalRecordSubmissionModule } from './criminal-record-submission/criminal-record-submission.module'
 import { DataProtectionComplaintModule } from './data-protection-complaint/data-protection-complaint.module'
 import { PSignSubmissionModule } from './p-sign-submission/p-sign-submission.module'
-import { AnnouncementOfDeathSubmissionModule } from './announcement-of-death/announcement-of-death.module'
+import { AnnouncementOfDeathModule } from './announcement-of-death/announcement-of-death.module'
 import { ExamplePaymentActionsModule } from './example-payment-actions/examplePaymentActions.module'
 
 export const modules = [
@@ -32,7 +32,7 @@ export const modules = [
   CriminalRecordSubmissionModule,
   DataProtectionComplaintModule,
   PSignSubmissionModule,
-  AnnouncementOfDeathSubmissionModule,
+  AnnouncementOfDeathModule,
   ExamplePaymentActionsModule,
 ]
 
@@ -51,5 +51,5 @@ export { GeneralPetitionService } from './general-petition/general-petition.serv
 export { CriminalRecordSubmissionService } from './criminal-record-submission/criminal-record-submission.service'
 export { DataProtectionComplaintService } from './data-protection-complaint/data-protection-complaint.service'
 export { PSignSubmissionService } from './p-sign-submission/p-sign-submission.service'
-export { AnnouncementOfDeathSubmissionService } from './announcement-of-death/announcement-of-death.service'
+export { AnnouncementOfDeathService } from './announcement-of-death/announcement-of-death.service'
 export { ExamplePaymentActionsService } from './example-payment-actions/examplePaymentActions.service'
