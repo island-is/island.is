@@ -13,7 +13,7 @@ import {
 } from '@island.is/island-ui/core'
 import { Query, AuthCustomDelegation } from '@island.is/api/schema'
 import { EmptyImage } from '@island.is/service-portal/core'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 
 import { AccessCard } from '../AccessCard'
 
@@ -40,6 +40,7 @@ export const AuthDelegationsQuery = gql`
 `
 
 function Accesses(): JSX.Element {
+  useNamespaces('sp.settings-access-control')
   const { pathname } = useLocation()
   const { data, loading } = useQuery<Query>(AuthDelegationsQuery)
   const history = useHistory()

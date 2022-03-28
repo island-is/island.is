@@ -17,6 +17,7 @@ export const MortgageCertificateForm: Form = buildForm({
   id: 'MortgageCertificateFormDraft',
   title: '',
   mode: FormModes.APPLYING,
+  renderLastScreenButton: true,
   children: [
     buildSection({
       id: 'externalData',
@@ -88,11 +89,6 @@ export const MortgageCertificateForm: Form = buildForm({
               ],
             }),
           ],
-        }),
-        buildDescriptionField({
-          id: 'final',
-          title: 'Takk',
-          description: '',
         }),
       ],
     }),

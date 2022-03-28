@@ -601,7 +601,7 @@ export const SignedVerdictOverview: React.FC = () => {
       />
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={Constants.REQUEST_LIST_ROUTE}
+          previousUrl={Constants.CASE_LIST_ROUTE}
           hideNextButton={
             user?.role !== UserRole.PROSECUTOR ||
             workingCase.decision ===

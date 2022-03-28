@@ -94,6 +94,7 @@ const Home: Screen<HomeProps> = ({
   return (
     <ServiceWebWrapper
       pageTitle={pageTitle}
+      pageDescription={o('serviceWebFeaturedDescription', '')}
       headerTitle={headerTitle}
       institutionSlug={institutionSlug}
       logoUrl={logoUrl}
