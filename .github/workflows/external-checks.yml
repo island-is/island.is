@@ -1,73 +1,73 @@
-name: External checks
+# name: External checks
 
-on:
-  pull_request: {}
-  workflow_dispatch: {}
+# on:
+#   pull_request: {}
+#   workflow_dispatch: {}
 
-jobs:
-  codeowners-check:
-    name: Lint CODEOWNERS
-    runs-on: ubuntu-20.04
+# jobs:
+  # codeowners-check:
+  #   name: Lint CODEOWNERS
+  #   runs-on: kubernetes-runner
 
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - name: Check if codeowners file changed
-        run: |
-          MERGE_BASE=$(git merge-base ${{github.event.pull_request.base.sha}} $GITHUB_SHA)
-          if ! git diff --exit-code --name-only $MERGE_BASE..$GITHUB_SHA .github/CODEOWNERS; then
-            echo "CHECK=true" >> $GITHUB_ENV
-            if [[ "${{ github.event.pull_request.head.repo.full_name }}" != "${{ github.repository }}" ]]; then
-              echo "Changes to codeowners are not allowed on forks!"
-              exit 1
-            fi
-          fi
-      - name: Check indentation
-        if: env.CHECK
-        run: |
-          no_different_indentations=$(cat .github/CODEOWNERS | grep -v '^#' | awk NF | sed s/@.*//g | awk '{ print length }' | sort | uniq | wc -l)
-          if [[ "$no_different_indentations" != "1" ]]; then
-            echo "CODEOWNERS has $no_different_indentations different indentations."
-            echo "Make sure that all teams start in the same column."
-            cat .github/CODEOWNERS | grep -v '^#' | awk NF
-            exit 1
-          fi
-      - uses: mszostok/codeowners-validator@v0.6.0
-        if: env.CHECK
-        with:
-          checks: 'files,owners,duppatterns'
-          experimental_checks: 'notowned'
-          github_access_token: '${{ secrets.OWNERS_VALIDATOR_GITHUB_SECRET }}'
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #       with:
+  #         fetch-depth: 0
+  #     - name: Check if codeowners file changed
+  #       run: |
+  #         MERGE_BASE=$(git merge-base ${{github.event.pull_request.base.sha}} $GITHUB_SHA)
+  #         if ! git diff --exit-code --name-only $MERGE_BASE..$GITHUB_SHA .github/CODEOWNERS; then
+  #           echo "CHECK=true" >> $GITHUB_ENV
+  #           if [[ "${{ github.event.pull_request.head.repo.full_name }}" != "${{ github.repository }}" ]]; then
+  #             echo "Changes to codeowners are not allowed on forks!"
+  #             exit 1
+  #           fi
+  #         fi
+  #     - name: Check indentation
+  #       if: env.CHECK
+  #       run: |
+  #         no_different_indentations=$(cat .github/CODEOWNERS | grep -v '^#' | awk NF | sed s/@.*//g | awk '{ print length }' | sort | uniq | wc -l)
+  #         if [[ "$no_different_indentations" != "1" ]]; then
+  #           echo "CODEOWNERS has $no_different_indentations different indentations."
+  #           echo "Make sure that all teams start in the same column."
+  #           cat .github/CODEOWNERS | grep -v '^#' | awk NF
+  #           exit 1
+  #         fi
+  #     - uses: mszostok/codeowners-validator@v0.6.0
+  #       if: env.CHECK
+  #       with:
+  #         checks: 'files,owners,duppatterns'
+  #         experimental_checks: 'notowned'
+  #         github_access_token: '${{ secrets.OWNERS_VALIDATOR_GITHUB_SECRET }}'
 
-  gitbook-check:
-    name: Lint gitbook
-    runs-on: ubuntu-20.04
+  # gitbook-check:
+  #   name: Lint gitbook
+  #   runs-on: kubernetes-runner
 
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '14'
-      - name: Run gitbook format
-        run: node ./scripts/gitbook.js
-      - name: Check if the git repo is dirty
-        id: changes
-        uses: UnicornGlobal/has-changes-action@v1.0.12
-      - name: Comment on PR
-        if: steps.changes.outputs.changed == 1
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
-          script: |
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: 'Markdown formatting is invalid. Please run `yarn gitbook` from the repository root.'
-            })
-      - name: Exit if repo is dirty
-        if: steps.changes.outputs.changed == 1
-        run: exit 1
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #       with:
+  #         fetch-depth: 0
+  #     - uses: actions/setup-node@v2
+  #       with:
+  #         node-version: '14'
+  #     - name: Run gitbook format
+  #       run: node ./scripts/gitbook.js
+  #     - name: Check if the git repo is dirty
+  #       id: changes
+  #       uses: UnicornGlobal/has-changes-action@v1.0.12
+  #     - name: Comment on PR
+  #       if: steps.changes.outputs.changed == 1
+  #       uses: actions/github-script@v6
+  #       with:
+  #         github-token: ${{secrets.GITHUB_TOKEN}}
+  #         script: |
+  #           github.rest.issues.createComment({
+  #             issue_number: context.issue.number,
+  #             owner: context.repo.owner,
+  #             repo: context.repo.repo,
+  #             body: 'Markdown formatting is invalid. Please run `yarn gitbook` from the repository root.'
+  #           })
+  #     - name: Exit if repo is dirty
+  #       if: steps.changes.outputs.changed == 1
+  #       run: exit 1
