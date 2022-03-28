@@ -12,7 +12,7 @@ import {
 import { RadioFormField } from '@island.is/application/ui-fields'
 import { useLocale } from '@island.is/localization'
 
-import { NO, YES } from '../../constants'
+import { NO, YES, NO_PRIVATE_PENSION_FUND } from '../../constants'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 
 export const UsePrivatePensionFund: FC<FieldBaseProps> = ({
@@ -51,7 +51,7 @@ export const UsePrivatePensionFund: FC<FieldBaseProps> = ({
           ],
           onSelect: (s: string) => {
             if (s === NO) {
-              setValue('payments.privatePensionFund', '')
+              setValue('payments.privatePensionFund', NO_PRIVATE_PENSION_FUND)
               setValue('payments.privatePensionFundPercentage', '')
             }
           },

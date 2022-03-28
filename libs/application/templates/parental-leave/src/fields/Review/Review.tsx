@@ -56,6 +56,7 @@ import {
   SPOUSE,
   ParentalRelations,
   NO_UNION,
+  NO_PRIVATE_PENSION_FUND,
 } from '../../constants'
 import { YesOrNo } from '../../types'
 import { SummaryTimeline } from '../components/SummaryTimeline/SummaryTimeline'
@@ -491,7 +492,9 @@ export const Review: FC<ReviewScreenProps> = ({
                 onSelect={(s: string) => {
                   setStateful((prev) => {
                     const privatePensionFund =
-                      s === NO ? '' : prev.privatePensionFund
+                      s === NO
+                        ? NO_PRIVATE_PENSION_FUND
+                        : prev.privatePensionFund
                     const privatePensionFundPercentage =
                       s === NO ? '' : prev.privatePensionFundPercentage
                     setValue('payments.privatePensionFund', privatePensionFund)
