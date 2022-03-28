@@ -21,6 +21,7 @@ jobs:
           echo "GIT_BRANCH=$GIT_BRANCH" >> $GITHUB_ENV
       - name: Generate deployment branch name
         id: git-branch-deploy
+        shell: bash
         run: |
           GIT_BRANCH_DEPLOY=$GIT_BRANCH
           if [[ ! ("$GIT_BRANCH_DEPLOY" =~ "feature/") ]]; then
