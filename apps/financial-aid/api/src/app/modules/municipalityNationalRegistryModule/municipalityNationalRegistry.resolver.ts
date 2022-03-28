@@ -9,9 +9,9 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
-import { NationalRegistryXRoadService } from '@island.is/api/domains/national-registry-x-road'
 import { Person } from './models/person.model'
 import { UserSpouse } from './models/userSpouse.model'
+import { MunicipalityNationalRegistryService } from './municipalityNationalRegistry.service'
 
 @UseGuards(IdsAuthGuard, IdsUserGuard, ScopesGuard)
 @Scopes('@samband.is/internal')
@@ -19,7 +19,7 @@ import { UserSpouse } from './models/userSpouse.model'
 @Audit({ namespace: '@island.is/api/national-registry-x-road' })
 export class MunicipalityNationalRegistryResolver {
   constructor(
-    private nationalRegistryXRoadService: NationalRegistryXRoadService,
+    private municipalityNationalRegistryService: MunicipalityNationalRegistryService,
   ) {}
 
   @Query(() => Person, {
@@ -30,7 +30,7 @@ export class MunicipalityNationalRegistryResolver {
   async nationalRegistryPersons(
     @CurrentUser() user: User,
   ): Promise<Person | undefined> {
-    return this.nationalRegistryXRoadService.getNationalRegistryPerson(
+    return this.municipalityNationalRegistryService.getNationalRegistryPerson(
       user,
       user.nationalId,
     )
@@ -42,7 +42,7 @@ export class MunicipalityNationalRegistryResolver {
     @Context('req') { user }: { user: User },
     @Parent() person: Person,
   ): Promise<UserSpouse | undefined> {
-    return await this.nationalRegistryXRoadService
+    return await this.municipalityNationalRegistryService
       .getSpouse(user, person.nationalId)
       .then((res) => {
         return res
