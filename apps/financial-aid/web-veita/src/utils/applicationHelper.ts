@@ -48,6 +48,7 @@ export const getApplicant = (application: Application) => {
     },
     {
       title: 'Athugasemd',
+      content: application.formComment ? '' : 'Engin athugasemd',
       other: application.formComment,
     },
   ]
@@ -131,6 +132,7 @@ export const getApplicantSpouse = (application: Application) => {
     },
     {
       title: 'Athugasemd',
+      content: application.spouseFormComment ? '' : 'Engin athugasemd',
       other: application.spouseFormComment,
     },
   ]

@@ -23,7 +23,6 @@ export const CaseQuery = gql`
       defenderEmail
       defenderPhoneNumber
       sendRequestToDefender
-      defenderIsSpokesperson
       isHeightenedSecurityLevel
       court {
         id
@@ -83,6 +82,7 @@ export const CaseQuery = gql`
       courtDocuments
       sessionBookings
       courtCaseFacts
+      introduction
       courtLegalArguments
       ruling
       decision
@@ -135,10 +135,12 @@ export const CaseQuery = gql`
         size
         created
         state
+        key
       }
       isAppealDeadlineExpired
       isAppealGracePeriodExpired
       caseModifiedExplanation
+      caseResentExplanation
     }
   }
 `

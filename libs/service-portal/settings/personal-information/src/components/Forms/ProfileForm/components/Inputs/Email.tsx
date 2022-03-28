@@ -31,7 +31,7 @@ export const InputEmail: FC<Props> = ({
   emailDirty,
 }) => {
   useNamespaces('sp.settings')
-  const { handleSubmit, control, errors, getValues } = useForm()
+  const { handleSubmit, control, errors, getValues, setValue } = useForm()
   const {
     updateOrCreateUserProfile,
     loading: saveLoading,
@@ -70,6 +70,7 @@ export const InputEmail: FC<Props> = ({
   useEffect(() => {
     if (email && email.length > 0) {
       setEmailInternal(email)
+      setValue('email', email, { shouldValidate: true })
     }
     checkSetPristineInput()
   }, [email])
@@ -83,7 +84,7 @@ export const InputEmail: FC<Props> = ({
     } else {
       emailDirty(true)
     }
-  }, [emailInternal])
+  }, [emailInternal, email])
 
   const handleSendEmailVerification = async (data: { email: string }) => {
     const emailError = formatMessage({
@@ -186,6 +187,7 @@ export const InputEmail: FC<Props> = ({
               control={control}
               backgroundColor="blue"
               id="email"
+              autoFocus
               name="email"
               required={false}
               type="email"
@@ -206,7 +208,7 @@ export const InputEmail: FC<Props> = ({
                 setErrors({ ...formErrors, email: undefined })
                 checkSetPristineInput()
               }}
-              placeholder={formatMessage(m.email)}
+              placeholder="nafn@island.is"
               error={errors.email?.message || formErrors.email}
               size="xs"
               defaultValue={email}
@@ -290,7 +292,7 @@ export const InputEmail: FC<Props> = ({
                   name="code"
                   format="######"
                   label={formatMessage(m.verificationCode)}
-                  placeholder={formatMessage(m.verificationCode)}
+                  placeholder="123456"
                   defaultValue=""
                   error={errors.code?.message || formErrors.code}
                   disabled={verificationValid || disabled}
@@ -324,12 +326,12 @@ export const InputEmail: FC<Props> = ({
                       size="small"
                       disabled={!codeInternal || disabled || verificationValid}
                     >
-                      {formatMessage(m.confirmCode)}
+                      {formatMessage(m.codeConfirmation)}
                     </Button>
                   </button>
                 )}
                 {saveLoading && (
-                  <Box marginTop={1}>
+                  <Box>
                     <LoadingDots />
                   </Box>
                 )}

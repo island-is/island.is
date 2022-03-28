@@ -9,6 +9,16 @@ Driver's license API v1 and v2 through x-road
 
 The client is generated from a copy of the openApi document provided in x-road.
 
+## Quickstart
+
+Run the following and start developing:
+
+```sh
+yarn nx run clients-driving-license:dev
+```
+
+This command bundles updating the api definition and regenerating the client.
+
 ## Usage
 
 ### Updating the open api definition (clientConfig.json)
@@ -67,4 +77,4 @@ export class SomeService {
 
 ## Code owners and maintainers
 
-- [Kosmos & Kaos](https://github.com/orgs/island-is/teams/kosmos-og-kaos/members)
+- [Júní](https://github.com/orgs/island-is/teams/juni/members)

@@ -12,11 +12,7 @@ import { CyHttpMessages } from 'cypress/types/net-stubbing'
 
 const getFixtureFor = (graphqlRequest: CyHttpMessages.IncomingHttpRequest) => {
   if (graphqlRequest.body.hasOwnProperty('query')) {
-    if (graphqlRequest.body.query.includes('CasesQuery')) {
-      return {
-        fixture: 'cases',
-      }
-    } else if (graphqlRequest.body.query.includes('TransitionCaseMutation')) {
+    if (graphqlRequest.body.query.includes('TransitionCaseMutation')) {
       return {
         fixture: 'transitionCaseMutationResponse',
       }
@@ -80,6 +76,10 @@ Cypress.Commands.add('stubAPIResponses', () => {
       req.reply({ fixture: 'nationalRegistryPersonResponse' })
     },
   ).as('getPersonByNationalId')
+
+  cy.intercept('GET', '**/api/lawyers', (req) => {
+    req.reply({ fixture: 'lawyersResponse' })
+  }).as('lawyers')
 
   cy.intercept('POST', '**/api/graphql', (req) => {
     req.reply(getFixtureFor(req))

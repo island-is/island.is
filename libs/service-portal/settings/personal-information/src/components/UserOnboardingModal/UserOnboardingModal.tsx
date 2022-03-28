@@ -10,7 +10,6 @@ import {
   Box,
   Columns,
   Column,
-  LoadingDots,
 } from '@island.is/island-ui/core'
 import { m } from '@island.is/service-portal/core'
 import { servicePortalCloseOnBoardingModal } from '@island.is/plausible'
@@ -45,6 +44,7 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
       initialVisibility={true}
       className={styles.dialog}
       modalLabel="Onboarding"
+      preventBodyScroll={false}
     >
       <GridContainer>
         <GridRow marginBottom={4}>

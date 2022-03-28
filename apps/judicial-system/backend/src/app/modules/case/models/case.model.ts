@@ -21,6 +21,7 @@ import {
   CaseDecision,
   CaseType,
   SessionArrangements,
+  CourtDocument,
 } from '@island.is/judicial-system/types'
 
 import { CaseFile } from '../../file'
@@ -46,7 +47,7 @@ export class Case extends Model<Case> {
   id!: string
 
   /**********
-   * The date and time the case was created in the database
+   * The date and time the case was created in the Database
    **********/
   @CreatedAt
   @ApiProperty()
@@ -148,17 +149,6 @@ export class Case extends Model<Case> {
   })
   @ApiProperty()
   sendRequestToDefender?: boolean
-
-  /**********
-   * Indicates whether the accused was assigned a spokesperson rather than a defender -
-   * optional
-   **********/
-  @Column({
-    type: DataType.BOOLEAN,
-    allowNull: true,
-  })
-  @ApiProperty()
-  defenderIsSpokesperson?: boolean
 
   /**********
    * Indicates whether the secutity level of the case has been heightened -
@@ -528,11 +518,11 @@ export class Case extends Model<Case> {
    * A list of additional court documents - optional
    **********/
   @Column({
-    type: DataType.ARRAY(DataType.STRING),
+    type: DataType.ARRAY(DataType.JSON),
     allowNull: true,
   })
   @ApiProperty()
-  courtDocuments?: string[]
+  courtDocuments?: CourtDocument[]
 
   /**********
    * Bookings during court session
@@ -554,6 +544,16 @@ export class Case extends Model<Case> {
   })
   @ApiProperty()
   courtCaseFacts?: string
+
+  /**********
+   * Introduction to the case
+   **********/
+  @Column({
+    type: DataType.TEXT,
+    allowNull: true,
+  })
+  @ApiProperty()
+  introduction?: string
 
   /**********
    * The legal arguments presented by the prosecutor - autofilled from legalArguments -
@@ -832,4 +832,14 @@ export class Case extends Model<Case> {
   })
   @ApiProperty()
   caseModifiedExplanation?: string
+
+  /**********
+   * The explanation given for the extension of a case
+   **********/
+  @Column({
+    type: DataType.TEXT,
+    allowNull: true,
+  })
+  @ApiProperty()
+  caseResentExplanation?: string
 }

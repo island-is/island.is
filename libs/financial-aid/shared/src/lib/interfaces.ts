@@ -16,6 +16,10 @@ export interface GetSignedUrl {
   fileName: string
 }
 
+export interface GetSignedUrlForAllFiles {
+  getSignedUrlForAllFilesId: SignedUrl[]
+}
+
 export interface SignedUrl {
   url: string
   key: string
@@ -213,7 +217,7 @@ export interface CreateApplication {
   streetName?: string
   postalCode?: string
   city?: string
-  municipalityCode?: string
+  municipalityCode: string
   applicationSystemId?: string
 }
 
@@ -292,7 +296,7 @@ export interface Application {
   streetName?: string
   postalCode?: string
   city?: string
-  municipalityCode?: string
+  municipalityCode: string
   directTaxPayments: DirectTaxPayment[]
   applicationSystemId?: string
 }
@@ -368,4 +372,13 @@ export interface CreateStaffMunicipality {
 export interface Calculations {
   title: string
   calculation: string
+}
+
+export interface ApplicationProfileInfo {
+  title: string
+  content?: string
+  link?: string
+  onclick?: () => void
+  other?: string
+  fullWidth?: boolean
 }

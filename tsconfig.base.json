@@ -103,6 +103,9 @@
       "@island.is/api/domains/license-service": [
         "libs/api/domains/license-service/src/index.ts"
       ],
+      "@island.is/api/domains/mortgage-certificate": [
+        "libs/api/domains/mortgage-certificate/src/index.ts"
+      ],
       "@island.is/api/domains/national-registry": [
         "libs/api/domains/national-registry/src/index.ts"
       ],
@@ -199,6 +202,9 @@
       ],
       "@island.is/application/templates/meta-application": [
         "libs/application/templates/meta-application/src/index.ts"
+      ],
+      "@island.is/application/templates/mortgage-certificate": [
+        "libs/application/templates/mortgage-certificate/src/index.ts"
       ],
       "@island.is/application/templates/p-sign": [
         "libs/application/templates/p-sign/src/index.ts"
@@ -388,6 +394,7 @@
       ],
       "@island.is/regulations": ["libs/regulations/src/index.ts"],
       "@island.is/regulations/*": ["libs/regulations/src/sub/*"],
+      "@island.is/residence-history": ["libs/residence-history/src/index.ts"],
       "@island.is/service-portal/applications": [
         "libs/service-portal/applications/src/index.ts"
       ],

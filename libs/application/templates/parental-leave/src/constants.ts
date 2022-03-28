@@ -5,6 +5,8 @@ export const SPOUSE = 'spouse'
 
 export const FILE_SIZE_LIMIT = 10000000 // 10MB
 
+export const NO_UNION = 'F000'
+
 export enum ParentalRelations {
   primary = 'primary',
   secondary = 'secondary',

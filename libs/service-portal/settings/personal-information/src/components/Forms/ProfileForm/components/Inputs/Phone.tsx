@@ -41,7 +41,7 @@ export const InputPhone: FC<Props> = ({
   telDirty,
 }) => {
   useNamespaces('sp.settings')
-  const { handleSubmit, control, errors, getValues } = useForm()
+  const { handleSubmit, control, errors, getValues, setValue } = useForm()
   const {
     updateOrCreateUserProfile,
     loading: saveLoading,
@@ -80,6 +80,7 @@ export const InputPhone: FC<Props> = ({
   useEffect(() => {
     if (mobile && mobile.length > 0) {
       setTelInternal(mobile)
+      setValue('tel', mobile, { shouldValidate: true })
     }
     checkSetPristineInput()
   }, [mobile])
@@ -94,7 +95,7 @@ export const InputPhone: FC<Props> = ({
       telDirty(true)
     }
     checkSetPristineInput()
-  }, [telInternal])
+  }, [telInternal, mobile])
 
   const handleSendTelVerification = async (data: { tel: string }) => {
     try {
@@ -231,7 +232,7 @@ export const InputPhone: FC<Props> = ({
                     },
                   }}
                   label={formatMessage(sharedMessages.phoneNumber)}
-                  placeholder={formatMessage(sharedMessages.phoneNumber)}
+                  placeholder="000 0000"
                   onChange={(inp) => {
                     setTelInternal(parseFullNumber(inp.target.value || ''))
                     setErrors({ ...formErrors, mobile: undefined })
@@ -319,7 +320,7 @@ export const InputPhone: FC<Props> = ({
                   name="code"
                   format="######"
                   label={formatMessage(m.verificationCode)}
-                  placeholder={formatMessage(m.verificationCode)}
+                  placeholder="123456"
                   defaultValue=""
                   error={errors.code?.message || formErrors.code}
                   disabled={verificationValid || disabled}
@@ -353,12 +354,12 @@ export const InputPhone: FC<Props> = ({
                       size="small"
                       disabled={!codeInternal || disabled || verificationValid}
                     >
-                      {formatMessage(m.confirmCode)}
+                      {formatMessage(m.codeConfirmation)}
                     </Button>
                   </button>
                 )}
                 {saveLoading && (
-                  <Box marginTop={1}>
+                  <Box>
                     <LoadingDots />
                   </Box>
                 )}
