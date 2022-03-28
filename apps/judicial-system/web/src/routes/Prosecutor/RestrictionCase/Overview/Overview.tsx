@@ -243,6 +243,7 @@ export const Overview: React.FC = () => {
             defendants={workingCase.defendants ?? []}
             defender={{
               name: workingCase.defenderName ?? '',
+              defenderNationalId: workingCase.defenderNationalId,
               email: workingCase.defenderEmail,
               phoneNumber: workingCase.defenderPhoneNumber,
             }}

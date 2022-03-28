@@ -10,6 +10,7 @@ const prosecutorFields: (keyof UpdateCase)[] = [
   'description',
   'policeCaseNumber',
   'defenderName',
+  'defenderNationalId',
   'defenderEmail',
   'defenderPhoneNumber',
   'sendRequestToDefender',
@@ -49,6 +50,7 @@ export const prosecutorUpdateRule = {
 
 const courtFields: (keyof UpdateCase)[] = [
   'defenderName',
+  'defenderNationalId',
   'defenderEmail',
   'defenderPhoneNumber',
   'courtCaseNumber',

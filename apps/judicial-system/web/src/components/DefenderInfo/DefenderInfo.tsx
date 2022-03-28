@@ -63,6 +63,7 @@ const DefenderInfo: React.FC<Props> = (props) => {
     async (selectedOption: ValueType<ReactSelectOption>) => {
       let updatedLawyer = {
         defenderName: '',
+        defenderNationalId: '',
         defenderEmail: '',
         defenderPhoneNumber: '',
       }
@@ -75,6 +76,7 @@ const DefenderInfo: React.FC<Props> = (props) => {
 
         updatedLawyer = {
           defenderName: lawyer ? lawyer.name : label,
+          defenderNationalId: lawyer ? lawyer.nationalId : '',
           defenderEmail: lawyer ? lawyer.email : '',
           defenderPhoneNumber: lawyer ? lawyer.phoneNr : '',
         }

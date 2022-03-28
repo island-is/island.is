@@ -114,6 +114,7 @@ export interface Case {
   policeCaseNumber: string
   defendants?: Defendant[]
   defenderName?: string
+  defenderNationalId?: string
   defenderEmail?: string
   defenderPhoneNumber?: string
   sendRequestToDefender?: boolean
@@ -190,6 +191,7 @@ export interface CreateCase {
   description?: string
   policeCaseNumber: string
   defenderName?: string
+  defenderNationalId?: string
   defenderEmail?: string
   defenderPhoneNumber?: string
   sendRequestToDefender?: boolean
@@ -202,6 +204,7 @@ export interface UpdateCase {
   description?: string
   policeCaseNumber?: string
   defenderName?: string
+  defenderNationalId?: string
   defenderEmail?: string
   defenderPhoneNumber?: string
   sendRequestToDefender?: boolean
