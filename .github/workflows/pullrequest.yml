@@ -38,6 +38,7 @@ jobs:
       - name: Check node version
         run: |
           node -v
+          yarn --version
           ls -l `which node`
 
       - name: Checking out relevant branches
@@ -76,6 +77,7 @@ jobs:
           export GENERATED_FILES_KEY=${{ runner.os }}-$HASH-files-generated
           echo "GENERATED_FILES_KEY: $GENERATED_FILES_KEY"
           echo "::set-output name=generated-files-cache-key::$GENERATED_FILES_KEY"
+          yarn --version
 
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
@@ -102,6 +104,7 @@ jobs:
           source ./scripts/ci/00_prepare-base-tags.sh
           git checkout $GITHUB_SHA
           echo "BASE=$BASE" >> $GITHUB_ENV
+          yarn --version
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           HTML_URL: ${{ github.event.pull_request.html_url }}
