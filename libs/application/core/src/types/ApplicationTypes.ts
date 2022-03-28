@@ -102,8 +102,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.DRIVING_SCHOOL_CONFIRMATION]: {
     slug: 'okuskoli',
     translation: 'dsc.application',
+  },
   [ApplicationTypes.MORTGAGE_CERTIFICATE]: {
     slug: 'vedbokarvottord',
     translation: 'mc.application',
-  },
+  }
 }
