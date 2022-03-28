@@ -34,6 +34,7 @@ export class TranslationService {
     return this.translationModel.findAndCountAll({
       limit: count,
       offset: offset,
+      order: ['language', 'className', 'key', 'property'],
     })
   }
 
@@ -53,6 +54,7 @@ export class TranslationService {
       limit: count,
       offset: offset,
       distinct: true,
+      order: ['language', 'className', 'key', 'property'],
     })
   }
 
@@ -80,6 +82,7 @@ export class TranslationService {
       limit: count,
       offset: offset,
       distinct: true,
+      order: ['isoKey'],
     })
   }
 
