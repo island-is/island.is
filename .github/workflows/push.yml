@@ -27,7 +27,9 @@ env:
 jobs:
   pre-checks:
     name: Check if job should run
-    runs-on: ubuntu-20.04
+    runs-on: ec2-runners
+    container: 
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     env:
       CREATE_PATTERNS: ^release/
     outputs:
@@ -468,7 +470,9 @@ jobs:
     needs:
       - pre-checks
       - prepare
-    runs-on: ubuntu-20.04
+    runs-on: ec2-runners
+    container: 
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 35
     if: needs.prepare.outputs.BUILD_CHUNKS
     env:
@@ -571,7 +575,9 @@ jobs:
       - prepare
       - pre-checks
     if: needs.prepare.outputs.IMAGES && needs.pre-checks.outputs.PRE_CHECK != 'push'
-    runs-on: ubuntu-20.04
+    runs-on: ec2-runners
+    container: 
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 5
     env:
       FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
@@ -628,7 +634,9 @@ jobs:
             })
 
   retag-unaffected:
-    runs-on: ubuntu-20.04
+    runs-on: ec2-runners
+    container: 
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 5
     if: always() && needs.pre-checks.result == 'success' && needs.prepare.result != 'skipped'
     needs:
@@ -658,7 +666,9 @@ jobs:
         run: ./scripts/ci/retag-unaffected.sh "$UNAFFECTED"
 
   deploy:
-    runs-on: ubuntu-20.04
+    runs-on: ec2-runners
+    container: 
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     if: always() && needs.retag-unaffected.result == 'success' && needs.helm-docker-build.result != 'failure'
     needs:
       - retag-unaffected
@@ -697,7 +707,9 @@ jobs:
           BODY
 
   push-success:
-    runs-on: ubuntu-20.04
+    runs-on: ec2-runners
+    container: 
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     if: always()
     needs:
       - pre-checks
@@ -719,7 +731,9 @@ jobs:
         run: echo "Build was skipped"
 
   failure-notification:
-    runs-on: ubuntu-20.04
+    runs-on: ec2-runners
+    container: 
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     if: failure() && needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK != 'feature-deploy'
     needs:
       - pre-checks
