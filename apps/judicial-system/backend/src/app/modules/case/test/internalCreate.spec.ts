@@ -3,7 +3,12 @@ import { Transaction } from 'sequelize/types'
 
 import { BadRequestException } from '@nestjs/common'
 
-import { Gender, CaseType, UserRole } from '@island.is/judicial-system/types'
+import {
+  Gender,
+  CaseType,
+  UserRole,
+  CaseOrigin,
+} from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from './createTestingCaseModule'
 import { User, UserService } from '../../user'
@@ -102,9 +107,12 @@ describe('CaseController - Internal create', () => {
     })
 
     it('should create a case', () => {
-      expect(mockCaseModel.create).toHaveBeenCalledWith(caseToCreate, {
-        transaction,
-      })
+      expect(mockCaseModel.create).toHaveBeenCalledWith(
+        { ...caseToCreate, origin: CaseOrigin.LOKE },
+        {
+          transaction,
+        },
+      )
     })
   })
 
@@ -134,6 +142,7 @@ describe('CaseController - Internal create', () => {
       expect(mockCaseModel.create).toHaveBeenCalledWith(
         {
           ...caseToCreate,
+          origin: CaseOrigin.LOKE,
           creatingProsecutorId: userId,
           prosecutorId: userId,
         },
