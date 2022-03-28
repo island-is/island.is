@@ -7,6 +7,7 @@ import {
   InstitutionType,
   User,
   UserRole,
+  CaseOrigin,
 } from '@island.is/judicial-system/types'
 import faker from 'faker'
 
@@ -19,6 +20,7 @@ export const makeCustodyCase = (): Case => {
     created: '2020-09-16T19:50:08.033Z',
     modified: '2020-09-16T19:51:39.466Z',
     state: CaseState.DRAFT,
+    origin: CaseOrigin.RVG,
     type: CaseType.CUSTODY,
     policeCaseNumber: '007-2021-202000',
     defendants: [
@@ -43,6 +45,7 @@ export const makeInvestigationCase = (): Case => {
     created: '2020-09-16T19:50:08.033Z',
     modified: '2020-09-16T19:50:08.033Z',
     state: CaseState.DRAFT,
+    origin: CaseOrigin.RVG,
     type: CaseType.INTERNET_USAGE,
     court: {
       id: 'd1e6e06f-dcfd-45e0-9a24-2fdabc2cc8bf',

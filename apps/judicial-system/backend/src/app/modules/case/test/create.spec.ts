@@ -1,7 +1,11 @@
 import { uuid } from 'uuidv4'
 import { Transaction } from 'sequelize/types'
 
-import { CaseType, User as TUser } from '@island.is/judicial-system/types'
+import {
+  CaseOrigin,
+  CaseType,
+  User as TUser,
+} from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from './createTestingCaseModule'
 import { Defendant, DefendantService } from '../../defendant'
@@ -75,6 +79,7 @@ describe('CaseController - Create', () => {
       expect(mockCaseModel.create).toHaveBeenCalledWith(
         {
           ...caseToCreate,
+          origin: CaseOrigin.RVG,
           creatingProsecutorId: userId,
           prosecutorId: userId,
         },
