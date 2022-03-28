@@ -144,6 +144,7 @@ jobs:
         if: steps.generated-files-cache.outputs.cache-hit != 'true'
         run: |
           node --version
+          yarn --version
           tar zcvf generated_files.tar.gz $(./scripts/ci/get-files-touched-by.sh yarn schemas --skip-cache | xargs realpath --relative-to $(pwd))
 
       # - name: Security audit Node modules
