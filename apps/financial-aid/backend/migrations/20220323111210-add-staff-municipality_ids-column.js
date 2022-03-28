@@ -21,20 +21,20 @@ module.exports = {
           ),
         )
         .then(() =>
-        Promise.all([
-          queryInterface.removeColumn('staff', 'municipality_id', {
-            transaction: t,
-          }),
-          queryInterface.changeColumn(
-            'staff',
-            'municipality_ids',
-            {
-              type: Sequelize.ARRAY(Sequelize.STRING),
-              allowNull: false,
-            },
-            { transaction: t },
-          )
-        ])
+          Promise.all([
+            queryInterface.removeColumn('staff', 'municipality_id', {
+              transaction: t,
+            }),
+            queryInterface.changeColumn(
+              'staff',
+              'municipality_ids',
+              {
+                type: Sequelize.ARRAY(Sequelize.STRING),
+                allowNull: false,
+              },
+              { transaction: t },
+            ),
+          ]),
         ),
     )
   },
@@ -60,20 +60,20 @@ module.exports = {
           ),
         )
         .then(() =>
-        Promise.all([
-          queryInterface.removeColumn('staff', 'municipality_ids', {
-            transaction: t,
-          }),
-          queryInterface.changeColumn(
-            'staff',
-            'municipality_id',
-            {
-              type: Sequelize.STRING,
-              allowNull: false,
-            },
-            { transaction: t },
-          )
-        ])
+          Promise.all([
+            queryInterface.removeColumn('staff', 'municipality_ids', {
+              transaction: t,
+            }),
+            queryInterface.changeColumn(
+              'staff',
+              'municipality_id',
+              {
+                type: Sequelize.STRING,
+                allowNull: false,
+              },
+              { transaction: t },
+            ),
+          ]),
         ),
     )
   },
