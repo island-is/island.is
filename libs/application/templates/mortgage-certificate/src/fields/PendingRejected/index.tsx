@@ -92,7 +92,7 @@ export const PendingRejected: FC<FieldBaseProps> = ({ application }) => {
         />
       </Box>
       <Box display="flex" justifyContent={'flexEnd'}>
-        <Link href="https://minarsidur.island.is/">
+        <Link href={formatMessage(m.mortgageCertificateInboxLink)}>
           <Button variant="primary" icon="arrowForward">
             {formatMessage(m.mysites)}
           </Button>
