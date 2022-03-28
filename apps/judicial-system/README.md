@@ -2,7 +2,7 @@
 
 ## About
 
-TODO
+Ask Gudjon
 
 ## URLs
 
