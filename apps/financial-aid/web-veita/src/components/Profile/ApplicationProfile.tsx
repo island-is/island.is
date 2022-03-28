@@ -260,11 +260,7 @@ const ApplicationProfile = ({
 
       <AidAmountModal
         headline={modalInfo.headline}
-        calculations={
-          calculationsModal.type === AmountModal.ESTIMATED
-            ? estimatedBreakDown(aidAmount, application.usePersonalTaxCredit)
-            : acceptedAmountBreakDown(application?.amount)
-        }
+        calculations={modalInfo.calculations}
         isVisible={calculationsModal.visible}
         onVisibilityChange={() => {
           setCalculationsModal({ ...calculationsModal, visible: false })

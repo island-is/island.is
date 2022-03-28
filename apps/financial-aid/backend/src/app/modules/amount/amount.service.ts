@@ -22,7 +22,7 @@ export class AmountService {
       return this.amountModel
         .create(amount, { transaction: t })
         .then(async (amountResponse) => {
-          await Promise.all([
+          await Promise.all(
             amount.deductionFactors.map(async (item) => {
               return await this.deductionFactorsService.create(
                 {
@@ -33,7 +33,7 @@ export class AmountService {
                 t,
               )
             }),
-          ]).then((deductionFactors) => {
+          ).then((deductionFactors) => {
             amountResponse?.setDataValue('deductionFactors', deductionFactors)
           })
           // console.log(deductionFactors, amountResponse, 'blasdlasdl')
