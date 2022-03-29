@@ -172,6 +172,14 @@ export const GET_SERVICE_WEB_ORGANIZATION = gql`
       namespace {
         fields
       }
+      serviceWebFeaturedImage {
+        url
+        title
+        width
+        height
+        contentType
+        id
+      }
     }
   }
 `

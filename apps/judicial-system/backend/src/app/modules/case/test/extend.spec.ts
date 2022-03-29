@@ -4,13 +4,14 @@ import { Transaction } from 'sequelize/types'
 import {
   CaseCustodyRestrictions,
   CaseLegalProvisions,
+  CaseOrigin,
   CaseType,
   Gender,
   User as TUser,
 } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from './createTestingCaseModule'
-import { randomDate } from '../../../test'
+import { randomDate, randomEnum } from '../../../test'
 import { DefendantService, Defendant } from '../../defendant'
 import { User } from '../../user'
 import { Institution } from '../../institution'
@@ -66,6 +67,7 @@ describe('CaseController - Extend', () => {
     const userId = uuid()
     const user = { id: userId } as TUser
     const caseId = uuid()
+    const origin = randomEnum(CaseOrigin)
     const type = CaseType.CUSTODY
     const description = 'Some details'
     const policeCaseNumber = '007-2021-777'
@@ -86,6 +88,7 @@ describe('CaseController - Extend', () => {
     const rulingDate = randomDate()
     const theCase = {
       id: caseId,
+      origin,
       type,
       description,
       policeCaseNumber,
@@ -113,6 +116,7 @@ describe('CaseController - Extend', () => {
     it('should extend case', () => {
       expect(mockCaseModel.create).toHaveBeenCalledWith(
         {
+          origin,
           type,
           description,
           policeCaseNumber,
@@ -144,6 +148,7 @@ describe('CaseController - Extend', () => {
     const userId = uuid()
     const user = { id: userId } as TUser
     const caseId = uuid()
+    const origin = randomEnum(CaseOrigin)
     const type = CaseType.CUSTODY
     const description = 'Some details'
     const policeCaseNumber = '007-2021-777'
@@ -164,6 +169,7 @@ describe('CaseController - Extend', () => {
     const initialRulingDate = randomDate()
     const theCase = {
       id: caseId,
+      origin,
       type,
       description,
       policeCaseNumber,
@@ -191,6 +197,7 @@ describe('CaseController - Extend', () => {
     it('should extend case', () => {
       expect(mockCaseModel.create).toHaveBeenCalledWith(
         {
+          origin,
           type,
           description,
           policeCaseNumber,

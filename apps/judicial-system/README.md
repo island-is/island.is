@@ -124,6 +124,8 @@ yarn start judicial-system-web
 
 Then the project should be running on https://localhost:4200/.
 
+To be able to fetch a list of lawyers you need to provide a value for the environment variable `LAWYERS_ICELAND_API_KEY`
+
 {% hint style="info" %}
 To skip authentication at innskraning.island.is navigate to `/api/auth/login?nationalId=<national_id>` in the web project where `<national_id>` is the national id of a known user.
 Known users:

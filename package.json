@@ -170,7 +170,7 @@
     "identicon.js": "2.3.3",
     "intl": "1.2.5",
     "intl-locales-supported": "1.8.12",
-    "ioredis": "4.27.9",
+    "ioredis": "4.28.5",
     "is-circular": "1.0.2",
     "is-url": "1.2.4",
     "isomorphic-fetch": "3.0.0",

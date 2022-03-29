@@ -2,12 +2,13 @@ import React, { FC, useEffect, useState, createContext } from 'react'
 import Head from 'next/head'
 import { Box } from '@island.is/island-ui/core'
 
-import { Organization, Tag } from '@island.is/web/graphql/schema'
+import { Organization, Tag, Image } from '@island.is/web/graphql/schema'
 import {
   ServiceWebSearchSection,
   ServiceWebHeader,
   ServiceWebBackground,
   ServiceWebDynamicFooter,
+  HeadWithSocialSharing,
 } from '@island.is/web/components'
 import { BackgroundVariations, Options, TextModes } from '../types'
 import config from '../config'
@@ -38,6 +39,8 @@ interface WrapperProps {
   searchPlaceholder?: string
   searchTags?: Tag[]
   showLogoTitle?: boolean
+  pageDescription?: string
+  pageFeaturedImage?: Image
 }
 
 export const Wrapper: FC<WrapperProps> = ({
@@ -52,6 +55,8 @@ export const Wrapper: FC<WrapperProps> = ({
   searchPlaceholder,
   searchTags,
   showLogoTitle,
+  pageDescription,
+  pageFeaturedImage,
   children,
 }) => {
   const [options, setOptions] = useState<Options>({
@@ -72,10 +77,24 @@ export const Wrapper: FC<WrapperProps> = ({
 
   return (
     <>
-      <Head>
-        <title>{pageTitle}</title>
-        <meta name="robots" content="noindex, nofollow" />
-      </Head>
+      {!organization.serviceWebFeaturedImage && (
+        <Head>
+          <title>{pageTitle}</title>
+          <meta name="robots" content="noindex, nofollow" />
+        </Head>
+      )}
+      {organization.serviceWebFeaturedImage && (
+        <HeadWithSocialSharing
+          title={pageTitle}
+          description={pageDescription}
+          imageUrl={pageFeaturedImage?.url}
+          imageContentType={pageFeaturedImage?.contentType}
+          imageWidth={pageFeaturedImage?.width?.toString()}
+          imageHeight={pageFeaturedImage?.height?.toString()}
+        >
+          <meta name="robots" content="noindex, nofollow" />
+        </HeadWithSocialSharing>
+      )}
       <ServiceWebContext.Provider value={{ textMode, institutionSlug }}>
         <ServiceWebHeader
           hideSearch={!smallBackground}

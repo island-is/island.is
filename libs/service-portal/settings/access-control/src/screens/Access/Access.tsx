@@ -25,7 +25,7 @@ import {
   NotFound,
   ServicePortalPath,
 } from '@island.is/service-portal/core'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 
 import { AuthDelegationsQuery } from '../AccessControl'
 import { AccessItem, AccessModal } from '../../components'
@@ -40,6 +40,7 @@ import {
   ScopeTag,
   SCOPE_PREFIX,
 } from '../../utils/types'
+import { servicePortalSaveAccessControl } from '@island.is/plausible'
 
 const AuthApiScopesQuery = gql`
   query AuthApiScopesQuery {
@@ -108,6 +109,8 @@ const DeleteAuthDelegationMutation = gql`
 `
 
 const Access: FC = () => {
+  useNamespaces('sp.settings-access-control')
+
   const { formatMessage } = useLocale()
   const { delegationId }: { delegationId: string } = useParams()
   const history = useHistory()
@@ -148,6 +151,7 @@ const Access: FC = () => {
   const [formError, setFormError] = useState<boolean>(false)
 
   const onSubmit = handleSubmit(async (model: AccessForm) => {
+    formError && setFormError(false)
     const scopes = model[SCOPE_PREFIX].filter(
       (scope) => scope.name?.length > 0,
     ).map((scope) => ({
@@ -169,6 +173,9 @@ const Access: FC = () => {
     })
     if (data && !errors && !err) {
       history.push(ServicePortalPath.SettingsAccessControl)
+      servicePortalSaveAccessControl(
+        ServicePortalPath.SettingsAccessControlGrant,
+      )
     }
   })
 
@@ -219,7 +226,7 @@ const Access: FC = () => {
         intro={defineMessage({
           id: 'sp.settings-access-control:access-intro',
           defaultMessage:
-            'Hér velur þú hvaða aðgangur er veittur með þessu umboði og hversu lengi. Reyndu að lágmarka þau réttindi sem þú vilt veita viðkomandi eins mikið og mögulegt er.',
+            'Reyndu að lágmarka þau réttindi sem þú vilt veita viðkomandi eins mikið og mögulegt er.',
         })}
       />
       {formError && (
