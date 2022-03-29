@@ -112,7 +112,7 @@ module.exports = {
     '<rootDir>/libs/application/templates/criminal-record',
     '<rootDir>/libs/application/templates/data-protection-complaint',
     '<rootDir>/libs/application/templates/document-provider-onboarding',
-    '<rootDir>/libs/application/templates/driving-lessons',
+    '<rootDir>/libs/application/templates/driving-instructor-registrations',
     '<rootDir>/libs/application/templates/driving-license',
     '<rootDir>/libs/application/templates/example-payment',
     '<rootDir>/libs/application/templates/funding-government-projects',
