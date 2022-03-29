@@ -1,5 +1,8 @@
-import React, { useState } from 'react'
-import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
+import React from 'react'
+import {
+  NoDataScreen,
+  ServicePortalModuleComponent,
+} from '@island.is/service-portal/core'
 import { useQuery, gql } from '@apollo/client'
 import { PaymentSchedule, Query } from '@island.is/api/schema'
 import { GET_TAPS_QUERY } from '@island.is/service-portal/graphql'
@@ -16,7 +19,6 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import FinanceScheduleTable from '../../components/FinanceScheduleTable/FinanceScheduleTable'
-import { FinancePaymentScheduleItem } from './FinanceSchedule.types'
 
 export const GET_FINANCE_DEBT_STATUS = gql`
   query getDebtStatusQuery {
@@ -67,6 +69,30 @@ const FinanceSchedule: ServicePortalModuleComponent = () => {
     return <SkeletonLoader space={1} height={30} repeat={4} />
   }
 
+  if (
+    recordsData.length <= 0 &&
+    !paymentSchedulesLoading &&
+    !paymentSchedulesError
+  ) {
+    return (
+      <NoDataScreen
+        title={formatMessage(m.financeSchedules)}
+        button={{
+          internal: false,
+          text: formatMessage(m.financeScheduleApplication),
+          variant: 'primary',
+          link: 'https://island.is/umsoknir/greidsluaaetlun/',
+        }}
+      >
+        <Text>
+          Þú ert ekki með neinar virkar greiðsluáætlanir. Ef þú vilt gera
+          greiðsluáætlun þá getur þú hafið það ferli með því að ýta á hnappinn
+          hér að neðan.{' '}
+        </Text>
+      </NoDataScreen>
+    )
+  }
+
   return (
     <Box marginBottom={[6, 6, 10]}>
       <Stack space={2}>
@@ -89,8 +115,14 @@ const FinanceSchedule: ServicePortalModuleComponent = () => {
           <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
             <Box
               paddingRight={2}
+              paddingTop={[2, 2, 2, 0]}
               display="flex"
-              justifyContent="flexEnd"
+              justifyContent={[
+                'flexStart',
+                'flexStart',
+                'flexStart',
+                'flexEnd',
+              ]}
               alignItems="flexEnd"
               height="full"
             >
@@ -101,8 +133,8 @@ const FinanceSchedule: ServicePortalModuleComponent = () => {
               >
                 <Button
                   colorScheme="default"
-                  icon="open"
-                  iconType="outline"
+                  icon="receipt"
+                  iconType="filled"
                   preTextIconType="outline"
                   size="default"
                   type="button"
@@ -127,14 +159,6 @@ const FinanceSchedule: ServicePortalModuleComponent = () => {
               <SkeletonLoader space={1} height={40} repeat={5} />
             </Box>
           )}
-          {recordsData.length <= 0 &&
-            !paymentSchedulesLoading &&
-            !paymentSchedulesError && (
-              <AlertBanner
-                description={formatMessage(m.noResultsTryAgain)}
-                variant="warning"
-              />
-            )}
           {/* {debtData.length > 0 ? (
             <FinanceDebtStatus debtStatusData={debtData[0]} />
           ) : null} */}

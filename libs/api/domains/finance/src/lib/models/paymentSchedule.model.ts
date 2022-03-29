@@ -46,8 +46,8 @@ export class PaymentScheduleData {
 
 @ObjectType()
 export class PaymentScheduleModel {
-  @Field(() => PaymentScheduleData)
-  myPaymentSchedule!: PaymentScheduleData
+  @Field(() => PaymentScheduleData, { nullable: true })
+  myPaymentSchedule?: PaymentScheduleData
 }
 
 @ObjectType()
