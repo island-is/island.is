@@ -904,6 +904,19 @@ export class CaseService {
   }
 
   async archive(): Promise<ArchiveResponse> {
+    const theCase = await this.caseModel.findOne({
+      include: includes,
+      order: [defendantsOrder],
+      where: {
+        arvhived: false,
+        [Op.or]: [{ state: CaseState.DELETED }, oldFilter],
+      },
+    })
+
+    if (!theCase) {
+      return { caseArchived: false }
+    }
+
     return { caseArchived: false }
   }
 }
