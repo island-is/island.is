@@ -4,6 +4,7 @@ import { useMutation } from '@apollo/client'
 import get from 'lodash/get'
 import has from 'lodash/has'
 
+import { format as formatKennitala } from 'kennitala'
 import {
   Application,
   buildFieldOptions,
@@ -26,6 +27,7 @@ import { useLocale } from '@island.is/localization'
 import {
   DataValue,
   formatBankInfo,
+  formatPhoneNumber,
   handleServerError,
   Label,
   RadioValue,
@@ -253,7 +255,7 @@ export const Review: FC<ReviewScreenProps> = ({
                 label={formatMessage(
                   parentalLeaveFormMessages.applicant.nationalId,
                 )}
-                value={application.applicant}
+                value={formatKennitala(application.applicant)}
               />
             </GridColumn>
           </GridRow>
@@ -273,7 +275,7 @@ export const Review: FC<ReviewScreenProps> = ({
               label={formatMessage(
                 parentalLeaveFormMessages.applicant.phoneNumber,
               )}
-              value={applicantPhoneNumber}
+              value={formatPhoneNumber(applicantPhoneNumber)}
               error={hasError('applicant.phoneNumber')}
             />
           </GridColumn>
@@ -338,19 +340,9 @@ export const Review: FC<ReviewScreenProps> = ({
                 label={formatMessage(
                   parentalLeaveFormMessages.shared.otherParentID,
                 )}
-                value={otherParentId}
-              />
-            </GridColumn>
-          </GridRow>
-        )}
-        {otherParentWillApprove && (
-          <GridRow marginTop={3}>
-            <GridColumn>
-              <DataValue
-                label={formatMessage(
-                  parentalLeaveFormMessages.shared.otherParentEmailSubSection,
-                )}
-                value={otherParentEmail}
+                value={
+                  otherParentId ? formatKennitala(otherParentId) : otherParentId
+                }
               />
             </GridColumn>
           </GridRow>
