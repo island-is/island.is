@@ -12,7 +12,7 @@ import {
 import * as z from 'zod'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
-import { Features } from '@island.is/nest/feature-flags'
+import { Features } from '@island.is/feature-flags'
 
 import { ApiActions } from '../shared'
 import { m } from './messages'
