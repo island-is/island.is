@@ -26,19 +26,22 @@ export const confirmation = {
       description: 'Confirmation next steps',
     },
     contentMissingFiles: {
-      id: 'fa.application:section.confirmation.nextSteps.contentMissingFiles#markup',
+      id:
+        'fa.application:section.confirmation.nextSteps.contentMissingFiles#markup',
       defaultMessage:
         '* Þú hleður upp nauðsynlegum gögnum í gegnum stöðusíðu umsóknar.',
       description: 'Confirmation first step if missing files',
     },
     contentSpouseMissingFiles: {
-      id: 'fa.application:section.confirmation.nextSteps.contentSpouseMissingFiles#markup',
+      id:
+        'fa.application:section.confirmation.nextSteps.contentSpouseMissingFiles#markup',
       defaultMessage:
         '* Maki hleður upp nauðsynlegum gögnum sem þarf til úrvinnslu umsóknar.',
       description: 'Confirmation first step if spouse missing files',
     },
     contentBothMissingFiles: {
-      id: 'fa.application:section.confirmation.nextSteps.contentBothMissingFiles#markup',
+      id:
+        'fa.application:section.confirmation.nextSteps.contentBothMissingFiles#markup',
       defaultMessage:
         '* Þú og maki þinn hlaðið upp nauðsynlegum gögnum sem þarf til úrvinnslu umsóknar.',
       description: 'Confirmation first step if both are missing files',

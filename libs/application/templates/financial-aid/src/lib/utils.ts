@@ -12,7 +12,13 @@ import {
   Municipality,
 } from '@island.is/financial-aid/shared/lib'
 
-import { ApproveOptions, CurrentApplication, FAApplication, OverrideAnswerSchema, UploadFileType } from '..'
+import {
+  ApproveOptions,
+  CurrentApplication,
+  FAApplication,
+  OverrideAnswerSchema,
+  UploadFileType,
+} from '..'
 
 const emailRegex = /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
 export const isValidEmail = (value: string) => emailRegex.test(value)
@@ -87,7 +93,7 @@ export function hasActiveCurrentApplication(context: ApplicationContext) {
 
 export const hasFiles = (
   fileType: UploadFileType,
-  answers: OverrideAnswerSchema
+  answers: OverrideAnswerSchema,
 ) => {
   const files = answers[fileType as keyof OverrideAnswerSchema] as UploadFile[]
   return files && files.length > 0

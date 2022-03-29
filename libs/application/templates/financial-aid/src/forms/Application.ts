@@ -190,9 +190,9 @@ export const Application: Form = buildForm({
       title: m.confirmation.general.sectionTitle,
       children: [
         buildCustomField({
-          id: Routes.CONFIRMATION,
+          id: 'applicantConfirmation',
           title: m.confirmation.general.pageTitle,
-          component: 'Confirmation',
+          component: 'ApplicantConfirmation',
         }),
       ],
     }),
