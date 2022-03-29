@@ -10,7 +10,13 @@ import {
   RecordObject,
   Field,
 } from '@island.is/application/core'
-import { Box, GridColumn, GridRow, Stack } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  GridColumn,
+  GridRow,
+  Stack,
+} from '@island.is/island-ui/core'
 import {
   InputController,
   RadioController,
@@ -43,7 +49,15 @@ import {
 // import PaymentsTable from '../PaymentSchedule/PaymentsTable'
 // import { getEstimatedPayments } from '../PaymentSchedule/estimatedPaymentsQuery'
 import { parentalLeaveFormMessages } from '../../lib/messages'
-import { YES, NO, MANUAL, SPOUSE, ParentalRelations } from '../../constants'
+import {
+  YES,
+  NO,
+  MANUAL,
+  SPOUSE,
+  ParentalRelations,
+  NO_UNION,
+  NO_PRIVATE_PENSION_FUND,
+} from '../../constants'
 import { YesOrNo } from '../../types'
 import { SummaryTimeline } from '../components/SummaryTimeline/SummaryTimeline'
 import { SummaryRights } from '../Rights/SummaryRights'
@@ -52,6 +66,8 @@ import { usePrivatePensionFund as usePrivatePensionFundOptions } from '../../hoo
 import { usePensionFund as usePensionFundOptions } from '../../hooks/usePensionFund'
 import { useStatefulAnswers } from '../../hooks/useStatefulAnswers'
 import { getSelectOptionLabel } from '../../lib/parentalLeaveClientUtils'
+
+import * as styles from './Review.css'
 
 type ValidOtherParentAnswer = typeof NO | typeof MANUAL | undefined
 
@@ -157,6 +173,16 @@ export const Review: FC<ReviewScreenProps> = ({
 
   return (
     <>
+      <Box className={styles.printButton} position="absolute">
+        <Button
+          variant="utility"
+          icon="print"
+          onClick={(e) => {
+            e.preventDefault()
+            window.print()
+          }}
+        />
+      </Box>
       <ReviewGroup
         isEditable={editable}
         canCloseEdit={groupHasNoErrors([
@@ -408,7 +434,7 @@ export const Review: FC<ReviewScreenProps> = ({
                 ]}
                 onSelect={(s: string) => {
                   setStateful((prev) => {
-                    const union = s === NO ? '' : prev.union
+                    const union = s === NO ? NO_UNION : prev.union
                     setValue('payments.union', union)
                     return {
                       ...prev,
@@ -466,7 +492,9 @@ export const Review: FC<ReviewScreenProps> = ({
                 onSelect={(s: string) => {
                   setStateful((prev) => {
                     const privatePensionFund =
-                      s === NO ? '' : prev.privatePensionFund
+                      s === NO
+                        ? NO_PRIVATE_PENSION_FUND
+                        : prev.privatePensionFund
                     const privatePensionFundPercentage =
                       s === NO ? '' : prev.privatePensionFundPercentage
                     setValue('payments.privatePensionFund', privatePensionFund)
