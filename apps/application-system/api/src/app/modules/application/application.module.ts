@@ -77,7 +77,6 @@ if (process.env.INIT_SCHEMA === 'true') {
     },
     ApplicationAccessService,
     ApplicationValidationService,
-    ApplicationLifeCycleService,
   ],
 })
 export class ApplicationModule {}
