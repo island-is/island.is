@@ -53,7 +53,7 @@ describe('StaffController - Get staff for municipality', () => {
     it('should request staff by municipality id from the database', () => {
       expect(mockFindByMunicipalityId).toHaveBeenCalledWith({
         where: {
-          municipalityIds: { [Op.contains]: staff.municipalityIds },
+          municipalityIds: { [Op.overlap]: staff.municipalityIds },
         },
         order: [
           ['active', 'DESC'],

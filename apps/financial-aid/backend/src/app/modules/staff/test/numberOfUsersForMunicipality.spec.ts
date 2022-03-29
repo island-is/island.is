@@ -45,7 +45,7 @@ describe('StaffController - Get number of users for municipality', () => {
     it('should run database query', () => {
       expect(mockNumberOfUsers).toHaveBeenCalledWith({
         where: {
-          municipalityIds: { [Op.in]: [municipalityId] },
+          municipalityIds: { [Op.contains]: [municipalityId] },
         },
       })
     })
