@@ -12,7 +12,7 @@ interface AdminProvider {
   isAuthenticated?: boolean
   admin?: User
   setAdmin?: React.Dispatch<React.SetStateAction<User | undefined>>
-  municipality?: Municipality
+  municipality?: Municipality[]
 }
 
 interface PageProps {
@@ -40,7 +40,7 @@ const AdminProvider = ({ children }: PageProps) => {
   useEffect(() => {
     if (loggedInUser && !admin && loggedInUser.staff) {
       setAdmin(loggedInUser)
-      setMunicipalityById(loggedInUser.staff.municipalityIds[0])
+      setMunicipalityById(loggedInUser.staff.municipalityIds)
       setIsAuthenticated(true)
     }
   }, [setAdmin, loggedInUser, admin])

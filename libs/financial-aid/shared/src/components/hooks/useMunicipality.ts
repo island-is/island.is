@@ -6,9 +6,9 @@ import {
 } from '@island.is/financial-aid/shared/lib'
 import { gql } from '@apollo/client'
 
-const MunicipalityQuery = gql`
-  query GetMunicipalityQuery($input: MunicipalityQueryInput!) {
-    municipality(input: $input) {
+const MunicipalitiesQuery = gql`
+  query getMunicipalities {
+    municipalities {
       id
       name
       homepage
@@ -41,45 +41,42 @@ const MunicipalityQuery = gql`
 export const useMunicipality = () => {
   const storageKey = 'currentMunicipality'
 
-  const [municipality, setScopedMunicipality] = useState<Municipality>()
+  const [municipality, setScopedMunicipality] = useState<Municipality[]>([])
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<Error | undefined>(undefined)
 
-  const getMunicipality = useAsyncLazyQuery<
-    {
-      municipality: Municipality
-    },
-    { input: { id: string } }
-  >(MunicipalityQuery)
+  const getMunicipality = useAsyncLazyQuery<{
+    municipalities: Municipality[]
+  }>(MunicipalitiesQuery)
 
   useEffect(() => {
     setScopedMunicipality(
       sessionStorage.getItem(storageKey)
         ? JSON.parse(sessionStorage.getItem(storageKey) as string)
-        : undefined,
+        : [],
     )
   }, [])
 
   const setMunicipality = (municipality: Municipality) => {
-    setScopedMunicipality(municipality)
+    setScopedMunicipality([municipality])
     sessionStorage.setItem(storageKey, JSON.stringify(municipality))
   }
 
-  const setMunicipalityById = async (municipalityId: string) => {
+  const setMunicipalityById = async (municipalityIds: string[]) => {
     try {
       setError(undefined)
       setLoading(true)
       return await getMunicipality({
-        input: { id: municipalityId },
+        input: { ids: municipalityIds },
       }).then((res) => {
-        setScopedMunicipality(res.data?.municipality)
+        setScopedMunicipality(res.data?.municipalities ?? [])
         sessionStorage.setItem(
           storageKey,
-          JSON.stringify(res.data?.municipality),
+          JSON.stringify(res.data?.municipalities),
         )
         setLoading(false)
-        return res.data?.municipality
+        return res.data?.municipalities
       })
     } catch (error: unknown) {
       setError(error as Error)

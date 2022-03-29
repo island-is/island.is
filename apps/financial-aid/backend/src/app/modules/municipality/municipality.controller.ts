@@ -51,6 +51,27 @@ export class MunicipalityController {
     return municipality
   }
 
+  @UseGuards(ScopesGuard)
+  @Scopes(MunicipalitiesFinancialAidScope.read)
+  @Get('ids')
+  @ApiOkResponse({
+    type: MunicipalityModel,
+    description: 'Gets municipalities by ids',
+  })
+  async getByIds(
+    @Body() input: { ids: string[] },
+  ): Promise<MunicipalityModel[]> {
+    const municipality = await this.municipalityService.findByMunicipalityIds(
+      input.ids,
+    )
+
+    if (!municipality) {
+      throw new NotFoundException(`municipality not found`)
+    }
+
+    return municipality
+  }
+
   @UseGuards(StaffGuard)
   @StaffRolesRules(StaffRole.SUPERADMIN)
   @Post('')

@@ -9,7 +9,7 @@ import {
   UpdateMunicipalityDto,
   CreateMunicipalityDto,
 } from './dto'
-import { Sequelize } from 'sequelize'
+import { Op, Sequelize } from 'sequelize'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
@@ -47,6 +47,32 @@ export class MunicipalityService {
           as: 'cohabitationAid',
           where: {
             municipalityId,
+            type: AidType.COHABITATION,
+          },
+        },
+      ],
+    })
+  }
+
+  async findByMunicipalityIds(
+    municipalityIds: string[],
+  ): Promise<MunicipalityModel[]> {
+    return this.municipalityModel.findAll({
+      where: { municipalityId: { [Op.in]: municipalityIds } },
+      include: [
+        {
+          model: AidModel,
+          as: 'individualAid',
+          where: {
+            municipalityId: { [Op.in]: municipalityIds },
+            type: AidType.INDIVIDUAL,
+          },
+        },
+        {
+          model: AidModel,
+          as: 'cohabitationAid',
+          where: {
+            municipalityId: { [Op.in]: municipalityIds },
             type: AidType.COHABITATION,
           },
         },

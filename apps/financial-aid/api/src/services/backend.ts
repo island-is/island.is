@@ -26,7 +26,10 @@ import { environment } from '../environments'
 import { CreateApplicationFilesInput } from '../app/modules/file/dto'
 import { CreateStaffInput } from '../app/modules/staff'
 import { SpouseModel } from '../app/modules/user'
-import { UpdateMunicipalityInput } from '../app/modules/municipality/dto'
+import {
+  MunicipalityByIdsQueryInput,
+  UpdateMunicipalityInput,
+} from '../app/modules/municipality/dto'
 import {
   DirectTaxPaymentsResponse,
   PersonalTaxReturnResponse,
@@ -59,6 +62,10 @@ class BackendAPI extends RESTDataSource {
 
   getMunicipality(id: string): Promise<Municipality> {
     return this.get(`municipality/${id}`)
+  }
+
+  getMunicipalitiesById(ids: string[]): Promise<Municipality[]> {
+    return this.get(`municipality/ids`)
   }
 
   getMunicipalities(): Promise<Municipality[]> {
