@@ -22,9 +22,9 @@ module.exports = {
           ),
         )
         .then(() =>
-            queryInterface.removeColumn('staff', 'municipality_id', {
-              transaction: t,
-            }),
+          queryInterface.removeColumn('staff', 'municipality_id', {
+            transaction: t,
+          }),
         ),
     )
   },
@@ -51,9 +51,9 @@ module.exports = {
           ),
         )
         .then(() =>
-            queryInterface.removeColumn('staff', 'municipality_ids', {
-              transaction: t,
-            }),
+          queryInterface.removeColumn('staff', 'municipality_ids', {
+            transaction: t,
+          }),
         ),
     )
   },
