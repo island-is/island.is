@@ -37,8 +37,8 @@ const Confirmation = ({
             title={
               hasSpouse
                 ? formatMessage(
-                  confirmation.alertMessagesInRelationship.success,
-                )
+                    confirmation.alertMessagesInRelationship.success,
+                  )
                 : formatMessage(confirmation.alertMessages.success)
             }
           />
@@ -47,8 +47,12 @@ const Confirmation = ({
           <Box marginTop={[2, 2, 3]}>
             <AlertMessage
               type="warning"
-              title={formatMessage(confirmation.alertMessagesInRelationship.dataNeeded)}
-              message={formatMessage(confirmation.alertMessagesInRelationship.dataNeededText)}
+              title={formatMessage(
+                confirmation.alertMessagesInRelationship.dataNeeded,
+              )}
+              message={formatMessage(
+                confirmation.alertMessagesInRelationship.dataNeededText,
+              )}
             />
           </Box>
         )}
