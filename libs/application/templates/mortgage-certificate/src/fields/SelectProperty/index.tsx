@@ -26,10 +26,15 @@ export const SelectProperty: FC<FieldBaseProps> = ({ application, field }) => {
   }
 
   useEffect(() => {
-    if (errorMessage && errorMessage.current) {
-      errorMessage.current.scrollIntoView({ behavior: 'smooth' })
-    }
-  }, [showErrorMsg])
+    console.log(showErrorMsg)
+    console.log(errorMessage)
+    setTimeout(() => {
+      if (errorMessage && errorMessage.current) {
+        errorMessage.current.scrollIntoView({ behavior: 'smooth' })
+        console.log('yehaw')
+      }
+    }, 100)
+  }, [showErrorMsg, errorMessage])
 
   return (
     <>
