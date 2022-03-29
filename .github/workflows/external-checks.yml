@@ -36,7 +36,6 @@ jobs:
       - name: Codeowners validation
         if: env.CHECK
         run: |
-          export GH_TOKEN=<your_token>
             docker run --rm -v $(pwd):/repo -w /repo \
             -e REPOSITORY_PATH="." \
             -e GITHUB_ACCESS_TOKEN="$GH_TOKEN" \
