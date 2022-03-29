@@ -29,6 +29,7 @@ export class IdpProviderService {
       limit: count,
       offset: offset,
       distinct: true,
+      order: ['name'],
     })
   }
 
@@ -48,6 +49,7 @@ export class IdpProviderService {
       offset: offset,
       distinct: true,
       where: { name: searchString },
+      order: ['name'],
     })
   }
 

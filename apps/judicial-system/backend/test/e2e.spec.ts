@@ -17,6 +17,7 @@ import {
   CaseType,
   UserRole,
   SessionArrangements,
+  CaseOrigin,
 } from '@island.is/judicial-system/types'
 import type {
   User as TUser,
@@ -135,6 +136,7 @@ afterAll(async () => {
 })
 
 const minimalCaseData = {
+  type: CaseType.CUSTODY,
   policeCaseNumber: 'Case Number',
 }
 
@@ -224,12 +226,7 @@ function getJudgeCaseData() {
   return remainingJudgeCaseData()
 }
 
-function getCaseType() {
-  return { type: CaseType.CUSTODY }
-}
-
 function getCaseData(
-  withCaseType = true,
   fullCreateCaseData = false,
   otherProsecutorCaseData = false,
   judgeCaseData = false,
@@ -237,9 +234,6 @@ function getCaseData(
   let data = getProsecutorCaseData(fullCreateCaseData, otherProsecutorCaseData)
   if (judgeCaseData) {
     data = { ...data, ...getJudgeCaseData() }
-  }
-  if (withCaseType) {
-    data = { ...data, ...getCaseType() }
   }
 
   return data as CCase
@@ -657,11 +651,11 @@ describe('User', () => {
 
 describe('Case', () => {
   it('PUT /api/case/:id should update prosecutor fields of a case by id', async () => {
-    const data = getCaseData(true, true, true)
+    const data = getCaseData(true, true)
     let dbCase: CCase
     let apiCase: CCase
 
-    await Case.create(getCaseData())
+    await Case.create({ ...getCaseData(), origin: CaseOrigin.RVG })
       .then((value) => {
         dbCase = caseToCCase(value)
 
@@ -703,6 +697,7 @@ describe('Case', () => {
 
     await Case.create({
       ...getCaseData(),
+      origin: CaseOrigin.RVG,
       state: CaseState.DRAFT,
     })
       .then((value) => {
@@ -740,7 +735,8 @@ describe('Case', () => {
     let apiCase: CCase
 
     await Case.create({
-      ...getCaseData(true, true, true, true),
+      ...getCaseData(true, true, true),
+      origin: CaseOrigin.RVG,
       state: CaseState.RECEIVED,
     })
       .then((value) => {
@@ -790,8 +786,8 @@ describe('Case', () => {
   })
 
   it('Get /api/cases should get all cases', async () => {
-    await Case.create(getCaseData())
-      .then(() => Case.create(getCaseData()))
+    await Case.create({ ...getCaseData(), origin: CaseOrigin.RVG })
+      .then(() => Case.create({ ...getCaseData(), origin: CaseOrigin.RVG }))
       .then(() =>
         request(app.getHttpServer())
           .get(`/api/cases`)
@@ -821,6 +817,7 @@ describe('Notification', () => {
     let apiSendNotificationResponse: SendNotificationResponse
 
     await Case.create({
+      origin: CaseOrigin.RVG,
       type: CaseType.CUSTODY,
       policeCaseNumber: 'Case Number',
     })
@@ -870,6 +867,7 @@ describe('Notification', () => {
     let dbNotification: Notification
 
     await Case.create({
+      origin: CaseOrigin.RVG,
       type: CaseType.CUSTODY,
       policeCaseNumber: 'Case Number',
     })
