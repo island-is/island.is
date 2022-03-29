@@ -14,7 +14,7 @@ The Authorization Code + PKCE Flow goes through the following steps.
 
 1. The user clicks the “Login” link in your application.
 2. Your app creates a cryptographically-random Code Verifier which is used to generate a Code Challenge. These two values are needed for the PKCE validation.
-3. Your app redirects the user to IAS’s `/connect/authorize` endpoint, with Authorization Code and Code Challenge parameters in the query string.
+3. Your app redirects the user to IAS’s `/connect/authorize` endpoint, with Response Type and Code Challenge parameters in the query string to indicate to the IAS the usage of Authorization Code + PKCE flow.
 4. The IAS shows a login screen to the user.
 5. The user authenticates to IAS using Auðkenni.
 6. IAS stores the Code Challenge and redirects the user back to your application with a single-use Authorization Code.

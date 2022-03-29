@@ -8,8 +8,9 @@ IAS has built-in scopes which provide access to user claims in the ID token and 
 
 Standard scope REQUIRED for user authentication with Open ID Connect. Returns the following claims:
 
-- `sub` - Uniquely identifies the subject+actor authentication.
+- `sub` - Uniquely identifies the subject+actor+idp authentication.
   - I.e. when users A and B act as user C, they have different `sub` values from each other, which is also different from user A, B and C’s normal `sub` values.
+  - The same user also has a different `sub` value based on their authentication method (sim, app or card). This may change in the future.
 - `subjectType` - The user-type of the subject. Can contain values:
   - `person` - The subject is a person.
   - `legalEntity` - The subject is a legal entity.
@@ -20,7 +21,7 @@ Standard scope REQUIRED for user authentication with Open ID Connect. Returns th
   - `audkenni_sim` - The user was authenticated with an electronic ID stored in a mobile phone SIM card.
   - `audkenni_card` - The user was authenticated with an electronic ID stored on a card.
   - `audkenni_app` - The user was authenticated with an electronic ID stored in [Auðkennisappið](https://app.audkenni.is/).
-- `actor` - Information about the authenticated user. Only available when a delegation is active. Contains two sub-claims:
+- `actor` - Information about the authenticated user. Only available when a delegation is active. Contains nested claims:
   - `nationalId` - The nationalId of the authenticated user.
   - `name` - Full name of the authenticated user.
 
@@ -34,7 +35,7 @@ Request user profile-related information claims:
 
 ### `offline_access`
 
-Request a Refresh Token along with other tokens which can be used to request new Access Tokens. Note that your Client needs to be configured to allow offline access and Refresh Tokens.
+Request a Refresh Token with other tokens, which can be used to request new Access Tokens. Note that your Client needs to be configured to allow offline access to receive Refresh Tokens.
 
 ## Access Tokens
 
@@ -58,7 +59,7 @@ Refresh Tokens issued by IAS are configured with Refresh Token rotation. This me
 4. The client uses the new AT2 to request data from the API.
 5. The API sees that AT2 is valid and returns resources.
 
-Behind the scenes, each authentication forms a chain of Refresh Tokens. If the same Refresh Token is used to request an Access Token for a second time, that request will fail and IAS will revoke that complete chain of Refresh Tokens. the user is forced to re-authenticate.
+Behind the scenes, each authentication forms a chain of Refresh Tokens. If the same Refresh Token is used to request an Access Token for a second time, that request will fail and IAS will revoke that complete chain of Refresh Tokens. The user is forced to re-authenticate.
 
 This means that if an adversary gets access to a Refresh Token in any way, that access will be blocked, either immediately, or the next time the real Client refreshes its token. The real user will notice this by the fact that they’ve been signed out.
 
@@ -66,7 +67,7 @@ This means that if an adversary gets access to a Refresh Token in any way, that 
 
 ### Protecting Refresh Tokens
 
-You MUST protect Refresh Tokens carefully since they can be used to generate new Access Tokens without user intervention. Refresh Tokens SHOULD never be accessible to client side code which can is susceptible to Cross Site Scripting (XSS) attacks.
+You MUST protect Refresh Tokens carefully since they can be used to generate new Access Tokens without user intervention. Refresh Tokens SHOULD never be accessible to client side code which is susceptible to Cross Site Scripting (XSS) attacks.
 
 We RECOMMEND storing Refresh Tokens in secure database storage. If you need to store it in a cookie-based session, the cookie should be configured with HTTPOnly, Secure and SameSite flags to limit access to it, and its contents should ideally be encrypted.
 

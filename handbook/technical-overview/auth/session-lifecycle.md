@@ -8,7 +8,7 @@ When users sign into applications there are up to 3 sessions to be aware of. The
 
 For applications which use IAS Access Tokens, you need to consider the token lifecycle.
 
-Access Tokens by default last 5 minutes. They can’t be —invalidated, so care should be made to protect access tokens and remove them as soon as the user logs out.
+Access Tokens by default last 5 minutes. They can’t be invalidated, so care should be made to protect access tokens and remove them as soon as the user logs out.
 
 With Refresh Tokens your app can get new Access Tokens as they expire. IAS supports both Inactive Expiration and Absolute Expiration for Refresh Tokens. These specify how much time can pass between the app refreshing tokens, as well as the total amount of time the app can refresh tokens.
 

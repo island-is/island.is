@@ -10,7 +10,7 @@ The IAS documentation uses the following terms:
 
 **Access Token**
 
-Access tokens are Credentials used to access protected resources.
+Access tokens are Credentials used to access protected resources. Access tokens issued by IAS are **[JSON Web Tokens (JWTs)](https://openid.net/specs/openid-connect-core-1_0.html#JWT)** signed with the [RS256 algorithm](https://datatracker.ietf.org/doc/html/rfc7518#section-3).
 
 **Claim**
 
@@ -18,7 +18,7 @@ Piece of information asserted about an Entity.
 
 **Client**
 
-An application making protected resource requests on behalf of a resource owner.
+An application making protected resource requests on behalf of a resource owner (such as a user).
 
 **Credential**
 
@@ -34,7 +34,7 @@ Something that has a separate and distinct existence and that can be identified 
 
 **ID Token**
 
-**[JSON Web Token (JWT)](https://openid.net/specs/openid-connect-core-1_0.html#JWT)** that contains Claims about an Authentication. It MAY contain other Claims.
+**[JWT](https://openid.net/specs/openid-connect-core-1_0.html#JWT)** that contains Claims about an Authentication. It MAY contain other Claims.
 
 **Issuer**
 

@@ -27,7 +27,7 @@ In some cases you need an IAS Access Token to access user resources from APIs. T
 
 Special care is needed to protect Access Tokens since they may grant access to sensitive user resources.
 
-Access Tokens should as a rule have a short lifetime. Usually no more than 5 minutes. To support longer user sessions you SHOULD request a Refresh Token and use it to refresh Access Tokens when they expire.
+Access Tokens issued by IAS have a short lifetime; no more than 5 minutes in production. To support longer user sessions you SHOULD request a Refresh Token and use it to refresh Access Tokens when they expire.
 
 You SHOULD NOT store tokens [in browser storage or even browser memory](https://medium.com/@benjamin.botto/secure-access-token-storage-with-single-page-applications-part-1-9536b0021321), as that will expose them to XSS attacks and token exfiltration. Leaked tokens can be more serious than normal XSS attacks since tokens sometimes provide a wider access to user resources then your application exposes.
 
@@ -35,7 +35,7 @@ Instead, you SHOULD keep tokens in a secure backend session storage. If your app
 
 ## Client authentication for APIs
 
-Some apps need to access APIs when no user is around, eg from queue workers or cron jobs.
+Some apps need to access APIs when no user is around, e.g. from queue workers or cron jobs.
 
 If you are performing offline processing for a user that has previously authenticated to your application you should consider storing the user’s Refresh Token so you can get a fresh Access Token when you need to perform the offline processing. This is preferable to Client Credentials since each access is limited to previously authenticated users which have presumably given consent for the access.
 

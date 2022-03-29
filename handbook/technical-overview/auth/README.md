@@ -2,7 +2,7 @@
 
 Digital Iceland has created the Island.is Authentication Service (IAS) as a modern solution to help government organisations authenticate users online. The service is built on open standards including OAuth2 and Open ID Connect and includes scope-based authorisation functionality to support different kinds of delegations as well as user-based API authorisation across organisational boundaries.
 
-Delegations allow individuals to access digital services on behalf of another individual or organisation. E.g. guardians can access services on behalf of their wards, and employees can access services on behalf of the company they work for. Note that with delegations, as opposed to impersonation, each delegated access includes cryptographically signed claims about the actual authenticated user.
+Delegations allow individuals to access digital services on behalf of another individual or legal entities. E.g. guardians can access services on behalf of children they ward, and employees can access services on behalf of the company they work for. Note that with delegations, as opposed to impersonation, each delegated access includes cryptographically signed claims about the actual authenticated user.
 
 This documentation is meant for developers and software architects at Service Providers (SPs) planning to integrate with the IAS. It describes the architecture of the authentication service and how to use it.
 
