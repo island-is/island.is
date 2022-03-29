@@ -193,7 +193,6 @@ export class ApplicationService {
           include: [{ model: DeductionFactorsModel, as: 'deductionFactors' }],
           separate: true,
           order: [['created', 'DESC']],
-          limit: 1,
         },
         {
           model: DirectTaxPaymentModel,
