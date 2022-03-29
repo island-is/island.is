@@ -10,7 +10,7 @@ import {
 import { ApplicationTypes } from './ApplicationTypes'
 import { Schema, StaticText } from './Form'
 import { AnswerValidator } from '../validation/AnswerValidator'
-import { Features } from '@island.is/nest/feature-flags'
+import { Features } from '@island.is/feature-flags'
 
 export interface ApplicationTemplate<
   TContext extends ApplicationContext,

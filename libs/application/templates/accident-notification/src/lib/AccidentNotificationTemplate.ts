@@ -17,7 +17,7 @@ import { ApiActions } from '../shared'
 import { WhoIsTheNotificationForEnum } from '../types'
 import { AccidentNotificationSchema } from './dataSchema'
 import { application } from './messages'
-import { Features } from '@island.is/nest/feature-flags'
+import { Features } from '@island.is/feature-flags'
 
 // The applicant is the applicant of the application, can be someone in power of attorney or the representative for the company
 // The assignee is the person who is assigned to review the application can be the injured person or the representative for the company
