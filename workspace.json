@@ -6051,8 +6051,8 @@
           "options": {
             "linter": "eslint",
             "tsConfig": [
-              "libs/judicial-system/scheduler/tsconfig.lib.json",
-              "libs/judicial-system/scheduler/tsconfig.spec.json"
+              "apps/judicial-system/scheduler/tsconfig.app.json",
+              "apps/judicial-system/scheduler/tsconfig.spec.json"
             ],
             "exclude": [
               "**/node_modules/**",
