@@ -644,42 +644,40 @@ describe('getCasesQueryFilter', () => {
         { [Op.not]: { state: [CaseState.DELETED] } },
         {
           [Op.not]: {
-            [Op.and]: [
-              { state: [CaseState.REJECTED, CaseState.DISMISSED] },
-              { ruling_date: { [Op.lt]: literal('current_date - 90') } },
-            ],
-          },
-        },
-        {
-          [Op.not]: {
-            [Op.and]: [
+            [Op.or]: [
               {
-                state: [
-                  CaseState.NEW,
-                  CaseState.DRAFT,
-                  CaseState.SUBMITTED,
-                  CaseState.RECEIVED,
+                [Op.and]: [
+                  { state: [CaseState.REJECTED, CaseState.DISMISSED] },
+                  { ruling_date: { [Op.lt]: literal('current_date - 90') } },
                 ],
               },
-              { created: { [Op.lt]: literal('current_date - 90') } },
-            ],
-          },
-        },
-        {
-          [Op.not]: {
-            [Op.and]: [
-              { type: restrictionCases },
-              { state: CaseState.ACCEPTED },
-              { valid_to_date: { [Op.lt]: literal('current_date - 90') } },
-            ],
-          },
-        },
-        {
-          [Op.not]: {
-            [Op.and]: [
-              { [Op.not]: { type: restrictionCases } },
-              { state: CaseState.ACCEPTED },
-              { ruling_date: { [Op.lt]: literal('current_date - 90') } },
+              {
+                [Op.and]: [
+                  {
+                    state: [
+                      CaseState.NEW,
+                      CaseState.DRAFT,
+                      CaseState.SUBMITTED,
+                      CaseState.RECEIVED,
+                    ],
+                  },
+                  { created: { [Op.lt]: literal('current_date - 90') } },
+                ],
+              },
+              {
+                [Op.and]: [
+                  { type: restrictionCases },
+                  { state: CaseState.ACCEPTED },
+                  { valid_to_date: { [Op.lt]: literal('current_date - 90') } },
+                ],
+              },
+              {
+                [Op.and]: [
+                  { [Op.not]: { type: restrictionCases } },
+                  { state: CaseState.ACCEPTED },
+                  { ruling_date: { [Op.lt]: literal('current_date - 90') } },
+                ],
+              },
             ],
           },
         },
@@ -707,7 +705,7 @@ describe('getCasesQueryFilter', () => {
     ${UserRole.REGISTRAR}
     ${UserRole.JUDGE}
   `.describe('given $role role', ({ role }) => {
-    it(`should get ${role} filter for`, () => {
+    it(`should get ${role} filter`, () => {
       // Arrange
       const user = {
         role,
@@ -723,42 +721,42 @@ describe('getCasesQueryFilter', () => {
           { [Op.not]: { state: [CaseState.DELETED, CaseState.NEW] } },
           {
             [Op.not]: {
-              [Op.and]: [
-                { state: [CaseState.REJECTED, CaseState.DISMISSED] },
-                { ruling_date: { [Op.lt]: literal('current_date - 90') } },
-              ],
-            },
-          },
-          {
-            [Op.not]: {
-              [Op.and]: [
+              [Op.or]: [
                 {
-                  state: [
-                    CaseState.NEW,
-                    CaseState.DRAFT,
-                    CaseState.SUBMITTED,
-                    CaseState.RECEIVED,
+                  [Op.and]: [
+                    { state: [CaseState.REJECTED, CaseState.DISMISSED] },
+                    { ruling_date: { [Op.lt]: literal('current_date - 90') } },
                   ],
                 },
-                { created: { [Op.lt]: literal('current_date - 90') } },
-              ],
-            },
-          },
-          {
-            [Op.not]: {
-              [Op.and]: [
-                { type: restrictionCases },
-                { state: CaseState.ACCEPTED },
-                { valid_to_date: { [Op.lt]: literal('current_date - 90') } },
-              ],
-            },
-          },
-          {
-            [Op.not]: {
-              [Op.and]: [
-                { [Op.not]: { type: restrictionCases } },
-                { state: CaseState.ACCEPTED },
-                { ruling_date: { [Op.lt]: literal('current_date - 90') } },
+                {
+                  [Op.and]: [
+                    {
+                      state: [
+                        CaseState.NEW,
+                        CaseState.DRAFT,
+                        CaseState.SUBMITTED,
+                        CaseState.RECEIVED,
+                      ],
+                    },
+                    { created: { [Op.lt]: literal('current_date - 90') } },
+                  ],
+                },
+                {
+                  [Op.and]: [
+                    { type: restrictionCases },
+                    { state: CaseState.ACCEPTED },
+                    {
+                      valid_to_date: { [Op.lt]: literal('current_date - 90') },
+                    },
+                  ],
+                },
+                {
+                  [Op.and]: [
+                    { [Op.not]: { type: restrictionCases } },
+                    { state: CaseState.ACCEPTED },
+                    { ruling_date: { [Op.lt]: literal('current_date - 90') } },
+                  ],
+                },
               ],
             },
           },
@@ -798,52 +796,52 @@ describe('getCasesQueryFilter', () => {
           },
           {
             [Op.not]: {
-              [Op.and]: [
-                { state: [CaseState.REJECTED, CaseState.DISMISSED] },
-                { ruling_date: { [Op.lt]: literal('current_date - 90') } },
-              ],
-            },
-          },
-          {
-            [Op.not]: {
-              [Op.and]: [
+              [Op.or]: [
                 {
-                  state: [
-                    CaseState.NEW,
-                    CaseState.DRAFT,
-                    CaseState.SUBMITTED,
-                    CaseState.RECEIVED,
+                  [Op.and]: [
+                    { state: [CaseState.REJECTED, CaseState.DISMISSED] },
+                    { ruling_date: { [Op.lt]: literal('current_date - 90') } },
                   ],
                 },
-                { created: { [Op.lt]: literal('current_date - 90') } },
+                {
+                  [Op.and]: [
+                    {
+                      state: [
+                        CaseState.NEW,
+                        CaseState.DRAFT,
+                        CaseState.SUBMITTED,
+                        CaseState.RECEIVED,
+                      ],
+                    },
+                    { created: { [Op.lt]: literal('current_date - 90') } },
+                  ],
+                },
+                {
+                  [Op.and]: [
+                    { type: restrictionCases },
+                    { state: CaseState.ACCEPTED },
+                    {
+                      valid_to_date: { [Op.lt]: literal('current_date - 90') },
+                    },
+                  ],
+                },
+                {
+                  [Op.and]: [
+                    { [Op.not]: { type: restrictionCases } },
+                    { state: CaseState.ACCEPTED },
+                    { ruling_date: { [Op.lt]: literal('current_date - 90') } },
+                  ],
+                },
               ],
             },
           },
           {
-            [Op.not]: {
-              [Op.and]: [
-                { type: restrictionCases },
-                { state: CaseState.ACCEPTED },
-                { valid_to_date: { [Op.lt]: literal('current_date - 90') } },
-              ],
-            },
-          },
-          {
-            [Op.not]: {
-              [Op.and]: [
-                { [Op.not]: { type: restrictionCases } },
-                { state: CaseState.ACCEPTED },
-                { ruling_date: { [Op.lt]: literal('current_date - 90') } },
-              ],
-            },
-          },
-          {
-            [Op.or]: {
-              accused_appeal_decision: CaseAppealDecision.APPEAL,
-              prosecutor_appeal_decision: CaseAppealDecision.APPEAL,
-              accused_postponed_appeal_date: { [Op.not]: null },
-              prosecutor_postponed_appeal_date: { [Op.not]: null },
-            },
+            [Op.or]: [
+              { accused_appeal_decision: CaseAppealDecision.APPEAL },
+              { prosecutor_appeal_decision: CaseAppealDecision.APPEAL },
+              { accused_postponed_appeal_date: { [Op.not]: null } },
+              { prosecutor_postponed_appeal_date: { [Op.not]: null } },
+            ],
           },
         ],
       })

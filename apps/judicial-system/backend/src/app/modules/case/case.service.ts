@@ -51,9 +51,10 @@ import { CourtService } from '../court'
 import { CreateCaseDto } from './dto/createCase.dto'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { UpdateCaseDto } from './dto/updateCase.dto'
-import { getCasesQueryFilter } from './filters/case.filters'
+import { getCasesQueryFilter, oldFilter } from './filters/case.filters'
 import { Case } from './models/case.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
+import { ArchiveResponse } from './models/archive.response'
 
 interface Recipient {
   name: string
@@ -894,5 +895,9 @@ export class CaseService {
     this.uploadRequestPdfToCourt(updatedCase, user)
 
     return updatedCase
+  }
+
+  async archive(): Promise<ArchiveResponse> {
+    return { archived: false }
   }
 }
