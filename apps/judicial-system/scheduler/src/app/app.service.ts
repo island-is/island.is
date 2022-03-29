@@ -40,7 +40,7 @@ export class AppService {
           const response = await res.json()
 
           if (res.ok) {
-            return !response.archived
+            return !response.caseArchived
           }
 
           logger.error('Failed to archive cases', { response })

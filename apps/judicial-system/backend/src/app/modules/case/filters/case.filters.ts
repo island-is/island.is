@@ -15,6 +15,8 @@ import type { User, Case as TCase } from '@island.is/judicial-system/types'
 
 import { Case } from '../models/case.model'
 
+const hideArchived = { isArchived: false }
+
 function getBlockedStates(
   role: UserRole,
   institutionType?: InstitutionType,
@@ -151,54 +153,20 @@ function isHightenedSecurityCaseHiddenFromUser(
   )
 }
 
-export function isCaseBlockedFromUser(
-  theCase: Case,
-  user: User,
-  forUpdate = true,
-): boolean {
-  return (
-    isStateHiddenFromRole(theCase.state, user.role, user.institution?.type) ||
-    isTypeHiddenFromRole(
-      theCase.type,
-      user.role,
-      forUpdate,
-      user.institution?.type,
-    ) ||
-    isDecisionHiddenFromInstitution(theCase.decision, user.institution?.type) ||
-    isProsecutorsOfficeCaseHiddenFromUser(
-      user,
-      forUpdate,
-      theCase.creatingProsecutor?.institutionId,
-      theCase.sharedWithProsecutorsOfficeId,
-    ) ||
-    isCourtCaseHiddenFromUser(
-      user,
-      forUpdate,
-      hasCaseBeenAppealed((theCase as unknown) as TCase),
-      theCase.courtId,
-    ) ||
-    isHightenedSecurityCaseHiddenFromUser(
-      user,
-      theCase.isHeightenedSecurityLevel,
-      theCase.creatingProsecutor?.id,
-      theCase.prosecutor?.id,
-    )
-  )
-}
-
 function getStaffCasesQueryFilter(
   institutionType?: InstitutionType,
 ): WhereOptions {
   return institutionType === InstitutionType.PRISON_ADMIN
     ? {
         [Op.and]: [
+          { isArchived: false },
           { state: CaseState.ACCEPTED },
           { type: [CaseType.CUSTODY, CaseType.TRAVEL_BAN] },
-          { valid_to_date: { [Op.gt]: literal('current_date - 90') } },
         ],
       }
     : {
         [Op.and]: [
+          { isArchived: false },
           { state: CaseState.ACCEPTED },
           { type: CaseType.CUSTODY },
           {
@@ -207,7 +175,6 @@ function getStaffCasesQueryFilter(
               CaseDecision.ACCEPTING_PARTIALLY,
             ],
           },
-          { valid_to_date: { [Op.gt]: literal('current_date - 90') } },
         ],
       }
 }
@@ -250,6 +217,41 @@ export const oldFilter = {
   ],
 }
 
+export function isCaseBlockedFromUser(
+  theCase: Case,
+  user: User,
+  forUpdate = true,
+): boolean {
+  return (
+    isStateHiddenFromRole(theCase.state, user.role, user.institution?.type) ||
+    isTypeHiddenFromRole(
+      theCase.type,
+      user.role,
+      forUpdate,
+      user.institution?.type,
+    ) ||
+    isDecisionHiddenFromInstitution(theCase.decision, user.institution?.type) ||
+    isProsecutorsOfficeCaseHiddenFromUser(
+      user,
+      forUpdate,
+      theCase.creatingProsecutor?.institutionId,
+      theCase.sharedWithProsecutorsOfficeId,
+    ) ||
+    isCourtCaseHiddenFromUser(
+      user,
+      forUpdate,
+      hasCaseBeenAppealed((theCase as unknown) as TCase),
+      theCase.courtId,
+    ) ||
+    isHightenedSecurityCaseHiddenFromUser(
+      user,
+      theCase.isHeightenedSecurityLevel,
+      theCase.creatingProsecutor?.id,
+      theCase.prosecutor?.id,
+    )
+  )
+}
+
 export function getCasesQueryFilter(user: User): WhereOptions {
   if (user.role === UserRole.STAFF) {
     return getStaffCasesQueryFilter(user.institution?.type)
@@ -257,11 +259,6 @@ export function getCasesQueryFilter(user: User): WhereOptions {
 
   const blockStates = {
     [Op.not]: { state: getBlockedStates(user.role, user.institution?.type) },
-  }
-
-  // Old cases are only filtered from case lists
-  const hideOld = {
-    [Op.not]: oldFilter,
   }
 
   const blockInstitutions =
@@ -305,8 +302,8 @@ export function getCasesQueryFilter(user: User): WhereOptions {
 
   return {
     [Op.and]: [
+      hideArchived,
       blockStates,
-      hideOld,
       blockInstitutions,
       ...blockHightenedSecurity,
     ],

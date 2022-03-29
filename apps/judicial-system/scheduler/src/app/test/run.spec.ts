@@ -62,15 +62,15 @@ describe('AppService - Run', () => {
       mockFetch
         .mockResolvedValue({
           ok: true,
-          json: () => Promise.resolve({ archived: false }),
+          json: () => Promise.resolve({ caseArchived: false }),
         })
         .mockResolvedValueOnce({
           ok: true,
-          json: () => Promise.resolve({ archived: true }),
+          json: () => Promise.resolve({ caseArchived: true }),
         })
         .mockResolvedValueOnce({
           ok: true,
-          json: () => Promise.resolve({ archived: true }),
+          json: () => Promise.resolve({ caseArchived: true }),
         })
 
       await givenWhenThen()
@@ -88,7 +88,7 @@ describe('AppService - Run', () => {
         .mockReturnValueOnce(new Date('2020-01-01T00:00:00.000Z'))
       mockFetch.mockResolvedValue({
         ok: true,
-        json: () => Promise.resolve({ archived: true }),
+        json: () => Promise.resolve({ caseArchived: true }),
       })
 
       await givenWhenThen()

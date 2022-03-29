@@ -1,3 +1,4 @@
+import { Op } from 'sequelize'
 import { Includeable, OrderItem, Transaction } from 'sequelize/types'
 import { Sequelize } from 'sequelize-typescript'
 import { Attachment } from 'nodemailer/lib/mailer'
@@ -22,6 +23,7 @@ import {
 import { EmailService } from '@island.is/email-service'
 import {
   CaseOrigin,
+  CaseState,
   isRestrictionCase,
   SessionArrangements,
   UserRole,
@@ -487,7 +489,11 @@ export class CaseService {
     const theCase = await this.caseModel.findOne({
       include: includes,
       order: [defendantsOrder],
-      where: { id: caseId },
+      where: {
+        id: caseId,
+        state: { [Op.not]: CaseState.DELETED },
+        isArchived: false,
+      },
     })
 
     if (!theCase) {
@@ -898,6 +904,6 @@ export class CaseService {
   }
 
   async archive(): Promise<ArchiveResponse> {
-    return { archived: false }
+    return { caseArchived: false }
   }
 }

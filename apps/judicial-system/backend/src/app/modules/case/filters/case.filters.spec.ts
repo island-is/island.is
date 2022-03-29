@@ -1,4 +1,4 @@
-import { literal, Op } from 'sequelize'
+import { Op } from 'sequelize'
 import each from 'jest-each'
 
 import {
@@ -7,7 +7,6 @@ import {
   CaseState,
   CaseType,
   InstitutionType,
-  restrictionCases,
   UserRole,
 } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
@@ -641,46 +640,8 @@ describe('getCasesQueryFilter', () => {
     // Assert
     expect(res).toStrictEqual({
       [Op.and]: [
+        { isArchived: false },
         { [Op.not]: { state: [CaseState.DELETED] } },
-        {
-          [Op.not]: {
-            [Op.or]: [
-              {
-                [Op.and]: [
-                  { state: [CaseState.REJECTED, CaseState.DISMISSED] },
-                  { ruling_date: { [Op.lt]: literal('current_date - 90') } },
-                ],
-              },
-              {
-                [Op.and]: [
-                  {
-                    state: [
-                      CaseState.NEW,
-                      CaseState.DRAFT,
-                      CaseState.SUBMITTED,
-                      CaseState.RECEIVED,
-                    ],
-                  },
-                  { created: { [Op.lt]: literal('current_date - 90') } },
-                ],
-              },
-              {
-                [Op.and]: [
-                  { type: restrictionCases },
-                  { state: CaseState.ACCEPTED },
-                  { valid_to_date: { [Op.lt]: literal('current_date - 90') } },
-                ],
-              },
-              {
-                [Op.and]: [
-                  { [Op.not]: { type: restrictionCases } },
-                  { state: CaseState.ACCEPTED },
-                  { ruling_date: { [Op.lt]: literal('current_date - 90') } },
-                ],
-              },
-            ],
-          },
-        },
         {
           [Op.or]: [
             { creating_prosecutor_id: { [Op.is]: null } },
@@ -718,48 +679,8 @@ describe('getCasesQueryFilter', () => {
       // Assert
       expect(res).toStrictEqual({
         [Op.and]: [
+          { isArchived: false },
           { [Op.not]: { state: [CaseState.DELETED, CaseState.NEW] } },
-          {
-            [Op.not]: {
-              [Op.or]: [
-                {
-                  [Op.and]: [
-                    { state: [CaseState.REJECTED, CaseState.DISMISSED] },
-                    { ruling_date: { [Op.lt]: literal('current_date - 90') } },
-                  ],
-                },
-                {
-                  [Op.and]: [
-                    {
-                      state: [
-                        CaseState.NEW,
-                        CaseState.DRAFT,
-                        CaseState.SUBMITTED,
-                        CaseState.RECEIVED,
-                      ],
-                    },
-                    { created: { [Op.lt]: literal('current_date - 90') } },
-                  ],
-                },
-                {
-                  [Op.and]: [
-                    { type: restrictionCases },
-                    { state: CaseState.ACCEPTED },
-                    {
-                      valid_to_date: { [Op.lt]: literal('current_date - 90') },
-                    },
-                  ],
-                },
-                {
-                  [Op.and]: [
-                    { [Op.not]: { type: restrictionCases } },
-                    { state: CaseState.ACCEPTED },
-                    { ruling_date: { [Op.lt]: literal('current_date - 90') } },
-                  ],
-                },
-              ],
-            },
-          },
           {
             [Op.or]: [
               { court_id: { [Op.is]: null } },
@@ -783,6 +704,7 @@ describe('getCasesQueryFilter', () => {
       // Assert
       expect(res).toStrictEqual({
         [Op.and]: [
+          { isArchived: false },
           {
             [Op.not]: {
               state: [
@@ -791,47 +713,6 @@ describe('getCasesQueryFilter', () => {
                 CaseState.DRAFT,
                 CaseState.SUBMITTED,
                 CaseState.RECEIVED,
-              ],
-            },
-          },
-          {
-            [Op.not]: {
-              [Op.or]: [
-                {
-                  [Op.and]: [
-                    { state: [CaseState.REJECTED, CaseState.DISMISSED] },
-                    { ruling_date: { [Op.lt]: literal('current_date - 90') } },
-                  ],
-                },
-                {
-                  [Op.and]: [
-                    {
-                      state: [
-                        CaseState.NEW,
-                        CaseState.DRAFT,
-                        CaseState.SUBMITTED,
-                        CaseState.RECEIVED,
-                      ],
-                    },
-                    { created: { [Op.lt]: literal('current_date - 90') } },
-                  ],
-                },
-                {
-                  [Op.and]: [
-                    { type: restrictionCases },
-                    { state: CaseState.ACCEPTED },
-                    {
-                      valid_to_date: { [Op.lt]: literal('current_date - 90') },
-                    },
-                  ],
-                },
-                {
-                  [Op.and]: [
-                    { [Op.not]: { type: restrictionCases } },
-                    { state: CaseState.ACCEPTED },
-                    { ruling_date: { [Op.lt]: literal('current_date - 90') } },
-                  ],
-                },
               ],
             },
           },
@@ -865,12 +746,12 @@ describe('getCasesQueryFilter', () => {
     // Assert
     expect(res).toStrictEqual({
       [Op.and]: [
+        { isArchived: false },
         { state: CaseState.ACCEPTED },
         { type: CaseType.CUSTODY },
         {
           decision: [CaseDecision.ACCEPTING, CaseDecision.ACCEPTING_PARTIALLY],
         },
-        { valid_to_date: { [Op.gt]: literal('current_date - 90') } },
       ],
     })
   })
@@ -892,9 +773,9 @@ describe('getCasesQueryFilter', () => {
     // Assert
     expect(res).toStrictEqual({
       [Op.and]: [
+        { isArchived: false },
         { state: CaseState.ACCEPTED },
         { type: [CaseType.CUSTODY, CaseType.TRAVEL_BAN] },
-        { valid_to_date: { [Op.gt]: literal('current_date - 90') } },
       ],
     })
   })

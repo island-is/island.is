@@ -42,7 +42,7 @@ describe('CaseController - Archive', () => {
     })
 
     it('should fail', () => {
-      expect(then.result).toEqual({ archived: false })
+      expect(then.result).toEqual({ caseArchived: false })
     })
   })
 })
