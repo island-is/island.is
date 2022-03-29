@@ -90,7 +90,6 @@ export class FinanceResolver {
 
   @Query(() => DocumentsListModel)
   @Scopes(ApiScope.financeOverview, ApiScope.financeSalary)
-  @Audit()
   async getDocumentsList(
     @CurrentUser() user: User,
     @Args('input') input: GetDocumentsListInput,
