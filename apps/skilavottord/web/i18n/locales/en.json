@@ -396,6 +396,22 @@
               "required": "Company name is required"
             }
           },
+          "nationalId": {
+            "label": "Company national ID",
+            "placeholder": "Company national ID",
+            "rules": {
+              "required": "Company national ID is required",
+              "validate": "National ID is incorrect"
+            }
+          },
+          "email": {
+            "label": "Company email",
+            "placeholder": "Company email",
+            "rules": {
+              "required": "Company email is required",
+              "validate": "Invalid email"
+            }
+          },
           "address": {
             "label": "Address",
             "placeholder": "Address",

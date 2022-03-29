@@ -78,15 +78,16 @@ export interface Name {
 
 export interface NameRules {
   required: string
+  validate: string
 }
 
 export interface NationalID {
   label: string
   placeholder: string
-  rules: NationalIDRules
+  rules: PurpleRules
 }
 
-export interface NationalIDRules {
+export interface PurpleRules {
   required: string
   validate: string
 }
@@ -450,6 +451,8 @@ export interface RecyclingCompanyForm {
 export interface FormInputs {
   companyId: Name
   companyName: Name
+  nationalId: Name
+  email: Name
   address: Name
   postnumber: Name
   city: Name
@@ -807,11 +810,11 @@ const typeMap: any = {
     [
       { json: 'label', js: 'label', typ: '' },
       { json: 'placeholder', js: 'placeholder', typ: '' },
-      { json: 'rules', js: 'rules', typ: r('NationalIDRules') },
+      { json: 'rules', js: 'rules', typ: r('PurpleRules') },
     ],
     false,
   ),
-  NationalIDRules: o(
+  PurpleRules: o(
     [
       { json: 'required', js: 'required', typ: '' },
       { json: 'validate', js: 'validate', typ: '' },
@@ -1273,6 +1276,8 @@ const typeMap: any = {
     [
       { json: 'companyId', js: 'companyId', typ: r('Name') },
       { json: 'companyName', js: 'companyName', typ: r('Name') },
+      { json: 'nationalId', js: 'nationalId', typ: r('Name') },
+      { json: 'email', js: 'email', typ: r('Name') },
       { json: 'address', js: 'address', typ: r('Name') },
       { json: 'postnumber', js: 'postnumber', typ: r('Name') },
       { json: 'city', js: 'city', typ: r('Name') },

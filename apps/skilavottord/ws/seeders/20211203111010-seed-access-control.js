@@ -22,7 +22,7 @@ module.exports = {
           name: 'Sigurgeir Gudmundsson',
           role: 'developer',
           partner_id: '9999999999',
-          email: 'essgje@island.is'
+          email: 'essgje@island.is',
         },
       ],
       {},

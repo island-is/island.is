@@ -16,12 +16,12 @@ export class CreateAccessControlInput {
 
   @Field({ nullable: true })
   partnerId?: string
-  
+
   @Field()
   email?: string
-  
+
   @Field()
-  phone!: string 
+  phone!: string
 }
 
 @InputType()
@@ -40,10 +40,9 @@ export class UpdateAccessControlInput {
 
   @Field()
   email?: string
-  
-  @Field()
-  phone!: string 
 
+  @Field()
+  phone!: string
 }
 
 @InputType()

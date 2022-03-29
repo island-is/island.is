@@ -32,9 +32,11 @@ export class AccessControlService {
   }
 
   //ATH
-  async findByRecyclingPartner(partnerId: string): Promise<AccessControlModel[]> {
+  async findByRecyclingPartner(
+    partnerId: string,
+  ): Promise<AccessControlModel[]> {
     return this.accessControlModel.findAll({
-      where: {partnerId},
+      where: { partnerId },
       include: [
         {
           model: RecyclingPartnerModel,

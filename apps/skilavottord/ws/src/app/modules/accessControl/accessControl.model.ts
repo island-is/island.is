@@ -40,7 +40,7 @@ export class AccessControlModel extends Model<AccessControlModel> {
     type: DataType.STRING,
   })
   role!: AccessControlRoleType
-  
+
   @Field({ nullable: true })
   @Column({
     type: DataType.STRING,

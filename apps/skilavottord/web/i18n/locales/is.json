@@ -396,6 +396,22 @@
               "required": "Skylda er að fylla út nafn fyrirtækis"
             }
           },
+          "nationalId": {
+            "label": "Kennitala fyrirtækis",
+            "placeholder": "Kennitala fyrirtækis",
+            "rules": {
+              "required": "Skylda er að fylla út kennitölu fyrirtækis",
+              "validate": "Kennitalan er ekki gild kennitala"
+            }
+          },
+          "email": {
+            "label": "Netfang fyrirtækis",
+            "placeholder": "Netfang fyrirtækis",
+            "rules": {
+              "required": "Skylda er að fylla út netfang fyrirtækis",
+              "validate": "Netfang er ekki réttu formi"
+            }
+          },
           "address": {
             "label": "Heimilisfang",
             "placeholder": "Heimilisfang",
