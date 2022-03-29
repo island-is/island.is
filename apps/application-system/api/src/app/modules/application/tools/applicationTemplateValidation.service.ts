@@ -1,0 +1,263 @@
+import { Injectable, Inject } from '@nestjs/common'
+import { ValidationFailed } from '@island.is/nest/problem'
+import {
+  Application,
+  ApplicationTemplateHelper,
+  FormatMessage,
+  FormValue,
+  validateAnswers,
+} from '@island.is/application/core'
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
+import {
+  BadRequestException,
+  ForbiddenException,
+  UnauthorizedException,
+} from '@nestjs/common'
+import { Unwrap } from '@island.is/shared/types'
+import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
+import { environment } from '../../../../environments'
+import { PopulateExternalDataDto } from '../dto/populateExternalData.dto'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import { User } from '@island.is/auth-nest-tools'
+
+const isRunningOnProductionEnvironment = () => {
+  return (
+    environment.production === true &&
+    environment.name !== 'local' &&
+    environment.name !== 'dev' &&
+    environment.name !== 'staging'
+  )
+}
+
+@Injectable()
+export class ApplicationValidationService {
+  constructor(
+    @Inject(LOGGER_PROVIDER)
+    private logger: Logger,
+    private readonly featureFlagService: FeatureFlagService,
+  ) {}
+
+  async validateThatApplicationIsReady(
+    application: Application,
+    user: User,
+  ): Promise<void> {
+    const applicationTemplate = await getApplicationTemplateByTypeId(
+      application.typeId,
+    )
+
+    if (!applicationTemplate) {
+      throw new BadRequestException(
+        `No template exists for type: ${application.typeId}`,
+      )
+    }
+
+    await this.validateThatTemplateIsReady(user, applicationTemplate)
+  }
+
+  async isTemplateFeatureFlaggedReady(featureFlag: Features, user: User) {
+    const feature = await this.featureFlagService.getValue(
+      featureFlag,
+      false,
+      user,
+    )
+    if (!feature) {
+      return false
+    }
+    return feature
+  }
+
+  // If configcat flag is present use that flag to determine if the template is ready
+  // If configcat flag is not present, use the readyForProduction flag
+  // TODO: Remove the readyForProduction flag
+  async isTemplateReady(
+    user: User,
+    template: Pick<
+      Unwrap<typeof getApplicationTemplateByTypeId>,
+      'readyForProduction' | 'featureFlag'
+    >,
+  ): Promise<boolean> {
+    if (template.featureFlag) {
+      const results = await this.isTemplateFeatureFlaggedReady(
+        template.featureFlag,
+        user,
+      )
+      if (!results) {
+        return false
+      }
+      return true
+    }
+    // TODO: Remove this when readyForProduction is removed
+    if (isRunningOnProductionEnvironment() && !template.readyForProduction) {
+      {
+        return false
+      }
+    }
+    return true
+  }
+
+  async validateThatTemplateIsReady(
+    user: User,
+    template: Unwrap<typeof getApplicationTemplateByTypeId>,
+  ): Promise<void> {
+    const results = await this.isTemplateReady(user, template)
+    if (!results) {
+      throw new BadRequestException(
+        `Template ${template.type} is not ready for production`,
+      )
+    }
+  }
+
+  async validateApplicationSchema(
+    application: Pick<Application, 'typeId'>,
+    newAnswers: FormValue,
+    formatMessage: FormatMessage,
+    user: User,
+  ): Promise<void> {
+    const applicationTemplate = await getApplicationTemplateByTypeId(
+      application.typeId,
+    )
+
+    if (applicationTemplate === null) {
+      throw new BadRequestException(
+        `No template exists for type: ${application.typeId}`,
+      )
+    }
+
+    await this.validateThatTemplateIsReady(user, applicationTemplate)
+
+    const schemaFormValidationError = validateAnswers({
+      dataSchema: applicationTemplate.dataSchema,
+      answers: newAnswers,
+      isFullSchemaValidation: false,
+      formatMessage,
+    })
+
+    if (schemaFormValidationError) {
+      this.logger.error('Failed to validate schema', schemaFormValidationError)
+      throw new ValidationFailed(schemaFormValidationError)
+    }
+  }
+
+  async validateIncomingAnswers(
+    application: Application,
+    newAnswers: FormValue | undefined,
+    nationalId: string,
+    isStrict = true,
+    formatMessage: FormatMessage,
+  ): Promise<FormValue> {
+    if (!newAnswers) {
+      return {}
+    }
+
+    const template = await getApplicationTemplateByTypeId(application.typeId)
+    const role = template.mapUserToRole(nationalId, application)
+
+    if (!role) {
+      throw new UnauthorizedException(
+        'Current user does not have a role in this application state',
+      )
+    }
+
+    const helper = new ApplicationTemplateHelper(application, template)
+    const writableAnswersAndExternalData = helper.getWritableAnswersAndExternalData(
+      role,
+    )
+
+    let trimmedAnswers: FormValue
+
+    if (writableAnswersAndExternalData === 'all') {
+      trimmedAnswers = newAnswers
+    } else {
+      if (
+        isStrict &&
+        (!writableAnswersAndExternalData ||
+          !writableAnswersAndExternalData?.answers)
+      ) {
+        throw new ForbiddenException(
+          `Current user is not permitted to update answers in this state: ${application.state}`,
+        )
+      }
+
+      const permittedAnswers = writableAnswersAndExternalData?.answers ?? []
+      trimmedAnswers = {}
+      const illegalAnswers: string[] = []
+
+      Object.keys(newAnswers).forEach((key) => {
+        if (permittedAnswers.indexOf(key) === -1) {
+          illegalAnswers.push(key)
+        } else {
+          trimmedAnswers[key] = newAnswers[key]
+        }
+      })
+
+      if (isStrict && illegalAnswers.length > 0) {
+        throw new ForbiddenException(
+          `Current user is not permitted to update the following answers: ${illegalAnswers.toString()}`,
+        )
+      }
+    }
+
+    try {
+      const errorMap = await helper.applyAnswerValidators(
+        newAnswers,
+        formatMessage,
+      )
+      if (errorMap) {
+        throw new ValidationFailed(errorMap)
+      }
+    } catch (error) {
+      this.logger.error('Failed to validate answers', error)
+      throw error
+    }
+
+    return trimmedAnswers
+  }
+
+  async validateIncomingExternalDataProviders(
+    application: Application,
+    providerDto: PopulateExternalDataDto,
+    nationalId: string,
+  ): Promise<void> {
+    const { dataProviders } = providerDto
+    if (!dataProviders.length) {
+      return
+    }
+    const template = await getApplicationTemplateByTypeId(application.typeId)
+    const role = template.mapUserToRole(nationalId, application)
+    if (!role) {
+      throw new UnauthorizedException(
+        'Current user does not have a role in this application state',
+      )
+    }
+    const helper = new ApplicationTemplateHelper(application, template)
+    const writableAnswersAndExternalData = helper.getWritableAnswersAndExternalData(
+      role,
+    )
+    if (writableAnswersAndExternalData === 'all') {
+      return
+    }
+    if (
+      !writableAnswersAndExternalData ||
+      !writableAnswersAndExternalData?.externalData
+    ) {
+      throw new BadRequestException(
+        `Current user is not permitted to update external data in this state: ${application.state}`,
+      )
+    }
+    const permittedDataProviders = writableAnswersAndExternalData.externalData
+
+    const illegalDataProviders: string[] = []
+
+    dataProviders.forEach(({ id }) => {
+      if (permittedDataProviders.indexOf(id) === -1) {
+        illegalDataProviders.push(id)
+      }
+    })
+    if (illegalDataProviders.length > 0) {
+      throw new BadRequestException(
+        `Current user is not permitted to update the following data providers: ${illegalDataProviders.toString()}`,
+      )
+    }
+  }
+}

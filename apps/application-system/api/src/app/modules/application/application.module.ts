@@ -21,8 +21,11 @@ import { ApplicationAccessService } from './tools/applicationAccess.service'
 import { PaymentModule } from '../payment/payment.module'
 import { LoggingModule } from '@island.is/logging'
 import { TemplateApiApplicationService } from './template-api.service'
+import { FeatureFlagModule } from '@island.is/nest/feature-flags'
+import { ApplicationValidationService } from './tools/applicationTemplateValidation.service'
 import { AwsModule } from '@island.is/nest/aws'
 import { ApplicationApiCoreModule } from '@island.is/application/api/core'
+import { ApplicationLifeCycleService } from './lifecycle/application-lifecycle.service'
 
 let BullModule: DynamicModule
 
@@ -62,6 +65,7 @@ if (process.env.INIT_SCHEMA === 'true') {
     BullModule,
     SigningModule.register(environment.signingOptions),
     CmsTranslationsModule,
+    FeatureFlagModule,
     LoggingModule,
   ],
   controllers: [ApplicationController],
@@ -73,6 +77,8 @@ if (process.env.INIT_SCHEMA === 'true') {
       useValue: environment.application as ApplicationConfig,
     },
     ApplicationAccessService,
+    ApplicationValidationService,
+    ApplicationLifeCycleService,
   ],
 })
 export class ApplicationModule {}
