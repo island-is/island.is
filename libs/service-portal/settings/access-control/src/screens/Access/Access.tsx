@@ -254,6 +254,7 @@ const Access: FC = () => {
                   <Button
                     variant="ghost"
                     colorScheme="destructive"
+                    size="small"
                     icon="close"
                     onClick={() => setCloseModalOpen(true)}
                   >
@@ -292,6 +293,7 @@ const Access: FC = () => {
               )}
               <Button
                 variant="primary"
+                size="small"
                 loading={updateLoading}
                 onClick={() => setSaveModalOpen(true)}
                 icon="checkmark"
