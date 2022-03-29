@@ -19,6 +19,9 @@ import { UpdatePracticalDrivingLessonInput } from './dto/updatePracticalDrivingL
 import { DeletePracticalDrivingLessonInput } from './dto/deletePracticalDrivingLesson.input'
 import { DrivingLicenseBookStudentForTeacher } from './models/studentsTeacherNationalId.response'
 import { DrivingInstructorGuard } from './guards/drivingInstructor.guard'
+import { DrivingSchool } from './models/drivingSchool.response'
+import { CreateDrivingSchoolTestResultInput } from './dto/createDrivingSchoolTestResult.input'
+import { DrivingLicenceTestResultId } from './models/drivingLicenseTestResult.response'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -90,6 +93,22 @@ export class DrivingLicenseBookResolver {
     return this.drivingLicenseBookService.deletePracticalDrivingLesson(
       input,
       user,
+    )
+  }
+
+  @Query(() => [DrivingSchool])
+  drivingLicenseBookSchoolForEmployee(
+    @CurrentUser() user: User,
+  ) {
+    return this.drivingLicenseBookService.getSchoolForSchoolStaff(user)
+  }
+
+  @Mutation(() => DrivingLicenceTestResultId)
+  drivingLicenseBookCreateDrivingSchoolTestResult(
+    @Args('input') input: CreateDrivingSchoolTestResultInput,
+  ) {
+    return this.drivingLicenseBookService.createDrivingSchoolTestResult(
+      input,
     )
   }
 }

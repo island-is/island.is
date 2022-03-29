@@ -20,7 +20,9 @@ import {
   DrivingLicenseBookStudent,
   PracticalDrivingLesson,
   DrivingLicenseBookStudentOverview,
+  Organization,
 } from './drivinLicenceBook.type'
+import { CreateDrivingSchoolTestResultInput } from './dto/createDrivingSchoolTestResult.input'
 
 @Injectable()
 export class DrivingLicenseBookService {
@@ -287,5 +289,44 @@ export class DrivingLicenseBookService {
       licenseCategory: LICENSE_CATEGORY,
     })
     return data?.bookId || null
+  }
+
+  async getSchoolForSchoolStaff(user: User): Promise<Organization> {
+    const api = await this.apiWithAuth()
+    const data = await api.apiSchoolGetSchoolForSchoolStaffUserSsnGet({
+      userSsn: user.nationalId,
+    })
+    if (!data) {
+      throw new NotFoundException(
+        `School found for user ${user.nationalId} not found`,
+      )
+    }
+    return {
+      nationalId: data.ssn ?? '',
+      name: data.name ?? '',
+      address: data.address ?? '',
+      zipCode: data.zipCode ?? '',
+      phoneNumber: data.phoneNumber ?? '',
+      email: data.email ?? '',
+      website: data.website ?? '',
+      allowedDrivingSchoolTypes: data.allowedDrivingSchoolTypes ?? [],
+    }
+  }
+
+  async createDrivingSchoolTestResult(
+    input: CreateDrivingSchoolTestResultInput,
+  ): Promise<{id: string} | null> {
+    const api = await this.apiWithAuth()
+    const { data } = await api.apiSchoolCreateSchoolTestResultPost({
+      schoolTestResultCreateRequestBody: {
+        bookId: input.bookId,
+        schoolTypeId: input.schoolTypeId,
+        schoolSsn: input.schoolNationlId,
+        schoolEmployeeSsn: input.schoolEmployeeNationalId,
+        createdOn: input.createdOn,
+        comments: input.comments,
+      },
+    })
+    return data?.id ? {id: data.id} : null
   }
 }

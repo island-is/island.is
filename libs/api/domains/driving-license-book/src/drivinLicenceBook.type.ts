@@ -92,3 +92,14 @@ export interface PracticalDrivingLesson {
   createdOn: string
   comments: string
 }
+
+export interface Organization {
+  nationalId: string 
+  name: string 
+  address: string 
+  zipCode: string 
+  phoneNumber: string 
+  email: string 
+  website: string 
+  allowedDrivingSchoolTypes: string[]
+}
