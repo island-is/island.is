@@ -1,7 +1,7 @@
-import React, { useCallback } from 'react'
+import React, { useMemo, useCallback } from 'react'
 
 import { Box, Text } from '@island.is/island-ui/core'
-import { Case } from '@island.is/judicial-system/types'
+import { CaseType, Case } from '@island.is/judicial-system/types'
 import { setAndSendDateToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { DateTime } from '@island.is/judicial-system-web/src/components'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -30,6 +30,11 @@ const ArrestDate: React.FC<Props> = (props) => {
     [workingCase, setWorkingCase, updateCase],
   )
 
+  const caseType = workingCase.type
+  const isArrestTimeRequired = useMemo(() => caseType === CaseType.CUSTODY, [
+    caseType,
+  ])
+
   return (
     <Box component="section" marginBottom={5}>
       <Box marginBottom={3}>
@@ -41,6 +46,7 @@ const ArrestDate: React.FC<Props> = (props) => {
         name="arrestDate"
         maxDate={new Date()}
         selectedDate={workingCase.arrestDate}
+        required={isArrestTimeRequired}
         onChange={onChange}
       />
     </Box>
