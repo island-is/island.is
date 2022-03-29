@@ -247,14 +247,13 @@ const Access: FC = () => {
       )}
       <FormProvider {...hookFormData}>
         <form onSubmit={onSubmit}>
-          <Box marginBottom={[3, 3, 5]} display="flex" justifyContent="flexEnd">
+          <Box marginBottom={[3, 3, 4]} display="flex" justifyContent="flexEnd">
             <Inline space={1}>
               {authDelegation?.scopes.length > 0 && (
                 <>
                   <Button
                     variant="ghost"
                     colorScheme="destructive"
-                    size="small"
                     icon="close"
                     onClick={() => setCloseModalOpen(true)}
                   >
@@ -292,7 +291,6 @@ const Access: FC = () => {
                 </>
               )}
               <Button
-                size="small"
                 variant="primary"
                 loading={updateLoading}
                 onClick={() => setSaveModalOpen(true)}
