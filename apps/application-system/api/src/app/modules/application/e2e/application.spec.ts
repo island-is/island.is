@@ -62,8 +62,6 @@ beforeAll(async () => {
   app = await setup(AppModule, {
     override: (builder) =>
       builder
-        .overrideProvider(FeatureFlagService)
-        .useClass(MockFeatureFlagService)
         .overrideProvider(ContentfulRepository)
         .useClass(MockContentfulRepository)
         .overrideProvider(FeatureFlagService)
