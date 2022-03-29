@@ -5899,14 +5899,21 @@
         "migrate": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "../../../node_modules/.bin/sequelize-cli db:migrate",
+            "command": "sequelize-cli db:migrate",
+            "cwd": "apps/judicial-system/backend"
+          }
+        },
+        "migrate/undo": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "sequelize-cli db:migrate:undo",
             "cwd": "apps/judicial-system/backend"
           }
         },
         "migrate/generate": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "../../../node_modules/.bin/sequelize-cli migration:generate --name $(whoami)",
+            "command": "sequelize-cli migration:generate --name $(whoami)",
             "cwd": "apps/judicial-system/backend"
           }
         },
