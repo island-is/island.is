@@ -13,12 +13,16 @@ const ApplicantConfirmation = ({ application }: FAFieldBaseProps) => {
     answers.income === ApproveOptions.Yes && !hasFiles('incomeFiles', answers)
 
   let firstStepText
-  if (applicantHasSpouse && missingIncomeFiles) {
-    firstStepText = confirmation.nextSteps.contentBothMissingFiles
-  } else if (applicantHasSpouse) {
-    firstStepText = confirmation.nextSteps.contentSpouseMissingFiles
-  } else if (missingIncomeFiles) {
-    firstStepText = confirmation.nextSteps.contentMissingFiles
+  switch (true) {
+    case (applicantHasSpouse && missingIncomeFiles):
+      firstStepText = confirmation.nextSteps.contentBothMissingFiles
+      break
+    case (applicantHasSpouse):
+      firstStepText = confirmation.nextSteps.contentSpouseMissingFiles
+      break
+    case (missingIncomeFiles):
+      firstStepText = confirmation.nextSteps.contentMissingFiles
+      break
   }
 
   return (
