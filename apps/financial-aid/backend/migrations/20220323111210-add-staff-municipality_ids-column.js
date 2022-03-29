@@ -9,7 +9,8 @@ module.exports = {
           'municipality_ids',
           {
             type: Sequelize.ARRAY(Sequelize.STRING),
-            allowNull: true,
+            defaultValue: [],
+            allowNull: false,
           },
           { transaction: t },
         )
@@ -21,20 +22,9 @@ module.exports = {
           ),
         )
         .then(() =>
-          Promise.all([
             queryInterface.removeColumn('staff', 'municipality_id', {
               transaction: t,
             }),
-            queryInterface.changeColumn(
-              'staff',
-              'municipality_ids',
-              {
-                type: Sequelize.ARRAY(Sequelize.STRING),
-                allowNull: false,
-              },
-              { transaction: t },
-            ),
-          ]),
         ),
     )
   },
@@ -47,33 +37,23 @@ module.exports = {
           'municipality_id',
           {
             type: Sequelize.STRING,
-            allowNull: true,
+            defaultValue: '',
+            allowNull: false,
           },
           { transaction: t },
         )
         .then(() =>
           queryInterface.sequelize.query(
             'UPDATE "staff"\
-      SET "municipality_id" = "municipality_ids"[1] \
-      WHERE "municipality_ids" IS NOT NULL AND array_length("municipality_ids", 1) > 0',
+            SET "municipality_id" = "municipality_ids"[1] \
+            WHERE "municipality_ids" IS NOT NULL AND array_length("municipality_ids", 1) > 0',
             { transaction: t },
           ),
         )
         .then(() =>
-          Promise.all([
             queryInterface.removeColumn('staff', 'municipality_ids', {
               transaction: t,
             }),
-            queryInterface.changeColumn(
-              'staff',
-              'municipality_id',
-              {
-                type: Sequelize.STRING,
-                allowNull: false,
-              },
-              { transaction: t },
-            ),
-          ]),
         ),
     )
   },
