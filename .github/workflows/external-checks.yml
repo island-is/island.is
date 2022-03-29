@@ -43,7 +43,7 @@ jobs:
             -e OWNER_CHECKER_REPOSITORY="island-is/island.is" \
             public.ecr.aws/m3u4c4h9/mszostok/codeowners-validator:0.7.1
         env:
-          GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          GH_TOKEN: ${{secrets.OWNERS_VALIDATOR_GITHUB_SECRET}}
           CHECKS: 'files,owners,duppatterns'
 
   gitbook-check:
