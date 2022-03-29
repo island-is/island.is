@@ -12,7 +12,10 @@ import {
   Tooltip,
 } from '@island.is/island-ui/core'
 
-import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
+import {
+  ReactSelectOption,
+  Lawyer,
+} from '@island.is/judicial-system-web/src/types'
 import {
   Case,
   CaseType,
@@ -26,7 +29,6 @@ import { defendant } from '@island.is/judicial-system-web/messages'
 import { rcHearingArrangements } from '@island.is/judicial-system-web/messages'
 import { icHearingArrangements } from '@island.is/judicial-system-web/messages'
 
-import type { Lawyer } from '@island.is/judicial-system-web/pages/api/lawyerRegistry/getLawyers/getLawyers'
 import { BlueBox } from '..'
 import { useCase, useLawyers } from '../../utils/hooks'
 import {
