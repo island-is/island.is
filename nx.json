@@ -109,6 +109,9 @@
     "api-domains-driving-license": {
       "tags": []
     },
+    "api-domains-driving-license-book": {
+      "tags": []
+    },
     "api-domains-education": {
       "tags": []
     },
@@ -212,6 +215,9 @@
     "application-templates-driving-assessment-approval": {
       "tags": []
     },
+    "application-templates-driving-instructor-registrations": {
+      "tags": []
+    },
     "application-templates-driving-license": {
       "tags": []
     },
@@ -305,6 +311,9 @@
       "tags": []
     },
     "clients-driving-license": {
+      "tags": []
+    },
+    "clients-driving-license-book": {
       "tags": []
     },
     "clients-finance": {
