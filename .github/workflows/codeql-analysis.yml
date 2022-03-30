@@ -17,7 +17,7 @@ on:
 jobs:
   analyze:
     name: Analyze
-    runs-on: ec2-runners
+    runs-on: kubernetes-runner
 
     strategy:
       fail-fast: false
