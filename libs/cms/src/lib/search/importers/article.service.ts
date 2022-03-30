@@ -14,6 +14,18 @@ import {
   removeEntryHyperlinkFields,
 } from './utils'
 
+interface MetaData {
+  metadata: {
+    tags: {
+      sys: {
+        id: string
+        type: 'Link'
+        linkType: 'Tag'
+      }
+    }[]
+  }
+}
+
 @Injectable()
 export class ArticleSyncService implements CmsSyncProvider<IArticle> {
   // only process articles that we consider not to be empty
@@ -98,12 +110,16 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
     }, [])
   }
 
-  doMapping(entries: IArticle[]) {
+  doMapping(entries: (IArticle & MetaData)[]) {
     logger.info('Mapping articles', { count: entries.length })
 
     return entries
       .map<MappedData | boolean>((entry) => {
         let mapped: Article
+
+        const contentfulTags = (entry?.metadata?.tags ?? [])
+          .map((t) => t?.sys?.id)
+          .filter(Boolean)
 
         try {
           mapped = mapArticle(entry)
@@ -166,6 +182,10 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
                 key: entry.fields?.slug,
                 type: 'slug',
               },
+              ...contentfulTags.map((tag) => ({
+                key: tag,
+                type: 'contentfultag',
+              })),
             ],
             dateCreated: entry.sys.createdAt,
             dateUpdated: new Date().getTime().toString(),

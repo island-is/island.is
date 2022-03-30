@@ -86,9 +86,9 @@ const SubPage: Screen<SubPageProps> = ({
   )
 
   const organizationTitle = (organization && organization.title) || 'Ísland.is'
-  const pageTitle = `${categoryTitle ? categoryTitle + ' | ' : ''}${n(
-    'assistanceForIslandIs',
-    'Aðstoð fyrir Ísland.is',
+  const pageTitle = `${categoryTitle ? categoryTitle + ' | ' : ''}${o(
+    'serviceWebSubpageTitleSuffix',
+    n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is'),
   )}`
 
   const mobileBackButtonText = questionSlug
