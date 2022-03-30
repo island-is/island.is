@@ -7,7 +7,7 @@ import {
   Field,
   Mutation,
 } from '@nestjs/graphql'
-import { UseGuards } from '@nestjs/common'
+import { Scope, UseGuards } from '@nestjs/common'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   IdsUserGuard,
@@ -154,6 +154,7 @@ export class MainResolver {
     return { pkpassQRCode }
   }
 
+  @Scopes(ApiScope.internal, ApiScope.licensesVerify)
   @Mutation(() => GenericPkPassVerification)
   @Audit()
   async verifyPkPass(
