@@ -30,25 +30,22 @@ const LogoMunicipality = ({ className }: LogoProps) => {
         </Box>
       }
     >
-      {admin && municipality && municipality?.length > 0 && (
-        <>
-          {municipality.map((muni) => {
-            return (
-              <a
-                href={muni?.homepage}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={cn({ [`${className}`]: true })}
-                key={'muni-' + muni.municipalityId}
-              >
-                <LogoSvg
-                  name={logoKeyFromMunicipalityCode[muni?.municipalityId]}
-                />
-              </a>
-            )
-          })}
-        </>
-      )}
+      {/* {admin && (
+        <a
+          href={municipality?.homepage}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={cn({ [`${className}`]: true })}
+        >
+          <LogoSvg
+            name={
+              logoKeyFromMunicipalityCode[
+                isSuperAdmin ? '' : municipality?.municipalityId ?? ''
+              ]
+            }
+          />
+        </a>
+      )} */}
     </LoadingContainer>
   )
 }

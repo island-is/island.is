@@ -4,14 +4,10 @@ import { Text, Box } from '@island.is/island-ui/core'
 import * as styles from './History.css'
 import cn from 'classnames'
 
-import {
-  ApplicationEvent,
-  ApplicationEventType,
-} from '@island.is/financial-aid/shared/lib'
+import { ApplicationEvent } from '@island.is/financial-aid/shared/lib'
 
 import {
   ChatElement,
-  TimeLineComment,
   TimeLineContainer,
 } from '@island.is/financial-aid-web/veita/src/components'
 
@@ -58,23 +54,7 @@ const History = ({
               applicantName={applicantName}
               spouseName={spouseName}
             >
-              <TimeLineComment
-                isVisable={
-                  item.eventType === ApplicationEventType.STAFFCOMMENT ||
-                  item.eventType === ApplicationEventType.APPROVED
-                }
-                comment={item.comment}
-              />
-
-              <ChatElement
-                isVisable={
-                  item.eventType === ApplicationEventType.FILEUPLOAD ||
-                  item.eventType === ApplicationEventType.SPOUSEFILEUPLOAD ||
-                  item.eventType === ApplicationEventType.DATANEEDED ||
-                  item.eventType == ApplicationEventType.REJECTED
-                }
-                comment={item.comment}
-              />
+              <ChatElement comment={item.comment} />
             </TimeLineContainer>
           )
         })}
