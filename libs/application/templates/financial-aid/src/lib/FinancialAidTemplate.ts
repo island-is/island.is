@@ -15,7 +15,6 @@ import { Roles, ApplicationStates, ONE_DAY, ONE_MONTH } from './constants'
 import { application } from './messages'
 import { dataSchema } from './dataSchema'
 import {
-  hasSpouse,
   isMuncipalityNotRegistered,
   hasActiveCurrentApplication,
   hasSpouseCheck,
