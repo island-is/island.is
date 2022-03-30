@@ -20,6 +20,7 @@ module.exports = {
     '<rootDir>/apps/icelandic-names-registry/backend',
     '<rootDir>/apps/judicial-system/api',
     '<rootDir>/apps/judicial-system/backend',
+    '<rootDir>/apps/judicial-system/scheduler',
     '<rootDir>/apps/judicial-system/web',
     '<rootDir>/apps/judicial-system/xrd-api',
     '<rootDir>/apps/services/auth-admin-api',
