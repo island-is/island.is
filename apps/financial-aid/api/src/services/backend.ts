@@ -26,10 +26,7 @@ import { environment } from '../environments'
 import { CreateApplicationFilesInput } from '../app/modules/file/dto'
 import { CreateStaffInput } from '../app/modules/staff'
 import { SpouseModel } from '../app/modules/user'
-import {
-  GetMunicipalityIdsQueryInput,
-  UpdateMunicipalityInput,
-} from '../app/modules/municipality/dto'
+import { UpdateMunicipalityInput } from '../app/modules/municipality/dto'
 import {
   DirectTaxPaymentsResponse,
   PersonalTaxReturnResponse,

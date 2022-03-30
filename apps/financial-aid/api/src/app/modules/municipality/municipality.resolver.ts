@@ -21,7 +21,6 @@ import {
   CreateMunicipalityInput,
   MunicipalityQueryInput,
   UpdateMunicipalityInput,
-  GetMunicipalityIdsQueryInput,
 } from './dto'
 import { IdsUserGuard } from '@island.is/auth-nest-tools'
 import type { Municipality, Staff } from '@island.is/financial-aid/shared/lib'
