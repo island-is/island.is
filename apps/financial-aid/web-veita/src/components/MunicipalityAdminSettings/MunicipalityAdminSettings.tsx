@@ -74,6 +74,7 @@ const MunicipalityAdminSettings = ({ municipality }: Props) => {
           homepage: state.homepage,
           rulesHomepage: state.rulesHomepage,
           email: state.email,
+          municipalityId: municipality.municipalityId,
         },
       },
     })

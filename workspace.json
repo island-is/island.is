@@ -5933,11 +5933,6 @@
                 "output": "./migrations"
               },
               {
-                "glob": "*",
-                "input": "apps/judicial-system/backend/seeders",
-                "output": "./seeders"
-              },
-              {
                 "glob": ".sequelizerc",
                 "input": "apps/judicial-system/backend",
                 "output": "./"
@@ -6132,6 +6127,60 @@
           },
           "outputs": ["coverage/libs/judicial-system/formatters"]
         }
+      }
+    },
+    "judicial-system-scheduler": {
+      "root": "apps/judicial-system/scheduler",
+      "sourceRoot": "apps/judicial-system/scheduler/src",
+      "projectType": "application",
+      "prefix": "judicial-system-scheduler",
+      "architect": {
+        "build": {
+          "builder": "@irdnis/esbuildnx:build",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/apps/judicial-system/scheduler",
+            "main": "apps/judicial-system/scheduler/src/main.ts",
+            "tsConfig": "apps/judicial-system/scheduler/tsconfig.app.json",
+            "maxWorkers": 2
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "judicial-system-scheduler:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "apps/judicial-system/scheduler/tsconfig.app.json",
+              "apps/judicial-system/scheduler/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!apps/judicial-system/scheduler/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/apps/judicial-system/scheduler"],
+          "options": {
+            "jestConfig": "apps/judicial-system/scheduler/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "docker-express": {}
       }
     },
     "judicial-system-types": {
