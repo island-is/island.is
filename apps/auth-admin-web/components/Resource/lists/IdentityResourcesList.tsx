@@ -30,13 +30,7 @@ const IdentityResourcesList: React.FC = () => {
       count,
     )
     if (response) {
-      const resourceArr = response.rows.sort((c1, c2) => {
-        if (!c1.archived && !c2.archived) return 0
-        if (!c1.archived && c2.archived) return 1
-        if (c1.archived && !c2.archived) return -1
-        return 0
-      })
-      setResources(resourceArr.reverse())
+      setResources(response.rows)
       setLastPage(Math.ceil(response.count / count))
     }
   }

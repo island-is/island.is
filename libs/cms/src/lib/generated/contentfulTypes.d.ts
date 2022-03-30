@@ -2206,6 +2206,12 @@ export interface IProjectPageFields {
 
   /** Featured Image */
   featuredImage?: Asset | undefined
+
+  /** Default Header Image */
+  defaultHeaderImage?: Asset | undefined
+
+  /** Default Header Background Color */
+  defaultHeaderBackgroundColor?: string | undefined
 }
 
 export interface IProjectPage extends Entry<IProjectPageFields> {

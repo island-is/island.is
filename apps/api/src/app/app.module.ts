@@ -6,6 +6,8 @@ import { AuthModule as AuthDomainModule } from '@island.is/api/domains/auth'
 import { ContentSearchModule } from '@island.is/api/domains/content-search'
 import { CmsModule } from '@island.is/cms'
 import { DrivingLicenseModule } from '@island.is/api/domains/driving-license'
+import { DrivingLicenseBookClientConfig } from '@island.is/clients/driving-license-book'
+import { DrivingLicenseBookModule } from '@island.is/api/domains/driving-license-book'
 import { EducationModule } from '@island.is/api/domains/education'
 import { ApplicationModule } from '@island.is/api/domains/application'
 import { DirectorateOfLabourModule } from '@island.is/api/domains/directorate-of-labour'
@@ -87,6 +89,17 @@ const autoSchemaFile = environment.production
     ContentSearchModule,
     CmsModule,
     DrivingLicenseModule.register({
+      clientConfig: {
+        xroadBaseUrl: environment.xroad.baseUrl!,
+        xroadClientId: environment.xroad.clientId!,
+        secret: environment.drivingLicense.secret!,
+        xroadPathV1: environment.drivingLicense.v1.xroadPath!,
+        xroadPathV2: environment.drivingLicense.v2.xroadPath!,
+      },
+    }),
+    // DrivingLicenseBook has drivingIstructorGuard that uses drivingLicenseService
+    // DrivingLicenseBookModule needs to register DrivingLicenseModule and uses the same config to do so
+    DrivingLicenseBookModule.register({
       clientConfig: {
         xroadBaseUrl: environment.xroad.baseUrl!,
         xroadClientId: environment.xroad.clientId!,
@@ -262,6 +275,7 @@ const autoSchemaFile = environment.production
         XRoadConfig,
         CompanyRegistryConfig,
         FishingLicenseClientConfig,
+        DrivingLicenseBookClientConfig,
       ],
     }),
   ],
