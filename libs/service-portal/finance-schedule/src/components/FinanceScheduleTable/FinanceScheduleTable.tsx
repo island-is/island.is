@@ -100,12 +100,14 @@ const FinanceScheduleTable: FC<Props> = ({ recordsArray }) => {
           ]}
         />
         <T.Body>
-          {datedArray.map((x) => (
-            <FinanceScheduleTableRow
-              key={x.scheduleNumber}
-              paymentSchedule={x}
-            />
-          ))}
+          {datedArray
+            .slice(ITEMS_ON_PAGE * (page - 1), ITEMS_ON_PAGE * page)
+            .map((x) => (
+              <FinanceScheduleTableRow
+                key={x.scheduleNumber}
+                paymentSchedule={x}
+              />
+            ))}
         </T.Body>
       </T.Table>
 
