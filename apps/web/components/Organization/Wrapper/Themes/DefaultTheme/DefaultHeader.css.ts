@@ -1,41 +1,27 @@
 import { style } from '@vanilla-extract/css'
-import { blueberry100, themeUtils } from '@island.is/island-ui/theme'
+import { themeUtils } from '@island.is/island-ui/theme'
 
 export const headerBg = style({
-  height: 385,
-  marginTop: -130,
-  paddingTop: 130,
+  display: 'flex',
+  flexFlow: 'column nowrap',
+  alignItems: 'flex-end',
+  justifyContent: 'center',
 })
 
 export const iconCircle = style({
   height: 136,
   width: 136,
   margin: '0 auto',
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
+  display: 'grid',
+  placeItems: 'center',
   boxShadow: '0px 4px 30px rgba(0, 97, 255, 0.08)',
-  ...themeUtils.responsiveStyle({
-    xs: {
-      marginTop: 32,
-    },
-    md: {
-      marginTop: 104,
-      position: 'relative',
-    },
-  }),
-})
-
-export const headerBorder = style({
-  ...themeUtils.responsiveStyle({
-    md: {
-      borderBottom: '4px solid #ffbe43',
-    },
-  }),
+  position: 'absolute',
+  bottom: -32,
+  left: '10%',
 })
 
 export const headerWrapper = style({
-  marginTop: -20,
+  paddingTop: 130,
 })
 
 export const headerLogo = style({
@@ -43,18 +29,25 @@ export const headerLogo = style({
   maxHeight: 70,
 })
 
-export const navigation = style({
-  ...themeUtils.responsiveStyle({
-    md: {
-      background: 'none',
-      paddingTop: 0,
-    },
-    xs: {
-      marginLeft: -24,
-      marginRight: -24,
-      paddingLeft: 24,
-      paddingRight: 24,
-      paddingTop: 32,
-    },
-  }),
+export const container = style({
+  minHeight: 385,
+  marginBottom: 32,
+  position: 'relative',
+})
+
+export const gridContainer = style({
+  display: 'grid',
+  gridTemplateColumns: '1fr 1fr',
+})
+
+export const headerImage = style({
+  objectFit: 'cover',
+  height: '100%',
+  maxHeight: 385,
+  width: '100%',
+})
+
+export const textContainer = style({
+  marginBottom: 32,
+  marginRight: 40,
 })
