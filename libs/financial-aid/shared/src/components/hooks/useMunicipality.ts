@@ -6,9 +6,9 @@ import {
 } from '@island.is/financial-aid/shared/lib'
 import { gql } from '@apollo/client'
 
-const MunicipalityQueryMutation = gql`
-  mutation MunicipalityQueryMutation($input: GetMunicipalityIdsQueryInput!) {
-    getMunicipalityByIds(input: $input) {
+const MunicipalityQuery = gql`
+  query GetMunicipalityQuery {
+    municipalityByIds {
       id
       name
       homepage
@@ -41,59 +41,40 @@ const MunicipalityQueryMutation = gql`
 export const useMunicipality = () => {
   const storageKey = 'currentMunicipality'
 
-  const [municipality, setScopedMunicipality] = useState<Municipality[]>([])
+  const [municipality, setScopedMunicipality] = useState<Municipality>()
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<Error | undefined>(undefined)
 
   const getMunicipality = useAsyncLazyQuery<{
-    municipalities: Municipality[]
-  }>(MunicipalityQueryMutation)
+    municipalityByIds: Municipality
+  }>(MunicipalityQuery)
 
   useEffect(() => {
     setScopedMunicipality(
-      // sessionStorage.getItem(storageKey)
-      //   ? JSON.parse(sessionStorage.getItem(storageKey) as string)
-      //   : [],
-      [],
+      sessionStorage.getItem(storageKey)
+        ? JSON.parse(sessionStorage.getItem(storageKey) as string)
+        : [],
     )
   }, [])
 
   const setMunicipality = (municipality: Municipality) => {
-    setScopedMunicipality([municipality])
+    setScopedMunicipality(municipality)
     sessionStorage.setItem(storageKey, JSON.stringify(municipality))
   }
 
-  const setMunicipalityById = async (municipalityIds: string[]) => {
-    console.log(
-      '1? ',
-      getMunicipality({
-        variables: {
-          input: {
-            ids: municipalityIds,
-          },
-        },
-      }),
-    )
-
+  const setMunicipalityById = async () => {
     try {
       setError(undefined)
       setLoading(true)
-      await getMunicipality({
-        variables: {
-          input: {
-            ids: municipalityIds,
-          },
-        },
-      }).then((res) => {
-        console.log('kemuru hér?')
-        setScopedMunicipality(res.data?.municipalities ?? [])
+      return await getMunicipality({}).then((res) => {
+        setScopedMunicipality(res.data?.municipalityByIds)
         sessionStorage.setItem(
           storageKey,
-          JSON.stringify(res.data?.municipalities),
+          JSON.stringify(res.data?.municipalityByIds),
         )
         setLoading(false)
-        return res.data?.municipalities
+        return res.data?.municipalityByIds
       })
     } catch (error: unknown) {
       setError(error as Error)

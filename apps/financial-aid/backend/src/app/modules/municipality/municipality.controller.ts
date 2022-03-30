@@ -60,13 +60,8 @@ export class MunicipalityController {
   })
   async getByMunicipalityIds(
     @CurrentUser() staff: Staff,
-    @Body()
-    input: {
-      ids: string[]
-    },
   ): Promise<MunicipalityModel[]> {
-    console.log('please komduuuuuu', input)
-    return this.municipalityService.findByMunicipalityIds(staff.municipalityIds)
+    return this.municipalityService.findByMunicipalityIds(staff.nationalId)
   }
 
   @UseGuards(StaffGuard)
