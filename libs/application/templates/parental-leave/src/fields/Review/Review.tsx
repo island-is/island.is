@@ -340,12 +340,16 @@ export const Review: FC<ReviewScreenProps> = ({
           </GridRow>
         )}
         {otherParentWillApprove && (
-          <DataValue
-            label={formatMessage(
-              parentalLeaveFormMessages.shared.otherParentEmailSubSection,
-            )}
-            value={otherParentEmail}
-          />
+          <GridRow marginTop={3}>
+            <GridColumn>
+              <DataValue
+                label={formatMessage(
+                  parentalLeaveFormMessages.shared.otherParentEmailSubSection,
+                )}
+                value={otherParentEmail}
+              />
+            </GridColumn>
+          </GridRow>
         )}
       </ReviewGroup>
 
