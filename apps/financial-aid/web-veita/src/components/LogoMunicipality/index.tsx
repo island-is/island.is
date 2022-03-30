@@ -4,7 +4,10 @@ import LogoSvg from './LogoSvg'
 import { Box, SkeletonLoader } from '@island.is/island-ui/core'
 import { LoadingContainer } from '@island.is/financial-aid-web/veita/src/components'
 import { AdminContext } from '../AdminProvider/AdminProvider'
-import { logoKeyFromMunicipalityCode } from '@island.is/financial-aid/shared/lib'
+import {
+  logoKeyFromMunicipalityCode,
+  StaffRole,
+} from '@island.is/financial-aid/shared/lib'
 
 interface LogoProps {
   className?: string
@@ -12,6 +15,8 @@ interface LogoProps {
 
 const LogoMunicipality = ({ className }: LogoProps) => {
   const { admin, municipality } = useContext(AdminContext)
+
+  const isSuperAdmin = admin?.staff?.roles.includes(StaffRole.SUPERADMIN)
 
   const logoSize = 48
 
@@ -33,7 +38,9 @@ const LogoMunicipality = ({ className }: LogoProps) => {
         >
           <LogoSvg
             name={
-              logoKeyFromMunicipalityCode[admin.staff?.municipalityId ?? '']
+              logoKeyFromMunicipalityCode[
+                isSuperAdmin ? '' : municipality?.municipalityId ?? ''
+              ]
             }
           />
         </a>

@@ -41,11 +41,11 @@ export class StaffModel extends Model<Staff> {
   nationalId: string
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.ARRAY(DataType.STRING),
     allowNull: false,
   })
   @ApiProperty()
-  municipalityId: string
+  municipalityIds: string[]
 
   @Column({
     type: DataType.STRING,
