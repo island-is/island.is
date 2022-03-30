@@ -1,11 +1,17 @@
 import React from 'react'
 
 import { FAFieldBaseProps } from '../../lib/types'
+import MoreActions from './MoreActions'
 
 const Status = ({ application }: FAFieldBaseProps) => {
+  const { nationalRegistry } = application.externalData
+
   return (
     <>
-      <h1>hellooo</h1>
+      <MoreActions
+        rulesPage={nationalRegistry?.data.municipality?.rulesHomepage}
+        email={nationalRegistry?.data.municipality?.email}
+      />
     </>
   )
 }

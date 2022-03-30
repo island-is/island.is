@@ -1,9 +1,4 @@
-import {
-  buildCustomField,
-  buildForm,
-  Form,
-  FormModes,
-} from '@island.is/application/core'
+import { buildCustomField, buildForm, Form } from '@island.is/application/core'
 
 import * as m from '../lib/messages'
 

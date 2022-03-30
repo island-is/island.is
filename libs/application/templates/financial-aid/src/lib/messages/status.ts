@@ -13,4 +13,21 @@ export const status = {
       description: 'Status page title',
     },
   }),
+  moreActions: defineMessages({
+    title: {
+      id: 'fa.application:section.status.moreActions.title',
+      defaultMessage: 'Frekari aðgerðir í boði',
+      description: 'More action title',
+    },
+    rulesLink: {
+      id: 'fa.application:section.status.moreActions.rulesLink#markup',
+      defaultMessage: '[Reglur um fjárhagsaðstoð]({rulesPage})',
+      description: 'More action link to rules',
+    },
+    emailLink: {
+      id: 'fa.application:section.status.moreActions.emailLink#markup',
+      defaultMessage: '[Hafa samband]({email})',
+      description: 'More action link to email',
+    },
+  }),
 }
