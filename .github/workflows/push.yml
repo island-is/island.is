@@ -306,7 +306,7 @@ jobs:
         run: whoami
 
       - name: Docker login to ECR repo
-        run: sudo usermod -a -G docker runner && ./scripts/ci/docker-login-ecr.sh
+        run: sudo usermod -a -G docker runner && id runner && ./scripts/ci/docker-login-ecr.sh
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
