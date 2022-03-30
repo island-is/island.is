@@ -146,6 +146,7 @@
   - [Document Provider](libs/clients/document-provider/README.md)
   - [Documents](libs/clients/documents/README.md)
   - [Driving License](libs/clients/driving-license/README.md)
+  - [Driving License](libs/clients/driving-license-book/README.md)
   - [Finance](libs/clients/finance/README.md)
   - [Health Insurance](libs/clients/health-insurance-v2/README.md)
   - [Islykill](libs/clients/islykill/README.md)

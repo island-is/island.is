@@ -45,7 +45,7 @@ export const ApplicationQuery = gql`
       rejection
       staff {
         name
-        municipalityId
+        municipalityIds
         nationalId
       }
       applicationEvents {
@@ -113,7 +113,7 @@ export const UpdateApplicationTableMutation = gql`
         state
         staff {
           name
-          municipalityId
+          municipalityIds
         }
       }
       filters {
@@ -195,7 +195,7 @@ export const ApplicationEventMutation = gql`
       rejection
       staff {
         name
-        municipalityId
+        municipalityIds
       }
       applicationEvents {
         id
@@ -229,7 +229,7 @@ export const CurrentUserQuery = gql`
         id
         nationalId
         name
-        municipalityId
+        municipalityIds
         phoneNumber
         roles
         active
@@ -294,7 +294,7 @@ export const UpdateApplicationMutation = gql`
       }
       staff {
         name
-        municipalityId
+        municipalityIds
         nationalId
       }
       directTaxPayments {
@@ -410,7 +410,7 @@ export const UpdateStaffMutation = gql`
       id
       nationalId
       name
-      municipalityId
+      municipalityIds
       phoneNumber
       roles
       active
