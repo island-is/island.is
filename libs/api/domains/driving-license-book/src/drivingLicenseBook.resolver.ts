@@ -22,6 +22,8 @@ import { DrivingInstructorGuard } from './guards/drivingInstructor.guard'
 import { DrivingSchool } from './models/drivingSchool.response'
 import { CreateDrivingSchoolTestResultInput } from './dto/createDrivingSchoolTestResult.input'
 import { DrivingLicenceTestResultId } from './models/drivingLicenseTestResult.response'
+import { SchoolTestResultType } from './models/drivingLicenseBookSchoolType.response'
+import { DrivingSchoolEmployeeGuard } from './guards/DrivingSchoolEmployee.guard'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -30,7 +32,7 @@ export class DrivingLicenseBookResolver {
     private readonly drivingLicenseBookService: DrivingLicenseBookService,
   ) {}
 
-  @UseGuards(DrivingInstructorGuard)
+  @UseGuards(DrivingInstructorGuard, DrivingSchoolEmployeeGuard)
   @Query(() => [DrivingLicenseBookStudent])
   drivingLicenseBookFindStudent(
     @Args('input') input: DrivingLicenseBookStudentsInput,
@@ -44,7 +46,7 @@ export class DrivingLicenseBookResolver {
     return this.drivingLicenseBookService.getStudentsForTeacher(user)
   }
 
-  @UseGuards(DrivingInstructorGuard)
+  @UseGuards(DrivingInstructorGuard, DrivingSchoolEmployeeGuard)
   @Query(() => DrivingLicenseBookStudentOverview)
   drivingLicenseBookStudent(
     @Args('input') input: DrivingLicenseBookStudentInput,
@@ -95,7 +97,7 @@ export class DrivingLicenseBookResolver {
       user,
     )
   }
-
+  @UseGuards(DrivingSchoolEmployeeGuard)
   @Query(() => [DrivingSchool])
   drivingLicenseBookSchoolForEmployee(
     @CurrentUser() user: User,
@@ -103,6 +105,13 @@ export class DrivingLicenseBookResolver {
     return this.drivingLicenseBookService.getSchoolForSchoolStaff(user)
   }
 
+  @Query(() => [SchoolTestResultType])
+  drivingLicenseBookSchoolTypes(
+  ) {
+    return this.drivingLicenseBookService.getSchoolTypes()
+  }
+
+  @UseGuards(DrivingSchoolEmployeeGuard)
   @Mutation(() => DrivingLicenceTestResultId)
   drivingLicenseBookCreateDrivingSchoolTestResult(
     @Args('input') input: CreateDrivingSchoolTestResultInput,

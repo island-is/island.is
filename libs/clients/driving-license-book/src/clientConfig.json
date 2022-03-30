@@ -448,7 +448,7 @@
         }
       }
     },
-    "/api/School/GetSchoolForSchoolStaff/{userSsn}": {
+    "/api/School/GetSchoolForSchoolStaff": {
       "get": {
         "tags": [
           "DrivingLicenseBook"
@@ -457,9 +457,8 @@
         "parameters": [
           {
             "name": "userSsn",
-            "in": "path",
+            "in": "query",
             "description": "",
-            "required": true,
             "schema": {
               "type": "string"
             }

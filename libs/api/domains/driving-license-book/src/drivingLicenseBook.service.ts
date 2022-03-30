@@ -21,6 +21,7 @@ import {
   PracticalDrivingLesson,
   DrivingLicenseBookStudentOverview,
   Organization,
+  SchoolTestResultType,
 } from './drivinLicenceBook.type'
 import { CreateDrivingSchoolTestResultInput } from './dto/createDrivingSchoolTestResult.input'
 
@@ -293,7 +294,7 @@ export class DrivingLicenseBookService {
 
   async getSchoolForSchoolStaff(user: User): Promise<Organization> {
     const api = await this.apiWithAuth()
-    const data = await api.apiSchoolGetSchoolForSchoolStaffUserSsnGet({
+    const data = await api.apiSchoolGetSchoolForSchoolStaffGet({
       userSsn: user.nationalId,
     })
     if (!data) {
@@ -328,5 +329,16 @@ export class DrivingLicenseBookService {
       },
     })
     return data?.id ? {id: data.id} : null
+  }
+
+  async getSchoolTypes(): Promise<SchoolTestResultType[] | null>{
+    const api = await this.apiWithAuth()
+    const {data} = await api.apiSchoolGetSchoolTypesGet({licenseCategory: "B"})
+    return data?.map((type) => ({
+      schoolTypeId: type.schoolTypeId ?? -1,
+      schoolTypeName: type.schoolTypeName ?? "",
+      schoolTypeCode: type.schoolTypeCode ?? "",
+      licenseCategory: type.licenseCategory ?? "",
+    })) || null
   }
 }

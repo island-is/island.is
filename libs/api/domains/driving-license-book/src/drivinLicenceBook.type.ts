@@ -103,3 +103,10 @@ export interface Organization {
   website: string 
   allowedDrivingSchoolTypes: string[]
 }
+
+export interface SchoolTestResultType {
+  schoolTypeId: number
+  schoolTypeName: string
+  schoolTypeCode: string
+  licenseCategory: string
+}
