@@ -15,7 +15,6 @@ interface LogoProps {
 
 const LogoMunicipality = ({ className }: LogoProps) => {
   const { admin, municipality } = useContext(AdminContext)
-  console.log(municipality)
 
   const isSuperAdmin = admin?.staff?.roles.includes(StaffRole.SUPERADMIN)
 
@@ -30,22 +29,40 @@ const LogoMunicipality = ({ className }: LogoProps) => {
         </Box>
       }
     >
-      {/* {admin && (
-        <a
-          href={municipality?.homepage}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={cn({ [`${className}`]: true })}
-        >
-          <LogoSvg
-            name={
-              logoKeyFromMunicipalityCode[
-                isSuperAdmin ? '' : municipality?.municipalityId ?? ''
-              ]
-            }
-          />
-        </a>
-      )} */}
+      {admin &&
+        municipality &&
+        (isSuperAdmin ? (
+          <>
+            <a
+              href="https://www.samband.is/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={cn({ [`${className}`]: true })}
+            >
+              <LogoSvg name={logoKeyFromMunicipalityCode['']} />
+            </a>
+          </>
+        ) : (
+          <>
+            {municipality.map((muni) => {
+              return (
+                <a
+                  href={muni?.homepage}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={cn({ [`${className}`]: true })}
+                  key={'municipalitycode-' + muni?.municipalityId}
+                >
+                  <LogoSvg
+                    name={
+                      logoKeyFromMunicipalityCode[muni?.municipalityId ?? '']
+                    }
+                  />
+                </a>
+              )
+            })}
+          </>
+        ))}
     </LoadingContainer>
   )
 }

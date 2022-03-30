@@ -61,7 +61,6 @@ const Nav = ({ showInMobile, className }: Props) => {
           <Box className={styles.logoMunicipality}>
             <LogoMunicipality />
           </Box>
-
           <Box paddingLeft={2} className={'headLine'}>
             {isSuperAdmin ? (
               <Text as="h1" lineHeight="sm">

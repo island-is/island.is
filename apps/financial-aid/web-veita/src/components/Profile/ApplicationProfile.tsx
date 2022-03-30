@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useContext } from 'react'
+import React, { useState, useMemo } from 'react'
 import { Box } from '@island.is/island-ui/core'
 import {
   Application,
@@ -11,6 +11,7 @@ import {
   getAidAmountModalInfo,
   UserType,
   ApplicationProfileInfo,
+  Municipality,
 } from '@island.is/financial-aid/shared/lib'
 
 import format from 'date-fns/format'
@@ -25,7 +26,7 @@ import {
   ApplicationHeader,
   FilesListWithHeaderContainer,
 } from '@island.is/financial-aid-web/veita/src/components'
-import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
+
 import {
   getApplicant,
   getApplicantMoreInfo,
@@ -42,6 +43,7 @@ interface ApplicationProps {
   setApplication: React.Dispatch<React.SetStateAction<Application | undefined>>
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
   isPrint?: boolean
+  applicationMunicipality: Municipality
 }
 
 interface CalculationsModal {
@@ -54,6 +56,7 @@ const ApplicationProfile = ({
   setApplication,
   setIsLoading,
   isPrint = false,
+  applicationMunicipality,
 }: ApplicationProps) => {
   const [isStateModalVisible, setStateModalVisible] = useState(false)
 
@@ -64,18 +67,16 @@ const ApplicationProfile = ({
     },
   )
 
-  const { municipality } = useContext(AdminContext)
-
   const aidAmount = useMemo(() => {
-    if (application && municipality && application.homeCircumstances) {
+    if (applicationMunicipality && application.homeCircumstances) {
       return aidCalculator(
         application.homeCircumstances,
         showSpouseData[application.familyStatus]
-          ? municipality.cohabitationAid
-          : municipality.individualAid,
+          ? applicationMunicipality.cohabitationAid
+          : applicationMunicipality.individualAid,
       )
     }
-  }, [application, municipality])
+  }, [applicationMunicipality])
 
   const applicationInfo: ApplicationProfileInfo[] = [
     {
@@ -253,6 +254,7 @@ const ApplicationProfile = ({
           familyStatus={application.familyStatus}
           setIsLoading={setIsLoading}
           applicationCreated={application.created}
+          applicationMunicipality={applicationMunicipality}
         />
       )}
 

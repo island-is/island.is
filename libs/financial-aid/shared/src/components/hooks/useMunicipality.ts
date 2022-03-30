@@ -41,13 +41,13 @@ const MunicipalityQuery = gql`
 export const useMunicipality = () => {
   const storageKey = 'currentMunicipality'
 
-  const [municipality, setScopedMunicipality] = useState<Municipality>()
+  const [municipality, setScopedMunicipality] = useState<Municipality[]>([])
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<Error | undefined>(undefined)
 
   const getMunicipality = useAsyncLazyQuery<{
-    municipalityByIds: Municipality
+    municipalityByIds: Municipality[]
   }>(MunicipalityQuery)
 
   useEffect(() => {
@@ -58,7 +58,7 @@ export const useMunicipality = () => {
     )
   }, [])
 
-  const setMunicipality = (municipality: Municipality) => {
+  const setMunicipality = (municipality: Municipality[]) => {
     setScopedMunicipality(municipality)
     sessionStorage.setItem(storageKey, JSON.stringify(municipality))
   }
@@ -68,18 +68,18 @@ export const useMunicipality = () => {
       setError(undefined)
       setLoading(true)
       return await getMunicipality({}).then((res) => {
-        setScopedMunicipality(res.data?.municipalityByIds)
+        setScopedMunicipality(res.data?.municipalityByIds ?? [])
         sessionStorage.setItem(
           storageKey,
           JSON.stringify(res.data?.municipalityByIds),
         )
         setLoading(false)
-        return res.data?.municipalityByIds
+        return res.data?.municipalityByIds ?? []
       })
     } catch (error: unknown) {
       setError(error as Error)
       setLoading(false)
-      return undefined
+      return []
     }
   }
 
