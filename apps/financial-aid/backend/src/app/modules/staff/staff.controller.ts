@@ -71,7 +71,7 @@ export class StaffController {
   async getStaffForMunicipality(
     @CurrentStaff() staff: Staff,
   ): Promise<StaffModel[]> {
-    return await this.staffService.findByMunicipalityId(staff.municipalityId)
+    return await this.staffService.findByMunicipalityId(staff.municipalityIds)
   }
 
   @Put('id/:id')
@@ -95,7 +95,7 @@ export class StaffController {
     return updatedStaff
   }
 
-  @StaffRolesRules(StaffRole.ADMIN)
+  @StaffRolesRules(StaffRole.ADMIN, StaffRole.SUPERADMIN)
   @Post('')
   @ApiOkResponse({
     type: StaffModel,
@@ -105,13 +105,14 @@ export class StaffController {
     @CurrentStaff() staff: Staff,
     @Body() createStaffInput: CreateStaffDto,
   ): Promise<StaffModel> {
+    //TODO
     return await this.staffService.createStaff(
       createStaffInput,
       {
-        municipalityId: createStaffInput.municipalityId ?? staff.municipalityId,
+        municipalityId:
+          createStaffInput.municipalityId ?? staff.municipalityIds[0],
         municipalityName:
           createStaffInput.municipalityName ?? staff.municipalityName,
-        municipalityHomepage: staff?.municipalityHomepage,
       },
       staff,
     )

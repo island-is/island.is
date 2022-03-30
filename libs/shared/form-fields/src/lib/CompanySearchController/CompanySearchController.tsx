@@ -1,17 +1,10 @@
 import React, { FC, useMemo, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import {
-  AsyncSearch,
-  AsyncSearchOption,
-  Box,
-  AlertMessage,
-  InputError,
-} from '@island.is/island-ui/core'
+import { AsyncSearch, Box, AlertMessage } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { coreErrorMessages } from '@island.is/application/core'
 import { gql, useLazyQuery } from '@apollo/client'
 import debounce from 'lodash/debounce'
-import kennitala from 'kennitala'
 import { CompanySearchItem } from './CompanySearchItem'
 import { debounceTime } from '@island.is/shared/constants'
 
@@ -65,8 +58,6 @@ export const CompanySearchController: FC<Props> = ({
     data?.companyRegistryCompanies?.data?.length === 0 &&
     !loading &&
     searchQuery.trim().length > 0
-  const invalidNationalId =
-    !kennitala.isValid(searchQuery) && !loading && searchQuery.length === 10
 
   const onInputChange = (inputValue: string) => {
     setSearchQuery(inputValue)
@@ -146,12 +137,7 @@ export const CompanySearchController: FC<Props> = ({
           )
         }}
       />
-      {invalidNationalId && (
-        <InputError
-          errorMessage={formatMessage(coreErrorMessages.invalidNationalId)}
-        />
-      )}
-      {noResultsFound && !invalidNationalId && (
+      {noResultsFound && (
         <Box marginTop={[2, 2]}>
           <AlertMessage
             type="error"

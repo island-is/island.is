@@ -2,6 +2,9 @@ import React, { FC } from 'react'
 import { FieldBaseProps } from '@island.is/application/core'
 import { PropertyTable } from './PropertyTable'
 import { PropertyDetail } from '../../../types/schema'
+import { useLocale } from '@island.is/localization'
+import { AlertMessage, Box } from '@island.is/island-ui/core'
+import { m } from '../../../lib/messages'
 
 interface RegisteredPropertiesProps {
   selectHandler: (property: PropertyDetail | undefined) => void
@@ -13,20 +16,30 @@ export const RegisteredProperties: FC<
 > = ({ application, field, selectHandler, selectedPropertyNumber }) => {
   const { externalData } = application
 
-  const myProperties =
-    (externalData.nationalRegistryRealEstate?.data as {
-      properties: [PropertyDetail]
-    })?.properties || []
+  const { properties } = externalData.nationalRegistryRealEstate?.data as {
+    properties: [PropertyDetail]
+  }
 
-  // remove this comment
+  const { formatMessage } = useLocale()
 
   return (
-    <PropertyTable
-      application={application}
-      field={field}
-      myProperties={myProperties}
-      selectHandler={selectHandler}
-      selectedPropertyNumber={selectedPropertyNumber}
-    />
+    <>
+      {properties && properties.length > 0 ? (
+        <PropertyTable
+          application={application}
+          field={field}
+          myProperties={properties}
+          selectHandler={selectHandler}
+          selectedPropertyNumber={selectedPropertyNumber}
+        />
+      ) : (
+        <Box marginTop={4}>
+          <AlertMessage
+            type="info"
+            message={formatMessage(m.mortgageCertificateNoPropertyRegistered)}
+          />
+        </Box>
+      )}
+    </>
   )
 }

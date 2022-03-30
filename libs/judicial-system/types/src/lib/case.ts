@@ -3,6 +3,13 @@ import type { Institution } from './institution'
 import type { Notification } from './notification'
 import type { CaseFile } from './file'
 import type { User } from './user'
+import type { CourtDocument } from './courtDocument'
+
+export enum CaseOrigin {
+  UNKNOWN = 'UNKNOWN',
+  RVG = 'RVG',
+  LOKE = 'LOKE',
+}
 
 export enum CaseType {
   CUSTODY = 'CUSTODY',
@@ -100,12 +107,14 @@ export interface Case {
   id: string
   created: string
   modified: string
+  origin: CaseOrigin
   type: CaseType
   description?: string
   state: CaseState
   policeCaseNumber: string
   defendants?: Defendant[]
   defenderName?: string
+  defenderNationalId?: string
   defenderEmail?: string
   defenderPhoneNumber?: string
   sendRequestToDefender?: boolean
@@ -142,7 +151,7 @@ export interface Case {
   isClosedCourtHidden?: boolean
   courtAttendees?: string
   prosecutorDemands?: string
-  courtDocuments?: string[]
+  courtDocuments?: CourtDocument[]
   sessionBookings?: string
   courtCaseFacts?: string
   introduction?: string
@@ -174,6 +183,7 @@ export interface Case {
   notifications?: Notification[]
   caseFiles?: CaseFile[]
   caseModifiedExplanation?: string
+  caseResentExplanation?: string
 }
 
 export interface CreateCase {
@@ -181,6 +191,7 @@ export interface CreateCase {
   description?: string
   policeCaseNumber: string
   defenderName?: string
+  defenderNationalId?: string
   defenderEmail?: string
   defenderPhoneNumber?: string
   sendRequestToDefender?: boolean
@@ -193,6 +204,7 @@ export interface UpdateCase {
   description?: string
   policeCaseNumber?: string
   defenderName?: string
+  defenderNationalId?: string
   defenderEmail?: string
   defenderPhoneNumber?: string
   sendRequestToDefender?: boolean
@@ -225,9 +237,10 @@ export interface UpdateCase {
   courtRoom?: string
   courtStartDate?: string
   courtEndTime?: string
+  isClosedCourtHidden?: boolean
   courtAttendees?: string
   prosecutorDemands?: string
-  courtDocuments?: string[]
+  courtDocuments?: CourtDocument[]
   sessionBookings?: string
   courtCaseFacts?: string
   introduction?: string
@@ -248,6 +261,7 @@ export interface UpdateCase {
   registrarId?: string
   judgeId?: string
   caseModifiedExplanation?: string
+  caseResentExplanation?: string
 }
 
 export interface TransitionCase {

@@ -48,6 +48,10 @@ input[type='number'] {
   max-width: 1440px;
   margin: 0 auto;
 }
+.printwrapper {
+  max-width: 800px;
+  margin: 0 auto;
+}
 
 .headLine {
   position: relative;
@@ -179,4 +183,36 @@ input[type='number'] {
 
 .showErrorMessage {
   opacity: 1;
+}
+
+.no-print,
+.no-print * {
+  display: none !important;
+}
+
+@media print {
+  @page {
+    margin-top: 32px;
+    margin-bottom: 32px;
+  }
+  body {
+    padding-top: 0px;
+    padding-bottom: 0px;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .printRightColor {
+    -webkit-print-color-adjust: exact;
+  }
+
+  .print-break {
+    page-break-after: always;
+  }
+
+  .printableSection {
+    float: left;
+    width: 100vw;
+    height: 100vh;
+    page-break-after: always;
+  }
 }

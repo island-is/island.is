@@ -30,9 +30,10 @@ import { Routes, StaffRole } from '@island.is/financial-aid/shared/lib'
 
 interface Props {
   showInMobile: boolean
+  className?: string
 }
 
-const Nav = ({ showInMobile }: Props) => {
+const Nav = ({ showInMobile, className }: Props) => {
   const router = useRouter()
 
   const logOut = useLogOut()
@@ -49,6 +50,7 @@ const Nav = ({ showInMobile }: Props) => {
         [`${styles.container}`]: true,
         [`${styles.adminStyles}`]: isSuperAdmin,
         [`${styles.showNavInMobile}`]: showInMobile,
+        [`${className}`]: className,
       })}
     >
       <header>

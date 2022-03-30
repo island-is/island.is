@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   Header,
-  Inject,
   Post,
   Res,
   Param,
@@ -19,6 +18,7 @@ import {
   Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
+import { AuditService } from '@island.is/nest/audit'
 import { GetFinanceDocumentDto } from './dto/getFinanceDocument.dto'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -26,8 +26,8 @@ import { GetFinanceDocumentDto } from './dto/getFinanceDocument.dto'
 @Controller('finance')
 export class FinanceDocumentController {
   constructor(
-    @Inject(FinanceClientService)
     private readonly financeService: FinanceClientService,
+    private readonly auditService: AuditService,
   ) {}
 
   @Post('/:pdfId')
@@ -60,6 +60,12 @@ export class FinanceDocumentController {
 
     const documentBase64 = documentResponse?.docment?.document
     if (documentBase64) {
+      this.auditService.audit({
+        action: 'getFinancePdf',
+        auth: user,
+        resources: pdfId,
+      })
+
       const buffer = Buffer.from(documentBase64, 'base64')
 
       res.header('Content-length', buffer.length.toString())

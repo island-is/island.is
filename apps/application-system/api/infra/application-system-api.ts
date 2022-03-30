@@ -8,6 +8,7 @@ import {
   PaymentSchedule,
   CriminalRecord,
   DataProtectionComplaint,
+  NationalRegistry,
 } from '../../../../infra/src/dsl/xroad'
 import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 import { PostgresInfo } from '../../../../infra/src/dsl/types/input-types'
@@ -49,6 +50,12 @@ export const workerSetup = (): ServiceBuilder<'application-system-api-worker'> =
       SYSLUMENN_HOST: '/k8s/application-system-api/SYSLUMENN_HOST',
       SYSLUMENN_USERNAME: '/k8s/application-system/api/SYSLUMENN_USERNAME',
       SYSLUMENN_PASSWORD: '/k8s/application-system/api/SYSLUMENN_PASSWORD',
+      DRIVING_LICENSE_BOOK_XROAD_PATH:
+        '/k8s/application-system-api/DRIVING_LICENSE_BOOK_XROAD_PATH',
+      DRIVING_LICENSE_BOOK_USERNAME:
+        '/k8s/application-system-api/DRIVING_LICENSE_BOOK_USERNAME',
+      DRIVING_LICENSE_BOOK_PASSWORD:
+        '/k8s/application-system-api/DRIVING_LICENSE_BOOK_PASSWORD',
     })
     .args('main.js', '--job', 'worker')
     .command('node')
@@ -154,6 +161,7 @@ export const serviceSetup = (services: {
       Client,
       Labor,
       HealthInsurance,
+      NationalRegistry,
       Payment,
       DrivingLicense,
       PaymentSchedule,
@@ -177,6 +185,12 @@ export const serviceSetup = (services: {
         '/k8s/application-system/api/DOCUMENT_PROVIDER_ONBOARDING_REVIEWER',
       SYSLUMENN_USERNAME: '/k8s/application-system/api/SYSLUMENN_USERNAME',
       SYSLUMENN_PASSWORD: '/k8s/application-system/api/SYSLUMENN_PASSWORD',
+      DRIVING_LICENSE_BOOK_XROAD_PATH:
+        '/k8s/application-system-api/DRIVING_LICENSE_BOOK_XROAD_PATH',
+      DRIVING_LICENSE_BOOK_USERNAME:
+        '/k8s/application-system-api/DRIVING_LICENSE_BOOK_USERNAME',
+      DRIVING_LICENSE_BOOK_PASSWORD:
+        '/k8s/application-system-api/DRIVING_LICENSE_BOOK_PASSWORD',
       NOVA_PASSWORD: '/k8s/application-system/api/NOVA_PASSWORD',
       ARK_BASE_URL: '/k8s/application-system-api/ARK_BASE_URL',
     })

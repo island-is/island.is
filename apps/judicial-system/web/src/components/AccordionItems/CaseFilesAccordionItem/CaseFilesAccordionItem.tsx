@@ -8,6 +8,7 @@ import { UploadStateMessage } from '@island.is/judicial-system-web/src/routes/Sh
 import { useCourtUpload } from '@island.is/judicial-system-web/src/utils/hooks/useCourtUpload'
 import {
   Case,
+  CaseFileState,
   CaseState,
   completedCaseStates,
   courtRoles,
@@ -108,6 +109,7 @@ const CaseFilesAccordionItem: React.FC<Props> = (props) => {
             ],
           ])
         }
+        isCaseCompleted={completedCaseStates.includes(workingCase.state)}
       />
       {canCaseFilesBeUploaded() && (
         <Box display="flex" justifyContent="flexEnd">

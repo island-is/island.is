@@ -1,6 +1,6 @@
 import React from 'react'
 import { Text, Box, UploadFile } from '@island.is/island-ui/core'
-import * as styles from './FileList.css'
+
 import cn from 'classnames'
 import format from 'date-fns/format'
 import {
@@ -19,6 +19,8 @@ export const GetSignedUrlQuery = gql`
     }
   }
 `
+
+import * as styles from './FileList.css'
 
 interface Props {
   className?: string
@@ -48,7 +50,7 @@ const FileList = ({ className, files }: Props) => {
           return (
             <button
               className={cn({
-                [styles.filesLink]: true,
+                [`${styles.filesLink}`]: true,
                 [styles.hoverState]: item.id,
               })}
               key={'file-' + index}
