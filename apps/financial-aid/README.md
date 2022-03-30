@@ -30,7 +30,7 @@ Run Ósk or Veita client:
 - `yarn start financial-aid-web-veita`
 
 Go to localhost:4200
-#dummy change
+
 ## To test authentication locally
 
 Install <https://github.com/cameronhunter/local-ssl-proxy>:
