@@ -36,7 +36,7 @@ export class MunicipalityController {
 
   @UseGuards(ScopesGuard)
   @Scopes(MunicipalitiesFinancialAidScope.read)
-  @Get(':id')
+  @Get('id/:id')
   @ApiOkResponse({
     type: MunicipalityModel,
     description: 'Gets municipality by id',
@@ -55,21 +55,18 @@ export class MunicipalityController {
   @Scopes(MunicipalitiesFinancialAidScope.read)
   @Get('ids')
   @ApiOkResponse({
-    type: MunicipalityModel,
+    type: [MunicipalityModel],
     description: 'Gets municipalities by ids',
   })
-  async getByIds(
-    @Body() input: { ids: string[] },
+  async getByMunicipalityIds(
+    @CurrentUser() staff: Staff,
+    @Body()
+    input: {
+      ids: string[]
+    },
   ): Promise<MunicipalityModel[]> {
-    const municipality = await this.municipalityService.findByMunicipalityIds(
-      input.ids,
-    )
-
-    if (!municipality) {
-      throw new NotFoundException(`municipality not found`)
-    }
-
-    return municipality
+    console.log('please komduuuuuu', input)
+    return this.municipalityService.findByMunicipalityIds(staff.municipalityIds)
   }
 
   @UseGuards(StaffGuard)

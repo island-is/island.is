@@ -27,7 +27,7 @@ import { CreateApplicationFilesInput } from '../app/modules/file/dto'
 import { CreateStaffInput } from '../app/modules/staff'
 import { SpouseModel } from '../app/modules/user'
 import {
-  MunicipalityByIdsQueryInput,
+  GetMunicipalityIdsQueryInput,
   UpdateMunicipalityInput,
 } from '../app/modules/municipality/dto'
 import {
@@ -61,11 +61,14 @@ class BackendAPI extends RESTDataSource {
   }
 
   getMunicipality(id: string): Promise<Municipality> {
-    return this.get(`municipality/${id}`)
+    return this.get(`municipality/id/${id}`)
   }
 
-  getMunicipalitiesById(ids: string[]): Promise<Municipality[]> {
-    return this.get(`municipality/ids`)
+  getMunicipalitiesById(
+    input: GetMunicipalityIdsQueryInput,
+  ): Promise<Municipality[]> {
+    console.log('BLAAAA')
+    return this.get('municipality/ids', { input })
   }
 
   getMunicipalities(): Promise<Municipality[]> {

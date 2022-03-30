@@ -6,9 +6,9 @@ import {
 } from '@island.is/financial-aid/shared/lib'
 import { gql } from '@apollo/client'
 
-const MunicipalitiesQuery = gql`
-  query getMunicipalities {
-    municipalities {
+const MunicipalityQueryMutation = gql`
+  mutation MunicipalityQueryMutation($input: GetMunicipalityIdsQueryInput!) {
+    getMunicipalityByIds(input: $input) {
       id
       name
       homepage
@@ -48,13 +48,14 @@ export const useMunicipality = () => {
 
   const getMunicipality = useAsyncLazyQuery<{
     municipalities: Municipality[]
-  }>(MunicipalitiesQuery)
+  }>(MunicipalityQueryMutation)
 
   useEffect(() => {
     setScopedMunicipality(
-      sessionStorage.getItem(storageKey)
-        ? JSON.parse(sessionStorage.getItem(storageKey) as string)
-        : [],
+      // sessionStorage.getItem(storageKey)
+      //   ? JSON.parse(sessionStorage.getItem(storageKey) as string)
+      //   : [],
+      [],
     )
   }, [])
 
@@ -64,12 +65,28 @@ export const useMunicipality = () => {
   }
 
   const setMunicipalityById = async (municipalityIds: string[]) => {
+    console.log(
+      '1? ',
+      getMunicipality({
+        variables: {
+          input: {
+            ids: municipalityIds,
+          },
+        },
+      }),
+    )
+
     try {
       setError(undefined)
       setLoading(true)
-      return await getMunicipality({
-        input: { ids: municipalityIds },
+      await getMunicipality({
+        variables: {
+          input: {
+            ids: municipalityIds,
+          },
+        },
       }).then((res) => {
+        console.log('kemuru hér?')
         setScopedMunicipality(res.data?.municipalities ?? [])
         sessionStorage.setItem(
           storageKey,

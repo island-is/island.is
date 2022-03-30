@@ -3,8 +3,8 @@ import { Allow } from 'class-validator'
 import { Field, InputType } from '@nestjs/graphql'
 
 @InputType()
-export class MunicipalityByIdsQueryInput {
+export class GetMunicipalityIdsQueryInput {
   @Allow()
-  @Field()
-  readonly ids!: string[]
+  @Field(() => [String])
+  readonly municipalityIds!: string[]
 }

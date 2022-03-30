@@ -21,7 +21,7 @@ import {
   CreateMunicipalityInput,
   MunicipalityQueryInput,
   UpdateMunicipalityInput,
-  MunicipalityByIdsQueryInput,
+  GetMunicipalityIdsQueryInput,
 } from './dto'
 import { IdsUserGuard } from '@island.is/auth-nest-tools'
 import type { Municipality, Staff } from '@island.is/financial-aid/shared/lib'
@@ -48,14 +48,12 @@ export class MunicipalityResolver {
 
   @Query(() => [MunicipalityModel])
   getMunicipalityByIds(
-    @Args('input', { type: () => MunicipalityByIdsQueryInput })
-    input: MunicipalityByIdsQueryInput,
+    @Args('input', { type: () => GetMunicipalityIdsQueryInput })
+    input: GetMunicipalityIdsQueryInput,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<Municipality[]> {
-    this.logger.debug(`Getting municipalities`)
-    const { ids } = input
-
-    return backendApi.getMunicipalitiesById(ids)
+    this.logger.debug(`Getting municipalities by ids`)
+    return backendApi.getMunicipalitiesById(input)
   }
 
   @Mutation(() => MunicipalityModel, { nullable: false })

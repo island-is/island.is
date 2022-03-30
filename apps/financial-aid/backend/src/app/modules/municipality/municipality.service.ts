@@ -57,6 +57,7 @@ export class MunicipalityService {
   async findByMunicipalityIds(
     municipalityIds: string[],
   ): Promise<MunicipalityModel[]> {
+    console.log('kemuru her?', municipalityIds)
     return this.municipalityModel.findAll({
       where: { municipalityId: { [Op.in]: municipalityIds } },
       include: [
