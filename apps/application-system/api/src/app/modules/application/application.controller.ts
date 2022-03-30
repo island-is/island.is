@@ -330,9 +330,15 @@ export class ApplicationController {
       throw new NotFoundException('Token no longer usable.')
     }
 
+    await this.applicationService.removeNonce(existingApplication, decodedToken.nonce)
+
+
+
     if (existingApplication.state !== decodedToken.state) {
       throw new NotFoundException('Application no longer in assignable state')
     }
+
+    
 
     const templateId = existingApplication.typeId as ApplicationTypes
     const template = await getApplicationTemplateByTypeId(templateId)
@@ -753,6 +759,7 @@ export class ApplicationController {
         newState,
         updatedApplication.answers,
         updatedApplication.assignees,
+        updatedApplication.assignNonces
         status,
         getApplicationLifecycle(updatedApplication, template),
       )

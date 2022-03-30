@@ -202,6 +202,21 @@ export class ApplicationService {
     return { numberOfAffectedRows, updatedApplication }
   }
 
+  async removeNonce(application: Application, assignNonce: string) {
+    const [
+      numberOfAffectedRows,
+      [updatedApplication],
+    ] = await this.applicationModel.update(
+      {
+        assignNonces: application.assignNonces.filter(
+          (nonce) => nonce !== assignNonce,
+        ),
+      },
+      { where: { id: application.id }, returning: true },
+    )
+    return { numberOfAffectedRows, updatedApplication }
+  }
+
   async updateApplicationState(
     id: string,
     state: string,
