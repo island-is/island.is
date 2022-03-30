@@ -389,7 +389,6 @@ const ArticleScreen: Screen<ArticleProps> = ({
     let widget: any
     if (article.id === '7i92Z9s9HQeYlpGReYQVX') {
       widget = activateUkraineChatPanel()
-      console.log(widget)
     }
 
     return () => widget?.call('destroy')
