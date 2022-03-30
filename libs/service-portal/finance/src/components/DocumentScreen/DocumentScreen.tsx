@@ -116,7 +116,7 @@ const DocumentScreen: FC<Props> = ({
           <GridColumn span={['12/12', '8/12']}>
             <Text variant="default">{intro}</Text>
           </GridColumn>
-          <Box display="flex" marginLeft="auto" marginTop={1}>
+          <Box display="flex" marginLeft="auto" marginTop={1} printHidden>
             <GridColumn>
               <Button
                 colorScheme="default"
