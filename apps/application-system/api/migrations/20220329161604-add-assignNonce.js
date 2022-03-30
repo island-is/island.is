@@ -9,8 +9,6 @@ module.exports = {
           defaultValue: [],
           allowNull: false,
         }),
-
-        queryInterface.removeColumn('application', 'assignNonces'),
       ]),
     )
   },
