@@ -51,11 +51,13 @@ export const useMunicipality = () => {
   }>(MunicipalityQuery)
 
   useEffect(() => {
-    setScopedMunicipality(
-      sessionStorage.getItem(storageKey)
-        ? JSON.parse(sessionStorage.getItem(storageKey) as string)
-        : [],
-    )
+    if (sessionStorage.getItem(storageKey)) {
+      setScopedMunicipality(
+        JSON.parse(sessionStorage.getItem(storageKey) as string),
+      )
+      return
+    }
+    setMunicipalityById()
   }, [])
 
   const setMunicipality = (municipality: Municipality[]) => {

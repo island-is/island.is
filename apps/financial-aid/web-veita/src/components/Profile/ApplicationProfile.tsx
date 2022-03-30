@@ -76,7 +76,7 @@ const ApplicationProfile = ({
           : applicationMunicipality.individualAid,
       )
     }
-  }, [applicationMunicipality])
+  }, [applicationMunicipality, application])
 
   const applicationInfo: ApplicationProfileInfo[] = [
     {
