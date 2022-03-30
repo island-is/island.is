@@ -20,7 +20,6 @@ import {
 import { ApplicationAccessService } from './tools/applicationAccess.service'
 import { PaymentModule } from '../payment/payment.module'
 import { LoggingModule } from '@island.is/logging'
-import { AuthPublicApiClientModule } from '@island.is/clients/auth-public-api'
 import { TemplateApiApplicationService } from './template-api.service'
 import { AwsModule } from '@island.is/nest/aws'
 import { ApplicationApiCoreModule } from '@island.is/application/api/core'
@@ -64,7 +63,6 @@ if (process.env.INIT_SCHEMA === 'true') {
     SigningModule.register(environment.signingOptions),
     CmsTranslationsModule,
     LoggingModule,
-    AuthPublicApiClientModule,
   ],
   controllers: [ApplicationController],
   providers: [

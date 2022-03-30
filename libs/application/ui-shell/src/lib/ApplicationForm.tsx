@@ -62,10 +62,13 @@ const ApplicationLoader: FC<{
   }
 
   if (!applicationId || error) {
-    if (applicationId && !delegationsChecked && type) {
+    const foundError = findProblemInApolloError(error as any, [
+      ProblemType.BAD_SUBJECT,
+    ])
+    if (foundError?.type === ProblemType.BAD_SUBJECT) {
       return (
         <DelegationsScreen
-          type={type}
+          alternativeSubjects={foundError.alternativeSubjects}
           setDelegationsChecked={setDelegationsChecked}
           applicationId={applicationId}
         />

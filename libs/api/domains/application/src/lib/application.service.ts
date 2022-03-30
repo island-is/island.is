@@ -45,14 +45,6 @@ export class ApplicationService {
     )
   }
 
-  async findDelegationApplicant(id: string, auth: Auth) {
-    return await this.applicationApiWithAuth(
-      auth,
-    ).applicationControllerFindDelegatedApplicant({
-      id,
-    })
-  }
-
   async getPaymentStatus(
     applicationId: string,
     auth: Auth,

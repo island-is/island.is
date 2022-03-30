@@ -134,28 +134,12 @@ export class ApplicationController {
   ): Promise<ApplicationResponseDto> {
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
-      user.nationalId,
+      user,
     )
 
     await validateThatApplicationIsReady(existingApplication as BaseApplication)
 
     return existingApplication
-  }
-
-  @Scopes(ApplicationScope.read)
-  @Get('applications/delegated/:id')
-  @ApiOkResponse({ type: ApplicationResponseDto })
-  @Audit<ApplicationResponseDto>({
-    resources: (app) => app.id,
-  })
-  async findDelegatedApplicant(
-    @Param('id', new ParseUUIDPipe()) id: string,
-    @CurrentUser() user: User,
-  ): Promise<ApplicationResponseDto> {
-    return await this.applicationAccessService.findOneByIdAndDelegations(
-      id,
-      user,
-    )
   }
 
   @Scopes(ApplicationScope.read)
@@ -414,7 +398,7 @@ export class ApplicationController {
   ): Promise<ApplicationResponseDto> {
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
-      user.nationalId,
+      user,
     )
     const namespaces = await getApplicationTranslationNamespaces(
       existingApplication as BaseApplication,
@@ -478,7 +462,7 @@ export class ApplicationController {
   ): Promise<ApplicationResponseDto> {
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
-      user.nationalId,
+      user,
     )
 
     await validateIncomingExternalDataProviders(
@@ -545,7 +529,7 @@ export class ApplicationController {
   ): Promise<ApplicationResponseDto> {
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
-      user.nationalId,
+      user,
     )
     const templateId = existingApplication.typeId as ApplicationTypes
     const template = await getApplicationTemplateByTypeId(templateId)
@@ -862,7 +846,7 @@ export class ApplicationController {
   ): Promise<ApplicationResponseDto> {
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
-      user.nationalId,
+      user,
     )
     const { key } = input
 
@@ -902,7 +886,7 @@ export class ApplicationController {
   ): Promise<PresignedUrlResponseDto> {
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
-      user.nationalId,
+      user,
     )
     const url = await this.fileService.generatePdf(
       existingApplication,
@@ -937,7 +921,7 @@ export class ApplicationController {
   ): Promise<RequestFileSignatureResponseDto> {
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
-      user.nationalId,
+      user,
     )
     const {
       controlCode,
@@ -974,7 +958,7 @@ export class ApplicationController {
   ): Promise<UploadSignedFileResponseDto> {
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
-      user.nationalId,
+      user,
     )
 
     await this.fileService.uploadSignedFile(
@@ -1012,7 +996,7 @@ export class ApplicationController {
   ): Promise<PresignedUrlResponseDto> {
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
-      user.nationalId,
+      user,
     )
     const url = await this.fileService.getPresignedUrl(
       existingApplication,
@@ -1057,7 +1041,7 @@ export class ApplicationController {
   ): Promise<PresignedUrlResponseDto> {
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
-      user.nationalId,
+      user,
     )
 
     if (!existingApplication.attachments) {

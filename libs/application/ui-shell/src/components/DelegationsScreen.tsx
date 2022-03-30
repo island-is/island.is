@@ -1,7 +1,10 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { useQuery } from '@apollo/client'
 import { useAuth } from '@island.is/auth/react'
-import { APPLICANT_DELEGATIONS } from '@island.is/application/graphql'
+import {
+  ACTOR_DELEGATIONS,
+  APPLICANT_DELEGATIONS,
+} from '@island.is/application/graphql'
 import {
   Text,
   Box,
@@ -14,7 +17,7 @@ import { getApplicationTemplateByTypeId } from '@island.is/application/template-
 import { ApplicationTypes } from '@island.is/application/core'
 import { LoadingShell } from './LoadingShell'
 import {
-  ActorValidationFailedProblem,
+  BadSubjectProblem,
   findProblemInApolloError,
   ProblemType,
 } from '@island.is/shared/problem'
@@ -24,17 +27,19 @@ import { useLocale } from '@island.is/localization'
 
 type Delegation = {
   type: string
-  nationalId: string
-  name: string
+  from: {
+    nationalId: string
+    name: string
+  }
 }
 interface DelegationsScreenProps {
-  type: ApplicationTypes
+  alternativeSubjects: { nationalId: string }[]
   setDelegationsChecked: Dispatch<SetStateAction<boolean>>
   applicationId: string
 }
 
 export const DelegationsScreen = ({
-  type,
+  alternativeSubjects,
   setDelegationsChecked,
   applicationId,
 }: DelegationsScreenProps) => {
@@ -44,58 +49,28 @@ export const DelegationsScreen = ({
 
   const { switchUser } = useAuth()
 
-  // Check if template supports delegations
-  useEffect(() => {
-    async function checkDelegations() {
-      const template = await getApplicationTemplateByTypeId(type)
-      if (template.allowedDelegations) {
-        setAllowedDelegations(template.allowedDelegations)
-      } else {
-        setDelegationsChecked(true)
-      }
-    }
-    checkDelegations()
-  }, [type])
+  // Check for user delegations if application supports delegations
+  const { data: delegations, loading } = useQuery(ACTOR_DELEGATIONS, {
+    skip: !allowedDelegations,
+  })
 
-  // Only check if user has delegations if the template supports delegations
-  const { error: delegationCheckError, loading } = useQuery(
-    APPLICANT_DELEGATIONS,
-    {
-      variables: {
-        input: {
-          id: applicationId,
-        },
-      },
-      // Setting this so that refetch causes a re-render
-      // https://github.com/apollographql/react-apollo/issues/321#issuecomment-599087392
-      // We want to refetch after setting the application back to 'draft', so that
-      // it loads the correct form for the 'draft' state.
-      skip: !applicationId,
-    },
-  )
   // Check if user has the delegations of the delegation types the application supports
   useEffect(() => {
-    const foundError = findProblemInApolloError(delegationCheckError as any, [
-      ProblemType.ACTOR_VALIDATION_FAILED,
-    ])
-    if (
-      allowedDelegations &&
-      foundError?.type === ProblemType.ACTOR_VALIDATION_FAILED
-    ) {
-      const problem: ActorValidationFailedProblem = foundError
-
-      // Does the actor have delegation for the applicant of the application
-      const found = problem.fields.delegations.find(
+    if (delegations && alternativeSubjects) {
+      const found: Delegation = delegations.authActorDelegations.find(
         (delegation: Delegation) =>
-          delegation.nationalId === problem.fields.delegatedUser &&
-          (allowedDelegations.includes(delegation.type) ||
-            delegation.type === 'ACTOR'),
+          alternativeSubjects.includes({
+            nationalId: delegation.from.nationalId,
+          }),
       )
-
-      if (!found) setDelegationsChecked(true)
-      setApplicant(found)
+      if (!found) {
+        setDelegationsChecked(true)
+      } else {
+        setApplicant(found)
+      }
     }
-  }, [allowedDelegations, delegationCheckError])
+
+  }, [alternativeSubjects, delegations])
 
   const handleClick = (nationalId?: string) => {
     if (nationalId) switchUser(nationalId)
@@ -121,13 +96,13 @@ export const DelegationsScreen = ({
 
             <ActionCard
               avatar
-              heading={applicant.name}
-              text={'Kennitala: ' + formatKennitala(applicant.nationalId)}
+              heading={applicant.from.name}
+              text={'Kennitala: ' + formatKennitala(applicant.from.nationalId)}
               cta={{
                 label: 'Halda áfram',
                 variant: 'text',
                 size: 'medium',
-                onClick: () => handleClick(applicant.nationalId),
+                onClick: () => handleClick(applicant.from.nationalId),
               }}
             />
           </Box>

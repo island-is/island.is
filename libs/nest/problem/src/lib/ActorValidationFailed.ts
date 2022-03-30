@@ -1,17 +1,17 @@
 import {
   ProblemType,
-  ActorValidationFailedFields,
+  AlternativeSubject,
 } from '@island.is/shared/problem'
 import { ProblemError } from './ProblemError'
 
-export class ActorValidationFailed extends ProblemError {
-  constructor(fields: ActorValidationFailedFields) {
+export class BadSubject extends ProblemError {
+  constructor(alternativeSubjects: AlternativeSubject[]) {
     super({
-      type: ProblemType.ACTOR_VALIDATION_FAILED,
-      title: 'Actor Validation Failed',
-      status: 400,
-      detail: `User has not delegated to correct user`,
-      fields,
+      type: ProblemType.BAD_SUBJECT,
+      title: 'Bad Subject',
+      status: 403,
+      detail: `User does not have access to resource`,
+      alternativeSubjects,
     })
   }
 }

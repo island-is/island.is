@@ -60,7 +60,7 @@ export const DelegationsScreen = ({
   }, [type])
 
   // Check for user delegations if application supports delegations
-  const { data: delegations } = useQuery(ACTOR_DELEGATIONS, {
+  const { data: delegations, error } = useQuery(ACTOR_DELEGATIONS, {
     skip: !allowedDelegations,
   })
 
@@ -78,10 +78,18 @@ export const DelegationsScreen = ({
 
   const handleClick = (nationalId?: string) => {
     history.push(`../${slug}/?delegationChecked=true`)
-    if (nationalId) switchUser(nationalId)
-    else setDelegationsChecked(true)
+    if (nationalId) {
+      switchUser(nationalId)
+    } else {
+      setDelegationsChecked(true)
+    }
   }
+  console.log(delegations)
+  console.log(user)
 
+  if (error) {
+    setDelegationsChecked(true)
+  }
   return delegations && user ? (
     <Page>
       <GridContainer>

@@ -93,16 +93,17 @@ export class ApplicationService {
     })
   }
 
-  async findDelegatedApplicant(
+  async findByActor(
     id: string,
-    nationalIds?: string[],
+    nationalId?: string,
+    actorNationalId?: string
   ): Promise<Application | null> {
     return this.applicationModel.findOne({
       where: {
         id,
-        ...(nationalIds
+        ...(nationalId || actorNationalId
           ? {
-              [Op.or]: { applicant: { [Op.in]: nationalIds } },
+              [Op.or]: { actors: { [Op.contains]: {[Op.or]: [nationalId, actorNationalId]} } },
             }
           : {}),
       },
