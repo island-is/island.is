@@ -1,7 +1,6 @@
 import { OrganizationPage } from '@island.is/web/graphql/schema'
 import React from 'react'
-import { Box, Hidden, Link, Text } from '@island.is/island-ui/core'
-import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
+import { Box, Link, Text } from '@island.is/island-ui/core'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import * as styles from './DefaultHeader.css'
 
@@ -75,91 +74,4 @@ export const DefaultHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
       )}
     </Box>
   )
-
-  // return (
-  //   <Box
-  //     className={
-  //       organizationPage.defaultHeaderImage?.url ? styles.container : undefined
-  //     }
-  //   >
-  //     <Box
-  //       className={styles.headerBg}
-  //       style={{ background: getBackgroundStyle(organizationPage) }}
-  //     >
-  //       <Box className={styles.headerWrapper}>
-  //         <SidebarLayout
-  //           sidebarContent={
-  //             !!organizationPage.organization.logo && (
-  //               <Link
-  //                 href={
-  //                   linkResolver('organizationpage', [organizationPage.slug])
-  //                     .href
-  //                 }
-  //               >
-  //                 <Box
-  //                   borderRadius="circle"
-  //                   className={styles.iconCircle}
-  //                   background="white"
-  //                 >
-  //                   <img
-  //                     src={organizationPage.organization.logo.url}
-  //                     className={styles.headerLogo}
-  //                     alt=""
-  //                   />
-  //                 </Box>
-  //               </Link>
-  //             )
-  //           }
-  //         >
-  //           {!!organizationPage.organization.logo && (
-  //             <Hidden above="sm">
-  //               <Link
-  //                 href={
-  //                   linkResolver('organizationpage', [organizationPage.slug])
-  //                     .href
-  //                 }
-  //               >
-  //                 {!!organizationPage.organization.logo && (
-  //                   <Box
-  //                     borderRadius="circle"
-  //                     className={styles.iconCircle}
-  //                     background="white"
-  //                   >
-  //                     <img
-  //                       src={organizationPage.organization.logo.url}
-  //                       className={styles.headerLogo}
-  //                       alt=""
-  //                     />
-  //                   </Box>
-  //                 )}
-  //               </Link>
-  //             </Hidden>
-  //           )}
-  //           <Box
-  //             className={styles.textContainer}
-  //             textAlign={['center', 'center', 'left']}
-  //           >
-  //             <Text
-  //               variant="h1"
-  //               color={
-  //                 organizationPage.themeProperties.darkText
-  //                   ? 'dark400'
-  //                   : 'white'
-  //               }
-  //             >
-  //               {organizationPage.title}
-  //             </Text>
-  //           </Box>
-  //         </SidebarLayout>
-  //       </Box>
-  //     </Box>
-  //     {organizationPage.defaultHeaderImage?.url && (
-  //       <img
-  //         className={styles.headerImage}
-  //         src={organizationPage.defaultHeaderImage.url}
-  //         alt="header"
-  //       ></img>
-  //     )}
-  //   </Box>
-  // )
 }
