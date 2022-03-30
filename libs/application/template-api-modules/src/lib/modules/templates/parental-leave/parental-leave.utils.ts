@@ -84,7 +84,7 @@ export const getPensionFund = (
   isPrivate = false,
 ): PensionFund => {
   const getter = isPrivate
-    ? 'payments.privatePensionFund'
+    ? 'payments.privatePensionFund.name'
     : 'payments.pensionFund'
 
   const value = get(application.answers, getter, isPrivate ? null : undefined)

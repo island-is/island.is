@@ -197,7 +197,7 @@ describe('getPensionFund', () => {
   it('should return selected private pension fund if selected', () => {
     const expectedId = 'asdf'
 
-    set(application.answers, 'payments.privatePensionFund', expectedId)
+    set(application.answers, 'payments.privatePensionFund.name', expectedId)
 
     expect(getPensionFund(application, true)).toEqual({
       id: expectedId,
@@ -215,7 +215,7 @@ describe('getPrivatePensionFundRatio', () => {
     const expectedValue = 5
     set(
       application.answers,
-      'payments.privatePensionFundPercentage',
+      'payments.privatePensionFund.percentage',
       expectedValue.toString(),
     )
 
