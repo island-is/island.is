@@ -69,7 +69,7 @@ export class ApplicationValidationService {
 
   // If configcat flag is present use that flag to determine if the template is ready
   // If configcat flag is not present, use the readyForProduction flag
-  // TODO: Remove the readyForProduction flag
+  // TODO: Remove the readyForProduction flag and assume that applications that have no featureFlag are ready for production
   async isTemplateReady(
     user: User,
     template: Pick<
