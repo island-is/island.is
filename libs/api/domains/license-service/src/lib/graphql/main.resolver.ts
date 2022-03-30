@@ -7,7 +7,7 @@ import {
   Field,
   Mutation,
 } from '@nestjs/graphql'
-import { Scope, UseGuards } from '@nestjs/common'
+import { UseGuards } from '@nestjs/common'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   IdsUserGuard,
