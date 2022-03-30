@@ -297,6 +297,10 @@ jobs:
         shell: bash
         run: sudo usermod -a -G docker runner
 
+      - name: Set Usermod on machine
+        shell: bash
+        run: sudo usermod -a -G docker ec2-user 
+
       # - name: Set Usermod on machine
       #   shell: bash
       #   run: sudo usermod -a -G docker ec2-user
@@ -314,10 +318,6 @@ jobs:
       - name: WHOAMI
         shell: bash
         run: whoami
-
-      - name: Set Usermod on machine
-        shell: bash
-        run: sudo usermod -a -G docker runner
 
       # - name: Set Usermod on machine
       #   shell: bash
