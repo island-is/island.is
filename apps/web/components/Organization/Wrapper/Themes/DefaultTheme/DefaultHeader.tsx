@@ -33,7 +33,10 @@ export const DefaultHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
         className={styles.headerBg}
         style={{ background: getBackgroundStyle(organizationPage) }}
       >
-        <Box className={styles.textContainer}>
+        <Box
+          className={styles.textContainer}
+          textAlign={['center', 'center', 'right']}
+        >
           <Text
             variant="h1"
             color={

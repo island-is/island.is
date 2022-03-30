@@ -6,6 +6,12 @@ export const headerBg = style({
   flexFlow: 'column nowrap',
   alignItems: 'flex-end',
   justifyContent: 'center',
+  order: 1,
+  ...themeUtils.responsiveStyle({
+    md: {
+      order: 0,
+    },
+  }),
 })
 
 export const iconCircle = style({
@@ -16,8 +22,8 @@ export const iconCircle = style({
   placeItems: 'center',
   boxShadow: '0px 4px 30px rgba(0, 97, 255, 0.08)',
   position: 'absolute',
+  left: '11%',
   bottom: -32,
-  left: '10%',
 })
 
 export const headerWrapper = style({
@@ -37,14 +43,29 @@ export const container = style({
 
 export const gridContainer = style({
   display: 'grid',
-  gridTemplateColumns: '1fr 1fr',
+  gridTemplateRows: '2fr 3fr',
+  gridTemplateColumns: '1fr',
+  ...themeUtils.responsiveStyle({
+    md: {
+      gridTemplateColumns: '1fr 1fr',
+      gridTemplateRows: '1fr',
+    },
+  }),
 })
 
 export const headerImage = style({
   objectFit: 'cover',
-  height: '100%',
-  maxHeight: 385,
+  height: 200,
   width: '100%',
+  order: 0,
+  ...themeUtils.responsiveStyle({
+    md: {
+      order: 1,
+
+      height: '100%',
+      maxHeight: 385,
+    },
+  }),
 })
 
 export const textContainer = style({
