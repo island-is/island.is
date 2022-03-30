@@ -190,8 +190,8 @@ export const serviceSetup = (services: {
     .liveness('/liveness')
     .readiness('/liveness')
     .resources({
-      limits: { cpu: '400m', memory: '512Mi' },
-      requests: { cpu: '100m', memory: '256Mi' },
+      limits: { cpu: '400m', memory: '1024Mi' },
+      requests: { cpu: '100m', memory: '512Mi' },
     })
     .ingress({
       primary: {
