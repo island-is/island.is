@@ -28,6 +28,9 @@ jobs:
   pre-checks:
     name: Check if job should run
     runs-on: ec2-runners
+    defaults:
+      run:
+        shell: bash
     container: 
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     defaults:
@@ -112,6 +115,9 @@ jobs:
       run:
         shell: bash
     runs-on: ec2-runners
+    defaults:
+      run:
+        shell: bash
     container: 
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 90
@@ -420,6 +426,9 @@ jobs:
       - prepare
     if: needs.prepare.outputs.TEST_CHUNKS
     runs-on: ec2-runners
+    defaults:
+      run:
+        shell: bash
     container: 
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 25
@@ -474,6 +483,9 @@ jobs:
       - pre-checks
       - prepare
     runs-on: ec2-runners
+    defaults:
+      run:
+        shell: bash
     container: 
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 35
@@ -579,6 +591,9 @@ jobs:
       - pre-checks
     if: needs.prepare.outputs.IMAGES && needs.pre-checks.outputs.PRE_CHECK != 'push'
     runs-on: ec2-runners
+    defaults:
+      run:
+        shell: bash
     container: 
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 5
@@ -638,6 +653,9 @@ jobs:
 
   retag-unaffected:
     runs-on: ec2-runners
+    defaults:
+      run:
+        shell: bash
     container: 
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 5
@@ -670,6 +688,9 @@ jobs:
 
   deploy:
     runs-on: ec2-runners
+    defaults:
+      run:
+        shell: bash
     container: 
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     if: always() && needs.retag-unaffected.result == 'success' && needs.helm-docker-build.result != 'failure'
@@ -711,6 +732,9 @@ jobs:
 
   push-success:
     runs-on: ec2-runners
+    defaults:
+      run:
+        shell: bash
     container: 
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     if: always()
@@ -735,6 +759,9 @@ jobs:
 
   failure-notification:
     runs-on: ec2-runners
+    defaults:
+      run:
+        shell: bash
     container: 
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     if: failure() && needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK != 'feature-deploy'

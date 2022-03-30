@@ -9,6 +9,9 @@ jobs:
   cleanup:
     name: Clean up feature deployment
     runs-on: ec2-runners
+    defaults:
+      run:
+        shell: bash
     container: 
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     defaults:
