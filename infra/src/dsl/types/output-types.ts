@@ -111,6 +111,10 @@ export interface FeatureKubeJob {
           command: string[]
           image: string
           name: string
+          securityContext?: {
+            privileged: boolean
+            allowPrivilegeEscalation: boolean
+          }
           env: { name: string; value: string }[]
         }[]
         restartPolicy: 'Never' | 'OnFailure'
@@ -132,6 +136,7 @@ export type SerializeErrors = {
 export type SerializeMethod = (
   service: Service,
   uberChart: UberChartType,
+  featuresDeployment?: string,
   featuresOn?: FeatureNames[],
 ) => SerializeSuccess | SerializeErrors
 

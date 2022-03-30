@@ -13,10 +13,11 @@ const dumpOpts = {
 
 const renderValueFile = (
   uberChart: UberChart,
+  featureDeployment?: string,
   ...services: Service[]
 ): ValueFile => {
   const helmServices: Services = services.reduce((acc, s) => {
-    const values = serializeService(s, uberChart)
+    const values = serializeService(s, uberChart, featureDeployment)
     switch (values.type) {
       case 'error':
         throw new Error(values.errors.join('\n'))
@@ -63,7 +64,7 @@ export const generateYamlForEnv = (
   uberChart: UberChart,
   ...services: Service[]
 ): ValueFile => {
-  return renderValueFile(uberChart, ...services)
+  return renderValueFile(uberChart, undefined, ...services)
 }
 
 export const dumpYaml = (ch: UberChart, valueFile: ValueFile) => {
@@ -101,9 +102,10 @@ const findDependencies = (
 export const getDependantServices = (
   uberChart: UberChart,
   habitat: Service[],
+  featureDeployment?: string,
   ...services: Service[]
 ): Service[] => {
-  renderValueFile(uberChart, ...habitat) // doing this so we find out the dependencies
+  renderValueFile(uberChart, featureDeployment, ...habitat) // doing this so we find out the dependencies
   const dependantServices = services
     .map((s) => findDependencies(uberChart, s))
     .flatMap((x) => x)
@@ -119,33 +121,7 @@ export const getDependantServices = (
 export function featureSpecificServiceDef(
   feature: string,
   featureSpecificServices: Service[],
-) {
-  const namespace = `feature-${feature}`
-  featureSpecificServices.forEach((s) => {
-    s.serviceDef.namespace = namespace
-    s.serviceDef.replicaCount = { min: 1, max: 2, default: 1 }
-  })
-  featureSpecificServices.forEach((s) => {
-    Object.entries(s.serviceDef.ingress).forEach(([name, ingress]) => {
-      if (!Array.isArray(ingress.host.dev)) {
-        ingress.host.dev = [ingress.host.dev]
-      }
-      ingress.host.dev = ingress.host.dev.map((host) => `${feature}-${host}`)
-    })
-  })
-  featureSpecificServices.forEach((s) => {
-    // s.serviceDef.postgres = getPostgresInfoForFeature(
-    //   feature,
-    //   s.serviceDef.postgres,
-    // )
-    // if (s.serviceDef.initContainers) {
-    //   s.serviceDef.initContainers.postgres = getPostgresInfoForFeature(
-    //     feature,
-    //     s.serviceDef.initContainers.postgres,
-    //   )
-    // }
-  })
-}
+) {}
 
 function featureSpecificServicesPrepare(
   uberChart: UberChart,
@@ -156,6 +132,7 @@ function featureSpecificServicesPrepare(
   const featureSpecificServices = getDependantServices(
     uberChart,
     habitat,
+    feature,
     ...services,
   )
   featureSpecificServiceDef(feature, featureSpecificServices)
@@ -178,7 +155,7 @@ export const generateYamlForFeature = (
       services,
       feature,
     ).filter((f) => !excludedServiceNames.includes(f.serviceDef.name))
-    return renderValueFile(uberChart, ...featureSpecificServices)
+    return renderValueFile(uberChart, feature, ...featureSpecificServices)
   } else {
     throw new Error('Feature deployment with a feature name not defined')
   }

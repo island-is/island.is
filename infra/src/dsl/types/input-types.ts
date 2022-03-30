@@ -1,5 +1,7 @@
 import { FeatureNames } from '../features'
 import { EnvironmentConfig, UberChartType } from './charts'
+import { UberChart } from '../uber-chart'
+import { FeatureKubeJob } from './output-types'
 
 export type OpsEnv = 'dev' | 'staging' | 'prod'
 export const MissingSetting = 'Missing setting'
@@ -59,11 +61,17 @@ export type InfrastructureResource = {
     serviceDef: ServiceDefinition,
     uberChart: UberChartType,
     service: Service,
+    featureDeployment?: string,
   ): {
-    env: { [name: string]: string }
-    secrets: { [name: string]: string }
+    env: { [p: string]: string }
+    secrets: { [p: string]: string }
     errors: string[]
   }
+  featureDeploymentProvisionManifest(
+    uberChart: UberChart,
+    service: Service,
+    image: string,
+  ): FeatureKubeJob['spec']['template']['spec']['containers']
 }
 
 export type ServiceDefinition = {

@@ -1,11 +1,6 @@
 import { UberChart } from './uber-chart'
 import { PostgresInfo, Service } from './types/input-types'
-import {
-  getDependantServices,
-  getPostgresInfoForFeature,
-  resolveWithMaxLength,
-} from './serialize-to-yaml'
-import { resolveDbHost } from './map-to-values'
+import { getDependantServices, resolveWithMaxLength } from './serialize-to-yaml'
 import { FeatureKubeJob } from './types/output-types'
 
 export const generateJobsForFeature = (
@@ -21,6 +16,7 @@ export const generateJobsForFeature = (
   const featureSpecificServices = getDependantServices(
     uberChart,
     habitat,
+    feature,
     ...services,
   )
   const securityContext = {
@@ -28,64 +24,18 @@ export const generateJobsForFeature = (
     allowPrivilegeEscalation: false,
   }
   const containers = featureSpecificServices
-    .map((service) =>
-      [
-        getPostgresInfoForFeature(feature, service.serviceDef.postgres),
-        getPostgresInfoForFeature(
-          feature,
-          service.serviceDef.initContainers?.postgres,
-        ),
-      ]
-        .filter((id) => id)
-        .map((info) => {
-          const host = resolveDbHost(info!, uberChart, service)
-          return {
-            command: ['/app/create-db.sh'],
-            image,
-            name: `${info!.name!.replace(/_/g, '-').substr(0, 60)}1`,
-            securityContext,
-            env: [
-              {
-                name: 'PGHOST',
-                value: host.writer,
-              },
-              {
-                name: 'PGDATABASE',
-                value: 'postgres',
-              },
-              {
-                name: 'PGUSER',
-                value: 'root',
-              },
-              {
-                name: 'PGPASSWORD_KEY',
-                value: '/rds/vidspyrna/masterpassword',
-              },
-              {
-                name: 'DB_USER',
-                value: info!.username!,
-              },
-              {
-                name: 'DB_NAME',
-                value: info!.name!,
-              },
-              {
-                name: 'DB_PASSWORD_KEY',
-                value: info!.passwordSecret!,
-              },
-            ],
-          }
-        }),
+    .flatMap((service) =>
+      service.serviceDef.infraResource.flatMap((r) =>
+        r.featureDeploymentProvisionManifest(uberChart, service, image),
+      ),
     )
     .reduce((acc, cur) => {
       let result = acc
-      cur.forEach((c) => {
-        if (result.map((a) => a.name).indexOf(c.name) === -1) {
-          result = result.concat([c])
-        }
-      })
+      if (result.map((a) => a.name).indexOf(cur.name) === -1) {
+        result = result.concat([cur])
+      }
       return result
-    }, [])
+    }, [] as FeatureKubeJob['spec']['template']['spec']['containers'])
   if (containers.length === 0) {
     containers.push({
       name: 'noop',

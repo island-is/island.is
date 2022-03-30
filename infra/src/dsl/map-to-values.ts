@@ -7,6 +7,7 @@ import {
   InfrastructureResource,
   Ingress,
   MissingSetting,
+  ReplicaCount,
   Resources,
   Service,
   ServiceDefinition,
@@ -22,25 +23,31 @@ import { EnvironmentConfig, UberChartType } from './types/charts'
 import { FeatureNames } from './features'
 import { serializeEnvironmentVariables } from './serialize-environment-variables'
 
-function serializeInfrastructureResources(
-  serviceDef: ServiceDefinition,
+function namespaceName(
+  namespace: string,
+  featureDeployment: string | undefined,
+) {
+  return featureDeployment ? `feature-${featureDeployment}` : namespace
+}
+
+function replicaCount(
   uberChart: UberChartType,
-  service: Service,
-  resource: InfrastructureResource,
-): {
-  env: { [name: string]: string }
-  secrets: { [name: string]: string }
-  errors: string[]
-} {
-  const { env, secrets } = resource.prodDeploymentConfig(
-    serviceDef,
-    uberChart,
-    service,
-  )
-  return {
-    env: env,
-    secrets: secrets,
-    errors: [],
+  replicaCount: ReplicaCount | undefined,
+  featureDeployment: string | undefined,
+) {
+  if (replicaCount) return replicaCount
+  if (featureDeployment) {
+    return {
+      min: 1,
+      max: 2,
+      default: 1,
+    }
+  } else {
+    return {
+      min: 2,
+      max: uberChart.env.defaultMaxReplicas,
+      default: 2,
+    }
   }
 }
 
@@ -52,6 +59,7 @@ function serializeInfrastructureResources(
 export const serializeService: SerializeMethod = (
   service: Service,
   uberChart: UberChartType,
+  featureDeployment?: string,
 ) => {
   let allErrors: string[] = []
   const checkCollisions = (
@@ -86,7 +94,7 @@ export const serializeService: SerializeMethod = (
     enabled: true,
     grantNamespaces: grantNamespaces,
     grantNamespacesEnabled: grantNamespacesEnabled,
-    namespace: namespace,
+    namespace: namespaceName(namespace, featureDeployment),
     image: {
       repository: `821090935708.dkr.ecr.eu-west-1.amazonaws.com/${
         serviceDef.image ?? serviceDef.name
@@ -131,15 +139,20 @@ export const serializeService: SerializeMethod = (
   }
 
   // replicas
-  if (serviceDef.replicaCount) {
-    result.replicaCount = serviceDef.replicaCount
-  } else {
-    result.replicaCount = {
-      min: 2,
-      max: uberChart.env.defaultMaxReplicas,
-      default: 2,
-    }
-  }
+  // if (serviceDef.replicaCount) {
+  //   result.replicaCount = serviceDef.replicaCount
+  // } else {
+  //   result.replicaCount = {
+  //     min: 2,
+  //     max: uberChart.env.defaultMaxReplicas,
+  //     default: 2,
+  //   }
+  // }
+  result.replicaCount = replicaCount(
+    uberChart,
+    serviceDef.replicaCount,
+    featureDeployment,
+  )
 
   // extra attributes
   if (serviceDef.extraAttributes) {
@@ -257,6 +270,7 @@ export const serializeService: SerializeMethod = (
           serviceDef,
           uberChart,
           service,
+          featureDeployment,
         )
         mergeObjects(result.initContainer.env, env)
         mergeObjects(result.initContainer.secrets, secrets)
@@ -294,6 +308,7 @@ export const serializeService: SerializeMethod = (
             ingressConf,
             uberChart.env,
             ingressName,
+            featureDeployment,
           )
           return {
             ...acc,
@@ -321,6 +336,7 @@ export const serializeService: SerializeMethod = (
       serviceDef,
       uberChart,
       service,
+      featureDeployment,
     )
     mergeObjects(result.env, env)
     mergeObjects(result.secrets, secrets)
@@ -385,6 +401,7 @@ function serializeIngress(
   ingressConf: Ingress,
   env: EnvironmentConfig,
   ingressName: string,
+  featureDeployment?: string,
 ) {
   const ingress = ingressConf.host[env.type]
   if (ingress === MissingSetting) {
@@ -395,11 +412,18 @@ function serializeIngress(
   const hosts = (typeof ingress === 'string'
     ? [ingressConf.host[env.type] as string]
     : (ingressConf.host[env.type] as string[])
-  ).map((host) =>
-    ingressConf.public ?? true
-      ? hostFullName(host, env)
-      : internalHostFullName(host, env),
   )
+    .map((host) =>
+      ingressConf.public ?? true
+        ? hostFullName(host, env)
+        : internalHostFullName(host, env),
+    )
+    .map((host) => {
+      if (env.type === 'dev' && featureDeployment) {
+        return `${featureDeployment}-${host}`
+      }
+      return host
+    })
 
   return {
     annotations: {
