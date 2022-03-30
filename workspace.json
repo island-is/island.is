@@ -7492,6 +7492,35 @@
         }
       }
     },
+    "service-portal-finance-schedule": {
+      "root": "libs/service-portal/finance-schedule",
+      "sourceRoot": "libs/service-portal/finance-schedule/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/service-portal/finance-schedule/**/*.{ts,tsx,js,jsx}"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/service-portal/finance-schedule"],
+          "options": {
+            "jestConfig": "libs/service-portal/finance-schedule/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/service-portal/finance-schedule/src/{lib,components,screens}/**/*.{js,ts,tsx}'"
+          }
+        }
+      }
+    },
     "service-portal-graphql": {
       "root": "libs/service-portal/graphql",
       "sourceRoot": "libs/service-portal/graphql/src",

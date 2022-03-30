@@ -19,13 +19,16 @@ import {
   AlertBanner,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { formSubmit } from '../../utils/documentFormSubmission'
 import {
   FinanceStatusDataType,
   FinanceStatusOrganizationType,
 } from './FinanceStatusData.types'
-import { ExpandHeader, ExpandRow } from '../../components/ExpandableTable'
-import amountFormat from '../../utils/amountFormat'
+import {
+  ExpandHeader,
+  ExpandRow,
+  amountFormat,
+  formSubmit,
+} from '@island.is/service-portal/core'
 import { exportGreidslustadaFile } from '../../utils/filesGreidslustada'
 import DropdownExport from '../../components/DropdownExport/DropdownExport'
 import FinanceStatusTableRow from '../../components/FinanceStatusTableRow/FinanceStatusTableRow'

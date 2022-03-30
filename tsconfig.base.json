@@ -437,6 +437,9 @@
       "@island.is/service-portal/finance": [
         "libs/service-portal/finance/src/index.ts"
       ],
+      "@island.is/service-portal/finance-schedule": [
+        "libs/service-portal/finance-schedule/src/index.ts"
+      ],
       "@island.is/service-portal/graphql": [
         "libs/service-portal/graphql/src/index.ts"
       ],

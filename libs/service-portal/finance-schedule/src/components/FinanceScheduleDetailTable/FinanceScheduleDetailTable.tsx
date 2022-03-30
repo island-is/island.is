@@ -7,8 +7,8 @@ import cn from 'classnames'
 import * as styles from './FinanceScheduleDetailTable.css'
 import {
   tableStyles,
-  dateParse,
   amountFormat,
+  dateParse,
 } from '@island.is/service-portal/core'
 import { DetailedSchedule } from '@island.is/api/schema'
 import { dateFormat } from '@island.is/shared/constants'

@@ -1,3 +1,4 @@
+import { gql } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
 import { ApiScope } from '@island.is/auth/scopes'
 import {
@@ -10,6 +11,28 @@ import { GET_TAPS_QUERY } from '@island.is/service-portal/graphql'
 import * as Sentry from '@sentry/react'
 import { lazy } from 'react'
 
+const GET_FINANCE_PAYMENT_SCHEDULES = gql`
+  query getPaymentSchedulesQuery {
+    getPaymentSchedule {
+      myPaymentSchedule {
+        nationalId
+        paymentSchedules {
+          approvalDate
+          paymentCount
+          scheduleName
+          scheduleNumber
+          scheduleStatus
+          scheduleType
+          totalAmount
+          unpaidAmount
+          unpaidCount
+          documentID
+          downloadServiceURL
+        }
+      }
+    }
+  }
+`
 const tabRoutes = {
   transactions: {
     name: m.financeTransactions,
@@ -55,12 +78,7 @@ export const financeModule: ServicePortalModule = {
         enabled: userInfo.scopes.includes(ApiScope.financeOverview),
         render: () => lazy(() => import('./screens/FinanceBills')),
       },
-      {
-        name: m.financeSchedule,
-        path: ServicePortalPath.FinanceSchedule,
-        enabled: userInfo.scopes.includes(ApiScope.financeOverview),
-        render: () => lazy(() => import('./screens/FinanceSchedule')),
-      },
+
       {
         ...tabRoutes.transactions,
         enabled: userInfo.scopes.includes(ApiScope.financeOverview),

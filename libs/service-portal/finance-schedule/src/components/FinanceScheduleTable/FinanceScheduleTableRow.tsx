@@ -2,8 +2,8 @@ import React, { FC } from 'react'
 import { gql, useLazyQuery } from '@apollo/client'
 import {
   ExpandRow,
-  amountFormat,
   formSubmit,
+  amountFormat,
 } from '@island.is/service-portal/core'
 import FinanceScheduleDetailTable from '../FinanceScheduleDetailTable/FinanceScheduleDetailTable'
 import { DetailedSchedule, PaymentSchedule } from '@island.is/api/schema'
