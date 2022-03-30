@@ -5,7 +5,8 @@ import {
   FishingLicenseCodeType,
 } from '@island.is/clients/fishing-license'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 @Injectable()
 export class FishingLicenseService {
