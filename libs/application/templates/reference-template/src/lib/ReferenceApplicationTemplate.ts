@@ -12,7 +12,7 @@ import {
 import * as z from 'zod'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
-import { DelegationType } from '@island.is/auth-api-lib'
+// import { DelegationType } from '@island.is/auth-api-lib'
 
 import { ApiActions } from '../shared'
 import { m } from './messages'
@@ -88,7 +88,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
   // allowedDelegations are optional, if it is not added to the template the application type will not support delegations
   // If the application type should support delegations then configure the needed delegationTypes in allowedDelegations
   // In this example the application type supports delegations for legal guardians
-  allowedDelegations: [DelegationType.LegalGuardian],
+  // allowedDelegations: [DelegationType.LegalGuardian],
   stateMachineConfig: {
     initial: States.prerequisites,
     states: {
