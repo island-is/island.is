@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useState, useEffect } from 'react'
 import { FieldBaseProps } from '@island.is/application/core'
 import {
   Box,
@@ -14,7 +14,7 @@ import { PropertyDetail } from '../../types/schema'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 
-export const PendingRejected: FC<FieldBaseProps> = ({ application, field }) => {
+export const PendingRejected: FC<FieldBaseProps> = ({ application }) => {
   const { externalData } = application
   const { formatMessage } = useLocale()
 
@@ -23,6 +23,10 @@ export const PendingRejected: FC<FieldBaseProps> = ({ application, field }) => {
   const [submitApplication] = useMutation(SUBMIT_APPLICATION, {
     onError: (e) => console.error(e.message),
   })
+
+  useEffect(() => {
+    document.title = 'Beiðni um vinnslu'
+  }, [])
 
   const handleStateChange = (newRunEvent: string) => {
     if (runEvent !== newRunEvent) {
@@ -40,16 +44,18 @@ export const PendingRejected: FC<FieldBaseProps> = ({ application, field }) => {
     }
   }
 
-  const hasSentRequest = (externalData.submitRequestToSyslumenn?.data as {
+  const { hasSentRequest } = externalData.submitRequestToSyslumenn?.data as {
     hasSentRequest: boolean
-  })?.hasSentRequest
+  }
 
   if (hasSentRequest) {
     handleStateChange(MCEvents.PENDING_REJECTED_TRY_AGAIN)
   }
 
-  const selectedProperty = externalData.getPropertyDetails
-    ?.data as PropertyDetail
+  const { propertyDetails } = externalData.validateMortgageCertificate
+    ?.data as {
+    propertyDetails: PropertyDetail
+  }
 
   return (
     <Box>
@@ -66,8 +72,9 @@ export const PendingRejected: FC<FieldBaseProps> = ({ application, field }) => {
       >
         <Text fontWeight="semiBold">Valin fasteign</Text>
         <Text>
-          {selectedProperty?.propertyNumber}{' '}
-          {selectedProperty?.defaultAddress?.display}
+          {propertyDetails?.propertyNumber}
+          {' - '}
+          {propertyDetails?.defaultAddress?.display}
         </Text>
       </Box>
       <Box marginBottom={5}>
@@ -85,7 +92,7 @@ export const PendingRejected: FC<FieldBaseProps> = ({ application, field }) => {
         />
       </Box>
       <Box display="flex" justifyContent={'flexEnd'}>
-        <Link href="https://minarsidur.island.is/">
+        <Link href={formatMessage(m.mortgageCertificateInboxLink)}>
           <Button variant="primary" icon="arrowForward">
             {formatMessage(m.mysites)}
           </Button>

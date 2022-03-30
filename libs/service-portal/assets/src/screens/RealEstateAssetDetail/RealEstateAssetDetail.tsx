@@ -89,7 +89,7 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
     return <AssetLoader />
   }
 
-  if (!id || error) {
+  if (!id || error || (!loading && data?.assetsDetail === null)) {
     return (
       <NotFound
         title={defineMessage({

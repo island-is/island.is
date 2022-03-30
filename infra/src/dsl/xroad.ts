@@ -72,7 +72,7 @@ export const JudicialSystem = new XroadConf({
       staging: '5309672079',
       prod: '5309672079',
     },
-    XROAD_COURT_API_PATH: '/Domstolasyslan-Private/JusticePortal-v1',
+    XROAD_COURT_API_PATH: '/Domstolasyslan/JusticePortal-v1',
     XROAD_POLICE_API_PATH: '/Logreglan-Private/loke-api-v1',
   },
   secrets: {
@@ -281,5 +281,14 @@ export const DataProtectionComplaint = new XroadConf({
       '/k8s/xroad/client/DATA_PROTECTION_COMPLAINT_API_USERNAME',
     DATA_PROTECTION_COMPLAINT_API_PASSWORD:
       '/k8s/xroad/client/DATA_PROTECTION_COMPLAINT_API_PASSWORD',
+  },
+})
+
+export const DrivingLicenseBook = new XroadConf({
+  env: {},
+  secrets: {
+    DRIVING_LICENSE_BOOK_XROAD_PATH: '/k8s/api/DRIVING_LICENSE_BOOK_XROAD_PATH',
+    DRIVING_LICENSE_BOOK_USERNAME: '/k8s/api/DRIVING_LICENSE_BOOK_USERNAME',
+    DRIVING_LICENSE_BOOK_PASSWORD: '/k8s/api/DRIVING_LICENSE_BOOK_PASSWORD',
   },
 })

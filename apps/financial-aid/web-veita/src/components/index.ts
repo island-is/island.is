@@ -32,7 +32,6 @@ export { default as ApplicationOverviewSkeleton } from './Skeletons/ApplicationO
 export { default as LoadingContainer } from './Skeletons/LoadingContainer'
 export { default as TableSkeleton } from './Skeletons/TableSkeleton'
 export { default as SearchSkeleton } from './Skeletons/SearchSkeleton'
-export { default as TimeLineComment } from './Timeline/TimeLineComment'
 export { default as ChatElement } from './Timeline/ChatElement'
 export { default as TimeLineContainer } from './Timeline/TimeLineContainer'
 export { default as ProfileNotFound } from './ProfileNotFound/ProfileNotFound'
@@ -47,3 +46,4 @@ export { default as SuperAdminSideNavItems } from './SuperAdminSideNavItems/Supe
 export { default as NewMunicipalityModal } from './NewMunicipalityModal/NewMunicipalityModal'
 export { default as MunicipalityProfile } from './Profile/MunicipalityProfile'
 export { default as CollapsibleProfileUnit } from './ProfileUnit/CollapsibleProfileUnit'
+export { default as PrintableFiles } from './PrintableFiles/PrintableFiles'

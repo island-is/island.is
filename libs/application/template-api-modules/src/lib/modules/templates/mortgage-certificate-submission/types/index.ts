@@ -1,3 +1,6 @@
+import { PropertyDetail } from '@island.is/api/domains/assets'
+import { MortgageCertificateValidation } from '@island.is/clients/syslumenn'
+
 export interface Address {
   streetAddress: string
   postalCode: string
@@ -17,4 +20,9 @@ export interface UserProfile {
 
 export interface SubmitRequestToSyslumennResult {
   hasSentRequest: boolean
+}
+
+export interface ValidateMortgageCertificateResult {
+  validation: MortgageCertificateValidation
+  propertyDetails: PropertyDetail
 }

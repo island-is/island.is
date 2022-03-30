@@ -20,8 +20,8 @@ import {
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
 import { EmailService } from '@island.is/email-service'
-import { IntegratedCourts } from '@island.is/judicial-system/consts'
 import {
+  CaseOrigin,
   isRestrictionCase,
   SessionArrangements,
   UserRole,
@@ -395,11 +395,7 @@ export class CaseService {
 
     let courtRecordPdf = undefined
 
-    if (
-      theCase.courtId &&
-      theCase.courtCaseNumber &&
-      IntegratedCourts.includes(theCase.courtId)
-    ) {
+    if (theCase.courtId && theCase.courtCaseNumber) {
       uploadPromises.push(
         this.uploadSignedRulingPdfToCourt(theCase, user, signedRulingPdf).then(
           (res) => {
@@ -452,9 +448,8 @@ export class CaseService {
       theCase.defenderEmail &&
       (isRestrictionCase(theCase.type) ||
         theCase.sessionArrangements === SessionArrangements.ALL_PRESENT ||
-        (theCase.sessionArrangements ===
-          SessionArrangements.ALL_PRESENT_SPOKESPERSON &&
-          theCase.defenderIsSpokesperson))
+        theCase.sessionArrangements ===
+          SessionArrangements.ALL_PRESENT_SPOKESPERSON)
     ) {
       emailPromises.push(
         this.sendEmailToDefender(courtRecordPdf, theCase, rulingAttachment),
@@ -549,7 +544,10 @@ export class CaseService {
     return this.sequelize
       .transaction(async (transaction) => {
         const caseId = await this.createCase(
-          caseToCreate,
+          {
+            ...caseToCreate,
+            origin: CaseOrigin.LOKE,
+          } as InternalCreateCaseDto,
           prosecutorId,
           transaction,
         )
@@ -577,7 +575,7 @@ export class CaseService {
     return this.sequelize
       .transaction(async (transaction) => {
         const caseId = await this.createCase(
-          caseToCreate,
+          { ...caseToCreate, origin: CaseOrigin.RVG } as CreateCaseDto,
           prosecutorId,
           transaction,
         )
@@ -801,10 +799,12 @@ export class CaseService {
       .transaction(async (transaction) => {
         const caseId = await this.createCase(
           {
+            origin: theCase.origin,
             type: theCase.type,
             description: theCase.description,
             policeCaseNumber: theCase.policeCaseNumber,
             defenderName: theCase.defenderName,
+            defenderNationalId: theCase.defenderNationalId,
             defenderEmail: theCase.defenderEmail,
             defenderPhoneNumber: theCase.defenderPhoneNumber,
             leadInvestigator: theCase.leadInvestigator,
@@ -890,10 +890,8 @@ export class CaseService {
       true,
     )) as Case
 
-    if (theCase.courtId && IntegratedCourts.includes(theCase.courtId)) {
-      // No need to wait
-      this.uploadRequestPdfToCourt(updatedCase, user)
-    }
+    // No need to wait
+    this.uploadRequestPdfToCourt(updatedCase, user)
 
     return updatedCase
   }

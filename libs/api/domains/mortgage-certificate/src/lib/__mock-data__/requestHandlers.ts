@@ -1,7 +1,6 @@
 import { rest } from 'msw'
 
-export const MOCK_REAL_ESTATE_NUMBER = 'F2240968'
-export const MOCK_REAL_ESTATE_NUMBER_NOT_EXISTS = 'F12345678'
+export const MOCK_PROPERTY_NUMBER_OK = 'F2003292'
 
 const url = (path: string) => {
   return new URL(path, 'http://localhost').toString()
@@ -18,22 +17,11 @@ export const requestHandlers = [
     const { fastanumer } = req.body as {
       fastanumer?: string
     }
-    if (
-      fastanumer ===
-      MOCK_REAL_ESTATE_NUMBER.substring(1, MOCK_REAL_ESTATE_NUMBER.length)
-    ) {
+    if ('F' + fastanumer === MOCK_PROPERTY_NUMBER_OK) {
       return res(
         ctx.status(200),
         ctx.json({ vedbandayfirlitPDFSkra: 'c29tZWNvbnRlbnQ=' }),
       )
-    } else if (
-      fastanumer ===
-      MOCK_REAL_ESTATE_NUMBER_NOT_EXISTS.substring(
-        1,
-        MOCK_REAL_ESTATE_NUMBER_NOT_EXISTS.length,
-      )
-    ) {
-      return res(ctx.status(500), ctx.text('Internal Server Error'))
     } else {
       return res(ctx.status(200), ctx.json({ vedbandayfirlitPDFSkra: '' }))
     }

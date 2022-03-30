@@ -1,8 +1,22 @@
 {
   "openapi": "3.0.1",
   "info": {
+    "description": "Provides access to Justice Portal rest service",
+    "version": "1.0.0",
     "title": "GoPro.JusticePortal.Rest",
-    "version": "v1"
+    "termsOfService": "",
+    "contact": {
+      "name": "Gopro Support",
+      "url": "https://gopro.net/support/",
+      "email": "support@gopro.net"
+    },
+    "x-pricing": ["paid"],
+    "x-category": ["personal", "official", "financial"],
+    "x-links": {
+      "responsibleParty": "https://domstolasyslan.is/",
+      "bugReport": "https://gopro.net/support/",
+      "featureRequest": "https://gopro.net/support/"
+    }
   },
   "servers": [
     {
@@ -193,6 +207,55 @@
         "x-codegen-request-body-name": "createDocumentData"
       }
     },
+    "/CreateEmail": {
+      "post": {
+        "tags": ["CreateEmail"],
+        "summary": "Description: Creates Email and returns email identificator (Guid). This method is saving the email (not sending it) - email is already sent with another system and is put in GoPro for archiving purposes; Version: 1.0.0; Title: CreateEmail; Department Name (if you have problem with the service): Gopro Support; Department email: support@gopro.net; x-category: personal, official, financial; x-pricing: paid; x-links: responsibleParty - https://domstolasyslan.is/, bugReport - https://gopro.net/support/, featureRequest - https://gopro.net/support/;",
+        "operationId": "CreateEmail",
+        "requestBody": {
+          "description": "Data needed for the creation of the email",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateEmailData"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateEmailData"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Returns the email identifier of the newly created email",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid",
+                  "example": "00000000-0000-0000-0000-000000000000"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid",
+                  "example": "00000000-0000-0000-0000-000000000000"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "If the method is called wtih wrong parameters (e.g. wrong/expired authentication token). In the responce body you will see the message with the exact error.",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "createEmailData"
+      }
+    },
     "/CreateThingbok": {
       "post": {
         "tags": ["CreateThingbok"],
@@ -312,6 +375,53 @@
         }
       }
     },
+    "/LookupDataGDNJCases": {
+      "post": {
+        "tags": ["LookupDataGDNJCases"],
+        "summary": "When there are no matches returns empty array, otherwise array with matching results. If caseNumber is not specified, caseType must be specified. Returns max one year of results. Lookup allows for one case type at a time.",
+        "operationId": "LookupDataGDNJCases",
+        "requestBody": {
+          "description": "lookup parameters",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LookupGDNJCasesData"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LookupGDNJCasesData"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LookupGDNJCasesResult"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LookupGDNJCasesResult"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-codegen-request-body-name": "lookupParameters"
+      }
+    },
     "/openapi3/docs/v1": {
       "get": {
         "tags": ["OpenApi"],
@@ -339,7 +449,7 @@
     "/SearchBankruptcyHistory": {
       "post": {
         "tags": ["SearchBankruptcyHistory"],
-        "summary": "Returns \"0\" or JSON with Case number, Case status, Outcome date and Organization/court name.",
+        "summary": "bankruptcyStatus meaning: 1. Með forræði og enga sögu; 2. Með forræði og með sögu; 3. Ekki með forræði og með sögu; 0. Ekki með forræði og enga sögu. Note: bankruptcyStatus is the same for all elements in the returned collection, so you can make global conclusion by checking only the first one.",
         "operationId": "SearchBankruptcyHistory",
         "parameters": [
           {
@@ -464,9 +574,185 @@
           }
         }
       },
+      "CreateEmailData": {
+        "required": [
+          "authenticationToken",
+          "body",
+          "caseNumber",
+          "fromEmail",
+          "recipients",
+          "subject"
+        ],
+        "type": "object",
+        "properties": {
+          "authenticationToken": {
+            "type": "string",
+            "description": "Authentication token. Returned by Authenticate"
+          },
+          "caseNumber": {
+            "type": "string",
+            "description": "The case number"
+          },
+          "subject": {
+            "type": "string",
+            "description": "The subject"
+          },
+          "body": {
+            "type": "string",
+            "description": "HTML encoded email body"
+          },
+          "recipients": {
+            "type": "string",
+            "description": "Comma separated list of the recipients"
+          },
+          "fromEmail": {
+            "type": "string",
+            "description": "Email of the sender."
+          },
+          "fromName": {
+            "type": "string",
+            "description": "Name of the sender."
+          },
+          "folderName": {
+            "type": "string",
+            "description": "Folder name. If not exist it will be created. If empty then the email will be saved under Tölvupóstar folder."
+          }
+        }
+      },
+      "LookupGDNJCasesData": {
+        "required": ["authenticationToken", "dateFrom"],
+        "type": "object",
+        "properties": {
+          "authenticationToken": {
+            "type": "string",
+            "description": "Authentication token. Returned by Authenticate"
+          },
+          "dateFrom": {
+            "type": "string",
+            "description": "DateFrom is a lower bound for Modified Date of cases in the result set. If case is NOT modified after its creation then Modified Date is equal to Creation Date"
+          },
+          "dateTo": {
+            "type": "string",
+            "description": "DateTo is an upper bound for Modified Date of cases in the result set. If empty, then will be \"today\""
+          },
+          "caseType": {
+            "type": "string",
+            "description": "Possible values: 'D - Opinber skipti', 'G - Gjaldþrotaskipti', 'J - Greiðslustöðvunarbeiðnir', 'N - Nauðasamningar'"
+          },
+          "caseNumber": {
+            "type": "string",
+            "description": "User can send one casenumber and get the results for only that case. If empty then CaseType will be used."
+          }
+        }
+      },
+      "LookupGDNJCasesResult": {
+        "type": "object",
+        "properties": {
+          "caseNumber": {
+            "type": "string"
+          },
+          "caseType": {
+            "type": "string"
+          },
+          "court": {
+            "type": "string"
+          },
+          "subject": {
+            "type": "string"
+          },
+          "plaintiff": {
+            "type": "array",
+            "description": "Sóknaraðili (t.d. Skiptabeiðandi)",
+            "items": {
+              "$ref": "#/components/schemas/BasePerson"
+            }
+          },
+          "defendant": {
+            "type": "array",
+            "description": "Varnaraðili (t.d. Skuldari)",
+            "items": {
+              "$ref": "#/components/schemas/BasePerson"
+            }
+          },
+          "liquidators": {
+            "type": "array",
+            "description": "Skiptastjórar",
+            "items": {
+              "$ref": "#/components/schemas/BasePerson"
+            }
+          },
+          "receivalDate": {
+            "type": "string",
+            "description": "Móttökudagur"
+          },
+          "adjudicationDate": {
+            "type": "string",
+            "description": "Tekið til úrskurðar"
+          },
+          "finalizationDate": {
+            "type": "string",
+            "description": "Skiptalok dags"
+          },
+          "reconsiderationDate": {
+            "type": "string",
+            "description": "Endurupptaka skipta"
+          },
+          "outcome": {
+            "type": "array",
+            "description": "Lyktir",
+            "items": {
+              "$ref": "#/components/schemas/BaseOutcome"
+            }
+          },
+          "outcomeHistory": {
+            "type": "array",
+            "description": "Fyrri lyktir (eingöngu ef mál var endurupptekið)",
+            "items": {
+              "$ref": "#/components/schemas/BaseOutcome"
+            }
+          },
+          "created": {
+            "type": "string"
+          },
+          "updated": {
+            "type": "string"
+          },
+          "resultDate": {
+            "type": "string"
+          }
+        }
+      },
+      "BasePerson": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "idNumber": {
+            "type": "string"
+          }
+        }
+      },
+      "BaseOutcome": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "outcome": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string"
+          }
+        }
+      },
       "BankruptcyHistoryResult": {
         "type": "object",
         "properties": {
+          "bankruptcyStatus": {
+            "type": "string"
+          },
           "caseNumber": {
             "type": "string"
           },

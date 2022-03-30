@@ -40,7 +40,7 @@ const AdminProvider = ({ children }: PageProps) => {
   useEffect(() => {
     if (loggedInUser && !admin && loggedInUser.staff) {
       setAdmin(loggedInUser)
-      setMunicipalityById(loggedInUser.staff.municipalityId)
+      setMunicipalityById(loggedInUser.staff.municipalityIds[0])
       setIsAuthenticated(true)
     }
   }, [setAdmin, loggedInUser, admin])

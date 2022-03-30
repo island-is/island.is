@@ -17,6 +17,7 @@ import {
   CaseType,
   UserRole,
   SessionArrangements,
+  CaseOrigin,
 } from '@island.is/judicial-system/types'
 import type {
   User as TUser,
@@ -135,6 +136,7 @@ afterAll(async () => {
 })
 
 const minimalCaseData = {
+  type: CaseType.CUSTODY,
   policeCaseNumber: 'Case Number',
 }
 
@@ -142,6 +144,7 @@ function remainingCreateCaseData() {
   return {
     description: 'Description',
     defenderName: 'Defender Name',
+    defenderNationalId: '0000000009',
     defenderEmail: 'Defender Email',
     defenderPhoneNumber: '555-5555',
     sendRequestToDefender: true,
@@ -181,13 +184,12 @@ function remainingJudgeCaseData() {
     sessionArrangements: SessionArrangements.PROSECUTOR_PRESENT,
     courtDate: '2020-09-29T13:00:00.000Z',
     courtRoom: '201',
-    defenderIsSpokesperson: true,
     courtStartDate: '2020-09-29T13:00:00.000Z',
     courtEndTime: '2020-09-29T14:00:00.000Z',
     isClosedCourtHidden: true,
     courtAttendees: 'Court Attendees',
     prosecutorDemands: 'Police Demands',
-    courtDocuments: ['Þingskjal 1', 'Þingskjal 2'],
+    courtDocuments: [{ name: 'Þingskjal 1' }, { name: 'Þingskjal 2' }],
     sessionBookings: 'Session Bookings',
     courtCaseFacts: 'Court Case Facts',
     courtLegalArguments: 'Court Legal Arguments',
@@ -225,12 +227,7 @@ function getJudgeCaseData() {
   return remainingJudgeCaseData()
 }
 
-function getCaseType() {
-  return { type: CaseType.CUSTODY }
-}
-
 function getCaseData(
-  withCaseType = true,
   fullCreateCaseData = false,
   otherProsecutorCaseData = false,
   judgeCaseData = false,
@@ -238,9 +235,6 @@ function getCaseData(
   let data = getProsecutorCaseData(fullCreateCaseData, otherProsecutorCaseData)
   if (judgeCaseData) {
     data = { ...data, ...getJudgeCaseData() }
-  }
-  if (withCaseType) {
-    data = { ...data, ...getCaseType() }
   }
 
   return data as CCase
@@ -339,15 +333,15 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.state).toBe(caseTwo.state)
   expect(caseOne.policeCaseNumber).toBe(caseTwo.policeCaseNumber)
   expect(caseOne.defenderName ?? null).toBe(caseTwo.defenderName ?? null)
+  expect(caseOne.defenderNationalId ?? null).toBe(
+    caseTwo.defenderNationalId ?? null,
+  )
   expect(caseOne.defenderEmail ?? null).toBe(caseTwo.defenderEmail ?? null)
   expect(caseOne.defenderPhoneNumber ?? null).toBe(
     caseTwo.defenderPhoneNumber ?? null,
   )
   expect(caseOne.sendRequestToDefender ?? null).toBe(
     caseTwo.sendRequestToDefender ?? null,
-  )
-  expect(caseOne.defenderIsSpokesperson ?? null).toBe(
-    caseTwo.defenderIsSpokesperson ?? null,
   )
   expect(caseOne.isHeightenedSecurityLevel ?? null).toBe(
     caseTwo.isHeightenedSecurityLevel ?? null,
@@ -454,6 +448,9 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.parentCaseId ?? null).toBe(caseTwo.parentCaseId ?? null)
   expect(caseOne.caseModifiedExplanation ?? null).toBe(
     caseTwo.caseModifiedExplanation ?? null,
+  )
+  expect(caseOne.caseResentExplanation ?? null).toBe(
+    caseTwo.caseResentExplanation ?? null,
   )
   if (caseOne.parentCase || caseTwo.parentCase) {
     expectCasesToMatch(caseOne.parentCase, caseTwo.parentCase)
@@ -658,11 +655,11 @@ describe('User', () => {
 
 describe('Case', () => {
   it('PUT /api/case/:id should update prosecutor fields of a case by id', async () => {
-    const data = getCaseData(true, true, true)
+    const data = getCaseData(true, true)
     let dbCase: CCase
     let apiCase: CCase
 
-    await Case.create(getCaseData())
+    await Case.create({ ...getCaseData(), origin: CaseOrigin.RVG })
       .then((value) => {
         dbCase = caseToCCase(value)
 
@@ -704,6 +701,7 @@ describe('Case', () => {
 
     await Case.create({
       ...getCaseData(),
+      origin: CaseOrigin.RVG,
       state: CaseState.DRAFT,
     })
       .then((value) => {
@@ -741,7 +739,8 @@ describe('Case', () => {
     let apiCase: CCase
 
     await Case.create({
-      ...getCaseData(true, true, true, true),
+      ...getCaseData(true, true, true),
+      origin: CaseOrigin.RVG,
       state: CaseState.RECEIVED,
     })
       .then((value) => {
@@ -791,8 +790,8 @@ describe('Case', () => {
   })
 
   it('Get /api/cases should get all cases', async () => {
-    await Case.create(getCaseData())
-      .then(() => Case.create(getCaseData()))
+    await Case.create({ ...getCaseData(), origin: CaseOrigin.RVG })
+      .then(() => Case.create({ ...getCaseData(), origin: CaseOrigin.RVG }))
       .then(() =>
         request(app.getHttpServer())
           .get(`/api/cases`)
@@ -822,6 +821,7 @@ describe('Notification', () => {
     let apiSendNotificationResponse: SendNotificationResponse
 
     await Case.create({
+      origin: CaseOrigin.RVG,
       type: CaseType.CUSTODY,
       policeCaseNumber: 'Case Number',
     })
@@ -871,6 +871,7 @@ describe('Notification', () => {
     let dbNotification: Notification
 
     await Case.create({
+      origin: CaseOrigin.RVG,
       type: CaseType.CUSTODY,
       policeCaseNumber: 'Case Number',
     })

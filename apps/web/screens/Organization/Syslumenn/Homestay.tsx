@@ -32,6 +32,8 @@ import { OrganizationWrapper } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import getConfig from 'next/config'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import { useRouter } from 'next/router'
 
 const { publicRuntimeConfig } = getConfig()
 
@@ -55,10 +57,14 @@ const Homestay: Screen<HomestayProps> = ({
   }
   */
 
+  useContentfulId(organizationPage.id, subpage.id)
+
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
 
-  const pageUrl = `/s/syslumenn/heimagisting`
+  const Router = useRouter()
+
+  const pageUrl = Router.pathname
 
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
@@ -198,7 +204,11 @@ const Homestay: Screen<HomestayProps> = ({
   )
 }
 
-Homestay.getInitialProps = async ({ apolloClient, locale, query }) => {
+Homestay.getInitialProps = async ({ apolloClient, locale, pathname }) => {
+  const path = pathname?.split('/') ?? []
+  const slug = path?.[path.length - 2] ?? 'syslumenn'
+  const subSlug = path.pop() ?? 'heimagisting'
+
   const [
     {
       data: { getOrganizationPage },
@@ -215,7 +225,7 @@ Homestay.getInitialProps = async ({ apolloClient, locale, query }) => {
       query: GET_ORGANIZATION_PAGE_QUERY,
       variables: {
         input: {
-          slug: 'syslumenn',
+          slug: slug,
           lang: locale as ContentLanguage,
         },
       },
@@ -224,8 +234,8 @@ Homestay.getInitialProps = async ({ apolloClient, locale, query }) => {
       query: GET_ORGANIZATION_SUBPAGE_QUERY,
       variables: {
         input: {
-          organizationSlug: 'syslumenn',
-          slug: 'heimagisting',
+          organizationSlug: slug,
+          slug: subSlug,
           lang: locale as ContentLanguage,
         },
       },

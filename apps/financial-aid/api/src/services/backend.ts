@@ -117,6 +117,10 @@ class BackendAPI extends RESTDataSource {
     return this.get(`file/url/${id}`)
   }
 
+  getSignedUrlForAllFiles(applicationId: string): Promise<SignedUrl[]> {
+    return this.get(`file/${applicationId}`)
+  }
+
   createApplicationEvent(
     createApplicationEvent: CreateApplicationEvent,
   ): Promise<Application> {

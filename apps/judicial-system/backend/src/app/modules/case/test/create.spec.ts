@@ -1,7 +1,11 @@
 import { uuid } from 'uuidv4'
 import { Transaction } from 'sequelize/types'
 
-import { CaseType, User as TUser } from '@island.is/judicial-system/types'
+import {
+  CaseOrigin,
+  CaseType,
+  User as TUser,
+} from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from './createTestingCaseModule'
 import { Defendant, DefendantService } from '../../defendant'
@@ -59,7 +63,8 @@ describe('CaseController - Create', () => {
       type: CaseType.AUTOPSY,
       description: 'Some details',
       policeCaseNumber: '007-2021-777',
-      defenderName: 'John Jhon',
+      defenderName: 'John John',
+      defenderNationalId: '0000000009',
       defenderEmail: 'john@dummy.is',
       defenderPhoneNumber: '1234567',
       sendRequestToDefender: false,
@@ -75,6 +80,7 @@ describe('CaseController - Create', () => {
       expect(mockCaseModel.create).toHaveBeenCalledWith(
         {
           ...caseToCreate,
+          origin: CaseOrigin.RVG,
           creatingProsecutorId: userId,
           prosecutorId: userId,
         },

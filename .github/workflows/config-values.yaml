@@ -106,8 +106,6 @@ jobs:
         working-directory: infra
         run: yarn install --frozen-lock
 
-      - name: Install yq
-        run: sudo snap install yq
       - name: Select role
         env:
           prod: arn:aws:iam::251502586493:role/list-ssm-parameters

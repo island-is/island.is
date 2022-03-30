@@ -34,12 +34,26 @@ export const icDemands = {
           id:
             'judicial.system.investigation_cases:police_demands.demands.prefill.search_warrant',
           defaultMessage:
+            'Í þágu rannsóknar sakamáls er þess krafist að Héraðsdómur Reykjavíkur veiti lögreglustjóranum á höfuðborgarsvæðinu heimild til leitar í {address}, þar sem {accusedName} á dvalarstað, í því skyni að handtaka hann og hafa uppi á munum sem hald skal leggja á. Heimildin nái til leitar í læstum hirslum og í geymslum tilheyrandi framangreindu húsnæði svo og til rannsóknar á efnisinnihaldi raftækja, svo sem símum, tölvum og öðrum rafrænum gagnavörslumunum, sem þar er að finna.',
+          description: 'Sjálfgefinn dómkröfutexti fyrir húsleit',
+        },
+        searchWarrant2: {
+          id:
+            'judicial.system.investigation_cases:police_demands.demands.prefill.search_warrant2',
+          defaultMessage:
             'Í þágu rannsóknar sakamáls er þess krafist að {court} veiti {institution} heimild til leitar í {address}, þar sem {accused} {live, plural, one {býr} other {búa}}, í því skyni að handtaka hann og hafa uppi á munum sem hald skal leggja á. Þess er krafist að heimildin nái til leitar í læstum hirslum og í geymslum tilheyrandi framangreindu húsnæði, svo og til rannsóknar á efnisinnihaldi raftækja, svo sem símum, tölvum og öðrum rafrænum gagnavörslumunum, sem þar er að finna.',
           description: 'Sjálfgefinn dómkröfutexti fyrir húsleit',
         },
         bankingSecrecyWaiver: {
           id:
             'judicial.system.investigation_cases:police_demands.demands.prefill.banking_secrecy_waiver',
+          defaultMessage:
+            'Þess er krafist að [fjármálafyrirtæki - aðrir sem hafa uppl.], verði með úrskurði Héraðsdóms Reykjavíkur gert skylt að láta lögreglu í hendur allar upplýsingar sem þessi fyrirtæki kunna að hafa um banka og fjármálaviðskipti, þ.á.m. bankareikninga, verðbréfa- og afleiðuviðskipti, lánaviðskipti og greiðslukortaviðskipti, gjaldeyriskaup, peningasendingar og bankahólf er varða [aðili, kt.], vegna tímabilsins frá [DD.MM.ÁÁ]',
+          description: 'Sjálfgefinn dómkröfutexti fyrir rof bankaleyndar',
+        },
+        bankingSecrecyWaiver2: {
+          id:
+            'judicial.system.investigation_cases:police_demands.demands.prefill.banking_secrecy_waiver2',
           defaultMessage:
             'Þess er krafist að {court} úrskurði að [fjármálafyrirtæki - aðrir sem hafa uppl.], verði gert skylt að láta lögreglu í hendur allar upplýsingar sem þessi fyrirtæki kunna að hafa um banka og fjármálaviðskipti, þ.á.m. bankareikninga, verðbréfa- og afleiðuviðskipti, lánaviðskipti og greiðslukortaviðskipti, gjaldeyriskaup, peningasendingar og bankahólf er varða {accused}, vegna tímabilsins frá [DD.MM.ÁÁ]',
           description: 'Sjálfgefinn dómkröfutexti fyrir rof bankaleyndar',
@@ -48,12 +62,27 @@ export const icDemands = {
           id:
             'judicial.system.investigation_cases:police_demands.demands.prefill.phone_tapping',
           defaultMessage:
-            'Þess er krafist að {court} úrskurði að {insitution} sé heimilt að hlusta og hljóðrita símtöl úr og í símanúmerin [###-####] auk annara símanúmera sem {accused}, hefur í notkun og umráð yfir, frá og með [DD.MM.ÁÁ] til og með [DD.MM.ÁÁ], og jafnframt sé heimilt að nema sms sendingar, þar með taldar sms sendingar á lesanlegu formi, sem sendar eru eða mótteknar með símanúmerunum á sama tíma og hlusta og hljóðrita samtöl við talhólf greindra númera og símtækja á sama tíma.',
+            'Þess er krafist að Héraðsdómur Reykjavíkur úrskurði að lögreglustjóranum á höfuðborgarsvæðinu sé heimilt að hlusta og hljóðrita símtöl úr og í símanúmerin [###-####] auk annara símanúmera sem {accusedName}, hefur í notkun og umráð yfir, frá og með [DD.MM.ÁÁ] til og með [DD.MM.ÁÁ], og jafnframt sé heimilt að nema sms sendingar, þar með taldar sms sendingar á lesanlegu formi, sem sendar eru eða mótteknar með símanúmerunum á sama tíma og hlusta og hljóðrita samtöl við talhólf greindra númera og símtækja á sama tíma.',
+          description: 'Sjálfgefinn dómkröfutexti fyrir símhlerun',
+        },
+        phoneTapping2: {
+          id:
+            'judicial.system.investigation_cases:police_demands.demands.prefill.phone_tapping2',
+          defaultMessage:
+            'Þess er krafist að {court} úrskurði að {institution} sé heimilt að hlusta og hljóðrita símtöl úr og í símanúmerin [###-####] auk annara símanúmera sem {accused}, hefur í notkun og umráð yfir, frá og með [DD.MM.ÁÁ] til og með [DD.MM.ÁÁ], og jafnframt sé heimilt að nema sms sendingar, þar með taldar sms sendingar á lesanlegu formi, sem sendar eru eða mótteknar með símanúmerunum á sama tíma og hlusta og hljóðrita samtöl við talhólf greindra númera og símtækja á sama tíma.',
           description: 'Sjálfgefinn dómkröfutexti fyrir símhlerun',
         },
         teleCommunications: {
           id:
             'judicial.system.investigation_cases:police_demands.demands.prefill.tele_communications',
+          defaultMessage:
+            'Þess er krafist að Héraðsdómur Reykjavíkur úrskurði að [fjarskiptafyrirtæki], verði gert skylt að veita lögreglustjóranum á höfuðborgarsvæðinu upplýsingar um hvaða símanúmer hafi verið í sambandi við símanúmerið [###-####] eða önnur númer og símtæki sem {accusedName}, hefur haft til umráða frá og með [DD.MM.ÁÁ] til [DD.MM.ÁÁ] og IMEI númer sem viðkomandi símanúmer nota á sama tímabili, jafnframt sendar og mótteknar sms sendingar, sem og samtöl við talhólf greinds númers, en jafnframt verði upplýst hverjir eru rétthafar þeirra númera sem þannig tengjast greindum númerum á sama tíma. Þá er krafist upplýsinga um netnotkun símanúmersins og símtækja sem og tengingar við símsenda, hvort sem er vegna símtala eða netnotkunar og upplýsinga um gagnanotkun og gagnamagn á sama tímabili. Jafnframt er krafist upplýsinga um þau símanúmer sem tengst hafa IMEI/IMSEI númerum símtækjanna sem ofangreint númer er notað í á sama tímabili. Þá er krafist upplýsinga um hvaða endurvarpa (BASE-stöðvar) í fjarskiptakerfum fyrirtækjanna hafa farið símtöl úr og í ofangreint númer og önnur símanúmer og símtæki sem umráðamaður hefur haft í umráðum á sama tíma.',
+          description:
+            'Sjálfgefinn dómkröfutexti fyrir upplýsingar um fjarskiptasamskipti',
+        },
+        teleCommunications2: {
+          id:
+            'judicial.system.investigation_cases:police_demands.demands.prefill.tele_communications2',
           defaultMessage:
             'Þess er krafist að {court} úrskurði að [fjarskiptafyrirtæki], verði gert skylt að veita {institution} upplýsingar um hvaða símanúmer hafi verið í sambandi við símanúmerið [###-####] eða önnur númer og símtæki sem {accused}, hefur haft til umráða frá og með [DD.MM.ÁÁ] til [DD.MM.ÁÁ] og IMEI númer sem viðkomandi símanúmer nota á sama tímabili, jafnframt sendar og mótteknar sms sendingar, sem og samtöl við talhólf greinds númers, en jafnframt verði upplýst hverjir eru rétthafar þeirra númera sem þannig tengjast greindum númerum á sama tíma. Þá er krafist upplýsinga um netnotkun símanúmersins og símtækja sem og tengingar við símsenda, hvort sem er vegna símtala eða netnotkunar og upplýsinga um gagnanotkun og gagnamagn á sama tímabili. Jafnframt er krafist upplýsinga um þau símanúmer sem tengst hafa IMEI/IMSEI númerum símtækjanna sem ofangreint númer er notað í á sama tímabili. Þá er krafist upplýsinga um hvaða endurvarpa (BASE-stöðvar) í fjarskiptakerfum fyrirtækjanna hafa farið símtöl úr og í ofangreint númer og önnur símanúmer og símtæki sem umráðamaður hefur haft í umráðum á sama tíma.',
           description:
@@ -62,6 +91,13 @@ export const icDemands = {
         trackingEquipment: {
           id:
             'judicial.system.investigation_cases:police_demands.demands.prefill.tracking_equipment',
+          defaultMessage:
+            'Þess er krafist að Héraðsdómur Reykjavíkur úrskurði um að lögreglustjóranum á höfuðborgarsvæðinu sé heimilt að koma fyrir eftirfararbúnaði á eða í bifreiðunum [#] svo og öðrum þeim bifreiðum sem {accusedName}, kann að hafa umráð yfir á úrskurðartímanum, og fylgjast með staðsetningum/ferðum bifreiðanna án þess að eigandi hennar, ökumaður, farþegar og aðrir hlutaðeigandi viti af því, frá og með [DD.MM.ÁÁ] til og með [DD.MM.ÁÁ]',
+          description: 'Sjálfgefinn dómkröfutexti fyrir eftirfararbúnaður',
+        },
+        trackingEquipment2: {
+          id:
+            'judicial.system.investigation_cases:police_demands.demands.prefill.tracking_equipment2',
           defaultMessage:
             'Þess er krafist að {court} úrskurði um að {institution} sé heimilt að koma fyrir eftirfararbúnaði á eða í bifreiðunum [#] svo og öðrum þeim bifreiðum sem {accused}, kann að hafa umráð yfir á úrskurðartímanum, og fylgjast með staðsetningum/ferðum bifreiðanna án þess að eigandi hennar, ökumaður, farþegar og aðrir hlutaðeigandi viti af því, frá og með [DD.MM.ÁÁ] til og með [DD.MM.ÁÁ]',
           description: 'Sjálfgefinn dómkröfutexti fyrir eftirfararbúnaður',

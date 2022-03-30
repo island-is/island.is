@@ -148,22 +148,19 @@ function constructRestrictionCourtRecordPdf(
   addEmptyLines(doc)
   addNormalJustifiedText(
     doc,
-    formatMessage(courtRecord.courtDocuments.request, {
+    `${formatMessage(courtRecord.courtDocuments.request, {
       caseTypes: formatRequestCaseType(theCase.type),
-    }),
+    })} ${formatMessage(courtRecord.courtDocuments.announcement)}`,
     'Times-Roman',
   )
-  addNormalJustifiedText(
-    doc,
-    formatMessage(courtRecord.courtDocuments.announcement),
-  )
 
-  theCase.courtDocuments?.forEach((courttDocument, index) =>
+  theCase.courtDocuments?.forEach((courtDocument, index) =>
     addNormalJustifiedText(
       doc,
       formatMessage(courtRecord.courtDocuments.other, {
-        documentName: courttDocument,
+        documentName: courtDocument.name,
         documentNumber: index + 2,
+        submittedBy: courtDocument.submittedBy,
       }),
     ),
   )
@@ -392,22 +389,19 @@ function constructInvestigationCourtRecordPdf(
   addEmptyLines(doc)
   addNormalJustifiedText(
     doc,
-    formatMessage(courtRecord.courtDocuments.request, {
+    `${formatMessage(courtRecord.courtDocuments.request, {
       caseTypes: formatRequestCaseType(theCase.type),
-    }),
+    })} ${formatMessage(courtRecord.courtDocuments.announcement)}`,
     'Times-Roman',
   )
-  addNormalJustifiedText(
-    doc,
-    formatMessage(courtRecord.courtDocuments.announcement),
-  )
 
-  theCase.courtDocuments?.forEach((courttDocument, index) =>
+  theCase.courtDocuments?.forEach((courtDocument, index) =>
     addNormalJustifiedText(
       doc,
       formatMessage(courtRecord.courtDocuments.other, {
-        documentName: courttDocument,
+        documentName: courtDocument.name,
         documentNumber: index + 2,
+        submittedBy: courtDocument.submittedBy,
       }),
     ),
   )
