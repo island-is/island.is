@@ -36,19 +36,19 @@ export const headerLogo = style({
 })
 
 export const container = style({
-  minHeight: 385,
+  minHeight: 255,
   marginBottom: 32,
   position: 'relative',
 })
 
 export const gridContainer = style({
   display: 'grid',
+  // gridTemplateColumns: '1fr',
   gridTemplateRows: '2fr 3fr',
-  gridTemplateColumns: '1fr',
   ...themeUtils.responsiveStyle({
     md: {
       gridTemplateColumns: '1fr 1fr',
-      gridTemplateRows: '1fr',
+      gridTemplateRows: '300px',
     },
   }),
 })
@@ -61,14 +61,13 @@ export const headerImage = style({
   ...themeUtils.responsiveStyle({
     md: {
       order: 1,
-
       height: '100%',
-      maxHeight: 385,
     },
   }),
 })
 
 export const textContainer = style({
-  marginBottom: 32,
+  margin: 10,
+  marginBottom: 110,
   marginRight: 40,
 })

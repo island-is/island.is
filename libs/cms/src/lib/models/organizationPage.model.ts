@@ -68,8 +68,8 @@ export class OrganizationPage {
   @Field(() => AlertBanner, { nullable: true })
   alertBanner?: AlertBanner
 
-  @Field(() => Image)
-  defaultHeaderImage!: Image | null
+  @Field(() => Image, { nullable: true })
+  defaultHeaderImage?: Image
 }
 
 export const mapOrganizationPage = ({
@@ -101,5 +101,5 @@ export const mapOrganizationPage = ({
     : undefined,
   defaultHeaderImage: fields.defaultHeaderImage
     ? mapImage(fields.defaultHeaderImage)
-    : null,
+    : undefined,
 })
