@@ -297,10 +297,6 @@ jobs:
         shell: bash
         run: sudo usermod -a -G docker runner
 
-      - name: Set Usermod on machine
-        shell: bash
-        run: sudo usermod -a -G docker ec2-user 
-
       # - name: Set Usermod on machine
       #   shell: bash
       #   run: sudo usermod -a -G docker ec2-user
@@ -310,7 +306,7 @@ jobs:
         run: whoami
 
       - name: Docker login to ECR repo
-        run: whoami && ./scripts/ci/docker-login-ecr.sh
+        run: sudo usermod -a -G docker runner && ./scripts/ci/docker-login-ecr.sh
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
