@@ -10,9 +10,6 @@ env:
 
 jobs:
   prepare:
-    defaults:
-      run:
-        shell: bash
     runs-on: ec2-runners
     defaults:
       run:
@@ -327,9 +324,6 @@ jobs:
         run: ./scripts/ci/40_e2e.sh ${AFFECTED_PROJECT}
 
   linting-workspace:
-    defaults:
-      run:
-        shell: bash
     needs:
       - prepare
     runs-on: ec2-runners
