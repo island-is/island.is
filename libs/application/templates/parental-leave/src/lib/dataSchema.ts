@@ -45,13 +45,35 @@ export const dataSchema = z.object({
       { params: errorMessages.bank },
     ),
     pensionFund: z.string(),
-    privatePensionFund: z.string().optional(),
-    privatePensionFundPercentage: z.enum(['2', '4', '']).optional(),
-    union: z.string().optional(),
+    privatePensionFund: z
+      .object({
+        active: z.enum([YES, NO]).refine((v) => v, {
+          params: errorMessages.invalidValue,
+        }),
+        name: z.string().optional(),
+        percentage: z.enum(['2', '4', '']).optional(),
+      })
+      .refine((v) => (v.active === YES ? v.name : true), {
+        params: errorMessages.invalidValue,
+        path: ['payments.privatePensionFund.name'],
+      })
+      .refine((v) => (v.active === YES ? v.percentage : true), {
+        params: errorMessages.invalidValue,
+        path: ['payments.privatePensionFund.percentage'],
+      }),
+    union: z
+      .object({
+        active: z.enum([YES, NO]).refine((v) => v, {
+          params: errorMessages.invalidValue,
+        }),
+        value: z.string().optional(),
+      })
+      .refine((v) => (v.active === YES ? v.value : true), {
+        params: errorMessages.invalidValue,
+        path: ['payments.union.value'],
+      }),
   }),
   shareInformationWithOtherParent: z.enum([YES, NO]),
-  useUnion: z.enum([YES, NO]),
-  usePrivatePensionFund: z.enum([YES, NO]),
   employerNationalRegistryId: z
     .string()
     .refine((n) => n && kennitala.isValid(n), {

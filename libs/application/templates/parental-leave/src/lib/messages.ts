@@ -1532,6 +1532,11 @@ export const otherParentApprovalFormMessages = defineMessages({
 })
 
 export const errorMessages = defineMessages({
+  invalidValue: {
+    id: 'pl.application:errors.invalidValue',
+    defaultMessage: 'Ógilt gildi.',
+    description: 'Error message when a value is invalid.',
+  },
   phoneNumber: {
     id: 'pl.application:dataSchema.phoneNumber',
     defaultMessage: 'Símanúmerið þarf að vera gilt.',

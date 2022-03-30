@@ -206,15 +206,16 @@ export const ParentalLeaveForm: Form = buildForm({
                 }),
                 buildCustomField({
                   component: 'UseUnion',
-                  id: 'useUnion',
+                  id: 'payments.union.active',
                   title: parentalLeaveFormMessages.shared.unionName,
                   description:
                     parentalLeaveFormMessages.shared.unionDescription,
                 }),
                 buildAsyncSelectField({
-                  condition: (answers) => answers.useUnion === YES,
+                  condition: (answers) =>
+                    answers.payments?.union?.active === YES,
                   title: parentalLeaveFormMessages.shared.union,
-                  id: 'payments.union',
+                  id: 'payments.union.value',
                   loadingError: parentalLeaveFormMessages.errors.loading,
                   isSearchable: true,
                   placeholder:
@@ -234,7 +235,7 @@ export const ParentalLeaveForm: Form = buildForm({
                 }),
                 buildCustomField({
                   component: 'UsePrivatePensionFund',
-                  id: 'usePrivatePensionFund',
+                  id: 'payments.privatePensionFund.active',
                   title:
                     parentalLeaveFormMessages.shared.privatePensionFundName,
                   description:
@@ -242,8 +243,10 @@ export const ParentalLeaveForm: Form = buildForm({
                       .privatePensionFundDescription,
                 }),
                 buildAsyncSelectField({
-                  condition: (answers) => answers.usePrivatePensionFund === YES,
-                  id: 'payments.privatePensionFund',
+                  condition: (answers) => {
+                    return answers.payments?.privatePensionFund?.active === YES
+                  },
+                  id: 'payments.privatePensionFund.name',
                   title: parentalLeaveFormMessages.shared.privatePensionFund,
                   loadingError: parentalLeaveFormMessages.errors.loading,
                   isSearchable: true,
@@ -263,8 +266,9 @@ export const ParentalLeaveForm: Form = buildForm({
                   },
                 }),
                 buildSelectField({
-                  condition: (answers) => answers.usePrivatePensionFund === YES,
-                  id: 'payments.privatePensionFundPercentage',
+                  condition: (answers) =>
+                    answers.payments?.privatePensionFund?.active === YES,
+                  id: 'payments.privatePensionFund.percentage',
                   title:
                     parentalLeaveFormMessages.shared.privatePensionFundRatio,
                   options: [

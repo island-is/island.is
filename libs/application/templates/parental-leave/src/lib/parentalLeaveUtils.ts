@@ -399,23 +399,23 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   const pensionFund = getValueViaPath(answers, 'payments.pensionFund') as string
 
-  const useUnion = getValueViaPath(answers, 'useUnion') as YesOrNo
+  const useUnion = getValueViaPath(answers, 'payments.union.active') as YesOrNo
 
-  const union = getValueViaPath(answers, 'payments.union') as string
+  const union = getValueViaPath(answers, 'payments.union.value') as string
 
   const usePrivatePensionFund = getValueViaPath(
     answers,
-    'usePrivatePensionFund',
+    'payments.privatePensionFund.active',
   ) as YesOrNo
 
   const privatePensionFund = getValueViaPath(
     answers,
-    'payments.privatePensionFund',
+    'payments.privatePensionFund.name',
   ) as string
 
   const privatePensionFundPercentage = getValueViaPath(
     answers,
-    'payments.privatePensionFundPercentage',
+    'payments.privatePensionFund.percentage',
     '0',
   ) as string
 

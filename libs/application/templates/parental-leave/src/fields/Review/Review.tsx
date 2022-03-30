@@ -359,10 +359,11 @@ export const Review: FC<ReviewScreenProps> = ({
         canCloseEdit={groupHasNoErrors([
           'payments.bank',
           'payments.pensionFund',
-          'useUnion',
-          'payments.union',
-          'usePrivatePensionFund',
-          'payments.privatePensionFund',
+          'payments.union.active',
+          'payments.union.value',
+          'payments.privatePensionFund.active',
+          'payments.privatePensionFund.name',
+          'payments.privatePensionFund.percentage',
         ])}
         editChildren={
           <Stack space={3}>
@@ -410,8 +411,8 @@ export const Review: FC<ReviewScreenProps> = ({
 
             <Stack space={1}>
               <RadioController
-                id="useUnion"
-                name="useUnion"
+                id="payments.union.active"
+                name="payments.union.active"
                 defaultValue={useUnion}
                 split="1/2"
                 options={[
@@ -430,8 +431,9 @@ export const Review: FC<ReviewScreenProps> = ({
                 ]}
                 onSelect={(s: string) => {
                   setStateful((prev) => {
-                    const union = s === NO ? NO_UNION : prev.union
-                    setValue('payments.union', union)
+                    const union = s === NO ? NO_UNION : ''
+                    setValue('payments.union.value', union)
+                    setValue('payments.union.active', s)
                     return {
                       ...prev,
                       union,
@@ -439,14 +441,14 @@ export const Review: FC<ReviewScreenProps> = ({
                     }
                   })
                 }}
-                error={hasError('useUnion')}
+                error={hasError('payments.union.active')}
               />
 
               {useUnion === YES && (
                 <SelectController
                   label={formatMessage(parentalLeaveFormMessages.shared.union)}
-                  name="payments.union"
-                  id="payments.union"
+                  name="payments.union.value"
+                  id="payments.union.value"
                   options={unionOptions}
                   defaultValue={union}
                   onSelect={(s) => {
@@ -455,7 +457,7 @@ export const Review: FC<ReviewScreenProps> = ({
                       union: s.value as string,
                     }))
                   }}
-                  error={hasError('payments.union')}
+                  error={hasError('payments.union.value')}
                 />
               )}
             </Stack>
@@ -467,8 +469,8 @@ export const Review: FC<ReviewScreenProps> = ({
             </Label>
             <Stack space={1}>
               <RadioController
-                id="usePrivatePensionFund"
-                name="usePrivatePensionFund"
+                id="payments.privatePensionFund.active"
+                name="payments.privatePensionFund.active"
                 defaultValue={usePrivatePensionFund}
                 split="1/2"
                 options={[
@@ -488,16 +490,17 @@ export const Review: FC<ReviewScreenProps> = ({
                 onSelect={(s: string) => {
                   setStateful((prev) => {
                     const privatePensionFund =
-                      s === NO
-                        ? NO_PRIVATE_PENSION_FUND
-                        : prev.privatePensionFund
-                    const privatePensionFundPercentage =
-                      s === NO ? '' : prev.privatePensionFundPercentage
-                    setValue('payments.privatePensionFund', privatePensionFund)
+                      s === NO ? NO_PRIVATE_PENSION_FUND : ''
+                    const privatePensionFundPercentage = ''
                     setValue(
-                      'payments.privatePensionFundPercentage',
+                      'payments.privatePensionFund.name',
+                      privatePensionFund,
+                    )
+                    setValue(
+                      'payments.privatePensionFund.percentage',
                       privatePensionFundPercentage,
                     )
+                    setValue('payments.privatePensionFund.active', s)
                     return {
                       ...prev,
                       privatePensionFund,
@@ -506,7 +509,7 @@ export const Review: FC<ReviewScreenProps> = ({
                     }
                   })
                 }}
-                error={hasError('usePrivatePensionFund')}
+                error={hasError('payments.privatePensionFund.active')}
               />
 
               {usePrivatePensionFund === YES && (
@@ -516,8 +519,8 @@ export const Review: FC<ReviewScreenProps> = ({
                       label={formatMessage(
                         parentalLeaveFormMessages.shared.privatePensionFund,
                       )}
-                      name="payments.privatePensionFund"
-                      id="payments.privatePensionFund"
+                      name="payments.privatePensionFund.name"
+                      id="payments.privatePensionFund.name"
                       options={privatePensionFundOptions}
                       defaultValue={privatePensionFund}
                       onSelect={(s) =>
@@ -526,7 +529,7 @@ export const Review: FC<ReviewScreenProps> = ({
                           privatePensionFund: s.value as string,
                         }))
                       }
-                      error={hasError('payments.privatePensionFund')}
+                      error={hasError('payments.privatePensionFund.name')}
                     />
                   </GridColumn>
 
@@ -539,8 +542,8 @@ export const Review: FC<ReviewScreenProps> = ({
                         parentalLeaveFormMessages.shared
                           .privatePensionFundRatio,
                       )}
-                      name="payments.privatePensionFundPercentage"
-                      id="payments.privatePensionFundPercentage"
+                      name="payments.privatePensionFund.percentage"
+                      id="payments.privatePensionFund.percentage"
                       defaultValue={privatePensionFundPercentage}
                       options={[
                         { label: '2%', value: '2' },
@@ -552,7 +555,7 @@ export const Review: FC<ReviewScreenProps> = ({
                           privatePensionFundPercentage: s.value as string,
                         }))
                       }
-                      error={hasError('payments.privatePensionFundPercentage')}
+                      error={hasError('payments.privatePensionFund.percentage')}
                     />
                   </GridColumn>
                 </GridRow>
