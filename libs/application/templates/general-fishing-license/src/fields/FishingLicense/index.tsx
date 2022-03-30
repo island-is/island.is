@@ -5,7 +5,7 @@ import {
 } from '@island.is/application/core'
 import { Box, LoadingDots, Text } from '@island.is/island-ui/core'
 import React, { FC } from 'react'
-import { ShipInformation, Tag } from '../components'
+import { FishingLicenseAlertMessage, ShipInformation, Tag } from '../components'
 import {
   FishingLicense as FishingLicenseSchema,
   Ship,
@@ -68,47 +68,59 @@ export const FishingLicense: FC<FieldBaseProps> = ({
         <Text variant="h4" marginBottom={3}>
           {formatMessage(fishingLicense.labels.radioButtonTitle)}
         </Text>
-        {/* loading ? (
+        {loading ? (
           <LoadingDots large color="gradient" />
         ) : (
-          <RadioController
-            id={field.id}
-            largeButtons
-            backgroundColor="blue"
-            error={errors && getErrorViaPath(errors, field.id)}
-            options={data?.fishingLicenses?.map(
-              ({ fishingLicenseInfo, answer }: FishingLicenseSchema) => {
-                return {
-                  value: fishingLicenseInfo.code,
-                  label:
-                    formatMessage(
-                      fishingLicense.labels[fishingLicenseInfo.code],
-                    ) || fishingLicenseInfo.name,
-                  tooltip: formatMessage(
-                    fishingLicense.tooltips[fishingLicenseInfo.code],
-                  ),
-                  disabled: !answer,
-                }
+          <>
+            <RadioController
+              id={field.id}
+              largeButtons
+              backgroundColor="blue"
+              error={errors && getErrorViaPath(errors, field.id)}
+              options={data?.fishingLicenses
+                ?.filter(({ answer }: FishingLicenseSchema) => answer)
+                .map(({ fishingLicenseInfo }: FishingLicenseSchema) => {
+                  return {
+                    value: fishingLicenseInfo.code,
+                    label:
+                      formatMessage(
+                        fishingLicense.labels[fishingLicenseInfo.code],
+                      ) || fishingLicenseInfo.name,
+                    tooltip: formatMessage(
+                      fishingLicense.tooltips[fishingLicenseInfo.code],
+                    ),
+                  }
+                })}
+            />
+            {data?.fishingLicenses.map(
+              ({
+                fishingLicenseInfo,
+                answer,
+                reasons,
+              }: FishingLicenseSchema) => {
+                if (answer) return null
+                if (reasons.length === 0) return null
+                return (
+                  <Box marginBottom={2} key={fishingLicenseInfo.code}>
+                    <FishingLicenseAlertMessage
+                      title={formatMessage(
+                        fishingLicense.warningMessageTitle[
+                          fishingLicenseInfo.code
+                        ],
+                      )}
+                      description={formatMessage(
+                        fishingLicense.warningMessageDescription[
+                          fishingLicenseInfo.code
+                        ],
+                      )}
+                      reasons={reasons}
+                    />
+                  </Box>
+                )
               },
             )}
-          />
-            ) */}
-        {
-          // Temporary until fishing license are ready from service
-          <RadioController
-            id={field.id}
-            largeButtons
-            backgroundColor="blue"
-            error={errors && getErrorViaPath(errors, field.id)}
-            options={[
-              {
-                value: FishingLicenseEnum.CATCHLIMIT,
-                label: formatMessage(fishingLicense.labels.catchMark),
-                tooltip: formatMessage(fishingLicense.tooltips.catchMark),
-              },
-            ]}
-          />
-        }
+          </>
+        )}
       </Box>
     </>
   )

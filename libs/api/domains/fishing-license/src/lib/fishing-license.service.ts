@@ -59,12 +59,20 @@ export class FishingLicenseService {
     return (
       licenses.veidileyfiIBodi?.map((l) => ({
         fishingLicenseInfo: {
-          code: FishingLicenseCodeType.catchMark,
-          name: l.forsendur?.veidileyfi?.nafn ?? '',
+          code:
+            l.veidileyfi?.kodi === '1'
+              ? FishingLicenseCodeType.catchMark
+              : l.veidileyfi?.kodi === '32'
+              ? FishingLicenseCodeType.hookCatchLimit
+              : '',
+          name: l.veidileyfi?.nafn ?? '',
         },
         answer: !!l.svar,
         reasons:
-          l.astaedur?.map((x) => ({ description: '', directions: '' })) ?? [],
+          l.astaedur?.map((x) => ({
+            description: x.lysing ?? '',
+            directions: x.leidbeining ?? '',
+          })) ?? [],
       })) ?? []
     )
   }

@@ -292,3 +292,13 @@ export const DrivingLicenseBook = new XroadConf({
     DRIVING_LICENSE_BOOK_PASSWORD: '/k8s/api/DRIVING_LICENSE_BOOK_PASSWORD',
   },
 })
+
+export const FishingLicense = new XroadConf({
+  env: {
+    FISHING_LICENSE_XROAD_PROVIDER_ID: {
+      dev: 'IS-DEV/GOV/10012/Fiskistofa-Protected/veidileyfi-v1',
+      staging: 'IS-DEV/GOV/10012/Fiskistofa-Protected/veidileyfi-v1',
+      prod: 'IS-DEV/GOV/10012/Fiskistofa-Protected/veidileyfi-v1',
+    },
+  },
+})
