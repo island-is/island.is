@@ -2,10 +2,10 @@ import { Injectable, NotFoundException } from '@nestjs/common'
 
 import { ActorValidationFailed } from '@island.is/nest/problem'
 import {
-  DelegationDTO,
   ActorDelegationsControllerFindAllDirectionEnum,
   ActorDelegationsApi,
 } from '@island.is/clients/auth-public-api'
+import type { DelegationDTO } from '@island.is/clients/auth-public-api'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 interface Actor {
   name: string
