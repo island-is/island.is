@@ -1,5 +1,9 @@
 import * as faker from 'faker'
 import { MessageDescriptor } from 'react-intl'
+import {
+  ApplicationTypes,
+  ApplicationStatus,
+} from '@island.is/application/core'
 
 type RecordObject<T = unknown> = Record<string, T>
 
@@ -38,10 +42,6 @@ interface ExternalData {
   [key: string]: DataProviderResult
 }
 
-interface ApplicationWithAttachments extends Application {
-  attachments: object
-}
-
 interface Application {
   id: string
   state: string
@@ -59,33 +59,8 @@ interface Application {
   status: ApplicationStatus
 }
 
-enum ApplicationTypes {
-  EXAMPLE = 'ExampleForm',
-  PASSPORT = 'Passport',
-  DRIVING_LICENSE = 'DrivingLicense',
-  DRIVING_ASSESSMENT_APPROVAL = 'DrivingAssessmentApproval',
-  PARENTAL_LEAVE = 'ParentalLeave',
-  DOCUMENT_PROVIDER_ONBOARDING = 'DocumentProviderOnboarding',
-  HEALTH_INSURANCE = 'HealthInsurance',
-  CHILDREN_RESIDENCE_CHANGE = 'ChildrenResidenceChange',
-  DATA_PROTECTION_AUTHORITY_COMPLAINT = 'DataProtectionAuthorityComplaint',
-  LOGIN_SERVICE = 'LoginService',
-  INSTITUTION_COLLABORATION = 'InstitutionCollaboration',
-  FUNDING_GOVERNMENT_PROJECTS = 'FundingGovernmentProjects',
-  PUBLIC_DEBT_PAYMENT_PLAN = 'PublicDebtPaymentPlan',
-  COMPLAINTS_TO_ALTHINGI_OMBUDSMAN = 'ComplaintsToAlthingiOmbudsman',
-  ACCIDENT_NOTIFICATION = 'AccidentNotification',
-  GENERAL_PETITION = 'GeneralPetitionService',
-  P_SIGN = 'PSign',
-  CRIMINAL_RECORD = 'CriminalRecord',
-  EXAMPLE_PAYMENT = 'ExamplePayment',
-  MORTGAGE_CERTIFICATE = 'MortgageCertificate',
-}
-
-enum ApplicationStatus {
-  IN_PROGRESS = 'inprogress',
-  COMPLETED = 'completed',
-  REJECTED = 'rejected',
+export interface ApplicationWithAttachments extends Application {
+  attachments: object
 }
 
 export const createApplication = (
