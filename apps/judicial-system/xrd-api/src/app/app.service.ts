@@ -9,7 +9,6 @@ import {
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import type { Case as TCase } from '@island.is/judicial-system/types'
 import {
   AuditedAction,
   AuditTrailService,

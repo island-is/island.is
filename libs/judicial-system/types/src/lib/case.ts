@@ -5,6 +5,12 @@ import type { CaseFile } from './file'
 import type { User } from './user'
 import type { CourtDocument } from './courtDocument'
 
+export enum CaseOrigin {
+  UNKNOWN = 'UNKNOWN',
+  RVG = 'RVG',
+  LOKE = 'LOKE',
+}
+
 export enum CaseType {
   CUSTODY = 'CUSTODY',
   TRAVEL_BAN = 'TRAVEL_BAN',
@@ -101,12 +107,14 @@ export interface Case {
   id: string
   created: string
   modified: string
+  origin: CaseOrigin
   type: CaseType
   description?: string
   state: CaseState
   policeCaseNumber: string
   defendants?: Defendant[]
   defenderName?: string
+  defenderNationalId?: string
   defenderEmail?: string
   defenderPhoneNumber?: string
   sendRequestToDefender?: boolean
@@ -183,6 +191,7 @@ export interface CreateCase {
   description?: string
   policeCaseNumber: string
   defenderName?: string
+  defenderNationalId?: string
   defenderEmail?: string
   defenderPhoneNumber?: string
   sendRequestToDefender?: boolean
@@ -195,6 +204,7 @@ export interface UpdateCase {
   description?: string
   policeCaseNumber?: string
   defenderName?: string
+  defenderNationalId?: string
   defenderEmail?: string
   defenderPhoneNumber?: string
   sendRequestToDefender?: boolean

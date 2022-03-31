@@ -43,6 +43,11 @@ export class UpdateCaseDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
+  readonly defenderNationalId?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
   readonly defenderEmail?: string
 
   @IsOptional()

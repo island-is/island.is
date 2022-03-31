@@ -132,6 +132,7 @@ export const getApplicantSpouse = (application: Application) => {
     },
     {
       title: 'Athugasemd',
+      content: application.spouseFormComment ? '' : 'Engin athugasemd',
       other: application.spouseFormComment,
     },
   ]

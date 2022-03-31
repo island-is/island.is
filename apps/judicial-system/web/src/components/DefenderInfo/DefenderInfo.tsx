@@ -12,7 +12,10 @@ import {
   Tooltip,
 } from '@island.is/island-ui/core'
 
-import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
+import {
+  ReactSelectOption,
+  Lawyer,
+} from '@island.is/judicial-system-web/src/types'
 import {
   Case,
   CaseType,
@@ -26,7 +29,6 @@ import { defendant } from '@island.is/judicial-system-web/messages'
 import { rcHearingArrangements } from '@island.is/judicial-system-web/messages'
 import { icHearingArrangements } from '@island.is/judicial-system-web/messages'
 
-import type { Lawyer } from '@island.is/judicial-system-web/pages/api/lawyerRegistry/getLawyers/getLawyers'
 import { BlueBox } from '..'
 import { useCase, useLawyers } from '../../utils/hooks'
 import {
@@ -63,6 +65,7 @@ const DefenderInfo: React.FC<Props> = (props) => {
     async (selectedOption: ValueType<ReactSelectOption>) => {
       let updatedLawyer = {
         defenderName: '',
+        defenderNationalId: '',
         defenderEmail: '',
         defenderPhoneNumber: '',
       }
@@ -75,6 +78,7 @@ const DefenderInfo: React.FC<Props> = (props) => {
 
         updatedLawyer = {
           defenderName: lawyer ? lawyer.name : label,
+          defenderNationalId: lawyer ? lawyer.nationalId : '',
           defenderEmail: lawyer ? lawyer.email : '',
           defenderPhoneNumber: lawyer ? lawyer.phoneNr : '',
         }
