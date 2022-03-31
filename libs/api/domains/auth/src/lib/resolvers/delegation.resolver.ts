@@ -27,7 +27,6 @@ import {
 import { Delegation } from '../models'
 import { MeDelegationsService } from '../meDelegations.service'
 import { ActorDelegationsService } from '../actorDelegations.service'
-import { AuditService } from '@island.is/nest/audit'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => Delegation)
@@ -36,7 +35,6 @@ export class DelegationResolver {
     private meDelegationsService: MeDelegationsService,
     private actorDelegationsService: ActorDelegationsService,
     private identityService: IdentityService,
-    private readonly auditService: AuditService,
   ) {}
 
   @Query(() => [Delegation], { name: 'authActorDelegations' })
@@ -75,13 +73,6 @@ export class DelegationResolver {
         scopes: input.scopes,
       })
     }
-
-    this.auditService.audit({
-      auth: user,
-      namespace: '@island.is/api/auth',
-      action: 'createDelegation',
-      resources: [input.toNationalId],
-    })
 
     return delegation
   }
