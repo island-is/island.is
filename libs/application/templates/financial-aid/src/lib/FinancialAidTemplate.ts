@@ -93,9 +93,23 @@ const FinancialAidTemplate: ApplicationTemplate<
                 import('../forms/Application').then((module) =>
                   Promise.resolve(module.Application),
                 ),
-              // TODO: Limit this
               read: 'all',
-              write: 'all',
+              write: {
+                answers: [
+                  'spouse',
+                  'relationshipStatus',
+                  'homeCircumstances',
+                  'student',
+                  'employment',
+                  'income',
+                  'incomeFiles',
+                  'taxReturnFiles',
+                  'personalTaxCredit',
+                  'bankInfo',
+                  'contactInfo',
+                  'formComment',
+                ],
+              },
             },
           ],
         },
