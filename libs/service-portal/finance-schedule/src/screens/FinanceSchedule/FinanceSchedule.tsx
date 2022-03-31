@@ -65,6 +65,10 @@ const FinanceSchedule: ServicePortalModuleComponent = () => {
       ?.paymentSchedules || []
   // const debtData: any = debtStatusData?.getDebtStatus?.myDebtStatus || {}
 
+  const applicationButtonText = formatMessage({
+    id: 'sp.finance-schedule:finance-schedule-application',
+    defaultMessage: 'Gera greiðsluáætlun',
+  })
   if (tabLoading) {
     return <SkeletonLoader space={1} height={30} repeat={4} />
   }
@@ -76,18 +80,23 @@ const FinanceSchedule: ServicePortalModuleComponent = () => {
   ) {
     return (
       <NoDataScreen
-        title={formatMessage(m.financeSchedules)}
+        title={formatMessage({
+          id: 'sp.finance-schedule:finance-schedules-empty-title',
+          defaultMessage: 'Greiðsluáætlanir',
+        })}
         button={{
           internal: false,
-          text: formatMessage(m.financeScheduleApplication),
+          text: applicationButtonText,
           variant: 'primary',
           link: 'https://island.is/umsoknir/greidsluaaetlun/',
         }}
       >
         <Text>
-          Þú ert ekki með neinar virkar greiðsluáætlanir. Ef þú vilt gera
-          greiðsluáætlun þá getur þú hafið það ferli með því að ýta á hnappinn
-          hér að neðan.{' '}
+          {formatMessage({
+            id: 'sp.finance-schedule:finance-schedules-empty-text',
+            defaultMessage:
+              'Þú ert ekki með neinar virkar greiðsluáætlanir. Ef þú vilt gera greiðsluáætlun þá getur þú hafið það ferli með því að ýta á hnappinn hér að neðan.',
+          })}
         </Text>
       </NoDataScreen>
     )
@@ -99,7 +108,7 @@ const FinanceSchedule: ServicePortalModuleComponent = () => {
         <Text variant="h3" as="h1">
           {formatMessage({
             id: 'sp.finance-schedule:title',
-            defaultMessage: 'Greiðsluáætlun',
+            defaultMessage: 'Greiðsluáætlanir',
           })}
         </Text>
         <GridRow>
@@ -140,7 +149,7 @@ const FinanceSchedule: ServicePortalModuleComponent = () => {
                   type="button"
                   variant="utility"
                 >
-                  {formatMessage(m.financeScheduleApplication)}
+                  {applicationButtonText}
                 </Button>
               </a>
             </Box>
@@ -150,7 +159,10 @@ const FinanceSchedule: ServicePortalModuleComponent = () => {
         <Box marginTop={4}>
           {paymentSchedulesError && (
             <AlertBanner
-              description={formatMessage(m.errorFetch)}
+              description={formatMessage({
+                id: 'sp.finance-schedule:could-not-fetch-data',
+                defaultMessage: 'Ekki tókst að sækja gögn',
+              })}
               variant="error"
             />
           )}

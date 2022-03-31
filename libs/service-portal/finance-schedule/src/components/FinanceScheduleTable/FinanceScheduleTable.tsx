@@ -1,7 +1,7 @@
 import React, { FC, useState } from 'react'
 import format from 'date-fns/format'
 import { Table as T, Box, Pagination, Tooltip } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import { dateFormat } from '@island.is/shared/constants'
 import { ExpandHeader, dateParse } from '@island.is/service-portal/core'
 import { PaymentSchedule } from '@island.is/api/schema'
@@ -18,6 +18,8 @@ const compare = function (a: any, b: any) {
   return 0
 }
 const FinanceScheduleTable: FC<Props> = ({ recordsArray }) => {
+  useNamespaces('sp.finance-schedule')
+
   const [page, setPage] = useState(1)
   const { formatMessage } = useLocale()
 

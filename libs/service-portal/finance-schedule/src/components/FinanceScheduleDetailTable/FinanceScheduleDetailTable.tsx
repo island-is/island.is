@@ -1,8 +1,7 @@
 import React, { FC } from 'react'
 import { Icon, Table as T, Tooltip } from '@island.is/island-ui/core'
 import { Box, Text } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
-import { m } from '@island.is/service-portal/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import cn from 'classnames'
 import * as styles from './FinanceScheduleDetailTable.css'
 import {
@@ -26,6 +25,7 @@ type DetailData = Array<
 
 const FinanceScheduleDetailTable: FC<Props> = ({ data }) => {
   const { formatMessage } = useLocale()
+  useNamespaces('sp.finance-schedule')
 
   const arr: DetailData = data.map((x, i) => {
     const sum =

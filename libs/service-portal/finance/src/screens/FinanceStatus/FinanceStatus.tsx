@@ -1,11 +1,7 @@
 import React from 'react'
 import flatten from 'lodash/flatten'
 import { gql, useQuery } from '@apollo/client'
-import {
-  ServicePortalModuleComponent,
-  m,
-  ServicePortalPath,
-} from '@island.is/service-portal/core'
+import { ServicePortalModuleComponent, m } from '@island.is/service-portal/core'
 import { GridColumn, GridRow, Table as T } from '@island.is/island-ui/core'
 import subYears from 'date-fns/subYears'
 import { Query } from '@island.is/api/schema'
@@ -109,7 +105,10 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
                       type="button"
                       variant="utility"
                     >
-                      {formatMessage(m.financeScheduleApplication)}
+                      {formatMessage({
+                        id: 'sp.finance-status:make-payment-schedule',
+                        defaultMessage: 'Gera greiðsluáætlun',
+                      })}
                     </Button>
                   </a>
                 </Box>
