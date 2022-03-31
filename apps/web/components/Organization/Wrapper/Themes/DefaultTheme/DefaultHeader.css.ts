@@ -2,72 +2,66 @@ import { style } from '@vanilla-extract/css'
 import { themeUtils } from '@island.is/island-ui/theme'
 
 export const headerBg = style({
-  display: 'flex',
-  flexFlow: 'column nowrap',
-  alignItems: 'flex-end',
-  justifyContent: 'center',
   order: 1,
-  ...themeUtils.responsiveStyle({
-    md: {
+  '@media': {
+    'screen and (min-width: 1000px)': {
       order: 0,
     },
-  }),
+  },
 })
 
 export const iconCircle = style({
   height: 136,
   width: 136,
   margin: '0 auto',
-  display: 'grid',
-  placeItems: 'center',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
   boxShadow: '0px 4px 30px rgba(0, 97, 255, 0.08)',
-  position: 'absolute',
-  left: '11%',
-  bottom: -32,
+  ...themeUtils.responsiveStyle({
+    xs: {
+      marginTop: 12,
+    },
+    md: {
+      marginTop: 84,
+      position: 'relative',
+    },
+  }),
 })
 
-export const headerWrapper = style({
-  paddingTop: 130,
-})
+export const headerWrapper = style({})
 
 export const headerLogo = style({
   width: 70,
   maxHeight: 70,
 })
 
+export const headerImage = style({
+  objectFit: 'cover',
+  height: '200px',
+  width: '100%',
+  order: 0,
+  '@media': {
+    'screen and (min-width: 1000px)': {
+      order: 1,
+      height: '100%',
+    },
+  },
+})
+
 export const container = style({
-  minHeight: 255,
-  marginBottom: 32,
-  position: 'relative',
+  display: 'grid',
+  gridTemplateRows: '255px',
 })
 
 export const gridContainer = style({
   display: 'grid',
-  // gridTemplateColumns: '1fr',
-  gridTemplateRows: '2fr 3fr',
-  ...themeUtils.responsiveStyle({
-    md: {
+  gridTemplateColumns: '1fr',
+  gridTemplateRows: '200px 1fr',
+  '@media': {
+    'screen and (min-width: 1000px)': {
       gridTemplateColumns: '1fr 1fr',
-      gridTemplateRows: '300px',
+      gridTemplateRows: '255px',
     },
-  }),
-})
-
-export const headerImage = style({
-  objectFit: 'cover',
-  height: 200,
-  width: '100%',
-  order: 0,
-  ...themeUtils.responsiveStyle({
-    md: {
-      order: 1,
-      height: '100%',
-    },
-  }),
-})
-
-export const textContainer = style({
-  margin: 10,
-  marginBottom: 110,
-  marginRight: 40,
+  },
 })
