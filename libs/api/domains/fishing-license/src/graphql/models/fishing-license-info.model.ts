@@ -12,4 +12,6 @@ export class FishingLicenseInfo {
   code!: FishingLicenseCodeType
   @Field()
   name!: string
+  @Field()
+  chargeType!: string
 }

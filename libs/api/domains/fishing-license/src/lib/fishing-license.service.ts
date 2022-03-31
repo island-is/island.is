@@ -66,6 +66,7 @@ export class FishingLicenseService {
               ? FishingLicenseCodeType.hookCatchLimit
               : '',
           name: l.veidileyfi?.nafn ?? '',
+          chargeType: l.veidileyfi?.vorunumerfjs ?? '',
         },
         answer: !!l.svar,
         reasons:

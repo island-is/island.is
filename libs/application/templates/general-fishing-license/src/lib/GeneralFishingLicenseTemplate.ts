@@ -13,6 +13,14 @@ import { GeneralFishingLicenseSchema } from './dataSchema'
 import { application } from './messages'
 import { ApiActions } from '../shared'
 
+const pruneAtMidnight = () => {
+  return {
+    shouldBeListed: true,
+    shouldBePruned: true,
+    whenToPrune: 3600 * 1000,
+  }
+}
+
 const GeneralFishingLicenseTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
@@ -33,12 +41,7 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
         meta: {
           name: application.general.name.defaultMessage,
           progress: 0.3,
-          // Application is only suppose to live for an hour while building it, change later
-          lifecycle: {
-            shouldBeListed: true,
-            shouldBePruned: true,
-            whenToPrune: 3600 * 1000,
-          },
+          lifecycle: pruneAtMidnight(),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -72,12 +75,7 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
             description: application.labels.actionCardPayment,
           },
           progress: 0.9,
-          // Application is only suppose to live for an hour while building it, change later
-          lifecycle: {
-            shouldBeListed: true,
-            shouldBePruned: true,
-            whenToPrune: 3600 * 1000,
-          },
+          lifecycle: pruneAtMidnight(),
           onEntry: {
             apiModuleAction: ApiActions.createCharge,
           },
@@ -137,12 +135,7 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
         meta: {
           name: 'Declined',
           progress: 1,
-          // Application is only suppose to live for an hour while building it, change later
-          lifecycle: {
-            shouldBeListed: true,
-            shouldBePruned: true,
-            whenToPrune: 3600 * 1000,
-          },
+          lifecycle: pruneAtMidnight(),
           roles: [
             {
               id: Roles.APPLICANT,
