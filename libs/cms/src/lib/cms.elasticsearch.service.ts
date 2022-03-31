@@ -273,7 +273,7 @@ export class CmsElasticsearchService {
               path: 'tags',
               query: {
                 bool: {
-                  must: [
+                  should: [
                     {
                       term: {
                         'tags.key': tag.key,
