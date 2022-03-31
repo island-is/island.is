@@ -52,6 +52,7 @@ import { Institution } from '../institution'
 import { User, UserService } from '../user'
 import { AwsS3Service } from '../aws-s3'
 import { CourtService } from '../court'
+import { CaseEvent, EventService } from '../event'
 import { CreateCaseDto } from './dto/createCase.dto'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { UpdateCaseDto } from './dto/updateCase.dto'
@@ -156,6 +157,7 @@ export class CaseService {
     private readonly signingService: SigningService,
     private readonly emailService: EmailService,
     private readonly intlService: IntlService,
+    private readonly eventService: EventService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -983,7 +985,7 @@ export class CaseService {
       return { caseArchived: false }
     }
 
-    this.sequelize.transaction(async (transaction) => {
+    await this.sequelize.transaction(async (transaction) => {
       await this.update(
         theCase.id,
         {
@@ -1033,6 +1035,8 @@ export class CaseService {
         )
       }
     })
+
+    this.eventService.postEvent(CaseEvent.ARCHIVE, theCase)
 
     return { caseArchived: true }
   }
