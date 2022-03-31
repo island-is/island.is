@@ -23,7 +23,9 @@ else
 EOM
 )
 fi
-
-# shellcheck disable=SC2086
-npx \
-  nx print-affected --target="$1" --select=tasks.target.project $EXTRA_ARGS
+if [[ "${AFFECTED_FILES}" != "" ]]
+then
+  # shellcheck disable=SC2086
+  npx \
+    nx print-affected --target="$1" --select=tasks.target.project $EXTRA_ARGS
+fi
