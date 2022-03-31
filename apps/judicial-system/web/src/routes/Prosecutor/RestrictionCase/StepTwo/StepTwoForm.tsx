@@ -13,7 +13,6 @@ import {
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
-  DateTime,
   FormContentContainer,
   FormFooter,
   BlueBox,
@@ -25,6 +24,7 @@ import * as Constants from '@island.is/judicial-system/consts'
 import SelectProsecutor from '../../SharedComponents/SelectProsecutor/SelectProsecutor'
 import SelectCourt from '../../SharedComponents/SelectCourt/SelectCourt'
 import RequestCourtDate from '../../SharedComponents/RequestCourtDate/RequestCourtDate'
+import ArrestDate from './ArrestDate'
 
 interface Props {
   workingCase: Case
@@ -112,30 +112,13 @@ const StepTwoForm: React.FC<Props> = (props) => {
           />
         </Box>
         {!workingCase.parentCase && (
-          <Box component="section" marginBottom={5}>
-            <Box marginBottom={3}>
-              <Text as="h3" variant="h3">
-                {formatMessage(
-                  rcRequestedHearingArrangements.sections.arrestDate.heading,
-                )}
-              </Text>
-            </Box>
-            <DateTime
-              name="arrestDate"
-              maxDate={new Date()}
-              selectedDate={workingCase.arrestDate}
-              onChange={(date: Date | undefined, valid: boolean) => {
-                setAndSendDateToServer(
-                  'arrestDate',
-                  date,
-                  valid,
-                  workingCase,
-                  setWorkingCase,
-                  updateCase,
-                )
-              }}
-            />
-          </Box>
+          <ArrestDate
+            title={formatMessage(
+              rcRequestedHearingArrangements.sections.arrestDate.heading,
+            )}
+            workingCase={workingCase}
+            setWorkingCase={setWorkingCase}
+          />
         )}
         <Box component="section" marginBottom={5}>
           <RequestCourtDate

@@ -51,10 +51,14 @@ export class PersonalTaxReturnService {
 
       if (taxReturn.success === false) {
         changeableYear -= 1
-        taxReturn = await this.personalTaxReturnApi.personalTaxReturnInPdf(
-          nationalId,
-          changeableYear,
-        )
+        taxReturn = await this.personalTaxReturnApi
+          .personalTaxReturnInPdf(nationalId, changeableYear)
+          .catch(() => {
+            return {
+              success: false,
+              content: '',
+            }
+          })
       }
 
       if (taxReturn.success === false) {

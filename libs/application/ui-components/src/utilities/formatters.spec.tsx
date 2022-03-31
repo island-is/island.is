@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom'
 
-import { formatBankInfo } from './formatters'
+import { formatBankInfo, formatPhoneNumber } from './formatters'
 
 describe('formatters', () => {
   describe('formatBankInfo', () => {
@@ -34,6 +34,16 @@ describe('formatters', () => {
       const expectedBankInfo = '000#test011222$$222'
       // assert
       expect(formatBankInfo(bankInfo)).toBe(expectedBankInfo)
+    })
+  })
+
+  describe('formatPhoneNumber', () => {
+    it('should place "-" after 3 digits', async () => {
+      // arrange
+      const phoneNumber = '9999999'
+      const expectedPhoneNumber = '999-9999'
+      // assert
+      expect(formatPhoneNumber(phoneNumber)).toBe(expectedPhoneNumber)
     })
   })
 })
