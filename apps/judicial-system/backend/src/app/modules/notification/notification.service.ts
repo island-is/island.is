@@ -466,7 +466,8 @@ export class NotificationService {
       )
     } catch (error) {
       // Tolerate failure, but log error
-      this.logger.error(
+      // TODO: Log as error when implemented in the court system
+      this.logger.info(
         `Failed to upload email to court for case ${theCase.id}`,
         { error },
       )
