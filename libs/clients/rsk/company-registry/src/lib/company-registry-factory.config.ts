@@ -12,7 +12,7 @@ export const CompanyRegistryApiFactoryConfig = (
       treat400ResponsesAsErrors: true,
       logErrorResponseBody: true,
     }),
-    basePath: `${xRoadBasePath}/r1/${xRoadProviderId}/`,
+    basePath: `${xRoadBasePath}/r1/${xRoadProviderId}`,
     headers: {
       Accept: 'application/json',
       'X-Road-Client': xRoadClient,
