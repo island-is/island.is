@@ -1,4 +1,3 @@
-import type { History } from 'history'
 import React, {
   SyntheticEvent,
   useCallback,
@@ -6,9 +5,7 @@ import React, {
   useReducer,
   useState,
 } from 'react'
-import { useHistory } from 'react-router-dom'
 
-import { AuthSettings } from '../AuthSettings'
 import { getAuthSettings, getUserManager } from '../userManager'
 import { ActionType, initialState, reducer } from './Authenticator.state'
 
@@ -29,36 +26,27 @@ interface SessionInfoMessage {
 
 const messageEventName = 'message'
 
-const getReturnUrl = (history: History, { redirectPath }: AuthSettings) => {
-  const returnUrl = history.location.pathname + history.location.search
-  if (redirectPath && returnUrl.startsWith(redirectPath)) {
-    return '/'
-  }
-  return returnUrl
-}
-
 export const CheckIdpSession = () => {
-  const history = useHistory()
   const reducerInstance = useReducer(reducer, initialState)
   const [state, dispatch] = reducerInstance
   const userManager = getUserManager()
   const authSettings = getAuthSettings()
   const iframeSrc = `${authSettings.authority}${authSettings.checkSessionPath}`
   const [iframeChecksum, setIframeChecksum] = useState(0)
+  const [sessionTimeout, setSessionTimeout] = useState<ReturnType<
+    typeof setTimeout
+  > | null>(null)
 
-  let sessionTimeout: ReturnType<typeof setTimeout> | null = null
-
-  const signIn = useCallback(
-    async function signIn() {
+  const signOut = useCallback(
+    async function signOut() {
       dispatch({
-        type: ActionType.SIGNIN_START,
+        type: ActionType.LOGGING_OUT,
       })
-      return userManager.signinRedirect({
-        state: getReturnUrl(history, authSettings),
+      await userManager.signoutRedirect({
+        post_logout_redirect_uri: authSettings.baseUrl,
       })
-      // Nothing more happens here since browser will redirect to IDS.
     },
-    [dispatch, userManager, authSettings, history],
+    [userManager, dispatch, authSettings.baseUrl],
   )
 
   const onLoadHandler = (event: SyntheticEvent<HTMLIFrameElement>) => {
@@ -84,53 +72,55 @@ export const CheckIdpSession = () => {
     />
   )
 
-  const messageHandler = async ({
-    data,
-    origin,
-  }: MessageEvent): Promise<void> => {
-    if (origin !== authSettings.authority) {
-      return
-    }
-
-    const sessionInfo = data as SessionInfo
-
-    if (sessionInfo && sessionInfo.message === 'OK') {
-      // SessionInfo was found, check if it is valid or expired
-      if (sessionInfo.isExpired) {
-        return signIn()
-      } else if (sessionInfo.expiresUtc) {
-        // Calculate when the session should expire with padding when we should check again
-        const timeout =
-          new Date(sessionInfo.expiresUtc).getTime() -
-          new Date().getTime() +
-          1000
-
-        if (timeout <= 0) {
-          // The session is expired but for some reason the `isExpired` was not correctly set
-          return signIn()
-        }
-
-        if (!sessionTimeout) {
-          sessionTimeout = setTimeout(() => {
-            sessionTimeout = null
-            window.removeEventListener(messageEventName, messageHandler)
-            setIframeChecksum(iframeChecksum + 1)
-          }, timeout)
-        }
+  const messageHandler = useCallback(
+    async ({ data, origin }: MessageEvent): Promise<void> => {
+      if (origin !== authSettings.authority) {
+        return
       }
-    } else if (sessionInfo && sessionInfo.message === 'No user session') {
-      return signIn()
-    }
 
-    // Silent failure as we have failed to get sessionInfo but the user still might have valid session.
-    // So we only trigger the signIn flow when we get definite response about expired session.
-  }
+      const sessionInfo = data as SessionInfo
+
+      if (sessionInfo && sessionInfo.message === 'OK') {
+        // SessionInfo was found, check if it is valid or expired
+        if (sessionInfo.isExpired) {
+          return signOut()
+        } else if (sessionInfo.expiresUtc) {
+          // Calculate when the session should expire with padding when we should check again
+          const timeout =
+            new Date(sessionInfo.expiresUtc).getTime() -
+            new Date().getTime() +
+            1000
+
+          if (timeout <= 0) {
+            // The session is expired but for some reason the `isExpired` was not correctly set
+            return signOut()
+          }
+
+          if (!sessionTimeout) {
+            const newSessionTimeout = setTimeout(() => {
+              setSessionTimeout(null)
+              setIframeChecksum((i) => i + 1)
+            }, timeout)
+            setSessionTimeout(newSessionTimeout)
+          }
+        }
+      } else if (sessionInfo && sessionInfo.message === 'No user session') {
+        return signOut()
+      }
+
+      // Silent failure as we have failed to get sessionInfo but the user still might have valid session.
+      // So we only trigger the signIn flow when we get definite response about expired session.
+    },
+    [authSettings.authority, signOut, sessionTimeout],
+  )
 
   useEffect(() => {
     window.addEventListener(messageEventName, messageHandler)
 
-    return () => window.removeEventListener(messageEventName, messageHandler)
-  }, [])
+    return () => {
+      window.removeEventListener(messageEventName, messageHandler)
+    }
+  }, [messageHandler, iframeChecksum])
 
   return checkIdpSessionIframe
 }
