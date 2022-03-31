@@ -804,6 +804,7 @@ export class CaseService {
             description: theCase.description,
             policeCaseNumber: theCase.policeCaseNumber,
             defenderName: theCase.defenderName,
+            defenderNationalId: theCase.defenderNationalId,
             defenderEmail: theCase.defenderEmail,
             defenderPhoneNumber: theCase.defenderPhoneNumber,
             leadInvestigator: theCase.leadInvestigator,
