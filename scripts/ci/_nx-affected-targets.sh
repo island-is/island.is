@@ -23,7 +23,7 @@ else
 EOM
 )
 fi
-if [[ "${AFFECTED_FILES}" != "" ]]
+if [[ "${EXTRA_ARGS}" != "" ]]
 then
   # shellcheck disable=SC2086
   npx \
