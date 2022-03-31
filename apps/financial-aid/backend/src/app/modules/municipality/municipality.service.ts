@@ -57,20 +57,24 @@ export class MunicipalityService {
   async findByMunicipalityIds(
     staffNationalId: string,
   ): Promise<MunicipalityModel[]> {
-    const currentMuncipalities = await this.staffService.findByNationalId(
+    const currentStaffMuncipalities = await this.staffService.findByNationalId(
       staffNationalId,
     )
-    if (currentMuncipalities.municipalityIds) {
+    if (currentStaffMuncipalities.municipalityIds) {
       return this.municipalityModel.findAll({
         where: {
-          municipalityId: { [Op.in]: currentMuncipalities.municipalityIds },
+          municipalityId: {
+            [Op.in]: currentStaffMuncipalities.municipalityIds,
+          },
         },
         include: [
           {
             model: AidModel,
             as: 'individualAid',
             where: {
-              municipalityId: { [Op.in]: currentMuncipalities.municipalityIds },
+              municipalityId: {
+                [Op.in]: currentStaffMuncipalities.municipalityIds,
+              },
               type: AidType.INDIVIDUAL,
             },
           },
@@ -78,7 +82,9 @@ export class MunicipalityService {
             model: AidModel,
             as: 'cohabitationAid',
             where: {
-              municipalityId: { [Op.in]: currentMuncipalities.municipalityIds },
+              municipalityId: {
+                [Op.in]: currentStaffMuncipalities.municipalityIds,
+              },
               type: AidType.COHABITATION,
             },
           },
