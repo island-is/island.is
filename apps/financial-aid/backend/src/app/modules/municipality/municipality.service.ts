@@ -60,30 +60,32 @@ export class MunicipalityService {
     const currentMuncipalities = await this.staffService.findByNationalId(
       staffNationalId,
     )
-
-    return this.municipalityModel.findAll({
-      where: {
-        municipalityId: { [Op.in]: currentMuncipalities.municipalityIds },
-      },
-      include: [
-        {
-          model: AidModel,
-          as: 'individualAid',
-          where: {
-            municipalityId: { [Op.in]: currentMuncipalities.municipalityIds },
-            type: AidType.INDIVIDUAL,
-          },
+    if (currentMuncipalities.municipalityIds) {
+      return this.municipalityModel.findAll({
+        where: {
+          municipalityId: { [Op.in]: currentMuncipalities.municipalityIds },
         },
-        {
-          model: AidModel,
-          as: 'cohabitationAid',
-          where: {
-            municipalityId: { [Op.in]: currentMuncipalities.municipalityIds },
-            type: AidType.COHABITATION,
+        include: [
+          {
+            model: AidModel,
+            as: 'individualAid',
+            where: {
+              municipalityId: { [Op.in]: currentMuncipalities.municipalityIds },
+              type: AidType.INDIVIDUAL,
+            },
           },
-        },
-      ],
-    })
+          {
+            model: AidModel,
+            as: 'cohabitationAid',
+            where: {
+              municipalityId: { [Op.in]: currentMuncipalities.municipalityIds },
+              type: AidType.COHABITATION,
+            },
+          },
+        ],
+      })
+    }
+    return []
   }
 
   private findAidTypeId = (obj: AidModel[], type: AidType) => {
