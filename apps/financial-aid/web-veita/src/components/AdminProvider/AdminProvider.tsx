@@ -13,6 +13,9 @@ interface AdminProvider {
   admin?: User
   setAdmin?: React.Dispatch<React.SetStateAction<User | undefined>>
   municipality?: Municipality
+  setScopedMunicipality?: React.Dispatch<
+    React.SetStateAction<Municipality | undefined>
+  >
 }
 
 interface PageProps {
@@ -35,7 +38,11 @@ const AdminProvider = ({ children }: PageProps) => {
   })
   const loggedInUser: User = data?.currentUser
 
-  const { municipality, setMunicipalityById } = useMunicipality()
+  const {
+    municipality,
+    setMunicipalityById,
+    setScopedMunicipality,
+  } = useMunicipality()
 
   useEffect(() => {
     if (loggedInUser && !admin && loggedInUser.staff) {
@@ -62,6 +69,7 @@ const AdminProvider = ({ children }: PageProps) => {
         admin,
         setAdmin,
         municipality,
+        setScopedMunicipality,
       }}
     >
       {children}

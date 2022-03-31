@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 
 import {
   Municipality,
@@ -61,7 +61,7 @@ export const useMunicipality = () => {
     )
   }, [])
 
-  const setMunicipality = (municipality: Municipality) => {
+  const setMunicipality = (municipality?: Municipality) => {
     setScopedMunicipality(municipality)
     sessionStorage.setItem(storageKey, JSON.stringify(municipality))
   }
@@ -92,6 +92,7 @@ export const useMunicipality = () => {
     municipality,
     setMunicipalityById,
     setMunicipality,
+    setScopedMunicipality,
     error,
     loading,
   }

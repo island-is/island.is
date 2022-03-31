@@ -78,8 +78,9 @@ const NewUserModal = ({
             nationalId: state.staffNationalId,
             roles: state.roles,
             municipalityName,
-            municipalityId:
-              municipality?.municipalityId || (router.query.id as string),
+            municipalityId: state.roles.includes(StaffRole.SUPERADMIN)
+              ? '0'
+              : (router.query.id as string) || municipality?.municipalityId,
           },
         },
       }).then(() => {
