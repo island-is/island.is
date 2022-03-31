@@ -32,7 +32,7 @@ export class AppService {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            authorization: `Bearer ${this.config.backendAuthToken}`,
+            authorization: `Bearer ${this.config.backendAccessToken}`,
           },
         },
       )

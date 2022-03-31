@@ -24,12 +24,7 @@ import {
   DokobitError,
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
-import {
-  CaseOrigin,
-  CaseState,
-  CaseType,
-  UserRole,
-} from '@island.is/judicial-system/types'
+import { CaseState, CaseType, UserRole } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 import {
   CurrentHttpUser,

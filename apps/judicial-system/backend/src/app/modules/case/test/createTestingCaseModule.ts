@@ -3,6 +3,7 @@ import { Sequelize } from 'sequelize-typescript'
 import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
+import { ConfigType } from '@island.is/nest/config'
 import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 import { IntlService } from '@island.is/cms-translations'
 import { SigningService } from '@island.is/dokobit-signing'
@@ -17,6 +18,7 @@ import { FileService } from '../../file'
 import { AwsS3Service } from '../../aws-s3'
 import { DefendantService } from '../../defendant'
 import { Case } from '../models/case.model'
+import { caseModuleConfig } from '../case.config'
 import { CaseService } from '../case.service'
 import { CaseController } from '../case.controller'
 
@@ -70,6 +72,7 @@ export const createTestingCaseModule = async () => {
           update: jest.fn(),
         },
       },
+      { provide: caseModuleConfig.KEY, useValue: caseModuleConfig() },
       CaseService,
     ],
   }).compile()
@@ -77,6 +80,8 @@ export const createTestingCaseModule = async () => {
   const courtService = caseModule.get<CourtService>(CourtService)
 
   const userService = caseModule.get<UserService>(UserService)
+
+  const fileService = caseModule.get<FileService>(FileService)
 
   const awsS3Service = caseModule.get<AwsS3Service>(AwsS3Service)
 
@@ -88,6 +93,10 @@ export const createTestingCaseModule = async () => {
 
   const caseModel = caseModule.get<typeof Case>(getModelToken(Case))
 
+  const caseConfig = caseModule.get<ConfigType<typeof caseModuleConfig>>(
+    caseModuleConfig.KEY,
+  )
+
   const caseService = caseModule.get<CaseService>(CaseService)
 
   const caseController = caseModule.get<CaseController>(CaseController)
@@ -95,11 +104,13 @@ export const createTestingCaseModule = async () => {
   return {
     courtService,
     userService,
+    fileService,
     awsS3Service,
     defendantService,
     logger,
     sequelize,
     caseModel,
+    caseConfig,
     caseService,
     caseController,
   }

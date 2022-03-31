@@ -50,7 +50,7 @@ describe('AppService - Run', () => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            authorization: `Bearer ${appModuleConfig().backendAuthToken}`,
+            authorization: `Bearer ${appModuleConfig().backendAccessToken}`,
           },
         },
       )

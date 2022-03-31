@@ -12,8 +12,8 @@ const devConfig = {
 }
 
 if (process.env.NODE_ENV === 'production') {
-  if (!process.env.SECRET_TOKEN) {
-    throw new Error('Missing SECRET_TOKEN environment.')
+  if (!process.env.BACKEND_ACCESS_TOKEN) {
+    throw new Error('Missing BACKEND_ACCESS_TOKEN environment.')
   }
   if (!process.env.AUDIT_TRAIL_GROUP_NAME) {
     throw new Error('Missing AUDIT_TRAIL_GROUP_NAME environment.')
@@ -29,7 +29,7 @@ if (process.env.NODE_ENV === 'production') {
 const prodConfig = {
   production: true,
   auth: {
-    secretToken: process.env.SECRET_TOKEN,
+    secretToken: process.env.BACKEND_ACCESS_TOKEN,
   },
   auditTrail: {
     useGenericLogger: process.env.AUDIT_TRAIL_USE_GENERIC_LOGGER === 'true',

@@ -1,10 +1,12 @@
 import { uuid } from 'uuidv4'
 import { Op } from 'sequelize'
+import { Transaction } from 'sequelize/types'
 
 import {
   BadRequestException,
   Inject,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
@@ -232,5 +234,34 @@ export class FileService {
     const success = numberOfAffectedRows > 0
 
     return { success }
+  }
+
+  async updateCaseFile(
+    caseId: string,
+    fileId: string,
+    update: { [key: string]: string },
+    transaction?: Transaction,
+  ): Promise<void> {
+    const promisedUpdate = transaction
+      ? this.fileModel.update(update, {
+          where: { id: fileId, caseId },
+          transaction,
+        })
+      : this.fileModel.update(update, {
+          where: { id: fileId, caseId },
+        })
+
+    const [numberOfAffectedRows] = await promisedUpdate
+
+    if (numberOfAffectedRows > 1) {
+      // Tolerate failure, but log error
+      this.logger.error(
+        `Unexpected number of rows (${numberOfAffectedRows}) affected when updating file ${fileId} of case ${caseId}`,
+      )
+    } else if (numberOfAffectedRows < 1) {
+      throw new InternalServerErrorException(
+        `Could not update file ${fileId} of case ${caseId}`,
+      )
+    }
   }
 }

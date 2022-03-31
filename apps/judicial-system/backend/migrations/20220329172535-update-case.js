@@ -2,19 +2,19 @@
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.sequelize.transaction((t) =>
+    return queryInterface.sequelize.transaction((transaction) =>
       queryInterface.addColumn(
         'case',
         'is_archived',
         { type: Sequelize.BOOLEAN, allowNull: false, defaultValue: false },
-        { transaction: t },
+        { transaction },
       ),
     )
   },
 
   down: (queryInterface) => {
-    return queryInterface.sequelize.transaction((t) =>
-      queryInterface.removeColumn('case', 'is_archived', { transaction: t }),
+    return queryInterface.sequelize.transaction((transaction) =>
+      queryInterface.removeColumn('case', 'is_archived', { transaction }),
     )
   },
 }

@@ -25,8 +25,8 @@ if (process.env.NODE_ENV === 'production') {
   if (!process.env.AUTH_JWT_SECRET) {
     throw new Error('Missing AUTH_JWT_SECRET environment.')
   }
-  if (!process.env.SECRET_TOKEN) {
-    throw new Error('Missing SECRET_TOKEN environment.')
+  if (!process.env.BACKEND_ACCESS_TOKEN) {
+    throw new Error('Missing BACKEND_ACCESS_TOKEN environment.')
   }
   if (!process.env.AUDIT_TRAIL_GROUP_NAME) {
     throw new Error('Missing AUDIT_TRAIL_GROUP_NAME environment.')
@@ -46,7 +46,7 @@ const prodConfig = {
     audience: process.env.AUTH_AUDIENCE,
     allowAuthBypass: process.env.ALLOW_AUTH_BYPASS === 'true',
     jwtSecret: process.env.AUTH_JWT_SECRET ?? '',
-    secretToken: process.env.SECRET_TOKEN ?? '',
+    secretToken: process.env.BACKEND_ACCESS_TOKEN ?? '',
   },
   auditTrail: {
     useGenericLogger: process.env.AUDIT_TRAIL_USE_GENERIC_LOGGER === 'true',
