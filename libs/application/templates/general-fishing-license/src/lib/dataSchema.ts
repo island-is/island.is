@@ -54,11 +54,14 @@ export const GeneralFishingLicenseSchema = z.object({
     }),
     registrationNumber: z.string(),
   }),
-  fishingLicense: z
-    .enum([FishingLicenseEnum.HOOKCATCHLIMIT, FishingLicenseEnum.CATCHLIMIT])
-    .refine((x) => x, {
-      params: error.requiredRadioField,
-    }),
+  fishingLicense: z.object({
+    license: z
+      .enum([FishingLicenseEnum.HOOKCATCHLIMIT, FishingLicenseEnum.CATCHLIMIT])
+      .refine((x) => x, {
+        params: error.requiredRadioField,
+      }),
+    chargeType: z.string().min(1),
+  }),
 })
 
 export type GeneralFishingLicense = z.TypeOf<typeof GeneralFishingLicenseSchema>

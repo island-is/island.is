@@ -14,6 +14,11 @@ import { application } from './messages'
 import { ApiActions } from '../shared'
 
 const pruneAtMidnight = () => {
+  const date = new Date()
+  const utcDate = new Date(date.toUTCString()) // In case user is not on GMT
+  const timeToPrune = utcDate.getTime() - 8492400
+
+  console.log(date, utcDate, date.getTime(), timeToPrune)
   return {
     shouldBeListed: true,
     shouldBePruned: true,

@@ -40,7 +40,17 @@ export class FishingLicenseService {
           seaworthiness: ship.haffaeri
             ? { validTo: new Date(ship.haffaeri.gildistimi as Date) }
             : { validTo: new Date() },
-          fishingLicenses: [],
+          fishingLicenses:
+            ship.veidileyfi?.map((v) => ({
+              code:
+                v.kodi === '1'
+                  ? FishingLicenseCodeType.catchMark
+                  : v.kodi === '32'
+                  ? FishingLicenseCodeType.hookCatchLimit
+                  : FishingLicenseCodeType.unknown,
+              name: v.nafn ?? '',
+              chargeType: v.vorunumerfjs ?? '',
+            })) ?? [],
         })) ?? []
       )
     } catch (error) {
@@ -50,32 +60,37 @@ export class FishingLicenseService {
   }
 
   async getFishingLicenses(shipRegistationNumber: number, auth: Auth) {
-    const licenses = await this.shipApi
-      .withMiddleware(new AuthMiddleware(auth))
-      .v1SkipSkipaskrarnumerVeidileyfiGet({
-        skipaskrarnumer: shipRegistationNumber,
-      })
+    try {
+      const licenses = await this.shipApi
+        .withMiddleware(new AuthMiddleware(auth))
+        .v1SkipSkipaskrarnumerVeidileyfiGet({
+          skipaskrarnumer: shipRegistationNumber,
+        })
 
-    return (
-      licenses.veidileyfiIBodi?.map((l) => ({
-        fishingLicenseInfo: {
-          code:
-            l.veidileyfi?.kodi === '1'
-              ? FishingLicenseCodeType.catchMark
-              : l.veidileyfi?.kodi === '32'
-              ? FishingLicenseCodeType.hookCatchLimit
-              : '',
-          name: l.veidileyfi?.nafn ?? '',
-          chargeType: l.veidileyfi?.vorunumerfjs ?? '',
-        },
-        answer: !!l.svar,
-        reasons:
-          l.astaedur?.map((x) => ({
-            description: x.lysing ?? '',
-            directions: x.leidbeining ?? '',
-          })) ?? [],
-      })) ?? []
-    )
+      return (
+        licenses.veidileyfiIBodi?.map((l) => ({
+          fishingLicenseInfo: {
+            code:
+              l.veidileyfi?.kodi === '1'
+                ? FishingLicenseCodeType.catchMark
+                : l.veidileyfi?.kodi === '32'
+                ? FishingLicenseCodeType.hookCatchLimit
+                : FishingLicenseCodeType.unknown,
+            name: l.veidileyfi?.nafn ?? '',
+            chargeType: l.veidileyfi?.vorunumerfjs ?? '',
+          },
+          answer: !!l.svar,
+          reasons:
+            l.astaedur?.map((x) => ({
+              description: x.lysing ?? '',
+              directions: x.leidbeining ?? '',
+            })) ?? [],
+        })) ?? []
+      )
+    } catch (error) {
+      this.logger.error('Error when trying to get fishing licenses', error)
+      throw new Error('Error when trying to get fishing licenses')
+    }
   }
 
   //Todo fishingLicense type

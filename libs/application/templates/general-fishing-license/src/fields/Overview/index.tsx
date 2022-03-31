@@ -104,7 +104,7 @@ export const Overview: FC<FieldBaseProps> = ({ application, goToScreen }) => {
           <GridColumn span={['9/12', '9/12', '9/12', '5/12']}>
             <ValueLine
               label={fishingLicense.general.title}
-              value={fishingLicense.labels[answers.fishingLicense]}
+              value={fishingLicense.labels[answers.fishingLicense.license]}
             />
           </GridColumn>
         </GridRow>

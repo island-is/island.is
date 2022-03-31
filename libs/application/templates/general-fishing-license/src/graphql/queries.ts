@@ -17,9 +17,10 @@ export const queryShips = `
         explanation
       }
       features
-      fishingLicenses  {
+      fishingLicenses {
         code
         name
+        chargeType
       }
     }
   }
@@ -31,6 +32,7 @@ export const queryFishingLicense = gql`
       fishingLicenseInfo {
         code
         name
+        chargeType
       }
       answer
       reasons {

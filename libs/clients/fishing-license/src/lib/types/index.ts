@@ -41,4 +41,5 @@ export type FishingLicenseInfo = {
 export enum FishingLicenseCodeType {
   hookCatchLimit = '1',
   catchMark = '32',
+  unknown = '0',
 }

@@ -5,13 +5,13 @@ import {
 } from '@island.is/application/core'
 import { AlertMessage, Box, Text, Stack } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import React, { FC, useState } from 'react'
+import React, { FC, useState, useEffect } from 'react'
 import { ShipInformation, Tag } from '../components'
 import { RadioController } from '@island.is/shared/form-fields'
 import format from 'date-fns/format'
 import { shipSelection, error as errorMessage } from '../../lib/messages'
 import is from 'date-fns/locale/is'
-import { Ship } from '@island.is/api/schema'
+import { FishingLicenseCodeType, Ship } from '@island.is/api/schema'
 import parseISO from 'date-fns/parseISO'
 import { useFormContext } from 'react-hook-form'
 
@@ -29,6 +29,7 @@ export const ShipSelection: FC<FieldBaseProps> = ({
   const { formatMessage } = useLocale()
   const { register } = useFormContext()
   const [showTitle, setShowTitle] = useState<boolean>(false)
+  console.log(application)
 
   const registrationNumberValue = getValueViaPath(
     application.answers,
@@ -48,6 +49,7 @@ export const ShipSelection: FC<FieldBaseProps> = ({
     const options = [] as Option[]
     for (const [index, ship] of ships.entries()) {
       if (ship.fishingLicenses.length !== 0) {
+        if (index + 1 === ships.length) break
         continue
       }
       const isExpired = new Date(ship.seaworthiness.validTo) < new Date()
@@ -90,6 +92,7 @@ export const ShipSelection: FC<FieldBaseProps> = ({
         disabled: isExpired,
       })
     }
+    console.log(options)
     return options
   }
 
@@ -111,17 +114,18 @@ export const ShipSelection: FC<FieldBaseProps> = ({
         }}
         options={shipOptions(ships)}
       />
+
       {showTitle && (
         <Text variant="h4" paddingY={3}>
           {formatMessage(shipSelection.labels.withFishingLicenseTitle)}
         </Text>
       )}
 
-      {ships.map((ship: Ship, index: number) => {
+      {ships?.map((ship: Ship, index: number) => {
         if (ship.fishingLicenses.length === 0) {
           return null
         }
-        setShowTitle(true)
+        if (!showTitle) setShowTitle(true)
         return (
           <Box
             border="standard"
@@ -135,8 +139,8 @@ export const ShipSelection: FC<FieldBaseProps> = ({
           >
             <ShipInformation ship={ship} />
             <Stack space={1} align="right">
-              {ship.fishingLicenses.map((license) => {
-                console.log(license)
+              {ship.fishingLicenses?.map((license) => {
+                if (license.code === FishingLicenseCodeType.unknown) return null
                 return (
                   <Tag variant="blue">
                     {formatMessage(shipSelection.tags[license.code])}
