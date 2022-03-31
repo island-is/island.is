@@ -19,6 +19,7 @@ const LogoMunicipality = ({ className }: LogoProps) => {
   const isSuperAdmin = admin?.staff?.roles.includes(StaffRole.SUPERADMIN)
 
   const logoSize = 48
+  console.log(municipality)
 
   return (
     <LoadingContainer
@@ -44,7 +45,7 @@ const LogoMunicipality = ({ className }: LogoProps) => {
           </>
         ) : (
           <>
-            {municipality.map((muni) => {
+            {municipality?.map((muni) => {
               return (
                 <a
                   href={muni?.homepage}

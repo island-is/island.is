@@ -6,6 +6,6 @@ export const selectContainer = style({
   display: 'block',
 })
 
-export const select = style({
-  backgroundColor: theme.color.blueberry600,
+export const tags = style({
+  backgroundColor: theme.color.blue100,
 })

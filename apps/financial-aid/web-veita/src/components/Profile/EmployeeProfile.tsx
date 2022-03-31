@@ -54,7 +54,7 @@ const EmployeeProfile = ({ user }: EmployeeProfileProps) => {
     roles: user.roles,
     municipalityIds: user.municipalityIds,
     serviceCenter: municipality
-      // .filter((el) => !user.municipalityIds.includes(el.municipalityId))
+      .filter((el) => !user.municipalityIds.includes(el.municipalityId))
       .map((el) => {
         return { label: el.name, value: el.municipalityId }
       }),
@@ -205,30 +205,16 @@ const EmployeeProfile = ({ user }: EmployeeProfileProps) => {
 
           <Box>
             <MultiSelection
-              options={[
-                {
-                  label: 'Valmöguleiki 1',
-                  value: '0',
-                },
-                {
-                  label: 'Valmöguleiki 2',
-                  value: '1',
-                },
-                {
-                  label: 'Valmöguleiki 3',
-                  value: '2',
-                },
-                {
-                  label: 'Valmöguleiki 4',
-                  value: '3',
-                },
-                {
-                  label: 'Valmöguleiki 5',
-                  value: '4',
-                },
-              ]}
+              options={state.serviceCenter}
+              active={municipality
+                .filter((el) =>
+                  user.municipalityIds.includes(el.municipalityId),
+                )
+                .map((el) => {
+                  return { label: el.name, value: el.municipalityId }
+                })}
             />
-            <Select
+            {/* <Select
               label="Sveitarfélag"
               name="selectMunicipality"
               noOptionsMessage="Enginn valmöguleiki"
@@ -250,7 +236,7 @@ const EmployeeProfile = ({ user }: EmployeeProfileProps) => {
                   })
                 }
               }}
-            />
+            /> */}
             {/* <ul>
               {state.municipalityIds.map((el) => {
                 return <li>{el}</li>
