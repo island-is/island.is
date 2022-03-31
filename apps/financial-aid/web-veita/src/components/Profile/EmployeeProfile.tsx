@@ -7,6 +7,8 @@ import {
   Checkbox,
   Button,
   ToastContainer,
+  Option,
+  Select,
 } from '@island.is/island-ui/core'
 
 import * as styles from './Profile.css'
@@ -22,7 +24,7 @@ import {
 import cn from 'classnames'
 import { useStaff } from '@island.is/financial-aid-web/veita/src/utils/useStaff'
 import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
-import { filteredServiceCentered } from '../../utils/formHelper'
+import MultiSelection from '../MultiSelection/MultiSelection'
 
 interface EmployeeProfileProps {
   user: Staff
@@ -35,13 +37,11 @@ interface EmployeeProfileInfo {
   hasError: boolean
   roles: StaffRole[]
   municipalityIds: string[]
+  serviceCenter: Option[]
 }
 
 const EmployeeProfile = ({ user }: EmployeeProfileProps) => {
-  const { admin } = useContext(AdminContext)
-
-  const selectServiceCenter = filteredServiceCentered(user.municipalityIds)
-  console.log(selectServiceCenter)
+  const { admin, municipality } = useContext(AdminContext)
 
   const isLoggedInUser = (staff: Staff) =>
     admin?.nationalId === staff.nationalId
@@ -53,6 +53,11 @@ const EmployeeProfile = ({ user }: EmployeeProfileProps) => {
     hasError: false,
     roles: user.roles,
     municipalityIds: user.municipalityIds,
+    serviceCenter: municipality
+      // .filter((el) => !user.municipalityIds.includes(el.municipalityId))
+      .map((el) => {
+        return { label: el.name, value: el.municipalityId }
+      }),
   })
 
   const { changeUserActivity, staffActivationLoading, updateInfo } = useStaff()
@@ -197,6 +202,61 @@ const EmployeeProfile = ({ user }: EmployeeProfileProps) => {
               </Box>
             )
           })}
+
+          <Box>
+            <MultiSelection
+              options={[
+                {
+                  label: 'Valmöguleiki 1',
+                  value: '0',
+                },
+                {
+                  label: 'Valmöguleiki 2',
+                  value: '1',
+                },
+                {
+                  label: 'Valmöguleiki 3',
+                  value: '2',
+                },
+                {
+                  label: 'Valmöguleiki 4',
+                  value: '3',
+                },
+                {
+                  label: 'Valmöguleiki 5',
+                  value: '4',
+                },
+              ]}
+            />
+            <Select
+              label="Sveitarfélag"
+              name="selectMunicipality"
+              noOptionsMessage="Enginn valmöguleiki"
+              options={state.serviceCenter}
+              placeholder="Veldu tegund"
+              // hasError={!addedServiceCenter.label && !addedServiceCenter.value}
+              // errorMessage="Þú þarft að velja sveitarfélag"
+              // value={addedServiceCenter}
+              onChange={(option) => {
+                console.log(option)
+                // setAddedServiceCenter(option as Option)
+                if (option?.value as Option) {
+                  setState({
+                    ...state,
+                    municipalityIds: [...state.municipalityIds, option?.value],
+                    serviceCenter: state.serviceCenter.filter(
+                      (el) => el.value !== option.value,
+                    ),
+                  })
+                }
+              }}
+            />
+            {/* <ul>
+              {state.municipalityIds.map((el) => {
+                return <li>{el}</li>
+              })}
+            </ul> */}
+          </Box>
 
           <Box
             className={`contentUp delay-75`}
