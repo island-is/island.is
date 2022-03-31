@@ -113,7 +113,11 @@ export class FinanceResolver {
       auth: user,
       namespace: '@island.is/api/finance',
       action: 'getDocumentList',
-      resources: [input.listPath, input.dayFrom, input.dayTo],
+      meta: {
+        path: input.listPath,
+        dateFrom: input.dayFrom,
+        dateTo: input.dayTo,
+      },
     })
 
     return {
