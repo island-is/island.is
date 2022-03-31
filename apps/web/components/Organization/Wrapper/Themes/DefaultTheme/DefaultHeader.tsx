@@ -4,6 +4,8 @@ import { Box, Hidden, Link, Text } from '@island.is/island-ui/core'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import * as styles from './DefaultHeader.css'
+import { useWindowSize } from 'react-use'
+import { theme } from '@island.is/island-ui/theme'
 
 const getBackgroundStyle = (organizationPage: OrganizationPage) => {
   if (
@@ -23,90 +25,172 @@ interface HeaderProps {
 export const DefaultHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
   const { linkResolver } = useLinkResolver()
 
+  const imageProvided = !!organizationPage.defaultHeaderImage?.url
+  const logoProvided = !!organizationPage.organization?.logo?.url
+
   return (
-    <Box
-      className={`${styles.container} ${
-        organizationPage.defaultHeaderImage?.url ? styles.gridContainer : ''
-      }`}
-    >
-      <Box
-        className={styles.headerBg}
-        style={{ background: getBackgroundStyle(organizationPage) }}
-      >
-        <Box className={styles.headerWrapper}>
-          <SidebarLayout
-            sidebarContent={
-              !!organizationPage.organization.logo && (
-                <Link
-                  href={
-                    linkResolver('organizationpage', [organizationPage.slug])
-                      .href
-                  }
-                >
-                  <Box
-                    borderRadius="circle"
-                    className={styles.iconCircle}
-                    background="white"
-                  >
-                    <img
-                      src={organizationPage.organization.logo.url}
-                      className={styles.headerLogo}
-                      alt=""
-                    />
-                  </Box>
-                </Link>
-              )
-            }
-          >
-            {!!organizationPage.organization.logo && (
-              <Hidden above="sm">
-                <Link
-                  href={
-                    linkResolver('organizationpage', [organizationPage.slug])
-                      .href
-                  }
-                >
-                  {!!organizationPage.organization.logo && (
-                    <Box
-                      borderRadius="circle"
-                      className={styles.iconCircle}
-                      background="white"
-                    >
-                      <img
-                        src={organizationPage.organization.logo.url}
-                        className={styles.headerLogo}
-                        alt=""
-                      />
-                    </Box>
-                  )}
-                </Link>
-              </Hidden>
-            )}
-            <Box marginTop={2} textAlign={['center', 'center', 'right']}>
-              <Text
-                variant="h1"
-                color={
-                  organizationPage.themeProperties.darkText
-                    ? 'dark400'
-                    : 'white'
+    <>
+      {logoProvided && (
+        <Hidden below="md">
+          <div className={styles.contentContainer}>
+            <div className={styles.innerContentContainer}>
+              <Link
+                href={
+                  linkResolver('organizationpage', [organizationPage.slug]).href
                 }
               >
-                {organizationPage.title}
-              </Text>
-            </Box>
-          </SidebarLayout>
-        </Box>
-      </Box>
-      {organizationPage.defaultHeaderImage?.url && (
-        <img
-          className={styles.headerImage}
-          src={organizationPage.defaultHeaderImage.url}
-          alt="header"
-        ></img>
+                <Box
+                  className={styles.logoContainer}
+                  borderRadius="circle"
+                  background="white"
+                >
+                  <img
+                    className={styles.logo}
+                    src={organizationPage.organization.logo.url}
+                    alt=""
+                  />
+                </Box>
+              </Link>
+            </div>
+          </div>
+        </Hidden>
       )}
-    </Box>
+      <div className={`${imageProvided ? styles.gridContainer : ''}`}>
+        <div
+          className={styles.textContainer}
+          style={{
+            background: getBackgroundStyle(organizationPage),
+          }}
+        >
+          {logoProvided && (
+            <Hidden above="sm">
+              <Link
+                href={
+                  linkResolver('organizationpage', [organizationPage.slug]).href
+                }
+              >
+                <Box
+                  className={styles.logoContainerMobile}
+                  borderRadius="circle"
+                  background="white"
+                >
+                  <img
+                    className={styles.logo}
+                    src={organizationPage.organization.logo.url}
+                    alt=""
+                  />
+                </Box>
+              </Link>
+            </Hidden>
+          )}
+          <Text
+            variant="h1"
+            color={
+              organizationPage.themeProperties.darkText ? 'dark400' : 'white'
+            }
+          >
+            {organizationPage.title}
+          </Text>
+        </div>
+        {imageProvided && (
+          <img
+            className={styles.headerImage}
+            src={organizationPage.defaultHeaderImage.url}
+            alt="header"
+          ></img>
+        )}
+      </div>
+    </>
   )
 }
+
+// export const DefaultHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
+//   const { linkResolver } = useLinkResolver()
+
+//   return (
+//     <Box
+//       className={`${styles.container} ${
+//         organizationPage.defaultHeaderImage?.url ? styles.gridContainer : ''
+//       }`}
+//     >
+//       <Box
+//         className={styles.headerBg}
+//         style={{ background: getBackgroundStyle(organizationPage) }}
+//       >
+//         <Box className={styles.headerWrapper}>
+//           <SidebarLayout
+//             sidebarContent={
+//               !!organizationPage.organization.logo && (
+//                 <Link
+//                   href={
+//                     linkResolver('organizationpage', [organizationPage.slug])
+//                       .href
+//                   }
+//                 >
+//                   <Box
+//                     borderRadius="circle"
+//                     className={styles.iconCircle}
+//                     background="white"
+//                   >
+//                     <img
+//                       src={organizationPage.organization.logo.url}
+//                       className={styles.headerLogo}
+//                       alt=""
+//                     />
+//                   </Box>
+//                 </Link>
+//               )
+//             }
+//           >
+//             {!!organizationPage.organization.logo && (
+//               <Hidden above="sm">
+//                 <Link
+//                   href={
+//                     linkResolver('organizationpage', [organizationPage.slug])
+//                       .href
+//                   }
+//                 >
+//                   {!!organizationPage.organization.logo && (
+//                     <Box
+//                       borderRadius="circle"
+//                       className={styles.iconCircle}
+//                       background="white"
+//                     >
+//                       <img
+//                         src={organizationPage.organization.logo.url}
+//                         className={styles.headerLogo}
+//                         alt=""
+//                       />
+//                     </Box>
+//                   )}
+//                 </Link>
+//               </Hidden>
+//             )}
+//             <Box marginTop={2} textAlign={['center', 'center', 'right']}>
+//               <Text
+//                 variant="h1"
+//                 color={
+//                   organizationPage.themeProperties.darkText
+//                     ? 'dark400'
+//                     : 'white'
+//                 }
+//               >
+//                 {organizationPage.title}
+//               </Text>
+//             </Box>
+//           </SidebarLayout>
+//         </Box>
+//       </Box>
+//       {organizationPage.defaultHeaderImage?.url && (
+//         <img
+//           className={styles.headerImage}
+//           src={organizationPage.defaultHeaderImage.url}
+//           alt="header"
+//         ></img>
+//       )}
+//     </Box>
+//   )
+// }
 
 // import { OrganizationPage } from '@island.is/web/graphql/schema'
 // import React from 'react'
