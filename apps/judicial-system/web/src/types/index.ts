@@ -199,4 +199,5 @@ export interface Lawyer {
   practice: string
   email: string
   phoneNr: string
+  nationalId: string
 }

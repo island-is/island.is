@@ -131,7 +131,10 @@ export const isHearingArrangementsStepValidRC = (workingCase: Case) => {
       ((workingCase as unknown) as { prosecutorId: string }).prosecutorId) &&
     (workingCase.court ||
       ((workingCase as unknown) as { courtId: string }).courtId) &&
-    validate(workingCase.requestedCourtDate || '', 'date-format').isValid
+    validate(workingCase.requestedCourtDate || '', 'date-format').isValid &&
+    (workingCase.type === CaseType.CUSTODY && !workingCase.parentCase
+      ? validate(workingCase.arrestDate || '', 'date-format').isValid
+      : true)
   )
 }
 

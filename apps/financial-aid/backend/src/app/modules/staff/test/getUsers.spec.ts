@@ -46,7 +46,7 @@ describe('StaffController - Get users', () => {
     it('should run expected query', () => {
       expect(mockGetUsers).toHaveBeenCalledWith({
         where: {
-          municipalityId,
+          municipalityIds: { [Op.contains]: [municipalityId] },
           roles: { [Op.contains]: [StaffRole.ADMIN] },
         },
       })

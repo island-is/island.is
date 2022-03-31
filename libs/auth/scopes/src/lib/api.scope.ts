@@ -6,4 +6,5 @@ export enum ApiScope {
   internal = '@island.is/internal',
   meDetails = '@island.is/me:details',
   licenses = '@island.is/licenses',
+  licensesVerify = '@island.is/licenses:verify',
 }
