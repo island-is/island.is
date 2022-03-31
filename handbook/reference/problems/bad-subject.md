@@ -1,4 +1,4 @@
-# 400 Actor Validation Failed
+# 403 Bad Subject
 
 The server will not process the request due to validation issues around actor delegations.
 This error should be thrown when a user (actor) tries to access a resource that they do not have access to but someone they have delegation rights for (subject) has access to.

@@ -1,7 +1,4 @@
-import {
-  ProblemType,
-  AlternativeSubject,
-} from '@island.is/shared/problem'
+import { ProblemType, AlternativeSubject } from '@island.is/shared/problem'
 import { ProblemError } from './ProblemError'
 
 export class BadSubject extends ProblemError {

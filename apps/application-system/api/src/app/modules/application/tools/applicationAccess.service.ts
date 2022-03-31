@@ -1,18 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 
 import { BadSubject } from '@island.is/nest/problem'
-import {
-} from '@island.is/clients/auth-public-api'
 import { User } from '@island.is/auth-nest-tools'
-interface Actor {
-  name: string
-  nationalId: string
-}
-interface Delegation {
-  name: string
-  nationalId: string
-  type: string
-}
 
 import {
   Application,
@@ -20,21 +9,30 @@ import {
 } from '@island.is/application/api/core'
 @Injectable()
 export class ApplicationAccessService {
-  constructor(
-    private readonly applicationService: ApplicationService,
-  ) {}
+  constructor(private readonly applicationService: ApplicationService) {}
 
-  async findOneByIdAndNationalId(id: string,  user: User) {
+  async findOneByIdAndNationalId(id: string, user: User) {
     const existingApplication = await this.applicationService.findOneById(
       id,
       user.nationalId,
     )
 
     if (!existingApplication) {
-
-      const actorApplication = await this.applicationService.findByActor(id, user.nationalId, user.actor?.nationalId)
-      if(actorApplication) {
-        throw new BadSubject([{nationalId: actorApplication.applicant}])
+      const actorApplication = await this.applicationService.findByActor(
+        id,
+        user.nationalId,
+      )
+      if (actorApplication) {
+        throw new BadSubject([{ nationalId: actorApplication.applicant }])
+      }
+      if (user.actor?.nationalId) {
+        const userActorApplication = await this.applicationService.findByActor(
+          id,
+          user.actor.nationalId,
+        )
+        if (userActorApplication) {
+          throw new BadSubject([{ nationalId: userActorApplication.applicant }])
+        }
       }
 
       throw new NotFoundException(
@@ -44,5 +42,4 @@ export class ApplicationAccessService {
 
     return existingApplication as Application
   }
-
 }

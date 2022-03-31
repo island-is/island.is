@@ -1,10 +1,7 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { useQuery } from '@apollo/client'
 import { useAuth } from '@island.is/auth/react'
-import {
-  ACTOR_DELEGATIONS,
-  APPLICANT_DELEGATIONS,
-} from '@island.is/application/graphql'
+import { ACTOR_DELEGATIONS } from '@island.is/application/graphql'
 import {
   Text,
   Box,
@@ -16,11 +13,6 @@ import { coreDelegationsMessages } from '@island.is/application/core'
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
 import { ApplicationTypes } from '@island.is/application/core'
 import { LoadingShell } from './LoadingShell'
-import {
-  BadSubjectProblem,
-  findProblemInApolloError,
-  ProblemType,
-} from '@island.is/shared/problem'
 import { ErrorShell } from './ErrorShell'
 import { format as formatKennitala } from 'kennitala'
 import { useLocale } from '@island.is/localization'
@@ -33,15 +25,15 @@ type Delegation = {
   }
 }
 interface DelegationsScreenProps {
+  type: ApplicationTypes
   alternativeSubjects: { nationalId: string }[]
   setDelegationsChecked: Dispatch<SetStateAction<boolean>>
-  applicationId: string
 }
 
 export const DelegationsScreen = ({
+  type,
   alternativeSubjects,
   setDelegationsChecked,
-  applicationId,
 }: DelegationsScreenProps) => {
   const [allowedDelegations, setAllowedDelegations] = useState<string[]>()
   const [applicant, setApplicant] = useState<Delegation>()
@@ -49,19 +41,35 @@ export const DelegationsScreen = ({
 
   const { switchUser } = useAuth()
 
+  useEffect(() => {
+    async function checkDelegations() {
+      if (type) {
+        const template = await getApplicationTemplateByTypeId(type)
+        if (template.allowedDelegations) {
+          setAllowedDelegations(template.allowedDelegations)
+        } else {
+          setDelegationsChecked(true)
+        }
+      }
+    }
+    checkDelegations()
+  }, [type])
+
   // Check for user delegations if application supports delegations
   const { data: delegations, loading } = useQuery(ACTOR_DELEGATIONS, {
-    skip: !allowedDelegations,
+    skip: !alternativeSubjects,
   })
 
   // Check if user has the delegations of the delegation types the application supports
   useEffect(() => {
-    if (delegations && alternativeSubjects) {
+    if (delegations && alternativeSubjects && allowedDelegations) {
+      const subjects: string[] = alternativeSubjects.map(
+        (subject) => subject.nationalId,
+      )
       const found: Delegation = delegations.authActorDelegations.find(
         (delegation: Delegation) =>
-          alternativeSubjects.includes({
-            nationalId: delegation.from.nationalId,
-          }),
+          subjects.includes(delegation.from.nationalId) &&
+          allowedDelegations.includes(delegation.type),
       )
       if (!found) {
         setDelegationsChecked(true)
@@ -69,12 +77,14 @@ export const DelegationsScreen = ({
         setApplicant(found)
       }
     }
-
-  }, [alternativeSubjects, delegations])
+  }, [alternativeSubjects, delegations, allowedDelegations])
 
   const handleClick = (nationalId?: string) => {
-    if (nationalId) switchUser(nationalId)
-    else setDelegationsChecked(true)
+    if (nationalId) {
+      switchUser(nationalId)
+    } else {
+      setDelegationsChecked(true)
+    }
   }
   if (!loading && applicant) {
     return (
