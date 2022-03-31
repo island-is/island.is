@@ -38,6 +38,7 @@ export const useStaff = () => {
     roles?: StaffRole[],
     nickname?: string,
     email?: string,
+    municipalityIds?: string[],
     usePseudoName?: boolean,
     updateAdmin?: boolean,
   ) => {
@@ -51,6 +52,7 @@ export const useStaff = () => {
             nickname,
             email,
             usePseudoName,
+            municipalityIds,
           },
         },
       }).then((res) => {

@@ -22,6 +22,7 @@ import {
 import cn from 'classnames'
 import { useStaff } from '@island.is/financial-aid-web/veita/src/utils/useStaff'
 import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
+import { filteredServiceCentered } from '../../utils/formHelper'
 
 interface EmployeeProfileProps {
   user: Staff
@@ -33,10 +34,14 @@ interface EmployeeProfileInfo {
   nickname?: string
   hasError: boolean
   roles: StaffRole[]
+  municipalityIds: string[]
 }
 
 const EmployeeProfile = ({ user }: EmployeeProfileProps) => {
   const { admin } = useContext(AdminContext)
+
+  const selectServiceCenter = filteredServiceCentered(user.municipalityIds)
+  console.log(selectServiceCenter)
 
   const isLoggedInUser = (staff: Staff) =>
     admin?.nationalId === staff.nationalId
@@ -47,6 +52,7 @@ const EmployeeProfile = ({ user }: EmployeeProfileProps) => {
     email: user.email ?? '',
     hasError: false,
     roles: user.roles,
+    municipalityIds: user.municipalityIds,
   })
 
   const { changeUserActivity, staffActivationLoading, updateInfo } = useStaff()
@@ -129,6 +135,7 @@ const EmployeeProfile = ({ user }: EmployeeProfileProps) => {
       state.roles,
       state.nickname,
       state.email,
+      state.municipalityIds,
     )
   }
 

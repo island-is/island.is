@@ -346,6 +346,7 @@ export const StaffQuery = gql`
       active
       nickname
       email
+      municipalityIds
     }
   }
 `

@@ -4,6 +4,7 @@ import differenceInDays from 'date-fns/differenceInDays'
 import differenceInYears from 'date-fns/differenceInYears'
 import differenceInWeeks from 'date-fns/differenceInWeeks'
 
+import { serviceCenters } from '@island.is/financial-aid/shared/data'
 import { ApplicationState } from '@island.is/financial-aid/shared/lib'
 
 export const isPluralInIcelandic = (value: number): boolean =>
@@ -61,4 +62,16 @@ export const getTagByState = (state: ApplicationState) => {
     case ApplicationState.DATANEEDED:
       return 'outDatedOrDenied'
   }
+}
+
+export const filteredServiceCentered = (
+  activeMunicipalitiesCodes: string[],
+) => {
+  const toNumberActiveMuni = activeMunicipalitiesCodes.map((i) => Number(i))
+
+  return serviceCenters
+    .filter((el) => el.number !== 0 && !toNumberActiveMuni?.includes(el.number))
+    .map((el) => {
+      return { label: el.name, value: el.number.toString() }
+    })
 }
