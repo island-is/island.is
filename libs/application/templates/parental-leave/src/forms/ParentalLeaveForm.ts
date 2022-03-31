@@ -212,8 +212,8 @@ export const ParentalLeaveForm: Form = buildForm({
                     parentalLeaveFormMessages.shared.unionDescription,
                 }),
                 buildAsyncSelectField({
-                  condition: (answers) =>
-                    answers.payments?.union?.active === YES,
+                  condition: ({ payments }) =>
+                    (payments as any)?.union?.active === YES,
                   title: parentalLeaveFormMessages.shared.union,
                   id: 'payments.union.value',
                   loadingError: parentalLeaveFormMessages.errors.loading,
@@ -243,9 +243,8 @@ export const ParentalLeaveForm: Form = buildForm({
                       .privatePensionFundDescription,
                 }),
                 buildAsyncSelectField({
-                  condition: (answers) => {
-                    return answers.payments?.privatePensionFund?.active === YES
-                  },
+                  condition: ({ payments }) =>
+                    (payments as any)?.privatePensionFund?.active === YES,
                   id: 'payments.privatePensionFund.name',
                   title: parentalLeaveFormMessages.shared.privatePensionFund,
                   loadingError: parentalLeaveFormMessages.errors.loading,
@@ -266,8 +265,8 @@ export const ParentalLeaveForm: Form = buildForm({
                   },
                 }),
                 buildSelectField({
-                  condition: (answers) =>
-                    answers.payments?.privatePensionFund?.active === YES,
+                  condition: ({ payments }) =>
+                    (payments as any)?.privatePensionFund?.active === YES,
                   id: 'payments.privatePensionFund.percentage',
                   title:
                     parentalLeaveFormMessages.shared.privatePensionFundRatio,
