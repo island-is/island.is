@@ -11,12 +11,16 @@ export class FeatureFlagService {
     private readonly client: FeatureFlagClient,
   ) {}
 
-  async getValue(
+  async getValue<T extends boolean | string>(
     feature: Features,
-    defaultValue: boolean | string,
+    defaultValue: T,
     user?: User,
-  ) {
+  ): Promise<T> {
     const featureFlagUser = user && { id: user.nationalId }
-    return this.client.getValue(feature, defaultValue, featureFlagUser)
+    return this.client.getValue(
+      feature,
+      defaultValue,
+      featureFlagUser,
+    ) as Promise<T>
   }
 }

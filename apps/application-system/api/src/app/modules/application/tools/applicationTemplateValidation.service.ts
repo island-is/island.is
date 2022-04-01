@@ -56,15 +56,7 @@ export class ApplicationValidationService {
   }
 
   async isTemplateFeatureFlaggedReady(featureFlag: Features, user: User) {
-    const feature = await this.featureFlagService.getValue(
-      featureFlag,
-      false,
-      user,
-    )
-    if (!feature) {
-      return false
-    }
-    return feature
+    return await this.featureFlagService.getValue(featureFlag, false, user)
   }
 
   // If configcat flag is present use that flag to determine if the template is ready
@@ -78,14 +70,10 @@ export class ApplicationValidationService {
     >,
   ): Promise<boolean> {
     if (template.featureFlag) {
-      const results = await this.isTemplateFeatureFlaggedReady(
+      return await this.isTemplateFeatureFlaggedReady(
         template.featureFlag,
         user,
       )
-      if (!results) {
-        return false
-      }
-      return true
     }
     // TODO: Remove this when readyForProduction is removed
     if (isRunningOnProductionEnvironment() && !template.readyForProduction) {
