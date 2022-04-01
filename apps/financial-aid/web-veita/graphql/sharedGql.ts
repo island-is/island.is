@@ -41,6 +41,7 @@ export const ApplicationQuery = gql`
       state
       formComment
       spouseFormComment
+      municipalityCode
       studentCustom
       rejection
       staff {
@@ -267,6 +268,7 @@ export const UpdateApplicationMutation = gql`
       spouseName
       spouseEmail
       spousePhoneNumber
+      municipalityCode
       city
       streetName
       postalCode
