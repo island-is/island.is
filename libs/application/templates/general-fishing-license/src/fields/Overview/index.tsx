@@ -12,10 +12,12 @@ import {
   overview,
 } from '../../lib/messages'
 import { formatIsk, formatPhonenumber } from '../../utils'
-import { Ship } from '@island.is/api/schema'
+import { FishingLicenseShip as Ship } from '@island.is/api/schema'
 
 export const Overview: FC<FieldBaseProps> = ({ application, goToScreen }) => {
   const answers = application.answers as GeneralFishingLicense
+
+  console.log(application)
 
   const ships = getValueViaPath(
     application.externalData,

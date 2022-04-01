@@ -2,7 +2,7 @@ import { gql } from '@apollo/client'
 
 export const queryShips = `
   query ShipQuery {
-    ships {
+    fishingLicenseShips {
       name
       registrationNumber
       grossTons

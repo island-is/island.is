@@ -7,8 +7,8 @@ import { Box, LoadingDots, Text } from '@island.is/island-ui/core'
 import React, { FC, useState } from 'react'
 import { FishingLicenseAlertMessage, ShipInformation, Tag } from '../components'
 import {
-  FishingLicense as FishingLicenseSchema,
-  Ship,
+  FishingLicenseLicense as FishingLicenseSchema,
+  FishingLicenseShip as Ship,
 } from '@island.is/api/schema'
 import { useQuery } from '@apollo/client'
 import { queryFishingLicense } from '../../graphql/queries'
@@ -45,6 +45,8 @@ export const FishingLicense: FC<FieldBaseProps> = ({
       registrationNumber: parseInt(registrationNumber),
     },
   })
+
+  console.log(registrationNumber, data)
 
   const ship = ships[parseInt(shipIndex)]
 

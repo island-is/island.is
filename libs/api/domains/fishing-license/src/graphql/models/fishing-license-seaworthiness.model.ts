@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
-export class Seaworthiness {
+export class FishingLicenseSeaworthiness {
   @Field(() => Date)
   validTo!: Date
 }

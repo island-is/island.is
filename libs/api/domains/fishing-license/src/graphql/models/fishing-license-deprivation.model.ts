@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
-export class Deprivation {
+export class FishingLicenseDeprivation {
   @Field(() => Date, { nullable: true })
   validFrom?: Date
   @Field(() => Date, { nullable: true })

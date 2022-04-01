@@ -3,18 +3,18 @@ import {
   FailedDataProviderResult,
   SuccessfulDataProviderResult,
 } from '@island.is/application/core'
-import { Ship } from '@island.is/api/schema'
+import { FishingLicenseShip } from '@island.is/api/schema'
 import * as Sentry from '@sentry/react'
 import { queryShips } from '../graphql/queries'
 
 interface GeneralFishingLicenseProps {
-  ships: Ship[]
+  ships: FishingLicenseShip[]
 }
 
 export class GeneralFishingLicenseProvider extends BasicDataProvider {
   type = 'GeneralFishingLicenseProvider'
 
-  async queryShips(): Promise<Ship[]> {
+  async queryShips(): Promise<FishingLicenseShip[]> {
     return this.useGraphqlGateway(queryShips).then(async (res: Response) => {
       const response = await res.json()
 
@@ -22,7 +22,7 @@ export class GeneralFishingLicenseProvider extends BasicDataProvider {
         return this.handleError(response.errors)
       }
 
-      return Promise.resolve(response.data.ships)
+      return Promise.resolve(response.data.fishingLicenseShips)
     })
   }
 

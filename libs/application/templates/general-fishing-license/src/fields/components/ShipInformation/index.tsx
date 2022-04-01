@@ -5,7 +5,7 @@ import { shipSelection } from '../../../lib/messages'
 import { ValueLine } from './ValueLine'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
-import { Ship } from '@island.is/api/schema'
+import { FishingLicenseShip as Ship } from '@island.is/api/schema'
 import parseISO from 'date-fns/parseISO'
 
 interface ShipInformationProps {

@@ -1,10 +1,10 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { Deprivation } from './deprivation.model'
+import { FishingLicenseDeprivation } from './fishing-license-deprivation.model'
 import { FishingLicenseInfo } from './fishing-license-info.model'
-import { Seaworthiness } from './seaworthiness.model'
+import { FishingLicenseSeaworthiness } from './fishing-license-seaworthiness.model'
 
 @ObjectType()
-export class Ship {
+export class FishingLicenseShip {
   @Field(() => String)
   name!: string
   @Field()
@@ -17,10 +17,10 @@ export class Ship {
   length!: number
   @Field(() => String)
   homePort!: string
-  @Field(() => Seaworthiness)
-  seaworthiness!: Seaworthiness
-  @Field(() => [Deprivation])
-  deprivations!: Deprivation[]
+  @Field(() => FishingLicenseSeaworthiness)
+  seaworthiness!: FishingLicenseSeaworthiness
+  @Field(() => [FishingLicenseDeprivation])
+  deprivations!: FishingLicenseDeprivation[]
   @Field(() => [FishingLicenseInfo])
   fishingLicenses!: FishingLicenseInfo[]
 }

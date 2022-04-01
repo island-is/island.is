@@ -11,7 +11,7 @@ import { RadioController } from '@island.is/shared/form-fields'
 import format from 'date-fns/format'
 import { shipSelection } from '../../lib/messages'
 import is from 'date-fns/locale/is'
-import { Ship } from '@island.is/api/schema'
+import { FishingLicenseShip as Ship } from '@island.is/api/schema'
 import parseISO from 'date-fns/parseISO'
 import { useFormContext } from 'react-hook-form'
 
