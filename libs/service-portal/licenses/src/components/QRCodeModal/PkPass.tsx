@@ -24,7 +24,6 @@ type PkPassProps = {
 }
 export const PkPass = ({ expireDate }: PkPassProps) => {
   const [pkpassQRCode, setPkpassQRCode] = useState<string | null>(null)
-  const [pkpassUrl, setPkpassUrl] = useState<string | null>(null)
   const [generatePkPass, { loading: urlLoading }] = useMutation(CREATE_PK_PASS)
   const [generatePkPassQrCode, { loading: QRCodeLoading }] = useMutation(
     CREATE_PK_PASS_QR_CODE,
@@ -41,47 +40,44 @@ export const PkPass = ({ expireDate }: PkPassProps) => {
     setModalOpen(!modalOpen)
   }
 
-  useEffect(() => {
-    const licenseType = 'DriversLicense'
+  const licenseType = 'DriversLicense'
 
-    const getCode = async () => {
-      const response = await generatePkPassQrCode({
-        variables: { locale, input: { licenseType } },
-      })
+  const getCode = async () => {
+    const response = await generatePkPassQrCode({
+      variables: { locale, input: { licenseType } },
+    })
 
-      if (!response.errors) {
-        setPkpassQRCode(
-          response?.data?.generatePkPassQrCode?.pkpassQRCode ?? null,
-        )
-      }
+    if (!response.errors) {
+      setPkpassQRCode(
+        response?.data?.generatePkPassQrCode?.pkpassQRCode ?? null,
+      )
     }
-
-    const getLink = async () => {
-      const response = await generatePkPass({
-        variables: { locale, input: { licenseType } },
-      })
-
-      if (!response.errors) {
-        setPkpassQRCode(response?.data?.generatePkPass?.pkpassQRCode ?? null)
-        setPkpassUrl(response?.data?.generatePkPass?.pkpassUrl ?? null)
-      }
-    }
-
-    isMobile ? getLink() : getCode()
-  }, [isMobile])
-
-  const clickLink = () => {
-    const link = document.getElementById('pkpass-url')
-    link?.setAttribute('href', pkpassUrl ?? '')
-    link?.click()
   }
 
-  useEffect(() => {
-    if (!QRCodeLoading && displayLoader && pkpassUrl) {
-      clickLink()
-      setDisplayLoader(false)
+  const getLink = async () => {
+    const response = await generatePkPass({
+      variables: { locale, input: { licenseType } },
+    })
+
+    if (!response.errors) {
+      const link = document.getElementById('pkpass-url')
+      link?.setAttribute(
+        'href',
+        response?.data?.generatePkPass?.pkpassUrl ?? '',
+      )
+      link?.click()
     }
-  }, [displayLoader, QRCodeLoading, pkpassUrl])
+  }
+
+  const handleClick = () => {
+    setDisplayLoader(true)
+    getLink()
+    setDisplayLoader(false)
+  }
+  const handleQRCodeClick = () => {
+    toggleModal()
+    getCode()
+  }
 
   useEffect(() => {
     if (width < theme.breakpoints.md) {
@@ -99,7 +95,7 @@ export const PkPass = ({ expireDate }: PkPassProps) => {
             size="small"
             icon="QRCode"
             iconType="outline"
-            onClick={toggleModal}
+            onClick={handleQRCodeClick}
           >
             {formatMessage(m.sendToPhone)}
           </Button>
@@ -124,13 +120,14 @@ export const PkPass = ({ expireDate }: PkPassProps) => {
           )}
         </>
       )}
+
       {isMobile && (
         <Button
           variant="text"
           size="small"
           icon={displayLoader ? undefined : 'QRCode'}
           iconType="outline"
-          onClick={() => (urlLoading ? setDisplayLoader(true) : clickLink())}
+          onClick={handleClick}
         >
           {formatMessage(m.sendToPhone)}{' '}
           {displayLoader && (
@@ -142,12 +139,7 @@ export const PkPass = ({ expireDate }: PkPassProps) => {
       )}
 
       <Box display="none">
-        <a
-          id="pkpass-url"
-          href={pkpassUrl ?? ''}
-          target="_blank"
-          rel="noreferrer"
-        >
+        <a id="pkpass-url" href={undefined} target="_blank" rel="noreferrer">
           {formatMessage(m.sendToPhone)}
         </a>
       </Box>
