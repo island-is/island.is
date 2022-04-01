@@ -88,7 +88,7 @@ export const DefaultHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
                 organizationPage.themeProperties.darkText ? 'dark400' : 'white'
               }
             >
-              Heilbrigðisstofnun Norðurlands
+              {organizationPage.title}
             </Text>
           </div>
         </div>
