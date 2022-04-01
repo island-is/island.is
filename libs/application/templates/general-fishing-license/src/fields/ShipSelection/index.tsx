@@ -5,13 +5,13 @@ import {
 } from '@island.is/application/core'
 import { AlertMessage, Box, Text, Stack } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import React, { FC, useState, useEffect } from 'react'
+import React, { FC, useState } from 'react'
 import { ShipInformation, Tag } from '../components'
 import { RadioController } from '@island.is/shared/form-fields'
 import format from 'date-fns/format'
-import { shipSelection, error as errorMessage } from '../../lib/messages'
+import { shipSelection } from '../../lib/messages'
 import is from 'date-fns/locale/is'
-import { FishingLicenseCodeType, Ship } from '@island.is/api/schema'
+import { Ship } from '@island.is/api/schema'
 import parseISO from 'date-fns/parseISO'
 import { useFormContext } from 'react-hook-form'
 
@@ -49,7 +49,6 @@ export const ShipSelection: FC<FieldBaseProps> = ({
     const options = [] as Option[]
     for (const [index, ship] of ships.entries()) {
       if (ship.fishingLicenses.length !== 0) {
-        if (index + 1 === ships.length) break
         continue
       }
       const isExpired = new Date(ship.seaworthiness.validTo) < new Date()
@@ -140,7 +139,7 @@ export const ShipSelection: FC<FieldBaseProps> = ({
             <ShipInformation ship={ship} />
             <Stack space={1} align="right">
               {ship.fishingLicenses?.map((license) => {
-                if (license.code === FishingLicenseCodeType.unknown) return null
+                if (license.code === 'unknown') return null
                 return (
                   <Tag variant="blue">
                     {formatMessage(shipSelection.tags[license.code])}

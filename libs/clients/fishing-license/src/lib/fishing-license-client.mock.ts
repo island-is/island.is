@@ -25,6 +25,7 @@ export class FishingLicenseApiClientMock implements FishingLicenseClient {
           {
             code: FishingLicenseCodeType.catchMark,
             name: 'aflamark',
+            chargeType: '',
           },
         ],
       },
@@ -41,10 +42,12 @@ export class FishingLicenseApiClientMock implements FishingLicenseClient {
           {
             code: FishingLicenseCodeType.catchMark,
             name: 'aflamark',
+            chargeType: '',
           },
           {
             code: FishingLicenseCodeType.hookCatchLimit,
             name: 'krókaflamark',
+            chargeType: '',
           },
         ],
       },
@@ -69,6 +72,7 @@ export class FishingLicenseApiClientMock implements FishingLicenseClient {
         fishingLicenseInfo: {
           code: FishingLicenseCodeType.catchMark,
           name: 'aflamark',
+          chargeType: '',
         },
         reasons: [
           {
@@ -82,6 +86,7 @@ export class FishingLicenseApiClientMock implements FishingLicenseClient {
         fishingLicenseInfo: {
           code: FishingLicenseCodeType.hookCatchLimit,
           name: 'krókaflamark',
+          chargeType: '',
         },
         reasons: [
           {

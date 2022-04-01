@@ -8,7 +8,6 @@ import React, { FC, useState } from 'react'
 import { FishingLicenseAlertMessage, ShipInformation, Tag } from '../components'
 import {
   FishingLicense as FishingLicenseSchema,
-  FishingLicenseCodeType,
   Ship,
 } from '@island.is/api/schema'
 import { useQuery } from '@apollo/client'
@@ -49,7 +48,7 @@ export const FishingLicense: FC<FieldBaseProps> = ({
 
   const ship = ships[parseInt(shipIndex)]
 
-  const handleOnSelect = (value: FishingLicenseCodeType) => {
+  const handleOnSelect = (value: string) => {
     const selectedLicense = data?.fishingLicenses?.find(
       ({ fishingLicenseInfo }: FishingLicenseSchema) =>
         fishingLicenseInfo.code === value,
@@ -90,22 +89,20 @@ export const FishingLicense: FC<FieldBaseProps> = ({
               largeButtons
               backgroundColor="blue"
               error={errors && getErrorViaPath(errors, field.id)}
-              onSelect={(value) =>
-                handleOnSelect(value as FishingLicenseCodeType)
-              }
+              onSelect={(value) => handleOnSelect(value)}
               options={data?.fishingLicenses
                 ?.filter(({ answer }: FishingLicenseSchema) => answer)
                 .map(({ fishingLicenseInfo }: FishingLicenseSchema) => {
                   return {
                     value: fishingLicenseInfo.code,
                     label:
-                      fishingLicenseInfo.code === FishingLicenseCodeType.unknown
+                      fishingLicenseInfo.code === 'unknown'
                         ? fishingLicenseInfo.name
                         : formatMessage(
                             fishingLicense.labels[fishingLicenseInfo.code],
                           ),
                     tooltip:
-                      fishingLicenseInfo.code === FishingLicenseCodeType.unknown
+                      fishingLicenseInfo.code === 'unknown'
                         ? ''
                         : formatMessage(
                             fishingLicense.tooltips[fishingLicenseInfo.code],
@@ -125,8 +122,7 @@ export const FishingLicense: FC<FieldBaseProps> = ({
                   <Box marginBottom={2} key={fishingLicenseInfo.code}>
                     <FishingLicenseAlertMessage
                       title={
-                        fishingLicenseInfo.code ===
-                        FishingLicenseCodeType.unknown
+                        fishingLicenseInfo.code === 'unknown'
                           ? ''
                           : formatMessage(
                               fishingLicense.warningMessageTitle[
@@ -135,8 +131,7 @@ export const FishingLicense: FC<FieldBaseProps> = ({
                             )
                       }
                       description={
-                        fishingLicenseInfo.code ===
-                        FishingLicenseCodeType.unknown
+                        fishingLicenseInfo.code === 'unknown'
                           ? ''
                           : formatMessage(
                               fishingLicense.warningMessageDescription[

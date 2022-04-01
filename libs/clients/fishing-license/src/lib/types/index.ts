@@ -36,6 +36,7 @@ export type FishingLicenseReason = {
 export type FishingLicenseInfo = {
   code: FishingLicenseCodeType
   name: string
+  chargeType: string
 }
 
 export enum FishingLicenseCodeType {
