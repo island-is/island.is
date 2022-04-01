@@ -9,7 +9,7 @@ import {
   UpdateMunicipalityDto,
   CreateMunicipalityDto,
 } from './dto'
-import { Op, Sequelize } from 'sequelize'
+import { Sequelize } from 'sequelize'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
@@ -52,46 +52,6 @@ export class MunicipalityService {
         },
       ],
     })
-  }
-
-  async findByMunicipalityIds(
-    staffNationalId: string,
-  ): Promise<MunicipalityModel[]> {
-    const currentStaffMuncipalities = await this.staffService.findByNationalId(
-      staffNationalId,
-    )
-    if (currentStaffMuncipalities.municipalityIds) {
-      return this.municipalityModel.findAll({
-        where: {
-          municipalityId: {
-            [Op.in]: currentStaffMuncipalities.municipalityIds,
-          },
-        },
-        include: [
-          {
-            model: AidModel,
-            as: 'individualAid',
-            where: {
-              municipalityId: {
-                [Op.in]: currentStaffMuncipalities.municipalityIds,
-              },
-              type: AidType.INDIVIDUAL,
-            },
-          },
-          {
-            model: AidModel,
-            as: 'cohabitationAid',
-            where: {
-              municipalityId: {
-                [Op.in]: currentStaffMuncipalities.municipalityIds,
-              },
-              type: AidType.COHABITATION,
-            },
-          },
-        ],
-      })
-    }
-    return []
   }
 
   private findAidTypeId = (obj: AidModel[], type: AidType) => {
