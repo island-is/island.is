@@ -130,26 +130,26 @@ export class UserProfileService {
         nationalId: user.nationalId,
       })
 
-      const islyklarData = await this.islyklarService.getIslykillSettings(
-        user.nationalId,
-      )
-
       const feature = await this.featureFlagService.getValue(
         Features.personalInformation,
         false,
         user,
       )
 
-      return {
-        ...profile,
-
-        // Temporary solution while we still run the old user profile service.
-        ...(feature && {
+      if (feature) {
+        const islyklarData = await this.islyklarService.getIslykillSettings(
+          user.nationalId,
+        )
+        return {
+          ...profile,
+          // Temporary solution while we still run the old user profile service.
           mobilePhoneNumber: islyklarData?.mobile,
           email: islyklarData?.email,
           canNudge: islyklarData?.canNudge,
           bankInfo: islyklarData?.bankInfo,
-        }),
+        }
+      } else {
+        return profile
       }
     } catch (error) {
       if (error.status === 404) {
