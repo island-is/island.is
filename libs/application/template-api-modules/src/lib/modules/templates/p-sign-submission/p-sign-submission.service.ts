@@ -59,7 +59,9 @@ export class PSignSubmissionService {
                 QUALITY_PHOTO,
               )
               .then((response) => response.json())
-          ).data?.drivingLicenseQualityPhoto?.dataUri as string)
+          ).data?.drivingLicenseQualityPhoto?.dataUri?.split(
+            'base64,',
+          )[1] as string)
         : await this.getAttachments({
             application,
             auth,
@@ -147,6 +149,6 @@ export class PSignSubmissionService {
       })
       .promise()
     const fileContent = file.Body as Buffer
-    return `data:image/jpeg;base64,${fileContent?.toString('base64')}` || ''
+    return fileContent?.toString('base64') || ''
   }
 }

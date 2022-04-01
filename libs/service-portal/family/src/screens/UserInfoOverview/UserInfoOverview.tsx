@@ -15,26 +15,14 @@ import { ServicePortalModuleComponent, m } from '@island.is/service-portal/core'
 import { FamilyMemberCard } from '../../components/FamilyMemberCard/FamilyMemberCard'
 import { FamilyMemberCardLoader } from '../../components/FamilyMemberCard/FamilyMemberCardLoader'
 import { NATIONAL_REGISTRY_CHILDREN } from '../../lib/queries/getNationalChildren'
-
-const NationalRegistryCurrentUserQuery = gql`
-  query NationalRegistryCurrentUserQuery {
-    nationalRegistryUser {
-      nationalId
-      spouse {
-        name
-        nationalId
-        cohabitant
-      }
-    }
-  }
-`
+import { NATIONAL_REGISTRY_USER } from '../../lib/queries/getNationalRegistryUser'
 
 const UserInfoOverview: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
 
   const { data, loading, error, called } = useQuery<Query>(
-    NationalRegistryCurrentUserQuery,
+    NATIONAL_REGISTRY_USER,
   )
   const { nationalRegistryUser } = data || {}
 

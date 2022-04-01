@@ -46,6 +46,7 @@ import {
 import { endpoints as chatPanelEndpoints } from '../../ChatPanel/config'
 
 import * as styles from './OrganizationWrapper.css'
+import MannaudstorgFooter from './Themes/MannaudstorgTheme/MannaudstorgFooter'
 
 interface NavigationData {
   title: string
@@ -74,7 +75,7 @@ interface HeaderProps {
 }
 
 export const lightThemes = ['digital_iceland', 'utlendingastofnun']
-export const footerEnabled = ['syslumenn']
+export const footerEnabled = ['syslumenn', 'mannaudstorg']
 
 export const getThemeConfig = (
   theme: string,
@@ -184,6 +185,15 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
           title={organization.title}
           logo={organization.logo?.url}
           footerItems={organization.footerItems}
+        />
+      )
+    case 'mannaudstorg':
+      return (
+        <MannaudstorgFooter
+          title={organization.title}
+          logoSrc={organization.logo?.url}
+          phone={organization.phone}
+          contactLink={organization.link}
         />
       )
   }

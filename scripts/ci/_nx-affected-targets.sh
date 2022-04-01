@@ -13,16 +13,19 @@ AFFECTED_ALL=${AFFECTED_ALL:-} # Could be used for forcing all projects to be af
 BRANCH=${BRANCH:-$GITHUB_HEAD_REF}
 if [[ -n "$BRANCH" && -n "$AFFECTED_ALL" && "$AFFECTED_ALL" == "7913-$BRANCH" ]]
 then
-  AFFECTED_FLAGS=(--all)
+  EXTRA_ARGS="--all"
 else
-  affected_files_list=()
-  affected_files=$(git diff --name-only "$HEAD" "$BASE")
-  while read -r line; do
-     affected_files_list+=("$line")
-  done <<< "$affected_files"
-  printf -v comma_separated '%s,' "${affected_files_list[@]}"
-  AFFECTED_FLAGS=(--files=["${comma_separated%?}"])
+  AFFECTED_FILES=$(git diff --name-only "$HEAD" "$BASE")
+  export AFFECTED_FILES
+  EXTRA_ARGS=$(node << EOM
+        const affectedFiles = (process.env.AFFECTED_FILES || "").split("\n").map(e => e.trim()).filter(e => e.length > 0);
+        console.log(affectedFiles.map(file => '--files='+ file).join(' '));
+EOM
+)
 fi
-
-npx \
-  nx print-affected --target="$1" --select=tasks.target.project "${AFFECTED_FLAGS[@]}"
+if [[ "${EXTRA_ARGS}" != "" ]]
+then
+  # shellcheck disable=SC2086
+  npx \
+    nx print-affected --target="$1" --select=tasks.target.project $EXTRA_ARGS
+fi

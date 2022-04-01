@@ -11,7 +11,6 @@ export const serviceSetup = (): ServiceBuilder<'air-discount-scheme-backend'> =>
     .image('air-discount-scheme-backend')
     .namespace('air-discount-scheme')
     .secrets({
-      SENTRY_DSN: '/k8s/air-discount-scheme-backend/SENTRY_DSN',
       ICELANDAIR_API_KEY: '/k8s/air-discount-scheme/backend/ICELANDAIR_API_KEY',
       ERNIR_API_KEY: '/k8s/air-discount-scheme/backend/ERNIR_API_KEY',
       NORLANDAIR_API_KEY: '/k8s/air-discount-scheme/backend/NORLANDAIR_API_KEY',

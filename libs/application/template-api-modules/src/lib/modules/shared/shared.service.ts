@@ -20,13 +20,11 @@ import {
   PaymentChargeData,
   PaymentStatusData,
 } from './shared.queries'
-import { S3 } from 'aws-sdk'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 @Injectable()
 export class SharedTemplateApiService {
-  private readonly s3: S3
   constructor(
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
@@ -36,9 +34,7 @@ export class SharedTemplateApiService {
     private readonly configService: ConfigService<BaseTemplateAPIModuleConfig>,
     @Inject(BaseTemplateApiApplicationService)
     private readonly applicationService: BaseTemplateApiApplicationService,
-  ) {
-    this.s3 = new S3()
-  }
+  ) {}
 
   async sendEmail(
     templateGenerator: EmailTemplateGenerator,

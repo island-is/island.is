@@ -10,7 +10,6 @@ import type { Case } from '@island.is/judicial-system/types'
 interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
-  isCaseUpToDate: boolean
   isDraftingConclusion: boolean | undefined
   setIsDraftingConclusion: React.Dispatch<
     React.SetStateAction<boolean | undefined>
@@ -21,7 +20,6 @@ const DraftConclusionModal: React.FC<Props> = (props) => {
   const {
     workingCase,
     setWorkingCase,
-    isCaseUpToDate,
     isDraftingConclusion,
     setIsDraftingConclusion,
   } = props
@@ -35,7 +33,6 @@ const DraftConclusionModal: React.FC<Props> = (props) => {
             <ConclusionDraft
               workingCase={workingCase}
               setWorkingCase={setWorkingCase}
-              isCaseUpToDate={isCaseUpToDate}
             />
           }
           primaryButtonText="Loka glugga"

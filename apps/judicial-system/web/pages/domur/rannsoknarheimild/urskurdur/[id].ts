@@ -1,3 +1,3 @@
-import RulingStepOne from '@island.is/judicial-system-web/src/routes/Court/InvestigationRequest/Ruling/StepOne/RulingStepOne'
+import Ruling from '@island.is/judicial-system-web/src/routes/Court/InvestigationCase/Ruling/Ruling'
 
-export default RulingStepOne
+export default Ruling

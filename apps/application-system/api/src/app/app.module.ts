@@ -11,6 +11,8 @@ import { ProblemModule } from '@island.is/nest/problem'
 
 import { SequelizeConfigService } from './sequelizeConfig.service'
 import { ApplicationModule } from './modules/application/application.module'
+import { DrivingLicenseBookClientConfig } from '@island.is/clients/driving-license-book'
+import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
 
 @Module({
   imports: [
@@ -21,7 +23,13 @@ import { ApplicationModule } from './modules/application/application.module'
     ProblemModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [IdsClientConfig, SyslumennClientConfig, XRoadConfig],
+      load: [
+        IdsClientConfig,
+        SyslumennClientConfig,
+        XRoadConfig,
+        DrivingLicenseBookClientConfig,
+        NationalRegistryClientConfig,
+      ],
     }),
   ],
 })

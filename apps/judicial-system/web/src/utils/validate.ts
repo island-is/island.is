@@ -131,7 +131,10 @@ export const isHearingArrangementsStepValidRC = (workingCase: Case) => {
       ((workingCase as unknown) as { prosecutorId: string }).prosecutorId) &&
     (workingCase.court ||
       ((workingCase as unknown) as { courtId: string }).courtId) &&
-    validate(workingCase.requestedCourtDate || '', 'date-format').isValid
+    validate(workingCase.requestedCourtDate || '', 'date-format').isValid &&
+    (workingCase.type === CaseType.CUSTODY && !workingCase.parentCase
+      ? validate(workingCase.arrestDate || '', 'date-format').isValid
+      : true)
   )
 }
 
@@ -208,11 +211,35 @@ export const isCourtHearingArrangementsStepValidIC = (workingCase: Case) => {
   )
 }
 
+export const isRulingValidRC = (workingCase: Case) => {
+  return (
+    validate(workingCase.prosecutorDemands || '', 'empty').isValid &&
+    validate(workingCase.courtCaseFacts || '', 'empty').isValid &&
+    validate(workingCase.courtLegalArguments || '', 'empty').isValid &&
+    validate(workingCase.ruling || '', 'empty').isValid
+  )
+}
+
+export const isRulingValidIC = (workingCase: Case) => {
+  return (
+    validate(workingCase.prosecutorDemands || '', 'empty').isValid &&
+    validate(workingCase.courtCaseFacts || '', 'empty').isValid &&
+    validate(workingCase.courtLegalArguments || '', 'empty').isValid &&
+    validate(workingCase.ruling || '', 'empty').isValid
+  )
+}
+
 export const isCourtRecordStepValidRC = (workingCase: Case) => {
   return (
     validate(workingCase.courtStartDate || '', 'date-format').isValid &&
     validate(workingCase.courtLocation || '', 'empty').isValid &&
-    validate(workingCase.sessionBookings || '', 'empty').isValid
+    validate(workingCase.sessionBookings || '', 'empty').isValid &&
+    workingCase.accusedAppealDecision &&
+    workingCase.prosecutorAppealDecision &&
+    validate(workingCase.courtEndTime || '', 'empty').isValid &&
+    validate(workingCase.courtEndTime || '', 'date-format').isValid &&
+    validate(workingCase.decision || '', 'empty').isValid &&
+    validate(workingCase.conclusion || '', 'empty').isValid
   )
 }
 
@@ -220,45 +247,13 @@ export const isCourtRecordStepValidIC = (workingCase: Case) => {
   return (
     validate(workingCase.courtStartDate || '', 'date-format').isValid &&
     validate(workingCase.courtLocation || '', 'empty').isValid &&
-    validate(workingCase.sessionBookings || '', 'empty').isValid
-  )
-}
-
-export const isRulingStepOneValidRC = (workingCase: Case) => {
-  return (
-    validate(workingCase.prosecutorDemands || '', 'empty').isValid &&
-    validate(workingCase.courtCaseFacts || '', 'empty').isValid &&
-    validate(workingCase.courtLegalArguments || '', 'empty').isValid &&
-    validate(workingCase.decision || '', 'empty').isValid &&
-    validate(workingCase.ruling || '', 'empty').isValid &&
-    validate(workingCase.conclusion || '', 'empty').isValid
-  )
-}
-
-export const isRulingStepOneValidIC = (workingCase: Case) => {
-  return (
-    validate(workingCase.prosecutorDemands || '', 'empty').isValid &&
-    validate(workingCase.courtCaseFacts || '', 'empty').isValid &&
-    validate(workingCase.courtLegalArguments || '', 'empty').isValid &&
-    validate(workingCase.decision || '', 'empty').isValid &&
-    validate(workingCase.ruling || '', 'empty').isValid &&
-    validate(workingCase.conclusion || '', 'empty').isValid
-  )
-}
-
-export const isRulingStepTwoValidRC = (workingCase: Case) => {
-  return (
+    validate(workingCase.sessionBookings || '', 'empty').isValid &&
     workingCase.accusedAppealDecision &&
     workingCase.prosecutorAppealDecision &&
-    validate(workingCase.courtEndTime || '', 'date-format').isValid
-  )
-}
-
-export const isRulingStepTwoValidIC = (workingCase: Case) => {
-  return (
-    workingCase.accusedAppealDecision &&
-    workingCase.prosecutorAppealDecision &&
-    validate(workingCase.courtEndTime || '', 'date-format').isValid
+    validate(workingCase.courtEndTime || '', 'empty').isValid &&
+    validate(workingCase.courtEndTime || '', 'date-format').isValid &&
+    validate(workingCase.decision || '', 'empty').isValid &&
+    validate(workingCase.conclusion || '', 'empty').isValid
   )
 }
 

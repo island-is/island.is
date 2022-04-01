@@ -36,7 +36,7 @@ export class MunicipalityController {
 
   @UseGuards(ScopesGuard)
   @Scopes(MunicipalitiesFinancialAidScope.read)
-  @Get(':id')
+  @Get('id/:id')
   @ApiOkResponse({
     type: MunicipalityModel,
     description: 'Gets municipality by id',
@@ -49,6 +49,19 @@ export class MunicipalityController {
     }
 
     return municipality
+  }
+
+  @UseGuards(ScopesGuard)
+  @Scopes(MunicipalitiesFinancialAidScope.read)
+  @Get('ids')
+  @ApiOkResponse({
+    type: [MunicipalityModel],
+    description: 'Gets municipalities by ids',
+  })
+  async getByMunicipalityIds(
+    @CurrentUser() staff: Staff,
+  ): Promise<MunicipalityModel[]> {
+    return this.municipalityService.findByMunicipalityIds(staff.nationalId)
   }
 
   @UseGuards(StaffGuard)
@@ -92,13 +105,9 @@ export class MunicipalityController {
     description: 'Updates municipality',
   })
   async updateMunicipality(
-    @CurrentStaff() staff: Staff,
     @Body() input: UpdateMunicipalityDto,
   ): Promise<MunicipalityModel> {
-    return await this.municipalityService.updateMunicipality(
-      staff.municipalityId,
-      input,
-    )
+    return await this.municipalityService.updateMunicipality(input)
   }
 
   @Put('activity/:id')

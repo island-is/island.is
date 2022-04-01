@@ -13,10 +13,12 @@ import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import {
+  CurrentHttpUser,
   JwtAuthGuard,
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
+import type { User } from '@island.is/judicial-system/types'
 
 import { judgeRule, prosecutorRule, registrarRule } from '../../guards'
 import {
@@ -156,15 +158,18 @@ export class FileController {
   uploadCaseFileToCourt(
     @Param('caseId') caseId: string,
     @Param('fileId') fileId: string,
+    @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @CurrentCaseFile() caseFile: CaseFile,
   ): Promise<UploadFileToCourtResponse> {
     this.logger.debug(`Uploading file ${fileId} of case ${caseId} to court`)
 
     return this.fileService.uploadCaseFileToCourt(
+      user,
+      caseFile,
+      caseId,
       theCase.courtId,
       theCase.courtCaseNumber,
-      caseFile,
     )
   }
 }

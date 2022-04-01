@@ -50,9 +50,8 @@ describe('StaffController - createStaff', () => {
       municipalityName: 'Island',
     }
     const staff: Staff = {
-      municipalityId: '0',
+      municipalityIds: ['0'],
       municipalityName: 'Saturn',
-      municipalityHomepage: '...',
       id: '',
       nationalId: '',
       name: '',
@@ -72,12 +71,11 @@ describe('StaffController - createStaff', () => {
         {
           nationalId: input.nationalId,
           name: input.name,
-          municipalityId: input.municipalityId,
+          municipalityIds: [input.municipalityId],
           email: input.email,
           roles: input.roles,
           active: true,
           municipalityName: input.municipalityName,
-          municipalityHomepage: staff.municipalityHomepage,
         },
         { transaction: undefined },
       )
@@ -95,9 +93,8 @@ describe('StaffController - createStaff', () => {
       municipalityName: undefined,
     }
     const staff: Staff = {
-      municipalityId: '10',
+      municipalityIds: ['10'],
       municipalityName: 'Here',
-      municipalityHomepage: 'mypage',
       id: '',
       nationalId: '',
       name: '',
@@ -117,12 +114,11 @@ describe('StaffController - createStaff', () => {
         {
           nationalId: input.nationalId,
           name: input.name,
-          municipalityId: staff.municipalityId,
+          municipalityIds: staff.municipalityIds,
           email: input.email,
           roles: input.roles,
           active: true,
           municipalityName: staff.municipalityName,
-          municipalityHomepage: staff.municipalityHomepage,
         },
         { transaction: undefined },
       )
@@ -140,9 +136,8 @@ describe('StaffController - createStaff', () => {
       municipalityName: 'A place',
     }
     const staff: Staff = {
-      municipalityId: '0',
+      municipalityIds: ['0'],
       municipalityName: 'Saturn',
-      municipalityHomepage: '...',
       id: '',
       nationalId: '',
       name: '',
@@ -173,9 +168,8 @@ describe('StaffController - createStaff', () => {
       municipalityName: '',
     }
     const staff: Staff = {
-      municipalityId: '0',
+      municipalityIds: ['0'],
       municipalityName: 'Saturn',
-      municipalityHomepage: '...',
       id: '',
       nationalId: '',
       name: '',

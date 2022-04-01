@@ -58,7 +58,7 @@ export const icCourtRecord = {
       },
       autofillAllPresent: {
         id:
-          'judicial.system.investigation_cases:court_record.session_bookings.autofill_all_present',
+          'judicial.system.investigation_cases:court_record.session_bookings.autofill_all_present#markdown',
         defaultMessage:
           'Sækjanda og verjanda varnaraðila er gefinn kostur á að tjá sig um kröfuna. Verjandi krefst þess að kröfunni verði hafnað.\n\nMálið er tekið til úrskurðar.\n\nÍ málinu er kveðinn upp úrskurður.',
         description:
@@ -82,7 +82,7 @@ export const icCourtRecord = {
       },
       autofillSpokeperson: {
         id:
-          'judicial.system.investigation_cases:court_record.session_bookings.autofill_spokeperson',
+          'judicial.system.investigation_cases:court_record.session_bookings.autofill_spokeperson#markdown',
         defaultMessage:
           'Dómari hefur fallist á að krafan hljóti meðferð fyrir dómi án þess að varnaraðili verði kvaddur/kvödd á dómþing, sbr. 1. mgr. 104. gr. laga nr. 88/2008.\n\nSækjanda og talsmanni varnaraðila er gefinn kostur á að tjá sig um kröfuna. Talsmaður varnaraðila mótmælir kröfunni og krefst þess að kröfunni verði hafnað en til vara að aðgerðinni verði markaður skemmri tími. Þá krefst talsmaður þóknunar fyrir sín störf.\n\nMálið er tekið til úrskurðar.\n\nÍ málinu er kveðinn upp úrskurður.',
         description:
@@ -90,7 +90,7 @@ export const icCourtRecord = {
       },
       autofillProsecutor: {
         id:
-          'judicial.system.investigation_cases:court_record.session_bookings.autofill_prosecutor',
+          'judicial.system.investigation_cases:court_record.session_bookings.autofill_prosecutor#markdown',
         defaultMessage:
           'Dómari hefur fallist á að krafan hljóti meðferð fyrir dómi án þess að varnaraðili verði kvaddur/kvödd á dómþing, sbr. 1. mgr. 104. gr. laga nr. 88/2008.\n\nSækjanda er gefinn kostur á að tjá sig um kröfuna.',
         description:
@@ -98,7 +98,7 @@ export const icCourtRecord = {
       },
       autofillRestrainingOrder: {
         id:
-          'judicial.system.investigation_cases:court_record.session_bookings.autofill_restraining_order',
+          'judicial.system.investigation_cases:court_record.session_bookings.autofill_restraining_order#markdown',
         defaultMessage:
           'Sækjanda, réttargæslumanni og verjanda varnaraðila  er gefinn kostur á að tjá sig um kröfuna. Verjandi krefst þess að kröfunni verði hafnað en til vara að nálgunnarbanni verði markaður skemmri tími. Þá krefjast verjandi og réttargæslumaður þóknunar sér til handa.\n\nMálið er tekið til úrskurðar.\n\nÍ málinu er kveðinn upp úrskurður.',
         description:
@@ -106,7 +106,7 @@ export const icCourtRecord = {
       },
       autofillAutopsy: {
         id:
-          'judicial.system.investigation_cases:court_record.session_bookings.autofill_autopsy',
+          'judicial.system.investigation_cases:court_record.session_bookings.autofill_autopsy#markdown',
         defaultMessage:
           'Ekki er sótt þing af hálfu varnaraðila.\n\nSækjanda er gefinn kostur á að tjá sig um kröfuna.\n\nMálið er tekið til úrskurðar.\n\nÍ málinu er kveðinn upp úrskurður.',
         description:
@@ -161,5 +161,187 @@ export const icCourtRecord = {
           'Notað sem útskýringar texti í "Dómskjöl" textaboxi á þingbókar skrefi í rannsóknarheimildum.',
       },
     }),
+    conclusion: {
+      id: 'judicial.system.investigation_cases:court_record.conclusion.title',
+      defaultMessage: 'Úrskurðarorð',
+      description:
+        'Notaður sem titill fyrir "Úrskurðarorð" hlutann á þingbókar skrefi í rannsóknarheimildum.',
+    },
+    appealDecision: defineMessages({
+      title: {
+        id:
+          'judicial.system.investigation_cases:court_record.appeal_decision.title',
+        defaultMessage: 'Ákvörðun um kæru',
+        description:
+          'Notaður sem titill fyrir "Ákvörðun um kæru" hlutann á þingbókar skrefi í rannsóknarheimildum.',
+      },
+      disclaimer: {
+        id:
+          'judicial.system.investigation_cases:court_record.appeal_decision.disclaimer',
+        defaultMessage:
+          'Dómari leiðbeinir málsaðilum um rétt þeirra til að kæra úrskurð þennan til Landsréttar innan þriggja sólarhringa.',
+        description:
+          'Notaður sem texti í "Ákvörðun um kæru" hlutanum á þingbókar skrefi í rannsóknarheimildum.',
+      },
+      accusedTitle: {
+        id:
+          'judicial.system.investigation_cases:court_record.appeal_decision.accused_title',
+        defaultMessage: 'Afstaða varnaraðila til málsins í lok þinghalds',
+        description:
+          'Notaður sem titill fyrir "Afstaða varnaraðila til málsins í lok þinghalds" spjald á þingbókar skrefi í rannsóknarheimildum.',
+      },
+      accusedAppeal: {
+        id:
+          'judicial.system.investigation_cases:court_record.appeal_decision.accused_appeal',
+        defaultMessage: 'Varnaraðili kærir úrskurðinn',
+        description:
+          'Notaður sem texti við valmöguleika varnaraðila um að kæra úrskurðinn radio takkann á þingbókar skrefi í rannsóknarheimildum.',
+      },
+      multipleAccusedAppeal: {
+        id:
+          'judicial.system.investigation_cases:court_record.appeal_decision.multiple_accused_appeal',
+        defaultMessage: 'Varnaraðilar kæra úrskurðinn',
+        description:
+          'Notaður sem texti við valmöguleika margra varnaraðila um að kæra úrskurðinn radio takkann á þingbókar skrefi í rannsóknarheimildum.',
+      },
+      accusedAccept: {
+        id:
+          'judicial.system.investigation_cases:court_record.appeal_decision.accused_accept',
+        defaultMessage: 'Varnaraðili unir úrskurðinum',
+        description:
+          'Notaður sem texti við valmöguleika varnaraðila um að una úrskurðinum radio takkann á þingbókar skrefi í rannsóknarheimildum.',
+      },
+      multipleAccusedAccept: {
+        id:
+          'judicial.system.investigation_cases:court_record.appeal_decision.multiple_accused_accept',
+        defaultMessage: 'Varnaraðilar una úrskurðinum',
+        description:
+          'Notaður sem texti við valmöguleika margrar varnaraðila um að una úrskurðinum radio takkann á þingbókar skrefi í rannsóknarheimildum.',
+      },
+      accusedPostpone: {
+        id:
+          'judicial.system.investigation_cases:court_record.appeal_decision.accused_postpone',
+        defaultMessage: 'Varnaraðili tekur sér lögboðinn frest',
+        description:
+          'Notaður sem texti við valmöguleika varnaraðila um lögbundinn frest radio takkann á þingbókar skrefi í rannsóknarheimildum.',
+      },
+      multipleAccusedPostpone: {
+        id:
+          'judicial.system.investigation_cases:court_record.appeal_decision.multiple_accused_postpone',
+        defaultMessage: 'Varnaraðilar taka sér lögboðinn frest',
+        description:
+          'Notaður sem texti við valmöguleika margra varnaraðila um lögbundinn frest radio takkann á þingbókar skrefi í rannsóknarheimildum.',
+      },
+      accusedNotApplicable: {
+        id:
+          'judicial.system.investigation_cases:court_record.appeal_decision.accused_not_applicable',
+        defaultMessage: 'Á ekki við',
+        description:
+          'Notaður sem texti við valmöguleika varnaraðila um á ekki við radio takkann á þingbókar skrefi í rannsóknarheimildum.',
+      },
+      accusedAnnouncementLabel: {
+        id:
+          'judicial.system.investigation_cases:court_record.appeal_decision.accused_announcement_label',
+        defaultMessage: 'Yfirlýsing varnaraðila',
+        description:
+          'Notaður sem titill á "Yfirlýsing varnaraðila" innsláttarsvæði á þingbókar skrefi í rannsóknarheimildum.',
+      },
+      accusedAnnouncementPlaceholder: {
+        id:
+          'judicial.system.investigation_cases:court_record.appeal_decision.accused_announcement_placeholder',
+        defaultMessage:
+          'Hér er hægt að bóka frekar um það sem varnaraðili vill taka fram ef við á.',
+        description:
+          'Notaður sem placeholder í "Yfirlýsing varnaraðila" innsláttarsvæði á þingbókar skrefi í rannsóknarheimildum.',
+      },
+      multipleAccusedAnnouncementPlaceholder: {
+        id:
+          'judicial.system.investigation_cases:court_record.appeal_decision.multiple_accused_announcement_placeholder',
+        defaultMessage:
+          'Hér er hægt að bóka frekar um það sem varnaraðilar vilja taka fram ef við á.',
+        description:
+          'Notaður sem placeholder í "Yfirlýsing varnaraðila" innsláttarsvæði á þingbókar skrefi í rannsóknarheimildum þegar það eru margir varnaraðilar.',
+      },
+      prosecutorTitle: {
+        id:
+          'judicial.system.investigation_cases:court_record.appeal_decision.prosecutor_title',
+        defaultMessage: 'Afstaða sækjanda til málsins í lok þinghalds',
+        description:
+          'Notaður sem titill fyrir "Afstaða sækjanda til málsins í lok þinghalds" spjald á þingbókar skrefi í rannsóknarheimildum.',
+      },
+      prosecutorAppeal: {
+        id:
+          'judicial.system.investigation_cases:court_record.appeal_decision.prosecutor_appeal',
+        defaultMessage: 'Sækjandi kærir úrskurðinn',
+        description:
+          'Notaður sem texti við valmöguleika sækjanda um að kæra úrskurðinn radio takkann á þingbókar skrefi í rannsóknarheimildum.',
+      },
+      prosecutorAccept: {
+        id:
+          'judicial.system.investigation_cases:court_record.appeal_decision.prosecutor_accept',
+        defaultMessage: 'Sækjandi unir úrskurðinum',
+        description:
+          'Notaður sem texti við valmöguleika sækjanda um að una úrskurðinum radio takkann á þingbókar skrefi í rannsóknarheimildum.',
+      },
+      prosecutorPostpone: {
+        id:
+          'judicial.system.investigation_cases:court_record.appeal_decision.prosecutor_postpone',
+        defaultMessage: 'Sækjandi tekur sér lögboðinn frest',
+        description:
+          'Notaður sem texti við valmöguleika sækjanda um lögbundinn frest radio takkann á þingbókar skrefi í rannsóknarheimildum.',
+      },
+      prosecutorNotApplicable: {
+        id:
+          'judicial.system.investigation_cases:court_record.appeal_decision.prosecutor_not_applicable',
+        defaultMessage: 'Á ekki við',
+        description:
+          'Notaður sem texti við valmöguleika sækjanda um á ekki við radio takkann á þingbókar skrefi í rannsóknarheimildum.',
+      },
+      prosecutorAnnouncementLabel: {
+        id:
+          'judicial.system.investigation_cases:court_record.appeal_decision.prosecutor_announcement_label',
+        defaultMessage: 'Yfirlýsing sækjanda',
+        description:
+          'Notaður sem titill á "Yfirlýsing sækjanda" innsláttarsvæði á þingbókar skrefi í rannsóknarheimildum.',
+      },
+      prosecutorAnnouncementPlaceholder: {
+        id:
+          'judicial.system.investigation_cases:court_record.appeal_decision.prosecutor_announcement_placeholder',
+        defaultMessage:
+          'Hér er hægt að bóka frekar um það sem sækjandi vill taka fram ef við á.',
+        description:
+          'Notaður sem placeholder í "Yfirlýsing sækjanda" innsláttarsvæði á þingbókar skrefi í rannsóknarheimildum.',
+      },
+    }),
+    endOfSessionBookings: defineMessages({
+      title: {
+        id:
+          'judicial.system.investigation_cases:court_record.end_of_session_bookings.title',
+        defaultMessage: 'Bókanir í lok þinghalds',
+        description:
+          'Notaður sem titill fyrir "Bókanir í lok þinghalds" hlutann á þingbókar skrefi í rannsóknarheimildum.',
+      },
+      label: {
+        id:
+          'judicial.system.investigation_cases:court_record.end_of_session_bookings.label',
+        defaultMessage: 'Tilhögun gæslu og aðrar bókanir',
+        description:
+          'Notaður sem titill á "Tilhögun gæslu og aðrar bókanir" innsláttarsvæði á þingbókar skrefi í rannsóknarheimildum.',
+      },
+      placeholder: {
+        id:
+          'judicial.system.investigation_cases:court_record.end_of_session.placeholder',
+        defaultMessage: 'Hér er hægt að skrá aðrar bókanir',
+        description:
+          'Notaður sem placeholder fyrir "Tilhögun gæslu og aðrar bókanir" innsláttarsvæði á þingbókar skrefi í rannsóknarheimildum.',
+      },
+    }),
+  },
+  nextButtonInfo: {
+    id: 'judicial.system.investigation_cases:court_record.next_button_info',
+    defaultMessage:
+      'Til að halda áfram þarf að skrá lyktir máls og skrifa úrskurðarorð á skjánum Úrskurður.',
+    description:
+      'Notaður sem texti í info panel sem kemur í staðinn fyrir Áfram takk þegar ekki er búið að setja lyktir máls eða úrskurðarorð',
   },
 }

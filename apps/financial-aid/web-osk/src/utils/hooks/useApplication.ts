@@ -18,7 +18,7 @@ const useApplication = () => {
     { loading: isCreatingApplication },
   ] = useMutation(CreateApplicationMutation)
 
-  const { nationalRegistryData } = useContext(AppContext)
+  const { nationalRegistryData, municipality } = useContext(AppContext)
 
   const formatFiles = (files: UploadFile[], type: FileType) => {
     return files.map((f) => {
@@ -73,7 +73,9 @@ const useApplication = () => {
               streetName: nationalRegistryData?.address.streetName,
               postalCode: nationalRegistryData?.address.postalCode,
               city: nationalRegistryData?.address.city,
-              municipalityCode: nationalRegistryData?.address.municipalityCode,
+              municipalityCode:
+                nationalRegistryData?.address.municipalityCode ||
+                municipality?.municipalityId,
               directTaxPayments: form?.directTaxPayments,
             },
           },

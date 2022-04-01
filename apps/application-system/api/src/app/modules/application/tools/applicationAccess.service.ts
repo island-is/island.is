@@ -1,8 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 
-import { Application } from '../application.model'
-import { ApplicationService } from '../application.service'
-
+import {
+  Application,
+  ApplicationService,
+} from '@island.is/application/api/core'
 @Injectable()
 export class ApplicationAccessService {
   constructor(private readonly applicationService: ApplicationService) {}

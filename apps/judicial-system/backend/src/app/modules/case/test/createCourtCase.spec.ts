@@ -1,6 +1,6 @@
 import { uuid } from 'uuidv4'
 
-import { CaseType } from '@island.is/judicial-system/types'
+import { CaseType, User as TUser } from '@island.is/judicial-system/types'
 
 import { randomEnum } from '../../../test'
 import { createTestingCaseModule } from './createTestingCaseModule'
@@ -15,9 +15,13 @@ interface Then {
   error: Error
 }
 
-type GivenWhenThen = (caseId: string, theCase: Case) => Promise<Then>
+type GivenWhenThen = (
+  caseId: string,
+  user: TUser,
+  theCase: Case,
+) => Promise<Then>
 
-describe('xCaseController - Create court case', () => {
+describe('CaseController - Create court case', () => {
   let mockCourtService: CourtService
   let mockCaseModel: typeof Case
   let givenWhenThen: GivenWhenThen
@@ -31,11 +35,15 @@ describe('xCaseController - Create court case', () => {
     mockCourtService = courtService
     mockCaseModel = caseModel
 
-    givenWhenThen = async (caseId: string, theCase: Case) => {
+    givenWhenThen = async (caseId: string, user: TUser, theCase: Case) => {
       const then = {} as Then
 
       try {
-        then.result = await caseController.createCourtCase(caseId, theCase)
+        then.result = await caseController.createCourtCase(
+          caseId,
+          user,
+          theCase,
+        )
       } catch (error) {
         then.error = error as Error
       }
@@ -45,6 +53,7 @@ describe('xCaseController - Create court case', () => {
   })
 
   describe('court case created', () => {
+    const user = { id: uuid() } as TUser
     const caseId = uuid()
     const type = randomEnum(CaseType)
     const policeCaseNumber = uuid()
@@ -52,11 +61,13 @@ describe('xCaseController - Create court case', () => {
     const theCase = { id: caseId, type, policeCaseNumber, courtId } as Case
 
     beforeEach(async () => {
-      await givenWhenThen(caseId, theCase)
+      await givenWhenThen(caseId, user, theCase)
     })
 
     it('should create a court case', () => {
       expect(mockCourtService.createCourtCase).toHaveBeenCalledWith(
+        user,
+        caseId,
         courtId,
         type,
         policeCaseNumber,
@@ -66,6 +77,7 @@ describe('xCaseController - Create court case', () => {
   })
 
   describe('court case number updated', () => {
+    const user = {} as TUser
     const caseId = uuid()
     const theCase = { id: caseId } as Case
     const courtCaseNumber = uuid()
@@ -74,7 +86,7 @@ describe('xCaseController - Create court case', () => {
       const mockCreateCourtCase = mockCourtService.createCourtCase as jest.Mock
       mockCreateCourtCase.mockResolvedValueOnce(courtCaseNumber)
 
-      await givenWhenThen(caseId, theCase)
+      await givenWhenThen(caseId, user, theCase)
     })
 
     it('should update the court case number', () => {
@@ -86,6 +98,7 @@ describe('xCaseController - Create court case', () => {
   })
 
   describe('case lookup', () => {
+    const user = {} as TUser
     const caseId = uuid()
     const theCase = { id: caseId } as Case
 
@@ -93,7 +106,7 @@ describe('xCaseController - Create court case', () => {
       const mockUpdate = mockCaseModel.update as jest.Mock
       mockUpdate.mockResolvedValueOnce([1])
 
-      await givenWhenThen(caseId, theCase)
+      await givenWhenThen(caseId, user, theCase)
     })
 
     it('should lookup the updated case', () => {
@@ -137,6 +150,7 @@ describe('xCaseController - Create court case', () => {
   })
 
   describe('case returned', () => {
+    const user = {} as TUser
     const caseId = uuid()
     const theCase = { id: caseId } as Case
     const returnedCase = {} as Case
@@ -148,7 +162,7 @@ describe('xCaseController - Create court case', () => {
       const mockFindOne = mockCaseModel.findOne as jest.Mock
       mockFindOne.mockResolvedValueOnce(returnedCase)
 
-      then = await givenWhenThen(caseId, theCase)
+      then = await givenWhenThen(caseId, user, theCase)
     })
 
     it('should return the case', () => {
@@ -157,6 +171,7 @@ describe('xCaseController - Create court case', () => {
   })
 
   describe('court case number update fails', () => {
+    const user = {} as TUser
     const caseId = uuid()
     const theCase = { id: caseId } as Case
     let then: Then
@@ -165,7 +180,7 @@ describe('xCaseController - Create court case', () => {
       const mockUpdate = mockCaseModel.update as jest.Mock
       mockUpdate.mockRejectedValueOnce(new Error('Some error'))
 
-      then = await givenWhenThen(caseId, theCase)
+      then = await givenWhenThen(caseId, user, theCase)
     })
 
     it('should throw Error', () => {
@@ -175,6 +190,7 @@ describe('xCaseController - Create court case', () => {
   })
 
   describe('case lookup fails', () => {
+    const user = {} as TUser
     const caseId = uuid()
     const theCase = { id: caseId } as Case
     let then: Then
@@ -185,7 +201,7 @@ describe('xCaseController - Create court case', () => {
       const mockFindOne = mockCaseModel.findOne as jest.Mock
       mockFindOne.mockRejectedValueOnce(new Error('Some error'))
 
-      then = await givenWhenThen(caseId, theCase)
+      then = await givenWhenThen(caseId, user, theCase)
     })
 
     it('should throw Error', () => {

@@ -56,16 +56,8 @@ const Greeting: FC<{}> = () => {
             {isNonBinary && formatMessage(m.nonBinaryGreeting)}
             {!knownGender &&
               (isEveningGreeting
-                ? formatMessage({
-                    defaultMessage: 'Góða kvöldið,',
-                    description: 'Welcome the user during the evening',
-                    id: 'service.portal:good-evening',
-                  })
-                : formatMessage({
-                    defaultMessage: 'Góðan dag,',
-                    description: 'Welcome the user during the day',
-                    id: 'service.portal:good-day',
-                  }))}
+                ? formatMessage(m.eveningGreeting)
+                : formatMessage(m.dayGreeting))}
           </Text>
           <Text variant="h1" as="h1" marginBottom={1}>
             {userInfo?.profile.name}
@@ -92,10 +84,7 @@ const Greeting: FC<{}> = () => {
       <GridColumn span={['12/12', '5/12']}>
         <img
           src="./assets/images/school.svg"
-          alt={`${formatMessage(m.altText)} ${formatMessage({
-            defaultMessage: 'upphafssíðu',
-            id: 'service.portal:start-page',
-          })}`}
+          alt={`${formatMessage(m.altText)} ${formatMessage(m.startPage)}`}
         />
       </GridColumn>
     </GridRow>

@@ -1,23 +1,19 @@
-import React from 'react'
+import React, { ReactNode } from 'react'
 import { Text, Box } from '@island.is/island-ui/core'
 
 import * as styles from './ProfileUnit.css'
 import cn from 'classnames'
 import Unit from './Unit'
+import { ApplicationProfileInfo } from '@island.is/financial-aid/shared/lib'
 
 interface Props {
   heading: string
-  info: {
-    title: string
-    content?: string
-    link?: string
-    onclick?: () => void
-    other?: string
-  }[]
+  info: ApplicationProfileInfo[]
   className?: string
+  children?: ReactNode
 }
 
-const ProfileUnit = ({ heading, info, className }: Props) => {
+const ProfileUnit = ({ heading, info, className, children }: Props) => {
   return (
     <>
       <Box
@@ -34,6 +30,17 @@ const ProfileUnit = ({ heading, info, className }: Props) => {
         </Text>
       </Box>
       <Unit info={info} className={className} />
+
+      {children && (
+        <Box
+          className={cn({
+            [`${styles.fullWidth}`]: true,
+            [`${className}`]: className,
+          })}
+        >
+          {children}
+        </Box>
+      )}
     </>
   )
 }

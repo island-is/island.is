@@ -121,6 +121,8 @@ export class DrivingLicenseSubmissionService {
     const needsQualityPhoto = answers.willBringQualityPhoto === 'yes'
     const juristictionId = answers.juristiction
     const teacher = answers.drivingInstructor as string
+    const email = answers.email as string
+    const phone = answers.phone as string
 
     if (applicationFor === 'B-full') {
       return this.drivingLicenseService.newDrivingLicense(nationalId, {
@@ -134,6 +136,8 @@ export class DrivingLicenseSubmissionService {
         needsToPresentHealthCertificate: needsHealthCert,
         needsToPresentQualityPhoto: needsQualityPhoto,
         teacherNationalId: teacher,
+        email: email,
+        phone: phone,
       })
     }
 

@@ -1,8 +1,5 @@
-import React, { useState, useMemo, useContext } from 'react'
+import React, { useState, useMemo } from 'react'
 import { Box } from '@island.is/island-ui/core'
-
-import * as styles from './Profile.css'
-
 import {
   Application,
   ApplicationState,
@@ -13,6 +10,8 @@ import {
   AmountModal,
   getAidAmountModalInfo,
   UserType,
+  ApplicationProfileInfo,
+  Municipality,
 } from '@island.is/financial-aid/shared/lib'
 
 import format from 'date-fns/format'
@@ -27,7 +26,7 @@ import {
   ApplicationHeader,
   FilesListWithHeaderContainer,
 } from '@island.is/financial-aid-web/veita/src/components'
-import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
+
 import {
   getApplicant,
   getApplicantMoreInfo,
@@ -37,10 +36,14 @@ import {
 } from '@island.is/financial-aid-web/veita/src/utils/applicationHelper'
 import { TaxBreakdown } from '@island.is/financial-aid/shared/components'
 
+import * as styles from './Profile.css'
+
 interface ApplicationProps {
   application: Application
   setApplication: React.Dispatch<React.SetStateAction<Application | undefined>>
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
+  isPrint?: boolean
+  applicationMunicipality: Municipality
 }
 
 interface CalculationsModal {
@@ -52,6 +55,8 @@ const ApplicationProfile = ({
   application,
   setApplication,
   setIsLoading,
+  isPrint = false,
+  applicationMunicipality,
 }: ApplicationProps) => {
   const [isStateModalVisible, setStateModalVisible] = useState(false)
 
@@ -62,20 +67,18 @@ const ApplicationProfile = ({
     },
   )
 
-  const { municipality } = useContext(AdminContext)
-
   const aidAmount = useMemo(() => {
-    if (application && municipality && application.homeCircumstances) {
+    if (applicationMunicipality && application.homeCircumstances) {
       return aidCalculator(
         application.homeCircumstances,
         showSpouseData[application.familyStatus]
-          ? municipality.cohabitationAid
-          : municipality.individualAid,
+          ? applicationMunicipality.cohabitationAid
+          : applicationMunicipality.individualAid,
       )
     }
-  }, [application, municipality])
+  }, [applicationMunicipality, application])
 
-  const applicationInfo = [
+  const applicationInfo: ApplicationProfileInfo[] = [
     {
       title: 'Tímabil',
       content:
@@ -105,7 +108,7 @@ const ApplicationProfile = ({
 
   if (application.state === ApplicationState.APPROVED) {
     applicationInfo.push({
-      title: 'Veitt',
+      title: 'Veitt aðstoð',
       content: `${application.amount?.finalAmount.toLocaleString('de-DE')} kr.`,
       onclick: () => {
         setCalculationsModal({ visible: true, type: AmountModal.PROVIDED })
@@ -118,6 +121,7 @@ const ApplicationProfile = ({
       content: application?.rejection
         ? application?.rejection
         : 'enginn ástæða gefin',
+      fullWidth: true,
     })
   }
 
@@ -149,8 +153,8 @@ const ApplicationProfile = ({
   return (
     <>
       <Box
-        marginTop={10}
-        marginBottom={15}
+        marginTop={isPrint ? 1 : 10}
+        marginBottom={isPrint ? 4 : 15}
         className={`${styles.applicantWrapper}`}
       >
         <ApplicationHeader
@@ -160,6 +164,7 @@ const ApplicationProfile = ({
           }}
           setApplication={setApplication}
           setIsLoading={setIsLoading}
+          isPrint={isPrint}
         />
 
         <ProfileUnit
@@ -179,6 +184,7 @@ const ApplicationProfile = ({
             heading="Upplýsingar um staðgreiðslu"
             info={getDirectTaxPayments(applicantDirectPayments)}
             className={`contentUp delay-75`}
+            isPrint={isPrint}
           >
             <TaxBreakdown items={applicantDirectPayments} />
           </CollapsibleProfileUnit>
@@ -189,6 +195,7 @@ const ApplicationProfile = ({
             heading="Maki"
             info={applicantSpouse}
             className={`contentUp delay-100`}
+            isPrint={isPrint}
           />
         )}
 
@@ -197,6 +204,7 @@ const ApplicationProfile = ({
             heading="Upplýsingar um staðgreiðslu maka"
             info={getDirectTaxPayments(spouseDirectPayments)}
             className={`contentUp delay-125`}
+            isPrint={isPrint}
           >
             <TaxBreakdown items={spouseDirectPayments} />
           </CollapsibleProfileUnit>
@@ -206,22 +214,26 @@ const ApplicationProfile = ({
           heading="Umsóknarferli"
           info={applicantMoreInfo}
           className={`contentUp delay-125`}
+          isPrint={isPrint}
         />
 
         <CollapsibleProfileUnit
           heading="Þjóðskrá"
           info={nationalRegistryInfo}
           className={`contentUp delay-125`}
+          isPrint={isPrint}
         />
 
         {application.files && (
           <FilesListWithHeaderContainer applicationFiles={application.files} />
         )}
 
-        <CommentSection
-          className={`contentUp delay-125 ${styles.widthAlmostFull}`}
-          setApplication={setApplication}
-        />
+        {!isPrint && (
+          <CommentSection
+            className={`contentUp delay-125 ${styles.widthAlmostFull}`}
+            setApplication={setApplication}
+          />
+        )}
 
         <History
           applicantName={application.name}
@@ -242,6 +254,7 @@ const ApplicationProfile = ({
           familyStatus={application.familyStatus}
           setIsLoading={setIsLoading}
           applicationCreated={application.created}
+          applicationMunicipality={applicationMunicipality}
         />
       )}
 

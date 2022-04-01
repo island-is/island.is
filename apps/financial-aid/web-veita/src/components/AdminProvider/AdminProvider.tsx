@@ -12,14 +12,14 @@ interface AdminProvider {
   isAuthenticated?: boolean
   admin?: User
   setAdmin?: React.Dispatch<React.SetStateAction<User | undefined>>
-  municipality?: Municipality
+  municipality: Municipality[]
 }
 
 interface PageProps {
   children: ReactNode
 }
 
-export const AdminContext = createContext<AdminProvider>({})
+export const AdminContext = createContext<AdminProvider>({ municipality: [] })
 
 const AdminProvider = ({ children }: PageProps) => {
   const [session] = useSession()
@@ -35,12 +35,11 @@ const AdminProvider = ({ children }: PageProps) => {
   })
   const loggedInUser: User = data?.currentUser
 
-  const { municipality, setMunicipalityById } = useMunicipality()
+  const { municipality } = useMunicipality()
 
   useEffect(() => {
     if (loggedInUser && !admin && loggedInUser.staff) {
       setAdmin(loggedInUser)
-      setMunicipalityById(loggedInUser.staff.municipalityId)
       setIsAuthenticated(true)
     }
   }, [setAdmin, loggedInUser, admin])

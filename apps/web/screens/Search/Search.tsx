@@ -53,6 +53,7 @@ import {
   GetSearchResultsTotalQuery,
   OrganizationSubpage,
   Link as LinkItem,
+  ProjectPage,
 } from '@island.is/web/graphql/schema'
 import { ActionType, reducer, initialState } from './Search.state'
 import { useLinkResolver, usePlausible } from '@island.is/web/hooks'
@@ -93,7 +94,8 @@ type SearchType = Article &
   AdgerdirPage &
   SubArticle &
   OrganizationSubpage &
-  LinkItem
+  LinkItem &
+  ProjectPage
 
 const connectedTypes: Partial<
   Record<
@@ -101,7 +103,12 @@ const connectedTypes: Partial<
     Array<SearchableContentTypes | string>
   >
 > = {
-  webArticle: ['WebArticle', 'WebSubArticle', 'WebOrganizationSubpage'],
+  webArticle: [
+    'WebArticle',
+    'WebSubArticle',
+    'WebOrganizationSubpage',
+    'WebProjectPage',
+  ],
   webAdgerdirPage: ['WebAdgerdirPage'],
   webNews: ['WebNews'],
   webQNA: ['WebQna'],
@@ -168,6 +175,10 @@ const Search: Screen<CategoryProps> = ({
         (countResults?.typesCount ?? []).find(
           (x) => x.key === 'webOrganizationSubpage',
         )?.count ?? 0
+
+      total +=
+        (countResults?.typesCount ?? []).find((x) => x.key === 'webProjectPage')
+          ?.count ?? 0
 
       if (query.processentry) {
         return total + (countResults?.processEntryCount ?? 0)
@@ -286,7 +297,8 @@ const Search: Screen<CategoryProps> = ({
       typename: item.__typename,
       title: item.title,
       parentTitle: item.parent?.title,
-      description: item.intro ?? item.description ?? item.parent?.intro,
+      description:
+        item.intro ?? item.description ?? item.parent?.intro ?? item.subtitle,
       link: linkResolver(item.__typename, item?.url ?? item.slug.split('/')),
       categorySlug: item.category?.slug ?? item.parent?.category?.slug,
       category: item.category ?? item.parent?.category,
@@ -668,6 +680,7 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
     'webLink' as SearchableContentTypes,
     'webNews' as SearchableContentTypes,
     'webOrganizationSubpage' as SearchableContentTypes,
+    'webProjectPage' as SearchableContentTypes,
   ]
 
   const [

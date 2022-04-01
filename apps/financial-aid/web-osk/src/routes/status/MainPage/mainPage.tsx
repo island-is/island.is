@@ -82,7 +82,7 @@ const MainPage = () => {
         {loading && <LoadingDots />}
 
         <MoreActions
-          homepage={municipality?.homepage}
+          rulesPage={municipality?.rulesHomepage}
           email={municipality?.email}
         />
       </ContentContainer>

@@ -45,8 +45,10 @@ import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages'
-import * as Constants from '@island.is/judicial-system/consts'
 import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
+import * as Constants from '@island.is/judicial-system/consts'
 
 import { CourtRecordSignatureConfirmationQuery } from './courtRecordSignatureConfirmationGql'
 import SignedVerdictOverviewForm from './SignedVerdictOverviewForm'
@@ -158,10 +160,6 @@ export const SignedVerdictOverview: React.FC = () => {
       }
     },
   })
-
-  useEffect(() => {
-    document.title = 'Yfirlit staðfestrar kröfu - Réttarvörslugátt'
-  }, [])
 
   useEffect(() => {
     if (workingCase.validToDate) {
@@ -440,7 +438,11 @@ export const SignedVerdictOverview: React.FC = () => {
     value: Date | undefined,
     valid: boolean,
   ) => {
-    if (value && workingCase.isolationToDate) {
+    if (
+      value &&
+      workingCase.isCustodyIsolation &&
+      workingCase.isolationToDate
+    ) {
       const validToDateIsBeforeIsolationToDate =
         compareAsc(value, new Date(workingCase.isolationToDate)) === -1
 
@@ -580,6 +582,7 @@ export const SignedVerdictOverview: React.FC = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
+      <PageHeader title={formatMessage(titles.shared.signedVerdictOverview)} />
       <SignedVerdictOverviewForm
         workingCase={workingCase}
         setWorkingCase={setWorkingCase}
@@ -598,7 +601,7 @@ export const SignedVerdictOverview: React.FC = () => {
       />
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={Constants.REQUEST_LIST_ROUTE}
+          previousUrl={Constants.CASE_LIST_ROUTE}
           hideNextButton={
             user?.role !== UserRole.PROSECUTOR ||
             workingCase.decision ===

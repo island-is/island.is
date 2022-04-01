@@ -124,9 +124,12 @@ export class ApplicationModel implements Application {
   @Field({ nullable: true })
   readonly city?: string
 
-  @Field({ nullable: true })
-  readonly municipalityCode?: string
+  @Field()
+  readonly municipalityCode!: string
 
   @Field(() => [DirectTaxPaymentModel])
   readonly directTaxPayments!: DirectTaxPaymentModel[]
+
+  @Field({ nullable: true })
+  readonly applicationSystemId?: string
 }

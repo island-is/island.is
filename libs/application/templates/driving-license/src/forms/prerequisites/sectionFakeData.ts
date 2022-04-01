@@ -32,7 +32,7 @@ export const sectionFakeData = buildSubSection({
             Öll önnur gögn eru ekki gervigögn og er þetta eingöngu gert
             til að hægt sé að prófa ferlið án þess að vera með tilheyrandi
             ökuréttindi í staging grunni RLS.
-          `.replace(/\s{2}/g, ''),
+          `.replace(/\s{1,}/g, ' '),
         }),
         buildRadioField({
           id: 'fakeData.useFakeData',

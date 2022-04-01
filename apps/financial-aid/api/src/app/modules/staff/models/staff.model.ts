@@ -13,8 +13,8 @@ export class StaffModel implements Staff {
   @Field()
   readonly nationalId!: string
 
-  @Field()
-  readonly municipalityId!: string
+  @Field(() => [String])
+  readonly municipalityIds!: string[]
 
   @Field()
   readonly municipalityName!: string
@@ -30,9 +30,6 @@ export class StaffModel implements Staff {
 
   @Field({ nullable: true })
   readonly phoneNumber?: string
-
-  @Field({ nullable: true })
-  readonly municipalityHomepage?: string
 
   @Field({ nullable: true })
   readonly nickname?: string

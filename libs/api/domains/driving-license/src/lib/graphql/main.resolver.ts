@@ -91,6 +91,7 @@ export class MainResolver {
     @Args('input') input: ApplicationEligibilityInput,
   ) {
     return this.drivingLicenseService.getApplicationEligibility(
+      user,
       user.nationalId,
       input.applicationFor,
     )

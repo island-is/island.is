@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { useMutation } from '@apollo/client'
 import { useIntl } from 'react-intl'
 
@@ -44,11 +44,19 @@ type autofillProperties = Pick<
   | 'sessionBookings'
   | 'ruling'
   | 'endOfSessionBookings'
+  | 'introduction'
+  | 'requestedOtherRestrictions'
 >
 
 type autofillSessionArrangementProperties = Pick<Case, 'sessionArrangements'>
 
 type autofillBooleanProperties = Pick<Case, 'isCustodyIsolation'>
+
+export type autofillFunc = (
+  key: keyof autofillProperties,
+  value: string,
+  workingCase: Case,
+) => void
 
 interface CreateCaseMutationResponse {
   createCase: Case
@@ -102,7 +110,6 @@ const useCase = () => {
   ] = useMutation<TransitionCaseMutationResponse>(TransitionCaseMutation)
   const [
     sendNotificationMutation,
-    { loading: isSendingNotification },
   ] = useMutation<SendNotificationMutationResponse>(SendNotificationMutation)
   const [
     requestRulingSignatureMutation,
@@ -131,6 +138,7 @@ const useCase = () => {
                 type: theCase.type,
                 policeCaseNumber: theCase.policeCaseNumber,
                 defenderName: theCase.defenderName,
+                defenderNationalId: theCase.defenderNationalId,
                 defenderEmail: theCase.defenderEmail,
                 defenderPhoneNumber: theCase.defenderPhoneNumber,
                 sendRequestToDefender: theCase.sendRequestToDefender,
@@ -245,6 +253,7 @@ const useCase = () => {
     [formatMessage, transitionCaseMutation],
   )
 
+  const [isSendingNotification, setIsSendingNotification] = useState(false)
   const sendNotification = useMemo(
     () => async (
       id: string,
@@ -252,6 +261,9 @@ const useCase = () => {
       eventOnly?: boolean,
     ): Promise<boolean> => {
       try {
+        if (!eventOnly) {
+          setIsSendingNotification(true)
+        }
         const { data } = await sendNotificationMutation({
           variables: {
             input: {
@@ -261,9 +273,10 @@ const useCase = () => {
             },
           },
         })
-
+        setIsSendingNotification(false)
         return Boolean(data?.sendNotification?.notificationSent)
       } catch (e) {
+        setIsSendingNotification(false)
         toast.error(formatMessage(errors.sendNotification))
         return false
       }
@@ -316,8 +329,8 @@ const useCase = () => {
     [extendCaseMutation, formatMessage],
   )
 
-  const autofill = useMemo(
-    () => (key: keyof autofillProperties, value: string, workingCase: Case) => {
+  const autofill: autofillFunc = useMemo(
+    () => (key, value, workingCase) => {
       if (workingCase[key] === undefined || workingCase[key] === null) {
         workingCase[key] = value
 

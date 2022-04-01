@@ -18,6 +18,7 @@ import {
   HomeCircumstances,
   FamilyStatus,
   getMonth,
+  Municipality,
 } from '@island.is/financial-aid/shared/lib'
 import { useApplicationState } from '../../utils/useApplicationState'
 import StateModalContainer from './StateModalContainer'
@@ -32,6 +33,7 @@ interface Props {
   homeCircumstances: HomeCircumstances
   familyStatus: FamilyStatus
   applicationCreated: string
+  applicationMunicipality: Municipality
 }
 
 const StateModal = ({
@@ -44,6 +46,7 @@ const StateModal = ({
   homeCircumstances,
   familyStatus,
   applicationCreated,
+  applicationMunicipality,
 }: Props) => {
   const [selected, setSelected] = useState<ApplicationState | undefined>()
 
@@ -154,6 +157,7 @@ const StateModal = ({
           <EmailFormatInputModal
             onCancel={onClickCancel}
             isModalVisable={selected === ApplicationState.DATANEEDED}
+            state={ApplicationState.DATANEEDED}
             onSaveApplication={(comment?: string) => {
               if (!selected) {
                 return
@@ -185,11 +189,13 @@ const StateModal = ({
             }}
             homeCircumstances={homeCircumstances}
             familyStatus={familyStatus}
+            applicationMunicipality={applicationMunicipality}
           />
 
           <EmailFormatInputModal
             onCancel={onClickCancel}
             isModalVisable={selected === ApplicationState.REJECTED}
+            state={ApplicationState.REJECTED}
             onSaveApplication={(reasonForRejection?: string) => {
               if (!selected) {
                 return

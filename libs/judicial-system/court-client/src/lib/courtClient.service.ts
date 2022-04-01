@@ -28,6 +28,8 @@ import {
   CreateDocumentData,
   CreateThingbokApi,
   CreateThingbokRequest,
+  CreateEmailApi,
+  CreateEmailData,
 } from '../../gen/fetch'
 import { UploadStreamApi } from './uploadStreamApi'
 import { courtClientModuleConfig } from './courtClient.config'
@@ -54,6 +56,8 @@ type CreateDocumentArgs = Omit<CreateDocumentData, 'authenticationToken'>
 
 type CreateThingbokArgs = Omit<CreateThingbokRequest, 'authenticationToken'>
 
+type CreateEmailArgs = Omit<CreateEmailData, 'authenticationToken'>
+
 interface CourtClientServiceOptions {
   [key: string]: AuthenticateRequest
 }
@@ -66,6 +70,7 @@ export class CourtClientService {
   private readonly createCaseApi: CreateCaseApi
   private readonly createDocumentApi: CreateDocumentApi
   private readonly createThingbokApi: CreateThingbokApi
+  private readonly createEmailApi: CreateEmailApi
   private readonly uploadStreamApi: UploadStreamApi
 
   private readonly options: CourtClientServiceOptions
@@ -103,6 +108,7 @@ export class CourtClientService {
     this.createCaseApi = new CreateCaseApi(providerConfiguration)
     this.createDocumentApi = new CreateDocumentApi(providerConfiguration)
     this.createThingbokApi = new CreateThingbokApi(providerConfiguration)
+    this.createEmailApi = new CreateEmailApi(providerConfiguration)
     this.uploadStreamApi = new UploadStreamApi(basePath, defaultHeaders, agent)
     this.options = config.courtsCredentials
   }
@@ -223,10 +229,7 @@ export class CourtClientService {
   createCase(clientId: string, args: CreateCaseArgs): Promise<string> {
     return this.authenticatedRequest(clientId, (authenticationToken) =>
       this.createCaseApi.createCase({
-        createCaseData: {
-          ...args,
-          authenticationToken,
-        },
+        createCaseData: { ...args, authenticationToken },
       }),
     )
   }
@@ -234,19 +237,21 @@ export class CourtClientService {
   createDocument(clientId: string, args: CreateDocumentArgs): Promise<string> {
     return this.authenticatedRequest(clientId, (authenticationToken) =>
       this.createDocumentApi.createDocument({
-        createDocumentData: {
-          ...args,
-          authenticationToken,
-        },
+        createDocumentData: { ...args, authenticationToken },
       }),
     )
   }
 
   createThingbok(clientId: string, args: CreateThingbokArgs): Promise<string> {
     return this.authenticatedRequest(clientId, (authenticationToken) =>
-      this.createThingbokApi.createThingbok({
-        ...args,
-        authenticationToken,
+      this.createThingbokApi.createThingbok({ ...args, authenticationToken }),
+    )
+  }
+
+  createEmail(clientId: string, args: CreateEmailArgs): Promise<string> {
+    return this.authenticatedRequest(clientId, (authenticationToken) =>
+      this.createEmailApi.createEmail({
+        createEmailData: { ...args, authenticationToken },
       }),
     )
   }
@@ -255,10 +260,7 @@ export class CourtClientService {
     clientId: string,
     file: {
       value: Buffer
-      options?: {
-        filename?: string
-        contentType?: string
-      }
+      options?: { filename?: string; contentType?: string }
     },
   ): Promise<string> {
     return this.authenticatedRequest(clientId, (authenticationToken) =>
