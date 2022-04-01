@@ -237,7 +237,7 @@ judicial-system-scheduler:
       memory: '128Mi'
   schedule: '0 2 * * *'
   secrets:
-    BACKEND_AUTH_TOKEN: '/k8s/judicial-system/BACKEND_AUTH_TOKEN'
+    BACKEND_ACCESS_TOKEN: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
   securityContext:
     allowPrivilegeEscalation: false
