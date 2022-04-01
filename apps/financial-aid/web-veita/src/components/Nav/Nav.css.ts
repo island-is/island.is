@@ -62,7 +62,6 @@ export const logoMunicipalityContainer = style({
 
 export const logoMunicipality = style({
   width: theme.spacing[4],
-  height: theme.spacing[6],
 })
 
 export const personIcon = style({

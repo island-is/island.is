@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { Box, Checkbox, Input, Text } from '@island.is/island-ui/core'
 import { ActionModal } from '@island.is/financial-aid-web/veita/src/components'
 import { StaffMutation } from '@island.is/financial-aid-web/veita/graphql'
@@ -7,6 +7,7 @@ import { isEmailValid, StaffRole } from '@island.is/financial-aid/shared/lib'
 import cn from 'classnames'
 
 import { useRouter } from 'next/router'
+import { AdminContext } from '../AdminProvider/AdminProvider'
 
 interface Props {
   isVisible: boolean
@@ -33,6 +34,7 @@ const NewUserModal = ({
   municipalityName,
 }: Props) => {
   const router = useRouter()
+  const { municipality } = useContext(AdminContext)
 
   const [state, setState] = useState<newUsersModalState>({
     staffNationalId: '',
@@ -76,7 +78,9 @@ const NewUserModal = ({
             nationalId: state.staffNationalId,
             roles: state.roles,
             municipalityName,
-            municipalityId: router.query.id as string,
+            municipalityId:
+              //TODO better check
+              municipality[0]?.municipalityId || (router.query.id as string),
           },
         },
       }).then(() => {
