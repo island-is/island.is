@@ -37,7 +37,7 @@ import isAfter from 'date-fns/isAfter'
 import isBefore from 'date-fns/isBefore'
 import isEqual from 'lodash/isEqual'
 import isWithinInterval from 'date-fns/isWithinInterval'
-import startOfTomorrow from 'date-fns/startOfTomorrow'
+import addMonths from 'date-fns/addMonths'
 import * as Sentry from '@sentry/react'
 import * as styles from './Overview.css'
 
@@ -67,7 +67,7 @@ const getFilteredDocuments = (
   const { dateFrom, dateTo, activeCategory, searchQuery } = filterValues
   let filteredDocuments = documents.filter((document) => {
     const minDate = dateFrom || new Date('1900-01-01')
-    const maxDate = dateTo || startOfTomorrow()
+    const maxDate = dateTo || addMonths(new Date(), 3)
     return isWithinInterval(new Date(document.date), {
       start: isBefore(maxDate, minDate) ? maxDate : minDate,
       end: isAfter(minDate, maxDate) ? minDate : maxDate,
