@@ -5,19 +5,16 @@ import {
   ForeignKey,
   Model,
   Table,
-  UpdatedAt,
 } from 'sequelize-typescript'
 
 import { ApiProperty } from '@nestjs/swagger'
-
-import { Gender } from '@island.is/judicial-system/types'
 
 // TODO Find a way to import from case index file
 import { Case } from '../../case/models/case.model'
 
 @Table({
   tableName: 'case_archive',
-  timestamps: true,
+  timestamps: false,
 })
 export class CaseArchive extends Model<CaseArchive> {
   @Column({
@@ -30,7 +27,9 @@ export class CaseArchive extends Model<CaseArchive> {
   id!: string
 
   @CreatedAt
-  @ApiProperty()
+  @ApiProperty({
+    type: DataType.DATE,
+  })
   created!: Date
 
   @ForeignKey(() => Case)
