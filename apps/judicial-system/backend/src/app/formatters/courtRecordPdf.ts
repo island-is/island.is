@@ -61,7 +61,7 @@ function constructRestrictionCourtRecordPdf(
   addLargeHeading(
     doc,
     theCase.court?.name ?? formatMessage(courtRecord.missingCourt),
-    'Times-Roman',
+    'Comic-Sans',
   )
   setLineGap(doc, 2)
   addMediumHeading(doc, title)
@@ -133,17 +133,17 @@ function constructRestrictionCourtRecordPdf(
     addNormalText(
       doc,
       formatMessage(courtRecord.attendeesHeading),
-      'Times-Bold',
+      'ComicSans Bold',
     )
     addEmptyLines(doc)
-    addNormalJustifiedText(doc, theCase.courtAttendees, 'Times-Roman')
+    addNormalJustifiedText(doc, theCase.courtAttendees, 'Comic-Sans')
   }
 
   addEmptyLines(doc)
   addNormalText(
     doc,
     formatMessage(courtRecord.courtDocuments.heading),
-    'Times-Bold',
+    'ComicSans Bold',
   )
   addEmptyLines(doc)
   addNormalJustifiedText(
@@ -151,7 +151,7 @@ function constructRestrictionCourtRecordPdf(
     `${formatMessage(courtRecord.courtDocuments.request, {
       caseTypes: formatRequestCaseType(theCase.type),
     })} ${formatMessage(courtRecord.courtDocuments.announcement)}`,
-    'Times-Roman',
+    'Comic-Sans',
   )
 
   theCase.courtDocuments?.forEach((courtDocument, index) =>
@@ -183,13 +183,13 @@ function constructRestrictionCourtRecordPdf(
   addNormalCenteredText(
     doc,
     theCase.judge?.name ?? formatMessage(courtRecord.missingJudge),
-    'Times-Bold',
+    'ComicSans Bold',
   )
   addEmptyLines(doc, 2)
   addNormalJustifiedText(
     doc,
     formatMessage(courtRecord.conclusionIntro),
-    'Times-Roman',
+    'Comic-Sans',
   )
   addEmptyLines(doc)
   addNormalJustifiedText(doc, formatMessage(courtRecord.appealDirections))
@@ -302,7 +302,7 @@ function constructInvestigationCourtRecordPdf(
   addLargeHeading(
     doc,
     theCase.court?.name ?? formatMessage(courtRecord.missingCourt),
-    'Times-Roman',
+    'Comic-Sans',
   )
   setLineGap(doc, 2)
   addMediumHeading(doc, title)
@@ -374,17 +374,17 @@ function constructInvestigationCourtRecordPdf(
     addNormalText(
       doc,
       formatMessage(courtRecord.attendeesHeading),
-      'Times-Bold',
+      'ComicSans Bold',
     )
     addEmptyLines(doc)
-    addNormalJustifiedText(doc, theCase.courtAttendees, 'Times-Roman')
+    addNormalJustifiedText(doc, theCase.courtAttendees, 'Comic-Sans')
   }
 
   addEmptyLines(doc)
   addNormalText(
     doc,
     formatMessage(courtRecord.courtDocuments.heading),
-    'Times-Bold',
+    'ComicSans Bold',
   )
   addEmptyLines(doc)
   addNormalJustifiedText(
@@ -392,7 +392,7 @@ function constructInvestigationCourtRecordPdf(
     `${formatMessage(courtRecord.courtDocuments.request, {
       caseTypes: formatRequestCaseType(theCase.type),
     })} ${formatMessage(courtRecord.courtDocuments.announcement)}`,
-    'Times-Roman',
+    'Comic-Sans',
   )
 
   theCase.courtDocuments?.forEach((courtDocument, index) =>
@@ -424,13 +424,13 @@ function constructInvestigationCourtRecordPdf(
   addNormalCenteredText(
     doc,
     theCase.judge?.name ?? formatMessage(courtRecord.missingJudge),
-    'Times-Bold',
+    'ComicSans Bold',
   )
   addEmptyLines(doc, 2)
   addNormalJustifiedText(
     doc,
     formatMessage(courtRecord.conclusionIntro),
-    'Times-Roman',
+    'Comic-Sans',
   )
 
   if (theCase.sessionArrangements === SessionArrangements.ALL_PRESENT) {

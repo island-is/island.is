@@ -51,7 +51,7 @@ function constructRulingPdf(
   addLargeHeading(
     doc,
     theCase.court?.name ?? formatMessage(ruling.missingCourt),
-    'Times-Roman',
+    'Comic-Sans',
   )
   setLineGap(doc, 2)
   addMediumHeading(
@@ -106,42 +106,46 @@ function constructRulingPdf(
   addNormalText(
     doc,
     formatMessage(ruling.prosecutorDemandsHeading),
-    'Times-Bold',
+    'ComicSans Bold',
   )
   addEmptyLines(doc)
   addNormalJustifiedText(
     doc,
     theCase.prosecutorDemands ?? formatMessage(ruling.missingProsecutorDemands),
-    'Times-Roman',
+    'Comic-Sans',
   )
   addEmptyLines(doc)
-  addNormalText(doc, formatMessage(ruling.courtCaseFactsHeading), 'Times-Bold')
+  addNormalText(
+    doc,
+    formatMessage(ruling.courtCaseFactsHeading),
+    'ComicSans Bold',
+  )
   addEmptyLines(doc)
   addNormalJustifiedText(
     doc,
     theCase.courtCaseFacts ?? formatMessage(ruling.missingCourtCaseFacts),
-    'Times-Roman',
+    'Comic-Sans',
   )
   addEmptyLines(doc)
   addNormalText(
     doc,
     formatMessage(ruling.courtLegalArgumentsHeading),
-    'Times-Bold',
+    'ComicSans Bold',
   )
   addEmptyLines(doc)
   addNormalJustifiedText(
     doc,
     theCase.courtLegalArguments ??
       formatMessage(ruling.missingCourtLegalArguments),
-    'Times-Roman',
+    'Comic-Sans',
   )
   addEmptyLines(doc)
-  addNormalText(doc, formatMessage(ruling.rulingHeading), 'Times-Bold')
+  addNormalText(doc, formatMessage(ruling.rulingHeading), 'ComicSans Bold')
   addEmptyLines(doc)
   addNormalJustifiedText(
     doc,
     theCase.ruling ?? formatMessage(ruling.missingRuling),
-    'Times-Roman',
+    'Comic-Sans',
   )
   setLineGap(doc, 3)
   addEmptyLines(doc, 2)
@@ -156,7 +160,7 @@ function constructRulingPdf(
   addNormalCenteredText(
     doc,
     theCase.judge?.name ?? formatMessage(ruling.missingJudge),
-    'Times-Bold',
+    'ComicSans Bold',
   )
   addFooter(doc)
 
