@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import {
   ApplicationOverviewSkeleton,
   LoadingContainer,
@@ -6,26 +6,17 @@ import {
 } from '@island.is/financial-aid-web/veita/src/components'
 
 import { useMunicipalities } from '@island.is/financial-aid-web/veita/src/utils/useMunicipalities'
-import { Municipality } from '@island.is/financial-aid/shared/lib'
 
 export const MunicipalitySettings = () => {
   const { municipality, error, loading } = useMunicipalities()
-
-  const [currentMunicipality, setCurrentMunicipality] = useState<Municipality>()
-
-  useEffect(() => {
-    if (municipality && municipality.length > 0) {
-      setCurrentMunicipality(municipality[0])
-    }
-  }, [municipality])
 
   return (
     <LoadingContainer
       isLoading={loading}
       loader={<ApplicationOverviewSkeleton />}
     >
-      {currentMunicipality && (
-        <MunicipalityAdminSettings currentMunicipality={currentMunicipality} />
+      {municipality && (
+        <MunicipalityAdminSettings municipality={municipality} />
       )}
 
       {error && (

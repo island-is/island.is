@@ -18,7 +18,6 @@ import {
   HomeCircumstances,
   FamilyStatus,
   getMonth,
-  Municipality,
 } from '@island.is/financial-aid/shared/lib'
 import { useApplicationState } from '../../utils/useApplicationState'
 import StateModalContainer from './StateModalContainer'
@@ -33,7 +32,6 @@ interface Props {
   homeCircumstances: HomeCircumstances
   familyStatus: FamilyStatus
   applicationCreated: string
-  applicationMunicipality: Municipality
 }
 
 const StateModal = ({
@@ -46,7 +44,6 @@ const StateModal = ({
   homeCircumstances,
   familyStatus,
   applicationCreated,
-  applicationMunicipality,
 }: Props) => {
   const [selected, setSelected] = useState<ApplicationState | undefined>()
 
@@ -189,7 +186,6 @@ const StateModal = ({
             }}
             homeCircumstances={homeCircumstances}
             familyStatus={familyStatus}
-            applicationMunicipality={applicationMunicipality}
           />
 
           <EmailFormatInputModal

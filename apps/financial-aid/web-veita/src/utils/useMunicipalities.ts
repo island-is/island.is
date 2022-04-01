@@ -7,8 +7,8 @@ import {
 import { gql } from '@apollo/client'
 
 const MunicipalityQuery = gql`
-  query GetMunicipalityQuery {
-    municipalityByIds {
+  query GetMunicipalityQuery($input: MunicipalityQueryInput!) {
+    municipality(input: $input) {
       id
       name
       homepage
@@ -41,47 +41,50 @@ const MunicipalityQuery = gql`
 export const useMunicipalities = () => {
   const storageKey = 'currentMunicipalities'
 
-  const [municipality, setScopedMunicipality] = useState<Municipality[]>([])
+  const [municipality, setScopedMunicipality] = useState<Municipality>()
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<Error | undefined>(undefined)
 
-  const getMunicipality = useAsyncLazyQuery<{
-    municipalityByIds: Municipality[]
-  }>(MunicipalityQuery)
+  const getMunicipality = useAsyncLazyQuery<
+    {
+      municipality: Municipality
+    },
+    { input: { id: string } }
+  >(MunicipalityQuery)
 
   useEffect(() => {
-    if (sessionStorage.getItem(storageKey)) {
-      setScopedMunicipality(
-        JSON.parse(sessionStorage.getItem(storageKey) as string),
-      )
-      return
-    }
-    setMunicipalityById()
+    setScopedMunicipality(
+      sessionStorage.getItem(storageKey)
+        ? JSON.parse(sessionStorage.getItem(storageKey) as string)
+        : undefined,
+    )
   }, [])
 
-  const setMunicipality = (municipality: Municipality[]) => {
+  const setMunicipality = (municipality: Municipality) => {
     setScopedMunicipality(municipality)
     sessionStorage.setItem(storageKey, JSON.stringify(municipality))
   }
 
-  const setMunicipalityById = async () => {
+  const setMunicipalityById = async (municipalityId: string) => {
     try {
       setError(undefined)
       setLoading(true)
-      return await getMunicipality({}).then((res) => {
-        setScopedMunicipality(res.data?.municipalityByIds ?? [])
+      return await getMunicipality({
+        input: { id: municipalityId },
+      }).then((res) => {
+        setScopedMunicipality(res.data?.municipality)
         sessionStorage.setItem(
           storageKey,
-          JSON.stringify(res.data?.municipalityByIds),
+          JSON.stringify(res.data?.municipality),
         )
         setLoading(false)
-        return res.data?.municipalityByIds ?? []
+        return res.data?.municipality
       })
     } catch (error: unknown) {
       setError(error as Error)
       setLoading(false)
-      return []
+      return undefined
     }
   }
 
