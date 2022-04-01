@@ -1,10 +1,11 @@
-import React, { useMemo, useState } from 'react'
+import React, { useContext, useMemo, useState } from 'react'
 
 import {
   InputModal,
   NumberInput,
 } from '@island.is/financial-aid-web/veita/src/components'
 
+import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
 import {
   aidCalculator,
   Amount,
@@ -12,7 +13,6 @@ import {
   calculateTaxOfAmount,
   FamilyStatus,
   HomeCircumstances,
-  Municipality,
   showSpouseData,
 } from '@island.is/financial-aid/shared/lib'
 import { Box, Button, Input, Text } from '@island.is/island-ui/core'
@@ -27,7 +27,6 @@ interface Props {
   isModalVisable: boolean
   homeCircumstances: HomeCircumstances
   familyStatus: FamilyStatus
-  applicationMunicipality: Municipality
 }
 
 interface calculationsState {
@@ -47,32 +46,29 @@ const AcceptModal = ({
   isModalVisable,
   homeCircumstances,
   familyStatus,
-  applicationMunicipality,
 }: Props) => {
   const router = useRouter()
 
   const maximumInputLength = 6
 
+  const { municipality } = useContext(AdminContext)
+
   const aidAmount = useMemo(() => {
-    if (applicationMunicipality && homeCircumstances) {
+    if (municipality && homeCircumstances) {
       return aidCalculator(
         homeCircumstances,
         showSpouseData[familyStatus]
-          ? applicationMunicipality.cohabitationAid
-          : applicationMunicipality.individualAid,
+          ? municipality.cohabitationAid
+          : municipality.individualAid,
       )
     }
-  }, [homeCircumstances, applicationMunicipality])
+  }, [homeCircumstances, municipality])
 
   if (!aidAmount) {
     return (
-      <>
-        {isModalVisable && (
-          <Text color="red400">
-            Útreikingur fyrir aðstoð misstókst, vinsamlegast reyndu aftur
-          </Text>
-        )}
-      </>
+      <Text color="red400">
+        Útreikingur fyrir aðstoð misstókst, vinsamlegast reyndu aftur
+      </Text>
     )
   }
 

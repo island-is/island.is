@@ -21,11 +21,11 @@ import { useMunicipality } from '@island.is/financial-aid/shared/components'
 import MunicipalityAdminInput from './MunicipalityNumberInput/MunicipalityNumberInput'
 
 interface Props {
-  currentMunicipality: Municipality
+  municipality: Municipality
 }
 
-const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
-  const [state, setState] = useState(currentMunicipality)
+const MunicipalityAdminSettings = ({ municipality }: Props) => {
+  const [state, setState] = useState(municipality)
   const [hasAidError, setHasAidError] = useState(false)
   const [updateMunicipalityMutation, { loading }] = useMutation(
     UpdateMunicipalityMutation,
@@ -74,7 +74,7 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
           homepage: state.homepage,
           rulesHomepage: state.rulesHomepage,
           email: state.email,
-          municipalityId: currentMunicipality.municipalityId,
+          municipalityId: municipality.municipalityId,
         },
       },
     })
@@ -95,7 +95,7 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
           Sveitarfélagsstillingar
         </Text>
         <Text as="h3" variant="h3" color="dark300">
-          Reglur um fjárhagsaðstoð {currentMunicipality.name}
+          Reglur um fjárhagsaðstoð {municipality.name}
         </Text>
       </Box>
 
