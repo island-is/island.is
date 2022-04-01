@@ -7,11 +7,13 @@ export const formatBankInfo = (bankInfo: string) => {
   return bankInfo
 }
 
-export const formatPhoneNumber = (value: string) => {
-  const splitAt = (index: number) => (x: string) => [
-    x.slice(0, index),
-    x.slice(index),
-  ]
-  if (value.length > 3) return splitAt(3)(value).join('-')
-  return value
+export const formatPhoneNumber = (phoneNumber: string) => {
+  if (/^\d{3}-\d{4}$/.test(phoneNumber)) {
+    return phoneNumber
+  }
+  const formattedPhoneNumber = phoneNumber.replace(/^(.{3})/, '$1-')
+  if (formattedPhoneNumber && formattedPhoneNumber.length === 8) {
+    return formattedPhoneNumber
+  }
+  return phoneNumber
 }
