@@ -1,7 +1,7 @@
 const devConfig = {
   production: false,
   auth: {
-    secretToken: 'secret-token',
+    secretToken: 'secret-backend-api-token',
   },
   auditTrail: {
     useGenericLogger: true,

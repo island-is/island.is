@@ -5,7 +5,7 @@ const devConfig = {
     audience: 'localhost:4200',
     allowAuthBypass: true,
     jwtSecret: 'jwt-secret',
-    secretToken: 'secret-token',
+    secretToken: 'secret-backend-api-token',
   },
   auditTrail: {
     useGenericLogger: true,
