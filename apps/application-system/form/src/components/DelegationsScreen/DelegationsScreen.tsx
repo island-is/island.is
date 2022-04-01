@@ -84,8 +84,6 @@ export const DelegationsScreen = ({
       setDelegationsChecked(true)
     }
   }
-  console.log(delegations)
-  console.log(user)
 
   if (error) {
     setDelegationsChecked(true)
