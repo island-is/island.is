@@ -299,4 +299,16 @@ export const m = defineMessages({
     defaultMessage: 'Reyndu aftur síðar',
     description: 'Unhandled error in data provider',
   },
+
+  /* Validation Error */
+  missingAttachmentValidationError: {
+    id: 'ps.application:error.missingAttachment',
+    defaultMessage: 'Vinsamlegast veldu mynd til að hlaða inn',
+    description: 'Validation error for attachment',
+  },
+  missingDistrictValidationError: {
+    id: 'ps.application:error.missingAttachment',
+    defaultMessage: 'Vinsamlegast veldu embætti',
+    description: 'Validation error for district',
+  },
 })
