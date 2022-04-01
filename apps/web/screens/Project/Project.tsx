@@ -180,6 +180,52 @@ const assignNavigationActive = (
     }
   })
 
+const activateUkraineChatPanel = () => {
+  /* eslint-disable */
+  const w: any = window
+  w.__lc = w.__lc || {}
+  w.__lc.license = 13822368
+  const widget = (function (n: any, t, c) {
+    function i(n) {
+      return e._h ? e._h.apply(null, n) : e._q.push(n)
+    }
+    var e = {
+      _q: [],
+      _h: null,
+      _v: '2.0',
+      on: function () {
+        i(['on', c.call(arguments)])
+      },
+      once: function () {
+        i(['once', c.call(arguments)])
+      },
+      off: function () {
+        i(['off', c.call(arguments)])
+      },
+      get: function () {
+        if (!e._h)
+          throw new Error("[LiveChatWidget] You can't use getters before load.")
+        return i(['get', c.call(arguments)])
+      },
+      call: function () {
+        i(['call', c.call(arguments)])
+      },
+      init: function () {
+        var n = t.createElement('script')
+        n.id = 'ukraine-chat-panel'
+        ;(n.async = !0),
+          (n.type = 'text/javascript'),
+          (n.src = 'https://cdn.livechatinc.com/tracking.js'),
+          t.head.appendChild(n)
+      },
+    }
+    !n.__lc.asyncInit && e.init(), (n.LiveChatWidget = n.LiveChatWidget || e)
+    return e
+  })(window, document, [].slice)
+  return widget
+  /* eslint-enable */
+}
+
 const ProjectPage: Screen<PageProps> = ({
   projectPage,
   news,
@@ -245,6 +291,17 @@ const ProjectPage: Screen<PageProps> = ({
       setSelectedSliceTab(slice)
     }
   }, [renderSlicesAsTabs, subpage, router.asPath])
+
+  useEffect(() => {
+    // TODO: refactor this logic into a reusable component
+    let widget: any
+    if (projectPage.id === '7GtuCCd7MEZhZKe0oXcHdb') {
+      widget = activateUkraineChatPanel()
+    }
+
+    return () => widget?.call('destroy')
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <>

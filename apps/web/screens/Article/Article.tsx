@@ -30,7 +30,6 @@ import {
   Sticky,
   Webreader,
   AppendedArticleComponents,
-  ChatPanel,
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from '../queries'
