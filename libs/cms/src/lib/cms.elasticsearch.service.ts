@@ -240,7 +240,8 @@ export class CmsElasticsearchService {
       page = 1,
       size = 10,
       tags,
-    }: GetPublishedMaterialInput,
+    }: // tagGroups,
+    GetPublishedMaterialInput,
   ): Promise<EnhancedAssetSearchResult> {
     const mappedTags = organizationSlug
       ? [
