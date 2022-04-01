@@ -7,27 +7,42 @@ export const gridContainer = style({
     xs: {
       gridTemplateRows: '200px 255px',
     },
-    md: {
+    lg: {
       gridTemplateRows: '255px',
-      gridTemplateColumns: '1fr 1fr',
+      gridTemplateColumns: '65fr 35fr',
     },
   }),
 })
 
 export const textContainer = style({
+  textAlign: 'center',
   ...themeUtils.responsiveStyle({
     xs: {
       order: 1,
-      textAlign: 'center',
       minHeight: '255px',
       paddingTop: '32px',
     },
-    md: {
+    lg: {
       order: 0,
-      textAlign: 'right',
-      paddingRight: '32px',
-      paddingTop: '32px',
-      minHeight: '255px',
+      display: 'grid',
+      placeItems: 'center',
+      textAlign: 'left',
+      paddingTop: '0px',
+    },
+  }),
+})
+
+export const textInnerContainer = style({
+  ...themeUtils.responsiveStyle({
+    lg: {
+      height: '100%',
+      maxWidth: '50%',
+      transform: 'translateX(50%)',
+      display: 'flex',
+      justifyContent: 'flex-end',
+      alignItems: 'center',
+      paddingLeft: '16px',
+      paddingRight: '16px',
     },
   }),
 })
@@ -40,7 +55,7 @@ export const headerImage = style({
     xs: {
       order: 0,
     },
-    md: {
+    lg: {
       order: 1,
     },
   }),
@@ -87,69 +102,5 @@ export const logoContainerMobile = style({
   display: 'grid',
   placeItems: 'center',
   margin: '0 auto',
+  marginBottom: '4px',
 })
-
-// export const headerBg = style({
-//   order: 1,
-//   '@media': {
-//     'screen and (min-width: 1000px)': {
-//       order: 0,
-//     },
-//   },
-// })
-
-// export const iconCircle = style({
-//   height: 136,
-//   width: 136,
-//   margin: '0 auto',
-//   display: 'flex',
-//   justifyContent: 'center',
-//   alignItems: 'center',
-//   boxShadow: '0px 4px 30px rgba(0, 97, 255, 0.08)',
-//   ...themeUtils.responsiveStyle({
-//     xs: {
-//       marginTop: 12,
-//     },
-//     md: {
-//       marginTop: 84,
-//       position: 'relative',
-//     },
-//   }),
-// })
-
-// export const headerWrapper = style({})
-
-// export const headerLogo = style({
-//   width: 70,
-//   maxHeight: 70,
-// })
-
-// export const headerImage = style({
-//   objectFit: 'cover',
-//   height: '200px',
-//   width: '100%',
-//   order: 0,
-//   '@media': {
-//     'screen and (min-width: 1000px)': {
-//       order: 1,
-//       height: '100%',
-//     },
-//   },
-// })
-
-// export const container = style({
-//   display: 'grid',
-//   gridTemplateRows: '255px',
-// })
-
-// export const gridContainer = style({
-//   display: 'grid',
-//   gridTemplateColumns: '1fr',
-//   gridTemplateRows: '200px 1fr',
-//   '@media': {
-//     'screen and (min-width: 1000px)': {
-//       gridTemplateColumns: '1fr 1fr',
-//       gridTemplateRows: '255px',
-//     },
-//   },
-// })
