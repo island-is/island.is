@@ -131,6 +131,16 @@ export class Case extends Model<Case> {
   defenderName?: string
 
   /**********
+   * The national of the accused's defender - optional
+   **********/
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  defenderNationalId?: string
+
+  /**********
    * The email address of the accused's defender - optional
    **********/
   @Column({

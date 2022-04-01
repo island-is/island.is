@@ -112,6 +112,7 @@ const OverviewForm: React.FC<Props> = (props) => {
             defendants={workingCase.defendants ?? []}
             defender={{
               name: workingCase.defenderName ?? '',
+              defenderNationalId: workingCase.defenderNationalId,
               email: workingCase.defenderEmail,
               phoneNumber: workingCase.defenderPhoneNumber,
             }}

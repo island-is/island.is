@@ -20,6 +20,7 @@ export const CaseQuery = gql`
         citizenship
       }
       defenderName
+      defenderNationalId
       defenderEmail
       defenderPhoneNumber
       sendRequestToDefender
