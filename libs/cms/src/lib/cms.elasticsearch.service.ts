@@ -249,17 +249,27 @@ export class CmsElasticsearchService {
         ]
       : [...tags.map((t) => ({ type: 'genericTag', key: t }))]
 
+    const wildcardSearch = {
+      wildcard: {
+        title: '*',
+      },
+    }
+
+    const multimatchSearch = {
+      multi_match: {
+        query: searchString ? searchString.toLowerCase() : '',
+        fields: ['title'],
+        type: 'phrase_prefix',
+      },
+    }
+
     const enhancedAssetResponse: ApiResponse<
       SearchResponse<MappedData>
     > = await this.elasticService.findByQuery(index, {
       query: {
         bool: {
           should: [
-            {
-              wildcard: {
-                title: !searchString ? '*' : `*${searchString.toLowerCase()}*`,
-              },
-            },
+            !searchString ? wildcardSearch : multimatchSearch,
             {
               term: {
                 type: {
