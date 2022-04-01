@@ -12,13 +12,15 @@ import {
   overview,
 } from '../../lib/messages'
 import { formatIsk, formatPhonenumber } from '../../utils'
-import { FishingLicenseShip as Ship } from '@island.is/api/schema'
+import {
+  FishingLicenseShip as Ship,
+  PaymentCatalogItem,
+} from '@island.is/api/schema'
 
 export const Overview: FC<FieldBaseProps> = ({ application, goToScreen }) => {
   const answers = application.answers as GeneralFishingLicense
 
-  console.log(application)
-
+  // Ships
   const ships = getValueViaPath(
     application.externalData,
     'directoryOfFisheries.data.ships',
@@ -29,6 +31,23 @@ export const Overview: FC<FieldBaseProps> = ({ application, goToScreen }) => {
     '0',
   ) as string
   const ship = ships[parseInt(shipIndex)]
+
+  // ChargeItem
+  const catalogItems = getValueViaPath(
+    application.externalData,
+    'feeInfoProvider.data',
+    [],
+  ) as PaymentCatalogItem[]
+  const chargeItem = getValueViaPath(
+    answers,
+    'fishingLicense.chargeType',
+    '',
+  ) as string
+
+  const selectedCatalogItem = catalogItems?.find(
+    (item) => item.chargeItemCode === chargeItem,
+  )
+  const fishingLicensePrice = selectedCatalogItem?.priceAmount || 0
 
   const changeScreens = (screen: string) => {
     if (goToScreen) goToScreen(screen)
@@ -111,19 +130,20 @@ export const Overview: FC<FieldBaseProps> = ({ application, goToScreen }) => {
           </GridColumn>
         </GridRow>
       </ReviewGroup>
-
-      <ReviewGroup>
-        <GridRow>
-          <GridColumn span={['9/12', '9/12', '9/12', '5/12']}>
-            <ValueLine
-              label={overview.labels.amount}
-              value={formatIsk(22490)}
-              color="blue400"
-              isPrice
-            />
-          </GridColumn>
-        </GridRow>
-      </ReviewGroup>
+      {!!fishingLicensePrice && (
+        <ReviewGroup>
+          <GridRow>
+            <GridColumn span={['9/12', '9/12', '9/12', '5/12']}>
+              <ValueLine
+                label={overview.labels.amount}
+                value={formatIsk(fishingLicensePrice)}
+                color="blue400"
+                isPrice
+              />
+            </GridColumn>
+          </GridRow>
+        </ReviewGroup>
+      )}
     </Box>
   )
 }

@@ -18,6 +18,7 @@ export const shipSelectionSection = buildSection({
         buildCustomField({
           id: 'shipSelection',
           title: '',
+          doesNotRequireAnswer: true,
           component: 'ShipSelection',
         }),
       ],
