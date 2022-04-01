@@ -79,7 +79,8 @@ const NewUserModal = ({
             roles: state.roles,
             municipalityName,
             municipalityId:
-              municipality?.municipalityId || (router.query.id as string),
+              //TODO better check
+              municipality[0]?.municipalityId || (router.query.id as string),
           },
         },
       }).then(() => {
