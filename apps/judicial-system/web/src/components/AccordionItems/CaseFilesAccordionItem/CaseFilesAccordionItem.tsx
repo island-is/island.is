@@ -8,7 +8,6 @@ import { UploadStateMessage } from '@island.is/judicial-system-web/src/routes/Sh
 import { useCourtUpload } from '@island.is/judicial-system-web/src/utils/hooks/useCourtUpload'
 import {
   Case,
-  CaseFileState,
   CaseState,
   completedCaseStates,
   courtRoles,
