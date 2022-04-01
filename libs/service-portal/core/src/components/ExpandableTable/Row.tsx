@@ -93,7 +93,7 @@ const ExpandableLine: FC<Props> = ({
               className={styles.loader}
               display="flex"
               alignItems="center"
-              justifyContent="flexEnd"
+              justifyContent="flexStart"
             >
               <LoadingDots single />
             </Box>

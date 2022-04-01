@@ -8,6 +8,7 @@ import {
 import FinanceScheduleDetailTable from '../FinanceScheduleDetailTable/FinanceScheduleDetailTable'
 import { DetailedSchedule, PaymentSchedule } from '@island.is/api/schema'
 import { Box, Button } from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
 
 const GET_FINANCE_PAYMENT_SCHEDULE_BY_ID = gql`
   query getPaymentScheduleByIdQuery($input: GetFinancePaymentScheduleInput!) {
@@ -42,6 +43,8 @@ const FinanceScheduleTableRow: FC<Props> = ({ paymentSchedule }) => {
     getPaymentScheduleById,
     { loading, error, ...detailsQuery },
   ] = useLazyQuery(GET_FINANCE_PAYMENT_SCHEDULE_BY_ID)
+  useNamespaces('sp.finance-schedule')
+  const { formatMessage } = useLocale()
 
   const paymentDetailData: Array<DetailedSchedule> =
     detailsQuery?.data?.getPaymentScheduleById.myDetailedSchedules
@@ -50,13 +53,25 @@ const FinanceScheduleTableRow: FC<Props> = ({ paymentSchedule }) => {
   const getType = (type: string) => {
     switch (type) {
       case 'S':
-        return 'Í gildi'
+        return formatMessage({
+          id: 'sp.finance-schedule:status-valid',
+          defaultMessage: 'Í gildi',
+        })
       case 'E':
-        return 'Ógild'
+        return formatMessage({
+          id: 'sp.finance-schedule:status-invalid',
+          defaultMessage: 'Ógild',
+        })
       case 'L':
-        return 'Lokið'
+        return formatMessage({
+          id: 'sp.finance-schedule:status-closed',
+          defaultMessage: 'Lokið',
+        })
       default:
-        return 'Í gildi'
+        return formatMessage({
+          id: 'sp.finance-schedule:status-empty',
+          defaultMessage: 'Engin staða',
+        })
     }
   }
 
@@ -96,7 +111,6 @@ const FinanceScheduleTableRow: FC<Props> = ({ paymentSchedule }) => {
               </Button>
             </Box>
           ),
-          element: true,
           align: 'right',
         },
       ]}

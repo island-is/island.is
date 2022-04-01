@@ -1,4 +1,3 @@
-import { gql } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
 import { ApiScope } from '@island.is/auth/scopes'
 import {

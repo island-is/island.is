@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 
 import {
   Text,
@@ -16,7 +16,8 @@ interface Props {
 
 const FinanceDebtStatus: FC<Props> = ({ debtStatusData }) => {
   const { formatMessage } = useLocale()
-  console.log('DebtStatusData: ', debtStatusData)
+  useNamespaces('sp.finance-schedule')
+
   return (
     <Box paddingBottom={7}>
       <Blockquote>
@@ -29,7 +30,10 @@ const FinanceDebtStatus: FC<Props> = ({ debtStatusData }) => {
                 justifyContent="spaceBetween"
               >
                 <Text fontWeight="semiBold">
-                  {'Staða við ríkissjóð og stofnanir'}
+                  {formatMessage({
+                    id: 'sp.finance-schedule:debt-status',
+                    defaultMessage: 'Staða við ríkissjóð og stofnanir',
+                  })}
                 </Text>
                 <Text>{debtStatusData.totalAmount?.toString()}</Text>
               </Box>
@@ -40,7 +44,12 @@ const FinanceDebtStatus: FC<Props> = ({ debtStatusData }) => {
                 flexDirection="row"
                 justifyContent="spaceBetween"
               >
-                <Text fontWeight="semiBold">{'Ekki búið að semja um'}</Text>
+                <Text fontWeight="semiBold">
+                  {formatMessage({
+                    id: 'sp.finance-schedule:not-scheduled',
+                    defaultMessage: 'Ekki búið að semja um',
+                  })}
+                </Text>
                 <Text>{debtStatusData.possibleToSchedule?.toString()}</Text>
               </Box>
             </GridColumn>
@@ -52,7 +61,12 @@ const FinanceDebtStatus: FC<Props> = ({ debtStatusData }) => {
                 flexDirection="row"
                 justifyContent="spaceBetween"
               >
-                <Text fontWeight="semiBold">{'Greiðsluáætlun samþykkt'}</Text>
+                <Text fontWeight="semiBold">
+                  {formatMessage({
+                    id: 'sp.finance-schedule:schedule-approved',
+                    defaultMessage: 'Greiðsluáætlun samþykkt',
+                  })}
+                </Text>
                 <Text>{debtStatusData.approvedSchedule?.toString()}</Text>
               </Box>
             </GridColumn>
@@ -62,7 +76,12 @@ const FinanceDebtStatus: FC<Props> = ({ debtStatusData }) => {
                 flexDirection="row"
                 justifyContent="spaceBetween"
               >
-                <Text fontWeight="semiBold">{'Ekki hægt að semja um'}</Text>
+                <Text fontWeight="semiBold">
+                  {formatMessage({
+                    id: 'sp.finance-schedule:cant-schedule',
+                    defaultMessage: 'Ekki hægt að semja um',
+                  })}
+                </Text>
                 <Text>{debtStatusData.notPossibleToSchedule?.toString()}</Text>
               </Box>
             </GridColumn>
