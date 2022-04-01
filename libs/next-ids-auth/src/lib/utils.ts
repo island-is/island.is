@@ -11,8 +11,8 @@ export const checkExpiry = (
 
   if (decoded && !(typeof decoded === 'string') && decoded['exp']) {
     const expires = new Date(decoded.exp * 1000)
-    // Set renewalTime few seconds before the actual time as a buffer to make sure we
-    // accidentally don't indicate valid token that could expire before it is used.
+    // Set renewalTime few seconds before the actual time to make sure we
+    // don't indicate a valid token that could expire before it is used.
     const renewalTime = new Date(expires.getTime() - renewalSeconds * 1000)
     return decoded.exp && new Date() > renewalTime && !isRefreshTokenExpired
   }
