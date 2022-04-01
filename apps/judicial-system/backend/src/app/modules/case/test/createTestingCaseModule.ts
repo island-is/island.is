@@ -21,6 +21,7 @@ import { Case } from '../models/case.model'
 import { caseModuleConfig } from '../case.config'
 import { CaseService } from '../case.service'
 import { CaseController } from '../case.controller'
+import { CaseArchive } from '../models/caseArchive.model'
 
 jest.mock('@island.is/dokobit-signing')
 jest.mock('@island.is/email-service')
@@ -72,6 +73,10 @@ export const createTestingCaseModule = async () => {
           update: jest.fn(),
         },
       },
+      {
+        provide: getModelToken(CaseArchive),
+        useValue: { create: jest.fn() },
+      },
       { provide: caseModuleConfig.KEY, useValue: caseModuleConfig() },
       CaseService,
     ],
@@ -93,6 +98,10 @@ export const createTestingCaseModule = async () => {
 
   const caseModel = caseModule.get<typeof Case>(getModelToken(Case))
 
+  const caseArchiveModel = caseModule.get<typeof CaseArchive>(
+    getModelToken(CaseArchive),
+  )
+
   const caseConfig = caseModule.get<ConfigType<typeof caseModuleConfig>>(
     caseModuleConfig.KEY,
   )
@@ -110,6 +119,7 @@ export const createTestingCaseModule = async () => {
     logger,
     sequelize,
     caseModel,
+    caseArchiveModel,
     caseConfig,
     caseService,
     caseController,

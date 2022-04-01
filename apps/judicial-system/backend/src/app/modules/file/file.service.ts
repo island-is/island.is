@@ -239,7 +239,7 @@ export class FileService {
   async updateCaseFile(
     caseId: string,
     fileId: string,
-    update: { [key: string]: string },
+    update: { [key: string]: string | null },
     transaction?: Transaction,
   ): Promise<void> {
     const promisedUpdate = transaction

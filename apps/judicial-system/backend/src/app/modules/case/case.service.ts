@@ -33,7 +33,7 @@ import {
 import type { User as TUser } from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
-import { nowFactory } from '../../factories'
+import { nowFactory, uuidFactory } from '../../factories'
 import {
   getRequestPdfAsBuffer,
   getRulingPdfAsString,
@@ -58,10 +58,10 @@ import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { UpdateCaseDto } from './dto/updateCase.dto'
 import { getCasesQueryFilter, oldFilter } from './filters/case.filters'
 import { Case } from './models/case.model'
+import { CaseArchive } from './models/caseArchive.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { ArchiveResponse } from './models/archive.response'
 import { caseModuleConfig } from './case.config'
-import { uuid } from 'uuidv4'
 
 const caseEncryptionProperties: (keyof Case)[] = [
   'description',
@@ -76,7 +76,7 @@ const caseEncryptionProperties: (keyof Case)[] = [
   'caseFilesComments',
   'courtAttendees',
   'prosecutorDemands',
-  // 'courtDocuments',
+  'courtDocuments',
   'sessionBookings',
   'courtCaseFacts',
   'introduction',
@@ -97,6 +97,25 @@ const defendantEncryptionProperties: (keyof Defendant)[] = [
 ]
 
 const caseFileEncryptionProperties: (keyof CaseFile)[] = ['name', 'key']
+
+function collectEncryptionProperties(
+  properties: string[],
+  unknownSource: unknown,
+): [{ [key: string]: string | null }, { [key: string]: unknown }] {
+  const source = unknownSource as { [key: string]: unknown }
+  return properties.reduce<
+    [{ [key: string]: string | null }, { [key: string]: unknown }]
+  >(
+    (data, property) => [
+      {
+        ...data[0],
+        [property]: typeof source[property] === 'string' ? '' : null,
+      },
+      { ...data[1], [property]: source[property] },
+    ],
+    [{}, {}],
+  )
+}
 
 interface Recipient {
   name: string
@@ -147,6 +166,8 @@ export class CaseService {
   constructor(
     @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(Case) private readonly caseModel: typeof Case,
+    @InjectModel(CaseArchive)
+    private readonly caseArchiveModel: typeof CaseArchive,
     @Inject(caseModuleConfig.KEY)
     private readonly config: ConfigType<typeof caseModuleConfig>,
     private readonly defendantService: DefendantService,
@@ -551,20 +572,6 @@ export class CaseService {
         { error },
       )
     }
-  }
-
-  private encrypt(data: { [key: string]: string }): { [key: string]: string } {
-    return Object.keys(data).reduce(
-      (update: { [key: string]: string }, property) => ({
-        ...update,
-        [property]: CryptoJS.AES.encrypt(
-          data[property],
-          this.config.archiveEncryptionKey,
-          { iv: CryptoJS.enc.Hex.parse(uuid()) },
-        ).toString(),
-      }),
-      {},
-    )
   }
 
   async findById(caseId: string): Promise<Case> {
@@ -973,7 +980,7 @@ export class CaseService {
       include: [...includes, { model: CaseFile, as: 'caseFiles' }],
       order: [
         defendantsOrder,
-        [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
+        [{ model: CaseFile, as: 'caseFiles' }, 'created', 'ASC'],
       ],
       where: {
         isArchived: false,
@@ -986,54 +993,68 @@ export class CaseService {
     }
 
     await this.sequelize.transaction(async (transaction) => {
-      await this.update(
-        theCase.id,
-        {
-          ...this.encrypt(
-            caseEncryptionProperties.reduce(
-              (data, property) => ({ ...data, [property]: theCase[property] }),
-              {},
-            ),
-          ),
-          isArchived: true,
-        } as UpdateCaseDto,
-        false,
-        transaction,
+      const [clearedCaseProperties, caseArchive] = collectEncryptionProperties(
+        caseEncryptionProperties,
+        theCase,
       )
 
+      const defendantsArchive = []
       for (const defendant of theCase.defendants ?? []) {
+        const [
+          clearedDefendantProperties,
+          defendantArchive,
+        ] = collectEncryptionProperties(
+          defendantEncryptionProperties,
+          defendant,
+        )
+        defendantsArchive.push(defendantArchive)
+
         await this.defendantService.update(
           theCase.id,
           defendant.id,
-          this.encrypt(
-            defendantEncryptionProperties.reduce(
-              (data, property) => ({
-                ...data,
-                [property]: defendant[property],
-              }),
-              {},
-            ),
-          ),
+          clearedDefendantProperties,
           transaction,
         )
       }
 
+      const caseFilesArchive = []
       for (const caseFile of theCase.caseFiles ?? []) {
+        const [
+          clearedCaseFileProperties,
+          caseFileArchive,
+        ] = collectEncryptionProperties(caseFileEncryptionProperties, caseFile)
+        caseFilesArchive.push(caseFileArchive)
+
         await this.fileService.updateCaseFile(
           theCase.id,
           caseFile.id,
-          this.encrypt(
-            caseFileEncryptionProperties.reduce(
-              (data, property) => ({
-                ...data,
-                [property]: caseFile[property],
-              }),
-              {},
-            ),
-          ),
+          clearedCaseFileProperties,
           transaction,
         )
       }
+
+      await this.caseArchiveModel.create(
+        {
+          caseId: theCase.id,
+          archive: CryptoJS.AES.encrypt(
+            JSON.stringify({
+              ...caseArchive,
+              defendants: defendantsArchive,
+              caseFiles: caseFilesArchive,
+            }),
+            this.config.archiveEncryptionKey,
+            { iv: CryptoJS.enc.Hex.parse(uuidFactory()) },
+          ).toString(),
+        },
+        { transaction },
+      )
+
+      await this.update(
+        theCase.id,
+        { ...clearedCaseProperties, isArchived: true } as UpdateCaseDto,
+        false,
+        transaction,
+      )
     })
 
     this.eventService.postEvent(CaseEvent.ARCHIVE, theCase)
