@@ -36,7 +36,7 @@ const FinanceScheduleDetailTable: FC<Props> = ({ data }) => {
       ) || 0
     return {
       ...data[i],
-      paid: sum >= x.plannedAmount ? true : false,
+      paid: sum >= x.plannedAmount,
     }
   })
   const headerArray = [

@@ -11,28 +11,6 @@ import { GET_TAPS_QUERY } from '@island.is/service-portal/graphql'
 import * as Sentry from '@sentry/react'
 import { lazy } from 'react'
 
-const GET_FINANCE_PAYMENT_SCHEDULES = gql`
-  query getPaymentSchedulesQuery {
-    getPaymentSchedule {
-      myPaymentSchedule {
-        nationalId
-        paymentSchedules {
-          approvalDate
-          paymentCount
-          scheduleName
-          scheduleNumber
-          scheduleStatus
-          scheduleType
-          totalAmount
-          unpaidAmount
-          unpaidCount
-          documentID
-          downloadServiceURL
-        }
-      }
-    }
-  }
-`
 const tabRoutes = {
   transactions: {
     name: m.financeTransactions,

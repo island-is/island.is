@@ -5,8 +5,6 @@ import {
 } from '@island.is/service-portal/core'
 import { useQuery, gql } from '@apollo/client'
 import { PaymentSchedule, Query } from '@island.is/api/schema'
-import { GET_TAPS_QUERY } from '@island.is/service-portal/graphql'
-import { m } from '@island.is/service-portal/core'
 import {
   Box,
   Text,
@@ -20,11 +18,6 @@ import {
 import { useLocale, useNamespaces } from '@island.is/localization'
 import FinanceScheduleTable from '../../components/FinanceScheduleTable/FinanceScheduleTable'
 
-export const GET_FINANCE_DEBT_STATUS = gql`
-  query getDebtStatusQuery {
-    getDebtStatus
-  }
-`
 export const GET_FINANCE_PAYMENT_SCHEDULES = gql`
   query getPaymentSchedulesQuery {
     getPaymentSchedule {
@@ -58,18 +51,16 @@ const FinanceSchedule: ServicePortalModuleComponent = () => {
     error: paymentSchedulesError,
   } = useQuery<Query>(GET_FINANCE_PAYMENT_SCHEDULES)
 
-  const { loading: tabLoading } = useQuery<Query>(GET_TAPS_QUERY)
-
   const recordsData: Array<PaymentSchedule> =
     paymentSchedulesData?.getPaymentSchedule?.myPaymentSchedule
       ?.paymentSchedules || []
-  // const debtData: any = debtStatusData?.getDebtStatus?.myDebtStatus || {}
 
   const applicationButtonText = formatMessage({
     id: 'sp.finance-schedule:finance-schedule-application',
     defaultMessage: 'Gera greiðsluáætlun',
   })
-  if (tabLoading) {
+
+  if (paymentSchedulesLoading) {
     return <SkeletonLoader space={1} height={30} repeat={4} />
   }
 
@@ -171,9 +162,6 @@ const FinanceSchedule: ServicePortalModuleComponent = () => {
               <SkeletonLoader space={1} height={40} repeat={5} />
             </Box>
           )}
-          {/* {debtData.length > 0 ? (
-            <FinanceDebtStatus debtStatusData={debtData[0]} />
-          ) : null} */}
 
           {recordsData.length > 0 ? (
             <FinanceScheduleTable recordsArray={recordsData} />

@@ -7,7 +7,6 @@ import {
   Text,
   LoadingDots,
   Table as T,
-  Hidden,
   Button,
 } from '@island.is/island-ui/core'
 import { m } from '@island.is/service-portal/core'
@@ -18,7 +17,6 @@ interface Props {
   data: Array<{
     value: string | number | React.ReactElement
     align?: 'left' | 'right'
-    element?: boolean
   }>
   last?: boolean
   loading?: boolean
