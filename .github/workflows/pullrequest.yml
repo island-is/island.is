@@ -14,8 +14,9 @@ jobs:
     defaults:
       run:
         shell: bash
-    container: 
+    container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+      options: --cap-add=NET_ADMIN
     timeout-minutes: 25
 
     env:
@@ -205,8 +206,9 @@ jobs:
     defaults:
       run:
         shell: bash
-    container: 
+    container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+      options: --cap-add=NET_ADMIN
     timeout-minutes: 25
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
@@ -262,8 +264,9 @@ jobs:
     defaults:
       run:
         shell: bash
-    container: 
+    container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+      options: --cap-add=NET_ADMIN
     timeout-minutes: 25
     env:
       AFFECTED_PROJECT: ${{ matrix.projects }}
@@ -330,8 +333,9 @@ jobs:
     defaults:
       run:
         shell: bash
-    container: 
+    container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+      options: --cap-add=NET_ADMIN
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v2
@@ -345,17 +349,18 @@ jobs:
       - name: Check cache success
         shell: bash
         run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
-      
+
       - name: Linting workspace
         shell: bash
         run: ./scripts/ci/20_lint-workspace.sh
-  
+
   # shellcheck:
   #   needs:
   #     - linting-workspace
   #   runs-on: ec2-runners
-  #   container: 
+  #   container:
   #     image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+  options: --cap-add=NET_ADMIN
   #   timeout-minutes: 5
   #   steps:
   #     - name: Run ShellCheck
@@ -371,8 +376,9 @@ jobs:
     needs:
       - prepare
     runs-on: ec2-runners
-    container: 
+    container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+      options: --cap-add=NET_ADMIN
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v2
@@ -397,8 +403,9 @@ jobs:
     defaults:
       run:
         shell: bash
-    container: 
+    container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+      options: --cap-add=NET_ADMIN
     timeout-minutes: 25
     if: needs.prepare.outputs.LINT_CHUNKS
     env:
@@ -449,8 +456,9 @@ jobs:
     defaults:
       run:
         shell: bash
-    container: 
+    container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+      options: --cap-add=NET_ADMIN
     timeout-minutes: 25
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
@@ -497,8 +505,9 @@ jobs:
     defaults:
       run:
         shell: bash
-    container: 
+    container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+      options: --cap-add=NET_ADMIN
     if: always()
     needs:
       - prepare

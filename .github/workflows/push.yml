@@ -31,8 +31,9 @@ jobs:
     defaults:
       run:
         shell: bash
-    container: 
+    container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+      options: --cap-add=NET_ADMIN
     env:
       CREATE_PATTERNS: ^release/
     outputs:
@@ -112,8 +113,9 @@ jobs:
       run:
         shell: bash
     runs-on: ec2-runners
-    container: 
+    container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+      options: --cap-add=NET_ADMIN
     timeout-minutes: 90
 
     if: needs.pre-checks.outputs.PRE_CHECK
@@ -293,37 +295,16 @@ jobs:
           HTML_URL: ${{ github.event.pull_request.html_url }}
           ISSUE_REPORTING_SLACK_WEBHOOK_URL: ${{ secrets.SLACK_BUILD_ISSUES_REPORTING_WEBHOOK_URL }}
 
-      - name: Set Usermod on machine
-        shell: bash
-        run: sudo usermod -a -G docker runner
-
-      # - name: Set Usermod on machine
-      #   shell: bash
-      #   run: sudo usermod -a -G docker ec2-user
-
-      - name: WHOAMI
-        shell: bash
-        run: whoami
-
       - name: Docker login to ECR repo
-        run: sudo usermod -a -G docker runner && id runner && ./scripts/ci/docker-login-ecr.sh
+        run: ./scripts/ci/docker-login-ecr.sh
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
-      - name: WHOAMI
-        shell: bash
-        run: whoami
-
-      # - name: Set Usermod on machine
-      #   shell: bash
-      #   run: sudo usermod -a -G docker ec2-user
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
         with:
           image: '${{ env.DOCKER_BASE_IMAGE_REGISTRY }}/eks-distro-build-tooling/binfmt-misc:qemu-v6.1.0'
-      
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
@@ -419,8 +400,9 @@ jobs:
     defaults:
       run:
         shell: bash
-    container: 
+    container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+      options: --cap-add=NET_ADMIN
     timeout-minutes: 25
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
@@ -476,8 +458,9 @@ jobs:
     defaults:
       run:
         shell: bash
-    container: 
+    container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+      options: --cap-add=NET_ADMIN
     timeout-minutes: 35
     if: needs.prepare.outputs.BUILD_CHUNKS
     env:
@@ -584,8 +567,9 @@ jobs:
     defaults:
       run:
         shell: bash
-    container: 
+    container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+      options: --cap-add=NET_ADMIN
     timeout-minutes: 5
     env:
       FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
@@ -646,8 +630,9 @@ jobs:
     defaults:
       run:
         shell: bash
-    container: 
+    container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+      options: --cap-add=NET_ADMIN
     timeout-minutes: 5
     if: always() && needs.pre-checks.result == 'success' && needs.prepare.result != 'skipped'
     needs:
@@ -681,8 +666,9 @@ jobs:
     defaults:
       run:
         shell: bash
-    container: 
+    container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+      options: --cap-add=NET_ADMIN
     if: always() && needs.retag-unaffected.result == 'success' && needs.helm-docker-build.result != 'failure'
     needs:
       - retag-unaffected
@@ -725,8 +711,9 @@ jobs:
     defaults:
       run:
         shell: bash
-    container: 
+    container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+      options: --cap-add=NET_ADMIN
     if: always()
     needs:
       - pre-checks
@@ -752,8 +739,9 @@ jobs:
     defaults:
       run:
         shell: bash
-    container: 
+    container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+      options: --cap-add=NET_ADMIN
     if: failure() && needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK != 'feature-deploy'
     needs:
       - pre-checks
