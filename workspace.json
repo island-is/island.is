@@ -3819,33 +3819,6 @@
         }
       }
     },
-    "clients-rsk-v1": {
-      "root": "libs/clients/rsk/v1",
-      "sourceRoot": "libs/clients/rsk/v1/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/clients/rsk/v1/tsconfig.lib.json",
-              "libs/clients/rsk/v1/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!libs/clients/rsk/v1/**/*"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/clients/rsk/v1/jest.config.js",
-            "passWithNoTests": true
-          },
-          "outputs": ["coverage/libs/clients/rsk/v1"]
-        }
-      }
-    },
     "clients-syslumenn": {
       "root": "libs/clients/syslumenn",
       "sourceRoot": "libs/clients/syslumenn/src",
