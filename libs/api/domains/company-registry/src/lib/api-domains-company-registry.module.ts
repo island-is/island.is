@@ -5,6 +5,7 @@ import { RskCompanyInfoService } from './rsk-company-info.service'
 
 @Module({
   providers: [RskCompanyInfoService, CompanyRegistryResolver],
+  exports: [RskCompanyInfoService],
   imports: [CompanyRegistryClientModule],
 })
 export class CompanyRegistryModule {}
