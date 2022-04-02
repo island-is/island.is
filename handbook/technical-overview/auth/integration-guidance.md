@@ -12,14 +12,14 @@ We recommend these libraries and frameworks to integrate OIDC:
 - [NextAuth.js](https://next-auth.js.org/) - Authentication for Next.js projects.
 - [node-openid-client](https://github.com/panva/node-openid-client) - OIDC implementation for Node.js.
 - [AppAuth](https://appauth.io/) - OIDC implementation for mobile apps: [iOS](https://github.com/openid/AppAuth-iOS), [Android](https://github.com/openid/AppAuth-Android), [JS](https://github.com/openid/AppAuth-JS), [React Native](https://formidable.com/open-source/react-native-app-auth/) and [Flutter](https://pub.dev/packages/flutter_appauth).
-- [IdentityModel.AspNetCore](https://github.com/IdentityModel/IdentityModel.AspNetCore) - OIDC implementation for .NET.
+- [ASP.NET Core Authentication](https://docs.microsoft.com/en-us/dotnet/architecture/microservices/secure-net-microservices-web-applications/#authenticate-with-an-openid-connect-or-oauth-20-identity-provider) - OIDC implementation for .NET.
 - [Nimbus OAuth + OIDC SDK](https://connect2id.com/products/nimbus-oauth-openid-connect-sdk) - OIDC implementation for Java Applications.
 
 **Validating access tokens**
 
 - [Nimbus JOSE + JWT](https://connect2id.com/products/nimbus-jose-jwt) - JWT validation for Java.
 - [passport-jwt](http://www.passportjs.org/packages/passport-jwt/) + [jwks-rsa](https://github.com/auth0/node-jwks-rsa) - JWT validation for Node.js.
-- [ASP.NET Core Authentication](https://docs.microsoft.com/en-us/aspnet/core/security/authentication/?view=aspnetcore-6.0) - JWT validation for .NET.
+- [ASP.NET Core Authentication](https://docs.microsoft.com/en-us/dotnet/architecture/microservices/secure-net-microservices-web-applications/#consume-security-tokens) - JWT validation for .NET.
 
 ## Examples
 
