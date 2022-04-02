@@ -2,6 +2,7 @@ import { SequelizeConfigService } from '@island.is/auth-api-lib'
 import { IdsUserGuard, MockAuthGuard, User } from '@island.is/auth-nest-tools'
 import { EinstaklingarApi } from '@island.is/clients/national-registry-v2'
 import { RskProcuringClient } from '@island.is/clients/rsk/procuring'
+import { UserProfileApi } from '@island.is/clients/user-profile'
 import { FeatureFlagService } from '@island.is/nest/feature-flags'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 import {
@@ -13,10 +14,15 @@ import {
 import { TestingModuleBuilder } from '@nestjs/testing'
 import { AppModule } from '../src/app/app.module'
 
-class mockEinstaklingarApi {
+class MockEinstaklingarApi {
   withMiddleware = () => this
-  einstaklingarGetEinstaklingur = () => Promise.resolve({})
-  einstaklingarGetForsja = () => []
+  einstaklingarGetEinstaklingur = jest.fn().mockResolvedValue({})
+  einstaklingarGetForsja = jest.fn().mockResolvedValue([])
+}
+
+class MockUserProfile {
+  withMiddleware = () => this
+  userProfileControllerFindOneByNationalId = jest.fn().mockResolvedValue({})
 }
 
 interface SetupOptions {
@@ -39,10 +45,12 @@ export const setupWithAuth = async ({
           }),
         )
         .overrideProvider(EinstaklingarApi)
-        .useClass(mockEinstaklingarApi)
+        .useClass(MockEinstaklingarApi)
+        .overrideProvider(UserProfileApi)
+        .useClass(MockUserProfile)
         .overrideProvider(RskProcuringClient)
         .useValue({
-          getSimple: () => Promise.resolve(null),
+          getSimple: jest.fn().mockResolvedValue(null),
         })
         .overrideProvider(FeatureFlagService)
         .useValue({ getValue: () => true }),

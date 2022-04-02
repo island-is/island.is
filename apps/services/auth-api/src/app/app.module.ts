@@ -13,6 +13,7 @@ import {
 import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
 import { RskProcuringClientConfig } from '@island.is/clients/rsk/procuring'
+import { UserProfileClientConfig } from '@island.is/clients/user-profile'
 
 import { ClientsModule } from './modules/clients/clients.module'
 import { GrantsModule } from './modules/grants/grants.module'
@@ -46,6 +47,7 @@ import { UserProfileModule } from './modules/user-profile/user-profile.module'
         IdsClientConfig,
         NationalRegistryClientConfig,
         RskProcuringClientConfig,
+        UserProfileClientConfig,
         XRoadConfig,
       ],
     }),
