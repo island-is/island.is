@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common'
 import { UserProfileService } from '@island.is/auth-api-lib'
 import { NationalRegistryClientModule } from '@island.is/clients/national-registry-v2'
+import { CompanyRegistryClientModule } from '@island.is/clients/rsk/company-registry'
 import { UserProfileClientModule } from '@island.is/clients/user-profile'
 import { UserProfileController } from './user-profile.controller'
 
@@ -8,6 +9,7 @@ import { UserProfileController } from './user-profile.controller'
   imports: [
     NationalRegistryClientModule,
     UserProfileClientModule,
+    CompanyRegistryClientModule,
   ],
   controllers: [UserProfileController],
   providers: [UserProfileService],

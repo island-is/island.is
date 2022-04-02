@@ -3,6 +3,10 @@ import * as faker from 'faker'
 
 import { EinstaklingarApi } from '@island.is/clients/national-registry-v2'
 import {
+  GetCompanyApi,
+  ResponseCompanyDetailed,
+} from '@island.is/clients/rsk/company-registry'
+import {
   UserProfile,
   UserProfileApi,
   UserProfileLocaleEnum,
@@ -19,6 +23,12 @@ import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function mocked<T extends (...args: any) => any>(value: T) {
   return (value as unknown) as jest.Mock<ReturnType<T>, Parameters<T>>
+}
+
+function createCompany(): ResponseCompanyDetailed {
+  return {
+    nafn: faker.company.companyName(),
+  } as ResponseCompanyDetailed
 }
 
 function createUserProfile(): UserProfile {
@@ -205,6 +215,65 @@ describe('UserProfileController', () => {
 
         // Assert
         expect(res.body).toMatchObject(expected)
+      })
+    })
+  })
+
+  describe('with auth as company delegation', () => {
+    let app: TestApp
+    let server: request.SuperTest<request.Test>
+
+    beforeAll(async () => {
+      const user = createCurrentUser({
+        nationalIdType: 'company',
+        scope: ['@identityserver.api/authentication'],
+      })
+      app = await setupWithAuth({ user })
+      server = request(app.getHttpServer())
+    })
+
+    afterAll(async () => {
+      await app.cleanUp()
+    })
+
+    describe('GET /user-profile', () => {
+      it('with empty registries should return no claims', async () => {
+        // Act
+        const res = await server.get(path).expect(200)
+
+        // Assert
+        expect(res.body).toEqual({})
+      })
+
+      it('with failing registries should log and return no claims', async () => {
+        // Arrange
+        const errorLog = jest
+          .spyOn(app.get<Logger>(LOGGER_PROVIDER), 'error')
+          .mockImplementation()
+        mocked(app.get(GetCompanyApi).getCompany).mockRejectedValue(
+          new Error('test error'),
+        )
+
+        // Act
+        const res = await server.get(path).expect(200)
+
+        // Assert
+        expect(errorLog).toHaveBeenCalledTimes(1)
+        expect(res.body).toEqual({})
+      })
+
+      it('with full registries should return company claims', async () => {
+        // Arrange
+        const company = createCompany()
+        mocked(app.get(GetCompanyApi).getCompany).mockResolvedValue(company)
+
+        // Act
+        const res = await server.get(path).expect(200)
+
+        // Assert
+        expect(res.body).toEqual({
+          name: company.nafn,
+        })
       })
     })
   })

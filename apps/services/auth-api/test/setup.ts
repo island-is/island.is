@@ -2,6 +2,7 @@ import { SequelizeConfigService } from '@island.is/auth-api-lib'
 import { IdsUserGuard, MockAuthGuard, User } from '@island.is/auth-nest-tools'
 import { EinstaklingarApi } from '@island.is/clients/national-registry-v2'
 import { RskProcuringClient } from '@island.is/clients/rsk/procuring'
+import { GetCompanyApi } from '@island.is/clients/rsk/company-registry'
 import { UserProfileApi } from '@island.is/clients/user-profile'
 import { FeatureFlagService } from '@island.is/nest/feature-flags'
 import { createCurrentUser } from '@island.is/testing/fixtures'
@@ -48,6 +49,10 @@ export const setupWithAuth = async ({
         .useClass(MockEinstaklingarApi)
         .overrideProvider(UserProfileApi)
         .useClass(MockUserProfile)
+        .overrideProvider(GetCompanyApi)
+        .useValue({
+          getCompany: jest.fn().mockResolvedValue({}),
+        })
         .overrideProvider(RskProcuringClient)
         .useValue({
           getSimple: jest.fn().mockResolvedValue(null),

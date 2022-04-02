@@ -7,6 +7,7 @@ import {
   Heimilisfang,
 } from '@island.is/clients/national-registry-v2'
 import type { EinstaklingarGetEinstaklingurRequest } from '@island.is/clients/national-registry-v2'
+import { GetCompanyApi } from '@island.is/clients/rsk/company-registry'
 import { UserProfileApi } from '@island.is/clients/user-profile'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
@@ -20,6 +21,7 @@ export class UserProfileService {
   constructor(
     private individualApi: EinstaklingarApi,
     private userProfileApi: UserProfileApi,
+    private companyRegistryApi: GetCompanyApi,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
@@ -31,7 +33,7 @@ export class UserProfileService {
   async getUserProfileClaims(auth: User): Promise<UserProfileDTO> {
     const isCompany = !!auth.nationalId.match(/^[4-7]\d{9}$/)
     if (isCompany) {
-      return {}
+      return this.getClaimsFromCompanyRegistry(auth).catch(this.handleError)
     } else {
       return this.getIndividualUserProfileClaims(auth)
     }
@@ -48,6 +50,19 @@ export class UserProfileService {
   private handleError = (error: Error): UserProfileDTO => {
     this.logger.error(error)
     return {}
+  }
+
+  private async getClaimsFromCompanyRegistry(
+    auth: User,
+  ): Promise<UserProfileDTO> {
+    const companyInfo = await this.companyRegistryApi.getCompany({
+      nationalId: auth.nationalId,
+    })
+
+    // TODO: Add address and domicile claims when company registry integration has been fixed.
+    return {
+      name: companyInfo.nafn,
+    }
   }
 
   private async getClaimsFromNationalRegistry(

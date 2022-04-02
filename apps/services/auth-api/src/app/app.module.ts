@@ -12,6 +12,7 @@ import {
 } from '@island.is/nest/config'
 import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
+import { CompanyRegistryConfig } from '@island.is/clients/rsk/company-registry'
 import { RskProcuringClientConfig } from '@island.is/clients/rsk/procuring'
 import { UserProfileClientConfig } from '@island.is/clients/user-profile'
 
@@ -42,6 +43,7 @@ import { UserProfileModule } from './modules/user-profile/user-profile.module'
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
+        CompanyRegistryConfig,
         DelegationConfig,
         FeatureFlagConfig,
         IdsClientConfig,
