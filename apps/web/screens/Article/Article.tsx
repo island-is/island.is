@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useMemo, useRef, useState } from 'react'
-import router, { useRouter } from 'next/router'
+import { useRouter } from 'next/router'
 import NextLink from 'next/link'
 import { BLOCKS } from '@contentful/rich-text-types'
 import slugify from '@sindresorhus/slugify'
@@ -30,6 +30,7 @@ import {
   Sticky,
   Webreader,
   AppendedArticleComponents,
+  UkraineChatPanel,
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from '../queries'
@@ -283,52 +284,6 @@ const ArticleSidebar: FC<ArticleSidebarProps> = ({
   )
 }
 
-const activateUkraineChatPanel = () => {
-  /* eslint-disable */
-  const w: any = window
-  w.__lc = w.__lc || {}
-  w.__lc.license = 13822368
-  const widget = (function (n: any, t, c) {
-    function i(n) {
-      return e._h ? e._h.apply(null, n) : e._q.push(n)
-    }
-    var e = {
-      _q: [],
-      _h: null,
-      _v: '2.0',
-      on: function () {
-        i(['on', c.call(arguments)])
-      },
-      once: function () {
-        i(['once', c.call(arguments)])
-      },
-      off: function () {
-        i(['off', c.call(arguments)])
-      },
-      get: function () {
-        if (!e._h)
-          throw new Error("[LiveChatWidget] You can't use getters before load.")
-        return i(['get', c.call(arguments)])
-      },
-      call: function () {
-        i(['call', c.call(arguments)])
-      },
-      init: function () {
-        var n = t.createElement('script')
-        n.id = 'ukraine-chat-panel'
-        ;(n.async = !0),
-          (n.type = 'text/javascript'),
-          (n.src = 'https://cdn.livechatinc.com/tracking.js'),
-          t.head.appendChild(n)
-      },
-    }
-    !n.__lc.asyncInit && e.init(), (n.LiveChatWidget = n.LiveChatWidget || e)
-    return e
-  })(window, document, [].slice)
-  return widget
-  /* eslint-enable */
-}
-
 export interface ArticleProps {
   article: Article
   namespace: GetNamespaceQuery['getNamespace']
@@ -383,16 +338,6 @@ const ArticleScreen: Screen<ArticleProps> = ({
     false,
     150,
   )
-
-  useEffect(() => {
-    let widget: any
-    if (article.id === '7i92Z9s9HQeYlpGReYQVX') {
-      widget = activateUkraineChatPanel()
-    }
-
-    return () => widget?.call('destroy')
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   const contentOverviewOptions = useMemo(() => {
     return createArticleNavigation(article, subArticle, linkResolver)
@@ -659,10 +604,14 @@ const ArticleScreen: Screen<ArticleProps> = ({
             portalRef.current,
           )}
       </SidebarLayout>
-      <OrganizationChatPanel
-        slugs={article.organization.map((x) => x.slug)}
-        pushUp={isVisible}
-      />
+      {article.id === '7i92Z9s9HQeYlpGReYQVX' ? (
+        <UkraineChatPanel />
+      ) : (
+        <OrganizationChatPanel
+          slugs={article.organization.map((x) => x.slug)}
+          pushUp={isVisible}
+        />
+      )}
       <OrganizationFooter
         organizations={article.organization as Organization[]}
       />
