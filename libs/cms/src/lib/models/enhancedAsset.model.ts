@@ -23,6 +23,9 @@ export class EnhancedAsset {
 
   @Field(() => Organization)
   organization!: Organization | null
+
+  @Field()
+  description?: string
 }
 
 export const mapEnhancedAsset = ({
@@ -37,4 +40,5 @@ export const mapEnhancedAsset = ({
   organization: fields.organization
     ? mapOrganization(fields.organization)
     : null,
+  description: fields.description ?? '',
 })

@@ -7,6 +7,7 @@ export const GET_PUBLISHED_MATERIAL_QUERY = gql`
       items {
         id
         title
+        description
         file {
           url
           title

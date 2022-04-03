@@ -521,6 +521,9 @@ export interface IEnhancedAssetFields {
 
   /** Organization */
   organization?: IOrganization | undefined
+
+  /** Description */
+  description?: string | undefined
 }
 
 /** An Asset that can be tagged with generic tags */

@@ -2,7 +2,11 @@ import React from 'react'
 import { Box, FocusableBox, Text, Tag } from '@island.is/island-ui/core'
 import { EnhancedAsset } from '@island.is/web/graphql/schema'
 
-export const PublishedMaterialItem = ({ item }: { item: EnhancedAsset }) => {
+interface PublishedMaterialItemProps {
+  item: EnhancedAsset
+}
+
+export const PublishedMaterialItem = ({ item }: PublishedMaterialItemProps) => {
   const fileEnding = item.file?.url.split('.').pop().toUpperCase()
   return (
     <FocusableBox
