@@ -7,8 +7,8 @@ import {
 import { gql } from '@apollo/client'
 
 const MunicipalityQuery = gql`
-  query GetMunicipalityQuery($input: MunicipalityQueryInput!) {
-    municipality(input: $input) {
+  query GetMunicipalityQuery {
+    municipalityByIds {
       id
       name
       homepage
@@ -46,45 +46,42 @@ export const useMunicipalities = () => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<Error | undefined>(undefined)
 
-  const getMunicipality = useAsyncLazyQuery<
-    {
-      municipality: Municipality
-    },
-    { input: { id: string } }
-  >(MunicipalityQuery)
+  const getMunicipality = useAsyncLazyQuery<{
+    municipalityByIds: Municipality[]
+  }>(MunicipalityQuery)
 
   useEffect(() => {
-    setScopedMunicipality(
-      sessionStorage.getItem(storageKey)
-        ? JSON.parse(sessionStorage.getItem(storageKey) as string)
-        : undefined,
-    )
+    if (sessionStorage.getItem(storageKey)) {
+      setScopedMunicipality(
+        JSON.parse(sessionStorage.getItem(storageKey) as string),
+      )
+      return
+    }
+    setMunicipalityById()
   }, [])
 
-  const setMunicipality = (municipality: Municipality) => {
+  const setMunicipality = (municipality: Municipality[]) => {
     setScopedMunicipality(municipality)
     sessionStorage.setItem(storageKey, JSON.stringify(municipality))
   }
 
-  const setMunicipalityById = async (municipalityId: string) => {
+  const setMunicipalityById = async () => {
     try {
       setError(undefined)
       setLoading(true)
-      return await getMunicipality({
-        input: { id: municipalityId },
-      }).then((res) => {
-        setScopedMunicipality(res.data?.municipality)
+      return await getMunicipality({}).then((res) => {
+        setScopedMunicipality(res.data?.municipalityByIds ?? [])
         sessionStorage.setItem(
           storageKey,
-          JSON.stringify(res.data?.municipality),
+          JSON.stringify(res.data?.municipalityByIds),
         )
         setLoading(false)
-        return res.data?.municipality
+        return res.data?.municipalityByIds ?? []
       })
     } catch (error: unknown) {
       setError(error as Error)
       setLoading(false)
-      return undefined
+      return []
     }
   }
 

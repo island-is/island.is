@@ -6,7 +6,7 @@ import { CurrentUserQuery } from '@island.is/financial-aid-web/veita/graphql/sha
 import { useSession } from 'next-auth/client'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { useLogOut } from '../../utils/useLogOut'
-import { useMunicipality } from '@island.is/financial-aid/shared/components'
+import { useMunicipalities } from '../../utils/useMunicipalities'
 
 interface AdminProvider {
   isAuthenticated?: boolean
@@ -35,7 +35,7 @@ const AdminProvider = ({ children }: PageProps) => {
   })
   const loggedInUser: User = data?.currentUser
 
-  const { municipality } = useMunicipality()
+  const { municipality } = useMunicipalities()
 
   useEffect(() => {
     if (loggedInUser && !admin && loggedInUser.staff) {

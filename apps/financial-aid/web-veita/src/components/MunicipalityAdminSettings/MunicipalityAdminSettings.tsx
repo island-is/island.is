@@ -17,8 +17,8 @@ import {
 import { useMutation } from '@apollo/client'
 import { UpdateMunicipalityMutation } from '@island.is/financial-aid-web/veita/graphql'
 import omit from 'lodash/omit'
-import { useMunicipality } from '@island.is/financial-aid/shared/components'
 import MunicipalityAdminInput from './MunicipalityNumberInput/MunicipalityNumberInput'
+import { useMunicipalities } from '../../utils/useMunicipalities'
 
 interface Props {
   currentMunicipality: Municipality
@@ -30,7 +30,7 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
   const [updateMunicipalityMutation, { loading }] = useMutation(
     UpdateMunicipalityMutation,
   )
-  const { setMunicipality } = useMunicipality()
+  const { setMunicipality } = useMunicipalities()
 
   const INDIVIDUAL = 'individual'
   const COHABITATION = 'cohabitation'
