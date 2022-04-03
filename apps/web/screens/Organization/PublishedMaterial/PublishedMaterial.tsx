@@ -1,25 +1,21 @@
 import { useQuery } from '@apollo/client'
-import { GenericTagGroup } from '@island.is/api/schema'
 import {
   Box,
   Button,
   Filter,
   FilterInput,
   FilterMultiChoice,
-  FocusableBox,
   GridColumn,
   GridContainer,
   GridRow,
   LoadingDots,
   NavigationItem,
-  Tag,
   Text,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { getThemeConfig, OrganizationWrapper } from '@island.is/web/components'
 import {
   ContentLanguage,
-  EnhancedAsset,
   GenericTag,
   GetNamespaceQuery,
   Query,
@@ -44,80 +40,17 @@ import {
   GET_ORGANIZATION_QUERY,
 } from '../../queries'
 import { GET_PUBLISHED_MATERIAL_QUERY } from '../../queries/PublishedMaterial'
+import FilterTag from './components/FilterTag'
+import PublishedMaterialItem from './components/PublishedMaterialItem'
+import {
+  getFilterCategories,
+  getFilterTags,
+  getInitialParameters,
+} from './utils'
+import * as styles from './PublishedMaterial.css'
 
 const ASSETS_PER_PAGE = 20
 const DEBOUNCE_TIME_IN_MS = 300
-
-interface FilterCategory {
-  id: string
-  label: string
-  selected: string[]
-  filters: {
-    value: string
-    label: string
-  }[]
-}
-
-const getAllGenericTagGroups = (genericTags: GenericTag[]) => {
-  const genericTagGroupObject: Record<string, GenericTagGroup> = {}
-  genericTags.forEach(
-    (tag) =>
-      (genericTagGroupObject[tag.genericTagGroup.id] = tag.genericTagGroup),
-  )
-  return Object.keys(genericTagGroupObject).map(
-    (key) => genericTagGroupObject[key],
-  )
-}
-
-const getFilterCategories = (genericTags: GenericTag[]): FilterCategory[] => {
-  const genericTagGroups = getAllGenericTagGroups(genericTags)
-  return genericTagGroups.map((tagGroup) => {
-    return {
-      id: tagGroup.slug,
-      label: tagGroup.title,
-      selected: [],
-      filters: genericTags
-        .filter((tag) => tag.genericTagGroup?.id === tagGroup.id)
-        .map((tag) => ({ value: tag.slug, label: tag.title })),
-    }
-  })
-}
-
-const getInitialParameters = (filterCategories: FilterCategory[]) => {
-  const parameters: Record<string, string[]> = {}
-  filterCategories.forEach(({ id }) => (parameters[id] = []))
-  return parameters
-}
-
-const PublishedMaterialItem = ({ item }: { item: EnhancedAsset }) => {
-  const fileEnding = item.file?.url.split('.').pop().toUpperCase()
-  return (
-    <FocusableBox
-      width="full"
-      padding={[2, 2, 3]}
-      href={
-        item.file.url.startsWith('//')
-          ? `https:${item.file.url}`
-          : item.file.url
-      }
-      border="standard"
-      borderRadius="large"
-    >
-      <Box borderRadius="large" position="relative" display="flex" width="full">
-        <Text variant="h4" as="span" color="blue400">
-          {item.title}
-        </Text>
-        {fileEnding && (
-          <Box marginLeft="auto" paddingLeft={2}>
-            <Tag disabled={true} outlined={true}>
-              {fileEnding}
-            </Tag>
-          </Box>
-        )}
-      </Box>
-    </FocusableBox>
-  )
-}
 
 interface PublishedMaterialProps {
   organizationPage: Query['getOrganizationPage']
@@ -250,6 +183,8 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
     (data?.getPublishedMaterial?.total ?? page * ASSETS_PER_PAGE) -
     page * ASSETS_PER_PAGE
 
+  const selectedFilters = getFilterTags(filterCategories)
+
   return (
     <OrganizationWrapper
       pageTitle={pageTitle}
@@ -282,7 +217,7 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
             variant={isMobile ? 'dialog' : 'popover'}
             align="right"
             labelClear={n('clearFilter', 'Hreinsa síu')}
-            labelClearAll={n('clearAllFilters', 'Hreinsa allar síu')}
+            labelClearAll={n('clearAllFilters', 'Hreinsa allar síur')}
             labelOpen={n('openFilter', 'Opna síu')}
             labelClose={n('closeFilter', 'Loka síu')}
             labelResult={n('viewResults', 'Skoða niðurstöður')}
@@ -330,7 +265,7 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
 
         <GridContainer>
           <GridColumn span="12/12">
-            <GridRow marginTop={3} align="center">
+            <GridRow marginTop={2} align="center">
               <Box
                 style={{
                   visibility: loading || isTyping ? 'visible' : 'hidden',
@@ -338,6 +273,30 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
               >
                 <LoadingDots />
               </Box>
+            </GridRow>
+            <GridRow>
+              <GridColumn span="8/12">
+                <GridRow>
+                  <div className={styles.filterTagContainer}>
+                    {selectedFilters.map(({ label, value, category }) => (
+                      <FilterTag
+                        key={value}
+                        onClick={() => {
+                          setIsTyping(true)
+                          setParameters((prevParameters) => ({
+                            ...prevParameters,
+                            [category]: (prevParameters[category] ?? []).filter(
+                              (prevValue) => prevValue !== value,
+                            ),
+                          }))
+                        }}
+                      >
+                        {label}
+                      </FilterTag>
+                    ))}
+                  </div>
+                </GridRow>
+              </GridColumn>
             </GridRow>
             {(data?.getPublishedMaterial?.items ?? []).map((item, index) => {
               return (
