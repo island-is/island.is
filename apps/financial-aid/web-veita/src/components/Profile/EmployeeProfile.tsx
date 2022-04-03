@@ -10,6 +10,7 @@ import {
   Option,
   Select,
 } from '@island.is/island-ui/core'
+import { motion } from 'framer-motion'
 
 import * as styles from './Profile.css'
 
@@ -25,6 +26,8 @@ import cn from 'classnames'
 import { useStaff } from '@island.is/financial-aid-web/veita/src/utils/useStaff'
 import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
 import MultiSelection from '../MultiSelection/MultiSelection'
+import { isString, StringIterator } from 'lodash'
+import { ValueType } from 'react-select'
 
 interface EmployeeProfileProps {
   user: Staff
@@ -107,6 +110,7 @@ const EmployeeProfile = ({ user }: EmployeeProfileProps) => {
     },
     {
       label: 'Stutt nafn',
+      bgIsBlue: true,
       value: state.nickname,
       type: 'text' as InputType,
       onchange: (
@@ -202,31 +206,21 @@ const EmployeeProfile = ({ user }: EmployeeProfileProps) => {
               </Box>
             )
           })}
-
-          <Box>
+          <Box display="block" marginTop={3} marginBottom={[3, 3, 5]}>
+            <Text as="h2" variant="h3" color="dark300" marginBottom={3}>
+              Sveitarfélög notanda
+            </Text>
             <MultiSelection
               options={state.serviceCenter}
               active={municipality
                 .filter((el) =>
-                  user.municipalityIds.includes(el.municipalityId),
+                  state.municipalityIds.includes(el.municipalityId),
                 )
                 .map((el) => {
                   return { label: el.name, value: el.municipalityId }
                 })}
-            />
-            {/* <Select
-              label="Sveitarfélag"
-              name="selectMunicipality"
-              noOptionsMessage="Enginn valmöguleiki"
-              options={state.serviceCenter}
-              placeholder="Veldu tegund"
-              // hasError={!addedServiceCenter.label && !addedServiceCenter.value}
-              // errorMessage="Þú þarft að velja sveitarfélag"
-              // value={addedServiceCenter}
-              onChange={(option) => {
-                console.log(option)
-                // setAddedServiceCenter(option as Option)
-                if (option?.value as Option) {
+              onSelected={(option: any) => {
+                if ((option?.value as unknown) && isString(option?.value)) {
                   setState({
                     ...state,
                     municipalityIds: [...state.municipalityIds, option?.value],
@@ -236,12 +230,19 @@ const EmployeeProfile = ({ user }: EmployeeProfileProps) => {
                   })
                 }
               }}
-            /> */}
-            {/* <ul>
-              {state.municipalityIds.map((el) => {
-                return <li>{el}</li>
-              })}
-            </ul> */}
+              unSelected={(value: string, name: string) => {
+                setState({
+                  ...state,
+                  municipalityIds: state.municipalityIds.filter(
+                    (muni) => muni != value,
+                  ),
+                  serviceCenter: [
+                    ...state.serviceCenter,
+                    { label: name, value: value },
+                  ],
+                })
+              }}
+            />
           </Box>
 
           <Box
@@ -249,7 +250,6 @@ const EmployeeProfile = ({ user }: EmployeeProfileProps) => {
             marginTop={3}
             marginBottom={[3, 3, 5]}
           >
-            {' '}
             <Text as="h2" variant="h3" color="dark300" marginBottom={3}>
               Réttindi notanda
             </Text>
