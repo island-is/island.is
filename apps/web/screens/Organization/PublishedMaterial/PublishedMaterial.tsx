@@ -45,6 +45,7 @@ import PublishedMaterialItem from './components/PublishedMaterialItem'
 import {
   getFilterCategories,
   getFilterTags,
+  getGenericTagGroupHierarchy,
   getInitialParameters,
 } from './utils'
 import * as styles from './PublishedMaterial.css'
@@ -101,6 +102,7 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
         page: page,
         searchString: searchValue,
         size: ASSETS_PER_PAGE,
+        tagGroups: {},
       },
     },
   })
@@ -109,30 +111,6 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
     Query,
     QueryGetPublishedMaterialArgs
   >(GET_PUBLISHED_MATERIAL_QUERY, queryVariables)
-
-  const loadMore = () => {
-    const nextPage = page + 1
-    setPage(nextPage)
-    fetchMore({
-      variables: {
-        input: {
-          lang: activeLocale,
-          organizationSlug: (router.query.slug as string) ?? '',
-          tags: [],
-          page: nextPage,
-          searchString: searchValue,
-          size: ASSETS_PER_PAGE,
-        },
-      },
-      updateQuery: (prevResult, { fetchMoreResult }) => {
-        fetchMoreResult.getPublishedMaterial.items = [
-          ...prevResult.getPublishedMaterial.items,
-          ...fetchMoreResult.getPublishedMaterial.items,
-        ]
-        return fetchMoreResult
-      },
-    })
-  }
 
   const initialFilterCategories = useMemo(
     () => getFilterCategories(genericTagFilters),
@@ -147,6 +125,31 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
   useEffect(() => {
     setParameters(getInitialParameters(initialFilterCategories))
   }, [initialFilterCategories])
+
+  const loadMore = () => {
+    const nextPage = page + 1
+    setPage(nextPage)
+    fetchMore({
+      variables: {
+        input: {
+          lang: activeLocale,
+          organizationSlug: (router.query.slug as string) ?? '',
+          tags: [],
+          page: nextPage,
+          searchString: searchValue,
+          size: ASSETS_PER_PAGE,
+          tagGroups: getGenericTagGroupHierarchy(filterCategories),
+        },
+      },
+      updateQuery: (prevResult, { fetchMoreResult }) => {
+        fetchMoreResult.getPublishedMaterial.items = [
+          ...prevResult.getPublishedMaterial.items,
+          ...fetchMoreResult.getPublishedMaterial.items,
+        ]
+        return fetchMoreResult
+      },
+    })
+  }
 
   useDebounce(
     () => {
@@ -166,6 +169,7 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
             page: 1,
             searchString: searchValue,
             size: ASSETS_PER_PAGE,
+            tagGroups: getGenericTagGroupHierarchy(filterCategories),
           },
         },
       })

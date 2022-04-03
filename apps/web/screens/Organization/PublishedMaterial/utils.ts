@@ -63,3 +63,17 @@ export const getFilterTags = (filterCategories: FilterCategory[]) => {
 
   return filterTags.filter(Boolean)
 }
+
+export const getGenericTagGroupHierarchy = (
+  filterCategories: FilterCategory[],
+): Record<string, string[]> => {
+  const hierarchy: Record<string, string[]> = {}
+
+  filterCategories.forEach((filterCategory) => {
+    hierarchy[filterCategory.id] = filterCategory.filters.map(
+      ({ value }) => value,
+    )
+  })
+
+  return hierarchy
+}

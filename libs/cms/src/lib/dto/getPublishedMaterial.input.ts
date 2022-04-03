@@ -1,7 +1,7 @@
 import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manager'
 import { Field, InputType, Int } from '@nestjs/graphql'
 import { IsInt, IsOptional, IsString } from 'class-validator'
-// import GraphQLJSON from 'graphql-type-json'
+import GraphQLJSON from 'graphql-type-json'
 
 @InputType()
 export class GetPublishedMaterialInput {
@@ -31,6 +31,6 @@ export class GetPublishedMaterialInput {
   @Field(() => [String])
   tags!: string[]
 
-  // @Field(() => GraphQLJSON)
-  // tagGroups!: Record<string, string[]>
+  @Field(() => GraphQLJSON)
+  tagGroups!: Record<string, string[]>
 }

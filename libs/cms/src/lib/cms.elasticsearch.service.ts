@@ -240,15 +240,42 @@ export class CmsElasticsearchService {
       page = 1,
       size = 10,
       tags,
-    }: // tagGroups,
-    GetPublishedMaterialInput,
+      tagGroups,
+    }: GetPublishedMaterialInput,
   ): Promise<EnhancedAssetSearchResult> {
-    const mappedTags = organizationSlug
-      ? [
-          { type: 'organization', key: organizationSlug },
-          ...tags.map((t) => ({ type: 'genericTag', key: t })),
-        ]
-      : [...tags.map((t) => ({ type: 'genericTag', key: t }))]
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const must: Record<string, any>[] = [
+      {
+        term: {
+          type: {
+            value: 'webEnhancedAsset',
+          },
+        },
+      },
+    ]
+
+    if (organizationSlug)
+      must.push({
+        nested: {
+          path: 'tags',
+          query: {
+            bool: {
+              must: [
+                {
+                  term: {
+                    'tags.key': organizationSlug,
+                  },
+                },
+                {
+                  term: {
+                    'tags.type': 'organization',
+                  },
+                },
+              ],
+            },
+          },
+        },
+      })
 
     const wildcardSearch = {
       wildcard: {
@@ -264,43 +291,14 @@ export class CmsElasticsearchService {
       },
     }
 
+    must.push(!searchString ? wildcardSearch : multimatchSearch)
+
     const enhancedAssetResponse: ApiResponse<
       SearchResponse<MappedData>
     > = await this.elasticService.findByQuery(index, {
       query: {
         bool: {
-          should: [
-            !searchString ? wildcardSearch : multimatchSearch,
-            {
-              term: {
-                type: {
-                  value: 'webEnhancedAsset',
-                },
-              },
-            },
-          ],
-          must: mappedTags.map((tag) => ({
-            nested: {
-              path: 'tags',
-              query: {
-                bool: {
-                  must: [
-                    {
-                      term: {
-                        'tags.key': tag.key,
-                      },
-                    },
-                    {
-                      term: {
-                        'tags.type': tag.type,
-                      },
-                    },
-                  ],
-                },
-              },
-            },
-          })),
-          minimum_should_match: 2,
+          must: must.concat(generateGenericTagGroupQueries(tags, tagGroups)),
         },
       },
       size,
@@ -314,4 +312,53 @@ export class CmsElasticsearchService {
       ),
     }
   }
+}
+
+const generateGenericTagGroupQueries = (
+  tags: string[],
+  tagGroups: Record<string, string[]>,
+) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const queries: Record<string, any>[] = []
+
+  Object.keys(tagGroups).forEach((tagGroup) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const should: Record<string, any>[] = []
+
+    tags
+      .filter((tag) => tagGroups[tagGroup].includes(tag))
+      .forEach((tag) => {
+        should.push({
+          bool: {
+            must: [
+              {
+                term: {
+                  'tags.key': tag,
+                },
+              },
+              {
+                term: {
+                  'tags.type': 'genericTag',
+                },
+              },
+            ],
+          },
+        })
+      })
+
+    const query = {
+      nested: {
+        path: 'tags',
+        query: {
+          bool: {
+            should,
+          },
+        },
+      },
+    }
+
+    queries.push(query)
+  })
+
+  return queries
 }
