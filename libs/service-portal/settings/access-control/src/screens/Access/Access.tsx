@@ -162,10 +162,14 @@ const Access: FC = () => {
       displayName: scope.displayName,
     }))
 
-    const err = getValues()?.[SCOPE_PREFIX]?.find((x) => x.name && !x.validTo)
+    const err = getValues()?.[SCOPE_PREFIX]?.find(
+      (x) => x.name.length > 0 && !x.validTo,
+    )
+
     if (err) {
       setSaveModalOpen(false)
       setFormError(true)
+      return
     }
 
     const { data, errors } = await updateDelegation({
@@ -243,12 +247,12 @@ const Access: FC = () => {
       )}
       <FormProvider {...hookFormData}>
         <form onSubmit={onSubmit}>
-          <Box marginBottom={[3, 3, 8]} display="flex" justifyContent="flexEnd">
-            <Inline space={3}>
+          <Box marginBottom={[3, 3, 4]} display="flex" justifyContent="flexEnd">
+            <Inline space={1}>
               {authDelegation?.scopes.length > 0 && (
                 <>
                   <Button
-                    variant="text"
+                    variant="ghost"
                     colorScheme="destructive"
                     size="small"
                     icon="close"
@@ -288,8 +292,8 @@ const Access: FC = () => {
                 </>
               )}
               <Button
+                variant="primary"
                 size="small"
-                variant="text"
                 loading={updateLoading}
                 onClick={() => setSaveModalOpen(true)}
                 icon="checkmark"

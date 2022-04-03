@@ -11,7 +11,7 @@ import {
   Scopes,
 } from '@island.is/auth-nest-tools'
 import { FinanceClientService } from '@island.is/clients/finance'
-import { Audit } from '@island.is/nest/audit'
+import { Audit, AuditService } from '@island.is/nest/audit'
 import { DownloadServiceConfig } from '@island.is/nest/config'
 import type { ConfigType } from '@island.is/nest/config'
 
@@ -43,6 +43,7 @@ export class FinanceResolver {
     private readonly downloadServiceConfig: ConfigType<
       typeof DownloadServiceConfig
     >,
+    private readonly auditService: AuditService,
   ) {}
 
   @Query(() => graphqlTypeJson)
@@ -95,7 +96,6 @@ export class FinanceResolver {
 
   @Query(() => DocumentsListModel)
   @Scopes(ApiScope.financeOverview, ApiScope.financeSalary)
-  @Audit()
   async getDocumentsList(
     @CurrentUser() user: User,
     @Args('input') input: GetDocumentsListInput,
@@ -114,6 +114,18 @@ export class FinanceResolver {
       input.listPath,
       user,
     )
+
+    this.auditService.audit({
+      auth: user,
+      namespace: '@island.is/api/finance',
+      action: 'getDocumentList',
+      meta: {
+        path: input.listPath,
+        dateFrom: input.dayFrom,
+        dateTo: input.dayTo,
+      },
+    })
+
     return {
       ...documentsList,
       downloadServiceURL: `${this.downloadServiceConfig.baseUrl}/download/v1/finance/`,
@@ -121,15 +133,22 @@ export class FinanceResolver {
   }
 
   @Query(() => FinanceDocumentModel, { nullable: true })
-  @Audit()
   async getFinanceDocument(
     @CurrentUser() user: User,
     @Args('input') input: GetFinanceDocumentInput,
   ) {
-    return this.financeService.getFinanceDocument(
-      user.nationalId,
-      input.documentID,
-      user,
+    return this.auditService.auditPromise(
+      {
+        auth: user,
+        namespace: '@island.is/api/finance',
+        action: 'getFinanceDocument',
+        resources: input.documentID,
+      },
+      this.financeService.getFinanceDocument(
+        user.nationalId,
+        input.documentID,
+        user,
+      ),
     )
   }
 
