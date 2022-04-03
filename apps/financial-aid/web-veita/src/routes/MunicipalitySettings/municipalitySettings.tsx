@@ -3,6 +3,7 @@ import {
   ApplicationOverviewSkeleton,
   LoadingContainer,
   MunicipalityAdminSettings,
+  SelectedMunicipality,
 } from '@island.is/financial-aid-web/veita/src/components'
 
 import { Municipality } from '@island.is/financial-aid/shared/lib'
@@ -24,6 +25,12 @@ export const MunicipalitySettings = () => {
       isLoading={loading}
       loader={<ApplicationOverviewSkeleton />}
     >
+      {municipality && currentMunicipality && (
+        <SelectedMunicipality
+          municipality={municipality}
+          currentMunicipality={currentMunicipality}
+        />
+      )}
       {currentMunicipality && (
         <MunicipalityAdminSettings currentMunicipality={currentMunicipality} />
       )}
