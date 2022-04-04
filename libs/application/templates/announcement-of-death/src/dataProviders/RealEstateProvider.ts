@@ -12,7 +12,8 @@ export class RealEstateProvider extends BasicDataProvider {
 
   async provide(application: Application): Promise<RealEstates> {
     // TODO verify this works
-    const deadded: string = application.externalData?.deadPersonNationalId.data as string ?? ""
+    const deadded: string =
+      (application.externalData?.deadPersonNationalId.data as string) ?? ''
 
     const query = `
       query GetRealEstateQuery($input: GetMultiPropertyInput!) {
@@ -41,16 +42,14 @@ export class RealEstateProvider extends BasicDataProvider {
       }
     `
 
-    return this.useGraphqlGateway(query, {input: deadded})
+    return this.useGraphqlGateway(query, { input: deadded })
       .then(async (res: Response) => {
         const response = await res.json()
         if (response.errors?.length > 0) {
           return this.handleError(response.errors[0])
         }
 
-        return Promise.resolve(
-          response.data.getAssetsOverview,
-        )
+        return Promise.resolve(response.data.getAssetsOverview)
       })
       .catch((error) => this.handleError(error))
   }

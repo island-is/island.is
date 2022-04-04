@@ -11,7 +11,7 @@ export class WillProvider extends BasicDataProvider {
 
   async provide(): Promise<Will> {
     // TODO implement
-    return Promise.resolve({ nationalId: "1111111111", hasWill: true })
+    return Promise.resolve({ nationalId: '1111111111', hasWill: true })
     /*
     const query = `
         query GetWill {
