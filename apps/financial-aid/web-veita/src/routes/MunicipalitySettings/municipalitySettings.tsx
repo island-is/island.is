@@ -6,7 +6,7 @@ import {
 } from '@island.is/financial-aid-web/veita/src/components'
 
 import { Municipality } from '@island.is/financial-aid/shared/lib'
-import { useMunicipalities } from '../../utils/useMunicipalities'
+import { useMunicipalities } from '@island.is/financial-aid-web/veita/src/utils/useMunicipalities'
 
 export const MunicipalitySettings = () => {
   const { municipality, error, loading } = useMunicipalities()

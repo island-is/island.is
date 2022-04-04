@@ -10,7 +10,6 @@ import {
   Option,
   Select,
 } from '@island.is/island-ui/core'
-import { motion } from 'framer-motion'
 
 import * as styles from './Profile.css'
 
@@ -26,8 +25,7 @@ import cn from 'classnames'
 import { useStaff } from '@island.is/financial-aid-web/veita/src/utils/useStaff'
 import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
 import MultiSelection from '../MultiSelection/MultiSelection'
-import { isString, StringIterator } from 'lodash'
-import { ValueType } from 'react-select'
+import { isString } from 'lodash'
 
 interface EmployeeProfileProps {
   user: Staff
