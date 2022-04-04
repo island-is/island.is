@@ -7,7 +7,6 @@ import {
   CaseType,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
-import { not } from 'sequelize/types/lib/operators'
 
 import { notifications } from '../messages'
 
@@ -124,6 +123,18 @@ describe('formatLegalProvisions', () => {
 })
 
 describe('formatHeadsUpSmsNotification', () => {
+  const messages = [
+    notifications.prosecutorText,
+    notifications.courtHeadsUp.arrestDateText,
+    notifications.courtHeadsUp.newCaseText,
+    notifications.courtHeadsUp.requestedCourtDateText,
+  ]
+
+  let formatMessage: FormatMessage
+  beforeAll(() => {
+    formatMessage = createTestIntl('is-IS', messages).formatMessage
+  })
+
   test('should format heads up notification', () => {
     // Arrange
     const type = CaseType.CUSTODY
@@ -133,6 +144,7 @@ describe('formatHeadsUpSmsNotification', () => {
 
     // Act
     const res = formatCourtHeadsUpSmsNotification(
+      formatMessage,
       type,
       prosecutorName,
       arrestDate,
@@ -152,6 +164,7 @@ describe('formatHeadsUpSmsNotification', () => {
 
     // Act
     const res = formatCourtHeadsUpSmsNotification(
+      formatMessage,
       type,
       prosecutorName,
       undefined,
@@ -170,6 +183,7 @@ describe('formatHeadsUpSmsNotification', () => {
 
     // Act
     const res = formatCourtHeadsUpSmsNotification(
+      formatMessage,
       type,
       undefined,
       undefined,
@@ -191,6 +205,7 @@ describe('formatHeadsUpSmsNotification', () => {
 
     // Act
     const res = formatCourtHeadsUpSmsNotification(
+      formatMessage,
       type,
       prosecutorName,
       arrestDate,
@@ -212,6 +227,7 @@ describe('formatHeadsUpSmsNotification', () => {
 
     // Act
     const res = formatCourtHeadsUpSmsNotification(
+      formatMessage,
       type,
       prosecutorName,
       arrestDate,
@@ -233,6 +249,7 @@ describe('formatHeadsUpSmsNotification', () => {
 
     // Act
     const res = formatCourtHeadsUpSmsNotification(
+      formatMessage,
       type,
       prosecutorName,
       arrestDate,
@@ -248,8 +265,8 @@ describe('formatHeadsUpSmsNotification', () => {
 
 describe('formatReadyForCourtSmsNotification', () => {
   const messages = [
+    notifications.prosecutorText,
     notifications.courtReadyForCourt.courtText,
-    notifications.courtReadyForCourt.prosecutorText,
     notifications.courtReadyForCourt.submittedCase,
   ]
 
@@ -959,10 +976,10 @@ describe('formatCourtRevokedSmsNotification', () => {
 
   beforeAll(() => {
     const messages: MessageDescriptor[] = [
+      notifications.prosecutorText,
       notifications.courtRevoked.requestedCourtDate,
       notifications.courtRevoked.courtDate,
       notifications.courtRevoked.caseTypeRevoked,
-      notifications.courtRevoked.prosecutorText,
     ]
 
     const intl = createTestIntl('is-IS', messages)

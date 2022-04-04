@@ -300,6 +300,7 @@ export class NotificationService {
 
   private sendHeadsUpSmsNotificationToCourt(theCase: Case): Promise<Recipient> {
     const smsText = formatCourtHeadsUpSmsNotification(
+      this.formatMessage,
       theCase.type,
       theCase.prosecutor?.name,
       theCase.arrestDate,

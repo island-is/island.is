@@ -65,42 +65,45 @@ export function formatLegalProvisions(
     : 'Lagaákvæði ekki skráð'
 }
 
+const getProsecutorText = (
+  formatMessage: FormatMessage,
+  prosecutorName?: string,
+): string =>
+  formatMessage(notifications.prosecutorText, {
+    prosecutorName: prosecutorName || 'NONE',
+  })
+
 export function formatCourtHeadsUpSmsNotification(
+  formatMessage: FormatMessage,
   type: CaseType,
   prosecutorName?: string,
   arrestDate?: Date,
   requestedCourtDate?: Date,
 ): string {
-  // Prosecutor
-  const prosecutorText = ` Sækjandi: ${prosecutorName ?? 'Ekki skráður'}.`
+  const prosecutorText = getProsecutorText(formatMessage, prosecutorName)
 
-  // Arrest date
   const arrestDateText = arrestDate
-    ? ` Viðkomandi handtekinn ${formatDate(arrestDate, 'Pp')?.replace(
-        ' ',
-        ', kl. ',
-      )}.`
-    : ''
+    ? formatMessage(notifications.courtHeadsUp.arrestDateText, {
+        date: formatDate(arrestDate, 'P'),
+        time: formatDate(arrestDate, 'p'),
+      })
+    : undefined
 
-  // Court date
   const requestedCourtDateText = requestedCourtDate
-    ? ` ÓE fyrirtöku ${formatDate(requestedCourtDate, 'Pp')?.replace(
-        ' ',
-        ', eftir kl. ',
-      )}.`
-    : ''
+    ? formatMessage(notifications.courtHeadsUp.requestedCourtDateText, {
+        date: formatDate(requestedCourtDate, 'P'),
+        time: formatDate(requestedCourtDate, 'p'),
+      })
+    : undefined
 
-  const newCaseText = `Ný ${
-    type === CaseType.CUSTODY
-      ? 'gæsluvarðhaldskrafa'
-      : type === CaseType.TRAVEL_BAN
-      ? 'farbannskrafa'
-      : type === CaseType.OTHER
-      ? 'krafa um rannsóknarheimild'
-      : `krafa um rannsóknarheimild (${caseTypes[type]})`
-  } í vinnslu.`
+  const newCaseText = formatMessage(notifications.courtHeadsUp.newCaseText, {
+    caseType: type,
+    courtTypeName: caseTypes[type],
+  })
 
-  return `${newCaseText}${prosecutorText}${arrestDateText}${requestedCourtDateText}`
+  return [newCaseText, prosecutorText, arrestDateText, requestedCourtDateText]
+    .filter(Boolean)
+    .join(' ')
 }
 
 export function formatCourtReadyForCourtSmsNotification(
@@ -113,16 +116,13 @@ export function formatCourtReadyForCourtSmsNotification(
     notifications.courtReadyForCourt.submittedCase,
     { caseType: type, courtTypeName: caseTypes[type] },
   )
-  const prosecutorText = formatMessage(
-    notifications.courtReadyForCourt.prosecutorText,
-    { prosecutorName: prosecutorName ?? 'NONE' },
-  )
+  const prosecutorText = getProsecutorText(formatMessage, prosecutorName)
   const courtText = formatMessage(notifications.courtReadyForCourt.courtText, {
     court: court ?? 'NONE',
   })
 
   return [submittedCaseText, prosecutorText, courtText]
-    .filter((x) => x)
+    .filter(Boolean)
     .join(' ')
 }
 
@@ -286,13 +286,7 @@ export function formatCourtRevokedSmsNotification(
   courtDate?: Date,
 ) {
   // Prosecutor
-  const prosecutorText = formatMessage(
-    notifications.courtRevoked.prosecutorText,
-    {
-      prosecutorName: prosecutorName ?? 'NONE',
-    },
-  )
-
+  const prosecutorText = getProsecutorText(formatMessage, prosecutorName)
   // Court date
   const courtDateText = courtDate
     ? formatMessage(notifications.courtRevoked.courtDate, {
@@ -314,7 +308,7 @@ export function formatCourtRevokedSmsNotification(
   )
 
   return [courtRevokedText, prosecutorText, courtDateText]
-    .filter((x) => Boolean(x))
+    .filter(Boolean)
     .join(' ')
 }
 

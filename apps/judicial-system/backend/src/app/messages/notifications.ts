@@ -2,6 +2,13 @@ import { defineMessages } from '@formatjs/intl'
 import { CaseType } from '@island.is/judicial-system/types'
 
 export const notifications = {
+  prosecutorText: {
+    id: 'judicial.system.backend:notifications.courtRevoked.prosecutor_text',
+    defaultMessage:
+      'Sækjandi: {prosecutorName, select, NONE {Ekki skráður} other {{prosecutorName}}}.',
+    description:
+      'Notaður sem texti í sms-i til þess að tilgreina hver sækjandi er',
+  },
   readyForCourt: defineMessages({
     prosecutorHtml: {
       id:
@@ -16,7 +23,7 @@ export const notifications = {
     caseTypeRevoked: {
       id:
         'judicial.system.backend:notifications.courtRevoked.case_type_revoked',
-      defaultMessage: `{caseType, select, ${CaseType.TRAVEL_BAN} {Farbannskrafa} ${CaseType.ADMISSION_TO_FACILITY} {Krafa um vistun á viðeignandi stofnun}  other {Gæsluvarðhaldskrafa}} afturkölluð.`,
+      defaultMessage: `{caseType, select, ${CaseType.TRAVEL_BAN} {Farbannskrafa} ${CaseType.ADMISSION_TO_FACILITY} {Krafa um vistun á viðeignandi stofnun} other {Gæsluvarðhaldskrafa}} afturkölluð.`,
       description: 'Notaður sem texti í sms-i til TODO',
     },
     prosecutorText: {
@@ -38,6 +45,27 @@ export const notifications = {
       defaultMessage: 'ÓVE fyrirtöku {date}, eftir kl. {time}.',
       description:
         'Notaður sem texti í sms-i til þess að tilgreina hvenær fyrirtöku tími er',
+    },
+  }),
+  courtHeadsUp: defineMessages({
+    arrestDateText: {
+      id: 'judicial.system.backend:notifications.courtHeadsUp.arrest_date_text',
+      defaultMessage: 'Viðkomandi handtekinn {date}, kl. {time}.',
+      description:
+        'Notaður sem texti í sms-i til þess að tilgreina hvenær handtöku tími er',
+    },
+    requestedCourtDateText: {
+      id:
+        'judicial.system.backend:notifications.courtHeadsUp.requested_court_date_text',
+      defaultMessage: 'ÓE fyrirtöku {date}, eftir kl. {time}.',
+      description:
+        'Notaður sem texti í sms-i til þess að tilgreina hvenær fyrirtöku tími er',
+    },
+    newCaseText: {
+      id: 'judicial.system.backend:notifications.courtHeadsUp.new_case_text',
+      defaultMessage: `Ný {caseType, select, ${CaseType.TRAVEL_BAN} {farbannskrafa} ${CaseType.ADMISSION_TO_FACILITY} {krafa um vistun á viðeignandi stofnun} ${CaseType.CUSTODY} {gæsluvarðhaldskrafa} ${CaseType.OTHER} {krafa um rannsóknarheimild} other {krafa um rannsóknarheimild ({courtTypeName})}} í vinnslu.`,
+      description:
+        'Notaður sem texti í sms-i til þess að tilgreina að mál sé komið í vinnslu',
     },
   }),
   courtReadyForCourt: defineMessages({
