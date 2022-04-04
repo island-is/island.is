@@ -25,6 +25,12 @@ import { FinanceDocumentModel } from './models/financeDocument.model'
 import { CustomerTapsControlModel } from './models/customerTapsControl.model'
 import { DocumentsListModel } from './models/documentsList.model'
 import { CustomerRecords } from './models/customerRecords.model'
+import {
+  PaymentScheduleDetailModel,
+  PaymentScheduleModel,
+} from './models/paymentSchedule.model'
+import { DebtStatusModel } from './models/debtStatus.model'
+import { GetFinancePaymentScheduleInput } from './dto/getFinancePaymentSchedule.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.financeOverview)
@@ -163,5 +169,49 @@ export class FinanceResolver {
   @Audit()
   async getCustomerTapControl(@CurrentUser() user: User) {
     return this.financeService.getCustomerTapControl(user.nationalId, user)
+  }
+
+  @Query(() => PaymentScheduleModel, { nullable: true })
+  @Audit()
+  async getPaymentSchedule(@CurrentUser() user: User) {
+    const res = await this.financeService.getPaymentSchedules(
+      user.nationalId,
+      user,
+    )
+    if (res?.myPaymentSchedule.paymentSchedules) {
+      const data = res?.myPaymentSchedule.paymentSchedules.map((item) => {
+        return {
+          ...item,
+          downloadServiceURL: `${this.downloadServiceConfig.baseUrl}/download/v1/finance/${item.documentID}`,
+        }
+      })
+
+      return {
+        myPaymentSchedule: {
+          nationalId: res?.myPaymentSchedule.nationalId,
+          paymentSchedules: data,
+        },
+      }
+    }
+    return null
+  }
+
+  @Query(() => graphqlTypeJson)
+  @Audit()
+  async getDebtStatus(@CurrentUser() user: User) {
+    return this.financeService.getDebtStatus(user.nationalId, user)
+  }
+
+  @Query(() => PaymentScheduleDetailModel)
+  @Audit()
+  async getPaymentScheduleById(
+    @CurrentUser() user: User,
+    @Args('input') input: GetFinancePaymentScheduleInput,
+  ) {
+    return this.financeService.getPaymentScheduleById(
+      user.nationalId,
+      input.scheduleNumber,
+      user,
+    )
   }
 }

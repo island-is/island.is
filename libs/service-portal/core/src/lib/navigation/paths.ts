@@ -54,7 +54,7 @@ export enum ServicePortalPath {
   FinanceVehicles = 'https://mitt.samgongustofa.is/',
   FinancePayments = '/greidslur',
   FinanceExternal = 'https://minarsidur.island.is/minar-sidur/fjarmal/fjarmal-stada-vid-rikissjod-og-stofnanir/',
-
+  FinanceSchedule = '/fjarmal/greidsluaetlanir',
   // Electronic Documents
   ElectronicDocumentsRoot = '/postholf',
   ElectronicDocumentsFileDownload = '/postholf/:id',
