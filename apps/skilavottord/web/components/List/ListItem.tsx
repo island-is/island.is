@@ -36,7 +36,9 @@ export const ListItem: FC<CompanyProps> = ({
       <Box paddingBottom={[2, 2, 0, 0]}>
         <Stack space={[2, 2, 1, 1]}>
           <Text variant="h5">{title}</Text>
-          {content.map((row, key) => (
+          {content.map((row, key) => {
+            if (!row?.text) return null
+            return (
             <Text
               key={key}
               color={row.isHighlighted ? 'blue400' : 'currentColor'}
@@ -53,7 +55,7 @@ export const ListItem: FC<CompanyProps> = ({
                 row.text
               )}
             </Text>
-          ))}
+          )})}
         </Stack>
       </Box>
       {buttons}

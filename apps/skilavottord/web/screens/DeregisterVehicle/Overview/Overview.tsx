@@ -145,7 +145,15 @@ const Overview: FC = () => {
               title: `${sidenavText.companyInfo}`,
               link: `${routes.companyInfo.baseRoute}`,
             },
-          ]}
+            { ...(hasPermission('accessControlCompany', user?.role)
+            ? {
+              icon: 'lockClosed',
+              title: `${sidenavText.accessControl}`,
+              link: `${routes.accessControlCompany}`,
+            }
+          : null)
+            } as React.ComponentProps<typeof Sidenav>['sections'][0],
+          ].filter(Boolean)}
           activeSection={0}
         />
       }

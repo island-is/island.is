@@ -11,6 +11,8 @@ export const getRoleTranslation = (role: Role, locale: Locale): string => {
       return locale === 'is' ? 'Móttökuaðili' : 'Recycling Company'
     case 'recyclingFund':
       return locale === 'is' ? 'Úrvinnslusjóður' : 'Recycling Fund'
+    case 'recyclingCompanyAdmin':
+      return locale === 'is' ? 'Mótökuaðila Umsjón' : 'Recycling Company Admin'
     default:
       return startCase(role)
   }

@@ -472,7 +472,9 @@
       "nationalId": "National Id",
       "name": "Name",
       "role": "Role",
-      "partner": "Partner"
+      "partner": "Partner",
+      "email": "Email",
+      "phone": "Phone"
     },
     "status": {
       "active": "Active",
@@ -509,6 +511,21 @@
           "placeholder": "Name",
           "rules": {
             "required": "Name is required"
+          }
+        },
+        "email": {
+          "label": "Email",
+          "placeholder": "Email",
+          "rules": {
+            "required": "Email is required",
+            "validate": "Invalid email"
+          }
+        },
+        "phone": {
+          "label": "Phone",
+          "placeholder": "Phone",
+          "rules": {
+            "required": "Phone is required"
           }
         },
         "role": {
@@ -566,6 +583,7 @@
     },
     "recycledVehicles": "/en/recycled-vehicles",
     "accessControl": "/en/access-control",
+    "accessControlCompany": "/en/access-control-company",
     "recyclingCompanies": {
       "baseRoute": "/en/recycling-companies",
       "add": "/en/recycling-companies/add",

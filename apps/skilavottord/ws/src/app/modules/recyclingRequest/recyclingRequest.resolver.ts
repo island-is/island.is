@@ -50,7 +50,7 @@ export class RecyclingRequestResolver {
   }
 
   @Authorize({
-    roles: [Role.developer, Role.recyclingCompany, Role.recyclingFund],
+    roles: [Role.developer, Role.recyclingCompany, Role.recyclingFund, Role.recyclingCompanyAdmin],
   })
   @Query(() => [RecyclingRequestModel])
   async skilavottordRecyclingRequests(
@@ -62,7 +62,7 @@ export class RecyclingRequestResolver {
     return recyclingRequests
   }
 
-  @Authorize({ roles: [Role.developer, Role.recyclingCompany] })
+  @Authorize({ roles: [Role.developer, Role.recyclingCompany, Role.recyclingCompanyAdmin] })
   @Query(() => Boolean)
   async skilavottordDeRegisterVehicle(
     @Args('vehiclePermno') nid: string,
@@ -71,7 +71,7 @@ export class RecyclingRequestResolver {
     return this.recyclingRequestService.deRegisterVehicle(nid, station)
   }
 
-  @Authorize({ roles: [Role.developer, Role.recyclingCompany] })
+  @Authorize({ roles: [Role.developer, Role.recyclingCompany, Role.recyclingCompanyAdmin] })
   @Query(() => VehicleModel)
   async skilavottordVehicleReadyToDeregistered(
     @Args('permno') permno: string,
@@ -98,7 +98,7 @@ export class RecyclingRequestResolver {
         )
       }
     }
-    const hasPermission = [Role.developer, Role.recyclingCompany].includes(
+    const hasPermission = [Role.developer, Role.recyclingCompany, Role.recyclingCompanyAdmin].includes(
       user.role,
     )
     if (requestType === 'deregistered' && !hasPermission) {

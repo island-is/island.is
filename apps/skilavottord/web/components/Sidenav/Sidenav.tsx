@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {FC} from 'react'
 import {
   Box,
   Divider,
@@ -29,7 +29,9 @@ export const Sidenav = ({ title, sections, activeSection }: SidenavProps) => (
         {title}
       </Text>
       <Stack space={3}>
-        {sections.map((section, index) => (
+        {sections.map((section, index) => {
+          if (!section?.title) return null
+          return (
           <FocusableBox
             key={index}
             display="flex"
@@ -50,7 +52,7 @@ export const Sidenav = ({ title, sections, activeSection }: SidenavProps) => (
               {section.title}
             </Text>
           </FocusableBox>
-        ))}
+        )})}
       </Stack>
     </Stack>
   </Box>

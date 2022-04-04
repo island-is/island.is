@@ -31,12 +31,11 @@ export class AccessControlService {
     })
   }
 
-  //ATH
   async findByRecyclingPartner(
     partnerId: string,
   ): Promise<AccessControlModel[]> {
     return this.accessControlModel.findAll({
-      where: { partnerId },
+      where: { partnerId,  role: ['recyclingCompany', 'recyclingCompanyAdmin'] },
       include: [
         {
           model: RecyclingPartnerModel,

@@ -17,12 +17,12 @@ interface AccessControlModalProps
   onSubmit: (
     e?: BaseSyntheticEvent<object, any, any> | undefined,
   ) => Promise<void>
-  recyclingPartners: Option[]
-  roles: Option[]
+  // recyclingPartners?: Option[]
+  // roles: Option[]
   errors: DeepMap<FieldValues, FieldError>
   control: Control<FieldValues>
   nationalIdDisabled?: boolean
-  partnerIdRequired?: boolean
+  // partnerIdRequired?: boolean
 }
 
 export const AccessControlModal: FC<AccessControlModalProps> = ({
@@ -31,10 +31,10 @@ export const AccessControlModal: FC<AccessControlModalProps> = ({
   show,
   onCancel,
   onSubmit,
-  recyclingPartners,
-  roles,
+  // recyclingPartners,
+  // roles,
   nationalIdDisabled = false,
-  partnerIdRequired = false,
+  // partnerIdRequired = false,
   errors,
   control,
 }) => {
@@ -135,7 +135,7 @@ export const AccessControlModal: FC<AccessControlModalProps> = ({
             error={errors?.phone?.message}
             backgroundColor="blue"
           />
-          <Controller
+          {/* <Controller
             name="role"
             control={control}
             rules={{
@@ -161,8 +161,8 @@ export const AccessControlModal: FC<AccessControlModalProps> = ({
                 />
               )
             }}
-          />
-          <Controller
+          /> */}
+          {/* <Controller
             name="partnerId"
             control={control}
             rules={
@@ -186,14 +186,14 @@ export const AccessControlModal: FC<AccessControlModalProps> = ({
                   hasError={!!errors?.partnerId?.message}
                   errorMessage={errors?.partnerId?.message}
                   backgroundColor="blue"
-                  options={recyclingPartners}
+                  options={recyclingPartners || []}
                   onChange={onChange}
                   required={partnerIdRequired}
                   isCreatable
                 />
               )
             }}
-          />
+          /> */}
         </Stack>
         <Box display="flex" justifyContent="spaceBetween" marginTop={7}>
           <Button variant="ghost" onClick={onCancel} fluid>

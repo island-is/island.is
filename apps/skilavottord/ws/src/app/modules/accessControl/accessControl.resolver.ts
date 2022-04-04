@@ -13,7 +13,7 @@ import {
 } from './accessControl.input'
 
 @Authorize({
-  roles: [Role.developer, Role.recyclingFund],
+  roles: [Role.developer, Role.recyclingFund, Role.recyclingCompanyAdmin],
 })
 @Resolver(() => AccessControlModel)
 export class AccessControlResolver {
@@ -29,9 +29,20 @@ export class AccessControlResolver {
   private verifyRecyclingCompanyInput(
     input: CreateAccessControlInput | UpdateAccessControlInput,
   ) {
-    if (input.role === Role.recyclingCompany && !input.partnerId) {
+    if ((input.role === Role.recyclingCompany || input.role === Role.recyclingCompanyAdmin ) && !input.partnerId) {
       throw new BadRequestException(
-        `User is not recyclingCompany or partnerId not found`,
+        `User is not recyclingCompany/recyclingCompanyAdmin or partnerId not found`,
+      )
+    }
+  }
+
+  private verifyRecyclingCompanyAdminInput(
+    role: Role,
+    user: User,
+  ) {
+    if (!(user.role === Role.recyclingCompanyAdmin && (role === Role.recyclingCompany || role === Role.recyclingCompanyAdmin ))) {
+      throw new BadRequestException(
+        `RecyclingCompanyAdmin does not have permission on ${role}`,
       )
     }
   }
@@ -44,14 +55,13 @@ export class AccessControlResolver {
     return this.accessControlService.findAll(isDeveloper)
   }
 
-  //ath accesscontrol
   @Query(() => [AccessControlModel])
   async skilavottordAccessControlsByRecyclingPartner(
     @CurrentUser() user: User,
-    @Args('recyclingPartnerId') recyclingPartnerId: string,
+    // @Args('recyclingPartnerId') recyclingPartnerId: string,
   ): Promise<AccessControlModel[]> {
     //recyclingPartnerId = user.partnerId ath
-    return this.accessControlService.findByRecyclingPartner(recyclingPartnerId)
+    return this.accessControlService.findByRecyclingPartner(user.partnerId)
   }
 
   @Mutation(() => AccessControlModel)
@@ -61,6 +71,7 @@ export class AccessControlResolver {
     @CurrentUser() user: User,
   ): Promise<AccessControlModel> {
     this.verifyDeveloperAccess(user, input.role)
+    this.verifyRecyclingCompanyAdminInput(input.role, user)
     this.verifyRecyclingCompanyInput(input)
     return this.accessControlService.createAccess(input)
   }
@@ -72,6 +83,7 @@ export class AccessControlResolver {
     @CurrentUser() user: User,
   ): Promise<AccessControlModel> {
     this.verifyDeveloperAccess(user, input.role)
+    this.verifyRecyclingCompanyAdminInput(input.role, user)
     this.verifyRecyclingCompanyInput(input)
     return this.accessControlService.updateAccess(input)
   }
@@ -86,6 +98,7 @@ export class AccessControlResolver {
       input.nationalId,
     )
     this.verifyDeveloperAccess(user, accessControl.role)
+    this.verifyRecyclingCompanyAdminInput(accessControl.role, user)
     if (!accessControl) {
       throw new NotFoundException('AccessControl not found')
     }

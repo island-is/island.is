@@ -285,7 +285,8 @@
   "deregisterSidenav": {
     "title": "Aðgerðir",
     "deregister": "Afskrá ökutæki",
-    "companyInfo": "Upplýsingar fyrirtækis"
+    "companyInfo": "Upplýsingar fyrirtækis",
+    "accessControl": "Aðgangsstýring"
   },
   "deregisterVehicle": {
     "select": {
@@ -472,7 +473,9 @@
       "nationalId": "Kennitala",
       "name": "Nafn",
       "role": "Hlutverk",
-      "partner": "Móttökuaðili"
+      "partner": "Móttökuaðili",
+      "email": "Netfang",
+      "phone": "Sími"
     },
     "status": {
       "active": "Virkt",
@@ -509,6 +512,21 @@
           "placeholder": "Nafn",
           "rules": {
             "required": "Skylda er að fylla út nafn"
+          }
+        },
+        "email": {
+          "label": "Netfang",
+          "placeholder": "Netfang",
+          "rules": {
+            "required": "Skylda er að fylla út netfang",
+            "validate": "Netfang er ekki réttu formi"
+          }
+        },
+        "phone": {
+          "label": "Símanúmer",
+          "placeholder": "Símanúmer",
+          "rules": {
+            "required": "Skylda er að fylla út símanúmer"
           }
         },
         "role": {
@@ -566,6 +584,7 @@
     },
     "recycledVehicles": "/recycled-vehicles",
     "accessControl": "/access-control",
+    "accessControlCompany": "/access-control-company",
     "recyclingCompanies": {
       "baseRoute": "/recycling-companies",
       "add": "/recycling-companies/add",
