@@ -181,6 +181,7 @@ module.exports = {
     '<rootDir>/libs/service-portal/eligibility',
     '<rootDir>/libs/service-portal/family',
     '<rootDir>/libs/service-portal/finance',
+    '<rootDir>/libs/service-portal/finance-schedule',
     '<rootDir>/libs/service-portal/graphql',
     '<rootDir>/libs/service-portal/health',
     '<rootDir>/libs/service-portal/licenses',
