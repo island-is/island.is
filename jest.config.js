@@ -144,7 +144,6 @@ module.exports = {
     '<rootDir>/libs/clients/zendesk',
     '<rootDir>/libs/clients/zendesk',
     '<rootDir>/libs/clients/rsk/procuring',
-    '<rootDir>/libs/clients/rsk/v1',
     '<rootDir>/libs/content-search-indexer/types',
     '<rootDir>/libs/contentful-extensions/mideind-translation',
     '<rootDir>/libs/contentful-extensions/parent-slug',
