@@ -69,7 +69,7 @@ air-discount-scheme-backend:
     DB_USER: 'air_discount_scheme_backend'
     ENVIRONMENT: 'dev'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
-    NODE_OPTIONS: '--max-old-space-size=208'
+    NODE_OPTIONS: '--max-old-space-size=464'
     REDIS_URL_NODE_01: 'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379'
     SERVERSIDE_FEATURES_ON: ''
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
@@ -137,11 +137,11 @@ air-discount-scheme-backend:
     min: 2
   resources:
     limits:
+      cpu: '400m'
+      memory: '512Mi'
+    requests:
       cpu: '200m'
       memory: '256Mi'
-    requests:
-      cpu: '100m'
-      memory: '128Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/air-discount-scheme/backend/DB_PASSWORD'
