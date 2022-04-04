@@ -1,12 +1,5 @@
 import { style } from '@vanilla-extract/css'
 
-export const filterTagContainer = style({
-  display: 'flex',
-  flexFlow: 'row wrap',
-  alignItems: 'center',
-  gap: '8px',
-})
-
 export const container = style({
-  minHeight: '400px',
+  minHeight: '600px',
 })

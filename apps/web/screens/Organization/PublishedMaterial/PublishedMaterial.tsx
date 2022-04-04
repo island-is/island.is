@@ -8,6 +8,7 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
+  Inline,
   LoadingDots,
   NavigationItem,
   Text,
@@ -280,29 +281,27 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
             </GridRow>
             <GridRow>
               <GridColumn span="8/12">
-                <GridRow>
-                  <div className={styles.filterTagContainer}>
-                    {selectedFilters.map(({ label, value, category }) => (
-                      <FilterTag
-                        key={value}
-                        onClick={() => {
-                          setIsTyping(true)
-                          setParameters((prevParameters) => ({
-                            ...prevParameters,
-                            [category]: (prevParameters[category] ?? []).filter(
-                              (prevValue) => prevValue !== value,
-                            ),
-                          }))
-                        }}
-                      >
-                        {label}
-                      </FilterTag>
-                    ))}
-                  </div>
-                </GridRow>
+                <Inline space={1}>
+                  {selectedFilters.map(({ label, value, category }) => (
+                    <FilterTag
+                      key={value}
+                      onClick={() => {
+                        setIsTyping(true)
+                        setParameters((prevParameters) => ({
+                          ...prevParameters,
+                          [category]: (prevParameters[category] ?? []).filter(
+                            (prevValue) => prevValue !== value,
+                          ),
+                        }))
+                      }}
+                    >
+                      {label}
+                    </FilterTag>
+                  ))}
+                </Inline>
               </GridColumn>
             </GridRow>
-            {(data?.getPublishedMaterial?.items ?? []).map((item, index) => {
+            {(data?.getPublishedMaterial.items ?? []).map((item, index) => {
               return (
                 <GridRow
                   key={`${item.id}-${index}`}
