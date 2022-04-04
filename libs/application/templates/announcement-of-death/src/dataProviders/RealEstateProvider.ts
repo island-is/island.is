@@ -1,4 +1,5 @@
 import {
+  Application,
   BasicDataProvider,
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
@@ -9,8 +10,8 @@ import { m } from '../lib/messages'
 export class RealEstateProvider extends BasicDataProvider {
   type = 'DistrictsProvider'
 
-  async provide(): Promise<RealEstates> {
-    // TODO query by deathed relative
+  async provide(application: Application): Promise<RealEstates> {
+    const deadded: string = application.externalData?.deadPersonNationalId.data as string ?? ""
 
     const query = `
       query GetRealEstateQuery($input: GetMultiPropertyInput!) {
@@ -39,7 +40,7 @@ export class RealEstateProvider extends BasicDataProvider {
       }
     `
 
-    return this.useGraphqlGateway(query)
+    return this.useGraphqlGateway(query, {input: deadded})
       .then(async (res: Response) => {
         const response = await res.json()
         if (response.errors?.length > 0) {
