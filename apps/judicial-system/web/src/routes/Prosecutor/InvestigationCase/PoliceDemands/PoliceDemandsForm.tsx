@@ -159,7 +159,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
 
         autofill('demands', courtClaimText, workingCase)
 
-        setWorkingCase(workingCase)
+        setWorkingCase({ ...workingCase })
       }
     }
   }, [autofill, formatMessage, isCaseUpToDate, setWorkingCase, workingCase])

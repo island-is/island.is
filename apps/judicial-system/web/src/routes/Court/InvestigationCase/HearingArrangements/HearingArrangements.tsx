@@ -43,7 +43,7 @@ const HearingArrangements = () => {
         )
       }
 
-      setWorkingCase(theCase)
+      setWorkingCase({ ...theCase })
     }
   }, [
     autofill,

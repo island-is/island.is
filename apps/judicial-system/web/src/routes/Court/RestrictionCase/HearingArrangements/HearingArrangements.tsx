@@ -63,7 +63,7 @@ export const HearingArrangements: React.FC = () => {
         autofill('courtDate', theCase.requestedCourtDate, theCase)
       }
 
-      setWorkingCase(theCase)
+      setWorkingCase({ ...theCase })
     }
   }, [autofill, isCaseUpToDate, setWorkingCase, workingCase])
 

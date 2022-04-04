@@ -58,7 +58,7 @@ const Ruling = () => {
       autofill('conclusion', workingCase.demands, workingCase)
     }
 
-    setWorkingCase(workingCase)
+    setWorkingCase({ ...workingCase })
   }, [isCaseUpToDate, autofill, workingCase, formatMessage, setWorkingCase])
 
   return (

@@ -249,7 +249,7 @@ export const Ruling: React.FC = () => {
       )
     }
 
-    setWorkingCase(theCase)
+    setWorkingCase({ ...theCase })
   }, [
     autofill,
     autofillBoolean,

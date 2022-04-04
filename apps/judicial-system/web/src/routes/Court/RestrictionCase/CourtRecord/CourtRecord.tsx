@@ -242,7 +242,7 @@ export const CourtRecord: React.FC = () => {
 
       autofill('sessionBookings', autofillSessionBookings, theCase)
 
-      setWorkingCase(theCase)
+      setWorkingCase({ ...theCase })
     }
   }, [autofill, formatMessage, isCaseUpToDate, setWorkingCase, workingCase])
 

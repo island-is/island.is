@@ -150,7 +150,7 @@ const CourtRecord = () => {
         )
       }
 
-      setWorkingCase(theCase)
+      setWorkingCase({ ...theCase })
     }
   }, [autofill, formatMessage, isCaseUpToDate, setWorkingCase, workingCase])
 

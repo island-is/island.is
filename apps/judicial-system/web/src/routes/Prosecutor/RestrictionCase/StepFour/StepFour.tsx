@@ -101,7 +101,7 @@ export const StepFour: React.FC = () => {
         )
       }
 
-      setWorkingCase(theCase)
+      setWorkingCase({ ...theCase })
     }
   }, [autofill, formatMessage, isCaseUpToDate, setWorkingCase, workingCase])
 
