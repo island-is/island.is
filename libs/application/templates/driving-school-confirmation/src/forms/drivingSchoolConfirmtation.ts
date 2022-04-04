@@ -35,6 +35,18 @@ export const getDrivingSchoolConfirmation = (): Form => {
                 title: '',
                 subTitle: '',
               }),
+              buildDataProviderItem({
+                id: 'employee',
+                type: 'EmployeeProvider',
+                title: m.dataCollectionConfirmationRightsTitle,
+                subTitle: m.dataCollectionConfirmationRightsSubtitle,
+              }),
+              buildDataProviderItem({
+                id: 'schoolTypes',
+                type: 'SchoolTypesProvider',
+                title: '',
+                subTitle: '',
+              }),
             ],
           }),
         ],

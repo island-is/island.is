@@ -98,7 +98,7 @@ export class DrivingLicenseBookResolver {
     )
   }
   @UseGuards(DrivingSchoolEmployeeGuard)
-  @Query(() => [DrivingSchool])
+  @Query(() => DrivingSchool)
   drivingLicenseBookSchoolForEmployee(@CurrentUser() user: User) {
     return this.drivingLicenseBookService.getSchoolForSchoolStaff(user)
   }
