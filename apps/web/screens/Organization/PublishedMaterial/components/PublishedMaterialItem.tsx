@@ -20,12 +20,20 @@ export const PublishedMaterialItem = ({ item }: PublishedMaterialItemProps) => {
       border="standard"
       borderRadius="large"
     >
-      <Box borderRadius="large" position="relative" display="flex" width="full">
-        <Text variant="h4" as="span" color="blue400">
-          {item.title}
-        </Text>
+      <Box position="relative" display="flex" width="full">
+        <Box>
+          <Text variant="h4" as="span" color="dark400">
+            {item.title}
+          </Text>
+          <Text>{item.description}</Text>
+        </Box>
         {fileEnding && (
-          <Box marginLeft="auto" paddingLeft={2}>
+          <Box
+            display="flex"
+            alignItems="center"
+            marginLeft="auto"
+            paddingLeft={2}
+          >
             <Tag disabled={true} outlined={true}>
               {fileEnding}
             </Tag>
