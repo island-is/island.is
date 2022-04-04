@@ -657,6 +657,9 @@
     "service-portal-finance": {
       "tags": []
     },
+    "service-portal-finance-schedule": {
+      "tags": []
+    },
     "service-portal-graphql": {
       "tags": []
     },
