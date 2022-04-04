@@ -136,6 +136,7 @@ export class CaseController {
   @ApiOkResponse({ type: Case, description: 'Updates an existing case' })
   async update(
     @Param('caseId') caseId: string,
+    @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @Body() caseToUpdate: UpdateCaseDto,
   ): Promise<Case | null> {
@@ -149,7 +150,7 @@ export class CaseController {
         theCase.creatingProsecutor?.institutionId,
       )
 
-      // If the case was created via xRoad, then there is no creating prosecutor
+      // If the case was created via xRoad, then there may not have been a creating prosecutor
       if (!theCase.creatingProsecutor) {
         caseToUpdate = {
           ...caseToUpdate,
@@ -178,6 +179,15 @@ export class CaseController {
       caseId,
       caseToUpdate,
     )) as Case
+
+    if (
+      updatedCase.courtCaseNumber &&
+      updatedCase.courtCaseNumber !== theCase.courtCaseNumber
+    ) {
+      // The court case number has changed, so the request must be uploaded to the new court case
+      // No need to wait
+      this.caseService.uploadRequestPdfToCourt(updatedCase, user)
+    }
 
     return updatedCase
   }
