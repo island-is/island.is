@@ -869,7 +869,7 @@ export class Case extends Model<Case> {
    **********/
   @Column({
     type: DataType.BOOLEAN,
-    allowNull: true,
+    allowNull: false,
   })
   @ApiProperty()
   isArchived?: boolean
