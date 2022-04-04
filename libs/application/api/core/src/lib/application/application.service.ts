@@ -8,7 +8,6 @@ import {
 } from '@island.is/application/core'
 import { Application } from './application.model'
 import { ApplicationLifecycle } from '@island.is/application/core'
-import { Console } from 'console'
 
 const applicationIsNotSetToBePruned = () => ({
   [Op.or]: [
