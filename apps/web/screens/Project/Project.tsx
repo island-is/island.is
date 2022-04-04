@@ -27,6 +27,7 @@ import {
   ElectionProjectHeader,
   OneColumnTextSlice,
   NewsItems,
+  UkraineChatPanel,
 } from '@island.is/web/components'
 import {
   Box,
@@ -248,6 +249,7 @@ const ProjectPage: Screen<PageProps> = ({
 
   return (
     <>
+      {projectPage.id === '7GtuCCd7MEZhZKe0oXcHdb' && <UkraineChatPanel />}
       <HeadWithSocialSharing
         title={`${projectPage.title} | Ísland.is`}
         description={projectPage.intro}

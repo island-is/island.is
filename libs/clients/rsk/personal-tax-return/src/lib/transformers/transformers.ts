@@ -24,6 +24,16 @@ export function directTaxPaymentResponseToDto(
   const spouseTotalSalary =
     result['b:_launagr_re_Maki']?.['b:ReiknadEndurgjaldDetail']
 
+  const salaryBreakdown =
+    result['b:_launasundurlidanir']?.['b:Launasundurlidun']
+
+  const salaryBreakdownToArray =
+    Array.isArray(salaryBreakdown) && salaryBreakdown?.length
+      ? salaryBreakdown
+      : salaryBreakdown && !Array.isArray(salaryBreakdown)
+      ? [salaryBreakdown]
+      : undefined
+
   return {
     remark: result['b:_abendingar'],
     payerNationalId: result['b:_kennitalaLaunamanns'],
@@ -56,9 +66,7 @@ export function directTaxPaymentResponseToDto(
           year: spouseTotalSalary['b:_tekjuar'],
         }
       : undefined,
-    salaryBreakdown: result['b:_launasundurlidanir']?.[
-      'b:Launasundurlidun'
-    ]?.map((salary) => {
+    salaryBreakdown: salaryBreakdownToArray?.map((salary) => {
       return {
         privatePensionSavings: salary['b:_Tharaf_gr_sereignarsparnadur'],
         year: salary['b:_ar'],
