@@ -114,7 +114,7 @@ jobs:
         shell: bash
     runs-on: ec2-runners
     container:
-      image: summerwind/actions-runner-dind:latest
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
       options: --cap-add=NET_ADMIN
     timeout-minutes: 90
 
@@ -191,13 +191,6 @@ jobs:
         run: |
           git checkout main
           git checkout $GITHUB_SHA
-
-      - name: Test docker
-        run: |
-          ps auxww
-          cat /var/log/dockerd.* || true
-          docker ps
-        shell: bash
 
       - name: Keep PR run event
         uses: actions/upload-artifact@v2
