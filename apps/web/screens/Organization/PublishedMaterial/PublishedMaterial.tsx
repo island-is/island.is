@@ -208,7 +208,7 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
         items: navList,
       }}
     >
-      <GridContainer>
+      <GridContainer className={styles.container}>
         <GridRow>
           <GridColumn span={['12/12', '12/12', '6/12', '6/12', '8/12']}>
             <Text variant="h1" as="h1" marginBottom={4} marginTop={1}>
