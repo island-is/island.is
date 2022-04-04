@@ -42,6 +42,22 @@ import {
 } from '../../utils/types'
 import { servicePortalSaveAccessControl } from '@island.is/plausible'
 
+const compareArray = [
+  'Pósthólf',
+  'Lesaðgangur að umsóknum',
+  'Mínar upplýsingar',
+  'Meðmæli',
+  'Skírteini',
+  'Starfsleyfi',
+  'Menntun',
+  'Fasteignir',
+  'Eignir',
+  'Fjármál',
+  'Launamál',
+  'Staða og hreyfingar',
+  'Ökutæki',
+]
+
 const AuthApiScopesQuery = gql`
   query AuthApiScopesQuery {
     authApiScopes {
@@ -110,7 +126,6 @@ const DeleteAuthDelegationMutation = gql`
 
 const Access: FC = () => {
   useNamespaces('sp.settings-access-control')
-
   const { formatMessage } = useLocale()
   const { delegationId }: { delegationId: string } = useParams()
   const history = useHistory()
@@ -221,6 +236,22 @@ const Access: FC = () => {
           ?.displayName,
         validTo: item.validTo,
       }
+  })
+
+  const accessItemsArray = Object.keys(groupedApiScopes).map((key, index) => {
+    const apiScopes = groupedApiScopes[key]
+
+    const accessItems: Scope[] = key.startsWith(GROUP_PREFIX)
+      ? [
+          {
+            ...apiScopes[0].group,
+            model: `${GROUP_PREFIX}.${index}`,
+          } as ApiScopeGroup,
+          ...apiScopes,
+        ]
+      : apiScopes
+
+    return accessItems
   })
 
   return (
@@ -369,25 +400,21 @@ const Access: FC = () => {
             </Hidden>
             <Box>
               {!loading &&
-                Object.keys(groupedApiScopes).map((key, index) => {
-                  const apiScopes = groupedApiScopes[key]
-                  const accessItems: Scope[] = key.startsWith(GROUP_PREFIX)
-                    ? [
-                        {
-                          ...apiScopes[0].group,
-                          model: `${GROUP_PREFIX}.${index}`,
-                        } as ApiScopeGroup,
-                        ...apiScopes,
-                      ]
-                    : apiScopes
-                  return (
-                    <AccessItem
-                      apiScopes={accessItems}
-                      authDelegation={authDelegation}
-                      key={index}
-                    />
+                accessItemsArray
+                  .sort(
+                    (a, b) =>
+                      compareArray.indexOf(a[0].displayName) -
+                      compareArray.indexOf(b[0].displayName),
                   )
-                })}
+                  .map((item, index) => {
+                    return (
+                      <AccessItem
+                        apiScopes={item}
+                        authDelegation={authDelegation}
+                        key={index}
+                      />
+                    )
+                  })}
             </Box>
           </Box>
           {loading && (
