@@ -12,7 +12,7 @@ export class DrivingSchoolEmployeeGuard implements CanActivate {
     const ctx = GqlExecutionContext.create(context)
     const user = ctx.getContext().req.user
     const staff = await this.drivingLicenseBookService.getSchoolForSchoolStaff(
-      user.nationalId,
+      user
     )
     return !!staff
   }
