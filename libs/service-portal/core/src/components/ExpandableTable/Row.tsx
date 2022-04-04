@@ -7,7 +7,6 @@ import {
   Text,
   LoadingDots,
   Table as T,
-  Hidden,
   Button,
 } from '@island.is/island-ui/core'
 import { m } from '@island.is/service-portal/core'
@@ -15,7 +14,10 @@ import * as styles from './ExpandableTable.css'
 import { tableStyles } from '@island.is/service-portal/core'
 
 interface Props {
-  data: Array<{ value: string | number; align?: 'left' | 'right' }>
+  data: Array<{
+    value: string | number | React.ReactElement
+    align?: 'left' | 'right'
+  }>
   last?: boolean
   loading?: boolean
   error?: ApolloError
@@ -53,44 +55,22 @@ const ExpandableLine: FC<Props> = ({
   return (
     <>
       <T.Row>
-        {data.map((item, i) => (
-          <T.Data
-            key={i}
-            box={{
-              background: fullClose || loading ? 'transparent' : 'blue100',
-              borderColor: fullClose || loading ? 'blue200' : 'blue100',
-              position: 'relative',
-            }}
-            style={tableStyles}
-          >
-            {!fullClose && i === 0 && !loading ? (
-              <div className={styles.line} />
-            ) : null}
-            <Text variant={last ? 'eyebrow' : 'medium'} as="span">
-              <div
-                className={
-                  item.align === 'right' ? styles.financeTd : undefined
-                }
-              >
-                {item.value}
-              </div>
-            </Text>
-          </T.Data>
-        ))}
         <T.Data
           box={{
             alignItems: 'flexEnd',
             background: fullClose || loading ? 'transparent' : 'blue100',
             borderColor: fullClose || loading ? 'blue200' : 'blue100',
             printHidden: true,
+            position: 'relative',
           }}
           style={tableStyles}
         >
+          {!fullClose && !loading ? <div className={styles.line} /> : null}
           {!last && !loading && (
             <Box
               display="flex"
               alignItems="center"
-              justifyContent="flexEnd"
+              justifyContent="flexStart"
               onClick={onExpandButton}
               cursor="pointer"
             >
@@ -113,12 +93,33 @@ const ExpandableLine: FC<Props> = ({
               className={styles.loader}
               display="flex"
               alignItems="center"
-              justifyContent="flexEnd"
+              justifyContent="flexStart"
             >
               <LoadingDots single />
             </Box>
           )}
         </T.Data>
+        {data.map((item, i) => (
+          <T.Data
+            key={i}
+            box={{
+              background: fullClose || loading ? 'transparent' : 'blue100',
+              borderColor: fullClose || loading ? 'blue200' : 'blue100',
+              position: 'relative',
+            }}
+            style={tableStyles}
+          >
+            <Text variant={last ? 'eyebrow' : 'medium'} as="span">
+              <div
+                className={
+                  item.align === 'right' ? styles.financeTd : undefined
+                }
+              >
+                {item.value}
+              </div>
+            </Text>
+          </T.Data>
+        ))}
       </T.Row>
       <T.Row>
         <T.Data
