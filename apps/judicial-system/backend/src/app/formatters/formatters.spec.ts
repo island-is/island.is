@@ -978,8 +978,8 @@ describe('formatCourtRevokedSmsNotification', () => {
 
     // Act
     const res = formatCourtRevokedSmsNotification(
-      type,
       formatMessage,
+      type,
       prosecutorName,
       requestedCourtDate,
       courtDate,
@@ -999,8 +999,8 @@ describe('formatCourtRevokedSmsNotification', () => {
 
     // Act
     const res = formatCourtRevokedSmsNotification(
-      type,
       formatMessage,
+      type,
       prosecutorName,
       requestedCourtDate,
       undefined,
@@ -1018,8 +1018,8 @@ describe('formatCourtRevokedSmsNotification', () => {
 
     // Act
     const res = formatCourtRevokedSmsNotification(
-      type,
       formatMessage,
+      type,
       undefined,
       undefined,
       undefined,
@@ -1038,8 +1038,8 @@ describe('formatCourtRevokedSmsNotification', () => {
 
     // Act
     const res = formatCourtRevokedSmsNotification(
-      type,
       formatMessage,
+      type,
       prosecutorName,
       requestedCourtDate,
       courtDate,

@@ -279,8 +279,8 @@ export function formatPrisonRulingEmailNotification(
 }
 
 export function formatCourtRevokedSmsNotification(
-  type: CaseType,
   formatMessage: FormatMessage,
+  type: CaseType,
   prosecutorName?: string,
   requestedCourtDate?: Date,
   courtDate?: Date,
