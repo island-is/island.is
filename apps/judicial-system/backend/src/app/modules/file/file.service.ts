@@ -241,17 +241,19 @@ export class FileService {
     fileId: string,
     update: { [key: string]: string | null },
     transaction?: Transaction,
-  ): Promise<void> {
+  ): Promise<CaseFile> {
     const promisedUpdate = transaction
       ? this.fileModel.update(update, {
           where: { id: fileId, caseId },
+          returning: true,
           transaction,
         })
       : this.fileModel.update(update, {
           where: { id: fileId, caseId },
+          returning: true,
         })
 
-    const [numberOfAffectedRows] = await promisedUpdate
+    const [numberOfAffectedRows, updatedCaseFiles] = await promisedUpdate
 
     if (numberOfAffectedRows > 1) {
       // Tolerate failure, but log error
@@ -263,5 +265,7 @@ export class FileService {
         `Could not update file ${fileId} of case ${caseId}`,
       )
     }
+
+    return updatedCaseFiles[0]
   }
 }
