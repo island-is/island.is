@@ -6,3 +6,7 @@ export const filterTagContainer = style({
   alignItems: 'center',
   gap: '8px',
 })
+
+export const container = style({
+  minHeight: '400px',
+})
