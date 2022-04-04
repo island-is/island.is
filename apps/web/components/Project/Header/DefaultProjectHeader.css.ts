@@ -8,20 +8,19 @@ export const headerBg = style({
   ...themeUtils.responsiveStyle({
     md: {
       order: 0,
-      height: '400px',
+      minHeight: '100%',
     },
   }),
 })
 
 export const headerWrapper = style({
   display: 'grid',
-  gridTemplateRows: '2fr 3fr',
-  height: '500px',
+  minHeight: '500px',
+  height: 'fit-content',
   ...themeUtils.responsiveStyle({
     md: {
-      display: 'grid',
-      height: '400px',
       gridTemplateColumns: '1fr 1fr',
+      gridTemplateRows: '1fr',
     },
   }),
 })
@@ -29,15 +28,13 @@ export const headerWrapper = style({
 export const headerImage = style({
   height: '100%',
   maxHeight: '200px',
-  objectFit: 'cover',
   width: '100%',
+  objectFit: 'cover',
   order: 0,
   ...themeUtils.responsiveStyle({
     md: {
       order: 1,
-      height: '400px',
       maxHeight: '100%',
-      objectFit: 'cover',
     },
   }),
 })
