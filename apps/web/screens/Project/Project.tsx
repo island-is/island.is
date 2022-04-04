@@ -27,6 +27,7 @@ import {
   ElectionProjectHeader,
   OneColumnTextSlice,
   NewsItems,
+  UkraineChatPanel,
 } from '@island.is/web/components'
 import {
   Box,
@@ -49,7 +50,7 @@ import slugify from '@sindresorhus/slugify'
 import { getStepOptionsFromUIConfiguration } from '../../components/StepperFSM/StepperFSMUtils'
 import StepperFSM from '../../components/StepperFSM/StepperFSM'
 
-const lightThemes = ['traveling-to-iceland', 'election', 'ukraine']
+const lightThemes = ['traveling-to-iceland', 'election', 'ukraine', 'default']
 
 const getThemeConfig = (
   theme: string,
@@ -248,6 +249,7 @@ const ProjectPage: Screen<PageProps> = ({
 
   return (
     <>
+      {projectPage.id === '7GtuCCd7MEZhZKe0oXcHdb' && <UkraineChatPanel />}
       <HeadWithSocialSharing
         title={`${projectPage.title} | Ísland.is`}
         description={projectPage.intro}

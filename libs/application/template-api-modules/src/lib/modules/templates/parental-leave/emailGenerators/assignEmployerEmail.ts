@@ -68,6 +68,26 @@ export const generateAssignEmployerApplicationEmail: AssignmentEmailTemplateGene
             href: assignLink,
           },
         },
+        {
+          component: 'Copy',
+          context: {
+            copy: `Athugið! Ef hnappur virkar ekki, getur þú afritað hlekkinn hér að neðan og límt hann inn í vafrann þinn.`,
+          },
+        },
+        {
+          component: 'Copy',
+          context: {
+            copy: assignLink,
+            small: true,
+          },
+        },
+        {
+          component: 'Copy',
+          context: {
+            copy: `<br />`,
+            small: true,
+          },
+        },
         { component: 'Copy', context: { copy: 'Með kveðju,' } },
         { component: 'Copy', context: { copy: 'Fæðingarorlofssjóður' } },
       ],

@@ -5,6 +5,8 @@ import {
   Text,
   AlertMessage,
   SkeletonLoader,
+  Button,
+  Link,
 } from '@island.is/island-ui/core'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 import { useMutation, useQuery } from '@apollo/client'
@@ -127,6 +129,11 @@ export const PendingRejectedTryAgain: FC<FieldBaseProps> = ({
             title={formatMessage(m.propertyCertificateError)}
             message={formatMessage(m.propertyCertificateErrorContactSheriff)}
           />
+          <Box marginY={5}>
+            <Link href={formatMessage(m.mortgageCertificateInboxLink)}>
+              <Button>{formatMessage(m.mysites)}</Button>
+            </Link>
+          </Box>
         </Box>
       ) : (
         <Box>

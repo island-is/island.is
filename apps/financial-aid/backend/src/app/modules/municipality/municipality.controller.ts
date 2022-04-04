@@ -92,13 +92,9 @@ export class MunicipalityController {
     description: 'Updates municipality',
   })
   async updateMunicipality(
-    @CurrentStaff() staff: Staff,
     @Body() input: UpdateMunicipalityDto,
   ): Promise<MunicipalityModel> {
-    return await this.municipalityService.updateMunicipality(
-      staff.municipalityId,
-      input,
-    )
+    return await this.municipalityService.updateMunicipality(input)
   }
 
   @Put('activity/:id')

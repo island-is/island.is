@@ -48,6 +48,9 @@ export class Organization {
 
   @Field(() => Namespace, { nullable: true })
   namespace!: Namespace | null
+
+  @Field(() => Image, { nullable: true })
+  serviceWebFeaturedImage!: Image | null
 }
 
 export const mapOrganization = ({
@@ -69,5 +72,8 @@ export const mapOrganization = ({
     serviceWebTitle: fields.serviceWebTitle ?? '',
     serviceWebEnabled: Boolean(fields.serviceWebEnabled),
     namespace: fields.namespace ? mapNamespace(fields.namespace) : null,
+    serviceWebFeaturedImage: fields.serviceWebFeaturedImage
+      ? mapImage(fields.serviceWebFeaturedImage)
+      : null,
   }
 }

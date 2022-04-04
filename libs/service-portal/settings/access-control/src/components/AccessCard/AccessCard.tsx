@@ -11,7 +11,7 @@ import {
   Inline,
   Icon,
 } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 
 interface PropTypes {
   title: string
@@ -30,6 +30,7 @@ function AccessCard({
   tags,
   validTo,
 }: PropTypes) {
+  useNamespaces('sp.settings-access-control')
   const { formatMessage } = useLocale()
 
   return (

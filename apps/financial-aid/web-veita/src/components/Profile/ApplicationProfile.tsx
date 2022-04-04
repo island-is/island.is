@@ -107,7 +107,7 @@ const ApplicationProfile = ({
 
   if (application.state === ApplicationState.APPROVED) {
     applicationInfo.push({
-      title: 'Veitt',
+      title: 'Veitt aðstoð',
       content: `${application.amount?.finalAmount.toLocaleString('de-DE')} kr.`,
       onclick: () => {
         setCalculationsModal({ visible: true, type: AmountModal.PROVIDED })

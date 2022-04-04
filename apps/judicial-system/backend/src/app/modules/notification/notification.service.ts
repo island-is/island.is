@@ -1,3 +1,5 @@
+import format from 'date-fns/format'
+
 import {
   Inject,
   Injectable,
@@ -24,6 +26,7 @@ import {
 import { formatDate } from '@island.is/judicial-system/formatters'
 
 import { environment } from '../../../environments'
+import { now } from '../../factories'
 import {
   formatProsecutorCourtDateEmailNotification,
   formatCourtHeadsUpSmsNotification,
@@ -238,6 +241,7 @@ export class NotificationService {
         theCase.id,
         theCase.courtId ?? '',
         theCase.courtCaseNumber ?? '',
+        `Krafa ${theCase.policeCaseNumber}-${format(now(), 'yyy-MM-DD-HH:mm')}`,
         requestPdf,
       )
     } catch (error) {
@@ -466,7 +470,8 @@ export class NotificationService {
       )
     } catch (error) {
       // Tolerate failure, but log error
-      this.logger.error(
+      // TODO: Log as error when implemented in the court system
+      this.logger.info(
         `Failed to upload email to court for case ${theCase.id}`,
         { error },
       )

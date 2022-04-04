@@ -1843,6 +1843,9 @@ export interface IOrganizationFields {
 
   /** Namespace */
   namespace?: IUiConfiguration | undefined
+
+  /** Service Web Featured Image */
+  serviceWebFeaturedImage?: Asset | undefined
 }
 
 export interface IOrganization extends Entry<IOrganizationFields> {
@@ -1945,6 +1948,9 @@ export interface IOrganizationPageFields {
 
   /** Alert Banner */
   alertBanner?: IAlertBanner | undefined
+
+  /** Default Header Image */
+  defaultHeaderImage?: Asset | undefined
 }
 
 export interface IOrganizationPage extends Entry<IOrganizationPageFields> {
@@ -2203,6 +2209,12 @@ export interface IProjectPageFields {
 
   /** Featured Image */
   featuredImage?: Asset | undefined
+
+  /** Default Header Image */
+  defaultHeaderImage?: Asset | undefined
+
+  /** Default Header Background Color */
+  defaultHeaderBackgroundColor?: string | undefined
 }
 
 export interface IProjectPage extends Entry<IProjectPageFields> {

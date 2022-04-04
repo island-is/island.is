@@ -86,9 +86,9 @@ const SubPage: Screen<SubPageProps> = ({
   )
 
   const organizationTitle = (organization && organization.title) || 'Ísland.is'
-  const pageTitle = `${categoryTitle ? categoryTitle + ' | ' : ''}${n(
-    'assistanceForIslandIs',
-    'Aðstoð fyrir Ísland.is',
+  const pageTitle = `${categoryTitle ? categoryTitle + ' | ' : ''}${o(
+    'serviceWebSubpageTitleSuffix',
+    n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is'),
   )}`
 
   const mobileBackButtonText = questionSlug
@@ -133,6 +133,7 @@ const SubPage: Screen<SubPageProps> = ({
   return (
     <ServiceWebWrapper
       pageTitle={pageTitle}
+      pageDescription={o('serviceWebFeaturedDescription', '')}
       headerTitle={o(
         'serviceWebHeaderTitle',
         n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is'),
@@ -236,27 +237,27 @@ const SubPage: Screen<SubPageProps> = ({
                               marginTop={6}
                               marginBottom={2}
                             >
-                              <Text fontWeight="semiBold">
-                                {o(
-                                  'serviceWebRelatedMaterialHeaderTitle',
-                                  'Tengt efni',
-                                )}
-                              </Text>
-                              <GridColumn>
+                              <Stack space={[1, 1, 2]}>
+                                <Text variant="eyebrow" as="h3">
+                                  {o(
+                                    'serviceWebRelatedMaterialHeaderTitle',
+                                    'Tengt efni',
+                                  )}
+                                </Text>
                                 {(question.relatedLinks ?? []).map(
                                   ({ text, url }, index) => (
-                                    <GridRow marginTop={2} key={index}>
-                                      <Link
-                                        underline="small"
-                                        underlineVisibility="hover"
-                                        href={url}
-                                      >
+                                    <Link
+                                      key={index}
+                                      href={url}
+                                      underline="normal"
+                                    >
+                                      <Text key={url} as="span">
                                         {text}
-                                      </Link>
-                                    </GridRow>
+                                      </Text>
+                                    </Link>
                                   ),
                                 )}
-                              </GridColumn>
+                              </Stack>
                             </Box>
                           )}
                           {question.contactLink && (
