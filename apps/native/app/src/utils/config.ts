@@ -25,6 +25,7 @@ const defaults = {
       'profile',
       '@island.is/user-profile:read',
       'offline_access',
+      '@island.is/licenses:verify'
     ],
     clientId: '@island.is/apps/scanner',
   },
