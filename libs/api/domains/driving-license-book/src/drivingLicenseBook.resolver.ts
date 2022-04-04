@@ -22,7 +22,7 @@ import { DrivingInstructorGuard } from './guards/drivingInstructor.guard'
 import { DrivingSchool } from './models/drivingSchool.response'
 import { CreateDrivingSchoolTestResultInput } from './dto/createDrivingSchoolTestResult.input'
 import { DrivingLicenceTestResultId } from './models/drivingLicenseTestResult.response'
-import { SchoolTestResultType } from './models/drivingLicenseBookSchoolType.response'
+import { DrivingSchoolType } from './models/drivingLicenseBookSchoolType.response'
 import { DrivingSchoolEmployeeGuard } from './guards/DrivingSchoolEmployee.guard'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -103,7 +103,7 @@ export class DrivingLicenseBookResolver {
     return this.drivingLicenseBookService.getSchoolForSchoolStaff(user)
   }
 
-  @Query(() => [SchoolTestResultType])
+  @Query(() => [DrivingSchoolType])
   drivingLicenseBookSchoolTypes() {
     return this.drivingLicenseBookService.getSchoolTypes()
   }

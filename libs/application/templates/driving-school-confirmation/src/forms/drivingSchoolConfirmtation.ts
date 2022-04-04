@@ -8,6 +8,8 @@ import {
   buildMultiField,
   buildCustomField,
   buildTextField,
+  buildSubmitField,
+  DefaultEvents,
 } from '@island.is/application/core'
 import { m } from '../lib/messages'
 
@@ -40,12 +42,6 @@ export const getDrivingSchoolConfirmation = (): Form => {
                 type: 'EmployeeProvider',
                 title: m.dataCollectionConfirmationRightsTitle,
                 subTitle: m.dataCollectionConfirmationRightsSubtitle,
-              }),
-              buildDataProviderItem({
-                id: 'schoolTypes',
-                type: 'SchoolTypesProvider',
-                title: '',
-                subTitle: '',
               }),
             ],
           }),
@@ -85,14 +81,22 @@ export const getDrivingSchoolConfirmation = (): Form => {
                 id: 'student',
                 component: 'ViewStudent',
               }),
+              buildSubmitField({
+                id: 'submit',
+                title: '',
+                placement: 'footer',
+                refetchApplicationAfterSubmit: true,
+                actions: [
+                  {
+                    event: DefaultEvents.SUBMIT,
+                    name: 'Senda inn umsókn',
+                    type: 'primary',
+                  },
+                ],
+              }),
             ],
           }),
         ],
-      }),
-      buildCustomField({
-        id: 'schoolConfirmed',
-        title: '',
-        component: 'SchoolConfirmed',
       }),
     ],
   })

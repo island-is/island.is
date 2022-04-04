@@ -59,6 +59,29 @@ const DrivingSchoolConfirmationTemplate: ApplicationTemplate<
             },
           ],
         },
+        on: {
+          [DefaultEvents.SUBMIT]: { target: States.DONE },
+        },
+      },
+      [States.DONE]: {
+        meta: {
+          name: 'Done',
+          progress: 1,
+          lifecycle: {
+            shouldBeListed: false,
+            shouldBePruned: true,
+            whenToPrune: 24 * 3600 * 1000,
+          },
+
+          roles: [
+            {
+              id: Roles.SCHOOL_EMPLOYEE,
+              formLoader: () => import('../forms/done').then((val) => val.done),
+              read: 'all',
+            },
+          ],
+        },
+        type: 'final',
       },
     },
   },

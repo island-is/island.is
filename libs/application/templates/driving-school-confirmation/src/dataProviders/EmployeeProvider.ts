@@ -20,7 +20,11 @@ export class EmployeeProvider extends BasicDataProvider {
         phoneNumber
         email
         website
-        allowedDrivingSchoolTypes
+        allowedDrivingSchoolTypes {
+          schoolTypeId
+          schoolTypeName
+          schoolTypeCode
+        }
       }
     }
     `

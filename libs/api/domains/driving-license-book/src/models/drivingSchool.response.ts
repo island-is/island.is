@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+import { DrivingSchoolType } from './drivingLicenseBookSchoolType.response'
 @ObjectType()
 export class DrivingSchool {
   @Field()
@@ -22,6 +23,6 @@ export class DrivingSchool {
   @Field()
   website!: string
 
-  @Field(() => [String])
-  allowedDrivingSchoolTypes!: string[]
+  @Field(() => [DrivingSchoolType])
+  allowedDrivingSchoolTypes!: DrivingSchoolType[]
 }

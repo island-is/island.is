@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { FC, useState } from 'react'
 import {
   Text,
   RadioButton,
@@ -7,21 +7,23 @@ import {
   GridRow,
   GridColumn,
 } from '@island.is/island-ui/core'
-import { drivingSchools } from '../../lib/constants'
+// import { drivingSchools } from '../../lib/constants'
 import format from 'date-fns/format'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import Skeleton from './Skeleton'
-import { Application } from '@island.is/application/core'
+import { Application, FieldBaseProps } from '@island.is/application/core'
 import { student } from './mock.js'
+import { DrivingSchool, DrivingSchoolType } from '../../types/schema'
 
-const ViewStudent = () => {
+const ViewStudent: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
 
   const [school, setSchool] = useState(0)
   const [date, setDate] = useState<string>('')
   const [dateError, setDateError] = useState(false)
-
+  const drivingSchools: DrivingSchoolType[] = (application.externalData.employee
+    .data as DrivingSchool).allowedDrivingSchoolTypes
   return (
     <GridContainer>
       {student && Object.entries(student).length > 0 ? (
@@ -106,11 +108,11 @@ const ViewStudent = () => {
                 >
                   <RadioButton
                     name={'options-' + index}
-                    label={item.label}
-                    value={item.value}
-                    checked={item.value === school}
+                    label={item.schoolTypeName}
+                    value={item.schoolTypeId}
+                    checked={item.schoolTypeId === school}
                     onChange={() => {
-                      setSchool(item.value)
+                      setSchool(item.schoolTypeId)
                     }}
                     large
                   />

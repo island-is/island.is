@@ -101,10 +101,10 @@ export interface Organization {
   phoneNumber: string
   email: string
   website: string
-  allowedDrivingSchoolTypes: string[]
+  allowedDrivingSchoolTypes: SchoolType[]
 }
 
-export interface SchoolTestResultType {
+export interface SchoolType {
   schoolTypeId: number
   schoolTypeName: string
   schoolTypeCode: string
