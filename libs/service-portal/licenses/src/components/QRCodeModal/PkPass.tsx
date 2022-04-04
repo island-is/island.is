@@ -24,17 +24,19 @@ type PkPassProps = {
 }
 export const PkPass = ({ expireDate }: PkPassProps) => {
   const [pkpassQRCode, setPkpassQRCode] = useState<string | null>(null)
+  const [pkpassUrl, setPkpassUrl] = useState<string | null>(null)
   const [generatePkPass, { loading: urlLoading }] = useMutation(CREATE_PK_PASS)
   const [generatePkPassQrCode, { loading: QRCodeLoading }] = useMutation(
     CREATE_PK_PASS_QR_CODE,
   )
-  const [displayLoader, setDisplayLoader] = useState<boolean>(false)
   const { data: userProfile } = useUserProfile()
+  const [displayLoader, setDisplayLoader] = useState<boolean>(false)
+  const [modalOpen, setModalOpen] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
   const locale = (userProfile?.locale as Locale) ?? 'is'
   const { formatMessage } = useLocale()
-  const [modalOpen, setModalOpen] = useState(false)
   const { width } = useWindowSize()
-  const [isMobile, setIsMobile] = useState(false)
+  const timeFetched = new Date() // Used to compare if license is expired
 
   const toggleModal = () => {
     setModalOpen(!modalOpen)
@@ -42,15 +44,25 @@ export const PkPass = ({ expireDate }: PkPassProps) => {
 
   const licenseType = 'DriversLicense'
 
+  useEffect(() => {
+    if (width < theme.breakpoints.md) {
+      return setIsMobile(true)
+    }
+    setIsMobile(false)
+  }, [width])
+
+  /* Fetch pkpass on load  */
+  useEffect(() => {
+    width < theme.breakpoints.md ? getLink() : getCode()
+  }, [])
+
   const getCode = async () => {
     const response = await generatePkPassQrCode({
       variables: { locale, input: { licenseType } },
     })
 
     if (!response.errors) {
-      setPkpassQRCode(
-        response?.data?.generatePkPassQrCode?.pkpassQRCode ?? null,
-      )
+      setPkpassQRCode(response?.data?.generatePkPassQrCode?.pkpassQRCode)
     }
   }
 
@@ -60,33 +72,17 @@ export const PkPass = ({ expireDate }: PkPassProps) => {
     })
 
     if (!response.errors) {
-      const link = document.getElementById('pkpass-url')
-      link?.setAttribute(
-        'href',
-        response?.data?.generatePkPass?.pkpassUrl ?? '',
-      )
-      setTimeout(() => {
-        link?.click()
-      }, 500)
+      setPkpassUrl(response?.data?.generatePkPass?.pkpassUrl)
     }
   }
 
-  const handleClick = () => {
-    setDisplayLoader(true)
-    getLink()
-    setDisplayLoader(false)
+  /* License is expired if 30 minutes has passed -> fetch pkpass again */
+  const isTimeMoreThen30Minutes = () => {
+    const now = new Date()
+    const timeDiff = Math.abs(now.getTime() - timeFetched?.getTime())
+    const diffMinutes = Math.ceil(timeDiff / (1000 * 60))
+    return diffMinutes > 30
   }
-  const handleQRCodeClick = () => {
-    toggleModal()
-    getCode()
-  }
-
-  useEffect(() => {
-    if (width < theme.breakpoints.md) {
-      return setIsMobile(true)
-    }
-    setIsMobile(false)
-  }, [width])
 
   return (
     <>
@@ -97,7 +93,11 @@ export const PkPass = ({ expireDate }: PkPassProps) => {
             size="small"
             icon="QRCode"
             iconType="outline"
-            onClick={handleQRCodeClick}
+            onClick={() => {
+              const isLessThen = isTimeMoreThen30Minutes()
+              if (isLessThen) getCode()
+              toggleModal()
+            }}
           >
             {formatMessage(m.sendToPhone)}
           </Button>
@@ -109,7 +109,7 @@ export const PkPass = ({ expireDate }: PkPassProps) => {
               expires={expireDate}
             >
               {QRCodeLoading && <SkeletonLoader height={180} width={180} />}
-              {pkpassQRCode && (
+              {pkpassQRCode && !QRCodeLoading && (
                 <Box>
                   <img
                     src={pkpassQRCode}
@@ -123,28 +123,50 @@ export const PkPass = ({ expireDate }: PkPassProps) => {
         </>
       )}
 
-      {isMobile && (
-        <Button
-          variant="text"
-          size="small"
-          icon={displayLoader ? undefined : 'QRCode'}
-          iconType="outline"
-          onClick={handleClick}
-        >
-          {formatMessage(m.sendToPhone)}{' '}
-          {displayLoader && (
-            <span className={styles.loader}>
-              <LoadingDots single />
-            </span>
-          )}
-        </Button>
+      {/* Display "fake" button with loading dots if user clicks when url not ready */}
+      {isMobile && urlLoading && (
+        <Box className={styles.pkpassButton}>
+          <Button
+            variant="text"
+            size="small"
+            icon={displayLoader ? undefined : 'QRCode'}
+            iconType="outline"
+            onClick={() => setDisplayLoader(true)}
+          >
+            {formatMessage(m.sendToPhone)}{' '}
+            {displayLoader && (
+              <span className={styles.loader}>
+                <LoadingDots single />
+              </span>
+            )}
+          </Button>
+        </Box>
       )}
-
-      <Box display="none">
-        <a id="pkpass-url" href={undefined} target="_blank" rel="noreferrer">
-          {formatMessage(m.sendToPhone)}
+      {/* Display link button when url is ready. */}
+      {isMobile && pkpassUrl && !urlLoading && (
+        <a
+          className={styles.pkpassButton}
+          href={pkpassUrl}
+          id="pkpass-url"
+          target="_blank"
+          rel="noreferrer"
+          onClick={(e) => {
+            const isLessThen = isTimeMoreThen30Minutes()
+            if (isLessThen) {
+              e.preventDefault
+              getLink()
+              document
+                .getElementById('pkpass-url')
+                ?.setAttribute('href', pkpassUrl)
+            }
+            return false
+          }}
+        >
+          <Button variant="text" size="small" icon="QRCode" iconType="outline">
+            {formatMessage(m.sendToPhone)}{' '}
+          </Button>
         </a>
-      </Box>
+      )}
     </>
   )
 }
