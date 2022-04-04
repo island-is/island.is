@@ -144,6 +144,8 @@ const EmployeeProfile = ({ user }: EmployeeProfileProps) => {
       state.roles,
       state.nickname,
       state.email,
+      undefined,
+      undefined,
       state.municipalityIds,
     )
   }
@@ -206,50 +208,54 @@ const EmployeeProfile = ({ user }: EmployeeProfileProps) => {
               </Box>
             )
           })}
-          <Box display="block" marginTop={3} marginBottom={[3, 3, 5]}>
-            <Text as="h2" variant="h3" color="dark300" marginBottom={3}>
-              Sveitarfélög notanda
-            </Text>
-            <MultiSelection
-              options={state.serviceCenter}
-              active={municipality
-                .filter((el) =>
-                  state.municipalityIds.includes(el.municipalityId),
-                )
-                .map((el) => {
-                  return { label: el.name, value: el.municipalityId }
-                })}
-              onSelected={(option: any) => {
-                if ((option?.value as unknown) && isString(option?.value)) {
-                  setState({
-                    ...state,
-                    municipalityIds: [...state.municipalityIds, option?.value],
-                    serviceCenter: state.serviceCenter.filter(
-                      (el) => el.value !== option.value,
-                    ),
-                  })
-                }
-              }}
-              unSelected={(value: string, name: string) => {
-                setState({
-                  ...state,
-                  municipalityIds: state.municipalityIds.filter(
-                    (muni) => muni != value,
-                  ),
-                  serviceCenter: [
-                    ...state.serviceCenter,
-                    { label: name, value: value },
-                  ],
-                })
-              }}
-            />
-          </Box>
 
           <Box
             className={`contentUp delay-75`}
             marginTop={3}
             marginBottom={[3, 3, 5]}
           >
+            <Box display="block" marginTop={3} marginBottom={[3, 3, 5]}>
+              <Text as="h2" variant="h3" color="dark300" marginBottom={3}>
+                Sveitarfélög notanda
+              </Text>
+              <MultiSelection
+                options={state.serviceCenter}
+                active={municipality
+                  .filter((el) =>
+                    state.municipalityIds.includes(el.municipalityId),
+                  )
+                  .map((el) => {
+                    return { label: el.name, value: el.municipalityId }
+                  })}
+                onSelected={(option: any) => {
+                  if ((option?.value as unknown) && isString(option?.value)) {
+                    setState({
+                      ...state,
+                      municipalityIds: [
+                        ...state.municipalityIds,
+                        option?.value,
+                      ],
+                      serviceCenter: state.serviceCenter.filter(
+                        (el) => el.value !== option.value,
+                      ),
+                    })
+                  }
+                }}
+                unSelected={(value: string, name: string) => {
+                  setState({
+                    ...state,
+                    municipalityIds: state.municipalityIds.filter(
+                      (muni) => muni != value,
+                    ),
+                    serviceCenter: [
+                      ...state.serviceCenter,
+                      { label: name, value: value },
+                    ],
+                  })
+                }}
+              />
+            </Box>
+
             <Text as="h2" variant="h3" color="dark300" marginBottom={3}>
               Réttindi notanda
             </Text>
