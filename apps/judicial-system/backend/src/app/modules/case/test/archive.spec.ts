@@ -1,10 +1,10 @@
 import CryptoJS from 'crypto-js'
 import { uuid } from 'uuidv4'
-import { literal, Op } from 'sequelize'
+import { Op } from 'sequelize'
 import { Transaction } from 'sequelize/types'
 
 import { ConfigType } from '@island.is/nest/config'
-import { CaseState, CaseType, UserRole } from '@island.is/judicial-system/types'
+import { CaseState, UserRole } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from './createTestingCaseModule'
 import { uuidFactory } from '../../../factories'
