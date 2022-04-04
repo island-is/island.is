@@ -16,13 +16,13 @@ import { ApiActions } from '../shared'
 const pruneAtMidnight = () => {
   const date = new Date()
   const utcDate = new Date(date.toUTCString()) // In case user is not on GMT
-  const timeToPrune = utcDate.getTime() - 8492400
-
-  console.log(date, utcDate, date.getTime(), timeToPrune)
+  const midnightDate = new Date(date.toUTCString())
+  midnightDate.setHours(23, 59, 59)
+  const timeToPrune = midnightDate.getTime() - utcDate.getTime()
   return {
     shouldBeListed: true,
     shouldBePruned: true,
-    whenToPrune: 3600 * 1000,
+    whenToPrune: timeToPrune,
   }
 }
 
@@ -113,11 +113,7 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
           name: application.general.name.defaultMessage,
           progress: 1,
           // Application is only suppose to live for an hour while building it, change later
-          lifecycle: {
-            shouldBeListed: true,
-            shouldBePruned: true,
-            whenToPrune: 3600 * 1000,
-          },
+          lifecycle: pruneAtMidnight(),
           onEntry: {
             apiModuleAction: ApiActions.submitApplication,
           },

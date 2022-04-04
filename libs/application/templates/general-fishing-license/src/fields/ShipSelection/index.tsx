@@ -29,7 +29,6 @@ export const ShipSelection: FC<FieldBaseProps> = ({
   const { formatMessage } = useLocale()
   const { register } = useFormContext()
   const [showTitle, setShowTitle] = useState<boolean>(false)
-  console.log(application)
 
   const registrationNumberValue = getValueViaPath(
     application.answers,
@@ -91,7 +90,6 @@ export const ShipSelection: FC<FieldBaseProps> = ({
         disabled: isExpired,
       })
     }
-    console.log(options)
     return options
   }
 

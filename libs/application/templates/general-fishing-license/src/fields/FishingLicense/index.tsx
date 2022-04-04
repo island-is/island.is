@@ -46,8 +46,6 @@ export const FishingLicense: FC<FieldBaseProps> = ({
     },
   })
 
-  console.log(registrationNumber, data)
-
   const ship = ships[parseInt(shipIndex)]
 
   const handleOnSelect = (value: string) => {
@@ -90,7 +88,7 @@ export const FishingLicense: FC<FieldBaseProps> = ({
               id={`${field.id}.license`}
               largeButtons
               backgroundColor="blue"
-              error={errors && getErrorViaPath(errors, field.id)}
+              error={errors && getErrorViaPath(errors, `${field.id}.license`)}
               onSelect={(value) => handleOnSelect(value)}
               options={data?.fishingLicenses
                 ?.filter(({ answer }: FishingLicenseSchema) => answer)

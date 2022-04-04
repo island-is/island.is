@@ -1,6 +1,6 @@
 import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
 import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
-import React, { FC } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { ShipInformation } from '../components'
 import { ReviewGroup } from '@island.is/application/ui-components'
 import { ValueLine } from './ValueLine'
@@ -12,19 +12,17 @@ import {
   overview,
 } from '../../lib/messages'
 import { formatIsk, formatPhonenumber } from '../../utils'
-import {
-  FishingLicenseShip as Ship,
-  PaymentCatalogItem,
-} from '@island.is/api/schema'
+import { FishingLicenseShip } from '@island.is/api/schema'
 
 export const Overview: FC<FieldBaseProps> = ({ application, goToScreen }) => {
   const answers = application.answers as GeneralFishingLicense
+  const [fishingLicensePrice, setFishingLicensePrice] = useState<number>(0)
 
   // Ships
   const ships = getValueViaPath(
     application.externalData,
     'directoryOfFisheries.data.ships',
-  ) as Ship[]
+  ) as FishingLicenseShip[]
   const shipIndex = getValueViaPath(
     answers,
     'shipSelection.ship',
@@ -37,17 +35,25 @@ export const Overview: FC<FieldBaseProps> = ({ application, goToScreen }) => {
     application.externalData,
     'feeInfoProvider.data',
     [],
-  ) as PaymentCatalogItem[]
-  const chargeItem = getValueViaPath(
+  ) as {
+    performingOrgID: string
+    chargeItemCode: string
+    chargeItemName: string
+    priceAmount: number
+  }[]
+  const chargeItemCode = getValueViaPath(
     answers,
     'fishingLicense.chargeType',
-    '',
   ) as string
+  getValueViaPath(answers, 'fishingLicense.chargeType', '') as string
 
-  const selectedCatalogItem = catalogItems?.find(
-    (item) => item.chargeItemCode === chargeItem,
-  )
-  const fishingLicensePrice = selectedCatalogItem?.priceAmount || 0
+  useEffect(() => {
+    catalogItems?.map((item) => {
+      if (item.chargeItemCode === chargeItemCode)
+        setFishingLicensePrice(item.priceAmount)
+      return item
+    })
+  }, [chargeItemCode])
 
   const changeScreens = (screen: string) => {
     if (goToScreen) goToScreen(screen)

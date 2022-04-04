@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { SharedTemplateApiService } from '../../shared'
-import { Item } from '@island.is/clients/payment'
+import { GeneralFishingLicenseAnswers } from '@island.is/application/templates/general-fishing-license'
+import { getValueViaPath } from '@island.is/application/core'
 
 @Injectable()
 export class GeneralFishingLicenseService {
@@ -9,17 +10,20 @@ export class GeneralFishingLicenseService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {}
 
-  async createCharge({
-    application: { id, answers },
-    auth,
-  }: TemplateApiModuleActionProps) {
-    // Create real charge
-    // TODO: Get charge item code from answers when service from Fiskistofa is ready
-    const chargeItemCode = 'L5102'
+  async createCharge({ application, auth }: TemplateApiModuleActionProps) {
+    const answers = application.answers as GeneralFishingLicenseAnswers
+    const chargeItemCode = getValueViaPath(
+      answers,
+      'fishingLicense.chargeType',
+    ) as string
+
+    if (!chargeItemCode) {
+      throw new Error('charge item code missing')
+    }
 
     const response = await this.sharedTemplateAPIService.createCharge(
       auth.authorization,
-      id,
+      application.id,
       chargeItemCode,
     )
 
