@@ -58,6 +58,13 @@ export const notifications = {
       description:
         'Notaður sem texti í sms-i til dómstóla þegar krafa er afturkölluð',
     },
+    prosecutorText: {
+      id: 'judicial.system.backend:notifications.courtRevoked.prosecutor_text',
+      defaultMessage:
+        'Sækjandi: {prosecutorName, select, NONE {Ekki skráður} other {{prosecutorName}}}.',
+      description:
+        'Notaður sem texti í sms-i til þess að tilgreina hver sækjandi er',
+    },
     courtDate: {
       id: 'judicial.system.backend:notifications.courtRevoked.court_date',
       defaultMessage: 'Fyrirtökutími: {date}, kl. {time}.',
