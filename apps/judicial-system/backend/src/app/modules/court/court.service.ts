@@ -21,10 +21,8 @@ export const subTypes: SubTypes = {
   // 'Framsalsmál',
   // 'Frestur',
   CUSTODY: ['Gæsluvarðhald', 'Framlenging gæsluvarðhalds'],
-  ADMISSION_TO_FACILITY: [
-    'Vistun á viðeigandi stofnun',
-    'Framlenging vistununar á viðeigandi stofnun',
-  ],
+  // TODO: replace with appropriate type when it has been created in the court system
+  ADMISSION_TO_FACILITY: ['Gæsluvarðhald', 'Framlenging gæsluvarðhalds'],
   PSYCHIATRIC_EXAMINATION: 'Geðrannsókn',
   // 'Handtaka',
   SOUND_RECORDING_EQUIPMENT: 'Hljóðupptökubúnaði komið fyrir',
@@ -47,6 +45,7 @@ export const subTypes: SubTypes = {
   TELECOMMUNICATIONS: 'Upplýsingar um fjarskiptasamskipti',
   INTERNET_USAGE: 'Upplýsingar um vefnotkun',
   ELECTRONIC_DATA_DISCOVERY_INVESTIGATION: 'Rannsókn á rafrænum gögnum',
+  // TODO: replace with appropriate type when it has been created in the court system
   VIDEO_RECORDING_EQUIPMENT: 'Annað',
 }
 
