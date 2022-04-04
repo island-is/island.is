@@ -201,6 +201,9 @@ export class UserProfileController {
       throw new ForbiddenException()
     }
 
+    // findOrCreateUserProfile for edge cases - fragmented onboarding
+    await this.findOrCreateUserProfile(nationalId, user)
+
     const updatedFields = Object.keys(userProfileToUpdate)
 
     if (userProfileToUpdate.mobilePhoneNumber) {
