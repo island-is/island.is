@@ -30,3 +30,7 @@ export enum Routes {
   SPOUSETAXRETURNFILES = 'spouseTaxReturnFiles',
   SPOUSECONTACTINFO = 'spouseContactInfo',
 }
+
+export enum ApiActions {
+  CREATEAPPLICATION = 'createApplication',
+}

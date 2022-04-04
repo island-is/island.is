@@ -12,8 +12,6 @@ import { MunicipalityModel } from './models/municipality.model'
 import { MunicipalityQueryInput } from './models/municipality.input'
 import { SignedUrlModel } from './models/signedUrl.model'
 import { GetSignedUrlInput } from './dto/getSignedUrl.input'
-import { CreateMunicipalitiesApplicationInput } from './dto/createApplication.input'
-import { ApplicationModel } from './models/application.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -50,18 +48,6 @@ export class MunicipalitiesFinancialAidResolver {
     @CurrentUser() user: User,
   ): Promise<SignedUrlModel | null> {
     return this.municipalitiesFinancialAidService.municipalitiesFinancialAidCreateSignedUrl(
-      user,
-      input,
-    )
-  }
-
-  @Mutation(() => ApplicationModel, { nullable: true })
-  createMunicipalitiesApplication(
-    @Args('input', { type: () => CreateMunicipalitiesApplicationInput })
-    input: CreateMunicipalitiesApplicationInput,
-    @CurrentUser() user: User,
-  ): Promise<ApplicationModel | null> {
-    return this.municipalitiesFinancialAidService.municipalitiesFinancialAidCreateApplication(
       user,
       input,
     )

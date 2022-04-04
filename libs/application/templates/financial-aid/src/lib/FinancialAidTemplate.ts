@@ -10,7 +10,13 @@ import {
 
 import { assign } from 'xstate'
 
-import { Roles, ApplicationStates, ONE_DAY, ONE_MONTH } from './constants'
+import {
+  Roles,
+  ApplicationStates,
+  ONE_DAY,
+  ONE_MONTH,
+  ApiActions,
+} from './constants'
 
 import { application } from './messages'
 import { dataSchema } from './dataSchema'
@@ -160,6 +166,9 @@ const FinancialAidTemplate: ApplicationTemplate<
         meta: {
           name: application.name.defaultMessage,
           lifecycle: oneMonthLifeCycle,
+          onEntry: {
+            apiModuleAction: ApiActions.CREATEAPPLICATION,
+          },
           roles: [
             {
               id: Roles.APPLICANT,

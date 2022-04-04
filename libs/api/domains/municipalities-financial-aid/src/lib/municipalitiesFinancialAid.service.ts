@@ -8,7 +8,6 @@ import {
 } from '@island.is/clients/municipalities-financial-aid'
 import { MunicipalityQueryInput } from './models/municipality.input'
 import { GetSignedUrlInput } from './dto/getSignedUrl.input'
-import { CreateMunicipalitiesApplicationInput } from './dto/createApplication.input'
 
 @Injectable()
 export class MunicipalitiesFinancialAidService {
@@ -16,7 +15,7 @@ export class MunicipalitiesFinancialAidService {
     private applicationApi: ApplicationApi,
     private municipalityApi: MunicipalityApi,
     private filesApi: FilesApi,
-  ) {}
+  ) { }
 
   applicationApiWithAuth(auth: Auth) {
     return this.applicationApi.withMiddleware(new AuthMiddleware(auth))
@@ -67,20 +66,6 @@ export class MunicipalitiesFinancialAidService {
   ) {
     return await this.fileApiWithAuth(auth)
       .fileControllerCreateSignedUrl({ getSignedUrlDto: getSignedUrl })
-      .then((res) => {
-        return res
-      })
-      .catch((error) => {
-        throw error
-      })
-  }
-
-  async municipalitiesFinancialAidCreateApplication(
-    auth: Auth,
-    application: CreateMunicipalitiesApplicationInput,
-  ) {
-    return await this.applicationApiWithAuth(auth)
-      .applicationControllerCreate({ createApplicationDto: application })
       .then((res) => {
         return res
       })
