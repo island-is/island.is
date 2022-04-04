@@ -7,7 +7,8 @@ import {
   PersonType,
   DataUploadResponse,
 } from '@island.is/clients/syslumenn'
-import { NationalRegistry } from './types'
+import { FasteignirApi } from '@island.is/clients/assets'
+import { NationalRegistry, RealEstateAddress } from './types'
 import {
   ApplicationWithAttachments as Application,
   getValueViaPath,
@@ -20,6 +21,7 @@ export class AnnouncementOfDeathService {
   constructor(
     private readonly syslumennService: SyslumennService,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
+    private readonly fasteignirApi: FasteignirApi,
   ) {}
 
   async sendTestEmail({ application }: TemplateApiModuleActionProps) {
@@ -27,6 +29,21 @@ export class AnnouncementOfDeathService {
       generateTestEmail,
       application,
     )
+  }
+
+  async addressLookupByRealEstateId({ application }: TemplateApiModuleActionProps): Promise<RealEstateAddress> {
+    // TODO correctly access inputted assetId
+    const assetId: string = application.answers.addedAssetId
+    const realEstate = await this.fasteignirApi.fasteignirGetFasteign({ fasteignanumer: assetId })
+    const address = realEstate.sjalfgefidStadfang
+    return Promise.resolve({
+      addressNumber: address?.stadfanganumer ?? -1,
+      landNumber: address?.landeignarnumer ?? -1,
+      postalCode: address?.postnumer ?? -1,
+      municipality: address?.sveitarfelagBirting ?? '',
+      display: address?.birting ?? '',
+      displayShort: address?.birtingStutt ?? '',
+    })
   }
 
   async submitApplication({ application }: TemplateApiModuleActionProps) {

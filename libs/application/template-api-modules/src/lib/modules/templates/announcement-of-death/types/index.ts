@@ -9,3 +9,12 @@ export interface NationalRegistry {
   fullName: string
   address: Address
 }
+
+export interface RealEstateAddress {
+  addressNumber: number
+  landNumber: number
+  postalCode: number
+  municipality: string
+  display: string
+  displayShort: string
+}
