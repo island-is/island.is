@@ -296,6 +296,13 @@ export class CmsElasticsearchService {
     const enhancedAssetResponse: ApiResponse<
       SearchResponse<MappedData>
     > = await this.elasticService.findByQuery(index, {
+      sort: [
+        {
+          releaseDate: {
+            order: SortDirection.DESC,
+          },
+        },
+      ],
       query: {
         bool: {
           must: must.concat(generateGenericTagGroupQueries(tags, tagGroups)),

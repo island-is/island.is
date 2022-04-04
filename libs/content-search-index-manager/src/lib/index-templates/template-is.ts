@@ -162,6 +162,9 @@ export const template = {
       dateUpdated: {
         type: 'date',
       },
+      releaseDate: {
+        type: 'date',
+      },
     },
   },
 }
