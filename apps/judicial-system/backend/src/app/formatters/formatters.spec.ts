@@ -9,6 +9,7 @@ import {
   UserRole,
   InstitutionType,
 } from '@island.is/judicial-system/types'
+import { not } from 'sequelize/types/lib/operators'
 
 import { notifications } from '../messages'
 
