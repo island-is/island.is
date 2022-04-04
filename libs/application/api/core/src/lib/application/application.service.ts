@@ -8,6 +8,7 @@ import {
 } from '@island.is/application/core'
 import { Application } from './application.model'
 import { ApplicationLifecycle } from '@island.is/application/core'
+import { Console } from 'console'
 
 const applicationIsNotSetToBePruned = () => ({
   [Op.or]: [
@@ -186,10 +187,7 @@ export class ApplicationService {
   async update(
     id: string,
     application: Partial<
-      Pick<
-        Application,
-        'attachments' | 'answers' | 'externalData' | 'pruned' | 'assignNonces'
-      >
+      Pick<Application, 'attachments' | 'answers' | 'externalData' | 'pruned'>
     >,
   ) {
     const [
@@ -211,6 +209,32 @@ export class ApplicationService {
         assignNonces: application.assignNonces.filter(
           (nonce) => nonce !== assignNonce,
         ),
+      },
+      { where: { id: application.id }, returning: true },
+    )
+    return { numberOfAffectedRows, updatedApplication }
+  }
+
+  async clearNonces(id: string) {
+    const [
+      numberOfAffectedRows,
+      [updatedApplication],
+    ] = await this.applicationModel.update(
+      {
+        assignNonces: [],
+      },
+      { where: { id: id }, returning: true },
+    )
+    return { numberOfAffectedRows, updatedApplication }
+  }
+
+  async addNonce(application: Application, assignNonce: string) {
+    const [
+      numberOfAffectedRows,
+      [updatedApplication],
+    ] = await this.applicationModel.update(
+      {
+        assignNonces: [...(application?.assignNonces ?? []), assignNonce],
       },
       { where: { id: application.id }, returning: true },
     )

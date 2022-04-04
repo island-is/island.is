@@ -4,6 +4,8 @@ export interface DecodedAssignmentToken {
   applicationId: string
   state: string
   nonce: string
+  iat: number
+  exp: number
 }
 
 export interface StateChangeResult {

@@ -90,4 +90,10 @@ export abstract class BaseTemplateApiApplicationService {
   ): Promise<string>
 
   abstract storeNonceForApplication(application: Application): Promise<string>
+
+  abstract createAssignToken(
+    application: Application,
+    secret: string,
+    expiresIn: number,
+  ): Promise<string>
 }

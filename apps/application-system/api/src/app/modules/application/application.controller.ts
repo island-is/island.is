@@ -326,14 +326,19 @@ export class ApplicationController {
       return existingApplication
     }
 
-    if (!existingApplication.assignNonces.includes(decodedToken.nonce)) {
-      throw new NotFoundException('Token no longer usable.')
-    }
+    if (decodedToken.nonce) {
+      if (!existingApplication.assignNonces.includes(decodedToken.nonce)) {
+        throw new NotFoundException('Token no longer usable.')
+      }
 
-    await this.applicationService.removeNonce(
-      existingApplication,
-      decodedToken.nonce,
-    )
+      await this.applicationService.removeNonce(
+        existingApplication,
+        decodedToken.nonce,
+      )
+    } else if (new Date((decodedToken.iat + 3628800) * 1000) < new Date()) {
+      //supporting legacy tokens but reducing the validity to 6 weeks from issue date
+      throw new BadRequestException('Token has expired.')
+    }
 
     if (existingApplication.state !== decodedToken.state) {
       throw new NotFoundException('Application no longer in assignable state')
@@ -678,7 +683,7 @@ export class ApplicationController {
     const onExitStateAction = helper.getOnExitStateAPIAction(application.state)
     const status = helper.getApplicationStatus()
     let updatedApplication: BaseApplication = application
-
+    await this.applicationService.clearNonces(updatedApplication.id)
     if (onExitStateAction) {
       const {
         hasError,
