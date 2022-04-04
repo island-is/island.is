@@ -11,18 +11,14 @@ import {
   InputController,
   SelectController,
 } from '@island.is/shared/form-fields'
-import {
-  FieldBaseProps,
-  formatText,
-  getErrorViaPath,
-} from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/core'
 import {
   Box,
-  Text,
   GridColumn,
   GridRow,
   Button,
   ProfileCard,
+  LoadingDots,
 } from '@island.is/island-ui/core'
 import { EstateMember, RelationEnum } from '../../types'
 
@@ -40,13 +36,8 @@ const IdentityQuery = gql`
     }
   }
 `
-
-export const EstateMemberRepeater: FC<FieldBaseProps> = ({
-  application,
-  errors,
-  field,
-}) => {
-  const { id, title } = field
+export const EstateMemberRepeater: FC<FieldBaseProps> = ({ field }) => {
+  const { id } = field
   const { formatMessage } = useLocale()
   const { fields, append, remove } = useFieldArray<EstateMember>({ name: id })
 
@@ -55,42 +46,6 @@ export const EstateMemberRepeater: FC<FieldBaseProps> = ({
       nationalId: '',
       relation: RelationEnum.PARENT,
     })
-
-  const { setValue, setError, register } = useFormContext()
-
-  /*
-  const handleChange = async (value: string) => {
-    const nationalId = value.replace('-', '').trim()
-    const isValidPerson = kennitala.isPerson(nationalId)
-    if (nationalId.length === 10 && isValidPerson)
-      getIdentity({
-        variables: {
-          input: {
-            nationalId,
-          },
-        },
-      })
-  }
-
-  useEffect(() => {
-    const name = queryData?.identity?.name
-    const nationalId = queryData?.identity?.nationalId
-
-    if (name && nationalId) {
-      for (const fieldIndex in fields) {
-        console.log("ITERATING")
-        console.log(fields[fieldIndex].nationalId)
-        if (fields[fieldIndex]?.nationalId?.replace('-', '').trim() === nationalId) {
-          console.log("OBLITERATING", {name, nationalId})
-          setValue(`${fieldIndex}.name`, name)
-          setValue(`${fieldIndex}.nationalId`, '1111111111')
-        }
-      }
-    }
-  }, [queryData])
-  */
-
-  const relationOptions = getRelationOptions()
 
   return (
     <Box marginTop={2}>
@@ -140,17 +95,15 @@ const Item = ({
   const relationField = `${fieldIndex}.relation`
   const custodianField = `${fieldIndex}.custodian`
   const foreignCitizenshipField = `${fieldIndex}.foreignCitizenship`
-
   const nationalIdInput = useWatch({ name: nationalIdField, defaultValue: '' })
 
   const { setValue } = useFormContext()
 
   const [
     getIdentity,
-    { data: queryData, loading: queryLoading, error: queryError },
+    { loading: queryLoading, error: queryError },
   ] = useLazyQuery<Query, { input: IdentityInput }>(IdentityQuery, {
     onError: (error: unknown) => {
-      //setLookupError(true)
       console.log('getIdentity error:', error)
     },
     onCompleted: (data) => {
@@ -191,8 +144,6 @@ const Item = ({
             label="Kennitala"
             defaultValue={field.nationalId}
             format="######-####"
-            //error={errors && getErrorViaPath(errors, nationalIdField)}
-            //onChange={(e) => handleChange(e.target.value)}
             required
             backgroundColor="blue"
           />
@@ -221,17 +172,25 @@ const Item = ({
                 label: 'Maki',
               },
             ]}
-            //error={errors && getErrorViaPath(errors, relationField)}
             backgroundColor="blue"
           />
         </GridColumn>
         <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-          <InputController
-            id={nameField}
-            name={nameField}
-            label="Nafn"
-            readOnly
-          />
+          {queryLoading ? (
+            <LoadingDots />
+          ) : (
+            <InputController
+              id={nameField}
+              name={nameField}
+              label="Nafn"
+              error={
+                queryError
+                  ? 'Villa kom upp við að sækja nafn út frá kennitölu. Vinsamlegast prófið aftur síðar.'
+                  : undefined
+              }
+              readOnly
+            />
+          )}
         </GridColumn>
         <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
           <InputController

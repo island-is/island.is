@@ -15,10 +15,12 @@ import {
 } from '@island.is/application/core'
 import { SharedTemplateApiService } from '../../shared'
 import { generateTestEmail } from './emailGenerators'
+import { EinstaklingarApi } from '@island.is/clients/national-registry-v2'
 
 @Injectable()
 export class AnnouncementOfDeathService {
   constructor(
+    private readonly nationalRegistryPersonApi: EinstaklingarApi,
     private readonly syslumennService: SyslumennService,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly fasteignirApi: FasteignirApi,

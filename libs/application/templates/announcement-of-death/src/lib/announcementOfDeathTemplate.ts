@@ -34,6 +34,10 @@ const AnnouncementOfDeathTemplate: ApplicationTemplate<
           },
           progress: 0.33,
           lifecycle: DefaultStateLifeCycle,
+          onEntry: {
+            apiModuleAction: ApiActions.getPerson,
+            shouldPersistToExternalData: true
+          },
           onExit: {
             apiModuleAction: ApiActions.submitApplication,
             shouldPersistToExternalData: true,

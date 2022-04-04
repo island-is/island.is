@@ -145,7 +145,6 @@ const ElectPerson: FC<ElectPersonFieldBaseProps> = ({
 
   useEffect(() => {
     const name = queryData?.identity?.name
-    console.log(queryData)
 
     if (name) {
       setValue(fieldNames.electedPersonName, name)
