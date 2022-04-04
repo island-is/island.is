@@ -4,7 +4,11 @@ import { Text } from '@island.is/island-ui/core'
 import { Table as T } from '@island.is/island-ui/core'
 import { tableStyles } from '@island.is/service-portal/core'
 interface Props {
-  data: Array<{ value: string; align?: 'left' | 'right' }>
+  data: Array<{
+    value: string | React.ReactElement
+    align?: 'left' | 'right'
+    element?: boolean
+  }>
 }
 
 const ExpandableLine: FC<Props> = ({ data }) => {
@@ -18,12 +22,15 @@ const ExpandableLine: FC<Props> = ({ data }) => {
             key={i}
             style={tableStyles}
           >
-            <Text variant="medium" fontWeight="semiBold">
+            <Text
+              variant="medium"
+              fontWeight="semiBold"
+              as={item.element ? 'span' : 'p'}
+            >
               {item.value}
             </Text>
           </T.HeadData>
         ))}
-        <T.HeadData box={{ printHidden: true }}></T.HeadData>
       </T.Row>
     </T.Head>
   )
