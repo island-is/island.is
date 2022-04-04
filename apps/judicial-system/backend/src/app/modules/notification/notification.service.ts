@@ -241,7 +241,7 @@ export class NotificationService {
         theCase.id,
         theCase.courtId ?? '',
         theCase.courtCaseNumber ?? '',
-        `Krafa ${theCase.policeCaseNumber}-${format(now(), 'yyy-MM-21-HH:mm')}`,
+        `Krafa ${theCase.policeCaseNumber}-${format(now(), 'yyy-MM-DD-HH:mm')}`,
         requestPdf,
       )
     } catch (error) {
