@@ -68,14 +68,21 @@ export class CourtService {
     caseId: string,
     courtId: string,
     courtCaseNumber: string,
+    fileName: string,
     content: Buffer,
   ): Promise<string> {
-    return this.uploadStream(courtId, 'Krafa.pdf', 'application/pdf', content)
+    console.log('!!!!!!!!!', { fileName })
+    return this.uploadStream(
+      courtId,
+      `${fileName}.pdf`,
+      'application/pdf',
+      content,
+    )
       .then((streamId) =>
         this.courtClientService.createDocument(courtId, {
           caseNumber: courtCaseNumber,
-          subject: 'Krafa',
-          fileName: 'Krafa.pdf',
+          subject: fileName,
+          fileName: `${fileName}.pdf`,
           streamID: streamId,
           caseFolder: 'Krafa og greinargerð',
         }),
