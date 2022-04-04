@@ -8,8 +8,10 @@ import type { CaseType, User } from '@island.is/judicial-system/types'
 import { now } from '../../factories'
 import { EventService } from '../event'
 
+type SubTypes = { [c in CaseType]: string | [string, string] }
+//
 // Maps case types to sub types in the court system
-export const subTypes = {
+export const subTypes: SubTypes = {
   // 'Afhending gagna',
   // 'Afturköllun á skipun verjanda',
   OTHER: 'Annað',
@@ -19,6 +21,8 @@ export const subTypes = {
   // 'Framsalsmál',
   // 'Frestur',
   CUSTODY: ['Gæsluvarðhald', 'Framlenging gæsluvarðhalds'],
+  // TODO: replace with appropriate type when it has been created in the court system
+  ADMISSION_TO_FACILITY: ['Gæsluvarðhald', 'Framlenging gæsluvarðhalds'],
   PSYCHIATRIC_EXAMINATION: 'Geðrannsókn',
   // 'Handtaka',
   SOUND_RECORDING_EQUIPMENT: 'Hljóðupptökubúnaði komið fyrir',
@@ -41,6 +45,7 @@ export const subTypes = {
   TELECOMMUNICATIONS: 'Upplýsingar um fjarskiptasamskipti',
   INTERNET_USAGE: 'Upplýsingar um vefnotkun',
   ELECTRONIC_DATA_DISCOVERY_INVESTIGATION: 'Rannsókn á rafrænum gögnum',
+  // TODO: replace with appropriate type when it has been created in the court system
   VIDEO_RECORDING_EQUIPMENT: 'Annað',
 }
 
