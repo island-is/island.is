@@ -31,7 +31,9 @@ export class UserProfileService {
   }
 
   async getUserProfileClaims(auth: User): Promise<UserProfileDTO> {
+    // TODO: Switch to `kennitala` package after it releases 2.0.0 with temporary id support.
     const isCompany = !!auth.nationalId.match(/^[4-7]\d{9}$/)
+
     if (isCompany) {
       return this.getClaimsFromCompanyRegistry(auth).catch(this.handleError)
     } else {
