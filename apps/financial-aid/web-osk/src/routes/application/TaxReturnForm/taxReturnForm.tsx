@@ -31,7 +31,6 @@ const TaxReturnForm = () => {
 
   const taxReturnFetchFailed = form.taxReturnFromRskFile.length === 0
   const directTaxPaymentsFetchedFailed = form.directTaxPayments.length === 0
-
   const taxDataGatheringFailed =
     taxReturnFetchFailed && directTaxPaymentsFetchedFailed
 
