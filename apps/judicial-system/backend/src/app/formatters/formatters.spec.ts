@@ -7,6 +7,7 @@ import {
   CaseType,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
+import { not } from 'sequelize/types/lib/operators'
 
 import { notifications } from '../messages'
 
@@ -246,6 +247,18 @@ describe('formatHeadsUpSmsNotification', () => {
 })
 
 describe('formatReadyForCourtSmsNotification', () => {
+  const messages = [
+    notifications.courtReadyForCourt.courtText,
+    notifications.courtReadyForCourt.prosecutorText,
+    notifications.courtReadyForCourt.submittedCase,
+  ]
+
+  let formatMessage: FormatMessage
+  beforeAll(() => {
+    const intl = createTestIntl('is-IS', messages)
+    formatMessage = intl.formatMessage
+  })
+
   test('should format ready for court SMS notification', () => {
     // Arrange
     const type = CaseType.CUSTODY
@@ -254,6 +267,7 @@ describe('formatReadyForCourtSmsNotification', () => {
 
     // Act
     const res = formatCourtReadyForCourtSmsNotification(
+      formatMessage,
       type,
       prosecutorName,
       court,
@@ -271,6 +285,7 @@ describe('formatReadyForCourtSmsNotification', () => {
 
     // Act
     const res = formatCourtReadyForCourtSmsNotification(
+      formatMessage,
       type,
       undefined,
       undefined,
@@ -290,6 +305,7 @@ describe('formatReadyForCourtSmsNotification', () => {
 
     // Act
     const res = formatCourtReadyForCourtSmsNotification(
+      formatMessage,
       type,
       prosecutorName,
       court,
@@ -309,6 +325,7 @@ describe('formatReadyForCourtSmsNotification', () => {
 
     // Act
     const res = formatCourtReadyForCourtSmsNotification(
+      formatMessage,
       type,
       prosecutorName,
       court,
@@ -328,6 +345,7 @@ describe('formatReadyForCourtSmsNotification', () => {
 
     // Act
     const res = formatCourtReadyForCourtSmsNotification(
+      formatMessage,
       type,
       prosecutorName,
       court,

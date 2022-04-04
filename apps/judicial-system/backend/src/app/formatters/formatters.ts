@@ -104,22 +104,26 @@ export function formatCourtHeadsUpSmsNotification(
 }
 
 export function formatCourtReadyForCourtSmsNotification(
+  formatMessage: FormatMessage,
   type: CaseType,
   prosecutorName?: string,
   court?: string,
 ): string {
-  const submittedCaseText =
-    type === CaseType.CUSTODY
-      ? 'Gæsluvarðhaldskrafa'
-      : type === CaseType.TRAVEL_BAN
-      ? 'Farbannskrafa'
-      : type === CaseType.OTHER
-      ? 'Krafa um rannsóknarheimild'
-      : `Krafa um rannsóknarheimild (${caseTypes[type]})`
-  const prosecutorText = ` Sækjandi: ${prosecutorName ?? 'Ekki skráður'}.`
-  const courtText = ` Dómstóll: ${court ?? 'Ekki skráður'}.`
+  const submittedCaseText = formatMessage(
+    notifications.courtReadyForCourt.submittedCase,
+    { caseType: type, courtTypeName: caseTypes[type] },
+  )
+  const prosecutorText = formatMessage(
+    notifications.courtReadyForCourt.prosecutorText,
+    { prosecutorName: prosecutorName ?? 'NONE' },
+  )
+  const courtText = formatMessage(notifications.courtReadyForCourt.courtText, {
+    court: court ?? 'NONE',
+  })
 
-  return `${submittedCaseText} tilbúin til afgreiðslu.${prosecutorText}${courtText}`
+  return [submittedCaseText, prosecutorText, courtText]
+    .filter((x) => x)
+    .join(' ')
 }
 
 export function formatCourtResubmittedToCourtSmsNotification(
