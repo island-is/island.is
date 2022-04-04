@@ -153,7 +153,7 @@ export const PkPass = ({ expireDate }: PkPassProps) => {
           onClick={(e) => {
             const isExpired = isTimeMoreThen30Minutes()
             if (isExpired) {
-              e.preventDefault
+              e.preventDefault()
               getLink()
               document
                 .getElementById('pkpass-url')
