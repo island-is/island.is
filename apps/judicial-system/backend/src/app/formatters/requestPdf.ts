@@ -2,7 +2,11 @@ import PDFDocument from 'pdfkit'
 import streamBuffers from 'stream-buffers'
 
 import { FormatMessage } from '@island.is/cms-translations'
-import { CaseType, isRestrictionCase } from '@island.is/judicial-system/types'
+import {
+  CaseType,
+  isRestrictionCase,
+  SessionArrangements,
+} from '@island.is/judicial-system/types'
 import {
   caseTypes,
   formatNationalId,
@@ -118,7 +122,9 @@ function constructRestrictionRequestPdf(
     doc,
     formatMessage(m.baseInfo.defender, {
       defenderName:
-        theCase.defenderName && !theCase.defenderIsSpokesperson
+        theCase.defenderName &&
+        theCase.sessionArrangements !==
+          SessionArrangements.ALL_PRESENT_SPOKESPERSON
           ? theCase.defenderName
           : formatMessage(m.baseInfo.noDefender),
     }),
@@ -272,7 +278,10 @@ function constructInvestigationRequestPdf(
     )
   })
 
-  if (theCase.defenderName && !theCase.defenderIsSpokesperson) {
+  if (
+    theCase.defenderName &&
+    theCase.sessionArrangements !== SessionArrangements.ALL_PRESENT_SPOKESPERSON
+  ) {
     if (theCase.defendants && theCase.defendants.length > 1) {
       addEmptyLines(doc)
     }

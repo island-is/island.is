@@ -5,6 +5,8 @@ import {
   Text,
   AlertMessage,
   SkeletonLoader,
+  Button,
+  Link,
 } from '@island.is/island-ui/core'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 import { useMutation, useQuery } from '@apollo/client'
@@ -30,9 +32,14 @@ export const PendingRejectedTryAgain: FC<FieldBaseProps> = ({
     onError: (e) => console.error(e.message),
   })
 
-  const { propertyDetails } = externalData.validateMortgageCertificate
-    ?.data as {
+  useEffect(() => {
+    document.title = 'Beiðni um vinnslu'
+  }, [])
+
+  const { propertyDetails, validation } = externalData
+    .validateMortgageCertificate?.data as {
     propertyDetails: PropertyDetail
+    validation: { propertyNumber: string; isFromSearch: boolean }
   }
 
   const handleStateChangeAndRefetch = () => {
@@ -66,7 +73,8 @@ export const PendingRejectedTryAgain: FC<FieldBaseProps> = ({
   const { data, error, loading } = useQuery(validateCertificateQuery, {
     variables: {
       input: {
-        propertyNumber: propertyDetails?.propertyNumber,
+        propertyNumber: validation?.propertyNumber,
+        isFromSearch: validation?.isFromSearch,
       },
     },
     skip: !continuePolling,
@@ -109,7 +117,8 @@ export const PendingRejectedTryAgain: FC<FieldBaseProps> = ({
       >
         <Text fontWeight="semiBold">Valin fasteign</Text>
         <Text>
-          {propertyDetails?.propertyNumber}{' '}
+          {propertyDetails?.propertyNumber}
+          {' - '}
           {propertyDetails?.defaultAddress?.display}
         </Text>
       </Box>
@@ -120,6 +129,11 @@ export const PendingRejectedTryAgain: FC<FieldBaseProps> = ({
             title={formatMessage(m.propertyCertificateError)}
             message={formatMessage(m.propertyCertificateErrorContactSheriff)}
           />
+          <Box marginY={5}>
+            <Link href={formatMessage(m.mortgageCertificateInboxLink)}>
+              <Button>{formatMessage(m.mysites)}</Button>
+            </Link>
+          </Box>
         </Box>
       ) : (
         <Box>

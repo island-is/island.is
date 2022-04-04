@@ -46,7 +46,7 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
   return (
     <AccordionItem
       id="courtRecordAccordionItem"
-      label="Þingbók"
+      label={formatMessage(m.title)}
       labelVariant="h3"
       labelUse="h3"
     >
@@ -86,25 +86,22 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
         </AccordionListItem>
       )}
       <AccordionListItem title={formatMessage(m.sections.courtDocuments.title)}>
-        <Text>{`${formatMessage(core.requestCaseType, {
-          caseType: formatRequestCaseType(workingCase.type),
-        })} þingmerkt nr. 1.`}</Text>
         <Text>
-          Rannsóknargögn málsins liggja frammi.
-          <br />
-          {workingCase.courtDocuments?.map((courtDocument, index) => {
-            return (
-              <>
-                {`${formatMessage(m.sections.courtDocuments.text, {
-                  documentName: capitalize(courtDocument.name),
-                  documentNumber: index + 2,
-                  submittedBy: courtDocument.submittedBy,
-                })}`}
-                <br />
-              </>
-            )
+          {formatMessage(m.sections.firstCourtDocument, {
+            caseType: formatRequestCaseType(workingCase.type),
           })}
         </Text>
+        {workingCase.courtDocuments?.map((courtDocument, index) => {
+          return (
+            <Text key={`${index}${courtDocument.name}`}>
+              {formatMessage(m.sections.courtDocuments.text, {
+                documentName: capitalize(courtDocument.name),
+                documentNumber: index + 2,
+                submittedBy: courtDocument.submittedBy,
+              })}
+            </Text>
+          )
+        })}
       </AccordionListItem>
       <AccordionListItem
         title={formatMessage(m.sections.sessionBookings.title)}

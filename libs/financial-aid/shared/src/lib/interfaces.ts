@@ -16,6 +16,10 @@ export interface GetSignedUrl {
   fileName: string
 }
 
+export interface GetSignedUrlForAllFiles {
+  getSignedUrlForAllFilesId: SignedUrl[]
+}
+
 export interface SignedUrl {
   url: string
   key: string
@@ -29,7 +33,7 @@ export interface Staff {
   id: string
   nationalId: string
   name: string
-  municipalityId: string
+  municipalityIds: string[]
   roles: StaffRole[]
   active: boolean
   municipalityName: string
@@ -368,4 +372,13 @@ export interface CreateStaffMunicipality {
 export interface Calculations {
   title: string
   calculation: string
+}
+
+export interface ApplicationProfileInfo {
+  title: string
+  content?: string
+  link?: string
+  onclick?: () => void
+  other?: string
+  fullWidth?: boolean
 }

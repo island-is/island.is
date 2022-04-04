@@ -439,6 +439,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
     const judgeName = 'Dóra Dómari'
     const registrarName = 'Dalli Dómritari'
     const defenderName = 'Valdi Verjandi'
+    const sessionArrangements = undefined
 
     // Act
     const res = formatProsecutorCourtDateEmailNotification(
@@ -449,7 +450,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
       judgeName,
       registrarName,
       defenderName,
-      undefined,
+      sessionArrangements,
     )
 
     // Assert
@@ -464,7 +465,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
     const court = 'Héraðsdómur Reykjavíkur'
     const courtDate = new Date('2020-12-24T18:00')
     const courtRoom = '101'
-    const defenderIsSpokesperson = true
+    const sessionArrangements = SessionArrangements.ALL_PRESENT_SPOKESPERSON
 
     // Act
     const res = formatProsecutorCourtDateEmailNotification(
@@ -475,7 +476,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
       undefined,
       undefined,
       undefined,
-      defenderIsSpokesperson,
+      sessionArrangements,
     )
 
     // Assert
@@ -493,7 +494,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
     const judgeName = 'Dóra Dómari'
     const registrarName = 'Dalli Dómritari'
     const defenderName = 'Valdi Verjandi'
-    const defenderIsSpokesperson = true
+    const sessionArrangements = SessionArrangements.ALL_PRESENT_SPOKESPERSON
 
     // Act
     const res = formatProsecutorCourtDateEmailNotification(
@@ -504,7 +505,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
       judgeName,
       registrarName,
       defenderName,
-      defenderIsSpokesperson,
+      sessionArrangements,
     )
 
     // Assert
@@ -521,7 +522,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
     const courtRoom = '999'
     const judgeName = 'Dóra Dómari'
     const registrarName = 'Dalli Dómritari'
-    const defenderIsSpokesperson = false
+    const defenderName = undefined
     const sessionArrangements = SessionArrangements.ALL_PRESENT
 
     // Act
@@ -532,8 +533,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
       courtRoom,
       judgeName,
       registrarName,
-      undefined,
-      defenderIsSpokesperson,
+      defenderName,
       sessionArrangements,
     )
 
@@ -552,6 +552,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
     const judgeName = 'Dóra Dómari'
     const registrarName = 'Dalli Dómritari'
     const defenderName = 'Valdi Verjandi'
+    const sessionArrangements = SessionArrangements.ALL_PRESENT
 
     // Act
     const res = formatProsecutorCourtDateEmailNotification(
@@ -562,8 +563,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
       judgeName,
       registrarName,
       defenderName,
-      undefined,
-      undefined,
+      sessionArrangements,
     )
 
     // Assert
@@ -581,7 +581,6 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
     const judgeName = 'Dóra Dómari'
     const registrarName = 'Dalli Dómritari'
     const defenderName = 'Tinni Talsmaður'
-    const defenderIsSpokesperson = true
     const sessionArrangements = SessionArrangements.PROSECUTOR_PRESENT
 
     // Act
@@ -593,7 +592,6 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
       judgeName,
       registrarName,
       defenderName,
-      defenderIsSpokesperson,
       sessionArrangements,
     )
 
@@ -643,6 +641,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
     const isolation = true
     const defenderName = 'Varði Varnari'
     const isExtension = false
+    const sessionArrangements = SessionArrangements.ALL_PRESENT
 
     // Act
     const res = formatPrisonCourtDateEmailNotification(
@@ -654,8 +653,8 @@ describe('formatPrisonCourtDateEmailNotification', () => {
       requestedValidToDate,
       isolation,
       defenderName,
-      undefined,
       isExtension,
+      sessionArrangements,
     )
 
     // Assert
@@ -674,8 +673,8 @@ describe('formatPrisonCourtDateEmailNotification', () => {
     const requestedValidToDate = new Date('2030-08-12T08:25')
     const isolation = true
     const defenderName = 'Vala Verja'
-    const defenderIsSpokesperson = true
     const isExtension = false
+    const sessionArrangements = SessionArrangements.ALL_PRESENT_SPOKESPERSON
 
     // Act
     const res = formatPrisonCourtDateEmailNotification(
@@ -687,8 +686,8 @@ describe('formatPrisonCourtDateEmailNotification', () => {
       requestedValidToDate,
       isolation,
       defenderName,
-      defenderIsSpokesperson,
       isExtension,
+      sessionArrangements,
     )
 
     // Assert
@@ -707,8 +706,8 @@ describe('formatPrisonCourtDateEmailNotification', () => {
     const requestedValidToDate = new Date('2030-08-12T08:25')
     const isolation = false
     const defenderName = 'Vala Verja'
-    const defenderIsSpokesperson = false
     const isExtension = false
+    const sessionArrangements = SessionArrangements.ALL_PRESENT_SPOKESPERSON
 
     // Act
     const res = formatPrisonCourtDateEmailNotification(
@@ -720,13 +719,13 @@ describe('formatPrisonCourtDateEmailNotification', () => {
       requestedValidToDate,
       isolation,
       defenderName,
-      defenderIsSpokesperson,
       isExtension,
+      sessionArrangements,
     )
 
     // Assert
     expect(res).toBe(
-      'Lögreglustjórinn á höfuðborgarsvæðinu hefur sent kröfu um gæsluvarðhald til Héraðsdóms Austurlands og verður málið tekið fyrir fimmtudaginn 4. febrúar 2021, kl. 02:02.<br /><br />Nafn sakbornings: Maggi Murder.<br /><br />Kyn sakbornings: Karl.<br /><br />Krafist er gæsluvarðhalds til mánudagsins 12. ágúst 2030, kl. 08:25.<br /><br />Ekki er farið fram á einangrun.<br /><br />Verjandi sakbornings: Vala Verja.',
+      'Lögreglustjórinn á höfuðborgarsvæðinu hefur sent kröfu um gæsluvarðhald til Héraðsdóms Austurlands og verður málið tekið fyrir fimmtudaginn 4. febrúar 2021, kl. 02:02.<br /><br />Nafn sakbornings: Maggi Murder.<br /><br />Kyn sakbornings: Karl.<br /><br />Krafist er gæsluvarðhalds til mánudagsins 12. ágúst 2030, kl. 08:25.<br /><br />Ekki er farið fram á einangrun.<br /><br />Talsmaður sakbornings: Vala Verja.',
     )
   })
 
@@ -739,7 +738,9 @@ describe('formatPrisonCourtDateEmailNotification', () => {
     const accusedGender = Gender.MALE
     const requestedValidToDate = new Date('2030-08-12T08:25')
     const isolation = false
+    const defenderName = undefined
     const isExtension = false
+    const sessionArrangements = SessionArrangements.ALL_PRESENT
 
     // Act
     const res = formatPrisonCourtDateEmailNotification(
@@ -750,9 +751,9 @@ describe('formatPrisonCourtDateEmailNotification', () => {
       accusedGender,
       requestedValidToDate,
       isolation,
-      undefined,
-      undefined,
+      defenderName,
       isExtension,
+      sessionArrangements,
     )
 
     // Assert
@@ -770,8 +771,9 @@ describe('formatPrisonCourtDateEmailNotification', () => {
     const accusedGender = Gender.MALE
     const requestedValidToDate = new Date('2030-08-12T08:25')
     const isolation = false
-    const defenderIsSpokesperson = true
+    const defenderName = undefined
     const isExtension = true
+    const sessionArrangements = SessionArrangements.ALL_PRESENT_SPOKESPERSON
 
     // Act
     const res = formatPrisonCourtDateEmailNotification(
@@ -782,9 +784,9 @@ describe('formatPrisonCourtDateEmailNotification', () => {
       accusedGender,
       requestedValidToDate,
       isolation,
-      undefined,
-      defenderIsSpokesperson,
+      defenderName,
       isExtension,
+      sessionArrangements,
     )
 
     // Assert
@@ -804,6 +806,7 @@ describe('formatDefenderCourtDateEmailNotification', () => {
     const judgeName = 'Judy'
     const registrarName = 'Robin'
     const prosecutor = makeProsecutor()
+    const sessionArrangements = SessionArrangements.ALL_PRESENT
 
     // Act
     const res = formatDefenderCourtDateEmailNotification(
@@ -811,11 +814,11 @@ describe('formatDefenderCourtDateEmailNotification', () => {
       courtCaseNumber,
       courtDate,
       courtRoom,
-      false,
       judgeName,
       registrarName,
       prosecutor.name,
       prosecutor.institution?.name,
+      sessionArrangements,
     )
 
     // Assert
@@ -830,10 +833,10 @@ describe('formatDefenderCourtDateEmailNotification', () => {
     const courtCaseNumber = 'R-77/2021'
     const courtDate = new Date('2020-12-19T10:19')
     const courtRoom = '101'
-    const defenderIsSpokesperson = true
     const judgeName = 'Judy'
     const registrarName = 'Robin'
     const prosecutor = makeProsecutor()
+    const sessionArrangements = SessionArrangements.ALL_PRESENT_SPOKESPERSON
 
     // Act
     const res = formatDefenderCourtDateEmailNotification(
@@ -841,11 +844,11 @@ describe('formatDefenderCourtDateEmailNotification', () => {
       courtCaseNumber,
       courtDate,
       courtRoom,
-      defenderIsSpokesperson,
       judgeName,
       registrarName,
       prosecutor.name,
       prosecutor.institution?.name,
+      sessionArrangements,
     )
 
     // Assert
@@ -863,6 +866,7 @@ describe('formatDefenderCourtDateEmailNotification', () => {
     const judgeName = 'Judy'
     const registrarName = 'Robin'
     const prosecutor = makeProsecutor()
+    const sessionArrangements = SessionArrangements.ALL_PRESENT
 
     // Act
     const res = formatDefenderCourtDateEmailNotification(
@@ -870,11 +874,11 @@ describe('formatDefenderCourtDateEmailNotification', () => {
       courtCaseNumber,
       courtDate,
       courtRoom,
-      false,
       judgeName,
       registrarName,
       prosecutor.name,
       prosecutor.institution?.name,
+      sessionArrangements,
     )
 
     // Assert
@@ -891,6 +895,7 @@ describe('formatDefenderCourtDateEmailNotification', () => {
     const courtRoom = undefined
     const judgeName = 'Judy'
     const prosecutor = makeProsecutor()
+    const sessionArrangements = SessionArrangements.ALL_PRESENT
 
     // Act
     const res = formatDefenderCourtDateEmailNotification(
@@ -898,11 +903,11 @@ describe('formatDefenderCourtDateEmailNotification', () => {
       courtCaseNumber,
       courtDate,
       courtRoom,
-      false,
       judgeName,
       undefined,
       prosecutor.name,
       prosecutor.institution?.name,
+      sessionArrangements,
     )
 
     // Assert

@@ -9,11 +9,12 @@ import {
   ApplicationTypes,
 } from '@island.is/application/core'
 import { ContentfulRepository } from '@island.is/cms'
-
 import { setup } from '../../../../../test/setup'
 import { environment } from '../../../../environments'
 import { FileService } from '../files/file.service'
 import { AppModule } from '../../../app.module'
+import { FeatureFlagService } from '@island.is/nest/feature-flags'
+import { MockFeatureFlagService } from './mockFeatureFlagService'
 import * as uuid from 'uuidv4'
 import jwt from 'jsonwebtoken'
 
@@ -54,6 +55,7 @@ class MockContentfulRepository {
   }
 }
 
+// eslint-disable-next-line local-rules/disallow-kennitalas
 let server: request.SuperTest<request.Test>
 const nationalId = '1234564321'
 const mockAuthGuard = new MockAuthGuard({
@@ -67,6 +69,8 @@ beforeAll(async () => {
       builder
         .overrideProvider(ContentfulRepository)
         .useClass(MockContentfulRepository)
+        .overrideProvider(FeatureFlagService)
+        .useClass(MockFeatureFlagService)
         .overrideProvider(EmailService)
         .useClass(MockEmailService)
         .overrideGuard(IdsUserGuard)

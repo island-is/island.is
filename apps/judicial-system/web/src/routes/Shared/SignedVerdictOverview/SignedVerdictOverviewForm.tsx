@@ -153,7 +153,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
           <Button
             variant="text"
             preTextIcon="arrowBack"
-            onClick={() => router.push(Constants.REQUEST_LIST_ROUTE)}
+            onClick={() => router.push(Constants.CASE_LIST_ROUTE)}
           >
             Til baka
           </Button>
@@ -322,10 +322,11 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
           defendants={workingCase.defendants ?? []}
           defender={{
             name: workingCase.defenderName ?? '',
+            defenderNationalId: workingCase.defenderNationalId,
             email: workingCase.defenderEmail,
             phoneNumber: workingCase.defenderPhoneNumber,
-            defenderIsSpokesperson: workingCase.defenderIsSpokesperson,
           }}
+          sessionArrangement={workingCase.sessionArrangements}
         />
       </Box>
       {(workingCase.accusedAppealDecision === CaseAppealDecision.POSTPONE ||

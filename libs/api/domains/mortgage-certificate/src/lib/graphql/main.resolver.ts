@@ -20,7 +20,7 @@ export class MainResolver {
   ) {
     return await this.mortgageCertificateService.validateMortgageCertificate(
       input.propertyNumber,
-      undefined,
+      input.isFromSearch,
     )
   }
 }

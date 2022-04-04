@@ -28,7 +28,8 @@ export const OverviewPaymentCharge: FC<FieldBaseProps> = ({ application }) => {
       >
         <Text fontWeight="semiBold">Til greiðslu vegna fasteignar</Text>
         <Text>
-          {propertyDetails?.propertyNumber}{' '}
+          {propertyDetails?.propertyNumber}
+          {' - '}
           {propertyDetails?.defaultAddress?.display}
         </Text>
       </Box>

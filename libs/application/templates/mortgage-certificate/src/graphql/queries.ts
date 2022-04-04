@@ -42,6 +42,7 @@ export const VALIDATE_MORTGAGE_CERTIFICATE_QUERY = `
     query ValidateMortgageCertificateQuery($input: ValidateMortgageCertificateInput!) {
       validateMortgageCertificate(input: $input) {
         propertyNumber
+        isFromSearch
         exists
         hasKMarking
       }

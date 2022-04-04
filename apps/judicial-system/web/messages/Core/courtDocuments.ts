@@ -2,26 +2,26 @@ import { defineMessage } from 'react-intl'
 
 export const courtDocuments = {
   tag: defineMessage({
-    id: 'courtDocuments.tag',
+    id: 'judicial.system.core:courtDocuments.tag',
     defaultMessage: 'Þingmerkt nr. {index}',
     description:
       'Notaður sem text í Þingmerkt nr. # taggi í "Lagt er fram" svæði á þingbókarskjám',
   }),
   add: {
     label: defineMessage({
-      id: 'courtDocuments.add.label',
+      id: 'judicial.system.core:courtDocuments.add.label',
       defaultMessage: 'Heiti dómsskjals',
       description:
         'Notaður sem titill fyrir í "Heiti dómskjals" textaboxi í "Lagt er fram" svæði á þingbókarskjám',
     }),
     placeholder: defineMessage({
-      id: 'courtDocuments.add.placeholder',
+      id: 'judicial.system.core:courtDocuments.add.placeholder',
       defaultMessage: 'Skrá inn heiti á skjali hér',
       description:
         'Notaður sem skýritexti í "Heiti dómskjals" textaboxi í "Lagt er fram" svæði á þingbókarskjám',
     }),
     buttonText: defineMessage({
-      id: 'courtDocuments.add.button_text',
+      id: 'judicial.system.core:courtDocuments.add.button_text',
       defaultMessage: 'Bæta við skjali',
       description:
         'Texti í "Bæta við skjali" takka í "Lagt er fram" svæði á þingbókarskjám',

@@ -1,14 +1,14 @@
-import { UserProfileService, IndividuaInfoDTO } from '@island.is/auth-api-lib'
-import type { User } from '@island.is/auth-nest-tools'
+import { Controller, Get, UseGuards } from '@nestjs/common'
+import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
+
+import { IndividuaInfoDTO, UserProfileService } from '@island.is/auth-api-lib'
 import {
+  CurrentUser,
   IdsUserGuard,
   Scopes,
   ScopesGuard,
-  CurrentUser,
 } from '@island.is/auth-nest-tools'
-import { Controller, Get, UseGuards } from '@nestjs/common'
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
-import { environment } from '../../../environments'
+import type { User } from '@island.is/auth-nest-tools'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('user-profile')
@@ -20,9 +20,6 @@ export class UserProfileController {
   @Get('individual')
   @ApiOkResponse()
   async findIndividual(@CurrentUser() user: User): Promise<IndividuaInfoDTO> {
-    return this.userProfileService.findIndividual(
-      user,
-      environment.nationalRegistry.authMiddlewareOptions,
-    )
+    return this.userProfileService.findIndividual(user)
   }
 }

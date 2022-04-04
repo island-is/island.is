@@ -22,6 +22,7 @@ import {
   CaseType,
   SessionArrangements,
   CourtDocument,
+  CaseOrigin,
 } from '@island.is/judicial-system/types'
 
 import { CaseFile } from '../../file'
@@ -59,6 +60,16 @@ export class Case extends Model<Case> {
   @UpdatedAt
   @ApiProperty()
   modified!: Date
+
+  /**********
+   * The case origin - example: RVG
+   **********/
+  @Column({
+    type: DataType.ENUM,
+    allowNull: false,
+    values: Object.values(CaseOrigin),
+  })
+  origin!: CaseOrigin
 
   /**********
    * The case type - example: CUSTODY
@@ -120,6 +131,16 @@ export class Case extends Model<Case> {
   defenderName?: string
 
   /**********
+   * The national of the accused's defender - optional
+   **********/
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  defenderNationalId?: string
+
+  /**********
    * The email address of the accused's defender - optional
    **********/
   @Column({
@@ -149,17 +170,6 @@ export class Case extends Model<Case> {
   })
   @ApiProperty()
   sendRequestToDefender?: boolean
-
-  /**********
-   * Indicates whether the accused was assigned a spokesperson rather than a defender -
-   * optional
-   **********/
-  @Column({
-    type: DataType.BOOLEAN,
-    allowNull: true,
-  })
-  @ApiProperty()
-  defenderIsSpokesperson?: boolean
 
   /**********
    * Indicates whether the secutity level of the case has been heightened -

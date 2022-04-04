@@ -23,7 +23,7 @@ env:
 
 jobs:
   prepare:
-    runs-on: ubuntu-20.04
+    runs-on: kubernetes-runner
     outputs:
       ENVS: ${{ steps.select_envs.outputs.ENVS }}
     steps:
@@ -40,7 +40,7 @@ jobs:
           echo "::set-output name=ENVS::{\"env\":$ENVS_JSON}"
 
   helm-values-validation:
-    runs-on: ubuntu-20.04
+    runs-on: kubernetes-runner
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v2
@@ -74,7 +74,7 @@ jobs:
     needs:
       - prepare
       - helm-values-validation # waiting on this job so the cache would be prepared
-    runs-on: ubuntu-20.04
+    runs-on: kubernetes-runner
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.ENVS) }}
@@ -97,8 +97,6 @@ jobs:
         working-directory: infra
         run: yarn install --frozen-lock
 
-      - name: Install yq
-        run: sudo snap install yq
       - name: Select role
         env:
           prod: arn:aws:iam::251502586493:role/list-ssm-parameters

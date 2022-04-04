@@ -26,7 +26,6 @@ interface Props {
 
 export const Parents: FC<Props> = ({
   label,
-  content,
   loading,
   title,
   parent1,
@@ -40,7 +39,7 @@ export const Parents: FC<Props> = ({
   return (
     <Box position="relative" paddingY={1} paddingRight={4}>
       {title && (
-        <Text variant="eyebrow" paddingBottom={2}>
+        <Text variant="eyebrow" color="purple400" paddingBottom={2}>
           {title}
         </Text>
       )}

@@ -38,6 +38,10 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field({ nullable: true })
+  readonly defenderNationalId?: string
+
+  @Allow()
+  @Field({ nullable: true })
   readonly defenderEmail?: string
 
   @Allow()
@@ -47,10 +51,6 @@ export class UpdateCaseInput implements UpdateCase {
   @Allow()
   @Field({ nullable: true })
   readonly sendRequestToDefender?: boolean
-
-  @Allow()
-  @Field({ nullable: true })
-  readonly defenderIsSpokesperson?: boolean
 
   @Allow()
   @Field({ nullable: true })

@@ -43,6 +43,11 @@ export class UpdateCaseDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
+  readonly defenderNationalId?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
   readonly defenderEmail?: string
 
   @IsOptional()
@@ -54,11 +59,6 @@ export class UpdateCaseDto {
   @IsBoolean()
   @ApiPropertyOptional()
   readonly sendRequestToDefender?: boolean
-
-  @IsOptional()
-  @IsBoolean()
-  @ApiPropertyOptional()
-  readonly defenderIsSpokesperson?: boolean
 
   @IsOptional()
   @IsBoolean()
