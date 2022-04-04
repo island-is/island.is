@@ -205,6 +205,10 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             path: ServicePortalPath.FinanceBills,
           },
           {
+            name: m.financeSchedules,
+            path: ServicePortalPath.FinanceSchedule,
+          },
+          {
             name: m.financeEmployeeClaims,
             path: ServicePortalPath.FinanceEmployeeClaims,
           },
