@@ -71,7 +71,6 @@ export class CourtService {
     fileName: string,
     content: Buffer,
   ): Promise<string> {
-    console.log('!!!!!!!!!', { fileName })
     return this.uploadStream(
       courtId,
       `${fileName}.pdf`,
