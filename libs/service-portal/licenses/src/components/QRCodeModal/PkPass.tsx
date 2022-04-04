@@ -94,8 +94,8 @@ export const PkPass = ({ expireDate }: PkPassProps) => {
             icon="QRCode"
             iconType="outline"
             onClick={() => {
-              const isLessThen = isTimeMoreThen30Minutes()
-              if (isLessThen) getCode()
+              const isExpired = isTimeMoreThen30Minutes()
+              if (isExpired) getCode()
               toggleModal()
             }}
           >
@@ -151,15 +151,14 @@ export const PkPass = ({ expireDate }: PkPassProps) => {
           target="_blank"
           rel="noreferrer"
           onClick={(e) => {
-            const isLessThen = isTimeMoreThen30Minutes()
-            if (isLessThen) {
+            const isExpired = isTimeMoreThen30Minutes()
+            if (isExpired) {
               e.preventDefault
               getLink()
               document
                 .getElementById('pkpass-url')
                 ?.setAttribute('href', pkpassUrl)
             }
-            return false
           }}
         >
           <Button variant="text" size="small" icon="QRCode" iconType="outline">
