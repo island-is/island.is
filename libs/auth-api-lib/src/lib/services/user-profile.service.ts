@@ -78,9 +78,9 @@ export class UserProfileService {
 
     return {
       name: result.nafn,
-      givenName: result.eiginnafn,
-      familyName: result.kenninafn,
-      middleName: result.millinafn,
+      givenName: result.eiginnafn ?? undefined,
+      familyName: result.kenninafn ?? undefined,
+      middleName: result.millinafn ?? undefined,
       gender: this.formatGender(result.kynkodi),
       address: this.formatAddress(result.adsetur ?? result.logheimili),
       domicile: this.formatAddress(result.logheimili),
