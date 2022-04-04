@@ -14,10 +14,12 @@ import {
 } from '@island.is/application/core'
 import { SharedTemplateApiService } from '../../shared'
 import { generateTestEmail } from './emailGenerators'
+import { EinstaklingarApi } from '@island.is/clients/national-registry-v2'
 
 @Injectable()
 export class AnnouncementOfDeathSubmissionService {
   constructor(
+    private readonly nationalRegistryPersonApi: EinstaklingarApi,
     private readonly syslumennService: SyslumennService,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {}
@@ -27,6 +29,12 @@ export class AnnouncementOfDeathSubmissionService {
       generateTestEmail,
       application,
     )
+  }
+
+  async getPerson({ application }: TemplateApiModuleActionProps) {
+    console.log("CALLING MY SHARONA TO THE BLOODY THRONE-A")
+    const person = await this.nationalRegistryPersonApi.einstaklingarGetForsja({id: "0101302989"})
+    return person
   }
 
   async submitApplication({ application }: TemplateApiModuleActionProps) {

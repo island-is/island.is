@@ -25,4 +25,5 @@ export interface AnnouncementOfDeathFakeData {
 
 export enum ApiActions {
   submitApplication = 'submitApplication',
+  getPerson = 'getPerson'
 }
