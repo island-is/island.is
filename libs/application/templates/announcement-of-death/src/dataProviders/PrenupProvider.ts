@@ -3,26 +3,21 @@ import {
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
 } from '@island.is/application/core'
-import { Vehicle } from '../types/schema'
+import { Prenup } from '../types/schema'
 import { m } from '../lib/messages'
 
-export class VehicleProvider extends BasicDataProvider {
-  type = 'VehicleProvider'
+export class PrenupProvider extends BasicDataProvider {
+  type = 'PrenupProvider'
 
-  async provide(): Promise<Array<Vehicle>> {
+  async provide(): Promise<Prenup> {
     // TODO implement from external client
-    return [
-      { plateNumber: 'AB123', numberOfWheels: 4, weight: 1234, year: 2010},
-      { plateNumber: 'BEAN', numberOfWheels: 3, weight: 700, year: 1990},
-    ]
+    return { hasPrenup: true }
 
     /*
     const query = `
-      query GetVehiclesQuery($input: GetMultiVehicleInput!) {
-        getVehicles(input: $input) {
-          vehicleNumber
-          address
-        }
+      query GetPrenupQuery($input: GetPrenupInput!) {
+        getPrenup(input: $input) {
+        hasPrenup
       }
     `
 
@@ -34,7 +29,7 @@ export class VehicleProvider extends BasicDataProvider {
         }
 
         return Promise.resolve(
-          response.data.getVehicles,
+          response.data.getPrenup,
         )
       })
       .catch((error) => this.handleError(error))
