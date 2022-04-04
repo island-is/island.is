@@ -14,6 +14,8 @@ import { setup } from '../../../../../test/setup'
 import { environment } from '../../../../environments'
 import { FileService } from '../files/file.service'
 import { AppModule } from '../../../app.module'
+import { FeatureFlagService } from '@island.is/nest/feature-flags'
+import { MockFeatureFlagService } from './mockFeatureFlagService'
 
 let app: INestApplication
 
@@ -52,6 +54,7 @@ class MockContentfulRepository {
   }
 }
 
+// eslint-disable-next-line local-rules/disallow-kennitalas
 const nationalId = '1234564321'
 let server: request.SuperTest<request.Test>
 
@@ -61,6 +64,8 @@ beforeAll(async () => {
       builder
         .overrideProvider(ContentfulRepository)
         .useClass(MockContentfulRepository)
+        .overrideProvider(FeatureFlagService)
+        .useClass(MockFeatureFlagService)
         .overrideProvider(EmailService)
         .useClass(MockEmailService)
         .overrideGuard(IdsUserGuard)
