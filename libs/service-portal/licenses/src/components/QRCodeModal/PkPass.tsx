@@ -65,7 +65,9 @@ export const PkPass = ({ expireDate }: PkPassProps) => {
         'href',
         response?.data?.generatePkPass?.pkpassUrl ?? '',
       )
-      link?.click()
+      setTimeout(() => {
+        link?.click()
+      }, 500)
     }
   }
 
