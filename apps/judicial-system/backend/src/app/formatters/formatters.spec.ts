@@ -1,3 +1,5 @@
+import { MessageDescriptor } from '@formatjs/intl'
+import { createTestIntl, FormatMessage } from '@island.is/cms-translations'
 import { makeProsecutor } from '@island.is/judicial-system/formatters'
 import {
   CaseLegalProvisions,
@@ -5,6 +7,8 @@ import {
   CaseType,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
+
+import { notifications } from '../messages'
 
 import {
   formatProsecutorCourtDateEmailNotification,
@@ -933,6 +937,20 @@ describe('formatPrisonRulingEmailNotification', () => {
 })
 
 describe('formatCourtRevokedSmsNotification', () => {
+  let formatMessage: FormatMessage
+
+  beforeAll(() => {
+    const messages: MessageDescriptor[] = [
+      notifications.courtRevoked.requestedCourtDate,
+      notifications.courtRevoked.courtDate,
+      notifications.courtRevoked.caseTypeRevoked,
+      notifications.courtRevoked.prosecutorText,
+    ]
+
+    const intl = createTestIntl('is-IS', messages)
+    formatMessage = intl.formatMessage
+  })
+
   test('should format revoked sms with court date', () => {
     // Arrange
     const type = CaseType.CUSTODY
@@ -943,6 +961,7 @@ describe('formatCourtRevokedSmsNotification', () => {
     // Act
     const res = formatCourtRevokedSmsNotification(
       type,
+      formatMessage,
       prosecutorName,
       requestedCourtDate,
       courtDate,
@@ -963,6 +982,7 @@ describe('formatCourtRevokedSmsNotification', () => {
     // Act
     const res = formatCourtRevokedSmsNotification(
       type,
+      formatMessage,
       prosecutorName,
       requestedCourtDate,
       undefined,
@@ -981,6 +1001,7 @@ describe('formatCourtRevokedSmsNotification', () => {
     // Act
     const res = formatCourtRevokedSmsNotification(
       type,
+      formatMessage,
       undefined,
       undefined,
       undefined,
@@ -1000,6 +1021,7 @@ describe('formatCourtRevokedSmsNotification', () => {
     // Act
     const res = formatCourtRevokedSmsNotification(
       type,
+      formatMessage,
       prosecutorName,
       requestedCourtDate,
       courtDate,

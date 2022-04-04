@@ -5,6 +5,7 @@ import {
   formatGender,
   caseTypes,
 } from '@island.is/judicial-system/formatters'
+import type { FormatMessage } from '@island.is/cms-translations'
 import {
   CaseLegalProvisions,
   CaseType,
@@ -12,6 +13,8 @@ import {
   SessionArrangements,
 } from '@island.is/judicial-system/types'
 import type { Gender } from '@island.is/judicial-system/types'
+
+import { notifications } from '../messages'
 
 function legalProvisionsOrder(p: CaseLegalProvisions) {
   switch (p) {
@@ -273,26 +276,42 @@ export function formatPrisonRulingEmailNotification(
 
 export function formatCourtRevokedSmsNotification(
   type: CaseType,
+  formatMessage: FormatMessage,
   prosecutorName?: string,
   requestedCourtDate?: Date,
   courtDate?: Date,
 ) {
   // Prosecutor
-  const prosecutorText = ` Sækjandi: ${prosecutorName ?? 'Ekki skráður'}.`
+  const prosecutorText = formatMessage(
+    notifications.courtRevoked.prosecutorText,
+    {
+      prosecutorName: prosecutorName ?? 'NONE',
+    },
+  )
 
   // Court date
   const courtDateText = courtDate
-    ? ` Fyrirtökutími: ${formatDate(courtDate, 'Pp')?.replace(' ', ', kl. ')}.`
+    ? formatMessage(notifications.courtRevoked.courtDate, {
+        date: formatDate(courtDate, 'P'),
+        time: formatDate(courtDate, 'p'),
+      })
     : requestedCourtDate
-    ? ` ÓVE fyrirtöku ${formatDate(requestedCourtDate, 'Pp')?.replace(
-        ' ',
-        ', eftir kl. ',
-      )}.`
-    : ''
+    ? formatMessage(notifications.courtRevoked.requestedCourtDate, {
+        date: formatDate(requestedCourtDate, 'P'),
+        time: formatDate(requestedCourtDate, 'p'),
+      })
+    : undefined
 
-  return `${
-    type === CaseType.CUSTODY ? 'Gæsluvarðhaldskrafa' : 'Farbannskrafa'
-  } afturkölluð.${prosecutorText}${courtDateText}`
+  const courtRevokedText = formatMessage(
+    notifications.courtRevoked.caseTypeRevoked,
+    {
+      caseType: type,
+    },
+  )
+
+  return [courtRevokedText, prosecutorText, courtDateText]
+    .filter((x) => Boolean(x))
+    .join(' ')
 }
 
 export function formatPrisonRevokedEmailNotification(

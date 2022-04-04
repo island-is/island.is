@@ -1,4 +1,5 @@
 import { defineMessages } from '@formatjs/intl'
+import { CaseType } from '@island.is/judicial-system/types'
 
 export const notifications = {
   readyForCourt: defineMessages({
@@ -9,6 +10,34 @@ export const notifications = {
         'Þú hefur sent kröfu um {caseType} á {courtName} vegna LÖKE máls {policeCaseNumber}. Skjalið er aðgengilegt undir {linkStart}málinu í Réttarvörslugátt{linkEnd}.',
       description:
         'Notaður sem texti í pósti til ákæranda varðandi kröfu sem hefur verið send á héraðsdómara',
+    },
+  }),
+  courtRevoked: defineMessages({
+    caseTypeRevoked: {
+      id:
+        'judicial.system.backend:notifications.courtRevoked.case_type_revoked',
+      defaultMessage: `{caseType, select, ${CaseType.TRAVEL_BAN} {Farbannskrafa} ${CaseType.ADMISSION_TO_FACILITY} {Krafa um vistun á viðeignandi stofnun}  other {Gæsluvarðhaldskrafa}} afturkölluð.`,
+      description: 'Notaður sem texti í sms-i til TODO',
+    },
+    prosecutorText: {
+      id: 'judicial.system.backend:notifications.courtRevoked.prosecutor_text',
+      defaultMessage:
+        'Sækjandi: {prosecutorName, select, NONE {Ekki skráður} other {{prosecutorName}}}.',
+      description:
+        'Notaður sem texti í sms-i til þess að tilgreina hver sækjandi er',
+    },
+    courtDate: {
+      id: 'judicial.system.backend:notifications.courtRevoked.court_date',
+      defaultMessage: 'Fyrirtökutími: {date}, kl. {time}.',
+      description:
+        'Notaður sem texti í sms-i til þess að tilgreina hvenær fyrirtöku tími er',
+    },
+    requestedCourtDate: {
+      id:
+        'judicial.system.backend:notifications.courtRevoked.requested_court_date',
+      defaultMessage: 'ÓVE fyrirtöku {date}, eftir kl. {time}.',
+      description:
+        'Notaður sem texti í sms-i til þess að tilgreina hvenær fyrirtöku tími er',
     },
   }),
   signedRuling: defineMessages({

@@ -851,6 +851,7 @@ export class NotificationService {
   private sendRevokedSmsNotificationToCourt(theCase: Case): Promise<Recipient> {
     const smsText = formatCourtRevokedSmsNotification(
       theCase.type,
+      this.formatMessage,
       theCase.prosecutor?.name,
       theCase.requestedCourtDate,
       theCase.courtDate,
