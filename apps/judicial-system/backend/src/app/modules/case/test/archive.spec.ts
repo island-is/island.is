@@ -16,6 +16,7 @@ import { ArchiveResponse } from '../models/archive.response'
 import { Case } from '../models/case.model'
 import { CaseArchive } from '../models/caseArchive.model'
 import { caseModuleConfig } from '../case.config'
+import { oldFilter } from '../filters/case.filters'
 
 jest.mock('crypto-js')
 jest.mock('../../../factories')
@@ -116,52 +117,7 @@ describe('CaseController - Archive', () => {
         ],
         where: {
           isArchived: false,
-          [Op.or]: [
-            { state: CaseState.DELETED },
-            {
-              [Op.or]: [
-                {
-                  [Op.and]: [
-                    { state: [CaseState.REJECTED, CaseState.DISMISSED] },
-                    { ruling_date: { [Op.lt]: literal('current_date - 90') } },
-                  ],
-                },
-                {
-                  [Op.and]: [
-                    {
-                      state: [
-                        CaseState.NEW,
-                        CaseState.DRAFT,
-                        CaseState.SUBMITTED,
-                        CaseState.RECEIVED,
-                      ],
-                    },
-                    { created: { [Op.lt]: literal('current_date - 90') } },
-                  ],
-                },
-                {
-                  [Op.and]: [
-                    { type: [CaseType.CUSTODY, CaseType.TRAVEL_BAN] },
-                    { state: CaseState.ACCEPTED },
-                    {
-                      valid_to_date: { [Op.lt]: literal('current_date - 90') },
-                    },
-                  ],
-                },
-                {
-                  [Op.and]: [
-                    {
-                      [Op.not]: {
-                        type: [CaseType.CUSTODY, CaseType.TRAVEL_BAN],
-                      },
-                    },
-                    { state: CaseState.ACCEPTED },
-                    { ruling_date: { [Op.lt]: literal('current_date - 90') } },
-                  ],
-                },
-              ],
-            },
-          ],
+          [Op.or]: [{ state: CaseState.DELETED }, oldFilter],
         },
       })
     })
