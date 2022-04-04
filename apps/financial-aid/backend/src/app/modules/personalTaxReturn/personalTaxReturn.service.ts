@@ -18,7 +18,6 @@ export class PersonalTaxReturnService {
         this.createPeriod(3),
         this.createPeriod(1),
       )
-
       return {
         directTaxPayments: directTaxPayments.salaryBreakdown.map((salary) => {
           return {
