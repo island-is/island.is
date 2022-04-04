@@ -11,6 +11,7 @@ export class RealEstateProvider extends BasicDataProvider {
   type = 'DistrictsProvider'
 
   async provide(application: Application): Promise<RealEstates> {
+    // TODO verify this works
     const deadded: string = application.externalData?.deadPersonNationalId.data as string ?? ""
 
     const query = `

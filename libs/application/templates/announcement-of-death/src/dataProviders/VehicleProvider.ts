@@ -3,14 +3,14 @@ import {
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
 } from '@island.is/application/core'
-import { Vehicles } from '../types/schema'
+import { Vehicle } from '../types/schema'
 import { m } from '../lib/messages'
 
 export class VehicleProvider extends BasicDataProvider {
   type = 'VehicleProvider'
 
-  async provide(): Promise<Vehicles> {
-
+  async provide(): Promise<Array<Vehicle>> {
+    // TODO implement from external client
     return [
       { plateNumber: 'AB123', numberOfWheels: 4, weight: 1234, year: 2010},
       { plateNumber: 'BEAN', numberOfWheels: 3, weight: 700, year: 1990},

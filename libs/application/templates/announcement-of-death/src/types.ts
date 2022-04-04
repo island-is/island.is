@@ -32,3 +32,8 @@ export interface Vehicle {
   vehicleNumber: string
   address?: string
 }
+
+export interface Will {
+  nationalId: string
+  hasWill: boolean
+}
