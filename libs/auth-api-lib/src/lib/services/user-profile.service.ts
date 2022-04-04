@@ -121,9 +121,9 @@ export class UserProfileService {
 
     return {
       formatted: this.formattedAddressString(address),
-      streetAddress: address.heiti,
-      locality: address.stadur,
-      postalCode: address.postnumer,
+      streetAddress: address.heiti ?? undefined,
+      locality: address.stadur ?? undefined,
+      postalCode: address.postnumer ?? undefined,
     }
   }
 

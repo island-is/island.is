@@ -1,21 +1,21 @@
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
 export class AddressDTO {
-  @ApiPropertyOptional({ type: String })
-  formatted?: string | null
+  @ApiPropertyOptional()
+  formatted?: string
 
-  @ApiPropertyOptional({ type: String })
-  streetAddress?: string | null
+  @ApiPropertyOptional()
+  streetAddress?: string
 
-  @ApiPropertyOptional({ type: String })
-  locality?: string | null
+  @ApiPropertyOptional()
+  locality?: string
 
-  @ApiPropertyOptional({ type: String })
-  region?: string | null
+  @ApiPropertyOptional()
+  region?: string
 
-  @ApiPropertyOptional({ type: String })
-  postalCode?: string | null
+  @ApiPropertyOptional()
+  postalCode?: string
 
-  @ApiPropertyOptional({ type: String })
-  country?: string | null
+  @ApiPropertyOptional()
+  country?: string
 }

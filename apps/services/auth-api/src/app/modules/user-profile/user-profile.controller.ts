@@ -18,14 +18,14 @@ export class UserProfileController {
 
   @Scopes('@identityserver.api/authentication')
   @Get()
-  @ApiOkResponse()
+  @ApiOkResponse({ type: UserProfileDTO })
   async userProfile(@CurrentUser() user: User): Promise<UserProfileDTO> {
     return this.userProfileService.getUserProfileClaims(user)
   }
 
   @Scopes('@identityserver.api/authentication')
   @Get('individual')
-  @ApiOkResponse()
+  @ApiOkResponse({ type: UserProfileDTO })
   async individualUserProfile(
     @CurrentUser() user: User,
   ): Promise<UserProfileDTO> {

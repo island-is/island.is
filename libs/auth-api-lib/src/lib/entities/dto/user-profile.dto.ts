@@ -1,48 +1,48 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { ApiPropertyOptional } from '@nestjs/swagger'
 import { AddressDTO } from './address.dto'
 
 export type GenderValue = 'male' | 'female' | 'non-binary'
 
 export class UserProfileDTO {
-  @ApiPropertyOptional({ type: String })
-  name?: string | null
+  @ApiPropertyOptional()
+  name?: string
 
-  @ApiPropertyOptional({ type: String })
-  givenName?: string | null
+  @ApiPropertyOptional()
+  givenName?: string
 
-  @ApiPropertyOptional({ type: String })
-  familyName?: string | null
+  @ApiPropertyOptional()
+  familyName?: string
 
-  @ApiPropertyOptional({ type: String })
-  middleName?: string | null
+  @ApiPropertyOptional()
+  middleName?: string
 
-  @ApiPropertyOptional({ type: String })
-  email?: string | null
+  @ApiPropertyOptional()
+  email?: string
 
-  @ApiPropertyOptional({ type: Boolean })
-  emailVerified?: boolean | null
+  @ApiPropertyOptional()
+  emailVerified?: boolean
 
-  @ApiPropertyOptional({ type: String })
-  phoneNumber?: string | null
+  @ApiPropertyOptional()
+  phoneNumber?: string
 
-  @ApiPropertyOptional({ type: Boolean })
-  phoneNumberVerified?: boolean | null
+  @ApiPropertyOptional()
+  phoneNumberVerified?: boolean
 
-  @ApiPropertyOptional({ type: String })
-  gender?: GenderValue | null
+  @ApiPropertyOptional()
+  gender?: GenderValue
 
-  @ApiPropertyOptional({ type: String })
-  birthdate?: string | null
+  @ApiPropertyOptional()
+  birthdate?: string
 
-  @ApiPropertyOptional({ type: String })
-  picture?: string | null
+  @ApiPropertyOptional()
+  picture?: string
 
-  @ApiPropertyOptional({ type: String })
-  locale?: string | null
+  @ApiPropertyOptional()
+  locale?: string
 
-  @ApiPropertyOptional({ type: AddressDTO })
-  address?: AddressDTO | null
+  @ApiPropertyOptional()
+  address?: AddressDTO
 
-  @ApiPropertyOptional({ type: AddressDTO })
-  domicile?: AddressDTO | null
+  @ApiPropertyOptional()
+  domicile?: AddressDTO
 }
