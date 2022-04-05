@@ -10,7 +10,6 @@ import Select, {
   OptionProps,
   PlaceholderProps,
   ValueContainerProps,
-  ValueType,
 } from 'react-select'
 
 import {
