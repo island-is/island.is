@@ -96,6 +96,7 @@ export const template = {
       },
       releaseDate: {
         type: 'date',
+        ignore_malformed: true,
       },
     },
   },

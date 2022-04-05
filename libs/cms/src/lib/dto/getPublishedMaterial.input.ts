@@ -1,4 +1,5 @@
 import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manager'
+import { SortDirection } from '@island.is/content-search-toolkit'
 import { Field, InputType, Int } from '@nestjs/graphql'
 import { IsInt, IsOptional, IsString } from 'class-validator'
 import GraphQLJSON from 'graphql-type-json'
@@ -33,4 +34,7 @@ export class GetPublishedMaterialInput {
 
   @Field(() => GraphQLJSON)
   tagGroups!: Record<string, string[]>
+
+  @Field(() => GraphQLJSON)
+  sort!: { field: 'title.sort' | 'releaseDate'; order: SortDirection }
 }

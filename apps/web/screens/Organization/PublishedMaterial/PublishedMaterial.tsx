@@ -2,12 +2,14 @@ import { useQuery } from '@apollo/client'
 import {
   Box,
   Button,
+  DropdownMenu,
   Filter,
   FilterInput,
   FilterMultiChoice,
   GridColumn,
   GridContainer,
   GridRow,
+  Icon,
   Inline,
   LoadingDots,
   NavigationItem,
@@ -41,15 +43,17 @@ import {
   GET_ORGANIZATION_QUERY,
 } from '../../queries'
 import { GET_PUBLISHED_MATERIAL_QUERY } from '../../queries/PublishedMaterial'
-import FilterTag from './components/FilterTag'
-import PublishedMaterialItem from './components/PublishedMaterialItem'
+import FilterTag from './components/FilterTag/FilterTag'
+import { PublishedMaterialItem } from './components/PublishedMaterialItem'
 import {
   getFilterCategories,
   getFilterTags,
   getGenericTagGroupHierarchy,
   getInitialParameters,
+  Ordering,
 } from './utils'
 import * as styles from './PublishedMaterial.css'
+import { OrderByItem } from './components/OrderByItem'
 
 const ASSETS_PER_PAGE = 20
 const DEBOUNCE_TIME_IN_MS = 300
@@ -68,6 +72,10 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
   const router = useRouter()
   const { width } = useWindowSize()
   const [searchValue, setSearchValue] = useState('')
+  const [ordering, setOrdering] = useState<Ordering>({
+    field: 'releaseDate',
+    order: 'asc',
+  })
   const n = useNamespace(namespace)
 
   useContentfulId(organizationPage.id)
@@ -104,6 +112,7 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
         searchString: searchValue,
         size: ASSETS_PER_PAGE,
         tagGroups: {},
+        sort: ordering,
       },
     },
   })
@@ -140,6 +149,7 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
           searchString: searchValue,
           size: ASSETS_PER_PAGE,
           tagGroups: getGenericTagGroupHierarchy(filterCategories),
+          sort: ordering,
         },
       },
       updateQuery: (prevResult, { fetchMoreResult }) => {
@@ -171,13 +181,14 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
             searchString: searchValue,
             size: ASSETS_PER_PAGE,
             tagGroups: getGenericTagGroupHierarchy(filterCategories),
+            sort: ordering,
           },
         },
       })
       setIsTyping(false)
     },
     DEBOUNCE_TIME_IN_MS,
-    [parameters, activeLocale, searchValue],
+    [parameters, activeLocale, searchValue, ordering],
   )
 
   const pageTitle = n('pageTitle', 'Útgefið efni')
@@ -210,65 +221,65 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
       }}
     >
       <GridContainer className={styles.container}>
-        <GridRow>
-          <GridColumn span={['12/12', '12/12', '6/12', '6/12', '8/12']}>
-            <Text variant="h1" as="h1" marginBottom={4} marginTop={1}>
-              {pageTitle}
-            </Text>
-          </GridColumn>
-        </GridRow>
-        <GridRow>
-          <Filter
-            variant={isMobile ? 'dialog' : 'popover'}
-            align="right"
-            labelClear={n('clearFilter', 'Hreinsa síu')}
-            labelClearAll={n('clearAllFilters', 'Hreinsa allar síur')}
-            labelOpen={n('openFilter', 'Opna síu')}
-            labelClose={n('closeFilter', 'Loka síu')}
-            labelResult={n('viewResults', 'Skoða niðurstöður')}
-            labelTitle={n('filterMenuTitle', 'Sía útgefið efni')}
-            filterInput={
-              <FilterInput
-                placeholder={n(
-                  'filterSearchPlaceholder',
-                  'Sía eftir leitarorði',
-                )}
-                name="filterInput"
-                value={searchValue}
-                onChange={(value) => {
-                  setSearchValue(value)
+        <GridColumn span="12/12">
+          <GridRow>
+            <GridColumn span={['12/12', '12/12', '6/12', '6/12', '8/12']}>
+              <Text variant="h1" as="h1" marginBottom={4} marginTop={1}>
+                {pageTitle}
+              </Text>
+            </GridColumn>
+          </GridRow>
+          <GridRow>
+            <Filter
+              variant={isMobile ? 'dialog' : 'popover'}
+              align="right"
+              labelClear={n('clearFilter', 'Hreinsa síu')}
+              labelClearAll={n('clearAllFilters', 'Hreinsa allar síur')}
+              labelOpen={n('openFilter', 'Opna síu')}
+              labelClose={n('closeFilter', 'Loka síu')}
+              labelResult={n('viewResults', 'Skoða niðurstöður')}
+              labelTitle={n('filterMenuTitle', 'Sía útgefið efni')}
+              filterInput={
+                <FilterInput
+                  placeholder={n(
+                    'filterSearchPlaceholder',
+                    'Sía eftir leitarorði',
+                  )}
+                  name="filterInput"
+                  value={searchValue}
+                  onChange={(value) => {
+                    setSearchValue(value)
+                    setIsTyping(true)
+                  }}
+                />
+              }
+              onFilterClear={() => {
+                setParameters(getInitialParameters(filterCategories))
+                setSearchValue('')
+                setIsTyping(true)
+              }}
+            >
+              <FilterMultiChoice
+                labelClear={n('clearSelection', 'Hreinsa val')}
+                onChange={({ categoryId, selected }) => {
                   setIsTyping(true)
+                  setParameters((prevParameters) => ({
+                    ...prevParameters,
+                    [categoryId]: selected,
+                  }))
                 }}
-              />
-            }
-            onFilterClear={() => {
-              setParameters(getInitialParameters(filterCategories))
-              setSearchValue('')
-              setIsTyping(true)
-            }}
-          >
-            <FilterMultiChoice
-              labelClear={n('clearSelection', 'Hreinsa val')}
-              onChange={({ categoryId, selected }) => {
-                setIsTyping(true)
-                setParameters((prevParameters) => ({
-                  ...prevParameters,
-                  [categoryId]: selected,
-                }))
-              }}
-              onClear={(categoryId) => {
-                setIsTyping(true)
-                setParameters((prevParameters) => ({
-                  ...prevParameters,
-                  [categoryId]: [],
-                }))
-              }}
-              categories={filterCategories}
-            ></FilterMultiChoice>
-          </Filter>
-        </GridRow>
+                onClear={(categoryId) => {
+                  setIsTyping(true)
+                  setParameters((prevParameters) => ({
+                    ...prevParameters,
+                    [categoryId]: [],
+                  }))
+                }}
+                categories={filterCategories}
+              ></FilterMultiChoice>
+            </Filter>
+          </GridRow>
 
-        <GridContainer>
           <GridColumn span="12/12">
             <GridRow marginTop={2} align="center">
               <Box
@@ -279,7 +290,7 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
                 <LoadingDots />
               </Box>
             </GridRow>
-            <GridRow>
+            <GridRow alignItems="center">
               <GridColumn span="8/12">
                 <Inline space={1}>
                   {selectedFilters.map(({ label, value, category }) => (
@@ -299,6 +310,120 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
                     </FilterTag>
                   ))}
                 </Inline>
+              </GridColumn>
+              <GridColumn span="4/12">
+                <GridRow align="flexEnd">
+                  <DropdownMenu
+                    title={n('orderBy', 'Raða')}
+                    icon="arrowUp"
+                    zIndex={10}
+                    disclosure={
+                      <div className={styles.orderByContainer}>
+                        <div className={styles.orderByText}>
+                          {n('orderBy', 'Raða')}
+                        </div>
+                        {
+                          <Icon
+                            className={styles.orderByIcon}
+                            size="small"
+                            icon="arrowUp"
+                          />
+                        }
+                        {<Icon size="small" icon="arrowDown" />}
+                      </div>
+                    }
+                    items={[
+                      {
+                        render: () => (
+                          <OrderByItem
+                            isSelected={
+                              ordering.field === 'title.sort' &&
+                              ordering.order === 'asc'
+                            }
+                            onClick={() =>
+                              setOrdering({
+                                field: 'title.sort',
+                                order: 'asc',
+                              })
+                            }
+                          >
+                            {n('orderByTitleAscending', 'Titill (a-ö)')}
+                          </OrderByItem>
+                        ),
+                        title: n('orderByTitleAscending', 'Titill (a-ö)'),
+                      },
+                      {
+                        render: () => (
+                          <OrderByItem
+                            isSelected={
+                              ordering.field === 'title.sort' &&
+                              ordering.order === 'desc'
+                            }
+                            onClick={() =>
+                              setOrdering({
+                                field: 'title.sort',
+                                order: 'desc',
+                              })
+                            }
+                          >
+                            {n('orderByTitleDescending', 'Titill (ö-a)')}
+                          </OrderByItem>
+                        ),
+                        title: n('orderByTitleDescending', 'Titill (ö-a)'),
+                      },
+                      {
+                        render: () => (
+                          <OrderByItem
+                            isSelected={
+                              ordering.field === 'releaseDate' &&
+                              ordering.order === 'desc'
+                            }
+                            onClick={() =>
+                              setOrdering({
+                                field: 'releaseDate',
+                                order: 'desc',
+                              })
+                            }
+                          >
+                            {n(
+                              'orderByReleaseDateDescending',
+                              'Útgáfudagur (nýjasta)',
+                            )}
+                          </OrderByItem>
+                        ),
+                        title: n(
+                          'orderByReleaseDateDescending',
+                          'Útgáfudagur (nýjasta)',
+                        ),
+                      },
+                      {
+                        render: () => (
+                          <OrderByItem
+                            isSelected={
+                              ordering.field === 'releaseDate' &&
+                              ordering.order === 'asc'
+                            }
+                            onClick={() =>
+                              setOrdering({
+                                field: 'releaseDate',
+                                order: 'asc',
+                              })
+                            }
+                          >
+                            {n(
+                              'orderByReleaseDateAscending',
+                              'Útgáfudagur (elsta)',
+                            )}
+                          </OrderByItem>
+                        ),
+                        title: n(
+                          'orderByReleaseDateAscending',
+                          'Útgáfudagur (elsta)',
+                        ),
+                      },
+                    ]}
+                  />
+                </GridRow>
               </GridColumn>
             </GridRow>
             {(data?.getPublishedMaterial.items ?? []).map((item, index) => {
@@ -320,7 +445,7 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
               </GridRow>
             )}
           </GridColumn>
-        </GridContainer>
+        </GridColumn>
       </GridContainer>
     </OrganizationWrapper>
   )

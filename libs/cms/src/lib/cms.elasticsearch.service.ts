@@ -241,6 +241,7 @@ export class CmsElasticsearchService {
       size = 10,
       tags,
       tagGroups,
+      sort,
     }: GetPublishedMaterialInput,
   ): Promise<EnhancedAssetSearchResult> {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -298,8 +299,8 @@ export class CmsElasticsearchService {
     > = await this.elasticService.findByQuery(index, {
       sort: [
         {
-          releaseDate: {
-            order: SortDirection.DESC,
+          [sort.field]: {
+            order: sort.order,
           },
         },
       ],

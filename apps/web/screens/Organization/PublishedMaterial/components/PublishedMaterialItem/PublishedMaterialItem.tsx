@@ -3,15 +3,24 @@ import { Box, FocusableBox, Text, Tag } from '@island.is/island-ui/core'
 import { EnhancedAsset } from '@island.is/web/graphql/schema'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 
+const getFileEnding = (url: string): string => {
+  const lastChunk = url.split('/').pop()
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const filenameChunks = lastChunk.split('.')
+  if (filenameChunks.length === 1) return ''
+  return filenameChunks.pop()
+}
+
 interface PublishedMaterialItemProps {
   item: EnhancedAsset
 }
 
 export const PublishedMaterialItem = ({ item }: PublishedMaterialItemProps) => {
   const { format } = useDateUtils()
-  const fileEnding = item.file?.url.split('.').pop().toUpperCase()
+  const fileEnding = getFileEnding(item.file?.url ?? '')
   const date =
     item?.releaseDate && format(new Date(item.releaseDate), 'do MMMM yyyy')
+
   return (
     <FocusableBox
       width="full"
@@ -24,32 +33,34 @@ export const PublishedMaterialItem = ({ item }: PublishedMaterialItemProps) => {
       border="standard"
       borderRadius="large"
       display="flex"
-      flexDirection="column"
+      flexDirection="row"
     >
-      <Box position="relative" display="flex" width="full">
+      <Box position="relative" width="full">
         <Box>
           <Text variant="h4" as="span" color="dark400">
             {item.title}
           </Text>
           <Text>{item.description}</Text>
         </Box>
-        {fileEnding && (
-          <Box
-            display="flex"
-            alignItems="center"
-            marginLeft="auto"
-            paddingLeft={2}
-          >
-            <Tag disabled={true} outlined={true}>
-              {fileEnding}
-            </Tag>
+        {date && (
+          <Box marginTop={1}>
+            <Text variant="eyebrow" color="dark300">
+              {date}
+            </Text>
           </Box>
         )}
       </Box>
-      {date && (
-        <Text variant="eyebrow" color="dark300">
-          {date}
-        </Text>
+      {fileEnding && (
+        <Box
+          display="flex"
+          alignItems="center"
+          marginLeft="auto"
+          paddingLeft={2}
+        >
+          <Tag disabled={true} outlined={true}>
+            {fileEnding}
+          </Tag>
+        </Box>
       )}
     </FocusableBox>
   )

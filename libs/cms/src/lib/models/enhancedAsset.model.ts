@@ -18,8 +18,8 @@ export class EnhancedAsset {
   @Field(() => [GenericTag])
   genericTags!: GenericTag[]
 
-  @Field()
-  releaseDate?: string
+  @Field(() => String, { nullable: true })
+  releaseDate!: string | null
 
   @Field(() => Organization)
   organization!: Organization | null
@@ -36,7 +36,7 @@ export const mapEnhancedAsset = ({
   title: fields.title ?? '',
   file: fields.file ? mapAsset(fields.file) : null,
   genericTags: fields.genericTags ? fields.genericTags.map(mapGenericTag) : [],
-  releaseDate: fields.releaseDate ?? '',
+  releaseDate: fields.releaseDate ?? null,
   organization: fields.organization
     ? mapOrganization(fields.organization)
     : null,

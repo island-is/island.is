@@ -46,7 +46,7 @@ export class EnhancedAssetSyncService
             ],
             dateCreated: entry.sys.createdAt,
             dateUpdated: new Date().getTime().toString(),
-            releaseDate: mapped.releaseDate ?? '',
+            releaseDate: mapped.releaseDate,
           }
         } catch (error) {
           logger.warn('Failed to import project page', {
