@@ -73,5 +73,5 @@ export class UpdateApplicationDto {
   @IsOptional()
   @IsBoolean()
   @ApiProperty()
-  readonly spouseHasFetchedDirectTaxPayment: boolean
+  readonly spouseHasFetchedDirectTaxPayment?: boolean
 }
