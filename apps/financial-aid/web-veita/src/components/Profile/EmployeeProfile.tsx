@@ -8,7 +8,6 @@ import {
   Button,
   ToastContainer,
   Option,
-  Select,
 } from '@island.is/island-ui/core'
 
 import * as styles from './Profile.css'
@@ -17,6 +16,7 @@ import * as headerStyles from '@island.is/financial-aid-web/veita/src/components
 import {
   InputType,
   isEmailValid,
+  Municipality,
   Staff,
   StaffRole,
 } from '@island.is/financial-aid/shared/lib'
@@ -47,6 +47,18 @@ const EmployeeProfile = ({ user }: EmployeeProfileProps) => {
   const isLoggedInUser = (staff: Staff) =>
     admin?.nationalId === staff.nationalId
 
+  const mapToOption = (filterArr: string[], active: boolean) => {
+    return municipality
+      .filter((el) =>
+        active
+          ? filterArr.includes(el.municipalityId)
+          : !filterArr.includes(el.municipalityId),
+      )
+      .map((el) => {
+        return { label: el.name, value: el.municipalityId }
+      })
+  }
+
   const [state, setState] = useState<EmployeeProfileInfo>({
     nationalId: user.nationalId,
     nickname: user?.nickname ?? '',
@@ -54,11 +66,7 @@ const EmployeeProfile = ({ user }: EmployeeProfileProps) => {
     hasError: false,
     roles: user.roles,
     municipalityIds: user.municipalityIds,
-    serviceCenter: municipality
-      .filter((el) => !user.municipalityIds.includes(el.municipalityId))
-      .map((el) => {
-        return { label: el.name, value: el.municipalityId }
-      }),
+    serviceCenter: mapToOption(user.municipalityIds, false),
   })
 
   const { changeUserActivity, staffActivationLoading, updateInfo } = useStaff()
@@ -218,13 +226,7 @@ const EmployeeProfile = ({ user }: EmployeeProfileProps) => {
               </Text>
               <MultiSelection
                 options={state.serviceCenter}
-                active={municipality
-                  .filter((el) =>
-                    state.municipalityIds.includes(el.municipalityId),
-                  )
-                  .map((el) => {
-                    return { label: el.name, value: el.municipalityId }
-                  })}
+                active={mapToOption(state.municipalityIds, true)}
                 onSelected={(option: any) => {
                   if ((option?.value as unknown) && isString(option?.value)) {
                     setState({
