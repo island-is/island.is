@@ -23,14 +23,11 @@ export const PublishedMaterialItem = ({ item }: PublishedMaterialItemProps) => {
       }
       border="standard"
       borderRadius="large"
+      display="flex"
+      flexDirection="column"
     >
       <Box position="relative" display="flex" width="full">
         <Box>
-          {date && (
-            <Text variant="eyebrow" color="purple400">
-              {date}
-            </Text>
-          )}
           <Text variant="h4" as="span" color="dark400">
             {item.title}
           </Text>
@@ -49,6 +46,11 @@ export const PublishedMaterialItem = ({ item }: PublishedMaterialItemProps) => {
           </Box>
         )}
       </Box>
+      {date && (
+        <Text variant="eyebrow" color="dark300">
+          {date}
+        </Text>
+      )}
     </FocusableBox>
   )
 }
