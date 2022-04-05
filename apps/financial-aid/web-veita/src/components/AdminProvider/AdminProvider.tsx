@@ -5,8 +5,8 @@ import { Municipality, User } from '@island.is/financial-aid/shared/lib'
 import { CurrentUserQuery } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
 import { useSession } from 'next-auth/client'
 import { Box, Button, Text } from '@island.is/island-ui/core'
-import { useLogOut } from '../../utils/useLogOut'
-import { useMunicipalities } from '../../utils/useMunicipalities'
+import { useLogOut } from '@island.is/financial-aid-web/veita/src/utils/useLogOut'
+import { useMunicipalities } from '@island.is/financial-aid-web/veita/src/utils/useMunicipalities'
 
 interface AdminProvider {
   isAuthenticated?: boolean

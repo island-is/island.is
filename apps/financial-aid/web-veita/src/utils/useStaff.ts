@@ -38,9 +38,9 @@ export const useStaff = () => {
     roles?: StaffRole[],
     nickname?: string,
     email?: string,
-    municipalityIds?: string[],
     usePseudoName?: boolean,
     updateAdmin?: boolean,
+    municipalityIds?: string[],
   ) => {
     try {
       await updateStaff({

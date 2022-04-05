@@ -8,9 +8,7 @@ import {
   Button,
   ToastContainer,
   Option,
-  Select,
 } from '@island.is/island-ui/core'
-import { motion } from 'framer-motion'
 
 import * as styles from './Profile.css'
 
@@ -18,6 +16,7 @@ import * as headerStyles from '@island.is/financial-aid-web/veita/src/components
 import {
   InputType,
   isEmailValid,
+  Municipality,
   Staff,
   StaffRole,
 } from '@island.is/financial-aid/shared/lib'
@@ -26,8 +25,7 @@ import cn from 'classnames'
 import { useStaff } from '@island.is/financial-aid-web/veita/src/utils/useStaff'
 import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
 import MultiSelection from '../MultiSelection/MultiSelection'
-import { isString, StringIterator } from 'lodash'
-import { ValueType } from 'react-select'
+import { isString } from 'lodash'
 
 interface EmployeeProfileProps {
   user: Staff
@@ -49,6 +47,18 @@ const EmployeeProfile = ({ user }: EmployeeProfileProps) => {
   const isLoggedInUser = (staff: Staff) =>
     admin?.nationalId === staff.nationalId
 
+  const mapToOption = (filterArr: string[], active: boolean) => {
+    return municipality
+      .filter((el) =>
+        active
+          ? filterArr.includes(el.municipalityId)
+          : !filterArr.includes(el.municipalityId),
+      )
+      .map((el) => {
+        return { label: el.name, value: el.municipalityId }
+      })
+  }
+
   const [state, setState] = useState<EmployeeProfileInfo>({
     nationalId: user.nationalId,
     nickname: user?.nickname ?? '',
@@ -56,11 +66,7 @@ const EmployeeProfile = ({ user }: EmployeeProfileProps) => {
     hasError: false,
     roles: user.roles,
     municipalityIds: user.municipalityIds,
-    serviceCenter: municipality
-      .filter((el) => !user.municipalityIds.includes(el.municipalityId))
-      .map((el) => {
-        return { label: el.name, value: el.municipalityId }
-      }),
+    serviceCenter: mapToOption(user.municipalityIds, false),
   })
 
   const { changeUserActivity, staffActivationLoading, updateInfo } = useStaff()
@@ -144,6 +150,8 @@ const EmployeeProfile = ({ user }: EmployeeProfileProps) => {
       state.roles,
       state.nickname,
       state.email,
+      undefined,
+      undefined,
       state.municipalityIds,
     )
   }
@@ -206,50 +214,48 @@ const EmployeeProfile = ({ user }: EmployeeProfileProps) => {
               </Box>
             )
           })}
-          <Box display="block" marginTop={3} marginBottom={[3, 3, 5]}>
-            <Text as="h2" variant="h3" color="dark300" marginBottom={3}>
-              Sveitarfélög notanda
-            </Text>
-            <MultiSelection
-              options={state.serviceCenter}
-              active={municipality
-                .filter((el) =>
-                  state.municipalityIds.includes(el.municipalityId),
-                )
-                .map((el) => {
-                  return { label: el.name, value: el.municipalityId }
-                })}
-              onSelected={(option: any) => {
-                if ((option?.value as unknown) && isString(option?.value)) {
-                  setState({
-                    ...state,
-                    municipalityIds: [...state.municipalityIds, option?.value],
-                    serviceCenter: state.serviceCenter.filter(
-                      (el) => el.value !== option.value,
-                    ),
-                  })
-                }
-              }}
-              unSelected={(value: string, name: string) => {
-                setState({
-                  ...state,
-                  municipalityIds: state.municipalityIds.filter(
-                    (muni) => muni != value,
-                  ),
-                  serviceCenter: [
-                    ...state.serviceCenter,
-                    { label: name, value: value },
-                  ],
-                })
-              }}
-            />
-          </Box>
 
           <Box
             className={`contentUp delay-75`}
             marginTop={3}
             marginBottom={[3, 3, 5]}
           >
+            <Box display="block" marginTop={3} marginBottom={[3, 3, 5]}>
+              <Text as="h2" variant="h3" color="dark300" marginBottom={3}>
+                Sveitarfélög notanda
+              </Text>
+              <MultiSelection
+                options={state.serviceCenter}
+                active={mapToOption(state.municipalityIds, true)}
+                onSelected={(option: any) => {
+                  if ((option?.value as unknown) && isString(option?.value)) {
+                    setState({
+                      ...state,
+                      municipalityIds: [
+                        ...state.municipalityIds,
+                        option?.value,
+                      ],
+                      serviceCenter: state.serviceCenter.filter(
+                        (el) => el.value !== option.value,
+                      ),
+                    })
+                  }
+                }}
+                unSelected={(value: string, name: string) => {
+                  setState({
+                    ...state,
+                    municipalityIds: state.municipalityIds.filter(
+                      (muni) => muni != value,
+                    ),
+                    serviceCenter: [
+                      ...state.serviceCenter,
+                      { label: name, value: value },
+                    ],
+                  })
+                }}
+              />
+            </Box>
+
             <Text as="h2" variant="h3" color="dark300" marginBottom={3}>
               Réttindi notanda
             </Text>

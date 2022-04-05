@@ -18,7 +18,7 @@ import { useMutation } from '@apollo/client'
 import { UpdateMunicipalityMutation } from '@island.is/financial-aid-web/veita/graphql'
 import omit from 'lodash/omit'
 import MunicipalityAdminInput from './MunicipalityNumberInput/MunicipalityNumberInput'
-import { useMunicipalities } from '../../utils/useMunicipalities'
+import { useMunicipalities } from '@island.is/financial-aid-web/veita/src/utils/useMunicipalities'
 
 interface Props {
   currentMunicipality: Municipality

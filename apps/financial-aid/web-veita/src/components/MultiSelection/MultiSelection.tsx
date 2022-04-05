@@ -13,7 +13,7 @@ interface Props {
 
 const MultiSelection = ({ options, active, onSelected, unSelected }: Props) => {
   return (
-    <Box className={styles.selectContainer}>
+    <Box display="block">
       <Box marginBottom={2}>
         {active.map((muni, index) => {
           return (
