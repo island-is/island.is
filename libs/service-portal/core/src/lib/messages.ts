@@ -386,6 +386,10 @@ export const m = defineMessages({
     id: 'service.portal:finance-bills',
     defaultMessage: 'Greiðsluseðlar og -kvittanir',
   },
+  financeSchedules: {
+    id: 'service.portal:finance-schedules',
+    defaultMessage: 'Greiðsluáætlanir',
+  },
   financeEmployeeClaims: {
     id: 'service.portal:finance-employee-claims',
     defaultMessage: 'Laungreiðendakröfur',

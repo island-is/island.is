@@ -75,9 +75,11 @@ export const laws = {
   _100_1: '1. mgr. 100. gr. sml.',
 }
 
-export const caseTypes = {
+type CaseTypes = { [c in CaseType]: string }
+export const caseTypes: CaseTypes = {
   CUSTODY: 'gæsluvarðhald',
   TRAVEL_BAN: 'farbann',
+  ADMISSION_TO_FACILITY: 'vistun á viðeigandi stofnun',
   SEARCH_WARRANT: 'húsleit',
   BANKING_SECRECY_WAIVER: 'rof bankaleyndar',
   PHONE_TAPPING: 'símhlustun',

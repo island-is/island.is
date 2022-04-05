@@ -849,10 +849,7 @@ export class CaseService {
       .then((caseId) => this.findById(caseId))
   }
 
-  private async uploadRequestPdfToCourt(
-    theCase: Case,
-    user: TUser,
-  ): Promise<void> {
+  async uploadRequestPdfToCourt(theCase: Case, user: TUser): Promise<void> {
     try {
       await this.refreshFormatMessage()
 
@@ -863,6 +860,7 @@ export class CaseService {
         theCase.id,
         theCase.courtId ?? '',
         theCase.courtCaseNumber ?? '',
+        `Krafa ${theCase.policeCaseNumber}`,
         pdf,
       )
     } catch (error) {
