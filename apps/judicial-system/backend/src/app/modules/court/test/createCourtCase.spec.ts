@@ -119,6 +119,7 @@ describe('CourtService - Create court case', () => {
     type
     ${CaseType.CUSTODY}
     ${CaseType.TRAVEL_BAN}
+    ${CaseType.ADMISSION_TO_FACILITY}
   `.describe('extendable court case created for $type', ({ type }) => {
     const user = {} as User
     const caseId = uuid()
@@ -153,6 +154,7 @@ describe('CourtService - Create court case', () => {
     type
     ${CaseType.CUSTODY}
     ${CaseType.TRAVEL_BAN}
+    ${CaseType.ADMISSION_TO_FACILITY}
   `.describe('extended court case created for $type', ({ type }) => {
     const user = {} as User
     const caseId = uuid()

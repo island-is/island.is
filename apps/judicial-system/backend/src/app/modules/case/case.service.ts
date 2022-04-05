@@ -549,31 +549,6 @@ export class CaseService {
     return theCase.id
   }
 
-  private async uploadRequestPdfToCourt(
-    theCase: Case,
-    user: TUser,
-  ): Promise<void> {
-    try {
-      await this.refreshFormatMessage()
-
-      const pdf = await getRequestPdfAsBuffer(theCase, this.formatMessage)
-
-      await this.courtService.createRequest(
-        user,
-        theCase.id,
-        theCase.courtId ?? '',
-        theCase.courtCaseNumber ?? '',
-        pdf,
-      )
-    } catch (error) {
-      // Tolerate failure, but log error
-      this.logger.error(
-        `Failed to upload request pdf to court for case ${theCase.id}`,
-        { error },
-      )
-    }
-  }
-
   async findById(caseId: string): Promise<Case> {
     const theCase = await this.caseModel.findOne({
       include: includes,
@@ -951,6 +926,29 @@ export class CaseService {
         return caseId
       })
       .then((caseId) => this.findById(caseId))
+  }
+
+  async uploadRequestPdfToCourt(theCase: Case, user: TUser): Promise<void> {
+    try {
+      await this.refreshFormatMessage()
+
+      const pdf = await getRequestPdfAsBuffer(theCase, this.formatMessage)
+
+      await this.courtService.createRequest(
+        user,
+        theCase.id,
+        theCase.courtId ?? '',
+        theCase.courtCaseNumber ?? '',
+        `Krafa ${theCase.policeCaseNumber}`,
+        pdf,
+      )
+    } catch (error) {
+      // Tolerate failure, but log error
+      this.logger.error(
+        `Failed to upload request pdf to court for case ${theCase.id}`,
+        { error },
+      )
+    }
   }
 
   async createCourtCase(theCase: Case, user: TUser): Promise<Case> {
