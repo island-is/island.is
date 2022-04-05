@@ -19,7 +19,7 @@ export function formatIndividualDto(
   individual: Einstaklingsupplysingar | null | undefined,
 ): IndividualDto | null {
   if (individual == null) {
-    return individual ?? null
+    return null
   }
   return {
     nationalId: individual.kennitala,

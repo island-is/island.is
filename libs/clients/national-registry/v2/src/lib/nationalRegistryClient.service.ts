@@ -24,7 +24,7 @@ export class NationalRegistryClientService {
     return formatIndividualDto(individual)
   }
 
-  private handleError(error: FetchError) {
+  private handleError(error: FetchError): null {
     if (error.status === 404) {
       return null
     }
