@@ -64,7 +64,7 @@ export * from './lib/entities/dto/delegation.dto'
 export * from './lib/entities/dto/api-scope-group.dto'
 export * from './lib/entities/dto/paged-rows.dto'
 export * from './lib/entities/dto/domain.dto'
-export * from './lib/entities/dto/individual-info.dto'
+export * from './lib/entities/dto/user-profile.dto'
 
 // Services
 export * from './lib/services/clients.service'

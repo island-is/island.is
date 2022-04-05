@@ -10,6 +10,15 @@ import differenceInMonths from 'date-fns/differenceInMonths'
  */
 const MODIFIED_FALLBACK_TIME = new Date('2022-04-01T00:00:00Z')
 
+export const diffModifiedOverMaxDate = (modified: string | undefined) => {
+  const modifiedProfileDate = modified ?? MODIFIED_FALLBACK_TIME
+  const dateNow = new Date()
+  const dateModified = new Date(modifiedProfileDate)
+  const diffInMonths = differenceInMonths(dateNow, dateModified)
+  const diffModifiedOverMaxDate = diffInMonths >= 6
+  return diffModifiedOverMaxDate
+}
+
 export const showModal = (getUserProfile: UserProfile | undefined | null) => {
   if (!getUserProfile) {
     return false
@@ -19,13 +28,7 @@ export const showModal = (getUserProfile: UserProfile | undefined | null) => {
   const userProfileTel = getUserProfile.mobilePhoneNumber
   const hasEmailAndTel = userProfileEmail && userProfileTel
 
-  const modifiedProfileDate = getUserProfile.modified ?? MODIFIED_FALLBACK_TIME
-  const dateNow = new Date()
-  const dateModified = new Date(modifiedProfileDate)
-  const diffInMonths = differenceInMonths(dateNow, dateModified)
-  const diffModifiedOverMaxDate = diffInMonths >= 6
+  const diffOverMax = diffModifiedOverMaxDate(getUserProfile.modified)
 
-  return (
-    (!hasEmailAndTel && !getUserProfile.modified) || diffModifiedOverMaxDate
-  )
+  return (!hasEmailAndTel && !getUserProfile.modified) || diffOverMax
 }
