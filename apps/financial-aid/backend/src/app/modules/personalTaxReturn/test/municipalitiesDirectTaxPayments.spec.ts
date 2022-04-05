@@ -73,7 +73,7 @@ describe('PersonalTaxReturnController - Municipalities direct tax payments', () 
     })
 
     it('should return empty array', () => {
-      expect(then.result).toEqual({ directTaxPayments: [] })
+      expect(then.result).toEqual({ directTaxPayments: [], success: false })
     })
   })
 
@@ -129,6 +129,7 @@ describe('PersonalTaxReturnController - Municipalities direct tax payments', () 
           year: 2022,
         },
       ],
+      success: true,
     }
 
     beforeEach(async () => {
