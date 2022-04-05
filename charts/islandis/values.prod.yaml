@@ -209,6 +209,7 @@ api:
   env:
     APPLICATION_SYSTEM_API_URL: 'http://web-application-system-api.application-system.svc.cluster.local'
     AUTH_PUBLIC_API_URL: 'https://innskra.island.is/api'
+    COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS/GOV/5402696029/Skatturinn/ft-v1'
     CONTACT_US_EMAIL: 'island@island.is'
     CONTENTFUL_HOST: 'cdn.contentful.com'
