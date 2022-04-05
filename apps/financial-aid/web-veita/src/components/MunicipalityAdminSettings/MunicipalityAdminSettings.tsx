@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Text,
   Box,
@@ -31,6 +31,13 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
     UpdateMunicipalityMutation,
   )
   const { setMunicipality } = useMunicipalities()
+  console.log('state', state)
+  // useEffect(() => {
+  //   console.log('ferdu hingad og uppfærir? ')
+  //   console.log(state, 'currnet')
+  //   setState(currentMunicipality)
+  //   console.log(state, 'state')
+  // }, [currentMunicipality])
 
   const INDIVIDUAL = 'individual'
   const COHABITATION = 'cohabitation'
