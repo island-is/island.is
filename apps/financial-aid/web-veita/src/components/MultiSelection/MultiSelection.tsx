@@ -3,11 +3,12 @@ import { Box, Option, Select, Text, Icon } from '@island.is/island-ui/core'
 import * as styles from './MultiSelection.css'
 
 import { ValueType } from 'react-select'
+import { ReactSelectOption } from '@island.is/financial-aid/shared/lib'
 
 interface Props {
   options: Option[]
   active: Option[]
-  onSelected: (value: ValueType<Option>) => void
+  onSelected: (value: ValueType<ReactSelectOption>) => void
   unSelected: (value: string, name: string) => void
 }
 
@@ -43,6 +44,7 @@ const MultiSelection = ({ options, active, onSelected, unSelected }: Props) => {
         options={options}
         placeholder="Veldu tegund"
         onChange={onSelected}
+        backgroundColor="blue"
       />
     </Box>
   )

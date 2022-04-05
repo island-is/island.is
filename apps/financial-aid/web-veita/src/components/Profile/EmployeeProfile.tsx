@@ -16,7 +16,7 @@ import * as headerStyles from '@island.is/financial-aid-web/veita/src/components
 import {
   InputType,
   isEmailValid,
-  Municipality,
+  ReactSelectOption,
   Staff,
   StaffRole,
 } from '@island.is/financial-aid/shared/lib'
@@ -26,6 +26,7 @@ import { useStaff } from '@island.is/financial-aid-web/veita/src/utils/useStaff'
 import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
 import MultiSelection from '../MultiSelection/MultiSelection'
 import { isString } from 'lodash'
+import { ValueType } from 'react-select'
 
 interface EmployeeProfileProps {
   user: Staff
@@ -105,7 +106,6 @@ const EmployeeProfile = ({ user }: EmployeeProfileProps) => {
     {
       label: 'Netfang',
       value: state.email,
-      bgIsBlue: true,
       type: 'email' as InputType,
       onchange: (
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -116,7 +116,6 @@ const EmployeeProfile = ({ user }: EmployeeProfileProps) => {
     },
     {
       label: 'Stutt nafn',
-      bgIsBlue: true,
       value: state.nickname,
       type: 'text' as InputType,
       onchange: (
@@ -208,7 +207,7 @@ const EmployeeProfile = ({ user }: EmployeeProfileProps) => {
                   type={item.type}
                   value={item.value}
                   onChange={item.onchange}
-                  backgroundColor={item.bgIsBlue ? 'blue' : 'white'}
+                  backgroundColor="blue"
                   hasError={state.hasError && item.error}
                 />
               </Box>
@@ -227,16 +226,14 @@ const EmployeeProfile = ({ user }: EmployeeProfileProps) => {
               <MultiSelection
                 options={state.serviceCenter}
                 active={mapToOption(state.municipalityIds, true)}
-                onSelected={(option: any) => {
-                  if ((option?.value as unknown) && isString(option?.value)) {
+                onSelected={(option: ValueType<ReactSelectOption>) => {
+                  const { value } = option as ReactSelectOption
+                  if (value && isString(value)) {
                     setState({
                       ...state,
-                      municipalityIds: [
-                        ...state.municipalityIds,
-                        option?.value,
-                      ],
+                      municipalityIds: [...state.municipalityIds, value],
                       serviceCenter: state.serviceCenter.filter(
-                        (el) => el.value !== option.value,
+                        (el) => el.value !== value,
                       ),
                     })
                   }

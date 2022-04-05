@@ -16,6 +16,8 @@ export interface GetSignedUrl {
   fileName: string
 }
 
+export type ReactSelectOption = { label: string; value: string | number }
+
 export interface GetSignedUrlForAllFiles {
   getSignedUrlForAllFilesId: SignedUrl[]
 }
