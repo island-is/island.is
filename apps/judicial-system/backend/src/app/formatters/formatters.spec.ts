@@ -401,6 +401,13 @@ describe('formatReadyForCourtSmsNotification', () => {
 })
 
 describe('formatProsecutorReceivedByCourtSmsNotification', () => {
+  const messages = [notifications.prosecutorReceivedByCourt]
+
+  let formatMessage: FormatMessage
+  beforeAll(() => {
+    const intl = createTestIntl('is-IS', messages)
+    formatMessage = intl.formatMessage
+  })
   test('should format received by court notification for custody', () => {
     // Arranged
     const type = CaseType.CUSTODY
@@ -409,6 +416,7 @@ describe('formatProsecutorReceivedByCourtSmsNotification', () => {
 
     // Act
     const res = formatProsecutorReceivedByCourtSmsNotification(
+      formatMessage,
       type,
       court,
       courtCaseNumber,
@@ -428,6 +436,7 @@ describe('formatProsecutorReceivedByCourtSmsNotification', () => {
 
     // Act
     const res = formatProsecutorReceivedByCourtSmsNotification(
+      formatMessage,
       type,
       court,
       courtCaseNumber,
@@ -447,6 +456,7 @@ describe('formatProsecutorReceivedByCourtSmsNotification', () => {
 
     // Act
     const res = formatProsecutorReceivedByCourtSmsNotification(
+      formatMessage,
       type,
       court,
       courtCaseNumber,
@@ -466,6 +476,7 @@ describe('formatProsecutorReceivedByCourtSmsNotification', () => {
 
     // Act
     const res = formatProsecutorReceivedByCourtSmsNotification(
+      formatMessage,
       type,
       court,
       courtCaseNumber,

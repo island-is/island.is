@@ -1,5 +1,6 @@
 import { defineMessages } from '@formatjs/intl'
 import { CaseType } from '@island.is/judicial-system/types'
+import { Case } from '../modules/case'
 
 export const notifications = {
   prosecutorText: {
@@ -92,12 +93,17 @@ export const notifications = {
     },
   }),
   courtResubmittedToCourt: {
-    id:
-      'judicial.system.backend:notifications.courtRevoked.case_resubmitted_to_court',
+    id: 'judicial.system.backend:notifications.case_resubmitted_to_court',
     defaultMessage:
       'Sækjandi í máli {courtCaseNumber} hefur breytt kröfunni og sent aftur á héraðsdómstól. Nýtt kröfuskjal hefur verið vistað í Auði.',
     description:
       'Notaður sem texti í sms-i þegar sækjandi breytir kröfunni og sendir aftur á héraðsdómstól',
+  },
+  prosecutorReceivedByCourt: {
+    id: 'judicial.system.backend:notifications.prosecutor_received_by_court',
+    defaultMessage:
+      '{court} hefur móttekið kröfu um {investigationPrefix, select, onlyPrefix {rannsóknarheimild} withPrefix {rannsóknarheimild ({courtTypeName})} other {{courtTypeName}}} sem þú sendir og úthlutað málsnúmerinu {courtCaseNumber}. Sjá nánar á rettarvorslugatt.island.is.',
+    description: 'Notaður sem texti í sms-i þegar sækjandi fær kröfuskjal',
   },
   signedRuling: defineMessages({
     subject: {

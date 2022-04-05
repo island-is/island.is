@@ -433,6 +433,7 @@ export class NotificationService {
     theCase: Case,
   ): Promise<Recipient> {
     const smsText = formatProsecutorReceivedByCourtSmsNotification(
+      this.formatMessage,
       theCase.type,
       theCase.court?.name,
       theCase.courtCaseNumber,

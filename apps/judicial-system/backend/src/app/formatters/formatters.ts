@@ -9,7 +9,7 @@ import type { FormatMessage } from '@island.is/cms-translations'
 import {
   CaseLegalProvisions,
   CaseType,
-  isRestrictionCase,
+  isInvestigationCase,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
 import type { Gender } from '@island.is/judicial-system/types'
@@ -136,17 +136,24 @@ export function formatCourtResubmittedToCourtSmsNotification(
 }
 
 export function formatProsecutorReceivedByCourtSmsNotification(
+  formatMessage: FormatMessage,
   type: CaseType,
   court?: string,
   courtCaseNumber?: string,
 ): string {
-  const receivedCaseText = isRestrictionCase(type)
-    ? `${caseTypes[type]}`
-    : type === CaseType.OTHER
-    ? 'rannsóknarheimild'
-    : `rannsóknarheimild (${caseTypes[type]})`
+  let investigationPrefix = 'noPrefix'
+  if (type === CaseType.OTHER) {
+    investigationPrefix = 'onlyPrefix'
+  } else if (isInvestigationCase(type)) {
+    investigationPrefix = 'withPrefix'
+  }
 
-  return `${court} hefur móttekið kröfu um ${receivedCaseText} sem þú sendir og úthlutað málsnúmerinu ${courtCaseNumber}. Sjá nánar á rettarvorslugatt.island.is.`
+  return formatMessage(notifications.prosecutorReceivedByCourt, {
+    court,
+    investigationPrefix,
+    courtTypeName: caseTypes[type],
+    courtCaseNumber,
+  })
 }
 
 export function formatProsecutorCourtDateEmailNotification(
