@@ -43,19 +43,14 @@ import {
 import { servicePortalSaveAccessControl } from '@island.is/plausible'
 
 const compareArray = [
-  'Pósthólf',
-  'Lesaðgangur að umsóknum',
-  'Mínar upplýsingar',
-  'Meðmæli',
-  'Skírteini',
-  'Starfsleyfi',
-  'Menntun',
-  'Fasteignir',
-  'Eignir',
-  'Fjármál',
-  'Launamál',
-  'Staða og hreyfingar',
-  'Ökutæki',
+  '@island.is/documents',
+  '@island.is/applications:read',
+  '@island.is/me:details',
+  '@island.is/endorsements',
+  '@island.is/assets',
+  'fjarmal',
+  '@island.is/finance/salary',
+  '@island.is/finance:overview',
 ]
 
 const AuthApiScopesQuery = gql`
@@ -403,8 +398,8 @@ const Access: FC = () => {
                 accessItemsArray
                   .sort(
                     (a, b) =>
-                      compareArray.indexOf(a[0].displayName) -
-                      compareArray.indexOf(b[0].displayName),
+                      compareArray.indexOf(a[0].name) -
+                      compareArray.indexOf(b[0].name),
                   )
                   .map((item, index) => {
                     return (
