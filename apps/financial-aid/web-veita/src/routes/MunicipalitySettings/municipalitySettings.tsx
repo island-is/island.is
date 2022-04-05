@@ -29,6 +29,9 @@ export const MunicipalitySettings = () => {
         <SelectedMunicipality
           municipality={municipality}
           currentMunicipality={currentMunicipality}
+          setCurrentMunicipality={(muni: Municipality) => {
+            setCurrentMunicipality(muni)
+          }}
         />
       )}
       {currentMunicipality && (
