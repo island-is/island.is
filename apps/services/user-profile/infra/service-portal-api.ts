@@ -43,4 +43,9 @@ export const serviceSetup = (): ServiceBuilder<'service-portal-api'> =>
       requests: { cpu: '400m', memory: '512Mi' },
     })
     .postgres({ passwordSecret: '/k8s/service-portal/api/DB_PASSWORD' })
-    .grantNamespaces('nginx-ingress-external', 'islandis', 'user-notification')
+    .grantNamespaces(
+      'nginx-ingress-external',
+      'islandis',
+      'user-notification',
+      'identity-server',
+    )

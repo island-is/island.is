@@ -1202,6 +1202,7 @@ service-portal:
     - 'nginx-ingress-external'
     - 'islandis'
     - 'user-notification'
+    - 'identity-server'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -1256,6 +1257,7 @@ service-portal-api:
     - 'nginx-ingress-external'
     - 'islandis'
     - 'user-notification'
+    - 'identity-server'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
