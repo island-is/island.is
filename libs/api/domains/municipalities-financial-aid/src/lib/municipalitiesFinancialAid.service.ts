@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common'
+
 import type { Auth } from '@island.is/auth-nest-tools'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import {
@@ -6,6 +7,8 @@ import {
   MunicipalityApi,
   FilesApi,
 } from '@island.is/clients/municipalities-financial-aid'
+import { FetchError } from '@island.is/clients/middlewares'
+
 import { MunicipalityQueryInput } from './models/municipality.input'
 import { GetSignedUrlInput } from './dto/getSignedUrl.input'
 
@@ -29,15 +32,17 @@ export class MunicipalitiesFinancialAidService {
     return this.filesApi.withMiddleware(new AuthMiddleware(auth))
   }
 
+  private handle404(error: FetchError) {
+    if (error.status === 404) {
+      return null
+    }
+    throw error
+  }
+
   async municipalitiesFinancialAidCurrentApplication(auth: Auth) {
     return await this.applicationApiWithAuth(auth)
       .applicationControllerGetCurrentApplication()
-      .catch((error) => {
-        if (error.status === 404) {
-          return null
-        }
-        throw error
-      })
+      .catch(this.handle404)
   }
 
   async municipalityInfoForFinancialAId(
@@ -46,12 +51,7 @@ export class MunicipalitiesFinancialAidService {
   ) {
     return await this.municipalityApiWithAuth(auth)
       .municipalityControllerGetById(municipalityCode)
-      .catch((error) => {
-        if (error.status === 404) {
-          return null
-        }
-        throw error
-      })
+      .catch(this.handle404)
   }
 
   async municipalitiesFinancialAidCreateSignedUrl(
