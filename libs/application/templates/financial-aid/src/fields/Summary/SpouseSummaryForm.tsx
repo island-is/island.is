@@ -11,18 +11,9 @@ import {
 import { Routes } from '../../lib/constants'
 import { DescriptionText } from '../index'
 import { formatAddress, spouseFormItems } from '../../lib/formatters'
-import {
-  FormInfo,
-  SummaryComment,
-  UserInfo,
-  ContactInfo,
-  Files,
-} from './index'
+import { FormInfo, SummaryComment, UserInfo, ContactInfo, Files } from './index'
 
-const SpouseSummaryForm = ({
-  application,
-  goToScreen,
-}: FAFieldBaseProps) => {
+const SpouseSummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
   const { id, answers, externalData } = application
   const summaryCommentType = SummaryCommentType.SPOUSEFORMCOMMENT
 

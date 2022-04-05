@@ -15,7 +15,7 @@ export class MunicipalitiesFinancialAidService {
     private applicationApi: ApplicationApi,
     private municipalityApi: MunicipalityApi,
     private filesApi: FilesApi,
-  ) { }
+  ) {}
 
   applicationApiWithAuth(auth: Auth) {
     return this.applicationApi.withMiddleware(new AuthMiddleware(auth))
@@ -32,9 +32,6 @@ export class MunicipalitiesFinancialAidService {
   async municipalitiesFinancialAidCurrentApplication(auth: Auth) {
     return await this.applicationApiWithAuth(auth)
       .applicationControllerGetCurrentApplication()
-      .then((res) => {
-        return res
-      })
       .catch((error) => {
         if (error.status === 404) {
           return null
@@ -49,9 +46,6 @@ export class MunicipalitiesFinancialAidService {
   ) {
     return await this.municipalityApiWithAuth(auth)
       .municipalityControllerGetById(municipalityCode)
-      .then((res) => {
-        return res
-      })
       .catch((error) => {
         if (error.status === 404) {
           return null
@@ -64,13 +58,8 @@ export class MunicipalitiesFinancialAidService {
     auth: Auth,
     getSignedUrl: GetSignedUrlInput,
   ) {
-    return await this.fileApiWithAuth(auth)
-      .fileControllerCreateSignedUrl({ getSignedUrlDto: getSignedUrl })
-      .then((res) => {
-        return res
-      })
-      .catch((error) => {
-        throw error
-      })
+    return await this.fileApiWithAuth(auth).fileControllerCreateSignedUrl({
+      getSignedUrlDto: getSignedUrl,
+    })
   }
 }
