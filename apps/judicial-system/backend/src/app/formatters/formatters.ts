@@ -127,9 +127,12 @@ export function formatCourtReadyForCourtSmsNotification(
 }
 
 export function formatCourtResubmittedToCourtSmsNotification(
+  formatMessage: FormatMessage,
   courtCaseNumber?: string,
 ) {
-  return `Sækjandi í máli ${courtCaseNumber} hefur breytt kröfunni og sent aftur á héraðsdómstól. Nýtt kröfuskjal hefur verið vistað í Auði.`
+  return formatMessage(notifications.courtResubmittedToCourt, {
+    courtCaseNumber,
+  })
 }
 
 export function formatProsecutorReceivedByCourtSmsNotification(

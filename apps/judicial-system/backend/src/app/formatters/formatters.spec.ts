@@ -376,12 +376,22 @@ describe('formatReadyForCourtSmsNotification', () => {
 })
 
 describe('formatReadyForCourtSmsNotification', () => {
+  const messages = [notifications.courtResubmittedToCourt]
+  let formatMessage: FormatMessage
+  beforeAll(() => {
+    const intl = createTestIntl('is-IS', messages)
+    formatMessage = intl.formatMessage
+  })
+
   test('should format ready for court SMS notification', () => {
     // Arrange
     const courtCaseNumber = 'R-123/2021'
 
     // Act
-    const res = formatCourtResubmittedToCourtSmsNotification(courtCaseNumber)
+    const res = formatCourtResubmittedToCourtSmsNotification(
+      formatMessage,
+      courtCaseNumber,
+    )
 
     // Assert
     expect(res).toBe(

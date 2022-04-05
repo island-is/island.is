@@ -3,7 +3,7 @@ import { CaseType } from '@island.is/judicial-system/types'
 
 export const notifications = {
   prosecutorText: {
-    id: 'judicial.system.backend:notifications.courtRevoked.prosecutor_text',
+    id: 'judicial.system.backend:notifications.prosecutor_text',
     defaultMessage:
       'Sækjandi: {prosecutorName, select, NONE {Ekki skráður} other {{prosecutorName}}}.',
     description:
@@ -71,25 +71,34 @@ export const notifications = {
   courtReadyForCourt: defineMessages({
     submittedCase: {
       id:
-        'judicial.system.backend:notifications.courtRevoked.case_ready_for_court',
+        'judicial.system.backend:notifications.courtReadyForCourt.case_ready_for_court',
       defaultMessage: `{caseType, select, ${CaseType.TRAVEL_BAN} {Farbannskrafa} ${CaseType.ADMISSION_TO_FACILITY} {Krafa um vistun á viðeignandi stofnun} ${CaseType.CUSTODY} {Gæsluvarðhaldskrafa} ${CaseType.OTHER} {Krafa um rannsóknarheimild} other {Krafa um rannsóknarheimild ({courtTypeName})}} tilbúin til afgreiðslu.`,
       description: 'Notaður sem texti í sms-i til TODO',
     },
     prosecutorText: {
-      id: 'judicial.system.backend:notifications.courtRevoked.prosecutor_text',
+      id:
+        'judicial.system.backend:notifications.courtReadyForCourt.prosecutor_text',
       defaultMessage:
         'Sækjandi: {prosecutorName, select, NONE {Ekki skráður} other {{prosecutorName}}}.',
       description:
         'Notaður sem texti í sms-i til þess að tilgreina hver sækjandi er',
     },
     courtText: {
-      id: 'judicial.system.backend:notifications.courtRevoked.court_text',
+      id: 'judicial.system.backend:notifications.courtReadyForCourt.court_text',
       defaultMessage:
         'Dómstóll: {court, select, NONE {Ekki skráður} other {{court}}}.',
       description:
         'Notaður sem texti í sms-i til þess að tilgreina hvaða dómstóll er skráður',
     },
   }),
+  courtResubmittedToCourt: {
+    id:
+      'judicial.system.backend:notifications.courtRevoked.case_resubmitted_to_court',
+    defaultMessage:
+      'Sækjandi í máli {courtCaseNumber} hefur breytt kröfunni og sent aftur á héraðsdómstól. Nýtt kröfuskjal hefur verið vistað í Auði.',
+    description:
+      'Notaður sem texti í sms-i þegar sækjandi breytir kröfunni og sendir aftur á héraðsdómstól',
+  },
   signedRuling: defineMessages({
     subject: {
       id: 'judicial.system.backend:notifications.signed_ruling.subject',
