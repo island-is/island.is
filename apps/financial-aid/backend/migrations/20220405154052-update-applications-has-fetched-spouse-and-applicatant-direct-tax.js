@@ -3,9 +3,8 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.sequelize.transaction((t) =>
-    Promise.all([
-      queryInterface
-        .addColumn(
+      Promise.all([
+        queryInterface.addColumn(
           'applications',
           'has_fetched_direct_tax_payment',
           {
@@ -22,9 +21,8 @@ module.exports = {
             allowNull: true,
           },
           { transaction: t },
-        )
-    
-        ])
+        ),
+      ]),
     )
   },
 
