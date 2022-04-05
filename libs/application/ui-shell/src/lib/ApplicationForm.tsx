@@ -1,6 +1,7 @@
 import React, { FC, useEffect, useState } from 'react'
 import { useQuery } from '@apollo/client'
 import * as Sentry from '@sentry/react'
+import Cookie from 'js-cookie'
 
 import { APPLICATION_APPLICATION } from '@island.is/application/graphql'
 import {
@@ -10,6 +11,7 @@ import {
   Schema,
   coreMessages,
 } from '@island.is/application/core'
+import { Locale } from '@island.is/shared/types'
 import {
   getApplicationTemplateByTypeId,
   getApplicationUIFields,
@@ -73,14 +75,22 @@ const ShellWrapper: FC<{
   const [dataSchema, setDataSchema] = useState<Schema>()
   const [form, setForm] = useState<Form>()
   const [, fieldsDispatch] = useFields()
-  const { formatMessage } = useLocale()
+  const { formatMessage, changeLanguage, lang } = useLocale()
   const featureFlagClient = useFeatureFlagClient()
+  // Temp solution while the preffered locale isnt defined in the IDS to persist locale
+  let cookieLocale = ''
+  if (typeof window !== 'undefined' && window.document) {
+    cookieLocale = Cookie.get('applicationSystemLocale') === 'en' ? 'en' : 'is'
+  }
 
   useApplicationNamespaces(application.typeId)
-
   useEffect(() => {
     async function populateForm() {
       if (dataSchema === undefined && form === undefined) {
+        if (cookieLocale && lang !== cookieLocale) {
+          changeLanguage(cookieLocale as Locale)
+        }
+
         const template = await getApplicationTemplateByTypeId(
           application.typeId,
         )
@@ -126,6 +136,9 @@ const ShellWrapper: FC<{
     dataSchema,
     formatMessage,
     featureFlagClient,
+    changeLanguage,
+    lang,
+    cookieLocale,
   ])
 
   if (!form || !dataSchema) {

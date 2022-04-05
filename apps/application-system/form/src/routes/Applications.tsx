@@ -2,6 +2,7 @@ import React, { FC, useEffect } from 'react'
 import { useMutation } from '@apollo/client'
 import { useParams, useHistory } from 'react-router-dom'
 import isEmpty from 'lodash/isEmpty'
+import Cookie from 'js-cookie'
 import {
   CREATE_APPLICATION,
   APPLICATION_APPLICATIONS,
@@ -13,6 +14,7 @@ import {
   Button,
   GridContainer,
 } from '@island.is/island-ui/core'
+import { Locale } from '@island.is/shared/types'
 import { coreMessages, getTypeFromSlug } from '@island.is/application/core'
 import { ApplicationList } from '@island.is/application/ui-components'
 import { ErrorShell } from '@island.is/application/ui-shell'
@@ -27,7 +29,12 @@ import { ApplicationLoading } from '../components/ApplicationsLoading/Applicatio
 export const Applications: FC = () => {
   const { slug } = useParams<{ slug: string }>()
   const history = useHistory()
-  const { formatMessage } = useLocale()
+  // Temp solution while the preffered locale isnt defined in the IDS to persist locale
+  let cookieLocale = ''
+  if (typeof window !== 'undefined' && window.document) {
+    cookieLocale = Cookie.get('applicationSystemLocale') === 'en' ? 'en' : 'is'
+  }
+  const { formatMessage, changeLanguage, lang } = useLocale()
   const type = getTypeFromSlug(slug)
 
   useApplicationNamespaces(type)
@@ -65,7 +72,10 @@ export const Applications: FC = () => {
     if (type && data && isEmpty(data.applicationApplications)) {
       createApplication()
     }
-  }, [type, data])
+    if (cookieLocale && lang !== cookieLocale) {
+      changeLanguage(cookieLocale as Locale)
+    }
+  }, [type, data, cookieLocale, lang, changeLanguage])
 
   if (loading) {
     return <ApplicationLoading />
