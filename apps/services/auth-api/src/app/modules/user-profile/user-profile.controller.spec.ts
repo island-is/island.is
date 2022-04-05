@@ -149,7 +149,7 @@ describe('UserProfileController', () => {
 
         // Assert
         expect(res.body).toEqual({})
-        expect(errorLog).toHaveBeenCalledTimes(2)
+        expect(errorLog).toHaveBeenCalledTimes(1)
       })
 
       it('with full registries should return all claims', async () => {
@@ -181,17 +181,17 @@ describe('UserProfileController', () => {
             postalCode: domicile.postnumer,
             locality: domicile.stadur,
           },
-          email: userProfile.email,
-          emailVerified: userProfile.emailVerified,
+          // email: userProfile.email,
+          // emailVerified: userProfile.emailVerified,
           familyName: individual.kenninafn,
           gender: 'male',
           givenName: individual.eiginnafn,
-          locale: userProfile.locale,
+          // locale: userProfile.locale,
           middleName: individual.millinafn,
           name: individual.nafn,
-          phoneNumber: userProfile.mobilePhoneNumber,
-          phoneNumberVerified: userProfile.mobilePhoneNumberVerified,
-          picture: userProfile.profileImageUrl,
+          // phoneNumber: userProfile.mobilePhoneNumber,
+          // phoneNumberVerified: userProfile.mobilePhoneNumberVerified,
+          // picture: userProfile.profileImageUrl,
         }
 
         // Act

@@ -44,7 +44,9 @@ export class UserProfileService {
   async getIndividualUserProfileClaims(auth: User): Promise<UserProfileDTO> {
     const [nationalRegistryClaims, userProfileClaims] = await Promise.all([
       this.getClaimsFromNationalRegistry(auth).catch(this.handleError),
-      this.getClaimsFromUserProfile(auth).catch(this.handleError),
+      // REVERTED for release/14.3.0
+      // this.getClaimsFromUserProfile(auth).catch(this.handleError),
+      {},
     ])
     return { ...nationalRegistryClaims, ...userProfileClaims }
   }
