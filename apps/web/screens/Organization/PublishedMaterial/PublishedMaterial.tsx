@@ -359,6 +359,7 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
                               ordering.field === 'title.sort' &&
                               ordering.order === 'desc'
                             }
+                            hasBorderTop={true}
                             onClick={() =>
                               setOrdering({
                                 field: 'title.sort',
@@ -378,6 +379,7 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
                               ordering.field === 'releaseDate' &&
                               ordering.order === 'desc'
                             }
+                            hasBorderTop={true}
                             onClick={() =>
                               setOrdering({
                                 field: 'releaseDate',
@@ -403,6 +405,7 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
                               ordering.field === 'releaseDate' &&
                               ordering.order === 'asc'
                             }
+                            hasBorderTop={true}
                             onClick={() =>
                               setOrdering({
                                 field: 'releaseDate',
