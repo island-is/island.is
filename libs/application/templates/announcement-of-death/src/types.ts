@@ -41,7 +41,7 @@ export interface Will {
 }
 
 export interface Prenup {
-  nationalId: string
-  partnerNationalId: string
   hasPrenup: boolean
+  nationalId: string
+  partnerNationalId?: string
 }

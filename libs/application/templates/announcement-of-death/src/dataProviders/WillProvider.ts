@@ -28,10 +28,12 @@ export class WillProvider extends BasicDataProvider {
         if (response.errors?.length > 0) {
           return this.handleError(response.errors[0])
         }
+        const data = response.data.getPrenup
+        const will: Will = {
+          hasWill: data.hefurErfdaskra
+        }
 
-        return Promise.resolve(
-          response.data.getWill,
-        )
+        return Promise.resolve(will)
       })
       .catch((error) => this.handleError(error))
       */

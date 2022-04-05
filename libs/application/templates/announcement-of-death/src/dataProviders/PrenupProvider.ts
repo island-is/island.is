@@ -31,10 +31,14 @@ export class PrenupProvider extends BasicDataProvider {
         if (response.errors?.length > 0) {
           return this.handleError(response.errors[0])
         }
+        const data = response.data.getPrenup
+        const prenup: Prenup = {
+          hasPrenup: data.hefurKaupmala
+          nationalId: data.nationalId
+          partnerNationalId: data.partnerNationalId ?? ""
+        }
 
-        return Promise.resolve(
-          response.data.getPrenup,
-        )
+        return Promise.resolve(prenup)
       })
       .catch((error) => this.handleError(error))
     */
