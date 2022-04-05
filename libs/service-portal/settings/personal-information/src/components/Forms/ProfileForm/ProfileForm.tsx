@@ -19,6 +19,7 @@ import { Nudge } from './components/Inputs/Nudge'
 import { msg } from '../../../lib/messages'
 import { DropModalType, DataStatus } from './types/form'
 import { bankInfoObject } from '../../../utils/bankInfoHelper'
+import { diffModifiedOverMaxDate } from '../../../utils/showModal'
 
 interface Props {
   onCloseOverlay?: () => void
@@ -100,10 +101,13 @@ export const ProfileForm: FC<Props> = ({
         userProfileData?.mobileStatus === DataStatus.NOT_VERIFIED &&
         userProfile?.mobilePhoneNumber
 
+      const diffOverMax = diffModifiedOverMaxDate(userProfileData?.modified)
+
       // If user is migrating. Then process migration, else close modal without action.
       if (
-        (hasEmailNoVerification || hasTelNoVerification) &&
-        !hasModification
+        ((hasEmailNoVerification || hasTelNoVerification) &&
+          !hasModification) ||
+        diffOverMax
       ) {
         /**
          * If email is present in data, but has status of 'NOT_VERIFIED',

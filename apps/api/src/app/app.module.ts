@@ -197,14 +197,7 @@ const autoSchemaFile = environment.production
     IdentityModule,
     AuthModule.register(environment.auth as AuthConfig),
     SyslumennModule,
-    CompanyRegistryModule.register({
-      password: environment.rskDomain.password!,
-      url: environment.rskDomain.url!,
-      username: environment.rskDomain.username!,
-      xRoadProviderId: environment.rskCompanyInfo.xRoadProviderId!,
-      xRoadBaseUrl: environment.rskCompanyInfo.xRoadBaseUrl!,
-      xRoadClientId: environment.rskCompanyInfo.xRoadClientId!,
-    }),
+    CompanyRegistryModule,
     IcelandicNamesModule.register({
       backendUrl: environment.icelandicNamesRegistry.backendUrl!,
     }),

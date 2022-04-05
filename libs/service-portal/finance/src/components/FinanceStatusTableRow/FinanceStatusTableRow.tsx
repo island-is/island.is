@@ -7,8 +7,7 @@ import {
   FinanceStatusOrganizationChargeType,
 } from '../../screens/FinanceStatus/FinanceStatusData.types'
 import FinanceStatusDetailTable from '../../components/FinanceStatusDetailTable/FinanceStatusDetailTable'
-import { ExpandRow } from '../../components/ExpandableTable'
-import amountFormat from '../../utils/amountFormat'
+import { ExpandRow, amountFormat } from '@island.is/service-portal/core'
 
 const GetFinanceStatusDetailsQuery = gql`
   query GetFinanceStatusDetailsQuery($input: GetFinancialOverviewInput!) {
