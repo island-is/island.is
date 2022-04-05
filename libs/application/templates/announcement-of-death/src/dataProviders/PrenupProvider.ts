@@ -3,7 +3,7 @@ import {
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
 } from '@island.is/application/core'
-import { Prenup } from '../types/schema'
+import { Prenup } from '../types'
 import { m } from '../lib/messages'
 
 export class PrenupProvider extends BasicDataProvider {
@@ -11,7 +11,11 @@ export class PrenupProvider extends BasicDataProvider {
 
   async provide(): Promise<Prenup> {
     // TODO implement from external client
-    return { hasPrenup: true }
+    return Promise.resolve({
+      nationalId: "1111111111",
+      partnerNationalId: "1111111111",
+      hasPrenup: true,
+    })
 
     /*
     const query = `

@@ -4,13 +4,13 @@ import {
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
 } from '@island.is/application/core'
-import { RealEstates } from '../types/schema'
+import { PropertyOverview } from '../types/schema'
 import { m } from '../lib/messages'
 
 export class RealEstateProvider extends BasicDataProvider {
   type = 'DistrictsProvider'
 
-  async provide(application: Application): Promise<RealEstates> {
+  async provide(application: Application): Promise<PropertyOverview> {
     // TODO verify this works
     const deadded: string =
       (application.externalData?.deadPersonNationalId.data as string) ?? ''

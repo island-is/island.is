@@ -29,8 +29,10 @@ export interface Property {
 }
 
 export interface Vehicle {
-  vehicleNumber: string
-  address?: string
+  plateNumber: string
+  numberOfWheels: number
+  weight: number
+  year: number
 }
 
 export interface Will {
@@ -39,5 +41,7 @@ export interface Will {
 }
 
 export interface Prenup {
+  nationalId: string
+  partnerNationalId: string
   hasPrenup: boolean
 }

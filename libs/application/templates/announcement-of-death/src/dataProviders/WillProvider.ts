@@ -3,7 +3,7 @@ import {
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
 } from '@island.is/application/core'
-import { Will } from '../types/schema'
+import { Will } from '../types'
 import { m } from '../lib/messages'
 
 export class WillProvider extends BasicDataProvider {
