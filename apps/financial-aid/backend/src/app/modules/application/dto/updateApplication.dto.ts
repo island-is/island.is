@@ -1,4 +1,10 @@
-import { IsNotEmpty, IsString, IsOptional, IsArray } from 'class-validator'
+import {
+  IsNotEmpty,
+  IsString,
+  IsOptional,
+  IsArray,
+  IsBoolean,
+} from 'class-validator'
 
 import { ApiProperty } from '@nestjs/swagger'
 
@@ -63,4 +69,9 @@ export class UpdateApplicationDto {
   @IsArray()
   @ApiProperty()
   readonly directTaxPayments?: DirectTaxPayment[]
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiProperty()
+  readonly spouseHasFetchedDirectTaxPayment: boolean
 }
