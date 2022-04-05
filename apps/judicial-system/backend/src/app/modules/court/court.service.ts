@@ -5,7 +5,7 @@ import { Injectable } from '@nestjs/common'
 import { CourtClientService } from '@island.is/judicial-system/court-client'
 import type { CaseType, User } from '@island.is/judicial-system/types'
 
-import { now } from '../../factories'
+import { nowFactory } from '../../factories'
 import { EventService } from '../event'
 
 type SubTypes = { [c in CaseType]: string | [string, string] }
@@ -247,7 +247,7 @@ export class CourtService {
         caseType: 'R - Rannsóknarmál',
         subtype: subType,
         status: 'Skráð',
-        receivalDate: formatISO(now(), { representation: 'date' }),
+        receivalDate: formatISO(nowFactory(), { representation: 'date' }),
         basedOn: 'Rannsóknarhagsmunir',
         sourceNumber: policeCaseNumber,
       })
