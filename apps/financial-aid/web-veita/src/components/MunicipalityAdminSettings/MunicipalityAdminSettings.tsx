@@ -31,13 +31,10 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
     UpdateMunicipalityMutation,
   )
   const { setMunicipality } = useMunicipalities()
-  console.log('state', state)
-  // useEffect(() => {
-  //   console.log('ferdu hingad og uppfærir? ')
-  //   console.log(state, 'currnet')
-  //   setState(currentMunicipality)
-  //   console.log(state, 'state')
-  // }, [currentMunicipality])
+
+  useEffect(() => {
+    setState(currentMunicipality)
+  }, [currentMunicipality])
 
   const INDIVIDUAL = 'individual'
   const COHABITATION = 'cohabitation'

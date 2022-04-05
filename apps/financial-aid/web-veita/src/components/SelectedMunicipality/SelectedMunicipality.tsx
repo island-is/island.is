@@ -39,10 +39,6 @@ export const SelectedMunicipality = ({
         onChange={(selected: ValueType<ReactSelectOption>) => {
           const { value } = selected as ReactSelectOption
           if (value && isString(value)) {
-            console.log(
-              value,
-              municipality.find((el) => el.municipalityId === value),
-            )
             setCurrentMunicipality(
               municipality.find((el) => el.municipalityId === value),
             )
