@@ -55,6 +55,13 @@ export class AccessControlModel extends Model<AccessControlModel> {
   })
   phone!: string
 
+  @Field({ nullable: true })
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  recyclingLocation?: string
+
   @ForeignKey(() => RecyclingPartnerModel)
   @Column({
     type: DataType.STRING,

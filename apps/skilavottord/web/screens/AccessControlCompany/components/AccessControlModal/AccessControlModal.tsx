@@ -18,7 +18,7 @@ interface AccessControlModalProps
     e?: BaseSyntheticEvent<object, any, any> | undefined,
   ) => Promise<void>
   // recyclingPartners?: Option[]
-  // roles: Option[]
+  roles: Option[]
   errors: DeepMap<FieldValues, FieldError>
   control: Control<FieldValues>
   nationalIdDisabled?: boolean
@@ -32,7 +32,7 @@ export const AccessControlModal: FC<AccessControlModalProps> = ({
   onCancel,
   onSubmit,
   // recyclingPartners,
-  // roles,
+  roles,
   nationalIdDisabled = false,
   // partnerIdRequired = false,
   errors,
@@ -135,7 +135,7 @@ export const AccessControlModal: FC<AccessControlModalProps> = ({
             error={errors?.phone?.message}
             backgroundColor="blue"
           />
-          {/* <Controller
+          <Controller
             name="role"
             control={control}
             rules={{
@@ -161,7 +161,7 @@ export const AccessControlModal: FC<AccessControlModalProps> = ({
                 />
               )
             }}
-          /> */}
+          />
           {/* <Controller
             name="partnerId"
             control={control}

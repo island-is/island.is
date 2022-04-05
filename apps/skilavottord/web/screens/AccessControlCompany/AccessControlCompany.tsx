@@ -204,6 +204,9 @@ const AccessControlCompany: FC = () => {
     .filter((role) =>
       !isDeveloper(user?.role) ? role !== Role.developer : role,
     )
+    .filter((role) =>
+      role === Role.recyclingCompany || role === Role.recyclingCompanyAdmin
+    )
     .map((role) => ({
       label: getRoleTranslation(role as Role, activeLocale),
       value: role,
@@ -314,7 +317,7 @@ const AccessControlCompany: FC = () => {
             onCancel={handleCreateAccessControlCloseModal}
             onSubmit={handleCreateAccessControl}
             // recyclingPartners={recyclingPartners}
-            // roles={roles}
+            roles={roles}
           />
         </Box>
         <Stack space={3}>
@@ -358,7 +361,10 @@ const AccessControlCompany: FC = () => {
                     <Data>{item.name}</Data>
                     <Data>{item.email}</Data>
                     <Data>{item.phone}</Data>
-                    <Data>{item.role}</Data>
+                    <Data>{getRoleTranslation(
+                        item.role as AccessControlRole & Role,
+                        activeLocale,
+                      )}</Data>
                     <Data>
                       <DropdownMenu
                         disclosure={
@@ -426,7 +432,7 @@ const AccessControlCompany: FC = () => {
         onCancel={handleUpdateAccessControlCloseModal}
         onSubmit={handleUpdateAccessControl}
         // recyclingPartners={recyclingPartners}
-        // roles={roles}
+        roles={roles}
         currentPartner={partner}
       />
     </PartnerPageLayout>

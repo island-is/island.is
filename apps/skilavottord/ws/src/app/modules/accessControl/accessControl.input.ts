@@ -22,6 +22,9 @@ export class CreateAccessControlInput {
 
   @Field()
   phone!: string
+
+  @Field({ nullable: true })
+  recyclingLocation?: string
 }
 
 @InputType()
@@ -43,6 +46,9 @@ export class UpdateAccessControlInput {
 
   @Field()
   phone!: string
+
+  @Field({ nullable: true })
+  recyclingLocation?: string
 }
 
 @InputType()

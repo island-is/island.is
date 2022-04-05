@@ -18,7 +18,7 @@ interface AccessControlCreateProps
   > {
   onSubmit: (partner: CreateAccessControlInput) => Promise<void>
   // recyclingPartners: Option[]
-  // roles: Option[]
+  roles: Option[]
 }
 
 export const AccessControlCreate: FC<AccessControlCreateProps> = ({
@@ -28,7 +28,7 @@ export const AccessControlCreate: FC<AccessControlCreateProps> = ({
   onCancel,
   onSubmit,
   // recyclingPartners,
-  // roles,
+  roles,
 }) => {
   const { control, errors, handleSubmit, watch } = useForm({
     mode: 'onChange',
@@ -36,13 +36,14 @@ export const AccessControlCreate: FC<AccessControlCreateProps> = ({
   const { user } = useContext(UserContext)
 
   const handleOnSubmit = handleSubmit(
-    ({ nationalId, name, email, phone }) => {
+    ({ nationalId, name, role, email, phone }) => {
       return onSubmit({
         nationalId,
         name,
         phone,
         email,
-        role: AccessControlRole.recyclingCompany,
+        // role: AccessControlRole.recyclingCompany,
+        role: role.value,
         partnerId: user?.partnerId,
       })
     },
@@ -56,7 +57,7 @@ export const AccessControlCreate: FC<AccessControlCreateProps> = ({
       onCancel={onCancel}
       onSubmit={handleOnSubmit}
       // recyclingPartners={recyclingPartners}
-      // roles={roles}
+      roles={roles}
       control={control}
       errors={errors}
       // partnerIdRequired={watch('role')?.value === Role.recyclingCompanyAdmin}

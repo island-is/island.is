@@ -19,7 +19,7 @@ interface AccessControlUpdateProps
   > {
   onSubmit: (partner: UpdateAccessControlInput) => Promise<void>
   // recyclingPartners: Option[]
-  // roles: Option[]
+  roles: Option[]
   currentPartner?: AccessControl
 }
 
@@ -30,7 +30,7 @@ export const AccessControlUpdate: FC<AccessControlUpdateProps> = ({
   onCancel,
   onSubmit,
   // recyclingPartners,
-  // roles,
+  roles,
   currentPartner,
 }) => {
   const { control, errors, reset, handleSubmit, watch } = useForm({
@@ -41,7 +41,7 @@ export const AccessControlUpdate: FC<AccessControlUpdateProps> = ({
   useEffect(() => {
     reset({
       ...currentPartner,
-      // role: roles.find((option) => option.value === currentPartner?.role),
+      role: roles.find((option) => option.value === currentPartner?.role),
       // partnerId: recyclingPartners.find(
       //   (option) =>
       //     option.value === currentPartner?.recyclingPartner?.companyId,
@@ -50,13 +50,14 @@ export const AccessControlUpdate: FC<AccessControlUpdateProps> = ({
   }, [currentPartner])
 
   const handleOnSubmit = handleSubmit(
-    ({ nationalId, name, email, phone }) => {
+    ({ nationalId, name, role, email, phone }) => {
       return onSubmit({
         nationalId,
         name,
         email,
         phone,
-        role: AccessControlRole.recyclingCompany,
+        // role: AccessControlRole.recyclingFund,
+        role: role.value,
         partnerId: user?.partnerId,
       })
     },
@@ -70,7 +71,7 @@ export const AccessControlUpdate: FC<AccessControlUpdateProps> = ({
       onCancel={onCancel}
       onSubmit={handleOnSubmit}
       // recyclingPartners={recyclingPartners}
-      // roles={roles}
+      roles={roles}
       control={control}
       errors={errors}
       // partnerIdRequired={watch('role')?.value === Role.recyclingCompanyAdmin}

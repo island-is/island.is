@@ -285,7 +285,8 @@
   "deregisterSidenav": {
     "title": "Actions",
     "deregister": "Deregister car",
-    "companyInfo": "Company information"
+    "companyInfo": "Company information",
+    "accessControl": "Access Control"
   },
   "deregisterVehicle": {
     "select": {
