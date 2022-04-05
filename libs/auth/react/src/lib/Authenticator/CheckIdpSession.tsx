@@ -10,12 +10,12 @@ import { getAuthSettings, getUserManager } from '../userManager'
 
 enum SessionInfoMessageType {
   SessionInfoRequest = 'SessionInfoRequest',
-  SessionInfoReponse = 'SessionInfoResponse',
+  SessionInfoResponse = 'SessionInfoResponse',
 }
 
 export interface SessionInfoResponse {
   // Type to use to filter postMessage messages
-  type: SessionInfoMessageType.SessionInfoReponse
+  type: SessionInfoMessageType.SessionInfoResponse
 
   // Message detailing if the request was processed OK, no session detected or with failure.
   message: string
@@ -62,7 +62,7 @@ export const CheckIdpSession = () => {
 
       if (
         origin !== authSettings.authority ||
-        sessionInfo.type !== SessionInfoMessageType.SessionInfoReponse
+        sessionInfo.type !== SessionInfoMessageType.SessionInfoResponse
       ) {
         return
       }
