@@ -1,12 +1,18 @@
-import React, { useEffect } from 'react'
+import React from 'react'
+import { useIntl } from 'react-intl'
+
+import { useMutation } from '@apollo/client'
+import { useRouter } from 'next/router'
+
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
 import { UserRole } from '@island.is/judicial-system/types'
-import type { User } from '@island.is/judicial-system/types'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import { useMutation } from '@apollo/client'
 import { CreateUserMutation } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
-import { useRouter } from 'next/router'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
+import type { User } from '@island.is/judicial-system/types'
+import * as Constants from '@island.is/judicial-system/consts'
+
 import UserForm from '../UserForm/UserForm'
 
 const user: User = {
@@ -26,10 +32,6 @@ const user: User = {
 export const NewUser: React.FC = () => {
   const router = useRouter()
 
-  useEffect(() => {
-    document.title = 'Nýr notandi - Réttarvörslugátt'
-  }, [])
-
   const {
     allCourts,
     prosecutorsOffices,
@@ -37,6 +39,7 @@ export const NewUser: React.FC = () => {
     loading: institutionLoading,
     loaded: institutionLoaded,
   } = useInstitution()
+  const { formatMessage } = useIntl()
 
   const [createUserMutation, { loading: createLoading }] = useMutation(
     CreateUserMutation,
@@ -69,6 +72,7 @@ export const NewUser: React.FC = () => {
       isLoading={institutionLoading}
       notFound={false}
     >
+      <PageHeader title={formatMessage(titles.admin.newUser)} />
       {institutionLoaded && (
         <UserForm
           user={user}

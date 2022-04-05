@@ -10,7 +10,7 @@ export const intercept = (res: Case) => {
         },
       })
     }
-  })
+  }).as('gqlCaseQuery')
 }
 
 export const hasOperationName = (

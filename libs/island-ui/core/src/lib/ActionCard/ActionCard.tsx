@@ -10,6 +10,7 @@ import {
 } from '../ProgressMeter/ProgressMeter'
 import * as styles from './ActionCard.css'
 import { Hidden } from '../Hidden/Hidden'
+import { Icon as IconType } from '../IconRC/iconMap'
 
 type ActionCardProps = {
   date?: string
@@ -27,15 +28,17 @@ type ActionCardProps = {
     label: string
     variant?: ButtonTypes['variant']
     size?: ButtonSizes
-    icon?: 'arrowForward'
+    icon?: IconType
     onClick?: () => void
     disabled?: boolean
   }
   secondaryCta?: {
     label: string
-    icon?: 'arrowForward'
     visible?: boolean
+    size?: ButtonSizes
+    icon?: IconType
     onClick?: () => void
+    disabled?: boolean
   }
   progressMeter?: {
     active?: boolean
@@ -208,8 +211,10 @@ export const ActionCard: React.FC<ActionCardProps> = ({
             <Box paddingRight={4} paddingLeft={2}>
               <Button
                 variant="text"
+                size={secondaryCta?.size}
                 onClick={secondaryCta?.onClick}
-                icon={'document'}
+                icon={secondaryCta?.icon}
+                disabled={secondaryCta?.disabled}
               >
                 {secondaryCta?.label}
               </Button>

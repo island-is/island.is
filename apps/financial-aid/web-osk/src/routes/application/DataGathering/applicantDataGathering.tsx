@@ -14,21 +14,16 @@ import { useRouter } from 'next/router'
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/hooks/useFormNavigation'
 
 import {
-  FileType,
   NationalRegistryData,
   NavigationProps,
-  PersonalTaxReturn,
   Routes,
   useAsyncLazyQuery,
 } from '@island.is/financial-aid/shared/lib'
 
-import {
-  NationalRegistryUserQuery,
-  PersonalTaxReturnQuery,
-} from '@island.is/financial-aid-web/osk/graphql'
+import { NationalRegistryUserQuery } from '@island.is/financial-aid-web/osk/graphql'
 import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/hooks/useLogOut'
 import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
-import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
+import useTaxData from '@island.is/financial-aid-web/osk/src/utils/hooks/useTaxData'
 
 const ApplicantDataGathering = () => {
   const router = useRouter()
@@ -38,7 +33,6 @@ const ApplicantDataGathering = () => {
     setMunicipalityById,
     loadingMunicipality,
   } = useContext(AppContext)
-  const { form, updateForm } = useContext(FormContext)
 
   const [accept, setAccept] = useState(false)
   const [hasError, setHasError] = useState(false)
@@ -52,9 +46,7 @@ const ApplicantDataGathering = () => {
     { input: { ssn: string } }
   >(NationalRegistryUserQuery)
 
-  const personalTaxReturnQuery = useAsyncLazyQuery<{
-    municipalitiesPersonalTaxReturn: PersonalTaxReturn
-  }>(PersonalTaxReturnQuery)
+  const gatherTaxData = useTaxData()
 
   const logOut = useLogOut()
 
@@ -71,21 +63,13 @@ const ApplicantDataGathering = () => {
     setError(false)
     setLoading(true)
 
-    const [
-      { data: nationalRegistry },
-      { data: personalTaxReturn },
-    ] = await Promise.all([
-      await nationalRegistryQuery({
-        input: { ssn: user?.nationalId },
-      }).catch(() => {
-        return {
-          data: undefined,
-        }
-      }),
-      await personalTaxReturnQuery({}).catch(() => {
-        return { data: undefined }
-      }),
-    ])
+    const { data: nationalRegistry } = await nationalRegistryQuery({
+      input: { ssn: user?.nationalId },
+    }).catch(() => {
+      return {
+        data: undefined,
+      }
+    })
 
     if (
       !nationalRegistry ||
@@ -96,31 +80,23 @@ const ApplicantDataGathering = () => {
       return
     }
 
-    if (personalTaxReturn) {
-      updateForm({
-        ...form,
-        taxReturnFromRskFile: [
-          {
-            ...personalTaxReturn.municipalitiesPersonalTaxReturn,
-          },
-        ],
-      })
-    }
-
     setNationalRegistryData(nationalRegistry.municipalityNationalRegistryUserV2)
 
     await setMunicipalityById(
       nationalRegistry.municipalityNationalRegistryUserV2.address
         .municipalityCode,
-    ).then((municipality) => {
-      navigation.nextUrl && municipality && municipality.active
-        ? router.push(navigation?.nextUrl)
-        : router.push(
-            Routes.serviceCenter(
-              nationalRegistry.municipalityNationalRegistryUserV2.address
-                .municipalityCode,
-            ),
-          )
+    ).then(async (municipality) => {
+      if (navigation.nextUrl && municipality && municipality.active) {
+        await gatherTaxData()
+        router.push(navigation?.nextUrl)
+      } else {
+        router.push(
+          Routes.serviceCenter(
+            nationalRegistry.municipalityNationalRegistryUserV2.address
+              .municipalityCode,
+          ),
+        )
+      }
     })
   }
 

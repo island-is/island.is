@@ -6,9 +6,9 @@ import {
   UpdateApplication,
   ApplicationState,
   ApplicationEventType,
-  Amount,
 } from '@island.is/financial-aid/shared/lib'
 import { CreateAmountInput } from '../../amount'
+import { DirectTaxPaymentInput } from './directTaxPayment.input'
 
 @InputType()
 export class UpdateApplicationInput implements UpdateApplication {
@@ -55,4 +55,8 @@ export class UpdateApplicationInput implements UpdateApplication {
   @Allow()
   @Field({ nullable: true })
   readonly amount?: CreateAmountInput
+
+  @Allow()
+  @Field(() => [DirectTaxPaymentInput], { nullable: true })
+  readonly directTaxPayments?: DirectTaxPaymentInput[]
 }

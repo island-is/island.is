@@ -11,8 +11,7 @@ import { findSectionIndex } from '@island.is/financial-aid-web/osk/src/utils/hoo
 const Stepper = () => {
   const router = useRouter()
 
-  const { form } = useContext(FormContext)
-  const sections = useNavigationTree(Boolean(form?.hasIncome))
+  const sections = useNavigationTree()
 
   const activeSection = findSectionIndex(sections, router.pathname)
     .activeSectionIndex

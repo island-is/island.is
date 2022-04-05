@@ -38,6 +38,7 @@ export const TextFormField: FC<Props> = ({
     suffix,
     rows,
     required,
+    readOnly,
     maxLength,
     onChange = () => undefined,
   } = field
@@ -55,6 +56,7 @@ export const TextFormField: FC<Props> = ({
       <Box paddingTop={2}>
         <InputController
           disabled={disabled}
+          readOnly={readOnly}
           id={id}
           placeholder={formatText(
             placeholder || '',

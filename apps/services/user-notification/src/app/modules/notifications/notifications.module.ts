@@ -55,6 +55,7 @@ import * as userProfile from '@island.is/clients/user-profile'
             basePath: environment.userProfileServiceBasePath,
             fetchApi: createEnhancedFetch({
               name: 'services-user-notification',
+              circuitBreaker: true,
               autoAuth: {
                 issuer: environment.identityServerPath,
                 clientId: environment.notificationsClientId,

@@ -101,7 +101,7 @@ const Confirmation = () => {
                 type="button"
                 variant="text"
               >
-                Upplýsingar um fjárhagsaðstoð
+                Reglur um fjárhagsaðstoð
               </Button>
             </Box>
           )}

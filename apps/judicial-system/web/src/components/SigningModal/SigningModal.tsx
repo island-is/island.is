@@ -21,8 +21,7 @@ import type {
   RequestSignatureResponse,
   SignatureConfirmationResponse,
 } from '@island.is/judicial-system/types'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-
+import * as Constants from '@island.is/judicial-system/consts'
 import { RulingSignatureConfirmationQuery } from '../../utils/mutations'
 import { Modal } from '..'
 import { useCase } from '../../utils/hooks'

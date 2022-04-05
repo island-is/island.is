@@ -17,10 +17,11 @@ import {
 } from '@island.is/auth-nest-tools'
 import { IsBoolean, IsArray, IsOptional } from 'class-validator'
 import type { Locale } from '@island.is/shared/types'
-
+import { Audit } from '@island.is/nest/audit'
 import { LicenseServiceService } from '../licenseService.service'
 import {
   GenericPkPass,
+  GenericPkPassQrCode,
   GenericPkPassVerification,
   GenericUserLicense,
 } from './genericLicense.model'
@@ -76,10 +77,12 @@ export class VerifyPkPassInput {
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.internal)
 @Resolver()
+@Audit({ namespace: '@island.is/api/license-service' })
 export class MainResolver {
   constructor(private readonly licenseServiceService: LicenseServiceService) {}
 
   @Query(() => [GenericUserLicense])
+  @Audit()
   async genericLicenses(
     @CurrentUser() user: User,
     @Args('locale', { type: () => String, nullable: true })
@@ -100,6 +103,7 @@ export class MainResolver {
   }
 
   @Query(() => GenericUserLicense)
+  @Audit()
   async genericLicense(
     @CurrentUser() user: User,
     @Args('locale', { type: () => String, nullable: true })
@@ -116,25 +120,43 @@ export class MainResolver {
   }
 
   @Mutation(() => GenericPkPass)
+  @Audit()
   async generatePkPass(
     @CurrentUser() user: User,
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
     @Args('input') input: GeneratePkPassInput,
   ): Promise<GenericPkPass> {
+    const { pkpassUrl } = await this.licenseServiceService.generatePkPass(
+      user.nationalId,
+      locale,
+      input.licenseType,
+    )
+    return { pkpassUrl }
+  }
+
+  @Mutation(() => GenericPkPassQrCode)
+  @Audit()
+  async generatePkPassQrCode(
+    @CurrentUser() user: User,
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
+    @Args('input') input: GeneratePkPassInput,
+  ): Promise<GenericPkPassQrCode> {
     const {
-      pkpassUrl,
       pkpassQRCode,
-    } = await this.licenseServiceService.generatePkPass(
+    } = await this.licenseServiceService.generatePkPassQrCode(
       user.nationalId,
       locale,
       input.licenseType,
     )
 
-    return { pkpassUrl, pkpassQRCode }
+    return { pkpassQRCode }
   }
 
+  @Scopes(ApiScope.internal, ApiScope.licensesVerify)
   @Mutation(() => GenericPkPassVerification)
+  @Audit()
   async verifyPkPass(
     @CurrentUser() user: User,
     @Args('locale', { type: () => String, nullable: true })

@@ -29,6 +29,7 @@ export class InvalidConfiguration {
           prop in target ||
           InvalidConfiguration.allowedMembers.includes(String(prop))
         ) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           return (target as any)[prop]
         }
         throw new ConfigurationError(errorMessage)

@@ -57,6 +57,11 @@ export const userNotificationWorkerSetup = (services: {
         staging: 'is.island.app.staging',
         prod: 'is.island.app',
       },
+      CONTENTFUL_HOST: {
+        dev: 'preview.contentful.com',
+        staging: 'cdn.contentful.com',
+        prod: 'cdn.contentful.com',
+      },
     })
     .secrets({
       FIREBASE_CREDENTIALS: '/k8s/user-notification/firestore-credentials',

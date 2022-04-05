@@ -32,7 +32,7 @@ export const CorrectedEmployerSchema = z.object({
     .refine((x) => x && x.length !== 0 && kennitala.isValid(x), {
       params: error.nationalId,
     }),
-  name: z.string().min(1),
+  label: z.string().min(1),
 })
 
 export const PaymentPlansSchema = z.object({

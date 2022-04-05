@@ -24,8 +24,12 @@ import {
   DokobitError,
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
-import { IntegratedCourts } from '@island.is/judicial-system/consts'
-import { CaseState, CaseType, UserRole } from '@island.is/judicial-system/types'
+import {
+  CaseOrigin,
+  CaseState,
+  CaseType,
+  UserRole,
+} from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 import {
   CurrentHttpUser,
@@ -132,6 +136,7 @@ export class CaseController {
   @ApiOkResponse({ type: Case, description: 'Updates an existing case' })
   async update(
     @Param('caseId') caseId: string,
+    @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @Body() caseToUpdate: UpdateCaseDto,
   ): Promise<Case | null> {
@@ -145,7 +150,7 @@ export class CaseController {
         theCase.creatingProsecutor?.institutionId,
       )
 
-      // If the case was created via xRoad, then there is no creating prosecutor
+      // If the case was created via xRoad, then there may not have been a creating prosecutor
       if (!theCase.creatingProsecutor) {
         caseToUpdate = {
           ...caseToUpdate,
@@ -176,14 +181,12 @@ export class CaseController {
     )) as Case
 
     if (
-      theCase.courtId &&
-      IntegratedCourts.includes(theCase.courtId) &&
-      Boolean(caseToUpdate.courtCaseNumber) &&
-      caseToUpdate.courtCaseNumber !== theCase.courtCaseNumber
+      updatedCase.courtCaseNumber &&
+      updatedCase.courtCaseNumber !== theCase.courtCaseNumber
     ) {
-      // TODO: Find a better place for this
-      // No need to wait for the upload
-      this.caseService.uploadRequestPdfToCourt(updatedCase)
+      // The court case number has changed, so the request must be uploaded to the new court case
+      // No need to wait
+      this.caseService.uploadRequestPdfToCourt(updatedCase, user)
     }
 
     return updatedCase
@@ -487,6 +490,7 @@ export class CaseController {
 
     return this.caseService.getRulingSignatureConfirmation(
       theCase,
+      user,
       documentToken,
     )
   }
@@ -514,5 +518,22 @@ export class CaseController {
     this.eventService.postEvent(CaseEvent.EXTEND, extendedCase as Case)
 
     return extendedCase
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
+  @RolesRules(judgeRule, registrarRule)
+  @Post('case/:caseId/court')
+  @ApiCreatedResponse({
+    type: Case,
+    description: 'Creates a court case associated with an existing case',
+  })
+  async createCourtCase(
+    @Param('caseId') caseId: string,
+    @CurrentHttpUser() user: User,
+    @CurrentCase() theCase: Case,
+  ): Promise<Case> {
+    this.logger.debug(`Creating a court case for case ${caseId}`)
+
+    return this.caseService.createCourtCase(theCase, user)
   }
 }

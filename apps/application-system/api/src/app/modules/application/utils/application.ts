@@ -4,7 +4,7 @@ import { Application, DefaultStateLifeCycle } from '@island.is/application/core'
 import { Unwrap } from '@island.is/shared/types'
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
 
-import { ApplicationLifecycle } from '../types'
+import { ApplicationLifecycle } from '@island.is/application/core'
 
 export const getApplicationLifecycle = (
   application: Application,

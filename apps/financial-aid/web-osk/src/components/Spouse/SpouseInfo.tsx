@@ -4,7 +4,7 @@ import { Input, Checkbox, Box } from '@island.is/island-ui/core'
 import {
   focusOnNextInput,
   isEmailValid,
-  sanitizeNationalId,
+  sanitizeOnlyNumbers,
 } from '@island.is/financial-aid/shared/lib'
 import { FormContext } from '../FormProvider/FormProvider'
 import SpouseEmailInput from '../SpouseEmailInput/SpouseEmailInput'
@@ -45,7 +45,7 @@ const SpouseInfo = ({
               ...form,
               spouse: {
                 ...form.spouse,
-                nationalId: sanitizeNationalId(event.target.value),
+                nationalId: sanitizeOnlyNumbers(event.target.value),
               },
             })
             removeError()

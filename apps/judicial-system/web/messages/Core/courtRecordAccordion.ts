@@ -1,6 +1,11 @@
 import { defineMessages } from 'react-intl'
 
 export const courtRecordAccordion = {
+  title: {
+    id: 'judicial.system.core:court_record_accordion.title',
+    defaultMessage: 'Þingbók',
+    description: 'Notaður sem titill fyrir Þingbókarfellilistann',
+  },
   sections: {
     timeAndLocation: defineMessages({
       title: {
@@ -42,7 +47,19 @@ export const courtRecordAccordion = {
         description:
           'Notaður sem titill í "Lagt er fram" svæði í þingbókarfellilistanum.',
       },
+      text: {
+        id: 'judicial.system.core:court_record_accordion.court_documents.text',
+        defaultMessage:
+          '{documentName} þingmerkt nr. {documentNumber}{submittedBy, select, DEFENDER { lagt fram af varnaraðila} PROSECUTOR { lagt fram af sækjanda} other {}}.',
+      },
     }),
+    firstCourtDocument: {
+      id: 'judicial.system.core:court_record_accordion.firstCourtDocument',
+      defaultMessage:
+        'Krafa um {caseType} þingmerkt nr. 1. Rannsóknargögn málsins liggja frammi.',
+      dscription:
+        'Notaður sem texti fyrir fyrsta skjal þar sem þingskjöl eru upptalinn',
+    },
     conclusion: defineMessages({
       disclaimer: {
         id: 'judicial.system.core:court_record_accordion.conclusion.disclaimer',
@@ -52,13 +69,13 @@ export const courtRecordAccordion = {
           'Notaður sem texti undir "Úrskurðarorð" hlutanum í þingbókarfellilistanum.',
       },
     }),
-    accusedBookings: defineMessages({
+    sessionBookings: defineMessages({
       title: {
         id:
-          'judicial.system.core:court_record_accordion.accused_bookings.title',
-        defaultMessage: 'Bókanir um {accusedType}',
+          'judicial.system.core:court_record_accordion.session_bookings.title',
+        defaultMessage: 'Bókanir fyrir úrskurð',
         description:
-          'Notaður sem titill fyrir "Bókarnir um ..." hlutann í þingbókarfellilistanum.',
+          'Notaður sem titill fyrir "Bókarnir fyrir úrskurð" hlutann í þingbókarfellilistanum.',
       },
     }),
     appealDecision: defineMessages({

@@ -11,7 +11,6 @@ import {
   Body,
   Controller,
   Get,
-  Put,
   NotFoundException,
   Param,
   Post,
@@ -21,9 +20,11 @@ import {
   BadRequestException,
   HttpCode,
   Delete,
+  Patch,
 } from '@nestjs/common'
 import {
   ApiCreatedResponse,
+  ApiExcludeEndpoint,
   ApiNoContentResponse,
   ApiOkResponse,
   ApiOperation,
@@ -161,9 +162,25 @@ export class UserProfileController {
     return userProfile
   }
 
+  @ApiExcludeEndpoint()
+  async findOrCreateUserProfile(
+    @Param('nationalId') nationalId: string,
+    @CurrentUser() user: User,
+  ): Promise<UserProfile> {
+    if (nationalId != user.nationalId) {
+      throw new ForbiddenException()
+    }
+    try {
+      return await this.findOneByNationalId(nationalId, user)
+    } catch (error) {
+      const ret = await this.create({ nationalId }, user)
+      return ret
+    }
+  }
+
   @Scopes(UserProfileScope.write)
   @ApiSecurity('oauth2', [UserProfileScope.write])
-  @Put('userProfile/:nationalId')
+  @Patch('userProfile/:nationalId')
   @ApiOkResponse({ type: UserProfile })
   @ApiParam({
     name: 'nationalId',
@@ -180,14 +197,18 @@ export class UserProfileController {
     @CurrentUser()
     user: User,
   ): Promise<UserProfile> {
-    // findOneByNationalId must be first as it implictly checks if the
-    // route param matches the authenticated user.
-    const profile = await this.findOneByNationalId(nationalId, user)
+    if (nationalId != user.nationalId) {
+      throw new ForbiddenException()
+    }
+
+    // findOrCreateUserProfile for edge cases - fragmented onboarding
+    const profile = await this.findOrCreateUserProfile(nationalId, user)
+
     const updatedFields = Object.keys(userProfileToUpdate)
     userProfileToUpdate = {
       ...userProfileToUpdate,
-      mobileStatus: DataStatus.NOT_VERIFIED,
-      emailStatus: DataStatus.NOT_VERIFIED,
+      mobileStatus: profile.mobileStatus as DataStatus,
+      emailStatus: profile.emailStatus as DataStatus,
     }
 
     if (userProfileToUpdate.mobilePhoneNumber) {
@@ -202,6 +223,8 @@ export class UserProfileController {
           mobileStatus: DataStatus.VERIFIED,
           mobilePhoneNumberVerified: phoneVerified.confirmed,
         }
+      } else {
+        throw new ForbiddenException()
       }
     }
 
@@ -217,6 +240,8 @@ export class UserProfileController {
           emailStatus: DataStatus.VERIFIED,
           emailVerified: emailVerified.confirmed,
         }
+      } else {
+        throw new ForbiddenException()
       }
     }
 
@@ -398,6 +423,8 @@ export class UserProfileController {
     if (nationalId != user.nationalId) {
       throw new BadRequestException()
     } else {
+      // findOrCreateUserProfile for edge cases - fragmented onboarding
+      await this.findOrCreateUserProfile(nationalId, user)
       return await this.userProfileService.addDeviceToken(body, user)
     }
   }

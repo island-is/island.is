@@ -6,7 +6,6 @@ import {
   capitalize,
   formatRequestedCustodyRestrictions,
   formatDate,
-  TIME_FORMAT,
   formatRequestCaseType,
   formatNationalId,
 } from '@island.is/judicial-system/formatters'
@@ -20,9 +19,11 @@ import {
   core,
   laws,
 } from '@island.is/judicial-system-web/messages'
+import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 
 import AccordionListItem from '../../AccordionListItem/AccordionListItem'
 import * as styles from './PoliceRequestAccordionItem.css'
+
 interface Props {
   workingCase: Case
 }
@@ -39,41 +40,40 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
         caseType: formatRequestCaseType(workingCase.type),
       })}
       labelVariant="h3"
-      labelUse="h2"
+      labelUse="h3"
     >
-      <Box marginBottom={2}>
-        <Text variant="h4" as="h4">
-          {capitalize(
-            formatMessage(core.defendant, {
-              suffix: (workingCase.defendants ?? []).length > 1 ? 'ar' : 'i',
-            }),
-          )}
-        </Text>
-      </Box>
-      {workingCase.defendants &&
-        workingCase.defendants.map((defendant, index) => (
-          <Box key={index}>
-            <Box marginBottom={1}>
-              <Text>
-                {`${formatMessage(
-                  defendant.noNationalId ? core.dateOfBirth : core.nationalId,
-                )}: ${
-                  defendant.noNationalId
-                    ? defendant.nationalId
-                    : formatNationalId(defendant.nationalId ?? '')
-                }`}
-              </Text>
+      <AccordionListItem
+        title={capitalize(
+          formatMessage(core.defendant, {
+            suffix: (workingCase.defendants ?? []).length > 1 ? 'ar' : 'i',
+          }),
+        )}
+      >
+        {workingCase.defendants &&
+          workingCase.defendants.map((defendant, index) => (
+            <Box key={index}>
+              <Box marginBottom={1}>
+                <Text>
+                  {`${formatMessage(
+                    defendant.noNationalId ? core.dateOfBirth : core.nationalId,
+                  )}: ${
+                    defendant.noNationalId
+                      ? defendant.nationalId
+                      : formatNationalId(defendant.nationalId ?? '')
+                  }`}
+                </Text>
+              </Box>
+              <Box marginBottom={1}>
+                <Text>{`${formatMessage(core.fullName)}: ${
+                  defendant.name
+                }`}</Text>
+              </Box>
+              <Box marginBottom={3}>
+                <Text>Lögheimili: {defendant.address}</Text>
+              </Box>
             </Box>
-            <Box marginBottom={1}>
-              <Text>{`${formatMessage(core.fullName)}: ${
-                defendant.name
-              }`}</Text>
-            </Box>
-            <Box marginBottom={3}>
-              <Text>Lögheimili: {defendant.address}</Text>
-            </Box>
-          </Box>
-        ))}
+          ))}
+      </AccordionListItem>
       {workingCase.arrestDate && (
         <AccordionListItem title="Tími handtöku">
           <Text>
@@ -121,30 +121,27 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
         )}
       </AccordionListItem>
       {isRestrictionCase(workingCase.type) && (
-        <>
-          <Box marginBottom={1}>
-            <Text variant="h5">{`Takmarkanir og tilhögun ${
-              workingCase.type === CaseType.CUSTODY ? 'gæslu' : 'farbanns'
-            }`}</Text>
-          </Box>
-          <Box marginBottom={4}>
-            <Text>
-              {formatRequestedCustodyRestrictions(
-                workingCase.type,
-                workingCase.requestedCustodyRestrictions,
-                workingCase.requestedOtherRestrictions,
-              )
-                .split('\n')
-                .map((requestedCustodyRestriction, index) => {
-                  return (
-                    <span key={index} className={styles.block}>
-                      <Text as="span">{requestedCustodyRestriction}</Text>
-                    </span>
-                  )
-                })}
-            </Text>
-          </Box>
-        </>
+        <AccordionListItem
+          title={`Takmarkanir og tilhögun ${
+            workingCase.type === CaseType.CUSTODY ? 'gæslu' : 'farbanns'
+          }`}
+        >
+          <Text>
+            {formatRequestedCustodyRestrictions(
+              workingCase.type,
+              workingCase.requestedCustodyRestrictions,
+              workingCase.requestedOtherRestrictions,
+            )
+              .split('\n')
+              .map((requestedCustodyRestriction, index) => {
+                return (
+                  <span key={index} className={styles.block}>
+                    <Text as="span">{requestedCustodyRestriction}</Text>
+                  </span>
+                )
+              })}
+          </Text>
+        </AccordionListItem>
       )}
       <Box marginBottom={2}>
         <Text variant="h4" as="h4">

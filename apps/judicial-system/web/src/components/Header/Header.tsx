@@ -4,9 +4,9 @@ import { useRouter } from 'next/router'
 import Link from 'next/link'
 
 import { api } from '@island.is/judicial-system-web/src/services'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { UserContext } from '../UserProvider/UserProvider'
 import { UserRole } from '@island.is/judicial-system/types'
+import * as Constants from '@island.is/judicial-system/consts'
 import * as styles from './Header.css'
 
 const Header: React.FC = () => {
@@ -21,7 +21,7 @@ const Header: React.FC = () => {
             ? '/'
             : user.role === UserRole.ADMIN
             ? Constants.USER_LIST_ROUTE
-            : Constants.REQUEST_LIST_ROUTE
+            : Constants.CASE_LIST_ROUTE
         }
         data-testid="link-to-home"
       >

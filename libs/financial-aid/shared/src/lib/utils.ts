@@ -7,6 +7,13 @@ import { StaffRole } from './enums'
 export const getFileType = (fileName: string) => {
   return fileName?.substring(fileName.lastIndexOf('.') + 1)
 }
+export const isImage = (filename: string): boolean => {
+  const imagesFileExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp']
+
+  const extension = filename.split('.').pop()?.toLowerCase() || ''
+
+  return imagesFileExtensions.includes(extension)
+}
 
 export const encodeFilename = (filename: string) =>
   encodeURI(filename.replace(/ +/g, '_'))
@@ -39,15 +46,15 @@ export const formatPhoneNumber = (phoneNumber: string) => {
 export const formatNationalId = (nationalId: string) =>
   insertAt(nationalId.replace('-', ''), '-', 6) || '-'
 
-export const sanitizeNationalId = (nationalId: string) =>
-  nationalId?.replace(/[^0-9]/g, '')
-
 export const isNationalIdValid = (nationalId: string): boolean => {
   return (
-    sanitizeNationalId(nationalId).length === 10 &&
-    isNaN(Number(sanitizeNationalId(nationalId))) === false
+    sanitizeOnlyNumbers(nationalId).length === 10 &&
+    isNaN(Number(sanitizeOnlyNumbers(nationalId))) === false
   )
 }
+
+export const sanitizeOnlyNumbers = (value: string) =>
+  value?.replace(/[^0-9]/g, '')
 
 export const isEmailValid = (emailAddress?: string) => {
   if (emailAddress) {

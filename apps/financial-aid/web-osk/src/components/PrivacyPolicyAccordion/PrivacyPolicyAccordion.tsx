@@ -1,5 +1,5 @@
 import React from 'react'
-import { Accordion, AccordionItem, Text } from '@island.is/island-ui/core'
+import { Accordion, AccordionItem, Link, Text } from '@island.is/island-ui/core'
 
 interface Props {
   municipalityHomePage?: string
@@ -130,13 +130,14 @@ const PrivacyPolicyAccordion = ({ municipalityHomePage }: Props) => {
               sveitarfélaginu má finna í persónuverndar-stefnu þess sem
               aðgengileg er á vefsíðunni
               {` `}
-              <a
+              <Link
                 href={municipalityHomePage}
-                target="_blank"
-                rel="noreferrer noopener"
+                color="blue400"
+                underline="small"
+                underlineVisibility="always"
               >
                 {municipalityHomePage}
-              </a>
+              </Link>
               .
             </>
           ) : (

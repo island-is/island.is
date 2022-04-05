@@ -12,11 +12,12 @@ import {
   mockProsecutorWonderWomanQuery,
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { UserProvider } from '@island.is/judicial-system-web/src/components'
-import { formatDate, TIME_FORMAT } from '@island.is/judicial-system/formatters'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import { LocaleProvider } from '@island.is/localization'
+import FormProvider from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 
 import { SignedVerdictOverview } from './SignedVerdictOverview'
-import FormProvider from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 
 window.scrollTo = jest.fn()
 

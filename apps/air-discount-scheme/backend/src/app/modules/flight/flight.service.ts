@@ -29,6 +29,7 @@ const DEFAULT_AVAILABLE_LEGS = 6
 const AVAILABLE_FLIGHT_LEGS: { [year: string]: number } = {
   '2020': 2,
   '2021': 6,
+  '2022': 6,
 }
 
 const availableFinancialStates = [

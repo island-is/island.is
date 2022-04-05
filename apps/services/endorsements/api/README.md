@@ -59,4 +59,4 @@ yarn test services-endorsements-api --skip-nx-cache
 
 ## Code owners and maintainers
 
-- [Júní, formerly Kosmos&Kaos](https://github.com/orgs/island-is/teams/kosmos-kaos/members)
+- [Júní](https://github.com/orgs/island-is/teams/juni/members)

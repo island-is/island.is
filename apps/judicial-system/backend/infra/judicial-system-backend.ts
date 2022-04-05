@@ -35,6 +35,20 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
         staging: 'https://judicial-system.staging01.devland.is/krafa/yfirlit/',
         prod: 'https://rettarvorslugatt.island.is/krafa/yfirlit/',
       },
+      PROSECUTOR_RESTRICTION_CASE_OVERVIEW_URL: {
+        dev: 'https://judicial-system.dev01.devland.is/krafa/stadfesta/',
+        staging:
+          'https://judicial-system.staging01.devland.is/krafa/stadfesta/',
+        prod: 'https://rettarvorslugatt.island.is/krafa/stadfesta/',
+      },
+      PROSECUTOR_INVESTIGATION_CASE_OVERVIEW_URL: {
+        dev:
+          'https://judicial-system.dev01.devland.is/krafa/rannsoknarheimild/stadfesta/',
+        staging:
+          'https://judicial-system.staging01.devland.is/krafa/rannsoknarheimild/stadfesta/',
+        prod:
+          'https://rettarvorslugatt.island.is/krafa/rannsoknarheimild/stadfesta/',
+      },
     })
     .xroad(Base, JudicialSystem)
     .secrets({
@@ -54,6 +68,7 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
       SECRET_TOKEN: '/k8s/judicial-system/SECRET_TOKEN',
       CONTENTFUL_ACCESS_TOKEN: '/k8s/judicial-system/CONTENTFUL_ACCESS_TOKEN',
       EVENT_URL: '/k8s/judicial-system/EVENT_URL',
+      ERROR_EVENT_URL: '/k8s/judicial-system/ERROR_EVENT_URL',
     })
     .initContainer({
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],

@@ -23,6 +23,7 @@ import {
   AsyncSelectField,
   RecordObject,
   Field,
+  CompanySearchField,
 } from '../types/Fields'
 import { CallToAction } from '../types/StateMachine'
 import { FormText, FormTextArray } from '../types/Form'
@@ -175,6 +176,20 @@ export function buildAsyncSelectField(
   }
 }
 
+export function buildCompanySearchField(
+  data: Omit<CompanySearchField, 'type' | 'component' | 'children'>,
+): CompanySearchField {
+  const { placeholder } = data
+
+  return {
+    ...extractCommonFields(data),
+    children: undefined,
+    placeholder,
+    type: FieldTypes.COMPANY_SEARCH,
+    component: FieldComponents.COMPANY_SEARCH,
+  }
+}
+
 export function buildTextField(
   data: Omit<TextField, 'type' | 'component' | 'children'>,
 ): TextField {
@@ -187,6 +202,7 @@ export function buildTextField(
     rows,
     required,
     maxLength,
+    readOnly,
   } = data
   return {
     ...extractCommonFields(data),
@@ -199,6 +215,7 @@ export function buildTextField(
     rows,
     required,
     maxLength,
+    readOnly,
     type: FieldTypes.TEXT,
     component: FieldComponents.TEXT,
   }

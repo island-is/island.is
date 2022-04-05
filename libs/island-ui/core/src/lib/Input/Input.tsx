@@ -157,6 +157,7 @@ export const Input = forwardRef(
             [styles.fixedFocusState]: fixedFocusState,
             [styles.noLabel]: !label,
             [styles.containerDisabled]: disabled,
+            [styles.readOnly]: readOnly,
           })}
           onClick={(e) => {
             e.preventDefault()

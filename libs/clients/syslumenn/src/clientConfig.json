@@ -7,7 +7,7 @@
     "version": "v1"
   },
   "host": "api.syslumenn.is",
-  "basePath": "/Test",
+  "basePath": "/test",
   "schemes": ["https"],
   "produces": ["text/plain", "application/json", "text/json"],
   "paths": {
@@ -339,6 +339,37 @@
         "security": [
           {
             "JWT Token": []
+          }
+        ]
+      }
+    },
+    "/api/Logmannalisti": {
+      "post": {
+        "tags": ["Syslumenn"],
+        "operationId": "Logmannalisti_Get",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "audkenni",
+            "in": "query",
+            "x-nullable": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Logmenn"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT Token": ["Logmannalisti"]
           }
         ]
       }
@@ -998,6 +1029,100 @@
         ]
       }
     },
+    "/api/Vedbokarvottord": {
+      "post": {
+        "tags": ["Syslumenn"],
+        "operationId": "Vedbokarvottord_Post",
+        "consumes": [
+          "application/json-patch+json",
+          "application/json",
+          "text/json",
+          "application/*+json"
+        ],
+        "parameters": [
+          {
+            "name": "skilabod",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/VedbandayfirlitSkeyti"
+            },
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/VedbandayfirlitSvarSkeyti"
+            }
+          },
+          "404": {
+            "x-nullable": false,
+            "description": "NotFound",
+            "schema": {
+              "$ref": "#/definitions/VedbandayfirlitSvarSkeyti"
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
+      }
+    },
+    "/api/VedbokavottordRegluverki": {
+      "post": {
+        "tags": ["Syslumenn"],
+        "operationId": "VedbokavottordRegluverki_Post",
+        "consumes": [
+          "application/json-patch+json",
+          "application/json",
+          "text/json",
+          "application/*+json"
+        ],
+        "parameters": [
+          {
+            "name": "skilabod",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/VedbandayfirlitSkeyti"
+            },
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/VedbandayfirlitReguverkiSvarSkeyti"
+              }
+            }
+          },
+          "404": {
+            "x-nullable": false,
+            "description": "NotFound",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/VedbandayfirlitReguverkiSvarSkeyti"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT Token": ["Vedbokarvottord"]
+          }
+        ]
+      }
+    },
     "/Version": {
       "get": {
         "tags": ["Syslumenn"],
@@ -1191,6 +1316,32 @@
         }
       }
     },
+    "Logmenn": {
+      "type": "object",
+      "properties": {
+        "kennitala": {
+          "type": "string"
+        },
+        "logmannsstofa": {
+          "type": "string"
+        },
+        "adsetur": {
+          "type": "string"
+        },
+        "postnumer": {
+          "type": "string"
+        },
+        "stadur": {
+          "type": "string"
+        },
+        "simi": {
+          "type": "string"
+        },
+        "netfang": {
+          "type": "string"
+        }
+      }
+    },
     "VirkLeyfi": {
       "type": "object",
       "required": ["rowNum"],
@@ -1218,6 +1369,12 @@
           "type": "string"
         },
         "tegund": {
+          "type": "string"
+        },
+        "tegund2": {
+          "type": "string"
+        },
+        "tegundVeitingastadar": {
           "type": "string"
         },
         "gildirFra": {
@@ -1251,6 +1408,14 @@
         },
         "afgr_Afgengis_Adfaranott_Fridaga_Utiveitingar": {
           "type": "string"
+        },
+        "hamarksfjoldiGesta": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "fjoldiGestaIVeitingum": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },
@@ -1576,7 +1741,7 @@
     },
     "EventType": {
       "type": "integer",
-      "description": "",
+      "description": "0 = AllSigned",
       "x-enumNames": ["AllSigned"],
       "enum": [0]
     },
@@ -1689,7 +1854,7 @@
     },
     "AdiliTegund": {
       "type": "integer",
-      "description": "",
+      "description": "0 = Malshefjandi\n1 = Gagnadili\n2 = Barn",
       "x-enumNames": ["Malshefjandi", "Gagnadili", "Barn"],
       "enum": [0, 1, 2]
     },
@@ -1717,6 +1882,78 @@
           "type": "string"
         },
         "skraarnafn": {
+          "type": "string"
+        }
+      }
+    },
+    "VedbandayfirlitSvarSkeyti": {
+      "type": "object",
+      "properties": {
+        "audkenni": {
+          "type": "string"
+        },
+        "skilabod": {
+          "type": "string"
+        },
+        "vedbandayfirlitPDFSkra": {
+          "type": "string"
+        }
+      }
+    },
+    "VedbandayfirlitSkeyti": {
+      "type": "object",
+      "required": ["tegundAndlags"],
+      "properties": {
+        "audkenni": {
+          "type": "string"
+        },
+        "fastanumer": {
+          "type": "string"
+        },
+        "tegundAndlags": {
+          "$ref": "#/definitions/TegundAndlags"
+        }
+      }
+    },
+    "TegundAndlags": {
+      "type": "integer",
+      "description": "0 = Fasteign\n1 = Okutaeki\n2 = Skip\n3 = Lausafe\n4 = Loftfar",
+      "x-enumNames": ["Fasteign", "Okutaeki", "Skip", "Lausafe", "Loftfar"],
+      "enum": [0, 1, 2, 3, 4]
+    },
+    "VedbandayfirlitReguverkiSvarSkeyti": {
+      "type": "object",
+      "required": ["landNr"],
+      "properties": {
+        "fastnum": {
+          "type": "string"
+        },
+        "landNr": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "heiti": {
+          "type": "string"
+        },
+        "svfn": {
+          "type": "string"
+        },
+        "svetiarfelag": {
+          "type": "string"
+        },
+        "notkun": {
+          "type": "string"
+        },
+        "eining": {
+          "type": "string"
+        },
+        "byggd": {
+          "type": "string"
+        },
+        "embaetti": {
+          "type": "string"
+        },
+        "embaettiNumer": {
           "type": "string"
         }
       }

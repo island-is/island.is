@@ -1,22 +1,5 @@
 import type { AuthConfig, User } from '@island.is/auth-nest-tools'
 import {
-  AuthMiddleware,
-  AuthMiddlewareOptions,
-} from '@island.is/auth-nest-tools'
-import {
-  createEnhancedFetch,
-  EnhancedFetchAPI,
-} from '@island.is/clients/middlewares'
-import type {
-  EinstaklingarGetEinstaklingurRequest,
-  EinstaklingarGetForsjaRequest,
-} from '@island.is/clients/national-registry-v2'
-import { EinstaklingarApi } from '@island.is/clients/national-registry-v2'
-import { RskProcuringClient } from '@island.is/clients/rsk/procuring'
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
-import {
   BadRequestException,
   Inject,
   Injectable,
@@ -28,6 +11,23 @@ import startOfDay from 'date-fns/startOfDay'
 import uniqBy from 'lodash/uniqBy'
 import { Op, WhereOptions } from 'sequelize'
 import { uuid } from 'uuidv4'
+
+import { AuthMiddleware } from '@island.is/auth-nest-tools'
+import {
+  createEnhancedFetch,
+  EnhancedFetchAPI,
+} from '@island.is/clients/middlewares'
+import { EinstaklingarApi } from '@island.is/clients/national-registry-v2'
+import type {
+  EinstaklingarGetEinstaklingurRequest,
+  EinstaklingarGetForsjaRequest,
+} from '@island.is/clients/national-registry-v2'
+import { RskProcuringClient } from '@island.is/clients/rsk/procuring'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
+
+import { UpdateDelegationScopeDTO } from '../entities/dto/delegation-scope.dto'
 import {
   CreateDelegationDTO,
   DelegationDTO,
@@ -36,12 +36,23 @@ import {
   UpdateDelegationDTO,
 } from '../entities/dto/delegation.dto'
 import { ApiScope } from '../entities/models/api-scope.model'
+import { Client } from '../entities/models/client.model'
+import { ClientAllowedScope } from '../entities/models/client-allowed-scope.model'
 import { DelegationScope } from '../entities/models/delegation-scope.model'
 import { Delegation } from '../entities/models/delegation.model'
 import { PersonalRepresentativeService } from '../personal-representative'
 import type { PersonalRepresentativeDTO } from '../personal-representative/entities/dto/personal-representative.dto'
 import { DelegationValidity } from '../types/delegationValidity'
 import { DelegationScopeService } from './delegationScope.service'
+import { ResourcesService } from './resources.service'
+
+type ClientDelegationInfo = Pick<
+  Client,
+  | 'supportsDelegation'
+  | 'supportsLegalGuardians'
+  | 'supportsProcuringHolders'
+  | 'supportsPersonalRepresentatives'
+>
 
 export const DELEGATIONS_AUTH_CONFIG = 'DELEGATIONS_AUTH_CONFIG'
 
@@ -52,6 +63,10 @@ export class DelegationsService {
   constructor(
     @InjectModel(Delegation)
     private delegationModel: typeof Delegation,
+    @InjectModel(Client)
+    private clientModel: typeof Client,
+    @InjectModel(ClientAllowedScope)
+    private clientAllowedScopeModel: typeof ClientAllowedScope,
     @Inject(DELEGATIONS_AUTH_CONFIG)
     private authConfig: AuthConfig,
     @Inject(LOGGER_PROVIDER)
@@ -61,6 +76,7 @@ export class DelegationsService {
     private delegationScopeService: DelegationScopeService,
     private featureFlagService: FeatureFlagService,
     private prService: PersonalRepresentativeService,
+    private resourcesService: ResourcesService,
   ) {
     this.authFetch = createEnhancedFetch({ name: 'delegation-auth-client' })
   }
@@ -70,53 +86,84 @@ export class DelegationsService {
   /**
    *
    * @param user The user that is giving the delegation to other user
-   * @param delegation The delegation to create
-   * @param xRoadClient
-   * @param authMiddlewareOptions
+   * @param createDelegation The delegation to create
    * @returns
    */
   async create(
     user: User,
-    delegation: CreateDelegationDTO,
-    authMiddlewareOptions: AuthMiddlewareOptions,
+    createDelegation: CreateDelegationDTO,
   ): Promise<DelegationDTO | null> {
-    if (delegation.toNationalId === user.nationalId) {
+    if (createDelegation.toNationalId === user.nationalId) {
       throw new BadRequestException(`Can not create delegation to self.`)
     }
 
-    const [fromDisplayName, toName] = await Promise.all([
-      this.getUserName(user),
-      this.getPersonName(delegation.toNationalId, user, authMiddlewareOptions),
-    ])
-
-    this.logger.debug('Creating a new delegation')
-    const id = uuid()
-    await this.delegationModel.create({
-      id,
-      fromNationalId: user.nationalId,
-      toNationalId: delegation.toNationalId,
-      fromDisplayName,
-      toName,
-    })
-    if (delegation.scopes && delegation.scopes.length > 0) {
-      await this.delegationScopeService.createMany(id, delegation.scopes)
+    if (!(await this.validateScopesAccess(user, createDelegation.scopes))) {
+      throw new BadRequestException(
+        'User does not have access to the requested scopes.',
+      )
     }
-    return this.findById(user.nationalId, id)
+
+    if (!this.validateScopesPeriod(createDelegation.scopes)) {
+      throw new BadRequestException(
+        'When scope validTo property is provided it must be in the future',
+      )
+    }
+
+    let delegation = await this.findByRelationship(
+      user,
+      createDelegation.toNationalId,
+    )
+
+    if (!delegation) {
+      const [fromDisplayName, toName] = await Promise.all([
+        this.getUserName(user),
+        this.getPersonName(createDelegation.toNationalId),
+      ])
+
+      delegation = await this.delegationModel.create({
+        id: uuid(),
+        fromNationalId: user.nationalId,
+        toNationalId: createDelegation.toNationalId,
+        fromDisplayName,
+        toName,
+      })
+    }
+
+    // If createDelegation.scopes are empty then this will remove all the scopes the user has accesss to
+    delegation.delegationScopes = await this.delegationScopeService.createOrUpdate(
+      delegation.id,
+      user.scope,
+      createDelegation.scopes,
+    )
+
+    return delegation.toDTO()
   }
 
   /**
    * Updates a delegation between two users
-   * @param fromNationalId Id of the user that is granting the delegation
+   * @param user Authenticated user
    * @param input Scopes that the delegation should be updated with
    * @param delegationId Id of the delegation
    * @returns
    */
   async update(
-    fromNationalId: string,
+    user: User,
     input: UpdateDelegationDTO,
     delegationId: string,
   ): Promise<DelegationDTO | null> {
-    const delegation = await this.findById(fromNationalId, delegationId)
+    if (!(await this.validateScopesAccess(user, input.scopes))) {
+      throw new BadRequestException(
+        'User does not have access to the requested scopes.',
+      )
+    }
+
+    if (!this.validateScopesPeriod(input.scopes)) {
+      throw new BadRequestException(
+        'If scope validTo property is provided it must be in the future',
+      )
+    }
+
+    const delegation = await this.findById(user, delegationId)
     if (!delegation) {
       this.logger.debug('Delegation does not exists for user')
       throw new NotFoundException()
@@ -124,59 +171,57 @@ export class DelegationsService {
 
     this.logger.debug(`Updating delegation ${delegation.id}`)
 
-    await this.delegationScopeService.delete(delegationId)
-    if (input.scopes && input.scopes.length > 0) {
-      await this.delegationScopeService.createMany(delegationId, input.scopes)
-    }
-    return this.findById(fromNationalId, delegationId)
+    await this.delegationScopeService.createOrUpdate(
+      delegationId,
+      user.scope,
+      input.scopes,
+    )
+
+    return this.findById(user, delegationId)
   }
 
   /**
    * Deletes a delegation a user has given.
-   * @param nationalId Id of the user who created the delegation to delete.
+   * @param user User object of the authenticated user.
    * @param id Id of the delegation to delete
    * @returns
    */
-  async delete(nationalId: string, id: string): Promise<number> {
+  async delete(user: User, id: string): Promise<number> {
     this.logger.debug(`Deleting delegation ${id}`)
 
     const delegation = await this.delegationModel.findByPk(id)
-    if (!delegation || delegation.fromNationalId !== nationalId) {
+    if (!delegation || delegation.fromNationalId !== user.nationalId) {
       this.logger.debug('Delegation does not exists or is not assigned to user')
       throw new NotFoundException()
     }
 
-    await this.delegationScopeService.delete(id)
-
-    return this.delegationModel.destroy({
-      where: { id: id, fromNationalId: nationalId },
-    })
+    return this.delegationScopeService.delete(id, user.scope)
   }
 
   /**
    * Finds a single delegation for a user.
    * @param nationalId Id of the user to find the delegation from.
    * @param id Id of the delegation to find.
-   * @param valid Filter which scopes to return.
    * @returns
    */
-  async findById(
-    nationalId: string,
-    id: string,
-    valid = DelegationValidity.ALL,
-  ): Promise<DelegationDTO | null> {
+  async findById(user: User, id: string): Promise<DelegationDTO | null> {
     this.logger.debug(`Finding a delegation with id ${id}`)
     const delegation = await this.delegationModel.findOne({
       where: {
         id: id,
-        [Op.or]: [{ fromNationalId: nationalId }, { toNationalId: nationalId }],
+        [Op.or]: [
+          { fromNationalId: user.nationalId },
+          { toNationalId: user.nationalId },
+        ],
       },
       include: [
         {
           model: DelegationScope,
           as: 'delegationScopes',
           required: false,
-          where: this.getScopeValidWhereClause(valid),
+          where: this.getScopeValidWhereClause(
+            DelegationValidity.INCLUDE_FUTURE,
+          ),
           include: [
             {
               model: ApiScope,
@@ -189,22 +234,30 @@ export class DelegationsService {
         },
       ],
     })
-    return delegation ? delegation.toDTO() : null
+
+    if (delegation) {
+      delegation.delegationScopes = delegation.delegationScopes?.filter((s) =>
+        this.checkIfScopeAllowed(s, user.scope),
+      )
+    }
+
+    return delegation?.toDTO() || null
   }
 
   /**
    * Finds all delegations a user has created.
-   * @param nationalId The id of the user to find all delegations from
-   * @param isValid Flag to indicate if to filter by validTo to find only valid delegations
+   * @param user Authenticated user
+   * @param validity Enum values to indicate the validity of the scopes
+   * @param otherUser The id of a user to find a specific delegation given to
    * @returns
    */
   async findAllOutgoing(
-    nationalId: string,
-    valid: DelegationValidity,
-    otherUser: string,
+    user: User,
+    validity: DelegationValidity,
+    otherUser?: string,
   ): Promise<DelegationDTO[]> {
     const delegationWhere: { fromNationalId: string; toNationalId?: string } = {
-      fromNationalId: nationalId,
+      fromNationalId: user.nationalId,
     }
 
     if (otherUser) {
@@ -225,8 +278,8 @@ export class DelegationsService {
               },
             },
           ],
-          required: valid !== DelegationValidity.ALL,
-          where: this.getScopeValidWhereClause(valid),
+          required: validity !== DelegationValidity.ALL,
+          where: this.getScopeValidWhereClause(validity),
         },
       ],
     })
@@ -245,7 +298,20 @@ export class DelegationsService {
       )
     }
 
-    return delegations.map((delegation) => delegation.toDTO())
+    return delegations
+      .filter((d) =>
+        // The user must have access to at least one scope in the delegation
+        d.delegationScopes?.some((s) =>
+          this.checkIfScopeAllowed(s, user.scope),
+        ),
+      )
+      .map((d) => {
+        // Filter out scopes the user does not have access to
+        d.delegationScopes = d.delegationScopes?.filter((s) =>
+          this.checkIfScopeAllowed(s, user.scope),
+        )
+        return d.toDTO()
+      })
   }
 
   /***** Incoming Delegations *****/
@@ -255,42 +321,48 @@ export class DelegationsService {
    * Includes custom delegations and natural delegations from
    * NationalRegistry and CompanyRegistry.
    * @param user
-   * @param xRoadClient
-   * @param authMiddlewareOptions
    * @returns
    */
-  async findAllIncoming(
-    user: User,
-    authMiddlewareOptions: AuthMiddlewareOptions,
-  ): Promise<DelegationDTO[]> {
-    const [wards, companies, custom, represented] = await Promise.all([
-      this.findAllWardsIncoming(user, authMiddlewareOptions),
-      this.findAllCompaniesIncoming(user),
-      this.findAllValidCustomIncoming(user),
-      this.findAllRepresentedPersonsIncoming(user, authMiddlewareOptions),
-    ])
+  async findAllIncoming(user: User): Promise<DelegationDTO[]> {
+    const client = await this.getClientDelegationInfo(user)
+
+    const delegationPromises = []
+
+    if (!client || client.supportsLegalGuardians) {
+      delegationPromises.push(this.findAllWardsIncoming(user))
+    }
+    if (!client || client.supportsProcuringHolders) {
+      delegationPromises.push(this.findAllCompaniesIncoming(user))
+    }
+    if (!client || client.supportsDelegation) {
+      delegationPromises.push(this.findAllValidCustomIncoming(user))
+    }
+    if (!client || client.supportsPersonalRepresentatives) {
+      delegationPromises.push(this.findAllRepresentedPersonsIncoming(user))
+    }
+    const delegationSets = await Promise.all(delegationPromises)
 
     return uniqBy(
-      [...wards, ...companies, ...custom, ...represented],
+      ([] as DelegationDTO[]).concat(...delegationSets),
       'fromNationalId',
     ).filter((delegation) => delegation.fromNationalId !== user.nationalId)
   }
 
   /**
    * Finds a delegation by relationship of two users
-   * @param fromNationalId
+   * @param user Authenticated user that has given the delegation
    * @param toNationalId
    * @returns
    */
-  async findByRelationship(
-    fromNationalId: string,
+  private async findByRelationship(
+    user: User,
     toNationalId: string,
   ): Promise<Delegation | null> {
     const today = startOfDay(new Date())
     const delegation = await this.delegationModel.findOne({
       where: {
+        fromNationalId: user.nationalId,
         toNationalId: toNationalId,
-        fromNationalId: fromNationalId,
       },
       include: [
         {
@@ -305,6 +377,12 @@ export class DelegationsService {
       ],
     })
 
+    if (delegation) {
+      delegation.delegationScopes = delegation.delegationScopes?.filter((s) =>
+        this.checkIfScopeAllowed(s, user.scope),
+      )
+    }
+
     return delegation
   }
 
@@ -312,14 +390,9 @@ export class DelegationsService {
   /**
    * Find all wards for the user from NationalRegistry
    * @param user
-   * @param xRoadClient
-   * @param authMiddlewareOptions
    * @returns
    */
-  private async findAllWardsIncoming(
-    user: User,
-    authMiddlewareOptions: AuthMiddlewareOptions,
-  ): Promise<DelegationDTO[]> {
+  private async findAllWardsIncoming(user: User): Promise<DelegationDTO[]> {
     try {
       const supported = await this.featureFlagService.getValue(
         Features.legalGuardianDelegations,
@@ -331,8 +404,8 @@ export class DelegationsService {
       }
 
       const response = await this.personApi
-        .withMiddleware(new AuthMiddleware(user, authMiddlewareOptions))
-        .einstaklingarGetForsja(<EinstaklingarGetForsjaRequest>{
+        .withMiddleware(new AuthMiddleware(user))
+        .einstaklingarGetForsja({
           id: user.nationalId,
         })
 
@@ -341,11 +414,9 @@ export class DelegationsService {
       )
 
       const resultPromises = distinct.map(async (nationalId) =>
-        this.personApi
-          .withMiddleware(new AuthMiddleware(user, authMiddlewareOptions))
-          .einstaklingarGetEinstaklingur(<EinstaklingarGetEinstaklingurRequest>{
-            id: nationalId,
-          }),
+        this.personApi.einstaklingarGetEinstaklingur({
+          id: nationalId,
+        }),
       )
 
       const result = await Promise.all(resultPromises)
@@ -411,7 +482,6 @@ export class DelegationsService {
    */
   private async findAllRepresentedPersonsIncoming(
     user: User,
-    authMiddlewareOptions: AuthMiddlewareOptions,
   ): Promise<DelegationDTO[]> {
     try {
       const feature = await this.featureFlagService.getValue(
@@ -441,8 +511,7 @@ export class DelegationsService {
 
       const resultPromises = rp.map(async (representative) =>
         this.personApi
-          .withMiddleware(new AuthMiddleware(user, authMiddlewareOptions))
-          .einstaklingarGetEinstaklingur(<EinstaklingarGetEinstaklingurRequest>{
+          .einstaklingarGetEinstaklingur({
             id: representative.nationalIdRepresentedPerson,
           })
           .then(
@@ -476,7 +545,7 @@ export class DelegationsService {
       return []
     }
 
-    const result = await this.delegationModel.findAll({
+    const delegations = await this.delegationModel.findAll({
       where: {
         toNationalId: user.nationalId,
       },
@@ -499,18 +568,31 @@ export class DelegationsService {
       ],
     })
 
-    return result.map((d) => d.toDTO())
+    const allowedScopes = await this.getClientAllowedScopes(user)
+
+    return delegations
+      .filter((d) =>
+        d.delegationScopes?.some((s) =>
+          this.checkIfScopeAllowed(s, allowedScopes),
+        ),
+      )
+      .map((d) => {
+        d.delegationScopes = d.delegationScopes?.filter((s) =>
+          this.checkIfScopeAllowed(s, user.scope),
+        )
+        return d.toDTO()
+      })
   }
 
   /**
    * Constructs a where clause to use for DelegationScopes to filter
    * by a validity on the validFrom and validTo properties.
-   * @param valid Controls the validFrom and validTo where clauses
+   * @param validity Controls the validFrom and validTo where clauses
    * @returns
    */
-  private getScopeValidWhereClause = (
-    valid: DelegationValidity,
-  ): WhereOptions | undefined => {
+  private getScopeValidWhereClause(
+    validity: DelegationValidity,
+  ): WhereOptions | undefined {
     let scopesWhere: WhereOptions | undefined
     const startOfToday = startOfDay(new Date())
     const futureValidToWhere: WhereOptions = {
@@ -523,14 +605,14 @@ export class DelegationsService {
       },
     }
 
-    if (valid === DelegationValidity.NOW) {
+    if (validity === DelegationValidity.NOW) {
       scopesWhere = {
         validFrom: { [Op.lte]: startOfToday },
         ...futureValidToWhere,
       }
-    } else if (valid === DelegationValidity.INCLUDE_FUTURE) {
+    } else if (validity === DelegationValidity.INCLUDE_FUTURE) {
       scopesWhere = futureValidToWhere
-    } else if (valid === DelegationValidity.PAST) {
+    } else if (validity === DelegationValidity.PAST) {
       scopesWhere = {
         validTo: {
           [Op.lt]: startOfToday,
@@ -539,6 +621,41 @@ export class DelegationsService {
     }
 
     return scopesWhere
+  }
+
+  private checkIfScopeAllowed(
+    scope: DelegationScope,
+    allowedScopes: string[],
+  ): boolean {
+    return (
+      (scope.scopeName && allowedScopes.includes(scope.scopeName)) ||
+      (scope.identityResourceName &&
+        allowedScopes.includes(scope.identityResourceName)) ||
+      false
+    )
+  }
+
+  private async getClientDelegationInfo(
+    user: User,
+  ): Promise<ClientDelegationInfo | null> {
+    return this.clientModel.findByPk(user.client, {
+      attributes: [
+        'supportsLegalGuardians',
+        'supportsProcuringHolders',
+        'supportsDelegation',
+        'supportsPersonalRepresentatives',
+      ],
+    })
+  }
+
+  private async getClientAllowedScopes(user: User) {
+    return (
+      await this.clientAllowedScopeModel.findAll({
+        where: {
+          clientId: user.client,
+        },
+      })
+    ).map((s) => s.scopeName)
   }
 
   private async getUserName(user: User) {
@@ -554,25 +671,61 @@ export class DelegationsService {
     return userinfo.name
   }
 
-  private async getPersonName(
-    nationalId: string,
-    user: User,
-    authMiddlewareOptions: AuthMiddlewareOptions,
-  ) {
-    const person = await this.personApi
-      .withMiddleware(
-        new AuthMiddleware(user, {
-          forwardUserInfo: authMiddlewareOptions.forwardUserInfo,
-        }),
-      )
-      .einstaklingarGetEinstaklingur({
-        id: nationalId,
-      })
+  private async getPersonName(nationalId: string) {
+    const person = await this.personApi.einstaklingarGetEinstaklingur({
+      id: nationalId,
+    })
     if (!person) {
       throw new BadRequestException(
         `A person with nationalId<${nationalId}> could not be found`,
       )
     }
     return person.fulltNafn || person.nafn
+  }
+
+  /**
+   * Validates that the delegation scopes belong to user and are valid for delegation
+   * @param user user scopes from the currently authenticated user
+   * @param requestedScopes requested scopes from a delegation
+   * @returns
+   */
+  private async validateScopesAccess(
+    user: User,
+    requestedScopes?: UpdateDelegationScopeDTO[],
+  ): Promise<boolean> {
+    if (!requestedScopes || requestedScopes.length === 0) {
+      return true
+    }
+
+    for (const scope of requestedScopes) {
+      // Delegation scopes need to be associated with the user scopes
+      if (!user.scope.includes(scope.name)) {
+        return false
+      }
+    }
+
+    // Check if the requested scopes are valid
+    const scopes = requestedScopes.map((scope) => scope.name)
+    const allowedApiScopesCount = await this.resourcesService.countAllowedDelegationApiScopesForUser(
+      scopes,
+      user,
+    )
+    return requestedScopes.length === allowedApiScopesCount
+  }
+
+  /**
+   * Validates the valid period of the scopes requested in a delegation.
+   * @param scopes requested scopes on a delegation
+   */
+  private validateScopesPeriod(scopes?: UpdateDelegationScopeDTO[]): boolean {
+    if (!scopes || scopes.length === 0) {
+      return true
+    }
+
+    const startOfToday = startOfDay(new Date())
+    // validTo needs to be the current day or in the future
+    return scopes.every(
+      (scope) => scope.validTo && new Date(scope.validTo) >= startOfToday,
+    )
   }
 }

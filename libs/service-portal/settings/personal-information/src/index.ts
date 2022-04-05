@@ -1,5 +1,4 @@
 import { Query } from '@island.is/api/schema'
-import differenceInMonths from 'date-fns/differenceInMonths'
 import { UserProfileScope } from '@island.is/auth/scopes'
 import {
   ServicePortalModule,
@@ -9,7 +8,7 @@ import {
   m,
 } from '@island.is/service-portal/core'
 import { USER_PROFILE } from '@island.is/service-portal/graphql'
-import { outOfDate } from '../src/utils/outOfDate'
+import { showModal } from '../src/utils/showModal'
 
 import { lazy } from 'react'
 import * as Sentry from '@sentry/react'
@@ -46,16 +45,13 @@ export const personalInformationModule: ServicePortalModule = {
         query: USER_PROFILE,
       })
 
-      const profileExists = res.data?.getUserProfile?.modified
-      const dateDiffLate = res.data?.getUserProfile
-        ? outOfDate(res.data.getUserProfile)
-        : false
-      // If the user profile is empty or has not been modified for 3 months, we render the onboarding modal
+      const showTheModal = showModal(res.data?.getUserProfile)
+
       if (
         // true
         process.env.NODE_ENV !== 'development' &&
-        (!profileExists || dateDiffLate) &&
-        userInfo.scopes.includes(UserProfileScope.write)
+        userInfo.scopes.includes(UserProfileScope.write) &&
+        showTheModal
       )
         routes.push({
           render: () =>

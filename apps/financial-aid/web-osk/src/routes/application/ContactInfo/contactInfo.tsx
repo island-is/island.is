@@ -12,6 +12,7 @@ import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/hooks/
 import {
   NavigationProps,
   isEmailValid,
+  sanitizeOnlyNumbers,
 } from '@island.is/financial-aid/shared/lib'
 import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 
@@ -93,7 +94,10 @@ const ContactInfo = () => {
             value={form?.phoneNumber}
             onChange={(event) => {
               setHasError(false)
-              updateForm({ ...form, phoneNumber: event.target.value })
+              updateForm({
+                ...form,
+                phoneNumber: sanitizeOnlyNumbers(event.target.value),
+              })
             }}
             backgroundColor="blue"
             errorMessage="Athugaðu hvort símanúmer sé rétt slegið inn, gilt símanúmer eru 7 stafir"

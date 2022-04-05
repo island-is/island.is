@@ -63,7 +63,9 @@ const LokeCaseNumber: React.FC<Props> = (props) => {
           name="policeCaseNumber"
           autoComplete="off"
           label={formatMessage(policeCaseNumber.label)}
-          placeholder={formatMessage(policeCaseNumber.placeholder)}
+          placeholder={formatMessage(policeCaseNumber.placeholder, {
+            year: new Date().getFullYear(),
+          })}
           errorMessage={policeCaseNumberErrorMessage}
           hasError={policeCaseNumberErrorMessage !== ''}
           required

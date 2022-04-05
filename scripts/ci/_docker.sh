@@ -25,6 +25,7 @@ case $PUBLISH in
 
 esac
 
+# shellcheck disable=SC2086
 docker buildx build \
   --platform=linux/amd64 \
   --cache-from=type=local,src="$PROJECT_ROOT"/cache \
@@ -32,6 +33,7 @@ docker buildx build \
   -f "${DIR}"/"$DOCKERFILE" \
   --target="$TARGET" \
   "${PUBLISH_TO_REGISTRY[@]}" \
+  ${EXTRA_DOCKER_BUILD_ARGS:-} \
   --build-arg APP="${APP}" \
   --build-arg APP_HOME="${APP_HOME}" \
   --build-arg APP_DIST_HOME="${APP_DIST_HOME}" \

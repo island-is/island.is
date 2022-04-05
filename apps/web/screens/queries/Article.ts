@@ -86,6 +86,7 @@ export const GET_ARTICLE_QUERY = gql`
         url
       }
       subArticles {
+        id
         title
         slug
         body {

@@ -3,6 +3,9 @@ import { ApplicationWithAttachments as Application } from '@island.is/applicatio
 export interface DecodedAssignmentToken {
   applicationId: string
   state: string
+  nonce: string
+  iat: number
+  exp: number
 }
 
 export interface StateChangeResult {
@@ -16,9 +19,4 @@ export interface TemplateAPIModuleActionResult {
   updatedApplication: Application
   hasError: boolean
   error?: string
-}
-
-export interface ApplicationLifecycle {
-  isListed: boolean
-  pruneAt: Date | null
 }

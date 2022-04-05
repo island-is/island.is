@@ -74,15 +74,28 @@ export const SjukratryggingarFooter: React.FC<FooterProps> = ({
                   span={['12/12', '12/12', '6/12', '3/12']}
                   className={styles.footerSecondRow}
                 >
-                  <img src="/assets/sjukratryggingar_norraent_samstarf.png" />
+                  <img
+                    src="/assets/sjukratryggingar_heilbrigdisraduneytid.png"
+                    alt="heilbrygdisraduneytid"
+                  />
                 </GridColumn>
                 <GridColumn
                   span={['12/12', '12/12', '6/12', '3/12']}
                   className={styles.footerSecondRow}
                 >
-                  <img src="/assets/sjukratryggingar_heilbrigdisraduneytid.png" />
+                  <Box>
+                    {richText((footerItems?.[4].content ?? []) as SliceType[], {
+                      renderNode: {
+                        [BLOCKS.PARAGRAPH]: (_node, children) => (
+                          <Text variant="small" color="dark400" marginY={1}>
+                            {children}
+                          </Text>
+                        ),
+                      },
+                    })}
+                  </Box>
                 </GridColumn>
-                {footerItems.slice(4, 6).map((item, index) => (
+                {footerItems.slice(5, 7).map((item, index) => (
                   <GridColumn
                     span={['12/12', '12/12', '6/12', '3/12']}
                     className={styles.footerSecondRow}

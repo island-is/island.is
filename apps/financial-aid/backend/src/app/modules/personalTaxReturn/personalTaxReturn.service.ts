@@ -11,46 +11,89 @@ export class PersonalTaxReturnService {
     private fileService: FileService,
   ) {}
 
-  private async callPersonalTaxReturn(nationalId: string, year: number) {
-    return await this.personalTaxReturnApi
-      .personalTaxReturnInPdf(nationalId, year.toString())
-      .catch(() => {
-        return { success: false, content: '' }
-      })
+  async directTaxPayments(nationalId: string) {
+    try {
+      const directTaxPayments = await this.personalTaxReturnApi.directTaxPayments(
+        nationalId,
+        this.createPeriod(3),
+        this.createPeriod(1),
+      )
+      return {
+        directTaxPayments: directTaxPayments.salaryBreakdown.map((salary) => {
+          return {
+            totalSalary: salary.salaryTotal,
+            payerNationalId: salary.payerNationalId.toString(),
+            personalAllowance: salary.personalAllowance,
+            withheldAtSource: salary.salaryWithheldAtSource,
+            month: salary.period,
+            year: salary.year,
+          }
+        }),
+      }
+    } catch {
+      return { directTaxPayments: [] }
+    }
   }
 
   async personalTaxReturn(nationalId: string, folder: string) {
-    let year = new Date().getFullYear() - 1
+    try {
+      let changeableYear = new Date().getFullYear() - 1
 
-    let taxReturn = await this.callPersonalTaxReturn(nationalId, year)
+      let taxReturn = await this.personalTaxReturnApi
+        .personalTaxReturnInPdf(nationalId, changeableYear)
+        .catch(() => {
+          return {
+            success: false,
+            content: '',
+          }
+        })
 
-    if (taxReturn.success === false) {
-      year -= 1
-      taxReturn = await this.callPersonalTaxReturn(nationalId, year)
-    }
+      if (taxReturn.success === false) {
+        changeableYear -= 1
+        taxReturn = await this.personalTaxReturnApi
+          .personalTaxReturnInPdf(nationalId, changeableYear)
+          .catch(() => {
+            return {
+              success: false,
+              content: '',
+            }
+          })
+      }
 
-    if (taxReturn.success === false) {
+      if (taxReturn.success === false) {
+        throw Error('Tax return was not successful')
+      }
+
+      const fileName = `Framtal_${nationalId}_${changeableYear}.pdf`
+
+      const presignedUrl = this.fileService.createSignedUrl(folder, fileName)
+      const base64 = Base64.atob(taxReturn.content)
+      const size = base64.length
+
+      await fetch(presignedUrl.url, {
+        method: 'PUT',
+        body: Buffer.from(base64, 'binary'),
+        headers: {
+          'x-amz-acl': 'bucket-owner-full-control',
+          'Content-Type': 'application/pdf',
+          'Content-Length': size.toString(),
+        },
+      })
+
+      return {
+        personalTaxReturn: { key: presignedUrl.key, name: fileName, size },
+      }
+    } catch {
       return undefined
     }
+  }
 
-    const fileName = `Framtal_${nationalId}_${year}.pdf`
-
-    const presignedUrl = this.fileService.createSignedUrl(folder, fileName)
-    const base64 = Base64.atob(taxReturn.content)
-    const size = base64.length
-
-    await fetch(presignedUrl.url, {
-      method: 'PUT',
-      body: Buffer.from(base64, 'binary'),
-      headers: {
-        'x-amz-acl': 'bucket-owner-full-control',
-        'Content-Type': 'application/pdf',
-        'Content-Length': size.toString(),
-      },
-    }).catch(() => {
-      return undefined
-    })
-
-    return { key: presignedUrl.key, name: fileName, size }
+  private createPeriod(pastMonth: number) {
+    const date = new Date()
+    date.setMonth(date.getMonth() - pastMonth)
+    return {
+      year: date.getFullYear(),
+      month: date.getMonth() + 1,
+    }
   }
 }

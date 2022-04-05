@@ -1,11 +1,13 @@
 import { Case, CaseDecision } from '@island.is/judicial-system/types'
 import { makeCustodyCase } from '@island.is/judicial-system/formatters'
+import { CONFIRMATION_ROUTE } from '@island.is/judicial-system/consts'
+
 import { intercept } from '../../../utils'
 
-describe('/domur/stadfesta/:id', () => {
+describe(`${CONFIRMATION_ROUTE}/:id`, () => {
   beforeEach(() => {
     cy.stubAPIResponses()
-    cy.visit('/domur/stadfesta/test_id_stadfesting')
+    cy.visit(`${CONFIRMATION_ROUTE}/test_id_stadfesting`)
   })
 
   it('should display the ruling statement', () => {

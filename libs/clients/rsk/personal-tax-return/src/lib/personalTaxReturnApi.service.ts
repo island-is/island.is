@@ -1,9 +1,16 @@
 import { HttpService, Inject, Injectable } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
 import { PersonalTaxReturnConfig } from './personalTaxReturn.config'
-import { pdfRequest } from './requests/pdf'
 import * as xml2js from 'xml2js'
-import { PdfDto, PdfResponse } from './dto/pdf.dto'
+import { directTaxPaymentRequest, pdfRequest } from './requests'
+import { Period } from './interfaces'
+import { DirectTaxPaymentDto, PdfDto } from './dto'
+import { DirectTaxPaymentResponse, PdfResponse } from './responses'
+import {
+  directTaxPaymentResponseToDto,
+  pdfResponseToDto,
+} from './transformers/transformers'
+import { parseBooleans, parseNumbers } from 'xml2js/lib/processors'
 
 @Injectable()
 export class PersonalTaxReturnApi {
@@ -15,7 +22,7 @@ export class PersonalTaxReturnApi {
 
   async personalTaxReturnInPdf(
     nationalId: string,
-    year: string,
+    year: number,
   ): Promise<PdfDto> {
     const headers = { Accept: 'gzip', 'Content-Type': 'application/soap+xml' }
 
@@ -25,6 +32,7 @@ export class PersonalTaxReturnApi {
         pdfRequest(
           this.config.agentNationalId,
           this.config.agentId,
+          this.config.url,
           nationalId,
           year,
         ),
@@ -32,29 +40,49 @@ export class PersonalTaxReturnApi {
       )
       .toPromise()
       .then(async (response) => {
-        const parser = new xml2js.Parser()
+        const parser = new xml2js.Parser({
+          explicitArray: false,
+          valueProcessors: [parseBooleans],
+        })
         return await parser
           .parseStringPromise(response.data.replace(/(\t\n|\t|\n)/gm, ''))
           .then((parsedResponse: PdfResponse) => {
-            return {
-              success:
-                parsedResponse['s:Envelope']['s:Body'][0]
-                  .SaekjaPDFAfritFramtalsEinstaklingsResponse[0]
-                  .SaekjaPDFAfritFramtalsEinstaklingsResult[0]['b:Tokst'][0] ===
-                'true',
-              errorText:
-                parsedResponse['s:Envelope']['s:Body'][0]
-                  .SaekjaPDFAfritFramtalsEinstaklingsResponse[0]
-                  .SaekjaPDFAfritFramtalsEinstaklingsResult[0]['b:Villubod'][0],
-              content:
-                parsedResponse['s:Envelope']['s:Body'][0]
-                  .SaekjaPDFAfritFramtalsEinstaklingsResponse[0]
-                  .SaekjaPDFAfritFramtalsEinstaklingsResult[0][
-                  'b:PDFAfritFramtals'
-                ][0],
-            }
+            return pdfResponseToDto(parsedResponse)
           })
       })
-      .catch((err) => err)
+  }
+
+  async directTaxPayments(
+    nationalId: string,
+    from: Period,
+    to: Period,
+  ): Promise<DirectTaxPaymentDto> {
+    const headers = { 'Content-Type': 'application/soap+xml' }
+    return await this.httpService
+      .post(
+        this.config.url,
+        directTaxPaymentRequest(
+          this.config.agentNationalId,
+          this.config.agentId,
+          this.config.url,
+          nationalId,
+          from,
+          to,
+        ),
+        { headers },
+      )
+      .toPromise()
+      .then(async (response) => {
+        const parser = new xml2js.Parser({
+          explicitArray: false,
+          valueProcessors: [parseNumbers, parseBooleans],
+        })
+
+        return await parser
+          .parseStringPromise(response.data.replace(/(\t\n|\t|\n)/gm, ''))
+          .then((parsedResponse: DirectTaxPaymentResponse) => {
+            return directTaxPaymentResponseToDto(parsedResponse)
+          })
+      })
   }
 }

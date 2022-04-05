@@ -20,6 +20,7 @@ import { StaffService } from '../../staff/staff.service'
 import { UpdateApplicationDto } from '../dto'
 import { ApplicationModel } from '../models/application.model'
 import { createTestingApplicationModule } from './createTestingApplicationModule'
+import { DirectTaxPaymentService } from '../../directTaxPayment'
 
 interface Then {
   result: ApplicationModel
@@ -41,6 +42,7 @@ describe('ApplicationController - Update', () => {
   let mockApplicationEventService: ApplicationEventService
   let mockMunicipalityService: MunicipalityService
   let mockEmailService: EmailService
+  let mockDirectTaxPaymentService: DirectTaxPaymentService
 
   beforeEach(async () => {
     const {
@@ -52,6 +54,7 @@ describe('ApplicationController - Update', () => {
       applicationEventService,
       municipalityService,
       emailService,
+      directTaxPaymentService,
     } = await createTestingApplicationModule()
 
     mockApplicationModel = applicationModel
@@ -61,6 +64,7 @@ describe('ApplicationController - Update', () => {
     mockApplicationEventService = applicationEventService
     mockMunicipalityService = municipalityService
     mockEmailService = emailService
+    mockDirectTaxPaymentService = directTaxPaymentService
 
     givenWhenThen = async (
       id: string,
@@ -148,6 +152,8 @@ describe('ApplicationController - Update', () => {
       eventFindById.mockReturnValueOnce(Promise.resolve([]))
       const getApplicationFiles = mockFileService.getAllApplicationFiles as jest.Mock
       getApplicationFiles.mockReturnValueOnce(Promise.resolve([]))
+      const getDirectTaxPayment = mockDirectTaxPaymentService.getByApplicationId as jest.Mock
+      getDirectTaxPayment.mockReturnValueOnce(Promise.resolve([]))
 
       then = await givenWhenThen(id, applicationUpdate, user)
     })
@@ -158,6 +164,12 @@ describe('ApplicationController - Update', () => {
 
     it('should not call amountService', () => {
       expect(mockAmountService.create).not.toHaveBeenCalled()
+    })
+
+    it('should call directTaxPaymentService', () => {
+      expect(
+        mockDirectTaxPaymentService.getByApplicationId,
+      ).toHaveBeenCalledWith(application.id)
     })
 
     it('should call applicationEventService with correct values', () => {
@@ -255,6 +267,8 @@ describe('ApplicationController - Update', () => {
       eventFindById.mockReturnValueOnce(Promise.resolve([]))
       const getApplicationFiles = mockFileService.getAllApplicationFiles as jest.Mock
       getApplicationFiles.mockReturnValueOnce(Promise.resolve([]))
+      const getDirectTaxPayment = mockDirectTaxPaymentService.getByApplicationId as jest.Mock
+      getDirectTaxPayment.mockReturnValueOnce(Promise.resolve([]))
     })
 
     describe('Allowed events', () => {
@@ -359,6 +373,8 @@ describe('ApplicationController - Update', () => {
       findByMunicipalityId.mockReturnValueOnce(Promise.resolve(municipality))
       const sendEmail = mockEmailService.sendEmail as jest.Mock
       sendEmail.mockReturnValueOnce(Promise.resolve())
+      const getDirectTaxPayment = mockDirectTaxPaymentService.getByApplicationId as jest.Mock
+      getDirectTaxPayment.mockReturnValueOnce(Promise.resolve([]))
     })
 
     describe('Forbidden events', () => {
@@ -469,6 +485,8 @@ describe('ApplicationController - Update', () => {
       findByMunicipalityId.mockReturnValueOnce(Promise.resolve(municipality))
       const sendEmail = mockEmailService.sendEmail as jest.Mock
       sendEmail.mockReturnValueOnce(Promise.resolve())
+      const getDirectTaxPayment = mockDirectTaxPaymentService.getByApplicationId as jest.Mock
+      getDirectTaxPayment.mockReturnValueOnce(Promise.resolve([]))
 
       then = await givenWhenThen(id, applicationUpdate, staff)
     })
@@ -495,6 +513,12 @@ describe('ApplicationController - Update', () => {
 
     it('should not call amountService', () => {
       expect(mockAmountService.create).not.toHaveBeenCalled()
+    })
+
+    it('should call directTaxPaymentService', () => {
+      expect(
+        mockDirectTaxPaymentService.getByApplicationId,
+      ).toHaveBeenCalledWith(application.id)
     })
 
     it('should call municipality service with correct value', () => {

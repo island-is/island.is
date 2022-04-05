@@ -74,6 +74,8 @@ export const createTestingCaseModule = async () => {
     ],
   }).compile()
 
+  const courtService = caseModule.get<CourtService>(CourtService)
+
   const userService = caseModule.get<UserService>(UserService)
 
   const awsS3Service = caseModule.get<AwsS3Service>(AwsS3Service)
@@ -91,6 +93,7 @@ export const createTestingCaseModule = async () => {
   const caseController = caseModule.get<CaseController>(CaseController)
 
   return {
+    courtService,
     userService,
     awsS3Service,
     defendantService,

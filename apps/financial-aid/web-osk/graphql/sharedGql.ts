@@ -67,6 +67,7 @@ export const ApplicationQuery = gql`
       modified
       municipalityCode
       spouseNationalId
+      familyStatus
       applicationEvents {
         id
         applicationId
@@ -133,12 +134,24 @@ export const NationalRegistryUserQuery = gql`
   }
 `
 
-export const PersonalTaxReturnQuery = gql`
-  query personalTaxReturnQuery {
+export const GatherTaxDataQuery = gql`
+  query gatherTaxDataQuery {
     municipalitiesPersonalTaxReturn {
-      key
-      name
-      size
+      personalTaxReturn {
+        key
+        name
+        size
+      }
+    }
+    municipalitiesDirectTaxPayments {
+      directTaxPayments {
+        totalSalary
+        payerNationalId
+        personalAllowance
+        withheldAtSource
+        month
+        year
+      }
     }
   }
 `

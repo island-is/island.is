@@ -5,15 +5,19 @@ import {
   makeInvestigationCase,
   makeCourt,
 } from '@island.is/judicial-system/formatters'
+import {
+  IC_COURT_HEARING_ARRANGEMENTS_ROUTE,
+  IC_RULING_ROUTE,
+} from '@island.is/judicial-system/consts'
 
 import { intercept } from '../../../utils'
 
-describe('/domur/rannsoknarheimild/fyrirtaka/:id', () => {
+describe(`${IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
   beforeEach(() => {
     cy.login()
 
     cy.stubAPIResponses()
-    cy.visit('/domur/rannsoknarheimild/fyrirtaka/test_id_stadfest')
+    cy.visit(`${IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/test_id_stadfest`)
   })
 
   it('should display case comments', () => {
@@ -29,11 +33,10 @@ describe('/domur/rannsoknarheimild/fyrirtaka/:id', () => {
     cy.contains(comment)
   })
 
-  it('should allow users to choose if they send COURT_DATE notification', () => {
+  it('should ask for defender info depending on selected session arrangement', () => {
     const caseData = makeInvestigationCase()
     const caseDataAddition: Case = {
       ...caseData,
-      // judge: makeJudge(),
       court: makeCourt(),
       requestedCourtDate: '2020-09-16T19:50:08.033Z',
       state: CaseState.RECEIVED,
@@ -41,10 +44,33 @@ describe('/domur/rannsoknarheimild/fyrirtaka/:id', () => {
 
     intercept(caseDataAddition)
 
-    cy.getByTestid('select-judge').click()
-    cy.get('#react-select-judge-option-0').click()
-    cy.getByTestid('select-registrar').click()
-    cy.get('#react-select-registrar-option-0').click()
+    cy.get('[name="session-arrangements-all-present"]').click()
+    cy.get('[name="defenderName"]').should('exist')
+    cy.get('[name="defenderEmail"]').should('exist')
+    cy.get('[name="defenderPhoneNumber"]').should('exist')
+
+    cy.get('[name="session-arrangements-all-present_spokesperson"]').click()
+    cy.get('[name="defenderName"]').should('exist')
+    cy.get('[name="defenderEmail"]').should('exist')
+    cy.get('[name="defenderPhoneNumber"]').should('exist')
+
+    cy.get('[name="session-arrangements-prosecutor-present"]').click()
+    cy.get('[name="defenderName"]').should('not.exist')
+    cy.get('[name="defenderEmail"]').should('not.exist')
+    cy.get('[name="defenderPhoneNumber"]').should('not.exist')
+  })
+
+  it('should allow users to choose if they send COURT_DATE notification', () => {
+    const caseData = makeInvestigationCase()
+    const caseDataAddition: Case = {
+      ...caseData,
+      court: makeCourt(),
+      requestedCourtDate: '2020-09-16T19:50:08.033Z',
+      state: CaseState.RECEIVED,
+    }
+
+    intercept(caseDataAddition)
+
     cy.get('[name="session-arrangements-all-present"]').click()
     cy.getByTestid('courtroom').type('1337')
     cy.getByTestid('continueButton').click()
@@ -62,12 +88,10 @@ describe('/domur/rannsoknarheimild/fyrirtaka/:id', () => {
 
     intercept(caseDataAddition)
 
-    cy.getByTestid('select-judge').click()
-    cy.get('#react-select-judge-option-0').click()
     cy.get('[name="session-arrangements-all-present"]').click()
     cy.getByTestid('continueButton').should('not.be.disabled')
     cy.getByTestid('continueButton').click()
     cy.getByTestid('modalSecondaryButton').click()
-    cy.url().should('include', '/domur/rannsoknarheimild/thingbok')
+    cy.url().should('include', IC_RULING_ROUTE)
   })
 })

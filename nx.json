@@ -109,6 +109,9 @@
     "api-domains-driving-license": {
       "tags": []
     },
+    "api-domains-driving-license-book": {
+      "tags": []
+    },
     "api-domains-education": {
       "tags": []
     },
@@ -131,6 +134,9 @@
       "tags": []
     },
     "api-domains-license-service": {
+      "tags": []
+    },
+    "api-domains-mortgage-certificate": {
       "tags": []
     },
     "api-domains-national-registry": {
@@ -158,6 +164,9 @@
       "tags": []
     },
     "api-schema": {
+      "tags": []
+    },
+    "application-api-core": {
       "tags": []
     },
     "application-core": {
@@ -206,6 +215,9 @@
     "application-templates-driving-assessment-approval": {
       "tags": []
     },
+    "application-templates-driving-instructor-registrations": {
+      "tags": []
+    },
     "application-templates-driving-license": {
       "tags": []
     },
@@ -228,6 +240,9 @@
       "tags": []
     },
     "application-templates-login-service": {
+      "tags": []
+    },
+    "application-templates-mortgage-certificate": {
       "tags": []
     },
     "application-templates-p-sign": {
@@ -298,6 +313,9 @@
     "clients-driving-license": {
       "tags": []
     },
+    "clients-driving-license-book": {
+      "tags": []
+    },
     "clients-finance": {
       "tags": []
     },
@@ -335,9 +353,6 @@
       "tags": []
     },
     "clients-rsk-procuring": {
-      "tags": []
-    },
-    "clients-rsk-v1": {
       "tags": []
     },
     "clients-syslumenn": {
@@ -461,9 +476,6 @@
     "infra-metrics": {
       "tags": []
     },
-    "infra-monitoring": {
-      "tags": []
-    },
     "infra-nest-server": {
       "tags": []
     },
@@ -485,7 +497,7 @@
     },
     "island-ui-storybook": {
       "tags": [],
-      "implicitDependencies": ["island-ui-core"]
+      "implicitDependencies": ["island-ui-core", "application-ui-fields"]
     },
     "island-ui-theme": {
       "tags": []
@@ -517,6 +529,9 @@
     "judicial-system-formatters": {
       "tags": []
     },
+    "judicial-system-scheduler": {
+      "tags": []
+    },
     "judicial-system-types": {
       "tags": []
     },
@@ -540,6 +555,9 @@
       "tags": []
     },
     "nest-audit": {
+      "tags": []
+    },
+    "nest-aws": {
       "tags": []
     },
     "nest-config": {
@@ -582,6 +600,9 @@
       "tags": []
     },
     "regulations": {
+      "tags": []
+    },
+    "residence-history": {
       "tags": []
     },
     "service-portal": {
@@ -634,6 +655,9 @@
       "tags": []
     },
     "service-portal-finance": {
+      "tags": []
+    },
+    "service-portal-finance-schedule": {
       "tags": []
     },
     "service-portal-graphql": {

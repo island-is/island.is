@@ -133,4 +133,38 @@ describe('JwtStrategy#validate', () => {
     expect(user.actor!.nationalId).toEqual(payload.actor!.nationalId)
     expect(user.actor!.scope).toEqual(payload.actor!.scope)
   })
+
+  it('picks up client_nationalId', async () => {
+    const jwtStrategywithClientNationalId = new JwtStrategy({
+      issuer: 'issuer',
+      audience: 'audience',
+      allowClientNationalId: true,
+    })
+    // Arrange
+    const payload: JwtPayload = {
+      scope: ['test-scope-1'],
+      client_id: 'test-client',
+      client_nationalId: '1234565555',
+    }
+
+    const personPayload: JwtPayload = {
+      scope: ['test-scope-1'],
+      client_id: 'test-client',
+      nationalId: '1234567890',
+    }
+
+    // Act
+    const user = await jwtStrategywithClientNationalId.validate(
+      fakeRequest,
+      payload,
+    )
+
+    const personUser = await jwtStrategywithClientNationalId.validate(
+      fakeRequest,
+      personPayload,
+    )
+    // Assert
+    expect(user.nationalId).toEqual(payload.client_nationalId)
+    expect(personUser.nationalId).toEqual('1234567890')
+  })
 })

@@ -29,7 +29,7 @@ export const SyslumennFooter: React.FC<FooterProps> = ({
   logo,
   footerItems,
 }) => {
-  const { isServiceWeb } = useContext(GlobalContext)
+  const { isServiceWeb, shouldLinkToServiceWeb } = useContext(GlobalContext)
 
   const items = footerItems.map((item, index) => (
     <GridColumn
@@ -95,11 +95,11 @@ export const SyslumennFooter: React.FC<FooterProps> = ({
             </div>
           </Box>
           <GridRow>
-            {isServiceWeb ? (
+            {!shouldLinkToServiceWeb || isServiceWeb ? (
               items
             ) : (
               <>
-                <GridColumn span={['12/12', '12/12', '1/5']}>
+                <GridColumn span={['12/12', '12/12', '1/5']} paddingBottom={4}>
                   <HeaderLink
                     linkType="serviceweborganization"
                     slug="syslumenn"

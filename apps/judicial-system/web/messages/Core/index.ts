@@ -176,4 +176,9 @@ export const core = defineMessages({
     defaultMessage: 'Uppfæra',
     description: 'Notað fyrir orðið Uppfæra í öllum flæðum.',
   },
+  and: {
+    id: 'judicial.system.core:and',
+    defaultMessage: 'og',
+    description: 'Notað fyrir orðið og',
+  },
 })

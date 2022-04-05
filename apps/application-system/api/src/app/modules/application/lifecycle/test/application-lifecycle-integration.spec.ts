@@ -7,9 +7,13 @@ import { setup } from '../../../../../../test/setup'
 import { ApplicationLifeCycleService } from '../application-lifecycle.service'
 import { ApplicationTypes } from '@island.is/application/core'
 import * as utils from '../../utils/application'
-import { AwsService } from '../../files/aws.service'
+import { AwsService } from '@island.is/nest/aws'
 import { EmailService } from '@island.is/email-service'
 import { ContentfulRepository } from '@island.is/cms'
+import { ApplicationLifecycleModule } from '../application-lifecycle.module'
+import { AppModule } from '../../../../app.module'
+import { FeatureFlagService } from '@island.is/nest/feature-flags'
+import { MockFeatureFlagService } from '../../e2e/mockFeatureFlagService'
 
 let app: INestApplication
 let server: request.SuperTest<request.Test>
@@ -53,11 +57,13 @@ class MockContentfulRepository {
 beforeAll(async () => {
   const currentUser = createCurrentUser()
   const { nationalId } = currentUser
-  app = await setup({
+  app = await setup(AppModule, {
     override: (builder) =>
       builder
         .overrideProvider(ContentfulRepository)
         .useClass(MockContentfulRepository)
+        .overrideProvider(FeatureFlagService)
+        .useClass(MockFeatureFlagService)
         .overrideProvider(EmailService)
         .useClass(MockEmailService)
         .overrideGuard(IdsUserGuard)
@@ -68,7 +74,10 @@ beforeAll(async () => {
           }),
         ),
   })
-  lifeCycleService = app.get<ApplicationLifeCycleService>(
+
+  const lifeCycleApp = await setup(ApplicationLifecycleModule)
+
+  lifeCycleService = lifeCycleApp.get<ApplicationLifeCycleService>(
     ApplicationLifeCycleService,
   )
   awsService = app.get<AwsService>(AwsService)

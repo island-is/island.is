@@ -5,9 +5,6 @@ const isProd = process.env.NODE_ENV === 'production'
 const devConfig = {
   production: false,
   environment: 'local',
-  sentry: {
-    dsn: process.env.SENTRY_DSN,
-  },
   nationalRegistry: {
     url: process.env.NATIONAL_REGISTRY_URL,
     username: process.env.NATIONAL_REGISTRY_USERNAME,
@@ -55,9 +52,6 @@ if (isProd) {
 const prodConfig = {
   production: true,
   environment: process.env.ENVIRONMENT,
-  sentry: {
-    dsn: process.env.SENTRY_DSN,
-  },
   nationalRegistry: {
     url: process.env.NATIONAL_REGISTRY_URL,
     username: process.env.NATIONAL_REGISTRY_USERNAME,

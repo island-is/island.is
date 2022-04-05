@@ -182,4 +182,5 @@ export const userDelegationsText = style({
 
 export const userTopicCardBox = style({
   height: 64,
+  textAlign: 'left',
 })

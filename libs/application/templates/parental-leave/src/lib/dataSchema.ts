@@ -50,6 +50,7 @@ export const dataSchema = z.object({
     union: z.string().optional(),
   }),
   shareInformationWithOtherParent: z.enum([YES, NO]),
+  useUnion: z.enum([YES, NO]),
   usePrivatePensionFund: z.enum([YES, NO]),
   employerNationalRegistryId: z
     .string()
@@ -82,7 +83,7 @@ export const dataSchema = z.object({
   otherParentId: z
     .string()
     .optional()
-    .refine((n) => n && kennitala.isValid(n) && kennitala.isPerson(n), {
+    .refine((n) => !n || (kennitala.isValid(n) && kennitala.isPerson(n)), {
       params: errorMessages.otherParentId,
     }),
   otherParentRightOfAccess: z.enum([YES, NO]).optional(),

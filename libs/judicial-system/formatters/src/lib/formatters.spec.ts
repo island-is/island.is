@@ -5,7 +5,8 @@ import {
   CaseType,
 } from '@island.is/judicial-system/types'
 
-import * as Constants from './constants'
+import * as Constants from '@island.is/judicial-system/consts'
+
 import {
   formatDate,
   formatRequestedCustodyRestrictions,

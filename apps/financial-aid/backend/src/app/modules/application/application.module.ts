@@ -12,6 +12,7 @@ import {
   FileModule,
   StaffModule,
   ApplicationEventModule,
+  DirectTaxPaymentModule,
 } from '../index'
 
 @Module({
@@ -22,6 +23,7 @@ import {
     forwardRef(() => ApplicationEventModule),
     forwardRef(() => MunicipalityModule),
     forwardRef(() => AmountModule),
+    forwardRef(() => DirectTaxPaymentModule),
     SequelizeModule.forFeature([ApplicationModel]),
   ],
   providers: [ApplicationService],

@@ -1,9 +1,11 @@
 import {
   Application,
   ApplicationEventType,
+  ApplicationState,
   getState,
+  Routes,
 } from '@island.is/financial-aid/shared/lib'
-import { Box, Button, Text } from '@island.is/island-ui/core'
+import { Box, Button, Icon, Text } from '@island.is/island-ui/core'
 import React from 'react'
 
 import * as styles from './ApplicationHeader.css'
@@ -19,12 +21,14 @@ import {
   GenerateName,
 } from '@island.is/financial-aid-web/veita/src/components'
 import { useApplicationState } from '@island.is/financial-aid-web/veita/src/utils/useApplicationState'
+import Link from 'next/link'
 
 interface ApplicantProps {
   application: Application
   onClickApplicationState: () => void
   setApplication: React.Dispatch<React.SetStateAction<Application | undefined>>
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
+  isPrint?: boolean
 }
 
 const ApplicationHeader = ({
@@ -32,6 +36,7 @@ const ApplicationHeader = ({
   onClickApplicationState,
   setIsLoading,
   setApplication,
+  isPrint = false,
 }: ApplicantProps) => {
   const router = useRouter()
 
@@ -42,7 +47,9 @@ const ApplicationHeader = ({
 
     await changeApplicationState(
       application.id,
-      application.state,
+      application.state === ApplicationState.NEW
+        ? ApplicationState.INPROGRESS
+        : application.state,
       ApplicationEventType.ASSIGNCASE,
     )
       .then((updatedApplication) => {
@@ -58,8 +65,8 @@ const ApplicationHeader = ({
   return (
     <Box className={`contentUp ${styles.widthAlmostFull} `}>
       <Box
-        marginBottom={3}
-        display="flex"
+        marginBottom={isPrint ? 0 : 3}
+        display={isPrint ? 'none' : 'flex'}
         justifyContent="spaceBetween"
         alignItems="center"
         width="full"
@@ -94,7 +101,7 @@ const ApplicationHeader = ({
         paddingY={3}
       >
         <Box display="flex" alignItems="center">
-          <Box marginRight={2}>
+          <Box marginRight={2} display="flex">
             <GeneratedProfile size={48} nationalId={application.nationalId} />
           </Box>
 
@@ -103,38 +110,50 @@ const ApplicationHeader = ({
           </Text>
         </Box>
 
-        <Button
-          colorScheme="default"
-          icon="pencil"
-          iconType="filled"
-          onClick={onClickApplicationState}
-          preTextIconType="filled"
-          size="small"
-          type="button"
-          variant="ghost"
-        >
-          Breyta stöðu
-        </Button>
+        {application.state && isPrint && (
+          <div className={`tags ${getTagByState(application.state)}`}>
+            {getState[application.state]}
+          </div>
+        )}
+
+        <Box display={isPrint ? 'none' : 'block'}>
+          <Button
+            colorScheme="default"
+            icon="pencil"
+            iconType="filled"
+            onClick={onClickApplicationState}
+            preTextIconType="filled"
+            size="small"
+            type="button"
+            variant="ghost"
+          >
+            Breyta stöðu
+          </Button>
+        </Box>
       </Box>
 
-      <Box display="flex" marginBottom={8}>
-        <Box display="flex" marginRight={1}>
-          {application.staff?.name && (
-            <>
-              <Box marginRight={1}>
-                <Text variant="small" fontWeight="semiBold" color="dark300">
-                  Umsjá
-                </Text>
-              </Box>
-              <Box marginRight={1}>
-                <Text variant="small">{application.staff.name}</Text>
-              </Box>
-            </>
-          )}
+      <Box display="flex" marginBottom={isPrint ? 4 : 8}>
+        <Box display={isPrint ? 'none' : 'flex'} marginRight={1}>
+          {application.staff?.name &&
+            application.state !== ApplicationState.NEW && (
+              <>
+                <Box marginRight={1}>
+                  <Text variant="small" fontWeight="semiBold" color="dark300">
+                    Umsjá
+                  </Text>
+                </Box>
+                <Box marginRight={1}>
+                  <Text variant="small">{application.staff.name}</Text>
+                </Box>
+              </>
+            )}
           <button onClick={assignEmployee} className={styles.button}>
             Sjá um
           </button>
-          <Text variant="small">·</Text>
+
+          <Box>
+            <Text variant="small">·</Text>
+          </Box>
         </Box>
 
         <Box marginRight={1}>
@@ -142,7 +161,27 @@ const ApplicationHeader = ({
             Aldur umsóknar
           </Text>
         </Box>
-        <Text variant="small">{calcDifferenceInDate(application.created)}</Text>
+        <Box>
+          <Text variant="small">
+            {calcDifferenceInDate(application.created)}
+          </Text>
+        </Box>
+        {!isPrint && (
+          <>
+            <Box marginX={1}>
+              <Text variant="small">·</Text>
+            </Box>
+            <Link href={Routes.printApplicationProfile(application.id)}>
+              <a target="_blank" className={styles.button}>
+                <Box marginRight={1} display="flex" alignItems="center">
+                  <Icon icon="print" type="outline" size="small" />
+                </Box>
+
+                <span>Prenta umsókn </span>
+              </a>
+            </Link>
+          </>
+        )}
       </Box>
     </Box>
   )

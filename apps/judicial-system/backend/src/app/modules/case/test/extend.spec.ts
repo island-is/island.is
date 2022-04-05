@@ -4,12 +4,14 @@ import { Transaction } from 'sequelize/types'
 import {
   CaseCustodyRestrictions,
   CaseLegalProvisions,
+  CaseOrigin,
   CaseType,
   Gender,
   User as TUser,
 } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from './createTestingCaseModule'
+import { randomDate, randomEnum } from '../../../test'
 import { DefendantService, Defendant } from '../../defendant'
 import { User } from '../../user'
 import { Institution } from '../../institution'
@@ -65,10 +67,12 @@ describe('CaseController - Extend', () => {
     const userId = uuid()
     const user = { id: userId } as TUser
     const caseId = uuid()
+    const origin = randomEnum(CaseOrigin)
     const type = CaseType.CUSTODY
     const description = 'Some details'
     const policeCaseNumber = '007-2021-777'
     const defenderName = 'John Doe'
+    const defenderNationalId = '0000000009'
     const defenderEmail = 'john@dummy.is'
     const defenderPhoneNumber = '1234567'
     const leadInvestigator = 'The Boss'
@@ -82,13 +86,15 @@ describe('CaseController - Extend', () => {
     const legalArguments = 'This is why custody is needed'
     const requestProsecutorOnlySession = false
     const prosecutorOnlySessionRequest = 'The prosecutors wants an exclusive'
-    const rulingDate = new Date()
+    const rulingDate = randomDate()
     const theCase = {
       id: caseId,
+      origin,
       type,
       description,
       policeCaseNumber,
       defenderName,
+      defenderNationalId,
       defenderEmail,
       defenderPhoneNumber,
       leadInvestigator,
@@ -112,10 +118,12 @@ describe('CaseController - Extend', () => {
     it('should extend case', () => {
       expect(mockCaseModel.create).toHaveBeenCalledWith(
         {
+          origin,
           type,
           description,
           policeCaseNumber,
           defenderName,
+          defenderNationalId,
           defenderEmail,
           defenderPhoneNumber,
           leadInvestigator,
@@ -143,10 +151,12 @@ describe('CaseController - Extend', () => {
     const userId = uuid()
     const user = { id: userId } as TUser
     const caseId = uuid()
+    const origin = randomEnum(CaseOrigin)
     const type = CaseType.CUSTODY
     const description = 'Some details'
     const policeCaseNumber = '007-2021-777'
     const defenderName = 'John Doe'
+    const defenderNationalId = '0000000009'
     const defenderEmail = 'john@dummy.is'
     const defenderPhoneNumber = '1234567'
     const leadInvestigator = 'The Boss'
@@ -160,13 +170,15 @@ describe('CaseController - Extend', () => {
     const legalArguments = 'This is why custody is needed'
     const requestProsecutorOnlySession = false
     const prosecutorOnlySessionRequest = 'The prosecutors wants an exclusive'
-    const initialRulingDate = new Date()
+    const initialRulingDate = randomDate()
     const theCase = {
       id: caseId,
+      origin,
       type,
       description,
       policeCaseNumber,
       defenderName,
+      defenderNationalId,
       defenderEmail,
       defenderPhoneNumber,
       leadInvestigator,
@@ -190,10 +202,12 @@ describe('CaseController - Extend', () => {
     it('should extend case', () => {
       expect(mockCaseModel.create).toHaveBeenCalledWith(
         {
+          origin,
           type,
           description,
           policeCaseNumber,
           defenderName,
+          defenderNationalId,
           defenderEmail,
           defenderPhoneNumber,
           leadInvestigator,
@@ -225,12 +239,14 @@ describe('CaseController - Extend', () => {
       name: 'Thing 1',
       gender: Gender.MALE,
       address: 'House 1',
+      citizenship: 'Citizenship 1',
     }
     const defendantTwo = {
       nationalId: '0000001111',
       name: 'Thing 2',
       gender: Gender.FEMALE,
       address: 'House 2',
+      citizenship: 'Citizenship 2',
     }
     const theCase = {
       id: caseId,

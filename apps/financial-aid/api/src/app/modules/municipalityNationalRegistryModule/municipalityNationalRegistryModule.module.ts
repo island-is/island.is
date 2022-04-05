@@ -1,10 +1,15 @@
 import { Module } from '@nestjs/common'
 
+import { NationalRegistryClientModule } from '@island.is/clients/national-registry-v2'
+
 import { MunicipalityNationalRegistryResolver } from './municipalityNationalRegistry.resolver'
-import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-registry-x-road'
+import { MunicipalityNationalRegistryService } from './municipalityNationalRegistry.service'
 
 @Module({
-  imports: [NationalRegistryXRoadModule],
-  providers: [MunicipalityNationalRegistryResolver],
+  imports: [NationalRegistryClientModule],
+  providers: [
+    MunicipalityNationalRegistryResolver,
+    MunicipalityNationalRegistryService,
+  ],
 })
 export class MunicipalityNationalRegistryModule {}

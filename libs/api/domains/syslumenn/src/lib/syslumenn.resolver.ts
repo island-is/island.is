@@ -1,9 +1,10 @@
 import { Args, Directive, Query, Resolver } from '@nestjs/graphql'
 import { GetHomestaysInput } from './dto/getHomestays.input'
+import { GetOperatingLicensesInput } from './dto/getOperatingLicenses.input'
 import { Homestay } from './models/homestay'
 import { SyslumennAuction } from './models/syslumennAuction'
 import { SyslumennService } from '@island.is/clients/syslumenn'
-import { OperatingLicense } from './models/operatingLicense'
+import { PaginatedOperatingLicenses } from './models/paginatedOperatingLicenses'
 import { CertificateInfoResponse } from './models/certificateInfo'
 import { DistrictCommissionerAgencies } from './models/districtCommissionerAgencies'
 import { UseGuards } from '@nestjs/common'
@@ -16,6 +17,8 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
+import { PropertyDetail } from '@island.is/api/domains/assets'
+import { SearchForPropertyInput } from './dto/searchForProperty.input'
 
 const cacheTime = process.env.CACHE_TIME || 300
 
@@ -40,10 +43,16 @@ export class SyslumennResolver {
   }
 
   @Directive(cacheControlDirective())
-  @Query(() => [OperatingLicense])
+  @Query(() => PaginatedOperatingLicenses)
   @BypassAuth()
-  getOperatingLicenses(): Promise<OperatingLicense[]> {
-    return this.syslumennService.getOperatingLicenses()
+  getOperatingLicenses(
+    @Args('input') input: GetOperatingLicensesInput,
+  ): Promise<PaginatedOperatingLicenses> {
+    return this.syslumennService.getOperatingLicenses(
+      input.searchBy,
+      input.pageNumber,
+      input.pageSize,
+    )
   }
 
   @Query(() => CertificateInfoResponse)
@@ -60,5 +69,13 @@ export class SyslumennResolver {
     DistrictCommissionerAgencies[]
   > {
     return this.syslumennService.getDistrictCommissionersAgencies()
+  }
+
+  @Query(() => PropertyDetail, { nullable: true })
+  @Scopes(ApiScope.assets)
+  searchForProperty(
+    @Args('input') input: SearchForPropertyInput,
+  ): Promise<PropertyDetail> {
+    return this.syslumennService.getPropertyDetails(input.propertyNumber)
   }
 }

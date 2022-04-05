@@ -14,6 +14,7 @@ import {
   AmountModule,
   DeductionFactorsModule,
   PersonalTaxReturnModule,
+  DirectTaxPaymentModule,
 } from './modules'
 
 import { SequelizeConfigService } from './sequelizeConfig.service'
@@ -26,6 +27,7 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
     AuthModule.register(environment.identityServerAuth),
     AmountModule,
     DeductionFactorsModule,
+    DirectTaxPaymentModule,
     StaffModule,
     ApplicationModule,
     MunicipalityModule,

@@ -9,10 +9,15 @@ import {
   ApplicationStateUrl,
   FamilyStatus,
   AidType,
+  UserType,
 } from './enums'
 
 export interface GetSignedUrl {
   fileName: string
+}
+
+export interface GetSignedUrlForAllFiles {
+  getSignedUrlForAllFilesId: SignedUrl[]
 }
 
 export interface SignedUrl {
@@ -28,7 +33,7 @@ export interface Staff {
   id: string
   nationalId: string
   name: string
-  municipalityId: string
+  municipalityIds: string[]
   roles: StaffRole[]
   active: boolean
   municipalityName: string
@@ -212,7 +217,8 @@ export interface CreateApplication {
   streetName?: string
   postalCode?: string
   city?: string
-  municipalityCode?: string
+  municipalityCode: string
+  applicationSystemId?: string
 }
 
 export interface ApplicantEmailData {
@@ -241,6 +247,16 @@ export interface PersonalTaxReturn {
   key: string
   name: string
   size: number
+}
+
+export interface DirectTaxPayment {
+  totalSalary: number
+  payerNationalId: string
+  personalAllowance: number
+  withheldAtSource: number
+  month: number
+  year: number
+  userType?: UserType
 }
 
 export interface Application {
@@ -280,7 +296,9 @@ export interface Application {
   streetName?: string
   postalCode?: string
   city?: string
-  municipalityCode?: string
+  municipalityCode: string
+  directTaxPayments: DirectTaxPayment[]
+  applicationSystemId?: string
 }
 
 export interface GetSignedUrlForId {
@@ -354,4 +372,13 @@ export interface CreateStaffMunicipality {
 export interface Calculations {
   title: string
   calculation: string
+}
+
+export interface ApplicationProfileInfo {
+  title: string
+  content?: string
+  link?: string
+  onclick?: () => void
+  other?: string
+  fullWidth?: boolean
 }

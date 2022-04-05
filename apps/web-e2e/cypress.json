@@ -10,5 +10,9 @@
   "responseTimeout": 120000,
   "videosFolder": "../../dist/cypress/apps/web-e2e/videos",
   "screenshotsFolder": "../../dist/cypress/apps/web-e2e/screenshots",
-  "chromeWebSecurity": false
+  "chromeWebSecurity": false,
+  "retries": {
+    "runMode": 2,
+    "openMode": 0
+  }
 }

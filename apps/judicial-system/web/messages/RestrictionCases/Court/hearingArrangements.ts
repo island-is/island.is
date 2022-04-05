@@ -18,40 +18,6 @@ export const rcHearingArrangements = {
       'Notaður sem titill á fyrirtöku skrefi í gæsluvarðhalds- og farbannsmálum.',
   }),
   sections: {
-    setJudge: defineMessages({
-      title: {
-        id:
-          'judicial.system.restriction_cases:hearing_arrangements.set_judge.title',
-        defaultMessage: 'Dómari',
-        description:
-          'Notaður sem titill fyrir "dómari" hlutann á fyrirtöku skrefi í gæsluvarðhalds- og farbannsmálum.',
-      },
-      tooltip: {
-        id:
-          'judicial.system.restriction_cases:hearing_arrangements.set_judge.tooltip',
-        defaultMessage:
-          'Dómarinn sem er valinn hér verður skráður á málið og mun fá tilkynningar sendar í tölvupóst. Eingöngu skráður dómari getur svo undirritað úrskurð.',
-        description:
-          'Notaður sem upplýsingatexti í upplýsingasvæði við "dómari" titlinn á fyrirtöku skrefi í gæsluvarðhalds- og farbannsmálum.',
-      },
-    }),
-    setRegistrar: defineMessages({
-      title: {
-        id:
-          'judicial.system.restriction_cases:hearing_arrangements.set_registrar.title',
-        defaultMessage: 'Dómritari',
-        description:
-          'Notaður sem titill fyrir "Dómritari" hlutann á fyrirtöku skrefi í gæsluvarðhalds- og farbannsmálum.',
-      },
-      tooltip: {
-        id:
-          'judicial.system.restriction_cases:hearing_arrangements.set_registrar.tooltip',
-        defaultMessage:
-          'Dómritari sem er valinn hér verður skráður á málið og mun fá tilkynningar sendar í tölvupósti.',
-        description:
-          'Notaður sem upplýsingatexti í upplýsingasvæði við "dómritari" titlinn á fyrirtöku skrefi í gæsluvarðhalds- og farbannsmálum.',
-      },
-    }),
     requestedCourtDate: defineMessages({
       title: {
         id:

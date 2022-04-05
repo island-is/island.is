@@ -1,16 +1,24 @@
 import faker from 'faker'
 
-import { Case, CaseState } from '@island.is/judicial-system/types'
+import {
+  Case,
+  CaseState,
+  SessionArrangements,
+} from '@island.is/judicial-system/types'
 import {
   investigationCaseAccusedAddress,
   investigationCaseAccusedName,
   makeInvestigationCase,
   makeProsecutor,
 } from '@island.is/judicial-system/formatters'
+import {
+  IC_COURT_HEARING_ARRANGEMENTS_ROUTE,
+  IC_OVERVIEW_ROUTE,
+} from '@island.is/judicial-system/consts'
 
 import { intercept } from '../../../utils'
 
-describe('/domur/krafa/:id', () => {
+describe(`${IC_OVERVIEW_ROUTE}/:id`, () => {
   const demands = faker.lorem.paragraph()
   const defenderName = faker.name.findName()
   const defenderEmail = faker.internet.email()
@@ -41,6 +49,7 @@ describe('/domur/krafa/:id', () => {
       creatingProsecutor: makeProsecutor(),
       requestedCourtDate: '2020-09-20T19:50:08.033Z',
       state: CaseState.RECEIVED,
+      sessionArrangements: SessionArrangements.ALL_PRESENT,
     }
 
     cy.stubAPIResponses()
@@ -53,6 +62,7 @@ describe('/domur/krafa/:id', () => {
     cy.getByTestid('infoCard').contains(
       `${investigationCaseAccusedName}, kt. 000000-0000, ${investigationCaseAccusedAddress}`,
     )
+    cy.getByTestid('infoCard').contains('Verjandi')
     cy.getByTestid('infoCard').contains(
       `${defenderName}, ${defenderEmail}, s. ${defenderPhoneNumber}`,
     )
@@ -79,16 +89,20 @@ describe('/domur/krafa/:id', () => {
     cy.getByTestid('requestPDFButton').should('exist')
   })
 
-  it('should require a valid case id', () => {
-    cy.getByTestid('courtCaseNumber').click().blur()
+  it('should include button to draft conclusion in modal', () => {
+    cy.getByTestid('draftConclusionButton').click()
+    cy.getByTestid('modal')
+      .getByTestid('ruling')
+      .contains('héraðsdómari kveður upp úrskurð þennan.')
+      .clear()
+    cy.clickOutside()
     cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
-    cy.getByTestid('courtCaseNumber').type('R-X/2021')
+    cy.getByTestid('ruling').type('lorem')
     cy.getByTestid('inputErrorMessage').should('not.exist')
   })
 
   it('should navigate to the next step when all input data is valid and the continue button is clicked', () => {
-    cy.getByTestid('courtCaseNumber').type('R-X/2021')
     cy.getByTestid('continueButton').click()
-    cy.url().should('include', '/domur/rannsoknarheimild/fyrirtaka')
+    cy.url().should('include', IC_COURT_HEARING_ARRANGEMENTS_ROUTE)
   })
 })

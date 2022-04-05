@@ -7,8 +7,9 @@ import {
   CaseType,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
-import { formatDate, TIME_FORMAT } from '@island.is/judicial-system/formatters'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import { Box, Button, IconMapIcon, Text } from '@island.is/island-ui/core'
+import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 
 import * as styles from './CaseDates.css'
 
@@ -30,19 +31,11 @@ const CaseDates: React.FC<Props> = (props) => {
 
   return (
     <Box>
-      <Box marginBottom={3}>
-        <Text variant="h5" as="h5">
-          {`Úrskurðað ${formatDate(
-            workingCase.courtEndTime,
-            'PPP',
-          )} kl. ${formatDate(workingCase.courtEndTime, TIME_FORMAT)}`}
-        </Text>
-      </Box>
       {workingCase.state === CaseState.ACCEPTED &&
         isRestrictionCase(workingCase.type) && (
           <div className={styles.caseDateContainer}>
             {workingCase.isValidToDateInThePast ? (
-              <Text variant="h5" as="h5">
+              <Text variant="h5">
                 {`${isTravelBan ? 'Farbann' : 'Gæsla'} rann út ${formatDate(
                   workingCase.validToDate,
                   'PPP',
@@ -55,7 +48,7 @@ const CaseDates: React.FC<Props> = (props) => {
                 alignItems="flexEnd"
               >
                 <Box>
-                  <Text variant="h5" as="h5">
+                  <Text variant="h5">
                     {`${isTravelBan ? 'Farbann' : 'Gæsla'} til ${formatDate(
                       workingCase.validToDate,
                       'PPP',

@@ -16,7 +16,7 @@ export const policeCaseNumber = defineMessages({
   },
   placeholder: {
     id: 'judicial.system.core:police_case_number.placeholder',
-    defaultMessage: '007-2021-X',
+    defaultMessage: '007-{year}-X',
     description:
       'Notaður sem skýritexti í "LÖKE málsnúmer" textaboxi á sakbornings skrefi í öllum málstegundum.',
   },

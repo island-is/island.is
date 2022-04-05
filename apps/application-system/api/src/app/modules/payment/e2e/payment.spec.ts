@@ -9,6 +9,7 @@ import { setup } from '../../../../../test/setup'
 import { PaymentAPI } from '@island.is/clients/payment'
 import { CreateChargeInput } from '../dto/createChargeInput.dto'
 import { PaymentService } from '../payment.service'
+import { AppModule } from '../../../app.module'
 
 let app: INestApplication
 
@@ -77,7 +78,7 @@ let server: request.SuperTest<request.Test>
 const nationalId = createCurrentUser().nationalId
 
 beforeAll(async () => {
-  app = await setup({
+  app = await setup(AppModule, {
     override: (builder) =>
       builder
         .overrideProvider(PaymentAPI)

@@ -14,11 +14,11 @@ import {
   lowercase,
   formatAppeal,
   formatRequestCaseType,
-  formatNationalId,
 } from '@island.is/judicial-system/formatters'
 
 import { environment } from '../../environments'
 import { Case } from '../modules/case'
+import { now } from '../factories'
 import { courtRecord } from '../messages'
 import {
   addFooter,
@@ -148,36 +148,27 @@ function constructRestrictionCourtRecordPdf(
   addEmptyLines(doc)
   addNormalJustifiedText(
     doc,
-    formatMessage(courtRecord.courtDocuments.request, {
+    `${formatMessage(courtRecord.courtDocuments.request, {
       caseTypes: formatRequestCaseType(theCase.type),
-    }),
+    })} ${formatMessage(courtRecord.courtDocuments.announcement)}`,
     'Times-Roman',
   )
-  addNormalJustifiedText(
-    doc,
-    formatMessage(courtRecord.courtDocuments.announcement),
-  )
 
-  theCase.courtDocuments?.forEach((courttDocument, index) =>
+  theCase.courtDocuments?.forEach((courtDocument, index) =>
     addNormalJustifiedText(
       doc,
       formatMessage(courtRecord.courtDocuments.other, {
-        documentName: courttDocument,
+        documentName: courtDocument.name,
         documentNumber: index + 2,
+        submittedBy: courtDocument.submittedBy,
       }),
     ),
   )
-
-  if (theCase.accusedBookings) {
-    addEmptyLines(doc)
-    addNormalJustifiedText(doc, theCase.accusedBookings)
-  }
-
   addEmptyLines(doc)
   addNormalJustifiedText(
     doc,
-    theCase.litigationPresentations ??
-      formatMessage(courtRecord.missingLitigationPresentations),
+    theCase.sessionBookings ??
+      formatMessage(courtRecord.missingSessionBookings),
   )
   setLineGap(doc, 3)
   addEmptyLines(doc, 2)
@@ -274,7 +265,7 @@ function constructRestrictionCourtRecordPdf(
       ? formatMessage(courtRecord.smallPrint, {
           actorName: user.name,
           actorInstitution: user.institution?.name,
-          date: formatDate(new Date(), 'PPPp'),
+          date: formatDate(now(), 'PPPp'),
         })
       : undefined,
   )
@@ -398,36 +389,27 @@ function constructInvestigationCourtRecordPdf(
   addEmptyLines(doc)
   addNormalJustifiedText(
     doc,
-    formatMessage(courtRecord.courtDocuments.request, {
+    `${formatMessage(courtRecord.courtDocuments.request, {
       caseTypes: formatRequestCaseType(theCase.type),
-    }),
+    })} ${formatMessage(courtRecord.courtDocuments.announcement)}`,
     'Times-Roman',
   )
-  addNormalJustifiedText(
-    doc,
-    formatMessage(courtRecord.courtDocuments.announcement),
-  )
 
-  theCase.courtDocuments?.forEach((courttDocument, index) =>
+  theCase.courtDocuments?.forEach((courtDocument, index) =>
     addNormalJustifiedText(
       doc,
       formatMessage(courtRecord.courtDocuments.other, {
-        documentName: courttDocument,
+        documentName: courtDocument.name,
         documentNumber: index + 2,
+        submittedBy: courtDocument.submittedBy,
       }),
     ),
   )
-
-  if (theCase.accusedBookings) {
-    addEmptyLines(doc)
-    addNormalJustifiedText(doc, theCase.accusedBookings)
-  }
-
   addEmptyLines(doc)
   addNormalJustifiedText(
     doc,
-    theCase.litigationPresentations ??
-      formatMessage(courtRecord.missingLitigationPresentations),
+    theCase.sessionBookings ??
+      formatMessage(courtRecord.missingSessionBookings),
   )
   setLineGap(doc, 3)
   addEmptyLines(doc, 2)
@@ -527,7 +509,7 @@ function constructInvestigationCourtRecordPdf(
       ? formatMessage(courtRecord.smallPrint, {
           actorName: user.name,
           actorInstitution: user.institution?.name,
-          date: formatDate(new Date(), 'PPPp'),
+          date: formatDate(now(), 'PPPp'),
         })
       : undefined,
   )

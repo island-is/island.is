@@ -54,7 +54,7 @@ export class ApplicationEventModel extends Model<ApplicationEvent> {
   eventType: ApplicationEventType
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.TEXT,
     allowNull: true,
   })
   @ApiProperty()

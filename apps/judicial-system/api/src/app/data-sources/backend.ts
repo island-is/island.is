@@ -55,13 +55,13 @@ export class BackendApi extends DataSource<{ req: Request }> {
   ): Promise<TResult> {
     return fetch(`${environment.backend.url}/api/${route}`, options).then(
       async (res) => {
+        const response = await res.json()
+
         if (res.ok) {
-          return res.json()
+          return response
         }
 
-        const error = await res.text()
-
-        throw new ProblemError(JSON.parse(error))
+        throw new ProblemError(response)
       },
     )
   }
@@ -168,6 +168,10 @@ export class BackendApi extends DataSource<{ req: Request }> {
 
   extendCase(id: string): Promise<Case> {
     return this.post(`case/${id}/extend`)
+  }
+
+  createCourtCase(id: string): Promise<Case> {
+    return this.post(`case/${id}/court`)
   }
 
   getCaseNotifications(id: string): Promise<Notification[]> {

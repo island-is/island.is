@@ -3,6 +3,11 @@ import { Text } from '@island.is/island-ui/core'
 import TaxBreakdownItem from './TaxBreakdownItem'
 
 import * as styles from './TaxBreakdown.css'
+import {
+  DirectTaxPayment,
+  formatNationalId,
+  getMonth,
+} from '@island.is/financial-aid/shared/lib'
 
 export const taxBreakDownHeaders = [
   'Fyrirtæki',
@@ -11,28 +16,42 @@ export const taxBreakDownHeaders = [
   'Staðgreiðsla',
 ]
 
-const TaxBreakdown = () => {
+interface Props {
+  items: DirectTaxPayment[]
+}
+
+const TaxBreakdown = ({ items }: Props) => {
   return (
     <table className={styles.tableContainer}>
-      <tr className={styles.tableHeaders}>
-        {taxBreakDownHeaders.map((headers) => {
+      <thead>
+        <tr className={styles.tableHeaders}>
+          {taxBreakDownHeaders.map((head) => {
+            return (
+              <th key={head}>
+                <Text variant="small" fontWeight="semiBold">
+                  {head}
+                </Text>
+              </th>
+            )
+          })}
+        </tr>
+      </thead>
+      <tbody>
+        {items.map((i, index) => {
           return (
-            <th>
-              <Text variant="small" fontWeight="semiBold">
-                {headers}
-              </Text>
-            </th>
+            <TaxBreakdownItem
+              headline={`${getMonth(i.month - 1)} ${i.year}`}
+              key={`${index}-taxbreakDown-${i.payerNationalId}-${i.userType}`}
+              items={[
+                formatNationalId(i.payerNationalId),
+                `${i.totalSalary.toLocaleString('de-DE')} kr.`,
+                `${i.personalAllowance.toLocaleString('de-DE')} kr.`,
+                `${i.withheldAtSource.toLocaleString('de-DE')} kr.`,
+              ]}
+            />
           )
         })}
-      </tr>
-      <TaxBreakdownItem
-        headline="Janúar 2022"
-        items={['230203 krþ', 1000, 300, '23929']}
-      />
-      <TaxBreakdownItem
-        headline="Desember 2021"
-        items={['230203 krþ', 1000, 300, '23929']}
-      />
+      </tbody>
     </table>
   )
 }

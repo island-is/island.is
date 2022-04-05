@@ -10,7 +10,9 @@ import {
   AllFiles,
   FormInfo,
   FormComment,
+  DirectTaxPaymentCell,
   ContactInfo,
+  DirectTaxPaymentsModal,
 } from '@island.is/financial-aid-web/osk/src/components'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 import { useRouter } from 'next/router'
@@ -44,6 +46,7 @@ const SummaryForm = () => {
 
   const [isVisible, setIsVisible] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   const [formError, setFormError] = useState({
     status: false,
@@ -116,11 +119,12 @@ const SummaryForm = () => {
           router.push(navigation.nextUrl)
         }
       })
-      .catch((e) => {
+      .catch(() => {
         setIsLoading(false)
         setFormError({
           status: true,
-          message: 'Obbobbob eitthvað fór úrskeiðis',
+          message:
+            'Ekki tókst að senda inn umsókn. Vinsamlegast reyndu aftur síðar eða hafðu samband við þitt sveitafélag',
         })
 
         const findErrorInFormInfo = formInfoOverview.find(
@@ -171,6 +175,10 @@ const SummaryForm = () => {
         <UserInfo />
         <FormInfo info={formInfoOverview} error={formError.status} />
 
+        <DirectTaxPaymentCell
+          setIsModalOpen={setIsModalOpen}
+          directTaxPayments={form?.directTaxPayments}
+        />
         <ContactInfo
           phone={form.phoneNumber}
           email={form.emailAddress}
@@ -196,6 +204,15 @@ const SummaryForm = () => {
             setIsVisible(isModalVisible)
           }}
         />
+        {form.directTaxPayments.length > 0 && (
+          <DirectTaxPaymentsModal
+            items={form.directTaxPayments}
+            isVisible={isModalOpen}
+            onVisibilityChange={(isOpen) => {
+              setIsModalOpen(isOpen)
+            }}
+          />
+        )}
       </ContentContainer>
 
       <Footer

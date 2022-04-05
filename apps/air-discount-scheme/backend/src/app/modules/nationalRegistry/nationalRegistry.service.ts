@@ -13,7 +13,7 @@ import { environment } from '../../../environments'
 
 export const ONE_MONTH = 2592000 // seconds
 export const CACHE_KEY = 'nationalRegistry'
-const MAX_AGE_LIMIT = 18
+export const MAX_AGE_LIMIT = 18
 
 const TEST_USERS: NationalRegistryUser[] = [
   {

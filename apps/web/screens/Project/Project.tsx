@@ -21,12 +21,13 @@ import {
   DefaultProjectHeader,
   OrganizationSlice,
   Section,
-  Stepper,
   EntryProjectHeader,
+  UkraineProjectHeader,
   HeadWithSocialSharing,
   ElectionProjectHeader,
   OneColumnTextSlice,
   NewsItems,
+  UkraineChatPanel,
 } from '@island.is/web/components'
 import {
   Box,
@@ -46,8 +47,10 @@ import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 import { ProjectPage as ProjectPageSchema } from '@island.is/web/graphql/schema'
 import slugify from '@sindresorhus/slugify'
+import { getStepOptionsFromUIConfiguration } from '../../components/StepperFSM/StepperFSMUtils'
+import StepperFSM from '../../components/StepperFSM/StepperFSM'
 
-const lightThemes = ['traveling-to-iceland', 'election']
+const lightThemes = ['traveling-to-iceland', 'election', 'ukraine', 'default']
 
 const getThemeConfig = (
   theme: string,
@@ -104,6 +107,8 @@ const ProjectHeader = ({ projectPage }: ProjectHeaderProps) => {
       return <EntryProjectHeader projectPage={projectPage} />
     case 'election':
       return <ElectionProjectHeader projectPage={projectPage} />
+    case 'ukraine':
+      return <UkraineProjectHeader projectPage={projectPage} />
     default:
       return <DefaultProjectHeader projectPage={projectPage} />
   }
@@ -113,6 +118,8 @@ interface PageProps {
   projectPage: Query['getProjectPage']
   news: GetNewsQuery['getNews']['items']
   namespace: Query['getNamespace']
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  stepOptionsFromNamespace: { data: Record<string, any>[]; slug: string }[]
 }
 
 const convertLinksToNavigationItem = (links: Link[]) =>
@@ -174,7 +181,12 @@ const assignNavigationActive = (
     }
   })
 
-const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
+const ProjectPage: Screen<PageProps> = ({
+  projectPage,
+  news,
+  namespace,
+  stepOptionsFromNamespace,
+}) => {
   const n = useNamespace(namespace)
   const router = useRouter()
 
@@ -237,6 +249,7 @@ const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
 
   return (
     <>
+      {projectPage.id === '7GtuCCd7MEZhZKe0oXcHdb' && <UkraineChatPanel />}
       <HeadWithSocialSharing
         title={`${projectPage.title} | Ísland.is`}
         description={projectPage.intro}
@@ -264,26 +277,28 @@ const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
           />
         }
       >
-        <Hidden above="sm">
-          <Box>
-            <Box marginY={2}>
-              <Navigation
-                isMenuDialog
-                baseId="pageNav"
-                items={navigationList}
-                activeItemTitle={activeNavigationItemTitle}
-                title={navigationTitle}
-                renderLink={(link, item) => {
-                  return item?.href ? (
-                    <NextLink href={item?.href}>{link}</NextLink>
-                  ) : (
-                    link
-                  )
-                }}
-              />
+        {projectPage.sidebar && (
+          <Hidden above="sm">
+            <Box>
+              <Box marginY={2}>
+                <Navigation
+                  isMenuDialog
+                  baseId="pageNav"
+                  items={navigationList}
+                  activeItemTitle={activeNavigationItemTitle}
+                  title={navigationTitle}
+                  renderLink={(link, item) => {
+                    return item?.href ? (
+                      <NextLink href={item?.href}>{link}</NextLink>
+                    ) : (
+                      link
+                    )
+                  }}
+                />
+              </Box>
             </Box>
-          </Box>
-        </Hidden>
+          </Hidden>
+        )}
         {!!subpage && (
           <Box marginBottom={1}>
             <Text as="h1" variant="h1">
@@ -322,12 +337,13 @@ const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
         )}
         {content && richText(content)}
         {!subpage && projectPage.stepper && (
-          <Stepper
-            stepper={projectPage.stepper}
-            startAgainLabel={n('stepperStartAgain', 'Byrja upp á nýtt')}
-            answerLabel={n('stepperAnswer', 'Niðurstaða byggð á þínum svörum')}
-            backLabel={n('stepperBack', 'Til baka')}
-          />
+          <Box marginTop={6}>
+            <StepperFSM
+              scrollUpWhenNextStepAppears={false}
+              stepper={projectPage.stepper}
+              optionsFromNamespace={stepOptionsFromNamespace}
+            />
+          </Box>
         )}
         {!renderSlicesAsTabs &&
           (subpage ?? projectPage).slices.map((slice) =>
@@ -419,8 +435,17 @@ ProjectPage.getInitialProps = async ({ apolloClient, locale, query }) => {
     throw new CustomNextError(404, 'Project page not found')
   }
 
+  let stepOptionsFromNamespace = []
+
+  if (getProjectPage.stepper)
+    stepOptionsFromNamespace = await getStepOptionsFromUIConfiguration(
+      getProjectPage.stepper,
+      apolloClient,
+    )
+
   return {
     projectPage: getProjectPage,
+    stepOptionsFromNamespace,
     namespace,
     news: getNewsQuery?.data.getNews.items,
     showSearchInHeader: false,

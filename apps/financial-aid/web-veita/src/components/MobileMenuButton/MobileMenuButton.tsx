@@ -6,14 +6,16 @@ import cn from 'classnames'
 interface PageProps {
   showNav: boolean
   onClick: any
+  className?: string
 }
 
-const MobileMenuButton = ({ showNav, onClick }: PageProps) => {
+const MobileMenuButton = ({ showNav, onClick, className }: PageProps) => {
   return (
     <button
       className={cn({
         [`${styles.burgerMenu} burgerMenu`]: true,
         [`openBurgerMenu`]: showNav,
+        [`${className}`]: className,
       })}
       onClick={onClick}
     >

@@ -2,7 +2,7 @@
 
 /dist
 /coverage
-.github/actions/dist
+.github/actions/dist*
 /libs/api/domains/application/gen
 /tmp
 /cache

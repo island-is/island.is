@@ -36,9 +36,9 @@ export const findSectionIndex = (
 }
 
 const useFormNavigation = (currentRoute: string): NavigationInfoProps => {
-  const { form, updateForm } = useContext(FormContext)
+  const { form } = useContext(FormContext)
 
-  var navigationTree = useNavigationTree(Boolean(form?.hasIncome))
+  var navigationTree = useNavigationTree()
 
   const getNextUrl = (obj: FormStepperSection) => {
     if (obj?.children) {
@@ -104,7 +104,7 @@ const useFormNavigation = (currentRoute: string): NavigationInfoProps => {
 
   useEffect(() => {
     setNavigationInfo(createNavigationInfo(navigationTree))
-  }, [form?.hasIncome])
+  }, [form])
 
   return navigationInfo
 }
