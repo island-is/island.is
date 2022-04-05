@@ -35,7 +35,7 @@ const DirectTaxPaymentCell = ({
           <Text>Staðgreiðsluskrá sótt</Text>
         </Box>
 
-        {!fetchFailed ? (
+        {directTaxPayments.length === 0 ? (
           <Text marginTop={3}>Engin staðgreiðsla</Text>
         ) : (
           <Button
