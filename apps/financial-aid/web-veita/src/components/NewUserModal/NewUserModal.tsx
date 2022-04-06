@@ -1,23 +1,14 @@
-import React, { useContext, useState } from 'react'
-import { Box, Checkbox, Input, Text, Option } from '@island.is/island-ui/core'
+import React, { useState } from 'react'
+import { Box, Checkbox, Input, Text } from '@island.is/island-ui/core'
 import {
   ActionModal,
   MultiSelection,
 } from '@island.is/financial-aid-web/veita/src/components'
 import { StaffMutation } from '@island.is/financial-aid-web/veita/graphql'
 import { ApolloError, useMutation } from '@apollo/client'
-import {
-  isEmailValid,
-  ReactSelectOption,
-  StaffRole,
-} from '@island.is/financial-aid/shared/lib'
+import { isEmailValid, StaffRole } from '@island.is/financial-aid/shared/lib'
 import cn from 'classnames'
-
-import { useRouter } from 'next/router'
-import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
-import { mapMuniToOption } from '@island.is/financial-aid-web/veita/src/utils/formHelper'
-import { ValueType } from 'react-select'
-import { isString } from 'lodash'
+import { CreateUpdateStaff } from '@island.is/financial-aid-web/veita/src/components/MultiSelection/MultiSelection'
 
 interface Props {
   isVisible: boolean
@@ -27,16 +18,12 @@ interface Props {
   municipalityName?: string
 }
 
-export interface newUsersModalState {
-  staffNationalId: string
-  staffName: string
-  staffEmail: string
-  hasError: boolean
+type newUsersModalState = CreateUpdateStaff<{
+  staffNationalId?: string
+  staffName?: string
+  staffEmail?: string
   errorMessage?: string
-  roles: StaffRole[]
-  municipalityIds: string[]
-  serviceCenter: Option[]
-}
+}>
 
 const NewUserModal = ({
   isVisible,
@@ -45,8 +32,6 @@ const NewUserModal = ({
   predefinedRoles = [],
   municipalityName,
 }: Props) => {
-  const router = useRouter()
-
   const [state, setState] = useState<newUsersModalState>({
     staffNationalId: '',
     staffName: '',
@@ -55,8 +40,8 @@ const NewUserModal = ({
     errorMessage: undefined,
     roles: predefinedRoles,
     municipalityIds: predefinedRoles.length === 0 ? [] : ['0'],
-    serviceCenter: mapMuniToOption([], false),
   })
+
   const [createStaff] = useMutation(StaffMutation)
 
   const changeStaffAccess = (role: StaffRole, isAddingRole: boolean) => {
@@ -189,35 +174,24 @@ const NewUserModal = ({
         <>
           <Box display="block" marginBottom={[3, 3, 5]}>
             <MultiSelection
-              options={state.serviceCenter}
-              active={mapMuniToOption(state.municipalityIds, true)}
-              setState={setState}
-              state={state}
-              hasError={state.hasError && state.municipalityIds.length === 0}
-              onSelected={(option: ValueType<ReactSelectOption>) => {
-                const { value } = option as ReactSelectOption
-                if (value && isString(value)) {
+              selectionUpdate={(value: string, type: 'add' | 'remove') => {
+                if (type === 'add') {
                   setState({
                     ...state,
                     municipalityIds: [...state.municipalityIds, value],
-                    serviceCenter: state.serviceCenter.filter(
-                      (el) => el.value !== value,
+                  })
+                }
+                if (type === 'remove') {
+                  setState({
+                    ...state,
+                    municipalityIds: state.municipalityIds.filter(
+                      (muni) => muni != value,
                     ),
                   })
                 }
               }}
-              unSelected={(value: string, name: string) => {
-                setState({
-                  ...state,
-                  municipalityIds: state.municipalityIds.filter(
-                    (muni) => muni != value,
-                  ),
-                  serviceCenter: [
-                    ...state.serviceCenter,
-                    { label: name, value: value },
-                  ],
-                })
-              }}
+              state={state}
+              hasError={state.hasError && state.municipalityIds.length === 0}
             />
           </Box>
           <Text marginBottom={3} variant="h4">
