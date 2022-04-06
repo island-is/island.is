@@ -14,7 +14,6 @@ import {
 import type { Gender } from '@island.is/judicial-system/types'
 
 import { notifications } from '../messages'
-import { not } from 'sequelize/types/lib/operators'
 
 function legalProvisionsOrder(p: CaseLegalProvisions) {
   switch (p) {
