@@ -1,9 +1,9 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Select } from '@island.is/island-ui/core'
 import { Municipality } from '@island.is/financial-aid/shared/lib'
 import { ReactSelectOption } from '@island.is/financial-aid/shared/lib'
 import { ValueType } from 'react-select'
-import { useMunicipalities } from '../../utils/useMunicipalities'
+import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
 interface Props {
   currentMunicipality: Municipality
   onStateUpdate: (muni: Municipality) => void
@@ -12,7 +12,7 @@ export const SelectedMunicipality = ({
   currentMunicipality,
   onStateUpdate,
 }: Props) => {
-  const { municipality } = useMunicipalities()
+  const { municipality } = useContext(AdminContext)
   return (
     <Select
       label="Sveitarfélög"
