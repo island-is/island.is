@@ -33,10 +33,14 @@ export class AnnouncementOfDeathService {
     )
   }
 
-  async addressLookupByRealEstateId({ application }: TemplateApiModuleActionProps): Promise<RealEstateAddress> {
+  async addressLookupByRealEstateId({
+    application,
+  }: TemplateApiModuleActionProps): Promise<RealEstateAddress> {
     // TODO correctly access inputted assetId
-    const assetId: string = application.answers.addedAssetId
-    const realEstate = await this.fasteignirApi.fasteignirGetFasteign({ fasteignanumer: assetId })
+    const assetId = application.answers.addedAssetId.toString()
+    const realEstate = await this.fasteignirApi.fasteignirGetFasteign({
+      fasteignanumer: assetId,
+    })
     const address = realEstate.sjalfgefidStadfang
     return Promise.resolve({
       addressNumber: address?.stadfanganumer ?? -1,
