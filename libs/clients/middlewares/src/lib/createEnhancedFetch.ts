@@ -133,10 +133,6 @@ export const createEnhancedFetch = (
     builder.wrap(withClientCertificate, { clientCertificate })
   }
 
-  if (metricsClient) {
-    builder.wrap(withMetrics, { metricsClient })
-  }
-
   if (timeout !== false) {
     builder.wrap(withTimeout, { timeout })
   }
@@ -176,6 +172,10 @@ export const createEnhancedFetch = (
 
     // Need to handle response errors again.
     builder.wrap(withResponseErrors, { includeBody: logErrorResponseBody })
+  }
+
+  if (metricsClient) {
+    builder.wrap(withMetrics, { metricsClient })
   }
 
   builder.wrap(withErrorLog, {
