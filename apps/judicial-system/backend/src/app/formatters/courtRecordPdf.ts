@@ -18,7 +18,7 @@ import {
 
 import { environment } from '../../environments'
 import { Case } from '../modules/case'
-import { now } from '../factories'
+import { nowFactory } from '../factories'
 import { courtRecord } from '../messages'
 import {
   addFooter,
@@ -265,7 +265,7 @@ function constructRestrictionCourtRecordPdf(
       ? formatMessage(courtRecord.smallPrint, {
           actorName: user.name,
           actorInstitution: user.institution?.name,
-          date: formatDate(now(), 'PPPp'),
+          date: formatDate(nowFactory(), 'PPPp'),
         })
       : undefined,
   )
@@ -509,7 +509,7 @@ function constructInvestigationCourtRecordPdf(
       ? formatMessage(courtRecord.smallPrint, {
           actorName: user.name,
           actorInstitution: user.institution?.name,
-          date: formatDate(now(), 'PPPp'),
+          date: formatDate(nowFactory(), 'PPPp'),
         })
       : undefined,
   )

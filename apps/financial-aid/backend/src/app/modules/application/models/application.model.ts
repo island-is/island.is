@@ -291,4 +291,18 @@ export class ApplicationModel extends Model<Application> {
   })
   @ApiProperty()
   applicationSystemId: string
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+  })
+  @ApiProperty()
+  hasFetchedDirectTaxPayment: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+  })
+  @ApiProperty()
+  spouseHasFetchedDirectTaxPayment: boolean
 }

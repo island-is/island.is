@@ -863,4 +863,15 @@ export class Case extends Model<Case> {
   })
   @ApiProperty()
   caseResentExplanation?: string
+
+  /**********
+   * Indicates whether the case has been archived - optional
+   **********/
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  @ApiProperty()
+  isArchived?: boolean
 }
