@@ -35,7 +35,7 @@ air-discount-scheme-api:
     fsGroup: 65534
   replicaCount:
     default: 3
-    max: 5
+    max: 10
     min: 3
   resources:
     limits:
@@ -127,7 +127,7 @@ air-discount-scheme-backend:
   namespace: 'air-discount-scheme'
   replicaCount:
     default: 3
-    max: 5
+    max: 10
     min: 3
   resources:
     limits:
@@ -183,7 +183,7 @@ air-discount-scheme-web:
   namespace: 'air-discount-scheme'
   replicaCount:
     default: 3
-    max: 5
+    max: 10
     min: 3
   resources:
     limits:
@@ -291,7 +291,7 @@ api:
     fsGroup: 65534
   replicaCount:
     default: 3
-    max: 5
+    max: 10
     min: 3
   resources:
     limits:
@@ -551,7 +551,7 @@ application-system-api-worker:
     fsGroup: 65534
   replicaCount:
     default: 3
-    max: 5
+    max: 10
     min: 3
   resources:
     limits:
@@ -615,7 +615,7 @@ application-system-form:
   namespace: 'application-system'
   replicaCount:
     default: 3
-    max: 5
+    max: 10
     min: 3
   resources:
     limits:
@@ -660,7 +660,7 @@ contentful-translation-extension:
   namespace: 'contentful-translation-extension'
   replicaCount:
     default: 3
-    max: 5
+    max: 10
     min: 3
   resources:
     limits:
@@ -713,7 +713,7 @@ download-service:
   namespace: 'download-service'
   replicaCount:
     default: 3
-    max: 5
+    max: 10
     min: 3
   resources:
     limits:
@@ -793,7 +793,7 @@ endorsement-system-api:
     fsGroup: 65534
   replicaCount:
     default: 3
-    max: 5
+    max: 10
     min: 3
   resources:
     limits:
@@ -891,7 +891,7 @@ icelandic-names-registry-backend:
   namespace: 'icelandic-names-registry'
   replicaCount:
     default: 3
-    max: 5
+    max: 10
     min: 3
   resources:
     limits:
@@ -937,7 +937,7 @@ island-ui-storybook:
   namespace: 'storybook'
   replicaCount:
     default: 3
-    max: 5
+    max: 10
     min: 3
   resources:
     limits:
@@ -1271,7 +1271,7 @@ services-documents:
   namespace: 'services-documents'
   replicaCount:
     default: 3
-    max: 5
+    max: 10
     min: 3
   resources:
     limits:
@@ -1320,7 +1320,7 @@ skilavottord-web:
   namespace: 'skilavottord'
   replicaCount:
     default: 3
-    max: 5
+    max: 10
     min: 3
   resources:
     limits:
@@ -1398,7 +1398,7 @@ skilavottord-ws:
   namespace: 'skilavottord'
   replicaCount:
     default: 3
-    max: 5
+    max: 10
     min: 3
   resources:
     limits:
@@ -1461,7 +1461,7 @@ user-notification:
     fsGroup: 65534
   replicaCount:
     default: 3
-    max: 5
+    max: 10
     min: 3
   resources:
     limits:
@@ -1516,7 +1516,7 @@ user-notification-worker:
     fsGroup: 65534
   replicaCount:
     default: 3
-    max: 5
+    max: 10
     min: 3
   resources:
     limits:
@@ -1632,7 +1632,7 @@ xroad-collector:
     fsGroup: 65534
   replicaCount:
     default: 3
-    max: 5
+    max: 10
     min: 3
   resources:
     limits:

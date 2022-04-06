@@ -66,7 +66,7 @@ export const Envs: EnvironmentConfigs = {
     domain: 'island.is',
     type: 'prod',
     featuresOn: ['driving-license-use-v1-endpoint-for-v2-comms'],
-    defaultMaxReplicas: 5,
+    defaultMaxReplicas: 10,
     defaultMinReplicas: 3,
     releaseName: 'web',
     awsAccountId: '251502586493',
