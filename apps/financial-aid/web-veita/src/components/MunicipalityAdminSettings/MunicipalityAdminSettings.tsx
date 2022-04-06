@@ -223,7 +223,7 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
       )}
       <Box display="flex" justifyContent="flexEnd">
         <Button loading={loading} onClick={submit} icon="checkmark">
-          Vista stillingar
+          Vista stillingar asdas
         </Button>
       </Box>
       <ToastContainer />
