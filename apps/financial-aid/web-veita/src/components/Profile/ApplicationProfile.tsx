@@ -287,7 +287,7 @@ export const getDirectTaxPaymentsContent = (
     case directPaymentsArr.length === 0 && !hasFetchedPayments:
       return (
         <Text marginBottom={4} color="red400">
-          Ekki tókst að sækja greiðslu
+          Ekki tókst að sækja staðgreiðslu
         </Text>
       )
   }
