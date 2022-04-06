@@ -2,7 +2,6 @@ import {
   formatDate,
   formatNationalId,
   laws,
-  formatGender,
   caseTypes,
 } from '@island.is/judicial-system/formatters'
 import type { FormatMessage } from '@island.is/cms-translations'
@@ -15,7 +14,6 @@ import {
 import type { Gender } from '@island.is/judicial-system/types'
 
 import { notifications } from '../messages'
-import { not } from 'sequelize/types/lib/operators'
 
 function legalProvisionsOrder(p: CaseLegalProvisions) {
   switch (p) {
@@ -158,6 +156,7 @@ export function formatProsecutorReceivedByCourtSmsNotification(
 }
 
 export function formatProsecutorCourtDateEmailNotification(
+  formatMessage: FormatMessage,
   type: CaseType,
   court?: string,
   courtDate?: Date,
@@ -167,40 +166,41 @@ export function formatProsecutorCourtDateEmailNotification(
   defenderName?: string,
   sessionArrangements?: SessionArrangements,
 ): string {
-  const scheduledCaseText =
-    type === CaseType.CUSTODY
-      ? 'gæsluvarðhaldskröfu'
-      : type === CaseType.TRAVEL_BAN
-      ? 'farbannskröfu'
-      : type === CaseType.OTHER
-      ? 'kröfu um rannsóknarheimild'
-      : `kröfu um rannsóknarheimild (${caseTypes[type]})`
-  const courtDateText = formatDate(courtDate, 'PPPp')?.replace(' kl.', ', kl.')
-  const courtRoomText = courtRoom
-    ? `Dómsalur: ${courtRoom}`
-    : 'Dómsalur hefur ekki verið skráður'
-  const judgeText = judgeName
-    ? `Dómari: ${judgeName}`
-    : 'Dómari hefur ekki verið skráður'
+  const cf = notifications.prosecutorCourtDateEmail
+  const scheduledCaseText = formatMessage(cf.scheduledCase, {
+    court,
+    investigationPrefix:
+      type === CaseType.OTHER
+        ? 'onlyPrefix'
+        : isInvestigationCase(type)
+        ? 'withPrefix'
+        : 'noPrefix',
+    courtTypeName: caseTypes[type],
+  })
+  const courtDateText = formatMessage(cf.courtDate, { courtDate })
+  const courtRoomText = formatMessage(notifications.courtRoom, {
+    courtRoom: courtRoom || 'NONE',
+  })
+  const judgeText = formatMessage(notifications.judge, {
+    judgeName: judgeName || 'NONE',
+  })
   const registrarText = registrarName
-    ? `<br /><br />Dómritari: ${registrarName}.`
-    : ''
-  const defenderText =
-    sessionArrangements === SessionArrangements.PROSECUTOR_PRESENT
-      ? ''
-      : defenderName
-      ? `<br /><br />${
-          sessionArrangements === SessionArrangements.ALL_PRESENT_SPOKESPERSON
-            ? 'Talsmaður'
-            : 'Verjandi'
-        } sakbornings: ${defenderName}.`
-      : `<br /><br />${
-          sessionArrangements === SessionArrangements.ALL_PRESENT_SPOKESPERSON
-            ? 'Talsmaður'
-            : 'Verjandi'
-        } sakbornings hefur ekki verið skráður.`
+    ? formatMessage(notifications.registrar, { registrarName })
+    : undefined
+  const defenderText = formatMessage(notifications.defender, {
+    defenderName: defenderName || 'NONE',
+    sessionArrangements,
+  })
 
-  return `${court} hefur staðfest fyrirtökutíma fyrir ${scheduledCaseText}.<br /><br />Fyrirtaka mun fara fram ${courtDateText}.<br /><br />${courtRoomText}.<br /><br />${judgeText}.${registrarText}${defenderText}`
+  return formatMessage(cf.body, {
+    scheduledCaseText,
+    courtDateText,
+    courtRoomText,
+    judgeText,
+    registrarText: registrarText || 'NONE',
+    defenderText,
+    sessionArrangements,
+  })
 }
 
 export function formatPrisonCourtDateEmailNotification(
@@ -255,13 +255,10 @@ export function formatPrisonCourtDateEmailNotification(
     notifications.prisonCourtDateEmail.isolationText,
     { isolation: isolation ? 'TRUE' : 'FALSE' },
   )
-  const defenderText = formatMessage(
-    notifications.prisonCourtDateEmail.defenderText,
-    {
-      defenderName: defenderName ?? 'NONE',
-      sessionArrangements,
-    },
-  )
+  const defenderText = formatMessage(notifications.defender, {
+    defenderName: defenderName ?? 'NONE',
+    sessionArrangements,
+  })
 
   return formatMessage(notifications.prisonCourtDateEmail.body, {
     prosecutorOffice: prosecutorOffice || 'NONE',
@@ -271,6 +268,7 @@ export function formatPrisonCourtDateEmailNotification(
     requestText,
     isolationText,
     defenderText,
+    sessionArrangements,
   })
 }
 
@@ -299,14 +297,14 @@ export function formatDefenderCourtDateEmailNotification(
   const courtCaseNumberText = formatMessage(cf.courtCaseNumber, {
     courtCaseNumber,
   })
-  const courtRoomText = formatMessage(cf.courtRoom, {
+  const courtRoomText = formatMessage(notifications.courtRoom, {
     courtRoom: courtRoom || 'NONE',
   })
-  const judgeText = formatMessage(cf.judge, {
+  const judgeText = formatMessage(notifications.judge, {
     judgeName: judgeName,
   })
   const registrarText = registrarName
-    ? formatMessage(cf.registrar, {
+    ? formatMessage(notifications.registrar, {
         registrarName: registrarName,
       })
     : undefined

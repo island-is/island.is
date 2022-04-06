@@ -491,6 +491,20 @@ describe('formatProsecutorReceivedByCourtSmsNotification', () => {
 })
 
 describe('formatProsecutorCourtDateEmailNotification', () => {
+  const messsages = {
+    ...notifications.prosecutorCourtDateEmail,
+    courtRoom: notifications.courtRoom,
+    judge: notifications.judge,
+    defender: notifications.defender,
+    registrar: notifications.registrar,
+  }
+
+  let formatMessage: FormatMessage
+  beforeAll(() => {
+    const intl = createTestIntl('is-IS', messsages)
+    formatMessage = intl.formatMessage
+  })
+
   test('should format court date notification', () => {
     // Arrange
     const type = CaseType.CUSTODY
@@ -504,6 +518,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
 
     // Act
     const res = formatProsecutorCourtDateEmailNotification(
+      formatMessage,
       type,
       court,
       courtDate,
@@ -516,7 +531,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir gæsluvarðhaldskröfu.<br /><br />Fyrirtaka mun fara fram 24. desember 2020, kl. 18:00.<br /><br />Dómsalur: 101.<br /><br />Dómari: Dóra Dómari.<br /><br />Dómritari: Dalli Dómritari.<br /><br />Verjandi sakbornings: Valdi Verjandi.',
+      'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um gæsluvarðhald.<br/><br/>Fyrirtaka mun fara fram 24. desember 2020, kl. 18:00.<br/><br/>Dómsalur: 101.<br/><br/>Dómari: Dóra Dómari.<br/><br/>Dómritari: Dalli Dómritari.<br/><br/>Verjandi sakbornings: Valdi Verjandi.',
     )
   })
 
@@ -530,6 +545,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
 
     // Act
     const res = formatProsecutorCourtDateEmailNotification(
+      formatMessage,
       type,
       court,
       courtDate,
@@ -542,7 +558,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir gæsluvarðhaldskröfu.<br /><br />Fyrirtaka mun fara fram 24. desember 2020, kl. 18:00.<br /><br />Dómsalur: 101.<br /><br />Dómari hefur ekki verið skráður.<br /><br />Talsmaður sakbornings hefur ekki verið skráður.',
+      'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um gæsluvarðhald.<br/><br/>Fyrirtaka mun fara fram 24. desember 2020, kl. 18:00.<br/><br/>Dómsalur: 101.<br/><br/>Dómari hefur ekki verið skráður.<br/><br/>Talsmaður sakbornings hefur ekki verið skráður.',
     )
   })
 
@@ -559,6 +575,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
 
     // Act
     const res = formatProsecutorCourtDateEmailNotification(
+      formatMessage,
       type,
       court,
       courtDate,
@@ -571,7 +588,37 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir farbannskröfu.<br /><br />Fyrirtaka mun fara fram 24. desember 2021, kl. 10:00.<br /><br />Dómsalur: 999.<br /><br />Dómari: Dóra Dómari.<br /><br />Dómritari: Dalli Dómritari.<br /><br />Talsmaður sakbornings: Valdi Verjandi.',
+      'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um farbann.<br/><br/>Fyrirtaka mun fara fram 24. desember 2021, kl. 10:00.<br/><br/>Dómsalur: 999.<br/><br/>Dómari: Dóra Dómari.<br/><br/>Dómritari: Dalli Dómritari.<br/><br/>Talsmaður sakbornings: Valdi Verjandi.',
+    )
+  })
+
+  test('should format court date notification for admission to facility', () => {
+    // Arrange
+    const type = CaseType.ADMISSION_TO_FACILITY
+    const court = 'Héraðsdómur Reykjavíkur'
+    const courtDate = new Date('2021-12-24T10:00')
+    const courtRoom = '999'
+    const judgeName = 'Dóra Dómari'
+    const registrarName = 'Dalli Dómritari'
+    const defenderName = 'Valdi Verjandi'
+    const sessionArrangements = SessionArrangements.ALL_PRESENT_SPOKESPERSON
+
+    // Act
+    const res = formatProsecutorCourtDateEmailNotification(
+      formatMessage,
+      type,
+      court,
+      courtDate,
+      courtRoom,
+      judgeName,
+      registrarName,
+      defenderName,
+      sessionArrangements,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um vistun á viðeigandi stofnun.<br/><br/>Fyrirtaka mun fara fram 24. desember 2021, kl. 10:00.<br/><br/>Dómsalur: 999.<br/><br/>Dómari: Dóra Dómari.<br/><br/>Dómritari: Dalli Dómritari.<br/><br/>Talsmaður sakbornings: Valdi Verjandi.',
     )
   })
 
@@ -588,6 +635,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
 
     // Act
     const res = formatProsecutorCourtDateEmailNotification(
+      formatMessage,
       type,
       court,
       courtDate,
@@ -600,7 +648,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um rannsóknarheimild (hljóðupptökubúnaði komið fyrir).<br /><br />Fyrirtaka mun fara fram 24. desember 2021, kl. 10:00.<br /><br />Dómsalur: 999.<br /><br />Dómari: Dóra Dómari.<br /><br />Dómritari: Dalli Dómritari.<br /><br />Verjandi sakbornings hefur ekki verið skráður.',
+      'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um rannsóknarheimild (hljóðupptökubúnaði komið fyrir).<br/><br/>Fyrirtaka mun fara fram 24. desember 2021, kl. 10:00.<br/><br/>Dómsalur: 999.<br/><br/>Dómari: Dóra Dómari.<br/><br/>Dómritari: Dalli Dómritari.<br/><br/>Verjandi sakbornings hefur ekki verið skráður.',
     )
   })
 
@@ -617,6 +665,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
 
     // Act
     const res = formatProsecutorCourtDateEmailNotification(
+      formatMessage,
       type,
       court,
       courtDate,
@@ -629,7 +678,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um rannsóknarheimild.<br /><br />Fyrirtaka mun fara fram 24. desember 2021, kl. 10:00.<br /><br />Dómsalur: 999.<br /><br />Dómari: Dóra Dómari.<br /><br />Dómritari: Dalli Dómritari.<br /><br />Verjandi sakbornings: Valdi Verjandi.',
+      'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um rannsóknarheimild.<br/><br/>Fyrirtaka mun fara fram 24. desember 2021, kl. 10:00.<br/><br/>Dómsalur: 999.<br/><br/>Dómari: Dóra Dómari.<br/><br/>Dómritari: Dalli Dómritari.<br/><br/>Verjandi sakbornings: Valdi Verjandi.',
     )
   })
 
@@ -646,6 +695,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
 
     // Act
     const res = formatProsecutorCourtDateEmailNotification(
+      formatMessage,
       type,
       court,
       courtDate,
@@ -658,7 +708,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um rannsóknarheimild.<br /><br />Fyrirtaka mun fara fram 24. desember 2021, kl. 10:00.<br /><br />Dómsalur: 999.<br /><br />Dómari: Dóra Dómari.<br /><br />Dómritari: Dalli Dómritari.',
+      'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um rannsóknarheimild.<br/><br/>Fyrirtaka mun fara fram 24. desember 2021, kl. 10:00.<br/><br/>Dómsalur: 999.<br/><br/>Dómari: Dóra Dómari.<br/><br/>Dómritari: Dalli Dómritari.',
     )
   })
 
@@ -674,6 +724,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
 
     // Act
     const res = formatProsecutorCourtDateEmailNotification(
+      formatMessage,
       type,
       court,
       courtDate,
@@ -685,13 +736,16 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir gæsluvarðhaldskröfu.<br /><br />Fyrirtaka mun fara fram 24. desember 2020, kl. 18:00.<br /><br />Dómsalur hefur ekki verið skráður.<br /><br />Dómari: Dóra Dómari.<br /><br />Dómritari: Dalli Dómritari.<br /><br />Verjandi sakbornings: Valdi Verjandi.',
+      'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um gæsluvarðhald.<br/><br/>Fyrirtaka mun fara fram 24. desember 2020, kl. 18:00.<br/><br/>Dómsalur hefur ekki verið skráður.<br/><br/>Dómari: Dóra Dómari.<br/><br/>Dómritari: Dalli Dómritari.<br/><br/>Verjandi sakbornings: Valdi Verjandi.',
     )
   })
 })
 
 describe('formatPrisonCourtDateEmailNotification', () => {
-  const messages = notifications.prisonCourtDateEmail
+  const messages = {
+    ...notifications.prisonCourtDateEmail,
+    defender: notifications.defender,
+  }
 
   let formatMessage: FormatMessage
   beforeAll(() => {
@@ -870,7 +924,12 @@ describe('formatPrisonCourtDateEmailNotification', () => {
 })
 
 describe('formatDefenderCourtDateEmailNotification', () => {
-  const messages = notifications.defenderCourtDateEmail
+  const messages = {
+    ...notifications.defenderCourtDateEmail,
+    courtRoom: notifications.courtRoom,
+    judge: notifications.judge,
+    registrar: notifications.registrar,
+  }
 
   let formatMessage: FormatMessage
   beforeAll(() => {

@@ -2,6 +2,28 @@ import { defineMessages } from '@formatjs/intl'
 import { CaseType, SessionArrangements } from '@island.is/judicial-system/types'
 
 export const notifications = {
+  defender: {
+    id: 'judicial.system.backend:notifications.defender',
+    defaultMessage: `{sessionArrangements, select, ${SessionArrangements.ALL_PRESENT_SPOKESPERSON} {Talsmaður} other {Verjandi}} sakbornings{defenderName, select, NONE { hefur ekki verið skráður} other {: {defenderName}}}`,
+    description: 'Texti í pósti til fangeslis TODO',
+  },
+  courtRoom: {
+    id: 'judicial.system.backend:notifications.court_room',
+    defaultMessage:
+      '{courtRoom, select, NONE {Dómsalur hefur ekki verið skráður} other {Dómsalur: {courtRoom}}}.',
+    description: 'Texti í pósti til verjanda/talsmanns TODO',
+  },
+  judge: {
+    id: 'judicial.system.backend:notifications.judge',
+    defaultMessage:
+      '{judgeName, select, NONE {Dómari hefur ekki verið skráður} other {Dómari: {judgeName}}}.',
+    description: 'Texti í pósti til verjanda/talsmanns TODO',
+  },
+  registrar: {
+    id: 'judicial.system.backend:notifications.registrar',
+    defaultMessage: 'Dómritari: {registrarName}.',
+    description: 'Texti í pósti til verjanda/talsmanns TODO',
+  },
   prosecutorText: {
     id: 'judicial.system.backend:notifications.prosecutor_text',
     defaultMessage:
@@ -104,6 +126,27 @@ export const notifications = {
       '{court} hefur móttekið kröfu um {investigationPrefix, select, onlyPrefix {rannsóknarheimild} withPrefix {rannsóknarheimild ({courtTypeName})} other {{courtTypeName}}} sem þú sendir og úthlutað málsnúmerinu {courtCaseNumber}. Sjá nánar á rettarvorslugatt.island.is.',
     description: 'Notaður sem texti í sms-i þegar sækjandi fær kröfuskjal',
   },
+  prosecutorCourtDateEmail: defineMessages({
+    scheduledCase: {
+      id:
+        'judicial.system.backend:notifications.prosecutor_court_date_email.scheduled_case',
+      defaultMessage: `{court} hefur staðfest fyrirtökutíma fyrir kröfu um {investigationPrefix, select, onlyPrefix {rannsóknarheimild} withPrefix {rannsóknarheimild ({courtTypeName})} other {{courtTypeName}}}.`,
+      description: 'TODO',
+    },
+    courtDate: {
+      id:
+        'judicial.system.backend:notifications.prosecutor_court_date_email.court_date',
+      defaultMessage:
+        'Fyrirtaka mun fara fram {courtDate, date, long}, kl. {courtDate, time, short}.',
+      description: 'TODO',
+    },
+    body: {
+      id:
+        'judicial.system.backend:notifications.prosecutor_court_date_email.body',
+      defaultMessage: `{scheduledCaseText}<br /><br />{courtDateText}<br /><br />{courtRoomText}<br /><br />{judgeText}{registrarText, select, NONE {} other {<br /><br />{registrarText}}}{sessionArrangements, select, ${SessionArrangements.PROSECUTOR_PRESENT} {} other {<br /><br />{defenderText}.}}`,
+      description: 'TODO',
+    },
+  }),
   signedRuling: defineMessages({
     subject: {
       id: 'judicial.system.backend:notifications.signed_ruling.subject',
@@ -165,12 +208,6 @@ export const notifications = {
         '{isolation, select, FALSE {Ekki er farið fram á einangrun} other {Farið er fram á einangrun}}.',
       description: 'Texti í pósti til fangeslis TODO',
     },
-    defenderText: {
-      id:
-        'judicial.system.backend:notifications.prison_court_date_email.defender_text',
-      defaultMessage: `{sessionArrangements, select, ${SessionArrangements.ALL_PRESENT_SPOKESPERSON} {Talsmaður} other {Verjandi}} sakbornings{defenderName, select, NONE { hefur ekki verið skráður} other {: {defenderName}}}`,
-      description: 'Texti í pósti til fangeslis TODO',
-    },
     courtDateText: {
       id:
         'judicial.system.backend:notifications.prison_court_date_email.court_date_text',
@@ -224,25 +261,6 @@ export const notifications = {
       id:
         'judicial.system.backend:notifications.defender_court_date_email.court_case_number',
       defaultMessage: 'Málsnúmer: {courtCaseNumber}.',
-      description: 'Texti í pósti til verjanda/talsmanns TODO',
-    },
-    courtRoom: {
-      id:
-        'judicial.system.backend:notifications.defender_court_date_email.court_room',
-      defaultMessage:
-        '{courtRoom, select, NONE {Dómsalur hefur ekki verið skráður} other {Dómsalur: {courtRoom}}}.',
-      description: 'Texti í pósti til verjanda/talsmanns TODO',
-    },
-    judge: {
-      id:
-        'judicial.system.backend:notifications.defender_court_date_email.judge',
-      defaultMessage: 'Dómari: {judgeName}.',
-      description: 'Texti í pósti til verjanda/talsmanns TODO',
-    },
-    registrar: {
-      id:
-        'judicial.system.backend:notifications.defender_court_date_email.registrar',
-      defaultMessage: 'Dómritari: {registrarName}.',
       description: 'Texti í pósti til verjanda/talsmanns TODO',
     },
     prosecutor: {
