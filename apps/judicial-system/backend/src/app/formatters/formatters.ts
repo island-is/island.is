@@ -15,6 +15,7 @@ import {
 import type { Gender } from '@island.is/judicial-system/types'
 
 import { notifications } from '../messages'
+import { not } from 'sequelize/types/lib/operators'
 
 function legalProvisionsOrder(p: CaseLegalProvisions) {
   switch (p) {
@@ -274,6 +275,7 @@ export function formatPrisonCourtDateEmailNotification(
 }
 
 export function formatDefenderCourtDateEmailNotification(
+  formatMessage: FormatMessage,
   court?: string,
   courtCaseNumber?: string,
   courtDate?: Date,
@@ -284,23 +286,44 @@ export function formatDefenderCourtDateEmailNotification(
   prosecutorInstitution?: string,
   sessionArrangements?: SessionArrangements,
 ): string {
-  return `${court} hefur boðað þig í fyrirtöku sem ${
-    sessionArrangements === SessionArrangements.ALL_PRESENT_SPOKESPERSON
-      ? 'talsmann'
-      : 'verjanda'
-  } sakbornings.<br /><br />Fyrirtaka mun fara fram ${formatDate(
-    courtDate,
-    'PPPPp',
-  )
-    ?.replace('dagur,', 'daginn')
-    ?.replace(
-      ' kl.',
-      ', kl.',
-    )}.<br /><br />Málsnúmer: ${courtCaseNumber}.<br /><br />${
-    courtRoom ? `Dómsalur: ${courtRoom}` : 'Dómsalur hefur ekki verið skráður'
-  }.<br /><br />Dómari: ${judgeName}.${
-    registrarName ? `<br /><br />Dómritari: ${registrarName}.` : ''
-  }<br /><br />Sækjandi: ${prosecutorName} (${prosecutorInstitution}).`
+  /** contentful strings */
+  const cf = notifications.defenderCourtDateEmail
+  const sessionArrangementsText = formatMessage(cf.sessionArrangements, {
+    court,
+    sessionArrangements,
+  })
+  const courtDateText = formatMessage(cf.courtDate, {
+    date: formatDate(courtDate, 'PPPP')?.replace('dagur,', 'daginn'),
+    time: courtDate,
+  })
+  const courtCaseNumberText = formatMessage(cf.courtCaseNumber, {
+    courtCaseNumber,
+  })
+  const courtRoomText = formatMessage(cf.courtRoom, {
+    courtRoom: courtRoom || 'NONE',
+  })
+  const judgeText = formatMessage(cf.judge, {
+    judgeName: judgeName,
+  })
+  const registrarText = registrarName
+    ? formatMessage(cf.registrar, {
+        registrarName: registrarName,
+      })
+    : undefined
+  const prosecutorText = formatMessage(cf.prosecutor, {
+    prosecutorName: prosecutorName,
+    prosecutorInstitution: prosecutorInstitution,
+  })
+
+  return formatMessage(cf.body, {
+    courtCaseNumberText,
+    courtDateText,
+    courtRoomText,
+    judgeText,
+    prosecutorText,
+    registrarText: registrarText || 'NONE',
+    sessionArrangementsText,
+  })
 }
 
 // This function is only intended for case type CUSTODY

@@ -579,6 +579,7 @@ export class NotificationService {
   ): Promise<Recipient> {
     const subject = `Fyrirtaka í máli ${theCase.courtCaseNumber}`
     const html = formatDefenderCourtDateEmailNotification(
+      this.formatMessage,
       theCase.court?.name,
       theCase.courtCaseNumber,
       theCase.courtDate,

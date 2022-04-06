@@ -877,6 +877,22 @@ describe('formatPrisonCourtDateEmailNotification', () => {
 })
 
 describe('formatDefenderCourtDateEmailNotification', () => {
+  const messages = [
+    notifications.defenderCourtDateEmail.courtCaseNumber,
+    notifications.defenderCourtDateEmail.courtRoom,
+    notifications.defenderCourtDateEmail.prosecutor,
+    notifications.defenderCourtDateEmail.registrar,
+    notifications.defenderCourtDateEmail.body,
+    notifications.defenderCourtDateEmail.courtDate,
+    notifications.defenderCourtDateEmail.judge,
+    notifications.defenderCourtDateEmail.sessionArrangements,
+  ]
+
+  let formatMessage: FormatMessage
+  beforeAll(() => {
+    formatMessage = createTestIntl('is-IS', messages).formatMessage
+  })
+
   test('should format defender court date notification', () => {
     // Arrange
     const court = 'Héraðsdómur Norðurlands'
@@ -890,6 +906,7 @@ describe('formatDefenderCourtDateEmailNotification', () => {
 
     // Act
     const res = formatDefenderCourtDateEmailNotification(
+      formatMessage,
       court,
       courtCaseNumber,
       courtDate,
@@ -903,7 +920,7 @@ describe('formatDefenderCourtDateEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Héraðsdómur Norðurlands hefur boðað þig í fyrirtöku sem verjanda sakbornings.<br /><br />Fyrirtaka mun fara fram laugardaginn 19. desember 2020, kl. 10:19.<br /><br />Málsnúmer: R-77/2021.<br /><br />Dómsalur: 101.<br /><br />Dómari: Judy.<br /><br />Dómritari: Robin.<br /><br />Sækjandi: Áki Ákærandi (Lögreglan á Höfuðborgarsvæðinu).',
+      'Héraðsdómur Norðurlands hefur boðað þig í fyrirtöku sem verjanda sakbornings.<br/><br/>Fyrirtaka mun fara fram laugardaginn 19. desember 2020, kl. 10:19.<br/><br/>Málsnúmer: R-77/2021.<br/><br/>Dómsalur: 101.<br/><br/>Dómari: Judy.<br/><br/>Dómritari: Robin.<br/><br/>Sækjandi: Áki Ákærandi (Lögreglan á Höfuðborgarsvæðinu).',
     )
   })
 
@@ -920,6 +937,7 @@ describe('formatDefenderCourtDateEmailNotification', () => {
 
     // Act
     const res = formatDefenderCourtDateEmailNotification(
+      formatMessage,
       court,
       courtCaseNumber,
       courtDate,
@@ -933,7 +951,7 @@ describe('formatDefenderCourtDateEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Héraðsdómur Norðurlands hefur boðað þig í fyrirtöku sem talsmann sakbornings.<br /><br />Fyrirtaka mun fara fram laugardaginn 19. desember 2020, kl. 10:19.<br /><br />Málsnúmer: R-77/2021.<br /><br />Dómsalur: 101.<br /><br />Dómari: Judy.<br /><br />Dómritari: Robin.<br /><br />Sækjandi: Áki Ákærandi (Lögreglan á Höfuðborgarsvæðinu).',
+      'Héraðsdómur Norðurlands hefur boðað þig í fyrirtöku sem talsmann sakbornings.<br/><br/>Fyrirtaka mun fara fram laugardaginn 19. desember 2020, kl. 10:19.<br/><br/>Málsnúmer: R-77/2021.<br/><br/>Dómsalur: 101.<br/><br/>Dómari: Judy.<br/><br/>Dómritari: Robin.<br/><br/>Sækjandi: Áki Ákærandi (Lögreglan á Höfuðborgarsvæðinu).',
     )
   })
 
@@ -950,6 +968,7 @@ describe('formatDefenderCourtDateEmailNotification', () => {
 
     // Act
     const res = formatDefenderCourtDateEmailNotification(
+      formatMessage,
       court,
       courtCaseNumber,
       courtDate,
@@ -963,7 +982,7 @@ describe('formatDefenderCourtDateEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Héraðsdómur Norðurlands hefur boðað þig í fyrirtöku sem verjanda sakbornings.<br /><br />Fyrirtaka mun fara fram laugardaginn 19. desember 2020, kl. 10:19.<br /><br />Málsnúmer: R-77/2021.<br /><br />Dómsalur hefur ekki verið skráður.<br /><br />Dómari: Judy.<br /><br />Dómritari: Robin.<br /><br />Sækjandi: Áki Ákærandi (Lögreglan á Höfuðborgarsvæðinu).',
+      'Héraðsdómur Norðurlands hefur boðað þig í fyrirtöku sem verjanda sakbornings.<br/><br/>Fyrirtaka mun fara fram laugardaginn 19. desember 2020, kl. 10:19.<br/><br/>Málsnúmer: R-77/2021.<br/><br/>Dómsalur hefur ekki verið skráður.<br/><br/>Dómari: Judy.<br/><br/>Dómritari: Robin.<br/><br/>Sækjandi: Áki Ákærandi (Lögreglan á Höfuðborgarsvæðinu).',
     )
   })
 
@@ -979,6 +998,7 @@ describe('formatDefenderCourtDateEmailNotification', () => {
 
     // Act
     const res = formatDefenderCourtDateEmailNotification(
+      formatMessage,
       court,
       courtCaseNumber,
       courtDate,
@@ -992,7 +1012,7 @@ describe('formatDefenderCourtDateEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Héraðsdómur Norðurlands hefur boðað þig í fyrirtöku sem verjanda sakbornings.<br /><br />Fyrirtaka mun fara fram laugardaginn 19. desember 2020, kl. 10:19.<br /><br />Málsnúmer: R-77/2021.<br /><br />Dómsalur hefur ekki verið skráður.<br /><br />Dómari: Judy.<br /><br />Sækjandi: Áki Ákærandi (Lögreglan á Höfuðborgarsvæðinu).',
+      'Héraðsdómur Norðurlands hefur boðað þig í fyrirtöku sem verjanda sakbornings.<br/><br/>Fyrirtaka mun fara fram laugardaginn 19. desember 2020, kl. 10:19.<br/><br/>Málsnúmer: R-77/2021.<br/><br/>Dómsalur hefur ekki verið skráður.<br/><br/>Dómari: Judy.<br/><br/>Sækjandi: Áki Ákærandi (Lögreglan á Höfuðborgarsvæðinu).',
     )
   })
 })
