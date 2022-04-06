@@ -29,9 +29,9 @@ const FindStudentModal = ({
       variables: {
         input: {
           key: studentNationalId,
-          licenseCategory: "B",
-          cursor: "",
-          limit: 100
+          licenseCategory: 'B',
+          cursor: '',
+          limit: 100,
         },
       },
       notifyOnNetworkStatusChange: true,
