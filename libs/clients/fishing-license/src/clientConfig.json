@@ -47,6 +47,12 @@
               }
             }
           },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
           "500": {
             "description": "Server Error"
           }
@@ -88,6 +94,15 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
           },
           "500": {
             "description": "Server Error"
@@ -140,6 +155,15 @@
               }
             }
           },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
           "500": {
             "description": "Server Error"
           }
@@ -181,6 +205,12 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
           },
           "500": {
             "description": "Server Error"
@@ -369,7 +399,7 @@
         "additionalProperties": false
       },
       "Veidileyfi": {
-        "required": ["kodi", "nafn", "vorunumerfjs"],
+        "required": ["kodi", "nafn"],
         "type": "object",
         "properties": {
           "kodi": {
@@ -382,7 +412,8 @@
           },
           "vorunumerfjs": {
             "type": "string",
-            "description": "Vörunúmer veiðileyfis frá fjársýslu."
+            "description": "Vörunúmer veiðileyfis frá fjársýslu.\r\nNullable því það vantar vörunúmer fyrir öll veiðileyfi.",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -423,6 +454,9 @@
             "description": "Listi af veiðileyfum."
           }
         },
+        "additionalProperties": false
+      },
+      "ProblemDetails": {
         "additionalProperties": false
       }
     },
