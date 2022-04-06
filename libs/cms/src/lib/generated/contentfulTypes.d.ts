@@ -2215,6 +2215,9 @@ export interface IProjectPageFields {
 
   /** Default Header Background Color */
   defaultHeaderBackgroundColor?: string | undefined
+
+  /** Featured Description */
+  featuredDescription?: string | undefined
 }
 
 export interface IProjectPage extends Entry<IProjectPageFields> {
