@@ -20,6 +20,7 @@ export const UserLanguageSwitcher = ({
     const actor = user.profile.actor
     const isDelegation = Boolean(actor)
     changeLanguage(locale as Locale)
+
     if (user && !isDelegation) {
       try {
         await updateUserProfileMutation({
