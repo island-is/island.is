@@ -326,12 +326,10 @@ export function formatDefenderCourtDateEmailNotification(
 
 // This function is only intended for case type CUSTODY
 export function formatPrisonRulingEmailNotification(
+  formatMessage: FormatMessage,
   courtEndTime?: Date,
 ): string {
-  return `Meðfylgjandi er vistunarseðill gæsluvarðhaldsfanga sem var úrskurðaður í gæsluvarðhald í héraðsdómi ${formatDate(
-    courtEndTime,
-    'PPP',
-  )}, auk þingbókar þar sem úrskurðarorðin koma fram.`
+  return formatMessage(notifications.prisonRulingEmail, { courtEndTime })
 }
 
 export function formatCourtRevokedSmsNotification(
@@ -369,6 +367,7 @@ export function formatCourtRevokedSmsNotification(
 }
 
 export function formatPrisonRevokedEmailNotification(
+  formatMessage: FormatMessage,
   prosecutorOffice?: string,
   court?: string,
   courtDate?: Date,
@@ -376,21 +375,29 @@ export function formatPrisonRevokedEmailNotification(
   defenderName?: string,
   isExtension?: boolean,
 ): string {
-  const courtText = court?.replace('dómur', 'dóms') ?? 'ótilgreinds dómstóls'
-  const courtDateText =
-    formatDate(courtDate, 'PPPPp')
-      ?.replace('dagur,', 'daginn')
-      ?.replace(' kl.', ', kl.') ?? 'á ótilgreindum tíma'
-  const accusedNameText = `Nafn sakbornings: ${accusedName ?? 'Ekki skráð'}.`
-  const defenderText = defenderName
-    ? `Verjandi sakbornings: ${defenderName}`
-    : 'Verjandi sakbornings hefur ekki verið skráður'
-
-  return `${
-    prosecutorOffice ?? 'Ótilgreindur sækjandi'
-  } hefur afturkallað kröfu um ${
-    isExtension ? 'áframhaldandi ' : ''
-  }gæsluvarðhald sem send var til ${courtText} og taka átti fyrir ${courtDateText}.<br /><br />${accusedNameText}<br /><br />${defenderText}.`
+  const cf = notifications.prisonRevokedEmail
+  const courtText = formatMessage(cf.court, { court })?.replace('dómur', 'dóms')
+  const courtDateText = formatMessage(cf.courtDate, {
+    courtDate: courtDate || 'NONE',
+    date: formatDate(courtDate, 'PPPP')?.replace('dagur,', 'daginn'),
+  })
+  const accusedNameText = formatMessage(notifications.accused, {
+    accusedName: accusedName || 'NONE',
+  })
+  const defenderText = formatMessage(cf.defender, {
+    defenderName: defenderName || 'NONE',
+  })
+  const revokedCaseText = formatMessage(cf.revokedCase, {
+    prosecutorOffice: prosecutorOffice || 'NONE',
+    isExtension: isExtension ? 'yes' : 'no',
+    courtText,
+    courtDateText,
+  })
+  return formatMessage(cf.body, {
+    revokedCaseText,
+    accusedNameText,
+    defenderText,
+  })
 }
 
 export function formatDefenderRevokedEmailNotification(

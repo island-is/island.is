@@ -674,7 +674,10 @@ export class NotificationService {
     courtRecordPdf: string,
   ): Promise<Recipient> {
     const subject = 'Úrskurður um gæsluvarðhald' // Always custody
-    const html = formatPrisonRulingEmailNotification(theCase.rulingDate)
+    const html = formatPrisonRulingEmailNotification(
+      this.formatMessage,
+      theCase.rulingDate,
+    )
     const custodyNoticePdf = await getCustodyNoticePdfAsString(
       theCase,
       this.formatMessage,
@@ -872,6 +875,7 @@ export class NotificationService {
     const subject = 'Gæsluvarðhaldskrafa afturkölluð' // Always custody
     // Assume there is at most one defendant
     const html = formatPrisonRevokedEmailNotification(
+      this.formatMessage,
       theCase.creatingProsecutor?.institution?.name,
       theCase.court?.name,
       theCase.courtDate,

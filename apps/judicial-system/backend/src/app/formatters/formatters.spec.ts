@@ -1061,12 +1061,17 @@ describe('formatDefenderCourtDateEmailNotification', () => {
 })
 
 describe('formatPrisonRulingEmailNotification', () => {
+  const messages = { prisonRulingEmail: notifications.prisonRulingEmail }
+  let formatMessage: FormatMessage
+  beforeAll(() => {
+    formatMessage = createTestIntl('is-IS', messages).formatMessage
+  })
   test('should format prison ruling notification', () => {
     // Arrange
     const courtEndTime = new Date('2020-12-20T13:32')
 
     // Act
-    const res = formatPrisonRulingEmailNotification(courtEndTime)
+    const res = formatPrisonRulingEmailNotification(formatMessage, courtEndTime)
 
     // Assert
     expect(res).toBe(
@@ -1172,6 +1177,16 @@ describe('formatCourtRevokedSmsNotification', () => {
 })
 
 describe('formatPrisonRevokedEmailNotification', () => {
+  const messages = {
+    ...notifications.prisonRevokedEmail,
+    accused: notifications.accused,
+  }
+
+  let formatMessage: FormatMessage
+  beforeAll(() => {
+    formatMessage = createTestIntl('is-IS', messages).formatMessage
+  })
+
   test('should format revoked notification', () => {
     // Arrange
     const prosecutorOffice = 'Aðalsaksóknari'
@@ -1183,6 +1198,7 @@ describe('formatPrisonRevokedEmailNotification', () => {
 
     // Act
     const res = formatPrisonRevokedEmailNotification(
+      formatMessage,
       prosecutorOffice,
       court,
       courtDate,
@@ -1193,7 +1209,7 @@ describe('formatPrisonRevokedEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Aðalsaksóknari hefur afturkallað kröfu um gæsluvarðhald sem send var til Héraðsdóms Þingvalla og taka átti fyrir sunnudaginn 24. janúar 2021, kl. 08:15.<br /><br />Nafn sakbornings: Gaui Glæpon.<br /><br />Verjandi sakbornings: Dóri.',
+      'Aðalsaksóknari hefur afturkallað kröfu um gæsluvarðhald sem send var til Héraðsdóms Þingvalla og taka átti fyrir sunnudaginn 24. janúar 2021, kl. 08:15.<br/><br/>Nafn sakbornings: Gaui Glæpon.<br/><br/>Verjandi sakbornings: Dóri.',
     )
   })
 })
