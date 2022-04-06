@@ -1,6 +1,10 @@
-import { Module, DynamicModule, Type } from '@nestjs/common'
-import { InfraController } from './infra.controller'
+import { DynamicModule, Module, Type } from '@nestjs/common'
+import { APP_INTERCEPTOR } from '@nestjs/core'
+
 import { LoggingModule } from '@island.is/logging'
+
+import { InfraController } from './infra.controller'
+import { ApmInterceptor } from './apm.interceptor'
 
 interface InfraModuleOptions {
   appModule: Type<any>
@@ -8,6 +12,12 @@ interface InfraModuleOptions {
 
 @Module({
   controllers: [InfraController],
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ApmInterceptor,
+    },
+  ],
   imports: [LoggingModule],
 })
 export class InfraModule {

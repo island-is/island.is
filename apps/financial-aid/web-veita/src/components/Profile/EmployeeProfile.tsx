@@ -7,11 +7,13 @@ import {
   Checkbox,
   Button,
   ToastContainer,
+  Option,
 } from '@island.is/island-ui/core'
 
 import {
   InputType,
   isEmailValid,
+  ReactSelectOption,
   Staff,
   StaffRole,
 } from '@island.is/financial-aid/shared/lib'
@@ -36,10 +38,22 @@ type EmployeeProfileInfo = CreateUpdateStaff<{
 }>
 
 const EmployeeProfile = ({ user }: EmployeeProfileProps) => {
-  const { admin } = useContext(AdminContext)
+  const { admin, municipality } = useContext(AdminContext)
 
   const isLoggedInUser = (staff: Staff) =>
     admin?.nationalId === staff.nationalId
+
+  const mapToOption = (filterArr: string[], active: boolean) => {
+    return municipality
+      .filter((el) =>
+        active
+          ? filterArr.includes(el.municipalityId)
+          : !filterArr.includes(el.municipalityId),
+      )
+      .map((el) => {
+        return { label: el.name, value: el.municipalityId }
+      })
+  }
 
   const [state, setState] = useState<EmployeeProfileInfo>({
     nationalId: user.nationalId,

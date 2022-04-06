@@ -41,7 +41,13 @@ export const DefaultProjectHeader = ({
           <GridRow align="flexEnd">
             <GridColumn
               paddingTop={5}
-              span={['12/12', '12/12', '10/12', '10/12', '8/12']}
+              span={[
+                '12/12',
+                '12/12',
+                defaultImageIsProvided ? '10/12' : '12/12',
+                defaultImageIsProvided ? '10/12' : '12/12',
+                defaultImageIsProvided ? '8/12' : '12/12',
+              ]}
             >
               <Text variant="eyebrow" color="white" marginTop={5}>
                 Ísland.is
