@@ -73,9 +73,9 @@ export const calculatePersonalTaxAllowanceUsed = (
 }
 
 export const calculatePersonalTaxAllowanceFromAmount = (
+  tax: number,
   personalTaxCreditPercentage = 0,
   spousedPersonalTaxCreditPercentage = 0,
-  tax: number,
 ): number => {
   const taxInfoYear: TaxInfoYear = taxInfoNumbers
   const taxInfo = taxInfoYear[currentYear]
@@ -162,9 +162,9 @@ export const acceptedAmountBreakDown = (amount?: Amount): Calculations[] => {
   }
 
   const personalTaxAllowance = calculatePersonalTaxAllowanceFromAmount(
+    amount.tax,
     amount.personalTaxCredit,
     amount.spousePersonalTaxCredit,
-    amount.tax,
   )
 
   const deductionFactors =
