@@ -61,9 +61,9 @@ judicial-system-api:
   podSecurityContext:
     fsGroup: 65534
   replicaCount:
-    default: 2
+    default: 3
     max: 10
-    min: 2
+    min: 3
   resources:
     limits:
       cpu: '200m'
@@ -273,9 +273,9 @@ judicial-system-web:
             - '/'
   namespace: 'judicial-system'
   replicaCount:
-    default: 2
+    default: 3
     max: 10
-    min: 2
+    min: 3
   resources:
     limits:
       cpu: '200m'
@@ -325,9 +325,9 @@ judicial-system-xrd-api:
   podSecurityContext:
     fsGroup: 65534
   replicaCount:
-    default: 2
+    default: 3
     max: 10
-    min: 2
+    min: 3
   resources:
     limits:
       cpu: '200m'
