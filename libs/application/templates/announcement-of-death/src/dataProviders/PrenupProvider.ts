@@ -12,8 +12,8 @@ export class PrenupProvider extends BasicDataProvider {
   async provide(): Promise<Prenup> {
     // TODO implement from external client
     return Promise.resolve({
-      nationalId: "1111111111",
-      partnerNationalId: "1111111111",
+      nationalId: '1111111111',
+      partnerNationalId: '1111111111',
       hasPrenup: true,
     })
 

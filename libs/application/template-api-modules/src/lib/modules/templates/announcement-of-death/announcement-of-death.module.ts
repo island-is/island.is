@@ -3,7 +3,10 @@ import { SyslumennClientModule } from '@island.is/clients/syslumenn'
 import { AnnouncementOfDeathService } from './announcement-of-death.service'
 import { SharedTemplateAPIModule } from '../../shared'
 import { BaseTemplateAPIModuleConfig } from '../../../types'
-import { NationalRegistryClientConfig, NationalRegistryClientModule } from '@island.is/clients/national-registry-v2'
+import {
+  NationalRegistryClientConfig,
+  NationalRegistryClientModule,
+} from '@island.is/clients/national-registry-v2'
 import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
 
 export class AnnouncementOfDeathModule {

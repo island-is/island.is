@@ -1,6 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { NationalRegistryClientPerson } from '@island.is/shared/types'
-import { EinstaklingarApi } from '@island.is/clients/national-registry-v2'
+import {
+  EinstaklingarApi,
+  Einstaklingsupplysingar,
+} from '@island.is/clients/national-registry-v2'
 import { FetchError } from '@island.is/clients/middlewares'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import type { Logger } from '@island.is/logging'
@@ -8,6 +11,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { NationalRegistryPerson } from '../models/nationalRegistryPerson.model'
 import { NationalRegistryResidence } from '../models/nationalRegistryResidence.model'
 import { NationalRegistrySpouse } from '../models/nationalRegistrySpouse.model'
+import { NationalRegistryFamilyMemberInfo } from '../models/nationalRegistryFamilyMember.model'
 
 @Injectable()
 export class NationalRegistryXRoadService {
@@ -145,5 +149,33 @@ export class NationalRegistryXRoadService {
         maritalStatus: spouse.hjuskaparkodi,
       }
     )
+  }
+
+  async getFamily(
+    user: User,
+    nationalId: string,
+  ): Promise<NationalRegistryFamilyMemberInfo[] | null> {
+    const family = await this.nationalRegistryApiWithAuth(user)
+      .einstaklingarGetFjolskyldumedlimir({ id: nationalId })
+      .catch(this.handle404)
+
+    if (family?.einstaklingar) {
+      return family.einstaklingar.map((member) => {
+        return (
+          member && {
+            nationalId: member.kennitala,
+            fullName: member.fulltNafn ?? '',
+            genderCode: member.kynkodi.toString(),
+            address: {
+              streetName: member.adsetur?.heiti ?? '',
+              postalCode: member.adsetur?.postnumer ?? '',
+              city: member.adsetur?.stadur ?? '',
+              municipalityCode: null,
+            },
+          }
+        )
+      })
+    }
+    return null
   }
 }
