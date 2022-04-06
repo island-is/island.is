@@ -1,5 +1,4 @@
 import React from 'react'
-import Cookie from 'js-cookie'
 import { Box, Button, Select } from '@island.is/island-ui/core'
 import { User, Locale } from '@island.is/shared/types'
 import { useLocale } from '@island.is/localization'
@@ -21,10 +20,6 @@ export const UserLanguageSwitcher = ({
     const actor = user.profile.actor
     const isDelegation = Boolean(actor)
     changeLanguage(locale as Locale)
-    // Locale cookie only used in application system for now
-    if (typeof window !== 'undefined' && window.document) {
-      Cookie.set('applicationSystemLocale', locale)
-    }
     if (user && !isDelegation) {
       try {
         await updateUserProfileMutation({
