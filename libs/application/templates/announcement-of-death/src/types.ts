@@ -18,6 +18,7 @@ export interface ElectPersonType {
 }
 
 export interface EstateMember {
+  name: string
   nationalId: string
   relation: RelationEnum
   hasForeignCitizenship?: boolean

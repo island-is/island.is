@@ -33,7 +33,6 @@ const IdentityQuery = gql`
     }
   }
 `
-
 interface ElectPersonFieldBaseProps extends FieldBaseProps {
   errors: FieldErrors<FieldValues>
 }
