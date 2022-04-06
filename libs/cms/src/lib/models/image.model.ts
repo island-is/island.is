@@ -26,10 +26,22 @@ export class Image {
 export const mapImage = (entry: Asset): SystemMetadata<Image> => {
   const fields = entry?.fields
   const sys = entry?.sys
+
+  // The url might not contain a protocol that's why we prepend https:
+  // https://www.contentful.com/developers/docs/concepts/images/
+  let url: string
+  if (fields?.file?.url) {
+    url = fields.file.url.startsWith('//')
+      ? `https:${fields.file.url}`
+      : fields.file.url
+  } else {
+    url = ''
+  }
+
   return {
     typename: 'Image',
     id: sys?.id ?? '',
-    url: fields?.file?.url ?? '',
+    url: url,
     title: fields?.title ?? '',
     contentType: fields?.file?.contentType ?? '',
     width: fields?.file?.details?.image?.width ?? 0,
