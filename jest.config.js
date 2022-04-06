@@ -204,5 +204,8 @@ module.exports = {
     '<rootDir>/libs/testing/containers',
     '<rootDir>/libs/testing/fixtures',
     '<rootDir>/libs/testing/nest',
+    '<rootDir>/libs/api/domains/vehicles',
+    '<rootDir>/libs/clients/vehicles',
+    '<rootDir>/libs/service-portal/vehicles',
   ],
 }
