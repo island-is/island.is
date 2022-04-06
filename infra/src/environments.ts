@@ -38,7 +38,7 @@ export const Envs: EnvironmentConfigs = {
     type: 'staging',
     featuresOn: [],
     defaultMaxReplicas: 3,
-    defaultMinReplicas: 3,
+    defaultMinReplicas: 2,
     releaseName: 'web',
     awsAccountId: '261174024191',
     awsAccountRegion: 'eu-west-1',
