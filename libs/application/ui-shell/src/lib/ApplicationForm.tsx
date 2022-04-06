@@ -80,6 +80,7 @@ const ShellWrapper: FC<{
   const [, fieldsDispatch] = useFields()
   const { formatMessage, changeLanguage, lang } = useLocale()
   const featureFlagClient = useFeatureFlagClient()
+  const { userInfo } = useAuth()
 
   useApplicationNamespaces(application.typeId)
   useEffect(() => {
@@ -140,7 +141,6 @@ const ShellWrapper: FC<{
   ] = useLazyQuery<Query>(USER_PROFILE)
   const userProfile = userProfData?.getUserProfile || null
 
-  const { userInfo } = useAuth()
   useEffect(() => {
     if (userInfo?.profile.nationalId) getUserProfile()
   }, [userInfo, getUserProfile])
