@@ -52,8 +52,8 @@ import {
   getInitialParameters,
   Ordering,
 } from './utils'
-import * as styles from './PublishedMaterial.css'
 import { OrderByItem } from './components/OrderByItem'
+import * as styles from './PublishedMaterial.css'
 
 const ASSETS_PER_PAGE = 20
 const DEBOUNCE_TIME_IN_MS = 300
@@ -280,174 +280,165 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
             </Filter>
           </GridRow>
 
-          <GridColumn span="12/12">
-            <GridRow marginTop={2} align="center">
-              <Box
-                style={{
-                  visibility: loading || isTyping ? 'visible' : 'hidden',
-                }}
-              >
-                <LoadingDots />
-              </Box>
-            </GridRow>
-            <GridRow alignItems="center">
-              <GridColumn span="8/12">
-                <Inline space={1}>
-                  {selectedFilters.map(({ label, value, category }) => (
-                    <FilterTag
-                      key={value}
-                      onClick={() => {
-                        setIsTyping(true)
-                        setParameters((prevParameters) => ({
-                          ...prevParameters,
-                          [category]: (prevParameters[category] ?? []).filter(
-                            (prevValue) => prevValue !== value,
-                          ),
-                        }))
-                      }}
-                    >
-                      {label}
-                    </FilterTag>
-                  ))}
-                </Inline>
-              </GridColumn>
-              <GridColumn span="4/12">
-                <GridRow align="flexEnd">
-                  <DropdownMenu
-                    title={n('orderBy', 'Raða')}
-                    icon="arrowUp"
-                    zIndex={10}
-                    disclosure={
-                      <div className={styles.orderByContainer}>
-                        <div className={styles.orderByText}>
-                          {n('orderBy', 'Raða')}
-                        </div>
-                        {
-                          <Icon
-                            className={styles.orderByIcon}
-                            size="small"
-                            icon="arrowUp"
-                          />
-                        }
-                        {<Icon size="small" icon="arrowDown" />}
+          <GridRow marginTop={2} align="center">
+            <Box
+              style={{
+                visibility: loading || isTyping ? 'visible' : 'hidden',
+              }}
+            >
+              <LoadingDots />
+            </Box>
+          </GridRow>
+          <GridRow alignItems="center">
+            <GridColumn span="8/12">
+              <Inline space={1}>
+                {selectedFilters.map(({ label, value, category }) => (
+                  <FilterTag
+                    key={value}
+                    onClick={() => {
+                      setIsTyping(true)
+                      setParameters((prevParameters) => ({
+                        ...prevParameters,
+                        [category]: (prevParameters[category] ?? []).filter(
+                          (prevValue) => prevValue !== value,
+                        ),
+                      }))
+                    }}
+                  >
+                    {label}
+                  </FilterTag>
+                ))}
+              </Inline>
+            </GridColumn>
+            <GridColumn span="4/12">
+              <GridRow align="flexEnd">
+                <DropdownMenu
+                  title={n('orderBy', 'Raða')}
+                  icon="arrowUp"
+                  zIndex={10}
+                  disclosure={
+                    <div className={styles.orderByContainer}>
+                      <div className={styles.orderByText}>
+                        {n('orderBy', 'Raða eftir')}
                       </div>
-                    }
-                    items={[
-                      {
-                        render: () => (
-                          <OrderByItem
-                            isSelected={
-                              ordering.field === 'title.sort' &&
-                              ordering.order === 'asc'
-                            }
-                            onClick={() =>
-                              setOrdering({
-                                field: 'title.sort',
-                                order: 'asc',
-                              })
-                            }
-                          >
-                            {n('orderByTitleAscending', 'Titill (a-ö)')}
-                          </OrderByItem>
-                        ),
-                        title: n('orderByTitleAscending', 'Titill (a-ö)'),
-                      },
-                      {
-                        render: () => (
-                          <OrderByItem
-                            isSelected={
-                              ordering.field === 'title.sort' &&
-                              ordering.order === 'desc'
-                            }
-                            hasBorderTop={true}
-                            onClick={() =>
-                              setOrdering({
-                                field: 'title.sort',
-                                order: 'desc',
-                              })
-                            }
-                          >
-                            {n('orderByTitleDescending', 'Titill (ö-a)')}
-                          </OrderByItem>
-                        ),
-                        title: n('orderByTitleDescending', 'Titill (ö-a)'),
-                      },
-                      {
-                        render: () => (
-                          <OrderByItem
-                            isSelected={
-                              ordering.field === 'releaseDate' &&
-                              ordering.order === 'desc'
-                            }
-                            hasBorderTop={true}
-                            onClick={() =>
-                              setOrdering({
-                                field: 'releaseDate',
-                                order: 'desc',
-                              })
-                            }
-                          >
-                            {n(
-                              'orderByReleaseDateDescending',
-                              'Útgáfudagur (nýjasta)',
-                            )}
-                          </OrderByItem>
-                        ),
-                        title: n(
-                          'orderByReleaseDateDescending',
-                          'Útgáfudagur (nýjasta)',
-                        ),
-                      },
-                      {
-                        render: () => (
-                          <OrderByItem
-                            isSelected={
-                              ordering.field === 'releaseDate' &&
-                              ordering.order === 'asc'
-                            }
-                            hasBorderTop={true}
-                            onClick={() =>
-                              setOrdering({
-                                field: 'releaseDate',
-                                order: 'asc',
-                              })
-                            }
-                          >
-                            {n(
-                              'orderByReleaseDateAscending',
-                              'Útgáfudagur (elsta)',
-                            )}
-                          </OrderByItem>
-                        ),
-                        title: n(
-                          'orderByReleaseDateAscending',
-                          'Útgáfudagur (elsta)',
-                        ),
-                      },
-                    ]}
-                  />
-                </GridRow>
-              </GridColumn>
-            </GridRow>
-            {(data?.getPublishedMaterial.items ?? []).map((item, index) => {
-              return (
-                <GridRow
-                  key={`${item.id}-${index}`}
-                  marginTop={2}
-                  marginBottom={2}
-                >
-                  <PublishedMaterialItem item={item} />
-                </GridRow>
-              )
-            })}
-            {numberOfItemsThatCouldBeLoaded > 0 && (
-              <GridRow marginTop={8} align="center">
-                <Button onClick={loadMore} disabled={loading}>
-                  {n('seeMore', 'Sjá meira')} ({numberOfItemsThatCouldBeLoaded})
-                </Button>
+                      <Icon size="small" icon="chevronDown" />
+                    </div>
+                  }
+                  items={[
+                    {
+                      render: () => (
+                        <OrderByItem
+                          isSelected={
+                            ordering.field === 'title.sort' &&
+                            ordering.order === 'asc'
+                          }
+                          onClick={() =>
+                            setOrdering({
+                              field: 'title.sort',
+                              order: 'asc',
+                            })
+                          }
+                        >
+                          {n('orderByTitleAscending', 'Titill (a-ö)')}
+                        </OrderByItem>
+                      ),
+                      title: n('orderByTitleAscending', 'Titill (a-ö)'),
+                    },
+                    {
+                      render: () => (
+                        <OrderByItem
+                          isSelected={
+                            ordering.field === 'title.sort' &&
+                            ordering.order === 'desc'
+                          }
+                          hasBorderTop={true}
+                          onClick={() =>
+                            setOrdering({
+                              field: 'title.sort',
+                              order: 'desc',
+                            })
+                          }
+                        >
+                          {n('orderByTitleDescending', 'Titill (ö-a)')}
+                        </OrderByItem>
+                      ),
+                      title: n('orderByTitleDescending', 'Titill (ö-a)'),
+                    },
+                    {
+                      render: () => (
+                        <OrderByItem
+                          isSelected={
+                            ordering.field === 'releaseDate' &&
+                            ordering.order === 'desc'
+                          }
+                          hasBorderTop={true}
+                          onClick={() =>
+                            setOrdering({
+                              field: 'releaseDate',
+                              order: 'desc',
+                            })
+                          }
+                        >
+                          {n(
+                            'orderByReleaseDateDescending',
+                            'Útgáfudagur (nýjasta)',
+                          )}
+                        </OrderByItem>
+                      ),
+                      title: n(
+                        'orderByReleaseDateDescending',
+                        'Útgáfudagur (nýjasta)',
+                      ),
+                    },
+                    {
+                      render: () => (
+                        <OrderByItem
+                          isSelected={
+                            ordering.field === 'releaseDate' &&
+                            ordering.order === 'asc'
+                          }
+                          hasBorderTop={true}
+                          onClick={() =>
+                            setOrdering({
+                              field: 'releaseDate',
+                              order: 'asc',
+                            })
+                          }
+                        >
+                          {n(
+                            'orderByReleaseDateAscending',
+                            'Útgáfudagur (elsta)',
+                          )}
+                        </OrderByItem>
+                      ),
+                      title: n(
+                        'orderByReleaseDateAscending',
+                        'Útgáfudagur (elsta)',
+                      ),
+                    },
+                  ]}
+                />
               </GridRow>
-            )}
-          </GridColumn>
+            </GridColumn>
+          </GridRow>
+          {(data?.getPublishedMaterial.items ?? []).map((item, index) => {
+            return (
+              <GridRow
+                key={`${item.id}-${index}`}
+                marginTop={2}
+                marginBottom={2}
+              >
+                <PublishedMaterialItem item={item} />
+              </GridRow>
+            )
+          })}
+          {numberOfItemsThatCouldBeLoaded > 0 && (
+            <GridRow marginTop={8} align="center">
+              <Button onClick={loadMore} disabled={loading}>
+                {n('seeMore', 'Sjá meira')} ({numberOfItemsThatCouldBeLoaded})
+              </Button>
+            </GridRow>
+          )}
         </GridColumn>
       </GridContainer>
     </OrganizationWrapper>
