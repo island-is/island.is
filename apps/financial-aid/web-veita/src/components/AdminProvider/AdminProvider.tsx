@@ -5,21 +5,21 @@ import { Municipality, User } from '@island.is/financial-aid/shared/lib'
 import { CurrentUserQuery } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
 import { useSession } from 'next-auth/client'
 import { Box, Button, Text } from '@island.is/island-ui/core'
-import { useLogOut } from '../../utils/useLogOut'
-import { useMunicipality } from '@island.is/financial-aid/shared/components'
+import { useLogOut } from '@island.is/financial-aid-web/veita/src/utils/useLogOut'
+import { useMunicipalities } from '@island.is/financial-aid-web/veita/src/utils/useMunicipalities'
 
 interface AdminProvider {
   isAuthenticated?: boolean
   admin?: User
   setAdmin?: React.Dispatch<React.SetStateAction<User | undefined>>
-  municipality?: Municipality
+  municipality: Municipality[]
 }
 
 interface PageProps {
   children: ReactNode
 }
 
-export const AdminContext = createContext<AdminProvider>({})
+export const AdminContext = createContext<AdminProvider>({ municipality: [] })
 
 const AdminProvider = ({ children }: PageProps) => {
   const [session] = useSession()
@@ -35,12 +35,11 @@ const AdminProvider = ({ children }: PageProps) => {
   })
   const loggedInUser: User = data?.currentUser
 
-  const { municipality, setMunicipalityById } = useMunicipality()
+  const { municipality } = useMunicipalities()
 
   useEffect(() => {
     if (loggedInUser && !admin && loggedInUser.staff) {
       setAdmin(loggedInUser)
-      setMunicipalityById(loggedInUser.staff.municipalityIds[0])
       setIsAuthenticated(true)
     }
   }, [setAdmin, loggedInUser, admin])
