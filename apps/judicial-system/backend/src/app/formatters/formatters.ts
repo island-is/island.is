@@ -14,6 +14,7 @@ import {
 import type { Gender } from '@island.is/judicial-system/types'
 
 import { notifications } from '../messages'
+import { not } from 'sequelize/types/lib/operators'
 
 function legalProvisionsOrder(p: CaseLegalProvisions) {
   switch (p) {
@@ -255,20 +256,10 @@ export function formatPrisonCourtDateEmailNotification(
     notifications.prisonCourtDateEmail.isolationText,
     { isolation: isolation ? 'TRUE' : 'FALSE' },
   )
-<<<<<<< HEAD
   const defenderText = formatMessage(notifications.defender, {
     defenderName: defenderName ?? 'NONE',
     sessionArrangements,
   })
-=======
-  const defenderText = formatMessage(
-    notifications.prisonCourtDateEmail.defenderText,
-    {
-      defenderName: defenderName ?? 'NONE',
-      sessionArrangements,
-    },
-  )
->>>>>>> 58e09f522 (feat(j-s): move strings to Contentful in prison court date email)
 
   return formatMessage(notifications.prisonCourtDateEmail.body, {
     prosecutorOffice: prosecutorOffice || 'NONE',
@@ -278,10 +269,7 @@ export function formatPrisonCourtDateEmailNotification(
     requestText,
     isolationText,
     defenderText,
-<<<<<<< HEAD
     sessionArrangements,
-=======
->>>>>>> 58e09f522 (feat(j-s): move strings to Contentful in prison court date email)
   })
 }
 
