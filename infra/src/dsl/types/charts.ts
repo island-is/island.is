@@ -13,6 +13,7 @@ export interface EnvironmentConfig {
   domain: string
   releaseName: string
   defaultMaxReplicas: number
+  defaultMinReplicas: number
   type: OpsEnv
   featuresOn: FeatureNames[]
   awsAccountRegion: 'eu-west-1' | 'us-east-1'
