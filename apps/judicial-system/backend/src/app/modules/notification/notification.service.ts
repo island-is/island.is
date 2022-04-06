@@ -533,6 +533,7 @@ export class NotificationService {
     const subject = 'Krafa um gæsluvarðhald í vinnslu' // Always custody
     // Assume there is at most one defendant
     const html = formatPrisonCourtDateEmailNotification(
+      this.formatMessage,
       theCase.creatingProsecutor?.institution?.name,
       theCase.court?.name,
       theCase.courtDate,

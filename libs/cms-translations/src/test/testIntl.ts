@@ -16,12 +16,17 @@ const messagesToRecord = (
     if (!message.id) return result
     if (!message.defaultMessage) return result
 
-    const value =
-      typeof message.defaultMessage === 'string'
-        ? parse(message.defaultMessage)
-        : message.defaultMessage
+    try {
+      const value =
+        typeof message.defaultMessage === 'string'
+          ? parse(message.defaultMessage)
+          : message.defaultMessage
 
-    return { ...result, [message.id]: value }
+      return { ...result, [message.id]: value }
+    } catch (e) {
+      console.error('Unable to get value for', message.id, e)
+      throw e
+    }
   }, {} as Record<string, MessageFormatElement[]>)
 }
 

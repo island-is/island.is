@@ -1,5 +1,6 @@
 import { defineMessages } from '@formatjs/intl'
-import { CaseType } from '@island.is/judicial-system/types'
+import { CaseType, SessionArrangements } from '@island.is/judicial-system/types'
+import { Session } from 'inspector'
 import { Case } from '../modules/case'
 
 export const notifications = {
@@ -156,6 +157,55 @@ export const notifications = {
         '{courtName} hefur sent þér endurrit úr þingbók í máli {courtCaseNumber} ásamt úrskurði dómara í heild sinni í meðfylgjandi viðhengi.',
       description:
         'Notaður sem texti í pósti til verjanda/talsmanns vegna undirritunar úrskúrðar',
+    },
+  }),
+  prisonCourtDateEmail: defineMessages({
+    isolationText: {
+      id:
+        'judicial.system.backend:notifications.prison_court_date_email.isolation_text',
+      defaultMessage:
+        '{isolation, select, FALSE {Ekki er farið fram á einangrun} other {Farið er fram á einangrun}}.',
+      description: 'Texti í pósti til fangeslis TODO',
+    },
+    defenderText: {
+      id:
+        'judicial.system.backend:notifications.prison_court_date_email.defender_text',
+      defaultMessage: `{sessionArrangements, select, ${SessionArrangements.ALL_PRESENT_SPOKESPERSON} {Talsmaður} other {Verjandi}} sakbornings{defenderName, select, NONE { hefur ekki verið skráður} other {: {defenderName}}}`,
+      description: 'Texti í pósti til fangeslis TODO',
+    },
+    courtDateText: {
+      id:
+        'judicial.system.backend:notifications.prison_court_date_email.court_date_text',
+      defaultMessage:
+        '{dateMissing, select, missing {á ótilgreindum tíma} other {{date}, kl. {time, time, short}}}',
+      description: 'Texti í pósti til fangeslis TODO',
+    },
+    requestText: {
+      id:
+        'judicial.system.backend:notifications.prison_court_date_email.request_text',
+      defaultMessage:
+        'Nafn sakbornings: {accusedName, select, NONE {Ekki skráð} other {{accusedName}}}.<br /><br />Kyn sakbornings: {gender, select, MALE {Karl} FEMALE {Kona} other {Kynsegin/Annað}}.<br /><br />Krafist er gæsluvarðhalds til {requestedValidToDateText}.',
+      description: 'Texti í pósti til fangeslis TODO',
+    },
+    courtText: {
+      id:
+        'judicial.system.backend:notifications.prison_court_date_email.court_text',
+      defaultMessage:
+        '{court, select, NONE {ótilgreinds dómstóls} other {{court}}}',
+      description: 'Texti í pósti til fangeslis TODO',
+    },
+    requestedValidToDateText: {
+      id:
+        'judicial.system.backend:notifications.prison_court_date_email.requested_valid_to_date_text',
+      defaultMessage:
+        '{dateMissing, select, missing {ótilgreinds tíma} other {{date}, kl. {time, time, short}}}',
+      description: 'Texti í pósti til fangeslis TODO',
+    },
+    body: {
+      id: 'judicial.system.backend:notifications.prison_court_date_email.body',
+      defaultMessage:
+        '{prosecutorOffice, select, NONE {Ótilgreindur sækjandi} other {{prosecutorOffice}}} hefur sent kröfu um {isExtension, select, yes {áframhaldandi } other {}}gæsluvarðhald til {courtText} og verður málið tekið fyrir {courtDateText}.<br /><br />{requestText}<br /><br />{isolationText}<br /><br />{defenderText}.',
+      description: 'Texti í pósti til fangeslis TODO',
     },
   }),
   modified: defineMessages({

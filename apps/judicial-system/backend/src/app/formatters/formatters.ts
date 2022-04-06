@@ -203,6 +203,7 @@ export function formatProsecutorCourtDateEmailNotification(
 }
 
 export function formatPrisonCourtDateEmailNotification(
+  formatMessage: FormatMessage,
   prosecutorOffice?: string,
   court?: string,
   courtDate?: Date,
@@ -214,38 +215,62 @@ export function formatPrisonCourtDateEmailNotification(
   isExtension?: boolean,
   sessionArrangements?: SessionArrangements,
 ): string {
-  const courtText = court?.replace('dómur', 'dóms') ?? 'ótilgreinds dómstóls'
-  const courtDateText =
-    formatDate(courtDate, 'PPPPp')
-      ?.replace('dagur,', 'daginn')
-      ?.replace(' kl.', ', kl.') ?? 'á ótilgreindum tíma'
-  const requestedValidToDateText =
-    formatDate(requestedValidToDate, 'PPPPp')
-      ?.replace('dagur,', 'dagsins')
-      ?.replace(' kl.', ', kl.') ?? 'ótilgreinds tíma'
-  const requestText = `Nafn sakbornings: ${
-    accusedName ?? 'Ekki skráð'
-  }.<br /><br />Kyn sakbornings: ${formatGender(
-    accusedGender,
-  )}.<br /><br />Krafist er gæsluvarðhalds til ${requestedValidToDateText}.`
-  const isolationText = isolation
-    ? 'Farið er fram á einangrun.'
-    : 'Ekki er farið fram á einangrun.'
-  const defenderText = defenderName
-    ? `${
-        sessionArrangements === SessionArrangements.ALL_PRESENT_SPOKESPERSON
-          ? 'Talsmaður'
-          : 'Verjandi'
-      } sakbornings: ${defenderName}`
-    : `${
-        sessionArrangements === SessionArrangements.ALL_PRESENT_SPOKESPERSON
-          ? 'Talsmaður'
-          : 'Verjandi'
-      } sakbornings hefur ekki verið skráður`
+  const courtText = formatMessage(
+    notifications.prisonCourtDateEmail.courtText,
+    { court: court || 'NONE' },
+  ).replace('dómur', 'dóms')
 
-  return `${prosecutorOffice ?? 'Ótilgreindur sækjandi'} hefur sent kröfu um ${
-    isExtension ? 'áframhaldandi ' : ''
-  }gæsluvarðhald til ${courtText} og verður málið tekið fyrir ${courtDateText}.<br /><br />${requestText}<br /><br />${isolationText}<br /><br />${defenderText}.`
+  const courtDateText = formatMessage(
+    notifications.prisonCourtDateEmail.courtDateText,
+    {
+      date: formatDate(courtDate, 'PPPP')?.replace('dagur,', 'daginn'),
+      time: courtDate,
+      dateMissing: courtDate ? 'defined' : 'missing',
+    },
+  )
+
+  const requestedValidToDateText = formatMessage(
+    notifications.prisonCourtDateEmail.requestedValidToDateText,
+    {
+      date: formatDate(requestedValidToDate, 'PPPP')?.replace(
+        'dagur,',
+        'dagsins',
+      ),
+      time: requestedValidToDate,
+      dateMissing: requestedValidToDate ? 'defined' : 'missing',
+    },
+  )
+
+  const requestText = formatMessage(
+    notifications.prisonCourtDateEmail.requestText,
+    {
+      accusedName: accusedName ?? 'NONE',
+      gender: accusedGender,
+      requestedValidToDateText,
+    },
+  )
+
+  const isolationText = formatMessage(
+    notifications.prisonCourtDateEmail.isolationText,
+    { isolation: isolation ? 'TRUE' : 'FALSE' },
+  )
+  const defenderText = formatMessage(
+    notifications.prisonCourtDateEmail.defenderText,
+    {
+      defenderName: defenderName ?? 'NONE',
+      sessionArrangements,
+    },
+  )
+
+  return formatMessage(notifications.prisonCourtDateEmail.body, {
+    prosecutorOffice: prosecutorOffice || 'NONE',
+    courtText,
+    isExtension: isExtension ? 'yes' : 'no',
+    courtDateText,
+    requestText,
+    isolationText,
+    defenderText,
+  })
 }
 
 export function formatDefenderCourtDateEmailNotification(
