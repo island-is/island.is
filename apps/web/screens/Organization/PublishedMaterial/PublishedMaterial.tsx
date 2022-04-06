@@ -53,6 +53,7 @@ import {
   Ordering,
 } from './utils'
 import { OrderByItem } from './components/OrderByItem'
+import { useSelect } from 'downshift'
 import * as styles from './PublishedMaterial.css'
 
 const ASSETS_PER_PAGE = 20
@@ -201,6 +202,58 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
 
   const selectedFilters = getFilterTags(filterCategories)
 
+  const orderByItems = [
+    {
+      title: n('orderByTitleAscending', 'Titill (a-ö)'),
+      onClick: () =>
+        setOrdering({
+          field: 'title.sort',
+          order: 'asc',
+        }),
+      isSelected: ordering.field === 'title.sort' && ordering.order === 'asc',
+    },
+    {
+      title: n('orderByTitleDescending', 'Titill (ö-a)'),
+      onClick: () =>
+        setOrdering({
+          field: 'title.sort',
+          order: 'desc',
+        }),
+      isSelected: ordering.field === 'title.sort' && ordering.order === 'desc',
+    },
+    {
+      title: n('orderByReleaseDateDescending', 'Útgáfudagur (nýjast)'),
+      onClick: () =>
+        setOrdering({
+          field: 'releaseDate',
+          order: 'desc',
+        }),
+      isSelected: ordering.field === 'releaseDate' && ordering.order === 'desc',
+    },
+    {
+      title: n('orderByReleaseDateAscending', 'Útgáfudagur (elsta)'),
+      onClick: () =>
+        setOrdering({
+          field: 'releaseDate',
+          order: 'asc',
+        }),
+      isSelected: ordering.field === 'releaseDate' && ordering.order === 'asc',
+    },
+  ]
+
+  const {
+    isOpen,
+    selectedItem,
+    getToggleButtonProps,
+    getMenuProps,
+    highlightedIndex,
+    getItemProps,
+  } = useSelect({ items: orderByItems })
+
+  useEffect(() => {
+    if (selectedItem?.onClick) selectedItem.onClick()
+  }, [selectedItem])
+
   return (
     <OrganizationWrapper
       pageTitle={pageTitle}
@@ -312,112 +365,35 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
             </GridColumn>
             <GridColumn span="4/12">
               <GridRow align="flexEnd">
-                <DropdownMenu
-                  title={n('orderBy', 'Raða')}
-                  icon="arrowUp"
-                  zIndex={10}
-                  disclosure={
-                    <div className={styles.orderByContainer}>
-                      <div className={styles.orderByText}>
-                        {n('orderBy', 'Raða eftir')}
-                      </div>
-                      <Icon size="small" icon="chevronDown" />
-                    </div>
-                  }
-                  items={[
-                    {
-                      render: () => (
-                        <OrderByItem
-                          isSelected={
-                            ordering.field === 'title.sort' &&
-                            ordering.order === 'asc'
-                          }
-                          onClick={() =>
-                            setOrdering({
-                              field: 'title.sort',
-                              order: 'asc',
-                            })
-                          }
-                        >
-                          {n('orderByTitleAscending', 'Titill (a-ö)')}
-                        </OrderByItem>
-                      ),
-                      title: n('orderByTitleAscending', 'Titill (a-ö)'),
-                    },
-                    {
-                      render: () => (
-                        <OrderByItem
-                          isSelected={
-                            ordering.field === 'title.sort' &&
-                            ordering.order === 'desc'
-                          }
-                          hasBorderTop={true}
-                          onClick={() =>
-                            setOrdering({
-                              field: 'title.sort',
-                              order: 'desc',
-                            })
-                          }
-                        >
-                          {n('orderByTitleDescending', 'Titill (ö-a)')}
-                        </OrderByItem>
-                      ),
-                      title: n('orderByTitleDescending', 'Titill (ö-a)'),
-                    },
-                    {
-                      render: () => (
-                        <OrderByItem
-                          isSelected={
-                            ordering.field === 'releaseDate' &&
-                            ordering.order === 'desc'
-                          }
-                          hasBorderTop={true}
-                          onClick={() =>
-                            setOrdering({
-                              field: 'releaseDate',
-                              order: 'desc',
-                            })
-                          }
-                        >
-                          {n(
-                            'orderByReleaseDateDescending',
-                            'Útgáfudagur (nýjasta)',
-                          )}
-                        </OrderByItem>
-                      ),
-                      title: n(
-                        'orderByReleaseDateDescending',
-                        'Útgáfudagur (nýjasta)',
-                      ),
-                    },
-                    {
-                      render: () => (
-                        <OrderByItem
-                          isSelected={
-                            ordering.field === 'releaseDate' &&
-                            ordering.order === 'asc'
-                          }
-                          hasBorderTop={true}
-                          onClick={() =>
-                            setOrdering({
-                              field: 'releaseDate',
-                              order: 'asc',
-                            })
-                          }
-                        >
-                          {n(
-                            'orderByReleaseDateAscending',
-                            'Útgáfudagur (elsta)',
-                          )}
-                        </OrderByItem>
-                      ),
-                      title: n(
-                        'orderByReleaseDateAscending',
-                        'Útgáfudagur (elsta)',
-                      ),
-                    },
-                  ]}
-                />
+                <button
+                  type="button"
+                  tabIndex={0}
+                  className={styles.orderByToggleButton}
+                  {...getToggleButtonProps()}
+                >
+                  <div className={styles.orderByToggleButtonText}>
+                    {n('orderBy', 'Raða eftir')}
+                  </div>
+                  <Icon size="small" icon="chevronDown" />
+                </button>
+                <ul
+                  style={{ display: isOpen ? 'block' : 'none' }}
+                  className={styles.orderByItemContainer}
+                  {...getMenuProps()}
+                >
+                  {orderByItems.map((item, index) => (
+                    <li key={index} {...getItemProps({ item, index })}>
+                      <OrderByItem
+                        isSelected={item.isSelected}
+                        isHighlighted={highlightedIndex === index}
+                        hasBorderTop={index !== 0}
+                        onClick={item.onClick}
+                      >
+                        {item.title}
+                      </OrderByItem>
+                    </li>
+                  ))}
+                </ul>
               </GridRow>
             </GridColumn>
           </GridRow>

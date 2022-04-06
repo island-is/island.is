@@ -4,12 +4,14 @@ import * as styles from './OrderByItem.css'
 
 interface OrderByItemProps {
   isSelected?: boolean
+  isHighlighted?: boolean
   onClick?: () => void
   hasBorderTop?: boolean
 }
 
 export const OrderByItem: React.FC<OrderByItemProps> = ({
   isSelected,
+  isHighlighted,
   onClick,
   hasBorderTop,
   children,
@@ -27,7 +29,9 @@ export const OrderByItem: React.FC<OrderByItemProps> = ({
     >
       <Text
         variant="small"
-        color={isSelected || isMouseOver ? 'blue400' : 'dark400'}
+        color={
+          isSelected || isMouseOver || isHighlighted ? 'blue400' : 'dark400'
+        }
         fontWeight={isSelected ? 'semiBold' : 'regular'}
       >
         {children}
