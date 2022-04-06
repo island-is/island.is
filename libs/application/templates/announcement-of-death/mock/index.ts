@@ -1,6 +1,6 @@
 export const deceased = {
   name: 'Jóna Jónsdóttir',
-  nationalId: '0101302989',
+  nationalId: '190841-2409',
   deathAnnouncementDate: '05.02.2022',
   maritalStatus: 'Gift/ur',
 }
