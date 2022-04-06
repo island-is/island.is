@@ -11,6 +11,7 @@ export const useLogOut = () => {
 
   const logOut = () => {
     setAdmin && setAdmin(undefined)
+    sessionStorage.clear()
     signOut({
       callbackUrl: signOutUrl(window, session?.idToken),
     })
