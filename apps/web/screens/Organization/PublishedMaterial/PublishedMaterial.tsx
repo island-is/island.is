@@ -2,7 +2,6 @@ import { useQuery } from '@apollo/client'
 import {
   Box,
   Button,
-  DropdownMenu,
   Filter,
   FilterInput,
   FilterMultiChoice,
@@ -34,7 +33,7 @@ import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { useRouter } from 'next/router'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useDebounce } from 'react-use'
 import { Screen } from '../../../types'
 import {
@@ -140,12 +139,18 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
   const loadMore = () => {
     const nextPage = page + 1
     setPage(nextPage)
+
+    const selectedCategories: string[] = []
+    filterCategories.forEach((c) =>
+      c.selected.forEach((t) => selectedCategories.push(t)),
+    )
+
     fetchMore({
       variables: {
         input: {
           lang: activeLocale,
           organizationSlug: (router.query.slug as string) ?? '',
-          tags: [],
+          tags: selectedCategories,
           page: nextPage,
           searchString: searchValue,
           size: ASSETS_PER_PAGE,
@@ -254,6 +259,8 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
     if (selectedItem?.onClick) selectedItem.onClick()
   }, [selectedItem])
 
+  const orderByButtonRef = useRef<HTMLDivElement | null>(null)
+
   return (
     <OrganizationWrapper
       pageTitle={pageTitle}
@@ -284,6 +291,7 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
           </GridRow>
           <GridRow>
             <Filter
+              resultCount={data?.getPublishedMaterial.total ?? 0}
               variant={isMobile ? 'dialog' : 'popover'}
               align="right"
               labelClear={n('clearFilter', 'Hreinsa síu')}
@@ -365,19 +373,27 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
             </GridColumn>
             <GridColumn span="4/12">
               <GridRow align="flexEnd">
-                <button
-                  type="button"
-                  tabIndex={0}
-                  className={styles.orderByToggleButton}
-                  {...getToggleButtonProps()}
-                >
-                  <div className={styles.orderByToggleButtonText}>
-                    {n('orderBy', 'Raða eftir')}
-                  </div>
-                  <Icon size="small" icon="chevronDown" />
-                </button>
+                <div ref={orderByButtonRef}>
+                  <button
+                    type="button"
+                    tabIndex={0}
+                    className={styles.orderByToggleButton}
+                    {...getToggleButtonProps()}
+                  >
+                    <div className={styles.orderByToggleButtonText}>
+                      {n('orderBy', 'Raða eftir')}
+                    </div>
+                    <Icon size="small" icon="chevronDown" />
+                  </button>
+                </div>
                 <ul
-                  style={{ display: isOpen ? 'block' : 'none' }}
+                  style={{
+                    display: isOpen ? 'block' : 'none',
+                    marginTop: orderByButtonRef.current
+                      ? (orderByButtonRef.current.getBoundingClientRect()
+                          ?.height ?? 24) + 4
+                      : 28,
+                  }}
                   className={styles.orderByItemContainer}
                   {...getMenuProps()}
                 >

@@ -23,7 +23,6 @@ export const orderByItemContainer = style({
   position: 'absolute',
   background: 'white',
   zIndex: 10,
-  marginTop: '28px',
   border: `1px solid ${theme.color.dark100}`,
   borderRadius: '6px',
   boxShadow: '0px 4px 30px rgba(0, 97, 255, 0.16)',
