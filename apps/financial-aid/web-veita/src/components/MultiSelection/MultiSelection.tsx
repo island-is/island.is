@@ -19,7 +19,7 @@ export type CreateUpdateStaff<T> = {
 export type selectionType = 'add' | 'remove'
 
 type Props<T> = {
-  selectionUpdate: (value: string, type: 'add' | 'remove') => void
+  selectionUpdate: (value: string, type: selectionType) => void
   state: CreateUpdateStaff<T>
   hasError: boolean
 }

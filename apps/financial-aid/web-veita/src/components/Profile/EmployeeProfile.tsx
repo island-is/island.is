@@ -33,7 +33,6 @@ type EmployeeProfileInfo = CreateUpdateStaff<{
   nationalId?: string
   nickname?: string
   email?: string
-  errorMessage?: string
 }>
 
 const EmployeeProfile = ({ user }: EmployeeProfileProps) => {
