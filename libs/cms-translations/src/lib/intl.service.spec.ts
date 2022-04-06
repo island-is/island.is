@@ -1,19 +1,18 @@
 import type { MessageDescriptor, IntlShape } from '@formatjs/intl'
 import { createTestIntl } from '../test'
-import { formatMessage } from './intl.service'
 import type { FormatMessage } from '../types'
 
 type Fl = Omit<IntlShape<string>, 'formatMessage'>
 type TestIntl = Fl & { formatMessage: FormatMessage }
 
 describe('formatMessage', () => {
-  const messages: MessageDescriptor[] = [
-    {
+  const messages = {
+    title: {
       id: 'testIntl.title',
       defaultMessage: 'Testing {test}',
       description: '',
     },
-  ]
+  }
 
   let intl: TestIntl
   beforeAll(() => {
@@ -29,7 +28,7 @@ describe('formatMessage', () => {
   })
 
   it('should call format message when descriptor is not a string', () => {
-    const result = intl.formatMessage(messages[0], { test: 'test' })
+    const result = intl.formatMessage(messages.title, { test: 'test' })
 
     expect(result).toBe('Testing test')
   })

@@ -123,12 +123,10 @@ describe('formatLegalProvisions', () => {
 })
 
 describe('formatHeadsUpSmsNotification', () => {
-  const messages = [
-    notifications.prosecutorText,
-    notifications.courtHeadsUp.arrestDateText,
-    notifications.courtHeadsUp.newCaseText,
-    notifications.courtHeadsUp.requestedCourtDateText,
-  ]
+  const messages = {
+    ...notifications.courtHeadsUp,
+    prosecutorText: notifications.prosecutorText,
+  }
 
   let formatMessage: FormatMessage
   beforeAll(() => {
@@ -264,11 +262,10 @@ describe('formatHeadsUpSmsNotification', () => {
 })
 
 describe('formatReadyForCourtSmsNotification', () => {
-  const messages = [
-    notifications.prosecutorText,
-    notifications.courtReadyForCourt.courtText,
-    notifications.courtReadyForCourt.submittedCase,
-  ]
+  const messages = {
+    ...notifications.courtReadyForCourt,
+    prosecutorText: notifications.prosecutorText,
+  }
 
   let formatMessage: FormatMessage
   beforeAll(() => {
@@ -376,7 +373,9 @@ describe('formatReadyForCourtSmsNotification', () => {
 })
 
 describe('formatReadyForCourtSmsNotification', () => {
-  const messages = [notifications.courtResubmittedToCourt]
+  const messages = {
+    courtResubmittedToCourt: notifications.courtResubmittedToCourt,
+  }
   let formatMessage: FormatMessage
   beforeAll(() => {
     const intl = createTestIntl('is-IS', messages)
@@ -401,7 +400,9 @@ describe('formatReadyForCourtSmsNotification', () => {
 })
 
 describe('formatProsecutorReceivedByCourtSmsNotification', () => {
-  const messages = [notifications.prosecutorReceivedByCourt]
+  const messages = {
+    prosecutorReceivedByCourt: notifications.prosecutorReceivedByCourt,
+  }
 
   let formatMessage: FormatMessage
   beforeAll(() => {
@@ -690,15 +691,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
 })
 
 describe('formatPrisonCourtDateEmailNotification', () => {
-  const messages = [
-    notifications.prisonCourtDateEmail.courtText,
-    notifications.prisonCourtDateEmail.requestedValidToDateText,
-    notifications.prisonCourtDateEmail.defenderText,
-    notifications.prisonCourtDateEmail.isolationText,
-    notifications.prisonCourtDateEmail.courtDateText,
-    notifications.prisonCourtDateEmail.body,
-    notifications.prisonCourtDateEmail.requestText,
-  ]
+  const messages = notifications.prisonCourtDateEmail
 
   let formatMessage: FormatMessage
   beforeAll(() => {
@@ -877,16 +870,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
 })
 
 describe('formatDefenderCourtDateEmailNotification', () => {
-  const messages = [
-    notifications.defenderCourtDateEmail.courtCaseNumber,
-    notifications.defenderCourtDateEmail.courtRoom,
-    notifications.defenderCourtDateEmail.prosecutor,
-    notifications.defenderCourtDateEmail.registrar,
-    notifications.defenderCourtDateEmail.body,
-    notifications.defenderCourtDateEmail.courtDate,
-    notifications.defenderCourtDateEmail.judge,
-    notifications.defenderCourtDateEmail.sessionArrangements,
-  ]
+  const messages = notifications.defenderCourtDateEmail
 
   let formatMessage: FormatMessage
   beforeAll(() => {
@@ -1036,12 +1020,10 @@ describe('formatCourtRevokedSmsNotification', () => {
   let formatMessage: FormatMessage
 
   beforeAll(() => {
-    const messages: MessageDescriptor[] = [
-      notifications.prosecutorText,
-      notifications.courtRevoked.requestedCourtDate,
-      notifications.courtRevoked.courtDate,
-      notifications.courtRevoked.caseTypeRevoked,
-    ]
+    const messages = {
+      ...notifications.courtRevoked,
+      prosecutorText: notifications.prosecutorText,
+    }
 
     const intl = createTestIntl('is-IS', messages)
     formatMessage = intl.formatMessage

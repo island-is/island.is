@@ -10,9 +10,10 @@ import type { FormatMessage } from '../types'
 import { formatMessage } from './../lib/intl.service'
 
 const messagesToRecord = (
-  messages: MessageDescriptor[],
+  messages: Record<string, MessageDescriptor>,
 ): Record<string, MessageFormatElement[]> => {
-  return messages.reduce((result, message) => {
+  return Object.keys(messages).reduce((result, key) => {
+    const message = messages[key]
     if (!message.id) return result
     if (!message.defaultMessage) return result
 
@@ -32,7 +33,7 @@ const messagesToRecord = (
 
 export const createTestIntl = (
   locale = 'is-IS',
-  messages: MessageDescriptor[] = [],
+  messages: Record<string, MessageDescriptor>,
 ): Omit<IntlShape<string>, 'formatMessage'> & {
   formatMessage: FormatMessage
 } => {
