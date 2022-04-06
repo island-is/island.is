@@ -252,7 +252,7 @@ const ProjectPage: Screen<PageProps> = ({
       {projectPage.id === '7GtuCCd7MEZhZKe0oXcHdb' && <UkraineChatPanel />}
       <HeadWithSocialSharing
         title={`${projectPage.title} | Ísland.is`}
-        description={projectPage.intro}
+        description={projectPage.featuredDescription || projectPage.intro}
         imageUrl={projectPage.featuredImage?.url}
         imageContentType={projectPage.featuredImage?.contentType}
         imageWidth={projectPage.featuredImage?.width?.toString()}
