@@ -9,7 +9,8 @@ import { FetchAPI as NodeFetchAPI } from './nodeFetch'
 import { EnhancedFetchAPI } from './types'
 import { withAuth } from './withAuth'
 import { AutoAuthOptions, withAutoAuth } from './withAutoAuth'
-import { withErrors } from './withErrors'
+import { withErrorLog } from './withErrorLog'
+import { withResponseErrors } from './withResponseErrors'
 import { withCircuitBreaker } from './withCircuitBreaker'
 import {
   ClientCertificateOptions,
@@ -148,12 +149,7 @@ export const createEnhancedFetch = (
     builder.wrap(withTimeout, { timeout })
   }
 
-  builder.wrap(withErrors, {
-    name,
-    logger,
-    treat400ResponsesAsErrors,
-    logErrorResponseBody,
-  })
+  builder.wrap(withResponseErrors, { includeBody: logErrorResponseBody })
 
   if (autoAuth) {
     builder.wrap(withAutoAuth, {
@@ -177,6 +173,12 @@ export const createEnhancedFetch = (
       opossum,
     })
   }
+
+  builder.wrap(withErrorLog, {
+    name,
+    logger,
+    treat400ResponsesAsErrors,
+  })
 
   return (builder.fetch as unknown) as EnhancedFetchAPI
 }

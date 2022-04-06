@@ -1,31 +1,22 @@
-import { Logger } from 'winston'
+import { Logger } from '@island.is/logging'
 
 import { FetchAPI, FetchMiddlewareOptions } from './nodeFetch'
 import { FetchError } from './FetchError'
 
-interface ErrorOptions extends FetchMiddlewareOptions {
+interface ErrorLogOptions extends FetchMiddlewareOptions {
   name: string
   logger: Logger
-  logErrorResponseBody: boolean
   treat400ResponsesAsErrors: boolean
 }
 
-export function withErrors({
+export function withErrorLog({
   name,
   fetch,
-  logErrorResponseBody,
   treat400ResponsesAsErrors,
   logger,
-}: ErrorOptions): FetchAPI {
-  return async (input, init) => {
-    try {
-      const response = await fetch(input, init)
-      if (!response.ok) {
-        throw await FetchError.build(response, logErrorResponseBody)
-      }
-
-      return response
-    } catch (error) {
+}: ErrorLogOptions): FetchAPI {
+  return (input, init) => {
+    return fetch(input, init).catch((error) => {
       const logLevel =
         error.name === 'FetchError' &&
         error.status < 500 &&
@@ -41,6 +32,6 @@ export function withErrors({
         response: undefined,
       })
       throw error
-    }
+    })
   }
 }
