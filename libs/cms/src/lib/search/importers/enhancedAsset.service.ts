@@ -4,7 +4,7 @@ import { Injectable } from '@nestjs/common'
 import { Entry } from 'contentful'
 import { IEnhancedAsset } from '../../generated/contentfulTypes'
 import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
-import { mapEnhancedAsset } from '../../models/EnhancedAsset.model'
+import { mapEnhancedAsset } from '../../models/enhancedAsset.model'
 
 @Injectable()
 export class EnhancedAssetSyncService
