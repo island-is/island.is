@@ -21,15 +21,13 @@ export type selectionType = 'add' | 'remove'
 type Props<T> = {
   selectionUpdate: (value: string, type: selectionType) => void
   state: CreateUpdateStaff<T>
-  hasError: boolean
 }
 
 const MultiSelection = <T extends unknown>({
   selectionUpdate,
   state,
-  hasError,
 }: Props<T>) => {
-  const { municipalityIds } = state
+  const { municipalityIds, hasError } = state
 
   return (
     <Box display="block">
@@ -79,7 +77,7 @@ const MultiSelection = <T extends unknown>({
         }}
         backgroundColor="blue"
         errorMessage="Verður að velja að minnsta kosti 1 sveitarfélag"
-        hasError={hasError}
+        hasError={hasError && municipalityIds.length === 0}
       />
     </Box>
   )

@@ -219,7 +219,6 @@ const EmployeeProfile = ({ user }: EmployeeProfileProps) => {
                   }
                 }}
                 state={state}
-                hasError={state.hasError && state.municipalityIds.length === 0}
               />
             </Box>
 

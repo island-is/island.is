@@ -194,7 +194,6 @@ const NewUserModal = ({
                 }
               }}
               state={state}
-              hasError={state.hasError && state.municipalityIds.length === 0}
             />
           </Box>
           <Text marginBottom={3} variant="h4">
