@@ -1,20 +1,39 @@
 import React from 'react'
 import { Box, Option, Select, Text, Icon } from '@island.is/island-ui/core'
-import * as styles from './MultiSelection.css'
-
-import { ValueType } from 'react-select'
 import { ReactSelectOption } from '@island.is/financial-aid/shared/lib'
+import { newUsersModalState } from '../NewUserModal/NewUserModal'
+import { EmployeeProfileInfo } from '../Profile/EmployeeProfile'
+import { isString } from 'lodash'
+import { ValueType } from 'react-select'
+import * as styles from './MultiSelection.css'
 
 interface Props {
   options: Option[]
   active: Option[]
   onSelected: (value: ValueType<ReactSelectOption>) => void
   unSelected: (value: string, name: string) => void
+  setState:
+    | React.Dispatch<React.SetStateAction<newUsersModalState>>
+    | React.Dispatch<React.SetStateAction<EmployeeProfileInfo>>
+  state: newUsersModalState | EmployeeProfileInfo
+  hasError: boolean
+  // | Pick<EmployeeProfileInfo, 'municipalityIds' | 'serviceCenter'>
 }
 
-const MultiSelection = ({ options, active, onSelected, unSelected }: Props) => {
+const MultiSelection = ({
+  options,
+  active,
+  onSelected,
+  unSelected,
+  setState,
+  state,
+  hasError,
+}: Props) => {
   return (
     <Box display="block">
+      <Text as="h2" variant="h3" color="dark300" marginBottom={3}>
+        Sveitarfélög notanda
+      </Text>
       <Box marginBottom={2}>
         {active.map((muni, index) => {
           return (
@@ -45,6 +64,8 @@ const MultiSelection = ({ options, active, onSelected, unSelected }: Props) => {
         placeholder="Veldu tegund"
         onChange={onSelected}
         backgroundColor="blue"
+        errorMessage="Verður að haka við sveitarfélag"
+        hasError={hasError}
       />
     </Box>
   )

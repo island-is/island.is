@@ -1,13 +1,23 @@
 import React, { useContext, useState } from 'react'
-import { Box, Checkbox, Input, Text } from '@island.is/island-ui/core'
-import { ActionModal } from '@island.is/financial-aid-web/veita/src/components'
+import { Box, Checkbox, Input, Text, Option } from '@island.is/island-ui/core'
+import {
+  ActionModal,
+  MultiSelection,
+} from '@island.is/financial-aid-web/veita/src/components'
 import { StaffMutation } from '@island.is/financial-aid-web/veita/graphql'
 import { ApolloError, useMutation } from '@apollo/client'
-import { isEmailValid, StaffRole } from '@island.is/financial-aid/shared/lib'
+import {
+  isEmailValid,
+  ReactSelectOption,
+  StaffRole,
+} from '@island.is/financial-aid/shared/lib'
 import cn from 'classnames'
 
 import { useRouter } from 'next/router'
-import { AdminContext } from '../AdminProvider/AdminProvider'
+import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
+import { mapMuniToOption } from '@island.is/financial-aid-web/veita/src/utils/formHelper'
+import { ValueType } from 'react-select'
+import { isString } from 'lodash'
 
 interface Props {
   isVisible: boolean
@@ -17,13 +27,15 @@ interface Props {
   municipalityName?: string
 }
 
-interface newUsersModalState {
+export interface newUsersModalState {
   staffNationalId: string
   staffName: string
   staffEmail: string
   hasError: boolean
   errorMessage?: string
   roles: StaffRole[]
+  municipalityIds: string[]
+  serviceCenter: Option[]
 }
 
 const NewUserModal = ({
@@ -34,7 +46,6 @@ const NewUserModal = ({
   municipalityName,
 }: Props) => {
   const router = useRouter()
-  const { municipality } = useContext(AdminContext)
 
   const [state, setState] = useState<newUsersModalState>({
     staffNationalId: '',
@@ -43,6 +54,8 @@ const NewUserModal = ({
     hasError: false,
     errorMessage: undefined,
     roles: predefinedRoles,
+    municipalityIds: predefinedRoles.length === 0 ? [] : ['0'],
+    serviceCenter: mapMuniToOption([], false),
   })
   const [createStaff] = useMutation(StaffMutation)
 
@@ -61,7 +74,8 @@ const NewUserModal = ({
     !state.staffNationalId ||
     state.roles.length === 0 ||
     !isEmailValid(state.staffEmail) ||
-    state.staffNationalId.length !== 10
+    state.staffNationalId.length !== 10 ||
+    state.municipalityIds.length === 0
 
   const submit = async () => {
     if (areRequiredFieldsFilled) {
@@ -78,9 +92,7 @@ const NewUserModal = ({
             nationalId: state.staffNationalId,
             roles: state.roles,
             municipalityName,
-            municipalityId:
-              //TODO better check
-              municipality[0]?.municipalityId || (router.query.id as string),
+            municipalityIds: state.municipalityIds, // TODO check on router.query.id
           },
         },
       }).then(() => {
@@ -175,6 +187,39 @@ const NewUserModal = ({
       </Text>
       {predefinedRoles.length === 0 && (
         <>
+          <Box display="block" marginBottom={[3, 3, 5]}>
+            <MultiSelection
+              options={state.serviceCenter}
+              active={mapMuniToOption(state.municipalityIds, true)}
+              setState={setState}
+              state={state}
+              hasError={state.hasError && state.municipalityIds.length === 0}
+              onSelected={(option: ValueType<ReactSelectOption>) => {
+                const { value } = option as ReactSelectOption
+                if (value && isString(value)) {
+                  setState({
+                    ...state,
+                    municipalityIds: [...state.municipalityIds, value],
+                    serviceCenter: state.serviceCenter.filter(
+                      (el) => el.value !== value,
+                    ),
+                  })
+                }
+              }}
+              unSelected={(value: string, name: string) => {
+                setState({
+                  ...state,
+                  municipalityIds: state.municipalityIds.filter(
+                    (muni) => muni != value,
+                  ),
+                  serviceCenter: [
+                    ...state.serviceCenter,
+                    { label: name, value: value },
+                  ],
+                })
+              }}
+            />
+          </Box>
           <Text marginBottom={3} variant="h4">
             Réttindi notanda
           </Text>

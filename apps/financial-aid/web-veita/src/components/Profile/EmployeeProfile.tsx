@@ -1,4 +1,6 @@
 import React, { useContext, useState } from 'react'
+import { isString } from 'lodash'
+import { ValueType } from 'react-select'
 import {
   Box,
   Divider,
@@ -10,9 +12,6 @@ import {
   Option,
 } from '@island.is/island-ui/core'
 
-import * as styles from './Profile.css'
-
-import * as headerStyles from '@island.is/financial-aid-web/veita/src/components/ApplicationHeader/ApplicationHeader.css'
 import {
   InputType,
   isEmailValid,
@@ -20,19 +19,21 @@ import {
   Staff,
   StaffRole,
 } from '@island.is/financial-aid/shared/lib'
+import { MultiSelection } from '@island.is/financial-aid-web/veita/src/components'
 
-import cn from 'classnames'
 import { useStaff } from '@island.is/financial-aid-web/veita/src/utils/useStaff'
 import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
-import MultiSelection from '../MultiSelection/MultiSelection'
-import { isString } from 'lodash'
-import { ValueType } from 'react-select'
+import { mapMuniToOption } from '@island.is/financial-aid-web/veita/src/utils/formHelper'
+
+import cn from 'classnames'
+import * as styles from './Profile.css'
+import * as headerStyles from '@island.is/financial-aid-web/veita/src/components/ApplicationHeader/ApplicationHeader.css'
 
 interface EmployeeProfileProps {
   user: Staff
 }
 
-interface EmployeeProfileInfo {
+export interface EmployeeProfileInfo {
   nationalId: string
   email?: string
   nickname?: string
@@ -43,22 +44,10 @@ interface EmployeeProfileInfo {
 }
 
 const EmployeeProfile = ({ user }: EmployeeProfileProps) => {
-  const { admin, municipality } = useContext(AdminContext)
+  const { admin } = useContext(AdminContext)
 
   const isLoggedInUser = (staff: Staff) =>
     admin?.nationalId === staff.nationalId
-
-  const mapToOption = (filterArr: string[], active: boolean) => {
-    return municipality
-      .filter((el) =>
-        active
-          ? filterArr.includes(el.municipalityId)
-          : !filterArr.includes(el.municipalityId),
-      )
-      .map((el) => {
-        return { label: el.name, value: el.municipalityId }
-      })
-  }
 
   const [state, setState] = useState<EmployeeProfileInfo>({
     nationalId: user.nationalId,
@@ -67,7 +56,7 @@ const EmployeeProfile = ({ user }: EmployeeProfileProps) => {
     hasError: false,
     roles: user.roles,
     municipalityIds: user.municipalityIds,
-    serviceCenter: mapToOption(user.municipalityIds, false),
+    serviceCenter: mapMuniToOption(user.municipalityIds, false),
   })
 
   const { changeUserActivity, staffActivationLoading, updateInfo } = useStaff()
@@ -220,12 +209,11 @@ const EmployeeProfile = ({ user }: EmployeeProfileProps) => {
             marginBottom={[3, 3, 5]}
           >
             <Box display="block" marginTop={3} marginBottom={[3, 3, 5]}>
-              <Text as="h2" variant="h3" color="dark300" marginBottom={3}>
-                Sveitarfélög notanda
-              </Text>
               <MultiSelection
                 options={state.serviceCenter}
-                active={mapToOption(state.municipalityIds, true)}
+                active={mapMuniToOption(state.municipalityIds, true)}
+                setState={setState}
+                state={state}
                 onSelected={(option: ValueType<ReactSelectOption>) => {
                   const { value } = option as ReactSelectOption
                   if (value && isString(value)) {

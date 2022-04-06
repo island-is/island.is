@@ -12,14 +12,14 @@ interface AdminProvider {
   isAuthenticated?: boolean
   admin?: User
   setAdmin?: React.Dispatch<React.SetStateAction<User | undefined>>
-  municipality?: Municipality[]
+  municipality: Municipality[]
 }
 
 interface PageProps {
   children: ReactNode
 }
 
-export const AdminContext = createContext<AdminProvider>({})
+export const AdminContext = createContext<AdminProvider>({ municipality: [] })
 
 const AdminProvider = ({ children }: PageProps) => {
   const [session] = useSession()

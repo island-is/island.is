@@ -47,3 +47,4 @@ export { default as NewMunicipalityModal } from './NewMunicipalityModal/NewMunic
 export { default as MunicipalityProfile } from './Profile/MunicipalityProfile'
 export { default as CollapsibleProfileUnit } from './ProfileUnit/CollapsibleProfileUnit'
 export { default as PrintableFiles } from './PrintableFiles/PrintableFiles'
+export { default as MultiSelection } from './MultiSelection/MultiSelection'
