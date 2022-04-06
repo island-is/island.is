@@ -19,11 +19,11 @@ import { UpdateMunicipalityMutation } from '@island.is/financial-aid-web/veita/g
 import omit from 'lodash/omit'
 import MunicipalityAdminInput from './MunicipalityNumberInput/MunicipalityNumberInput'
 import { useMunicipalities } from '@island.is/financial-aid-web/veita/src/utils/useMunicipalities'
+import { SelectedMunicipality } from '@island.is/financial-aid-web/veita/src/components'
 
 interface Props {
   currentMunicipality: Municipality
 }
-
 const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
   const [state, setState] = useState(currentMunicipality)
   const [hasAidError, setHasAidError] = useState(false)
@@ -31,10 +31,6 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
     UpdateMunicipalityMutation,
   )
   const { setMunicipality } = useMunicipalities()
-
-  useEffect(() => {
-    setState(currentMunicipality)
-  }, [currentMunicipality])
 
   const INDIVIDUAL = 'individual'
   const COHABITATION = 'cohabitation'
@@ -78,7 +74,7 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
           homepage: state.homepage,
           rulesHomepage: state.rulesHomepage,
           email: state.email,
-          municipalityId: currentMunicipality.municipalityId,
+          municipalityId: state.municipalityId,
         },
       },
     })
@@ -92,18 +88,24 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
         )
       })
   }
-  return (
-    <Box marginTop={[5, 10, 15]} marginBottom={[5, 10, 15]}>
-      <Box className={`contentUp delay-25`} marginBottom={[1, 1, 3]}>
-        <Text as="h1" variant="h1" marginBottom={[2, 2, 7]}>
-          Sveitarfélagsstillingar
-        </Text>
-        <Text as="h3" variant="h3" color="dark300">
-          Reglur um fjárhagsaðstoð {currentMunicipality.name}
-        </Text>
-      </Box>
 
-      <Box marginBottom={[1, 1, 2]} className={`contentUp delay-25`}>
+  const content = [
+    {
+      headline: 'Veldu sveitarfélag til að breyta stillingum',
+      component: (
+        <SelectedMunicipality
+          currentMunicipality={state}
+          onStateUpdate={(muni: Municipality) => {
+            setState(muni)
+          }}
+        />
+      ),
+    },
+    {
+      headline: `Reglur um fjárhagsaðstoð ${state.name}`,
+      smallText:
+        'Þegar umsóknum er synjað er hlekkur á slóð um reglur um fjárhagsaðstoð sveitarfélagsins birtur í tölvupósti sem er sendur á umsækjanda.',
+      component: (
         <Input
           label="Slóð"
           name="financialAidRules"
@@ -116,19 +118,13 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
             })
           }
         />
-      </Box>
-      <Box className={`contentUp delay-50`}>
-        <Text marginBottom={[2, 2, 7]} variant="small">
-          Þegar umsóknum er synjað er hlekkur á slóð um reglur um fjárhagsaðstoð
-          sveitarfélagsins birtur í tölvupósti sem er sendur á umsækjanda.
-        </Text>
-      </Box>
-      <Box className={`contentUp delay-75`}>
-        <Text as="h3" variant="h3" marginBottom={[1, 1, 3]} color="dark300">
-          Almennt netfang sveitarfélagsins (félagsþjónusta)
-        </Text>
-      </Box>
-      <Box marginBottom={[1, 1, 2]} className={`contentUp delay-75`}>
+      ),
+    },
+    {
+      headline: 'Almennt netfang sveitarfélagsins (félagsþjónusta)',
+      smallText:
+        'Ef ske kynni að tæknilegir örðugleikar yllu því að umsækjandi næði ekki að senda athugasemdir eða gögn í gegnum sína stöðusíðu þá er umsækjanda bent á að hægt sé að hafa samband með því að senda tölvupóst. Þá er þetta netfang birt umsækjanda til upplýsinga.',
+      component: (
         <Input
           label="Netfang"
           name="municipalityEmail"
@@ -142,20 +138,13 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
             })
           }
         />
-      </Box>
-      <Box className={`contentUp delay-100`}>
-        <Text marginBottom={[2, 2, 7]} variant="small">
-          Ef ske kynni að tæknilegir örðugleikar yllu því að umsækjandi næði
-          ekki að senda athugasemdir eða gögn í gegnum sína stöðusíðu þá er
-          umsækjanda bent á að hægt sé að hafa samband með því að senda
-          tölvupóst. Þá er þetta netfang birt umsækjanda til upplýsinga.
-        </Text>
-
-        <Text as="h3" variant="h3" marginBottom={[1, 1, 3]} color="dark300">
-          Vefur sveitarfélagsins
-        </Text>
-      </Box>
-      <Box marginBottom={[1, 1, 2]} className={`contentUp delay-100`}>
+      ),
+    },
+    {
+      headline: 'Vefur sveitarfélagsins',
+      smallText:
+        'Ef vísað er til þess að upplýsingar megi finna á vef sveitarfélagsins er notanda bent á þessa slóð.',
+      component: (
         <Input
           label="Slóð"
           name="municipalityWeb"
@@ -168,15 +157,11 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
             })
           }
         />
-      </Box>
-      <Text marginBottom={[2, 2, 7]} variant="small">
-        Ef vísað er til þess að upplýsingar megi finna á vef sveitarfélagsins er
-        notanda bent á þessa slóð.
-      </Text>
-      <Text as="h3" variant="h3" marginBottom={[1, 1, 3]} color="dark300">
-        Einstaklingar
-      </Text>
-      {Object.entries(state.individualAid).map(
+      ),
+    },
+    {
+      headline: 'Einstaklingar',
+      component: Object.entries(state.individualAid).map(
         (aid) =>
           aidNames.includes(aid[0]) && (
             <MunicipalityAdminInput
@@ -198,11 +183,11 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
               }
             />
           ),
-      )}
-      <Text as="h3" variant="h3" marginBottom={[1, 1, 3]} color="dark300">
-        Hjón/sambúð
-      </Text>
-      {Object.entries(state.cohabitationAid).map(
+      ),
+    },
+    {
+      headline: 'Hjón/sambúð',
+      component: Object.entries(state.cohabitationAid).map(
         (aid) =>
           aidNames.includes(aid[0]) && (
             <MunicipalityAdminInput
@@ -224,7 +209,40 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
               }
             />
           ),
-      )}
+      ),
+    },
+  ]
+  console.log(state, Object.entries(state.cohabitationAid))
+
+  return (
+    <Box marginTop={[5, 10, 15]} marginBottom={[5, 10, 15]}>
+      <Box className={`contentUp`}>
+        <Text as="h1" variant="h1" marginBottom={[2, 2, 7]}>
+          Sveitarfélagsstillingar
+        </Text>
+      </Box>
+
+      {content.map((el, index) => {
+        return (
+          <Box
+            marginBottom={[2, 2, 7]}
+            className={``}
+            style={{ animationDelay: index * 10 + 30 + 'ms' }}
+          >
+            <Text as="h3" variant="h3" marginBottom={[2, 2, 3]} color="dark300">
+              {el.headline}
+            </Text>
+            {el.component}
+
+            {el.smallText && (
+              <Text marginTop={1} variant="small">
+                {el.smallText}
+              </Text>
+            )}
+          </Box>
+        )
+      })}
+
       <Box display="flex" justifyContent="flexEnd">
         <Button loading={loading} onClick={submit} icon="checkmark">
           Vista stillingar

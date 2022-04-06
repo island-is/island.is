@@ -1,51 +1,41 @@
-import React, { useEffect, useState } from 'react'
-import { Select, Box } from '@island.is/island-ui/core'
+import React from 'react'
+import { Select } from '@island.is/island-ui/core'
 import { Municipality } from '@island.is/financial-aid/shared/lib'
-import { isString } from 'lodash'
 import { ReactSelectOption } from '@island.is/financial-aid/shared/lib'
 import { ValueType } from 'react-select'
-
+import { useMunicipalities } from '../../utils/useMunicipalities'
 interface Props {
-  municipality: Municipality[]
   currentMunicipality: Municipality
-  setCurrentMunicipality: React.Dispatch<
-    React.SetStateAction<Municipality | undefined>
-  >
+  onStateUpdate: (muni: Municipality) => void
 }
 export const SelectedMunicipality = ({
-  municipality,
   currentMunicipality,
-  setCurrentMunicipality,
+  onStateUpdate,
 }: Props) => {
-  const [state, setState] = useState<ReactSelectOption[]>(
-    municipality
-      .filter((el) => el !== currentMunicipality)
-      .map((el) => {
-        return { label: el.name, value: el.municipalityId }
-      }),
-  )
-
+  const { municipality } = useMunicipalities()
   return (
-    <Box>
-      <Select
-        label="Sveitarfélög"
-        name="selectMunicipality"
-        noOptionsMessage="Enginn valmöguleiki"
-        defaultValue={{
-          label: currentMunicipality.name,
-          value: currentMunicipality.municipalityId,
-        }}
-        options={state}
-        onChange={(selected: ValueType<ReactSelectOption>) => {
-          const { value } = selected as ReactSelectOption
-          if (value && isString(value)) {
-            setCurrentMunicipality(
-              municipality.find((el) => el.municipalityId === value),
-            )
-          }
-        }}
-      />
-    </Box>
+    <Select
+      label="Sveitarfélög"
+      name="selectMunicipality"
+      noOptionsMessage="Enginn valmöguleiki"
+      backgroundColor="blue"
+      defaultValue={{
+        label: currentMunicipality.name,
+        value: currentMunicipality.municipalityId,
+      }}
+      options={municipality
+        .filter((el) => el !== currentMunicipality)
+        .map((el) => {
+          return { label: el.name, value: el.municipalityId }
+        })}
+      onChange={(selected: ValueType<ReactSelectOption>) => {
+        const { value } = selected as ReactSelectOption
+        const findMuni = municipality.find((el) => el.municipalityId === value)
+        if (findMuni) {
+          onStateUpdate(findMuni)
+        }
+      }}
+    />
   )
 }
 
