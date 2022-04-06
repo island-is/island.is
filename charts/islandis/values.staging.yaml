@@ -36,9 +36,9 @@ air-discount-scheme-api:
   podSecurityContext:
     fsGroup: 65534
   replicaCount:
-    default: 2
+    default: 3
     max: 3
-    min: 2
+    min: 3
   resources:
     limits:
       cpu: '200m'
@@ -132,9 +132,9 @@ air-discount-scheme-backend:
       DB_PASS: '/k8s/air-discount-scheme/backend/DB_PASSWORD'
   namespace: 'air-discount-scheme'
   replicaCount:
-    default: 2
+    default: 3
     max: 3
-    min: 2
+    min: 3
   resources:
     limits:
       cpu: '400m'
@@ -190,9 +190,9 @@ air-discount-scheme-web:
             - '/'
   namespace: 'air-discount-scheme'
   replicaCount:
-    default: 2
+    default: 3
     max: 3
-    min: 2
+    min: 3
   resources:
     limits:
       cpu: '200m'
@@ -296,9 +296,9 @@ api:
   podSecurityContext:
     fsGroup: 65534
   replicaCount:
-    default: 2
+    default: 3
     max: 3
-    min: 2
+    min: 3
   resources:
     limits:
       cpu: '400m'
@@ -462,9 +462,9 @@ application-system-api:
   podSecurityContext:
     fsGroup: 65534
   replicaCount:
-    default: 2
-    max: 3
-    min: 2
+    default: 10
+    max: 60
+    min: 10
   resources:
     limits:
       cpu: '400m'
@@ -556,9 +556,9 @@ application-system-api-worker:
   podSecurityContext:
     fsGroup: 65534
   replicaCount:
-    default: 2
+    default: 3
     max: 3
-    min: 2
+    min: 3
   resources:
     limits:
       cpu: '200m'
@@ -618,9 +618,9 @@ application-system-form:
             - '/umsoknir'
   namespace: 'application-system'
   replicaCount:
-    default: 2
+    default: 3
     max: 3
-    min: 2
+    min: 3
   resources:
     limits:
       cpu: '200m'
@@ -664,9 +664,9 @@ contentful-translation-extension:
             - '/'
   namespace: 'contentful-translation-extension'
   replicaCount:
-    default: 2
+    default: 3
     max: 3
-    min: 2
+    min: 3
   resources:
     limits:
       cpu: '200m'
@@ -718,9 +718,9 @@ download-service:
             - '/download'
   namespace: 'download-service'
   replicaCount:
-    default: 2
+    default: 3
     max: 3
-    min: 2
+    min: 3
   resources:
     limits:
       cpu: '400m'
@@ -798,9 +798,9 @@ endorsement-system-api:
   podSecurityContext:
     fsGroup: 65534
   replicaCount:
-    default: 2
+    default: 3
     max: 3
-    min: 2
+    min: 3
   resources:
     limits:
       cpu: '200m'
@@ -896,9 +896,9 @@ icelandic-names-registry-backend:
       DB_PASS: '/k8s/icelandic-names-registry-backend/DB_PASSWORD'
   namespace: 'icelandic-names-registry'
   replicaCount:
-    default: 2
+    default: 3
     max: 3
-    min: 2
+    min: 3
   resources:
     limits:
       cpu: '200m'
@@ -943,9 +943,9 @@ island-ui-storybook:
             - '/'
   namespace: 'storybook'
   replicaCount:
-    default: 2
+    default: 3
     max: 3
-    min: 2
+    min: 3
   resources:
     limits:
       cpu: '200m'
@@ -1119,9 +1119,9 @@ service-portal:
             - '/minarsidur'
   namespace: 'service-portal'
   replicaCount:
-    default: 2
-    max: 20
-    min: 2
+    default: 5
+    max: 30
+    min: 5
   resources:
     limits:
       cpu: '400m'
@@ -1275,9 +1275,9 @@ services-documents:
       DB_PASS: '/k8s/services-documents/DB_PASSWORD'
   namespace: 'services-documents'
   replicaCount:
-    default: 2
+    default: 3
     max: 3
-    min: 2
+    min: 3
   resources:
     limits:
       cpu: '200m'
@@ -1321,9 +1321,9 @@ skilavottord-web:
             - '/app/skilavottord/'
   namespace: 'skilavottord'
   replicaCount:
-    default: 2
+    default: 3
     max: 3
-    min: 2
+    min: 3
   resources:
     limits:
       cpu: '200m'
@@ -1396,9 +1396,9 @@ skilavottord-ws:
       DB_PASS: '/k8s/skilavottord/DB_PASSWORD'
   namespace: 'skilavottord'
   replicaCount:
-    default: 2
+    default: 3
     max: 3
-    min: 2
+    min: 3
   resources:
     limits:
       cpu: '200m'
@@ -1459,9 +1459,9 @@ user-notification:
   podSecurityContext:
     fsGroup: 65534
   replicaCount:
-    default: 2
+    default: 3
     max: 3
-    min: 2
+    min: 3
   resources:
     limits:
       cpu: '200m'
@@ -1514,9 +1514,9 @@ user-notification-worker:
   podSecurityContext:
     fsGroup: 65534
   replicaCount:
-    default: 2
+    default: 3
     max: 3
-    min: 2
+    min: 3
   resources:
     limits:
       cpu: '200m'
@@ -1576,9 +1576,9 @@ web:
             - '/'
   namespace: 'islandis'
   replicaCount:
-    default: 2
-    max: 3
-    min: 2
+    default: 10
+    max: 50
+    min: 10
   resources:
     limits:
       cpu: '400m'
@@ -1627,9 +1627,9 @@ xroad-collector:
   podSecurityContext:
     fsGroup: 65534
   replicaCount:
-    default: 2
+    default: 3
     max: 3
-    min: 2
+    min: 3
   resources:
     limits:
       cpu: '200m'
