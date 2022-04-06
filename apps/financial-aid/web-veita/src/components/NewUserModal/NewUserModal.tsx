@@ -169,7 +169,7 @@ const NewUserModal = ({
           }
         />
       </Box>
-      <Text marginBottom={5} variant="small">
+      <Text marginBottom={3} variant="small">
         Notandi fær sendan tölvupóst með hlekk til að skrá sig inn með rafrænum
         skilríkjum.
       </Text>

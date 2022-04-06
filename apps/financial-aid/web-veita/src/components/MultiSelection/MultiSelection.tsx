@@ -33,7 +33,12 @@ const MultiSelection = <T extends unknown>({
 
   return (
     <Box display="block">
-      <Text as="h2" variant="h3" color="dark300" marginBottom={3}>
+      <Text
+        fontWeight="semiBold"
+        color="dark300"
+        variant="small"
+        marginBottom={2}
+      >
         Sveitarfélög notanda
       </Text>
       <Box marginBottom={2}>
@@ -73,7 +78,7 @@ const MultiSelection = <T extends unknown>({
           }
         }}
         backgroundColor="blue"
-        errorMessage="Verður að haka við sveitarfélag"
+        errorMessage="Verður að velja að minnsta kosti 1 sveitarfélag"
         hasError={hasError}
       />
     </Box>
