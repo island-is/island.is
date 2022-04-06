@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useState } from 'react'
-import { useQuery } from '@apollo/client'
+import { useLazyQuery, useQuery } from '@apollo/client'
 import * as Sentry from '@sentry/react'
-import Cookie from 'js-cookie'
+import { isLocale } from 'class-validator'
 
 import { APPLICATION_APPLICATION } from '@island.is/application/graphql'
 import {
@@ -24,6 +24,9 @@ import { FieldProvider, useFields } from '../context/FieldContext'
 import { LoadingShell } from '../components/LoadingShell'
 import { FormShell } from './FormShell'
 import { ErrorShell } from '../components/ErrorShell'
+import { Query } from '@island.is/api/schema'
+import { USER_PROFILE } from '@island.is/service-portal/graphql'
+import { useAuth } from '@island.is/auth/react'
 
 const ApplicationLoader: FC<{
   applicationId: string
@@ -77,20 +80,11 @@ const ShellWrapper: FC<{
   const [, fieldsDispatch] = useFields()
   const { formatMessage, changeLanguage, lang } = useLocale()
   const featureFlagClient = useFeatureFlagClient()
-  // Temp solution while the preffered locale isnt defined in the IDS to persist locale
-  let cookieLocale = ''
-  if (typeof window !== 'undefined' && window.document) {
-    cookieLocale = Cookie.get('applicationSystemLocale') === 'en' ? 'en' : 'is'
-  }
 
   useApplicationNamespaces(application.typeId)
   useEffect(() => {
     async function populateForm() {
       if (dataSchema === undefined && form === undefined) {
-        if (cookieLocale && lang !== cookieLocale) {
-          changeLanguage(cookieLocale as Locale)
-        }
-
         const template = await getApplicationTemplateByTypeId(
           application.typeId,
         )
@@ -138,10 +132,29 @@ const ShellWrapper: FC<{
     featureFlagClient,
     changeLanguage,
     lang,
-    cookieLocale,
   ])
 
-  if (!form || !dataSchema) {
+  const [
+    getUserProfile,
+    { data: userProfData, loading: userProfileLoading },
+  ] = useLazyQuery<Query>(USER_PROFILE)
+  const userProfile = userProfData?.getUserProfile || null
+
+  const { userInfo } = useAuth()
+  useEffect(() => {
+    if (userInfo?.profile.nationalId) getUserProfile()
+  }, [userInfo, getUserProfile])
+
+  useEffect(() => {
+    if (
+      userProfile?.locale &&
+      isLocale(userProfile.locale) &&
+      userProfile.locale !== lang
+    )
+      changeLanguage(userProfile.locale as Locale)
+  }, [userProfile, changeLanguage, lang])
+
+  if (!form || !dataSchema || userProfileLoading) {
     return <LoadingShell />
   }
 
