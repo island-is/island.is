@@ -6,6 +6,7 @@ module.exports = {
       BEGIN;
         ALTER TABLE access_control ADD COLUMN email VARCHAR;
         ALTER TABLE access_control ADD COLUMN phone VARCHAR;
+        ALTER TABLE access_control ADD COLUMN recycling_location VARCHAR;
       COMMIT;
     `)
   },
@@ -14,7 +15,6 @@ module.exports = {
     return queryInterface.sequelize.query(`
       ALTER TABLE access_control DROP COLUMN email;
       ALTER TABLE access_control DROP COLUMN phone;
-
     `)
   },
 }

@@ -59,6 +59,7 @@ export class AccessControlModel extends Model<AccessControlModel> {
   @Column({
     type: DataType.STRING,
     allowNull: true,
+    field: 'recycling_location',
   })
   recyclingLocation?: string
 
