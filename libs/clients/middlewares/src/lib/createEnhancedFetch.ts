@@ -129,14 +129,6 @@ export const createEnhancedFetch = (
   const treat400ResponsesAsErrors = options.treat400ResponsesAsErrors === true
   const builder = buildFetch(fetch)
 
-  if (cache) {
-    builder.wrap(withCache, {
-      ...cache,
-      name,
-      logger,
-    })
-  }
-
   if (clientCertificate) {
     builder.wrap(withClientCertificate, { clientCertificate })
   }
@@ -172,6 +164,18 @@ export const createEnhancedFetch = (
       treat400ResponsesAsErrors,
       opossum,
     })
+  }
+
+  if (cache) {
+    builder.wrap(withCache, {
+      ...cache,
+      name,
+      logger,
+      metricsClient,
+    })
+
+    // Need to handle response errors again.
+    builder.wrap(withResponseErrors, { includeBody: logErrorResponseBody })
   }
 
   builder.wrap(withErrorLog, {

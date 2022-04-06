@@ -1,6 +1,7 @@
 import CachePolicy from 'http-cache-semantics'
 
 import { FetchAPI, Headers, HeadersInit, Request, Response } from '../nodeFetch'
+import { FetchError } from '../FetchError'
 import { CacheEntry, CacheMiddlewareConfig, CachePolicyInternal } from './types'
 import { CacheResponse } from './CacheResponse'
 
@@ -40,7 +41,7 @@ export function withCache({
     const entry = await cacheManager.get<CacheEntry>(cacheKey)
 
     if (!entry) {
-      const response = await fetch(request)
+      const response = await fetch(request).catch(handleFetchErrors)
       const policy = new CachePolicy(
         policyRequestFrom(request),
         policyResponseFrom(
@@ -89,6 +90,13 @@ export function withCache({
     }
 
     return cacheResponse.getResponse()
+  }
+
+  function handleFetchErrors(error: Error): Response {
+    if (error instanceof FetchError) {
+      return error.response
+    }
+    throw error
   }
 
   /**
