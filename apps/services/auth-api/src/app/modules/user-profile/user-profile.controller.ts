@@ -36,6 +36,6 @@ export class UserProfileController {
   async individualUserProfile(
     @CurrentUser() user: User,
   ): Promise<UserProfileDTO> {
-    return this.userProfileService.getIndividualUserProfileClaims(user)
+    return this.userProfileService.getUserProfileClaims(user)
   }
 }
