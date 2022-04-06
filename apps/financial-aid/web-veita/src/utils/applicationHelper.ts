@@ -143,6 +143,9 @@ export const getApplicantSpouse = (application: Application) => {
 }
 
 export const getDirectTaxPayments = (directTaxPayments: DirectTaxPayment[]) => {
+  if (directTaxPayments && directTaxPayments.length === 0) {
+    return []
+  }
   const totalSalary = directTaxPayments.reduce(
     (n, { totalSalary }) => n + totalSalary,
     0,

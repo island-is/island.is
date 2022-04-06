@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react'
-import { Box } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import {
   Application,
   ApplicationState,
@@ -12,6 +12,7 @@ import {
   UserType,
   ApplicationProfileInfo,
   Municipality,
+  DirectTaxPayment,
 } from '@island.is/financial-aid/shared/lib'
 
 import format from 'date-fns/format'
@@ -179,35 +180,39 @@ const ApplicationProfile = ({
           className={`contentUp delay-75`}
         />
 
-        {applicantDirectPayments.length > 0 && (
-          <CollapsibleProfileUnit
-            heading="Upplýsingar um staðgreiðslu"
-            info={getDirectTaxPayments(applicantDirectPayments)}
-            className={`contentUp delay-75`}
-            isPrint={isPrint}
-          >
-            <TaxBreakdown items={applicantDirectPayments} />
-          </CollapsibleProfileUnit>
-        )}
+        <CollapsibleProfileUnit
+          heading="Upplýsingar um staðgreiðslu"
+          info={getDirectTaxPayments(applicantDirectPayments)}
+          className={`contentUp delay-75`}
+          isPrint={isPrint}
+        >
+          {getDirectTaxPaymentsContent(
+            applicantDirectPayments,
+            application.hasFetchedDirectTaxPayment,
+          )}
+        </CollapsibleProfileUnit>
 
         {showSpouseData[application.familyStatus] && (
-          <CollapsibleProfileUnit
-            heading="Maki"
-            info={applicantSpouse}
-            className={`contentUp delay-100`}
-            isPrint={isPrint}
-          />
-        )}
+          <>
+            <CollapsibleProfileUnit
+              heading="Maki"
+              info={applicantSpouse}
+              className={`contentUp delay-100`}
+              isPrint={isPrint}
+            />
 
-        {spouseDirectPayments.length > 0 && (
-          <CollapsibleProfileUnit
-            heading="Upplýsingar um staðgreiðslu maka"
-            info={getDirectTaxPayments(spouseDirectPayments)}
-            className={`contentUp delay-125`}
-            isPrint={isPrint}
-          >
-            <TaxBreakdown items={spouseDirectPayments} />
-          </CollapsibleProfileUnit>
+            <CollapsibleProfileUnit
+              heading="Upplýsingar um staðgreiðslu maka"
+              info={getDirectTaxPayments(spouseDirectPayments)}
+              className={`contentUp delay-125`}
+              isPrint={isPrint}
+            >
+              {getDirectTaxPaymentsContent(
+                spouseDirectPayments,
+                application.spouseHasFetchedDirectTaxPayment,
+              )}
+            </CollapsibleProfileUnit>
+          </>
         )}
 
         <CollapsibleProfileUnit
@@ -271,3 +276,21 @@ const ApplicationProfile = ({
 }
 
 export default ApplicationProfile
+
+export const getDirectTaxPaymentsContent = (
+  directPaymentsArr: DirectTaxPayment[],
+  hasFetchedPayments: boolean,
+) => {
+  switch (true) {
+    case directPaymentsArr.length > 0:
+      return <TaxBreakdown items={directPaymentsArr} />
+    case directPaymentsArr.length === 0 && hasFetchedPayments:
+      return <Text marginBottom={4}>Engin staðgreiðsla</Text>
+    case directPaymentsArr.length === 0 && !hasFetchedPayments:
+      return (
+        <Text marginBottom={4} color="red400">
+          Ekki tókst að sækja staðgreiðslu
+        </Text>
+      )
+  }
+}
