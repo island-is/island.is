@@ -16,18 +16,24 @@ export function withErrorLog({
   logger,
 }: ErrorLogOptions): FetchAPI {
   return (input, init) => {
-    return fetch(input, init).catch((error) => {
+    return fetch(input, init).catch((error: Error) => {
       const logLevel =
-        error.name === 'FetchError' &&
+        error instanceof FetchError &&
         error.status < 500 &&
         !treat400ResponsesAsErrors
           ? 'warn'
           : 'error'
+      const cacheStatus =
+        (error instanceof FetchError &&
+          error.response.headers.get('cache-status')) ??
+        undefined
+
       logger.log(logLevel, {
         ...error,
         stack: error.stack,
         url: input,
         message: `Fetch failure (${name}): ${error.message}`,
+        cacheStatus,
         // Do not log large response objects.
         response: undefined,
       })
