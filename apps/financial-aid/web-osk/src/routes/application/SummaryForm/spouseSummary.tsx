@@ -125,6 +125,7 @@ const SpouseSummary = () => {
 
         <DirectTaxPaymentCell
           setIsModalOpen={setIsModalOpen}
+          hasFetchedPayments={form?.hasFetchedPayments}
           directTaxPayments={form?.directTaxPayments}
         />
 

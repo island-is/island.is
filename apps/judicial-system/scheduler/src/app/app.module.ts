@@ -1,6 +1,12 @@
 import { Module } from '@nestjs/common'
 
-import { AppService } from './app.service'
+import { ConfigModule } from '@island.is/nest/config'
 
-@Module({ providers: [AppService] })
+import { AppService } from './app.service'
+import { appModuleConfig } from './app.config'
+
+@Module({
+  imports: [ConfigModule.forRoot({ load: [appModuleConfig] })],
+  providers: [AppService],
+})
 export class AppModule {}

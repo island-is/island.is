@@ -144,6 +144,7 @@ export const GatherTaxDataQuery = gql`
       }
     }
     municipalitiesDirectTaxPayments {
+      success
       directTaxPayments {
         totalSalary
         payerNationalId

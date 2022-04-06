@@ -24,12 +24,7 @@ import {
   DokobitError,
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
-import {
-  CaseOrigin,
-  CaseState,
-  CaseType,
-  UserRole,
-} from '@island.is/judicial-system/types'
+import { CaseState, CaseType, UserRole } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 import {
   CurrentHttpUser,
@@ -65,6 +60,7 @@ import { TransitionCaseDto } from './dto/transitionCase.dto'
 import { UpdateCaseDto } from './dto/updateCase.dto'
 import { Case } from './models/case.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
+import { ArchiveResponse } from './models/archive.response'
 import { transitionCase } from './state/case.state'
 import { CaseService } from './case.service'
 
@@ -535,5 +531,17 @@ export class CaseController {
     this.logger.debug(`Creating a court case for case ${caseId}`)
 
     return this.caseService.createCourtCase(theCase, user)
+  }
+
+  @UseGuards(TokenGuard)
+  @Post('internal/cases/archive')
+  @ApiOkResponse({
+    type: ArchiveResponse,
+    description: 'Archives a single case if any case is ready to be archived',
+  })
+  archive(): Promise<ArchiveResponse> {
+    this.logger.debug('Archiving a case')
+
+    return this.caseService.archive()
   }
 }
