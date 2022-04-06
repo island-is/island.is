@@ -8,7 +8,10 @@ import { StaffMutation } from '@island.is/financial-aid-web/veita/graphql'
 import { ApolloError, useMutation } from '@apollo/client'
 import { isEmailValid, StaffRole } from '@island.is/financial-aid/shared/lib'
 import cn from 'classnames'
-import { CreateUpdateStaff } from '@island.is/financial-aid-web/veita/src/components/MultiSelection/MultiSelection'
+import {
+  CreateUpdateStaff,
+  selectionType,
+} from '@island.is/financial-aid-web/veita/src/components/MultiSelection/MultiSelection'
 
 interface Props {
   isVisible: boolean
@@ -174,7 +177,7 @@ const NewUserModal = ({
         <>
           <Box display="block" marginBottom={[3, 3, 5]}>
             <MultiSelection
-              selectionUpdate={(value: string, type: 'add' | 'remove') => {
+              selectionUpdate={(value: string, type: selectionType) => {
                 if (type === 'add') {
                   setState({
                     ...state,

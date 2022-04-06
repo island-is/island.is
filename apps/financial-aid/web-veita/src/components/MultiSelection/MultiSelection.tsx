@@ -16,8 +16,10 @@ export type CreateUpdateStaff<T> = {
   municipalityIds: string[]
 } & T
 
+export type selectionType = 'add' | 'remove'
+
 type Props<T> = {
-  selectionUpdate: any
+  selectionUpdate: (value: string, type: 'add' | 'remove') => void
   state: CreateUpdateStaff<T>
   hasError: boolean
 }
