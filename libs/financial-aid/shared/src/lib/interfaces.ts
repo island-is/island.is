@@ -221,6 +221,7 @@ export interface CreateApplication {
   city?: string
   municipalityCode: string
   applicationSystemId?: string
+  hasFetchedDirectTaxPayment: boolean
 }
 
 export interface ApplicantEmailData {
@@ -300,6 +301,8 @@ export interface Application {
   city?: string
   municipalityCode: string
   directTaxPayments: DirectTaxPayment[]
+  hasFetchedDirectTaxPayment: boolean
+  spouseHasFetchedDirectTaxPayment: boolean
   applicationSystemId?: string
 }
 
