@@ -1363,4 +1363,16 @@ describe('stripHtmlTags', () => {
     // Assert
     expect(res).toBe('blablabla\n\nblablablabla')
   })
+
+  test('should strip html tags other br tag format', () => {
+    // Arrange
+    const html =
+      'bla<strong>blab</strong>la<br/><br/>blabla<a href="blablabla">blabla</a>'
+
+    // Act
+    const res = stripHtmlTags(html)
+
+    // Assert
+    expect(res).toBe('blablabla\n\nblablablabla')
+  })
 })
