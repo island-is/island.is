@@ -30,7 +30,7 @@ export class CreateStaffDto {
   readonly municipalityIds: string[]
 
   @IsOptional()
-  @IsString()
+  @IsArray()
   @ApiProperty()
-  readonly municipalityName: string
+  readonly municipalityNames: string[]
 }
