@@ -17,7 +17,7 @@ import {
 import { useMutation } from '@apollo/client'
 import { UpdateMunicipalityMutation } from '@island.is/financial-aid-web/veita/graphql'
 import omit from 'lodash/omit'
-import MunicipalityAdminInput from './MunicipalityNumberInput/MunicipalityNumberInput'
+import MunicipalityNumberInput from './MunicipalityNumberInput/MunicipalityNumberInput'
 import { useMunicipalities } from '@island.is/financial-aid-web/veita/src/utils/useMunicipalities'
 
 interface Props {
@@ -175,7 +175,7 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
       {Object.entries(state.individualAid).map(
         (aid) =>
           aidNames.includes(aid[0]) && (
-            <MunicipalityAdminInput
+            <MunicipalityNumberInput
               key={`${INDIVIDUAL}${aid[0]}`}
               id={aid[0]}
               aid={aid[1]}
@@ -201,7 +201,7 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
       {Object.entries(state.cohabitationAid).map(
         (aid) =>
           aidNames.includes(aid[0]) && (
-            <MunicipalityAdminInput
+            <MunicipalityNumberInput
               key={`${COHABITATION}${aid[0]}`}
               id={aid[0]}
               aid={aid[1]}
