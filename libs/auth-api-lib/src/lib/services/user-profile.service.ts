@@ -3,10 +3,9 @@ import { Inject, Injectable } from '@nestjs/common'
 import type { Auth, User } from '@island.is/auth-nest-tools'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import {
-  EinstaklingarApi,
-  Heimilisfang,
+  NationalRegistryClientService,
+  AddressDto as NationalRegistryAddress,
 } from '@island.is/clients/national-registry-v2'
-import type { EinstaklingarGetEinstaklingurRequest } from '@island.is/clients/national-registry-v2'
 import { GetCompanyApi } from '@island.is/clients/rsk/company-registry'
 import { UserProfileApi } from '@island.is/clients/user-profile'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -15,11 +14,12 @@ import type { Logger } from '@island.is/logging'
 import { UserProfileDTO } from '../entities/dto/user-profile.dto'
 import type { GenderValue } from '../entities/dto/user-profile.dto'
 import { AddressDTO } from '../entities/dto/address.dto'
+import { FetchError } from '@island.is/clients/middlewares'
 
 @Injectable()
 export class UserProfileService {
   constructor(
-    private individualApi: EinstaklingarApi,
+    private individualClient: NationalRegistryClientService,
     private userProfileApi: UserProfileApi,
     private companyRegistryApi: GetCompanyApi,
     @Inject(LOGGER_PROVIDER)
@@ -50,7 +50,10 @@ export class UserProfileService {
   }
 
   private handleError = (error: Error): UserProfileDTO => {
-    this.logger.error(error)
+    const is404 = (error as FetchError).status === 404
+    if (!is404) {
+      this.logger.error(error)
+    }
     return {}
   }
 
@@ -70,21 +73,24 @@ export class UserProfileService {
   private async getClaimsFromNationalRegistry(
     auth: User,
   ): Promise<UserProfileDTO> {
-    const result = await this.individualApi.einstaklingarGetEinstaklingur(<
-      EinstaklingarGetEinstaklingurRequest
-    >{
-      id: auth.nationalId,
-    })
+    const individual = await this.individualClient.getIndividual(
+      auth.nationalId,
+    )
+    if (!individual) {
+      return {}
+    }
 
     return {
-      name: result.nafn,
-      givenName: result.eiginnafn ?? undefined,
-      familyName: result.kenninafn ?? undefined,
-      middleName: result.millinafn ?? undefined,
-      gender: this.formatGender(result.kynkodi),
-      address: this.formatAddress(result.adsetur ?? result.logheimili),
-      domicile: this.formatAddress(result.logheimili),
-      birthdate: this.formatBirthdate(result.faedingardagur),
+      name: individual.name,
+      givenName: individual.givenName ?? undefined,
+      familyName: individual.familyName ?? undefined,
+      middleName: individual.middleName ?? undefined,
+      gender: this.formatGender(individual.genderCode),
+      address: this.formatAddress(
+        individual.residence ?? individual.legalDomicile,
+      ),
+      legalDomicile: this.formatAddress(individual.legalDomicile),
+      birthdate: this.formatBirthdate(individual.birthdate),
     }
   }
 
@@ -104,40 +110,44 @@ export class UserProfileService {
     }
   }
 
-  private formatAddress(address?: Heimilisfang | null): AddressDTO | undefined {
+  private formatAddress(
+    address: NationalRegistryAddress | null,
+  ): AddressDTO | undefined {
     if (!address) {
       return undefined
     }
 
     const likelyForeign =
-      address.heiti != null &&
-      address.stadur == null &&
-      address.postnumer == null &&
-      address.sveitarfelagsnumer == null
+      address.streetAddress != null &&
+      address.locality == null &&
+      address.postalCode == null &&
+      address.municipalityNumber == null
     if (likelyForeign) {
       // When individuals live abroad, the national registry stores the country name under "heiti".
       return {
-        country: address.heiti,
+        country: address.streetAddress,
       }
     }
 
     return {
       formatted: this.formattedAddressString(address),
-      streetAddress: address.heiti ?? undefined,
-      locality: address.stadur ?? undefined,
-      postalCode: address.postnumer ?? undefined,
+      streetAddress: address.streetAddress ?? undefined,
+      locality: address.locality ?? undefined,
+      postalCode: address.postalCode ?? undefined,
     }
   }
 
-  private formattedAddressString(address: Heimilisfang): string | undefined {
+  private formattedAddressString(
+    address: NationalRegistryAddress,
+  ): string | undefined {
     const icelandicAddress =
-      address.heiti &&
-      address.stadur &&
-      address.postnumer &&
-      address.sveitarfelagsnumer
+      address.streetAddress &&
+      address.locality &&
+      address.postalCode &&
+      address.municipalityNumber
 
     if (icelandicAddress) {
-      return `${address.heiti}\n${address.postnumer} ${address.stadur}\nÍsland`
+      return `${address.streetAddress}\n${address.postalCode} ${address.locality}\nÍsland`
     }
     return undefined
   }
