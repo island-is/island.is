@@ -12,6 +12,7 @@ import {
   CreateUpdateStaff,
   selectionType,
 } from '@island.is/financial-aid-web/veita/src/components/MultiSelection/MultiSelection'
+import { useRouter } from 'next/router'
 
 interface Props {
   isVisible: boolean
@@ -35,6 +36,21 @@ const NewUserModal = ({
   predefinedRoles = [],
   municipalityName,
 }: Props) => {
+  const router = useRouter()
+
+  const getMunicipalityIds = () => {
+    if (predefinedRoles.length === 0) {
+      return []
+    }
+    if (predefinedRoles.includes(StaffRole.SUPERADMIN)) {
+      return ['0']
+    }
+    if (router.query.id) {
+      return [router.query.id as string]
+    }
+    return []
+  }
+
   const [state, setState] = useState<newUsersModalState>({
     staffNationalId: '',
     staffName: '',
@@ -42,7 +58,7 @@ const NewUserModal = ({
     hasError: false,
     errorMessage: undefined,
     roles: predefinedRoles,
-    municipalityIds: predefinedRoles.length === 0 ? [] : ['0'],
+    municipalityIds: getMunicipalityIds(),
   })
 
   const [createStaff] = useMutation(StaffMutation)

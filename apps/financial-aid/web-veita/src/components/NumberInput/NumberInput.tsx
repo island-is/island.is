@@ -13,7 +13,7 @@ interface Props {
   errorMessage?: string
 }
 
-export default function NumberInput({
+export const NumberInput = ({
   maximumInputLength,
   onUpdate,
   id,
@@ -23,7 +23,7 @@ export default function NumberInput({
   value,
   hasError = false,
   errorMessage,
-}: Props) {
+}: Props) => {
   const sanitizeNumber = (n: string) => n.replace(/[^\d]/g, '')
   const formatNumber = (n?: string) =>
     n ? Number(n).toLocaleString('de-DE') : ''
@@ -57,3 +57,5 @@ export default function NumberInput({
     />
   )
 }
+
+export default NumberInput
