@@ -31,7 +31,7 @@ describe('StaffController - createStaff', () => {
       const then = {} as Then
 
       await staffController
-        .createStaff(staff, createStaffInput)
+        .createStaff(createStaffInput)
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 
@@ -46,11 +46,10 @@ describe('StaffController - createStaff', () => {
       email: 'test@test.test',
       roles: [StaffRole.EMPLOYEE],
       municipalityIds: ['10'],
-      municipalityName: 'Island',
+      municipalityNames: ['Island'],
     }
     const staff: Staff = {
       municipalityIds: ['0'],
-      municipalityName: 'Saturn',
       id: '',
       nationalId: '',
       name: '',
@@ -74,7 +73,6 @@ describe('StaffController - createStaff', () => {
           email: input.email,
           roles: input.roles,
           active: true,
-          municipalityName: input.municipalityName,
         },
         { transaction: undefined },
       )
@@ -89,7 +87,7 @@ describe('StaffController - createStaff', () => {
       email: 'test@test.test',
       roles: [StaffRole.EMPLOYEE],
       municipalityIds: ['10'],
-      municipalityName: undefined,
+      municipalityNames: ['name'],
     }
     const staff: Staff = {
       municipalityIds: ['10'],
@@ -116,7 +114,6 @@ describe('StaffController - createStaff', () => {
           email: input.email,
           roles: input.roles,
           active: true,
-          municipalityName: staff.municipalityName,
         },
         { transaction: undefined },
       )
@@ -131,11 +128,10 @@ describe('StaffController - createStaff', () => {
       email: 'test@test.test',
       roles: [StaffRole.EMPLOYEE],
       municipalityIds: ['10'],
-      municipalityName: 'A place',
+      municipalityNames: ['A place'],
     }
     const staff: Staff = {
       municipalityIds: ['0'],
-      municipalityName: 'Saturn',
       id: '',
       nationalId: '',
       name: '',
@@ -163,11 +159,10 @@ describe('StaffController - createStaff', () => {
       email: 'test@test.test',
       roles: [StaffRole.EMPLOYEE],
       municipalityIds: [],
-      municipalityName: '',
+      municipalityNames: [''],
     }
     const staff: Staff = {
       municipalityIds: ['0'],
-      municipalityName: 'Saturn',
       id: '',
       nationalId: '',
       name: '',
