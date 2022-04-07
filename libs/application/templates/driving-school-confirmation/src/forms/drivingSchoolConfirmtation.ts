@@ -73,13 +73,25 @@ export const getDrivingSchoolConfirmation = (): Form => {
         title: m.confirmationSectionTitle,
         children: [
           buildMultiField({
-            id: 'students',
+            id: 'student',
             title: m.confirmationSectionTitle,
             children: [
               buildCustomField({
-                title: m.confirmationSectionTitle,
-                id: 'student',
+                title: '',
+                id: 'info',
                 component: 'ViewStudent',
+              }),
+              buildCustomField({
+                title: '',
+                id: 'confirmation.date',
+                component: 'ConfirmationDate',
+                condition: (answers) => !!answers.studentBookTypes,
+              }),
+              buildCustomField({
+                title: '',
+                id: 'confirmation.school',
+                component: 'SelectSchool',
+                condition: (answers) => !!answers.studentBookTypes,
               }),
               buildSubmitField({
                 id: 'submit',
