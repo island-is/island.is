@@ -1,1 +1,1 @@
-export * from './lib/api-domains-vehicles'
+export * from './lib/api-domains-vehicles.module'

@@ -30,6 +30,7 @@ import { CompanyRegistryModule } from '@island.is/api/domains/company-registry'
 import { IcelandicNamesModule } from '@island.is/api/domains/icelandic-names-registry'
 import { RegulationsModule } from '@island.is/api/domains/regulations'
 import { FinanceModule } from '@island.is/api/domains/finance'
+import { VehiclesModule } from '@island.is/api/domains/vehicles'
 import { AssetsModule } from '@island.is/api/domains/assets'
 import { EndorsementSystemModule } from '@island.is/api/domains/endorsement-system'
 import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-registry-x-road'
@@ -54,6 +55,7 @@ import { MortgageCertificateModule } from '@island.is/api/domains/mortgage-certi
 
 import { maskOutFieldsMiddleware } from './graphql.middleware'
 import { CompanyRegistryConfig } from '@island.is/clients/rsk/company-registry'
+import { VehiclesClientConfig } from '@island.is/clients/vehicles'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -206,6 +208,7 @@ const autoSchemaFile = environment.production
       url: environment.regulationsDomain.url!,
     }),
     FinanceModule,
+    VehiclesModule,
     AssetsModule,
     NationalRegistryXRoadModule,
     ApiDomainsPaymentModule.register({
@@ -254,6 +257,7 @@ const autoSchemaFile = environment.production
       isGlobal: true,
       load: [
         AssetsClientConfig,
+        VehiclesClientConfig,
         AuthPublicApiClientConfig,
         DownloadServiceConfig,
         FeatureFlagConfig,

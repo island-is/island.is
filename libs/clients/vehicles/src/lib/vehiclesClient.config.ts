@@ -6,17 +6,15 @@ const schema = z.object({
   fetch: z.object({
     timeout: z.number().int(),
   }),
-  username: z.string(),
-  password: z.string(),
 })
 
-export const VehiclesClientConfig = defineConfig({
-  name: 'VehiclesApi',
+export const VehiclesClientConfig = defineConfig<z.infer<typeof schema>>({
+  name: 'VehiclesClient',
   schema,
   load(env) {
     return {
       xRoadServicePath: env.required(
-        'DRIVING_LICENSE_BOOK_XROAD_PATH',
+        'VEHICLES_XROAD_PATH', //TODO setja upp env breytu
         'IS-DEV:GOV:10017:Samgongustofa-Protected/Mitt-Svaedi-V1',
       ),
       fetch: {
