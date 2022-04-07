@@ -45,7 +45,7 @@ runs:
 
     - name: Give cache server a bit of time to recover
       if: always() && inputs.retry > 0 && steps.cache_try_number_one.outputs.success != 'true'
-      
+      shell: bash
       run: sleep 10
 
     - name: Cache try number two
@@ -58,7 +58,7 @@ runs:
 
     - name: Give cache server a bit of time to recover
       if: always() && inputs.retry > 1 && steps.cache_try_number_one.outputs.success != 'true' && steps.cache_try_number_two.outputs.success != 'true'
-      
+      shell: bash
       run: sleep 10
 
     - name: Cache try number three
@@ -72,7 +72,7 @@ runs:
     - name: Gather outputs
       id: computed_outputs
       if: always()
-      
+      shell: bash
       run: |
         if [[ "${{ steps.cache_try_number_one.outputs.success }}" == "true" ]] || \
            [[ "${{ steps.cache_try_number_two.outputs.success }}" == "true" ]] || \
