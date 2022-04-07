@@ -1,10 +1,10 @@
+import { useContext } from 'react'
 import differenceInMinutes from 'date-fns/differenceInMinutes'
 import differenceInHours from 'date-fns/differenceInHours'
 import differenceInDays from 'date-fns/differenceInDays'
 import differenceInYears from 'date-fns/differenceInYears'
 import differenceInWeeks from 'date-fns/differenceInWeeks'
 import { ApplicationState } from '@island.is/financial-aid/shared/lib'
-import { useContext } from 'react'
 import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
 
 export const isPluralInIcelandic = (value: number): boolean =>
