@@ -91,7 +91,8 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
       })
   }
 
-  const content = [
+  //This is because of animation on select doesnt work stand alone
+  const rulesAndMultiSelectContent = [
     {
       headline: 'Veldu sveitarfélag til að breyta stillingum',
       component: (
@@ -122,6 +123,9 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
         />
       ),
     },
+  ]
+
+  const EmailSiteAidContent = [
     {
       headline: 'Almennt netfang sveitarfélagsins (félagsþjónusta)',
       smallText:
@@ -223,13 +227,40 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
         </Text>
       </Box>
 
-      {content.map((el, index) => {
+      <Box className={`contentUp delay-25`}>
+        {rulesAndMultiSelectContent.map((el, index) => {
+          return (
+            <Box
+              marginBottom={[2, 2, 7]}
+              key={`rulesAndMultiSelectContent-${index}`}
+            >
+              <Text
+                as="h3"
+                variant="h3"
+                marginBottom={[2, 2, 3]}
+                color="dark300"
+              >
+                {el.headline}
+              </Text>
+              {el.component}
+
+              {el.smallText && (
+                <Text marginTop={1} variant="small">
+                  {el.smallText}
+                </Text>
+              )}
+            </Box>
+          )
+        })}
+      </Box>
+
+      {EmailSiteAidContent.map((el, index) => {
         return (
           <Box
             marginBottom={[2, 2, 7]}
-            className={``}
+            className={`contentUp`}
             style={{ animationDelay: index * 10 + 30 + 'ms' }}
-            key={`settings-${index}`}
+            key={`EmailSiteAidContent-${index}`}
           >
             <Text as="h3" variant="h3" marginBottom={[2, 2, 3]} color="dark300">
               {el.headline}
