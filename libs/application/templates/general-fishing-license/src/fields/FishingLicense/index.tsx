@@ -3,7 +3,7 @@ import {
   getErrorViaPath,
   getValueViaPath,
 } from '@island.is/application/core'
-import { Box, LoadingDots, Text } from '@island.is/island-ui/core'
+import { Box, SkeletonLoader, Text } from '@island.is/island-ui/core'
 import React, { FC, useState } from 'react'
 import { FishingLicenseAlertMessage, ShipInformation, Tag } from '../components'
 import {
@@ -81,7 +81,12 @@ export const FishingLicense: FC<FieldBaseProps> = ({
           {formatMessage(fishingLicense.labels.radioButtonTitle)}
         </Text>
         {loading ? (
-          <LoadingDots large color="gradient" />
+          <SkeletonLoader
+            repeat={2}
+            space={2}
+            height={75}
+            borderRadius="standard"
+          />
         ) : (
           <>
             <RadioController
