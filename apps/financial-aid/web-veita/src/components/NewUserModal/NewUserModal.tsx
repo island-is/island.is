@@ -204,7 +204,7 @@ const NewUserModal = ({
                   setState({
                     ...state,
                     municipalityIds: state.municipalityIds.filter(
-                      (muni) => muni != value,
+                      (muni) => muni !== value,
                     ),
                   })
                 }
