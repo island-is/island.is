@@ -171,7 +171,7 @@ const MunicipalityProfile = ({
               variant="ghost"
               onClick={() => setIsModalVisible(true)}
             >
-              Bæta við stjórnanda
+              Nýr stjórnandi
             </Button>
           </Box>
 
@@ -199,17 +199,18 @@ const MunicipalityProfile = ({
             </button>
           </Box>
         </Box>
-        <Box marginBottom={7}>
-          <Box marginBottom={3} className={`contentUp delay-50`}>
+        <Box marginBottom={7} className={`contentUp delay-50`}>
+          <Box marginBottom={3}>
             <Text as="h3" variant="h3" color="dark300">
               Stjórnendur
             </Text>
           </Box>
-
           <Box>
-            <MultiSelectionAdmin admins={municipality.allAdminUsers} />
+            <MultiSelectionAdmin
+              admins={municipality.allAdminUsers}
+              onUpdate={refreshList}
+            />
           </Box>
-
           <div className={`${tableStyles.smallTableWrapper} hideScrollBar`}>
             <table
               className={cn({
