@@ -3,13 +3,14 @@ import { useForm } from 'react-hook-form'
 import { m } from '@island.is/service-portal/core'
 import { msg } from '../../../../../lib/messages'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { Box, Button, Text, LoadingDots } from '@island.is/island-ui/core'
+import { Box, Text, LoadingDots } from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
 import {
   useVerifyEmail,
   useUpdateOrCreateUserProfile,
   useDeleteIslykillValue,
 } from '@island.is/service-portal/graphql'
+import { FormButton } from '../FormButton'
 import * as styles from './ProfileForms.css'
 
 interface Props {
@@ -223,9 +224,7 @@ export const InputEmail: FC<Props> = ({
             {!createLoading && !deleteLoading && (
               <>
                 {emailVerifyCreated ? (
-                  <Button
-                    variant="text"
-                    size="small"
+                  <FormButton
                     disabled={
                       verificationValid ||
                       disabled ||
@@ -249,22 +248,16 @@ export const InputEmail: FC<Props> = ({
                           })
                         : buttonText
                       : formatMessage(msg.saveEmptyChange)}
-                  </Button>
+                  </FormButton>
                 ) : (
-                  <button
-                    type="submit"
+                  <FormButton
+                    submit
                     disabled={verificationValid || disabled || inputPristine}
                   >
-                    <Button
-                      variant="text"
-                      size="small"
-                      disabled={verificationValid || disabled || inputPristine}
-                    >
-                      {emailInternal
-                        ? buttonText
-                        : formatMessage(msg.saveEmptyChange)}
-                    </Button>
-                  </button>
+                    {emailInternal
+                      ? buttonText
+                      : formatMessage(msg.saveEmptyChange)}
+                  </FormButton>
                 )}
               </>
             )}
@@ -315,20 +308,15 @@ export const InputEmail: FC<Props> = ({
                 alignItems="flexStart"
                 flexDirection="column"
                 paddingTop={4}
+                className={styles.codeButton}
               >
                 {!saveLoading && (
-                  <button
-                    type="submit"
+                  <FormButton
+                    submit
                     disabled={!codeInternal || disabled || verificationValid}
                   >
-                    <Button
-                      variant="text"
-                      size="small"
-                      disabled={!codeInternal || disabled || verificationValid}
-                    >
-                      {formatMessage(m.codeConfirmation)}
-                    </Button>
-                  </button>
+                    {formatMessage(m.codeConfirmation)}
+                  </FormButton>
                 )}
                 {saveLoading && (
                   <Box>

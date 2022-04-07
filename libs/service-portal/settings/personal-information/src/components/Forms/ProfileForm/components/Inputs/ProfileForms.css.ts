@@ -27,10 +27,32 @@ export const account = style({
 
 export const formContainer = style({
   maxWidth: 400,
+  '@media': {
+    [`screen and (max-width: ${theme.breakpoints.sm}px)`]: {
+      marginRight: 0,
+      maxWidth: '100%',
+    },
+  },
 })
 
 export const codeInput = style({
   maxWidth: 210,
+  '@media': {
+    [`screen and (max-width: ${theme.breakpoints.sm}px)`]: {
+      // marginRight: 0,
+      // maxWidth: '100%',
+    },
+  },
+})
+
+export const codeButton = style({
+  '@media': {
+    [`screen and (max-width: ${theme.breakpoints.sm}px)`]: {
+      alignSelf: 'flex-end',
+      marginTop: theme.spacing['2'],
+      paddingTop: 0,
+    },
+  },
 })
 
 export const nudgeSave = style({
