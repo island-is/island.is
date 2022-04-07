@@ -92,14 +92,18 @@ export const getNationalRegistryInfo = (application: Application) => {
       content: application.postalCode,
     },
     {
-      title: 'Maki',
-      content: application.spouseNationalId
-        ? formatNationalId(application.spouseNationalId)
-        : 'Enginn maki',
+      title: 'Sveitarfélag',
+      content: application.city,
     },
     {
       title: 'Ríkisfang',
       content: 'Ísland',
+    },
+    {
+      title: 'Maki',
+      content: application.spouseNationalId
+        ? formatNationalId(application.spouseNationalId)
+        : 'Enginn maki',
     },
     {
       title: 'Aldur',
@@ -139,6 +143,9 @@ export const getApplicantSpouse = (application: Application) => {
 }
 
 export const getDirectTaxPayments = (directTaxPayments: DirectTaxPayment[]) => {
+  if (directTaxPayments && directTaxPayments.length === 0) {
+    return []
+  }
   const totalSalary = directTaxPayments.reduce(
     (n, { totalSalary }) => n + totalSalary,
     0,

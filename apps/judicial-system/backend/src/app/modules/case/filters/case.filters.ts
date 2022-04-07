@@ -15,6 +15,8 @@ import type { User, Case as TCase } from '@island.is/judicial-system/types'
 
 import { Case } from '../models/case.model'
 
+const hideArchived = { isArchived: false }
+
 function getBlockedStates(
   role: UserRole,
   institutionType?: InstitutionType,
@@ -151,6 +153,70 @@ function isHightenedSecurityCaseHiddenFromUser(
   )
 }
 
+function getStaffCasesQueryFilter(
+  institutionType?: InstitutionType,
+): WhereOptions {
+  return institutionType === InstitutionType.PRISON_ADMIN
+    ? {
+        [Op.and]: [
+          { isArchived: false },
+          { state: CaseState.ACCEPTED },
+          { type: [CaseType.CUSTODY, CaseType.TRAVEL_BAN] },
+        ],
+      }
+    : {
+        [Op.and]: [
+          { isArchived: false },
+          { state: CaseState.ACCEPTED },
+          { type: CaseType.CUSTODY },
+          {
+            decision: [
+              CaseDecision.ACCEPTING,
+              CaseDecision.ACCEPTING_PARTIALLY,
+            ],
+          },
+        ],
+      }
+}
+
+export const oldFilter = {
+  [Op.or]: [
+    {
+      [Op.and]: [
+        { state: [CaseState.REJECTED, CaseState.DISMISSED] },
+        { ruling_date: { [Op.lt]: literal('current_date - 90') } },
+      ],
+    },
+    {
+      [Op.and]: [
+        {
+          state: [
+            CaseState.NEW,
+            CaseState.DRAFT,
+            CaseState.SUBMITTED,
+            CaseState.RECEIVED,
+          ],
+        },
+        { created: { [Op.lt]: literal('current_date - 90') } },
+      ],
+    },
+    {
+      [Op.and]: [
+        { type: restrictionCases },
+        { state: CaseState.ACCEPTED },
+        { valid_to_date: { [Op.lt]: literal('current_date - 90') } },
+      ],
+    },
+    {
+      [Op.and]: [
+        { [Op.not]: { type: restrictionCases } },
+        { state: CaseState.ACCEPTED },
+        { ruling_date: { [Op.lt]: literal('current_date - 90') } },
+      ],
+    },
+  ],
+}
+
 export function isCaseBlockedFromUser(
   theCase: Case,
   user: User,
@@ -186,32 +252,6 @@ export function isCaseBlockedFromUser(
   )
 }
 
-function getStaffCasesQueryFilter(
-  institutionType?: InstitutionType,
-): WhereOptions {
-  return institutionType === InstitutionType.PRISON_ADMIN
-    ? {
-        [Op.and]: [
-          { state: CaseState.ACCEPTED },
-          { type: [CaseType.CUSTODY, CaseType.TRAVEL_BAN] },
-          { valid_to_date: { [Op.gt]: literal('current_date - 90') } },
-        ],
-      }
-    : {
-        [Op.and]: [
-          { state: CaseState.ACCEPTED },
-          { type: CaseType.CUSTODY },
-          {
-            decision: [
-              CaseDecision.ACCEPTING,
-              CaseDecision.ACCEPTING_PARTIALLY,
-            ],
-          },
-          { valid_to_date: { [Op.gt]: literal('current_date - 90') } },
-        ],
-      }
-}
-
 export function getCasesQueryFilter(user: User): WhereOptions {
   if (user.role === UserRole.STAFF) {
     return getStaffCasesQueryFilter(user.institution?.type)
@@ -220,51 +260,6 @@ export function getCasesQueryFilter(user: User): WhereOptions {
   const blockStates = {
     [Op.not]: { state: getBlockedStates(user.role, user.institution?.type) },
   }
-
-  // Old cases are only filtered from case lists
-  const hideOld = [
-    {
-      [Op.not]: {
-        [Op.and]: [
-          { state: [CaseState.REJECTED, CaseState.DISMISSED] },
-          { ruling_date: { [Op.lt]: literal('current_date - 90') } },
-        ],
-      },
-    },
-    {
-      [Op.not]: {
-        [Op.and]: [
-          {
-            state: [
-              CaseState.NEW,
-              CaseState.DRAFT,
-              CaseState.SUBMITTED,
-              CaseState.RECEIVED,
-            ],
-          },
-          { created: { [Op.lt]: literal('current_date - 90') } },
-        ],
-      },
-    },
-    {
-      [Op.not]: {
-        [Op.and]: [
-          { type: restrictionCases },
-          { state: CaseState.ACCEPTED },
-          { valid_to_date: { [Op.lt]: literal('current_date - 90') } },
-        ],
-      },
-    },
-    {
-      [Op.not]: {
-        [Op.and]: [
-          { [Op.not]: { type: restrictionCases } },
-          { state: CaseState.ACCEPTED },
-          { ruling_date: { [Op.lt]: literal('current_date - 90') } },
-        ],
-      },
-    },
-  ]
 
   const blockInstitutions =
     user.role === UserRole.PROSECUTOR
@@ -277,12 +272,12 @@ export function getCasesQueryFilter(user: User): WhereOptions {
         }
       : user.institution?.type === InstitutionType.HIGH_COURT
       ? {
-          [Op.or]: {
-            accused_appeal_decision: CaseAppealDecision.APPEAL,
-            prosecutor_appeal_decision: CaseAppealDecision.APPEAL,
-            accused_postponed_appeal_date: { [Op.not]: null },
-            prosecutor_postponed_appeal_date: { [Op.not]: null },
-          },
+          [Op.or]: [
+            { accused_appeal_decision: CaseAppealDecision.APPEAL },
+            { prosecutor_appeal_decision: CaseAppealDecision.APPEAL },
+            { accused_postponed_appeal_date: { [Op.not]: null } },
+            { prosecutor_postponed_appeal_date: { [Op.not]: null } },
+          ],
         }
       : {
           [Op.or]: [
@@ -307,8 +302,8 @@ export function getCasesQueryFilter(user: User): WhereOptions {
 
   return {
     [Op.and]: [
+      hideArchived,
       blockStates,
-      ...hideOld,
       blockInstitutions,
       ...blockHightenedSecurity,
     ],

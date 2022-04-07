@@ -29,6 +29,7 @@ const LogoMunicipality = ({ className }: LogoProps) => {
         </Box>
       }
     >
+      {/* Todo better check */}
       {admin &&
         municipality &&
         (isSuperAdmin ? (
@@ -44,7 +45,7 @@ const LogoMunicipality = ({ className }: LogoProps) => {
           </>
         ) : (
           <>
-            {municipality.map((muni) => {
+            {municipality?.map((muni) => {
               return (
                 <a
                   href={muni?.homepage}

@@ -5,11 +5,11 @@ import {
   MunicipalityAdminSettings,
 } from '@island.is/financial-aid-web/veita/src/components'
 
-import { useMunicipality } from '@island.is/financial-aid/shared/components'
 import { Municipality } from '@island.is/financial-aid/shared/lib'
+import { useMunicipalities } from '@island.is/financial-aid-web/veita/src/utils/useMunicipalities'
 
 export const MunicipalitySettings = () => {
-  const { municipality, error, loading } = useMunicipality()
+  const { municipality, error, loading } = useMunicipalities()
 
   const [currentMunicipality, setCurrentMunicipality] = useState<Municipality>()
 

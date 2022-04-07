@@ -15,6 +15,7 @@ import {
   EventModule,
 } from '../index'
 import { Case } from './models/case.model'
+import { CaseArchive } from './models/caseArchive.model'
 import { CaseController } from './case.controller'
 import { CaseService } from './case.service'
 
@@ -29,7 +30,7 @@ import { CaseService } from './case.service'
     forwardRef(() => CourtModule),
     forwardRef(() => AwsS3Module),
     forwardRef(() => EventModule),
-    SequelizeModule.forFeature([Case]),
+    SequelizeModule.forFeature([Case, CaseArchive]),
   ],
   providers: [CaseService],
   controllers: [CaseController],

@@ -107,6 +107,7 @@ describe('ApplicationController - Create', () => {
       streetName: '',
       homeCircumstancesCustom: '',
       directTaxPayments: [],
+      hasFetchedDirectTaxPayment: false,
       applicationSystemId: '',
     }
     const user: User = {
@@ -183,6 +184,7 @@ describe('ApplicationController - Create', () => {
       homeCircumstancesCustom: '',
       employmentCustom: '',
       directTaxPayments: [],
+      hasFetchedDirectTaxPayment: false,
       applicationSystemId: '',
     }
     const user: User = {
@@ -298,6 +300,7 @@ describe('ApplicationController - Create', () => {
       homeCircumstancesCustom: '',
       employmentCustom: '',
       directTaxPayments: [],
+      hasFetchedDirectTaxPayment: false,
       applicationSystemId: '',
     }
     const user: User = {
@@ -406,6 +409,7 @@ describe('ApplicationController - Create', () => {
       homeCircumstancesCustom: '',
       employmentCustom: '',
       directTaxPayments: [],
+      hasFetchedDirectTaxPayment: false,
       applicationSystemId: '',
     }
     const user: User = {
@@ -482,6 +486,7 @@ describe('ApplicationController - Create', () => {
       streetName: '',
       homeCircumstancesCustom: '',
       employmentCustom: '',
+      hasFetchedDirectTaxPayment: true,
       directTaxPayments: [
         {
           totalSalary: 1,
@@ -585,6 +590,7 @@ describe('ApplicationController - Create', () => {
       homeCircumstancesCustom: '',
       employmentCustom: '',
       directTaxPayments: [],
+      hasFetchedDirectTaxPayment: false,
       applicationSystemId: '',
     }
     const user: User = {
@@ -645,6 +651,7 @@ describe('ApplicationController - Create', () => {
       homeCircumstancesCustom: '',
       employmentCustom: '',
       directTaxPayments: [],
+      hasFetchedDirectTaxPayment: false,
       applicationSystemId: '',
     }
     const user: User = {
