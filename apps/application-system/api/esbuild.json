@@ -33,6 +33,7 @@
     "lru-cache",
     "pdfkit",
     "sequelize",
+    "configcat-node",
     "@protobufjs/aspromise",
     "@protobufjs/base64",
     "@protobufjs/codegen",

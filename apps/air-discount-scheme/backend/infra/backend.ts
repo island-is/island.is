@@ -72,3 +72,7 @@ export const serviceSetup = (): ServiceBuilder<'air-discount-scheme-backend'> =>
     })
     .readiness('/liveness')
     .liveness('/liveness')
+    .resources({
+      limits: { cpu: '400m', memory: '512Mi' },
+      requests: { cpu: '200m', memory: '256Mi' },
+    })

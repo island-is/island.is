@@ -1948,6 +1948,9 @@ export interface IOrganizationPageFields {
 
   /** Alert Banner */
   alertBanner?: IAlertBanner | undefined
+
+  /** Default Header Image */
+  defaultHeaderImage?: Asset | undefined
 }
 
 export interface IOrganizationPage extends Entry<IOrganizationPageFields> {
@@ -2212,6 +2215,9 @@ export interface IProjectPageFields {
 
   /** Default Header Background Color */
   defaultHeaderBackgroundColor?: string | undefined
+
+  /** Featured Description */
+  featuredDescription?: string | undefined
 }
 
 export interface IProjectPage extends Entry<IProjectPageFields> {
