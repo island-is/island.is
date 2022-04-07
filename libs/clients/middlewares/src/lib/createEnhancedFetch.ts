@@ -167,7 +167,6 @@ export const createEnhancedFetch = (
       ...cache,
       name,
       logger,
-      metricsClient,
     })
 
     // Need to handle response errors again.
