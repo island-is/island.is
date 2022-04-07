@@ -16,7 +16,7 @@ interface Props {
   prefixText: string
   postfixText: string
   state: ApplicationState
-  muncipalityEmail?: string
+  municipalityEmail?: string
 }
 
 const EmailFormatInputModal = ({
@@ -29,7 +29,7 @@ const EmailFormatInputModal = ({
   prefixText,
   postfixText,
   state,
-  muncipalityEmail,
+  municipalityEmail,
 }: Props) => {
   const ref = useRef<HTMLSpanElement>(null)
   const [hasError, setHasError] = useState(false)
@@ -106,8 +106,8 @@ const EmailFormatInputModal = ({
               áfrýjunarnefndar þíns sveitarfélags. Skal það gert skriflega og
               innan fjögurra vikna. Fyrir frekari upplýsingar um málskot hafðu
               samband með tölvupósti á netfangið{' '}
-              <a href={`mailto:${muncipalityEmail}`} rel="noreferrer noopener">
-                <span className="linkInText">{muncipalityEmail}</span>
+              <a href={`mailto:${municipalityEmail}`} rel="noreferrer noopener">
+                <span className="linkInText">{municipalityEmail}</span>
               </a>
               . 
               <br />

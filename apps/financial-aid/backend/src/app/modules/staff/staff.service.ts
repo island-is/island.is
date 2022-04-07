@@ -144,7 +144,9 @@ export class StaffService {
         {
           nationalId: input.nationalId,
           name: input.name,
-          municipalityIds: [municipality.municipalityId],
+          municipalityIds: isFirstStaffForMunicipality
+            ? [municipality.municipalityId]
+            : input.municipalityIds,
           email: input.email,
           roles: input.roles,
           active: true,
