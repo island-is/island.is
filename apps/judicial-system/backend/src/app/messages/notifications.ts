@@ -14,12 +14,6 @@ export const notifications = {
       'Nafn sakbornings: {accusedName, select, NONE {Ekki skráð} other {{accusedName}}}.',
     description: 'Texti í pósti sem tilgreinir hver sakborningur er í máli',
   },
-  accused: {
-    id: 'judicial.system.backend:notifications.accused',
-    defaultMessage:
-      'Nafn sakbornings: {accusedName, select, NONE {Ekki skráð} other {{accusedName}}}.',
-    description: 'TODO',
-  },
   courtRoom: {
     id: 'judicial.system.backend:notifications.court_room',
     defaultMessage:
@@ -304,45 +298,6 @@ export const notifications = {
         'Verjandi sakbornings{defenderName, select, NONE { hefur ekki verið skráður} other {: {defenderName}}}.',
       description:
         'Texti í pósti til fangelsis sem tilgreinir hver verjandi sakbornings er',
-    },
-  }),
-  prisonRulingEmail: {
-    id: 'judicial.system.backend:notifications.prison_ruling_email',
-    defaultMessage:
-      'Meðfylgjandi er vistunarseðill gæsluvarðhaldsfanga sem var úrskurðaður í gæsluvarðhald í héraðsdómi {courtEndTime, date, long}, auk þingbókar þar sem úrskurðarorðin koma fram.',
-    description: 'TODO',
-  },
-  prisonRevokedEmail: defineMessages({
-    revokedCase: {
-      id:
-        'judicial.system.backend:notifications.prison_revoked_email.revoked_case',
-      defaultMessage:
-        '{prosecutorOffice, select, NONE {Ótilgreindur sækjandi} other {{prosecutorOffice}}} hefur afturkallað kröfu um {isExtension, select, yes {áframhaldandi } other {}}gæsluvarðhald sem send var til {courtText} og taka átti fyrir {courtDateText}.',
-      description: 'TODO',
-    },
-    court: {
-      id: 'judicial.system.backend:notifications.prison_revoked_email.court',
-      defaultMessage:
-        '{court, select, NONE {ótilgreinds dómstóls} other {{court}}}',
-      description: 'TODO',
-    },
-    courtDate: {
-      id:
-        'judicial.system.backend:notifications.prison_revoked_email.court_date_text',
-      defaultMessage:
-        '{courtDate, select, NONE {á ótilgreindum tíma} other {{date}, kl. {courtDate, time, short}}}',
-    },
-    body: {
-      id: 'judicial.system.backend:notifications.prison_revoked_email.body',
-      defaultMessage:
-        '{revokedCaseText}<br /><br />{accusedNameText}<br /><br />{defenderText}',
-      description: 'TODO',
-    },
-    defender: {
-      id: 'judicial.system.backend:notifications.prison_revoked_email.defender',
-      defaultMessage:
-        'Verjandi sakbornings{defenderName, select, NONE { hefur ekki verið skráður} other {: {defenderName}}}.',
-      description: 'TODO',
     },
   }),
   defenderCourtDateEmail: defineMessages({
