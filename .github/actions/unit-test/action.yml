@@ -14,19 +14,20 @@ runs:
   steps:
     - name: Docker login to ECR repo
       run: ./scripts/ci/docker-login-ecr.sh
-      
+      shell: bash
       env:
         AWS_ACCESS_KEY_ID: ${{ inputs.aws-access-key-id }}
         AWS_SECRET_ACCESS_KEY: ${{ inputs.aws-secret-access-key }}
         DOCKER_REGISTRY: ${{ inputs.docker-registry }}
     - name: Set Codeconv version numner
+      shell: bash
       run: |
         echo "CODECOV_REV=v0.1.18" >> $GITHUB_ENV
       
 
     - name: Running tests
       run: ./scripts/ci/run-in-parallel.sh 30_test
-      
+      shell: bash
       env:
         DOCKER_REGISTRY: ${{ inputs.docker-registry }}
         NODE_OPTIONS: --max-old-space-size=4096
@@ -39,6 +40,7 @@ runs:
         key: ${{ runner.os }}-codeconv-${{ env.CODECOV_REV }}
 
     - name: Fetch codecov uploader
+      shell: bash
       if: steps.codecov-cache.outputs.cache-hit != 'true'
       run: |
         # Importing pgp keys
@@ -55,6 +57,7 @@ runs:
       
 
     - name: Install codecov uploader
+      shell: bash
       id: codecov
       run: |
         chmod +x codecov
@@ -67,6 +70,6 @@ runs:
 
     - name: Upload coverage reports
       run: ./scripts/ci/run-in-parallel.sh 50_upload-coverage || true # If for some reason codecov is down, we can still build. This is not a perfect solution though.
-      
+      shell: bash
       env:
         CODECOV_TOKEN: ${{ inputs.codecov-token }}
