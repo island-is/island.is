@@ -148,14 +148,6 @@ jobs:
           node -v
           ls -l `which node`
 
-      # - name: Cleanup disk space
-      #   run: |
-      #     df -h
-      #     # https://github.com/actions/virtual-environments/issues/709#issuecomment-612569242
-      #     sudo rm -rf "/usr/local/share/boost"
-      #     sudo apt clean
-      #     df -h
-
       - name: Git refs
         id: git_refs
         run: |
