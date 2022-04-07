@@ -334,7 +334,7 @@ export class DrivingLicenseBookService {
     }
   }
 
-  async isSchoolStaff(user: User): Promise<Boolean> {
+  async isSchoolStaff(user: User): Promise<boolean> {
     const api = await this.apiWithAuth()
     const employee = await api.apiSchoolGetSchoolForSchoolStaffGet({
       userSsn: user.nationalId,

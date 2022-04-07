@@ -8,10 +8,7 @@ export class DrivingSchoolConfirmationModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
     return {
       module: DrivingSchoolConfirmationModule,
-      imports: [
-        DrivingLicenseBookModule.register(config.drivingLicense),
-        // SharedTemplateAPIModule.register(config),
-      ],
+      imports: [DrivingLicenseBookModule.register(config.drivingLicense)],
       providers: [DrivingSchoolConfirmationService],
       exports: [DrivingSchoolConfirmationService],
     }

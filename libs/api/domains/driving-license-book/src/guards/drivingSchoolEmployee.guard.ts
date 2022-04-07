@@ -11,7 +11,6 @@ export class DrivingSchoolEmployeeGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const ctx = GqlExecutionContext.create(context)
     const user = ctx.getContext().req.user
-    const staff = await this.drivingLicenseBookService.isSchoolStaff(user)
-    return !!staff
+    return await this.drivingLicenseBookService.isSchoolStaff(user)
   }
 }
