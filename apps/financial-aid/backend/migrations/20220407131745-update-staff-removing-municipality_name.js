@@ -11,14 +11,16 @@ module.exports = {
 
   down: (queryInterface, Sequelize) => {
     return queryInterface.sequelize.transaction((t) =>
-        queryInterface.addColumn('staff', 'municipality_name', 
-          {
-            type: Sequelize.TEXT,
-            allowNull: false,
-            defaultValue: '',
-          },
-          { transaction: t },
-        )
+      queryInterface.addColumn(
+        'staff',
+        'municipality_name',
+        {
+          type: Sequelize.TEXT,
+          allowNull: false,
+          defaultValue: '',
+        },
+        { transaction: t },
+      ),
     )
   },
 }
