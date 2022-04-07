@@ -212,7 +212,6 @@ input[type='number'] {
   .printableSection {
     float: left;
     width: 100vw;
-    height: 100vh;
     page-break-after: always;
   }
 }
