@@ -5,6 +5,11 @@ export const tableContainer = style({
   width: '100%',
   backgroundColor: theme.color.white,
   border: `1px solid ${theme.color.blue200}`,
+  '@media': {
+    [`print`]: {
+      marginBottom: theme.spacing[4],
+    },
+  },
 })
 
 globalStyle(`${tableContainer} th, ${tableContainer} td`, {
@@ -22,6 +27,9 @@ export const tableHeaders = style({
   display: 'none',
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.sm}px)`]: {
+      display: 'table-row',
+    },
+    [`print`]: {
       display: ' table-row',
     },
   },
@@ -43,6 +51,9 @@ export const information = style({
   display: 'grid',
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.sm}px)`]: {
+      display: ' table-row',
+    },
+    [`print`]: {
       display: ' table-row',
     },
   },
