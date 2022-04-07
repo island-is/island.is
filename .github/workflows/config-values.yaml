@@ -16,6 +16,10 @@ on:
       - 'infra/**'
       - '**/infra/**'
 
+defaults:
+  run:
+    shell: bash
+
 env:
   DEVOPS_DEBUG: ${{ secrets.DEVOPS_DEBUG }}
   AWS_MAX_ATTEMPTS: 10

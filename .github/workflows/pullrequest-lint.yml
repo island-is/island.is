@@ -7,6 +7,10 @@ on:
       - edited
       - synchronize
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   lint:
     runs-on: ec2-runners
