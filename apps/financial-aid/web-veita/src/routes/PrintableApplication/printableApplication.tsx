@@ -29,6 +29,7 @@ const PrintableApplication = () => {
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
+  const { municipality } = useContext(AdminContext)
 
   const { municipality } = useContext(AdminContext)
 

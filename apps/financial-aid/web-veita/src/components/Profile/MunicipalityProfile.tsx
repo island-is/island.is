@@ -7,12 +7,6 @@ import {
   toast,
   ToastContainer,
 } from '@island.is/island-ui/core'
-
-import * as styles from './Profile.css'
-import * as headerStyles from '@island.is/financial-aid-web/veita/src/components/ApplicationHeader/ApplicationHeader.css'
-import * as tableStyles from '../../sharedStyles/Table.css'
-import cn from 'classnames'
-
 import {
   AidTypeHomeCircumstances,
   Municipality,
@@ -33,7 +27,11 @@ import { AdminUsersQuery } from '@island.is/financial-aid-web/veita/graphql'
 import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
 import { useMutation } from '@apollo/client'
 import { MunicipalityActivityMutation } from '@island.is/financial-aid-web/veita/graphql'
+import cn from 'classnames'
 
+import * as styles from './Profile.css'
+import * as headerStyles from '@island.is/financial-aid-web/veita/src/components/ApplicationHeader/ApplicationHeader.css'
+import * as tableStyles from '../../sharedStyles/Table.css'
 interface MunicipalityProfileProps {
   municipality: Municipality
   getMunicipality: () => void

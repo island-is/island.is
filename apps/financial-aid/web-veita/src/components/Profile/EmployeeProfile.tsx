@@ -10,9 +10,6 @@ import {
   Option,
 } from '@island.is/island-ui/core'
 
-import * as styles from './Profile.css'
-
-import * as headerStyles from '@island.is/financial-aid-web/veita/src/components/ApplicationHeader/ApplicationHeader.css'
 import {
   InputType,
   isEmailValid,
@@ -20,27 +17,25 @@ import {
   Staff,
   StaffRole,
 } from '@island.is/financial-aid/shared/lib'
+import { MultiSelection } from '@island.is/financial-aid-web/veita/src/components'
 
-import cn from 'classnames'
 import { useStaff } from '@island.is/financial-aid-web/veita/src/utils/useStaff'
 import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
-import MultiSelection from '../MultiSelection/MultiSelection'
-import { isString } from 'lodash'
-import { ValueType } from 'react-select'
+import { CreateUpdateStaff } from '../MultiSelection/MultiSelection'
+
+import cn from 'classnames'
+import * as styles from './Profile.css'
+import * as headerStyles from '@island.is/financial-aid-web/veita/src/components/ApplicationHeader/ApplicationHeader.css'
 
 interface EmployeeProfileProps {
   user: Staff
 }
 
-interface EmployeeProfileInfo {
-  nationalId: string
-  email?: string
+type EmployeeProfileInfo = CreateUpdateStaff<{
+  nationalId?: string
   nickname?: string
-  hasError: boolean
-  roles: StaffRole[]
-  municipalityIds: string[]
-  serviceCenter: Option[]
-}
+  email?: string
+}>
 
 const EmployeeProfile = ({ user }: EmployeeProfileProps) => {
   const { admin, municipality } = useContext(AdminContext)
@@ -67,7 +62,6 @@ const EmployeeProfile = ({ user }: EmployeeProfileProps) => {
     hasError: false,
     roles: user.roles,
     municipalityIds: user.municipalityIds,
-    serviceCenter: mapToOption(user.municipalityIds, false),
   })
 
   const { changeUserActivity, staffActivationLoading, updateInfo } = useStaff()
@@ -135,7 +129,8 @@ const EmployeeProfile = ({ user }: EmployeeProfileProps) => {
     !state.nationalId ||
     state.roles.length === 0 ||
     !isEmailValid(state.email) ||
-    state.nationalId.length !== 10
+    state.nationalId.length !== 10 ||
+    state.municipalityIds.length === 0
 
   const onSubmitUpdate = async () => {
     if (areRequiredFieldsFilled) {
@@ -220,36 +215,24 @@ const EmployeeProfile = ({ user }: EmployeeProfileProps) => {
             marginBottom={[3, 3, 5]}
           >
             <Box display="block" marginTop={3} marginBottom={[3, 3, 5]}>
-              <Text as="h2" variant="h3" color="dark300" marginBottom={3}>
-                Sveitarfélög notanda
-              </Text>
               <MultiSelection
-                options={state.serviceCenter}
-                active={mapToOption(state.municipalityIds, true)}
-                onSelected={(option: ValueType<ReactSelectOption>) => {
-                  const { value } = option as ReactSelectOption
-                  if (value && isString(value)) {
+                selectionUpdate={(value: string, type: 'add' | 'remove') => {
+                  if (type === 'add') {
                     setState({
                       ...state,
                       municipalityIds: [...state.municipalityIds, value],
-                      serviceCenter: state.serviceCenter.filter(
-                        (el) => el.value !== value,
+                    })
+                  }
+                  if (type === 'remove') {
+                    setState({
+                      ...state,
+                      municipalityIds: state.municipalityIds.filter(
+                        (muni) => muni != value,
                       ),
                     })
                   }
                 }}
-                unSelected={(value: string, name: string) => {
-                  setState({
-                    ...state,
-                    municipalityIds: state.municipalityIds.filter(
-                      (muni) => muni != value,
-                    ),
-                    serviceCenter: [
-                      ...state.serviceCenter,
-                      { label: name, value: value },
-                    ],
-                  })
-                }}
+                state={state}
               />
             </Box>
 
