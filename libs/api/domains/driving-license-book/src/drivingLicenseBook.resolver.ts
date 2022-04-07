@@ -23,7 +23,7 @@ import { DrivingSchool } from './models/drivingSchool.response'
 import { CreateDrivingSchoolTestResultInput } from './dto/createDrivingSchoolTestResult.input'
 import { DrivingLicenceTestResultId } from './models/drivingLicenseTestResult.response'
 import { DrivingSchoolType } from './models/drivingLicenseBookSchoolType.response'
-import { DrivingSchoolEmployeeGuard } from './guards/DrivingSchoolEmployee.guard'
+import { DrivingSchoolEmployeeGuard } from './guards/drivingSchoolEmployee.guard'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
