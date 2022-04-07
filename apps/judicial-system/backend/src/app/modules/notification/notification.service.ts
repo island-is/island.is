@@ -908,6 +908,7 @@ export class NotificationService {
 
     // Assume there is at most one defendant
     const html = formatDefenderRevokedEmailNotification(
+      this.formatMessage,
       theCase.type,
       theCase.defendants && theCase.defendants.length > 0
         ? theCase.defendants[0].nationalId

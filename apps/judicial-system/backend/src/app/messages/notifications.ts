@@ -322,6 +322,47 @@ export const notifications = {
       description: 'Texti í pósti til verjanda/talsmanns TODO',
     },
   }),
+  defenderRevokedEmail: defineMessages({
+    court: {
+      id: 'judicial.system.backend:notifications.defender_revoked_email.court',
+      defaultMessage:
+        '{court, select, NONE {ótilgreindum dómstóli} other {{court}}}',
+      description: 'TODO',
+    },
+    courtDate: {
+      id:
+        'judicial.system.backend:notifications.defender_revoked_email.court_date',
+      defaultMessage:
+        '{courtDate, select, NONE {á ótilgreindum tíma} other {{date}, kl. {courtDate, time, short}}}',
+      description: 'TODO',
+    },
+    revoked: {
+      id:
+        'judicial.system.backend:notifications.defender_revoked_email.revoked',
+      defaultMessage:
+        'Krafa um {investigationPrefix, select, onlyPrefix {rannsóknarheimild} withPrefix {rannsóknarheimild ({courtTypeName})} other {{courtTypeName}}} sem taka átti fyrir hjá {courtText} {courtDateText}, hefur verið afturkölluð.',
+      description: 'TODO',
+    },
+    defendant: {
+      id:
+        'judicial.system.backend:notifications.defender_revoked_email.defendant',
+      defaultMessage:
+        'Sakborningur: {defendantName, select, NONE {Nafn ekki skráð} other {{defendantName}}}, {defendantNoNationalId, select, NONE {fd. {defendantNationalId}} other {kt. {defendantNationalId, select, NONE {ekki skráð} other {{defendantNationalId}}}}}.',
+      description: 'TODO',
+    },
+    defenderAssigned: {
+      id:
+        'judicial.system.backend:notifications.defender_revoked_email.defender_assigned',
+      defaultMessage: 'Dómstóllinn hafði skráð þig sem verjanda sakbornings.',
+      description: 'TODO',
+    },
+    body: {
+      id: 'judicial.system.backend:notifications.defender_revoked_email.body',
+      defaultMessage:
+        '{revokedText}<br /><br />{defendantText}<br /><br />{defenderAssignedText}',
+      description: 'TODO',
+    },
+  }),
   modified: defineMessages({
     subject: {
       id: 'judicial.system.backend:notifications.modified.subject',

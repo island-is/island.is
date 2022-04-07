@@ -1,4 +1,3 @@
-import { MessageDescriptor } from '@formatjs/intl'
 import { createTestIntl, FormatMessage } from '@island.is/cms-translations'
 import { makeProsecutor } from '@island.is/judicial-system/formatters'
 import {
@@ -1215,6 +1214,12 @@ describe('formatPrisonRevokedEmailNotification', () => {
 })
 
 describe('formatDefenderRevokedEmailNotification', () => {
+  const messages = { ...notifications.defenderRevokedEmail }
+  let formatMessage: FormatMessage
+  beforeAll(() => {
+    formatMessage = createTestIntl('is-IS', messages).formatMessage
+  })
+
   test('should format revoked notification', () => {
     // Arrange
     const type = CaseType.CUSTODY
@@ -1226,6 +1231,7 @@ describe('formatDefenderRevokedEmailNotification', () => {
 
     // Act
     const res = formatDefenderRevokedEmailNotification(
+      formatMessage,
       type,
       defendantNationalId,
       defendantName,
@@ -1236,7 +1242,7 @@ describe('formatDefenderRevokedEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Gæsluvarðhaldskrafa sem taka átti fyrir hjá Héraðsdómi Þingvalla sunnudaginn 24. janúar 2021, kl. 08:15, hefur verið afturkölluð.<br /><br />Sakborningur: Gaui Glæpon, kt. 000000-1111.<br /><br />Dómstóllinn hafði skráð þig sem verjanda sakbornings.',
+      'Krafa um gæsluvarðhald sem taka átti fyrir hjá Héraðsdómi Þingvalla sunnudaginn 24. janúar 2021, kl. 08:15, hefur verið afturkölluð.<br/><br/>Sakborningur: Gaui Glæpon, kt. 000000-1111.<br/><br/>Dómstóllinn hafði skráð þig sem verjanda sakbornings.',
     )
   })
 
@@ -1251,6 +1257,7 @@ describe('formatDefenderRevokedEmailNotification', () => {
 
     // Act
     const res = formatDefenderRevokedEmailNotification(
+      formatMessage,
       type,
       defendantNationalId,
       defendantName,
@@ -1261,7 +1268,33 @@ describe('formatDefenderRevokedEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Farbannskrafa sem taka átti fyrir hjá Héraðsdómi Þingvalla sunnudaginn 24. janúar 2021, kl. 08:15, hefur verið afturkölluð.<br /><br />Sakborningur: Gaui Glæpon, kt. 111100-1111.<br /><br />Dómstóllinn hafði skráð þig sem verjanda sakbornings.',
+      'Krafa um farbann sem taka átti fyrir hjá Héraðsdómi Þingvalla sunnudaginn 24. janúar 2021, kl. 08:15, hefur verið afturkölluð.<br/><br/>Sakborningur: Gaui Glæpon, kt. 111100-1111.<br/><br/>Dómstóllinn hafði skráð þig sem verjanda sakbornings.',
+    )
+  })
+
+  test('should format revoked notification for admission to facility', () => {
+    // Arrange
+    const type = CaseType.ADMISSION_TO_FACILITY
+    const defendantNationalId = undefined
+    const defendantName = undefined
+    const defendantNoNationalId = false
+    const court = undefined
+    const courtDate = undefined
+
+    // Act
+    const res = formatDefenderRevokedEmailNotification(
+      formatMessage,
+      type,
+      defendantNationalId,
+      defendantName,
+      defendantNoNationalId,
+      court,
+      courtDate,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Krafa um vistun á viðeigandi stofnun sem taka átti fyrir hjá ótilgreindum dómstóli á ótilgreindum tíma, hefur verið afturkölluð.<br/><br/>Sakborningur: Nafn ekki skráð, kt. ekki skráð.<br/><br/>Dómstóllinn hafði skráð þig sem verjanda sakbornings.',
     )
   })
 
@@ -1276,6 +1309,7 @@ describe('formatDefenderRevokedEmailNotification', () => {
 
     // Act
     const res = formatDefenderRevokedEmailNotification(
+      formatMessage,
       type,
       defendantNationalId,
       defendantName,
@@ -1286,13 +1320,13 @@ describe('formatDefenderRevokedEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Krafa um rannsóknarheimild sem taka átti fyrir hjá Héraðsdómi Þingvalla sunnudaginn 24. janúar 2021, kl. 08:15, hefur verið afturkölluð.<br /><br />Sakborningur: Gaui Glæpon, kt. 111100-1111.<br /><br />Dómstóllinn hafði skráð þig sem verjanda sakbornings.',
+      'Krafa um rannsóknarheimild (rof bankaleyndar) sem taka átti fyrir hjá Héraðsdómi Þingvalla sunnudaginn 24. janúar 2021, kl. 08:15, hefur verið afturkölluð.<br/><br/>Sakborningur: Gaui Glæpon, kt. 111100-1111.<br/><br/>Dómstóllinn hafði skráð þig sem verjanda sakbornings.',
     )
   })
 
   test('should format revoked notification when defendant does not have a national id', () => {
     // Arrange
-    const type = CaseType.BANKING_SECRECY_WAIVER
+    const type = CaseType.OTHER
     const defendantNationalId = '01.01.2022'
     const defendantName = 'Gaui Glæpon'
     const defendantNoNationalId = true
@@ -1301,6 +1335,7 @@ describe('formatDefenderRevokedEmailNotification', () => {
 
     // Act
     const res = formatDefenderRevokedEmailNotification(
+      formatMessage,
       type,
       defendantNationalId,
       defendantName,
@@ -1311,7 +1346,7 @@ describe('formatDefenderRevokedEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Krafa um rannsóknarheimild sem taka átti fyrir hjá Héraðsdómi Þingvalla sunnudaginn 24. janúar 2021, kl. 08:15, hefur verið afturkölluð.<br /><br />Sakborningur: Gaui Glæpon, fd. 01.01.2022.<br /><br />Dómstóllinn hafði skráð þig sem verjanda sakbornings.',
+      'Krafa um rannsóknarheimild sem taka átti fyrir hjá Héraðsdómi Þingvalla sunnudaginn 24. janúar 2021, kl. 08:15, hefur verið afturkölluð.<br/><br/>Sakborningur: Gaui Glæpon, fd. 01.01.2022.<br/><br/>Dómstóllinn hafði skráð þig sem verjanda sakbornings.',
     )
   })
 })

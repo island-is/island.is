@@ -401,6 +401,7 @@ export function formatPrisonRevokedEmailNotification(
 }
 
 export function formatDefenderRevokedEmailNotification(
+  formatMessage: FormatMessage,
   type: CaseType,
   defendantNationalId?: string,
   defendantName?: string,
@@ -408,24 +409,42 @@ export function formatDefenderRevokedEmailNotification(
   court?: string,
   courtDate?: Date,
 ): string {
-  const courtText = court?.replace('dómur', 'dómi')
-  const courtDateText = formatDate(courtDate, 'PPPPp')
-    ?.replace('dagur,', 'daginn')
-    ?.replace(' kl.', ', kl.')
+  const cf = notifications.defenderRevokedEmail
+  const courtText = formatMessage(cf.court, {
+    court: court || 'NONE',
+  }).replace('dómur', 'dómi')
 
-  return `${
-    type === CaseType.CUSTODY
-      ? 'Gæsluvarðhaldskrafa'
-      : type === CaseType.TRAVEL_BAN
-      ? 'Farbannskrafa'
-      : 'Krafa um rannsóknarheimild'
-  } sem taka átti fyrir hjá ${courtText} ${courtDateText}, hefur verið afturkölluð.<br /><br />Sakborningur: ${
-    defendantName ?? 'Nafn ekki skráð'
-  }, ${defendantNoNationalId ? 'fd.' : 'kt.'} ${
-    defendantNoNationalId
-      ? defendantNationalId
-      : formatNationalId(defendantNationalId ?? 'ekki skráð')
-  }.<br /><br />Dómstóllinn hafði skráð þig sem verjanda sakbornings.`
+  const courtDateText = formatMessage(cf.courtDate, {
+    date: formatDate(courtDate, 'PPPP')?.replace('dagur,', 'daginn'),
+    courtDate: courtDate || 'NONE',
+  })
+  const revokedText = formatMessage(cf.revoked, {
+    courtText,
+    courtDateText,
+    investigationPrefix:
+      type === CaseType.OTHER
+        ? 'onlyPrefix'
+        : isInvestigationCase(type)
+        ? 'withPrefix'
+        : 'noPrefix',
+    courtTypeName: caseTypes[type],
+  })
+
+  const defendantNationalIdText = defendantNoNationalId
+    ? defendantNationalId
+    : formatNationalId(defendantNationalId || 'NONE')
+  const defendantText = formatMessage(cf.defendant, {
+    defendantName: defendantName || 'NONE',
+    defendantNationalId: defendantNationalIdText,
+    defendantNoNationalId: defendantNoNationalId ? 'NONE' : 'SOME',
+  })
+  const defenderAssignedText = formatMessage(cf.defenderAssigned)
+
+  return formatMessage(cf.body, {
+    revokedText,
+    defendantText,
+    defenderAssignedText,
+  })
 }
 
 export function stripHtmlTags(html: string): string {
