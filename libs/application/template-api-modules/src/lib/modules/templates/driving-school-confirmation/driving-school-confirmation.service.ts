@@ -14,33 +14,25 @@ export class DrivingSchoolConfirmationService {
     application: { answers, externalData },
     auth,
   }: TemplateApiModuleActionProps) {
-    console.log('DRIVING SCHOOL SERVICE')
-    console.log(answers)
     // TODO: Confirmation email
     const nationalId = getValueViaPath<string>(answers, 'nationalId')
     const email = getValueViaPath<string>(answers, 'email')
 
+    const studentBookId = getValueViaPath<string>(answers, 'studentBookId')
     const confirmation = getValueViaPath<{ date: string; school: string }>(
       answers,
       'confirmation',
     )
-    if (!confirmation) {
+    if (!confirmation || !studentBookId) {
       throw new Error(`Missing date and school`)
     }
     const schoolNationlId = (externalData.employee.data as DrivingSchool)
       .nationalId
-    console.log({
-      bookId: '398D2BEA-0ABE-49CF-88EE-171E83F058DE',
-      schoolTypeId: parseInt(confirmation?.school),
-      schoolNationlId: schoolNationlId,
-      schoolEmployeeNationalId: auth.nationalId,
-      createdOn: confirmation?.date,
-      comments: '',
-    })
+
     try {
       const result = await this.drivingLicenseBookService.createDrivingSchoolTestResult(
         {
-          bookId: '398D2BEA-0ABE-49CF-88EE-171E83F058DE',
+          bookId: studentBookId,
           schoolTypeId: parseInt(confirmation?.school),
           schoolNationlId: schoolNationlId,
           schoolEmployeeNationalId: auth.nationalId,
@@ -55,7 +47,7 @@ export class DrivingSchoolConfirmationService {
 
       return { success: true, id: result.id }
     } catch (e) {
-        throw new Error(`Application submission failed`)
+      throw new Error(`Application submission failed`)
     }
   }
 }
