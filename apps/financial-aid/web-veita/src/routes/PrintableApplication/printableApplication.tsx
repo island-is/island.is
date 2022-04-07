@@ -31,8 +31,6 @@ const PrintableApplication = () => {
   })
   const { municipality } = useContext(AdminContext)
 
-  const { municipality } = useContext(AdminContext)
-
   const [application, setApplication] = useState<Application>()
   const [
     applicationMunicipality,
