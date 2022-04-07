@@ -17,20 +17,20 @@ import {
 import { useMutation } from '@apollo/client'
 import { UpdateMunicipalityMutation } from '@island.is/financial-aid-web/veita/graphql'
 import omit from 'lodash/omit'
-import { useMunicipality } from '@island.is/financial-aid/shared/components'
 import MunicipalityAdminInput from './MunicipalityNumberInput/MunicipalityNumberInput'
+import { useMunicipalities } from '@island.is/financial-aid-web/veita/src/utils/useMunicipalities'
 
 interface Props {
-  municipality: Municipality
+  currentMunicipality: Municipality
 }
 
-const MunicipalityAdminSettings = ({ municipality }: Props) => {
-  const [state, setState] = useState(municipality)
+const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
+  const [state, setState] = useState(currentMunicipality)
   const [hasAidError, setHasAidError] = useState(false)
   const [updateMunicipalityMutation, { loading }] = useMutation(
     UpdateMunicipalityMutation,
   )
-  const { setMunicipality } = useMunicipality()
+  const { setMunicipality } = useMunicipalities()
 
   const INDIVIDUAL = 'individual'
   const COHABITATION = 'cohabitation'
@@ -74,7 +74,7 @@ const MunicipalityAdminSettings = ({ municipality }: Props) => {
           homepage: state.homepage,
           rulesHomepage: state.rulesHomepage,
           email: state.email,
-          municipalityId: municipality.municipalityId,
+          municipalityId: currentMunicipality.municipalityId,
         },
       },
     })
@@ -95,7 +95,7 @@ const MunicipalityAdminSettings = ({ municipality }: Props) => {
           Sveitarfélagsstillingar
         </Text>
         <Text as="h3" variant="h3" color="dark300">
-          Reglur um fjárhagsaðstoð {municipality.name}
+          Reglur um fjárhagsaðstoð {currentMunicipality.name}
         </Text>
       </Box>
 

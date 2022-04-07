@@ -58,7 +58,11 @@ class BackendAPI extends RESTDataSource {
   }
 
   getMunicipality(id: string): Promise<Municipality> {
-    return this.get(`municipality/${id}`)
+    return this.get(`municipality/id/${id}`)
+  }
+
+  getMunicipalitiesById(): Promise<Municipality[]> {
+    return this.get('municipality/ids')
   }
 
   getMunicipalities(): Promise<Municipality[]> {

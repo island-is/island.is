@@ -5,7 +5,7 @@ import { Injectable } from '@nestjs/common'
 import { CourtClientService } from '@island.is/judicial-system/court-client'
 import type { CaseType, User } from '@island.is/judicial-system/types'
 
-import { now } from '../../factories'
+import { nowFactory } from '../../factories'
 import { EventService } from '../event'
 
 type SubTypes = { [c in CaseType]: string | [string, string] }
@@ -73,14 +73,20 @@ export class CourtService {
     caseId: string,
     courtId: string,
     courtCaseNumber: string,
+    fileName: string,
     content: Buffer,
   ): Promise<string> {
-    return this.uploadStream(courtId, 'Krafa.pdf', 'application/pdf', content)
+    return this.uploadStream(
+      courtId,
+      `${fileName}.pdf`,
+      'application/pdf',
+      content,
+    )
       .then((streamId) =>
         this.courtClientService.createDocument(courtId, {
           caseNumber: courtCaseNumber,
-          subject: 'Krafa',
-          fileName: 'Krafa.pdf',
+          subject: fileName,
+          fileName: `${fileName}.pdf`,
           streamID: streamId,
           caseFolder: 'Krafa og greinargerð',
         }),
@@ -241,7 +247,7 @@ export class CourtService {
         caseType: 'R - Rannsóknarmál',
         subtype: subType,
         status: 'Skráð',
-        receivalDate: formatISO(now(), { representation: 'date' }),
+        receivalDate: formatISO(nowFactory(), { representation: 'date' }),
         basedOn: 'Rannsóknarhagsmunir',
         sourceNumber: policeCaseNumber,
       })
