@@ -9,7 +9,7 @@ import {
   UpdateMunicipalityDto,
   CreateMunicipalityDto,
 } from './dto'
-import { Sequelize } from 'sequelize'
+import { Op, Sequelize } from 'sequelize'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
@@ -52,6 +52,47 @@ export class MunicipalityService {
         },
       ],
     })
+  }
+
+  async findByMunicipalityIds(
+    staffNationalId: string,
+  ): Promise<MunicipalityModel[]> {
+    const currentStaffMuncipalities = await this.staffService.findByNationalId(
+      staffNationalId,
+    )
+    if (currentStaffMuncipalities.municipalityIds) {
+      return this.municipalityModel.findAll({
+        where: {
+          municipalityId: {
+            [Op.in]: currentStaffMuncipalities.municipalityIds,
+          },
+        },
+        order: ['name'],
+        include: [
+          {
+            model: AidModel,
+            as: 'individualAid',
+            where: {
+              municipalityId: {
+                [Op.in]: currentStaffMuncipalities.municipalityIds,
+              },
+              type: AidType.INDIVIDUAL,
+            },
+          },
+          {
+            model: AidModel,
+            as: 'cohabitationAid',
+            where: {
+              municipalityId: {
+                [Op.in]: currentStaffMuncipalities.municipalityIds,
+              },
+              type: AidType.COHABITATION,
+            },
+          },
+        ],
+      })
+    }
+    return []
   }
 
   private findAidTypeId = (obj: AidModel[], type: AidType) => {
@@ -106,7 +147,8 @@ export class MunicipalityService {
 
   async updateMunicipality(
     municipality: UpdateMunicipalityDto,
-  ): Promise<MunicipalityModel> {
+    currentUser: Staff,
+  ): Promise<MunicipalityModel[]> {
     try {
       await this.sequelize.transaction((t) => {
         return Promise.all([
@@ -130,8 +172,7 @@ export class MunicipalityService {
       this.logger.error('Error while updating municipality')
       throw new NotFoundException(`Error while updating municipality`)
     }
-
-    return await this.findByMunicipalityId(municipality.municipalityId)
+    return await this.findByMunicipalityIds(currentUser.nationalId)
   }
 
   async getAll(): Promise<MunicipalityModel[]> {

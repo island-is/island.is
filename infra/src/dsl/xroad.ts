@@ -194,7 +194,6 @@ export const NationalRegistry = new XroadConf({
       staging: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1',
       prod: 'IS/GOV/6503760649/SKRA-Protected/Einstaklingar-v1',
     },
-    // Only cache on dev for now.
     XROAD_NATIONAL_REGISTRY_REDIS_NODES: {
       dev: json([
         'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
@@ -264,6 +263,17 @@ export const RskCompanyInfo = new XroadConf({
       dev: 'IS-DEV/GOV/10006/Skatturinn/ft-v1',
       staging: 'IS-TEST/GOV/5402696029/Skatturinn/ft-v1',
       prod: 'IS/GOV/5402696029/Skatturinn/ft-v1',
+    },
+    COMPANY_REGISTRY_REDIS_NODES: {
+      dev: json([
+        'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+      ]),
+      staging: json([
+        'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
+      ]),
+      prod: json([
+        'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
+      ]),
     },
   },
 })

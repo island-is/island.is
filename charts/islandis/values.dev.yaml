@@ -6,7 +6,7 @@ air-discount-scheme-api:
     CONTENTFUL_HOST: 'preview.contentful.com'
     ELASTIC_NODE: 'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
-    NODE_OPTIONS: '--max-old-space-size=208'
+    NODE_OPTIONS: '--max-old-space-size=464'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
   grantNamespacesEnabled: false
@@ -41,11 +41,11 @@ air-discount-scheme-api:
     min: 2
   resources:
     limits:
+      cpu: '400m'
+      memory: '512Mi'
+    requests:
       cpu: '200m'
       memory: '256Mi'
-    requests:
-      cpu: '100m'
-      memory: '128Mi'
   secrets:
     ADMINS: '/k8s/air-discount-scheme/api/ADMINS'
     AUTH_JWT_SECRET: '/k8s/air-discount-scheme/api/AUTH_JWT_SECRET'
@@ -217,6 +217,7 @@ api:
   env:
     APPLICATION_SYSTEM_API_URL: 'http://web-application-system-api.application-system.svc.cluster.local'
     AUTH_PUBLIC_API_URL: 'https://identity-server.dev01.devland.is/api'
+    COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10006/Skatturinn/ft-v1'
     CONTACT_US_EMAIL: 's@kogk.is'
     CONTENTFUL_HOST: 'preview.contentful.com'
@@ -466,9 +467,9 @@ application-system-api:
   podSecurityContext:
     fsGroup: 65534
   replicaCount:
-    default: 2
-    max: 3
-    min: 2
+    default: 10
+    max: 60
+    min: 10
   resources:
     limits:
       cpu: '400m'
@@ -1227,9 +1228,9 @@ service-portal:
             - '/minarsidur'
   namespace: 'service-portal'
   replicaCount:
-    default: 2
-    max: 20
-    min: 2
+    default: 5
+    max: 30
+    min: 5
   resources:
     limits:
       cpu: '400m'
@@ -1683,9 +1684,9 @@ web:
             - '/'
   namespace: 'islandis'
   replicaCount:
-    default: 2
-    max: 3
-    min: 2
+    default: 10
+    max: 50
+    min: 10
   resources:
     limits:
       cpu: '400m'

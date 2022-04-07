@@ -50,6 +50,11 @@ export const serviceSetup = (services: {
       limits: { cpu: '400m', memory: '512Mi' },
       requests: { cpu: '200m', memory: '256Mi' },
     })
+    .replicaCount({
+      default: 10,
+      max: 50,
+      min: 10,
+    })
     .extraAttributes({
       dev: {},
       staging: { basicAuth: '/k8s/web/basic_auth' },

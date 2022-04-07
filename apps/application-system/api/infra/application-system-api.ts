@@ -207,6 +207,11 @@ export const serviceSetup = (services: {
       limits: { cpu: '400m', memory: '1024Mi' },
       requests: { cpu: '100m', memory: '512Mi' },
     })
+    .replicaCount({
+      default: 10,
+      max: 60,
+      min: 10,
+    })
     .ingress({
       primary: {
         host: {

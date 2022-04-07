@@ -18,6 +18,7 @@ import { AppModule } from '../src/app/app.module'
 class MockEinstaklingarApi {
   withMiddleware = () => this
   einstaklingarGetEinstaklingur = jest.fn().mockResolvedValue({})
+  einstaklingarGetEinstaklingurRaw = jest.fn().mockResolvedValue({})
   einstaklingarGetForsja = jest.fn().mockResolvedValue([])
 }
 
