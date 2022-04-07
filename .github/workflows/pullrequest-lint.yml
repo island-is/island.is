@@ -13,7 +13,7 @@ defaults:
 
 jobs:
   lint:
-    runs-on: ec2-runners
+    runs-on: kubernetes-runner
     
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest

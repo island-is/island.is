@@ -14,7 +14,7 @@ env:
 
 jobs:
   prepare:
-    runs-on: ec2-runners
+    runs-on: kubernetes-runner
     
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
@@ -204,7 +204,7 @@ jobs:
     needs:
       - prepare
     if: needs.prepare.outputs.TEST_CHUNKS
-    runs-on: ec2-runners
+    runs-on: kubernetes-runner
     
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
@@ -260,7 +260,7 @@ jobs:
     needs:
       - prepare
     if: needs.prepare.outputs.E2E_CHUNKS
-    runs-on: ec2-runners
+    runs-on: kubernetes-runner
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 25
@@ -322,7 +322,7 @@ jobs:
   linting-workspace:
     needs:
       - prepare
-    runs-on: ec2-runners
+    runs-on: kubernetes-runner
     
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
@@ -367,7 +367,7 @@ jobs:
     
     needs:
       - prepare
-    runs-on: ec2-runners
+    runs-on: kubernetes-runner
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
       options: --cap-add=NET_ADMIN
@@ -391,7 +391,7 @@ jobs:
   linting:
     needs:
       - prepare
-    runs-on: ec2-runners
+    runs-on: kubernetes-runner
     
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
@@ -442,7 +442,7 @@ jobs:
   build:
     needs:
       - prepare
-    runs-on: ec2-runners
+    runs-on: kubernetes-runner
     
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
@@ -489,7 +489,7 @@ jobs:
         run: ./scripts/ci/run-in-parallel-native.sh build
 
   success:
-    runs-on: ec2-runners
+    runs-on: kubernetes-runner
     
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
