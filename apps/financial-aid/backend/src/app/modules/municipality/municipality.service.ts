@@ -127,11 +127,11 @@ export class MunicipalityService {
         return await this.staffService
           .createStaff(
             admin,
+            currentUser,
             {
               municipalityId: municipality.municipalityId,
               municipalityName: municipality.name,
             },
-            currentUser,
             t,
             true,
           )

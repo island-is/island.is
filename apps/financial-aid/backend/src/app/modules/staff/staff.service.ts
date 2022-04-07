@@ -134,8 +134,8 @@ export class StaffService {
 
   async createStaff(
     input: CreateStaffDto,
-    municipality: CreateStaffMunicipality,
     user: Staff,
+    municipality?: CreateStaffMunicipality,
     t?: Transaction,
     isFirstStaffForMunicipality: boolean = false,
   ): Promise<StaffModel> {
@@ -144,7 +144,9 @@ export class StaffService {
         {
           nationalId: input.nationalId,
           name: input.name,
-          municipalityIds: [municipality.municipalityId],
+          municipalityIds: isFirstStaffForMunicipality
+            ? [municipality.municipalityId]
+            : input.municipalityId,
           email: input.email,
           roles: input.roles,
           active: true,

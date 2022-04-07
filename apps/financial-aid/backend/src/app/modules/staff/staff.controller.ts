@@ -105,16 +105,7 @@ export class StaffController {
     @CurrentStaff() staff: Staff,
     @Body() createStaffInput: CreateStaffDto,
   ): Promise<StaffModel> {
-    //TODO
-    return await this.staffService.createStaff(
-      createStaffInput,
-      {
-        municipalityId:
-          createStaffInput.municipalityId ?? staff.municipalityIds[0],
-        municipalityName: createStaffInput.municipalityName ?? '',
-      },
-      staff,
-    )
+    return await this.staffService.createStaff(createStaffInput, staff)
   }
 
   @StaffRolesRules(StaffRole.SUPERADMIN)
