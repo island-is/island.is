@@ -15,8 +15,6 @@ env:
 jobs:
   prepare:
     runs-on: kubernetes-runner
-    
-    
     timeout-minutes: 25
 
     env:
@@ -203,8 +201,6 @@ jobs:
       - prepare
     if: needs.prepare.outputs.TEST_CHUNKS
     runs-on: kubernetes-runner
-    
-    
     timeout-minutes: 25
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
@@ -257,8 +253,6 @@ jobs:
       - prepare
     if: needs.prepare.outputs.E2E_CHUNKS
     runs-on: kubernetes-runner
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 25
     env:
       AFFECTED_PROJECT: ${{ matrix.projects }}
@@ -319,8 +313,6 @@ jobs:
     needs:
       - prepare
     runs-on: kubernetes-runner
-    
-    
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v2
@@ -362,7 +354,6 @@ jobs:
     needs:
       - prepare
     runs-on: kubernetes-runner
-    
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v2
@@ -384,8 +375,6 @@ jobs:
     needs:
       - prepare
     runs-on: kubernetes-runner
-    
-    
     timeout-minutes: 25
     if: needs.prepare.outputs.LINT_CHUNKS
     env:
@@ -433,8 +422,6 @@ jobs:
     needs:
       - prepare
     runs-on: kubernetes-runner
-    
-    
     timeout-minutes: 25
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
@@ -478,8 +465,6 @@ jobs:
 
   success:
     runs-on: kubernetes-runner
-    
-    
     if: always()
     needs:
       - prepare
