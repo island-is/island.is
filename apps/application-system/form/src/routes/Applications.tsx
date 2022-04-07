@@ -13,7 +13,11 @@ import {
   Button,
   GridContainer,
 } from '@island.is/island-ui/core'
-import { coreMessages, getTypeFromSlug } from '@island.is/application/core'
+import {
+  Application,
+  coreMessages,
+  getTypeFromSlug,
+} from '@island.is/application/core'
 import { ApplicationList } from '@island.is/application/ui-components'
 import { ErrorShell } from '@island.is/application/ui-shell'
 import {
@@ -23,12 +27,21 @@ import {
 } from '@island.is/localization'
 
 import { ApplicationLoading } from '../components/ApplicationsLoading/ApplicationLoading'
+import { useDeleteApplication } from '../hooks/useDeleteApplication'
 
 export const Applications: FC = () => {
   const { slug } = useParams<{ slug: string }>()
   const history = useHistory()
   const { formatMessage } = useLocale()
   const type = getTypeFromSlug(slug)
+
+  const { deleteApplication, loading: deleteLoading } = useDeleteApplication()
+
+  // click handler for each application
+  const handleDeleteApplication = (applicationId: string) => {
+    deleteApplication(applicationId)
+    //refetch()
+  }
 
   useApplicationNamespaces(type)
 
@@ -110,6 +123,7 @@ export const Applications: FC = () => {
                 onClick={(applicationUrl) =>
                   history.push(`../${applicationUrl}`)
                 }
+                onDeleteApplication={handleDeleteApplication}
               />
             )}
 

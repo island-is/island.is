@@ -68,9 +68,14 @@ const DefaultData: Record<ApplicationStatus, DefaultStateData> = {
 interface Props {
   applications: Application[]
   onClick: (id: string) => void
+  onDeleteApplication: (id: string) => void
 }
 
-const ApplicationList = ({ applications, onClick }: Props) => {
+const ApplicationList = ({
+  applications,
+  onClick,
+  onDeleteApplication,
+}: Props) => {
   const { lang: locale, formatMessage } = useLocale()
   const formattedDate = locale === 'is' ? dateFormat.is : dateFormat.en
 
@@ -91,6 +96,7 @@ const ApplicationList = ({ applications, onClick }: Props) => {
           <ActionCard
             key={`${application.id}-${index}`}
             date={format(new Date(application.modified), formattedDate)}
+            eyebrow="TOtot"
             tag={{
               label: actionCard?.tag?.label
                 ? formatMessage(actionCard.tag.label)
@@ -111,12 +117,18 @@ const ApplicationList = ({ applications, onClick }: Props) => {
               label: 'delete',
               icon: undefined,
               visible: actionCard?.cta?.delete,
-              onClick: () => onClick(`${slug}/${application.id}`),
+              onClick: onDeleteApplication.bind(null, application.id),
             }}
             progressMeter={{
               active: false, // Boolean(application.progress), todo proper button
               progress: application.progress,
               variant: stateDefaultData.progress.variant,
+            }}
+            deleteButton={{
+              visible: actionCard?.cta?.delete,
+              onClick: onDeleteApplication.bind(null, application.id),
+              disabled: false,
+              icon: 'delete',
             }}
           />
         )

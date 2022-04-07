@@ -1069,29 +1069,26 @@ export class ApplicationController {
     description: 'The id of the application to delete.',
     allowEmptyValue: false,
   })
-  @UseInterceptors(ApplicationSerializer)
   async delete(
     @Param('id', new ParseUUIDPipe()) id: string,
     @CurrentUser() user: User,
   ) {
+    const { nationalId } = user
     const existingApplication = (await this.applicationAccessService.findOneByIdAndNationalId(
       id,
-      user.nationalId,
+      nationalId,
     )) as BaseApplication
+    console.log(existingApplication)
+    const canDelete = await this.applicationAccessService.canDeleteApplication(
+      existingApplication,
+      nationalId,
+    )
 
-    const templateId = existingApplication.typeId as ApplicationTypes
-    const template = await getApplicationTemplateByTypeId(templateId)
-    const helper = new ApplicationTemplateHelper(existingApplication, template)
-
-    const userRole = template.mapUserToRole(id, existingApplication) ?? ''
-    const role = helper.getRoleInState(userRole)
-
-    if (role?.delete) {
-      this.applicationService.delete(existingApplication.id)
-    } else {
+    if (!canDelete) {
       throw new ForbiddenException(
         'Users role does not have permission to delete this application in this state',
       )
     }
+    await this.applicationService.delete(existingApplication.id)
   }
 }
