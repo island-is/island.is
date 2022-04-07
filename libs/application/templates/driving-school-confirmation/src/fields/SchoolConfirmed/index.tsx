@@ -22,7 +22,10 @@ const SchoolConfirmed: FC<FieldBaseProps> = ({ application }) => {
     <GridContainer>
       <GridRow marginBottom={3}>
         <GridColumn span={'12/12'}>
-          <AlertMessage title="Skráning móttekin" type="success"></AlertMessage>
+          <AlertMessage
+            title={formatMessage(m.confirmationComplete)}
+            type="success"
+          ></AlertMessage>
         </GridColumn>
       </GridRow>
       <GridRow>
@@ -37,7 +40,7 @@ const SchoolConfirmed: FC<FieldBaseProps> = ({ application }) => {
           <Text variant="default">{nationalId}</Text>
         </GridColumn>
         <GridColumn span={['12/12', '4/12']} paddingBottom={[3, 0]}>
-          <Text variant="h4">{'Skráning'}</Text>
+          <Text variant="h4">{formatMessage(m.confirmation)}</Text>
           <Text variant="default">
             {'Ökuskóli ' + (answers.confirmation as any)?.school}
           </Text>

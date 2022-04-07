@@ -95,7 +95,7 @@ const ViewStudent: FC<FieldBaseProps> = ({ application }) => {
       ) : error ? (
         <AlertMessage
           type="error"
-          message="Enginn nemandi fannst. Reyndu aftur"
+          message={formatMessage(m.noStudentFoundMessage)}
         />
       ) : (
         <Skeleton />
