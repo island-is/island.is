@@ -68,6 +68,7 @@ export const Applications: FC = () => {
     })
   }
 
+  // TODO: Change when IDS has locale
   const [
     getUserProfile,
     { data: userProfData, loading: userProfileLoading },
@@ -91,7 +92,7 @@ export const Applications: FC = () => {
     if (type && data && isEmpty(data.applicationApplications)) {
       createApplication()
     }
-  }, [type, data, changeLanguage])
+  }, [type, data])
 
   if (loading || userProfileLoading) {
     return <ApplicationLoading />

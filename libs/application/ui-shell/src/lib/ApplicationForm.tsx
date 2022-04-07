@@ -131,10 +131,9 @@ const ShellWrapper: FC<{
     dataSchema,
     formatMessage,
     featureFlagClient,
-    changeLanguage,
-    lang,
   ])
 
+  // TODO: Change when IDS has locale
   const [
     getUserProfile,
     { data: userProfData, loading: userProfileLoading },
