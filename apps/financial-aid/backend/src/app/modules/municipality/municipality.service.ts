@@ -102,7 +102,6 @@ export class MunicipalityService {
   async create(
     municipality: CreateMunicipalityDto,
     admin: CreateStaffDto,
-    currentUser: Staff,
   ): Promise<MunicipalityModel> {
     return await this.sequelize.transaction(async (t) => {
       return await Promise.all(
@@ -132,7 +131,6 @@ export class MunicipalityService {
               municipalityId: municipality.municipalityId,
               municipalityName: municipality.name,
             },
-            currentUser,
             t,
             true,
           )

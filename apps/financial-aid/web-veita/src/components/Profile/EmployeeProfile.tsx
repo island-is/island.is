@@ -216,7 +216,11 @@ const EmployeeProfile = ({ user }: EmployeeProfileProps) => {
           >
             <Box display="block" marginTop={3} marginBottom={[3, 3, 5]}>
               <MultiSelection
-                selectionUpdate={(value: string, type: 'add' | 'remove') => {
+                selectionUpdate={(
+                  value: string,
+                  label: string,
+                  type: 'add' | 'remove',
+                ) => {
                   if (type === 'add') {
                     setState({
                       ...state,
