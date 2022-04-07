@@ -62,10 +62,11 @@ export const mapHtml = (html: Document | TopLevelBlock, id: string): Html => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       if ('organizationPage' in (node.data.target as any)?.fields) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const slug = (node.data.target as any)?.fields?.organizationPage?.fields
-          ?.slug
+        const slug = (node?.data?.target as any)?.fields?.organizationPage
+          ?.fields?.slug
         removeEntryHyperlinkFields(node)
-        node.data.target.fields.organizationPage = { fields: { slug: slug } }
+        if (slug)
+          node.data.target.fields.organizationPage = { fields: { slug: slug } }
       } else {
         removeEntryHyperlinkFields(node)
       }
