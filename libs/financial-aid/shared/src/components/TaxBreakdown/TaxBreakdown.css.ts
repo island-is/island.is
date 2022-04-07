@@ -30,7 +30,7 @@ export const tableHeaders = style({
       display: 'table-row',
     },
     [`print`]: {
-      display: ' table-row',
+      display: 'none',
     },
   },
 })
