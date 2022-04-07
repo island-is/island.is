@@ -105,9 +105,10 @@ export class MunicipalityController {
     description: 'Updates municipality',
   })
   async updateMunicipality(
+    @CurrentUser() staff: Staff,
     @Body() input: UpdateMunicipalityDto,
-  ): Promise<MunicipalityModel> {
-    return await this.municipalityService.updateMunicipality(input)
+  ): Promise<MunicipalityModel[]> {
+    return await this.municipalityService.updateMunicipality(input, staff)
   }
 
   @Put('activity/:id')

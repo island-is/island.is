@@ -81,7 +81,7 @@ class BackendAPI extends RESTDataSource {
 
   updateMunicipality(
     updateMunicipality: UpdateMunicipalityInput,
-  ): Promise<Municipality> {
+  ): Promise<Municipality[]> {
     return this.put('municipality', updateMunicipality)
   }
 

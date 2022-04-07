@@ -41,7 +41,7 @@ const MunicipalityQuery = gql`
 export const useMunicipalities = () => {
   const storageKey = 'currentMunicipalities'
 
-  const [municipality, setScopedMunicipality] = useState<Municipality[]>()
+  const [municipality, setScopedMunicipality] = useState<Municipality[]>([])
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<Error | undefined>(undefined)

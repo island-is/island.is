@@ -13,6 +13,7 @@ import { FieldBaseProps } from '@island.is/application/core'
 import { useQuery } from '@apollo/client'
 import { ViewSingleStudentQuery } from '../../graphql/queries'
 import { useFormContext } from 'react-hook-form'
+import kennitala from 'kennitala'
 
 const ViewStudent: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
@@ -27,17 +28,19 @@ const ViewStudent: FC<FieldBaseProps> = ({ application }) => {
     notifyOnNetworkStatusChange: true,
   })
 
-  const student = data?.drivingLicenseBookStudent
-
   useEffect(() => {
     if (data) {
       setValue('studentBookTypes', student.book?.drivingSchoolExams)
+      setValue('studentName', student.name)
+      setValue('studentBookId', student.book?.id)
     }
 
-    if (error) {
+    if (loading) {
       setValue('studentBookTypes', undefined)
     }
-  }, [data, error])
+  }, [data, loading])
+
+  const student = data?.drivingLicenseBookStudent
 
   return (
     <GridContainer>
@@ -54,7 +57,9 @@ const ViewStudent: FC<FieldBaseProps> = ({ application }) => {
               <Text variant="h4">
                 {formatMessage(m.confirmationSectionNationalId)}
               </Text>
-              <Text variant="default">{student.nationalId}</Text>
+              <Text variant="default">
+                {kennitala.format(student.nationalId)}
+              </Text>
             </GridColumn>
             <GridColumn span={['12/12', '4/12']} paddingBottom={[3, 0]}>
               <Text variant="h4">
@@ -90,7 +95,7 @@ const ViewStudent: FC<FieldBaseProps> = ({ application }) => {
       ) : error ? (
         <AlertMessage
           type="error"
-          message="Enginn nemandi fannst. Reyndu aftur"
+          message={formatMessage(m.noStudentFoundMessage)}
         />
       ) : (
         <Skeleton />

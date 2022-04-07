@@ -98,4 +98,21 @@ export const m = defineMessages({
     defaultMessage: 'Veldu skóla',
     description: 'Select school title',
   },
+  confirmationComplete: {
+    id: 'dsc.application:confirmationComplete',
+    defaultMessage: 'Skráning móttekin',
+    description: 'Confirmation complete alert message',
+  },
+  confirmation: {
+    id: 'dsc.application:confirmation',
+    defaultMessage: 'Skráning',
+    description: 'Title for school thats been confirmed',
+  },
+
+  /* No student was found */
+  noStudentFoundMessage: {
+    id: 'dsc.application:noStudentFoundMessage',
+    defaultMessage: 'Enginn nemandi fannst. Reyndu aftur',
+    description: 'No student found alert message',
+  },
 })
