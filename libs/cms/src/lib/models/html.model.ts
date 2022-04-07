@@ -10,6 +10,7 @@ import {
 import graphqlTypeJson from 'graphql-type-json'
 import { RichTextContent } from 'contentful'
 import { SliceUnion } from '../unions/slice.union'
+import { removeEntryHyperlinkFields } from '../search/importers/utils'
 
 type RichText = Block | Inline | Text
 
@@ -54,6 +55,22 @@ export class Html {
 
 export const mapHtml = (html: Document | TopLevelBlock, id: string): Html => {
   const newHtml = sanitizeData(html)
+
+  // Remove all unnecessary fields from entry-hyperlinks
+  newHtml.content.forEach((node) => {
+    if (node.nodeType === 'entry-hyperlink') {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      if ('organizationPage' in (node.data.target as any)?.fields) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const slug = (node.data.target as any)?.fields?.organizationPage?.fields
+          ?.slug
+        removeEntryHyperlinkFields(node)
+        node.data.target.fields.organizationPage = { fields: { slug: slug } }
+      } else {
+        removeEntryHyperlinkFields(node)
+      }
+    }
+  })
 
   switch (newHtml.nodeType) {
     case BLOCKS.DOCUMENT:
