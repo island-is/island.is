@@ -24,5 +24,9 @@ export class CreateStaffInput implements CreateStaff {
 
   @Allow()
   @Field({ nullable: true })
-  readonly municipalityId?: string
+  readonly municipalityName?: string
+
+  @Allow()
+  @Field(() => [String], { nullable: true })
+  readonly municipalityIds?: string[]
 }

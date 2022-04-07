@@ -25,7 +25,12 @@ export class CreateStaffDto {
   readonly roles!: StaffRole[]
 
   @IsOptional()
+  @IsArray()
+  @ApiProperty()
+  readonly municipalityIds: string[]
+
+  @IsOptional()
   @IsString()
   @ApiProperty()
-  readonly municipalityId: string
+  readonly municipalityName: string
 }

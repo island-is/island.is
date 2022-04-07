@@ -40,13 +40,12 @@ describe('StaffController - createStaff', () => {
   })
 
   describe('database query', () => {
-    const id = uuid()
     const input: CreateStaffDto = {
       name: 'Im a test',
       nationalId: '0000000000',
       email: 'test@test.test',
       roles: [StaffRole.EMPLOYEE],
-      municipalityId: '10',
+      municipalityIds: ['10'],
       municipalityName: 'Island',
     }
     const staff: Staff = {
@@ -71,7 +70,7 @@ describe('StaffController - createStaff', () => {
         {
           nationalId: input.nationalId,
           name: input.name,
-          municipalityIds: [input.municipalityId],
+          municipalityIds: input.municipalityIds,
           email: input.email,
           roles: input.roles,
           active: true,
@@ -89,12 +88,11 @@ describe('StaffController - createStaff', () => {
       nationalId: '0000000000',
       email: 'test@test.test',
       roles: [StaffRole.EMPLOYEE],
-      municipalityId: undefined,
+      municipalityIds: ['10'],
       municipalityName: undefined,
     }
     const staff: Staff = {
       municipalityIds: ['10'],
-      municipalityName: 'Here',
       id: '',
       nationalId: '',
       name: '',
@@ -132,7 +130,7 @@ describe('StaffController - createStaff', () => {
       nationalId: '0000000000',
       email: 'test@test.test',
       roles: [StaffRole.EMPLOYEE],
-      municipalityId: '10',
+      municipalityIds: ['10'],
       municipalityName: 'A place',
     }
     const staff: Staff = {
@@ -164,7 +162,7 @@ describe('StaffController - createStaff', () => {
       nationalId: '0000000000',
       email: 'test@test.test',
       roles: [StaffRole.EMPLOYEE],
-      municipalityId: '',
+      municipalityIds: [],
       municipalityName: '',
     }
     const staff: Staff = {

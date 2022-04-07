@@ -362,7 +362,8 @@ export interface CreateStaff {
   email: string
   nationalId: string
   roles: StaffRole[]
-  municipalityId?: string
+  municipalityName?: string
+  municipalityIds?: string[]
 }
 
 export interface CreateStaffMunicipality {
