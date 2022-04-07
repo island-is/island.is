@@ -162,6 +162,7 @@ export interface Municipality {
   rulesHomepage?: string
   numberOfUsers?: number
   adminUsers?: Staff[]
+  allAdminUsers?: Staff[]
 }
 
 export interface UpdateMunicipalityActivity {

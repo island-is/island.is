@@ -20,6 +20,7 @@ import {
   TextTableItem,
   ActivationButtonTableItem,
   NewUserModal,
+  MultiSelectionAdmin,
 } from '@island.is/financial-aid-web/veita/src/components'
 import { useStaff } from '@island.is/financial-aid-web/veita/src/utils/useStaff'
 import { useLazyQuery } from '@apollo/client'
@@ -203,6 +204,10 @@ const MunicipalityProfile = ({
             <Text as="h3" variant="h3" color="dark300">
               Stjórnendur
             </Text>
+          </Box>
+
+          <Box>
+            <MultiSelectionAdmin admins={municipality.allAdminUsers} />
           </Box>
 
           <div className={`${tableStyles.smallTableWrapper} hideScrollBar`}>

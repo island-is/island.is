@@ -23,7 +23,7 @@ type Props<T> = {
   state: CreateUpdateStaff<T>
 }
 
-const MultiSelection = <T extends unknown>({
+const MultiSelectionMunicipality = <T extends unknown>({
   selectionUpdate,
   state,
 }: Props<T>) => {
@@ -83,4 +83,4 @@ const MultiSelection = <T extends unknown>({
   )
 }
 
-export default MultiSelection
+export default MultiSelectionMunicipality

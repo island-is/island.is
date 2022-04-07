@@ -461,10 +461,8 @@ export const MunicipalityQuery = gql`
       }
       allAdminUsers {
         name
-        nationalId
-        email
-        active
         id
+        municipalityIds
       }
       individualAid {
         ownPlace
