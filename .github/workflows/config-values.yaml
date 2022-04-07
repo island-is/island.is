@@ -24,9 +24,7 @@ env:
 jobs:
   prepare:
     runs-on: ec2-runner
-    defaults:
-      run:
-        shell: bash
+    
     outputs:
       ENVS: ${{ steps.select_envs.outputs.ENVS }}
     steps:
@@ -44,9 +42,7 @@ jobs:
 
   helm-values-validation:
     runs-on: ec2-runner
-    defaults:
-      run:
-        shell: bash
+    
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v2
@@ -81,9 +77,7 @@ jobs:
       - prepare
       - helm-values-validation # waiting on this job so the cache would be prepared
     runs-on: ec2-runner
-    defaults:
-      run:
-        shell: bash
+    
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.ENVS) }}

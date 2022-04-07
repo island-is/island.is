@@ -28,9 +28,7 @@ jobs:
   pre-checks:
     name: Check if job should run
     runs-on: ec2-runners
-    defaults:
-      run:
-        shell: bash
+    
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
       options: --cap-add=NET_ADMIN
@@ -109,9 +107,7 @@ jobs:
           echo "::set-output name=PRE_CHECK::push"
 
   prepare:
-    defaults:
-      run:
-        shell: bash
+    
     runs-on: ec2-runners
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
@@ -201,7 +197,7 @@ jobs:
           retention-days: 60
 
       - name: Generate docker image tag
-        shell: bash
+        
         id: docker_tags
         run: |
           export DOCKER_BRANCH_TAG=$(echo ${GIT_BRANCH:0:45} | tr "/." "-" )
@@ -265,7 +261,7 @@ jobs:
           key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-yarn
 
       - name: Check cache success
-        shell: bash
+        
         run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Building NodeJS dependencies
@@ -317,7 +313,7 @@ jobs:
           key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-docker-deps-1
 
       - name: Check cache success
-        shell: bash
+        
         run: '[[ "${{ steps.cache-deps.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Cache for NodeJS dependencies - Docker layer
@@ -329,7 +325,7 @@ jobs:
           key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-docker-output-base-1
 
       - name: Check cache success
-        shell: bash
+        
         run: '[[ "${{ steps.cache-deps-base.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Building NodeJS dependencies
@@ -348,7 +344,7 @@ jobs:
           key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
 
       - name: Check cache success
-        shell: bash
+        
         run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Generate schemas
@@ -397,9 +393,7 @@ jobs:
       - prepare
     if: needs.prepare.outputs.TEST_CHUNKS
     runs-on: ec2-runners
-    defaults:
-      run:
-        shell: bash
+    
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
       options: --cap-add=NET_ADMIN
@@ -424,7 +418,7 @@ jobs:
           key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
 
       - name: Check cache success
-        shell: bash
+        
         run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Cache for generated files
@@ -436,12 +430,12 @@ jobs:
           key: ${{ needs.prepare.outputs.generated-files-cache-key }}
 
       - name: Check cache success
-        shell: bash
+        
         run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Untar generated files
         run: tar zxvf generated_files.tar.gz
-        shell: bash
+        
 
       - uses: ./.github/actions/unit-test
         with:
@@ -455,9 +449,7 @@ jobs:
       - pre-checks
       - prepare
     runs-on: ec2-runners
-    defaults:
-      run:
-        shell: bash
+    
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
       options: --cap-add=NET_ADMIN
@@ -497,7 +489,7 @@ jobs:
           key: ${{ needs.prepare.outputs.generated-files-cache-key }}
 
       - name: Check cache success
-        shell: bash
+        
         run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Untar generated files
@@ -514,7 +506,7 @@ jobs:
           key: ${{ needs.prepare.outputs.node-modules-hash }}-docker-output-base-1
 
       - name: Check cache success
-        shell: bash
+        
         run: '[[ "${{ steps.cache-deps-base.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Cache for NodeJS dependencies - Docker layer
@@ -527,7 +519,7 @@ jobs:
           key: ${{ needs.prepare.outputs.node-modules-hash }}-docker-deps-1
 
       - name: Check cache success
-        shell: bash
+        
         run: '[[ "${{ steps.cache-deps.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Docker login to ECR repo
@@ -564,9 +556,7 @@ jobs:
       - pre-checks
     if: needs.prepare.outputs.IMAGES && needs.pre-checks.outputs.PRE_CHECK != 'push'
     runs-on: ec2-runners
-    defaults:
-      run:
-        shell: bash
+    
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
       options: --cap-add=NET_ADMIN
@@ -627,9 +617,7 @@ jobs:
 
   retag-unaffected:
     runs-on: ec2-runners
-    defaults:
-      run:
-        shell: bash
+    
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
       options: --cap-add=NET_ADMIN
@@ -663,9 +651,7 @@ jobs:
 
   deploy:
     runs-on: ec2-runners
-    defaults:
-      run:
-        shell: bash
+    
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
       options: --cap-add=NET_ADMIN
@@ -708,9 +694,7 @@ jobs:
 
   push-success:
     runs-on: ec2-runners
-    defaults:
-      run:
-        shell: bash
+    
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
       options: --cap-add=NET_ADMIN
@@ -736,9 +720,7 @@ jobs:
 
   failure-notification:
     runs-on: ec2-runners
-    defaults:
-      run:
-        shell: bash
+    
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
       options: --cap-add=NET_ADMIN

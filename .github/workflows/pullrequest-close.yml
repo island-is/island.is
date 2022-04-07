@@ -9,9 +9,7 @@ jobs:
   cleanup:
     name: Clean up feature deployment
     runs-on: ec2-runners
-    defaults:
-      run:
-        shell: bash
+    
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
       options: --cap-add=NET_ADMIN
@@ -22,7 +20,7 @@ jobs:
           echo "GIT_BRANCH=$GIT_BRANCH" >> $GITHUB_ENV
       - name: Generate deployment branch name
         id: git-branch-deploy
-        shell: bash
+        
         run: |
           GIT_BRANCH_DEPLOY=$GIT_BRANCH
           if [[ ! ("$GIT_BRANCH_DEPLOY" =~ "feature/") ]]; then
