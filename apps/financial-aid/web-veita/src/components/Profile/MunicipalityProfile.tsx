@@ -170,7 +170,7 @@ const MunicipalityProfile = ({
               variant="ghost"
               onClick={() => setIsModalVisible(true)}
             >
-              Nýr stjórnandi
+              Bæta við stjórnanda
             </Button>
           </Box>
 

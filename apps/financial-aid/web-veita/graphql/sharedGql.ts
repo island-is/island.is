@@ -459,6 +459,13 @@ export const MunicipalityQuery = gql`
         active
         id
       }
+      allAdminUsers {
+        name
+        nationalId
+        email
+        active
+        id
+      }
       individualAid {
         ownPlace
         registeredRenting
