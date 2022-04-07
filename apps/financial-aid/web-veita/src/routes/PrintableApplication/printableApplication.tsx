@@ -14,6 +14,7 @@ import {
   ApplicationProfile,
   PrintableFiles,
 } from '@island.is/financial-aid-web/veita/src/components'
+import { Box } from '@island.is/island-ui/core'
 
 interface ApplicantData {
   application: Application
@@ -47,9 +48,9 @@ const PrintableApplication = () => {
             isPrint={true}
           />
           {application?.files && (
-            <>
+            <Box marginTop={20}>
               <PrintableFiles applicationId={application.id} />
-            </>
+            </Box>
           )}
         </>
       ) : (

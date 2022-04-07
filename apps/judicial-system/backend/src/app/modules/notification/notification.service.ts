@@ -26,7 +26,7 @@ import {
 import { formatDate } from '@island.is/judicial-system/formatters'
 
 import { environment } from '../../../environments'
-import { now } from '../../factories'
+import { nowFactory } from '../../factories'
 import {
   formatProsecutorCourtDateEmailNotification,
   formatCourtHeadsUpSmsNotification,
@@ -241,7 +241,10 @@ export class NotificationService {
         theCase.id,
         theCase.courtId ?? '',
         theCase.courtCaseNumber ?? '',
-        `Krafa ${theCase.policeCaseNumber}-${format(now(), 'yyy-MM-DD-HH:mm')}`,
+        `Krafa ${theCase.policeCaseNumber}-${format(
+          nowFactory(),
+          'yyy-MM-DD-HH:mm',
+        )}`,
         requestPdf,
       )
     } catch (error) {

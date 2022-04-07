@@ -128,6 +128,29 @@ export class LocalRunner implements GitActionStatus {
       )
       if (workflowRuns.length > 10) break
     }
+    if (workflowRuns.length === 0) {
+      // Attempting to use the create event if no push events. Necessary for release branches.
+      const runsIteratorForCreateEvents = this.octokit.paginate.iterator(
+        'GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}/runs',
+        {
+          owner,
+          repo,
+          branch: branchName,
+          workflow_id: `${workflowId}.yml`,
+          event: 'create',
+          status: 'success',
+        },
+      )
+      for await (const workflow_runs of runsIteratorForCreateEvents) {
+        app(`Retrieved ${workflow_runs.data.length} workflow runs`)
+        workflowRuns.push(
+          ...workflow_runs.data.filter((run) =>
+            candidateCommits.includes(run.head_sha.slice(0, 7)),
+          ),
+        )
+        if (workflowRuns.length > 10) break
+      }
+    }
     app(`Got GHA information for ${workflowRuns.length} workflows`)
 
     let sortedWorkflowRuns = workflowRuns
