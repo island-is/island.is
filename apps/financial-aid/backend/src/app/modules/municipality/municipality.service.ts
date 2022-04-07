@@ -67,6 +67,7 @@ export class MunicipalityService {
             [Op.in]: currentStaffMuncipalities.municipalityIds,
           },
         },
+        order: ['name'],
         include: [
           {
             model: AidModel,

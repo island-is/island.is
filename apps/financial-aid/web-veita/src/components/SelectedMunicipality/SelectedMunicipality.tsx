@@ -24,7 +24,9 @@ export const SelectedMunicipality = ({
         value: currentMunicipality.municipalityId,
       }}
       options={municipality
-        .filter((el) => el !== currentMunicipality)
+        .filter(
+          (el) => el.municipalityId !== currentMunicipality.municipalityId,
+        )
         .map((el) => {
           return { label: el.name, value: el.municipalityId }
         })}
