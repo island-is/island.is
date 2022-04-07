@@ -156,7 +156,7 @@ describe('formatHeadsUpSmsNotification', () => {
 
   test('should format heads up notification with missing dates', () => {
     // Arrange
-    const type = CaseType.CUSTODY
+    const type = CaseType.TRAVEL_BAN
     const prosecutorName = 'Árni Ákærandi'
 
     // Act
@@ -169,14 +169,12 @@ describe('formatHeadsUpSmsNotification', () => {
     )
 
     // Assert
-    expect(res).toBe(
-      'Ný gæsluvarðhaldskrafa í vinnslu. Sækjandi: Árni Ákærandi.',
-    )
+    expect(res).toBe('Ný farbannskrafa í vinnslu. Sækjandi: Árni Ákærandi.')
   })
 
   test('should format heads up notification with missing prosecutor', () => {
     // Arrange
-    const type = CaseType.CUSTODY
+    const type = CaseType.ADMISSION_TO_FACILITY
 
     // Act
     const res = formatCourtHeadsUpSmsNotification(
@@ -189,7 +187,7 @@ describe('formatHeadsUpSmsNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Ný gæsluvarðhaldskrafa í vinnslu. Sækjandi: Ekki skráður.',
+      'Ný krafa um vistun á viðeigandi stofnun í vinnslu. Sækjandi: Ekki skráður.',
     )
   })
 
@@ -330,6 +328,26 @@ describe('formatReadyForCourtSmsNotification', () => {
     )
   })
 
+  test('should format ready for court SMS notification for admission to facility', () => {
+    // Arrange
+    const type = CaseType.ADMISSION_TO_FACILITY
+    const prosecutorName = 'Árni Ákærandi'
+    const court = 'Héraðsdómur Austurlands'
+
+    // Act
+    const res = formatCourtReadyForCourtSmsNotification(
+      formatMessage,
+      type,
+      prosecutorName,
+      court,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Krafa um vistun á viðeigandi stofnun tilbúin til afgreiðslu. Sækjandi: Árni Ákærandi. Dómstóll: Héraðsdómur Austurlands.',
+    )
+  })
+
   test('should format ready for court SMS notification for investigation', () => {
     // Arrange
     const type = CaseType.INTERNET_USAGE
@@ -445,6 +463,26 @@ describe('formatProsecutorReceivedByCourtSmsNotification', () => {
     // Assert
     expect(res).toBe(
       'Héraðsdómur Reykjavíkur hefur móttekið kröfu um farbann sem þú sendir og úthlutað málsnúmerinu R-898/2021. Sjá nánar á rettarvorslugatt.island.is.',
+    )
+  })
+
+  test('should format received by court notification for admission to facility', () => {
+    // Arranged
+    const type = CaseType.ADMISSION_TO_FACILITY
+    const court = 'Héraðsdómur Reykjavíkur'
+    const courtCaseNumber = 'R-898/2021'
+
+    // Act
+    const res = formatProsecutorReceivedByCourtSmsNotification(
+      formatMessage,
+      type,
+      court,
+      courtCaseNumber,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Héraðsdómur Reykjavíkur hefur móttekið kröfu um vistun á viðeigandi stofnun sem þú sendir og úthlutað málsnúmerinu R-898/2021. Sjá nánar á rettarvorslugatt.island.is.',
     )
   })
 
@@ -1171,6 +1209,28 @@ describe('formatCourtRevokedSmsNotification', () => {
     // Assert
     expect(res).toBe(
       'Farbannskrafa afturkölluð. Sækjandi: Kiddi Kærari. Fyrirtökutími: 20.12.2021, kl. 11:30.',
+    )
+  })
+
+  test('should format revoked sms for admission to facility', () => {
+    // Arrange
+    const type = CaseType.ADMISSION_TO_FACILITY
+    const prosecutorName = 'Kiddi Kærari'
+    const requestedCourtDate = new Date('2021-01-20T11:10')
+    const courtDate = new Date('2021-12-20T11:30')
+
+    // Act
+    const res = formatCourtRevokedSmsNotification(
+      formatMessage,
+      type,
+      prosecutorName,
+      requestedCourtDate,
+      courtDate,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Krafa um vistun á viðeigandi stofnun afturkölluð. Sækjandi: Kiddi Kærari. Fyrirtökutími: 20.12.2021, kl. 11:30.',
     )
   })
 })
