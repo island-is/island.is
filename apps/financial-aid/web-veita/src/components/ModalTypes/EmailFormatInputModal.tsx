@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { InputModal } from '@island.is/financial-aid-web/veita/src/components'
 import { Text, Box } from '@island.is/island-ui/core'
 import { ApplicationState } from '@island.is/financial-aid/shared/lib'
+
 import * as styles from './ModalTypes.css'
 
 interface Props {

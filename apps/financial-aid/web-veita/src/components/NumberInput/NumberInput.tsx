@@ -1,5 +1,5 @@
 import { Input } from '@island.is/island-ui/core'
-import React, { useState, useCallback, ChangeEvent } from 'react'
+import React, { useState, useCallback, ChangeEvent, useEffect } from 'react'
 
 interface Props {
   id: string
@@ -28,6 +28,12 @@ export const NumberInput = ({
   const formatNumber = (n?: string) =>
     n ? Number(n).toLocaleString('de-DE') : ''
   const [text, setText] = useState<string>(formatNumber(value))
+
+  useEffect(() => {
+    if (value) {
+      setText(formatNumber(value))
+    }
+  }, [value])
 
   const handleChange = useCallback(
     (ev: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
