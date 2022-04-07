@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useState } from 'react'
 import {
   Text,
   Box,
@@ -18,8 +18,8 @@ import { useMutation } from '@apollo/client'
 import { UpdateMunicipalityMutation } from '@island.is/financial-aid-web/veita/graphql'
 import omit from 'lodash/omit'
 import MunicipalityAdminInput from './MunicipalityNumberInput/MunicipalityNumberInput'
-import { useMunicipalities } from '@island.is/financial-aid-web/veita/src/utils/useMunicipalities'
 import { SelectedMunicipality } from '@island.is/financial-aid-web/veita/src/components'
+import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
 
 interface Props {
   currentMunicipality: Municipality
@@ -30,7 +30,7 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
   const [updateMunicipalityMutation, { loading }] = useMutation(
     UpdateMunicipalityMutation,
   )
-  const { setMunicipality } = useMunicipalities()
+  const { setMunicipality } = useContext(AdminContext)
 
   const INDIVIDUAL = 'individual'
   const COHABITATION = 'cohabitation'
@@ -79,8 +79,10 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
       },
     })
       .then((res) => {
-        setMunicipality(res.data.updateMunicipality)
-        toast.success('Það tókst að uppfæra sveitarfélagið')
+        if (setMunicipality) {
+          setMunicipality(res.data.updateMunicipality)
+          toast.success('Það tókst að uppfæra sveitarfélagið')
+        }
       })
       .catch(() => {
         toast.error(
@@ -212,7 +214,6 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
       ),
     },
   ]
-  console.log(state, Object.entries(state.cohabitationAid))
 
   return (
     <Box marginTop={[5, 10, 15]} marginBottom={[5, 10, 15]}>
@@ -228,6 +229,7 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
             marginBottom={[2, 2, 7]}
             className={``}
             style={{ animationDelay: index * 10 + 30 + 'ms' }}
+            key={`settings-${index}`}
           >
             <Text as="h3" variant="h3" marginBottom={[2, 2, 3]} color="dark300">
               {el.headline}
