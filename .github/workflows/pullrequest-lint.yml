@@ -15,9 +15,7 @@ jobs:
   lint:
     runs-on: kubernetes-runner
     
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-      options: --cap-add=NET_ADMIN
+    
     steps:
       - uses: amannn/action-semantic-pull-request@v4.2.0
         with:
