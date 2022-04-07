@@ -18,6 +18,7 @@ import {
   HomeCircumstances,
   FamilyStatus,
   getMonth,
+  Municipality,
 } from '@island.is/financial-aid/shared/lib'
 import { useApplicationState } from '../../utils/useApplicationState'
 import StateModalContainer from './StateModalContainer'
@@ -32,6 +33,7 @@ interface Props {
   homeCircumstances: HomeCircumstances
   familyStatus: FamilyStatus
   applicationCreated: string
+  applicationMunicipality: Municipality
 }
 
 const StateModal = ({
@@ -44,6 +46,7 @@ const StateModal = ({
   homeCircumstances,
   familyStatus,
   applicationCreated,
+  applicationMunicipality,
 }: Props) => {
   const [selected, setSelected] = useState<ApplicationState | undefined>()
 
@@ -166,6 +169,7 @@ const StateModal = ({
             errorMessage="Þú þarft að gera grein fyrir hvaða gögn vanti í umsóknina"
             prefixText="Til að klára umsóknina verður þú að senda okkur"
             postfixText="Þú getur kynnt þér nánar reglur um fjárhagsaðstoð."
+            muncipalityEmail={applicationMunicipality?.email}
           />
           <AcceptModal
             isModalVisable={selected === ApplicationState.APPROVED}
@@ -186,6 +190,7 @@ const StateModal = ({
             }}
             homeCircumstances={homeCircumstances}
             familyStatus={familyStatus}
+            applicationMunicipality={applicationMunicipality}
           />
 
           <EmailFormatInputModal
@@ -205,6 +210,7 @@ const StateModal = ({
               new Date(applicationCreated).getMonth(),
             )} hefur verið synjað`}
             postfixText="Þú getur kynnt þér nánar reglur um fjárhagsaðstoð."
+            muncipalityEmail={applicationMunicipality?.email}
           />
         </AnimateSharedLayout>
       </Box>

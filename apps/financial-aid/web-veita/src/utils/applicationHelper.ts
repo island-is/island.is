@@ -92,14 +92,18 @@ export const getNationalRegistryInfo = (application: Application) => {
       content: application.postalCode,
     },
     {
-      title: 'Maki',
-      content: application.spouseNationalId
-        ? formatNationalId(application.spouseNationalId)
-        : 'Enginn maki',
+      title: 'Sveitarfélag',
+      content: application.city,
     },
     {
       title: 'Ríkisfang',
       content: 'Ísland',
+    },
+    {
+      title: 'Maki',
+      content: application.spouseNationalId
+        ? formatNationalId(application.spouseNationalId)
+        : 'Enginn maki',
     },
     {
       title: 'Aldur',
