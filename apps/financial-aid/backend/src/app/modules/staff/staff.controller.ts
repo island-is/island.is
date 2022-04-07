@@ -102,10 +102,9 @@ export class StaffController {
     description: 'Creates staff',
   })
   async createStaff(
-    @CurrentStaff() staff: Staff,
     @Body() createStaffInput: CreateStaffDto,
   ): Promise<StaffModel> {
-    return await this.staffService.createStaff(createStaffInput, staff)
+    return await this.staffService.createStaff(createStaffInput)
   }
 
   @StaffRolesRules(StaffRole.SUPERADMIN)
