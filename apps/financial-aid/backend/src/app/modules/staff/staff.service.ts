@@ -148,7 +148,6 @@ export class StaffService {
           email: input.email,
           roles: input.roles,
           active: true,
-          municipalityName: municipality.municipalityName,
         },
         { transaction: t },
       )
@@ -158,7 +157,7 @@ export class StaffService {
 
     await this.sendEmail(
       input,
-      municipality.municipalityName,
+      municipality.municipalityName ?? '',
       user,
       isFirstStaffForMunicipality,
     )

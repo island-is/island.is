@@ -14,7 +14,6 @@ interface Props {
   setIsVisible: React.Dispatch<React.SetStateAction<boolean>>
   onStaffCreated: () => void
   predefinedRoles?: StaffRole[]
-  municipalityName?: string
 }
 
 interface newUsersModalState {
@@ -31,7 +30,6 @@ const NewUserModal = ({
   setIsVisible,
   onStaffCreated,
   predefinedRoles = [],
-  municipalityName,
 }: Props) => {
   const router = useRouter()
   const { municipality } = useContext(AdminContext)
@@ -77,7 +75,6 @@ const NewUserModal = ({
             email: state.staffEmail,
             nationalId: state.staffNationalId,
             roles: state.roles,
-            municipalityName,
             municipalityId:
               //TODO better check
               municipality[0]?.municipalityId || (router.query.id as string),

@@ -28,9 +28,4 @@ export class CreateStaffDto {
   @IsString()
   @ApiProperty()
   readonly municipalityId: string
-
-  @IsOptional()
-  @IsString()
-  @ApiProperty()
-  readonly municipalityName: string
 }
