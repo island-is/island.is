@@ -7,10 +7,10 @@ const schema = z.object({
   secret: z.string(),
   xroadPathV1: z.string(),
   xroadPathV2: z.string(),
-  // fetchOptions?: z.Partial<EnhancedFetchOptions>(),
+  // fetchOptions: TODO
 })
 
-export const drivingLicenseApiConfig = defineConfig({
+export const DrivingLicenseApiConfig = defineConfig({
   name: 'DrivingLicenseApi',
   schema,
   load(env) {
@@ -21,6 +21,7 @@ export const drivingLicenseApiConfig = defineConfig({
       secret: env.required(''),
       xroadPathV1: env.required(''),
       xroadPathV2: env.required(''),
+      // fetchOptions: TODO
     }
   },
 })
