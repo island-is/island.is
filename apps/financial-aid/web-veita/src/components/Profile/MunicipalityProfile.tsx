@@ -377,7 +377,6 @@ const MunicipalityProfile = ({
         }}
         onStaffCreated={refreshList}
         predefinedRoles={[StaffRole.ADMIN]}
-        municipalityName={municipality.name}
       />
       <ToastContainer />
     </Box>

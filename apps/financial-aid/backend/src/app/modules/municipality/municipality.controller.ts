@@ -19,7 +19,7 @@ import type { Staff } from '@island.is/financial-aid/shared/lib'
 import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import { StaffGuard } from '../../guards/staff.guard'
 import { StaffRolesRules } from '../../decorators/staffRole.decorator'
-import { CurrentStaff, CurrentUser } from '../../decorators'
+import { CurrentUser } from '../../decorators'
 import {
   MunicipalityActivityDto,
   UpdateMunicipalityDto,
@@ -72,7 +72,6 @@ export class MunicipalityController {
     description: 'Creates a new municipality',
   })
   create(
-    @CurrentUser() staff: Staff,
     @Body()
     input: {
       municipalityInput: CreateMunicipalityDto
@@ -82,7 +81,6 @@ export class MunicipalityController {
     return this.municipalityService.create(
       input.municipalityInput,
       input.adminInput,
-      staff,
     )
   }
 

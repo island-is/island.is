@@ -19,7 +19,7 @@ export type CreateUpdateStaff<T> = {
 export type selectionType = 'add' | 'remove'
 
 type Props<T> = {
-  selectionUpdate: (value: string, type: selectionType) => void
+  selectionUpdate: (value: string, label: string, type: selectionType) => void
   state: CreateUpdateStaff<T>
 }
 
@@ -46,7 +46,7 @@ const MultiSelection = <T extends unknown>({
               key={'muni-tags-' + index}
               className={styles.tags}
               onClick={() => {
-                selectionUpdate(muni.value, 'remove')
+                selectionUpdate(muni.value, muni.label, 'remove')
               }}
             >
               <Box display="flex" alignItems="center" padding={1}>
@@ -70,9 +70,9 @@ const MultiSelection = <T extends unknown>({
         options={mapMuniToOption(municipalityIds, false)}
         placeholder="Veldu tegund"
         onChange={(option: ValueType<ReactSelectOption>) => {
-          const { value } = option as ReactSelectOption
-          if (value && isString(value)) {
-            selectionUpdate(value, 'add')
+          const { value, label } = option as ReactSelectOption
+          if (value && isString(value) && label) {
+            selectionUpdate(value, label, 'add')
           }
         }}
         backgroundColor="blue"
