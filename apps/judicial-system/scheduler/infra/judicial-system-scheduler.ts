@@ -11,7 +11,7 @@ export const serviceSetup = (services: {
       TIME_TO_LIVE_MINUTES: '30',
     })
     .secrets({
-      SECRET_TOKEN: '/k8s/judicial-system/SECRET_TOKEN',
+      BACKEND_ACCESS_TOKEN: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN',
     })
     .replicaCount({ min: 1, max: 1, default: 1 })
     .command('node')

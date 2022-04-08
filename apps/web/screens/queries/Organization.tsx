@@ -63,6 +63,12 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
       slug
       title
       description
+      defaultHeaderImage {
+        url
+        contentType
+        width
+        height
+      }
       alertBanner {
         showAlertBanner
         bannerVariant
@@ -143,6 +149,8 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
       themeProperties {
         gradientStartColor
         gradientEndColor
+        backgroundColor
+        darkText
       }
       externalLinks {
         text

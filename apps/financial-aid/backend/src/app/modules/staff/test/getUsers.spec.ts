@@ -65,7 +65,6 @@ describe('StaffController - Get users', () => {
         municipalityId: municipalityId,
         roles: [StaffRole.ADMIN],
         active: true,
-        municipalityName: 'here',
       },
       {
         id: '2',
@@ -74,7 +73,6 @@ describe('StaffController - Get users', () => {
         municipalityId: municipalityId,
         roles: [StaffRole.ADMIN],
         active: true,
-        municipalityName: 'here',
       },
     ]
     let mockGetUsers: jest.Mock
