@@ -31,7 +31,7 @@ export const m = defineMessages({
   dataCollectionConfirmationRightsSubtitle: {
     id: 'dsc.application:dataCollectionConfirmationRightsSubtitle',
     defaultMessage:
-      'Við munum sækja skráningu þína frá Samgöngustofu til að athuga hvort þú hafi sannarlega réttindi til skráningar ökuskóla',
+      'Við munum sækja skráningu þína frá Samgöngustofu til að athuga hvort þú hafir sannarlega réttindi til skráningar ökuskóla',
     description: 'Data provider subtitle',
   },
 
@@ -107,6 +107,11 @@ export const m = defineMessages({
     id: 'dsc.application:confirmation',
     defaultMessage: 'Skráning',
     description: 'Title for school thats been confirmed',
+  },
+  school: {
+    id: 'dsc.application:school',
+    defaultMessage: 'Ökuskóli',
+    description: 'school',
   },
 
   /* No student was found */

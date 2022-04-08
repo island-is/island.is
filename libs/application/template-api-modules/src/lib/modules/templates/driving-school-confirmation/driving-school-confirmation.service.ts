@@ -15,8 +15,8 @@ export class DrivingSchoolConfirmationService {
     auth,
   }: TemplateApiModuleActionProps) {
     // TODO: Confirmation email
-    // const nationalId = getValueViaPath<string>(answers, 'nationalId')
-    // const email = getValueViaPath<string>(answers, 'email')
+    const nationalId = getValueViaPath<string>(answers, 'nationalId')
+    const email = getValueViaPath<string>(answers, 'email')
 
     const studentBookId = getValueViaPath<string>(answers, 'studentBookId')
     const confirmation = getValueViaPath<{ date: string; school: string }>(
