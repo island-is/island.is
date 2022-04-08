@@ -9,21 +9,6 @@ import { validate } from './validate'
 import * as formatters from './formatters'
 
 describe('Formatters utils', () => {
-  describe('Parse array', () => {
-    test('given a property name and an array of strings should parse correctly into JSON', () => {
-      // Arrange
-      const property = 'test'
-      const array = ['lorem', 'ipsum']
-
-      // Act
-      const parsedArray = formatters.parseArray(property, array)
-
-      // Assert
-      expect(parsedArray).not.toEqual(null)
-      expect(parsedArray).toEqual({ test: ['lorem', 'ipsum'] })
-    })
-  })
-
   describe('Parse time', () => {
     test('should return a valid date with time given a valid date and time', () => {
       // Arrange

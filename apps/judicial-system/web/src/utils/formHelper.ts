@@ -4,12 +4,7 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 import type { Case, UpdateCase } from '@island.is/judicial-system/types'
 
-import {
-  padTimeWithZero,
-  parseArray,
-  parseTime,
-  replaceTabs,
-} from './formatters'
+import { padTimeWithZero, parseTime, replaceTabs } from './formatters'
 import { validate, Validation } from './validate'
 
 export const removeTabsValidateAndSet = (
@@ -238,7 +233,7 @@ export const setCheckboxAndSendToServer = (
   })
 
   if (theCase.id !== '') {
-    updateCase(theCase.id, parseArray(field, checks))
+    updateCase(theCase.id, { [field]: checks })
   }
 }
 
