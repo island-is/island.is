@@ -45,13 +45,13 @@ const MultiSelectionAdmin = ({ admins, onUpdate }: Props) => {
     <Box display="block" marginBottom={3}>
       <Box marginBottom={3}>
         <Select
-          label="Stjórnendur"
+          label="Leita að stjórnanda"
           name="selectMunicipality"
           noOptionsMessage="Enginn valmöguleiki"
           options={admins.map((el) => {
             return { label: el.name, value: el.id }
           })}
-          placeholder="Leita að stjórnanda"
+          placeholder="Veldu stjórnanda"
           onChange={(option: ValueType<ReactSelectOption>) => {
             const { value } = option as ReactSelectOption
             setSelected(admins.find((el) => value === el.id))
