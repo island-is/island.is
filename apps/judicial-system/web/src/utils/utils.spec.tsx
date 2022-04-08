@@ -24,23 +24,6 @@ describe('Formatters utils', () => {
     })
   })
 
-  describe('Parse transition', () => {
-    test('given a last modified timestamp and a transition should parse correnctly into JSON', () => {
-      // Arrange
-      const modified = 'timestamp'
-      const transition = CaseTransition.SUBMIT
-
-      // Act
-      const parsedTransition = formatters.parseTransition(modified, transition)
-
-      // Assert
-      expect(parsedTransition).toEqual({
-        modified: 'timestamp',
-        transition: CaseTransition.SUBMIT,
-      })
-    })
-  })
-
   describe('Parse time', () => {
     test('should return a valid date with time given a valid date and time', () => {
       // Arrange

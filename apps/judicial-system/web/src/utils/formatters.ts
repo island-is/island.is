@@ -17,20 +17,6 @@ export const parseArray = (property: string, array: string[]) => {
   }
 }
 
-export const parseTransition = (
-  modified: string,
-  transition: CaseTransition,
-) => {
-  try {
-    const json = JSON.parse(
-      `{"modified": "${modified}", "transition": "${transition}"}`,
-    )
-    return json
-  } catch (e) {
-    return null
-  }
-}
-
 export const parseTime = (date: string, time: string) => {
   const timeWithoutColon = time.replace(':', '')
 
