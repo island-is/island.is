@@ -8,7 +8,6 @@ import {
   padTimeWithZero,
   parseArray,
   parseBoolean,
-  parseNull,
   parseTime,
   replaceTabs,
 } from './formatters'
@@ -214,7 +213,7 @@ export const setAndSendToServer = (
     } else if (typeof value === 'boolean') {
       return updateCase(theCase.id, parseBoolean(field, value))
     } else {
-      return updateCase(theCase.id, parseNull(field))
+      return updateCase(theCase.id, { [field]: null })
     }
   }
 }

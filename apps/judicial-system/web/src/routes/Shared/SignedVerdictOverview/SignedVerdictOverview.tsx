@@ -30,7 +30,6 @@ import {
   BlueBox,
 } from '@island.is/judicial-system-web/src/components'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
-import { parseNull } from '@island.is/judicial-system-web/src/utils/formatters'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   CaseData,
@@ -346,7 +345,9 @@ export const SignedVerdictOverview: React.FC = () => {
         accusedPostponedAppealDate: undefined,
       })
 
-      updateCase(workingCase.id, parseNull('accusedPostponedAppealDate'))
+      updateCase(workingCase.id, {
+        accusedPostponedAppealDate: (null as unknown) as string,
+      })
     }
   }
 
@@ -357,7 +358,9 @@ export const SignedVerdictOverview: React.FC = () => {
         prosecutorPostponedAppealDate: undefined,
       })
 
-      updateCase(workingCase.id, parseNull('prosecutorPostponedAppealDate'))
+      updateCase(workingCase.id, {
+        prosecutorPostponedAppealDate: (null as unknown) as string,
+      })
     }
   }
 
@@ -387,7 +390,9 @@ export const SignedVerdictOverview: React.FC = () => {
         })
         setSelectedSharingInstitutionId(null)
 
-        updateCase(workingCase.id, parseNull('sharedWithProsecutorsOfficeId'))
+        updateCase(workingCase.id, {
+          sharedWithProsecutorsOfficeId: (null as unknown) as string,
+        })
       } else {
         setSharedCaseModal({
           open: true,
