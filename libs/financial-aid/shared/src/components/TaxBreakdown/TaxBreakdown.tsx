@@ -1,13 +1,13 @@
 import React from 'react'
 import { Text } from '@island.is/island-ui/core'
 import TaxBreakdownItem from './TaxBreakdownItem'
-
-import * as styles from './TaxBreakdown.css'
 import {
   DirectTaxPayment,
   formatNationalId,
   getMonth,
 } from '@island.is/financial-aid/shared/lib'
+
+import * as styles from './TaxBreakdown.css'
 
 export const taxBreakDownHeaders = [
   'Fyrirtæki',

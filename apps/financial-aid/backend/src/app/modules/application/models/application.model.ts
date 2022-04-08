@@ -86,7 +86,7 @@ export class ApplicationModel extends Model<Application> {
   homeCircumstances: HomeCircumstances
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.TEXT,
     allowNull: true,
   })
   @ApiProperty()
@@ -101,7 +101,7 @@ export class ApplicationModel extends Model<Application> {
   employment: Employment
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.TEXT,
     allowNull: true,
   })
   @ApiProperty()
