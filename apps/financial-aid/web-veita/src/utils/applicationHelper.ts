@@ -11,6 +11,10 @@ import {
 } from '@island.is/financial-aid/shared/lib'
 import { calcAge } from './formHelper'
 
+const commentFullWidth = (comment?: string) => {
+  comment && comment.length > 80 ? true : false
+}
+
 export const getApplicant = (application: Application) => {
   return [
     {
@@ -50,6 +54,7 @@ export const getApplicant = (application: Application) => {
       title: 'Athugasemd',
       content: application.formComment ? '' : 'Engin athugasemd',
       other: application.formComment,
+      fullWidth: commentFullWidth(application.formComment),
     },
   ]
 }
@@ -138,6 +143,7 @@ export const getApplicantSpouse = (application: Application) => {
       title: 'Athugasemd',
       content: application.spouseFormComment ? '' : 'Engin athugasemd',
       other: application.spouseFormComment,
+      fullWidth: commentFullWidth(application.spouseFormComment),
     },
   ]
 }
