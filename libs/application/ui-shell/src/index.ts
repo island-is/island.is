@@ -9,3 +9,4 @@ export {
   HeaderInfoProvider,
   useHeaderInfo,
 } from './context/HeaderInfoProvider'
+export { DelegationsScreen} from './components/DelegationsScreen'

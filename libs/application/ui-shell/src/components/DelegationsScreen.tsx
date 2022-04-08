@@ -8,14 +8,19 @@ import {
   Page,
   ActionCard,
   GridContainer,
+  Stack,
 } from '@island.is/island-ui/core'
-import { coreDelegationsMessages } from '@island.is/application/core'
+import {
+  coreDelegationsMessages,
+  getTypeFromSlug,
+} from '@island.is/application/core'
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
 import { ApplicationTypes } from '@island.is/application/core'
 import { LoadingShell } from './LoadingShell'
 import { ErrorShell } from './ErrorShell'
 import { format as formatKennitala } from 'kennitala'
 import { useLocale } from '@island.is/localization'
+import { useHistory } from 'react-router-dom'
 
 type Delegation = {
   type: string
@@ -25,21 +30,23 @@ type Delegation = {
   }
 }
 interface DelegationsScreenProps {
-  type: ApplicationTypes
-  alternativeSubjects: { nationalId: string }[]
+  alternativeSubjects?: { nationalId: string }[]
   setDelegationsChecked: Dispatch<SetStateAction<boolean>>
+  slug: string
 }
 
 export const DelegationsScreen = ({
-  type,
+  slug,
   alternativeSubjects,
   setDelegationsChecked,
 }: DelegationsScreenProps) => {
   const [allowedDelegations, setAllowedDelegations] = useState<string[]>()
   const [applicant, setApplicant] = useState<Delegation>()
+  const [actorDelegations, setActorDelegations] = useState<Delegation[]>()
   const { formatMessage } = useLocale()
-
-  const { switchUser } = useAuth()
+  const type = getTypeFromSlug(slug)
+  const { switchUser, userInfo: user } = useAuth()
+  const history = useHistory()
 
   useEffect(() => {
     async function checkDelegations() {
@@ -48,6 +55,9 @@ export const DelegationsScreen = ({
         if (template.allowedDelegations) {
           setAllowedDelegations(template.allowedDelegations)
         } else {
+          if (user?.profile.actor) {
+            switchUser(user?.profile.actor.nationalId)
+          }
           setDelegationsChecked(true)
         }
       }
@@ -57,29 +67,40 @@ export const DelegationsScreen = ({
 
   // Check for user delegations if application supports delegations
   const { data: delegations, loading } = useQuery(ACTOR_DELEGATIONS, {
-    skip: !alternativeSubjects,
+    skip: !alternativeSubjects && !allowedDelegations,
   })
 
   // Check if user has the delegations of the delegation types the application supports
   useEffect(() => {
-    if (delegations && alternativeSubjects && allowedDelegations) {
-      const subjects: string[] = alternativeSubjects.map(
-        (subject) => subject.nationalId,
-      )
-      const found: Delegation = delegations.authActorDelegations.find(
+    if (delegations && allowedDelegations) {
+      const authActorDelegations: Delegation[] = delegations.authActorDelegations.filter(
         (delegation: Delegation) =>
-          subjects.includes(delegation.from.nationalId) &&
           allowedDelegations.includes(delegation.type),
       )
-      if (!found) {
+      console.log(authActorDelegations)
+      if (authActorDelegations.length <= 0) {
         setDelegationsChecked(true)
       } else {
-        setApplicant(found)
+        if (alternativeSubjects) {
+          const subjects: string[] = alternativeSubjects.map(
+            (subject) => subject.nationalId,
+          )
+          const found: Delegation = delegations.authActorDelegations.find(
+            (delegation: Delegation) =>
+              subjects.includes(delegation.from.nationalId),
+          )
+          setApplicant(found)
+        } else {
+          setActorDelegations(authActorDelegations)
+        }
       }
     }
-  }, [alternativeSubjects, delegations, allowedDelegations])
+  }, [delegations, allowedDelegations])
 
   const handleClick = (nationalId?: string) => {
+    if(!applicant) {
+      history.push(`../${slug}/?delegationChecked=true`)
+    }
     if (nationalId) {
       switchUser(nationalId)
     } else {
@@ -120,7 +141,82 @@ export const DelegationsScreen = ({
       </Page>
     )
   }
-  if (!loading && !applicant) {
+  if (!loading && actorDelegations && user) {
+    return (
+      <Page>
+        <GridContainer>
+          <Box marginTop={5} marginBottom={5}>
+            <Text marginBottom={2} variant="h1">
+              {formatMessage(coreDelegationsMessages.delegationScreenTitle)}
+            </Text>
+            <Text>
+              {formatMessage(coreDelegationsMessages.delegationScreenSubtitle)}
+            </Text>
+          </Box>
+          <Stack space={2}>
+            <ActionCard
+              avatar
+              heading={
+                user.profile.actor
+                  ? user.profile.actor?.name
+                  : user.profile.name
+              }
+              text={
+                formatMessage(
+                  coreDelegationsMessages.delegationActionCardText,
+                ) +
+                (user.profile.actor
+                  ? formatKennitala(user.profile.actor?.nationalId)
+                  : formatKennitala(user.profile.nationalId))
+              }
+              cta={{
+                label: formatMessage(
+                  coreDelegationsMessages.delegationActionCardButton,
+                ),
+                variant: 'text',
+                size: 'medium',
+                onClick: () =>
+                  handleClick(
+                    user.profile.actor
+                      ? user.profile.actor.nationalId
+                      : undefined,
+                  ),
+              }}
+            />
+            {actorDelegations.map((delegation: Delegation) => {
+              return (
+                <ActionCard
+                  key={delegation.from.nationalId}
+                  avatar
+                  heading={delegation.from.name}
+                  text={
+                    formatMessage(
+                      coreDelegationsMessages.delegationActionCardText,
+                    ) + formatKennitala(delegation.from.nationalId)
+                  }
+                  cta={{
+                    label: formatMessage(
+                      coreDelegationsMessages.delegationActionCardButton,
+                    ),
+                    variant: 'text',
+                    size: 'medium',
+                    onClick: () =>
+                      handleClick(
+                        user.profile.nationalId !== delegation.from.nationalId
+                          ? delegation.from.nationalId
+                          : undefined,
+                      ),
+                  }}
+                />
+              )
+            })}
+          </Stack>
+        </GridContainer>
+      </Page>
+    )
+  }
+  if (!loading && !applicant && !actorDelegations) {
+    console.log("whyyy")
     return <ErrorShell />
   }
 

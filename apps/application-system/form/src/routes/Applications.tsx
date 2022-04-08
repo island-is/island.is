@@ -15,14 +15,13 @@ import {
 } from '@island.is/island-ui/core'
 import { coreMessages, getTypeFromSlug } from '@island.is/application/core'
 import { ApplicationList } from '@island.is/application/ui-components'
-import { ErrorShell } from '@island.is/application/ui-shell'
+import { ErrorShell, DelegationsScreen } from '@island.is/application/ui-shell'
 import {
   useApplicationNamespaces,
   useLocale,
   useLocalizedQuery,
 } from '@island.is/localization'
 import { ApplicationLoading } from '../components/ApplicationsLoading/ApplicationLoading'
-import { DelegationsScreen } from '../components/DelegationsScreen/DelegationsScreen'
 
 export const Applications: FC = () => {
   const { slug } = useParams<{ slug: string }>()
@@ -112,7 +111,6 @@ export const Applications: FC = () => {
   if (!delegationsChecked && type) {
     return (
       <DelegationsScreen
-        type={type}
         setDelegationsChecked={setDelegationsChecked}
         slug={slug}
       />
