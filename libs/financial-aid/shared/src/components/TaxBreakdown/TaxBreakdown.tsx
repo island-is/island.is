@@ -26,7 +26,7 @@ const TaxBreakdown = ({ items }: Props) => {
   const date = new Date()
   const currentMonth = date.getMonth() + 1
   const currentYear = date.getFullYear()
-  const itemsGrouped = groupBy(items, item => item.month)
+  const itemsGrouped = groupBy(items, (item) => item.month)
 
   for (let i = 1; i <= 3; i++) {
     const month = currentMonth - i
@@ -72,12 +72,8 @@ const TaxBreakdown = ({ items }: Props) => {
                       items={[
                         formatNationalId(item.payerNationalId),
                         `${item.totalSalary.toLocaleString('de-DE')} kr.`,
-                        `${item.personalAllowance.toLocaleString(
-                          'de-DE',
-                        )} kr.`,
-                        `${item.withheldAtSource.toLocaleString(
-                          'de-DE',
-                        )} kr.`,
+                        `${item.personalAllowance.toLocaleString('de-DE')} kr.`,
+                        `${item.withheldAtSource.toLocaleString('de-DE')} kr.`,
                       ]}
                     />
                   ) : (
