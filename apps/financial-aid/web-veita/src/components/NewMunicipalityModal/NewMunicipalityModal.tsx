@@ -146,6 +146,36 @@ const NewMunicipalityModal = ({
         Stjórnandi fær sendan tölvupóst með hlekk til að skrá sig inn með
         rafrænum skilríkjum.
       </Text>
+
+      {allAdmins && (
+        <Box marginBottom={3}>
+          <Select
+            label="Leita að stjórnanda"
+            name="selectAdmin"
+            noOptionsMessage="Enginn valmöguleiki"
+            options={allAdmins.map((el) => {
+              return { label: el.name, value: el.id }
+            })}
+            placeholder="Veldu tegund"
+            hasError={
+              state.hasError &&
+              !state.serviceCenter.label &&
+              !state.serviceCenter.value
+            }
+            errorMessage="Þú þarft að velja stjórnanda"
+            // hasError={state.hasError && }
+            value={state.serviceCenter}
+            onChange={(option) => {
+              setState({
+                ...state,
+                serviceCenter: option as Option,
+                hasError: false,
+              })
+            }}
+          />
+        </Box>
+      )}
+
       <Box marginBottom={2}>
         <Input
           label="Kennitala"

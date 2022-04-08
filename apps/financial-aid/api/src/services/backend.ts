@@ -71,7 +71,7 @@ class BackendAPI extends RESTDataSource {
 
   createMunicipality(
     createMunicipality: CreateMunicipality,
-    createAdmin: CreateStaff,
+    createAdmin?: CreateStaff,
   ): Promise<Municipality> {
     return this.post('municipality', {
       municipalityInput: createMunicipality,

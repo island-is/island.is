@@ -124,21 +124,23 @@ export class MunicipalityService {
           AidType.COHABITATION,
         )
 
-        return await this.staffService
-          .createStaff(
-            admin,
-            {
-              municipalityId: municipality.municipalityId,
-              municipalityName: municipality.name,
-            },
-            t,
-            true,
-          )
-          .then(() => {
-            return this.municipalityModel.create(municipality, {
-              transaction: t,
+        if (admin) {
+          return await this.staffService
+            .createStaff(
+              admin,
+              {
+                municipalityId: municipality.municipalityId,
+                municipalityName: municipality.name,
+              },
+              t,
+              true,
+            )
+            .then(() => {
+              return this.municipalityModel.create(municipality, {
+                transaction: t,
+              })
             })
-          })
+        }
       })
     })
   }

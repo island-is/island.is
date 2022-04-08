@@ -71,7 +71,7 @@ export class MunicipalityResolver {
     @Args('input', { type: () => CreateMunicipalityInput })
     input: CreateMunicipalityInput,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
-  ): Promise<MunicipalityModel> {
+  ): Promise<Municipality> {
     const { admin, ...createMunicipality } = input
     this.logger.debug('Creating municipality')
     return backendApi.createMunicipality(createMunicipality, admin)
