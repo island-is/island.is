@@ -389,9 +389,9 @@ jobs:
       - prepare
     if: needs.prepare.outputs.TEST_CHUNKS
     runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-      options: --cap-add=NET_ADMIN
+    # container:
+    #   image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    #   options: --cap-add=NET_ADMIN
     timeout-minutes: 25
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
