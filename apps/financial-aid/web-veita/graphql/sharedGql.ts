@@ -378,6 +378,7 @@ export const MunicipalityMutation = gql`
   mutation MunicipalityMutation($input: CreateMunicipalityInput!) {
     createMunicipality(input: $input) {
       id
+      municipalityId
     }
   }
 `

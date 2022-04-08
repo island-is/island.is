@@ -172,6 +172,7 @@ export class StaffService {
     return await this.staffModel.count({
       where: {
         municipalityIds: { [Op.contains]: [municipalityId] },
+        roles: { [Op.contains]: [StaffRole.ADMIN] },
       },
     })
   }

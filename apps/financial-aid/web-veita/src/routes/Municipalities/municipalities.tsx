@@ -16,14 +16,11 @@ import {
   ToastContainer,
   toast,
 } from '@island.is/island-ui/core'
-import * as tableStyles from '../../sharedStyles/Table.css'
-import * as headerStyles from '../../sharedStyles/Header.css'
-import cn from 'classnames'
 
 import {
   Municipality,
   Routes,
-  Staff,
+  UpdateAdmin,
 } from '@island.is/financial-aid/shared/lib'
 import {
   MunicipalityActivityMutation,
@@ -31,6 +28,10 @@ import {
   AllAdminsQuery,
 } from '@island.is/financial-aid-web/veita/graphql'
 import { useRouter } from 'next/router'
+
+import * as tableStyles from '../../sharedStyles/Table.css'
+import * as headerStyles from '../../sharedStyles/Header.css'
+import cn from 'classnames'
 
 export const Municipalities = () => {
   const [getMunicipalities, { data, error, loading }] = useLazyQuery<{
@@ -40,13 +41,11 @@ export const Municipalities = () => {
     errorPolicy: 'all',
   })
 
-  const [getAdmins, { data: dataAdmins }] = useLazyQuery<{
-    admins: [
-      {
-        id: string
-        name: string
-      },
-    ]
+  const [
+    getAdmins,
+    { data: dataAdmins, error: errorAdmins, loading: loadingAdmins },
+  ] = useLazyQuery<{
+    admins: UpdateAdmin[]
   }>(AllAdminsQuery, {
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
@@ -196,6 +195,7 @@ export const Municipalities = () => {
         )}
         onMunicipalityCreated={refreshList}
         allAdmins={dataAdmins?.admins}
+        loadingAdmins={loadingAdmins}
       />
     </LoadingContainer>
   )
