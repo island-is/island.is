@@ -378,6 +378,7 @@ export const MunicipalityMutation = gql`
   mutation MunicipalityMutation($input: CreateMunicipalityInput!) {
     createMunicipality(input: $input) {
       id
+      municipalityId
     }
   }
 `
@@ -497,6 +498,16 @@ export const AdminUsersQuery = gql`
         active
         id
       }
+    }
+  }
+`
+
+export const AllAdminsQuery = gql`
+  query allAdminsQuery {
+    admins {
+      id
+      name
+      municipalityIds
     }
   }
 `
