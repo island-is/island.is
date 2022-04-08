@@ -7,7 +7,6 @@ import type { Case, UpdateCase } from '@island.is/judicial-system/types'
 import {
   padTimeWithZero,
   parseArray,
-  parseBoolean,
   parseTime,
   replaceTabs,
 } from './formatters'
@@ -208,10 +207,8 @@ export const setAndSendToServer = (
     [field]: value,
   })
   if (theCase.id !== '') {
-    if (typeof value === 'string') {
+    if (typeof value === 'string' || typeof value === 'boolean') {
       return updateCase(theCase.id, { [field]: value })
-    } else if (typeof value === 'boolean') {
-      return updateCase(theCase.id, parseBoolean(field, value))
     } else {
       return updateCase(theCase.id, { [field]: null })
     }
