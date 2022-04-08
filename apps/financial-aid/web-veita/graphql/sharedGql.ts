@@ -41,6 +41,7 @@ export const ApplicationQuery = gql`
       state
       formComment
       spouseFormComment
+      municipalityCode
       studentCustom
       rejection
       staff {
@@ -69,6 +70,8 @@ export const ApplicationQuery = gql`
           amount
         }
       }
+      spouseHasFetchedDirectTaxPayment
+      hasFetchedDirectTaxPayment
       directTaxPayments {
         totalSalary
         payerNationalId
@@ -206,6 +209,8 @@ export const ApplicationEventMutation = gql`
         staffNationalId
         staffName
       }
+      spouseHasFetchedDirectTaxPayment
+      hasFetchedDirectTaxPayment
       directTaxPayments {
         totalSalary
         payerNationalId
@@ -267,6 +272,7 @@ export const UpdateApplicationMutation = gql`
       spouseName
       spouseEmail
       spousePhoneNumber
+      municipalityCode
       city
       streetName
       postalCode
@@ -297,6 +303,8 @@ export const UpdateApplicationMutation = gql`
         municipalityIds
         nationalId
       }
+      spouseHasFetchedDirectTaxPayment
+      hasFetchedDirectTaxPayment
       directTaxPayments {
         totalSalary
         payerNationalId
@@ -344,6 +352,7 @@ export const StaffQuery = gql`
       active
       nickname
       email
+      municipalityIds
     }
   }
 `

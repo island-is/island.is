@@ -13,6 +13,7 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
 import { ApplicationModule } from './modules/application/application.module'
 import { DrivingLicenseBookClientConfig } from '@island.is/clients/driving-license-book'
 import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
+import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { NationalRegistryClientConfig } from '@island.is/clients/national-regist
         XRoadConfig,
         DrivingLicenseBookClientConfig,
         NationalRegistryClientConfig,
+        FeatureFlagConfig,
       ],
     }),
   ],
