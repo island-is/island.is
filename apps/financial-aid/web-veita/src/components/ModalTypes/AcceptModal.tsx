@@ -4,7 +4,7 @@ import {
   InputModal,
   NumberInput,
 } from '@island.is/financial-aid-web/veita/src/components'
-
+import { useRouter } from 'next/router'
 import {
   aidCalculator,
   Amount,
@@ -19,7 +19,6 @@ import { Box, Button, Input, Text } from '@island.is/island-ui/core'
 import cn from 'classnames'
 
 import * as modalStyles from './ModalTypes.css'
-import { useRouter } from 'next/router'
 
 interface Props {
   onCancel: (event: React.MouseEvent<HTMLButtonElement>) => void

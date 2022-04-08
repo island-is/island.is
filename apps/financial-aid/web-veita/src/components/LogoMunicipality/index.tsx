@@ -1,5 +1,4 @@
 import React, { useContext } from 'react'
-import cn from 'classnames'
 import LogoSvg from './LogoSvg'
 import { Box, SkeletonLoader } from '@island.is/island-ui/core'
 import { LoadingContainer } from '@island.is/financial-aid-web/veita/src/components'
@@ -9,16 +8,17 @@ import {
   StaffRole,
 } from '@island.is/financial-aid/shared/lib'
 
+import cn from 'classnames'
+
 interface LogoProps {
   className?: string
 }
 
 const LogoMunicipality = ({ className }: LogoProps) => {
   const { admin, municipality } = useContext(AdminContext)
-
   const isSuperAdmin = admin?.staff?.roles.includes(StaffRole.SUPERADMIN)
 
-  const logoSize = 48
+  const logoSize = 32
 
   return (
     <LoadingContainer
@@ -29,7 +29,6 @@ const LogoMunicipality = ({ className }: LogoProps) => {
         </Box>
       }
     >
-      {/* Todo better check */}
       {admin &&
         municipality &&
         (isSuperAdmin ? (

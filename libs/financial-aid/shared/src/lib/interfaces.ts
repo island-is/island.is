@@ -38,9 +38,7 @@ export interface Staff {
   municipalityIds: string[]
   roles: StaffRole[]
   active: boolean
-  municipalityName: string
   phoneNumber?: string
-  municipalityHomepage?: string
   nickname?: string
   email?: string
   usePseudoName?: boolean
@@ -364,8 +362,8 @@ export interface CreateStaff {
   email: string
   nationalId: string
   roles: StaffRole[]
-  municipalityName?: string
-  municipalityId?: string
+  municipalityNames?: string[]
+  municipalityIds?: string[]
 }
 
 export interface CreateStaffMunicipality {

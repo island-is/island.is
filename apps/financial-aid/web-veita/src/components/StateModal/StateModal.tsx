@@ -2,8 +2,6 @@ import React, { useState } from 'react'
 import { Text, Box } from '@island.is/island-ui/core'
 import { AnimateSharedLayout } from 'framer-motion'
 
-import * as styles from './StateModal.css'
-
 import {
   OptionsModal,
   AcceptModal,
@@ -22,6 +20,8 @@ import {
 } from '@island.is/financial-aid/shared/lib'
 import { useApplicationState } from '../../utils/useApplicationState'
 import StateModalContainer from './StateModalContainer'
+
+import * as styles from './StateModal.css'
 
 interface Props {
   isVisible: boolean
@@ -124,7 +124,6 @@ const StateModal = ({
 
     saveStateApplication(applicationId, stateOption)
   }
-
   return (
     <StateModalContainer
       isVisible={isVisible}
@@ -169,6 +168,7 @@ const StateModal = ({
             errorMessage="Þú þarft að gera grein fyrir hvaða gögn vanti í umsóknina"
             prefixText="Til að klára umsóknina verður þú að senda okkur"
             postfixText="Þú getur kynnt þér nánar reglur um fjárhagsaðstoð."
+            municipalityEmail={applicationMunicipality?.email}
           />
           <AcceptModal
             isModalVisable={selected === ApplicationState.APPROVED}
@@ -209,6 +209,7 @@ const StateModal = ({
               new Date(applicationCreated).getMonth(),
             )} hefur verið synjað`}
             postfixText="Þú getur kynnt þér nánar reglur um fjárhagsaðstoð."
+            municipalityEmail={applicationMunicipality?.email}
           />
         </AnimateSharedLayout>
       </Box>

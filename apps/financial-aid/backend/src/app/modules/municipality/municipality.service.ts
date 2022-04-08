@@ -67,6 +67,7 @@ export class MunicipalityService {
             [Op.in]: currentStaffMuncipalities.municipalityIds,
           },
         },
+        order: ['name'],
         include: [
           {
             model: AidModel,
@@ -101,7 +102,6 @@ export class MunicipalityService {
   async create(
     municipality: CreateMunicipalityDto,
     admin: CreateStaffDto,
-    currentUser: Staff,
   ): Promise<MunicipalityModel> {
     return await this.sequelize.transaction(async (t) => {
       return await Promise.all(
@@ -131,7 +131,6 @@ export class MunicipalityService {
               municipalityId: municipality.municipalityId,
               municipalityName: municipality.name,
             },
-            currentUser,
             t,
             true,
           )
@@ -146,7 +145,8 @@ export class MunicipalityService {
 
   async updateMunicipality(
     municipality: UpdateMunicipalityDto,
-  ): Promise<MunicipalityModel> {
+    currentUser: Staff,
+  ): Promise<MunicipalityModel[]> {
     try {
       await this.sequelize.transaction((t) => {
         return Promise.all([
@@ -170,8 +170,7 @@ export class MunicipalityService {
       this.logger.error('Error while updating municipality')
       throw new NotFoundException(`Error while updating municipality`)
     }
-
-    return await this.findByMunicipalityId(municipality.municipalityId)
+    return await this.findByMunicipalityIds(currentUser.nationalId)
   }
 
   async getAll(): Promise<MunicipalityModel[]> {
