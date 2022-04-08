@@ -33,6 +33,16 @@ export const GET_ORGANIZATION_QUERY = gql`
         title
         url
       }
+      publishedMaterialSearchFilterGenericTags {
+        id
+        title
+        slug
+        genericTagGroup {
+          id
+          title
+          slug
+        }
+      }
       link
       tag {
         id
