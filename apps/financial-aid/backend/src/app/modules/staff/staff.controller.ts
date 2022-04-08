@@ -142,6 +142,18 @@ export class StaffController {
   }
 
   @StaffRolesRules(StaffRole.SUPERADMIN)
+  @Get('allAdminUsers/:municipalityId')
+  @ApiOkResponse({
+    type: [StaffModel],
+    description: 'Gets admin users by municipality id',
+  })
+  async allAdminUsers(
+    @Param('municipalityId') municipalityId: string,
+  ): Promise<StaffModel[]> {
+    return this.staffService.allAdminUsers(municipalityId)
+  }
+
+  @StaffRolesRules(StaffRole.SUPERADMIN)
   @Get('supervisors')
   @ApiOkResponse({
     type: [StaffModel],
