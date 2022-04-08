@@ -67,6 +67,7 @@ const SkilavottordAccessControlsByRecyclingPartnerQuery = gql`
       role
       email
       phone
+      recyclingLocation
       recyclingPartner {
         companyId
         companyName
@@ -85,6 +86,7 @@ export const CreateSkilavottordAccessControlMutation = gql`
       role
       email
       phone
+      recyclingLocation
       recyclingPartner {
         companyId
         companyName
@@ -103,6 +105,7 @@ export const UpdateSkilavottordAccessControlMutation = gql`
       role
       email
       phone
+      recyclingLocation
       recyclingPartner {
         companyId
         companyName
@@ -296,7 +299,7 @@ const AccessControlCompany: FC = () => {
           <GridRow marginBottom={7}>
             <GridColumn span={['8/8', '6/8', '5/8']} order={[2, 1]}>
               <Text variant="h1" as="h1" marginBottom={4}>
-                {t.title}
+                {t.title} {accessControls.length > 0 ? accessControls[0]?.recyclingPartner?.companyName : ''}
               </Text>
               <Text variant="intro">{t.info}</Text>
             </GridColumn>
@@ -351,6 +354,9 @@ const AccessControlCompany: FC = () => {
                   <HeadData>
                     <Text variant="eyebrow">{t.tableHeaders.role}</Text>
                   </HeadData>
+                  <HeadData>
+                    <Text variant="eyebrow">{t.tableHeaders.recyclingLocation}</Text>
+                  </HeadData>
                   <HeadData></HeadData>
                 </Row>
               </Head>
@@ -365,6 +371,7 @@ const AccessControlCompany: FC = () => {
                         item.role as AccessControlRole & Role,
                         activeLocale,
                       )}</Data>
+                    <Data>{item.recyclingLocation}</Data>
                     <Data>
                       <DropdownMenu
                         disclosure={

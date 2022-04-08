@@ -36,12 +36,13 @@ export const AccessControlCreate: FC<AccessControlCreateProps> = ({
   const { user } = useContext(UserContext)
 
   const handleOnSubmit = handleSubmit(
-    ({ nationalId, name, role, email, phone }) => {
+    ({ nationalId, name, role, email, phone, recyclingLocation }) => {
       return onSubmit({
         nationalId,
         name,
         phone,
         email,
+        recyclingLocation,
         // role: AccessControlRole.recyclingCompany,
         role: role.value,
         partnerId: user?.partnerId,

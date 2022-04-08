@@ -359,6 +359,14 @@
     "subtitles": {
       "companies": "Móttökuaðilar"
     },
+    "tableHeaders": {
+      "id": "ID",
+      "name": "Nafn",
+      "address": "Heimilisfang",
+      "postnumber": "Póstnúmer",
+      "email": "Netfang",
+      "status": "Staða"
+    },
     "status": {
       "active": "Virkt",
       "inactive": "Óvirkt"
@@ -475,7 +483,8 @@
       "role": "Hlutverk",
       "partner": "Móttökuaðili",
       "email": "Netfang",
-      "phone": "Sími"
+      "phone": "Sími",
+      "recyclingLocation": "Starfstöð"
     },
     "status": {
       "active": "Virkt",
@@ -527,6 +536,13 @@
           "placeholder": "Símanúmer",
           "rules": {
             "required": "Skylda er að fylla út símanúmer"
+          }
+        },
+        "recyclingLocation": {
+          "label": "Starfstöð",
+          "placeholder": "Starfstöð",
+          "rules": {
+            "validate": "Starfstöð má ekki vera fleiri en 32 stafir"
           }
         },
         "role": {

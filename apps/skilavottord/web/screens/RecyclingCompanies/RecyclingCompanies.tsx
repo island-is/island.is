@@ -5,11 +5,11 @@ import gql from 'graphql-tag'
 import NextLink from 'next/link'
 
 import {
-  ActionCard,
   Box,
   Breadcrumbs,
   Button,
   GridColumn,
+  Table as T,
   GridRow,
   Stack,
   Text,
@@ -35,12 +35,16 @@ export const SkilavottordAllRecyclingPartnersQuery = gql`
     skilavottordAllRecyclingPartners {
       companyId
       companyName
+      address
+      postnumber
+      email
       active
     }
   }
 `
 
 const RecyclingCompanies: FC = () => {
+  const { Table, Head, Row, HeadData, Body, Data } = T
   const { user } = useContext(UserContext)
   const router = useRouter()
   const { data, error, loading } = useQuery<Query>(
@@ -58,6 +62,7 @@ const RecyclingCompanies: FC = () => {
 
   const partners = data?.skilavottordAllRecyclingPartners || []
   const recyclingPartners = filterInternalPartners(partners)
+  recyclingPartners.sort((a, b) => a.companyName.localeCompare(b.companyName))
 
   const handleCreate = () => {
     router.push({
@@ -148,7 +153,7 @@ const RecyclingCompanies: FC = () => {
           <Text>{t.empty}</Text>
         ) : (
           <Stack space={3}>
-            {recyclingPartners.map((partner: RecyclingPartner) => (
+            {/* {recyclingPartners.map((partner: RecyclingPartner) => (
               <ActionCard
                 key={partner.companyId}
                 cta={{
@@ -163,7 +168,112 @@ const RecyclingCompanies: FC = () => {
                   variant: partner.active ? 'mint' : 'red',
                 }}
               />
-            ))}
+            ))} */}
+            <Table>
+              <Head>
+                <Row>
+                  <HeadData>
+                    <Text variant="eyebrow">{t.tableHeaders.name}</Text>
+                  </HeadData>
+                  <HeadData>
+                    <Text variant="eyebrow">{t.tableHeaders.id}</Text>
+                  </HeadData>
+                  <HeadData>
+                    <Text variant="eyebrow">{t.tableHeaders.address}</Text>
+                  </HeadData>
+                  <HeadData>
+                    <Text variant="eyebrow">{t.tableHeaders.postnumber}</Text>
+                  </HeadData>
+                  <HeadData>
+                    <Text variant="eyebrow">{t.tableHeaders.email}</Text>
+                  </HeadData>
+                  <HeadData>
+                    <Text variant="eyebrow">{t.tableHeaders.status}</Text>
+                  </HeadData>
+                  <HeadData></HeadData>
+                </Row>
+              </Head>
+              <Body>
+                {recyclingPartners.map((partner: RecyclingPartner) => (
+                  <Row key={partner.companyId}>
+                    <Data>{partner.companyName}</Data>
+                    <Data>{partner.companyId}</Data>
+                    <Data>{partner.address}</Data>
+                    <Data>{partner.postnumber}</Data>
+                    <Data>{partner.email}</Data>
+                    <Data>{partner.active ? <Text color="mint400" fontWeight='semiBold'  variant='eyebrow'>
+                                      {t.status.active}
+                                    </Text> : <Text color="red600" fontWeight='semiBold' variant='eyebrow'>
+                                      {t.status.inactive}
+                                    </Text>}
+                    </Data>
+                    <Data>
+                          <Button
+                            variant="text"
+                            icon="chevronForward"
+                            size="small"
+                            nowrap
+                            onClick={() => handleUpdate(partner.companyId)}
+                          >
+                            {t.buttons.view}
+                          </Button>
+                        
+                      {/* <DropdownMenu
+                        disclosure={
+                          <Button
+                            variant="text"
+                            icon="chevronDown"
+                            size="small"
+                            nowrap
+                          >
+                            {t.buttons.actions}
+                          </Button>
+                        }
+                        items={[
+                          {
+                            title: t.buttons.edit,
+                            onClick: () => setPartner(item),
+                          },
+                          {
+                            title: t.buttons.delete,
+                            render: () => (
+                              <DialogPrompt
+                                title={t.modal.titles.delete}
+                                description={t.modal.subtitles.delete}
+                                baseId={`delete-${item.nationalId}-dialog`}
+                                ariaLabel={`delete-${item.nationalId}-dialog`}
+                                disclosureElement={
+                                  <Box
+                                    display="flex"
+                                    alignItems="center"
+                                    justifyContent="center"
+                                    paddingY={2}
+                                    cursor="pointer"
+                                    className={styles.deleteMenuItem}
+                                  >
+                                    <Text variant="eyebrow" color="red600">
+                                      {t.buttons.delete}
+                                    </Text>
+                                  </Box>
+                                }
+                                buttonTextCancel={t.modal.buttons.cancel}
+                                buttonTextConfirm={t.modal.buttons.confirm}
+                                onConfirm={() =>
+                                  handleDeleteAccessControl({
+                                    nationalId: item.nationalId,
+                                  })
+                                }
+                              />
+                            ),
+                          },
+                        ]}
+                        menuLabel={t.buttons.actions}
+                      /> */}
+                    </Data>
+                  </Row>
+                ))}
+              </Body>
+            </Table>
           </Stack>
         )}
       </Stack>

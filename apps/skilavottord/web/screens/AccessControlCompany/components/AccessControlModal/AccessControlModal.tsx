@@ -135,6 +135,25 @@ export const AccessControlModal: FC<AccessControlModalProps> = ({
             error={errors?.phone?.message}
             backgroundColor="blue"
           />
+          <InputController
+            id="recyclingLocation"
+            control={control}
+            label={t.modal.inputs.recyclingLocation.label}
+            placeholder={t.modal.inputs.recyclingLocation.placeholder}
+            rules={{
+              validate: {
+                value: (value: string) => {
+                  if (
+                    value.toString().length > 32
+                  ) {
+                    return t.modal.inputs.recyclingLocation.rules?.validate
+                  }
+                },
+              }
+            }}
+            error={errors?.recyclingLocation?.message}
+            backgroundColor="blue"
+          />
           <Controller
             name="role"
             control={control}

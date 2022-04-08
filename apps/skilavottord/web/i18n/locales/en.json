@@ -359,6 +359,14 @@
     "subtitles": {
       "companies": "Recycling companies"
     },
+    "tableHeaders": {
+      "id": "ID",
+      "name": "Name",
+      "address": "Address",
+      "postnumber": "Post",
+      "email": "Email",
+      "status": "Status"
+    },
     "status": {
       "active": "Active",
       "inactive": "Inactive"
@@ -475,7 +483,8 @@
       "role": "Role",
       "partner": "Partner",
       "email": "Email",
-      "phone": "Phone"
+      "phone": "Phone",
+      "recyclingLocation": "Location"
     },
     "status": {
       "active": "Active",
@@ -485,7 +494,7 @@
       "add": "Give access",
       "edit": "Edit",
       "delete": "Delete",
-      "actions": "actions"
+      "actions": "Actions"
     },
     "modal": {
       "titles": {
@@ -527,6 +536,13 @@
           "placeholder": "Phone",
           "rules": {
             "required": "Phone is required"
+          }
+        },
+        "recyclingLocation": {
+          "label": "Recycling location",
+          "placeholder": "Recycling location",
+          "rules": {
+            "validate": "Recycling location could not extend 32 characters"
           }
         },
         "role": {

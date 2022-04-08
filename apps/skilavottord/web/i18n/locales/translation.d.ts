@@ -36,7 +36,7 @@ export interface AccessControl {
     title:        string;
     info:         string;
     empty:        string;
-    tableHeaders: TableHeaders;
+    tableHeaders: AccessControlTableHeaders;
     status:       AccessControlStatus;
     buttons:      SubtitlesClass;
     modal:        Modal;
@@ -64,12 +64,13 @@ export interface FormButtons {
 }
 
 export interface ModalInputs {
-    nationalId: Email;
-    name:       Name;
-    email:      Email;
-    phone:      Name;
-    role:       Name;
-    partner:    Name;
+    nationalId:        Email;
+    name:              Name;
+    email:             Email;
+    phone:             Name;
+    recyclingLocation: RecyclingLocation;
+    role:              Name;
+    partner:           Name;
 }
 
 export interface Email {
@@ -93,18 +94,29 @@ export interface NameRules {
     required: string;
 }
 
+export interface RecyclingLocation {
+    label:       string;
+    placeholder: string;
+    rules:       RecyclingLocationRules;
+}
+
+export interface RecyclingLocationRules {
+    validate: string;
+}
+
 export interface AccessControlStatus {
     active:   string;
     inactive: string;
 }
 
-export interface TableHeaders {
-    nationalId: string;
-    name:       string;
-    role:       string;
-    partner:    string;
-    email:      string;
-    phone:      string;
+export interface AccessControlTableHeaders {
+    nationalId:        string;
+    name:              string;
+    role:              string;
+    partner:           string;
+    email:             string;
+    phone:             string;
+    recyclingLocation: string;
 }
 
 export interface CompanyInfo {
@@ -424,6 +436,7 @@ export interface RecyclingCompanies {
     info:             string;
     empty:            string;
     subtitles:        RecyclingCompaniesSubtitles;
+    tableHeaders:     RecyclingCompaniesTableHeaders;
     status:           AccessControlStatus;
     buttons:          RecyclingCompaniesButtons;
     recyclingCompany: RecyclingCompany;
@@ -475,6 +488,15 @@ export interface View {
 
 export interface RecyclingCompaniesSubtitles {
     companies: string;
+}
+
+export interface RecyclingCompaniesTableHeaders {
+    id:         string;
+    name:       string;
+    address:    string;
+    postnumber: string;
+    email:      string;
+    status:     string;
 }
 
 export interface RecyclingFundOverview {
@@ -712,7 +734,7 @@ const typeMap: any = {
         { json: "title", js: "title", typ: "" },
         { json: "info", js: "info", typ: "" },
         { json: "empty", js: "empty", typ: "" },
-        { json: "tableHeaders", js: "tableHeaders", typ: r("TableHeaders") },
+        { json: "tableHeaders", js: "tableHeaders", typ: r("AccessControlTableHeaders") },
         { json: "status", js: "status", typ: r("AccessControlStatus") },
         { json: "buttons", js: "buttons", typ: r("SubtitlesClass") },
         { json: "modal", js: "modal", typ: r("Modal") },
@@ -740,6 +762,7 @@ const typeMap: any = {
         { json: "name", js: "name", typ: r("Name") },
         { json: "email", js: "email", typ: r("Email") },
         { json: "phone", js: "phone", typ: r("Name") },
+        { json: "recyclingLocation", js: "recyclingLocation", typ: r("RecyclingLocation") },
         { json: "role", js: "role", typ: r("Name") },
         { json: "partner", js: "partner", typ: r("Name") },
     ], false),
@@ -760,17 +783,26 @@ const typeMap: any = {
     "NameRules": o([
         { json: "required", js: "required", typ: "" },
     ], false),
+    "RecyclingLocation": o([
+        { json: "label", js: "label", typ: "" },
+        { json: "placeholder", js: "placeholder", typ: "" },
+        { json: "rules", js: "rules", typ: r("RecyclingLocationRules") },
+    ], false),
+    "RecyclingLocationRules": o([
+        { json: "validate", js: "validate", typ: "" },
+    ], false),
     "AccessControlStatus": o([
         { json: "active", js: "active", typ: "" },
         { json: "inactive", js: "inactive", typ: "" },
     ], false),
-    "TableHeaders": o([
+    "AccessControlTableHeaders": o([
         { json: "nationalId", js: "nationalId", typ: "" },
         { json: "name", js: "name", typ: "" },
         { json: "role", js: "role", typ: "" },
         { json: "partner", js: "partner", typ: "" },
         { json: "email", js: "email", typ: "" },
         { json: "phone", js: "phone", typ: "" },
+        { json: "recyclingLocation", js: "recyclingLocation", typ: "" },
     ], false),
     "CompanyInfo": o([
         { json: "title", js: "title", typ: "" },
@@ -1037,6 +1069,7 @@ const typeMap: any = {
         { json: "info", js: "info", typ: "" },
         { json: "empty", js: "empty", typ: "" },
         { json: "subtitles", js: "subtitles", typ: r("RecyclingCompaniesSubtitles") },
+        { json: "tableHeaders", js: "tableHeaders", typ: r("RecyclingCompaniesTableHeaders") },
         { json: "status", js: "status", typ: r("AccessControlStatus") },
         { json: "buttons", js: "buttons", typ: r("RecyclingCompaniesButtons") },
         { json: "recyclingCompany", js: "recyclingCompany", typ: r("RecyclingCompany") },
@@ -1081,6 +1114,14 @@ const typeMap: any = {
     ], false),
     "RecyclingCompaniesSubtitles": o([
         { json: "companies", js: "companies", typ: "" },
+    ], false),
+    "RecyclingCompaniesTableHeaders": o([
+        { json: "id", js: "id", typ: "" },
+        { json: "name", js: "name", typ: "" },
+        { json: "address", js: "address", typ: "" },
+        { json: "postnumber", js: "postnumber", typ: "" },
+        { json: "email", js: "email", typ: "" },
+        { json: "status", js: "status", typ: "" },
     ], false),
     "RecyclingFundOverview": o([
         { json: "title", js: "title", typ: "" },

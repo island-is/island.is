@@ -50,12 +50,13 @@ export const AccessControlUpdate: FC<AccessControlUpdateProps> = ({
   }, [currentPartner])
 
   const handleOnSubmit = handleSubmit(
-    ({ nationalId, name, role, email, phone }) => {
+    ({ nationalId, name, role, email, phone, recyclingLocation }) => {
       return onSubmit({
         nationalId,
         name,
         email,
         phone,
+        recyclingLocation,
         // role: AccessControlRole.recyclingFund,
         role: role.value,
         partnerId: user?.partnerId,
