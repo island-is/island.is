@@ -17,18 +17,6 @@ export const parseArray = (property: string, array: string[]) => {
   }
 }
 
-export const parseString = (
-  property: string,
-  value: string | Date | boolean,
-) => {
-  try {
-    const json = JSON.parse(`{"${property}": ${JSON.stringify(value)}}`)
-    return json
-  } catch (e) {
-    return null
-  }
-}
-
 export const parseTransition = (
   modified: string,
   transition: CaseTransition,

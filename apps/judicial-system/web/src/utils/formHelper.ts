@@ -9,7 +9,6 @@ import {
   parseArray,
   parseBoolean,
   parseNull,
-  parseString,
   parseTime,
   replaceTabs,
 } from './formatters'
@@ -165,7 +164,7 @@ export const validateAndSendToServer = (
   validateAndSetErrorMessage(validations, value, setErrorMessage)
 
   if (theCase.id !== '') {
-    updateCase(theCase.id, parseString(field, value))
+    updateCase(theCase.id, { [field]: value })
   }
 }
 
@@ -193,7 +192,7 @@ export const validateAndSendTimeToServer = (
     const dateMinutes = parseTime(currentValue, paddedTime)
 
     if (theCase.id !== '') {
-      updateCase(theCase.id, parseString(field, dateMinutes))
+      updateCase(theCase.id, { [field]: dateMinutes })
     }
   }
 }
@@ -211,7 +210,7 @@ export const setAndSendToServer = (
   })
   if (theCase.id !== '') {
     if (typeof value === 'string') {
-      return updateCase(theCase.id, parseString(field, value))
+      return updateCase(theCase.id, { [field]: value })
     } else if (typeof value === 'boolean') {
       return updateCase(theCase.id, parseBoolean(field, value))
     } else {

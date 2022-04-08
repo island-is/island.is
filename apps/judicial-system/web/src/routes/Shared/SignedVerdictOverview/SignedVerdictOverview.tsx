@@ -30,10 +30,7 @@ import {
   BlueBox,
 } from '@island.is/judicial-system-web/src/components'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
-import {
-  parseNull,
-  parseString,
-} from '@island.is/judicial-system-web/src/utils/formatters'
+import { parseNull } from '@island.is/judicial-system-web/src/utils/formatters'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   CaseData,
@@ -323,10 +320,9 @@ export const SignedVerdictOverview: React.FC = () => {
         accusedPostponedAppealDate: formatISO(date),
       })
 
-      updateCase(
-        workingCase.id,
-        parseString('accusedPostponedAppealDate', formatISO(date)),
-      )
+      updateCase(workingCase.id, {
+        accusedPostponedAppealDate: formatISO(date),
+      })
     }
   }
 
@@ -337,10 +333,9 @@ export const SignedVerdictOverview: React.FC = () => {
         prosecutorPostponedAppealDate: formatISO(date),
       })
 
-      updateCase(
-        workingCase.id,
-        parseString('prosecutorPostponedAppealDate', formatISO(date)),
-      )
+      updateCase(workingCase.id, {
+        prosecutorPostponedAppealDate: formatISO(date),
+      })
     }
   }
 

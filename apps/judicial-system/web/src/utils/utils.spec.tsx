@@ -24,35 +24,6 @@ describe('Formatters utils', () => {
     })
   })
 
-  describe('Parse string', () => {
-    test('given a property name and a value should parse correctly into JSON', () => {
-      // Arrange
-      const property = 'test'
-      const value = 'lorem'
-
-      // Act
-      const parsedString = formatters.parseString(property, value)
-
-      // Assert
-      expect(parsedString).toEqual({ test: 'lorem' })
-    })
-
-    test('given a value with special characters should parse correctly into JSON', () => {
-      //Arrange
-      const property = 'test'
-      const value = `lorem
-ipsum`
-
-      // Act
-      const parsedString = formatters.parseString(property, value)
-
-      // Assert
-      expect(parsedString).toEqual({
-        test: 'lorem\nipsum',
-      })
-    })
-  })
-
   describe('Parse transition', () => {
     test('given a last modified timestamp and a transition should parse correnctly into JSON', () => {
       // Arrange
