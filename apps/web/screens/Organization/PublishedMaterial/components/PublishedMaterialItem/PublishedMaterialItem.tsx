@@ -5,7 +5,6 @@ import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 
 const getFileEnding = (url: string): string => {
   const lastChunk = url.split('/').pop()
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const filenameChunks = lastChunk.split('.')
   if (filenameChunks.length === 1) return ''
   return filenameChunks.pop()
