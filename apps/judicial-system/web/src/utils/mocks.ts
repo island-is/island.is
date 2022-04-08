@@ -9,6 +9,8 @@ import {
   CaseType,
   InstitutionType,
   UserRole,
+  Case,
+  CaseOrigin,
 } from '@island.is/judicial-system/types'
 import type { UpdateCase, User } from '@island.is/judicial-system/types'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
@@ -1074,3 +1076,27 @@ export const mockUpdateCaseMutation = (updateCases: UpdateCase[], id: string) =>
       },
     }
   })
+
+export const makeCustodyCase = (): Case => {
+  return {
+    id: 'test_id',
+    created: '2020-09-16T19:50:08.033Z',
+    modified: '2020-09-16T19:51:39.466Z',
+    state: CaseState.DRAFT,
+    origin: CaseOrigin.RVG,
+    type: CaseType.CUSTODY,
+    policeCaseNumber: '007-2021-202000',
+    defendants: [
+      {
+        id: 'test_defendant_id',
+        created: '2020-09-16T19:50:08.033Z',
+        modified: '2020-09-16T19:51:39.466Z',
+        caseId: 'test_id',
+        nationalId: '000000-0000',
+        name: 'Donald Duck',
+        gender: Gender.MALE,
+        address: 'Batcave 1337',
+      },
+    ],
+  }
+}
