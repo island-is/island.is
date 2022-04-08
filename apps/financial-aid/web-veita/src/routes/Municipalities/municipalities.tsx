@@ -20,10 +20,15 @@ import * as tableStyles from '../../sharedStyles/Table.css'
 import * as headerStyles from '../../sharedStyles/Header.css'
 import cn from 'classnames'
 
-import { Municipality, Routes } from '@island.is/financial-aid/shared/lib'
+import {
+  Municipality,
+  Routes,
+  Staff,
+} from '@island.is/financial-aid/shared/lib'
 import {
   MunicipalityActivityMutation,
   MunicipalitiesQuery,
+  AllAdminsQuery,
 } from '@island.is/financial-aid-web/veita/graphql'
 import { useRouter } from 'next/router'
 
@@ -35,9 +40,20 @@ export const Municipalities = () => {
     errorPolicy: 'all',
   })
 
+  const [getAdmins, { data: dataAdmins }] = useLazyQuery<{
+    admins: [
+      {
+        id: string
+        name: string
+      },
+    ]
+  }>(AllAdminsQuery, {
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
+  })
+
   const [isModalVisible, setIsModalVisible] = useState(false)
   const router = useRouter()
-
   useEffect(() => {
     getMunicipalities()
   }, [])
@@ -93,7 +109,10 @@ export const Municipalities = () => {
           size="small"
           icon="add"
           variant="ghost"
-          onClick={() => setIsModalVisible(true)}
+          onClick={() => {
+            setIsModalVisible(true)
+            getAdmins()
+          }}
         >
           Nýtt sveitarfélag
         </Button>
@@ -174,6 +193,7 @@ export const Municipalities = () => {
           parseInt(el.municipalityId),
         )}
         onMunicipalityCreated={refreshList}
+        allAdmins={dataAdmins?.admins}
       />
     </LoadingContainer>
   )

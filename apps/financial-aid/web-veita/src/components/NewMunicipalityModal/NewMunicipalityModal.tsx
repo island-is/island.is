@@ -12,6 +12,12 @@ interface Props {
   setIsVisible: React.Dispatch<React.SetStateAction<boolean>>
   activeMunicipalitiesCodes?: number[]
   onMunicipalityCreated: () => void
+  allAdmins?: [
+    {
+      id: string
+      name: string
+    },
+  ]
 }
 
 interface newMunicipalityModalState {
@@ -28,7 +34,10 @@ const NewMunicipalityModal = ({
   setIsVisible,
   activeMunicipalitiesCodes,
   onMunicipalityCreated,
+  allAdmins,
 }: Props) => {
+  console.log('newMunibla ', allAdmins)
+
   const selectServiceCenter = serviceCenters
     .filter(
       (el) =>
@@ -131,6 +140,11 @@ const NewMunicipalityModal = ({
 
       <Text marginBottom={2} variant="h4">
         Stjórnandi
+      </Text>
+      <Text marginBottom={2} variant="small">
+        Þú getur valið núverandi stjórnanda eða bætt við nýjum. <br />
+        Stjórnandi fær sendan tölvupóst með hlekk til að skrá sig inn með
+        rafrænum skilríkjum.
       </Text>
       <Box marginBottom={2}>
         <Input

@@ -132,6 +132,16 @@ export class StaffController {
   }
 
   @StaffRolesRules(StaffRole.SUPERADMIN)
+  @Get('admins')
+  @ApiOkResponse({
+    type: [StaffModel],
+    description: 'Gets admins',
+  })
+  async getAdmins(): Promise<StaffModel[]> {
+    return this.staffService.getAdmins()
+  }
+
+  @StaffRolesRules(StaffRole.SUPERADMIN)
   @Get('supervisors')
   @ApiOkResponse({
     type: [StaffModel],

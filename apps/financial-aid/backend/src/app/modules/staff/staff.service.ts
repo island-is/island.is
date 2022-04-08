@@ -185,6 +185,14 @@ export class StaffService {
     })
   }
 
+  async getAdmins(): Promise<StaffModel[]> {
+    return await this.staffModel.findAll({
+      where: {
+        roles: { [Op.contains]: [StaffRole.ADMIN] },
+      },
+    })
+  }
+
   async getSupervisors(): Promise<StaffModel[]> {
     return await this.staffModel.findAll({
       where: {

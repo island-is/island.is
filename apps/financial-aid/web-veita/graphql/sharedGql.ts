@@ -496,6 +496,15 @@ export const AdminUsersQuery = gql`
   }
 `
 
+export const AllAdminsQuery = gql`
+  query allAdminsQuery {
+    admins {
+      id
+      name
+    }
+  }
+`
+
 export const SupervisorsQuery = gql`
   query supervisorsQuery {
     supervisors {
