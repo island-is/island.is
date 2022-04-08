@@ -1,5 +1,3 @@
-export interface SchoolTestResultType {}
-
 import { Field, ObjectType } from '@nestjs/graphql'
 @ObjectType()
 export class DrivingSchoolType {
