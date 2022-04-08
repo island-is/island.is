@@ -92,9 +92,4 @@ export class FishingLicenseService {
       throw new Error('Error when trying to get fishing licenses')
     }
   }
-
-  //Todo fishingLicense type
-  async createFishingLicense(fishingLicense: any) {
-    console.log('🐟🐠🦈🎣')
-  }
 }

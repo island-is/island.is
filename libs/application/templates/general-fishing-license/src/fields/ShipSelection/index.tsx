@@ -3,10 +3,10 @@ import {
   getErrorViaPath,
   getValueViaPath,
 } from '@island.is/application/core'
-import { AlertMessage, Box, Text, Stack } from '@island.is/island-ui/core'
+import { AlertMessage, Box, Text, Stack, Tag } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React, { FC, useState } from 'react'
-import { ShipInformation, Tag } from '../components'
+import { ShipInformation } from '../components'
 import { RadioController } from '@island.is/shared/form-fields'
 import format from 'date-fns/format'
 import { shipSelection } from '../../lib/messages'
@@ -51,6 +51,7 @@ export const ShipSelection: FC<FieldBaseProps> = ({
         continue
       }
       const isExpired = new Date(ship.seaworthiness.validTo) < new Date()
+      const hasDeprivations = ship.deprivations.length > 0
       const seaworthinessDate = format(
         parseISO(ship.seaworthiness.validTo),
         'dd.MM.yy',
@@ -69,13 +70,16 @@ export const ShipSelection: FC<FieldBaseProps> = ({
                 isExpired={isExpired}
               />
               <Box>
-                <Tag variant="purple" disabled={isExpired}>
+                <Tag
+                  variant={isExpired || hasDeprivations ? 'disabled' : 'purple'}
+                  disabled
+                >
                   {formatMessage(shipSelection.tags.noFishingLicensesFound)}
                 </Tag>
               </Box>
             </Box>
             {isExpired && (
-              <Box marginTop={3}>
+              <Box marginTop={2}>
                 <AlertMessage
                   type="warning"
                   title={formatMessage(shipSelection.labels.expired, {
@@ -85,9 +89,29 @@ export const ShipSelection: FC<FieldBaseProps> = ({
                 />
               </Box>
             )}
+            {hasDeprivations && (
+              <Box marginTop={2}>
+                <AlertMessage
+                  type="warning"
+                  title={formatMessage(shipSelection.labels.deprivation)}
+                  message={ship.deprivations.map(
+                    ({ explanation, validFrom }) => {
+                      return (
+                        <div>{`${explanation} ${format(
+                          parseISO(validFrom),
+                          'dd.MM.yy',
+                          {
+                            locale: is,
+                          },
+                        )}`}</div>
+                      )
+                    },
+                  )}
+                />
+              </Box>
+            )}
           </>
         ),
-        disabled: isExpired,
       })
     }
     return options
@@ -139,7 +163,7 @@ export const ShipSelection: FC<FieldBaseProps> = ({
               {ship.fishingLicenses?.map((license) => {
                 if (license.code === 'unknown') return null
                 return (
-                  <Tag variant="blue">
+                  <Tag variant="blue" disabled>
                     {formatMessage(shipSelection.tags[license.code])}
                   </Tag>
                 )

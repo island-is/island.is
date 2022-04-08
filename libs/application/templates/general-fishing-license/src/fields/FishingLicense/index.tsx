@@ -3,9 +3,9 @@ import {
   getErrorViaPath,
   getValueViaPath,
 } from '@island.is/application/core'
-import { Box, SkeletonLoader, Text } from '@island.is/island-ui/core'
+import { Box, SkeletonLoader, Tag, Text } from '@island.is/island-ui/core'
 import React, { FC, useState } from 'react'
-import { FishingLicenseAlertMessage, ShipInformation, Tag } from '../components'
+import { FishingLicenseAlertMessage, ShipInformation } from '../components'
 import {
   FishingLicenseLicense as FishingLicenseSchema,
   FishingLicenseShip as Ship,
@@ -47,6 +47,8 @@ export const FishingLicense: FC<FieldBaseProps> = ({
   })
 
   const ship = ships[parseInt(shipIndex)]
+  const isExpired = new Date(ship.seaworthiness.validTo) < new Date()
+  const hasDeprivations = ship.deprivations.length > 0
 
   const handleOnSelect = (value: string) => {
     const selectedLicense = data?.fishingLicenses?.find(
@@ -70,7 +72,10 @@ export const FishingLicense: FC<FieldBaseProps> = ({
         >
           <ShipInformation ship={ship} seaworthinessHasColor />
           <Box>
-            <Tag variant="purple">
+            <Tag
+              variant={isExpired || hasDeprivations ? 'disabled' : 'purple'}
+              disabled
+            >
               {formatMessage(shipSelection.tags.noFishingLicensesFound)}
             </Tag>
           </Box>
@@ -121,29 +126,25 @@ export const FishingLicense: FC<FieldBaseProps> = ({
                 answer,
                 reasons,
               }: FishingLicenseSchema) => {
-                if (answer) return null
-                if (reasons.length === 0) return null
+                if (
+                  answer ||
+                  reasons.length === 0 ||
+                  fishingLicenseInfo.code === 'unknown'
+                )
+                  return null
                 return (
                   <Box marginBottom={2} key={fishingLicenseInfo.code}>
                     <FishingLicenseAlertMessage
-                      title={
-                        fishingLicenseInfo.code === 'unknown'
-                          ? ''
-                          : formatMessage(
-                              fishingLicense.warningMessageTitle[
-                                fishingLicenseInfo.code
-                              ],
-                            )
-                      }
-                      description={
-                        fishingLicenseInfo.code === 'unknown'
-                          ? ''
-                          : formatMessage(
-                              fishingLicense.warningMessageDescription[
-                                fishingLicenseInfo.code
-                              ],
-                            )
-                      }
+                      title={formatMessage(
+                        fishingLicense.warningMessageTitle[
+                          fishingLicenseInfo.code
+                        ],
+                      )}
+                      description={formatMessage(
+                        fishingLicense.warningMessageDescription[
+                          fishingLicenseInfo.code
+                        ],
+                      )}
                       reasons={reasons}
                     />
                   </Box>

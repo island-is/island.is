@@ -70,6 +70,11 @@ export const shipSelection = {
         'Vinsamlegast hafðu samband við Samgöngustofu til þess að endurnýja haffærin',
       description: 'Expired message',
     },
+    deprivation: {
+      id: 'gfl.application:shipSelection.labels.deprivation',
+      defaultMessage: 'Svipting/ar',
+      description: 'Deprivation label',
+    },
   }),
   tags: defineMessages({
     noFishingLicensesFound: {
