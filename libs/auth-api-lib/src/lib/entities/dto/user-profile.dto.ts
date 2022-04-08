@@ -44,5 +44,5 @@ export class UserProfileDTO {
   address?: AddressDTO
 
   @ApiPropertyOptional()
-  domicile?: AddressDTO
+  legalDomicile?: AddressDTO
 }

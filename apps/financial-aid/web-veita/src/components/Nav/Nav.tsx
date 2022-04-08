@@ -17,16 +17,15 @@ import {
   SuperAdminSideNavItems,
 } from '@island.is/financial-aid-web/veita/src/components'
 
-import * as styles from './Nav.css'
-import * as sideNavButtonStyles from '../../sharedStyles/SideNavButton.css'
-
-import cn from 'classnames'
 import { ApplicationFiltersContext } from '@island.is/financial-aid-web/veita/src/components/ApplicationFiltersProvider/ApplicationFiltersProvider'
 
 import { useLogOut } from '@island.is/financial-aid-web/veita/src/utils/useLogOut'
 
 import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
 import { Routes, StaffRole } from '@island.is/financial-aid/shared/lib'
+import cn from 'classnames'
+import * as styles from './Nav.css'
+import * as sideNavButtonStyles from '../../sharedStyles/SideNavButton.css'
 
 interface Props {
   showInMobile: boolean
@@ -54,26 +53,27 @@ const Nav = ({ showInMobile, className }: Props) => {
       })}
     >
       <header>
-        <div className={styles.logoContainer}>
+        <Box
+          display="flex"
+          marginBottom={[2, 2, 6]}
+          className={styles.logoContainer}
+        >
           <Logo />
-        </div>
-        <div className={styles.logoMunicipalityContainer}>
-          <Box className={styles.logoMunicipality}>
-            <LogoMunicipality />
-          </Box>
-
-          <Box paddingLeft={2} className={'headLine'}>
-            {isSuperAdmin ? (
-              <Text as="h1" lineHeight="sm">
-                <strong>Veita</strong> • Umsjón með sveitarfélögum
-              </Text>
-            ) : (
-              <Text as="h1" lineHeight="sm">
-                <strong>Veita</strong> • Umsóknir um fjárhagsaðstoð
-              </Text>
-            )}
-          </Box>
-        </div>
+        </Box>
+        <Box display="flex" marginBottom={1} className={styles.textContainer}>
+          {isSuperAdmin ? (
+            <Text as="h1" lineHeight="sm">
+              <strong>Veita</strong> • Umsjón með sveitarfélögum
+            </Text>
+          ) : (
+            <Text as="h1" lineHeight="sm">
+              <strong>Veita</strong> • Umsóknir um fjárhagsaðstoð
+            </Text>
+          )}
+        </Box>
+        <Box display="flex">
+          <LogoMunicipality />
+        </Box>
       </header>
 
       <div>

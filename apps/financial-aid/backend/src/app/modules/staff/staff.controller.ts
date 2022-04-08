@@ -102,20 +102,9 @@ export class StaffController {
     description: 'Creates staff',
   })
   async createStaff(
-    @CurrentStaff() staff: Staff,
     @Body() createStaffInput: CreateStaffDto,
   ): Promise<StaffModel> {
-    //TODO
-    return await this.staffService.createStaff(
-      createStaffInput,
-      {
-        municipalityId:
-          createStaffInput.municipalityId ?? staff.municipalityIds[0],
-        municipalityName:
-          createStaffInput.municipalityName ?? staff.municipalityName,
-      },
-      staff,
-    )
+    return await this.staffService.createStaff(createStaffInput)
   }
 
   @StaffRolesRules(StaffRole.SUPERADMIN)
@@ -140,6 +129,18 @@ export class StaffController {
     @Param('municipalityId') municipalityId: string,
   ): Promise<StaffModel[]> {
     return this.staffService.getUsers(municipalityId)
+  }
+
+  @StaffRolesRules(StaffRole.SUPERADMIN)
+  @Get('allAdminUsers/:municipalityId')
+  @ApiOkResponse({
+    type: [StaffModel],
+    description: 'Gets admin users by municipality id',
+  })
+  async allAdminUsers(
+    @Param('municipalityId') municipalityId: string,
+  ): Promise<StaffModel[]> {
+    return this.staffService.allAdminUsers(municipalityId)
   }
 
   @StaffRolesRules(StaffRole.SUPERADMIN)
