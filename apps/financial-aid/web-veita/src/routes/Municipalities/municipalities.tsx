@@ -111,7 +111,9 @@ export const Municipalities = () => {
           variant="ghost"
           onClick={() => {
             setIsModalVisible(true)
-            getAdmins()
+            if (!dataAdmins?.admins) {
+              getAdmins()
+            }
           }}
         >
           Nýtt sveitarfélag

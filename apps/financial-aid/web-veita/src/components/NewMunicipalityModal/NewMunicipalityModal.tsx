@@ -6,6 +6,7 @@ import { isEmailValid, StaffRole } from '@island.is/financial-aid/shared/lib'
 
 import { serviceCenters } from '@island.is/financial-aid/shared/data'
 import { MunicipalityMutation } from '@island.is/financial-aid-web/veita/graphql'
+import { useStaff } from '@island.is/financial-aid-web/veita/src/utils/useStaff'
 
 interface Props {
   isVisible: boolean
@@ -16,12 +17,13 @@ interface Props {
     {
       id: string
       name: string
+      municipalityIds: string[]
     },
   ]
 }
-
 interface newMunicipalityModalState {
   serviceCenter: Option
+  selectedAdmin: Option
   adminNationalId: string
   adminName: string
   adminEmail: string
@@ -36,8 +38,6 @@ const NewMunicipalityModal = ({
   onMunicipalityCreated,
   allAdmins,
 }: Props) => {
-  console.log('newMunibla ', allAdmins)
-
   const selectServiceCenter = serviceCenters
     .filter(
       (el) =>
@@ -48,9 +48,11 @@ const NewMunicipalityModal = ({
     })
 
   const [createMunicipality] = useMutation(MunicipalityMutation)
+  const { updateInfo } = useStaff()
 
   const [state, setState] = useState<newMunicipalityModalState>({
     serviceCenter: { label: '', value: '' },
+    selectedAdmin: { label: '', value: '' },
     adminNationalId: '',
     adminName: '',
     adminEmail: '',
@@ -60,36 +62,67 @@ const NewMunicipalityModal = ({
 
   const [errorMessage, setErrorMessage] = useState<string>()
 
-  const areRequiredFieldsFilled =
-    !state.serviceCenter.label ||
-    !state.serviceCenter.value ||
+  const areRequiredFieldsFilledForNewAdmin =
     !state.adminEmail ||
     !state.adminName ||
     !state.adminNationalId ||
     !isEmailValid(state.adminEmail) ||
     state.adminNationalId.length !== 10
 
+  const areRequiredFieldsFilledForUpdateAdmin =
+    !state.selectedAdmin.label || !state.selectedAdmin.value
+
+  const areRequiredFieldsFilledForServiceCenter =
+    !state.serviceCenter.label || !state.serviceCenter.value
+
   const submit = async () => {
-    if (areRequiredFieldsFilled) {
+    if (
+      areRequiredFieldsFilledForServiceCenter ||
+      (areRequiredFieldsFilledForUpdateAdmin &&
+        areRequiredFieldsFilledForNewAdmin)
+    ) {
       setState({ ...state, hasError: true })
       return
     }
+    console.log(
+      'ferdu hinad?',
+      areRequiredFieldsFilledForNewAdmin ? 'admin' : 'bla',
+    )
     try {
       return await createMunicipality({
         variables: {
           input: {
             name: state.serviceCenter.label,
             municipalityId: state.serviceCenter.value,
-            admin: {
-              name: state.adminName,
-              email: state.adminEmail,
-              nationalId: state.adminNationalId,
-              roles: [StaffRole.ADMIN],
-            },
+            admin: areRequiredFieldsFilledForNewAdmin
+              ? undefined
+              : {
+                  name: state.adminName,
+                  email: state.adminEmail,
+                  nationalId: state.adminNationalId,
+                  roles: [StaffRole.ADMIN],
+                },
           },
         },
       }).then(() => {
-        onMunicipalityCreated()
+        if (areRequiredFieldsFilledForNewAdmin) {
+          // await updateInfo(
+          //   state.selectedAdmin.value,
+          //   undefined,
+          //   undefined,
+          //   undefined,
+          //   undefined,
+          //   undefined,
+          //   undefined,
+          //   selected?.municipalityIds && newMuni
+          //     ? [...selected?.municipalityIds, newMuni]
+          //     : undefined,
+          // )
+          console.log('veisla')
+          return
+        }
+
+        // onMunicipalityCreated()
       })
     } catch (error) {
       if (error.graphQLErrors[0]?.extensions?.response?.status === 400) {
@@ -121,11 +154,7 @@ const NewMunicipalityModal = ({
           noOptionsMessage="Enginn valmöguleiki"
           options={selectServiceCenter}
           placeholder="Veldu tegund"
-          hasError={
-            state.hasError &&
-            !state.serviceCenter.label &&
-            !state.serviceCenter.value
-          }
+          hasError={state.hasError && areRequiredFieldsFilledForServiceCenter}
           errorMessage="Þú þarft að velja sveitarfélag"
           value={state.serviceCenter}
           onChange={(option) => {
@@ -157,18 +186,13 @@ const NewMunicipalityModal = ({
               return { label: el.name, value: el.id }
             })}
             placeholder="Veldu tegund"
-            hasError={
-              state.hasError &&
-              !state.serviceCenter.label &&
-              !state.serviceCenter.value
-            }
+            hasError={state.hasError && areRequiredFieldsFilledForUpdateAdmin}
             errorMessage="Þú þarft að velja stjórnanda"
-            // hasError={state.hasError && }
-            value={state.serviceCenter}
+            value={state.selectedAdmin}
             onChange={(option) => {
               setState({
                 ...state,
-                serviceCenter: option as Option,
+                selectedAdmin: option as Option,
                 hasError: false,
               })
             }}

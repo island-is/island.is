@@ -14,6 +14,6 @@ export class CreateMunicipalityInput {
   readonly municipalityId!: string
 
   @Allow()
-  @Field()
+  @Field({ nullable: true })
   readonly admin?: CreateStaffInput
 }

@@ -140,6 +140,10 @@ export class MunicipalityService {
                 transaction: t,
               })
             })
+        } else {
+          return this.municipalityModel.create(municipality, {
+            transaction: t,
+          })
         }
       })
     })

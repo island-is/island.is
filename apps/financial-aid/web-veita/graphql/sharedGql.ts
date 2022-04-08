@@ -501,6 +501,7 @@ export const AllAdminsQuery = gql`
     admins {
       id
       name
+      municipalityIds
     }
   }
 `
