@@ -2,13 +2,14 @@ import React, { useState } from 'react'
 import { Box, Select, Button } from '@island.is/island-ui/core'
 import {
   ReactSelectOption,
-  Staff,
   UpdateAdmin,
 } from '@island.is/financial-aid/shared/lib'
 import { ValueType } from 'react-select'
 
 import { useStaff } from '@island.is/financial-aid-web/veita/src/utils/useStaff'
 import { useRouter } from 'next/router'
+
+import * as styles from './MultiSelection.css'
 
 interface Props {
   admins: UpdateAdmin[]
@@ -42,27 +43,32 @@ const MultiSelectionAdmin = ({ admins, onUpdate }: Props) => {
     })
   }
   return (
-    <Box display="block" marginBottom={3}>
-      <Box marginBottom={3}>
-        <Select
-          label="Leita að stjórnanda"
-          name="selectMunicipality"
-          noOptionsMessage="Enginn valmöguleiki"
-          options={admins.map((el) => {
-            return { label: el.name, value: el.id }
-          })}
-          placeholder="Veldu stjórnanda"
-          onChange={(option: ValueType<ReactSelectOption>) => {
-            const { value } = option as ReactSelectOption
-            setSelected(admins.find((el) => value === el.id))
-          }}
-          errorMessage="Verður að velja að minnsta kosti 1 sveitarfélag"
-          // hasError={hasError && municipalityIds.length === 0}
-        />
+    <Box marginBottom={7} className={styles.selectionAdminContainer}>
+      <Select
+        label="Leita að stjórnanda"
+        name="selectMunicipality"
+        noOptionsMessage="Enginn valmöguleiki"
+        options={admins.map((el) => {
+          return { label: el.name, value: el.id }
+        })}
+        placeholder="Veldu stjórnanda"
+        onChange={(option: ValueType<ReactSelectOption>) => {
+          const { value } = option as ReactSelectOption
+          setSelected(admins.find((el) => value === el.id))
+        }}
+        size="sm"
+      />
+      <Box display="flex" alignItems="center">
+        <Button
+          size="small"
+          icon="add"
+          variant="ghost"
+          onClick={onSubmitUpdate}
+          disabled={!selected}
+        >
+          Bæta við
+        </Button>
       </Box>
-      <Button size="small" icon="add" variant="ghost" onClick={onSubmitUpdate}>
-        Bæta við
-      </Button>
     </Box>
   )
 }
