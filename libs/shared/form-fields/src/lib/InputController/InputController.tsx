@@ -28,6 +28,7 @@ interface Props {
   required?: boolean
   readOnly?: boolean
   maxLength?: number
+  loading?: boolean
   size?: 'xs' | 'sm' | 'md'
 }
 
@@ -61,6 +62,7 @@ export const InputController: FC<Props> = ({
   required,
   readOnly,
   maxLength,
+  loading,
   size = 'md',
 }) => {
   function renderChildInput(c: ChildParams) {
@@ -83,6 +85,7 @@ export const InputController: FC<Props> = ({
           value={value}
           format={format}
           maxLength={maxLength}
+          loading={loading}
           onChange={(
             e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
           ) => {
@@ -115,6 +118,7 @@ export const InputController: FC<Props> = ({
           value={value}
           format={format}
           maxLength={maxLength}
+          loading={loading}
           onChange={(
             e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
           ) => {
@@ -147,6 +151,7 @@ export const InputController: FC<Props> = ({
           value={value}
           format={format}
           maxLength={maxLength}
+          loading={loading}
           onChange={(
             e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
           ) => {
@@ -181,6 +186,7 @@ export const InputController: FC<Props> = ({
           textarea={textarea}
           type={type}
           maxLength={maxLength}
+          loading={loading}
           onChange={(e) => {
             onChange(e.target.value)
             if (onInputChange) {

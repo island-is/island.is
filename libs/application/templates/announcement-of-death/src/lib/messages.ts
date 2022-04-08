@@ -25,7 +25,8 @@ export const m = defineMessages({
   },
   dataCollectionSubtitle: {
     id: 'aod.application:dataCollectionSubtitle',
-    defaultMessage: 'Eftirfarandi gögn verða sótt rafrænt með þínu samþykki',
+    defaultMessage:
+      'Eftirfarandi upplýsingar um hinn látna verða sóttar rafrænt',
     description: 'Subtitle for data collection section',
   },
   dataCollectionDescription: {
@@ -41,12 +42,13 @@ export const m = defineMessages({
   },
   dataCollectionNationalRegistryTitle: {
     id: 'aod.application:dataCollectionNationalRegistryTitle',
-    defaultMessage: 'Uppfletting í Þjóðskrá',
+    defaultMessage: 'Persónuupplýsingar',
     description: 'National registry title',
   },
   dataCollectionNationalRegistrySubtitle: {
     id: 'aod.application:dataCollectionNationalRegistrySubtitle',
-    defaultMessage: 'Fullt nafn, kennitala, heimilisfang.',
+    defaultMessage:
+      'Upplýsingar frá Þjóðskrá um fæðingardag, heimilisfang, fjölskylduhagi og hjúskaparstöðu.',
     description: 'National registry subtitle',
   },
   dataCollectionUserProfileTitle: {
@@ -112,28 +114,69 @@ export const m = defineMessages({
     defaultMessage: 'Senda umsókn áfram á annan aðila.',
     description: 'Role confirmation delegate role',
   },
+  delegateRoleDisclaimer: {
+    id: 'aod.application:delegateRoleDisclaimer',
+    defaultMessage:
+      'Þegar andlátstilkynning hefur verið send á annan aðila verður hún eingöngu virk hjá þeim aðila.',
+    description: 'Delegate role disclaimer',
+  },
+  delegateRoleSSN: {
+    id: 'aod.application:delegateRoleSSN',
+    defaultMessage: 'Kennitala viðtakanda',
+    description: 'Delegate role SSN',
+  },
+  delegateRoleName: {
+    id: 'aod.application:delegateRoleName',
+    defaultMessage: 'Nafn',
+    description: 'Delegate role name',
+  },
 
   /* Validation */
+  errorRoleConfirmation: {
+    id: 'aod.application:error.errorRoleConfirmation',
+    defaultMessage: 'Þú verður að velja einn möguleika',
+    description: 'Role confirmation is invalid',
+  },
   errorNationalIdIncorrect: {
     id: 'aod.application:error.nationalIdIncorrect',
     defaultMessage: 'Þessi kennitala virðist ekki vera rétt',
     description: 'National id is invalid',
   },
-
-  /* Information */
-  informationTitle: {
-    id: 'aod.application:informationSectionTitle',
-    defaultMessage:
-      'Persónuupplýsingar umsækjanda, vegna umsóknar um stæðiskort',
-    description: 'Information section title',
+  errorPhoneNumber: {
+    id: 'aod.application:error.errorPhoneNumber',
+    defaultMessage: 'Símanúmer virðist ekki vera rétt',
+    description: 'Phone number is invalid',
   },
-  informationSectionTitle: {
-    id: 'aod.application:informationTitle',
-    defaultMessage: 'Upplýsingar',
-    description: 'Information title',
+  errorEmail: {
+    id: 'aod.application:error.errorEmail',
+    defaultMessage: 'Netfang virðist ekki vera rétt',
+    description: 'Email is invalid',
+  },
+  errorRelation: {
+    id: 'aod.application:error.errorRelation',
+    defaultMessage: 'Netfang virðist ekki vera rétt',
+    description: 'Email is invalid',
+  },
+
+  /* Announcement */
+  announcementTitle: {
+    id: 'aod.application:announcementTitle',
+    defaultMessage: 'Tilkynnandi',
+    description: 'Announcement section title',
+  },
+  announcementDescription: {
+    id: 'aod.application:announcementDescription',
+    defaultMessage:
+      'Vinsamlegast farðu yfir upplýsingarnar og gakktu úr skugga um að þær séu réttar.',
+    description: 'Announcement description',
   },
 
   /* Applicant - used in information and overview sections */
+  infoSectionTitle: {
+    id: 'aod.application:infoSectionTitle',
+    defaultMessage: 'Upplýsingar',
+    description: 'info section title',
+  },
   applicantsName: {
     id: 'aod.application:applicantsName',
     defaultMessage: 'Nafn',
@@ -163,6 +206,16 @@ export const m = defineMessages({
     id: 'aod.application:applicantsPhoneNumber',
     defaultMessage: 'Símanúmer',
     description: 'Phone number label',
+  },
+  applicantsRelation: {
+    id: 'aod.application:applicantsRelation',
+    defaultMessage: 'Tengsl',
+    description: 'Relation label',
+  },
+  applicantsRelationPlaceholder: {
+    id: 'aod.application:applicantsRelationPlaceholder',
+    defaultMessage: 'Veldu tengsl',
+    description: 'Relation label',
   },
   cardValidityPeriod: {
     id: 'aod.application:cardValidityPeriod',

@@ -1,5 +1,4 @@
 import {
-  buildDescriptionField,
   buildMultiField,
   buildSelectField,
   buildTextField,
@@ -14,14 +13,13 @@ export const subSectionInfo = buildSubSection({
   children: [
     buildMultiField({
       id: 'announcement',
-      title: 'Tilkynnandi',
-      description:
-        'Vinsamlegast farðu yfir upplýsingarnar og gakktu úr skugga um að þær séu réttar.',
+      title: m.announcementTitle,
+      description: m.announcementDescription,
       space: 1,
       children: [
         buildTextField({
           id: 'applicantName',
-          title: 'Nafn',
+          title: m.applicantsName,
           placeholder: '',
           backgroundColor: 'white',
           width: 'half',
@@ -31,7 +29,7 @@ export const subSectionInfo = buildSubSection({
         }),
         buildTextField({
           id: 'applicantPhone',
-          title: 'Símanúmer',
+          title: m.applicantsPhoneNumber,
           placeholder: '',
           width: 'half',
           defaultValue: (application: Application) =>
@@ -40,7 +38,7 @@ export const subSectionInfo = buildSubSection({
         }),
         buildTextField({
           id: 'applicantEmail',
-          title: 'Netfang',
+          title: m.applicantsEmail,
           placeholder: '',
           width: 'half',
           defaultValue: (application: Application) =>
@@ -48,8 +46,8 @@ export const subSectionInfo = buildSubSection({
         }),
         buildSelectField({
           id: 'applicantRelation',
-          title: 'Tengsl',
-          placeholder: 'Veldu tengsl',
+          title: m.applicantsRelation,
+          placeholder: m.applicantsRelationPlaceholder,
           width: 'half',
           options: [
             {

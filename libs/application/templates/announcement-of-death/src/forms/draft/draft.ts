@@ -15,10 +15,12 @@ import {
   buildSubmitField,
   DefaultEvents,
   getValueViaPath,
+  buildRadioField,
 } from '@island.is/application/core'
 import { subSectionDelegate } from './subSectionDelegate'
 import { subSectionInfo } from './subSectionInfo'
 import { subSectionInheritance } from './subSectionInheritance'
+import { subSectionWillAndTrade } from './subSectionWillAndTrade'
 import { subSectionProperties } from './subSectionProperties'
 import { format as formatNationalId } from 'kennitala'
 import { NationalRegistryUser, UserProfile } from '../../types/schema'
@@ -71,10 +73,28 @@ export const draft = (): Form => {
                 description: m.roleConfirmationNotice,
                 id: 'roleConfirmationNotice',
               }),
+              buildRadioField({
+                id: 'roleConfirmation',
+                title: '',
+                options: [
+                  {
+                    value: RoleConfirmationEnum.CONTINUE,
+                    label: m.roleConfirmationContinue,
+                  },
+                  {
+                    value: RoleConfirmationEnum.DELEGATE,
+                    label: m.roleConfirmationDelegate,
+                  },
+                ],
+                width: 'full',
+              }),
               buildCustomField({
                 title: '',
                 id: 'electPerson',
                 component: 'ElectPerson',
+                condition: (answers) =>
+                  getValueViaPath(answers, 'roleConfirmation') ===
+                  RoleConfirmationEnum.DELEGATE,
               }),
             ],
           }),
@@ -89,7 +109,6 @@ export const draft = (): Form => {
             id: 'approveExternalData',
             title: m.dataCollectionTitle,
             subTitle: m.dataCollectionSubtitle,
-            description: m.dataCollectionDescription,
             checkboxLabel: m.dataCollectionCheckboxLabel,
             dataProviders: [
               buildDataProviderItem({
@@ -110,9 +129,10 @@ export const draft = (): Form => {
       }),
       buildSection({
         id: 'info',
-        title: 'Upplýsingar',
+        title: m.infoSectionTitle,
         children: [
           subSectionInfo,
+          subSectionWillAndTrade,
           subSectionInheritance,
           subSectionProperties,
           subSectionFiles,
