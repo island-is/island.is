@@ -76,6 +76,7 @@ export enum ServicePortalPath {
   AssetsRoot = '/fasteignir',
   AssetsRealEstateDetail = '/fasteignir/:id',
   AssetsVehicles = '/okutaeki',
+  AssetsVehiclesDetail = '/okutaeki/:id',
 
   // Messages
   MessagesRoot = '/skilabod',

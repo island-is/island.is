@@ -16,5 +16,10 @@ export const vehiclesModule: ServicePortalModule = {
       path: ServicePortalPath.AssetsVehicles,
       render: () => lazy(() => import('./screens/Overview/Overview')),
     },
+    {
+      name: 'Ökutæki',
+      path: ServicePortalPath.AssetsVehiclesDetail,
+      render: () => lazy(() => import('./screens/VehicleDetail/VehicleDetail')),
+    },
   ],
 }

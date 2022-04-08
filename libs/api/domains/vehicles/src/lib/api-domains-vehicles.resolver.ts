@@ -13,6 +13,7 @@ import {
   Scopes,
 } from '@island.is/auth-nest-tools'
 import { GetVehiclesForUserInput } from '../dto/getVehiclesForUserInput'
+import { GetVehicleDetailInput } from '../dto/getVehicleDetailInput'
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
 export class VehiclesResolver {
@@ -21,6 +22,20 @@ export class VehiclesResolver {
   @Query(() => graphqlTypeJson, { name: 'getVehiclesForUser' })
   @Audit()
   async getVehicleForUser(@CurrentUser() user: User) {
-    return this.vehiclesService.getVehiclesForUser(user.nationalId)
+    return await this.vehiclesService.getVehiclesForUser(user.nationalId)
+  }
+
+  @Query(() => graphqlTypeJson, { name: 'getVehicleDetail' })
+  @Audit()
+  async getVehicleDetail(
+    @Args('input') input: GetVehicleDetailInput,
+    @CurrentUser() user: User,
+  ) {
+    return await this.vehiclesService.getVehicleDetail({
+      clientPersidno: user.nationalId,
+      permno: input.permno,
+      regno: input.regno,
+      vin: input.vin,
+    })
   }
 }
