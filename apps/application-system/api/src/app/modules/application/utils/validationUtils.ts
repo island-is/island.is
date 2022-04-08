@@ -214,15 +214,3 @@ export async function validateIncomingExternalDataProviders(
   }
 }
 
-export async function validateActors(
-  application: Pick<Application, 'actors'>,
-  user: User,
-): Promise<Boolean> {
-  if (!user.actor) {
-    return true
-  }
-  if (application.actors.includes(user.actor.nationalId)) {
-    return true
-  }
-  return false
-}

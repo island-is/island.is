@@ -78,7 +78,6 @@ import {
   validateThatTemplateIsReady,
   isTemplateReady,
   validateThatApplicationIsReady,
-  validateActors,
 } from './utils/validationUtils'
 import { ApplicationSerializer } from './tools/application.serializer'
 import { UpdateApplicationStateDto } from './dto/updateApplicationState.dto'
@@ -98,6 +97,7 @@ import { ApplicationAccessService } from './tools/applicationAccess.service'
 import { CurrentLocale } from './utils/currentLocale'
 import { Application } from '@island.is/application/api/core'
 import { Documentation } from '@island.is/nest/swagger'
+import {DelegationGuard} from './guards/delegation.guard'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('applications')
@@ -380,6 +380,7 @@ export class ApplicationController {
   }
 
   @Scopes(ApplicationScope.write)
+  @UseGuards(DelegationGuard)
   @Put('applications/:id')
   @ApiParam({
     name: 'id',
@@ -419,11 +420,6 @@ export class ApplicationController {
       newAnswers,
       intl.formatMessage,
     )
-
-    const validActors = await validateActors(existingApplication, user)
-    if (!validActors && user.actor) {
-      existingApplication.actors.push(user.actor?.nationalId)
-    }
 
     const mergedAnswers = mergeAnswers(existingApplication.answers, newAnswers)
     const { updatedApplication } = await this.applicationService.update(
