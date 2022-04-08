@@ -1,10 +1,12 @@
 import { uuid } from 'uuidv4'
+import { Op } from 'sequelize'
 import { Transaction } from 'sequelize/types'
 
 import {
   CaseCustodyRestrictions,
   CaseLegalProvisions,
   CaseOrigin,
+  CaseState,
   CaseType,
   Gender,
   User as TUser,
@@ -326,7 +328,11 @@ describe('CaseController - Extend', () => {
           { model: Case, as: 'childCase' },
         ],
         order: [[{ model: Defendant, as: 'defendants' }, 'created', 'ASC']],
-        where: { id: extendedCaseId },
+        where: {
+          id: extendedCaseId,
+          isArchived: false,
+          state: { [Op.not]: CaseState.DELETED },
+        },
       })
     })
   })

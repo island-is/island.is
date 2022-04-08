@@ -19,7 +19,7 @@ const useNavigationTree = () => {
   const hasIncome = Boolean(form?.hasIncome)
   const showTax = Boolean(
     form?.taxReturnFromRskFile.length === 0 ||
-      form?.directTaxPayments.length === 0,
+      (form?.directTaxPayments.length === 0 && !form.hasFetchedPayments),
   )
 
   const section: FormStepperSection[] = [

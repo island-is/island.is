@@ -29,6 +29,7 @@ interface Props {
   readOnly?: boolean
   maxLength?: number
   size?: 'xs' | 'sm' | 'md'
+  autoComplete?: 'off' | 'on'
 }
 
 interface ChildParams {
@@ -62,6 +63,7 @@ export const InputController: FC<Props> = ({
   readOnly,
   maxLength,
   size = 'md',
+  autoComplete,
 }) => {
   function renderChildInput(c: ChildParams) {
     const { value, onChange, ...props } = c
@@ -83,6 +85,7 @@ export const InputController: FC<Props> = ({
           value={value}
           format={format}
           maxLength={maxLength}
+          autoComplete={autoComplete}
           onChange={(
             e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
           ) => {
@@ -115,6 +118,7 @@ export const InputController: FC<Props> = ({
           value={value}
           format={format}
           maxLength={maxLength}
+          autoComplete={autoComplete}
           onChange={(
             e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
           ) => {
@@ -147,6 +151,7 @@ export const InputController: FC<Props> = ({
           value={value}
           format={format}
           maxLength={maxLength}
+          autoComplete={autoComplete}
           onChange={(
             e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
           ) => {
@@ -181,6 +186,7 @@ export const InputController: FC<Props> = ({
           textarea={textarea}
           type={type}
           maxLength={maxLength}
+          autoComplete={autoComplete}
           onChange={(e) => {
             onChange(e.target.value)
             if (onInputChange) {
