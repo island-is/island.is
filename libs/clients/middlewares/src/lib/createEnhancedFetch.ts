@@ -12,12 +12,12 @@ import { AutoAuthOptions, withAutoAuth } from './withAutoAuth'
 import { withErrorLog } from './withErrorLog'
 import { withResponseErrors } from './withResponseErrors'
 import { withCircuitBreaker } from './withCircuitBreaker'
-import {
-  ClientCertificateOptions,
-  withClientCertificate,
-} from './withClientCertificate'
+import { AgentOptions, ClientCertificateOptions, withAgent } from './withAgent'
 import { withCache } from './withCache/withCache'
 import { CacheConfig } from './withCache/types'
+
+const DEFAULT_TIMEOUT = 1000 * 10 // seconds
+const DEFAULT_FREE_SOCKET_TIMEOUT = 1000 * 10 // 10 seconds
 
 export interface EnhancedFetchOptions {
   // The name of this fetch function, used in logs and opossum stats.
@@ -58,6 +58,13 @@ export interface EnhancedFetchOptions {
 
   // Certificate for auth
   clientCertificate?: ClientCertificateOptions
+
+  // Override configuration for the http agent. E.g. configure a client certificate.
+  agentOptions?: AgentOptions
+
+  // Configures keepAlive for requests. If false, never reuse connections. If true, reuse connection with a maximum
+  // idle timeout of 10 seconds. If number, override the idle connection timeout. Defaults to true.
+  keepAlive?: boolean | number
 
   // The client used to send metrics.
   metricsClient?: DogStatsD
@@ -118,20 +125,27 @@ export const createEnhancedFetch = (
     name,
     logger = defaultLogger,
     fetch = nodeFetch,
-    timeout = 10000,
+    timeout = DEFAULT_TIMEOUT,
     logErrorResponseBody = false,
     autoAuth,
     forwardAuthUserAgent = true,
     clientCertificate,
+    agentOptions,
+    keepAlive = true,
     cache,
     metricsClient = new DogStatsD({ prefix: `${options.name}.` }),
   } = options
   const treat400ResponsesAsErrors = options.treat400ResponsesAsErrors === true
+  const freeSocketTimeout =
+    typeof keepAlive === 'number' ? keepAlive : DEFAULT_FREE_SOCKET_TIMEOUT
   const builder = buildFetch(fetch)
 
-  if (clientCertificate) {
-    builder.wrap(withClientCertificate, { clientCertificate })
-  }
+  builder.wrap(withAgent, {
+    clientCertificate,
+    agentOptions,
+    keepAlive: !!keepAlive,
+    freeSocketTimeout,
+  })
 
   if (timeout !== false) {
     builder.wrap(withTimeout, { timeout })
