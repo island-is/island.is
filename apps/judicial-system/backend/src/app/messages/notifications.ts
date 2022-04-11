@@ -206,7 +206,7 @@ export const notifications = {
       defaultMessage:
         '{isolation, select, FALSE {Ekki er farið fram á einangrun} other {Farið er fram á einangrun}}.',
       description:
-        'Texti í pósti til fangeslis sem tilgreinir hvort farið er framm á einangrun',
+        'Texti í pósti til fangeslis sem tilgreinir hvort farið er fram á einangrun',
     },
     courtDateText: {
       id:
