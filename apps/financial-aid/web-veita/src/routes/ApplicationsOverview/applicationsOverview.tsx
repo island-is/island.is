@@ -29,9 +29,15 @@ interface ApplicationsProvider {
 }
 
 export const ApplicationsOverview = () => {
+  const router = useRouter()
+
   const [filters, setFilters] = useState<Filters>({
-    selectedStates: [],
-    selectedMonths: [],
+    selectedStates: router?.query?.stada
+      ? ((router?.query?.stada as string).split(',') as ApplicationState[])
+      : [],
+    selectedMonths: router?.query?.timabil
+      ? (router?.query?.timabil as string).split(',').map(Number)
+      : [],
   })
 
   const onChecked = (item: ApplicationState | number, checked: boolean) => {
@@ -49,8 +55,6 @@ export const ApplicationsOverview = () => {
 
     setFilters(filtersCopy)
   }
-
-  const router = useRouter()
 
   const { data, error, loading } = useQuery<ApplicationsProvider>(
     ApplicationsQuery,
