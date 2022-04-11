@@ -222,7 +222,7 @@ export const notifications = {
       defaultMessage:
         'Nafn sakbornings: {accusedName, select, NONE {Ekki skráð} other {{accusedName}}}.<br /><br />Kyn sakbornings: {gender, select, MALE {Karl} FEMALE {Kona} other {Kynsegin/Annað}}.<br /><br />Krafist er gæsluvarðhalds til {requestedValidToDateText}.',
       description:
-        'Texti í pósti til fangeslis tilgreinir hver sakborningur er',
+        'Texti í pósti til fangeslis sem tilgreinir hver sakborningur er',
     },
     courtText: {
       id:
