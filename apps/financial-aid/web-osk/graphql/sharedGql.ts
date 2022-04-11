@@ -67,6 +67,7 @@ export const ApplicationQuery = gql`
       modified
       municipalityCode
       spouseNationalId
+      familyStatus
       applicationEvents {
         id
         applicationId
@@ -143,6 +144,7 @@ export const GatherTaxDataQuery = gql`
       }
     }
     municipalitiesDirectTaxPayments {
+      success
       directTaxPayments {
         totalSalary
         payerNationalId

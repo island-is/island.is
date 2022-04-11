@@ -355,9 +355,6 @@
     "clients-rsk-procuring": {
       "tags": []
     },
-    "clients-rsk-v1": {
-      "tags": []
-    },
     "clients-syslumenn": {
       "tags": []
     },
@@ -658,6 +655,9 @@
       "tags": []
     },
     "service-portal-finance": {
+      "tags": []
+    },
+    "service-portal-finance-schedule": {
       "tags": []
     },
     "service-portal-graphql": {

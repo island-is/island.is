@@ -33,7 +33,7 @@ const AppLayout = ({ children }: Props) => {
     (user?.currentApplicationId && !user?.spouse?.hasPartnerApplied)
 
   if (isUserLoggedIn && shouldRedirect && shouldRouteToStatus) {
-    router.push(Routes.statusPage(user.currentApplicationId as string))
+    router.push(Routes.statusPage(user?.currentApplicationId as string))
     return null
   }
 

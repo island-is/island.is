@@ -40,7 +40,6 @@ describe('StaffController - Get staff for municipality', () => {
       municipalityIds: ['0'],
       roles: [StaffRole.EMPLOYEE],
       active: true,
-      municipalityName: 'here',
     }
     let mockFindByMunicipalityId: jest.Mock
 
@@ -72,7 +71,6 @@ describe('StaffController - Get staff for municipality', () => {
       municipalityIds: ['0'],
       roles: [StaffRole.EMPLOYEE],
       active: true,
-      municipalityName: 'here',
     }
 
     const result = [
@@ -83,7 +81,6 @@ describe('StaffController - Get staff for municipality', () => {
         municipalityIds: ['0'],
         roles: [StaffRole.EMPLOYEE],
         active: true,
-        municipalityName: 'here',
       },
       {
         id: '2',
@@ -92,7 +89,6 @@ describe('StaffController - Get staff for municipality', () => {
         municipalityIds: ['0'],
         roles: [StaffRole.EMPLOYEE],
         active: true,
-        municipalityName: 'here',
       },
     ]
     let mockFindByMunicipalityId: jest.Mock
@@ -121,7 +117,6 @@ describe('StaffController - Get staff for municipality', () => {
       municipalityIds: ['0'],
       roles: [StaffRole.EMPLOYEE],
       active: true,
-      municipalityName: 'here',
     }
     let then: Then
 

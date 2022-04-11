@@ -8,6 +8,7 @@ import {
   MartialStatusType,
   martialStatusTypeFromMartialCode,
   estimatedBreakDown,
+  showSpouseData,
 } from '@island.is/financial-aid/shared/lib'
 
 import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
@@ -24,15 +25,32 @@ const Estimation = ({
   homeCircumstances,
   usePersonalTaxCredit,
 }: Props) => {
-  const { municipality, nationalRegistryData } = useContext(AppContext)
+  const { municipality, nationalRegistryData, myApplication } = useContext(
+    AppContext,
+  )
+
+  const getAidType = () => {
+    switch (true) {
+      case nationalRegistryData?.spouse?.maritalStatus != undefined:
+        return (
+          martialStatusTypeFromMartialCode(
+            nationalRegistryData?.spouse?.maritalStatus,
+          ) === MartialStatusType.SINGLE
+        )
+      case myApplication?.familyStatus != undefined:
+        if (myApplication?.familyStatus) {
+          return !showSpouseData[myApplication.familyStatus]
+        }
+      case myApplication?.spouseNationalId != undefined:
+        return false
+    }
+  }
 
   const aidAmount = useMemo(() => {
     if (municipality && homeCircumstances) {
       return aidCalculator(
         homeCircumstances,
-        martialStatusTypeFromMartialCode(
-          nationalRegistryData?.spouse?.maritalStatus,
-        ) === MartialStatusType.SINGLE
+        getAidType()
           ? municipality.individualAid
           : municipality.cohabitationAid,
       )

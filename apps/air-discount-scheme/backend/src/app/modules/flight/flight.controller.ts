@@ -242,6 +242,13 @@ export class PublicFlightController {
             custodianInfo &&
             this.flightService.isADSPostalCode(custodianInfo.postalcode)
           ) {
+            // Overview breaks when postalcode is null
+            // On rare occasions the national registry has no
+            // info on children. This is a patch for the overview screen
+            // to function properly on those occasions
+            if (!user.postalcode) {
+              user.postalcode = custodianInfo.postalcode
+            }
             meetsADSRequirements = true
             break
           }
