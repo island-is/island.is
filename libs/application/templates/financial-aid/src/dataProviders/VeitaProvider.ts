@@ -10,8 +10,8 @@ export class VeitaProvider extends BasicDataProvider {
   async provide(): Promise<CurrentApplication> {
     // TODO: We probably need application system id and current Veita id here
     const query = `
-        query FinancialAidCurrentApplicationQuery {
-          financialAidCurrentApplication
+        query FinancialAidCurrentMunicipalityApplicationQuery {
+          financialAidMunicipalitiesCurrentApplication
         }
       `
 
@@ -22,7 +22,7 @@ export class VeitaProvider extends BasicDataProvider {
           return this.handleError(response.errors)
         }
         const returnObject =
-          response.data.financialAidCurrentApplication
+          response.data.financialAidMunicipalitiesCurrentApplication
 
         return Promise.resolve({ currentApplicationId: returnObject })
       })

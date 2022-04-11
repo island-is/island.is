@@ -21,7 +21,7 @@ export class MunicipalitiesFinancialAidResolver {
   ) {}
 
   @Query(() => String, { nullable: true })
-  async financialAidCurrentApplication(
+  async financialAidMunicipalitiesCurrentApplication(
     @CurrentUser() user: User,
   ): Promise<string | null> {
     return await this.municipalitiesFinancialAidService.municipalitiesFinancialAidCurrentApplication(
