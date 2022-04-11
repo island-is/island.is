@@ -154,7 +154,7 @@
   - [Islykill](libs/clients/islykill/README.md)
   - [Enhanced Fetch](libs/clients/middlewares/README.md)
   - [MMS](libs/clients/mms/README.md)
-  - [Clients Municipalities Financial Aid](libs/clients/municipalities-financial-aid/README.md)
+  - [Financial Aid](libs/clients/municipalities-financial-aid/README.md)
   - [National Registry](libs/clients/national-registry/README.md)
     - [V1](libs/clients/national-registry/v1/README.md)
     - [V2](libs/clients/national-registry/v2/README.md)
