@@ -336,7 +336,10 @@ export class CaseController {
       `Getting the custody notice for case ${caseId} as a pdf document`,
     )
 
-    if (theCase.type !== CaseType.CUSTODY) {
+    if (
+      theCase.type !== CaseType.CUSTODY &&
+      theCase.type !== CaseType.ADMISSION_TO_FACILITY
+    ) {
       throw new BadRequestException(
         `Cannot generate a custody notice for ${theCase.type} cases`,
       )
