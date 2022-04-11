@@ -11,4 +11,3 @@ if (argv.job === 'worker') {
     app.bootstrapServer()
   })
 }
-// Dummy Comment
