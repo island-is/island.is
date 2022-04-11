@@ -23,7 +23,7 @@ export const startPostgres = async () => {
 
   const port = postgresContainer.getMappedPort(5432)
   process.env.DB_PORT = `${port}`
-  process.env.DB_HOST = postgresContainer.getName()
+  process.env.DB_HOST = name
 }
 
 export const stopPostgres = () => {
