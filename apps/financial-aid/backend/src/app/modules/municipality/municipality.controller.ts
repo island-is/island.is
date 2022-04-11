@@ -16,10 +16,14 @@ import { MunicipalityModel } from './models'
 
 import { apiBasePath, StaffRole } from '@island.is/financial-aid/shared/lib'
 import type { Staff } from '@island.is/financial-aid/shared/lib'
-import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import {
+  CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
+} from '@island.is/auth-nest-tools'
 import { StaffGuard } from '../../guards/staff.guard'
 import { StaffRolesRules } from '../../decorators/staffRole.decorator'
-import { CurrentStaff } from '../../decorators/staff.decorator'
 import {
   MunicipalityActivityDto,
   UpdateMunicipalityDto,
@@ -36,7 +40,7 @@ export class MunicipalityController {
 
   @UseGuards(ScopesGuard)
   @Scopes(MunicipalitiesFinancialAidScope.read)
-  @Get(':id')
+  @Get('id/:id')
   @ApiOkResponse({
     type: MunicipalityModel,
     description: 'Gets municipality by id',
@@ -51,6 +55,19 @@ export class MunicipalityController {
     return municipality
   }
 
+  @UseGuards(ScopesGuard)
+  @Scopes(MunicipalitiesFinancialAidScope.read)
+  @Get('ids')
+  @ApiOkResponse({
+    type: [MunicipalityModel],
+    description: 'Gets municipalities by ids',
+  })
+  async getByMunicipalityIds(
+    @CurrentUser() staff: Staff,
+  ): Promise<MunicipalityModel[]> {
+    return this.municipalityService.findByMunicipalityIds(staff.nationalId)
+  }
+
   @UseGuards(StaffGuard)
   @StaffRolesRules(StaffRole.SUPERADMIN)
   @Scopes(MunicipalitiesFinancialAidScope.employee)
@@ -60,17 +77,15 @@ export class MunicipalityController {
     description: 'Creates a new municipality',
   })
   create(
-    @CurrentStaff() staff: Staff,
     @Body()
     input: {
       municipalityInput: CreateMunicipalityDto
-      adminInput: CreateStaffDto
+      adminInput?: CreateStaffDto
     },
   ): Promise<MunicipalityModel> {
     return this.municipalityService.create(
       input.municipalityInput,
       input.adminInput,
-      staff,
     )
   }
 
@@ -95,13 +110,10 @@ export class MunicipalityController {
     description: 'Updates municipality',
   })
   async updateMunicipality(
-    @CurrentStaff() staff: Staff,
+    @CurrentUser() staff: Staff,
     @Body() input: UpdateMunicipalityDto,
-  ): Promise<MunicipalityModel> {
-    return await this.municipalityService.updateMunicipality(
-      staff.municipalityId,
-      input,
-    )
+  ): Promise<MunicipalityModel[]> {
+    return await this.municipalityService.updateMunicipality(input, staff)
   }
 
   @Put('activity/:id')

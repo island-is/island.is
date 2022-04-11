@@ -113,6 +113,7 @@ describe('ApplicationController - Create', () => {
       streetName: '',
       homeCircumstancesCustom: '',
       directTaxPayments: [],
+      hasFetchedDirectTaxPayment: false,
       applicationSystemId: '',
       nationalId: user.nationalId,
     }
@@ -191,6 +192,7 @@ describe('ApplicationController - Create', () => {
       homeCircumstancesCustom: '',
       employmentCustom: '',
       directTaxPayments: [],
+      hasFetchedDirectTaxPayment: false,
       applicationSystemId: '',
       nationalId: user.nationalId,
     }
@@ -308,6 +310,7 @@ describe('ApplicationController - Create', () => {
       homeCircumstancesCustom: '',
       employmentCustom: '',
       directTaxPayments: [],
+      hasFetchedDirectTaxPayment: false,
       applicationSystemId: '',
       nationalId: user.nationalId,
     }
@@ -418,6 +421,7 @@ describe('ApplicationController - Create', () => {
       homeCircumstancesCustom: '',
       employmentCustom: '',
       directTaxPayments: [],
+      hasFetchedDirectTaxPayment: false,
       applicationSystemId: '',
       nationalId: user.nationalId,
     }
@@ -491,6 +495,7 @@ describe('ApplicationController - Create', () => {
       streetName: '',
       homeCircumstancesCustom: '',
       employmentCustom: '',
+      hasFetchedDirectTaxPayment: true,
       directTaxPayments: [
         {
           totalSalary: 1,
@@ -600,6 +605,7 @@ describe('ApplicationController - Create', () => {
       homeCircumstancesCustom: '',
       employmentCustom: '',
       directTaxPayments: [],
+      hasFetchedDirectTaxPayment: false,
       applicationSystemId: '',
       nationalId: user.nationalId,
     }
@@ -662,6 +668,7 @@ describe('ApplicationController - Create', () => {
       homeCircumstancesCustom: '',
       employmentCustom: '',
       directTaxPayments: [],
+      hasFetchedDirectTaxPayment: false,
       applicationSystemId: '',
       nationalId: user.nationalId,
     }

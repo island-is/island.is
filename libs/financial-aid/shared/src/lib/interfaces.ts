@@ -15,6 +15,8 @@ export interface GetSignedUrl {
   fileName: string
 }
 
+export type ReactSelectOption = { label: string; value: string | number }
+
 export interface GetSignedUrlForAllFiles {
   getSignedUrlForAllFilesId: SignedUrl[]
 }
@@ -32,12 +34,10 @@ export interface Staff {
   id: string
   nationalId: string
   name: string
-  municipalityId: string
+  municipalityIds: string[]
   roles: StaffRole[]
   active: boolean
-  municipalityName: string
   phoneNumber?: string
-  municipalityHomepage?: string
   nickname?: string
   email?: string
   usePseudoName?: boolean
@@ -147,6 +147,12 @@ export interface ApplicationEvent {
   staffName?: string
 }
 
+export interface UpdateAdmin {
+  id: string
+  name: string
+  municipalityIds: string[]
+}
+
 export interface Municipality {
   id: string
   name: string
@@ -159,6 +165,7 @@ export interface Municipality {
   rulesHomepage?: string
   numberOfUsers?: number
   adminUsers?: Staff[]
+  allAdminUsers?: UpdateAdmin[]
 }
 
 export interface UpdateMunicipalityActivity {
@@ -216,6 +223,7 @@ export interface CreateApplication {
   city?: string
   municipalityCode: string
   applicationSystemId?: string
+  hasFetchedDirectTaxPayment: boolean
 }
 
 export interface ApplicantEmailData {
@@ -295,6 +303,8 @@ export interface Application {
   city?: string
   municipalityCode: string
   directTaxPayments: DirectTaxPayment[]
+  hasFetchedDirectTaxPayment: boolean
+  spouseHasFetchedDirectTaxPayment: boolean
   applicationSystemId?: string
 }
 
@@ -356,8 +366,8 @@ export interface CreateStaff {
   email: string
   nationalId: string
   roles: StaffRole[]
-  municipalityName?: string
-  municipalityId?: string
+  municipalityNames?: string[]
+  municipalityIds?: string[]
 }
 
 export interface CreateStaffMunicipality {

@@ -38,10 +38,16 @@ export const DefaultProjectHeader = ({
         style={{ background: textBackgroundColor }}
       >
         <GridContainer>
-          <GridRow>
+          <GridRow align="flexEnd">
             <GridColumn
-              span={['12/12', '12/12', '10/12', '7/12', '6/12']}
-              offset={['0', '0', '1/12', '1/12', '1/12']}
+              paddingTop={5}
+              span={[
+                '12/12',
+                '12/12',
+                defaultImageIsProvided ? '10/12' : '12/12',
+                defaultImageIsProvided ? '10/12' : '12/12',
+                defaultImageIsProvided ? '8/12' : '12/12',
+              ]}
             >
               <Text variant="eyebrow" color="white" marginTop={5}>
                 Ísland.is

@@ -1,4 +1,5 @@
 import { uuid } from 'uuidv4'
+import { Op } from 'sequelize'
 import { Transaction } from 'sequelize/types'
 
 import { BadRequestException } from '@nestjs/common'
@@ -8,6 +9,7 @@ import {
   CaseType,
   UserRole,
   CaseOrigin,
+  CaseState,
 } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from './createTestingCaseModule'
@@ -235,7 +237,11 @@ describe('CaseController - Internal create', () => {
           { model: Case, as: 'childCase' },
         ],
         order: [[{ model: Defendant, as: 'defendants' }, 'created', 'ASC']],
-        where: { id: caseId },
+        where: {
+          id: caseId,
+          isArchived: false,
+          state: { [Op.not]: CaseState.DELETED },
+        },
       })
     })
   })

@@ -177,4 +177,9 @@ export class CreateApplicationDto {
   @IsUUID()
   @ApiProperty()
   readonly applicationSystemId: string
+
+  @IsNotEmpty()
+  @IsBoolean()
+  @ApiProperty()
+  readonly hasFetchedDirectTaxPayment: boolean
 }

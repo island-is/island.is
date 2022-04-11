@@ -109,6 +109,9 @@
     "api-domains-driving-license": {
       "tags": []
     },
+    "api-domains-driving-license-book": {
+      "tags": []
+    },
     "api-domains-education": {
       "tags": []
     },
@@ -215,6 +218,9 @@
     "application-templates-driving-assessment-approval": {
       "tags": []
     },
+    "application-templates-driving-instructor-registrations": {
+      "tags": []
+    },
     "application-templates-driving-license": {
       "tags": []
     },
@@ -313,6 +319,9 @@
     "clients-driving-license": {
       "tags": []
     },
+    "clients-driving-license-book": {
+      "tags": []
+    },
     "clients-finance": {
       "tags": []
     },
@@ -353,9 +362,6 @@
       "tags": []
     },
     "clients-rsk-procuring": {
-      "tags": []
-    },
-    "clients-rsk-v1": {
       "tags": []
     },
     "clients-syslumenn": {
@@ -532,6 +538,9 @@
     "judicial-system-formatters": {
       "tags": []
     },
+    "judicial-system-scheduler": {
+      "tags": []
+    },
     "judicial-system-types": {
       "tags": []
     },
@@ -655,6 +664,9 @@
       "tags": []
     },
     "service-portal-finance": {
+      "tags": []
+    },
+    "service-portal-finance-schedule": {
       "tags": []
     },
     "service-portal-graphql": {
