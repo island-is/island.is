@@ -676,7 +676,7 @@ export const m = defineMessages({
   declinedOtherNonEESCountryDescription: {
     id: 'dl.application:declinedOtherNonEESCountryDescription',
     defaultMessage:
-      'Umsækjandi með ökuskírteini utan EES getur sótt um að skipta yfir í íslenskt eftir 6 mánaða fasta búsetu. Taka þarf bæði bóklegt og verklegt próf og öðlast fullnaðarskírteini.',
+      'Umsækjandi með ökuskírteini utan EES getur sótt um að skipta yfir í íslenskt ökuskírteini eftir 6 mánaða fasta búsetu. Taka þarf bæði bóklegt og verklegt próf og öðlast fullnaðarskírteini.',
     description: 'Driving license from other country description',
   },
   nationalCommissionerOfPolice: {
