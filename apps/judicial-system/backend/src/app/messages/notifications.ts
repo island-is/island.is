@@ -214,7 +214,7 @@ export const notifications = {
       defaultMessage:
         '{dateMissing, select, missing {á ótilgreindum tíma} other {{date}, kl. {time, time, short}}}',
       description:
-        'Texti í pósti til fangeslis sem tilgreinir hvernær mál verður tekið fyrir.',
+        'Texti í pósti til fangelsis sem tilgreinir hvernær mál verður tekið fyrir.',
     },
     requestText: {
       id:
