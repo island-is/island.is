@@ -33,6 +33,23 @@ export const ApplicationsOverview = () => {
     selectedStates: [],
     selectedMonths: [],
   })
+
+  const onChecked = (item: ApplicationState | number, checked: boolean) => {
+    const filtersCopy = { ...filters }
+
+    if (typeof item === 'number') {
+      checked
+        ? filters.selectedMonths.push(item)
+        : filters.selectedMonths.splice(filters.selectedMonths.indexOf(item), 1)
+    } else {
+      checked
+        ? filters.selectedStates.push(item)
+        : filters.selectedStates.splice(filters.selectedStates.indexOf(item), 1)
+    }
+
+    setFilters(filtersCopy)
+  }
+
   const router = useRouter()
 
   const { data, error, loading } = useQuery<ApplicationsProvider>(
@@ -79,8 +96,9 @@ export const ApplicationsOverview = () => {
           selectedMonths={filters.selectedMonths}
           selectedStates={filters.selectedStates}
           results={80}
-          onFilterClear={() => {}}
-          onFilterSave={() => {}}
+          onChecked={onChecked}
+          onFilterClear={() => { }}
+          onFilterSave={() => { }}
         />
       )}
       {applications && (
