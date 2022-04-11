@@ -205,6 +205,7 @@ export function formatProsecutorCourtDateEmailNotification(
 
 export function formatPrisonCourtDateEmailNotification(
   formatMessage: FormatMessage,
+  type: CaseType,
   prosecutorOffice?: string,
   court?: string,
   courtDate?: Date,
@@ -245,6 +246,7 @@ export function formatPrisonCourtDateEmailNotification(
   const requestText = formatMessage(
     notifications.prisonCourtDateEmail.requestText,
     {
+      caseType: type,
       accusedName: accusedName ?? 'NONE',
       gender: accusedGender,
       requestedValidToDateText,
@@ -261,6 +263,7 @@ export function formatPrisonCourtDateEmailNotification(
   })
 
   return formatMessage(notifications.prisonCourtDateEmail.body, {
+    caseType: type,
     prosecutorOffice: prosecutorOffice || 'NONE',
     courtText,
     isExtension: isExtension ? 'yes' : 'no',
@@ -324,12 +327,16 @@ export function formatDefenderCourtDateEmailNotification(
   })
 }
 
-// This function is only intended for case type CUSTODY
+// This function is only intended for case type CUSTODY and ADMISSION_TO_FACILITY
 export function formatPrisonRulingEmailNotification(
   formatMessage: FormatMessage,
+  type: CaseType,
   courtEndTime?: Date,
 ): string {
-  return formatMessage(notifications.prisonRulingEmail, { courtEndTime })
+  return formatMessage(notifications.prisonRulingEmail.body, {
+    courtEndTime,
+    caseType: type,
+  })
 }
 
 export function formatCourtRevokedSmsNotification(
@@ -368,6 +375,7 @@ export function formatCourtRevokedSmsNotification(
 
 export function formatPrisonRevokedEmailNotification(
   formatMessage: FormatMessage,
+  type: CaseType,
   prosecutorOffice?: string,
   court?: string,
   courtDate?: Date,
@@ -388,6 +396,7 @@ export function formatPrisonRevokedEmailNotification(
     defenderName: defenderName || 'NONE',
   })
   const revokedCaseText = formatMessage(cf.revokedCase, {
+    caseType: type,
     prosecutorOffice: prosecutorOffice || 'NONE',
     isExtension: isExtension ? 'yes' : 'no',
     courtText,
