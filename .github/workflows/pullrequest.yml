@@ -54,7 +54,7 @@ jobs:
           echo "{\"base_sha\": \"$BASE_SHA\", \"head_sha\":\"$HEAD_SHA\"}" > event.json
 
       - name: Keep PR run event
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: pr-event
           path: event.json
