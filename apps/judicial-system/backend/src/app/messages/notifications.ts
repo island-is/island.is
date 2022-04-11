@@ -261,7 +261,7 @@ export const notifications = {
       defaultMessage:
         '{prosecutorOffice, select, NONE {Ótilgreindur sækjandi} other {{prosecutorOffice}}} hefur afturkallað kröfu um {isExtension, select, yes {áframhaldandi } other {}}gæsluvarðhald sem send var til {courtText} og taka átti fyrir {courtDateText}.',
       description:
-        'Texti í pósti til fangelis þegar sækjandi afturkallar kröfu',
+        'Texti í pósti til fangelsis þegar sækjandi afturkallar kröfu',
     },
     court: {
       id: 'judicial.system.backend:notifications.prison_revoked_email.court',
