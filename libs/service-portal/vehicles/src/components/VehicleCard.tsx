@@ -1,4 +1,3 @@
-import { Vehicle } from '@island.is/api/schema'
 import { ActionCard, Box, Button, Text, Stack } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { ServicePortalPath } from '@island.is/service-portal/core'
@@ -6,7 +5,7 @@ import React, { FC } from 'react'
 import { useHistory } from 'react-router-dom'
 
 interface Props {
-  vehicle: Vehicle
+  vehicle: any
 }
 
 export const VehicleCard: FC<Props> = ({ vehicle }) => {

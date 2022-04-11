@@ -12,12 +12,12 @@ export const vehiclesModule: ServicePortalModule = {
   widgets: () => [],
   routes: ({ userInfo }) => [
     {
-      name: 'Ökutæki',
+      name: m.yourVehicles,
       path: ServicePortalPath.AssetsVehicles,
       render: () => lazy(() => import('./screens/Overview/Overview')),
     },
     {
-      name: 'Ökutæki',
+      name: m.vehicles,
       path: ServicePortalPath.AssetsVehiclesDetail,
       render: () => lazy(() => import('./screens/VehicleDetail/VehicleDetail')),
     },

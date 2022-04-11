@@ -1,6 +1,5 @@
 import { globalStyle, style } from '@vanilla-extract/css'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
-import { m } from '@island.is/service-portal/core'
 
 export const image = style({
   width: 60,

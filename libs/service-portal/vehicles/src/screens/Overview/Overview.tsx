@@ -7,7 +7,7 @@ import {
 import { defineMessage } from 'react-intl'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { useQuery, gql } from '@apollo/client'
-import { Query, Vehicle } from '@island.is/api/schema'
+import { Query } from '@island.is/api/schema'
 import {
   AlertMessage,
   Box,
@@ -68,14 +68,14 @@ type FilterValues = {
 }
 
 const getFilteredVehicles = (
-  vehicles: Vehicle[],
+  vehicles: any[],
   filterValues: FilterValues,
-): Vehicle[] => {
+): any[] => {
   const { searchQuery } = filterValues
 
   if (searchQuery) {
     return vehicles.filter(
-      (x: Vehicle) =>
+      (x: any) =>
         x.permno?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         x.regno?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         x.type?.toLowerCase().includes(searchQuery.toLowerCase()),

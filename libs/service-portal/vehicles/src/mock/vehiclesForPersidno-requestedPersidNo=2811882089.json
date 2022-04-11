@@ -1,0 +1,36 @@
+{
+    "data": {
+        "persidno": "2811882089",
+        "name": "Kristleifur Þorsteinsson",
+        "address": "Háaleitisbraut 17",
+        "postStation": "108",
+        "vehicleList": [
+            {
+                "isCurrent": true,
+                "permno": "RIF88",
+                "regno": "RIO",
+                "vin": "KNADM514AG6817531",
+                "type": "KIA RIO",
+                "color": "Blár",
+                "firstRegDate": "2017-03-15T12:00:00.00Z",
+                "modelYear": null,
+                "productYear": null,
+                "registrationType": "Nýskráð-Almenn",
+                "role": "Eigandi",
+                "operatorStartDate": "2017-04-07T02:35:30.30Z",
+                "operatorEndDate": null,
+                "outOfUse": true,
+                "otherOwners": false,
+                "termination": null,
+                "buyerPersidno": null,
+                "ownerPersidno": "4507042290",
+                "vehicleStatus": "Í lagi",
+                "useGroup": "Almenn notkun",
+                "vehGroup": "Fólksbifreið (M1)",
+                "plateStatus": "Á ökutæki"
+            }
+        ],
+        "createdTimestamp": "2022-04-08T01:29:35.35Z"
+    },
+    "nextCursor": ""
+}
