@@ -191,7 +191,7 @@ const renderSlices = (
 }
 
 SubPage.getInitialProps = async ({ apolloClient, locale, query, pathname }) => {
-  populateQueryFromPathname(query, pathname)
+  if (!query.slug && !query.subSlug) populateQueryFromPathname(query, pathname)
   const [
     {
       data: { getOrganizationPage },
@@ -250,22 +250,12 @@ SubPage.getInitialProps = async ({ apolloClient, locale, query, pathname }) => {
   }
 }
 
-/**
- * This function was added since syslumenn have already set up their published material
- * by creating an organization subpage filled with accordions and file links.
- *
- * That page has the same slug as the new generic published material page for organizations.
- *
- * This will be removed in the future if syslumenn want to utilize the new generic published material page instead
- */
 const populateQueryFromPathname = (query: ParsedUrlQuery, pathname: string) => {
   const path = pathname?.split('/') ?? []
   const slug = path?.[path.length - 2]
   const subSlug = path.pop()
-  if (slug === 'syslumenn' && subSlug === 'utgefid-efni') {
-    query.slug = 'syslumenn'
-    query.subSlug = 'utgefid-efni'
-  }
+  query.slug = slug
+  query.subSlug = subSlug
 }
 
 export default withMainLayout(SubPage)
