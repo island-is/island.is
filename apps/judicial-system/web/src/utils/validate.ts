@@ -152,8 +152,8 @@ export const isPoliceDemandsStepValidRC = (workingCase: Case) => {
   return (
     validate(workingCase.lawsBroken || '', 'empty').isValid &&
     validate(workingCase.requestedValidToDate || '', 'date-format').isValid &&
-    workingCase.legalProvisions &&
-    workingCase.legalProvisions.length > 0
+    ((workingCase.legalProvisions && workingCase.legalProvisions.length > 0) ||
+      validate(workingCase.legalBasis || '', 'empty').isValid)
   )
 }
 
