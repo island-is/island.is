@@ -238,7 +238,7 @@ export const notifications = {
       defaultMessage:
         '{dateMissing, select, missing {ótilgreinds tíma} other {{date}, kl. {time, time, short}}}',
       description:
-        'Texti í pósti til fangeslis sem tilgreinir hversu lengir er krafist gæsluvarðhandls',
+        'Texti í pósti til fangeslis sem tilgreinir hversu lengi gæsluvarðhandls er krafist',
     },
     body: {
       id: 'judicial.system.backend:notifications.prison_court_date_email.body',
