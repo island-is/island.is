@@ -6,7 +6,7 @@ export const headerBg = style({
   minHeight: '200px',
   order: 1,
   ...themeUtils.responsiveStyle({
-    md: {
+    lg: {
       order: 0,
       minHeight: '100%',
     },
@@ -17,8 +17,9 @@ export const headerWrapper = style({
   display: 'grid',
   minHeight: '300px',
   height: 'fit-content',
+  maxHeight: 'min-content',
   ...themeUtils.responsiveStyle({
-    md: {
+    lg: {
       gridTemplateColumns: '1fr 1fr',
       gridTemplateRows: 'min-content',
     },
@@ -27,14 +28,22 @@ export const headerWrapper = style({
 
 export const headerImage = style({
   height: '100%',
-  maxHeight: '200px',
   width: '100%',
   objectFit: 'cover',
   order: 0,
   ...themeUtils.responsiveStyle({
+    xs: {
+      maxHeight: '200px',
+    },
+    sm: {
+      maxHeight: '200px',
+    },
     md: {
+      maxHeight: '200px',
+    },
+    lg: {
       order: 1,
-      maxHeight: 'fit-content',
+      maxHeight: '300px',
     },
   }),
 })
