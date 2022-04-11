@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
@@ -20,6 +20,7 @@ import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
 import CourtRecordForm from './CourtRecordForm'
 
 const CourtRecord = () => {
+  const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
   const { autofill } = useCase()
   const { formatMessage } = useIntl()
   const {
@@ -32,48 +33,49 @@ const CourtRecord = () => {
   const { user } = useContext(UserContext)
 
   useEffect(() => {
-    if (isCaseUpToDate) {
-      const theCase = workingCase
-
-      if (theCase.courtDate) {
-        autofill('courtStartDate', theCase.courtDate, theCase)
+    if (isCaseUpToDate && !initialAutoFillDone) {
+      if (workingCase.courtDate) {
+        autofill('courtStartDate', workingCase.courtDate, workingCase)
       }
 
-      if (theCase.court) {
+      if (workingCase.court) {
         autofill(
           'courtLocation',
           `í ${
-            theCase.court.name.indexOf('dómur') > -1
-              ? theCase.court.name.replace('dómur', 'dómi')
-              : theCase.court.name
+            workingCase.court.name.indexOf('dómur') > -1
+              ? workingCase.court.name.replace('dómur', 'dómi')
+              : workingCase.court.name
           }`,
-          theCase,
+          workingCase,
         )
       }
 
-      if (theCase.courtAttendees !== '') {
+      if (workingCase.courtAttendees !== '') {
         let autofillAttendees = ''
 
-        if (theCase.prosecutor) {
-          autofillAttendees += `${theCase.prosecutor.name} ${theCase.prosecutor.title}`
+        if (workingCase.prosecutor) {
+          autofillAttendees += `${workingCase.prosecutor.name} ${workingCase.prosecutor.title}`
         }
 
         if (
-          theCase.defenderName &&
-          theCase.sessionArrangements !== SessionArrangements.PROSECUTOR_PRESENT
+          workingCase.defenderName &&
+          workingCase.sessionArrangements !==
+            SessionArrangements.PROSECUTOR_PRESENT
         ) {
-          autofillAttendees += `\n${theCase.defenderName} skipaður ${
-            theCase.defenderIsSpokesperson ? 'talsmaður' : 'verjandi'
+          autofillAttendees += `\n${workingCase.defenderName} skipaður ${
+            workingCase.defenderIsSpokesperson ? 'talsmaður' : 'verjandi'
           } ${formatMessage(core.defendant, { suffix: 'a' })}`
         }
 
-        if (theCase.translator) {
-          autofillAttendees += `\n${theCase.translator} túlkur`
+        if (workingCase.translator) {
+          autofillAttendees += `\n${workingCase.translator} túlkur`
         }
 
-        if (theCase.defendants && theCase.defendants.length > 0) {
-          if (theCase.sessionArrangements === SessionArrangements.ALL_PRESENT) {
-            theCase.defendants.forEach((defendant) => {
+        if (workingCase.defendants && workingCase.defendants.length > 0) {
+          if (
+            workingCase.sessionArrangements === SessionArrangements.ALL_PRESENT
+          ) {
+            workingCase.defendants.forEach((defendant) => {
               autofillAttendees += `\n${defendant.name} ${formatMessage(
                 core.defendant,
                 {
@@ -84,40 +86,40 @@ const CourtRecord = () => {
           }
         }
 
-        autofill('courtAttendees', autofillAttendees, theCase)
+        autofill('courtAttendees', autofillAttendees, workingCase)
       }
 
-      if (theCase.type === CaseType.RESTRAINING_ORDER) {
+      if (workingCase.type === CaseType.RESTRAINING_ORDER) {
         autofill(
           'sessionBookings',
           formatMessage(m.sections.sessionBookings.autofillRestrainingOrder),
-          theCase,
+          workingCase,
         )
-      } else if (theCase.type === CaseType.AUTOPSY) {
+      } else if (workingCase.type === CaseType.AUTOPSY) {
         autofill(
           'sessionBookings',
           formatMessage(m.sections.sessionBookings.autofillAutopsy),
-          theCase,
+          workingCase,
         )
       } else if (
-        theCase.sessionArrangements === SessionArrangements.ALL_PRESENT
+        workingCase.sessionArrangements === SessionArrangements.ALL_PRESENT
       ) {
         let autofillSessionBookings = ''
 
-        if (theCase.defenderName) {
+        if (workingCase.defenderName) {
           autofillSessionBookings += `${formatMessage(
             m.sections.sessionBookings.autofillDefender,
             {
-              defender: theCase.defenderName,
+              defender: workingCase.defenderName,
             },
           )}\n\n`
         }
 
-        if (theCase.translator) {
+        if (workingCase.translator) {
           autofillSessionBookings += `${formatMessage(
             m.sections.sessionBookings.autofillTranslator,
             {
-              translator: theCase.translator,
+              translator: workingCase.translator,
             },
           )}\n\n`
         }
@@ -130,29 +132,38 @@ const CourtRecord = () => {
           m.sections.sessionBookings.autofillAccusedPlea,
         )}\n\n${formatMessage(m.sections.sessionBookings.autofillAllPresent)}`
 
-        autofill('sessionBookings', autofillSessionBookings, theCase)
+        autofill('sessionBookings', autofillSessionBookings, workingCase)
       } else if (
-        theCase.sessionArrangements ===
+        workingCase.sessionArrangements ===
         SessionArrangements.ALL_PRESENT_SPOKESPERSON
       ) {
         autofill(
           'sessionBookings',
           formatMessage(m.sections.sessionBookings.autofillSpokeperson),
-          theCase,
+          workingCase,
         )
       } else if (
-        theCase.sessionArrangements === SessionArrangements.PROSECUTOR_PRESENT
+        workingCase.sessionArrangements ===
+        SessionArrangements.PROSECUTOR_PRESENT
       ) {
         autofill(
           'sessionBookings',
           formatMessage(m.sections.sessionBookings.autofillProsecutor),
-          theCase,
+          workingCase,
         )
       }
 
-      setWorkingCase({ ...theCase })
+      setInitialAutoFillDone(true)
+      setWorkingCase({ ...workingCase })
     }
-  }, [autofill, formatMessage, isCaseUpToDate, setWorkingCase, workingCase])
+  }, [
+    autofill,
+    formatMessage,
+    initialAutoFillDone,
+    isCaseUpToDate,
+    setWorkingCase,
+    workingCase,
+  ])
 
   return (
     <PageLayout

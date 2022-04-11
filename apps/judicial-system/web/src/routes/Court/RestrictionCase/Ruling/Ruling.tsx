@@ -88,6 +88,7 @@ export const Ruling: React.FC = () => {
   const id = router.query.id
 
   const { user } = useContext(UserContext)
+  const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
   const { updateCase, autofill, autofillBoolean } = useCase()
   const { formatMessage } = useIntl()
 
@@ -97,102 +98,104 @@ export const Ruling: React.FC = () => {
   useDeb(workingCase, 'conclusion')
 
   useEffect(() => {
-    const theCase = workingCase
-
     const isolationEndsBeforeValidToDate =
-      theCase.validToDate &&
-      theCase.isolationToDate &&
-      new Date(theCase.validToDate) > new Date(theCase.isolationToDate)
+      workingCase.validToDate &&
+      workingCase.isolationToDate &&
+      new Date(workingCase.validToDate) > new Date(workingCase.isolationToDate)
 
-    if (isCaseUpToDate) {
+    if (isCaseUpToDate && !initialAutoFillDone) {
       autofill(
         'introduction',
         formatMessage(m.sections.introduction.autofill, {
-          date: formatDate(theCase.courtDate, 'PPP'),
+          date: formatDate(workingCase.courtDate, 'PPP'),
         }),
-        theCase,
+        workingCase,
       )
 
-      if (theCase.demands) {
-        autofill('prosecutorDemands', theCase.demands, theCase)
+      if (workingCase.demands) {
+        autofill('prosecutorDemands', workingCase.demands, workingCase)
       }
 
-      if (theCase.requestedValidToDate) {
-        autofill('validToDate', theCase.requestedValidToDate, theCase)
+      if (workingCase.requestedValidToDate) {
+        autofill('validToDate', workingCase.requestedValidToDate, workingCase)
       }
 
-      if (theCase.type === CaseType.CUSTODY) {
+      if (workingCase.type === CaseType.CUSTODY) {
         autofillBoolean(
           'isCustodyIsolation',
-          theCase.requestedCustodyRestrictions &&
-            theCase.requestedCustodyRestrictions.includes(
+          workingCase.requestedCustodyRestrictions &&
+            workingCase.requestedCustodyRestrictions.includes(
               CaseCustodyRestrictions.ISOLATION,
             )
             ? true
             : false,
-          theCase,
+          workingCase,
         )
       }
 
-      if (theCase.validToDate) {
-        autofill('isolationToDate', theCase.validToDate, theCase)
+      if (workingCase.validToDate) {
+        autofill('isolationToDate', workingCase.validToDate, workingCase)
       }
 
-      if (theCase.caseFacts) {
-        autofill('courtCaseFacts', theCase.caseFacts, theCase)
+      if (workingCase.caseFacts) {
+        autofill('courtCaseFacts', workingCase.caseFacts, workingCase)
       }
 
-      if (theCase.legalArguments) {
-        autofill('courtLegalArguments', theCase.legalArguments, theCase)
+      if (workingCase.legalArguments) {
+        autofill('courtLegalArguments', workingCase.legalArguments, workingCase)
       }
 
       autofillRuling(workingCase, autofill, formatMessage)
+
+      setInitialAutoFillDone(true)
+      setWorkingCase({ ...workingCase })
     }
 
     if (
-      theCase.decision &&
-      theCase.defendants &&
-      theCase.defendants.length > 0
+      !workingCase.conclusion &&
+      workingCase.decision &&
+      workingCase.defendants &&
+      workingCase.defendants.length > 0
     ) {
       const accusedSuffix =
-        theCase.defendants[0].gender === Gender.MALE ? 'i' : 'a'
+        workingCase.defendants[0].gender === Gender.MALE ? 'i' : 'a'
 
       autofill(
         'conclusion',
-        theCase.decision === CaseDecision.DISMISSING
+        workingCase.decision === CaseDecision.DISMISSING
           ? formatMessage(m.sections.conclusion.dismissingAutofill, {
               genderedAccused: formatMessage(core.accused, {
                 suffix: accusedSuffix,
               }),
-              accusedName: theCase.defendants[0].name,
+              accusedName: workingCase.defendants[0].name,
               extensionSuffix:
-                theCase.parentCase &&
-                isAcceptingCaseDecision(theCase.parentCase.decision)
+                workingCase.parentCase &&
+                isAcceptingCaseDecision(workingCase.parentCase.decision)
                   ? ' áframhaldandi'
                   : '',
               caseType:
-                theCase.type === CaseType.CUSTODY
+                workingCase.type === CaseType.CUSTODY
                   ? 'gæsluvarðhaldi'
                   : 'farbanni',
             })
-          : theCase.decision === CaseDecision.REJECTING
+          : workingCase.decision === CaseDecision.REJECTING
           ? formatMessage(m.sections.conclusion.rejectingAutofill, {
               genderedAccused: formatMessage(core.accused, {
                 suffix: accusedSuffix,
               }),
-              accusedName: theCase.defendants[0].name,
-              accusedNationalId: theCase.defendants[0].noNationalId
+              accusedName: workingCase.defendants[0].name,
+              accusedNationalId: workingCase.defendants[0].noNationalId
                 ? ', '
                 : `, kt. ${formatNationalId(
-                    theCase.defendants[0].nationalId ?? '',
+                    workingCase.defendants[0].nationalId ?? '',
                   )}, `,
               extensionSuffix:
-                theCase.parentCase &&
-                isAcceptingCaseDecision(theCase.parentCase.decision)
+                workingCase.parentCase &&
+                isAcceptingCaseDecision(workingCase.parentCase.decision)
                   ? ' áframhaldandi'
                   : '',
               caseType:
-                theCase.type === CaseType.CUSTODY
+                workingCase.type === CaseType.CUSTODY
                   ? 'gæsluvarðhaldi'
                   : 'farbanni',
             })
@@ -202,32 +205,32 @@ export const Ruling: React.FC = () => {
                   suffix: accusedSuffix,
                 }),
               ),
-              accusedName: theCase.defendants[0].name,
-              accusedNationalId: theCase.defendants[0].noNationalId
+              accusedName: workingCase.defendants[0].name,
+              accusedNationalId: workingCase.defendants[0].noNationalId
                 ? ', '
                 : `, kt. ${formatNationalId(
-                    theCase.defendants[0].nationalId ?? '',
+                    workingCase.defendants[0].nationalId ?? '',
                   )}, `,
               caseTypeAndExtensionSuffix:
-                theCase.decision === CaseDecision.ACCEPTING ||
-                theCase.decision === CaseDecision.ACCEPTING_PARTIALLY
+                workingCase.decision === CaseDecision.ACCEPTING ||
+                workingCase.decision === CaseDecision.ACCEPTING_PARTIALLY
                   ? `${
-                      theCase.parentCase &&
-                      isAcceptingCaseDecision(theCase.parentCase.decision)
+                      workingCase.parentCase &&
+                      isAcceptingCaseDecision(workingCase.parentCase.decision)
                         ? 'áframhaldandi '
                         : ''
                     }${
-                      theCase.type === CaseType.CUSTODY
+                      workingCase.type === CaseType.CUSTODY
                         ? 'gæsluvarðhaldi'
                         : 'farbanni'
                     }`
                   : // decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
                     'farbanni',
-              validToDate: `${formatDate(theCase.validToDate, 'PPPPp')
+              validToDate: `${formatDate(workingCase.validToDate, 'PPPPp')
                 ?.replace('dagur,', 'dagsins')
                 ?.replace(' kl.', ', kl.')}`,
               isolationSuffix:
-                isAcceptingCaseDecision(theCase.decision) &&
+                isAcceptingCaseDecision(workingCase.decision) &&
                 workingCase.isCustodyIsolation
                   ? ` ${capitalize(
                       formatMessage(core.accused, {
@@ -236,7 +239,7 @@ export const Ruling: React.FC = () => {
                     )} skal sæta einangrun ${
                       isolationEndsBeforeValidToDate
                         ? `ekki lengur en til ${formatDate(
-                            theCase.isolationToDate,
+                            workingCase.isolationToDate,
                             'PPPPp',
                           )
                             ?.replace('dagur,', 'dagsins')
@@ -245,15 +248,16 @@ export const Ruling: React.FC = () => {
                     }`
                   : '',
             }),
-        theCase,
+        workingCase,
       )
-    }
 
-    setWorkingCase({ ...theCase })
+      setWorkingCase({ ...workingCase })
+    }
   }, [
     autofill,
     autofillBoolean,
     formatMessage,
+    initialAutoFillDone,
     isCaseUpToDate,
     setWorkingCase,
     updateCase,

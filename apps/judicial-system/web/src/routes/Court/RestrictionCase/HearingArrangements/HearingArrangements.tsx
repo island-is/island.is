@@ -47,6 +47,7 @@ export const HearingArrangements: React.FC = () => {
   const router = useRouter()
   const id = router.query.id
 
+  const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
   const {
     updateCase,
     autofill,
@@ -56,16 +57,21 @@ export const HearingArrangements: React.FC = () => {
   const { formatMessage } = useIntl()
 
   useEffect(() => {
-    if (isCaseUpToDate) {
-      const theCase = workingCase
-
-      if (theCase.requestedCourtDate) {
-        autofill('courtDate', theCase.requestedCourtDate, theCase)
+    if (isCaseUpToDate && !initialAutoFillDone) {
+      if (workingCase.requestedCourtDate) {
+        autofill('courtDate', workingCase.requestedCourtDate, workingCase)
       }
 
-      setWorkingCase({ ...theCase })
+      setInitialAutoFillDone(true)
+      setWorkingCase({ ...workingCase })
     }
-  }, [autofill, isCaseUpToDate, setWorkingCase, workingCase])
+  }, [
+    autofill,
+    initialAutoFillDone,
+    isCaseUpToDate,
+    setWorkingCase,
+    workingCase,
+  ])
 
   const handleNextButtonClick = () => {
     if (

@@ -26,11 +26,12 @@ const Ruling = () => {
     isCaseUpToDate,
   } = useContext(FormContext)
 
+  const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
   const { autofill } = useCase()
   const { formatMessage } = useIntl()
 
   useEffect(() => {
-    if (isCaseUpToDate) {
+    if (isCaseUpToDate && !initialAutoFillDone) {
       autofill(
         'introduction',
         formatMessage(m.sections.introduction.autofill, {
@@ -58,8 +59,16 @@ const Ruling = () => {
       autofill('conclusion', workingCase.demands, workingCase)
     }
 
+    setInitialAutoFillDone(true)
     setWorkingCase({ ...workingCase })
-  }, [isCaseUpToDate, autofill, workingCase, formatMessage, setWorkingCase])
+  }, [
+    isCaseUpToDate,
+    autofill,
+    workingCase,
+    formatMessage,
+    setWorkingCase,
+    initialAutoFillDone,
+  ])
 
   return (
     <PageLayout
