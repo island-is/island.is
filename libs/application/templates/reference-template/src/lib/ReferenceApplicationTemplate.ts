@@ -16,7 +16,6 @@ import { Features } from '@island.is/feature-flags'
 
 import { ApiActions } from '../shared'
 import { m } from './messages'
-
 const States = {
   prerequisites: 'prerequisites',
   draft: 'draft',
@@ -85,7 +84,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
   institution: m.institutionName,
   translationNamespaces: [ApplicationConfigurations.ExampleForm.translation],
   dataSchema: ExampleSchema,
-  featureFlag: Features.exampleApplication,
+  //featureFlag: Features.exampleApplication,
   stateMachineConfig: {
     initial: States.prerequisites,
     states: {
@@ -110,6 +109,15 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
               ],
               write: 'all',
+              api: [
+                {
+                  apiAction: 'getReferenceData',
+                  params: {
+                    applicationId: 'as',
+                  },
+                  //shouldPersistToExternalData,
+                },
+              ],
             },
           ],
         },

@@ -35,6 +35,12 @@ export interface RoleInState<T extends EventObject = AnyEventObject> {
   write?: ReadWriteValues
   formLoader?: FormLoader
   actions?: CallToAction<T>[]
+  api?: ApiDataProvider[]
+}
+
+export interface ApiDataProvider {
+  apiAction: string
+  params?: string
 }
 
 export interface ApplicationContext {

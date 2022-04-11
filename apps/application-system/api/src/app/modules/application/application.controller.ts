@@ -90,6 +90,7 @@ import { ApplicationAccessService } from './tools/applicationAccess.service'
 import { CurrentLocale } from './utils/currentLocale'
 import { Application } from '@island.is/application/api/core'
 import { Documentation } from '@island.is/nest/swagger'
+import { ThinglysturEigandiFromJSON } from '@island.is/clients/assets'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('applications')
@@ -479,36 +480,38 @@ export class ApplicationController {
     const templateDataProviders = await getApplicationDataProviders(
       existingApplication.typeId,
     )
-    const results = await callDataProviders(
-      buildDataProviders(externalDataDto, templateDataProviders, user, locale),
-      existingApplication as BaseApplication,
-      this.applicationService.customTemplateFindQuery(
-        existingApplication.typeId,
-      ) as CustomTemplateFindQuery,
-      intl.formatMessage,
-    )
 
-    const {
-      updatedApplication,
-    } = await this.applicationService.updateExternalData(
-      existingApplication.id,
-      existingApplication.externalData as ExternalData,
-      buildExternalData(externalDataDto, results),
-    )
+    const templateId = existingApplication.typeId as ApplicationTypes
+    const template = await getApplicationTemplateByTypeId(templateId)
 
-    if (!updatedApplication) {
+    for (let i = 0; i < externalDataDto.dataProviders.length; i++) {
+      //TODO order of data provider calls
+      console.log(externalDataDto.dataProviders[i])
+      const s = await this.performActionOnApplication(
+        existingApplication as BaseApplication,
+        template,
+        user,
+        {
+          apiModuleAction: externalDataDto.dataProviders[i].type,
+          externalDataId: '12312',
+          shouldPersistToExternalData: true,
+        },
+      )
+    }
+
+    if (!existingApplication) {
       throw new NotFoundException(
-        `An application with the id ${existingApplication.id} does not exist`,
+        `An application with the id ${id} does not exist`,
       )
     }
 
     this.auditService.audit({
       auth: user,
       action: 'updateExternalData',
-      resources: updatedApplication.id,
+      resources: existingApplication.id,
       meta: { providers: externalDataDto },
     })
-    return updatedApplication
+    return existingApplication
   }
 
   @Scopes(ApplicationScope.write)
@@ -629,7 +632,7 @@ export class ApplicationController {
         auth,
       },
     })
-
+    console.log({ actionResult })
     let updatedApplication: BaseApplication = application
 
     if (shouldPersistToExternalData) {

@@ -11,6 +11,16 @@ export class ReferenceTemplateService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {}
 
+  async getReferenceData() {
+    await new Promise((resolve) => setTimeout(resolve, 2000))
+    return {
+      referenceData: {
+        some: 'data',
+        numbers: 123,
+      },
+    }
+  }
+
   // A test action that can be used in the ReferenceApplicationTemplate to see
   // what happens when an api action fails
   async doStuffThatFails() {
