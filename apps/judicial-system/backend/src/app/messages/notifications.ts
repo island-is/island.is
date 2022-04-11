@@ -283,7 +283,7 @@ export const notifications = {
       defaultMessage:
         '{revokedCaseText}<br /><br />{accusedNameText}<br /><br />{defenderText}',
       description:
-        'Notaður sem beinagrind á pósti til fangelis þegar krafa er afturkölluð',
+        'Notaður sem beinagrind á pósti til fangelsis þegar krafa er afturkölluð',
     },
     defender: {
       id: 'judicial.system.backend:notifications.prison_revoked_email.defender',
