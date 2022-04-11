@@ -1,4 +1,4 @@
-import { Op } from 'sequelize'
+import { Op, literal } from 'sequelize'
 import each from 'jest-each'
 
 import {
@@ -580,6 +580,27 @@ describe('isCaseBlockedFromUser', () => {
     expect(isReadBlocked).toBe(false)
   })
 
+  it('should not read block an accepted admission to facility case from prison staff', () => {
+    // Arrange
+    const theCase = {
+      type: CaseType.ADMISSION_TO_FACILITY,
+      state: CaseState.ACCEPTED,
+      decision: CaseDecision.ACCEPTING,
+    } as Case
+    const user = {
+      role: UserRole.STAFF,
+      institution: { type: InstitutionType.PRISON },
+    } as User
+
+    // Act
+    const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
+    const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+
+    // Assert
+    expect(isWriteBlocked).toBe(true)
+    expect(isReadBlocked).toBe(false)
+  })
+
   it('should not read block a partially accepted custody case from prison staff', () => {
     // Arrange
     const theCase = {
@@ -601,10 +622,51 @@ describe('isCaseBlockedFromUser', () => {
     expect(isReadBlocked).toBe(false)
   })
 
+  it('should not read block a partially accepted admission to facility case from prison staff', () => {
+    // Arrange
+    const theCase = {
+      type: CaseType.ADMISSION_TO_FACILITY,
+      state: CaseState.ACCEPTED,
+      decision: CaseDecision.ACCEPTING_PARTIALLY,
+    } as Case
+    const user = {
+      role: UserRole.STAFF,
+      institution: { type: InstitutionType.PRISON },
+    } as User
+
+    // Act
+    const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
+    const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+
+    // Assert
+    expect(isWriteBlocked).toBe(true)
+    expect(isReadBlocked).toBe(false)
+  })
+
   it('should not read block an accepted custody case from prison admin staff', () => {
     // Arrange
     const theCase = {
       type: CaseType.CUSTODY,
+      state: CaseState.ACCEPTED,
+    } as Case
+    const user = {
+      role: UserRole.STAFF,
+      institution: { type: InstitutionType.PRISON_ADMIN },
+    } as User
+
+    // Act
+    const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
+    const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+
+    // Assert
+    expect(isWriteBlocked).toBe(true)
+    expect(isReadBlocked).toBe(false)
+  })
+
+  it('should not read block an accepted admission to facility case from prison admin staff', () => {
+    // Arrange
+    const theCase = {
+      type: CaseType.ADMISSION_TO_FACILITY,
       state: CaseState.ACCEPTED,
     } as Case
     const user = {
@@ -748,7 +810,7 @@ describe('getCasesQueryFilter', () => {
       [Op.and]: [
         { isArchived: false },
         { state: CaseState.ACCEPTED },
-        { type: CaseType.CUSTODY },
+        { type: [CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY] },
         {
           decision: [CaseDecision.ACCEPTING, CaseDecision.ACCEPTING_PARTIALLY],
         },
@@ -775,7 +837,13 @@ describe('getCasesQueryFilter', () => {
       [Op.and]: [
         { isArchived: false },
         { state: CaseState.ACCEPTED },
-        { type: [CaseType.CUSTODY, CaseType.TRAVEL_BAN] },
+        {
+          type: [
+            CaseType.ADMISSION_TO_FACILITY,
+            CaseType.CUSTODY,
+            CaseType.TRAVEL_BAN,
+          ],
+        },
       ],
     })
   })
