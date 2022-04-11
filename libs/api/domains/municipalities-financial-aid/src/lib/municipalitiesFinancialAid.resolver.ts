@@ -8,10 +8,10 @@ import {
 import { UseGuards } from '@nestjs/common'
 
 import { MunicipalitiesFinancialAidService } from './municipalitiesFinancialAid.service'
-import { MunicipalityModel } from './models/municipality.model'
+import { FinancialAidMunicipalityModel } from './models/municipality.model'
 import { FinancialAidMunicipalityInput } from './models/municipality.input'
-import { SignedUrlModel } from './models/signedUrl.model'
-import { FinancialAidCreateSignedUrlInput } from './dto/getSignedUrl.input'
+import { FinancialAidMunicipalitiesSignedUrlModel } from './models/signedUrl.model'
+import { FinancialAidMunicipalitiesCreateSignedUrlInput } from './dto/getSignedUrl.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -29,24 +29,26 @@ export class MunicipalitiesFinancialAidResolver {
     )
   }
 
-  @Query(() => MunicipalityModel, { nullable: true })
+  @Query(() => FinancialAidMunicipalityModel, { nullable: true })
   async financialAidMunicipality(
     @Args('input', { type: () => FinancialAidMunicipalityInput })
     input: FinancialAidMunicipalityInput,
     @CurrentUser() user: User,
-  ): Promise<MunicipalityModel | null> {
+  ): Promise<FinancialAidMunicipalityModel | null> {
     return await this.municipalitiesFinancialAidService.municipalityInfoForFinancialAId(
       user,
       input,
     )
   }
 
-  @Mutation(() => SignedUrlModel)
-  createFinancialAidSignedUrl(
-    @Args('input', { type: () => FinancialAidCreateSignedUrlInput })
-    input: FinancialAidCreateSignedUrlInput,
+  @Mutation(() => FinancialAidMunicipalitiesSignedUrlModel)
+  createFinancialAidMunicipalitiesSignedUrl(
+    @Args('input', {
+      type: () => FinancialAidMunicipalitiesCreateSignedUrlInput,
+    })
+    input: FinancialAidMunicipalitiesCreateSignedUrlInput,
     @CurrentUser() user: User,
-  ): Promise<SignedUrlModel | null> {
+  ): Promise<FinancialAidMunicipalitiesSignedUrlModel | null> {
     return this.municipalitiesFinancialAidService.municipalitiesFinancialAidCreateSignedUrl(
       user,
       input,

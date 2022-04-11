@@ -10,7 +10,7 @@ import {
 import { FetchError } from '@island.is/clients/middlewares'
 
 import { FinancialAidMunicipalityInput } from './models/municipality.input'
-import { FinancialAidCreateSignedUrlInput } from './dto/getSignedUrl.input'
+import { FinancialAidMunicipalitiesCreateSignedUrlInput } from './dto/getSignedUrl.input'
 
 @Injectable()
 export class MunicipalitiesFinancialAidService {
@@ -56,7 +56,7 @@ export class MunicipalitiesFinancialAidService {
 
   async municipalitiesFinancialAidCreateSignedUrl(
     auth: Auth,
-    getSignedUrl: FinancialAidCreateSignedUrlInput,
+    getSignedUrl: FinancialAidMunicipalitiesCreateSignedUrlInput,
   ) {
     return await this.fileApiWithAuth(auth).fileControllerCreateSignedUrl({
       getSignedUrlDto: getSignedUrl,
