@@ -276,7 +276,7 @@ export const notifications = {
       defaultMessage:
         '{courtDate, select, NONE {á ótilgreindum tíma} other {{date}, kl. {courtDate, time, short}}}',
       description:
-        'Texti í pósti til fangelis sem tilgreinir hvernær fyrirtaka átti að fara fram af afturkallaðri kröfu',
+        'Texti í pósti til fangelsis sem tilgreinir hvernær fyrirtaka átti að fara fram í afturkallaðri kröfu',
     },
     body: {
       id: 'judicial.system.backend:notifications.prison_revoked_email.body',
