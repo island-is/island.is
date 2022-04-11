@@ -29,40 +29,46 @@ export const useRoutes = () => {
       ),
     )
 
+    console.log('arrangeRoutes__')
     dispatch({
       type: ActionType.SetRoutesFulfilled,
       payload: flatten(routes),
     })
   }
 
+  const arrangeDynamicRoutes = async (
+    userInfo: User,
+    dispatch: (action: Action) => void,
+    modules: ServicePortalModule[],
+    client: ApolloClient<NormalizedCacheObject>,
+  ) => {
+    console.log('arrangeDynamicRoutes__')
+    Promise.all(
+      Object.values(modules)
+        .filter((module) => module.dynamicRoutes)
+        .map((module) => {
+          if (module.dynamicRoutes) {
+            return module.dynamicRoutes({
+              userInfo,
+              client,
+            })
+          }
+        }),
+    ).then((dynamicRoutes) => {
+      if (dynamicRoutes.length > 0) {
+        dispatch({
+          type: ActionType.UpdateFulfilledRoutes,
+          payload: flatten(dynamicRoutes) as ServicePortalRoute[],
+        })
+      }
+    })
+  }
+
   useEffect(() => {
     if (userInfo === null || modulesPending) return
     arrangeRoutes(userInfo, dispatch, Object.values(modules), client)
+    arrangeDynamicRoutes(userInfo, dispatch, Object.values(modules), client)
   }, [userInfo, dispatch, modules, client])
-
-  useEffect(() => {
-    if (!modulesPending) {
-      Promise.all(
-        Object.values(modules)
-          .filter((module) => module.dynamicRoutes)
-          .map((module) => {
-            if (module.dynamicRoutes) {
-              return module.dynamicRoutes({
-                userInfo,
-                client,
-              })
-            }
-          }),
-      ).then((dynamicRoutes) => {
-        if (dynamicRoutes.length > 0) {
-          dispatch({
-            type: ActionType.UpdateFulfilledRoutes,
-            payload: flatten(dynamicRoutes) as ServicePortalRoute[],
-          })
-        }
-      })
-    }
-  }, [modulesPending])
 }
 
 export default useRoutes

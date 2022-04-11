@@ -64,6 +64,7 @@ const useNavigation = () => {
       filterNavigationTree(rootItem, routes, userInfo),
     )
 
+    console.log('masterNav', masterNav)
     setActiveNavigation(masterNav)
   }, [routes, userInfo])
 
