@@ -128,7 +128,9 @@ export class PoliceService {
           return response.map(
             (file: { rvMalSkjolMals_ID: string; heitiSkjals: string }) => ({
               id: file.rvMalSkjolMals_ID,
-              name: file.heitiSkjals,
+              name: file.heitiSkjals.endsWith('.pdf')
+                ? file.heitiSkjals
+                : `${file.heitiSkjals}.pdf`,
             }),
           )
         }
