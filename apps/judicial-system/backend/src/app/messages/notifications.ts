@@ -62,7 +62,7 @@ export const notifications = {
       id: 'judicial.system.backend:notifications.courtRevoked.court_date',
       defaultMessage: 'Fyrirtökutími: {date}, kl. {time}.',
       description:
-        'Notaður sem texti í sms-i til þess að tilgreina hvenær fyrirtöku tími er',
+        'Notaður sem texti í afturköllunar sms-i til dómstóla til þess að tilgreina hvenær fyrirtaka átti að vera',
     },
     requestedCourtDate: {
       id:
