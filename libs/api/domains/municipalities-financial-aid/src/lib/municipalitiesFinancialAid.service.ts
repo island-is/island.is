@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common'
+
 import type { Auth } from '@island.is/auth-nest-tools'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import {
@@ -6,9 +7,10 @@ import {
   MunicipalityApi,
   FilesApi,
 } from '@island.is/clients/municipalities-financial-aid'
-import { MunicipalityQueryInput } from './models/municipality.input'
-import { GetSignedUrlInput } from './dto/getSignedUrl.input'
-import { CreateMunicipalitiesApplicationInput } from './dto/createApplication.input'
+import { FetchError } from '@island.is/clients/middlewares'
+
+import { FinancialAidMunicipalityInput } from './models/municipality.input'
+import { FinancialAidCreateSignedUrlInput } from './dto/getSignedUrl.input'
 
 @Injectable()
 export class MunicipalitiesFinancialAidService {
@@ -30,62 +32,34 @@ export class MunicipalitiesFinancialAidService {
     return this.filesApi.withMiddleware(new AuthMiddleware(auth))
   }
 
+  private handle404(error: FetchError) {
+    if (error.status === 404) {
+      return null
+    }
+    throw error
+  }
+
   async municipalitiesFinancialAidCurrentApplication(auth: Auth) {
     return await this.applicationApiWithAuth(auth)
       .applicationControllerGetCurrentApplication()
-      .then((res) => {
-        return res
-      })
-      .catch((error) => {
-        if (error.status === 404) {
-          return null
-        }
-        throw error
-      })
+      .catch(this.handle404)
   }
 
   async municipalityInfoForFinancialAId(
     auth: Auth,
-    municipalityCode: MunicipalityQueryInput,
+    municipalityCode: FinancialAidMunicipalityInput,
   ) {
     return await this.municipalityApiWithAuth(auth)
       .municipalityControllerGetById(municipalityCode)
-      .then((res) => {
-        return res
-      })
-      .catch((error) => {
-        if (error.status === 404) {
-          return null
-        }
-        throw error
-      })
+      .catch(this.handle404)
   }
 
   async municipalitiesFinancialAidCreateSignedUrl(
     auth: Auth,
-    getSignedUrl: GetSignedUrlInput,
+    getSignedUrl: FinancialAidCreateSignedUrlInput,
   ) {
-    return await this.fileApiWithAuth(auth)
-      .fileControllerCreateSignedUrl({ getSignedUrlDto: getSignedUrl })
-      .then((res) => {
-        return res
-      })
-      .catch((error) => {
-        throw error
-      })
-  }
-
-  async municipalitiesFinancialAidCreateApplication(
-    auth: Auth,
-    application: CreateMunicipalitiesApplicationInput,
-  ) {
-    return await this.applicationApiWithAuth(auth)
-      .applicationControllerCreate({ createApplicationDto: application })
-      .then((res) => {
-        return res
-      })
-      .catch((error) => {
-        throw error
-      })
+    return await this.fileApiWithAuth(auth).fileControllerCreateSignedUrl({
+      getSignedUrlDto: getSignedUrl,
+    })
   }
 }

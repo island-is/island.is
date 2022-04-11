@@ -3,7 +3,7 @@ import { Allow } from 'class-validator'
 import { Field, InputType } from '@nestjs/graphql'
 
 @InputType()
-export class GetSignedUrlInput {
+export class FinancialAidCreateSignedUrlInput {
   @Allow()
   @Field()
   readonly fileName!: string

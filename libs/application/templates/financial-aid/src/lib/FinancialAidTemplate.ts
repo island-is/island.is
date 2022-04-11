@@ -10,12 +10,17 @@ import {
 
 import { assign } from 'xstate'
 
-import { Roles, ApplicationStates, ONE_DAY, ONE_MONTH } from './constants'
+import {
+  Roles,
+  ApplicationStates,
+  ONE_DAY,
+  ONE_MONTH,
+  ApiActions,
+} from './constants'
 
 import { application } from './messages'
 import { dataSchema } from './dataSchema'
 import {
-  hasSpouse,
   isMuncipalityNotRegistered,
   hasActiveCurrentApplication,
   hasSpouseCheck,
@@ -94,9 +99,23 @@ const FinancialAidTemplate: ApplicationTemplate<
                 import('../forms/Application').then((module) =>
                   Promise.resolve(module.Application),
                 ),
-              // TODO: Limit this
               read: 'all',
-              write: 'all',
+              write: {
+                answers: [
+                  'spouse',
+                  'relationshipStatus',
+                  'homeCircumstances',
+                  'student',
+                  'employment',
+                  'income',
+                  'incomeFiles',
+                  'taxReturnFiles',
+                  'personalTaxCredit',
+                  'bankInfo',
+                  'contactInfo',
+                  'formComment',
+                ],
+              },
             },
           ],
         },
@@ -147,6 +166,9 @@ const FinancialAidTemplate: ApplicationTemplate<
         meta: {
           name: application.name.defaultMessage,
           lifecycle: oneMonthLifeCycle,
+          onEntry: {
+            apiModuleAction: ApiActions.CREATEAPPLICATION,
+          },
           roles: [
             {
               id: Roles.APPLICANT,
