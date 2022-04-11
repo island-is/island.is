@@ -21,9 +21,7 @@ const Column = ({ label, value }: PropTypes) => {
           display="flex"
           alignItems="center"
         >
-          <Text variant="small" fontWeight="semiBold">
-            {label}
-          </Text>
+          <p className={styles.pTitle}>{label}</p>
         </Box>
       </GridColumn>
       <GridColumn
@@ -31,7 +29,7 @@ const Column = ({ label, value }: PropTypes) => {
         className={styles.item}
       >
         <Box paddingBottom={2} paddingTop={2} paddingLeft={3}>
-          <Text variant="small">{value}</Text>
+          <p className={styles.pItem}>{value}</p>
         </Box>
       </GridColumn>
     </>

@@ -55,11 +55,12 @@ const RegistrationInfoItem = ({ data }: PropTypes) => {
       <Row>
         <Column
           label={formatMessage({
-            id: 'sp.vehicles:reg-special-name',
-            defaultMessage: 'Sérheiti',
+            id: 'sp.vehicles:reg-color',
+            defaultMessage: 'Litur',
           })}
-          value={data.specialName}
+          value={data.color}
         />
+
         <Column
           label={formatMessage({
             id: 'sp.vehicles:reg-type',
@@ -100,22 +101,17 @@ const RegistrationInfoItem = ({ data }: PropTypes) => {
           value={data.standingPassengers}
         />
       </Row>
-      <Row>
-        <Column
-          label={formatMessage({
-            id: 'sp.vehicles:reg-color',
-            defaultMessage: 'Litur',
-          })}
-          value={data.color}
-        />
-        <Column
-          label={formatMessage({
-            id: 'sp.vehicles:reg-owner-reg',
-            defaultMessage: 'Skráning eiganda',
-          })}
-          value={data.purchaseDate}
-        />
-      </Row>
+      {data.specialName && (
+        <Row>
+          <Column
+            label={formatMessage({
+              id: 'sp.vehicles:reg-special-name',
+              defaultMessage: 'Sérheiti',
+            })}
+            value={data.specialName}
+          />
+        </Row>
+      )}
     </Box>
   )
 }

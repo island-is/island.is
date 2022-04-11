@@ -28,26 +28,11 @@ const InspectionInfoItem = ({ data }: PropTypes) => {
           })}
           value={data.type}
         />
-        <Column
-          label={formatMessage({
-            id: 'sp.vehicles:insp-result',
-            defaultMessage: 'Niðurstaða',
-          })}
-          value={data.result}
-        />
-      </Row>
-      <Row>
-        <Column
-          label={formatMessage({
-            id: 'sp.vehicles:insp-plate-status',
-            defaultMessage: 'Staða plötu',
-          })}
-          value={data.plateStatus}
-        />
+
         <Column
           label={formatMessage({
             id: 'sp.vehicles:insp-date',
-            defaultMessage: 'Móttökudagur',
+            defaultMessage: 'Dagsetning',
           })}
           value={data.date}
         />
@@ -55,36 +40,28 @@ const InspectionInfoItem = ({ data }: PropTypes) => {
       <Row>
         <Column
           label={formatMessage({
-            id: 'sp.vehicles:insp-plate-location',
-            defaultMessage: 'Geymslustaður',
+            id: 'sp.vehicles:insp-result',
+            defaultMessage: 'Niðurstaða',
           })}
-          value={data.plateLocation}
+          value={data.result}
         />
         <Column
           label={formatMessage({
-            id: 'sp.vehicles:insp-last-insp',
-            defaultMessage: 'Síðasta skoðun',
+            id: 'sp.vehicles:insp-plate-status',
+            defaultMessage: 'Staða plötu',
           })}
-          value={data.lastInspectionDate}
+          value={data.plateStatus}
         />
       </Row>
       <Row>
         <Column
           label={formatMessage({
-            id: 'sp.vehicles:insp-next-insp',
-            defaultMessage: 'Næsta aðalskoðun',
+            id: 'sp.vehicles:insp-taxes',
+            defaultMessage: 'Bifreiðagjöld',
           })}
-          value={data.nextInspectionDate}
+          value={data.carTaxes}
         />
-        <Column
-          label={formatMessage({
-            id: 'sp.vehicles:insp-mortages',
-            defaultMessage: 'Veðbönd',
-          })}
-          value={data.mortages}
-        />
-      </Row>
-      <Row>
+
         <Column
           label={formatMessage({
             id: 'sp.vehicles:insp-insured',
@@ -102,23 +79,52 @@ const InspectionInfoItem = ({ data }: PropTypes) => {
                 })
           }
         />
-        <Column
-          label={formatMessage({
-            id: 'sp.vehicles:insp-taxes',
-            defaultMessage: 'Bifreiðagjöld',
-          })}
-          value={data.carTaxes}
-        />
       </Row>
       <Row>
         <Column
           label={formatMessage({
-            id: 'sp.vehicles:insp-negligence',
-            defaultMessage: 'Vanrækslugjald',
+            id: 'sp.vehicles:insp-next-insp',
+            defaultMessage: 'Næsta aðalskoðun',
           })}
-          value={data.negligenceFee}
+          value={data.nextInspectionDate}
+        />
+        <Column
+          label={formatMessage({
+            id: 'sp.vehicles:insp-last-insp',
+            defaultMessage: 'Síðasta skoðun',
+          })}
+          value={data.lastInspectionDate}
         />
       </Row>
+      {(data.mortages || data.negligenceFee) && (
+        <Row>
+          <Column
+            label={formatMessage({
+              id: 'sp.vehicles:insp-mortages',
+              defaultMessage: 'Veðbönd',
+            })}
+            value={data.mortages}
+          />
+          <Column
+            label={formatMessage({
+              id: 'sp.vehicles:insp-negligence',
+              defaultMessage: 'Vanrækslugjald',
+            })}
+            value={data.negligenceFee}
+          />
+        </Row>
+      )}
+      {data.plateLocation && (
+        <Row>
+          <Column
+            label={formatMessage({
+              id: 'sp.vehicles:insp-plate-location',
+              defaultMessage: 'Geymslustaður',
+            })}
+            value={data.plateLocation}
+          />
+        </Row>
+      )}
     </Box>
   )
 }

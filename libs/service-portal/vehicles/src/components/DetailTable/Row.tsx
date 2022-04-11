@@ -1,5 +1,5 @@
 import React from 'react'
-import { Divider, GridRow } from '@island.is/island-ui/core'
+import { Divider, GridRow, Hidden } from '@island.is/island-ui/core'
 
 interface PropTypes {
   children: React.ReactNode
@@ -9,7 +9,9 @@ const Row = ({ children }: PropTypes) => {
   return (
     <>
       <GridRow>{children}</GridRow>
-      <Divider />
+      <Hidden print below="md">
+        <Divider />
+      </Hidden>
     </>
   )
 }

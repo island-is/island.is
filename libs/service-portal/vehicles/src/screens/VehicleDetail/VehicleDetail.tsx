@@ -115,10 +115,21 @@ const VehicleDetail: ServicePortalModuleComponent = ({ userInfo }) => {
         <Divider />
         <UserInfoLine
           label={formatMessage({
-            id: 'sp.vehicles:vin',
-            defaultMessage: 'Verksmiðjunúmer',
+            id: 'sp.vehicles:trailer-with-brakes',
+            defaultMessage: 'Hemlaður eftirvagn',
           })}
-          content={vehicleDetailReal.vin}
+          content={vehicleDetailReal.techincal.tMassoftrbr.toString() + ' kg.'}
+          loading={false}
+        />
+        <Divider />
+        <UserInfoLine
+          label={formatMessage({
+            id: 'sp.vehicles:trailer-without-brakes',
+            defaultMessage: 'Óhemlaður eftirvagn',
+          })}
+          content={
+            vehicleDetailReal.techincal.tMassoftrunbr.toString() + ' kg.'
+          }
           loading={false}
         />
         <Divider />

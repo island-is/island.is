@@ -505,7 +505,7 @@ export const technicalInfo = {
   totalWeight: '1690', // mass -> massladen
   length: '4050', // size => length
   capacityWeight: '476', // masscapacity
-  slagrymi: 'Slagrými?', // ??
+  capactiy: '1396', // capacity ????
   vehicleWeight: '1214', // massinro
   width: '1720', // size => width
   trailerWithoutBrakesWeight: '450', // massoftrunbr

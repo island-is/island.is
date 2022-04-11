@@ -24,6 +24,15 @@ export const item = style({
   alignItems: 'center',
 })
 
+export const pTitle = style({
+  fontSize: 14,
+  fontWeight: 600,
+})
+
+export const pItem = style({
+  fontSize: 14,
+})
+
 export const bottomBorder = style({
   ...themeUtils.responsiveStyle({
     md: {

@@ -30,10 +30,27 @@ const TechnicalInfoItem = ({ data }: PropTypes) => {
         />
         <Column
           label={formatMessage({
-            id: 'sp.vehicles:tech-total-weight',
-            defaultMessage: 'Heildarþyngd',
+            id: 'sp.vehicles:tech-vehicleWeight',
+            defaultMessage: 'Eiginþyngd',
           })}
-          value={data.totalWeight + ' kg'}
+          value={data.vehicleWeight + ' kg'}
+        />
+      </Row>
+      <Row>
+        <Column
+          label={formatMessage({
+            id: 'sp.vehicles:tech-slagrymi',
+            defaultMessage: 'Slagrými',
+          })}
+          value={data.capactiy + ' cc.'}
+        />
+
+        <Column
+          label={formatMessage({
+            id: 'sp.vehicles:tech-capacity-weight',
+            defaultMessage: 'Þyngd vagnlestar',
+          })}
+          value={data.capacityWeight + ' kg'}
         />
       </Row>
       <Row>
@@ -46,26 +63,10 @@ const TechnicalInfoItem = ({ data }: PropTypes) => {
         />
         <Column
           label={formatMessage({
-            id: 'sp.vehicles:tech-capacity-weight',
-            defaultMessage: 'Þyngd vagnlestar',
+            id: 'sp.vehicles:tech-total-weight',
+            defaultMessage: 'Heildarþyngd',
           })}
-          value={data.capacityWeight + ' kg'}
-        />
-      </Row>
-      <Row>
-        <Column
-          label={formatMessage({
-            id: 'sp.vehicles:tech-slagrymi',
-            defaultMessage: 'Slagrými',
-          })}
-          value={data.slagrymi + ' cc.'}
-        />
-        <Column
-          label={formatMessage({
-            id: 'sp.vehicles:tech-vehicleWeight',
-            defaultMessage: 'Eiginþyngd',
-          })}
-          value={data.vehicleWeight + ' kg'}
+          value={data.totalWeight + ' kg'}
         />
       </Row>
       <Row>
@@ -94,19 +95,19 @@ const TechnicalInfoItem = ({ data }: PropTypes) => {
         />
         <Column
           label={formatMessage({
-            id: 'sp.vehicles:tech-carrying-capacity',
-            defaultMessage: 'Burðargeta',
+            id: 'sp.vehicles:tech-trailer-with-brakes',
+            defaultMessage: 'Hemlaður eftirvagn',
           })}
-          value={data.carryingCapacity && data.carryingCapacity + ' kg'}
+          value={data.trailerWithBrakesWeight + ' kg'}
         />
       </Row>
       <Row>
         <Column
           label={formatMessage({
-            id: 'sp.vehicles:tech-trailer-with-brakes',
-            defaultMessage: 'Hemlaður eftirvagn',
+            id: 'sp.vehicles:tech-carrying-capacity',
+            defaultMessage: 'Burðargeta',
           })}
-          value={data.trailerWithBrakesWeight + ' kg'}
+          value={data.carryingCapacity && data.carryingCapacity + ' kg'}
         />
         <Column
           label={formatMessage({
