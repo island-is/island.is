@@ -85,7 +85,7 @@ const FilterPopover = ({ selectedStates, selectedMonths, onFilterClear, onFilter
             variant="text"
             onClick={onFilterSave}
           >
-            Velja síur
+            Uppfæra lista með síum
           </Button>
         </Box>
       </>
