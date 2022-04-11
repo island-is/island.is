@@ -108,6 +108,7 @@ const CaseFilesAccordionItem: React.FC<Props> = (props) => {
             ],
           ])
         }
+        isCaseCompleted={completedCaseStates.includes(workingCase.state)}
       />
       {canCaseFilesBeUploaded() && (
         <Box display="flex" justifyContent="flexEnd">

@@ -19,7 +19,6 @@ import {
   buildFileUploadField,
   buildTextField,
   buildDateField,
-  getValueViaPath,
 } from '@island.is/application/core'
 import type { User } from '@island.is/api/domains/national-registry'
 import { format as formatNationalId } from 'kennitala'
@@ -32,7 +31,8 @@ import { m } from '../lib/messages'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
 import { HasQualityPhotoData } from '../fields/QualityPhoto/hooks/useQualityPhoto'
-import { UPLOAD_ACCEPT } from '../lib/constants'
+import { UPLOAD_ACCEPT, YES, NO, SEND_HOME, PICK_UP } from '../lib/constants'
+import { Photo, Delivery } from '../types'
 
 export const getApplication = (): Form => {
   return buildForm({
@@ -189,81 +189,73 @@ export const getApplication = (): Form => {
         title: m.qualityPhotoSectionTitle,
         children: [
           buildMultiField({
-            id: 'info',
+            id: 'userPhoto',
             title: m.qualityPhotoTitle,
-            condition: (_, externalData) => {
-              return (
-                getValueViaPath<HasQualityPhotoData>(
-                  externalData,
-                  'qualityPhoto',
-                )?.data?.hasQualityPhoto ?? false
-              )
-            },
             children: [
               buildDescriptionField({
                 id: 'descriptionPhoto',
                 title: '',
                 description: m.qualityPhotoExistingPhotoText,
+                condition: (_, externalData) => {
+                  return (
+                    (externalData.qualityPhoto as HasQualityPhotoData)?.data
+                      ?.hasQualityPhoto === true
+                  )
+                },
               }),
-              buildCustomField({
-                title: '',
-                id: 'qphoto',
-                component: 'QualityPhoto',
-              }),
-              buildRadioField({
-                id: 'qualityPhoto',
-                title: '',
-                width: 'half',
-                disabled: false,
-                options: [
-                  { value: 'yes', label: m.qualityPhotoUseExistingPhoto },
-                  { value: 'no', label: m.qualityPhotoUploadNewPhoto },
-                ],
-                defaultValue: 'yes',
-              }),
-              buildCustomField({
-                id: 'bullets',
-                title: '',
-                component: 'Bullets',
-                condition: (answers: FormValue) =>
-                  answers.qualityPhoto === 'no',
-              }),
-              buildFileUploadField({
-                id: 'attachments',
-                title: '',
-                uploadHeader: m.qualityPhotoFileUploadTitle,
-                uploadDescription: m.qualityPhotoFileUploadDescription,
-                uploadButtonLabel: m.qualityPhotoUploadButtonLabel,
-                forImageUpload: true,
-                uploadMultiple: false,
-                uploadAccept: UPLOAD_ACCEPT,
-                condition: (answers: FormValue) =>
-                  answers.qualityPhoto === 'no',
-              }),
-            ],
-          }),
-          buildMultiField({
-            id: 'photoUpload',
-            title: m.qualityPhotoTitle,
-            condition: (_, externalData) => {
-              return (
-                (externalData.qualityPhoto as HasQualityPhotoData)?.data
-                  ?.hasQualityPhoto === false
-              )
-            },
-            children: [
               buildDescriptionField({
                 id: 'descriptionNoPhoto',
                 title: '',
                 description: m.qualityPhotoNoPhotoDescription,
+                condition: (_, externalData) => {
+                  return (
+                    (externalData.qualityPhoto as HasQualityPhotoData)?.data
+                      ?.hasQualityPhoto === false
+                  )
+                },
+              }),
+              buildCustomField({
+                id: 'qphoto',
+                title: '',
+                component: 'QualityPhoto',
+                condition: (_, externalData) => {
+                  return (
+                    (externalData.qualityPhoto as HasQualityPhotoData)?.data
+                      ?.hasQualityPhoto === true
+                  )
+                },
+              }),
+              buildRadioField({
+                id: 'photo.qualityPhoto',
+                title: '',
+                width: 'half',
+                disabled: false,
+                options: [
+                  { value: YES, label: m.qualityPhotoUseExistingPhoto },
+                  { value: NO, label: m.qualityPhotoUploadNewPhoto },
+                ],
+                defaultValue: YES,
+                condition: (_, externalData) => {
+                  return (
+                    (externalData.qualityPhoto as HasQualityPhotoData)?.data
+                      ?.hasQualityPhoto === true
+                  )
+                },
               }),
               buildCustomField({
                 id: 'bullets',
                 title: '',
                 component: 'Bullets',
+                condition: (answers, externalData) => {
+                  return (
+                    (externalData.qualityPhoto as HasQualityPhotoData)?.data
+                      ?.hasQualityPhoto === false ||
+                    (answers.photo as Photo)?.qualityPhoto === NO
+                  )
+                },
               }),
               buildFileUploadField({
-                id: 'attachments',
+                id: 'photo.attachments',
                 title: '',
                 uploadHeader: m.qualityPhotoFileUploadTitle,
                 uploadDescription: m.qualityPhotoFileUploadDescription,
@@ -271,6 +263,13 @@ export const getApplication = (): Form => {
                 forImageUpload: true,
                 uploadMultiple: false,
                 uploadAccept: UPLOAD_ACCEPT,
+                condition: (answers, externalData) => {
+                  return (
+                    (externalData.qualityPhoto as HasQualityPhotoData)?.data
+                      ?.hasQualityPhoto === false ||
+                    (answers.photo as Photo)?.qualityPhoto === NO
+                  )
+                },
               }),
             ],
           }),
@@ -290,18 +289,18 @@ export const getApplication = (): Form => {
                 description: m.deliveryMethodDescription,
               }),
               buildRadioField({
-                id: 'deliveryMethod',
+                id: 'delivery.deliveryMethod',
                 title: '',
                 width: 'half',
                 disabled: false,
                 options: [
-                  { value: 'sendHome', label: m.deliveryMethodHomeDelivery },
-                  { value: 'pickUp', label: m.deliveryMethodPickUp },
+                  { value: SEND_HOME, label: m.deliveryMethodHomeDelivery },
+                  { value: PICK_UP, label: m.deliveryMethodPickUp },
                 ],
-                defaultValue: 'sendHome',
+                defaultValue: SEND_HOME,
               }),
               buildSelectField({
-                id: 'district',
+                id: 'delivery.district',
                 title: m.deliveryMethodOfficeLabel,
                 placeholder: m.deliveryMethodOfficeSelectPlaceholder,
                 options: ({
@@ -317,9 +316,8 @@ export const getApplication = (): Form => {
                     }),
                   )
                 },
-
                 condition: (answers: FormValue) =>
-                  answers.deliveryMethod === 'pickUp',
+                  (answers.delivery as Delivery)?.deliveryMethod === PICK_UP,
               }),
             ],
           }),
@@ -398,13 +396,15 @@ export const getApplication = (): Form => {
                 title: '',
                 component: 'UploadedPhoto',
                 condition: (answers) =>
-                  answers.qualityPhoto === 'no' || !answers.qualityPhoto,
+                  (answers.photo as Photo)?.qualityPhoto === NO ||
+                  !(answers.photo as Photo)?.qualityPhoto,
               }),
               buildCustomField({
                 id: 'qphoto',
                 title: '',
                 component: 'QualityPhoto',
-                condition: (answers) => answers.qualityPhoto === 'yes',
+                condition: (answers) =>
+                  (answers.photo as Photo)?.qualityPhoto === YES,
               }),
               buildDividerField({}),
               buildKeyValueField({
@@ -416,16 +416,18 @@ export const getApplication = (): Form => {
                   answers,
                 }) => {
                   const district = (data as DistrictCommissionerAgencies[]).find(
-                    (d) => d.id === answers.district,
+                    (d) => d.id === (answers.delivery as Delivery)?.district,
                   )
                   return `Þú hefur valið að sækja stæðiskortið sjálf/ur/t hjá: ${district?.name}, ${district?.place}`
                 },
-                condition: (answers) => answers.deliveryMethod === 'pickUp',
+                condition: (answers) =>
+                  (answers.delivery as Delivery)?.deliveryMethod === PICK_UP,
               }),
               buildKeyValueField({
                 label: m.deliveryMethodTitle,
                 value: () => m.overviewDeliveryText,
-                condition: (answers) => answers.deliveryMethod === 'sendHome',
+                condition: (answers) =>
+                  (answers.delivery as Delivery)?.deliveryMethod === SEND_HOME,
               }),
               buildSubmitField({
                 id: 'submit',

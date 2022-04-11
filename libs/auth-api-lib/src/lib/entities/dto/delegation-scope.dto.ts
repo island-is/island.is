@@ -51,7 +51,8 @@ export class DelegationScopeDTO {
   @ApiProperty()
   validFrom!: Date
 
+  @IsOptional()
   @IsDateString()
-  @ApiProperty()
-  validTo!: Date
+  @ApiPropertyOptional({ nullable: true })
+  validTo?: Date | null
 }

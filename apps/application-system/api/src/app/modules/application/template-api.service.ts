@@ -1,5 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { ApplicationWithAttachments } from '@island.is/application/core'
+import {
+  ApplicationWithAttachments,
+  Application,
+} from '@island.is/application/core'
 import {
   BaseTemplateApiApplicationService,
   TemplateAPIConfig,
@@ -7,6 +10,7 @@ import {
 import { ApplicationService } from '@island.is/application/api/core'
 import { AwsService } from '@island.is/nest/aws'
 import { ConfigService } from '@nestjs/config'
+import jwt from 'jsonwebtoken'
 import { uuid } from 'uuidv4'
 
 @Injectable()
@@ -51,5 +55,37 @@ export class TemplateApiApplicationService extends BaseTemplateApiApplicationSer
     })
 
     return attachmentKey
+  }
+
+  async storeNonceForApplication(application: Application): Promise<string> {
+    const nonce = uuid()
+
+    const applicationToUpdate = await this.applicationService.findOneById(
+      application.id,
+    )
+
+    if (!applicationToUpdate) throw new Error('Application not found')
+
+    await this.applicationService.addNonce(applicationToUpdate, nonce)
+
+    return nonce
+  }
+
+  async createAssignToken(
+    application: Application,
+    secret: string,
+    expiresIn: number,
+  ): Promise<string> {
+    const nonce = await this.storeNonceForApplication(application)
+    const token = jwt.sign(
+      {
+        applicationId: application.id,
+        state: application.state,
+        nonce,
+      },
+      secret,
+      { expiresIn },
+    )
+    return token
   }
 }

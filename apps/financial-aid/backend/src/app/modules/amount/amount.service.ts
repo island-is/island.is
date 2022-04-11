@@ -22,15 +22,19 @@ export class AmountService {
       return this.amountModel
         .create(amount, { transaction: t })
         .then(async (amountResponse) => {
-          amount.deductionFactors.map((item) => {
-            return this.deductionFactorsService.create(
-              {
-                amountId: amountResponse.getDataValue('id'),
-                description: item.description,
-                amount: item.amount,
-              },
-              t,
-            )
+          await Promise.all(
+            amount.deductionFactors.map(async (item) => {
+              return await this.deductionFactorsService.create(
+                {
+                  amountId: amountResponse.getDataValue('id'),
+                  description: item.description,
+                  amount: item.amount,
+                },
+                t,
+              )
+            }),
+          ).then((deductionFactors) => {
+            amountResponse?.setDataValue('deductionFactors', deductionFactors)
           })
           return amountResponse
         })

@@ -30,22 +30,20 @@ yargs(hideBin(process.argv))
     'get all required secrets from all charts',
     { env: { type: 'string', demand: true, choices: OpsEnvNames } },
     (p) => {
-      console.log(
-        Object.values(charts)
-          .map((chart) => chart[p.env as OpsEnv])
-          .flatMap((services) =>
-            services.map((s) =>
-              serializeService(s, new UberChart(Envs[p.env as OpsEnv])),
-            ),
-          )
-          .flatMap((s) => {
-            if (s.type === 'success') {
-              return Object.values(s.serviceDef.secrets!)
-            }
-            return [`serialize errors: ${s.errors.join(', ')}`]
-          })
-          .join('\n'),
-      )
+      const secrets = Object.values(charts)
+        .map((chart) => chart[p.env as OpsEnv])
+        .flatMap((services) =>
+          services.map((s) =>
+            serializeService(s, new UberChart(Envs[p.env as OpsEnv])),
+          ),
+        )
+        .flatMap((s) => {
+          if (s.type === 'success') {
+            return Object.values(s.serviceDef.secrets!)
+          }
+          return [`serialize errors: ${s.errors.join(', ')}`]
+        })
+      console.log([...new Set(secrets)].join('\n'))
     },
   )
   .command(

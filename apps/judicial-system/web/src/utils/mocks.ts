@@ -158,6 +158,7 @@ const testCase1 = {
     {
       id: 'fc96b11c-f750-4867-b767-c5e562a54f09',
       name: 'Screen Recording 2021-04-09 at 14.39.51.mov',
+      key: 'somekey',
       size: 4991527,
       created: '2021-04-12T13:55:28.131Z',
       state: CaseFileState.STORED_IN_RVG,

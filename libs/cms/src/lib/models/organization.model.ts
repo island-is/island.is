@@ -4,6 +4,7 @@ import { Image, mapImage } from './image.model'
 import { OrganizationTag, mapOrganizationTag } from './organizationTag.model'
 import { FooterItem, mapFooterItem } from './footerItem.model'
 import { mapNamespace, Namespace } from './namespace.model'
+import { GenericTag, mapGenericTag } from './genericTag.model'
 
 @ObjectType()
 export class Organization {
@@ -48,6 +49,12 @@ export class Organization {
 
   @Field(() => Namespace, { nullable: true })
   namespace!: Namespace | null
+
+  @Field(() => Image, { nullable: true })
+  serviceWebFeaturedImage!: Image | null
+
+  @Field(() => [GenericTag])
+  publishedMaterialSearchFilterGenericTags!: GenericTag[]
 }
 
 export const mapOrganization = ({
@@ -69,5 +76,11 @@ export const mapOrganization = ({
     serviceWebTitle: fields.serviceWebTitle ?? '',
     serviceWebEnabled: Boolean(fields.serviceWebEnabled),
     namespace: fields.namespace ? mapNamespace(fields.namespace) : null,
+    serviceWebFeaturedImage: fields.serviceWebFeaturedImage
+      ? mapImage(fields.serviceWebFeaturedImage)
+      : null,
+    publishedMaterialSearchFilterGenericTags: fields.publishedMaterialSearchFilterGenericTags
+      ? fields.publishedMaterialSearchFilterGenericTags.map(mapGenericTag)
+      : [],
   }
 }

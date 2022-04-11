@@ -1,21 +1,40 @@
 import React, { useState } from 'react'
-import { Box, Input, Select, Text, Option } from '@island.is/island-ui/core'
-import { ActionModal } from '@island.is/financial-aid-web/veita/src/components'
+import {
+  Box,
+  Input,
+  Select,
+  Text,
+  Option,
+  LoadingDots,
+  SkeletonLoader,
+} from '@island.is/island-ui/core'
+import {
+  ActionModal,
+  LoadingContainer,
+} from '@island.is/financial-aid-web/veita/src/components'
 import { useMutation } from '@apollo/client'
-import { isEmailValid, StaffRole } from '@island.is/financial-aid/shared/lib'
+import {
+  isEmailValid,
+  ReactSelectOption,
+  StaffRole,
+  UpdateAdmin,
+} from '@island.is/financial-aid/shared/lib'
 
 import { serviceCenters } from '@island.is/financial-aid/shared/data'
 import { MunicipalityMutation } from '@island.is/financial-aid-web/veita/graphql'
+import { useStaff } from '@island.is/financial-aid-web/veita/src/utils/useStaff'
 
 interface Props {
   isVisible: boolean
   setIsVisible: React.Dispatch<React.SetStateAction<boolean>>
   activeMunicipalitiesCodes?: number[]
   onMunicipalityCreated: () => void
+  allAdmins?: UpdateAdmin[]
+  loadingAdmins: boolean
 }
-
 interface newMunicipalityModalState {
   serviceCenter: Option
+  selectedAdmin?: UpdateAdmin
   adminNationalId: string
   adminName: string
   adminEmail: string
@@ -28,6 +47,8 @@ const NewMunicipalityModal = ({
   setIsVisible,
   activeMunicipalitiesCodes,
   onMunicipalityCreated,
+  allAdmins,
+  loadingAdmins,
 }: Props) => {
   const selectServiceCenter = serviceCenters
     .filter(
@@ -39,9 +60,11 @@ const NewMunicipalityModal = ({
     })
 
   const [createMunicipality] = useMutation(MunicipalityMutation)
+  const { updateInfo } = useStaff()
 
   const [state, setState] = useState<newMunicipalityModalState>({
     serviceCenter: { label: '', value: '' },
+    selectedAdmin: undefined,
     adminNationalId: '',
     adminName: '',
     adminEmail: '',
@@ -51,17 +74,41 @@ const NewMunicipalityModal = ({
 
   const [errorMessage, setErrorMessage] = useState<string>()
 
-  const areRequiredFieldsFilled =
-    !state.serviceCenter.label ||
-    !state.serviceCenter.value ||
+  const areRequiredFieldsFilledForNewAdmin =
     !state.adminEmail ||
     !state.adminName ||
     !state.adminNationalId ||
     !isEmailValid(state.adminEmail) ||
     state.adminNationalId.length !== 10
 
+  const areRequiredFieldsFilledForUpdateAdmin = !state.selectedAdmin
+
+  const areRequiredFieldsFilledForServiceCenter =
+    !state.serviceCenter.label || !state.serviceCenter.value
+
+  const onUpdateAdmin = async (muniId: string) => {
+    await updateInfo(
+      state.selectedAdmin?.id,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      state.selectedAdmin?.municipalityIds && muniId
+        ? [...state.selectedAdmin?.municipalityIds, muniId]
+        : undefined,
+    ).then(() => {
+      onMunicipalityCreated()
+    })
+  }
+
   const submit = async () => {
-    if (areRequiredFieldsFilled) {
+    if (
+      areRequiredFieldsFilledForServiceCenter ||
+      (areRequiredFieldsFilledForUpdateAdmin &&
+        areRequiredFieldsFilledForNewAdmin)
+    ) {
       setState({ ...state, hasError: true })
       return
     }
@@ -71,15 +118,24 @@ const NewMunicipalityModal = ({
           input: {
             name: state.serviceCenter.label,
             municipalityId: state.serviceCenter.value,
-            admin: {
-              name: state.adminName,
-              email: state.adminEmail,
-              nationalId: state.adminNationalId,
-              roles: [StaffRole.ADMIN],
-            },
+            admin: areRequiredFieldsFilledForNewAdmin
+              ? undefined
+              : {
+                  name: state.adminName,
+                  email: state.adminEmail,
+                  nationalId: state.adminNationalId,
+                  roles: [StaffRole.ADMIN],
+                },
           },
         },
-      }).then(() => {
+      }).then((res) => {
+        if (
+          areRequiredFieldsFilledForNewAdmin &&
+          res.data.createMunicipality.municipalityId
+        ) {
+          onUpdateAdmin(res.data.createMunicipality.municipalityId)
+          return
+        }
         onMunicipalityCreated()
       })
     } catch (error) {
@@ -112,11 +168,7 @@ const NewMunicipalityModal = ({
           noOptionsMessage="Enginn valmöguleiki"
           options={selectServiceCenter}
           placeholder="Veldu tegund"
-          hasError={
-            state.hasError &&
-            !state.serviceCenter.label &&
-            !state.serviceCenter.value
-          }
+          hasError={state.hasError && areRequiredFieldsFilledForServiceCenter}
           errorMessage="Þú þarft að velja sveitarfélag"
           value={state.serviceCenter}
           onChange={(option) => {
@@ -132,6 +184,56 @@ const NewMunicipalityModal = ({
       <Text marginBottom={2} variant="h4">
         Stjórnandi
       </Text>
+      <Text marginBottom={2} variant="small">
+        Þú getur valið núverandi stjórnanda eða bætt við nýjum. <br />
+        Stjórnandi fær sendan tölvupóst með hlekk til að skrá sig inn með
+        rafrænum skilríkjum.
+      </Text>
+
+      <LoadingContainer
+        isLoading={loadingAdmins}
+        loader={
+          <Box
+            marginBottom={3}
+            display="flex"
+            width="full"
+            justifyContent="center"
+          >
+            <SkeletonLoader height="80px" />
+          </Box>
+        }
+      >
+        {allAdmins ? (
+          <Box marginBottom={3}>
+            <Select
+              label="Leita að stjórnanda"
+              name="selectAdmin"
+              noOptionsMessage="Enginn valmöguleiki"
+              options={allAdmins.map((el) => {
+                return { label: el.name, value: el.id }
+              })}
+              placeholder="Veldu tegund"
+              hasError={state.hasError && areRequiredFieldsFilledForUpdateAdmin}
+              errorMessage="Þú þarft að velja stjórnanda"
+              onChange={(option) => {
+                const { value } = option as ReactSelectOption
+                setState({
+                  ...state,
+                  selectedAdmin: allAdmins.find((el) => value === el.id),
+                  hasError: false,
+                })
+              }}
+            />
+          </Box>
+        ) : (
+          <Box marginBottom={3}>
+            <Text color="red400">
+              Abbabb mistókst að sækja núverandi stjórnendur
+            </Text>
+          </Box>
+        )}
+      </LoadingContainer>
+
       <Box marginBottom={2}>
         <Input
           label="Kennitala"

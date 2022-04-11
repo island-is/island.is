@@ -20,6 +20,7 @@ export const CaseQuery = gql`
         citizenship
       }
       defenderName
+      defenderNationalId
       defenderEmail
       defenderPhoneNumber
       sendRequestToDefender
@@ -135,6 +136,7 @@ export const CaseQuery = gql`
         size
         created
         state
+        key
       }
       isAppealDeadlineExpired
       isAppealGracePeriodExpired

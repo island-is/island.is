@@ -24,7 +24,6 @@ import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { IslykillService } from './islykill.service'
 import { UserDeviceTokenInput } from './dto/userDeviceTokenInput'
 import { DataStatus } from './types/dataStatus.enum'
-import { FetchError } from '@island.is/clients/middlewares'
 
 export const MAX_OUT_OF_DATE_MONTHS = 6
 
@@ -131,26 +130,26 @@ export class UserProfileService {
         nationalId: user.nationalId,
       })
 
-      const islyklarData = await this.islyklarService.getIslykillSettings(
-        user.nationalId,
-      )
-
       const feature = await this.featureFlagService.getValue(
         Features.personalInformation,
         false,
         user,
       )
 
-      return {
-        ...profile,
-
-        // Temporary solution while we still run the old user profile service.
-        ...(feature && {
+      if (feature) {
+        const islyklarData = await this.islyklarService.getIslykillSettings(
+          user.nationalId,
+        )
+        return {
+          ...profile,
+          // Temporary solution while we still run the old user profile service.
           mobilePhoneNumber: islyklarData?.mobile,
           email: islyklarData?.email,
           canNudge: islyklarData?.canNudge,
           bankInfo: islyklarData?.bankInfo,
-        }),
+        }
+      } else {
+        return profile
       }
     } catch (error) {
       if (error.status === 404) {
@@ -271,27 +270,9 @@ export class UserProfileService {
       user,
     )
 
-    let updatedUserProfile: UserProfile
-    try {
-      updatedUserProfile = await this.userProfileApiWithAuth(
-        user,
-      ).userProfileControllerUpdate(request)
-    } catch (error) {
-      // Poor man's fix to allow update to be createOrUpdate.
-      // TODO: update the user profile API to support createOrUpdate
-      if (error instanceof FetchError && error.status === 404) {
-        updatedUserProfile = await this.userProfileApiWithAuth(
-          user,
-        ).userProfileControllerCreate({
-          createUserProfileDto: {
-            nationalId: user.nationalId,
-            ...updateUserDto,
-          },
-        })
-      } else {
-        return handleError(error)
-      }
-    }
+    const updatedUserProfile = await this.userProfileApiWithAuth(user)
+      .userProfileControllerUpdate(request)
+      .catch(handleError)
 
     if (feature) {
       const islyklarData = await this.islyklarService.getIslykillSettings(

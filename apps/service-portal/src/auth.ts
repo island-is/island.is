@@ -53,7 +53,7 @@ if (userMocked) {
       ApiScope.financeSalary,
       ApiScope.internal,
       ApiScope.meDetails,
-      ApiScope.licenses,
+      ApiScope.licensesVerify,
     ],
     post_logout_redirect_uri: `${window.location.origin}`,
     userStorePrefix: 'sp.',

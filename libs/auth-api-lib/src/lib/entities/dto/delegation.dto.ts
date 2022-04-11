@@ -49,7 +49,7 @@ export class DelegationDTO {
 
   @IsOptional()
   @IsDateString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ nullable: true })
   validTo?: Date | null
 
   @ApiProperty({ enum: DelegationType, enumName: 'DelegationType' })
