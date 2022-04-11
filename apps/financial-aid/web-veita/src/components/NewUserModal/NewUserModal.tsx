@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Box, Checkbox, Input, Text } from '@island.is/island-ui/core'
 import {
   ActionModal,
-  MultiSelection,
+  MultiSelectionMunicipality,
 } from '@island.is/financial-aid-web/veita/src/components'
 import { StaffMutation } from '@island.is/financial-aid-web/veita/graphql'
 import { ApolloError, useMutation } from '@apollo/client'
@@ -11,7 +11,7 @@ import cn from 'classnames'
 import {
   CreateUpdateStaff,
   selectionType,
-} from '@island.is/financial-aid-web/veita/src/components/MultiSelection/MultiSelection'
+} from '@island.is/financial-aid-web/veita/src/components/MultiSelection/MultiSelectionMunicipality'
 import { useRouter } from 'next/router'
 
 interface Props {
@@ -192,7 +192,7 @@ const NewUserModal = ({
       {predefinedRoles.length === 0 && (
         <>
           <Box display="block" marginBottom={[3, 3, 5]}>
-            <MultiSelection
+            <MultiSelectionMunicipality
               selectionUpdate={(
                 value: string,
                 label: string,

@@ -19,6 +19,11 @@ import { GetMenuInput } from './dto/getMenu.input'
 import { GetSingleMenuInput } from './dto/getSingleMenu.input'
 import { GetOrganizationSubpageInput } from './dto/getOrganizationSubpage.input'
 import { OrganizationSubpage } from './models/organizationSubpage.model'
+import { GetPublishedMaterialInput } from './dto/getPublishedMaterial.input'
+import { EnhancedAssetSearchResult } from './models/enhancedAssetSearchResult.model'
+import { ApiResponse } from '@elastic/elasticsearch'
+import { SearchResponse } from 'elastic'
+import { MappedData } from '@island.is/content-search-indexer/types'
 
 @Injectable()
 export class CmsElasticsearchService {
@@ -226,4 +231,142 @@ export class CmsElasticsearchService {
     const response = menuResponse.body?._source?.response
     return response ? JSON.parse(response) : null
   }
+
+  async getPublishedMaterial(
+    index: string,
+    {
+      organizationSlug,
+      searchString,
+      page = 1,
+      size = 10,
+      tags,
+      tagGroups,
+      sort,
+    }: GetPublishedMaterialInput,
+  ): Promise<EnhancedAssetSearchResult> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const must: Record<string, any>[] = [
+      {
+        term: {
+          type: {
+            value: 'webEnhancedAsset',
+          },
+        },
+      },
+    ]
+
+    if (organizationSlug)
+      must.push({
+        nested: {
+          path: 'tags',
+          query: {
+            bool: {
+              must: [
+                {
+                  term: {
+                    'tags.key': organizationSlug,
+                  },
+                },
+                {
+                  term: {
+                    'tags.type': 'organization',
+                  },
+                },
+              ],
+            },
+          },
+        },
+      })
+
+    const wildcardSearch = {
+      wildcard: {
+        title: '*',
+      },
+    }
+
+    const multimatchSearch = {
+      multi_match: {
+        query: searchString ? searchString.toLowerCase() : '',
+        fields: ['title'],
+        type: 'phrase_prefix',
+      },
+    }
+
+    must.push(!searchString ? wildcardSearch : multimatchSearch)
+
+    const enhancedAssetResponse: ApiResponse<
+      SearchResponse<MappedData>
+    > = await this.elasticService.findByQuery(index, {
+      sort: [
+        {
+          [sort.field]: {
+            order: sort.order,
+          },
+        },
+      ],
+      query: {
+        bool: {
+          must: must.concat(generateGenericTagGroupQueries(tags, tagGroups)),
+        },
+      },
+      size,
+      from: (page - 1) * size,
+    })
+
+    return {
+      total: enhancedAssetResponse.body.hits.total.value,
+      items: enhancedAssetResponse.body.hits.hits.map((item) =>
+        JSON.parse(item._source.response ?? '{}'),
+      ),
+    }
+  }
+}
+
+const generateGenericTagGroupQueries = (
+  tags: string[],
+  tagGroups: Record<string, string[]>,
+) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const queries: Record<string, any>[] = []
+
+  Object.keys(tagGroups).forEach((tagGroup) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const should: Record<string, any>[] = []
+
+    tags
+      .filter((tag) => tagGroups[tagGroup].includes(tag))
+      .forEach((tag) => {
+        should.push({
+          bool: {
+            must: [
+              {
+                term: {
+                  'tags.key': tag,
+                },
+              },
+              {
+                term: {
+                  'tags.type': 'genericTag',
+                },
+              },
+            ],
+          },
+        })
+      })
+
+    const query = {
+      nested: {
+        path: 'tags',
+        query: {
+          bool: {
+            should,
+          },
+        },
+      },
+    }
+
+    queries.push(query)
+  })
+
+  return queries
 }

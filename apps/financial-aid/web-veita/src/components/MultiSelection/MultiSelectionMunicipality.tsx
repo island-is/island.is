@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext, useEffect } from 'react'
 import { Box, Select, Text, Icon } from '@island.is/island-ui/core'
 import {
   ReactSelectOption,
@@ -6,7 +6,7 @@ import {
 } from '@island.is/financial-aid/shared/lib'
 import { isString } from 'lodash'
 import { ValueType } from 'react-select'
-import { mapMuniToOption } from '@island.is/financial-aid-web/veita/src/utils/formHelper'
+import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
 
 import * as styles from './MultiSelection.css'
 
@@ -23,11 +23,41 @@ type Props<T> = {
   state: CreateUpdateStaff<T>
 }
 
-const MultiSelection = <T extends unknown>({
+const MultiSelectionMunicipality = <T extends unknown>({
   selectionUpdate,
   state,
 }: Props<T>) => {
+  const { municipality } = useContext(AdminContext)
+
+  useEffect(() => {
+    if (municipality && municipality.length === 1) {
+      selectionUpdate(
+        municipality[0].municipalityId,
+        municipality[0].name,
+        'add',
+      )
+    }
+  }, [municipality])
+
+  if (municipality.length === 1) {
+    return <></>
+  }
+
   const { municipalityIds, hasError } = state
+
+  const mapMuniToOption = (filterArr: string[], active: boolean) => {
+    const { municipality } = useContext(AdminContext)
+
+    return municipality
+      .filter((el) =>
+        active
+          ? filterArr.includes(el.municipalityId)
+          : !filterArr.includes(el.municipalityId),
+      )
+      .map((el) => {
+        return { label: el.name, value: el.municipalityId }
+      })
+  }
 
   return (
     <Box display="block">
@@ -83,4 +113,4 @@ const MultiSelection = <T extends unknown>({
   )
 }
 
-export default MultiSelection
+export default MultiSelectionMunicipality

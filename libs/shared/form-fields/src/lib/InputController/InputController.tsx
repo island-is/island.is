@@ -28,6 +28,7 @@ interface Props {
   required?: boolean
   readOnly?: boolean
   maxLength?: number
+  loading?: boolean
   size?: 'xs' | 'sm' | 'md'
   autoComplete?: 'off' | 'on'
 }
@@ -62,6 +63,7 @@ export const InputController: FC<Props> = ({
   required,
   readOnly,
   maxLength,
+  loading,
   size = 'md',
   autoComplete,
 }) => {
@@ -86,6 +88,7 @@ export const InputController: FC<Props> = ({
           format={format}
           maxLength={maxLength}
           autoComplete={autoComplete}
+          loading={loading}
           onChange={(
             e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
           ) => {
@@ -119,6 +122,7 @@ export const InputController: FC<Props> = ({
           format={format}
           maxLength={maxLength}
           autoComplete={autoComplete}
+          loading={loading}
           onChange={(
             e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
           ) => {
@@ -152,6 +156,7 @@ export const InputController: FC<Props> = ({
           format={format}
           maxLength={maxLength}
           autoComplete={autoComplete}
+          loading={loading}
           onChange={(
             e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
           ) => {
@@ -187,6 +192,7 @@ export const InputController: FC<Props> = ({
           type={type}
           maxLength={maxLength}
           autoComplete={autoComplete}
+          loading={loading}
           onChange={(e) => {
             onChange(e.target.value)
             if (onInputChange) {
