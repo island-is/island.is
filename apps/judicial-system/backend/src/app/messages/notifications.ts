@@ -77,7 +77,7 @@ export const notifications = {
       id: 'judicial.system.backend:notifications.courtHeadsUp.arrest_date_text',
       defaultMessage: 'Viðkomandi handtekinn {date}, kl. {time}.',
       description:
-        'Notaður sem texti í sms-i til þess að tilgreina hvenær handtöku tími er',
+        'Notaður sem texti í sms-i til þess að tilgreina hvenær varnaraðili var handtekinn',
     },
     requestedCourtDateText: {
       id:
