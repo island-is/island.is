@@ -299,7 +299,7 @@ export class DrivingLicenseBookService {
     })
     if (!employee) {
       throw new NotFoundException(
-        `School found for user ${user.nationalId} not found`,
+        `School for user ${user.nationalId} not found`,
       )
     }
     const { data } = await api.apiSchoolGetSchoolTypesGet({
