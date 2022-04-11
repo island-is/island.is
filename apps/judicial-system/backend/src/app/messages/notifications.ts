@@ -69,7 +69,7 @@ export const notifications = {
         'judicial.system.backend:notifications.courtRevoked.requested_court_date',
       defaultMessage: 'ÓVE fyrirtöku {date}, eftir kl. {time}.',
       description:
-        'Notaður sem texti í sms-i til þess að tilgreina hvenær fyrirtöku tíma óskað  er',
+        'Notaður sem texti í afturköllunar sms-i til þess að tilgreina hvenær óskað var eftir fyrirtöku',
     },
   }),
   courtHeadsUp: defineMessages({
