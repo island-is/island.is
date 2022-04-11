@@ -38,6 +38,14 @@ export class StaffResolver {
   }
 
   @Query(() => [StaffModel])
+  admins(
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+  ): Promise<Staff[]> {
+    this.logger.debug(`Getting all admins`)
+    return backendApi.getAdmins()
+  }
+
+  @Query(() => [StaffModel])
   supervisors(
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<Staff[]> {

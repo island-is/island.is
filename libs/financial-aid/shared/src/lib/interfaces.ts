@@ -150,6 +150,12 @@ export interface ApplicationEvent {
   staffName?: string
 }
 
+export interface UpdateAdmin {
+  id: string
+  name: string
+  municipalityIds: string[]
+}
+
 export interface Municipality {
   id: string
   name: string
@@ -162,6 +168,7 @@ export interface Municipality {
   rulesHomepage?: string
   numberOfUsers?: number
   adminUsers?: Staff[]
+  allAdminUsers?: UpdateAdmin[]
 }
 
 export interface UpdateMunicipalityActivity {

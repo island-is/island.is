@@ -75,7 +75,7 @@ export class MunicipalityController {
     @Body()
     input: {
       municipalityInput: CreateMunicipalityDto
-      adminInput: CreateStaffDto
+      adminInput?: CreateStaffDto
     },
   ): Promise<MunicipalityModel> {
     return this.municipalityService.create(
