@@ -244,7 +244,7 @@ export const notifications = {
       id: 'judicial.system.backend:notifications.prison_court_date_email.body',
       defaultMessage:
         '{prosecutorOffice, select, NONE {Ótilgreindur sækjandi} other {{prosecutorOffice}}} hefur sent kröfu um {isExtension, select, yes {áframhaldandi } other {}}gæsluvarðhald til {courtText} og verður málið tekið fyrir {courtDateText}.<br /><br />{requestText}<br /><br />{isolationText}<br /><br />{defenderText}.',
-      description: 'Notaður sem beinagrind á í pósti til fangeslis',
+      description: 'Notaður sem beinagrind á í pósti til fangelsis',
     },
   }),
   prisonRulingEmail: {
