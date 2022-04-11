@@ -5,6 +5,7 @@ import { useQuery } from '@apollo/client'
 import {
   ApplicationOverviewSkeleton,
   ApplicationsTable,
+  FilterPopover,
   LoadingContainer,
 } from '@island.is/financial-aid-web/veita/src/components'
 
@@ -18,11 +19,20 @@ import { ApplicationsQuery } from '@island.is/financial-aid-web/veita/graphql/sh
 
 import { navigationItems } from '@island.is/financial-aid-web/veita/src/utils/navigation'
 
+interface Filters {
+  selectedStates: ApplicationState[]
+  selectedMonths: number[]
+}
+
 interface ApplicationsProvider {
   applications?: Application[]
 }
 
 export const ApplicationsOverview = () => {
+  const [filters, setFilters] = useState<Filters>({
+    selectedStates: [],
+    selectedMonths: [],
+  })
   const router = useRouter()
 
   const { data, error, loading } = useQuery<ApplicationsProvider>(
@@ -39,6 +49,8 @@ export const ApplicationsOverview = () => {
   const currentNavigationItem =
     navigationItems.find((i) => i.link === router.pathname) ||
     navigationItems[0]
+
+  const finishedApplicationsPage = currentNavigationItem.link === '/afgreidd'
 
   const [applications, setApplications] = useState<Application[]>()
 
@@ -62,7 +74,14 @@ export const ApplicationsOverview = () => {
           {currentNavigationItem.label}
         </Text>
       </Box>
-
+      {finishedApplicationsPage && (
+        <FilterPopover
+          selectedMonths={filters.selectedMonths}
+          selectedStates={filters.selectedStates}
+          onFilterClear={() => {}}
+          onFilterSave={() => {}}
+        />
+      )}
       {applications && (
         <ApplicationsTable
           headers={currentNavigationItem.headers}
