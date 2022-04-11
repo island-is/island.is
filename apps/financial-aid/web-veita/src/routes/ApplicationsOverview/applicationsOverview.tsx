@@ -78,6 +78,7 @@ export const ApplicationsOverview = () => {
         <FilterPopover
           selectedMonths={filters.selectedMonths}
           selectedStates={filters.selectedStates}
+          results={80}
           onFilterClear={() => {}}
           onFilterSave={() => {}}
         />
