@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useRef } from 'react'
 import {
   Box,
   Text,
@@ -37,11 +37,11 @@ export const DefaultProjectHeader = ({
 
   const { width } = useWindowSize()
 
-  const isBelowLarge = !(width < theme.breakpoints.lg)
+  const isBelowLarge = width < theme.breakpoints.lg
 
   console.log(textRef.current?.getBoundingClientRect())
 
-  const maxImageHeight = isBelowLarge
+  const maxImageHeight = !isBelowLarge
     ? textRef.current?.getBoundingClientRect()?.height ?? undefined
     : undefined
 
