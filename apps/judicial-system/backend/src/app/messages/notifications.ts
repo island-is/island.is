@@ -290,7 +290,7 @@ export const notifications = {
       defaultMessage:
         'Verjandi sakbornings{defenderName, select, NONE { hefur ekki verið skráður} other {: {defenderName}}}.',
       description:
-        'Texti í pósti til fangelis sem tilgreinir hver verjandi sakbornings er',
+        'Texti í pósti til fangelsis sem tilgreinir hver verjandi sakbornings er',
     },
   }),
   defenderCourtDateEmail: defineMessages({
