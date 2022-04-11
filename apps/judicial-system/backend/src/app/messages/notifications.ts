@@ -252,7 +252,7 @@ export const notifications = {
     defaultMessage:
       'Meðfylgjandi er vistunarseðill gæsluvarðhaldsfanga sem var úrskurðaður í gæsluvarðhald í héraðsdómi {courtEndTime, date, long}, auk þingbókar þar sem úrskurðarorðin koma fram.',
     description:
-      'Texti í pósti til fangelis þegar vistunarseðill og þingbók eru send',
+      'Texti í pósti til fangelsis þegar vistunarseðill og þingbók eru send',
   },
   prisonRevokedEmail: defineMessages({
     revokedCase: {
