@@ -84,7 +84,7 @@ export const notifications = {
         'judicial.system.backend:notifications.courtHeadsUp.requested_court_date_text',
       defaultMessage: 'ÓE fyrirtöku {date}, eftir kl. {time}.',
       description:
-        'Notaður sem texti í sms-i til þess að tilgreina hvenær fyrirtöku tíma óskað  er',
+        'Notaður sem texti í sms-i til þess að tilgreina hvenær óskað er eftir fyrirtöku',
     },
     newCaseText: {
       id: 'judicial.system.backend:notifications.courtHeadsUp.new_case_text',
