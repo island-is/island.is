@@ -4,6 +4,7 @@ import { Button, ButtonSizes, ButtonTypes } from '../Button/Button'
 import { Tag, TagVariant } from '../Tag/Tag'
 import { Text } from '../Text/Text'
 import { Tooltip } from '../Tooltip/Tooltip'
+import { Inline } from '../Inline/Inline'
 import {
   ProgressMeter,
   ProgressMeterVariant,
@@ -57,7 +58,11 @@ type ActionCardProps = {
     visible?: boolean
     onClick?: () => void
     disabled?: boolean
-    icon?: string
+    icon?: IconType
+    dialogTitle?: string
+    dialogDescription?: string
+    dialogConfirmLabel?: string
+    dialogCancelLabel?: string
   }
 }
 
@@ -88,7 +93,11 @@ const defaultDelete = {
   visible: false,
   onClick: () => null,
   disabled: true,
-  icon: 'delete',
+  icon: 'trash',
+  dialogTitle: '',
+  dialogDescription: '',
+  dialogConfirmLabel: '',
+  dialogCancelLabel: '',
 } as const
 
 export const ActionCard: React.FC<ActionCardProps> = ({
@@ -191,7 +200,10 @@ export const ActionCard: React.FC<ActionCardProps> = ({
           <Text variant="small">{date}</Text>
         </Box>
 
-        {!eyebrow && renderTag()}
+        <Inline alignY="center" space={1}>
+          {!eyebrow && renderTag()}
+          {!eyebrow && renderDelete()}
+        </Inline>
       </Box>
     )
   }
@@ -216,20 +228,19 @@ export const ActionCard: React.FC<ActionCardProps> = ({
     return (
       <DialogPrompt
         baseId="delete_dialog"
-        title="Eyða umsókn?"
-        description="Ertu viss um að þú viljir eyða þessari umsókn. Öll gögn tapast að eilífu!"
+        title={deleteButton.dialogTitle}
+        description={deleteButton.dialogDescription}
         ariaLabel="delete"
         disclosureElement={
           <Tag outlined={tag.outlined} variant={tag.variant}>
             <Box display="flex" flexDirection="row" alignItems="center">
-              <Icon icon="trash" size="small" type="outline" />
+              <Icon icon={deleteButton.icon} size="small" type="outline" />
             </Box>
           </Tag>
         }
         onConfirm={deleteButton.onClick}
-        onCancel={() => console.log('Cancelled')}
-        buttonTextConfirm="Já"
-        buttonTextCancel="Gaur nei"
+        buttonTextConfirm={deleteButton.dialogConfirmLabel}
+        buttonTextCancel={deleteButton.dialogCancelLabel}
       />
     )
   }

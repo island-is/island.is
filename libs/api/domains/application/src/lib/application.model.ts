@@ -22,13 +22,6 @@ class ActionCardTag {
   @Field(() => String, { nullable: true })
   variant?: string
 }
-
-@ObjectType()
-class ActionCardMetaDataCta {
-  @Field(() => Boolean, { nullable: true })
-  delete?: boolean
-}
-
 @ObjectType()
 class ActionCardMetaData {
   @Field(() => String, { nullable: true })
@@ -40,8 +33,8 @@ class ActionCardMetaData {
   @Field(() => ActionCardTag, { nullable: true })
   tag?: ActionCardTag
 
-  @Field(() => ActionCardMetaDataCta, { nullable: true })
-  cta?: ActionCardMetaDataCta
+  @Field(() => Boolean, { nullable: true })
+  delete?: boolean
 }
 
 @ObjectType()

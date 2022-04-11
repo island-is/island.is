@@ -48,9 +48,6 @@ export const LinkExistingApplication: FC<FieldBaseProps> = ({
             ),
           }))}
           onClick={(url) => history.push(`../../${url}`)}
-          onDeleteApplication={() => {
-            console.log('delete')
-          }}
         />
       </Box>
     </>

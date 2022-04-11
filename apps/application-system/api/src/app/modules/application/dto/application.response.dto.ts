@@ -44,9 +44,7 @@ class ActionCardMetaData {
   @ApiPropertyOptional()
   @Expose()
   @IsObject()
-  cta?: {
-    delete?: boolean
-  }
+  delete?: boolean
 }
 
 export class ApplicationResponseDto {

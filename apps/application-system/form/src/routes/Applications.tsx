@@ -16,6 +16,7 @@ import {
 import {
   Application,
   coreMessages,
+  FieldBaseProps,
   getTypeFromSlug,
 } from '@island.is/application/core'
 import { ApplicationList } from '@island.is/application/ui-components'
@@ -27,7 +28,6 @@ import {
 } from '@island.is/localization'
 
 import { ApplicationLoading } from '../components/ApplicationsLoading/ApplicationLoading'
-import { useDeleteApplication } from '../hooks/useDeleteApplication'
 
 export const Applications: FC = () => {
   const { slug } = useParams<{ slug: string }>()
@@ -35,25 +35,19 @@ export const Applications: FC = () => {
   const { formatMessage } = useLocale()
   const type = getTypeFromSlug(slug)
 
-  const { deleteApplication, loading: deleteLoading } = useDeleteApplication()
-
-  // click handler for each application
-  const handleDeleteApplication = (applicationId: string) => {
-    deleteApplication(applicationId)
-    //refetch()
-  }
-
   useApplicationNamespaces(type)
 
-  const { data, loading, error: applicationsError } = useLocalizedQuery(
-    APPLICATION_APPLICATIONS,
-    {
-      variables: {
-        input: { typeId: type },
-      },
-      skip: !type,
+  const {
+    data,
+    loading,
+    error: applicationsError,
+    refetch,
+  } = useLocalizedQuery(APPLICATION_APPLICATIONS, {
+    variables: {
+      input: { typeId: type },
     },
-  )
+    skip: !type,
+  })
 
   const [createApplicationMutation, { error: createError }] = useMutation(
     CREATE_APPLICATION,
@@ -123,7 +117,7 @@ export const Applications: FC = () => {
                 onClick={(applicationUrl) =>
                   history.push(`../${applicationUrl}`)
                 }
-                onDeleteApplication={handleDeleteApplication}
+                refetch={refetch}
               />
             )}
 

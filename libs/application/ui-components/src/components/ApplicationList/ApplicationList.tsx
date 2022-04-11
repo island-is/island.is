@@ -12,6 +12,7 @@ import {
 } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
 import { dateFormat } from '@island.is/shared/constants'
+import { useDeleteApplication } from './hooks/useDeleteApplication'
 
 interface DefaultStateData {
   tag: {
@@ -68,16 +69,18 @@ const DefaultData: Record<ApplicationStatus, DefaultStateData> = {
 interface Props {
   applications: Application[]
   onClick: (id: string) => void
-  onDeleteApplication: (id: string) => void
+  refetch?: (() => void) | undefined
 }
 
-const ApplicationList = ({
-  applications,
-  onClick,
-  onDeleteApplication,
-}: Props) => {
+const ApplicationList = ({ applications, onClick, refetch }: Props) => {
   const { lang: locale, formatMessage } = useLocale()
   const formattedDate = locale === 'is' ? dateFormat.is : dateFormat.en
+
+  const { deleteApplication } = useDeleteApplication(refetch)
+
+  const handleDeleteApplication = (applicationId: string) => {
+    deleteApplication(applicationId)
+  }
 
   return (
     <Stack space={2}>
@@ -96,7 +99,6 @@ const ApplicationList = ({
           <ActionCard
             key={`${application.id}-${index}`}
             date={format(new Date(application.modified), formattedDate)}
-            eyebrow="TOtot"
             tag={{
               label: actionCard?.tag?.label
                 ? formatMessage(actionCard.tag.label)
@@ -113,22 +115,24 @@ const ApplicationList = ({
               icon: undefined,
               onClick: () => onClick(`${slug}/${application.id}`),
             }}
-            secondaryCta={{
-              label: 'delete',
-              icon: undefined,
-              visible: actionCard?.cta?.delete,
-              onClick: onDeleteApplication.bind(null, application.id),
-            }}
             progressMeter={{
               active: false, // Boolean(application.progress), todo proper button
               progress: application.progress,
               variant: stateDefaultData.progress.variant,
             }}
             deleteButton={{
-              visible: actionCard?.cta?.delete,
-              onClick: onDeleteApplication.bind(null, application.id),
+              visible: actionCard?.delete,
+              onClick: handleDeleteApplication.bind(null, application.id),
               disabled: false,
-              icon: 'delete',
+              icon: 'trash',
+              dialogTitle:
+                coreMessages.deleteApplicationDialogTitle.defaultMessage,
+              dialogDescription:
+                coreMessages.deleteApplicationDialogDescription.defaultMessage,
+              dialogConfirmLabel:
+                coreMessages.deleteApplicationDialogConfirmLabel.defaultMessage,
+              dialogCancelLabel:
+                coreMessages.deleteApplicationDialogCancelLabel.defaultMessage,
             }}
           />
         )
