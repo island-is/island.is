@@ -3,7 +3,7 @@ import { style } from '@vanilla-extract/css'
 
 export const headerBg = style({
   height: 'fit-content',
-  minHeight: '300px',
+  minHeight: '200px',
   order: 1,
   ...themeUtils.responsiveStyle({
     md: {
@@ -15,12 +15,12 @@ export const headerBg = style({
 
 export const headerWrapper = style({
   display: 'grid',
-  minHeight: '500px',
+  minHeight: '300px',
   height: 'fit-content',
   ...themeUtils.responsiveStyle({
     md: {
       gridTemplateColumns: '1fr 1fr',
-      gridTemplateRows: '1fr',
+      gridTemplateRows: 'min-content',
     },
   }),
 })
@@ -34,7 +34,7 @@ export const headerImage = style({
   ...themeUtils.responsiveStyle({
     md: {
       order: 1,
-      maxHeight: '100%',
+      maxHeight: 'fit-content',
     },
   }),
 })
