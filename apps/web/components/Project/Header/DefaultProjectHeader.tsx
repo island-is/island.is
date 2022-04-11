@@ -39,8 +39,6 @@ export const DefaultProjectHeader = ({
 
   const isBelowLarge = width < theme.breakpoints.lg
 
-  console.log(textRef.current?.getBoundingClientRect())
-
   const maxImageHeight = !isBelowLarge
     ? textRef.current?.getBoundingClientRect()?.height ?? undefined
     : undefined
