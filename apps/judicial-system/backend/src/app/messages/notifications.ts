@@ -268,7 +268,7 @@ export const notifications = {
       defaultMessage:
         '{court, select, NONE {ótilgreinds dómstóls} other {{court}}}',
       description:
-        'Texti í pósti til fangelis sem tilgreinir hvaða dómstóll dæmir í máli sem hefur verið afturkallað',
+        'Texti í pósti til fangelsis sem tilgreinir hvaða dómstóll átti að dæma í máli sem hefur verið afturkallað',
     },
     courtDate: {
       id:
