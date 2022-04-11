@@ -9,7 +9,7 @@ interface PropTypes {
   data: any
 }
 
-function OwnerInfoItem({ data }: PropTypes) {
+const OwnerInfoItem = ({ data }: PropTypes) => {
   useNamespaces('sp.vehicles')
   const { formatMessage } = useLocale()
   return (

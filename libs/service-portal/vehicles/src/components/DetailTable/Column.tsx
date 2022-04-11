@@ -7,7 +7,7 @@ interface PropTypes {
   value: string | null
 }
 
-function Column({ label, value }: PropTypes) {
+const Column = ({ label, value }: PropTypes) => {
   return (
     <>
       <GridColumn

@@ -12,7 +12,7 @@ interface PropTypes {
   children: string
 }
 
-function HeaderRow({ children }: PropTypes) {
+const HeaderRow = ({ children }: PropTypes) => {
   return (
     <GridRow className={styles.row}>
       <GridColumn

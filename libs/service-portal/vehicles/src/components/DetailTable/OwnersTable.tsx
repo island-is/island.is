@@ -6,7 +6,7 @@ interface PropTypes {
   data: any
 }
 
-function OwnersTable({ data }: PropTypes) {
+const OwnersTable = ({ data }: PropTypes) => {
   useNamespaces('sp.vehicles')
   const { formatMessage } = useLocale()
   return (

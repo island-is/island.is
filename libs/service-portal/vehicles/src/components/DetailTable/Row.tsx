@@ -5,7 +5,7 @@ interface PropTypes {
   children: React.ReactNode
 }
 
-function Row({ children }: PropTypes) {
+const Row = ({ children }: PropTypes) => {
   return (
     <>
       <GridRow>{children}</GridRow>
