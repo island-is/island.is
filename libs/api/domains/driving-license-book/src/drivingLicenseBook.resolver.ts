@@ -19,7 +19,7 @@ import { UpdatePracticalDrivingLessonInput } from './dto/updatePracticalDrivingL
 import { DeletePracticalDrivingLessonInput } from './dto/deletePracticalDrivingLesson.input'
 import { DrivingLicenseBookStudentForTeacher } from './models/studentsTeacherNationalId.response'
 import { DrivingInstructorGuard } from './guards/drivingInstructor.guard'
-import { DrivingSchool } from './models/drivingSchool.response'
+import { DrivingLicenseBookSchool } from './models/drivingSchool.response'
 import { CreateDrivingSchoolTestResultInput } from './dto/createDrivingSchoolTestResult.input'
 import { DrivingLicenceTestResultId } from './models/drivingLicenseTestResult.response'
 import { DrivingSchoolType } from './models/drivingLicenseBookSchoolType.response'
@@ -98,7 +98,7 @@ export class DrivingLicenseBookResolver {
     )
   }
   @UseGuards(DrivingSchoolEmployeeGuard)
-  @Query(() => DrivingSchool)
+  @Query(() => DrivingLicenseBookSchool)
   drivingLicenseBookSchoolForEmployee(@CurrentUser() user: User) {
     return this.drivingLicenseBookService.getSchoolForSchoolStaff(user)
   }

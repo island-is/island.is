@@ -4,12 +4,12 @@ import {
   FailedDataProviderResult,
   coreErrorMessages,
 } from '@island.is/application/core'
-import { DrivingSchool } from '@island.is/api/schema'
+import { DrivingLicenseBookSchool } from '@island.is/api/schema'
 
 export class EmployeeProvider extends BasicDataProvider {
   type = 'EmployeeProvider'
 
-  async provide(): Promise<DrivingSchool> {
+  async provide(): Promise<DrivingLicenseBookSchool> {
     const query = `
     query drivingLicenseBookSchoolForEmployee {
       drivingLicenseBookSchoolForEmployee {

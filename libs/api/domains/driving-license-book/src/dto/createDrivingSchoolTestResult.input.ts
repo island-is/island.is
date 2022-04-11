@@ -9,7 +9,7 @@ export class CreateDrivingSchoolTestResultInput {
   schoolTypeId!: number
 
   @Field()
-  schoolNationlId!: string
+  schoolNationalId!: string
 
   @Field()
   schoolEmployeeNationalId!: string

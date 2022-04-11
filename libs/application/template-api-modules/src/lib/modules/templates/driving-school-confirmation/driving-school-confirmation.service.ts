@@ -26,7 +26,7 @@ export class DrivingSchoolConfirmationService {
     if (!confirmation || !studentBookId) {
       throw new Error(`Missing date and school`)
     }
-    const schoolNationlId = (externalData.employee.data as DrivingSchool)
+    const schoolNationalId = (externalData.employee.data as DrivingSchool)
       .nationalId
 
     try {
@@ -34,7 +34,7 @@ export class DrivingSchoolConfirmationService {
         {
           bookId: studentBookId,
           schoolTypeId: parseInt(confirmation?.school),
-          schoolNationlId: schoolNationlId,
+          schoolNationalId: schoolNationalId,
           schoolEmployeeNationalId: auth.nationalId,
           createdOn: confirmation?.date,
           comments: '',

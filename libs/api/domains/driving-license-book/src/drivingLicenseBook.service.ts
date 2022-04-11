@@ -353,7 +353,7 @@ export class DrivingLicenseBookService {
       schoolTestResultCreateRequestBody: {
         bookId: input.bookId,
         schoolTypeId: input.schoolTypeId,
-        schoolSsn: input.schoolNationlId,
+        schoolSsn: input.schoolNationalId,
         schoolEmployeeSsn: input.schoolEmployeeNationalId,
         createdOn: input.createdOn,
         comments: input.comments,
