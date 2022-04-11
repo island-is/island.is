@@ -1,4 +1,5 @@
-import { createTestIntl, FormatMessage } from '@island.is/cms-translations'
+import { FormatMessage } from '@island.is/cms-translations'
+import { createTestIntl } from '@island.is/cms-translations/test'
 import { makeProsecutor } from '@island.is/judicial-system/formatters'
 import {
   CaseLegalProvisions,
