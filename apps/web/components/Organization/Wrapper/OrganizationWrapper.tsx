@@ -26,11 +26,7 @@ import {
   Button,
   Inline,
 } from '@island.is/island-ui/core'
-import {
-  ChatPanel,
-  HeadWithSocialSharing,
-  Sticky,
-} from '@island.is/web/components'
+import { HeadWithSocialSharing, Sticky } from '@island.is/web/components'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { SyslumennHeader, SyslumennFooter } from './Themes/SyslumennTheme'
 import {
@@ -43,10 +39,11 @@ import {
   UtlendingastofnunFooter,
   UtlendingastofnunHeader,
 } from './Themes/UtlendingastofnunTheme'
-import { endpoints as chatPanelEndpoints } from '../../ChatPanel/config'
+import { endpoints as chatPanelEndpoints } from '../../ChatPanel/BoostChatPanel/config'
 
 import * as styles from './OrganizationWrapper.css'
 import MannaudstorgFooter from './Themes/MannaudstorgTheme/MannaudstorgFooter'
+import BoostChatPanel from '../../ChatPanel/BoostChatPanel/BoostChatPanel'
 
 interface NavigationData {
   title: string
@@ -219,7 +216,7 @@ export const OrganizationChatPanel = ({
   const slug = slugs.find((x) => chatEnabled.includes(x))
 
   return slug ? (
-    <ChatPanel
+    <BoostChatPanel
       endpoint={slug as keyof typeof chatPanelEndpoints}
       pushUp={pushUp}
     />
