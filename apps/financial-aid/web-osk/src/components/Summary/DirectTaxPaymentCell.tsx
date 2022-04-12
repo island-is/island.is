@@ -4,17 +4,16 @@ import { DirectTaxPayment } from '@island.is/financial-aid/shared/lib'
 
 interface Props {
   directTaxPayments: DirectTaxPayment[]
-  hasDirectTaxPaymentsSuccess: boolean
+  hasFetchedPayments: boolean
   setIsModalOpen: (open: boolean) => void
 }
 
 const DirectTaxPaymentCell = ({
   directTaxPayments,
-  hasDirectTaxPaymentsSuccess,
+  hasFetchedPayments,
   setIsModalOpen,
 }: Props) => {
-  const fetchFailed =
-    directTaxPayments.length === 0 && !hasDirectTaxPaymentsSuccess
+  const fetchFailed = directTaxPayments.length === 0 && !hasFetchedPayments
 
   if (fetchFailed) {
     return null

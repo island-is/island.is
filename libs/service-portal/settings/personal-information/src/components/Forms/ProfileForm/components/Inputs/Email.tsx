@@ -285,12 +285,13 @@ export const InputEmail: FC<Props> = ({
                   name="code"
                   format="######"
                   label={formatMessage(m.verificationCode)}
-                  placeholder="123456"
+                  placeholder="000000"
                   defaultValue=""
                   error={errors.code?.message || formErrors.code}
                   disabled={verificationValid || disabled}
                   icon={verificationValid ? 'checkmark' : undefined}
                   size="xs"
+                  autoComplete="off"
                   onChange={(inp) => {
                     setCodeInternal(inp.target.value)
                     setErrors({ ...formErrors, code: undefined })

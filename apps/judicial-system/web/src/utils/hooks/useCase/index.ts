@@ -2,10 +2,6 @@ import { useMemo, useState } from 'react'
 import { useMutation } from '@apollo/client'
 import { useIntl } from 'react-intl'
 
-import {
-  parseString,
-  parseTransition,
-} from '@island.is/judicial-system-web/src/utils/formatters'
 import type {
   NotificationType,
   SendNotificationResponse,
@@ -224,13 +220,14 @@ const useCase = () => {
       setWorkingCase?: React.Dispatch<React.SetStateAction<Case>>,
     ): Promise<boolean> => {
       try {
-        const transitionRequest = parseTransition(
-          workingCase.modified,
-          transition,
-        )
-
         const { data } = await transitionCaseMutation({
-          variables: { input: { id: workingCase.id, ...transitionRequest } },
+          variables: {
+            input: {
+              id: workingCase.id,
+              modified: workingCase.modified,
+              transition,
+            },
+          },
         })
 
         if (!data?.transitionCase?.state) {
@@ -335,7 +332,7 @@ const useCase = () => {
         workingCase[key] = value
 
         if (workingCase[key]) {
-          updateCase(workingCase.id, parseString(key, value))
+          updateCase(workingCase.id, { [key]: value })
         }
       }
     },
@@ -352,7 +349,7 @@ const useCase = () => {
         workingCase[key] = value
 
         if (workingCase[key]) {
-          updateCase(workingCase.id, parseString(key, value))
+          updateCase(workingCase.id, { [key]: value })
         }
       }
     },
@@ -368,7 +365,7 @@ const useCase = () => {
       if (workingCase[key] === undefined || workingCase[key] === null) {
         workingCase[key] = value
 
-        updateCase(workingCase.id, parseString(key, value))
+        updateCase(workingCase.id, { [key]: value })
       }
     },
     [updateCase],
