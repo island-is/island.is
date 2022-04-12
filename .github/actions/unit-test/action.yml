@@ -23,6 +23,10 @@ runs:
       run: |
         echo "CODECOV_REV=v0.1.18" >> $GITHUB_ENV
       shell: bash
+    
+    - name: Setup yarn
+      run: npm install -g yarn
+      shell: bash
 
     - uses: actions/setup-node@v2
       with:
