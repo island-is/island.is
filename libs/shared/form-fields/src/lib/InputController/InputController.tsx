@@ -30,6 +30,7 @@ interface Props {
   maxLength?: number
   loading?: boolean
   size?: 'xs' | 'sm' | 'md'
+  autoComplete?: 'off' | 'on'
 }
 
 interface ChildParams {
@@ -64,6 +65,7 @@ export const InputController: FC<Props> = ({
   maxLength,
   loading,
   size = 'md',
+  autoComplete,
 }) => {
   function renderChildInput(c: ChildParams) {
     const { value, onChange, ...props } = c
@@ -85,6 +87,7 @@ export const InputController: FC<Props> = ({
           value={value}
           format={format}
           maxLength={maxLength}
+          autoComplete={autoComplete}
           loading={loading}
           onChange={(
             e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -118,6 +121,7 @@ export const InputController: FC<Props> = ({
           value={value}
           format={format}
           maxLength={maxLength}
+          autoComplete={autoComplete}
           loading={loading}
           onChange={(
             e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -151,6 +155,7 @@ export const InputController: FC<Props> = ({
           value={value}
           format={format}
           maxLength={maxLength}
+          autoComplete={autoComplete}
           loading={loading}
           onChange={(
             e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -186,6 +191,7 @@ export const InputController: FC<Props> = ({
           textarea={textarea}
           type={type}
           maxLength={maxLength}
+          autoComplete={autoComplete}
           loading={loading}
           onChange={(e) => {
             onChange(e.target.value)

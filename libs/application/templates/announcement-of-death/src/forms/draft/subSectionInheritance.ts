@@ -6,7 +6,6 @@ import {
   buildSubSection,
   buildCustomField,
 } from '@island.is/application/core'
-import { markdownOverrides } from '../../lib/markdownOverrides'
 import { m } from '../../lib/messages'
 
 export const subSectionInheritance = buildSubSection({
@@ -17,7 +16,6 @@ export const subSectionInheritance = buildSubSection({
       id: 'inheritanceTitle',
       title: 'Erfingjar',
       description: '',
-      descriptionMarkdownOverrides: markdownOverrides,
       space: 1,
       children: [
         buildDescriptionField({
