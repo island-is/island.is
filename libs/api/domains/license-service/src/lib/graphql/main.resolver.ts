@@ -154,6 +154,7 @@ export class MainResolver {
     return { pkpassQRCode }
   }
 
+  @Scopes(ApiScope.internal, ApiScope.licensesVerify)
   @Mutation(() => GenericPkPassVerification)
   @Audit()
   async verifyPkPass(

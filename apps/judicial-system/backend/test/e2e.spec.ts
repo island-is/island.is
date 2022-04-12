@@ -144,6 +144,7 @@ function remainingCreateCaseData() {
   return {
     description: 'Description',
     defenderName: 'Defender Name',
+    defenderNationalId: '0000000009',
     defenderEmail: 'Defender Email',
     defenderPhoneNumber: '555-5555',
     sendRequestToDefender: true,
@@ -332,6 +333,9 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.state).toBe(caseTwo.state)
   expect(caseOne.policeCaseNumber).toBe(caseTwo.policeCaseNumber)
   expect(caseOne.defenderName ?? null).toBe(caseTwo.defenderName ?? null)
+  expect(caseOne.defenderNationalId ?? null).toBe(
+    caseTwo.defenderNationalId ?? null,
+  )
   expect(caseOne.defenderEmail ?? null).toBe(caseTwo.defenderEmail ?? null)
   expect(caseOne.defenderPhoneNumber ?? null).toBe(
     caseTwo.defenderPhoneNumber ?? null,

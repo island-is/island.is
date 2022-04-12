@@ -30,6 +30,7 @@ import {
   Sticky,
   Webreader,
   AppendedArticleComponents,
+  UkraineChatPanel,
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from '../queries'
@@ -603,10 +604,14 @@ const ArticleScreen: Screen<ArticleProps> = ({
             portalRef.current,
           )}
       </SidebarLayout>
-      <OrganizationChatPanel
-        slugs={article.organization.map((x) => x.slug)}
-        pushUp={isVisible}
-      />
+      {article.id === '7i92Z9s9HQeYlpGReYQVX' ? (
+        <UkraineChatPanel />
+      ) : (
+        <OrganizationChatPanel
+          slugs={article.organization.map((x) => x.slug)}
+          pushUp={isVisible}
+        />
+      )}
       <OrganizationFooter
         organizations={article.organization as Organization[]}
       />
