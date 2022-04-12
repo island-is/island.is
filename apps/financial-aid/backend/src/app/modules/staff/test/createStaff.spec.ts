@@ -31,7 +31,7 @@ describe('StaffController - createStaff', () => {
       const then = {} as Then
 
       await staffController
-        .createStaff(staff, createStaffInput)
+        .createStaff(createStaffInput)
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 
@@ -40,18 +40,16 @@ describe('StaffController - createStaff', () => {
   })
 
   describe('database query', () => {
-    const id = uuid()
     const input: CreateStaffDto = {
       name: 'Im a test',
       nationalId: '0000000000',
       email: 'test@test.test',
       roles: [StaffRole.EMPLOYEE],
-      municipalityId: '10',
-      municipalityName: 'Island',
+      municipalityIds: ['10'],
+      municipalityNames: ['Island'],
     }
     const staff: Staff = {
       municipalityIds: ['0'],
-      municipalityName: 'Saturn',
       id: '',
       nationalId: '',
       name: '',
@@ -71,11 +69,10 @@ describe('StaffController - createStaff', () => {
         {
           nationalId: input.nationalId,
           name: input.name,
-          municipalityIds: [input.municipalityId],
+          municipalityIds: input.municipalityIds,
           email: input.email,
           roles: input.roles,
           active: true,
-          municipalityName: input.municipalityName,
         },
         { transaction: undefined },
       )
@@ -89,12 +86,11 @@ describe('StaffController - createStaff', () => {
       nationalId: '0000000000',
       email: 'test@test.test',
       roles: [StaffRole.EMPLOYEE],
-      municipalityId: undefined,
-      municipalityName: undefined,
+      municipalityIds: ['10'],
+      municipalityNames: ['name'],
     }
     const staff: Staff = {
       municipalityIds: ['10'],
-      municipalityName: 'Here',
       id: '',
       nationalId: '',
       name: '',
@@ -118,7 +114,6 @@ describe('StaffController - createStaff', () => {
           email: input.email,
           roles: input.roles,
           active: true,
-          municipalityName: staff.municipalityName,
         },
         { transaction: undefined },
       )
@@ -132,12 +127,11 @@ describe('StaffController - createStaff', () => {
       nationalId: '0000000000',
       email: 'test@test.test',
       roles: [StaffRole.EMPLOYEE],
-      municipalityId: '10',
-      municipalityName: 'A place',
+      municipalityIds: ['10'],
+      municipalityNames: ['A place'],
     }
     const staff: Staff = {
       municipalityIds: ['0'],
-      municipalityName: 'Saturn',
       id: '',
       nationalId: '',
       name: '',
@@ -164,12 +158,11 @@ describe('StaffController - createStaff', () => {
       nationalId: '0000000000',
       email: 'test@test.test',
       roles: [StaffRole.EMPLOYEE],
-      municipalityId: '',
-      municipalityName: '',
+      municipalityIds: [],
+      municipalityNames: [''],
     }
     const staff: Staff = {
       municipalityIds: ['0'],
-      municipalityName: 'Saturn',
       id: '',
       nationalId: '',
       name: '',

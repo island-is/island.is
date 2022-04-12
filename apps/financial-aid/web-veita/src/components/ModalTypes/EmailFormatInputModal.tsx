@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useRef, useContext } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 
 import { InputModal } from '@island.is/financial-aid-web/veita/src/components'
 import { Text, Box } from '@island.is/island-ui/core'
-import * as styles from './ModalTypes.css'
-import { AdminContext } from '../AdminProvider/AdminProvider'
 import { ApplicationState } from '@island.is/financial-aid/shared/lib'
+
+import * as styles from './ModalTypes.css'
 
 interface Props {
   onCancel: (event: React.MouseEvent<HTMLButtonElement>) => void
@@ -16,6 +16,7 @@ interface Props {
   prefixText: string
   postfixText: string
   state: ApplicationState
+  municipalityEmail?: string
 }
 
 const EmailFormatInputModal = ({
@@ -28,11 +29,10 @@ const EmailFormatInputModal = ({
   prefixText,
   postfixText,
   state,
+  municipalityEmail,
 }: Props) => {
   const ref = useRef<HTMLSpanElement>(null)
   const [hasError, setHasError] = useState(false)
-
-  const { municipality } = useContext(AdminContext)
 
   useEffect(() => {
     if (hasError) {
@@ -106,11 +106,8 @@ const EmailFormatInputModal = ({
               áfrýjunarnefndar þíns sveitarfélags. Skal það gert skriflega og
               innan fjögurra vikna. Fyrir frekari upplýsingar um málskot hafðu
               samband með tölvupósti á netfangið{' '}
-              <a
-                href={`mailto:${municipality?.email}`}
-                rel="noreferrer noopener"
-              >
-                <span className="linkInText">{municipality?.email}</span>
+              <a href={`mailto:${municipalityEmail}`} rel="noreferrer noopener">
+                <span className="linkInText">{municipalityEmail}</span>
               </a>
               . 
               <br />
