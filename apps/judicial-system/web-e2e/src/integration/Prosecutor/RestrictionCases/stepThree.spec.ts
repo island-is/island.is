@@ -35,7 +35,7 @@ describe(`${STEP_THREE_ROUTE}/:id`, () => {
     cy.getByTestid('inputErrorMessage').should('not.exist')
   })
 
-  it('should require at lease one custody provision to be selected', () => {
+  it('should require at lease one custody provision to be selected or a valid legal basis value', () => {
     cy.getByTestid('datepicker').click()
     cy.getByTestid('datepickerIncreaseMonth').click()
     cy.contains('15').click()
@@ -43,6 +43,10 @@ describe(`${STEP_THREE_ROUTE}/:id`, () => {
     cy.getByTestid('lawsBroken').type('Lorem ipsum')
     cy.getByTestid('continueButton').should('be.disabled')
     cy.getByTestid('checkbox').first().click()
+    cy.getByTestid('continueButton').should('not.be.disabled')
+    cy.getByTestid('checkbox').first().click()
+    cy.getByTestid('continueButton').should('be.disabled')
+    cy.getByTestid('legalBasis').type('Lorem ipsum')
     cy.getByTestid('continueButton').should('not.be.disabled')
   })
 
