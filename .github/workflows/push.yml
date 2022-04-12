@@ -457,6 +457,11 @@ jobs:
         with:
           node-version: '14'
         if: steps.gather.outcome == 'success'
+
+      - name: Setup yarn
+        run: npm install -g yarn
+        if: steps.gather.outcome == 'success'
+      
       - uses: actions/checkout@v2
         if: steps.gather.outcome == 'success'
       - name: Cache for generated files
