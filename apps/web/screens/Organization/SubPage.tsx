@@ -191,7 +191,7 @@ const renderSlices = (
 }
 
 SubPage.getInitialProps = async ({ apolloClient, locale, query, pathname }) => {
-  if (!query.slug && !query.subSlug) populateQueryFromPathname(query, pathname)
+  const { slug, subSlug } = getSlugAndSubSlug(query, pathname)
   const [
     {
       data: { getOrganizationPage },
@@ -205,7 +205,7 @@ SubPage.getInitialProps = async ({ apolloClient, locale, query, pathname }) => {
       query: GET_ORGANIZATION_PAGE_QUERY,
       variables: {
         input: {
-          slug: query.slug as string,
+          slug: slug as string,
           lang: locale as ContentLanguage,
         },
       },
@@ -214,8 +214,8 @@ SubPage.getInitialProps = async ({ apolloClient, locale, query, pathname }) => {
       query: GET_ORGANIZATION_SUBPAGE_QUERY,
       variables: {
         input: {
-          organizationSlug: query.slug as string,
-          slug: query.subSlug as string,
+          organizationSlug: slug as string,
+          slug: subSlug as string,
           lang: locale as ContentLanguage,
         },
       },
@@ -250,12 +250,20 @@ SubPage.getInitialProps = async ({ apolloClient, locale, query, pathname }) => {
   }
 }
 
-const populateQueryFromPathname = (query: ParsedUrlQuery, pathname: string) => {
+const getSlugAndSubSlug = (query: ParsedUrlQuery, pathname: string) => {
   const path = pathname?.split('/') ?? []
-  const slug = path?.[path.length - 2]
-  const subSlug = path.pop()
-  query.slug = slug
-  query.subSlug = subSlug
+  let { slug, subSlug } = query
+
+  if (!slug && path.length >= 2) {
+    // The slug is the next-last index in the path, i.e. "syslumenn" in the case of "/s/syslumenn/utgefid-efni"
+    slug = path[path.length - 2]
+  }
+  if (!subSlug && path.length > 0) {
+    // The subslug is the last index in the path, i.e. "utgefid-efn" in the case of "/s/syslumenn/utgefid-efni"
+    subSlug = path.pop()
+  }
+
+  return { slug, subSlug }
 }
 
 export default withMainLayout(SubPage)
