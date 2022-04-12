@@ -98,7 +98,7 @@ const MultiSelectionMunicipality = <T extends unknown>({
         name="selectMunicipality"
         noOptionsMessage="Enginn valmöguleiki"
         options={mapMuniToOption(municipalityIds, false)}
-        placeholder="Veldu tegund"
+        placeholder="Veldu sveitafélag"
         onChange={(option: ValueType<ReactSelectOption>) => {
           const { value, label } = option as ReactSelectOption
           if (value && isString(value) && label) {
