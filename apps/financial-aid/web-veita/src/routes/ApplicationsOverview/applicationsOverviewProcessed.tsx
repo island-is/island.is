@@ -53,6 +53,11 @@ export const ApplicationsOverviewProcessed = () => {
 
   const onFilterSave = () => {
     filter()
+    router.push({
+      search: `?timabil=${filters.selectedMonths.join(
+        ',',
+      )}&stada=${filters.selectedStates.join(',')}`,
+    })
   }
 
   const filter = () => {
@@ -70,7 +75,7 @@ export const ApplicationsOverviewProcessed = () => {
   }
 
   const [getApplications, { data, error, loading }] = useLazyQuery<{
-    applicationFilter: Application[]
+    filterApplications: Application[]
   }>(ApplicationFilterQuery, {
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
@@ -94,15 +99,15 @@ export const ApplicationsOverviewProcessed = () => {
       <FilterPopover
         selectedMonths={filters.selectedMonths}
         selectedStates={filters.selectedStates}
-        results={data?.applicationFilter?.length}
+        results={data?.filterApplications?.length}
         onChecked={onChecked}
         onFilterClear={onFilterClear}
         onFilterSave={onFilterSave}
       />
-      {data?.applicationFilter && (
+      {data?.filterApplications && (
         <ApplicationsTable
           headers={currentNavigationItem.headers}
-          applications={data?.applicationFilter}
+          applications={data?.filterApplications}
           setApplications={() => {}}
         />
       )}
