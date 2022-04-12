@@ -209,6 +209,9 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Setup yarn
+        run: npm install -g yarn
+
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
         continue-on-error: true
@@ -260,6 +263,9 @@ jobs:
       matrix: ${{ fromJson(needs.prepare.outputs.E2E_CHUNKS) }}
     steps:
       - uses: actions/checkout@v2
+
+      - name: Setup yarn
+        run: npm install -g yarn
 
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
@@ -317,6 +323,8 @@ jobs:
         with:
           path: node_modules
           key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
+      - name: Setup yarn
+        run: npm install -g yarn
       - name: Check cache success
         run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
       - name: Linting workspace
@@ -334,6 +342,8 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v2
+      - name: Setup yarn
+        run: npm install -g yarn
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
         continue-on-error: true
@@ -361,7 +371,8 @@ jobs:
       matrix: ${{ fromJson(needs.prepare.outputs.LINT_CHUNKS) }}
     steps:
       - uses: actions/checkout@v2
-
+      - name: Setup yarn
+        run: npm install -g yarn
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
         continue-on-error: true
@@ -404,7 +415,8 @@ jobs:
     if: needs.prepare.outputs.BUILD_CHUNKS
     steps:
       - uses: actions/checkout@v2
-
+      - name: Setup yarn
+        run: npm install -g yarn
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
         continue-on-error: true
