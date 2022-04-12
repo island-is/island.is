@@ -24,6 +24,14 @@ runs:
         echo "CODECOV_REV=v0.1.18" >> $GITHUB_ENV
       shell: bash
 
+    - uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+    
+    - name: Setup yarn
+      run: npm install -g yarn
+      shell: bash
+
     - name: Running tests
       run: ./scripts/ci/run-in-parallel.sh 30_test
       shell: bash
