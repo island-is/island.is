@@ -99,11 +99,9 @@ const OverviewForm: React.FC<Props> = (props) => {
             },
             {
               title: workingCase.parentCase
-                ? `${
-                    workingCase.type === CaseType.CUSTODY
-                      ? formatMessage(core.pastCustody)
-                      : formatMessage(core.pastTravelBan)
-                  }`
+                ? formatMessage(core.pastRestrictionCase, {
+                    caseType: workingCase.type,
+                  })
                 : formatMessage(core.arrestDate),
               value: workingCase.parentCase
                 ? `${capitalize(

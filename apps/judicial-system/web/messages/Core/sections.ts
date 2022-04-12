@@ -1,3 +1,4 @@
+import { CaseType } from '@island.is/judicial-system/types'
 import { defineMessages } from 'react-intl'
 
 export const sections = {
@@ -266,6 +267,44 @@ export const sections = {
       defaultMessage: 'Yfirlit kröfu',
       description:
         'Notaður sem texti fyrir Yfirlit kröfu skref í hliðarstiku í framlengdum rannsóknarheimildum hjá sækjendum',
+    },
+  }),
+  caseResults: defineMessages({
+    dissmissed: {
+      id: 'judicial.system.core:sections.case_results.dissmissed',
+      defaultMessage: 'Kröfu vísað frá',
+      description:
+        'Notaður sem texti í skrefum á hliðarstiku þegar kröfu er vísað frá',
+    },
+    restrictionActive: {
+      id: 'judicial.system.core:sections.case_results.restriction_active',
+      defaultMessage: `{caseType, select, ${CaseType.ADMISSION_TO_FACILITY} {Vistun á stofnun virk} ${CaseType.TRAVEL_BAN} {Farbann virkt} other {Gæsluvarðhald virkt}}`,
+      description:
+        'Notaður sem texti í skrefum á hliðarstiku þegar gæslu/farbann/vistun er virk',
+    },
+    restrictionOver: {
+      id: 'judicial.system.core:sections.case_results.restriction_active',
+      defaultMessage: `{caseType, select, ${CaseType.ADMISSION_TO_FACILITY} {Vistun á stofnun} ${CaseType.TRAVEL_BAN} {Farbanni} other {Gæsluvarðhaldi}} lokið`,
+      description:
+        'Notaður sem texti í skrefum á hliðarstiku þegar gæslu/farbann/vistun er lokið',
+    },
+    result: {
+      id: 'judicial.system.core:sections.case_results.result',
+      defaultMessage: 'Niðurstaða',
+      description: 'Notaður sem titill í hliðarstiku í niðurstöðum',
+    },
+    rejected: {
+      id: 'judicial.system.core:sections.case_results.rejected',
+      defaultMessage:
+        'Kröfu {isInvestigationCase, select, yes {um rannsóknarheimild } other {}}hafnað',
+      description:
+        'Notaður sem texti í skrefum á hliðarstiku þegar kröfu er hafnað',
+    },
+    investigationAccepted: {
+      id: 'judicial.system.core:sections.case_results.investigation_accepted',
+      defaultMessage: 'Krafa um rannsóknarheimild samþykkt',
+      description:
+        'Notaður sem texti í skrefum á hliðarstiku þegar kröfu er samþykkt',
     },
   }),
 }

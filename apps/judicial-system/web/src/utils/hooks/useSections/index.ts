@@ -9,7 +9,6 @@ import {
 import { core } from '@island.is/judicial-system-web/messages'
 import { caseResult } from '@island.is/judicial-system-web/src/components/PageLayout/utils'
 import { sections } from '@island.is/judicial-system-web/messages/Core/sections'
-import { signedVerdictOverview } from '@island.is/judicial-system-web/messages/Core/signedVerdictOverview'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import * as Constants from '@island.is/judicial-system/consts'
 import {
@@ -531,12 +530,7 @@ const useSections = () => {
             activeSubSection,
           ),
       {
-        name: caseResult(
-          {
-            dismissedTitle: formatMessage(signedVerdictOverview.dismissedTitle),
-          },
-          workingCase,
-        ),
+        name: caseResult(formatMessage, workingCase),
       },
       isRestrictionCase(workingCase?.type)
         ? getExtenstionSections(workingCase || ({} as Case), activeSubSection)
