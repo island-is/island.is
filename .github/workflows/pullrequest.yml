@@ -35,6 +35,9 @@ jobs:
         with:
           node-version: '14'
 
+      - name: Setup yarn
+        run: npm install -g yarn
+
       - name: Check node version
         run: |
           node -v
