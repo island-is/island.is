@@ -37,12 +37,6 @@ export const formContainer = style({
 
 export const codeInput = style({
   maxWidth: 210,
-  '@media': {
-    [`screen and (max-width: ${theme.breakpoints.sm}px)`]: {
-      // marginRight: 0,
-      // maxWidth: '100%',
-    },
-  },
 })
 
 export const codeButton = style({
