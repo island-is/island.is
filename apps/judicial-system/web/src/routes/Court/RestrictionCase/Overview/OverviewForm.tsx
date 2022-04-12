@@ -17,11 +17,7 @@ import {
   Button,
   Text,
 } from '@island.is/island-ui/core'
-import {
-  capitalize,
-  formatDate,
-  formatRequestedCustodyRestrictions,
-} from '@island.is/judicial-system/formatters'
+import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import CaseFilesAccordionItem from '@island.is/judicial-system-web/src/components/AccordionItems/CaseFilesAccordionItem/CaseFilesAccordionItem'
 import {
@@ -38,6 +34,7 @@ import type {
 import * as constants from '@island.is/judicial-system/consts'
 
 import DraftConclusionModal from '../../SharedComponents/DraftConclusionModal/DraftConclusionModal'
+import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
 
 interface Props {
   workingCase: Case
@@ -182,6 +179,7 @@ const OverviewForm: React.FC<Props> = (props) => {
               }`}
             >
               {formatRequestedCustodyRestrictions(
+                formatMessage,
                 workingCase.type,
                 workingCase.requestedCustodyRestrictions,
                 workingCase.requestedOtherRestrictions,

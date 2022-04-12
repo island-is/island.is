@@ -29,7 +29,6 @@ import {
   CaseInfo,
   AccordionListItem,
 } from '@island.is/judicial-system-web/src/components'
-import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system/formatters'
 import {
   ProsecutorSubsections,
   Sections,
@@ -49,6 +48,7 @@ import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader
 import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
 import type { CaseLegalProvisions } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system/consts'
+import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
 
 import * as styles from './Overview.css'
 
@@ -292,6 +292,7 @@ export const Overview: React.FC = () => {
               }`}
             >
               {formatRequestedCustodyRestrictions(
+                formatMessage,
                 workingCase.type,
                 workingCase.requestedCustodyRestrictions,
                 workingCase.requestedOtherRestrictions,

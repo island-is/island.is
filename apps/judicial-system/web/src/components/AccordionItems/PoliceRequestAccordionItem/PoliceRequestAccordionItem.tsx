@@ -4,7 +4,6 @@ import { useIntl } from 'react-intl'
 
 import {
   capitalize,
-  formatRequestedCustodyRestrictions,
   formatDate,
   formatRequestCaseType,
   formatNationalId,
@@ -20,6 +19,7 @@ import {
   laws,
 } from '@island.is/judicial-system-web/messages'
 import { TIME_FORMAT } from '@island.is/judicial-system/consts'
+import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
 
 import AccordionListItem from '../../AccordionListItem/AccordionListItem'
 import * as styles from './PoliceRequestAccordionItem.css'
@@ -132,6 +132,7 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
         >
           <Text>
             {formatRequestedCustodyRestrictions(
+              formatMessage,
               workingCase.type,
               workingCase.requestedCustodyRestrictions,
               workingCase.requestedOtherRestrictions,

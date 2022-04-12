@@ -29,9 +29,9 @@ import {
   travelBanProvisions,
 } from '@island.is/judicial-system-web/src/utils/laws'
 import {
-  alternativeTravelBanRestrictions,
-  restrictions,
-} from '@island.is/judicial-system-web/src/utils/Restrictions'
+  travelBanRestrictionsCheckboxes,
+  restrictionsCheckboxes,
+} from '@island.is/judicial-system-web/src/utils/restrictions'
 import { isPoliceDemandsStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import { rcDemands } from '@island.is/judicial-system-web/messages/RestrictionCases/Prosecutor/demandsForm'
 import { core } from '@island.is/judicial-system-web/messages'
@@ -209,7 +209,8 @@ const StepThreeForm: React.FC<Props> = (props) => {
             <Box marginBottom={2}>
               <CheckboxList
                 checkboxes={
-                  workingCase.type === CaseType.CUSTODY
+                  workingCase.type === CaseType.CUSTODY ||
+                  workingCase.type === CaseType.ADMISSION_TO_FACILITY
                     ? legalProvisions
                     : travelBanProvisions
                 }
@@ -283,7 +284,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
             </Box>
             <BlueBox>
               <CheckboxList
-                checkboxes={restrictions}
+                checkboxes={restrictionsCheckboxes}
                 selected={workingCase.requestedCustodyRestrictions}
                 onChange={(id) =>
                   setCheckboxAndSendToServer(
@@ -318,7 +319,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
             <BlueBox>
               <Box marginBottom={3}>
                 <CheckboxList
-                  checkboxes={alternativeTravelBanRestrictions}
+                  checkboxes={travelBanRestrictionsCheckboxes}
                   selected={workingCase.requestedCustodyRestrictions}
                   onChange={(id) =>
                     setCheckboxAndSendToServer(
