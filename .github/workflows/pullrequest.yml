@@ -208,6 +208,10 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
+      
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
 
       - name: Setup yarn
         run: npm install -g yarn
@@ -263,6 +267,10 @@ jobs:
       matrix: ${{ fromJson(needs.prepare.outputs.E2E_CHUNKS) }}
     steps:
       - uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
 
       - name: Setup yarn
         run: npm install -g yarn
@@ -323,6 +331,11 @@ jobs:
         with:
           path: node_modules
           key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
       - name: Setup yarn
         run: npm install -g yarn
       - name: Check cache success
@@ -342,6 +355,9 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
       - name: Setup yarn
         run: npm install -g yarn
       - name: Cache for NodeJS dependencies - host OS
@@ -371,6 +387,9 @@ jobs:
       matrix: ${{ fromJson(needs.prepare.outputs.LINT_CHUNKS) }}
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
       - name: Setup yarn
         run: npm install -g yarn
       - name: Cache for NodeJS dependencies - host OS
@@ -415,6 +434,9 @@ jobs:
     if: needs.prepare.outputs.BUILD_CHUNKS
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
       - name: Setup yarn
         run: npm install -g yarn
       - name: Cache for NodeJS dependencies - host OS
