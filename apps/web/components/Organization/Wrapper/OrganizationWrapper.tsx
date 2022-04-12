@@ -40,10 +40,9 @@ import {
   UtlendingastofnunHeader,
 } from './Themes/UtlendingastofnunTheme'
 import { endpoints as chatPanelEndpoints } from '../../ChatPanel/BoostChatPanel/config'
-
-import * as styles from './OrganizationWrapper.css'
 import MannaudstorgFooter from './Themes/MannaudstorgTheme/MannaudstorgFooter'
 import BoostChatPanel from '../../ChatPanel/BoostChatPanel/BoostChatPanel'
+import * as styles from './OrganizationWrapper.css'
 
 interface NavigationData {
   title: string
