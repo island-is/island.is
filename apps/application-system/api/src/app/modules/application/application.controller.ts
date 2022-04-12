@@ -122,6 +122,7 @@ export class ApplicationController {
   ) {}
 
   @Scopes(ApplicationScope.read)
+  @UseGuards(DelegationGuard)
   @Get('applications/:id')
   @ApiOkResponse({ type: ApplicationResponseDto })
   @UseInterceptors(ApplicationSerializer)
@@ -132,6 +133,7 @@ export class ApplicationController {
     @Param('id', new ParseUUIDPipe()) id: string,
     @CurrentUser() user: User,
   ): Promise<ApplicationResponseDto> {
+    console.log("find one")
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
       user,
@@ -143,6 +145,7 @@ export class ApplicationController {
   }
 
   @Scopes(ApplicationScope.read)
+  @UseGuards(DelegationGuard)
   @Get('users/:nationalId/applications')
   @ApiParam({
     name: 'nationalId',
@@ -176,6 +179,7 @@ export class ApplicationController {
     @Query('typeId') typeId?: string,
     @Query('status') status?: string,
   ): Promise<ApplicationResponseDto[]> {
+    console.log("find all")
     if (nationalId !== user.nationalId) {
       throw new UnauthorizedException()
     }
@@ -216,6 +220,7 @@ export class ApplicationController {
   }
 
   @Scopes(ApplicationScope.write)
+  @UseGuards(DelegationGuard)
   @Post('applications')
   @ApiCreatedResponse({ type: ApplicationResponseDto })
   @UseInterceptors(ApplicationSerializer)
@@ -225,6 +230,7 @@ export class ApplicationController {
     @CurrentUser()
     user: User,
   ): Promise<ApplicationResponseDto> {
+    console.log("create")
     const { typeId } = application
     const template = await getApplicationTemplateByTypeId(typeId)
 
@@ -397,6 +403,7 @@ export class ApplicationController {
     @CurrentUser() user: User,
     @CurrentLocale() locale: Locale,
   ): Promise<ApplicationResponseDto> {
+    console.log("update")
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
       user,
@@ -440,6 +447,7 @@ export class ApplicationController {
   }
 
   @Scopes(ApplicationScope.write)
+  @UseGuards(DelegationGuard)
   @Put('applications/:id/externalData')
   @ApiParam({
     name: 'id',
@@ -507,6 +515,7 @@ export class ApplicationController {
   }
 
   @Scopes(ApplicationScope.write)
+  @UseGuards(DelegationGuard)
   @Put('applications/:id/submit')
   @ApiParam({
     name: 'id',
@@ -780,6 +789,7 @@ export class ApplicationController {
   }
 
   @Scopes(ApplicationScope.write)
+  @UseGuards(DelegationGuard)
   @Put('applications/:id/attachments')
   @ApiParam({
     name: 'id',
@@ -825,6 +835,7 @@ export class ApplicationController {
   }
 
   @Scopes(ApplicationScope.write)
+  @UseGuards(DelegationGuard)
   @Delete('applications/:id/attachments')
   @ApiParam({
     name: 'id',
@@ -866,6 +877,7 @@ export class ApplicationController {
   }
 
   @Scopes(ApplicationScope.write)
+  @UseGuards(DelegationGuard)
   @Put('applications/:id/generatePdf')
   @ApiParam({
     name: 'id',
@@ -900,6 +912,7 @@ export class ApplicationController {
   }
 
   @Scopes(ApplicationScope.write)
+  @UseGuards(DelegationGuard)
   @Put('applications/:id/requestFileSignature')
   @ApiParam({
     name: 'id',
@@ -938,6 +951,7 @@ export class ApplicationController {
   }
 
   @Scopes(ApplicationScope.write)
+  @UseGuards(DelegationGuard)
   @Put('applications/:id/uploadSignedFile')
   @ApiParam({
     name: 'id',
@@ -976,6 +990,7 @@ export class ApplicationController {
   }
 
   @Scopes(ApplicationScope.read)
+  @UseGuards(DelegationGuard)
   @Get('applications/:id/:pdfType/presignedUrl')
   @ApiParam({
     name: 'id',
@@ -1011,6 +1026,7 @@ export class ApplicationController {
 
   @Get('applications/:id/attachments/:attachmentKey/presigned-url')
   @Scopes(ApplicationScope.read)
+  @UseGuards(DelegationGuard)
   @Documentation({
     description: 'Gets a presigned url for attachments',
     response: { status: 200, type: PresignedUrlResponseDto },

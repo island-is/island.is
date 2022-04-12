@@ -77,7 +77,6 @@ export const DelegationsScreen = ({
         (delegation: Delegation) =>
           allowedDelegations.includes(delegation.type),
       )
-      console.log(authActorDelegations)
       if (authActorDelegations.length <= 0) {
         setDelegationsChecked(true)
       } else {
@@ -216,7 +215,6 @@ export const DelegationsScreen = ({
     )
   }
   if (!loading && !applicant && !actorDelegations) {
-    console.log("whyyy")
     return <ErrorShell />
   }
 
