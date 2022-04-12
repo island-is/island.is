@@ -5,7 +5,11 @@ import {
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
-import { ApplicationModel, SpouseResponse } from './models'
+import {
+  ApplicationModel,
+  FilterApplicationsResponse,
+  SpouseResponse,
+} from './models'
 
 import { Op } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
@@ -29,6 +33,7 @@ import {
   getApplicantEmailDataFromEventType,
   firstDateOfMonth,
   UserType,
+  applicationPageSize,
 } from '@island.is/financial-aid/shared/lib'
 import { FileService } from '../file'
 import {
@@ -432,7 +437,10 @@ export class ApplicationService {
     return updatedApplication
   }
 
-  async filter(filters: FilterApplicationsDto): Promise<ApplicationModel[]> {
+  async filter(
+    filters: FilterApplicationsDto,
+  ): Promise<FilterApplicationsResponse> {
+    console.log(filters)
     const whereOptions = {
       state: {
         [Op.in]:
@@ -461,10 +469,14 @@ export class ApplicationService {
       )
     }
 
-    return this.applicationModel.findAll({
+    const results = await this.applicationModel.findAndCountAll({
       where: whereOptions,
       order: [['modified', 'DESC']],
+      offset: (filters.page - 1) * applicationPageSize,
+      limit: applicationPageSize,
     })
+
+    return { applications: results.rows, totalCount: results.count }
   }
 
   private async sendApplicationUpdateEmail(

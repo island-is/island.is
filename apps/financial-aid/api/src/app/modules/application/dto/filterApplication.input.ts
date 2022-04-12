@@ -11,4 +11,8 @@ export class FilterApplicationsInput {
   @Allow()
   @Field(() => [Number])
   readonly months!: number[]
+
+  @Allow()
+  @Field()
+  readonly page!: number
 }

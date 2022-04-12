@@ -20,6 +20,7 @@ import {
   Staff,
   CreateStaff,
   CreateMunicipality,
+  ApplicationPagination,
 } from '@island.is/financial-aid/shared/lib'
 
 import { environment } from '../environments'
@@ -188,7 +189,7 @@ class BackendAPI extends RESTDataSource {
 
   getFilteredApplications(
     filters: FilterApplicationsInput,
-  ): Promise<Application[]> {
+  ): Promise<ApplicationPagination> {
     return this.post('application/filter', filters)
   }
 }

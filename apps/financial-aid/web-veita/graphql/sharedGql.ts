@@ -103,12 +103,15 @@ export const ApplicationSearchQuery = gql`
 export const ApplicationFilterQuery = gql`
   query ApplicationFilterQuery($input: FilterApplicationsInput!) {
     filterApplications(input: $input) {
-      id
-      nationalId
-      name
-      state
-      modified
-      created
+      applications {
+        id
+        nationalId
+        name
+        state
+        modified
+        created
+      }
+      totalCount
     }
   }
 `

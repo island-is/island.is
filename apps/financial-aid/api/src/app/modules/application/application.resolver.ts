@@ -7,6 +7,7 @@ import { BackendAPI } from '../../../services'
 import {
   ApplicationFiltersModel,
   ApplicationModel,
+  FilterApplicationsResponse,
   UpdateApplicationTableResponse,
 } from './models'
 import {
@@ -22,6 +23,7 @@ import {
 import {
   Application,
   ApplicationFilters,
+  ApplicationPagination,
   UpdateApplicationTableResponseType,
 } from '@island.is/financial-aid/shared/lib'
 import { IdsUserGuard } from '@island.is/auth-nest-tools'
@@ -120,12 +122,12 @@ export class ApplicationResolver {
     return backendApi.createApplicationEvent(input)
   }
 
-  @Query(() => [ApplicationModel], { nullable: false })
+  @Query(() => FilterApplicationsResponse, { nullable: false })
   filterApplications(
     @Args('input', { type: () => FilterApplicationsInput })
     input: FilterApplicationsInput,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
-  ): Promise<Application[]> {
+  ): Promise<ApplicationPagination> {
     this.logger.debug(`filter applications`)
     return backendApi.getFilteredApplications(input)
   }

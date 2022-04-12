@@ -114,7 +114,7 @@ const FilterPopover = ({
 
       {results && (
         <Text fontWeight="semiBold" whiteSpace="nowrap">
-          {results} niðurstöður
+          {`${results} ${results === 1 ? 'niðurstaða' : 'niðurstöður'}`}
         </Text>
       )}
     </Box>

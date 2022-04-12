@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Text, Box } from '@island.is/island-ui/core'
+import { Text, Box, Pagination } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 import { useLazyQuery } from '@apollo/client'
 
@@ -9,7 +9,7 @@ import {
 } from '@island.is/financial-aid-web/veita/src/components'
 import {
   ApplicationState,
-  Application,
+  ApplicationPagination,
 } from '@island.is/financial-aid/shared/lib'
 import { ApplicationFilterQuery } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
 import { navigationItems } from '@island.is/financial-aid-web/veita/src/utils/navigation'
@@ -22,6 +22,9 @@ interface Filters {
 export const ApplicationsOverviewProcessed = () => {
   const router = useRouter()
 
+  const [currentPage, setCurrentPage] = useState<number>(
+    router.query.sida ? parseInt(router.query.sida as string) : 1,
+  )
   const [filters, setFilters] = useState<Filters>({
     selectedStates: router?.query?.stada
       ? ((router?.query?.stada as string).split(',') as ApplicationState[])
@@ -47,32 +50,28 @@ export const ApplicationsOverviewProcessed = () => {
     setFilters(filtersCopy)
   }
 
+  const onFilterSave = () => {
+    setQuery()
+    setCurrentPage(1)
+  }
+
   const onFilterClear = () => {
     setFilters({ selectedMonths: [], selectedStates: [] })
+    setQuery()
+    setCurrentPage(1)
   }
 
-  const onFilterSave = () => {
-    filter()
-    router.push({
-      search: `?timabil=${filters.selectedMonths.join(
-        ',',
-      )}&stada=${filters.selectedStates.join(',')}`,
-    })
-  }
+  const setQuery = () => {
+    const query = new URLSearchParams()
+    query.append('timabil', filters.selectedMonths.join(','))
+    query.append('stada', filters.selectedStates.join(','))
+    query.append('sida', currentPage.toString())
 
-  const filter = () => {
-    getApplications({
-      variables: {
-        input: {
-          states: filters.selectedStates,
-          months: filters.selectedMonths,
-        },
-      },
-    })
+    router.push({ search: query.toString() })
   }
 
   const [getApplications, { data, error, loading }] = useLazyQuery<{
-    filterApplications: Application[]
+    filterApplications: ApplicationPagination
   }>(ApplicationFilterQuery, {
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
@@ -83,8 +82,16 @@ export const ApplicationsOverviewProcessed = () => {
     navigationItems[0]
 
   useEffect(() => {
-    filter()
-  }, [])
+    getApplications({
+      variables: {
+        input: {
+          states: filters.selectedStates,
+          months: filters.selectedMonths,
+          page: currentPage,
+        },
+      },
+    })
+  }, [router.query, currentPage])
 
   return (
     <>
@@ -96,18 +103,35 @@ export const ApplicationsOverviewProcessed = () => {
       <FilterPopover
         selectedMonths={filters.selectedMonths}
         selectedStates={filters.selectedStates}
-        results={data?.filterApplications?.length}
+        results={data?.filterApplications?.totalCount}
         onChecked={onChecked}
         onFilterClear={onFilterClear}
         onFilterSave={onFilterSave}
       />
-      {data?.filterApplications && (
+      {data?.filterApplications?.applications && (
         <ApplicationsTable
           headers={currentNavigationItem.headers}
-          applications={data?.filterApplications}
-          setApplications={() => {}}
+          applications={data?.filterApplications?.applications}
+          setApplications={() => { }}
         />
       )}
+      <Pagination
+        page={currentPage}
+        renderLink={(page, className, children) => (
+          <Box
+            cursor="pointer"
+            className={className}
+            onClick={() => setCurrentPage(page)}
+          >
+            {children}
+          </Box>
+        )}
+        totalPages={
+          data?.filterApplications.totalCount
+            ? Math.ceil(data?.filterApplications.totalCount / 2)
+            : 0
+        }
+      />
       {error && (
         <div>
           Abbabab mistókst að sækja umsóknir, ertu örugglega með aðgang að þessu
