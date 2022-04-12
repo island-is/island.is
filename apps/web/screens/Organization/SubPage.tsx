@@ -259,7 +259,7 @@ const getSlugAndSubSlug = (query: ParsedUrlQuery, pathname: string) => {
     slug = path[path.length - 2]
   }
   if (!subSlug && path.length > 0) {
-    // The subslug is the last index in the path, i.e. "utgefid-efn" in the case of "/s/syslumenn/utgefid-efni"
+    // The subslug is the last index in the path, i.e. "utgefid-efni" in the case of "/s/syslumenn/utgefid-efni"
     subSlug = path.pop()
   }
 
