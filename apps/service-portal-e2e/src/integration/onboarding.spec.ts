@@ -54,9 +54,9 @@ describe('service-portal', () => {
     ).should('exist')
 
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(500)
+    cy.wait(200)
 
-    cy.get('button[aria-label="Loka glugga"]').click()
+    cy.get('button').contains('Halda áfram').click()
     cy.get('#user-onboarding-modal').should('not.be.visible')
   })
 })
