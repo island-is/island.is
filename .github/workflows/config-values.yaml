@@ -48,6 +48,9 @@ jobs:
         with:
           node-version: '14'
 
+      - name: Setup yarn
+        run: npm install -g yarn
+
       - name: Cache for NodeJS dependencies
         id: node-modules
         continue-on-error: true
