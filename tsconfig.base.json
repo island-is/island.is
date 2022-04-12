@@ -182,6 +182,9 @@
       "@island.is/application/templates/driving-license": [
         "libs/application/templates/driving-license/src/index.ts"
       ],
+      "@island.is/application/templates/driving-school-confirmation": [
+        "libs/application/templates/driving-school-confirmation/src/index.ts"
+      ],
       "@island.is/application/templates/example-payment": [
         "libs/application/templates/example-payment/src/index.ts"
       ],
