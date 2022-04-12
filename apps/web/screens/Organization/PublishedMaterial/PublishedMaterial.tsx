@@ -74,7 +74,7 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
   const [searchValue, setSearchValue] = useState('')
   const [ordering, setOrdering] = useState<Ordering>({
     field: 'releaseDate',
-    order: 'asc',
+    order: 'desc',
   })
   const n = useNamespace(namespace)
 
@@ -82,25 +82,24 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
   useLocalLinkTypeResolver()
   const { activeLocale } = useI18n()
 
-  const pageUrl = `${organizationPage.slug}/${router.asPath.split('/').pop()}`
-
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink.text,
       href: primaryLink.url,
       active:
-        primaryLink.url.includes(pageUrl) ||
-        childrenLinks.some((link) => link.url.includes(pageUrl)),
+        primaryLink.url === router.asPath ||
+        childrenLinks.some((link) => link.url === router.asPath),
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
         href: url,
-        active: url.includes(pageUrl),
+        active: url === router.asPath,
       })),
     }),
   )
 
-  const [isTyping, setIsTyping] = useState(false)
+  // The page number is 1-based meaning that page 1 is the first page
   const [page, setPage] = useState(1)
+  const [isTyping, setIsTyping] = useState(false)
   const [parameters, setParameters] = useState<Record<string, string[]>>({})
   const [queryVariables, setQueryVariables] = useState({
     variables: {
@@ -227,7 +226,7 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
       isSelected: ordering.field === 'title.sort' && ordering.order === 'desc',
     },
     {
-      title: n('orderByReleaseDateDescending', 'Útgáfudagur (nýjast)'),
+      title: n('orderByReleaseDateDescending', 'Útgáfudagur (nýtt)'),
       onClick: () =>
         setOrdering({
           field: 'releaseDate',
@@ -236,7 +235,7 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
       isSelected: ordering.field === 'releaseDate' && ordering.order === 'desc',
     },
     {
-      title: n('orderByReleaseDateAscending', 'Útgáfudagur (elsta)'),
+      title: n('orderByReleaseDateAscending', 'Útgáfudagur (gamalt)'),
       onClick: () =>
         setOrdering({
           field: 'releaseDate',
