@@ -9,7 +9,11 @@ import { ApplicationModel, SpouseResponse } from './models'
 
 import { Op } from 'sequelize'
 
-import { CreateApplicationDto, UpdateApplicationDto } from './dto'
+import {
+  CreateApplicationDto,
+  FilterApplicationsDto,
+  UpdateApplicationDto,
+} from './dto'
 import {
   ApplicationEventType,
   ApplicationFilters,
@@ -425,6 +429,16 @@ export class ApplicationService {
     ])
 
     return updatedApplication
+  }
+
+  async filter(filters: FilterApplicationsDto): Promise<ApplicationModel[]> {
+    console.log(filters)
+    return this.applicationModel.findAll({
+      where: {
+        state: { [Op.in]: filters.states },
+      },
+      order: [['modified', 'DESC']],
+    })
   }
 
   private async sendApplicationUpdateEmail(

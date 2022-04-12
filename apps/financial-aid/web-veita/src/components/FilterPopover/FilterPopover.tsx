@@ -18,7 +18,7 @@ import {
 interface Props {
   selectedStates: ApplicationState[]
   selectedMonths: number[]
-  results: number
+  results?: number
   onChecked: (item: ApplicationState | number, checked: boolean) => void
   onFilterClear: () => void
   onFilterSave: () => void
@@ -112,9 +112,11 @@ const FilterPopover = ({
         </Filter>
       </Box>
 
-      <Text fontWeight="semiBold" whiteSpace="nowrap">
-        {results} niðurstöður
-      </Text>
+      {results && (
+        <Text fontWeight="semiBold" whiteSpace="nowrap">
+          {results} niðurstöður
+        </Text>
+      )}
     </Box>
   )
 }

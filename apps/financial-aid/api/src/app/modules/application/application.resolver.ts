@@ -17,6 +17,7 @@ import {
   ApplicationInput,
   AllApplicationInput,
   ApplicationSearchInput,
+  FilterApplicationsInput,
 } from './dto'
 import {
   Application,
@@ -117,5 +118,15 @@ export class ApplicationResolver {
     this.logger.debug('Creating application event')
 
     return backendApi.createApplicationEvent(input)
+  }
+
+  @Query(() => [ApplicationModel], { nullable: false })
+  filterApplications(
+    @Args('input', { type: () => FilterApplicationsInput })
+    input: FilterApplicationsInput,
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+  ): Promise<Application[]> {
+    this.logger.debug(`filter applications`)
+    return backendApi.getFilteredApplications(input)
   }
 }

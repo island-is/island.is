@@ -5,12 +5,10 @@ import { useQuery } from '@apollo/client'
 import {
   ApplicationOverviewSkeleton,
   ApplicationsTable,
-  FilterPopover,
   LoadingContainer,
 } from '@island.is/financial-aid-web/veita/src/components'
 
 import {
-  ApplicationState,
   Application,
   getStateUrlFromRoute,
 } from '@island.is/financial-aid/shared/lib'
@@ -19,42 +17,12 @@ import { ApplicationsQuery } from '@island.is/financial-aid-web/veita/graphql/sh
 
 import { navigationItems } from '@island.is/financial-aid-web/veita/src/utils/navigation'
 
-interface Filters {
-  selectedStates: ApplicationState[]
-  selectedMonths: number[]
-}
-
 interface ApplicationsProvider {
   applications?: Application[]
 }
 
 export const ApplicationsOverview = () => {
   const router = useRouter()
-
-  const [filters, setFilters] = useState<Filters>({
-    selectedStates: router?.query?.stada
-      ? ((router?.query?.stada as string).split(',') as ApplicationState[])
-      : [],
-    selectedMonths: router?.query?.timabil
-      ? (router?.query?.timabil as string).split(',').map(Number)
-      : [],
-  })
-
-  const onChecked = (item: ApplicationState | number, checked: boolean) => {
-    const filtersCopy = { ...filters }
-
-    if (typeof item === 'number') {
-      checked
-        ? filters.selectedMonths.push(item)
-        : filters.selectedMonths.splice(filters.selectedMonths.indexOf(item), 1)
-    } else {
-      checked
-        ? filters.selectedStates.push(item)
-        : filters.selectedStates.splice(filters.selectedStates.indexOf(item), 1)
-    }
-
-    setFilters(filtersCopy)
-  }
 
   const { data, error, loading } = useQuery<ApplicationsProvider>(
     ApplicationsQuery,
@@ -70,8 +38,6 @@ export const ApplicationsOverview = () => {
   const currentNavigationItem =
     navigationItems.find((i) => i.link === router.pathname) ||
     navigationItems[0]
-
-  const finishedApplicationsPage = currentNavigationItem.link === '/afgreidd'
 
   const [applications, setApplications] = useState<Application[]>()
 
@@ -95,16 +61,7 @@ export const ApplicationsOverview = () => {
           {currentNavigationItem.label}
         </Text>
       </Box>
-      {finishedApplicationsPage && (
-        <FilterPopover
-          selectedMonths={filters.selectedMonths}
-          selectedStates={filters.selectedStates}
-          results={80}
-          onChecked={onChecked}
-          onFilterClear={() => { }}
-          onFilterSave={() => { }}
-        />
-      )}
+
       {applications && (
         <ApplicationsTable
           headers={currentNavigationItem.headers}

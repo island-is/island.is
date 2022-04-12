@@ -100,6 +100,19 @@ export const ApplicationSearchQuery = gql`
   }
 `
 
+export const ApplicationFilterQuery = gql`
+  query ApplicationFilterQuery($input: FilterApplicationsInput!) {
+    filterApplications(input: $input) {
+      id
+      nationalId
+      name
+      state
+      modified
+      created
+    }
+  }
+`
+
 export const UpdateApplicationTableMutation = gql`
   mutation UpdateApplicationTableMutation(
     $input: UpdateApplicationInputTable!
