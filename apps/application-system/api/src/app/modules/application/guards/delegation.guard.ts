@@ -13,7 +13,7 @@ export class DelegationGuard implements CanActivate {
     id: string,
     user: User,
   ): Promise<string | null> {
-    if(!id) {
+    if (!id) {
       return null
     }
     const application = await this.applicationService.findOneById(
@@ -23,14 +23,15 @@ export class DelegationGuard implements CanActivate {
     return application?.typeId || null
   }
 
-  async getTypeIdFromToken (token: string, user: User): Promise<string | null> {
-    const decodedToken = verifyToken<DecodedAssignmentToken>(
-      token,
-    )
-    if(!decodedToken) {
+  async getTypeIdFromToken(token: string, user: User): Promise<string | null> {
+    const decodedToken = verifyToken<DecodedAssignmentToken>(token)
+    if (!decodedToken) {
       return null
     }
-    return await this.getTypeIdFromApplicationId(decodedToken.applicationId, user)
+    return await this.getTypeIdFromApplicationId(
+      decodedToken.applicationId,
+      user,
+    )
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -49,7 +50,7 @@ export class DelegationGuard implements CanActivate {
         request.body.typeId ||
         (await this.getTypeIdFromApplicationId(request.params.id, user)) ||
         (await this.getTypeIdFromToken(request.body.token, user))
-        
+
       // Get the delegation types the application type supports
       if (typeId) {
         const applicationTemplate = await getApplicationTemplateByTypeId(typeId)

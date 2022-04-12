@@ -97,7 +97,7 @@ export const DelegationsScreen = ({
   }, [delegations, allowedDelegations])
 
   const handleClick = (nationalId?: string) => {
-    if(!applicant) {
+    if (!applicant) {
       history.push(`../${slug}/?delegationChecked=true`)
     }
     if (nationalId) {

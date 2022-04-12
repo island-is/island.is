@@ -97,7 +97,7 @@ import { ApplicationAccessService } from './tools/applicationAccess.service'
 import { CurrentLocale } from './utils/currentLocale'
 import { Application } from '@island.is/application/api/core'
 import { Documentation } from '@island.is/nest/swagger'
-import {DelegationGuard} from './guards/delegation.guard'
+import { DelegationGuard } from './guards/delegation.guard'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('applications')
@@ -133,7 +133,7 @@ export class ApplicationController {
     @Param('id', new ParseUUIDPipe()) id: string,
     @CurrentUser() user: User,
   ): Promise<ApplicationResponseDto> {
-    console.log("find one")
+    console.log('find one')
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
       user,
@@ -179,7 +179,7 @@ export class ApplicationController {
     @Query('typeId') typeId?: string,
     @Query('status') status?: string,
   ): Promise<ApplicationResponseDto[]> {
-    console.log("find all")
+    console.log('find all')
     if (nationalId !== user.nationalId) {
       throw new UnauthorizedException()
     }
@@ -230,7 +230,7 @@ export class ApplicationController {
     @CurrentUser()
     user: User,
   ): Promise<ApplicationResponseDto> {
-    console.log("create")
+    console.log('create')
     const { typeId } = application
     const template = await getApplicationTemplateByTypeId(typeId)
 
@@ -301,6 +301,7 @@ export class ApplicationController {
   }
 
   @Scopes(ApplicationScope.write)
+  @UseGuards(DelegationGuard)
   @Put('applications/assign')
   @ApiOkResponse({ type: ApplicationResponseDto })
   @UseInterceptors(ApplicationSerializer)
@@ -403,7 +404,7 @@ export class ApplicationController {
     @CurrentUser() user: User,
     @CurrentLocale() locale: Locale,
   ): Promise<ApplicationResponseDto> {
-    console.log("update")
+    console.log('update')
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
       user,
