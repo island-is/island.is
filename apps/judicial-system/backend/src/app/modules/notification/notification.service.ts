@@ -243,12 +243,15 @@ export class NotificationService {
         theCase.courtCaseNumber ?? '',
         `Krafa ${theCase.policeCaseNumber}-${format(
           nowFactory(),
-          'yyy-MM-DD-HH:mm',
+          'yyyy-MM-dd-HH:mm',
         )}`,
         requestPdf,
       )
     } catch (error) {
-      this.logger.error('Failed to upload request pdf to court', { error })
+      this.logger.error(
+        `Failed to upload request pdf to court for case ${theCase.id}`,
+        { error },
+      )
     }
   }
 

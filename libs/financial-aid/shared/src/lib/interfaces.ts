@@ -38,9 +38,7 @@ export interface Staff {
   municipalityIds: string[]
   roles: StaffRole[]
   active: boolean
-  municipalityName: string
   phoneNumber?: string
-  municipalityHomepage?: string
   nickname?: string
   email?: string
   usePseudoName?: boolean
@@ -152,6 +150,12 @@ export interface ApplicationEvent {
   staffName?: string
 }
 
+export interface UpdateAdmin {
+  id: string
+  name: string
+  municipalityIds: string[]
+}
+
 export interface Municipality {
   id: string
   name: string
@@ -164,6 +168,7 @@ export interface Municipality {
   rulesHomepage?: string
   numberOfUsers?: number
   adminUsers?: Staff[]
+  allAdminUsers?: UpdateAdmin[]
 }
 
 export interface UpdateMunicipalityActivity {
@@ -364,8 +369,8 @@ export interface CreateStaff {
   email: string
   nationalId: string
   roles: StaffRole[]
-  municipalityName?: string
-  municipalityId?: string
+  municipalityNames?: string[]
+  municipalityIds?: string[]
 }
 
 export interface CreateStaffMunicipality {
