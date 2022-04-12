@@ -237,7 +237,7 @@ export class CmsElasticsearchService {
     {
       organizationSlug,
       searchString,
-      page = 1,
+      page = 1, // The page number is 1-based meaning that page 1 is the first page
       size = 10,
       tags,
       tagGroups,
