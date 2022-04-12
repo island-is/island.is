@@ -167,6 +167,26 @@ export class AssetsXRoadService {
               }),
             ),
           },
+          land: {
+            landNumber: singleFasteignResponse.landeign?.landeignarnumer,
+            landAppraisal: singleFasteignResponse.landeign?.lodamat,
+            useDisplay: singleFasteignResponse.landeign?.notkunBirting,
+            area: singleFasteignResponse.landeign?.flatarmal,
+            areaUnit: singleFasteignResponse.landeign?.flatarmalEining,
+            registeredOwners: {
+              paging:
+                singleFasteignResponse.landeign?.thinglystirEigendur?.paging,
+              registeredOwners: singleFasteignResponse.landeign?.thinglystirEigendur?.thinglystirEigendur?.map(
+                (owner) => ({
+                  name: owner.nafn,
+                  ssn: owner.kennitala,
+                  ownership: owner.eignarhlutfall,
+                  purchaseDate: owner.kaupdagur,
+                  grantDisplay: owner.heimildBirting,
+                }),
+              ),
+            },
+          },
         }
       }
       return null
