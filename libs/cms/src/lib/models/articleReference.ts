@@ -14,6 +14,7 @@ import { SystemMetadata } from '@island.is/shared/types'
 import { ArticleGroup, mapArticleGroup } from './articleGroup.model'
 import { mapOrganization, Organization } from './organization.model'
 import { ArticleCategory, mapArticleCategory } from './articleCategory.model'
+import { mapProcessEntry, ProcessEntry } from './processEntry.model'
 
 @ObjectType()
 export class ArticleReference {
@@ -37,6 +38,9 @@ export class ArticleReference {
 
   @Field(() => [Organization], { nullable: true })
   organization?: Array<Organization>
+
+  @Field(() => ProcessEntry, { nullable: true })
+  processEntry?: ProcessEntry | null
 }
 
 export const mapArticleReference = ({
@@ -55,4 +59,7 @@ export const mapArticleReference = ({
       (organization) => organization.fields?.title && organization.fields?.slug,
     )
     .map(mapOrganization),
+  processEntry: fields.processEntry
+    ? mapProcessEntry(fields.processEntry)
+    : null,
 })

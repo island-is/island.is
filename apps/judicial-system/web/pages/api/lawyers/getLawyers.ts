@@ -43,6 +43,7 @@ function mapToLawyer(lawyer: LawyerFull): Lawyer {
     practice: lawyer.Practice,
     email: lawyer.Email,
     phoneNr: lawyer.GSM,
+    nationalId: lawyer.SSN,
   }
 }
 

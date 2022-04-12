@@ -7,39 +7,53 @@ import {
   Checkbox,
   Button,
   ToastContainer,
+  Option,
 } from '@island.is/island-ui/core'
 
-import * as styles from './Profile.css'
-
-import * as headerStyles from '@island.is/financial-aid-web/veita/src/components/ApplicationHeader/ApplicationHeader.css'
 import {
   InputType,
   isEmailValid,
+  ReactSelectOption,
   Staff,
   StaffRole,
 } from '@island.is/financial-aid/shared/lib'
+import { MultiSelectionMunicipality } from '@island.is/financial-aid-web/veita/src/components'
 
-import cn from 'classnames'
 import { useStaff } from '@island.is/financial-aid-web/veita/src/utils/useStaff'
 import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
+import { CreateUpdateStaff } from '@island.is/financial-aid-web/veita/src/components/MultiSelection/MultiSelectionMunicipality'
+
+import cn from 'classnames'
+import * as styles from './Profile.css'
+import * as headerStyles from '@island.is/financial-aid-web/veita/src/components/ApplicationHeader/ApplicationHeader.css'
 
 interface EmployeeProfileProps {
   user: Staff
 }
 
-interface EmployeeProfileInfo {
-  nationalId: string
-  email?: string
+type EmployeeProfileInfo = CreateUpdateStaff<{
+  nationalId?: string
   nickname?: string
-  hasError: boolean
-  roles: StaffRole[]
-}
+  email?: string
+}>
 
 const EmployeeProfile = ({ user }: EmployeeProfileProps) => {
-  const { admin } = useContext(AdminContext)
+  const { admin, municipality } = useContext(AdminContext)
 
   const isLoggedInUser = (staff: Staff) =>
     admin?.nationalId === staff.nationalId
+
+  const mapToOption = (filterArr: string[], active: boolean) => {
+    return municipality
+      .filter((el) =>
+        active
+          ? filterArr.includes(el.municipalityId)
+          : !filterArr.includes(el.municipalityId),
+      )
+      .map((el) => {
+        return { label: el.name, value: el.municipalityId }
+      })
+  }
 
   const [state, setState] = useState<EmployeeProfileInfo>({
     nationalId: user.nationalId,
@@ -47,6 +61,7 @@ const EmployeeProfile = ({ user }: EmployeeProfileProps) => {
     email: user.email ?? '',
     hasError: false,
     roles: user.roles,
+    municipalityIds: user.municipalityIds,
   })
 
   const { changeUserActivity, staffActivationLoading, updateInfo } = useStaff()
@@ -85,7 +100,6 @@ const EmployeeProfile = ({ user }: EmployeeProfileProps) => {
     {
       label: 'Netfang',
       value: state.email,
-      bgIsBlue: true,
       type: 'email' as InputType,
       onchange: (
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -115,7 +129,8 @@ const EmployeeProfile = ({ user }: EmployeeProfileProps) => {
     !state.nationalId ||
     state.roles.length === 0 ||
     !isEmailValid(state.email) ||
-    state.nationalId.length !== 10
+    state.nationalId.length !== 10 ||
+    state.municipalityIds.length === 0
 
   const onSubmitUpdate = async () => {
     if (areRequiredFieldsFilled) {
@@ -129,6 +144,9 @@ const EmployeeProfile = ({ user }: EmployeeProfileProps) => {
       state.roles,
       state.nickname,
       state.email,
+      undefined,
+      undefined,
+      state.municipalityIds,
     )
   }
 
@@ -184,7 +202,7 @@ const EmployeeProfile = ({ user }: EmployeeProfileProps) => {
                   type={item.type}
                   value={item.value}
                   onChange={item.onchange}
-                  backgroundColor={item.bgIsBlue ? 'blue' : 'white'}
+                  backgroundColor="blue"
                   hasError={state.hasError && item.error}
                 />
               </Box>
@@ -196,7 +214,32 @@ const EmployeeProfile = ({ user }: EmployeeProfileProps) => {
             marginTop={3}
             marginBottom={[3, 3, 5]}
           >
-            {' '}
+            <Box display="block" marginTop={3} marginBottom={[3, 3, 5]}>
+              <MultiSelectionMunicipality
+                selectionUpdate={(
+                  value: string,
+                  label: string,
+                  type: 'add' | 'remove',
+                ) => {
+                  if (type === 'add') {
+                    setState({
+                      ...state,
+                      municipalityIds: [...state.municipalityIds, value],
+                    })
+                  }
+                  if (type === 'remove') {
+                    setState({
+                      ...state,
+                      municipalityIds: state.municipalityIds.filter(
+                        (muni) => muni != value,
+                      ),
+                    })
+                  }
+                }}
+                state={state}
+              />
+            </Box>
+
             <Text as="h2" variant="h3" color="dark300" marginBottom={3}>
               Réttindi notanda
             </Text>

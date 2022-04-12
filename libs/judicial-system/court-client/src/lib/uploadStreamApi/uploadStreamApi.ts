@@ -62,7 +62,7 @@ export class UploadStreamApi {
           ) {
             resolve(body)
           } else {
-            reject(new HttpError(response, body, response.statusCode))
+            reject(body)
           }
         }
       })

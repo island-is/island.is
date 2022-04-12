@@ -1,7 +1,11 @@
 import React, { useContext } from 'react'
 import { Button, Text, Box } from '@island.is/island-ui/core'
 
-import { getState, ApplicationState } from '@island.is/financial-aid/shared/lib'
+import {
+  getState,
+  ApplicationState,
+  currentMonth,
+} from '@island.is/financial-aid/shared/lib'
 import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 
 interface Props {
@@ -33,7 +37,8 @@ const Rejected = ({
         <>
           {rejectionComment && (
             <Text variant="intro" marginBottom={[2, 2, 3]}>
-              Umsókn þinni um fjárhagsaðstoð í ágúst hefur verið synjað{` `}
+              Umsókn þinni um fjárhagsaðstoð í {currentMonth()} hefur verið
+              synjað{` `}
               {rejectionComment}. Smelltu á hlekkinn hér fyrir neðan til að
               kynna þér reglur um fjárhagsaðstoð.
             </Text>
