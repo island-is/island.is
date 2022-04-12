@@ -148,11 +148,9 @@ export class SyslumennService {
 
   async sealDocument(document: string): Promise<SvarSkeyti> {
     const { id, api } = await this.createApi()
-    const explination = 'Rafrænt undirritað vottorð'
     return await api.innsiglunPost({
       skeyti: {
         audkenni: id,
-        skyring: explination,
         skjal: document,
       },
     })
