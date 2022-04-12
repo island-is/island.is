@@ -64,10 +64,7 @@ export const ApplicationsOverviewProcessed = () => {
     getApplications({
       variables: {
         input: {
-          states:
-            filters.selectedStates.length === 0
-              ? [ApplicationState.APPROVED, ApplicationState.REJECTED]
-              : filters.selectedStates,
+          states: filters.selectedStates,
           months: filters.selectedMonths,
         },
       },

@@ -8,6 +8,7 @@ import { InjectModel } from '@nestjs/sequelize'
 import { ApplicationModel, SpouseResponse } from './models'
 
 import { Op } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 
 import {
   CreateApplicationDto,
@@ -432,11 +433,36 @@ export class ApplicationService {
   }
 
   async filter(filters: FilterApplicationsDto): Promise<ApplicationModel[]> {
-    console.log(filters)
-    return this.applicationModel.findAll({
-      where: {
-        state: { [Op.in]: filters.states },
+    const whereOptions = {
+      state: {
+        [Op.in]:
+          filters.states.length > 0
+            ? filters.states
+            : [ApplicationState.APPROVED, ApplicationState.REJECTED],
       },
+    }
+
+    if (filters.months.length > 0) {
+      const date = new Date()
+      const currentYear = date.getFullYear()
+      const currentMonth = date.getMonth()
+
+      whereOptions[Op.or] = filters.months.map((month) =>
+        Sequelize.and(
+          Sequelize.where(
+            Sequelize.fn('date_part', 'MONTH', Sequelize.col('created')),
+            (month + 1).toString(),
+          ),
+          Sequelize.where(
+            Sequelize.fn('date_part', 'YEAR', Sequelize.col('created')),
+            (month > currentMonth ? currentYear - 1 : currentYear).toString(),
+          ),
+        ),
+      )
+    }
+
+    return this.applicationModel.findAll({
+      where: whereOptions,
       order: [['modified', 'DESC']],
     })
   }
