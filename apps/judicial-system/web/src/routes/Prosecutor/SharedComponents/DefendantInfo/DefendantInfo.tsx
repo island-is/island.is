@@ -151,6 +151,9 @@ const DefendantInfo: React.FC<Props> = (props) => {
           )}
           checked={defendant.noNationalId}
           onChange={() => {
+            setNationalIdNotFound(false)
+            setNationalIdErrorMessage('')
+
             updateDefendantState(defendant.id, {
               noNationalId: !defendant.noNationalId,
               nationalId: undefined,
@@ -171,11 +174,10 @@ const DefendantInfo: React.FC<Props> = (props) => {
           maskPlaceholder={null}
           value={defendant.nationalId ?? ''}
           onChange={(evt) => {
-            setNationalIdErrorMessage('')
             setNationalIdNotFound(false)
             removeErrorMessageIfValid(
               defendant.noNationalId
-                ? ['empty', 'date-of-birth']
+                ? ['date-of-birth']
                 : ['empty', 'national-id'],
               evt.target.value,
               nationalIdErrorMessage,
@@ -189,7 +191,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
           onBlur={async (evt) => {
             validateAndSetErrorMessage(
               defendant.noNationalId
-                ? ['empty', 'date-of-birth']
+                ? ['date-of-birth']
                 : ['empty', 'national-id'],
               evt.target.value,
               setNationalIdErrorMessage,
@@ -212,7 +214,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
             )}
             errorMessage={nationalIdErrorMessage}
             hasError={nationalIdErrorMessage !== ''}
-            required
+            required={!defendant.noNationalId}
           />
         </InputMask>
         {defendant.nationalId?.length === 11 && nationalIdNotFound && (

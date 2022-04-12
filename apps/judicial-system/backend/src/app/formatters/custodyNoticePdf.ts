@@ -65,29 +65,29 @@ function constructCustodyNoticePdf(
       ? theCase.defendants[0].name
       : 'Nafn ekki skráð',
   )
-  addNormalText(
-    doc,
-    `${
-      theCase.defendants &&
-      theCase.defendants.length > 0 &&
-      theCase.defendants[0].noNationalId
-        ? 'fd.'
-        : 'kt.'
-    } ${
-      theCase.defendants &&
-      theCase.defendants.length > 0 &&
-      theCase.defendants[0].noNationalId
-        ? theCase.defendants[0].nationalId
-        : formatNationalId(
-            theCase.defendants &&
-              theCase.defendants.length > 0 &&
-              theCase.defendants[0].nationalId
-              ? theCase.defendants[0].nationalId
-              : 'ekki skráð',
-          )
-    }`,
-    'Helvetica',
-  )
+
+  if (
+    theCase.defendants &&
+    theCase.defendants.length > 0 &&
+    theCase.defendants[0].noNationalId
+  ) {
+    if (theCase.defendants[0].nationalId) {
+      addNormalText(doc, `fd. ${theCase.defendants[0].nationalId}`, 'Helvetica')
+    }
+  } else {
+    addNormalText(
+      doc,
+      `kt. ${formatNationalId(
+        theCase.defendants &&
+          theCase.defendants.length > 0 &&
+          theCase.defendants[0].nationalId
+          ? theCase.defendants[0].nationalId
+          : 'ekki skráð',
+      )}`,
+      'Helvetica',
+    )
+  }
+
   addNormalText(
     doc,
     theCase.defendants &&

@@ -341,10 +341,12 @@ export function formatDefenderRevokedEmailNotification(
       : 'Krafa um rannsóknarheimild'
   } sem taka átti fyrir hjá ${courtText} ${courtDateText}, hefur verið afturkölluð.<br /><br />Sakborningur: ${
     defendantName ?? 'Nafn ekki skráð'
-  }, ${defendantNoNationalId ? 'fd.' : 'kt.'} ${
+  }${
     defendantNoNationalId
       ? defendantNationalId
-      : formatNationalId(defendantNationalId ?? 'ekki skráð')
+        ? `, fd. ${defendantNationalId}`
+        : ''
+      : `, kt. ${formatNationalId(defendantNationalId ?? 'ekki skráð')}`
   }.<br /><br />Dómstóllinn hafði skráð þig sem verjanda sakbornings.`
 }
 
