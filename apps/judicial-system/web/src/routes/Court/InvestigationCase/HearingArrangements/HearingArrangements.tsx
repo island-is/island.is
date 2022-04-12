@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
@@ -24,30 +24,31 @@ const HearingArrangements = () => {
   } = useContext(FormContext)
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
+  const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
 
   const { autofill, autofillSessionArrangements } = useCase()
 
   useEffect(() => {
-    if (isCaseUpToDate) {
-      const theCase = workingCase
-
-      if (theCase.requestedCourtDate) {
-        autofill('courtDate', theCase.requestedCourtDate, theCase)
+    if (isCaseUpToDate && !initialAutoFillDone) {
+      if (workingCase.requestedCourtDate) {
+        autofill('courtDate', workingCase.requestedCourtDate, workingCase)
       }
 
-      if (theCase.defenderName) {
+      if (workingCase.defenderName) {
         autofillSessionArrangements(
           'sessionArrangements',
           SessionArrangements.ALL_PRESENT,
-          theCase,
+          workingCase,
         )
       }
 
-      setWorkingCase(theCase)
+      setInitialAutoFillDone(true)
+      setWorkingCase({ ...workingCase })
     }
   }, [
     autofill,
     autofillSessionArrangements,
+    initialAutoFillDone,
     isCaseUpToDate,
     setWorkingCase,
     workingCase,
