@@ -29,6 +29,7 @@ export const StepThree: React.FC = () => {
 
   useEffect(() => {
     if (
+      !workingCase.requestedOtherRestrictions &&
       workingCase.requestedCustodyRestrictions &&
       workingCase.requestedCustodyRestrictions.indexOf(
         CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION,
@@ -44,8 +45,10 @@ export const StepThree: React.FC = () => {
         ),
         workingCase,
       )
+
+      setWorkingCase({ ...workingCase })
     }
-  }, [autofill, formatMessage, workingCase])
+  }, [autofill, formatMessage, setWorkingCase, workingCase])
 
   return (
     <PageLayout

@@ -143,6 +143,9 @@ jobs:
         with:
           node-version: '14'
 
+      - name: Setup yarn
+        run: npm install -g yarn
+
       - name: Check node version
         run: |
           node -v
@@ -403,6 +406,13 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
+      
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Setup yarn
+        run: npm install -g yarn
 
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
@@ -472,6 +482,16 @@ jobs:
         with:
           node-version: '14'
         if: steps.gather.outcome == 'success'
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+        if: steps.gather.outcome == 'success'
+
+      - name: Setup yarn
+        run: npm install -g yarn
+        if: steps.gather.outcome == 'success'
+      
       - uses: actions/checkout@v2
         if: steps.gather.outcome == 'success'
       - name: Cache for generated files
