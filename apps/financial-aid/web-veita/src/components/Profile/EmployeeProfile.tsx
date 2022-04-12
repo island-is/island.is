@@ -17,11 +17,11 @@ import {
   Staff,
   StaffRole,
 } from '@island.is/financial-aid/shared/lib'
-import { MultiSelection } from '@island.is/financial-aid-web/veita/src/components'
+import { MultiSelectionMunicipality } from '@island.is/financial-aid-web/veita/src/components'
 
 import { useStaff } from '@island.is/financial-aid-web/veita/src/utils/useStaff'
 import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
-import { CreateUpdateStaff } from '../MultiSelection/MultiSelection'
+import { CreateUpdateStaff } from '@island.is/financial-aid-web/veita/src/components/MultiSelection/MultiSelectionMunicipality'
 
 import cn from 'classnames'
 import * as styles from './Profile.css'
@@ -215,8 +215,12 @@ const EmployeeProfile = ({ user }: EmployeeProfileProps) => {
             marginBottom={[3, 3, 5]}
           >
             <Box display="block" marginTop={3} marginBottom={[3, 3, 5]}>
-              <MultiSelection
-                selectionUpdate={(value: string, type: 'add' | 'remove') => {
+              <MultiSelectionMunicipality
+                selectionUpdate={(
+                  value: string,
+                  label: string,
+                  type: 'add' | 'remove',
+                ) => {
                   if (type === 'add') {
                     setState({
                       ...state,
