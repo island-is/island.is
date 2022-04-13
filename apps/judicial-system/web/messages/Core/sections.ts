@@ -2,6 +2,7 @@ import { CaseType } from '@island.is/judicial-system/types'
 import { defineMessages } from 'react-intl'
 
 export const sections = {
+  // TODO: remove custodyAndTravelBanProsecutorSection, it's renamed to restrictionCaseProsecutorSection
   custodyAndTravelBanProsecutorSection: defineMessages({
     custodyTitle: {
       id:
@@ -51,6 +52,50 @@ export const sections = {
       defaultMessage: 'Yfirlit kröfu',
       description:
         'Notaður sem texti fyrir Yfirlit kröfu skref í hliðarstiku í gæslu- og farbannsmálum hjá sækjendum',
+    },
+  }),
+  restrictionCaseProsecutorSection: defineMessages({
+    caseTitle: {
+      id:
+        'judicial.system.core:sections.restriction_case_prosecutor_section.case_title',
+      defaultMessage: `Krafa um {caseType, select, ${CaseType.ADMISSION_TO_FACILITY} {vistun á viðeigandi stofnun} ${CaseType.TRAVEL_BAN} {farbann} other {gæsluvarðhald}}`,
+      description:
+        'Notaður sem titill í hliðarstiku í gæslu-, farbanns- og vistunarmálum hjá sækjendum',
+    },
+    hearingArrangements: {
+      id:
+        'judicial.system.core:sections.restriction_case_prosecutor_section.hearing_arrangements',
+      defaultMessage: 'Óskir um fyrirtöku',
+      description:
+        'Notaður sem texti fyrir Óskir um fyrirtöku skref í hliðarstiku í gæslu- og farbannsmálum hjá sækjendum',
+    },
+    policeDemands: {
+      id:
+        'judicial.system.core:sections.restriction_case_prosecutor_section.police_demands',
+      defaultMessage: 'Dómkröfur og lagagrundvöllur',
+      description:
+        'Notaður sem texti fyrir Dómkröfur og lagagrundvöllur skref í hliðarstiku í gæslu- og farbannsmálum hjá sækjendum',
+    },
+    policeReport: {
+      id:
+        'judicial.system.core:sections.restriction_case_prosecutor_section.police_report',
+      defaultMessage: 'Greinargerð',
+      description:
+        'Notaður sem texti fyrir Greinargerð skref í hliðarstiku í gæslu- og farbannsmálum hjá sækjendum',
+    },
+    caseFiles: {
+      id:
+        'judicial.system.core:sections.restriction_case_prosecutor_section.case_files',
+      defaultMessage: 'Rannsóknargögn',
+      description:
+        'Notaður sem texti fyrir Rannsóknargögn skref í hliðarstiku í gæslu- og farbannsmálum hjá sækjendum',
+    },
+    overview: {
+      id:
+        'judicial.system.core:sections.restriction_case_prosecutor_section.overview',
+      defaultMessage: 'Yfirlit kröfu',
+      description:
+        'Notaður sem texti fyrir Yfirlit kröfu skref í hliðarstiku í gæslu-, vinstunar- og farbannsmálum hjá sækjendum',
     },
   }),
   investigationCaseProsecutorSection: defineMessages({
