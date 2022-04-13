@@ -1,15 +1,7 @@
 import React, { useState } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import {
-  ActionCard,
-  Box,
-  Button,
-  Hidden,
-  Tag,
-  Text,
-} from '@island.is/island-ui/core'
-import { Link, useHistory } from 'react-router-dom'
-import * as styles from './PassportLicense.css'
+import { ActionCard } from '@island.is/island-ui/core'
+import { useHistory } from 'react-router-dom'
 import { getExpiresIn, toDate } from '../../utils/dateUtils'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import { m } from '../../lib/messages'
@@ -38,7 +30,6 @@ export const PassportLicense = ({
         ? ServicePortalPath.LicensesChildrenPassportDetail.replace(':id', id)
         : ServicePortalPath.LicensesPassportDetail.replace(':id', id),
     )
-  console.log(expiresIn)
   return (
     <ActionCard
       heading={children ? name || '' : formatMessage(m.passportCardTitle)}
