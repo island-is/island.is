@@ -33,8 +33,6 @@ outputs:
     value: ${{ steps.computed_outputs.outputs.success }}
   cache-hit:
     value: ${{ steps.computed_outputs.outputs.cache-hit }}
-
-   
 runs:
   using: 'composite'
   steps:

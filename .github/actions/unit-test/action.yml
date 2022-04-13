@@ -23,7 +23,7 @@ runs:
       run: |
         echo "CODECOV_REV=v0.1.18" >> $GITHUB_ENV
       shell: bash
-
+    
     - name: Setup yarn
       run: npm install -g yarn
       shell: bash
@@ -31,7 +31,7 @@ runs:
     - uses: actions/setup-node@v2
       with:
         node-version: '14'
-
+    
     - name: Setup yarn
       run: npm install -g yarn
       shell: bash
@@ -51,7 +51,6 @@ runs:
         key: ${{ runner.os }}-codeconv-${{ env.CODECOV_REV }}
 
     - name: Fetch codecov uploader
-      shell: bash
       if: steps.codecov-cache.outputs.cache-hit != 'true'
       run: |
         # Importing pgp keys
@@ -65,10 +64,9 @@ runs:
         gpgv codecov.SHA256SUM.sig codecov.SHA256SUM
         shasum -a 256 -c codecov.SHA256SUM
         rm codecov.SHA256SUM.sig codecov.SHA256SUM
-
+      shell: bash
 
     - name: Install codecov uploader
-      shell: bash
       id: codecov
       run: |
         chmod +x codecov
@@ -77,7 +75,7 @@ runs:
         mkdir -p "$HOME/.local/bin"
         cp codecov "$HOME/.local/bin/codecov"
         echo "$HOME/.local/bin" >> $GITHUB_PATH
-
+      shell: bash
 
     - name: Upload coverage reports
       run: ./scripts/ci/run-in-parallel.sh 50_upload-coverage || true # If for some reason codecov is down, we can still build. This is not a perfect solution though.
