@@ -52,18 +52,44 @@ export const ApplicationsOverviewProcessed = () => {
     setFilters(filtersCopy)
   }
 
-  const setQuery = (page: number, clearFilters?: boolean) => {
+  const onFilterClear = () => {
+    setFilters({ selectedMonths: [], selectedStates: [] })
+    setCurrentPage(1)
+    filter(1, { selectedMonths: [], selectedStates: [] })
+  }
+
+  const onFilterSave = () => {
+    setCurrentPage(1)
+    filter(1, filters)
+  }
+
+  const onPageChange = (page: number) => {
+    setCurrentPage(page)
+    filter(page, filters)
+  }
+
+  const filter = (page: number, searchFilters: Filters) => {
+    getApplications({
+      variables: {
+        input: {
+          states: searchFilters.selectedStates,
+          months: searchFilters.selectedMonths,
+          page: page,
+        },
+      },
+    })
+
     const query = new URLSearchParams()
-    query.append('month', clearFilters ? '' : filters.selectedMonths.join(','))
-    query.append('state', clearFilters ? '' : filters.selectedStates.join(','))
     query.append('page', page.toString())
 
-    router.push({ search: query.toString() })
-
-    setCurrentPage(page)
-    if (clearFilters) {
-      setFilters({ selectedMonths: [], selectedStates: [] })
+    if (searchFilters.selectedMonths.length > 0) {
+      query.append('month', filters.selectedMonths.join(','))
     }
+    if (searchFilters.selectedStates.length > 0) {
+      query.append('state', filters.selectedStates.join(','))
+    }
+
+    router.push({ search: query.toString() })
   }
 
   const [getApplications, { data, error }] = useLazyQuery<{
@@ -78,16 +104,8 @@ export const ApplicationsOverviewProcessed = () => {
     navigationItems[0]
 
   useEffect(() => {
-    getApplications({
-      variables: {
-        input: {
-          states: filters.selectedStates,
-          months: filters.selectedMonths,
-          page: currentPage,
-        },
-      },
-    })
-  }, [router.query])
+    filter(currentPage, filters)
+  }, [])
 
   return (
     <Box
@@ -107,8 +125,8 @@ export const ApplicationsOverviewProcessed = () => {
           selectedStates={filters.selectedStates}
           results={data?.filterApplications?.totalCount ?? 0}
           onChecked={onChecked}
-          onFilterClear={() => setQuery(1, true)}
-          onFilterSave={() => setQuery(1)}
+          onFilterClear={onFilterClear}
+          onFilterSave={onFilterSave}
         />
         {data?.filterApplications?.applications && (
           <ApplicationsTable
@@ -139,7 +157,7 @@ export const ApplicationsOverviewProcessed = () => {
             <Box
               cursor="pointer"
               className={className}
-              onClick={() => setQuery(page)}
+              onClick={() => onPageChange(page)}
             >
               {children}
             </Box>
