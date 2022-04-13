@@ -4,15 +4,7 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 import type { Case, UpdateCase } from '@island.is/judicial-system/types'
 
-import {
-  padTimeWithZero,
-  parseArray,
-  parseBoolean,
-  parseNull,
-  parseString,
-  parseTime,
-  replaceTabs,
-} from './formatters'
+import { padTimeWithZero, parseTime, replaceTabs } from './formatters'
 import { validate, Validation } from './validate'
 
 export const removeTabsValidateAndSet = (
@@ -165,7 +157,7 @@ export const validateAndSendToServer = (
   validateAndSetErrorMessage(validations, value, setErrorMessage)
 
   if (theCase.id !== '') {
-    updateCase(theCase.id, parseString(field, value))
+    updateCase(theCase.id, { [field]: value })
   }
 }
 
@@ -193,7 +185,7 @@ export const validateAndSendTimeToServer = (
     const dateMinutes = parseTime(currentValue, paddedTime)
 
     if (theCase.id !== '') {
-      updateCase(theCase.id, parseString(field, dateMinutes))
+      updateCase(theCase.id, { [field]: dateMinutes })
     }
   }
 }
@@ -210,12 +202,10 @@ export const setAndSendToServer = (
     [field]: value,
   })
   if (theCase.id !== '') {
-    if (typeof value === 'string') {
-      return updateCase(theCase.id, parseString(field, value))
-    } else if (typeof value === 'boolean') {
-      return updateCase(theCase.id, parseBoolean(field, value))
+    if (typeof value === 'string' || typeof value === 'boolean') {
+      return updateCase(theCase.id, { [field]: value })
     } else {
-      return updateCase(theCase.id, parseNull(field))
+      return updateCase(theCase.id, { [field]: null })
     }
   }
 }
@@ -243,7 +233,7 @@ export const setCheckboxAndSendToServer = (
   })
 
   if (theCase.id !== '') {
-    updateCase(theCase.id, parseArray(field, checks))
+    updateCase(theCase.id, { [field]: checks })
   }
 }
 

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FC, useState } from 'react'
 import { gql, useQuery, useMutation } from '@apollo/client'
 import { useParams, useHistory } from 'react-router-dom'
 import { useForm, FormProvider } from 'react-hook-form'
@@ -10,49 +10,37 @@ import {
   Text,
   Stack,
   Button,
-  Table as T,
   SkeletonLoader,
   Divider,
-  ModalBase,
   toast,
+  GridRow,
+  GridColumn,
+  Hidden,
+  AlertBanner,
 } from '@island.is/island-ui/core'
-import {
-  Query,
-  Mutation,
-  AuthCustomDelegation,
-  AuthApiScope,
-  AuthApiScopeGroup,
-} from '@island.is/api/schema'
+import { Query, Mutation, AuthCustomDelegation } from '@island.is/api/schema'
 import {
   IntroHeader,
   m as coreMessages,
   NotFound,
   ServicePortalPath,
 } from '@island.is/service-portal/core'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 
 import { AuthDelegationsQuery } from '../AccessControl'
-import { AccessItem } from './components'
+import { AccessItem, AccessModal } from '../../components'
 
 import * as styles from './Access.css'
-
-const GROUP_PREFIX = 'group'
-const SCOPE_PREFIX = 'scope'
-
-type ApiScope = AuthApiScope & { model: string }
-type ApiScopeGroup = AuthApiScopeGroup & { model: string }
-export type Scope = ApiScope | ApiScopeGroup
-interface GroupedApiScopes {
-  [_: string]: ApiScope[]
-}
-
-type AccessForm = {
-  [SCOPE_PREFIX]: {
-    name: string[]
-    validTo?: string
-    type: string
-  }[]
-}
+import {
+  AccessForm,
+  ApiScopeGroup,
+  GroupedApiScopes,
+  GROUP_PREFIX,
+  Scope,
+  ScopeTag,
+  SCOPE_PREFIX,
+} from '../../utils/types'
+import { servicePortalSaveAccessControl } from '@island.is/plausible'
 
 const AuthApiScopesQuery = gql`
   query AuthApiScopesQuery {
@@ -88,6 +76,7 @@ const AuthDelegationQuery = gql`
           name
           type
           validTo
+          displayName
         }
       }
     }
@@ -106,6 +95,7 @@ const UpdateAuthDelegationMutation = gql`
           id
           name
           validTo
+          displayName
         }
       }
     }
@@ -118,10 +108,14 @@ const DeleteAuthDelegationMutation = gql`
   }
 `
 
-function Access() {
+const Access: FC = () => {
+  useNamespaces('sp.settings-access-control')
+
   const { formatMessage } = useLocale()
   const { delegationId }: { delegationId: string } = useParams()
   const history = useHistory()
+  const [closeModalOpen, setCloseModalOpen] = useState(false)
+  const [saveModalOpen, setSaveModalOpen] = useState(false)
 
   const onError = () => {
     toast.error(formatMessage(coreMessages.somethingWrong))
@@ -149,14 +143,15 @@ function Access() {
     },
   )
   const hookFormData = useForm<AccessForm>()
-  const { handleSubmit } = hookFormData
-
+  const { handleSubmit, getValues } = hookFormData
   const { authApiScopes } = apiScopeData || {}
   const authDelegation = (delegationData || {})
     .authDelegation as AuthCustomDelegation
   const loading = apiScopeLoading || delegationLoading
+  const [formError, setFormError] = useState<boolean>(false)
 
   const onSubmit = handleSubmit(async (model: AccessForm) => {
+    formError && setFormError(false)
     const scopes = model[SCOPE_PREFIX].filter(
       (scope) => scope.name?.length > 0,
     ).map((scope) => ({
@@ -164,26 +159,36 @@ function Access() {
       type: authApiScopes?.find((apiScope) => apiScope.name === scope.name[0])
         ?.type,
       name: scope.name[0],
+      displayName: scope.displayName,
     }))
+
+    const err = getValues()?.[SCOPE_PREFIX]?.find(
+      (x) => x.name.length > 0 && !x.validTo,
+    )
+
+    if (err) {
+      setSaveModalOpen(false)
+      setFormError(true)
+      return
+    }
+
     const { data, errors } = await updateDelegation({
       variables: { input: { delegationId, scopes } },
     })
-    if (data && !errors) {
-      toast.success(
-        formatMessage({
-          id: 'service.portal.settings.accessControl:access-update-success',
-          defaultMessage: 'Aðgangur uppfærður!',
-        }),
+    if (data && !errors && !err) {
+      history.push(ServicePortalPath.SettingsAccessControl)
+      servicePortalSaveAccessControl(
+        ServicePortalPath.SettingsAccessControlGrant,
       )
     }
   })
 
-  const onDelete = async (closeModal: () => void) => {
+  const onDelete = async () => {
     const { data, errors } = await deleteDelegation({
       variables: { input: { delegationId } },
     })
     if (data && !errors) {
-      closeModal()
+      setCloseModalOpen(false)
       history.push(ServicePortalPath.SettingsAccessControl)
     }
   }
@@ -209,176 +214,182 @@ function Access() {
     {} as GroupedApiScopes,
   )
 
+  const scopes = getValues()?.[SCOPE_PREFIX]?.map((item) => {
+    if (item.name && item.validTo)
+      return {
+        displayName: authApiScopes?.find((x) => x.name === item.name[0])
+          ?.displayName,
+        validTo: item.validTo,
+      }
+  })
+
   return (
     <Box>
       <IntroHeader
         title={authDelegation?.to?.name || ''}
         intro={defineMessage({
-          id: 'service.portal.settings.accessControl:access-intro',
+          id: 'sp.settings-access-control:access-intro',
           defaultMessage:
-            'Reyndu að lámarka þau réttindi sem þú vilt veita viðkomandi eins mikið og mögulegt er.',
+            'Reyndu að lágmarka þau réttindi sem þú vilt veita viðkomandi eins mikið og mögulegt er.',
         })}
       />
+      {formError && (
+        <Box paddingBottom={3}>
+          <AlertBanner
+            description={formatMessage({
+              id: 'sp.settings-access-control:date-error',
+              defaultMessage:
+                'Nauðsynlegt er að velja dagsetningu fyrir hvert umboð',
+            })}
+            variant="error"
+          />
+        </Box>
+      )}
       <FormProvider {...hookFormData}>
         <form onSubmit={onSubmit}>
-          <Box marginBottom={3} display="flex" justifyContent="flexEnd">
-            <Inline space={3}>
+          <Box marginBottom={[3, 3, 4]} display="flex" justifyContent="flexEnd">
+            <Inline space={1}>
               {authDelegation?.scopes.length > 0 && (
-                <ModalBase
-                  baseId="authDelegation-remove"
-                  className={styles.modal}
-                  disclosure={
-                    <Button
-                      variant="ghost"
-                      colorScheme="destructive"
-                      size="small"
-                      icon="close"
-                    >
-                      {formatMessage({
-                        id:
-                          'service.portal.settings.accessControl:access-remove-delegation',
-                        defaultMessage: 'Eyða umboði',
-                      })}
-                    </Button>
-                  }
-                >
-                  {({ closeModal }: { closeModal: () => void }) => (
-                    <Box
-                      position="relative"
-                      background="white"
-                      borderRadius="large"
-                      paddingTop={[3, 6, 10]}
-                      paddingBottom={[3, 6]}
-                      paddingX={[3, 6, 12]}
-                    >
-                      <Box className={styles.closeButton}>
-                        <Button
-                          circle
-                          colorScheme="negative"
-                          icon="close"
-                          onClick={() => {
-                            closeModal()
-                          }}
-                          size="large"
-                        />
-                      </Box>
-                      <Stack space={10}>
-                        <Box marginRight={4}>
-                          <Stack space={1}>
-                            <Text variant="h1">
-                              {formatMessage({
-                                id:
-                                  'service.portal.settings.accessControl:access-remove-modal-title',
-                                defaultMessage:
-                                  'Þú ert að fara að eyða aðgangi.',
-                              })}
-                            </Text>
-                            <Text>
-                              {formatMessage({
-                                id:
-                                  'service.portal.settings.accessControl:access-remove-modal-content',
-                                defaultMessage:
-                                  'Ertu viss um að þú viljir eyða þessum aðgangi?',
-                              })}
-                            </Text>
-                          </Stack>
-                        </Box>
-                        <Box display="flex" justifyContent="spaceBetween">
-                          <Button onClick={closeModal} variant="ghost">
-                            {formatMessage({
-                              id:
-                                'service.portal.settings.accessControl:access-remove-modal-cancel',
-                              defaultMessage: 'Hætta við',
-                            })}
-                          </Button>
-                          <Button
-                            onClick={() => onDelete(closeModal)}
-                            loading={deleteLoading}
-                            colorScheme="destructive"
-                          >
-                            {formatMessage({
-                              id:
-                                'service.portal.settings.accessControl:access-remove-modal-confirm',
-                              defaultMessage: 'Eyða',
-                            })}
-                          </Button>
-                        </Box>
-                      </Stack>
-                    </Box>
-                  )}
-                </ModalBase>
+                <>
+                  <Button
+                    variant="ghost"
+                    colorScheme="destructive"
+                    size="small"
+                    icon="close"
+                    onClick={() => setCloseModalOpen(true)}
+                  >
+                    {formatMessage({
+                      id: 'sp.settings-access-control:access-remove-delegation',
+                      defaultMessage: 'Eyða umboði',
+                    })}
+                  </Button>
+
+                  <AccessModal
+                    id="access-delete-modal"
+                    isVisible={closeModalOpen}
+                    title={formatMessage({
+                      id:
+                        'sp.settings-access-control:access-remove-modal-content',
+                      defaultMessage:
+                        'Ertu viss um að þú viljir eyða þessum aðgangi?',
+                    })}
+                    text={`${authDelegation?.to?.name} mun missa umboð fyrir eftirfarandi:`}
+                    scopes={scopes as ScopeTag[]}
+                    onClose={() => setCloseModalOpen(false)}
+                    onCloseButtonText={formatMessage({
+                      id:
+                        'sp.settings-access-control:access-remove-modal-cancel',
+                      defaultMessage: 'Hætta við',
+                    })}
+                    onSubmitColor="red"
+                    onSubmit={() => onDelete()}
+                    onSubmitButtonText={formatMessage({
+                      id:
+                        'sp.settings-access-control:access-remove-modal-confirm',
+                      defaultMessage: 'Já, ég vil eyða umboði',
+                    })}
+                  />
+                </>
               )}
               <Button
+                variant="primary"
                 size="small"
                 loading={updateLoading}
-                type="submit"
+                onClick={() => setSaveModalOpen(true)}
                 icon="checkmark"
               >
                 {formatMessage({
-                  id: 'service.portal.settings.accessControl:access-save',
+                  id: 'sp.settings-access-control:access-save',
                   defaultMessage: 'Vista aðgang',
                 })}
               </Button>
+              <AccessModal
+                id="access-save-modal"
+                isVisible={saveModalOpen}
+                title={formatMessage({
+                  id: 'sp.settings-access-control:access-save-modal-content',
+                  defaultMessage: 'Ertu viss um að þú viljir veita umboðið?',
+                })}
+                //
+                text={`${authDelegation?.to?.name}  mun fá umboð fyrir eftirfarandi:`}
+                scopes={scopes as ScopeTag[]}
+                onClose={() => setSaveModalOpen(false)}
+                onCloseButtonText={formatMessage({
+                  id: 'sp.settings-access-control:access-save-modal-cancel',
+                  defaultMessage: 'Hætta við',
+                })}
+                onSubmitColor="blue"
+                onSubmit={() => onSubmit()}
+                onSubmitButtonText={formatMessage({
+                  id: 'sp.settings-access-control:access-save-modal-confirm',
+                  defaultMessage: 'Já, ég vil vista umboðið',
+                })}
+              />
             </Inline>
           </Box>
-
-          <div className={styles.datePickerFix}>
-            <T.Table>
-              <T.Head>
-                <T.Row>
-                  <T.HeadData>
-                    <Text variant="small" color="blue600">
-                      {formatMessage({
-                        id:
-                          'service.portal.settings.accessControl:access-access',
-                        defaultMessage: 'Aðgangur',
-                      })}
-                    </Text>
-                  </T.HeadData>
-                  <T.HeadData>
-                    <Text variant="small" color="blue600">
-                      {formatMessage({
-                        id:
-                          'service.portal.settings.accessControl:access-explanation',
-                        defaultMessage: 'Útskýring',
-                      })}
-                    </Text>
-                  </T.HeadData>
-                  <T.HeadData>
-                    <Text variant="small" color="blue600">
-                      {formatMessage({
-                        id:
-                          'service.portal.settings.accessControl:access-valid-to',
-                        defaultMessage: 'Í gildi til',
-                      })}
-                    </Text>
-                  </T.HeadData>
-                </T.Row>
-              </T.Head>
-              <T.Body>
-                {!loading &&
-                  Object.keys(groupedApiScopes).map((key, index) => {
-                    const apiScopes = groupedApiScopes[key]
-                    const accessItems: Scope[] = key.startsWith(GROUP_PREFIX)
-                      ? [
-                          {
-                            ...apiScopes[0].group,
-                            model: `${GROUP_PREFIX}.${index}`,
-                          } as ApiScopeGroup,
-                          ...apiScopes,
-                        ]
-                      : apiScopes
-                    return (
-                      <AccessItem
-                        apiScopes={accessItems}
-                        authDelegation={authDelegation}
-                        key={index}
-                      />
-                    )
-                  })}
-              </T.Body>
-            </T.Table>
-          </div>
+          <Box>
+            <Hidden below="md">
+              <GridRow className={styles.row}>
+                <GridColumn
+                  span={['12/12', '12/12', '3/12']}
+                  paddingBottom={2}
+                  paddingTop={2}
+                  className={styles.column}
+                >
+                  <Text variant="medium" fontWeight="semiBold">
+                    {formatMessage({
+                      id: 'sp.settings-access-control:access-access',
+                      defaultMessage: 'Aðgangur',
+                    })}
+                  </Text>
+                </GridColumn>
+                <GridColumn
+                  span={['12/12', '12/12', '4/12', '5/12']}
+                  className={styles.column}
+                >
+                  <Text variant="medium" fontWeight="semiBold">
+                    {formatMessage({
+                      id: 'sp.settings-access-control:access-explanation',
+                      defaultMessage: 'Útskýring',
+                    })}
+                  </Text>
+                </GridColumn>
+                <GridColumn
+                  span={['12/12', '12/12', '5/12', '4/12']}
+                  className={styles.column}
+                >
+                  <Text variant="medium" fontWeight="semiBold">
+                    {formatMessage({
+                      id: 'sp.settings-access-control:access-valid-to',
+                      defaultMessage: 'Í gildi til',
+                    })}
+                  </Text>
+                </GridColumn>
+              </GridRow>
+            </Hidden>
+            <Box>
+              {!loading &&
+                Object.keys(groupedApiScopes).map((key, index) => {
+                  const apiScopes = groupedApiScopes[key]
+                  const accessItems: Scope[] = key.startsWith(GROUP_PREFIX)
+                    ? [
+                        {
+                          ...apiScopes[0].group,
+                          model: `${GROUP_PREFIX}.${index}`,
+                        } as ApiScopeGroup,
+                        ...apiScopes,
+                      ]
+                    : apiScopes
+                  return (
+                    <AccessItem
+                      apiScopes={accessItems}
+                      authDelegation={authDelegation}
+                      key={index}
+                    />
+                  )
+                })}
+            </Box>
+          </Box>
           {loading && (
             <Box marginTop={3}>
               <Stack space={3}>

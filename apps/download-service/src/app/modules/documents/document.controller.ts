@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   Header,
-  Inject,
   Post,
   Res,
   Param,
@@ -20,6 +19,7 @@ import {
   Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
+import { AuditService } from '@island.is/nest/audit'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(DocumentsScope.main)
@@ -27,8 +27,8 @@ import {
 @Controller('electronic-documents')
 export class DocumentController {
   constructor(
-    @Inject(DocumentClient)
     private readonly documentClient: DocumentClient,
+    private readonly auditService: AuditService,
   ) {}
 
   @Post('/:pdfId')
@@ -52,6 +52,12 @@ export class DocumentController {
     if (!rawDocumentDTO || !rawDocumentDTO.content) {
       return res.end()
     }
+
+    this.auditService.audit({
+      action: 'getDocumentPdf',
+      auth: user,
+      resources: pdfId,
+    })
 
     const buffer = Buffer.from(rawDocumentDTO.content, 'base64')
 

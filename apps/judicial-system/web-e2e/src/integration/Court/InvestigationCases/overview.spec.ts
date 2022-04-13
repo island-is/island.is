@@ -1,18 +1,22 @@
 import faker from 'faker'
 
-import { Case, CaseState } from '@island.is/judicial-system/types'
 import {
-  investigationCaseAccusedAddress,
-  investigationCaseAccusedName,
-  makeInvestigationCase,
-  makeProsecutor,
-} from '@island.is/judicial-system/formatters'
+  Case,
+  CaseState,
+  SessionArrangements,
+} from '@island.is/judicial-system/types'
 import {
   IC_COURT_HEARING_ARRANGEMENTS_ROUTE,
   IC_OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
 
-import { intercept } from '../../../utils'
+import {
+  investigationCaseAccusedAddress,
+  investigationCaseAccusedName,
+  makeInvestigationCase,
+  makeProsecutor,
+  intercept,
+} from '../../../utils'
 
 describe(`${IC_OVERVIEW_ROUTE}/:id`, () => {
   const demands = faker.lorem.paragraph()
@@ -45,6 +49,7 @@ describe(`${IC_OVERVIEW_ROUTE}/:id`, () => {
       creatingProsecutor: makeProsecutor(),
       requestedCourtDate: '2020-09-20T19:50:08.033Z',
       state: CaseState.RECEIVED,
+      sessionArrangements: SessionArrangements.ALL_PRESENT,
     }
 
     cy.stubAPIResponses()
@@ -57,6 +62,7 @@ describe(`${IC_OVERVIEW_ROUTE}/:id`, () => {
     cy.getByTestid('infoCard').contains(
       `${investigationCaseAccusedName}, kt. 000000-0000, ${investigationCaseAccusedAddress}`,
     )
+    cy.getByTestid('infoCard').contains('Verjandi')
     cy.getByTestid('infoCard').contains(
       `${defenderName}, ${defenderEmail}, s. ${defenderPhoneNumber}`,
     )

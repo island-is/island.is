@@ -4,7 +4,7 @@ import { useIntl } from 'react-intl'
 import { Box, Text } from '@island.is/island-ui/core'
 import { core } from '@island.is/judicial-system-web/messages'
 import { capitalize } from '@island.is/judicial-system/formatters'
-import { Case, UserRole } from '@island.is/judicial-system/types'
+import { Case, courtRoles, UserRole } from '@island.is/judicial-system/types'
 
 interface Props {
   workingCase: Case
@@ -37,15 +37,16 @@ const CaseInfo: React.FC<Props> = ({
       <Box marginBottom={1}>
         <Text variant="h2" as="h2">
           {formatMessage(core.caseNumber, {
-            caseNumber:
-              userRole === UserRole.JUDGE
+            caseNumber: userRole
+              ? courtRoles.includes(userRole)
                 ? workingCase.courtCaseNumber
-                : workingCase.policeCaseNumber,
+                : workingCase.policeCaseNumber
+              : '',
           })}
         </Text>
       </Box>
       {userRole ? (
-        userRole === UserRole.JUDGE ? (
+        courtRoles.includes(userRole) ? (
           <>
             <Text fontWeight="semiBold">{`${formatMessage(core.prosecutor)}: ${
               workingCase.prosecutor?.institution?.name

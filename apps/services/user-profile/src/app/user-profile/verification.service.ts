@@ -224,7 +224,7 @@ export class VerificationService {
             {
               component: 'Image',
               context: {
-                src: join(__dirname, `./assets/images/islandis.jpg`),
+                src: join(__dirname, `./assets/images/logois.jpg`),
                 alt: 'Ísland.is logo',
               },
             },
@@ -244,7 +244,7 @@ export class VerificationService {
               component: 'Copy',
               context: {
                 copy:
-                  'Þetta er öryggiskóðinn þinn til staðfestingar á netfangi. Hann eyðist sjálfkrafa eftir 5mín, eftir þann tíma þarftu að láta senda nýjan í sama ferli og þú varst að fara gegnum.',
+                  'Þetta er öryggiskóðinn þinn til staðfestingar á netfangi. Hann eyðist sjálfkrafa eftir 5 mínútur, eftir þann tíma þarftu að láta senda nýjan í sama ferli og þú varst að fara gegnum.',
               },
             },
             {

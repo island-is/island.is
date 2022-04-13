@@ -11,7 +11,7 @@ import {
   Scopes,
 } from '@island.is/auth-nest-tools'
 import { FinanceClientService } from '@island.is/clients/finance'
-import { Audit } from '@island.is/nest/audit'
+import { Audit, AuditService } from '@island.is/nest/audit'
 import { DownloadServiceConfig } from '@island.is/nest/config'
 import type { ConfigType } from '@island.is/nest/config'
 
@@ -25,6 +25,12 @@ import { FinanceDocumentModel } from './models/financeDocument.model'
 import { CustomerTapsControlModel } from './models/customerTapsControl.model'
 import { DocumentsListModel } from './models/documentsList.model'
 import { CustomerRecords } from './models/customerRecords.model'
+import {
+  PaymentScheduleDetailModel,
+  PaymentScheduleModel,
+} from './models/paymentSchedule.model'
+import { DebtStatusModel } from './models/debtStatus.model'
+import { GetFinancePaymentScheduleInput } from './dto/getFinancePaymentSchedule.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.financeOverview)
@@ -37,6 +43,7 @@ export class FinanceResolver {
     private readonly downloadServiceConfig: ConfigType<
       typeof DownloadServiceConfig
     >,
+    private readonly auditService: AuditService,
   ) {}
 
   @Query(() => graphqlTypeJson)
@@ -89,7 +96,6 @@ export class FinanceResolver {
 
   @Query(() => DocumentsListModel)
   @Scopes(ApiScope.financeOverview, ApiScope.financeSalary)
-  @Audit()
   async getDocumentsList(
     @CurrentUser() user: User,
     @Args('input') input: GetDocumentsListInput,
@@ -108,6 +114,18 @@ export class FinanceResolver {
       input.listPath,
       user,
     )
+
+    this.auditService.audit({
+      auth: user,
+      namespace: '@island.is/api/finance',
+      action: 'getDocumentList',
+      meta: {
+        path: input.listPath,
+        dateFrom: input.dayFrom,
+        dateTo: input.dayTo,
+      },
+    })
+
     return {
       ...documentsList,
       downloadServiceURL: `${this.downloadServiceConfig.baseUrl}/download/v1/finance/`,
@@ -115,15 +133,22 @@ export class FinanceResolver {
   }
 
   @Query(() => FinanceDocumentModel, { nullable: true })
-  @Audit()
   async getFinanceDocument(
     @CurrentUser() user: User,
     @Args('input') input: GetFinanceDocumentInput,
   ) {
-    return this.financeService.getFinanceDocument(
-      user.nationalId,
-      input.documentID,
-      user,
+    return this.auditService.auditPromise(
+      {
+        auth: user,
+        namespace: '@island.is/api/finance',
+        action: 'getFinanceDocument',
+        resources: input.documentID,
+      },
+      this.financeService.getFinanceDocument(
+        user.nationalId,
+        input.documentID,
+        user,
+      ),
     )
   }
 
@@ -144,5 +169,49 @@ export class FinanceResolver {
   @Audit()
   async getCustomerTapControl(@CurrentUser() user: User) {
     return this.financeService.getCustomerTapControl(user.nationalId, user)
+  }
+
+  @Query(() => PaymentScheduleModel, { nullable: true })
+  @Audit()
+  async getPaymentSchedule(@CurrentUser() user: User) {
+    const res = await this.financeService.getPaymentSchedules(
+      user.nationalId,
+      user,
+    )
+    if (res?.myPaymentSchedule.paymentSchedules) {
+      const data = res?.myPaymentSchedule.paymentSchedules.map((item) => {
+        return {
+          ...item,
+          downloadServiceURL: `${this.downloadServiceConfig.baseUrl}/download/v1/finance/${item.documentID}`,
+        }
+      })
+
+      return {
+        myPaymentSchedule: {
+          nationalId: res?.myPaymentSchedule.nationalId,
+          paymentSchedules: data,
+        },
+      }
+    }
+    return null
+  }
+
+  @Query(() => graphqlTypeJson)
+  @Audit()
+  async getDebtStatus(@CurrentUser() user: User) {
+    return this.financeService.getDebtStatus(user.nationalId, user)
+  }
+
+  @Query(() => PaymentScheduleDetailModel)
+  @Audit()
+  async getPaymentScheduleById(
+    @CurrentUser() user: User,
+    @Args('input') input: GetFinancePaymentScheduleInput,
+  ) {
+    return this.financeService.getPaymentScheduleById(
+      user.nationalId,
+      input.scheduleNumber,
+      user,
+    )
   }
 }

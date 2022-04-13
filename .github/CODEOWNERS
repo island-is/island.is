@@ -61,18 +61,16 @@
 /libs/message-queue/                                                                                @island-is/juni
 /libs/application/templates/example-payment/                                                        @island-is/juni
 /libs/application/template-api-modules/src/lib/modules/templates/example-payment-actions            @island-is/juni
+/libs/application/templates/driving-school-confirmation/                                            @island-is/juni
+/libs/application/templates/driving-instructor-registrations/                                       @island-is/juni
+/libs/api/domains/driving-license-book/                                                             @island-is/juni 
+/libs/clients/driving-license-book/                                                                 @island-is/juni  
 
 /libs/clients/auth-public-api/                                                                      @island-is/aranja
 /libs/clients/middlewares/                                                                          @island-is/aranja
 /libs/service-portal/settings/access-control                                                        @island-is/aranja
 /libs/clients/vmst/                                                                                 @island-is/aranja
 /libs/api/domains/directorate-of-labour/                                                            @island-is/aranja
-
-/apps/application-system/api/src/app/modules/application/files/                                     @island-is/kolibri-modern-family
-/libs/application/templates/family-matters/                                                         @island-is/kolibri-modern-family
-/libs/application/template-api-modules/src/lib/modules/templates/children-residence-change          @island-is/kolibri-modern-family
-/libs/clients/national-registry/v2/                                                                 @island-is/kolibri-modern-family
-/libs/api/domains/national-registry-x-road/                                                         @island-is/kolibri-modern-family
 
 /apps/judicial-system/                                                                              @island-is/kolibri-justice-league
 /libs/judicial-system/                                                                              @island-is/kolibri-justice-league
@@ -157,12 +155,14 @@ infra/                                                                          
 
 /apps/skilavottord/                                                                                 @island-is/deloitte @island-is/vice-versa
 /libs/skilavottord/                                                                                 @island-is/deloitte @island-is/vice-versa
+/libs/application/templates/parental-leave/                                                         @island-is/deloitte
+/libs/application/template-api-modules/src/lib/modules/templates/parental-leave/                    @island-is/deloitte
 
-/apps/services/auth-api/                                                                            @island-is/fuglar
-/apps/services/auth-admin-api/                                                                      @island-is/fuglar
+/apps/services/auth-api/                                                                            @island-is/fuglar @island-is/aranja
+/apps/services/auth-admin-api/                                                                      @island-is/fuglar @island-is/aranja
 /apps/services/auth-public-api/                                                                     @island-is/fuglar @island-is/aranja
-/apps/auth-admin-web/                                                                               @island-is/fuglar
-/apps/auth-admin-web-e2e/                                                                           @island-is/fuglar
+/apps/auth-admin-web/                                                                               @island-is/fuglar @island-is/aranja
+/apps/auth-admin-web-e2e/                                                                           @island-is/fuglar @island-is/aranja
 /libs/auth-api-lib/                                                                                 @island-is/fuglar @island-is/aranja
 /libs/auth-nest-tools/                                                                              @island-is/fuglar @island-is/aranja
 

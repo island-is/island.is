@@ -8,7 +8,7 @@ import {
   formatNationalId,
 } from '@island.is/judicial-system/formatters'
 import { FormatMessage } from '@island.is/cms-translations'
-import { Gender } from '@island.is/judicial-system/types'
+import { Gender, SessionArrangements } from '@island.is/judicial-system/types'
 
 import { environment } from '../../environments'
 import { Case } from '../modules/case'
@@ -131,7 +131,9 @@ function constructCustodyNoticePdf(
   addNormalText(doc, 'Verjandi: ', 'Helvetica-Bold', true)
   addNormalText(
     doc,
-    theCase.defenderName && !theCase.defenderIsSpokesperson
+    theCase.defenderName &&
+      theCase.sessionArrangements !==
+        SessionArrangements.ALL_PRESENT_SPOKESPERSON
       ? `${theCase.defenderName}${
           theCase.defenderPhoneNumber
             ? `, s. ${theCase.defenderPhoneNumber}`

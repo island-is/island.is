@@ -1,5 +1,4 @@
 export * from './DisposableIncome/DisposableIncome'
-export * from './EmployerInfo/EmployerIdField'
 export * from './EmployerInfo/EmployerInfo'
 export * from './EmployerInfo/EmployerInfoDescription'
 export * from './FormConclusion'

@@ -34,6 +34,7 @@ import {
   SupportCategory,
   Organization,
   QueryGetOrganizationsArgs,
+  SearchableTags,
 } from '@island.is/web/graphql/schema'
 import {
   GET_NAMESPACE_QUERY,
@@ -43,6 +44,7 @@ import {
   SERVICE_WEB_FORMS_MUTATION,
 } from '../../queries'
 import { Screen } from '../../../types'
+import { CustomNextError } from '@island.is/web/units/errors'
 
 interface ServiceWebFormsPageProps {
   syslumenn?: Organizations['items']
@@ -96,6 +98,23 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
       : ''
   }${headerTitle}`
 
+  const breadcrumbItems = [
+    {
+      title: n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is'),
+      typename: 'serviceweb',
+      href: linkResolver('serviceweb').href,
+    },
+    {
+      title: organization.title,
+      typename: 'serviceweb',
+      href: `${linkResolver('serviceweb').href}/${institutionSlug}`,
+    },
+    {
+      title: 'Hafðu samband',
+      isTag: true,
+    },
+  ]
+
   return (
     <ServiceWebWrapper
       pageTitle={pageTitle}
@@ -117,27 +136,7 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
                   <GridColumn span="12/12" paddingBottom={[2, 2, 4]}>
                     <Box display={['none', 'none', 'block']} printHidden>
                       <Breadcrumbs
-                        items={[
-                          {
-                            title: n(
-                              'assistanceForIslandIs',
-                              'Aðstoð fyrir Ísland.is',
-                            ),
-                            typename: 'serviceweb',
-                            href: linkResolver('serviceweb').href,
-                          },
-                          {
-                            title: organization.title,
-                            typename: 'serviceweb',
-                            href: `${
-                              linkResolver('serviceweb').href
-                            }/${institutionSlug}`,
-                          },
-                          {
-                            title: 'Hafðu samband',
-                            isTag: true,
-                          },
-                        ]}
+                        items={breadcrumbItems}
                         renderLink={(link, { href }) => {
                           return (
                             <NextLink href={href} passHref>
@@ -284,6 +283,10 @@ ServiceWebFormsPage.getInitialProps = async ({
           : {},
       ),
   ])
+
+  if (slug === 'mannaudstorg') {
+    throw new CustomNextError(404, 'Mannaudstorg does not have a contact page')
+  }
 
   return {
     syslumenn: organizations?.data?.getOrganizations?.items?.filter((x) =>

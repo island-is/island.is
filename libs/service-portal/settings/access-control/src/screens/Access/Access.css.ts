@@ -1,4 +1,4 @@
-import { style, globalStyle } from '@vanilla-extract/css'
+import { style } from '@vanilla-extract/css'
 
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
@@ -29,9 +29,13 @@ export const closeButton = style({
   zIndex: 2,
 })
 
-export const datePickerFix = style({})
+export const row = style({
+  background: theme.color.blue100,
+  display: 'flex',
+  alignItems: 'center',
+  borderBottom: `1px solid ${theme.color.blue200}`,
+})
 
-globalStyle(`${datePickerFix} > div`, {
-  marginBottom: theme.spacing['10'],
-  overflow: 'auto',
+export const column = style({
+  paddingLeft: theme.spacing.p2,
 })

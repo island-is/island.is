@@ -5,10 +5,14 @@ on:
     types:
       - closed
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   cleanup:
     name: Clean up feature deployment
-    runs-on: self-hosted
+    runs-on: kubernetes-runner
     steps:
       - name: Get git branch
         run: |

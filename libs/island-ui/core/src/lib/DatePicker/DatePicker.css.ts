@@ -140,7 +140,6 @@ export const popper = style({
   right: '0',
   width: '100%',
   top: '65px !important',
-  transform: 'none !important',
   margin: '0 !important',
   ...themeUtils.responsiveStyle({
     md: {
@@ -149,11 +148,20 @@ export const popper = style({
   }),
 })
 
+export const popperXsmall = style({
+  top: '51px !important',
+  ...themeUtils.responsiveStyle({
+    md: {
+      top: '65px !important',
+    },
+  }),
+})
+
 export const popperSmall = style({
   top: '51px !important',
   ...themeUtils.responsiveStyle({
     md: {
-      top: '57px !important',
+      top: '-7px !important',
     },
   }),
 })
@@ -268,5 +276,37 @@ globalStyle(
   {
     background: `${theme.color.blue400} !important`,
     color: `${theme.color.white} !important`,
+  },
+)
+
+globalStyle(
+  `${root}.island-ui-datepicker .react-datepicker-popper[data-placement^="top"]`,
+  {
+    top: '11px !important',
+  },
+)
+
+globalStyle(
+  `${root}.island-ui-datepicker .react-datepicker-popper[data-placement^="bottom"]`,
+  {
+    top: '-7px !important',
+  },
+)
+
+globalStyle(
+  `${root}.island-ui-datepicker .react-datepicker-popper[data-placement^="top"] .react-datepicker`,
+  {
+    borderTopRightRadius: '8px',
+    borderTopLeftRadius: '8px',
+    borderBottomRightRadius: '0',
+    borderBottomLeftRadius: '0',
+    boxShadow: `inset -3px 0px 0px ${theme.color.mint400}, inset 3px 0px 0px ${theme.color.mint400}, inset -1px 3px 0px ${theme.color.mint400}`,
+  },
+)
+
+globalStyle(
+  `${root}.island-ui-datepicker .react-datepicker-popper[data-placement^="top"] .react-datepicker__header--custom .date-picker-custom-header`,
+  {
+    borderTop: 0,
   },
 )

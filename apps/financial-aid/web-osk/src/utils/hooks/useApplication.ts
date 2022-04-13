@@ -77,6 +77,7 @@ const useApplication = () => {
                 nationalRegistryData?.address.municipalityCode ||
                 municipality?.municipalityId,
               directTaxPayments: form?.directTaxPayments,
+              hasFetchedDirectTaxPayment: form?.hasFetchedPayments,
             },
           },
         })

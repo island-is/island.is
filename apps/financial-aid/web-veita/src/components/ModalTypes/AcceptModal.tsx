@@ -1,11 +1,10 @@
-import React, { useContext, useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 
 import {
   InputModal,
   NumberInput,
 } from '@island.is/financial-aid-web/veita/src/components'
-
-import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
+import { useRouter } from 'next/router'
 import {
   aidCalculator,
   Amount,
@@ -13,13 +12,13 @@ import {
   calculateTaxOfAmount,
   FamilyStatus,
   HomeCircumstances,
+  Municipality,
   showSpouseData,
 } from '@island.is/financial-aid/shared/lib'
 import { Box, Button, Input, Text } from '@island.is/island-ui/core'
 import cn from 'classnames'
 
 import * as modalStyles from './ModalTypes.css'
-import { useRouter } from 'next/router'
 
 interface Props {
   onCancel: (event: React.MouseEvent<HTMLButtonElement>) => void
@@ -27,6 +26,7 @@ interface Props {
   isModalVisable: boolean
   homeCircumstances: HomeCircumstances
   familyStatus: FamilyStatus
+  applicationMunicipality: Municipality
 }
 
 interface calculationsState {
@@ -46,29 +46,32 @@ const AcceptModal = ({
   isModalVisable,
   homeCircumstances,
   familyStatus,
+  applicationMunicipality,
 }: Props) => {
   const router = useRouter()
 
   const maximumInputLength = 6
 
-  const { municipality } = useContext(AdminContext)
-
   const aidAmount = useMemo(() => {
-    if (municipality && homeCircumstances) {
+    if (applicationMunicipality && homeCircumstances) {
       return aidCalculator(
         homeCircumstances,
         showSpouseData[familyStatus]
-          ? municipality.cohabitationAid
-          : municipality.individualAid,
+          ? applicationMunicipality.cohabitationAid
+          : applicationMunicipality.individualAid,
       )
     }
-  }, [homeCircumstances, municipality])
+  }, [homeCircumstances, applicationMunicipality])
 
   if (!aidAmount) {
     return (
-      <Text color="red400">
-        Útreikingur fyrir aðstoð misstókst, vinsamlegast reyndu aftur
-      </Text>
+      <>
+        {isModalVisable && (
+          <Text color="red400">
+            Útreikingur fyrir aðstoð misstókst, vinsamlegast reyndu aftur
+          </Text>
+        )}
+      </>
     )
   }
 
@@ -311,8 +314,8 @@ const AcceptModal = ({
           variant="text"
         >
           {state.showSecondPersonalTaxCredit
-            ? 'Fjarlægðu skattkorti'
-            : 'Bættu við skattkorti'}
+            ? 'Fjarlægja persónuafslátt'
+            : 'Nýta persónuafslátt maka'}
         </Button>
       </Box>
 
@@ -344,6 +347,7 @@ const AcceptModal = ({
       <Box
         display="flex"
         justifyContent="spaceBetween"
+        alignItems="center"
         background="blue100"
         borderTopWidth="standard"
         borderBottomWidth="standard"

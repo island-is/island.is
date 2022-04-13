@@ -4,6 +4,7 @@ import {
   IsEnum,
   IsUUID,
   IsBoolean,
+  IsObject,
 } from 'class-validator'
 
 import { ApiPropertyOptional } from '@nestjs/swagger'
@@ -15,6 +16,7 @@ import {
   CaseDecision,
   CaseType,
   SessionArrangements,
+  CourtDocument,
 } from '@island.is/judicial-system/types'
 
 export class UpdateCaseDto {
@@ -41,6 +43,11 @@ export class UpdateCaseDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
+  readonly defenderNationalId?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
   readonly defenderEmail?: string
 
   @IsOptional()
@@ -52,11 +59,6 @@ export class UpdateCaseDto {
   @IsBoolean()
   @ApiPropertyOptional()
   readonly sendRequestToDefender?: boolean
-
-  @IsOptional()
-  @IsBoolean()
-  @ApiPropertyOptional()
-  readonly defenderIsSpokesperson?: boolean
 
   @IsOptional()
   @IsBoolean()
@@ -214,9 +216,9 @@ export class UpdateCaseDto {
   readonly prosecutorDemands?: string
 
   @IsOptional()
-  @IsString({ each: true })
+  @IsObject({ each: true })
   @ApiPropertyOptional({ isArray: true })
-  readonly courtDocuments?: string
+  readonly courtDocuments?: CourtDocument[]
 
   @IsOptional()
   @IsString()
@@ -317,4 +319,9 @@ export class UpdateCaseDto {
   @IsString()
   @ApiPropertyOptional()
   readonly caseModifiedExplanation?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly caseResentExplanation?: string
 }

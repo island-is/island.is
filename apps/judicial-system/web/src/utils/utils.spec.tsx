@@ -9,67 +9,6 @@ import { validate } from './validate'
 import * as formatters from './formatters'
 
 describe('Formatters utils', () => {
-  describe('Parse array', () => {
-    test('given a property name and an array of strings should parse correctly into JSON', () => {
-      // Arrange
-      const property = 'test'
-      const array = ['lorem', 'ipsum']
-
-      // Act
-      const parsedArray = formatters.parseArray(property, array)
-
-      // Assert
-      expect(parsedArray).not.toEqual(null)
-      expect(parsedArray).toEqual({ test: ['lorem', 'ipsum'] })
-    })
-  })
-
-  describe('Parse string', () => {
-    test('given a property name and a value should parse correctly into JSON', () => {
-      // Arrange
-      const property = 'test'
-      const value = 'lorem'
-
-      // Act
-      const parsedString = formatters.parseString(property, value)
-
-      // Assert
-      expect(parsedString).toEqual({ test: 'lorem' })
-    })
-
-    test('given a value with special characters should parse correctly into JSON', () => {
-      //Arrange
-      const property = 'test'
-      const value = `lorem
-ipsum`
-
-      // Act
-      const parsedString = formatters.parseString(property, value)
-
-      // Assert
-      expect(parsedString).toEqual({
-        test: 'lorem\nipsum',
-      })
-    })
-  })
-
-  describe('Parse transition', () => {
-    test('given a last modified timestamp and a transition should parse correnctly into JSON', () => {
-      // Arrange
-      const modified = 'timestamp'
-      const transition = CaseTransition.SUBMIT
-
-      // Act
-      const parsedTransition = formatters.parseTransition(modified, transition)
-
-      // Assert
-      expect(parsedTransition).toEqual({
-        modified: 'timestamp',
-        transition: CaseTransition.SUBMIT,
-      })
-    })
-  })
-
   describe('Parse time', () => {
     test('should return a valid date with time given a valid date and time', () => {
       // Arrange
@@ -134,6 +73,56 @@ ipsum`
 
       // Assert
       expect(spy).not.toBeCalled()
+    })
+  })
+
+  describe('enumerate', () => {
+    test('should enumerate list with three values', () => {
+      // Arrange
+      const values = ['alice', 'bob', 'paul']
+      const endWord = 'and'
+
+      // Act
+      const result = formatters.enumerate(values, endWord)
+
+      //Assert
+      expect(result).toBe('alice, bob and paul')
+    })
+
+    test('should enumerate list with two values', () => {
+      // Arrange
+      const values = ['alice', 'bob']
+      const endWord = 'or'
+
+      // Act
+      const result = formatters.enumerate(values, endWord)
+
+      //Assert
+      expect(result).toBe('alice or bob')
+    })
+
+    test('should enumerate list with one value', () => {
+      // Arrange
+      const values = ['alice']
+      const endWord = 'and'
+
+      // Act
+      const result = formatters.enumerate(values, endWord)
+
+      //Assert
+      expect(result).toBe('alice')
+    })
+
+    test('should handle empty list', () => {
+      // Arrange
+      const values: string[] = []
+      const endWord = 'and'
+
+      // Act
+      const result = formatters.enumerate(values, endWord)
+
+      //Assert
+      expect(result).toBe('')
     })
   })
 })

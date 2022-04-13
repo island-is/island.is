@@ -38,6 +38,7 @@ export const Routes = {
   userProfile: (id: string) => `/notendur/${id}`,
   municipalityProfile: (id: string) => `/sveitarfelog/${id}`,
   applicationProfile: (id: string) => `/umsokn/${id}`,
+  printApplicationProfile: (id: string) => `/umsokn/${id}/print`,
 }
 
 export const months = [
@@ -70,3 +71,5 @@ export const getNextPeriod = {
 }
 
 export const apiBasePath = 'api/financial-aid'
+
+export const applicationPageSize = 300
