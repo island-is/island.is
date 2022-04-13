@@ -61,27 +61,27 @@ export const notifications = {
   courtRevoked: defineMessages({
     caseTypeRevoked: {
       id:
-        'judicial.system.backend:notifications.courtRevoked.case_type_revoked',
+        'judicial.system.backend:notifications.court_revoked.case_type_revoked',
       defaultMessage: `{caseType, select, ${CaseType.TRAVEL_BAN} {Farbannskrafa} ${CaseType.ADMISSION_TO_FACILITY} {Krafa um vistun á viðeigandi stofnun} other {Gæsluvarðhaldskrafa}} afturkölluð.`,
       description:
         'Notaður sem texti í sms-i til dómstóla þegar krafa er afturkölluð',
     },
     prosecutorText: {
-      id: 'judicial.system.backend:notifications.courtRevoked.prosecutor_text',
+      id: 'judicial.system.backend:notifications.court_revoked.prosecutor_text',
       defaultMessage:
         'Sækjandi: {prosecutorName, select, NONE {Ekki skráður} other {{prosecutorName}}}.',
       description:
         'Notaður sem texti í sms-i til dómstóla þegar krafa er afturkölluð',
     },
     courtDate: {
-      id: 'judicial.system.backend:notifications.courtRevoked.court_date',
+      id: 'judicial.system.backend:notifications.court_revoked.court_date',
       defaultMessage: 'Fyrirtökutími: {date}, kl. {time}.',
       description:
         'Notaður sem texti í afturköllunar sms-i til dómstóla til þess að tilgreina hvenær fyrirtaka átti að vera',
     },
     requestedCourtDate: {
       id:
-        'judicial.system.backend:notifications.courtRevoked.requested_court_date',
+        'judicial.system.backend:notifications.court_revoked.requested_court_date',
       defaultMessage: 'ÓVE fyrirtöku {date}, eftir kl. {time}.',
       description:
         'Notaður sem texti í afturköllunar sms-i til þess að tilgreina hvenær óskað var eftir fyrirtöku',
@@ -89,20 +89,21 @@ export const notifications = {
   }),
   courtHeadsUp: defineMessages({
     arrestDateText: {
-      id: 'judicial.system.backend:notifications.courtHeadsUp.arrest_date_text',
+      id:
+        'judicial.system.backend:notifications.court_heads_up.arrest_date_text',
       defaultMessage: 'Viðkomandi handtekinn {date}, kl. {time}.',
       description:
         'Notaður sem texti í sms-i til þess að tilgreina hvenær varnaraðili var handtekinn',
     },
     requestedCourtDateText: {
       id:
-        'judicial.system.backend:notifications.courtHeadsUp.requested_court_date_text',
+        'judicial.system.backend:notifications.court_heads_up.requested_court_date_text',
       defaultMessage: 'ÓE fyrirtöku {date}, eftir kl. {time}.',
       description:
         'Notaður sem texti í sms-i til þess að tilgreina hvenær óskað er eftir fyrirtöku',
     },
     newCaseText: {
-      id: 'judicial.system.backend:notifications.courtHeadsUp.new_case_text',
+      id: 'judicial.system.backend:notifications.court_heads_up.new_case_text',
       defaultMessage: `Ný {caseType, select, ${CaseType.TRAVEL_BAN} {farbannskrafa} ${CaseType.ADMISSION_TO_FACILITY} {krafa um vistun á viðeigandi stofnun} ${CaseType.CUSTODY} {gæsluvarðhaldskrafa} ${CaseType.OTHER} {krafa um rannsóknarheimild} other {krafa um rannsóknarheimild ({courtTypeName})}} í vinnslu.`,
       description:
         'Notaður sem texti í sms-i til þess að tilgreina að mál sé komið í vinnslu',
@@ -111,13 +112,14 @@ export const notifications = {
   courtReadyForCourt: defineMessages({
     submittedCase: {
       id:
-        'judicial.system.backend:notifications.courtReadyForCourt.case_ready_for_court',
+        'judicial.system.backend:notifications.court_ready_for_court.case_ready_for_court',
       defaultMessage: `{caseType, select, ${CaseType.TRAVEL_BAN} {Farbannskrafa} ${CaseType.ADMISSION_TO_FACILITY} {Krafa um vistun á viðeigandi stofnun} ${CaseType.CUSTODY} {Gæsluvarðhaldskrafa} ${CaseType.OTHER} {Krafa um rannsóknarheimild} other {Krafa um rannsóknarheimild ({courtTypeName})}} tilbúin til afgreiðslu.`,
       description:
         'Notaður sem texti í sms-i sem tilgreinir að krafa sé tilbúin til afgreiðslu',
     },
     courtText: {
-      id: 'judicial.system.backend:notifications.courtReadyForCourt.court_text',
+      id:
+        'judicial.system.backend:notifications.court_ready_for_court.court_text',
       defaultMessage:
         'Dómstóll: {court, select, NONE {Ekki skráður} other {{court}}}.',
       description:
