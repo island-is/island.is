@@ -18,6 +18,7 @@ import {
   ApplicationModel,
   UpdateApplicationTableResponse,
   SpouseResponse,
+  FilterApplicationsResponse,
 } from './models'
 
 import {
@@ -29,6 +30,7 @@ import {
   CreateApplicationDto,
   UpdateApplicationDto,
   CreateApplicationEventDto,
+  FilterApplicationsDto,
 } from './dto'
 
 import {
@@ -327,5 +329,19 @@ export class ApplicationController {
     }
 
     return application
+  }
+
+  @UseGuards(RolesGuard)
+  @RolesRules(RolesRule.VEITA)
+  @Post('filter')
+  @ApiOkResponse({
+    type: FilterApplicationsResponse,
+    description: 'Filter applications',
+  })
+  filter(
+    @Body() filters: FilterApplicationsDto,
+  ): Promise<FilterApplicationsResponse> {
+    this.logger.debug('Application controller: Filter applications')
+    return this.applicationService.filter(filters)
   }
 }

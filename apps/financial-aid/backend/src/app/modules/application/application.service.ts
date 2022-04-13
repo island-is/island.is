@@ -5,11 +5,20 @@ import {
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
-import { ApplicationModel, SpouseResponse } from './models'
+import {
+  ApplicationModel,
+  FilterApplicationsResponse,
+  SpouseResponse,
+} from './models'
 
 import { Op } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 
-import { CreateApplicationDto, UpdateApplicationDto } from './dto'
+import {
+  CreateApplicationDto,
+  FilterApplicationsDto,
+  UpdateApplicationDto,
+} from './dto'
 import {
   ApplicationEventType,
   ApplicationFilters,
@@ -24,6 +33,7 @@ import {
   getApplicantEmailDataFromEventType,
   firstDateOfMonth,
   UserType,
+  applicationPageSize,
 } from '@island.is/financial-aid/shared/lib'
 import { FileService } from '../file'
 import {
@@ -425,6 +435,56 @@ export class ApplicationService {
     ])
 
     return updatedApplication
+  }
+
+  async filter(
+    filters: FilterApplicationsDto,
+  ): Promise<FilterApplicationsResponse> {
+    const whereOptions = {
+      state: {
+        [Op.in]:
+          filters.states.length > 0
+            ? filters.states
+            : [ApplicationState.APPROVED, ApplicationState.REJECTED],
+      },
+    }
+
+    if (filters.months.length > 0) {
+      const date = new Date()
+      const currentYear = date.getFullYear()
+      const currentMonth = date.getMonth()
+
+      whereOptions[Op.or] = filters.months.map((month) =>
+        Sequelize.and(
+          Sequelize.where(
+            Sequelize.fn(
+              'date_part',
+              'month',
+              Sequelize.col('ApplicationModel.created'),
+            ),
+            (month + 1).toString(),
+          ),
+          Sequelize.where(
+            Sequelize.fn(
+              'date_part',
+              'year',
+              Sequelize.col('ApplicationModel.created'),
+            ),
+            (month > currentMonth ? currentYear - 1 : currentYear).toString(),
+          ),
+        ),
+      )
+    }
+
+    const results = await this.applicationModel.findAndCountAll({
+      where: whereOptions,
+      order: [['modified', 'DESC']],
+      include: [{ model: StaffModel, as: 'staff' }],
+      offset: (filters.page - 1) * applicationPageSize,
+      limit: applicationPageSize,
+    })
+
+    return { applications: results.rows, totalCount: results.count }
   }
 
   private async sendApplicationUpdateEmail(
