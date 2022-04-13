@@ -141,7 +141,14 @@ export const requestHandlers = [
       const canApply = body.kennitala !== MOCK_NATIONAL_ID_NO_ASSESSMENT
 
       if (canApply) {
-        return res(ctx.status(200), ctx.text(''))
+        return res(
+          ctx.status(200),
+          ctx.json({
+            result: true,
+            okuskirteiniId: 1,
+            errorCode: null,
+          }),
+        )
       } else {
         return res(ctx.status(400), ctx.text('error message'))
       }

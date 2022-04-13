@@ -33,6 +33,16 @@ export const GET_ORGANIZATION_QUERY = gql`
         title
         url
       }
+      publishedMaterialSearchFilterGenericTags {
+        id
+        title
+        slug
+        genericTagGroup {
+          id
+          title
+          slug
+        }
+      }
       link
       tag {
         id
@@ -53,6 +63,12 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
       slug
       title
       description
+      defaultHeaderImage {
+        url
+        contentType
+        width
+        height
+      }
       alertBanner {
         showAlertBanner
         bannerVariant
@@ -133,6 +149,8 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
       themeProperties {
         gradientStartColor
         gradientEndColor
+        backgroundColor
+        darkText
       }
       externalLinks {
         text

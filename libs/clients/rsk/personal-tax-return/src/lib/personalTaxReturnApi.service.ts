@@ -58,7 +58,6 @@ export class PersonalTaxReturnApi {
     to: Period,
   ): Promise<DirectTaxPaymentDto> {
     const headers = { 'Content-Type': 'application/soap+xml' }
-
     return await this.httpService
       .post(
         this.config.url,
@@ -78,6 +77,7 @@ export class PersonalTaxReturnApi {
           explicitArray: false,
           valueProcessors: [parseNumbers, parseBooleans],
         })
+
         return await parser
           .parseStringPromise(response.data.replace(/(\t\n|\t|\n)/gm, ''))
           .then((parsedResponse: DirectTaxPaymentResponse) => {

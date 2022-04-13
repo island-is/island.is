@@ -51,6 +51,11 @@ export class SearcherInput {
   @IsOptional()
   tags?: Tag[]
 
+  @Field(() => [String], { nullable: true })
+  @IsArray()
+  @IsOptional()
+  contentfulTags?: string[]
+
   @Field(() => [SearchableTags], { nullable: true })
   @IsArray()
   @IsOptional()

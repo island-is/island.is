@@ -11,6 +11,10 @@ import {
 } from '@island.is/financial-aid/shared/lib'
 import { calcAge } from './formHelper'
 
+const commentFullWidth = (comment?: string) => {
+  return comment && comment.length > 80 ? true : false
+}
+
 export const getApplicant = (application: Application) => {
   return [
     {
@@ -50,6 +54,7 @@ export const getApplicant = (application: Application) => {
       title: 'Athugasemd',
       content: application.formComment ? '' : 'Engin athugasemd',
       other: application.formComment,
+      fullWidth: commentFullWidth(application.formComment),
     },
   ]
 }
@@ -92,14 +97,18 @@ export const getNationalRegistryInfo = (application: Application) => {
       content: application.postalCode,
     },
     {
-      title: 'Maki',
-      content: application.spouseNationalId
-        ? formatNationalId(application.spouseNationalId)
-        : 'Enginn maki',
+      title: 'Sveitarfélag',
+      content: application.city,
     },
     {
       title: 'Ríkisfang',
       content: 'Ísland',
+    },
+    {
+      title: 'Maki',
+      content: application.spouseNationalId
+        ? formatNationalId(application.spouseNationalId)
+        : 'Enginn maki',
     },
     {
       title: 'Aldur',
@@ -134,11 +143,15 @@ export const getApplicantSpouse = (application: Application) => {
       title: 'Athugasemd',
       content: application.spouseFormComment ? '' : 'Engin athugasemd',
       other: application.spouseFormComment,
+      fullWidth: commentFullWidth(application.spouseFormComment),
     },
   ]
 }
 
 export const getDirectTaxPayments = (directTaxPayments: DirectTaxPayment[]) => {
+  if (directTaxPayments && directTaxPayments.length === 0) {
+    return []
+  }
   const totalSalary = directTaxPayments.reduce(
     (n, { totalSalary }) => n + totalSalary,
     0,
