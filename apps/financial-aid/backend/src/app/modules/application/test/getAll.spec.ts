@@ -52,8 +52,8 @@ describe('ApplicationController - Get all', () => {
 
   describe('database query', () => {
     const stateUrl = ApplicationStateUrl.NEW
-    const municipalityCode = '0'
-    const staff = { id: uuid(), municipalityId: municipalityCode } as Staff
+    const municipalityCodes = ['0']
+    const staff = { id: uuid(), municipalityIds: municipalityCodes } as Staff
     let mockGetAll: jest.Mock
 
     beforeEach(async () => {
@@ -66,7 +66,7 @@ describe('ApplicationController - Get all', () => {
       expect(mockGetAll).toHaveBeenCalledWith({
         where: {
           state: { [Op.in]: getStateFromUrl[stateUrl] },
-          municipalityCode,
+          municipalityCode: { [Op.in]: municipalityCodes },
         },
         order: [['modified', 'DESC']],
         include: [{ model: StaffModel, as: 'staff' }],
@@ -76,9 +76,9 @@ describe('ApplicationController - Get all', () => {
 
   describe('database query - my cases', () => {
     const stateUrl = ApplicationStateUrl.MYCASES
-    const municipalityCode = '0'
+    const municipalityCodes = ['0']
     const staffId = uuid()
-    const staff = { id: staffId, municipalityId: municipalityCode } as Staff
+    const staff = { id: staffId, municipalityIds: municipalityCodes } as Staff
     let mockGetAll: jest.Mock
 
     beforeEach(async () => {
@@ -92,7 +92,7 @@ describe('ApplicationController - Get all', () => {
         where: {
           state: { [Op.in]: getStateFromUrl[stateUrl] },
           staffId,
-          municipalityCode,
+          municipalityCode: { [Op.in]: municipalityCodes },
         },
         order: [['modified', 'DESC']],
         include: [{ model: StaffModel, as: 'staff' }],
@@ -102,7 +102,7 @@ describe('ApplicationController - Get all', () => {
 
   describe('no application', () => {
     const stateUrl = ApplicationStateUrl.NEW
-    const staff = { id: uuid(), municipalityId: '0' } as Staff
+    const staff = { id: uuid(), municipalityIds: ['0'] } as Staff
     let then: Then
     const expected = []
 
@@ -124,7 +124,7 @@ describe('ApplicationController - Get all', () => {
 
   describe('applications', () => {
     const stateUrl = ApplicationStateUrl.NEW
-    const staff = { id: uuid(), municipalityId: '0' } as Staff
+    const staff = { id: uuid(), municipalityIds: ['0'] } as Staff
     let then: Then
     const application = {
       id: '1',
@@ -173,7 +173,7 @@ describe('ApplicationController - Get all', () => {
 
   describe('database query fails', () => {
     const stateUrl = ApplicationStateUrl.NEW
-    const staff = { id: uuid(), municipalityId: '0' } as Staff
+    const staff = { id: uuid(), municipalityIds: ['0'] } as Staff
     let then: Then
 
     beforeEach(async () => {

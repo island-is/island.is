@@ -55,6 +55,15 @@ export class ProjectPage {
 
   @Field(() => Image, { nullable: true })
   featuredImage!: Image | null
+
+  @Field(() => Image, { nullable: true })
+  defaultHeaderImage!: Image | null
+
+  @Field()
+  defaultHeaderBackgroundColor!: string
+
+  @Field()
+  featuredDescription!: string
 }
 
 export const mapProjectPage = ({ sys, fields }: IProjectPage): ProjectPage => ({
@@ -72,6 +81,13 @@ export const mapProjectPage = ({ sys, fields }: IProjectPage): ProjectPage => ({
   stepper: fields.stepper ? mapStepper(fields.stepper) : null,
   slices: (fields.slices ?? []).map(safelyMapSliceUnion),
   newsTag: fields.newsTag ? mapGenericTag(fields.newsTag) : null,
-  projectSubpages: (fields.projectSubpages ?? []).map(mapProjectSubpage),
+  projectSubpages: (fields.projectSubpages ?? [])
+    .filter((p) => p.fields?.title)
+    .map(mapProjectSubpage),
   featuredImage: fields.featuredImage ? mapImage(fields.featuredImage) : null,
+  defaultHeaderImage: fields.defaultHeaderImage
+    ? mapImage(fields.defaultHeaderImage)
+    : null,
+  defaultHeaderBackgroundColor: fields.defaultHeaderBackgroundColor ?? '',
+  featuredDescription: fields.featuredDescription ?? '',
 })

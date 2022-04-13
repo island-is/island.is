@@ -1,12 +1,29 @@
 import { Injectable } from '@nestjs/common'
-import { Locale } from '@island.is/shared/types'
-import { StaticText } from '@island.is/application/core'
 import { createIntl, createIntlCache, IntlShape } from '@formatjs/intl'
 import { logger } from '@island.is/logging'
+import { Locale } from '@island.is/shared/types'
+import { StaticText } from '@island.is/application/core'
 
 import { CmsTranslationsService } from './cms-translations.service'
+import type { FormatMessage } from '../types'
 
 export type NestIntl = Promise<IntlShape<string>>
+
+export const formatMessage = (intl: IntlShape<string>): FormatMessage => (
+  descriptor: StaticText,
+  values?: Record<string, unknown>,
+): string => {
+  if (!descriptor) {
+    logger.warn('No descriptor passed to formatMessage function.')
+    return ''
+  }
+
+  if (typeof descriptor === 'string') {
+    return descriptor
+  }
+
+  return intl.formatMessage(descriptor, values)
+}
 
 @Injectable()
 export class IntlService {
@@ -14,7 +31,14 @@ export class IntlService {
 
   constructor(private cmsTranslationsService: CmsTranslationsService) {}
 
-  useIntl = async (namespaces: string[], locale: Locale) => {
+  useIntl = async (
+    namespaces: string[],
+    locale: Locale,
+  ): Promise<
+    Omit<IntlShape<string>, 'formatMessage'> & {
+      formatMessage: FormatMessage
+    }
+  > => {
     const messages = await this.cmsTranslationsService.getTranslations(
       namespaces,
       locale,
@@ -39,18 +63,7 @@ export class IntlService {
 
     return {
       ...intl,
-      formatMessage: (descriptor: StaticText, values?: any) => {
-        if (!descriptor) {
-          logger.warn('No descriptor passed to formatMessage function.')
-          return ''
-        }
-
-        if (typeof descriptor === 'string') {
-          return descriptor
-        }
-
-        return intl.formatMessage(descriptor, values)
-      },
+      formatMessage: formatMessage(intl),
     }
   }
 }

@@ -12,6 +12,7 @@ import type {
   CaseType,
   SessionArrangements,
   CourtDocument,
+  CaseOrigin,
 } from '@island.is/judicial-system/types'
 
 import { Defendant } from '../../defendant'
@@ -32,6 +33,9 @@ export class Case implements TCase {
   readonly modified!: string
 
   @Field(() => String)
+  readonly origin!: CaseOrigin
+
+  @Field(() => String)
   readonly type!: CaseType
 
   @Field({ nullable: true })
@@ -48,6 +52,9 @@ export class Case implements TCase {
 
   @Field({ nullable: true })
   readonly defenderName?: string
+
+  @Field({ nullable: true })
+  readonly defenderNationalId?: string
 
   @Field({ nullable: true })
   readonly defenderEmail?: string
