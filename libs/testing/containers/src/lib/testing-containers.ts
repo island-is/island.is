@@ -25,6 +25,7 @@ export const startPostgres = async () => {
   process.env.DB_PORT = `${port}`
   process.env.DB_HOST = postgresContainer.getHost()
 }
+
 export const stopPostgres = () => {
   postgresContainer.stop()
 }
