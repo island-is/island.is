@@ -20,6 +20,7 @@ export enum ApplicationTypes {
   CRIMINAL_RECORD = 'CriminalRecord',
   DRIVING_INSTRUCTOR_REGISTRATIONS = 'DrivingInstructorRegistrations',
   EXAMPLE_PAYMENT = 'ExamplePayment',
+  DRIVING_SCHOOL_CONFIRMATION = 'DrivingSchoolConfirmation',
   MORTGAGE_CERTIFICATE = 'MortgageCertificate',
 }
 
@@ -107,6 +108,10 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.EXAMPLE_PAYMENT]: {
     slug: 'greida',
     translation: 'ep.application',
+  },
+  [ApplicationTypes.DRIVING_SCHOOL_CONFIRMATION]: {
+    slug: 'okuskoli',
+    translation: 'dsc.application',
   },
   [ApplicationTypes.MORTGAGE_CERTIFICATE]: {
     slug: 'vedbokarvottord',

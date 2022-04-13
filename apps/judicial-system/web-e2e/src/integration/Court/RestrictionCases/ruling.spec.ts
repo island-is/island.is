@@ -1,12 +1,11 @@
 /// <reference path="../../../support/index.d.ts" />
 import { Case, CaseDecision, CaseType } from '@island.is/judicial-system/types'
-import { makeCustodyCase } from '@island.is/judicial-system/formatters'
 import {
   COURT_RECORD_ROUTE,
   RULING_ROUTE,
 } from '@island.is/judicial-system/consts'
 
-import { intercept } from '../../../utils'
+import { makeCustodyCase, intercept } from '../../../utils'
 
 describe(`${RULING_ROUTE}/:id`, () => {
   beforeEach(() => {

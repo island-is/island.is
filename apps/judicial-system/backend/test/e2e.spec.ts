@@ -36,6 +36,8 @@ import {
   Notification,
   SendNotificationResponse,
 } from '../src/app/modules/notification'
+import { IntlService } from '@island.is/cms-translations'
+import { StaticText } from '@island.is/application/core'
 
 interface CUser extends TUser {
   institutionId: string
@@ -73,7 +75,21 @@ let admin: CUser
 let adminAuthCookie: string
 
 beforeAll(async () => {
-  app = await testServer({ appModule: AppModule })
+  app = await testServer({
+    appModule: AppModule,
+    override: (builder) =>
+      builder.overrideProvider(IntlService).useValue({
+        useIntl: () =>
+          Promise.resolve({
+            formatMessage: (descriptor: StaticText) => {
+              if (typeof descriptor === 'string') {
+                return descriptor
+              }
+              return descriptor.defaultMessage
+            },
+          }),
+      }),
+  })
 
   sequelize = await app.resolve(getConnectionToken() as Type<Sequelize>)
 
