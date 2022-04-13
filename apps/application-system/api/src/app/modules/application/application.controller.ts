@@ -133,7 +133,6 @@ export class ApplicationController {
     @Param('id', new ParseUUIDPipe()) id: string,
     @CurrentUser() user: User,
   ): Promise<ApplicationResponseDto> {
-    console.log('find one')
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
       user,
@@ -179,7 +178,6 @@ export class ApplicationController {
     @Query('typeId') typeId?: string,
     @Query('status') status?: string,
   ): Promise<ApplicationResponseDto[]> {
-    console.log('find all')
     if (nationalId !== user.nationalId) {
       throw new UnauthorizedException()
     }
@@ -189,7 +187,6 @@ export class ApplicationController {
       typeId,
       status,
     )
-
     const templateTypeToIsReady: Partial<Record<ApplicationTypes, boolean>> = {}
     const filteredApplications: Application[] = []
 
@@ -230,7 +227,6 @@ export class ApplicationController {
     @CurrentUser()
     user: User,
   ): Promise<ApplicationResponseDto> {
-    console.log('create')
     const { typeId } = application
     const template = await getApplicationTemplateByTypeId(typeId)
 
@@ -404,7 +400,6 @@ export class ApplicationController {
     @CurrentUser() user: User,
     @CurrentLocale() locale: Locale,
   ): Promise<ApplicationResponseDto> {
-    console.log('update')
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
       user,

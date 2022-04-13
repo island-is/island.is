@@ -48,7 +48,7 @@ export const Applications: FC = () => {
       variables: {
         input: { typeId: type },
       },
-      skip: !type || !delegationsChecked,
+      skip: !type,
     },
   )
 
