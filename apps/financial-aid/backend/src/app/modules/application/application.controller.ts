@@ -331,8 +331,9 @@ export class ApplicationController {
     return application
   }
 
-  @UseGuards(RolesGuard)
+  @UseGuards(RolesGuard, StaffGuard)
   @RolesRules(RolesRule.VEITA)
+  @StaffRolesRules(StaffRole.EMPLOYEE)
   @Post('filter')
   @ApiOkResponse({
     type: FilterApplicationsResponse,
@@ -340,8 +341,9 @@ export class ApplicationController {
   })
   filter(
     @Body() filters: FilterApplicationsDto,
+    @CurrentStaff() staff: Staff,
   ): Promise<FilterApplicationsResponse> {
     this.logger.debug('Application controller: Filter applications')
-    return this.applicationService.filter(filters)
+    return this.applicationService.filter(filters, staff.municipalityIds)
   }
 }
