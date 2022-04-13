@@ -37,7 +37,7 @@ export const modules = [
   ExamplePaymentActionsModule,
   ComplaintsToAlthingiOmbudsmanTemplateModule,
   MortgageCertificateSubmissionModule,
-  MarriageConditionsSubmissionModule
+  MarriageConditionsSubmissionModule,
 ]
 
 export { ReferenceTemplateService } from './reference-template/reference-template.service'

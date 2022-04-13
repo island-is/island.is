@@ -21,7 +21,7 @@ export class MarriageConditionsSubmissionService {
       id,
       'AY114',
     )
-    
+
     console.log('RESPONSE', response)
     // last chance to validate before the user receives a dummy
     if (!response?.paymentUrl) {
@@ -32,7 +32,6 @@ export class MarriageConditionsSubmissionService {
 
     return response
   }
-
 
   async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
     console.log('submit', application)
@@ -47,7 +46,7 @@ export class MarriageConditionsSubmissionService {
         success: false,
       }
     }*/
-    
+
     return { success: true }
   }
 }

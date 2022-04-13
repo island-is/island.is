@@ -145,7 +145,6 @@ export const m = defineMessages({
     description: 'email',
   },
 
-
   /* Payment */
   paymentPendingDescription: {
     id: 'mc.application:paymentPendingDescription',

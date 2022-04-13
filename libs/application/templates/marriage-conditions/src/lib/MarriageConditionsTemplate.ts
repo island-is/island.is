@@ -75,8 +75,8 @@ const MarriageConditionsTemplate: ApplicationTemplate<
               id: Roles.APPLICANT,
               formLoader: () =>
                 import('../forms/payment').then((val) =>
-                Promise.resolve(val.getPayment()),
-              ),
+                  Promise.resolve(val.getPayment()),
+                ),
               actions: [
                 { event: DefaultEvents.SUBMIT, name: 'Panta', type: 'primary' },
                 {

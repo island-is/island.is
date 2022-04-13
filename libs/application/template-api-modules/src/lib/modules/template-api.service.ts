@@ -20,7 +20,7 @@ import {
   ExamplePaymentActionsService,
   ComplaintsToAlthingiOmbudsmanTemplateService,
   MortgageCertificateSubmissionService,
-  MarriageConditionsSubmissionService
+  MarriageConditionsSubmissionService,
 } from './templates'
 
 interface ApplicationApiAction {
@@ -60,7 +60,7 @@ export class TemplateAPIService {
     private readonly examplePaymentActionsService: ExamplePaymentActionsService,
     private readonly complaintsToAlthingiOmbudsman: ComplaintsToAlthingiOmbudsmanTemplateService,
     private readonly mortgageCertificateSubmissionService: MortgageCertificateSubmissionService,
-    private readonly marriageConditionsSubmissionService: MarriageConditionsSubmissionService
+    private readonly marriageConditionsSubmissionService: MarriageConditionsSubmissionService,
   ) {}
 
   private async tryRunningActionOnService(
