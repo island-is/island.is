@@ -44,9 +44,10 @@ import {
   UtlendingastofnunHeader,
 } from './Themes/UtlendingastofnunTheme'
 import { endpoints as chatPanelEndpoints } from '../../ChatPanel/config'
-
-import * as styles from './OrganizationWrapper.css'
 import MannaudstorgFooter from './Themes/MannaudstorgTheme/MannaudstorgFooter'
+
+import { useNamespace } from '@island.is/web/hooks'
+import * as styles from './OrganizationWrapper.css'
 
 interface NavigationData {
   title: string
@@ -160,6 +161,9 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
   const organization = force
     ? organizations[0]
     : organizations.find((x) => footerEnabled.includes(x.slug))
+
+  const n = useNamespace(organization?.namespace)
+
   if (!organization) return null
 
   switch (organization.slug) {
@@ -194,6 +198,7 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
           logoSrc={organization.logo?.url}
           phone={organization.phone}
           contactLink={organization.link}
+          telephoneText={n('telephone', 'Sími')}
         />
       )
   }

@@ -289,11 +289,13 @@ export interface ArticleProps {
   namespace: GetNamespaceQuery['getNamespace']
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   stepOptionsFromNamespace: { data: Record<string, any>[]; slug: string }[]
+  stepperNamespace: GetNamespaceQuery['getNamespace']
 }
 
 const ArticleScreen: Screen<ArticleProps> = ({
   article,
   namespace,
+  stepperNamespace,
   stepOptionsFromNamespace,
 }) => {
   const { activeLocale } = useI18n()
@@ -540,6 +542,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
               <StepperFSM
                 stepper={subArticle.stepper}
                 optionsFromNamespace={stepOptionsFromNamespace}
+                namespace={stepperNamespace}
               />
             )}
             <AppendedArticleComponents article={article} />
@@ -622,7 +625,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
 ArticleScreen.getInitialProps = async ({ apolloClient, query, locale }) => {
   const slug = query.slug as string
 
-  const [article, namespace] = await Promise.all([
+  const [article, namespace, stepperNamespace] = await Promise.all([
     apolloClient
       .query<GetSingleArticleQuery, QueryGetSingleArticleArgs>({
         query: GET_ARTICLE_QUERY,
@@ -648,6 +651,20 @@ ArticleScreen.getInitialProps = async ({ apolloClient, query, locale }) => {
         // map data here to reduce data processing in component
         return JSON.parse(content.data.getNamespace.fields)
       }),
+    apolloClient
+      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
+        query: GET_NAMESPACE_QUERY,
+        variables: {
+          input: {
+            namespace: 'StepperFSM',
+            lang: locale,
+          },
+        },
+      })
+      .then((content) => {
+        // map data here to reduce data processing in component
+        return JSON.parse(content?.data?.getNamespace?.fields ?? '{}')
+      }),
   ])
 
   // we assume 404 if no article/sub-article is found
@@ -671,6 +688,7 @@ ArticleScreen.getInitialProps = async ({ apolloClient, query, locale }) => {
     article,
     namespace,
     stepOptionsFromNamespace,
+    stepperNamespace,
   }
 }
 
