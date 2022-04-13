@@ -7,15 +7,15 @@ import {
   SessionArrangements,
 } from '@island.is/judicial-system/types'
 import {
-  makeInvestigationCase,
-  makeProsecutor,
-} from '@island.is/judicial-system/formatters'
-import {
   IC_CONFIRMATION_ROUTE,
   IC_COURT_RECORD_ROUTE,
 } from '@island.is/judicial-system/consts'
 
-import { intercept } from '../../../utils'
+import {
+  makeInvestigationCase,
+  makeProsecutor,
+  intercept,
+} from '../../../utils'
 
 describe(`${IC_COURT_RECORD_ROUTE}/:id`, () => {
   beforeEach(() => {
