@@ -114,7 +114,7 @@ jobs:
           HTML_URL: ${{ github.event.pull_request.html_url }}
           ISSUE_REPORTING_SLACK_WEBHOOK_URL: ${{ secrets.SLACK_BUILD_ISSUES_REPORTING_WEBHOOK_URL }}
         name: Preparing HEAD and BASE tags
-        
+
 
       - name: Cache for cypress
         id: cypress
@@ -212,7 +212,7 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      
+
       - uses: actions/setup-node@v2
         with:
           node-version: '14'
@@ -244,7 +244,7 @@ jobs:
 
       - name: Untar generated files
         run: tar zxvf generated_files.tar.gz
-        
+
 
       - uses: ./.github/actions/unit-test
         with:
@@ -343,20 +343,13 @@ jobs:
         run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
       - name: Linting workspace
         run: ./scripts/ci/20_lint-workspace.sh
-
-  shellcheck:
-    needs:
-      - linting-workspace
-    runs-on: ec2-runners
-    timeout-minutes: 5
-    steps:
       - name: Run ShellCheck
         uses: ludeeus/action-shellcheck@1.1.0
         with:
           ignore: node_modules
           severity: warning
 
-  formatting:    
+  formatting:
     needs:
       - prepare
     runs-on: kubernetes-runner
@@ -375,9 +368,9 @@ jobs:
         with:
           path: node_modules
           key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
-      - name: Check cache success        
+      - name: Check cache success
         run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
-      - name: Check formatting        
+      - name: Check formatting
         run: ./scripts/ci/20_check-formatting.sh
 
   linting:
@@ -408,7 +401,7 @@ jobs:
           path: node_modules
           key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
 
-      - name: Check cache success        
+      - name: Check cache success
         run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Cache for generated files
@@ -419,13 +412,13 @@ jobs:
           path: generated_files.tar.gz
           key: ${{ needs.prepare.outputs.generated-files-cache-key }}
 
-      - name: Check cache success        
+      - name: Check cache success
         run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Untar generated files
         run: tar zxvf generated_files.tar.gz
 
-      - name: Linting        
+      - name: Linting
         run: ./scripts/ci/run-in-parallel-native.sh lint
 
   build:
@@ -455,7 +448,7 @@ jobs:
           path: node_modules
           key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
 
-      - name: Check cache success        
+      - name: Check cache success
         run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Cache for generated files
@@ -466,7 +459,7 @@ jobs:
           path: generated_files.tar.gz
           key: ${{ needs.prepare.outputs.generated-files-cache-key }}
 
-      - name: Check cache success        
+      - name: Check cache success
         run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Untar generated files
@@ -487,17 +480,17 @@ jobs:
       - e2e
       - build
     steps:
-      - name: Check prepare success        
+      - name: Check prepare success
         run: '[[ ${{ needs.prepare.result }} == "success" ]] || exit 1'
-      - name: Check tests success        
+      - name: Check tests success
         run: '[[ ${{ needs.tests.result }} != "failure" ]] || exit 1'
-      - name: Check e2e success        
+      - name: Check e2e success
         run: '[[ ${{ needs.e2e.result }} != "failure" ]] || exit 1'
-      - name: Check linting success        
+      - name: Check linting success
         run: '[[ ${{ needs.linting.result }} != "failure" ]] || exit 1'
-      - name: Check formatting success        
+      - name: Check formatting success
         run: '[[ ${{ needs.formatting.result }} != "failure" ]] || exit 1'
-      - name: Check build success        
+      - name: Check build success
         run: '[[ ${{ needs.build.result }} != "failure" ]] || exit 1'
-      - name: Announce success        
+      - name: Announce success
         run: echo "Build is successful"
