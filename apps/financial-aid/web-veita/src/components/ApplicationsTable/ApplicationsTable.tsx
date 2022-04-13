@@ -32,11 +32,13 @@ interface PageProps {
     React.SetStateAction<Application[] | undefined>
   >
   headers: TableHeadersProps[]
+  emptyText?: string
 }
 
 const ApplicationsTable = ({
   applications,
   headers,
+  emptyText,
   setApplications,
 }: PageProps) => {
   const router = useRouter()
@@ -147,7 +149,11 @@ const ApplicationsTable = ({
     )
   }
 
-  return <Text>Engar umsóknir bíða þín, vel gert 👏</Text>
+  return (
+    <Text marginTop={2}>
+      {emptyText ?? 'Engar umsóknir bíða þín, vel gert 👏'}
+    </Text>
+  )
 }
 
 export default ApplicationsTable

@@ -98,7 +98,7 @@ export const ApplicationsOverviewProcessed = () => {
       <FilterPopover
         selectedMonths={filters.selectedMonths}
         selectedStates={filters.selectedStates}
-        results={data?.filterApplications?.totalCount}
+        results={data?.filterApplications?.totalCount ?? 0}
         onChecked={onChecked}
         onFilterClear={() => setQuery(1, true)}
         onFilterSave={() => setQuery(1)}
@@ -107,27 +107,31 @@ export const ApplicationsOverviewProcessed = () => {
         <ApplicationsTable
           headers={currentNavigationItem.headers}
           applications={data?.filterApplications?.applications}
+          emptyText="Engar umsóknir fundust með þessum leitarskilyrðum 👀"
         />
       )}
-      <Pagination
-        page={currentPage}
-        totalPages={
-          data?.filterApplications.totalCount
-            ? Math.ceil(
-                data?.filterApplications.totalCount / applicationPageSize,
-              )
-            : 0
-        }
-        renderLink={(page, className, children) => (
-          <Box
-            cursor="pointer"
-            className={className}
-            onClick={() => setQuery(page)}
-          >
-            {children}
-          </Box>
-        )}
-      />
+      {data?.filterApplications && data.filterApplications.totalCount > 0 && (
+        <Pagination
+          page={currentPage}
+          totalPages={
+            data?.filterApplications
+              ? Math.ceil(
+                  data?.filterApplications.totalCount / applicationPageSize,
+                )
+              : 0
+          }
+          renderLink={(page, className, children) => (
+            <Box
+              cursor="pointer"
+              className={className}
+              onClick={() => setQuery(page)}
+            >
+              {children}
+            </Box>
+          )}
+        />
+      )}
+
       {error && (
         <div>
           Abbabab mistókst að sækja umsóknir, ertu örugglega með aðgang að þessu
