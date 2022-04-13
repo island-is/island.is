@@ -1,9 +1,11 @@
-import { makeCustodyCase } from '@island.is/judicial-system/formatters'
 import {
   CaseDecision,
   CaseState,
   CaseType,
 } from '@island.is/judicial-system/types'
+
+import { makeCustodyCase } from '@island.is/judicial-system-web/src/utils/mocks'
+
 import { caseResult } from './'
 
 describe('Page layout utils', () => {
