@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import { Text, Box, Pagination } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 import { useLazyQuery } from '@apollo/client'
 
+import { Text, Box, Pagination } from '@island.is/island-ui/core'
 import {
   ApplicationsTable,
   FilterPopover,
@@ -14,6 +14,7 @@ import {
 } from '@island.is/financial-aid/shared/lib'
 import { ApplicationFilterQuery } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
 import { navigationItems } from '@island.is/financial-aid-web/veita/src/utils/navigation'
+import { container } from './applicationsOverviewProcessed.css'
 
 interface Filters {
   selectedStates: ApplicationState[]
@@ -89,28 +90,42 @@ export const ApplicationsOverviewProcessed = () => {
   }, [router.query])
 
   return (
-    <>
-      <Box className={`contentUp delay-25`} marginTop={15}>
-        <Text as="h1" variant="h1" marginBottom={[2, 2, 4]}>
-          {currentNavigationItem.label}
-        </Text>
-      </Box>
-      <FilterPopover
-        selectedMonths={filters.selectedMonths}
-        selectedStates={filters.selectedStates}
-        results={data?.filterApplications?.totalCount ?? 0}
-        onChecked={onChecked}
-        onFilterClear={() => setQuery(1, true)}
-        onFilterSave={() => setQuery(1)}
-      />
-      {data?.filterApplications?.applications && (
-        <ApplicationsTable
-          headers={currentNavigationItem.headers}
-          applications={data?.filterApplications?.applications}
-          emptyText="Engar umsóknir fundust með þessum leitarskilyrðum 👀"
+    <Box
+      className={container}
+      display="flex"
+      flexDirection="column"
+      justifyContent="spaceBetween"
+    >
+      <Box>
+        <Box className={`contentUp delay-25`} marginTop={15}>
+          <Text as="h1" variant="h1" marginBottom={[2, 2, 4]}>
+            {currentNavigationItem.label}
+          </Text>
+        </Box>
+        <FilterPopover
+          selectedMonths={filters.selectedMonths}
+          selectedStates={filters.selectedStates}
+          results={data?.filterApplications?.totalCount ?? 0}
+          onChecked={onChecked}
+          onFilterClear={() => setQuery(1, true)}
+          onFilterSave={() => setQuery(1)}
         />
-      )}
-      {data?.filterApplications && data.filterApplications.totalCount > 0 && (
+        {data?.filterApplications?.applications && (
+          <ApplicationsTable
+            headers={currentNavigationItem.headers}
+            applications={data?.filterApplications?.applications}
+            emptyText="Engar umsóknir fundust með þessum leitarskilyrðum 👀"
+          />
+        )}
+        {error && (
+          <div>
+            Abbabab mistókst að sækja umsóknir, ertu örugglega með aðgang að
+            þessu upplýsingum?
+          </div>
+        )}
+      </Box>
+
+      <Box marginBottom={[3, 3, 7]}>
         <Pagination
           page={currentPage}
           totalPages={
@@ -130,15 +145,8 @@ export const ApplicationsOverviewProcessed = () => {
             </Box>
           )}
         />
-      )}
-
-      {error && (
-        <div>
-          Abbabab mistókst að sækja umsóknir, ertu örugglega með aðgang að þessu
-          upplýsingum?
-        </div>
-      )}
-    </>
+      </Box>
+    </Box>
   )
 }
 
