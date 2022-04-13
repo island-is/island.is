@@ -8,15 +8,11 @@ import {
   SessionArrangements,
 } from '@island.is/judicial-system/types'
 import {
-  makeCustodyCase,
-  makeProsecutor,
-} from '@island.is/judicial-system/formatters'
-import {
   HEARING_ARRANGEMENTS_ROUTE,
   OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
 
-import { intercept } from '../../../utils'
+import { makeCustodyCase, makeProsecutor, intercept } from '../../../utils'
 
 describe(`${OVERVIEW_ROUTE}/:id`, () => {
   const demands = faker.lorem.paragraph()
