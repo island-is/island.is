@@ -2,13 +2,13 @@ import {
   IC_HEARING_ARRANGEMENTS_ROUTE,
   IC_POLICE_DEMANDS_ROUTE,
 } from '@island.is/judicial-system/consts'
+
 import {
   makeCourt,
   makeInvestigationCase,
   makeProsecutor,
-} from '@island.is/judicial-system/formatters'
-
-import { intercept } from '../../../utils'
+  intercept,
+} from '../../../utils'
 
 describe(`${IC_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
   beforeEach(() => {

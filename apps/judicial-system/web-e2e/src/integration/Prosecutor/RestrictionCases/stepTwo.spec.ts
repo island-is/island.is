@@ -2,13 +2,13 @@ import {
   STEP_THREE_ROUTE,
   STEP_TWO_ROUTE,
 } from '@island.is/judicial-system/consts'
+
 import {
   makeCustodyCase,
   makeCourt,
   makeProsecutor,
-} from '@island.is/judicial-system/formatters'
-
-import { intercept } from '../../../utils'
+  intercept,
+} from '../../../utils'
 
 describe(`${STEP_TWO_ROUTE}/:id`, () => {
   beforeEach(() => {

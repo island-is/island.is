@@ -172,6 +172,7 @@ export class StaffService {
     return await this.staffModel.count({
       where: {
         municipalityIds: { [Op.contains]: [municipalityId] },
+        roles: { [Op.contains]: [StaffRole.ADMIN] },
       },
     })
   }
@@ -180,6 +181,27 @@ export class StaffService {
     return await this.staffModel.findAll({
       where: {
         municipalityIds: { [Op.contains]: [municipalityId] },
+        roles: { [Op.contains]: [StaffRole.ADMIN] },
+      },
+    })
+  }
+
+  async allAdminUsers(municipalityId: string): Promise<StaffModel[]> {
+    return await this.staffModel.findAll({
+      where: {
+        [Op.not]: {
+          municipalityIds: {
+            [Op.contains]: [municipalityId],
+          },
+        },
+        roles: { [Op.contains]: [StaffRole.ADMIN] },
+      },
+    })
+  }
+
+  async getAdmins(): Promise<StaffModel[]> {
+    return await this.staffModel.findAll({
+      where: {
         roles: { [Op.contains]: [StaffRole.ADMIN] },
       },
     })

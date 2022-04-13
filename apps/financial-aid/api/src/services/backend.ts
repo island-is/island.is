@@ -73,7 +73,7 @@ class BackendAPI extends RESTDataSource {
 
   createMunicipality(
     createMunicipality: CreateMunicipality,
-    createAdmin: CreateStaff,
+    createAdmin?: CreateStaff,
   ): Promise<Municipality> {
     return this.post('municipality', {
       municipalityInput: createMunicipality,
@@ -158,9 +158,16 @@ class BackendAPI extends RESTDataSource {
   getAdminUsers(municipalityId: string): Promise<Staff[]> {
     return this.get(`staff/users/${municipalityId}`)
   }
+  getAllAdminUsers(municipalityId: string): Promise<Staff[]> {
+    return this.get(`staff/allAdminUsers/${municipalityId}`)
+  }
 
   getSupervisors(): Promise<Staff[]> {
     return this.get('staff/supervisors')
+  }
+
+  getAdmins(): Promise<Staff[]> {
+    return this.get('staff/admins')
   }
 
   updateStaff(id: string, updateStaff: UpdateStaff): Promise<Staff> {
