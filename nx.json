@@ -221,6 +221,9 @@
     "application-templates-driving-license": {
       "tags": []
     },
+    "application-templates-driving-school-confirmation": {
+      "tags": []
+    },
     "application-templates-example-payment": {
       "tags": []
     },
@@ -353,9 +356,6 @@
       "tags": []
     },
     "clients-rsk-procuring": {
-      "tags": []
-    },
-    "clients-rsk-v1": {
       "tags": []
     },
     "clients-syslumenn": {

@@ -38,9 +38,25 @@ export const serviceSetup = (): ServiceBuilder<'service-portal-api'> =>
       max: 30,
       min: 2,
     })
+    .ingress({
+      internal: {
+        host: {
+          dev: 'service-portal-api',
+          staging: 'service-portal-api',
+          prod: 'service-portal-api',
+        },
+        paths: ['/'],
+        public: false,
+      },
+    })
     .resources({
       limits: { cpu: '800m', memory: '1024Mi' },
       requests: { cpu: '400m', memory: '512Mi' },
     })
     .postgres({ passwordSecret: '/k8s/service-portal/api/DB_PASSWORD' })
-    .grantNamespaces('nginx-ingress-external', 'islandis', 'user-notification')
+    .grantNamespaces(
+      'nginx-ingress-internal',
+      'islandis',
+      'user-notification',
+      'identity-server',
+    )

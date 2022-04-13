@@ -1,4 +1,4 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { Field, ID, ObjectType, PickType } from '@nestjs/graphql'
 
 @ObjectType()
 export class DrivingLicenceTestResult {
@@ -44,3 +44,9 @@ export class DrivingLicenceTestResult {
   @Field()
   comments!: string
 }
+
+@ObjectType()
+export class DrivingLicenceTestResultId extends PickType(
+  DrivingLicenceTestResult,
+  ['id'],
+) {}

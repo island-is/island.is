@@ -31,7 +31,7 @@ const FinanceScheduleDetailTable: FC<Props> = ({ data }) => {
     const sum =
       x.payments?.reduce(
         (sum: number, current: { payAmount: number }) =>
-          sum + current.payAmount,
+          sum + Math.abs(current.payAmount),
         0,
       ) || 0
     return {
