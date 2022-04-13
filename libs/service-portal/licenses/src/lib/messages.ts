@@ -82,6 +82,10 @@ export const m = defineMessages({
     id: 'sp.license:see',
     defaultMessage: 'Skoða',
   },
+  applyFor: {
+    id: 'sp.license:apply-for',
+    defaultMessage: 'Sækja um',
+  },
   qrCodeAltText: {
     id: 'sp.license:QR-code-alt-text',
     defaultMessage: 'QR code for driving license',

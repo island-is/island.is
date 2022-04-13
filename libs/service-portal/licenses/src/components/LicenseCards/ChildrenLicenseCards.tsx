@@ -3,6 +3,7 @@ import { GridColumn, GridRow, Stack } from '@island.is/island-ui/core'
 import { DrivingLicense } from '../DrivingLicense/DrivingLicense'
 import { DrivingLicenseType } from '@island.is/service-portal/core'
 import PassportLicense from '../PassportLicense/PassportLicense'
+import EmptyCard from '../EmptyCard/EmptyCard'
 interface Props {
   data?: any
 }
@@ -31,14 +32,22 @@ const ChildrenLicenseCards: FC<Props> = ({ data }) => {
           )} */}
           {/* Mappa í genum array sem a bæði passport object og driving license */}
           {data?.passportData?.map((item: any, index: number) => {
-            const fullName = item.displayFirstName + ' ' + item.displayLastName
-            return (
+            const fullName = titleCase(
+              item.displayFirstName + ' ' + item.displayLastName,
+            )
+            return !item.number ? (
+              <EmptyCard
+                image="./assets/images/stjornarrad.svg"
+                title={fullName}
+                text={'Þú átt engin gild ökuskírteini'}
+              />
+            ) : (
               <PassportLicense
                 key={index + item.number}
                 id={item.number}
                 expireDate={item.expirationDate}
                 children={true}
-                name={titleCase(fullName)}
+                name={fullName}
               />
             )
           })}

@@ -55,18 +55,6 @@ export const LicensesOverview: ServicePortalModuleComponent = (userInfo) => {
           passportData={passportData}
         />
       )}
-      {/* 
-      {!drivingLicenseLoading &&
-        !drivingLicenseError &&
-        (status === 'Unknown' || status === 'NotAvailable') && (
-          <Box marginTop={2}>
-            <EmptyCard
-              image="./assets/images/stjornarrad.svg"
-              title={userInfo.userInfo.profile.name}
-              text={'Þú átt engin gild ökuskírteini'}
-            />
-          </Box>
-        )} */}
 
       {drivingLicenseError && (
         <Box>
