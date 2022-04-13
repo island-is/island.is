@@ -1,4 +1,4 @@
-export const config = {
+export const watsonConfig = {
   // Project page id
   '3NFDdRCIe5RVnlSEbHxoTT': {
     integrationID: 'b1a80e76-da12-4333-8872-936b08246eaa',
