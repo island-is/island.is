@@ -234,7 +234,9 @@ export class CmsElasticsearchService {
 
   async getPublishedMaterial(
     index: string,
-    {
+    input: GetPublishedMaterialInput,
+  ): Promise<EnhancedAssetSearchResult> {
+    const {
       organizationSlug,
       searchString,
       page = 1, // The page number is 1-based meaning that page 1 is the first page
@@ -242,8 +244,8 @@ export class CmsElasticsearchService {
       tags,
       tagGroups,
       sort,
-    }: GetPublishedMaterialInput,
-  ): Promise<EnhancedAssetSearchResult> {
+    } = input
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const must: Record<string, any>[] = [
       {
@@ -318,6 +320,9 @@ export class CmsElasticsearchService {
       items: enhancedAssetResponse.body.hits.hits.map((item) =>
         JSON.parse(item._source.response ?? '{}'),
       ),
+
+      // Also return the input so we can match the response to the request that was made
+      input,
     }
   }
 }

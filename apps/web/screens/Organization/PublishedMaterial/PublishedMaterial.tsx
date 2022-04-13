@@ -50,6 +50,7 @@ import {
   getGenericTagGroupHierarchy,
   getInitialParameters,
   Ordering,
+  responseInputMatchesRequestInput,
 } from './utils'
 import { OrderByItem } from './components/OrderByItem'
 import { useSelect } from 'downshift'
@@ -114,6 +115,11 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
         sort: ordering,
       },
     },
+  })
+  const [publishedMaterialData, setPublishedMaterialData] = useState({
+    total: 0,
+    items: [],
+    input: {},
   })
 
   const { data, loading, fetchMore } = useQuery<
@@ -257,6 +263,14 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
   useEffect(() => {
     if (selectedItem?.onClick) selectedItem.onClick()
   }, [selectedItem])
+
+  useEffect(() => {
+    const responseInput = data?.getPublishedMaterial?.input ?? {}
+    const requestInput = queryVariables.variables.input
+    if (responseInputMatchesRequestInput(responseInput, requestInput)) {
+      setPublishedMaterialData(data?.getPublishedMaterial)
+    }
+  }, [data?.getPublishedMaterial, queryVariables.variables.input])
 
   const orderByButtonRef = useRef<HTMLDivElement | null>(null)
 
@@ -412,7 +426,7 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
               </GridRow>
             </GridColumn>
           </GridRow>
-          {(data?.getPublishedMaterial.items ?? []).map((item, index) => {
+          {(publishedMaterialData?.items ?? []).map((item, index) => {
             return (
               <GridRow
                 key={`${item.id}-${index}`}
