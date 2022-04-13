@@ -3,12 +3,21 @@ import { defineMessages } from 'react-intl'
 export const m = defineMessages({
   title: {
     id: 'sp.license:title',
-    defaultMessage: 'Þín skírteini',
+    defaultMessage: 'Þín réttindi',
+  },
+  titleChildren: {
+    id: 'sp.license:title-children',
+    defaultMessage: 'Réttindi barna',
   },
   intro: {
     id: 'sp.license:intro',
     defaultMessage:
-      'Hér gefur að líta á núverandi skírteini og réttindi þín. Til að byrja með geturu fundið ökuréttindi þín og kannað stöðu þeirra. Unnið er að því að bæta við fleiri skírteinum og réttindum eins og bólusetningarskírteini, skotvopnaleyfi og vegabréfi.',
+      'Hér gefur að líta á núverandi réttindi og skírteini þín. Til að byrja með geturu fundið ökuréttindi þín og kannað stöðu þeirra ásamt því að geta séð upplýsingar um vegabréf. Unnið er að því að bæta við fleiri skírteinum og réttindum eins og bólusetningarskírteini og skotvopnaleyfi.',
+  },
+  introChildren: {
+    id: 'sp.license:intro-children',
+    defaultMessage:
+      'Hér gefur að líta á núverandi réttindi og skírteini barna þinna og gildistíma þeirra.',
   },
   drivingLicense: {
     id: 'sp.license:license',
@@ -22,6 +31,16 @@ export const m = defineMessages({
     id: 'sp.license:driving-license-description',
     defaultMessage:
       'Hér birtast upplýsingar um ökuskírteini þitt ásam þeim ökuréttidnum sem þú ert með í gildi á hverjum tíma.',
+  },
+  passportDescription: {
+    id: 'sp.license:passport-description',
+    defaultMessage:
+      'Hér birtast upplýsingar um vegabréfið þitt. Athugaðu að þetta eru aðeins upplýsingar en ekki gilt vegabréf.',
+  },
+  passportDescriptionChildren: {
+    id: 'sp.license:passport-description',
+    defaultMessage:
+      'Hér birtast upplýsingar um vegabréf barna þinna. Athugaðu að þetta eru aðeins upplýsingar en ekki gilt vegabréf.',
   },
   expiresIn: {
     id: 'sp.license:expires-in',
@@ -59,6 +78,10 @@ export const m = defineMessages({
     id: 'sp.license:see-details',
     defaultMessage: 'Skoða upplýsingar',
   },
+  see: {
+    id: 'sp.license:see',
+    defaultMessage: 'Skoða',
+  },
   qrCodeAltText: {
     id: 'sp.license:QR-code-alt-text',
     defaultMessage: 'QR code for driving license',
@@ -79,6 +102,10 @@ export const m = defineMessages({
   errorFetchingDrivingLicense: {
     id: 'sp.license:error-fetch-driving-license',
     defaultMessage: 'Ekki tókst að sækja gögn um ökuskírteini',
+  },
+  errorFetchingPassport: {
+    id: 'sp.license:error-fetch-passport',
+    defaultMessage: 'Ekki tókst að sækja gögn um vegabréf',
   },
   errorFetch: {
     id: 'sp.license:error-fetch',
@@ -106,10 +133,51 @@ export const m = defineMessages({
   },
   issuedBy: {
     id: 'sp.license:issued-by',
-    defaultMessage: 'Nafn útgefanda',
+    defaultMessage: 'Útgefandi',
   },
   licenseCategories: {
     id: 'sp.license:license-categories-title',
     defaultMessage: 'Réttindaflokkar',
+  },
+  altText: {
+    id: 'sp.license:license-alt-text',
+    defaultMessage: 'Skrautmynd fyrir',
+  },
+  passportCardTitle: {
+    id: 'sp.license:passport-card-title',
+    defaultMessage: 'Vegabréf',
+  },
+  passportNumber: {
+    id: 'sp.license:passport-number',
+    defaultMessage: 'Númer vegabréfs',
+  },
+  passportName: {
+    id: 'sp.license:passport-name',
+    defaultMessage: 'Nafn einstaklings',
+  },
+  passportNumberShort: {
+    id: 'sp.license:passport-number-short',
+    defaultMessage: 'Númer',
+  },
+  passportNameComputer: {
+    id: 'sp.license:passport-name-computer',
+    defaultMessage: 'Nafn á tölvulesanlegu formi',
+  },
+  passportGender: {
+    id: 'sp.license:passport-gender',
+    defaultMessage: 'Kyn',
+  },
+  passportRenew: {
+    id: 'sp.license:passport-renew',
+    defaultMessage: 'Endurnýja vegabréf',
+  },
+
+  passportExpired: {
+    id: 'sp.license:passport-expired',
+    defaultMessage: 'Vegabréf útrunnið',
+  },
+  passportExpiredText: {
+    id: 'sp.license:passport-expired-text',
+    defaultMessage: 'Athugið að vegabréf er útrunnið og þarf að sækja um nýtt',
   },
 })

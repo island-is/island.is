@@ -49,7 +49,10 @@ type ActionCardProps = {
     label?: string
     message?: string
   }
-  avatar?: boolean
+  image?: {
+    variant?: 'image' | 'default'
+    src?: string
+  }
 }
 
 const defaultCta = {
@@ -88,7 +91,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
   tag: _tag,
   unavailable: _unavailable,
   progressMeter: _progressMeter,
-  avatar,
+  image,
 }) => {
   const cta = { ...defaultCta, ..._cta }
   const progressMeter = { ...defaultProgressMeter, ..._progressMeter }
@@ -101,27 +104,47 @@ export const ActionCard: React.FC<ActionCardProps> = ({
       ? 'red100'
       : 'blue100'
 
-  const renderAvatar = () => {
-    if (!avatar) {
+  const renderImage = () => {
+    if (!image) {
       return null
     }
 
-    return heading ? (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        flexShrink={0}
-        marginRight={[2, 3]}
-        borderRadius="circle"
-        background="blue100"
-        className={styles.avatar}
-      >
-        <Text variant="h3" as="p" color="blue400">
-          {getTitleAbbreviation(heading)}
-        </Text>
-      </Box>
-    ) : null
+    if (image.variant === 'default') {
+      return heading ? (
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          flexShrink={0}
+          marginRight={[2, 3]}
+          borderRadius="circle"
+          background="blue100"
+          className={styles.avatar}
+        >
+          <Text variant="h3" as="p" color="blue400">
+            {getTitleAbbreviation(heading)}
+          </Text>
+        </Box>
+      ) : null
+    }
+    if (image.variant === 'image') {
+      return (
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          flexShrink={0}
+          marginRight={[2, 3]}
+          className={styles.avatar}
+        >
+          <img
+            className={styles.avatar}
+            src={image.src}
+            alt={`action card for ${heading}`}
+          />
+        </Box>
+      )
+    }
   }
 
   const renderDisabled = () => {
@@ -290,7 +313,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
         display="flex"
         flexDirection={['column', 'row']}
       >
-        {renderAvatar()}
+        {renderImage()}
         <Box flexDirection="row" width="full">
           {heading && (
             <Box

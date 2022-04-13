@@ -368,7 +368,7 @@ export const m = defineMessages({
   },
   licenses: {
     id: 'service.portal:licenses',
-    defaultMessage: 'Skírteini',
+    defaultMessage: 'Réttindi',
   },
   finance: {
     id: 'service.portal:finance',
@@ -434,6 +434,18 @@ export const m = defineMessages({
   drivingLicense: {
     id: 'service.portal:drivingLicense',
     defaultMessage: 'Ökuréttindi',
+  },
+  passport: {
+    id: 'service.portal:passport',
+    defaultMessage: 'Vegabréf',
+  },
+  myLicenses: {
+    id: 'service.portal:my-licenses',
+    defaultMessage: 'Mín réttindi',
+  },
+  childLicenses: {
+    id: 'service.portal:child-licenses',
+    defaultMessage: 'Réttindi barna',
   },
   notFound: {
     id: 'service.portal:not-found',
@@ -653,10 +665,10 @@ export const m = defineMessages({
   },
   licenseNavTitle: {
     id: 'service.portal:license-title',
-    defaultMessage: 'Skírteini',
+    defaultMessage: 'Réttindi',
   },
   yourLicenses: {
     id: 'service.portal:your-licenses',
-    defaultMessage: 'Þín skírteini',
+    defaultMessage: 'Þín réttindi',
   },
 })

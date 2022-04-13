@@ -6,8 +6,9 @@ export const LicenseLoader: FC = () => {
     <Box
       display="flex"
       alignItems="center"
-      paddingY={[2, 3, 4]}
-      paddingX={[2, 3, 4]}
+      paddingY={[2, 3]}
+      paddingX={[2, 4]}
+      marginBottom={2}
       border="standard"
       borderRadius="large"
     >

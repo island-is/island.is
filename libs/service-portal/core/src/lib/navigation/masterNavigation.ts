@@ -80,9 +80,32 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         },
         children: [
           {
+            name: m.myLicenses,
+            path: ServicePortalPath.LicensesRoot,
+          },
+          {
+            name: m.childLicenses,
+            path: ServicePortalPath.LicensesChildrenRoot,
+          },
+          {
             navHide: true,
             name: m.drivingLicense,
             path: ServicePortalPath.LicensesDrivingDetail,
+          },
+          {
+            navHide: true,
+            name: m.passport,
+            path: ServicePortalPath.LicensesPassportDetail,
+          },
+          {
+            navHide: true,
+            name: m.drivingLicense,
+            path: ServicePortalPath.LicensesChildrenDrivingDetail,
+          },
+          {
+            navHide: true,
+            name: m.passport,
+            path: ServicePortalPath.LicensesChildrenPassportDetail,
           },
         ],
       },

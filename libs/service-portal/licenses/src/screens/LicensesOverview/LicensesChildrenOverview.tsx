@@ -11,14 +11,16 @@ import {
 import LicenseCards from '../../components/LicenseCards/LicenseCards'
 import { LicenseLoader } from '../../components/LicenseLoader/LicenseLoader'
 import {
+  Query,
   useDrivingLicense,
-  useAllLicenses,
+  NATIONAL_REGISTRY_CHILDREN,
 } from '@island.is/service-portal/graphql'
 import { m } from '../../lib/messages'
-import { passportDetail } from '../../mock/passport'
-import EmptyCard from '../../components/EmptyCard/EmptyCard'
+import { passportDetail, passportDetailChildren } from '../../mock/passport'
+import { useQuery } from '@apollo/client'
+import ChildrenLicenseCards from '../../components/LicenseCards/ChildrenLicenseCards'
 
-export const LicensesOverview: ServicePortalModuleComponent = (userInfo) => {
+export const LicensesChildrenOverview: ServicePortalModuleComponent = () => {
   useNamespaces('sp.license')
   const { formatMessage } = useLocale()
   const {
@@ -27,44 +29,37 @@ export const LicensesOverview: ServicePortalModuleComponent = (userInfo) => {
     loading: drivingLicenseLoading,
     error: drivingLicenseError,
   } = useDrivingLicense()
-
-  const {
-    data: allLicenseData,
-    loading: allLicenseLoading,
-    error: allLicenseError,
-  } = useAllLicenses()
+  /* TODO: Set up passport resolver to fetch all children and passport for all children, if no passport then return empty passport object */
+  const passportChildrenData = passportDetailChildren
   const passportData = passportDetail
   const passportLoading = false
   const passportError = false
 
-  console.log('allLicenseData', allLicenseData)
-  console.log('drivingLicenseData', drivingLicenseData)
-
+  const childrensLicenensesData = {
+    drivingLicenseData: drivingLicenseData,
+    passportData: passportChildrenData,
+  }
   return (
     <>
-      <Box marginBottom={[3, 4, 5]}>
+      <Box>
         <IntroHeader
-          title={defineMessage(m.title)}
-          intro={defineMessage(m.intro)}
+          title={defineMessage(m.titleChildren)}
+          intro={defineMessage(m.introChildren)}
         />
       </Box>
       {(drivingLicenseLoading || passportLoading) && <LicenseLoader />}
-      {(drivingLicenseData || passportData) && (
-        <LicenseCards
-          drivingLicenseData={drivingLicenseData}
-          passportData={passportData}
-        />
-      )}
+      {childrensLicenensesData &&
+        drivingLicenseData &&
+        !drivingLicenseLoading &&
+        !passportLoading && (
+          <ChildrenLicenseCards data={childrensLicenensesData} />
+        )}
       {/* 
       {!drivingLicenseLoading &&
         !drivingLicenseError &&
         (status === 'Unknown' || status === 'NotAvailable') && (
-          <Box marginTop={2}>
-            <EmptyCard
-              image="./assets/images/stjornarrad.svg"
-              title={userInfo.userInfo.profile.name}
-              text={'Þú átt engin gild ökuskírteini'}
-            />
+          <Box marginTop={8}>
+            <EmptyState title={m.errorNoData} />
           </Box>
         )} */}
 
@@ -80,4 +75,4 @@ export const LicensesOverview: ServicePortalModuleComponent = (userInfo) => {
   )
 }
 
-export default LicensesOverview
+export default LicensesChildrenOverview

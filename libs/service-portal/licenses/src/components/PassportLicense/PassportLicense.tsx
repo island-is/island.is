@@ -1,31 +1,47 @@
 import React, { useState } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { ActionCard } from '@island.is/island-ui/core'
-import { useHistory } from 'react-router-dom'
-import { getExpiresIn } from '../../utils/dateUtils'
+import {
+  ActionCard,
+  Box,
+  Button,
+  Hidden,
+  Tag,
+  Text,
+} from '@island.is/island-ui/core'
+import { Link, useHistory } from 'react-router-dom'
+import * as styles from './PassportLicense.css'
+import { getExpiresIn, toDate } from '../../utils/dateUtils'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import { m } from '../../lib/messages'
 
-export const DrivingLicense = ({
+export const PassportLicense = ({
   id,
   expireDate,
+  children = false,
+  name,
 }: {
   id: string
   expireDate: string
+  children?: boolean
+  name?: string
 }) => {
   useNamespaces('sp.license')
   const { formatMessage } = useLocale()
-  const [currentDate] = useState(new Date())
   const history = useHistory()
+  const [currentDate] = useState(new Date())
 
   const expiresIn = getExpiresIn(currentDate, new Date(expireDate))
 
   const handleClick = () =>
-    history.push(ServicePortalPath.LicensesDrivingDetail.replace(':id', id))
-
+    history.push(
+      children
+        ? ServicePortalPath.LicensesChildrenPassportDetail.replace(':id', id)
+        : ServicePortalPath.LicensesPassportDetail.replace(':id', id),
+    )
+  console.log(expiresIn)
   return (
     <ActionCard
-      heading={formatMessage(m.drivingLicense)}
+      heading={children ? name || '' : formatMessage(m.passportCardTitle)}
       headingVariant="h4"
       tag={{
         label: expiresIn
@@ -46,8 +62,8 @@ export const DrivingLicense = ({
         variant: expiresIn ? 'red' : 'blue',
         outlined: false,
       }}
-      image={{ variant: 'image', src: './assets/images/stjornarrad.svg' }}
-      text={formatMessage(m.drivingLicenseNumber) + ' - ' + id}
+      image={{ variant: 'image', src: './assets/images/tjodskra.svg' }}
+      text={formatMessage(m.passportNumber) + ' - ' + id}
       cta={{
         variant: 'text',
         onClick: handleClick,
@@ -57,4 +73,4 @@ export const DrivingLicense = ({
   )
 }
 
-export default DrivingLicense
+export default PassportLicense
