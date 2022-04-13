@@ -11,7 +11,7 @@ export const done: Form = buildForm({
   mode: FormModes.APPLYING,
   children: [
     buildCustomField({
-      id: 'overview',
+      id: 'congrats',
       component: 'Congratulations',
       title: 'Umsókn móttekin',
     }),

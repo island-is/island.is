@@ -19,7 +19,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.MARRIAGE_CONDITIONS,
-  name: 'Stæðiskort',
+  name: m.applicationTitle,
   dataSchema: dataSchema,
   readyForProduction: true,
   stateMachineConfig: {
@@ -37,11 +37,6 @@ const MarriageConditionsTemplate: ApplicationTemplate<
             shouldBePruned: true,
             whenToPrune: 24 * 3600 * 1000,
           },
-          onExit: {
-            apiModuleAction: ApiActions.submitApplication,
-            shouldPersistToExternalData: true,
-            throwOnError: true,
-          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -51,9 +46,43 @@ const MarriageConditionsTemplate: ApplicationTemplate<
                 ),
               actions: [
                 {
-                  event: DefaultEvents.SUBMIT,
-                  name: 'Staðfesta',
+                  event: DefaultEvents.PAYMENT,
+                  name: 'Áfram í greiðslu',
                   type: 'primary',
+                },
+              ],
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.PAYMENT]: { target: States.PAYMENT },
+        },
+      },
+      [States.PAYMENT]: {
+        meta: {
+          name: 'Payment state',
+          actionCard: {
+            description: 'payment',
+          },
+          progress: 0.9,
+          lifecycle: DefaultStateLifeCycle,
+          onEntry: {
+            apiModuleAction: ApiActions.createCharge,
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/payment').then((val) =>
+                Promise.resolve(val.getPayment()),
+              ),
+              actions: [
+                { event: DefaultEvents.SUBMIT, name: 'Panta', type: 'primary' },
+                {
+                  event: DefaultEvents.ABORT,
+                  name: 'Hætta við',
+                  type: 'reject',
                 },
               ],
               write: 'all',

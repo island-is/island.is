@@ -8,29 +8,15 @@ import {
   buildMultiField,
   Application,
   buildCustomField,
-  buildRadioField,
-  buildDescriptionField,
-  FormValue,
-  buildSelectField,
   buildDividerField,
-  buildKeyValueField,
+  buildTextField,
   buildSubmitField,
   DefaultEvents,
-  buildFileUploadField,
-  buildTextField,
-  buildDateField,
-  getValueViaPath,
 } from '@island.is/application/core'
 import type { User } from '@island.is/api/domains/national-registry'
 import { format as formatNationalId } from 'kennitala'
-import {
-  NationalRegistryUser,
-  UserProfile,
-  DistrictCommissionerAgencies,
-} from '../types/schema'
+import { UserProfile } from '../types/schema'
 import { m } from '../lib/messages'
-import format from 'date-fns/format'
-import is from 'date-fns/locale/is'
 
 export const getApplication = (): Form => {
   return buildForm({
@@ -66,14 +52,14 @@ export const getApplication = (): Form => {
               buildDataProviderItem({
                 id: 'birthCertificate',
                 type: '',
-                title: 'Fæðingarvottorð',
-                subTitle: 'Vottorð um fæðingardag/kennitölu, kyn, fæðingarstað og nöfn foreldra.',
+                title: m.dataCollectionBirthCertificateTitle,
+                subTitle: m.dataCollectionBirthCertificateDescription,
               }),
               buildDataProviderItem({
                 id: 'maritalStatus',
                 type: '',
-                title: 'Hjúskaparvottorð',
-                subTitle: 'Vottorð um núverandi hjúskaparstöðu.',
+                title: m.dataCollectionMaritalStatusTitle,
+                subTitle: m.dataCollectionMaritalStatusDescription,
               }),
             ],
           }),
@@ -87,18 +73,22 @@ export const getApplication = (): Form => {
             id: 'sides',
             title: m.informationTitle,
             children: [
-              buildDividerField({ title: 'Hjónaefni 1', color: 'dark400' }),
+              buildDividerField({
+                title: m.informationSpouse1,
+                color: 'dark400',
+              }),
               buildTextField({
-                id: 'nationalId1',
-                title: m.applicantsNationalId,
+                id: 'applicant.nationalId',
+                title: m.nationalId,
                 width: 'half',
                 backgroundColor: 'white',
+                format: '######-####',
                 defaultValue: (application: Application) =>
                   formatNationalId(application.applicant),
               }),
               buildTextField({
-                id: 'name1',
-                title: m.applicantsName,
+                id: 'applicant.name',
+                title: m.name,
                 width: 'half',
                 backgroundColor: 'white',
                 defaultValue: (application: Application) => {
@@ -108,8 +98,8 @@ export const getApplication = (): Form => {
                 },
               }),
               buildTextField({
-                id: 'phone1',
-                title: m.applicantsPhoneNumber,
+                id: 'applicant.phone',
+                title: m.phone,
                 width: 'half',
                 backgroundColor: 'blue',
                 defaultValue: (application: Application) => {
@@ -119,8 +109,8 @@ export const getApplication = (): Form => {
                 },
               }),
               buildTextField({
-                id: 'email1',
-                title: m.applicantsEmail,
+                id: 'applicant.email',
+                title: m.email,
                 variant: 'email',
                 width: 'half',
                 backgroundColor: 'blue',
@@ -130,33 +120,37 @@ export const getApplication = (): Form => {
                   return data.email
                 },
               }),
-              buildDividerField({ title: 'Hjónaefni 2', color: 'dark400' }),
+              buildDividerField({
+                title: m.informationSpouse2,
+                color: 'dark400',
+              }),
               buildCustomField({
                 id: 'alert',
                 title: '',
                 component: 'InfoAlert',
               }),
               buildTextField({
-                id: 'nationalId2',
-                title: m.applicantsNationalId,
+                id: 'spouse.nationalId',
+                title: m.nationalId,
+                width: 'half',
+                backgroundColor: 'blue',
+                format: '######-####',
+              }),
+              buildTextField({
+                id: 'spouse.name',
+                title: m.name,
                 width: 'half',
                 backgroundColor: 'blue',
               }),
               buildTextField({
-                id: 'name2',
-                title: m.applicantsName,
+                id: 'spouse.phone',
+                title: m.phone,
                 width: 'half',
                 backgroundColor: 'blue',
               }),
               buildTextField({
-                id: 'phone2',
-                title: m.applicantsPhoneNumber,
-                width: 'half',
-                backgroundColor: 'blue',
-              }),
-              buildTextField({
-                id: 'email2',
-                title: m.applicantsEmail,
+                id: 'spouse.email',
+                title: m.email,
                 variant: 'email',
                 width: 'half',
                 backgroundColor: 'blue',
@@ -167,61 +161,69 @@ export const getApplication = (): Form => {
       }),
       buildSection({
         id: 'marriageWitnesses',
-        title: 'Hjúskapavottar',
+        title: m.informationMaritalSides,
         children: [
           buildMultiField({
             id: 'witnesses',
-            title: 'Hjúskapavottar',
-            description: 'Undirritaðir aðilar munu ábyrgjast að enginn lagatálmi sé á fyrirhuguðum hjúskap.',
+            title: m.informationMaritalSides,
+            description: m.informationMaritalSidesDescription,
             children: [
-              buildDividerField({ title: 'Votti 1', color: 'dark400' }),
-              buildTextField({
-                id: 'witnessNationalId1',
-                title: m.applicantsNationalId,
-                width: 'half',
-                backgroundColor: 'blue',
+              buildDividerField({
+                title: m.informationWitness1,
+                color: 'dark400',
               }),
               buildTextField({
-                id: 'witnessName1',
-                title: m.applicantsName,
+                id: 'witness1.nationalId',
+                title: m.nationalId,
+                width: 'half',
+                backgroundColor: 'blue',
+                format: '######-####',
+              }),
+              buildTextField({
+                id: 'witness1.name',
+                title: m.name,
                 width: 'half',
                 backgroundColor: 'white',
               }),
               buildTextField({
-                id: 'witnessPhone1',
-                title: m.applicantsPhoneNumber,
+                id: 'witness1.phone',
+                title: m.phone,
                 width: 'half',
                 backgroundColor: 'blue',
               }),
               buildTextField({
-                id: 'witnessEmail1',
-                title: m.applicantsEmail,
+                id: 'witness1.email',
+                title: m.email,
                 variant: 'email',
                 width: 'half',
                 backgroundColor: 'blue',
               }),
-              buildDividerField({ title: 'Votti 2', color: 'dark400' }),
-              buildTextField({
-                id: 'witnessNationalId2',
-                title: m.applicantsNationalId,
-                width: 'half',
-                backgroundColor: 'blue',
+              buildDividerField({
+                title: m.informationWitness2,
+                color: 'dark400',
               }),
               buildTextField({
-                id: 'witnessName2',
-                title: m.applicantsName,
+                id: 'witness2.nationalId',
+                title: m.nationalId,
+                width: 'half',
+                backgroundColor: 'blue',
+                format: '######-####',
+              }),
+              buildTextField({
+                id: 'witness2.name',
+                title: m.name,
                 width: 'half',
                 backgroundColor: 'white',
               }),
               buildTextField({
-                id: 'witnessPhone2',
-                title: m.applicantsPhoneNumber,
+                id: 'witness2.phone',
+                title: m.phone,
                 width: 'half',
                 backgroundColor: 'blue',
               }),
               buildTextField({
-                id: 'witnessEmail2',
-                title: m.applicantsEmail,
+                id: 'witness2.email',
+                title: m.email,
                 variant: 'email',
                 width: 'half',
                 backgroundColor: 'blue',
@@ -232,18 +234,48 @@ export const getApplication = (): Form => {
       }),
       buildSection({
         id: 'marriageWitnesses',
-        title: 'Hjúskapavottar',
+        title: '',
         children: [
           buildMultiField({
-            id: 'witnesses',
+            id: 'applicationOverview',
             title: 'Yfirlit umsóknar',
-            description: 'Vinsamlegast farðu yfir umsóknina til að vera viss um að réttar upplýsingar hafi verið gefnar upp. ',
+            description:
+              'Vinsamlegast farðu yfir umsóknina til að vera viss um að réttar upplýsingar hafi verið gefnar upp. ',
             children: [
-              buildDividerField({}),
               buildCustomField({
-                id: 'efni1',
-                title: 'Hjónaefni 1',
+                id: 'overview',
+                title: '',
                 component: 'ApplicationOverview',
+              }),
+            ],
+          }),
+        ],
+      }),
+      buildSection({
+        id: 'paymentTotal',
+        title: 'Greiðsla',
+        children: [
+          buildMultiField({
+            id: 'payment',
+            title: '',
+            children: [
+              buildCustomField({
+                id: 'payment',
+                title: '',
+                component: 'PaymentInfo',
+              }),
+              buildSubmitField({
+                id: 'submitPayment',
+                title: '',
+                placement: 'footer',
+                refetchApplicationAfterSubmit: true,
+                actions: [
+                  {
+                    event: DefaultEvents.PAYMENT,
+                    name: 'Áfram í greiðslu',
+                    type: 'primary',
+                  },
+                ],
               }),
             ],
           }),

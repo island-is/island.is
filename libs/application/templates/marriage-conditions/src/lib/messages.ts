@@ -2,301 +2,213 @@ import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
   applicationTitle: {
-    id: 'ps.application:applicationTitle',
-    defaultMessage: 'Umsókn um Stæðiskort',
-    description: 'Application for P-Sign',
+    id: 'mc.application:applicationTitle',
+    defaultMessage: 'Umsókn um könnun hjónavígsluskilyrða',
+    description: 'Application for Marriage Conditions',
   },
   /* Data Collection Section */
   dataCollectionTitle: {
-    id: 'ps.application:applicationDataCollectionTitle',
+    id: 'mc.application:applicationDataCollectionTitle',
     defaultMessage: 'Gagnaöflun',
     description: 'Title for data collection section',
   },
   dataCollectionSubtitle: {
-    id: 'ps.application:dataCollectionSubtitle',
-    defaultMessage: 'Til þess að uppfylla skilyrði til hjónavígslu þurfa bæði hjónaefni að skila inn fæðingar- og hjúskaparvottorði frá Þjóðskrá Íslands.',
+    id: 'mc.application:dataCollectionSubtitle',
+    defaultMessage: 'Eftirfarandi gögn verða sótt rafrænt með þínu samþykki',
     description: 'Subtitle for data collection section',
   },
   dataCollectionDescription: {
-    id: 'ps.application:dataCollectionDescription',
+    id: 'mc.application:dataCollectionDescription',
     defaultMessage:
-      'Til þess að geta hafið umsókn þína fyrir stæðiskort þarf að sækja eftirfarandi gögn með þínu samþykki.',
+      'Til þess að uppfylla skilyrði til hjónavígslu þurfa bæði hjónaefni að skila inn fæðingar- og hjúskaparvottorði frá Þjóðskrá Íslands.',
     description: 'Description for data collection section',
   },
   dataCollectionCheckboxLabel: {
-    id: 'ps.application:dataCollectionCheckboxLabel',
-    defaultMessage: 'Ég samþykki að láta sækja gögn',
+    id: 'mc.application:dataCollectionCheckboxLabel',
+    defaultMessage: 'Ég samþykki gagnaöflun',
     description: 'Checkbox label for data collection section',
   },
-  dataCollectionDoctorsNoteTitle: {
-    id: 'ps.application:dataCollectionDoctorsNoteTitle',
-    defaultMessage: 'Læknisvottorð vegna umsóknar um stæðiskort',
-    description: 'Doctors note title',
+  dataCollectionBirthCertificateTitle: {
+    id: 'mc.application:dataCollectionBirthCertificateTitle',
+    defaultMessage: 'Fæðingarvottorð',
+    description: 'Birth certificate',
   },
-  dataCollectionDoctorsNoteSubtitle: {
-    id: 'ps.application:dataCollectionDoctorsNoteLabel',
+  dataCollectionBirthCertificateDescription: {
+    id: 'mc.application:dataCollectionBirthCertificateDescription',
     defaultMessage:
-      'Rafrænt læknisvottorð frá heimilislækni þar sem tilgreindur er gildistími stæðiskorts.',
-    description: 'Doctors note subtitle',
+      'Vottorð um fæðingardag/kennitölu, kyn, fæðingarstað og nöfn foreldra.',
+    description: 'Birth certificate',
+  },
+  dataCollectionMaritalStatusTitle: {
+    id: 'mc.application:dataCollectionMaritalStatusTitle',
+    defaultMessage: 'Hjúskaparvottorð',
+    description: 'Marital Status',
+  },
+  dataCollectionMaritalStatusDescription: {
+    id: 'mc.application:dataCollectionMaritalStatusDescription',
+    defaultMessage: 'Vottorð um núverandi hjúskaparstöðu.',
+    description: 'Marital Status',
   },
   dataCollectionNationalRegistryTitle: {
-    id: 'ps.application:dataCollectionNationalRegistryTitle',
+    id: 'mc.application:dataCollectionNationalRegistryTitle',
     defaultMessage: 'Persónuupplýsingar',
     description: 'National registry title',
   },
   dataCollectionNationalRegistrySubtitle: {
-    id: 'ps.application:dataCollectionNationalRegistrySubtitle',
+    id: 'mc.application:dataCollectionNationalRegistrySubtitle',
     defaultMessage: 'Fullt nafn, kennitala, heimilisfang.',
     description: 'National registry subtitle',
   },
-  dataCollectionQualityPhotoTitle: {
-    id: 'ps.application:dataCollectionQualityPhotoTitle',
-    defaultMessage: 'Ökuskírteini (ef til staðar)',
-    description: 'Info from drivers license',
-  },
-  dataCollectionQualityPhotoSubtitle: {
-    id: 'ps.application:dataCollectionQualityPhotoSubtitle',
-    defaultMessage: 'Mynd úr ökuskírteinakerfi hjá Samgöngustofu.',
-    description: 'National registry subtitle',
-  },
   dataCollectionUserProfileTitle: {
-    id: 'cr.application:dataCollectionUserProfileTitle',
+    id: 'mc.application:dataCollectionUserProfileTitle',
     defaultMessage: 'Mínar síður á Ísland.is/stillingar',
     description: 'Your user profile information',
   },
   dataCollectionUserProfileSubtitle: {
-    id: 'ps.application:dataCollectionUserProfileSubtitle',
+    id: 'mc.application:dataCollectionUserProfileSubtitle',
     defaultMessage:
       'Ef þú ert með skráðar upplýsingar um síma og netfang inni á Mínar síður á Ísland.is þá verða þær sjálfkrafa settar inn í umsóknina.',
     description:
       'In order to apply for this application we need your email and phone number',
   },
 
-  /* Information Section */
+  /* Information Section Marital Sides */
   informationTitle: {
-    id: 'ps.application:informationSectionTitle',
+    id: 'mc.application:informationSectionTitle',
     defaultMessage: 'Upplýsingar um hjónaefni',
     description: 'Information section title',
   },
   informationSubtitle: {
-    id: 'ps.application:informationSectionSubtitle',
+    id: 'mc.application:informationSectionSubtitle',
     defaultMessage:
       'Vinsamlegast farðu yfir upplýsingarnar og gakktu úr skugga um að þær séu réttar.',
     description: 'Information section title',
   },
   informationSectionTitle: {
-    id: 'ps.application:informationTitle',
+    id: 'mc.application:informationTitle',
     defaultMessage: 'Upplýsingar',
     description: 'Information title',
   },
-
-  /* Applicant - used in information and overview sections */
-  applicantsName: {
-    id: 'ps.application:applicantsName',
-    defaultMessage: 'Nafn',
-    description: 'Name label',
+  informationSpouse1: {
+    id: 'mc.application:informationSpouse1',
+    defaultMessage: 'Hjónaefni 1',
+    description: 'Information title spouse 1',
   },
-  applicantsNationalId: {
-    id: 'ps.application:applicantsNationalId',
+  informationSpouse2: {
+    id: 'mc.application:informationSpouse2',
+    defaultMessage: 'Hjónaefni 2',
+    description: 'Information title spouse 2',
+  },
+  informationMaritalSides: {
+    id: 'mc.application:maritalSides',
+    defaultMessage: 'Hjónaefni',
+    description: 'marital sides',
+  },
+  informationMaritalSidesDescription: {
+    id: 'mc.application:maritalSidesDescription',
+    defaultMessage:
+      'Undirritaðir aðilar munu ábyrgjast að enginn lagatálmi sé á fyrirhuguðum hjúskap.',
+    description: 'marital sides',
+  },
+
+  /* Information Section Witnesses */
+  informationWitness1: {
+    id: 'mc.application:informationWitness1',
+    defaultMessage: 'Vottur 1',
+    description: 'Information title witness 1',
+  },
+  informationWitness2: {
+    id: 'mc.application:informationWitness2',
+    defaultMessage: 'Vottur 2',
+    description: 'Information title witness 2',
+  },
+
+  /* Individuals info headers */
+  nationalId: {
+    id: 'mc.application:nationalId',
     defaultMessage: 'Kennitala',
-    description: 'National id label',
+    description: 'national id',
   },
-  applicantsAddress: {
-    id: 'ps.application:applicantsAddress',
-    defaultMessage: 'Heimilisfang',
-    description: 'Address label',
+  name: {
+    id: 'mc.application:name',
+    defaultMessage: 'Nafn',
+    description: 'name',
   },
-  applicantsCity: {
-    id: 'ps.application:applicantsCity',
-    defaultMessage: 'Staður',
-    description: 'City label',
-  },
-  applicantsEmail: {
-    id: 'ps.application:applicantsEmail',
-    defaultMessage: 'Netfang',
-    description: 'Email label',
-  },
-  applicantsPhoneNumber: {
-    id: 'ps.application:applicantsPhoneNumber',
+  phone: {
+    id: 'mc.application:phone',
     defaultMessage: 'Símanúmer',
-    description: 'Phone number label',
+    description: 'phone',
   },
-  cardValidityPeriod: {
-    id: 'ps.application:cardValidityPeriod',
-    defaultMessage: 'Gildistími',
-    description: 'Card validity label',
-  },
-
-  /* Quality Photo Section */
-  qualityPhotoTitle: {
-    id: 'ps.application:qualityPhotoSectionTitle',
-    defaultMessage: 'Mynd',
-    description: 'Title for quality photo section',
-  },
-  qualityPhotoSectionTitle: {
-    id: 'ps.application:qualityPhotoSectionTitle',
-    defaultMessage: 'Mynd',
-    description: 'Title for quality photo section',
-  },
-  qualityPhotoExistingPhotoText: {
-    id: 'ps.application:qualityPhotoExistingPhotoText',
-    defaultMessage:
-      'Hér er núverandi mynd úr ökuskírteinaskrá. Hægt er að nota hana eða hlaða inn nýrri mynd með tilgreindum skilyrðum hér fyrir neðan.',
-    description: `Text for the user's existing quality photo`,
-  },
-  qualityPhotoUseExistingPhoto: {
-    id: 'ps.application:qualityPhotoUseExistingPhoto',
-    defaultMessage: 'Nota núverandi mynd',
-    description: `Text for the user's existing quality photo`,
-  },
-  qualityPhotoUploadNewPhoto: {
-    id: 'ps.application:qualityPhotoUploadNewPhoto',
-    defaultMessage: 'Hlaða inn mynd',
-    description: `Text for uploading a new photo`,
-  },
-  qualityPhotoFileUploadTitle: {
-    id: 'ps.application:qualityPhotoFileUploadTitle',
-    defaultMessage: 'Dragðu mynd hingað til að hlaða upp',
-    description: `Title for file upload`,
-  },
-  qualityPhotoFileUploadDescription: {
-    id: 'ps.application:qualityPhotoFileUploadDescription',
-    defaultMessage: 'Tekið er við mynd með endingu: .jpeg, .png, .jpg',
-    description: `Description for file upload`,
-  },
-  qualityPhotoUploadButtonLabel: {
-    id: 'ps.application:qualityPhotoUploadButtonLabel',
-    defaultMessage: 'Velja mynd til að hlaða upp',
-    description: `Upload button label`,
-  },
-  qualityPhotoNoPhotoDescription: {
-    id: 'ps.application:qualityPhotoNoPhotoDescription',
-    defaultMessage:
-      'Til að hlaða inn mynd fyrir stæðiskort, þarf hún að fylla upp eftirfarandi skilyrði:',
-    description: `Description text for no existing photo`,
-  },
-  qualityPhotoAltText: {
-    id: 'ps.application:qualityPhotoAltText',
-    defaultMessage: 'Þín mynd skv. ökuskírteinaskrá',
-    description: `Alt text for the user's quality photo`,
-  },
-  qualityPhotoInstructionsBulletOne: {
-    id: 'ps.application:qualityPhoto.instructionsbulletone',
-    defaultMessage: `
-    Ljósmynd af umsækjanda þarf að vera tekin beint að framan.
-    `,
-    description: 'Description of photo requirements',
-  },
-  qualityPhotoInstructionsBulletTwo: {
-    id: 'ps.application:qualityPhoto.instructionsbullettwo',
-    defaultMessage: `
-    Sýna þarf höfuð (án höfuðfats) og herðar.
-    `,
-    description: 'Description of photo requirements',
-  },
-  qualityPhotoInstructionsBulletThree: {
-    id: 'ps.application:qualityPhoto.instructionsbulletthree',
-    defaultMessage: `
-    Lýsing andlits þarf að vera jöfn.
-    `,
-    description: 'Description of photo requirements',
-  },
-  qualityPhotoInstructionsBulletFour: {
-    id: 'ps.application:qualityPhoto.instructionsbulletfour',
-    defaultMessage: `
-    Hvorki má glampa á gleraugu né skyggja á augu.
-    `,
-    description: 'Description of photo requirements',
-  },
-  qualityPhotoInstructionsBulletFive: {
-    id: 'ps.application:qualityPhoto.instructionsbulletfive',
-    defaultMessage: `
-    Bakgrunnur þarf að vera einfaldur og ljós á litinn.
-    `,
-    description: 'Description of photo requirements',
-  },
-  qualityPhotoNoPhotoAlertMessage: {
-    id: 'ps.application:qualityPhoto.qualityPhotoNoPhotoAlertMessage',
-    defaultMessage: 'Ath. Skylda er að hlaða inn mynd',
-    description: 'Alert on no photo attachment',
+  email: {
+    id: 'mc.application:email',
+    defaultMessage: 'Netfang',
+    description: 'email',
   },
 
-  /* Delivery method Section */
-  deliveryMethodTitle: {
-    id: 'ps.application:deliveryMethodTitle',
-    defaultMessage: 'Afhending',
-    description: 'Title for delivery method section',
-  },
-  deliveryMethodDescription: {
-    id: 'ps.application:deliveryMethodDescription',
-    defaultMessage:
-      'Þú getur valið að fá stæðiskortið sent með pósti á lögheimili þitt eftir 3 til 5 virka daga eða sótt það hjá næsta sýslumannsembætti.',
-    description: 'Description for delivery method section',
-  },
-  deliveryMethodHomeDelivery: {
-    id: 'ps.application:deliveryMethodHomeDelivery',
-    defaultMessage: 'Fá sent í pósti',
-    description: 'Checkbox label for home delivery method',
-  },
-  deliveryMethodPickUp: {
-    id: 'ps.application:deliveryMethodPickUp',
-    defaultMessage: 'Sækja til Sýslumanns',
-    description: 'Checkbox label for self-pickup',
-  },
-  deliveryMethodOfficeLabel: {
-    id: 'ps.application:deliveryMethodOfficeLabel',
-    defaultMessage: 'Embætti',
-    description: 'Title for office',
-  },
-  deliveryMethodOfficeSelectPlaceholder: {
-    id: 'ps.application:deliveryMethodOfficeSelectPlaceholder',
-    defaultMessage: 'Veldu embætti',
-    description: 'Placeholder for office selection',
-  },
 
-  /* Overview Section */
-  overviewTitle: {
-    id: 'ps.application:overviewTitle',
-    defaultMessage: 'Yfirlit',
-    description: 'Title for overview section',
+  /* Payment */
+  paymentPendingDescription: {
+    id: 'mc.application:paymentPendingDescription',
+    defaultMessage: 'Augnablik meðan beðið er eftir staðfestingu',
+    description: 'Please wait until the payment is confirmed',
   },
-  overviewSectionTitle: {
-    id: 'ps.application:overviewTitle',
-    defaultMessage: 'Yfirlit',
-    description: 'Title for overview section',
-  },
-  overviewSectionDescription: {
-    id: 'ps.application:overviewSectionDescription',
+  paymentSuccessExtraDocuments: {
+    id: 'mc.application:paymentSuccessExtraDocuments',
     defaultMessage:
-      'Vinsamlegast lestu yfir umsóknina og vertu viss um að allar upplýsingar séu rétt uppgefnar. Að loknum yfirlestri getur þú sent inn umsóknina.',
-    description: 'Description for overview section',
+      'Ef beðið var um viðbótargögn (nýja ljósmynd eða læknisvottorð) þarf að skila þeim til Sýslumanns svo að fullnaðarskírteini fari í pöntun.',
+    description:
+      'If extra documents are required(new photograph or doctor certificate), you must return them to district commissioner so the driving license can be ordered.',
   },
-  overviewSelfPickupText: {
-    id: 'ps.application:overviewSelfPickupText',
-    defaultMessage: 'Þú hefur valið að sækja stæðiskortið sjálf/ur/t á: ',
-    description: 'Text for delivery info',
-  },
-  overviewDeliveryText: {
-    id: 'ps.application:overviewDeliveryText',
-    defaultMessage: 'Þú hefur valið að fá stæðiskortið sent heim í pósti',
-    description: 'Text for delivery info',
-  },
-
-  /* Congratulation Section */
-  congratulationsTitleSuccess: {
-    id: 'ps.application:congratulationsTitleSuccess',
+  paymentSuccessIfNotReadyFewWeeks: {
+    id: 'mc.application:paymentSuccessIfNotReadyFewWeeks',
     defaultMessage:
-      'Umsókn þín um stæðiskort hefur verið móttekin. Þú færð stæðiskortið afhent eftir 3-5 virka daga.',
-    description: 'Your application for P-sign was successful.',
+      'Ef svo var ekki þá verður fullnaðarskírteinið tilbúið á afhendingarstað eftir 3 til 4 vikur.',
+    description:
+      'If not then the driving license will be ready at the drop off location in 3 to 4 weeks.',
   },
-  congratulationsTitle: {
-    id: 'ps.application:congratulationsTitle',
-    defaultMessage: 'Til hamingju',
-    description: 'Congratulations',
+  paymentApprovedContinue: {
+    id: 'mc.application:paymentApprovedContinue',
+    defaultMessage: `Greiðslan hefur verið staðfest, valið er 'Halda áfram' til að klára umsóknina.`,
+    description:
+      'The payment has been confirmed, choose "Continue" to finish the application.',
   },
-  errorDataProvider: {
-    id: 'ps.application:error.dataProvider',
-    defaultMessage: 'Reyndu aftur síðar',
-    description: 'Unhandled error in data provider',
+  paymentImage: {
+    id: 'mc.application:paymentImage',
+    defaultMessage: `Skrautmynd`,
+    description: 'Company Image',
+  },
+  examplePaymentPendingField: {
+    id: 'mc.application:example.waitingForPayment',
+    defaultMessage: 'Augnablik meðan beðið er eftir greiðslu',
+    description: 'One moment while we wait for payment confirmation.',
+  },
+  examplePaymentPendingFieldError: {
+    id: 'mc.application:example.waitingForPaymentError',
+    defaultMessage: 'Villa kom upp við að sækja upplýsingar um greiðslu',
+    description: 'An error came up while getting payment information',
+  },
+  submitErrorButtonCaption: {
+    id: 'mc.application:submitErrorButtonCaption',
+    defaultMessage: 'Reyna aftur',
+    description:
+      'Button that shows up when submitting the application fails, allowing you to retry',
+  },
+  submitErrorTitle: {
+    id: 'mc.application:submitErrorTitle',
+    defaultMessage: 'Móttaka umsóknar tókst ekki',
+    description:
+      'title that shows up when an error occurs while submitting the application',
+  },
+  submitErrorMessage: {
+    id: 'mc.application:submitErrorMessage',
+    defaultMessage:
+      'Eitthvað fór úrskeiðis við að senda inn umsókn. Reyndu aftur síðar.',
+    description:
+      'Text that shows up when an error occurs while submitting the application',
+  },
+  forwardingToPayment: {
+    id: 'mc.application:forwardingToPayment',
+    defaultMessage: 'Sendi þig áfram á greiðsluveitu...',
+    description: 'Forwarding you to payment handler...',
   },
 })

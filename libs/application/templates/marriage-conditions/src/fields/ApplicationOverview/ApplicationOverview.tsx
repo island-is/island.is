@@ -1,143 +1,148 @@
-import React from 'react'
-import { Box, Text, Divider } from '@island.is/island-ui/core'
+import React, { FC } from 'react'
+import { Box, Text, Divider, Checkbox } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
+import { FieldBaseProps } from '@island.is/application/core'
 
-export const ApplicationOverview = () => {
+export type Individual = {
+  name: string
+  nationalId: string
+  phone: string
+  email: string
+}
+
+export const ApplicationOverview: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
+  const { answers } = application
+  const applicant = answers.applicant as Individual
+  const spouse = answers.spouse as Individual
+  const witness1 = answers.witness1 as Individual
+  const witness2 = answers.witness2 as Individual
 
   return (
     <>
       <Box>
-        <Text variant="h3" marginTop={4} marginBottom={3}>
+        <Box paddingBottom={3}>
+          <Divider />
+        </Box>
+        <Text variant="h3" marginBottom={3}>
           {'Hjónaefni 1'}
         </Text>
-        <Box display='flex' marginBottom={3}>
-          <Box width='half'>
+        <Box display="flex" marginBottom={3}>
+          <Box width="half">
             <Text variant="h4">{'Nafn'}</Text>
-            <Text>{'Albina'}</Text>
+            <Text>{applicant.name}</Text>
           </Box>
-          <Box width='half'>
+          <Box width="half">
             <Text variant="h4">{'Kennitala'}</Text>
-            <Text>{'020200200330'}</Text>
+            <Text>{applicant.nationalId}</Text>
           </Box>
         </Box>
-        <Box display='flex'>
-          <Box width='half'>
+        <Box display="flex">
+          <Box width="half">
             <Text variant="h4">{'Símanúmer'}</Text>
-            <Text>{'8417484'}</Text>
+            <Text>{applicant.phone}</Text>
           </Box>
-          <Box width='half'>
+          <Box width="half">
             <Text variant="h4">{'Netfang'}</Text>
-            <Text>{'jonaj@gmail.com'}</Text>
+            <Text>{applicant.email}</Text>
           </Box>
         </Box>
       </Box>
       <Box>
-        <Text variant="h3" marginTop={4} marginBottom={3}>
+        <Text variant="h3" marginBottom={3}>
           {'Hjónaefni 2'}
         </Text>
-        <Box display='flex' marginBottom={3}>
-          <Box width='half'>
+        <Box display="flex" marginBottom={3}>
+          <Box width="half">
             <Text variant="h4">{'Nafn'}</Text>
-            <Text>{'Albina'}</Text>
+            <Text>{spouse.name}</Text>
           </Box>
-          <Box width='half'>
+          <Box width="half">
             <Text variant="h4">{'Kennitala'}</Text>
-            <Text>{'020200200330'}</Text>
+            <Text>{spouse.nationalId}</Text>
           </Box>
         </Box>
-        <Box display='flex'>
-          <Box width='half'>
+        <Box display="flex">
+          <Box width="half">
             <Text variant="h4">{'Símanúmer'}</Text>
-            <Text>{'8417484'}</Text>
+            <Text>{spouse.phone}</Text>
           </Box>
-          <Box width='half'>
+          <Box width="half">
             <Text variant="h4">{'Netfang'}</Text>
-            <Text>{'jonaj@gmail.com'}</Text>
+            <Text>{spouse.email}</Text>
+          </Box>
+        </Box>
+      </Box>
+      <Box marginTop={4}>
+        <Box paddingBottom={3}>
+          <Divider />
+        </Box>
+        <Text variant="h3" marginBottom={3}>
+          {'Vottur 1'}
+        </Text>
+        <Box display="flex" marginBottom={3}>
+          <Box width="half">
+            <Text variant="h4">{'Nafn'}</Text>
+            <Text>{witness1.name}</Text>
+          </Box>
+          <Box width="half">
+            <Text variant="h4">{'Kennitala'}</Text>
+            <Text>{witness1.nationalId}</Text>
+          </Box>
+        </Box>
+        <Box display="flex">
+          <Box width="half">
+            <Text variant="h4">{'Símanúmer'}</Text>
+            <Text>{witness1.phone}</Text>
+          </Box>
+          <Box width="half">
+            <Text variant="h4">{'Netfang'}</Text>
+            <Text>{witness2.email}</Text>
+          </Box>
+        </Box>
+      </Box>
+      <Box marginTop={4}>
+        <Text variant="h3" marginBottom={3}>
+          {'Vottur 2'}
+        </Text>
+        <Box display="flex" marginBottom={3}>
+          <Box width="half">
+            <Text variant="h4">{'Nafn'}</Text>
+            <Text>{witness2.name}</Text>
+          </Box>
+          <Box width="half">
+            <Text variant="h4">{'Kennitala'}</Text>
+            <Text>{witness2.nationalId}</Text>
+          </Box>
+        </Box>
+        <Box display="flex">
+          <Box width="half">
+            <Text variant="h4">{'Símanúmer'}</Text>
+            <Text>{witness2.phone}</Text>
+          </Box>
+          <Box width="half">
+            <Text variant="h4">{'Netfang'}</Text>
+            <Text>{witness2.email}</Text>
           </Box>
         </Box>
       </Box>
       <Box marginTop={5}>
-        <Divider />
-      </Box>
-      <Box marginTop={5}>
-        <Text variant="h3" marginTop={4} marginBottom={3}>
-          {'Votti 1'}
+        <Box paddingBottom={4}>
+          <Divider />
+        </Box>
+        <Box paddingBottom={3}>
+          <Checkbox
+            value={''}
+            label={'Við ætlum að láta gefa okkur saman hjá Sýslumanni'}
+          />
+        </Box>
+        <Text variant="small">
+          Hjónaefni ábyrgjast hér með undirskrift sinni að upplýsingar gefnar af
+          þeim eru réttar og lýsa yfir að viðlögðum drengskap að þau viti ekki
+          um tálma á fyrirhuguðum hjúskap sínum, sbr. II. og III. kafla laga nr.
+          31/1993.
         </Text>
-        <Box display='flex' marginBottom={3}>
-          <Box width='half'>
-            <Text variant="h4">{'Nafn'}</Text>
-            <Text>{'Albina'}</Text>
-          </Box>
-          <Box width='half'>
-            <Text variant="h4">{'Kennitala'}</Text>
-            <Text>{'020200200330'}</Text>
-          </Box>
-        </Box>
-        <Box display='flex'>
-          <Box width='half'>
-            <Text variant="h4">{'Símanúmer'}</Text>
-            <Text>{'8417484'}</Text>
-          </Box>
-          <Box width='half'>
-            <Text variant="h4">{'Netfang'}</Text>
-            <Text>{'jonaj@gmail.com'}</Text>
-          </Box>
-        </Box>
-      </Box>
-      <Box>
-        <Text variant="h3" marginTop={4} marginBottom={3}>
-          {'Votti 2'}
-        </Text>
-        <Box display='flex' marginBottom={3}>
-          <Box width='half'>
-            <Text variant="h4">{'Nafn'}</Text>
-            <Text>{'Albina'}</Text>
-          </Box>
-          <Box width='half'>
-            <Text variant="h4">{'Kennitala'}</Text>
-            <Text>{'020200200330'}</Text>
-          </Box>
-        </Box>
-        <Box display='flex'>
-          <Box width='half'>
-            <Text variant="h4">{'Símanúmer'}</Text>
-            <Text>{'8417484'}</Text>
-          </Box>
-          <Box width='half'>
-            <Text variant="h4">{'Netfang'}</Text>
-            <Text>{'jonaj@gmail.com'}</Text>
-          </Box>
-        </Box>
-      </Box>
-      <Box marginY={5}>
-        <Divider />
-      </Box>
-      <Box>
-        <Text variant="h3" marginTop={4} marginBottom={3}>
-          {'Votti 2'}
-        </Text>
-        <Box display='flex' marginBottom={3}>
-          <Box width='half'>
-            <Text variant="h4">{'Nafn'}</Text>
-            <Text>{'Albina'}</Text>
-          </Box>
-          <Box width='half'>
-            <Text variant="h4">{'Kennitala'}</Text>
-            <Text>{'020200200330'}</Text>
-          </Box>
-        </Box>
-        <Box display='flex'>
-          <Box width='half'>
-            <Text variant="h4">{'Símanúmer'}</Text>
-            <Text>{'8417484'}</Text>
-          </Box>
-          <Box width='half'>
-            <Text variant="h4">{'Netfang'}</Text>
-            <Text>{'jonaj@gmail.com'}</Text>
-          </Box>
-        </Box>
       </Box>
     </>
   )
