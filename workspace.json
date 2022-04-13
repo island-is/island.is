@@ -1355,6 +1355,27 @@
         }
       }
     },
+    "api-domains-no-debt-certificate": {
+      "root": "libs/api/domains/no-debt-certificate",
+      "sourceRoot": "libs/api/domains/no-debt-certificate/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/api/domains/no-debt-certificate/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/api/domains/no-debt-certificate"],
+          "options": {
+            "jestConfig": "libs/api/domains/no-debt-certificate/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "api-domains-payment": {
       "root": "libs/api/domains/payment",
       "sourceRoot": "libs/api/domains/payment/src",
@@ -2657,6 +2678,49 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/mortgage-certificate/src/**/*.{js,ts,tsx}'"
+          }
+        }
+      }
+    },
+    "application-templates-no-debt-certificate": {
+      "root": "libs/application/templates/no-debt-certificate",
+      "sourceRoot": "libs/application/templates/no-debt-certificate/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/no-debt-certificate/tsconfig.lib.json",
+              "libs/application/templates/no-debt-certificate/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/no-debt-certificate/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": [
+            "coverage/libs/application/templates/no-debt-certificate"
+          ],
+          "options": {
+            "jestConfig": "libs/application/templates/no-debt-certificate/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "schemas/codegen": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "graphql-codegen --config libs/application/templates/no-debt-certificate/codegen.yml"
+          }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/no-debt-certificate/src/**/*.{js,ts,tsx}'"
           }
         }
       }
