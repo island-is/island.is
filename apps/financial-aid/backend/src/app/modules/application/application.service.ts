@@ -440,7 +440,6 @@ export class ApplicationService {
   async filter(
     filters: FilterApplicationsDto,
   ): Promise<FilterApplicationsResponse> {
-    console.log(filters)
     const whereOptions = {
       state: {
         [Op.in]:
@@ -458,11 +457,19 @@ export class ApplicationService {
       whereOptions[Op.or] = filters.months.map((month) =>
         Sequelize.and(
           Sequelize.where(
-            Sequelize.fn('date_part', 'MONTH', Sequelize.col('created')),
+            Sequelize.fn(
+              'date_part',
+              'month',
+              Sequelize.col('ApplicationModel.created'),
+            ),
             (month + 1).toString(),
           ),
           Sequelize.where(
-            Sequelize.fn('date_part', 'YEAR', Sequelize.col('created')),
+            Sequelize.fn(
+              'date_part',
+              'year',
+              Sequelize.col('ApplicationModel.created'),
+            ),
             (month > currentMonth ? currentYear - 1 : currentYear).toString(),
           ),
         ),
@@ -472,6 +479,7 @@ export class ApplicationService {
     const results = await this.applicationModel.findAndCountAll({
       where: whereOptions,
       order: [['modified', 'DESC']],
+      include: [{ model: StaffModel, as: 'staff' }],
       offset: (filters.page - 1) * applicationPageSize,
       limit: applicationPageSize,
     })

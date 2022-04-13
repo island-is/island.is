@@ -110,6 +110,9 @@ export const ApplicationFilterQuery = gql`
         state
         modified
         created
+        staff {
+          name
+        }
       }
       totalCount
     }

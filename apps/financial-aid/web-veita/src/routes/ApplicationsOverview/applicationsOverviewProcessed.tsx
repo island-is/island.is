@@ -10,6 +10,7 @@ import {
 import {
   ApplicationState,
   ApplicationPagination,
+  applicationPageSize,
 } from '@island.is/financial-aid/shared/lib'
 import { ApplicationFilterQuery } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
 import { navigationItems } from '@island.is/financial-aid-web/veita/src/utils/navigation'
@@ -23,14 +24,14 @@ export const ApplicationsOverviewProcessed = () => {
   const router = useRouter()
 
   const [currentPage, setCurrentPage] = useState<number>(
-    router.query.sida ? parseInt(router.query.sida as string) : 1,
+    router?.query?.page ? parseInt(router.query.page as string) : 1,
   )
   const [filters, setFilters] = useState<Filters>({
-    selectedStates: router?.query?.stada
-      ? ((router?.query?.stada as string).split(',') as ApplicationState[])
+    selectedStates: router?.query?.state
+      ? ((router?.query?.state as string).split(',') as ApplicationState[])
       : [],
-    selectedMonths: router?.query?.timabil
-      ? (router?.query?.timabil as string).split(',').map(Number)
+    selectedMonths: router?.query?.month
+      ? (router?.query?.month as string).split(',').map(Number)
       : [],
   })
 
@@ -50,27 +51,21 @@ export const ApplicationsOverviewProcessed = () => {
     setFilters(filtersCopy)
   }
 
-  const onFilterSave = () => {
-    setQuery()
-    setCurrentPage(1)
-  }
-
-  const onFilterClear = () => {
-    setFilters({ selectedMonths: [], selectedStates: [] })
-    setQuery()
-    setCurrentPage(1)
-  }
-
-  const setQuery = () => {
+  const setQuery = (page: number, clearFilters?: boolean) => {
     const query = new URLSearchParams()
-    query.append('timabil', filters.selectedMonths.join(','))
-    query.append('stada', filters.selectedStates.join(','))
-    query.append('sida', currentPage.toString())
+    query.append('month', clearFilters ? '' : filters.selectedMonths.join(','))
+    query.append('state', clearFilters ? '' : filters.selectedStates.join(','))
+    query.append('page', page.toString())
 
     router.push({ search: query.toString() })
+
+    setCurrentPage(page)
+    if (clearFilters) {
+      setFilters({ selectedMonths: [], selectedStates: [] })
+    }
   }
 
-  const [getApplications, { data, error, loading }] = useLazyQuery<{
+  const [getApplications, { data, error }] = useLazyQuery<{
     filterApplications: ApplicationPagination
   }>(ApplicationFilterQuery, {
     fetchPolicy: 'no-cache',
@@ -91,7 +86,7 @@ export const ApplicationsOverviewProcessed = () => {
         },
       },
     })
-  }, [router.query, currentPage])
+  }, [router.query])
 
   return (
     <>
@@ -105,32 +100,33 @@ export const ApplicationsOverviewProcessed = () => {
         selectedStates={filters.selectedStates}
         results={data?.filterApplications?.totalCount}
         onChecked={onChecked}
-        onFilterClear={onFilterClear}
-        onFilterSave={onFilterSave}
+        onFilterClear={() => setQuery(1, true)}
+        onFilterSave={() => setQuery(1)}
       />
       {data?.filterApplications?.applications && (
         <ApplicationsTable
           headers={currentNavigationItem.headers}
           applications={data?.filterApplications?.applications}
-          setApplications={() => { }}
         />
       )}
       <Pagination
         page={currentPage}
+        totalPages={
+          data?.filterApplications.totalCount
+            ? Math.ceil(
+                data?.filterApplications.totalCount / applicationPageSize,
+              )
+            : 0
+        }
         renderLink={(page, className, children) => (
           <Box
             cursor="pointer"
             className={className}
-            onClick={() => setCurrentPage(page)}
+            onClick={() => setQuery(page)}
           >
             {children}
           </Box>
         )}
-        totalPages={
-          data?.filterApplications.totalCount
-            ? Math.ceil(data?.filterApplications.totalCount / 2)
-            : 0
-        }
       />
       {error && (
         <div>

@@ -28,7 +28,7 @@ import { calcDifferenceInDate } from '@island.is/financial-aid-web/veita/src/uti
 
 interface PageProps {
   applications: Application[]
-  setApplications: React.Dispatch<
+  setApplications?: React.Dispatch<
     React.SetStateAction<Application[] | undefined>
   >
   headers: TableHeadersProps[]
@@ -57,7 +57,7 @@ const ApplicationsTable = ({
     )
       .then((updateTable) => {
         setIsLoading(false)
-        setApplications(updateTable)
+        setApplications && setApplications(updateTable)
       })
       .catch(() => {
         //TODO ERROR STATE
