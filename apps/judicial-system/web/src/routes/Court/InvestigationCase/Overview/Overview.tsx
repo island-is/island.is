@@ -23,7 +23,7 @@ const Overview = () => {
   } = useContext(FormContext)
   const { formatMessage } = useIntl()
 
-  useRulingAutofill(isCaseUpToDate, workingCase)
+  useRulingAutofill(isCaseUpToDate, workingCase, setWorkingCase)
 
   return (
     <PageLayout

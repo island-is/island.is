@@ -101,6 +101,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase, isLoading, isCaseUpToDate } = props
 
   const { formatMessage } = useIntl()
+  const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
   const { updateCase, autofill } = useCase()
   const { user } = useContext(UserContext)
 
@@ -113,7 +114,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
   useDeb(workingCase, 'legalBasis')
 
   useEffect(() => {
-    if (isCaseUpToDate) {
+    if (isCaseUpToDate && !initialAutoFillDone) {
       if (
         workingCase &&
         workingCase.defendants &&
@@ -159,10 +160,19 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
 
         autofill('demands', courtClaimText, workingCase)
 
-        setWorkingCase(workingCase)
+        setWorkingCase({ ...workingCase })
       }
+
+      setInitialAutoFillDone(true)
     }
-  }, [autofill, formatMessage, isCaseUpToDate, setWorkingCase, workingCase])
+  }, [
+    autofill,
+    formatMessage,
+    initialAutoFillDone,
+    isCaseUpToDate,
+    setWorkingCase,
+    workingCase,
+  ])
 
   return (
     <>

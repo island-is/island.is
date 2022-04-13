@@ -18,6 +18,7 @@ export class GetPublishedMaterialInput {
   @Field(() => Int, { nullable: true })
   @IsInt()
   @IsOptional()
+  // The page number is 1-based meaning that page 1 is the first page
   page?: number
 
   @Field({ nullable: true })

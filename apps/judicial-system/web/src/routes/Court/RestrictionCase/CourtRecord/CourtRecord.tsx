@@ -56,7 +56,6 @@ import {
   closedCourt,
   core,
 } from '@island.is/judicial-system-web/messages'
-import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
@@ -89,6 +88,7 @@ export const CourtRecord: React.FC = () => {
   ] = useState<string>('')
 
   const router = useRouter()
+  const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
   const { updateCase, autofill } = useCase()
   const { formatMessage } = useIntl()
 
@@ -101,77 +101,75 @@ export const CourtRecord: React.FC = () => {
   useDeb(workingCase, 'endOfSessionBookings')
 
   useEffect(() => {
-    if (isCaseUpToDate) {
-      const theCase = workingCase
-
-      if (theCase.courtDate) {
-        autofill('courtStartDate', theCase.courtDate, theCase)
+    if (isCaseUpToDate && !initialAutoFillDone) {
+      if (workingCase.courtDate) {
+        autofill('courtStartDate', workingCase.courtDate, workingCase)
       }
 
-      if (theCase.court) {
+      if (workingCase.court) {
         autofill(
           'courtLocation',
           `í ${
-            theCase.court.name.indexOf('dómur') > -1
-              ? theCase.court.name.replace('dómur', 'dómi')
-              : theCase.court.name
+            workingCase.court.name.indexOf('dómur') > -1
+              ? workingCase.court.name.replace('dómur', 'dómi')
+              : workingCase.court.name
           }`,
-          theCase,
+          workingCase,
         )
       }
 
-      if (theCase.courtAttendees !== '') {
+      if (workingCase.courtAttendees !== '') {
         let autofillAttendees = ''
 
-        if (theCase.prosecutor) {
-          autofillAttendees += `${theCase.prosecutor.name} ${theCase.prosecutor.title}`
+        if (workingCase.prosecutor) {
+          autofillAttendees += `${workingCase.prosecutor.name} ${workingCase.prosecutor.title}`
         }
 
-        if (theCase.defenderName) {
+        if (workingCase.defenderName) {
           autofillAttendees += `\n${
-            theCase.defenderName
+            workingCase.defenderName
           } skipaður verjandi ${formatMessage(core.accused, {
             suffix:
-              theCase.defendants &&
-              theCase.defendants.length > 0 &&
-              theCase.defendants[0].gender === Gender.FEMALE
+              workingCase.defendants &&
+              workingCase.defendants.length > 0 &&
+              workingCase.defendants[0].gender === Gender.FEMALE
                 ? 'u'
                 : 'a',
           })}`
         }
 
-        if (theCase.translator) {
-          autofillAttendees += `\n${theCase.translator} túlkur`
+        if (workingCase.translator) {
+          autofillAttendees += `\n${workingCase.translator} túlkur`
         }
 
-        if (theCase.defendants && theCase.defendants.length > 0) {
-          autofillAttendees += `\n${theCase.defendants[0].name} ${formatMessage(
-            core.accused,
-            {
-              suffix: theCase.defendants[0].gender === Gender.MALE ? 'i' : 'a',
-            },
-          )}`
+        if (workingCase.defendants && workingCase.defendants.length > 0) {
+          autofillAttendees += `\n${
+            workingCase.defendants[0].name
+          } ${formatMessage(core.accused, {
+            suffix:
+              workingCase.defendants[0].gender === Gender.MALE ? 'i' : 'a',
+          })}`
         }
 
-        autofill('courtAttendees', autofillAttendees, theCase)
+        autofill('courtAttendees', autofillAttendees, workingCase)
       }
 
       let autofillSessionBookings = ''
 
-      if (theCase.defenderName) {
+      if (workingCase.defenderName) {
         autofillSessionBookings += `${formatMessage(
           m.sections.sessionBookings.autofillDefender,
           {
-            defender: theCase.defenderName,
+            defender: workingCase.defenderName,
           },
         )}\n\n`
       }
 
-      if (theCase.translator) {
+      if (workingCase.translator) {
         autofillSessionBookings += `${formatMessage(
           m.sections.sessionBookings.autofillTranslator,
           {
-            translator: theCase.translator,
+            translator: workingCase.translator,
           },
         )}\n\n`
       }
@@ -182,15 +180,15 @@ export const CourtRecord: React.FC = () => {
         m.sections.sessionBookings.autofillCourtDocumentOne,
       )}\n\n${formatMessage(m.sections.sessionBookings.autofillAccusedPlea)}`
 
-      if (theCase.type === CaseType.CUSTODY) {
+      if (workingCase.type === CaseType.CUSTODY) {
         autofillSessionBookings += `\n\n${formatMessage(
           m.sections.sessionBookings.autofillPresentations,
           {
             accused: formatMessage(core.accused, {
               suffix:
-                theCase.defendants &&
-                theCase.defendants.length > 0 &&
-                theCase.defendants[0].gender === Gender.FEMALE
+                workingCase.defendants &&
+                workingCase.defendants.length > 0 &&
+                workingCase.defendants[0].gender === Gender.FEMALE
                   ? 'u'
                   : 'a',
             }),
@@ -198,35 +196,35 @@ export const CourtRecord: React.FC = () => {
         )}`
 
         if (
-          isAcceptingCaseDecision(theCase.decision) ||
-          theCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+          isAcceptingCaseDecision(workingCase.decision) ||
+          workingCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
         ) {
           autofill(
             'endOfSessionBookings',
             `${
-              isAcceptingCaseDecision(theCase.decision)
+              isAcceptingCaseDecision(workingCase.decision)
                 ? `${formatCustodyRestrictions(
-                    theCase.requestedCustodyRestrictions,
-                    theCase.isCustodyIsolation,
+                    workingCase.requestedCustodyRestrictions,
+                    workingCase.isCustodyIsolation,
                     true,
                   )}\n\n`
                 : ''
             }${formatMessage(m.sections.custodyRestrictions.disclaimer, {
               caseType:
-                theCase.decision ===
+                workingCase.decision ===
                 CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
                   ? 'farbannsins'
                   : 'gæsluvarðhaldsins',
             })}`,
-            theCase,
+            workingCase,
           )
         }
-      } else if (theCase.type === CaseType.TRAVEL_BAN) {
+      } else if (workingCase.type === CaseType.TRAVEL_BAN) {
         autofillSessionBookings += `\n\n${formatMessage(
           m.sections.sessionBookings.autofillPresentationsTravelBan,
         )}`
 
-        if (isAcceptingCaseDecision(theCase.decision)) {
+        if (isAcceptingCaseDecision(workingCase.decision)) {
           autofill(
             'endOfSessionBookings',
             `${
@@ -235,16 +233,24 @@ export const CourtRecord: React.FC = () => {
             }${formatMessage(m.sections.custodyRestrictions.disclaimer, {
               caseType: 'farbannsins',
             })}`,
-            theCase,
+            workingCase,
           )
         }
       }
 
-      autofill('sessionBookings', autofillSessionBookings, theCase)
+      autofill('sessionBookings', autofillSessionBookings, workingCase)
 
-      setWorkingCase(theCase)
+      setInitialAutoFillDone(true)
+      setWorkingCase({ ...workingCase })
     }
-  }, [autofill, formatMessage, isCaseUpToDate, setWorkingCase, workingCase])
+  }, [
+    autofill,
+    formatMessage,
+    initialAutoFillDone,
+    isCaseUpToDate,
+    setWorkingCase,
+    workingCase,
+  ])
 
   return (
     <PageLayout
@@ -359,10 +365,7 @@ export const CourtRecord: React.FC = () => {
               )
             }
             onBlur={(event) =>
-              updateCase(
-                workingCase.id,
-                parseString('courtAttendees', event.target.value),
-              )
+              updateCase(workingCase.id, { courtAttendees: event.target.value })
             }
             textarea
             rows={7}
@@ -512,13 +515,9 @@ export const CourtRecord: React.FC = () => {
                             accusedAppealDecision: CaseAppealDecision.APPEAL,
                           })
 
-                          updateCase(
-                            workingCase.id,
-                            parseString(
-                              'accusedAppealDecision',
-                              CaseAppealDecision.APPEAL,
-                            ),
-                          )
+                          updateCase(workingCase.id, {
+                            accusedAppealDecision: CaseAppealDecision.APPEAL,
+                          })
                         }}
                         large
                         backgroundColor="white"
@@ -553,13 +552,9 @@ export const CourtRecord: React.FC = () => {
                             accusedAppealDecision: CaseAppealDecision.ACCEPT,
                           })
 
-                          updateCase(
-                            workingCase.id,
-                            parseString(
-                              'accusedAppealDecision',
-                              CaseAppealDecision.ACCEPT,
-                            ),
-                          )
+                          updateCase(workingCase.id, {
+                            accusedAppealDecision: CaseAppealDecision.ACCEPT,
+                          })
                         }}
                         large
                         backgroundColor="white"
@@ -598,13 +593,9 @@ export const CourtRecord: React.FC = () => {
                             accusedAppealDecision: CaseAppealDecision.POSTPONE,
                           })
 
-                          updateCase(
-                            workingCase.id,
-                            parseString(
-                              'accusedAppealDecision',
-                              CaseAppealDecision.POSTPONE,
-                            ),
-                          )
+                          updateCase(workingCase.id, {
+                            accusedAppealDecision: CaseAppealDecision.POSTPONE,
+                          })
                         }}
                         large
                         backgroundColor="white"
@@ -629,13 +620,10 @@ export const CourtRecord: React.FC = () => {
                               CaseAppealDecision.NOT_APPLICABLE,
                           })
 
-                          updateCase(
-                            workingCase.id,
-                            parseString(
-                              'accusedAppealDecision',
+                          updateCase(workingCase.id, {
+                            accusedAppealDecision:
                               CaseAppealDecision.NOT_APPLICABLE,
-                            ),
-                          )
+                          })
                         }}
                         large
                         backgroundColor="white"
@@ -724,13 +712,9 @@ export const CourtRecord: React.FC = () => {
                           prosecutorAppealDecision: CaseAppealDecision.APPEAL,
                         })
 
-                        updateCase(
-                          workingCase.id,
-                          parseString(
-                            'prosecutorAppealDecision',
-                            CaseAppealDecision.APPEAL,
-                          ),
-                        )
+                        updateCase(workingCase.id, {
+                          prosecutorAppealDecision: CaseAppealDecision.APPEAL,
+                        })
                       }}
                       large
                       backgroundColor="white"
@@ -754,13 +738,9 @@ export const CourtRecord: React.FC = () => {
                           prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
                         })
 
-                        updateCase(
-                          workingCase.id,
-                          parseString(
-                            'prosecutorAppealDecision',
-                            CaseAppealDecision.ACCEPT,
-                          ),
-                        )
+                        updateCase(workingCase.id, {
+                          prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
+                        })
                       }}
                       large
                       backgroundColor="white"
@@ -788,13 +768,9 @@ export const CourtRecord: React.FC = () => {
                           prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
                         })
 
-                        updateCase(
-                          workingCase.id,
-                          parseString(
-                            'prosecutorAppealDecision',
-                            CaseAppealDecision.POSTPONE,
-                          ),
-                        )
+                        updateCase(workingCase.id, {
+                          prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
+                        })
                       }}
                       large
                       backgroundColor="white"
@@ -819,13 +795,10 @@ export const CourtRecord: React.FC = () => {
                             CaseAppealDecision.NOT_APPLICABLE,
                         })
 
-                        updateCase(
-                          workingCase.id,
-                          parseString(
-                            'prosecutorAppealDecision',
+                        updateCase(workingCase.id, {
+                          prosecutorAppealDecision:
                             CaseAppealDecision.NOT_APPLICABLE,
-                          ),
-                        )
+                        })
                       }}
                       large
                       backgroundColor="white"
