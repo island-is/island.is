@@ -118,6 +118,7 @@
 ## Libs
 
 - [API](libs/api/README.md)
+    - [API Domains Vehicles](libs/api/domains/vehicles/README.md)
   - [Mocks](libs/api/mocks/README.md)
 - [API Catalogue](libs/api-catalogue/README.md)
   - [Elastic](libs/api-catalogue/elastic/README.md)
@@ -166,6 +167,7 @@
     - [Procuring](libs/clients/rsk/procuring/README.md)
   - [Syslumenn](libs/clients/syslumenn/README.md)
   - [User Profile](libs/clients/user-profile/README.md)
+  - [Driving License](libs/clients/vehicles/README.md)
   - [VMST](libs/clients/vmst/README.md)
   - [Zendesk](libs/clients/zendesk/README.md)
 - [CMS](libs/cms/README.md)
@@ -204,6 +206,7 @@
 - [Residence History](libs/residence-history/README.md)
 - [Service Portal](libs/service-portal/README.md)
   - [Core](libs/service-portal/core/README.md)
+  - [Service Portal Vehicles](libs/service-portal/vehicles/README.md)
 - [Shared](libs/shared/README.md)
   - [Babel](libs/shared/babel/README.md)
   - [Components](libs/shared/components/README.md)
