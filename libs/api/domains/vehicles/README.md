@@ -1,4 +1,6 @@
-# api-domains-vehicles
+<!-- gitbook-ignore -->
+
+# API Domains Vehicles
 
 This library was generated with [Nx](https://nx.dev).
 
