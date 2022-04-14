@@ -45,6 +45,14 @@ export class MunicipalityResolver {
     return backendApi.getMunicipality(input.id)
   }
 
+  @Query(() => [MunicipalityModel], { nullable: false })
+  municipalityByIds(
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+  ): Promise<Municipality[]> {
+    this.logger.debug(`Getting municipalities by ids`)
+    return backendApi.getMunicipalitiesById()
+  }
+
   @Mutation(() => MunicipalityModel, { nullable: false })
   municipalityActivity(
     @Args('input', { type: () => MunicipalityActivityInput })
@@ -63,20 +71,19 @@ export class MunicipalityResolver {
     @Args('input', { type: () => CreateMunicipalityInput })
     input: CreateMunicipalityInput,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
-  ): Promise<MunicipalityModel> {
+  ): Promise<Municipality> {
     const { admin, ...createMunicipality } = input
     this.logger.debug('Creating municipality')
     return backendApi.createMunicipality(createMunicipality, admin)
   }
 
-  @Mutation(() => MunicipalityModel, { nullable: false })
+  @Mutation(() => [MunicipalityModel], { nullable: false })
   updateMunicipality(
     @Args('input', { type: () => UpdateMunicipalityInput })
     input: UpdateMunicipalityInput,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
-  ): Promise<Municipality> {
+  ): Promise<Municipality[]> {
     this.logger.debug('Updating municipality')
-
     return backendApi.updateMunicipality(input)
   }
 
@@ -97,19 +104,26 @@ export class MunicipalityResolver {
     this.logger.debug(
       `Getting number of users for ${municipality.municipalityId}`,
     )
-
     return backendApi.getNumberOfStaffForMunicipality(
       municipality.municipalityId,
     )
   }
 
-  @ResolveField('adminUsers', () => [StaffModel])
+  @ResolveField('adminUsers')
   adminUsers(
     @Parent() municipality: MunicipalityModel,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<Staff[]> {
     this.logger.debug(`Getting admin users for ${municipality.municipalityId}`)
-
     return backendApi.getAdminUsers(municipality.municipalityId)
+  }
+
+  @ResolveField('allAdminUsers')
+  allAdminUsers(
+    @Parent() municipality: MunicipalityModel,
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+  ): Promise<Staff[]> {
+    this.logger.debug(`Getting admin users for ${municipality.municipalityId}`)
+    return backendApi.getAllAdminUsers(municipality.municipalityId)
   }
 }

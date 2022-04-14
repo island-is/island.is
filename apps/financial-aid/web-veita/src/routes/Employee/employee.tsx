@@ -7,9 +7,12 @@ import {
   LoadingContainer,
   EmployeeProfile,
 } from '@island.is/financial-aid-web/veita/src/components'
-import { StaffQuery } from '@island.is/financial-aid-web/veita/graphql'
+import {
+  MunicipalitiesQuery,
+  StaffQuery,
+} from '@island.is/financial-aid-web/veita/graphql'
 import { useRouter } from 'next/router'
-import { Staff } from '@island.is/financial-aid/shared/lib'
+import { Municipality, Staff } from '@island.is/financial-aid/shared/lib'
 
 export const Employee = () => {
   const router = useRouter()

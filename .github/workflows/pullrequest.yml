@@ -4,6 +4,10 @@ on:
   pull_request: {}
   workflow_dispatch: {}
 
+defaults:
+  run:
+    shell: bash
+
 env:
   COMPOSE_HTTP_TIMEOUT: 180
   GITHUB_ACTIONS_CACHE_URL: https://cache.dev01.devland.is/
@@ -34,6 +38,9 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: '14'
+
+      - name: Setup yarn
+        run: npm install -g yarn
 
       - name: Check node version
         run: |
@@ -107,7 +114,7 @@ jobs:
           HTML_URL: ${{ github.event.pull_request.html_url }}
           ISSUE_REPORTING_SLACK_WEBHOOK_URL: ${{ secrets.SLACK_BUILD_ISSUES_REPORTING_WEBHOOK_URL }}
         name: Preparing HEAD and BASE tags
-        shell: bash
+
 
       - name: Cache for cypress
         id: cypress
@@ -177,7 +184,7 @@ jobs:
           if [[ $CHUNKS != "[]" ]]; then
             echo "::set-output name=CHUNKS::{\"projects\":$CHUNKS}"
           fi
-          echo "::set-output name=BUILD_ID::$GITHUB_RUN_ID-$(uuidgen)"
+          echo "::set-output name=BUILD_ID::$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-$(uuidgen)"
 
       - name: Prepare build targets
         id: build_projects
@@ -206,6 +213,13 @@ jobs:
         with:
           fetch-depth: 0
 
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Setup yarn
+        run: npm install -g yarn
+
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
         continue-on-error: true
@@ -230,7 +244,7 @@ jobs:
 
       - name: Untar generated files
         run: tar zxvf generated_files.tar.gz
-        shell: bash
+
 
       - uses: ./.github/actions/unit-test
         with:
@@ -257,6 +271,13 @@ jobs:
       matrix: ${{ fromJson(needs.prepare.outputs.E2E_CHUNKS) }}
     steps:
       - uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Setup yarn
+        run: npm install -g yarn
 
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
@@ -294,9 +315,6 @@ jobs:
       - name: Untar generated files
         run: tar zxvf generated_files.tar.gz
 
-      - name: Increase fs watchers for cypress
-        run: echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
-
       - name: Running e2e tests
         run: ./scripts/ci/40_e2e.sh ${AFFECTED_PROJECT}
 
@@ -314,6 +332,13 @@ jobs:
         with:
           path: node_modules
           key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Setup yarn
+        run: npm install -g yarn
       - name: Check cache success
         run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
       - name: Linting workspace
@@ -331,6 +356,11 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - name: Setup yarn
+        run: npm install -g yarn
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
         continue-on-error: true
@@ -358,7 +388,11 @@ jobs:
       matrix: ${{ fromJson(needs.prepare.outputs.LINT_CHUNKS) }}
     steps:
       - uses: actions/checkout@v2
-
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - name: Setup yarn
+        run: npm install -g yarn
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
         continue-on-error: true
@@ -401,7 +435,11 @@ jobs:
     if: needs.prepare.outputs.BUILD_CHUNKS
     steps:
       - uses: actions/checkout@v2
-
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - name: Setup yarn
+        run: npm install -g yarn
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
         continue-on-error: true

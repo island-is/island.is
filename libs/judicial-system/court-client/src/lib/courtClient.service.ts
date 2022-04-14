@@ -1,5 +1,4 @@
 import https, { Agent } from 'https'
-import fetch from 'isomorphic-fetch'
 
 import {
   BadGatewayException,
@@ -98,7 +97,14 @@ export class CourtClientService {
       config.courtApiPath,
     )
     const providerConfiguration = new Configuration({
-      fetchApi: fetch,
+      fetchApi: (input, init) =>
+        fetch(input, init).then(async (res) => {
+          if (res.ok) {
+            return res
+          }
+
+          throw await res.text()
+        }),
       basePath,
       headers: defaultHeaders,
       middleware,
@@ -136,94 +142,107 @@ export class CourtClientService {
         // Strip the quotation marks from the result
         this.authenticationToken[clientId] = stripResult(res)
       })
-      .catch(() => {
-        // Cannot log the error as it contains username and password in plain text
-        this.logger.error('Unable to log into the court service')
+      .catch((reason) => {
+        if (typeof reason === 'string') {
+          throw new BadGatewayException(
+            `Unable to log into the court service: ${reason}`,
+          )
+        }
 
-        throw new BadGatewayException('Unable to log into the court service')
+        // The error may contain username and password in plain text
+        const maskedDetail = reason.message?.replace(
+          /&password=.*? /,
+          '&password=xxxxx ',
+        )
+
+        throw new BadGatewayException({
+          ...reason,
+          message: 'Unable to log into the court service',
+          detail: maskedDetail,
+        })
       })
       .finally(() => (this.loginPromise = undefined))
 
     return this.loginPromise
   }
 
-  private handleError(reason: { status?: number; statusText?: string }): Error {
-    // Now check for other known errors
-    if (reason.status === 400 && reason.statusText === 'FileNotSupported') {
-      this.logger.warn('Media type not supported', { reason })
-
-      return new UnsupportedMediaTypeException(
-        reason,
-        'Media type not supported',
-      )
+  private handleError(reason: unknown): Error {
+    // Check for known errors
+    if (reason === 'FileNotSupported') {
+      return new UnsupportedMediaTypeException(reason)
     }
-
-    this.logger.error('Error while calling the court service', { reason })
 
     // One step closer to forced relogin.
     // Relying on body above to contain the correct string is brittle.
     // Therefore, the error count is used as backup.
     this.errorCount++
 
-    return new BadGatewayException(
-      reason,
-      'Error while calling the court service',
-    )
+    if (typeof reason === 'string') {
+      return new BadGatewayException(
+        `Error while calling the court service: ${reason}`,
+      )
+    }
+
+    const error = reason as Error
+
+    return new BadGatewayException({
+      ...error,
+      message: 'Error while calling the court service',
+      detail: error.message,
+    })
   }
 
   private async authenticatedRequest(
     clientId: string,
     request: (authenticationToken: string) => Promise<string>,
   ): Promise<string> {
-    // Login if there is no authentication token or too many errors since last login
-    if (
-      !this.authenticationToken[clientId] ||
-      this.errorCount >= MAX_ERRORS_BEFORE_RELOGIN
-    ) {
+    // Login if there is no authentication token
+    if (!this.authenticationToken[clientId]) {
+      await this.login(clientId)
+    }
+
+    // Force relogin if there are too many consecutive errors
+    if (this.errorCount >= MAX_ERRORS_BEFORE_RELOGIN) {
+      this.logger.error(
+        `Too many consecutive errors (${this.errorCount}) from the court service, relogin forced`,
+      )
+
       await this.login(clientId)
     }
 
     const currentAuthenticationToken = this.authenticationToken[clientId]
 
     return request(currentAuthenticationToken)
-      .then((res) => stripResult(res))
-      .catch(
-        async (reason: {
-          statusCode?: number
-          body?: string
-          status?: number
-          statusText?: string
-        }) => {
-          // Error responses from the court system are a bit tricky.
-          // There are at least two types of possible error objects.
-          // Start by checking for authentication token expiration.
-          if (
-            (reason.status === 400 &&
-              reason.statusText ===
-                `authenticationToken is expired - ${currentAuthenticationToken}`) ||
-            (reason.statusCode === 400 &&
-              reason.body ===
-                `authenticationToken is expired - ${currentAuthenticationToken}`)
-          ) {
-            this.logger.warn(
-              'Error while calling the court service - attempting relogin',
-              { reason },
-            )
+      .then((res) => {
+        // Reset the error count
+        this.errorCount = 0
 
-            return this.login(clientId).then(() =>
-              request(this.authenticationToken[clientId])
-                .then((res) => stripResult(res))
-                .catch((reason) => {
-                  // Throw an appropriate eception
-                  throw this.handleError(reason)
-                }),
-            )
-          }
+        return stripResult(res)
+      })
+      .catch(async (reason) => {
+        // Error responses from the court service are a bit tricky.
+        // Check for authentication token expiration.
+        if (
+          reason ===
+          `authenticationToken is expired - ${currentAuthenticationToken}`
+        ) {
+          this.logger.info('Authentication token expired, attempting relogin', {
+            reason,
+          })
 
-          // Throw an appropriate eception
-          throw this.handleError(reason)
-        },
-      )
+          return this.login(clientId).then(() =>
+            request(this.authenticationToken[clientId])
+              .then((res) => stripResult(res))
+              .catch((reason) => {
+                // Throw an appropriate eception
+                throw this.handleError(reason)
+              }),
+          )
+        }
+
+        // Throw an appropriate eception
+        throw this.handleError(reason)
+      })
   }
 
   createCase(clientId: string, args: CreateCaseArgs): Promise<string> {

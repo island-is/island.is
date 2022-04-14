@@ -6,7 +6,7 @@ air-discount-scheme-api:
     CONTENTFUL_HOST: 'cdn.contentful.com'
     ELASTIC_NODE: 'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
-    NODE_OPTIONS: '--max-old-space-size=208'
+    NODE_OPTIONS: '--max-old-space-size=464'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces: []
   grantNamespacesEnabled: false
@@ -34,16 +34,16 @@ air-discount-scheme-api:
   podSecurityContext:
     fsGroup: 65534
   replicaCount:
-    default: 2
+    default: 3
     max: 10
-    min: 2
+    min: 3
   resources:
     limits:
+      cpu: '400m'
+      memory: '512Mi'
+    requests:
       cpu: '200m'
       memory: '256Mi'
-    requests:
-      cpu: '100m'
-      memory: '128Mi'
   secrets:
     ADMINS: '/k8s/air-discount-scheme/api/ADMINS'
     AUTH_JWT_SECRET: '/k8s/air-discount-scheme/api/AUTH_JWT_SECRET'
@@ -126,9 +126,9 @@ air-discount-scheme-backend:
       DB_PASS: '/k8s/air-discount-scheme/backend/DB_PASSWORD'
   namespace: 'air-discount-scheme'
   replicaCount:
-    default: 2
+    default: 3
     max: 10
-    min: 2
+    min: 3
   resources:
     limits:
       cpu: '400m'
@@ -182,9 +182,9 @@ air-discount-scheme-web:
             - '/'
   namespace: 'air-discount-scheme'
   replicaCount:
-    default: 2
+    default: 3
     max: 10
-    min: 2
+    min: 3
   resources:
     limits:
       cpu: '200m'
@@ -209,6 +209,7 @@ api:
   env:
     APPLICATION_SYSTEM_API_URL: 'http://web-application-system-api.application-system.svc.cluster.local'
     AUTH_PUBLIC_API_URL: 'https://innskra.island.is/api'
+    COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS/GOV/5402696029/Skatturinn/ft-v1'
     CONTACT_US_EMAIL: 'island@island.is'
     CONTENTFUL_HOST: 'cdn.contentful.com'
@@ -290,9 +291,9 @@ api:
   podSecurityContext:
     fsGroup: 65534
   replicaCount:
-    default: 2
+    default: 3
     max: 10
-    min: 2
+    min: 3
   resources:
     limits:
       cpu: '400m'
@@ -456,9 +457,9 @@ application-system-api:
   podSecurityContext:
     fsGroup: 65534
   replicaCount:
-    default: 2
-    max: 10
-    min: 2
+    default: 10
+    max: 60
+    min: 10
   resources:
     limits:
       cpu: '400m'
@@ -550,9 +551,9 @@ application-system-api-worker:
   podSecurityContext:
     fsGroup: 65534
   replicaCount:
-    default: 2
+    default: 3
     max: 10
-    min: 2
+    min: 3
   resources:
     limits:
       cpu: '200m'
@@ -614,9 +615,9 @@ application-system-form:
             - '/umsoknir'
   namespace: 'application-system'
   replicaCount:
-    default: 2
+    default: 3
     max: 10
-    min: 2
+    min: 3
   resources:
     limits:
       cpu: '200m'
@@ -659,9 +660,9 @@ contentful-translation-extension:
             - '/'
   namespace: 'contentful-translation-extension'
   replicaCount:
-    default: 2
+    default: 3
     max: 10
-    min: 2
+    min: 3
   resources:
     limits:
       cpu: '200m'
@@ -712,9 +713,9 @@ download-service:
             - '/download'
   namespace: 'download-service'
   replicaCount:
-    default: 2
+    default: 3
     max: 10
-    min: 2
+    min: 3
   resources:
     limits:
       cpu: '400m'
@@ -792,9 +793,9 @@ endorsement-system-api:
   podSecurityContext:
     fsGroup: 65534
   replicaCount:
-    default: 2
+    default: 3
     max: 10
-    min: 2
+    min: 3
   resources:
     limits:
       cpu: '200m'
@@ -890,9 +891,9 @@ icelandic-names-registry-backend:
       DB_PASS: '/k8s/icelandic-names-registry-backend/DB_PASSWORD'
   namespace: 'icelandic-names-registry'
   replicaCount:
-    default: 2
+    default: 3
     max: 10
-    min: 2
+    min: 3
   resources:
     limits:
       cpu: '200m'
@@ -936,9 +937,9 @@ island-ui-storybook:
             - '/'
   namespace: 'storybook'
   replicaCount:
-    default: 2
+    default: 3
     max: 10
-    min: 2
+    min: 3
   resources:
     limits:
       cpu: '200m'
@@ -1085,9 +1086,10 @@ service-portal:
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
   grantNamespaces:
-    - 'nginx-ingress-external'
+    - 'nginx-ingress-internal'
     - 'islandis'
     - 'user-notification'
+    - 'identity-server'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -1113,9 +1115,9 @@ service-portal:
             - '/minarsidur'
   namespace: 'service-portal'
   replicaCount:
-    default: 2
-    max: 20
-    min: 2
+    default: 5
+    max: 30
+    min: 5
   resources:
     limits:
       cpu: '400m'
@@ -1142,9 +1144,10 @@ service-portal-api:
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SERVICE_PORTAL_BASE_URL: 'https://island.is/minarsidur'
   grantNamespaces:
-    - 'nginx-ingress-external'
+    - 'nginx-ingress-internal'
     - 'islandis'
     - 'user-notification'
+    - 'identity-server'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -1157,6 +1160,14 @@ service-portal-api:
       timeoutSeconds: 3
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-profile'
+  ingress:
+    internal-alb:
+      annotations:
+        kubernetes.io/ingress.class: 'nginx-internal-alb'
+      hosts:
+        - host: 'service-portal-api.internal.island.is'
+          paths:
+            - '/'
   initContainer:
     containers:
       - args:
@@ -1260,9 +1271,9 @@ services-documents:
       DB_PASS: '/k8s/services-documents/DB_PASSWORD'
   namespace: 'services-documents'
   replicaCount:
-    default: 2
+    default: 3
     max: 10
-    min: 2
+    min: 3
   resources:
     limits:
       cpu: '200m'
@@ -1309,9 +1320,9 @@ skilavottord-web:
             - '/app/skilavottord/'
   namespace: 'skilavottord'
   replicaCount:
-    default: 2
+    default: 3
     max: 10
-    min: 2
+    min: 3
   resources:
     limits:
       cpu: '200m'
@@ -1387,9 +1398,9 @@ skilavottord-ws:
       DB_PASS: '/k8s/skilavottord/DB_PASSWORD'
   namespace: 'skilavottord'
   replicaCount:
-    default: 2
+    default: 3
     max: 10
-    min: 2
+    min: 3
   resources:
     limits:
       cpu: '200m'
@@ -1450,9 +1461,9 @@ user-notification:
   podSecurityContext:
     fsGroup: 65534
   replicaCount:
-    default: 2
+    default: 3
     max: 10
-    min: 2
+    min: 3
   resources:
     limits:
       cpu: '200m'
@@ -1505,9 +1516,9 @@ user-notification-worker:
   podSecurityContext:
     fsGroup: 65534
   replicaCount:
-    default: 2
+    default: 3
     max: 10
-    min: 2
+    min: 3
   resources:
     limits:
       cpu: '200m'
@@ -1570,9 +1581,9 @@ web:
             - '/'
   namespace: 'islandis'
   replicaCount:
-    default: 2
-    max: 10
-    min: 2
+    default: 10
+    max: 50
+    min: 10
   resources:
     limits:
       cpu: '400m'
@@ -1621,9 +1632,9 @@ xroad-collector:
   podSecurityContext:
     fsGroup: 65534
   replicaCount:
-    default: 2
+    default: 3
     max: 10
-    min: 2
+    min: 3
   resources:
     limits:
       cpu: '200m'

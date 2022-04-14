@@ -36,8 +36,7 @@ const useTaxData = () => {
         : [],
       directTaxPayments:
         taxes?.municipalitiesDirectTaxPayments?.directTaxPayments,
-      hasDirectTaxPaymentsSuccess:
-        taxes?.municipalitiesDirectTaxPayments?.success,
+      hasFetchedPayments: taxes?.municipalitiesDirectTaxPayments?.success,
     })
   }
 
