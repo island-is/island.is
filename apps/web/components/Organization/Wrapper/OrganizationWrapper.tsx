@@ -74,7 +74,7 @@ interface HeaderProps {
   organizationPage: OrganizationPage
 }
 
-export const lightThemes = ['digital_iceland', 'utlendingastofnun']
+export const lightThemes = ['digital_iceland', 'utlendingastofnun', 'default']
 export const footerEnabled = ['syslumenn', 'mannaudstorg']
 
 export const getThemeConfig = (

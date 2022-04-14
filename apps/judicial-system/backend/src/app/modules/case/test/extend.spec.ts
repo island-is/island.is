@@ -1,16 +1,19 @@
 import { uuid } from 'uuidv4'
+import { Op } from 'sequelize'
 import { Transaction } from 'sequelize/types'
 
 import {
   CaseCustodyRestrictions,
   CaseLegalProvisions,
+  CaseOrigin,
+  CaseState,
   CaseType,
   Gender,
   User as TUser,
 } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from './createTestingCaseModule'
-import { randomDate } from '../../../test'
+import { randomDate, randomEnum } from '../../../test'
 import { DefendantService, Defendant } from '../../defendant'
 import { User } from '../../user'
 import { Institution } from '../../institution'
@@ -66,10 +69,12 @@ describe('CaseController - Extend', () => {
     const userId = uuid()
     const user = { id: userId } as TUser
     const caseId = uuid()
+    const origin = randomEnum(CaseOrigin)
     const type = CaseType.CUSTODY
     const description = 'Some details'
     const policeCaseNumber = '007-2021-777'
     const defenderName = 'John Doe'
+    const defenderNationalId = '0000000009'
     const defenderEmail = 'john@dummy.is'
     const defenderPhoneNumber = '1234567'
     const leadInvestigator = 'The Boss'
@@ -86,10 +91,12 @@ describe('CaseController - Extend', () => {
     const rulingDate = randomDate()
     const theCase = {
       id: caseId,
+      origin,
       type,
       description,
       policeCaseNumber,
       defenderName,
+      defenderNationalId,
       defenderEmail,
       defenderPhoneNumber,
       leadInvestigator,
@@ -113,10 +120,12 @@ describe('CaseController - Extend', () => {
     it('should extend case', () => {
       expect(mockCaseModel.create).toHaveBeenCalledWith(
         {
+          origin,
           type,
           description,
           policeCaseNumber,
           defenderName,
+          defenderNationalId,
           defenderEmail,
           defenderPhoneNumber,
           leadInvestigator,
@@ -144,10 +153,12 @@ describe('CaseController - Extend', () => {
     const userId = uuid()
     const user = { id: userId } as TUser
     const caseId = uuid()
+    const origin = randomEnum(CaseOrigin)
     const type = CaseType.CUSTODY
     const description = 'Some details'
     const policeCaseNumber = '007-2021-777'
     const defenderName = 'John Doe'
+    const defenderNationalId = '0000000009'
     const defenderEmail = 'john@dummy.is'
     const defenderPhoneNumber = '1234567'
     const leadInvestigator = 'The Boss'
@@ -164,10 +175,12 @@ describe('CaseController - Extend', () => {
     const initialRulingDate = randomDate()
     const theCase = {
       id: caseId,
+      origin,
       type,
       description,
       policeCaseNumber,
       defenderName,
+      defenderNationalId,
       defenderEmail,
       defenderPhoneNumber,
       leadInvestigator,
@@ -191,10 +204,12 @@ describe('CaseController - Extend', () => {
     it('should extend case', () => {
       expect(mockCaseModel.create).toHaveBeenCalledWith(
         {
+          origin,
           type,
           description,
           policeCaseNumber,
           defenderName,
+          defenderNationalId,
           defenderEmail,
           defenderPhoneNumber,
           leadInvestigator,
@@ -313,7 +328,11 @@ describe('CaseController - Extend', () => {
           { model: Case, as: 'childCase' },
         ],
         order: [[{ model: Defendant, as: 'defendants' }, 'created', 'ASC']],
-        where: { id: extendedCaseId },
+        where: {
+          id: extendedCaseId,
+          isArchived: false,
+          state: { [Op.not]: CaseState.DELETED },
+        },
       })
     })
   })

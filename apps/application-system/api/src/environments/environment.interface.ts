@@ -9,6 +9,7 @@ import { ApplicationConfig } from '../app/modules/application/application.config
 export interface Environment {
   production: boolean
   environment: string
+  sentryDsn: string
   name: string
   baseApiUrl: string
   redis: {

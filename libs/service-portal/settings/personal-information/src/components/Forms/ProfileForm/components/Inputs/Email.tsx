@@ -31,7 +31,7 @@ export const InputEmail: FC<Props> = ({
   emailDirty,
 }) => {
   useNamespaces('sp.settings')
-  const { handleSubmit, control, errors, getValues } = useForm()
+  const { handleSubmit, control, errors, getValues, setValue } = useForm()
   const {
     updateOrCreateUserProfile,
     loading: saveLoading,
@@ -70,6 +70,7 @@ export const InputEmail: FC<Props> = ({
   useEffect(() => {
     if (email && email.length > 0) {
       setEmailInternal(email)
+      setValue('email', email, { shouldValidate: true })
     }
     checkSetPristineInput()
   }, [email])
@@ -83,7 +84,7 @@ export const InputEmail: FC<Props> = ({
     } else {
       emailDirty(true)
     }
-  }, [emailInternal])
+  }, [emailInternal, email])
 
   const handleSendEmailVerification = async (data: { email: string }) => {
     const emailError = formatMessage({
@@ -186,6 +187,7 @@ export const InputEmail: FC<Props> = ({
               control={control}
               backgroundColor="blue"
               id="email"
+              autoFocus
               name="email"
               required={false}
               type="email"
@@ -290,12 +292,13 @@ export const InputEmail: FC<Props> = ({
                   name="code"
                   format="######"
                   label={formatMessage(m.verificationCode)}
-                  placeholder="123456"
+                  placeholder="000000"
                   defaultValue=""
                   error={errors.code?.message || formErrors.code}
                   disabled={verificationValid || disabled}
                   icon={verificationValid ? 'checkmark' : undefined}
                   size="xs"
+                  autoComplete="off"
                   onChange={(inp) => {
                     setCodeInternal(inp.target.value)
                     setErrors({ ...formErrors, code: undefined })
@@ -329,7 +332,7 @@ export const InputEmail: FC<Props> = ({
                   </button>
                 )}
                 {saveLoading && (
-                  <Box marginTop={1}>
+                  <Box>
                     <LoadingDots />
                   </Box>
                 )}

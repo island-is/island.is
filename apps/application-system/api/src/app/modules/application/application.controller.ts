@@ -71,14 +71,7 @@ import {
   buildDataProviders,
   buildExternalData,
 } from './utils/externalDataUtils'
-import {
-  validateApplicationSchema,
-  validateIncomingAnswers,
-  validateIncomingExternalDataProviders,
-  validateThatTemplateIsReady,
-  isTemplateReady,
-  validateThatApplicationIsReady,
-} from './utils/validationUtils'
+import { ApplicationValidationService } from './tools/applicationTemplateValidation.service'
 import { ApplicationSerializer } from './tools/application.serializer'
 import { UpdateApplicationStateDto } from './dto/updateApplicationState.dto'
 import { ApplicationResponseDto } from './dto/application.response.dto'
@@ -115,6 +108,7 @@ export class ApplicationController {
     private readonly templateAPIService: TemplateAPIService,
     private readonly fileService: FileService,
     private readonly auditService: AuditService,
+    private readonly validationService: ApplicationValidationService,
     private readonly applicationAccessService: ApplicationAccessService,
     @Optional() @InjectQueue('upload') private readonly uploadQueue: Queue,
     private intlService: IntlService,
@@ -136,7 +130,10 @@ export class ApplicationController {
       user.nationalId,
     )
 
-    await validateThatApplicationIsReady(existingApplication as BaseApplication)
+    await this.validationService.validateThatApplicationIsReady(
+      existingApplication as BaseApplication,
+      user,
+    )
 
     return existingApplication
   }
@@ -203,7 +200,9 @@ export class ApplicationController {
         application.typeId,
       )
 
-      if (isTemplateReady(applicationTemplate)) {
+      if (
+        await this.validationService.isTemplateReady(user, applicationTemplate)
+      ) {
         templateTypeToIsReady[application.typeId] = true
         filteredApplications.push(application)
       } else {
@@ -326,13 +325,23 @@ export class ApplicationController {
       return existingApplication
     }
 
+    if (decodedToken.nonce) {
+      if (!existingApplication.assignNonces.includes(decodedToken.nonce)) {
+        throw new NotFoundException('Token no longer usable.')
+      }
+
+      await this.applicationService.removeNonce(
+        existingApplication,
+        decodedToken.nonce,
+      )
+    } else if (new Date((decodedToken.iat + 3628800) * 1000) < new Date()) {
+      //supporting legacy tokens but reducing the validity to 6 weeks from issue date
+      throw new BadRequestException('Token has expired.')
+    }
+
     if (existingApplication.state !== decodedToken.state) {
       throw new NotFoundException('Application no longer in assignable state')
     }
-
-    // TODO check if assignee is still the same?
-    // decodedToken.assignedEmail === get(existingApplication.answers, decodedToken.emailPath)
-    // throw new BadRequestException('Invalid token')
 
     const templateId = existingApplication.typeId as ApplicationTypes
     const template = await getApplicationTemplateByTypeId(templateId)
@@ -344,7 +353,7 @@ export class ApplicationController {
       )
     }
 
-    validateThatTemplateIsReady(template)
+    await this.validationService.validateThatTemplateIsReady(user, template)
 
     const assignees = [user.nationalId]
 
@@ -403,7 +412,7 @@ export class ApplicationController {
     const newAnswers = application.answers as FormValue
     const intl = await this.intlService.useIntl(namespaces, locale)
 
-    await validateIncomingAnswers(
+    await this.validationService.validateIncomingAnswers(
       existingApplication as BaseApplication,
       newAnswers,
       user.nationalId,
@@ -411,10 +420,11 @@ export class ApplicationController {
       intl.formatMessage,
     )
 
-    await validateApplicationSchema(
+    await this.validationService.validateApplicationSchema(
       existingApplication,
       newAnswers,
       intl.formatMessage,
+      user,
     )
 
     const mergedAnswers = mergeAnswers(existingApplication.answers, newAnswers)
@@ -456,7 +466,7 @@ export class ApplicationController {
       user.nationalId,
     )
 
-    await validateIncomingExternalDataProviders(
+    await this.validationService.validateIncomingExternalDataProviders(
       existingApplication as BaseApplication,
       externalDataDto,
       user.nationalId,
@@ -538,7 +548,7 @@ export class ApplicationController {
     )
     const intl = await this.intlService.useIntl(namespaces, locale)
 
-    const permittedAnswers = await validateIncomingAnswers(
+    const permittedAnswers = await this.validationService.validateIncomingAnswers(
       existingApplication as BaseApplication,
       newAnswers,
       user.nationalId,
@@ -546,10 +556,11 @@ export class ApplicationController {
       intl.formatMessage,
     )
 
-    await validateApplicationSchema(
+    await this.validationService.validateApplicationSchema(
       existingApplication as BaseApplication,
       permittedAnswers,
       intl.formatMessage,
+      user,
     )
 
     const mergedAnswers = mergeAnswers(
@@ -673,7 +684,7 @@ export class ApplicationController {
     const onExitStateAction = helper.getOnExitStateAPIAction(application.state)
     const status = helper.getApplicationStatus()
     let updatedApplication: BaseApplication = application
-
+    await this.applicationService.clearNonces(updatedApplication.id)
     if (onExitStateAction) {
       const {
         hasError,

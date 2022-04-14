@@ -41,7 +41,7 @@ export const InputPhone: FC<Props> = ({
   telDirty,
 }) => {
   useNamespaces('sp.settings')
-  const { handleSubmit, control, errors, getValues } = useForm()
+  const { handleSubmit, control, errors, getValues, setValue } = useForm()
   const {
     updateOrCreateUserProfile,
     loading: saveLoading,
@@ -80,6 +80,7 @@ export const InputPhone: FC<Props> = ({
   useEffect(() => {
     if (mobile && mobile.length > 0) {
       setTelInternal(mobile)
+      setValue('tel', mobile, { shouldValidate: true })
     }
     checkSetPristineInput()
   }, [mobile])
@@ -94,7 +95,7 @@ export const InputPhone: FC<Props> = ({
       telDirty(true)
     }
     checkSetPristineInput()
-  }, [telInternal])
+  }, [telInternal, mobile])
 
   const handleSendTelVerification = async (data: { tel: string }) => {
     try {
@@ -319,12 +320,13 @@ export const InputPhone: FC<Props> = ({
                   name="code"
                   format="######"
                   label={formatMessage(m.verificationCode)}
-                  placeholder="123456"
+                  placeholder="000000"
                   defaultValue=""
                   error={errors.code?.message || formErrors.code}
                   disabled={verificationValid || disabled}
                   icon={verificationValid ? 'checkmark' : undefined}
                   size="xs"
+                  autoComplete="off"
                   onChange={(inp) => {
                     setCodeInternal(inp.target.value)
                     setErrors({ ...formErrors, code: undefined })
@@ -358,7 +360,7 @@ export const InputPhone: FC<Props> = ({
                   </button>
                 )}
                 {saveLoading && (
-                  <Box marginTop={1}>
+                  <Box>
                     <LoadingDots />
                   </Box>
                 )}

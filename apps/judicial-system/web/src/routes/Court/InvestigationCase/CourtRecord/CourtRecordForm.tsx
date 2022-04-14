@@ -47,7 +47,6 @@ import {
   core,
 } from '@island.is/judicial-system-web/messages'
 import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
-import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import { isCourtRecordStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import * as Constants from '@island.is/judicial-system/consts'
 
@@ -178,10 +177,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
               )
             }
             onBlur={(event) =>
-              updateCase(
-                workingCase.id,
-                parseString('courtAttendees', event.target.value),
-              )
+              updateCase(workingCase.id, { courtAttendees: event.target.value })
             }
             textarea
             rows={7}
@@ -315,13 +311,9 @@ const CourtRecordForm: React.FC<Props> = (props) => {
                             accusedAppealDecision: CaseAppealDecision.APPEAL,
                           })
 
-                          updateCase(
-                            workingCase.id,
-                            parseString(
-                              'accusedAppealDecision',
-                              CaseAppealDecision.APPEAL,
-                            ),
-                          )
+                          updateCase(workingCase.id, {
+                            accusedAppealDecision: CaseAppealDecision.APPEAL,
+                          })
                         }}
                         large
                         backgroundColor="white"
@@ -347,13 +339,9 @@ const CourtRecordForm: React.FC<Props> = (props) => {
                             accusedAppealDecision: CaseAppealDecision.ACCEPT,
                           })
 
-                          updateCase(
-                            workingCase.id,
-                            parseString(
-                              'accusedAppealDecision',
-                              CaseAppealDecision.ACCEPT,
-                            ),
-                          )
+                          updateCase(workingCase.id, {
+                            accusedAppealDecision: CaseAppealDecision.ACCEPT,
+                          })
                         }}
                         large
                         backgroundColor="white"
@@ -383,13 +371,9 @@ const CourtRecordForm: React.FC<Props> = (props) => {
                             accusedAppealDecision: CaseAppealDecision.POSTPONE,
                           })
 
-                          updateCase(
-                            workingCase.id,
-                            parseString(
-                              'accusedAppealDecision',
-                              CaseAppealDecision.POSTPONE,
-                            ),
-                          )
+                          updateCase(workingCase.id, {
+                            accusedAppealDecision: CaseAppealDecision.POSTPONE,
+                          })
                         }}
                         large
                         backgroundColor="white"
@@ -414,13 +398,10 @@ const CourtRecordForm: React.FC<Props> = (props) => {
                               CaseAppealDecision.NOT_APPLICABLE,
                           })
 
-                          updateCase(
-                            workingCase.id,
-                            parseString(
-                              'accusedAppealDecision',
+                          updateCase(workingCase.id, {
+                            accusedAppealDecision:
                               CaseAppealDecision.NOT_APPLICABLE,
-                            ),
-                          )
+                          })
                         }}
                         large
                         backgroundColor="white"
@@ -497,13 +478,9 @@ const CourtRecordForm: React.FC<Props> = (props) => {
                           prosecutorAppealDecision: CaseAppealDecision.APPEAL,
                         })
 
-                        updateCase(
-                          workingCase.id,
-                          parseString(
-                            'prosecutorAppealDecision',
-                            CaseAppealDecision.APPEAL,
-                          ),
-                        )
+                        updateCase(workingCase.id, {
+                          prosecutorAppealDecision: CaseAppealDecision.APPEAL,
+                        })
                       }}
                       large
                       backgroundColor="white"
@@ -527,13 +504,9 @@ const CourtRecordForm: React.FC<Props> = (props) => {
                           prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
                         })
 
-                        updateCase(
-                          workingCase.id,
-                          parseString(
-                            'prosecutorAppealDecision',
-                            CaseAppealDecision.ACCEPT,
-                          ),
-                        )
+                        updateCase(workingCase.id, {
+                          prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
+                        })
                       }}
                       large
                       backgroundColor="white"
@@ -561,13 +534,9 @@ const CourtRecordForm: React.FC<Props> = (props) => {
                           prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
                         })
 
-                        updateCase(
-                          workingCase.id,
-                          parseString(
-                            'prosecutorAppealDecision',
-                            CaseAppealDecision.POSTPONE,
-                          ),
-                        )
+                        updateCase(workingCase.id, {
+                          prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
+                        })
                       }}
                       large
                       backgroundColor="white"
@@ -592,13 +561,10 @@ const CourtRecordForm: React.FC<Props> = (props) => {
                             CaseAppealDecision.NOT_APPLICABLE,
                         })
 
-                        updateCase(
-                          workingCase.id,
-                          parseString(
-                            'prosecutorAppealDecision',
+                        updateCase(workingCase.id, {
+                          prosecutorAppealDecision:
                             CaseAppealDecision.NOT_APPLICABLE,
-                          ),
-                        )
+                        })
                       }}
                       large
                       backgroundColor="white"
