@@ -172,6 +172,7 @@ export class LicenseServiceService {
           ...licenseUserdata,
         },
         fetch,
+        payload: licenseDataFromService?.payload,
       }
 
       licenses.push(combined)

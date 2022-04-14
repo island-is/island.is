@@ -43,6 +43,15 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     pkpassVerify: true,
     timeout: 100,
   },
+  {
+    type: GenericLicenseType.PassportLicense,
+    provider: {
+      id: GenericLicenseProviderId.NationalRegistry,
+    },
+    pkpass: false,
+    pkpassVerify: false,
+    timeout: 1500,
+  },
 ]
 
 @Module({})
