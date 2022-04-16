@@ -1,14 +1,14 @@
 import faker from 'faker'
 
 import { Case, Defendant } from '@island.is/judicial-system/types'
+import { STEP_SIX_ROUTE } from '@island.is/judicial-system/consts'
+
 import {
   makeCustodyCase,
   makeCourt,
   makeProsecutor,
-} from '@island.is/judicial-system/formatters'
-import { STEP_SIX_ROUTE } from '@island.is/judicial-system/consts'
-
-import { intercept } from '../../../utils'
+  intercept,
+} from '../../../utils'
 
 describe(`${STEP_SIX_ROUTE}/:id`, () => {
   const defenderName = faker.name.findName()

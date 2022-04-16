@@ -35,7 +35,7 @@ export const JudgeOverview: React.FC = () => {
   const router = useRouter()
   const id = router.query.id
 
-  useRulingAutofill(isCaseUpToDate, workingCase)
+  useRulingAutofill(isCaseUpToDate, workingCase, setWorkingCase)
   const { uploadState } = useCourtUpload(workingCase, setWorkingCase)
 
   return (

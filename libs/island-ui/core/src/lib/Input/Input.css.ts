@@ -1,4 +1,4 @@
-import { style, styleVariants } from '@vanilla-extract/css'
+import { keyframes, style, styleVariants } from '@vanilla-extract/css'
 import { Theme, theme, themeUtils } from '@island.is/island-ui/theme'
 import * as mixins from './Input.mixins'
 import omit from 'lodash/omit'
@@ -103,9 +103,29 @@ export const fixedFocusState = style({
   },
 })
 
+export const spinner = style({
+  width: 24,
+  height: 24,
+  marginBottom: -3,
+  border: `3px solid ${theme.color.blue200}`,
+  borderBottomColor: theme.color.blue400,
+  animationName: keyframes({
+    from: {
+      transform: 'rotate(0deg)',
+    },
+    to: {
+      transform: 'rotate(360deg)',
+    },
+  }),
+  animationDuration: '1.5s',
+  animationIterationCount: 'infinite',
+  animationTimingFunction: 'linear',
+})
+
 export const icon = style({
   width: 24,
   height: 24,
+  flexShrink: 0,
   marginBottom: -3,
   color: theme.color.blue400,
   ...themeUtils.responsiveStyle({

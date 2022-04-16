@@ -10,7 +10,7 @@ jobs:
     runs-on: kubernetes-runner
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - name: Check if codeowners file changed
@@ -51,12 +51,16 @@ jobs:
     runs-on: kubernetes-runner
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - uses: actions/setup-node@v2
         with:
           node-version: '14'
+
+      - name: Setup yarn
+        run: npm install -g yarn
+
       - name: Run gitbook format
         run: node ./scripts/gitbook.js
       - name: Check if the git repo is dirty
