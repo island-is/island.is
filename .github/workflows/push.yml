@@ -132,7 +132,7 @@ jobs:
       node-modules-hash: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
       generated-files-cache-key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - uses: actions/setup-node@v2
@@ -393,7 +393,7 @@ jobs:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
       
@@ -478,7 +478,7 @@ jobs:
         run: npm install -g yarn
         if: steps.gather.outcome == 'success'
       
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         if: steps.gather.outcome == 'success'
       - name: Cache for generated files
         id: generated-files-cache
@@ -562,7 +562,7 @@ jobs:
       DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
       GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Docker login
         run: ./scripts/ci/docker-login-ecr.sh
@@ -632,7 +632,7 @@ jobs:
         run: '[[ ${{ needs.prepare.result }} == "success" ]] || exit 1'
       - name: Check docker-build success
         run: '[[ ${{ needs.docker-build.result }} != "failure" ]] || exit 1'
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -665,7 +665,7 @@ jobs:
           - gjafakort
           - identity-auth-api
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Trigger Deployment for service
         env:
           SPINNAKER_WEBHOOK_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_TOKEN }}
