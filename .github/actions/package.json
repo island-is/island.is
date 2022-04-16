@@ -19,7 +19,7 @@
     "@octokit/rest": "18.12.0",
     "@types/debug": "4.1.7",
     "@types/jest": "^27.4.1",
-    "@vercel/ncc": "^0.33.3",
+    "@vercel/ncc": "^0.33.4",
     "debug": "4.3.4",
     "esbuild-runner": "2.2.1",
     "jest": "27.5.1",
