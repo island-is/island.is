@@ -439,6 +439,7 @@ export class ApplicationService {
 
   async filter(
     filters: FilterApplicationsDto,
+    municipalityCodes: string[],
   ): Promise<FilterApplicationsResponse> {
     const whereOptions = {
       state: {
@@ -447,6 +448,7 @@ export class ApplicationService {
             ? filters.states
             : [ApplicationState.APPROVED, ApplicationState.REJECTED],
       },
+      municipalityCode: { [Op.in]: municipalityCodes },
     }
 
     if (filters.months.length > 0) {
