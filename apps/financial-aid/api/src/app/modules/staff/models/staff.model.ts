@@ -13,11 +13,8 @@ export class StaffModel implements Staff {
   @Field()
   readonly nationalId!: string
 
-  @Field()
-  readonly municipalityId!: string
-
-  @Field()
-  readonly municipalityName!: string
+  @Field(() => [String])
+  readonly municipalityIds!: string[]
 
   @Field(() => [String])
   readonly roles!: StaffRole[]

@@ -40,7 +40,6 @@ interface WrapperProps {
   searchTags?: Tag[]
   showLogoTitle?: boolean
   pageDescription?: string
-  pageFeaturedImage?: Image
 }
 
 export const Wrapper: FC<WrapperProps> = ({
@@ -56,7 +55,6 @@ export const Wrapper: FC<WrapperProps> = ({
   searchTags,
   showLogoTitle,
   pageDescription,
-  pageFeaturedImage,
   children,
 }) => {
   const [options, setOptions] = useState<Options>({
@@ -87,10 +85,10 @@ export const Wrapper: FC<WrapperProps> = ({
         <HeadWithSocialSharing
           title={pageTitle}
           description={pageDescription}
-          imageUrl={pageFeaturedImage?.url}
-          imageContentType={pageFeaturedImage?.contentType}
-          imageWidth={pageFeaturedImage?.width?.toString()}
-          imageHeight={pageFeaturedImage?.height?.toString()}
+          imageUrl={organization.serviceWebFeaturedImage?.url}
+          imageContentType={organization.serviceWebFeaturedImage?.contentType}
+          imageWidth={organization.serviceWebFeaturedImage?.width?.toString()}
+          imageHeight={organization.serviceWebFeaturedImage?.height?.toString()}
         >
           <meta name="robots" content="noindex, nofollow" />
         </HeadWithSocialSharing>

@@ -3,11 +3,11 @@ import * as Sentry from '@sentry/node'
 
 import { AppModule } from './app/app.module'
 import { SentryInterceptor } from './interceptors'
+import { environment } from './environments'
 import { openApi } from './openApi'
 
 Sentry.init({
-  dsn:
-    'https://22093678b2b24a0cad25111c1806a8d7@o406638.ingest.sentry.io/5530607',
+  dsn: environment.sentryDsn,
   environment: 'api',
 })
 

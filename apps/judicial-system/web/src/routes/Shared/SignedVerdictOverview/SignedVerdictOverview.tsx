@@ -30,10 +30,6 @@ import {
   BlueBox,
 } from '@island.is/judicial-system-web/src/components'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
-import {
-  parseNull,
-  parseString,
-} from '@island.is/judicial-system-web/src/utils/formatters'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   CaseData,
@@ -323,10 +319,9 @@ export const SignedVerdictOverview: React.FC = () => {
         accusedPostponedAppealDate: formatISO(date),
       })
 
-      updateCase(
-        workingCase.id,
-        parseString('accusedPostponedAppealDate', formatISO(date)),
-      )
+      updateCase(workingCase.id, {
+        accusedPostponedAppealDate: formatISO(date),
+      })
     }
   }
 
@@ -337,10 +332,9 @@ export const SignedVerdictOverview: React.FC = () => {
         prosecutorPostponedAppealDate: formatISO(date),
       })
 
-      updateCase(
-        workingCase.id,
-        parseString('prosecutorPostponedAppealDate', formatISO(date)),
-      )
+      updateCase(workingCase.id, {
+        prosecutorPostponedAppealDate: formatISO(date),
+      })
     }
   }
 
@@ -351,7 +345,9 @@ export const SignedVerdictOverview: React.FC = () => {
         accusedPostponedAppealDate: undefined,
       })
 
-      updateCase(workingCase.id, parseNull('accusedPostponedAppealDate'))
+      updateCase(workingCase.id, {
+        accusedPostponedAppealDate: (null as unknown) as string,
+      })
     }
   }
 
@@ -362,7 +358,9 @@ export const SignedVerdictOverview: React.FC = () => {
         prosecutorPostponedAppealDate: undefined,
       })
 
-      updateCase(workingCase.id, parseNull('prosecutorPostponedAppealDate'))
+      updateCase(workingCase.id, {
+        prosecutorPostponedAppealDate: (null as unknown) as string,
+      })
     }
   }
 
@@ -392,7 +390,9 @@ export const SignedVerdictOverview: React.FC = () => {
         })
         setSelectedSharingInstitutionId(null)
 
-        updateCase(workingCase.id, parseNull('sharedWithProsecutorsOfficeId'))
+        updateCase(workingCase.id, {
+          sharedWithProsecutorsOfficeId: (null as unknown) as string,
+        })
       } else {
         setSharedCaseModal({
           open: true,
@@ -601,7 +601,7 @@ export const SignedVerdictOverview: React.FC = () => {
       />
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={Constants.REQUEST_LIST_ROUTE}
+          previousUrl={Constants.CASE_LIST_ROUTE}
           hideNextButton={
             user?.role !== UserRole.PROSECUTOR ||
             workingCase.decision ===

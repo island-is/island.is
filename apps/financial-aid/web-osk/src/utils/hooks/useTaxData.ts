@@ -13,7 +13,10 @@ import { FormContext } from '@island.is/financial-aid-web/osk/src/components/For
 const useTaxData = () => {
   const gatherTaxDataQuery = useAsyncLazyQuery<{
     municipalitiesPersonalTaxReturn: { personalTaxReturn: PersonalTaxReturn }
-    municipalitiesDirectTaxPayments: { directTaxPayments: DirectTaxPayment[] }
+    municipalitiesDirectTaxPayments: {
+      directTaxPayments: DirectTaxPayment[]
+      success: boolean
+    }
   }>(GatherTaxDataQuery)
   const { form, updateForm } = useContext(FormContext)
 
@@ -32,7 +35,8 @@ const useTaxData = () => {
           ]
         : [],
       directTaxPayments:
-        taxes?.municipalitiesDirectTaxPayments.directTaxPayments,
+        taxes?.municipalitiesDirectTaxPayments?.directTaxPayments,
+      hasFetchedPayments: taxes?.municipalitiesDirectTaxPayments?.success,
     })
   }
 

@@ -1,5 +1,4 @@
 import { defineMessage } from 'react-intl'
-import { signedVerdictOverview } from './signedVerdictOverview'
 
 export const titles = {
   prosecutor: {

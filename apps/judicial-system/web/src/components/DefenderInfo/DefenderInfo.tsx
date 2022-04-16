@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState, useCallback } from 'react'
 import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
 import { ValueType } from 'react-select/src/types'
@@ -11,8 +11,11 @@ import {
   Text,
   Tooltip,
 } from '@island.is/island-ui/core'
-import lawyers from '@island.is/judicial-system-web/src/utils/lawyerScraper/db.json'
-import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
+
+import {
+  ReactSelectOption,
+  Lawyer,
+} from '@island.is/judicial-system-web/src/types'
 import {
   Case,
   CaseType,
@@ -27,7 +30,7 @@ import { rcHearingArrangements } from '@island.is/judicial-system-web/messages'
 import { icHearingArrangements } from '@island.is/judicial-system-web/messages'
 
 import { BlueBox } from '..'
-import { useCase } from '../../utils/hooks'
+import { useCase, useLawyers } from '../../utils/hooks'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
@@ -56,29 +59,36 @@ const DefenderInfo: React.FC<Props> = (props) => {
     setDefenderPhoneNumberErrorMessage,
   ] = useState<string>('')
 
-  const handleDefenderChange = async (
-    selectedOption: ValueType<ReactSelectOption>,
-  ) => {
-    let updatedLawyer = {
-      defenderName: '',
-      defenderEmail: '',
-      defenderPhoneNumber: '',
-    }
+  const lawyers = useLawyers()
 
-    if (selectedOption) {
-      const { label, value } = selectedOption as ReactSelectOption
-      const lawyer = lawyers.lawyers.find((l) => l.email === (value as string))
-
-      updatedLawyer = {
-        defenderName: lawyer ? lawyer.name : label,
-        defenderEmail: lawyer ? lawyer.email : '',
-        defenderPhoneNumber: lawyer ? lawyer.phoneNr : '',
+  const handleDefenderChange = useCallback(
+    async (selectedOption: ValueType<ReactSelectOption>) => {
+      let updatedLawyer = {
+        defenderName: '',
+        defenderNationalId: '',
+        defenderEmail: '',
+        defenderPhoneNumber: '',
       }
-    }
 
-    await updateCase(workingCase.id, updatedLawyer)
-    setWorkingCase({ ...workingCase, ...updatedLawyer })
-  }
+      if (selectedOption) {
+        const { label, value } = selectedOption as ReactSelectOption
+        const lawyer = lawyers.find(
+          (l: Lawyer) => l.email === (value as string),
+        )
+
+        updatedLawyer = {
+          defenderName: lawyer ? lawyer.name : label,
+          defenderNationalId: lawyer ? lawyer.nationalId : '',
+          defenderEmail: lawyer ? lawyer.email : '',
+          defenderPhoneNumber: lawyer ? lawyer.phoneNr : '',
+        }
+      }
+
+      await updateCase(workingCase.id, updatedLawyer)
+      setWorkingCase({ ...workingCase, ...updatedLawyer })
+    },
+    [lawyers, setWorkingCase, workingCase, updateCase],
+  )
 
   const getTranslations = () => {
     if (isRestrictionCase(workingCase.type)) {
@@ -213,7 +223,7 @@ const DefenderInfo: React.FC<Props> = (props) => {
           <Select
             name="defenderName"
             icon="search"
-            options={lawyers.lawyers.map((l) => {
+            options={lawyers.map((l: Lawyer) => {
               return {
                 label: `${l.name}${l.practice ? ` (${l.practice})` : ''}`,
                 value: l.email,
