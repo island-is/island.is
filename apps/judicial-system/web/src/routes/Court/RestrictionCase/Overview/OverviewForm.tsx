@@ -68,11 +68,9 @@ const OverviewForm: React.FC<Props> = (props) => {
       )}
       <Box marginBottom={7}>
         <Text as="h1" variant="h1">
-          {`Yfirlit ${
-            workingCase.type === CaseType.CUSTODY
-              ? 'gæsluvarðhaldskröfu'
-              : 'farbannskröfu'
-          }`}
+          {formatMessage(rcCourtOverview.sections.title, {
+            caseType: workingCase.type,
+          })}
         </Text>
       </Box>
       <Box component="section" marginBottom={5}>
