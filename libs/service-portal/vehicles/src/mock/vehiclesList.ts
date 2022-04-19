@@ -31,7 +31,7 @@ export const vehiclesList: any[] = [
     permno: 'KZP28',
     regno: 'KZP28',
     vin: 'TMBLG9NE5E0055360',
-    type: 'Almenn notkun',
+    type: 'Volvo',
     color: 'Brúnn',
     firstRegDate: new Date('2014-02-03').toISOString(),
     modelYear: '2014',
