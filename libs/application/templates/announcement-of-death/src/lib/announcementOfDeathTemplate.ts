@@ -7,6 +7,7 @@ import {
   DefaultStateLifeCycle,
   Application,
   DefaultEvents,
+  EphemeralStateLifeCycle,
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
@@ -24,15 +25,55 @@ const AnnouncementOfDeathTemplate: ApplicationTemplate<
   dataSchema: dataSchema,
   readyForProduction: false,
   stateMachineConfig: {
-    initial: States.DRAFT,
+    initial: States.PREREQUISITES,
     states: {
+      [States.PREREQUISITES]: {
+        id: 'prerequisite',
+        exit: [],
+        meta: {
+          name: 'Prerequisites',
+          actionCard: {
+            title: m.applicationTitle,
+          },
+          progress: 0.25,
+          lifecycle: EphemeralStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/prerequisite').then((val) =>
+                  Promise.resolve(val.prerequisite()),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Submit',
+                  type: 'primary',
+                },
+              ],
+              write: 'all',
+            },
+          ],
+          // TODO: consider this as a call to fetch info from Syslumadur
+          /*
+          onExit: {
+            apiModuleAction: ApiActions.fetchSyslumennInfo,
+            shouldPersistToExternalData: true,
+            throwOnError: true
+          },
+          */
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: { target: States.DRAFT },
+        },
+      },
       [States.DRAFT]: {
         meta: {
           name: 'Draft',
           actionCard: {
             title: m.applicationTitle,
           },
-          progress: 0.33,
+          progress: 0.5,
           lifecycle: DefaultStateLifeCycle,
           onExit: {
             apiModuleAction: ApiActions.submitApplication,

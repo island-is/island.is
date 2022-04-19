@@ -5,6 +5,7 @@ export type Events =
   | { type: DefaultEvents.REJECT }
 
 export enum States {
+  PREREQUISITES = 'prerequisites',
   DRAFT = 'draft',
   DELEGATED = 'delegated',
   DONE = 'done',
