@@ -2,9 +2,8 @@ import {
   STEP_FIVE_ROUTE,
   STEP_FOUR_ROUTE,
 } from '@island.is/judicial-system/consts'
-import { makeCustodyCase } from '@island.is/judicial-system/formatters'
 
-import { intercept } from '../../../utils'
+import { makeCustodyCase, intercept } from '../../../utils'
 
 describe(`${STEP_FOUR_ROUTE}/:id`, () => {
   beforeEach(() => {

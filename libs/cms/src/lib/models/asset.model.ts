@@ -19,10 +19,23 @@ export class Asset {
   contentType?: string
 }
 
-export const mapAsset = ({ sys, fields }: ContentfulAsset): Asset => ({
-  typename: 'Asset',
-  id: sys.id,
-  title: fields.title ?? '',
-  url: fields.file?.url ?? '',
-  contentType: fields.file?.contentType ?? '',
-})
+export const mapAsset = ({ sys, fields }: ContentfulAsset): Asset => {
+  // The url might not contain a protocol that's why we prepend https:
+  // https://www.contentful.com/developers/docs/concepts/images/
+  let url: string
+  if (fields?.file?.url) {
+    url = fields.file.url.startsWith('//')
+      ? `https:${fields.file.url}`
+      : fields.file.url
+  } else {
+    url = ''
+  }
+
+  return {
+    typename: 'Asset',
+    id: sys.id,
+    title: fields.title ?? '',
+    url: url,
+    contentType: fields.file?.contentType ?? '',
+  }
+}

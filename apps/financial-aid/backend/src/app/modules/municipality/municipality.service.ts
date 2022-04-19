@@ -102,7 +102,6 @@ export class MunicipalityService {
   async create(
     municipality: CreateMunicipalityDto,
     admin: CreateStaffDto,
-    currentUser: Staff,
   ): Promise<MunicipalityModel> {
     return await this.sequelize.transaction(async (t) => {
       return await Promise.all(
@@ -125,22 +124,27 @@ export class MunicipalityService {
           AidType.COHABITATION,
         )
 
-        return await this.staffService
-          .createStaff(
-            admin,
-            {
-              municipalityId: municipality.municipalityId,
-              municipalityName: municipality.name,
-            },
-            currentUser,
-            t,
-            true,
-          )
-          .then(() => {
-            return this.municipalityModel.create(municipality, {
-              transaction: t,
+        if (admin) {
+          return await this.staffService
+            .createStaff(
+              admin,
+              {
+                municipalityId: municipality.municipalityId,
+                municipalityName: municipality.name,
+              },
+              t,
+              true,
+            )
+            .then(() => {
+              return this.municipalityModel.create(municipality, {
+                transaction: t,
+              })
             })
+        } else {
+          return this.municipalityModel.create(municipality, {
+            transaction: t,
           })
+        }
       })
     })
   }

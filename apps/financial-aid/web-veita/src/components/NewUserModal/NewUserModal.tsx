@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Box, Checkbox, Input, Text } from '@island.is/island-ui/core'
 import {
   ActionModal,
-  MultiSelection,
+  MultiSelectionMunicipality,
 } from '@island.is/financial-aid-web/veita/src/components'
 import { StaffMutation } from '@island.is/financial-aid-web/veita/graphql'
 import { ApolloError, useMutation } from '@apollo/client'
@@ -11,7 +11,7 @@ import cn from 'classnames'
 import {
   CreateUpdateStaff,
   selectionType,
-} from '@island.is/financial-aid-web/veita/src/components/MultiSelection/MultiSelection'
+} from '@island.is/financial-aid-web/veita/src/components/MultiSelection/MultiSelectionMunicipality'
 import { useRouter } from 'next/router'
 
 interface Props {
@@ -19,7 +19,6 @@ interface Props {
   setIsVisible: React.Dispatch<React.SetStateAction<boolean>>
   onStaffCreated: () => void
   predefinedRoles?: StaffRole[]
-  municipalityName?: string
 }
 
 type newUsersModalState = CreateUpdateStaff<{
@@ -27,6 +26,7 @@ type newUsersModalState = CreateUpdateStaff<{
   staffName?: string
   staffEmail?: string
   errorMessage?: string
+  municipalityNames: string[]
 }>
 
 const NewUserModal = ({
@@ -34,7 +34,6 @@ const NewUserModal = ({
   setIsVisible,
   onStaffCreated,
   predefinedRoles = [],
-  municipalityName,
 }: Props) => {
   const router = useRouter()
 
@@ -58,6 +57,7 @@ const NewUserModal = ({
     hasError: false,
     errorMessage: undefined,
     roles: predefinedRoles,
+    municipalityNames: [],
     municipalityIds: getMunicipalityIds(),
   })
 
@@ -95,7 +95,7 @@ const NewUserModal = ({
             email: state.staffEmail,
             nationalId: state.staffNationalId,
             roles: state.roles,
-            municipalityName,
+            municipalityNames: state.municipalityNames,
             municipalityIds: state.municipalityIds, // TODO check on router.query.id
           },
         },
@@ -192,12 +192,17 @@ const NewUserModal = ({
       {predefinedRoles.length === 0 && (
         <>
           <Box display="block" marginBottom={[3, 3, 5]}>
-            <MultiSelection
-              selectionUpdate={(value: string, type: selectionType) => {
+            <MultiSelectionMunicipality
+              selectionUpdate={(
+                value: string,
+                label: string,
+                type: selectionType,
+              ) => {
                 if (type === 'add') {
                   setState({
                     ...state,
                     municipalityIds: [...state.municipalityIds, value],
+                    municipalityNames: [...state.municipalityNames, label],
                   })
                 }
                 if (type === 'remove') {
@@ -205,6 +210,9 @@ const NewUserModal = ({
                     ...state,
                     municipalityIds: state.municipalityIds.filter(
                       (muni) => muni !== value,
+                    ),
+                    municipalityNames: state.municipalityNames.filter(
+                      (muni) => muni !== label,
                     ),
                   })
                 }
