@@ -60,8 +60,8 @@ import { useScrollPosition } from '../../hooks/useScrollPosition'
 import { scrollTo } from '../../hooks/useScrollSpy'
 import StepperFSM from '../../components/StepperFSM/StepperFSM'
 import { getStepOptionsFromUIConfiguration } from '../../components/StepperFSM/StepperFSMUtils'
-import * as styles from './Article.css'
 import { liveChatIncConfig } from './config'
+import * as styles from './Article.css'
 
 type Article = GetSingleArticleQuery['getSingleArticle']
 type SubArticle = GetSingleArticleQuery['getSingleArticle']['subArticles'][0]
