@@ -50,10 +50,10 @@ import {
   getGenericTagGroupHierarchy,
   getInitialParameters,
   Ordering,
-  responseInputMatchesRequestInput,
 } from './utils'
 import { OrderByItem } from './components/OrderByItem'
 import { useSelect } from 'downshift'
+import { stringHash } from '@island.is/web/utils/stringHash'
 import * as styles from './PublishedMaterial.css'
 
 const ASSETS_PER_PAGE = 20
@@ -113,13 +113,24 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
         size: ASSETS_PER_PAGE,
         tagGroups: {},
         sort: ordering,
+        hash: 0,
       },
     },
   })
+
+  // This hash value is used to match the response to a request
+  const [requestHash, setRequestHash] = useState(0)
+
+  useEffect(() => {
+    const input = { ...queryVariables.variables.input }
+    delete input['hash']
+    setRequestHash(stringHash(JSON.stringify(input)))
+  }, [queryVariables])
+
   const [publishedMaterialData, setPublishedMaterialData] = useState({
     total: 0,
     items: [],
-    input: {},
+    hash: 0,
   })
 
   const { data, loading, fetchMore } = useQuery<
@@ -150,17 +161,25 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
       c.selected.forEach((t) => selectedCategories.push(t)),
     )
 
+    const input = {
+      lang: activeLocale,
+      organizationSlug: (router.query.slug as string) ?? '',
+      tags: selectedCategories,
+      page: nextPage,
+      searchString: searchValue,
+      size: ASSETS_PER_PAGE,
+      tagGroups: getGenericTagGroupHierarchy(filterCategories),
+      sort: ordering,
+    }
+
+    const hash = stringHash(JSON.stringify(input))
+    setRequestHash(hash)
+
     fetchMore({
       variables: {
         input: {
-          lang: activeLocale,
-          organizationSlug: (router.query.slug as string) ?? '',
-          tags: selectedCategories,
-          page: nextPage,
-          searchString: searchValue,
-          size: ASSETS_PER_PAGE,
-          tagGroups: getGenericTagGroupHierarchy(filterCategories),
-          sort: ordering,
+          ...input,
+          hash,
         },
       },
       updateQuery: (prevResult, { fetchMoreResult }) => {
@@ -182,17 +201,25 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
         c.selected.forEach((t) => selectedCategories.push(t)),
       )
 
+      const input = {
+        lang: activeLocale,
+        organizationSlug: (router.query.slug as string) ?? '',
+        tags: selectedCategories,
+        page: 1,
+        searchString: searchValue,
+        size: ASSETS_PER_PAGE,
+        tagGroups: getGenericTagGroupHierarchy(filterCategories),
+        sort: ordering,
+      }
+
+      const hash = stringHash(JSON.stringify(input))
+      setRequestHash(hash)
+
       setQueryVariables({
         variables: {
           input: {
-            lang: activeLocale,
-            organizationSlug: (router.query.slug as string) ?? '',
-            tags: selectedCategories,
-            page: 1,
-            searchString: searchValue,
-            size: ASSETS_PER_PAGE,
-            tagGroups: getGenericTagGroupHierarchy(filterCategories),
-            sort: ordering,
+            ...input,
+            hash,
           },
         },
       })
@@ -265,12 +292,11 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
   }, [selectedItem])
 
   useEffect(() => {
-    const responseInput = data?.getPublishedMaterial?.input ?? {}
-    const requestInput = queryVariables.variables.input
-    if (responseInputMatchesRequestInput(responseInput, requestInput)) {
+    const responseHash = data?.getPublishedMaterial?.hash
+    if (requestHash === responseHash) {
       setPublishedMaterialData(data?.getPublishedMaterial)
     }
-  }, [data?.getPublishedMaterial, queryVariables.variables.input])
+  }, [data?.getPublishedMaterial, requestHash])
 
   const orderByButtonRef = useRef<HTMLDivElement | null>(null)
 

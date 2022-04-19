@@ -244,6 +244,7 @@ export class CmsElasticsearchService {
       tags,
       tagGroups,
       sort,
+      hash = 0,
     } = input
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -320,9 +321,7 @@ export class CmsElasticsearchService {
       items: enhancedAssetResponse.body.hits.hits.map((item) =>
         JSON.parse(item._source.response ?? '{}'),
       ),
-
-      // Also return the input so we can match the response to the request that was made
-      input,
+      hash, // Also return the input hash so we can match the response to the request that was made
     }
   }
 }

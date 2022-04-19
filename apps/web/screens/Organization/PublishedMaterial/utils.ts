@@ -1,9 +1,4 @@
-import {
-  GenericTag,
-  GenericTagGroup,
-  GetPublishedMaterialInput,
-  GetPublishedMaterialObject,
-} from '@island.is/web/graphql/schema'
+import { GenericTag, GenericTagGroup } from '@island.is/web/graphql/schema'
 
 export interface Ordering {
   field: 'title.sort' | 'releaseDate'
@@ -86,62 +81,4 @@ export const getGenericTagGroupHierarchy = (
   })
 
   return hierarchy
-}
-
-export const responseInputMatchesRequestInput = (
-  responseInput: Partial<Omit<GetPublishedMaterialObject, '__typename'>>,
-  requestInput: GetPublishedMaterialInput,
-) => {
-  if (responseInput?.lang !== requestInput.lang) {
-    return false
-  }
-  if (responseInput?.organizationSlug !== requestInput.organizationSlug) {
-    return false
-  }
-  if (responseInput?.page !== requestInput.page) {
-    return false
-  }
-  if (responseInput?.searchString !== requestInput.searchString) {
-    return false
-  }
-  if (responseInput?.size !== requestInput.size) {
-    return false
-  }
-
-  const responseInputSort = responseInput?.sort ?? {}
-
-  for (const key in Object.keys(responseInputSort)) {
-    for (const subKey in Object.keys(responseInputSort[key] ?? {})) {
-      if (responseInput[key][subKey] !== requestInput[key]?.[subKey]) {
-        return false
-      }
-    }
-  }
-
-  const responseTagGroups = responseInput?.tagGroups ?? {}
-
-  for (const key in Object.keys(responseTagGroups)) {
-    if (!responseTagGroups[key]?.length) {
-      continue
-    }
-    for (let i = 0; i < responseTagGroups[key].length; i += 1) {
-      if (
-        responseTagGroups?.[key]?.[i] !== requestInput.tagGroups?.[key]?.[i]
-      ) {
-        return false
-      }
-    }
-  }
-
-  if (responseInput?.tags?.length !== requestInput.tags.length) {
-    return false
-  }
-
-  for (let i = 0; i < responseInput.tags.length; i += 1) {
-    if (responseInput.tags[i] !== requestInput.tags[i]) {
-      return false
-    }
-  }
-
-  return true
 }
