@@ -153,6 +153,12 @@ export const restrictionsV2 = defineMessages({
       },
     },
   ),
+  title: {
+    id: 'judicial.system.core:restrictionsV2.title',
+    defaultMessage: `Takmarkanir og tilhögun {caseType, select, ${CaseType.ADMISSION_TO_FACILITY} {vistunar} ${CaseType.TRAVEL_BAN} {farbanns} other {gæslu}}`,
+    description:
+      'Notaður sem titil þegar útlistað er hvaða takmarkanir eru á gæslu/vistun/farbanni',
+  },
   fallback: {
     id: 'judicial.system.core:restrictionsV2.fallback',
     defaultMessage: `Ekki er farið fram á takmarkanir á {caseType, select, ${CaseType.ADMISSION_TO_FACILITY} {vistun} ${CaseType.TRAVEL_BAN} {farbanni} other {gæslu}}.`,

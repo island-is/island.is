@@ -8,7 +8,7 @@ import {
   formatRequestCaseType,
   formatNationalId,
 } from '@island.is/judicial-system/formatters'
-import { CaseType, isRestrictionCase } from '@island.is/judicial-system/types'
+import { isRestrictionCase } from '@island.is/judicial-system/types'
 import type {
   Case,
   CaseLegalProvisions,
@@ -17,6 +17,7 @@ import {
   requestCourtDate,
   core,
   laws,
+  restrictionsV2,
 } from '@island.is/judicial-system-web/messages'
 import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
@@ -126,9 +127,9 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
       </AccordionListItem>
       {isRestrictionCase(workingCase.type) && (
         <AccordionListItem
-          title={`Takmarkanir og tilhögun ${
-            workingCase.type === CaseType.CUSTODY ? 'gæslu' : 'farbanns'
-          }`}
+          title={formatMessage(restrictionsV2.title, {
+            caseType: workingCase.type,
+          })}
         >
           <Text>
             {formatRequestedCustodyRestrictions(

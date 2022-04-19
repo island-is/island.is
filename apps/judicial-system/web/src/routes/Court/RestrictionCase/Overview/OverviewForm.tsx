@@ -25,6 +25,7 @@ import {
   laws,
   requestCourtDate,
   rcCourtOverview,
+  restrictionsV2,
 } from '@island.is/judicial-system-web/messages'
 import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
 import type {
@@ -171,9 +172,9 @@ const OverviewForm: React.FC<Props> = (props) => {
             <AccordionItem
               labelVariant="h3"
               id="id_3"
-              label={`Takmarkanir og tilhögun ${
-                workingCase.type === CaseType.CUSTODY ? 'gæslu' : 'farbanns'
-              }`}
+              label={formatMessage(restrictionsV2.title, {
+                caseType: workingCase.type,
+              })}
             >
               {formatRequestedCustodyRestrictions(
                 formatMessage,

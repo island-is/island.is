@@ -41,6 +41,7 @@ import {
   rcOverview,
   requestCourtDate,
 } from '@island.is/judicial-system-web/messages'
+import { restrictionsV2 } from '@island.is/judicial-system-web/messages'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import CommentsAccordionItem from '@island.is/judicial-system-web/src/components/AccordionItems/CommentsAccordionItem/CommentsAccordionItem'
 import { createCaseResentExplanation } from '@island.is/judicial-system-web/src/utils/stepHelper'
@@ -285,9 +286,9 @@ export const Overview: React.FC = () => {
             <AccordionItem
               labelVariant="h3"
               id="id_3"
-              label={`Takmarkanir og tilhögun ${
-                workingCase.type === CaseType.CUSTODY ? 'gæslu' : 'farbanns'
-              }`}
+              label={formatMessage(restrictionsV2.title, {
+                caseType: workingCase.type,
+              })}
             >
               {formatRequestedCustodyRestrictions(
                 formatMessage,
