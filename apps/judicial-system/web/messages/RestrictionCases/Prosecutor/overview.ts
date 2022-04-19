@@ -23,6 +23,15 @@ export const rcOverview = {
         description:
           'Notaður sem titill á modal sem birtist þegar krafa hefur verið send til dómstóls',
       },
+      headingV2: {
+        id: 'judicial.system.restriction_cases:overview.modal.heading_v2',
+        defaultMessage: `Krafa um {caseType, select,
+          ${CaseType.ADMISSION_TO_FACILITY} {vistun á viðeigandi stofnun}
+          ${CaseType.TRAVEL_BAN} {farbann}
+          other {gæsluvarhald}} hefur verið send til dómstóls`,
+        description:
+          'Notaður sem titill á modal sem birtist þegar krafa hefur verið send til dómstóls',
+      },
       notificationSent: {
         id:
           'judicial.system.restriction_cases:overview.modal.notification_sent',

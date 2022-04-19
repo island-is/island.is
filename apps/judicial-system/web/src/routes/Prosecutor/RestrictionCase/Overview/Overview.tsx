@@ -421,11 +421,8 @@ export const Overview: React.FC = () => {
       <AnimatePresence>
         {modalVisible && (
           <Modal
-            title={formatMessage(rcOverview.sections.modal.heading, {
-              caseType:
-                workingCase.type === CaseType.CUSTODY
-                  ? 'gæsluvarðhald'
-                  : 'farbann',
+            title={formatMessage(rcOverview.sections.modal.headingV2, {
+              caseType: workingCase.type,
             })}
             text={modalText}
             handleClose={() => router.push(Constants.CASE_LIST_ROUTE)}
