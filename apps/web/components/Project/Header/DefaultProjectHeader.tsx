@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useMemo, useRef } from 'react'
 import {
   Box,
   Text,
@@ -37,17 +37,13 @@ export const DefaultProjectHeader = ({
 
   const isBelowLarge = width < theme.breakpoints.lg
 
-  const [maxImageHeight, setMaxImageHeight] = useState(300)
+  const textRef = useRef<HTMLDivElement | null>(null)
 
-  const measuredRef = useCallback(
-    (node) => {
-      if (node) {
-        setMaxImageHeight(node.getBoundingClientRect().height)
-      }
-    },
+  const maxImageHeight = useMemo(() => {
+    if (!textRef?.current) return 300
+    return textRef.current.getBoundingClientRect().height
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [width],
-  )
+  }, [width])
 
   return (
     <Box className={defaultImageIsProvided ? styles.headerWrapper : undefined}>
@@ -56,7 +52,7 @@ export const DefaultProjectHeader = ({
         style={{ background: textBackgroundColor }}
       >
         <GridContainer>
-          <Box ref={measuredRef}>
+          <Box ref={textRef}>
             <GridRow align="flexEnd">
               <GridColumn
                 paddingTop={5}
