@@ -8,14 +8,8 @@ import {
 import { UseGuards } from '@nestjs/common'
 
 import { MunicipalitiesFinancialAidService } from './municipalitiesFinancialAid.service'
-import {
-  MunicipalitiesFinancialAidMunicipalityModel,
-  MunicipalitiesFinancialAidSignedUrlModel,
-} from './models'
-import {
-  MunicipalitiesFinancialAidCreateSignedUrlInput,
-  MunicipalitiesFinancialAidMunicipalityInput,
-} from './dto'
+import { MunicipalityModel, SignedUrlModel } from './models'
+import { CreateSignedUrlInput, MunicipalityInput } from './dto'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -33,26 +27,26 @@ export class MunicipalitiesFinancialAidResolver {
     )
   }
 
-  @Query(() => MunicipalitiesFinancialAidMunicipalityModel, { nullable: true })
+  @Query(() => MunicipalityModel, { nullable: true })
   async municipalitiesFinancialAidMunicipality(
-    @Args('input', { type: () => MunicipalitiesFinancialAidMunicipalityInput })
-    input: MunicipalitiesFinancialAidMunicipalityInput,
+    @Args('input', { type: () => MunicipalityInput })
+    input: MunicipalityInput,
     @CurrentUser() user: User,
-  ): Promise<MunicipalitiesFinancialAidMunicipalityModel | null> {
+  ): Promise<MunicipalityModel | null> {
     return await this.municipalitiesFinancialAidService.municipalityInfoForFinancialAId(
       user,
       input,
     )
   }
 
-  @Mutation(() => MunicipalitiesFinancialAidSignedUrlModel)
+  @Mutation(() => SignedUrlModel)
   createMunicipalitiesFinancialAidSignedUrl(
     @Args('input', {
-      type: () => MunicipalitiesFinancialAidCreateSignedUrlInput,
+      type: () => CreateSignedUrlInput,
     })
-    input: MunicipalitiesFinancialAidCreateSignedUrlInput,
+    input: CreateSignedUrlInput,
     @CurrentUser() user: User,
-  ): Promise<MunicipalitiesFinancialAidSignedUrlModel | null> {
+  ): Promise<SignedUrlModel | null> {
     return this.municipalitiesFinancialAidService.municipalitiesFinancialAidCreateSignedUrl(
       user,
       input,

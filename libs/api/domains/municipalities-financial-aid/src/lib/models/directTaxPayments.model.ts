@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-@ObjectType()
+@ObjectType('MunicipalitiesFinancialAidDirectTaxPaymentModel')
 export class DirectTaxPaymentModel {
   @Field()
   readonly totalSalary!: number

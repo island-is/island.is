@@ -2,7 +2,7 @@ import { Field, ID, ObjectType } from '@nestjs/graphql'
 
 import { ApplicationFileModelTypeEnum } from '@island.is/clients/municipalities-financial-aid'
 
-@ObjectType()
+@ObjectType('MunicipalitiesFinancialAidApplicationFileModel')
 export class ApplicationFileModel {
   @Field(() => ID)
   readonly id!: string

@@ -13,7 +13,7 @@ import {
   DirectTaxPaymentModel,
 } from '.'
 
-@ObjectType()
+@ObjectType('MunicipalitiesFinancialAidApplicationModel')
 export class ApplicationModel {
   @Field(() => ID)
   readonly id!: string
