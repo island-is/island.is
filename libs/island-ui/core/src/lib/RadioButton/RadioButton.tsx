@@ -26,8 +26,6 @@ export interface RadioButtonProps {
   subLabel?: string
   /** illustration can only be used if the 'large' prop set to true */
   illustration?: React.FC
-  /** Makes label span full width for if you are using ReactChild/ReactFragment as label */
-  fullWidthLabel?: boolean
 }
 
 interface AriaError {
@@ -54,7 +52,6 @@ export const RadioButton = ({
   errorMessage,
   large,
   backgroundColor,
-  fullWidthLabel,
 }: RadioButtonProps) => {
   const errorId = `${id}-error`
   const ariaError = hasError
@@ -101,11 +98,7 @@ export const RadioButton = ({
         >
           <div className={styles.checkMark} />
         </div>
-        <span
-          className={cn(styles.labelText, {
-            [styles.labelFullWidth]: fullWidthLabel,
-          })}
-        >
+        <span className={styles.labelText}>
           <Text as="span" fontWeight={checked ? 'semiBold' : 'light'}>
             {label}
           </Text>
