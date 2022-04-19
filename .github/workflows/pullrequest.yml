@@ -32,10 +32,10 @@ jobs:
       node-modules-hash: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
       generated-files-cache-key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
           node-version: '14'
 
@@ -209,11 +209,11 @@ jobs:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
           node-version: '14'
 
@@ -270,9 +270,9 @@ jobs:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.E2E_CHUNKS) }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
           node-version: '14'
 
@@ -324,7 +324,7 @@ jobs:
     runs-on: kubernetes-runner
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
         continue-on-error: true
@@ -333,7 +333,7 @@ jobs:
           path: node_modules
           key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
 
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
           node-version: '14'
 
@@ -355,8 +355,8 @@ jobs:
     runs-on: kubernetes-runner
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: '14'
       - name: Setup yarn
@@ -387,8 +387,8 @@ jobs:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.LINT_CHUNKS) }}
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: '14'
       - name: Setup yarn
@@ -434,8 +434,8 @@ jobs:
       matrix: ${{ fromJson(needs.prepare.outputs.BUILD_CHUNKS) }}
     if: needs.prepare.outputs.BUILD_CHUNKS
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: '14'
       - name: Setup yarn
