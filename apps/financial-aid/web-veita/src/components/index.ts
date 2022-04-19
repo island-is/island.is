@@ -49,4 +49,5 @@ export { default as CollapsibleProfileUnit } from './ProfileUnit/CollapsibleProf
 export { default as PrintableFiles } from './PrintableFiles/PrintableFiles'
 export { default as MultiSelectionMunicipality } from './MultiSelection/MultiSelectionMunicipality'
 export { default as SelectedMunicipality } from './SelectedMunicipality/SelectedMunicipality'
+export { default as FilterPopover } from './FilterPopover/FilterPopover'
 export { default as MultiSelectionAdmin } from './MultiSelection/MultiSelectionAdmins'
