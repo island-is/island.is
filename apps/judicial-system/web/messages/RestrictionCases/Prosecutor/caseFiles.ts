@@ -31,6 +31,13 @@ export const rcCaseFiles = {
         description:
           'Notaður sem titill fyrir "rannsóknargögn" hlutann á rannsóknargagna skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
+      introduction: {
+        id: 'judicial.system.restriction_cases:case_files.files.introduction',
+        defaultMessage:
+          'Gögnin í pakkanum hér fyrir neðan munu liggja frammi í þinghaldinu.',
+        description:
+          'Notaður sem skýring fyrir "rannsóknargögn" hlutann á rannsóknargagna skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
       label: {
         id: 'judicial.system.restriction_cases:case_files.files.label',
         defaultMessage: 'Dragðu skjöl hingað til að hlaða upp',
@@ -59,6 +66,14 @@ export const rcCaseFiles = {
           'Ef krafan var stofnuð í gegnum LÖKE er hægt að sjá öll skjöl úr málinu sem hafa verið merkt sem rannsóknargögn í LÖKE í listanum hér fyrir neðan, og velja þau beint inn með takkanum Hlaða upp.',
         description:
           'Notaður sem upplýsingatexti í upplýsingasvæði við "gögn úr LÖKE-máli ..." titil á rannsóknargagna skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+      introduction: {
+        id:
+          'judicial.system.restriction_cases:case_files.police_case_files.introduction',
+        defaultMessage:
+          'Til að gögn úr þessum lista verði hluti af gagnapakka málsins þarf að velja þau og smella á Hlaða upp.',
+        description:
+          'Notaður sem skýring fyrir "LOKE" gagnapakkann á rannsóknargagna skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
       selectAllLabel: {
         id:
