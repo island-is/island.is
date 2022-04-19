@@ -29,7 +29,6 @@ export const useRoutes = () => {
       ),
     )
 
-    console.log('arrangeRoutes__')
     dispatch({
       type: ActionType.SetRoutesFulfilled,
       payload: flatten(routes),
@@ -42,7 +41,6 @@ export const useRoutes = () => {
     modules: ServicePortalModule[],
     client: ApolloClient<NormalizedCacheObject>,
   ) => {
-    console.log('arrangeDynamicRoutes__')
     Promise.all(
       Object.values(modules)
         .filter((module) => module.dynamicRoutes)

@@ -34,7 +34,6 @@ export const useModules = () => {
       {} as Record<ModuleKeys, ServicePortalModule>,
     )
 
-    console.log('filteredModulesfilteredModules', filteredModules)
     dispatch({
       type: ActionType.SetModulesList,
       payload: filteredModules,
