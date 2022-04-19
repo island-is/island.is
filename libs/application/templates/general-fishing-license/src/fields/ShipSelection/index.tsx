@@ -124,7 +124,6 @@ export const ShipSelection: FC<FieldBaseProps> = ({
         largeButtons
         backgroundColor="white"
         error={errors && getErrorViaPath(errors, `${field.id}.ship`)}
-        fullWidthLabel
         defaultValue={
           (getValueViaPath(application.answers, 'shipSelection') as string[]) ??
           undefined

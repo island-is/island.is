@@ -30,7 +30,6 @@ interface Props {
   split?: '1/1' | '1/2' | '1/3' | '1/4' | '1/5'
   smallScreenSplit?: '1/1' | '1/2' | '1/3' | '1/4' | '1/5'
   backgroundColor?: InputBackgroundColor
-  fullWidthLabel?: boolean
   onSelect?: (s: string) => void
 }
 
@@ -46,7 +45,6 @@ export const RadioController: FC<Props> = ({
   backgroundColor = 'blue',
   split = '1/1',
   smallScreenSplit = '1/1',
-  fullWidthLabel = false,
 }) => {
   const { clearErrors, setValue } = useFormContext()
 
@@ -82,7 +80,6 @@ export const RadioController: FC<Props> = ({
                 hasError={error !== undefined}
                 backgroundColor={backgroundColor}
                 illustration={option.illustration}
-                fullWidthLabel={fullWidthLabel}
               />
             </GridColumn>
           ))}

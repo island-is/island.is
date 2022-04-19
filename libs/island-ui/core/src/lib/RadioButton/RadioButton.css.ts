@@ -38,8 +38,6 @@ export const label = style({
 export const labelText = style({
   display: 'flex',
   flexDirection: 'column',
-})
-export const labelFullWidth = style({
   width: '100%',
 })
 export const largeLabel = style({
