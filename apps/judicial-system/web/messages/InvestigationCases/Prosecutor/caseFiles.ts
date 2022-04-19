@@ -60,14 +60,6 @@ export const icCaseFiles = {
         description:
           'Notaður sem titill fyrir "LOKE" gagnapakkann á rannsóknargagna skrefi í rannsóknarheimildum.',
       },
-      tooltip: {
-        id:
-          'judicial.system.investigation_cases:case_files.police_case_files.tooltip',
-        defaultMessage:
-          'Ef krafan var stofnuð í gegnum LÖKE er hægt að sjá öll skjöl úr málinu sem hafa verið merkt sem rannsóknargögn í LÖKE í listanum hér fyrir neðan, og velja þau beint inn með takkanum Hlaða upp.',
-        description:
-          'Notaður sem upplýsingatexti í upplýsingasvæði við "gögn úr LÖKE-máli ..." titil á rannsóknargagna skrefi í rannsóknarheimildum.',
-      },
       introduction: {
         id:
           'judicial.system.investigation_cases:case_files.police_case_files.introduction',
@@ -110,6 +102,21 @@ export const icCaseFiles = {
         defaultMessage: 'Hlaða upp',
         description:
           'Notaður sem texti í "hlaða upp" takka í LÖKE gagnapakkanum á rannsóknargagna skrefi í rannsóknarheimildum.',
+      },
+      originNotLokeTitle: {
+        id:
+          'judicial.system.investigation_cases:case_files.police_case_files.origin_not_loke_title',
+        defaultMessage: 'Krafa ekki stofnuð í LÖKE',
+        description:
+          'Notaður sem titill í upplýsingaboxi fyrir kröfu sem ekki er stofnuð í LÖKE í LÖKE gagnapakkanum á rannsóknargagna skrefi í rannsóknarheimildum.',
+      },
+      originNotLokeMessage: {
+        id:
+          'judicial.system.investigation_cases:case_files.police_case_files.origin_not_loke_message',
+        defaultMessage:
+          'Til að fá sjálfkrafa yfirlit yfir skjöl úr LÖKE þarf að stofna kröfuna í gegnum LÖKE.',
+        description:
+          'Notaður sem texti í upplýsingaboxi fyrir kröfu sem ekki er stofnuð í LÖKE í LÖKE gagnapakkanum á rannsóknargagna skrefi í rannsóknarheimildum.',
       },
     }),
     comments: defineMessages({

@@ -142,6 +142,7 @@ export const CaseQuery = gql`
       isAppealGracePeriodExpired
       caseModifiedExplanation
       caseResentExplanation
+      origin
     }
   }
 `

@@ -3,7 +3,7 @@ import { useQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
 import { useIntl } from 'react-intl'
 
-import { PoliceCaseFile } from '@island.is/judicial-system/types'
+import { CaseOrigin, PoliceCaseFile } from '@island.is/judicial-system/types'
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
 import { PoliceCaseFilesQuery } from '@island.is/judicial-system-web/graphql'
 import {
@@ -42,10 +42,17 @@ export const CaseFiles: React.FC = () => {
   } = useQuery(PoliceCaseFilesQuery, {
     variables: { input: { caseId: id } },
     fetchPolicy: 'no-cache',
+    skip: workingCase.origin !== CaseOrigin.LOKE,
   })
 
   useEffect(() => {
-    if (policeData && policeData.policeCaseFiles) {
+    if (workingCase.origin !== CaseOrigin.LOKE) {
+      setPoliceCaseFiles({
+        files: [],
+        isLoading: false,
+        hasError: false,
+      })
+    } else if (policeData && policeData.policeCaseFiles) {
       setPoliceCaseFiles({
         files: policeData.policeCaseFiles,
         isLoading: false,
@@ -65,7 +72,7 @@ export const CaseFiles: React.FC = () => {
         errorMessage: policeDataError?.message,
       })
     }
-  }, [policeData, policeDataLoading, policeDataError])
+  }, [policeData, policeDataLoading, policeDataError, workingCase.origin])
 
   return (
     <PageLayout
