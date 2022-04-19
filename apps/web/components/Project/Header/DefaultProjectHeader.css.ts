@@ -3,10 +3,10 @@ import { style } from '@vanilla-extract/css'
 
 export const headerBg = style({
   height: 'fit-content',
-  minHeight: '300px',
+  minHeight: '200px',
   order: 1,
   ...themeUtils.responsiveStyle({
-    md: {
+    lg: {
       order: 0,
       minHeight: '100%',
     },
@@ -15,26 +15,35 @@ export const headerBg = style({
 
 export const headerWrapper = style({
   display: 'grid',
-  minHeight: '500px',
+  minHeight: '300px',
   height: 'fit-content',
+  maxHeight: 'min-content',
   ...themeUtils.responsiveStyle({
-    md: {
+    lg: {
       gridTemplateColumns: '1fr 1fr',
-      gridTemplateRows: '1fr',
+      gridTemplateRows: 'min-content',
     },
   }),
 })
 
 export const headerImage = style({
   height: '100%',
-  maxHeight: '200px',
   width: '100%',
   objectFit: 'cover',
   order: 0,
   ...themeUtils.responsiveStyle({
+    xs: {
+      maxHeight: '200px',
+    },
+    sm: {
+      maxHeight: '200px',
+    },
     md: {
+      maxHeight: '200px',
+    },
+    lg: {
       order: 1,
-      maxHeight: '100%',
+      maxHeight: '300px',
     },
   }),
 })
