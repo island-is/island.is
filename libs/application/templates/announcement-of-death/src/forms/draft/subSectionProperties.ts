@@ -1,10 +1,6 @@
 import {
   buildDescriptionField,
   buildMultiField,
-  buildKeyValueField,
-  buildSelectField,
-  buildDividerField,
-  buildTextField,
   buildSubSection,
   buildCustomField,
   buildCheckboxField,
@@ -13,19 +9,19 @@ import { m } from '../../lib/messages'
 
 export const subSectionProperties = buildSubSection({
   id: 'propertiesStep',
-  title: 'Eignir',
+  title: m.propertiesTitle,
   children: [
     buildMultiField({
       id: 'propertiesTitle',
-      title: 'Eignir',
-      description:
-        'Hér skaltu lista niður upplýsingar um helstu eignir í dánarbúi. Eignir ber að tilkynna til Sýslumanns innan 30 daga frá dánardegi.',
+      title: m.propertiesTitle,
+      description: m.propertiesDescription,
       space: 1,
       children: [
         buildDescriptionField({
           id: 'realEstatesAndLandsTitle',
-          title: 'Fasteignir og lóðir',
+          title: m.realEstatesTitle,
           titleVariant: 'h3',
+          description: m.realEstatesDescription,
         }),
         buildCustomField({
           title: 'realEstateAndLandsRepeater',
@@ -34,7 +30,8 @@ export const subSectionProperties = buildSubSection({
         }),
         buildDescriptionField({
           id: 'vehiclesTitle',
-          title: 'Ökutæki',
+          title: m.vehiclesTitle,
+          description: m.vehiclesDescription,
           space: 5,
           titleVariant: 'h3',
         }),
@@ -45,9 +42,9 @@ export const subSectionProperties = buildSubSection({
         }),
         buildDescriptionField({
           id: 'otherPropertiesTitle',
-          title: 'Aðrar eignir',
+          title: m.otherPropertiesTitle,
           titleVariant: 'h3',
-          description: 'Merktu við þá reiti sem að eiga við þetta ferli.',
+          description: m.otherPropertiesDescription,
           space: 5,
         }),
         buildCheckboxField({
@@ -58,16 +55,20 @@ export const subSectionProperties = buildSubSection({
           doesNotRequireAnswer: true,
           options: [
             {
-              label: 'Bankareikningar, verðbréf, hlutabréf',
+              label: m.otherPropertiesAccounts,
               value: 'option1',
             },
             {
-              label: 'Eigin rekstur',
+              label: m.otherPropertiesOwnBusiness,
               value: 'option2',
             },
             {
-              label: 'Búseturéttur',
+              label: m.otherPropertiesResidence,
               value: 'option3',
+            },
+            {
+              label: m.otherPropertiesAssetsAbroad,
+              value: 'option4',
             },
           ],
         }),

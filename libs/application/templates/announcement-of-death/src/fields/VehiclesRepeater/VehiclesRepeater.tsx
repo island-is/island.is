@@ -1,34 +1,22 @@
-import React, { FC, useEffect } from 'react'
+import React, { FC } from 'react'
 import { useFieldArray } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
-import {
-  CheckboxController,
-  InputController,
-  SelectController,
-} from '@island.is/shared/form-fields'
-import {
-  FieldBaseProps,
-  formatText,
-  getErrorViaPath,
-} from '@island.is/application/core'
+import { InputController } from '@island.is/shared/form-fields'
+import { FieldBaseProps } from '@island.is/application/core'
 import {
   Box,
-  Text,
   GridColumn,
   GridRow,
   Button,
   ProfileCard,
 } from '@island.is/island-ui/core'
-import { Vehicle, Property } from '../../types'
+import { Property } from '../../types'
 
 import * as styles from './VehiclesRepeater.css'
+import { m } from '../../lib/messages'
 
-export const VehiclesRepeater: FC<FieldBaseProps> = ({
-  application,
-  errors,
-  field,
-}) => {
-  const { id, title } = field
+export const VehiclesRepeater: FC<FieldBaseProps> = ({ field }) => {
+  const { id } = field
   const { formatMessage } = useLocale()
   const { fields, append, remove } = useFieldArray<Property>({ name: id })
 
@@ -42,13 +30,30 @@ export const VehiclesRepeater: FC<FieldBaseProps> = ({
     <Box marginTop={2}>
       <GridRow>
         <GridColumn span={['12/12', '12/12', '6/12']} paddingBottom={3}>
-          <ProfileCard title="VU-U52" description="Alfa Romeo" heightFull />
+          <ProfileCard
+            // TODO: Get data
+            title="VU-U52"
+            description={[
+              'Alfa Romeo',
+              <Box marginTop={1} as="span">
+                <Button
+                  variant="text"
+                  icon="trash"
+                  size="small"
+                  iconType="outline"
+                >
+                  {formatMessage(m.inheritanceRemoveMember)}
+                </Button>
+              </Box>,
+            ]}
+            heightFull
+          />
         </GridColumn>
       </GridRow>
       {fields.map((field, index) => {
         const fieldIndex = `${id}[${index}]`
         const vehicleNumberField = `${fieldIndex}.vehicleNumber`
-        const addressField = `${fieldIndex}.address`
+        const vehicleTypeField = `${fieldIndex}.vehicleType`
 
         return (
           <Box position="relative" key={field.id} marginTop={2}>
@@ -66,16 +71,16 @@ export const VehiclesRepeater: FC<FieldBaseProps> = ({
                 <InputController
                   id={vehicleNumberField}
                   name={vehicleNumberField}
-                  label="Bílnúmer"
+                  label={formatMessage(m.vehicleNumberLabel)}
                   backgroundColor="blue"
                 />
               </GridColumn>
               <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
                 <InputController
-                  id={addressField}
-                  name={addressField}
-                  label="Heimilisfang"
-                  disabled
+                  id={vehicleTypeField}
+                  name={vehicleTypeField}
+                  label={formatMessage(m.vehicleTypeLabel)}
+                  readOnly
                 />
               </GridColumn>
             </GridRow>
@@ -90,7 +95,7 @@ export const VehiclesRepeater: FC<FieldBaseProps> = ({
           onClick={handleAddVehicle}
           size="small"
         >
-          Bæta við ökutæki
+          {formatMessage(m.addVehicle)}
         </Button>
       </Box>
     </Box>

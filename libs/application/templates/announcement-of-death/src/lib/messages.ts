@@ -131,6 +131,205 @@ export const m = defineMessages({
     description: 'Delegate role name',
   },
 
+  /* Testament step */
+  testamentTitle: {
+    id: 'aod.application:testamentTitle',
+    defaultMessage: 'Erfðaskrá og kaupmáli',
+    description: 'Testament step title',
+  },
+  testamentDescription: {
+    id: 'aod.application:testamentDescription',
+    defaultMessage:
+      'Upplýsingar um erfðaskrá og kaupmála eru sóttar til Sýslumanns. Ef fleiri en ein erfðaskrá er til staðar er mikilvægt að koma frumriti eða upplýsingum um þær til sýslumanns eins fljótt og kostur er.',
+    description: 'Testament step description',
+  },
+  testamentTestamentAvailable: {
+    id: 'aod.application:testamentTestamentAvailable',
+    defaultMessage: 'Erfðaskrá í vörslu sýslumanns',
+    description: 'Testament step testament available',
+  },
+  testamentBuyration: {
+    id: 'aod.application:testamentBuyration',
+    defaultMessage: 'Kaupmáli',
+    description: 'Testament step buyration',
+  },
+  testamentKnowledgeOfOtherTestament: {
+    id: 'aod.application:testamentKnowledgeOfOtherTestament',
+    defaultMessage: 'Vitneskja um aðra erfðaskrá',
+    description: 'Testament step knowledge of other testament',
+  },
+  testamentKnowledgeOfOtherTestamentYes: {
+    id: 'aod.application:testamentKnowledgeOfOtherTestamentYes',
+    defaultMessage: 'Já',
+    description: 'Testament step knowledge of other testament answer yes',
+  },
+  testamentKnowledgeOfOtherTestamentNo: {
+    id: 'aod.application:testamentKnowledgeOfOtherTestamentNo',
+    defaultMessage: 'Nei',
+    description: 'Testament step knowledge of other testament answer no',
+  },
+
+  /* Inheritance step */
+  inheritanceTitle: {
+    id: 'aod.application:inheritanceTitle',
+    defaultMessage: 'Erfingjar',
+    description: 'Inheritance step title',
+  },
+  inheritanceDescription: {
+    id: 'aod.application:inheritanceDescription#markdown',
+    defaultMessage: `Erfðaréttur byggist á skyldleika, ættleiðingu, hjúskap og erfðaskrá hins látna. Ef hinn látni var:
+
+* Í hjúskap og/eða átti börn: erfa maki og/eða börn hinn látna. Ef barn er látið taka afkomendur barnsins arf í þess stað.
+* Einhleypur: erfa foreldrar og/eða systkini og/eða afkomendur þeirra hinn látna. Ef enginn þeirra er á lífi erfa afar og ömmur hinn látna eða börn þeirra.
+* Búinn að gera erfðaskrá: erfir einstaklingur og/eða lögaðili, sem tilgreindur er í erfðaskránni, hinn látna.
+
+Ef ekkert á við sem hér að ofan er talið rennur arfur í ríkissjóð. Nánari upplýsingar má finna á (Ísland.is)[https://island.is]`,
+    description: 'Inheritance step title',
+  },
+  inheritanceMembersOfEstateTitle: {
+    id: 'aod.application:inheritanceMembersOfEstateTitle',
+    defaultMessage: 'Aðilar að dánarbúi',
+    description: 'Inheritance step members of estate title',
+  },
+  inheritanceAddMember: {
+    id: 'aod.application:inheritanceAddMember',
+    defaultMessage: 'Bæta við erfingja',
+    description: 'Inheritance step add member of estate',
+  },
+  inheritanceRemoveMember: {
+    id: 'aod.application:inheritanceRemoveMember',
+    defaultMessage: 'Eyða',
+    description: 'Inheritance step remove member of estate',
+  },
+  inheritanceKtLabel: {
+    id: 'aod.application:inheritanceKtLabel',
+    defaultMessage: 'Kennitala',
+    description: 'National id label',
+  },
+  inheritanceRelationLabel: {
+    id: 'aod.application:inheritanceRelationLabel',
+    defaultMessage: 'Tengsl',
+    description: 'Relation label',
+  },
+  inheritanceRelationPlaceholder: {
+    id: 'aod.application:inheritanceRelationPlaceholder',
+    defaultMessage: 'Veldu tengsl',
+    description: 'Relation placeholder',
+  },
+  inheritanceNameLabel: {
+    id: 'aod.application:inheritanceNameLabel',
+    defaultMessage: 'Nafn',
+    description: 'Name label',
+  },
+  inheritanceCustodyLabel: {
+    id: 'aod.application:inheritanceCustodyLabel',
+    defaultMessage: 'Forsjáraðili',
+    description: 'Custody label',
+  },
+  inheritanceForeignCitizenshipLabel: {
+    id: 'aod.application:inheritanceForeignCitizenshipLabel',
+    defaultMessage: 'Aðili án íslenskrar kennitölu',
+    description: 'No icelandic ssn label',
+  },
+  inheritanceDayOfBirthLabel: {
+    id: 'aod.application:inheritanceDayOfBirthLabel',
+    defaultMessage: 'Fæðingardagur',
+    description: 'Day of birth label',
+  },
+
+  /* Properties step */
+  propertiesTitle: {
+    id: 'aod.application:propertiesTitle',
+    defaultMessage: 'Eignir',
+    description: 'Properties title',
+  },
+  propertiesDescription: {
+    id: 'aod.application:propertiesDescription',
+    defaultMessage:
+      'Upplýsingar um eignir og ökutæki hafa verið sóttar rafrænt. Vinsamlega bætið við upplýsingum ef eitthvað vantar. Taktu þér góðan tíma í að fylla þetta út eftir bestu getu. ',
+    description: 'Properties description',
+  },
+  realEstatesTitle: {
+    id: 'aod.application:realEstatesTitle',
+    defaultMessage: 'Fasteignir',
+    description: 'Real estates and lands title',
+  },
+  realEstatesDescription: {
+    id: 'aod.application:realEstatesDescription',
+    defaultMessage: 'Til dæmis íbúðarhús, sumarhús, lóðir og jarðir.',
+    description: 'Real estates and lands description',
+  },
+  vehiclesTitle: {
+    id: 'aod.application:vehiclesTitle',
+    defaultMessage: 'Faratæki',
+    description: 'Vehicles title',
+  },
+  vehiclesDescription: {
+    id: 'aod.application:vehiclesDescription',
+    defaultMessage: 'Til dæmis bifreiðar, flugvélar og bátar.',
+    description: 'Vehicles description',
+  },
+  otherPropertiesTitle: {
+    id: 'aod.application:otherPropertiesTitle',
+    defaultMessage: 'Aðrar eignir',
+    description: 'Other properties title',
+  },
+  otherPropertiesDescription: {
+    id: 'aod.application:otherPropertiesDescription',
+    defaultMessage: 'Merktu við það sem á við eftir bestu vitund.',
+    description: 'Other properties description',
+  },
+  otherPropertiesAccounts: {
+    id: 'aod.application:otherPropertiesAccounts',
+    defaultMessage: 'Bankareikningar, verðbréf eða hlutabréf',
+    description: 'Other properties option: Accounts',
+  },
+  otherPropertiesOwnBusiness: {
+    id: 'aod.application:otherPropertiesOwnBusiness',
+    defaultMessage: 'Eigin rekstur',
+    description: 'Other properties option: Own business',
+  },
+  otherPropertiesResidence: {
+    id: 'aod.application:otherPropertiesResidence',
+    defaultMessage: 'Búseturéttur vegna kaupleigu íbúða',
+    description: 'Other properties option: Residence',
+  },
+  otherPropertiesAssetsAbroad: {
+    id: 'aod.application:otherPropertiesAssetsAbroad',
+    defaultMessage: 'Eignir erlendis',
+    description: 'Other properties option: Assets abroad',
+  },
+  propertyNumber: {
+    id: 'aod.application:propertyNumber',
+    defaultMessage: 'Fastanúmer',
+    description: 'Property number label',
+  },
+  address: {
+    id: 'aod.application:address',
+    defaultMessage: 'Heimilisfang',
+    description: 'Address label',
+  },
+  addProperty: {
+    id: 'aod.application:addProperty',
+    defaultMessage: 'Bæta við fasteign eða lóð',
+    description: 'Add property',
+  },
+  addVehicle: {
+    id: 'aod.application:addVehicle',
+    defaultMessage: 'Bæta við ökutæki',
+    description: 'Add vehicle',
+  },
+  vehicleNumberLabel: {
+    id: 'aod.application:vehicleNumberLabel',
+    defaultMessage: 'Skráninganúmer ökutækis',
+    description: 'Vehicle number label',
+  },
+  vehicleTypeLabel: {
+    id: 'aod.application:vehicleTypeLabel',
+    defaultMessage: 'Tegund faratækis',
+    description: 'Vehicle type label',
+  },
+
   /* Validation */
   errorRoleConfirmation: {
     id: 'aod.application:error.errorRoleConfirmation',
@@ -215,7 +414,7 @@ export const m = defineMessages({
   applicantsRelationPlaceholder: {
     id: 'aod.application:applicantsRelationPlaceholder',
     defaultMessage: 'Veldu tengsl',
-    description: 'Relation label',
+    description: 'Relation placeholder',
   },
   cardValidityPeriod: {
     id: 'aod.application:cardValidityPeriod',

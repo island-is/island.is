@@ -1,34 +1,22 @@
-import React, { FC, useEffect } from 'react'
+import React, { FC } from 'react'
 import { useFieldArray } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
-import {
-  CheckboxController,
-  InputController,
-  SelectController,
-} from '@island.is/shared/form-fields'
-import {
-  FieldBaseProps,
-  formatText,
-  getErrorViaPath,
-} from '@island.is/application/core'
+import { InputController } from '@island.is/shared/form-fields'
+import { FieldBaseProps } from '@island.is/application/core'
 import {
   Box,
-  Text,
   GridColumn,
   GridRow,
   Button,
   ProfileCard,
 } from '@island.is/island-ui/core'
-import { Property, RelationEnum } from '../../types'
+import { Property } from '../../types'
 
 import * as styles from './RealEstateAndLandsRepeater.css'
+import { m } from '../../lib/messages'
 
-export const RealEstateAndLandsRepeater: FC<FieldBaseProps> = ({
-  application,
-  errors,
-  field,
-}) => {
-  const { id, title } = field
+export const RealEstateAndLandsRepeater: FC<FieldBaseProps> = ({ field }) => {
+  const { id } = field
   const { formatMessage } = useLocale()
   const { fields, append, remove } = useFieldArray<Property>({ name: id })
 
@@ -43,15 +31,43 @@ export const RealEstateAndLandsRepeater: FC<FieldBaseProps> = ({
       <GridRow>
         <GridColumn span={['12/12', '12/12', '6/12']} paddingBottom={3}>
           <ProfileCard
+            // TODO: Get data
             title="Mosagata 13, 210 Garðabær"
-            description={['Fastanúmer: 16313', 'Eignarhluti: 50%']}
+            description={[
+              'Fastanúmer: 16313',
+              'Eignarhluti: 50%',
+              <Box marginTop={1} as="span">
+                <Button
+                  variant="text"
+                  icon="trash"
+                  size="small"
+                  iconType="outline"
+                >
+                  {formatMessage(m.inheritanceRemoveMember)}
+                </Button>
+              </Box>,
+            ]}
             heightFull
           />
         </GridColumn>
         <GridColumn span={['12/12', '12/12', '6/12']} paddingBottom={3}>
           <ProfileCard
+            // TODO: Get data
             title="Bolholt 8, 105 Reykjavík"
-            description={['Fastanúmer: 13871', 'Eignarhluti: 50%']}
+            description={[
+              'Fastanúmer: 13871',
+              'Eignarhluti: 50%',
+              <Box marginTop={1} as="span">
+                <Button
+                  variant="text"
+                  icon="trash"
+                  size="small"
+                  iconType="outline"
+                >
+                  {formatMessage(m.inheritanceRemoveMember)}
+                </Button>
+              </Box>,
+            ]}
             heightFull
           />
         </GridColumn>
@@ -77,7 +93,7 @@ export const RealEstateAndLandsRepeater: FC<FieldBaseProps> = ({
                 <InputController
                   id={propertyNumberField}
                   name={propertyNumberField}
-                  label="Fastanúmer"
+                  label={formatMessage(m.propertyNumber)}
                   backgroundColor="blue"
                 />
               </GridColumn>
@@ -85,8 +101,8 @@ export const RealEstateAndLandsRepeater: FC<FieldBaseProps> = ({
                 <InputController
                   id={addressField}
                   name={addressField}
-                  label="Heimilisfang"
-                  disabled
+                  label={formatMessage(m.address)}
+                  readOnly
                 />
               </GridColumn>
             </GridRow>
@@ -101,7 +117,7 @@ export const RealEstateAndLandsRepeater: FC<FieldBaseProps> = ({
           onClick={handleAddProperty}
           size="small"
         >
-          Bæta við fasteign eða lóð
+          {formatMessage(m.addProperty)}
         </Button>
       </Box>
     </Box>

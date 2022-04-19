@@ -5,11 +5,12 @@ import {
   buildSubSection,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
+import { RelationEnum } from '../../types'
 import { Application } from '../../types/schema'
 
 export const subSectionInfo = buildSubSection({
   id: 'infoStep',
-  title: 'Tilkynnandi',
+  title: m.announcementTitle,
   children: [
     buildMultiField({
       id: 'announcement',
@@ -50,17 +51,22 @@ export const subSectionInfo = buildSubSection({
           placeholder: m.applicantsRelationPlaceholder,
           width: 'half',
           options: [
+            // TODO: Get value
             {
-              label: 'Option 1',
-              value: 'Option 1',
+              value: RelationEnum.CHILD,
+              label: 'Barn',
             },
             {
-              label: 'Option 2',
-              value: 'Option 2',
+              value: RelationEnum.PARENT,
+              label: 'Foreldri',
             },
             {
-              label: 'Option 3',
-              value: 'Option 3',
+              value: RelationEnum.SIBLING,
+              label: 'Systkini',
+            },
+            {
+              value: RelationEnum.SPOUSE,
+              label: 'Maki',
             },
           ],
         }),

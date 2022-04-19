@@ -1,8 +1,6 @@
 import {
   buildDescriptionField,
   buildMultiField,
-  buildKeyValueField,
-  buildTextField,
   buildSubSection,
   buildCustomField,
 } from '@island.is/application/core'
@@ -10,17 +8,17 @@ import { m } from '../../lib/messages'
 
 export const subSectionInheritance = buildSubSection({
   id: 'inheritanceStep',
-  title: 'Erfingjar',
+  title: m.inheritanceTitle,
   children: [
     buildMultiField({
       id: 'inheritanceTitle',
-      title: 'Erfingjar',
-      description: '',
+      title: m.inheritanceTitle,
+      description: m.inheritanceDescription,
       space: 1,
       children: [
         buildDescriptionField({
           id: 'membersOfEstateTitle',
-          title: 'Aðilar dánarbús',
+          title: m.inheritanceMembersOfEstateTitle,
           space: 2,
           titleVariant: 'h4',
         }),

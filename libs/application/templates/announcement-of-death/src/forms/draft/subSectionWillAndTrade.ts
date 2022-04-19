@@ -1,44 +1,46 @@
 import {
-  buildDescriptionField,
   buildMultiField,
   buildKeyValueField,
-  buildTextField,
   buildSubSection,
-  buildCustomField,
-  buildFieldOptions,
   buildRadioField,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 
 export const subSectionWillAndTrade = buildSubSection({
-  id: 'inheritanceStep',
-  title: 'Erfðaskrá og kaupmáli',
+  id: 'testament',
+  title: m.testamentTitle,
   children: [
     buildMultiField({
       id: 'inheritanceTitle',
-      title: 'Erfðaskrá og kaupmáli',
-      description:
-        'Upplýsingar um erfðaskrá og kaupmála eru sóttar til Sýslumanns. Ef fleiri en ein erfðaskrá er til staðar er mikilvægt að koma frumriti eða upplýsingum um þær til sýslumanns eins fljótt og kostur er. ',
+      title: m.testamentTitle,
+      description: m.testamentDescription,
       space: 1,
       children: [
         buildKeyValueField({
-          label: 'Erfðaskrá í vörslu sýslumanns',
-          value: 'Já',
+          label: m.testamentTestamentAvailable,
+          value: 'Já', // TODO: Get value
           width: 'half',
         }),
         buildKeyValueField({
-          label: 'Kaupmáli',
-          value: 'Nei',
+          label: m.testamentBuyration,
+          value: 'Nei', // TODO: Get value
           width: 'half',
         }),
         buildRadioField({
           id: 'knowledgeOfOtherWills',
-          title: 'Vitneskja um aðra erfðaskrá',
-          width: 'half',
-          largeButtons: true,
+          title: m.testamentKnowledgeOfOtherTestament,
+          width: 'full',
+          largeButtons: false,
+          space: 3,
           options: [
-            { value: 'yes', label: 'Já' },
-            { value: 'no', label: 'Nei' },
+            {
+              value: 'yes',
+              label: m.testamentKnowledgeOfOtherTestamentYes,
+            },
+            {
+              value: 'no',
+              label: m.testamentKnowledgeOfOtherTestamentNo,
+            },
           ],
         }),
       ],

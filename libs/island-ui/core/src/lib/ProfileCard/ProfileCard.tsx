@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, Fragment } from 'react'
 import { Box } from '../Box/Box'
 import { Button } from '../Button/Button'
 import { Link } from '../Link/Link'
@@ -21,7 +21,7 @@ export interface ProfileCardProps {
   /**
    * Usually job description
    */
-  description?: string | string[]
+  description?: string | (string | JSX.Element)[] | JSX.Element
   /**
    * 100% height
    */
@@ -51,14 +51,8 @@ export const ProfileCard: FC<ProfileCardProps> = ({
   if (heightFull) {
     conditionalProps.height = 'full'
   }
-  let strings: string[] = []
-  if (description) {
-    if (typeof description === 'string') {
-      strings = [description]
-    } else if (Array.isArray(description)) {
-      strings = description.filter((x) => x)
-    }
-  }
+  const strings =
+    description && Array.isArray(description) ? description : [description]
 
   return (
     <Box
@@ -82,13 +76,15 @@ export const ProfileCard: FC<ProfileCardProps> = ({
           </Text>
         )}
         <Stack space={0}>
-          {strings.map((x, idx) => {
-            return (
+          {strings?.map((x, idx) =>
+            typeof x === 'string' ? (
               <Text variant={size} key={idx}>
                 {x}
               </Text>
-            )
-          })}
+            ) : (
+              <Fragment key={idx}>{x}</Fragment>
+            ),
+          )}
         </Stack>
         {link && (
           <Box paddingTop={2}>
