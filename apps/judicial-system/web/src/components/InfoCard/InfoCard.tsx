@@ -19,6 +19,7 @@ interface Props {
   defendants?: Defendant[]
   defender?: {
     name: string
+    defenderNationalId?: string
     email?: string
     phoneNumber?: string
   }
