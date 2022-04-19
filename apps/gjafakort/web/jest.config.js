@@ -12,6 +12,7 @@ module.exports = {
   },
   coverageDirectory: '../../../coverage/apps/gjafakort/web',
   setupFiles: ['./jest.setup.js'],
-  globals: { 'ts-jest': { tsConfig: '<rootDir>/tsconfig.spec.json' } },
+  globals: { 'ts-jest': { tsconfig: '<rootDir>/tsconfig.spec.json' } },
   displayName: 'gjafakort-web',
+  testEnvironment: 'node',
 }

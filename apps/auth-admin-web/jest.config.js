@@ -9,4 +9,5 @@ module.exports = {
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory: '../../coverage/apps/auth-admin-web',
   displayName: 'auth-admin-web',
+  testEnvironment: 'node',
 }

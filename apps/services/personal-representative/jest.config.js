@@ -4,7 +4,7 @@ module.exports = {
   globals: {
     'ts-jest': {
       diagnostics: false,
-      tsConfig: '<rootDir>/tsconfig.spec.json',
+      tsconfig: '<rootDir>/tsconfig.spec.json',
     },
   },
   transform: {
@@ -24,4 +24,5 @@ module.exports = {
     '!**/buildOpenApi.ts',
     '!**/openApi.ts',
   ],
+  testEnvironment: 'node',
 }

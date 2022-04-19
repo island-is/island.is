@@ -5,9 +5,7 @@ module.exports = {
     '^.+\\.[tj]sx?$': 'ts-jest',
   },
   globals: {
-    'ts-jest': {
-      tsConfig: '<rootDir>/tsconfig.json',
-    },
+    'ts-jest': { tsconfig: '<rootDir>/tsconfig.json' },
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'html'],
   displayName: 'external-contracts-tests',

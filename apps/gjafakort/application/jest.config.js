@@ -5,6 +5,7 @@ module.exports = {
   globalTeardown: './test/globalTeardown.ts',
   coverageDirectory: '../../../coverage/apps/gjafakort-application',
   setupFilesAfterEnv: ['./test/setup.ts'],
-  globals: { 'ts-jest': { tsConfig: '<rootDir>/tsconfig.spec.json' } },
+  globals: { 'ts-jest': { tsconfig: '<rootDir>/tsconfig.spec.json' } },
   displayName: 'gjafakort-application',
+  testEnvironment: 'node',
 }
