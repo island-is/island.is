@@ -41,9 +41,12 @@ export const GET_FINANCE_PAYMENT_SCHEDULES = gql`
   }
 `
 
-const FinanceSchedule: ServicePortalModuleComponent = () => {
+const FinanceSchedule: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.finance-schedule')
   const { formatMessage } = useLocale()
+
+  const actor = userInfo.profile.actor
+  const isDelegation = Boolean(actor)
 
   const {
     data: paymentSchedulesData,
@@ -112,39 +115,41 @@ const FinanceSchedule: ServicePortalModuleComponent = () => {
               })}
             </Text>
           </GridColumn>
-          <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
-            <Box
-              paddingRight={2}
-              paddingTop={[2, 2, 2, 0]}
-              display="flex"
-              justifyContent={[
-                'flexStart',
-                'flexStart',
-                'flexStart',
-                'flexEnd',
-              ]}
-              alignItems="flexEnd"
-              height="full"
-            >
-              <a
-                href="https://island.is/umsoknir/greidsluaaetlun/"
-                target="_blank"
-                rel="noreferrer"
+          {!isDelegation && (
+            <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+              <Box
+                paddingRight={2}
+                paddingTop={[2, 2, 2, 0]}
+                display="flex"
+                justifyContent={[
+                  'flexStart',
+                  'flexStart',
+                  'flexStart',
+                  'flexEnd',
+                ]}
+                alignItems="flexEnd"
+                height="full"
               >
-                <Button
-                  colorScheme="default"
-                  icon="receipt"
-                  iconType="filled"
-                  preTextIconType="outline"
-                  size="default"
-                  type="button"
-                  variant="utility"
+                <a
+                  href="https://island.is/umsoknir/greidsluaaetlun/"
+                  target="_blank"
+                  rel="noreferrer"
                 >
-                  {applicationButtonText}
-                </Button>
-              </a>
-            </Box>
-          </GridColumn>
+                  <Button
+                    colorScheme="default"
+                    icon="receipt"
+                    iconType="filled"
+                    preTextIconType="outline"
+                    size="default"
+                    type="button"
+                    variant="utility"
+                  >
+                    {applicationButtonText}
+                  </Button>
+                </a>
+              </Box>
+            </GridColumn>
+          )}
         </GridRow>
 
         <Box marginTop={4}>
