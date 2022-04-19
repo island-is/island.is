@@ -1,4 +1,8 @@
 {
-  "presets": ["next/babel", "@nrwl/react/babel", "../../libs/shared/babel/web"],
+  "presets": [
+    "@nrwl/next/babel",
+    "@nrwl/react/babel",
+    "../../libs/shared/babel/web"
+  ],
   "plugins": []
 }
