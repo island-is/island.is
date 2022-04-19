@@ -190,11 +190,8 @@ export const StepTwo: React.FC = () => {
               title={formatMessage(
                 rcRequestedHearingArrangements.modal.heading,
               )}
-              text={formatMessage(rcRequestedHearingArrangements.modal.text, {
-                caseType:
-                  workingCase.type === CaseType.CUSTODY
-                    ? 'gæsluvarðhald'
-                    : 'farbann',
+              text={formatMessage(rcRequestedHearingArrangements.modal.textV2, {
+                caseType: workingCase.type,
               })}
               primaryButtonText="Senda tilkynningu"
               secondaryButtonText="Halda áfram með kröfu"
