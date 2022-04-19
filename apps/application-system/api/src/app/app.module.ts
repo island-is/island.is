@@ -11,7 +11,6 @@ import { ProblemModule } from '@island.is/nest/problem'
 
 import { SequelizeConfigService } from './sequelizeConfig.service'
 import { ApplicationModule } from './modules/application/application.module'
-import { AuthPublicApiClientConfig } from '@island.is/clients/auth-public-api'
 import { DrivingLicenseBookClientConfig } from '@island.is/clients/driving-license-book'
 import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
 
@@ -28,7 +27,6 @@ import { NationalRegistryClientConfig } from '@island.is/clients/national-regist
         IdsClientConfig,
         SyslumennClientConfig,
         XRoadConfig,
-        AuthPublicApiClientConfig,
         DrivingLicenseBookClientConfig,
         NationalRegistryClientConfig,
       ],

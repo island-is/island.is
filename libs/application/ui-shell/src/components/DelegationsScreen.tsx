@@ -12,10 +12,10 @@ import {
 } from '@island.is/island-ui/core'
 import {
   coreDelegationsMessages,
+  coreMessages,
   getTypeFromSlug,
 } from '@island.is/application/core'
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
-import { ApplicationTypes } from '@island.is/application/core'
 import { LoadingShell } from './LoadingShell'
 import { ErrorShell } from './ErrorShell'
 import { format as formatKennitala } from 'kennitala'
@@ -70,7 +70,7 @@ export const DelegationsScreen = ({
     skip: !alternativeSubjects && !allowedDelegations,
   })
 
-  // Check if user has the delegations of the delegation types the application supports
+  // Check if user has delegations of the delegation types the application supports
   useEffect(() => {
     if (delegations && allowedDelegations) {
       const authActorDelegations: Delegation[] = delegations.authActorDelegations.filter(
@@ -98,7 +98,7 @@ export const DelegationsScreen = ({
 
   const handleClick = (nationalId?: string) => {
     if (!applicant) {
-      history.push(`../${slug}/?delegationChecked=true`)
+      history.push('?delegationChecked=true')
     }
     if (nationalId) {
       switchUser(nationalId)
@@ -106,6 +106,7 @@ export const DelegationsScreen = ({
       setDelegationsChecked(true)
     }
   }
+
   if (!loading && applicant) {
     return (
       <Page>
@@ -127,9 +128,13 @@ export const DelegationsScreen = ({
             <ActionCard
               avatar
               heading={applicant.from.name}
-              text={'Kennitala: ' + formatKennitala(applicant.from.nationalId)}
+              text={
+                formatMessage(
+                  coreDelegationsMessages.delegationScreenNationalId,
+                ) + formatKennitala(applicant.from.nationalId)
+              }
               cta={{
-                label: 'Halda áfram',
+                label: formatMessage(coreMessages.buttonNext),
                 variant: 'text',
                 size: 'medium',
                 onClick: () => handleClick(applicant.from.nationalId),

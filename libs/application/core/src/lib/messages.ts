@@ -277,7 +277,7 @@ export const coreDelegationsMessages = defineMessages({
   delegationScreenSubtitle: {
     id: 'application.system:core.delegations.delegationScreenSubtitle',
     defaultMessage:
-      'Hér getur þú valið fyrir hvaða einstakling þú vilt hefja umsókn um P-kort.',
+      'Hér getur þú valið fyrir hvaða einstakling þú vilt hefja umsókn fyrir.',
     description: 'Delegations screen subtitle for new application',
   },
   delegationActionCardText: {
@@ -302,5 +302,10 @@ export const coreDelegationsMessages = defineMessages({
     defaultMessage:
       'Hér getur þú haldið áfram umsókn fyrir viðkomandi aðila. Ef þú þarft að breyta umsóknaraðila skaltu hefja nýja umsókn.',
     description: 'Delegations screen subtitle for ongoing application',
+  },
+  delegationScreenNationalId: {
+    id: 'application.system:core.delegations.delegationScreenNationalId',
+    defaultMessage: 'Kennitala: ',
+    description: 'Delegations screen national Id',
   },
 })

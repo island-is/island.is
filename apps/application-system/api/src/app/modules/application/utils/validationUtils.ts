@@ -17,7 +17,7 @@ import { ValidationFailed } from '@island.is/nest/problem'
 
 import { PopulateExternalDataDto } from '../dto/populateExternalData.dto'
 import { environment } from '../../../../environments'
-import type { User } from '@island.is/auth-nest-tools'
+import { User } from '@island.is/auth-nest-tools'
 
 const isRunningOnProductionEnvironment =
   environment.production === true &&
@@ -211,5 +211,21 @@ export async function validateIncomingExternalDataProviders(
     throw new BadRequestException(
       `Current user is not permitted to update the following data providers: ${illegalDataProviders.toString()}`,
     )
+  }
+}
+
+export function newActor(
+  application: Pick<Application, 'actors' | 'applicant'>,
+  user: User,
+) {
+  if (!user.actor) {
+    return false
+  } else if (
+    !application.actors.includes(user.actor.nationalId) &&
+    user.nationalId === application.applicant
+  ) {
+    return true
+  } else {
+    return false
   }
 }

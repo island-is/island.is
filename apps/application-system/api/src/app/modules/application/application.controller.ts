@@ -78,6 +78,7 @@ import {
   validateThatTemplateIsReady,
   isTemplateReady,
   validateThatApplicationIsReady,
+  newActor,
 } from './utils/validationUtils'
 import { ApplicationSerializer } from './tools/application.serializer'
 import { UpdateApplicationStateDto } from './dto/updateApplicationState.dto'
@@ -425,11 +426,16 @@ export class ApplicationController {
     )
 
     const mergedAnswers = mergeAnswers(existingApplication.answers, newAnswers)
+    const actors: string[] =
+      newActor(existingApplication, user) && user.actor?.nationalId
+        ? [...existingApplication.actors, user.actor.nationalId]
+        : existingApplication.actors
+
     const { updatedApplication } = await this.applicationService.update(
       existingApplication.id,
       {
         answers: mergedAnswers,
-        actors: existingApplication.actors,
+        actors: actors,
       },
     )
 
