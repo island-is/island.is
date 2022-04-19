@@ -353,8 +353,11 @@ export class ApplicationController {
     return application
   }
 
-  @UseGuards(RolesGuard, StaffGuard)
-  @RolesRules(RolesRule.VEITA)
+  @Scopes(
+    MunicipalitiesFinancialAidScope.read,
+    MunicipalitiesFinancialAidScope.employee,
+  )
+  @UseGuards(StaffGuard)
   @StaffRolesRules(StaffRole.EMPLOYEE)
   @Post('filter')
   @ApiOkResponse({
