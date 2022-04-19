@@ -12,7 +12,7 @@ import {
 import { calcAge } from './formHelper'
 
 const commentFullWidth = (comment?: string) => {
-  comment && comment.length > 80 ? true : false
+  return comment && comment.length > 80 ? true : false
 }
 
 export const getApplicant = (application: Application) => {

@@ -2338,6 +2338,40 @@
         }
       }
     },
+    "application-templates-driving-school-confirmation": {
+      "root": "libs/application/templates/driving-school-confirmation",
+      "sourceRoot": "libs/application/templates/driving-school-confirmation/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/driving-school-confirmation/tsconfig.lib.json",
+              "libs/application/templates/driving-school-confirmation/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/driving-school-confirmation/**/*"
+            ]
+          }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/driving-school-confirmation/src/lib/messages.ts"
+          }
+        },
+        "schemas/codegen": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "graphql-codegen --config libs/application/templates/driving-school-confirmation/codegen.yml"
+          }
+        }
+      }
+    },
     "application-templates-example-payment": {
       "root": "libs/application/templates/example-payment",
       "sourceRoot": "libs/application/templates/example-payment/src",
