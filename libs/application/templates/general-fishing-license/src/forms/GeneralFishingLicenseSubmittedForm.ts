@@ -1,4 +1,4 @@
-import { buildForm, Form, FormModes } from '@island.is/application/core'
+import { buildForm, Form } from '@island.is/application/core'
 import { Logo } from '../assets'
 import { conclusionSection } from './GeneralFishingLicenseForm/conclusionSection'
 

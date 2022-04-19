@@ -55,7 +55,9 @@ export class FishingLicenseService {
       )
     } catch (error) {
       this.logger.error('Error when trying to get ships', error)
-      throw new Error('Error when trying to get ships')
+      throw new Error(
+        'Villa kom upp þegar reynt var að sækja upplýsingar um skip á þinni kennitölu.',
+      )
     }
   }
 
@@ -89,7 +91,9 @@ export class FishingLicenseService {
       )
     } catch (error) {
       this.logger.error('Error when trying to get fishing licenses', error)
-      throw new Error('Error when trying to get fishing licenses')
+      throw new Error(
+        'Villa kom upp þegar reynt var að sækja veiðileyfi tengd skipinu sem var valið.',
+      )
     }
   }
 }

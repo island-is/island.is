@@ -67,7 +67,7 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.PAYMENT]: { target: States.PAYMENT },
+          [DefaultEvents.PAYMENT]: { target: States.SUBMITTED },
           [DefaultEvents.REJECT]: {
             target: States.DECLINED,
           },
