@@ -9,9 +9,9 @@ import {
 } from '@island.is/island-ui/core'
 import { ProjectPage } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import * as styles from './DefaultProjectHeader.css'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
 import { theme } from '@island.is/island-ui/theme'
+import * as styles from './DefaultProjectHeader.css'
 
 const getTextBackgroundColor = (projectPage: ProjectPage) => {
   if (projectPage.defaultHeaderBackgroundColor)
@@ -45,13 +45,12 @@ export const DefaultProjectHeader = ({
 
   return (
     <Box className={defaultImageIsProvided ? styles.headerWrapper : undefined}>
-      <div
+      <Box
         className={styles.headerBg}
         style={{ background: textBackgroundColor }}
-        ref={textRef}
       >
         <GridContainer>
-          <div ref={textRef}>
+          <Box ref={textRef}>
             <GridRow align="flexEnd">
               <GridColumn
                 paddingTop={5}
@@ -81,9 +80,9 @@ export const DefaultProjectHeader = ({
                 </Text>
               </GridColumn>
             </GridRow>
-          </div>
+          </Box>
         </GridContainer>
-      </div>
+      </Box>
       {defaultImageIsProvided && (
         <img
           className={styles.headerImage}
