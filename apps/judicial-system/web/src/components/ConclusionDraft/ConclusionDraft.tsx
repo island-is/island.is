@@ -37,20 +37,18 @@ const ConclusionDraft: React.FC<Props> = (props) => {
           acceptedLabelText={
             isRestrictionCase(workingCase.type)
               ? formatMessage(rcRuling.sections.decision.acceptLabel, {
-                  caseType:
-                    workingCase.type === CaseType.CUSTODY
-                      ? 'gæsluvarðhald'
-                      : 'farbann',
+                  caseType: formatMessage(rcRuling.sections.decision.caseType, {
+                    caseType: workingCase.type,
+                  }),
                 })
               : formatMessage(icRuling.sections.decision.acceptLabel)
           }
           rejectedLabelText={
             isRestrictionCase(workingCase.type)
               ? formatMessage(rcRuling.sections.decision.rejectLabel, {
-                  caseType:
-                    workingCase.type === CaseType.CUSTODY
-                      ? 'gæsluvarðhald'
-                      : 'farbann',
+                  caseType: formatMessage(rcRuling.sections.decision.caseType, {
+                    caseType: workingCase.type,
+                  }),
                 })
               : formatMessage(icRuling.sections.decision.rejectLabel)
           }
@@ -62,10 +60,9 @@ const ConclusionDraft: React.FC<Props> = (props) => {
           dismissLabelText={
             isRestrictionCase(workingCase.type)
               ? formatMessage(rcRuling.sections.decision.dismissLabel, {
-                  caseType:
-                    workingCase.type === CaseType.CUSTODY
-                      ? 'gæsluvarðhald'
-                      : 'farbann',
+                  caseType: formatMessage(rcRuling.sections.decision.caseType, {
+                    caseType: workingCase.type,
+                  }),
                 })
               : formatMessage(icRuling.sections.decision.dismissLabel)
           }
