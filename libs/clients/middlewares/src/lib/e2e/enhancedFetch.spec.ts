@@ -8,9 +8,11 @@ import {
 import { createServer as createHttpsServer } from 'https'
 import { AddressInfo } from 'net'
 import { join } from 'path'
+import { TLSSocket } from 'tls'
+
+import { sleep } from '@island.is/shared/utils'
 
 import { createEnhancedFetch } from '../createEnhancedFetch'
-import { TLSSocket } from 'tls'
 
 type Protocol = 'http' | 'https'
 
@@ -44,7 +46,6 @@ const startServer = (protocol: Protocol = 'http'): Promise<TestServer> =>
 
     server.on('listening', () => {
       const address = server.address() as AddressInfo
-      address.family
       resolve({
         url: `${protocol}://localhost:${address.port}`,
         requestSpy,
@@ -58,9 +59,6 @@ const startServer = (protocol: Protocol = 'http'): Promise<TestServer> =>
     })
     server.listen()
   })
-
-const sleep = (ms: number): Promise<void> =>
-  new Promise((resolve) => setTimeout(resolve, ms))
 
 describe('Enhanced Fetch against http server', () => {
   let server: TestServer

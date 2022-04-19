@@ -1,7 +1,6 @@
 import { Cache } from 'cache-manager'
 import CachePolicy from 'http-cache-semantics'
 import { Logger } from '@island.is/logging'
-import { DogStatsD } from '@island.is/infra-metrics'
 
 import { FetchAPI, Request, Response } from '../nodeFetch'
 

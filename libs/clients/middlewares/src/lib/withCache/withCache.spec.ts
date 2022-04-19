@@ -5,13 +5,14 @@ import {
   buildCacheControl,
   CacheControlOptions,
 } from '@island.is/clients/middlewares'
+import { sleep } from '@island.is/shared/utils'
+
 import {
   EnhancedFetchTestEnv,
   fakeResponse,
   setupTestEnv,
 } from '../../../test/setup'
 
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 const testUrl = 'http://localhost/test'
 
 describe('EnhancedFetch#withCache', () => {

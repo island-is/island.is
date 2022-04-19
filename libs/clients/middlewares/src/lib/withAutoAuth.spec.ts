@@ -9,7 +9,6 @@ import {
   setupTestEnv,
 } from '../../test/setup'
 
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 const testUrl = 'http://localhost/test'
 const issuerUrl = 'http://localhost/issuer'
 const clientId = 'client'
