@@ -1,3 +1,4 @@
+import { CaseType } from '@island.is/judicial-system/types'
 import { defineMessage, defineMessages } from 'react-intl'
 
 // Strings on signed verdict overview screen
@@ -170,6 +171,31 @@ export const signedVerdictOverview = {
         description:
           'Notaður sem texti í "Breyting á lengd gæsluvarðhalds" glugga á yfirlitsskjá afgreiddra mála.',
       },
+      validToDateAndIsolationToDateAreTheSame: defineMessage({
+        id:
+          'judicial.system.core:signed_verdict_overview.modify_dates_modal.valid_to_date_and_isolation_to_date_are_the_same',
+        defaultMessage: `{caseType, select,
+          ${CaseType.ADMISSION_TO_FACILITY} {Vistun á viðeigandi stofnun}
+          other {Gælsuvarðhald}} og einangrun til {date}`,
+        description:
+          'Notaður sem texti í "Lengd gæsluvarðhalds breytt" glugga á yfirlitsskjá afgreiddra mála.',
+      }),
+      validToDateChanged: defineMessage({
+        id:
+          'judicial.system.core:signed_verdict_overview.modify_dates_modal.valid_to_date_changed',
+        defaultMessage: `{caseType, select,
+          ${CaseType.ADMISSION_TO_FACILITY} {Vistun á viðeigandi stofnun}
+          other {Gælsuvarðhald}} til {date}.`,
+        description:
+          'Notaður sem texti "Lengd gæsluvarðhalds breytt" glugga á yfirlitsskjá afgreiddra mála.',
+      }),
+      isolationDateChanged: defineMessage({
+        id:
+          'judicial.system.core:signed_verdict_overview.modify_dates_modal.isolation_date_changed',
+        defaultMessage: `Einangrun til {date}.`,
+        description:
+          'Notaður sem texti "Lengd gæsluvarðhalds breytt" glugga á yfirlitsskjá afgreiddra mála.',
+      }),
       successText: {
         id:
           'judicial.system.core:signed_verdict_overview.modify_dates_modal.success_text',
@@ -298,4 +324,29 @@ export const signedVerdictOverview = {
       },
     }),
   },
+  caseExtension: defineMessages({
+    buttonLabel: defineMessage({
+      id:
+        'judicial.system.core:signed_verdict_overview.case_extension.button_label',
+      defaultMessage: `Framlengja {caseType, select,
+        ${CaseType.ADMISSION_TO_FACILITY} {vistun}
+        ${CaseType.TRAVEL_BAN} {farbann}
+        ${CaseType.CUSTODY} {gæslu}
+        other {heimild}}`,
+      description: 'Notaður sem label á framlengja mál takka',
+    }),
+    extensionInfo: defineMessage({
+      id: 'judicial.system.core:signed_verdict_overview.case_extension.button',
+      defaultMessage: `{hasChildCase, select,
+        yes {Framlengingarkrafa hefur þegar verið útbúin}
+        other {Ekki hægt að framlengja {} {rejectReason, select,
+          rejected {sem var hafnað}
+          dismissed {sem var vísað frá}
+          isValidToDateInThePast {sem er lokið}
+          acceptingAlternativeTravelBan {þegar dómari hefur úrskurðað um annað en dómkröfur sögðu til um}
+          other {}}}.`,
+      description:
+        'Notaður sem upplýsingatexti á info búbblu hjá framlengja mál takka',
+    }),
+  }),
 }
