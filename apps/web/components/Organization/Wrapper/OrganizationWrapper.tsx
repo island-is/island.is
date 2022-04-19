@@ -26,7 +26,11 @@ import {
   Button,
   Inline,
 } from '@island.is/island-ui/core'
-import { HeadWithSocialSharing, Sticky } from '@island.is/web/components'
+import {
+  HeadWithSocialSharing,
+  Sticky,
+  BoostChatPanel,
+} from '@island.is/web/components'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { SyslumennHeader, SyslumennFooter } from './Themes/SyslumennTheme'
 import {
@@ -41,7 +45,6 @@ import {
 } from './Themes/UtlendingastofnunTheme'
 import { endpoints as chatPanelEndpoints } from '../../ChatPanel/BoostChatPanel/config'
 import MannaudstorgFooter from './Themes/MannaudstorgTheme/MannaudstorgFooter'
-import BoostChatPanel from '../../ChatPanel/BoostChatPanel/BoostChatPanel'
 import * as styles from './OrganizationWrapper.css'
 
 interface NavigationData {

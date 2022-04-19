@@ -1,3 +1,3 @@
 export * from './BoostChatPanel'
-export * from './UkraineChatPanel'
+export * from './LiveChatIncChatPanel'
 export * from './WatsonChatPanel'
