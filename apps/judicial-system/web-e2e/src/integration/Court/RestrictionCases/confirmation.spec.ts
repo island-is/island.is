@@ -1,8 +1,7 @@
 import { Case, CaseDecision } from '@island.is/judicial-system/types'
-import { makeCustodyCase } from '@island.is/judicial-system/formatters'
 import { CONFIRMATION_ROUTE } from '@island.is/judicial-system/consts'
 
-import { intercept } from '../../../utils'
+import { makeCustodyCase, intercept } from '../../../utils'
 
 describe(`${CONFIRMATION_ROUTE}/:id`, () => {
   beforeEach(() => {

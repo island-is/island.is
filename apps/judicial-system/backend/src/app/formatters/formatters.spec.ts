@@ -1,11 +1,13 @@
 import { FormatMessage } from '@island.is/cms-translations'
 import { createTestIntl } from '@island.is/cms-translations/test'
-import { makeProsecutor } from '@island.is/judicial-system/formatters'
 import {
   CaseLegalProvisions,
   Gender,
   CaseType,
   SessionArrangements,
+  User,
+  UserRole,
+  InstitutionType,
 } from '@island.is/judicial-system/types'
 
 import { notifications } from '../messages'
@@ -25,6 +27,28 @@ import {
   formatProsecutorReceivedByCourtSmsNotification,
   formatCourtResubmittedToCourtSmsNotification,
 } from './formatters'
+
+export const makeProsecutor = (): User => {
+  return {
+    id: '9c0b4106-4213-43be-a6b2-ff324f4ba0c2',
+    created: '2020-09-16T19:50:08.033Z',
+    modified: '2020-09-16T19:50:08.033Z',
+    name: 'Áki Ákærandi',
+    nationalId: '000000-0000',
+    mobileNumber: '000-0000',
+    email: 'prosecutor@law.is',
+    role: UserRole.PROSECUTOR,
+    active: true,
+    title: 'aðstoðarsaksóknari',
+    institution: {
+      id: '',
+      created: '',
+      modified: '',
+      type: InstitutionType.PROSECUTORS_OFFICE,
+      name: 'Lögreglan á Höfuðborgarsvæðinu',
+    },
+  }
+}
 
 describe('formatLegalProvisions', () => {
   test('should format legal provisions when no provisions are selected', () => {

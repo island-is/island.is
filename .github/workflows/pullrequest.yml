@@ -4,6 +4,10 @@ on:
   pull_request: {}
   workflow_dispatch: {}
 
+defaults:
+  run:
+    shell: bash
+
 env:
   COMPOSE_HTTP_TIMEOUT: 180
   GITHUB_ACTIONS_CACHE_URL: https://cache.dev01.devland.is/
@@ -28,10 +32,10 @@ jobs:
       node-modules-hash: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
       generated-files-cache-key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
           node-version: '14'
 
@@ -110,7 +114,7 @@ jobs:
           HTML_URL: ${{ github.event.pull_request.html_url }}
           ISSUE_REPORTING_SLACK_WEBHOOK_URL: ${{ secrets.SLACK_BUILD_ISSUES_REPORTING_WEBHOOK_URL }}
         name: Preparing HEAD and BASE tags
-        shell: bash
+
 
       - name: Cache for cypress
         id: cypress
@@ -205,11 +209,11 @@ jobs:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      
-      - uses: actions/setup-node@v2
+
+      - uses: actions/setup-node@v3
         with:
           node-version: '14'
 
@@ -240,7 +244,7 @@ jobs:
 
       - name: Untar generated files
         run: tar zxvf generated_files.tar.gz
-        shell: bash
+
 
       - uses: ./.github/actions/unit-test
         with:
@@ -266,9 +270,9 @@ jobs:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.E2E_CHUNKS) }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
           node-version: '14'
 
@@ -311,9 +315,6 @@ jobs:
       - name: Untar generated files
         run: tar zxvf generated_files.tar.gz
 
-      - name: Increase fs watchers for cypress
-        run: echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
-
       - name: Running e2e tests
         run: ./scripts/ci/40_e2e.sh ${AFFECTED_PROJECT}
 
@@ -323,7 +324,7 @@ jobs:
     runs-on: kubernetes-runner
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
         continue-on-error: true
@@ -332,7 +333,7 @@ jobs:
           path: node_modules
           key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
 
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
           node-version: '14'
 
@@ -354,8 +355,8 @@ jobs:
     runs-on: kubernetes-runner
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: '14'
       - name: Setup yarn
@@ -386,8 +387,8 @@ jobs:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.LINT_CHUNKS) }}
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: '14'
       - name: Setup yarn
@@ -433,8 +434,8 @@ jobs:
       matrix: ${{ fromJson(needs.prepare.outputs.BUILD_CHUNKS) }}
     if: needs.prepare.outputs.BUILD_CHUNKS
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: '14'
       - name: Setup yarn
