@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo, useRef } from 'react'
 import {
   Box,
   Text,
@@ -9,6 +9,8 @@ import {
 } from '@island.is/island-ui/core'
 import { ProjectPage } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { useWindowSize } from '@island.is/web/hooks/useViewport'
+import { theme } from '@island.is/island-ui/theme'
 import * as styles from './DefaultProjectHeader.css'
 
 const getTextBackgroundColor = (projectPage: ProjectPage) => {
@@ -31,6 +33,18 @@ export const DefaultProjectHeader = ({
 
   const textBackgroundColor = getTextBackgroundColor(projectPage)
 
+  const { width } = useWindowSize()
+
+  const isBelowLarge = width < theme.breakpoints.lg
+
+  const textRef = useRef<HTMLDivElement | null>(null)
+
+  const maxImageHeight = useMemo(() => {
+    if (!textRef?.current) return 300
+    return textRef.current.getBoundingClientRect().height
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [width])
+
   return (
     <Box className={defaultImageIsProvided ? styles.headerWrapper : undefined}>
       <Box
@@ -38,38 +52,45 @@ export const DefaultProjectHeader = ({
         style={{ background: textBackgroundColor }}
       >
         <GridContainer>
-          <GridRow align="flexEnd">
-            <GridColumn
-              paddingTop={5}
-              span={[
-                '12/12',
-                '12/12',
-                defaultImageIsProvided ? '10/12' : '12/12',
-                defaultImageIsProvided ? '10/12' : '12/12',
-                defaultImageIsProvided ? '8/12' : '12/12',
-              ]}
-            >
-              <Text variant="eyebrow" color="white" marginTop={5}>
-                Ísland.is
-              </Text>
-              <Link href={linkResolver('projectpage', [projectPage.slug]).href}>
-                <Text variant="h1" color="white" marginTop={2}>
-                  {projectPage.title}
+          <Box ref={textRef}>
+            <GridRow align="flexEnd">
+              <GridColumn
+                paddingTop={5}
+                span={[
+                  '12/12',
+                  '12/12',
+                  defaultImageIsProvided ? '10/12' : '12/12',
+                  defaultImageIsProvided ? '10/12' : '12/12',
+                  defaultImageIsProvided ? '8/12' : '12/12',
+                ]}
+              >
+                <Text variant="eyebrow" color="white" marginTop={5}>
+                  Ísland.is
                 </Text>
-              </Link>
-              <Text variant="intro" color="white" marginTop={3}>
-                {projectPage.subtitle}
-              </Text>
-              <Text color="white" marginTop={3}>
-                {projectPage.intro}
-              </Text>
-            </GridColumn>
-          </GridRow>
+                <Link
+                  href={linkResolver('projectpage', [projectPage.slug]).href}
+                >
+                  <Text variant="h1" color="white" marginTop={2}>
+                    {projectPage.title}
+                  </Text>
+                </Link>
+                <Text variant="intro" color="white" marginTop={3}>
+                  {projectPage.subtitle}
+                </Text>
+                <Text color="white" marginTop={3} marginBottom={3}>
+                  {projectPage.intro}
+                </Text>
+              </GridColumn>
+            </GridRow>
+          </Box>
         </GridContainer>
       </Box>
       {defaultImageIsProvided && (
         <img
           className={styles.headerImage}
+          style={{
+            maxHeight: !isBelowLarge ? maxImageHeight : undefined,
+          }}
           src={projectPage.defaultHeaderImage.url}
           alt="header"
         ></img>
