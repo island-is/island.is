@@ -7,5 +7,6 @@ import { DrivingLicenseModule } from '@island.is/api/domains/driving-license'
 @Module({
   imports: [DrivingLicenseBookClientModule, DrivingLicenseModule],
   providers: [DrivingLicenseBookResolver, DrivingLicenseBookService],
+  exports: [DrivingLicenseBookService],
 })
 export class DrivingLicenseBookModule {}

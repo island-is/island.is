@@ -218,17 +218,13 @@ export class DrivingLicenseApi {
       },
     })
 
-    // Service returns empty string on success (actually different but the generated
-    // client forces it to)
-    const success = '' + response === DRIVING_LICENSE_SUCCESSFUL_RESPONSE_VALUE
-
-    if (!success) {
+    if (!response.result) {
       throw new Error(
-        `POST apiOkuskirteiniApplicationsNewTemporaryPost was not successful, response was: ${response}`,
+        `POST apiOkuskirteiniApplicationsNewTemporaryPost was not successful, response was: ${response.errorCode}`,
       )
     }
 
-    return success
+    return response.result
   }
 
   async postCreateDrivingLicenseFull(params: {

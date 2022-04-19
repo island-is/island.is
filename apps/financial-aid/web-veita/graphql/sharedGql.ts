@@ -100,6 +100,25 @@ export const ApplicationSearchQuery = gql`
   }
 `
 
+export const ApplicationFilterQuery = gql`
+  query ApplicationFilterQuery($input: FilterApplicationsInput!) {
+    filterApplications(input: $input) {
+      applications {
+        id
+        nationalId
+        name
+        state
+        modified
+        created
+        staff {
+          name
+        }
+      }
+      totalCount
+    }
+  }
+`
+
 export const UpdateApplicationTableMutation = gql`
   mutation UpdateApplicationTableMutation(
     $input: UpdateApplicationInputTable!
@@ -378,6 +397,7 @@ export const MunicipalityMutation = gql`
   mutation MunicipalityMutation($input: CreateMunicipalityInput!) {
     createMunicipality(input: $input) {
       id
+      municipalityId
     }
   }
 `
@@ -497,6 +517,16 @@ export const AdminUsersQuery = gql`
         active
         id
       }
+    }
+  }
+`
+
+export const AllAdminsQuery = gql`
+  query allAdminsQuery {
+    admins {
+      id
+      name
+      municipalityIds
     }
   }
 `

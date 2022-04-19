@@ -31,7 +31,7 @@ export const m = defineMessages({
   dataCollectionTeachersRightsSubtitle: {
     id: 'dir.application:dataCollectionTeachersRightsSubtitle',
     defaultMessage:
-      'Við munum sækja skráningu þína úr ökuskírteinaskrá til að athuga hvort þú hafi sannarlega ökukennararéttindi.',
+      'Við munum sækja skráningu þína úr ökuskírteinaskrá til að athuga hvort þú hafir sannarlega ökukennararéttindi.',
     description: 'Data provider subtitle',
   },
 
