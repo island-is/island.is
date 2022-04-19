@@ -8,9 +8,7 @@ import {
   FilesApi,
 } from '@island.is/clients/municipalities-financial-aid'
 import { FetchError } from '@island.is/clients/middlewares'
-
-import { FinancialAidMunicipalityInput } from './models/municipality.input'
-import { FinancialAidMunicipalitiesCreateSignedUrlInput } from './dto/getSignedUrl.input'
+import { MunicipalitiesFinancialAidCreateSignedUrlInput, MunicipalitiesFinancialAidMunicipalityInput } from './dto'
 
 @Injectable()
 export class MunicipalitiesFinancialAidService {
@@ -47,7 +45,7 @@ export class MunicipalitiesFinancialAidService {
 
   async municipalityInfoForFinancialAId(
     auth: Auth,
-    municipalityCode: FinancialAidMunicipalityInput,
+    municipalityCode: MunicipalitiesFinancialAidMunicipalityInput,
   ) {
     return await this.municipalityApiWithAuth(auth)
       .municipalityControllerGetById(municipalityCode)
@@ -56,7 +54,7 @@ export class MunicipalitiesFinancialAidService {
 
   async municipalitiesFinancialAidCreateSignedUrl(
     auth: Auth,
-    getSignedUrl: FinancialAidMunicipalitiesCreateSignedUrlInput,
+    getSignedUrl: MunicipalitiesFinancialAidCreateSignedUrlInput,
   ) {
     return await this.fileApiWithAuth(auth).fileControllerCreateSignedUrl({
       getSignedUrlDto: getSignedUrl,

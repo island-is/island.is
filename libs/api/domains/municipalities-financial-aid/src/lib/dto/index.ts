@@ -1,0 +1,5 @@
+export { MunicipalitiesFinancialAidCreateSignedUrlInput } from './getSignedUrl.input'
+export { MunicipalitiesFinancialAidMunicipalityInput } from './municipality.input'
+export { CreateMunicipalitiesApplicationInput } from './createApplication.input'
+export { CreateApplicationFileInput } from './createFile.input'
+export { DirectTaxPaymentInput } from './directTaxPayment.input'

@@ -8,8 +8,7 @@ import {
   ApplicationState,
   FamilyStatus,
 } from '@island.is/financial-aid/shared/lib'
-import { CreateApplicationFileInput } from './createFile.input'
-import { DirectTaxPaymentInput } from './directTaxPayment.input'
+import { CreateApplicationFileInput, DirectTaxPaymentInput } from '.'
 
 @InputType()
 export class CreateMunicipalitiesApplicationInput {

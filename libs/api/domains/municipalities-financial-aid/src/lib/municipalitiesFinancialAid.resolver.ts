@@ -8,10 +8,8 @@ import {
 import { UseGuards } from '@nestjs/common'
 
 import { MunicipalitiesFinancialAidService } from './municipalitiesFinancialAid.service'
-import { FinancialAidMunicipalityModel } from './models/municipality.model'
-import { FinancialAidMunicipalityInput } from './models/municipality.input'
-import { FinancialAidMunicipalitiesSignedUrlModel } from './models/signedUrl.model'
-import { FinancialAidMunicipalitiesCreateSignedUrlInput } from './dto/getSignedUrl.input'
+import { MunicipalitiesFinancialAidMunicipalityModel, MunicipalitiesFinancialAidSignedUrlModel } from './models'
+import { MunicipalitiesFinancialAidCreateSignedUrlInput, MunicipalitiesFinancialAidMunicipalityInput } from './dto'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -21,7 +19,7 @@ export class MunicipalitiesFinancialAidResolver {
   ) {}
 
   @Query(() => String, { nullable: true })
-  async financialAidMunicipalitiesCurrentApplication(
+  async municipalitiesFinancialAidCurrentApplication(
     @CurrentUser() user: User,
   ): Promise<string | null> {
     return await this.municipalitiesFinancialAidService.municipalitiesFinancialAidCurrentApplication(
@@ -29,26 +27,26 @@ export class MunicipalitiesFinancialAidResolver {
     )
   }
 
-  @Query(() => FinancialAidMunicipalityModel, { nullable: true })
-  async financialAidMunicipality(
-    @Args('input', { type: () => FinancialAidMunicipalityInput })
-    input: FinancialAidMunicipalityInput,
+  @Query(() => MunicipalitiesFinancialAidMunicipalityModel, { nullable: true })
+  async municipalitiesFinancialAidMunicipality(
+    @Args('input', { type: () => MunicipalitiesFinancialAidMunicipalityInput })
+    input: MunicipalitiesFinancialAidMunicipalityInput,
     @CurrentUser() user: User,
-  ): Promise<FinancialAidMunicipalityModel | null> {
+  ): Promise<MunicipalitiesFinancialAidMunicipalityModel | null> {
     return await this.municipalitiesFinancialAidService.municipalityInfoForFinancialAId(
       user,
       input,
     )
   }
 
-  @Mutation(() => FinancialAidMunicipalitiesSignedUrlModel)
-  createFinancialAidMunicipalitiesSignedUrl(
+  @Mutation(() => MunicipalitiesFinancialAidSignedUrlModel)
+  createMunicipalitiesFinancialAidSignedUrl(
     @Args('input', {
-      type: () => FinancialAidMunicipalitiesCreateSignedUrlInput,
+      type: () => MunicipalitiesFinancialAidCreateSignedUrlInput,
     })
-    input: FinancialAidMunicipalitiesCreateSignedUrlInput,
+    input: MunicipalitiesFinancialAidCreateSignedUrlInput,
     @CurrentUser() user: User,
-  ): Promise<FinancialAidMunicipalitiesSignedUrlModel | null> {
+  ): Promise<MunicipalitiesFinancialAidSignedUrlModel | null> {
     return this.municipalitiesFinancialAidService.municipalitiesFinancialAidCreateSignedUrl(
       user,
       input,

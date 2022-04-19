@@ -6,10 +6,10 @@ import { gql } from '@apollo/client'
 import { encodeFilenames } from '../utils'
 
 export const CreateSignedUrlMutation = gql`
-  mutation CreateFinancialAidMunicipalitiesSignedUrlQuery(
-    $input: FinancialAidMunicipalitiesCreateSignedUrlInput!
+  mutation CreateMunicipalitiesFinancialAidSignedUrlQuery(
+    $input: MunicipalitiesFinancialAidCreateSignedUrlInput!
   ) {
-    createFinancialAidMunicipalitiesSignedUrl(input: $input) {
+    createMunicipalitiesFinancialAidSignedUrl(input: $input) {
       url
       key
     }
@@ -98,7 +98,7 @@ export const useFileUpload = (formFiles: UploadFile[], folderId: string) => {
         },
       })
 
-      signedUrl = presignedUrlData?.createFinancialAidMunicipalitiesSignedUrl
+      signedUrl = presignedUrlData?.createMunicipalitiesFinancialAidSignedUrl
     } catch (e) {
       setUploadErrorMessage('Næ ekki sambandi við vefþjón')
     }

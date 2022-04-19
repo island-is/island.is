@@ -1,16 +1,12 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 
-import { ApplicationFileModel } from './file.model'
-import { ApplicationEventModel } from './applicationEvent.model'
-import { AmountModel } from './amount.model'
-
 import {
   ApplicationModelEmploymentEnum,
   ApplicationModelFamilyStatusEnum,
   ApplicationModelHomeCircumstancesEnum,
   ApplicationModelStateEnum,
 } from '@island.is/clients/municipalities-financial-aid'
-import { DirectTaxPaymentModel } from './directTaxPayments.model'
+import { AmountModel, ApplicationEventModel, ApplicationFileModel, DirectTaxPaymentModel } from '.'
 
 @ObjectType()
 export class ApplicationModel {

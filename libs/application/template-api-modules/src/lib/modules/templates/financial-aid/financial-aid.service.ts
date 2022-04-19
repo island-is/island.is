@@ -89,6 +89,7 @@ export class FinancialAidService {
       municipalityCode:
         externalData.nationalRegistry.data.applicant.address.municipalityCode,
       directTaxPayments: [],
+      hasFetchedDirectTaxPayment: false,
       applicationSystemId: id,
     }
 

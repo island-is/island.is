@@ -1,6 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-
-import { DeductionFactorsModel } from './deductionFactors.model'
+import { DeductionFactorsModel } from '.'
 
 @ObjectType()
 export class AmountModel {
