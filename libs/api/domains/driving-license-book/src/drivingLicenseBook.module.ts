@@ -10,13 +10,14 @@ export interface Config {
 }
 @Module({
   imports: [DrivingLicenseBookClientModule],
-  providers: [DrivingLicenseBookResolver, DrivingLicenseBookService],
 })
 export class DrivingLicenseBookModule {
   static register(baseConfig: Config): DynamicModule {
     return {
       module: DrivingLicenseBookModule,
       imports: [DrivingLicenseModule.register(baseConfig)],
+      providers: [DrivingLicenseBookResolver, DrivingLicenseBookService],
+      exports: [DrivingLicenseBookService],
     }
   }
 }

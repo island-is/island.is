@@ -1,13 +1,12 @@
 import faker from 'faker'
 
-import { makeInvestigationCase } from '@island.is/judicial-system/formatters'
 import { Case } from '@island.is/judicial-system/types'
 import {
   IC_CASE_FILES_ROUTE,
   IC_POLICE_REPORT_ROUTE,
 } from '@island.is/judicial-system/consts'
 
-import { intercept } from '../../../utils'
+import { makeInvestigationCase, intercept } from '../../../utils'
 
 describe(`${IC_POLICE_REPORT_ROUTE}/:id`, () => {
   const demands = faker.lorem.paragraph()
