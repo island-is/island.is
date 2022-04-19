@@ -14,7 +14,8 @@ export const externalData = {
     },
     subTitle: {
       id: 'gfl.application:section.dataProvider.subTitle',
-      defaultMessage: 'Eftirfarandi upplýsingar verða sóttar rafrænt.',
+      defaultMessage:
+        'Unnið verður með persónugreinanleg gögn frá eftirfarandi aðilum við vinnslu umsóknarinnar',
       description: 'External information retrieval subtitle',
     },
     checkboxLabel: {
@@ -26,14 +27,13 @@ export const externalData = {
   directoryOfFisheries: defineMessages({
     title: {
       id: 'gfl.application:section.externalData.directoryOfFisheries.title',
-      defaultMessage: 'Upplýsingar frá Fiskistofu',
+      defaultMessage: 'Þjóðskrá Íslands/Fyrirtækjaskrá',
       description: 'Approval of directory of labor',
     },
     description: {
       id:
         'gfl.application:section.externalData.directoryOfFisheries.description',
-      defaultMessage:
-        'Nafn fiskveiðiskips, skipaskrárnúmer, lengd, brúttótonn.',
+      defaultMessage: 'Nafn, kennitala og heimilisfang.',
       description:
         'Approval of gathering information from directory of fisheries',
     },
@@ -41,25 +41,25 @@ export const externalData = {
   nationalRegistry: defineMessages({
     title: {
       id: 'gfl.application:section.externalData.nationalRegistry.title',
-      defaultMessage: 'Upplýsingar frá þjóðskrá',
+      defaultMessage: 'Samgöngustofa',
       description: 'Title: National Registry',
     },
     description: {
       id: 'gfl.application:section.externalData.nationalRegistry.description',
-      defaultMessage: 'Upplýsingar um nafn, kennitölu og heimilisfang.',
+      defaultMessage: 'Skipaskrá. Upplýsingar um lögskráningu. Haffærni skips.',
       description: 'Description: National Registry',
     },
   }),
   userProfile: defineMessages({
     title: {
       id: 'gfl.application:section.externalData.userProfile.title',
-      defaultMessage: 'Upplýsingar úr prófilgrunni á island.is',
+      defaultMessage: 'Fjársýsla',
       description: 'Title: External Info from user profile provider',
     },
     description: {
       id: 'gfl.application:section.externalData.userProfile.description',
       defaultMessage:
-        'Símanúmer, netfang. Upplýsingar um símanúmer eða netfang er hægt að uppfæra á vefsíðu island.is ef þess þarf.',
+        'Skuldastaða vegna veiðigjalda og álagninga frá Fiskistofu. Greiðsla fyrir veiðileyfi.',
       description: 'Description: External Info from user profile provider',
     },
   }),
@@ -68,7 +68,7 @@ export const externalData = {
       id:
         'gfl.application:section.externalData.extraInformation.descriptionFirstPart',
       defaultMessage:
-        'Texti frá Fiskistofu... er nauðsynlegt að fá upplýsingar um skipið til þess að hægt sé að ganga frá Veiðileyfi. Upplýsinganna er aflað á grundvelli heimildar í 5. tölul. 9. gr. laga nr. 90/2018, um persónuvernd og vinnslu persónuupplýsinga. ',
+        'Fiskistofa þarf að afla eftirfarandi upplýsinga til að afgreiða umsóknir um veiðileyfi. Upplýsinganna er aflað á grundvelli heimildar í 5. tölul. 9. gr. laga nr. 90/2018, um persónuvernd og vinnslu persónuupplýsinga.',
       description: 'Description for link in extrainformation',
     },
   }),

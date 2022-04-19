@@ -63,7 +63,7 @@ export class GeneralFishingLicenseService {
       const applicantNationalId = getValueViaPath(
         application.answers,
         'applicant.nationalId',
-      ) as string
+      ) as number
       const registrationNumber = getValueViaPath(
         application.answers,
         'shipSelection.registrationNumber',
@@ -73,12 +73,13 @@ export class GeneralFishingLicenseService {
         'fishingLicense.license',
       ) as string
       this.umsoknirApi
+
       await this.umsoknirApi
         .withMiddleware(new AuthMiddleware(auth as Auth))
         .v1UmsoknirPost({
           umsokn: {
-            umsaekjandiKennitala: parseInt(applicantNationalId, 10),
-            utgerdKennitala: parseInt(applicantNationalId, 10),
+            umsaekjandiKennitala: applicantNationalId,
+            utgerdKennitala: applicantNationalId,
             skipaskrarnumer: parseInt(registrationNumber, 10),
             umbedinGildistaka: null,
             veidileyfiKodi: fishingLicense,
