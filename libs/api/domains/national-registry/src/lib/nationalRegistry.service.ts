@@ -92,7 +92,10 @@ export class NationalRegistryService {
 
     const members = myChildren
       .filter((familyChild) => {
-        return familyChild.Barn !== nationalId
+        const isNotUser = familyChild.Barn !== nationalId
+        const isUnderEighteen = kennitala.info(familyChild.Barn).age < 18
+
+        return isNotUser && isUnderEighteen
       })
       .map((familyChild) => ({
         fullName: familyChild.FulltNafn,
