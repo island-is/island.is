@@ -20,7 +20,7 @@ export interface PoliceCaseFilesData {
   files: PoliceCaseFile[]
   isLoading: boolean
   hasError: boolean
-  errorMessage?: string
+  errorCode?: string
 }
 
 export const CaseFiles: React.FC = () => {
@@ -69,7 +69,7 @@ export const CaseFiles: React.FC = () => {
         files: policeData ? policeData.policeCaseFiles : [],
         isLoading: false,
         hasError: true,
-        errorMessage: policeDataError?.message,
+        errorCode: policeDataError?.graphQLErrors[0].extensions?.code,
       })
     }
   }, [policeData, policeDataLoading, policeDataError, workingCase.origin])

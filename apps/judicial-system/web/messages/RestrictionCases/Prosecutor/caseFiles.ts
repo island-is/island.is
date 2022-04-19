@@ -74,6 +74,14 @@ export const rcCaseFiles = {
         description:
           'Notaður sem texti fyrir "Velja allt" valmöguleikann í LÖKE gagnapakkanum á rannsóknargagna skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
+      couldNotGetFromLOKEMessage: {
+        id:
+          'judicial.system.restriction_cases:case_files.police_case_files.could_not_get_from_loke_message',
+        defaultMessage:
+          'Ekki tókst að sækja skjalalista í LÖKE. Hægt er að hlaða upp skjölum hér fyrir neðan.',
+        description:
+          'Notaður sem villuskilaboð í LÖKE gagnapakkanum á rannsóknargagna skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
       caseNotFoundInLOKEMessage: {
         id:
           'judicial.system.restriction_cases:case_files.police_case_files.case_not_found_in_loke_message',

@@ -232,8 +232,8 @@ export const StepFiveForm: React.FC<Props> = (props) => {
                       <LoadingDots />
                     </Box>
                   ) : policeCaseFiles?.hasError ? (
-                    policeCaseFiles?.errorMessage &&
-                    policeCaseFiles?.errorMessage.indexOf('404') > -1 ? (
+                    policeCaseFiles?.errorCode ===
+                    'https://httpstatuses.com/404' ? (
                       <PoliceCaseFilesMessageBox
                         icon="warning"
                         iconColor="yellow400"
@@ -245,7 +245,9 @@ export const StepFiveForm: React.FC<Props> = (props) => {
                       <PoliceCaseFilesMessageBox
                         icon="close"
                         iconColor="red400"
-                        message={formatMessage(errors.general)}
+                        message={formatMessage(
+                          m.sections.policeCaseFiles.couldNotGetFromLOKEMessage,
+                        )}
                       />
                     )
                   ) : policeCaseFiles?.files.length === 0 ? (

@@ -21,7 +21,7 @@ export interface PoliceCaseFilesData {
   files: PoliceCaseFile[]
   isLoading: boolean
   hasError: boolean
-  errorMessage?: string
+  errorCode?: string
 }
 
 export const StepFive: React.FC = () => {
@@ -72,15 +72,10 @@ export const StepFive: React.FC = () => {
         files: policeData ? policeData.policeCaseFiles : [],
         isLoading: false,
         hasError: true,
-        errorMessage: policeDataError?.message,
+        errorCode: policeDataError?.graphQLErrors[0].extensions?.code,
       })
     }
-  }, [
-    policeData,
-    policeDataError?.message,
-    policeDataLoading,
-    workingCase.origin,
-  ])
+  }, [policeData, policeDataError, policeDataLoading, workingCase.origin])
 
   return (
     <PageLayout
