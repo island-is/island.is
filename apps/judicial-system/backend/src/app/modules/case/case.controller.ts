@@ -203,7 +203,7 @@ export class CaseController {
     @Param('caseId') caseId: string,
     @CurrentCase() theCase: Case,
     @Body() transition: TransitionCaseDto,
-  ): Promise<Case | null> {
+  ): Promise<Case> {
     this.logger.debug(`Transitioning case ${caseId}`)
 
     // Use theCase.modified when client is ready to send last modified timestamp with all updates
@@ -216,17 +216,18 @@ export class CaseController {
       update.parentCaseId = null
     }
 
-    const updatedCase = (await this.caseService.update(
+    const updatedCase = await this.caseService.update(
       caseId,
       update as UpdateCaseDto,
-    )) as Case
+      state !== CaseState.DELETED,
+    )
 
     this.eventService.postEvent(
       (transition.transition as unknown) as CaseEvent,
-      updatedCase,
+      updatedCase ?? theCase,
     )
 
-    return updatedCase
+    return updatedCase ?? theCase
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)

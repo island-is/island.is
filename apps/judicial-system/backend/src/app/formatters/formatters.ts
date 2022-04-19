@@ -440,7 +440,7 @@ export function formatDefenderRevokedEmailNotification(
   })
 
   const defendantNationalIdText = defendantNoNationalId
-    ? defendantNationalId
+    ? defendantNationalId || 'NONE'
     : formatNationalId(defendantNationalId || 'NONE')
   const defendantText = formatMessage(cf.defendant, {
     defendantName: defendantName || 'NONE',

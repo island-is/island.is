@@ -392,7 +392,7 @@ export const notifications = {
       id:
         'judicial.system.backend:notifications.defender_revoked_email.defendant',
       defaultMessage:
-        'Sakborningur: {defendantName, select, NONE {Nafn ekki skráð} other {{defendantName}}}, {defendantNoNationalId, select, NONE {fd. {defendantNationalId}} other {kt. {defendantNationalId, select, NONE {ekki skráð} other {{defendantNationalId}}}}}.',
+        'Sakborningur: {defendantName, select, NONE {Nafn ekki skráð} other {{defendantName}}}{defendantNoNationalId, select, NONE {{defendantNationalId, select, NONE {} other {, fd. {defendantNationalId}}}} other {, kt. {defendantNationalId, select, NONE {ekki skráð} other {{defendantNationalId}}}}}.',
       description:
         'Texti í pósti til verjanda/talsmanns sem tilgreinir sakborning',
     },

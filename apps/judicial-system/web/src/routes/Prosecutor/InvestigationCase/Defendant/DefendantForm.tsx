@@ -280,7 +280,7 @@ const DefendantForm: React.FC<Props> = (props) => {
                         !defendant.gender) ||
                       !defendant.name ||
                       !defendant.address ||
-                      !defendant.nationalId,
+                      (!defendant.noNationalId && !defendant.nationalId),
                   )}
                 >
                   {formatMessage(

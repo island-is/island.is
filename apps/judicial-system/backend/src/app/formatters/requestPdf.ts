@@ -99,17 +99,22 @@ function constructRestrictionRequestPdf(
       addEmptyLines(doc)
     }
 
-    addNormalText(
-      doc,
-      `${formatMessage(
-        defendant.noNationalId ? m.baseInfo.dateOfBirth : m.baseInfo.nationalId,
-      )} ${
-        defendant.noNationalId
-          ? defendant.nationalId
-          : formatNationalId(defendant.nationalId ?? '')
-      }`,
-      'Helvetica',
-    )
+    if (!defendant.noNationalId) {
+      addNormalText(
+        doc,
+        `${formatMessage(m.baseInfo.nationalId)} ${formatNationalId(
+          defendant.nationalId ?? '',
+        )}`,
+        'Helvetica',
+      )
+    } else if (defendant.nationalId) {
+      addNormalText(
+        doc,
+        `${formatMessage(m.baseInfo.dateOfBirth)} ${defendant.nationalId}`,
+        'Helvetica',
+      )
+    }
+
     addNormalText(
       doc,
       `${formatMessage(m.baseInfo.fullName)} ${defendant.name ?? ''}`,
@@ -263,17 +268,22 @@ function constructInvestigationRequestPdf(
       addEmptyLines(doc)
     }
 
-    addNormalText(
-      doc,
-      `${formatMessage(
-        defendant.noNationalId ? m.baseInfo.dateOfBirth : m.baseInfo.nationalId,
-      )} ${
-        defendant.noNationalId
-          ? defendant.nationalId
-          : formatNationalId(defendant.nationalId ?? '')
-      }`,
-      'Helvetica',
-    )
+    if (!defendant.noNationalId) {
+      addNormalText(
+        doc,
+        `${formatMessage(m.baseInfo.nationalId)} ${formatNationalId(
+          defendant.nationalId ?? '',
+        )}`,
+        'Helvetica',
+      )
+    } else if (defendant.nationalId) {
+      addNormalText(
+        doc,
+        `${formatMessage(m.baseInfo.dateOfBirth)} ${defendant.nationalId}`,
+        'Helvetica',
+      )
+    }
+
     addNormalText(
       doc,
       `${formatMessage(m.baseInfo.fullName)} ${defendant.name ?? ''}`,
