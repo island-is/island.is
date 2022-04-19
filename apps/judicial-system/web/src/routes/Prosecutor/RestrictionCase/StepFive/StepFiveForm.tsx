@@ -199,6 +199,9 @@ export const StepFiveForm: React.FC<Props> = (props) => {
               text={formatMessage(m.sections.policeCaseFiles.tooltip)}
             />
           </Text>
+          <Text marginTop={1}>
+            {formatMessage(m.sections.policeCaseFiles.introduction)}
+          </Text>
         </Box>
         <Box marginBottom={5}>
           <AnimateSharedLayout>
@@ -320,6 +323,9 @@ export const StepFiveForm: React.FC<Props> = (props) => {
         <Box marginBottom={3}>
           <Text variant="h3" as="h3">
             {formatMessage(m.sections.files.heading)}
+          </Text>
+          <Text marginTop={1}>
+            {formatMessage(m.sections.files.introduction)}
           </Text>
         </Box>
         <Box marginBottom={5}>
