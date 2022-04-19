@@ -17,7 +17,6 @@ globalStyle('*, *:before, *:after', {
 globalStyle('body, h1, h2, h3, h4, h5, h6, p, ol, ul, blockquote', {
   margin: 0,
   padding: 0,
-  fontWeight: 'normal',
   fontFamily: theme.typography.fontFamily,
   color: theme.color.dark400,
   scrollMarginTop: 64,

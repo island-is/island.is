@@ -2,6 +2,7 @@ import { Dispatch, SetStateAction } from 'react'
 import { GraphQLError } from 'graphql'
 import { ZodObject } from 'zod'
 import { MessageDescriptor } from 'react-intl'
+import { MarkdownToJSX } from 'markdown-to-jsx'
 
 import type { BoxProps } from '@island.is/island-ui/core/types'
 import { Field, RecordObject } from '@island.is/application/core'
@@ -111,6 +112,7 @@ export interface MultiField extends FormItem {
   children: Field[]
   isPartOfRepeater?: boolean
   readonly description?: FormText
+  descriptionMarkdownOptions?: MarkdownToJSX.Options
   space?: BoxProps['paddingTop']
 }
 

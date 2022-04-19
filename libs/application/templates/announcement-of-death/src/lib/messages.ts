@@ -179,11 +179,13 @@ export const m = defineMessages({
     id: 'aod.application:inheritanceDescription#markdown',
     defaultMessage: `Erfðaréttur byggist á skyldleika, ættleiðingu, hjúskap og erfðaskrá hins látna. Ef hinn látni var:
 
+
 * Í hjúskap og/eða átti börn: erfa maki og/eða börn hinn látna. Ef barn er látið taka afkomendur barnsins arf í þess stað.
 * Einhleypur: erfa foreldrar og/eða systkini og/eða afkomendur þeirra hinn látna. Ef enginn þeirra er á lífi erfa afar og ömmur hinn látna eða börn þeirra.
 * Búinn að gera erfðaskrá: erfir einstaklingur og/eða lögaðili, sem tilgreindur er í erfðaskránni, hinn látna.
 
-Ef ekkert á við sem hér að ofan er talið rennur arfur í ríkissjóð. Nánari upplýsingar má finna á (Ísland.is)[https://island.is]`,
+
+Ef ekkert á við sem hér að ofan er talið rennur arfur í ríkissjóð. Nánari upplýsingar má finna á [Ísland.is](https://island.is)`,
     description: 'Inheritance step title',
   },
   inheritanceMembersOfEstateTitle: {
