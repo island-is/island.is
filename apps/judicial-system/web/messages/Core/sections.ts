@@ -1,8 +1,13 @@
 import { CaseType } from '@island.is/judicial-system/types'
-import { defineMessages } from 'react-intl'
+import { defineMessages, defineMessage } from 'react-intl'
 
 export const sections = {
   // TODO: remove custodyAndTravelBanProsecutorSection, it's renamed to restrictionCaseProsecutorSection
+  title: defineMessage({
+    id: 'judicial.system.core:sections:title',
+    defaultMessage: `{caseType, select, ${CaseType.CUSTODY} {Gæsluvarðhald} ${CaseType.TRAVEL_BAN} {Farbann} ${CaseType.ADMISSION_TO_FACILITY} {Vistun á viðeignadi stofnun} other {Rannsóknarheimild}}`,
+    description: 'Notaður sem titill á hliðarstiku í öllum ferlum',
+  }),
   custodyAndTravelBanProsecutorSection: defineMessages({
     custodyTitle: {
       id:
