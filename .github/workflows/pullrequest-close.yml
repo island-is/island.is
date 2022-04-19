@@ -5,6 +5,10 @@ on:
     types:
       - closed
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   cleanup:
     name: Clean up feature deployment
