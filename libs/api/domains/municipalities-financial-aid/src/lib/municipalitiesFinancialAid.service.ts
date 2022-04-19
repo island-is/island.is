@@ -8,7 +8,10 @@ import {
   FilesApi,
 } from '@island.is/clients/municipalities-financial-aid'
 import { FetchError } from '@island.is/clients/middlewares'
-import { MunicipalitiesFinancialAidCreateSignedUrlInput, MunicipalitiesFinancialAidMunicipalityInput } from './dto'
+import {
+  MunicipalitiesFinancialAidCreateSignedUrlInput,
+  MunicipalitiesFinancialAidMunicipalityInput,
+} from './dto'
 
 @Injectable()
 export class MunicipalitiesFinancialAidService {

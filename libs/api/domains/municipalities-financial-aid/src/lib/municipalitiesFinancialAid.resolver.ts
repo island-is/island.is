@@ -8,8 +8,14 @@ import {
 import { UseGuards } from '@nestjs/common'
 
 import { MunicipalitiesFinancialAidService } from './municipalitiesFinancialAid.service'
-import { MunicipalitiesFinancialAidMunicipalityModel, MunicipalitiesFinancialAidSignedUrlModel } from './models'
-import { MunicipalitiesFinancialAidCreateSignedUrlInput, MunicipalitiesFinancialAidMunicipalityInput } from './dto'
+import {
+  MunicipalitiesFinancialAidMunicipalityModel,
+  MunicipalitiesFinancialAidSignedUrlModel,
+} from './models'
+import {
+  MunicipalitiesFinancialAidCreateSignedUrlInput,
+  MunicipalitiesFinancialAidMunicipalityInput,
+} from './dto'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()

@@ -6,7 +6,12 @@ import {
   ApplicationModelHomeCircumstancesEnum,
   ApplicationModelStateEnum,
 } from '@island.is/clients/municipalities-financial-aid'
-import { AmountModel, ApplicationEventModel, ApplicationFileModel, DirectTaxPaymentModel } from '.'
+import {
+  AmountModel,
+  ApplicationEventModel,
+  ApplicationFileModel,
+  DirectTaxPaymentModel,
+} from '.'
 
 @ObjectType()
 export class ApplicationModel {
