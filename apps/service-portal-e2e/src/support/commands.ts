@@ -7,25 +7,35 @@
 // commands please read more here:
 // https://on.cypress.io/custom-commands
 // ***********************************************
-// eslint-disable-next-line @typescript-eslint/no-namespace
-declare namespace Cypress {
-  interface Chainable<Subject> {
-    login(email: string, password: string): void
+
+import { CyHttpMessages } from 'cypress/types/net-stubbing'
+
+type KeyMapping<TKey extends string, TValue> = { [K in TKey]: TValue }
+
+const getFixtureFromRequest: KeyMapping<string, { fixture: string }> = {
+  GetUserProfile: { fixture: 'getUserProfileQuery' },
+}
+
+const getFixtureFor = (graphqlRequest: CyHttpMessages.IncomingHttpRequest) => {
+  if (graphqlRequest.body.hasOwnProperty('query')) {
+    if (graphqlRequest.body.query.includes('GetUserProfile')) {
+      return {
+        fixture: 'getUserProfileQuery',
+      }
+    }
   }
 }
-//
-// -- This is a parent command --
-Cypress.Commands.add('login', (email, password) => {
-  console.log('Custom command example: Login', email, password)
+
+Cypress.Commands.add('stubAPIResponses', () => {
+  /**
+   * This is currently seems to not work with mock data,
+   * could be resolved when this is resolved: https://github.com/mswjs/msw/issues/374
+   * */
+  cy.intercept('POST', '**/api/graphql', (req) => {
+    req.reply(getFixtureFor(req))
+  }).as('DataApi')
 })
-//
-// -- This is a child command --
-// Cypress.Commands.add("drag", { prevSubject: 'element'}, (subject, options) => { ... })
-//
-//
-// -- This is a dual command --
-// Cypress.Commands.add("dismiss", { prevSubject: 'optional'}, (subject, options) => { ... })
-//
-//
-// -- This will overwrite an existing command --
-// Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
+
+Cypress.Commands.add('getByTestId', (selector) => {
+  return cy.get(`[data-testid=${selector}]`)
+})

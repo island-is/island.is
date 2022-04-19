@@ -1,0 +1,16 @@
+{
+  "data": {
+    "getUserProfile": {
+      "nationalId": "000000-0000",
+      "mobilePhoneNumber": "+354-4265500",
+      "locale": null,
+      "email": "test@island.is",
+      "canNudge": null,
+      "bankInfo": null,
+      "emailStatus": null,
+      "mobileStatus": null,
+      "modified": null,
+      "__typename": "UserProfile"
+    }
+  }
+}

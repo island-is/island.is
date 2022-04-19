@@ -46,10 +46,12 @@ export const personalInformationModule: ServicePortalModule = {
       })
 
       const showTheModal = showModal(res.data?.getUserProfile)
+      const userMocked = process.env.API_MOCKS === 'true'
+      const notLocal = process.env.NODE_ENV !== 'development'
 
       if (
         // true
-        process.env.NODE_ENV !== 'development' &&
+        (userMocked || notLocal) &&
         userInfo.scopes.includes(UserProfileScope.write) &&
         showTheModal
       )

@@ -1,7 +1,12 @@
-describe('service-portal', () => {
-  it('should get onboarding modal and close without entering info', () => {
-    cy.visit('/minarsidur')
+/// <reference path="../support/index.d.ts" />
 
+describe('service-portal', () => {
+  beforeEach(() => {
+    cy.stubAPIResponses()
+    cy.visit('/minarsidur')
+  })
+
+  it('should get onboarding modal and close without entering info', () => {
     cy.get('button[aria-label="Loka glugga"]').click()
     cy.contains('Engar upplýsingar skráðar')
     cy.get('button').contains('Vil ekki skrá').click()

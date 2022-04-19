@@ -1,5 +1,8 @@
 {
   "extends": ["../../.eslintrc.json", "plugin:cypress/recommended"],
-  "rules": {},
+  "rules": {
+    "no-prototype-builtins": "off",
+    "@typescript-eslint/triple-slash-reference": "off"
+  },
   "ignorePatterns": ["!**/*"]
 }

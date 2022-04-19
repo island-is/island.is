@@ -6,9 +6,9 @@
   "pluginsFile": "./src/plugins/index",
   "supportFile": "./src/support/index.ts",
   "video": false,
-  "videosFolder": "../../dist/cypress/apps/service-portal-e2e/videos",
-  "screenshotsFolder": "../../dist/cypress/apps/service-portal-e2e/screenshots",
   "chromeWebSecurity": false,
+  "viewportWidth": 1440,
+  "defaultCommandTimeout": 20000,
   "retries": {
     "runMode": 2,
     "openMode": 0
