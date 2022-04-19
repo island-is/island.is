@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useCallback, useState } from 'react'
 import {
   Box,
   Text,
@@ -33,15 +33,21 @@ export const DefaultProjectHeader = ({
 
   const textBackgroundColor = getTextBackgroundColor(projectPage)
 
-  const textRef = useRef<HTMLDivElement | null>(null)
-
   const { width } = useWindowSize()
 
   const isBelowLarge = width < theme.breakpoints.lg
 
-  const maxImageHeight = !isBelowLarge
-    ? textRef.current?.getBoundingClientRect()?.height ?? undefined
-    : undefined
+  const [maxImageHeight, setMaxImageHeight] = useState(300)
+
+  const measuredRef = useCallback(
+    (node) => {
+      if (node) {
+        setMaxImageHeight(node.getBoundingClientRect().height)
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [width],
+  )
 
   return (
     <Box className={defaultImageIsProvided ? styles.headerWrapper : undefined}>
@@ -50,7 +56,7 @@ export const DefaultProjectHeader = ({
         style={{ background: textBackgroundColor }}
       >
         <GridContainer>
-          <Box ref={textRef}>
+          <Box ref={measuredRef}>
             <GridRow align="flexEnd">
               <GridColumn
                 paddingTop={5}
@@ -87,7 +93,7 @@ export const DefaultProjectHeader = ({
         <img
           className={styles.headerImage}
           style={{
-            maxHeight: maxImageHeight,
+            maxHeight: !isBelowLarge ? maxImageHeight : undefined,
           }}
           src={projectPage.defaultHeaderImage.url}
           alt="header"
