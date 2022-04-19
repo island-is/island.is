@@ -389,3 +389,8 @@ export interface ApplicationProfileInfo {
   other?: string
   fullWidth?: boolean
 }
+
+export interface ApplicationPagination {
+  applications: Application[]
+  totalCount: number
+}

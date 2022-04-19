@@ -21,6 +21,7 @@ import {
   ComplaintsToAlthingiOmbudsmanTemplateService,
   MortgageCertificateSubmissionService,
   FinancialAidService,
+  DrivingSchoolConfirmationService,
 } from './templates'
 
 interface ApplicationApiAction {
@@ -61,6 +62,7 @@ export class TemplateAPIService {
     private readonly complaintsToAlthingiOmbudsman: ComplaintsToAlthingiOmbudsmanTemplateService,
     private readonly mortgageCertificateSubmissionService: MortgageCertificateSubmissionService,
     private readonly financialAidService: FinancialAidService,
+    private readonly drivingSchoolConfirmationService: DrivingSchoolConfirmationService,
   ) {}
 
   private async tryRunningActionOnService(
@@ -83,7 +85,8 @@ export class TemplateAPIService {
       | ExamplePaymentActionsService
       | ComplaintsToAlthingiOmbudsmanTemplateService
       | MortgageCertificateSubmissionService
-      | FinancialAidService,
+      | FinancialAidService
+      | DrivingSchoolConfirmationService,
     action: ApplicationApiAction,
   ): Promise<PerformActionResult> {
     // No index signature with a parameter of type 'string' was found on type
@@ -209,6 +212,11 @@ export class TemplateAPIService {
         )
       case ApplicationTypes.FINANCIAL_AID:
         return this.tryRunningActionOnService(this.financialAidService, action)
+      case ApplicationTypes.DRIVING_SCHOOL_CONFIRMATION:
+        return this.tryRunningActionOnService(
+          this.drivingSchoolConfirmationService,
+          action,
+        )
     }
 
     return {

@@ -18,6 +18,7 @@ import {
   ApplicationModel,
   UpdateApplicationTableResponse,
   SpouseResponse,
+  FilterApplicationsResponse,
 } from './models'
 
 import {
@@ -29,6 +30,7 @@ import {
   CreateApplicationDto,
   UpdateApplicationDto,
   CreateApplicationEventDto,
+  FilterApplicationsDto,
 } from './dto'
 
 import {
@@ -349,5 +351,21 @@ export class ApplicationController {
     }
 
     return application
+  }
+
+  @UseGuards(RolesGuard, StaffGuard)
+  @RolesRules(RolesRule.VEITA)
+  @StaffRolesRules(StaffRole.EMPLOYEE)
+  @Post('filter')
+  @ApiOkResponse({
+    type: FilterApplicationsResponse,
+    description: 'Filter applications',
+  })
+  filter(
+    @Body() filters: FilterApplicationsDto,
+    @CurrentStaff() staff: Staff,
+  ): Promise<FilterApplicationsResponse> {
+    this.logger.debug('Application controller: Filter applications')
+    return this.applicationService.filter(filters, staff.municipalityIds)
   }
 }

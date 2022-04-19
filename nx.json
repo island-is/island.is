@@ -224,6 +224,9 @@
     "application-templates-driving-license": {
       "tags": []
     },
+    "application-templates-driving-school-confirmation": {
+      "tags": []
+    },
     "application-templates-example-payment": {
       "tags": []
     },
