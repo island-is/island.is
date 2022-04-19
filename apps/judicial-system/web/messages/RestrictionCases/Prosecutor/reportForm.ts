@@ -1,3 +1,4 @@
+import { CaseType } from '@island.is/judicial-system/types'
 import { defineMessage, defineMessages } from 'react-intl'
 
 // Strings for report form 'Greinargerð'
@@ -42,6 +43,12 @@ export const rcReportForm = {
           'Þess er krafist að {accusedName}{accusedNationalId}sæti{extensionSuffix} {caseType} með úrskurði {court}, til {requestedValidToDate}{isolationSuffix}.',
         description:
           'Notaður sem sjálfgefinn texti í textaboxi fyrir "dómkröfur" á greinargerðar skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+      autofillV2: {
+        id: 'judicial.system.restriction_cases:report_form.demands.autofill_v2',
+        defaultMessage: `Þess er krafist að {accusedName}{accusedNationalId}sæti{isExtended, select, yes { áframhaldandi} other {}} {caseType, select, ${CaseType.ADMISSION_TO_FACILITY} {vistun á viðeigandi stofnun} ${CaseType.TRAVEL_BAN} {farbanni} other {gæsluvarðhaldi}} með úrskurði {court}, til {requestedValidToDate}{hasIsolationRequest, select, yes {, og verði gert að sæta einangrun á meðan á varðhaldi stendur} other {}}.`,
+        description:
+          'Notaður sem sjálfgefinn texti í textaboxi fyrir "dómkröfur" á greinargerðar skrefi í gæsluvarðhalds-, vistunar- og farbannsmálum.',
       },
     }),
     caseFacts: defineMessages({
