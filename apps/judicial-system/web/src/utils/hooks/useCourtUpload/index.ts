@@ -106,7 +106,7 @@ export const useCourtUpload = (
       const xFiles = files as CaseFile[]
       xFiles.forEach(async (file) => {
         try {
-          if (file.state === CaseFileState.STORED_IN_RVG) {
+          if (file.state === CaseFileState.STORED_IN_RVG && file.key) {
             setFileUploadStatus(workingCase, file, 'uploading')
 
             await uploadFileToCourtMutation({

@@ -16,6 +16,10 @@ on:
       - 'infra/**'
       - '**/infra/**'
 
+defaults:
+  run:
+    shell: bash
+
 env:
   DEVOPS_DEBUG: ${{ secrets.DEVOPS_DEBUG }}
   AWS_MAX_ATTEMPTS: 10
@@ -23,7 +27,7 @@ env:
 
 jobs:
   prepare:
-    runs-on: kubernetes-runner
+    runs-on: kubernetes-runner    
     outputs:
       ENVS: ${{ steps.select_envs.outputs.ENVS }}
     steps:
@@ -40,13 +44,16 @@ jobs:
           echo "::set-output name=ENVS::{\"env\":$ENVS_JSON}"
 
   helm-values-validation:
-    runs-on: kubernetes-runner
+    runs-on: kubernetes-runner    
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: '14'
+
+      - name: Setup yarn
+        run: npm install -g yarn
 
       - name: Cache for NodeJS dependencies
         id: node-modules
@@ -74,12 +81,12 @@ jobs:
     needs:
       - prepare
       - helm-values-validation # waiting on this job so the cache would be prepared
-    runs-on: kubernetes-runner
+    runs-on: kubernetes-runner    
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.ENVS) }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Cache for NodeJS dependencies
         id: node-modules

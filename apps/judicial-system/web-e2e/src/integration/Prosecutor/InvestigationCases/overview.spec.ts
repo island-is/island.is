@@ -1,15 +1,15 @@
 import faker from 'faker'
 
+import { Case } from '@island.is/judicial-system/types'
+import { IC_POLICE_CONFIRMATION_ROUTE } from '@island.is/judicial-system/consts'
+
 import {
   investigationCaseAccusedAddress,
   investigationCaseAccusedName,
   makeInvestigationCase,
   makeProsecutor,
-} from '@island.is/judicial-system/formatters'
-import { Case } from '@island.is/judicial-system/types'
-import { IC_POLICE_CONFIRMATION_ROUTE } from '@island.is/judicial-system/consts'
-
-import { intercept } from '../../../utils'
+  intercept,
+} from '../../../utils'
 
 describe(`${IC_POLICE_CONFIRMATION_ROUTE}/:id`, () => {
   const demands = faker.lorem.paragraph()
