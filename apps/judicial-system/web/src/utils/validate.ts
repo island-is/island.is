@@ -31,22 +31,7 @@ const someDefendantIsInvalid = (workingCase: Case) => {
   )
 }
 
-export const validate = (value: string, validation: Validation) => {
-  if (!value) {
-    if (validation === 'empty') {
-      return { isValid: false, errorMessage: 'Reitur má ekki vera tómur' }
-    } else {
-      return { isValid: true, errorMessage: '' }
-    }
-  } else {
-    const v = getRegexByValidation(validation)
-
-    const isValid = v.regex.test(value)
-    return { isValid, errorMessage: isValid ? '' : v.errorMessage }
-  }
-}
-
-export const getRegexByValidation = (validation: Validation) => {
+const getRegexByValidation = (validation: Validation) => {
   switch (validation) {
     case 'empty':
       return {
@@ -92,6 +77,21 @@ export const getRegexByValidation = (validation: Validation) => {
         errorMessage: '',
       }
     }
+  }
+}
+
+export const validate = (value: string, validation: Validation) => {
+  if (!value) {
+    if (validation === 'empty') {
+      return { isValid: false, errorMessage: 'Reitur má ekki vera tómur' }
+    } else {
+      return { isValid: true, errorMessage: '' }
+    }
+  } else {
+    const v = getRegexByValidation(validation)
+
+    const isValid = v.regex.test(value)
+    return { isValid, errorMessage: isValid ? '' : v.errorMessage }
   }
 }
 
@@ -159,8 +159,8 @@ export const isPoliceDemandsStepValidRC = (workingCase: Case) => {
   return (
     validate(workingCase.lawsBroken || '', 'empty').isValid &&
     validate(workingCase.requestedValidToDate || '', 'date-format').isValid &&
-    workingCase.legalProvisions &&
-    workingCase.legalProvisions.length > 0
+    ((workingCase.legalProvisions && workingCase.legalProvisions.length > 0) ||
+      validate(workingCase.legalBasis || '', 'empty').isValid)
   )
 }
 
