@@ -4,6 +4,10 @@ on:
   pull_request: { }
   workflow_dispatch: { }
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   codeowners-check:
     name: Lint CODEOWNERS
