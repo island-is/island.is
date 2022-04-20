@@ -134,6 +134,28 @@ export function formatCourtResubmittedToCourtSmsNotification(
   })
 }
 
+export function formatProsecutorReadyForCourtEmailNotification(
+  formatMessage: FormatMessage,
+  caseType?: CaseType,
+  courtName?: string,
+  policeCaseNumber?: string,
+  overviewUrl?: string,
+) {
+  const subject = formatMessage(notifications.readyForCourt.subject, {
+    policeCaseNumber,
+  })
+
+  const body = formatMessage(notifications.readyForCourt.prosecutorHtmlV2, {
+    caseType,
+    courtName: courtName,
+    policeCaseNumber,
+    linkStart: `<a href="${overviewUrl}">`,
+    linkEnd: '</a>',
+  })
+
+  return { subject, body }
+}
+
 export function formatProsecutorReceivedByCourtSmsNotification(
   formatMessage: FormatMessage,
   type: CaseType,
