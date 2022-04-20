@@ -8,6 +8,7 @@ if (argv.job === 'worker') {
   })
 } else {
   import('./app').then((app) => {
+    // dummy change
     app.bootstrapServer()
   })
 }
