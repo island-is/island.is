@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
-import { PlausiblePageviewDetail } from '@island.is/service-portal/core'
 import { defineMessage } from 'react-intl'
-import { useParams, useLocation } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
 import {
@@ -19,12 +18,12 @@ import {
   ServicePortalModuleComponent,
   UserInfoLine,
   m,
-  ServicePortalPath,
 } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Parents } from '../../components/Parents/Parents'
 import ChildRegistrationModal from './ChildRegistrationModal'
-import { NATIONAL_REGISTRY_FAMILY_DETAIL } from '../../lib/queries/getNationalRegistryFamily'
+
+import { NATIONAL_REGISTRY_CHILDREN } from '../../lib/queries/getNationalChildren'
 
 const dataNotFoundMessage = defineMessage({
   id: 'sp.family:data-not-found',
@@ -36,34 +35,20 @@ const editLink = defineMessage({
   defaultMessage: 'Breyta hjá Þjóðskrá',
 })
 
-const FamilyMember: ServicePortalModuleComponent = ({ userInfo }) => {
+const Child: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.family')
   const [modalOpen, setModalOpen] = useState(false)
   const { formatMessage } = useLocale()
-  const location = useLocation()
   const { nationalId }: { nationalId: string | undefined } = useParams()
 
-  PlausiblePageviewDetail(
-    ServicePortalPath.FamilyMember.replace(':nationalId', 'child'),
-  )
-
-  const { data, loading, error } = useQuery<Query>(
-    NATIONAL_REGISTRY_FAMILY_DETAIL,
-    {
-      variables: { input: { familyMemberNationalId: nationalId } },
-    },
-  )
-  const { nationalRegistryFamilyDetail } = data || {}
+  const { data, loading, error } = useQuery<Query>(NATIONAL_REGISTRY_CHILDREN)
+  const { nationalRegistryChildren } = data || {}
 
   const person =
-    nationalRegistryFamilyDetail?.nationalId === nationalId
-      ? nationalRegistryFamilyDetail
-      : null
+    nationalRegistryChildren?.find((x) => x.nationalId === nationalId) || null
 
   const isChild = nationalId === userInfo.profile.nationalId
 
-  console.log('location', location)
-  console.log('datafam', data)
   if (!nationalId || error || (!loading && !person))
     return (
       <NotFound
@@ -217,6 +202,41 @@ const FamilyMember: ServicePortalModuleComponent = ({ userInfo }) => {
           loading={loading}
         />
         <Divider />
+        {!person?.fate && !error ? (
+          <>
+            <Parents
+              label={formatMessage({
+                id: 'sp.family:custody-parents',
+                defaultMessage: 'Forsjáraðilar',
+              })}
+              parent1={person?.nameCustody1}
+              parent2={person?.nameCustody2}
+              loading={loading}
+            />
+            <Parents
+              label={formatMessage(m.natreg)}
+              parent1={
+                person?.custody1 ? formatNationalId(person.custody1) : ''
+              }
+              parent2={
+                person?.custody2 ? formatNationalId(person.custody2) : ''
+              }
+              loading={loading}
+            />
+            <Parents
+              label={formatMessage({
+                id: 'sp.family:custody-status',
+                defaultMessage: 'Staða forsjár',
+              })}
+              parent1={person?.custodyText1}
+              parent2={person?.custodyText2}
+              loading={loading}
+            />
+            <Divider />
+          </>
+        ) : (
+          <Divider />
+        )}
       </Stack>
       {modalOpen ? (
         <ChildRegistrationModal
@@ -236,4 +256,4 @@ const FamilyMember: ServicePortalModuleComponent = ({ userInfo }) => {
   )
 }
 
-export default FamilyMember
+export default Child
