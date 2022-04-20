@@ -1,4 +1,6 @@
-import { useEffect } from 'react'
+import React from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { ChatBubble } from '../ChatBubble'
 
 const URL = 'https://web-chat.global.assistant.watson.appdomain.cloud'
 const FILENAME = 'WatsonAssistantChatEntry.js'
@@ -14,27 +16,25 @@ interface WatsonChatPanelProps {
   integrationID: string
   serviceInstanceID: string
   version?: string
+
+  // Whether the default launcher is shown
+  showLauncher?: boolean
 }
 
-export const WatsonChatPanel = ({
-  integrationID,
-  region,
-  serviceInstanceID,
-  version = 'latest',
-}: WatsonChatPanelProps) => {
-  useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let mainInstance: any
+export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
+  const { version = 'latest', showLauncher = true } = props
 
+  const watsonInstance = useRef(null)
+  const [isButtonVisible, setIsButtonVisible] = useState(false)
+
+  useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const windowObject: any = window
     windowObject.watsonAssistantChatOptions = {
-      integrationID,
-      region,
-      serviceInstanceID,
+      ...props,
       onLoad: (instance) => {
-        mainInstance = instance
-        instance.render()
+        watsonInstance.current = instance
+        instance.render().then(() => setIsButtonVisible(true))
       },
     }
 
@@ -44,12 +44,20 @@ export const WatsonChatPanel = ({
 
     return () => {
       scriptElement?.remove()
-      mainInstance?.destroy()
+      watsonInstance?.current?.destroy()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  return null
+  if (showLauncher) return null
+
+  return (
+    <ChatBubble
+      text="Hæ, get ég aðstoðað?"
+      isVisible={isButtonVisible}
+      onClick={watsonInstance.current?.openWindow}
+    />
+  )
 }
 
 export default WatsonChatPanel

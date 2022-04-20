@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import cn from 'classnames'
-import { FocusableBox, Text } from '@island.is/island-ui/core'
 import { config, endpoints } from './config'
 import { useWindowSize } from 'react-use'
-import * as styles from './BoostChatPanel.css'
+import { ChatBubble } from '../ChatBubble'
 
 declare global {
   interface Window {
@@ -73,22 +71,12 @@ export const BoostChatPanel: React.FC<BoostChatPanelProps> = ({
   }, [])
 
   return (
-    <div className={cn(styles.root, { [styles.hidden]: !showButton })}>
-      <FocusableBox
-        component="button"
-        tabIndex={0}
-        className={cn(styles.message, pushUp && styles.messagePushUp)}
-        onClick={() => {
-          window.boost.chatPanel.show()
-        }}
-      >
-        <Text variant="h5" color="white">
-          Hæ, get ég aðstoðað?
-        </Text>
-        <div className={styles.messageArrow} />
-        <div className={styles.messageArrowBorder} />
-      </FocusableBox>
-    </div>
+    <ChatBubble
+      text={'Hæ, get ég aðstoðað?'}
+      onClick={() => window.boost.chatPanel.show()}
+      pushUp={pushUp}
+      isVisible={showButton}
+    />
   )
 }
 
