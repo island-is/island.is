@@ -377,7 +377,7 @@ application-system-api:
     FISHING_LICENSE_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10012/Fiskistofa-Protected/veidileyfi-v1'
     FUNDING_GOVERNMENT_PROJECTS_APPLICATION_RECIPIENT_EMAIL_ADDRESS: 'island@island.is'
     FUNDING_GOVERNMENT_PROJECTS_APPLICATION_RECIPIENT_NAME: 'Stafrænt Ísland'
-    GRAPHQL_API_URL: 'http://web-api.islandis.svc.cluster.local/'
+    GRAPHQL_API_URL: 'http://web-api.islandis.svc.cluster.local'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/application-system'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     INSTITUTION_APPLICATION_RECIPIENT_EMAIL_ADDRESS: 'island@island.is'
