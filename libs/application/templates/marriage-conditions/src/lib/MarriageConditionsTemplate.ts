@@ -62,9 +62,6 @@ const MarriageConditionsTemplate: ApplicationTemplate<
       [States.PAYMENT]: {
         meta: {
           name: 'Payment state',
-          actionCard: {
-            description: 'payment',
-          },
           progress: 0.9,
           lifecycle: DefaultStateLifeCycle,
           onEntry: {
@@ -90,21 +87,102 @@ const MarriageConditionsTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: { target: States.DONE },
+          [DefaultEvents.SUBMIT]: { target: States.APPLICANT_DONE },
         },
       },
-      [States.DONE]: {
+      [States.APPLICANT_DONE]: {
         meta: {
           name: 'Done',
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
-
           roles: [
             {
               id: Roles.APPLICANT,
               formLoader: () => import('../forms/done').then((val) => val.done),
               read: 'all',
             },
+            {
+              id: Roles.ASSIGNED_SPOUSE,
+              formLoader: () => import('../forms/spouseConfirmation').then((val) => val.spouseConfirmation),
+              read: 'all',
+              write: 'all',
+              actions: [
+                { event: DefaultEvents.SUBMIT, name: 'Senda inn umsókn', type: 'primary' },
+              ],
+            }
+          ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: { target: States.SPOUSE_CONFIRMED },
+        },
+      },
+      [States.SPOUSE_CONFIRMED]: {
+        meta: {
+          name: 'spouse_confirmed',
+          progress: 1,
+          lifecycle: DefaultStateLifeCycle,
+          roles: [
+            {
+              id: Roles.ASSIGNED_SPOUSE,
+              formLoader: () => import('../forms/done').then((val) => val.done),
+              read: 'all',
+              write: 'all',
+            },
+            {
+              id: Roles.WITNESS_ONE,
+              formLoader: () => import('../forms/witnessOneConfirmation').then((val) => val.witnessOneConfirmation),
+              read: 'all',
+              write: 'all',
+              actions: [
+                { event: DefaultEvents.SUBMIT, name: 'Senda inn umsókn', type: 'primary' },
+              ],
+            }
+          ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: { target: States.WITNESS_ONE_CONFIRMED },
+        },
+      },
+      [States.WITNESS_ONE_CONFIRMED]: {
+        meta: {
+          name: 'witness_one_confirmed',
+          progress: 1,
+          lifecycle: DefaultStateLifeCycle,
+          roles: [
+            {
+              id: Roles.WITNESS_ONE,
+              formLoader: () => import('../forms/done').then((val) => val.done),
+              read: 'all',
+              write: 'all',
+            },
+            {
+              id: Roles.WITNESS_TWO,
+              formLoader: () => import('../forms/witnessTwoConfirmation').then((val) => val.witnessTwoConfirmation),
+              read: 'all',
+              write: 'all',
+              actions: [
+                { event: DefaultEvents.SUBMIT, name: 'Senda inn umsókn', type: 'primary' },
+              ],
+            }
+          ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: { target: States.WITNESS_TWO_CONFIRMED },
+        },
+      },
+      [States.WITNESS_TWO_CONFIRMED]: {
+        meta: {
+          name: 'witness_two_confirmed',
+          progress: 1,
+          lifecycle: DefaultStateLifeCycle,
+
+          roles: [
+            {
+              id: Roles.WITNESS_TWO,
+              formLoader: () => import('../forms/done').then((val) => val.done),
+              read: 'all',
+              write: 'all',
+            }
           ],
         },
         type: 'final' as const,
@@ -115,7 +193,16 @@ const MarriageConditionsTemplate: ApplicationTemplate<
     nationalId: string,
     application: Application,
   ): ApplicationRole | undefined {
-    if (application.applicant === nationalId) {
+    if (application.state === States.APPLICANT_DONE) {
+      return Roles.ASSIGNED_SPOUSE
+    } else if (application.state === States.SPOUSE_CONFIRMED) {
+      return Roles.WITNESS_ONE
+    } else if (application.state === States.WITNESS_ONE_CONFIRMED) {
+      return Roles.WITNESS_TWO
+    } else if (application.state === States.WITNESS_TWO_CONFIRMED) {
+      return Roles.WITNESS_TWO
+    }
+    else if (application.applicant === nationalId) {
       return Roles.APPLICANT
     }
   },

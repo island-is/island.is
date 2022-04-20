@@ -49,7 +49,7 @@ export const ApplicationOverview: FC<FieldBaseProps> = ({ application }) => {
           </Box>
         </Box>
       </Box>
-      <Box>
+      <Box marginTop={4}>
         <Text variant="h3" marginBottom={3}>
           {'Hjónaefni 2'}
         </Text>
@@ -126,23 +126,6 @@ export const ApplicationOverview: FC<FieldBaseProps> = ({ application }) => {
             <Text>{witness2.email}</Text>
           </Box>
         </Box>
-      </Box>
-      <Box marginTop={5}>
-        <Box paddingBottom={4}>
-          <Divider />
-        </Box>
-        <Box paddingBottom={3}>
-          <Checkbox
-            value={''}
-            label={'Við ætlum að láta gefa okkur saman hjá Sýslumanni'}
-          />
-        </Box>
-        <Text variant="small">
-          Hjónaefni ábyrgjast hér með undirskrift sinni að upplýsingar gefnar af
-          þeim eru réttar og lýsa yfir að viðlögðum drengskap að þau viti ekki
-          um tálma á fyrirhuguðum hjúskap sínum, sbr. II. og III. kafla laga nr.
-          31/1993.
-        </Text>
       </Box>
     </>
   )

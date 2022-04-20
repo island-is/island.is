@@ -19,7 +19,7 @@ export class MarriageConditionsSubmissionService {
     const response = await this.sharedTemplateAPIService.createCharge(
       auth.authorization,
       id,
-      'AY114',
+      'AY110',
     )
 
     console.log('RESPONSE', response)
@@ -34,8 +34,6 @@ export class MarriageConditionsSubmissionService {
   }
 
   async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
-    console.log('submit', application)
-
     /*const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
       auth.authorization,
       application.id,

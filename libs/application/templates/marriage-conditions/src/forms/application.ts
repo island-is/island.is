@@ -12,6 +12,7 @@ import {
   buildTextField,
   buildSubmitField,
   DefaultEvents,
+  buildDescriptionField,
 } from '@island.is/application/core'
 import type { User } from '@island.is/api/domains/national-registry'
 import { format as formatNationalId } from 'kennitala'
@@ -88,7 +89,7 @@ export const getApplication = (): Form => {
               }),
               buildTextField({
                 id: 'applicant.name',
-                title: m.name,
+                title: 'Nafn',
                 width: 'half',
                 backgroundColor: 'white',
                 defaultValue: (application: Application) => {
@@ -129,7 +130,17 @@ export const getApplication = (): Form => {
                 title: '',
                 component: 'InfoAlert',
               }),
-              buildTextField({
+              buildCustomField({
+                id: 'spouse.nationalId',
+                title: '',
+                component: 'NationalIdWithName',
+              }),
+              buildDescriptionField({
+                id: 'spouse.name',
+                title: '',
+                description: ''
+              }),
+              /*buildTextField({
                 id: 'spouse.nationalId',
                 title: m.nationalId,
                 width: 'half',
@@ -141,7 +152,7 @@ export const getApplication = (): Form => {
                 title: m.name,
                 width: 'half',
                 backgroundColor: 'blue',
-              }),
+              }),*/
               buildTextField({
                 id: 'spouse.phone',
                 title: m.phone,
