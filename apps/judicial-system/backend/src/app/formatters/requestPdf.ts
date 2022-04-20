@@ -31,6 +31,7 @@ import {
   setTitle,
   addNormalJustifiedText,
   addCoatOfArms,
+  addPoliceStar,
 } from './pdfHelpers'
 import { writeFile } from './writeFile'
 
@@ -67,10 +68,13 @@ function constructRestrictionRequestPdf(
   setTitle(doc, title)
 
   if (
-    !theCase.creatingProsecutor?.institution?.name?.startsWith(
+    theCase.creatingProsecutor?.institution?.name?.startsWith(
       'Lögreglustjórinn',
     )
   ) {
+    addPoliceStar(doc)
+    addEmptyLines(doc, 5)
+  } else {
     addCoatOfArms(doc)
     addEmptyLines(doc, 5)
   }
@@ -230,10 +234,13 @@ function constructInvestigationRequestPdf(
   setTitle(doc, title)
 
   if (
-    !theCase.creatingProsecutor?.institution?.name?.startsWith(
+    theCase.creatingProsecutor?.institution?.name?.startsWith(
       'Lögreglustjórinn',
     )
   ) {
+    addPoliceStar(doc)
+    addEmptyLines(doc, 5)
+  } else {
     addCoatOfArms(doc)
     addEmptyLines(doc, 5)
   }
