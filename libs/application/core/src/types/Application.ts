@@ -26,7 +26,7 @@ export interface ActionCardMetaData {
     label?: string
     variant?: ActionCardTag
   }
-  delete?: boolean
+  deleteButton?: boolean
 }
 
 export interface Application {

@@ -116,12 +116,12 @@ const ApplicationList = ({ applications, onClick, refetch }: Props) => {
               onClick: () => onClick(`${slug}/${application.id}`),
             }}
             progressMeter={{
-              active: false, // Boolean(application.progress), todo proper button
+              active: Boolean(application.progress),
               progress: application.progress,
               variant: stateDefaultData.progress.variant,
             }}
             deleteButton={{
-              visible: actionCard?.delete,
+              visible: actionCard?.deleteButton,
               onClick: handleDeleteApplication.bind(null, application.id),
               disabled: false,
               icon: 'trash',

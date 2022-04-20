@@ -34,7 +34,7 @@ class ActionCardMetaData {
   tag?: ActionCardTag
 
   @Field(() => Boolean, { nullable: true })
-  delete?: boolean
+  deleteButton?: boolean
 }
 
 @ObjectType()

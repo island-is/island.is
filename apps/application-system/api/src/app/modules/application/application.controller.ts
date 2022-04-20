@@ -1078,7 +1078,6 @@ export class ApplicationController {
       id,
       nationalId,
     )) as BaseApplication
-    console.log(existingApplication)
     const canDelete = await this.applicationAccessService.canDeleteApplication(
       existingApplication,
       nationalId,

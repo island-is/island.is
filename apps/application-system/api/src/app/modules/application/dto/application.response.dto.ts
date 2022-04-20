@@ -11,6 +11,7 @@ import {
   IsObject,
   IsString,
   IsArray,
+  IsBoolean,
 } from 'class-validator'
 
 class ActionCardTag {
@@ -43,8 +44,8 @@ class ActionCardMetaData {
 
   @ApiPropertyOptional()
   @Expose()
-  @IsObject()
-  delete?: boolean
+  @IsBoolean()
+  deleteButton?: boolean
 }
 
 export class ApplicationResponseDto {

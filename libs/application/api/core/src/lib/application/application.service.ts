@@ -281,7 +281,6 @@ export class ApplicationService {
   }
 
   async delete(id: string) {
-    console.log('Deleteing ', id)
     return this.applicationModel.destroy({ where: { id } })
   }
 }

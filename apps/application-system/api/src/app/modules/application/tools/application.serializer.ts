@@ -64,14 +64,12 @@ export class ApplicationSerializer
     const intl = await this.intlService.useIntl(namespaces, locale)
 
     const userRole = template.mapUserToRole(nationalId, application) ?? ''
-    //TODO now fix
-    const role = helper.getRoleInState(userRole)
+
+    const roleInState = helper.getRoleInState(userRole)
 
     const dto = plainToInstance(ApplicationResponseDto, {
       ...application,
-      ...helper.getReadableAnswersAndExternalData(
-        template.mapUserToRole(nationalId, application) ?? '',
-      ),
+      ...helper.getReadableAnswersAndExternalData(userRole),
       actionCard: {
         title: actionCardMeta.title
           ? intl.formatMessage(actionCardMeta.title)
@@ -85,9 +83,7 @@ export class ApplicationSerializer
             ? intl.formatMessage(actionCardMeta.tag.label)
             : null,
         },
-        cta: {
-          delete: role?.delete,
-        },
+        deleteButton: roleInState?.delete,
       },
       name: intl.formatMessage(template.name),
       institution: template.institution
