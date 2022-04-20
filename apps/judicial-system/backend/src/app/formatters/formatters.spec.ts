@@ -26,6 +26,7 @@ import {
   formatDefenderRevokedEmailNotification,
   formatProsecutorReceivedByCourtSmsNotification,
   formatCourtResubmittedToCourtSmsNotification,
+  formatProsecutorReadyForCourtEmailNotification,
 } from './formatters'
 
 export const makeProsecutor = (): User => {
@@ -441,6 +442,103 @@ describe('formatReadyForCourtSmsNotification', () => {
   })
 })
 
+describe('formatProsecutorReadyForCourtEmailNotification', () => {
+  const messages = {
+    ...notifications.readyForCourt,
+  }
+  let formatMessage: FormatMessage
+  beforeAll(() => {
+    const intl = createTestIntl('is-IS', messages)
+    formatMessage = intl.formatMessage
+  })
+
+  test('should format ready for court email subject', () => {
+    // Arrange
+    const type = CaseType.CUSTODY
+    const court = 'Héraðsdómur Reykjavíkur'
+    const policeCaseNumber = '1234567'
+    const overviewUrl = 'https://rettarvorslugatt.island.is/test/overview'
+
+    // Act
+    const res = formatProsecutorReadyForCourtEmailNotification(
+      formatMessage,
+      type,
+      court,
+      policeCaseNumber,
+      overviewUrl,
+    )
+
+    // Assert
+    expect(res.subject).toBe('Krafa í máli 1234567')
+  })
+
+  test('should format ready for court email for custody cases', () => {
+    // Arrange
+    const type = CaseType.CUSTODY
+    const court = 'Héraðsdómur Reykjavíkur'
+    const policeCaseNumber = '1234567'
+    const overviewUrl = 'https://rettarvorslugatt.island.is/test/overview'
+
+    // Act
+    const res = formatProsecutorReadyForCourtEmailNotification(
+      formatMessage,
+      type,
+      court,
+      policeCaseNumber,
+      overviewUrl,
+    )
+
+    // Assert
+    expect(res.body).toBe(
+      'Þú hefur sent kröfu um gæsluvarðhald á Héraðsdómur Reykjavíkur vegna LÖKE máls 1234567. Skjalið er aðgengilegt undir <a href="https://rettarvorslugatt.island.is/test/overview">málinu í Réttarvörslugátt</a>.',
+    )
+  })
+
+  test('should format ready for court email for travel ban cases', () => {
+    // Arrange
+    const type = CaseType.TRAVEL_BAN
+    const court = 'Héraðsdómur Reykjaness'
+    const policeCaseNumber = '66666'
+    const overviewUrl = 'https://rettarvorslugatt.island.is/test/overview'
+
+    // Act
+    const res = formatProsecutorReadyForCourtEmailNotification(
+      formatMessage,
+      type,
+      court,
+      policeCaseNumber,
+      overviewUrl,
+    )
+
+    // Assert
+    expect(res.body).toBe(
+      'Þú hefur sent kröfu um farbann á Héraðsdómur Reykjaness vegna LÖKE máls 66666. Skjalið er aðgengilegt undir <a href="https://rettarvorslugatt.island.is/test/overview">málinu í Réttarvörslugátt</a>.',
+    )
+  })
+
+  test('should format ready for court email for travel ban cases', () => {
+    // Arrange
+    const type = CaseType.ADMISSION_TO_FACILITY
+    const court = 'Héraðsdómur Reykjaness'
+    const policeCaseNumber = '66666'
+    const overviewUrl = 'https://rettarvorslugatt.island.is/test/overview'
+
+    // Act
+    const res = formatProsecutorReadyForCourtEmailNotification(
+      formatMessage,
+      type,
+      court,
+      policeCaseNumber,
+      overviewUrl,
+    )
+
+    // Assert
+    expect(res.body).toBe(
+      'Þú hefur sent kröfu um vistun á viðeigandi stofnun á Héraðsdómur Reykjaness vegna LÖKE máls 66666. Skjalið er aðgengilegt undir <a href="https://rettarvorslugatt.island.is/test/overview">málinu í Réttarvörslugátt</a>.',
+    )
+  })
+})
+
 describe('formatProsecutorReceivedByCourtSmsNotification', () => {
   const messages = {
     prosecutorReceivedByCourt: notifications.prosecutorReceivedByCourt,
@@ -816,6 +914,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
 
   test('should format court date notification', () => {
     // Arrange
+    const caseType = CaseType.CUSTODY
     const prosecutorOffice = 'Lögreglustjórinn á höfuðborgarsvæðinu'
     const court = 'Héraðsdómur Austurlands'
     const courtDate = new Date('2021-02-04T02:02')
@@ -830,6 +929,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
     // Act
     const res = formatPrisonCourtDateEmailNotification(
       formatMessage,
+      caseType,
       prosecutorOffice,
       court,
       courtDate,
@@ -850,6 +950,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
 
   test('should format court date notification with unknown gender', () => {
     // Arrange
+    const caseType = CaseType.CUSTODY
     const prosecutorOffice = 'Lögreglustjórinn á höfuðborgarsvæðinu'
     const court = 'Héraðsdómur Austurlands'
     const courtDate = new Date('2021-02-04T02:02')
@@ -864,6 +965,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
     // Act
     const res = formatPrisonCourtDateEmailNotification(
       formatMessage,
+      caseType,
       prosecutorOffice,
       court,
       courtDate,
@@ -884,6 +986,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
 
   test('should format court date notification with no isolation', () => {
     // Arrange
+    const caseType = CaseType.CUSTODY
     const prosecutorOffice = 'Lögreglustjórinn á höfuðborgarsvæðinu'
     const court = 'Héraðsdómur Austurlands'
     const courtDate = new Date('2021-02-04T02:02')
@@ -898,6 +1001,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
     // Act
     const res = formatPrisonCourtDateEmailNotification(
       formatMessage,
+      caseType,
       prosecutorOffice,
       court,
       courtDate,
@@ -918,6 +1022,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
 
   test('should format court date notification with no defender', () => {
     // Arrange
+    const caseType = CaseType.CUSTODY
     const prosecutorOffice = 'Lögreglustjórinn á höfuðborgarsvæðinu'
     const court = 'Héraðsdómur Austurlands'
     const courtDate = new Date('2021-02-04T02:02')
@@ -932,6 +1037,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
     // Act
     const res = formatPrisonCourtDateEmailNotification(
       formatMessage,
+      caseType,
       prosecutorOffice,
       court,
       courtDate,
@@ -952,6 +1058,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
 
   test('should format court date notification for extension requests', () => {
     // Arrange
+    const caseType = CaseType.CUSTODY
     const prosecutorOffice = 'Lögreglustjórinn á höfuðborgarsvæðinu'
     const court = 'Héraðsdómur Austurlands'
     const courtDate = new Date('2021-02-11T12:02')
@@ -966,6 +1073,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
     // Act
     const res = formatPrisonCourtDateEmailNotification(
       formatMessage,
+      caseType,
       prosecutorOffice,
       court,
       courtDate,
@@ -981,6 +1089,42 @@ describe('formatPrisonCourtDateEmailNotification', () => {
     // Assert
     expect(res).toBe(
       'Lögreglustjórinn á höfuðborgarsvæðinu hefur sent kröfu um áframhaldandi gæsluvarðhald til Héraðsdóms Austurlands og verður málið tekið fyrir fimmtudaginn 11. febrúar 2021, kl. 12:02.<br/><br/>Nafn sakbornings: Maggi Murder.<br/><br/>Kyn sakbornings: Karl.<br/><br/>Krafist er gæsluvarðhalds til mánudagsins 12. ágúst 2030, kl. 08:25.<br/><br/>Ekki er farið fram á einangrun.<br/><br/>Talsmaður sakbornings hefur ekki verið skráður.',
+    )
+  })
+
+  test('should format request for admission to facility', () => {
+    // Arrange
+    const caseType = CaseType.ADMISSION_TO_FACILITY
+    const prosecutorOffice = 'Lögreglustjórinn á höfuðborgarsvæðinu'
+    const court = 'Héraðsdómur Austurlands'
+    const courtDate = new Date('2021-02-11T12:02')
+    const accusedName = 'Maggi Murder'
+    const accusedGender = Gender.MALE
+    const requestedValidToDate = new Date('2030-08-12T08:25')
+    const isolation = false
+    const defenderName = undefined
+    const isExtension = true
+    const sessionArrangements = SessionArrangements.ALL_PRESENT_SPOKESPERSON
+
+    // Act
+    const res = formatPrisonCourtDateEmailNotification(
+      formatMessage,
+      caseType,
+      prosecutorOffice,
+      court,
+      courtDate,
+      accusedName,
+      accusedGender,
+      requestedValidToDate,
+      isolation,
+      defenderName,
+      isExtension,
+      sessionArrangements,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Lögreglustjórinn á höfuðborgarsvæðinu hefur sent kröfu um áframhaldandi vistunar á viðeignadi stofnun til Héraðsdóms Austurlands og verður málið tekið fyrir fimmtudaginn 11. febrúar 2021, kl. 12:02.<br/><br/>Nafn sakbornings: Maggi Murder.<br/><br/>Kyn sakbornings: Karl.<br/><br/>Krafist er vistunar til mánudagsins 12. ágúst 2030, kl. 08:25.<br/><br/>Ekki er farið fram á einangrun.<br/><br/>Talsmaður sakbornings hefur ekki verið skráður.',
     )
   })
 })
@@ -1123,21 +1267,44 @@ describe('formatDefenderCourtDateEmailNotification', () => {
 })
 
 describe('formatPrisonRulingEmailNotification', () => {
-  const messages = { prisonRulingEmail: notifications.prisonRulingEmail }
+  const messages = { ...notifications.prisonRulingEmail }
   let formatMessage: FormatMessage
   beforeAll(() => {
     formatMessage = createTestIntl('is-IS', messages).formatMessage
   })
-  test('should format prison ruling notification', () => {
+  test('should format prison ruling notification for custody', () => {
     // Arrange
     const courtEndTime = new Date('2020-12-20T13:32')
+    const caseType = CaseType.CUSTODY
 
     // Act
-    const res = formatPrisonRulingEmailNotification(formatMessage, courtEndTime)
+    const res = formatPrisonRulingEmailNotification(
+      formatMessage,
+      caseType,
+      courtEndTime,
+    )
 
     // Assert
     expect(res).toBe(
-      'Meðfylgjandi er vistunarseðill gæsluvarðhaldsfanga sem var úrskurðaður í gæsluvarðhald í héraðsdómi 20. desember 2020, auk þingbókar þar sem úrskurðarorðin koma fram.',
+      'Meðfylgjandi er vistunarseðill aðila sem var úrskurðaður í gæsluvarðhald í héraðsdómi 20. desember 2020, auk þingbókar þar sem úrskurðarorðin koma fram.',
+    )
+  })
+
+  test('should format prison ruling notification for admission to facility', () => {
+    // Arrange
+    const courtEndTime = new Date('2020-12-20T13:32')
+    const caseType = CaseType.ADMISSION_TO_FACILITY
+
+    // Act
+    const res = formatPrisonRulingEmailNotification(
+      formatMessage,
+      caseType,
+      courtEndTime,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Meðfylgjandi er vistunarseðill aðila sem var úrskurðaður í vistun á viðeigandi stofnun í héraðsdómi 20. desember 2020, auk þingbókar þar sem úrskurðarorðin koma fram.',
     )
   })
 })
@@ -1271,8 +1438,9 @@ describe('formatPrisonRevokedEmailNotification', () => {
     formatMessage = createTestIntl('is-IS', messages).formatMessage
   })
 
-  test('should format revoked notification', () => {
+  test('should format revoked notification for custody', () => {
     // Arrange
+    const caseType = CaseType.CUSTODY
     const prosecutorOffice = 'Aðalsaksóknari'
     const court = 'Héraðsdómur Þingvalla'
     const courtDate = new Date('2021-01-24T08:15')
@@ -1283,6 +1451,7 @@ describe('formatPrisonRevokedEmailNotification', () => {
     // Act
     const res = formatPrisonRevokedEmailNotification(
       formatMessage,
+      caseType,
       prosecutorOffice,
       court,
       courtDate,
@@ -1294,6 +1463,34 @@ describe('formatPrisonRevokedEmailNotification', () => {
     // Assert
     expect(res).toBe(
       'Aðalsaksóknari hefur afturkallað kröfu um gæsluvarðhald sem send var til Héraðsdóms Þingvalla og taka átti fyrir sunnudaginn 24. janúar 2021, kl. 08:15.<br/><br/>Nafn sakbornings: Gaui Glæpon.<br/><br/>Verjandi sakbornings: Dóri.',
+    )
+  })
+
+  test('should format revoked notification for admission to facility', () => {
+    // Arrange
+    const caseType = CaseType.ADMISSION_TO_FACILITY
+    const prosecutorOffice = 'Aðalsaksóknari'
+    const court = 'Héraðsdómur Þingvalla'
+    const courtDate = new Date('2021-01-24T08:15')
+    const accusedName = 'Gaui Glæpon'
+    const defenderName = 'Dóri'
+    const isExtension = false
+
+    // Act
+    const res = formatPrisonRevokedEmailNotification(
+      formatMessage,
+      caseType,
+      prosecutorOffice,
+      court,
+      courtDate,
+      accusedName,
+      defenderName,
+      isExtension,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Aðalsaksóknari hefur afturkallað kröfu um vistun sem send var til Héraðsdóms Þingvalla og taka átti fyrir sunnudaginn 24. janúar 2021, kl. 08:15.<br/><br/>Nafn sakbornings: Gaui Glæpon.<br/><br/>Verjandi sakbornings: Dóri.',
     )
   })
 })
