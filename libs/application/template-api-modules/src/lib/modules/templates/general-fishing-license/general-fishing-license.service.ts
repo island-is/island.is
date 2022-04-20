@@ -3,7 +3,10 @@ import { TemplateApiModuleActionProps } from '../../../types'
 import { SharedTemplateApiService } from '../../shared'
 import { GeneralFishingLicenseAnswers } from '@island.is/application/templates/general-fishing-license'
 import { getValueViaPath } from '@island.is/application/core'
-import { UmsoknirApi } from '@island.is/clients/fishing-license'
+import {
+  FishingLicenseCodeType,
+  UmsoknirApi,
+} from '@island.is/clients/fishing-license'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
@@ -45,7 +48,7 @@ export class GeneralFishingLicenseService {
   }
 
   async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
-    /* const paymentStatus = await this.sharedTemplateAPIService.getPaymentStatus(
+    const paymentStatus = await this.sharedTemplateAPIService.getPaymentStatus(
       auth.authorization,
       application.id,
     )
@@ -57,13 +60,13 @@ export class GeneralFishingLicenseService {
       throw new Error(
         'Ekki er hægt að skila inn umsókn af því að ekki hefur tekist að taka við greiðslu.',
       )
-    } */
+    }
 
     try {
       const applicantNationalId = getValueViaPath(
         application.answers,
         'applicant.nationalId',
-      ) as number
+      ) as string
       const registrationNumber = getValueViaPath(
         application.answers,
         'shipSelection.registrationNumber',
@@ -72,7 +75,6 @@ export class GeneralFishingLicenseService {
         application.answers,
         'fishingLicense.license',
       ) as string
-      this.umsoknirApi
 
       await this.umsoknirApi
         .withMiddleware(new AuthMiddleware(auth as Auth))
@@ -82,7 +84,12 @@ export class GeneralFishingLicenseService {
             utgerdKennitala: applicantNationalId,
             skipaskrarnumer: parseInt(registrationNumber, 10),
             umbedinGildistaka: null,
-            veidileyfiKodi: fishingLicense,
+            veidileyfiKodi:
+              fishingLicense === 'catchMark'
+                ? FishingLicenseCodeType.catchMark
+                : fishingLicense === 'hookCatchLimit'
+                ? FishingLicenseCodeType.hookCatchLimit
+                : '0',
           },
         })
       return { success: true }

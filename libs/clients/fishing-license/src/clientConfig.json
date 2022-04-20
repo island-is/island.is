@@ -359,15 +359,13 @@
         "properties": {
           "umsaekjandiKennitala": {
             "pattern": "^\\d{10}$",
-            "type": "integer",
-            "description": "Kennitala umsækjanda.",
-            "format": "int32"
+            "type": "string",
+            "description": "Kennitala umsækjanda."
           },
           "utgerdKennitala": {
             "pattern": "^\\d{10}$",
-            "type": "integer",
-            "description": "Kennitala útgerðaraðila.",
-            "format": "int32"
+            "type": "string",
+            "description": "Kennitala útgerðaraðila."
           },
           "skipaskrarnumer": {
             "type": "integer",

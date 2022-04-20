@@ -67,7 +67,7 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.PAYMENT]: { target: States.SUBMITTED },
+          [DefaultEvents.PAYMENT]: { target: States.PAYMENT },
           [DefaultEvents.REJECT]: {
             target: States.DECLINED,
           },
@@ -112,7 +112,6 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
         meta: {
           name: application.general.name.defaultMessage,
           progress: 1,
-          // Application is only suppose to live for an hour while building it, change later
           lifecycle: pruneAtMidnight(),
           onEntry: {
             apiModuleAction: ApiActions.submitApplication,
@@ -126,7 +125,6 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
                 ).then((val) =>
                   Promise.resolve(val.GeneralFishingLicenseSubmittedForm),
                 ),
-              read: 'all',
             },
           ],
         },
@@ -144,7 +142,6 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
                 import('../forms/GeneralFishingLicenseDeclinedForm').then(
                   (val) => val.GeneralFishingLicenseDeclinedForm,
                 ),
-              read: 'all',
             },
           ],
         },
