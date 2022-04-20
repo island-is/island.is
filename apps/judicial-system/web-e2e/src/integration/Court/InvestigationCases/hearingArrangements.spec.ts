@@ -24,6 +24,7 @@ describe(`${IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
       comments: comment,
     }
 
+    // dummy change
     intercept(caseDataAddition)
 
     cy.contains(comment)
