@@ -37,7 +37,7 @@ export class AnnouncementOfDeathService {
     application,
   }: TemplateApiModuleActionProps): Promise<Array<RealEstateAddress>> {
     return this.syslumennService.getRealEstateAddress(
-      application.answers.assetId,
+      application.answers.assetId as string,
     )
   }
 

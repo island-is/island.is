@@ -20,6 +20,7 @@ import {
 } from '@island.is/application/core'
 import { format as formatNationalId } from 'kennitala'
 import { NationalRegistryUser, UserProfile } from '../../types/schema'
+import get from 'lodash/get'
 import { m } from '../../lib/messages'
 import { RoleConfirmationEnum } from '../../types'
 import CoatOfArms from '../../assets/CoatOfArms'
@@ -32,68 +33,64 @@ export const prerequisite = (): Form => {
     logo: CoatOfArms,
     children: [
       buildSection({
-        id: 'prerequisite',
-        title: 'Forsöfnun gagna',
+        id: 'externalData',
+        title: m.dataCollectionTitle,
         children: [
-          buildMultiField({
-            title: 'Staðfesting',
-            children: [
-              buildDescriptionField({
-                id: 'disclaimer',
-                title: 'Gögn um dánarbú',
-                description:
-                  'Ef þú heldur áfram munu gögn um verða sótt um hvort þú sért aðstandi að dánarbúi eður ei.',
+          buildExternalDataProvider({
+            id: 'approveExternalData',
+            title: m.dataCollectionTitle,
+            subTitle: m.dataCollectionSubtitle,
+            checkboxLabel: m.dataCollectionCheckboxLabel,
+            dataProviders: [
+              buildDataProviderItem({
+                id: 'nationalRegistry',
+                type: 'NationalRegistryProvider',
+                title: m.dataCollectionNationalRegistryTitle,
+                subTitle: m.dataCollectionNationalRegistrySubtitle,
               }),
-              buildDescriptionField({
-                id: 'disclaimer-2',
-                title: 'Fyrir forritara',
-                description:
-                  'Spurning hvort það eigi ekki bara að færa allt gagnasöfnunarskrefið hingað? Hvað segja hönnuðir?',
-              }),
-              buildSubmitField({
-                id: 'submit',
-                title: 'Samþykkja',
-                placement: 'footer',
-                refetchApplicationAfterSubmit: true,
-                actions: [
-                  {
-                    event: DefaultEvents.SUBMIT,
-                    name: 'Samþykki að sækja dánarbúsuppýsingar',
-                    type: 'primary',
-                  },
-                ],
+              buildDataProviderItem({
+                id: 'userProfile',
+                type: 'UserProfileProvider',
+                title: m.dataCollectionUserProfileTitle,
+                subTitle: m.dataCollectionUserProfileSubtitle,
               }),
             ],
           }),
         ],
       }),
-
-      buildSection({
-        id: 'prereq-intro',
-        title: 'Inngangur',
+      buildMultiField({
+        id: 'externalDataSuccess',
+        title: 'Tókst að sækja gögn',
         children: [
           buildDescriptionField({
-            id: 'pod-desc',
+            id: 'externalDataSuccessDescription',
             title: '',
-            defaultValue: '',
-            description: '',
+            description: (application: Application) =>
+              `Jæja ${get(
+                application.externalData,
+                'nationalRegistry.data.fullName',
+                'félagi',
+              )}. Tókst að sækja gögn`,
+          }),
+          buildSubmitField({
+            id: 'toDraft',
+            placement: 'footer',
+            title: 'Hefja umsókn',
+            refetchApplicationAfterSubmit: true,
+            actions: [
+              {
+                event: 'SUBMIT',
+                name: 'Hefja umsókn',
+                type: 'primary',
+              },
+            ],
           }),
         ],
       }),
-      buildSection({
-        id: 'prereq-data',
-        title: 'Gagnaöflun',
-        children: [],
-      }),
-      buildSection({
-        id: 'prereq-info',
-        title: 'Upplýsingar',
-        children: [],
-      }),
-      buildSection({
-        id: 'prereq-overview',
-        title: 'Yfirlit',
-        children: [],
+      buildDescriptionField({
+        id: 'neverDisplayed',
+        title: '',
+        description: '',
       }),
     ],
   })

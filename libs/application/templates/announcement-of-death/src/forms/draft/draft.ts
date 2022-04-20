@@ -102,32 +102,6 @@ export const draft = (): Form => {
         ],
       }),
       buildSection({
-        id: 'externalData',
-        title: m.dataCollectionTitle,
-        children: [
-          buildExternalDataProvider({
-            id: 'approveExternalData',
-            title: m.dataCollectionTitle,
-            subTitle: m.dataCollectionSubtitle,
-            checkboxLabel: m.dataCollectionCheckboxLabel,
-            dataProviders: [
-              buildDataProviderItem({
-                id: 'nationalRegistry',
-                type: 'NationalRegistryProvider',
-                title: m.dataCollectionNationalRegistryTitle,
-                subTitle: m.dataCollectionNationalRegistrySubtitle,
-              }),
-              buildDataProviderItem({
-                id: 'userProfile',
-                type: 'UserProfileProvider',
-                title: m.dataCollectionUserProfileTitle,
-                subTitle: m.dataCollectionUserProfileSubtitle,
-              }),
-            ],
-          }),
-        ],
-      }),
-      buildSection({
         id: 'info',
         title: m.infoSectionTitle,
         children: [
