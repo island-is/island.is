@@ -52,17 +52,21 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
         {workingCase.defendants &&
           workingCase.defendants.map((defendant, index) => (
             <Box key={index}>
-              <Box marginBottom={1}>
-                <Text>
-                  {`${formatMessage(
-                    defendant.noNationalId ? core.dateOfBirth : core.nationalId,
-                  )}: ${
-                    defendant.noNationalId
-                      ? defendant.nationalId
-                      : formatNationalId(defendant.nationalId ?? '')
-                  }`}
-                </Text>
-              </Box>
+              {(!defendant.noNationalId || defendant.nationalId) && (
+                <Box marginBottom={1}>
+                  <Text>
+                    {`${formatMessage(
+                      defendant.noNationalId
+                        ? core.dateOfBirth
+                        : core.nationalId,
+                    )}: ${
+                      defendant.noNationalId
+                        ? defendant.nationalId
+                        : formatNationalId(defendant.nationalId ?? '')
+                    }`}
+                  </Text>
+                </Box>
+              )}
               <Box marginBottom={1}>
                 <Text>{`${formatMessage(core.fullName)}: ${
                   defendant.name

@@ -15,6 +15,10 @@ const EXCLUDED_ENVIRONMENT_NAMES = [
   'NOVA_PASSWORD',
 ]
 
+const OVERRIDE_ENVIRONMENT_NAMES: Record<string, string> = {
+  IDENTITY_SERVER_CLIENT_SECRET: '/k8s/local-dev/IDENTITY_SERVER_CLIENT_SECRET',
+}
+
 const client = new SSM(API_INITIALIZATION_OPTIONS)
 
 export const renderSecretsCommand = async (service: string) => {
@@ -50,6 +54,14 @@ export const renderSecrets = async (service: string) => {
     })
     .reduce((p, c) => p.concat(c), [])
     .filter(([envName]) => !EXCLUDED_ENVIRONMENT_NAMES.includes(envName))
+    .map((request) => {
+      const envName = request[0]
+      const ssmName = OVERRIDE_ENVIRONMENT_NAMES[envName]
+      if (ssmName) {
+        return [envName, ssmName]
+      }
+      return request
+    })
 
   const values = await getParams(secretRequests.map(([_, ssmName]) => ssmName))
 

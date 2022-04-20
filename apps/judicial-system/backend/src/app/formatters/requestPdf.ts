@@ -49,11 +49,17 @@ function constructRestrictionRequestPdf(
 
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
 
+  let caseTypeText = ''
+  if (CaseType.ADMISSION_TO_FACILITY) {
+    caseTypeText = formatMessage(core.caseType.admissionToFacility)
+  } else if (CaseType.TRAVEL_BAN) {
+    caseTypeText = formatMessage(core.caseType.travelBan)
+  } else if (CaseType.CUSTODY) {
+    caseTypeText = formatMessage(core.caseType.custody)
+  }
+
   const title = formatMessage(m.heading, {
-    caseType:
-      theCase.type === CaseType.CUSTODY
-        ? formatMessage(core.caseType.custody)
-        : formatMessage(core.caseType.travelBan),
+    caseType: caseTypeText,
   })
 
   setTitle(doc, title)
@@ -93,17 +99,22 @@ function constructRestrictionRequestPdf(
       addEmptyLines(doc)
     }
 
-    addNormalText(
-      doc,
-      `${formatMessage(
-        defendant.noNationalId ? m.baseInfo.dateOfBirth : m.baseInfo.nationalId,
-      )} ${
-        defendant.noNationalId
-          ? defendant.nationalId
-          : formatNationalId(defendant.nationalId ?? '')
-      }`,
-      'Helvetica',
-    )
+    if (!defendant.noNationalId) {
+      addNormalText(
+        doc,
+        `${formatMessage(m.baseInfo.nationalId)} ${formatNationalId(
+          defendant.nationalId ?? '',
+        )}`,
+        'Helvetica',
+      )
+    } else if (defendant.nationalId) {
+      addNormalText(
+        doc,
+        `${formatMessage(m.baseInfo.dateOfBirth)} ${defendant.nationalId}`,
+        'Helvetica',
+      )
+    }
+
     addNormalText(
       doc,
       `${formatMessage(m.baseInfo.fullName)} ${defendant.name ?? ''}`,
@@ -257,17 +268,22 @@ function constructInvestigationRequestPdf(
       addEmptyLines(doc)
     }
 
-    addNormalText(
-      doc,
-      `${formatMessage(
-        defendant.noNationalId ? m.baseInfo.dateOfBirth : m.baseInfo.nationalId,
-      )} ${
-        defendant.noNationalId
-          ? defendant.nationalId
-          : formatNationalId(defendant.nationalId ?? '')
-      }`,
-      'Helvetica',
-    )
+    if (!defendant.noNationalId) {
+      addNormalText(
+        doc,
+        `${formatMessage(m.baseInfo.nationalId)} ${formatNationalId(
+          defendant.nationalId ?? '',
+        )}`,
+        'Helvetica',
+      )
+    } else if (defendant.nationalId) {
+      addNormalText(
+        doc,
+        `${formatMessage(m.baseInfo.dateOfBirth)} ${defendant.nationalId}`,
+        'Helvetica',
+      )
+    }
+
     addNormalText(
       doc,
       `${formatMessage(m.baseInfo.fullName)} ${defendant.name ?? ''}`,
