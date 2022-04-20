@@ -45,7 +45,10 @@ function constructCustodyNoticePdf(
   setTitle(doc, 'Vistunarseðill')
   setLineGap(doc, 8)
   addHugeHeading(doc, 'Vistunarseðill', 'Helvetica-Bold')
-  addLargeHeading(doc, 'Úrskurður um gæsluvarðhald')
+  addLargeHeading(
+    doc,
+    formatMessage(custodyNotice.rulingTitle, { caseType: theCase.type }),
+  )
   addLargeHeading(
     doc,
     `Málsnúmer ${theCase.court?.name?.replace('dómur', 'dóms') ?? '?'} ${
@@ -65,29 +68,29 @@ function constructCustodyNoticePdf(
       ? theCase.defendants[0].name
       : 'Nafn ekki skráð',
   )
-  addNormalText(
-    doc,
-    `${
-      theCase.defendants &&
-      theCase.defendants.length > 0 &&
-      theCase.defendants[0].noNationalId
-        ? 'fd.'
-        : 'kt.'
-    } ${
-      theCase.defendants &&
-      theCase.defendants.length > 0 &&
-      theCase.defendants[0].noNationalId
-        ? theCase.defendants[0].nationalId
-        : formatNationalId(
-            theCase.defendants &&
-              theCase.defendants.length > 0 &&
-              theCase.defendants[0].nationalId
-              ? theCase.defendants[0].nationalId
-              : 'ekki skráð',
-          )
-    }`,
-    'Helvetica',
-  )
+
+  if (
+    theCase.defendants &&
+    theCase.defendants.length > 0 &&
+    theCase.defendants[0].noNationalId
+  ) {
+    if (theCase.defendants[0].nationalId) {
+      addNormalText(doc, `fd. ${theCase.defendants[0].nationalId}`, 'Helvetica')
+    }
+  } else {
+    addNormalText(
+      doc,
+      `kt. ${formatNationalId(
+        theCase.defendants &&
+          theCase.defendants.length > 0 &&
+          theCase.defendants[0].nationalId
+          ? theCase.defendants[0].nationalId
+          : 'ekki skráð',
+      )}`,
+      'Helvetica',
+    )
+  }
+
   addNormalText(
     doc,
     theCase.defendants &&
@@ -98,7 +101,11 @@ function constructCustodyNoticePdf(
   )
   addEmptyLines(doc, 2)
   setLineGap(doc, 8)
-  addMediumText(doc, 'Úrskurður um gæsluvarðhald', 'Helvetica-Bold')
+  addMediumText(
+    doc,
+    formatMessage(custodyNotice.rulingTitle, { caseType: theCase.type }),
+    'Helvetica-Bold',
+  )
   addNormalText(
     doc,
     `${theCase.court?.name}, ${formatDate(theCase.courtStartDate, 'PPP')}`,
@@ -151,7 +158,11 @@ function constructCustodyNoticePdf(
   if (theCase.isCustodyIsolation || custodyRestrictions) {
     addEmptyLines(doc, 2)
     setLineGap(doc, 8)
-    addMediumText(doc, 'Tilhögun gæsluvarðhalds', 'Helvetica-Bold')
+    addMediumText(
+      doc,
+      formatMessage(custodyNotice.arrangement, { caseType: theCase.type }),
+      'Helvetica-Bold',
+    )
 
     if (theCase.isCustodyIsolation) {
       const genderedAccused = formatMessage(core.accused, {
