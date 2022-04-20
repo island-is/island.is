@@ -6,14 +6,14 @@ import { CaseExistsGuard } from '../guards/caseExists.guard'
 import { CaseReadGuard } from '../guards/caseRead.guard'
 import { CaseController } from '../case.controller'
 
-describe('CaseController - Get request pdf guards', () => {
+describe('CaseController - Get custody notice pdf guards', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let guards: any[]
 
   beforeEach(() => {
     guards = Reflect.getMetadata(
       '__guards__',
-      CaseController.prototype.getRequestPdf,
+      CaseController.prototype.getCustodyNoticePdf,
     )
   })
 
