@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { ApplicationTypes } from '@island.is/application/core'
-import { TemplateApiModuleActionProps } from '../types'
+import { PerformActionResult, TemplateApiModuleActionProps } from '../types'
 import {
   ParentalLeaveService,
   ReferenceTemplateService,
@@ -21,22 +21,13 @@ import {
   ComplaintsToAlthingiOmbudsmanTemplateService,
   MortgageCertificateSubmissionService,
 } from './templates'
+import { NationalRegistryService } from './dataproviders/national-registry/national-registry.service'
 
 interface ApplicationApiAction {
   templateId: string
   type: string
   props: TemplateApiModuleActionProps
 }
-
-type PerformActionResult =
-  | {
-      success: true
-      response: unknown
-    }
-  | {
-      success: false
-      error: string
-    }
 
 @Injectable()
 export class TemplateAPIService {
@@ -59,6 +50,7 @@ export class TemplateAPIService {
     private readonly examplePaymentActionsService: ExamplePaymentActionsService,
     private readonly complaintsToAlthingiOmbudsman: ComplaintsToAlthingiOmbudsmanTemplateService,
     private readonly mortgageCertificateSubmissionService: MortgageCertificateSubmissionService,
+    private readonly nationalRegistry: NationalRegistryService,
   ) {}
 
   private async tryRunningActionOnService(
@@ -80,7 +72,8 @@ export class TemplateAPIService {
       | PSignSubmissionService
       | ExamplePaymentActionsService
       | ComplaintsToAlthingiOmbudsmanTemplateService
-      | MortgageCertificateSubmissionService,
+      | MortgageCertificateSubmissionService
+      | NationalRegistryService,
     action: ApplicationApiAction,
   ): Promise<PerformActionResult> {
     // No index signature with a parameter of type 'string' was found on type
@@ -114,6 +107,17 @@ export class TemplateAPIService {
   async performAction(
     action: ApplicationApiAction,
   ): Promise<PerformActionResult> {
+    if (action.type.includes('.')) {
+      const [serviceName, actionName] = action.type.split('.')
+      const service = (this as any)[serviceName]
+      if (service) {
+        return this.tryRunningActionOnService(service, {
+          ...action,
+          type: actionName,
+        })
+      }
+    }
+
     switch (action.templateId) {
       case ApplicationTypes.EXAMPLE:
         return this.tryRunningActionOnService(

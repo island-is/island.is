@@ -1,5 +1,5 @@
-import { IsArray, IsString } from 'class-validator'
-import { ApiProperty } from '@nestjs/swagger'
+import { IsArray, IsNumber, IsString } from 'class-validator'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
 
 class DataProviderDto {
@@ -10,6 +10,10 @@ class DataProviderDto {
   @IsString()
   @ApiProperty()
   type!: string
+
+  @ApiPropertyOptional()
+  @IsNumber()
+  order?: number
 }
 
 export class PopulateExternalDataDto {

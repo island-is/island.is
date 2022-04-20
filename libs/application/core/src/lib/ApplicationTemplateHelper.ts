@@ -11,6 +11,7 @@ import {
   FormValue,
 } from '../types/Application'
 import {
+  ApiDataProvider,
   ApplicationContext,
   ApplicationRole,
   ApplicationStateMachine,
@@ -18,6 +19,7 @@ import {
   ApplicationStateSchema,
   createApplicationMachine,
   ReadWriteValues,
+  RoleInState,
 } from '../types/StateMachine'
 import { ApplicationTemplate } from '../types/ApplicationTemplate'
 import { FormatMessage, StaticText } from '../types/Form'
@@ -265,5 +267,19 @@ export class ApplicationTemplateHelper<
     if (hasError) {
       return errorMap
     }
+  }
+
+  getRoleInState(role: ApplicationRole): RoleInState<TEvents> | undefined {
+    const stateInformation = this.getApplicationStateInformation(
+      this.application.state,
+    )
+    if (!stateInformation) return undefined
+
+    return stateInformation.roles?.find(({ id }) => id === role)
+  }
+
+  getDataProvidersFromRoleInState(role: ApplicationRole): ApiDataProvider[] {
+    const roleInState = this.getRoleInState(role)
+    return roleInState?.api ?? []
   }
 }

@@ -167,10 +167,13 @@ const FormExternalDataProvider: FC<{
           variables: {
             input: {
               id: applicationId,
-              dataProviders: relevantDataProviders.map(({ id, type }) => ({
-                id,
-                type,
-              })),
+              dataProviders: relevantDataProviders.map(
+                ({ id, type, order }) => ({
+                  id,
+                  type,
+                  order,
+                }),
+              ),
             },
             locale,
           },

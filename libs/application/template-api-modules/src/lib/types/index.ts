@@ -60,6 +60,15 @@ export interface EmailTemplateGeneratorProps {
     email: { sender: string; address: string }
   }
 }
+export type PerformActionResult =
+  | {
+      success: true
+      response: unknown
+    }
+  | {
+      success: false
+      error: string
+    }
 
 export type AssignmentEmailTemplateGenerator = (
   props: EmailTemplateGeneratorProps,

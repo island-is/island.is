@@ -52,7 +52,10 @@ import {
   getApplicationTemplateByTypeId,
   getApplicationTranslationNamespaces,
 } from '@island.is/application/template-loader'
-import { TemplateAPIService } from '@island.is/application/template-api-modules'
+import {
+  PerformActionResult,
+  TemplateAPIService,
+} from '@island.is/application/template-api-modules'
 import { mergeAnswers, DefaultEvents } from '@island.is/application/core'
 import { IntlService } from '@island.is/cms-translations'
 import { Audit, AuditService } from '@island.is/nest/audit'
@@ -90,8 +93,7 @@ import { ApplicationAccessService } from './tools/applicationAccess.service'
 import { CurrentLocale } from './utils/currentLocale'
 import { Application } from '@island.is/application/api/core'
 import { Documentation } from '@island.is/nest/swagger'
-import { ThinglysturEigandiFromJSON } from '@island.is/clients/assets'
-
+import { TemplateApiActionRunner } from './tools/templateApiActionRunner.service'
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('applications')
 @ApiHeader({
@@ -113,6 +115,7 @@ export class ApplicationController {
     private readonly applicationAccessService: ApplicationAccessService,
     @Optional() @InjectQueue('upload') private readonly uploadQueue: Queue,
     private intlService: IntlService,
+    private readonly templateApiActionRunner: TemplateApiActionRunner,
   ) {}
 
   @Scopes(ApplicationScope.read)
@@ -477,27 +480,54 @@ export class ApplicationController {
       existingApplication as BaseApplication,
     )
     const intl = await this.intlService.useIntl(namespaces, locale)
-    const templateDataProviders = await getApplicationDataProviders(
-      existingApplication.typeId,
-    )
 
     const templateId = existingApplication.typeId as ApplicationTypes
     const template = await getApplicationTemplateByTypeId(templateId)
 
+    //TODO : Get Dataproviders from Template role
+    ////////
+    const helper = new ApplicationTemplateHelper(
+      existingApplication as BaseApplication,
+      template,
+    )
+
+    const userRole = template.mapUserToRole(
+      user.nationalId,
+      existingApplication as BaseApplication,
+    )
+
+    const providersFromRole = userRole
+      ? helper.getDataProvidersFromRoleInState(userRole)
+      : []
+    //////
+    const listOfProviders: ApplicationTemplateAPIAction[] = []
     for (let i = 0; i < externalDataDto.dataProviders.length; i++) {
-      //TODO order of data provider calls
       console.log(externalDataDto.dataProviders[i])
-      const s = await this.performActionOnApplication(
-        existingApplication as BaseApplication,
-        template,
-        user,
-        {
-          apiModuleAction: externalDataDto.dataProviders[i].type,
-          externalDataId: '12312',
-          shouldPersistToExternalData: true,
-        },
+      console.log(providersFromRole)
+      const found = providersFromRole.find(
+        (x) => x.id === externalDataDto.dataProviders[i].id,
       )
+
+      if (found) {
+        listOfProviders.push({
+          apiModuleAction: found.apiAction,
+          externalDataId: found.id,
+          shouldPersistToExternalData: found.shouldPersisttoExternalData,
+          order: externalDataDto.dataProviders[i].order,
+        })
+      } else {
+        throw new BadRequestException(
+          'Data provider not found with id ' +
+            externalDataDto.dataProviders[i].id,
+        )
+      }
     }
+
+    await this.templateApiActionRunner.run(
+      existingApplication as BaseApplication,
+      listOfProviders,
+      user,
+    )
 
     if (!existingApplication) {
       throw new NotFoundException(
@@ -511,6 +541,7 @@ export class ApplicationController {
       resources: existingApplication.id,
       meta: { providers: externalDataDto },
     })
+    console.log({ existingApplication })
     return existingApplication
   }
 
@@ -623,7 +654,9 @@ export class ApplicationController {
       externalDataId,
       throwOnError,
     } = action
+    console.log('performActionOnApplication', action)
 
+    //TODO provide a way to call multiple at once without concurrency issues
     const actionResult = await this.templateAPIService.performAction({
       templateId: template.type,
       type: apiModuleAction,
@@ -632,7 +665,7 @@ export class ApplicationController {
         auth,
       },
     })
-    console.log({ actionResult })
+
     let updatedApplication: BaseApplication = application
 
     if (shouldPersistToExternalData) {

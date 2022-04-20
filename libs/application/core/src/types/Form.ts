@@ -132,6 +132,7 @@ export interface DataProviderItem {
   readonly subTitle?: StaticText
   readonly source?: string
   readonly parameters?: any
+  readonly order?: number
 }
 
 export type DataProviderPermissionItem = Omit<

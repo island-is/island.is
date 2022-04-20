@@ -27,10 +27,18 @@ export const Prerequisites: Form = buildForm({
           title: 'Utanaðkomandi gögn',
           dataProviders: [
             buildDataProviderItem({
-              id: 'getReferenceData',
+              id: 'reference',
               type: 'getReferenceData',
               title: 'getReferenceData',
               subTitle: 'Æji er að setja upp nýtt stöff',
+              order: 2,
+            }),
+            buildDataProviderItem({
+              id: 'nationalRegistry',
+              type: 'nationalRegistry',
+              title: 'nationalRegistry',
+              subTitle: 'Náum í national registry dót',
+              order: 1,
             }),
           ],
         }),
@@ -44,7 +52,7 @@ export const Prerequisites: Form = buildForm({
               description: (application: Application) =>
                 `Gildið frá data provider: ${get(
                   application.externalData,
-                  'sampleData.data.value',
+                  'reference.data.referenceData.numbers',
                   'fannst ekki',
                 )}`,
             }),

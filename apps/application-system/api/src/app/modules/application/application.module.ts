@@ -25,6 +25,7 @@ import { AwsModule } from '@island.is/nest/aws'
 import { ApplicationApiCoreModule } from '@island.is/application/api/core'
 import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 import { ApplicationValidationService } from './tools/applicationTemplateValidation.service'
+import { TemplateApiActionRunner } from './tools/templateApiActionRunner.service'
 
 let BullModule: DynamicModule
 
@@ -77,6 +78,7 @@ if (process.env.INIT_SCHEMA === 'true') {
     },
     ApplicationAccessService,
     ApplicationValidationService,
+    TemplateApiActionRunner,
   ],
 })
 export class ApplicationModule {}

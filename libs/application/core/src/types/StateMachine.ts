@@ -28,7 +28,6 @@ export type ReadWriteValues =
       answers?: string[]
       externalData?: string[]
     }
-
 export interface RoleInState<T extends EventObject = AnyEventObject> {
   id: ApplicationRole
   read?: ReadWriteValues
@@ -38,9 +37,12 @@ export interface RoleInState<T extends EventObject = AnyEventObject> {
   api?: ApiDataProvider[]
 }
 
+export type paramType = { [key: string]: number | string } //Array<{ [key: string]: number | string }>
 export interface ApiDataProvider {
+  id: string
   apiAction: string
-  params?: string
+  shouldPersisttoExternalData?: boolean
+  parameters?: paramType | ((application: Application) => paramType)
 }
 
 export interface ApplicationContext {
@@ -65,6 +67,8 @@ export interface ApplicationTemplateAPIAction {
   // Should the state transition be blocked if this action errors out
   // defaults to true
   throwOnError?: boolean
+
+  order?: number
 }
 
 export type StateLifeCycle =

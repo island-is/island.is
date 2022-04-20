@@ -16,6 +16,7 @@ import { Features } from '@island.is/feature-flags'
 
 import { ApiActions } from '../shared'
 import { m } from './messages'
+import { application } from 'express'
 const States = {
   prerequisites: 'prerequisites',
   draft: 'draft',
@@ -109,13 +110,21 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
               ],
               write: 'all',
+              // TODO: Where do permissions for Dataproviders lie
               api: [
                 {
-                  apiAction: 'getReferenceData',
-                  params: {
-                    applicationId: 'as',
+                  apiAction: ApiActions.getReferenceData,
+                  id: 'reference',
+                  shouldPersisttoExternalData: true,
+                  parameters: (application: Application) => {
+                    //Do all the stuff here
+                    return { applicationId: application.id }
                   },
-                  //shouldPersistToExternalData,
+                },
+                {
+                  apiAction: ApiActions.nationalRegistry,
+                  id: 'nationalRegistry',
+                  shouldPersisttoExternalData: true,
                 },
               ],
             },
