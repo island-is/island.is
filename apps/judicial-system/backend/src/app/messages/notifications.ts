@@ -47,13 +47,25 @@ export const notifications = {
   readyForCourt: defineMessages({
     subject: {
       id: 'judicial.system.backend:notifications.ready_for_court.subject',
-      defaultMessage: 'Krafa á máli {policeCaseNumber}',
+      defaultMessage: 'Krafa í máli {policeCaseNumber}',
       description: 'Titill í pósti til ákæranda þegar krafa er send',
     },
     prosecutorHtml: {
       id:
         'judicial.system.backend:notifications.ready_for_court.prosecutor_html_v1',
-      defaultMessage: `Þú hefur sent kröfu um {caseType, select, ${CaseType.CUSTODY} {gæsluvarðhald} ${CaseType.TRAVEL_BAN} {farbann} ${CaseType.ADMISSION_TO_FACILITY} {vistun á viðeigandi stofnun} other {rannsóknarheimild}} á {courtName} vegna LÖKE máls {policeCaseNumber}. Skjalið er aðgengilegt undir {linkStart}málinu í Réttarvörslugátt{linkEnd}.`,
+      defaultMessage:
+        'Þú hefur sent kröfu um {caseType} á {courtName} vegna LÖKE máls {policeCaseNumber}. Skjalið er aðgengilegt undir {linkStart}málinu í Réttarvörslugátt{linkEnd}.',
+      description:
+        'Notaður sem texti í pósti til ákæranda varðandi kröfu sem hefur verið send á héraðsdómara',
+    },
+    prosecutorHtmlV2: {
+      id:
+        'judicial.system.backend:notifications.ready_for_court.prosecutor_html_v2',
+      defaultMessage: `Þú hefur sent kröfu um {caseType, select,
+        ${CaseType.CUSTODY} {gæsluvarðhald}
+        ${CaseType.TRAVEL_BAN} {farbann}
+        ${CaseType.ADMISSION_TO_FACILITY} {vistun á viðeigandi stofnun}
+        other {rannsóknarheimild}} á {courtName} vegna LÖKE máls {policeCaseNumber}. Skjalið er aðgengilegt undir {linkStart}málinu í Réttarvörslugátt{linkEnd}.`,
       description:
         'Notaður sem texti í pósti til ákæranda varðandi kröfu sem hefur verið send á héraðsdómara',
     },
