@@ -121,7 +121,9 @@ export const useRegulationEffectPrepper = (
                   diff: true,
                 })
               : item.effect === 'amend' && item.status === 'pending'
-              ? linkToRegulation(item.name)
+              ? // Link to current version (no diff) because the impact (text-changes)
+                // has not been inserted yet.
+                linkToRegulation(item.name)
               : undefined
 
           const active = isItemActive(item.date)
