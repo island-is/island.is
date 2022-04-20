@@ -138,7 +138,7 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
             </Text>
           </GridColumn>
           {recordsDataArray.length > 0 ? (
-            <Box display="flex" marginLeft="auto" marginTop={1}>
+            <Box display="flex" marginLeft="auto" marginTop={1} printHidden>
               <GridColumn>
                 <Button
                   colorScheme="default"

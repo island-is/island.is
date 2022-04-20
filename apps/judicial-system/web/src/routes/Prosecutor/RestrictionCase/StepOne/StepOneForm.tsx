@@ -17,7 +17,7 @@ import {
   CaseType,
   UpdateDefendant,
 } from '@island.is/judicial-system/types'
-import { isAccusedStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
+import { isDefendantStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import DefenderInfo from '@island.is/judicial-system-web/src/components/DefenderInfo/DefenderInfo'
 import { accused as m } from '@island.is/judicial-system-web/messages'
 import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDefendants'
@@ -173,7 +173,7 @@ export const StepOneForm: React.FC<Props> = (props) => {
             await handleNextButtonClick(workingCase)
           }
           nextIsLoading={loading}
-          nextIsDisabled={!isAccusedStepValidRC(workingCase)}
+          nextIsDisabled={!isDefendantStepValidRC(workingCase)}
           nextButtonText={
             workingCase.id === '' ? 'Stofna kröfu' : 'Halda áfram'
           }
