@@ -58,6 +58,8 @@ const StepThreeForm: React.FC<Props> = (props) => {
   useDeb(workingCase, 'legalBasis')
   useDeb(workingCase, 'requestedOtherRestrictions')
 
+  const showIsolationDemandSection = workingCase.type === CaseType.CUSTODY || workingCase.type === CaseType.ADMISSION_TO_FACILITY
+
   return (
     <>
       <FormContentContainer>
@@ -81,11 +83,9 @@ const StepThreeForm: React.FC<Props> = (props) => {
             {workingCase.parentCase && (
               <Box marginTop={1}>
                 <Text>
-                  {`${
-                    workingCase.type === CaseType.CUSTODY
-                      ? 'Fyrri gæsla'
-                      : 'Fyrra farbann'
-                  } var/er til `}
+                  {formatMessage(rcDemands.sections.demands.pastRestriction, {
+                    caseType: workingCase.type,
+                  })}
                   <Text as="span" fontWeight="semiBold">
                     {formatDate(
                       workingCase.parentCase.validToDate,
@@ -97,14 +97,15 @@ const StepThreeForm: React.FC<Props> = (props) => {
             )}
           </Box>
           <BlueBox>
-            <Box marginBottom={workingCase.type === CaseType.CUSTODY ? 3 : 0}>
+            <Box
+              marginBottom={showIsolationDemandSection ? 3 : 0}
+            >
               <DateTime
                 name="reqValidToDate"
-                datepickerLabel={`${
-                  workingCase.type === CaseType.CUSTODY
-                    ? 'Gæsluvarðhald'
-                    : 'Farbann'
-                } til`}
+                datepickerLabel={formatMessage(
+                  rcDemands.sections.demands.restrictionValidDateLabel,
+                  { caseType: workingCase.type },
+                )}
                 minDate={new Date()}
                 selectedDate={workingCase.requestedValidToDate}
                 onChange={(date: Date | undefined, valid: boolean) => {
@@ -121,27 +122,27 @@ const StepThreeForm: React.FC<Props> = (props) => {
                 blueBox={false}
               />
             </Box>
-            {workingCase.type === CaseType.CUSTODY && (
-              <Checkbox
-                name="isIsolation"
-                label={formatMessage(rcDemands.sections.demands.isolation)}
-                tooltip={formatMessage(rcDemands.sections.demands.tooltip)}
-                checked={workingCase.requestedCustodyRestrictions?.includes(
-                  CaseCustodyRestrictions.ISOLATION,
-                )}
-                onChange={() =>
-                  setCheckboxAndSendToServer(
-                    'requestedCustodyRestrictions',
-                    'ISOLATION',
-                    workingCase,
-                    setWorkingCase,
-                    updateCase,
-                  )
-                }
-                large
-                filled
-              />
-            )}
+            {showIsolationDemandSection && (
+                <Checkbox
+                  name="isIsolation"
+                  label={formatMessage(rcDemands.sections.demands.isolation)}
+                  tooltip={formatMessage(rcDemands.sections.demands.tooltip)}
+                  checked={workingCase.requestedCustodyRestrictions?.includes(
+                    CaseCustodyRestrictions.ISOLATION,
+                  )}
+                  onChange={() =>
+                    setCheckboxAndSendToServer(
+                      'requestedCustodyRestrictions',
+                      'ISOLATION',
+                      workingCase,
+                      setWorkingCase,
+                      updateCase,
+                    )
+                  }
+                  large
+                  filled
+                />
+              )}
           </BlueBox>
         </Box>
         {workingCase.defendants && workingCase.defendants.length > 0 && (
@@ -266,18 +267,18 @@ const StepThreeForm: React.FC<Props> = (props) => {
               <Box marginBottom={1}>
                 <Text as="h3" variant="h3">
                   {formatMessage(
-                    rcDemands.sections.custodyRestrictions.heading,
+                    rcDemands.sections.custodyRestrictions.headingV2,
                     {
-                      caseType: 'gæslu',
+                      caseType: workingCase.type,
                     },
                   )}
                 </Text>
               </Box>
               <Text>
                 {formatMessage(
-                  rcDemands.sections.custodyRestrictions.subHeading,
+                  rcDemands.sections.custodyRestrictions.subHeadingV2,
                   {
-                    caseType: 'gæsla',
+                    caseType: workingCase.type,
                   },
                 )}
               </Text>
@@ -303,15 +304,18 @@ const StepThreeForm: React.FC<Props> = (props) => {
           <Box component="section" marginBottom={4}>
             <Box marginBottom={3}>
               <Text as="h3" variant="h3">
-                {formatMessage(rcDemands.sections.custodyRestrictions.heading, {
-                  caseType: 'farbanns',
-                })}
+                {formatMessage(
+                  rcDemands.sections.custodyRestrictions.headingV2,
+                  {
+                    caseType: workingCase.type,
+                  },
+                )}
               </Text>
               <Text>
                 {formatMessage(
-                  rcDemands.sections.custodyRestrictions.subHeading,
+                  rcDemands.sections.custodyRestrictions.subHeadingV2,
                   {
-                    caseType: 'farbann',
+                    caseType: workingCase.type,
                   },
                 )}
               </Text>
@@ -380,4 +384,4 @@ const StepThreeForm: React.FC<Props> = (props) => {
   )
 }
 
-export default StepThreeForm
+export default

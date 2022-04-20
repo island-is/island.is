@@ -1,3 +1,4 @@
+import { CaseType } from '@island.is/judicial-system/types'
 import { defineMessage, defineMessages } from 'react-intl'
 
 export const rcDemands = {
@@ -28,6 +29,26 @@ export const rcDemands = {
           'Gæslufangar skulu aðeins látnir vera í einrúmi samkvæmt úrskurði dómara en þó skulu þeir ekki gegn vilja sínum hafðir með öðrum föngum.',
         description:
           'Notaður sem skýritexti í "krafa um einangrun" valmöguleika í "dómkröfu" textaboxi á lagagrundvöllur og dómkröfur skrefi í gæsluvarðhalds- og farbannsmálum.',
+      }),
+      pastRestriction: defineMessage({
+        id:
+          'judicial.system.restriction_cases:police_demands.demands.past_restriction',
+        defaultMessage: `{caseType, select,
+          ${CaseType.ADMISSION_TO_FACILITY} {Fyrri vistun}
+          ${CaseType.TRAVEL_BAN} {Fyrra farbann}
+          other {Fyrri gæsla}} var/er til `,
+        description:
+          'Notaður sem texti yfir fyrri gæslu/vistun/farbann ef um framlengt mál er að ræða í skrefi lagagrundvöllur og dómkörfur.',
+      }),
+      restrictionValidDateLabel: defineMessage({
+        id:
+          'judicial.system.restriction_cases:police_demands.demands.restriction_label',
+        defaultMessage: `{caseType, select,
+          ${CaseType.ADMISSION_TO_FACILITY} {Vistun á viðeignandi stofnun}
+          ${CaseType.TRAVEL_BAN} {Farbann}
+          other {Gæsluvarðhald}} til`,
+        description:
+          'Notaður sem texti þegar valið er lengd á gæslu/vistun/farbanni í "dómkröfu" á lagagrundvöllur og dómkröfur skrefi.',
       }),
     },
     lawsBroken: defineMessages({
@@ -86,10 +107,30 @@ export const rcDemands = {
         description:
           'Notaður sem titill fyrir "takmarkanir og tilhögun gæslu/farbanns" hlutann á lagagrundvöllur og dómkröfur skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
+      headingV2: {
+        id:
+          'judicial.system.restriction_cases:police_demands.custody_restrictions.heading_v2',
+        defaultMessage: `Takmarkanir og tilhögun {caseType, select,
+        ${CaseType.ADMISSION_TO_FACILITY} {vistunar}
+        ${CaseType.TRAVEL_BAN} {farbanns}
+        other {gæslu}}`,
+        description:
+          'Notaður sem titill fyrir "takmarkanir og tilhögun gæslu/farbanns/vistunar" hlutann á lagagrundvöllur og dómkröfur skrefi í gæsluvarðhalds-, vistunar- og farbannsmálum.',
+      },
       subHeading: {
         id:
           'judicial.system.restriction_cases:police_demands.custody_restrictions.sub_heading',
         defaultMessage: 'Ef ekkert er valið er {caseType} án takmarkana',
+        description:
+          'Notaður sem undirtitill fyrir "takmarkanir og tilhögun gæslu" hlutann á lagagrundvöllur og dómkröfur skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+      subHeadingV2: {
+        id:
+          'judicial.system.restriction_cases:police_demands.custody_restrictions.sub_heading_v2',
+        defaultMessage: `Ef ekkert er valið er {caseType, select,
+        ${CaseType.ADMISSION_TO_FACILITY} {vistun}
+        ${CaseType.TRAVEL_BAN} {farbann}
+        other {gæsla}} án takmarkana`,
         description:
           'Notaður sem undirtitill fyrir "takmarkanir og tilhögun gæslu" hlutann á lagagrundvöllur og dómkröfur skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
