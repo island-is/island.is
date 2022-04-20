@@ -4,23 +4,18 @@ import { Text, Box, Icon } from '@island.is/island-ui/core'
 import * as styles from '../History/History.css'
 
 interface Props {
-  isVisable: boolean
   comment?: string
 }
 
-const ChatElement = ({ isVisable, comment }: Props) => {
-  if (!isVisable) {
+const ChatElement = ({ comment }: Props) => {
+  if (!comment) {
     return null
   }
 
   return (
     <Box paddingLeft={3} marginBottom={2} className={styles.timelineMessages}>
-      {comment && (
-        <>
-          <Icon icon="chatbubble" type="outline" />{' '}
-          <Text marginBottom={2}>„{comment}“</Text>
-        </>
-      )}
+      <Icon icon="chatbubble" type="outline" />{' '}
+      <Text marginBottom={2}>„{comment}“</Text>
     </Box>
   )
 }

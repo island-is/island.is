@@ -1000,6 +1000,36 @@
         }
       }
     },
+    "api-domains-driving-license-book": {
+      "root": "libs/api/domains/driving-license-book",
+      "sourceRoot": "libs/api/domains/driving-license-book/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/api/domains/driving-license-book/tsconfig.lib.json",
+              "libs/api/domains/driving-license-book/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/api/domains/driving-license-book/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/api/domains/driving-license-book/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/libs/api/domains/driving-license-book"]
+        }
+      }
+    },
     "api-domains-education": {
       "root": "libs/api/domains/education",
       "sourceRoot": "libs/api/domains/education/src",
@@ -2262,6 +2292,40 @@
         }
       }
     },
+    "application-templates-driving-instructor-registrations": {
+      "root": "libs/application/templates/driving-instructor-registrations",
+      "sourceRoot": "libs/application/templates/driving-instructor-registrations/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/driving-instructor-registrations/tsconfig.lib.json",
+              "libs/application/templates/driving-instructor-registrations/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/driving-instructor-registrations/**/*"
+            ]
+          }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/driving-instructor-registrations/src/lib/messages.ts"
+          }
+        },
+        "schemas/codegen": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "graphql-codegen --config libs/application/templates/driving-instructor-registrations/codegen.yml"
+          }
+        }
+      }
+    },
     "application-templates-driving-license": {
       "root": "libs/application/templates/driving-license",
       "sourceRoot": "libs/application/templates/driving-license/src",
@@ -2300,6 +2364,40 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "graphql-codegen --config libs/application/templates/driving-license/codegen.yml"
+          }
+        }
+      }
+    },
+    "application-templates-driving-school-confirmation": {
+      "root": "libs/application/templates/driving-school-confirmation",
+      "sourceRoot": "libs/application/templates/driving-school-confirmation/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/driving-school-confirmation/tsconfig.lib.json",
+              "libs/application/templates/driving-school-confirmation/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/driving-school-confirmation/**/*"
+            ]
+          }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/driving-school-confirmation/src/lib/messages.ts"
+          }
+        },
+        "schemas/codegen": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "graphql-codegen --config libs/application/templates/driving-school-confirmation/codegen.yml"
           }
         }
       }
@@ -3395,6 +3493,47 @@
         }
       }
     },
+    "clients-driving-license-book": {
+      "root": "libs/clients/driving-license-book",
+      "sourceRoot": "libs/clients/driving-license-book/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/clients/driving-license-book/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/clients/driving-license-book"],
+          "options": {
+            "jestConfig": "libs/clients/driving-license-book/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "update-openapi-document": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" http://localhost:8081/r1/IS-DEV/GOV/10017/Samgongustofa-Protected/getOpenAPI?serviceCode=Okunamsbok-V1 > src/clientConfig.json",
+              "jq '.paths[][].tags = [\"DrivingLicenseBook\"]' src/clientConfig.json > _.tmp && mv _.tmp src/clientConfig.json",
+              "jq '.components.schemas.ProblemDetails.additionalProperties = false' src/clientConfig.json > _.tmp && mv _.tmp src/clientConfig.json"
+            ],
+            "parallel": false,
+            "cwd": "libs/clients/driving-license-book"
+          }
+        },
+        "schemas/external-openapi-generator": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "yarn openapi-generator -o libs/clients/driving-license-book/gen/fetch -i libs/clients/driving-license-book/src/clientConfig.json"
+            ]
+          }
+        }
+      }
+    },
     "clients-finance": {
       "root": "libs/clients/finance",
       "sourceRoot": "libs/clients/finance/src",
@@ -3802,33 +3941,6 @@
         }
       }
     },
-    "clients-rsk-v1": {
-      "root": "libs/clients/rsk/v1",
-      "sourceRoot": "libs/clients/rsk/v1/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/clients/rsk/v1/tsconfig.lib.json",
-              "libs/clients/rsk/v1/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!libs/clients/rsk/v1/**/*"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/clients/rsk/v1/jest.config.js",
-            "passWithNoTests": true
-          },
-          "outputs": ["coverage/libs/clients/rsk/v1"]
-        }
-      }
-    },
     "clients-syslumenn": {
       "root": "libs/clients/syslumenn",
       "sourceRoot": "libs/clients/syslumenn/src",
@@ -3888,11 +4000,15 @@
             "passWithNoTests": true
           }
         },
-        "schemas/openapi-generator": {
+        "schemas/external-openapi-generator": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "outputPath": "libs/clients/user-profile/gen",
-            "command": "yarn openapi-generator -o libs/clients/user-profile/gen/fetch -i apps/services/user-profile/src/openapi.yaml"
+            "commands": [
+              "nx run services-user-profile:schemas/build-openapi-internal $NX_OPTIONS",
+              "yarn openapi-generator -o libs/clients/user-profile/gen/fetch -i apps/services/user-profile/src/openapi.yaml"
+            ],
+            "parallel": false
           }
         }
       }
@@ -5916,11 +6032,6 @@
                 "output": "./migrations"
               },
               {
-                "glob": "*",
-                "input": "apps/judicial-system/backend/seeders",
-                "output": "./seeders"
-              },
-              {
                 "glob": ".sequelizerc",
                 "input": "apps/judicial-system/backend",
                 "output": "./"
@@ -5987,14 +6098,21 @@
         "migrate": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "../../../node_modules/.bin/sequelize-cli db:migrate",
+            "command": "sequelize-cli db:migrate",
+            "cwd": "apps/judicial-system/backend"
+          }
+        },
+        "migrate/undo": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "sequelize-cli db:migrate:undo",
             "cwd": "apps/judicial-system/backend"
           }
         },
         "migrate/generate": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "../../../node_modules/.bin/sequelize-cli migration:generate --name $(whoami)",
+            "command": "sequelize-cli migration:generate --name $(whoami)",
             "cwd": "apps/judicial-system/backend"
           }
         },
@@ -6108,6 +6226,60 @@
           },
           "outputs": ["coverage/libs/judicial-system/formatters"]
         }
+      }
+    },
+    "judicial-system-scheduler": {
+      "root": "apps/judicial-system/scheduler",
+      "sourceRoot": "apps/judicial-system/scheduler/src",
+      "projectType": "application",
+      "prefix": "judicial-system-scheduler",
+      "architect": {
+        "build": {
+          "builder": "@irdnis/esbuildnx:build",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/apps/judicial-system/scheduler",
+            "main": "apps/judicial-system/scheduler/src/main.ts",
+            "tsConfig": "apps/judicial-system/scheduler/tsconfig.app.json",
+            "maxWorkers": 2
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "judicial-system-scheduler:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "apps/judicial-system/scheduler/tsconfig.app.json",
+              "apps/judicial-system/scheduler/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!apps/judicial-system/scheduler/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/apps/judicial-system/scheduler"],
+          "options": {
+            "jestConfig": "apps/judicial-system/scheduler/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "docker-express": {}
       }
     },
     "judicial-system-types": {
@@ -7580,6 +7752,35 @@
         }
       }
     },
+    "service-portal-finance-schedule": {
+      "root": "libs/service-portal/finance-schedule",
+      "sourceRoot": "libs/service-portal/finance-schedule/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/service-portal/finance-schedule/**/*.{ts,tsx,js,jsx}"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/service-portal/finance-schedule"],
+          "options": {
+            "jestConfig": "libs/service-portal/finance-schedule/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/service-portal/finance-schedule/src/{lib,components,screens}/**/*.{js,ts,tsx}'"
+          }
+        }
+      }
+    },
     "service-portal-graphql": {
       "root": "libs/service-portal/graphql",
       "sourceRoot": "libs/service-portal/graphql/src",
@@ -8651,6 +8852,12 @@
           }
         },
         "schemas/build-openapi": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn nx run services-user-profile:schemas/build-openapi-internal $NX_OPTIONS"
+          }
+        },
+        "schemas/build-openapi-internal": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "outputPath": "apps/services/user-profile/src/openapi.yaml",

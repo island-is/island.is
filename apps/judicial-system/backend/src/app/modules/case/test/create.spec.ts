@@ -1,8 +1,10 @@
 import { uuid } from 'uuidv4'
+import { Op } from 'sequelize'
 import { Transaction } from 'sequelize/types'
 
 import {
   CaseOrigin,
+  CaseState,
   CaseType,
   User as TUser,
 } from '@island.is/judicial-system/types'
@@ -63,7 +65,8 @@ describe('CaseController - Create', () => {
       type: CaseType.AUTOPSY,
       description: 'Some details',
       policeCaseNumber: '007-2021-777',
-      defenderName: 'John Jhon',
+      defenderName: 'John John',
+      defenderNationalId: '0000000009',
       defenderEmail: 'john@dummy.is',
       defenderPhoneNumber: '1234567',
       sendRequestToDefender: false,
@@ -159,7 +162,11 @@ describe('CaseController - Create', () => {
           { model: Case, as: 'childCase' },
         ],
         order: [[{ model: Defendant, as: 'defendants' }, 'created', 'ASC']],
-        where: { id: caseId },
+        where: {
+          id: caseId,
+          isArchived: false,
+          state: { [Op.not]: CaseState.DELETED },
+        },
       })
     })
   })

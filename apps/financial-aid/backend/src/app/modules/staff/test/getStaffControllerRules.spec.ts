@@ -11,12 +11,15 @@ describe('StaffController -  Creates staff rules', () => {
       StaffController.prototype.createStaff,
     )
   })
-  it('should have one rule', () => {
-    expect(rules).toHaveLength(1)
+  it('should have two rule', () => {
+    expect(rules).toHaveLength(2)
   })
 
   it('should give permission to admin', () => {
     expect(rules).toContain(StaffRole.ADMIN)
+  })
+  it('should give permission to admin', () => {
+    expect(rules).toContain(StaffRole.SUPERADMIN)
   })
 })
 

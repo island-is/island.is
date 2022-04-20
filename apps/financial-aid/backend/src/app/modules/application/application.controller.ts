@@ -18,6 +18,7 @@ import {
   ApplicationModel,
   UpdateApplicationTableResponse,
   SpouseResponse,
+  FilterApplicationsResponse,
 } from './models'
 
 import {
@@ -29,6 +30,7 @@ import {
   CreateApplicationDto,
   UpdateApplicationDto,
   CreateApplicationEventDto,
+  FilterApplicationsDto,
 } from './dto'
 
 import {
@@ -115,7 +117,7 @@ export class ApplicationController {
 
     const applications = await this.applicationService.findByNationalId(
       nationalId,
-      staff.municipalityId,
+      staff.municipalityIds,
     )
 
     this.auditService.audit({
@@ -162,7 +164,7 @@ export class ApplicationController {
     return this.applicationService.getAll(
       stateUrl,
       staff.id,
-      staff.municipalityId,
+      staff.municipalityIds,
     )
   }
 
@@ -203,7 +205,10 @@ export class ApplicationController {
     @CurrentStaff() staff: Staff,
   ): Promise<ApplicationFilters> {
     this.logger.debug('Application controller: Getting application filters')
-    return this.applicationService.getAllFilters(staff.id, staff.municipalityId)
+    return this.applicationService.getAllFilters(
+      staff.id,
+      staff.municipalityIds,
+    )
   }
 
   @Scopes(MunicipalitiesFinancialAidScope.write)
@@ -295,11 +300,11 @@ export class ApplicationController {
       applications: await this.applicationService.getAll(
         stateUrl,
         staff.id,
-        staff.municipalityId,
+        staff.municipalityIds,
       ),
       filters: await this.applicationService.getAllFilters(
         staff.id,
-        staff.municipalityId,
+        staff.municipalityIds,
       ),
     }
   }
@@ -346,5 +351,24 @@ export class ApplicationController {
     }
 
     return application
+  }
+
+  @Scopes(
+    MunicipalitiesFinancialAidScope.read,
+    MunicipalitiesFinancialAidScope.employee,
+  )
+  @UseGuards(StaffGuard)
+  @StaffRolesRules(StaffRole.EMPLOYEE)
+  @Post('filter')
+  @ApiOkResponse({
+    type: FilterApplicationsResponse,
+    description: 'Filter applications',
+  })
+  filter(
+    @Body() filters: FilterApplicationsDto,
+    @CurrentStaff() staff: Staff,
+  ): Promise<FilterApplicationsResponse> {
+    this.logger.debug('Application controller: Filter applications')
+    return this.applicationService.filter(filters, staff.municipalityIds)
   }
 }

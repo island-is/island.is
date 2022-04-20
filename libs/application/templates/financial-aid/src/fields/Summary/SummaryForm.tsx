@@ -1,6 +1,5 @@
-import React, { useState, useMemo } from 'react'
+import React, { useMemo } from 'react'
 import { useIntl } from 'react-intl'
-import { useFormContext } from 'react-hook-form'
 
 import { Text, Box } from '@island.is/island-ui/core'
 import {
@@ -20,26 +19,10 @@ import {
 import { Routes } from '../../lib/constants'
 import { DescriptionText, Breakdown } from '../index'
 import { formatAddress, formItems } from '../../lib/formatters'
-import useApplication from '../../lib/hooks/useApplication'
-import { hasSpouse } from '../../lib/utils'
-import {
-  FormInfo,
-  SummaryComment,
-  UserInfo,
-  ContactInfo,
-  Files,
-  SummaryError,
-} from './index'
+import { FormInfo, SummaryComment, UserInfo, ContactInfo, Files } from './index'
 
-const SummaryForm = ({
-  application,
-  goToScreen,
-  setBeforeSubmitCallback,
-}: FAFieldBaseProps) => {
+const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
-  const { getValues } = useFormContext()
-  const { createApplication } = useApplication()
-  const [formError, setFormError] = useState(false)
   const { id, answers, externalData } = application
   const summaryCommentType = SummaryCommentType.FORMCOMMENT
 
@@ -58,25 +41,6 @@ const SummaryForm = ({
       )
     }
   }, [externalData.nationalRegistry?.data?.municipality])
-
-  if (!hasSpouse(answers, externalData)) {
-    setBeforeSubmitCallback &&
-      setBeforeSubmitCallback(async () => {
-        application.answers.formComment = getValues(summaryCommentType)
-        const createApp = await createApplication(application)
-          .then(() => {
-            return true
-          })
-          .catch(() => {
-            setFormError(true)
-            return false
-          })
-        if (createApp) {
-          return [true, null]
-        }
-        return [false, 'Failed to create application']
-      })
-  }
 
   return (
     <>
@@ -147,8 +111,6 @@ const SummaryForm = ({
         commentId={summaryCommentType}
         comment={answers?.formComment}
       />
-
-      <SummaryError error={formError} />
     </>
   )
 }

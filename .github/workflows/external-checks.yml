@@ -1,8 +1,12 @@
 name: External checks
 
 on:
-  pull_request: {}
-  workflow_dispatch: {}
+  pull_request: { }
+  workflow_dispatch: { }
+
+defaults:
+  run:
+    shell: bash
 
 jobs:
   codeowners-check:
@@ -10,7 +14,7 @@ jobs:
     runs-on: kubernetes-runner
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - name: Check if codeowners file changed
@@ -33,29 +37,53 @@ jobs:
             cat .github/CODEOWNERS | grep -v '^#' | awk NF
             exit 1
           fi
-      - uses: mszostok/codeowners-validator@v0.6.0
+      - name: Codeowners validation
         if: env.CHECK
-        with:
-          checks: 'files,owners,duppatterns'
-          experimental_checks: 'notowned'
-          github_access_token: '${{ secrets.OWNERS_VALIDATOR_GITHUB_SECRET }}'
+        run: |
+            docker run --rm -v $(pwd):/repo -w /repo \
+            -e REPOSITORY_PATH="." \
+            -e GITHUB_ACCESS_TOKEN="$GH_TOKEN" \
+            -e EXPERIMENTAL_CHECKS="notowned" \
+            -e OWNER_CHECKER_REPOSITORY="island-is/island.is" \
+            public.ecr.aws/m3u4c4h9/mszostok/codeowners-validator:0.7.1
+        env:
+          GH_TOKEN: ${{secrets.OWNERS_VALIDATOR_GITHUB_SECRET}}
+          CHECKS: 'files,owners,duppatterns'
 
   gitbook-check:
     name: Lint gitbook
-    runs-on: kubernetes-runner
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
           node-version: '14'
+
+      - name: Setup yarn
+        run: npm install -g yarn
+
       - name: Run gitbook format
         run: node ./scripts/gitbook.js
       - name: Check if the git repo is dirty
         id: changes
-        uses: UnicornGlobal/has-changes-action@v1.0.12
+        run: |
+          set -e
+
+          function check() {
+            if [[ -z "$(git status --porcelain)" ]];
+            then
+              echo "0"
+            else
+              echo "1"
+            fi
+          }
+
+          echo ::set-output name=changed::$(check)
       - name: Comment on PR
         if: steps.changes.outputs.changed == 1
         uses: actions/github-script@v6

@@ -37,7 +37,7 @@ export const serviceSetup = (services: {
     .xroad(Base, JudicialSystem)
     .secrets({
       AUTH_JWT_SECRET: '/k8s/judicial-system/AUTH_JWT_SECRET',
-      SECRET_TOKEN: '/k8s/judicial-system/SECRET_TOKEN',
+      BACKEND_ACCESS_TOKEN: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN',
       CONTENTFUL_ACCESS_TOKEN: '/k8s/judicial-system/CONTENTFUL_ACCESS_TOKEN',
     })
     .liveness('/liveness')

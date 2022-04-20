@@ -2,7 +2,7 @@ import { Allow } from 'class-validator'
 
 import { Field, InputType } from '@nestjs/graphql'
 
-@InputType()
+@InputType('MunicipalitiesFinancialAidDirectTaxPaymentInput')
 export class DirectTaxPaymentInput {
   @Allow()
   @Field()

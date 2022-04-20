@@ -16,6 +16,10 @@ on:
       - 'infra/**'
       - '**/infra/**'
 
+defaults:
+  run:
+    shell: bash
+
 env:
   DEVOPS_DEBUG: ${{ secrets.DEVOPS_DEBUG }}
   AWS_MAX_ATTEMPTS: 10
@@ -23,7 +27,9 @@ env:
 
 jobs:
   prepare:
-    runs-on: kubernetes-runner
+    runs-on: ec2-runners    
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest    
     outputs:
       ENVS: ${{ steps.select_envs.outputs.ENVS }}
     steps:
@@ -40,13 +46,18 @@ jobs:
           echo "::set-output name=ENVS::{\"env\":$ENVS_JSON}"
 
   helm-values-validation:
-    runs-on: kubernetes-runner
+    runs-on: ec2-runners    
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest    
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: '14'
+
+      - name: Setup yarn
+        run: npm install -g yarn
 
       - name: Cache for NodeJS dependencies
         id: node-modules
@@ -74,12 +85,17 @@ jobs:
     needs:
       - prepare
       - helm-values-validation # waiting on this job so the cache would be prepared
-    runs-on: kubernetes-runner
+    runs-on: ec2-runners    
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest    
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.ENVS) }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '14'
 
       - name: Cache for NodeJS dependencies
         id: node-modules
@@ -97,8 +113,6 @@ jobs:
         working-directory: infra
         run: yarn install --frozen-lock
 
-      - name: Install yq
-        run: sudo snap install yq
       - name: Select role
         env:
           prod: arn:aws:iam::251502586493:role/list-ssm-parameters

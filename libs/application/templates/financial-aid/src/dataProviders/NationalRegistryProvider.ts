@@ -27,8 +27,8 @@ query NationalRegistryUserQuery {
 `
 
 const municipalityQuery = `
-  query GetMunicipalityQuery($input: MunicipalityQueryInput!) {
-    municipalityInfoForFinancialAid(input: $input) {
+  query MunicipalitiesFinancialAidMunicipalityQuery($input: MunicipalitiesFinancialAidMunicipalityInput!) {
+    municipalitiesFinancialAidMunicipality(input: $input) {
       id
       name
       homepage
@@ -92,7 +92,7 @@ export class NationalRegistryProvider extends BasicDataProvider {
 
     const municipality = await this.runQuery<Municipality>(
       municipalityQuery,
-      'municipalityInfoForFinancialAid',
+      'municipalitiesFinancialAidMunicipality',
       {
         input: { id: applicant.address.municipalityCode },
       },

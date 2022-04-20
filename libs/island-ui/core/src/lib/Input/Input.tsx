@@ -79,6 +79,7 @@ export const Input = forwardRef(
       size = 'md',
       fixedFocusState,
       autoExpand,
+      loading,
       ...inputProps
     } = props
     const [hasFocus, setHasFocus] = useState(false)
@@ -242,7 +243,14 @@ export const Input = forwardRef(
               {...(required && { 'aria-required': true })}
             />
           </Box>
-          {hasError && !icon && (
+          {loading && (
+            <Box
+              className={styles.spinner}
+              flexShrink={0}
+              borderRadius="circle"
+            />
+          )}
+          {!loading && hasError && !icon && (
             <Icon
               icon="warning"
               skipPlaceholderSize
@@ -250,7 +258,7 @@ export const Input = forwardRef(
               ariaHidden
             />
           )}
-          {icon && (
+          {!loading && icon && (
             <Icon
               icon={icon}
               type={iconType}

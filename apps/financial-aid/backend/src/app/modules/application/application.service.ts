@@ -5,11 +5,20 @@ import {
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
-import { ApplicationModel, SpouseResponse } from './models'
+import {
+  ApplicationModel,
+  FilterApplicationsResponse,
+  SpouseResponse,
+} from './models'
 
 import { Op } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 
-import { CreateApplicationDto, UpdateApplicationDto } from './dto'
+import {
+  CreateApplicationDto,
+  FilterApplicationsDto,
+  UpdateApplicationDto,
+} from './dto'
 import {
   ApplicationEventType,
   ApplicationFilters,
@@ -22,6 +31,7 @@ import {
   getApplicantEmailDataFromEventType,
   firstDateOfMonth,
   UserType,
+  applicationPageSize,
 } from '@island.is/financial-aid/shared/lib'
 import { FileService } from '../file'
 import {
@@ -89,18 +99,18 @@ export class ApplicationService {
 
   async findByNationalId(
     nationalId: string,
-    municipalityCode: string,
+    municipalityCodes: string[],
   ): Promise<ApplicationModel[]> {
     return this.applicationModel.findAll({
       where: {
         [Op.or]: [
           {
             nationalId,
-            municipalityCode,
+            municipalityCode: { [Op.in]: municipalityCodes },
           },
           {
             spouseNationalId: nationalId,
-            municipalityCode,
+            municipalityCode: { [Op.in]: municipalityCodes },
           },
         ],
       },
@@ -141,7 +151,7 @@ export class ApplicationService {
   async getAll(
     stateUrl: ApplicationStateUrl,
     staffId: string,
-    municipalityCode: string,
+    municipalityCodes: string[],
   ): Promise<ApplicationModel[]> {
     return this.applicationModel.findAll({
       where:
@@ -149,11 +159,11 @@ export class ApplicationService {
           ? {
               state: { [Op.in]: getStateFromUrl[stateUrl] },
               staffId,
-              municipalityCode,
+              municipalityCode: { [Op.in]: municipalityCodes },
             }
           : {
               state: { [Op.in]: getStateFromUrl[stateUrl] },
-              municipalityCode,
+              municipalityCode: { [Op.in]: municipalityCodes },
             },
       order: [['modified', 'DESC']],
       include: [{ model: StaffModel, as: 'staff' }],
@@ -193,7 +203,6 @@ export class ApplicationService {
           include: [{ model: DeductionFactorsModel, as: 'deductionFactors' }],
           separate: true,
           order: [['created', 'DESC']],
-          limit: 1,
         },
         {
           model: DirectTaxPaymentModel,
@@ -211,7 +220,7 @@ export class ApplicationService {
 
   async getAllFilters(
     staffId: string,
-    municipalityCode: string,
+    municipalityCodes: string[],
   ): Promise<ApplicationFilters> {
     const statesToCount = [
       ApplicationState.NEW,
@@ -223,7 +232,10 @@ export class ApplicationService {
 
     const countPromises = statesToCount.map((item) =>
       this.applicationModel.count({
-        where: { state: item, municipalityCode },
+        where: {
+          state: item,
+          municipalityCode: { [Op.in]: municipalityCodes },
+        },
       }),
     )
 
@@ -231,7 +243,7 @@ export class ApplicationService {
       this.applicationModel.count({
         where: {
           staffId,
-          municipalityCode,
+          municipalityCode: { [Op.in]: municipalityCodes },
           state: {
             [Op.or]: [ApplicationState.INPROGRESS, ApplicationState.DATANEEDED],
           },
@@ -436,6 +448,58 @@ export class ApplicationService {
     ])
 
     return updatedApplication
+  }
+
+  async filter(
+    filters: FilterApplicationsDto,
+    municipalityCodes: string[],
+  ): Promise<FilterApplicationsResponse> {
+    const whereOptions = {
+      state: {
+        [Op.in]:
+          filters.states.length > 0
+            ? filters.states
+            : [ApplicationState.APPROVED, ApplicationState.REJECTED],
+      },
+      municipalityCode: { [Op.in]: municipalityCodes },
+    }
+
+    if (filters.months.length > 0) {
+      const date = new Date()
+      const currentYear = date.getFullYear()
+      const currentMonth = date.getMonth()
+
+      whereOptions[Op.or] = filters.months.map((month) =>
+        Sequelize.and(
+          Sequelize.where(
+            Sequelize.fn(
+              'date_part',
+              'month',
+              Sequelize.col('ApplicationModel.created'),
+            ),
+            (month + 1).toString(),
+          ),
+          Sequelize.where(
+            Sequelize.fn(
+              'date_part',
+              'year',
+              Sequelize.col('ApplicationModel.created'),
+            ),
+            (month > currentMonth ? currentYear - 1 : currentYear).toString(),
+          ),
+        ),
+      )
+    }
+
+    const results = await this.applicationModel.findAndCountAll({
+      where: whereOptions,
+      order: [['modified', 'DESC']],
+      include: [{ model: StaffModel, as: 'staff' }],
+      offset: (filters.page - 1) * applicationPageSize,
+      limit: applicationPageSize,
+    })
+
+    return { applications: results.rows, totalCount: results.count }
   }
 
   private async sendApplicationUpdateEmail(

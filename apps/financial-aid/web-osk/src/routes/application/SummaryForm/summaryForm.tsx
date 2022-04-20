@@ -177,6 +177,7 @@ const SummaryForm = () => {
 
         <DirectTaxPaymentCell
           setIsModalOpen={setIsModalOpen}
+          hasFetchedPayments={form?.hasFetchedPayments}
           directTaxPayments={form?.directTaxPayments}
         />
         <ContactInfo

@@ -36,6 +36,8 @@ import {
   Notification,
   SendNotificationResponse,
 } from '../src/app/modules/notification'
+import { IntlService } from '@island.is/cms-translations'
+import { StaticText } from '@island.is/application/core'
 
 interface CUser extends TUser {
   institutionId: string
@@ -73,7 +75,21 @@ let admin: CUser
 let adminAuthCookie: string
 
 beforeAll(async () => {
-  app = await testServer({ appModule: AppModule })
+  app = await testServer({
+    appModule: AppModule,
+    override: (builder) =>
+      builder.overrideProvider(IntlService).useValue({
+        useIntl: () =>
+          Promise.resolve({
+            formatMessage: (descriptor: StaticText) => {
+              if (typeof descriptor === 'string') {
+                return descriptor
+              }
+              return descriptor.defaultMessage
+            },
+          }),
+      }),
+  })
 
   sequelize = await app.resolve(getConnectionToken() as Type<Sequelize>)
 
@@ -144,6 +160,7 @@ function remainingCreateCaseData() {
   return {
     description: 'Description',
     defenderName: 'Defender Name',
+    defenderNationalId: '0000000009',
     defenderEmail: 'Defender Email',
     defenderPhoneNumber: '555-5555',
     sendRequestToDefender: true,
@@ -332,6 +349,9 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.state).toBe(caseTwo.state)
   expect(caseOne.policeCaseNumber).toBe(caseTwo.policeCaseNumber)
   expect(caseOne.defenderName ?? null).toBe(caseTwo.defenderName ?? null)
+  expect(caseOne.defenderNationalId ?? null).toBe(
+    caseTwo.defenderNationalId ?? null,
+  )
   expect(caseOne.defenderEmail ?? null).toBe(caseTwo.defenderEmail ?? null)
   expect(caseOne.defenderPhoneNumber ?? null).toBe(
     caseTwo.defenderPhoneNumber ?? null,
@@ -489,7 +509,7 @@ describe('Institution', () => {
       .send()
       .expect(200)
       .then((response) => {
-        expect(response.body.length).toBe(14)
+        expect(response.body.length).toBe(16)
       })
   })
 })

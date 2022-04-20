@@ -2,7 +2,7 @@ import { Field, ObjectType } from '@nestjs/graphql'
 
 import { AidModelTypeEnum } from '@island.is/clients/municipalities-financial-aid'
 
-@ObjectType()
+@ObjectType('MunicipalitiesFinancialAidAidModel')
 export class AidModel {
   @Field()
   readonly ownPlace!: number

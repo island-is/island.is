@@ -13,6 +13,7 @@ import {
   PaymentSchedule,
   CriminalRecord,
   RskCompanyInfo,
+  DrivingLicenseBook,
 } from '../../../infra/src/dsl/xroad'
 import { settings } from '../../../infra/src/dsl/settings'
 
@@ -103,11 +104,13 @@ export const serviceSetup = (services: {
       XROAD_NATIONAL_REGISTRY_TIMEOUT: '20000',
       XROAD_PROPERTIES_TIMEOUT: '20000',
       SYSLUMENN_TIMEOUT: '30000',
+      XROAD_DRIVING_LICENSE_BOOK_TIMEOUT: '20000',
       IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
+      MUNICIPALITIES_FINANCIAL_AID_BACKEND_URL: 'http://localhost:3344',
     })
 
     .secrets({
@@ -149,9 +152,6 @@ export const serviceSetup = (services: {
       PKPASS_CACHE_TOKEN_EXPIRY_DELTA:
         '/k8s/api/PKPASS_CACHE_TOKEN_EXPIRY_DELTA',
       PKPASS_SECRET_KEY: '/k8s/api/PKPASS_SECRET_KEY',
-      RSK_API_USERNAME: '/k8s/shared/api/RSK_API_USERNAME',
-      RSK_API_PASSWORD: '/k8s/shared/api/RSK_API_PASSWORD',
-      RSK_API_URL: '/k8s/shared/api/RSK_API_URL',
       ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE',
       ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH',
       IDENTITY_SERVER_CLIENT_SECRET: '/k8s/api/IDENTITY_SERVER_CLIENT_SECRET',
@@ -170,6 +170,7 @@ export const serviceSetup = (services: {
       PaymentSchedule,
       CriminalRecord,
       RskCompanyInfo,
+      DrivingLicenseBook,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({

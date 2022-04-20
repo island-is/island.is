@@ -2,6 +2,8 @@ import * as faker from 'faker'
 
 import { NationalRegistryClientPerson } from '@island.is/shared/types'
 
+import { createNationalId } from './nationalId'
+
 const createRandomNationalRegistryUser = (): NationalRegistryClientPerson => {
   const [firstName, middleName, lastName] = [
     faker.name.firstName(),
@@ -11,7 +13,7 @@ const createRandomNationalRegistryUser = (): NationalRegistryClientPerson => {
   const name = `${firstName} ${middleName} ${lastName}`
 
   return {
-    kennitala: faker.helpers.replaceSymbolWithNumber('##########'),
+    kennitala: createNationalId('person'),
     nafn: name,
     eiginnafn: firstName,
     millinafn: middleName,
@@ -19,7 +21,7 @@ const createRandomNationalRegistryUser = (): NationalRegistryClientPerson => {
     fulltNafn: name,
     kynkodi: faker.datatype.number({ min: 1, max: 8 }).toString(),
     bannmerking: faker.datatype.boolean(),
-    faedingardagur: faker.date.past(),
+    faedingardagur: faker.date.past(100),
     logheimili: {
       heiti: faker.address.streetName(),
       postnumer: faker.address.zipCode(),

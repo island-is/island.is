@@ -4,13 +4,20 @@ import { useMutation } from '@apollo/client'
 import get from 'lodash/get'
 import has from 'lodash/has'
 
+import { format as formatKennitala } from 'kennitala'
 import {
   Application,
   buildFieldOptions,
   RecordObject,
   Field,
 } from '@island.is/application/core'
-import { Box, GridColumn, GridRow, Stack } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  GridColumn,
+  GridRow,
+  Stack,
+} from '@island.is/island-ui/core'
 import {
   InputController,
   RadioController,
@@ -20,6 +27,7 @@ import { useLocale } from '@island.is/localization'
 import {
   DataValue,
   formatBankInfo,
+  formatPhoneNumber,
   handleServerError,
   Label,
   RadioValue,
@@ -50,6 +58,7 @@ import {
   SPOUSE,
   ParentalRelations,
   NO_UNION,
+  NO_PRIVATE_PENSION_FUND,
 } from '../../constants'
 import { YesOrNo } from '../../types'
 import { SummaryTimeline } from '../components/SummaryTimeline/SummaryTimeline'
@@ -59,6 +68,8 @@ import { usePrivatePensionFund as usePrivatePensionFundOptions } from '../../hoo
 import { usePensionFund as usePensionFundOptions } from '../../hooks/usePensionFund'
 import { useStatefulAnswers } from '../../hooks/useStatefulAnswers'
 import { getSelectOptionLabel } from '../../lib/parentalLeaveClientUtils'
+
+import * as styles from './Review.css'
 
 type ValidOtherParentAnswer = typeof NO | typeof MANUAL | undefined
 
@@ -164,6 +175,16 @@ export const Review: FC<ReviewScreenProps> = ({
 
   return (
     <>
+      <Box className={styles.printButton} position="absolute">
+        <Button
+          variant="utility"
+          icon="print"
+          onClick={(e) => {
+            e.preventDefault()
+            window.print()
+          }}
+        />
+      </Box>
       <ReviewGroup
         isEditable={editable}
         canCloseEdit={groupHasNoErrors([
@@ -234,7 +255,7 @@ export const Review: FC<ReviewScreenProps> = ({
                 label={formatMessage(
                   parentalLeaveFormMessages.applicant.nationalId,
                 )}
-                value={application.applicant}
+                value={formatKennitala(application.applicant)}
               />
             </GridColumn>
           </GridRow>
@@ -254,7 +275,7 @@ export const Review: FC<ReviewScreenProps> = ({
               label={formatMessage(
                 parentalLeaveFormMessages.applicant.phoneNumber,
               )}
-              value={applicantPhoneNumber}
+              value={formatPhoneNumber(applicantPhoneNumber)}
               error={hasError('applicant.phoneNumber')}
             />
           </GridColumn>
@@ -304,14 +325,6 @@ export const Review: FC<ReviewScreenProps> = ({
                 )}
                 value={otherParentName}
               />
-              {otherParentWillApprove && (
-                <DataValue
-                  label={formatMessage(
-                    parentalLeaveFormMessages.shared.otherParentEmailSubSection,
-                  )}
-                  value={otherParentEmail}
-                />
-              )}
             </GridColumn>
 
             <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
@@ -319,7 +332,9 @@ export const Review: FC<ReviewScreenProps> = ({
                 label={formatMessage(
                   parentalLeaveFormMessages.shared.otherParentID,
                 )}
-                value={otherParentId}
+                value={
+                  otherParentId ? formatKennitala(otherParentId) : otherParentId
+                }
               />
             </GridColumn>
           </GridRow>
@@ -473,7 +488,9 @@ export const Review: FC<ReviewScreenProps> = ({
                 onSelect={(s: string) => {
                   setStateful((prev) => {
                     const privatePensionFund =
-                      s === NO ? '' : prev.privatePensionFund
+                      s === NO
+                        ? NO_PRIVATE_PENSION_FUND
+                        : prev.privatePensionFund
                     const privatePensionFundPercentage =
                       s === NO ? '' : prev.privatePensionFundPercentage
                     setValue('payments.privatePensionFund', privatePensionFund)

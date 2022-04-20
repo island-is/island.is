@@ -14,6 +14,7 @@ export enum CaseOrigin {
 export enum CaseType {
   CUSTODY = 'CUSTODY',
   TRAVEL_BAN = 'TRAVEL_BAN',
+  ADMISSION_TO_FACILITY = 'ADMISSION_TO_FACILITY',
   SEARCH_WARRANT = 'SEARCH_WARRANT',
   BANKING_SECRECY_WAIVER = 'BANKING_SECRECY_WAIVER',
   PHONE_TAPPING = 'PHONE_TAPPING',
@@ -114,6 +115,7 @@ export interface Case {
   policeCaseNumber: string
   defendants?: Defendant[]
   defenderName?: string
+  defenderNationalId?: string
   defenderEmail?: string
   defenderPhoneNumber?: string
   sendRequestToDefender?: boolean
@@ -190,6 +192,7 @@ export interface CreateCase {
   description?: string
   policeCaseNumber: string
   defenderName?: string
+  defenderNationalId?: string
   defenderEmail?: string
   defenderPhoneNumber?: string
   sendRequestToDefender?: boolean
@@ -202,6 +205,7 @@ export interface UpdateCase {
   description?: string
   policeCaseNumber?: string
   defenderName?: string
+  defenderNationalId?: string
   defenderEmail?: string
   defenderPhoneNumber?: string
   sendRequestToDefender?: boolean
@@ -277,7 +281,11 @@ export interface SignatureConfirmationResponse {
   message?: string
 }
 
-export const restrictionCases = [CaseType.CUSTODY, CaseType.TRAVEL_BAN]
+export const restrictionCases = [
+  CaseType.CUSTODY,
+  CaseType.TRAVEL_BAN,
+  CaseType.ADMISSION_TO_FACILITY,
+]
 
 export const investigationCases = [
   CaseType.SEARCH_WARRANT,

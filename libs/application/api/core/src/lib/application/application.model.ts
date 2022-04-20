@@ -121,4 +121,10 @@ export class Application extends Model<Application> {
   })
   @ApiProperty()
   pruned!: boolean
+
+  @Column({
+    type: DataType.ARRAY(DataType.STRING),
+  })
+  @ApiProperty()
+  assignNonces!: string[]
 }

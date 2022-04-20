@@ -43,15 +43,27 @@ export const autofillRuling = (
 export const useRulingAutofill = (
   isCaseUpToDate: boolean,
   workingCase: Case,
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
 ) => {
   const { formatMessage } = useIntl()
+  const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
   const { autofill } = useCase()
 
   useEffect(() => {
-    if (isCaseUpToDate) {
+    if (isCaseUpToDate && !initialAutoFillDone) {
       autofillRuling(workingCase, autofill, formatMessage)
+
+      setInitialAutoFillDone(true)
+      setWorkingCase({ ...workingCase })
     }
-  }, [autofill, formatMessage, isCaseUpToDate, workingCase])
+  }, [
+    autofill,
+    formatMessage,
+    initialAutoFillDone,
+    isCaseUpToDate,
+    setWorkingCase,
+    workingCase,
+  ])
 }
 
 const RulingInput: React.FC<Props> = (props) => {

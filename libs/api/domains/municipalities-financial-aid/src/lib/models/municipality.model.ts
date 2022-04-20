@@ -1,8 +1,7 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { AidModel } from '.'
 
-import { AidModel } from './aid.model'
-
-@ObjectType()
+@ObjectType('MunicipalitiesFinancialAidMunicipalityModel')
 export class MunicipalityModel {
   @Field(() => ID)
   readonly id!: string

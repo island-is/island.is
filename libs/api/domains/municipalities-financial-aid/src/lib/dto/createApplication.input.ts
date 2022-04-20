@@ -8,11 +8,10 @@ import {
   ApplicationState,
   FamilyStatus,
 } from '@island.is/financial-aid/shared/lib'
-import { CreateApplicationFileInput } from './createFile.input'
-import { DirectTaxPaymentInput } from './directTaxPayment.input'
+import { CreateFileInput, DirectTaxPaymentInput } from '.'
 
-@InputType()
-export class CreateMunicipalitiesApplicationInput {
+@InputType('MunicipalitiesFinancialAidCreateApplicationInput')
+export class CreateApplicationInput {
   @Allow()
   @Field()
   readonly name!: string
@@ -86,7 +85,7 @@ export class CreateMunicipalitiesApplicationInput {
   readonly state!: ApplicationState
 
   @Allow()
-  @Field(() => [CreateApplicationFileInput])
+  @Field(() => [CreateFileInput])
   readonly files!: string[]
 
   @Allow()
