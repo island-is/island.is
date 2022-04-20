@@ -10,12 +10,10 @@ export const createMockUser = (user?: MockUser) =>
       name: 'Mock',
       locale: 'is',
       nationalId: '0000000000',
-      delegationType: ['Custom'],
       ...user?.profile,
     },
     expired: false,
     expires_in: 9999,
     scopes: [],
-    dateOfBirth: new Date('2000-01-01'),
     ...user,
   } as User)
