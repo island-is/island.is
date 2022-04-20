@@ -12,8 +12,6 @@ jobs:
   codeowners-check:
     name: Lint CODEOWNERS
     runs-on: kubernetes-runner
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
 
     steps:
       - uses: actions/checkout@v3
