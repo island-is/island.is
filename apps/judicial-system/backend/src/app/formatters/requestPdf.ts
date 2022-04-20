@@ -53,11 +53,11 @@ function constructRestrictionRequestPdf(
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
 
   let caseTypeText = ''
-  if (CaseType.ADMISSION_TO_FACILITY) {
+  if (theCase.type === CaseType.ADMISSION_TO_FACILITY) {
     caseTypeText = formatMessage(core.caseType.admissionToFacility)
-  } else if (CaseType.TRAVEL_BAN) {
+  } else if (theCase.type === CaseType.TRAVEL_BAN) {
     caseTypeText = formatMessage(core.caseType.travelBan)
-  } else if (CaseType.CUSTODY) {
+  } else if (theCase.type === CaseType.CUSTODY) {
     caseTypeText = formatMessage(core.caseType.custody)
   }
 
