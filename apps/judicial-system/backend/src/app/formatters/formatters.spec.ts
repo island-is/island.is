@@ -26,6 +26,7 @@ import {
   formatDefenderRevokedEmailNotification,
   formatProsecutorReceivedByCourtSmsNotification,
   formatCourtResubmittedToCourtSmsNotification,
+  formatReadyForCourtEmailNotificationToProsecutor,
 } from './formatters'
 
 export const makeProsecutor = (): User => {
@@ -437,6 +438,103 @@ describe('formatReadyForCourtSmsNotification', () => {
     // Assert
     expect(res).toBe(
       'Sækjandi í máli R-123/2021 hefur breytt kröfunni og sent aftur á héraðsdómstól. Nýtt kröfuskjal hefur verið vistað í Auði.',
+    )
+  })
+})
+
+describe('formatReadyForCourtEmailNotificationToProsecutor', () => {
+  const messages = {
+    ...notifications.readyForCourt,
+  }
+  let formatMessage: FormatMessage
+  beforeAll(() => {
+    const intl = createTestIntl('is-IS', messages)
+    formatMessage = intl.formatMessage
+  })
+
+  test('should format ready for court email subject', () => {
+    // Arrange
+    const type = CaseType.CUSTODY
+    const court = 'Héraðsdómur Reykjavíkur'
+    const policeCaseNumber = '1234567'
+    const overviewUrl = 'https://rettarvorslugatt.island.is/test/overview'
+
+    // Act
+    const res = formatReadyForCourtEmailNotificationToProsecutor(
+      formatMessage,
+      type,
+      court,
+      policeCaseNumber,
+      overviewUrl,
+    )
+
+    // Assert
+    expect(res.subject).toBe('Krafa í máli 1234567')
+  })
+
+  test('should format ready for court email for custody cases', () => {
+    // Arrange
+    const type = CaseType.CUSTODY
+    const court = 'Héraðsdómur Reykjavíkur'
+    const policeCaseNumber = '1234567'
+    const overviewUrl = 'https://rettarvorslugatt.island.is/test/overview'
+
+    // Act
+    const res = formatReadyForCourtEmailNotificationToProsecutor(
+      formatMessage,
+      type,
+      court,
+      policeCaseNumber,
+      overviewUrl,
+    )
+
+    // Assert
+    expect(res.body).toBe(
+      'Þú hefur sent kröfu um gæsluvarðhald á Héraðsdómur Reykjavíkur vegna LÖKE máls 1234567. Skjalið er aðgengilegt undir <a href="https://rettarvorslugatt.island.is/test/overview">málinu í Réttarvörslugátt</a>.',
+    )
+  })
+
+  test('should format ready for court email for travel ban cases', () => {
+    // Arrange
+    const type = CaseType.TRAVEL_BAN
+    const court = 'Héraðsdómur Reykjaness'
+    const policeCaseNumber = '66666'
+    const overviewUrl = 'https://rettarvorslugatt.island.is/test/overview'
+
+    // Act
+    const res = formatReadyForCourtEmailNotificationToProsecutor(
+      formatMessage,
+      type,
+      court,
+      policeCaseNumber,
+      overviewUrl,
+    )
+
+    // Assert
+    expect(res.body).toBe(
+      'Þú hefur sent kröfu um farbann á Héraðsdómur Reykjaness vegna LÖKE máls 66666. Skjalið er aðgengilegt undir <a href="https://rettarvorslugatt.island.is/test/overview">málinu í Réttarvörslugátt</a>.',
+    )
+  })
+
+  test('should format ready for court email for travel ban cases', () => {
+    // Arrange
+    const type = CaseType.ADMISSION_TO_FACILITY
+    const court = 'Héraðsdómur Reykjaness'
+    const policeCaseNumber = '66666'
+    const overviewUrl = 'https://rettarvorslugatt.island.is/test/overview'
+
+    // Act
+    const res = formatReadyForCourtEmailNotificationToProsecutor(
+      formatMessage,
+      type,
+      court,
+      policeCaseNumber,
+      overviewUrl,
+    )
+
+    // Assert
+    expect(res.body).toBe(
+      'Þú hefur sent kröfu um vistun á viðeigandi stofnun á Héraðsdómur Reykjaness vegna LÖKE máls 66666. Skjalið er aðgengilegt undir <a href="https://rettarvorslugatt.island.is/test/overview">málinu í Réttarvörslugátt</a>.',
     )
   })
 })
