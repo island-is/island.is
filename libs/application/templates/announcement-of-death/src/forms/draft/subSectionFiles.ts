@@ -4,55 +4,56 @@ import {
   buildCustomField,
   buildDescriptionField,
 } from '@island.is/application/core'
+import { m } from '../../lib/messages'
 
 export const subSectionFiles = buildSubSection({
   id: 'filesStep',
-  title: 'Skjöl',
+  title: m.filesTitle,
   children: [
     buildMultiField({
-      id: 'propertiesTitle',
-      title: 'Skjöl',
-      description: 'Texti sem segir aðeins frá hvað þetta hérna fyrir neðan er',
+      id: 'filesTitle',
+      title: m.filesTitle,
+      description: m.filesDescription,
       space: 1,
       children: [
         buildDescriptionField({
-          id: 'sendToAll',
-          title: 'Sent á alla aðila dánarbús',
+          id: 'selectMainRecipient',
+          title: m.filesSelectMainRecipient,
           titleVariant: 'h3',
         }),
         buildCustomField(
           {
-            title: 'Heimild til að afla upplýsinga',
-            description:
-              'Heimild veitt til erfingja svo hann geti aflað sér upplýsinga um fjárhagsstöðu dánarbúsins',
-            id: 'EstateProxy',
+            title: m.certificateOfDeathAnnouncementTitle,
+            description: m.certificateOfDeathAnnouncementDescription,
+            id: 'certificateOfDeathAnnouncement',
             component: 'FilesRecipientCard',
-            defaultValue: 'Allir erfingjar',
           },
           {
-            noOptions: true,
+            placeholder: m.certificateOfDeathAnnouncementPlaceholder,
           },
         ),
-        buildDescriptionField({
-          id: 'selectMainRecipient',
-          title: 'Veldu hver fær sent',
-          titleVariant: 'h3',
-          space: 5,
-        }),
-        buildCustomField({
-          title: 'Vottorð um tilkynningu andláts',
-          description:
-            'Heimilar erfingjum að greftra viðkomandi einstakling. Prestur þarf að fá þetta skjal áður en útför fer fram',
-          id: 'EstateCertificate',
-          component: 'FilesRecipientCard',
-        }),
-        buildCustomField({
-          title: 'Heimild til úttektar á útfarakostnaði',
-          description:
-            'Heimild sem erfingi framvísar hjá bankastofnun svo hann geti notað fjármuni hins látna til að greiða útfarakostnað',
-          id: 'EstateWarrant',
-          component: 'FilesRecipientCard',
-        }),
+        buildCustomField(
+          {
+            title: m.financesDataCollectionPermissionTitle,
+            description: m.financesDataCollectionPermissionDescription,
+            id: 'financesDataCollectionPermission',
+            component: 'FilesRecipientCard',
+          },
+          {
+            placeholder: m.financesDataCollectionPermissionPlaceholder,
+          },
+        ),
+        buildCustomField(
+          {
+            title: m.authorizationForFuneralExpensesTitle,
+            description: m.authorizationForFuneralExpensesDescription,
+            id: 'authorizationForFuneralExpenses',
+            component: 'FilesRecipientCard',
+          },
+          {
+            placeholder: m.authorizationForFuneralExpensesPlaceholder,
+          },
+        ),
       ],
     }),
   ],

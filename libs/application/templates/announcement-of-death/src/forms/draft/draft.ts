@@ -198,7 +198,7 @@ export const draft = (): Form => {
                 actions: [
                   {
                     event: DefaultEvents.SUBMIT,
-                    name: 'Staðfesta andlátstilkynnningu',
+                    name: m.submitApplication,
                     type: 'primary',
                   },
                 ],

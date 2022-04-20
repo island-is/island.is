@@ -332,6 +332,77 @@ Ef ekkert á við sem hér að ofan er talið rennur arfur í ríkissjóð. Nán
     description: 'Vehicle type label',
   },
 
+  /* Files Step */
+  filesTitle: {
+    id: 'aod.application:filesTitle',
+    defaultMessage: 'Skjöl',
+    description: 'Files title',
+  },
+  filesDescription: {
+    id: 'aod.application:filesDescription',
+    defaultMessage:
+      'Skjölin verða send og gerð aðgengileg í pósthólfi inni á Mínar síður Ísland.is.',
+    description: 'Files description',
+  },
+  filesSelectMainRecipient: {
+    id: 'aod.application:filesSelectMainRecipient',
+    defaultMessage: 'Veldu hver fær sent skjal:',
+    description: 'Files select main recipients description',
+  },
+  filesRecipientLabel: {
+    id: 'aod.application:filesRecipientLabel',
+    defaultMessage: 'Erfingi',
+    description: 'Files dropdown label',
+  },
+  certificateOfDeathAnnouncementTitle: {
+    id: 'aod.application:certificateOfDeathAnnouncementTitle',
+    defaultMessage: 'Vottorð um tilkynningu andláts',
+    description: 'Certificate of death announcement title',
+  },
+  certificateOfDeathAnnouncementDescription: {
+    id: 'aod.application:certificateOfDeathAnnouncementDescription',
+    defaultMessage:
+      'Heimilar að útför hins látna megi fara fram. Prestur eða sá aðili sem sér um útför þarf að fá þetta vottorð áður en útför fer fram.',
+    description: 'Certificate of death announcement description',
+  },
+  certificateOfDeathAnnouncementPlaceholder: {
+    id: 'aod.application:certificateOfDeathAnnouncementPlaceholder',
+    defaultMessage: 'Veldu erfingja sem á að fá sent skjal',
+    description: 'Certificate of death announcement placeholder',
+  },
+  financesDataCollectionPermissionTitle: {
+    id: 'aod.application:financesDataCollectionPermissionTitle',
+    defaultMessage: 'Heimild til að afla upplýsinga um fjárhag',
+    description: 'Finances data collection permission title',
+  },
+  financesDataCollectionPermissionDescription: {
+    id: 'aod.application:financesDataCollectionPermissionDescription',
+    defaultMessage:
+      'Heimild veitt til erfingja svo þau geti aflað sér upplýsinga um fjárhagsstöðu dánarbúsins.',
+    description: 'Finances data collection permission description',
+  },
+  financesDataCollectionPermissionPlaceholder: {
+    id: 'aod.application:financesDataCollectionPermissionPlaceholder',
+    defaultMessage: 'Veldu erfingja sem á að fá sent skjal',
+    description: 'Finances data collection permission placeholder',
+  },
+  authorizationForFuneralExpensesTitle: {
+    id: 'aod.application:authorizationForFuneralExpensesTitle',
+    defaultMessage: 'Heimild til að afla upplýsinga um fjárhag',
+    description: 'Authorization for funeral expenses title',
+  },
+  authorizationForFuneralExpensesDescription: {
+    id: 'aod.application:authorizationForFuneralExpensesDescription',
+    defaultMessage:
+      'Heimild veitt til erfingja svo þau geti aflað sér upplýsinga um fjárhagsstöðu dánarbúsins.',
+    description: 'Authorization for funeral expenses description',
+  },
+  authorizationForFuneralExpensesPlaceholder: {
+    id: 'aod.application:authorizationForFuneralExpensesPlaceholder',
+    defaultMessage: 'Veldu erfingja sem á að fá sent skjal',
+    description: 'Authorization for funeral expenses placeholder',
+  },
+
   /* Validation */
   errorRoleConfirmation: {
     id: 'aod.application:error.errorRoleConfirmation',
@@ -488,5 +559,10 @@ Ef ekkert á við sem hér að ofan er talið rennur arfur í ríkissjóð. Nán
     defaultMessage:
       'Endilega lestu yfir til að vera viss um að réttar upplýsingar hafi verið gefnar.',
     description: 'Overview description',
+  },
+  submitApplication: {
+    id: 'aod.application:submitApplication',
+    defaultMessage: 'Staðfesta andlátstilkynnningu',
+    description: 'Submit application of death',
   },
 })

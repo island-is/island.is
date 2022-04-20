@@ -4,7 +4,7 @@ import {
   buildSubSection,
   buildCustomField,
 } from '@island.is/application/core'
-import { markdownOptions } from '../../lib/markdownOverrides'
+import { markdownOptions } from '../../lib/markdownOptions'
 import { m } from '../../lib/messages'
 
 export const subSectionInheritance = buildSubSection({
