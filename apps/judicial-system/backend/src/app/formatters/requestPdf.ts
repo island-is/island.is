@@ -30,6 +30,7 @@ import {
   addFooter,
   setTitle,
   addNormalJustifiedText,
+  addCoatOfArms,
 } from './pdfHelpers'
 import { writeFile } from './writeFile'
 
@@ -64,6 +65,16 @@ function constructRestrictionRequestPdf(
   })
 
   setTitle(doc, title)
+
+  if (
+    !theCase.creatingProsecutor?.institution?.name?.startsWith(
+      'Lögreglustjórinn',
+    )
+  ) {
+    addCoatOfArms(doc)
+    addEmptyLines(doc, 5)
+  }
+
   setLineGap(doc, 4)
   addLargeHeading(
     doc,
@@ -217,6 +228,16 @@ function constructInvestigationRequestPdf(
   })
 
   setTitle(doc, title)
+
+  if (
+    !theCase.creatingProsecutor?.institution?.name?.startsWith(
+      'Lögreglustjórinn',
+    )
+  ) {
+    addCoatOfArms(doc)
+    addEmptyLines(doc, 5)
+  }
+
   setLineGap(doc, 4)
   addLargeHeading(
     doc,
