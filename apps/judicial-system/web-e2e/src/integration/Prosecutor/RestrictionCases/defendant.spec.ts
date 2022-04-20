@@ -25,6 +25,7 @@ describe(STEP_ONE_CUSTODY_REQUEST_ROUTE, () => {
   })
 
   it('should autofill name, address and gender after getting person by national id in national registry', () => {
+    // eslint-disable-next-line local-rules/disallow-kennitalas
     cy.getByTestid('nationalId').type('1111111111')
     cy.wait('@getPersonByNationalId')
     cy.getByTestid('accusedAddress').should('have.value', 'Jokersway 90')
@@ -32,12 +33,10 @@ describe(STEP_ONE_CUSTODY_REQUEST_ROUTE, () => {
     cy.getByTestid('select-defendantGender').should('contain', 'Karl')
   })
 
-  it('should require a valid accused date of birth if the user does not have a national id', () => {
+  it('should require a valid accused date of birth or empty if the user does not have a national id', () => {
     cy.get('[type="checkbox"]').check()
     cy.getByTestid('nationalId').type('0').blur()
     cy.getByTestid('inputErrorMessage').contains('Dæmi: 00.00.0000')
-    cy.getByTestid('nationalId').clear().blur()
-    cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
     cy.getByTestid('nationalId').clear().type('01.01.2000')
     cy.getByTestid('inputErrorMessage').should('not.exist')
   })

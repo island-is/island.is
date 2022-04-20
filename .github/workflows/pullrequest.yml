@@ -185,7 +185,7 @@ jobs:
           if [[ $CHUNKS != "[]" ]]; then
             echo "::set-output name=CHUNKS::{\"projects\":$CHUNKS}"
           fi
-          echo "::set-output name=BUILD_ID::$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-$(uuidgen)"
+          echo "::set-output name=BUILD_ID::$GITHUB_RUN_ID-$GITHUB_RUN_NUMBER-$GITHUB_RUN_ATTEMPT-$(uuidgen)"
 
       - name: Prepare build targets
         id: build_projects
