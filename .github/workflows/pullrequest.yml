@@ -14,7 +14,9 @@ env:
 
 jobs:
   prepare:
-    runs-on: kubernetes-runner
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 25
 
     env:
@@ -115,13 +117,12 @@ jobs:
           ISSUE_REPORTING_SLACK_WEBHOOK_URL: ${{ secrets.SLACK_BUILD_ISSUES_REPORTING_WEBHOOK_URL }}
         name: Preparing HEAD and BASE tags
 
-
       - name: Cache for cypress
         id: cypress
         continue-on-error: true
         uses: ./.github/actions/cache
         with:
-          path: ~/.cache/Cypress
+          path: /github/home/.cache/Cypress
           key: cypress-cache-${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
 
       - name: Check cache success
@@ -184,7 +185,7 @@ jobs:
           if [[ $CHUNKS != "[]" ]]; then
             echo "::set-output name=CHUNKS::{\"projects\":$CHUNKS}"
           fi
-          echo "::set-output name=BUILD_ID::$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-$(uuidgen)"
+          echo "::set-output name=BUILD_ID::$GITHUB_RUN_ID-$GITHUB_RUN_NUMBER-$GITHUB_RUN_ATTEMPT-$(uuidgen)"
 
       - name: Prepare build targets
         id: build_projects
@@ -200,7 +201,9 @@ jobs:
     needs:
       - prepare
     if: needs.prepare.outputs.TEST_CHUNKS
-    runs-on: kubernetes-runner
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 25
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
@@ -245,7 +248,6 @@ jobs:
       - name: Untar generated files
         run: tar zxvf generated_files.tar.gz
 
-
       - uses: ./.github/actions/unit-test
         with:
           codecov-token: ${{ secrets.CODECOV_TOKEN }}
@@ -257,7 +259,9 @@ jobs:
     needs:
       - prepare
     if: needs.prepare.outputs.E2E_CHUNKS
-    runs-on: kubernetes-runner
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 25
     env:
       AFFECTED_PROJECT: ${{ matrix.projects }}
@@ -295,7 +299,7 @@ jobs:
         continue-on-error: true
         uses: ./.github/actions/cache
         with:
-          path: ~/.cache/Cypress
+          path: /github/home/.cache/Cypress
           key: cypress-cache-${{ needs.prepare.outputs.node-modules-hash }}
 
       - name: Check cache success
@@ -321,7 +325,9 @@ jobs:
   linting-workspace:
     needs:
       - prepare
-    runs-on: kubernetes-runner
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v3
@@ -343,6 +349,14 @@ jobs:
         run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
       - name: Linting workspace
         run: ./scripts/ci/20_lint-workspace.sh
+
+  run-shellcheck:
+    needs:
+      - prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v3
       - name: Run ShellCheck
         uses: ludeeus/action-shellcheck@1.1.0
         with:
@@ -352,7 +366,9 @@ jobs:
   formatting:
     needs:
       - prepare
-    runs-on: kubernetes-runner
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v3
@@ -376,7 +392,9 @@ jobs:
   linting:
     needs:
       - prepare
-    runs-on: kubernetes-runner
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 25
     if: needs.prepare.outputs.LINT_CHUNKS
     env:
@@ -424,7 +442,9 @@ jobs:
   build:
     needs:
       - prepare
-    runs-on: kubernetes-runner
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 25
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
@@ -469,13 +489,16 @@ jobs:
         run: ./scripts/ci/run-in-parallel-native.sh build
 
   success:
-    runs-on: kubernetes-runner
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     if: always()
     needs:
       - prepare
       - linting-workspace
       - tests
       - linting
+      - run-shellcheck
       - formatting
       - e2e
       - build
@@ -488,6 +511,8 @@ jobs:
         run: '[[ ${{ needs.e2e.result }} != "failure" ]] || exit 1'
       - name: Check linting success
         run: '[[ ${{ needs.linting.result }} != "failure" ]] || exit 1'
+      - name: Check run-shellcheck success
+        run: '[[ ${{ needs.run-shellcheck.result }} != "failure" ]] || exit 1'
       - name: Check formatting success
         run: '[[ ${{ needs.formatting.result }} != "failure" ]] || exit 1'
       - name: Check build success

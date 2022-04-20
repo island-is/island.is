@@ -58,7 +58,8 @@ export const lowercase = (text?: string): string => {
 }
 
 export const formatNationalId = (nationalId: string): string => {
-  if (nationalId?.length === 10) {
+  const regex = new RegExp(/^\d{10}$/)
+  if (regex.test(nationalId)) {
     return `${nationalId.slice(0, 6)}-${nationalId.slice(6)}`
   } else {
     return nationalId

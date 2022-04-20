@@ -4,10 +4,16 @@ on:
   pull_request: { }
   workflow_dispatch: { }
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   codeowners-check:
     name: Lint CODEOWNERS
-    runs-on: kubernetes-runner
+    runs-on: ec2-runners    
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
 
     steps:
       - uses: actions/checkout@v3
@@ -48,7 +54,9 @@ jobs:
 
   gitbook-check:
     name: Lint gitbook
-    runs-on: kubernetes-runner
+    runs-on: ec2-runners    
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
 
     steps:
       - uses: actions/checkout@v3
