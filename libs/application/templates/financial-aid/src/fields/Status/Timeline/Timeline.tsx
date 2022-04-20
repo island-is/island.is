@@ -4,9 +4,7 @@ import format from 'date-fns/format'
 import { useIntl } from 'react-intl'
 
 import { Text, Box } from '@island.is/island-ui/core'
-import {
-  ApplicationState,
-} from '@island.is/financial-aid/shared/lib'
+import { ApplicationState } from '@island.is/financial-aid/shared/lib'
 
 import * as styles from './Timeline.css'
 import { status } from '../../../lib/messages'

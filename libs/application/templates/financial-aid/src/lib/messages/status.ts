@@ -38,7 +38,8 @@ export const status = {
     },
     description: {
       id: 'fa.application:section.status.timeline.description',
-      defaultMessage: 'Hér geturðu séð hvað hefur gerst og hvað er framundan. Hikaðu ekki við að senda okkur athugasemd ef þú telur eitthvað óljóst eða rangt.',
+      defaultMessage:
+        'Hér geturðu séð hvað hefur gerst og hvað er framundan. Hikaðu ekki við að senda okkur athugasemd ef þú telur eitthvað óljóst eða rangt.',
       description: 'Timeline description',
     },
     receivedTitle: {
@@ -48,7 +49,8 @@ export const status = {
     },
     receivedDescription: {
       id: 'fa.application:section.status.timeline.receivedDescription',
-      defaultMessage: 'Umsóknin verður tekin til úrvinnslu eins fljótt og kostur er.',
+      defaultMessage:
+        'Umsóknin verður tekin til úrvinnslu eins fljótt og kostur er.',
       description: 'Timeline received step description',
     },
     inProgressTitle: {
@@ -58,7 +60,8 @@ export const status = {
     },
     inProgressDescription: {
       id: 'fa.application:section.status.timeline.inProgressDescription',
-      defaultMessage: 'Úrvinnsla umsóknarinnar er hafin. Ef þörf er á frekari upplýsingum eða gögnum mun vinnsluaðili óska eftir því hér á þessari stöðusíðu.',
+      defaultMessage:
+        'Úrvinnsla umsóknarinnar er hafin. Ef þörf er á frekari upplýsingum eða gögnum mun vinnsluaðili óska eftir því hér á þessari stöðusíðu.',
       description: 'Timeline in progress step description',
     },
     resultsTitle: {
@@ -68,8 +71,27 @@ export const status = {
     },
     resultsDescription: {
       id: 'fa.application:section.status.timeline.resultsDescription',
-      defaultMessage: 'Umsókn verður samþykkt eða henni hafnað og umsækjandi látinn vita um niðurstöðuna.',
+      defaultMessage:
+        'Umsókn verður samþykkt eða henni hafnað og umsækjandi látinn vita um niðurstöðuna.',
       description: 'Timeline results step description',
+    },
+  }),
+  aidAmount: defineMessages({
+    title: {
+      id: 'fa.application:section.status.aidAmount.title',
+      defaultMessage: 'Áætluð aðstoð',
+      description: 'Aid amount title',
+    },
+    titleApproved: {
+      id: 'fa.application:section.status.aidAmount.titleApproved',
+      defaultMessage: 'Veitt aðstoð',
+      description: 'Aid amount title for approved applications',
+    },
+    description: {
+      id: 'fa.application:section.status.aidAmount.description',
+      defaultMessage:
+        'Athugaðu að þessi útreikningur er eingöngu til viðmiðunar og getur tekið breytingum. Þú færð skilaboð þegar frekari útreikningur liggur fyrir. Umsóknin verður afgreidd eins fljótt og auðið er.',
+      description: 'Aid amount description',
     },
   }),
 }
