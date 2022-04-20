@@ -1,5 +1,9 @@
 import { Application, FieldBaseProps } from '@island.is/application/core'
-import { Municipality } from '@island.is/financial-aid/shared/lib'
+import {
+  DirectTaxPayment,
+  Municipality,
+  PersonalTaxReturn,
+} from '@island.is/financial-aid/shared/lib'
 import { UploadFile } from '@island.is/island-ui/core'
 import { answersSchema } from './dataSchema'
 
@@ -22,6 +26,7 @@ export interface ExternalData {
     data: {
       applicant: Applicant
       municipality: Municipality
+      taxData: TaxData
     }
     date: string
   }
@@ -59,6 +64,16 @@ export interface Applicant {
   fullName: string
   address: Address
   spouse?: Spouse
+}
+
+export interface TaxData {
+  municipalitiesPersonalTaxReturn: {
+    personalTaxReturn: PersonalTaxReturn | null
+  }
+  municipalitiesDirectTaxPayments: {
+    directTaxPayments: DirectTaxPayment[]
+    success: boolean
+  }
 }
 
 export interface CurrentApplication {

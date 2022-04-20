@@ -6,6 +6,7 @@ import {
   ApplicationApi,
   MunicipalityApi,
   FilesApi,
+  PersonalTaxReturnApi,
 } from '@island.is/clients/municipalities-financial-aid'
 import { FetchError } from '@island.is/clients/middlewares'
 import { CreateSignedUrlInput, MunicipalityInput } from './dto'
@@ -16,6 +17,7 @@ export class MunicipalitiesFinancialAidService {
     private applicationApi: ApplicationApi,
     private municipalityApi: MunicipalityApi,
     private filesApi: FilesApi,
+    private personalTaxReturnApi: PersonalTaxReturnApi,
   ) {}
 
   applicationApiWithAuth(auth: Auth) {
@@ -28,6 +30,10 @@ export class MunicipalitiesFinancialAidService {
 
   fileApiWithAuth(auth: Auth) {
     return this.filesApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  personalTaxReturnApiWithAuth(auth: Auth) {
+    return this.personalTaxReturnApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   private handle404(error: FetchError) {
@@ -50,6 +56,20 @@ export class MunicipalitiesFinancialAidService {
     return await this.municipalityApiWithAuth(auth)
       .municipalityControllerGetById(municipalityCode)
       .catch(this.handle404)
+  }
+
+  async personalTaxReturnForFinancialAId(auth: Auth, folderId: string) {
+    return await this.personalTaxReturnApiWithAuth(
+      auth,
+    ).personalTaxReturnControllerMunicipalitiesPersonalTaxReturn({
+      id: folderId,
+    })
+  }
+
+  async directTaxPaymentsForFinancialAId(auth: Auth) {
+    return await this.personalTaxReturnApiWithAuth(
+      auth,
+    ).personalTaxReturnControllerMunicipalitiesDirectTaxPayments()
   }
 
   async municipalitiesFinancialAidCreateSignedUrl(

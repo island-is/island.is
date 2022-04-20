@@ -8,8 +8,17 @@ import {
 import { UseGuards } from '@nestjs/common'
 
 import { MunicipalitiesFinancialAidService } from './municipalitiesFinancialAid.service'
-import { MunicipalityModel, SignedUrlModel } from './models'
-import { CreateSignedUrlInput, MunicipalityInput } from './dto'
+import {
+  DirectTaxPaymentsResponse,
+  MunicipalityModel,
+  PersonalTaxReturnResponse,
+  SignedUrlModel,
+} from './models'
+import {
+  CreateSignedUrlInput,
+  MunicipalityInput,
+  PersonalTaxReturnInput,
+} from './dto'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -36,6 +45,27 @@ export class MunicipalitiesFinancialAidResolver {
     return await this.municipalitiesFinancialAidService.municipalityInfoForFinancialAId(
       user,
       input,
+    )
+  }
+
+  @Query(() => PersonalTaxReturnResponse)
+  async municipalitiesPersonalTaxReturn(
+    @Args('input', { type: () => PersonalTaxReturnInput })
+    input: PersonalTaxReturnInput,
+    @CurrentUser() user: User,
+  ): Promise<PersonalTaxReturnResponse> {
+    return await this.municipalitiesFinancialAidService.personalTaxReturnForFinancialAId(
+      user,
+      input.folderId,
+    )
+  }
+
+  @Query(() => DirectTaxPaymentsResponse)
+  async municipalitiesDirectTaxPayments(
+    @CurrentUser() user: User,
+  ): Promise<DirectTaxPaymentsResponse> {
+    return await this.municipalitiesFinancialAidService.directTaxPaymentsForFinancialAId(
+      user,
     )
   }
 

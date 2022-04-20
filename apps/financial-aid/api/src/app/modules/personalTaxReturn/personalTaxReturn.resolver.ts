@@ -12,7 +12,7 @@ export class PersonalTaxReturnResolver {
   async municipalitiesPersonalTaxReturn(
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<PersonalTaxReturnResponse> {
-    return await backendApi.getPersonalTaxReturn()
+    return await backendApi.getPersonalTaxReturn('id')
   }
 
   @Query(() => DirectTaxPaymentsResponse)

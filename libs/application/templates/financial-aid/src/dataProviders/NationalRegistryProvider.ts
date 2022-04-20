@@ -3,8 +3,12 @@ import {
   FailedDataProviderResult,
   SuccessfulDataProviderResult,
 } from '@island.is/application/core'
-import { Municipality } from '@island.is/financial-aid/shared/lib'
-import { DataProviderTypes, Applicant } from '../lib/types'
+import {
+  DirectTaxPayment,
+  Municipality,
+  PersonalTaxReturn,
+} from '@island.is/financial-aid/shared/lib'
+import { DataProviderTypes, Applicant, TaxData } from '../lib/types'
 
 const nationalRegistryQuery = `
 query NationalRegistryUserQuery {
@@ -57,6 +61,33 @@ const municipalityQuery = `
     }
   }
 `
+const personalTaxReturnQuery = `
+query PersonalTaxReturnQuery($input: MunicipalitiesFinancialAidPersonalTaxReturnInput!) {
+  municipalitiesPersonalTaxReturn(input: $input) {
+      personalTaxReturn {
+        key
+        name
+        size
+      }
+    }
+  }
+`
+
+const directTaxPaymentsQuery = `
+  query DirectTaxPaymentsQuery {
+    municipalitiesDirectTaxPayments {
+      success
+      directTaxPayments {
+        totalSalary
+        payerNationalId
+        personalAllowance
+        withheldAtSource
+        month
+        year
+      }
+    }
+  }
+`
 
 export class NationalRegistryProvider extends BasicDataProvider {
   readonly type = DataProviderTypes.NationalRegistry
@@ -84,6 +115,7 @@ export class NationalRegistryProvider extends BasicDataProvider {
   async provide(): Promise<{
     applicant: Applicant
     municipality: Municipality
+    taxData: TaxData
   }> {
     const applicant = await this.runQuery<Applicant>(
       nationalRegistryQuery,
@@ -98,7 +130,23 @@ export class NationalRegistryProvider extends BasicDataProvider {
       },
     )
 
-    return { applicant, municipality }
+    const personalTaxReturn = await this.runQuery<{
+      personalTaxReturn: PersonalTaxReturn | null
+    }>(personalTaxReturnQuery, 'municipalitiesPersonalTaxReturn', {
+      input: { id: 'virkarEtta' },
+    })
+
+    const directTaxPayments = await this.runQuery<{
+      directTaxPayments: DirectTaxPayment[]
+      success: boolean
+    }>(directTaxPaymentsQuery, 'municipalitiesDirectTaxPayments')
+
+    const taxData = {
+      municipalitiesPersonalTaxReturn: personalTaxReturn,
+      municipalitiesDirectTaxPayments: directTaxPayments,
+    }
+
+    return { applicant, municipality, taxData }
   }
   handleError(error: Error | unknown) {
     console.error('Provider.FinancialAid.NationalRegistry:', error)
