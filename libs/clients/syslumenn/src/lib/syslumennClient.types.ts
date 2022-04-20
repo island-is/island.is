@@ -125,3 +125,15 @@ export enum PersonType {
   Child,
   CriminalRecordApplicant,
 }
+
+export enum AssetType {
+  RealEstate = 0,
+  Vehicle = 1,
+  Ship = 2,
+  Cash = 3,
+  Flyer = 4,
+}
+
+export interface RealEstateAddress {
+  address: string
+}

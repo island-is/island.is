@@ -95,6 +95,7 @@ export const RealEstateAndLandsRepeater: FC<FieldBaseProps> = ({ field }) => {
                   name={propertyNumberField}
                   label={formatMessage(m.propertyNumber)}
                   backgroundColor="blue"
+                  defaultValue={''}
                 />
               </GridColumn>
               <GridColumn span={['1/1', '1/2']} paddingBottom={2}>

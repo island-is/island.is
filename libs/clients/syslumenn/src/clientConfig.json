@@ -343,6 +343,37 @@
         ]
       }
     },
+    "/api/Logmannalisti": {
+      "post": {
+        "tags": ["Syslumenn"],
+        "operationId": "Logmannalisti_Get",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "audkenni",
+            "in": "query",
+            "x-nullable": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Logmenn"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT Token": ["Logmannalisti"]
+          }
+        ]
+      }
+    },
     "/api/VirkLeyfi/{audkenni}": {
       "get": {
         "tags": ["Syslumenn"],
@@ -998,10 +1029,10 @@
         ]
       }
     },
-    "/v1/Vedbandayfirlit": {
+    "/api/Vedbokarvottord": {
       "post": {
         "tags": ["Syslumenn"],
-        "operationId": "Vedbandayfirlit_Post",
+        "operationId": "Vedbokarvottord_Post",
         "consumes": [
           "application/json-patch+json",
           "application/json",
@@ -1038,6 +1069,56 @@
         "security": [
           {
             "JWT Token": []
+          }
+        ]
+      }
+    },
+    "/api/VedbokavottordRegluverki": {
+      "post": {
+        "tags": ["Syslumenn"],
+        "operationId": "VedbokavottordRegluverki_Post",
+        "consumes": [
+          "application/json-patch+json",
+          "application/json",
+          "text/json",
+          "application/*+json"
+        ],
+        "parameters": [
+          {
+            "name": "skilabod",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/VedbandayfirlitSkeyti"
+            },
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/VedbandayfirlitReguverkiSvarSkeyti"
+              }
+            }
+          },
+          "404": {
+            "x-nullable": false,
+            "description": "NotFound",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/VedbandayfirlitReguverkiSvarSkeyti"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT Token": ["Vedbokarvottord"]
           }
         ]
       }
@@ -1231,6 +1312,32 @@
           "type": "string"
         },
         "uppbodStadur": {
+          "type": "string"
+        }
+      }
+    },
+    "Logmenn": {
+      "type": "object",
+      "properties": {
+        "kennitala": {
+          "type": "string"
+        },
+        "logmannsstofa": {
+          "type": "string"
+        },
+        "adsetur": {
+          "type": "string"
+        },
+        "postnumer": {
+          "type": "string"
+        },
+        "stadur": {
+          "type": "string"
+        },
+        "simi": {
+          "type": "string"
+        },
+        "netfang": {
           "type": "string"
         }
       }
@@ -1813,6 +1920,43 @@
       "description": "0 = Fasteign\n1 = Okutaeki\n2 = Skip\n3 = Lausafe\n4 = Loftfar",
       "x-enumNames": ["Fasteign", "Okutaeki", "Skip", "Lausafe", "Loftfar"],
       "enum": [0, 1, 2, 3, 4]
+    },
+    "VedbandayfirlitReguverkiSvarSkeyti": {
+      "type": "object",
+      "required": ["landNr"],
+      "properties": {
+        "fastnum": {
+          "type": "string"
+        },
+        "landNr": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "heiti": {
+          "type": "string"
+        },
+        "svfn": {
+          "type": "string"
+        },
+        "svetiarfelag": {
+          "type": "string"
+        },
+        "notkun": {
+          "type": "string"
+        },
+        "eining": {
+          "type": "string"
+        },
+        "byggd": {
+          "type": "string"
+        },
+        "embaetti": {
+          "type": "string"
+        },
+        "embaettiNumer": {
+          "type": "string"
+        }
+      }
     }
   },
   "securityDefinitions": {

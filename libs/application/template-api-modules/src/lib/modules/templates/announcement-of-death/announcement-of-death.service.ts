@@ -35,21 +35,10 @@ export class AnnouncementOfDeathService {
 
   async addressLookupByRealEstateId({
     application,
-  }: TemplateApiModuleActionProps): Promise<RealEstateAddress> {
-    // TODO correctly access inputted assetId
-    const assetId = application.answers.addedAssetId.toString()
-    const realEstate = await this.fasteignirApi.fasteignirGetFasteign({
-      fasteignanumer: assetId,
-    })
-    const address = realEstate.sjalfgefidStadfang
-    return Promise.resolve({
-      addressNumber: address?.stadfanganumer ?? -1,
-      landNumber: address?.landeignarnumer ?? -1,
-      postalCode: address?.postnumer ?? -1,
-      municipality: address?.sveitarfelagBirting ?? '',
-      display: address?.birting ?? '',
-      displayShort: address?.birtingStutt ?? '',
-    })
+  }: TemplateApiModuleActionProps): Promise<Array<RealEstateAddress>> {
+    return this.syslumennService.getRealEstateAddress(
+      application.answers.assetId,
+    )
   }
 
   async submitApplication({ application }: TemplateApiModuleActionProps) {
