@@ -1,5 +1,5 @@
 import { theme } from '@island.is/island-ui/theme'
-import { ChatPanelConfig } from './types'
+import { BoostChatPanelConfig } from './types'
 
 export const endpoints = {
   'covid-island': {
@@ -21,4 +21,4 @@ export const config = {
       fontFamily: 'IBM Plex Sans',
     },
   },
-} as ChatPanelConfig
+} as BoostChatPanelConfig

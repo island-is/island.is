@@ -30,7 +30,7 @@ import {
   Sticky,
   Webreader,
   AppendedArticleComponents,
-  UkraineChatPanel,
+  LiveChatIncChatPanel,
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from '../queries'
@@ -60,6 +60,7 @@ import { useScrollPosition } from '../../hooks/useScrollPosition'
 import { scrollTo } from '../../hooks/useScrollSpy'
 import StepperFSM from '../../components/StepperFSM/StepperFSM'
 import { getStepOptionsFromUIConfiguration } from '../../components/StepperFSM/StepperFSMUtils'
+import { liveChatIncConfig } from './config'
 import * as styles from './Article.css'
 
 type Article = GetSingleArticleQuery['getSingleArticle']
@@ -607,8 +608,8 @@ const ArticleScreen: Screen<ArticleProps> = ({
             portalRef.current,
           )}
       </SidebarLayout>
-      {article.id === '7i92Z9s9HQeYlpGReYQVX' ? (
-        <UkraineChatPanel />
+      {article.id in liveChatIncConfig ? (
+        <LiveChatIncChatPanel {...liveChatIncConfig[article.id]} />
       ) : (
         <OrganizationChatPanel
           slugs={article.organization.map((x) => x.slug)}

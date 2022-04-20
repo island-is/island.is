@@ -9,7 +9,6 @@ import {
 } from '@island.is/financial-aid-web/veita/src/components'
 
 import {
-  ApplicationState,
   Application,
   getStateUrlFromRoute,
 } from '@island.is/financial-aid/shared/lib'
