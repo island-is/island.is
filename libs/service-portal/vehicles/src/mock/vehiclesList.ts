@@ -403,17 +403,27 @@ export const vehicleDetail = {
 }
 
 // Grunnupplýsingar
+// * Tegund
+// * Skráningarnúmer
+// * Undirtegng
+// * Fastanúmer
+// * Verksmiðjunúmer
+// * Árgerð
+// * Framleiðsluland
+// * Framleiðsluár
+// * Fyrra skráningarland
+// * Innflutningsástand
 export const basicInfo = {
   model: 'KIA',
   regno: 'RIF88',
   subModel: 'RIO', //vehcom (+ speccom?) // Undirtegund
   permno: 'RIF88', // Fastanúmer
   verno: 'KNADM514AG6817531',
-  firstRegDateYear: '2017', // firstregdate -> year
+  year: null, // modelYear || productYear // ef ekkert er skráð þá er þetta null
   country: 'Suður Kórea',
   preregDateYear: '2016', // preregdate -> year
   formerCountry: null, // formercountry
-  importStatus: null, // ?? import & tala
+  importStatus: 4, // ?? import & tala
 }
 
 // Skráning
@@ -421,26 +431,23 @@ export const basicInfo = {
 // * Forskráning
 // * Nýskráning
 // * Ökutækisflokkur
-// * Sérheiti
+// * Litur
 // * Skráningarflokkur
 // * Farþegar
-// * Litur
+// * Notkunarflokkur
 // * Farþegar hjá ökumanni
 // * Farþegar í stæði
-// * Notkunarflokkur
 export const registration = {
   firstRegistrationDate: '2017-03-15', // firstregdate
   preRegistrationDate: '2016-12-29', // preregdate
   newRegistrationDate: '2017-03-15', // newregdate
-  vehicleGroup: 'Fólksbifreið (M1)', // technical -> vehGroup
-  specialName: null, // ??
-  taxgroup: null, // VSK bíll
-  passengers: 4, // pass
-  purchaseDate: '2017-03-15', // purchasedate,
+  vehicleGroup: 'Fólksbifreið (M1)', // technical -> vehGroup // ökutækisflokkur
   color: 'Blár', // color
-  driversPassengers: 1, // ??
-  standingPassengers: 0, // ??
-  useGroup: 'Almenn notkun', //usegroup
+  reggroup: null, // Skráningarflokkur // plates -> reggroup
+  passengers: 4, // pass
+  useGroup: 'Almenn notkun', // usegroup
+  driversPassengers: 1, // passbydr
+  standingPassengers: 0, // standingno
 }
 
 // Eigandi
@@ -461,28 +468,29 @@ export const currentOwner = {
 
 // Skoðun & gjöld
 // * Tegund skoðunar
+// * Dagsetning
 // * Niðurstaða
 // * Staða plötu
+// * Bifreiðagjöld
+// * Tryggt
+// * Næsta aðalskoðun
+// * Síðasta skoðun
 // * Móttökudagur
 // * Geymslustaður
-// * Síðasta skoðun
-// * Næsta aðalskoðun
 // * Veðbönd
-// * Tryggt
-// * Bifreiðagjöld
 // * Vanrækslugjald
 export const inspectionInfo = {
   type: 'Fulltrúaskoðun', // inspections -> type
+  date: '2017-03-15', // inspetctions -> date
   result: 'Án athugasemda', // inspections -> result
   plateStatus: 'Á ökutæki', //platestatus
-  date: '2017-03-15', // inspetctions -> date
-  plateLocation: null, //platestoragelocation
   lastInspectionDate: '2016-03-15',
   nextInspectionDate: '2018-03-15', //nextinspectiondate
   mortages: null, // ??
+  negligenceFee: null, // ??
   insuranceStatus: true, //insurancestatus
   carTaxes: null, // ??
-  negligenceFee: null, // ??
+  plateLocation: null, //platestoragelocation
 }
 
 // Tæknilegar upplýsingar
