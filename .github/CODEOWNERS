@@ -11,7 +11,6 @@
 # Top level project ownership. When a project contains, for example, templates or modules
 # that are developed by others teams, we first list down the team working on the core and
 # further below the other team working on other part of the project.
-# dummy change
 /apps/application-system/                                                                           @island-is/sendiradid-applications
 /apps/web*/                                                                                         @island-is/juni
 /libs/application/                                                                                  @island-is/sendiradid-applications
