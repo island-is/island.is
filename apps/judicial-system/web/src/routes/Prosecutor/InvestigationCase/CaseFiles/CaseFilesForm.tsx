@@ -26,7 +26,6 @@ import {
   FormFooter,
 } from '@island.is/judicial-system-web/src/components'
 import { removeTabsValidateAndSet } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
 import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
@@ -191,7 +190,15 @@ const CaseFilesForm: React.FC<Props> = (props) => {
           <Text variant="h3" as="h3">
             {formatMessage(m.sections.policeCaseFiles.heading, {
               policeCaseNumber: workingCase.policeCaseNumber,
-            })}
+            })}{' '}
+            <Tooltip
+              placement="right"
+              as="span"
+              text={formatMessage(m.sections.policeCaseFiles.tooltip)}
+            />
+          </Text>
+          <Text marginTop={1}>
+            {formatMessage(m.sections.policeCaseFiles.introduction)}
           </Text>
         </Box>
         <Box marginBottom={5}>
@@ -313,6 +320,9 @@ const CaseFilesForm: React.FC<Props> = (props) => {
           <Text variant="h3" as="h3">
             {formatMessage(m.sections.files.heading)}
           </Text>
+          <Text marginTop={1}>
+            {formatMessage(m.sections.files.introduction)}
+          </Text>
         </Box>
         <Box marginBottom={5}>
           <ContentBlock>
@@ -355,10 +365,9 @@ const CaseFilesForm: React.FC<Props> = (props) => {
                 )
               }
               onBlur={(evt) =>
-                updateCase(
-                  workingCase.id,
-                  parseString('caseFilesComments', evt.target.value),
-                )
+                updateCase(workingCase.id, {
+                  caseFilesComments: evt.target.value,
+                })
               }
               textarea
               rows={7}
