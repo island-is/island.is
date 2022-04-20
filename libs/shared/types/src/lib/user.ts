@@ -2,6 +2,7 @@ import { IDTokenClaims, User as OidcUser } from 'oidc-client'
 
 interface IdsAuthClaims {
   nationalId: string
+  dateOfBirth: Date
   name: string
   nat: string
   idp: string
@@ -9,6 +10,7 @@ interface IdsAuthClaims {
     nationalId: string
     name: string
   }
+  delegationType?: string[]
 }
 
 export type User = Omit<OidcUser, 'profile'> & {

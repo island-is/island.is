@@ -1,5 +1,6 @@
 import { Dispatch } from 'react'
 import { User } from '@island.is/shared/types'
+import kennitala from 'kennitala'
 
 export type AuthState =
   | 'logged-out'
@@ -39,6 +40,25 @@ export const initialState: AuthReducerState = {
 
 export type AuthDispatch = Dispatch<Action>
 
+// Add dateOfBirth Date object to user profile
+// Add delegationType array to user profile
+const formatUser = (payload: User): User | null => {
+  const delegationType = payload.profile.delegationType
+  return {
+    ...payload,
+    scopes: payload.scopes || [],
+    profile: {
+      ...payload.profile,
+      dateOfBirth: kennitala.info(payload.profile.nationalId).birthday,
+      delegationType: Array.isArray(delegationType)
+        ? delegationType
+        : delegationType
+        ? [delegationType]
+        : undefined,
+    },
+  }
+}
+
 export const reducer = (
   state: AuthReducerState,
   action: Action,
@@ -52,7 +72,7 @@ export const reducer = (
     case ActionType.SIGNIN_SUCCESS:
       return {
         ...state,
-        userInfo: action.payload,
+        userInfo: formatUser(action.payload),
         authState: 'logged-in',
         isAuthenticated: true,
       }
@@ -60,7 +80,7 @@ export const reducer = (
       return state.isAuthenticated
         ? {
             ...state,
-            userInfo: action.payload,
+            userInfo: formatUser(action.payload),
           }
         : state
     case ActionType.SIGNIN_FAILURE:
