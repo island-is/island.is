@@ -44,6 +44,7 @@ import {
   formatProsecutorReceivedByCourtSmsNotification,
   formatCourtResubmittedToCourtSmsNotification,
   getCourtRecordPdfAsString,
+  formatProsecutorReadyForCourtEmailNotification,
 } from '../../formatters'
 import { notifications } from '../../messages'
 import { Case } from '../case'
@@ -351,28 +352,23 @@ export class NotificationService {
   ): Promise<Recipient> {
     const { type, court, policeCaseNumber } = theCase
 
-    const subject = this.formatMessage(notifications.readyForCourt.subject, {
-      policeCaseNumber,
-    })
+    const overviewUrl = `${
+      isRestrictionCase(theCase.type)
+        ? environment.deepLinks.prosecutorRestrictionCaseOverviewUrl
+        : environment.deepLinks.prosecutorInvestigationCaseOverviewUrl
+    }${theCase.id}`
 
-    const html = this.formatMessage(
-      notifications.readyForCourt.prosecutorHtml,
-      {
-        caseType: type,
-        courtName: court?.name,
-        policeCaseNumber,
-        linkStart: `<a href="${
-          isRestrictionCase(theCase.type)
-            ? environment.deepLinks.prosecutorRestrictionCaseOverviewUrl
-            : environment.deepLinks.prosecutorInvestigationCaseOverviewUrl
-        }${theCase.id}">`,
-        linkEnd: '</a>',
-      },
+    const { subject, body } = formatProsecutorReadyForCourtEmailNotification(
+      this.formatMessage,
+      type,
+      court?.name,
+      policeCaseNumber,
+      overviewUrl,
     )
 
     return this.sendEmail(
       subject,
-      html,
+      body,
       theCase.prosecutor?.name,
       theCase.prosecutor?.email,
     )
