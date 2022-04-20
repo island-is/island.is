@@ -563,6 +563,6 @@ Ef ekkert á við sem hér að ofan er talið rennur arfur í ríkissjóð. Nán
   submitApplication: {
     id: 'aod.application:submitApplication',
     defaultMessage: 'Staðfesta andlátstilkynnningu',
-    description: 'Submit application of death',
+    description: 'Submit announcement of death',
   },
 })
