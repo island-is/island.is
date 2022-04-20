@@ -338,6 +338,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   placeholder: '0%',
                   variant: 'number',
                   width: 'half',
+                  defaultValue: '0'
                 }),
               ],
             }),
@@ -398,6 +399,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   placeholder: '0%',
                   variant: 'number',
                   width: 'half',
+                  defaultValue: '0'
                 }),
               ],
             }),
@@ -525,7 +527,7 @@ export const ParentalLeaveForm: Form = buildForm({
               condition: (answers, externalData) => {
                 const canTransferRights =
                   getSelectedChild(answers, externalData)?.parentalRelation ===
-                    ParentalRelations.primary && allowOtherParent(answers)
+                  ParentalRelations.primary && allowOtherParent(answers)
 
                 return canTransferRights
               },
@@ -544,7 +546,7 @@ export const ParentalLeaveForm: Form = buildForm({
               condition: (answers, externalData) => {
                 const canTransferRights =
                   getSelectedChild(answers, externalData)?.parentalRelation ===
-                    ParentalRelations.primary && allowOtherParent(answers)
+                  ParentalRelations.primary && allowOtherParent(answers)
 
                 return (
                   canTransferRights &&
@@ -563,7 +565,7 @@ export const ParentalLeaveForm: Form = buildForm({
               condition: (answers, externalData) => {
                 const canTransferRights =
                   getSelectedChild(answers, externalData)?.parentalRelation ===
-                    ParentalRelations.primary && allowOtherParent(answers)
+                  ParentalRelations.primary && allowOtherParent(answers)
 
                 return (
                   canTransferRights &&
