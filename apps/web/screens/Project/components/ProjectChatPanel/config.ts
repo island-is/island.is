@@ -6,6 +6,9 @@ export const watsonConfig = {
     region: 'eu-gb',
     serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
     showLauncher: false,
+    cssVariables: {
+      'BASE-font-family': '"IBM Plex Sans"',
+    },
   },
 }
 

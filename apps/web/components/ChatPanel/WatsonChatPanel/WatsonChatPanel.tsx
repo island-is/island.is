@@ -16,13 +16,14 @@ interface WatsonChatPanelProps {
   integrationID: string
   serviceInstanceID: string
   version?: string
+  cssVariables?: Record<string, string>
 
   // Whether the default launcher is shown
   showLauncher?: boolean
 }
 
 export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
-  const { version = 'latest', showLauncher = true } = props
+  const { version = 'latest', showLauncher = true, cssVariables } = props
 
   const watsonInstance = useRef(null)
   const [isButtonVisible, setIsButtonVisible] = useState(false)
@@ -34,6 +35,9 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
       ...props,
       onLoad: (instance) => {
         watsonInstance.current = instance
+        if (cssVariables) {
+          instance.updateCSSVariables(cssVariables)
+        }
         instance.render().then(() => setIsButtonVisible(true))
       },
     }
