@@ -255,7 +255,7 @@ export class ApplicationController {
       | 'answers'
       | 'applicant'
       | 'assignees'
-      | 'actors'
+      | 'applicantActors'
       | 'attachments'
       | 'state'
       | 'status'
@@ -264,7 +264,7 @@ export class ApplicationController {
       answers: {},
       applicant: user.nationalId,
       assignees: [],
-      actors: user.actor ? [user.actor.nationalId] : [],
+      applicantActors: user.actor ? [user.actor.nationalId] : [],
       attachments: {},
       state: initialState,
       status: ApplicationStatus.IN_PROGRESS,
@@ -426,16 +426,16 @@ export class ApplicationController {
     )
 
     const mergedAnswers = mergeAnswers(existingApplication.answers, newAnswers)
-    const actors: string[] =
+    const applicantActors: string[] =
       newActor(existingApplication, user) && user.actor?.nationalId
-        ? [...existingApplication.actors, user.actor.nationalId]
-        : existingApplication.actors
+        ? [...existingApplication.applicantActors, user.actor.nationalId]
+        : existingApplication.applicantActors
 
     const { updatedApplication } = await this.applicationService.update(
       existingApplication.id,
       {
         answers: mergedAnswers,
-        actors: actors,
+        applicantActors: applicantActors,
       },
     )
 

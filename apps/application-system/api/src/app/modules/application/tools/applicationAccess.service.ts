@@ -18,7 +18,7 @@ export class ApplicationAccessService {
     )
 
     if (!existingApplication) {
-      const actorApplication = await this.applicationService.findByActor(
+      const actorApplication = await this.applicationService.findByApplicantActor(
         id,
         user.nationalId,
       )
@@ -26,7 +26,7 @@ export class ApplicationAccessService {
         throw new BadSubject([{ nationalId: actorApplication.applicant }])
       }
       if (user.actor?.nationalId) {
-        const userActorApplication = await this.applicationService.findByActor(
+        const userActorApplication = await this.applicationService.findByApplicantActor(
           id,
           user.actor.nationalId,
         )

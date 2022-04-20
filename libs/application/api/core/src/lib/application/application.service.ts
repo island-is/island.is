@@ -93,7 +93,7 @@ export class ApplicationService {
     })
   }
 
-  async findByActor(
+  async findByApplicantActor(
     id: string,
     nationalId?: string,
   ): Promise<Application | null> {
@@ -104,7 +104,7 @@ export class ApplicationService {
           ? {
               [Op.or]: [
                 { applicant: nationalId },
-                { actors: { [Op.contains]: [nationalId] } },
+                { applicantActors: { [Op.contains]: [nationalId] } },
               ],
             }
           : {}),
@@ -207,7 +207,7 @@ export class ApplicationService {
     application: Partial<
       Pick<
         Application,
-        'attachments' | 'answers' | 'externalData' | 'pruned' | 'actors'
+        'attachments' | 'answers' | 'externalData' | 'pruned' | 'applicantActors'
       >
     >,
   ) {

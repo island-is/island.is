@@ -53,7 +53,7 @@ export class Application {
   assignees!: string[]
 
   @Field(() => [String])
-  actors!: string[]
+  applicantActors!: string[]
 
   @Field(() => String)
   state!: string

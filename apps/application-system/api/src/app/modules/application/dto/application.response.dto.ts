@@ -71,7 +71,7 @@ export class ApplicationResponseDto {
   @ApiProperty()
   @Expose()
   @IsArray()
-  actors!: string[]
+  applicantActors!: string[]
 
   @ApiProperty()
   @Expose()

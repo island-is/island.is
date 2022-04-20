@@ -12,6 +12,7 @@ import { Events, States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
 import { m } from '../lib/messages'
 import { ApiActions } from './constants'
+import { AuthDelegationType } from '../types/schema'
 
 const PSignTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -22,7 +23,7 @@ const PSignTemplate: ApplicationTemplate<
   name: 'Stæðiskort',
   dataSchema: dataSchema,
   readyForProduction: true,
-  allowedDelegations: ['Custom'],
+  allowedDelegations: [AuthDelegationType.Custom],
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {
