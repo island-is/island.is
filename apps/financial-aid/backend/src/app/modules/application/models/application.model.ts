@@ -17,7 +17,6 @@ import {
   HomeCircumstances,
   Employment,
   ApplicationState,
-  Application,
   FamilyStatus,
 } from '@island.is/financial-aid/shared/lib'
 
@@ -31,7 +30,7 @@ import { DirectTaxPaymentModel } from '../../directTaxPayment/models'
   tableName: 'applications',
   timestamps: true,
 })
-export class ApplicationModel extends Model<Application> {
+export class ApplicationModel extends Model {
   @Column({
     type: DataType.UUID,
     primaryKey: true,

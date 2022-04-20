@@ -14,7 +14,7 @@ import { IdentityResource } from './identity-resource.model'
 @Table({
   tableName: 'identity_resource_user_claim',
 })
-export class IdentityResourceUserClaim extends Model<IdentityResourceUserClaim> {
+export class IdentityResourceUserClaim extends Model {
   @PrimaryKey
   @Column({
     type: DataType.STRING,

@@ -39,10 +39,13 @@ export class UserIdentitiesService {
 
     try {
       return this.sequelize.transaction((t) => {
-        return this.userIdentityModel.create(userIdentity, {
-          include: [Claim],
-          transaction: t,
-        })
+        return this.userIdentityModel.create(
+          { ...userIdentity },
+          {
+            include: [Claim],
+            transaction: t,
+          },
+        )
       })
     } catch {
       this.logger.warn('Error when executing transaction, rollbacked.')

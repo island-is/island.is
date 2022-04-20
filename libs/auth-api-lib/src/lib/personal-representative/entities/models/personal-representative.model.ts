@@ -27,7 +27,7 @@ import { PersonalRepresentativePublicDTO } from '../dto/personal-representative-
     },
   ],
 })
-export class PersonalRepresentative extends Model<PersonalRepresentative> {
+export class PersonalRepresentative extends Model {
   @PrimaryKey
   @Column({
     type: DataType.UUID,

@@ -15,7 +15,7 @@ import { PersonalRepresentativeRightTypeDTO } from '../dto/personal-representati
 @Table({
   tableName: 'personal_representative_right_type',
 })
-export class PersonalRepresentativeRightType extends Model<PersonalRepresentativeRightType> {
+export class PersonalRepresentativeRightType extends Model {
   @PrimaryKey
   @Column({
     type: DataType.STRING,

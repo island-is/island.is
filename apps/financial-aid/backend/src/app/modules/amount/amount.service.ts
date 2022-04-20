@@ -26,7 +26,7 @@ export class AmountService {
             amount.deductionFactors.map(async (item) => {
               return await this.deductionFactorsService.create(
                 {
-                  amountId: amountResponse.getDataValue('id'),
+                  amountId: amountResponse.id,
                   description: item.description,
                   amount: item.amount,
                 },

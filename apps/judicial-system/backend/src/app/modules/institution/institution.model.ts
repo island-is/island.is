@@ -15,7 +15,7 @@ import { InstitutionType } from '@island.is/judicial-system/types'
   tableName: 'institution',
   timestamps: true,
 })
-export class Institution extends Model<Institution> {
+export class Institution extends Model {
   @Column({
     type: DataType.UUID,
     primaryKey: true,

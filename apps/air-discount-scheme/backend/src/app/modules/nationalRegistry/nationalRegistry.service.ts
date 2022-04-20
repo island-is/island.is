@@ -10,6 +10,7 @@ import {
   FamilyMember,
 } from './nationalRegistry.types'
 import { environment } from '../../../environments'
+import { lastValueFrom } from 'rxjs'
 
 export const ONE_MONTH = 2592000 // seconds
 export const CACHE_KEY = 'nationalRegistry'
@@ -233,9 +234,9 @@ export class NationalRegistryService {
     }
     const response: {
       data: [NationalRegistryGeneralLookupResponse]
-    } = await this.httpService
-      .get(`${this.baseUrl}/general-lookup?ssn=${nationalId}`)
-      .toPromise()
+    } = await lastValueFrom(
+      this.httpService.get(`${this.baseUrl}/general-lookup?ssn=${nationalId}`),
+    )
 
     const user = this.createNationalRegistryUser(response.data[0])
     if (user) {
@@ -277,9 +278,9 @@ export class NationalRegistryService {
 
     const response: {
       data: [NationalRegistryFamilyLookupResponse]
-    } = await this.httpService
-      .get(`${this.baseUrl}/family-lookup?ssn=${nationalId}`)
-      .toPromise()
+    } = await lastValueFrom(
+      this.httpService.get(`${this.baseUrl}/family-lookup?ssn=${nationalId}`),
+    )
 
     const data = response.data[0]
     if (data.error) {

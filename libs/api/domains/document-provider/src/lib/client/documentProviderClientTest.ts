@@ -1,5 +1,6 @@
 import { HttpService, Inject, Injectable } from '@nestjs/common'
 import { AxiosRequestConfig } from 'axios'
+import { lastValueFrom } from 'rxjs'
 
 import { DocumentOauthConnection } from './documentProvider.connection'
 import type { DocumentProviderClientConfig } from './documentProviderClientConfig'
@@ -42,9 +43,12 @@ export class DocumentProviderClientTest {
 
     const response: {
       data: T
-    } = await this.httpService
-      .get(`${this.clientConfig.basePath}${requestRoute}`, config)
-      .toPromise()
+    } = await lastValueFrom(
+      this.httpService.get(
+        `${this.clientConfig.basePath}${requestRoute}`,
+        config,
+      ),
+    )
 
     return response.data
   }
@@ -59,9 +63,13 @@ export class DocumentProviderClientTest {
 
     const response: {
       data: T
-    } = await this.httpService
-      .post(`${this.clientConfig.basePath}${requestRoute}`, null, config)
-      .toPromise()
+    } = await lastValueFrom(
+      this.httpService.post(
+        `${this.clientConfig.basePath}${requestRoute}`,
+        null,
+        config,
+      ),
+    )
 
     return response.data
   }

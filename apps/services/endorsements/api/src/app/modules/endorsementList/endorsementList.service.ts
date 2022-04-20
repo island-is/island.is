@@ -201,7 +201,7 @@ export class EndorsementListService {
       ])
     }
     this.logger.info(`Creating endorsement list: ${list.title}`)
-    return this.endorsementListModel.create(list)
+    return this.endorsementListModel.create({ ...list })
   }
 
   // generic get open lists

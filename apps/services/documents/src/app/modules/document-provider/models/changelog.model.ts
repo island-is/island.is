@@ -20,7 +20,7 @@ import { EntityTypes } from '../enums/EntityTypes'
     },
   ],
 })
-export class Changelog extends Model<Changelog> {
+export class Changelog extends Model {
   @Column({
     type: DataType.UUID,
     primaryKey: true,

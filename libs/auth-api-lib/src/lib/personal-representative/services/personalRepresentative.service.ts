@@ -210,7 +210,7 @@ export class PersonalRepresentativeService {
     try {
       await this.sequelize.transaction(async (t) => {
         const newPr = await this.personalRepresentativeModel.create(
-          personalRepresentative,
+          { ...personalRepresentative },
           { transaction: t },
         )
 

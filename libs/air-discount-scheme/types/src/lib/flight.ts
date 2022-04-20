@@ -7,6 +7,7 @@ export type FlightLeg = {
   originalPrice: number
   discountPrice: number
   financialState: string
+  financialStateUpdated: Date
   flight: Flight
   date: Date
   created: Date

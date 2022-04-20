@@ -37,7 +37,6 @@ import {
   SendNotificationResponse,
 } from '../src/app/modules/notification'
 import { IntlService } from '@island.is/cms-translations'
-import { StaticText } from '@island.is/application/core'
 
 interface CUser extends TUser {
   institutionId: string

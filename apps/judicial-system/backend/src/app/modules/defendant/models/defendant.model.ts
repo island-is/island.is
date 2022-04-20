@@ -19,7 +19,7 @@ import { Case } from '../../case/models/case.model'
   tableName: 'defendant',
   timestamps: true,
 })
-export class Defendant extends Model<Defendant> {
+export class Defendant extends Model {
   @Column({
     type: DataType.UUID,
     primaryKey: true,

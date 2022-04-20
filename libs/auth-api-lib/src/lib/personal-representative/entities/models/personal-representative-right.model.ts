@@ -16,7 +16,7 @@ import { PersonalRepresentativeRightType } from './personal-representative-right
 @Table({
   tableName: 'personal_representative_right',
 })
-export class PersonalRepresentativeRight extends Model<PersonalRepresentativeRight> {
+export class PersonalRepresentativeRight extends Model {
   @PrimaryKey
   @Column({
     type: DataType.UUID,

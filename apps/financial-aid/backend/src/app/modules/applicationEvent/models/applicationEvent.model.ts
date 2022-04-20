@@ -20,7 +20,10 @@ import {
   tableName: 'application_events',
   timestamps: false,
 })
-export class ApplicationEventModel extends Model<ApplicationEvent> {
+export class ApplicationEventModel extends Model<
+  ApplicationEventModel,
+  ApplicationEvent
+> {
   @Column({
     type: DataType.UUID,
     primaryKey: true,

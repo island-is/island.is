@@ -108,6 +108,12 @@
             "selector": "enumMember",
             "format": ["camelCase", "UPPER_CASE", "PascalCase"]
           }
+        ],
+        "@typescript-eslint/no-empty-interface": [
+          "error",
+          {
+            "allowSingleExtends": true
+          }
         ]
       }
     },

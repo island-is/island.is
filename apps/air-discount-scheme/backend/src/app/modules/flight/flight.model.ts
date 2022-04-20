@@ -1,27 +1,28 @@
+import { ApiProperty } from '@nestjs/swagger'
 import {
+  BelongsTo,
   Column,
   CreatedAt,
   DataType,
+  ForeignKey,
+  HasMany,
   Model,
   Table,
   UpdatedAt,
-  HasMany,
-  BelongsTo,
-  ForeignKey,
 } from 'sequelize-typescript'
-import { ApiProperty } from '@nestjs/swagger'
+import { Optional } from 'sequelize/types'
+import { createMachine } from 'xstate'
 
+import {
+  Actions,
+  Airlines,
+  States,
+} from '@island.is/air-discount-scheme/consts'
 import type {
   Flight as TFlight,
   FlightLeg as TFlightLeg,
   UserInfo,
 } from '@island.is/air-discount-scheme/types'
-import {
-  Actions,
-  States,
-  Airlines,
-} from '@island.is/air-discount-scheme/consts'
-import { createMachine } from 'xstate'
 
 export const financialStateMachine = createMachine({
   id: 'flight_leg_financial_state_machine',
@@ -48,8 +49,22 @@ export const financialStateMachine = createMachine({
   },
 })
 
+interface FlightLegCreationAttributes
+  extends Optional<
+    TFlightLeg,
+    | 'id'
+    | 'created'
+    | 'modified'
+    | 'financialState'
+    | 'financialStateUpdated'
+    | 'flight'
+    | 'flightId'
+  > {}
+
 @Table({ tableName: 'flight_leg' })
-export class FlightLeg extends Model<FlightLeg> implements TFlightLeg {
+export class FlightLeg
+  extends Model<TFlightLeg, FlightLegCreationAttributes>
+  implements TFlightLeg {
   @Column({
     type: DataType.UUID,
     primaryKey: true,
@@ -155,8 +170,15 @@ export class FlightLeg extends Model<FlightLeg> implements TFlightLeg {
   readonly modified!: Date
 }
 
+interface FlightCreationAttributes
+  extends Optional<Omit<TFlight, 'flightLegs'>, 'id' | 'modified' | 'created'> {
+  flightLegs: FlightLegCreationAttributes[]
+}
+
 @Table({ tableName: 'flight' })
-export class Flight extends Model<Flight> implements TFlight {
+export class Flight
+  extends Model<TFlight, FlightCreationAttributes>
+  implements TFlight {
   @Column({
     type: DataType.UUID,
     primaryKey: true,

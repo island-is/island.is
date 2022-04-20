@@ -7,6 +7,17 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
+import { Optional } from 'sequelize/types'
+
+interface ResourceAttributes {
+  id: string
+  nationalId: string
+  created: Date
+  modified: Date
+}
+
+interface ResourceCreationAttributes
+  extends Optional<ResourceAttributes, 'id' | 'created' | 'modified'> {}
 
 @Table({
   tableName: 'resource',
@@ -16,7 +27,10 @@ import {
     },
   ],
 })
-export class Resource extends Model<Resource> {
+export class Resource extends Model<
+  ResourceAttributes,
+  ResourceCreationAttributes
+> {
   @ApiProperty()
   @Column({
     type: DataType.UUID,

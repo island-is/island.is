@@ -173,7 +173,7 @@ export class AccessService {
 
     let response = null
     scopes.forEach(async (x) => {
-      response = await this.apiScopeUserAccess.create(x)
+      response = await this.apiScopeUserAccess.create({ ...x })
     })
 
     return response

@@ -17,7 +17,7 @@ import { Case } from '../../case'
   tableName: 'notification',
   timestamps: false,
 })
-export class Notification extends Model<Notification> {
+export class Notification extends Model {
   @Column({
     type: DataType.UUID,
     primaryKey: true,

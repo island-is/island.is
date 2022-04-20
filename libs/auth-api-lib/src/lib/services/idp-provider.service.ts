@@ -68,7 +68,7 @@ export class IdpProviderService {
   /** Creates a new Idp Provider */
   async create(idpProvider: IdpProviderDTO) {
     this.logger.debug('creating and idp provider: ' + idpProvider)
-    return this.idpProvider.create(idpProvider)
+    return this.idpProvider.create({ ...idpProvider })
   }
 
   /** Updates an Idp Provider */
@@ -79,7 +79,7 @@ export class IdpProviderService {
     this.logger.debug('Updating a idp provider: ' + idpProvider)
     return this.idpProvider.update(
       { ...idpProvider },
-      { where: { name: name } },
+      { where: { name: name }, returning: true },
     )
   }
 

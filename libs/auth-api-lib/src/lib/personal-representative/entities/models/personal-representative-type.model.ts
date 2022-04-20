@@ -14,7 +14,7 @@ import { PersonalRepresentative } from './personal-representative.model'
 @Table({
   tableName: 'personal_representative_type',
 })
-export class PersonalRepresentativeType extends Model<PersonalRepresentativeType> {
+export class PersonalRepresentativeType extends Model {
   @PrimaryKey
   @Column({
     type: DataType.STRING,

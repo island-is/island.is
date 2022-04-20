@@ -17,7 +17,7 @@ import { Domain } from './domain.model'
 @Table({
   tableName: 'api_scope_group',
 })
-export class ApiScopeGroup extends Model<ApiScopeGroup> {
+export class ApiScopeGroup extends Model {
   @PrimaryKey
   @Column({
     type: DataType.UUID,
