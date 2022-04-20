@@ -3,7 +3,7 @@ import cn from 'classnames'
 import { FocusableBox, Text } from '@island.is/island-ui/core'
 import { config, endpoints } from './config'
 import { useWindowSize } from 'react-use'
-import * as styles from './ChatPanel.css'
+import * as styles from './BoostChatPanel.css'
 
 declare global {
   interface Window {
@@ -14,12 +14,12 @@ declare global {
   }
 }
 
-interface ChatPanelProps {
+interface BoostChatPanelProps {
   endpoint: keyof typeof endpoints
   pushUp?: boolean
 }
 
-export const ChatPanel: React.FC<ChatPanelProps> = ({
+export const BoostChatPanel: React.FC<BoostChatPanelProps> = ({
   endpoint,
   pushUp = false,
 }) => {
@@ -92,4 +92,4 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({
   )
 }
 
-export default ChatPanel
+export default BoostChatPanel
