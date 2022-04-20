@@ -203,7 +203,7 @@ const CaseFilesForm: React.FC<Props> = (props) => {
           </Text>
         </Box>
         <Box marginBottom={5}>
-          {workingCase.origin === CaseOrigin.LOKE ? (
+          {workingCase.origin === CaseOrigin.LOKE && (
             <AnimateSharedLayout>
               <motion.div layout className={styles.policeCaseFilesContainer}>
                 <motion.ul layout>
@@ -319,7 +319,8 @@ const CaseFilesForm: React.FC<Props> = (props) => {
                 </Button>
               </motion.div>
             </AnimateSharedLayout>
-          ) : (
+          )}
+          {workingCase.origin !== CaseOrigin.LOKE && (
             <AlertMessage
               type="info"
               title={formatMessage(
