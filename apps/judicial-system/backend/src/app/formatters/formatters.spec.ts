@@ -26,7 +26,7 @@ import {
   formatDefenderRevokedEmailNotification,
   formatProsecutorReceivedByCourtSmsNotification,
   formatCourtResubmittedToCourtSmsNotification,
-  formatReadyForCourtEmailNotificationToProsecutor,
+  formatProsecutorReadyForCourtEmailNotification,
 } from './formatters'
 
 export const makeProsecutor = (): User => {
@@ -442,7 +442,7 @@ describe('formatReadyForCourtSmsNotification', () => {
   })
 })
 
-describe('formatReadyForCourtEmailNotificationToProsecutor', () => {
+describe('formatProsecutorReadyForCourtEmailNotification', () => {
   const messages = {
     ...notifications.readyForCourt,
   }
@@ -460,7 +460,7 @@ describe('formatReadyForCourtEmailNotificationToProsecutor', () => {
     const overviewUrl = 'https://rettarvorslugatt.island.is/test/overview'
 
     // Act
-    const res = formatReadyForCourtEmailNotificationToProsecutor(
+    const res = formatProsecutorReadyForCourtEmailNotification(
       formatMessage,
       type,
       court,
@@ -480,7 +480,7 @@ describe('formatReadyForCourtEmailNotificationToProsecutor', () => {
     const overviewUrl = 'https://rettarvorslugatt.island.is/test/overview'
 
     // Act
-    const res = formatReadyForCourtEmailNotificationToProsecutor(
+    const res = formatProsecutorReadyForCourtEmailNotification(
       formatMessage,
       type,
       court,
@@ -502,7 +502,7 @@ describe('formatReadyForCourtEmailNotificationToProsecutor', () => {
     const overviewUrl = 'https://rettarvorslugatt.island.is/test/overview'
 
     // Act
-    const res = formatReadyForCourtEmailNotificationToProsecutor(
+    const res = formatProsecutorReadyForCourtEmailNotification(
       formatMessage,
       type,
       court,
@@ -524,7 +524,7 @@ describe('formatReadyForCourtEmailNotificationToProsecutor', () => {
     const overviewUrl = 'https://rettarvorslugatt.island.is/test/overview'
 
     // Act
-    const res = formatReadyForCourtEmailNotificationToProsecutor(
+    const res = formatProsecutorReadyForCourtEmailNotification(
       formatMessage,
       type,
       court,

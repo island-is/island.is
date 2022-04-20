@@ -44,6 +44,7 @@ import {
   formatProsecutorReceivedByCourtSmsNotification,
   formatCourtResubmittedToCourtSmsNotification,
   getCourtRecordPdfAsString,
+  formatProsecutorReadyForCourtEmailNotification,
 } from '../../formatters'
 import { notifications } from '../../messages'
 import { Case } from '../case'
@@ -52,7 +53,6 @@ import { CaseEvent, EventService } from '../event'
 import { SendNotificationDto } from './dto/sendNotification.dto'
 import { Notification } from './models/notification.model'
 import { SendNotificationResponse } from './models/sendNotification.resopnse'
-import { formatReadyForCourtEmailNotificationToProsecutor } from '../../formatters/formatters'
 
 interface Recipient {
   address?: string
@@ -358,7 +358,7 @@ export class NotificationService {
         : environment.deepLinks.prosecutorInvestigationCaseOverviewUrl
     }${theCase.id}`
 
-    const { subject, body } = formatReadyForCourtEmailNotificationToProsecutor(
+    const { subject, body } = formatProsecutorReadyForCourtEmailNotification(
       this.formatMessage,
       type,
       court?.name,

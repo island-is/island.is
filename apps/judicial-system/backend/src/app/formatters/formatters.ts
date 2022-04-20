@@ -134,7 +134,7 @@ export function formatCourtResubmittedToCourtSmsNotification(
   })
 }
 
-export function formatReadyForCourtEmailNotificationToProsecutor(
+export function formatProsecutorReadyForCourtEmailNotification(
   formatMessage: FormatMessage,
   caseType?: CaseType,
   courtName?: string,
