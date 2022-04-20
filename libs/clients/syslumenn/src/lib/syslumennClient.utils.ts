@@ -7,6 +7,7 @@ import {
   Skilabod,
   SyslMottakaGognPostRequest,
   AdiliTegund,
+  VedbandayfirlitReguverkiSvarSkeyti,
 } from '../../gen/fetch'
 import { uuid } from 'uuidv4'
 import {
@@ -22,6 +23,7 @@ import {
   CertificateInfoResponse,
   DistrictCommissionerAgencies,
   PersonType,
+  RealEstateAddress,
 } from './syslumennClient.types'
 const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
 
@@ -190,4 +192,10 @@ function mapPersonEnum(e: PersonType) {
     case PersonType.CriminalRecordApplicant:
       return AdiliTegund.NUMBER_0
   }
+}
+
+export const mapRealEstateAddress = (
+  response: VedbandayfirlitReguverkiSvarSkeyti,
+): RealEstateAddress => {
+  return { address: response.heiti ?? '' }
 }

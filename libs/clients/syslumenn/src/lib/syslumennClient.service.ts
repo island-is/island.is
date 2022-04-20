@@ -7,6 +7,8 @@ import {
   DataUploadResponse,
   Person,
   Attachment,
+  RealEstateAddress,
+  AssetType,
 } from './syslumennClient.types'
 import {
   mapSyslumennAuction,
@@ -15,6 +17,7 @@ import {
   mapCertificateInfo,
   mapDistrictCommissionersAgenciesResponse,
   mapDataUploadResponse,
+  mapRealEstateAddress,
   constructUploadDataObject,
 } from './syslumennClient.utils'
 import { Injectable, Inject } from '@nestjs/common'
@@ -209,5 +212,19 @@ export class SyslumennService {
     const { api } = await this.createApi()
     const response = await api.embaettiOgStarfsstodvarGetEmbaetti()
     return response.map(mapDistrictCommissionersAgenciesResponse)
+  }
+
+  async getRealEstateAddress(
+    realEstateId: string,
+  ): Promise<Array<RealEstateAddress>> {
+    const { id, api } = await this.createApi()
+    const response = await api.vedbokavottordRegluverkiPost({
+      skilabod: {
+        audkenni: id,
+        fastanumer: realEstateId,
+        tegundAndlags: AssetType.RealEstate as number,
+      },
+    })
+    return response.map(mapRealEstateAddress)
   }
 }
