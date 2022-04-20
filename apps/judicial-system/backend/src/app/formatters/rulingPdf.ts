@@ -91,12 +91,12 @@ function constructRulingPdf(
               : index + 1 === theCase.defendants?.length
               ? ', og'
               : ','
-          } ${defendant.name ?? '-'}, ${
-            defendant.noNationalId ? 'fd.' : 'kt.'
-          } ${
+          } ${defendant.name ?? '-'}${
             defendant.noNationalId
               ? defendant.nationalId
-              : formatNationalId(defendant.nationalId ?? '-')
+                ? `, fd. ${defendant.nationalId}`
+                : ''
+              : `, kt. ${formatNationalId(defendant.nationalId ?? '-')}`
           }`,
         '',
       ) ?? ` ${ruling.missingDefendants}`

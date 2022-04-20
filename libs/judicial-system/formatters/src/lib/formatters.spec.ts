@@ -14,6 +14,7 @@ import {
   formatGender,
   formatCustodyRestrictions,
   formatAppeal,
+  formatNationalId,
 } from './formatters'
 
 describe('formatDate', () => {
@@ -347,5 +348,51 @@ describe('formatAppeal', () => {
     expect(res).toBe(
       'Aðilar lýsa því yfir að þeir taki sér lögbundinn kærufrest.',
     )
+  })
+})
+
+describe('formatNationalId', () => {
+  test('should format valid national id', () => {
+    // Arrange
+    const nationalId = '1234567890'
+
+    // Act
+    const res = formatNationalId(nationalId)
+
+    // Assert
+    expect(res).toBe('123456-7890')
+  })
+
+  test('should not format short', () => {
+    // Arrange
+    const nationalId = '1234567'
+
+    // Act
+    const res = formatNationalId(nationalId)
+
+    // Assert
+    expect(res).toBe('1234567')
+  })
+
+  test('should not format long', () => {
+    // Arrange
+    const nationalId = '12345678900'
+
+    // Act
+    const res = formatNationalId(nationalId)
+
+    // Assert
+    expect(res).toBe('12345678900')
+  })
+
+  test('should not format non-number', () => {
+    // Arrange
+    const nationalId = 'ekki skráð'
+
+    // Act
+    const res = formatNationalId(nationalId)
+
+    // Assert
+    expect(res).toBe('ekki skráð')
   })
 })
