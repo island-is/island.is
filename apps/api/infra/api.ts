@@ -110,6 +110,7 @@ export const serviceSetup = (services: {
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
+      MUNICIPALITIES_FINANCIAL_AID_BACKEND_URL: 'http://localhost:3344',
     })
 
     .secrets({

@@ -155,6 +155,7 @@ export const serviceSetup = (services: {
       ENDORSEMENTS_API_BASE_PATH: ref(
         (h) => `http://${h.svc(services.servicesEndorsementApi)}`,
       ),
+      MUNICIPALITIES_FINANCIAL_AID_BACKEND_URL: 'http://localhost:3344',
     })
     .xroad(
       Base,

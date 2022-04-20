@@ -11,7 +11,7 @@ export const MunicipalitiesFinancialAidConfig = defineConfig({
   load(env) {
     return {
       baseApiUrl: env.required(
-        'FINANCIAL_AID_BACKEND_URL',
+        'MUNICIPALITIES_FINANCIAL_AID_BACKEND_URL',
         'http://localhost:3344',
       ),
     }
