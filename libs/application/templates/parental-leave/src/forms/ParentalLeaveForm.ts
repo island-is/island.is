@@ -338,7 +338,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   placeholder: '0%',
                   variant: 'number',
                   width: 'half',
-                  defaultValue: '0'
+                  defaultValue: '0',
                 }),
               ],
             }),
@@ -399,7 +399,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   placeholder: '0%',
                   variant: 'number',
                   width: 'half',
-                  defaultValue: '0'
+                  defaultValue: '0',
                 }),
               ],
             }),
