@@ -9,7 +9,6 @@ import { Box } from '@island.is/island-ui/core'
 import {
   ServicePortalModuleComponent,
   ServicePortalPath,
-  IntroHeader,
   NotFound,
 } from '@island.is/service-portal/core'
 import TableUnits from '../../components/TableUnits'
@@ -25,6 +24,7 @@ import {
 } from '../../lib/queries'
 import DetailHeader from '../../components/DetailHeader'
 import { DEFAULT_PAGING_ITEMS } from '../../utils/const'
+import TableGrid from '../../components/TableGrid/TableGrid'
 
 export const AssetsOverview: ServicePortalModuleComponent = () => {
   useNamespaces('sp.assets')
@@ -147,6 +147,38 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
           ]}
         />
       </Box>
+      {assetData.land?.landNumber ? (
+        <TableGrid
+          title={formatMessage(messages.land)}
+          mt
+          dataArray={[
+            [
+              {
+                title: formatMessage(messages.usage),
+                value: assetData.land?.useDisplay ?? '',
+              },
+              {
+                title: formatMessage(messages.landSize),
+                value: assetData.land?.area
+                  ? `${assetData.land?.area} ${assetData.land?.areaUnit}`
+                  : '',
+              },
+            ],
+            [
+              {
+                title: formatMessage(messages.landNumber),
+                value: assetData.land?.landNumber,
+              },
+              {
+                title: formatMessage(messages.landAppraisal),
+                value: assetData.land?.landAppraisal
+                  ? amountFormat(assetData.land?.landAppraisal)
+                  : '',
+              },
+            ],
+          ]}
+        />
+      ) : null}
       <Box marginTop={7}>
         {assetData?.unitsOfUse?.unitsOfUse &&
         assetData?.unitsOfUse?.unitsOfUse?.length > 0 ? (
