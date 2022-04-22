@@ -1,22 +1,48 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-import { Text, UploadFile, Box } from '@island.is/island-ui/core'
+import { UploadFile, Box, AlertMessage } from '@island.is/island-ui/core'
 import { taxReturnForm } from '../../lib/messages'
 
 import { FAFieldBaseProps, OverrideAnswerSchema, UploadFileType } from '../..'
 
-import { DescriptionText, Files } from '..'
+import { Files } from '..'
+import { getTaxFormContent } from './taxFormContent'
 
 const TaxReturnFilesForm = ({ field, application }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
-  const { id, answers } = application
+  const { id, answers, externalData } = application
+
+  const {
+    municipalitiesDirectTaxPayments,
+    municipalitiesPersonalTaxReturn,
+  } = externalData.nationalRegistry.data.taxData
+
+  const taxReturnFetchFailed =
+    municipalitiesPersonalTaxReturn?.personalTaxReturn === null
+  const directTaxPaymentsFetchedFailed =
+    municipalitiesDirectTaxPayments.directTaxPayments.length === 0 &&
+    !municipalitiesDirectTaxPayments.success
+  const taxDataGatheringFailed =
+    taxReturnFetchFailed && directTaxPaymentsFetchedFailed
+
+  const content = getTaxFormContent(
+    taxReturnFetchFailed,
+    directTaxPaymentsFetchedFailed,
+  )
 
   return (
     <>
-      {/* TODO alertbox */}
-      <Box marginBottom={[3, 3, 5]}>
-        <DescriptionText text={taxReturnForm.general.description} />
-      </Box>
+      {taxDataGatheringFailed && (
+        <Box marginBottom={4} marginTop={2}>
+          <AlertMessage
+            type="error"
+            title={formatMessage(taxReturnForm.alertMessage.title)}
+            message={formatMessage(taxReturnForm.alertMessage.title)}
+          />
+        </Box>
+      )}
+
+      {content.data}
 
       <Files
         fileKey={field.id as UploadFileType}
@@ -25,18 +51,8 @@ const TaxReturnFilesForm = ({ field, application }: FAFieldBaseProps) => {
         }
         folderId={id}
       />
-      <Text as="h2" variant="h3" marginBottom={2}>
-        {formatMessage(taxReturnForm.instructions.findTaxReturnTitle)}
-      </Text>
-      <DescriptionText text={taxReturnForm.instructions.findTaxReturn} />
 
-      <Text as="h2" variant="h3" marginBottom={2}>
-        {formatMessage(taxReturnForm.instructions.findDirectTaxPaymentsTitle)}
-      </Text>
-
-      <Text marginBottom={[3, 3, 10]}>
-        {formatMessage(taxReturnForm.instructions.findDirectTaxPayments)}
-      </Text>
+      {content.info}
     </>
   )
 }

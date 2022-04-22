@@ -56,7 +56,7 @@ export class MunicipalitiesFinancialAidResolver {
   ): Promise<PersonalTaxReturnResponse> {
     return await this.municipalitiesFinancialAidService.personalTaxReturnForFinancialAId(
       user,
-      input.folderId,
+      input.id,
     )
   }
 

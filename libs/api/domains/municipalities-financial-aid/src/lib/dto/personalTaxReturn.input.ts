@@ -6,5 +6,5 @@ import { Field, InputType } from '@nestjs/graphql'
 export class PersonalTaxReturnInput {
   @Allow()
   @Field()
-  readonly folderId!: string
+  readonly id!: string
 }

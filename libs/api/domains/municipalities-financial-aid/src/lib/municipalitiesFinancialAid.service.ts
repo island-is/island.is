@@ -58,11 +58,11 @@ export class MunicipalitiesFinancialAidService {
       .catch(this.handle404)
   }
 
-  async personalTaxReturnForFinancialAId(auth: Auth, folderId: string) {
+  async personalTaxReturnForFinancialAId(auth: Auth, id: string) {
     return await this.personalTaxReturnApiWithAuth(
       auth,
     ).personalTaxReturnControllerMunicipalitiesPersonalTaxReturn({
-      id: folderId,
+      id: id,
     })
   }
 
