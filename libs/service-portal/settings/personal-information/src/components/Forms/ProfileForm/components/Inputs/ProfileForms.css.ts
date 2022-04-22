@@ -3,30 +3,42 @@ import { style } from '@vanilla-extract/css'
 
 export const bank = style({
   marginRight: theme.spacing['1'],
-  maxWidth: '110px',
+  maxWidth: '115px',
   '@media': {
-    [`screen and (max-width: ${theme.breakpoints.sm}px)`]: {
-      maxWidth: '90px',
+    [`screen and (max-width: ${theme.breakpoints.sm - 1}px)`]: {
+      maxWidth: '120px',
+      marginBottom: theme.spacing['2'],
     },
   },
 })
 
 export const hb = style({
   marginRight: theme.spacing['1'],
-  maxWidth: '85px',
+  maxWidth: '92px',
   '@media': {
-    [`screen and (max-width: ${theme.breakpoints.sm}px)`]: {
-      maxWidth: '60px',
+    [`screen and (max-width: ${theme.breakpoints.sm - 1}px)`]: {
+      maxWidth: '100px',
+      marginBottom: theme.spacing['2'],
     },
   },
 })
 
 export const account = style({
   marginRight: theme.spacing['1'],
+  '@media': {
+    [`screen and (max-width: ${theme.breakpoints.sm}px)`]: {
+      maxWidth: '200px',
+    },
+  },
 })
 
 export const formContainer = style({
   maxWidth: 400,
+  '@media': {
+    [`screen and (max-width: ${theme.breakpoints.sm}px)`]: {
+      width: '100%',
+    },
+  },
 })
 
 export const codeInput = style({
@@ -35,7 +47,7 @@ export const codeInput = style({
 
 export const nudgeSave = style({
   '@media': {
-    [`screen and (max-width: ${theme.breakpoints.sm}px)`]: {
+    [`screen and (max-width: ${theme.breakpoints.sm - 1}px)`]: {
       marginTop: theme.spacing['2'],
       marginLeft: 0,
     },
