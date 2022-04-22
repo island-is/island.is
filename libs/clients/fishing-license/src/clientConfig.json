@@ -362,6 +362,16 @@
             "type": "string",
             "description": "Kennitala umsækjanda."
           },
+          "simanumer": {
+            "type": "string",
+            "description": "Símanúmer umsækjanda.",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "description": "Email umsækjanda.",
+            "nullable": true
+          },
           "utgerdKennitala": {
             "pattern": "^\\d{10}$",
             "type": "string",

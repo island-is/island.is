@@ -67,6 +67,14 @@ export class GeneralFishingLicenseService {
         application.answers,
         'applicant.nationalId',
       ) as string
+      const applicantPhoneNumber = getValueViaPath(
+        application.answers,
+        'applicant.phoneNumber',
+      ) as string
+      const applicantEmail = getValueViaPath(
+        application.answers,
+        'applicant.email',
+      ) as string
       const registrationNumber = getValueViaPath(
         application.answers,
         'shipSelection.registrationNumber',
@@ -81,6 +89,8 @@ export class GeneralFishingLicenseService {
         .v1UmsoknirPost({
           umsokn: {
             umsaekjandiKennitala: applicantNationalId,
+            simanumer: applicantPhoneNumber,
+            email: applicantEmail,
             utgerdKennitala: applicantNationalId,
             skipaskrarnumer: parseInt(registrationNumber, 10),
             umbedinGildistaka: null,
