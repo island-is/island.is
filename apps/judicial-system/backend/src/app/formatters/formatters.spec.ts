@@ -26,6 +26,7 @@ import {
   formatDefenderRevokedEmailNotification,
   formatProsecutorReceivedByCourtSmsNotification,
   formatCourtResubmittedToCourtSmsNotification,
+  formatProsecutorReadyForCourtEmailNotification,
 } from './formatters'
 
 export const makeProsecutor = (): User => {
@@ -441,6 +442,103 @@ describe('formatReadyForCourtSmsNotification', () => {
   })
 })
 
+describe('formatProsecutorReadyForCourtEmailNotification', () => {
+  const messages = {
+    ...notifications.readyForCourt,
+  }
+  let formatMessage: FormatMessage
+  beforeAll(() => {
+    const intl = createTestIntl('is-IS', messages)
+    formatMessage = intl.formatMessage
+  })
+
+  test('should format ready for court email subject', () => {
+    // Arrange
+    const type = CaseType.CUSTODY
+    const court = 'Héraðsdómur Reykjavíkur'
+    const policeCaseNumber = '1234567'
+    const overviewUrl = 'https://rettarvorslugatt.island.is/test/overview'
+
+    // Act
+    const res = formatProsecutorReadyForCourtEmailNotification(
+      formatMessage,
+      type,
+      court,
+      policeCaseNumber,
+      overviewUrl,
+    )
+
+    // Assert
+    expect(res.subject).toBe('Krafa í máli 1234567')
+  })
+
+  test('should format ready for court email for custody cases', () => {
+    // Arrange
+    const type = CaseType.CUSTODY
+    const court = 'Héraðsdómur Reykjavíkur'
+    const policeCaseNumber = '1234567'
+    const overviewUrl = 'https://rettarvorslugatt.island.is/test/overview'
+
+    // Act
+    const res = formatProsecutorReadyForCourtEmailNotification(
+      formatMessage,
+      type,
+      court,
+      policeCaseNumber,
+      overviewUrl,
+    )
+
+    // Assert
+    expect(res.body).toBe(
+      'Þú hefur sent kröfu um gæsluvarðhald á Héraðsdómur Reykjavíkur vegna LÖKE máls 1234567. Skjalið er aðgengilegt undir <a href="https://rettarvorslugatt.island.is/test/overview">málinu í Réttarvörslugátt</a>.',
+    )
+  })
+
+  test('should format ready for court email for travel ban cases', () => {
+    // Arrange
+    const type = CaseType.TRAVEL_BAN
+    const court = 'Héraðsdómur Reykjaness'
+    const policeCaseNumber = '66666'
+    const overviewUrl = 'https://rettarvorslugatt.island.is/test/overview'
+
+    // Act
+    const res = formatProsecutorReadyForCourtEmailNotification(
+      formatMessage,
+      type,
+      court,
+      policeCaseNumber,
+      overviewUrl,
+    )
+
+    // Assert
+    expect(res.body).toBe(
+      'Þú hefur sent kröfu um farbann á Héraðsdómur Reykjaness vegna LÖKE máls 66666. Skjalið er aðgengilegt undir <a href="https://rettarvorslugatt.island.is/test/overview">málinu í Réttarvörslugátt</a>.',
+    )
+  })
+
+  test('should format ready for court email for travel ban cases', () => {
+    // Arrange
+    const type = CaseType.ADMISSION_TO_FACILITY
+    const court = 'Héraðsdómur Reykjaness'
+    const policeCaseNumber = '66666'
+    const overviewUrl = 'https://rettarvorslugatt.island.is/test/overview'
+
+    // Act
+    const res = formatProsecutorReadyForCourtEmailNotification(
+      formatMessage,
+      type,
+      court,
+      policeCaseNumber,
+      overviewUrl,
+    )
+
+    // Assert
+    expect(res.body).toBe(
+      'Þú hefur sent kröfu um vistun á viðeigandi stofnun á Héraðsdómur Reykjaness vegna LÖKE máls 66666. Skjalið er aðgengilegt undir <a href="https://rettarvorslugatt.island.is/test/overview">málinu í Réttarvörslugátt</a>.',
+    )
+  })
+})
+
 describe('formatProsecutorReceivedByCourtSmsNotification', () => {
   const messages = {
     prosecutorReceivedByCourt: notifications.prosecutorReceivedByCourt,
@@ -811,7 +909,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
 
   let formatMessage: FormatMessage
   beforeAll(() => {
-    formatMessage = createTestIntl('is-IS', messages).formatMessage
+    formatMessage = createTestIntl('is', messages).formatMessage
   })
 
   test('should format court date notification', () => {
@@ -1189,6 +1287,24 @@ describe('formatPrisonRulingEmailNotification', () => {
     // Assert
     expect(res).toBe(
       'Meðfylgjandi er vistunarseðill aðila sem var úrskurðaður í gæsluvarðhald í héraðsdómi 20. desember 2020, auk þingbókar þar sem úrskurðarorðin koma fram.',
+    )
+  })
+
+  test('should format prison ruling notification when date is missing', () => {
+    // Arrange
+    const courtEndTime = undefined
+    const caseType = CaseType.ADMISSION_TO_FACILITY
+
+    // Act
+    const res = formatPrisonRulingEmailNotification(
+      formatMessage,
+      caseType,
+      courtEndTime,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Meðfylgjandi er vistunarseðill aðila sem var úrskurðaður í vistun á viðeigandi stofnun í héraðsdómi á ótilgreindum tíma, auk þingbókar þar sem úrskurðarorðin koma fram.',
     )
   })
 
