@@ -36,7 +36,7 @@ const ApplicationList: ServicePortalModuleComponent = () => {
   Sentry.configureScope((scope) => scope.setTransactionName('Applications'))
 
   const { formatMessage } = useLocale()
-  const { data: applications, loading, error } = useApplications()
+  const { data: applications, loading, error, refetch } = useApplications()
 
   return (
     <>
@@ -72,6 +72,7 @@ const ApplicationList: ServicePortalModuleComponent = () => {
           onClick={(applicationUrl) =>
             window.open(`${baseUrlForm}/${applicationUrl}`)
           }
+          refetch={refetch}
         />
       )}
     </>
