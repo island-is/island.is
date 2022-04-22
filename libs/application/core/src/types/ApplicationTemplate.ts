@@ -12,8 +12,6 @@ import { Schema, StaticText } from './Form'
 import { AnswerValidator } from '../validation/AnswerValidator'
 import { Features } from '@island.is/feature-flags'
 
-
-
 export interface ApplicationTemplate<
   TContext extends ApplicationContext,
   TStateSchema extends ApplicationStateSchema<TEvents>,

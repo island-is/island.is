@@ -12,4 +12,3 @@ export const ACTOR_DELEGATIONS = gql`
     }
   }
 `
-

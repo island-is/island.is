@@ -48,7 +48,7 @@ interface Application {
   actionCard?: ActionCardMetaData
   applicant: string
   assignees: string[]
-  applicantActors: string[],
+  applicantActors: string[]
   typeId: ApplicationTypes
   modified: Date
   created: Date

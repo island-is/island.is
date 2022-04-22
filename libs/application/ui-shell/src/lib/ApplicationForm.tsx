@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useEffect, useState, useCallback } from 'react'
 import { useLazyQuery, useQuery } from '@apollo/client'
 import * as Sentry from '@sentry/react'
 import { isLocale } from 'class-validator'
@@ -43,6 +43,9 @@ const ApplicationLoader: FC<{
   const [delegationsChecked, setDelegationsChecked] = useState(
     type ? false : true,
   )
+  const checkDelegation = useCallback(() => {
+    setDelegationsChecked((d) => !d)
+  }, [])
 
   const { lang: locale } = useLocale()
   const { data, error, loading, refetch } = useQuery(APPLICATION_APPLICATION, {
@@ -79,7 +82,7 @@ const ApplicationLoader: FC<{
         <DelegationsScreen
           slug={slug}
           alternativeSubjects={foundError.alternativeSubjects}
-          setDelegationsChecked={setDelegationsChecked}
+          checkDelegation={checkDelegation}
         />
       )
     }

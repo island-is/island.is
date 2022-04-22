@@ -207,7 +207,11 @@ export class ApplicationService {
     application: Partial<
       Pick<
         Application,
-        'attachments' | 'answers' | 'externalData' | 'pruned' | 'applicantActors'
+        | 'attachments'
+        | 'answers'
+        | 'externalData'
+        | 'pruned'
+        | 'applicantActors'
       >
     >,
   ) {

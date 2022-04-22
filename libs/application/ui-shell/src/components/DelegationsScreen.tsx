@@ -31,14 +31,14 @@ type Delegation = {
 }
 interface DelegationsScreenProps {
   alternativeSubjects?: { nationalId: string }[]
-  setDelegationsChecked: Dispatch<SetStateAction<boolean>>
+  checkDelegation: Dispatch<SetStateAction<boolean>>
   slug: string
 }
 
 export const DelegationsScreen = ({
   slug,
   alternativeSubjects,
-  setDelegationsChecked,
+  checkDelegation,
 }: DelegationsScreenProps) => {
   const [allowedDelegations, setAllowedDelegations] = useState<string[]>()
   const [applicant, setApplicant] = useState<Delegation>()
@@ -58,12 +58,12 @@ export const DelegationsScreen = ({
           if (user?.profile.actor) {
             switchUser(user?.profile.actor.nationalId)
           }
-          setDelegationsChecked(true)
+          checkDelegation(true)
         }
       }
     }
     checkDelegations()
-  }, [type])
+  }, [type, user?.profile.actor, switchUser, checkDelegation])
 
   // Check for user delegations if application supports delegations
   const { data: delegations, loading } = useQuery(ACTOR_DELEGATIONS, {
@@ -78,7 +78,7 @@ export const DelegationsScreen = ({
           allowedDelegations.includes(delegation.type),
       )
       if (authActorDelegations.length <= 0) {
-        setDelegationsChecked(true)
+        checkDelegation(true)
       } else {
         if (alternativeSubjects) {
           const subjects: string[] = alternativeSubjects.map(
@@ -94,7 +94,7 @@ export const DelegationsScreen = ({
         }
       }
     }
-  }, [delegations, allowedDelegations])
+  }, [delegations, allowedDelegations, alternativeSubjects, checkDelegation])
 
   const handleClick = (nationalId?: string) => {
     if (!applicant) {
@@ -103,7 +103,7 @@ export const DelegationsScreen = ({
     if (nationalId) {
       switchUser(nationalId)
     } else {
-      setDelegationsChecked(true)
+      checkDelegation(true)
     }
   }
 

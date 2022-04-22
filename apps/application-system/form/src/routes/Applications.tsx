@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useCallback, useEffect, useState } from 'react'
 import { useParams, useHistory, useLocation } from 'react-router-dom'
 import { useLazyQuery, useMutation } from '@apollo/client'
 import isEmpty from 'lodash/isEmpty'
@@ -47,6 +47,9 @@ export const Applications: FC = () => {
   const [delegationsChecked, setDelegationsChecked] = useState(
     !!query.get('delegationChecked'),
   )
+  const checkDelegation = useCallback(() => {
+    setDelegationsChecked((d) => !d)
+  }, [])
 
   useApplicationNamespaces(type)
 
@@ -137,12 +140,7 @@ export const Applications: FC = () => {
   }
 
   if (!delegationsChecked && type) {
-    return (
-      <DelegationsScreen
-        setDelegationsChecked={setDelegationsChecked}
-        slug={slug}
-      />
-    )
+    return <DelegationsScreen checkDelegation={checkDelegation} slug={slug} />
   }
 
   return (
