@@ -7,6 +7,7 @@ import { SyslumennService } from '@island.is/clients/syslumenn'
 import { PaginatedOperatingLicenses } from './models/paginatedOperatingLicenses'
 import { CertificateInfoResponse } from './models/certificateInfo'
 import { DistrictCommissionerAgencies } from './models/districtCommissionerAgencies'
+import { RealEstateAddress } from './models/realEstateAddress'
 import { UseGuards } from '@nestjs/common'
 import { ApiScope } from '@island.is/auth/scopes'
 import {
@@ -67,5 +68,13 @@ export class SyslumennResolver {
     DistrictCommissionerAgencies[]
   > {
     return this.syslumennService.getDistrictCommissionersAgencies()
+  }
+
+  @Query(() => [RealEstateAddress])
+  @BypassAuth()
+  getRealEstateAddress(
+    @Args('input') realEstateId: string,
+  ): Promise<Array<RealEstateAddress>> {
+    return this.syslumennService.getRealEstateAddress(realEstateId)
   }
 }
