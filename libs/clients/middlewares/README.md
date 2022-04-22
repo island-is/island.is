@@ -28,7 +28,11 @@ A new library providing an createEnhancedFetch function.
 - `timeout?: number | false` - Timeout for requests. Logged and thrown as errors. May cause circuit breaker to open. Defaults to `10000`ms. Can be disabled by passing false.
 - `treat400ResponsesAsErrors?: boolean` - If `true`, then too many 400 responses may cause the circuit to open. Either way these responses will be logged and thrown. Defaults to `false`.
 - `logErrorResponseBody?: boolean` - If `true`, then non-200 response bodies will be consumed and included in the error object and logged as `body`.
+- `keepAlive?: boolean | number` - Configures keepAlive for requests. If `false`, never reuse connections. If `true`, reuse connection with a maximum idle timeout of 10 seconds. By passing a number you can override the idle connection timeout. Defaults to `true`.
+- `clientCertificate?: ClientCertificateOptions` - Configures client certificate for requests.
+- `agentOptions?: AgentOptions` - Overrides agent configuration for requests (e.g. `rejectUnauthorized` or advanced keep-alive configuration).
 - `opossum?: CircuitBreaker.Options` - Allows overriding Opossum options.
+- `autoAuth?: AutoAuthOptions` - Configure [authorization](#authorization).
 - `cache?: CacheConfig` - Configure [caching](#caching).
 
 The EnhancedFetch function works generally the same as standard fetch, except for non-200 responses it throws an error instead with the following properties.

@@ -146,7 +146,7 @@ function GrantAccess() {
         intro={defineMessage({
           id: 'sp.settings-access-control:grant-intro',
           defaultMessage:
-            'Hér velur þú einstakling sem á að fá umboð til að sjá gögn á Mínum síðum. Í næsta skrefi velur þú hvaða umboð þessi einstaklingur fær.',
+            'Hér getur þú gefið öðrum aðgang til að sýsla með þín gögn hjá island.is',
         })}
       />
 
