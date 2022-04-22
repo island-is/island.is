@@ -248,6 +248,9 @@
       "@island.is/application/templates/reference-template": [
         "libs/application/templates/reference-template/src/index.ts"
       ],
+      "@island.is/application/templates/yearly-audit": [
+        "libs/application/templates/yearly-audit/src/index.ts"
+      ],
       "@island.is/application/ui-components": [
         "libs/application/ui-components/src/index.ts"
       ],
