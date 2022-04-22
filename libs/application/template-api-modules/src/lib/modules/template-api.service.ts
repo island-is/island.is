@@ -92,7 +92,8 @@ export class TemplateAPIService {
       | MortgageCertificateSubmissionService
       | FinancialAidService
       | DrivingSchoolConfirmationService
-      | NoDebtCertificateSubmissionService,
+      | NoDebtCertificateSubmissionService
+      | MortgageCertificateSubmissionService,
     action: ApplicationApiAction,
   ): Promise<PerformActionResult> {
     // No index signature with a parameter of type 'string' was found on type

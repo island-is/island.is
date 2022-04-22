@@ -44,6 +44,8 @@ export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
   const { formatMessage } = useLocale()
   const [viewNoDebtCertificate, setViewNoDebtCertificate] = useState(false)
 
+  //TODOx fix the way we get PDF string from external data
+
   function renderFooter() {
     return (
       <>
