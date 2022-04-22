@@ -13,30 +13,55 @@ export class NoDebtCertificateProvider extends BasicDataProvider {
 
   async provide(application: Application): Promise<unknown> {
     const query = `
-    query NoDebtCertificateValidation {
-        noDebtCertificateValidation
+    query GetDebtLessCertificate {
+        getDebtLessCertificate {
+          debtLessCertificateResult {
+            debtLess
+            certificate {
+              type
+              document
+            }
+          }
+          error {
+            code
+            message
+            errors {
+              code
+              message
+              help
+              trackingId
+              param
+            }
+          }
+        }
       }
     `
 
     return this.useGraphqlGateway(query).then(async (res: Response) => {
       const response = await res.json()
 
+      //TODOx skoða líka ef response.error... og er það er ekki skuldlaust... þá færðu ekkert vottorð
+
       if (response.errors) {
+        console.log(JSON.stringify(response))
         console.error(
           `graphql error in ${this.type}: ${response.errors[0].message}`,
         )
         return Promise.reject({})
       }
 
-      if (response.data.noDebtCertificateValidation !== true) {
-        return Promise.reject({})
-      }
+      // if (!response.data.getDebtLessCertificate?.debtLessCertificateResult) {
+      //   return Promise.reject({})
+      // }
 
-      return Promise.resolve({ isValid: true })
+      // return Promise.resolve()
+
+      return Promise.reject({})
     })
   }
 
   onProvideError(errorMessage: MessageDescriptor): FailedDataProviderResult {
+    console.log('---------errorMessage: ' + JSON.stringify(errorMessage))
     return {
       date: new Date(),
       reason: errorMessage?.id

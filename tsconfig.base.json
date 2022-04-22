@@ -115,9 +115,6 @@
       "@island.is/api/domains/national-registry-x-road": [
         "libs/api/domains/national-registry-x-road/src/index.ts"
       ],
-      "@island.is/api/domains/no-debt-certificate": [
-        "libs/api/domains/no-debt-certificate/src/index.ts"
-      ],
       "@island.is/api/domains/payment": [
         "libs/api/domains/payment/src/index.ts"
       ],

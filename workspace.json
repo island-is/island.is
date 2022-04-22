@@ -1355,27 +1355,6 @@
         }
       }
     },
-    "api-domains-no-debt-certificate": {
-      "root": "libs/api/domains/no-debt-certificate",
-      "sourceRoot": "libs/api/domains/no-debt-certificate/src",
-      "projectType": "library",
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["libs/api/domains/no-debt-certificate/**/*.ts"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/api/domains/no-debt-certificate"],
-          "options": {
-            "jestConfig": "libs/api/domains/no-debt-certificate/jest.config.js",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
     "api-domains-payment": {
       "root": "libs/api/domains/payment",
       "sourceRoot": "libs/api/domains/payment/src",

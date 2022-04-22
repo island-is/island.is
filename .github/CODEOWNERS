@@ -178,5 +178,3 @@ infra/                                                                          
 /libs/api/domains/mortgage-certificate/                                                             @island-is/origo
 
 /libs/application/templates/no-debt-certificate/                                                    @island-is/origo
-/libs/application/template-api-modules/src/lib/modules/templates/no-debt-certificate-submission     @island-is/origo
-/libs/api/domains/no-debt-certificate/                                                              @island-is/origo

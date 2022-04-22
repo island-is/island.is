@@ -1,3 +1,2 @@
-export enum ApiActions {
-  getNoDebtCertificate = 'getNoDebtCertificate',
-}
+export enum ApiActions {}
+//getNoDebtCertificate = 'getNoDebtCertificate',

@@ -205,6 +205,5 @@ module.exports = {
     '<rootDir>/libs/testing/containers',
     '<rootDir>/libs/testing/fixtures',
     '<rootDir>/libs/testing/nest',
-    '<rootDir>/libs/api/domains/no-debt-certificate',
   ],
 }

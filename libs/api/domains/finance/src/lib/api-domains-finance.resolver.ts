@@ -29,6 +29,7 @@ import {
   PaymentScheduleDetailModel,
   PaymentScheduleModel,
 } from './models/paymentSchedule.model'
+import { DebtLessCertificateModel } from './models/debtLessCertificate.model'
 import { DebtStatusModel } from './models/debtStatus.model'
 import { GetFinancePaymentScheduleInput } from './dto/getFinancePaymentSchedule.input'
 
@@ -211,6 +212,19 @@ export class FinanceResolver {
     return this.financeService.getPaymentScheduleById(
       user.nationalId,
       input.scheduleNumber,
+      user,
+    )
+  }
+
+  @Query(() => DebtLessCertificateModel)
+  @Audit()
+  async getDebtLessCertificate(
+    @CurrentUser() user: User,
+    //@Args('input') input: GetDebtLessCertificateInput,
+  ) {
+    return this.financeService.getDebtLessCertificate(
+      user.nationalId,
+      'IS', //TODOx get from input //input.language,
       user,
     )
   }
