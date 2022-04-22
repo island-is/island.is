@@ -48,6 +48,7 @@ interface Application {
   actionCard?: ActionCardMetaData
   applicant: string
   assignees: string[]
+  applicantActors: string[],
   typeId: ApplicationTypes
   modified: Date
   created: Date
@@ -69,6 +70,7 @@ export const createApplication = (
   applicant: faker.helpers.replaceSymbolWithNumber('##########'),
   answers: {},
   assignees: [],
+  applicantActors: [],
   attachments: {},
   created: new Date(),
   modified: new Date(),
