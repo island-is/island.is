@@ -43,7 +43,7 @@ export const externalDataSection = buildSection({
     buildMultiField({
       id: 'getDataSuccess',
       title: externalData.dataProvider.getDataSuccess,
-      description: 'Með gagnaöflun tókst að sækja eftirfarandi gögn: ',
+      description: externalData.dataProvider.getDataSuccessDescription,
       children: [
         buildDescriptionField({
           id: 'getDataSuccess.directoryOfFisheries',

@@ -28,6 +28,11 @@ export const externalData = {
       defaultMessage: 'Tókst að sækja gögn',
       description: 'Was able to get data',
     },
+    getDataSuccessDescription: {
+      id: 'gfl.application:section.dataProvider.getDataSuccessDescription',
+      defaultMessage: 'Með gagnaöflun tókst að sækja eftirfarandi gögn:',
+      description: 'Was able to get data description',
+    },
     submitButton: {
       id: 'gfl.application:externalData.dataProvider.submitButton',
       defaultMessage: 'Hefja umsókn',
