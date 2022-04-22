@@ -9,7 +9,12 @@ import { toISODate, RegulationMaybeDiff } from '@island.is/regulations'
 
 const useStepperState = (regulation: RegulationMaybeDiff) =>
   useMemo(() => {
-    const { timelineDate, history, lastAmendDate } = regulation
+    const {
+      timelineDate,
+      history: regulationHistory,
+      lastAmendDate,
+    } = regulation
+    const history = regulationHistory.filter((h) => h.status === 'published')
 
     const changes = history.filter(({ effect }) => effect !== 'repeal')
 
