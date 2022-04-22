@@ -84,10 +84,6 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
   institution: m.institutionName,
   translationNamespaces: [ApplicationConfigurations.ExampleForm.translation],
   dataSchema: ExampleSchema,
-  // allowedDelegations are optional, if it is not added to the template the application type will not support delegations
-  // If the application type should support delegations then configure the needed delegationTypes in allowedDelegations
-  // In this example the application type supports delegations for legal guardians
-  // allowedDelegations: [DelegationType.LegalGuardian],
   featureFlag: Features.exampleApplication,
   stateMachineConfig: {
     initial: States.prerequisites,
