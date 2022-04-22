@@ -1,6 +1,11 @@
 import { uuid } from 'uuidv4'
+import { Op } from 'sequelize'
 
-import { CaseType, User as TUser } from '@island.is/judicial-system/types'
+import {
+  CaseState,
+  CaseType,
+  User as TUser,
+} from '@island.is/judicial-system/types'
 
 import { randomEnum } from '../../../test'
 import { createTestingCaseModule } from './createTestingCaseModule'
@@ -144,7 +149,11 @@ describe('CaseController - Create court case', () => {
           { model: Case, as: 'childCase' },
         ],
         order: [[{ model: Defendant, as: 'defendants' }, 'created', 'ASC']],
-        where: { id: caseId },
+        where: {
+          id: caseId,
+          isArchived: false,
+          state: { [Op.not]: CaseState.DELETED },
+        },
       })
     })
   })

@@ -1,11 +1,8 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { ReactElement, useMemo, useState, useEffect } from 'react'
-import { LayoutProps, withMainLayout } from '@island.is/web/layouts/main'
+import React, { useMemo, useState, useEffect } from 'react'
+import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   ContentLanguage,
   GetNewsQuery,
-  Link,
-  LinkGroup,
   OneColumnText,
   Query,
   QueryGetNamespaceArgs,
@@ -18,101 +15,35 @@ import { CustomNextError } from '@island.is/web/units/errors'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { GET_PROJECT_PAGE_QUERY } from '@island.is/web/screens/queries/Project'
 import {
-  DefaultProjectHeader,
   OrganizationSlice,
   Section,
-  EntryProjectHeader,
-  UkraineProjectHeader,
   HeadWithSocialSharing,
-  ElectionProjectHeader,
   OneColumnTextSlice,
   NewsItems,
-  UkraineChatPanel,
 } from '@island.is/web/components'
 import {
   Box,
-  GridColumn,
-  GridContainer,
-  GridRow,
   Hidden,
   Navigation,
-  NavigationItem,
   TableOfContents,
   Text,
 } from '@island.is/island-ui/core'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
 import { QueryGetNewsArgs } from '@island.is/api/schema'
-import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
-import { ProjectPage as ProjectPageSchema } from '@island.is/web/graphql/schema'
 import slugify from '@sindresorhus/slugify'
 import { getStepOptionsFromUIConfiguration } from '../../components/StepperFSM/StepperFSMUtils'
 import StepperFSM from '../../components/StepperFSM/StepperFSM'
-
-const lightThemes = ['traveling-to-iceland', 'election', 'ukraine', 'default']
-
-const getThemeConfig = (
-  theme: string,
-): { themeConfig: Partial<LayoutProps> } => {
-  const isLightTheme = lightThemes.includes(theme)
-  if (!isLightTheme) {
-    return {
-      themeConfig: {
-        headerButtonColorScheme: 'negative',
-        headerColorScheme: 'white',
-      },
-    }
-  }
-  return { themeConfig: {} }
-}
-
-interface ProjectWrapperProps {
-  withSidebar?: boolean
-  sidebarContent?: ReactElement
-}
-
-const ProjectWrapper: React.FC<ProjectWrapperProps> = ({
-  withSidebar = false,
-  sidebarContent,
-  children,
-}) => {
-  return withSidebar ? (
-    <SidebarLayout isSticky={true} sidebarContent={sidebarContent}>
-      {children}
-    </SidebarLayout>
-  ) : (
-    <GridContainer>
-      <GridRow>
-        <GridColumn
-          paddingTop={6}
-          paddingBottom={6}
-          span={['12/12', '12/12', '10/12']}
-          offset={['0', '0', '1/12']}
-        >
-          {children}
-        </GridColumn>
-      </GridRow>
-    </GridContainer>
-  )
-}
-
-interface ProjectHeaderProps {
-  projectPage: ProjectPageSchema
-}
-
-const ProjectHeader = ({ projectPage }: ProjectHeaderProps) => {
-  switch (projectPage.theme) {
-    case 'traveling-to-iceland':
-      return <EntryProjectHeader projectPage={projectPage} />
-    case 'election':
-      return <ElectionProjectHeader projectPage={projectPage} />
-    case 'ukraine':
-      return <UkraineProjectHeader projectPage={projectPage} />
-    default:
-      return <DefaultProjectHeader projectPage={projectPage} />
-  }
-}
+import {
+  assignNavigationActive,
+  convertLinkGroupsToNavigationItems,
+  getActiveNavigationItemTitle,
+  getThemeConfig,
+} from './utils'
+import { ProjectHeader } from './components/ProjectHeader'
+import { ProjectWrapper } from './components/ProjectWrapper'
+import { ProjectChatPanel } from './components/ProjectChatPanel'
 
 interface PageProps {
   projectPage: Query['getProjectPage']
@@ -121,65 +52,6 @@ interface PageProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   stepOptionsFromNamespace: { data: Record<string, any>[]; slug: string }[]
 }
-
-const convertLinksToNavigationItem = (links: Link[]) =>
-  links.map(({ text, url }) => {
-    return {
-      title: text,
-      href: url,
-      active: false,
-    }
-  })
-
-const convertLinkGroupsToNavigationItems = (
-  linkGroups: LinkGroup[],
-): NavigationItem[] =>
-  linkGroups.map(({ primaryLink, childrenLinks }) => {
-    return {
-      title: primaryLink.text,
-      href: primaryLink.url,
-      active: false,
-      items: convertLinksToNavigationItem(childrenLinks),
-    }
-  })
-
-const getActiveNavigationItemTitle = (
-  navigationItems: NavigationItem[],
-  clientUrl: string,
-) => {
-  for (const item of navigationItems) {
-    if (clientUrl === item.href) {
-      return item.title
-    }
-    for (const childItem of item.items) {
-      if (clientUrl === childItem.href) {
-        return childItem.title
-      }
-    }
-  }
-}
-
-const assignNavigationActive = (
-  items: NavigationItem[],
-  clientUrl: string,
-): NavigationItem[] =>
-  items.map((item) => {
-    let isAnyChildActive = false
-    const childItems = item.items.map((childItem) => {
-      const isChildActive = clientUrl === childItem.href
-      if (isChildActive) isAnyChildActive = isChildActive
-      return {
-        ...childItem,
-        active: isChildActive,
-      }
-    })
-    return {
-      title: item.title,
-      href: item.href,
-      active: clientUrl === item.href || isAnyChildActive,
-      items: childItems,
-    }
-  })
 
 const ProjectPage: Screen<PageProps> = ({
   projectPage,
@@ -249,10 +121,10 @@ const ProjectPage: Screen<PageProps> = ({
 
   return (
     <>
-      {projectPage.id === '7GtuCCd7MEZhZKe0oXcHdb' && <UkraineChatPanel />}
+      <ProjectChatPanel projectPage={projectPage} />
       <HeadWithSocialSharing
         title={`${projectPage.title} | Ísland.is`}
-        description={projectPage.intro}
+        description={projectPage.featuredDescription || projectPage.intro}
         imageUrl={projectPage.featuredImage?.url}
         imageContentType={projectPage.featuredImage?.contentType}
         imageWidth={projectPage.featuredImage?.width?.toString()}

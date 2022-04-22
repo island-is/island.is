@@ -41,6 +41,7 @@ export const ApplicationQuery = gql`
       state
       formComment
       spouseFormComment
+      municipalityCode
       studentCustom
       rejection
       staff {
@@ -69,6 +70,8 @@ export const ApplicationQuery = gql`
           amount
         }
       }
+      spouseHasFetchedDirectTaxPayment
+      hasFetchedDirectTaxPayment
       directTaxPayments {
         totalSalary
         payerNationalId
@@ -93,6 +96,25 @@ export const ApplicationSearchQuery = gql`
       files {
         id
       }
+    }
+  }
+`
+
+export const ApplicationFilterQuery = gql`
+  query ApplicationFilterQuery($input: FilterApplicationsInput!) {
+    filterApplications(input: $input) {
+      applications {
+        id
+        nationalId
+        name
+        state
+        modified
+        created
+        staff {
+          name
+        }
+      }
+      totalCount
     }
   }
 `
@@ -206,6 +228,8 @@ export const ApplicationEventMutation = gql`
         staffNationalId
         staffName
       }
+      spouseHasFetchedDirectTaxPayment
+      hasFetchedDirectTaxPayment
       directTaxPayments {
         totalSalary
         payerNationalId
@@ -267,6 +291,7 @@ export const UpdateApplicationMutation = gql`
       spouseName
       spouseEmail
       spousePhoneNumber
+      municipalityCode
       city
       streetName
       postalCode
@@ -297,6 +322,8 @@ export const UpdateApplicationMutation = gql`
         municipalityIds
         nationalId
       }
+      spouseHasFetchedDirectTaxPayment
+      hasFetchedDirectTaxPayment
       directTaxPayments {
         totalSalary
         payerNationalId
@@ -344,6 +371,7 @@ export const StaffQuery = gql`
       active
       nickname
       email
+      municipalityIds
     }
   }
 `
@@ -369,6 +397,7 @@ export const MunicipalityMutation = gql`
   mutation MunicipalityMutation($input: CreateMunicipalityInput!) {
     createMunicipality(input: $input) {
       id
+      municipalityId
     }
   }
 `
@@ -450,6 +479,11 @@ export const MunicipalityQuery = gql`
         active
         id
       }
+      allAdminUsers {
+        name
+        id
+        municipalityIds
+      }
       individualAid {
         ownPlace
         registeredRenting
@@ -483,6 +517,16 @@ export const AdminUsersQuery = gql`
         active
         id
       }
+    }
+  }
+`
+
+export const AllAdminsQuery = gql`
+  query allAdminsQuery {
+    admins {
+      id
+      name
+      municipalityIds
     }
   }
 `

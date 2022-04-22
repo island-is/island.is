@@ -32,6 +32,13 @@ export const icCaseFiles = {
         description:
           'Notaður sem titill fyrir "rannsóknargögn" hlutann á rannsóknargagna skrefi í rannsóknarheimildum.',
       },
+      introduction: {
+        id: 'judicial.system.investigation_cases:case_files.files.introduction',
+        defaultMessage:
+          'Gögnin í pakkanum hér fyrir neðan munu liggja frammi í þinghaldinu.',
+        description:
+          'Notaður sem skýring fyrir "rannsóknargögn" hlutann á rannsóknargagna skrefi í rannsóknarheimildum.',
+      },
       label: {
         id: 'judicial.system.investigation_cases:case_files.files.label',
         defaultMessage: 'Dragðu skjöl hingað til að hlaða upp',
@@ -53,12 +60,28 @@ export const icCaseFiles = {
         description:
           'Notaður sem titill fyrir "LOKE" gagnapakkann á rannsóknargagna skrefi í rannsóknarheimildum.',
       },
+      introduction: {
+        id:
+          'judicial.system.investigation_cases:case_files.police_case_files.introduction',
+        defaultMessage:
+          'Til að gögn úr þessum lista verði hluti af gagnapakka málsins þarf að velja þau og smella á Hlaða upp.',
+        description:
+          'Notaður sem skýring fyrir "LOKE" gagnapakkann á rannsóknargagna skrefi í rannsóknarheimildum.',
+      },
       selectAllLabel: {
         id:
           'judicial.system.investigation_cases:case_files.police_case_files.select_all_label',
         defaultMessage: 'Velja allt',
         description:
           'Notaður sem texti fyrir "Velja allt" valmöguleikann í LÖKE gagnapakkanum á rannsóknargagna skrefi í rannsóknarheimildum.',
+      },
+      couldNotGetFromLOKEMessage: {
+        id:
+          'judicial.system.investigation_cases:case_files.police_case_files.could_not_get_from_loke_message',
+        defaultMessage:
+          'Ekki tókst að sækja skjalalista í LÖKE. Hægt er að hlaða upp skjölum hér fyrir neðan.',
+        description:
+          'Notaður sem villuskilaboð í LÖKE gagnapakkanum á rannsóknargagna skrefi í rannsóknarheimildum.',
       },
       caseNotFoundInLOKEMessage: {
         id:
@@ -87,6 +110,21 @@ export const icCaseFiles = {
         defaultMessage: 'Hlaða upp',
         description:
           'Notaður sem texti í "hlaða upp" takka í LÖKE gagnapakkanum á rannsóknargagna skrefi í rannsóknarheimildum.',
+      },
+      originNotLokeTitle: {
+        id:
+          'judicial.system.investigation_cases:case_files.police_case_files.origin_not_loke_title',
+        defaultMessage: 'Krafa ekki stofnuð í LÖKE',
+        description:
+          'Notaður sem titill í upplýsingaboxi fyrir kröfu sem ekki er stofnuð í LÖKE í LÖKE gagnapakkanum á rannsóknargagna skrefi í rannsóknarheimildum.',
+      },
+      originNotLokeMessage: {
+        id:
+          'judicial.system.investigation_cases:case_files.police_case_files.origin_not_loke_message',
+        defaultMessage:
+          'Til að fá sjálfkrafa yfirlit yfir skjöl úr LÖKE þarf að stofna kröfuna í gegnum LÖKE.',
+        description:
+          'Notaður sem texti í upplýsingaboxi fyrir kröfu sem ekki er stofnuð í LÖKE í LÖKE gagnapakkanum á rannsóknargagna skrefi í rannsóknarheimildum.',
       },
     }),
     comments: defineMessages({

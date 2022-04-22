@@ -89,7 +89,12 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
           </GridColumn>
           {financeStatusData.organizations?.length > 0 || financeStatusZero ? (
             <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
-              <Box display="flex" justifyContent="flexEnd" marginTop={1}>
+              <Box
+                display="flex"
+                justifyContent="flexEnd"
+                marginTop={1}
+                printHidden
+              >
                 <Box paddingRight={2}>
                   <a
                     href="https://island.is/umsoknir/greidsluaaetlun/"
