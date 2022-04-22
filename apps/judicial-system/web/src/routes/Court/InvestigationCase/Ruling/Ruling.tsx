@@ -53,14 +53,21 @@ const Ruling = () => {
       }
 
       autofillRuling(workingCase, autofill, formatMessage)
+
+      setInitialAutoFillDone(true)
+      setWorkingCase({ ...workingCase })
     }
 
-    if (isAcceptingCaseDecision(workingCase.decision) && workingCase.demands) {
+    if (
+      (workingCase.conclusion === undefined ||
+        workingCase.conclusion === null) &&
+      isAcceptingCaseDecision(workingCase.decision) &&
+      workingCase.demands
+    ) {
       autofill('conclusion', workingCase.demands, workingCase)
-    }
 
-    setInitialAutoFillDone(true)
-    setWorkingCase({ ...workingCase })
+      setWorkingCase({ ...workingCase })
+    }
   }, [
     isCaseUpToDate,
     autofill,
@@ -68,6 +75,7 @@ const Ruling = () => {
     formatMessage,
     setWorkingCase,
     initialAutoFillDone,
+    setInitialAutoFillDone,
   ])
 
   return (
