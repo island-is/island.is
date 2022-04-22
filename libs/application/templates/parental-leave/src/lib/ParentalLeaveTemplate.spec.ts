@@ -228,7 +228,7 @@ describe('Parental Leave Application Template', () => {
               usePersonalAllowanceFromSpouse: NO,
               personalAllowanceFromSpouse: {
                 usage: '33%',
-                useAsMuchAsPossible: NO
+                useAsMuchAsPossible: NO,
               },
               employer: {
                 isSelfEmployed: 'no',
@@ -251,7 +251,7 @@ describe('Parental Leave Application Template', () => {
               usePersonalAllowance: NO,
               personalAllowance: {
                 usage: '33%',
-                useAsMuchAsPossible: NO
+                useAsMuchAsPossible: NO,
               },
               employer: {
                 isSelfEmployed: 'no',

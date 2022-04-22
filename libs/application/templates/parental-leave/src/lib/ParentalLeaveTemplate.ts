@@ -103,7 +103,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         exit: [
           'setOtherParentIdIfSelectedSpouse',
           'clearPersonalAllowanceIfUsePersonalAllowanceIsNo',
-          'clearSpouseAllowanceIfUseSpouseAllowanceIsNo'
+          'clearSpouseAllowanceIfUseSpouseAllowanceIsNo',
         ],
         meta: {
           name: States.DRAFT,
@@ -692,13 +692,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
         const answers = getApplicationAnswers(application.answers)
 
-        if (answers.usePersonalAllowance === NO
-          && (answers.personalUsage || answers.personalUseAsMuchAsPossible)) {
-          set(
-            application.answers,
-            'personalAllowance',
-            null,
-          )
+        if (
+          answers.usePersonalAllowance === NO &&
+          (answers.personalUsage || answers.personalUseAsMuchAsPossible)
+        ) {
+          set(application.answers, 'personalAllowance', null)
         }
 
         return context
@@ -708,13 +706,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
         const answers = getApplicationAnswers(application.answers)
 
-        if (answers.usePersonalAllowanceFromSpouse === NO
-          && (answers.spouseUsage || answers.spouseUseAsMuchAsPossible)) {
-          set(
-            application.answers,
-            'personalAllowanceFromSpouse',
-            null,
-          )
+        if (
+          answers.usePersonalAllowanceFromSpouse === NO &&
+          (answers.spouseUsage || answers.spouseUseAsMuchAsPossible)
+        ) {
+          set(application.answers, 'personalAllowanceFromSpouse', null)
         }
 
         return context
