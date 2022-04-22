@@ -100,7 +100,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       },
       [States.DRAFT]: {
         entry: 'clearAssignees',
-        exit: 'setOtherParentIdIfSelectedSpouse',
+        exit: [
+          'setOtherParentIdIfSelectedSpouse',
+          'clearPersonalAllowanceIfUsePersonalAllowanceIsNo',
+          'clearSpouseAllowanceIfUseSpouseAllowanceIsNo'
+        ],
         meta: {
           name: States.DRAFT,
           actionCard: {
@@ -678,6 +682,38 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             application.answers,
             'otherParentId',
             getOtherParentId(application),
+          )
+        }
+
+        return context
+      }),
+      clearPersonalAllowanceIfUsePersonalAllowanceIsNo: assign((context) => {
+        const { application } = context
+
+        const answers = getApplicationAnswers(application.answers)
+
+        if (answers.usePersonalAllowance === NO
+          && (answers.personalUsage || answers.personalUseAsMuchAsPossible)) {
+          set(
+            application.answers,
+            'personalAllowance',
+            null,
+          )
+        }
+
+        return context
+      }),
+      clearSpouseAllowanceIfUseSpouseAllowanceIsNo: assign((context) => {
+        const { application } = context
+
+        const answers = getApplicationAnswers(application.answers)
+
+        if (answers.usePersonalAllowanceFromSpouse === NO
+          && (answers.spouseUsage || answers.spouseUseAsMuchAsPossible)) {
+          set(
+            application.answers,
+            'personalAllowanceFromSpouse',
+            null,
           )
         }
 
