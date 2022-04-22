@@ -8,7 +8,7 @@ export const m = defineMessages({
   intro: {
     id: 'sp.license:intro',
     defaultMessage:
-      'Hér gefur að líta á núverandi skírteini og réttindi þín. Til að byrja með geturu fundið ökuréttindi þín og kannað stöðu þeirra. Unnið er að því að bæta við fleiri skírteinum og réttindum eins og bólusetningarskírteini, skotvopnaleyfi og vegabréfi.',
+      'Hér gefur að líta á núverandi skírteini og réttindi þín. Til að byrja með getur þú fundið ökuréttindi þín og kannað stöðu þeirra. Unnið er að því að bæta við fleiri skírteinum og réttindum eins og bólusetningarskírteini, skotvopnaleyfi og vegabréfi.',
   },
   drivingLicense: {
     id: 'sp.license:license',
