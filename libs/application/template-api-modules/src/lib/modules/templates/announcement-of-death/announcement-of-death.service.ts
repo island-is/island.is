@@ -33,14 +33,6 @@ export class AnnouncementOfDeathService {
     )
   }
 
-  async addressLookupByRealEstateId({
-    application,
-  }: TemplateApiModuleActionProps): Promise<Array<RealEstateAddress>> {
-    return this.syslumennService.getRealEstateAddress(
-      application.answers.assetId,
-    )
-  }
-
   async submitApplication({ application }: TemplateApiModuleActionProps) {
     return { success: true }
   }
