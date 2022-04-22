@@ -11,6 +11,8 @@ import { ApplicationTypes } from './ApplicationTypes'
 import { Schema, StaticText } from './Form'
 import { AnswerValidator } from '../validation/AnswerValidator'
 
+
+
 export interface ApplicationTemplate<
   TContext extends ApplicationContext,
   TStateSchema extends ApplicationStateSchema<TEvents>,

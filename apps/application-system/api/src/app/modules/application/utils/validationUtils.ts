@@ -214,7 +214,7 @@ export async function validateIncomingExternalDataProviders(
   }
 }
 
-export function newActor(
+export function isNewActor(
   application: Pick<Application, 'applicantActors' | 'applicant'>,
   user: User,
 ) {

@@ -78,7 +78,7 @@ import {
   validateThatTemplateIsReady,
   isTemplateReady,
   validateThatApplicationIsReady,
-  newActor,
+  isNewActor,
 } from './utils/validationUtils'
 import { ApplicationSerializer } from './tools/application.serializer'
 import { UpdateApplicationStateDto } from './dto/updateApplicationState.dto'
@@ -427,7 +427,7 @@ export class ApplicationController {
 
     const mergedAnswers = mergeAnswers(existingApplication.answers, newAnswers)
     const applicantActors: string[] =
-      newActor(existingApplication, user) && user.actor?.nationalId
+      isNewActor(existingApplication, user) && user.actor?.nationalId
         ? [...existingApplication.applicantActors, user.actor.nationalId]
         : existingApplication.applicantActors
 
