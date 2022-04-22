@@ -95,15 +95,17 @@ export const ShipSelection: FC<FieldBaseProps> = ({
                   type="warning"
                   title={formatMessage(shipSelection.labels.deprivation)}
                   message={ship.deprivations.map(
-                    ({ explanation, validFrom }) => {
+                    ({ explanation, validFrom }, index) => {
                       return (
-                        <div>{`${explanation} ${format(
+                        <span
+                          key={`${index}-${explanation}`}
+                        >{`${explanation} ${format(
                           parseISO(validFrom),
                           'dd.MM.yy',
                           {
                             locale: is,
                           },
-                        )}`}</div>
+                        )}`}</span>
                       )
                     },
                   )}
@@ -162,7 +164,7 @@ export const ShipSelection: FC<FieldBaseProps> = ({
               {ship.fishingLicenses?.map((license) => {
                 if (license.code === 'unknown') return null
                 return (
-                  <Tag variant="blue" disabled>
+                  <Tag variant="blue" disabled key={`${license}`}>
                     {formatMessage(shipSelection.tags[license.code])}
                   </Tag>
                 )
