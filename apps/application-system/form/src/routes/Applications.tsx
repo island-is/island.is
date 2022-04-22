@@ -37,12 +37,9 @@ export const Applications: FC = () => {
   const type = getTypeFromSlug(slug)
   const { userInfo } = useAuth()
 
-  function getQuery() {
-    const { search } = useLocation()
-    return React.useMemo(() => new URLSearchParams(search), [search])
-  }
+  const { search } = useLocation()
 
-  let query = getQuery()
+  const query = React.useMemo(() => new URLSearchParams(search), [search])
 
   const [delegationsChecked, setDelegationsChecked] = useState(
     !!query.get('delegationChecked'),
