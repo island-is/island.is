@@ -31,6 +31,7 @@ if (userMocked) {
       ApplicationScope.write,
       AuthScope.actorDelegations,
       UserProfileScope.read,
+      UserProfileScope.write,
       NationalRegistryScope.individuals,
       EndorsementsScope.main,
       ApiScope.internal,
