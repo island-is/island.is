@@ -7,6 +7,7 @@ import {
   OPERATING_LICENSE,
   OPERATING_LICENSE_PAGINATION_INFO_SERVICE_RES,
   DATA_UPLOAD,
+  REAL_ESTATE_ADDRESS,
 } from './__mock-data__/responses'
 import {
   mapHomestay,
@@ -118,6 +119,18 @@ describe('SyslumennService', () => {
         'Lögheimilisbreyting barns',
       )
       expect(response).toStrictEqual(mapDataUploadResponse(DATA_UPLOAD))
+    })
+  })
+
+  describe('getRealEstateAddress', () => {
+    it('should return address for valid realEstateId', async () => {
+      const response = await service.getRealEstateAddress("012345")
+      expect(response).toStrictEqual(REAL_ESTATE_ADDRESS)
+    })
+
+    it('should return error for invalid realEstateId', async () => {
+      const response = await service.getRealEstateAddress("abcdefg")
+      expect(response).toThrowError()
     })
   })
 })

@@ -3,7 +3,9 @@ import {
   VirkarHeimagistingar,
   VirkLeyfi,
   Skilabod,
+  VedbandayfirlitReguverkiSvarSkeyti,
 } from '../../../gen/fetch'
+import { RealEstateAddress } from '../syslumennClient.types'
 import { SyslumennApiPaginationInfo } from '../syslumennClient.types'
 
 export const VHSUCCESS = [
@@ -102,4 +104,21 @@ export const DATA_UPLOAD: Skilabod = {
   skilabod: 'Gögn móttekin',
   audkenni: 'string',
   malsnumer: 'string',
+}
+
+export const REAL_ESTATE_RESPONSE: VedbandayfirlitReguverkiSvarSkeyti = {
+    fastnum: "string",
+    landNr: 123456,
+    heiti: "Hvergiland",
+    svfn: "string",
+    svetiarfelag: "string",
+    notkun: "string",
+    eining: "string",
+    byggd: "string",
+    embaetti: "string",
+    embaettiNumer: "string",
+}
+
+export const REAL_ESTATE_ADDRESS: RealEstateAddress = {
+  address: 'Hvergiland',
 }
