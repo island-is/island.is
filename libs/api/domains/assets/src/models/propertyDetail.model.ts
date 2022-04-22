@@ -4,6 +4,7 @@ import {
   UnitsOfUseModel,
 } from './propertyUnitsOfUse.model'
 import { PropertyOwnersModel } from './propertyOwners.model'
+import { LandModel } from './Land.model'
 import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
@@ -19,6 +20,9 @@ export class PropertyDetail {
 
   @Field(() => PropertyLocation, { nullable: true })
   defaultAddress?: PropertyLocation
+
+  @Field(() => LandModel, { nullable: true })
+  land?: LandModel
 
   @Field({ nullable: true })
   propertyNumber?: string

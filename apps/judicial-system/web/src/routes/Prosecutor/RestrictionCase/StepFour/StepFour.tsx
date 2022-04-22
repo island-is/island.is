@@ -54,6 +54,7 @@ export const StepFour: React.FC = () => {
 
   const { formatMessage } = useIntl()
 
+  const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
   const { updateCase, autofill } = useCase()
 
   useDeb(workingCase, 'demands')
@@ -62,48 +63,57 @@ export const StepFour: React.FC = () => {
   useDeb(workingCase, 'comments')
 
   useEffect(() => {
-    if (isCaseUpToDate) {
-      const theCase: Case = workingCase
-
-      if (theCase.defendants && theCase.defendants.length > 0) {
+    if (isCaseUpToDate && !initialAutoFillDone) {
+      if (workingCase.defendants && workingCase.defendants.length > 0) {
         autofill(
           'demands',
           `${formatMessage(rcReportForm.sections.demands.autofill, {
-            accusedName: theCase.defendants[0].name,
-            accusedNationalId: theCase.defendants[0].noNationalId
+            accusedName: workingCase.defendants[0].name,
+            accusedNationalId: workingCase.defendants[0].noNationalId
               ? ' '
               : `, kt. ${formatNationalId(
-                  theCase.defendants[0].nationalId ?? '',
+                  workingCase.defendants[0].nationalId ?? '',
                 )}, `,
             extensionSuffix:
-              theCase.parentCase &&
-              isAcceptingCaseDecision(theCase.parentCase.decision)
+              workingCase.parentCase &&
+              isAcceptingCaseDecision(workingCase.parentCase.decision)
                 ? ' áframhaldandi'
                 : '',
             caseType:
-              theCase.type === CaseType.CUSTODY ? 'gæsluvarðhaldi' : 'farbanni',
-            court: theCase.court?.name.replace('Héraðsdómur', 'Héraðsdóms'),
+              workingCase.type === CaseType.CUSTODY
+                ? 'gæsluvarðhaldi'
+                : 'farbanni',
+            court: workingCase.court?.name.replace('Héraðsdómur', 'Héraðsdóms'),
             requestedValidToDate: formatDate(
-              theCase.requestedValidToDate,
+              workingCase.requestedValidToDate,
               'PPPPp',
             )
               ?.replace('dagur,', 'dagsins')
               ?.replace(' kl.', ', kl.'),
             isolationSuffix:
-              theCase.type === CaseType.CUSTODY &&
-              theCase.requestedCustodyRestrictions?.includes(
+              workingCase.type === CaseType.CUSTODY &&
+              workingCase.requestedCustodyRestrictions?.includes(
                 CaseCustodyRestrictions.ISOLATION,
               )
                 ? ', og verði gert að sæta einangrun á meðan á varðhaldi stendur'
                 : '',
           })}`,
-          theCase,
+          workingCase,
         )
+
+        setWorkingCase({ ...workingCase })
       }
 
-      setWorkingCase(theCase)
+      setInitialAutoFillDone(true)
     }
-  }, [autofill, formatMessage, isCaseUpToDate, setWorkingCase, workingCase])
+  }, [
+    autofill,
+    formatMessage,
+    initialAutoFillDone,
+    isCaseUpToDate,
+    setWorkingCase,
+    workingCase,
+  ])
 
   return (
     <PageLayout

@@ -6,17 +6,17 @@ import {
   SessionArrangements,
 } from '@island.is/judicial-system/types'
 import {
-  investigationCaseAccusedAddress,
-  investigationCaseAccusedName,
-  makeInvestigationCase,
-  makeProsecutor,
-} from '@island.is/judicial-system/formatters'
-import {
   IC_COURT_HEARING_ARRANGEMENTS_ROUTE,
   IC_OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
 
-import { intercept } from '../../../utils'
+import {
+  investigationCaseAccusedAddress,
+  investigationCaseAccusedName,
+  makeInvestigationCase,
+  makeProsecutor,
+  intercept,
+} from '../../../utils'
 
 describe(`${IC_OVERVIEW_ROUTE}/:id`, () => {
   const demands = faker.lorem.paragraph()

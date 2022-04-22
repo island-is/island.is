@@ -14,11 +14,13 @@ import {
   Button,
   LoadingDots,
   UploadFile,
+  AlertMessage,
 } from '@island.is/island-ui/core'
 import {
   Case,
   CaseFile,
   CaseFileState,
+  CaseOrigin,
   User,
 } from '@island.is/judicial-system/types'
 import {
@@ -31,7 +33,6 @@ import {
   FormFooter,
 } from '@island.is/judicial-system-web/src/components'
 import { removeTabsValidateAndSet } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
 import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import {
@@ -193,134 +194,150 @@ export const StepFiveForm: React.FC<Props> = (props) => {
           <Text variant="h3" as="h3">
             {formatMessage(m.sections.policeCaseFiles.heading, {
               policeCaseNumber: workingCase.policeCaseNumber,
-            })}{' '}
-            <Tooltip
-              placement="right"
-              as="span"
-              text={formatMessage(m.sections.policeCaseFiles.tooltip)}
-            />
+            })}
+          </Text>
+          <Text marginTop={1}>
+            {formatMessage(m.sections.policeCaseFiles.introduction)}
           </Text>
         </Box>
         <Box marginBottom={5}>
-          <AnimateSharedLayout>
-            <motion.div layout className={styles.policeCaseFilesContainer}>
-              <motion.ul layout>
-                <motion.li
-                  layout
-                  className={cn(styles.policeCaseFile, {
-                    [styles.selectAllPoliceCaseFiles]: true,
-                  })}
-                >
-                  <Checkbox
-                    name="selectAllPoliceCaseFiles"
-                    label={formatMessage(
-                      m.sections.policeCaseFiles.selectAllLabel,
-                    )}
-                    checked={checkAllChecked}
-                    onChange={(evt) => toggleCheckbox(evt, true)}
-                    disabled={isUploading || policeCaseFileList.length === 0}
-                    strong
-                  />
-                </motion.li>
-                {policeCaseFiles?.isLoading ? (
-                  <Box
-                    textAlign="center"
-                    paddingY={2}
-                    paddingX={3}
-                    marginBottom={2}
+          {workingCase.origin === CaseOrigin.LOKE && (
+            <AnimateSharedLayout>
+              <motion.div layout className={styles.policeCaseFilesContainer}>
+                <motion.ul layout>
+                  <motion.li
+                    layout
+                    className={cn(styles.policeCaseFile, {
+                      [styles.selectAllPoliceCaseFiles]: true,
+                    })}
                   >
-                    <LoadingDots />
-                  </Box>
-                ) : policeCaseFiles?.hasError ? (
-                  policeCaseFiles?.errorMessage &&
-                  policeCaseFiles?.errorMessage.indexOf('404') > -1 ? (
+                    <Checkbox
+                      name="selectAllPoliceCaseFiles"
+                      label={formatMessage(
+                        m.sections.policeCaseFiles.selectAllLabel,
+                      )}
+                      checked={checkAllChecked}
+                      onChange={(evt) => toggleCheckbox(evt, true)}
+                      disabled={isUploading || policeCaseFileList.length === 0}
+                      strong
+                    />
+                  </motion.li>
+                  {policeCaseFiles?.isLoading ? (
+                    <Box
+                      textAlign="center"
+                      paddingY={2}
+                      paddingX={3}
+                      marginBottom={2}
+                    >
+                      <LoadingDots />
+                    </Box>
+                  ) : policeCaseFiles?.hasError ? (
+                    policeCaseFiles?.errorCode ===
+                    'https://httpstatuses.com/404' ? (
+                      <PoliceCaseFilesMessageBox
+                        icon="warning"
+                        iconColor="yellow400"
+                        message={formatMessage(
+                          m.sections.policeCaseFiles.caseNotFoundInLOKEMessage,
+                        )}
+                      />
+                    ) : (
+                      <PoliceCaseFilesMessageBox
+                        icon="close"
+                        iconColor="red400"
+                        message={formatMessage(
+                          m.sections.policeCaseFiles.couldNotGetFromLOKEMessage,
+                        )}
+                      />
+                    )
+                  ) : policeCaseFiles?.files.length === 0 ? (
                     <PoliceCaseFilesMessageBox
                       icon="warning"
                       iconColor="yellow400"
                       message={formatMessage(
-                        m.sections.policeCaseFiles.caseNotFoundInLOKEMessage,
+                        m.sections.policeCaseFiles.noFilesFoundInLOKEMessage,
                       )}
                     />
+                  ) : policeCaseFileList.length > 0 ? (
+                    <AnimatePresence>
+                      {policeCaseFileList.map((listItem) => {
+                        return (
+                          <motion.li
+                            layout
+                            className={styles.policeCaseFile}
+                            key={listItem.label}
+                            initial={{
+                              opacity: 0,
+                            }}
+                            animate={{
+                              opacity: 1,
+                            }}
+                            exit={{
+                              opacity: 0,
+                            }}
+                          >
+                            <Checkbox
+                              label={
+                                <Box
+                                  display="flex"
+                                  alignItems="center"
+                                  justifyContent="spaceBetween"
+                                >
+                                  {listItem.label}
+                                  {isUploading && listItem.checked && (
+                                    <LoadingDots />
+                                  )}
+                                </Box>
+                              }
+                              name={listItem.id}
+                              value={listItem.id}
+                              checked={listItem.checked}
+                              onChange={(evt) => toggleCheckbox(evt)}
+                            />
+                          </motion.li>
+                        )
+                      })}
+                    </AnimatePresence>
                   ) : (
                     <PoliceCaseFilesMessageBox
-                      icon="close"
-                      iconColor="red400"
-                      message={formatMessage(errors.general)}
+                      icon="checkmark"
+                      iconColor="blue400"
+                      message={formatMessage(
+                        m.sections.policeCaseFiles.allFilesUploadedMessage,
+                      )}
                     />
-                  )
-                ) : policeCaseFiles?.files.length === 0 ? (
-                  <PoliceCaseFilesMessageBox
-                    icon="warning"
-                    iconColor="yellow400"
-                    message={formatMessage(
-                      m.sections.policeCaseFiles.noFilesFoundInLOKEMessage,
-                    )}
-                  />
-                ) : policeCaseFileList.length > 0 ? (
-                  <AnimatePresence>
-                    {policeCaseFileList.map((listItem) => {
-                      return (
-                        <motion.li
-                          layout
-                          className={styles.policeCaseFile}
-                          key={listItem.label}
-                          initial={{
-                            opacity: 0,
-                          }}
-                          animate={{
-                            opacity: 1,
-                          }}
-                          exit={{
-                            opacity: 0,
-                          }}
-                        >
-                          <Checkbox
-                            label={
-                              <Box
-                                display="flex"
-                                alignItems="center"
-                                justifyContent="spaceBetween"
-                              >
-                                {listItem.label}
-                                {isUploading && listItem.checked && (
-                                  <LoadingDots />
-                                )}
-                              </Box>
-                            }
-                            name={listItem.id}
-                            value={listItem.id}
-                            checked={listItem.checked}
-                            onChange={(evt) => toggleCheckbox(evt)}
-                          />
-                        </motion.li>
-                      )
-                    })}
-                  </AnimatePresence>
-                ) : (
-                  <PoliceCaseFilesMessageBox
-                    icon="checkmark"
-                    iconColor="blue400"
-                    message={formatMessage(
-                      m.sections.policeCaseFiles.allFilesUploadedMessage,
-                    )}
-                  />
-                )}
-              </motion.ul>
-            </motion.div>
-            <motion.div layout className={styles.uploadToRVGButtonContainer}>
-              <Button
-                onClick={uploadToRVG}
-                loading={isUploading}
-                disabled={policeCaseFileList.length === 0}
-              >
-                {formatMessage(m.sections.policeCaseFiles.uploadButtonLabel)}
-              </Button>
-            </motion.div>
-          </AnimateSharedLayout>
+                  )}
+                </motion.ul>
+              </motion.div>
+              <motion.div layout className={styles.uploadToRVGButtonContainer}>
+                <Button
+                  onClick={uploadToRVG}
+                  loading={isUploading}
+                  disabled={policeCaseFileList.length === 0}
+                >
+                  {formatMessage(m.sections.policeCaseFiles.uploadButtonLabel)}
+                </Button>
+              </motion.div>
+            </AnimateSharedLayout>
+          )}{' '}
+          {workingCase.origin !== CaseOrigin.LOKE && (
+            <AlertMessage
+              type="info"
+              title={formatMessage(
+                m.sections.policeCaseFiles.originNotLokeTitle,
+              )}
+              message={formatMessage(
+                m.sections.policeCaseFiles.originNotLokeMessage,
+              )}
+            />
+          )}
         </Box>
         <Box marginBottom={3}>
           <Text variant="h3" as="h3">
             {formatMessage(m.sections.files.heading)}
+          </Text>
+          <Text marginTop={1}>
+            {formatMessage(m.sections.files.introduction)}
           </Text>
         </Box>
         <Box marginBottom={5}>
@@ -371,10 +388,9 @@ export const StepFiveForm: React.FC<Props> = (props) => {
                 )
               }
               onBlur={(evt) =>
-                updateCase(
-                  workingCase.id,
-                  parseString('caseFilesComments', evt.target.value),
-                )
+                updateCase(workingCase.id, {
+                  caseFilesComments: evt.target.value,
+                })
               }
               textarea
               rows={7}

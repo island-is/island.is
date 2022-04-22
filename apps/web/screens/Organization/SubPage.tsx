@@ -38,6 +38,7 @@ import getConfig from 'next/config'
 import { Namespace } from '@island.is/api/schema'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
+import { ParsedUrlQuery } from 'querystring'
 
 const { publicRuntimeConfig } = getConfig()
 
@@ -189,7 +190,8 @@ const renderSlices = (
   }
 }
 
-SubPage.getInitialProps = async ({ apolloClient, locale, query }) => {
+SubPage.getInitialProps = async ({ apolloClient, locale, query, pathname }) => {
+  const { slug, subSlug } = getSlugAndSubSlug(query, pathname)
   const [
     {
       data: { getOrganizationPage },
@@ -203,7 +205,7 @@ SubPage.getInitialProps = async ({ apolloClient, locale, query }) => {
       query: GET_ORGANIZATION_PAGE_QUERY,
       variables: {
         input: {
-          slug: query.slug as string,
+          slug: slug as string,
           lang: locale as ContentLanguage,
         },
       },
@@ -212,8 +214,8 @@ SubPage.getInitialProps = async ({ apolloClient, locale, query }) => {
       query: GET_ORGANIZATION_SUBPAGE_QUERY,
       variables: {
         input: {
-          organizationSlug: query.slug as string,
-          slug: query.subSlug as string,
+          organizationSlug: slug as string,
+          slug: subSlug as string,
           lang: locale as ContentLanguage,
         },
       },
@@ -246,6 +248,22 @@ SubPage.getInitialProps = async ({ apolloClient, locale, query }) => {
     showSearchInHeader: false,
     ...getThemeConfig(getOrganizationPage.theme),
   }
+}
+
+const getSlugAndSubSlug = (query: ParsedUrlQuery, pathname: string) => {
+  const path = pathname?.split('/') ?? []
+  let { slug, subSlug } = query
+
+  if (!slug && path.length >= 2) {
+    // The slug is the next-last index in the path, i.e. "syslumenn" in the case of "/s/syslumenn/utgefid-efni"
+    slug = path[path.length - 2]
+  }
+  if (!subSlug && path.length > 0) {
+    // The subslug is the last index in the path, i.e. "utgefid-efni" in the case of "/s/syslumenn/utgefid-efni"
+    subSlug = path.pop()
+  }
+
+  return { slug, subSlug }
 }
 
 export default withMainLayout(SubPage)
