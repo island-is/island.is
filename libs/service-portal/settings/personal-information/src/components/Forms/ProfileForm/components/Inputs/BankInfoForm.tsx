@@ -83,7 +83,7 @@ export const BankInfoForm: FC<Props> = ({ bankInfo }) => {
     <form onSubmit={handleSubmit(submitFormData)}>
       <Box display="flex" flexWrap="wrap" alignItems="center">
         <Box marginRight={3} className={styles.formContainer}>
-          <Columns alignY="center">
+          <Columns collapseBelow="sm" alignY="center">
             <Column width="content">
               <Box className={styles.bank}>
                 <InputController

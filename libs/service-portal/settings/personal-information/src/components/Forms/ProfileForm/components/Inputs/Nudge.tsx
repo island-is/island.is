@@ -96,7 +96,6 @@ export const Nudge: FC<Props> = ({ refuseMail }) => {
             display="flex"
             alignItems="center"
             justifyContent="flexStart"
-            marginLeft={2}
           >
             <Hidden below="sm">
               <Box display="flex" alignItems="center" marginRight={1}>

@@ -27,7 +27,7 @@ export const DocumentList: ServicePortalModuleComponent = ({ userInfo }) => {
               {formatMessage({
                 id: 'sp.documents:error',
                 defaultMessage:
-                  'Tókst ekki að sækja rafræn skjöl, eitthvað fór úrskeiðis',
+                  'Tókst ekki að sækja rafræn skjöl, eitthvað fór úrskeiðis.',
               })}
             </Text>
           </Box>
@@ -38,7 +38,7 @@ export const DocumentList: ServicePortalModuleComponent = ({ userInfo }) => {
               {formatMessage({
                 id: 'sp.documents:not-found',
                 defaultMessage:
-                  'Engin skjöl fundust fyrir gefin leitarskilyrði',
+                  'Engin skjöl fundust fyrir gefin leitarskilyrði.',
               })}
             </Text>
           </Box>
