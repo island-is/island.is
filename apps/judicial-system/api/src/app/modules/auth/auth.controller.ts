@@ -164,29 +164,58 @@ export class AuthController {
     return res.json({ logout: true })
   }
 
-  private async redirectAuthenticatedUser(
+  private async authorizeUser(
     authUser: AuthUser,
-    res: Response,
-    redirectRoute: string,
-    csrfToken?: string,
+    csrfToken: string | undefined,
+    requestedRedirectRoute: string,
   ) {
     const user = await this.authService.findUser(authUser.nationalId)
 
-    if (!user || !this.authService.validateUser(user)) {
-      this.logger.error('Blocking login attempt from an unknown user')
+    let userId: string | undefined
+    let jwtToken: string | undefined
+    let redirectRoute: string | undefined
+
+    if (user && this.authService.validateUser(user)) {
+      userId = user.id
+      jwtToken = this.sharedAuthService.signJwt(user, csrfToken)
+      redirectRoute = requestedRedirectRoute
+        ? requestedRedirectRoute
+        : user.role === UserRole.ADMIN
+        ? '/notendur'
+        : '/krofur'
+    } else if (requestedRedirectRoute?.startsWith('/verjandi/')) {
+      // Default to user role defender which gets only limited access
+      userId = 'defender'
+      jwtToken = this.sharedAuthService.signJwt(
+        { nationalId: authUser.nationalId, role: UserRole.DEFENDER } as User,
+        csrfToken,
+      )
+      redirectRoute = requestedRedirectRoute
+    }
+
+    return { userId, jwtToken, redirectRoute }
+  }
+
+  private async redirectAuthenticatedUser(
+    authUser: AuthUser,
+    res: Response,
+    requestedRedirectRoute: string,
+    csrfToken?: string,
+  ) {
+    const { userId, jwtToken, redirectRoute } = await this.authorizeUser(
+      authUser,
+      csrfToken,
+      requestedRedirectRoute,
+    )
+
+    if (!userId || !jwtToken || !redirectRoute) {
+      this.logger.error('Blocking login attempt from an unauthorized user')
 
       return res.redirect('/?villa=innskraning-ekki-notandi')
     }
 
-    const jwtToken = this.sharedAuthService.signJwt(user as User, csrfToken)
-
-    const tokenParts = jwtToken.split('.')
-    if (tokenParts.length !== 3) {
-      return res.redirect('/?villa=innskraning-ogild')
-    }
-
     this.auditTrailService.audit(
-      user.id,
+      userId,
       AuditedAction.LOGIN,
       res
         .cookie(
@@ -201,14 +230,8 @@ export class AuthController {
           ...ACCESS_TOKEN_COOKIE.options,
           maxAge: EXPIRES_IN_MILLISECONDS,
         })
-        .redirect(
-          redirectRoute
-            ? redirectRoute
-            : user.role === UserRole.ADMIN
-            ? '/notendur'
-            : '/krofur',
-        ),
-      user.id,
+        .redirect(redirectRoute),
+      userId,
     )
   }
 }
