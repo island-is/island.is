@@ -1,12 +1,11 @@
 import faker from 'faker'
 
-import { makeInvestigationCase } from '@island.is/judicial-system/formatters'
 import {
   IC_POLICE_DEMANDS_ROUTE,
   IC_POLICE_REPORT_ROUTE,
 } from '@island.is/judicial-system/consts'
 
-import { intercept } from '../../../utils'
+import { makeInvestigationCase, intercept } from '../../../utils'
 
 describe(`${IC_POLICE_DEMANDS_ROUTE}/:id`, () => {
   beforeEach(() => {

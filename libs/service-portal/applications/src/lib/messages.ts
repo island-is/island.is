@@ -9,7 +9,7 @@ export const m = defineMessages({
   introCopy: {
     id: 'sp.applications:intro.copy',
     defaultMessage:
-      'Smelltu á hnappinn hér að neðan til að sjá allar umsóknir sem eru í boði fyrir Ísland.is gáttina.',
+      'Hér sérðu yfirlit yfir þær umsóknir sem þú hefur sótt um í gegnum Ísland.is.',
     description: 'Intro copy to introduce to all applications available',
   },
   error: {

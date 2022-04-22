@@ -2,15 +2,11 @@ import faker from 'faker'
 
 import { Case, CaseState } from '@island.is/judicial-system/types'
 import {
-  makeInvestigationCase,
-  makeCourt,
-} from '@island.is/judicial-system/formatters'
-import {
   IC_COURT_HEARING_ARRANGEMENTS_ROUTE,
   IC_RULING_ROUTE,
 } from '@island.is/judicial-system/consts'
 
-import { intercept } from '../../../utils'
+import { makeInvestigationCase, makeCourt, intercept } from '../../../utils'
 
 describe(`${IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
   beforeEach(() => {

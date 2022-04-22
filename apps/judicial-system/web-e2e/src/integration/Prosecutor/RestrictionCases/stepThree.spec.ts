@@ -2,9 +2,8 @@ import {
   STEP_FOUR_ROUTE,
   STEP_THREE_ROUTE,
 } from '@island.is/judicial-system/consts'
-import { makeCustodyCase } from '@island.is/judicial-system/formatters'
 
-import { intercept } from '../../../utils'
+import { makeCustodyCase, intercept } from '../../../utils'
 
 describe(`${STEP_THREE_ROUTE}/:id`, () => {
   beforeEach(() => {
@@ -35,7 +34,7 @@ describe(`${STEP_THREE_ROUTE}/:id`, () => {
     cy.getByTestid('inputErrorMessage').should('not.exist')
   })
 
-  it('should require at lease one custody provision to be selected', () => {
+  it('should require at lease one custody provision to be selected or a valid legal basis value', () => {
     cy.getByTestid('datepicker').click()
     cy.getByTestid('datepickerIncreaseMonth').click()
     cy.contains('15').click()
@@ -43,6 +42,10 @@ describe(`${STEP_THREE_ROUTE}/:id`, () => {
     cy.getByTestid('lawsBroken').type('Lorem ipsum')
     cy.getByTestid('continueButton').should('be.disabled')
     cy.getByTestid('checkbox').first().click()
+    cy.getByTestid('continueButton').should('not.be.disabled')
+    cy.getByTestid('checkbox').first().click()
+    cy.getByTestid('continueButton').should('be.disabled')
+    cy.getByTestid('legalBasis').type('Lorem ipsum')
     cy.getByTestid('continueButton').should('not.be.disabled')
   })
 

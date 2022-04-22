@@ -171,7 +171,7 @@ export class FileController {
     try {
       return this.auditTrailService.audit(
         user.id,
-        AuditedAction.GET_RULING_PDF,
+        AuditedAction.GET_CUSTODY_NOTICE_PDF,
         this.getPdf(id, 'custodyNotice', req, res),
         id,
       )

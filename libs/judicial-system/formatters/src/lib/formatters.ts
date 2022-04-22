@@ -58,7 +58,8 @@ export const lowercase = (text?: string): string => {
 }
 
 export const formatNationalId = (nationalId: string): string => {
-  if (nationalId?.length === 10) {
+  const regex = new RegExp(/^\d{10}$/)
+  if (regex.test(nationalId)) {
     return `${nationalId.slice(0, 6)}-${nationalId.slice(6)}`
   } else {
     return nationalId
@@ -75,9 +76,11 @@ export const laws = {
   _100_1: '1. mgr. 100. gr. sml.',
 }
 
-export const caseTypes = {
+type CaseTypes = { [c in CaseType]: string }
+export const caseTypes: CaseTypes = {
   CUSTODY: 'gæsluvarðhald',
   TRAVEL_BAN: 'farbann',
+  ADMISSION_TO_FACILITY: 'vistun á viðeigandi stofnun',
   SEARCH_WARRANT: 'húsleit',
   BANKING_SECRECY_WAIVER: 'rof bankaleyndar',
   PHONE_TAPPING: 'símhlustun',

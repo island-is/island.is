@@ -3,41 +3,47 @@ import { style } from '@vanilla-extract/css'
 
 export const headerBg = style({
   height: 'fit-content',
-  minHeight: '300px',
+  minHeight: '200px',
   order: 1,
   ...themeUtils.responsiveStyle({
-    md: {
+    lg: {
       order: 0,
-      height: '400px',
+      minHeight: '100%',
     },
   }),
 })
 
 export const headerWrapper = style({
   display: 'grid',
-  gridTemplateRows: '2fr 3fr',
-  height: '500px',
+  minHeight: '300px',
+  height: 'fit-content',
+  maxHeight: 'min-content',
   ...themeUtils.responsiveStyle({
-    md: {
-      display: 'grid',
-      height: '400px',
+    lg: {
       gridTemplateColumns: '1fr 1fr',
+      gridTemplateRows: 'min-content',
     },
   }),
 })
 
 export const headerImage = style({
   height: '100%',
-  maxHeight: '200px',
-  objectFit: 'cover',
   width: '100%',
+  objectFit: 'cover',
   order: 0,
   ...themeUtils.responsiveStyle({
+    xs: {
+      maxHeight: '200px',
+    },
+    sm: {
+      maxHeight: '200px',
+    },
     md: {
+      maxHeight: '200px',
+    },
+    lg: {
       order: 1,
-      height: '400px',
-      maxHeight: '100%',
-      objectFit: 'cover',
+      maxHeight: '300px',
     },
   }),
 })
