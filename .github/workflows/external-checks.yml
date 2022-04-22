@@ -11,7 +11,7 @@ defaults:
 jobs:
   codeowners-check:
     name: Lint CODEOWNERS
-    runs-on: ec2-runners    
+    runs-on: ec2-runners
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
 
@@ -42,19 +42,19 @@ jobs:
       - name: Codeowners validation
         if: env.CHECK
         run: |
-            docker run --rm -v $(pwd):/repo -w /repo \
-            -e REPOSITORY_PATH="." \
-            -e GITHUB_ACCESS_TOKEN="$GH_TOKEN" \
-            -e EXPERIMENTAL_CHECKS="notowned" \
-            -e OWNER_CHECKER_REPOSITORY="island-is/island.is" \
-            public.ecr.aws/m3u4c4h9/mszostok/codeowners-validator:0.7.1
+            curl -sfL https://raw.githubusercontent.com/mszostok/codeowners-validator/main/install.sh | sh -s -- -b $HOME v0.7.4
+            REPOSITORY_PATH="." \
+            GITHUB_ACCESS_TOKEN="$GH_TOKEN" \
+            EXPERIMENTAL_CHECKS="notowned" \
+            CHECKS="files,owners,duppatterns" \
+            OWNER_CHECKER_REPOSITORY="island-is/island.is" \
+            ~/codeowners-validator
         env:
           GH_TOKEN: ${{secrets.OWNERS_VALIDATOR_GITHUB_SECRET}}
-          CHECKS: 'files,owners,duppatterns'
 
   gitbook-check:
     name: Lint gitbook
-    runs-on: ec2-runners    
+    runs-on: ec2-runners
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
 
