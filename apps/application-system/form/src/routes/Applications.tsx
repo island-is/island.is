@@ -1,7 +1,9 @@
 import React, { FC, useEffect } from 'react'
-import { useMutation } from '@apollo/client'
+import { useLazyQuery, useMutation } from '@apollo/client'
 import { useParams, useHistory } from 'react-router-dom'
 import isEmpty from 'lodash/isEmpty'
+import { isLocale } from 'class-validator'
+
 import {
   CREATE_APPLICATION,
   APPLICATION_APPLICATIONS,
@@ -13,22 +15,27 @@ import {
   Button,
   GridContainer,
 } from '@island.is/island-ui/core'
+import { Locale } from '@island.is/shared/types'
 import { coreMessages, getTypeFromSlug } from '@island.is/application/core'
 import { ApplicationList } from '@island.is/application/ui-components'
 import { ErrorShell } from '@island.is/application/ui-shell'
+import { useAuth } from '@island.is/auth/react'
 import {
   useApplicationNamespaces,
   useLocale,
   useLocalizedQuery,
 } from '@island.is/localization'
+import { USER_PROFILE } from '@island.is/service-portal/graphql'
+import { Query } from '@island.is/api/schema'
 
 import { ApplicationLoading } from '../components/ApplicationsLoading/ApplicationLoading'
 
 export const Applications: FC = () => {
   const { slug } = useParams<{ slug: string }>()
   const history = useHistory()
-  const { formatMessage } = useLocale()
+  const { formatMessage, changeLanguage, lang } = useLocale()
   const type = getTypeFromSlug(slug)
+  const { userInfo } = useAuth()
 
   useApplicationNamespaces(type)
 
@@ -61,13 +68,33 @@ export const Applications: FC = () => {
     })
   }
 
+  // TODO: Change when IDS has locale
+  const [
+    getUserProfile,
+    { data: userProfData, loading: userProfileLoading },
+  ] = useLazyQuery<Query>(USER_PROFILE)
+  const userProfile = userProfData?.getUserProfile || null
+
+  useEffect(() => {
+    if (userInfo?.profile.nationalId) getUserProfile()
+  }, [userInfo, getUserProfile])
+
+  useEffect(() => {
+    if (
+      userProfile?.locale &&
+      isLocale(userProfile.locale) &&
+      userProfile.locale !== lang
+    )
+      changeLanguage(userProfile.locale as Locale)
+  }, [userProfile, changeLanguage, lang])
+
   useEffect(() => {
     if (type && data && isEmpty(data.applicationApplications)) {
       createApplication()
     }
   }, [type, data])
 
-  if (loading) {
+  if (loading || userProfileLoading) {
     return <ApplicationLoading />
   }
 
