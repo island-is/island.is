@@ -31,15 +31,11 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import {
-  CaseData,
-  ReactSelectOption,
-} from '@island.is/judicial-system-web/src/types'
+import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { Box, Input, Text } from '@island.is/island-ui/core'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
-import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages'
 import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
@@ -108,6 +104,7 @@ export const SignedVerdictOverview: React.FC = () => {
     setWorkingCase,
     isLoadingWorkingCase,
     caseNotFound,
+    refreshCase,
   } = useContext(FormContext)
   const { user } = useContext(UserContext)
   const router = useRouter()
@@ -134,9 +131,7 @@ export const SignedVerdictOverview: React.FC = () => {
           setCourtRecordSignatureConfirmationResponse(
             courtRecordSignatureConfirmationData.courtRecordSignatureConfirmation,
           )
-          if (workingCase) {
-            reloadCase({ variables: { input: { id: workingCase.id } } })
-          }
+          refreshCase()
         } else {
           setCourtRecordSignatureConfirmationResponse({ documentSigned: false })
         }
@@ -147,15 +142,6 @@ export const SignedVerdictOverview: React.FC = () => {
       },
     },
   )
-
-  const [reloadCase] = useLazyQuery<CaseData>(CaseQuery, {
-    fetchPolicy: 'no-cache',
-    onCompleted: (caseData) => {
-      if (caseData?.case) {
-        setWorkingCase(caseData.case)
-      }
-    },
-  })
 
   useEffect(() => {
     if (workingCase.validToDate) {

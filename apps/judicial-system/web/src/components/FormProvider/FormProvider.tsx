@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 
 import {
   Case,
+  CaseOrigin,
   CaseState,
   CaseType,
   Defendant,
@@ -26,6 +27,7 @@ interface FormProvider {
   isLoadingWorkingCase: boolean
   caseNotFound: boolean
   isCaseUpToDate: boolean
+  refreshCase: () => void
 }
 
 interface Props {
@@ -36,6 +38,7 @@ const initialState: Case = {
   id: '',
   created: '',
   modified: '',
+  origin: CaseOrigin.UNKNOWN,
   type: CaseType.CUSTODY,
   state: CaseState.NEW,
   policeCaseNumber: '',
@@ -48,6 +51,8 @@ export const FormContext = createContext<FormProvider>({
   isLoadingWorkingCase: true,
   caseNotFound: false,
   isCaseUpToDate: false,
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  refreshCase: () => {},
 })
 
 const FormProvider = ({ children }: Props) => {
@@ -75,7 +80,7 @@ const FormProvider = ({ children }: Props) => {
   const replacingPath = router.pathname !== path
 
   useEffect(() => {
-    if (!router.query.id) {
+    if (!router.query.id || router.pathname.includes('verjandi')) {
       // Not working on a case
       setState(undefined)
     } else if (router.query.id === caseId) {
@@ -135,6 +140,7 @@ const FormProvider = ({ children }: Props) => {
         // Not found until we navigate to a different page
         caseNotFound: !replacingPath && state === 'not-found',
         isCaseUpToDate: state === 'up-to-date',
+        refreshCase: () => setState('refresh'),
       }}
     >
       {children}

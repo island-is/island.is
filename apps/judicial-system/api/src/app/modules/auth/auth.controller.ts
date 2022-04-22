@@ -22,7 +22,6 @@ import {
   EXPIRES_IN_MILLISECONDS,
 } from '@island.is/judicial-system/consts'
 import { UserRole } from '@island.is/judicial-system/types'
-import type { User } from '@island.is/judicial-system/types'
 import { SharedAuthService } from '@island.is/judicial-system/auth'
 import {
   AuditedAction,
@@ -138,7 +137,7 @@ export class AuthController {
       return this.redirectAuthenticatedUser(
         {
           nationalId,
-          name: '',
+          name: 'Óþekktur',
           mobile: '',
         },
         res,
@@ -187,7 +186,18 @@ export class AuthController {
       // Default to user role defender which gets only limited access
       userId = 'defender'
       jwtToken = this.sharedAuthService.signJwt(
-        { nationalId: authUser.nationalId, role: UserRole.DEFENDER } as User,
+        {
+          id: '',
+          created: '',
+          modified: '',
+          nationalId: authUser.nationalId,
+          name: authUser.name,
+          role: UserRole.DEFENDER,
+          title: '',
+          mobileNumber: authUser.mobile,
+          email: '',
+          active: true,
+        },
         csrfToken,
       )
       redirectRoute = requestedRedirectRoute
