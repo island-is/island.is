@@ -2,38 +2,17 @@ import { useQuery } from '@apollo/client'
 import React, { useMemo } from 'react'
 import { useEffect, useRef, useState } from 'react'
 import { ChatBubble } from '../ChatBubble'
-import {
-  Query,
-  QueryGetNamespaceArgs,
-  ContentLanguage,
-  QueryGetOrganizationTagsArgs,
-  QueryGetOrganizationArgs,
-} from '@island.is/api/schema'
+import { Query, QueryGetNamespaceArgs } from '@island.is/api/schema'
 import { GET_NAMESPACE_QUERY } from '@island.is/web/screens/queries'
 import { useI18n } from '@island.is/web/i18n'
 import { useNamespaceStrict } from '@island.is/web/hooks'
+import { WatsonChatPanelProps } from '../types'
 
 const URL = 'https://web-chat.global.assistant.watson.appdomain.cloud'
 const FILENAME = 'WatsonAssistantChatEntry.js'
 
 const getScriptSource = (version: string) => {
   return `${URL}/versions/${version}/${FILENAME}`
-}
-
-const namespaceQuery = {}
-
-interface WatsonChatPanelProps {
-  // The region your integration is hosted in.
-  region: string
-
-  integrationID: string
-  serviceInstanceID: string
-  version?: string
-  carbonTheme?: string
-  cssVariables?: Record<string, string>
-
-  // Whether the default launcher is shown
-  showLauncher?: boolean
 }
 
 export const WatsonChatPanel = (props: WatsonChatPanelProps) => {

@@ -1,4 +1,9 @@
-export const watsonConfig = {
+import {
+  LiveChatIncChatPanelProps,
+  WatsonChatPanelProps,
+} from '@island.is/web/components'
+
+export const watsonConfig: Record<string, WatsonChatPanelProps> = {
   // Test page for Watson chat bot
   // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/3NFDdRCIe5RVnlSEbHxoTT
   '3NFDdRCIe5RVnlSEbHxoTT': {
@@ -9,15 +14,16 @@ export const watsonConfig = {
     carbonTheme: 'g10',
     cssVariables: {
       'BASE-font-family': '"IBM Plex Sans", "Open Sans", Arial, sans-serif',
-      '$interactive-01': '#0061FF',
-      '$interactive-03': '#0061FF',
-      '$interactive-04': '#0061FF',
+      'HOME_SCREEN-background': '#0061FF',
       'HOME_SCREEN-color-text': 'white',
+      'ACCENT-color-bw': 'white',
+      '$interactive-02': '#0061FF',
+      '$hover-primary': 'transparent',
     },
   },
 }
 
-export const liveChatIncConfig = {
+export const liveChatIncConfig: Record<string, LiveChatIncChatPanelProps> = {
   // Information for Ukrainian citizens
   // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/7GtuCCd7MEZhZKe0oXcHdb
   '7GtuCCd7MEZhZKe0oXcHdb': {

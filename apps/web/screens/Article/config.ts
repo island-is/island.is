@@ -1,4 +1,6 @@
-export const liveChatIncConfig = {
+import { LiveChatIncChatPanelProps } from '@island.is/web/components'
+
+export const liveChatIncConfig: Record<string, LiveChatIncChatPanelProps> = {
   // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/7i92Z9s9HQeYlpGReYQVX
   // Information for Ukrainian citizens
   '7i92Z9s9HQeYlpGReYQVX': {

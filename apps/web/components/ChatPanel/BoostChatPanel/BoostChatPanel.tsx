@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { config, endpoints } from './config'
 import { useWindowSize } from 'react-use'
 import { ChatBubble } from '../ChatBubble'
+import { BoostChatPanelProps } from '../types'
 
 declare global {
   interface Window {
@@ -10,11 +11,6 @@ declare global {
     boostEndpoint: string
     boost: any
   }
-}
-
-interface BoostChatPanelProps {
-  endpoint: keyof typeof endpoints
-  pushUp?: boolean
 }
 
 export const BoostChatPanel: React.FC<BoostChatPanelProps> = ({
