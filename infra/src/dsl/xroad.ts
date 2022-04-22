@@ -307,8 +307,8 @@ export const FishingLicense = new XroadConf({
   env: {
     FISHING_LICENSE_XROAD_PROVIDER_ID: {
       dev: 'IS-DEV/GOV/10012/Fiskistofa-Protected/veidileyfi-v1',
-      staging: 'IS-DEV/GOV/10012/Fiskistofa-Protected/veidileyfi-v1',
-      prod: 'IS-DEV/GOV/10012/Fiskistofa-Protected/veidileyfi-v1',
+      staging: 'IS-TEST/GOV/6608922069/Fiskistofa-Protected/veidileyfi-v1',
+      prod: 'IS/GOV/6608922069/Fiskistofa-Protected/veidileyfi-v1',
     },
   },
 })

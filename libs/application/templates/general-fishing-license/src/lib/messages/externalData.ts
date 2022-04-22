@@ -23,6 +23,16 @@ export const externalData = {
       defaultMessage: 'Ég skil að ofangreindra upplýsinga verður aflað',
       description: 'External information retrieval checkbox label',
     },
+    getDataSuccess: {
+      id: 'gfl.application:section.dataProvider.getDataSuccess',
+      defaultMessage: 'Tókst að sækja gögn',
+      description: 'Was able to get data',
+    },
+    submitButton: {
+      id: 'gfl.application:externalData.dataProvider.submitButton',
+      defaultMessage: 'Hefja umsókn',
+      description: 'Continue to application',
+    },
   }),
   directoryOfFisheries: defineMessages({
     title: {

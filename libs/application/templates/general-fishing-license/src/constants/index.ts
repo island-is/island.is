@@ -1,6 +1,7 @@
 import { DefaultEvents } from '@island.is/application/core'
 
 export enum States {
+  PREREQUISITES = 'prerequisites',
   DRAFT = 'draft',
   PAYMENT = 'payment',
   SUBMITTED = 'submitted',

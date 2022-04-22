@@ -4,13 +4,12 @@ import {
   Form,
   FormModes,
 } from '@island.is/application/core'
-import { applicantInformationSection } from './applicantInformationSection'
-import { externalDataSection } from './externalDataSection'
 import { Logo } from '../../assets'
 import { shipSelectionSection } from './shipSelectionSection'
 import { fishingLicenseSection } from './fishingLicenseSection'
 import { overviewSection } from './overviewSection'
-import { conclusion, payment } from '../../lib/messages'
+import { conclusion, externalData, payment } from '../../lib/messages'
+import { applicantInformationSection } from './applicantInformationSection'
 
 export const GeneralFishingLicenseForm: Form = buildForm({
   id: 'GeneralFishingLicenseForm',
@@ -20,7 +19,11 @@ export const GeneralFishingLicenseForm: Form = buildForm({
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
   children: [
-    externalDataSection,
+    buildSection({
+      id: 'ExternalDataSection',
+      title: externalData.dataProvider.sectionTitle,
+      children: [],
+    }),
     applicantInformationSection,
     shipSelectionSection,
     fishingLicenseSection,

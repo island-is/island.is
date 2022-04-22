@@ -54,5 +54,10 @@ export const applicantInformation = {
       defaultMessage: 'Símanúmer',
       description: 'Telephone number',
     },
+    submitButton: {
+      id: 'gfl.application:applicantInfo.labels.submitButton',
+      defaultMessage: 'Hefja umsókn',
+      description: 'Continue to application',
+    },
   }),
 }

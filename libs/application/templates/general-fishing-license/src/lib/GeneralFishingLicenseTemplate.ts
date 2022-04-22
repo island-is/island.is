@@ -40,8 +40,37 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
   ],
   dataSchema: GeneralFishingLicenseSchema,
   stateMachineConfig: {
-    initial: States.DRAFT,
+    initial: States.PREREQUISITES,
     states: {
+      [States.PREREQUISITES]: {
+        meta: {
+          name: application.general.name.defaultMessage,
+          progress: 0.1,
+          lifecycle: pruneAtMidnight(),
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: async () =>
+                await import(
+                  '../forms/GeneralFishingLicensePrerequisitesForm/index'
+                ).then((val) =>
+                  Promise.resolve(val.GeneralFishingLicensePrerequisitesForm),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Submit',
+                  type: 'primary',
+                },
+              ],
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: { target: States.DRAFT },
+        },
+      },
       [States.DRAFT]: {
         meta: {
           name: application.general.name.defaultMessage,
