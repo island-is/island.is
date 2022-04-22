@@ -1,6 +1,17 @@
-import React from 'react'
+import { useQuery } from '@apollo/client'
+import React, { useMemo } from 'react'
 import { useEffect, useRef, useState } from 'react'
 import { ChatBubble } from '../ChatBubble'
+import {
+  Query,
+  QueryGetNamespaceArgs,
+  ContentLanguage,
+  QueryGetOrganizationTagsArgs,
+  QueryGetOrganizationArgs,
+} from '@island.is/api/schema'
+import { GET_NAMESPACE_QUERY } from '@island.is/web/screens/queries'
+import { useI18n } from '@island.is/web/i18n'
+import { useNamespaceStrict } from '@island.is/web/hooks'
 
 const URL = 'https://web-chat.global.assistant.watson.appdomain.cloud'
 const FILENAME = 'WatsonAssistantChatEntry.js'
@@ -9,6 +20,8 @@ const getScriptSource = (version: string) => {
   return `${URL}/versions/${version}/${FILENAME}`
 }
 
+const namespaceQuery = {}
+
 interface WatsonChatPanelProps {
   // The region your integration is hosted in.
   region: string
@@ -16,6 +29,7 @@ interface WatsonChatPanelProps {
   integrationID: string
   serviceInstanceID: string
   version?: string
+  carbonTheme?: string
   cssVariables?: Record<string, string>
 
   // Whether the default launcher is shown
@@ -23,7 +37,25 @@ interface WatsonChatPanelProps {
 }
 
 export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
+  const { activeLocale } = useI18n()
+
   const { version = 'latest', showLauncher = true, cssVariables } = props
+
+  const { data } = useQuery<Query, QueryGetNamespaceArgs>(GET_NAMESPACE_QUERY, {
+    variables: {
+      input: {
+        lang: activeLocale,
+        namespace: 'ChatPanels',
+      },
+    },
+  })
+
+  const namespace = useMemo(
+    () => JSON.parse(data?.getNamespace?.fields ?? '{}'),
+    [data?.getNamespace?.fields],
+  )
+
+  const n = useNamespaceStrict(namespace)
 
   const watsonInstance = useRef(null)
   const [isButtonVisible, setIsButtonVisible] = useState(false)
@@ -57,7 +89,7 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
 
   return (
     <ChatBubble
-      text="Hæ, get ég aðstoðað?"
+      text={n('chatBubbleText', 'Hæ, get ég aðstoðað?')}
       isVisible={isButtonVisible}
       onClick={watsonInstance.current?.openWindow}
     />

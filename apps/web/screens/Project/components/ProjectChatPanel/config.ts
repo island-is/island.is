@@ -6,8 +6,13 @@ export const watsonConfig = {
     region: 'eu-gb',
     serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
     showLauncher: false,
+    carbonTheme: 'g10',
     cssVariables: {
-      'BASE-font-family': '"IBM Plex Sans"',
+      'BASE-font-family': '"IBM Plex Sans", "Open Sans", Arial, sans-serif',
+      '$interactive-01': '#0061FF',
+      '$interactive-03': '#0061FF',
+      '$interactive-04': '#0061FF',
+      'HOME_SCREEN-color-text': 'white',
     },
   },
 }
