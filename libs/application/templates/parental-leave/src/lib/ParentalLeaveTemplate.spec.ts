@@ -240,7 +240,6 @@ describe('Parental Leave Application Template', () => {
         const [hasChanged, _, newApplication] = helper.changeState({
           type: DefaultEvents.SUBMIT,
         })
-        console.log(newApplication.answers)
         expect(hasChanged).toBe(true)
         expect(newApplication.answers.personalAllowanceFromSpouse).toEqual(null)
       })
@@ -264,7 +263,6 @@ describe('Parental Leave Application Template', () => {
         const [hasChanged, _, newApplication] = helper.changeState({
           type: DefaultEvents.SUBMIT,
         })
-        console.log(newApplication.answers)
         expect(hasChanged).toBe(true)
         expect(newApplication.answers.personalAllowance).toEqual(null)
       })
