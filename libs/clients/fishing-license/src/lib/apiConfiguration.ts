@@ -28,7 +28,7 @@ export const ApiConfiguration = {
             }
           : undefined,
       }),
-      basePath: `${xRoadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`, //TODO Change to ${xRoadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}/ when fiskistofa api is available on xroad
+      basePath: `${xRoadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
       headers: {
         Accept: 'application/json',
         'X-Road-Client': xRoadConfig.xRoadClient,
