@@ -16,6 +16,7 @@ export interface CachePolicyInternal extends CachePolicy {
   _isShared: boolean
 
   age(): number
+  maxAge(): number
 
   _resHeaders: Record<string, string>
 

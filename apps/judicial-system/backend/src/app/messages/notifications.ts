@@ -163,7 +163,7 @@ export const notifications = {
       id:
         'judicial.system.backend:notifications.prosecutor_court_date_email.court_date',
       defaultMessage:
-        'Fyrirtaka mun fara fram {courtDate, date, long}, kl. {courtDate, time, short}.',
+        'Fyrirtaka mun fara fram {courtDate, select, NONE {á ótilgreindum tíma} other {{courtDate}}}.',
       description:
         'Notaður sem texti í pósti sem tilgreinir hvenær fyrirtaka fer fram',
     },
@@ -241,7 +241,7 @@ export const notifications = {
       id:
         'judicial.system.backend:notifications.prison_court_date_email.court_date_text',
       defaultMessage:
-        '{dateMissing, select, missing {á ótilgreindum tíma} other {{date}, kl. {time, time, short}}}',
+        '{courtDate, select, NONE {á ótilgreindum tíma} other {{courtDate}}}',
       description:
         'Texti í pósti til fangelsis sem tilgreinir hvernær mál verður tekið fyrir.',
     },
@@ -264,7 +264,7 @@ export const notifications = {
       id:
         'judicial.system.backend:notifications.prison_court_date_email.requested_valid_to_date_text',
       defaultMessage:
-        '{dateMissing, select, missing {ótilgreinds tíma} other {{date}, kl. {time, time, short}}}',
+        '{requestedValidToDate, select, NONE {ótilgreinds tíma} other {{requestedValidToDate}}}',
       description:
         'Texti í pósti til fangeslis sem tilgreinir hversu lengi gæsluvarðhandls er krafist',
     },
@@ -289,7 +289,7 @@ export const notifications = {
     },
     body: {
       id: 'judicial.system.backend:notifications.prison_ruling_email',
-      defaultMessage: `Meðfylgjandi er vistunarseðill aðila sem var úrskurðaður í {caseType, select, ${CaseType.ADMISSION_TO_FACILITY} {vistun á viðeigandi stofnun} other {gæsluvarðhald}} í héraðsdómi {courtEndTime, date, long}, auk þingbókar þar sem úrskurðarorðin koma fram.`,
+      defaultMessage: `Meðfylgjandi er vistunarseðill aðila sem var úrskurðaður í {caseType, select, ${CaseType.ADMISSION_TO_FACILITY} {vistun á viðeigandi stofnun} other {gæsluvarðhald}} í héraðsdómi {courtEndTime, select, NONE {á ótilgreindum tíma} other {{courtEndTime}}}, auk þingbókar þar sem úrskurðarorðin koma fram.`,
       description:
         'Texti í pósti til fangelis þegar vistunarseðill og þingbók eru send',
     },
@@ -318,7 +318,7 @@ export const notifications = {
       id:
         'judicial.system.backend:notifications.prison_revoked_email.court_date_text',
       defaultMessage:
-        '{courtDate, select, NONE {á ótilgreindum tíma} other {{date}, kl. {courtDate, time, short}}}',
+        '{courtDate, select, NONE {á ótilgreindum tíma} other {{courtDate}}}',
       description:
         'Texti í pósti til fangelsis sem tilgreinir hvernær fyrirtaka átti að fara fram í afturkallaðri kröfu',
     },
@@ -349,7 +349,7 @@ export const notifications = {
       id:
         'judicial.system.backend:notifications.defender_court_date_email.court_date',
       defaultMessage:
-        'Fyrirtaka mun fara fram {date}, kl. {time, time, short}.',
+        'Fyrirtaka mun fara fram {courtDate, select, NONE {á ótilgreindum tíma} other {{courtDate}}}.',
       description:
         'Texti í pósti til verjanda/talsmanns sem tilgreinir hvernær fyrirtaka mun fara fram',
     },
@@ -388,7 +388,7 @@ export const notifications = {
       id:
         'judicial.system.backend:notifications.defender_revoked_email.court_date',
       defaultMessage:
-        '{courtDate, select, NONE {á ótilgreindum tíma} other {{date}, kl. {courtDate, time, short}}}',
+        '{courtDate, select, NONE {á ótilgreindum tíma} other {{courtDate}}}',
       description:
         'Texti í pósti til verjanda/talsmanns sem tilgreinir hvernær fyrirtaka var skráð',
     },
