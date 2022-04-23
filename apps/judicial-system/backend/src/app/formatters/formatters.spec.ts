@@ -909,7 +909,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
 
   let formatMessage: FormatMessage
   beforeAll(() => {
-    formatMessage = createTestIntl('is-IS', messages).formatMessage
+    formatMessage = createTestIntl('is', messages).formatMessage
   })
 
   test('should format court date notification', () => {
@@ -1287,6 +1287,24 @@ describe('formatPrisonRulingEmailNotification', () => {
     // Assert
     expect(res).toBe(
       'Meðfylgjandi er vistunarseðill aðila sem var úrskurðaður í gæsluvarðhald í héraðsdómi 20. desember 2020, auk þingbókar þar sem úrskurðarorðin koma fram.',
+    )
+  })
+
+  test('should format prison ruling notification when date is missing', () => {
+    // Arrange
+    const courtEndTime = undefined
+    const caseType = CaseType.ADMISSION_TO_FACILITY
+
+    // Act
+    const res = formatPrisonRulingEmailNotification(
+      formatMessage,
+      caseType,
+      courtEndTime,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Meðfylgjandi er vistunarseðill aðila sem var úrskurðaður í vistun á viðeigandi stofnun í héraðsdómi á ótilgreindum tíma, auk þingbókar þar sem úrskurðarorðin koma fram.',
     )
   })
 
