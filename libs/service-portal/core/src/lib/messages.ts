@@ -464,12 +464,22 @@ export const m = defineMessages({
   },
   accessDenied: {
     id: 'service.portal:accessDenied',
-    defaultMessage: 'Ekki með aðgang',
+    defaultMessage: 'Aðgangur læstur',
+  },
+
+  accessNeeded: {
+    id: 'service.portal:access-needed',
+    defaultMessage: 'Umboð vantar',
+  },
+
+  accessNeededText: {
+    id: 'service.portal:access-needed-text',
+    defaultMessage: 'Umboð vantar',
   },
   accessDeniedText: {
     id: 'service.portal:accessDeniedText',
     defaultMessage:
-      'Þú hefur því miður ekki aðgang af þessu svæði. Það verður að óska eftir aðgangi hjá viðeigandi aðila.',
+      'Því miður vantar þig umboð til þess að hafa aðgang að þessu svæði. Vinsamlegast hafðu samband við viðeigandi aðila sem sér um þessi mál.',
   },
   educationStudentAssessment: {
     id: 'service.portal:educationStudentAssessment',
