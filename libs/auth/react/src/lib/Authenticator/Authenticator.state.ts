@@ -1,5 +1,8 @@
 import { Dispatch } from 'react'
 import { User } from '@island.is/shared/types'
+import kennitala from 'kennitala'
+import { DelegationType } from '@island.is/auth-api-lib'
+import differenceInYears from 'date-fns/differenceInYears'
 
 export type AuthState =
   | 'logged-out'
@@ -38,6 +41,27 @@ export const initialState: AuthReducerState = {
 }
 
 export type AuthDispatch = Dispatch<Action>
+
+// Add dateOfBirth Date object to user profile
+// Add delegationType array to user profile
+const formatUser = (payload: User): User | null => {
+  const delegationType = payload.profile.delegationType
+  const dateOfBirth = kennitala.info(payload.profile.nationalId).birthday
+
+  return {
+    ...payload,
+    scopes: payload.scopes || [],
+    profile: {
+      ...payload.profile,
+      dateOfBirth: dateOfBirth,
+      delegationType: Array.isArray(delegationType)
+        ? delegationType
+        : delegationType
+        ? [delegationType]
+        : undefined,
+    },
+  }
+}
 
 export const reducer = (
   state: AuthReducerState,
