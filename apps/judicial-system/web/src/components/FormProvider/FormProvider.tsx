@@ -9,9 +9,10 @@ import {
   CaseType,
   Defendant,
 } from '@island.is/judicial-system/types'
-import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 
-import { CaseData } from '../../types'
+import { CaseData, RestrictedCaseData } from '../../types'
+import { CaseQuery } from './caseGql'
+import { RestrictedCaseQuery } from './restrictedCaseGql'
 
 type ProviderState =
   | 'fetch'
@@ -57,6 +58,7 @@ export const FormContext = createContext<FormProvider>({
 
 const FormProvider = ({ children }: Props) => {
   const router = useRouter()
+  const restricted = router.pathname.includes('verjandi')
   const id = router.query.id
 
   const caseType = router.pathname.includes('farbann')
@@ -80,7 +82,7 @@ const FormProvider = ({ children }: Props) => {
   const replacingPath = router.pathname !== path
 
   useEffect(() => {
-    if (!router.query.id || router.pathname.includes('verjandi')) {
+    if (!router.query.id) {
       // Not working on a case
       setState(undefined)
     } else if (router.query.id === caseId) {
@@ -96,11 +98,14 @@ const FormProvider = ({ children }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.query.id, router.pathname])
 
-  const [getCase] = useLazyQuery<CaseData>(CaseQuery, {
+  const caseQuery = restricted ? RestrictedCaseQuery : CaseQuery
+  const resultProperty = restricted ? 'restrictedCase' : 'case'
+
+  const [getCase] = useLazyQuery<CaseData & RestrictedCaseData>(caseQuery, {
     fetchPolicy: 'no-cache',
     onCompleted: (caseData) => {
-      if (caseData?.case) {
-        setWorkingCase(caseData.case)
+      if (caseData && caseData[resultProperty]) {
+        setWorkingCase(caseData[resultProperty] as Case)
 
         // The case has been loaded from the server
         setState('up-to-date')

@@ -1,12 +1,16 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common'
 import { AuthGuard } from '@nestjs/passport'
 
-import { User, UserRole } from '@island.is/judicial-system/types'
+import { User } from '@island.is/judicial-system/types'
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
+  constructor(private readonly allowNonUsers = false) {
+    super()
+  }
+
   handleRequest<TUser extends User>(err: Error, user: TUser): TUser {
-    if (err || !user || user.role === UserRole.DEFENDER) {
+    if (err || !user || (!user.id && !this.allowNonUsers)) {
       throw new UnauthorizedException(err?.message ?? 'Unauthorized')
     }
 

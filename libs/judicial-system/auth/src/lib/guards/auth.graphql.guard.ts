@@ -4,7 +4,7 @@ import { Injectable, ExecutionContext } from '@nestjs/common'
 import { GqlExecutionContext } from '@nestjs/graphql'
 import { AuthGuard } from '@nestjs/passport'
 
-import { User, UserRole } from '@island.is/judicial-system/types'
+import { User } from '@island.is/judicial-system/types'
 
 @Injectable()
 export class JwtGraphQlAuthGuard extends AuthGuard('jwt') {
@@ -20,11 +20,7 @@ export class JwtGraphQlAuthGuard extends AuthGuard('jwt') {
   }
 
   handleRequest<TUser extends User>(err: Error, user: TUser): TUser {
-    if (
-      err ||
-      !user ||
-      (user.role === UserRole.DEFENDER && !this.allowNonUsers)
-    ) {
+    if (err || !user || (!user.id && !this.allowNonUsers)) {
       throw new AuthenticationError(err?.message ?? 'Unauthorized')
     }
 
