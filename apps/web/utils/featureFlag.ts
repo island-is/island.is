@@ -6,7 +6,7 @@ import {
 import getConfig from 'next/config'
 
 const { publicRuntimeConfig } = getConfig()
-let client: FeatureFlagClient | null
+let client: FeatureFlagClient | undefined
 
 export const getFeatureFlag = async (
   flag: string,
