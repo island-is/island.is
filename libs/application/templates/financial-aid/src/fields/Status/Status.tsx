@@ -12,25 +12,12 @@ const Status = ({ application }: FAFieldBaseProps) => {
 
   return (
     <>
-      {/* TODO: add checks when do display aid amount*/}
-      <AidAmount
-        application={application}
-        type={
-          application.state === ApplicationState.APPROVED
-            ? 'breakdown'
-            : 'estimation'
-        }
-        amount={{
-          aidAmount: 10000,
-          personalTaxCredit: 2000,
-          tax: 1000,
-          finalAmount: 20000,
-        }}
-      />
+      {/* TODO: use correct aid amount inside AidAmount component*/}
+      <AidAmount application={application} />
 
-      {/* TODO: use correct state and we might need to use the dates from Veita*/}
+      {/* TODO: we might need to use the dates from Veita*/}
       <Timeline
-        state={ApplicationState.APPROVED}
+        state={application.applicationState}
         created={application.created}
         modified={application.modified}
       />

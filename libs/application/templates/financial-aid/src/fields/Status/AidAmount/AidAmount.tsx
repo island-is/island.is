@@ -5,30 +5,36 @@ import { Box, Text } from '@island.is/island-ui/core'
 import {
   Amount,
   acceptedAmountBreakDown,
+  ApplicationState,
 } from '@island.is/financial-aid/shared/lib'
 
 import { Breakdown } from '../..'
 import { status } from '../../../lib/messages'
 import Estimation from '../Estimation/Estimation'
-import { ApproveOptions, FAApplication } from '../../../lib/types'
+import { FAApplication } from '../../../lib/types'
 
 interface Props {
-  amount: Amount
   application: FAApplication
-  type: 'estimation' | 'breakdown'
 }
 
-const Approved = ({ application, type, amount }: Props) => {
+const AidAmount = ({ application }: Props) => {
   const { formatMessage } = useIntl()
 
   return (
     <Box marginBottom={[4, 4, 5]}>
-      {type === 'breakdown' ? (
+      {application.applicationState === ApplicationState.APPROVED ? (
         <>
           <Text as="h3" variant="h3" marginBottom={2}>
             {formatMessage(status.aidAmount.titleApproved)}
           </Text>
-          <Breakdown calculations={acceptedAmountBreakDown(amount)} />
+          <Breakdown
+            calculations={acceptedAmountBreakDown({
+              aidAmount: 10000,
+              personalTaxCredit: 2000,
+              tax: 1000,
+              finalAmount: 20000,
+            })}
+          />
         </>
       ) : (
         <Estimation application={application} />
@@ -37,4 +43,4 @@ const Approved = ({ application, type, amount }: Props) => {
   )
 }
 
-export default Approved
+export default AidAmount

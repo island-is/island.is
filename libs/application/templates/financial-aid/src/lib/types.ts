@@ -1,5 +1,8 @@
 import { Application, FieldBaseProps } from '@island.is/application/core'
-import { Municipality } from '@island.is/financial-aid/shared/lib'
+import {
+  ApplicationState,
+  Municipality,
+} from '@island.is/financial-aid/shared/lib'
 import { UploadFile } from '@island.is/island-ui/core'
 import { answersSchema } from './dataSchema'
 
@@ -46,7 +49,11 @@ export interface OverrideAnswerSchema extends answersSchema {
 
 export type FAApplication = Override<
   Application,
-  { answers: OverrideAnswerSchema; externalData: ExternalData }
+  {
+    answers: OverrideAnswerSchema
+    externalData: ExternalData
+    applicationState: ApplicationState
+  }
 >
 
 export type FAFieldBaseProps = Override<
