@@ -152,7 +152,8 @@ export const Ruling: React.FC = () => {
     }
 
     if (
-      !workingCase.conclusion &&
+      (workingCase.conclusion === undefined ||
+        workingCase.conclusion === null) &&
       workingCase.decision &&
       workingCase.defendants &&
       workingCase.defendants.length > 0

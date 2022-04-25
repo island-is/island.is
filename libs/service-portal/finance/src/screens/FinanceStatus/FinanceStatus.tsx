@@ -86,13 +86,18 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
               {formatMessage({
                 id: 'sp.finance-status:intro',
                 defaultMessage:
-                  'Hér er að finna sundurliðun skulda og inneigna við ríkissjóð og stofnanir á þeim degi sem skoðað er.',
+                  'Hér sérð þú sundurliðun skulda og/eða inneigna hjá ríkissjóði og stofnunum.',
               })}
             </Text>
           </GridColumn>
           {financeStatusData.organizations?.length > 0 || financeStatusZero ? (
             <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
-              <Box display="flex" justifyContent="flexEnd" marginTop={1}>
+              <Box
+                display="flex"
+                justifyContent="flexEnd"
+                marginTop={1}
+                printHidden
+              >
                 {!isDelegation && (
                   <Box paddingRight={2}>
                     <a

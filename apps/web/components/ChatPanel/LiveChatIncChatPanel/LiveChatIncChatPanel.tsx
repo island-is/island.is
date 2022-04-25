@@ -1,18 +1,12 @@
-/* 
-    This component will show the Directorate of Immigration live chat for people fleeing the war in Ukraine.
-*/
-
 import { useEffect } from 'react'
 
-const LICENSE = 13822368
-const VERSION = '2.0'
 const SCRIPT_SRC = 'https://cdn.livechatinc.com/tracking.js'
 
-const activateWidget = () => {
+const activateWidget = (license: number, version: string) => {
   /* eslint-disable */
   const w: any = window
   w.__lc = w.__lc || {}
-  w.__lc.license = LICENSE
+  w.__lc.license = license
   const widget = (function (n: any, t, c) {
     function i(n) {
       return e._h ? e._h.apply(null, n) : e._q.push(n)
@@ -20,7 +14,7 @@ const activateWidget = () => {
     var e = {
       _q: [],
       _h: null,
-      _v: VERSION,
+      _v: version,
       on: function () {
         i(['on', c.call(arguments)])
       },
@@ -53,14 +47,22 @@ const activateWidget = () => {
   /* eslint-enable */
 }
 
-export const UkraineChatPanel = () => {
+interface LiveChatIncChatPanelProps {
+  license: number
+  version: string
+}
+
+export const LiveChatIncChatPanel = ({
+  license,
+  version,
+}: LiveChatIncChatPanelProps) => {
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const widget: any = activateWidget()
+    const widget: any = activateWidget(license, version)
     return () => widget?.call('destroy')
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
   return null
 }
 
-export default UkraineChatPanel
+export default LiveChatIncChatPanel
