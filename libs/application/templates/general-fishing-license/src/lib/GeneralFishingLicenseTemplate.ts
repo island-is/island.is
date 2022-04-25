@@ -46,7 +46,11 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
         meta: {
           name: application.general.name.defaultMessage,
           progress: 0.1,
-          lifecycle: pruneAtMidnight(),
+          lifecycle: {
+            shouldBeListed: false,
+            shouldBePruned: true,
+            whenToPrune: 600 * 1000, // 10 minutes
+          },
           roles: [
             {
               id: Roles.APPLICANT,
