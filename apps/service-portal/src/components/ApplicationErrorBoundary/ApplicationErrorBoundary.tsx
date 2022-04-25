@@ -89,10 +89,7 @@ const Error: FC = () => {
       <Box display="flex" justifyContent="center" marginBottom={[1, 0]}>
         <img
           src="./assets/images/hourglass.svg"
-          alt={formatMessage({
-            id: 'sp:error-page-img-alt',
-            defaultMessage: 'Skrautmynd fyrir villuskjá',
-          })}
+          alt=""
           className={styles.img}
         />
       </Box>
