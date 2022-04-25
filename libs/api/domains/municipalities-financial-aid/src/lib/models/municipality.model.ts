@@ -1,5 +1,5 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
-import { AidModel } from '.'
+import { AidModel } from './index'
 
 @ObjectType('MunicipalitiesFinancialAidMunicipalityModel')
 export class MunicipalityModel {

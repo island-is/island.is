@@ -11,7 +11,7 @@ import {
   ApplicationEventModel,
   ApplicationFileModel,
   DirectTaxPaymentModel,
-} from '.'
+} from './index'
 
 @ObjectType('MunicipalitiesFinancialAidApplicationModel')
 export class ApplicationModel {
