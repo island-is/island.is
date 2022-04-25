@@ -22,14 +22,29 @@ export const confirmation = {
     content: {
       id: 'fa.application:section.confirmation.nextSteps.content#markup',
       defaultMessage:
-        '* Vinnsluaðili sveitarfélagsins vinnur úr umsókninni. Umsóknin verður afgreidd eins fljótt og auðið er. \n* Ef umsóknin er samþykkt getur þú reiknað með útgreiðslu í byrjun október. \n* Ef þörf er á frekari upplýsingum eða gögnum til að vinna úr umsókninni mun vinnsluaðili sveitarfélagsins hafa samband.',
+        '* Vinnsluaðili sveitarfélagsins vinnur úr umsókninni. Umsóknin verður afgreidd eins fljótt og auðið er. \n* Ef umsóknin er samþykkt getur þú reiknað með útgreiðslu í byrjun {nextMonth}. \n* Ef þörf er á frekari upplýsingum eða gögnum til að vinna úr umsókninni mun vinnsluaðili sveitarfélagsins hafa samband.',
       description: 'Confirmation next steps',
     },
-    contentWithSpouse: {
-      id: 'fa.application:section.confirmation.nextSteps.content#markup',
+    contentMissingFiles: {
+      id:
+        'fa.application:section.confirmation.nextSteps.contentMissingFiles#markup',
       defaultMessage:
-        '* Þú og maki þinn hlaðið upp nauðsynlegum gögnum sem þarf til úrvinnslu umsóknar. \n* Vinnsluaðili sveitarfélagsins vinnur úr umsókninni. Umsóknin verður afgreidd eins fljótt og auðið er. \n* Ef umsóknin er samþykkt getur þú reiknað með útgreiðslu í byrjun október. \n* Ef þörf er á frekari upplýsingum eða gögnum til að vinna úr umsókninni mun vinnsluaðili sveitarfélagsins hafa samband.',
-      description: 'Confirmation next steps',
+        '* Þú hleður upp nauðsynlegum gögnum í gegnum stöðusíðu umsóknar.',
+      description: 'Confirmation first step if missing files',
+    },
+    contentSpouseMissingFiles: {
+      id:
+        'fa.application:section.confirmation.nextSteps.contentSpouseMissingFiles#markup',
+      defaultMessage:
+        '* Maki hleður upp nauðsynlegum gögnum sem þarf til úrvinnslu umsóknar.',
+      description: 'Confirmation first step if spouse missing files',
+    },
+    contentBothMissingFiles: {
+      id:
+        'fa.application:section.confirmation.nextSteps.contentBothMissingFiles#markup',
+      defaultMessage:
+        '* Þú og maki þinn hlaðið upp nauðsynlegum gögnum sem þarf til úrvinnslu umsóknar.',
+      description: 'Confirmation first step if both are missing files',
     },
   }),
   links: defineMessages({
@@ -41,14 +56,14 @@ export const confirmation = {
     content: {
       id: 'fa.application:section.confirmation.links.content#markup',
       defaultMessage:
-        '[Sjá stöðu umsóknar]({statusPage}) \n \n [Upplýsingar um fjárhagsaðstoð hjá sveitarfélaginu]({homePage})',
+        '[Sjá stöðu umsóknar]({statusPage}) \n \n [Reglur um fjárhagsaðstoð]({homePage})',
       description: 'Confirmation links',
     },
   }),
   alertMessages: defineMessages({
     success: {
       id: 'fa.application:section.confirmation.alertMessages.success',
-      defaultMessage: 'Umsókn þín um fjárhagsaðstoð er móttekin',
+      defaultMessage: 'Umsókn um fjárhagsaðstoð er móttekin',
       description: 'Alert message when application has successfully been sent',
     },
     dataNeeded: {

@@ -1,11 +1,10 @@
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import * as kennitala from 'kennitala'
 import {
-  Application,
   ApplicationContext,
   getValueViaPath,
 } from '@island.is/application/core'
-
+import { UploadFile } from '@island.is/island-ui/core'
 import {
   FamilyStatus,
   MartialStatusType,
@@ -13,7 +12,13 @@ import {
   Municipality,
 } from '@island.is/financial-aid/shared/lib'
 
-import { ApproveOptions, CurrentApplication, FAApplication, Spouse } from '..'
+import {
+  ApproveOptions,
+  CurrentApplication,
+  FAApplication,
+  OverrideAnswerSchema,
+  UploadFileType,
+} from '..'
 
 const emailRegex = /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
 export const isValidEmail = (value: string) => emailRegex.test(value)
@@ -84,4 +89,12 @@ export function hasActiveCurrentApplication(context: ApplicationContext) {
     'veita.data',
   ) as CurrentApplication
   return !dataProvider.currentApplicationId
+}
+
+export const hasFiles = (
+  fileType: UploadFileType,
+  answers: OverrideAnswerSchema,
+) => {
+  const files = answers[fileType as keyof OverrideAnswerSchema] as UploadFile[]
+  return files && files.length > 0
 }
