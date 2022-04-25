@@ -174,7 +174,7 @@ export const Ruling: React.FC = () => {
                 isAcceptingCaseDecision(workingCase.parentCase.decision)
                   ? 'yes'
                   : 'no',
-              caseType: workingCase.type === CaseType.CUSTODY,
+              caseType: workingCase.type,
             })
           : workingCase.decision === CaseDecision.REJECTING
           ? formatMessage(m.sections.conclusion.rejectingAutofillV2, {
@@ -192,9 +192,9 @@ export const Ruling: React.FC = () => {
                 isAcceptingCaseDecision(workingCase.parentCase.decision)
                   ? 'yes'
                   : 'no',
-              caseType: workingCase.type === CaseType.CUSTODY,
+              caseType: workingCase.type,
             })
-          : formatMessage(m.sections.conclusion.acceptingAutofill, {
+          : formatMessage(m.sections.conclusion.acceptingAutofillV2, {
               genderedAccused: capitalize(
                 formatMessage(core.accused, {
                   suffix: accusedSuffix,
@@ -508,7 +508,12 @@ export const Ruling: React.FC = () => {
                 },
               )}
               partiallyAcceptedLabelText={formatMessage(
-                m.sections.decision.partiallyAcceptLabel,
+                m.sections.decision.partiallyAcceptLabelV2,
+                {
+                  caseType: formatMessage(m.sections.decision.caseType, {
+                    caseType: workingCase.type,
+                  }),
+                },
               )}
               dismissLabelText={formatMessage(
                 m.sections.decision.dismissLabel,
@@ -519,7 +524,12 @@ export const Ruling: React.FC = () => {
                 },
               )}
               acceptingAlternativeTravelBanLabelText={formatMessage(
-                m.sections.decision.acceptingAlternativeTravelBanLabel,
+                m.sections.decision.acceptingAlternativeTravelBanLabelV2,
+                {
+                  caseType: formatMessage(m.sections.decision.caseType, {
+                    caseType: workingCase.type,
+                  }),
+                },
               )}
             />
           </Box>
@@ -577,7 +587,8 @@ export const Ruling: React.FC = () => {
               />
             </Box>
           )}
-        {workingCase.type === CaseType.CUSTODY &&
+        {(workingCase.type === CaseType.CUSTODY ||
+          workingCase.type === CaseType.ADMISSION_TO_FACILITY) &&
           isAcceptingCaseDecision(workingCase.decision) && (
             <Box component="section" marginBottom={5}>
               <Box marginBottom={2}>

@@ -2,17 +2,18 @@ import { CaseType } from '@island.is/judicial-system/types'
 import { defineMessage, defineMessages } from 'react-intl'
 
 export const rcOverview = {
+  // TODO: remove heading and use headingV2
   heading: defineMessage({
     id: 'judicial.system.restriction_cases:overview.heading',
     defaultMessage: 'Yfirlit kröfu um {caseType}',
     description: 'Notaður sem titill á yfirlits skrefi í rannsóknarheimildum.',
   }),
   headingV2: defineMessage({
-    id: 'judicial.system.restriction_cases:overview.heading',
+    id: 'judicial.system.restriction_cases:overview.heading_v2',
     defaultMessage: `Yfirlit kröfu um {caseType, select,
       ${CaseType.ADMISSION_TO_FACILITY} {{isExtended, select, yes {framlengingu á } other {}}vistun á viðeigandi stofnun}
       ${CaseType.TRAVEL_BAN} {{isExtended, select, yes {farbanni} other {farbann}}}
-      other {isExtended, select, yes {framlengingu á gæsluvarðhaldi} other {gæsluvarðhald}}}`,
+      other {{isExtended, select, yes {framlengingu á gæsluvarðhaldi} other {gæsluvarðhald}}}n  sn sb`,
     description: 'Notaður sem titill á yfirlits skrefi í rannsóknarheimildum.',
   }),
   sections: {

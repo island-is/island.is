@@ -72,7 +72,7 @@ export const StepFour: React.FC = () => {
               : `, kt. ${formatNationalId(
                   workingCase.defendants[0].nationalId ?? '',
                 )}, `,
-            isExteneded:
+            isExtended:
               workingCase.parentCase &&
               isAcceptingCaseDecision(workingCase.parentCase.decision)
                 ? 'yes'

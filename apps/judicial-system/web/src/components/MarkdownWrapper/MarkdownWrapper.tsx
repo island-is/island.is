@@ -1,6 +1,5 @@
 import React, { ReactNode } from 'react'
 import Markdown from 'markdown-to-jsx'
-import { MessageDescriptor, useIntl } from 'react-intl'
 import {
   Box,
   Text,

@@ -128,7 +128,7 @@ export const Overview: React.FC = () => {
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
             {formatMessage(rcOverview.headingV2, {
-              isExtended: Boolean(workingCase?.parentCase),
+              isExtended: workingCase?.parentCase ? 'yes' : 'no',
               caseType: workingCase.type,
             })}
           </Text>

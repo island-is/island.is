@@ -63,7 +63,7 @@ export const sections = {
     caseTitle: {
       id:
         'judicial.system.core:sections.restriction_case_prosecutor_section.case_title',
-      defaultMessage: `Krafa um {caseType, select, ${CaseType.ADMISSION_TO_FACILITY} {vistun á viðeigandi stofnun} ${CaseType.TRAVEL_BAN} {farbann} other {gæsluvarðhald}}`,
+      defaultMessage: `Krafa um {caseType, select, ${CaseType.ADMISSION_TO_FACILITY} {vistun} ${CaseType.TRAVEL_BAN} {farbann} other {gæsluvarðhald}}`,
       description:
         'Notaður sem titill í hliðarstiku í gæslu-, farbanns- og vistunarmálum hjá sækjendum',
     },
@@ -328,7 +328,7 @@ export const sections = {
     },
     restrictionActive: {
       id: 'judicial.system.core:sections.case_results.restriction_active',
-      defaultMessage: `{caseType, select, ${CaseType.ADMISSION_TO_FACILITY} {Vistun á stofnun virk} ${CaseType.TRAVEL_BAN} {Farbann virkt} other {Gæsluvarðhald virkt}}`,
+      defaultMessage: `{caseType, select, ${CaseType.ADMISSION_TO_FACILITY} {Vistun virk} ${CaseType.TRAVEL_BAN} {Farbann virkt} other {Gæsluvarðhald virkt}}`,
       description:
         'Notaður sem texti í skrefum á hliðarstiku þegar gæslu/farbann/vistun er virk',
     },

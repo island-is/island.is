@@ -1,7 +1,7 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { Box, Text } from '@island.is/island-ui/core'
-import { CaseType, isRestrictionCase } from '@island.is/judicial-system/types'
+import { isRestrictionCase } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import {
   Decision,
@@ -54,7 +54,17 @@ const ConclusionDraft: React.FC<Props> = (props) => {
           }
           partiallyAcceptedLabelText={`${
             isRestrictionCase(workingCase.type)
-              ? formatMessage(rcRuling.sections.decision.partiallyAcceptLabel)
+              ? formatMessage(
+                  rcRuling.sections.decision.partiallyAcceptLabelV2,
+                  {
+                    caseType: formatMessage(
+                      rcRuling.sections.decision.caseType,
+                      {
+                        caseType: workingCase.type,
+                      },
+                    ),
+                  },
+                )
               : formatMessage(icRuling.sections.decision.partiallyAcceptLabel)
           }`}
           dismissLabelText={
@@ -67,7 +77,12 @@ const ConclusionDraft: React.FC<Props> = (props) => {
               : formatMessage(icRuling.sections.decision.dismissLabel)
           }
           acceptingAlternativeTravelBanLabelText={formatMessage(
-            rcRuling.sections.decision.acceptingAlternativeTravelBanLabel,
+            rcRuling.sections.decision.acceptingAlternativeTravelBanLabelV2,
+            {
+              caseType: formatMessage(rcRuling.sections.decision.caseType, {
+                caseType: workingCase.type,
+              }),
+            },
           )}
         />
       </Box>

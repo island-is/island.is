@@ -46,7 +46,14 @@ export const rcReportForm = {
       },
       autofillV2: {
         id: 'judicial.system.restriction_cases:report_form.demands.autofill_v2',
-        defaultMessage: `Þess er krafist að {accusedName}{accusedNationalId}sæti{isExtended, select, yes { áframhaldandi} other {}} {caseType, select, ${CaseType.ADMISSION_TO_FACILITY} {vistun á viðeigandi stofnun} ${CaseType.TRAVEL_BAN} {farbanni} other {gæsluvarðhaldi}} með úrskurði {court}, til {requestedValidToDate}{hasIsolationRequest, select, yes {, og verði gert að sæta einangrun á meðan á varðhaldi stendur} other {}}.`,
+        defaultMessage: `Þess er krafist að {accusedName}{accusedNationalId}sæti{isExtended, select,
+          yes { áframhaldandi}
+          other {}} {caseType, select,
+            ${CaseType.ADMISSION_TO_FACILITY} {vistun á viðeigandi stofnun}
+            ${CaseType.TRAVEL_BAN} {farbanni}
+            other {gæsluvarðhaldi}} með úrskurði {court}, til {requestedValidToDate}{hasIsolationRequest, select,
+              yes {, og verði gert að sæta einangrun á meðan á varðhaldi stendur}
+              other {}}.`,
         description:
           'Notaður sem sjálfgefinn texti í textaboxi fyrir "dómkröfur" á greinargerðar skrefi í gæsluvarðhalds-, vistunar- og farbannsmálum.',
       },
