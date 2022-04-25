@@ -615,8 +615,8 @@ export const m = defineMessages({
     defaultMessage: 'Öll gögn hafa verið sótt og er hægt að hefja umsókn',
     description: 'All data has been fetched and the application can be started',
   },
-  externalDataSuccessSubmitFieldTitle: {
-    id: 'hi.application:externalDataSuccessTitle',
+  externalDataSuccessSubmitButton: {
+    id: 'hi.application:externalDataSuccessSubmitButton',
     defaultMessage: 'Hefja umsókn',
     description: 'Start application',
   },

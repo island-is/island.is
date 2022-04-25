@@ -15,6 +15,7 @@ const States = {
   draft: 'draft',
   submitted: 'submitted',
   closed: 'closed',
+  prerequisites: 'prerequisites',
 }
 export enum API_MODULE_ACTIONS {
   sendApplication = 'sendApplication',
@@ -43,8 +44,43 @@ const PublicDebtPaymentPlanTemplate: ApplicationTemplate<
   ],
   dataSchema: PublicDebtPaymentPlanSchema,
   stateMachineConfig: {
-    initial: States.draft,
+    initial: States.prerequisites,
     states: {
+      [States.prerequisites]: {
+        meta: {
+          name: States.prerequisites,
+          actionCard: {
+            title: application.name,
+            description: application.description,
+          },
+          progress: 0.5,
+          lifecycle: {
+            shouldBeListed: false,
+            shouldBePruned: true,
+            whenToPrune: 3600 * 1000,
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/PrerequisitesForm').then((module) =>
+                  Promise.resolve(module.PrerequisitesForm),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Hefja umsókn',
+                  type: 'primary',
+                },
+              ],
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          SUBMIT: { target: States.draft },
+        },
+      },
       [States.draft]: {
         meta: {
           name: States.draft,
