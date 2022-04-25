@@ -7,6 +7,7 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   DefaultEvents,
+  EphemeralStateLifeCycle,
 } from '@island.is/application/core'
 import { PublicDebtPaymentPlanSchema } from './dataSchema'
 import { application } from './messages'
@@ -54,11 +55,7 @@ const PublicDebtPaymentPlanTemplate: ApplicationTemplate<
             description: application.description,
           },
           progress: 0.5,
-          lifecycle: {
-            shouldBeListed: false,
-            shouldBePruned: true,
-            whenToPrune: 3600 * 1000,
-          },
+          lifecycle: EphemeralStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
