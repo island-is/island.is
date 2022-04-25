@@ -9,7 +9,6 @@ import {
   setupTestEnv,
 } from '../../test/setup'
 
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 const testUrl = 'http://localhost/test'
 const issuerUrl = 'http://localhost/issuer'
 const clientId = 'client'
@@ -86,15 +85,22 @@ describe('EnhancedFetch#withAutoAuth', () => {
     env = setupTestEnv({
       autoAuth: { ...autoAuth, mode: 'tokenExchange' },
     })
+    const expectedBody = new URLSearchParams({
+      grant_type: 'urn:ietf:params:oauth:grant-type:token-exchange',
+      client_id: 'client',
+      client_secret: 'secret',
+      scope: 'testScope',
+      subject_token: auth.authorization,
+      subject_token_type: 'urn:ietf:params:oauth:token-type:access_token',
+      requested_token_type: 'urn:ietf:params:oauth:token-type:access_token',
+    }).toString()
 
     // Act
     await env.enhancedFetch(testUrl, { auth })
 
     // Assert
     expect(env.authFetch).toHaveBeenCalledTimes(1)
-    expect(env.authFetch.mock.calls[0][1].body.toString()).toEqual(
-      `grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Atoken-exchange&client_id=client&client_secret=secret&scope=testScope&subject_token=${auth.authorization}&subject_token_type=urn%3Aietf%3Aparams%3Aoauth%3Atoken-type%3Aaccess_token&requested_token_type=urn%3Aietf%3Aparams%3Aoauth%3Atoken-type%3Aaccess_token`,
-    )
+    expect(env.authFetch.mock.calls[0][1].body.toString()).toEqual(expectedBody)
     expect(env.fetch.mock.calls[0][1].headers.get('authorization')).toEqual(
       fakeAuthentication,
     )
@@ -204,15 +210,22 @@ describe('EnhancedFetch#withAutoAuth', () => {
         tokenExchange: { requestActorToken: true },
       },
     })
+    const expectedBody = new URLSearchParams({
+      grant_type: 'urn:ietf:params:oauth:grant-type:token-exchange',
+      client_id: 'client',
+      client_secret: 'secret',
+      scope: 'testScope',
+      subject_token: auth.authorization,
+      subject_token_type: 'urn:ietf:params:oauth:token-type:access_token',
+      requested_token_type: 'islandis:oauth:token-type:actor-access-token',
+    }).toString()
 
     // Act
     await env.enhancedFetch(testUrl, { auth })
 
     // Assert
     expect(env.authFetch).toHaveBeenCalledTimes(1)
-    expect(env.authFetch.mock.calls[0][1].body.toString()).toEqual(
-      `grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Atoken-exchange&client_id=client&client_secret=secret&scope=testScope&subject_token=${auth.authorization}&subject_token_type=urn%3Aietf%3Aparams%3Aoauth%3Atoken-type%3Aaccess_token&requested_token_type=islandis%3Aoauth%3Atoken-type%3Aactor-access-token`,
-    )
+    expect(env.authFetch.mock.calls[0][1].body.toString()).toEqual(expectedBody)
     expect(env.fetch.mock.calls[0][1].headers.get('authorization')).toEqual(
       fakeAuthentication,
     )
@@ -332,6 +345,15 @@ describe('EnhancedFetch#withAutoAuth', () => {
       env = setupTestEnv({
         autoAuth: { ...autoAuth, mode: 'auto' },
       })
+      const expectedBody = new URLSearchParams({
+        grant_type: 'urn:ietf:params:oauth:grant-type:token-exchange',
+        client_id: 'client',
+        client_secret: 'secret',
+        scope: 'testScope',
+        subject_token: auth.authorization,
+        subject_token_type: 'urn:ietf:params:oauth:token-type:access_token',
+        requested_token_type: 'urn:ietf:params:oauth:token-type:access_token',
+      }).toString()
 
       // Act
       await env.enhancedFetch(testUrl, { auth })
@@ -339,7 +361,7 @@ describe('EnhancedFetch#withAutoAuth', () => {
       // Assert
       expect(env.authFetch).toHaveBeenCalledTimes(1)
       expect(env.authFetch.mock.calls[0][1].body.toString()).toEqual(
-        `grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Atoken-exchange&client_id=client&client_secret=secret&scope=testScope&subject_token=${auth.authorization}&subject_token_type=urn%3Aietf%3Aparams%3Aoauth%3Atoken-type%3Aaccess_token&requested_token_type=urn%3Aietf%3Aparams%3Aoauth%3Atoken-type%3Aaccess_token`,
+        expectedBody,
       )
     })
   })
