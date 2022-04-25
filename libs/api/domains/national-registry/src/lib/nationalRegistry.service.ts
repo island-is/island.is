@@ -122,7 +122,7 @@ export class NationalRegistryService {
         custodyText2: undefined,
         birthplace: familyMember.Faedingarstadur,
         religion: familyMember.Trufelag,
-        nationality: familyMember.Rikisfang,
+        nationality: familyMember.RikisfangLand,
         homeAddress: familyMember.Logheimili,
         municipality: familyMember.LogheimiliSveitarfelag,
         postal: familyMember.Postnr,
