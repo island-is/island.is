@@ -14,11 +14,11 @@ const ApplicantConfirmation = ({ application }: FAFieldBaseProps) => {
 
   const firstStepText = () => {
     switch (true) {
-      case (applicantHasSpouse && missingIncomeFiles):
+      case applicantHasSpouse && missingIncomeFiles:
         return confirmation.nextSteps.contentBothMissingFiles
-      case (applicantHasSpouse):
+      case applicantHasSpouse:
         return confirmation.nextSteps.contentSpouseMissingFiles
-      case (missingIncomeFiles):
+      case missingIncomeFiles:
         return confirmation.nextSteps.contentMissingFiles
     }
   }
