@@ -10,7 +10,3 @@ export const img = style({
     },
   }),
 })
-
-export const errorScreenTextContainer = style({
-  maxWidth: 660,
-})

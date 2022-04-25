@@ -40,9 +40,11 @@ export const RegulationStatus = (props: RegulationStatusProps) => {
 
   const today = toISODate(new Date())
 
+  const hasPending = !timelineDate && history[0]?.status === 'pending'
+
   const color: BallColor = repealed
     ? 'red'
-    : type === 'amending'
+    : hasPending || type === 'amending'
     ? 'yellow'
     : !timelineDate || timelineDate === (lastAmendDate || publishedDate)
     ? 'green'
@@ -126,6 +128,16 @@ export const RegulationStatus = (props: RegulationStatusProps) => {
                 type === 'base' ? 'statusCurrentBase' : 'statusCurrentAmending',
               ) + ' '}
               {onDateText}
+            </>
+          ) : hasPending ? (
+            <>
+              {txt('statusCurrentBase') + ' '}
+              <small className={s.metaDate}>
+                {txt(
+                  'statusHasPending',
+                  'Reglugerð án breytinga, sjá breytingasögu.',
+                )}
+              </small>
             </>
           ) : (
             <>
