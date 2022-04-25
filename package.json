@@ -194,7 +194,7 @@
     "msw": "0.21.3",
     "nest-winston": "1.4.0",
     "next": "10.0.1",
-    "next-auth": "3.29.0",
+    "next-auth": "3.29.1",
     "next-cookies": "2.0.3",
     "node-fetch": "2.6.7",
     "nodemailer": "6.7.2",
