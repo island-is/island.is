@@ -20,8 +20,6 @@ const ApplicantConfirmation = ({ application }: FAFieldBaseProps) => {
         return confirmation.nextSteps.contentSpouseMissingFiles
       case (missingIncomeFiles):
         return confirmation.nextSteps.contentMissingFiles
-      default:
-        return undefined
     }
   }
 
