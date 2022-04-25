@@ -1099,7 +1099,7 @@ export class ApplicationController {
     const { nationalId } = user
     const existingApplication = (await this.applicationAccessService.findOneByIdAndNationalId(
       id,
-      nationalId,
+      user,
     )) as BaseApplication
     const canDelete = await this.applicationAccessService.canDeleteApplication(
       existingApplication,
