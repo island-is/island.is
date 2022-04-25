@@ -132,7 +132,7 @@ Home.getInitialProps = async ({ apolloClient, locale, query }) => {
         query: GET_NAMESPACE_QUERY,
         variables: {
           input: {
-            namespace: 'Syslumenn',
+            namespace: 'OrganizationPages',
             lang: locale,
           },
         },

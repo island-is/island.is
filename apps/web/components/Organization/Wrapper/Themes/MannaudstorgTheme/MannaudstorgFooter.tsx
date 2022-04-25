@@ -24,6 +24,7 @@ interface Props {
   phone?: string
   headerText?: string
   linkText?: string
+  telephoneText?: string
 }
 
 export const MannaudstorgFooter: FC<Props> = ({
@@ -33,6 +34,7 @@ export const MannaudstorgFooter: FC<Props> = ({
   phone,
   headerText = 'Ertu með ábendingu eða spurningu?',
   linkText = 'Sendu okkur línu',
+  telephoneText = 'Sími',
 }) => {
   const { activeLocale } = useI18n()
 
@@ -114,9 +116,7 @@ export const MannaudstorgFooter: FC<Props> = ({
                           }}
                         >
                           <Inline space={1}>
-                            <Text color="white">
-                              {activeLocale === 'is' ? 'Sími:' : 'Telephone:'}
-                            </Text>
+                            <Text color="white">{telephoneText}:</Text>
                             <Text>
                               <a href={`tel:${phone}`}>{phone}</a>
                             </Text>

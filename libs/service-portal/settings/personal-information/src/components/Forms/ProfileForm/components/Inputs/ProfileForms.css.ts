@@ -44,6 +44,16 @@ export const codeInput = style({
   maxWidth: 210,
 })
 
+export const codeButton = style({
+  '@media': {
+    [`screen and (max-width: ${theme.breakpoints.sm}px)`]: {
+      alignSelf: 'flex-end',
+      marginTop: theme.spacing['2'],
+      paddingTop: 0,
+    },
+  },
+})
+
 export const nudgeSave = style({
   marginTop: theme.spacing['2'],
   ...themeUtils.responsiveStyle({
