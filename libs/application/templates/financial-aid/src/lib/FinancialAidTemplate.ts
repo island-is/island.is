@@ -173,8 +173,8 @@ const FinancialAidTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/Submitted').then((module) =>
-                  Promise.resolve(module.Submitted),
+                import('../forms/ApplicantSubmitted').then((module) =>
+                  Promise.resolve(module.ApplicantSubmitted),
                 ),
               // TODO: Limit this
               read: 'all',
@@ -182,8 +182,8 @@ const FinancialAidTemplate: ApplicationTemplate<
             {
               id: Roles.SPOUSE,
               formLoader: () =>
-                import('../forms/Submitted').then((module) =>
-                  Promise.resolve(module.Submitted),
+                import('../forms/SpouseSubmitted').then((module) =>
+                  Promise.resolve(module.SpouseSubmitted),
                 ),
               // TODO: Limit this
               read: 'all',
