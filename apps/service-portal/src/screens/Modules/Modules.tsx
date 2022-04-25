@@ -1,9 +1,10 @@
-import React, { FC, Suspense } from 'react'
-import { Route, Switch } from 'react-router-dom'
+import React, { FC, Suspense, useEffect } from 'react'
+import { Route, Switch, useLocation } from 'react-router-dom'
 import {
   ServicePortalRoute,
   NotFound,
   AccessDenied,
+  PlausiblePageviewDetail,
 } from '@island.is/service-portal/core'
 import { useStore } from '../../store/stateProvider'
 import ModuleErrorScreen, { ModuleErrorBoundary } from './ModuleErrorScreen'
@@ -17,6 +18,13 @@ const RouteComponent: FC<{
   userInfo: User
   client: ApolloClient<NormalizedCacheObject>
 }> = React.memo(({ route, userInfo, client }) => {
+  const location = useLocation()
+
+  useEffect(() => {
+    if (route.render !== undefined) {
+      PlausiblePageviewDetail(route.path)
+    }
+  }, [location])
   if (route.render === undefined) return null
 
   const App = route.render({
