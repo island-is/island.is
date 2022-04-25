@@ -210,29 +210,8 @@ describe('User profile API', () => {
     })
   })
 
-  describe('PUT /userProfile', () => {
-    it('PUT /userProfile/ should return 404 not found error msg', async () => {
-      // Arrange
-      const updatedProfile = {
-        mobilePhoneNumber: '9876543',
-        locale: 'is',
-        email: 'email@email.is',
-      }
-
-      // Act
-      const updateResponse = await request(app.getHttpServer())
-        .put(`/userProfile/${mockProfile.nationalId}`)
-        .send(updatedProfile)
-        .expect(404)
-
-      // Assert
-      expect(updateResponse.body.error).toBe('Not Found')
-      expect(updateResponse.body.message).toBe(
-        `A user profile with nationalId ${mockProfile.nationalId} does not exist`,
-      )
-    })
-
-    it('PUT /userProfile should update profile', async () => {
+  describe('PATCH /userProfile', () => {
+    it('PATCH /userProfile should update profile', async () => {
       //Arrange
       const updatedProfile = {
         locale: 'is',
@@ -242,7 +221,7 @@ describe('User profile API', () => {
 
       // Act
       const updateResponse = await request(app.getHttpServer())
-        .put(`/userProfile/${mockProfile.nationalId}`)
+        .patch(`/userProfile/${mockProfile.nationalId}`)
         .send(updatedProfile)
         .expect(200)
 
@@ -260,7 +239,7 @@ describe('User profile API', () => {
       )
     })
 
-    it('PUT /userProfile/ should return 403 forbidden on invalid authentication', async () => {
+    it('PATCH /userProfile/ should return 403 forbidden on invalid authentication', async () => {
       // Arrange
       const updatedProfile = {
         mobilePhoneNumber: '987654321',
@@ -271,7 +250,7 @@ describe('User profile API', () => {
 
       // Act
       await request(app.getHttpServer())
-        .put(`/userProfile/${invalidNationalId}`)
+        .patch(`/userProfile/${invalidNationalId}`)
         .send(updatedProfile)
         // Assert
         .expect(403)

@@ -7,6 +7,35 @@ export const icRuling = {
     description: 'Notaður sem titill á úrskurðar skrefi í rannsóknarheimildum.',
   }),
   sections: {
+    introduction: defineMessages({
+      title: {
+        id:
+          'judicial.system.investigation_cases:ruling.sections.introduction.title',
+        defaultMessage: 'Aðfararorð',
+        description:
+          'Titill sem titill fyrir "Aðfararorð" hlutann í rannsóknarheimildum.',
+      },
+      label: {
+        id: 'judicial.system.investigation_cases:ruling.introduction.label',
+        defaultMessage: 'Aðfararorð',
+        description:
+          'Notaður sem titill fyrir í "Aðfararorð" textaboxi á úrskurðar skrefi í rannsóknarheimildum.',
+      },
+      placeholder: {
+        id:
+          'judicial.system.investigation_cases:ruling.introduction.placeholder',
+        defaultMessage:
+          'Hér er m.a. unnt að greina frá því hvaða dag krafa var tekin fyrir og/eða tekin til úrskurðar.',
+        description:
+          'Notaður sem skýritexti fyrir í "Aðfararorð" textabox á úrskurðar skrefi í rannsóknarheimildum.',
+      },
+      autofill: {
+        id: 'judicial.system.investigation_cases:ruling.introduction.autofill',
+        defaultMessage: 'Mál þetta var tekið til úrskurðar {date}.',
+        description:
+          'Notaður sem sjálfgefinn texti í "Aðfararorð" textabox á úrskurðar skrefi í rannsóknarheimildum.',
+      },
+    }),
     prosecutorDemands: defineMessages({
       title: {
         id:

@@ -145,8 +145,20 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     union: {
       id: 'pl.application:payment.information.union',
-      defaultMessage: 'Stéttarfélag (valfrjálst)',
-      description: 'Union (optional)',
+      defaultMessage: 'Stéttarfélag',
+      description: 'Union',
+    },
+    unionName: {
+      id: 'pl.application:payment.information.union.name',
+      defaultMessage: 'Viltu greiða í stéttarfélag?',
+      description: 'Do you want to pay into a union?',
+    },
+    unionDescription: {
+      id: 'pl.application:payment.information.union.description',
+      defaultMessage:
+        'Athugið að með því að velja nei, missir þú áunninn rétt þinn hjá stéttarfélagi þínu.',
+      description:
+        'Note that by choosing no, you will lose your earned rights with your union.',
     },
     asyncSelectSearchableHint: {
       id: 'application.system:placeholder.searchable.hint',

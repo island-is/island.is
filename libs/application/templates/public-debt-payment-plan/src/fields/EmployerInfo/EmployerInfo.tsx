@@ -18,7 +18,7 @@ export const EmployerInfo = ({ application }: FieldBaseProps) => {
   )
   const correctedName = getValueViaPath(
     application.answers,
-    'correctedEmployer.name',
+    'correctedEmployer.label',
     undefined,
   )
 

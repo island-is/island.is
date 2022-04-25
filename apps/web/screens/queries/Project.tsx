@@ -9,6 +9,7 @@ export const GET_PROJECT_PAGE_QUERY = gql`
       slug
       theme
       sidebar
+      featuredDescription
       sidebarLinks {
         primaryLink {
           text
@@ -25,9 +26,13 @@ export const GET_PROJECT_PAGE_QUERY = gql`
         ...AllSlices
       }
       stepper {
+        id
+        title
         steps {
+          id
           title
           slug
+          stepType
           subtitle {
             ...HtmlFields
           }
@@ -36,7 +41,9 @@ export const GET_PROJECT_PAGE_QUERY = gql`
           }
           isAnswer
           options
+          config
         }
+        config
       }
       slices {
         ...AllSlices
@@ -64,6 +71,13 @@ export const GET_PROJECT_PAGE_QUERY = gql`
         width
         height
       }
+      defaultHeaderImage {
+        url
+        contentType
+        width
+        height
+      }
+      defaultHeaderBackgroundColor
     }
   }
   ${slices}

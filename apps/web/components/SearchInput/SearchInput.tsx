@@ -117,6 +117,7 @@ const useSearch = (
               types: [
                 SearchableContentTypes['WebArticle'],
                 SearchableContentTypes['WebSubArticle'],
+                SearchableContentTypes['WebProjectPage'],
               ],
             },
           },

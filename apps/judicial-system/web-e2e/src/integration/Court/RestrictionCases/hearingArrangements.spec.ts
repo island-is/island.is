@@ -2,15 +2,11 @@ import * as faker from 'faker'
 
 import { Case, CaseState } from '@island.is/judicial-system/types'
 import {
-  makeCustodyCase,
-  makeCourt,
-} from '@island.is/judicial-system/formatters'
-import {
-  COURT_RECORD_ROUTE,
   HEARING_ARRANGEMENTS_ROUTE,
+  RULING_ROUTE,
 } from '@island.is/judicial-system/consts'
 
-import { intercept } from '../../../utils'
+import { makeCustodyCase, makeCourt, intercept } from '../../../utils'
 
 describe(`${HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
   beforeEach(() => {
@@ -60,6 +56,6 @@ describe(`${HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
 
     cy.getByTestid('continueButton').click()
     cy.getByTestid('modalSecondaryButton').click()
-    cy.url().should('include', `${COURT_RECORD_ROUTE}/test_id_stadfest`)
+    cy.url().should('include', `${RULING_ROUTE}/test_id_stadfest`)
   })
 })

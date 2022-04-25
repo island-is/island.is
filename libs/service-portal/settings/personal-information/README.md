@@ -24,8 +24,8 @@ When the user enters the service-portal (/minarsidur) they might be prompted wit
 graph LR
 START(Login) --> A
 A[getUserProfile] -- Service error --> NO(Hide modal)
-A --> BOTH{Has userprofile AND islyklar data}
-BOTH -- yes --> MAYBE{Data last saved over 6 months ago}
+A --> BOTH{Has Email AND Tel}
+BOTH -- yes --> MAYBE{Last modified over 6 months ago}
 BOTH -- no --> YES
 MAYBE -- no --> NO
 MAYBE -- yes --> YES(Show modal)

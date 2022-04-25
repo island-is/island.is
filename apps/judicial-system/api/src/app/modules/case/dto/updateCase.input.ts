@@ -1,4 +1,5 @@
 import { Allow } from 'class-validator'
+import { GraphQLJSONObject } from 'graphql-type-json'
 
 import { Field, InputType } from '@nestjs/graphql'
 
@@ -10,6 +11,7 @@ import type {
   UpdateCase,
   CaseType,
   SessionArrangements,
+  CourtDocument,
 } from '@island.is/judicial-system/types'
 
 @InputType()
@@ -36,6 +38,10 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field({ nullable: true })
+  readonly defenderNationalId?: string
+
+  @Allow()
+  @Field({ nullable: true })
   readonly defenderEmail?: string
 
   @Allow()
@@ -45,10 +51,6 @@ export class UpdateCaseInput implements UpdateCase {
   @Allow()
   @Field({ nullable: true })
   readonly sendRequestToDefender?: boolean
-
-  @Allow()
-  @Field({ nullable: true })
-  readonly defenderIsSpokesperson?: boolean
 
   @Allow()
   @Field({ nullable: true })
@@ -175,8 +177,8 @@ export class UpdateCaseInput implements UpdateCase {
   readonly prosecutorDemands?: string
 
   @Allow()
-  @Field(() => [String], { nullable: true })
-  readonly courtDocuments?: string[]
+  @Field(() => [GraphQLJSONObject], { nullable: true })
+  readonly courtDocuments?: CourtDocument[]
 
   @Allow()
   @Field({ nullable: true })
@@ -185,6 +187,10 @@ export class UpdateCaseInput implements UpdateCase {
   @Allow()
   @Field({ nullable: true })
   readonly courtCaseFacts?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly introduction?: string
 
   @Allow()
   @Field({ nullable: true })
@@ -253,4 +259,8 @@ export class UpdateCaseInput implements UpdateCase {
   @Allow()
   @Field({ nullable: true })
   readonly caseModifiedExplanation?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly caseResentExplanation?: string
 }

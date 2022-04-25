@@ -3,13 +3,14 @@ import { useForm } from 'react-hook-form'
 import { m } from '@island.is/service-portal/core'
 import { msg } from '../../../../../lib/messages'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { Box, Button, Text, LoadingDots } from '@island.is/island-ui/core'
+import { Box, Text, LoadingDots } from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
 import {
   useVerifyEmail,
   useUpdateOrCreateUserProfile,
   useDeleteIslykillValue,
 } from '@island.is/service-portal/graphql'
+import { FormButton } from '../FormButton'
 import * as styles from './ProfileForms.css'
 
 interface Props {
@@ -31,7 +32,7 @@ export const InputEmail: FC<Props> = ({
   emailDirty,
 }) => {
   useNamespaces('sp.settings')
-  const { handleSubmit, control, errors, getValues } = useForm()
+  const { handleSubmit, control, errors, getValues, setValue } = useForm()
   const {
     updateOrCreateUserProfile,
     loading: saveLoading,
@@ -70,6 +71,7 @@ export const InputEmail: FC<Props> = ({
   useEffect(() => {
     if (email && email.length > 0) {
       setEmailInternal(email)
+      setValue('email', email, { shouldValidate: true })
     }
     checkSetPristineInput()
   }, [email])
@@ -83,7 +85,7 @@ export const InputEmail: FC<Props> = ({
     } else {
       emailDirty(true)
     }
-  }, [emailInternal])
+  }, [emailInternal, email])
 
   const handleSendEmailVerification = async (data: { email: string }) => {
     const emailError = formatMessage({
@@ -186,6 +188,7 @@ export const InputEmail: FC<Props> = ({
               control={control}
               backgroundColor="blue"
               id="email"
+              autoFocus
               name="email"
               required={false}
               type="email"
@@ -221,9 +224,7 @@ export const InputEmail: FC<Props> = ({
             {!createLoading && !deleteLoading && (
               <>
                 {emailVerifyCreated ? (
-                  <Button
-                    variant="text"
-                    size="small"
+                  <FormButton
                     disabled={
                       verificationValid ||
                       disabled ||
@@ -247,22 +248,16 @@ export const InputEmail: FC<Props> = ({
                           })
                         : buttonText
                       : formatMessage(msg.saveEmptyChange)}
-                  </Button>
+                  </FormButton>
                 ) : (
-                  <button
-                    type="submit"
+                  <FormButton
+                    submit
                     disabled={verificationValid || disabled || inputPristine}
                   >
-                    <Button
-                      variant="text"
-                      size="small"
-                      disabled={verificationValid || disabled || inputPristine}
-                    >
-                      {emailInternal
-                        ? buttonText
-                        : formatMessage(msg.saveEmptyChange)}
-                    </Button>
-                  </button>
+                    {emailInternal
+                      ? buttonText
+                      : formatMessage(msg.saveEmptyChange)}
+                  </FormButton>
                 )}
               </>
             )}
@@ -290,12 +285,13 @@ export const InputEmail: FC<Props> = ({
                   name="code"
                   format="######"
                   label={formatMessage(m.verificationCode)}
-                  placeholder="123456"
+                  placeholder="000000"
                   defaultValue=""
                   error={errors.code?.message || formErrors.code}
                   disabled={verificationValid || disabled}
                   icon={verificationValid ? 'checkmark' : undefined}
                   size="xs"
+                  autoComplete="off"
                   onChange={(inp) => {
                     setCodeInternal(inp.target.value)
                     setErrors({ ...formErrors, code: undefined })
@@ -313,23 +309,18 @@ export const InputEmail: FC<Props> = ({
                 alignItems="flexStart"
                 flexDirection="column"
                 paddingTop={4}
+                className={styles.codeButton}
               >
                 {!saveLoading && (
-                  <button
-                    type="submit"
+                  <FormButton
+                    submit
                     disabled={!codeInternal || disabled || verificationValid}
                   >
-                    <Button
-                      variant="text"
-                      size="small"
-                      disabled={!codeInternal || disabled || verificationValid}
-                    >
-                      {formatMessage(m.codeConfirmation)}
-                    </Button>
-                  </button>
+                    {formatMessage(m.codeConfirmation)}
+                  </FormButton>
                 )}
                 {saveLoading && (
-                  <Box marginTop={1}>
+                  <Box>
                     <LoadingDots />
                   </Box>
                 )}

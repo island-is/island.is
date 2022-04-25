@@ -33,6 +33,7 @@
     "lru-cache",
     "pdfkit",
     "sequelize",
+    "configcat-node",
     "@protobufjs/aspromise",
     "@protobufjs/base64",
     "@protobufjs/codegen",
@@ -42,7 +43,8 @@
     "@protobufjs/inquire",
     "@protobufjs/path",
     "@protobufjs/pool",
-    "@protobufjs/utf8"
+    "@protobufjs/utf8",
+    "pseudomap"
   ],
   "keepNames": true
 }

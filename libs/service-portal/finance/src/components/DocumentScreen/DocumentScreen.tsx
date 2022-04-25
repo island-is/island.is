@@ -7,8 +7,6 @@ import { Table as T } from '@island.is/island-ui/core'
 import {
   Box,
   Text,
-  Columns,
-  Column,
   Stack,
   GridRow,
   GridColumn,
@@ -21,11 +19,9 @@ import {
   Hidden,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { m } from '@island.is/service-portal/core'
+import { m, amountFormat, formSubmit } from '@island.is/service-portal/core'
 import { DocumentsListItemTypes } from './DocumentScreen.types'
-import amountFormat from '../../utils/amountFormat'
 import { billsFilter } from '../../utils/simpleFilter'
-import { formSubmit } from '../../utils/documentFormSubmission'
 import { User } from 'oidc-client'
 import { tableStyles } from '@island.is/service-portal/core'
 
@@ -116,7 +112,7 @@ const DocumentScreen: FC<Props> = ({
           <GridColumn span={['12/12', '8/12']}>
             <Text variant="default">{intro}</Text>
           </GridColumn>
-          <Box display="flex" marginLeft="auto" marginTop={1}>
+          <Box display="flex" marginLeft="auto" marginTop={1} printHidden>
             <GridColumn>
               <Button
                 colorScheme="default"

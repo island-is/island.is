@@ -17,7 +17,10 @@ export enum ApplicationTypes {
   GENERAL_PETITION = 'GeneralPetitionService',
   P_SIGN = 'PSign',
   CRIMINAL_RECORD = 'CriminalRecord',
+  DRIVING_INSTRUCTOR_REGISTRATIONS = 'DrivingInstructorRegistrations',
   EXAMPLE_PAYMENT = 'ExamplePayment',
+  DRIVING_SCHOOL_CONFIRMATION = 'DrivingSchoolConfirmation',
+  MORTGAGE_CERTIFICATE = 'MortgageCertificate',
 }
 
 export const ApplicationConfigurations = {
@@ -93,8 +96,20 @@ export const ApplicationConfigurations = {
     slug: 'sakavottord',
     translation: 'cr.application',
   },
+  [ApplicationTypes.DRIVING_INSTRUCTOR_REGISTRATIONS]: {
+    slug: 'okutimar',
+    translation: 'dir.application',
+  },
   [ApplicationTypes.EXAMPLE_PAYMENT]: {
     slug: 'greida',
     translation: 'ep.application',
+  },
+  [ApplicationTypes.DRIVING_SCHOOL_CONFIRMATION]: {
+    slug: 'okuskoli',
+    translation: 'dsc.application',
+  },
+  [ApplicationTypes.MORTGAGE_CERTIFICATE]: {
+    slug: 'vedbokarvottord',
+    translation: 'mc.application',
   },
 }

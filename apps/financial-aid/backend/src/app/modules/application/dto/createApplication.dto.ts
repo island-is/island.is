@@ -144,7 +144,7 @@ export class CreateApplicationDto {
   @ApiProperty()
   readonly postalCode: string
 
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
   @ApiProperty()
   readonly municipalityCode: string
@@ -162,4 +162,9 @@ export class CreateApplicationDto {
   @IsUUID()
   @ApiProperty()
   readonly applicationSystemId: string
+
+  @IsNotEmpty()
+  @IsBoolean()
+  @ApiProperty()
+  readonly hasFetchedDirectTaxPayment: boolean
 }

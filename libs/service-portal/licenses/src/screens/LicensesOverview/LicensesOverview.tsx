@@ -14,7 +14,7 @@ import { useDrivingLicense } from '@island.is/service-portal/graphql'
 import { m } from '../../lib/messages'
 
 export const LicensesOverview: ServicePortalModuleComponent = () => {
-  useNamespaces('sp.licenses')
+  useNamespaces('sp.license')
   const { formatMessage } = useLocale()
   const { data, status, loading, error } = useDrivingLicense()
 

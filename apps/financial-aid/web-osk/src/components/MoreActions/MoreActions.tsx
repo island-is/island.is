@@ -2,12 +2,12 @@ import React from 'react'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 
 interface Props {
-  homepage?: string
+  rulesPage?: string
   email?: string
 }
 
-const MoreActions = ({ homepage, email }: Props) => {
-  if (!homepage && !email) {
+const MoreActions = ({ rulesPage, email }: Props) => {
+  if (!rulesPage && !email) {
     return null
   }
 
@@ -17,7 +17,7 @@ const MoreActions = ({ homepage, email }: Props) => {
         Frekari aðgerðir í boði
       </Text>
       <Box marginBottom={[5, 5, 10]}>
-        {homepage && (
+        {rulesPage && (
           <Box marginBottom={2}>
             <Button
               icon="open"
@@ -25,10 +25,10 @@ const MoreActions = ({ homepage, email }: Props) => {
               size="small"
               variant="text"
               onClick={() => {
-                window.open(homepage, '_ blank')
+                window.open(rulesPage, '_ blank')
               }}
             >
-              Upplýsingar um fjárhagsaðstoð
+              Reglur um fjárhagsaðstoð
             </Button>
           </Box>
         )}

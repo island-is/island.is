@@ -13,11 +13,13 @@ import { InputSection } from './components/InputSection'
 import { InputEmail } from './components/Inputs/Email'
 import { InputPhone } from './components/Inputs/Phone'
 import { DropModal } from './components/DropModal'
+import { LoadModal } from './components/LoadModal'
 import { BankInfoForm } from './components/Inputs/BankInfoForm'
 import { Nudge } from './components/Inputs/Nudge'
 import { msg } from '../../../lib/messages'
 import { DropModalType, DataStatus } from './types/form'
 import { bankInfoObject } from '../../../utils/bankInfoHelper'
+import { diffModifiedOverMaxDate } from '../../../utils/showModal'
 
 interface Props {
   onCloseOverlay?: () => void
@@ -41,6 +43,7 @@ export const ProfileForm: FC<Props> = ({
   useNamespaces('sp.settings')
   const [telDirty, setTelDirty] = useState(true)
   const [emailDirty, setEmailDirty] = useState(true)
+  const [internalLoading, setInternalLoading] = useState(false)
   const [showDropModal, setShowDropModal] = useState<DropModalType>()
   const {
     updateOrCreateUserProfile,
@@ -71,6 +74,7 @@ export const ProfileForm: FC<Props> = ({
       if (showDropModal) {
         setShowDropModal(showDropModal)
       } else {
+        setInternalLoading(true)
         migratedUserUpdate()
       }
     }
@@ -79,25 +83,32 @@ export const ProfileForm: FC<Props> = ({
   const closeAllModals = () => {
     if (onCloseOverlay && setFormLoading) {
       onCloseOverlay()
+      setInternalLoading(false)
       setFormLoading(false)
     }
   }
 
   const migratedUserUpdate = async () => {
-    const refetchUserProfile = await refetch()
-    const userProfileData = refetchUserProfile?.data?.getUserProfile
-    const hasModification = userProfileData?.modified
+    try {
+      const refetchUserProfile = await refetch()
+      const userProfileData = refetchUserProfile?.data?.getUserProfile
+      const hasModification = userProfileData?.modified
 
-    const hasEmailNoVerification =
-      userProfileData?.emailStatus === DataStatus.NOT_VERIFIED &&
-      userProfile?.email
-    const hasTelNoVerification =
-      userProfileData?.mobileStatus === DataStatus.NOT_VERIFIED &&
-      userProfile?.mobilePhoneNumber
+      const hasEmailNoVerification =
+        userProfileData?.emailStatus === DataStatus.NOT_VERIFIED &&
+        userProfile?.email
+      const hasTelNoVerification =
+        userProfileData?.mobileStatus === DataStatus.NOT_VERIFIED &&
+        userProfile?.mobilePhoneNumber
 
-    // If user is migrating. Then process migration, else close modal without action.
-    if ((hasEmailNoVerification || hasTelNoVerification) && !hasModification) {
-      try {
+      const diffOverMax = diffModifiedOverMaxDate(userProfileData?.modified)
+
+      // If user is migrating. Then process migration, else close modal without action.
+      if (
+        ((hasEmailNoVerification || hasTelNoVerification) &&
+          !hasModification) ||
+        diffOverMax
+      ) {
         /**
          * If email is present in data, but has status of 'NOT_VERIFIED',
          * And the user has no modification date in the userprofile data,
@@ -108,38 +119,39 @@ export const ProfileForm: FC<Props> = ({
           ...(hasEmailNoVerification && { emailStatus: DataStatus.VERIFIED }),
           ...(hasTelNoVerification && { mobileStatus: DataStatus.VERIFIED }),
         }).then(() => closeAllModals())
-      } catch {
-        // do nothing
+      } else {
         closeAllModals()
       }
-    } else {
+    } catch {
+      // do nothing
       closeAllModals()
     }
   }
 
   const submitEmptyEmailAndTel = async () => {
-    const refetchUserProfile = await refetch()
-    const userProfileData = refetchUserProfile?.data?.getUserProfile
-    const hasModification = userProfileData?.modified
+    try {
+      const refetchUserProfile = await refetch()
+      const userProfileData = refetchUserProfile?.data?.getUserProfile
+      const hasModification = userProfileData?.modified
 
-    const emptyProfile = userProfileData === null || !hasModification
-    if (emptyProfile && emailDirty && telDirty) {
-      /**
-       * If the user has no email or tel data, and the inputs are empty,
-       * We will save the email and mobilePhoneNumber as undefined
-       * With a status of 'EMPTY'. This implies empty values by the user's choice.
-       * After asking the user to verify that they are updating their profile with empty fields.
-       */
-      try {
+      const emptyProfile = userProfileData === null || !hasModification
+      if (emptyProfile && emailDirty && telDirty) {
+        /**
+         * If the user has no email or tel data, and the inputs are empty,
+         * We will save the email and mobilePhoneNumber as undefined
+         * With a status of 'EMPTY'. This implies empty values by the user's choice.
+         * After asking the user to verify that they are updating their profile with empty fields.
+         */
+
         await deleteIslykillValue({
           email: true,
           mobilePhoneNumber: true,
         }).then(() => closeAllModals())
-      } catch {
-        // do nothing
+      } else {
         closeAllModals()
       }
-    } else {
+    } catch {
+      // do nothing
       closeAllModals()
     }
   }
@@ -148,6 +160,7 @@ export const ProfileForm: FC<Props> = ({
     try {
       if (setFormLoading) {
         setFormLoading(true)
+        setInternalLoading(true)
       }
       if (emailDirty && telDirty) {
         await submitEmptyEmailAndTel()
@@ -226,7 +239,7 @@ export const ProfileForm: FC<Props> = ({
               )}
             </InputSection>
           )}
-          {showDropModal && onCloseOverlay && (
+          {showDropModal && onCloseOverlay && !internalLoading && (
             <DropModal
               type={showDropModal}
               onDrop={dropSideEffects}
@@ -237,6 +250,7 @@ export const ProfileForm: FC<Props> = ({
               }}
             />
           )}
+          {internalLoading && <LoadModal />}
         </GridColumn>
       </GridRow>
     </GridContainer>

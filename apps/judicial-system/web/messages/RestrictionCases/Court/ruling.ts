@@ -8,6 +8,34 @@ export const rcRuling = {
       'Notaður sem titill á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
   }),
   sections: {
+    introduction: defineMessages({
+      title: {
+        id:
+          'judicial.system.restriction_cases:ruling.sections.introduction.title',
+        defaultMessage: 'Aðfararorð',
+        description:
+          'Titill sem titill fyrir "Aðfararorð" hlutann í gæsluvarðhalds- og farbannsmálum.',
+      },
+      label: {
+        id: 'judicial.system.restriction_cases:ruling.introduction.label',
+        defaultMessage: 'Aðfararorð',
+        description:
+          'Notaður sem titill fyrir í "Aðfararorð" textaboxi á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+      placeholder: {
+        id: 'judicial.system.restriction_cases:ruling.introduction.placeholder',
+        defaultMessage:
+          'Hér er m.a. unnt að greina frá því hvaða dag krafa var tekin fyrir og/eða tekin til úrskurðar.',
+        description:
+          'Notaður sem skýritexti fyrir í "Aðfararorð" textabox á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+      autofill: {
+        id: 'judicial.system.restriction_cases:ruling.introduction.autofill',
+        defaultMessage: 'Mál þetta var tekið til úrskurðar {date}.',
+        description:
+          'Notaður sem sjálfgefinn texti í "Aðfararorð" textabox á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+    }),
     prosecutorDemands: defineMessages({
       title: {
         id: 'judicial.system.restriction_cases:ruling.prosecutor_demands.title',

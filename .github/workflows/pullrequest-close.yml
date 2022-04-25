@@ -5,10 +5,16 @@ on:
     types:
       - closed
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   cleanup:
     name: Clean up feature deployment
-    runs-on: self-hosted
+    runs-on: ec2-runners    
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     steps:
       - name: Get git branch
         run: |

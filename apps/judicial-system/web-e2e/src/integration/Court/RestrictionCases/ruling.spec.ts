@@ -1,12 +1,11 @@
 /// <reference path="../../../support/index.d.ts" />
 import { Case, CaseDecision, CaseType } from '@island.is/judicial-system/types'
-import { makeCustodyCase } from '@island.is/judicial-system/formatters'
 import {
   COURT_RECORD_ROUTE,
   RULING_ROUTE,
 } from '@island.is/judicial-system/consts'
 
-import { intercept } from '../../../utils'
+import { makeCustodyCase, intercept } from '../../../utils'
 
 describe(`${RULING_ROUTE}/:id`, () => {
   beforeEach(() => {
@@ -276,6 +275,27 @@ describe(`${RULING_ROUTE}/:id`, () => {
     )
   })
 
+  it('should require a valid introduction', () => {
+    const caseData = makeCustodyCase()
+    const caseDataAddition: Case = {
+      ...caseData,
+      courtDate: '2020-12-22T11:23:00.000Z',
+    }
+
+    cy.visit(`${RULING_ROUTE}/test_id_stadfest`)
+
+    intercept(caseDataAddition)
+
+    cy.wait('@gqlCaseQuery')
+    cy.getByTestid('introduction')
+      .contains('Mál þetta var tekið til úrskurðar 22. desember 2020.')
+      .clear()
+    cy.clickOutside()
+    cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
+    cy.getByTestid('introduction').type('lorem')
+    cy.getByTestid('inputErrorMessage').should('not.exist')
+  })
+
   it('should require a valid ruling', () => {
     const caseData = makeCustodyCase()
     const caseDataAddition: Case = {
@@ -289,8 +309,7 @@ describe(`${RULING_ROUTE}/:id`, () => {
 
     intercept(caseDataAddition)
 
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(2000)
+    cy.wait('@gqlCaseQuery')
     cy.getByTestid('ruling')
       .contains('héraðsdómari kveður upp úrskurð þennan.')
       .clear()

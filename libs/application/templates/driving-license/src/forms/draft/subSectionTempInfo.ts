@@ -7,7 +7,12 @@ import {
   buildTextField,
   buildSubSection,
 } from '@island.is/application/core'
-import { NationalRegistryUser, Teacher } from '../../types/schema'
+import {
+  Application,
+  NationalRegistryUser,
+  Teacher,
+  UserProfile,
+} from '../../types/schema'
 import { m } from '../../lib/messages'
 import { B_TEMP } from '../../shared/constants'
 import { isApplicationForCondition } from '../../lib/utils'
@@ -56,6 +61,19 @@ export const subSectionTempInfo = buildSubSection({
           id: 'email',
           title: m.informationYourEmail,
           placeholder: 'Netfang',
+          defaultValue: ({ externalData }: Application) => {
+            const data = externalData.userProfile.data as UserProfile
+            return data.email
+          },
+        }),
+        buildTextField({
+          id: 'phone',
+          title: m.informationYourPhone,
+          placeholder: 'Símanúmer',
+          defaultValue: ({ externalData }: Application) => {
+            const data = externalData.userProfile.data as UserProfile
+            return data.mobilePhoneNumber
+          },
         }),
         buildDividerField({
           title: '',
@@ -76,8 +94,8 @@ export const subSectionTempInfo = buildSubSection({
               teachers: { data },
             },
           }) => {
-            return (data as Teacher[]).map(({ name }) => ({
-              value: name,
+            return (data as Teacher[]).map(({ name, nationalId }) => ({
+              value: nationalId,
               label: name,
             }))
           },

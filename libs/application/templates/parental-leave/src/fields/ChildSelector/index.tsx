@@ -1,6 +1,7 @@
 import React, { FC, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import get from 'lodash/get'
+import format from 'date-fns/format'
 
 import {
   ApplicationConfigurations,
@@ -12,6 +13,7 @@ import {
 } from '@island.is/shared/form-fields'
 import { Box, Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { dateFormat } from '@island.is/shared/constants'
 
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { useApplicationAnswers } from '../../hooks/useApplicationAnswers'
@@ -57,6 +59,9 @@ const ChildSelector: FC<FieldBaseProps> = ({
     history.push(`/${ApplicationConfigurations.ParentalLeave.slug}/${id}`)
   }
 
+  const formatDateOfBirth = (value: string) =>
+    format(new Date(value), dateFormat.is)
+
   return (
     <Box>
       {children.length > 0 && (
@@ -84,7 +89,7 @@ const ChildSelector: FC<FieldBaseProps> = ({
                 value: `${index}`,
                 label: formatMessage(
                   parentalLeaveFormMessages.selectChild.baby,
-                  { dateOfBirth: child.expectedDateOfBirth },
+                  { dateOfBirth: formatDateOfBirth(child.expectedDateOfBirth) },
                 ),
                 subLabel,
               }
@@ -113,7 +118,7 @@ const ChildSelector: FC<FieldBaseProps> = ({
                   size="small"
                 >
                   {formatMessage(parentalLeaveFormMessages.selectChild.baby, {
-                    dateOfBirth: expectedDateOfBirth,
+                    dateOfBirth: formatDateOfBirth(expectedDateOfBirth),
                   })}
                 </Button>
               ),

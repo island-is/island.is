@@ -22,6 +22,7 @@ export const generateAssignOtherParentApplicationEmail: EmailTemplateGenerator =
   }
 
   const subject = 'Yfirferð á umsókn um fæðingarorlof'
+  const link = `${clientLocationOrigin}/${ApplicationConfigurations.ParentalLeave.slug}/${application.id}`
 
   return {
     from: {
@@ -70,7 +71,20 @@ export const generateAssignOtherParentApplicationEmail: EmailTemplateGenerator =
           component: 'Button',
           context: {
             copy: 'Skoða umsókn',
-            href: `${clientLocationOrigin}/${ApplicationConfigurations.ParentalLeave.slug}/${application.id}`,
+            href: link,
+          },
+        },
+        {
+          component: 'Copy',
+          context: {
+            copy: `Athugið! Ef hnappur virkar ekki, getur þú afritað hlekkinn hér að neðan og límt hann inn í vafrann þinn.`,
+          },
+        },
+        {
+          component: 'Copy',
+          context: {
+            copy: link,
+            small: true,
           },
         },
       ],

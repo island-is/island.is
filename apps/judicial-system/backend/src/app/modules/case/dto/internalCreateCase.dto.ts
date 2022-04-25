@@ -5,9 +5,9 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Gender, CaseType } from '@island.is/judicial-system/types'
 
 export class InternalCreateCaseDto {
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
-  @ApiPropertyOptional({ enum: CaseType })
+  @ApiProperty({ enum: CaseType })
   readonly type!: CaseType
 
   @IsNotEmpty()

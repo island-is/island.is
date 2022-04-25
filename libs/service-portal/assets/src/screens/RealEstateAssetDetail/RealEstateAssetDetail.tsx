@@ -22,6 +22,7 @@ import {
 } from '../../lib/queries'
 import DetailHeader from '../../components/DetailHeader'
 import { DEFAULT_PAGING_ITEMS } from '../../utils/const'
+import TableGrid from '../../components/TableGrid/TableGrid'
 
 export const AssetsOverview: ServicePortalModuleComponent = () => {
   useNamespaces('sp.assets')
@@ -82,7 +83,7 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
     return <AssetLoader />
   }
 
-  if (!id || error) {
+  if (!id || error || (!loading && data?.assetsDetail === null)) {
     return (
       <NotFound
         title={defineMessage({
@@ -140,6 +141,38 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
           ]}
         />
       </Box>
+      {assetData.land?.landNumber ? (
+        <TableGrid
+          title={formatMessage(messages.land)}
+          mt
+          dataArray={[
+            [
+              {
+                title: formatMessage(messages.usage),
+                value: assetData.land?.useDisplay ?? '',
+              },
+              {
+                title: formatMessage(messages.landSize),
+                value: assetData.land?.area
+                  ? `${assetData.land?.area} ${assetData.land?.areaUnit}`
+                  : '',
+              },
+            ],
+            [
+              {
+                title: formatMessage(messages.landNumber),
+                value: assetData.land?.landNumber,
+              },
+              {
+                title: formatMessage(messages.landAppraisal),
+                value: assetData.land?.landAppraisal
+                  ? amountFormat(assetData.land?.landAppraisal)
+                  : '',
+              },
+            ],
+          ]}
+        />
+      ) : null}
       <Box marginTop={7}>
         {assetData?.unitsOfUse?.unitsOfUse &&
         assetData?.unitsOfUse?.unitsOfUse?.length > 0 ? (

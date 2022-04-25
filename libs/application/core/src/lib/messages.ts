@@ -180,6 +180,26 @@ export const coreMessages = defineMessages({
     description:
       'Text indicating we are waiting for confirmation from 3rd party payment gateway',
   },
+  deleteApplicationDialogTitle: {
+    id: 'application.system:delete.application.dialog.title',
+    defaultMessage: 'Eyða umsókn',
+    description: 'Delete application dialog title',
+  },
+  deleteApplicationDialogDescription: {
+    id: 'application.system:delete.application.dialog.description',
+    defaultMessage: 'Ertu viss um að þú viljir eyða þessari umsókn?',
+    description: 'Delete application dialog description',
+  },
+  deleteApplicationDialogConfirmLabel: {
+    id: 'application.system:delete.application.dialog.confirm',
+    defaultMessage: 'Já, eyða',
+    description: 'Delete application dialog confirm',
+  },
+  deleteApplicationDialogCancelLabel: {
+    id: 'application.system:delete.application.dialog.cancel',
+    defaultMessage: 'Hætta við',
+    description: 'Delete application dialog cancel',
+  },
 })
 
 export const coreErrorMessages = defineMessages({
@@ -250,5 +270,20 @@ export const coreErrorMessages = defineMessages({
     id: 'application.system:core.payment.statusError',
     defaultMessage: 'Tókst ekki að sækja stöðu greiðslu',
     description: 'Message indicating failure to fetch payment status',
+  },
+  invalidNationalId: {
+    id: 'application.system:core.payment.invalidNationalId',
+    defaultMessage: 'Ógild kennitala',
+    description: 'Message indicating national id is invalid',
+  },
+  noCompanySearchResultsFoundTitle: {
+    id: 'application.system:core.payment.noCompanySearchResultsFoundTitle',
+    defaultMessage: 'Engar niðurstöður fundust hjá fyrirtækjaskrá',
+    description: 'Title error message when no company search result is found',
+  },
+  noCompanySearchResultsFoundMessage: {
+    id: 'application.system:core.payment.noCompanySearchResultsFoundMessage',
+    defaultMessage: 'Vinsamlegast athugaðu hvort að rétt var slegið inn.',
+    description: 'Error Message when no company search result is found',
   },
 })

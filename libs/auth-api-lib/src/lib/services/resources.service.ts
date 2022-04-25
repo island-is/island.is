@@ -77,6 +77,7 @@ export class ResourcesService {
       limit: count,
       offset: offset,
       include: [IdentityResourceUserClaim],
+      order: ['name'],
       distinct: true,
       where: includeArchived ? {} : { archived: null },
     })
@@ -133,6 +134,7 @@ export class ResourcesService {
       where: includeArchived
         ? { nationalId: searchString }
         : { nationalId: searchString, archived: null },
+      order: ['name'],
       limit: count,
       offset: offset,
       include: [ApiResourceUserClaim, ApiResourceScope, ApiResourceSecret],
@@ -156,6 +158,7 @@ export class ResourcesService {
       where: includeArchived
         ? { name: searchString }
         : { name: searchString, archived: null },
+      order: ['name'],
       limit: count,
       offset: offset,
       include: [ApiResourceUserClaim, ApiResourceScope, ApiResourceSecret],
@@ -180,6 +183,7 @@ export class ResourcesService {
       include: [ApiResourceUserClaim, ApiResourceScope, ApiResourceSecret],
       distinct: true,
       where: includeArchived ? {} : { archived: null },
+      order: ['name'],
     })
   }
 
@@ -200,6 +204,7 @@ export class ResourcesService {
       include: [ApiScopeUserClaim, ApiScopeGroup],
       distinct: true,
       where: includeArchived ? {} : { archived: null },
+      order: ['name'],
     })
   }
 
@@ -854,7 +859,6 @@ export class ResourcesService {
   /** Returns all ApiScopeGroups */
   async findAllApiScopeGroups(): Promise<ApiScopeGroup[]> {
     return this.apiScopeGroup.findAll({
-      order: [['name', 'asc']],
       include: [ApiScope],
     })
   }

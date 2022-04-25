@@ -1,5 +1,4 @@
 import { UserProfileScope } from '@island.is/auth/scopes'
-import omit from 'lodash/omit'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   CurrentUser,
@@ -12,7 +11,6 @@ import {
   Body,
   Controller,
   Get,
-  Put,
   NotFoundException,
   Param,
   Post,
@@ -22,9 +20,11 @@ import {
   BadRequestException,
   HttpCode,
   Delete,
+  Patch,
 } from '@nestjs/common'
 import {
   ApiCreatedResponse,
+  ApiExcludeEndpoint,
   ApiNoContentResponse,
   ApiOkResponse,
   ApiOperation,
@@ -162,9 +162,25 @@ export class UserProfileController {
     return userProfile
   }
 
+  @ApiExcludeEndpoint()
+  async findOrCreateUserProfile(
+    @Param('nationalId') nationalId: string,
+    @CurrentUser() user: User,
+  ): Promise<UserProfile> {
+    if (nationalId != user.nationalId) {
+      throw new ForbiddenException()
+    }
+    try {
+      return await this.findOneByNationalId(nationalId, user)
+    } catch (error) {
+      const ret = await this.create({ nationalId }, user)
+      return ret
+    }
+  }
+
   @Scopes(UserProfileScope.write)
   @ApiSecurity('oauth2', [UserProfileScope.write])
-  @Put('userProfile/:nationalId')
+  @Patch('userProfile/:nationalId')
   @ApiOkResponse({ type: UserProfile })
   @ApiParam({
     name: 'nationalId',
@@ -185,9 +201,9 @@ export class UserProfileController {
       throw new ForbiddenException()
     }
 
-    // findOneByNationalId must be first as it implictly checks if the
-    // route param matches the authenticated user.
-    const profile = await this.findOneByNationalId(nationalId, user)
+    // findOrCreateUserProfile for edge cases - fragmented onboarding
+    const profile = await this.findOrCreateUserProfile(nationalId, user)
+
     const updatedFields = Object.keys(userProfileToUpdate)
     userProfileToUpdate = {
       ...userProfileToUpdate,
@@ -407,6 +423,8 @@ export class UserProfileController {
     if (nationalId != user.nationalId) {
       throw new BadRequestException()
     } else {
+      // findOrCreateUserProfile for edge cases - fragmented onboarding
+      await this.findOrCreateUserProfile(nationalId, user)
       return await this.userProfileService.addDeviceToken(body, user)
     }
   }

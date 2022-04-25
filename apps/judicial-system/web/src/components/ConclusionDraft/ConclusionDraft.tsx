@@ -12,11 +12,10 @@ import { icRuling, rcRuling } from '@island.is/judicial-system-web/messages'
 interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
-  isCaseUpToDate: boolean
 }
 
 const ConclusionDraft: React.FC<Props> = (props) => {
-  const { workingCase, setWorkingCase, isCaseUpToDate } = props
+  const { workingCase, setWorkingCase } = props
   const { formatMessage } = useIntl()
 
   return (
@@ -81,8 +80,7 @@ const ConclusionDraft: React.FC<Props> = (props) => {
       <RulingInput
         workingCase={workingCase}
         setWorkingCase={setWorkingCase}
-        isCaseUpToDate={isCaseUpToDate}
-        isRequired={false}
+        isRequired
         rows={12}
       />
     </>

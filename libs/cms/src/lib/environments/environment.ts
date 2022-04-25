@@ -14,9 +14,11 @@ export default {
     'groupedMenu',
     'organizationPage',
     'organizationSubpage',
+    'projectPage',
     'supportQNA',
     'link',
     'frontpage',
+    'enhancedAsset',
   ],
   nestedContentTypes: [
     'alertBanner',

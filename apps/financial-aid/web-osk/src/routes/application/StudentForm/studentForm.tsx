@@ -60,7 +60,7 @@ const StudentForm = () => {
     <>
       <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={[3, 3, 4]}>
-          Ertu í lánshæfu námi?
+          Ertu í námi?
         </Text>
 
         <div>

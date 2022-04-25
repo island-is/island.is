@@ -15,14 +15,21 @@ export interface FaqListProps {
     question: string
     answer?: SliceType[]
   }[]
+  showTitle?: boolean
 }
 
-export const FaqList: FC<FaqListProps> = ({ title, questions }) => {
+export const FaqList: FC<FaqListProps> = ({
+  title,
+  questions,
+  showTitle = true,
+}) => {
   return (
     <Stack space={6}>
-      <Text variant="h2" as="h2">
-        <span data-sidebar-link={slugify(title)}>{title}</span>
-      </Text>
+      {showTitle !== false && (
+        <Text variant="h2" as="h2">
+          <span data-sidebar-link={slugify(title)}>{title}</span>
+        </Text>
+      )}
       <Accordion>
         {questions.map(({ id, question, answer }) => {
           return (
