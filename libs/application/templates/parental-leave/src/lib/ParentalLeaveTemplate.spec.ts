@@ -8,7 +8,7 @@ import {
   ApplicationStatus,
 } from '@island.is/application/core'
 import ParentalLeaveTemplate from './ParentalLeaveTemplate'
-import { SPOUSE, States as ApplicationStates, YES } from '../constants'
+import { NO, SPOUSE, States as ApplicationStates, YES } from '../constants'
 
 function buildApplication(data: {
   answers?: FormValue
@@ -217,6 +217,54 @@ describe('Parental Leave Application Template', () => {
           expect(newState).toBe('vinnumalastofnunApproval')
           expect(newApplication.answers.otherParentId).toEqual(otherParentId)
         })
+      })
+    })
+
+    describe('allowance', () => {
+      it('should remove spouse allowance useAll and usage on submit, if usePersonalAllowanceFromSpouse is equal to NO', () => {
+        const helper = new ApplicationTemplateHelper(
+          buildApplication({
+            answers: {
+              usePersonalAllowanceFromSpouse: NO,
+              personalAllowanceFromSpouse: {
+                usage: '33%',
+                useAsMuchAsPossible: NO,
+              },
+              employer: {
+                isSelfEmployed: 'no',
+              },
+            },
+          }),
+          ParentalLeaveTemplate,
+        )
+        const [hasChanged, _, newApplication] = helper.changeState({
+          type: DefaultEvents.SUBMIT,
+        })
+        expect(hasChanged).toBe(true)
+        expect(newApplication.answers.personalAllowanceFromSpouse).toEqual(null)
+      })
+
+      it('should remove allowance useAll and usage on submit, if usePersonalAllowance is equal to NO', () => {
+        const helper = new ApplicationTemplateHelper(
+          buildApplication({
+            answers: {
+              usePersonalAllowance: NO,
+              personalAllowance: {
+                usage: '33%',
+                useAsMuchAsPossible: NO,
+              },
+              employer: {
+                isSelfEmployed: 'no',
+              },
+            },
+          }),
+          ParentalLeaveTemplate,
+        )
+        const [hasChanged, _, newApplication] = helper.changeState({
+          type: DefaultEvents.SUBMIT,
+        })
+        expect(hasChanged).toBe(true)
+        expect(newApplication.answers.personalAllowance).toEqual(null)
       })
     })
   })
