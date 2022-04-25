@@ -20,6 +20,7 @@ import { ApplicationApplicationsInput } from './dto/applicationApplications.inpu
 import { GetPresignedUrlInput } from './dto/getPresignedUrl.input'
 import { ApplicationPayment } from './application.model'
 import { AttachmentPresignedUrlInput } from './dto/AttachmentPresignedUrl.input'
+import { DeleteApplicationInput } from './dto/deleteApplication.input'
 
 @Injectable()
 export class ApplicationService {
@@ -154,6 +155,13 @@ export class ApplicationService {
       auth,
     ).applicationControllerAssignApplication({
       assignApplicationDto: input,
+    })
+  }
+
+  async deleteApplication(input: DeleteApplicationInput, auth: Auth) {
+    return this.applicationApiWithAuth(auth).applicationControllerDelete({
+      id: input.id,
+      authorization: auth.authorization,
     })
   }
 
