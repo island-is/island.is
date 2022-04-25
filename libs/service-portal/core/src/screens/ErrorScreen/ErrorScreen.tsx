@@ -28,40 +28,38 @@ export const ErrorScreen: FC<Props> = ({
 }) => {
   const { formatMessage } = useLocale()
   return (
-    <GridRow>
-      <GridColumn span={['1/1', '10/12']} offset={['0', '0']} order={[2, 1]}>
-        <Box
-          marginTop={[0, 6]}
-          marginBottom={[0, 6]}
-          textAlign="center"
-          justifyContent="center"
-        >
-          <Box marginBottom={4}>
-            <Tag variant={tagVariant}>{tag}</Tag>
-          </Box>
-          <Text variant="h1" as="h1" marginBottom={3}>
-            {title}
-          </Text>
-          <Text variant="default" as="p">
-            {children}
-          </Text>
+    <Box
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+      flexDirection="column"
+    >
+      <Box
+        marginY={6}
+        textAlign="center"
+        justifyContent="center"
+        className={styles.errorScreenTextContainer}
+      >
+        <Box marginBottom={4}>
+          <Tag variant={tagVariant}>{tag}</Tag>
         </Box>
-      </GridColumn>
+        <Text variant="h1" as="h1" marginBottom={3}>
+          {title}
+        </Text>
+        <Text variant="default" as="p">
+          {children}
+        </Text>
+      </Box>
+
       {figure && (
-        <GridColumn
-          span={['1/1', '4/12']}
-          offset={['0', '3/12']}
-          order={[1, 2]}
-        >
-          <Box display="flex" justifyContent="center" marginBottom={[1, 0]}>
-            <img
-              src={figure}
-              alt={`${formatMessage(m.altText)} ${title}`}
-              className={styles.img}
-            />
-          </Box>
-        </GridColumn>
+        <Box display="flex" justifyContent="center">
+          <img
+            src={figure}
+            alt={`${formatMessage(m.altText)} ${title}`}
+            className={styles.img}
+          />
+        </Box>
       )}
-    </GridRow>
+    </Box>
   )
 }
