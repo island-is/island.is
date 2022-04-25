@@ -105,7 +105,6 @@ export const iconWrapper = style({
 export const icon = style({
   pointerEvents: 'none',
   height: '26px',
-  animation: `100ms ease-in-out 0s 1 ${iconEaseIn}`,
 })
 
 export const dot = style({

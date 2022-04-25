@@ -67,6 +67,7 @@ const NavItemContent: FC<Props> = ({
     navItemHover = 'none'
   }
   const badgeActive: keyof typeof styles.badge = badge ? 'active' : 'inactive'
+
   return (
     <Box
       className={[
@@ -105,8 +106,9 @@ const NavItemContent: FC<Props> = ({
               )}
             ></Box>
             <Icon
-              type={active || hover ? 'filled' : icon.type}
+              type={active ? 'filled' : 'outline'}
               icon={icon.icon}
+              color={active || hover ? 'blue400' : 'blue600'}
               size="medium"
               className={styles.icon}
             />
