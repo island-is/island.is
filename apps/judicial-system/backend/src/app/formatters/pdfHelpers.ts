@@ -1,4 +1,5 @@
 import { coatOfArms } from './coatOfArms'
+import { policeStar } from './policeStar'
 
 export const smallFontSize = 9
 export const baseFontSize = 11
@@ -84,6 +85,14 @@ export function addCoatOfArms(doc: PDFKit.PDFDocument) {
   coatOfArms(doc)
 
   doc.fillColor('black').scale(2).translate(-270, -70)
+}
+
+export function addPoliceStar(doc: PDFKit.PDFDocument) {
+  doc.translate(270, 70).scale(0.04)
+
+  doc.image(policeStar, 0, 0, { fit: [1350, 1350] })
+
+  doc.scale(25).translate(-270, -70)
 }
 
 export function setLineGap(doc: PDFKit.PDFDocument, lineGap: number) {

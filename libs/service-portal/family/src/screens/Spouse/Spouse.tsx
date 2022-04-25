@@ -1,5 +1,4 @@
 import React from 'react'
-import { PlausiblePageviewDetail } from '@island.is/service-portal/core'
 import { defineMessage } from 'react-intl'
 import { useParams } from 'react-router-dom'
 import { useQuery } from '@apollo/client'
@@ -19,7 +18,6 @@ import {
   ServicePortalModuleComponent,
   UserInfoLine,
   m,
-  ServicePortalPath,
 } from '@island.is/service-portal/core'
 import { NATIONAL_REGISTRY_USER } from '../../lib/queries/getNationalRegistryUser'
 import { useLocale, useNamespaces } from '@island.is/localization'
@@ -37,10 +35,6 @@ const dataInfoSpouse = defineMessage({
 const FamilyMember: ServicePortalModuleComponent = () => {
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
-
-  PlausiblePageviewDetail(
-    ServicePortalPath.Spouse.replace(':nationalId', 'spouse'),
-  )
 
   const { data, loading, error } = useQuery<Query>(NATIONAL_REGISTRY_USER)
   const { nationalRegistryUser } = data || {}

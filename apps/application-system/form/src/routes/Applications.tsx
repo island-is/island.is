@@ -15,8 +15,8 @@ import {
   Button,
   GridContainer,
 } from '@island.is/island-ui/core'
-import { Locale } from '@island.is/shared/types'
 import { coreMessages, getTypeFromSlug } from '@island.is/application/core'
+import { Locale } from '@island.is/shared/types'
 import { ApplicationList } from '@island.is/application/ui-components'
 import { ErrorShell } from '@island.is/application/ui-shell'
 import { useAuth } from '@island.is/auth/react'
@@ -39,15 +39,17 @@ export const Applications: FC = () => {
 
   useApplicationNamespaces(type)
 
-  const { data, loading, error: applicationsError } = useLocalizedQuery(
-    APPLICATION_APPLICATIONS,
-    {
-      variables: {
-        input: { typeId: type },
-      },
-      skip: !type,
+  const {
+    data,
+    loading,
+    error: applicationsError,
+    refetch,
+  } = useLocalizedQuery(APPLICATION_APPLICATIONS, {
+    variables: {
+      input: { typeId: type },
     },
-  )
+    skip: !type,
+  })
 
   const [createApplicationMutation, { error: createError }] = useMutation(
     CREATE_APPLICATION,
@@ -137,6 +139,7 @@ export const Applications: FC = () => {
                 onClick={(applicationUrl) =>
                   history.push(`../${applicationUrl}`)
                 }
+                refetch={refetch}
               />
             )}
 
