@@ -12,7 +12,6 @@ import subMilliseconds from 'date-fns/subMilliseconds'
 import {
   CaseDecision,
   CaseState,
-  CaseType,
   InstitutionType,
   isRestrictionCase,
   NotificationType,
@@ -257,8 +256,8 @@ export const SignedVerdictOverview: React.FC = () => {
 
     return rejectReason === 'none'
       ? undefined
-      : formatMessage(m.caseExtension.extensionInfo, {
-          hasChildCase: Boolean(workingCase.childCase),
+      : formatMessage(m.sections.caseExtension.extensionInfo, {
+          hasChildCase: workingCase.childCase ? 'yes' : 'no',
           caseType: workingCase.type,
           rejectReason,
         })
@@ -629,7 +628,7 @@ export const SignedVerdictOverview: React.FC = () => {
             workingCase.isValidToDateInThePast ||
             Boolean(workingCase.childCase)
           }
-          nextButtonText={formatMessage(m.caseExtension.buttonLabel, {
+          nextButtonText={formatMessage(m.sections.caseExtension.buttonLabel, {
             caseType: workingCase.type,
           })}
           onNextButtonClick={() => handleCaseExtension()}
@@ -723,7 +722,10 @@ export const SignedVerdictOverview: React.FC = () => {
                       name="modifiedValidToDate"
                       size="sm"
                       datepickerLabel={formatMessage(
-                        m.sections.modifyDatesModal.modifiedValidToDateLabel,
+                        m.sections.modifyDatesModal.modifiedValidToDateLabelV2,
+                        {
+                          caseType: workingCase.type,
+                        },
                       )}
                       selectedDate={modifiedValidToDate?.value}
                       onChange={(value, valid) => {
