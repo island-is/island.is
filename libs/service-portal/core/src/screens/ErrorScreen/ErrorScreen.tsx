@@ -1,14 +1,5 @@
 import React, { FC } from 'react'
-import {
-  Box,
-  GridColumn,
-  GridRow,
-  Tag,
-  TagVariant,
-  Text,
-} from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
-import { m } from '@island.is/service-portal/core'
+import { Box, Tag, TagVariant, Text } from '@island.is/island-ui/core'
 import * as styles from './ErrorScreen.css'
 
 interface Props {
@@ -26,7 +17,6 @@ export const ErrorScreen: FC<Props> = ({
   children,
   tagVariant = 'purple',
 }) => {
-  const { formatMessage } = useLocale()
   return (
     <Box
       display="flex"
@@ -53,11 +43,7 @@ export const ErrorScreen: FC<Props> = ({
 
       {figure && (
         <Box display="flex" justifyContent="center">
-          <img
-            src={figure}
-            alt={`${formatMessage(m.altText)} ${title}`}
-            className={styles.img}
-          />
+          <img src={figure} alt="" className={styles.img} />
         </Box>
       )}
     </Box>
