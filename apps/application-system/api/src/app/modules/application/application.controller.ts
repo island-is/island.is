@@ -437,7 +437,7 @@ export class ApplicationController {
 
     const mergedAnswers = mergeAnswers(existingApplication.answers, newAnswers)
     const applicantActors: string[] =
-      isNewActor(existingApplication, user) && user.actor?.nationalId
+      isNewActor(existingApplication, user) && !!user.actor?.nationalId
         ? [...existingApplication.applicantActors, user.actor.nationalId]
         : existingApplication.applicantActors
 
