@@ -14,7 +14,7 @@ import { Audit } from '@island.is/nest/audit'
 import { NationalRegistryChild, NationalRegistryFamilyMember } from './models'
 import { NationalRegistryService } from '../nationalRegistry.service'
 import { FamilyMember, FamilyChild } from '../types'
-import { GetFamilyInfoInout } from '../dto/getFamilyDetailInput'
+import { GetFamilyInfoInput } from '../dto/getFamilyDetailInput'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.meDetails)
@@ -41,7 +41,7 @@ export class FamilyMemberResolver {
   @Audit()
   getMyFamilyDetail(
     @CurrentUser() user: AuthUser,
-    @Args('input') input: GetFamilyInfoInout,
+    @Args('input') input: GetFamilyInfoInput,
   ): Promise<FamilyChild> {
     return this.nationalRegistryService.getFamilyMemberDetails(
       user.nationalId,

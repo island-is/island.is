@@ -12,7 +12,7 @@ export const NATIONAL_REGISTRY_FAMILY = gql`
 `
 
 export const NATIONAL_REGISTRY_FAMILY_DETAIL = gql`
-  query NationalRegistryFamilyDetailQuery($input: GetFamilyInfoInout!) {
+  query NationalRegistryFamilyDetailQuery($input: GetFamilyInfoInput!) {
     nationalRegistryFamilyDetail(input: $input) {
       nationalId
       fullName
