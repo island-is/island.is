@@ -61,7 +61,12 @@ export const RegulationStatus = (props: RegulationStatusProps) => {
 
   const getNextHistoryDate = () => {
     const idx = (history || []).findIndex((item) => item.date === timelineDate)
-    const nextItem = idx > -1 && history[idx + 1]
+    const nextItem =
+      idx > -1
+        ? history[idx + 1]
+        : idx === -1 && history.length
+        ? history[0]
+        : false
     return nextItem ? nextItem.date : undefined
   }
 
