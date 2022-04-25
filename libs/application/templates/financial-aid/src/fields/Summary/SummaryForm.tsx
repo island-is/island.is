@@ -26,6 +26,8 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
   const { id, answers, externalData } = application
   const summaryCommentType = SummaryCommentType.FORMCOMMENT
 
+  console.log(externalData, answers)
+
   const aidAmount = useMemo(() => {
     if (
       externalData.nationalRegistry?.data?.municipality &&
@@ -102,8 +104,12 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
             : Routes.TAXRETURNFILES
         }
         goToScreen={goToScreen}
-        taxFiles={answers.taxReturnFiles}
-        incomeFiles={answers.incomeFiles}
+        personalTaxReturn={
+          externalData.nationalRegistry?.data?.taxData
+            ?.municipalitiesPersonalTaxReturn?.personalTaxReturn
+        }
+        taxFiles={answers.taxReturnFiles ?? []}
+        incomeFiles={answers.incomeFiles ?? []}
         applicationId={id}
       />
 
