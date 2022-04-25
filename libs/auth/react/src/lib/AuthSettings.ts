@@ -1,12 +1,7 @@
-import { UserManagerSettings, WebStorageStateStore } from 'oidc-client'
+import { UserManagerSettings, WebStorageStateStore } from 'oidc-client-ts'
 import { storageFactory } from './storageFactory'
 
 export interface AuthSettings extends Omit<UserManagerSettings, 'scope'> {
-  /**
-   * Make client id required.
-   */
-  client_id: string
-
   /*
    * Used to create redirect uris. Should not end with slash.
    * Default: window.location.origin
@@ -46,9 +41,16 @@ export interface AuthSettings extends Omit<UserManagerSettings, 'scope'> {
    * Wich PATH on the AUTHORITY to use for checking the session expiry.
    */
   checkSessionPath?: string
+
+  // /**
+  //  * Redirect URI of the client applicatoin to receive response after sign in from IDP.
+  //  * Overwriting this property from the UserManagerSettings to make it optional.
+  //  * This property is constructed from baseUrl and redirectPath if left empty.
+  //  */
+  //readonly redirect_uri: string
 }
 
-export const mergeAuthSettings = (settings: AuthSettings) => {
+export const mergeAuthSettings = (settings: AuthSettings): AuthSettings => {
   const baseUrl = settings.baseUrl ?? window.location.origin
   const redirectPath = settings.redirectPath ?? '/auth/callback'
   const redirectPathSilent =
@@ -61,13 +63,12 @@ export const mergeAuthSettings = (settings: AuthSettings) => {
     baseUrl,
     redirectPath,
     redirectPathSilent,
-    authority: 'https://innskra.island.is',
     checkSessionPath: '/connect/sessioninfo',
     silent_redirect_uri: `${baseUrl}${redirectPathSilent}`,
-    redirect_uri: `${baseUrl}${redirectPath}`,
     post_logout_redirect_uri: baseUrl,
     response_type: 'code',
-    revokeAccessTokenOnSignout: true,
+    revokeTokenTypes: ['access_token', 'refresh_token'],
+    revokeTokensOnSignout: true,
     loadUserInfo: true,
     monitorSession: onIdsDomain,
     userStore: new WebStorageStateStore({
@@ -75,5 +76,6 @@ export const mergeAuthSettings = (settings: AuthSettings) => {
       prefix: settings.userStorePrefix,
     }),
     ...settings,
+    redirect_uri: settings.redirect_uri ?? `${baseUrl}${redirectPath}`,
   }
 }
