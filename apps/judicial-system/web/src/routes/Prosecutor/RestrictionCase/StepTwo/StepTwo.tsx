@@ -7,7 +7,6 @@ import { useRouter } from 'next/router'
 import {
   CaseState,
   CaseTransition,
-  CaseType,
   NotificationType,
   UserRole,
 } from '@island.is/judicial-system/types'

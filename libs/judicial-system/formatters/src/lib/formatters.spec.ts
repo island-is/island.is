@@ -2,7 +2,6 @@ import {
   CaseAppealDecision,
   CaseCustodyRestrictions,
   Gender,
-  CaseType,
 } from '@island.is/judicial-system/types'
 
 import * as Constants from '@island.is/judicial-system/consts'
