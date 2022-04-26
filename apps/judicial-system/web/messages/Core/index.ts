@@ -157,6 +157,7 @@ export const core = defineMessages({
     defaultMessage: `{caseType, select, ${CaseType.ADMISSION_TO_FACILITY} {Fyrri vistun} ${CaseType.TRAVEL_BAN} {Fyrra farbann} other {Fyrri gæsla}}`,
     description: 'Notað fyrir fyrri mál í öllum flæðum.',
   },
+  // TODO: remove pastCustody and pastTravelBan, use pastRestrictionCase instead
   pastCustody: {
     id: 'judicial.system.core:past_custody',
     defaultMessage: 'Fyrri gæsla',

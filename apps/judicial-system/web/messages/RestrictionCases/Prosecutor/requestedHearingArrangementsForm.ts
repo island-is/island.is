@@ -68,6 +68,7 @@ export const rcRequestedHearingArrangements = {
       description:
         'Notaður sem titill fyrir "viltu senda tilkynningu" tilkynningagluggan á óskir um fyrirtöku skrefi í gæsluvarðhalds- og farbannsmálum.',
     },
+    // TODO: remove text and use textV2
     text: {
       id:
         'judicial.system.restriction_cases:requested_hearing_arrangements.modal.text',

@@ -4,7 +4,7 @@ import {
   CaseType,
 } from '@island.is/judicial-system/types'
 
-// Strings for select court component
+// TODO: remove restrictions and use restrictionsV2
 export const restrictions = defineMessages({
   [CaseCustodyRestrictions.NECESSITIES]: {
     id: 'judicial.system.core:restrictions.NECESSITIES',

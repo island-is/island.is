@@ -115,6 +115,7 @@ export const rcDemands = {
       },
     }),
     custodyRestrictions: defineMessages({
+      // TODO: remove heading and subheading and use headingV2 and subheadingV2
       heading: {
         id:
           'judicial.system.restriction_cases:police_demands.custody_restrictions.heading',
