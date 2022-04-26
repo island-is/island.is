@@ -38,7 +38,6 @@ export interface UploadFileToCourtResponse {
 export enum CaseFileState {
   STORED_IN_RVG = 'STORED_IN_RVG',
   STORED_IN_COURT = 'STORED_IN_COURT',
-  BOKEN_LINK = 'BOKEN_LINK',
   DELETED = 'DELETED',
 }
 
@@ -50,7 +49,7 @@ export interface CaseFile {
   name: string
   type: string
   state: CaseFileState
-  key: string
+  key?: string
   size: number
 }
 

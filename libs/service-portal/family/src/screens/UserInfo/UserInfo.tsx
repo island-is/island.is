@@ -1,6 +1,7 @@
 import React from 'react'
 import { defineMessage } from 'react-intl'
-import { useQuery, gql } from '@apollo/client'
+import { useQuery } from '@apollo/client'
+import { spmm } from '../../lib/messages'
 
 import { Query } from '@island.is/api/schema'
 import {
@@ -22,23 +23,7 @@ import {
   natRegGenderMessageDescriptorRecord,
   natRegMaritalStatusMessageDescriptorRecord,
 } from '../../helpers/localizationHelpers'
-
-const NationalRegistryUserQuery = gql`
-  query NationalRegistryUserQuery {
-    nationalRegistryUser {
-      nationalId
-      maritalStatus
-      religion
-      legalResidence
-      birthPlace
-      gender
-      citizenship {
-        code
-        name
-      }
-    }
-  }
-`
+import { NATIONAL_REGISTRY_USER } from '../../lib/queries/getNationalRegistryUser'
 
 const dataNotFoundMessage = defineMessage({
   id: 'sp.family:data-not-found',
@@ -48,9 +33,8 @@ const dataNotFoundMessage = defineMessage({
 const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
-  const { data, loading, error } = useQuery<Query>(NationalRegistryUserQuery)
+  const { data, loading, error } = useQuery<Query>(NATIONAL_REGISTRY_USER)
   const { nationalRegistryUser } = data || {}
-
   return (
     <>
       <Box marginBottom={5}>
@@ -61,18 +45,15 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
                 {userInfo.profile.name}
               </Text>
               <Text as="p" variant="default">
-                {formatMessage({
-                  id: 'sp.family:user-info-description',
-                  defaultMessage:
-                    'Hér eru þín gögn frá þjóðskrá. Þú hefur kost á að gera breytingar á þessum gögnum.',
-                })}
+                {formatMessage(spmm.family.userInfoDesc)}
               </Text>
             </Stack>
           </GridColumn>
         </GridRow>
       </Box>
-      <Stack space={1}>
+      <Stack space={2}>
         <UserInfoLine
+          title={formatMessage(m.myRegistration)}
           label={m.displayName}
           content={userInfo.profile.name}
           editLink={{
@@ -111,8 +92,9 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           }}
         />
         <Divider />
-
+        <Box marginY={3} />
         <UserInfoLine
+          title={formatMessage(m.baseInfo)}
           label={m.birthPlace}
           content={
             error
@@ -122,35 +104,6 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           loading={loading}
         />
         <Divider />
-
-        <UserInfoLine
-          label={m.citizenship}
-          content={
-            error
-              ? formatMessage(dataNotFoundMessage)
-              : nationalRegistryUser?.citizenship?.name || ''
-          }
-          loading={loading}
-        />
-        <Divider />
-
-        <UserInfoLine
-          label={m.gender}
-          content={
-            error
-              ? formatMessage(dataNotFoundMessage)
-              : nationalRegistryUser?.gender
-              ? formatMessage(
-                  natRegGenderMessageDescriptorRecord[
-                    nationalRegistryUser.gender
-                  ],
-                )
-              : ''
-          }
-          loading={loading}
-        />
-        <Divider />
-
         <UserInfoLine
           label={m.maritalStatus}
           content={
@@ -166,8 +119,8 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           }
           loading={loading}
         />
-        <Divider />
 
+        <Divider />
         <UserInfoLine
           label={defineMessage(m.religion)}
           content={
@@ -185,6 +138,55 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
             url:
               'https://www.skra.is/umsoknir/rafraen-skil/tru-og-lifsskodunarfelag',
           }}
+        />
+        <Divider />
+        <UserInfoLine
+          label={m.banMarking}
+          content={
+            error
+              ? formatMessage(dataNotFoundMessage)
+              : nationalRegistryUser?.banMarking?.banMarked
+              ? formatMessage({
+                  id: 'sp.family:yes',
+                  defaultMessage: 'Já',
+                })
+              : formatMessage({
+                  id: 'sp.family:no',
+                  defaultMessage: 'Nei',
+                })
+          }
+          tooltip={formatMessage({
+            id: 'sp.family:ban-marking-tooltip',
+            defaultMessage:
+              'Bannmerktir einstaklingar koma t.d. ekki fram á úrtakslistum úr þjóðskrá og öðrum úrtökum í markaðssetningarskyni.',
+          })}
+          loading={loading}
+        />
+        <Divider />
+        <UserInfoLine
+          label={m.gender}
+          content={
+            error
+              ? formatMessage(dataNotFoundMessage)
+              : nationalRegistryUser?.gender
+              ? formatMessage(
+                  natRegGenderMessageDescriptorRecord[
+                    nationalRegistryUser.gender
+                  ],
+                )
+              : ''
+          }
+          loading={loading}
+        />
+        <Divider />
+        <UserInfoLine
+          label={m.citizenship}
+          content={
+            error
+              ? formatMessage(dataNotFoundMessage)
+              : nationalRegistryUser?.citizenship?.name || ''
+          }
+          loading={loading}
         />
         <Divider />
       </Stack>

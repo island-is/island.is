@@ -1,15 +1,17 @@
 import formatISO from 'date-fns/formatISO'
 
-import { Inject, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 
 import { CourtClientService } from '@island.is/judicial-system/court-client'
-import type { CaseType } from '@island.is/judicial-system/types'
+import type { CaseType, User } from '@island.is/judicial-system/types'
 
-import { DATE_FACTORY } from '../../factories'
+import { nowFactory } from '../../factories'
 import { EventService } from '../event'
 
+type SubTypes = { [c in CaseType]: string | [string, string] }
+//
 // Maps case types to sub types in the court system
-export const subTypes = {
+export const subTypes: SubTypes = {
   // 'Afhending gagna',
   // 'Afturköllun á skipun verjanda',
   OTHER: 'Annað',
@@ -19,6 +21,8 @@ export const subTypes = {
   // 'Framsalsmál',
   // 'Frestur',
   CUSTODY: ['Gæsluvarðhald', 'Framlenging gæsluvarðhalds'],
+  // TODO: replace with appropriate type when it has been created in the court system
+  ADMISSION_TO_FACILITY: ['Gæsluvarðhald', 'Framlenging gæsluvarðhalds'],
   PSYCHIATRIC_EXAMINATION: 'Geðrannsókn',
   // 'Handtaka',
   SOUND_RECORDING_EQUIPMENT: 'Hljóðupptökubúnaði komið fyrir',
@@ -41,18 +45,19 @@ export const subTypes = {
   TELECOMMUNICATIONS: 'Upplýsingar um fjarskiptasamskipti',
   INTERNET_USAGE: 'Upplýsingar um vefnotkun',
   ELECTRONIC_DATA_DISCOVERY_INVESTIGATION: 'Rannsókn á rafrænum gögnum',
+  // TODO: replace with appropriate type when it has been created in the court system
+  VIDEO_RECORDING_EQUIPMENT: 'Annað',
 }
 
 @Injectable()
 export class CourtService {
   constructor(
-    @Inject(DATE_FACTORY) private readonly today: () => Date,
     private readonly courtClientService: CourtClientService,
     private readonly eventService: EventService,
   ) {}
 
   private uploadStream(
-    courtId: string | undefined,
+    courtId: string,
     fileName: string,
     contentType: string,
     content: Buffer,
@@ -64,29 +69,50 @@ export class CourtService {
   }
 
   async createRequest(
-    courtId: string | undefined,
-    courtCaseNumber: string | undefined,
+    user: User,
+    caseId: string,
+    courtId: string,
+    courtCaseNumber: string,
+    fileName: string,
     content: Buffer,
   ): Promise<string> {
     return this.uploadStream(
       courtId,
-      'Krafa.pdf',
+      `${fileName}.pdf`,
       'application/pdf',
       content,
-    ).then((streamId) =>
-      this.courtClientService.createDocument(courtId ?? '', {
-        caseNumber: courtCaseNumber ?? '',
-        subject: 'Krafa',
-        fileName: 'Krafa.pdf',
-        streamID: streamId,
-        caseFolder: 'Krafa og greinargerð',
-      }),
     )
+      .then((streamId) =>
+        this.courtClientService.createDocument(courtId, {
+          caseNumber: courtCaseNumber,
+          subject: fileName,
+          fileName: `${fileName}.pdf`,
+          streamID: streamId,
+          caseFolder: 'Krafa og greinargerð',
+        }),
+      )
+      .catch((reason) => {
+        this.eventService.postErrorEvent(
+          'Failed to create a court request',
+          {
+            caseId,
+            actor: user.name,
+            institution: user.institution?.name,
+            courtId,
+            courtCaseNumber,
+          },
+          reason,
+        )
+
+        throw reason
+      })
   }
 
   async createCourtRecord(
-    courtId: string | undefined,
-    courtCaseNumber: string | undefined,
+    user: User,
+    caseId: string,
+    courtId: string,
+    courtCaseNumber: string,
     fileName: string,
     content: Buffer,
   ): Promise<string> {
@@ -95,19 +121,38 @@ export class CourtService {
       `${fileName}.pdf`,
       'application/pdf',
       content,
-    ).then((streamId) =>
-      this.courtClientService.createThingbok(courtId ?? '', {
-        caseNumber: courtCaseNumber ?? '',
-        subject: fileName,
-        fileName: `${fileName}.pdf`,
-        streamID: streamId,
-      }),
     )
+      .then((streamId) =>
+        this.courtClientService.createThingbok(courtId, {
+          caseNumber: courtCaseNumber,
+          subject: fileName,
+          fileName: `${fileName}.pdf`,
+          streamID: streamId,
+        }),
+      )
+      .catch((reason) => {
+        this.eventService.postErrorEvent(
+          'Failed to create a court record',
+          {
+            caseId,
+            actor: user.name,
+            institution: user.institution?.name,
+            courtId,
+            courtCaseNumber,
+            fileName,
+          },
+          reason,
+        )
+
+        throw reason
+      })
   }
 
   async createRuling(
-    courtId: string | undefined,
-    courtCaseNumber: string | undefined,
+    user: User,
+    caseId: string,
+    courtId: string,
+    courtCaseNumber: string,
     fileName: string,
     content: Buffer,
   ): Promise<string> {
@@ -116,38 +161,77 @@ export class CourtService {
       `${fileName}.pdf`,
       'application/pdf',
       content,
-    ).then((streamId) =>
-      this.courtClientService.createDocument(courtId ?? '', {
-        caseNumber: courtCaseNumber ?? '',
-        subject: fileName,
-        fileName: `${fileName}.pdf`,
-        streamID: streamId,
-        caseFolder: 'Dómar, úrskurðir og Þingbók',
-      }),
     )
+      .then((streamId) =>
+        this.courtClientService.createDocument(courtId ?? '', {
+          caseNumber: courtCaseNumber,
+          subject: fileName,
+          fileName: `${fileName}.pdf`,
+          streamID: streamId,
+          caseFolder: 'Dómar, úrskurðir og Þingbók',
+        }),
+      )
+      .catch((reason) => {
+        this.eventService.postErrorEvent(
+          'Failed to create a court ruling',
+          {
+            caseId,
+            actor: user.name,
+            institution: user.institution?.name,
+            courtId,
+            courtCaseNumber,
+            fileName,
+          },
+          reason,
+        )
+
+        throw reason
+      })
   }
 
   async createDocument(
-    courtId: string | undefined,
-    courtCaseNumber: string | undefined,
+    user: User,
+    caseId: string,
+    courtId: string,
+    courtCaseNumber: string,
     subject: string,
     fileName: string,
     fileType: string,
     content: Buffer,
   ): Promise<string> {
-    return this.uploadStream(courtId, fileName, fileType, content).then(
-      (streamId) =>
-        this.courtClientService.createDocument(courtId ?? '', {
-          caseNumber: courtCaseNumber ?? '',
+    return this.uploadStream(courtId, fileName, fileType, content)
+      .then((streamId) =>
+        this.courtClientService.createDocument(courtId, {
+          caseNumber: courtCaseNumber,
           subject,
           fileName,
           streamID: streamId,
           caseFolder: 'Gögn málsins',
         }),
-    )
+      )
+      .catch((reason) => {
+        this.eventService.postErrorEvent(
+          'Failed to create a court document',
+          {
+            caseId,
+            actor: user.name,
+            institution: user.institution?.name,
+            courtId,
+            courtCaseNumber,
+            subject,
+            fileName,
+            fileType,
+          },
+          reason,
+        )
+
+        throw reason
+      })
   }
 
   async createCourtCase(
+    user: User,
+    caseId: string,
     courtId: string,
     type: CaseType,
     policeCaseNumber: string,
@@ -163,13 +247,64 @@ export class CourtService {
         caseType: 'R - Rannsóknarmál',
         subtype: subType,
         status: 'Skráð',
-        receivalDate: formatISO(this.today(), { representation: 'date' }),
+        receivalDate: formatISO(nowFactory(), { representation: 'date' }),
         basedOn: 'Rannsóknarhagsmunir',
         sourceNumber: policeCaseNumber,
       })
       .catch((reason) => {
         this.eventService.postErrorEvent(
           'Failed to create a court case',
+          {
+            caseId,
+            actor: user.name,
+            institution: user.institution?.name,
+            courtId,
+            type,
+            policeCaseNumber,
+            isExtension,
+          },
+          reason,
+        )
+
+        throw reason
+      })
+  }
+
+  async createEmail(
+    user: User,
+    caseId: string,
+    courtId: string,
+    courtCaseNumber: string,
+    subject: string,
+    body: string,
+    recipients: string,
+    fromEmail: string,
+    fromName: string,
+  ): Promise<string> {
+    return this.courtClientService
+      .createEmail(courtId, {
+        caseNumber: courtCaseNumber,
+        subject,
+        body,
+        recipients,
+        fromEmail,
+        fromName,
+      })
+      .catch((reason) => {
+        this.eventService.postErrorEvent(
+          'Failed to create an email',
+          {
+            caseId,
+            actor: user.name,
+            institution: user.institution?.name,
+            courtId,
+            courtCaseNumber,
+            subject,
+            body,
+            recipients,
+            fromEmail,
+            fromName,
+          },
           reason,
         )
 

@@ -9,7 +9,7 @@ import {
   Attachment,
   PersonType,
 } from '@island.is/clients/syslumenn'
-import { generateSyslumennNotificationEmail } from './emailGenerators/syslumennNotification'
+import { generateSyslumennNotifyErrorEmail } from './emailGenerators/syslumennNotifyError'
 import { ApplicationWithAttachments as Application } from '@island.is/application/core'
 import { NationalRegistry, UserProfile } from './types'
 import { ChargeItemCode } from '@island.is/shared/constants'
@@ -70,32 +70,32 @@ export class CriminalRecordSubmissionService {
     application,
   }: TemplateApiModuleActionProps): Promise<CriminalRecord> {
     const applicantSsn = application.applicant
-    const record = await this.criminalRecordService.getCriminalRecord(
+    const document = await this.criminalRecordService.getCriminalRecord(
       applicantSsn,
     )
 
     // Call sýslumaður to get the document sealed before handing it over to the user
-    const sealedRecordResponse = await this.syslumennService.sealCriminalRecord(
-      record.contentBase64,
+    const sealedDocumentResponse = await this.syslumennService.sealDocument(
+      document.contentBase64,
     )
 
-    if (!sealedRecordResponse?.skjal) {
+    if (!sealedDocumentResponse?.skjal) {
       throw new Error('Eitthvað fór úrskeiðis.')
     }
 
-    const sealedRecord: CriminalRecord = {
-      contentBase64: sealedRecordResponse.skjal,
+    const sealedDocument: CriminalRecord = {
+      contentBase64: sealedDocumentResponse.skjal,
     }
 
     // Notify Sýslumaður that person has received the criminal record
-    await this.notifySyslumenn(application, sealedRecord)
+    await this.notifySyslumenn(application, sealedDocument)
 
-    return sealedRecord
+    return sealedDocument
   }
 
   private async notifySyslumenn(
     application: Application,
-    record: CriminalRecord,
+    document: CriminalRecord,
   ) {
     const nationalRegistryData = application.externalData.nationalRegistry
       ?.data as NationalRegistry
@@ -118,7 +118,7 @@ export class CriminalRecordSubmissionService {
     const dateStr = new Date(Date.now()).toISOString().substring(0, 10)
     const attachment: Attachment = {
       name: `sakavottord_${nationalRegistryData?.nationalId}_${dateStr}.pdf`,
-      content: record.contentBase64,
+      content: document.contentBase64,
     }
 
     const extraData: { [key: string]: string } = {}
@@ -130,7 +130,7 @@ export class CriminalRecordSubmissionService {
       .uploadData(persons, attachment, extraData, uploadDataName, uploadDataId)
       .catch(async () => {
         await this.sharedTemplateAPIService.sendEmail(
-          generateSyslumennNotificationEmail,
+          generateSyslumennNotifyErrorEmail,
           (application as unknown) as Application,
         )
         return undefined

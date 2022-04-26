@@ -11,6 +11,11 @@ import { ProblemModule } from '@island.is/nest/problem'
 
 import { SequelizeConfigService } from './sequelizeConfig.service'
 import { ApplicationModule } from './modules/application/application.module'
+import { DrivingLicenseBookClientConfig } from '@island.is/clients/driving-license-book'
+import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
+import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
+import { MunicipalitiesFinancialAidConfig } from '@island.is/clients/municipalities-financial-aid'
+import { FishingLicenseClientConfig } from '@island.is/clients/fishing-license'
 
 @Module({
   imports: [
@@ -21,7 +26,16 @@ import { ApplicationModule } from './modules/application/application.module'
     ProblemModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [IdsClientConfig, SyslumennClientConfig, XRoadConfig],
+      load: [
+        IdsClientConfig,
+        SyslumennClientConfig,
+        XRoadConfig,
+        DrivingLicenseBookClientConfig,
+        NationalRegistryClientConfig,
+        FeatureFlagConfig,
+        MunicipalitiesFinancialAidConfig,
+        FishingLicenseClientConfig,
+      ],
     }),
   ],
 })

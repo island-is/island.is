@@ -2,7 +2,7 @@ const devConfig = {
   production: false,
   auth: {
     jwtSecret: 'jwt-secret',
-    secretToken: 'secret-token',
+    secretToken: 'secret-backend-api-token',
   },
   notifications: {
     prisonEmail: process.env.PRISON_EMAIL,
@@ -72,8 +72,8 @@ if (process.env.NODE_ENV === 'production') {
   if (!process.env.AUTH_JWT_SECRET) {
     throw new Error('Missing AUTH_JWT_SECRET environment.')
   }
-  if (!process.env.SECRET_TOKEN) {
-    throw new Error('Missing SECRET_TOKEN environment.')
+  if (!process.env.BACKEND_ACCESS_TOKEN) {
+    throw new Error('Missing BACKEND_ACCESS_TOKEN environment.')
   }
   if (!process.env.COURTS_MOBILE_NUMBERS) {
     throw new Error('Missing COURTS_MOBILE_NUMBERS environment.')
@@ -169,7 +169,7 @@ const prodConfig = {
   production: true,
   auth: {
     jwtSecret: process.env.AUTH_JWT_SECRET ?? '',
-    secretToken: process.env.SECRET_TOKEN ?? '',
+    secretToken: process.env.BACKEND_ACCESS_TOKEN ?? '',
   },
   notifications: {
     courtsMobileNumbers: JSON.parse(

@@ -6,7 +6,6 @@ import {
   FileType,
   HomeCircumstances,
   Municipality,
-  RolesRule,
   User,
   UserType,
 } from '@island.is/financial-aid/shared/lib'
@@ -78,9 +77,14 @@ describe('ApplicationController - Create', () => {
     let mockCreate: jest.Mock
     let mockFindOne: jest.Mock
 
+    const user: User = {
+      nationalId: '0000000000',
+      name: 'The User',
+    }
+
     const application: CreateApplicationDto = {
       state: ApplicationState.NEW,
-      name: 'Tester',
+      name: user.name,
       phoneNumber: '',
       email: 'Some mail',
       homeCircumstances: HomeCircumstances.UNKNOWN,
@@ -100,6 +104,8 @@ describe('ApplicationController - Create', () => {
       spouseName: '',
       spouseNationalId: '',
       spouseEmail: '',
+      spousePhoneNumber: '',
+      spouseFormComment: '',
       familyStatus: FamilyStatus.COHABITATION,
       city: '',
       postalCode: '',
@@ -107,12 +113,9 @@ describe('ApplicationController - Create', () => {
       streetName: '',
       homeCircumstancesCustom: '',
       directTaxPayments: [],
-    }
-    const user: User = {
-      nationalId: '0000000000',
-      name: 'The User',
-      folder: uuid(),
-      service: RolesRule.OSK,
+      hasFetchedDirectTaxPayment: false,
+      applicationSystemId: '',
+      nationalId: user.nationalId,
     }
 
     beforeEach(async () => {
@@ -153,9 +156,14 @@ describe('ApplicationController - Create', () => {
 
     const id = uuid()
 
+    const user: User = {
+      nationalId: '0000000000',
+      name: 'The User',
+    }
+
     const application: CreateApplicationDto = {
       state: ApplicationState.NEW,
-      name: 'Tester',
+      name: user.name,
       phoneNumber: '',
       email: 'Some mail',
       homeCircumstances: HomeCircumstances.UNKNOWN,
@@ -174,6 +182,8 @@ describe('ApplicationController - Create', () => {
       spouseName: '',
       spouseNationalId: undefined,
       spouseEmail: '',
+      spousePhoneNumber: '',
+      spouseFormComment: '',
       familyStatus: FamilyStatus.COHABITATION,
       city: '',
       postalCode: '',
@@ -182,12 +192,9 @@ describe('ApplicationController - Create', () => {
       homeCircumstancesCustom: '',
       employmentCustom: '',
       directTaxPayments: [],
-    }
-    const user: User = {
-      nationalId: '0000000000',
-      name: 'The User',
-      folder: uuid(),
-      service: RolesRule.OSK,
+      hasFetchedDirectTaxPayment: false,
+      applicationSystemId: '',
+      nationalId: user.nationalId,
     }
 
     const municipality: Municipality = {
@@ -257,8 +264,8 @@ describe('ApplicationController - Create', () => {
       expect(mockEmailService.sendEmail).toBeCalledTimes(1)
     })
 
-    it('should return application', () => {
-      expect(then.result).toEqual(appModel)
+    it('should not return application, since we have to wait for spouse', () => {
+      expect(then.result).toEqual(undefined)
     })
   })
 
@@ -267,9 +274,14 @@ describe('ApplicationController - Create', () => {
 
     const id = uuid()
 
+    const user: User = {
+      nationalId: '0000000000',
+      name: 'The User',
+    }
+
     const application: CreateApplicationDto = {
       state: ApplicationState.NEW,
-      name: 'Tester',
+      name: user.name,
       phoneNumber: '',
       email: 'Some mail',
       homeCircumstances: HomeCircumstances.UNKNOWN,
@@ -288,6 +300,8 @@ describe('ApplicationController - Create', () => {
       spouseName: 'Spouse name',
       spouseNationalId: '9999999999',
       spouseEmail: 'spouse email',
+      spousePhoneNumber: '5555555',
+      spouseFormComment: 'Spouse comment',
       familyStatus: FamilyStatus.COHABITATION,
       city: '',
       postalCode: '',
@@ -296,12 +310,9 @@ describe('ApplicationController - Create', () => {
       homeCircumstancesCustom: '',
       employmentCustom: '',
       directTaxPayments: [],
-    }
-    const user: User = {
-      nationalId: '0000000000',
-      name: 'The User',
-      folder: uuid(),
-      service: RolesRule.OSK,
+      hasFetchedDirectTaxPayment: false,
+      applicationSystemId: '',
+      nationalId: user.nationalId,
     }
 
     const municipality: Municipality = {
@@ -371,9 +382,14 @@ describe('ApplicationController - Create', () => {
 
     const id = uuid()
 
+    const user: User = {
+      nationalId: '0000000000',
+      name: 'The User',
+    }
+
     const application: CreateApplicationDto = {
       state: ApplicationState.NEW,
-      name: 'Tester',
+      name: user.name,
       phoneNumber: '',
       email: 'Some mail',
       homeCircumstances: HomeCircumstances.UNKNOWN,
@@ -395,6 +411,8 @@ describe('ApplicationController - Create', () => {
       spouseName: undefined,
       spouseNationalId: undefined,
       spouseEmail: undefined,
+      spousePhoneNumber: undefined,
+      spouseFormComment: undefined,
       familyStatus: FamilyStatus.COHABITATION,
       city: '',
       postalCode: '',
@@ -403,12 +421,9 @@ describe('ApplicationController - Create', () => {
       homeCircumstancesCustom: '',
       employmentCustom: '',
       directTaxPayments: [],
-    }
-    const user: User = {
-      nationalId: '0000000000',
-      name: 'The User',
-      folder: uuid(),
-      service: RolesRule.OSK,
+      hasFetchedDirectTaxPayment: false,
+      applicationSystemId: '',
+      nationalId: user.nationalId,
     }
 
     const appModel = {
@@ -471,6 +486,8 @@ describe('ApplicationController - Create', () => {
       spouseName: undefined,
       spouseNationalId: undefined,
       spouseEmail: undefined,
+      spousePhoneNumber: undefined,
+      spouseFormComment: undefined,
       familyStatus: FamilyStatus.COHABITATION,
       city: '',
       postalCode: '',
@@ -478,6 +495,7 @@ describe('ApplicationController - Create', () => {
       streetName: '',
       homeCircumstancesCustom: '',
       employmentCustom: '',
+      hasFetchedDirectTaxPayment: true,
       directTaxPayments: [
         {
           totalSalary: 1,
@@ -498,12 +516,12 @@ describe('ApplicationController - Create', () => {
           userType: UserType.SPOUSE,
         },
       ],
+      applicationSystemId: '',
+      nationalId: '',
     }
     const user: User = {
       nationalId: '0000000000',
       name: 'The User',
-      folder: uuid(),
-      service: RolesRule.OSK,
     }
 
     const appModel = {
@@ -548,9 +566,14 @@ describe('ApplicationController - Create', () => {
 
     const id = uuid()
 
+    const user: User = {
+      nationalId: '0000000000',
+      name: 'The User',
+    }
+
     const application: CreateApplicationDto = {
       state: ApplicationState.NEW,
-      name: 'Tester',
+      name: user.name,
       phoneNumber: '',
       email: 'Some mail',
       homeCircumstances: HomeCircumstances.UNKNOWN,
@@ -572,6 +595,8 @@ describe('ApplicationController - Create', () => {
       spouseName: undefined,
       spouseNationalId: undefined,
       spouseEmail: undefined,
+      spousePhoneNumber: undefined,
+      spouseFormComment: undefined,
       familyStatus: FamilyStatus.COHABITATION,
       city: '',
       postalCode: '',
@@ -580,12 +605,9 @@ describe('ApplicationController - Create', () => {
       homeCircumstancesCustom: '',
       employmentCustom: '',
       directTaxPayments: [],
-    }
-    const user: User = {
-      nationalId: '0000000000',
-      name: 'The User',
-      folder: uuid(),
-      service: RolesRule.OSK,
+      hasFetchedDirectTaxPayment: false,
+      applicationSystemId: '',
+      nationalId: user.nationalId,
     }
 
     const appModel = {
@@ -610,9 +632,14 @@ describe('ApplicationController - Create', () => {
   describe('database query fails', () => {
     let then: Then
 
+    const user: User = {
+      nationalId: '0000000000',
+      name: 'The User',
+    }
+
     const application: CreateApplicationDto = {
       state: ApplicationState.NEW,
-      name: 'Tester',
+      name: user.name,
       phoneNumber: '',
       email: 'Some mail',
       homeCircumstances: HomeCircumstances.UNKNOWN,
@@ -631,6 +658,8 @@ describe('ApplicationController - Create', () => {
       spouseName: '',
       spouseNationalId: '',
       spouseEmail: '',
+      spousePhoneNumber: '',
+      spouseFormComment: '',
       familyStatus: FamilyStatus.COHABITATION,
       city: '',
       postalCode: '',
@@ -639,12 +668,9 @@ describe('ApplicationController - Create', () => {
       homeCircumstancesCustom: '',
       employmentCustom: '',
       directTaxPayments: [],
-    }
-    const user: User = {
-      nationalId: '0000000000',
-      name: 'The User',
-      folder: uuid(),
-      service: RolesRule.OSK,
+      hasFetchedDirectTaxPayment: false,
+      applicationSystemId: '',
+      nationalId: user.nationalId,
     }
 
     beforeEach(async () => {

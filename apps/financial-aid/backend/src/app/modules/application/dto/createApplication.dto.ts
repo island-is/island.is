@@ -5,6 +5,7 @@ import {
   IsBoolean,
   IsArray,
   IsNumber,
+  IsUUID,
 } from 'class-validator'
 
 import { ApiProperty } from '@nestjs/swagger'
@@ -23,6 +24,11 @@ export class CreateApplicationDto {
   @IsString()
   @ApiProperty()
   readonly name: string
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  readonly nationalId: string
 
   @IsOptional()
   @IsString()
@@ -128,6 +134,16 @@ export class CreateApplicationDto {
   @ApiProperty()
   readonly spouseEmail: string
 
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  readonly spousePhoneNumber: string
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  readonly spouseFormComment: string
+
   @IsNotEmpty()
   @IsString()
   @ApiProperty()
@@ -143,7 +159,7 @@ export class CreateApplicationDto {
   @ApiProperty()
   readonly postalCode: string
 
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
   @ApiProperty()
   readonly municipalityCode: string
@@ -156,4 +172,14 @@ export class CreateApplicationDto {
   @IsArray()
   @ApiProperty()
   readonly directTaxPayments: DirectTaxPayment[]
+
+  @IsOptional()
+  @IsUUID()
+  @ApiProperty()
+  readonly applicationSystemId: string
+
+  @IsNotEmpty()
+  @IsBoolean()
+  @ApiProperty()
+  readonly hasFetchedDirectTaxPayment: boolean
 }

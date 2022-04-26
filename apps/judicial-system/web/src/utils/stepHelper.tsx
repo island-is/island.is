@@ -1,11 +1,13 @@
+import parseISO from 'date-fns/parseISO'
+import addDays from 'date-fns/addDays'
+
 import { TagVariant } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
+  Case,
   CaseCustodyRestrictions,
   Gender,
 } from '@island.is/judicial-system/types'
-import parseISO from 'date-fns/parseISO'
-import addDays from 'date-fns/addDays'
 
 /**
  * A value is considered dirty if it's a string, either an empty string or not.
@@ -37,8 +39,7 @@ export const getRestrictionTagVariant = (
   restriction: CaseCustodyRestrictions,
 ): TagVariant => {
   switch (restriction) {
-    case CaseCustodyRestrictions.COMMUNICATION:
-    case CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT: {
+    case CaseCustodyRestrictions.COMMUNICATION: {
       return 'rose'
     }
     case CaseCustodyRestrictions.ISOLATION: {
@@ -73,4 +74,17 @@ export const isBusiness = (nationalId?: string) => {
   }
 
   return parseInt(nationalId.slice(0, 2)) > 31
+}
+
+export const createCaseResentExplanation = (
+  workingCase: Case,
+  explanation?: string,
+) => {
+  const now = new Date()
+
+  return `${
+    workingCase.caseResentExplanation
+      ? `${workingCase.caseResentExplanation}<br/><br/>`
+      : ''
+  }Krafa endursend ${formatDate(now, 'PPPp')} - ${explanation}`
 }

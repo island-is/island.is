@@ -4,19 +4,11 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 import type { Case, UpdateCase } from '@island.is/judicial-system/types'
 
-import {
-  padTimeWithZero,
-  parseArray,
-  parseBoolean,
-  parseNull,
-  parseString,
-  parseTime,
-  replaceTabs,
-} from './formatters'
+import { padTimeWithZero, parseTime, replaceTabs } from './formatters'
 import { validate, Validation } from './validate'
 
 export const removeTabsValidateAndSet = (
-  field: string,
+  field: keyof UpdateCase,
   value: string,
   validations: Validation[],
   theCase: Case,
@@ -70,7 +62,7 @@ export const validateAndSetErrorMessage = (
 }
 
 export const validateAndSet = (
-  field: string,
+  field: keyof UpdateCase,
   value: string,
   validations: Validation[],
   theCase: Case,
@@ -87,7 +79,7 @@ export const validateAndSet = (
 }
 
 export const validateAndSetTime = (
-  field: string,
+  field: keyof UpdateCase,
   currentValue: string | undefined,
   time: string,
   validations: Validation[],
@@ -123,7 +115,7 @@ export const validateAndSetTime = (
 }
 
 export const setAndSendDateToServer = (
-  field: string,
+  field: keyof UpdateCase,
   date: Date | undefined,
   isValid: boolean,
   theCase: Case,
@@ -155,7 +147,7 @@ export const setAndSendDateToServer = (
 }
 
 export const validateAndSendToServer = (
-  field: string,
+  field: keyof UpdateCase,
   value: string,
   validations: Validation[],
   theCase: Case,
@@ -165,12 +157,12 @@ export const validateAndSendToServer = (
   validateAndSetErrorMessage(validations, value, setErrorMessage)
 
   if (theCase.id !== '') {
-    updateCase(theCase.id, parseString(field, value))
+    updateCase(theCase.id, { [field]: value })
   }
 }
 
 export const validateAndSendTimeToServer = (
-  field: string,
+  field: keyof UpdateCase,
   currentValue: string | undefined,
   time: string,
   validations: Validation[],
@@ -193,13 +185,13 @@ export const validateAndSendTimeToServer = (
     const dateMinutes = parseTime(currentValue, paddedTime)
 
     if (theCase.id !== '') {
-      updateCase(theCase.id, parseString(field, dateMinutes))
+      updateCase(theCase.id, { [field]: dateMinutes })
     }
   }
 }
 
 export const setAndSendToServer = (
-  field: string,
+  field: keyof UpdateCase,
   value: string | boolean | undefined,
   theCase: Case,
   setCase: (value: React.SetStateAction<Case>) => void,
@@ -210,18 +202,16 @@ export const setAndSendToServer = (
     [field]: value,
   })
   if (theCase.id !== '') {
-    if (typeof value === 'string') {
-      return updateCase(theCase.id, parseString(field, value))
-    } else if (typeof value === 'boolean') {
-      return updateCase(theCase.id, parseBoolean(field, value))
+    if (typeof value === 'string' || typeof value === 'boolean') {
+      return updateCase(theCase.id, { [field]: value })
     } else {
-      return updateCase(theCase.id, parseNull(field))
+      return updateCase(theCase.id, { [field]: null })
     }
   }
 }
 
 export const setCheckboxAndSendToServer = (
-  field: string,
+  field: keyof UpdateCase,
   value: string,
   theCase: Case,
   setCase: (value: React.SetStateAction<Case>) => void,
@@ -243,7 +233,7 @@ export const setCheckboxAndSendToServer = (
   })
 
   if (theCase.id !== '') {
-    updateCase(theCase.id, parseArray(field, checks))
+    updateCase(theCase.id, { [field]: checks })
   }
 }
 

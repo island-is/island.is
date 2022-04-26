@@ -10,65 +10,6 @@
     "version": "2.0"
   },
   "paths": {
-    "/api/okuskirteini/svipting/{kennitala}": {
-      "get": {
-        "tags": ["Okuskirteini"],
-        "summary": "Get for current licence revoke",
-        "parameters": [
-          {
-            "name": "kennitala",
-            "in": "path",
-            "description": "Person id number",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "api-version",
-            "in": "header",
-            "description": "The requested API version",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "default": "2.0"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/SviptingDto"
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/SviptingDto"
-                }
-              },
-              "text/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/SviptingDto"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SviptingDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SviptingDto"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/okuskirteini/{kennitala}": {
       "get": {
         "tags": ["Okuskirteini"],
@@ -303,6 +244,246 @@
             "content": {
               "text/plain": {
                 "schema": {
+                  "type": "string"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/okuskirteini/svipting/{kennitala}": {
+      "get": {
+        "tags": ["Okuskirteini"],
+        "summary": "Get for current licence revoke",
+        "parameters": [
+          {
+            "name": "kennitala",
+            "in": "path",
+            "description": "Person id number",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "2.0"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SviptingDto"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/SviptingDto"
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/SviptingDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SviptingDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SviptingDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/okuskirteini/applications/new/temporary": {
+      "post": {
+        "tags": ["Okuskirteini"],
+        "summary": "Apply for drivers license for a category",
+        "parameters": [
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "2.0"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Model of application",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostTemporaryLicenseV2"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewTemporaryLicsenseDto"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewTemporaryLicsenseDto"
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewTemporaryLicsenseDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewTemporaryLicsenseDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewTemporaryLicsenseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/okuskirteini/applications/temporarytestfinished": {
+      "post": {
+        "tags": ["Okuskirteini"],
+        "summary": "Endpoint to tell system that person has finished learning for temporary license and license can be ordered",
+        "description": "Checks\r\n- Does person exist in national registry\r\n- Is the liecense that has not been ordered\r\n- Is person at least 17 years old\r\n- Does he have a deprivation\r\n- Does he have a quality marked picture\r\n- Does he have a quality marked signature",
+        "parameters": [
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "2.0"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Post model",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostTeachingDoneForTempLicenseV2"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PantaBBSkirteiniDto"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/PantaBBSkirteiniDto"
+                }
+              },
+              "text/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/PantaBBSkirteiniDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PantaBBSkirteiniDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PantaBBSkirteiniDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
                 }
               },
@@ -415,6 +596,28 @@
         "additionalProperties": false,
         "description": "Entity for picture"
       },
+      "NewTemporaryLicsenseDto": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "boolean",
+            "description": "Was application successful"
+          },
+          "okuskirteiniId": {
+            "type": "integer",
+            "description": "Driver license id",
+            "format": "int32",
+            "nullable": true
+          },
+          "errorCode": {
+            "type": "string",
+            "description": "If not successful, this is the error code",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "New temporary license transfer object"
+      },
       "Okuskirteini": {
         "type": "object",
         "properties": {
@@ -505,13 +708,39 @@
         "additionalProperties": false,
         "description": "Licence entity"
       },
+      "PantaBBSkirteiniDto": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "integer",
+            "description": "Was temporary license ordered",
+            "format": "int32"
+          },
+          "driverLicenseIdOrdered": {
+            "type": "integer",
+            "description": "Number of driver license that was ordered",
+            "format": "int32",
+            "nullable": true
+          },
+          "errorCode": {
+            "type": "string",
+            "description": "Error code if not successful",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data transfer object for results when ordering temporary license"
+      },
       "PostNewFinalLicense": {
+        "required": ["authorityNumber", "personIdNumber"],
         "type": "object",
         "properties": {
           "personIdNumber": {
+            "maxLength": 10,
+            "minLength": 0,
+            "pattern": "^[0-9]{1,10}$",
             "type": "string",
-            "description": "Person id number",
-            "nullable": true
+            "description": "Person id number"
           },
           "authorityNumber": {
             "type": "integer",
@@ -541,6 +770,101 @@
         },
         "additionalProperties": false,
         "description": "Model class to post new final license"
+      },
+      "PostTeachingDoneForTempLicenseV2": {
+        "required": ["dagsetning", "kennitala", "nrOkuskirteinis"],
+        "type": "object",
+        "properties": {
+          "kennitala": {
+            "maxLength": 10,
+            "minLength": 0,
+            "pattern": "^[0-9]{1,10}$",
+            "type": "string",
+            "description": "Person Id number"
+          },
+          "nrOkuskirteinis": {
+            "type": "integer",
+            "description": "Driver License id",
+            "format": "int32"
+          },
+          "dagsetning": {
+            "type": "string",
+            "description": "Date when test was completed",
+            "format": "date-time"
+          },
+          "undanthagaOkugerdis": {
+            "type": "boolean",
+            "description": "Person on exemption from Ö3",
+            "nullable": true
+          },
+          "onlyAutomaticAuto": {
+            "type": "boolean",
+            "description": "Person has only license for driving automobiles with automatic transmissions",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Post that student has completed his lessons\r\nVersion 2"
+      },
+      "PostTemporaryLicenseV2": {
+        "required": [
+          "embaetti",
+          "kemurMedLaeknisvottord",
+          "kemurMedNyjaMynd",
+          "kennitala",
+          "kennitalaOkukennara",
+          "sendaSkirteiniIPosti"
+        ],
+        "type": "object",
+        "properties": {
+          "kennitala": {
+            "maxLength": 10,
+            "minLength": 0,
+            "pattern": "^[0-9]{1,10}$",
+            "type": "string",
+            "description": "Person id number"
+          },
+          "embaetti": {
+            "type": "integer",
+            "description": "Publishing authority",
+            "format": "int32"
+          },
+          "kemurMedLaeknisvottord": {
+            "type": "boolean",
+            "description": "Does person need to present health certificate"
+          },
+          "kemurMedNyjaMynd": {
+            "type": "boolean",
+            "description": "Applicant will bring new photo for license"
+          },
+          "sendaSkirteiniIPosti": {
+            "type": "boolean",
+            "description": "Applicant has asked to send license in mail"
+          },
+          "sendaAHeimilisfang": {
+            "maxLength": 100,
+            "minLength": 0,
+            "type": "string",
+            "description": "Address to send license to",
+            "nullable": true
+          },
+          "kennitalaOkukennara": {
+            "type": "string",
+            "description": "Social security number for driving teachser"
+          },
+          "netfang": {
+            "type": "string",
+            "description": "Applicant email",
+            "nullable": true
+          },
+          "farsimaNumer": {
+            "type": "string",
+            "description": "Applicant mobile number",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Post new temporary license"
       },
       "ProblemDetails": {
         "type": "object",

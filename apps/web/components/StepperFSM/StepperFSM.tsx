@@ -7,6 +7,9 @@ import {
   RadioButton,
   Select,
   Link,
+  GridColumn,
+  GridRow,
+  GridContainer,
 } from '@island.is/island-ui/core'
 
 import { Stepper } from '@island.is/api/schema'
@@ -36,6 +39,8 @@ import { useI18n } from '@island.is/web/i18n'
 import { ValueType } from 'react-select'
 import { ParsedUrlQuery } from 'querystring'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
+import { GetNamespaceQuery } from '@island.is/web/graphql/schema'
+import { useNamespace } from '@island.is/web/hooks'
 
 const ANSWER_DELIMITER = ','
 export const STEPPER_HELPER_ENABLED_KEY = 'show-stepper-config-helper'
@@ -48,7 +53,10 @@ interface StepperProps {
   startAgainLabel?: string
   answerLabel?: string
   backLabel?: string
-  optionsFromNamespace: { slug: string; data: [] }[]
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  optionsFromNamespace: { slug: string; data: Record<string, any>[] }[]
+  scrollUpWhenNextStepAppears?: boolean
+  namespace: GetNamespaceQuery['getNamespace']
 }
 
 interface StepOptionSelectItem {
@@ -125,13 +133,11 @@ const StepperFSMWrapper = (
       errors: validateStepConfig(step),
     }))
 
-    const showStepperConfigHelper = STEPPER_HELPER_ENABLED
-
     if (
       configErrors.size > 0 ||
       stepConfigErrors.some(({ errors }) => errors.size > 0)
     ) {
-      return showStepperConfigHelper
+      return STEPPER_HELPER_ENABLED
         ? renderStepperAndStepConfigErrors(
             props.stepper,
             configErrors,
@@ -146,9 +152,16 @@ const StepperFSMWrapper = (
   return Component
 }
 
-const StepperFSM = ({ stepper, optionsFromNamespace }: StepperProps) => {
+const StepperFSM = ({
+  stepper,
+  optionsFromNamespace,
+  namespace,
+  scrollUpWhenNextStepAppears = true,
+}: StepperProps) => {
   const router = useRouter()
   const { activeLocale } = useI18n()
+
+  const n = useNamespace(namespace)
 
   // eslint-disable-next-line @typescript-eslint/naming-convention
   const [_, setCounter] = useState(0)
@@ -241,7 +254,6 @@ const StepperFSM = ({ stepper, optionsFromNamespace }: StepperProps) => {
   const renderQuestionsAndAnswers = (
     questionsAndAnswers: QuestionAndAnswer[],
     urlWithoutQueryParams: string,
-    activeLocale: string,
   ) => {
     const accumulatedAnswers = []
 
@@ -277,7 +289,7 @@ const StepperFSM = ({ stepper, optionsFromNamespace }: StepperProps) => {
                 query: query,
               }}
             >
-              {activeLocale === 'en' ? 'Change' : 'Breyta'}
+              {n('changeSelection', 'Breyta')}
             </Link>
           </Box>
         </Box>
@@ -320,13 +332,16 @@ const StepperFSM = ({ stepper, optionsFromNamespace }: StepperProps) => {
                   answers: `${previousAnswers}${selectedOption.slug}`,
                 },
               })
-              .then(() => window.scrollTo(0, 0))
+              .then(() => {
+                if (scrollUpWhenNextStepAppears) window.scrollTo(0, 0)
+              })
 
             if (!transitionWorked) {
               setTransitionErrorMessage(
-                activeLocale === 'en'
-                  ? 'Sadly, the next step could not be loaded'
-                  : 'Því miður gekk ekki að hlaða niður næsta skrefi',
+                n(
+                  'couldNotLoadNextStep',
+                  'Því miður gekk ekki að hlaða niður næsta skrefi',
+                ),
               )
             } else {
               setTransitionErrorMessage('')
@@ -335,16 +350,17 @@ const StepperFSM = ({ stepper, optionsFromNamespace }: StepperProps) => {
             return newState
           })
         }}
+        size="small"
       >
-        {activeLocale === 'en' ? 'Continue' : 'Áfram'}
+        {n('continue', 'Áfram')}
       </Button>
     </Box>
   )
 
   const QuestionTitle = () => (
     <Box
-      marginTop={currentStep.stepType === STEP_TYPES.ANSWER ? 8 : 0}
       marginBottom={3}
+      marginTop={1}
       onClick={(ev) => {
         // If the user clicks four times in a row on the question title, we enable the helper if we're not in production
         if (ev.detail === 4) {
@@ -365,46 +381,51 @@ const StepperFSM = ({ stepper, optionsFromNamespace }: StepperProps) => {
       return stepOptions.map(function (option, i) {
         const key = `step-option-${i}`
         return (
-          <RadioButton
-            key={key}
-            name={key}
-            large={true}
-            hasError={
-              hasClickedContinueWithoutSelecting && selectedOption === null
-            }
-            label={option.label}
-            checked={option.slug === selectedOption?.slug}
-            onChange={() => setSelectedOption(option)}
-          />
+          <Box key={key} marginBottom={3}>
+            <RadioButton
+              name={key}
+              hasError={
+                hasClickedContinueWithoutSelecting && selectedOption === null
+              }
+              label={option.label}
+              checked={option.slug === selectedOption?.slug}
+              onChange={() => setSelectedOption(option)}
+            />
+          </Box>
         )
       })
 
     if (currentStepType === STEP_TYPES.QUESTION_DROPDOWN)
       return (
-        <Select
-          name="step-option-select"
-          noOptionsMessage={
-            activeLocale === 'en' ? 'No options' : 'Enginn valmöguleiki'
-          }
-          value={{
-            label: selectedOption?.label ?? '',
-            value: selectedOption?.slug ?? '',
-          }}
-          onChange={(option: ValueType<StepOptionSelectItem>) => {
-            const stepOptionSelectItem = option as StepOptionSelectItem
-            const newSelectedOption = {
-              label: stepOptionSelectItem.label,
-              slug: stepOptionSelectItem.value,
-              transition: stepOptionSelectItem.transition,
-            }
-            setSelectedOption(newSelectedOption)
-          }}
-          options={stepOptions.map((option) => ({
-            label: option.label,
-            value: option.slug,
-            transition: option.transition,
-          }))}
-        />
+        <GridContainer>
+          <GridRow>
+            <GridColumn span={['12/12', '12/12', '10/12', '8/12']}>
+              <Select
+                size="sm"
+                name="step-option-select"
+                noOptionsMessage={n('noOptions', 'Enginn valmöguleiki')}
+                value={{
+                  label: selectedOption?.label ?? '',
+                  value: selectedOption?.slug ?? '',
+                }}
+                onChange={(option: ValueType<StepOptionSelectItem>) => {
+                  const stepOptionSelectItem = option as StepOptionSelectItem
+                  const newSelectedOption = {
+                    label: stepOptionSelectItem.label,
+                    slug: stepOptionSelectItem.value,
+                    transition: stepOptionSelectItem.transition,
+                  }
+                  setSelectedOption(newSelectedOption)
+                }}
+                options={stepOptions.map((option) => ({
+                  label: option.label,
+                  value: option.slug,
+                  transition: option.transition,
+                }))}
+              />
+            </GridColumn>
+          </GridRow>
+        </GridContainer>
       )
   }
 
@@ -423,7 +444,7 @@ const StepperFSM = ({ stepper, optionsFromNamespace }: StepperProps) => {
       {!isOnFirstStep && (
         <Box marginTop={10}>
           <Text variant="h3" marginBottom={2}>
-            {activeLocale === 'en' ? 'Your answers' : 'Svörin þín'}
+            {n('yourAnswers', 'Svörin þín')}
           </Text>
           <Box marginBottom={3}>
             <Link
@@ -433,14 +454,13 @@ const StepperFSM = ({ stepper, optionsFromNamespace }: StepperProps) => {
               color="blue400"
               href={router.asPath.split('?')[0]}
             >
-              {activeLocale === 'en' ? 'Start again' : 'Byrja aftur'}
+              {n('startAgain', 'Byrja aftur')}
             </Link>
           </Box>
 
           {renderQuestionsAndAnswers(
             questionsAndAnswers,
             router.asPath.split('?')[0],
-            activeLocale,
           )}
         </Box>
       )}

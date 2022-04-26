@@ -12,9 +12,13 @@ import { UserLanguageSwitcher } from '@island.is/shared/components'
 import { useAuth } from '@island.is/auth/react'
 interface OnboardingHeaderProps {
   dropOnboarding: () => void
+  hideClose: boolean
 }
 
-export const OnboardingHeader = ({ dropOnboarding }: OnboardingHeaderProps) => {
+export const OnboardingHeader = ({
+  dropOnboarding,
+  hideClose,
+}: OnboardingHeaderProps) => {
   useNamespaces('sp.settings')
   const { formatMessage } = useLocale()
   const { userInfo: user } = useAuth()
@@ -40,26 +44,28 @@ export const OnboardingHeader = ({ dropOnboarding }: OnboardingHeaderProps) => {
           <Logo width={160} />
         </Hidden>
       </FocusableBox>
-      <Box display="flex" flexDirection="row" alignItems="center">
-        {user && <UserLanguageSwitcher user={user} />}
-        <Box
-          paddingLeft={5}
-          paddingRight={2}
-          onClick={dropOnboarding}
-          cursor="pointer"
-          type="button"
-          aria-label={closeWindow}
-        >
-          <Text variant="medium">{closeWindow}</Text>
+      {!hideClose && (
+        <Box display="flex" flexDirection="row" alignItems="center">
+          {user && <UserLanguageSwitcher user={user} />}
+          <Box
+            paddingLeft={5}
+            paddingRight={2}
+            onClick={dropOnboarding}
+            cursor="pointer"
+            type="button"
+            aria-label={closeWindow}
+          >
+            <Text variant="medium">{closeWindow}</Text>
+          </Box>
+          <Button
+            colorScheme="light"
+            circle
+            icon="close"
+            onClick={dropOnboarding}
+            aria-label={closeWindow}
+          ></Button>
         </Box>
-        <Button
-          colorScheme="light"
-          circle
-          icon="close"
-          onClick={dropOnboarding}
-          aria-label={closeWindow}
-        ></Button>
-      </Box>
+      )}
     </Box>
   )
 }

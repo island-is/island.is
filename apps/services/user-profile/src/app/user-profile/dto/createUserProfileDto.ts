@@ -43,11 +43,13 @@ export class CreateUserProfileDto {
   @IsOptional()
   @IsString()
   @IsEnum(DataStatus)
+  @ApiPropertyOptional()
   readonly emailStatus?: DataStatus
 
   @IsOptional()
   @IsString()
   @IsEnum(DataStatus)
+  @ApiPropertyOptional()
   readonly mobileStatus?: DataStatus
 
   @IsOptional()

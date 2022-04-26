@@ -147,7 +147,7 @@ export const mapPaginatedOperatingLicenses = (
 export function constructUploadDataObject(
   id: string,
   persons: Person[],
-  attachment: Attachment,
+  attachment: Attachment | undefined,
   extraData: { [key: string]: string },
   uploadDataName: string,
   uploadDataId?: string,
@@ -172,9 +172,14 @@ export function constructUploadDataObject(
             tegund: mapPersonEnum(p.type),
           }
         }),
-        attachments: [
-          { nafnSkraar: attachment.name, innihaldSkraar: attachment.content },
-        ],
+        attachments: attachment
+          ? [
+              {
+                nafnSkraar: attachment.name,
+                innihaldSkraar: attachment.content,
+              },
+            ]
+          : undefined,
         gagnaMengi: extraData ?? {},
       },
     },
@@ -190,6 +195,8 @@ function mapPersonEnum(e: PersonType) {
     case PersonType.Child:
       return AdiliTegund.NUMBER_2
     case PersonType.CriminalRecordApplicant:
+      return AdiliTegund.NUMBER_0
+    case PersonType.MortgageCertificateApplicant:
       return AdiliTegund.NUMBER_0
   }
 }

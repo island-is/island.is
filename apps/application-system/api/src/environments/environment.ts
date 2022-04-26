@@ -5,6 +5,7 @@ const devConfig = {
   environment: 'local',
   name: 'local',
   baseApiUrl: 'http://localhost:4444',
+  sentryDsn: '',
   redis: {
     urls: (
       process.env.REDIS_NODES ??
@@ -17,6 +18,7 @@ const devConfig = {
   auth: {
     issuer: 'https://identity-server.dev01.devland.is',
     audience: '@island.is',
+    allowClientNationalId: true,
   },
   templateApi: {
     clientLocationOrigin: 'http://localhost:4242/umsoknir',
@@ -123,6 +125,8 @@ const devConfig = {
 const prodConfig = {
   production: true,
   environment: process.env.ENVIRONMENT,
+  sentryDsn:
+    'https://22093678b2b24a0cad25111c1806a8d7@o406638.ingest.sentry.io/5530607',
   name: process.env.name,
   baseApiUrl: process.env.GRAPHQL_API_URL,
   redis: {

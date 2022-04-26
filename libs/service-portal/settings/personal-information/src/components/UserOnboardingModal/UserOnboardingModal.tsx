@@ -22,6 +22,7 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.settings')
   const [toggleCloseModal, setToggleCloseModal] = useState(false)
   const [canDropOverlay, setCanDropOverlay] = useState(false)
+  const [formLoading, setFormLoadingState] = useState(false)
   const { formatMessage } = useLocale()
 
   const { pathname } = useLocation()
@@ -42,11 +43,16 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
       hideOnClickOutside={false}
       initialVisibility={true}
       className={styles.dialog}
+      modalLabel="Onboarding"
+      preventBodyScroll={false}
     >
       <GridContainer>
         <GridRow marginBottom={4}>
           <GridColumn span="12/12">
-            <OnboardingHeader dropOnboarding={() => setCanDropOverlay(true)} />
+            <OnboardingHeader
+              hideClose={formLoading}
+              dropOnboarding={() => setCanDropOverlay(true)}
+            />
           </GridColumn>
         </GridRow>
         <GridRow>
@@ -57,6 +63,8 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
               onCloseOverlay={closeModal}
               onCloseDropModal={() => setCanDropOverlay(false)}
               canDrop={canDropOverlay}
+              setFormLoading={(val: boolean) => setFormLoadingState(val)}
+              showIntroTitle
             />
             <Columns>
               <Column width="9/12">
@@ -69,6 +77,7 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
                   <Button
                     icon="checkmark"
                     onClick={() => setCanDropOverlay(true)}
+                    loading={formLoading}
                   >
                     {formatMessage(m.continue)}
                   </Button>

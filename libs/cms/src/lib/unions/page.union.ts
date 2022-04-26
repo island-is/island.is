@@ -21,6 +21,7 @@ import {
   ISubArticle,
   IVidspyrnaFrontpage,
   IVidspyrnaPage,
+  IProjectPage,
 } from '../generated/contentfulTypes'
 import { ApolloError } from 'apollo-server-express'
 import { mapNews, News } from '../models/news.model'
@@ -29,6 +30,7 @@ import {
   mapArticleCategory,
 } from '../models/articleCategory.model'
 import { mapOrganizationSubpage, OrganizationSubpage } from '@island.is/cms'
+import { mapProjectPage, ProjectPage } from '../models/projectPage.model'
 
 export type PageTypes =
   | IArticle
@@ -40,6 +42,7 @@ export type PageTypes =
   | IArticleCategory
   | IOrganizationPage
   | IOrganizationSubpage
+  | IProjectPage
 
 export const PageUnion = createUnionType({
   name: 'Page',
@@ -53,6 +56,7 @@ export const PageUnion = createUnionType({
     ArticleCategory,
     OrganizationPage,
     OrganizationSubpage,
+    ProjectPage,
   ],
   resolveType: (document) => document.typename, // typename is appended to request on indexing
 })
@@ -86,6 +90,9 @@ export const mapPageUnion = (page: PageTypes): typeof PageUnion => {
     }
     case 'organizationSubpage': {
       return mapOrganizationSubpage(page as IOrganizationSubpage)
+    }
+    case 'projectPage': {
+      return mapProjectPage(page as IProjectPage)
     }
     default: {
       throw new ApolloError(`Can not map to page union: ${contentType}`)

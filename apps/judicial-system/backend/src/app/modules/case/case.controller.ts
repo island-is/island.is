@@ -24,7 +24,6 @@ import {
   DokobitError,
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
-import { IntegratedCourts } from '@island.is/judicial-system/consts'
 import { CaseState, CaseType, UserRole } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 import {
@@ -61,6 +60,7 @@ import { TransitionCaseDto } from './dto/transitionCase.dto'
 import { UpdateCaseDto } from './dto/updateCase.dto'
 import { Case } from './models/case.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
+import { ArchiveResponse } from './models/archive.response'
 import { transitionCase } from './state/case.state'
 import { CaseService } from './case.service'
 
@@ -132,6 +132,7 @@ export class CaseController {
   @ApiOkResponse({ type: Case, description: 'Updates an existing case' })
   async update(
     @Param('caseId') caseId: string,
+    @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @Body() caseToUpdate: UpdateCaseDto,
   ): Promise<Case | null> {
@@ -145,7 +146,7 @@ export class CaseController {
         theCase.creatingProsecutor?.institutionId,
       )
 
-      // If the case was created via xRoad, then there is no creating prosecutor
+      // If the case was created via xRoad, then there may not have been a creating prosecutor
       if (!theCase.creatingProsecutor) {
         caseToUpdate = {
           ...caseToUpdate,
@@ -176,14 +177,12 @@ export class CaseController {
     )) as Case
 
     if (
-      theCase.courtId &&
-      IntegratedCourts.includes(theCase.courtId) &&
-      Boolean(caseToUpdate.courtCaseNumber) &&
-      caseToUpdate.courtCaseNumber !== theCase.courtCaseNumber
+      updatedCase.courtCaseNumber &&
+      updatedCase.courtCaseNumber !== theCase.courtCaseNumber
     ) {
-      // TODO: Find a better place for this
-      // No need to wait for the upload
-      this.caseService.uploadRequestPdfToCourt(updatedCase)
+      // The court case number has changed, so the request must be uploaded to the new court case
+      // No need to wait
+      this.caseService.uploadRequestPdfToCourt(updatedCase, user)
     }
 
     return updatedCase
@@ -204,7 +203,7 @@ export class CaseController {
     @Param('caseId') caseId: string,
     @CurrentCase() theCase: Case,
     @Body() transition: TransitionCaseDto,
-  ): Promise<Case | null> {
+  ): Promise<Case> {
     this.logger.debug(`Transitioning case ${caseId}`)
 
     // Use theCase.modified when client is ready to send last modified timestamp with all updates
@@ -217,17 +216,18 @@ export class CaseController {
       update.parentCaseId = null
     }
 
-    const updatedCase = (await this.caseService.update(
+    const updatedCase = await this.caseService.update(
       caseId,
       update as UpdateCaseDto,
-    )) as Case
+      state !== CaseState.DELETED,
+    )
 
     this.eventService.postEvent(
       (transition.transition as unknown) as CaseEvent,
-      updatedCase,
+      updatedCase ?? theCase,
     )
 
-    return updatedCase
+    return updatedCase ?? theCase
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -337,7 +337,10 @@ export class CaseController {
       `Getting the custody notice for case ${caseId} as a pdf document`,
     )
 
-    if (theCase.type !== CaseType.CUSTODY) {
+    if (
+      theCase.type !== CaseType.CUSTODY &&
+      theCase.type !== CaseType.ADMISSION_TO_FACILITY
+    ) {
       throw new BadRequestException(
         `Cannot generate a custody notice for ${theCase.type} cases`,
       )
@@ -487,6 +490,7 @@ export class CaseController {
 
     return this.caseService.getRulingSignatureConfirmation(
       theCase,
+      user,
       documentToken,
     )
   }
@@ -525,10 +529,23 @@ export class CaseController {
   })
   async createCourtCase(
     @Param('caseId') caseId: string,
+    @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
   ): Promise<Case> {
     this.logger.debug(`Creating a court case for case ${caseId}`)
 
-    return this.caseService.createCourtCase(theCase)
+    return this.caseService.createCourtCase(theCase, user)
+  }
+
+  @UseGuards(TokenGuard)
+  @Post('internal/cases/archive')
+  @ApiOkResponse({
+    type: ArchiveResponse,
+    description: 'Archives a single case if any case is ready to be archived',
+  })
+  archive(): Promise<ArchiveResponse> {
+    this.logger.debug('Archiving a case')
+
+    return this.caseService.archive()
   }
 }

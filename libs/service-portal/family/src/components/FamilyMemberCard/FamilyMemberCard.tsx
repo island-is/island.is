@@ -1,5 +1,5 @@
 import { ActionCard, Box, Button, Text, Stack } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   formatNationalId,
   ServicePortalPath,
@@ -22,6 +22,7 @@ export const FamilyMemberCard: FC<Props> = ({
   currentUser,
   familyRelation,
 }) => {
+  useNamespaces('sp.family')
   const { formatMessage } = useLocale()
   const history = useHistory()
 
@@ -58,6 +59,7 @@ export const FamilyMemberCard: FC<Props> = ({
     <ActionCard
       avatar
       heading={title}
+      headingVariant="h4"
       text={
         nationalId &&
         `${formatMessage(m.natreg)}: ${formatNationalId(nationalId)}`
@@ -66,14 +68,14 @@ export const FamilyMemberCard: FC<Props> = ({
         familyRelation === undefined
           ? undefined
           : {
-              label: familyRelationLabel.defaultMessage,
+              label: formatMessage(familyRelationLabel),
               variant: 'purple',
             }
       }
       cta={{
         label: formatMessage({
           id: 'sp.family:see-info',
-          defaultMessage: 'Skoða upplýsingar',
+          defaultMessage: 'Skoða nánar',
         }),
         variant: 'text',
         onClick: () => handleClick(),

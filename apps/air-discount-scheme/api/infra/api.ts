@@ -33,7 +33,6 @@ export const serviceSetup = (services: {
       },
     })
     .secrets({
-      SENTRY_DSN: '/k8s/air-discount-scheme-api/SENTRY_DSN',
       AUTH_JWT_SECRET: '/k8s/air-discount-scheme/api/AUTH_JWT_SECRET',
       CONTENTFUL_ACCESS_TOKEN:
         '/k8s/air-discount-scheme/api/CONTENTFUL_ACCESS_TOKEN',
@@ -58,6 +57,10 @@ export const serviceSetup = (services: {
         paths: ['/api/graphql'],
         public: true,
       },
+    })
+    .resources({
+      limits: { cpu: '400m', memory: '512Mi' },
+      requests: { cpu: '200m', memory: '256Mi' },
     })
     .readiness('/liveness')
     .liveness('/liveness')

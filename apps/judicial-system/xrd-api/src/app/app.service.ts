@@ -9,7 +9,6 @@ import {
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import type { Case as TCase } from '@island.is/judicial-system/types'
 import {
   AuditedAction,
   AuditTrailService,
@@ -27,36 +26,36 @@ export class AppService {
   ) {}
 
   private async createCase(caseToCreate: CreateCaseDto): Promise<Case> {
-    const res = await fetch(`${environment.backend.url}/api/internal/case/`, {
+    return fetch(`${environment.backend.url}/api/internal/case/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         authorization: `Bearer ${environment.auth.secretToken}`,
       },
       body: JSON.stringify(caseToCreate),
-    }).catch((reason) => {
-      this.logger.error('Failed to create a new case', { reason })
-
-      throw new BadGatewayException('Failed to create a new case')
     })
+      .then(async (res) => {
+        const response = await res.json()
 
-    if (!res.ok) {
-      this.logger.info('Failed to create a new case', { res })
+        if (res.ok) {
+          return { id: response?.id }
+        }
 
-      if (res.status < 500) {
-        throw new BadRequestException('Failed to create a new case')
-      }
+        if (res.status < 500) {
+          throw new BadRequestException(response?.detail)
+        }
 
-      throw new BadGatewayException('Failed to create a new case')
-    }
-
-    return res
-      .json()
-      .then((newCase: TCase) => ({ id: newCase.id }))
+        throw response
+      })
       .catch((reason) => {
-        this.logger.error('Failed to create a new case', { reason })
+        if (reason instanceof BadRequestException) {
+          throw reason
+        }
 
-        throw new BadGatewayException('Failed to create a new case')
+        throw new BadGatewayException({
+          ...reason,
+          message: 'Failed to create a new case',
+        })
       })
   }
 

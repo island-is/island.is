@@ -11,6 +11,7 @@ export const searchQuery = (
     page = 1,
     types = [],
     tags = [],
+    contentfulTags = [],
     countTag = [],
     countTypes = false,
     countProcessEntry = false,
@@ -51,6 +52,14 @@ export const searchQuery = (
     tags.forEach((tag) => {
       must.push(tagQuery(tag))
     })
+  }
+
+  if (contentfulTags?.length) {
+    contentfulTags
+      .map((ct) => ({ key: ct, type: 'contentfultag' }))
+      .forEach((tag) => {
+        must.push(tagQuery(tag))
+      })
   }
 
   const aggregation = { aggs: {} }

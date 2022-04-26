@@ -1,13 +1,15 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import { Sequelize } from 'sequelize-typescript'
+import { Op } from 'sequelize'
+
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { Sequelize } from 'sequelize-typescript'
+
 import { Translation } from '../entities/models/translation.model'
 import { Language } from '../entities/models/language.model'
 import { TranslationDTO } from '../entities/dto/translation.dto'
 import { LanguageDTO } from '../entities/dto/language.dto'
-import { Op } from 'sequelize'
 
 @Injectable()
 export class TranslationService {
@@ -34,6 +36,7 @@ export class TranslationService {
     return this.translationModel.findAndCountAll({
       limit: count,
       offset: offset,
+      order: ['language', 'className', 'key', 'property'],
     })
   }
 
@@ -53,6 +56,7 @@ export class TranslationService {
       limit: count,
       offset: offset,
       distinct: true,
+      order: ['language', 'className', 'key', 'property'],
     })
   }
 
@@ -80,6 +84,7 @@ export class TranslationService {
       limit: count,
       offset: offset,
       distinct: true,
+      order: ['isoKey'],
     })
   }
 
@@ -189,5 +194,37 @@ export class TranslationService {
         property: translate.property,
       },
     })
+  }
+
+  /**
+   * Returns a map of translations for a given set of class instances.
+   */
+  async findTranslationMap(
+    className: string,
+    keys: string[],
+    language: string,
+  ): Promise<Map<string, Map<string, string>>> {
+    if (keys.length === 0) {
+      return new Map()
+    }
+
+    const translations = await this.translationModel.findAll({
+      where: {
+        language,
+        className,
+        key: keys,
+      },
+    })
+
+    return translations.reduce((acc, translation) => {
+      if (!acc.has(translation.key)) {
+        acc.set(translation.key, new Map())
+      }
+
+      if (translation.value) {
+        acc.get(translation.key).set(translation.property, translation.value)
+      }
+      return acc
+    }, new Map())
   }
 }

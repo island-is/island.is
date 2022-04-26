@@ -14,11 +14,11 @@ export enum Sections {
 }
 
 export enum ProsecutorSubsections {
-  CUSTODY_REQUEST_STEP_ONE = 0,
-  CUSTODY_REQUEST_STEP_TWO = 1,
-  CUSTODY_REQUEST_STEP_THREE = 2,
-  CUSTODY_REQUEST_STEP_FOUR = 3,
-  CUSTODY_REQUEST_STEP_FIVE = 4,
+  STEP_ONE = 0,
+  STEP_TWO = 1,
+  STEP_THREE = 2,
+  STEP_FOUR = 3,
+  STEP_FIVE = 4,
   PROSECUTOR_OVERVIEW = 5,
 }
 
@@ -26,10 +26,9 @@ export enum CourtSubsections {
   RECEPTION_AND_ASSIGNMENT = 0,
   JUDGE_OVERVIEW = 1,
   HEARING_ARRANGEMENTS = 2,
-  COURT_RECORD = 3,
-  RULING_STEP_ONE = 4,
-  RULING_STEP_TWO = 5,
-  CONFIRMATION = 6,
+  RULING = 3,
+  COURT_RECORD = 4,
+  CONFIRMATION = 5,
 }
 
 export type ReactSelectOption = { label: string; value: string | number }
@@ -193,4 +192,12 @@ export interface NationalRegistryResponseBusiness {
   items?: NationalRegistryBusiness[]
   meta?: NationalRegistryMeta
   error?: string
+}
+
+export interface Lawyer {
+  name: string
+  practice: string
+  email: string
+  phoneNr: string
+  nationalId: string
 }

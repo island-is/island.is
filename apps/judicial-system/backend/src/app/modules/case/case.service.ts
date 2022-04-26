@@ -1,3 +1,5 @@
+import { Op } from 'sequelize'
+import CryptoJS from 'crypto-js'
 import { Includeable, OrderItem, Transaction } from 'sequelize/types'
 import { Sequelize } from 'sequelize-typescript'
 import { Attachment } from 'nodemailer/lib/mailer'
@@ -11,6 +13,7 @@ import {
 } from '@nestjs/common'
 import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 
+import type { ConfigType } from '@island.is/nest/config'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { FormatMessage, IntlService } from '@island.is/cms-translations'
@@ -20,8 +23,9 @@ import {
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
 import { EmailService } from '@island.is/email-service'
-import { IntegratedCourts } from '@island.is/judicial-system/consts'
 import {
+  CaseOrigin,
+  CaseState,
   isRestrictionCase,
   SessionArrangements,
   UserRole,
@@ -29,6 +33,7 @@ import {
 import type { User as TUser } from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
+import { nowFactory, uuidFactory } from '../../factories'
 import {
   getRequestPdfAsBuffer,
   getRulingPdfAsString,
@@ -41,18 +46,76 @@ import {
   getCourtRecordPdfAsString,
 } from '../../formatters'
 import { courtUpload, notifications as m } from '../../messages'
-import { FileService } from '../file'
+import { CaseFile, FileService } from '../file'
 import { DefendantService, Defendant } from '../defendant'
 import { Institution } from '../institution'
 import { User, UserService } from '../user'
 import { AwsS3Service } from '../aws-s3'
 import { CourtService } from '../court'
+import { CaseEvent, EventService } from '../event'
 import { CreateCaseDto } from './dto/createCase.dto'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { UpdateCaseDto } from './dto/updateCase.dto'
-import { getCasesQueryFilter } from './filters/case.filters'
+import { getCasesQueryFilter, oldFilter } from './filters/case.filters'
 import { Case } from './models/case.model'
+import { CaseArchive } from './models/caseArchive.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
+import { ArchiveResponse } from './models/archive.response'
+import { caseModuleConfig } from './case.config'
+
+const caseEncryptionProperties: (keyof Case)[] = [
+  'description',
+  'demands',
+  'lawsBroken',
+  'legalBasis',
+  'requestedOtherRestrictions',
+  'caseFacts',
+  'legalArguments',
+  'prosecutorOnlySessionRequest',
+  'comments',
+  'caseFilesComments',
+  'courtAttendees',
+  'prosecutorDemands',
+  'courtDocuments',
+  'sessionBookings',
+  'courtCaseFacts',
+  'introduction',
+  'courtLegalArguments',
+  'ruling',
+  'conclusion',
+  'endOfSessionBookings',
+  'accusedAppealAnnouncement',
+  'prosecutorAppealAnnouncement',
+  'caseModifiedExplanation',
+  'caseResentExplanation',
+]
+
+const defendantEncryptionProperties: (keyof Defendant)[] = [
+  'nationalId',
+  'name',
+  'address',
+]
+
+const caseFileEncryptionProperties: (keyof CaseFile)[] = ['name', 'key']
+
+function collectEncryptionProperties(
+  properties: string[],
+  unknownSource: unknown,
+): [{ [key: string]: string | null }, { [key: string]: unknown }] {
+  const source = unknownSource as { [key: string]: unknown }
+  return properties.reduce<
+    [{ [key: string]: string | null }, { [key: string]: unknown }]
+  >(
+    (data, property) => [
+      {
+        ...data[0],
+        [property]: typeof source[property] === 'string' ? '' : null,
+      },
+      { ...data[1], [property]: source[property] },
+    ],
+    [{}, {}],
+  )
+}
 
 interface Recipient {
   name: string
@@ -103,6 +166,10 @@ export class CaseService {
   constructor(
     @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(Case) private readonly caseModel: typeof Case,
+    @InjectModel(CaseArchive)
+    private readonly caseArchiveModel: typeof CaseArchive,
+    @Inject(caseModuleConfig.KEY)
+    private readonly config: ConfigType<typeof caseModuleConfig>,
     private readonly defendantService: DefendantService,
     private readonly userService: UserService,
     private readonly fileService: FileService,
@@ -111,6 +178,7 @@ export class CaseService {
     private readonly signingService: SigningService,
     private readonly emailService: EmailService,
     private readonly intlService: IntlService,
+    private readonly eventService: EventService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -147,13 +215,14 @@ export class CaseService {
 
   private async uploadSignedRulingPdfToCourt(
     theCase: Case,
+    user: TUser,
     pdf: string,
   ): Promise<boolean> {
     this.logger.debug(
       `Uploading signed ruling pdf to court for case ${theCase.id}`,
     )
 
-    if (!environment.production) {
+    if (!this.config.production) {
       writeFile(`${theCase.id}-ruling-signed.pdf`, pdf)
     }
 
@@ -161,8 +230,10 @@ export class CaseService {
 
     try {
       await this.courtService.createRuling(
-        theCase.courtId,
-        theCase.courtCaseNumber,
+        user,
+        theCase.id,
+        theCase.courtId ?? '',
+        theCase.courtCaseNumber ?? '',
         this.formatMessage(courtUpload.ruling, {
           courtCaseNumber: theCase.courtCaseNumber,
         }),
@@ -182,21 +253,24 @@ export class CaseService {
 
   private async uploadCourtRecordPdfToCourt(
     theCase: Case,
+    user: TUser,
     pdf: string,
   ): Promise<boolean> {
     try {
       this.logger.debug(
         `Uploading court record pdf to court for case ${theCase.id}`,
       )
-      if (!environment.production) {
+      if (!this.config.production) {
         writeFile(`${theCase.id}-court-record.pdf`, pdf)
       }
 
       const buffer = Buffer.from(pdf, 'binary')
 
       await this.courtService.createCourtRecord(
-        theCase.courtId,
-        theCase.courtCaseNumber,
+        user,
+        theCase.id,
+        theCase.courtId ?? '',
+        theCase.courtCaseNumber ?? '',
         this.formatMessage(courtUpload.courtRecord, {
           courtCaseNumber: theCase.courtCaseNumber,
         }),
@@ -215,7 +289,7 @@ export class CaseService {
     }
   }
 
-  private async uploadCaseFilesPdfToCourt(theCase: Case) {
+  private async uploadCaseFilesPdfToCourt(theCase: Case, user: TUser) {
     try {
       theCase.caseFiles = await this.fileService.getAllCaseFiles(theCase.id)
 
@@ -226,15 +300,17 @@ export class CaseService {
 
         const caseFilesPdf = await getCasefilesPdfAsString(theCase)
 
-        if (!environment.production) {
+        if (!this.config.production) {
           writeFile(`${theCase.id}-case-files.pdf`, caseFilesPdf)
         }
 
         const buffer = Buffer.from(caseFilesPdf, 'binary')
 
         await this.courtService.createDocument(
-          theCase.courtId,
-          theCase.courtCaseNumber,
+          user,
+          theCase.id,
+          theCase.courtId ?? '',
+          theCase.courtCaseNumber ?? '',
           'Rannsóknargögn',
           'Rannsóknargögn.pdf',
           'application/pdf',
@@ -309,7 +385,7 @@ export class CaseService {
 
   private sendEmailToCourt(
     theCase: Case,
-    rulingUploadedToCourt: boolean,
+    rulingUploadedToS3: boolean,
     rulingAttachment: { filename: string; content: string; encoding: string },
   ) {
     const recipients = [
@@ -333,7 +409,7 @@ export class CaseService {
         linkEnd: '</a>',
       }),
       theCase.courtCaseNumber,
-      rulingUploadedToCourt ? undefined : [rulingAttachment],
+      rulingUploadedToS3 ? undefined : [rulingAttachment],
     )
   }
 
@@ -371,6 +447,7 @@ export class CaseService {
 
   private async sendRulingAsSignedPdf(
     theCase: Case,
+    user: TUser,
     signedRulingPdf: string,
   ): Promise<void> {
     let rulingUploadedToS3 = false
@@ -385,23 +462,20 @@ export class CaseService {
 
     let courtRecordPdf = undefined
 
-    if (
-      theCase.courtId &&
-      theCase.courtCaseNumber &&
-      IntegratedCourts.includes(theCase.courtId)
-    ) {
+    if (theCase.courtId && theCase.courtCaseNumber) {
       uploadPromises.push(
-        this.uploadSignedRulingPdfToCourt(theCase, signedRulingPdf).then(
+        this.uploadSignedRulingPdfToCourt(theCase, user, signedRulingPdf).then(
           (res) => {
             rulingUploadedToCourt = res
           },
         ),
-        this.uploadCaseFilesPdfToCourt(theCase),
+        this.uploadCaseFilesPdfToCourt(theCase, user),
         getCourtRecordPdfAsString(theCase, this.formatMessage)
           .then((pdf) => {
             courtRecordPdf = pdf
             return this.uploadCourtRecordPdfToCourt(
               theCase,
+              user,
               courtRecordPdf,
             ).then((res) => {
               courtRecordUploadedToCourt = res
@@ -433,7 +507,7 @@ export class CaseService {
 
     if (!rulingUploadedToCourt || !courtRecordUploadedToCourt) {
       emailPromises.push(
-        this.sendEmailToCourt(theCase, rulingUploadedToCourt, rulingAttachment),
+        this.sendEmailToCourt(theCase, rulingUploadedToS3, rulingAttachment),
       )
     }
 
@@ -441,9 +515,8 @@ export class CaseService {
       theCase.defenderEmail &&
       (isRestrictionCase(theCase.type) ||
         theCase.sessionArrangements === SessionArrangements.ALL_PRESENT ||
-        (theCase.sessionArrangements ===
-          SessionArrangements.ALL_PRESENT_SPOKESPERSON &&
-          theCase.defenderIsSpokesperson))
+        theCase.sessionArrangements ===
+          SessionArrangements.ALL_PRESENT_SPOKESPERSON)
     ) {
       emailPromises.push(
         this.sendEmailToDefender(courtRecordPdf, theCase, rulingAttachment),
@@ -480,7 +553,11 @@ export class CaseService {
     const theCase = await this.caseModel.findOne({
       include: includes,
       order: [defendantsOrder],
-      where: { id: caseId },
+      where: {
+        id: caseId,
+        state: { [Op.not]: CaseState.DELETED },
+        isArchived: false,
+      },
     })
 
     if (!theCase) {
@@ -538,7 +615,10 @@ export class CaseService {
     return this.sequelize
       .transaction(async (transaction) => {
         const caseId = await this.createCase(
-          caseToCreate,
+          {
+            ...caseToCreate,
+            origin: CaseOrigin.LOKE,
+          } as InternalCreateCaseDto,
           prosecutorId,
           transaction,
         )
@@ -566,7 +646,7 @@ export class CaseService {
     return this.sequelize
       .transaction(async (transaction) => {
         const caseId = await this.createCase(
-          caseToCreate,
+          { ...caseToCreate, origin: CaseOrigin.RVG } as CreateCaseDto,
           prosecutorId,
           transaction,
         )
@@ -582,10 +662,18 @@ export class CaseService {
     caseId: string,
     update: UpdateCaseDto,
     returnUpdatedCase = true,
+    transaction?: Transaction,
   ): Promise<Case | undefined> {
-    const [numberOfAffectedRows] = await this.caseModel.update(update, {
-      where: { id: caseId },
-    })
+    const promisedUpdate = transaction
+      ? this.caseModel.update(update, {
+          where: { id: caseId },
+          transaction,
+        })
+      : this.caseModel.update(update, {
+          where: { id: caseId },
+        })
+
+    const [numberOfAffectedRows] = await promisedUpdate
 
     if (numberOfAffectedRows > 1) {
       // Tolerate failure, but log error
@@ -652,7 +740,7 @@ export class CaseService {
     user: TUser,
   ): Promise<SigningServiceResponse> {
     // Development without signing service access token
-    if (!environment.production && !environment.signingOptions.accessToken) {
+    if (!this.config.production && !environment.signingOptions.accessToken) {
       return { controlCode: '0000', documentToken: 'DEVELOPMENT' }
     }
 
@@ -678,7 +766,7 @@ export class CaseService {
     // This method should be called immediately after requestCourtRecordSignature
 
     // Production, or development with signing service access token
-    if (environment.production || environment.signingOptions.accessToken) {
+    if (this.config.production || environment.signingOptions.accessToken) {
       try {
         const courtRecordPdf = await this.signingService.getSignedDocument(
           'courtRecord.pdf',
@@ -712,7 +800,7 @@ export class CaseService {
       theCase.id,
       {
         courtRecordSignatoryId: user.id,
-        courtRecordSignatureDate: new Date(),
+        courtRecordSignatureDate: nowFactory(),
       } as UpdateCaseDto,
       false,
     )
@@ -722,7 +810,7 @@ export class CaseService {
 
   async requestRulingSignature(theCase: Case): Promise<SigningServiceResponse> {
     // Development without signing service access token
-    if (!environment.production && !environment.signingOptions.accessToken) {
+    if (!this.config.production && !environment.signingOptions.accessToken) {
       return { controlCode: '0000', documentToken: 'DEVELOPMENT' }
     }
 
@@ -742,12 +830,13 @@ export class CaseService {
 
   async getRulingSignatureConfirmation(
     theCase: Case,
+    user: TUser,
     documentToken: string,
   ): Promise<SignatureConfirmationResponse> {
     // This method should be called immediately after requestRulingSignature
 
     // Production, or development with signing service access token
-    if (environment.production || environment.signingOptions.accessToken) {
+    if (this.config.production || environment.signingOptions.accessToken) {
       try {
         const signedPdf = await this.signingService.getSignedDocument(
           'ruling.pdf',
@@ -756,7 +845,7 @@ export class CaseService {
 
         await this.refreshFormatMessage()
 
-        await this.sendRulingAsSignedPdf(theCase, signedPdf)
+        await this.sendRulingAsSignedPdf(theCase, user, signedPdf)
       } catch (error) {
         if (error instanceof DokobitError) {
           return {
@@ -774,7 +863,7 @@ export class CaseService {
     await this.update(
       theCase.id,
       {
-        rulingDate: new Date(),
+        rulingDate: nowFactory(),
       } as UpdateCaseDto,
       false,
     )
@@ -789,10 +878,12 @@ export class CaseService {
       .transaction(async (transaction) => {
         const caseId = await this.createCase(
           {
+            origin: theCase.origin,
             type: theCase.type,
             description: theCase.description,
             policeCaseNumber: theCase.policeCaseNumber,
             defenderName: theCase.defenderName,
+            defenderNationalId: theCase.defenderNationalId,
             defenderEmail: theCase.defenderEmail,
             defenderPhoneNumber: theCase.defenderPhoneNumber,
             leadInvestigator: theCase.leadInvestigator,
@@ -819,10 +910,12 @@ export class CaseService {
               this.defendantService.create(
                 caseId,
                 {
+                  noNationalId: defendant.noNationalId,
                   nationalId: defendant.nationalId,
                   name: defendant.name,
                   gender: defendant.gender,
                   address: defendant.address,
+                  citizenship: defendant.citizenship,
                 },
                 transaction,
               ),
@@ -835,17 +928,18 @@ export class CaseService {
       .then((caseId) => this.findById(caseId))
   }
 
-  async uploadRequestPdfToCourt(theCase: Case): Promise<void> {
-    this.logger.debug(`Uploading request pdf to court for case ${theCase.id}`)
-
-    await this.refreshFormatMessage()
-
-    const pdf = await getRequestPdfAsBuffer(theCase, this.formatMessage)
-
+  async uploadRequestPdfToCourt(theCase: Case, user: TUser): Promise<void> {
     try {
+      await this.refreshFormatMessage()
+
+      const pdf = await getRequestPdfAsBuffer(theCase, this.formatMessage)
+
       await this.courtService.createRequest(
-        theCase.courtId,
-        theCase.courtCaseNumber,
+        user,
+        theCase.id,
+        theCase.courtId ?? '',
+        theCase.courtCaseNumber ?? '',
+        `Krafa ${theCase.policeCaseNumber}`,
         pdf,
       )
     } catch (error) {
@@ -857,14 +951,112 @@ export class CaseService {
     }
   }
 
-  async createCourtCase(theCase: Case): Promise<Case> {
+  async createCourtCase(theCase: Case, user: TUser): Promise<Case> {
     const courtCaseNumber = await this.courtService.createCourtCase(
+      user,
+      theCase.id,
       theCase.courtId ?? '',
       theCase.type,
       theCase.policeCaseNumber,
       Boolean(theCase.parentCaseId),
     )
 
-    return this.update(theCase.id, { courtCaseNumber }, true) as Promise<Case>
+    const updatedCase = (await this.update(
+      theCase.id,
+      { courtCaseNumber },
+      true,
+    )) as Case
+
+    // No need to wait
+    this.uploadRequestPdfToCourt(updatedCase, user)
+
+    return updatedCase
+  }
+
+  async archive(): Promise<ArchiveResponse> {
+    const theCase = await this.caseModel.findOne({
+      include: [...includes, { model: CaseFile, as: 'caseFiles' }],
+      order: [
+        defendantsOrder,
+        [{ model: CaseFile, as: 'caseFiles' }, 'created', 'ASC'],
+      ],
+      where: {
+        isArchived: false,
+        [Op.or]: [{ state: CaseState.DELETED }, oldFilter],
+      },
+    })
+
+    if (!theCase) {
+      return { caseArchived: false }
+    }
+
+    await this.sequelize.transaction(async (transaction) => {
+      const [clearedCaseProperties, caseArchive] = collectEncryptionProperties(
+        caseEncryptionProperties,
+        theCase,
+      )
+
+      const defendantsArchive = []
+      for (const defendant of theCase.defendants ?? []) {
+        const [
+          clearedDefendantProperties,
+          defendantArchive,
+        ] = collectEncryptionProperties(
+          defendantEncryptionProperties,
+          defendant,
+        )
+        defendantsArchive.push(defendantArchive)
+
+        await this.defendantService.update(
+          theCase.id,
+          defendant.id,
+          clearedDefendantProperties,
+          transaction,
+        )
+      }
+
+      const caseFilesArchive = []
+      for (const caseFile of theCase.caseFiles ?? []) {
+        const [
+          clearedCaseFileProperties,
+          caseFileArchive,
+        ] = collectEncryptionProperties(caseFileEncryptionProperties, caseFile)
+        caseFilesArchive.push(caseFileArchive)
+
+        await this.fileService.updateCaseFile(
+          theCase.id,
+          caseFile.id,
+          clearedCaseFileProperties,
+          transaction,
+        )
+      }
+
+      await this.caseArchiveModel.create(
+        {
+          caseId: theCase.id,
+          archive: CryptoJS.AES.encrypt(
+            JSON.stringify({
+              ...caseArchive,
+              defendants: defendantsArchive,
+              caseFiles: caseFilesArchive,
+            }),
+            this.config.archiveEncryptionKey,
+            { iv: CryptoJS.enc.Hex.parse(uuidFactory()) },
+          ).toString(),
+        },
+        { transaction },
+      )
+
+      await this.update(
+        theCase.id,
+        { ...clearedCaseProperties, isArchived: true } as UpdateCaseDto,
+        false,
+        transaction,
+      )
+    })
+
+    this.eventService.postEvent(CaseEvent.ARCHIVE, theCase)
+
+    return { caseArchived: true }
   }
 }

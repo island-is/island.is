@@ -17,7 +17,7 @@ describe('CaseController - Get request pdf guards', () => {
     )
   })
 
-  it('should have five guards', () => {
+  it('should have four guards', () => {
     expect(guards).toHaveLength(4)
   })
 

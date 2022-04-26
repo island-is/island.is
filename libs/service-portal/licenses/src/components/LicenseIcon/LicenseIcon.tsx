@@ -1,7 +1,4 @@
 import React from 'react'
-import cn from 'classnames'
-
-import * as styles from './LicenseIcon.css'
 
 interface LogoSvgProps {
   category: string
@@ -9,7 +6,10 @@ interface LogoSvgProps {
 
 const LicenseIcon = ({ category }: LogoSvgProps) => {
   return (
-    <img src={`./assets/icons/${category}.svg`} alt="driving-license-icon" />
+    <img
+      src={`./assets/icons/${category}.svg`}
+      alt={`driving-license-icon-${category}`}
+    />
   )
 }
 

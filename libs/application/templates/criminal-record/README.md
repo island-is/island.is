@@ -2,7 +2,7 @@
 
 # Criminal Record Application
 
-This library was generated with [Nx](https://nx.dev).
+This library was generated with [Nx](https://nx.dev). (yarn generate @nrwl/node:lib application/templates/criminal-record)
 
 ## Setup
 
@@ -68,4 +68,4 @@ Run `nx test application-templates-criminal-record` to execute the unit tests vi
 
 - [Unnur Sól - @unnursol](https://github.com/unnursolingimars)
 - [Jón Bjarni]()
-- [Jóhanna Agnes]()
+- [Jóhanna Agnes - @johannaagma](https://github.com/johannaagma)

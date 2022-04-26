@@ -116,14 +116,22 @@ export class CreateApplicationInput implements CreateApplication {
   readonly streetName?: string
 
   @Allow()
-  @Field({ nullable: true })
-  readonly municipalityCode?: string
+  @Field()
+  readonly municipalityCode!: string
 
   @Allow()
   @Field({ nullable: true })
   readonly postalCode?: string
 
   @Allow()
+  @Field({ nullable: true })
+  readonly hasFetchedDirectTaxPayment!: boolean
+
+  @Allow()
   @Field(() => [DirectTaxPaymentInput])
   readonly directTaxPayments!: DirectTaxPaymentInput[]
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly applicationSystemId?: string
 }

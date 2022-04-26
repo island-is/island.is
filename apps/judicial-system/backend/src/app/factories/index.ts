@@ -1,1 +1,2 @@
-export { DATE_FACTORY, today } from './date.factory'
+export { nowFactory } from './date.factory'
+export { uuidFactory } from './uuid.factory'

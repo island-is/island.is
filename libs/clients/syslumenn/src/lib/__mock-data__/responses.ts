@@ -122,3 +122,7 @@ export const VEDBANDAYFIRLRIT_REGLUVERKI_RESPONSE: Array<VedbandayfirlitReguverk
 export const REAL_ESTATE_ADDRESS: Array<RealEstateAddress> = [{
   address: 'Hvergiland',
 }]
+export const MORTGAGE_CERTIFICATE_CONTENT_OK = 'c29tZWNvbnRlbnQ='
+export const MORTGAGE_CERTIFICATE_CONTENT_NO_KMARKING = 'Precondition Required'
+export const MORTGAGE_CERTIFICATE_MESSAGE_NO_KMARKING =
+  'Ekki hægt að afgreiða vedbokarvottord'

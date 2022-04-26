@@ -24,7 +24,7 @@ import {
   ServicePortalPath,
   m,
 } from '@island.is/service-portal/core'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 
 import { AuthDelegationsQuery } from '../AccessControl'
 import * as styles from './GrantAccess.css'
@@ -51,10 +51,12 @@ const IdentityQuery = gql`
 `
 
 function GrantAccess() {
+  useNamespaces('sp.settings-access-control')
+
   const noUserFoundToast = () => {
     toast.error(
       formatMessage({
-        id: 'service.portal.settings.accessControl:grant-identity-error',
+        id: 'sp.settings-access-control:grant-identity-error',
         defaultMessage: 'Enginn notandi fannst með þessa kennitölu.',
       }),
     )
@@ -121,7 +123,7 @@ function GrantAccess() {
     } catch (error) {
       toast.error(
         formatMessage({
-          id: 'service.portal.settings.accessControl:grant-create-error',
+          id: 'sp.settings-access-control:grant-create-error',
           defaultMessage:
             'Eitthvað fór úrskeiðis!\nEkki tókst að búa til aðgang fyrir þennan notanda.',
         }),
@@ -137,9 +139,12 @@ function GrantAccess() {
   return (
     <Box>
       <IntroHeader
-        title={m.accessControlGrant}
+        title={defineMessage({
+          id: 'sp.settings-access-control:grant-intro-title',
+          defaultMessage: 'Veita aðgang',
+        })}
         intro={defineMessage({
-          id: 'service.portal.settings.accessControl:grant-intro',
+          id: 'sp.settings-access-control:grant-intro',
           defaultMessage:
             'Hér getur þú gefið öðrum aðgang til að sýsla með þín gögn hjá island.is',
         })}
@@ -150,12 +155,12 @@ function GrantAccess() {
           <GridColumn paddingBottom={2} span="12/12">
             <Text variant="h5" as="span">
               {formatMessage({
-                id: 'service.portal.settings.accessControl:grant-form-label',
+                id: 'sp.settings-access-control:grant-form-label',
                 defaultMessage: 'Sláðu inn upplýsingar aðgangshafa',
               })}
             </Text>
           </GridColumn>
-          <GridColumn span={['12/12', '12/12', '8/12']}>
+          <GridColumn span={['12/12', '12/12', '6/12']}>
             <div className={styles.inputWrapper}>
               {name && (
                 <Input
@@ -163,8 +168,7 @@ function GrantAccess() {
                   value={name}
                   aria-live="assertive"
                   label={formatMessage({
-                    id:
-                      'service.portal.settings.accessControl:grant-form-access-holder',
+                    id: 'sp.settings-access-control:grant-form-access-holder',
                     defaultMessage: 'Aðgangshafi',
                   })}
                   disabled
@@ -186,8 +190,7 @@ function GrantAccess() {
                       required: {
                         value: true,
                         message: formatMessage({
-                          id:
-                            'service.portal.settings.accessControl:grant-required-ssn',
+                          id: 'sp.settings-access-control:grant-required-ssn',
                           defaultMessage: 'Skylda er að fylla út kennitölu',
                         }),
                       },
@@ -199,7 +202,7 @@ function GrantAccess() {
                           ) {
                             return formatMessage({
                               id:
-                                'service.portal.settings.accessControl:grant-invalid-ssn',
+                                'sp.settings-access-control:grant-invalid-ssn',
                               defaultMessage:
                                 'Kennitalan er ekki gild kennitala',
                             })
@@ -211,7 +214,7 @@ function GrantAccess() {
                   type="tel"
                   format="######-####"
                   label={formatMessage(sharedMessages.nationalId)}
-                  placeholder={formatMessage(sharedMessages.nationalId)}
+                  placeholder={'000000-0000'}
                   error={errors.toNationalId?.message}
                   onChange={(value) => {
                     requestDelegation(value)
@@ -237,7 +240,7 @@ function GrantAccess() {
               ) : null}
             </div>
           </GridColumn>
-          <GridColumn span={['12/12', '12/12', '4/12']}>
+          <GridColumn span={['12/12', '12/12', '2/12']}>
             <Button
               size="large"
               fluid
@@ -247,7 +250,7 @@ function GrantAccess() {
               loading={loading}
             >
               {formatMessage({
-                id: 'service.portal.settings.accessControl:grant-form-submit',
+                id: 'sp.settings-access-control:grant-form-submit',
                 defaultMessage: 'Áfram',
               })}
             </Button>

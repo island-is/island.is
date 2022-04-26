@@ -1,14 +1,15 @@
 import { ZodError } from 'zod'
+
 import { ServerSideFeatureClient } from '@island.is/feature-flags'
 import { logger } from '@island.is/logging'
 
-import { ConfigDefinition, Configuration, EnvLoader } from './types'
-import { InvalidConfiguration } from './InvalidConfiguration'
 import {
   ConfigurationError,
   ConfigurationValidationError,
 } from './ConfigurationError'
+import { InvalidConfiguration } from './InvalidConfiguration'
 import { Issues, IssueType } from './Issues'
+import { ConfigDefinition, Configuration, EnvLoader } from './types'
 
 export class ConfigurationLoader<T> implements EnvLoader {
   private allowDevFallback = process.env.NODE_ENV !== 'production'
@@ -37,7 +38,7 @@ export class ConfigurationLoader<T> implements EnvLoader {
       return this.handleResult(result)
     } catch (err) {
       // Loader crashed. If there are reported issues, throw those instead.
-      return this.handleResult(undefined, err)
+      return this.handleResult(undefined, err as Error)
     }
   }
 
@@ -45,6 +46,12 @@ export class ConfigurationLoader<T> implements EnvLoader {
     // Always throw if there are any parse issues.
     if (this.issues.hasParseIssue) {
       throw new ConfigurationError(this.formatConfigurationError())
+    }
+
+    if (this.issues.hasMissingIssue && this.definition.optional) {
+      return new InvalidConfiguration(
+        this.formatConfigurationError(),
+      ) as Configuration<T>
     }
 
     // Only throw missing issue in production

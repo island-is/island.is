@@ -11,10 +11,15 @@ import { AccidentNotificationModule } from './accident-notification/accident-not
 import { PublicDebtPaymentPlanTemplateModule } from './public-debt-payment-plan/public-debt-payment-plan.module'
 import { GeneralPetitionModule } from './general-petition/general-petition.module'
 import { CriminalRecordSubmissionModule } from './criminal-record-submission/criminal-record-submission.module'
+import { GeneralFishingLicenseModule } from './general-fishing-license/general-fishing-license.module'
 import { DataProtectionComplaintModule } from './data-protection-complaint/data-protection-complaint.module'
 import { PSignSubmissionModule } from './p-sign-submission/p-sign-submission.module'
 import { AnnouncementOfDeathModule } from './announcement-of-death/announcement-of-death.module'
 import { ExamplePaymentActionsModule } from './example-payment-actions/examplePaymentActions.module'
+import { ComplaintsToAlthingiOmbudsmanTemplateModule } from './complaints-to-althingi-ombudsman/complaints-to-althingi-ombudsman.module'
+import { MortgageCertificateSubmissionModule } from './mortgage-certificate-submission/mortgage-certificate-submission.module'
+import { FinancialAidModule } from './financial-aid/financial-aid.module'
+import { DrivingSchoolConfirmationModule } from './driving-school-confirmation/driving-school-confirmation.module'
 
 export const modules = [
   ReferenceTemplateModule,
@@ -30,10 +35,15 @@ export const modules = [
   PublicDebtPaymentPlanTemplateModule,
   GeneralPetitionModule,
   CriminalRecordSubmissionModule,
+  GeneralFishingLicenseModule,
   DataProtectionComplaintModule,
   PSignSubmissionModule,
   AnnouncementOfDeathModule,
   ExamplePaymentActionsModule,
+  ComplaintsToAlthingiOmbudsmanTemplateModule,
+  MortgageCertificateSubmissionModule,
+  FinancialAidModule,
+  DrivingSchoolConfirmationModule,
 ]
 
 export { ReferenceTemplateService } from './reference-template/reference-template.service'
@@ -49,7 +59,12 @@ export { AccidentNotificationService } from './accident-notification/accident-no
 export { PublicDebtPaymentPlanTemplateService } from './public-debt-payment-plan/public-debt-payment-plan.service'
 export { GeneralPetitionService } from './general-petition/general-petition.service'
 export { CriminalRecordSubmissionService } from './criminal-record-submission/criminal-record-submission.service'
+export { GeneralFishingLicenseService } from './general-fishing-license/general-fishing-license.service'
 export { DataProtectionComplaintService } from './data-protection-complaint/data-protection-complaint.service'
 export { PSignSubmissionService } from './p-sign-submission/p-sign-submission.service'
 export { AnnouncementOfDeathService } from './announcement-of-death/announcement-of-death.service'
 export { ExamplePaymentActionsService } from './example-payment-actions/examplePaymentActions.service'
+export { ComplaintsToAlthingiOmbudsmanTemplateService } from './complaints-to-althingi-ombudsman/complaints-to-althingi-ombudsman.service'
+export { MortgageCertificateSubmissionService } from './mortgage-certificate-submission/mortgage-certificate-submission.service'
+export { FinancialAidService } from './financial-aid/financial-aid.service'
+export { DrivingSchoolConfirmationService } from './driving-school-confirmation/driving-school-confirmation.service'

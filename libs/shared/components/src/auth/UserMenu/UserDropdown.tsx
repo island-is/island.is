@@ -66,6 +66,7 @@ export const UserDropdown = ({
 
   const { data, error, loading } = useActorDelegationsQuery({
     skip: !showDelegations,
+    errorPolicy: 'all', // Return partial data, ignoring failed national registry lookups.
   })
   const hasDelegationsData = data && data.authActorDelegations?.length > 0
   const [isMobile, setIsMobile] = useState(false)

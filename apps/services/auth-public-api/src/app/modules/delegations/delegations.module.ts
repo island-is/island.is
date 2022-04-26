@@ -11,6 +11,15 @@ import {
   ApiScopeUser,
   ApiScopeUserAccess,
   ApiScopeUserClaim,
+  Client,
+  ClientAllowedCorsOrigin,
+  ClientAllowedScope,
+  ClientClaim,
+  ClientGrantType,
+  ClientIdpRestrictions,
+  ClientPostLogoutRedirectUri,
+  ClientRedirectUri,
+  ClientSecret,
   Delegation,
   DELEGATIONS_AUTH_CONFIG,
   DelegationScope,
@@ -20,7 +29,16 @@ import {
   IdentityResource,
   IdentityResourceUserClaim,
   ResourcesService,
+  TranslationModule,
 } from '@island.is/auth-api-lib'
+import {
+  PersonalRepresentative,
+  PersonalRepresentativeRight,
+  PersonalRepresentativeRightType,
+  PersonalRepresentativeScopePermission,
+  PersonalRepresentativeService,
+  PersonalRepresentativeType,
+} from '@island.is/auth-api-lib/personal-representative'
 import { AuthConfig } from '@island.is/auth-nest-tools'
 import { NationalRegistryClientModule } from '@island.is/clients/national-registry-v2'
 import { RskProcuringClientModule } from '@island.is/clients/rsk/procuring'
@@ -30,14 +48,6 @@ import { ProblemModule } from '@island.is/nest/problem'
 import { environment } from '../../../environments'
 import { ActorDelegationsController } from './actorDelegations.controller'
 import { MeDelegationsController } from './meDelegations.controller'
-import {
-  PersonalRepresentative,
-  PersonalRepresentativeRight,
-  PersonalRepresentativeRightType,
-  PersonalRepresentativeScopePermission,
-  PersonalRepresentativeService,
-  PersonalRepresentativeType,
-} from '@island.is/auth-api-lib/personal-representative'
 
 const delegationAuthConfig: AuthConfig = environment.auth
 
@@ -55,6 +65,15 @@ const delegationAuthConfig: AuthConfig = environment.auth
       ApiScopeUserAccess,
       ApiScopeUser,
       ApiScopeGroup,
+      Client,
+      ClientAllowedCorsOrigin,
+      ClientAllowedScope,
+      ClientClaim,
+      ClientGrantType,
+      ClientIdpRestrictions,
+      ClientPostLogoutRedirectUri,
+      ClientRedirectUri,
+      ClientSecret,
       Domain,
       Delegation,
       DelegationScope,
@@ -68,6 +87,7 @@ const delegationAuthConfig: AuthConfig = environment.auth
     NationalRegistryClientModule,
     FeatureFlagModule,
     ProblemModule,
+    TranslationModule,
   ],
   controllers: [ActorDelegationsController, MeDelegationsController],
   providers: [

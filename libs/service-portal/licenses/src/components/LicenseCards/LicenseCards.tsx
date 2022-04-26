@@ -1,5 +1,4 @@
 import React, { FC } from 'react'
-import { useNamespaces } from '@island.is/localization'
 import { GridColumn, GridRow, Stack } from '@island.is/island-ui/core'
 import { DrivingLicense } from '../DrivingLicense/DrivingLicense'
 import { DrivingLicenseType } from '@island.is/service-portal/core'
@@ -8,8 +7,6 @@ interface Props {
 }
 
 const LicenseCards: FC<Props> = ({ data }) => {
-  useNamespaces('sp.driving-license')
-
   return (
     <GridRow>
       <GridColumn span="12/12">

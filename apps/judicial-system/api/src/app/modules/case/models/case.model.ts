@@ -1,3 +1,5 @@
+import { GraphQLJSONObject } from 'graphql-type-json'
+
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 
 import type {
@@ -9,6 +11,8 @@ import type {
   CaseState,
   CaseType,
   SessionArrangements,
+  CourtDocument,
+  CaseOrigin,
 } from '@island.is/judicial-system/types'
 
 import { Defendant } from '../../defendant'
@@ -29,6 +33,9 @@ export class Case implements TCase {
   readonly modified!: string
 
   @Field(() => String)
+  readonly origin!: CaseOrigin
+
+  @Field(() => String)
   readonly type!: CaseType
 
   @Field({ nullable: true })
@@ -47,6 +54,9 @@ export class Case implements TCase {
   readonly defenderName?: string
 
   @Field({ nullable: true })
+  readonly defenderNationalId?: string
+
+  @Field({ nullable: true })
   readonly defenderEmail?: string
 
   @Field({ nullable: true })
@@ -54,9 +64,6 @@ export class Case implements TCase {
 
   @Field({ nullable: true })
   readonly sendRequestToDefender?: boolean
-
-  @Field({ nullable: true })
-  readonly defenderIsSpokesperson?: boolean
 
   @Field({ nullable: true })
   isHeightenedSecurityLevel?: boolean
@@ -154,14 +161,17 @@ export class Case implements TCase {
   @Field({ nullable: true })
   readonly prosecutorDemands?: string
 
-  @Field(() => [String], { nullable: true })
-  readonly courtDocuments?: string[]
+  @Field(() => [GraphQLJSONObject], { nullable: true })
+  readonly courtDocuments?: CourtDocument[]
 
   @Field({ nullable: true })
   readonly sessionBookings?: string
 
   @Field({ nullable: true })
   readonly courtCaseFacts?: string
+
+  @Field({ nullable: true })
+  readonly introduction?: string
 
   @Field({ nullable: true })
   readonly courtLegalArguments?: string
@@ -246,4 +256,7 @@ export class Case implements TCase {
 
   @Field({ nullable: true })
   readonly caseModifiedExplanation?: string
+
+  @Field({ nullable: true })
+  readonly caseResentExplanation?: string
 }

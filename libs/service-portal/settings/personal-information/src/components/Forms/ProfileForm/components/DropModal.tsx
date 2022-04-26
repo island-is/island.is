@@ -15,9 +15,10 @@ interface Props {
   onClose: () => void
   onDrop: () => void
   type: 'tel' | 'mail' | 'all'
+  loading?: boolean
 }
 
-export const DropModal: FC<Props> = ({ onClose, onDrop, type }) => {
+export const DropModal: FC<Props> = ({ onClose, onDrop, type, loading }) => {
   const [closeModal, setCloseModal] = useState(false)
   const { formatMessage } = useLocale()
   useNamespaces('sp.settings')
@@ -60,7 +61,7 @@ export const DropModal: FC<Props> = ({ onClose, onDrop, type }) => {
             <Hidden below="sm">
               <img
                 src="assets/images/jobsGrid.svg"
-                alt="Skrautmynd"
+                alt=""
                 width="80%"
                 style={{ float: 'right' }}
               />
@@ -75,7 +76,12 @@ export const DropModal: FC<Props> = ({ onClose, onDrop, type }) => {
               </Button>
             </Box>
             <Box>
-              <Button onClick={onDrop} variant="ghost" size="small">
+              <Button
+                loading={loading}
+                onClick={onDrop}
+                variant="ghost"
+                size="small"
+              >
                 {formatMessage(msg.dropModalDrop)}
               </Button>
             </Box>

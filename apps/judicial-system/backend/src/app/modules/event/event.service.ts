@@ -13,6 +13,24 @@ import {
 import { environment } from '../../../environments'
 import { Case } from '../case'
 
+const errorEmojis = [
+  ':sos:',
+  ':scream:',
+  ':exploding_head:',
+  ':cry:',
+  ':fearful:',
+  ':face_with_raised_eyebrow:',
+  ':unamused:',
+  ':face_with_monocle:',
+  ':skull_and_crossbones:',
+  ':see_no_evil:',
+  ':hear_no_evil:',
+  ':speak_no_evil:',
+  ':bomb:',
+  ':bangbang:',
+  ':x:',
+]
+
 const caseEvent = {
   CREATE: ':new: Krafa stofnuð',
   CREATE_XRD: ':new: Krafa stofnuð í gegnum Strauminn',
@@ -26,6 +44,7 @@ const caseEvent = {
   DELETE: ':fire: Krafa dregin til baka',
   SCHEDULE_COURT_DATE: ':timer_clock: Kröfu úthlutað fyrirtökutíma',
   DISMISS: ':woman-shrugging: Kröfu vísað frá',
+  ARCHIVE: ':file_cabinet: Sett í geymslu',
 }
 
 export enum CaseEvent {
@@ -41,6 +60,7 @@ export enum CaseEvent {
   DELETE = 'DELETE',
   SCHEDULE_COURT_DATE = 'SCHEDULE_COURT_DATE',
   DISMISS = 'DISMISS',
+  ARCHIVE = 'ARCHIVE',
 }
 
 @Injectable()
@@ -56,9 +76,7 @@ export class EventService {
         return
       }
 
-      const typeText = `${capitalize(caseTypes[theCase.type])} ${
-        theCase.description ? `- _${theCase.description}_ ` : ''
-      }*${theCase.id}*`
+      const typeText = `${capitalize(caseTypes[theCase.type])} *${theCase.id}*`
       const prosecutionText = `${
         theCase.prosecutor?.institution
           ? `${theCase.prosecutor?.institution?.name} `
@@ -104,10 +122,23 @@ export class EventService {
     }
   }
 
-  postErrorEvent(message: string, reason: Error) {
+  postErrorEvent(
+    message: string,
+    info: { [key: string]: string | boolean | undefined },
+    reason: Error,
+  ) {
     try {
       if (!environment.events.errorUrl) {
         return
+      }
+
+      let infoText = ''
+
+      if (info) {
+        let property: keyof typeof info
+        for (property in info) {
+          infoText = `${infoText}${property}: ${info[property]}\n`
+        }
       }
 
       fetch(`${environment.events.errorUrl}`, {
@@ -119,7 +150,9 @@ export class EventService {
               type: 'section',
               text: {
                 type: 'mrkdwn',
-                text: `*:sos: ${message}:*\n>${JSON.stringify(reason)}`,
+                text: `${
+                  errorEmojis[Math.floor(Math.random() * errorEmojis.length)]
+                } *${message}:*\n${infoText}>${JSON.stringify(reason)}`,
               },
             },
           ],

@@ -1,13 +1,22 @@
-import React, { SyntheticEvent, useCallback, useReducer, useState } from 'react'
-import { useHistory } from 'react-router-dom'
+import React, {
+  SyntheticEvent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 
 import { getAuthSettings, getUserManager } from '../userManager'
-import { ActionType, initialState, reducer } from './Authenticator.state'
 
-import type { History } from 'history'
-import { AuthSettings } from '../AuthSettings'
+enum SessionInfoMessageType {
+  SessionInfoRequest = 'SessionInfoRequest',
+  SessionInfoResponse = 'SessionInfoResponse',
+}
 
-export interface SessionInfo {
+export interface SessionInfoResponse {
+  // Type to use to filter postMessage messages
+  type: SessionInfoMessageType.SessionInfoResponse
+
   // Message detailing if the request was processed OK, no session detected or with failure.
   message: string
 
@@ -18,48 +27,89 @@ export interface SessionInfo {
   isExpired?: boolean
 }
 
-const messageEventName = 'message'
-
-const getReturnUrl = (history: History, { redirectPath }: AuthSettings) => {
-  const returnUrl = history.location.pathname + history.location.search
-  if (redirectPath && returnUrl.startsWith(redirectPath)) {
-    return '/'
-  }
-  return returnUrl
+interface SessionInfoRequest {
+  type: SessionInfoMessageType.SessionInfoRequest
 }
 
+const messageEventName = 'message'
+
 export const CheckIdpSession = () => {
-  const history = useHistory()
-  const reducerInstance = useReducer(reducer, initialState)
-  const [state, dispatch] = reducerInstance
   const userManager = getUserManager()
   const authSettings = getAuthSettings()
   const iframeSrc = `${authSettings.authority}${authSettings.checkSessionPath}`
   const [iframeChecksum, setIframeChecksum] = useState(0)
+  const sessionTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  let sessionTimeout: ReturnType<typeof setTimeout> | null = null
-
-  const signIn = useCallback(
-    async function signIn() {
-      dispatch({
-        type: ActionType.SIGNIN_START,
-      })
-      return userManager.signinRedirect({
-        state: getReturnUrl(history, authSettings),
-      })
-      // Nothing more happens here since browser will redirect to IDS.
-    },
-    [dispatch, userManager, authSettings, history],
-  )
+  const signInRedirect = useCallback(async () => {
+    await userManager.removeUser()
+    return window.location.reload()
+  }, [userManager])
 
   const onLoadHandler = (event: SyntheticEvent<HTMLIFrameElement>) => {
-    event?.currentTarget?.contentWindow?.postMessage(
-      {},
-      authSettings.authority ?? '',
-    )
+    if (authSettings.authority) {
+      event?.currentTarget?.contentWindow?.postMessage(
+        {
+          type: SessionInfoMessageType.SessionInfoRequest,
+        } as SessionInfoRequest,
+        authSettings.authority,
+      )
+    }
   }
 
-  const checkIdpSessionIframe = (
+  const messageHandler = useCallback(
+    async ({ data, origin }: MessageEvent): Promise<void> => {
+      const sessionInfo = data as SessionInfoResponse
+
+      if (
+        origin !== authSettings.authority ||
+        sessionInfo.type !== SessionInfoMessageType.SessionInfoResponse
+      ) {
+        return
+      }
+
+      if (sessionInfo && sessionInfo.message === 'OK') {
+        // SessionInfo was found, check if it is valid or expired
+        if (sessionInfo.isExpired) {
+          return signInRedirect()
+        } else if (sessionInfo.expiresUtc) {
+          // Calculate when the session should expire with padding when we should check again
+          const timeout =
+            new Date(sessionInfo.expiresUtc).getTime() -
+            new Date().getTime() +
+            1000
+
+          if (timeout <= 0) {
+            // The session is expired but for some reason the `isExpired` was not correctly set
+            return signInRedirect()
+          }
+
+          if (!sessionTimeout.current) {
+            const newSessionTimeout = setTimeout(() => {
+              sessionTimeout.current = null
+              setIframeChecksum((i) => i + 1)
+            }, timeout)
+            sessionTimeout.current = newSessionTimeout
+          }
+        }
+      } else if (sessionInfo && sessionInfo.message === 'No user session') {
+        return signInRedirect()
+      }
+
+      // Silent failure as we have failed to get sessionInfo but the user still might have valid session.
+      // So we only trigger the signInRedirect flow when we get definite response about expired session.
+    },
+    [authSettings.authority, signInRedirect],
+  )
+
+  useEffect(() => {
+    window.addEventListener(messageEventName, messageHandler)
+
+    return () => {
+      window.removeEventListener(messageEventName, messageHandler)
+    }
+  }, [messageHandler])
+
+  return (
     <iframe
       // We use the key attribute to trigger new reload of the iframe
       key={iframeChecksum}
@@ -72,43 +122,4 @@ export const CheckIdpSession = () => {
       onLoad={onLoadHandler}
     />
   )
-
-  const messageHandler = async ({ data }: MessageEvent): Promise<void> => {
-    const sessionInfo = data as SessionInfo
-
-    if (sessionInfo && sessionInfo.message === 'OK') {
-      // SessionInfo was found, check if it is valid or expired
-      if (sessionInfo.isExpired) {
-        return signIn()
-      } else if (sessionInfo.expiresUtc) {
-        // Calculate when the session should expire with padding when we should check again
-        const timeout =
-          new Date(sessionInfo.expiresUtc).getTime() -
-          new Date().getTime() +
-          1000
-
-        if (timeout <= 0) {
-          // The session is expired but for some reason the `isExpired` was not correctly set
-          return signIn()
-        }
-
-        if (!sessionTimeout) {
-          sessionTimeout = setTimeout(() => {
-            sessionTimeout = null
-            window.removeEventListener(messageEventName, messageHandler)
-            setIframeChecksum(iframeChecksum + 1)
-          }, timeout)
-        }
-      }
-    } else if (sessionInfo && sessionInfo.message === 'No user session') {
-      return signIn()
-    }
-
-    // Silent failure as we have failed to get sessionInfo but the user still might have valid session.
-    // So we only trigger the signIn flow when we get definite response about expired session.
-  }
-
-  window.addEventListener(messageEventName, messageHandler)
-
-  return checkIdpSessionIframe
 }

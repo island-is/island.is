@@ -62,4 +62,4 @@ RSK_API_PASSWORD
 
 ## Code owners and maintainers
 
-- [Kosmos & Kaos](https://github.com/orgs/island-is/teams/kosmos-kaos)
+- [Júní](https://github.com/orgs/island-is/teams/juni)

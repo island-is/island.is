@@ -86,7 +86,7 @@ export class ApplicationModel extends Model<Application> {
   homeCircumstances: HomeCircumstances
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.TEXT,
     allowNull: true,
   })
   @ApiProperty()
@@ -101,7 +101,7 @@ export class ApplicationModel extends Model<Application> {
   employment: Employment
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.TEXT,
     allowNull: true,
   })
   @ApiProperty()
@@ -190,7 +190,7 @@ export class ApplicationModel extends Model<Application> {
   files: ApplicationFileModel[]
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.TEXT,
     allowNull: true,
   })
   @ApiProperty()
@@ -275,7 +275,7 @@ export class ApplicationModel extends Model<Application> {
 
   @Column({
     type: DataType.STRING,
-    allowNull: true,
+    allowNull: false,
   })
   @ApiProperty()
   municipalityCode: string
@@ -283,4 +283,26 @@ export class ApplicationModel extends Model<Application> {
   @HasMany(() => DirectTaxPaymentModel, 'applicationId')
   @ApiProperty({ type: DirectTaxPaymentModel, isArray: true })
   directTaxPayments: DirectTaxPaymentModel[]
+
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+    unique: false,
+  })
+  @ApiProperty()
+  applicationSystemId: string
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+  })
+  @ApiProperty()
+  hasFetchedDirectTaxPayment: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+  })
+  @ApiProperty()
+  spouseHasFetchedDirectTaxPayment: boolean
 }

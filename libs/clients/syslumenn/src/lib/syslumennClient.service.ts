@@ -9,6 +9,8 @@ import {
   Attachment,
   RealEstateAddress,
   AssetType,
+  MortgageCertificate,
+  MortgageCertificateValidation,
 } from './syslumennClient.types'
 import {
   mapSyslumennAuction,
@@ -26,11 +28,13 @@ import {
   SvarSkeyti,
   Configuration,
   VirkLeyfiGetRequest,
+  TegundAndlags,
 } from '../../gen/fetch'
 import { SyslumennClientConfig } from './syslumennClient.config'
 import type { ConfigType } from '@island.is/nest/config'
 import { AuthHeaderMiddleware } from '@island.is/auth-nest-tools'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
+import { PropertyDetail } from '@island.is/api/domains/assets'
 
 const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
 
@@ -145,21 +149,21 @@ export class SyslumennService {
     )
   }
 
-  async sealCriminalRecord(criminalRecord: string): Promise<SvarSkeyti> {
+  async sealDocument(document: string): Promise<SvarSkeyti> {
     const { id, api } = await this.createApi()
     const explination = 'Rafrænt undirritað vottorð'
     return await api.innsiglunPost({
       skeyti: {
         audkenni: id,
         skyring: explination,
-        skjal: criminalRecord,
+        skjal: document,
       },
     })
   }
 
   async uploadData(
     persons: Person[],
-    attachment: Attachment,
+    attachment: Attachment | undefined,
     extraData: { [key: string]: string },
     uploadDataName: string,
     uploadDataId?: string,
@@ -232,5 +236,93 @@ export class SyslumennService {
         throw e
       })
     return response.map(mapRealEstateAddress)
+  }
+
+  async getMortgageCertificate(
+    propertyNumber: string,
+  ): Promise<MortgageCertificate> {
+    const { id, api } = await this.createApi()
+
+    const res = await api.vedbokarvottordPost({
+      skilabod: {
+        audkenni: id,
+        fastanumer:
+          propertyNumber[0] == 'F'
+            ? propertyNumber.substring(1, propertyNumber.length)
+            : propertyNumber,
+        tegundAndlags: TegundAndlags.NUMBER_0, // 0 = Real estate
+      },
+    })
+    const contentBase64 = res.vedbandayfirlitPDFSkra || ''
+
+    const certificate: MortgageCertificate = {
+      contentBase64: contentBase64,
+      apiMessage: res.skilabod,
+    }
+
+    return certificate
+  }
+
+  async validateMortgageCertificate(
+    propertyNumber: string,
+    isFromSearch: boolean | undefined,
+  ): Promise<MortgageCertificateValidation> {
+    try {
+      // Note: this function will throw an error if something goes wrong
+      const certificate = await this.getMortgageCertificate(propertyNumber)
+
+      const exists = certificate.contentBase64.length !== 0
+      const hasKMarking =
+        exists && certificate.contentBase64 !== 'Precondition Required'
+
+      // Note: we are saving propertyNumber and isFromSearch also in externalData,
+      // since it is not saved in answers if we go from state DRAFT -> DRAFT
+      return {
+        propertyNumber: propertyNumber,
+        isFromSearch: isFromSearch,
+        exists: exists,
+        hasKMarking: hasKMarking,
+      }
+    } catch (exception) {
+      return {
+        propertyNumber: propertyNumber,
+        isFromSearch: isFromSearch,
+        exists: false,
+        hasKMarking: false,
+      }
+    }
+  }
+
+  async getPropertyDetails(propertyNumber: string): Promise<PropertyDetail> {
+    const { id, api } = await this.createApi()
+
+    const res = await api.vedbokavottordRegluverkiPost({
+      skilabod: {
+        audkenni: id,
+        fastanumer:
+          propertyNumber[0] == 'F'
+            ? propertyNumber.substring(1, propertyNumber.length)
+            : propertyNumber,
+        tegundAndlags: TegundAndlags.NUMBER_0, // 0 = Real estate
+      },
+    })
+
+    if (res.length > 0) {
+      return {
+        propertyNumber: propertyNumber,
+        defaultAddress: {
+          display: res[0].heiti,
+        },
+        unitsOfUse: {
+          unitsOfUse: [
+            {
+              explanation: res[0].notkun,
+            },
+          ],
+        },
+      }
+    } else {
+      throw new Error()
+    }
   }
 }

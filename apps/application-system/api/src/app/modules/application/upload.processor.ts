@@ -1,6 +1,6 @@
 import { OnQueueCompleted, Process, Processor } from '@nestjs/bull'
 import { Job } from 'bull'
-import { ApplicationService } from './application.service'
+import { ApplicationService } from '@island.is/application/api/core'
 import { FileStorageService } from '@island.is/file-storage'
 import { Inject } from '@nestjs/common'
 import type { ApplicationConfig } from './application.configuration'
@@ -53,7 +53,6 @@ export class UploadProcessor {
   @OnQueueCompleted()
   async onCompleted(job: Job, result: JobResult) {
     const { applicationId, nationalId }: JobData = job.data
-
     const existingApplication = await this.applicationService.findOneById(
       applicationId,
       nationalId,
@@ -69,12 +68,11 @@ export class UploadProcessor {
       return
     }
 
-    // Update application attachments
-    return await this.applicationService.update(job.data.applicationId, {
-      attachments: {
-        ...(existingApplication?.attachments ?? {}),
-        [result.attachmentKey]: result.resultUrl,
-      },
-    })
+    return await this.applicationService.updateAttachment(
+      applicationId,
+      nationalId,
+      result.attachmentKey,
+      result.resultUrl,
+    )
   }
 }
