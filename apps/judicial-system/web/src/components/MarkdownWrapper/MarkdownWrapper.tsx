@@ -1,6 +1,5 @@
 import React, { ReactNode } from 'react'
 import Markdown from 'markdown-to-jsx'
-import { MessageDescriptor, useIntl } from 'react-intl'
 import {
   Box,
   Text,
@@ -42,8 +41,7 @@ const LinkComponent = ({
 }
 
 interface Props {
-  text: MessageDescriptor | string
-  format?: { [key: string]: string | number }
+  markdown: string
   textProps?: TextProps
 }
 
@@ -55,9 +53,7 @@ const headingOverride = {
   },
 }
 
-const DescriptionText = ({ text, format, textProps }: Props) => {
-  const { formatMessage } = useIntl()
-  const markdown = typeof text === 'string' ? text : formatMessage(text, format)
+const DescriptionText = ({ markdown, textProps }: Props) => {
   // markdown-to-jsx is able to handle this in most cases but when using 'formatMessage'
   // it does not work for some reason. That is the reason for this special handling here.
   // We will take a look at this later with the localization team.
