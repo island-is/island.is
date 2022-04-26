@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { useIntl } from 'react-intl'
+import { useIntl, IntlShape } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import {
@@ -24,6 +24,7 @@ import {
   PdfButton,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  Case,
   CaseCustodyRestrictions,
   CaseDecision,
   CaseType,
@@ -57,6 +58,97 @@ import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader
 import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
 import { autofillRuling } from '@island.is/judicial-system-web/src/components/RulingInput/RulingInput'
 import * as Constants from '@island.is/judicial-system/consts'
+
+export function getConclutionAutofill(
+  formatMessage: IntlShape['formatMessage'],
+  workingCase: Case,
+) {
+  if (
+    workingCase.conclusion ||
+    workingCase.conclusion === '' ||
+    !workingCase.decision ||
+    !workingCase.defendants ||
+    workingCase.defendants.length <= 0
+  ) {
+    return undefined
+  }
+
+  const isolationEndsBeforeValidToDate =
+    workingCase.validToDate &&
+    workingCase.isolationToDate &&
+    new Date(workingCase.validToDate) > new Date(workingCase.isolationToDate)
+
+  const accusedSuffix =
+    workingCase.defendants[0].gender === Gender.MALE ? 'i' : 'a'
+
+  return workingCase.decision === CaseDecision.DISMISSING
+    ? formatMessage(m.sections.conclusion.dismissingAutofillV2, {
+        genderedAccused: formatMessage(core.accused, {
+          suffix: accusedSuffix,
+        }),
+        accusedName: workingCase.defendants[0].name,
+        isExtended:
+          workingCase.parentCase &&
+          isAcceptingCaseDecision(workingCase.parentCase.decision)
+            ? 'yes'
+            : 'no',
+        caseType: workingCase.type,
+      })
+    : workingCase.decision === CaseDecision.REJECTING
+    ? formatMessage(m.sections.conclusion.rejectingAutofillV2, {
+        genderedAccused: formatMessage(core.accused, {
+          suffix: accusedSuffix,
+        }),
+        accusedName: workingCase.defendants[0].name,
+        accusedNationalId: workingCase.defendants[0].noNationalId
+          ? ', '
+          : `, kt. ${formatNationalId(
+              workingCase.defendants[0].nationalId ?? '',
+            )}, `,
+        isExtended:
+          workingCase.parentCase &&
+          isAcceptingCaseDecision(workingCase.parentCase.decision)
+            ? 'yes'
+            : 'no',
+        caseType: workingCase.type,
+      })
+    : formatMessage(m.sections.conclusion.acceptingAutofillV2, {
+        genderedAccused: capitalize(
+          formatMessage(core.accused, {
+            suffix: accusedSuffix,
+          }),
+        ),
+        accusedName: workingCase.defendants[0].name,
+        accusedNationalId: workingCase.defendants[0].noNationalId
+          ? ', '
+          : `, kt. ${formatNationalId(
+              workingCase.defendants[0].nationalId ?? '',
+            )}, `,
+        isExtended:
+          workingCase.parentCase &&
+          isAcceptingCaseDecision(workingCase.parentCase.decision)
+            ? 'yes'
+            : '',
+        caseType:
+          workingCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+            ? CaseType.TRAVEL_BAN
+            : workingCase.type,
+        validToDate: `${formatDate(workingCase.validToDate, 'PPPPp')
+          ?.replace('dagur,', 'dagsins')
+          ?.replace(' kl.', ', kl.')}`,
+        hasIsolation:
+          isAcceptingCaseDecision(workingCase.decision) &&
+          workingCase.isCustodyIsolation
+            ? 'yes'
+            : 'no',
+        isolationEndsBeforeValidToDate: isolationEndsBeforeValidToDate
+          ? 'yes'
+          : 'no',
+        isolationToDate: formatDate(workingCase.isolationToDate, 'PPPPp')
+          ?.replace('dagur,', 'dagsins')
+          ?.replace(' kl.', ', kl.'),
+      })
+}
 
 export const Ruling: React.FC = () => {
   const {
@@ -98,11 +190,6 @@ export const Ruling: React.FC = () => {
   useDeb(workingCase, 'conclusion')
 
   useEffect(() => {
-    const isolationEndsBeforeValidToDate =
-      workingCase.validToDate &&
-      workingCase.isolationToDate &&
-      new Date(workingCase.validToDate) > new Date(workingCase.isolationToDate)
-
     if (isCaseUpToDate && !initialAutoFillDone) {
       autofill(
         'introduction',
@@ -151,88 +238,9 @@ export const Ruling: React.FC = () => {
       setWorkingCase({ ...workingCase })
     }
 
-    if (
-      (workingCase.conclusion === undefined ||
-        workingCase.conclusion === null) &&
-      workingCase.decision &&
-      workingCase.defendants &&
-      workingCase.defendants.length > 0
-    ) {
-      const accusedSuffix =
-        workingCase.defendants[0].gender === Gender.MALE ? 'i' : 'a'
-
-      autofill(
-        'conclusion',
-        workingCase.decision === CaseDecision.DISMISSING
-          ? formatMessage(m.sections.conclusion.dismissingAutofillV2, {
-              genderedAccused: formatMessage(core.accused, {
-                suffix: accusedSuffix,
-              }),
-              accusedName: workingCase.defendants[0].name,
-              isExtended:
-                workingCase.parentCase &&
-                isAcceptingCaseDecision(workingCase.parentCase.decision)
-                  ? 'yes'
-                  : 'no',
-              caseType: workingCase.type,
-            })
-          : workingCase.decision === CaseDecision.REJECTING
-          ? formatMessage(m.sections.conclusion.rejectingAutofillV2, {
-              genderedAccused: formatMessage(core.accused, {
-                suffix: accusedSuffix,
-              }),
-              accusedName: workingCase.defendants[0].name,
-              accusedNationalId: workingCase.defendants[0].noNationalId
-                ? ', '
-                : `, kt. ${formatNationalId(
-                    workingCase.defendants[0].nationalId ?? '',
-                  )}, `,
-              isExtended:
-                workingCase.parentCase &&
-                isAcceptingCaseDecision(workingCase.parentCase.decision)
-                  ? 'yes'
-                  : 'no',
-              caseType: workingCase.type,
-            })
-          : formatMessage(m.sections.conclusion.acceptingAutofillV2, {
-              genderedAccused: capitalize(
-                formatMessage(core.accused, {
-                  suffix: accusedSuffix,
-                }),
-              ),
-              accusedName: workingCase.defendants[0].name,
-              accusedNationalId: workingCase.defendants[0].noNationalId
-                ? ', '
-                : `, kt. ${formatNationalId(
-                    workingCase.defendants[0].nationalId ?? '',
-                  )}, `,
-              isExtended:
-                workingCase.parentCase &&
-                isAcceptingCaseDecision(workingCase.parentCase.decision)
-                  ? 'yes'
-                  : '',
-              caseType:
-                workingCase.decision ===
-                CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                  ? CaseType.TRAVEL_BAN
-                  : workingCase.type,
-              validToDate: `${formatDate(workingCase.validToDate, 'PPPPp')
-                ?.replace('dagur,', 'dagsins')
-                ?.replace(' kl.', ', kl.')}`,
-              hasIsolation:
-                isAcceptingCaseDecision(workingCase.decision) &&
-                workingCase.isCustodyIsolation
-                  ? 'yes'
-                  : 'no',
-              isolationEndsBeforeValidToDate: isolationEndsBeforeValidToDate
-                ? 'yes'
-                : 'no',
-              isolationToDate: formatDate(workingCase.isolationToDate, 'PPPPp')
-                ?.replace('dagur,', 'dagsins')
-                ?.replace(' kl.', ', kl.'),
-            }),
-        workingCase,
-      )
+    const conclution = getConclutionAutofill(formatMessage, workingCase)
+    if (conclution) {
+      autofill('conclusion', conclution, workingCase)
 
       setWorkingCase({ ...workingCase })
     }

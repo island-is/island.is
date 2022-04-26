@@ -271,7 +271,7 @@ export const rcRuling = {
           'judicial.system.restriction_cases:ruling.conclusion.accepting_autofill_v2',
         defaultMessage: `{genderedAccused}, {accusedName}{accusedNationalId}skal sæta {isExtended, select, yes {áframhaldandi } other {}}{caseType, select,
           ${CaseType.TRAVEL_BAN} {farbanni}
-          ${CaseType.ADMISSION_TO_FACILITY} {vistun á viðeignadi stofnun}
+          ${CaseType.ADMISSION_TO_FACILITY} {vistun á viðeigandi stofnun}
           other {gæsluvarðhaldi}}, þó ekki lengur en til {validToDate}.{hasIsolation, select,
             yes { {genderedAccused} skal sæta einangrun {isolationEndsBeforeValidToDate, select,
               yes {ekki lengur en til {isolationToDate}} 
