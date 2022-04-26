@@ -1,6 +1,5 @@
 import { useQuery } from '@apollo/client'
-import React, { useMemo } from 'react'
-import { useEffect, useRef, useState } from 'react'
+import React, { useMemo, useEffect, useRef, useState } from 'react'
 import { ChatBubble } from '../ChatBubble'
 import { Query, QueryGetNamespaceArgs } from '@island.is/api/schema'
 import { GET_NAMESPACE_QUERY } from '@island.is/web/screens/queries'

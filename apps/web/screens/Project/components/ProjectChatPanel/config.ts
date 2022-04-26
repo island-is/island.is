@@ -14,9 +14,6 @@ export const watsonConfig: Record<string, WatsonChatPanelProps> = {
     carbonTheme: 'g10',
     cssVariables: {
       'BASE-font-family': '"IBM Plex Sans", "Open Sans", Arial, sans-serif',
-      'interactive-01': '#0061FF',
-      'interactive-03': '#0061FF',
-      'interactive-04': '#FFFFFF',
     },
     languagePack: {
       input_placeholder: 'Senda spurningu...',
