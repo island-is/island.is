@@ -11,6 +11,7 @@ export {
   formatDefenderRevokedEmailNotification,
   stripHtmlTags,
   formatCourtResubmittedToCourtSmsNotification,
+  formatProsecutorReadyForCourtEmailNotification,
 } from './formatters'
 export { getRequestPdfAsString, getRequestPdfAsBuffer } from './requestPdf'
 export {
