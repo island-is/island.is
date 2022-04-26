@@ -88,6 +88,9 @@
       "@island.is/api/domains/finance": [
         "libs/api/domains/finance/src/index.ts"
       ],
+      "@island.is/api/domains/fishing-license": [
+        "libs/api/domains/fishing-license/src/index.ts"
+      ],
       "@island.is/api/domains/health-insurance": [
         "libs/api/domains/health-insurance/src/index.ts"
       ],
@@ -194,6 +197,9 @@
       "@island.is/application/templates/funding-government-projects": [
         "libs/application/templates/funding-government-projects/src/index.ts"
       ],
+      "@island.is/application/templates/general-fishing-license": [
+        "libs/application/templates/general-fishing-license/src/index.ts"
+      ],
       "@island.is/application/templates/general-petition": [
         "libs/application/templates/general-petition/src/index.ts"
       ],
@@ -265,6 +271,9 @@
         "libs/clients/driving-license-book/src/index.ts"
       ],
       "@island.is/clients/finance": ["libs/clients/finance/src/index.ts"],
+      "@island.is/clients/fishing-license": [
+        "libs/clients/fishing-license/src/index.ts"
+      ],
       "@island.is/clients/health-insurance-v2": [
         "libs/clients/health-insurance-v2/src/index.ts"
       ],

@@ -19,6 +19,7 @@ interface Props {
   defendants?: Defendant[]
   defender?: {
     name: string
+    defenderNationalId?: string
     email?: string
     phoneNumber?: string
   }
@@ -44,12 +45,12 @@ const InfoCard: React.FC<Props> = (props) => {
             {defendants.map((defendant, index) => (
               <Text fontWeight="semiBold" key={index}>
                 {defendant.name}
-                <Text as="span">{`, `}</Text>
-                {`${defendant.noNationalId ? 'fd.' : 'kt.'} ${
-                  defendant.noNationalId
-                    ? defendant.nationalId
-                    : formatNationalId(defendant.nationalId ?? '')
-                }`}
+                {(!defendant.noNationalId || defendant.nationalId) &&
+                  `${defendant.noNationalId ? ', fd.' : ', kt.'} ${
+                    defendant.noNationalId
+                      ? defendant.nationalId
+                      : formatNationalId(defendant.nationalId ?? '')
+                  }`}
                 {defendant.citizenship && ` (${defendant.citizenship})`}
                 {defendant.address && (
                   <Text as="span">{`, ${defendant.address}`}</Text>

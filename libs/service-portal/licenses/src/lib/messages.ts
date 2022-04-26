@@ -30,7 +30,7 @@ export const m = defineMessages({
   drivingLicenseDescription: {
     id: 'sp.license:driving-license-description',
     defaultMessage:
-      'Hér birtast upplýsingar um ökuskírteini þitt ásam þeim ökuréttidnum sem þú ert með í gildi á hverjum tíma.',
+      'Hér birtast upplýsingar um ökuskírteini þitt ásam þeim ökuréttindum sem þú ert með í gildi á hverjum tíma.',
   },
   passportDescription: {
     id: 'sp.license:passport-description',

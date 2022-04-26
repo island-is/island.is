@@ -153,32 +153,6 @@ function isHightenedSecurityCaseHiddenFromUser(
   )
 }
 
-function getStaffCasesQueryFilter(
-  institutionType?: InstitutionType,
-): WhereOptions {
-  return institutionType === InstitutionType.PRISON_ADMIN
-    ? {
-        [Op.and]: [
-          { isArchived: false },
-          { state: CaseState.ACCEPTED },
-          { type: [CaseType.CUSTODY, CaseType.TRAVEL_BAN] },
-        ],
-      }
-    : {
-        [Op.and]: [
-          { isArchived: false },
-          { state: CaseState.ACCEPTED },
-          { type: CaseType.CUSTODY },
-          {
-            decision: [
-              CaseDecision.ACCEPTING,
-              CaseDecision.ACCEPTING_PARTIALLY,
-            ],
-          },
-        ],
-      }
-}
-
 export const oldFilter = {
   [Op.or]: [
     {
@@ -250,6 +224,38 @@ export function isCaseBlockedFromUser(
       theCase.prosecutor?.id,
     )
   )
+}
+
+function getStaffCasesQueryFilter(
+  institutionType?: InstitutionType,
+): WhereOptions {
+  return institutionType === InstitutionType.PRISON_ADMIN
+    ? {
+        [Op.and]: [
+          { isArchived: false },
+          { state: CaseState.ACCEPTED },
+          {
+            type: [
+              CaseType.ADMISSION_TO_FACILITY,
+              CaseType.CUSTODY,
+              CaseType.TRAVEL_BAN,
+            ],
+          },
+        ],
+      }
+    : {
+        [Op.and]: [
+          { isArchived: false },
+          { state: CaseState.ACCEPTED },
+          { type: [CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY] },
+          {
+            decision: [
+              CaseDecision.ACCEPTING,
+              CaseDecision.ACCEPTING_PARTIALLY,
+            ],
+          },
+        ],
+      }
 }
 
 export function getCasesQueryFilter(user: User): WhereOptions {

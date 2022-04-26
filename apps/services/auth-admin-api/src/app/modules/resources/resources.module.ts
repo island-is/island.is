@@ -18,6 +18,7 @@ import {
   Domain,
   DelegationScope,
   Delegation,
+  TranslationModule,
 } from '@island.is/auth-api-lib'
 
 @Module({
@@ -38,6 +39,7 @@ import {
       DelegationScope,
       Delegation,
     ]),
+    TranslationModule,
   ],
   controllers: [ResourcesController],
   providers: [ResourcesService, AccessService],

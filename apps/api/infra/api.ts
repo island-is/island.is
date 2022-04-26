@@ -14,6 +14,7 @@ import {
   CriminalRecord,
   RskCompanyInfo,
   DrivingLicenseBook,
+  FishingLicense,
 } from '../../../infra/src/dsl/xroad'
 import { settings } from '../../../infra/src/dsl/settings'
 
@@ -170,6 +171,7 @@ export const serviceSetup = (services: {
       CriminalRecord,
       RskCompanyInfo,
       DrivingLicenseBook,
+      FishingLicense,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({

@@ -6,7 +6,6 @@ import {
   Param,
   Post,
   Put,
-  Delete,
   ParseUUIDPipe,
   BadRequestException,
   UseInterceptors,
@@ -14,6 +13,8 @@ import {
   Query,
   UseGuards,
   UnauthorizedException,
+  Delete,
+  ForbiddenException,
 } from '@nestjs/common'
 import omit from 'lodash/omit'
 import { InjectQueue } from '@nestjs/bull'
@@ -1057,5 +1058,36 @@ export class ApplicationController {
     } catch (error) {
       throw new NotFoundException('Attachment not found')
     }
+  }
+
+  @Scopes(ApplicationScope.write)
+  @Delete('applications/:id')
+  @ApiParam({
+    name: 'id',
+    type: String,
+    required: true,
+    description: 'The id of the application to delete.',
+    allowEmptyValue: false,
+  })
+  async delete(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @CurrentUser() user: User,
+  ) {
+    const { nationalId } = user
+    const existingApplication = (await this.applicationAccessService.findOneByIdAndNationalId(
+      id,
+      nationalId,
+    )) as BaseApplication
+    const canDelete = await this.applicationAccessService.canDeleteApplication(
+      existingApplication,
+      nationalId,
+    )
+
+    if (!canDelete) {
+      throw new ForbiddenException(
+        'Users role does not have permission to delete this application in this state',
+      )
+    }
+    await this.applicationService.delete(existingApplication.id)
   }
 }

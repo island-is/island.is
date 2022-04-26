@@ -31,7 +31,8 @@ export class NationalRegistryService {
       maritalStatus: this.formatMaritalStatus(user.hju),
       religion: user.Trufelag, // TODO: format from user.Tru
       banMarking: {
-        banMarked: user.Bannmerking === '1',
+        banMarked:
+          user.Bannmerking === '1' || user.Bannmerking?.toLowerCase() === 'já',
         startDate: user.BannmerkingBreytt,
       },
       citizenship: {
@@ -92,7 +93,10 @@ export class NationalRegistryService {
 
     const members = myChildren
       .filter((familyChild) => {
-        return familyChild.Barn !== nationalId
+        const isNotUser = familyChild.Barn !== nationalId
+        const isUnderEighteen = kennitala.info(familyChild.Barn).age < 18
+
+        return isNotUser && isUnderEighteen
       })
       .map((familyChild) => ({
         fullName: familyChild.FulltNafn,

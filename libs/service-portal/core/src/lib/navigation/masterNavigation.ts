@@ -12,7 +12,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         systemRoute: true,
         path: ServicePortalPath.MinarSidurRoot,
         icon: {
-          type: 'outline',
           icon: 'home',
         },
       },
@@ -22,7 +21,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         name: m.documents,
         path: ServicePortalPath.ElectronicDocumentsRoot,
         icon: {
-          type: 'outline',
           icon: 'reader',
         },
         subscribesTo: 'documents',
@@ -33,7 +31,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         name: m.applications,
         path: ServicePortalPath.ApplicationRoot,
         icon: {
-          type: 'outline',
           icon: 'fileTrayFull',
         },
       },
@@ -43,7 +40,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         name: m.userInfo,
         path: ServicePortalPath.MyInfoRoot,
         icon: {
-          type: 'outline',
           icon: 'person',
         },
         children: [
@@ -75,7 +71,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         path: ServicePortalPath.LicensesRoot,
 
         icon: {
-          type: 'outline',
           icon: 'wallet',
         },
         children: [
@@ -114,7 +109,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         name: m.educationLicense,
         path: ServicePortalPath.EducationLicense,
         icon: {
-          type: 'outline',
           icon: 'receipt',
         },
       },
@@ -123,7 +117,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         name: m.delegation,
         path: ServicePortalPath.MyLicensesRoot,
         icon: {
-          type: 'outline',
           icon: 'receipt',
         },
         children: [
@@ -138,7 +131,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         name: m.education,
         path: ServicePortalPath.EducationRoot,
         icon: {
-          type: 'outline',
           icon: 'school',
         },
       },
@@ -146,7 +138,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         name: m.documentProvider,
         path: ServicePortalPath.DocumentProviderRoot,
         icon: {
-          type: 'outline',
           icon: 'receipt',
         },
         // The first release will only contain "Skjalaveitur" and only for the project owners.
@@ -195,7 +186,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         name: m.icelandicNamesRegistry,
         path: ServicePortalPath.IcelandicNamesRegistryRoot,
         icon: {
-          type: 'outline',
           icon: 'fileTrayFull',
         },
       },
@@ -205,7 +195,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         name: m.realEstate,
         path: ServicePortalPath.AssetsRoot,
         icon: {
-          type: 'outline',
           icon: 'home',
         },
       },
@@ -241,7 +230,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           },
         ],
         icon: {
-          type: 'outline',
           icon: 'cellular',
         },
       },
@@ -252,7 +240,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         path: ServicePortalPath.AssetsVehicles,
         systemRoute: true,
         icon: {
-          type: 'outline',
           icon: 'car',
         },
       },

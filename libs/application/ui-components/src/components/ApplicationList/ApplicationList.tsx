@@ -12,6 +12,7 @@ import {
 } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
 import { dateFormat } from '@island.is/shared/constants'
+import { useDeleteApplication } from './hooks/useDeleteApplication'
 
 interface DefaultStateData {
   tag: {
@@ -68,11 +69,18 @@ const DefaultData: Record<ApplicationStatus, DefaultStateData> = {
 interface Props {
   applications: Application[]
   onClick: (id: string) => void
+  refetch?: (() => void) | undefined
 }
 
-const ApplicationList = ({ applications, onClick }: Props) => {
+const ApplicationList = ({ applications, onClick, refetch }: Props) => {
   const { lang: locale, formatMessage } = useLocale()
   const formattedDate = locale === 'is' ? dateFormat.is : dateFormat.en
+
+  const { deleteApplication } = useDeleteApplication(refetch)
+
+  const handleDeleteApplication = (applicationId: string) => {
+    deleteApplication(applicationId)
+  }
 
   return (
     <Stack space={2}>
@@ -111,6 +119,20 @@ const ApplicationList = ({ applications, onClick }: Props) => {
               active: Boolean(application.progress),
               progress: application.progress,
               variant: stateDefaultData.progress.variant,
+            }}
+            deleteButton={{
+              visible: actionCard?.deleteButton,
+              onClick: handleDeleteApplication.bind(null, application.id),
+              disabled: false,
+              icon: 'trash',
+              dialogTitle:
+                coreMessages.deleteApplicationDialogTitle.defaultMessage,
+              dialogDescription:
+                coreMessages.deleteApplicationDialogDescription.defaultMessage,
+              dialogConfirmLabel:
+                coreMessages.deleteApplicationDialogConfirmLabel.defaultMessage,
+              dialogCancelLabel:
+                coreMessages.deleteApplicationDialogCancelLabel.defaultMessage,
             }}
           />
         )
