@@ -11,9 +11,9 @@ export class ApiScopeService {
     return this.scopesApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  getApiScopes(user: User): Promise<ApiScope[]> {
+  getApiScopes(user: User, lang: string): Promise<ApiScope[]> {
     return this.scopesApiWithAuth(
       user,
-    ).scopesControllerFindAllWithExplicitDelegationGrant()
+    ).scopesControllerFindAllWithExplicitDelegationGrant({ locale: lang })
   }
 }

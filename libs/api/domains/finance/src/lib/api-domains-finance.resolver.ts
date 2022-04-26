@@ -173,6 +173,7 @@ export class FinanceResolver {
 
   @Query(() => PaymentScheduleModel, { nullable: true })
   @Audit()
+  @Scopes(ApiScope.financeOverview, ApiScope.financeSchedule)
   async getPaymentSchedule(@CurrentUser() user: User) {
     const res = await this.financeService.getPaymentSchedules(
       user.nationalId,
@@ -198,12 +199,14 @@ export class FinanceResolver {
 
   @Query(() => graphqlTypeJson)
   @Audit()
+  @Scopes(ApiScope.financeOverview, ApiScope.financeSchedule)
   async getDebtStatus(@CurrentUser() user: User) {
     return this.financeService.getDebtStatus(user.nationalId, user)
   }
 
   @Query(() => PaymentScheduleDetailModel)
   @Audit()
+  @Scopes(ApiScope.financeOverview, ApiScope.financeSchedule)
   async getPaymentScheduleById(
     @CurrentUser() user: User,
     @Args('input') input: GetFinancePaymentScheduleInput,
