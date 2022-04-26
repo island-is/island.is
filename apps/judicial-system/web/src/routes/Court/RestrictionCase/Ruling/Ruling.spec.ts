@@ -282,5 +282,21 @@ describe('getConclutionAutofill', () => {
         'Kærða, Blær, kt. 000000-0000, skal sæta vistun á viðeigandi stofnun, þó ekki lengur en til miðvikudagsins 1. janúar 2020, kl. 12:31. Kærða skal sæta einangrun á meðan á vistunni stendur.',
       )
     })
+
+    it('should format as non extended travel ban case when case is an extended custody with accepcted alternative travel ban', () => {
+      const theCase = {
+        ...baseCase,
+        decision: CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
+        defendants: [{ ...defentantBase, gender: Gender.MALE }],
+        type: CaseType.CUSTODY,
+        parentCase: { decision: CaseDecision.ACCEPTING } as Case,
+      } as Case
+
+      const result = autofill(theCase)
+
+      expect(result).toEqual(
+        'Kærði, Blær, skal sæta farbanni, þó ekki lengur en til miðvikudagsins 1. janúar 2020, kl. 12:31.',
+      )
+    })
   })
 })

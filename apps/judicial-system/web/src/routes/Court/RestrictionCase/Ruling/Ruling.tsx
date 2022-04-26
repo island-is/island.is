@@ -126,7 +126,8 @@ export function getConclutionAutofill(
             )}, `,
         isExtended:
           workingCase.parentCase &&
-          isAcceptingCaseDecision(workingCase.parentCase.decision)
+          isAcceptingCaseDecision(workingCase.parentCase.decision) &&
+          workingCase.decision !== CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
             ? 'yes'
             : '',
         caseType:
