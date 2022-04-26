@@ -79,5 +79,10 @@ export const externalData = {
       defaultMessage: 'Upplýsingar um skuldir',
       description: 'External data section payment plan title',
     },
+    externalDataSuccessSubmitFieldTitle: {
+      id: 'hi.application:externalDataSuccessTitle',
+      defaultMessage: 'Hefja umsókn',
+      description: 'Start application button text',
+    },
   }),
 }
