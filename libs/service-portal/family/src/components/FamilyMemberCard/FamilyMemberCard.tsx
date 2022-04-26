@@ -1,5 +1,5 @@
 import { ActionCard } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   formatNationalId,
   ServicePortalPath,
@@ -21,6 +21,7 @@ export const FamilyMemberCard: FC<Props> = ({
   currentUser,
   familyRelation,
 }) => {
+  useNamespaces('sp.family')
   const { formatMessage } = useLocale()
   const history = useHistory()
   const [familyRelationData, setFamilyRelationData] = useState<{

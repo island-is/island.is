@@ -142,6 +142,9 @@
     "api-domains-mortgage-certificate": {
       "tags": []
     },
+    "api-domains-municipalities-financial-aid": {
+      "tags": []
+    },
     "api-domains-national-registry": {
       "tags": []
     },
@@ -231,6 +234,9 @@
       "tags": []
     },
     "application-templates-family-matters-core": {
+      "tags": []
+    },
+    "application-templates-financial-aid": {
       "tags": []
     },
     "application-templates-funding-government-projects": {
@@ -341,6 +347,9 @@
       "tags": []
     },
     "clients-mms": {
+      "tags": []
+    },
+    "clients-municipalities-financial-aid": {
       "tags": []
     },
     "clients-national-registry-v1": {

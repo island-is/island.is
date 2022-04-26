@@ -21,6 +21,7 @@ import {
   ExamplePaymentActionsService,
   ComplaintsToAlthingiOmbudsmanTemplateService,
   MortgageCertificateSubmissionService,
+  FinancialAidService,
   DrivingSchoolConfirmationService,
 } from './templates'
 
@@ -62,6 +63,7 @@ export class TemplateAPIService {
     private readonly examplePaymentActionsService: ExamplePaymentActionsService,
     private readonly complaintsToAlthingiOmbudsman: ComplaintsToAlthingiOmbudsmanTemplateService,
     private readonly mortgageCertificateSubmissionService: MortgageCertificateSubmissionService,
+    private readonly financialAidService: FinancialAidService,
     private readonly drivingSchoolConfirmationService: DrivingSchoolConfirmationService,
   ) {}
 
@@ -86,6 +88,7 @@ export class TemplateAPIService {
       | ExamplePaymentActionsService
       | ComplaintsToAlthingiOmbudsmanTemplateService
       | MortgageCertificateSubmissionService
+      | FinancialAidService
       | DrivingSchoolConfirmationService,
     action: ApplicationApiAction,
   ): Promise<PerformActionResult> {
@@ -215,6 +218,8 @@ export class TemplateAPIService {
           this.mortgageCertificateSubmissionService,
           action,
         )
+      case ApplicationTypes.FINANCIAL_AID:
+        return this.tryRunningActionOnService(this.financialAidService, action)
       case ApplicationTypes.DRIVING_SCHOOL_CONFIRMATION:
         return this.tryRunningActionOnService(
           this.drivingSchoolConfirmationService,
