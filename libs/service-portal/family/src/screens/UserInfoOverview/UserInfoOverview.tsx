@@ -41,7 +41,7 @@ const UserInfoOverview: ServicePortalModuleComponent = ({ userInfo }) => {
   const { nationalRegistryChildren } = childrenData || {}
 
   // User's Family members
-  const { data: famData, loading: famLoading } = useQuery<Query>(
+  const { data: famData, loading: familyLoading } = useQuery<Query>(
     NATIONAL_REGISTRY_FAMILY,
   )
   const { nationalRegistryFamily } = famData || {}
@@ -51,7 +51,7 @@ const UserInfoOverview: ServicePortalModuleComponent = ({ userInfo }) => {
      * Get children on the same family number who are
      * not in the NATIONAL_REGISTRY_CHILDREN query.
      */
-    if (!famLoading && !childrenLoading && nationalRegistryFamily) {
+    if (!familyLoading && !childrenLoading && nationalRegistryFamily) {
       const familyNrChildren = nationalRegistryFamily?.filter(
         (item) =>
           item.familyRelation === 'child' &&
@@ -59,7 +59,7 @@ const UserInfoOverview: ServicePortalModuleComponent = ({ userInfo }) => {
       )
       setChildrenOnFamilyNr(familyNrChildren)
     }
-  }, [famLoading, childrenLoading])
+  }, [familyLoading, childrenLoading])
 
   const spouseData = nationalRegistryUser?.spouse
   return (
