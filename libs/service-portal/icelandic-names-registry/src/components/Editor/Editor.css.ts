@@ -10,8 +10,3 @@ export const modal = style({
   overflowY: 'auto',
   boxShadow: '0px 4px 70px rgba(0, 97, 255, 0.1)',
 })
-
-export const gridContainer = style({
-  margin: 0,
-  padding: 0,
-})

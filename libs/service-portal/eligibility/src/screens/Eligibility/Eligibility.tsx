@@ -40,7 +40,7 @@ const data: Data[] = [
       defaultMessage:
         'Hér er hægt að skoða stöðu núverandi ökuskírteinis, ásamt því að sækja um og eða endurnýja ökupróf í öllum flokkum.',
     }),
-    link: ServicePortalPath.DrivingLicense,
+    link: ServicePortalPath.LicensesDriving,
     image: '/assets/images/movingTruck.svg',
   },
 ]
@@ -109,10 +109,7 @@ function Eligibility(): JSX.Element {
                 alignItems="center"
                 marginBottom={[3, 3, 0]}
               >
-                <img
-                  src={item.image}
-                  alt={`${formatMessage(m.altText)} ${item.heading}`}
-                />
+                <img src={item.image} alt="" />
               </Box>
             </GridColumn>
           </GridRow>

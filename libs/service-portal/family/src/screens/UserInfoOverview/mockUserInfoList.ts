@@ -15,7 +15,7 @@ export const mockUserInfoList: UserInfoItem[] = [
     subtext: defineMessage({
       id: 'sp.family:user-info-card-description',
       defaultMessage:
-        'Við viljum að stafræn þjónusta sé aðgengileg, sniðin að notandanum og með skýra framtíðarsýn. Hér fyrir neðan getur þú lesið okkar helstu.',
+        'Við viljum að stafræn þjónusta sé aðgengileg, sniðin að notandanum og með skýra framtíðarsýn.',
     }),
     link: ServicePortalPath.UserInfo,
     image: '/assets/images/individualsGrid.svg',

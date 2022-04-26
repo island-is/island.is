@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/client'
 import { useIntl } from 'react-intl'
 
-import { PoliceCaseFile } from '@island.is/judicial-system/types'
+import { CaseOrigin, PoliceCaseFile } from '@island.is/judicial-system/types'
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
 import { PoliceCaseFilesQuery } from '@island.is/judicial-system-web/graphql'
 import {
@@ -21,7 +21,7 @@ export interface PoliceCaseFilesData {
   files: PoliceCaseFile[]
   isLoading: boolean
   hasError: boolean
-  errorMessage?: string
+  errorCode?: string
 }
 
 export const StepFive: React.FC = () => {
@@ -45,10 +45,17 @@ export const StepFive: React.FC = () => {
   } = useQuery(PoliceCaseFilesQuery, {
     variables: { input: { caseId: id } },
     fetchPolicy: 'no-cache',
+    skip: workingCase.origin !== CaseOrigin.LOKE,
   })
 
   useEffect(() => {
-    if (policeData && policeData.policeCaseFiles) {
+    if (workingCase.origin !== CaseOrigin.LOKE) {
+      setPoliceCaseFiles({
+        files: [],
+        isLoading: false,
+        hasError: false,
+      })
+    } else if (policeData && policeData.policeCaseFiles) {
       setPoliceCaseFiles({
         files: policeData.policeCaseFiles,
         isLoading: false,
@@ -65,10 +72,10 @@ export const StepFive: React.FC = () => {
         files: policeData ? policeData.policeCaseFiles : [],
         isLoading: false,
         hasError: true,
-        errorMessage: policeDataError?.message,
+        errorCode: policeDataError?.graphQLErrors[0].extensions?.code,
       })
     }
-  }, [policeData, policeDataError?.message, policeDataLoading])
+  }, [policeData, policeDataError, policeDataLoading, workingCase.origin])
 
   return (
     <PageLayout
