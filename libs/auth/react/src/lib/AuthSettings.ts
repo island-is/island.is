@@ -1,7 +1,9 @@
 import { UserManagerSettings, WebStorageStateStore } from 'oidc-client-ts'
 import { storageFactory } from './storageFactory'
+import { toStringScope } from './utils/toStringScope'
 
-export interface AuthSettings extends Omit<UserManagerSettings, 'scope'> {
+export interface AuthSettings
+  extends Omit<UserManagerSettings, 'scope' | 'redirect_uri'> {
   /*
    * Used to create redirect uris. Should not end with slash.
    * Default: window.location.origin
@@ -70,6 +72,5 @@ export const mergeAuthSettings = (settings: AuthSettings): AuthSettings => {
     }),
     mergeClaims: true,
     ...settings,
-    redirect_uri: settings.redirect_uri || `${baseUrl}${redirectPath}`,
   }
 }

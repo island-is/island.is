@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 
 import * as faker from 'faker'
-import { User } from 'oidc-client'
+
+import { User } from '@island.is/shared/types'
 
 const createRandomOpenIDUser = (): User => {
   const [firstName, middleName, lastName] = [

@@ -27,6 +27,7 @@ export const configure = (settings: AuthSettings) => {
   userManager = new UserManager({
     ...authSettings,
     scope: toStringScope(settings.scope),
+    redirect_uri: `${authSettings.baseUrl}${authSettings.redirectPath}`,
   })
 
   return userManager
@@ -36,7 +37,6 @@ export const configureMock = (user?: MockUser) => {
   authSettings = mergeAuthSettings({
     client_id: 'test-client',
     authority: 'https://innskra.island.is',
-    redirect_uri: 'http://localhost:4200/minarsidur/signin-oidc',
   })
 
   const userInfo = createMockUser(user)
