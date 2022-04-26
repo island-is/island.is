@@ -14,11 +14,18 @@ export const watsonConfig: Record<string, WatsonChatPanelProps> = {
     carbonTheme: 'g10',
     cssVariables: {
       'BASE-font-family': '"IBM Plex Sans", "Open Sans", Arial, sans-serif',
-      'HOME_SCREEN-background': '#0061FF',
-      'HOME_SCREEN-color-text': 'white',
-      'ACCENT-color-bw': 'white',
-      '$interactive-02': '#0061FF',
-      '$hover-primary': 'transparent',
+      'interactive-01': '#0061FF',
+      'interactive-03': '#0061FF',
+      'interactive-04': '#FFFFFF',
+    },
+    languagePack: {
+      input_placeholder: 'Senda spurningu...',
+      homeScreen_returnToAssistant: 'Til baka',
+      suggestions_title: 'Tillögur',
+      suggestions_sectionTitleStarters: 'Þetta er það sem fólk hefur leitað að',
+      options_select: 'Veldu valmöguleika',
+      agent_chatTitle: 'Þjónustufulltrúi',
+      agent_startChat: 'Óska eftir aðstoð',
     },
   },
 }

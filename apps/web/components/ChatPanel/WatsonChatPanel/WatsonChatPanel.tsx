@@ -18,7 +18,12 @@ const getScriptSource = (version: string) => {
 export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
   const { activeLocale } = useI18n()
 
-  const { version = 'latest', showLauncher = true, cssVariables } = props
+  const {
+    version = 'latest',
+    showLauncher = true,
+    cssVariables,
+    languagePack,
+  } = props
 
   const { data } = useQuery<Query, QueryGetNamespaceArgs>(GET_NAMESPACE_QUERY, {
     variables: {
@@ -48,6 +53,9 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
         watsonInstance.current = instance
         if (cssVariables) {
           instance.updateCSSVariables(cssVariables)
+        }
+        if (languagePack) {
+          instance.updateLanguagePack(languagePack)
         }
         instance.render().then(() => setIsButtonVisible(true))
       },

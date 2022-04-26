@@ -19,6 +19,7 @@ export interface WatsonChatPanelProps {
   version?: string
   carbonTheme?: string
   cssVariables?: Record<string, string>
+  languagePack?: Record<string, string>
 
   // Whether the default launcher is shown
   showLauncher?: boolean
