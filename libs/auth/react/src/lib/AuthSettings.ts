@@ -41,13 +41,6 @@ export interface AuthSettings extends Omit<UserManagerSettings, 'scope'> {
    * Wich PATH on the AUTHORITY to use for checking the session expiry.
    */
   checkSessionPath?: string
-
-  // /**
-  //  * Redirect URI of the client applicatoin to receive response after sign in from IDP.
-  //  * Overwriting this property from the UserManagerSettings to make it optional.
-  //  * This property is constructed from baseUrl and redirectPath if left empty.
-  //  */
-  //readonly redirect_uri: string
 }
 
 export const mergeAuthSettings = (settings: AuthSettings): AuthSettings => {
@@ -75,7 +68,8 @@ export const mergeAuthSettings = (settings: AuthSettings): AuthSettings => {
       store: storageFactory(() => sessionStorage),
       prefix: settings.userStorePrefix,
     }),
+    mergeClaims: true,
     ...settings,
-    redirect_uri: settings.redirect_uri ?? `${baseUrl}${redirectPath}`,
+    redirect_uri: settings.redirect_uri || `${baseUrl}${redirectPath}`,
   }
 }
