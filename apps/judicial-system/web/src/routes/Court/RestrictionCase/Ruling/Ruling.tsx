@@ -207,7 +207,10 @@ export const Ruling: React.FC = () => {
         autofill('validToDate', workingCase.requestedValidToDate, workingCase)
       }
 
-      if (workingCase.type === CaseType.CUSTODY) {
+      if (
+        workingCase.type === CaseType.CUSTODY ||
+        workingCase.type === CaseType.ADMISSION_TO_FACILITY
+      ) {
         autofillBoolean(
           'isCustodyIsolation',
           workingCase.requestedCustodyRestrictions &&

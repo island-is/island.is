@@ -105,7 +105,7 @@ export const isDefendantStepValidRC = (workingCase: Case) => {
     !someDefendantIsInvalid(workingCase) &&
     validate(workingCase.defenderEmail || '', 'email-format').isValid &&
     validate(workingCase.defenderPhoneNumber || '', 'phonenumber').isValid &&
-    (workingCase.type !== CaseType.CUSTODY ||
+    (workingCase.type === CaseType.TRAVEL_BAN ||
       validate(workingCase.leadInvestigator || '', 'empty').isValid)
   )
 }
@@ -139,7 +139,7 @@ export const isHearingArrangementsStepValidRC = (workingCase: Case) => {
     (workingCase.court ||
       ((workingCase as unknown) as { courtId: string }).courtId) &&
     validate(workingCase.requestedCourtDate || '', 'date-format').isValid &&
-    (workingCase.type === CaseType.CUSTODY && !workingCase.parentCase
+    (workingCase.type !== CaseType.TRAVEL_BAN && !workingCase.parentCase
       ? validate(workingCase.arrestDate || '', 'date-format').isValid
       : true)
   )
