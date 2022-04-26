@@ -218,15 +218,19 @@ export class SyslumennService {
     realEstateId: string,
   ): Promise<Array<RealEstateAddress>> {
     const { id, api } = await this.createApi()
-    // TODO handle 404 being thrown here, in which case return an empty
-    // list or something else nullish
     const response = await api.vedbokavottordRegluverkiPost({
-      skilabod: {
-        audkenni: id,
-        fastanumer: realEstateId,
-        tegundAndlags: AssetType.RealEstate as number,
-      },
-    })
+        skilabod: {
+          audkenni: id,
+          fastanumer: realEstateId,
+          tegundAndlags: AssetType.RealEstate as number,
+        },
+      })
+      .catch((e) => {
+        if ((e as { status: number })?.status === 404) {
+          return []
+        }
+        throw e
+      })
     return response.map(mapRealEstateAddress)
   }
 }
