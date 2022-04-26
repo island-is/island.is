@@ -5,14 +5,17 @@ import {
   CurrentUser,
   IdsAuthGuard,
   IdsUserGuard,
+  Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
 import { FishingLicenseShip } from './models/fishing-license-ship.model'
 import { FishingLicenseLicense } from './models/fishing-license-license.model'
 import { FishingLicenseService } from '../lib/fishing-license.service'
+import { ApiScope } from '@island.is/auth/scopes'
 
 @UseGuards(IdsUserGuard, IdsAuthGuard, ScopesGuard)
+@Scopes(ApiScope.internal)
 @Resolver()
 export class FishingLicenseResolver {
   constructor(private fishingLicenseService: FishingLicenseService) {}

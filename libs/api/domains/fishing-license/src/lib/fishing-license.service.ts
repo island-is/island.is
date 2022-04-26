@@ -4,7 +4,7 @@ import {
   UtgerdirApi,
   FishingLicenseCodeType,
 } from '@island.is/clients/fishing-license'
-import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
+import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
@@ -17,10 +17,10 @@ export class FishingLicenseService {
     private logger: Logger,
   ) {}
 
-  async getShips(nationalId: string, auth: Auth) {
+  async getShips(nationalId: string, auth: User) {
     try {
       const ships = await this.utgerdirApi
-        .withMiddleware(new AuthMiddleware(auth, { forwardUserInfo: true }))
+        .withMiddleware(new AuthMiddleware(auth, { forwardUserInfo: false }))
         .v1UtgerdirKennitalaSkipGet({ kennitala: nationalId })
 
       return (
@@ -61,10 +61,10 @@ export class FishingLicenseService {
     }
   }
 
-  async getFishingLicenses(shipRegistationNumber: number, auth: Auth) {
+  async getFishingLicenses(shipRegistationNumber: number, auth: User) {
     try {
       const licenses = await this.shipApi
-        .withMiddleware(new AuthMiddleware(auth))
+        .withMiddleware(new AuthMiddleware(auth, { forwardUserInfo: false }))
         .v1SkipSkipaskrarnumerVeidileyfiGet({
           skipaskrarnumer: shipRegistationNumber,
         })
