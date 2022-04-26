@@ -1,5 +1,5 @@
 /// <reference path="../../../support/index.d.ts" />
-import { Case, CaseDecision, CaseType } from '@island.is/judicial-system/types'
+import { Case, CaseDecision } from '@island.is/judicial-system/types'
 import {
   COURT_RECORD_ROUTE,
   RULING_ROUTE,
