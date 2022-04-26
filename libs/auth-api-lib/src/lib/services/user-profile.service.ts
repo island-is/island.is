@@ -30,21 +30,29 @@ export class UserProfileService {
     return this.userProfileApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  async getUserProfileClaims(auth: User): Promise<UserProfileDTO> {
+  async getUserProfileClaims(
+    auth: User,
+    getUserProfileClaims: boolean,
+  ): Promise<UserProfileDTO> {
     // TODO: Switch to `kennitala` package after it releases 2.0.0 with temporary id support.
     const isCompany = !!auth.nationalId.match(/^[4-7]\d{9}$/)
 
     if (isCompany) {
       return this.getClaimsFromCompanyRegistry(auth).catch(this.handleError)
     } else {
-      return this.getIndividualUserProfileClaims(auth)
+      return this.getIndividualUserProfileClaims(auth, getUserProfileClaims)
     }
   }
 
-  async getIndividualUserProfileClaims(auth: User): Promise<UserProfileDTO> {
+  async getIndividualUserProfileClaims(
+    auth: User,
+    getUserProfileClaims: boolean,
+  ): Promise<UserProfileDTO> {
     const [nationalRegistryClaims, userProfileClaims] = await Promise.all([
       this.getClaimsFromNationalRegistry(auth).catch(this.handleError),
-      this.getClaimsFromUserProfile(auth).catch(this.handleError),
+      getUserProfileClaims
+        ? this.getClaimsFromUserProfile(auth).catch(this.handleError)
+        : {},
     ])
     return { ...nationalRegistryClaims, ...userProfileClaims }
   }

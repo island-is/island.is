@@ -7,7 +7,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 
-import * as styles from '../../components/DrivingLicense/DrivingLicense.css'
+import * as styles from './DrivingLicenseDetail.css'
 import { mapCategory } from '../../utils/dataMapper'
 import LicenseIcon from '../../components/LicenseIcon/LicenseIcon'
 import AnimateHeight from 'react-animate-height'

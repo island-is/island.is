@@ -112,7 +112,7 @@ export const StepOneForm: React.FC<Props> = (props) => {
             setWorkingCase={setWorkingCase}
           />
         </Box>
-        {workingCase.type === CaseType.CUSTODY && (
+        {workingCase.type !== CaseType.TRAVEL_BAN && (
           <Box component="section" marginBottom={10}>
             <Box
               display="flex"

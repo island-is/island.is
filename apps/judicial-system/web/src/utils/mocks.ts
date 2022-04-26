@@ -763,7 +763,7 @@ const testCase11 = {
 }
 
 const testCase12 = {
-  id: 'test_id_11',
+  id: 'test_id_12',
   created: '2020-09-16T19:50:08.033Z',
   modified: '2020-09-16T19:51:39.466Z',
   type: CaseType.CUSTODY,
@@ -812,6 +812,97 @@ const testCase12 = {
   judge: null,
   defenderName: 'Saul Goodman',
   defenderEmail: 'saul@goodman.com',
+}
+
+const testCase13 = {
+  id: 'test_id_13',
+  created: '2020-09-16T19:50:08.033Z',
+  modified: '2020-09-16T19:51:39.466Z',
+  type: CaseType.ADMISSION_TO_FACILITY,
+  state: CaseState.ACCEPTED,
+  policeCaseNumber: 'string',
+  defendants: [
+    {
+      nationalId: 'string',
+      name: 'Jon Harring',
+      aaddress: 'Harringvej 2',
+      gender: Gender.MALE,
+    },
+  ],
+  court: mockCourt,
+  arrestDate: null,
+  requestedCourtDate: null,
+  requestedValidToDate: '2020-09-16',
+  lawsBroken: null,
+  legalProvisions: [],
+  requestedCustodyRestrictions: [],
+  caseFacts: null,
+  legalArguments: null,
+  comments: 'string',
+  creatingProsecutor: {
+    name: 'Ruth Bader Ginsburg',
+    title: 'saksóknari',
+  },
+  prosecutor: {
+    name: 'Ruth Bader Ginsburg',
+    title: 'saksóknari',
+  },
+  courtCaseNumber: null,
+  courtDate: null,
+  courtStartDate: null,
+  courtEndTime: '2020-09-16T19:51:28.224Z',
+  courtAttendees: null,
+  prosecutorDemands: null,
+  sessionBookings: null,
+  ruling: null,
+  rulingDate: '2020-09-20T17:50:08.033Z',
+  decision: CaseDecision.ACCEPTING,
+  validToDate: '2020-09-24T19:50:08.033Z',
+  accusedAppealDecision: CaseAppealDecision.ACCEPT,
+  accusedAppealAnnouncement: null,
+  prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
+  prosecutorAppealAnnouncement: null,
+  isValidToDateInThePast: true,
+  isAppealDeadlineExpired: true,
+  isAppealGracePeriodExpired: true,
+  judge: null,
+  defenderName: 'Saul Goodman',
+  defenderEmail: 'saul@goodman.com',
+  parentCase: {
+    validToDate: '2021-01-18T19:50:08.033Z',
+  },
+  caseFiles: [
+    {
+      id: 'fc96b11c-f750-4867-b767-c5e562a54f09',
+      name: 'Screen Recording 2021-04-09 at 14.39.51.mov',
+      size: 4991527,
+      created: '2021-04-12T13:55:28.131Z',
+    },
+    {
+      id: '997a2b8c-c3ea-46af-8764-087af21ba00a',
+      name: 'Screen Shot 2021-04-09 at 14.01.30.png',
+      size: 125293,
+      created: '2021-04-12T13:55:24.311Z',
+    },
+    {
+      id: '58d53f9c-b70b-4b5a-a578-03e95102a981',
+      name: 'Screen Shot 2021-04-09 at 13.33.05.png',
+      size: 51454,
+      created: '2021-04-12T13:55:24.076Z',
+    },
+    {
+      id: '0fcff6d7-3e2e-4933-87d9-f3eacdb4caed',
+      name: 'Screen Shot 2021-04-09 at 13.40.53.png',
+      size: 67077,
+      created: '2021-04-12T13:55:24.069Z',
+    },
+    {
+      id: 'c63982e8-e548-445f-b9ea-580606e3de44',
+      name: 'Screen Shot 2021-04-09 at 08.48.06.png',
+      size: 50160,
+      created: '2021-04-12T13:55:24.055Z',
+    },
+  ],
 }
 
 export const mockInstitutionsQuery = [
@@ -1048,6 +1139,17 @@ export const mockCaseQueries = [
     result: {
       data: {
         case: testCase12,
+      },
+    },
+  },
+  {
+    request: {
+      query: CaseQuery,
+      variables: { input: { id: 'test_id_13' } },
+    },
+    result: {
+      data: {
+        case: testCase13,
       },
     },
   },
