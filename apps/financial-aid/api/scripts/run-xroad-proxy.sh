@@ -13,5 +13,5 @@ echo "Starting port forwarding session with instance $INSTANCE_ID for profile $A
 aws ssm start-session \
     --target "$INSTANCE_ID" \
     --document-name AWS-StartPortForwardingSession \
-    --parameters '{"portNumber":["5050"],"localPortNumber":["5050"]}' \
+    --parameters '{"portNumber":["8081"],"localPortNumber":["5050"]}' \
     --region eu-west-1
