@@ -13,7 +13,7 @@ export const rcOverview = {
     defaultMessage: `Yfirlit kröfu um {caseType, select,
       ${CaseType.ADMISSION_TO_FACILITY} {{isExtended, select, yes {framlengingu á } other {}}vistun á viðeigandi stofnun}
       ${CaseType.TRAVEL_BAN} {{isExtended, select, yes {farbanni} other {farbann}}}
-      other {{isExtended, select, yes {framlengingu á gæsluvarðhaldi} other {gæsluvarðhald}}}n  sn sb`,
+      other {{isExtended, select, yes {framlengingu á gæsluvarðhaldi} other {gæsluvarðhald}}}}`,
     description: 'Notaður sem titill á yfirlits skrefi í rannsóknarheimildum.',
   }),
   sections: {
