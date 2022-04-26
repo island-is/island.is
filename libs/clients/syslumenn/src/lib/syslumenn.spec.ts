@@ -124,13 +124,13 @@ describe('SyslumennService', () => {
 
   describe('getRealEstateAddress', () => {
     it('should return address for valid realEstateId', async () => {
-      const response = await service.getRealEstateAddress("012345")
+      const response = await service.getRealEstateAddress('012345')
       expect(response).toStrictEqual(REAL_ESTATE_ADDRESS)
     })
 
     it('should return error for invalid realEstateId', async () => {
-      const response = await service.getRealEstateAddress("abcdefg")
-      expect(response).toThrowError()
+      const response = await service.getRealEstateAddress('abcdefg')
+      expect(response).toStrictEqual([])
     })
   })
 })

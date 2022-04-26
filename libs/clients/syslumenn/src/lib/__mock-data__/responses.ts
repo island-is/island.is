@@ -106,19 +106,19 @@ export const DATA_UPLOAD: Skilabod = {
   malsnumer: 'string',
 }
 
-export const REAL_ESTATE_RESPONSE: VedbandayfirlitReguverkiSvarSkeyti = {
-    fastnum: "string",
-    landNr: 123456,
-    heiti: "Hvergiland",
-    svfn: "string",
-    svetiarfelag: "string",
-    notkun: "string",
-    eining: "string",
-    byggd: "string",
-    embaetti: "string",
-    embaettiNumer: "string",
-}
+export const VEDBANDAYFIRLRIT_REGLUVERKI_RESPONSE: Array<VedbandayfirlitReguverkiSvarSkeyti> = [{
+  fastnum: 'string',
+  landNr: 123456,
+  heiti: 'Hvergiland',
+  svfn: 'string',
+  svetiarfelag: 'string',
+  notkun: 'string',
+  eining: 'string',
+  byggd: 'string',
+  embaetti: 'string',
+  embaettiNumer: 'string',
+}]
 
-export const REAL_ESTATE_ADDRESS: RealEstateAddress = {
+export const REAL_ESTATE_ADDRESS: Array<RealEstateAddress> = [{
   address: 'Hvergiland',
-}
+}]

@@ -6,6 +6,7 @@ import {
   DATA_UPLOAD,
   OPERATING_LICENSE_SERVICE_RES,
   OPERATING_LICENSE_PAGINATION_INFO_SERVICE_RES,
+  VEDBANDAYFIRLRIT_REGLUVERKI_RESPONSE,
 } from './responses'
 
 const url = (path: string) => {
@@ -60,5 +61,12 @@ export const requestHandlers = [
   }),
   rest.post(url('/api/v1/SyslMottakaGogn'), (req, res, ctx) => {
     return res(ctx.status(200), ctx.json(DATA_UPLOAD))
+  }),
+  rest.post(url('/api/VedbokavottordRegluverki'), (req, res, ctx) => {
+    const realEstateId = (req.body as any).fastanumer ?? ""
+    const validRealEstateId = /f?\d+/.test(realEstateId)
+    if (!validRealEstateId)
+      return res(ctx.status(404), ctx.json([]))
+    return res(ctx.status(200), ctx.json(VEDBANDAYFIRLRIT_REGLUVERKI_RESPONSE))
   }),
 ]
