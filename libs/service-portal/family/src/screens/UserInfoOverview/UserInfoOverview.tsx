@@ -16,6 +16,7 @@ import { FamilyMemberCard } from '../../components/FamilyMemberCard/FamilyMember
 import { FamilyMemberCardLoader } from '../../components/FamilyMemberCard/FamilyMemberCardLoader'
 import { NATIONAL_REGISTRY_CHILDREN } from '../../lib/queries/getNationalChildren'
 import { NATIONAL_REGISTRY_USER } from '../../lib/queries/getNationalRegistryUser'
+import { spmm } from '../../lib/messages'
 
 const UserInfoOverview: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.family')
@@ -42,11 +43,7 @@ const UserInfoOverview: ServicePortalModuleComponent = ({ userInfo }) => {
                 {formatMessage(m.myInfo)}
               </Text>
               <Text as="p" variant="default">
-                {formatMessage({
-                  id: 'sp.family:user-info-description',
-                  defaultMessage:
-                    'Hér eru gögn um þig og fjölskyldu þína sem sótt eru til Þjóðskrár. Með því að smella á skoða nánar er hægt að óska eftir breytingum á þeim upplýsingum.',
-                })}
+                {formatMessage(spmm.family.userInfoDesc)}
               </Text>
             </Stack>
           </GridColumn>
