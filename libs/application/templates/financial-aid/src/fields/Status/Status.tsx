@@ -4,17 +4,22 @@ import { FAApplication } from '../../lib/types'
 import MoreActions from './MoreActions/MoreActions'
 import Timeline from './Timeline/Timeline'
 import AidAmount from './AidAmount/AidAmount'
+import MissingFilesCard from './MissingFIlesCard/MissingFilesCard'
 
 interface Props {
   application: FAApplication
-  showAidAmount: boolean
+  showAidAmount?: boolean
+  showFilesCard?: boolean
 }
 
-const Status = ({ application, showAidAmount }: Props) => {
+const Status = ({ application, showAidAmount, showFilesCard }: Props) => {
   const { nationalRegistry } = application.externalData
 
   return (
     <>
+      {/* TODO: redirect user to page to upload files when button is clicked insied of MissingFilesCard*/}
+      {showFilesCard && <MissingFilesCard />}
+
       {/* TODO: use correct aid amount inside AidAmount component*/}
       {showAidAmount && <AidAmount application={application} />}
 

@@ -9,6 +9,9 @@ const ApplicantStatus = ({ application }: FAFieldBaseProps) => {
   return (
     <Status
       application={application}
+      showFilesCard={
+        application.applicationState === ApplicationState.DATANEEDED
+      }
       showAidAmount={application.applicationState !== ApplicationState.REJECTED}
     />
   )

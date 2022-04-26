@@ -94,4 +94,22 @@ export const status = {
       description: 'Aid amount description',
     },
   }),
+  missingFilesCard: defineMessages({
+    title: {
+      id: 'fa.application:section.status.missingFilesCard.title',
+      defaultMessage: 'Vantar gögn',
+      description: 'Title of the card',
+    },
+    description: {
+      id: 'fa.application:section.status.missingFilesCard.description',
+      defaultMessage:
+        'Við þurfum að fá gögn frá þér áður en við getum haldið áfram með umsóknina.',
+      description: 'Description of the card',
+    },
+    action: {
+      id: 'fa.application:section.status.missingFilesCard.action',
+      defaultMessage: 'Hlaða upp gögnum',
+      description: 'Action title of the card',
+    },
+  }),
 }
