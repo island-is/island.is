@@ -33,10 +33,13 @@ const createRandomOpenIDUser = (): User => {
       aud: faker.random.word(),
       exp: faker.datatype.number(),
       iat: faker.datatype.number(),
-      nonce: faker.datatype.number(),
+      nat: faker.random.word(),
+      idp: faker.random.word(),
+      nonce: faker.random.word(),
     },
     expires_at: faker.datatype.number(),
     state: faker.random.word(),
+    session_state: faker.random.word(),
     toStorageString: () => '',
     expires_in: faker.datatype.number(),
     expired: faker.datatype.boolean(),
@@ -61,6 +64,7 @@ export const createOpenIDUser = (
     expires_in = user['expires_in'] ?? fallback['expires_in'],
     expired = user['expired'] ?? fallback['expired'],
     scopes = user['scopes'] ?? fallback['scopes'],
+    session_state = user['session_state'] ?? fallback['session_state'],
   } = user
 
   return {
@@ -75,5 +79,6 @@ export const createOpenIDUser = (
     expires_in,
     expired,
     scopes,
+    session_state,
   }
 }
