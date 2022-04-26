@@ -23,7 +23,7 @@ export const SignedDocument = (props: Props) => {
             time: formatDate(rulingDate, 'HH:mm'),
           })}
         </Text>
-        <Text>{judge}</Text>
+        <Text variant="small">{judge}</Text>
       </Box>
       <Icon icon="checkmark" size="large" color="mint600"></Icon>
     </Box>

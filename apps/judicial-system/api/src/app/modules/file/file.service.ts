@@ -11,6 +11,7 @@ import {
 
 import { FileExeption } from './file.exception'
 import { fileModuleConfig } from './file.config'
+import { ProblemError } from '@island.is/nest/problem'
 
 @Injectable()
 export class FileService {
@@ -34,11 +35,15 @@ export class FileService {
     const result = await fetch(
       `${this.config.backendUrl}/api/case/${id}/${route}`,
       { headers },
-    )
+    ).then(async (res) => {
+      if (res.ok) {
+        return res
+      }
 
-    if (!result.ok) {
-      throw new FileExeption(result.status, result.statusText)
-    }
+      const response = await res.json()
+
+      throw new ProblemError(response)
+    })
 
     const stream = result.body
 

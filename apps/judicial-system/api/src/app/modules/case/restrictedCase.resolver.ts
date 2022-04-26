@@ -33,7 +33,7 @@ export class RestrictedCaseResolver {
     @CurrentGraphQlUser() user: User,
     @Context('dataSources') { backendApi }: { backendApi: BackendApi },
   ): Promise<Case> {
-    this.logger.debug(`Getting restricted case ${input.id}`)
+    this.logger.debug(`Getting case ${input.id}`)
 
     return this.auditTrailService.audit(
       user.id,
