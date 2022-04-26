@@ -21,7 +21,7 @@ const FormInfo = ({ items, goToScreen }: Props) => {
   return (
     <>
       {items.map((item, i) => (
-        <SummaryBlock editAction={() => goToScreen?.(item.route)} key={i}>
+        <SummaryBlock editAction={() => goToScreen?.(item.route ?? '')} key={i}>
           <Text fontWeight="semiBold">{formatMessage(item.label)}</Text>
 
           <Text>

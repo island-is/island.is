@@ -73,16 +73,6 @@ export const summaryForm = {
       defaultMessage: 'Gögn',
       description: 'Summary form files title',
     },
-    directPaymentTitle: {
-      id: 'fa.application:section.summaryForm.formInfo.directPaymentTitle',
-      defaultMessage: 'Staðgreiðsluskrá',
-      description: 'Summary form direct payments title',
-    },
-    directPaymentFetched: {
-      id: 'fa.application:section.summaryForm.formInfo.directPaymentFetched',
-      defaultMessage: 'Staðgreiðsluskrá sótt',
-      description: 'Confirmation title that direct payments was fetched',
-    },
     formCommentTitle: {
       id: 'fa.application:section.summaryForm.formInfo.formCommentTitle',
       defaultMessage: 'Útskýring umsóknar',
@@ -97,6 +87,18 @@ export const summaryForm = {
       id: 'fa.application:section.summaryForm.formInfo.formCommentLabel',
       defaultMessage: 'Frekari útskýring á umsókn',
       description: 'Summary form label above the form comment section',
+    },
+  }),
+  directPayments: defineMessages({
+    title: {
+      id: 'fa.application:section.summaryForm.directPayments.title',
+      defaultMessage: 'Staðgreiðsluskrá',
+      description: 'Summary form direct payments title',
+    },
+    fetched: {
+      id: 'fa.application:section.summaryForm.directPayments.fetched',
+      defaultMessage: 'Staðgreiðsluskrá sótt',
+      description: 'Confirmation title that direct payments was fetched',
     },
   }),
   block: defineMessages({

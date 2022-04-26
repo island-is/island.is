@@ -125,11 +125,6 @@ export const formItems = (
     info: getMessageApproveOptionsForIncome[answers?.income],
   },
   {
-    route: Routes.INCOME,
-    label: m.summaryForm.formInfo.directPaymentTitle,
-    info: getMessageApproveOptionsForIncome[answers?.income],
-  },
-  {
     route: Routes.PERSONALTAXCREDIT,
     label: m.summaryForm.formInfo.personalTaxCreditTitle,
     info: getMessageApproveOptions[answers?.personalTaxCredit],

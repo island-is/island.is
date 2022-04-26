@@ -1,6 +1,5 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
-
 import { Text, Box } from '@island.is/island-ui/core'
 import {
   getNextPeriod,
@@ -19,14 +18,23 @@ import {
 import { Routes } from '../../lib/constants'
 import { DescriptionText, Breakdown } from '../index'
 import { formatAddress, formItems } from '../../lib/formatters'
-import { FormInfo, SummaryComment, UserInfo, ContactInfo, Files } from './index'
+import {
+  FormInfo,
+  SummaryComment,
+  UserInfo,
+  ContactInfo,
+  Files,
+  DirectTaxPaymentCell,
+} from './index'
+
+import { DirectTaxPaymentsModal } from '..'
 
 const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
   const { id, answers, externalData } = application
   const summaryCommentType = SummaryCommentType.FORMCOMMENT
 
-  console.log(externalData, answers)
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   const aidAmount = useMemo(() => {
     if (
@@ -90,6 +98,18 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
         goToScreen={goToScreen}
       />
 
+      <DirectTaxPaymentCell
+        setIsModalOpen={setIsModalOpen}
+        hasFetchedPayments={
+          externalData?.nationalRegistry?.data?.taxData
+            ?.municipalitiesDirectTaxPayments?.success
+        }
+        directTaxPayments={
+          externalData?.nationalRegistry?.data?.taxData
+            ?.municipalitiesDirectTaxPayments?.directTaxPayments
+        }
+      />
+
       <ContactInfo
         route={Routes.CONTACTINFO}
         email={answers?.contactInfo?.email}
@@ -116,6 +136,18 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
       <SummaryComment
         commentId={summaryCommentType}
         comment={answers?.formComment}
+      />
+
+      <DirectTaxPaymentsModal
+        items={
+          externalData?.nationalRegistry?.data?.taxData
+            ?.municipalitiesDirectTaxPayments?.directTaxPayments
+        }
+        dateDataWasFetched={externalData?.nationalRegistry?.date}
+        isVisible={isModalOpen}
+        onVisibilityChange={(isOpen) => {
+          setIsModalOpen(isOpen)
+        }}
       />
     </>
   )
