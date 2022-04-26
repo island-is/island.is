@@ -15,6 +15,7 @@ import {
   PublicDebtPaymentPlanTemplateService,
   GeneralPetitionService,
   CriminalRecordSubmissionService,
+  GeneralFishingLicenseService,
   DataProtectionComplaintService,
   PSignSubmissionService,
   ExamplePaymentActionsService,
@@ -55,6 +56,7 @@ export class TemplateAPIService {
     private readonly publicDebtPaymentPlanService: PublicDebtPaymentPlanTemplateService,
     private readonly generalPetitionService: GeneralPetitionService,
     private readonly criminalRecordSubmissionService: CriminalRecordSubmissionService,
+    private readonly generalFishingLicenseService: GeneralFishingLicenseService,
     private readonly dataProtectionComplaintService: DataProtectionComplaintService,
     private readonly pSignSubmissionService: PSignSubmissionService,
     private readonly examplePaymentActionsService: ExamplePaymentActionsService,
@@ -78,6 +80,7 @@ export class TemplateAPIService {
       | PublicDebtPaymentPlanTemplateService
       | GeneralPetitionService
       | CriminalRecordSubmissionService
+      | GeneralFishingLicenseService
       | DataProtectionComplaintService
       | PSignSubmissionService
       | ExamplePaymentActionsService
@@ -180,6 +183,11 @@ export class TemplateAPIService {
       case ApplicationTypes.CRIMINAL_RECORD:
         return this.tryRunningActionOnService(
           this.criminalRecordSubmissionService,
+          action,
+        )
+      case ApplicationTypes.GENERAL_FISHING_LICENSE:
+        return this.tryRunningActionOnService(
+          this.generalFishingLicenseService,
           action,
         )
       case ApplicationTypes.DATA_PROTECTION_AUTHORITY_COMPLAINT:
