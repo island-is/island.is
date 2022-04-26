@@ -42,99 +42,12 @@ export const draft = (): Form => {
         id: 'roleConfirmation',
         title: m.roleConfirmationSectionTitle,
         children: [
-          /*
-          buildMultiField({
-            id: 'list',
-            title: m.roleConfirmationHeading,
-            children: [
-              buildKeyValueField({
-                label: m.deceasedName,
-                value: 'Jóna Jónsdóttir',
-                colSpan: ['1/2', '1/2', '1/3'],
-              }),
-              buildKeyValueField({
-                label: m.deceasedNationalId,
-                value: '112233-4455',
-                colSpan: ['1/2', '1/2', '1/3'],
-              }),
-              buildKeyValueField({
-                label: m.deceasedDate,
-                value: '05.02.2022',
-                colSpan: ['1/1', '1/1', '1/3'],
-              }),
-              buildDescriptionField({
-                title: '',
-                space: 2,
-                description: m.roleConfirmationDescription,
-                id: 'roleConfirmationDescription',
-              }),
-              buildDescriptionField({
-                title: '',
-                space: 2,
-                description: m.roleConfirmationNotice,
-                id: 'roleConfirmationNotice',
-              }),
-              buildRadioField({
-                id: 'roleConfirmation',
-                title: '',
-                options: [
-                  {
-                    value: RoleConfirmationEnum.CONTINUE,
-                    label: m.roleConfirmationContinue,
-                  },
-                  {
-                    value: RoleConfirmationEnum.DELEGATE,
-                    label: m.roleConfirmationDelegate,
-                  },
-                ],
-                width: 'full',
-              }),
-              buildCustomField({
-                title: '',
-                id: 'electPerson',
-                component: 'ElectPerson',
-                condition: (answers) =>
-                  getValueViaPath(answers, 'roleConfirmation') ===
-                  RoleConfirmationEnum.DELEGATE,
-              }),
-            ],
-          }),
-          subSectionDelegate,
-          */
         ],
       }),
       buildSection({
         id: 'externalData',
         title: m.dataCollectionTitle,
         children: [
-          /*
-          buildExternalDataProvider({
-            id: 'approveExternalData',
-            title: m.dataCollectionTitle,
-            subTitle: m.dataCollectionSubtitle,
-            checkboxLabel: m.dataCollectionCheckboxLabel,
-            dataProviders: [
-              buildDataProviderItem({
-                id: 'nationalRegistry',
-                type: 'NationalRegistryProvider',
-                title: m.dataCollectionNationalRegistryTitle,
-                subTitle: m.dataCollectionNationalRegistrySubtitle,
-              }),
-              buildDataProviderItem({
-                id: 'userProfile',
-                type: 'UserProfileProvider',
-                title: m.dataCollectionUserProfileTitle,
-                subTitle: m.dataCollectionUserProfileSubtitle,
-              }),
-              buildDataProviderItem({
-                id: 'deathNotice',
-                type: 'DeathNoticeProvider',
-                title: 'Dauðir...',
-                subTitle: '...menn segja engar sögur',
-              }),
-            ],
-          }),
-            */
         ],
       }),
       buildSection({

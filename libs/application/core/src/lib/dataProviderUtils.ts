@@ -29,7 +29,6 @@ function callProvider(
       return Promise.resolve(provider.onProvideSuccess(result))
     },
     (error) => {
-      console.log(error)
       const reason =
         typeof error.reason === 'object'
           ? formatMessage(error.reason)

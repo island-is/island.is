@@ -54,14 +54,6 @@ const AnnouncementOfDeathTemplate: ApplicationTemplate<
               write: 'all',
             },
           ],
-          // TODO: consider this as a call to fetch info from Syslumadur
-          /*
-          onExit: {
-            apiModuleAction: ApiActions.fetchSyslumennInfo,
-            shouldPersistToExternalData: true,
-            throwOnError: true
-          },
-          */
         },
         on: {
           [DefaultEvents.SUBMIT]: { target: States.DRAFT },
