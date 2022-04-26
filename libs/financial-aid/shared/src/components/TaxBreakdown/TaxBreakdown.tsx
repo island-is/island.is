@@ -10,6 +10,7 @@ import TaxBreakdownHeadline from './TaxBreakdownHeadline'
 import groupBy from 'lodash/groupBy'
 
 import * as styles from './TaxBreakdown.css'
+import { Dictionary } from 'lodash'
 
 export const taxBreakDownHeaders = [
   'Fyrirtæki',
@@ -20,22 +21,39 @@ export const taxBreakDownHeaders = [
 
 interface Props {
   items: DirectTaxPayment[]
+  dateDataWasFetched?: string
 }
 
-const TaxBreakdown = ({ items }: Props) => {
-  const date = new Date()
-  const currentMonth = date.getMonth() + 1
-  const currentYear = date.getFullYear()
-  const itemsGrouped = groupBy(items, (item) => item.month)
+const TaxBreakdown = ({ items, dateDataWasFetched }: Props) => {
+  const date = dateDataWasFetched ? new Date(dateDataWasFetched) : new Date()
 
-  for (let i = 1; i <= 3; i++) {
-    const month = currentMonth - i
-    const year = month < 1 ? currentYear - 1 : currentYear
-
-    if (!itemsGrouped[month]) {
-      itemsGrouped[month] = [{ year, month } as DirectTaxPayment]
+  const isKeyInArray = (
+    grouped: Dictionary<DirectTaxPayment[]>,
+    month: number,
+    year: number,
+  ) => {
+    if (!grouped[month]) {
+      grouped[month] = [{ year, month } as DirectTaxPayment]
     }
   }
+
+  const fillInDictionary = (grouped: Dictionary<DirectTaxPayment[]>) => {
+    if (Object.keys(grouped).length === 3) {
+      return grouped
+    }
+    for (let i = 1; i <= 3; i++) {
+      const prevMonth = date.getMonth() - i
+      const year = date.getFullYear()
+
+      if (prevMonth < 0) {
+        isKeyInArray(grouped, prevMonth + 13, year - 1)
+      } else {
+        isKeyInArray(grouped, prevMonth + 1, year)
+      }
+    }
+    return grouped
+  }
+  const itemsGrouped = groupBy(items, (item) => item.month)
 
   return (
     <table className={styles.tableContainer}>
@@ -53,8 +71,11 @@ const TaxBreakdown = ({ items }: Props) => {
         </tr>
       </thead>
       <tbody>
-        {Object.entries(itemsGrouped)
-          .sort((a, b) => a[1][0].month - b[1][0].month)
+        {Object.entries(fillInDictionary(itemsGrouped))
+          .sort(
+            (a, b) =>
+              a[1][0].year - b[1][0].year || a[1][0].month - b[1][0].month,
+          )
           .map(([month, monthItems]) => {
             const monthNumber = parseInt(month) - 1
             return (
