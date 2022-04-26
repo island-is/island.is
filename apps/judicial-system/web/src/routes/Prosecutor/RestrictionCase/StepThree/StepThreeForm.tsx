@@ -157,7 +157,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
                     label={formatMessage(
                       rcDemands.sections.demands.admissionToAppropriateFacility,
                     )}
-                    tooltip={formatMessage(rcDemands.sections.demands.tooltip)}
+                    // tooltip={formatMessage(rcDemands.sections.demands.tooltip)}
                     checked={
                       workingCase.type === CaseType.ADMISSION_TO_FACILITY
                     }

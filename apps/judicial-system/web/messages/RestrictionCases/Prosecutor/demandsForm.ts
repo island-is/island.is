@@ -30,14 +30,6 @@ export const rcDemands = {
         description:
           'Notaður sem titill fyrir kröfu um vistun á viðeigandi stofnun fyrir "dómkröfur" hlutann á lagagrundvöllur og dómkröfur skrefi í gæsluvarðhalds-, og vistunarmálum.',
       }),
-      admissionToFacilityTooltip: defineMessage({
-        id:
-          'judicial.system.restriction_cases:police_demands.demands.admission_to_facility_tooltip',
-        defaultMessage:
-          'Þú getur valið einhvern af þessum viðeigandi stofnunum.',
-        description:
-          'Texti fyrir skýritexti í kröfu um vistun á viðeigandi stofnun fyrir "dómkröfur" hlutann á lagagrundvöllur og dómkröfur skrefi í gæsluvarðhalds- og farbannsmálum.',
-      }),
       tooltip: defineMessage({
         id: 'judicial.system.restriction_cases:police_demands.demands.tooltip',
         defaultMessage:
