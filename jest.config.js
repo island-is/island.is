@@ -116,6 +116,7 @@ module.exports = {
     '<rootDir>/libs/application/templates/driving-instructor-registrations',
     '<rootDir>/libs/application/templates/driving-license',
     '<rootDir>/libs/application/templates/example-payment',
+    '<rootDir>/libs/application/templates/financial-aid',
     '<rootDir>/libs/application/templates/funding-government-projects',
     '<rootDir>/libs/application/templates/general-fishing-license',
     '<rootDir>/libs/application/templates/health-insurance',

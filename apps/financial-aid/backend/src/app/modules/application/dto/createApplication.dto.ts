@@ -28,6 +28,11 @@ export class CreateApplicationDto {
   @IsOptional()
   @IsString()
   @ApiProperty()
+  readonly nationalId: string
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
   readonly phoneNumber: string
 
   @IsNotEmpty()
@@ -128,6 +133,16 @@ export class CreateApplicationDto {
   @IsString()
   @ApiProperty()
   readonly spouseEmail: string
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  readonly spousePhoneNumber: string
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  readonly spouseFormComment: string
 
   @IsNotEmpty()
   @IsString()

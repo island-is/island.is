@@ -112,6 +112,9 @@
       "@island.is/api/domains/mortgage-certificate": [
         "libs/api/domains/mortgage-certificate/src/index.ts"
       ],
+      "@island.is/api/domains/municipalities-financial-aid": [
+        "libs/api/domains/municipalities-financial-aid/src/index.ts"
+      ],
       "@island.is/api/domains/national-registry": [
         "libs/api/domains/national-registry/src/index.ts"
       ],
@@ -193,6 +196,9 @@
       ],
       "@island.is/application/templates/family-matters-core/*": [
         "libs/application/templates/family-matters/core/src/*"
+      ],
+      "@island.is/application/templates/financial-aid": [
+        "libs/application/templates/financial-aid/src/index.ts"
       ],
       "@island.is/application/templates/funding-government-projects": [
         "libs/application/templates/funding-government-projects/src/index.ts"
@@ -282,6 +288,9 @@
         "libs/clients/middlewares/src/index.ts"
       ],
       "@island.is/clients/mms": ["libs/clients/mms/src/index.ts"],
+      "@island.is/clients/municipalities-financial-aid": [
+        "libs/clients/municipalities-financial-aid/src/index.ts"
+      ],
       "@island.is/clients/national-registry-v1": [
         "libs/clients/national-registry/v1/src/index.ts"
       ],

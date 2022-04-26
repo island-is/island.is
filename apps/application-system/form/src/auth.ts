@@ -7,6 +7,7 @@ import {
   UserProfileScope,
   EndorsementsScope,
   AuthScope,
+  MunicipalitiesFinancialAidScope,
 } from '@island.is/auth/scopes'
 
 const userMocked = process.env.API_MOCKS === 'true'
@@ -35,6 +36,9 @@ if (userMocked) {
       EndorsementsScope.main,
       ApiScope.internal,
       ApiScope.meDetails,
+      MunicipalitiesFinancialAidScope.read,
+      MunicipalitiesFinancialAidScope.write,
+      MunicipalitiesFinancialAidScope.applicant,
       ApiScope.assets,
     ],
     post_logout_redirect_uri: `${window.location.origin}`,
