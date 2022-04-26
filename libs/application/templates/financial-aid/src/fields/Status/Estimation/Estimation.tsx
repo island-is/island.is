@@ -10,7 +10,7 @@ import {
   showSpouseData,
 } from '@island.is/financial-aid/shared/lib'
 
-import { Breakdown } from '../..'
+import { Breakdown, DescriptionText } from '../..'
 import { ApproveOptions, FAApplication } from '../../../lib/types'
 import { findFamilyStatus } from '../../../lib/utils'
 import { status } from '../../../lib/messages'
@@ -59,9 +59,10 @@ const Estimation = ({ application }: Props) => {
         </>
       </Box>
 
-      <Text marginBottom={2}>
-        {formatMessage(status.aidAmount.description)}
-      </Text>
+      <DescriptionText
+        textProps={{ marginBottom: 2 }}
+        text={status.aidAmount.description}
+      />
 
       <Breakdown
         calculations={estimatedBreakDown(

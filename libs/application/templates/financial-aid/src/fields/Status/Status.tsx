@@ -5,6 +5,7 @@ import MoreActions from './MoreActions/MoreActions'
 import Timeline from './Timeline/Timeline'
 import AidAmount from './AidAmount/AidAmount'
 import MissingFilesCard from './MissingFIlesCard/MissingFilesCard'
+import Header from './Header/Header'
 
 interface Props {
   application: FAApplication
@@ -17,6 +18,8 @@ const Status = ({ application, showAidAmount, showFilesCard }: Props) => {
 
   return (
     <>
+      <Header state={application.applicationState} />
+
       {/* TODO: redirect user to page to upload files when button is clicked insied of MissingFilesCard*/}
       {showFilesCard && <MissingFilesCard />}
 

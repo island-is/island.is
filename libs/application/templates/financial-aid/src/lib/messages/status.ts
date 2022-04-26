@@ -93,9 +93,9 @@ export const status = {
       description: 'Aid amount title for approved applications',
     },
     description: {
-      id: 'fa.application:section.status.aidAmount.description',
+      id: 'fa.application:section.status.aidAmount.description#markup',
       defaultMessage:
-        'Athugaðu að þessi útreikningur er eingöngu til viðmiðunar og getur tekið breytingum. Þú færð skilaboð þegar frekari útreikningur liggur fyrir. Umsóknin verður afgreidd eins fljótt og auðið er.',
+        'Athugaðu að þessi útreikningur er <b style="color: #FF0050">eingöngu til viðmiðunar og getur tekið breytingum</b>. Þú færð skilaboð þegar frekari útreikningur liggur fyrir. Umsóknin verður afgreidd eins fljótt og auðið er.',
       description: 'Aid amount description',
     },
   }),
@@ -115,6 +115,28 @@ export const status = {
       id: 'fa.application:section.status.missingFilesCard.action',
       defaultMessage: 'Hlaða upp gögnum',
       description: 'Action title of the card',
+    },
+  }),
+  header: defineMessages({
+    new: {
+      id: 'fa.application:section.status.header.new',
+      defaultMessage: 'Umsókn móttekin',
+      description: 'New text',
+    },
+    inProgress: {
+      id: 'fa.application:section.status.header.inProgress#markup',
+      defaultMessage: 'Umsókn í vinnslu til útgreiðslu í {month} {year}',
+      description: 'In progress text',
+    },
+    approved: {
+      id: 'fa.application:section.status.header.approved',
+      defaultMessage: 'Umsókn samþykkt',
+      description: 'Approved text',
+    },
+    rejected: {
+      id: 'fa.application:section.status.header.rejected',
+      defaultMessage: 'Umsókn synjað',
+      description: 'Rejected text',
     },
   }),
 }
