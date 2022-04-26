@@ -1,6 +1,7 @@
 import React from 'react'
 import { defineMessage } from 'react-intl'
 import { useQuery } from '@apollo/client'
+import { spmm } from '../../lib/messages'
 
 import { Query } from '@island.is/api/schema'
 import {
@@ -44,11 +45,7 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
                 {userInfo.profile.name}
               </Text>
               <Text as="p" variant="default">
-                {formatMessage({
-                  id: 'sp.family:user-info-description',
-                  defaultMessage:
-                    'Hér eru gögn um þig og fjölskyldu þína sem sótt eru til Þjóðskrár. Með því að smella á skoða upplýsingar er hægt að óska eftir breytingum á þeim upplýsingum.',
-                })}
+                {formatMessage(spmm.family.userInfoDesc)}
               </Text>
             </Stack>
           </GridColumn>

@@ -17,6 +17,7 @@ import { PSignSubmissionModule } from './p-sign-submission/p-sign-submission.mod
 import { ExamplePaymentActionsModule } from './example-payment-actions/examplePaymentActions.module'
 import { ComplaintsToAlthingiOmbudsmanTemplateModule } from './complaints-to-althingi-ombudsman/complaints-to-althingi-ombudsman.module'
 import { MortgageCertificateSubmissionModule } from './mortgage-certificate-submission/mortgage-certificate-submission.module'
+import { FinancialAidModule } from './financial-aid/financial-aid.module'
 import { DrivingSchoolConfirmationModule } from './driving-school-confirmation/driving-school-confirmation.module'
 
 export const modules = [
@@ -39,6 +40,7 @@ export const modules = [
   ExamplePaymentActionsModule,
   ComplaintsToAlthingiOmbudsmanTemplateModule,
   MortgageCertificateSubmissionModule,
+  FinancialAidModule,
   DrivingSchoolConfirmationModule,
 ]
 
@@ -61,4 +63,5 @@ export { PSignSubmissionService } from './p-sign-submission/p-sign-submission.se
 export { ExamplePaymentActionsService } from './example-payment-actions/examplePaymentActions.service'
 export { ComplaintsToAlthingiOmbudsmanTemplateService } from './complaints-to-althingi-ombudsman/complaints-to-althingi-ombudsman.service'
 export { MortgageCertificateSubmissionService } from './mortgage-certificate-submission/mortgage-certificate-submission.service'
+export { FinancialAidService } from './financial-aid/financial-aid.service'
 export { DrivingSchoolConfirmationService } from './driving-school-confirmation/driving-school-confirmation.service'

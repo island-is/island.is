@@ -50,6 +50,8 @@ import {
 import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 import { ProblemModule } from '@island.is/nest/problem'
 import { CriminalRecordModule } from '@island.is/api/domains/criminal-record'
+import { MunicipalitiesFinancialAidModule } from '@island.is/api/domains/municipalities-financial-aid'
+import { MunicipalitiesFinancialAidConfig } from '@island.is/clients/municipalities-financial-aid'
 import { MortgageCertificateModule } from '@island.is/api/domains/mortgage-certificate'
 
 import { maskOutFieldsMiddleware } from './graphql.middleware'
@@ -251,6 +253,7 @@ const autoSchemaFile = environment.production
         xroadPath: environment.criminalRecord.xroadPath!,
       },
     }),
+    MunicipalitiesFinancialAidModule,
     FishingLicenseModule,
     MortgageCertificateModule,
     ConfigModule.forRoot({
@@ -266,6 +269,7 @@ const autoSchemaFile = environment.production
         SyslumennClientConfig,
         FeatureFlagConfig,
         XRoadConfig,
+        MunicipalitiesFinancialAidConfig,
         CompanyRegistryConfig,
         FishingLicenseClientConfig,
         DrivingLicenseBookClientConfig,
