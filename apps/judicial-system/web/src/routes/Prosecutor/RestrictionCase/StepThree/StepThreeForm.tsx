@@ -157,11 +157,14 @@ const StepThreeForm: React.FC<Props> = (props) => {
                     label={formatMessage(
                       rcDemands.sections.demands.admissionToAppropriateFacility,
                     )}
-                    // tooltip={formatMessage(rcDemands.sections.demands.tooltip)}
                     checked={
                       workingCase.type === CaseType.ADMISSION_TO_FACILITY
                     }
                     onChange={(event) => {
+                      if (workingCase.parentCase) {
+                        return
+                      }
+
                       setAndSendToServer(
                         'type',
                         event.target.checked
@@ -174,6 +177,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
                     }}
                     large
                     filled
+                    disabled={Boolean(workingCase.parentCase)}
                   />
                 </GridColumn>
               </GridRow>
