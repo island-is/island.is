@@ -182,10 +182,9 @@ export const calculatePeriodLength = (
           13.mar - 31.mar
           13.mar - 02.apr
       */
-      if (dayOfMonth !== 1 && end.getMonth() - 1 === start.getMonth()){
+      if (dayOfMonth !== 1 && end.getMonth() - 1 === start.getMonth()) {
         costOfMonth = daysInMonth - dayOfMonth + 1
-      }
-      else {
+      } else {
         costOfMonth = 30 - dayOfMonth + 1
       }
     } else {
