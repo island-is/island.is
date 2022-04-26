@@ -7,12 +7,14 @@ import {
   Icon,
   LoadingDots,
   Checkbox,
+  Hidden,
 } from '@island.is/island-ui/core'
 import { m } from '@island.is/service-portal/core'
 import { useUpdateOrCreateUserProfile } from '@island.is/service-portal/graphql'
 import { msg } from '../../../../../lib/messages'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Controller, useForm } from 'react-hook-form'
+import { FormButton } from '../FormButton'
 import * as styles from './ProfileForms.css'
 
 interface Props {
@@ -95,18 +97,18 @@ export const Nudge: FC<Props> = ({ refuseMail }) => {
             alignItems="center"
             justifyContent="flexStart"
           >
-            <Box display="flex" alignItems="center" marginRight={1}>
-              {inputPristine && (
-                <Icon icon="checkmark" color="blue300" type="filled" />
-              )}
-            </Box>
+            <Hidden below="sm">
+              <Box display="flex" alignItems="center" marginRight={1}>
+                {inputPristine && (
+                  <Icon icon="checkmark" color="blue300" type="filled" />
+                )}
+              </Box>
+            </Hidden>
             <Box display="flex" alignItems="flexStart" flexDirection="column">
               {!loading && (
-                <button disabled={inputPristine} type="submit">
-                  <Button disabled={inputPristine} variant="text" size="small">
-                    {formatMessage(msg.saveSettings)}
-                  </Button>
-                </button>
+                <FormButton disabled={inputPristine} submit>
+                  {formatMessage(msg.saveSettings)}
+                </FormButton>
               )}
               {loading && <LoadingDots />}
             </Box>

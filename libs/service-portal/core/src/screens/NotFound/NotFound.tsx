@@ -1,7 +1,6 @@
 import React, { FC } from 'react'
-import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import { m } from '@island.is/service-portal/core'
-import { defineMessage, MessageDescriptor } from 'react-intl'
+import { MessageDescriptor } from 'react-intl'
 import { useLocale } from '@island.is/localization'
 import { useLocation } from 'react-router-dom'
 import { ErrorScreen } from '../ErrorScreen/ErrorScreen'
@@ -16,9 +15,9 @@ export const NotFound: FC<Props> = ({ title }) => {
   return (
     <ErrorScreen
       tag="404"
-      tagVariant="purple"
+      tagVariant="red"
       title={formatMessage(title || m.notFound)}
-      figure="./assets/images/hourglass.svg"
+      figure="./assets/images/404.svg"
     >
       {formatMessage(m.notFoundMessage, {
         path: pathname,

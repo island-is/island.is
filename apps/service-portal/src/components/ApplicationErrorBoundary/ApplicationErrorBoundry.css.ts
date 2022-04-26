@@ -1,13 +1,12 @@
 import { themeUtils } from '@island.is/island-ui/theme'
 import { style } from '@vanilla-extract/css'
 
-export const avatar = style({
-  width: 50,
-  height: 50,
+export const img = style({
+  minHeight: '20vh',
   ...themeUtils.responsiveStyle({
-    sm: {
-      width: 66,
-      height: 66,
+    md: {
+      maxHeight: '300px',
+      minHeight: '250px',
     },
   }),
 })
