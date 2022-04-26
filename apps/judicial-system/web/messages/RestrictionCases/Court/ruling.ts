@@ -277,7 +277,7 @@ export const rcRuling = {
               yes {ekki lengur en til {isolationToDate}} 
               other {á meðan á {caseType, select, 
                 ${CaseType.ADMISSION_TO_FACILITY} {vistunni} 
-                other {gæsluvarðhaldinu}} stendur.}}}
+                other {gæsluvarðhaldinu}} stendur}}.}
             other {}}`,
         description:
           'Notaður sem sjálfgefinn texti í "Úrskurðarorð" textaboxi þegar krafa er samþykkt á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
