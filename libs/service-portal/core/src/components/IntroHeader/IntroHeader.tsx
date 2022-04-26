@@ -39,7 +39,7 @@ export const IntroHeader = ({
         >
           <Hidden print={hideImgPrint}>
             <Box textAlign={['center', 'right']} padding={[6, 0]}>
-              <img src={img} alt={`${formatMessage(m.altText)} ${title}`} />
+              <img src={img} alt="" />
             </Box>
           </Hidden>
         </GridColumn>

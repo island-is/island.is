@@ -59,14 +59,6 @@ export const rcCaseFiles = {
         description:
           'Notaður sem titill fyrir "LOKE" gagnapakkann á rannsóknargagna skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
-      tooltip: {
-        id:
-          'judicial.system.restriction_cases:case_files.police_case_files.tooltip',
-        defaultMessage:
-          'Ef krafan var stofnuð í gegnum LÖKE er hægt að sjá öll skjöl úr málinu sem hafa verið merkt sem rannsóknargögn í LÖKE í listanum hér fyrir neðan, og velja þau beint inn með takkanum Hlaða upp.',
-        description:
-          'Notaður sem upplýsingatexti í upplýsingasvæði við "gögn úr LÖKE-máli ..." titil á rannsóknargagna skrefi í gæsluvarðhalds- og farbannsmálum.',
-      },
       introduction: {
         id:
           'judicial.system.restriction_cases:case_files.police_case_files.introduction',
@@ -81,6 +73,14 @@ export const rcCaseFiles = {
         defaultMessage: 'Velja allt',
         description:
           'Notaður sem texti fyrir "Velja allt" valmöguleikann í LÖKE gagnapakkanum á rannsóknargagna skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+      couldNotGetFromLOKEMessage: {
+        id:
+          'judicial.system.restriction_cases:case_files.police_case_files.could_not_get_from_loke_message',
+        defaultMessage:
+          'Ekki tókst að sækja skjalalista í LÖKE. Hægt er að hlaða upp skjölum hér fyrir neðan.',
+        description:
+          'Notaður sem villuskilaboð í LÖKE gagnapakkanum á rannsóknargagna skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
       caseNotFoundInLOKEMessage: {
         id:
@@ -109,6 +109,21 @@ export const rcCaseFiles = {
         defaultMessage: 'Hlaða upp',
         description:
           'Notaður sem texti í "hlaða upp" takka í LÖKE gagnapakkanum á rannsóknargagna skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+      originNotLokeTitle: {
+        id:
+          'judicial.system.restriction_cases:case_files.police_case_files.origin_not_loke_title',
+        defaultMessage: 'Krafa ekki stofnuð í LÖKE',
+        description:
+          'Notaður sem titill í upplýsingaboxi fyrir kröfu sem ekki er stofnuð í LÖKE í LÖKE gagnapakkanum á rannsóknargagna skrefi í gæsluvarðhalds- og farbannsmálum..',
+      },
+      originNotLokeMessage: {
+        id:
+          'judicial.system.restriction_cases:case_files.police_case_files.origin_not_loke_message',
+        defaultMessage:
+          'Til að fá sjálfkrafa yfirlit yfir skjöl úr LÖKE þarf að stofna kröfuna í gegnum LÖKE.',
+        description:
+          'Notaður sem texti í upplýsingaboxi fyrir kröfu sem ekki er stofnuð í LÖKE í LÖKE gagnapakkanum á rannsóknargagna skrefi í gæsluvarðhalds- og farbannsmálum..',
       },
     }),
     comments: defineMessages({

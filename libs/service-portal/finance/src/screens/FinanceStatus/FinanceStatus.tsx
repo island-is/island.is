@@ -40,6 +40,9 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.finance-status')
   const { formatMessage } = useLocale()
 
+  const actor = userInfo.profile.actor
+  const isDelegation = Boolean(actor)
+
   const { loading, error, ...statusQuery } = useQuery<Query>(
     GetFinanceStatusQuery,
   )
@@ -83,7 +86,7 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
               {formatMessage({
                 id: 'sp.finance-status:intro',
                 defaultMessage:
-                  'Hér er að finna sundurliðun skulda og inneigna við ríkissjóð og stofnanir á þeim degi sem skoðað er.',
+                  'Hér sérð þú sundurliðun skulda og/eða inneigna hjá ríkissjóði og stofnunum.',
               })}
             </Text>
           </GridColumn>
@@ -95,28 +98,30 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
                 marginTop={1}
                 printHidden
               >
-                <Box paddingRight={2}>
-                  <a
-                    href="https://island.is/umsoknir/greidsluaaetlun/"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    <Button
-                      colorScheme="default"
-                      icon="receipt"
-                      iconType="outline"
-                      preTextIconType="outline"
-                      size="default"
-                      type="button"
-                      variant="utility"
+                {!isDelegation && (
+                  <Box paddingRight={2}>
+                    <a
+                      href="https://island.is/umsoknir/greidsluaaetlun/"
+                      target="_blank"
+                      rel="noreferrer"
                     >
-                      {formatMessage({
-                        id: 'sp.finance-status:make-payment-schedule',
-                        defaultMessage: 'Gera greiðsluáætlun',
-                      })}
-                    </Button>
-                  </a>
-                </Box>
+                      <Button
+                        colorScheme="default"
+                        icon="receipt"
+                        iconType="outline"
+                        preTextIconType="outline"
+                        size="default"
+                        type="button"
+                        variant="utility"
+                      >
+                        {formatMessage({
+                          id: 'sp.finance-status:make-payment-schedule',
+                          defaultMessage: 'Gera greiðsluáætlun',
+                        })}
+                      </Button>
+                    </a>
+                  </Box>
+                )}
                 <Box paddingRight={2}>
                   <Button
                     colorScheme="default"
