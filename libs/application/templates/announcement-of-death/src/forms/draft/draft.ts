@@ -42,6 +42,7 @@ export const draft = (): Form => {
         id: 'roleConfirmation',
         title: m.roleConfirmationSectionTitle,
         children: [
+          /*
           buildMultiField({
             id: 'list',
             title: m.roleConfirmationHeading,
@@ -99,12 +100,14 @@ export const draft = (): Form => {
             ],
           }),
           subSectionDelegate,
+          */
         ],
       }),
       buildSection({
         id: 'externalData',
         title: m.dataCollectionTitle,
         children: [
+          /*
           buildExternalDataProvider({
             id: 'approveExternalData',
             title: m.dataCollectionTitle,
@@ -123,8 +126,15 @@ export const draft = (): Form => {
                 title: m.dataCollectionUserProfileTitle,
                 subTitle: m.dataCollectionUserProfileSubtitle,
               }),
+              buildDataProviderItem({
+                id: 'deathNotice',
+                type: 'DeathNoticeProvider',
+                title: 'Dauðir...',
+                subTitle: '...menn segja engar sögur',
+              }),
             ],
           }),
+            */
         ],
       }),
       buildSection({
