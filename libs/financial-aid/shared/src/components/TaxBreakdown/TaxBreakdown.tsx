@@ -8,9 +8,11 @@ import {
 } from '@island.is/financial-aid/shared/lib'
 import TaxBreakdownHeadline from './TaxBreakdownHeadline'
 import groupBy from 'lodash/groupBy'
+interface Dictionary<T> {
+  [index: string]: T
+}
 
 import * as styles from './TaxBreakdown.css'
-import { Dictionary } from 'lodash'
 
 export const taxBreakDownHeaders = [
   'Fyrirtæki',
