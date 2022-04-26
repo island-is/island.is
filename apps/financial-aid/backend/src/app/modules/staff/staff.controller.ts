@@ -14,22 +14,18 @@ import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import { StaffService } from './staff.service'
 import { StaffModel } from './models'
-import {
-  apiBasePath,
-  RolesRule,
-  StaffRole,
-} from '@island.is/financial-aid/shared/lib'
+import { apiBasePath, StaffRole } from '@island.is/financial-aid/shared/lib'
 
 import type { Staff } from '@island.is/financial-aid/shared/lib'
-import { IdsUserGuard } from '@island.is/auth-nest-tools'
-import { RolesGuard } from '../../guards/roles.guard'
-import { CurrentStaff, RolesRules } from '../../decorators'
+import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import { CurrentStaff } from '../../decorators/staff.decorator'
 import { StaffGuard } from '../../guards/staff.guard'
 import { StaffRolesRules } from '../../decorators/staffRole.decorator'
 import { UpdateStaffDto, CreateStaffDto } from './dto'
+import { MunicipalitiesFinancialAidScope } from '@island.is/auth/scopes'
 
-@UseGuards(IdsUserGuard, RolesGuard, StaffGuard)
-@RolesRules(RolesRule.VEITA)
+@UseGuards(IdsUserGuard, ScopesGuard, StaffGuard)
+@Scopes(MunicipalitiesFinancialAidScope.employee)
 @Controller(`${apiBasePath}/staff`)
 @ApiTags('staff')
 export class StaffController {
