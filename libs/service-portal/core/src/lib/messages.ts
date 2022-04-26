@@ -366,7 +366,7 @@ export const m = defineMessages({
   },
   licenses: {
     id: 'service.portal:licenses',
-    defaultMessage: 'Réttindi',
+    defaultMessage: 'Skírteini',
   },
   finance: {
     id: 'service.portal:finance',
@@ -443,7 +443,7 @@ export const m = defineMessages({
   },
   childLicenses: {
     id: 'service.portal:child-licenses',
-    defaultMessage: 'Réttindi barna',
+    defaultMessage: 'Skírteini barna',
   },
   notFound: {
     id: 'service.portal:not-found',
@@ -669,10 +669,10 @@ export const m = defineMessages({
   },
   licenseNavTitle: {
     id: 'service.portal:license-title',
-    defaultMessage: 'Réttindi',
+    defaultMessage: 'Skírteini',
   },
   yourLicenses: {
     id: 'service.portal:your-licenses',
-    defaultMessage: 'Þín réttindi',
+    defaultMessage: 'Þín skírteini',
   },
 })

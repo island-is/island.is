@@ -13,14 +13,11 @@ import {
   Link,
 } from '@island.is/island-ui/core'
 import {
-  PlausiblePageviewDetail,
   ServicePortalModuleComponent,
-  ServicePortalPath,
   UserInfoLine,
 } from '@island.is/service-portal/core'
 import { defineMessage } from 'react-intl'
 import { isExpired, toDate } from '../../utils/dateUtils'
-import * as styles from '../../components/DrivingLicense/DrivingLicense.css'
 import { m } from '../../lib/messages'
 import { passportDetail, passportDetailChildren } from '../../mock/passport'
 import { useLocation } from 'react-router-dom'
@@ -40,10 +37,6 @@ const PassportDetail: ServicePortalModuleComponent = ({ userInfo }) => {
   const error = false
   const isChild = pathname.includes('barna')
   if (isChild && childrenData) data = childrenData
-
-  PlausiblePageviewDetail(
-    ServicePortalPath.LicensesDrivingDetail.replace(':id', 'detail'),
-  )
 
   const licenseExpired =
     data && isExpired(new Date(), new Date(data.expirationDate))

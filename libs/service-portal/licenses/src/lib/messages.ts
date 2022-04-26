@@ -3,11 +3,11 @@ import { defineMessages } from 'react-intl'
 export const m = defineMessages({
   title: {
     id: 'sp.license:title',
-    defaultMessage: 'Þín réttindi',
+    defaultMessage: 'Þín skírteini',
   },
   titleChildren: {
     id: 'sp.license:title-children',
-    defaultMessage: 'Réttindi barna',
+    defaultMessage: 'Skírteini barna',
   },
   intro: {
     id: 'sp.license:intro',
@@ -175,7 +175,6 @@ export const m = defineMessages({
     id: 'sp.license:passport-renew',
     defaultMessage: 'Endurnýja vegabréf',
   },
-
   passportExpired: {
     id: 'sp.license:passport-expired',
     defaultMessage: 'Vegabréf útrunnið',
