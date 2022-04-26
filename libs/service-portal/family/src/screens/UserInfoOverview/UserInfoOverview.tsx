@@ -51,12 +51,12 @@ const UserInfoOverview: ServicePortalModuleComponent = ({ userInfo }) => {
      * not in the NATIONAL_REGISTRY_CHILDREN query.
      */
     if (!famLoading && !childrenLoading && nationalRegistryFamily) {
-      const familyNrChildern = nationalRegistryFamily?.filter(
+      const familyNrChildren = nationalRegistryFamily?.filter(
         (item) =>
           item.familyRelation === 'child' &&
           !some(nationalRegistryChildren, ['nationalId', item.nationalId]),
       )
-      setChildrenOnFamilyNr(familyNrChildern)
+      setChildrenOnFamilyNr(familyNrChildren)
     }
   }, [famLoading, childrenLoading])
 
@@ -91,11 +91,11 @@ const UserInfoOverview: ServicePortalModuleComponent = ({ userInfo }) => {
           currentUser
         />
         {loading && <FamilyMemberCardLoader />}
-        {spouseData && nationalRegistryUser?.spouse?.nationalId && (
+        {spouseData?.nationalId && (
           <FamilyMemberCard
-            key={nationalRegistryUser?.spouse?.nationalId}
-            title={nationalRegistryUser?.spouse?.name || ''}
-            nationalId={nationalRegistryUser.spouse.nationalId}
+            key={spouseData.nationalId}
+            title={spouseData?.name || ''}
+            nationalId={spouseData.nationalId}
             familyRelation="spouse"
           />
         )}
