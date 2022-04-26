@@ -9,10 +9,13 @@ export class NationalRegistryService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {}
 
-  async nationalRegistry({ auth }: TemplateApiModuleActionProps) {
+  async nationalRegistry({ application, auth }: TemplateApiModuleActionProps) {
+    //application.externalData.data.reference
+    //random number
+    const randomNumber = Math.floor(Math.random() * (999999 - 100000)) + 100000
     return {
       nationalId: auth.nationalId,
-      name: 'Justin Trudeau',
+      name: 'Justin Trudeau ' + randomNumber,
       age: '42',
       address: '123 Fake St',
       phone: '123-456-7890',

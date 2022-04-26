@@ -4,4 +4,5 @@ export enum ApiActions {
   completeApplication = 'completeApplication',
   getReferenceData = 'getReferenceData',
   nationalRegistry = 'nationalRegistry.nationalRegistry',
+  getAnotherReferenceData = 'getAnotherReferenceData',
 }

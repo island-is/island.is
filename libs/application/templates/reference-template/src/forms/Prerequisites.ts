@@ -27,11 +27,17 @@ export const Prerequisites: Form = buildForm({
           title: 'Utanaðkomandi gögn',
           dataProviders: [
             buildDataProviderItem({
+              id: 'anotherReference',
+              type: 'getAnotherReferenceData',
+              title: 'getAnotherReferenceData',
+              subTitle: 'Æji er að setja upp nýtt stöff',
+              order: 2,
+            }),
+            buildDataProviderItem({
               id: 'reference',
               type: 'getReferenceData',
               title: 'getReferenceData',
               subTitle: 'Æji er að setja upp nýtt stöff',
-              order: 2,
             }),
             buildDataProviderItem({
               id: 'nationalRegistry',

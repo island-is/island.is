@@ -523,13 +523,13 @@ export class ApplicationController {
       }
     }
 
-    await this.templateApiActionRunner.run(
+    const updatedApplication = await this.templateApiActionRunner.run(
       existingApplication as BaseApplication,
       listOfProviders,
       user,
     )
 
-    if (!existingApplication) {
+    if (!updatedApplication) {
       throw new NotFoundException(
         `An application with the id ${id} does not exist`,
       )
@@ -541,8 +541,8 @@ export class ApplicationController {
       resources: existingApplication.id,
       meta: { providers: externalDataDto },
     })
-    console.log({ existingApplication })
-    return existingApplication
+    console.log({ updatedApplication })
+    return updatedApplication
   }
 
   @Scopes(ApplicationScope.write)

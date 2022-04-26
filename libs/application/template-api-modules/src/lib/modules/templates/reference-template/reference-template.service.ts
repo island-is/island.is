@@ -4,6 +4,7 @@ import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
 
 import { generateApplicationApprovedEmail } from './emailGenerators'
+import { getValueViaPath } from '@island.is/application/core'
 
 @Injectable()
 export class ReferenceTemplateService {
@@ -11,12 +12,31 @@ export class ReferenceTemplateService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {}
 
-  async getReferenceData() {
+  async getReferenceData({ application }: TemplateApiModuleActionProps) {
     await new Promise((resolve) => setTimeout(resolve, 2000))
+
+    const name = getValueViaPath(
+      application.externalData,
+      'nationalRegistry.data.name',
+    ) as string
+
+    console.log(`name is ${name} waht is is  `)
     return {
       referenceData: {
+        name,
         some: 'data',
         numbers: 123,
+      },
+    }
+  }
+
+  async getAnotherReferenceData({ application }: TemplateApiModuleActionProps) {
+    await new Promise((resolve) => setTimeout(resolve, 2000))
+
+    return {
+      anotherData: {
+        stuff: 'same',
+        notAString: 666,
       },
     }
   }

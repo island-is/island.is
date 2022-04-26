@@ -1,4 +1,7 @@
-import { ApplicationService } from '@island.is/application/api/core'
+import {
+  Application,
+  ApplicationService,
+} from '@island.is/application/api/core'
 import {
   ApplicationTemplateAPIAction,
   ApplicationWithAttachments,
@@ -15,6 +18,8 @@ import { Injectable } from '@nestjs/common'
 export class TemplateApiActionRunner {
   private application: ApplicationWithAttachments = {} as ApplicationWithAttachments
   private auth: User = {} as User
+  private oldExternalData: ExternalData = {}
+  private newExternalData: ExternalData = {}
 
   constructor(
     private readonly applicationService: ApplicationService,
@@ -25,10 +30,10 @@ export class TemplateApiActionRunner {
     application: ApplicationWithAttachments,
     actions: ApplicationTemplateAPIAction[],
     auth: User,
-  ) {
+  ): Promise<ApplicationWithAttachments> {
     this.application = application
     this.auth = auth
-
+    this.oldExternalData = application.externalData
     // group by order
     const groupedActions = actions.reduce((acc, action) => {
       const order = action.order ?? -1
@@ -39,24 +44,34 @@ export class TemplateApiActionRunner {
       return acc
     }, {} as { [key: number]: ApplicationTemplateAPIAction[] })
 
-    //call by order
-    Object.keys(groupedActions).map(async (value: string, index: number) => {
-      const actions = groupedActions[index]
-      console.log({ actions })
-      console.log({ value })
-      console.log('typeif ' + typeof value)
-      console.log('typeif2 ' + typeof actions)
-      if (actions) {
-        const proms = actions.map((action) => this.makeCall(action))
-        console.log('calling ', value)
-        await Promise.all(proms)
-      } else {
-        console.log('no actions ', value)
-      }
-    })
+    const lss = Object.keys(groupedActions).map(
+      (value: string): ApplicationTemplateAPIAction[] => {
+        return groupedActions[(value as unknown) as number]
+      },
+    )
+
+    const result = lss.reduce((accumulatorPromise, actions) => {
+      return accumulatorPromise.then(() => {
+        const ps = Promise.all(
+          actions.map((action) => this.callProvider(action)),
+        )
+        return ps.then(() => {
+          return
+        })
+      })
+    }, Promise.resolve())
+
+    await result
+
+    this.persistExternalData()
+
+    return this.application
   }
 
-  async makeCall(action: ApplicationTemplateAPIAction) {
+  async callProvider(action: ApplicationTemplateAPIAction) {
+    console.log(
+      `makeCall to ${action.apiModuleAction} for application ${this.application.id}`,
+    )
     const {
       apiModuleAction,
       shouldPersistToExternalData,
@@ -77,6 +92,20 @@ export class TemplateApiActionRunner {
       externalDataId,
       shouldPersistToExternalData ?? false,
     )
+    console.log(
+      `done!!!!! makeCall to ${action.apiModuleAction} for application ${this.application.id}`,
+    )
+  }
+
+  async persistExternalData(): Promise<void> {
+    const {
+      updatedApplication: withExternalData,
+    } = await this.applicationService.updateExternalData(
+      this.application.id,
+      this.oldExternalData,
+      this.newExternalData,
+    )
+    this.application = withExternalData as ApplicationWithAttachments
   }
 
   async updateExternalData(
@@ -95,30 +124,11 @@ export class TemplateApiActionRunner {
       },
     }
 
-    if (persist) {
-      const {
-        updatedApplication: withExternalData,
-      } = await this.applicationService.updateExternalData(
-        this.application.id,
-        this.application.externalData,
-        newExternalDataEntry,
-      )
+    this.newExternalData = { ...this.newExternalData, ...newExternalDataEntry }
 
-      this.application = {
-        ...this.application,
-        externalData: {
-          ...this.application.externalData,
-          ...withExternalData.externalData,
-        },
-      }
-    } else {
-      this.application = {
-        ...this.application,
-        externalData: {
-          ...this.application.externalData,
-          ...newExternalDataEntry,
-        },
-      }
+    this.application.externalData = {
+      ...this.application.externalData,
+      ...this.newExternalData,
     }
   }
 }
