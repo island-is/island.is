@@ -9,6 +9,7 @@ import {
   CriminalRecord,
   DataProtectionComplaint,
   NationalRegistry,
+  FishingLicense,
 } from '../../../../infra/src/dsl/xroad'
 import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 import { PostgresInfo } from '../../../../infra/src/dsl/types/input-types'
@@ -172,6 +173,7 @@ export const serviceSetup = (services: {
       PaymentSchedule,
       CriminalRecord,
       DataProtectionComplaint,
+      FishingLicense,
     )
     .secrets({
       NOVA_URL: '/k8s/application-system-api/NOVA_URL',

@@ -15,6 +15,7 @@ import { DrivingLicenseBookClientConfig } from '@island.is/clients/driving-licen
 import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
 import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 import { MunicipalitiesFinancialAidConfig } from '@island.is/clients/municipalities-financial-aid'
+import { FishingLicenseClientConfig } from '@island.is/clients/fishing-license'
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { MunicipalitiesFinancialAidConfig } from '@island.is/clients/municipalit
         NationalRegistryClientConfig,
         FeatureFlagConfig,
         MunicipalitiesFinancialAidConfig,
+        FishingLicenseClientConfig,
       ],
     }),
   ],
