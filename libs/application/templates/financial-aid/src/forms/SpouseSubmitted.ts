@@ -8,7 +8,7 @@ export const SpouseSubmitted: Form = buildForm({
   children: [
     buildCustomField({
       id: 'spouseStatus',
-      title: m.status.general.pageTitle,
+      title: m.status.general.spousePageTitle,
       component: 'SpouseStatus',
     }),
   ],

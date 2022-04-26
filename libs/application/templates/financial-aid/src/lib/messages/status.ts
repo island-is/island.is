@@ -12,6 +12,11 @@ export const status = {
       defaultMessage: 'Aðstoðin þín',
       description: 'Status page title',
     },
+    spousePageTitle: {
+      id: 'fa.application:section.status.general.spousePageTitle',
+      defaultMessage: 'Aðstoð maka þíns',
+      description: 'Status page title',
+    },
   }),
   moreActions: defineMessages({
     title: {
