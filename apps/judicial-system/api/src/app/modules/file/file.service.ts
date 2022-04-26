@@ -1,19 +1,24 @@
 import fetch, { Headers } from 'node-fetch'
 import { Request, Response } from 'express'
 
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 
+import type { ConfigType } from '@island.is/nest/config'
 import {
   AuditedAction,
   AuditTrailService,
 } from '@island.is/judicial-system/audit-trail'
 
-import { environment } from '../../../environments'
 import { FileExeption } from './file.exception'
+import { fileModuleConfig } from './file.config'
 
 @Injectable()
 export class FileService {
-  constructor(private readonly auditTrailService: AuditTrailService) {}
+  constructor(
+    @Inject(fileModuleConfig.KEY)
+    private readonly config: ConfigType<typeof fileModuleConfig>,
+    private readonly auditTrailService: AuditTrailService,
+  ) {}
 
   private async getPdf(
     id: string,
@@ -27,7 +32,7 @@ export class FileService {
     headers.set('cookie', req.headers.cookie as string)
 
     const result = await fetch(
-      `${environment.backend.url}/api/case/${id}/${route}`,
+      `${this.config.backendUrl}/api/case/${id}/${route}`,
       { headers },
     )
 
