@@ -41,14 +41,12 @@ export const draft = (): Form => {
       buildSection({
         id: 'roleConfirmation',
         title: m.roleConfirmationSectionTitle,
-        children: [
-        ],
+        children: [],
       }),
       buildSection({
         id: 'externalData',
         title: m.dataCollectionTitle,
-        children: [
-        ],
+        children: [],
       }),
       buildSection({
         id: 'info',

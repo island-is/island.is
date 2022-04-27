@@ -70,10 +70,9 @@ export const requestHandlers = [
     return res(ctx.status(200), ctx.json(DATA_UPLOAD))
   }),
   rest.post(url('/api/VedbokavottordRegluverki'), (req, res, ctx) => {
-    const realEstateId = (req.body as any).fastanumer ?? ""
+    const realEstateId = (req.body as any).fastanumer ?? ''
     const validRealEstateId = /f?\d+/.test(realEstateId)
-    if (!validRealEstateId)
-      return res(ctx.status(404), ctx.json([]))
+    if (!validRealEstateId) return res(ctx.status(404), ctx.json([]))
     return res(ctx.status(200), ctx.json(VEDBANDAYFIRLRIT_REGLUVERKI_RESPONSE))
   }),
   rest.post(url('/api/Vedbokarvottord'), (req, res, ctx) => {

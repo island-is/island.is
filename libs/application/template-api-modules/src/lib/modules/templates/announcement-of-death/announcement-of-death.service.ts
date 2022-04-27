@@ -33,6 +33,15 @@ export class AnnouncementOfDeathService {
     )
   }
 
+  async getInitialData({ application }: TemplateApiModuleActionProps) {
+    //TODO: connect endpoint
+    if (application.applicant !== '0101302399') {
+      return { success: false }
+    } else {
+      return { success: true, fakeData: 'Initial data success' }
+    }
+  }
+
   async submitApplication({ application }: TemplateApiModuleActionProps) {
     return { success: true }
   }

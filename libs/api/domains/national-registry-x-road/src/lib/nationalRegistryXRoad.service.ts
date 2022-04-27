@@ -1,8 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { NationalRegistryClientPerson } from '@island.is/shared/types'
-import {
-  EinstaklingarApi,
-} from '@island.is/clients/national-registry-v2'
+import { EinstaklingarApi } from '@island.is/clients/national-registry-v2'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { FetchError } from '@island.is/clients/middlewares'
 import { LOGGER_PROVIDER } from '@island.is/logging'

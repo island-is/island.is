@@ -24,6 +24,8 @@ export interface AnnouncementOfDeathFakeData {
   useFakeData?: YesOrNo
 }
 
+
 export enum ApiActions {
   submitApplication = 'submitApplication',
+  getInitialData = "getInitialData"
 }
