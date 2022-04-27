@@ -133,27 +133,28 @@ const ShellWrapper: FC<{
     featureFlagClient,
   ])
 
-  // TODO: Change when IDS has locale
-  const [
-    getUserProfile,
-    { data: userProfData, loading: userProfileLoading },
-  ] = useLazyQuery<Query>(USER_PROFILE)
-  const userProfile = userProfData?.getUserProfile || null
+  // TODO: Change when IDS has locale. TODO2:
+  // const [
+  //   getUserProfile,
+  //   { data: userProfData, loading: userProfileLoading },
+  // ] = useLazyQuery<Query>(USER_PROFILE)
+  // const userProfile = userProfData?.getUserProfile || null
 
-  useEffect(() => {
-    if (userInfo?.profile.nationalId) getUserProfile()
-  }, [userInfo, getUserProfile])
+  // useEffect(() => {
+  //   if (userInfo?.profile.nationalId) getUserProfile()
+  // }, [userInfo, getUserProfile])
 
-  useEffect(() => {
-    if (
-      userProfile?.locale &&
-      isLocale(userProfile.locale) &&
-      userProfile.locale !== lang
-    )
-      changeLanguage(userProfile.locale as Locale)
-  }, [userProfile, changeLanguage, lang])
+  // useEffect(() => {
+  //   if (
+  //     userProfile?.locale &&
+  //     isLocale(userProfile.locale) &&
+  //     userProfile.locale !== lang
+  //   )
+  //     changeLanguage(userProfile.locale as Locale)
+  // }, [userProfile, changeLanguage, lang])
 
-  if (!form || !dataSchema || userProfileLoading) {
+  // if (!form || !dataSchema || userProfileLoading) {
+  if (!form || !dataSchema) {
     return <LoadingShell />
   }
 
