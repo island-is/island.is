@@ -1,6 +1,13 @@
-import { defineMessages } from 'react-intl'
+import { CaseType } from '@island.is/judicial-system/types'
+import { defineMessages, defineMessage } from 'react-intl'
 
 export const sections = {
+  // TODO: remove custodyAndTravelBanProsecutorSection, it's renamed to restrictionCaseProsecutorSection
+  title: defineMessage({
+    id: 'judicial.system.core:sections.title',
+    defaultMessage: `{caseType, select, ${CaseType.CUSTODY} {Gæsluvarðhald} ${CaseType.TRAVEL_BAN} {Farbann} ${CaseType.ADMISSION_TO_FACILITY} {Vistun á viðeignadi stofnun} other {Rannsóknarheimild}}`,
+    description: 'Notaður sem titill á hliðarstiku í öllum ferlum',
+  }),
   custodyAndTravelBanProsecutorSection: defineMessages({
     custodyTitle: {
       id:
@@ -50,6 +57,50 @@ export const sections = {
       defaultMessage: 'Yfirlit kröfu',
       description:
         'Notaður sem texti fyrir Yfirlit kröfu skref í hliðarstiku í gæslu- og farbannsmálum hjá sækjendum',
+    },
+  }),
+  restrictionCaseProsecutorSection: defineMessages({
+    caseTitle: {
+      id:
+        'judicial.system.core:sections.restriction_case_prosecutor_section.case_title',
+      defaultMessage: `Krafa um {caseType, select, ${CaseType.ADMISSION_TO_FACILITY} {vistun} ${CaseType.TRAVEL_BAN} {farbann} other {gæsluvarðhald}}`,
+      description:
+        'Notaður sem titill í hliðarstiku í gæslu-, farbanns- og vistunarmálum hjá sækjendum',
+    },
+    hearingArrangements: {
+      id:
+        'judicial.system.core:sections.restriction_case_prosecutor_section.hearing_arrangements',
+      defaultMessage: 'Óskir um fyrirtöku',
+      description:
+        'Notaður sem texti fyrir Óskir um fyrirtöku skref í hliðarstiku í gæslu- og farbannsmálum hjá sækjendum',
+    },
+    policeDemands: {
+      id:
+        'judicial.system.core:sections.restriction_case_prosecutor_section.police_demands',
+      defaultMessage: 'Dómkröfur og lagagrundvöllur',
+      description:
+        'Notaður sem texti fyrir Dómkröfur og lagagrundvöllur skref í hliðarstiku í gæslu- og farbannsmálum hjá sækjendum',
+    },
+    policeReport: {
+      id:
+        'judicial.system.core:sections.restriction_case_prosecutor_section.police_report',
+      defaultMessage: 'Greinargerð',
+      description:
+        'Notaður sem texti fyrir Greinargerð skref í hliðarstiku í gæslu- og farbannsmálum hjá sækjendum',
+    },
+    caseFiles: {
+      id:
+        'judicial.system.core:sections.restriction_case_prosecutor_section.case_files',
+      defaultMessage: 'Rannsóknargögn',
+      description:
+        'Notaður sem texti fyrir Rannsóknargögn skref í hliðarstiku í gæslu- og farbannsmálum hjá sækjendum',
+    },
+    overview: {
+      id:
+        'judicial.system.core:sections.restriction_case_prosecutor_section.overview',
+      defaultMessage: 'Yfirlit kröfu',
+      description:
+        'Notaður sem texti fyrir Yfirlit kröfu skref í hliðarstiku í gæslu-, vinstunar- og farbannsmálum hjá sækjendum',
     },
   }),
   investigationCaseProsecutorSection: defineMessages({
@@ -266,6 +317,44 @@ export const sections = {
       defaultMessage: 'Yfirlit kröfu',
       description:
         'Notaður sem texti fyrir Yfirlit kröfu skref í hliðarstiku í framlengdum rannsóknarheimildum hjá sækjendum',
+    },
+  }),
+  caseResults: defineMessages({
+    dissmissed: {
+      id: 'judicial.system.core:sections.case_results.dissmissed',
+      defaultMessage: 'Kröfu vísað frá',
+      description:
+        'Notaður sem texti í skrefum á hliðarstiku þegar kröfu er vísað frá',
+    },
+    restrictionActive: {
+      id: 'judicial.system.core:sections.case_results.restriction_active',
+      defaultMessage: `{caseType, select, ${CaseType.ADMISSION_TO_FACILITY} {Vistun virk} ${CaseType.TRAVEL_BAN} {Farbann virkt} other {Gæsluvarðhald virkt}}`,
+      description:
+        'Notaður sem texti í skrefum á hliðarstiku þegar gæslu/farbann/vistun er virk',
+    },
+    restrictionOver: {
+      id: 'judicial.system.core:sections.case_results.restriction_over',
+      defaultMessage: `{caseType, select, ${CaseType.ADMISSION_TO_FACILITY} {Vistun á stofnun} ${CaseType.TRAVEL_BAN} {Farbanni} other {Gæsluvarðhaldi}} lokið`,
+      description:
+        'Notaður sem texti í skrefum á hliðarstiku þegar gæslu/farbann/vistun er lokið',
+    },
+    result: {
+      id: 'judicial.system.core:sections.case_results.result',
+      defaultMessage: 'Niðurstaða',
+      description: 'Notaður sem titill í hliðarstiku í niðurstöðum',
+    },
+    rejected: {
+      id: 'judicial.system.core:sections.case_results.rejected',
+      defaultMessage:
+        'Kröfu {isInvestigationCase, select, yes {um rannsóknarheimild } other {}}hafnað',
+      description:
+        'Notaður sem texti í skrefum á hliðarstiku þegar kröfu er hafnað',
+    },
+    investigationAccepted: {
+      id: 'judicial.system.core:sections.case_results.investigation_accepted',
+      defaultMessage: 'Krafa um rannsóknarheimild samþykkt',
+      description:
+        'Notaður sem texti í skrefum á hliðarstiku þegar kröfu er samþykkt',
     },
   }),
 }

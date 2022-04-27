@@ -1,15 +1,9 @@
 import { useIntl } from 'react-intl'
 
-import {
-  Case,
-  CaseType,
-  isRestrictionCase,
-  User,
-} from '@island.is/judicial-system/types'
+import { Case, isRestrictionCase, User } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import { caseResult } from '@island.is/judicial-system-web/src/components/PageLayout/utils'
 import { sections } from '@island.is/judicial-system-web/messages/Core/sections'
-import { signedVerdictOverview } from '@island.is/judicial-system-web/messages/Core/signedVerdictOverview'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import * as Constants from '@island.is/judicial-system/consts'
 import {
@@ -48,18 +42,16 @@ const useSections = () => {
     return filterValidSteps[filterValidSteps.length - 1]
   }
 
-  const getCustodyAndTravelBanProsecutorSection = (
+  const getRestrictionCaseProsecutorSection = (
     workingCase: Case,
     activeSubSection?: number,
   ): Section => {
     const { type, id } = workingCase
 
     return {
-      name: formatMessage(
-        type === CaseType.CUSTODY
-          ? sections.custodyAndTravelBanProsecutorSection.custodyTitle
-          : sections.custodyAndTravelBanProsecutorSection.travelBanTitle,
-      ),
+      name: formatMessage(sections.restrictionCaseProsecutorSection.caseTitle, {
+        caseType: type,
+      }),
       children: [
         {
           type: 'SUB_SECTION',
@@ -69,7 +61,7 @@ const useSections = () => {
         {
           type: 'SUB_SECTION',
           name: formatMessage(
-            sections.custodyAndTravelBanProsecutorSection.hearingArrangements,
+            sections.restrictionCaseProsecutorSection.hearingArrangements,
           ),
           href:
             (activeSubSection && activeSubSection > 1) ||
@@ -80,7 +72,7 @@ const useSections = () => {
         {
           type: 'SUB_SECTION',
           name: formatMessage(
-            sections.custodyAndTravelBanProsecutorSection.policeDemands,
+            sections.restrictionCaseProsecutorSection.policeDemands,
           ),
           href:
             (activeSubSection && activeSubSection > 2) ||
@@ -92,7 +84,7 @@ const useSections = () => {
         {
           type: 'SUB_SECTION',
           name: formatMessage(
-            sections.custodyAndTravelBanProsecutorSection.policeReport,
+            sections.restrictionCaseProsecutorSection.policeReport,
           ),
           href:
             (activeSubSection && activeSubSection > 3) ||
@@ -105,7 +97,7 @@ const useSections = () => {
         {
           type: 'SUB_SECTION',
           name: formatMessage(
-            sections.custodyAndTravelBanProsecutorSection.caseFiles,
+            sections.restrictionCaseProsecutorSection.caseFiles,
           ),
           href:
             (activeSubSection && activeSubSection > 4) ||
@@ -119,7 +111,7 @@ const useSections = () => {
         {
           type: 'SUB_SECTION',
           name: formatMessage(
-            sections.custodyAndTravelBanProsecutorSection.overview,
+            sections.restrictionCaseProsecutorSection.overview,
           ),
           href:
             isDefendantStepValidForSidebarRC(workingCase) &&
@@ -515,7 +507,7 @@ const useSections = () => {
   ) => {
     return [
       isRestrictionCase(workingCase?.type)
-        ? getCustodyAndTravelBanProsecutorSection(
+        ? getRestrictionCaseProsecutorSection(
             workingCase || ({} as Case),
             activeSubSection,
           )
@@ -531,12 +523,7 @@ const useSections = () => {
             activeSubSection,
           ),
       {
-        name: caseResult(
-          {
-            dismissedTitle: formatMessage(signedVerdictOverview.dismissedTitle),
-          },
-          workingCase,
-        ),
+        name: caseResult(formatMessage, workingCase),
       },
       isRestrictionCase(workingCase?.type)
         ? getExtenstionSections(workingCase || ({} as Case), activeSubSection)
@@ -555,7 +542,7 @@ const useSections = () => {
   }
 
   return {
-    getCustodyAndTravelBanProsecutorSection,
+    getRestrictionCaseProsecutorSection,
     getInvestigationCaseProsecutorSection,
     getInvestigationCaseCourtSections,
     getCourtSections,
