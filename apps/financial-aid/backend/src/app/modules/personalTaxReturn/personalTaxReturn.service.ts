@@ -39,7 +39,7 @@ export class PersonalTaxReturnService {
       })
   }
 
-  async personalTaxReturn(nationalId: string, folder: string) {
+  async personalTaxReturn(nationalId: string, folder?: string) {
     try {
       let changeableYear = new Date().getFullYear() - 1
 
@@ -71,6 +71,7 @@ export class PersonalTaxReturnService {
       const fileName = `Framtal_${nationalId}_${changeableYear}.pdf`
 
       const presignedUrl = this.fileService.createSignedUrl(folder, fileName)
+
       const base64 = Base64.atob(taxReturn.content)
       const size = base64.length
 
