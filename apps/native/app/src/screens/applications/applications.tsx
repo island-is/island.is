@@ -90,7 +90,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
   useNavigationOptions(componentId)
   const SEARCH_QUERY_SIZE = 40
   const SEARCH_QUERY_TYPE = 'webArticle'
-  const TAGS = [{ type: 'processentry', key: 'true' }]
+  const CONTENTFUL_FILTER = 'umsokn';
   const QUERY_STRING_DEFAULT = '*'
 
   const ui = useUiStore()
@@ -106,7 +106,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
   const input = {
     queryString: queryString,
     types: [SEARCH_QUERY_TYPE],
-    tags: TAGS,
+    contentfulTags: [CONTENTFUL_FILTER],
     size: SEARCH_QUERY_SIZE,
     page: 1,
   }
