@@ -167,6 +167,7 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
 
   switch (organization.slug) {
     case 'syslumenn':
+    case 'district-commissioner':
       return (
         <SyslumennFooter
           title={organization.title}
@@ -175,6 +176,7 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
         />
       )
     case 'sjukratryggingar':
+    case 'icelandic-health-insurance':
       return (
         <SjukratryggingarFooter
           title={organization.title}
@@ -183,6 +185,7 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
         />
       )
     case 'utlendingastofnun':
+    case 'directorate-of-immigration':
       return (
         <UtlendingastofnunFooter
           title={organization.title}
