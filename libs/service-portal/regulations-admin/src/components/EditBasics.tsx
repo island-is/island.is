@@ -67,14 +67,17 @@ export const EditBasics = () => {
               <Divider />
               {' '}
             </Box>
-            <Box marginBottom={[4, 4, 6]}>
-              <EditorInput
-                label={t(msg.signatureText)}
-                draftId={draft.id}
-                value={draft.signatureText.value}
-                onChange={(text) => updateState('signatureText', text)}
-              />
-            </Box>
+            {draft.signedDocumentUrl && (
+              <Box marginBottom={[4, 4, 6]}>
+                <EditorInput
+                  label={t(msg.signatureText)}
+                  draftId={draft.id}
+                  value={draft.signatureText.value}
+                  onChange={(text) => updateState('signatureText', text)}
+                  readOnly
+                />
+              </Box>
+            )}
           </AccordionItem>
         </Accordion>
 

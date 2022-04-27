@@ -197,7 +197,7 @@ export const editorMsgs = defineMessages({
 
   lawChapters: {
     id: 'ap.regulations-admin:draft-labels-lawchapter',
-    defaultMessage: 'Kaflar í lagasasfni',
+    defaultMessage: 'Kaflar í lagasafni',
   },
   lawChapterPlaceholder: {
     id: 'ap.regulations-admin:draft-labels-choose-ministry',

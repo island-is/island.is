@@ -24,16 +24,16 @@ import { MessageDescriptor } from 'react-intl'
 export const steps: Record<Step, StepNav> = {
   basics: {
     name: 'basics',
-    next: 'meta',
-  },
-  meta: {
-    name: 'meta',
-    prev: 'basics',
     next: 'signature',
   },
   signature: {
     name: 'signature',
-    prev: 'meta',
+    prev: 'basics',
+    next: 'meta',
+  },
+  meta: {
+    name: 'meta',
+    prev: 'signature',
     next: 'impacts',
   },
   impacts: {

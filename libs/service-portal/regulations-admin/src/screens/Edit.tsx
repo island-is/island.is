@@ -74,14 +74,14 @@ const stepData: Record<
     title: editorMsgs.stepContentHeadline,
     Component: EditBasics,
   },
-  meta: {
-    title: editorMsgs.stepMetaHeadline,
-    Component: EditMeta,
-  },
   signature: {
     title: editorMsgs.stepSignatureHeadline,
     intro: editorMsgs.stepSignatureIntro,
     Component: EditSignature,
+  },
+  meta: {
+    title: editorMsgs.stepMetaHeadline,
+    Component: EditMeta,
   },
   impacts: {
     title: editorMsgs.stepImpactHeadline,
