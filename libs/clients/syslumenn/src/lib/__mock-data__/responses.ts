@@ -122,7 +122,8 @@ export const VEDBANDAYFIRLRIT_REGLUVERKI_RESPONSE: Array<VedbandayfirlitReguverk
 
 export const MORTGAGE_CERTIFICATE_CONTENT_OK = 'c29tZWNvbnRlbnQ='
 export const MORTGAGE_CERTIFICATE_CONTENT_NO_KMARKING = 'Precondition Required'
-export const MORTGAGE_CERTIFICATE_MESSAGE_NO_KMARKING = 'Ekki hægt að afgreiða vedbokarvottord'
+export const MORTGAGE_CERTIFICATE_MESSAGE_NO_KMARKING =
+  'Ekki hægt að afgreiða vedbokarvottord'
 
 export const REAL_ESTATE_ADDRESS_NAME = 'Hvergiland'
 export const VEHICLE_TYPE_NAME = 'WolfVagon'

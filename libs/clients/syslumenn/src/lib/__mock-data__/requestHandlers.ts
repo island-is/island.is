@@ -1,7 +1,4 @@
-import {
-  VedbandayfirlitSkeyti,
-  VedbokavottordRegluverkiPostRequest,
-} from '../../../gen/fetch'
+import { VedbandayfirlitSkeyti } from '../../../gen/fetch'
 import { rest } from 'msw'
 import { AssetType } from '../syslumennClient.types'
 import {
