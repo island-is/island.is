@@ -16,7 +16,10 @@ const ApplicantStatus = ({ application }: FAFieldBaseProps) => {
       showAidAmount={state !== ApplicationState.REJECTED}
       showRejectionMessage={state === ApplicationState.REJECTED}
       showSpouseAlert={application.state === ApplicationStates.SPOUSE}
-      showSpouseTimeline={hasSpouse(application.answers, application.externalData)}
+      showSpouseTimeline={hasSpouse(
+        application.answers,
+        application.externalData,
+      )}
     />
   )
 }

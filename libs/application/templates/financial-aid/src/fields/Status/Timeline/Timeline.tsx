@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import cn from 'classnames'
 import format from 'date-fns/format'
 import { useIntl } from 'react-intl'
-import findLastIndex from "lodash/findLastIndex"
+import findLastIndex from 'lodash/findLastIndex'
 
 import { Text, Box } from '@island.is/island-ui/core'
 import { ApplicationState } from '@island.is/financial-aid/shared/lib'

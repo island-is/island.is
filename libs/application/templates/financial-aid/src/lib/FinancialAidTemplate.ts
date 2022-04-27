@@ -176,7 +176,6 @@ const FinancialAidTemplate: ApplicationTemplate<
                 import('../forms/ApplicantSubmitted').then((module) =>
                   Promise.resolve(module.ApplicantSubmitted),
                 ),
-              // TODO: Limit this
               read: 'all',
             },
             {
@@ -185,7 +184,6 @@ const FinancialAidTemplate: ApplicationTemplate<
                 import('../forms/SpouseSubmitted').then((module) =>
                   Promise.resolve(module.SpouseSubmitted),
                 ),
-              // TODO: Limit this
               read: 'all',
             },
           ],

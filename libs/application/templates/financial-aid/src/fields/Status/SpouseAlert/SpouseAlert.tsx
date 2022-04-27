@@ -6,7 +6,7 @@ import { status } from '../../../lib/messages'
 
 const SpouseAlert = () => {
   const { formatMessage } = useIntl()
-  
+
   return (
     <Box marginBottom={[4, 4, 5]}>
       <AlertMessage

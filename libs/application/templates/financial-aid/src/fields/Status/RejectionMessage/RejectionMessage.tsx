@@ -12,7 +12,12 @@ interface Props {
   email?: string
 }
 
-const RejectionMessage = ({ rejectionComment, rulesPage, homepage, email }: Props) => {
+const RejectionMessage = ({
+  rejectionComment,
+  rulesPage,
+  homepage,
+  email,
+}: Props) => {
   const { formatMessage } = useIntl()
   const showRulesLink = rulesPage || homepage
 
