@@ -196,7 +196,7 @@ export const signedVerdictOverview = {
         description:
           'Notaður sem texti í "Breyting á lengd gæsluvarðhalds" glugga á yfirlitsskjá afgreiddra mála.',
       },
-      validToDateAndIsolationToDateAreTheSame: defineMessage({
+      validToDateAndIsolationToDateAreTheSame: {
         id:
           'judicial.system.core:signed_verdict_overview.modify_dates_modal.valid_to_date_and_isolation_to_date_are_the_same',
         defaultMessage: `{caseType, select,
@@ -204,8 +204,8 @@ export const signedVerdictOverview = {
           other {Gælsuvarðhald}} og einangrun til {date}`,
         description:
           'Notaður sem texti í "Lengd gæsluvarðhalds breytt" glugga á yfirlitsskjá afgreiddra mála.',
-      }),
-      validToDateChanged: defineMessage({
+      },
+      validToDateChanged: {
         id:
           'judicial.system.core:signed_verdict_overview.modify_dates_modal.valid_to_date_changed',
         defaultMessage: `{caseType, select,
@@ -213,14 +213,14 @@ export const signedVerdictOverview = {
           other {Gælsuvarðhald}} til {date}.`,
         description:
           'Notaður sem texti "Lengd gæsluvarðhalds breytt" glugga á yfirlitsskjá afgreiddra mála.',
-      }),
-      isolationDateChanged: defineMessage({
+      },
+      isolationDateChanged: {
         id:
           'judicial.system.core:signed_verdict_overview.modify_dates_modal.isolation_date_changed',
         defaultMessage: `Einangrun til {date}.`,
         description:
           'Notaður sem texti "Lengd gæsluvarðhalds breytt" glugga á yfirlitsskjá afgreiddra mála.',
-      }),
+      },
       successText: {
         id:
           'judicial.system.core:signed_verdict_overview.modify_dates_modal.success_text',
@@ -287,7 +287,7 @@ export const signedVerdictOverview = {
           'judicial.system.core:signed_verdict_overview.modify_dates_info.title_V2',
         defaultMessage: `Lengd {caseType, select,
           ${CaseType.ADMISSION_TO_FACILITY} {vistunar}
-          other {gæslu} uppfærð`,
+          other {gæslu}} uppfærð`,
         description:
           'Notaður sem titill í upplýsingaboxi um uppfærða lengd gæslu á yfirlitsskjá afgreiddra mála.',
       },
@@ -367,7 +367,7 @@ export const signedVerdictOverview = {
       },
     }),
     caseExtension: defineMessages({
-      buttonLabel: defineMessage({
+      buttonLabel: {
         id:
           'judicial.system.core:signed_verdict_overview.case_extension.button_label',
         defaultMessage: `Framlengja {caseType, select,
@@ -376,8 +376,8 @@ export const signedVerdictOverview = {
         ${CaseType.CUSTODY} {gæslu}
         other {heimild}}`,
         description: 'Notaður sem label á framlengja mál takka',
-      }),
-      extensionInfo: defineMessage({
+      },
+      extensionInfo: {
         id:
           'judicial.system.core:signed_verdict_overview.case_extension.button',
         defaultMessage: `{hasChildCase, select,
@@ -394,10 +394,10 @@ export const signedVerdictOverview = {
           other {}}}}.`,
         description:
           'Notaður sem upplýsingatexti á info búbblu hjá framlengja mál takka',
-      }),
+      },
     }),
     caseDates: defineMessages({
-      restrictionExpired: defineMessage({
+      restrictionExpired: {
         id:
           'judicial.system.core:signed_verdict_overview.case_dates.restriction_expired',
         defaultMessage: `{caseType, select,
@@ -405,8 +405,8 @@ export const signedVerdictOverview = {
       ${CaseType.TRAVEL_BAN} {Farbann}
       other {Gæsla}} rann út {date}`,
         description: 'Texti sem tilgreinir hvenær gæsla/vistun/farbann rann út',
-      }),
-      restrictionValidTo: defineMessage({
+      },
+      restrictionValidTo: {
         id:
           'judicial.system.core:signed_verdict_overview.case_dates.restriction_valid_to',
         defaultMessage: `{caseType, select,
@@ -415,13 +415,13 @@ export const signedVerdictOverview = {
       other {Gæsla}} til {date}`,
         description:
           'Texti sem tilgreinir hversu lengi gæsla/vistun/farbann er í gildi',
-      }),
-      isolationValidTo: defineMessage({
+      },
+      isolationValidTo: {
         id:
           'judicial.system.core:signed_verdict_overview.case_dates.isolation_valid_to',
         defaultMessage: `Einangrun til {date}`,
         description: 'Texti sem tilgreinir hversu lengi einangrun er í gildi',
-      }),
+      },
     }),
   },
 }
