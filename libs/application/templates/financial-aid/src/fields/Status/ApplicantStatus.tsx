@@ -6,13 +6,13 @@ import { FAFieldBaseProps } from '../../lib/types'
 import Status from './Status'
 
 const ApplicantStatus = ({ application }: FAFieldBaseProps) => {
+  const state = application.externalData?.veita?.data?.state
+
   return (
     <Status
       application={application}
-      showFilesCard={
-        application.applicationState === ApplicationState.DATANEEDED
-      }
-      showAidAmount={application.applicationState !== ApplicationState.REJECTED}
+      showAidAmount={state !== ApplicationState.REJECTED}
+      showRejectionMessage={state === ApplicationState.REJECTED}
     />
   )
 }

@@ -15,16 +15,22 @@ interface Props {
 }
 
 const Header = ({ state }: Props) => {
-  if(!state) {
+  if (!state) {
     return null
   }
-  
+
   const { formatMessage } = useIntl()
 
   const text = {
     [ApplicationState.NEW]: [formatMessage(status.header.new), 'blue400'],
-    [ApplicationState.APPROVED]: [formatMessage(status.header.approved), 'mint600'],
-    [ApplicationState.REJECTED]: [formatMessage(status.header.rejected), 'red400'],
+    [ApplicationState.APPROVED]: [
+      formatMessage(status.header.approved),
+      'mint600',
+    ],
+    [ApplicationState.REJECTED]: [
+      formatMessage(status.header.rejected),
+      'red400',
+    ],
     [ApplicationState.INPROGRESS]: [
       formatMessage(status.header.inProgress, {
         month: getNextPeriod.month,

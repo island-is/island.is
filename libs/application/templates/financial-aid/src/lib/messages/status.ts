@@ -139,4 +139,33 @@ export const status = {
       description: 'Rejected text',
     },
   }),
+  rejectionMessage: defineMessages({
+    explanation: {
+      id: 'fa.application:section.status.rejectionMessage.explanation#markup',
+      defaultMessage:
+        'Umsókn þinni um fjárhagsaðstoð í ágúst hefur verið synjað {rejectionComment}.',
+      description: 'Explanation of rejection',
+    },
+    explanationLink: {
+      id: 'fa.application:section.status.rejectionMessage.explanationLink',
+      defaultMessage:
+        'Smelltu á hlekkinn hér fyrir neðan til að kynna þér reglur um fjárhagsaðstoð.',
+      description: 'Text to direct to the rules link',
+    },
+    rulesPageLink: {
+      id: 'fa.application:section.status.rejectionMessage.rulesPageLink',
+      defaultMessage: 'Sjá reglur um fjárhagsaðstoð',
+      description: 'Text on link to rules page',
+    },
+    appealTitle: {
+      id: 'fa.application:section.status.rejectionMessage.appealTitle',
+      defaultMessage: 'Málskot',
+      description: 'Appeal title',
+    },
+    appealDescription: {
+      id: 'fa.application:section.status.rejectionMessage.appealDescription#markup',
+      defaultMessage: 'Bent skal á að unnt er að skjóta ákvörðun þessari til áfrýjunarnefndar þíns sveitarfélags. Skal það gert skriflega og innan fjögurra vikna. Fyrir frekari upplýsingar um málskot hafðu samband með tölvupósti á netfangið [{email}]({email}). \n\n Ákvörðun ráðsins má síðan skjóta til úrskurðarnefndar velferðarmála, Katrínartúni 2, 105 Reykjavík innan þriggja mánaða.',
+      description: 'Appeal title',
+    },
+  }),
 }

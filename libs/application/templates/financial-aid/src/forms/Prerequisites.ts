@@ -19,33 +19,33 @@ export const Prerequisites: Form = buildForm({
   title: m.application.name,
   mode: FormModes.APPLYING,
   children: [
-    buildSection({
-      id: 'externalData',
-      title: m.section.dataGathering,
-      children: [
-        buildExternalDataProvider({
-          title: m.externalData.general.pageTitle,
-          id: 'approveExternalData',
-          subTitle: m.externalData.general.subTitle,
-          description: m.externalData.general.description,
-          checkboxLabel: m.externalData.general.checkboxLabel,
-          dataProviders: [
-            buildDataProviderItem({
-              id: 'nationalRegistry',
-              type: DataProviderTypes.NationalRegistry,
-              title: m.externalData.applicant.title,
-              subTitle: m.externalData.applicant.subTitle,
-            }),
-            buildDataProviderItem({
-              id: 'veita',
-              type: DataProviderTypes.Veita,
-              title: '',
-              subTitle: undefined,
-            }),
-          ],
-        }),
-      ],
-    }),
+    // buildSection({
+    //   id: 'externalData',
+    //   title: m.section.dataGathering,
+    //   children: [
+    //     buildExternalDataProvider({
+    //       title: m.externalData.general.pageTitle,
+    //       id: 'approveExternalData',
+    //       subTitle: m.externalData.general.subTitle,
+    //       description: m.externalData.general.description,
+    //       checkboxLabel: m.externalData.general.checkboxLabel,
+    //       dataProviders: [
+    //         buildDataProviderItem({
+    //           id: 'nationalRegistry',
+    //           type: DataProviderTypes.NationalRegistry,
+    //           title: m.externalData.applicant.title,
+    //           subTitle: m.externalData.applicant.subTitle,
+    //         }),
+    //         buildDataProviderItem({
+    //           id: 'veita',
+    //           type: DataProviderTypes.Veita,
+    //           title: '',
+    //           subTitle: undefined,
+    //         }),
+    //       ],
+    //     }),
+    //   ],
+    // }),
     buildSection({
       id: 'aboutForm',
       title: m.aboutForm.general.sectionTitle,

@@ -15,14 +15,15 @@ import { FAApplication } from '../../../lib/types'
 
 interface Props {
   application: FAApplication
+  state: ApplicationState
 }
 
-const AidAmount = ({ application }: Props) => {
+const AidAmount = ({ application, state }: Props) => {
   const { formatMessage } = useIntl()
 
   return (
     <Box marginBottom={[4, 4, 5]}>
-      {application.applicationState === ApplicationState.APPROVED ? (
+      {state === ApplicationState.APPROVED ? (
         <>
           <Text as="h3" variant="h3" marginBottom={2}>
             {formatMessage(status.aidAmount.titleApproved)}

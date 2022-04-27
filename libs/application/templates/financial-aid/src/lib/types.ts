@@ -52,7 +52,6 @@ export type FAApplication = Override<
   {
     answers: OverrideAnswerSchema
     externalData: ExternalData
-    applicationState: ApplicationState
   }
 >
 
@@ -70,6 +69,7 @@ export interface Applicant {
 
 export interface CurrentApplication {
   currentApplicationId?: string
+  state: ApplicationState
 }
 
 export interface Address {
