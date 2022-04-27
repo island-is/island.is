@@ -11,11 +11,11 @@ interface Props {
 }
 
 const MoreActions = ({ rulesPage, email }: Props) => {
-  const { formatMessage } = useIntl()
-
   if (!rulesPage && !email) {
     return null
   }
+
+  const { formatMessage } = useIntl()
 
   return (
     <>

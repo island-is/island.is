@@ -24,30 +24,26 @@ const Estimation = ({ application }: Props) => {
   const { nationalRegistry } = application.externalData
 
   const getAidType = () => {
-    if (nationalRegistry?.data?.applicant?.spouse?.maritalStatus != undefined) {
-      return (
-        martialStatusTypeFromMartialCode(
+    switch (true) {
+      case !nationalRegistry?.data?.applicant?.spouse:
+        return true
+      case nationalRegistry?.data?.applicant?.spouse?.maritalStatus != undefined:
+        return martialStatusTypeFromMartialCode(
           nationalRegistry?.data?.applicant?.spouse?.maritalStatus,
         ) === MartialStatusType.SINGLE
-      )
+      default:
+        return !showSpouseData[
+          findFamilyStatus(application.answers, application.externalData)
+        ]
     }
-    return !showSpouseData[
-      findFamilyStatus(application.answers, application.externalData)
-    ]
   }
 
-  let aidAmount
-  if (
-    nationalRegistry?.data?.municipality &&
-    application.answers.homeCircumstances.type
-  ) {
-    aidAmount = aidCalculator(
-      application.answers.homeCircumstances.type,
-      getAidType()
-        ? nationalRegistry?.data?.municipality?.individualAid
-        : nationalRegistry?.data?.municipality?.cohabitationAid,
-    )
-  }
+  const aidAmount = aidCalculator(
+    application.answers.homeCircumstances.type,
+    getAidType()
+      ? nationalRegistry?.data?.municipality?.individualAid
+      : nationalRegistry?.data?.municipality?.cohabitationAid,
+  )
 
   return (
     <>

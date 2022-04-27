@@ -49,7 +49,7 @@ const Header = ({ state }: Props) => {
 
   return (
     <Text
-      as="h2"
+      as="h3"
       variant="h3"
       color={text[state][1] as Colors}
       marginBottom={[4, 4, 5]}
