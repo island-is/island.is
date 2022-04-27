@@ -2,12 +2,13 @@ import {
   Application,
   ApplicationStatus,
   ApplicationTypes,
+  coreErrorMessages,
 } from '@island.is/application/core'
 import addDays from 'date-fns/addDays'
 import format from 'date-fns/format'
 
 import { minimumPeriodStartBeforeExpectedDateOfBirth } from '../config'
-import { ParentalRelations } from '../constants'
+import { NO_PRIVATE_PENSION_FUND, ParentalRelations } from '../constants'
 import { answerValidators, VALIDATE_LATEST_PERIOD } from './answerValidators'
 import { errorMessages } from './messages'
 import { NO, StartDateOptions } from '../constants'
@@ -90,6 +91,34 @@ describe('answerValidators', () => {
       message: errorMessages.periodsPeriodRange,
       path: 'periods[0].startDate',
       values: { usageMaxMonths: 23.5 },
+    })
+  })
+
+  it('should create error when privatePensionFund is empty', () => {
+    const newAnswers = {
+      bank: '123456789012',
+      pensionFund: 'id-frjalsi',
+      privatePensionFund: '',
+      privatePensionFundProcentage: ''
+    }
+
+    expect(answerValidators['payments'](newAnswers, application)).toEqual({
+      message: coreErrorMessages.defaultError,
+      path: "payments.privatePensionFund",
+    })
+  })
+
+  it('should create error when privatePensionFundPercentage is empty', () => {
+    const newAnswers = {
+      bank: '123456789012',
+      pensionFund: 'id-frjalsi',
+      privatePensionFund: 'id-frjalsi',
+      privatePensionFundProcentage: ''
+    }
+
+    expect(answerValidators['payments'](newAnswers, application)).toEqual({
+      message: coreErrorMessages.defaultError,
+      path: "payments.privatePensionFundPercentage",
     })
   })
 })
