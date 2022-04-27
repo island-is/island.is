@@ -47,7 +47,7 @@ export function withAgent({
   }
 
   return (request) => {
-    request.agent ||= getAgent
+    request.agent = request.agent || getAgent
     return fetch(request)
   }
 }

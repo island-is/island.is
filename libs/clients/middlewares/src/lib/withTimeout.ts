@@ -6,7 +6,7 @@ export interface TimeoutOptions extends FetchMiddlewareOptions {
 
 export function withTimeout({ timeout, fetch }: TimeoutOptions): MiddlewareAPI {
   return (request) => {
-    request.timeout ||= timeout
+    request.timeout = request.timeout || timeout
     return fetch(request)
   }
 }
