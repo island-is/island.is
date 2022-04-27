@@ -66,10 +66,12 @@ export class ApplicationSerializer
     const userRole = template.mapUserToRole(nationalId, application) ?? ''
 
     const roleInState = helper.getRoleInState(userRole)
+    const actors = application.applicant === nationalId ? application.applicantActors : []
 
     const dto = plainToInstance(ApplicationResponseDto, {
       ...application,
       ...helper.getReadableAnswersAndExternalData(userRole),
+      applicationActors: actors,
       actionCard: {
         title: actionCardMeta.title
           ? intl.formatMessage(actionCardMeta.title)
