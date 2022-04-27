@@ -87,7 +87,7 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
     return (
       <NotFound
         title={defineMessage({
-          id: 'sp.assets',
+          id: 'sp.assets:not-found',
           defaultMessage: 'Fasteign fannst ekki',
         })}
       />
