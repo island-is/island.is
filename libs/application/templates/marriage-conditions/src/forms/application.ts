@@ -17,6 +17,7 @@ import {
 import type { User } from '@island.is/api/domains/national-registry'
 import { format as formatNationalId } from 'kennitala'
 import { UserProfile } from '../types/schema'
+import { Individual } from '../types'
 import { m } from '../lib/messages'
 
 export const getApplication = (): Form => {
@@ -79,23 +80,24 @@ export const getApplication = (): Form => {
                 color: 'dark400',
               }),
               buildTextField({
-                id: 'applicant.nationalId',
+                id: 'applicant.person.nationalId',
                 title: m.nationalId,
                 width: 'half',
                 backgroundColor: 'white',
                 format: '######-####',
-                defaultValue: (application: Application) =>
-                  formatNationalId(application.applicant),
+                defaultValue: (application: Application) => {
+                  return formatNationalId(application.applicant) ?? ''
+                },
               }),
               buildTextField({
-                id: 'applicant.name',
+                id: 'applicant.person.name',
                 title: 'Nafn',
                 width: 'half',
                 backgroundColor: 'white',
                 defaultValue: (application: Application) => {
                   const nationalRegistry = application.externalData
                     .nationalRegistry.data as User
-                  return nationalRegistry.fullName
+                  return nationalRegistry.fullName ?? ''
                 },
               }),
               buildTextField({
@@ -106,7 +108,7 @@ export const getApplication = (): Form => {
                 defaultValue: (application: Application) => {
                   const data = application.externalData.userProfile
                     .data as UserProfile
-                  return data.mobilePhoneNumber
+                  return data.mobilePhoneNumber ?? ''
                 },
               }),
               buildTextField({
@@ -118,7 +120,7 @@ export const getApplication = (): Form => {
                 defaultValue: (application: Application) => {
                   const data = application.externalData.userProfile
                     .data as UserProfile
-                  return data.email
+                  return data.email ?? ''
                 },
               }),
               buildDividerField({
@@ -131,33 +133,19 @@ export const getApplication = (): Form => {
                 component: 'InfoAlert',
               }),
               buildCustomField({
-                id: 'spouse.nationalId',
+                id: 'spouse.person',
                 title: '',
                 component: 'NationalIdWithName',
               }),
-              buildDescriptionField({
-                id: 'spouse.name',
-                title: '',
-                description: ''
-              }),
-              /*buildTextField({
-                id: 'spouse.nationalId',
-                title: m.nationalId,
-                width: 'half',
-                backgroundColor: 'blue',
-                format: '######-####',
-              }),
-              buildTextField({
-                id: 'spouse.name',
-                title: m.name,
-                width: 'half',
-                backgroundColor: 'blue',
-              }),*/
               buildTextField({
                 id: 'spouse.phone',
                 title: m.phone,
                 width: 'half',
                 backgroundColor: 'blue',
+                defaultValue: (application: Application) => {
+                  const info = application.answers.spouse as Individual
+                  return info?.phone ?? ''
+                },
               }),
               buildTextField({
                 id: 'spouse.email',
@@ -165,6 +153,10 @@ export const getApplication = (): Form => {
                 variant: 'email',
                 width: 'half',
                 backgroundColor: 'blue',
+                defaultValue: (application: Application) => {
+                  const info = application.answers.spouse as Individual
+                  return info?.email ?? ''
+                },
               }),
             ],
           }),
@@ -172,29 +164,21 @@ export const getApplication = (): Form => {
       }),
       buildSection({
         id: 'marriageWitnesses',
-        title: m.informationMaritalSides,
+        title: m.informationWitnessTitle,
         children: [
           buildMultiField({
             id: 'witnesses',
-            title: m.informationMaritalSides,
+            title: m.informationWitnessTitle,
             description: m.informationMaritalSidesDescription,
             children: [
               buildDividerField({
                 title: m.informationWitness1,
                 color: 'dark400',
               }),
-              buildTextField({
-                id: 'witness1.nationalId',
-                title: m.nationalId,
-                width: 'half',
-                backgroundColor: 'blue',
-                format: '######-####',
-              }),
-              buildTextField({
-                id: 'witness1.name',
-                title: m.name,
-                width: 'half',
-                backgroundColor: 'white',
+              buildCustomField({
+                id: 'witness1.person',
+                title: '',
+                component: 'NationalIdWithName',
               }),
               buildTextField({
                 id: 'witness1.phone',
@@ -213,18 +197,10 @@ export const getApplication = (): Form => {
                 title: m.informationWitness2,
                 color: 'dark400',
               }),
-              buildTextField({
-                id: 'witness2.nationalId',
-                title: m.nationalId,
-                width: 'half',
-                backgroundColor: 'blue',
-                format: '######-####',
-              }),
-              buildTextField({
-                id: 'witness2.name',
-                title: m.name,
-                width: 'half',
-                backgroundColor: 'white',
+              buildCustomField({
+                id: 'witness2.person',
+                title: '',
+                component: 'NationalIdWithName',
               }),
               buildTextField({
                 id: 'witness2.phone',
@@ -250,8 +226,7 @@ export const getApplication = (): Form => {
           buildMultiField({
             id: 'applicationOverview',
             title: 'Yfirlit umsóknar',
-            description:
-              'Vinsamlegast farðu yfir umsóknina til að vera viss um að réttar upplýsingar hafi verið gefnar upp. ',
+            description: m.informationSubtitle,
             children: [
               buildCustomField({
                 id: 'overview',

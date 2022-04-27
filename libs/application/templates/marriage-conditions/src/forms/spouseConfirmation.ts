@@ -12,6 +12,7 @@ import {
   buildSubmitField,
   DefaultEvents,
 } from '@island.is/application/core'
+import { NO, YES } from '../lib/constants'
 import { m } from '../lib/messages'
 
 export const spouseConfirmation: Form = buildForm({
@@ -26,20 +27,21 @@ export const spouseConfirmation: Form = buildForm({
         buildMultiField({
           id: 'spouse',
           title: 'Könnun hjónavígsluskilyrða',
-          description: 'Jóna Jónssdóttir sendi inn umsókn um könnun hjónavígsluskilyrða ykkar þann 13. júní, 2021. Til þess að halda áfram með ferlið þurfa bæði hjónaefni að senda frá sér persónuupplýsingar til samþykktar af Sýslumanni.',
+          description:
+            'Jóna Jónssdóttir sendi inn umsókn um könnun hjónavígsluskilyrða ykkar þann 13. júní, 2021. Til þess að halda áfram með ferlið þurfa bæði hjónaefni að senda frá sér persónuupplýsingar til samþykktar af Sýslumanni.',
           children: [
             buildCheckboxField({
               id: 'spouseApprove',
               title: '',
               options: [
-                { value: 'approve', label: 'Ég samþykki umsókn' },
-                { value: 'notApprove', label: 'Ég samþykki ekki umsókn' },
+                { value: YES, label: 'Ég samþykki umsókn' },
+                { value: NO, label: 'Ég samþykki ekki umsókn' },
               ],
-              defaultValue: ''
+              defaultValue: [YES],
             }),
-          ]
-        })
-      ]
+          ],
+        }),
+      ],
     }),
     buildSection({
       id: 'externalData',
@@ -123,11 +125,11 @@ export const spouseConfirmation: Form = buildForm({
             buildDescriptionField({
               id: 'applicationOverview',
               title: 'næsnæs',
-              description: 'helloooo vel gert'
-            })
+              description: 'helloooo vel gert',
+            }),
           ],
         }),
       ],
     }),
-  ]
+  ],
 })

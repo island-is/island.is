@@ -78,16 +78,16 @@ export const m = defineMessages({
     defaultMessage: 'Upplýsingar um hjónaefni',
     description: 'Information section title',
   },
+  informationSectionTitle: {
+    id: 'mc.application:informationTitle',
+    defaultMessage: 'Upplýsingar',
+    description: 'Information title',
+  },
   informationSubtitle: {
     id: 'mc.application:informationSectionSubtitle',
     defaultMessage:
       'Vinsamlegast farðu yfir upplýsingarnar og gakktu úr skugga um að þær séu réttar.',
     description: 'Information section title',
-  },
-  informationSectionTitle: {
-    id: 'mc.application:informationTitle',
-    defaultMessage: 'Upplýsingar',
-    description: 'Information title',
   },
   informationSpouse1: {
     id: 'mc.application:informationSpouse1',
@@ -110,17 +110,32 @@ export const m = defineMessages({
       'Undirritaðir aðilar munu ábyrgjast að enginn lagatálmi sé á fyrirhuguðum hjúskap.',
     description: 'marital sides',
   },
-
-  /* Information Section Witnesses */
+  informationWitnessTitle: {
+    id: 'mc.application:informationWitnessTitle',
+    defaultMessage: 'Svaramenn',
+    description: 'screen title',
+  },
+  informationWitnessSubtitle: {
+    id: 'mc.application:informationWitnessSubtitle',
+    defaultMessage:
+      'Undirritaðir aðilar munu ábyrgjast að enginn lagatálmi sé á fyrirhuguðum hjúskap.',
+    description: 'screen subtitle',
+  },
   informationWitness1: {
     id: 'mc.application:informationWitness1',
-    defaultMessage: 'Vottur 1',
+    defaultMessage: 'Svaramaður 1',
     description: 'Information title witness 1',
   },
   informationWitness2: {
     id: 'mc.application:informationWitness2',
-    defaultMessage: 'Vottur 2',
+    defaultMessage: 'Svaramaður 2',
     description: 'Information title witness 2',
+  },
+  witnessOverviewFooterText: {
+    id: 'mc.application:witnessOverviewFooterText',
+    defaultMessage:
+      'Hjónaefni ábyrgjast hér með undirskrift sinni að upplýsingar gefnar af þeim eru réttar og lýsa yfir að viðlögðum drengskap að þau viti ekki um tálma á fyrirhuguðum hjúskap sínum, sbr. II. og III. kafla laga nr. 31/1993.',
+    description: 'Witness overview footer text',
   },
 
   /* Individuals info headers */
@@ -144,6 +159,9 @@ export const m = defineMessages({
     defaultMessage: 'Netfang',
     description: 'email',
   },
+
+  /* Spouse confirmation screens */
+  
 
   /* Payment */
   paymentPendingDescription: {

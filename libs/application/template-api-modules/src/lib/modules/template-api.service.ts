@@ -218,7 +218,7 @@ export class TemplateAPIService {
       case ApplicationTypes.MARRIAGE_CONDITIONS:
         return this.tryRunningActionOnService(
           this.marriageConditionsSubmissionService,
-          action
+          action,
         )
     }
 

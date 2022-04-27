@@ -103,13 +103,20 @@ const MarriageConditionsTemplate: ApplicationTemplate<
             },
             {
               id: Roles.ASSIGNED_SPOUSE,
-              formLoader: () => import('../forms/spouseConfirmation').then((val) => val.spouseConfirmation),
+              formLoader: () =>
+                import('../forms/spouseConfirmation').then(
+                  (val) => val.spouseConfirmation,
+                ),
               read: 'all',
               write: 'all',
               actions: [
-                { event: DefaultEvents.SUBMIT, name: 'Senda inn umsókn', type: 'primary' },
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Senda inn umsókn',
+                  type: 'primary',
+                },
               ],
-            }
+            },
           ],
         },
         on: {
@@ -130,13 +137,20 @@ const MarriageConditionsTemplate: ApplicationTemplate<
             },
             {
               id: Roles.WITNESS_ONE,
-              formLoader: () => import('../forms/witnessOneConfirmation').then((val) => val.witnessOneConfirmation),
+              formLoader: () =>
+                import('../forms/witnessOneConfirmation').then(
+                  (val) => val.witnessOneConfirmation,
+                ),
               read: 'all',
               write: 'all',
               actions: [
-                { event: DefaultEvents.SUBMIT, name: 'Senda inn umsókn', type: 'primary' },
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Senda inn umsókn',
+                  type: 'primary',
+                },
               ],
-            }
+            },
           ],
         },
         on: {
@@ -157,13 +171,20 @@ const MarriageConditionsTemplate: ApplicationTemplate<
             },
             {
               id: Roles.WITNESS_TWO,
-              formLoader: () => import('../forms/witnessTwoConfirmation').then((val) => val.witnessTwoConfirmation),
+              formLoader: () =>
+                import('../forms/witnessTwoConfirmation').then(
+                  (val) => val.witnessTwoConfirmation,
+                ),
               read: 'all',
               write: 'all',
               actions: [
-                { event: DefaultEvents.SUBMIT, name: 'Senda inn umsókn', type: 'primary' },
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Senda inn umsókn',
+                  type: 'primary',
+                },
               ],
-            }
+            },
           ],
         },
         on: {
@@ -182,7 +203,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
               formLoader: () => import('../forms/done').then((val) => val.done),
               read: 'all',
               write: 'all',
-            }
+            },
           ],
         },
         type: 'final' as const,
@@ -201,8 +222,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
       return Roles.WITNESS_TWO
     } else if (application.state === States.WITNESS_TWO_CONFIRMED) {
       return Roles.WITNESS_TWO
-    }
-    else if (application.applicant === nationalId) {
+    } else if (application.applicant === nationalId) {
       return Roles.APPLICANT
     }
   },

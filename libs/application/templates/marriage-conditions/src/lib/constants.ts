@@ -11,7 +11,7 @@ export enum States {
   SPOUSE_CONFIRMED = 'spouse_confirmed',
   WITNESS_ONE_CONFIRMED = 'witness_one_confirmed',
   WITNESS_TWO_CONFIRMED = 'witness_two_confirmed',
-  COMPLETE = 'complete'
+  COMPLETE = 'complete',
 }
 export enum Roles {
   APPLICANT = 'applicant',
