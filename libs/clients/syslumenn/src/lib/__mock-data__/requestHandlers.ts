@@ -1,5 +1,9 @@
+import {
+  VedbandayfirlitSkeyti,
+  VedbokavottordRegluverkiPostRequest,
+} from '../../../gen/fetch'
 import { rest } from 'msw'
-import {AssetType} from '../syslumennClient.types'
+import { AssetType } from '../syslumennClient.types'
 import {
   VHSUCCESS,
   VHFAIL,
@@ -73,19 +77,12 @@ export const requestHandlers = [
     return res(ctx.status(200), ctx.json(DATA_UPLOAD))
   }),
   rest.post(url('/api/VedbokavottordRegluverki'), (req, res, ctx) => {
-<<<<<<< HEAD
-    const realEstateId = (req.body as any).fastanumer ?? ''
-    const validRealEstateId = /f?\d+/.test(realEstateId)
-    if (!validRealEstateId) return res(ctx.status(404), ctx.json([]))
-    return res(ctx.status(200), ctx.json(VEDBANDAYFIRLRIT_REGLUVERKI_RESPONSE))
-=======
-    const assetId = (req.body as any).fastanumer ?? ""
+    const body = req.body as VedbandayfirlitSkeyti
+    const assetId = body.fastanumer ?? ''
     const response = VEDBANDAYFIRLRIT_REGLUVERKI_RESPONSE
-    const t = (req.body as any).tegundAndlags ?? -1
-    switch (t) {
+    switch ((body.tegundAndlags as number) ?? -1) {
       case AssetType.RealEstate: {
-        if (!/f?\d+/.test(assetId))
-          return res(ctx.status(404), ctx.json([]))
+        if (!/f?\d+/.test(assetId)) return res(ctx.status(404), ctx.json([]))
         response[0].heiti = REAL_ESTATE_ADDRESS_NAME
         return res(ctx.status(200), ctx.json(response))
       }
@@ -97,11 +94,10 @@ export const requestHandlers = [
         return res(ctx.status(200), ctx.json(response))
       }
       default: {
-        response[0].heiti = "INVALIDE"
+        response[0].heiti = 'INVALIDE'
         return res(ctx.status(200), ctx.json(response))
       }
     }
->>>>>>> b7974bf3d8 (Add getVehicleType)
   }),
   rest.post(url('/api/Vedbokarvottord'), (req, res, ctx) => {
     const { fastanumer } = req.body as {

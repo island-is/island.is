@@ -219,7 +219,11 @@ export class SyslumennService {
     return response.map(mapDistrictCommissionersAgenciesResponse)
   }
 
-  async getAsset(assetId: string, assetType: AssetType, assetMapper: (res: VedbandayfirlitReguverkiSvarSkeyti) => AssetName): Promise<Array<AssetName>> {
+  async getAsset(
+    assetId: string,
+    assetType: AssetType,
+    assetMapper: (res: VedbandayfirlitReguverkiSvarSkeyti) => AssetName,
+  ): Promise<Array<AssetName>> {
     const { id, api } = await this.createApi()
     const response = await api
       .vedbokavottordRegluverkiPost({
@@ -238,15 +242,11 @@ export class SyslumennService {
     return response.map(assetMapper)
   }
 
-  async getRealEstateAddress(
-    realEstateId: string,
-  ): Promise<Array<AssetName>> {
+  async getRealEstateAddress(realEstateId: string): Promise<Array<AssetName>> {
     return await this.getAsset(realEstateId, AssetType.RealEstate, mapAssetName)
   }
 
-  async getVehicleType(
-    vehicleId: string,
-  ): Promise<Array<AssetName>> {
+  async getVehicleType(vehicleId: string): Promise<Array<AssetName>> {
     return await this.getAsset(vehicleId, AssetType.Vehicle, mapAssetName)
   }
 

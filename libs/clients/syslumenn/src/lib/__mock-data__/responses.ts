@@ -5,8 +5,7 @@ import {
   Skilabod,
   VedbandayfirlitReguverkiSvarSkeyti,
 } from '../../../gen/fetch'
-import { AssetName } from '../syslumennClient.types'
-import { SyslumennApiPaginationInfo } from '../syslumennClient.types'
+import { AssetName, SyslumennApiPaginationInfo } from '../syslumennClient.types'
 
 export const VHSUCCESS = [
   {
@@ -98,7 +97,7 @@ export const OPERATING_LICENSE_SERVICE_RES = [
     afgr_Afgengis_Virkirdagar_Utiveitingar: 'string',
     afgr_Afgengis_Adfaranott_Fridaga_Utiveitingar: 'string',
   },
-] as any[]
+] as any[] // This return object has no type, see clientConfig.json
 
 export const DATA_UPLOAD: Skilabod = {
   skilabod: 'Gögn móttekin',
@@ -128,10 +127,14 @@ export const MORTGAGE_CERTIFICATE_MESSAGE_NO_KMARKING = 'Ekki hægt að afgreið
 export const REAL_ESTATE_ADDRESS_NAME = 'Hvergiland'
 export const VEHICLE_TYPE_NAME = 'WolfVagon'
 
-export const REAL_ESTATE_ADDRESS: Array<AssetName> = [{
-  name: REAL_ESTATE_ADDRESS_NAME,
-}]
+export const REAL_ESTATE_ADDRESS: Array<AssetName> = [
+  {
+    name: REAL_ESTATE_ADDRESS_NAME,
+  },
+]
 
-export const VEHICLE_TYPE: Array<AssetName> = [{
-  name: VEHICLE_TYPE_NAME,
-}]
+export const VEHICLE_TYPE: Array<AssetName> = [
+  {
+    name: VEHICLE_TYPE_NAME,
+  },
+]
