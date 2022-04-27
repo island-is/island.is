@@ -71,24 +71,24 @@ export const Applications: FC = () => {
   }
 
   // TODO: Change when IDS has locale
-  const [
-    getUserProfile,
-    { data: userProfData, loading: userProfileLoading },
-  ] = useLazyQuery<Query>(USER_PROFILE)
-  const userProfile = userProfData?.getUserProfile || null
+  // const [
+  //   getUserProfile,
+  //   { data: userProfData, loading: userProfileLoading },
+  // ] = useLazyQuery<Query>(USER_PROFILE)
+  // const userProfile = userProfData?.getUserProfile || null
 
-  useEffect(() => {
-    if (userInfo?.profile.nationalId) getUserProfile()
-  }, [userInfo, getUserProfile])
+  // useEffect(() => {
+  //   if (userInfo?.profile.nationalId) getUserProfile()
+  // }, [userInfo, getUserProfile])
 
-  useEffect(() => {
-    if (
-      userProfile?.locale &&
-      isLocale(userProfile.locale) &&
-      userProfile.locale !== lang
-    )
-      changeLanguage(userProfile.locale as Locale)
-  }, [userProfile, changeLanguage, lang])
+  // useEffect(() => {
+  //   if (
+  //     userProfile?.locale &&
+  //     isLocale(userProfile.locale) &&
+  //     userProfile.locale !== lang
+  //   )
+  //     changeLanguage(userProfile.locale as Locale)
+  // }, [userProfile, changeLanguage, lang])
 
   useEffect(() => {
     if (type && data && isEmpty(data.applicationApplications)) {
@@ -96,7 +96,8 @@ export const Applications: FC = () => {
     }
   }, [type, data])
 
-  if (loading || userProfileLoading) {
+  // if (loading || userProfileLoading) {
+  if (loading) {
     return <ApplicationLoading />
   }
 
