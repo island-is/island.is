@@ -1,4 +1,3 @@
-import { CaseType } from '@island.is/judicial-system/types'
 import { defineMessage, defineMessages } from 'react-intl'
 
 export const rcDemands = {
@@ -40,20 +39,16 @@ export const rcDemands = {
       pastRestriction: defineMessage({
         id:
           'judicial.system.restriction_cases:police_demands.demands.past_restriction',
-        defaultMessage: `{caseType, select,
-          ${CaseType.ADMISSION_TO_FACILITY} {Fyrri vistun}
-          ${CaseType.TRAVEL_BAN} {Fyrra farbann}
-          other {Fyrri gæsla}} var/er til `,
+        defaultMessage:
+          '{caseType, select, ADMISSION_TO_FACILITY {Fyrri vistun} TRAVEL_BAN {Fyrra farbann} other {Fyrri gæsla}} var/er til ',
         description:
           'Notaður sem texti yfir fyrri gæslu/vistun/farbann ef um framlengt mál er að ræða í skrefi lagagrundvöllur og dómkörfur.',
       }),
       restrictionValidDateLabel: defineMessage({
         id:
           'judicial.system.restriction_cases:police_demands.demands.restriction_label',
-        defaultMessage: `{caseType, select,
-          ${CaseType.ADMISSION_TO_FACILITY} {Vistun á viðeignandi stofnun}
-          ${CaseType.TRAVEL_BAN} {Farbann}
-          other {Gæsluvarðhald}} til`,
+        defaultMessage:
+          '{caseType, select, ADMISSION_TO_FACILITY {Vistun á viðeignandi stofnun} TRAVEL_BAN {Farbann} other {Gæsluvarðhald}} til',
         description:
           'Notaður sem texti þegar valið er lengd á gæslu/vistun/farbanni í "dómkröfu" á lagagrundvöllur og dómkröfur skrefi.',
       }),
@@ -118,10 +113,8 @@ export const rcDemands = {
       headingV2: {
         id:
           'judicial.system.restriction_cases:police_demands.custody_restrictions.heading_v2',
-        defaultMessage: `Takmarkanir og tilhögun {caseType, select,
-        ${CaseType.ADMISSION_TO_FACILITY} {vistunar}
-        ${CaseType.TRAVEL_BAN} {farbanns}
-        other {gæslu}}`,
+        defaultMessage:
+          'Takmarkanir og tilhögun {caseType, select, ADMISSION_TO_FACILITY {vistunar} TRAVEL_BAN {farbanns} other {gæslu}}',
         description:
           'Notaður sem titill fyrir "takmarkanir og tilhögun gæslu/farbanns/vistunar" hlutann á lagagrundvöllur og dómkröfur skrefi í gæsluvarðhalds-, vistunar- og farbannsmálum.',
       },
@@ -135,10 +128,8 @@ export const rcDemands = {
       subHeadingV2: {
         id:
           'judicial.system.restriction_cases:police_demands.custody_restrictions.sub_heading_v2',
-        defaultMessage: `Ef ekkert er valið er {caseType, select,
-        ${CaseType.ADMISSION_TO_FACILITY} {vistun}
-        ${CaseType.TRAVEL_BAN} {farbann}
-        other {gæsla}} án takmarkana`,
+        defaultMessage:
+          'Ef ekkert er valið er {caseType, select, ADMISSION_TO_FACILITY {vistun} TRAVEL_BAN {farbann} other {gæsla}} án takmarkana',
         description:
           'Notaður sem undirtitill fyrir "takmarkanir og tilhögun gæslu" hlutann á lagagrundvöllur og dómkröfur skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
