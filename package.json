@@ -278,6 +278,7 @@
   },
   "devDependencies": {
     "@anatine/esbuild-decorators": "^0.2.4",
+    "@anatine/esbuildnx": "0.2.0",
     "@aws-sdk/client-ssm": "3.49.0",
     "@babel/core": "7.13.8",
     "@babel/plugin-proposal-decorators": "7.17.8",
@@ -294,7 +295,6 @@
     "@graphql-codegen/typescript-operations": "1.17.15",
     "@graphql-codegen/typescript-react-apollo": "1.17.7",
     "@graphql-codegen/typescript-resolvers": "1.17.9",
-    "@irdnis/esbuildnx": "0.0.4-rc8",
     "@jeremybarbet/contentful-extension-scripts": "0.22.7",
     "@nestjs/schematics": "8.0.10",
     "@nestjs/testing": "8.4.4",
