@@ -1,32 +1,63 @@
 import React from 'react'
+import { MessageDescriptor, useIntl } from 'react-intl'
+
+import { getNextPeriod } from '@island.is/financial-aid/shared/lib'
 import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
-import { FAFieldBaseProps } from '../../lib/types'
-import { useIntl } from 'react-intl'
+
 import { confirmation, copyUrl } from '../../lib/messages'
 import { DescriptionText, ConfirmationSectionImage, CopyUrl } from '..'
-import { hasSpouse } from '../../lib/utils'
 
-const Confirmation = ({ application }: FAFieldBaseProps) => {
+interface Props {
+  firstStepText?: MessageDescriptor
+  missingIncomeFiles: boolean
+  hasSpouse?: boolean
+  municipalityHomepage?: string
+}
+
+const Confirmation = ({
+  firstStepText,
+  missingIncomeFiles,
+  hasSpouse,
+  municipalityHomepage,
+}: Props) => {
   const { formatMessage } = useIntl()
-  const { answers, externalData } = application
+
   return (
     <>
       <Box marginTop={[4, 4, 5]}>
-        <Box>
-          <AlertMessage
-            type="success"
-            title={formatMessage(confirmation.alertMessages.success)}
-          />
-        </Box>
-        <Box marginTop={[2, 2, 3]}>
-          {/* //Todo customize alert message depending on applicant */}
+        {missingIncomeFiles ? (
           <AlertMessage
             type="warning"
             title={formatMessage(confirmation.alertMessages.dataNeeded)}
             message={formatMessage(confirmation.alertMessages.dataNeededText)}
           />
-        </Box>
+        ) : (
+          <AlertMessage
+            type="success"
+            title={
+              hasSpouse
+                ? formatMessage(
+                    confirmation.alertMessagesInRelationship.success,
+                  )
+                : formatMessage(confirmation.alertMessages.success)
+            }
+          />
+        )}
+        {hasSpouse && (
+          <Box marginTop={[2, 2, 3]}>
+            <AlertMessage
+              type="warning"
+              title={formatMessage(
+                confirmation.alertMessagesInRelationship.dataNeeded,
+              )}
+              message={formatMessage(
+                confirmation.alertMessagesInRelationship.dataNeededText,
+              )}
+            />
+          </Box>
+        )}
       </Box>
+
       <Text as="h3" variant="h3" marginTop={[4, 4, 5]}>
         {formatMessage(confirmation.nextSteps.title)}
       </Text>
@@ -34,7 +65,17 @@ const Confirmation = ({ application }: FAFieldBaseProps) => {
         <DescriptionText text={confirmation.nextSteps.content} />
       </Box>
 
-      {hasSpouse(answers, externalData) && (
+      {/* {hasSpouse(answers, externalData) && (
+        {firstStepText && <DescriptionText text={firstStepText} />}
+        <Box marginTop={2}>
+          <DescriptionText
+            text={confirmation.nextSteps.content}
+            format={{ nextMonth: getNextPeriod.month }}
+          />
+        </Box>
+      )} */}
+
+      {hasSpouse && (
         <>
           <Text as="h3" variant="h3" marginTop={[4, 4, 5]}>
             {formatMessage(confirmation.sharedLink.title)}
@@ -55,16 +96,14 @@ const Confirmation = ({ application }: FAFieldBaseProps) => {
       <Box marginTop={2}>
         <DescriptionText
           text={confirmation.links.content}
+          textProps={{ variant: 'small' }}
           format={{
             statusPage: window.location.href,
-            homePage:
-              externalData?.nationalRegistry?.data?.municipality?.homepage ||
-              '',
+            homePage: municipalityHomepage || '',
           }}
         />
       </Box>
-
-      <Box marginTop={[4, 4, 5]}>
+      <Box marginTop={[4, 4, 6]}>
         <ConfirmationSectionImage />
       </Box>
     </>

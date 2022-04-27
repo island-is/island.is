@@ -180,10 +180,14 @@ export const CourtRecord: React.FC = () => {
         m.sections.sessionBookings.autofillCourtDocumentOne,
       )}\n\n${formatMessage(m.sections.sessionBookings.autofillAccusedPlea)}`
 
-      if (workingCase.type === CaseType.CUSTODY) {
+      if (
+        workingCase.type === CaseType.CUSTODY ||
+        workingCase.type === CaseType.ADMISSION_TO_FACILITY
+      ) {
         autofillSessionBookings += `\n\n${formatMessage(
-          m.sections.sessionBookings.autofillPresentations,
+          m.sections.sessionBookings.autofillPresentationsV2,
           {
+            caseType: workingCase.type,
             accused: formatMessage(core.accused, {
               suffix:
                 workingCase.defendants &&
@@ -209,12 +213,12 @@ export const CourtRecord: React.FC = () => {
                     true,
                   )}\n\n`
                 : ''
-            }${formatMessage(m.sections.custodyRestrictions.disclaimer, {
+            }${formatMessage(m.sections.custodyRestrictions.disclaimerV2, {
               caseType:
                 workingCase.decision ===
                 CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                  ? 'farbannsins'
-                  : 'gæsluvarðhaldsins',
+                  ? CaseType.TRAVEL_BAN
+                  : workingCase.type,
             })}`,
             workingCase,
           )
@@ -230,8 +234,8 @@ export const CourtRecord: React.FC = () => {
             `${
               workingCase.requestedOtherRestrictions &&
               `${workingCase.requestedOtherRestrictions}\n\n`
-            }${formatMessage(m.sections.custodyRestrictions.disclaimer, {
-              caseType: 'farbannsins',
+            }${formatMessage(m.sections.custodyRestrictions.disclaimerV2, {
+              caseType: workingCase.type,
             })}`,
             workingCase,
           )

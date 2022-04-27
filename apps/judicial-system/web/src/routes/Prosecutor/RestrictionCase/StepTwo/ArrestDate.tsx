@@ -31,9 +31,12 @@ const ArrestDate: React.FC<Props> = (props) => {
   )
 
   const caseType = workingCase.type
-  const isArrestTimeRequired = useMemo(() => caseType === CaseType.CUSTODY, [
-    caseType,
-  ])
+  const isArrestTimeRequired = useMemo(
+    () =>
+      caseType === CaseType.CUSTODY ||
+      caseType === CaseType.ADMISSION_TO_FACILITY,
+    [caseType],
+  )
 
   return (
     <Box component="section" marginBottom={5}>

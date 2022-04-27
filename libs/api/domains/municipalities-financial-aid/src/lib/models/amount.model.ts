@@ -1,5 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { DeductionFactorsModel } from '.'
+import { DeductionFactorsModel } from './index'
 
 @ObjectType('MunicipalitiesFinancialAidAmountModel')
 export class AmountModel {

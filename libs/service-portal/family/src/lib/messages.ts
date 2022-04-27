@@ -81,5 +81,10 @@ export const spmm = {
       id: 'sp.family:marital-status-widowed',
       defaultMessage: 'Ekkill, ekkja',
     },
+    userInfoDesc: {
+      id: 'sp.family:user-info-description',
+      defaultMessage:
+        'Hér eru gögn um þig og fjölskyldu þína sem sótt eru til Þjóðskrár. Með því að smella á skoða upplýsingar er hægt að óska eftir breytingum á þeim upplýsingum.',
+    },
   }),
 }

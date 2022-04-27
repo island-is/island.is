@@ -651,10 +651,6 @@ export const m = defineMessages({
     id: 'service.portal:saveInfo',
     defaultMessage: 'Vista upplýsingar',
   },
-  altText: {
-    id: 'service.portal:alt-text',
-    defaultMessage: 'Skrautmynd fyrir',
-  },
   startPage: {
     id: 'service.portal:start-page',
     defaultMessage: 'upphafssíðu',

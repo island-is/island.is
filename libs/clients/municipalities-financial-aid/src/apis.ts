@@ -5,26 +5,24 @@ import {
   FilesApi,
   MunicipalityApi,
   Configuration,
-  PersonalTaxReturnApi,
 } from '../gen/fetch'
 import { MunicipalitiesFinancialAidConfig } from './municipalitiesFinancialAid.config'
 
-export const exportedApis = [
-  ApplicationApi,
-  FilesApi,
-  MunicipalityApi,
-  PersonalTaxReturnApi,
-].map((Api) => ({
-  provide: Api,
-  useFactory: (config: ConfigType<typeof MunicipalitiesFinancialAidConfig>) => {
-    return new Api(
-      new Configuration({
-        fetchApi: createEnhancedFetch({
-          name: Api.name,
+export const exportedApis = [ApplicationApi, FilesApi, MunicipalityApi].map(
+  (Api) => ({
+    provide: Api,
+    useFactory: (
+      config: ConfigType<typeof MunicipalitiesFinancialAidConfig>,
+    ) => {
+      return new Api(
+        new Configuration({
+          fetchApi: createEnhancedFetch({
+            name: Api.name,
+          }),
+          basePath: config.baseApiUrl,
         }),
-        basePath: config.baseApiUrl,
-      }),
-    )
-  },
-  inject: [MunicipalitiesFinancialAidConfig.KEY],
-}))
+      )
+    },
+    inject: [MunicipalitiesFinancialAidConfig.KEY],
+  }),
+)
