@@ -76,7 +76,7 @@ export const reducer = (
     case ActionType.SIGNIN_SUCCESS:
       return {
         ...state,
-        userInfo: action.payload,
+        userInfo: formatUser(action.payload),
         authState: 'logged-in',
         isAuthenticated: true,
       }
@@ -84,7 +84,7 @@ export const reducer = (
       return state.isAuthenticated
         ? {
             ...state,
-            userInfo: action.payload,
+            userInfo: formatUser(action.payload),
           }
         : state
     case ActionType.SIGNIN_FAILURE:

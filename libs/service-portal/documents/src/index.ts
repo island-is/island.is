@@ -7,7 +7,6 @@ import {
   ServicePortalPath,
 } from '@island.is/service-portal/core'
 import { User } from '@island.is/auth/react'
-import { DelegationType } from '@island.is/auth-api-lib'
 import differenceInYears from 'date-fns/differenceInYears'
 
 const rootName = defineMessage({
@@ -15,15 +14,22 @@ const rootName = defineMessage({
   defaultMessage: 'Pósthólf',
 })
 
-// const enabled = (userInfo: any) => {
-//   const hasScope = userInfo.scopes.includes(DocumentsScope.main)
-//   const isLegalGuardian = userInfo.profile.delegationType.includes(
-//     DelegationType.LegalGuardian,
-//   )
-//   const isOver15 =
-//     differenceInYears(new Date(), userInfo.profile.dateOfBirth) > 15
-//   return !(isLegalGuardian && isOver15) || hasScope
-// }
+const enabled = (userInfo: User) => {
+  const hasScope = userInfo.scopes?.includes(DocumentsScope.main)
+  const isLegalGuardian = userInfo.profile.delegationType?.includes(
+    'LegalGuardian',
+  )
+  const isOver15 =
+    differenceInYears(new Date(), userInfo.profile.dateOfBirth) > 15
+  if (isLegalGuardian && isOver15) {
+    return false
+  }
+  if (hasScope) {
+    return true
+  } else {
+    return false
+  }
+}
 export const documentsModule: ServicePortalModule = {
   name: rootName,
   widgets: () => [],
@@ -31,7 +37,7 @@ export const documentsModule: ServicePortalModule = {
     {
       name: rootName,
       path: ServicePortalPath.ElectronicDocumentsRoot,
-      enabled: userInfo.scopes.includes(DocumentsScope.main), //enabled(userInfo),
+      enabled: enabled(userInfo),
       render: () => lazy(() => import('./screens/Overview/Overview')),
     },
   ],
