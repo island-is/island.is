@@ -105,7 +105,7 @@ export const isDefendantStepValidRC = (workingCase: Case) => {
     !someDefendantIsInvalid(workingCase) &&
     validate(workingCase.defenderEmail || '', 'email-format').isValid &&
     validate(workingCase.defenderPhoneNumber || '', 'phonenumber').isValid &&
-    (workingCase.type !== CaseType.CUSTODY ||
+    (workingCase.type === CaseType.TRAVEL_BAN ||
       validate(workingCase.leadInvestigator || '', 'empty').isValid)
   )
 }
@@ -138,9 +138,11 @@ export const isHearingArrangementsStepValidRC = (workingCase: Case) => {
       ((workingCase as unknown) as { prosecutorId: string }).prosecutorId) &&
     (workingCase.court ||
       ((workingCase as unknown) as { courtId: string }).courtId) &&
+    validate(workingCase.requestedCourtDate || '', 'empty').isValid &&
     validate(workingCase.requestedCourtDate || '', 'date-format').isValid &&
-    (workingCase.type === CaseType.CUSTODY && !workingCase.parentCase
-      ? validate(workingCase.arrestDate || '', 'date-format').isValid
+    (workingCase.type !== CaseType.TRAVEL_BAN && !workingCase.parentCase
+      ? validate(workingCase.arrestDate || '', 'empty').isValid &&
+        validate(workingCase.arrestDate || '', 'date-format').isValid
       : true)
   )
 }
@@ -151,6 +153,7 @@ export const isHearingArrangementsStepValidIC = (workingCase: Case) => {
       ((workingCase as unknown) as { prosecutorId: string }).prosecutorId) &&
     (workingCase.court ||
       ((workingCase as unknown) as { courtId: string }).courtId) &&
+    validate(workingCase.requestedCourtDate || '', 'empty').isValid &&
     validate(workingCase.requestedCourtDate || '', 'date-format').isValid
   )
 }
@@ -158,6 +161,7 @@ export const isHearingArrangementsStepValidIC = (workingCase: Case) => {
 export const isPoliceDemandsStepValidRC = (workingCase: Case) => {
   return (
     validate(workingCase.lawsBroken || '', 'empty').isValid &&
+    validate(workingCase.requestedValidToDate || '', 'empty').isValid &&
     validate(workingCase.requestedValidToDate || '', 'date-format').isValid &&
     ((workingCase.legalProvisions && workingCase.legalProvisions.length > 0) ||
       validate(workingCase.legalBasis || '', 'empty').isValid)
@@ -205,6 +209,7 @@ export const isCourtHearingArrangemenstStepValidRC = (workingCase: Case) => {
   return (
     validate(workingCase.defenderEmail || '', 'email-format').isValid &&
     validate(workingCase.defenderPhoneNumber || '', 'phonenumber').isValid &&
+    validate(workingCase.courtDate || '', 'empty').isValid &&
     validate(workingCase.courtDate || '', 'date-format').isValid
   )
 }
@@ -212,6 +217,7 @@ export const isCourtHearingArrangemenstStepValidRC = (workingCase: Case) => {
 export const isCourtHearingArrangementsStepValidIC = (workingCase: Case) => {
   return (
     workingCase.sessionArrangements &&
+    validate(workingCase.courtDate || '', 'empty').isValid &&
     validate(workingCase.courtDate || '', 'date-format').isValid &&
     validate(workingCase.defenderEmail || '', 'email-format').isValid &&
     validate(workingCase.defenderPhoneNumber || '', 'phonenumber').isValid
@@ -238,6 +244,7 @@ export const isRulingValidIC = (workingCase: Case) => {
 
 export const isCourtRecordStepValidRC = (workingCase: Case) => {
   return (
+    validate(workingCase.courtStartDate || '', 'empty').isValid &&
     validate(workingCase.courtStartDate || '', 'date-format').isValid &&
     validate(workingCase.courtLocation || '', 'empty').isValid &&
     validate(workingCase.sessionBookings || '', 'empty').isValid &&
@@ -252,6 +259,7 @@ export const isCourtRecordStepValidRC = (workingCase: Case) => {
 
 export const isCourtRecordStepValidIC = (workingCase: Case) => {
   return (
+    validate(workingCase.courtStartDate || '', 'empty').isValid &&
     validate(workingCase.courtStartDate || '', 'date-format').isValid &&
     validate(workingCase.courtLocation || '', 'empty').isValid &&
     validate(workingCase.sessionBookings || '', 'empty').isValid &&

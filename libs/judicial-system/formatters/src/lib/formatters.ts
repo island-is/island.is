@@ -97,25 +97,6 @@ export const caseTypes: CaseTypes = {
   OTHER: 'annað',
 }
 
-const getRestrictionByValue = (value: CaseCustodyRestrictions) => {
-  switch (value) {
-    case CaseCustodyRestrictions.COMMUNICATION:
-      return 'D - Bréfskoðun, símabann'
-    case CaseCustodyRestrictions.ISOLATION:
-      return 'B - Einangrun'
-    case CaseCustodyRestrictions.MEDIA:
-      return 'E - Fjölmiðlabann'
-    case CaseCustodyRestrictions.VISITAION:
-      return 'C - Heimsóknarbann'
-    case CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION:
-      return 'Tilkynningaskylda'
-    case CaseCustodyRestrictions.NECESSITIES:
-      return 'A - Eigin nauðsynjar'
-    case CaseCustodyRestrictions.WORKBAN:
-      return 'F - Vinnubann'
-  }
-}
-
 export const getShortRestrictionByValue = (value: CaseCustodyRestrictions) => {
   switch (value) {
     case CaseCustodyRestrictions.COMMUNICATION:
@@ -217,43 +198,6 @@ export function formatCustodyRestrictions(
   return isRuling
     ? `Sækjandi kynnir kærða tilhögun gæsluvarðhaldsins, sem sé með takmörkunum skv. ${filteredCustodyRestrictionsAsString}1. mgr. 99. gr. laga nr. 88/2008.`
     : `Sækjandi tekur fram að gæsluvarðhaldið verði með ${filteredCustodyRestrictionsAsString}skv. 99. gr. laga nr. 88/2008.`
-}
-
-// Formats the requested restrictions from the prosecutor
-export const formatRequestedCustodyRestrictions = (
-  type: CaseType,
-  requestedCustodyRestrictions?: CaseCustodyRestrictions[],
-  requestedOtherRestrictions?: string,
-) => {
-  const hasRequestedCustodyRestrictions =
-    requestedCustodyRestrictions && requestedCustodyRestrictions?.length > 0
-  const hasRequestedOtherRestrictions =
-    requestedOtherRestrictions && requestedOtherRestrictions?.length > 0
-
-  // No restrictions
-  if (!hasRequestedCustodyRestrictions && !hasRequestedOtherRestrictions) {
-    return `Ekki er farið fram á takmarkanir á ${
-      type === CaseType.CUSTODY ? 'gæslu' : 'farbanni'
-    }.`
-  }
-
-  const requestedCustodyRestrictionsText = hasRequestedCustodyRestrictions
-    ? requestedCustodyRestrictions &&
-      requestedCustodyRestrictions.reduce(
-        (acc, restriction, index) =>
-          `${acc}${index > 0 ? '\n' : ''}${getRestrictionByValue(restriction)}`,
-        '',
-      )
-    : ''
-
-  const paragraphBreak =
-    hasRequestedCustodyRestrictions && hasRequestedOtherRestrictions ? '\n' : ''
-
-  const requestedOtherRestrictionsText = hasRequestedOtherRestrictions
-    ? requestedOtherRestrictions
-    : ''
-
-  return `${requestedCustodyRestrictionsText}${paragraphBreak}${requestedOtherRestrictionsText}`
 }
 
 export function formatGender(gender?: Gender): string {
