@@ -44,3 +44,11 @@ export interface Payment {
     paid: boolean
   }
 }
+
+export interface Payments {
+  bank: string,
+  pensionFund: string,
+  privatePensionFund: string,
+  privatePensionFundPercentage: string,
+  union: string,
+}

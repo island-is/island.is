@@ -13,8 +13,8 @@ import {
   AnswerValidationError,
 } from '@island.is/application/core'
 
-import { Period } from '../types'
-import { NO, YES } from '../constants'
+import { Period, Payments } from '../types'
+import { NO, NO_PRIVATE_PENSION_FUND, YES } from '../constants'
 import { isValidEmail } from './isValidEmail'
 import { errorMessages } from './messages'
 import {
@@ -33,6 +33,8 @@ export const VALIDATE_PERIODS = 'validatedPeriods'
 // the repeater sends all the periods saved in 'periods'
 // to this validator, which will validate the latest one
 export const VALIDATE_LATEST_PERIOD = 'periods'
+
+const PAYMENTS = 'payments'
 
 export const answerValidators: Record<string, AnswerValidator> = {
   [EMPLOYER]: (newAnswer: unknown, application: Application) => {
@@ -66,6 +68,55 @@ export const answerValidators: Record<string, AnswerValidator> = {
 
     if (isSelfEmployed === NO && !isValidEmail(obj.email as string)) {
       return buildError(errorMessages.email, 'email')
+    }
+
+    return undefined
+  },
+  [PAYMENTS]: (newAnswer: unknown, application: Application) => {
+    const payments = newAnswer as Payments
+
+    const privatePensionFund = getValueViaPath(
+      application.answers,
+      'payments.privatePensionFund',
+    )
+
+    const privatePensionFundPercentage = getValueViaPath(
+      application.answers,
+      'payments.privatePensionFundPercentage',
+    )
+
+    const buildError = (message: StaticText, path: string) =>
+      buildValidationError(`${PAYMENTS}.${path}`)(message)
+
+    // if privatePensionFund is NO_PRIVATE_PENSION_FUND and privatePensionFundPercentage is an empty string, allow the user to continue. 
+    // this will only happen when the usePrivatePensionFund field is set to NO
+    if (
+      payments.privatePensionFund === NO_PRIVATE_PENSION_FUND &&
+      payments.privatePensionFundPercentage === ''
+    ) return undefined
+
+    if (
+      payments.privatePensionFund === '' ||
+      privatePensionFund === ''
+    ) {
+      return buildError(coreErrorMessages.defaultError, 'privatePensionFund')
+    }
+
+    if (!payments.privatePensionFund) {
+      return buildError(coreErrorMessages.defaultError, 'privatePensionFund')
+    }
+
+    // validate that the privatePensionFundPercentage is either 2 or 4 percent
+    if (privatePensionFundPercentage === '') {
+      if (
+        payments.privatePensionFundPercentage === '2' ||
+        payments.privatePensionFundPercentage === '4'
+      ) return undefined
+      return buildError(coreErrorMessages.defaultError, 'privatePensionFundPercentage')
+    }
+
+    if (!payments.privatePensionFundPercentage) {
+      return buildError(coreErrorMessages.defaultError, 'privatePensionFundPercentage')
     }
 
     return undefined
