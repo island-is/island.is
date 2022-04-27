@@ -35,10 +35,7 @@ import {
 import { removeTabsValidateAndSet } from '@island.is/judicial-system-web/src/utils/formHelper'
 import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
 import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
-import {
-  errors,
-  rcCaseFiles as m,
-} from '@island.is/judicial-system-web/messages'
+import { rcCaseFiles as m } from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system/consts'
 
 import { PoliceCaseFilesData } from './StepFive'
@@ -186,7 +183,7 @@ export const StepFiveForm: React.FC<Props> = (props) => {
             </Text>
           </Box>
           <MarkdownWrapper
-            text={m.sections.description.list}
+            markdown={formatMessage(m.sections.description.list)}
             textProps={{ marginBottom: 0 }}
           />
         </Box>

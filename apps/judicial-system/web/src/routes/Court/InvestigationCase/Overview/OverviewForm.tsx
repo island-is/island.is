@@ -63,7 +63,7 @@ const OverviewForm: React.FC<Props> = (props) => {
               )}
               message={
                 <MarkdownWrapper
-                  text={workingCase.caseResentExplanation}
+                  markdown={workingCase.caseResentExplanation}
                   textProps={{ variant: 'small' }}
                 />
               }

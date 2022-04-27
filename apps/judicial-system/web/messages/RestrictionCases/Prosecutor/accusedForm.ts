@@ -1,3 +1,4 @@
+import { CaseType } from '@island.is/judicial-system/types'
 import { defineMessage, defineMessages } from 'react-intl'
 
 export const accused = {
@@ -95,11 +96,22 @@ export const accused = {
           description:
             'Notaður sem texti í "senda kröfu sjálfvirkt..." gátreit á sakbornings skrefi í gæsluvarðhalds- og farbannsmálum.',
         },
+        // TODO: remove unused message tooltip
         tooltip: {
           id:
             'judicial.system.restriction_cases:accused.defender_info.send_request.tooltip',
           defaultMessage:
             'Ef hakað er hér þá fær verjandi {caseType} senda þegar fyrirtökutíma hefur verið úthlutað',
+          description:
+            'Notaður sem upplýsingatexti í upplýsingasvæði við "senda kröfu sjálfvirkt..." gátreit á sakbornings skrefi í gæsluvarðhalds- og farbannsmálum.',
+        },
+        tooltipV2: {
+          id:
+            'judicial.system.restriction_cases:accused.defender_info.send_request.tooltip_v2',
+          defaultMessage: `Ef hakað er hér þá fær verjandi {caseType, select,
+          ${CaseType.ADMISSION_TO_FACILITY}) {kröfuna um vistun á viðeigandi stofnun}
+          ${CaseType.TRAVEL_BAN} {farbannskröfuna}
+          other {gæsluvarðhaldskröfuna}} senda þegar fyrirtökutíma hefur verið úthlutað`,
           description:
             'Notaður sem upplýsingatexti í upplýsingasvæði við "senda kröfu sjálfvirkt..." gátreit á sakbornings skrefi í gæsluvarðhalds- og farbannsmálum.',
         },
