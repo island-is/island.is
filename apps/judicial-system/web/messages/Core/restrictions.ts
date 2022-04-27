@@ -57,7 +57,7 @@ export const restrictions = defineMessages({
   },
 })
 
-export const restrictionsV2 = defineMessages({
+export const restrictionsV2 = {
   [CaseCustodyRestrictions.NECESSITIES]: defineMessages({
     title: {
       id: 'judicial.system.core:restrictionsV2.NECESSITIES.title',
@@ -165,4 +165,4 @@ export const restrictionsV2 = defineMessages({
     description:
       'Notaður til þessa að tilgreina að ekki er farið fram á takmarkanir',
   },
-})
+}
