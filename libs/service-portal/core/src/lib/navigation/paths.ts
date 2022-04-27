@@ -30,6 +30,7 @@ export enum ServicePortalPath {
 
   // Family
   FamilyRoot = '/min-gogn/fjolskyldan',
+  Child = '/min-gogn/fjolskyldan/barn/:nationalId',
   FamilyMember = '/min-gogn/fjolskyldan/:nationalId',
   Spouse = '/min-gogn/fjolskyldan/maki/:nationalId',
   MyInfoRoot = '/min-gogn',
