@@ -183,9 +183,9 @@ export const Review: FC<ReviewScreenProps> = ({
   const hasError = (id: string) => get(errors, id) as string
 
   const checkPaymentErrors = (ids: string[]) => {
-
-    if (typeof(validatePrivatePensionFund()) === 'string') return false
-    else if (typeof(validatePrivatePensionFundPercentage()) === 'string') return false
+    if (typeof validatePrivatePensionFund() === 'string') return false
+    else if (typeof validatePrivatePensionFundPercentage() === 'string')
+      return false
 
     return groupHasNoErrors(ids)
   }
@@ -398,7 +398,7 @@ export const Review: FC<ReviewScreenProps> = ({
           'payments.union',
           'usePrivatePensionFund',
           'payments.privatePensionFund',
-          'payments.privatePensionFundPercentage'
+          'payments.privatePensionFundPercentage',
         ])}
         editChildren={
           <Stack space={3}>
@@ -524,9 +524,7 @@ export const Review: FC<ReviewScreenProps> = ({
                 onSelect={(s: string) => {
                   setStateful((prev) => {
                     const privatePensionFund =
-                      s === NO
-                        ? NO_PRIVATE_PENSION_FUND
-                        : ''
+                      s === NO ? NO_PRIVATE_PENSION_FUND : ''
                     const privatePensionFundPercentage =
                       s === NO ? '' : prev.privatePensionFundPercentage
                     setValue('payments.privatePensionFund', privatePensionFund)

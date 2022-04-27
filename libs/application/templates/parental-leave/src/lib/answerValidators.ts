@@ -88,17 +88,15 @@ export const answerValidators: Record<string, AnswerValidator> = {
     const buildError = (message: StaticText, path: string) =>
       buildValidationError(`${PAYMENTS}.${path}`)(message)
 
-    // if privatePensionFund is NO_PRIVATE_PENSION_FUND and privatePensionFundPercentage is an empty string, allow the user to continue. 
+    // if privatePensionFund is NO_PRIVATE_PENSION_FUND and privatePensionFundPercentage is an empty string, allow the user to continue.
     // this will only happen when the usePrivatePensionFund field is set to NO
     if (
       payments.privatePensionFund === NO_PRIVATE_PENSION_FUND &&
       payments.privatePensionFundPercentage === ''
-    ) return undefined
+    )
+      return undefined
 
-    if (
-      payments.privatePensionFund === '' ||
-      privatePensionFund === ''
-    ) {
+    if (payments.privatePensionFund === '' || privatePensionFund === '') {
       return buildError(coreErrorMessages.defaultError, 'privatePensionFund')
     }
 
@@ -111,12 +109,19 @@ export const answerValidators: Record<string, AnswerValidator> = {
       if (
         payments.privatePensionFundPercentage === '2' ||
         payments.privatePensionFundPercentage === '4'
-      ) return undefined
-      return buildError(coreErrorMessages.defaultError, 'privatePensionFundPercentage')
+      )
+        return undefined
+      return buildError(
+        coreErrorMessages.defaultError,
+        'privatePensionFundPercentage',
+      )
     }
 
     if (!payments.privatePensionFundPercentage) {
-      return buildError(coreErrorMessages.defaultError, 'privatePensionFundPercentage')
+      return buildError(
+        coreErrorMessages.defaultError,
+        'privatePensionFundPercentage',
+      )
     }
 
     return undefined

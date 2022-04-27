@@ -46,9 +46,9 @@ export interface Payment {
 }
 
 export interface Payments {
-  bank: string,
-  pensionFund: string,
-  privatePensionFund: string,
-  privatePensionFundPercentage: string,
-  union: string,
+  bank: string
+  pensionFund: string
+  privatePensionFund: string
+  privatePensionFundPercentage: string
+  union: string
 }
