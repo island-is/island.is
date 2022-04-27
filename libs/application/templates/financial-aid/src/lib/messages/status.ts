@@ -168,4 +168,18 @@ export const status = {
       description: 'Appeal title',
     },
   }),
+  spouseAlert: defineMessages({
+    title: {
+      id: 'fa.application:section.status.spouseAlert.title',
+      defaultMessage:
+        'Gögn maka vantar',
+      description: 'Title of alert',
+    },
+    message: {
+      id: 'fa.application:section.status.spouseAlert.message',
+      defaultMessage:
+        'Maki hefur fengið sendan hlekk á umsókn til að hlaða upp gögnum svo hægt sé að vinna umsóknina',
+      description: 'Message of alert',
+    },
+  }),
 }

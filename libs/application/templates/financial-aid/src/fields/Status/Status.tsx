@@ -9,17 +9,20 @@ import AidAmount from './AidAmount/AidAmount'
 import MissingFilesCard from './MissingFIlesCard/MissingFilesCard'
 import Header from './Header/Header'
 import RejectionMessage from './RejectionMessage/RejectionMessage'
+import SpouseAlert from './SpouseAlert/SpouseAlert'
 
 interface Props {
   application: FAApplication
   showAidAmount?: boolean
   showRejectionMessage?: boolean
+  showSpouseAlert?: boolean
 }
 
 const Status = ({
   application,
   showAidAmount,
   showRejectionMessage,
+  showSpouseAlert,
 }: Props) => {
   const { nationalRegistry } = application.externalData
   const state = application.externalData?.veita?.data?.state
@@ -27,6 +30,8 @@ const Status = ({
   return (
     <>
       <Header state={state} />
+
+      {showSpouseAlert && <SpouseAlert />}
 
       {/* TODO: use correct rejectionMessage */}
       {showRejectionMessage && (

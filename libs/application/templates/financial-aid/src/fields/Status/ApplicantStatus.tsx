@@ -4,6 +4,7 @@ import { ApplicationState } from '@island.is/financial-aid/shared/lib'
 
 import { FAFieldBaseProps } from '../../lib/types'
 import Status from './Status'
+import { ApplicationStates } from '../../lib/constants'
 
 const ApplicantStatus = ({ application }: FAFieldBaseProps) => {
   const state = application.externalData?.veita?.data?.state
@@ -13,6 +14,7 @@ const ApplicantStatus = ({ application }: FAFieldBaseProps) => {
       application={application}
       showAidAmount={state !== ApplicationState.REJECTED}
       showRejectionMessage={state === ApplicationState.REJECTED}
+      showSpouseAlert={application.state === ApplicationStates.SPOUSE}
     />
   )
 }
