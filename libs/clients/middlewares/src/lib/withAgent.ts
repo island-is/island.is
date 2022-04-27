@@ -1,10 +1,10 @@
 import Agent, { HttpsOptions, HttpsAgent } from 'agentkeepalive'
 import { SecureContextOptions } from 'tls'
-import { FetchAPI, FetchMiddlewareOptions } from './nodeFetch'
+import { FetchMiddlewareOptions, MiddlewareAPI } from './nodeFetch'
 
 export type AgentOptions = HttpsOptions
 
-// Chrerry-pick the supported types of certs from TLS
+// Cherry-pick the supported types of certs from TLS
 export interface ClientCertificateOptions {
   pfx: NonNullable<SecureContextOptions['pfx']>
   passphrase?: SecureContextOptions['passphrase']
@@ -25,7 +25,7 @@ export function withAgent({
   freeSocketTimeout,
   keepAlive,
   fetch,
-}: AgentMiddlewareOptions): FetchAPI {
+}: AgentMiddlewareOptions): MiddlewareAPI {
   const options: AgentOptions = {
     ...clientCertificate,
     freeSocketTimeout,
@@ -46,5 +46,8 @@ export function withAgent({
     return agent
   }
 
-  return (input, init) => fetch(input, { agent: getAgent, ...init })
+  return (request) => {
+    request.agent ||= getAgent
+    return fetch(request)
+  }
 }

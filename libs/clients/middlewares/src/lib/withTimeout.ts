@@ -1,9 +1,12 @@
-import { FetchAPI, FetchMiddlewareOptions } from './nodeFetch'
+import { MiddlewareAPI, FetchMiddlewareOptions } from './nodeFetch'
 
 export interface TimeoutOptions extends FetchMiddlewareOptions {
   timeout: number
 }
 
-export function withTimeout({ timeout, fetch }: TimeoutOptions): FetchAPI {
-  return (input, init) => fetch(input, { timeout, ...init })
+export function withTimeout({ timeout, fetch }: TimeoutOptions): MiddlewareAPI {
+  return (request) => {
+    request.timeout ||= timeout
+    return fetch(request)
+  }
 }
