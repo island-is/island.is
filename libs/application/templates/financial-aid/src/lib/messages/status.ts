@@ -58,6 +58,17 @@ export const status = {
         'Umsóknin verður tekin til úrvinnslu eins fljótt og kostur er.',
       description: 'Timeline received step description',
     },
+    spouseTitle: {
+      id: 'fa.application:section.status.timeline.spouseTitle',
+      defaultMessage: 'Bið eftir gögnum frá maka',
+      description: 'Waiting spouse step title',
+    },
+    spouseDescription: {
+      id: 'fa.application:section.status.timeline.spouseDescription',
+      defaultMessage:
+        'Umsóknin verður tekin til úrvinnslu þegar maki skilar inn gögnum.',
+      description: 'Waiting spouse step description',
+    },
     inProgressTitle: {
       id: 'fa.application:section.status.timeline.inProgressTitle',
       defaultMessage: 'Umsókn í vinnslu',

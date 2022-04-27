@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import cn from 'classnames'
 import format from 'date-fns/format'
 import { useIntl } from 'react-intl'
+import findLastIndex from "lodash/findLastIndex"
 
 import { Text, Box } from '@island.is/island-ui/core'
 import { ApplicationState } from '@island.is/financial-aid/shared/lib'
@@ -13,9 +14,10 @@ interface Props {
   state: ApplicationState
   modified: Date
   created: Date
+  showSpouseStep?: boolean
 }
 
-const Timeline = ({ state, modified, created }: Props) => {
+const Timeline = ({ state, modified, created, showSpouseStep }: Props) => {
   const { formatMessage } = useIntl()
 
   const sections = [
@@ -39,8 +41,17 @@ const Timeline = ({ state, modified, created }: Props) => {
     },
   ]
 
+  if (showSpouseStep) {
+    sections.splice(1, 0, {
+      name: formatMessage(status.timeline.spouseTitle),
+      text: formatMessage(status.timeline.spouseDescription),
+      state: [ApplicationState.NEW],
+      date: format(new Date(created), 'dd/MM/yyyy HH:mm'),
+    })
+  }
+
   const [activeState] = useState(
-    sections.findIndex((el) => el.state.includes(state)),
+    findLastIndex(sections, (el) => el.state.includes(state)),
   )
 
   return (

@@ -16,6 +16,7 @@ interface Props {
   showAidAmount?: boolean
   showRejectionMessage?: boolean
   showSpouseAlert?: boolean
+  showSpouseTimeline?: boolean
 }
 
 const Status = ({
@@ -23,6 +24,7 @@ const Status = ({
   showAidAmount,
   showRejectionMessage,
   showSpouseAlert,
+  showSpouseTimeline,
 }: Props) => {
   const { nationalRegistry } = application.externalData
   const state = application.externalData?.veita?.data?.state
@@ -54,6 +56,7 @@ const Status = ({
         state={state}
         created={application.created}
         modified={application.modified}
+        showSpouseStep={showSpouseTimeline}
       />
 
       <MoreActions
