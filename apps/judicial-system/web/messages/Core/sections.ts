@@ -4,7 +4,7 @@ import { defineMessages, defineMessage } from 'react-intl'
 export const sections = {
   // TODO: remove custodyAndTravelBanProsecutorSection, it's renamed to restrictionCaseProsecutorSection
   title: defineMessage({
-    id: 'judicial.system.core:sections:title',
+    id: 'judicial.system.core:sections.title',
     defaultMessage: `{caseType, select, ${CaseType.CUSTODY} {Gæsluvarðhald} ${CaseType.TRAVEL_BAN} {Farbann} ${CaseType.ADMISSION_TO_FACILITY} {Vistun á viðeignadi stofnun} other {Rannsóknarheimild}}`,
     description: 'Notaður sem titill á hliðarstiku í öllum ferlum',
   }),
@@ -333,7 +333,7 @@ export const sections = {
         'Notaður sem texti í skrefum á hliðarstiku þegar gæslu/farbann/vistun er virk',
     },
     restrictionOver: {
-      id: 'judicial.system.core:sections.case_results.restriction_active',
+      id: 'judicial.system.core:sections.case_results.restriction_over',
       defaultMessage: `{caseType, select, ${CaseType.ADMISSION_TO_FACILITY} {Vistun á stofnun} ${CaseType.TRAVEL_BAN} {Farbanni} other {Gæsluvarðhaldi}} lokið`,
       description:
         'Notaður sem texti í skrefum á hliðarstiku þegar gæslu/farbann/vistun er lokið',
