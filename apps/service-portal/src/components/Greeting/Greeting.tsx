@@ -82,10 +82,7 @@ const Greeting: FC<{}> = () => {
         </Box>
       </GridColumn>
       <GridColumn span={['12/12', '5/12']}>
-        <img
-          src="./assets/images/school.svg"
-          alt={`${formatMessage(m.altText)} ${formatMessage(m.startPage)}`}
-        />
+        <img src="./assets/images/school.svg" alt="" />
       </GridColumn>
     </GridRow>
   )

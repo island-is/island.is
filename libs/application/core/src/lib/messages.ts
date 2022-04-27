@@ -180,6 +180,26 @@ export const coreMessages = defineMessages({
     description:
       'Text indicating we are waiting for confirmation from 3rd party payment gateway',
   },
+  deleteApplicationDialogTitle: {
+    id: 'application.system:delete.application.dialog.title',
+    defaultMessage: 'Eyða umsókn',
+    description: 'Delete application dialog title',
+  },
+  deleteApplicationDialogDescription: {
+    id: 'application.system:delete.application.dialog.description',
+    defaultMessage: 'Ertu viss um að þú viljir eyða þessari umsókn?',
+    description: 'Delete application dialog description',
+  },
+  deleteApplicationDialogConfirmLabel: {
+    id: 'application.system:delete.application.dialog.confirm',
+    defaultMessage: 'Já, eyða',
+    description: 'Delete application dialog confirm',
+  },
+  deleteApplicationDialogCancelLabel: {
+    id: 'application.system:delete.application.dialog.cancel',
+    defaultMessage: 'Hætta við',
+    description: 'Delete application dialog cancel',
+  },
 })
 
 export const coreErrorMessages = defineMessages({

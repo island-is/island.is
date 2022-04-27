@@ -56,7 +56,7 @@ const UserInfoOverviewItem: FC<UserInfoOverviewItemComponent> = ({
           alignItems="center"
           marginBottom={[3, 3, 0]}
         >
-          <img src={image} alt={`${formatMessage(m.altText)} ${heading}`} />
+          <img src={image} alt="" />
         </Box>
       </GridColumn>
     </GridRow>
