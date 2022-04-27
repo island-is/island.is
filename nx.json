@@ -124,6 +124,9 @@
     "api-domains-finance": {
       "tags": []
     },
+    "api-domains-fishing-license": {
+      "tags": []
+    },
     "api-domains-health-insurance": {
       "tags": []
     },
@@ -239,6 +242,9 @@
     "application-templates-funding-government-projects": {
       "tags": []
     },
+    "application-templates-general-fishing-license": {
+      "tags": []
+    },
     "application-templates-general-petition": {
       "tags": []
     },
@@ -326,6 +332,9 @@
       "tags": []
     },
     "clients-finance": {
+      "tags": []
+    },
+    "clients-fishing-license": {
       "tags": []
     },
     "clients-health-insurance-v2": {
