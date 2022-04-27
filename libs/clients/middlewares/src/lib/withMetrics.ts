@@ -1,11 +1,11 @@
 import { DogStatsD } from '@island.is/infra-metrics'
 
-import { FetchAPI, Response } from './nodeFetch'
+import { MiddlewareAPI, Response } from './nodeFetch'
 import { parseCacheStatusHeader } from './withCache/CacheStatus'
 import { FetchError } from './FetchError'
 
 export interface MetricsMiddlewareOptions {
-  fetch: FetchAPI
+  fetch: MiddlewareAPI
   metricsClient: DogStatsD
 }
 
@@ -19,7 +19,7 @@ const isCacheHit = (response: Response) => {
 export const withMetrics = ({
   fetch,
   metricsClient,
-}: MetricsMiddlewareOptions): FetchAPI => {
+}: MetricsMiddlewareOptions): MiddlewareAPI => {
   const handleMetrics = (response?: Response, error?: Error) => {
     // Support errors thrown by withResponseError middleware.
     if (error instanceof FetchError) {
@@ -50,9 +50,9 @@ export const withMetrics = ({
     }
   }
 
-  return async (input, init) => {
+  return async (request) => {
     try {
-      const response = await fetch(input, init)
+      const response = await fetch(request)
       handleMetrics(response)
       return response
     } catch (error) {
