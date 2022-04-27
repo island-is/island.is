@@ -7,10 +7,10 @@ import {
   DataUploadResponse,
   Person,
   Attachment,
-  RealEstateAddress,
   AssetType,
   MortgageCertificate,
   MortgageCertificateValidation,
+  AssetName,
 } from './syslumennClient.types'
 import {
   mapSyslumennAuction,
@@ -19,8 +19,8 @@ import {
   mapCertificateInfo,
   mapDistrictCommissionersAgenciesResponse,
   mapDataUploadResponse,
-  mapRealEstateAddress,
   constructUploadDataObject,
+  mapAssetName,
 } from './syslumennClient.utils'
 import { Injectable, Inject } from '@nestjs/common'
 import {
@@ -29,6 +29,7 @@ import {
   Configuration,
   VirkLeyfiGetRequest,
   TegundAndlags,
+  VedbandayfirlitReguverkiSvarSkeyti,
 } from '../../gen/fetch'
 import { SyslumennClientConfig } from './syslumennClient.config'
 import type { ConfigType } from '@island.is/nest/config'
@@ -218,16 +219,14 @@ export class SyslumennService {
     return response.map(mapDistrictCommissionersAgenciesResponse)
   }
 
-  async getRealEstateAddress(
-    realEstateId: string,
-  ): Promise<Array<RealEstateAddress>> {
+  async getAsset(assetId: string, assetType: AssetType, assetMapper: (res: VedbandayfirlitReguverkiSvarSkeyti) => AssetName): Promise<Array<AssetName>> {
     const { id, api } = await this.createApi()
     const response = await api
       .vedbokavottordRegluverkiPost({
         skilabod: {
           audkenni: id,
-          fastanumer: realEstateId,
-          tegundAndlags: AssetType.RealEstate as number,
+          fastanumer: assetId,
+          tegundAndlags: assetType as number,
         },
       })
       .catch((e) => {
@@ -236,7 +235,19 @@ export class SyslumennService {
         }
         throw e
       })
-    return response.map(mapRealEstateAddress)
+    return response.map(assetMapper)
+  }
+
+  async getRealEstateAddress(
+    realEstateId: string,
+  ): Promise<Array<AssetName>> {
+    return await this.getAsset(realEstateId, AssetType.RealEstate, mapAssetName)
+  }
+
+  async getVehicleType(
+    vehicleId: string,
+  ): Promise<Array<AssetName>> {
+    return await this.getAsset(vehicleId, AssetType.Vehicle, mapAssetName)
   }
 
   async getMortgageCertificate(

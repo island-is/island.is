@@ -23,7 +23,7 @@ import {
   CertificateInfoResponse,
   DistrictCommissionerAgencies,
   PersonType,
-  RealEstateAddress,
+  AssetName,
 } from './syslumennClient.types'
 const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
 
@@ -201,8 +201,8 @@ function mapPersonEnum(e: PersonType) {
   }
 }
 
-export const mapRealEstateAddress = (
+export const mapAssetName = (
   response: VedbandayfirlitReguverkiSvarSkeyti,
-): RealEstateAddress => {
-  return { address: response.heiti ?? '' }
+): AssetName => {
+  return { name: response.heiti ?? '' }
 }

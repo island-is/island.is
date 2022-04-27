@@ -5,7 +5,7 @@ import {
   Skilabod,
   VedbandayfirlitReguverkiSvarSkeyti,
 } from '../../../gen/fetch'
-import { RealEstateAddress } from '../syslumennClient.types'
+import { AssetName } from '../syslumennClient.types'
 import { SyslumennApiPaginationInfo } from '../syslumennClient.types'
 
 export const VHSUCCESS = [
@@ -121,12 +121,17 @@ export const VEDBANDAYFIRLRIT_REGLUVERKI_RESPONSE: Array<VedbandayfirlitReguverk
   },
 ]
 
-export const REAL_ESTATE_ADDRESS: Array<RealEstateAddress> = [
-  {
-    address: 'Hvergiland',
-  },
-]
 export const MORTGAGE_CERTIFICATE_CONTENT_OK = 'c29tZWNvbnRlbnQ='
 export const MORTGAGE_CERTIFICATE_CONTENT_NO_KMARKING = 'Precondition Required'
-export const MORTGAGE_CERTIFICATE_MESSAGE_NO_KMARKING =
-  'Ekki hægt að afgreiða vedbokarvottord'
+export const MORTGAGE_CERTIFICATE_MESSAGE_NO_KMARKING = 'Ekki hægt að afgreiða vedbokarvottord'
+
+export const REAL_ESTATE_ADDRESS_NAME = 'Hvergiland'
+export const VEHICLE_TYPE_NAME = 'WolfVagon'
+
+export const REAL_ESTATE_ADDRESS: Array<AssetName> = [{
+  name: REAL_ESTATE_ADDRESS_NAME,
+}]
+
+export const VEHICLE_TYPE: Array<AssetName> = [{
+  name: VEHICLE_TYPE_NAME,
+}]

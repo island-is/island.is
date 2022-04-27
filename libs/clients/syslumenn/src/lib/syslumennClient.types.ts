@@ -147,6 +147,6 @@ export enum AssetType {
   Flyer = 4,
 }
 
-export interface RealEstateAddress {
-  address: string
+export type AssetName = {
+  name: string
 }
