@@ -30,7 +30,7 @@ const Estimation = ({
   )
   const getAidType = () => {
     switch (true) {
-      case nationalRegistryData?.spouse === null:
+      case !nationalRegistryData?.spouse:
         return true
       case nationalRegistryData?.spouse?.maritalStatus != undefined:
         return (
