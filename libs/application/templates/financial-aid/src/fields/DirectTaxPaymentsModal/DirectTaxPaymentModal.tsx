@@ -18,40 +18,8 @@ const DirectTaxPaymentModal = ({
   items,
   dateDataWasFetched,
 }: Props) => {
-  const mockDate = '2022-02-22T16:40:19.864Z'
-  const date = new Date(mockDate)
-
-  const mock = [
-    {
-      month: 11,
-      payerNationalId: '6805131120',
-      personalAllowance: 22897,
-      totalSalary: 75838,
-      userType: 'Applicant',
-      withheldAtSource: 0,
-      year: 2021,
-    },
-    {
-      month: 11,
-      payerNationalId: '6805131120',
-      personalAllowance: 22897,
-      totalSalary: 75838,
-      userType: 'Applicant',
-      withheldAtSource: 0,
-      year: 2021,
-    },
-    {
-      month: 12,
-      payerNationalId: '6805131120',
-      personalAllowance: 13999,
-      totalSalary: 46365,
-      userType: 'Applicant',
-      withheldAtSource: 0,
-      year: 2021,
-    },
-  ]
   return (
-    <TaxBreakdown items={mock} dateDataWasFetched={mockDate} />
+    <TaxBreakdown items={items} dateDataWasFetched={dateDataWasFetched} />
     // <ModalBase
     //   baseId="directTaxPaymentModal"
     //   className={styles.modalBase}

@@ -13,7 +13,7 @@ import { summaryForm } from '../../lib/messages'
 interface Props {
   goToScreen?: (id: string) => void
   route: Routes
-  personalTaxReturn: UploadFile | null
+  personalTaxReturn?: UploadFile | null
   taxFiles: UploadFile[]
   incomeFiles: UploadFile[]
   applicationId: string
@@ -30,10 +30,9 @@ const Files = ({
   const { formatMessage } = useIntl()
   const [createSignedUrlMutation] = useMutation(CreateSignedUrlMutation)
 
-  const allFiles =
-    personalTaxReturn === null
-      ? incomeFiles.concat(taxFiles)
-      : incomeFiles.concat(taxFiles).concat([personalTaxReturn])
+  const allFiles = !personalTaxReturn
+    ? incomeFiles.concat(taxFiles)
+    : incomeFiles.concat(taxFiles).concat([personalTaxReturn])
 
   return (
     <SummaryBlock editAction={() => goToScreen?.(route)}>

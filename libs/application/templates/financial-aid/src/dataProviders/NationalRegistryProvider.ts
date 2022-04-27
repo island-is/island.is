@@ -1,4 +1,5 @@
 import {
+  Application,
   BasicDataProvider,
   FailedDataProviderResult,
   SuccessfulDataProviderResult,
@@ -112,7 +113,9 @@ export class NationalRegistryProvider extends BasicDataProvider {
       })
   }
 
-  async provide(): Promise<{
+  async provide(
+    application: Application,
+  ): Promise<{
     applicant: Applicant
     municipality: Municipality
     taxData: TaxData
@@ -133,7 +136,7 @@ export class NationalRegistryProvider extends BasicDataProvider {
     const personalTaxReturn = await this.runQuery<{
       personalTaxReturn: PersonalTaxReturn | null
     }>(personalTaxReturnQuery, 'municipalitiesPersonalTaxReturn', {
-      input: { id: 'virkarEtta' },
+      input: { id: application.id },
     })
 
     const directTaxPayments = await this.runQuery<{

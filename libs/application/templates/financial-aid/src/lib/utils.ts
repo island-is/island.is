@@ -1,7 +1,6 @@
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import * as kennitala from 'kennitala'
 import {
-  Application,
   ApplicationContext,
   getValueViaPath,
 } from '@island.is/application/core'
@@ -17,10 +16,10 @@ import {
   ApproveOptions,
   CurrentApplication,
   FAApplication,
-  Spouse,
   OverrideAnswerSchema,
   UploadFileType,
 } from '..'
+import { UploadFile } from '@island.is/island-ui/core'
 
 const emailRegex = /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
 export const isValidEmail = (value: string) => emailRegex.test(value)
