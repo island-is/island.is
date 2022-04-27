@@ -1,3 +1,4 @@
+import { CaseType } from '@island.is/judicial-system/types'
 import { defineMessages } from 'react-intl'
 
 export const core = defineMessages({
@@ -151,6 +152,12 @@ export const core = defineMessages({
     defaultMessage: 'Tegund kröfu',
     description: 'Notað fyrir orðið Tegund Kröfu í öllum flæðum.',
   },
+  pastRestrictionCase: {
+    id: 'judicial.system.core:past_restriction_case',
+    defaultMessage: `{caseType, select, ${CaseType.ADMISSION_TO_FACILITY} {Fyrri vistun} ${CaseType.TRAVEL_BAN} {Fyrra farbann} other {Fyrri gæsla}}`,
+    description: 'Notað fyrir fyrri mál í öllum flæðum.',
+  },
+  // TODO: remove pastCustody and pastTravelBan, use pastRestrictionCase instead
   pastCustody: {
     id: 'judicial.system.core:past_custody',
     defaultMessage: 'Fyrri gæsla',
@@ -175,5 +182,10 @@ export const core = defineMessages({
     id: 'judicial.system.core:update',
     defaultMessage: 'Uppfæra',
     description: 'Notað fyrir orðið Uppfæra í öllum flæðum.',
+  },
+  and: {
+    id: 'judicial.system.core:and',
+    defaultMessage: 'og',
+    description: 'Notað fyrir orðið og',
   },
 })

@@ -124,4 +124,17 @@ export enum PersonType {
   CounterParty,
   Child,
   CriminalRecordApplicant,
+  MortgageCertificateApplicant,
+}
+
+export interface MortgageCertificate {
+  contentBase64: string
+  apiMessage?: string | undefined
+}
+
+export interface MortgageCertificateValidation {
+  propertyNumber: string
+  isFromSearch?: boolean
+  exists: boolean
+  hasKMarking: boolean
 }

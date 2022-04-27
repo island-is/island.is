@@ -32,6 +32,8 @@ import { StudentAssessment } from '..'
 import { FetchError } from '@island.is/clients/middlewares'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { NationalRegistryXRoadService } from '@island.is/api/domains/national-registry-x-road'
+import { hasResidenceHistory } from './util/hasResidenceHistory'
 
 const LOGTAG = '[api-domains-driving-license]'
 
@@ -40,6 +42,7 @@ export class DrivingLicenseService {
   constructor(
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
     private readonly drivingLicenseApi: DrivingLicenseApi,
+    private nationalRegistryXRoadService: NationalRegistryXRoadService,
   ) {}
 
   async getDrivingLicense(
@@ -132,6 +135,7 @@ export class DrivingLicenseService {
   }
 
   async getApplicationEligibility(
+    user: User,
     nationalId: string,
     type: DrivingLicenseApplicationType,
   ): Promise<ApplicationEligibility> {
@@ -141,6 +145,12 @@ export class DrivingLicenseService {
         nationalId,
       },
     )
+
+    const residenceHistory = await this.nationalRegistryXRoadService.getNationalRegistryResidenceHistory(
+      user,
+      nationalId,
+    )
+    const localRecidency = hasResidenceHistory(residenceHistory)
 
     const canApply = await this.canApplyFor(nationalId, type)
 
@@ -163,7 +173,7 @@ export class DrivingLicenseService {
         ? [
             {
               key: RequirementKey.localResidency,
-              requirementMet: true,
+              requirementMet: localRecidency,
             },
           ]
         : []),
@@ -258,6 +268,8 @@ export class DrivingLicenseService {
         nationalIdTeacher: input.teacherNationalId,
         nationalIdApplicant: nationalId,
         sendLicenseInMail: false,
+        email: input.email,
+        phone: input.phone,
       },
     )
 

@@ -23,10 +23,12 @@ When the user enters the service-portal (/minarsidur) they might be prompted wit
 ```mermaid
 graph LR
 START(Login) --> A
-A[getUserProfile] -- Service error --> NO{No modal}
-A -- Has userprofile AND islyklar data --> NO{No modal}
-A -- Has userprofile AND islyklar data, but it's more than 6 months old --> YES{Show modal}
-A -- No userprofile OR No islyklar data --> YES{Show modal}
+A[getUserProfile] -- Service error --> NO(Hide modal)
+A --> BOTH{Has Email AND Tel}
+BOTH -- yes --> MAYBE{Last modified over 6 months ago}
+BOTH -- no --> YES
+MAYBE -- no --> NO
+MAYBE -- yes --> YES(Show modal)
 ```
 
 See: `./src/index.ts`

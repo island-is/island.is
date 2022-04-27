@@ -15,9 +15,14 @@ export enum ApplicationTypes {
   COMPLAINTS_TO_ALTHINGI_OMBUDSMAN = 'ComplaintsToAlthingiOmbudsman',
   ACCIDENT_NOTIFICATION = 'AccidentNotification',
   GENERAL_PETITION = 'GeneralPetitionService',
+  GENERAL_FISHING_LICENSE = 'GeneralFishingLicense',
   P_SIGN = 'PSign',
   CRIMINAL_RECORD = 'CriminalRecord',
+  FINANCIAL_AID = 'FinancialAid',
+  DRIVING_INSTRUCTOR_REGISTRATIONS = 'DrivingInstructorRegistrations',
   EXAMPLE_PAYMENT = 'ExamplePayment',
+  DRIVING_SCHOOL_CONFIRMATION = 'DrivingSchoolConfirmation',
+  MORTGAGE_CERTIFICATE = 'MortgageCertificate',
 }
 
 export const ApplicationConfigurations = {
@@ -85,6 +90,10 @@ export const ApplicationConfigurations = {
     slug: 'medmaelendalisti',
     translation: 'gpt.application',
   },
+  [ApplicationTypes.GENERAL_FISHING_LICENSE]: {
+    slug: 'veidileyfi',
+    translation: 'gfl.application',
+  },
   [ApplicationTypes.P_SIGN]: {
     slug: 'p-merki',
     translation: 'ps.application',
@@ -93,8 +102,24 @@ export const ApplicationConfigurations = {
     slug: 'sakavottord',
     translation: 'cr.application',
   },
+  [ApplicationTypes.FINANCIAL_AID]: {
+    slug: 'fjarhagsadstod',
+    translation: 'fa.application',
+  },
+  [ApplicationTypes.DRIVING_INSTRUCTOR_REGISTRATIONS]: {
+    slug: 'okutimar',
+    translation: 'dir.application',
+  },
   [ApplicationTypes.EXAMPLE_PAYMENT]: {
     slug: 'greida',
     translation: 'ep.application',
+  },
+  [ApplicationTypes.DRIVING_SCHOOL_CONFIRMATION]: {
+    slug: 'okuskoli',
+    translation: 'dsc.application',
+  },
+  [ApplicationTypes.MORTGAGE_CERTIFICATE]: {
+    slug: 'vedbokarvottord',
+    translation: 'mc.application',
   },
 }

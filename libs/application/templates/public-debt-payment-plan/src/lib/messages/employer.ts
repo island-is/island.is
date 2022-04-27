@@ -97,5 +97,15 @@ export const employer = {
       defaultMessage: `Lágmarksgreiðsla í launaafdrætti er {minPayment}`,
       description: 'Disposable income alert message',
     },
+    searchCompany: {
+      id: `pdpp.application:application.employer.labels.searchCompany`,
+      defaultMessage: `Leitaðu af fyrirtæki`,
+      description: 'Search company label',
+    },
+    searchCompanyPlaceholer: {
+      id: `pdpp.application:application.employer.labels.searchCompanyPlaceholer`,
+      defaultMessage: `Sláðu inn nafn eða kennitölu`,
+      description: 'Search company label placeholder',
+    },
   }),
 }

@@ -1,3 +1,4 @@
+import { CaseType } from '@island.is/judicial-system/types'
 import { defineMessage, defineMessages } from 'react-intl'
 
 export const rcRuling = {
@@ -8,6 +9,34 @@ export const rcRuling = {
       'Notaður sem titill á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
   }),
   sections: {
+    introduction: defineMessages({
+      title: {
+        id:
+          'judicial.system.restriction_cases:ruling.sections.introduction.title',
+        defaultMessage: 'Aðfararorð',
+        description:
+          'Titill sem titill fyrir "Aðfararorð" hlutann í gæsluvarðhalds- og farbannsmálum.',
+      },
+      label: {
+        id: 'judicial.system.restriction_cases:ruling.introduction.label',
+        defaultMessage: 'Aðfararorð',
+        description:
+          'Notaður sem titill fyrir í "Aðfararorð" textaboxi á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+      placeholder: {
+        id: 'judicial.system.restriction_cases:ruling.introduction.placeholder',
+        defaultMessage:
+          'Hér er m.a. unnt að greina frá því hvaða dag krafa var tekin fyrir og/eða tekin til úrskurðar.',
+        description:
+          'Notaður sem skýritexti fyrir í "Aðfararorð" textabox á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+      autofill: {
+        id: 'judicial.system.restriction_cases:ruling.introduction.autofill',
+        defaultMessage: 'Mál þetta var tekið til úrskurðar {date}.',
+        description:
+          'Notaður sem sjálfgefinn texti í "Aðfararorð" textabox á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+    }),
     prosecutorDemands: defineMessages({
       title: {
         id: 'judicial.system.restriction_cases:ruling.prosecutor_demands.title',
@@ -97,6 +126,18 @@ export const rcRuling = {
         description:
           'Notaður sem titill fyrir "Úrskurður" hlutann á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
+      validToDate: {
+        id: 'judicial.system.restriction_cases:ruling.decision.valid_to_date',
+        defaultMessage: '{caseType} til',
+        description:
+          'Notaður sem titill fyrir "Úrskurður gildir til" innsláttarsvæðið á úrskurðar skrefi í gæsluvarðhalds-, vistunar- og farbannsmálum.',
+      },
+      caseType: {
+        id: 'judicial.system.restriction_cases:ruling.decision.case_type',
+        defaultMessage: `{caseType, select, ${CaseType.ADMISSION_TO_FACILITY} {vistun} ${CaseType.TRAVEL_BAN} {farbann} other {gæsluvarðhald}}`,
+        description:
+          'Notaður sem texti við radio takka með vali um að samþykkja/hafna/vísa frá kröfu á úrskurðar skrefi í gæsluvarðhalds-, vistunar- og farbannsmálum.',
+      },
       acceptLabel: {
         id: 'judicial.system.restriction_cases:ruling.decision.accept_label',
         defaultMessage: 'Krafa um {caseType} samþykkt',
@@ -109,6 +150,13 @@ export const rcRuling = {
         defaultMessage: 'Krafa um gæsluvarðhald tekin til greina að hluta',
         description:
           'Notaður sem texti við radio takka með vali um að samþykkja gæsluvarðhald að hluta á úrskurðar skrefi í gæsluvarðhaldsmálum.',
+      },
+      partiallyAcceptLabelV2: {
+        id:
+          'judicial.system.restriction_cases:ruling.decision.partially_accept_label_v2',
+        defaultMessage: 'Krafa um {caseType} tekin til greina að hluta',
+        description:
+          'Notaður sem texti við radio takka með vali um að samþykkja gæsluvarðhald að hluta á úrskurðar skrefi í gæsluvarðhalds- og vistunarmálum.',
       },
       rejectLabel: {
         id: 'judicial.system.restriction_cases:ruling.decision.reject_label',
@@ -128,6 +176,13 @@ export const rcRuling = {
         defaultMessage: 'Kröfu um gæsluvarðhald hafnað en úrskurðað í farbann',
         description:
           'Notaður sem texti við radio takka með vali um að hafna gæsluvarðhaldi en úrskurða í farbann á úrskurðar skrefi í gæsluvarðhaldsmálum.',
+      },
+      acceptingAlternativeTravelBanLabelV2: {
+        id:
+          'judicial.system.restriction_cases:ruling.decision.accepting_alternative_travel_ban_label_v2',
+        defaultMessage: `Kröfu um {caseType} hafnað en úrskurðað í farbann`,
+        description:
+          'Notaður sem texti við radio takka með vali um að hafna gæsluvarðhaldi en úrskurða í farbann á úrskurðar skrefi í gæsluvarðhalds- og vistunarfálum.',
       },
     }),
     ruling: defineMessages({
@@ -181,6 +236,13 @@ export const rcRuling = {
         description:
           'Notaður sem sjálfgefinn texti í "Úrskurðarorð" textaboxi þegar kröfu er vísað frá á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
+      dismissingAutofillV2: {
+        id:
+          'judicial.system.restriction_cases:ruling.conclusion.dismissing_autofill_v2',
+        defaultMessage: `Kröfu um að {genderedAccused}, {accusedName}, sæti{isExtended, select, yes { áframhaldandi} other {}} {caseType, select, ${CaseType.ADMISSION_TO_FACILITY} {vistun á viðeigandi stofnun} ${CaseType.TRAVEL_BAN} {farbanni} other {gæsluvarðhaldi}} er vísað frá.`,
+        description:
+          'Notaður sem sjálfgefinn texti í "Úrskurðarorð" textaboxi þegar kröfu er vísað frá á úrskurðar skrefi í gæsluvarðhalds-, vistunar- og farbannsmálum.',
+      },
       rejectingAutofill: {
         id:
           'judicial.system.restriction_cases:ruling.conclusion.rejecting_autofillv1',
@@ -189,11 +251,34 @@ export const rcRuling = {
         description:
           'Notaður sem sjálfgefinn texti í "Úrskurðarorð" textaboxi þegar kröfu er hafnað á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
+      rejectingAutofillV2: {
+        id:
+          'judicial.system.restriction_cases:ruling.conclusion.rejecting_autofill_v2',
+        defaultMessage: `Kröfu um að {genderedAccused}, {accusedName}{accusedNationalId}sæti{isExtended, select, yes { áframhaldandi} other {}} {caseType, select, ${CaseType.ADMISSION_TO_FACILITY} {vistun á viðeigandi stofnun} ${CaseType.TRAVEL_BAN} {farbanni} other {gæsluvarðhaldi}} er hafnað.`,
+        description:
+          'Notaður sem sjálfgefinn texti í "Úrskurðarorð" textaboxi þegar kröfu er hafnað á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
       acceptingAutofill: {
         id:
           'judicial.system.restriction_cases:ruling.conclusion.accepting_autofillv1',
         defaultMessage:
           '{genderedAccused}, {accusedName}{accusedNationalId}skal sæta {caseTypeAndExtensionSuffix}, þó ekki lengur en til {validToDate}.{isolationSuffix}',
+        description:
+          'Notaður sem sjálfgefinn texti í "Úrskurðarorð" textaboxi þegar krafa er samþykkt á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+      acceptingAutofillV2: {
+        id:
+          'judicial.system.restriction_cases:ruling.conclusion.accepting_autofill_v2',
+        defaultMessage: `{genderedAccused}, {accusedName}{accusedNationalId}skal sæta {isExtended, select, yes {áframhaldandi } other {}}{caseType, select,
+          ${CaseType.TRAVEL_BAN} {farbanni}
+          ${CaseType.ADMISSION_TO_FACILITY} {vistun á viðeigandi stofnun}
+          other {gæsluvarðhaldi}}, þó ekki lengur en til {validToDate}.{hasIsolation, select,
+            yes { {genderedAccused} skal sæta einangrun {isolationEndsBeforeValidToDate, select,
+              yes {ekki lengur en til {isolationToDate}} 
+              other {á meðan á {caseType, select, 
+                ${CaseType.ADMISSION_TO_FACILITY} {vistunni} 
+                other {gæsluvarðhaldinu}} stendur}}.}
+            other {}}`,
         description:
           'Notaður sem sjálfgefinn texti í "Úrskurðarorð" textaboxi þegar krafa er samþykkt á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },

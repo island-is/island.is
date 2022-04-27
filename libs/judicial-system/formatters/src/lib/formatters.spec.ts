@@ -2,18 +2,17 @@ import {
   CaseAppealDecision,
   CaseCustodyRestrictions,
   Gender,
-  CaseType,
 } from '@island.is/judicial-system/types'
 
 import * as Constants from '@island.is/judicial-system/consts'
 
 import {
   formatDate,
-  formatRequestedCustodyRestrictions,
   capitalize,
   formatGender,
   formatCustodyRestrictions,
   formatAppeal,
+  formatNationalId,
 } from './formatters'
 
 describe('formatDate', () => {
@@ -51,94 +50,6 @@ describe('formatDate', () => {
 
     // Assert
     expect(formattedDate).toEqual('fimmtud. 10. september 2020')
-  })
-})
-
-describe('formatRequestedCustodyRestrictions', () => {
-  test('should return a comma separated list of restrictions', () => {
-    // Arrange
-    const type = CaseType.CUSTODY
-    const requestedCustodyRestrictions: CaseCustodyRestrictions[] = [
-      CaseCustodyRestrictions.ISOLATION,
-      CaseCustodyRestrictions.COMMUNICATION,
-    ]
-
-    // Act
-    const r = formatRequestedCustodyRestrictions(
-      type,
-      requestedCustodyRestrictions,
-    )
-
-    // Assert
-    expect(r).toEqual('B - Einangrun\nD - Bréfskoðun, símabann')
-  })
-
-  test('should return "Ekki er farið fram á takmarkanir á gæslu" if no custody restriction is supplied', () => {
-    // Arrange
-    const type = CaseType.CUSTODY
-    const requestedCustodyRestrictions: CaseCustodyRestrictions[] = []
-
-    // Act
-    const r = formatRequestedCustodyRestrictions(
-      type,
-      requestedCustodyRestrictions,
-    )
-
-    // Assert
-    expect(r).toEqual('Ekki er farið fram á takmarkanir á gæslu.')
-  })
-
-  test('should return "Ekki er farið fram á takmarkanir á farbanni" if no custody restriction is supplied', () => {
-    // Arrange
-    const type = CaseType.TRAVEL_BAN
-    const requestedCustodyRestrictions: CaseCustodyRestrictions[] = []
-
-    // Act
-    const r = formatRequestedCustodyRestrictions(
-      type,
-      requestedCustodyRestrictions,
-    )
-
-    // Assert
-    expect(r).toEqual('Ekki er farið fram á takmarkanir á farbanni.')
-  })
-
-  test('should return additional other restrictions', () => {
-    // Arrange
-    const type = CaseType.CUSTODY
-    const requestedCustodyRestrictions: CaseCustodyRestrictions[] = [
-      CaseCustodyRestrictions.ISOLATION,
-      CaseCustodyRestrictions.COMMUNICATION,
-    ]
-    const requestedOtherRestrictions = 'The accused should stay home.'
-
-    // Act
-    const r = formatRequestedCustodyRestrictions(
-      type,
-      requestedCustodyRestrictions,
-      requestedOtherRestrictions,
-    )
-
-    // Assert
-    expect(r).toEqual(
-      'B - Einangrun\nD - Bréfskoðun, símabann\nThe accused should stay home.',
-    )
-  })
-
-  test('should return additional other restrictions only', () => {
-    // Arrange
-    const type = CaseType.CUSTODY
-    const requestedOtherRestrictions = 'The accused should stay home.'
-
-    // Act
-    const r = formatRequestedCustodyRestrictions(
-      type,
-      undefined,
-      requestedOtherRestrictions,
-    )
-
-    // Assert
-    expect(r).toEqual('The accused should stay home.')
   })
 })
 
@@ -347,5 +258,51 @@ describe('formatAppeal', () => {
     expect(res).toBe(
       'Aðilar lýsa því yfir að þeir taki sér lögbundinn kærufrest.',
     )
+  })
+})
+
+describe('formatNationalId', () => {
+  test('should format valid national id', () => {
+    // Arrange
+    const nationalId = '1234567890'
+
+    // Act
+    const res = formatNationalId(nationalId)
+
+    // Assert
+    expect(res).toBe('123456-7890')
+  })
+
+  test('should not format short', () => {
+    // Arrange
+    const nationalId = '1234567'
+
+    // Act
+    const res = formatNationalId(nationalId)
+
+    // Assert
+    expect(res).toBe('1234567')
+  })
+
+  test('should not format long', () => {
+    // Arrange
+    const nationalId = '12345678900'
+
+    // Act
+    const res = formatNationalId(nationalId)
+
+    // Assert
+    expect(res).toBe('12345678900')
+  })
+
+  test('should not format non-number', () => {
+    // Arrange
+    const nationalId = 'ekki skráð'
+
+    // Act
+    const res = formatNationalId(nationalId)
+
+    // Assert
+    expect(res).toBe('ekki skráð')
   })
 })

@@ -69,6 +69,7 @@ export type RegulationPageTexts = Partial<
     | 'statusOriginal' // 'Upprunaleg útgáfa reglugerðar'
     | 'statusHistoric' // 'Eldri útgáfa reglugerðar'
     | 'statusHistoric_period' // 'gilti á tímabilinu ${dateFrom} – ${dateTo}'
+    | 'statusHasPending' // 'Reglugerð án breytinga, sjá breytingasögu.'
     | 'statusUpcoming' // 'Væntanleg útgáfa reglugerðar'
     | 'statusUpcoming_on' // 'mun taka gildi ${date}'
     | 'statusUpcoming_period' // 'mun gilda frá ${dateFrom} – ${dateTo}'

@@ -1,9 +1,16 @@
 import { uuid } from 'uuidv4'
+import { Op } from 'sequelize'
 import { Transaction } from 'sequelize/types'
 
 import { BadRequestException } from '@nestjs/common'
 
-import { Gender, CaseType, UserRole } from '@island.is/judicial-system/types'
+import {
+  Gender,
+  CaseType,
+  UserRole,
+  CaseOrigin,
+  CaseState,
+} from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from './createTestingCaseModule'
 import { User, UserService } from '../../user'
@@ -102,9 +109,12 @@ describe('CaseController - Internal create', () => {
     })
 
     it('should create a case', () => {
-      expect(mockCaseModel.create).toHaveBeenCalledWith(caseToCreate, {
-        transaction,
-      })
+      expect(mockCaseModel.create).toHaveBeenCalledWith(
+        { ...caseToCreate, origin: CaseOrigin.LOKE },
+        {
+          transaction,
+        },
+      )
     })
   })
 
@@ -134,6 +144,7 @@ describe('CaseController - Internal create', () => {
       expect(mockCaseModel.create).toHaveBeenCalledWith(
         {
           ...caseToCreate,
+          origin: CaseOrigin.LOKE,
           creatingProsecutorId: userId,
           prosecutorId: userId,
         },
@@ -226,7 +237,11 @@ describe('CaseController - Internal create', () => {
           { model: Case, as: 'childCase' },
         ],
         order: [[{ model: Defendant, as: 'defendants' }, 'created', 'ASC']],
-        where: { id: caseId },
+        where: {
+          id: caseId,
+          isArchived: false,
+          state: { [Op.not]: CaseState.DELETED },
+        },
       })
     })
   })

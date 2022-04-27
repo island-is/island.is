@@ -114,9 +114,9 @@ export const serializeService: SerializeMethod = (
     result.replicaCount = serviceDef.replicaCount
   } else {
     result.replicaCount = {
-      min: 2,
+      min: uberChart.env.defaultMinReplicas,
       max: uberChart.env.defaultMaxReplicas,
-      default: 2,
+      default: uberChart.env.defaultMinReplicas,
     }
   }
 

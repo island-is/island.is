@@ -2,8 +2,6 @@ import React, { useState } from 'react'
 import { Text, Box } from '@island.is/island-ui/core'
 import { AnimateSharedLayout } from 'framer-motion'
 
-import * as styles from './StateModal.css'
-
 import {
   OptionsModal,
   AcceptModal,
@@ -18,9 +16,12 @@ import {
   HomeCircumstances,
   FamilyStatus,
   getMonth,
+  Municipality,
 } from '@island.is/financial-aid/shared/lib'
 import { useApplicationState } from '../../utils/useApplicationState'
 import StateModalContainer from './StateModalContainer'
+
+import * as styles from './StateModal.css'
 
 interface Props {
   isVisible: boolean
@@ -32,6 +33,7 @@ interface Props {
   homeCircumstances: HomeCircumstances
   familyStatus: FamilyStatus
   applicationCreated: string
+  applicationMunicipality: Municipality
 }
 
 const StateModal = ({
@@ -44,6 +46,7 @@ const StateModal = ({
   homeCircumstances,
   familyStatus,
   applicationCreated,
+  applicationMunicipality,
 }: Props) => {
   const [selected, setSelected] = useState<ApplicationState | undefined>()
 
@@ -121,7 +124,6 @@ const StateModal = ({
 
     saveStateApplication(applicationId, stateOption)
   }
-
   return (
     <StateModalContainer
       isVisible={isVisible}
@@ -154,6 +156,7 @@ const StateModal = ({
           <EmailFormatInputModal
             onCancel={onClickCancel}
             isModalVisable={selected === ApplicationState.DATANEEDED}
+            state={ApplicationState.DATANEEDED}
             onSaveApplication={(comment?: string) => {
               if (!selected) {
                 return
@@ -165,6 +168,7 @@ const StateModal = ({
             errorMessage="Þú þarft að gera grein fyrir hvaða gögn vanti í umsóknina"
             prefixText="Til að klára umsóknina verður þú að senda okkur"
             postfixText="Þú getur kynnt þér nánar reglur um fjárhagsaðstoð."
+            municipalityEmail={applicationMunicipality?.email}
           />
           <AcceptModal
             isModalVisable={selected === ApplicationState.APPROVED}
@@ -185,11 +189,13 @@ const StateModal = ({
             }}
             homeCircumstances={homeCircumstances}
             familyStatus={familyStatus}
+            applicationMunicipality={applicationMunicipality}
           />
 
           <EmailFormatInputModal
             onCancel={onClickCancel}
             isModalVisable={selected === ApplicationState.REJECTED}
+            state={ApplicationState.REJECTED}
             onSaveApplication={(reasonForRejection?: string) => {
               if (!selected) {
                 return
@@ -203,6 +209,7 @@ const StateModal = ({
               new Date(applicationCreated).getMonth(),
             )} hefur verið synjað`}
             postfixText="Þú getur kynnt þér nánar reglur um fjárhagsaðstoð."
+            municipalityEmail={applicationMunicipality?.email}
           />
         </AnimateSharedLayout>
       </Box>

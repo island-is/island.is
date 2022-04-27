@@ -13,11 +13,13 @@ import { InputSection } from './components/InputSection'
 import { InputEmail } from './components/Inputs/Email'
 import { InputPhone } from './components/Inputs/Phone'
 import { DropModal } from './components/DropModal'
+import { LoadModal } from './components/LoadModal'
 import { BankInfoForm } from './components/Inputs/BankInfoForm'
 import { Nudge } from './components/Inputs/Nudge'
 import { msg } from '../../../lib/messages'
 import { DropModalType, DataStatus } from './types/form'
 import { bankInfoObject } from '../../../utils/bankInfoHelper'
+import { diffModifiedOverMaxDate } from '../../../utils/showModal'
 
 interface Props {
   onCloseOverlay?: () => void
@@ -41,6 +43,7 @@ export const ProfileForm: FC<Props> = ({
   useNamespaces('sp.settings')
   const [telDirty, setTelDirty] = useState(true)
   const [emailDirty, setEmailDirty] = useState(true)
+  const [internalLoading, setInternalLoading] = useState(false)
   const [showDropModal, setShowDropModal] = useState<DropModalType>()
   const {
     updateOrCreateUserProfile,
@@ -71,13 +74,22 @@ export const ProfileForm: FC<Props> = ({
       if (showDropModal) {
         setShowDropModal(showDropModal)
       } else {
+        setInternalLoading(true)
         migratedUserUpdate()
       }
     }
   }, [canDrop])
 
+  const closeAllModals = () => {
+    if (onCloseOverlay && setFormLoading) {
+      onCloseOverlay()
+      setInternalLoading(false)
+      setFormLoading(false)
+    }
+  }
+
   const migratedUserUpdate = async () => {
-    if (onCloseOverlay) {
+    try {
       const refetchUserProfile = await refetch()
       const userProfileData = refetchUserProfile?.data?.getUserProfile
       const hasModification = userProfileData?.modified
@@ -89,34 +101,35 @@ export const ProfileForm: FC<Props> = ({
         userProfileData?.mobileStatus === DataStatus.NOT_VERIFIED &&
         userProfile?.mobilePhoneNumber
 
+      const diffOverMax = diffModifiedOverMaxDate(userProfileData?.modified)
+
       // If user is migrating. Then process migration, else close modal without action.
       if (
-        (hasEmailNoVerification || hasTelNoVerification) &&
-        !hasModification
+        ((hasEmailNoVerification || hasTelNoVerification) &&
+          !hasModification) ||
+        diffOverMax
       ) {
-        try {
-          /**
-           * If email is present in data, but has status of 'NOT_VERIFIED',
-           * And the user has no modification date in the userprofile data,
-           * This implies a MIGRATED user. Therefore set the status to 'VERIFIED',
-           * After asking the user to verify the data themselves.
-           */
-          await updateOrCreateUserProfile({
-            ...(hasEmailNoVerification && { emailStatus: DataStatus.VERIFIED }),
-            ...(hasTelNoVerification && { mobileStatus: DataStatus.VERIFIED }),
-          }).then(() => onCloseOverlay())
-        } catch {
-          // do nothing
-          onCloseOverlay()
-        }
+        /**
+         * If email is present in data, but has status of 'NOT_VERIFIED',
+         * And the user has no modification date in the userprofile data,
+         * This implies a MIGRATED user. Therefore set the status to 'VERIFIED',
+         * After asking the user to verify the data themselves.
+         */
+        await updateOrCreateUserProfile({
+          ...(hasEmailNoVerification && { emailStatus: DataStatus.VERIFIED }),
+          ...(hasTelNoVerification && { mobileStatus: DataStatus.VERIFIED }),
+        }).then(() => closeAllModals())
       } else {
-        onCloseOverlay()
+        closeAllModals()
       }
+    } catch {
+      // do nothing
+      closeAllModals()
     }
   }
 
   const submitEmptyEmailAndTel = async () => {
-    if (onCloseOverlay) {
+    try {
       const refetchUserProfile = await refetch()
       const userProfileData = refetchUserProfile?.data?.getUserProfile
       const hasModification = userProfileData?.modified
@@ -129,26 +142,33 @@ export const ProfileForm: FC<Props> = ({
          * With a status of 'EMPTY'. This implies empty values by the user's choice.
          * After asking the user to verify that they are updating their profile with empty fields.
          */
-        try {
-          await deleteIslykillValue({
-            email: true,
-            mobilePhoneNumber: true,
-          }).then(() => onCloseOverlay())
-        } catch {
-          // do nothing
-          onCloseOverlay()
-        }
+
+        await deleteIslykillValue({
+          email: true,
+          mobilePhoneNumber: true,
+        }).then(() => closeAllModals())
       } else {
-        onCloseOverlay()
+        closeAllModals()
       }
+    } catch {
+      // do nothing
+      closeAllModals()
     }
   }
 
   const dropSideEffects = async () => {
-    if (emailDirty && telDirty) {
-      await submitEmptyEmailAndTel()
-    } else {
-      await migratedUserUpdate()
+    try {
+      if (setFormLoading) {
+        setFormLoading(true)
+        setInternalLoading(true)
+      }
+      if (emailDirty && telDirty) {
+        await submitEmptyEmailAndTel()
+      } else {
+        await migratedUserUpdate()
+      }
+    } catch (e) {
+      closeAllModals()
     }
   }
 
@@ -219,7 +239,7 @@ export const ProfileForm: FC<Props> = ({
               )}
             </InputSection>
           )}
-          {showDropModal && onCloseOverlay && (
+          {showDropModal && onCloseOverlay && !internalLoading && (
             <DropModal
               type={showDropModal}
               onDrop={dropSideEffects}
@@ -230,6 +250,7 @@ export const ProfileForm: FC<Props> = ({
               }}
             />
           )}
+          {internalLoading && <LoadModal />}
         </GridColumn>
       </GridRow>
     </GridContainer>

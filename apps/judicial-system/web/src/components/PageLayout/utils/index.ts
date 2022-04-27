@@ -5,15 +5,14 @@ import {
   CaseType,
   isInvestigationCase,
 } from '@island.is/judicial-system/types'
+import { IntlFormatters } from 'react-intl'
 
-interface TranslationStrings {
-  dismissedTitle: string
-}
+import { sections as m } from '@island.is/judicial-system-web/messages'
 
 export const caseResult = (
-  translationStrings: TranslationStrings,
+  formatMessage: IntlFormatters['formatMessage'],
   workingCase?: Case,
-) => {
+): string => {
   if (!workingCase) {
     return ''
   }
@@ -29,37 +28,26 @@ export const caseResult = (
   const isRejected = workingCase?.state === CaseState.REJECTED
   const isDismissed = workingCase.state === CaseState.DISMISSED
 
-  const isAlternativeTravelBan =
-    workingCase.state === CaseState.ACCEPTED &&
-    workingCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-
+  let caseType = workingCase.type
   if (isRejected) {
-    if (isInvestigationCase(workingCase.type)) {
-      return 'Kröfu um rannsóknarheimild hafnað'
-    } else {
-      return 'Kröfu hafnað'
-    }
+    return formatMessage(m.caseResults.rejected, {
+      isInvestigationCase: isInvestigationCase(caseType) ? 'yes' : 'no',
+    })
   } else if (isAccepted) {
-    if (isInvestigationCase(workingCase?.type)) {
-      return 'Krafa um rannsóknarheimild samþykkt'
+    if (isInvestigationCase(caseType)) {
+      return formatMessage(m.caseResults.investigationAccepted)
     } else {
+      const isAlternativeTravelBan =
+        workingCase.state === CaseState.ACCEPTED &&
+        workingCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+      caseType = isAlternativeTravelBan ? CaseType.TRAVEL_BAN : caseType
       return workingCase?.isValidToDateInThePast
-        ? `${
-            workingCase.type === CaseType.CUSTODY
-              ? 'Gæsluvarðhaldi'
-              : 'Farbanni'
-          } lokið`
-        : `${
-            workingCase.type === CaseType.CUSTODY ? 'Gæsluvarðhald' : 'Farbann'
-          } virkt`
+        ? formatMessage(m.caseResults.restrictionOver, { caseType })
+        : formatMessage(m.caseResults.restrictionActive, { caseType })
     }
   } else if (isDismissed) {
-    return translationStrings.dismissedTitle
-  } else if (isAlternativeTravelBan) {
-    return workingCase.isValidToDateInThePast
-      ? 'Farbanni lokið'
-      : 'Farbann virkt'
+    return formatMessage(m.caseResults.dissmissed)
   } else {
-    return 'Niðurstaða'
+    return formatMessage(m.caseResults.result)
   }
 }

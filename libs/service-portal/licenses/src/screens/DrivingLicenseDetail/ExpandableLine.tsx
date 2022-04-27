@@ -1,5 +1,4 @@
 import React, { FC, useCallback, useEffect, useState, useRef } from 'react'
-import { useNamespaces } from '@island.is/localization'
 import {
   Box,
   Divider,
@@ -8,7 +7,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 
-import * as styles from '../../components/DrivingLicense/DrivingLicense.css'
+import * as styles from './DrivingLicenseDetail.css'
 import { mapCategory } from '../../utils/dataMapper'
 import LicenseIcon from '../../components/LicenseIcon/LicenseIcon'
 import AnimateHeight from 'react-animate-height'
@@ -29,8 +28,6 @@ const ExpandableLine: FC<Props> = ({
   expireDate,
   children,
 }) => {
-  useNamespaces('sp.driving-license')
-
   const [expanded, toggleExpand] = useState<boolean>(false)
   const [closed, setClosed] = useState<boolean>(true)
   const ref = useRef<HTMLDivElement>(null)
@@ -45,7 +42,7 @@ const ExpandableLine: FC<Props> = ({
 
   useEffect(() => {
     if (!closed)
-      ref.current?.scrollIntoView({ block: 'end', behavior: 'smooth' })
+      ref.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
   }, [closed])
 
   function onExpandButton() {

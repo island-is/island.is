@@ -224,7 +224,6 @@ export class LicenseServiceService {
     licenseType: GenericLicenseType,
   ) {
     let pkpassUrl: string | null = null
-    let pkpassQRCode: string | null = null
 
     const licenseService = await this.genericLicenseFactory(
       licenseType,
@@ -233,7 +232,6 @@ export class LicenseServiceService {
 
     if (licenseService) {
       pkpassUrl = await licenseService.getPkPassUrl(nationalId)
-      pkpassQRCode = await licenseService.getPkPassQRCode(nationalId)
     } else {
       throw new Error(`${licenseType} not supported`)
     }
@@ -243,14 +241,33 @@ export class LicenseServiceService {
         `Unable to get pkpass url for ${licenseType} for nationalId ${nationalId}`,
       )
     }
+    return { pkpassUrl }
+  }
 
+  async generatePkPassQrCode(
+    nationalId: User['nationalId'],
+    locale: Locale,
+    licenseType: GenericLicenseType,
+  ) {
+    let pkpassQRCode: string | null = null
+
+    const licenseService = await this.genericLicenseFactory(
+      licenseType,
+      this.cacheManager,
+    )
+
+    if (licenseService) {
+      pkpassQRCode = await licenseService.getPkPassQRCode(nationalId)
+    } else {
+      throw new Error(`${licenseType} not supported`)
+    }
     if (!pkpassQRCode) {
       throw new Error(
         `Unable to get pkpass qr code for ${licenseType} for nationalId ${nationalId}`,
       )
     }
 
-    return { pkpassUrl, pkpassQRCode }
+    return { pkpassQRCode }
   }
 
   async verifyPkPass(

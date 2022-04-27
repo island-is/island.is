@@ -1,9 +1,10 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
-
 import { IOrganization } from '../generated/contentfulTypes'
 import { Image, mapImage } from './image.model'
 import { OrganizationTag, mapOrganizationTag } from './organizationTag.model'
 import { FooterItem, mapFooterItem } from './footerItem.model'
+import { mapNamespace, Namespace } from './namespace.model'
+import { GenericTag, mapGenericTag } from './genericTag.model'
 
 @ObjectType()
 export class Organization {
@@ -45,23 +46,41 @@ export class Organization {
 
   @Field(() => Boolean, { nullable: true })
   serviceWebEnabled?: boolean
+
+  @Field(() => Namespace, { nullable: true })
+  namespace!: Namespace | null
+
+  @Field(() => Image, { nullable: true })
+  serviceWebFeaturedImage!: Image | null
+
+  @Field(() => [GenericTag])
+  publishedMaterialSearchFilterGenericTags!: GenericTag[]
 }
 
 export const mapOrganization = ({
   fields,
   sys,
-}: IOrganization): Organization => ({
-  id: sys.id,
-  title: fields.title ?? '',
-  shortTitle: fields.shortTitle ?? '',
-  description: fields.description ?? '',
-  slug: fields.slug ?? '',
-  tag: (fields.tag ?? []).map(mapOrganizationTag),
-  logo: fields.logo ? mapImage(fields.logo) : null,
-  link: fields.link ?? '',
-  footerItems: (fields.footerItems ?? []).map(mapFooterItem),
-  phone: fields.phone ?? '',
-  email: fields.email ?? '',
-  serviceWebTitle: fields.serviceWebTitle ?? '',
-  serviceWebEnabled: Boolean(fields.serviceWebEnabled),
-})
+}: IOrganization): Organization => {
+  return {
+    id: sys.id,
+    title: fields.title ?? '',
+    shortTitle: fields.shortTitle ?? '',
+    description: fields.description ?? '',
+    slug: fields.slug ?? '',
+    tag: (fields.tag ?? []).map(mapOrganizationTag),
+    logo: fields.logo ? mapImage(fields.logo) : null,
+    link: fields.link ?? '',
+    footerItems: (fields.footerItems ?? []).map(mapFooterItem),
+    phone: fields.phone ?? '',
+    email: fields.email ?? '',
+    serviceWebTitle: fields.serviceWebTitle ?? '',
+    serviceWebEnabled: Boolean(fields.serviceWebEnabled),
+    namespace: fields.namespace ? mapNamespace(fields.namespace) : null,
+    serviceWebFeaturedImage: fields.serviceWebFeaturedImage
+      ? mapImage(fields.serviceWebFeaturedImage)
+      : null,
+    publishedMaterialSearchFilterGenericTags: fields.publishedMaterialSearchFilterGenericTags
+      ? fields.publishedMaterialSearchFilterGenericTags.map(mapGenericTag)
+      : [],
+  }
+}

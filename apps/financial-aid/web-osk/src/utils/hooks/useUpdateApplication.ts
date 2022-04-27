@@ -42,6 +42,7 @@ const useUpdateApplication = () => {
             spouseName: user?.name,
             spouseFormComment: form.formComment,
             directTaxPayments: form?.directTaxPayments,
+            spouseHasFetchedDirectTaxPayment: form?.hasFetchedPayments,
           },
         },
       })

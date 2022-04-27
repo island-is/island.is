@@ -238,7 +238,9 @@ export class PkPassClient {
     return null
   }
 
-  async getPkPassUrl(payload: PkPassPayload): Promise<string | null> {
+  async getPkPass(
+    payload: PkPassPayload,
+  ): Promise<PkPassServiceDriversLicenseResponse | null> {
     let res: Response | null = null
 
     try {
@@ -300,13 +302,24 @@ export class PkPassClient {
 
     const response = json as PkPassServiceDriversLicenseResponse
 
-    if (response.status === 1 && response.data?.pass_url) {
-      return response.data.pass_url
+    if (response.status === 1 && response.data) {
+      return response as PkPassServiceDriversLicenseResponse
+    }
+
+    return null
+  }
+
+  async getPkPassUrl(payload: PkPassPayload): Promise<string | null> {
+    const response: PkPassServiceDriversLicenseResponse | null = await this.getPkPass(
+      payload,
+    )
+    if (response?.data?.pass_url) {
+      return response.data?.pass_url
     }
 
     this.logger.warn('pkpass service response does not include pass_url', {
-      serviceStatus: response.status,
-      serviceMessage: response.message,
+      serviceStatus: response?.status,
+      serviceMessage: response?.message,
       category: LOG_CATEGORY,
     })
 
@@ -314,74 +327,16 @@ export class PkPassClient {
   }
 
   async getPkPassQRCode(payload: PkPassPayload): Promise<string | null> {
-    let res: Response | null = null
-
-    try {
-      res = await this.fetchRetried(
-        this.urlFetch(payload),
-        this.pkpassAuthRetries,
-      )
-    } catch (e) {
-      this.logger.warn('Unable to get pkpass QR code drivers license', {
-        exception: e,
-        category: LOG_CATEGORY,
-      })
-      return null
-    }
-
-    if (!res) {
-      this.logger.warn(
-        'Unable to get pkpass QR code drivers license, null from fetch',
-        {
-          category: LOG_CATEGORY,
-        },
-      )
-      return null
-    }
-
-    if (!res.ok) {
-      const responseErrors: PkPassServiceErrorResponse = {}
-      try {
-        const json = await res.json()
-        responseErrors.message = json?.message ?? undefined
-        responseErrors.status = json?.status ?? undefined
-        responseErrors.data = json?.data ?? undefined
-      } catch {
-        // noop
-      }
-
-      this.logger.warn(
-        'Expected 200 status for pkpass QR code drivers license service',
-        {
-          status: res.status,
-          statusText: res.statusText,
-          category: LOG_CATEGORY,
-          ...responseErrors,
-        },
-      )
-      return null
-    }
-
-    let json: unknown
-    try {
-      json = await res.json()
-    } catch (e) {
-      this.logger.warn('Unable to parse JSON for pkpass QR code service', {
-        exception: e,
-        category: LOG_CATEGORY,
-      })
-      return null
-    }
-
-    const response = json as PkPassServiceDriversLicenseResponse
-
-    if (response.status === 1 && response.data?.pass_qrcode) {
-      return response.data.pass_qrcode
+    const response: PkPassServiceDriversLicenseResponse | null = await this.getPkPass(
+      payload,
+    )
+    if (response?.data?.pass_qrcode) {
+      return response.data?.pass_qrcode
     }
 
     this.logger.warn('pkpass service response does not include pass_qrcode', {
-      serviceStatus: response.status,
-      serviceMessage: response.message,
+      serviceStatus: response?.status,
+      serviceMessage: response?.message,
       category: LOG_CATEGORY,
     })
 

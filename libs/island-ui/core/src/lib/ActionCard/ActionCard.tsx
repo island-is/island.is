@@ -4,6 +4,7 @@ import { Button, ButtonSizes, ButtonTypes } from '../Button/Button'
 import { Tag, TagVariant } from '../Tag/Tag'
 import { Text } from '../Text/Text'
 import { Tooltip } from '../Tooltip/Tooltip'
+import { Inline } from '../Inline/Inline'
 import {
   ProgressMeter,
   ProgressMeterVariant,
@@ -11,6 +12,8 @@ import {
 import * as styles from './ActionCard.css'
 import { Hidden } from '../Hidden/Hidden'
 import { Icon as IconType } from '../IconRC/iconMap'
+import { Icon } from '../IconRC/Icon'
+import DialogPrompt from '../DialogPrompt/DialogPrompt'
 
 type ActionCardProps = {
   date?: string
@@ -34,6 +37,8 @@ type ActionCardProps = {
   }
   secondaryCta?: {
     label: string
+    visible?: boolean
+    size?: ButtonSizes
     icon?: IconType
     onClick?: () => void
     disabled?: boolean
@@ -49,6 +54,16 @@ type ActionCardProps = {
     message?: string
   }
   avatar?: boolean
+  deleteButton?: {
+    visible?: boolean
+    onClick?: () => void
+    disabled?: boolean
+    icon?: IconType
+    dialogTitle?: string
+    dialogDescription?: string
+    dialogConfirmLabel?: string
+    dialogCancelLabel?: string
+  }
 }
 
 const defaultCta = {
@@ -56,7 +71,6 @@ const defaultCta = {
   icon: 'arrowForward',
   onClick: () => null,
 } as const
-
 const defaultTag = {
   variant: 'blue',
   outlined: true,
@@ -75,6 +89,17 @@ const defaultUnavailable = {
   message: '',
 } as const
 
+const defaultDelete = {
+  visible: false,
+  onClick: () => null,
+  disabled: true,
+  icon: 'trash',
+  dialogTitle: '',
+  dialogDescription: '',
+  dialogConfirmLabel: '',
+  dialogCancelLabel: '',
+} as const
+
 export const ActionCard: React.FC<ActionCardProps> = ({
   date,
   heading,
@@ -87,12 +112,14 @@ export const ActionCard: React.FC<ActionCardProps> = ({
   tag: _tag,
   unavailable: _unavailable,
   progressMeter: _progressMeter,
+  deleteButton: _delete,
   avatar,
 }) => {
   const cta = { ...defaultCta, ..._cta }
   const progressMeter = { ...defaultProgressMeter, ..._progressMeter }
   const tag = { ...defaultTag, ..._tag }
   const unavailable = { ...defaultUnavailable, ..._unavailable }
+  const deleteButton = { ...defaultDelete, ..._delete }
   const bgr =
     backgroundColor === 'white'
       ? 'white'
@@ -150,7 +177,9 @@ export const ActionCard: React.FC<ActionCardProps> = ({
         <Text variant="eyebrow" color="purple400">
           {eyebrow}
         </Text>
+
         {renderTag()}
+        {renderDelete()}
       </Box>
     )
   }
@@ -171,7 +200,10 @@ export const ActionCard: React.FC<ActionCardProps> = ({
           <Text variant="small">{date}</Text>
         </Box>
 
-        {!eyebrow && renderTag()}
+        <Inline alignY="center" space={1}>
+          {!eyebrow && renderTag()}
+          {!eyebrow && renderDelete()}
+        </Inline>
       </Box>
     )
   }
@@ -188,10 +220,38 @@ export const ActionCard: React.FC<ActionCardProps> = ({
     )
   }
 
+  const renderDelete = () => {
+    if (!deleteButton.visible) {
+      return null
+    }
+
+    return (
+      <DialogPrompt
+        baseId="delete_dialog"
+        title={deleteButton.dialogTitle}
+        description={deleteButton.dialogDescription}
+        ariaLabel="delete"
+        disclosureElement={
+          <Tag outlined={tag.outlined} variant={tag.variant}>
+            <Box display="flex" flexDirection="row" alignItems="center">
+              <Icon icon={deleteButton.icon} size="small" type="outline" />
+            </Box>
+          </Tag>
+        }
+        onConfirm={deleteButton.onClick}
+        buttonTextConfirm={deleteButton.dialogConfirmLabel}
+        buttonTextCancel={deleteButton.dialogCancelLabel}
+      />
+    )
+  }
+
   const renderDefault = () => {
     const hasCTA = cta.label && !progressMeter.active
     const hasSecondaryCTA =
-      hasCTA && secondaryCta?.label && !progressMeter.active
+      hasCTA &&
+      secondaryCta?.label &&
+      !progressMeter.active &&
+      secondaryCta?.visible
 
     return (
       !!hasCTA && (
@@ -206,6 +266,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
             <Box paddingRight={4} paddingLeft={2}>
               <Button
                 variant="text"
+                size={secondaryCta?.size}
                 onClick={secondaryCta?.onClick}
                 icon={secondaryCta?.icon}
                 disabled={secondaryCta?.disabled}

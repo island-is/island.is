@@ -77,3 +77,62 @@ export type DocumentsListItemTypes = {
   dateOpen: string
   amount: number
 }
+
+type ScheduleStatus = {
+  S: string
+  E: string
+  L: string
+}
+
+export type PaymentSchedule = {
+  approvalDate: string
+  scheduleType: string
+  scheduleName: string
+  paymentCount: string
+  scheduleStatus: ScheduleStatus
+  scheduleNumber: string
+  totalAmount: number
+  unpaidAmount: number
+  unpaidCount: string
+  documentID: string
+}
+
+export type PaymentScheduleType = {
+  myPaymentSchedule: {
+    nationalId: string
+    paymentSchedules: PaymentSchedule[]
+  }
+}
+
+export type PaymentScheduleDetailPayment = {
+  payAmount: number
+  payAmountAccumulated: number
+  payDate: string
+  payExplanation: string
+}
+
+export type PaymentScheduleDetail = {
+  paidAmount: number
+  paidAmountAccumulated: number
+  paidDate: string
+  paymentNumber: string
+  payments: PaymentScheduleDetailPayment[]
+  plannedAmount: number
+  plannedAmountAccumulated: number
+  plannedDate: string
+}
+
+export type PaymentScheduleDetailType = {
+  myDetailedSchedules: {
+    myDetailedSchedule: PaymentScheduleDetail[]
+  }
+}
+export type DebtStatus = {
+  totalAmount: number
+  approvedSchedule: number
+  possibleToSchedule: number
+  notPossibleToSchedule: number
+}
+export type DebtStatusType = {
+  myDeptStatus: DebtStatus[]
+}

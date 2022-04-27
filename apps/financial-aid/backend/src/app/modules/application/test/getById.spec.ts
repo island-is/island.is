@@ -67,6 +67,9 @@ describe('ApplicationController - Get by id', () => {
       state: ApplicationState.NEW,
       familyStatus: FamilyStatus.COHABITATION,
       directTaxPayments: [],
+      hasFetchedDirectTaxPayment: null,
+      spouseHasFetchedDirectTaxPayment: null,
+      municipalityCode: '',
     }
     let then: Then
 

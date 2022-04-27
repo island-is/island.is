@@ -1,4 +1,5 @@
 import React, { ReactNode, useContext, useEffect } from 'react'
+import { useIntl } from 'react-intl'
 
 import {
   Box,
@@ -8,9 +9,11 @@ import {
   FormStepper,
   AlertBanner,
 } from '@island.is/island-ui/core'
-import { CaseType, UserRole, Case } from '@island.is/judicial-system/types'
+import { UserRole, Case } from '@island.is/judicial-system/types'
 import { Sections } from '@island.is/judicial-system-web/src/types'
 import * as Constants from '@island.is/judicial-system/consts'
+import { sections } from '@island.is/judicial-system-web/messages/Core/sections'
+
 import { UserContext } from '../UserProvider/UserProvider'
 import Logo from '../Logo/Logo'
 import Skeleton from '../Skeleton/Skeleton'
@@ -39,6 +42,7 @@ const PageLayout: React.FC<PageProps> = ({
 }) => {
   const { user } = useContext(UserContext)
   const { getSections } = useSections()
+  const { formatMessage } = useIntl()
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -63,7 +67,7 @@ const PageLayout: React.FC<PageProps> = ({
         href:
           user?.role === UserRole.ADMIN
             ? Constants.USER_LIST_ROUTE
-            : Constants.REQUEST_LIST_ROUTE,
+            : Constants.CASE_LIST_ROUTE,
         title: 'Fara á yfirlitssíðu',
       }}
     />
@@ -104,13 +108,9 @@ const PageLayout: React.FC<PageProps> = ({
                             user,
                           ).filter((_, index) => index <= 2)
                     }
-                    formName={
-                      workingCase?.type === CaseType.CUSTODY
-                        ? 'Gæsluvarðhald'
-                        : workingCase?.type === CaseType.TRAVEL_BAN
-                        ? 'Farbann'
-                        : 'Rannsóknarheimild'
-                    }
+                    formName={formatMessage(sections.title, {
+                      caseType: workingCase?.type,
+                    })}
                     activeSection={activeSection}
                     activeSubSection={activeSubSection}
                   />

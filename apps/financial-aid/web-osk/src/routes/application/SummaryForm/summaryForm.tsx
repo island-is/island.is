@@ -123,7 +123,8 @@ const SummaryForm = () => {
         setIsLoading(false)
         setFormError({
           status: true,
-          message: 'Obbobbob eitthvað fór úrskeiðis',
+          message:
+            'Ekki tókst að senda inn umsókn. Vinsamlegast reyndu aftur síðar eða hafðu samband við þitt sveitafélag',
         })
 
         const findErrorInFormInfo = formInfoOverview.find(
@@ -176,6 +177,7 @@ const SummaryForm = () => {
 
         <DirectTaxPaymentCell
           setIsModalOpen={setIsModalOpen}
+          hasFetchedPayments={form?.hasFetchedPayments}
           directTaxPayments={form?.directTaxPayments}
         />
         <ContactInfo

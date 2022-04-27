@@ -7,12 +7,14 @@ import {
   Icon,
   LoadingDots,
   Checkbox,
+  Hidden,
 } from '@island.is/island-ui/core'
 import { m } from '@island.is/service-portal/core'
 import { useUpdateOrCreateUserProfile } from '@island.is/service-portal/graphql'
 import { msg } from '../../../../../lib/messages'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Controller, useForm } from 'react-hook-form'
+import { FormButton } from '../FormButton'
 import * as styles from './ProfileForms.css'
 
 interface Props {
@@ -86,28 +88,30 @@ export const Nudge: FC<Props> = ({ refuseMail }) => {
                 />
               )}
             />
-            <Box marginLeft={3}>
-              {inputPristine && (
-                <Icon icon="checkmark" color="blue300" type="filled" />
-              )}
-            </Box>
           </Box>
         </Column>
         <Column width="10/12">
           <Box
-            display="flex"
-            alignItems="flexStart"
-            flexDirection="column"
             className={styles.nudgeSave}
+            display="flex"
+            alignItems="center"
+            justifyContent="flexStart"
           >
-            {!loading && (
-              <button disabled={inputPristine} type="submit">
-                <Button disabled={inputPristine} variant="text" size="small">
+            <Hidden below="sm">
+              <Box display="flex" alignItems="center" marginRight={1}>
+                {inputPristine && (
+                  <Icon icon="checkmark" color="blue300" type="filled" />
+                )}
+              </Box>
+            </Hidden>
+            <Box display="flex" alignItems="flexStart" flexDirection="column">
+              {!loading && (
+                <FormButton disabled={inputPristine} submit>
                   {formatMessage(msg.saveSettings)}
-                </Button>
-              </button>
-            )}
-            {loading && <LoadingDots />}
+                </FormButton>
+              )}
+              {loading && <LoadingDots />}
+            </Box>
           </Box>
         </Column>
       </Columns>

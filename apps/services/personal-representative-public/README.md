@@ -46,15 +46,15 @@ The PublicAPI is only accessible through X-Road security servers and only to mac
 
 Urls for X-Road setup are as follows
 
-- Dev: [https://personal-representative-public-xrd.internal.dev01.devland.is/-json](https://personal-representative-public-xrd.internal.dev01.devland.is/-json)
-- Staging: [https://personal-representative-public-xrd.internal.staging01.devland.is/-json](https://personal-representative-public-xrd.internal.staging01.devland.is/-json)
-- Production: [https://personal-representative-public-xrd.internal.innskra.island.is/-json](https://personal-representative-public-xrd.internal.innskra.island.is/-json)
+- Dev: [https://personal-representative-public-xrd.internal.dev01.devland.is/swagger-json](https://personal-representative-public-xrd.internal.dev01.devland.is/swagger-json)
+- Staging: [https://personal-representative-public-xrd.internal.staging01.devland.is/swagger-json](https://personal-representative-public-xrd.internal.staging01.devland.is/swagger-json)
+- Production: [https://personal-representative-public-xrd.internal.innskra.island.is/swagger-json](https://personal-representative-public-xrd.internal.innskra.island.is/swagger-json)
 
 ### OpenAPI URL
 
 OpenAPI documentation and demoing at
 
-- [https://personal-representative-public-xrd.dev01.devland.is/](https://personal-representative-public-xrd.dev01.devland.is/)
+- [https://personal-representative-public-xrd.dev01.devland.is/swagger](https://personal-representative-public-xrd.dev01.devland.is/swagger)
 
 ## Development
 

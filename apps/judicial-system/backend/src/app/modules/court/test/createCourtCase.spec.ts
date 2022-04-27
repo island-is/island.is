@@ -6,8 +6,11 @@ import { CourtClientService } from '@island.is/judicial-system/court-client'
 import { CaseType, User } from '@island.is/judicial-system/types'
 
 import { randomBoolean, randomDate, randomEnum } from '../../../test'
+import { nowFactory } from '../../../factories'
 import { subTypes } from '../court.service'
 import { createTestingCourtModule } from './createTestingCourtModule'
+
+jest.mock('../../../factories')
 
 interface Then {
   result: string
@@ -31,13 +34,12 @@ describe('CourtService - Create court case', () => {
   beforeEach(async () => {
     const {
       courtClientService,
-      today,
       courtService,
     } = await createTestingCourtModule()
 
     mockCourtClientService = courtClientService
 
-    const mockToday = today as jest.Mock
+    const mockToday = nowFactory as jest.Mock
     mockToday.mockReturnValueOnce(date)
 
     givenWhenThen = async (
@@ -117,6 +119,7 @@ describe('CourtService - Create court case', () => {
     type
     ${CaseType.CUSTODY}
     ${CaseType.TRAVEL_BAN}
+    ${CaseType.ADMISSION_TO_FACILITY}
   `.describe('extendable court case created for $type', ({ type }) => {
     const user = {} as User
     const caseId = uuid()
@@ -151,6 +154,7 @@ describe('CourtService - Create court case', () => {
     type
     ${CaseType.CUSTODY}
     ${CaseType.TRAVEL_BAN}
+    ${CaseType.ADMISSION_TO_FACILITY}
   `.describe('extended court case created for $type', ({ type }) => {
     const user = {} as User
     const caseId = uuid()

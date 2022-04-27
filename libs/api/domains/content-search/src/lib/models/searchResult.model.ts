@@ -9,6 +9,7 @@ import {
   OrganizationSubpage,
   SupportQNA,
   Link,
+  ProjectPage,
 } from '@island.is/cms'
 
 import { TagCount } from './tagCount'
@@ -25,6 +26,7 @@ const Items = createUnionType({
     OrganizationSubpage,
     SupportQNA,
     Link,
+    ProjectPage,
   ], // add new return types here
   resolveType: (document) => document.typename, // typename is appended to request on mapping
 })

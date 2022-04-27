@@ -9,6 +9,7 @@ import {
   QueryGetOrganizationArgs,
   QueryGetSupportCategoriesInOrganizationArgs,
   QueryGetSupportQnAsArgs,
+  SearchableTags,
   SupportCategory,
 } from '@island.is/web/graphql/schema'
 import {
@@ -43,6 +44,7 @@ import * as styles from './Home.css'
 interface HomeProps {
   organization?: Organization
   namespace: Query['getNamespace']
+  organizationNamespace: Record<string, string>
   supportCategories:
     | Query['getSupportCategories']
     | Query['getSupportCategoriesInOrganization']
@@ -52,34 +54,62 @@ const Home: Screen<HomeProps> = ({
   organization,
   supportCategories,
   namespace,
+  organizationNamespace,
 }) => {
   const Router = useRouter()
   const n = useNamespace(namespace)
+  const o = useNamespace(organizationNamespace)
+
   const institutionSlug = getSlugPart(Router.asPath, 2)
 
-  const headerTitle = n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is')
+  const institutionSlugBelongsToMannaudstorg = institutionSlug.includes(
+    'mannaudstorg',
+  )
+
   const organizationTitle = (organization && organization.title) || 'Ísland.is'
+  const headerTitle = o(
+    'serviceWebHeaderTitle',
+    n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is'),
+  )
   const logoUrl = organization?.logo?.url ?? ''
-  const searchTitle = n('canWeAssist', 'Getum við aðstoðað?')
-  const pageTitle = `${
-    institutionSlug && organization && organization.title
-      ? organization.title + ' | '
-      : ''
-  }${headerTitle}`
+  const searchTitle = o(
+    'serviceWebSearchTitle',
+    n('canWeAssist', 'Getum við aðstoðað?'),
+  )
+
+  const pageTitle = o(
+    'serviceWebPageTitle',
+    `${
+      institutionSlug && organization && organization.title
+        ? organization.title + ' | '
+        : ''
+    }${o('serviceWebPageTitleSuffix', headerTitle)}`,
+  )
 
   const hasContent = !!supportCategories?.length
 
   const sortedSupportCategories = sortSupportCategories(supportCategories)
 
+  const searchTags = institutionSlugBelongsToMannaudstorg
+    ? [{ key: 'mannaudstorg', type: SearchableTags.Organization }]
+    : undefined
+
   return (
     <ServiceWebWrapper
       pageTitle={pageTitle}
+      pageDescription={o('serviceWebFeaturedDescription', '')}
       headerTitle={headerTitle}
       institutionSlug={institutionSlug}
       logoUrl={logoUrl}
       organization={organization}
       organizationTitle={organizationTitle}
       searchTitle={searchTitle}
+      searchPlaceholder={o(
+        'serviceWebSearchPlaceholder',
+        'Leitaðu á þjónustuvefnum',
+      )}
+      searchTags={searchTags}
+      showLogoTitle={!institutionSlugBelongsToMannaudstorg}
     >
       {hasContent && (
         <ServiceWebContext.Consumer>
@@ -87,13 +117,20 @@ const Home: Screen<HomeProps> = ({
             <>
               <Box className={styles.categories}>
                 <GridContainer>
-                  <GridRow>
+                  <GridRow
+                    {...(!institutionSlugBelongsToMannaudstorg
+                      ? {}
+                      : { direction: 'column', alignItems: 'center' })}
+                  >
                     <GridColumn span="12/12" paddingBottom={[2, 2, 3]}>
                       <Text
                         variant="h3"
                         {...(textMode === 'dark' ? {} : { color: 'white' })}
                       >
-                        {n('answersByCategory', 'Svör eftir flokkum')}
+                        {o(
+                          'serviceWebCategoryTitle',
+                          n('answersByCategory', 'Svör eftir flokkum'),
+                        )}
                       </Text>
                     </GridColumn>
                   </GridRow>
@@ -120,20 +157,22 @@ const Home: Screen<HomeProps> = ({
                   )}
                 </SimpleStackedSlider>
               </Box>
-              <Box marginY={[7, 10, 10]}>
-                <GridContainer>
-                  <GridRow>
-                    <GridColumn
-                      offset={[null, null, null, '1/12']}
-                      span={['12/12', '12/12', '12/12', '10/12']}
-                    >
-                      <Box marginY={[10, 10, 20]}>
-                        <ContactBanner slug={institutionSlug} />
-                      </Box>
-                    </GridColumn>
-                  </GridRow>
-                </GridContainer>
-              </Box>
+              {!institutionSlugBelongsToMannaudstorg && (
+                <Box marginY={[7, 10, 10]}>
+                  <GridContainer>
+                    <GridRow>
+                      <GridColumn
+                        offset={[null, null, null, '1/12']}
+                        span={['12/12', '12/12', '12/12', '10/12']}
+                      >
+                        <Box marginY={[10, 10, 20]}>
+                          <ContactBanner slug={institutionSlug} />
+                        </Box>
+                      </GridColumn>
+                    </GridRow>
+                  </GridContainer>
+                </Box>
+              )}
             </>
           )}
         </ServiceWebContext.Consumer>
@@ -210,9 +249,14 @@ Home.getInitialProps = async ({ apolloClient, locale, query }) => {
     )
   }
 
+  const organizationNamespace = JSON.parse(
+    organization?.data?.getOrganization?.namespace?.fields ?? '{}',
+  )
+
   return {
     organization: organization?.data?.getOrganization,
     namespace,
+    organizationNamespace,
     supportCategories: processedCategories,
   }
 }

@@ -1,17 +1,13 @@
 import React from 'react'
 
-import {
-  Case,
-  CaseState,
-  CaseDecision,
-  CaseType,
-  isRestrictionCase,
-} from '@island.is/judicial-system/types'
+import { Case, CaseDecision, CaseType } from '@island.is/judicial-system/types'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { Box, Button, IconMapIcon, Text } from '@island.is/island-ui/core'
 import { TIME_FORMAT } from '@island.is/judicial-system/consts'
+import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages'
 
 import * as styles from './CaseDates.css'
+import { useIntl } from 'react-intl'
 
 interface Props {
   workingCase: Case
@@ -24,74 +20,72 @@ interface Props {
 
 const CaseDates: React.FC<Props> = (props) => {
   const { workingCase, button } = props
+  const { formatMessage } = useIntl()
 
   const isTravelBan =
     workingCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
     workingCase.type === CaseType.TRAVEL_BAN
 
   return (
-    <Box>
-      <Box marginBottom={3}>
-        <Text variant="h5">
-          {`Úrskurðað ${formatDate(
-            workingCase.courtEndTime,
-            'PPP',
-          )} kl. ${formatDate(workingCase.courtEndTime, TIME_FORMAT)}`}
-        </Text>
-      </Box>
-      {workingCase.state === CaseState.ACCEPTED &&
-        isRestrictionCase(workingCase.type) && (
-          <div className={styles.caseDateContainer}>
-            {workingCase.isValidToDateInThePast ? (
+    <Box data-testid="caseDates">
+      <div className={styles.caseDateContainer}>
+        {workingCase.isValidToDateInThePast ? (
+          <Text variant="h5">
+            {formatMessage(m.sections.caseDates.restrictionExpired, {
+              caseType: isTravelBan ? CaseType.TRAVEL_BAN : workingCase.type,
+              date: `${formatDate(
+                workingCase.validToDate,
+                'PPP',
+              )} kl. ${formatDate(workingCase.validToDate, TIME_FORMAT)}`,
+            })}
+          </Text>
+        ) : (
+          <Box
+            display="flex"
+            justifyContent="spaceBetween"
+            alignItems="flexEnd"
+          >
+            <Box>
               <Text variant="h5">
-                {`${isTravelBan ? 'Farbann' : 'Gæsla'} rann út ${formatDate(
-                  workingCase.validToDate,
-                  'PPP',
-                )} kl. ${formatDate(workingCase.validToDate, TIME_FORMAT)}`}
+                {formatMessage(m.sections.caseDates.restrictionValidTo, {
+                  caseType: isTravelBan
+                    ? CaseType.TRAVEL_BAN
+                    : workingCase.type,
+                  date: `${formatDate(
+                    workingCase.validToDate,
+                    'PPP',
+                  )} kl. ${formatDate(workingCase.validToDate, TIME_FORMAT)}`,
+                })}
               </Text>
-            ) : (
-              <Box
-                display="flex"
-                justifyContent="spaceBetween"
-                alignItems="flexEnd"
-              >
-                <Box>
-                  <Text variant="h5">
-                    {`${isTravelBan ? 'Farbann' : 'Gæsla'} til ${formatDate(
-                      workingCase.validToDate,
+              {workingCase.isCustodyIsolation && workingCase.isolationToDate && (
+                <Text variant="h5" as="h5">
+                  {formatMessage(m.sections.caseDates.isolationValidTo, {
+                    date: `${formatDate(
+                      workingCase.isolationToDate,
                       'PPP',
-                    )} kl. ${formatDate(workingCase.validToDate, TIME_FORMAT)}`}
-                  </Text>
-                  {workingCase.type === CaseType.CUSTODY &&
-                    workingCase.isCustodyIsolation &&
-                    workingCase.isolationToDate && (
-                      <Text variant="h5" as="h5">
-                        {`Einangrun til ${formatDate(
-                          workingCase.isolationToDate,
-                          'PPP',
-                        )} kl. ${formatDate(
-                          workingCase.isolationToDate,
-                          TIME_FORMAT,
-                        )}`}
-                      </Text>
-                    )}
-                </Box>
-                <Box>
-                  {button && (
-                    <Button
-                      size="small"
-                      variant="text"
-                      onClick={button.onClick}
-                      icon={button.icon}
-                    >
-                      {button.label}
-                    </Button>
-                  )}
-                </Box>
-              </Box>
-            )}
-          </div>
+                    )} kl. ${formatDate(
+                      workingCase.isolationToDate,
+                      TIME_FORMAT,
+                    )}`,
+                  })}
+                </Text>
+              )}
+            </Box>
+            <Box>
+              {button && (
+                <Button
+                  size="small"
+                  variant="text"
+                  onClick={button.onClick}
+                  icon={button.icon}
+                >
+                  {button.label}
+                </Button>
+              )}
+            </Box>
+          </Box>
         )}
+      </div>
     </Box>
   )
 }

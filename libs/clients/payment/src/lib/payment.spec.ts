@@ -39,7 +39,7 @@ const createCatalogResponse = (
             {
               performingOrgID: '6509142520',
               chargeType: 'AY1',
-              chargeItemCode: 'AY102',
+              chargeItemCode: ChargeItemCode.MORTGAGE_CERTIFICATE,
               chargeItemName: 'Veðbókarvottorð',
               priceAmount: 2000,
             },
@@ -99,7 +99,7 @@ describe('getCatalog', () => {
           {
             performingOrgID: '6509142520',
             chargeType: 'AY1',
-            chargeItemCode: 'AY102',
+            chargeItemCode: ChargeItemCode.MORTGAGE_CERTIFICATE,
             chargeItemName: 'Veðbókarvottorð',
             priceAmount: 2000,
           },
