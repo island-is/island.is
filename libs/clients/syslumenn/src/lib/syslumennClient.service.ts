@@ -222,7 +222,8 @@ export class SyslumennService {
     realEstateId: string,
   ): Promise<Array<RealEstateAddress>> {
     const { id, api } = await this.createApi()
-    const response = await api.vedbokavottordRegluverkiPost({
+    const response = await api
+      .vedbokavottordRegluverkiPost({
         skilabod: {
           audkenni: id,
           fastanumer: realEstateId,

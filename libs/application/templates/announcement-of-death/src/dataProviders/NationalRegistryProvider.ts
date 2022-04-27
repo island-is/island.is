@@ -3,7 +3,7 @@ import {
   FailedDataProviderResult,
   SuccessfulDataProviderResult,
 } from '@island.is/application/core'
-import { DataProviderTypes, NationalRegistry } from '../types/'
+import { DataProviderTypes, NationalRegistry } from '../types/index'
 
 export class NationalRegistryProvider extends BasicDataProvider {
   readonly type = DataProviderTypes.NationalRegistry
