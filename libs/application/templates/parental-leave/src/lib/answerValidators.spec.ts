@@ -99,12 +99,12 @@ describe('answerValidators', () => {
       bank: '123456789012',
       pensionFund: 'id-frjalsi',
       privatePensionFund: '',
-      privatePensionFundProcentage: ''
+      privatePensionFundProcentage: '',
     }
 
     expect(answerValidators['payments'](newAnswers, application)).toEqual({
       message: coreErrorMessages.defaultError,
-      path: "payments.privatePensionFund",
+      path: 'payments.privatePensionFund',
     })
   })
 
@@ -113,12 +113,12 @@ describe('answerValidators', () => {
       bank: '123456789012',
       pensionFund: 'id-frjalsi',
       privatePensionFund: 'id-frjalsi',
-      privatePensionFundProcentage: ''
+      privatePensionFundProcentage: '',
     }
 
     expect(answerValidators['payments'](newAnswers, application)).toEqual({
       message: coreErrorMessages.defaultError,
-      path: "payments.privatePensionFundPercentage",
+      path: 'payments.privatePensionFundPercentage',
     })
   })
 })
