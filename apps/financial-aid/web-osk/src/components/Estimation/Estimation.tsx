@@ -28,9 +28,10 @@ const Estimation = ({
   const { municipality, nationalRegistryData, myApplication } = useContext(
     AppContext,
   )
-
   const getAidType = () => {
     switch (true) {
+      case !nationalRegistryData?.spouse:
+        return true
       case nationalRegistryData?.spouse?.maritalStatus != undefined:
         return (
           martialStatusTypeFromMartialCode(
