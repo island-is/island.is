@@ -105,12 +105,17 @@ export const answerValidators: Record<string, AnswerValidator> = {
     }
 
     // validate that the privatePensionFundPercentage is either 2 or 4 percent
-    if (privatePensionFundPercentage === '') {
+    if (
+      typeof (privatePensionFundPercentage) === 'string' ||
+      typeof (payments.privatePensionFundPercentage) === 'string'
+    ) {
       if (
         payments.privatePensionFundPercentage === '2' ||
         payments.privatePensionFundPercentage === '4'
-      )
+      ) {
         return undefined
+      }
+
       return buildError(
         coreErrorMessages.defaultError,
         'privatePensionFundPercentage',
