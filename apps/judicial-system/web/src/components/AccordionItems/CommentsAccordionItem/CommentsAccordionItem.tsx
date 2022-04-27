@@ -45,7 +45,7 @@ const CommentsAccordionItem: React.FC<Props> = (props) => {
             </Text>
           </Box>
           <Text whiteSpace="breakSpaces">
-            <MarkdownWrapper text={workingCase.caseResentExplanation} />
+            <MarkdownWrapper markdown={workingCase.caseResentExplanation} />
           </Text>
         </>
       )}

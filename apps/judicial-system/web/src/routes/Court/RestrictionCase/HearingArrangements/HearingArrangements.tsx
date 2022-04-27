@@ -189,12 +189,14 @@ export const HearingArrangements: React.FC = () => {
       {modalVisible && (
         <Modal
           title={formatMessage(
-            workingCase.type === CaseType.CUSTODY
+            workingCase.type === CaseType.CUSTODY ||
+              workingCase.type === CaseType.ADMISSION_TO_FACILITY
               ? m.modal.custodyCases.heading
               : m.modal.travelBanCases.heading,
           )}
           text={formatMessage(
-            workingCase.type === CaseType.CUSTODY
+            workingCase.type === CaseType.CUSTODY ||
+              workingCase.type === CaseType.ADMISSION_TO_FACILITY
               ? m.modal.custodyCases.text
               : m.modal.travelBanCases.text,
           )}
