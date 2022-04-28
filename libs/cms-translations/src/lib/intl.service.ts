@@ -15,10 +15,15 @@ export type NestIntl = Promise<IntlShape<string>>
 
 export const formatMessage = (intl: IntlShape<string>) =>
   ((
-    descriptor: MessageDescriptor | string | undefined,
+    descriptor: MessageDescriptor | string,
     values?: Record<string, unknown>,
-  ): string | undefined => {
-    if (!descriptor || typeof descriptor === 'string') {
+  ): string => {
+    if (!descriptor) {
+      logger.warn('No descriptor passed to formatMessage function.')
+      return ''
+    }
+
+    if (typeof descriptor === 'string') {
       return descriptor
     }
 

@@ -1,6 +1,6 @@
 import { MessageDescriptor } from '@formatjs/intl'
 
-export interface FormatMessage {
-  (descriptor: undefined): undefined
-  (descriptor: MessageDescriptor | string, values?: Record<string, any>): string
-}
+export type FormatMessage = (
+  descriptor: MessageDescriptor | string,
+  values?: Record<string, any>,
+) => string
