@@ -63,7 +63,7 @@ export const companyModules: ModuleKeys[] = [
   'assets',
   'finance',
   // 'licenses',
-  'family', // TODO: Change name of module to "myInformation"
+  'family',
 ]
 
 export const modules: Record<ModuleKeys, ServicePortalModule> = {
