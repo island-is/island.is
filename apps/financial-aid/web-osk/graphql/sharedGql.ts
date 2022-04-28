@@ -134,8 +134,15 @@ export const NationalRegistryUserQuery = gql`
   }
 `
 
-export const GatherDirectTaxPaymentsQuery = gql`
-  query gatherDirectTaxPayments {
+export const GatherTaxDataQuery = gql`
+  query gatherTaxDataQuery($input: MunicipalitiesPersonalTaxReturnIdInput!) {
+    municipalitiesPersonalTaxReturn(input: $input) {
+      personalTaxReturn {
+        key
+        name
+        size
+      }
+    }
     municipalitiesDirectTaxPayments {
       success
       directTaxPayments {
@@ -145,18 +152,6 @@ export const GatherDirectTaxPaymentsQuery = gql`
         withheldAtSource
         month
         year
-      }
-    }
-  }
-`
-
-export const GatherPersonalTaxReturnQuery = gql`
-  query gatherTaxReturn($input: MunicipalitiesPersonalTaxReturnIdInput!) {
-    municipalitiesPersonalTaxReturn(input: $input) {
-      personalTaxReturn {
-        key
-        name
-        size
       }
     }
   }
