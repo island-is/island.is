@@ -15,6 +15,7 @@ import { withCircuitBreaker } from './withCircuitBreaker'
 import { AgentOptions, ClientCertificateOptions, withAgent } from './withAgent'
 import { withCache } from './withCache/withCache'
 import { CacheConfig } from './withCache/types'
+import { buildFetch } from './buildFetch'
 
 const DEFAULT_TIMEOUT = 1000 * 10 // seconds
 const DEFAULT_FREE_SOCKET_TIMEOUT = 1000 * 10 // 10 seconds
@@ -68,20 +69,6 @@ export interface EnhancedFetchOptions {
 
   // The client used to send metrics.
   metricsClient?: DogStatsD
-}
-
-function buildFetch(fetch: NodeFetchAPI) {
-  const result = {
-    fetch,
-    wrap<T extends { fetch: NodeFetchAPI }>(
-      createFetch: (options: T) => NodeFetchAPI,
-      options: Omit<T, 'fetch'>,
-    ) {
-      result.fetch = createFetch({ ...options, fetch: result.fetch } as T)
-      return result
-    },
-  }
-  return result
 }
 
 /**
@@ -197,5 +184,5 @@ export const createEnhancedFetch = (
     treat400ResponsesAsErrors,
   })
 
-  return (builder.fetch as unknown) as EnhancedFetchAPI
+  return builder.getFetch()
 }

@@ -1,4 +1,3 @@
-import { CaseType } from '@island.is/judicial-system/types'
 import { defineMessages } from 'react-intl'
 
 export const rcCourtRecord = {
@@ -107,15 +106,8 @@ export const rcCourtRecord = {
       autofillPresentationsV2: {
         id:
           'judicial.system.restriction_cases:court_record.session_bookings.autofill_presentations_v2#markdown',
-        defaultMessage: `Sækjandi ítrekar kröfu um {caseType, select,
-        ${CaseType.ADMISSION_TO_FACILITY} {vistun á viðeigandi stofnun}
-        other {gæsluvarðhald}}, reifar og rökstyður kröfuna og leggur málið í úrskurð með venjulegum fyrirvara.\n\nVerjandi {accused} ítrekar mótmæli hans, krefst þess að kröfunni verði hafnað, til vara að {accused} verði gert að sæta farbanni í stað {caseType, select,
-        ${CaseType.ADMISSION_TO_FACILITY} {vistunar}
-        other {gæsluvarðhalds}}, en til þrautavara að {caseType, select,
-        ${CaseType.ADMISSION_TO_FACILITY} {vistun}
-        other {gæsluvarðhaldi}} verði markaður skemmri tími en krafist er og að {accused} verði ekki gert að sæta einangrun á meðan á {caseType, select,
-        ${CaseType.ADMISSION_TO_FACILITY} {vistun}
-        other {gæsluvarðhaldi}} stendur. Verjandinn reifar og rökstyður mótmælin og leggur málið í úrskurð með venjulegum fyrirvara.`,
+        defaultMessage:
+          'Sækjandi ítrekar kröfu um {caseType, select, ADMISSION_TO_FACILITY {vistun á viðeigandi stofnun} other {gæsluvarðhald}}, reifar og rökstyður kröfuna og leggur málið í úrskurð með venjulegum fyrirvara.\n\nVerjandi {accused} ítrekar mótmæli hans, krefst þess að kröfunni verði hafnað, til vara að {accused} verði gert að sæta farbanni í stað {caseType, select, ADMISSION_TO_FACILITY {vistunar} other {gæsluvarðhalds}}, en til þrautavara að {caseType, select, ADMISSION_TO_FACILITY {vistun} other {gæsluvarðhaldi}} verði markaður skemmri tími en krafist er og að {accused} verði ekki gert að sæta einangrun á meðan á {caseType, select, ADMISSION_TO_FACILITY {vistun} other {gæsluvarðhaldi}} stendur. Verjandinn reifar og rökstyður mótmælin og leggur málið í úrskurð með venjulegum fyrirvara.',
         description:
           'Sjálfgefinn texti í "Afstaða varnaraðila, málflutningur og aðrar bókanir" textaboxi á þingbókar skrefi í gæsluvarðhaldsmálum.',
       },
@@ -288,10 +280,8 @@ export const rcCourtRecord = {
       disclaimerV2: {
         id:
           'judicial.system.restriction_cases:court_record.custody_restrictions.disclaimer_v2',
-        defaultMessage: `Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt að bera atriði er lúta að framkvæmd {caseType, select,
-        ${CaseType.ADMISSION_TO_FACILITY} {vistunarinnar á viðeigandi stofnun}
-        ${CaseType.TRAVEL_BAN} {farbannsins}
-        other {gæsluvarðhaldsins}} undir dómara.`,
+        defaultMessage:
+          'Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt að bera atriði er lúta að framkvæmd {caseType, select, ADMISSION_TO_FACILITY {vistunarinnar á viðeigandi stofnun} TRAVEL_BAN {farbannsins} other {gæsluvarðhaldsins}} undir dómara.',
         description:
           'Notaður sem upplýsingatexti í upplýsingasvæði við "greinargerð um lagarök" titlinn á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
