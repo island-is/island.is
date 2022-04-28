@@ -53,13 +53,13 @@ export const generateAssignEmployerApplicationEmail: AssignmentEmailTemplateGene
         {
           component: 'Copy',
           context: {
-            copy: `Umsækjandi ${applicantName} með kennitölu ${application.applicant} hefur skráð þig sem atvinnuveitanda í umsókn sinni.`,
+            copy: `${applicantName} ${application.applicant} hefur skráð þig sem atvinnuveitanda í umsókn sinni.`,
           },
         },
         {
           component: 'Copy',
           context: {
-            copy: `Ef þú áttir von á þessum tölvupósti þá getur þú smellt á takkann hér fyrir neðan.`,
+            copy: `Ef þú áttir von á þessum tölvupósti smellir þú á takkan hér fyrir neðan. Ef annar einstaklingur á að samþykkja fæðingarorloftið má áframsenda póstinn á viðkomandi einstakling (passið þó að opna ekki linkinn).`,
           },
         },
         {
@@ -72,14 +72,7 @@ export const generateAssignEmployerApplicationEmail: AssignmentEmailTemplateGene
         {
           component: 'Copy',
           context: {
-            copy: `Athugið! Ef hnappur virkar ekki, getur þú afritað hlekkinn hér að neðan og límt hann inn í vafrann þinn.`,
-            small: true,
-          },
-        },
-        {
-          component: 'Copy',
-          context: {
-            copy: `Athugið: Ef upp kemur 404 villa hefur umsækjandi breytt umsókninni og sent nýja, þér ætti að hafa borist nýr póstur.`,
+            copy: `Ef hnappur virkar ekki, getur þú afritað hlekkinn hér að neðan og límt hann inn í vafrann þinn.`,
             small: true,
           },
         },
@@ -87,6 +80,13 @@ export const generateAssignEmployerApplicationEmail: AssignmentEmailTemplateGene
           component: 'Copy',
           context: {
             copy: assignLink,
+            small: true,
+          },
+        },
+        {
+          component: 'Copy',
+          context: {
+            copy: `Athugið: Ef upp kemur 404 villa hefur umsækjandi breytt umsókninni og sent nýja, þér ætti að hafa borist nýr póstur.`,
             small: true,
           },
         },
