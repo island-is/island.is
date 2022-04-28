@@ -5,23 +5,16 @@ import { Query } from '@island.is/api/schema'
 import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
 import ChildView from '../../components/ChildView/ChildView'
 
-import { NATIONAL_REGISTRY_FAMILY_DETAIL } from '../../lib/queries/getNationalRegistryFamily'
+import { NATIONAL_REGISTRY_CHILDREN } from '../../lib/queries/getNationalChildren'
 
-const FamilyMember: ServicePortalModuleComponent = ({ userInfo }) => {
+const Child: ServicePortalModuleComponent = ({ userInfo }) => {
   const { nationalId }: { nationalId: string | undefined } = useParams()
 
-  const { data, loading, error } = useQuery<Query>(
-    NATIONAL_REGISTRY_FAMILY_DETAIL,
-    {
-      variables: { input: { familyMemberNationalId: nationalId } },
-    },
-  )
-  const { nationalRegistryFamilyDetail } = data || {}
+  const { data, loading, error } = useQuery<Query>(NATIONAL_REGISTRY_CHILDREN)
+  const { nationalRegistryChildren } = data || {}
 
   const person =
-    nationalRegistryFamilyDetail?.nationalId === nationalId
-      ? nationalRegistryFamilyDetail
-      : null
+    nationalRegistryChildren?.find((x) => x.nationalId === nationalId) || null
 
   const isChild = nationalId === userInfo.profile.nationalId
 
@@ -32,8 +25,9 @@ const FamilyMember: ServicePortalModuleComponent = ({ userInfo }) => {
       loading={loading}
       person={person}
       isChild={isChild}
+      hasDetails
     />
   )
 }
 
-export default FamilyMember
+export default Child

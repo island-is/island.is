@@ -4,7 +4,6 @@ import { useIntl } from 'react-intl'
 import { Text, Box, Input, Tooltip } from '@island.is/island-ui/core'
 import {
   CaseCustodyRestrictions,
-  CaseType,
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
 import { isPoliceReportStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
@@ -33,7 +32,6 @@ import { FormContext } from '@island.is/judicial-system-web/src/components/FormP
 import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
-import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system/consts'
 
 export const StepFour: React.FC = () => {
@@ -67,22 +65,19 @@ export const StepFour: React.FC = () => {
       if (workingCase.defendants && workingCase.defendants.length > 0) {
         autofill(
           'demands',
-          `${formatMessage(rcReportForm.sections.demands.autofill, {
+          formatMessage(rcReportForm.sections.demands.autofillV2, {
             accusedName: workingCase.defendants[0].name,
             accusedNationalId: workingCase.defendants[0].noNationalId
               ? ' '
               : `, kt. ${formatNationalId(
                   workingCase.defendants[0].nationalId ?? '',
                 )}, `,
-            extensionSuffix:
+            isExtended:
               workingCase.parentCase &&
               isAcceptingCaseDecision(workingCase.parentCase.decision)
-                ? ' áframhaldandi'
-                : '',
-            caseType:
-              workingCase.type === CaseType.CUSTODY
-                ? 'gæsluvarðhaldi'
-                : 'farbanni',
+                ? 'yes'
+                : 'no',
+            caseType: workingCase.type,
             court: workingCase.court?.name.replace('Héraðsdómur', 'Héraðsdóms'),
             requestedValidToDate: formatDate(
               workingCase.requestedValidToDate,
@@ -90,14 +85,12 @@ export const StepFour: React.FC = () => {
             )
               ?.replace('dagur,', 'dagsins')
               ?.replace(' kl.', ', kl.'),
-            isolationSuffix:
-              workingCase.type === CaseType.CUSTODY &&
-              workingCase.requestedCustodyRestrictions?.includes(
-                CaseCustodyRestrictions.ISOLATION,
-              )
-                ? ', og verði gert að sæta einangrun á meðan á varðhaldi stendur'
-                : '',
-          })}`,
+            hasIsolationRequest: workingCase.requestedCustodyRestrictions?.includes(
+              CaseCustodyRestrictions.ISOLATION,
+            )
+              ? 'yes'
+              : 'no',
+          }),
           workingCase,
         )
 

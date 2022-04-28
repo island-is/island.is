@@ -189,6 +189,7 @@ const ApplicationProfile = ({
           {getDirectTaxPaymentsContent(
             applicantDirectPayments,
             application.hasFetchedDirectTaxPayment,
+            application.created,
           )}
         </CollapsibleProfileUnit>
 
@@ -210,6 +211,7 @@ const ApplicationProfile = ({
               {getDirectTaxPaymentsContent(
                 spouseDirectPayments,
                 application.spouseHasFetchedDirectTaxPayment,
+                application.created,
               )}
             </CollapsibleProfileUnit>
           </>
@@ -280,10 +282,16 @@ export default ApplicationProfile
 export const getDirectTaxPaymentsContent = (
   directPaymentsArr: DirectTaxPayment[],
   hasFetchedPayments: boolean,
+  applicationCreated: string,
 ) => {
   switch (true) {
     case directPaymentsArr.length > 0:
-      return <TaxBreakdown items={directPaymentsArr} />
+      return (
+        <TaxBreakdown
+          items={directPaymentsArr}
+          dateDataWasFetched={applicationCreated}
+        />
+      )
     case directPaymentsArr.length === 0 && hasFetchedPayments:
       return <Text marginBottom={4}>Engin staðgreiðsla</Text>
     case directPaymentsArr.length === 0 && !hasFetchedPayments:
