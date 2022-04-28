@@ -1,8 +1,5 @@
-import { defineMessages } from 'react-intl'
-import {
-  CaseCustodyRestrictions,
-  CaseType,
-} from '@island.is/judicial-system/types'
+import { defineMessage, defineMessages } from 'react-intl'
+import { CaseCustodyRestrictions } from '@island.is/judicial-system/types'
 
 // TODO: remove restrictions and use restrictionsV2
 export const restrictions = defineMessages({
@@ -51,13 +48,14 @@ export const restrictions = defineMessages({
   },
   fallback: {
     id: 'judicial.system.core:restrictions.fallback',
-    defaultMessage: `Ekki er farið fram á takmarkanir á {caseType, select, ${CaseType.ADMISSION_TO_FACILITY} {vistun} ${CaseType.TRAVEL_BAN} {farbanni} other {gæslu}}.`,
+    defaultMessage:
+      'Ekki er farið fram á takmarkanir á {caseType, select, ADMISSION_TO_FACILITY {vistun} TRAVEL_BAN {farbanni} other {gæslu}}.',
     description:
       'Notaður til þessa að tilgreina að ekki er farið fram á takmarkanir',
   },
 })
 
-export const restrictionsV2 = defineMessages({
+export const restrictionsV2 = {
   [CaseCustodyRestrictions.NECESSITIES]: defineMessages({
     title: {
       id: 'judicial.system.core:restrictionsV2.NECESSITIES.title',
@@ -153,16 +151,18 @@ export const restrictionsV2 = defineMessages({
       },
     },
   ),
-  title: {
-    id: 'judicial.system.core:restrictionsV2.title',
-    defaultMessage: `Takmarkanir og tilhögun {caseType, select, ${CaseType.ADMISSION_TO_FACILITY} {vistunar} ${CaseType.TRAVEL_BAN} {farbanns} other {gæslu}}`,
+  title: defineMessage({
+    id: 'judicial.system.core:restrictionsV2_title',
+    defaultMessage:
+      'Takmarkanir og tilhögun {caseType, select, ADMISSION_TO_FACILITY {vistunar} TRAVEL_BAN {farbanns} other {gæslu}}',
     description:
       'Notaður sem titil þegar útlistað er hvaða takmarkanir eru á gæslu/vistun/farbanni',
-  },
-  fallback: {
-    id: 'judicial.system.core:restrictionsV2.fallback',
-    defaultMessage: `Ekki er farið fram á takmarkanir á {caseType, select, ${CaseType.ADMISSION_TO_FACILITY} {vistun} ${CaseType.TRAVEL_BAN} {farbanni} other {gæslu}}.`,
+  }),
+  fallback: defineMessage({
+    id: 'judicial.system.core:restrictionsV2_fallback',
+    defaultMessage:
+      'Ekki er farið fram á takmarkanir á {caseType, select, ADMISSION_TO_FACILITY {vistun} TRAVEL_BAN {farbanni} other {gæslu}}.',
     description:
       'Notaður til þessa að tilgreina að ekki er farið fram á takmarkanir',
-  },
-})
+  }),
+}

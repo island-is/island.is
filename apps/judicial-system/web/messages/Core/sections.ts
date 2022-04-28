@@ -1,11 +1,11 @@
-import { CaseType } from '@island.is/judicial-system/types'
 import { defineMessages, defineMessage } from 'react-intl'
 
 export const sections = {
   // TODO: remove custodyAndTravelBanProsecutorSection, it's renamed to restrictionCaseProsecutorSection
   title: defineMessage({
-    id: 'judicial.system.core:sections:title',
-    defaultMessage: `{caseType, select, ${CaseType.CUSTODY} {Gæsluvarðhald} ${CaseType.TRAVEL_BAN} {Farbann} ${CaseType.ADMISSION_TO_FACILITY} {Vistun á viðeignadi stofnun} other {Rannsóknarheimild}}`,
+    id: 'judicial.system.core:sections.title',
+    defaultMessage:
+      '{caseType, select, CUSTODY {Gæsluvarðhald} TRAVEL_BAN {Farbann} ADMISSION_TO_FACILITY {Vistun á viðeignadi stofnun} other {Rannsóknarheimild}}',
     description: 'Notaður sem titill á hliðarstiku í öllum ferlum',
   }),
   custodyAndTravelBanProsecutorSection: defineMessages({
@@ -63,7 +63,8 @@ export const sections = {
     caseTitle: {
       id:
         'judicial.system.core:sections.restriction_case_prosecutor_section.case_title',
-      defaultMessage: `Krafa um {caseType, select, ${CaseType.ADMISSION_TO_FACILITY} {vistun} ${CaseType.TRAVEL_BAN} {farbann} other {gæsluvarðhald}}`,
+      defaultMessage:
+        'Krafa um {caseType, select, ADMISSION_TO_FACILITY {vistun} TRAVEL_BAN {farbann} other {gæsluvarðhald}}',
       description:
         'Notaður sem titill í hliðarstiku í gæslu-, farbanns- og vistunarmálum hjá sækjendum',
     },
@@ -328,13 +329,15 @@ export const sections = {
     },
     restrictionActive: {
       id: 'judicial.system.core:sections.case_results.restriction_active',
-      defaultMessage: `{caseType, select, ${CaseType.ADMISSION_TO_FACILITY} {Vistun virk} ${CaseType.TRAVEL_BAN} {Farbann virkt} other {Gæsluvarðhald virkt}}`,
+      defaultMessage:
+        '{caseType, select, ADMISSION_TO_FACILITY {Vistun virk} TRAVEL_BAN {Farbann virkt} other {Gæsluvarðhald virkt}}',
       description:
         'Notaður sem texti í skrefum á hliðarstiku þegar gæslu/farbann/vistun er virk',
     },
     restrictionOver: {
-      id: 'judicial.system.core:sections.case_results.restriction_active',
-      defaultMessage: `{caseType, select, ${CaseType.ADMISSION_TO_FACILITY} {Vistun á stofnun} ${CaseType.TRAVEL_BAN} {Farbanni} other {Gæsluvarðhaldi}} lokið`,
+      id: 'judicial.system.core:sections.case_results.restriction_over',
+      defaultMessage:
+        '{caseType, select, ADMISSION_TO_FACILITY {Vistun á stofnun} TRAVEL_BAN {Farbanni} other {Gæsluvarðhaldi}} lokið',
       description:
         'Notaður sem texti í skrefum á hliðarstiku þegar gæslu/farbann/vistun er lokið',
     },
