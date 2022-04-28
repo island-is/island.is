@@ -1,4 +1,4 @@
-import { FetchAPI, FetchMiddlewareOptions } from './nodeFetch'
+import { MiddlewareAPI, FetchMiddlewareOptions } from './nodeFetch'
 import { FetchError } from './FetchError'
 
 interface ResponseErrorsOptions extends FetchMiddlewareOptions {
@@ -8,9 +8,9 @@ interface ResponseErrorsOptions extends FetchMiddlewareOptions {
 export function withResponseErrors({
   fetch,
   includeBody,
-}: ResponseErrorsOptions): FetchAPI {
-  return async (input, init) => {
-    const response = await fetch(input, init)
+}: ResponseErrorsOptions): MiddlewareAPI {
+  return async (request) => {
+    const response = await fetch(request)
     if (!response.ok) {
       throw await FetchError.build(response, includeBody)
     }
