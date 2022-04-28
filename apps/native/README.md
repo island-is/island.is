@@ -54,6 +54,24 @@ yarn detox:test:ios
 yarn detox:test:android
 ```
 
+### Deploy CodePush
+
+Inside ./apps/native/app folder, do:
+
+#### iOS
+```bash
+yarn nx bundle-ios native-app --bundle-output ./build-ios-release/main.jsbundle --assets-dest ./build-ios-release --dev false
+mv ../../.././build-ios-release/main.jsbundle ./build-ios-release/main.jsbundle
+appcenter codepush release -a Stafraent-Island/Island-ios -t 1.0.0 -c ./build-ios-release -d production -x
+```
+
+#### Android
+```bash
+yarn nx bundle-android native-app --bundle-output ./build-android-release/main.jsbundle --assets-dest ./build-android-release --dev false
+mv ../../.././build-android-release/main.jsbundle ./build-android-release/main.jsbundle
+appcenter codepush release -a Stafraent-Island/Island-android -t 1.0.0 -c ./build-android-release -d production -x
+```
+
 ## Packages needed in root package json
 
 ### Dependencies
