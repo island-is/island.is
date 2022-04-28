@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 import { Box } from '@island.is/island-ui/core'
 
@@ -9,13 +9,22 @@ import {
   SummaryComment as SummaryCommentType,
 } from '../../lib/types'
 import { Routes } from '../../lib/constants'
-import { DescriptionText } from '../index'
+import { DescriptionText, DirectTaxPaymentsModal } from '../index'
 import { formatAddress, spouseFormItems } from '../../lib/formatters'
-import { FormInfo, SummaryComment, UserInfo, ContactInfo, Files } from './index'
+import {
+  FormInfo,
+  SummaryComment,
+  UserInfo,
+  ContactInfo,
+  Files,
+  DirectTaxPaymentCell,
+} from './index'
 
 const SpouseSummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
   const { id, answers, externalData } = application
   const summaryCommentType = SummaryCommentType.SPOUSEFORMCOMMENT
+
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   return (
     <>
@@ -32,6 +41,18 @@ const SpouseSummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
       />
 
       <FormInfo items={spouseFormItems(answers)} goToScreen={goToScreen} />
+
+      <DirectTaxPaymentCell
+        setIsModalOpen={setIsModalOpen}
+        hasFetchedPayments={
+          externalData?.taxDataFetch?.data?.municipalitiesDirectTaxPayments
+            ?.success
+        }
+        directTaxPayments={
+          externalData?.taxDataFetch?.data?.municipalitiesDirectTaxPayments
+            ?.directTaxPayments
+        }
+      />
 
       <ContactInfo
         route={Routes.SPOUSECONTACTINFO}
@@ -55,6 +76,18 @@ const SpouseSummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
       <SummaryComment
         commentId={summaryCommentType}
         comment={answers?.spouseFormComment}
+      />
+
+      <DirectTaxPaymentsModal
+        items={
+          externalData?.taxDataFetch?.data?.municipalitiesDirectTaxPayments
+            ?.directTaxPayments
+        }
+        dateDataWasFetched={externalData?.nationalRegistry?.date}
+        isVisible={isModalOpen}
+        onVisibilityChange={(isOpen: boolean) => {
+          setIsModalOpen(isOpen)
+        }}
       />
     </>
   )

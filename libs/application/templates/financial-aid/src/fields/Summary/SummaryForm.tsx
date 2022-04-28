@@ -13,6 +13,7 @@ import * as m from '../../lib/messages'
 import {
   ApproveOptions,
   FAFieldBaseProps,
+  Spouse,
   SummaryComment as SummaryCommentType,
 } from '../../lib/types'
 import { Routes } from '../../lib/constants'
@@ -36,6 +37,21 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
 
   const [isModalOpen, setIsModalOpen] = useState(false)
 
+  const getFamilyStatus = (
+    spouse?: Spouse,
+    unregisteredCohabitation?: ApproveOptions,
+  ) => {
+    if (spouse) {
+      return (
+        martialStatusTypeFromMartialCode(spouse?.maritalStatus) ===
+        MartialStatusType.SINGLE
+      )
+    }
+    if (unregisteredCohabitation) {
+      return unregisteredCohabitation === ApproveOptions.Yes ? false : true
+    }
+  }
+
   const aidAmount = useMemo(() => {
     if (
       externalData.nationalRegistry?.data?.municipality &&
@@ -43,9 +59,10 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
     ) {
       return aidCalculator(
         answers.homeCircumstances.type,
-        martialStatusTypeFromMartialCode(
-          externalData.nationalRegistry?.data?.applicant?.spouse?.maritalStatus,
-        ) === MartialStatusType.SINGLE
+        getFamilyStatus(
+          externalData.nationalRegistry?.data?.applicant?.spouse,
+          answers?.relationshipStatus?.unregisteredCohabitation,
+        )
           ? externalData.nationalRegistry?.data?.municipality?.individualAid
           : externalData.nationalRegistry?.data?.municipality?.cohabitationAid,
       )
@@ -101,12 +118,12 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
       <DirectTaxPaymentCell
         setIsModalOpen={setIsModalOpen}
         hasFetchedPayments={
-          externalData?.nationalRegistry?.data?.taxData
-            ?.municipalitiesDirectTaxPayments?.success
+          externalData?.taxDataFetch?.data?.municipalitiesDirectTaxPayments
+            ?.success
         }
         directTaxPayments={
-          externalData?.nationalRegistry?.data?.taxData
-            ?.municipalitiesDirectTaxPayments?.directTaxPayments
+          externalData?.taxDataFetch?.data?.municipalitiesDirectTaxPayments
+            ?.directTaxPayments
         }
       />
 
@@ -125,8 +142,8 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
         }
         goToScreen={goToScreen}
         personalTaxReturn={
-          externalData.nationalRegistry?.data?.taxData
-            ?.municipalitiesPersonalTaxReturn?.personalTaxReturn
+          externalData.taxDataFetch?.data?.municipalitiesPersonalTaxReturn
+            ?.personalTaxReturn
         }
         taxFiles={answers.taxReturnFiles ?? []}
         incomeFiles={answers.incomeFiles ?? []}
@@ -140,12 +157,12 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
 
       <DirectTaxPaymentsModal
         items={
-          externalData?.nationalRegistry?.data?.taxData
-            ?.municipalitiesDirectTaxPayments?.directTaxPayments
+          externalData?.taxDataFetch?.data?.municipalitiesDirectTaxPayments
+            ?.directTaxPayments
         }
         dateDataWasFetched={externalData?.nationalRegistry?.date}
         isVisible={isModalOpen}
-        onVisibilityChange={(isOpen) => {
+        onVisibilityChange={(isOpen: boolean) => {
           setIsModalOpen(isOpen)
         }}
       />

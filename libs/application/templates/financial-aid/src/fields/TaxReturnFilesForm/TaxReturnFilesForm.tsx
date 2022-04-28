@@ -15,7 +15,7 @@ const TaxReturnFilesForm = ({ field, application }: FAFieldBaseProps) => {
   const {
     municipalitiesDirectTaxPayments,
     municipalitiesPersonalTaxReturn,
-  } = externalData.nationalRegistry.data.taxData
+  } = externalData.taxDataFetch.data
 
   const taxReturnFetchFailed =
     municipalitiesPersonalTaxReturn?.personalTaxReturn === null

@@ -7,7 +7,10 @@ import {
   getMonth,
 } from '@island.is/financial-aid/shared/lib'
 import TaxBreakdownHeadline from './TaxBreakdownHeadline'
-import { Dictionary, groupBy } from 'lodash'
+import groupBy from 'lodash/groupBy'
+interface Dictionary<T> {
+  [index: string]: T
+}
 
 import * as styles from './TaxBreakdown.css'
 
@@ -20,13 +23,17 @@ export const taxBreakDownHeaders = [
 
 interface Props {
   items: DirectTaxPayment[]
-  dateDataWasFetched: string
+  dateDataWasFetched?: string
 }
 
 const TaxBreakdown = ({ items, dateDataWasFetched }: Props) => {
-  const date = new Date(dateDataWasFetched)
+  const date = dateDataWasFetched ? new Date(dateDataWasFetched) : new Date()
 
-  const isKeyInArray = (grouped: any, month: number, year: number) => {
+  const isKeyInArray = (
+    grouped: Dictionary<DirectTaxPayment[]>,
+    month: number,
+    year: number,
+  ) => {
     if (!grouped[month]) {
       grouped[month] = [{ year, month } as DirectTaxPayment]
     }
@@ -93,10 +100,7 @@ const TaxBreakdown = ({ items, dateDataWasFetched }: Props) => {
                       ]}
                     />
                   ) : (
-                    <TaxBreakdownItem
-                      key={`${index}-${item.month}-taxBreakdown`}
-                      items={['Engin staðgreiðsla']}
-                    />
+                    <TaxBreakdownItem items={['Engin staðgreiðsla']} />
                   ),
                 )}
               </>

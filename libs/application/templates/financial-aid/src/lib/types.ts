@@ -10,6 +10,7 @@ import { answersSchema } from './dataSchema'
 export enum DataProviderTypes {
   NationalRegistry = 'NationalRegistryProvider',
   Veita = 'VeitaProvider',
+  TaxDataFetch = 'TaxDataFetchProvider',
 }
 
 export enum ApproveOptions {
@@ -26,12 +27,15 @@ export interface ExternalData {
     data: {
       applicant: Applicant
       municipality: Municipality
-      taxData: TaxData
     }
     date: string
   }
   veita: {
     data: CurrentApplication
+    date: string
+  }
+  taxDataFetch: {
+    data: TaxData
     date: string
   }
 }

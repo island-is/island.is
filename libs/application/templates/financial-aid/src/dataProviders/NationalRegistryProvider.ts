@@ -62,33 +62,6 @@ const municipalityQuery = `
     }
   }
 `
-const personalTaxReturnQuery = `
-query PersonalTaxReturnQuery($input: MunicipalitiesFinancialAidPersonalTaxReturnInput!) {
-  municipalitiesPersonalTaxReturn(input: $input) {
-      personalTaxReturn {
-        key
-        name
-        size
-      }
-    }
-  }
-`
-
-const directTaxPaymentsQuery = `
-  query DirectTaxPaymentsQuery {
-    municipalitiesDirectTaxPayments {
-      success
-      directTaxPayments {
-        totalSalary
-        payerNationalId
-        personalAllowance
-        withheldAtSource
-        month
-        year
-      }
-    }
-  }
-`
 
 export class NationalRegistryProvider extends BasicDataProvider {
   readonly type = DataProviderTypes.NationalRegistry
@@ -113,12 +86,9 @@ export class NationalRegistryProvider extends BasicDataProvider {
       })
   }
 
-  async provide(
-    application: Application,
-  ): Promise<{
+  async provide(): Promise<{
     applicant: Applicant
     municipality: Municipality
-    taxData: TaxData
   }> {
     const applicant = await this.runQuery<Applicant>(
       nationalRegistryQuery,
@@ -133,23 +103,7 @@ export class NationalRegistryProvider extends BasicDataProvider {
       },
     )
 
-    const personalTaxReturn = await this.runQuery<{
-      personalTaxReturn: PersonalTaxReturn | null
-    }>(personalTaxReturnQuery, 'municipalitiesPersonalTaxReturn', {
-      input: { id: application.id },
-    })
-
-    const directTaxPayments = await this.runQuery<{
-      directTaxPayments: DirectTaxPayment[]
-      success: boolean
-    }>(directTaxPaymentsQuery, 'municipalitiesDirectTaxPayments')
-
-    const taxData = {
-      municipalitiesPersonalTaxReturn: personalTaxReturn,
-      municipalitiesDirectTaxPayments: directTaxPayments,
-    }
-
-    return { applicant, municipality, taxData }
+    return { applicant, municipality }
   }
   handleError(error: Error | unknown) {
     console.error('Provider.FinancialAid.NationalRegistry:', error)

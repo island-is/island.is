@@ -13,9 +13,7 @@ const DirectTaxPaymentCell = ({
   hasFetchedPayments,
   setIsModalOpen,
 }: Props) => {
-  const fetchFailed = directTaxPayments.length === 0 && !hasFetchedPayments
-
-  if (fetchFailed) {
+  if (!hasFetchedPayments) {
     return null
   }
   return (

@@ -7,7 +7,7 @@ import { TaxBreakdown } from '..'
 
 interface Props {
   isVisible: boolean
-  onVisibilityChange: React.Dispatch<React.SetStateAction<boolean>>
+  onVisibilityChange: (isOpen: boolean) => void
   items: DirectTaxPayment[]
   dateDataWasFetched: string
 }
@@ -19,44 +19,46 @@ const DirectTaxPaymentModal = ({
   dateDataWasFetched,
 }: Props) => {
   return (
-    <TaxBreakdown items={items} dateDataWasFetched={dateDataWasFetched} />
-    // <ModalBase
-    //   baseId="directTaxPaymentModal"
-    //   className={styles.modalBase}
-    //   isVisible={isVisible}
-    //   onVisibilityChange={(visibility) => {
-    //     if (visibility !== isVisible) {
-    //       onVisibilityChange(visibility)
-    //     }
-    //   }}
-    // >
-    //   {({
-    //     closeModal,
-    //   }: {
-    //     closeModal: () => React.Dispatch<React.SetStateAction<boolean>>
-    //   }) => (
-    //     <Box onClick={closeModal} className={styles.container}>
-    //       <Box
-    //         position="relative"
-    //         background="white"
-    //         borderRadius="large"
-    //         paddingY={4}
-    //         paddingX={4}
-    //         className={styles.modal}
-    //       >
-    //         <Text variant="h3" marginBottom={4}>
-    //           Staðgreiðsluskrá
-    //         </Text>
+    <ModalBase
+      baseId="directTaxPaymentModal"
+      className={styles.modalBase}
+      isVisible={isVisible}
+      onVisibilityChange={(visibility) => {
+        if (visibility !== isVisible) {
+          onVisibilityChange(visibility)
+        }
+      }}
+    >
+      {({
+        closeModal,
+      }: {
+        closeModal: () => React.Dispatch<React.SetStateAction<boolean>>
+      }) => (
+        <Box onClick={closeModal} className={styles.container}>
+          <Box
+            position="relative"
+            background="white"
+            borderRadius="large"
+            paddingY={4}
+            paddingX={4}
+            className={styles.modal}
+          >
+            <Text variant="h3" marginBottom={4}>
+              Staðgreiðsluskrá
+            </Text>
 
-    //         {/* <TaxBreakdown items={items} /> */}
+            <TaxBreakdown
+              items={items}
+              dateDataWasFetched={dateDataWasFetched}
+            />
 
-    //         <Box paddingTop={4} display="flex" justifyContent="flexEnd">
-    //           <Button onClick={closeModal}>Loka</Button>
-    //         </Box>
-    //       </Box>
-    //     </Box>
-    //   )}
-    // </ModalBase>
+            <Box paddingTop={4} display="flex" justifyContent="flexEnd">
+              <Button onClick={closeModal}>Loka</Button>
+            </Box>
+          </Box>
+        </Box>
+      )}
+    </ModalBase>
   )
 }
 
