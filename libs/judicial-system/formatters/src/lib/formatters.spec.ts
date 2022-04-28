@@ -169,6 +169,51 @@ describe('formatCustodyRestrictions', () => {
       'Sækjandi tekur fram að gæsluvarðhaldið verði með heimsóknarbanni, bréfaskoðun og símabanni og fjölmiðlabanni skv. 99. gr. laga nr. 88/2008.',
     )
   })
+
+  test('should order non-isolation restrictions with ruling', () => {
+    // Arrange
+    const custodyRestrictions = [
+      CaseCustodyRestrictions.MEDIA,
+      CaseCustodyRestrictions.VISITAION,
+    ]
+    const isIsolation = false
+    const isRuling = true
+
+    // Act
+    const res = formatCustodyRestrictions(
+      custodyRestrictions,
+      isIsolation,
+      isRuling,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Sækjandi tekur fram að gæsluvarðhaldið verði með heimsóknarbanni, bréfaskoðun og símabanni og fjölmiðlabanni skv. 99. gr. laga nr. 88/2008.',
+    )
+  })
+
+  test('should order non-isolation restrictions with ruling 2', () => {
+    // Arrange
+    const custodyRestrictions = [
+      CaseCustodyRestrictions.MEDIA,
+      CaseCustodyRestrictions.VISITAION,
+      CaseCustodyRestrictions.NECESSITIES,
+    ]
+    const isIsolation = false
+    const isRuling = true
+
+    // Act
+    const res = formatCustodyRestrictions(
+      custodyRestrictions,
+      isIsolation,
+      isRuling,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Sækjandi tekur fram að gæsluvarðhaldið verði með heimsóknarbanni, bréfaskoðun og símabanni og fjölmiðlabanni skv. 99. gr. laga nr. 88/2008.',
+    )
+  })
 })
 
 describe('capitalize', () => {
