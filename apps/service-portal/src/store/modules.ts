@@ -56,6 +56,16 @@ export const featureFlaggedModules: ModuleKeys[] = [
   'financeSchedule',
 ]
 
+export const companyModules: ModuleKeys[] = [
+  'documents',
+  'applications',
+  'wip',
+  'assets',
+  'finance',
+  // 'licenses',
+  'family', // TODO: Change name of module to "myInformation"
+]
+
 export const modules: Record<ModuleKeys, ServicePortalModule> = {
   documentProvider: documentProviderModule,
   documents: documentsModule,

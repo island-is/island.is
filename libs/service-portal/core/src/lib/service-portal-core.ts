@@ -79,6 +79,10 @@ export type ServicePortalRoute = {
    */
   navHide?: boolean
   /**
+   * Allows route for companies
+   */
+  // showForCompanies?: boolean
+  /**
    * The render value of this component
    */
   render?: (props: ServicePortalModuleProps) => ServicePortalModuleRenderValue

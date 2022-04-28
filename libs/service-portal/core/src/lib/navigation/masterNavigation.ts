@@ -215,7 +215,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
       {
         name: m.vehicles,
         path: ServicePortalPath.AssetsVehicles,
-        systemRoute: true,
         icon: {
           icon: 'car',
         },

@@ -20,6 +20,23 @@ export const useRoutes = () => {
     modules: ServicePortalModule[],
     client: ApolloClient<NormalizedCacheObject>,
   ) => {
+    // const routes = await Promise.all(
+    //   Object.values(modules).map((module) => {
+    //     const moduleRoutes = module.routes({
+    //       userInfo,
+    //       client,
+    //     })
+
+    //     const IS_COMPANY = true
+
+    //     const arrangedRoutes = IS_COMPANY
+    //       ? moduleRoutes.filter((route) => route.showForCompanies)
+    //       : moduleRoutes
+
+    //     return arrangedRoutes
+    //   }),
+    // )
+
     const routes = await Promise.all(
       Object.values(modules).map((module) =>
         module.routes({
