@@ -94,7 +94,7 @@ const PageLayout: React.FC<PageProps> = ({
               <div className={styles.formStepperContainer}>
                 <Box marginLeft={2}>
                   <Box marginBottom={5}>
-                    <Logo />
+                    <Logo defaultInstitution={workingCase?.court?.name} />
                   </Box>
                   <FormStepper
                     // Remove the extension parts of the formstepper if the user is not applying for an extension
