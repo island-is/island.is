@@ -152,9 +152,10 @@ const FinancialAidTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/WaitingForSpouse').then((module) =>
-                  Promise.resolve(module.WaitingForSpouse),
+                import('../forms/ApplicantSubmitted').then((module) =>
+                  Promise.resolve(module.ApplicantSubmitted),
                 ),
+              read: 'all',
             },
           ],
         },

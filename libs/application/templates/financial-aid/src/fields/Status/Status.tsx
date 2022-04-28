@@ -1,6 +1,7 @@
 import React from 'react'
 
 import { ApplicationState } from '@island.is/financial-aid/shared/lib'
+import { Box } from '@island.is/island-ui/core'
 
 import { FAApplication } from '../../lib/types'
 import MoreActions from './MoreActions/MoreActions'
@@ -10,6 +11,7 @@ import MissingFilesCard from './MissingFIlesCard/MissingFilesCard'
 import Header from './Header/Header'
 import RejectionMessage from './RejectionMessage/RejectionMessage'
 import SpouseAlert from './SpouseAlert/SpouseAlert'
+import SpouseApproved from './SpouseApproved/SpouseApproved'
 
 interface Props {
   application: FAApplication
@@ -17,6 +19,7 @@ interface Props {
   showRejectionMessage?: boolean
   showSpouseAlert?: boolean
   showSpouseTimeline?: boolean
+  showSpouseApproved?: boolean
 }
 
 const Status = ({
@@ -25,15 +28,18 @@ const Status = ({
   showRejectionMessage,
   showSpouseAlert,
   showSpouseTimeline,
+  showSpouseApproved,
 }: Props) => {
   const { nationalRegistry } = application.externalData
   const state = application.externalData?.veita?.data?.state
 
   return (
-    <>
+    <Box paddingBottom={5}>
       <Header state={state} />
 
       {showSpouseAlert && <SpouseAlert />}
+
+      {showSpouseApproved && <SpouseApproved />}
 
       {/* TODO: use correct rejectionMessage */}
       {showRejectionMessage && (
@@ -63,7 +69,7 @@ const Status = ({
         rulesPage={nationalRegistry?.data.municipality?.rulesHomepage}
         email={nationalRegistry?.data.municipality?.email}
       />
-    </>
+    </Box>
   )
 }
 

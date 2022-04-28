@@ -190,8 +190,16 @@ export const status = {
     message: {
       id: 'fa.application:section.status.spouseAlert.message',
       defaultMessage:
-        'Maki hefur fengið sendan hlekk á umsókn til að hlaða upp gögnum svo hægt sé að vinna umsóknina',
+        'Umsóknin verður tekin til úrvinnslu þegar maki skilar inn gögnum. Maki hefur fengið tölvupóst þess efnis.',
       description: 'Message of alert',
+    },
+  }),
+  spouseApproved: defineMessages({
+    message: {
+      id: 'fa.application:section.status.spouseApproved.message#markup',
+      defaultMessage:
+        'Umsóknin maka þíns um fjárhagsaðstoð í {month} er samþykkt. Maki þinn fær frekari upplýsingar um veitta aðstoð.',
+      description: 'Message for spouse when application is apporoved',
     },
   }),
 }

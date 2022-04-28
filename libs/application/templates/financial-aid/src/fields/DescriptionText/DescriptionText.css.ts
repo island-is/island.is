@@ -7,7 +7,7 @@ const activeBoxShadow = `inset 0 -2px 0 0 ${theme.color.mint400}`
 
 const linkStyle = {
   color: theme.color.blue400,
-  fontWeight: theme.typography.regular,
+  fontWeight: theme.typography.semiBold,
   paddingBottom: 4,
   textDecoration: 'none',
   boxShadow: smallBoxShadow,
