@@ -69,6 +69,7 @@ This starts a server on `localhost:4200`
 ### Feature flags
 
 You can create and manage feature flags in https://configcat.com/
+<br />
 These feature flags allow you to change boolean values that can be used to change things in the project at runtime (like enabling or disabling a specific feature).
 
 **Example usage:**
