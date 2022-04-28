@@ -61,7 +61,7 @@ export class TaxDataFetchProvider extends BasicDataProvider {
       })
   }
 
-  async provide(application: Application): Promise<{ taxData: TaxData }> {
+  async provide(application: Application): Promise<TaxData> {
     const personalTaxReturn = await this.runQuery<{
       personalTaxReturn: PersonalTaxReturn | null
     }>(personalTaxReturnQuery, 'municipalitiesPersonalTaxReturn', {
@@ -73,11 +73,10 @@ export class TaxDataFetchProvider extends BasicDataProvider {
       success: boolean
     }>(directTaxPaymentsQuery, 'municipalitiesDirectTaxPayments')
 
-    const taxData = {
+    return {
       municipalitiesPersonalTaxReturn: personalTaxReturn,
       municipalitiesDirectTaxPayments: directTaxPayments,
     }
-    return { taxData }
   }
   handleError(error: Error | unknown) {
     console.error('Provider.FinancialAid.TaxData:', error)

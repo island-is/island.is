@@ -65,7 +65,7 @@ const FinancialAidTemplate: ApplicationTemplate<
                 ),
               write: {
                 answers: ['approveExternalData'],
-                externalData: ['nationalRegistry', 'veita', 'taxData'],
+                externalData: ['nationalRegistry', 'veita', 'taxDataFetch'],
               },
             },
           ],
