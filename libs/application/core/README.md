@@ -239,6 +239,38 @@ stateMachineConfig: {
 },
 ```
 
+### Delete Application
+
+In order to enable users to delete applications within a state simply add `delete: true` to the desired role and state.
+
+```diff
+stateMachineConfig: {
+  states: {
+    ...
+    draft: {
+      meta: {
+        name: 'Draft',
+        roles: [
+          {
+            id: 'applicant',
+            formLoader: () =>
+              import('../forms/Draft).then((val) =>
+                Promise.resolve(val.Draft),
+              ),
+            read: 'all',
++           delete: true
+          },
+        ],
+      },
+    ...
+  },
+},
+```
+
+This will add a delete button in the Draft state available only to the `Applicant` role like so:
+
+![image](https://user-images.githubusercontent.com/2643113/165759979-a267dd6f-dbe4-4bc9-b2b8-dad5508a44c0.png)
+
 ## Form
 
 The `Form` type describes how to structure the flow of a form. It is basically a big json object which is used by `application-ui-shell` to know what to render on the screen.

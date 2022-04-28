@@ -288,6 +288,37 @@ export class ApplicationController {
       resources: updatedApplication.id,
       meta: { type: application.typeId },
     })
+
+    const actionDto: BaseApplication = {
+      ...applicationDto,
+      id: createdApplication.id,
+      modified: createdApplication.modified,
+      created: createdApplication.created,
+      answers: updatedApplication.answers as FormValue,
+      externalData: updatedApplication.externalData as ExternalData,
+      attachments: {},
+    }
+
+    // Trigger meta.onEntry for initial state on application creation
+    const onEnterStateAction = new ApplicationTemplateHelper(
+      actionDto,
+      template,
+    ).getOnEntryStateAPIAction(updatedApplication.state)
+
+    if (onEnterStateAction) {
+      const {
+        updatedApplication: withUpdatedExternalData,
+      } = await this.performActionOnApplication(
+        actionDto,
+        template,
+        user,
+        onEnterStateAction,
+      )
+
+      //Programmers responsible for handling failure status
+      updatedApplication.externalData = withUpdatedExternalData.externalData
+    }
+
     return updatedApplication
   }
 
