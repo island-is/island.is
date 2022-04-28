@@ -28,7 +28,7 @@ describe('feature flag fetching', () => {
   })
 
   it('should return the default value if the flag does not exist', async () => {
-    const defaultValue = 'some-default-value'
+    const defaultValue = false
     const flag = await getFeatureFlag('flagThatDoesNotExist', defaultValue)
     expect(flag).toBe(defaultValue)
   })

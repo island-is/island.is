@@ -8,9 +8,12 @@ import getConfig from 'next/config'
 const { publicRuntimeConfig } = getConfig()
 let client: FeatureFlagClient | undefined
 
+/**
+ * Returns a feature flag from ConfigCat
+ */
 export const getFeatureFlag = async (
   flag: string,
-  defaultValue: boolean | string,
+  defaultValue: boolean,
   user?: FeatureFlagUser,
 ) => {
   if (!client) {
@@ -19,5 +22,5 @@ export const getFeatureFlag = async (
     })
   }
   const value = await client.getValue(flag, defaultValue, user)
-  return value
+  return value as boolean
 }
