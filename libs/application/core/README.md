@@ -103,12 +103,14 @@ In order to introduce an application behind a featureflag you can follow the fol
  5. Add your flag to the package @island.is/feature-flags in libs/feature-flags/src/lib/features.ts
  6. Now you can add the featureFlag to the application template under "featureFlag".
  
+ Note: This will replace the readyForProduction flag, if a featureflag is present on the application then the featureFlag determines if the application is accessible without checking whether the readyForProduction flag is true or false.
+ 
  ```diff
 const ReferenceApplicationTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<ReferenceTemplateEvent>,
   ReferenceTemplateEvent
- > = {
+  > = {
   type: ApplicationTypes.EXAMPLE,
   name: m.name,
   institution: m.institutionName,
