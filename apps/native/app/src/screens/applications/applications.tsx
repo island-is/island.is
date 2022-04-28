@@ -88,7 +88,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
   componentId,
 }) => {
   useNavigationOptions(componentId)
-  const SEARCH_QUERY_SIZE = 40
+  const SEARCH_QUERY_SIZE = 100
   const SEARCH_QUERY_TYPE = 'webArticle'
   const CONTENTFUL_FILTER = 'umsokn';
   const QUERY_STRING_DEFAULT = '*'
@@ -100,7 +100,8 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
   const keyboardRef = useRef(false)
   const intl = useIntl()
   const [page, setPage] = useState(1)
-  const [isLoadingMore, setIsLoadingMore] = useState(true)
+  const [items, setItems] = useState([]);
+  // const [isLoadingMore, setIsLoadingMore] = useState(true)
   const scrollY = useRef(new Animated.Value(0)).current
 
   const input = {
@@ -118,47 +119,53 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
     },
   })
 
-  const items = res?.data?.searchResults?.items || ([] as [])
+  useEffect(() => {
+    if (!res.loading && res.data) {
+      setItems([...res?.data?.searchResults?.items || []].sort((a: IArticleSearchResults, b: IArticleSearchResults) => a.title.localeCompare(b.title)) as any);
+    }
+  }, [res.data, res.loading])
+
+  // removed load on scroll while we cant order items and the are only few for now
 
   // refetch load more on scroll
-  useEffect(() => {
-    if (page > 1) {
-      try {
-        res
-          .fetchMore({
-            updateQuery(prev, { fetchMoreResult }) {
-              setIsLoadingMore(true)
-              const oldIds = prev.searchResults.items.map(
-                (item: any) => item.id,
-              )
-              if (
-                !fetchMoreResult ||
-                fetchMoreResult.searchResults.items.length === 0
-              ) {
-                setIsLoadingMore(false)
-              }
-              return {
-                ...prev,
-                searchResults: {
-                  ...prev.searchResults,
-                  items: prev.searchResults.items.concat(
-                    fetchMoreResult.searchResults.items.filter(
-                      (item: any) => !oldIds.includes(item.id),
-                    ),
-                  ),
-                },
-              }
-            },
-            variables: {
-              input: { ...input, page },
-            },
-          })
-          .then(() => setIsLoadingMore(false))
-      } catch (err) {
-        // noop
-      }
-    }
-  }, [page])
+  // useEffect(() => {
+  //   if (page > 1) {
+  //     try {
+  //       res
+  //         .fetchMore({
+  //           updateQuery(prev, { fetchMoreResult }) {
+  //             setIsLoadingMore(true)
+  //             const oldIds = prev.searchResults.items.map(
+  //               (item: any) => item.id,
+  //             )
+  //             if (
+  //               !fetchMoreResult ||
+  //               fetchMoreResult.searchResults.items.length === 0
+  //             ) {
+  //               setIsLoadingMore(false)
+  //             }
+  //             return {
+  //               ...prev,
+  //               searchResults: {
+  //                 ...prev.searchResults,
+  //                 items: prev.searchResults.items.concat(
+  //                   fetchMoreResult.searchResults.items.filter(
+  //                     (item: any) => !oldIds.includes(item.id),
+  //                   ),
+  //                 ),
+  //               },
+  //             }
+  //           },
+  //           variables: {
+  //             input: { ...input, page },
+  //           },
+  //         })
+  //         .then(() => setIsLoadingMore(false))
+  //     } catch (err) {
+  //       // noop
+  //     }
+  //   }
+  // }, [page])
 
   const renderItem = useCallback(({ item }) => {
     if (item.type === 'loading') {
@@ -318,20 +325,20 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
         }
         data={isLoading ? loadingItem : isEmptyView ? emptyItem : items}
         renderItem={renderItem}
-        onEndReached={() => !isLoading && setPage((p) => p + 1)}
-        onEndReachedThreshold={0.5}
+        // onEndReached={() => !isLoading && setPage((p) => p + 1)}
+        // onEndReachedThreshold={0.5}
         refreshing={res?.networkStatus === 4}
         onRefresh={() => res?.refetch()}
-        ListFooterComponent={() =>
-          !isEmptyView &&
-          !isSearch &&
-          !isLoading &&
-          isLoadingMore && (
-            <View style={{ paddingVertical: 20 }}>
-              <ActivityIndicator size="large" color="#0061FF" />
-            </View>
-          )
-        }
+        // ListFooterComponent={() =>
+        //   !isEmptyView &&
+        //   !isSearch &&
+        //   !isLoading &&
+        //   isLoadingMore && (
+        //     <View style={{ paddingVertical: 20 }}>
+        //       <ActivityIndicator size="large" color="#0061FF" />
+        //     </View>
+        //   )
+        // }
       />
       {!isSearch && <TopLine scrollY={scrollY} />}
     </>
