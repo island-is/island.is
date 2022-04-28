@@ -109,7 +109,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
  ApplicationContext,
  ApplicationStateSchema<ReferenceTemplateEvent>,
  ReferenceTemplateEvent
-> = {
+ > = {
  type: ApplicationTypes.EXAMPLE,
  name: m.name,
  institution: m.institutionName,
