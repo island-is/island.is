@@ -25,8 +25,6 @@ const Estimation = ({ application }: Props) => {
 
   const getAidType = () => {
     switch (true) {
-      case !nationalRegistry?.data?.applicant?.spouse:
-        return true
       case nationalRegistry?.data?.applicant?.spouse?.maritalStatus !=
         undefined:
         return (
