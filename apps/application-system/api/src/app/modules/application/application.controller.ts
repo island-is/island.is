@@ -290,8 +290,10 @@ export class ApplicationController {
     })
 
     const actionDto: BaseApplication = {
-      ...updatedApplication,
+      ...applicationDto,
       id: createdApplication.id,
+      modified: createdApplication.modified,
+      created: createdApplication.created,
       answers: updatedApplication.answers as FormValue,
       externalData: updatedApplication.externalData as ExternalData,
       attachments: {},
@@ -305,8 +307,6 @@ export class ApplicationController {
 
     if (onEnterStateAction) {
       const {
-        hasError,
-        error,
         updatedApplication: withUpdatedExternalData,
       } = await this.performActionOnApplication(
         actionDto,
@@ -315,11 +315,7 @@ export class ApplicationController {
         onEnterStateAction,
       )
 
-      // TODO: decision on how to handle errors
-      // Proposal:  return the external Data anyway.
-      //            Programmers responsible for handling
-      //            failure status on external data in
-      //            their respective applications
+      //Programmers responsible for handling failure status
       updatedApplication.externalData = withUpdatedExternalData.externalData
     }
 
