@@ -1,6 +1,9 @@
 import { useContext } from 'react'
 
-import { GatherTaxDataQuery } from '@island.is/financial-aid-web/osk/graphql/sharedGql'
+import {
+  GatherDirectTaxPaymentsQuery,
+  GatherPersonalTaxReturnQuery,
+} from '@island.is/financial-aid-web/osk/graphql/sharedGql'
 
 import {
   DirectTaxPayment,
@@ -11,32 +14,42 @@ import {
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 
 const useTaxData = () => {
-  const gatherTaxDataQuery = useAsyncLazyQuery<{
-    municipalitiesPersonalTaxReturn: { personalTaxReturn: PersonalTaxReturn }
+  const gatherDirectTaxPayments = useAsyncLazyQuery<{
     municipalitiesDirectTaxPayments: {
       directTaxPayments: DirectTaxPayment[]
       success: boolean
     }
-  }>(GatherTaxDataQuery)
+  }>(GatherDirectTaxPaymentsQuery)
+
+  const gatherTaxReturn = useAsyncLazyQuery<
+    {
+      municipalitiesPersonalTaxReturn: { personalTaxReturn: PersonalTaxReturn }
+    },
+    { input: { id: string } }
+  >(GatherPersonalTaxReturnQuery)
+
   const { form, updateForm } = useContext(FormContext)
 
   const gatherTaxData = async () => {
-    const { data: taxes } = await gatherTaxDataQuery({})
-
+    const { data: directPayments } = await gatherDirectTaxPayments({})
+    const { data: taxReturn } = await gatherTaxReturn({
+      input: { id: form.fileFolderId },
+    })
     updateForm({
       ...form,
-      taxReturnFromRskFile: taxes?.municipalitiesPersonalTaxReturn
+      taxReturnFromRskFile: taxReturn?.municipalitiesPersonalTaxReturn
         ?.personalTaxReturn
         ? [
             {
-              ...taxes.municipalitiesPersonalTaxReturn?.personalTaxReturn,
+              ...taxReturn.municipalitiesPersonalTaxReturn?.personalTaxReturn,
               type: FileType.TAXRETURN,
             },
           ]
         : [],
       directTaxPayments:
-        taxes?.municipalitiesDirectTaxPayments?.directTaxPayments,
-      hasFetchedPayments: taxes?.municipalitiesDirectTaxPayments?.success,
+        directPayments?.municipalitiesDirectTaxPayments?.directTaxPayments,
+      hasFetchedPayments:
+        directPayments?.municipalitiesDirectTaxPayments?.success,
     })
   }
 

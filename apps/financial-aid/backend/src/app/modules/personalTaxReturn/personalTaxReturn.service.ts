@@ -39,7 +39,7 @@ export class PersonalTaxReturnService {
       })
   }
 
-  async personalTaxReturn(nationalId: string, folder?: string) {
+  async personalTaxReturn(nationalId: string, folder: string) {
     try {
       let changeableYear = new Date().getFullYear() - 1
 
