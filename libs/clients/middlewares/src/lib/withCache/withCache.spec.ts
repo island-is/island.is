@@ -601,4 +601,23 @@ describe('EnhancedFetch#withCache', () => {
     await expect(response1.text()).resolves.toEqual('')
     await expect(response2.text()).resolves.toEqual('')
   })
+
+  // REGRESSION TEST: Passed in headers were deleted when combining Cache with Auth or AutoAuth.
+  it('keeps all passed in headers', async () => {
+    // Arrange
+    const cacheManager = caching({ store: 'memory', ttl: 0 })
+    env = setupTestEnv({ cache: { cacheManager } })
+    mockResponse()
+    const expectedHeaders = { 'X-Test': ['Test'], authorization: ['Test auth'] }
+
+    // Act
+    await env.enhancedFetch(testUrl, {
+      headers: { 'X-Test': 'Test' },
+      auth: { authorization: 'Test auth', scope: [], client: '' },
+    })
+
+    // Assert
+    const actualHeaders = env.fetch.mock.calls[0][0].headers.raw()
+    expect(actualHeaders).toMatchObject(expectedHeaders)
+  })
 })
