@@ -36,10 +36,10 @@ export class Vehicle {
   role?: string
 
   @Field({ nullable: true })
-  operationStartDate?: string
+  operatorStartDate?: string
 
   @Field({ nullable: true })
-  operationEndDate?: string
+  operatorEndDate?: string
 
   @Field({ nullable: true })
   outOfUse?: boolean
@@ -48,7 +48,7 @@ export class Vehicle {
   otherOwners?: boolean
 
   @Field({ nullable: true })
-  termination?: string
+  termination?: boolean
 
   @Field({ nullable: true })
   buyerPersidno?: string

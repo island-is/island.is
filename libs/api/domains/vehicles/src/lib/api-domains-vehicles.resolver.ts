@@ -19,13 +19,13 @@ import { GetVehicleDetailInput } from '../dto/getVehicleDetailInput'
 export class VehiclesResolver {
   constructor(private readonly vehiclesService: VehiclesService) {}
 
-  @Query(() => graphqlTypeJson, { name: 'getVehiclesForUser' })
+  @Query(() => UsersVehicles, { name: 'getVehiclesForUser' })
   @Audit()
   async getVehicleForUser(@CurrentUser() user: User) {
     return await this.vehiclesService.getVehiclesForUser(user.nationalId)
   }
 
-  @Query(() => graphqlTypeJson, { name: 'getVehicleDetail' })
+  @Query(() => UsersVehicles, { name: 'getVehicleDetail' })
   @Audit()
   async getVehicleDetail(
     @Args('input') input: GetVehicleDetailInput,

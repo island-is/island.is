@@ -4,10 +4,10 @@ import type { Logger } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import {
   VehiclesApi,
-  RootGetRequest,
   BasicVehicleInformationGetRequest,
   BasicVehicleInformation,
   BasicVehicleInformationResult,
+  PersidnoLookup,
 } from '@island.is/clients/vehicles'
 import { GetVehiclesForUserInput } from '../dto/getVehiclesForUserInput'
 import { UsersVehicles } from './api-domains-vehicles.type'
@@ -20,8 +20,12 @@ export class VehiclesService {
     private vehiclesApi: VehiclesApi,
   ) {}
 
-  async getVehiclesForUser(nationalId: string): Promise<UsersVehicles> {
-    return await this.vehiclesApi.rootGet({ requestedPersidno: nationalId })
+  async getVehiclesForUser(nationalId: string): Promise<PersidnoLookup> {
+    const res = await this.vehiclesApi.vehicleHistoryGet({
+      requestedPersidno: '2312892249',
+    })
+    console.log('REEES', { res })
+    return res
   }
 
   async getVehicleDetail(

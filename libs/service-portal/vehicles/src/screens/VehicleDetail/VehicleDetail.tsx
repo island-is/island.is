@@ -35,7 +35,25 @@ import OwnerInfoItem from '../../components/DetailTable/OwnerInfoItem'
 import InspectionInfoItem from '../../components/DetailTable/InspectionInfoItem'
 import TechnicalInfoItem from '../../components/DetailTable/TechnicalInfoItem'
 import OwnersTable from '../../components/DetailTable/OwnersTable'
+import { gql, useQuery } from '@apollo/client'
+import { Query } from '@island.is/api/schema'
 
+const GET_USERS_VEHICLE_DETAIL = gql`
+  query GetUsersVehicles($input: GetVehicleDetailInput!) {
+    getVehicleDetail(input: $input) {
+      
+    }
+  }
+`
+
+/** permno?: string
+  regno!: string
+  vin?: string 
+  
+   query GenericLicenseQuery($input: GetGenericLicenseInput!, $locale: String) {
+    genericLicense(input: $input, locale: $locale) {
+  
+  */
 const VehicleDetail: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.vehicle')
   const { formatMessage } = useLocale()
@@ -43,7 +61,15 @@ const VehicleDetail: ServicePortalModuleComponent = ({ userInfo }) => {
   PlausiblePageviewDetail(
     ServicePortalPath.AssetsVehiclesDetail.replace(':id', 'detail'),
   )
+  const { data, loading, error } = useQuery<Query>(GET_USERS_VEHICLE_DETAIL, {
+    variables: {
+      input: {
+        regno: 'kzp28',
+      },
+    },
+  })
 
+  console.log(data)
   const year = dateParse(
     vehicleDetailReal.firstregdate.replace('-', ''),
   ).getFullYear()

@@ -21,10 +21,7 @@ export const VehiclesApiProvider: Provider<VehiclesApi> = {
           fetch: (url, init) => {
             // The Properties API expects two different authorization headers for some reason.
             const request = new Request(url, init)
-            request.headers.set(
-              'authorization-identity',
-              request.headers.get('authorization') ?? '',
-            )
+
             return nodeFetch(request)
           },
         }),
@@ -33,6 +30,7 @@ export const VehiclesApiProvider: Provider<VehiclesApi> = {
         headers: {
           'X-Road-Client': xroadConfig.xRoadClient,
           Accept: 'application/json',
+          'Content-Type': 'application/json',
         },
       }),
     ),

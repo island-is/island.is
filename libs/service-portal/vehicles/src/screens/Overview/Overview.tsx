@@ -56,7 +56,15 @@ import { vehiclesList } from '../../mock/vehiclesList'
     } */
 const GET_USERS_VEHICLES = gql`
   query GetUsersVehicles {
-    getVehiclesForUser
+    getVehiclesForUser {
+      name
+      vehicleList {
+        permno
+        regno
+        type
+        color
+      }
+    }
   }
 `
 
@@ -95,8 +103,8 @@ export const VehiclesOverview: ServicePortalModuleComponent = () => {
     defaultFilterValues,
   )
   const { data, loading, error, called } = useQuery<Query>(GET_USERS_VEHICLES)
-
-  const vehicles = vehiclesList //data?.getVehiclesForUser?.vehicleList || []
+  console.log(data)
+  const vehicles = data?.getVehiclesForUser?.vehicleList || []
   const filteredVehicles = getFilteredVehicles(vehicles, filterValue)
 
   const handleSearchChange = useCallback((value: string) => {
