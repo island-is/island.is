@@ -14,6 +14,7 @@ import {
   DATA_UPLOAD,
   REAL_ESTATE_ADDRESS,
   MORTGAGE_CERTIFICATE_CONTENT_NO_KMARKING,
+  VEHICLE_TYPE,
 } from './__mock-data__/responses'
 import {
   mapHomestay,
@@ -192,6 +193,19 @@ describe('SyslumennService', () => {
         undefined,
       )
       expect(res.exists).toStrictEqual(false)
+    })
+  })
+
+  describe('getVehicleTypeName', () => {
+    it('should return vehicle type name for valid license plate', async () => {
+      const response = await service.getVehicleType('AB123')
+      expect(response).toStrictEqual(VEHICLE_TYPE)
+    })
+
+    it('should return error for invalid license plate', async () => {
+      // License plates must be 2-6 letters/numbers/space
+      const response = await service.getVehicleType('ABC12345')
+      expect(response).toStrictEqual([])
     })
   })
 })

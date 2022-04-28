@@ -7,7 +7,7 @@ import { SyslumennService } from '@island.is/clients/syslumenn'
 import { PaginatedOperatingLicenses } from './models/paginatedOperatingLicenses'
 import { CertificateInfoResponse } from './models/certificateInfo'
 import { DistrictCommissionerAgencies } from './models/districtCommissionerAgencies'
-import { RealEstateAddress } from './models/realEstateAddress'
+import { AssetName } from './models/assetName'
 import { UseGuards } from '@nestjs/common'
 import { ApiScope } from '@island.is/auth/scopes'
 import {
@@ -72,12 +72,20 @@ export class SyslumennResolver {
     return this.syslumennService.getDistrictCommissionersAgencies()
   }
 
-  @Query(() => [RealEstateAddress])
+  @Query(() => [AssetName])
   @BypassAuth()
   getRealEstateAddress(
     @Args('input') realEstateId: string,
-  ): Promise<Array<RealEstateAddress>> {
+  ): Promise<Array<AssetName>> {
     return this.syslumennService.getRealEstateAddress(realEstateId)
+  }
+
+  @Query(() => [AssetName])
+  @BypassAuth()
+  getVehicleType(
+    @Args('input') licenseNumber: string,
+  ): Promise<Array<AssetName>> {
+    return this.syslumennService.getVehicleType(licenseNumber)
   }
 
   @Query(() => PropertyDetail, { nullable: true })

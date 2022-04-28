@@ -1,4 +1,6 @@
+import { VedbandayfirlitSkeyti } from '../../../gen/fetch'
 import { rest } from 'msw'
+import { AssetType } from '../syslumennClient.types'
 import {
   VHSUCCESS,
   VHFAIL,
@@ -10,6 +12,8 @@ import {
   MORTGAGE_CERTIFICATE_CONTENT_OK,
   MORTGAGE_CERTIFICATE_CONTENT_NO_KMARKING,
   MORTGAGE_CERTIFICATE_MESSAGE_NO_KMARKING,
+  VEHICLE_TYPE_NAME,
+  REAL_ESTATE_ADDRESS_NAME,
 } from './responses'
 
 export const MOCK_PROPERTY_NUMBER_OK = 'F2003292'
@@ -70,10 +74,27 @@ export const requestHandlers = [
     return res(ctx.status(200), ctx.json(DATA_UPLOAD))
   }),
   rest.post(url('/api/VedbokavottordRegluverki'), (req, res, ctx) => {
-    const realEstateId = (req.body as any).fastanumer ?? ''
-    const validRealEstateId = /f?\d+/.test(realEstateId)
-    if (!validRealEstateId) return res(ctx.status(404), ctx.json([]))
-    return res(ctx.status(200), ctx.json(VEDBANDAYFIRLRIT_REGLUVERKI_RESPONSE))
+    const body = req.body as VedbandayfirlitSkeyti
+    const assetId = body.fastanumer ?? ''
+    const response = VEDBANDAYFIRLRIT_REGLUVERKI_RESPONSE
+    switch ((body.tegundAndlags as number) ?? -1) {
+      case AssetType.RealEstate: {
+        if (!/f?\d+/.test(assetId)) return res(ctx.status(404), ctx.json([]))
+        response[0].heiti = REAL_ESTATE_ADDRESS_NAME
+        return res(ctx.status(200), ctx.json(response))
+      }
+      case AssetType.Vehicle: {
+        // This test will break if tested with Icelandic private license plates, even though they are legal
+        if (!/^[A-Z0-9]{2,6}$/.test(assetId.toUpperCase()))
+          return res(ctx.status(404), ctx.json([]))
+        response[0].heiti = VEHICLE_TYPE_NAME
+        return res(ctx.status(200), ctx.json(response))
+      }
+      default: {
+        response[0].heiti = 'INVALIDE'
+        return res(ctx.status(200), ctx.json(response))
+      }
+    }
   }),
   rest.post(url('/api/Vedbokarvottord'), (req, res, ctx) => {
     const { fastanumer } = req.body as {
