@@ -225,7 +225,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PersidnoLookup"
+                  "$ref": "#/components/schemas/PersidnoLookupResult"
                 }
               }
             }
@@ -1583,6 +1583,19 @@
             "nullable": true
           },
           "newValue": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PersidnoLookupResult": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/PersidnoLookup"
+          },
+          "nextCursor": {
             "type": "string",
             "nullable": true
           }

@@ -8,6 +8,7 @@ import {
   BasicVehicleInformation,
   BasicVehicleInformationResult,
   PersidnoLookup,
+  PersidnoLookupResult,
 } from '@island.is/clients/vehicles'
 import { GetVehiclesForUserInput } from '../dto/getVehiclesForUserInput'
 import { UsersVehicles } from './api-domains-vehicles.type'
@@ -20,7 +21,7 @@ export class VehiclesService {
     private vehiclesApi: VehiclesApi,
   ) {}
 
-  async getVehiclesForUser(nationalId: string): Promise<PersidnoLookup> {
+  async getVehiclesForUser(nationalId: string): Promise<PersidnoLookupResult> {
     const res = await this.vehiclesApi.vehicleHistoryGet({
       requestedPersidno: '2312892249',
     })

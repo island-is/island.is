@@ -22,7 +22,9 @@ export class VehiclesResolver {
   @Query(() => UsersVehicles, { name: 'getVehiclesForUser' })
   @Audit()
   async getVehicleForUser(@CurrentUser() user: User) {
-    return await this.vehiclesService.getVehiclesForUser(user.nationalId)
+    const res = await this.vehiclesService.getVehiclesForUser(user.nationalId)
+
+    return res?.data ?? null
   }
 
   @Query(() => UsersVehicles, { name: 'getVehicleDetail' })
