@@ -13,8 +13,8 @@ import {
   AnswerValidationError,
 } from '@island.is/application/core'
 
-import { Period } from '../types'
-import { NO, YES } from '../constants'
+import { Period, Payments } from '../types'
+import { NO, NO_PRIVATE_PENSION_FUND, YES } from '../constants'
 import { isValidEmail } from './isValidEmail'
 import { errorMessages } from './messages'
 import {
@@ -26,6 +26,7 @@ import { filterValidPeriods } from '../lib/parentalLeaveUtils'
 import { validatePeriod } from './answerValidator-utils'
 
 const EMPLOYER = 'employer'
+const PAYMENTS = 'payments'
 // When attempting to continue from the periods repeater main screen
 // this validator will get called to validate all of the periods
 export const VALIDATE_PERIODS = 'validatedPeriods'
@@ -66,6 +67,65 @@ export const answerValidators: Record<string, AnswerValidator> = {
 
     if (isSelfEmployed === NO && !isValidEmail(obj.email as string)) {
       return buildError(errorMessages.email, 'email')
+    }
+
+    return undefined
+  },
+  [PAYMENTS]: (newAnswer: unknown, application: Application) => {
+    const payments = newAnswer as Payments
+
+    const privatePensionFund = getValueViaPath(
+      application.answers,
+      'payments.privatePensionFund',
+    )
+
+    const privatePensionFundPercentage = getValueViaPath(
+      application.answers,
+      'payments.privatePensionFundPercentage',
+    )
+
+    const buildError = (message: StaticText, path: string) =>
+      buildValidationError(`${PAYMENTS}.${path}`)(message)
+
+    // if privatePensionFund is NO_PRIVATE_PENSION_FUND and privatePensionFundPercentage is an empty string, allow the user to continue.
+    // this will only happen when the usePrivatePensionFund field is set to NO
+    if (
+      payments.privatePensionFund === NO_PRIVATE_PENSION_FUND &&
+      payments.privatePensionFundPercentage === ''
+    )
+      return undefined
+
+    if (payments.privatePensionFund === '' || privatePensionFund === '') {
+      return buildError(coreErrorMessages.defaultError, 'privatePensionFund')
+    }
+
+    if (!payments.privatePensionFund) {
+      return buildError(coreErrorMessages.defaultError, 'privatePensionFund')
+    }
+
+    // validate that the privatePensionFundPercentage is either 2 or 4 percent
+    if (
+      typeof privatePensionFundPercentage === 'string' ||
+      typeof payments.privatePensionFundPercentage === 'string'
+    ) {
+      if (
+        payments.privatePensionFundPercentage === '2' ||
+        payments.privatePensionFundPercentage === '4'
+      ) {
+        return undefined
+      }
+
+      return buildError(
+        coreErrorMessages.defaultError,
+        'privatePensionFundPercentage',
+      )
+    }
+
+    if (!payments.privatePensionFundPercentage) {
+      return buildError(
+        coreErrorMessages.defaultError,
+        'privatePensionFundPercentage',
+      )
     }
 
     return undefined

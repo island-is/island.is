@@ -1,4 +1,3 @@
-import { CaseType } from '@island.is/judicial-system/types'
 import { defineMessages } from 'react-intl'
 
 export const core = defineMessages({
@@ -154,7 +153,8 @@ export const core = defineMessages({
   },
   pastRestrictionCase: {
     id: 'judicial.system.core:past_restriction_case',
-    defaultMessage: `{caseType, select, ${CaseType.ADMISSION_TO_FACILITY} {Fyrri vistun} ${CaseType.TRAVEL_BAN} {Fyrra farbann} other {Fyrri gæsla}}`,
+    defaultMessage:
+      '{caseType, select, ADMISSION_TO_FACILITY {Fyrri vistun} TRAVEL_BAN {Fyrra farbann} other {Fyrri gæsla}}',
     description: 'Notað fyrir fyrri mál í öllum flæðum.',
   },
   // TODO: remove pastCustody and pastTravelBan, use pastRestrictionCase instead

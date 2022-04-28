@@ -113,6 +113,11 @@ export const m = defineMessages({
     defaultMessage: 'Ökuskóli',
     description: 'school',
   },
+  confirmSchoolButton: {
+    id: 'dsc.application:confirmSchoolButton',
+    defaultMessage: 'Staðfesta skráningu',
+    description: 'school',
+  },
 
   /* No student was found */
   noStudentFoundMessage: {

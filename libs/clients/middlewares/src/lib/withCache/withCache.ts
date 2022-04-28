@@ -1,10 +1,15 @@
 import CachePolicy from 'http-cache-semantics'
 
-import { FetchAPI, Headers, HeadersInit, Request, Response } from '../nodeFetch'
+import {
+  Headers,
+  HeadersInit,
+  MiddlewareAPI,
+  Request,
+  Response,
+} from '../nodeFetch'
 import { FetchError } from '../FetchError'
 import { CacheEntry, CacheMiddlewareConfig, CachePolicyInternal } from './types'
 import { CacheResponse } from './CacheResponse'
-import { serializeCacheStatusHeader } from './CacheStatus'
 
 const DEBUG_NAMES = (process.env.ENHANCED_FETCH_DEBUG_CACHE ?? '')
   .split(',')
@@ -19,7 +24,7 @@ export function withCache({
   overrideCacheControl,
   overrideForPost = false,
   cacheManager,
-}: CacheMiddlewareConfig): FetchAPI {
+}: CacheMiddlewareConfig): MiddlewareAPI {
   const sharedFor = typeof shared === 'function' ? shared : () => shared
   const overrideCacheControlFor =
     typeof overrideCacheControl === 'function'
@@ -27,9 +32,7 @@ export function withCache({
       : () => overrideCacheControl
   const debug = DEBUG_NAMES.includes('*') || DEBUG_NAMES.includes(name)
 
-  const fetchWithCache: FetchAPI = async (input, init) => {
-    const request = new Request(input, init)
-
+  const fetchWithCache: MiddlewareAPI = async (request) => {
     const isShared = sharedFor(request)
     if (!isShared && !request.auth?.nationalId) {
       logger.warn(
