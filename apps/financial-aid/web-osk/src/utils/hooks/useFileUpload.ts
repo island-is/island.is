@@ -10,7 +10,7 @@ import {
   FileType,
   SignedUrl,
 } from '@island.is/financial-aid/shared/lib'
-import { FormContext } from '../../components/FormProvider/FormProvider'
+import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 
 export const useFileUpload = (formFiles: UploadFile[]) => {
   const { form } = useContext(FormContext)
