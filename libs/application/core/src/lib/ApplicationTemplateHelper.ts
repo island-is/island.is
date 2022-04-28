@@ -278,7 +278,9 @@ export class ApplicationTemplateHelper<
     return stateInformation.roles?.find(({ id }) => id === role)
   }
 
-  getDataProvidersFromRoleInState(role: ApplicationRole): ApiDataProvider[] {
+  getDataProvidersFromRoleInState(
+    role: ApplicationRole,
+  ): ApplicationTemplateAPIAction[] {
     const roleInState = this.getRoleInState(role)
     return roleInState?.api ?? []
   }

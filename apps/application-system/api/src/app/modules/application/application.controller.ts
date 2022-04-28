@@ -52,10 +52,7 @@ import {
   getApplicationTemplateByTypeId,
   getApplicationTranslationNamespaces,
 } from '@island.is/application/template-loader'
-import {
-  PerformActionResult,
-  TemplateAPIService,
-} from '@island.is/application/template-api-modules'
+import { TemplateAPIService } from '@island.is/application/template-api-modules'
 import { mergeAnswers, DefaultEvents } from '@island.is/application/core'
 import { IntlService } from '@island.is/cms-translations'
 import { Audit, AuditService } from '@island.is/nest/audit'
@@ -505,14 +502,12 @@ export class ApplicationController {
       console.log(externalDataDto.dataProviders[i])
       console.log(providersFromRole)
       const found = providersFromRole.find(
-        (x) => x.id === externalDataDto.dataProviders[i].id,
+        (x) => x.externalDataId === externalDataDto.dataProviders[i].id,
       )
 
       if (found) {
         listOfProviders.push({
-          apiModuleAction: found.apiAction,
-          externalDataId: found.id,
-          shouldPersistToExternalData: found.shouldPersisttoExternalData,
+          ...found,
           order: externalDataDto.dataProviders[i].order,
         })
       } else {

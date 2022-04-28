@@ -9,7 +9,7 @@ import { AnyEventObject, MachineOptions, StateMachine } from 'xstate/lib/types'
 
 import { FormLoader, FormText, StaticText } from './Form'
 import { Application, ActionCardTag } from './Application'
-
+import { PerformActionResult } from './TemplateApiModuleTypes'
 export type ApplicationRole = 'applicant' | 'assignee' | string
 
 export enum DefaultEvents {
@@ -34,15 +34,15 @@ export interface RoleInState<T extends EventObject = AnyEventObject> {
   write?: ReadWriteValues
   formLoader?: FormLoader
   actions?: CallToAction<T>[]
-  api?: ApiDataProvider[]
+  api?: Omit<ApplicationTemplateAPIAction, 'order'>[]
 }
 
-export type paramType = { [key: string]: number | string } //Array<{ [key: string]: number | string }>
 export interface ApiDataProvider {
   id: string
   apiAction: string
   shouldPersisttoExternalData?: boolean
-  parameters?: paramType | ((application: Application) => paramType)
+  useMockData?: boolean
+  mockData?: unknown | ((application: Application) => unknown)
 }
 
 export interface ApplicationContext {
@@ -69,6 +69,11 @@ export interface ApplicationTemplateAPIAction {
   throwOnError?: boolean
 
   order?: number
+
+  useMockData?: boolean
+  mockData?:
+    | PerformActionResult
+    | ((application: Application) => PerformActionResult)
 }
 
 export type StateLifeCycle =

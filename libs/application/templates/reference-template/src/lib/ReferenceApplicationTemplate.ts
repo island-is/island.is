@@ -8,6 +8,7 @@ import {
   DefaultEvents,
   DefaultStateLifeCycle,
   ApplicationConfigurations,
+  SharedDataProviders,
 } from '@island.is/application/core'
 import * as z from 'zod'
 import * as kennitala from 'kennitala'
@@ -110,22 +111,26 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
-              // TODO: Where do permissions for Dataproviders lie
               api: [
                 {
-                  apiAction: ApiActions.getReferenceData,
-                  id: 'reference',
-                  shouldPersisttoExternalData: true,
+                  apiModuleAction: ApiActions.getReferenceData,
+                  externalDataId: 'reference',
+                  shouldPersistToExternalData: true,
+                  useMockData: true,
+                  mockData: {
+                    response: {
+                      data: {
+                        stone: 'stones',
+                      },
+                    },
+                    success: true,
+                  },
                 },
+                SharedDataProviders.NationalRegistryProvider,
                 {
-                  apiAction: ApiActions.nationalRegistry,
-                  id: 'nationalRegistry',
-                  shouldPersisttoExternalData: true,
-                },
-                {
-                  apiAction: ApiActions.getAnotherReferenceData,
-                  id: 'anotherReference',
-                  shouldPersisttoExternalData: true,
+                  apiModuleAction: ApiActions.getAnotherReferenceData,
+                  externalDataId: 'anotherReference',
+                  shouldPersistToExternalData: true,
                 },
               ],
             },

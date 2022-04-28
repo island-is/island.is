@@ -6,11 +6,9 @@ import {
   ApplicationTemplateAPIAction,
   ApplicationWithAttachments,
   ExternalData,
-} from '@island.is/application/core'
-import {
   PerformActionResult,
-  TemplateAPIService,
-} from '@island.is/application/template-api-modules'
+} from '@island.is/application/core'
+import { TemplateAPIService } from '@island.is/application/template-api-modules'
 import { User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
 
@@ -26,6 +24,18 @@ export class TemplateApiActionRunner {
     private readonly templateAPIService: TemplateAPIService,
   ) {}
 
+  /**
+   * Runs api actions for a given application.
+   * Actions can be run sequentially or in parallel.
+   * Each action with the same order number is run in parallel.
+   * Else the actions are run sequentially ascending by order.
+   * Actions with no order are run last in parallel.
+   * Application is then updated with new external data from each action with persistToExternalData set to true
+   * @param application
+   * @param actions
+   * @param auth
+   * @returns Updated application
+   */
   async run(
     application: ApplicationWithAttachments,
     actions: ApplicationTemplateAPIAction[],
@@ -34,23 +44,17 @@ export class TemplateApiActionRunner {
     this.application = application
     this.auth = auth
     this.oldExternalData = application.externalData
-    // group by order
-    const groupedActions = actions.reduce((acc, action) => {
-      const order = action.order ?? -1
-      if (!acc[order]) {
-        acc[order] = []
-      }
-      acc[order].push(action)
-      return acc
-    }, {} as { [key: number]: ApplicationTemplateAPIAction[] })
 
-    const lss = Object.keys(groupedActions).map(
-      (value: string): ApplicationTemplateAPIAction[] => {
-        return groupedActions[(value as unknown) as number]
-      },
-    )
+    const groupedActions = this.groupByOrder(actions)
+    this.runActions(groupedActions)
 
-    const result = lss.reduce((accumulatorPromise, actions) => {
+    this.persistExternalData(actions)
+
+    return this.application
+  }
+
+  async runActions(actionGroups: ApplicationTemplateAPIAction[][]) {
+    const result = actionGroups.reduce((accumulatorPromise, actions) => {
       return accumulatorPromise.then(() => {
         const ps = Promise.all(
           actions.map((action) => this.callProvider(action)),
@@ -62,29 +66,60 @@ export class TemplateApiActionRunner {
     }, Promise.resolve())
 
     await result
+  }
 
-    this.persistExternalData()
+  groupByOrder(
+    actions: ApplicationTemplateAPIAction[],
+  ): ApplicationTemplateAPIAction[][] {
+    const groupedActions = actions.reduce((acc, action) => {
+      const order = action.order ?? -1
+      if (!acc[order]) {
+        acc[order] = []
+      }
+      acc[order].push(action)
+      return acc
+    }, {} as { [key: number]: ApplicationTemplateAPIAction[] })
 
-    return this.application
+    return Object.keys(groupedActions).map(
+      (value: string): ApplicationTemplateAPIAction[] => {
+        return groupedActions[(value as unknown) as number]
+      },
+    )
   }
 
   async callProvider(action: ApplicationTemplateAPIAction) {
     console.log(
       `makeCall to ${action.apiModuleAction} for application ${this.application.id}`,
     )
+
     const {
       apiModuleAction,
       shouldPersistToExternalData,
       externalDataId,
+      useMockData,
+      mockData,
     } = action
-    const actionResult = await this.templateAPIService.performAction({
-      templateId: this.application.typeId,
-      type: apiModuleAction,
-      props: {
-        application: this.application,
-        auth: this.auth,
-      },
-    })
+
+    let actionResult: PerformActionResult | undefined
+
+    if (useMockData) {
+      console.log('USING MOOOOKXS')
+      console.log({ mockData })
+      actionResult =
+        typeof mockData === 'function' ? mockData(this.application) : mockData
+    } else {
+      actionResult = await this.templateAPIService.performAction({
+        templateId: this.application.typeId,
+        type: apiModuleAction,
+        props: {
+          application: this.application,
+          auth: this.auth,
+        },
+      })
+    }
+    console.log({ actionResult })
+    if (!actionResult)
+      throw new Error(`No Action or mock is defined for ${apiModuleAction}`)
 
     await this.updateExternalData(
       actionResult,
@@ -97,7 +132,17 @@ export class TemplateApiActionRunner {
     )
   }
 
-  async persistExternalData(): Promise<void> {
+  async persistExternalData(
+    actions: ApplicationTemplateAPIAction[],
+  ): Promise<void> {
+    /*   actions.map((action) => {
+      if (!action.shouldPersistToExternalData) {
+        delete this.application.externalData[
+          action.externalDataId || action.apiModuleAction
+        ]
+      }
+    })*/
+
     const {
       updatedApplication: withExternalData,
     } = await this.applicationService.updateExternalData(
@@ -130,5 +175,6 @@ export class TemplateApiActionRunner {
       ...this.application.externalData,
       ...this.newExternalData,
     }
+    console.log(this.application.externalData)
   }
 }
