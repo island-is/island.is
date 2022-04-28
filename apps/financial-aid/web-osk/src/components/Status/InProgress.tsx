@@ -7,7 +7,6 @@ import {
   Application,
   ApplicationState,
   getNextPeriod,
-  getState,
   Routes,
 } from '@island.is/financial-aid/shared/lib'
 
@@ -61,6 +60,7 @@ const InProgress = ({ application, isApplicant = true }: Props) => {
         <Estimation
           homeCircumstances={application.homeCircumstances}
           usePersonalTaxCredit={application?.usePersonalTaxCredit}
+          familyStatus={application.familyStatus}
           aboutText={
             <Text marginBottom={[2, 2, 3]}>
               Athugaðu að þessi útreikningur er{' '}
