@@ -61,7 +61,6 @@ const Estimation = ({
       )
     }
   }, [municipality])
-  console.log(aidAmount)
 
   return (
     <>
