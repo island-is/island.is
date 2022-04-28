@@ -1670,9 +1670,7 @@ describe('formatCustodyRestrictions', () => {
     const result = format(caseType, requestedRestrictions, isCustodyIsolation)
 
     // Assert
-    expect(result).toEqual(
-      'Sækjandi tekur fram að vistuninn verði án takmarkana.',
-    )
+    expect(result).toEqual('Sækjandi tekur fram að vistun verði án takmarkana.')
   })
 
   test('should format custody with isolation, without further restrictions', () => {
@@ -1722,7 +1720,7 @@ describe('formatCustodyRestrictions', () => {
 
     // Assert
     expect(res).toBe(
-      'Sækjandi tekur fram að vistuninn verði með bréfaskoðun og símabanni og fjölmiðlabanni skv. 99. gr. laga nr. 88/2008.',
+      'Sækjandi tekur fram að vistun verði með bréfaskoðun og símabanni og fjölmiðlabanni skv. 99. gr. laga nr. 88/2008.',
     )
   })
 

@@ -55,14 +55,14 @@ export const custodyNotice = {
   withFurtherRestrictions: defineMessage({
     id: 'judicial.system.backend:pdf.custody_notice.with_further_restrictions',
     defaultMessage:
-      'Sækjandi tekur fram að {caseType, select, ADMISSION_TO_FACILITY {vistuninn} other {gæsluvarðhaldið}} verði með {restrictions} skv. 99. gr. laga nr. 88/2008.',
+      'Sækjandi tekur fram að {caseType, select, ADMISSION_TO_FACILITY {vistun} other {gæsluvarðhaldið}} verði með {restrictions} skv. 99. gr. laga nr. 88/2008.',
     description: '',
   }),
   noFutherRestrictions: defineMessage({
     id:
       'judicial.system.backend:pdf.custody_notice.ruling_restrictions.no_further_restrictions',
     defaultMessage:
-      'Sækjandi tekur fram að {caseType, select, ADMISSION_TO_FACILITY {vistuninn} other {gæsluvarðhaldið}} verði án {hasIsolation, select, true {annara } other {}}takmarkana.',
+      'Sækjandi tekur fram að {caseType, select, ADMISSION_TO_FACILITY {vistun} other {gæsluvarðhaldið}} verði án {hasIsolation, select, true {annara } other {}}takmarkana.',
     description: '',
   }),
 }
