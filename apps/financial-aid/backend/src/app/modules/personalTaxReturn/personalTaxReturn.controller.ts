@@ -36,8 +36,6 @@ export class PersonalTaxReturnController {
     @Param('id') id: string,
     @CurrentUser() user: User,
   ): Promise<PersonalTaxReturnResponse> {
-    console.log('KEMURU HER??')
-    // TODO: Get application id as query parameter input
     return await this.personalTaxReturnService.personalTaxReturn(
       user.nationalId,
       id,
