@@ -10,8 +10,6 @@ import {
   InstitutionType,
 } from '@island.is/judicial-system/types'
 
-import { notifications } from '../messages'
-
 import {
   formatProsecutorCourtDateEmailNotification,
   formatLegalProvisions,
@@ -26,6 +24,7 @@ import {
   formatDefenderRevokedEmailNotification,
   formatProsecutorReceivedByCourtSmsNotification,
   formatCourtResubmittedToCourtSmsNotification,
+  formatProsecutorReadyForCourtEmailNotification,
 } from './formatters'
 
 export const makeProsecutor = (): User => {
@@ -147,14 +146,10 @@ describe('formatLegalProvisions', () => {
 })
 
 describe('formatHeadsUpSmsNotification', () => {
-  const messages = {
-    ...notifications.courtHeadsUp,
-    prosecutorText: notifications.prosecutorText,
-  }
-
   let formatMessage: FormatMessage
   beforeAll(() => {
-    formatMessage = createTestIntl('is-IS', messages).formatMessage
+    formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
+      .formatMessage
   })
 
   test('should format heads up notification', () => {
@@ -284,15 +279,10 @@ describe('formatHeadsUpSmsNotification', () => {
 })
 
 describe('formatReadyForCourtSmsNotification', () => {
-  const messages = {
-    ...notifications.courtReadyForCourt,
-    prosecutorText: notifications.prosecutorText,
-  }
-
   let formatMessage: FormatMessage
   beforeAll(() => {
-    const intl = createTestIntl('is-IS', messages)
-    formatMessage = intl.formatMessage
+    formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
+      .formatMessage
   })
 
   test('should format ready for court SMS notification', () => {
@@ -415,13 +405,10 @@ describe('formatReadyForCourtSmsNotification', () => {
 })
 
 describe('formatReadyForCourtSmsNotification', () => {
-  const messages = {
-    courtResubmittedToCourt: notifications.courtResubmittedToCourt,
-  }
   let formatMessage: FormatMessage
   beforeAll(() => {
-    const intl = createTestIntl('is-IS', messages)
-    formatMessage = intl.formatMessage
+    formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
+      .formatMessage
   })
 
   test('should format ready for court SMS notification', () => {
@@ -441,16 +428,107 @@ describe('formatReadyForCourtSmsNotification', () => {
   })
 })
 
-describe('formatProsecutorReceivedByCourtSmsNotification', () => {
-  const messages = {
-    prosecutorReceivedByCourt: notifications.prosecutorReceivedByCourt,
-  }
-
+describe('formatProsecutorReadyForCourtEmailNotification', () => {
   let formatMessage: FormatMessage
   beforeAll(() => {
-    const intl = createTestIntl('is-IS', messages)
-    formatMessage = intl.formatMessage
+    formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
+      .formatMessage
   })
+
+  test('should format ready for court email subject', () => {
+    // Arrange
+    const type = CaseType.CUSTODY
+    const court = 'Héraðsdómur Reykjavíkur'
+    const policeCaseNumber = '1234567'
+    const overviewUrl = 'https://rettarvorslugatt.island.is/test/overview'
+
+    // Act
+    const res = formatProsecutorReadyForCourtEmailNotification(
+      formatMessage,
+      type,
+      court,
+      policeCaseNumber,
+      overviewUrl,
+    )
+
+    // Assert
+    expect(res.subject).toBe('Krafa í máli 1234567')
+  })
+
+  test('should format ready for court email for custody cases', () => {
+    // Arrange
+    const type = CaseType.CUSTODY
+    const court = 'Héraðsdómur Reykjavíkur'
+    const policeCaseNumber = '1234567'
+    const overviewUrl = 'https://rettarvorslugatt.island.is/test/overview'
+
+    // Act
+    const res = formatProsecutorReadyForCourtEmailNotification(
+      formatMessage,
+      type,
+      court,
+      policeCaseNumber,
+      overviewUrl,
+    )
+
+    // Assert
+    expect(res.body).toBe(
+      'Þú hefur sent kröfu um gæsluvarðhald á Héraðsdómur Reykjavíkur vegna LÖKE máls 1234567. Skjalið er aðgengilegt undir <a href="https://rettarvorslugatt.island.is/test/overview">málinu í Réttarvörslugátt</a>.',
+    )
+  })
+
+  test('should format ready for court email for travel ban cases', () => {
+    // Arrange
+    const type = CaseType.TRAVEL_BAN
+    const court = 'Héraðsdómur Reykjaness'
+    const policeCaseNumber = '66666'
+    const overviewUrl = 'https://rettarvorslugatt.island.is/test/overview'
+
+    // Act
+    const res = formatProsecutorReadyForCourtEmailNotification(
+      formatMessage,
+      type,
+      court,
+      policeCaseNumber,
+      overviewUrl,
+    )
+
+    // Assert
+    expect(res.body).toBe(
+      'Þú hefur sent kröfu um farbann á Héraðsdómur Reykjaness vegna LÖKE máls 66666. Skjalið er aðgengilegt undir <a href="https://rettarvorslugatt.island.is/test/overview">málinu í Réttarvörslugátt</a>.',
+    )
+  })
+
+  test('should format ready for court email for travel ban cases', () => {
+    // Arrange
+    const type = CaseType.ADMISSION_TO_FACILITY
+    const court = 'Héraðsdómur Reykjaness'
+    const policeCaseNumber = '66666'
+    const overviewUrl = 'https://rettarvorslugatt.island.is/test/overview'
+
+    // Act
+    const res = formatProsecutorReadyForCourtEmailNotification(
+      formatMessage,
+      type,
+      court,
+      policeCaseNumber,
+      overviewUrl,
+    )
+
+    // Assert
+    expect(res.body).toBe(
+      'Þú hefur sent kröfu um vistun á viðeigandi stofnun á Héraðsdómur Reykjaness vegna LÖKE máls 66666. Skjalið er aðgengilegt undir <a href="https://rettarvorslugatt.island.is/test/overview">málinu í Réttarvörslugátt</a>.',
+    )
+  })
+})
+
+describe('formatProsecutorReceivedByCourtSmsNotification', () => {
+  let formatMessage: FormatMessage
+  beforeAll(() => {
+    formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
+      .formatMessage
+  })
+
   test('should format received by court notification for custody', () => {
     // Arranged
     const type = CaseType.CUSTODY
@@ -553,18 +631,10 @@ describe('formatProsecutorReceivedByCourtSmsNotification', () => {
 })
 
 describe('formatProsecutorCourtDateEmailNotification', () => {
-  const messsages = {
-    ...notifications.prosecutorCourtDateEmail,
-    courtRoom: notifications.courtRoom,
-    judge: notifications.judge,
-    defender: notifications.defender,
-    registrar: notifications.registrar,
-  }
-
   let formatMessage: FormatMessage
   beforeAll(() => {
-    const intl = createTestIntl('is-IS', messsages)
-    formatMessage = intl.formatMessage
+    formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
+      .formatMessage
   })
 
   test('should format court date notification', () => {
@@ -593,7 +663,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um gæsluvarðhald.<br/><br/>Fyrirtaka mun fara fram 24. desember 2020, kl. 18:00.<br/><br/>Dómsalur: 101.<br/><br/>Dómari: Dóra Dómari.<br/><br/>Dómritari: Dalli Dómritari.<br/><br/>Verjandi sakbornings: Valdi Verjandi.',
+      'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um gæsluvarðhald.<br /><br />Fyrirtaka mun fara fram 24. desember 2020, kl. 18:00.<br /><br />Dómsalur: 101.<br /><br />Dómari: Dóra Dómari.<br /><br />Dómritari: Dalli Dómritari.<br /><br />Verjandi sakbornings: Valdi Verjandi.',
     )
   })
 
@@ -620,7 +690,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um gæsluvarðhald.<br/><br/>Fyrirtaka mun fara fram 24. desember 2020, kl. 18:00.<br/><br/>Dómsalur: 101.<br/><br/>Dómari hefur ekki verið skráður.<br/><br/>Talsmaður sakbornings hefur ekki verið skráður.',
+      'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um gæsluvarðhald.<br /><br />Fyrirtaka mun fara fram 24. desember 2020, kl. 18:00.<br /><br />Dómsalur: 101.<br /><br />Dómari hefur ekki verið skráður.<br /><br />Talsmaður sakbornings hefur ekki verið skráður.',
     )
   })
 
@@ -650,7 +720,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um farbann.<br/><br/>Fyrirtaka mun fara fram 24. desember 2021, kl. 10:00.<br/><br/>Dómsalur: 999.<br/><br/>Dómari: Dóra Dómari.<br/><br/>Dómritari: Dalli Dómritari.<br/><br/>Talsmaður sakbornings: Valdi Verjandi.',
+      'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um farbann.<br /><br />Fyrirtaka mun fara fram 24. desember 2021, kl. 10:00.<br /><br />Dómsalur: 999.<br /><br />Dómari: Dóra Dómari.<br /><br />Dómritari: Dalli Dómritari.<br /><br />Talsmaður sakbornings: Valdi Verjandi.',
     )
   })
 
@@ -680,7 +750,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um vistun á viðeigandi stofnun.<br/><br/>Fyrirtaka mun fara fram 24. desember 2021, kl. 10:00.<br/><br/>Dómsalur: 999.<br/><br/>Dómari: Dóra Dómari.<br/><br/>Dómritari: Dalli Dómritari.<br/><br/>Talsmaður sakbornings: Valdi Verjandi.',
+      'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um vistun á viðeigandi stofnun.<br /><br />Fyrirtaka mun fara fram 24. desember 2021, kl. 10:00.<br /><br />Dómsalur: 999.<br /><br />Dómari: Dóra Dómari.<br /><br />Dómritari: Dalli Dómritari.<br /><br />Talsmaður sakbornings: Valdi Verjandi.',
     )
   })
 
@@ -710,7 +780,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um rannsóknarheimild (hljóðupptökubúnaði komið fyrir).<br/><br/>Fyrirtaka mun fara fram 24. desember 2021, kl. 10:00.<br/><br/>Dómsalur: 999.<br/><br/>Dómari: Dóra Dómari.<br/><br/>Dómritari: Dalli Dómritari.<br/><br/>Verjandi sakbornings hefur ekki verið skráður.',
+      'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um rannsóknarheimild (hljóðupptökubúnaði komið fyrir).<br /><br />Fyrirtaka mun fara fram 24. desember 2021, kl. 10:00.<br /><br />Dómsalur: 999.<br /><br />Dómari: Dóra Dómari.<br /><br />Dómritari: Dalli Dómritari.<br /><br />Verjandi sakbornings hefur ekki verið skráður.',
     )
   })
 
@@ -740,7 +810,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um rannsóknarheimild.<br/><br/>Fyrirtaka mun fara fram 24. desember 2021, kl. 10:00.<br/><br/>Dómsalur: 999.<br/><br/>Dómari: Dóra Dómari.<br/><br/>Dómritari: Dalli Dómritari.<br/><br/>Verjandi sakbornings: Valdi Verjandi.',
+      'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um rannsóknarheimild.<br /><br />Fyrirtaka mun fara fram 24. desember 2021, kl. 10:00.<br /><br />Dómsalur: 999.<br /><br />Dómari: Dóra Dómari.<br /><br />Dómritari: Dalli Dómritari.<br /><br />Verjandi sakbornings: Valdi Verjandi.',
     )
   })
 
@@ -770,7 +840,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um rannsóknarheimild.<br/><br/>Fyrirtaka mun fara fram 24. desember 2021, kl. 10:00.<br/><br/>Dómsalur: 999.<br/><br/>Dómari: Dóra Dómari.<br/><br/>Dómritari: Dalli Dómritari.',
+      'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um rannsóknarheimild.<br /><br />Fyrirtaka mun fara fram 24. desember 2021, kl. 10:00.<br /><br />Dómsalur: 999.<br /><br />Dómari: Dóra Dómari.<br /><br />Dómritari: Dalli Dómritari.',
     )
   })
 
@@ -798,20 +868,16 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um gæsluvarðhald.<br/><br/>Fyrirtaka mun fara fram 24. desember 2020, kl. 18:00.<br/><br/>Dómsalur hefur ekki verið skráður.<br/><br/>Dómari: Dóra Dómari.<br/><br/>Dómritari: Dalli Dómritari.<br/><br/>Verjandi sakbornings: Valdi Verjandi.',
+      'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um gæsluvarðhald.<br /><br />Fyrirtaka mun fara fram 24. desember 2020, kl. 18:00.<br /><br />Dómsalur hefur ekki verið skráður.<br /><br />Dómari: Dóra Dómari.<br /><br />Dómritari: Dalli Dómritari.<br /><br />Verjandi sakbornings: Valdi Verjandi.',
     )
   })
 })
 
 describe('formatPrisonCourtDateEmailNotification', () => {
-  const messages = {
-    ...notifications.prisonCourtDateEmail,
-    defender: notifications.defender,
-  }
-
   let formatMessage: FormatMessage
   beforeAll(() => {
-    formatMessage = createTestIntl('is-IS', messages).formatMessage
+    formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
+      .formatMessage
   })
 
   test('should format court date notification', () => {
@@ -846,7 +912,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Lögreglustjórinn á höfuðborgarsvæðinu hefur sent kröfu um gæsluvarðhald til Héraðsdóms Austurlands og verður málið tekið fyrir fimmtudaginn 4. febrúar 2021, kl. 02:02.<br/><br/>Nafn sakbornings: Maggi Murder.<br/><br/>Kyn sakbornings: Kona.<br/><br/>Krafist er gæsluvarðhalds til mánudagsins 12. ágúst 2030, kl. 08:25.<br/><br/>Farið er fram á einangrun.<br/><br/>Verjandi sakbornings: Varði Varnari.',
+      'Lögreglustjórinn á höfuðborgarsvæðinu hefur sent kröfu um gæsluvarðhald til Héraðsdóms Austurlands og verður málið tekið fyrir fimmtudaginn 4. febrúar 2021, kl. 02:02.<br /><br />Nafn sakbornings: Maggi Murder.<br /><br />Kyn sakbornings: Kona.<br /><br />Krafist er gæsluvarðhalds til mánudagsins 12. ágúst 2030, kl. 08:25.<br /><br />Farið er fram á einangrun.<br /><br />Verjandi sakbornings: Varði Varnari.',
     )
   })
 
@@ -882,7 +948,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Lögreglustjórinn á höfuðborgarsvæðinu hefur sent kröfu um gæsluvarðhald til Héraðsdóms Austurlands og verður málið tekið fyrir fimmtudaginn 4. febrúar 2021, kl. 02:02.<br/><br/>Nafn sakbornings: Maggi Murder.<br/><br/>Kyn sakbornings: Kynsegin/Annað.<br/><br/>Krafist er gæsluvarðhalds til mánudagsins 12. ágúst 2030, kl. 08:25.<br/><br/>Farið er fram á einangrun.<br/><br/>Talsmaður sakbornings: Vala Verja.',
+      'Lögreglustjórinn á höfuðborgarsvæðinu hefur sent kröfu um gæsluvarðhald til Héraðsdóms Austurlands og verður málið tekið fyrir fimmtudaginn 4. febrúar 2021, kl. 02:02.<br /><br />Nafn sakbornings: Maggi Murder.<br /><br />Kyn sakbornings: Kynsegin/Annað.<br /><br />Krafist er gæsluvarðhalds til mánudagsins 12. ágúst 2030, kl. 08:25.<br /><br />Farið er fram á einangrun.<br /><br />Talsmaður sakbornings: Vala Verja.',
     )
   })
 
@@ -918,7 +984,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Lögreglustjórinn á höfuðborgarsvæðinu hefur sent kröfu um gæsluvarðhald til Héraðsdóms Austurlands og verður málið tekið fyrir fimmtudaginn 4. febrúar 2021, kl. 02:02.<br/><br/>Nafn sakbornings: Maggi Murder.<br/><br/>Kyn sakbornings: Karl.<br/><br/>Krafist er gæsluvarðhalds til mánudagsins 12. ágúst 2030, kl. 08:25.<br/><br/>Ekki er farið fram á einangrun.<br/><br/>Talsmaður sakbornings: Vala Verja.',
+      'Lögreglustjórinn á höfuðborgarsvæðinu hefur sent kröfu um gæsluvarðhald til Héraðsdóms Austurlands og verður málið tekið fyrir fimmtudaginn 4. febrúar 2021, kl. 02:02.<br /><br />Nafn sakbornings: Maggi Murder.<br /><br />Kyn sakbornings: Karl.<br /><br />Krafist er gæsluvarðhalds til mánudagsins 12. ágúst 2030, kl. 08:25.<br /><br />Ekki er farið fram á einangrun.<br /><br />Talsmaður sakbornings: Vala Verja.',
     )
   })
 
@@ -954,7 +1020,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Lögreglustjórinn á höfuðborgarsvæðinu hefur sent kröfu um gæsluvarðhald til Héraðsdóms Austurlands og verður málið tekið fyrir fimmtudaginn 4. febrúar 2021, kl. 02:02.<br/><br/>Nafn sakbornings: Maggi Murder.<br/><br/>Kyn sakbornings: Karl.<br/><br/>Krafist er gæsluvarðhalds til mánudagsins 12. ágúst 2030, kl. 08:25.<br/><br/>Ekki er farið fram á einangrun.<br/><br/>Verjandi sakbornings hefur ekki verið skráður.',
+      'Lögreglustjórinn á höfuðborgarsvæðinu hefur sent kröfu um gæsluvarðhald til Héraðsdóms Austurlands og verður málið tekið fyrir fimmtudaginn 4. febrúar 2021, kl. 02:02.<br /><br />Nafn sakbornings: Maggi Murder.<br /><br />Kyn sakbornings: Karl.<br /><br />Krafist er gæsluvarðhalds til mánudagsins 12. ágúst 2030, kl. 08:25.<br /><br />Ekki er farið fram á einangrun.<br /><br />Verjandi sakbornings hefur ekki verið skráður.',
     )
   })
 
@@ -990,7 +1056,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Lögreglustjórinn á höfuðborgarsvæðinu hefur sent kröfu um áframhaldandi gæsluvarðhald til Héraðsdóms Austurlands og verður málið tekið fyrir fimmtudaginn 11. febrúar 2021, kl. 12:02.<br/><br/>Nafn sakbornings: Maggi Murder.<br/><br/>Kyn sakbornings: Karl.<br/><br/>Krafist er gæsluvarðhalds til mánudagsins 12. ágúst 2030, kl. 08:25.<br/><br/>Ekki er farið fram á einangrun.<br/><br/>Talsmaður sakbornings hefur ekki verið skráður.',
+      'Lögreglustjórinn á höfuðborgarsvæðinu hefur sent kröfu um áframhaldandi gæsluvarðhald til Héraðsdóms Austurlands og verður málið tekið fyrir fimmtudaginn 11. febrúar 2021, kl. 12:02.<br /><br />Nafn sakbornings: Maggi Murder.<br /><br />Kyn sakbornings: Karl.<br /><br />Krafist er gæsluvarðhalds til mánudagsins 12. ágúst 2030, kl. 08:25.<br /><br />Ekki er farið fram á einangrun.<br /><br />Talsmaður sakbornings hefur ekki verið skráður.',
     )
   })
 
@@ -1026,22 +1092,16 @@ describe('formatPrisonCourtDateEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Lögreglustjórinn á höfuðborgarsvæðinu hefur sent kröfu um áframhaldandi vistunar á viðeignadi stofnun til Héraðsdóms Austurlands og verður málið tekið fyrir fimmtudaginn 11. febrúar 2021, kl. 12:02.<br/><br/>Nafn sakbornings: Maggi Murder.<br/><br/>Kyn sakbornings: Karl.<br/><br/>Krafist er vistunar til mánudagsins 12. ágúst 2030, kl. 08:25.<br/><br/>Ekki er farið fram á einangrun.<br/><br/>Talsmaður sakbornings hefur ekki verið skráður.',
+      'Lögreglustjórinn á höfuðborgarsvæðinu hefur sent kröfu um áframhaldandi vistunar á viðeignadi stofnun til Héraðsdóms Austurlands og verður málið tekið fyrir fimmtudaginn 11. febrúar 2021, kl. 12:02.<br /><br />Nafn sakbornings: Maggi Murder.<br /><br />Kyn sakbornings: Karl.<br /><br />Krafist er vistunar til mánudagsins 12. ágúst 2030, kl. 08:25.<br /><br />Ekki er farið fram á einangrun.<br /><br />Talsmaður sakbornings hefur ekki verið skráður.',
     )
   })
 })
 
 describe('formatDefenderCourtDateEmailNotification', () => {
-  const messages = {
-    ...notifications.defenderCourtDateEmail,
-    courtRoom: notifications.courtRoom,
-    judge: notifications.judge,
-    registrar: notifications.registrar,
-  }
-
   let formatMessage: FormatMessage
   beforeAll(() => {
-    formatMessage = createTestIntl('is-IS', messages).formatMessage
+    formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
+      .formatMessage
   })
 
   test('should format defender court date notification', () => {
@@ -1071,7 +1131,7 @@ describe('formatDefenderCourtDateEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Héraðsdómur Norðurlands hefur boðað þig í fyrirtöku sem verjanda sakbornings.<br/><br/>Fyrirtaka mun fara fram laugardaginn 19. desember 2020, kl. 10:19.<br/><br/>Málsnúmer: R-77/2021.<br/><br/>Dómsalur: 101.<br/><br/>Dómari: Judy.<br/><br/>Dómritari: Robin.<br/><br/>Sækjandi: Áki Ákærandi (Lögreglan á Höfuðborgarsvæðinu).',
+      'Héraðsdómur Norðurlands hefur boðað þig í fyrirtöku sem verjanda sakbornings.<br /><br />Fyrirtaka mun fara fram laugardaginn 19. desember 2020, kl. 10:19.<br /><br />Málsnúmer: R-77/2021.<br /><br />Dómsalur: 101.<br /><br />Dómari: Judy.<br /><br />Dómritari: Robin.<br /><br />Sækjandi: Áki Ákærandi (Lögreglan á Höfuðborgarsvæðinu).',
     )
   })
 
@@ -1102,7 +1162,7 @@ describe('formatDefenderCourtDateEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Héraðsdómur Norðurlands hefur boðað þig í fyrirtöku sem talsmann sakbornings.<br/><br/>Fyrirtaka mun fara fram laugardaginn 19. desember 2020, kl. 10:19.<br/><br/>Málsnúmer: R-77/2021.<br/><br/>Dómsalur: 101.<br/><br/>Dómari: Judy.<br/><br/>Dómritari: Robin.<br/><br/>Sækjandi: Áki Ákærandi (Lögreglan á Höfuðborgarsvæðinu).',
+      'Héraðsdómur Norðurlands hefur boðað þig í fyrirtöku sem talsmann sakbornings.<br /><br />Fyrirtaka mun fara fram laugardaginn 19. desember 2020, kl. 10:19.<br /><br />Málsnúmer: R-77/2021.<br /><br />Dómsalur: 101.<br /><br />Dómari: Judy.<br /><br />Dómritari: Robin.<br /><br />Sækjandi: Áki Ákærandi (Lögreglan á Höfuðborgarsvæðinu).',
     )
   })
 
@@ -1133,7 +1193,7 @@ describe('formatDefenderCourtDateEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Héraðsdómur Norðurlands hefur boðað þig í fyrirtöku sem verjanda sakbornings.<br/><br/>Fyrirtaka mun fara fram laugardaginn 19. desember 2020, kl. 10:19.<br/><br/>Málsnúmer: R-77/2021.<br/><br/>Dómsalur hefur ekki verið skráður.<br/><br/>Dómari: Judy.<br/><br/>Dómritari: Robin.<br/><br/>Sækjandi: Áki Ákærandi (Lögreglan á Höfuðborgarsvæðinu).',
+      'Héraðsdómur Norðurlands hefur boðað þig í fyrirtöku sem verjanda sakbornings.<br /><br />Fyrirtaka mun fara fram laugardaginn 19. desember 2020, kl. 10:19.<br /><br />Málsnúmer: R-77/2021.<br /><br />Dómsalur hefur ekki verið skráður.<br /><br />Dómari: Judy.<br /><br />Dómritari: Robin.<br /><br />Sækjandi: Áki Ákærandi (Lögreglan á Höfuðborgarsvæðinu).',
     )
   })
 
@@ -1163,17 +1223,18 @@ describe('formatDefenderCourtDateEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Héraðsdómur Norðurlands hefur boðað þig í fyrirtöku sem verjanda sakbornings.<br/><br/>Fyrirtaka mun fara fram laugardaginn 19. desember 2020, kl. 10:19.<br/><br/>Málsnúmer: R-77/2021.<br/><br/>Dómsalur hefur ekki verið skráður.<br/><br/>Dómari: Judy.<br/><br/>Sækjandi: Áki Ákærandi (Lögreglan á Höfuðborgarsvæðinu).',
+      'Héraðsdómur Norðurlands hefur boðað þig í fyrirtöku sem verjanda sakbornings.<br /><br />Fyrirtaka mun fara fram laugardaginn 19. desember 2020, kl. 10:19.<br /><br />Málsnúmer: R-77/2021.<br /><br />Dómsalur hefur ekki verið skráður.<br /><br />Dómari: Judy.<br /><br />Sækjandi: Áki Ákærandi (Lögreglan á Höfuðborgarsvæðinu).',
     )
   })
 })
 
 describe('formatPrisonRulingEmailNotification', () => {
-  const messages = { ...notifications.prisonRulingEmail }
   let formatMessage: FormatMessage
   beforeAll(() => {
-    formatMessage = createTestIntl('is-IS', messages).formatMessage
+    formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
+      .formatMessage
   })
+
   test('should format prison ruling notification for custody', () => {
     // Arrange
     const courtEndTime = new Date('2020-12-20T13:32')
@@ -1189,6 +1250,24 @@ describe('formatPrisonRulingEmailNotification', () => {
     // Assert
     expect(res).toBe(
       'Meðfylgjandi er vistunarseðill aðila sem var úrskurðaður í gæsluvarðhald í héraðsdómi 20. desember 2020, auk þingbókar þar sem úrskurðarorðin koma fram.',
+    )
+  })
+
+  test('should format prison ruling notification when date is missing', () => {
+    // Arrange
+    const courtEndTime = undefined
+    const caseType = CaseType.ADMISSION_TO_FACILITY
+
+    // Act
+    const res = formatPrisonRulingEmailNotification(
+      formatMessage,
+      caseType,
+      courtEndTime,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Meðfylgjandi er vistunarseðill aðila sem var úrskurðaður í vistun á viðeigandi stofnun í héraðsdómi á ótilgreindum tíma, auk þingbókar þar sem úrskurðarorðin koma fram.',
     )
   })
 
@@ -1213,15 +1292,9 @@ describe('formatPrisonRulingEmailNotification', () => {
 
 describe('formatCourtRevokedSmsNotification', () => {
   let formatMessage: FormatMessage
-
   beforeAll(() => {
-    const messages = {
-      ...notifications.courtRevoked,
-      prosecutorText: notifications.prosecutorText,
-    }
-
-    const intl = createTestIntl('is-IS', messages)
-    formatMessage = intl.formatMessage
+    formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
+      .formatMessage
   })
 
   test('should format revoked sms with court date', () => {
@@ -1330,14 +1403,10 @@ describe('formatCourtRevokedSmsNotification', () => {
 })
 
 describe('formatPrisonRevokedEmailNotification', () => {
-  const messages = {
-    ...notifications.prisonRevokedEmail,
-    accused: notifications.accused,
-  }
-
   let formatMessage: FormatMessage
   beforeAll(() => {
-    formatMessage = createTestIntl('is-IS', messages).formatMessage
+    formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
+      .formatMessage
   })
 
   test('should format revoked notification for custody', () => {
@@ -1364,7 +1433,7 @@ describe('formatPrisonRevokedEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Aðalsaksóknari hefur afturkallað kröfu um gæsluvarðhald sem send var til Héraðsdóms Þingvalla og taka átti fyrir sunnudaginn 24. janúar 2021, kl. 08:15.<br/><br/>Nafn sakbornings: Gaui Glæpon.<br/><br/>Verjandi sakbornings: Dóri.',
+      'Aðalsaksóknari hefur afturkallað kröfu um gæsluvarðhald sem send var til Héraðsdóms Þingvalla og taka átti fyrir sunnudaginn 24. janúar 2021, kl. 08:15.<br /><br />Nafn sakbornings: Gaui Glæpon.<br /><br />Verjandi sakbornings: Dóri.',
     )
   })
 
@@ -1392,16 +1461,16 @@ describe('formatPrisonRevokedEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Aðalsaksóknari hefur afturkallað kröfu um vistun sem send var til Héraðsdóms Þingvalla og taka átti fyrir sunnudaginn 24. janúar 2021, kl. 08:15.<br/><br/>Nafn sakbornings: Gaui Glæpon.<br/><br/>Verjandi sakbornings: Dóri.',
+      'Aðalsaksóknari hefur afturkallað kröfu um vistun sem send var til Héraðsdóms Þingvalla og taka átti fyrir sunnudaginn 24. janúar 2021, kl. 08:15.<br /><br />Nafn sakbornings: Gaui Glæpon.<br /><br />Verjandi sakbornings: Dóri.',
     )
   })
 })
 
 describe('formatDefenderRevokedEmailNotification', () => {
-  const messages = { ...notifications.defenderRevokedEmail }
   let formatMessage: FormatMessage
   beforeAll(() => {
-    formatMessage = createTestIntl('is-IS', messages).formatMessage
+    formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
+      .formatMessage
   })
 
   test('should format revoked notification', () => {
@@ -1426,7 +1495,7 @@ describe('formatDefenderRevokedEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Krafa um gæsluvarðhald sem taka átti fyrir hjá Héraðsdómi Þingvalla sunnudaginn 24. janúar 2021, kl. 08:15, hefur verið afturkölluð.<br/><br/>Sakborningur: Gaui Glæpon, kt. 000000-1111.<br/><br/>Dómstóllinn hafði skráð þig sem verjanda sakbornings.',
+      'Krafa um gæsluvarðhald sem taka átti fyrir hjá Héraðsdómi Þingvalla sunnudaginn 24. janúar 2021, kl. 08:15, hefur verið afturkölluð.<br /><br />Sakborningur: Gaui Glæpon, kt. 000000-1111.<br /><br />Dómstóllinn hafði skráð þig sem verjanda sakbornings.',
     )
   })
 
@@ -1452,7 +1521,7 @@ describe('formatDefenderRevokedEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Krafa um farbann sem taka átti fyrir hjá Héraðsdómi Þingvalla sunnudaginn 24. janúar 2021, kl. 08:15, hefur verið afturkölluð.<br/><br/>Sakborningur: Gaui Glæpon, kt. 111100-1111.<br/><br/>Dómstóllinn hafði skráð þig sem verjanda sakbornings.',
+      'Krafa um farbann sem taka átti fyrir hjá Héraðsdómi Þingvalla sunnudaginn 24. janúar 2021, kl. 08:15, hefur verið afturkölluð.<br /><br />Sakborningur: Gaui Glæpon, kt. 111100-1111.<br /><br />Dómstóllinn hafði skráð þig sem verjanda sakbornings.',
     )
   })
 
@@ -1478,7 +1547,7 @@ describe('formatDefenderRevokedEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Krafa um vistun á viðeigandi stofnun sem taka átti fyrir hjá ótilgreindum dómstóli á ótilgreindum tíma, hefur verið afturkölluð.<br/><br/>Sakborningur: Nafn ekki skráð, kt. ekki skráð.<br/><br/>Dómstóllinn hafði skráð þig sem verjanda sakbornings.',
+      'Krafa um vistun á viðeigandi stofnun sem taka átti fyrir hjá ótilgreindum dómstóli á ótilgreindum tíma, hefur verið afturkölluð.<br /><br />Sakborningur: Nafn ekki skráð, kt. ekki skráð.<br /><br />Dómstóllinn hafði skráð þig sem verjanda sakbornings.',
     )
   })
 
@@ -1504,7 +1573,7 @@ describe('formatDefenderRevokedEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Krafa um rannsóknarheimild (rof bankaleyndar) sem taka átti fyrir hjá Héraðsdómi Þingvalla sunnudaginn 24. janúar 2021, kl. 08:15, hefur verið afturkölluð.<br/><br/>Sakborningur: Gaui Glæpon, kt. 111100-1111.<br/><br/>Dómstóllinn hafði skráð þig sem verjanda sakbornings.',
+      'Krafa um rannsóknarheimild (rof bankaleyndar) sem taka átti fyrir hjá Héraðsdómi Þingvalla sunnudaginn 24. janúar 2021, kl. 08:15, hefur verið afturkölluð.<br /><br />Sakborningur: Gaui Glæpon, kt. 111100-1111.<br /><br />Dómstóllinn hafði skráð þig sem verjanda sakbornings.',
     )
   })
 
@@ -1530,7 +1599,7 @@ describe('formatDefenderRevokedEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Krafa um rannsóknarheimild sem taka átti fyrir hjá Héraðsdómi Þingvalla sunnudaginn 24. janúar 2021, kl. 08:15, hefur verið afturkölluð.<br/><br/>Sakborningur: Gaui Glæpon, fd. 01.01.2022.<br/><br/>Dómstóllinn hafði skráð þig sem verjanda sakbornings.',
+      'Krafa um rannsóknarheimild sem taka átti fyrir hjá Héraðsdómi Þingvalla sunnudaginn 24. janúar 2021, kl. 08:15, hefur verið afturkölluð.<br /><br />Sakborningur: Gaui Glæpon, fd. 01.01.2022.<br /><br />Dómstóllinn hafði skráð þig sem verjanda sakbornings.',
     )
   })
 })

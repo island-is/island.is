@@ -353,12 +353,9 @@ const DefenderInfo: React.FC<Props> = (props) => {
             tooltip={
               isRestrictionCase(workingCase.type)
                 ? formatMessage(
-                    accused.sections.defenderInfo.sendRequest.tooltip,
+                    accused.sections.defenderInfo.sendRequest.tooltipV2,
                     {
-                      caseType:
-                        workingCase.type === CaseType.CUSTODY
-                          ? 'gæsluvarðhaldskröfuna'
-                          : 'farbannskröfuna',
+                      caseType: workingCase.type,
                     },
                   )
                 : formatMessage(

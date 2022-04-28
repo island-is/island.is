@@ -5,7 +5,6 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { msg } from '../../../../../lib/messages'
 import {
   Box,
-  Button,
   Columns,
   Column,
   Input,
@@ -20,6 +19,7 @@ import {
 } from '@island.is/service-portal/graphql'
 import { sharedMessages } from '@island.is/shared/translations'
 import { parseFullNumber } from '../../../../../utils/phoneHelper'
+import { FormButton } from '../FormButton'
 import * as styles from './ProfileForms.css'
 
 interface Props {
@@ -252,15 +252,13 @@ export const InputPhone: FC<Props> = ({
             {!createLoading && !deleteLoading && (
               <>
                 {telVerifyCreated ? (
-                  <Button
-                    variant="text"
+                  <FormButton
                     disabled={
                       verificationValid ||
                       disabled ||
                       resendBlock ||
                       inputPristine
                     }
-                    size="small"
                     onClick={
                       telInternal
                         ? () =>
@@ -278,22 +276,16 @@ export const InputPhone: FC<Props> = ({
                           })
                         : buttonText
                       : formatMessage(msg.saveEmptyChange)}
-                  </Button>
+                  </FormButton>
                 ) : (
-                  <button
-                    type="submit"
+                  <FormButton
+                    submit
                     disabled={verificationValid || disabled || inputPristine}
                   >
-                    <Button
-                      variant="text"
-                      size="small"
-                      disabled={verificationValid || disabled || inputPristine}
-                    >
-                      {telInternal
-                        ? buttonText
-                        : formatMessage(msg.saveEmptyChange)}
-                    </Button>
-                  </button>
+                    {telInternal
+                      ? buttonText
+                      : formatMessage(msg.saveEmptyChange)}
+                  </FormButton>
                 )}
               </>
             )}
@@ -344,20 +336,15 @@ export const InputPhone: FC<Props> = ({
                 alignItems="flexStart"
                 flexDirection="column"
                 paddingTop={4}
+                className={styles.codeButton}
               >
                 {!saveLoading && (
-                  <button
-                    type="submit"
+                  <FormButton
+                    submit
                     disabled={!codeInternal || disabled || verificationValid}
                   >
-                    <Button
-                      variant="text"
-                      size="small"
-                      disabled={!codeInternal || disabled || verificationValid}
-                    >
-                      {formatMessage(m.codeConfirmation)}
-                    </Button>
-                  </button>
+                    {formatMessage(m.codeConfirmation)}
+                  </FormButton>
                 )}
                 {saveLoading && (
                   <Box>
