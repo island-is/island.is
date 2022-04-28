@@ -32,11 +32,11 @@ describe('EnhancedFetch#withAutoAuth', () => {
     // Assert
     expect(env.authFetch).toHaveBeenCalledTimes(1)
     expect(
-      env.authFetch.mock.calls[0][1].body.toString(),
+      env.authFetch.mock.calls[0][0].body.toString(),
     ).toMatchInlineSnapshot(
       `"grant_type=client_credentials&client_id=client&client_secret=secret&scope=testScope"`,
     )
-    expect(env.fetch.mock.calls[0][1].headers.get('authorization')).toEqual(
+    expect(env.fetch.mock.calls[0][0].headers.get('authorization')).toEqual(
       fakeAuthentication,
     )
   })
@@ -53,10 +53,10 @@ describe('EnhancedFetch#withAutoAuth', () => {
 
     // Assert
     expect(env.authFetch).toHaveBeenCalledTimes(1)
-    expect(env.fetch.mock.calls[0][1].headers.get('authorization')).toEqual(
+    expect(env.fetch.mock.calls[0][0].headers.get('authorization')).toEqual(
       fakeAuthentication,
     )
-    expect(env.fetch.mock.calls[1][1].headers.get('authorization')).toEqual(
+    expect(env.fetch.mock.calls[1][0].headers.get('authorization')).toEqual(
       fakeAuthentication,
     )
   })
@@ -100,8 +100,8 @@ describe('EnhancedFetch#withAutoAuth', () => {
 
     // Assert
     expect(env.authFetch).toHaveBeenCalledTimes(1)
-    expect(env.authFetch.mock.calls[0][1].body.toString()).toEqual(expectedBody)
-    expect(env.fetch.mock.calls[0][1].headers.get('authorization')).toEqual(
+    expect(env.authFetch.mock.calls[0][0].body.toString()).toEqual(expectedBody)
+    expect(env.fetch.mock.calls[0][0].headers.get('authorization')).toEqual(
       fakeAuthentication,
     )
   })
@@ -225,8 +225,8 @@ describe('EnhancedFetch#withAutoAuth', () => {
 
     // Assert
     expect(env.authFetch).toHaveBeenCalledTimes(1)
-    expect(env.authFetch.mock.calls[0][1].body.toString()).toEqual(expectedBody)
-    expect(env.fetch.mock.calls[0][1].headers.get('authorization')).toEqual(
+    expect(env.authFetch.mock.calls[0][0].body.toString()).toEqual(expectedBody)
+    expect(env.fetch.mock.calls[0][0].headers.get('authorization')).toEqual(
       fakeAuthentication,
     )
   })
@@ -244,7 +244,7 @@ describe('EnhancedFetch#withAutoAuth', () => {
 
       // Assert
       expect(env.authFetch).not.toHaveBeenCalled()
-      expect(env.fetch.mock.calls[0][1].headers.get('authorization')).toEqual(
+      expect(env.fetch.mock.calls[0][0].headers.get('authorization')).toEqual(
         auth.authorization,
       )
     })
@@ -266,7 +266,7 @@ describe('EnhancedFetch#withAutoAuth', () => {
 
       // Assert
       expect(env.authFetch).toHaveBeenCalledTimes(1)
-      expect(env.fetch.mock.calls[0][1].headers.get('authorization')).toEqual(
+      expect(env.fetch.mock.calls[0][0].headers.get('authorization')).toEqual(
         fakeAuthentication,
       )
     })
@@ -288,7 +288,7 @@ describe('EnhancedFetch#withAutoAuth', () => {
 
       // Assert
       expect(env.authFetch).not.toHaveBeenCalled()
-      expect(env.fetch.mock.calls[0][1].headers.get('authorization')).toEqual(
+      expect(env.fetch.mock.calls[0][0].headers.get('authorization')).toEqual(
         auth.authorization,
       )
     })
@@ -315,7 +315,7 @@ describe('EnhancedFetch#withAutoAuth', () => {
 
       // Assert
       expect(env.authFetch).toHaveBeenCalledTimes(1)
-      expect(env.fetch.mock.calls[0][1].headers.get('authorization')).toEqual(
+      expect(env.fetch.mock.calls[0][0].headers.get('authorization')).toEqual(
         fakeAuthentication,
       )
     })
@@ -334,7 +334,7 @@ describe('EnhancedFetch#withAutoAuth', () => {
       // Assert
       expect(env.authFetch).toHaveBeenCalledTimes(1)
       expect(
-        env.authFetch.mock.calls[0][1].body.toString(),
+        env.authFetch.mock.calls[0][0].body.toString(),
       ).toMatchInlineSnapshot(
         `"grant_type=client_credentials&client_id=client&client_secret=secret&scope=testScope"`,
       )
@@ -360,7 +360,7 @@ describe('EnhancedFetch#withAutoAuth', () => {
 
       // Assert
       expect(env.authFetch).toHaveBeenCalledTimes(1)
-      expect(env.authFetch.mock.calls[0][1].body.toString()).toEqual(
+      expect(env.authFetch.mock.calls[0][0].body.toString()).toEqual(
         expectedBody,
       )
     })

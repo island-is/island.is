@@ -1,4 +1,3 @@
-import { CaseType } from '@island.is/judicial-system/types'
 import { defineMessage, defineMessages } from 'react-intl'
 
 export const rcOverview = {
@@ -10,10 +9,8 @@ export const rcOverview = {
   }),
   headingV2: defineMessage({
     id: 'judicial.system.restriction_cases:overview.heading_v2',
-    defaultMessage: `Yfirlit kröfu um {caseType, select,
-      ${CaseType.ADMISSION_TO_FACILITY} {{isExtended, select, yes {framlengingu á } other {}}vistun á viðeigandi stofnun}
-      ${CaseType.TRAVEL_BAN} {{isExtended, select, yes {farbanni} other {farbann}}}
-      other {{isExtended, select, yes {framlengingu á gæsluvarðhaldi} other {gæsluvarðhald}}}}`,
+    defaultMessage:
+      'Yfirlit kröfu um {caseType, select, ADMISSION_TO_FACILITY {{isExtended, select, yes {framlengingu á } other {}}vistun á viðeigandi stofnun} TRAVEL_BAN {{isExtended, select, yes {farbanni} other {farbann}}} other {{isExtended, select, yes {framlengingu á gæsluvarðhaldi} other {gæsluvarðhald}}}}',
     description: 'Notaður sem titill á yfirlits skrefi í rannsóknarheimildum.',
   }),
   sections: {
@@ -26,10 +23,8 @@ export const rcOverview = {
       },
       headingV2: {
         id: 'judicial.system.restriction_cases:overview.modal.heading_v2',
-        defaultMessage: `Krafa um {caseType, select,
-          ${CaseType.ADMISSION_TO_FACILITY} {vistun á viðeigandi stofnun}
-          ${CaseType.TRAVEL_BAN} {farbann}
-          other {gæsluvarhald}} hefur verið send til dómstóls`,
+        defaultMessage:
+          'Krafa um {caseType, select, ADMISSION_TO_FACILITY {vistun á viðeigandi stofnun} TRAVEL_BAN {farbann} other {gæsluvarhald}} hefur verið send til dómstóls',
         description:
           'Notaður sem titill á modal sem birtist þegar krafa hefur verið send til dómstóls',
       },

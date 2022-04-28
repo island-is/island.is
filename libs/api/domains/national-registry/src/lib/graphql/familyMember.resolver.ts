@@ -1,6 +1,6 @@
 import { ApiScope } from '@island.is/auth/scopes'
 import { UseGuards } from '@nestjs/common'
-import { Resolver, Query } from '@nestjs/graphql'
+import { Resolver, Query, Args } from '@nestjs/graphql'
 
 import type { User as AuthUser } from '@island.is/auth-nest-tools'
 import {
@@ -11,9 +11,10 @@ import {
 } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
 
-import { NationalRegistryFamilyMember } from './models'
+import { NationalRegistryChild, NationalRegistryFamilyMember } from './models'
 import { NationalRegistryService } from '../nationalRegistry.service'
-import { FamilyMember } from '../types'
+import { FamilyMember, FamilyChild } from '../types'
+import { GetFamilyInfoInput } from '../dto/getFamilyDetailInput'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.meDetails)
@@ -31,5 +32,20 @@ export class FamilyMemberResolver {
   @Audit()
   getMyFamily(@CurrentUser() user: AuthUser): Promise<FamilyMember[]> {
     return this.nationalRegistryService.getFamily(user.nationalId)
+  }
+
+  @Query(() => NationalRegistryChild, {
+    name: 'nationalRegistryFamilyDetail',
+    nullable: true,
+  })
+  @Audit()
+  getMyFamilyDetail(
+    @CurrentUser() user: AuthUser,
+    @Args('input') input: GetFamilyInfoInput,
+  ): Promise<FamilyChild> {
+    return this.nationalRegistryService.getFamilyMemberDetails(
+      user.nationalId,
+      input.familyMemberNationalId,
+    )
   }
 }
