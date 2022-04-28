@@ -54,7 +54,10 @@ const Files = ({
                       },
                     },
                   }).then((response) => {
-                    window.open(response.data?.getSignedUrl.url)
+                    window.open(
+                      response.data?.createMunicipalitiesFinancialAidSignedUrl
+                        .url,
+                    )
                   })
                 }}
                 key={`file-` + index}
