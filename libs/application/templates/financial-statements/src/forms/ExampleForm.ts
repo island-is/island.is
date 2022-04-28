@@ -54,10 +54,11 @@ export const FinancialStatements: Form = buildForm({
             }),
           ],
         }),
+
       ],
     }),
     buildSection({
-      id: 'keyNumbers',
+      id: 'career',
       title: 'Lykiltölur',
       children: [
         buildSubSection({
@@ -82,6 +83,53 @@ export const FinancialStatements: Form = buildForm({
           ],
         }),
         buildSubSection({
+          id: 'debts',
+          title: 'Skuldir',
+          children: [
+            buildMultiField({
+              title: '',
+              children: [
+                buildTextField({
+                  id: 'debt.surplus',
+                  title: 'Skammtímarkröfur',
+                  width: 'half',
+                }),
+                buildTextField({
+                  id: 'debt.cost',
+                  title: 'Ógreiddur kostnaður',
+                  width: 'half',
+                }),
+              ],
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'expenses',
+          title: 'Gjöld',
+          children: [
+            buildMultiField({
+              title: '',
+              children: [
+                buildTextField({
+                  id: 'expenses.marketing',
+                  title: 'Auglýsinginar og kynningar',
+                  width: 'half',
+                }),
+                buildTextField({
+                  id: 'expenses.travelCost',
+                  title: 'Fundir og ferðakostnaður',
+                  width: 'half',
+                }),
+                buildTextField({
+                  id: 'expenses.other',
+                  title: 'Annar kostnaður',
+                  width: 'half',
+                }),
+              ],
+            }),
+          ],
+        }),
+        buildSubSection({
           id: 'income',
           title: 'Tekjur',
           children: [
@@ -89,17 +137,22 @@ export const FinancialStatements: Form = buildForm({
               title: '',
               children: [
                 buildTextField({
-                  id: 'income.donations',
+                  id: 'donations',
                   title: 'Framlög lögaðila',
                   width: 'half',
                 }),
                 buildTextField({
-                  id: 'income.peronal',
+                  id: 'income',
                   title: 'Eigin tekjur',
                   width: 'half',
                 }),
                 buildTextField({
-                  id: 'income.capital',
+                  id: 'donation.personal',
+                  title: 'Fjármagnskostnaður',
+                  width: 'half',
+                }),
+                buildTextField({
+                  id: 'capital',
                   title: 'Fjármagnskostnaður',
                   width: 'half',
                 }),

@@ -15,12 +15,12 @@ export const dataSchema = z.object({
     ),
     email: z.string().email(),
   }),
-  careerHistory: z.enum(['yes', 'no']).optional(),
-  careerHistoryCompanies: z
-    .array(
-      // TODO checkbox answers are [undefined, 'aranja', undefined] and we need to do something about it...
-      z.union([z.enum(['government', 'aranja', 'advania']), z.undefined()]),
-    )
-    .nonempty(),
-  dreamJob: z.string().optional(),
-})
+  properties: z.object({
+    short: z.string(),
+    cash: z.string(),
+  }),
+  income: z.object({
+    donations: z.string(),
+    personal: z.string(),
+    capital: z.string(),
+  })})
