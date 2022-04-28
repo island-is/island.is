@@ -53,7 +53,7 @@ export const generateAssignEmployerApplicationEmail: AssignmentEmailTemplateGene
         {
           component: 'Copy',
           context: {
-            copy: `${applicantName} ${application.applicant} hefur skráð þig sem atvinnuveitanda í umsókn sinni.`,
+            copy: `${applicantName} Kt:${application.applicant} hefur skráð þig sem atvinnuveitanda í umsókn sinni.`,
           },
         },
         {
