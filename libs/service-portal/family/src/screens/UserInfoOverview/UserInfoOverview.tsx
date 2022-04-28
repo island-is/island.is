@@ -1,7 +1,8 @@
-import React from 'react'
-import { useQuery, gql } from '@apollo/client'
+import React, { useEffect, useState } from 'react'
+import { useQuery } from '@apollo/client'
+import some from 'lodash/some'
 
-import { Query } from '@island.is/api/schema'
+import { NationalRegistryFamilyMember, Query } from '@island.is/api/schema'
 import {
   AlertMessage,
   Box,
@@ -16,20 +17,49 @@ import { FamilyMemberCard } from '../../components/FamilyMemberCard/FamilyMember
 import { FamilyMemberCardLoader } from '../../components/FamilyMemberCard/FamilyMemberCardLoader'
 import { NATIONAL_REGISTRY_CHILDREN } from '../../lib/queries/getNationalChildren'
 import { NATIONAL_REGISTRY_USER } from '../../lib/queries/getNationalRegistryUser'
+import { NATIONAL_REGISTRY_FAMILY } from '../../lib/queries/getNationalRegistryFamily'
+import { spmm } from '../../lib/messages'
 
 const UserInfoOverview: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
 
+  const [childrenOnFamilyNr, setChildrenOnFamilyNr] = useState<
+    NationalRegistryFamilyMember[]
+  >([])
+
+  // Current User
   const { data, loading, error, called } = useQuery<Query>(
     NATIONAL_REGISTRY_USER,
   )
   const { nationalRegistryUser } = data || {}
 
+  // User's Children
   const { data: childrenData, loading: childrenLoading } = useQuery<Query>(
     NATIONAL_REGISTRY_CHILDREN,
   )
   const { nationalRegistryChildren } = childrenData || {}
+
+  // User's Family members
+  const { data: famData, loading: familyLoading } = useQuery<Query>(
+    NATIONAL_REGISTRY_FAMILY,
+  )
+  const { nationalRegistryFamily } = famData || {}
+
+  useEffect(() => {
+    /**
+     * Get children on the same family number who are
+     * not in the NATIONAL_REGISTRY_CHILDREN query.
+     */
+    if (!familyLoading && !childrenLoading && nationalRegistryFamily) {
+      const familyNrChildren = nationalRegistryFamily?.filter(
+        (item) =>
+          item.familyRelation === 'child' &&
+          !some(nationalRegistryChildren, ['nationalId', item.nationalId]),
+      )
+      setChildrenOnFamilyNr(familyNrChildren)
+    }
+  }, [familyLoading, childrenLoading])
 
   const spouseData = nationalRegistryUser?.spouse
   return (
@@ -42,11 +72,7 @@ const UserInfoOverview: ServicePortalModuleComponent = ({ userInfo }) => {
                 {formatMessage(m.myInfo)}
               </Text>
               <Text as="p" variant="default">
-                {formatMessage({
-                  id: 'sp.family:user-info-description',
-                  defaultMessage:
-                    'Hér eru gögn um þig og fjölskyldu þína sem sótt eru til Þjóðskrár. Með því að smella á skoða nánar er hægt að óska eftir breytingum á þeim upplýsingum.',
-                })}
+                {formatMessage(spmm.family.userInfoDesc)}
               </Text>
             </Stack>
           </GridColumn>
@@ -62,11 +88,11 @@ const UserInfoOverview: ServicePortalModuleComponent = ({ userInfo }) => {
           currentUser
         />
         {loading && <FamilyMemberCardLoader />}
-        {spouseData && (
+        {spouseData?.nationalId && (
           <FamilyMemberCard
-            key={nationalRegistryUser?.spouse?.nationalId}
-            title={nationalRegistryUser?.spouse?.name || ''}
-            nationalId={nationalRegistryUser?.spouse?.nationalId || ''}
+            key={spouseData.nationalId}
+            title={spouseData?.name || ''}
+            nationalId={spouseData.nationalId}
             familyRelation="spouse"
           />
         )}
@@ -80,6 +106,14 @@ const UserInfoOverview: ServicePortalModuleComponent = ({ userInfo }) => {
             title={familyMember.fullName || familyMember.displayName || ''}
             nationalId={familyMember.nationalId}
             familyRelation="child"
+          />
+        ))}
+        {childrenOnFamilyNr?.map((child) => (
+          <FamilyMemberCard
+            key={child.nationalId}
+            title={child.fullName || ''}
+            nationalId={child.nationalId}
+            familyRelation="child2"
           />
         ))}
       </Stack>

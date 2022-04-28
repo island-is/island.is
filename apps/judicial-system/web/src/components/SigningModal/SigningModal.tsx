@@ -124,10 +124,14 @@ const SigningModal: React.FC<SigningModalProps> = ({
 
   const renderSuccessText = (caseType: CaseType) => {
     return isInvestigationCase(caseType)
-      ? icConfirmation.modal.text
-      : caseType === CaseType.CUSTODY
-      ? rcConfirmation.modal.custodyCases.text
-      : rcConfirmation.modal.travelBanCases.text
+      ? formatMessage(icConfirmation.modal.text)
+      : formatMessage(rcConfirmation.modal.rulingNotification.text, {
+          summarySentToPrison:
+            caseType === CaseType.CUSTODY ||
+            caseType === CaseType.ADMISSION_TO_FACILITY
+              ? 'yes'
+              : 'no',
+        })
   }
 
   return (
@@ -145,7 +149,7 @@ const SigningModal: React.FC<SigningModalProps> = ({
         !rulingSignatureConfirmationResponse ? (
           renderControlCode()
         ) : rulingSignatureConfirmationResponse.documentSigned ? (
-          <MarkdownWrapper text={renderSuccessText(workingCase.type)} />
+          <MarkdownWrapper markdown={renderSuccessText(workingCase.type)} />
         ) : (
           'Vinsamlegast reynið aftur svo hægt sé að senda úrskurðinn með undirritun.'
         )

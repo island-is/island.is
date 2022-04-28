@@ -1,13 +1,13 @@
 import { Logger } from 'winston'
 import CircuitBreaker from 'opossum'
 
-import { FetchAPI } from './nodeFetch'
+import { MiddlewareAPI } from './nodeFetch'
 import { FetchError } from './FetchError'
 
 export interface CircuitBreakerOptions {
   treat400ResponsesAsErrors: boolean
   opossum: CircuitBreaker.Options
-  fetch: FetchAPI
+  fetch: MiddlewareAPI
   name: string
   logger: Logger
 }
@@ -18,7 +18,7 @@ export function withCircuitBreaker({
   fetch,
   name,
   logger,
-}: CircuitBreakerOptions): FetchAPI {
+}: CircuitBreakerOptions): MiddlewareAPI {
   const errorFilter = treat400ResponsesAsErrors
     ? opossum?.errorFilter
     : (error: FetchError) => {
@@ -50,5 +50,5 @@ export function withCircuitBreaker({
     logger.error(`Fetch (${name}): Circuit breaker closed`),
   )
 
-  return (input, init) => breaker.fire(input, init)
+  return (request) => breaker.fire(request)
 }
