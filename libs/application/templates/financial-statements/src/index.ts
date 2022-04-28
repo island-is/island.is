@@ -1,4 +1,4 @@
-import ReferenceApplicationTemplate from './lib/YearlyAudit'
+import ReferenceApplicationTemplate from './lib/FinancialStatements'
 
 export const getDataProviders = () => import('./dataProviders/')
 export const getFields = () => import('./fields/')

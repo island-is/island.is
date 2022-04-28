@@ -8,6 +8,6 @@ module.exports = {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory:
-    '../../../../coverage/libs/application/templates/yearly-audit',
-  displayName: 'application-templates-yearly-audit',
+    '../../../../coverage/libs/application/templates/financial-statments',
+  displayName: 'application-templates-financial-statments',
 }

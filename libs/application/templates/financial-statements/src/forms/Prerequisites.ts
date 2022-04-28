@@ -15,23 +15,23 @@ import { m } from '../lib/messages'
 
 export const Prerequisites: Form = buildForm({
   id: 'PrerequisitesDraft',
-  title: 'Skilyrði',
+  title: 'Gagnaöflun',
   mode: FormModes.APPLYING,
   children: [
     buildSection({
       id: 'conditions',
-      title: m.conditionsSection,
+      title: 'Gagnöflun',
       children: [
         buildExternalDataProvider({
           id: 'approveExternalData',
-          title: 'Utanaðkomandi gögn',
+          title: 'Gagnaöflun',
+          checkboxLabel: "Ég samþykki að láta sækja gögn",
           dataProviders: [
             buildDataProviderItem({
               id: 'sampleData',
               type: 'SampleDataProvider',
-              title: 'Staðfesting á ákveðnu atriði',
-              subTitle:
-                'Betri lýsing á atriðinu sem er verið að sækja annarsstaðar frá',
+              title: '',
+              subTitle: 'Upplýsingar um sjóð og vörsluaðila'
             }),
           ],
         }),

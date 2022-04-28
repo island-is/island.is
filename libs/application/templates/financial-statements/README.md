@@ -1,6 +1,5 @@
-# Reference Template
+# Application Template Financial Statements
 
-This library is a reference how all application template libraries can be.
 
 ## Requirements
 

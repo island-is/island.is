@@ -43,7 +43,6 @@ const template: ApplicationTemplate<
                 const featureFlags = await getApplicationFeatureFlags(
                   featureFlagClient as FeatureFlagClient,
                 )
-
                 const getForm = await import(
                   '../forms/prerequisites/getForm'
                 ).then((val) => val.getForm)

@@ -38,24 +38,6 @@ enum Roles {
 const ExampleSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   person: z.object({
-    name: z.string().nonempty().max(256),
-    age: z.string().refine((x) => {
-      const asNumber = parseInt(x)
-      if (isNaN(asNumber)) {
-        return false
-      }
-      return asNumber > 15
-    }),
-    nationalId: z
-      .string()
-      /**
-       * We are depending on this template for the e2e tests on the application-system-api.
-       * Because we are not allowing committing valid kennitala, I reversed the condition
-       * to check for invalid kenitala so it passes the test.
-       */
-      .refine((n) => n && !kennitala.isValid(n), {
-        params: m.dataSchemeNationalId,
-      }),
     phoneNumber: z.string().refine(
       (p) => {
         const phoneNumber = parsePhoneNumberFromString(p, 'IS')
@@ -75,23 +57,24 @@ const ExampleSchema = z.object({
   dreamJob: z.string().optional(),
 })
 
-const ReferenceApplicationTemplate: ApplicationTemplate<
+const FinancialStatementApplication: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<ReferenceTemplateEvent>,
   ReferenceTemplateEvent
 > = {
   type: ApplicationTypes.EXAMPLE,
-  name: m.name,
-  institution: m.institutionName,
+  name: 'Stafræn skil ársreikninga',
+  institution: 'Ríkisendurskoðun',
   translationNamespaces: [ApplicationConfigurations.ExampleForm.translation],
   dataSchema: ExampleSchema,
+  readyForProduction: false,
   featureFlag: Features.exampleApplication,
   stateMachineConfig: {
     initial: States.prerequisites,
     states: {
       [States.prerequisites]: {
         meta: {
-          name: 'Skilyrði',
+          name: 'Gagnaöflun',
           progress: 0,
           lifecycle: {
             shouldBeListed: false,
@@ -121,7 +104,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
       },
       [States.draft]: {
         meta: {
-          name: 'Umsókn um ökunám',
+          name: 'foo',
           actionCard: {
             title: m.draftTitle,
             description: m.draftDescription,
@@ -132,8 +115,8 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/ExampleForm').then((module) =>
-                  Promise.resolve(module.ExampleForm),
+                import('../forms/FinancialStatements').then((module) =>
+                  Promise.resolve(module.FinancialStatements),
                 ),
               actions: [
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
@@ -236,4 +219,4 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
   },
 }
 
-export default ReferenceApplicationTemplate
+export default FinancialStatementApplication

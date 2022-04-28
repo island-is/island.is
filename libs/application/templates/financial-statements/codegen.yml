@@ -1,7 +1,7 @@
 schema:
   - apps/api/src/api.graphql
 generates:
-  libs/application/templates/yearly-audit/src/types/schema.ts:
+  libs/application/templates/financial-statements/src/types/schema.ts:
     plugins:
       - typescript
       - typescript-operations
