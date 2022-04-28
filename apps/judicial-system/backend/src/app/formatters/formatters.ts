@@ -3,6 +3,8 @@ import {
   formatNationalId,
   laws,
   caseTypes,
+  getSupportedCaseCustodyRestrictions,
+  enumerate,
 } from '@island.is/judicial-system/formatters'
 import type { FormatMessage } from '@island.is/cms-translations'
 import {
@@ -502,45 +504,17 @@ export function stripHtmlTags(html: string): string {
     .replace(/(?:<\/a>)/g, '')
 }
 
-/**
- * Enumerates a list of string, f.x
- * enumerate(['alice', 'bob', 'paul'], 'and'), returns "alice, bob and paul"
- * @param values list of strings to enumerate
- * @param endWord the word before last value is enumerated
- */
-export const enumerate = (values: string[], endWord: string): string => {
-  return values.join(', ').replace(/, ([^,]*)$/, ` ${endWord} $1`)
-}
-
-type SupportedCaseCustodyRestriction = {
-  id: string
-  type:
-    | CaseCustodyRestrictions.NECESSITIES
-    | CaseCustodyRestrictions.VISITAION
-    | CaseCustodyRestrictions.COMMUNICATION
-    | CaseCustodyRestrictions.MEDIA
-    | CaseCustodyRestrictions.WORKBAN
-}
-
-const supportedCaseCustodyRestrictions: SupportedCaseCustodyRestriction[] = [
-  { id: 'a', type: CaseCustodyRestrictions.NECESSITIES },
-  { id: 'c', type: CaseCustodyRestrictions.VISITAION },
-  { id: 'd', type: CaseCustodyRestrictions.COMMUNICATION },
-  { id: 'e', type: CaseCustodyRestrictions.MEDIA },
-  { id: 'f', type: CaseCustodyRestrictions.WORKBAN },
-]
-
 export function formatCustodyRestrictions(
   formatMessage: FormatMessage,
   caseType: CaseType,
   requestedRestrictions?: CaseCustodyRestrictions[],
   isCustodyIsolation?: boolean,
 ): string {
-  const restrictions = supportedCaseCustodyRestrictions.filter((restriction) =>
-    requestedRestrictions?.includes(restriction.type),
+  const restrictions = getSupportedCaseCustodyRestrictions(
+    requestedRestrictions,
   )
 
-  if (!restrictions || restrictions.length === 0) {
+  if (restrictions.length === 0) {
     return formatMessage(custodyNotice.noFutherRestrictions, {
       hasIsolation: isCustodyIsolation,
       caseType,
@@ -548,9 +522,9 @@ export function formatCustodyRestrictions(
   }
 
   const formatedRestrictions = enumerate(
-    restrictions
-      .sort((a, b) => (a.id > b.id ? 1 : -1))
-      .map((x) => formatMessage(custodyNotice.rulingRestrictions[x.type])),
+    restrictions.map((x) =>
+      formatMessage(custodyNotice.rulingRestrictions[x.type]),
+    ),
     'og',
   )
 
