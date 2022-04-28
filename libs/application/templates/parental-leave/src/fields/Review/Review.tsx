@@ -10,9 +10,7 @@ import {
   buildFieldOptions,
   RecordObject,
   Field,
-  buildValidationError,
   coreErrorMessages,
-  StaticText,
 } from '@island.is/application/core'
 import {
   Box,
@@ -156,9 +154,6 @@ export const Review: FC<ReviewScreenProps> = ({
     application.answers,
     application.externalData,
   )
-
-  const buildError = (message: StaticText, path: string) =>
-    buildValidationError(path)(message)
 
   const validatePrivatePensionFund = () => {
     if (usePrivatePensionFund !== YES) return undefined

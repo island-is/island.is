@@ -8,7 +8,7 @@ import addDays from 'date-fns/addDays'
 import format from 'date-fns/format'
 
 import { minimumPeriodStartBeforeExpectedDateOfBirth } from '../config'
-import { NO_PRIVATE_PENSION_FUND, ParentalRelations } from '../constants'
+import { ParentalRelations } from '../constants'
 import { answerValidators, VALIDATE_LATEST_PERIOD } from './answerValidators'
 import { errorMessages } from './messages'
 import { NO, StartDateOptions } from '../constants'

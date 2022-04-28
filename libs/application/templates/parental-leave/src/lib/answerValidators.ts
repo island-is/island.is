@@ -26,6 +26,7 @@ import { filterValidPeriods } from '../lib/parentalLeaveUtils'
 import { validatePeriod } from './answerValidator-utils'
 
 const EMPLOYER = 'employer'
+const PAYMENTS = 'payments'
 // When attempting to continue from the periods repeater main screen
 // this validator will get called to validate all of the periods
 export const VALIDATE_PERIODS = 'validatedPeriods'
@@ -33,8 +34,6 @@ export const VALIDATE_PERIODS = 'validatedPeriods'
 // the repeater sends all the periods saved in 'periods'
 // to this validator, which will validate the latest one
 export const VALIDATE_LATEST_PERIOD = 'periods'
-
-const PAYMENTS = 'payments'
 
 export const answerValidators: Record<string, AnswerValidator> = {
   [EMPLOYER]: (newAnswer: unknown, application: Application) => {
