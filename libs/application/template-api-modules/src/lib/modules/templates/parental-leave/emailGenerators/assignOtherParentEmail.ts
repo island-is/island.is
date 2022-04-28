@@ -59,7 +59,7 @@ export const generateAssignOtherParentApplicationEmail: EmailTemplateGenerator =
         {
           component: 'Copy',
           context: {
-            copy: `Umsækjandi ${applicantName} með kennitölu ${application.applicant} hefur skráð þig sem foreldri í umsókn sinni og er að óska eftir réttindum frá þér.`,
+            copy: `${applicantName} ${application.applicant} hefur skráð þig sem foreldri í umsókn sinni og er að óska eftir réttindum frá þér.`,
           },
         },
         {
