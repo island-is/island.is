@@ -45,12 +45,14 @@ export const prerequisite = (): Form => {
             subTitle: m.dataCollectionSubtitle,
             checkboxLabel: m.dataCollectionCheckboxLabel,
             dataProviders: [
+              /*
               buildDataProviderItem({
                 id: 'nationalRegistry',
                 type: 'NationalRegistryProvider',
                 title: m.dataCollectionNationalRegistryTitle,
                 subTitle: m.dataCollectionNationalRegistrySubtitle,
               }),
+              */
               buildDataProviderItem({
                 id: 'userProfile',
                 type: 'UserProfileProvider',
