@@ -3,9 +3,9 @@ import React from 'react'
 import { ApplicationState } from '@island.is/financial-aid/shared/lib'
 
 import { FAFieldBaseProps } from '../../lib/types'
-import Status from './Status'
 import { ApplicationStates } from '../../lib/constants'
 import { hasSpouse } from '../../lib/utils'
+import { Status } from './index'
 
 const ApplicantStatus = ({ application }: FAFieldBaseProps) => {
   const state = application.externalData?.veita?.data?.state

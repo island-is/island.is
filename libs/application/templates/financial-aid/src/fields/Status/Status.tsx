@@ -4,14 +4,16 @@ import { ApplicationState } from '@island.is/financial-aid/shared/lib'
 import { Box } from '@island.is/island-ui/core'
 
 import { FAApplication } from '../../lib/types'
-import MoreActions from './MoreActions/MoreActions'
-import Timeline from './Timeline/Timeline'
-import AidAmount from './AidAmount/AidAmount'
-import MissingFilesCard from './MissingFIlesCard/MissingFilesCard'
-import Header from './Header/Header'
-import RejectionMessage from './RejectionMessage/RejectionMessage'
-import SpouseAlert from './SpouseAlert/SpouseAlert'
-import SpouseApproved from './SpouseApproved/SpouseApproved'
+import {
+  AidAmount,
+  Header,
+  MissingFilesCard,
+  MoreActions,
+  RejectionMessage,
+  SpouseAlert,
+  SpouseApproved,
+  Timeline,
+} from './index'
 
 interface Props {
   application: FAApplication
