@@ -32,7 +32,6 @@ import {
 } from '@island.is/judicial-system/types'
 import type { User as TUser } from '@island.is/judicial-system/types'
 
-import { environment } from '../../../environments'
 import { nowFactory, uuidFactory } from '../../factories'
 import {
   getRequestPdfAsBuffer,
@@ -335,12 +334,12 @@ export class CaseService {
     try {
       await this.emailService.sendEmail({
         from: {
-          name: environment.email.fromName,
-          address: environment.email.fromEmail,
+          name: this.config.email.fromName,
+          address: this.config.email.fromEmail,
         },
         replyTo: {
-          name: environment.email.replyToName,
-          address: environment.email.replyToEmail,
+          name: this.config.email.replyToName,
+          address: this.config.email.replyToEmail,
         },
         to,
         subject: this.formatMessage(m.signedRuling.subject, {
@@ -369,13 +368,13 @@ export class CaseService {
         ? this.formatMessage(m.signedRuling.prosecutorBodyS3, {
             courtCaseNumber: theCase.courtCaseNumber,
             courtName: theCase.court?.name?.replace('dómur', 'dómi'),
-            linkStart: `<a href="${environment.deepLinks.completedCaseOverviewUrl}${theCase.id}">`,
+            linkStart: `<a href="${this.config.deepLinks.completedCaseOverviewUrl}${theCase.id}">`,
             linkEnd: '</a>',
           })
         : this.formatMessage(m.signedRuling.prosecutorBodyAttachment, {
             courtName: theCase.court?.name,
             courtCaseNumber: theCase.courtCaseNumber,
-            linkStart: `<a href="${environment.deepLinks.completedCaseOverviewUrl}${theCase.id}">`,
+            linkStart: `<a href="${this.config.deepLinks.completedCaseOverviewUrl}${theCase.id}">`,
             linkEnd: '</a>',
           }),
       theCase.courtCaseNumber,
@@ -405,7 +404,7 @@ export class CaseService {
       recipients,
       this.formatMessage(m.signedRuling.courtBody, {
         courtCaseNumber: theCase.courtCaseNumber,
-        linkStart: `<a href="${environment.deepLinks.completedCaseOverviewUrl}${theCase.id}">`,
+        linkStart: `<a href="${this.config.deepLinks.completedCaseOverviewUrl}${theCase.id}">`,
         linkEnd: '</a>',
       }),
       theCase.courtCaseNumber,
@@ -413,35 +412,23 @@ export class CaseService {
     )
   }
 
-  private sendEmailToDefender(
-    courtRecordPdf: undefined,
-    theCase: Case,
-    rulingAttachment: { filename: string; content: string; encoding: string },
-  ) {
-    const attachments = courtRecordPdf
-      ? [
-          {
-            filename: this.formatMessage(m.signedRuling.courtRecordAttachment, {
-              courtCaseNumber: theCase.courtCaseNumber,
-            }),
-            content: courtRecordPdf,
-            encoding: 'binary',
-          },
-          rulingAttachment,
-        ]
-      : [rulingAttachment]
-
+  private sendEmailToDefender(theCase: Case, rulingUploadedToS3: boolean) {
+    const newLocal = this.formatMessage(m.signedRuling.defenderBody, {
+      courtCaseNumber: theCase.courtCaseNumber,
+      courtName: theCase.court?.name?.replace('dómur', 'dómi'),
+      defenderHasAccessToRvg: theCase.defenderNationalId,
+      linkStart: `<a href="${this.config.deepLinks.defenderCompletedCaseOverviewUrl}${theCase.id}">`,
+      linkEnd: '</a>',
+      signedVerdictAvailableInS3: rulingUploadedToS3 ? 'TRUE' : 'FALSE',
+    })
+    console.log(newLocal)
     return this.sendEmail(
       {
         name: theCase.defenderName ?? '',
         address: theCase.defenderEmail ?? '',
       },
-      this.formatMessage(m.signedRuling.defenderBodyAttachment, {
-        courtName: theCase.court?.name,
-        courtCaseNumber: theCase.courtCaseNumber,
-      }),
+      newLocal,
       theCase.courtCaseNumber,
-      attachments,
     )
   }
 
@@ -460,8 +447,6 @@ export class CaseService {
       }),
     ]
 
-    let courtRecordPdf = undefined
-
     if (theCase.courtId && theCase.courtCaseNumber) {
       uploadPromises.push(
         this.uploadSignedRulingPdfToCourt(theCase, user, signedRulingPdf).then(
@@ -471,8 +456,7 @@ export class CaseService {
         ),
         this.uploadCaseFilesPdfToCourt(theCase, user),
         getCourtRecordPdfAsString(theCase, this.formatMessage)
-          .then((pdf) => {
-            courtRecordPdf = pdf
+          .then((courtRecordPdf) => {
             return this.uploadCourtRecordPdfToCourt(
               theCase,
               user,
@@ -518,9 +502,7 @@ export class CaseService {
         theCase.sessionArrangements ===
           SessionArrangements.ALL_PRESENT_SPOKESPERSON)
     ) {
-      emailPromises.push(
-        this.sendEmailToDefender(courtRecordPdf, theCase, rulingAttachment),
-      )
+      emailPromises.push(this.sendEmailToDefender(theCase, rulingUploadedToS3))
     }
 
     await Promise.all(emailPromises)
@@ -740,7 +722,7 @@ export class CaseService {
     user: TUser,
   ): Promise<SigningServiceResponse> {
     // Development without signing service access token
-    if (!this.config.production && !environment.signingOptions.accessToken) {
+    if (!this.config.production && !this.config.dokobitAccessToken) {
       return { controlCode: '0000', documentToken: 'DEVELOPMENT' }
     }
 
@@ -766,7 +748,7 @@ export class CaseService {
     // This method should be called immediately after requestCourtRecordSignature
 
     // Production, or development with signing service access token
-    if (this.config.production || environment.signingOptions.accessToken) {
+    if (this.config.production || this.config.dokobitAccessToken) {
       try {
         const courtRecordPdf = await this.signingService.getSignedDocument(
           'courtRecord.pdf',
@@ -810,7 +792,7 @@ export class CaseService {
 
   async requestRulingSignature(theCase: Case): Promise<SigningServiceResponse> {
     // Development without signing service access token
-    if (!this.config.production && !environment.signingOptions.accessToken) {
+    if (!this.config.production && !this.config.dokobitAccessToken) {
       return { controlCode: '0000', documentToken: 'DEVELOPMENT' }
     }
 
@@ -836,7 +818,7 @@ export class CaseService {
     // This method should be called immediately after requestRulingSignature
 
     // Production, or development with signing service access token
-    if (this.config.production || environment.signingOptions.accessToken) {
+    if (this.config.production || this.config.dokobitAccessToken) {
       try {
         const signedPdf = await this.signingService.getSignedDocument(
           'ruling.pdf',
