@@ -20,6 +20,7 @@ import { DefendantService } from '../../defendant'
 import { Case } from '../models/case.model'
 import { caseModuleConfig } from '../case.config'
 import { CaseService } from '../case.service'
+import { RestrictedCaseService } from '../restrictedCase.service'
 import { CaseController } from '../case.controller'
 import { CaseArchive } from '../models/caseArchive.model'
 
@@ -79,6 +80,7 @@ export const createTestingCaseModule = async () => {
       },
       { provide: caseModuleConfig.KEY, useValue: caseModuleConfig() },
       CaseService,
+      RestrictedCaseService,
     ],
   }).compile()
 
@@ -108,6 +110,10 @@ export const createTestingCaseModule = async () => {
 
   const caseService = caseModule.get<CaseService>(CaseService)
 
+  const restrictedCaseService = caseModule.get<RestrictedCaseService>(
+    RestrictedCaseService,
+  )
+
   const caseController = caseModule.get<CaseController>(CaseController)
 
   return {
@@ -122,6 +128,7 @@ export const createTestingCaseModule = async () => {
     caseArchiveModel,
     caseConfig,
     caseService,
+    restrictedCaseService,
     caseController,
   }
 }

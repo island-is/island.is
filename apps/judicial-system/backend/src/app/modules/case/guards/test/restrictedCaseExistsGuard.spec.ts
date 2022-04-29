@@ -14,7 +14,7 @@ import { Defendant } from '../../../defendant'
 import { Institution } from '../../../institution'
 import { User } from '../../../user'
 import { Case } from '../../models/case.model'
-import { CaseExistsGuard } from '../caseExists.guard'
+import { RestrictedCaseExistsGuard } from '../restrictedCaseExists.guard'
 
 interface Then {
   result: boolean
@@ -23,18 +23,18 @@ interface Then {
 
 type GivenWhenThen = () => Promise<Then>
 
-describe('Case Exists Guard', () => {
+describe('Restricted Case Exists Guard', () => {
   const mockRequest = jest.fn()
   let mockCaseModel: typeof Case
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { caseModel, caseService } = await createTestingCaseModule()
+    const { caseModel, restrictedCaseService } = await createTestingCaseModule()
 
     mockCaseModel = caseModel
 
     givenWhenThen = async (): Promise<Then> => {
-      const guard = new CaseExistsGuard(caseService)
+      const guard = new RestrictedCaseExistsGuard(restrictedCaseService)
       const then = {} as Then
 
       try {
@@ -51,6 +51,35 @@ describe('Case Exists Guard', () => {
 
   describe('database lookup', () => {
     const caseId = uuid()
+    const attributes: (keyof Case)[] = [
+      'id',
+      'created',
+      'modified',
+      'origin',
+      'type',
+      'state',
+      'policeCaseNumber',
+      'defenderName',
+      'defenderNationalId',
+      'defenderEmail',
+      'defenderPhoneNumber',
+      'courtId',
+      'leadInvestigator',
+      'requestedCustodyRestrictions',
+      'creatingProsecutorId',
+      'prosecutorId',
+      'courtCaseNumber',
+      'validToDate',
+      'isCustodyIsolation',
+      'isolationToDate',
+      'conclusion',
+      'rulingDate',
+      'registrarId',
+      'judgeId',
+      'courtRecordSignatoryId',
+      'courtRecordSignatureDate',
+      'parentCaseId',
+    ]
 
     beforeEach(async () => {
       mockRequest.mockImplementationOnce(() => ({ params: { caseId } }))
@@ -60,6 +89,7 @@ describe('Case Exists Guard', () => {
 
     it('should query the database', () => {
       expect(mockCaseModel.findOne).toHaveBeenCalledWith({
+        attributes,
         include: [
           { model: Defendant, as: 'defendants' },
           { model: Institution, as: 'court' },
@@ -73,7 +103,6 @@ describe('Case Exists Guard', () => {
             as: 'prosecutor',
             include: [{ model: Institution, as: 'institution' }],
           },
-          { model: Institution, as: 'sharedWithProsecutorsOffice' },
           {
             model: User,
             as: 'judge',
@@ -89,8 +118,8 @@ describe('Case Exists Guard', () => {
             as: 'courtRecordSignatory',
             include: [{ model: Institution, as: 'institution' }],
           },
-          { model: Case, as: 'parentCase' },
-          { model: Case, as: 'childCase' },
+          { model: Case, as: 'parentCase', attributes },
+          { model: Case, as: 'childCase', attributes },
         ],
         order: [[{ model: Defendant, as: 'defendants' }, 'created', 'ASC']],
         where: {
