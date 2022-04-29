@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards } from '@nestjs/common'
+import { Controller, Get, Param, UseGuards } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import { apiBasePath } from '@island.is/financial-aid/shared/lib'
@@ -27,18 +27,18 @@ export class PersonalTaxReturnController {
     private readonly personalTaxReturnService: PersonalTaxReturnService,
   ) {}
 
-  @Get('')
+  @Get('id/:id')
   @ApiOkResponse({
     type: PersonalTaxReturnResponse,
     description: 'Fetches personal tax return and uploads it to s3.',
   })
   async municipalitiesPersonalTaxReturn(
+    @Param('id') id: string,
     @CurrentUser() user: User,
   ): Promise<PersonalTaxReturnResponse> {
-    // TODO: Get application id as query parameter input
     return await this.personalTaxReturnService.personalTaxReturn(
       user.nationalId,
-      'todo',
+      id,
     )
   }
 
