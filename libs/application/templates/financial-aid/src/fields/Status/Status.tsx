@@ -68,7 +68,9 @@ const Status = ({
       />
 
       <MoreActions
-        municipalityRulesPage={nationalRegistry?.data.municipality?.rulesHomepage}
+        municipalityRulesPage={
+          nationalRegistry?.data.municipality?.rulesHomepage
+        }
         municipalityEmail={nationalRegistry?.data.municipality?.email}
       />
     </Box>

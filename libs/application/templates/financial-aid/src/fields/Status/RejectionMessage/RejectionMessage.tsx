@@ -27,8 +27,7 @@ const RejectionMessage = ({
         {formatMessage(rejectionMessage.explanation, {
           rejectionComment,
         })}{' '}
-        {showRulesLink &&
-          formatMessage(rejectionMessage.explanationLink)}
+        {showRulesLink && formatMessage(rejectionMessage.explanationLink)}
       </Text>
       {showRulesLink && (
         <Box marginBottom={[4, 4, 5]}>

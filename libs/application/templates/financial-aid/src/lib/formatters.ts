@@ -8,8 +8,7 @@ import {
 } from '@island.is/financial-aid/shared/lib'
 import { Colors } from '@island.is/island-ui/theme'
 
-import { MessageDescriptor, useIntl } from 'react-intl'
-const { formatMessage } = useIntl()
+import { MessageDescriptor } from 'react-intl'
 
 import * as m from './messages'
 import { Routes } from './constants'
@@ -150,23 +149,11 @@ export const spouseFormItems = (answers: OverrideAnswerSchema) => [
 
 export const getStateMessageAndColor: KeyMapping<
   ApplicationState,
-  [string, Colors]
+  [MessageDescriptor, Colors]
 > = {
-  New: [formatMessage(m.header.new), 'blue400'],
-  Approved: [formatMessage(m.header.approved), 'mint600'],
-  Rejected: [formatMessage(m.header.rejected), 'red400'],
-  InProgress: [
-    formatMessage(m.header.inProgress, {
-      month: getNextPeriod.month,
-      year: getNextPeriod.year,
-    }),
-    'blue400',
-  ],
-  DataNeeded: [
-    formatMessage(m.header.inProgress, {
-      month: getNextPeriod.month,
-      year: getNextPeriod.year,
-    }),
-    'blue400',
-  ],
+  New: [m.header.new, 'blue400'],
+  Approved: [m.header.approved, 'mint600'],
+  Rejected: [m.header.rejected, 'red400'],
+  InProgress: [m.header.inProgress, 'blue400'],
+  DataNeeded: [m.header.inProgress, 'blue400'],
 }

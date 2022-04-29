@@ -36,7 +36,6 @@ export const moreActions = defineMessages({
   },
 })
 
-
 export const timeline = defineMessages({
   title: {
     id: 'fa.application:section.timeline.title',
@@ -180,8 +179,7 @@ export const rejectionMessage = defineMessages({
     description: 'Appeal title',
   },
   appealDescription: {
-    id:
-      'fa.application:section.rejectionMessage.appealDescription#markup',
+    id: 'fa.application:section.rejectionMessage.appealDescription#markup',
     defaultMessage:
       'Bent skal á að unnt er að skjóta ákvörðun þessari til áfrýjunarnefndar þíns sveitarfélags. Skal það gert skriflega og innan fjögurra vikna. Fyrir frekari upplýsingar um málskot hafðu samband með tölvupósti á netfangið [{email}]({email}). \n\n Ákvörðun ráðsins má síðan skjóta til úrskurðarnefndar velferðarmála, Katrínartúni 2, 105 Reykjavík innan þriggja mánaða.',
     description: 'Appeal title',
@@ -201,7 +199,6 @@ export const spouseAlert = defineMessages({
     description: 'Message of alert',
   },
 })
-
 
 export const spouseApproved = defineMessages({
   message: {
