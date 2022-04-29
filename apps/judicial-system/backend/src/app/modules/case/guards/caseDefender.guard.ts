@@ -30,9 +30,7 @@ export class CaseDefenderGuard implements CanActivate {
       user.nationalId !== theCase.defenderNationalId
     ) {
       throw new ForbiddenException(
-        `User ${user.id || '?'} does not have read access to case ${
-          theCase.id
-        }`,
+        `User ${user.id} does not have read access to case ${theCase.id}`,
       )
     }
 
