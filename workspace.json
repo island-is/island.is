@@ -7979,6 +7979,12 @@
             "jestConfig": "libs/service-portal/information/jest.config.js",
             "passWithNoTests": true
           }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/service-portal/information/src/{screens,components}/**/*.{js,ts,tsx}'"
+          }
         }
       }
     },
