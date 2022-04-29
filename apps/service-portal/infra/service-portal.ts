@@ -21,9 +21,12 @@ export const serviceSetup = (services: {}): ServiceBuilder<'service-portal'> =>
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
+      ENVIRONMENT: ref((h) => h.env.type),
     })
     .secrets({
       SI_PUBLIC_CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY',
+      DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID',
+      DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN',
     })
     .ingress({
       primary: {
