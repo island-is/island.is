@@ -100,7 +100,7 @@ In order to introduce an application behind a featureflag you can follow the fol
 1.  Ask someone from DevOps for invite to ConfigCat.
 2.  Once you're in (https://app.configcat.com/) you can add your feature flag. The initial values should always be "On" in Dev and (probably always to start with) "Off" in Production and Staging.
 3.  Remember to add the label "applicationSystemFlag" to your flag.
-4.  Make sure that the CONFIGCAT_SDK_KEY environment variable is exported in .env.secret in the root of the repository. You can fetch it by calling for example yarn get-secrets service-portal.
+4.  Make sure that the CONFIGCAT_SDK_KEY environment variable is exported in .env.secret in the root of the repository. You can fetch it by calling for example yarn get-secrets application-system.
 5.  Add your flag to the package @island.is/feature-flags in libs/feature-flags/src/lib/features.ts
 6.  Now you can add the featureFlag to the application template under "featureFlag".
 
