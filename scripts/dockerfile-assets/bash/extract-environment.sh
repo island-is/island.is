@@ -14,7 +14,7 @@ placeholder="<!-- environment placeholder -->"
 function extract_environment() {
   env_prefix="SI_PUBLIC_"
   environment="{}"
-  env_names=$(grep -ohr "$env_prefix\w*" "$work_dir/" | sort | uniq)
+  mapfile -t env_names < <(grep -ohr "$env_prefix\w*" "$work_dir/" | sort | uniq)
   env_names+=("APP_VERSION")
 
   for env_name in "${env_names[@]}"; do
