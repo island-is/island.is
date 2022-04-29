@@ -139,7 +139,7 @@ export class AuthController {
           nationalId,
         },
         res,
-        typeof redirectRoute,
+        redirectRoute,
       )
     }
 
