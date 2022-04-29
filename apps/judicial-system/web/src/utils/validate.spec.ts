@@ -170,3 +170,40 @@ describe('Validate phonenumber format', () => {
     expect(r.isValid).toEqual(true)
   })
 })
+
+describe('Validate court case number', () => {
+  test.each`
+    courtCaseNumber
+    ${'R-1/2019'}
+    ${'R-22/2022'}
+    ${'R-7536/1993'}
+    ${'R-333/3333'}
+  `(
+    'should pass when case as correct format $courtCaseNumber',
+    ({ courtCaseNumber }) => {
+      const result = validate(courtCaseNumber, 'court-case-number')
+      expect(result.isValid).toEqual(true)
+    },
+  )
+
+  test.each`
+    courtCaseNumber
+    ${'2019'}
+    ${'r-1/2019'}
+    ${'R.1/2019'}
+    ${'R/1/2019'}
+    ${'R/1-2019'}
+    ${'R/1-2019'}
+    ${'R-1-2019'}
+    ${'R-1/201'}
+    ${'R-1/201'}
+    ${'R-12345/2014'}
+  `(
+    'should fail if case number as wrong format $courtCaseNumber',
+    ({ courtCaseNumber }) => {
+      const result = validate(courtCaseNumber, 'court-case-number')
+      expect(result.isValid).toEqual(false)
+      expect(result.errorMessage).toEqual('Dæmi: R-1234/2022')
+    },
+  )
+})
