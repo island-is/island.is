@@ -473,16 +473,9 @@ export class ApplicationController {
       user.nationalId,
     )
 
-    const namespaces = await getApplicationTranslationNamespaces(
-      existingApplication as BaseApplication,
-    )
-    const intl = await this.intlService.useIntl(namespaces, locale)
-
     const templateId = existingApplication.typeId as ApplicationTypes
     const template = await getApplicationTemplateByTypeId(templateId)
 
-    //TODO : Get Dataproviders from Template role
-    ////////
     const helper = new ApplicationTemplateHelper(
       existingApplication as BaseApplication,
       template,
@@ -496,11 +489,10 @@ export class ApplicationController {
     const providersFromRole = userRole
       ? helper.getDataProvidersFromRoleInState(userRole)
       : []
-    //////
+
     const listOfProviders: ApplicationTemplateAPIAction[] = []
+
     for (let i = 0; i < externalDataDto.dataProviders.length; i++) {
-      console.log(externalDataDto.dataProviders[i])
-      console.log(providersFromRole)
       const found = providersFromRole.find(
         (x) => x.externalDataId === externalDataDto.dataProviders[i].id,
       )
@@ -536,7 +528,7 @@ export class ApplicationController {
       resources: existingApplication.id,
       meta: { providers: externalDataDto },
     })
-    console.log({ updatedApplication })
+
     return updatedApplication
   }
 
