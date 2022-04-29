@@ -87,4 +87,31 @@ export const spmm = {
         'Hér eru gögn um þig og fjölskyldu þína sem sótt eru til Þjóðskrár. Með því að smella á skoða upplýsingar er hægt að óska eftir breytingum á þeim upplýsingum.',
     },
   }),
+  company: defineMessages({
+    subtitle: {
+      id: 'sp.company:company-subtitle',
+      defaultMessage:
+        'Hér fyrir neðan eru þín gögn sem hafa verið sótt frá Ríkisskattstjóra.',
+    },
+    name: {
+      id: 'sp.company:name',
+      defaultMessage: 'Nafn fyrirtækis',
+    },
+    registration: {
+      id: 'sp.company:registration',
+      defaultMessage: 'Stofnað/Skráð',
+    },
+    taxNr: {
+      id: 'sp.company:tax-number',
+      defaultMessage: 'Virðisaukaskattsnúmer',
+    },
+    operationForm: {
+      id: 'sp.company:operation-form',
+      defaultMessage: 'Rekstrarform',
+    },
+    industryClass: {
+      id: 'sp.company:idustry-class',
+      defaultMessage: 'ÍSAT Atvinnugreinaflokkun',
+    },
+  }),
 }

@@ -35,6 +35,15 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         },
       },
 
+      // Company
+      {
+        name: 'Um fyriræki',
+        path: ServicePortalPath.Company,
+        icon: {
+          icon: 'business',
+        },
+      },
+
       // Min Gogn
       {
         name: m.userInfo,

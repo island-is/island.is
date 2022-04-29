@@ -50,6 +50,14 @@ export const familyModule: ServicePortalModule = {
       render: () => lazy(() => import('./screens/Spouse/Spouse')),
     },
   ],
+  companyRoutes: ({ userInfo }) => [
+    {
+      name: 'Um fyrirtæki',
+      path: ServicePortalPath.Company,
+      // enabled: userInfo.scopes.includes(ApiScope.meDetails),
+      render: () => lazy(() => import('./screens/Company/UserInfo')),
+    },
+  ],
 }
 
 export * from './components/FamilyMemberCard/FamilyMemberCard'
