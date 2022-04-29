@@ -30,6 +30,7 @@ import {
   VirkLeyfiGetRequest,
   TegundAndlags,
   VedbandayfirlitReguverkiSvarSkeyti,
+  SkraningaradiliDanarbusSkeyti,
 } from '../../gen/fetch'
 import { SyslumennClientConfig } from './syslumennClient.config'
 import type { ConfigType } from '@island.is/nest/config'
@@ -336,5 +337,21 @@ export class SyslumennService {
     } else {
       throw new Error()
     }
+  }
+
+  async getEstateRegistrant(
+    registrantNationalId: string,
+  ): Promise<Array<SkraningaradiliDanarbusSkeyti>> {
+    const { id, api } = await this.createApi()
+
+    const res = await api.skraningaradiliDanarbusGet({
+      audkenni: id,
+      kennitala: registrantNationalId,
+    })
+
+    if (res.length > 0) {
+      return res
+    }
+    return []
   }
 }

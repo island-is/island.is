@@ -26,6 +26,16 @@ export class AnnouncementOfDeathService {
     private readonly fasteignirApi: FasteignirApi,
   ) {}
 
+  async syslumennOnEntry({ application }: TemplateApiModuleActionProps) {
+    const estates = await this.syslumennService.getEstateRegistrant(
+      application.applicant,
+    )
+    return {
+      success: true,
+      estates,
+    }
+  }
+
   async sendTestEmail({ application }: TemplateApiModuleActionProps) {
     await this.sharedTemplateAPIService.sendEmail(
       generateTestEmail,

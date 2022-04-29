@@ -35,6 +35,11 @@ const AnnouncementOfDeathTemplate: ApplicationTemplate<
           actionCard: {
             title: m.applicationTitle,
           },
+          onEntry: {
+            apiModuleAction: ApiActions.syslumennOnEntry,
+            shouldPersistToExternalData: true,
+            throwOnError: false,
+          },
           progress: 0.25,
           lifecycle: EphemeralStateLifeCycle,
           roles: [
