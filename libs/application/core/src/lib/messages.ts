@@ -328,4 +328,22 @@ export const coreDelegationsMessages = defineMessages({
     defaultMessage: 'Kennitala: ',
     description: 'Delegations screen national Id',
   },
+  delegationScreenTitleApplicationNoDelegationSupport: {
+    id:
+      'application.system:core.delegations.delegationScreenTitleApplicationNoDelegationSupport',
+    defaultMessage: 'Umsókn styður ekki umboð',
+    description: 'Delegations error application does not support delegations title',
+  },
+  delegationScreenSubtitleApplicationNoDelegationSupport: {
+    id:
+      'application.system:core.delegations.delegationScreenSubtitleApplicationNoDelegationSupport',
+    defaultMessage:
+      'Vinsamlegast skiptu um notanda til að halda áfram.',
+    description: 'Delegations error application does not support delegations title',
+  },
+  delegationErrorButton: {
+    id: 'application.system:core.delegations.delegationErrorButton',
+    defaultMessage: 'Skipta um notanda',
+    description: 'Delegations Screen Card Button/Link',
+  },
 })

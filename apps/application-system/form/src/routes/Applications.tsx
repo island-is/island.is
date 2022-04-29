@@ -29,6 +29,7 @@ import { USER_PROFILE } from '@island.is/service-portal/graphql'
 import { Query } from '@island.is/api/schema'
 
 import { ApplicationLoading } from '../components/ApplicationsLoading/ApplicationLoading'
+import { findProblemInApolloError, ProblemType } from '@island.is/shared/problem'
 
 export const Applications: FC = () => {
   const { slug } = useParams<{ slug: string }>()
@@ -117,6 +118,23 @@ export const Applications: FC = () => {
   }
 
   if (!type || applicationsError) {
+    const foundError = findProblemInApolloError(applicationsError as any, [
+      ProblemType.BAD_SUBJECT,
+    ])
+    if (
+      foundError?.type === ProblemType.BAD_SUBJECT &&
+      type &&
+      !delegationsChecked
+    ) {
+      console.log("HELLO HERE")
+      return (
+        <DelegationsScreen
+          slug={slug}
+          alternativeSubjects={foundError.alternativeSubjects}
+          checkDelegation={checkDelegation}
+        />
+      )
+    }
     return (
       <ErrorShell
         title={formatMessage(coreMessages.notFoundApplicationType)}

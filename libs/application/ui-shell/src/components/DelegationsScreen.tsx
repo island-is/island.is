@@ -41,13 +41,13 @@ export const DelegationsScreen = ({
   checkDelegation,
 }: DelegationsScreenProps) => {
   const [allowedDelegations, setAllowedDelegations] = useState<string[]>()
+  const [noAllowed, setNoAllowed] = useState<boolean>()
   const [applicant, setApplicant] = useState<Delegation>()
   const [actorDelegations, setActorDelegations] = useState<Delegation[]>()
   const { formatMessage } = useLocale()
   const type = getTypeFromSlug(slug)
   const { switchUser, userInfo: user } = useAuth()
   const history = useHistory()
-
   useEffect(() => {
     async function checkDelegations() {
       if (type) {
@@ -56,7 +56,8 @@ export const DelegationsScreen = ({
           setAllowedDelegations(template.allowedDelegations)
         } else {
           if (user?.profile.actor) {
-            switchUser(user?.profile.actor.nationalId)
+            setNoAllowed(true)
+            return
           }
           checkDelegation(true)
         }
@@ -215,6 +216,45 @@ export const DelegationsScreen = ({
               )
             })}
           </Stack>
+        </GridContainer>
+      </Page>
+    )
+  }
+  if(noAllowed && user?.profile.actor) {
+    const {name, nationalId} = user?.profile.actor
+    return (
+      <Page>
+        <GridContainer>
+          <Box>
+            <Box marginTop={5} marginBottom={5}>
+              <Text marginBottom={2} variant="h1">
+                {formatMessage(
+                  coreDelegationsMessages.delegationScreenTitleApplicationNoDelegationSupport,
+                )}
+              </Text>
+              <Text>
+                {formatMessage(
+                  coreDelegationsMessages.delegationScreenSubtitleApplicationNoDelegationSupport,
+                )}
+              </Text>
+            </Box>
+
+            <ActionCard
+              avatar
+              heading={name}
+              text={
+                formatMessage(
+                  coreDelegationsMessages.delegationScreenNationalId,
+                ) + formatKennitala(nationalId)
+              }
+              cta={{
+                label: formatMessage(coreDelegationsMessages.delegationErrorButton),
+                variant: 'text',
+                size: 'medium',
+                onClick: () => handleClick(nationalId),
+              }}
+            />
+          </Box>
         </GridContainer>
       </Page>
     )

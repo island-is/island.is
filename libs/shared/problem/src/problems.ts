@@ -27,7 +27,7 @@ export type AlternativeSubject = {
 }
 export interface BadSubjectProblem extends BaseProblem {
   type: ProblemType.BAD_SUBJECT
-  alternativeSubjects: AlternativeSubject[]
+  alternativeSubjects?: AlternativeSubject[]
 }
 
 // Should be avoided whenever possible in favour of typed problems.

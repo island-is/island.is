@@ -4,6 +4,7 @@ import { User } from '@island.is/auth-nest-tools'
 import { ApplicationService } from '@island.is/application/api/core'
 import { verifyToken } from '../utils/tokenUtils'
 import { DecodedAssignmentToken } from '../types'
+import { BadSubject } from '@island.is/nest/problem'
 
 @Injectable()
 export class DelegationGuard implements CanActivate {
@@ -55,13 +56,20 @@ export class DelegationGuard implements CanActivate {
       if (typeId) {
         const applicationTemplate = await getApplicationTemplateByTypeId(typeId)
         // returns true if the actors delegation type for the subject is allowed for this type of application
-        return (
+        if (
           applicationTemplate.allowedDelegations?.includes(
             user.actor.delegationType,
-          ) || false
-        )
+          )
+        ) {
+          return true
+        } else {
+          // throw bad subject with no fields,
+          //  user is trying to access a ressource that does not support delegations with active delegation
+          throw new BadSubject()
+        }
       } else {
-        return false
+        // This can happen if the user enters a drafted application and does not have access the getTypeIdFromApplicationId needs to get the application from the user id
+        throw new BadSubject()
       }
     }
   }
