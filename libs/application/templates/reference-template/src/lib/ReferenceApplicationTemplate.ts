@@ -15,7 +15,7 @@ import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { Features } from '@island.is/feature-flags'
 
-import { ApiActions } from '../shared'
+import { ApiActions, ReferenceApplicationProviders } from '../shared'
 import { m } from './messages'
 const States = {
   prerequisites: 'prerequisites',
@@ -113,25 +113,11 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
               read: 'all',
               api: [
                 {
-                  apiModuleAction: ApiActions.getReferenceData,
-                  externalDataId: 'reference',
-                  shouldPersistToExternalData: true,
+                  ...SharedDataProviders.NationalRegistryProvider,
                   useMockData: true,
-                  mockData: {
-                    response: {
-                      data: {
-                        stone: 'stones',
-                      },
-                    },
-                    success: true,
-                  },
                 },
-                SharedDataProviders.NationalRegistryProvider,
-                {
-                  apiModuleAction: ApiActions.getAnotherReferenceData,
-                  externalDataId: 'anotherReference',
-                  shouldPersistToExternalData: true,
-                },
+                ReferenceApplicationProviders.referenceProvider,
+                ReferenceApplicationProviders.anotherReferenceProvider,
               ],
             },
           ],

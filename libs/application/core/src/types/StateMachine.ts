@@ -34,7 +34,7 @@ export interface RoleInState<T extends EventObject = AnyEventObject> {
   write?: ReadWriteValues
   formLoader?: FormLoader
   actions?: CallToAction<T>[]
-  api?: Omit<ApplicationTemplateAPIAction, 'order'>[]
+  api?: DataProviderTemplateApi[]
 }
 
 export interface ApiDataProvider {
@@ -70,10 +70,15 @@ export interface ApplicationTemplateAPIAction {
 
   order?: number
 
-  useMockData?: boolean
+  useMockData?: boolean | ((application: Application) => boolean)
   mockData?:
     | PerformActionResult
     | ((application: Application) => PerformActionResult)
+}
+
+export interface DataProviderTemplateApi
+  extends Omit<ApplicationTemplateAPIAction, 'order'> {
+  externalDataId: string
 }
 
 export type StateLifeCycle =

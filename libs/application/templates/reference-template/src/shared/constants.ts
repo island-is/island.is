@@ -1,4 +1,4 @@
-import { ApplicationTemplateAPIAction } from '@island.is/application/core'
+import { DataProviderTemplateApi } from '@island.is/application/core'
 
 export enum ApiActions {
   createApplication = 'createApplication',
@@ -9,12 +9,12 @@ export enum ApiActions {
   getAnotherReferenceData = 'getAnotherReferenceData',
 }
 
-export class Providers {
-  public static readonly referenceProvider: ApplicationTemplateAPIAction = {
+export class ReferenceApplicationProviders {
+  public static readonly referenceProvider: DataProviderTemplateApi = {
     apiModuleAction: ApiActions.getReferenceData,
     externalDataId: 'reference',
     shouldPersistToExternalData: true,
-    useMockData: true,
+    useMockData: false,
     mockData: {
       response: {
         data: {
@@ -24,7 +24,7 @@ export class Providers {
       success: true,
     },
   }
-  public static readonly anotherReferenceProvider: ApplicationTemplateAPIAction = {
+  public static readonly anotherReferenceProvider: DataProviderTemplateApi = {
     apiModuleAction: ApiActions.getAnotherReferenceData,
     externalDataId: 'anotherReference',
     shouldPersistToExternalData: true,

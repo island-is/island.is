@@ -13,7 +13,7 @@ import {
   SharedDataProviders,
 } from '@island.is/application/core'
 import { m } from '../lib/messages'
-import { Providers } from '../shared'
+import { ReferenceApplicationProviders } from '../shared'
 
 export const Prerequisites: Form = buildForm({
   id: 'PrerequisitesDraft',
@@ -29,20 +29,26 @@ export const Prerequisites: Form = buildForm({
           title: 'Utanaðkomandi gögn',
           dataProviders: [
             buildDataProviderItem({
-              id: 'anotherRefercneData',
-              type: Providers.anotherReferenceProvider.externalDataId,
+              id:
+                ReferenceApplicationProviders.anotherReferenceProvider
+                  .externalDataId,
+              type:
+                ReferenceApplicationProviders.anotherReferenceProvider
+                  .externalDataId,
               title: 'getAnotherReferenceData',
-              subTitle: 'Æji er að setja upp nýtt stöff',
+              subTitle: 'Another Refernence Data',
               order: 2,
             }),
             buildDataProviderItem({
-              id: 'referenceData',
-              type: Providers.referenceProvider.externalDataId,
+              id:
+                ReferenceApplicationProviders.referenceProvider.externalDataId,
+              type:
+                ReferenceApplicationProviders.referenceProvider.externalDataId,
               title: 'getReferenceData',
-              subTitle: 'Æji er að setja upp nýtt stöff',
+              subTitle: 'Reference data',
             }),
             buildDataProviderItem({
-              id: 'nationalRegistryData',
+              id: SharedDataProviders.NationalRegistryProvider.externalDataId,
               type: SharedDataProviders.NationalRegistryProvider.externalDataId,
               title: 'Þjóðskrá',
               subTitle: 'Náum í national registry dót',

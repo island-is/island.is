@@ -12,7 +12,7 @@ export * from './types/PdfTypes'
 export * from './types/ApplicationLifecycle'
 export * from './types/TemplateApiModuleTypes'
 
-export * from './lib/sharedDataProviders'
+export * from './constants/sharedDataProviders'
 export * from './lib/conditionUtils'
 export * from './lib/dataProviderUtils'
 export * from './lib/formUtils'
