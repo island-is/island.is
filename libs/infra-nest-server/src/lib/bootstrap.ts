@@ -1,4 +1,5 @@
 import '@island.is/infra-tracing'
+import type { Server } from 'http'
 import { NestFactory } from '@nestjs/core'
 import cookieParser from 'cookie-parser'
 import {
@@ -22,6 +23,10 @@ import { startMetricServer } from '@island.is/infra-metrics'
 import { httpRequestDurationMiddleware } from './httpRequestDurationMiddleware'
 import { InfraModule } from './infra/infra.module'
 import { swaggerRedirectMiddleware } from './swaggerMiddlewares'
+
+// Allow client connections to stay connected for up to 30 seconds of inactivity. For reference, the default value in
+// Node.JS is 5 seconds, Kestrel (.NET) is 120 seconds and Nginx is 75 seconds.
+const KEEP_ALIVE_TIMEOUT = 1000 * 30
 
 type RunServerOptions = {
   /**
@@ -107,12 +112,15 @@ export const createApp = async ({
 const startServer = async (app: INestApplication, port = 3333) => {
   const servicePort = parseInt(process.env.PORT || '') || port
   const metricsPort = servicePort + 1
-  await app.listen(servicePort, () => {
+  const server = (await app.listen(servicePort, () => {
     logger.info(`Service listening at http://localhost:${servicePort}`, {
       context: 'Bootstrap',
     })
-  })
+  })) as Server
   await startMetricServer(metricsPort)
+
+  // Allow connections to remain idle for a bit longer than the default 5s.
+  server.keepAliveTimeout = KEEP_ALIVE_TIMEOUT
 }
 
 function setupOpenApi(

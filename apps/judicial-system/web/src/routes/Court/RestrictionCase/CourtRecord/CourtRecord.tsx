@@ -27,7 +27,6 @@ import {
 import {
   capitalize,
   caseTypes,
-  formatCustodyRestrictions,
   formatDate,
 } from '@island.is/judicial-system/formatters'
 import {
@@ -64,6 +63,7 @@ import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
 import * as Constants from '@island.is/judicial-system/consts'
 
 import { isCourtRecordStepValidRC } from '../../../../utils/validate'
+import { formatCustodyRestrictions } from '../../../../utils/restrictions'
 
 export const CourtRecord: React.FC = () => {
   const {
@@ -180,10 +180,14 @@ export const CourtRecord: React.FC = () => {
         m.sections.sessionBookings.autofillCourtDocumentOne,
       )}\n\n${formatMessage(m.sections.sessionBookings.autofillAccusedPlea)}`
 
-      if (workingCase.type === CaseType.CUSTODY) {
+      if (
+        workingCase.type === CaseType.CUSTODY ||
+        workingCase.type === CaseType.ADMISSION_TO_FACILITY
+      ) {
         autofillSessionBookings += `\n\n${formatMessage(
-          m.sections.sessionBookings.autofillPresentations,
+          m.sections.sessionBookings.autofillPresentationsV2,
           {
+            caseType: workingCase.type,
             accused: formatMessage(core.accused, {
               suffix:
                 workingCase.defendants &&
@@ -204,17 +208,17 @@ export const CourtRecord: React.FC = () => {
             `${
               isAcceptingCaseDecision(workingCase.decision)
                 ? `${formatCustodyRestrictions(
+                    formatMessage,
+                    workingCase.type,
                     workingCase.requestedCustodyRestrictions,
-                    workingCase.isCustodyIsolation,
-                    true,
                   )}\n\n`
                 : ''
-            }${formatMessage(m.sections.custodyRestrictions.disclaimer, {
+            }${formatMessage(m.sections.custodyRestrictions.disclaimerV2, {
               caseType:
                 workingCase.decision ===
                 CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                  ? 'farbannsins'
-                  : 'gæsluvarðhaldsins',
+                  ? CaseType.TRAVEL_BAN
+                  : workingCase.type,
             })}`,
             workingCase,
           )
@@ -230,8 +234,8 @@ export const CourtRecord: React.FC = () => {
             `${
               workingCase.requestedOtherRestrictions &&
               `${workingCase.requestedOtherRestrictions}\n\n`
-            }${formatMessage(m.sections.custodyRestrictions.disclaimer, {
-              caseType: 'farbannsins',
+            }${formatMessage(m.sections.custodyRestrictions.disclaimerV2, {
+              caseType: workingCase.type,
             })}`,
             workingCase,
           )

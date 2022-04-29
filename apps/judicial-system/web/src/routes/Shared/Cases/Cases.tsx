@@ -44,7 +44,7 @@ export const Cases: React.FC = () => {
     findLastValidStep,
     getCourtSections,
     getInvestigationCaseCourtSections,
-    getCustodyAndTravelBanProsecutorSection,
+    getRestrictionCaseProsecutorSection,
     getInvestigationCaseProsecutorSection,
   } = useSections()
 
@@ -158,7 +158,7 @@ export const Cases: React.FC = () => {
           routeTo = `${Constants.STEP_SIX_ROUTE}/${caseToOpen.id}`
         } else {
           routeTo = findLastValidStep(
-            getCustodyAndTravelBanProsecutorSection(caseToOpen),
+            getRestrictionCaseProsecutorSection(caseToOpen),
           ).href
         }
       } else {

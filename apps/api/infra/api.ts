@@ -14,6 +14,7 @@ import {
   CriminalRecord,
   RskCompanyInfo,
   DrivingLicenseBook,
+  FishingLicense,
 } from '../../../infra/src/dsl/xroad'
 import { settings } from '../../../infra/src/dsl/settings'
 
@@ -110,6 +111,11 @@ export const serviceSetup = (services: {
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
+      MUNICIPALITIES_FINANCIAL_AID_BACKEND_URL: {
+        dev: 'http://web-financial-aid-backend',
+        staging: 'http://web-financial-aid-backend',
+        prod: 'http://web-financial-aid-backend',
+      },
     })
 
     .secrets({
@@ -170,6 +176,7 @@ export const serviceSetup = (services: {
       CriminalRecord,
       RskCompanyInfo,
       DrivingLicenseBook,
+      FishingLicense,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({

@@ -98,7 +98,7 @@ const AccessModal: FC<Props> = ({
                       ? `assets/images/${img}.svg`
                       : 'assets/images/myInfo.svg'
                   }
-                  alt="Skrautmynd"
+                  alt=""
                   style={{ float: 'right' }}
                   width="80%"
                 />

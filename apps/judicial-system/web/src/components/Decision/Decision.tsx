@@ -89,7 +89,8 @@ const Decision: React.FC<Props> = (props) => {
           backgroundColor="white"
         />
       </Box>
-      {workingCase.type === CaseType.CUSTODY && (
+      {(workingCase.type === CaseType.CUSTODY ||
+        workingCase.type === CaseType.ADMISSION_TO_FACILITY) && (
         <Box marginTop={2}>
           <RadioButton
             name="case-decision"

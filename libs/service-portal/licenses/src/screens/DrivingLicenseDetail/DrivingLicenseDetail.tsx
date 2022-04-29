@@ -14,9 +14,7 @@ import {
   Link,
 } from '@island.is/island-ui/core'
 import {
-  PlausiblePageviewDetail,
   ServicePortalModuleComponent,
-  ServicePortalPath,
   UserInfoLine,
 } from '@island.is/service-portal/core'
 import { defineMessage } from 'react-intl'
@@ -24,7 +22,7 @@ import { isExpired, toDate } from '../../utils/dateUtils'
 import { mapCategory } from '../../utils/dataMapper'
 import ReactHtmlParser from 'react-html-parser'
 import ExpandableLine from './ExpandableLine'
-import * as styles from '../../components/DrivingLicense/DrivingLicense.css'
+import * as styles from './DrivingLicenseDetail.css'
 import QRCodeModal from '../../components/QRCodeModal/QRCodeModal'
 import { info } from 'kennitala'
 import { m } from '../../lib/messages'
@@ -35,9 +33,6 @@ const DrivingLicenseDetail: ServicePortalModuleComponent = ({ userInfo }) => {
   const { formatMessage } = useLocale()
   const { data, loading, error } = useDrivingLicense()
 
-  PlausiblePageviewDetail(
-    ServicePortalPath.LicensesDrivingDetail.replace(':id', 'detail'),
-  )
   const licenseExpired = data && isExpired(new Date(), new Date(data.gildirTil))
 
   const { age } = info(data?.kennitala ?? userInfo.profile.nationalId)
