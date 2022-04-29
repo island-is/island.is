@@ -108,7 +108,7 @@ export const accused = {
           id:
             'judicial.system.restriction_cases:accused.defender_info.send_request.tooltip_v2',
           defaultMessage:
-            'Ef hakað er hér þá fær verjandi {caseType, select, ADMISSION_TO_FACILITY) {kröfuna um vistun á viðeigandi stofnun} TRAVEL_BAN {farbannskröfuna} other {gæsluvarðhaldskröfuna}} senda þegar fyrirtökutíma hefur verið úthlutað',
+            'Ef hakað er hér þá fær verjandi {caseType, select, ADMISSION_TO_FACILITY {kröfuna um vistun á viðeigandi stofnun} TRAVEL_BAN {farbannskröfuna} other {gæsluvarðhaldskröfuna}} senda þegar fyrirtökutíma hefur verið úthlutað',
           description:
             'Notaður sem upplýsingatexti í upplýsingasvæði við "senda kröfu sjálfvirkt..." gátreit á sakbornings skrefi í gæsluvarðhalds- og farbannsmálum.',
         },
