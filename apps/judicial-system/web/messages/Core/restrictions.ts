@@ -165,4 +165,15 @@ export const restrictionsV2 = {
     description:
       'Notaður til þessa að tilgreina að ekki er farið fram á takmarkanir',
   }),
+  lawSection: defineMessage({
+    id: 'judicial.system.core:restrictionsV2_lawSection',
+    defaultMessage: '{sectionsLength, plural, one {lið} other {liðum}}',
+    description: 'Lið',
+  }),
+  ruling: defineMessage({
+    id: 'judicial.system.core:restrictionsV2_ruling',
+    defaultMessage:
+      'Sækjandi kynnir kærða tilhögun {caseType, select, ADMISSION_TO_FACILITY {vistunarinnar} other {gæsluvarðhaldsins}}, sem sé með takmörkunum skv. {restrictions} 1. mgr. 99. gr. laga nr. 88/2008.',
+    description: 'Notaður til þessa að tilgreina að hvaða bann er',
+  }),
 }
