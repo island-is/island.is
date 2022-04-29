@@ -439,7 +439,7 @@ export const m = defineMessages({
   },
   myLicenses: {
     id: 'service.portal:my-licenses',
-    defaultMessage: 'Mín réttindi',
+    defaultMessage: 'Mín skírteini',
   },
   childLicenses: {
     id: 'service.portal:child-licenses',
