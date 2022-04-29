@@ -7,7 +7,7 @@ export const getStaticEnv = (environmentVariableName: string) => {
 
   if (
     !environmentVariableName.startsWith(ENV_PREFIX) ||
-    environmentVariableName === 'APP_VERSION'
+    environmentVariableName !== 'APP_VERSION'
   ) {
     throw new Error(
       `Variable must be prefixed with ${ENV_PREFIX} or be APP_VERSION`,
