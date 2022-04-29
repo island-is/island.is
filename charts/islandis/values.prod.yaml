@@ -1086,6 +1086,7 @@ service-portal:
   enabled: true
   env:
     BASEPATH: '/minarsidur'
+    ENVIRONMENT: 'prod'
     NODE_OPTIONS: '--max-old-space-size=464'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
@@ -1131,6 +1132,8 @@ service-portal:
       memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID'
+    DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN'
     SI_PUBLIC_CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
   securityContext:
     allowPrivilegeEscalation: false
