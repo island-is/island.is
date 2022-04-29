@@ -77,7 +77,7 @@ The following is the interpretation of the object's structure that is passed to 
 
 `@ApiInternalServerErrorReponse` and `@ApiBadRequest` are always provided, as default decorators
 
-`@ApiForbiddenResponse` and `@ApiUnauthorizedResponse` will be provided based on the **isAuthorized** option, defaults to *true*.
+`@ApiForbiddenResponse` and `@ApiUnauthorizedResponse` will be provided based on the **isAuthorized** option, defaults to _true_.
 
 ## Running unit tests
 
