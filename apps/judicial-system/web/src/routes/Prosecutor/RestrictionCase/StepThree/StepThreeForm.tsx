@@ -1,7 +1,14 @@
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Box, Text, Input, Checkbox } from '@island.is/island-ui/core'
+import {
+  Box,
+  Text,
+  Input,
+  Checkbox,
+  GridRow,
+  GridColumn,
+} from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   CaseCustodyRestrictions,
@@ -21,6 +28,7 @@ import {
   removeTabsValidateAndSet,
   setCheckboxAndSendToServer,
   validateAndSendToServer,
+  setAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import CheckboxList from '@island.is/judicial-system-web/src/components/CheckboxList/CheckboxList'
@@ -29,9 +37,9 @@ import {
   travelBanProvisions,
 } from '@island.is/judicial-system-web/src/utils/laws'
 import {
-  alternativeTravelBanRestrictions,
-  restrictions,
-} from '@island.is/judicial-system-web/src/utils/Restrictions'
+  travelBanRestrictionsCheckboxes,
+  restrictionsCheckboxes,
+} from '@island.is/judicial-system-web/src/utils/restrictions'
 import { isPoliceDemandsStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import { rcDemands } from '@island.is/judicial-system-web/messages/RestrictionCases/Prosecutor/demandsForm'
 import { core } from '@island.is/judicial-system-web/messages'
@@ -81,11 +89,9 @@ const StepThreeForm: React.FC<Props> = (props) => {
             {workingCase.parentCase && (
               <Box marginTop={1}>
                 <Text>
-                  {`${
-                    workingCase.type === CaseType.CUSTODY
-                      ? 'Fyrri gæsla'
-                      : 'Fyrra farbann'
-                  } var/er til `}
+                  {formatMessage(rcDemands.sections.demands.pastRestriction, {
+                    caseType: workingCase.type,
+                  })}
                   <Text as="span" fontWeight="semiBold">
                     {formatDate(
                       workingCase.parentCase.validToDate,
@@ -97,14 +103,15 @@ const StepThreeForm: React.FC<Props> = (props) => {
             )}
           </Box>
           <BlueBox>
-            <Box marginBottom={workingCase.type === CaseType.CUSTODY ? 3 : 0}>
+            <Box
+              marginBottom={workingCase.type !== CaseType.TRAVEL_BAN ? 3 : 0}
+            >
               <DateTime
                 name="reqValidToDate"
-                datepickerLabel={`${
-                  workingCase.type === CaseType.CUSTODY
-                    ? 'Gæsluvarðhald'
-                    : 'Farbann'
-                } til`}
+                datepickerLabel={formatMessage(
+                  rcDemands.sections.demands.restrictionValidDateLabel,
+                  { caseType: workingCase.type },
+                )}
                 minDate={new Date()}
                 selectedDate={workingCase.requestedValidToDate}
                 onChange={(date: Date | undefined, valid: boolean) => {
@@ -121,26 +128,59 @@ const StepThreeForm: React.FC<Props> = (props) => {
                 blueBox={false}
               />
             </Box>
-            {workingCase.type === CaseType.CUSTODY && (
-              <Checkbox
-                name="isIsolation"
-                label={formatMessage(rcDemands.sections.demands.isolation)}
-                tooltip={formatMessage(rcDemands.sections.demands.tooltip)}
-                checked={workingCase.requestedCustodyRestrictions?.includes(
-                  CaseCustodyRestrictions.ISOLATION,
-                )}
-                onChange={() =>
-                  setCheckboxAndSendToServer(
-                    'requestedCustodyRestrictions',
-                    'ISOLATION',
-                    workingCase,
-                    setWorkingCase,
-                    updateCase,
-                  )
-                }
-                large
-                filled
-              />
+            {workingCase.type !== CaseType.TRAVEL_BAN && (
+              <GridRow>
+                <GridColumn span="1/2">
+                  <Checkbox
+                    name="isIsolation"
+                    label={formatMessage(rcDemands.sections.demands.isolation)}
+                    tooltip={formatMessage(rcDemands.sections.demands.tooltip)}
+                    checked={workingCase.requestedCustodyRestrictions?.includes(
+                      CaseCustodyRestrictions.ISOLATION,
+                    )}
+                    onChange={() =>
+                      setCheckboxAndSendToServer(
+                        'requestedCustodyRestrictions',
+                        'ISOLATION',
+                        workingCase,
+                        setWorkingCase,
+                        updateCase,
+                      )
+                    }
+                    large
+                    filled
+                  />
+                </GridColumn>
+                <GridColumn span="1/2">
+                  <Checkbox
+                    name="isAdmissionToFacility"
+                    label={formatMessage(
+                      rcDemands.sections.demands.admissionToAppropriateFacility,
+                    )}
+                    checked={
+                      workingCase.type === CaseType.ADMISSION_TO_FACILITY
+                    }
+                    onChange={(event) => {
+                      if (workingCase.parentCase) {
+                        return
+                      }
+
+                      setAndSendToServer(
+                        'type',
+                        event.target.checked
+                          ? CaseType.ADMISSION_TO_FACILITY
+                          : CaseType.CUSTODY,
+                        workingCase,
+                        setWorkingCase,
+                        updateCase,
+                      )
+                    }}
+                    large
+                    filled
+                    disabled={Boolean(workingCase.parentCase)}
+                  />
+                </GridColumn>
+              </GridRow>
             )}
           </BlueBox>
         </Box>
@@ -209,7 +249,8 @@ const StepThreeForm: React.FC<Props> = (props) => {
             <Box marginBottom={2}>
               <CheckboxList
                 checkboxes={
-                  workingCase.type === CaseType.CUSTODY
+                  workingCase.type === CaseType.CUSTODY ||
+                  workingCase.type === CaseType.ADMISSION_TO_FACILITY
                     ? legalProvisions
                     : travelBanProvisions
                 }
@@ -259,58 +300,62 @@ const StepThreeForm: React.FC<Props> = (props) => {
             />
           </BlueBox>
         </Box>
-        {workingCase.type === CaseType.CUSTODY && (
-          <Box component="section" marginBottom={10}>
-            <Box marginBottom={3}>
-              <Box marginBottom={1}>
-                <Text as="h3" variant="h3">
+        {workingCase.type === CaseType.CUSTODY ||
+          (workingCase.type === CaseType.ADMISSION_TO_FACILITY && (
+            <Box component="section" marginBottom={10}>
+              <Box marginBottom={3}>
+                <Box marginBottom={1}>
+                  <Text as="h3" variant="h3">
+                    {formatMessage(
+                      rcDemands.sections.custodyRestrictions.headingV2,
+                      {
+                        caseType: workingCase.type,
+                      },
+                    )}
+                  </Text>
+                </Box>
+                <Text>
                   {formatMessage(
-                    rcDemands.sections.custodyRestrictions.heading,
+                    rcDemands.sections.custodyRestrictions.subHeadingV2,
                     {
-                      caseType: 'gæslu',
+                      caseType: workingCase.type,
                     },
                   )}
                 </Text>
               </Box>
-              <Text>
-                {formatMessage(
-                  rcDemands.sections.custodyRestrictions.subHeading,
-                  {
-                    caseType: 'gæsla',
-                  },
-                )}
-              </Text>
+              <BlueBox>
+                <CheckboxList
+                  checkboxes={restrictionsCheckboxes}
+                  selected={workingCase.requestedCustodyRestrictions}
+                  onChange={(id) =>
+                    setCheckboxAndSendToServer(
+                      'requestedCustodyRestrictions',
+                      id,
+                      workingCase,
+                      setWorkingCase,
+                      updateCase,
+                    )
+                  }
+                />
+              </BlueBox>
             </Box>
-            <BlueBox>
-              <CheckboxList
-                checkboxes={restrictions}
-                selected={workingCase.requestedCustodyRestrictions}
-                onChange={(id) =>
-                  setCheckboxAndSendToServer(
-                    'requestedCustodyRestrictions',
-                    id,
-                    workingCase,
-                    setWorkingCase,
-                    updateCase,
-                  )
-                }
-              />
-            </BlueBox>
-          </Box>
-        )}
+          ))}
         {workingCase.type === CaseType.TRAVEL_BAN && (
           <Box component="section" marginBottom={4}>
             <Box marginBottom={3}>
               <Text as="h3" variant="h3">
-                {formatMessage(rcDemands.sections.custodyRestrictions.heading, {
-                  caseType: 'farbanns',
-                })}
+                {formatMessage(
+                  rcDemands.sections.custodyRestrictions.headingV2,
+                  {
+                    caseType: workingCase.type,
+                  },
+                )}
               </Text>
               <Text>
                 {formatMessage(
-                  rcDemands.sections.custodyRestrictions.subHeading,
+                  rcDemands.sections.custodyRestrictions.subHeadingV2,
                   {
-                    caseType: 'farbann',
+                    caseType: workingCase.type,
                   },
                 )}
               </Text>
@@ -318,7 +363,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
             <BlueBox>
               <Box marginBottom={3}>
                 <CheckboxList
-                  checkboxes={alternativeTravelBanRestrictions}
+                  checkboxes={travelBanRestrictionsCheckboxes}
                   selected={workingCase.requestedCustodyRestrictions}
                   onChange={(id) =>
                     setCheckboxAndSendToServer(

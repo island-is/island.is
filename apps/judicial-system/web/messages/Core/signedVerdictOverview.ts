@@ -27,6 +27,27 @@ export const signedVerdictOverview = {
     description:
       'Notaður sem titill á yfirlitsskjá afgreiddra mála þegar máli er vísað frá.',
   }),
+  validToDateInThePast: defineMessage({
+    id:
+      'judicial.system.core:signed_verdict_overview.valid_to_date_in_the_past',
+    defaultMessage:
+      '{caseType, select, ADMISSION_TO_FACILITY {Vistun á viðeigandi stofnun} TRAVEL_BAN {Farbanni} other {Gæsluvarðhaldi}} lokið',
+    description:
+      'Notaður sem titil á yfirlitsskjá afreiddra mála þegar dagsetning gæslu/vistunar/farbanni er liðin.',
+  }),
+  restrictionActive: defineMessage({
+    id: 'judicial.system.core:signed_verdict_overview.restriction_active',
+    defaultMessage:
+      '{caseType, select, ADMISSION_TO_FACILITY {Vistun á viðeigandi stofnun virk} TRAVEL_BAN {Farbann virkt} other {Gæsluvarðhald virkt}}',
+    description:
+      'Notaður sem titil á yfirlitsskjá afreiddra mála þegar dagsetning gæslu/vistunar/farbanni er liðin.',
+  }),
+  investigationAccepted: defineMessage({
+    id: 'judicial.system.core:signed_verdict_overview.investigation_accepted',
+    defaultMessage: 'Krafa um rannsóknarheimid samþykkt',
+    description:
+      'Notaður sem titil á yfirlitsskjá afreiddra mála krafa um rannsóknarheimid samþykkt.',
+  }),
   conclusionTitle: defineMessage({
     id: 'judicial.system.core:signed_verdict_overview.conclusion_title',
     defaultMessage: 'Úrskurðarorð',
@@ -170,6 +191,29 @@ export const signedVerdictOverview = {
         description:
           'Notaður sem texti í "Breyting á lengd gæsluvarðhalds" glugga á yfirlitsskjá afgreiddra mála.',
       },
+      validToDateAndIsolationToDateAreTheSame: {
+        id:
+          'judicial.system.core:signed_verdict_overview.modify_dates_modal.valid_to_date_and_isolation_to_date_are_the_same',
+        defaultMessage:
+          '{caseType, select, ADMISSION_TO_FACILITY {Vistun á viðeigandi stofnun} other {Gælsuvarðhald}} og einangrun til {date}',
+        description:
+          'Notaður sem texti í "Lengd gæsluvarðhalds breytt" glugga á yfirlitsskjá afgreiddra mála.',
+      },
+      validToDateChanged: {
+        id:
+          'judicial.system.core:signed_verdict_overview.modify_dates_modal.valid_to_date_changed',
+        defaultMessage:
+          '{caseType, select, ADMISSION_TO_FACILITY {Vistun á viðeigandi stofnun} other {Gælsuvarðhald}} til {date}.',
+        description:
+          'Notaður sem texti "Lengd gæsluvarðhalds breytt" glugga á yfirlitsskjá afgreiddra mála.',
+      },
+      isolationDateChanged: {
+        id:
+          'judicial.system.core:signed_verdict_overview.modify_dates_modal.isolation_date_changed',
+        defaultMessage: 'Einangrun til {date}.',
+        description:
+          'Notaður sem texti "Lengd gæsluvarðhalds breytt" glugga á yfirlitsskjá afgreiddra mála.',
+      },
       successText: {
         id:
           'judicial.system.core:signed_verdict_overview.modify_dates_modal.success_text',
@@ -206,6 +250,14 @@ export const signedVerdictOverview = {
         description:
           'Notaður sem texti í "Gæsluvarðhald til" í  "Breyting á lengd gæsluvarðhalds" glugga á yfirlitsskjá afgreiddra mála.',
       },
+      modifiedValidToDateLabelV2: {
+        id:
+          'judicial.system.core:signed_verdict_overview.modify_dates_modal.modified_valid_to_date_label_v2',
+        defaultMessage:
+          '{caseTye, select, ADMISSION_TO_FACILITY {Vistun á viðeigandi stofnun} other {Gæsluvarðhald}} til',
+        description:
+          'Notaður sem texti í  "Breyting á lengd gæsluvarðhalds/vistunar" glugga á yfirlitsskjá afgreiddra mála.',
+      },
       modifiedIsolationToDateLabel: {
         id:
           'judicial.system.core:signed_verdict_overview.modify_dates_modal.modified_isolation_to_date_label',
@@ -219,6 +271,14 @@ export const signedVerdictOverview = {
         id:
           'judicial.system.core:signed_verdict_overview.modify_dates_info.title',
         defaultMessage: 'Lengd gæslu uppfærð',
+        description:
+          'Notaður sem titill í upplýsingaboxi um uppfærða lengd gæslu á yfirlitsskjá afgreiddra mála.',
+      },
+      titleV2: {
+        id:
+          'judicial.system.core:signed_verdict_overview.modify_dates_info.title_V2',
+        defaultMessage:
+          'Lengd {caseType, select, ADMISSION_TO_FACILITY {vistunar} other {gæslu}} uppfærð',
         description:
           'Notaður sem titill í upplýsingaboxi um uppfærða lengd gæslu á yfirlitsskjá afgreiddra mála.',
       },
@@ -295,6 +355,46 @@ export const signedVerdictOverview = {
           'judicial.system.core:signed_verdict_overview.share_case_modal.button_close',
         defaultMessage: 'Loka glugga',
         description: 'Notaður sem label á loka takka í modal glugga',
+      },
+    }),
+    caseExtension: defineMessages({
+      buttonLabel: {
+        id:
+          'judicial.system.core:signed_verdict_overview.case_extension.button_label',
+        defaultMessage:
+          'Framlengja {caseType, select, ADMISSION_TO_FACILITY {vistun} TRAVEL_BAN {farbann} CUSTODY {gæslu} other {heimild}}',
+        description: 'Notaður sem label á framlengja mál takka',
+      },
+      extensionInfo: {
+        id:
+          'judicial.system.core:signed_verdict_overview.case_extension.button',
+        defaultMessage:
+          '{hasChildCase, select, yes {Framlengingarkrafa hefur þegar verið útbúin} other {Ekki hægt að framlengja {caseType, select, ADMISSION_TO_FACILITY {vistun á viðeigandi stofnun} TRAVEL_BAN {farbann} CUSTODY {gæsluvarðhald} other {kröfu}} {rejectReason, select, rejected {sem var hafnað} dismissed {sem var vísað frá} isValidToDateInThePast {sem er lokið} acceptingAlternativeTravelBan {þegar dómari hefur úrskurðað um annað en dómkröfur sögðu til um} other {}}}}.',
+        description:
+          'Notaður sem upplýsingatexti á info búbblu hjá framlengja mál takka',
+      },
+    }),
+    caseDates: defineMessages({
+      restrictionExpired: {
+        id:
+          'judicial.system.core:signed_verdict_overview.case_dates.restriction_expired',
+        defaultMessage:
+          '{caseType, select, ADMISSION_TO_FACILITY {Vistun} TRAVEL_BAN {Farbann} other {Gæsla}} rann út {date}',
+        description: 'Texti sem tilgreinir hvenær gæsla/vistun/farbann rann út',
+      },
+      restrictionValidTo: {
+        id:
+          'judicial.system.core:signed_verdict_overview.case_dates.restriction_valid_to',
+        defaultMessage:
+          '{caseType, select, ADMISSION_TO_FACILITY {Vistun} TRAVEL_BAN {Farbann} other {Gæsla}} til {date}',
+        description:
+          'Texti sem tilgreinir hversu lengi gæsla/vistun/farbann er í gildi',
+      },
+      isolationValidTo: {
+        id:
+          'judicial.system.core:signed_verdict_overview.case_dates.isolation_valid_to',
+        defaultMessage: 'Einangrun til {date}',
+        description: 'Texti sem tilgreinir hversu lengi einangrun er í gildi',
       },
     }),
   },

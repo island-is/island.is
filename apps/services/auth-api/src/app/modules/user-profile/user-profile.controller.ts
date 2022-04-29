@@ -9,13 +9,17 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { Documentation } from '@island.is/nest/swagger'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('user-profile')
 @Controller('user-profile')
 export class UserProfileController {
-  constructor(private readonly userProfileService: UserProfileService) {}
+  constructor(
+    private readonly userProfileService: UserProfileService,
+    private readonly featureFlagService: FeatureFlagService,
+  ) {}
 
   @Scopes('@identityserver.api/authentication')
   @Get()
@@ -23,7 +27,15 @@ export class UserProfileController {
     response: { type: UserProfileDTO },
   })
   async userProfile(@CurrentUser() user: User): Promise<UserProfileDTO> {
-    return this.userProfileService.getUserProfileClaims(user)
+    const fetchUserProfileClaims = await this.featureFlagService.getValue(
+      Features.userProfileClaims,
+      false,
+      user,
+    )
+    return this.userProfileService.getUserProfileClaims(
+      user,
+      fetchUserProfileClaims,
+    )
   }
 
   @Scopes('@identityserver.api/authentication')
@@ -36,6 +48,6 @@ export class UserProfileController {
   async individualUserProfile(
     @CurrentUser() user: User,
   ): Promise<UserProfileDTO> {
-    return this.userProfileService.getUserProfileClaims(user)
+    return this.userProfile(user)
   }
 }

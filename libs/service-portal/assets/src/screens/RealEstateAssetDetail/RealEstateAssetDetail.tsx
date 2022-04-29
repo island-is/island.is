@@ -1,5 +1,4 @@
 import React from 'react'
-import { PlausiblePageviewDetail } from '@island.is/service-portal/core'
 import { useParams } from 'react-router-dom'
 import { defineMessage } from 'react-intl'
 import { useQuery, useLazyQuery } from '@apollo/client'
@@ -8,7 +7,6 @@ import { useNamespaces, useLocale } from '@island.is/localization'
 import { Box } from '@island.is/island-ui/core'
 import {
   ServicePortalModuleComponent,
-  ServicePortalPath,
   NotFound,
 } from '@island.is/service-portal/core'
 import TableUnits from '../../components/TableUnits'
@@ -30,10 +28,6 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
   useNamespaces('sp.assets')
   const { formatMessage } = useLocale()
   const { id }: { id: string | undefined } = useParams()
-
-  PlausiblePageviewDetail(
-    ServicePortalPath.AssetsRealEstateDetail.replace(':id', 'detail'),
-  )
 
   const { loading, error, data } = useQuery<Query>(GET_SINGLE_PROPERTY_QUERY, {
     variables: {
@@ -93,7 +87,7 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
     return (
       <NotFound
         title={defineMessage({
-          id: 'sp.assets',
+          id: 'sp.assets:not-found',
           defaultMessage: 'Fasteign fannst ekki',
         })}
       />

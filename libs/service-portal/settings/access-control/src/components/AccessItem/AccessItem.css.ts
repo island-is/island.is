@@ -14,11 +14,3 @@ export const item = style({
   display: 'flex',
   alignItems: 'center',
 })
-
-export const bottomBorder = style({
-  ...themeUtils.responsiveStyle({
-    md: {
-      borderBottom: theme.border.width.standard,
-    },
-  }),
-})

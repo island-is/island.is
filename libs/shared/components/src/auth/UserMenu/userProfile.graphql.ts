@@ -17,3 +17,12 @@ export const UPDATE_USER_PROFILE = gql`
     }
   }
 `
+
+export const GET_USER_PROFILE_LOCALE = gql`
+  query GetUserProfileLocale {
+    getUserProfile {
+      nationalId
+      locale
+    }
+  }
+`

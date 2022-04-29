@@ -1,9 +1,7 @@
 import React, { FC, useCallback, useEffect, useState } from 'react'
 import { useParams, useHistory, useLocation } from 'react-router-dom'
-import { useLazyQuery, useMutation } from '@apollo/client'
+import { useMutation } from '@apollo/client'
 import isEmpty from 'lodash/isEmpty'
-import { isLocale } from 'class-validator'
-
 import {
   CREATE_APPLICATION,
   APPLICATION_APPLICATIONS,
@@ -16,17 +14,13 @@ import {
   GridContainer,
 } from '@island.is/island-ui/core'
 import { coreMessages, getTypeFromSlug } from '@island.is/application/core'
-import { Locale } from '@island.is/shared/types'
 import { ApplicationList } from '@island.is/application/ui-components'
 import { ErrorShell, DelegationsScreen } from '@island.is/application/ui-shell'
-import { useAuth } from '@island.is/auth/react'
 import {
   useApplicationNamespaces,
   useLocale,
   useLocalizedQuery,
 } from '@island.is/localization'
-import { USER_PROFILE } from '@island.is/service-portal/graphql'
-import { Query } from '@island.is/api/schema'
 
 import { ApplicationLoading } from '../components/ApplicationsLoading/ApplicationLoading'
 import { findProblemInApolloError, ProblemType } from '@island.is/shared/problem'
@@ -34,9 +28,8 @@ import { findProblemInApolloError, ProblemType } from '@island.is/shared/problem
 export const Applications: FC = () => {
   const { slug } = useParams<{ slug: string }>()
   const history = useHistory()
-  const { formatMessage, changeLanguage, lang } = useLocale()
+  const { formatMessage } = useLocale()
   const type = getTypeFromSlug(slug)
-  const { userInfo } = useAuth()
 
   const { search } = useLocation()
 
@@ -82,26 +75,6 @@ export const Applications: FC = () => {
     })
   }
 
-  // TODO: Change when IDS has locale
-  const [
-    getUserProfile,
-    { data: userProfData, loading: userProfileLoading },
-  ] = useLazyQuery<Query>(USER_PROFILE)
-  const userProfile = userProfData?.getUserProfile || null
-
-  useEffect(() => {
-    if (userInfo?.profile.nationalId) getUserProfile()
-  }, [userInfo, getUserProfile])
-
-  useEffect(() => {
-    if (
-      userProfile?.locale &&
-      isLocale(userProfile.locale) &&
-      userProfile.locale !== lang
-    )
-      changeLanguage(userProfile.locale as Locale)
-  }, [userProfile, changeLanguage, lang])
-
   useEffect(() => {
     if (
       type &&
@@ -113,7 +86,7 @@ export const Applications: FC = () => {
     }
   }, [type, data, delegationsChecked])
 
-  if (loading || userProfileLoading) {
+  if (loading) {
     return <ApplicationLoading />
   }
 
@@ -126,7 +99,6 @@ export const Applications: FC = () => {
       type &&
       !delegationsChecked
     ) {
-      console.log("HELLO HERE")
       return (
         <DelegationsScreen
           slug={slug}
