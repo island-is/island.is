@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common'
-import { FinancialStatementsInaoResolver } from './financial-statements-inao.resolver'
+import { FinancialStatementsInaoResolver } from './financialStatementsInao.resolver'
 
 @Module({
   providers: [FinancialStatementsInaoResolver],

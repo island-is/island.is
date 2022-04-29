@@ -1,1 +1,1 @@
-export * from './lib/financial-statements-inao.module'
+export * from './lib/financialStatementsInao.module'

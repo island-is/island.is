@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-@ObjectType()
+@ObjectType('FinancialStatementsInaoElection')
 export class Election {
   @Field()
   name!: string
