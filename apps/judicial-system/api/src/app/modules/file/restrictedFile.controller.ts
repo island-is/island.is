@@ -22,7 +22,7 @@ import type { User } from '@island.is/judicial-system/types'
 
 import { FileService } from './file.service'
 
-@UseGuards(JwtInjectBearerAuthGuard)
+@UseGuards(new JwtInjectBearerAuthGuard(true))
 @Controller('api/case/:id')
 export class RestrictedFileController {
   constructor(
