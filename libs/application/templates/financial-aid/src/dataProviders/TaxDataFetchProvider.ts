@@ -7,6 +7,7 @@ import {
 import {
   DirectTaxPayment,
   PersonalTaxReturn,
+  UserType,
 } from '@island.is/financial-aid/shared/lib'
 import { DataProviderTypes, Applicant, TaxData } from '../lib/types'
 
@@ -73,13 +74,17 @@ export class TaxDataFetchProvider extends BasicDataProvider {
       success: boolean
     }>(directTaxPaymentsQuery, 'municipalitiesDirectTaxPayments')
 
+    const userType = application?.externalData?.taxDataFetch
+      ? UserType.SPOUSE
+      : UserType.APPLICANT
+
     return {
       municipalitiesPersonalTaxReturn: personalTaxReturn,
       municipalitiesDirectTaxPayments: directTaxPayments,
+      userType: userType,
     }
   }
   handleError(error: Error | unknown) {
-    console.error('Provider.FinancialAid.TaxData:', error)
     return Promise.reject('Failed to fetch from tax data')
   }
   onProvideError(result: { message: string }): FailedDataProviderResult {
@@ -89,7 +94,7 @@ export class TaxDataFetchProvider extends BasicDataProvider {
       status: 'failure',
     }
   }
-  onProvideSuccess(result: Applicant): SuccessfulDataProviderResult {
+  onProvideSuccess(result: TaxData): SuccessfulDataProviderResult {
     return { date: new Date(), status: 'success', data: result }
   }
 }

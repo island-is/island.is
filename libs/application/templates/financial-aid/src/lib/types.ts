@@ -3,6 +3,7 @@ import {
   DirectTaxPayment,
   Municipality,
   PersonalTaxReturn,
+  UserType,
 } from '@island.is/financial-aid/shared/lib'
 import { UploadFile } from '@island.is/island-ui/core'
 import { answersSchema } from './dataSchema'
@@ -38,6 +39,16 @@ export interface ExternalData {
     data: TaxData
     date: string
   }
+  taxDataFetchSpouse?: {
+    data: TaxData
+    date: string
+  }
+}
+export interface ExternalDataSpouse {
+  taxDataFetch: {
+    data: TaxData
+    date: string
+  }
 }
 
 export type NestedType<T> = {
@@ -55,7 +66,10 @@ export interface OverrideAnswerSchema extends answersSchema {
 
 export type FAApplication = Override<
   Application,
-  { answers: OverrideAnswerSchema; externalData: ExternalData }
+  {
+    answers: OverrideAnswerSchema
+    externalData: ExternalData
+  }
 >
 
 export type FAFieldBaseProps = Override<
@@ -78,6 +92,7 @@ export interface TaxData {
     directTaxPayments: DirectTaxPayment[]
     success: boolean
   }
+  userType: UserType
 }
 
 export interface CurrentApplication {

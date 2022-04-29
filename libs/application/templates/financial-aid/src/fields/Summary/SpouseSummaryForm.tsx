@@ -42,17 +42,19 @@ const SpouseSummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
 
       <FormInfo items={spouseFormItems(answers)} goToScreen={goToScreen} />
 
-      <DirectTaxPaymentCell
-        setIsModalOpen={setIsModalOpen}
-        hasFetchedPayments={
-          externalData?.taxDataFetch?.data?.municipalitiesDirectTaxPayments
-            ?.success
-        }
-        directTaxPayments={
-          externalData?.taxDataFetch?.data?.municipalitiesDirectTaxPayments
-            ?.directTaxPayments
-        }
-      />
+      {externalData?.taxDataFetch && (
+        <DirectTaxPaymentCell
+          setIsModalOpen={setIsModalOpen}
+          hasFetchedPayments={
+            externalData?.taxDataFetch?.data?.municipalitiesDirectTaxPayments
+              ?.success
+          }
+          directTaxPayments={
+            externalData?.taxDataFetch?.data?.municipalitiesDirectTaxPayments
+              ?.directTaxPayments
+          }
+        />
+      )}
 
       <ContactInfo
         route={Routes.SPOUSECONTACTINFO}
@@ -78,17 +80,20 @@ const SpouseSummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
         comment={answers?.spouseFormComment}
       />
 
-      <DirectTaxPaymentsModal
-        items={
-          externalData?.taxDataFetch?.data?.municipalitiesDirectTaxPayments
-            ?.directTaxPayments
-        }
-        dateDataWasFetched={externalData?.nationalRegistry?.date}
-        isVisible={isModalOpen}
-        onVisibilityChange={(isOpen: boolean) => {
-          setIsModalOpen(isOpen)
-        }}
-      />
+      {externalData?.taxDataFetch?.data?.municipalitiesDirectTaxPayments
+        ?.directTaxPayments && (
+        <DirectTaxPaymentsModal
+          items={
+            externalData?.taxDataFetch?.data?.municipalitiesDirectTaxPayments
+              ?.directTaxPayments
+          }
+          dateDataWasFetched={externalData?.nationalRegistry?.date}
+          isVisible={isModalOpen}
+          onVisibilityChange={(isOpen: boolean) => {
+            setIsModalOpen(isOpen)
+          }}
+        />
+      )}
     </>
   )
 }
