@@ -1,11 +1,13 @@
 import {
   BasicDataProvider,
   FailedDataProviderResult,
+  StaticText,
   SuccessfulDataProviderResult,
 } from '@island.is/application/core'
 import { FishingLicenseShip } from '@island.is/api/schema'
 import * as Sentry from '@sentry/react'
 import { queryShips } from '../graphql/queries'
+import { error } from '../lib/messages'
 
 interface GeneralFishingLicenseProps {
   ships: FishingLicenseShip[]
@@ -15,19 +17,27 @@ export class GeneralFishingLicenseProvider extends BasicDataProvider {
   type = 'GeneralFishingLicenseProvider'
 
   async queryShips(): Promise<FishingLicenseShip[]> {
-    return this.useGraphqlGateway(queryShips).then(async (res: Response) => {
-      const response = await res.json()
+    return this.useGraphqlGateway(queryShips)
+      .then(async (res: Response) => {
+        const response = await res.json()
 
-      if (response.errors) {
-        return this.handleError(response.errors)
-      }
+        if (response.errors) {
+          return this.handleError(response.errors)
+        }
 
-      return Promise.resolve(response.data.fishingLicenseShips)
-    })
+        return Promise.resolve(response.data.fishingLicenseShips)
+      })
+      .catch((error) => this.handleError(error))
   }
 
   async provide(): Promise<GeneralFishingLicenseProps> {
     const ships = await this.queryShips()
+
+    if (ships.length <= 0) {
+      return Promise.reject({
+        reason: error.noShipsFoundError,
+      })
+    }
 
     return {
       ships,
@@ -44,11 +54,11 @@ export class GeneralFishingLicenseProvider extends BasicDataProvider {
     }
   }
 
-  onProvideError(): FailedDataProviderResult {
+  onProvideError(error: { reason: StaticText }): FailedDataProviderResult {
     return {
       date: new Date(),
       data: {},
-      reason: 'Failed',
+      reason: error.reason,
       status: 'failure',
     }
   }
