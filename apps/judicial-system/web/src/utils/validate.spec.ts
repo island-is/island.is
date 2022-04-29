@@ -172,6 +172,13 @@ describe('Validate phonenumber format', () => {
 })
 
 describe('Validate court case number', () => {
+  beforeAll(() => {
+    jest.useFakeTimers('modern').setSystemTime(new Date('2020-01-01'))
+  })
+  afterAll(() => {
+    jest.useRealTimers()
+  })
+
   test.each`
     courtCaseNumber
     ${'R-1/2019'}
@@ -203,7 +210,7 @@ describe('Validate court case number', () => {
     ({ courtCaseNumber }) => {
       const result = validate(courtCaseNumber, 'court-case-number')
       expect(result.isValid).toEqual(false)
-      expect(result.errorMessage).toEqual('Dæmi: R-1234/2022')
+      expect(result.errorMessage).toEqual('Dæmi: R-1234/2020')
     },
   )
 })
