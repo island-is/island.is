@@ -7,10 +7,10 @@ import {
   ApplicationState,
 } from '@island.is/financial-aid/shared/lib'
 
-import { Breakdown } from '../..'
-import { status } from '../../../lib/messages'
-import Estimation from '../Estimation/Estimation'
+import { aidAmount } from '../../../lib/messages'
 import { FAApplication } from '../../../lib/types'
+import { Breakdown } from '../../index'
+import { Estimation } from '../index'
 
 interface Props {
   application: FAApplication
@@ -25,8 +25,9 @@ const AidAmount = ({ application, state }: Props) => {
       {state === ApplicationState.APPROVED ? (
         <>
           <Text as="h3" variant="h3" marginBottom={2}>
-            {formatMessage(status.aidAmount.titleApproved)}
+            {formatMessage(aidAmount.titleApproved)}
           </Text>
+          {/* TODO: use real aid amount */}
           <Breakdown
             calculations={acceptedAmountBreakDown({
               aidAmount: 10000,

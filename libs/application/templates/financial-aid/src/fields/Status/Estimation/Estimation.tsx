@@ -13,7 +13,7 @@ import {
 import { Breakdown, DescriptionText } from '../..'
 import { ApproveOptions, FAApplication } from '../../../lib/types'
 import { findFamilyStatus } from '../../../lib/utils'
-import { status } from '../../../lib/messages'
+import { aidAmount as aidAmountMessages } from '../../../lib/messages'
 
 interface Props {
   application: FAApplication
@@ -39,26 +39,32 @@ const Estimation = ({ application }: Props) => {
     }
   }
 
-  const aidAmount = aidCalculator(
-    application.answers.homeCircumstances.type,
-    getAidType()
-      ? nationalRegistry?.data?.municipality?.individualAid
-      : nationalRegistry?.data?.municipality?.cohabitationAid,
-  )
+  let aidAmount
+  if (
+    application.answers.homeCircumstances.type &&
+    nationalRegistry?.data?.municipality
+  ) {
+    aidAmount = aidCalculator(
+      application.answers.homeCircumstances.type,
+      getAidType()
+        ? nationalRegistry.data.municipality.individualAid
+        : nationalRegistry.data.municipality.cohabitationAid,
+    )
+  }
 
   return (
     <>
       <Box display="flex" alignItems="center" flexWrap="wrap">
         <>
           <Text as="h3" variant="h3" marginBottom={2}>
-            {formatMessage(status.aidAmount.title)}
+            {formatMessage(aidAmountMessages.title)}
           </Text>
         </>
       </Box>
 
       <DescriptionText
         textProps={{ marginBottom: 2 }}
-        text={status.aidAmount.description}
+        text={aidAmountMessages.description}
       />
 
       <Breakdown

@@ -8,7 +8,7 @@ import { Text, Box } from '@island.is/island-ui/core'
 import { ApplicationState } from '@island.is/financial-aid/shared/lib'
 
 import * as styles from './Timeline.css'
-import { status } from '../../../lib/messages'
+import { timeline } from '../../../lib/messages'
 
 interface Props {
   state: ApplicationState
@@ -22,20 +22,20 @@ const Timeline = ({ state, modified, created, showSpouseStep }: Props) => {
 
   const sections = [
     {
-      name: formatMessage(status.timeline.receivedTitle),
-      text: formatMessage(status.timeline.receivedDescription),
+      name: formatMessage(timeline.receivedTitle),
+      text: formatMessage(timeline.receivedDescription),
       state: [ApplicationState.NEW],
       date: format(new Date(created), 'dd/MM/yyyy HH:mm'),
     },
     {
-      name: formatMessage(status.timeline.inProgressTitle),
-      text: formatMessage(status.timeline.inProgressDescription),
+      name: formatMessage(timeline.inProgressTitle),
+      text: formatMessage(timeline.inProgressDescription),
       state: [ApplicationState.INPROGRESS, ApplicationState.DATANEEDED],
       date: format(new Date(modified), 'dd/MM/yyyy HH:mm'),
     },
     {
-      name: formatMessage(status.timeline.resultsTitle),
-      text: formatMessage(status.timeline.resultsDescription),
+      name: formatMessage(timeline.resultsTitle),
+      text: formatMessage(timeline.resultsDescription),
       state: [ApplicationState.REJECTED, ApplicationState.APPROVED],
       date: format(new Date(modified), 'dd/MM/yyyy HH:mm'),
     },
@@ -43,8 +43,8 @@ const Timeline = ({ state, modified, created, showSpouseStep }: Props) => {
 
   if (showSpouseStep) {
     sections.splice(1, 0, {
-      name: formatMessage(status.timeline.spouseTitle),
-      text: formatMessage(status.timeline.spouseDescription),
+      name: formatMessage(timeline.spouseTitle),
+      text: formatMessage(timeline.spouseDescription),
       state: [ApplicationState.NEW],
       date: format(new Date(created), 'dd/MM/yyyy HH:mm'),
     })
@@ -57,10 +57,10 @@ const Timeline = ({ state, modified, created, showSpouseStep }: Props) => {
   return (
     <>
       <Text as="h3" variant="h3" marginBottom={[1, 1, 2]}>
-        {formatMessage(status.timeline.title)}
+        {formatMessage(timeline.title)}
       </Text>
       <Text marginBottom={[3, 3, 4]}>
-        {formatMessage(status.timeline.description)}
+        {formatMessage(timeline.description)}
       </Text>
 
       {sections.map((item, index) => {

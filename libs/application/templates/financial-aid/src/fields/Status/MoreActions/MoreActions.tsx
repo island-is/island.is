@@ -3,15 +3,15 @@ import { useIntl } from 'react-intl'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import { DescriptionText } from '../..'
-import { status } from '../../../lib/messages'
+import { moreActions } from '../../../lib/messages'
 
 interface Props {
-  rulesPage?: string
-  email?: string
+  municipalityRulesPage?: string
+  municipalityEmail?: string
 }
 
-const MoreActions = ({ rulesPage, email }: Props) => {
-  if (!rulesPage && !email) {
+const MoreActions = ({ municipalityRulesPage, municipalityEmail }: Props) => {
+  if (!municipalityRulesPage && !municipalityEmail) {
     return null
   }
 
@@ -20,24 +20,24 @@ const MoreActions = ({ rulesPage, email }: Props) => {
   return (
     <>
       <Text as="h3" variant="h3">
-        {formatMessage(status.moreActions.title)}
+        {formatMessage(moreActions.title)}
       </Text>
       <Box marginTop={2}>
-        {rulesPage && (
+        {municipalityRulesPage && (
           <DescriptionText
             textProps={{ variant: 'small' }}
-            text={status.moreActions.rulesLink}
+            text={moreActions.rulesLink}
             format={{
-              rulesPage: rulesPage,
+              rulesPage: municipalityRulesPage,
             }}
           />
         )}
-        {email && (
+        {municipalityEmail && (
           <DescriptionText
             textProps={{ variant: 'small' }}
-            text={status.moreActions.emailLink}
+            text={moreActions.emailLink}
             format={{
-              email: email,
+              email: municipalityEmail,
             }}
           />
         )}

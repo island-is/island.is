@@ -2,7 +2,7 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, ActionCard } from '@island.is/island-ui/core'
-import { status } from '../../../lib/messages'
+import { missingFilesCard } from '../../../lib/messages'
 
 const MissingFilesCard = () => {
   const { formatMessage } = useIntl()
@@ -10,10 +10,10 @@ const MissingFilesCard = () => {
   return (
     <Box marginBottom={[4, 4, 5]}>
       <ActionCard
-        heading={formatMessage(status.missingFilesCard.title)}
-        text={formatMessage(status.missingFilesCard.description)}
+        heading={formatMessage(missingFilesCard.title)}
+        text={formatMessage(missingFilesCard.description)}
         cta={{
-          label: formatMessage(status.missingFilesCard.action),
+          label: formatMessage(missingFilesCard.action),
           icon: undefined,
           onClick: () => {},
         }}
