@@ -8,5 +8,9 @@ import { GetSignedUrl } from '@island.is/financial-aid/shared/lib'
 export class GetSignedUrlInput implements GetSignedUrl {
   @Allow()
   @Field()
+  readonly folder!: string
+
+  @Allow()
+  @Field()
   readonly fileName!: string
 }

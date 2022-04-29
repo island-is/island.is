@@ -12,6 +12,7 @@ import {
 } from './enums'
 
 export interface GetSignedUrl {
+  folder: string
   fileName: string
 }
 

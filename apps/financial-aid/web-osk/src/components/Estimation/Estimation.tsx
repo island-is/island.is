@@ -9,6 +9,7 @@ import {
   martialStatusTypeFromMartialCode,
   estimatedBreakDown,
   showSpouseData,
+  FamilyStatus,
 } from '@island.is/financial-aid/shared/lib'
 
 import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
@@ -18,32 +19,35 @@ interface Props {
   aboutText: ReactNode
   homeCircumstances?: HomeCircumstances
   usePersonalTaxCredit?: boolean
+  familyStatus?: FamilyStatus
 }
 
 const Estimation = ({
   aboutText,
   homeCircumstances,
   usePersonalTaxCredit,
+  familyStatus,
 }: Props) => {
   const { municipality, nationalRegistryData, myApplication } = useContext(
     AppContext,
   )
+
   const getAidType = () => {
     switch (true) {
-      case !nationalRegistryData?.spouse:
-        return true
       case nationalRegistryData?.spouse?.maritalStatus != undefined:
         return (
           martialStatusTypeFromMartialCode(
             nationalRegistryData?.spouse?.maritalStatus,
           ) === MartialStatusType.SINGLE
         )
-      case myApplication?.familyStatus != undefined:
-        if (myApplication?.familyStatus) {
-          return !showSpouseData[myApplication.familyStatus]
+      case familyStatus != undefined:
+        if (familyStatus) {
+          return !showSpouseData[familyStatus]
         }
       case myApplication?.spouseNationalId != undefined:
         return false
+      case !nationalRegistryData?.spouse:
+        return true
     }
   }
 
