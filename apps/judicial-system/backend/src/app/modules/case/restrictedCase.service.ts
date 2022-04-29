@@ -4,8 +4,9 @@ import { Sequelize } from 'sequelize-typescript'
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 
-import { CaseState } from '@island.is/judicial-system/types'
+import { CaseState, UserRole } from '@island.is/judicial-system/types'
 
+import { nowFactory } from '../../factories'
 import { Defendant } from '../defendant'
 import { Institution } from '../institution'
 import { User } from '../user'
@@ -95,5 +96,29 @@ export class RestrictedCaseService {
     }
 
     return theCase
+  }
+
+  async findDefenderNationalId(
+    theCase: Case,
+    nationalId: string,
+  ): Promise<User> {
+    if (theCase.defenderNationalId !== nationalId) {
+      throw new NotFoundException('Defendant not found')
+    }
+
+    const now = nowFactory()
+
+    return {
+      id: 'defender',
+      created: now,
+      modified: now,
+      nationalId,
+      name: theCase.defenderName ?? '',
+      title: 'verjandi',
+      mobileNumber: theCase.defenderPhoneNumber ?? '',
+      email: theCase.defenderEmail ?? '',
+      role: UserRole.DEFENDER,
+      active: true,
+    } as User
   }
 }

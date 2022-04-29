@@ -137,8 +137,6 @@ export class AuthController {
       return this.redirectAuthenticatedUser(
         {
           nationalId,
-          name: 'Óþekktur',
-          mobile: '',
         },
         res,
         redirectRoute,
@@ -183,24 +181,16 @@ export class AuthController {
         ? '/notendur'
         : '/krofur'
     } else if (requestedRedirectRoute?.startsWith('/verjandi/')) {
-      // Default to user role defender which gets only limited access
-      userId = 'defender'
-      jwtToken = this.sharedAuthService.signJwt(
-        {
-          id: '',
-          created: '',
-          modified: '',
-          nationalId: authUser.nationalId,
-          name: authUser.name,
-          role: UserRole.DEFENDER,
-          title: '',
-          mobileNumber: authUser.mobile,
-          email: '',
-          active: true,
-        },
-        csrfToken,
+      const defender = await this.authService.findDefender(
+        requestedRedirectRoute.slice(10),
+        authUser.nationalId,
       )
-      redirectRoute = requestedRedirectRoute
+
+      if (defender && this.authService.validateUser(defender)) {
+        userId = defender.id
+        jwtToken = this.sharedAuthService.signJwt(defender, csrfToken)
+        redirectRoute = requestedRedirectRoute
+      }
     }
 
     return { userId, jwtToken, redirectRoute }

@@ -25,7 +25,7 @@ export const pageLayout = {
     }),
     alertMessage: defineMessage({
       id: 'judicial.system.core:page_layout.defender_role.alert_message',
-      defaultMessage: 'Ef til vill hefur þú ekki aðgang að þessu máli.',
+      defaultMessage: 'Vinsamlega reyndu að opna málið aftur.',
       description:
         'Notaður sem villuboð þegar mál finnst ekki í verjanda viðmóti',
     }),

@@ -3,7 +3,6 @@ import {
   CanActivate,
   ExecutionContext,
   BadRequestException,
-  InternalServerErrorException,
 } from '@nestjs/common'
 
 import { RestrictedCaseService } from '../restrictedCase.service'
@@ -14,12 +13,6 @@ export class RestrictedCaseExistsGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest()
-
-    const user = request.user
-
-    if (!user) {
-      throw new InternalServerErrorException('Missing user')
-    }
 
     const caseId = request.params.caseId
 

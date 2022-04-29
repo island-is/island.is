@@ -6,6 +6,7 @@ import {
   Header,
   Inject,
   Param,
+  Query,
   Res,
   UseGuards,
 } from '@nestjs/common'
@@ -18,33 +19,38 @@ import {
   JwtAuthGuard,
   RolesGuard,
   RolesRules,
+  TokenGuard,
 } from '@island.is/judicial-system/auth'
-import type { User } from '@island.is/judicial-system/types'
+import type { User as TUser } from '@island.is/judicial-system/types'
 
 import { defenderRule } from '../../guards/rolesRules'
+import { User } from '../user'
+import { CaseExistsGuard } from './guards/caseExists.guard'
 import { RestrictedCaseExistsGuard } from './guards/restrictedCaseExists.guard'
 import { CaseCompletedGuard } from './guards/caseCompleted.guard'
 import { CaseDefenderGuard } from './guards/caseDefender.guard'
 import { CurrentCase } from './guards/case.decorator'
 import { Case } from './models/case.model'
 import { CaseService } from './case.service'
+import { RestrictedCaseService } from './restrictedCase.service'
 
 @Controller('api/case/:caseId')
-@UseGuards(
-  new JwtAuthGuard(true),
-  RolesGuard,
-  RestrictedCaseExistsGuard,
-  CaseCompletedGuard,
-  CaseDefenderGuard,
-)
-@RolesRules(defenderRule)
 @ApiTags('restricted cases')
 export class RestrictedCaseController {
   constructor(
     private readonly caseService: CaseService,
+    private readonly restrictedCaseService: RestrictedCaseService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
+  @UseGuards(
+    new JwtAuthGuard(true),
+    RolesGuard,
+    RestrictedCaseExistsGuard,
+    CaseCompletedGuard,
+    CaseDefenderGuard,
+  )
+  @RolesRules(defenderRule)
   @Get('restricted')
   @ApiOkResponse({
     type: Case,
@@ -56,6 +62,33 @@ export class RestrictedCaseController {
     return theCase
   }
 
+  @UseGuards(TokenGuard, CaseExistsGuard)
+  @Get('defender/restricted')
+  @ApiOkResponse({
+    type: User,
+    description: 'Gets a case defender by national id',
+  })
+  findDefenderNationalId(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+    @Query('nationalId') nationalId: string,
+  ): Promise<User> {
+    this.logger.debug(`Getting a defender by national id from case ${caseId}`)
+
+    return this.restrictedCaseService.findDefenderNationalId(
+      theCase,
+      nationalId,
+    )
+  }
+
+  @UseGuards(
+    new JwtAuthGuard(true),
+    RolesGuard,
+    RestrictedCaseExistsGuard,
+    CaseCompletedGuard,
+    CaseDefenderGuard,
+  )
+  @RolesRules(defenderRule)
   @Get('request/restricted')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
@@ -76,6 +109,14 @@ export class RestrictedCaseController {
     res.end(pdf)
   }
 
+  @UseGuards(
+    new JwtAuthGuard(true),
+    RolesGuard,
+    RestrictedCaseExistsGuard,
+    CaseCompletedGuard,
+    CaseDefenderGuard,
+  )
+  @RolesRules(defenderRule)
   @Get('courtRecord/restricted')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
@@ -84,7 +125,7 @@ export class RestrictedCaseController {
   })
   async getCourtRecordPdf(
     @Param('caseId') caseId: string,
-    @CurrentHttpUser() user: User,
+    @CurrentHttpUser() user: TUser,
     @CurrentCase() theCase: Case,
     @Res() res: Response,
   ): Promise<void> {
@@ -97,6 +138,14 @@ export class RestrictedCaseController {
     res.end(pdf)
   }
 
+  @UseGuards(
+    new JwtAuthGuard(true),
+    RolesGuard,
+    RestrictedCaseExistsGuard,
+    CaseCompletedGuard,
+    CaseDefenderGuard,
+  )
+  @RolesRules(defenderRule)
   @Get('ruling/restricted')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
