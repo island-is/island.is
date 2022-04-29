@@ -23,8 +23,6 @@ export enum Roles {
 export const YES = 'yes'
 export const NO = 'no'
 
-type YesOrNo = 'yes' | 'no'
-
 export enum ApiActions {
   submitApplication = 'submitApplication',
   createCharge = 'createCharge',

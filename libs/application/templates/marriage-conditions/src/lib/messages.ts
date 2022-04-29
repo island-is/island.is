@@ -161,7 +161,6 @@ export const m = defineMessages({
   },
 
   /* Spouse confirmation screens */
-  
 
   /* Payment */
   paymentPendingDescription: {

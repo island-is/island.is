@@ -8,7 +8,6 @@ import { IdentityInput, Query } from '@island.is/api/schema'
 import { InputController } from '@island.is/shared/form-fields'
 import { useFormContext } from 'react-hook-form'
 import * as kennitala from 'kennitala'
-import { Individual } from '../../types'
 
 const IdentityQuery = gql`
   query IdentityQuery($input: IdentityInput!) {

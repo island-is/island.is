@@ -7,7 +7,6 @@ import {
   buildMultiField,
   buildSubmitField,
   DefaultEvents,
-  buildDividerField,
 } from '@island.is/application/core'
 import { NO, YES } from '../lib/constants'
 import { m } from '../lib/messages'
