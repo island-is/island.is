@@ -5,7 +5,11 @@ import {
 import { restrictionsV2 as m } from '@island.is/judicial-system-web/messages'
 
 import type { CheckboxInfo } from '../components/CheckboxList/CheckboxList'
-import { IntlFormatters } from 'react-intl'
+import { IntlFormatters, IntlShape } from 'react-intl'
+import {
+  enumerate,
+  getSupportedCaseCustodyRestrictions,
+} from '@island.is/judicial-system/formatters'
 
 const makeCheckboxInfo = (
   restriction: CaseCustodyRestrictions,
@@ -65,3 +69,33 @@ export const travelBanRestrictionsCheckboxes = [
     CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION,
   ),
 ]
+
+export function formatCustodyRestrictions(
+  formatMessage: IntlShape['formatMessage'],
+  caseType: CaseType,
+  requestedCustodyRestrictions?: CaseCustodyRestrictions[],
+) {
+  const restrictions = getSupportedCaseCustodyRestrictions(
+    requestedCustodyRestrictions,
+  )
+  if (!restrictions || restrictions.length === 0) {
+    return ''
+  }
+
+  const enumeratedRestrictions = enumerate(
+    restrictions.map((x) => `${x.id}-`),
+    'og',
+  )
+
+  const formatedRestrictions = `${enumeratedRestrictions}${formatMessage(
+    m.lawSection,
+    {
+      sectionsLength: enumeratedRestrictions.length - 1,
+    },
+  )}`
+
+  return formatMessage(m.ruling, {
+    restrictions: formatedRestrictions,
+    caseType: caseType,
+  })
+}
