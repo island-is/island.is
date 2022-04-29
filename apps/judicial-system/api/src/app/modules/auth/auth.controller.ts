@@ -139,7 +139,7 @@ export class AuthController {
           nationalId,
         },
         res,
-        typeof redirectRoute === 'string' ? redirectRoute : '',
+        typeof redirectRoute,
       )
     }
 
@@ -182,7 +182,7 @@ export class AuthController {
         : '/krofur'
     } else if (requestedRedirectRoute?.startsWith('/verjandi/')) {
       const defender = await this.authService.findDefender(
-        requestedRedirectRoute.slice(10),
+        requestedRedirectRoute.substring(10),
         authUser.nationalId,
       )
 
