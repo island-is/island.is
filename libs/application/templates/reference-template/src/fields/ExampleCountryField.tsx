@@ -27,10 +27,6 @@ const ExampleCountryField: FC<Props> = ({ error, field, application }) => {
     { name: string; region: string } | undefined
   >(undefined)
 
-  // call dataprovieder
-
-  // get from from dataprovider
-
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   const [age, setAge] = useState(formValue.person?.age || 0)

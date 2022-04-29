@@ -66,7 +66,6 @@ const ProviderItem: FC<{
 }> = ({ dataProviderResult = {}, provider, suppressProviderError }) => {
   const { title, subTitle } = provider
   const { formatMessage } = useLocale()
-  console.log({ dataProviderResult })
   const showError =
     provider.type &&
     dataProviderResult?.status === 'failure' &&

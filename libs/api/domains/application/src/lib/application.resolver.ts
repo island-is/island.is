@@ -118,7 +118,6 @@ export class ApplicationResolver {
       user,
       locale,
     )
-    console.log({ res })
     return res
   }
 
