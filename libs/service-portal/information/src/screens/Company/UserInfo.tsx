@@ -2,7 +2,6 @@ import React from 'react'
 import { defineMessage } from 'react-intl'
 import { useQuery } from '@apollo/client'
 import { spmm } from '../../lib/messages'
-
 import { Query } from '@island.is/api/schema'
 import {
   Text,
@@ -19,10 +18,6 @@ import {
   m,
 } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import {
-  natRegGenderMessageDescriptorRecord,
-  natRegMaritalStatusMessageDescriptorRecord,
-} from '../../helpers/localizationHelpers'
 import { NATIONAL_REGISTRY_USER } from '../../lib/queries/getNationalRegistryUser'
 
 const dataNotFoundMessage = defineMessage({
@@ -35,7 +30,6 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
   const { formatMessage } = useLocale()
   const { data, loading, error } = useQuery<Query>(NATIONAL_REGISTRY_USER)
   const { nationalRegistryUser } = data || {}
-  console.log('nationalRegistryUser', nationalRegistryUser)
   return (
     <>
       <Box marginBottom={5}>

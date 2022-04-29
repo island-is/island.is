@@ -463,9 +463,6 @@
       "@island.is/service-portal/endorsements": [
         "libs/service-portal/endorsements/src/index.ts"
       ],
-      "@island.is/service-portal/family": [
-        "libs/service-portal/family/src/index.ts"
-      ],
       "@island.is/service-portal/finance": [
         "libs/service-portal/finance/src/index.ts"
       ],
@@ -480,6 +477,9 @@
       ],
       "@island.is/service-portal/icelandic-names-registry": [
         "libs/service-portal/icelandic-names-registry/src/index.ts"
+      ],
+      "@island.is/service-portal/information": [
+        "libs/service-portal/information/src/index.ts"
       ],
       "@island.is/service-portal/licenses": [
         "libs/service-portal/licenses/src/index.ts"

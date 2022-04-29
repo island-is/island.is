@@ -672,9 +672,6 @@
     "service-portal-endorsements": {
       "tags": []
     },
-    "service-portal-family": {
-      "tags": []
-    },
     "service-portal-finance": {
       "tags": []
     },
@@ -688,6 +685,9 @@
       "tags": []
     },
     "service-portal-icelandic-names-registry": {
+      "tags": []
+    },
+    "service-portal-information": {
       "tags": []
     },
     "service-portal-licenses": {
