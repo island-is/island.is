@@ -413,21 +413,19 @@ export class CaseService {
   }
 
   private sendEmailToDefender(theCase: Case, rulingUploadedToS3: boolean) {
-    const newLocal = this.formatMessage(m.signedRuling.defenderBody, {
-      courtCaseNumber: theCase.courtCaseNumber,
-      courtName: theCase.court?.name?.replace('dómur', 'dómi'),
-      defenderHasAccessToRvg: theCase.defenderNationalId,
-      linkStart: `<a href="${this.config.deepLinks.defenderCompletedCaseOverviewUrl}${theCase.id}">`,
-      linkEnd: '</a>',
-      signedVerdictAvailableInS3: rulingUploadedToS3 ? 'TRUE' : 'FALSE',
-    })
-
     return this.sendEmail(
       {
         name: theCase.defenderName ?? '',
         address: theCase.defenderEmail ?? '',
       },
-      newLocal,
+      this.formatMessage(m.signedRuling.defenderBody, {
+        courtCaseNumber: theCase.courtCaseNumber,
+        courtName: theCase.court?.name?.replace('dómur', 'dómi'),
+        defenderHasAccessToRvg: theCase.defenderNationalId,
+        linkStart: `<a href="${this.config.deepLinks.defenderCompletedCaseOverviewUrl}${theCase.id}">`,
+        linkEnd: '</a>',
+        signedVerdictAvailableInS3: rulingUploadedToS3 ? 'TRUE' : 'FALSE',
+      }),
       theCase.courtCaseNumber,
     )
   }
