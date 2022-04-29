@@ -69,6 +69,10 @@ jobs:
           path: event.json
           retention-days: 60
 
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      
       - name: Calculate cache key for node_modules
         id: calculate_node_modules_hash
         run: |
