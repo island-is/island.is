@@ -421,7 +421,7 @@ export class CaseService {
       linkEnd: '</a>',
       signedVerdictAvailableInS3: rulingUploadedToS3 ? 'TRUE' : 'FALSE',
     })
-    console.log(newLocal)
+
     return this.sendEmail(
       {
         name: theCase.defenderName ?? '',
