@@ -1,3 +1,4 @@
+import { userMonitoring } from '@island.is/user-monitoring'
 import '@island.is/api/mocks'
 import React from 'react'
 import ReactDOM from 'react-dom'
@@ -7,7 +8,6 @@ import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import './auth'
 import { environment } from './environments'
 import App from './app/App'
-import { userMonitoring } from '@island.is/user-monitoring'
 
 console.debug(`Checking if we should init DD RUM`)
 if (!isRunningOnEnvironment('local')) {
@@ -19,7 +19,7 @@ if (!isRunningOnEnvironment('local')) {
     env: environment.ENVIRONMENT,
     version: environment.APP_VERSION,
   }
-  // userMonitoring.initDdRum(params)
+  userMonitoring.initDdRum(params)
   console.log(`params: ${JSON.stringify(params)}`)
   console.debug('done with the RUM')
 }
