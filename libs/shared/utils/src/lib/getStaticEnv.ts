@@ -1,9 +1,11 @@
 export const ENV_PREFIX = 'SI_PUBLIC_'
 
 export const getStaticEnv = (environmentVariableName: string) => {
+  console.debug(`Retrieving ${environmentVariableName}`)
   const environment = JSON.parse(
     document.getElementById('__SI_ENVIRONMENT__')?.textContent || '{}',
   )
+  console.debug(`Complete env is ${JSON.stringify(environment)}`)
 
   if (
     !(
