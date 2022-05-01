@@ -31,7 +31,7 @@ env:
 jobs:
   pre-checks:
     name: Check if job should run
-    runs-on: ec2-runners
+    runs-on: ec2-runners    
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     env:
@@ -108,7 +108,7 @@ jobs:
           fi
           echo "::set-output name=PRE_CHECK::push"
 
-  prepare:
+  prepare:    
     runs-on: ec2-runners
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
@@ -191,7 +191,7 @@ jobs:
           path: event.json
           retention-days: 60
 
-      - name: Generate docker image tag
+      - name: Generate docker image tag        
         id: docker_tags
         run: |
           export DOCKER_BRANCH_TAG=$(echo ${GIT_BRANCH:0:45} | tr "/." "-" )
@@ -254,7 +254,7 @@ jobs:
           path: node_modules
           key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-yarn
 
-      - name: Check cache success
+      - name: Check cache success        
         run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Building NodeJS dependencies
@@ -305,7 +305,7 @@ jobs:
           path: cache
           key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-docker-deps-1
 
-      - name: Check cache success
+      - name: Check cache success        
         run: '[[ "${{ steps.cache-deps.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Cache for NodeJS dependencies - Docker layer
@@ -316,7 +316,7 @@ jobs:
           path: cache_output
           key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-docker-output-base-1
 
-      - name: Check cache success
+      - name: Check cache success        
         run: '[[ "${{ steps.cache-deps-base.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Building NodeJS dependencies
@@ -334,7 +334,7 @@ jobs:
           path: generated_files.tar.gz
           key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
 
-      - name: Check cache success
+      - name: Check cache success        
         run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Generate schemas
@@ -396,7 +396,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-
+      
       - uses: actions/setup-node@v3
         with:
           node-version: '14'
@@ -412,7 +412,7 @@ jobs:
           path: node_modules
           key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
 
-      - name: Check cache success
+      - name: Check cache success        
         run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Cache for generated files
@@ -423,12 +423,12 @@ jobs:
           path: generated_files.tar.gz
           key: ${{ needs.prepare.outputs.generated-files-cache-key }}
 
-      - name: Check cache success
+      - name: Check cache success        
         run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Untar generated files
         run: tar zxvf generated_files.tar.gz
-
+        
 
       - uses: ./.github/actions/unit-test
         with:
@@ -441,7 +441,7 @@ jobs:
     needs:
       - pre-checks
       - prepare
-    runs-on: ec2-runners
+    runs-on: ec2-runners    
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 35
@@ -477,7 +477,7 @@ jobs:
       - name: Setup yarn
         run: npm install -g yarn
         if: steps.gather.outcome == 'success'
-
+      
       - uses: actions/checkout@v3
         if: steps.gather.outcome == 'success'
       - name: Cache for generated files
@@ -489,7 +489,7 @@ jobs:
           path: generated_files.tar.gz
           key: ${{ needs.prepare.outputs.generated-files-cache-key }}
 
-      - name: Check cache success
+      - name: Check cache success        
         run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Untar generated files
@@ -505,7 +505,7 @@ jobs:
           path: cache_output
           key: ${{ needs.prepare.outputs.node-modules-hash }}-docker-output-base-1
 
-      - name: Check cache success
+      - name: Check cache success        
         run: '[[ "${{ steps.cache-deps-base.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Cache for NodeJS dependencies - Docker layer
@@ -517,7 +517,7 @@ jobs:
           path: cache
           key: ${{ needs.prepare.outputs.node-modules-hash }}-docker-deps-1
 
-      - name: Check cache success
+      - name: Check cache success        
         run: '[[ "${{ steps.cache-deps.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Docker login to ECR repo
@@ -540,20 +540,20 @@ jobs:
         if: steps.gather.outcome == 'success'
         run: ./scripts/ci/run-in-parallel.sh 90_$DOCKER_TYPE
         env:
-          EXTRA_DOCKER_BUILD_ARGS: '--build-arg DOCKER_IMAGE_REGISTRY=${{ env.DOCKER_BASE_IMAGE_REGISTRY }} -e NODE_OPTIONS="--max-old-space-size=5096"'
+          EXTRA_DOCKER_BUILD_ARGS: '--build-arg DOCKER_IMAGE_REGISTRY=${{ env.DOCKER_BASE_IMAGE_REGISTRY }}'
 
       - name: Building Docker images Retry #This only exists until GHA starts supporting this
         if: steps.gather.outcome == 'success' && steps.dockerbuild.outcome == 'failure'
         run: ./scripts/ci/run-in-parallel.sh 90_$DOCKER_TYPE
         env:
-          EXTRA_DOCKER_BUILD_ARGS: '--build-arg DOCKER_IMAGE_REGISTRY=${{ env.DOCKER_BASE_IMAGE_REGISTRY }} -e NODE_OPTIONS="--max-old-space-size=5096"'
+          EXTRA_DOCKER_BUILD_ARGS: '--build-arg DOCKER_IMAGE_REGISTRY=${{ env.DOCKER_BASE_IMAGE_REGISTRY }}'
 
   helm-docker-build:
     needs:
       - prepare
       - pre-checks
     if: needs.prepare.outputs.IMAGES && needs.pre-checks.outputs.PRE_CHECK != 'push'
-    runs-on: ec2-runners
+    runs-on: ec2-runners    
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 5
@@ -612,7 +612,7 @@ jobs:
             })
 
   retag-unaffected:
-    runs-on: ec2-runners
+    runs-on: ec2-runners    
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 5
@@ -644,7 +644,7 @@ jobs:
         run: ./scripts/ci/retag-unaffected.sh "$UNAFFECTED"
 
   deploy:
-    runs-on: ec2-runners
+    runs-on: ec2-runners    
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     if: always() && needs.retag-unaffected.result == 'success' && needs.helm-docker-build.result != 'failure'
@@ -685,7 +685,7 @@ jobs:
           BODY
 
   push-success:
-    runs-on: ec2-runners
+    runs-on: ec2-runners    
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     if: always()
@@ -709,7 +709,7 @@ jobs:
         run: echo "Build was skipped"
 
   failure-notification:
-    runs-on: ec2-runners
+    runs-on: ec2-runners    
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     if: failure() && needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK != 'feature-deploy'
