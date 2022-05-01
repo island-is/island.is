@@ -20,7 +20,7 @@ ARG APP
 ARG APP_DIST_HOME
 ENV APP=${APP}
 ENV NODE_ENV=production
-ENV NODE_OPTIONS="--max-old-space-size=4096"
+ENV NODE_OPTIONS="--max-old-space-size=6096"
 
 RUN yarn run build ${APP} --prod
 
