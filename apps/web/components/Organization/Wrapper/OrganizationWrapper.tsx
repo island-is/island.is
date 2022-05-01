@@ -46,8 +46,8 @@ import {
 import { endpoints as chatPanelEndpoints } from '../../ChatPanel/config'
 import MannaudstorgFooter from './Themes/MannaudstorgTheme/MannaudstorgFooter'
 import { useNamespace } from '@island.is/web/hooks'
-import * as styles from './OrganizationWrapper.css'
 import LandlaeknirFooter from './Themes/LandlaeknirTheme/LandlaeknirFooter'
+import * as styles from './OrganizationWrapper.css'
 
 interface NavigationData {
   title: string
