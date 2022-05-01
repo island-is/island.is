@@ -161,7 +161,6 @@ const FinancialAidTemplate: ApplicationTemplate<
         },
       },
       [ApplicationStates.SPOUSE]: {
-        // entry: 'assignToSpouse',
         meta: {
           name: application.name.defaultMessage,
           lifecycle: oneMonthLifeCycle,

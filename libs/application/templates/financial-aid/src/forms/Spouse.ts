@@ -10,7 +10,7 @@ import {
 } from '@island.is/application/core'
 
 import * as m from '../lib/messages'
-import { ApproveOptions } from '../lib/types'
+import { ApproveOptions, ExternalData } from '../lib/types'
 import { Routes } from '../lib/constants'
 
 export const Spouse: Form = buildForm({
@@ -18,17 +18,6 @@ export const Spouse: Form = buildForm({
   title: m.application.name,
   mode: FormModes.APPLYING,
   children: [
-    buildSection({
-      id: 'aboutSpouseForm',
-      title: m.aboutSpouseForm.general.sectionTitle,
-      children: [
-        buildCustomField({
-          id: 'aboutSpouseForm',
-          title: m.aboutSpouseForm.general.pageTitle,
-          component: 'AboutSpouseForm',
-        }),
-      ],
-    }),
     // TODO: check if reusing components will work for the summary page
     buildSection({
       id: 'incomeForm',
@@ -54,6 +43,11 @@ export const Spouse: Form = buildForm({
       ],
     }),
     buildSection({
+      condition: (_, externalData) =>
+        ((externalData as unknown) as ExternalData).taxDataFetchSpouse?.data
+          ?.municipalitiesPersonalTaxReturn.personalTaxReturn === null ||
+        !((externalData as unknown) as ExternalData).taxDataFetchSpouse?.data
+          ?.municipalitiesDirectTaxPayments.success,
       id: 'taxReturnFilesForm',
       title: m.taxReturnForm.general.sectionTitle,
       children: [

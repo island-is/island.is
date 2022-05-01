@@ -44,12 +44,6 @@ export interface ExternalData {
     date: string
   }
 }
-export interface ExternalDataSpouse {
-  taxDataFetch: {
-    data: TaxData
-    date: string
-  }
-}
 
 export type NestedType<T> = {
   [K in keyof T]: T[K] extends Record<string, unknown>

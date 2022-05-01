@@ -26,17 +26,20 @@ const SpouseSummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
 
   const [isModalOpen, setIsModalOpen] = useState(false)
 
+  const nationalId =
+    externalData?.nationalRegistry?.data?.applicant?.spouse?.nationalId ||
+    answers?.relationshipStatus?.spouseNationalId
+
   return (
     <>
       <Box>
         <DescriptionText text={m.summaryForm.general.calculationsOverview} />
       </Box>
 
+      {/* TODO get name of spouse if unregistred */}
       <UserInfo
         name={externalData?.nationalRegistry?.data?.applicant?.spouse?.name}
-        nationalId={
-          externalData?.nationalRegistry?.data?.applicant?.spouse?.nationalId
-        }
+        nationalId={nationalId}
         address={formatAddress(externalData?.nationalRegistry?.data?.applicant)}
       />
 
@@ -70,8 +73,12 @@ const SpouseSummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
             : Routes.SPOUSETAXRETURNFILES
         }
         goToScreen={goToScreen}
-        taxFiles={answers.spouseTaxReturnFiles}
-        incomeFiles={answers.spouseIncomeFiles}
+        personalTaxReturn={
+          externalData?.taxDataFetchSpouse?.data
+            ?.municipalitiesPersonalTaxReturn?.personalTaxReturn
+        }
+        taxFiles={answers.spouseTaxReturnFiles ?? []}
+        incomeFiles={answers.spouseIncomeFiles ?? []}
         applicationId={id}
       />
 

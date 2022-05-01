@@ -10,12 +10,22 @@ import { getTaxFormContent } from './taxFormContent'
 
 const TaxReturnFilesForm = ({ field, application }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
-  const { id, answers, externalData } = application
+  const { id, answers, externalData, assignees } = application
 
-  const {
-    municipalitiesDirectTaxPayments,
-    municipalitiesPersonalTaxReturn,
-  } = externalData.taxDataFetch.data
+  const isSpouse = (assignees: string[], nationalId?: string) => {
+    if (!nationalId) {
+      return
+    }
+    return assignees.includes(nationalId)
+  }
+
+  const { municipalitiesDirectTaxPayments, municipalitiesPersonalTaxReturn } =
+    isSpouse(
+      assignees,
+      externalData?.nationalRegistry?.data?.applicant?.nationalId,
+    ) && externalData?.taxDataFetchSpouse?.data
+      ? externalData.taxDataFetchSpouse.data
+      : externalData.taxDataFetch.data
 
   const taxReturnFetchFailed =
     municipalitiesPersonalTaxReturn?.personalTaxReturn === null
