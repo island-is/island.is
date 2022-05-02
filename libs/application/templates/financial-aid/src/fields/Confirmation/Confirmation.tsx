@@ -65,15 +65,13 @@ const Confirmation = ({
         <DescriptionText text={confirmation.nextSteps.content} />
       </Box>
 
-      {/* {hasSpouse(answers, externalData) && (
-        {firstStepText && <DescriptionText text={firstStepText} />}
-        <Box marginTop={2}>
-          <DescriptionText
-            text={confirmation.nextSteps.content}
-            format={{ nextMonth: getNextPeriod.month }}
-          />
-        </Box>
-      )} */}
+      {firstStepText && <DescriptionText text={firstStepText} />}
+      <Box marginTop={2}>
+        <DescriptionText
+          text={confirmation.nextSteps.content}
+          format={{ nextMonth: getNextPeriod.month }}
+        />
+      </Box>
 
       {hasSpouse && (
         <>

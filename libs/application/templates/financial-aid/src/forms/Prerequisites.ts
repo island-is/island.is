@@ -45,8 +45,20 @@ export const Prerequisites: Form = buildForm({
             buildDataProviderItem({
               id: 'taxDataFetch',
               type: DataProviderTypes.TaxDataFetch,
+              title: m.externalData.taxData.title,
+              subTitle: m.externalData.taxData.dataInfo,
+            }),
+            buildDataProviderItem({
+              id: 'text',
+              type: undefined,
               title: '',
-              subTitle: undefined,
+              subTitle: m.externalData.taxData.whyDataIsNeeded,
+            }),
+            buildDataProviderItem({
+              id: 'moreTaxInfo',
+              type: undefined,
+              title: '',
+              subTitle: m.externalData.taxData.process,
             }),
           ],
         }),
