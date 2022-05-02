@@ -350,7 +350,8 @@ export const ParentalLeaveForm: Form = buildForm({
             buildMultiField({
               id: 'personalAllowanceFromSpouse',
               condition: (answers) =>
-                answers.usePersonalAllowanceFromSpouse === YES,
+                answers.usePersonalAllowanceFromSpouse === YES &&
+                allowOtherParent(answers),
               title: parentalLeaveFormMessages.personalAllowance.spouseTitle,
               description:
                 parentalLeaveFormMessages.personalAllowance.spouseDescription,
