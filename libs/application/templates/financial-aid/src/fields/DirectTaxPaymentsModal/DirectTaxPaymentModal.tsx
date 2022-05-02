@@ -1,9 +1,12 @@
 import React from 'react'
+import { useIntl } from 'react-intl'
 import { ModalBase, Text, Box, Button } from '@island.is/island-ui/core'
 
-import * as styles from './DirectTaxPaymentModal.css'
 import { DirectTaxPayment } from '@island.is/financial-aid/shared/lib'
 import { TaxBreakdown } from '..'
+import { directTaxPaymentModal } from '../../lib/messages'
+
+import * as styles from './DirectTaxPaymentModal.css'
 
 interface Props {
   isVisible: boolean
@@ -18,6 +21,8 @@ const DirectTaxPaymentModal = ({
   items,
   dateDataWasFetched,
 }: Props) => {
+  const { formatMessage } = useIntl()
+
   return (
     <ModalBase
       baseId="directTaxPaymentModal"
@@ -44,7 +49,7 @@ const DirectTaxPaymentModal = ({
             className={styles.modal}
           >
             <Text variant="h3" marginBottom={4}>
-              Staðgreiðsluskrá
+              {formatMessage(directTaxPaymentModal.general.headline)}
             </Text>
 
             <TaxBreakdown
@@ -53,7 +58,9 @@ const DirectTaxPaymentModal = ({
             />
 
             <Box paddingTop={4} display="flex" justifyContent="flexEnd">
-              <Button onClick={closeModal}>Loka</Button>
+              <Button onClick={closeModal}>
+                {formatMessage(directTaxPaymentModal.general.close)}
+              </Button>
             </Box>
           </Box>
         </Box>
