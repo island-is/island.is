@@ -23,8 +23,6 @@ export const PersonalUseAsMuchAsPossible: FC<FieldBaseProps> = ({
   const { formatMessage } = useLocale()
   const { id, title, description } = field
 
-  console.log(id)
-
   return (
     <Box>
       <Text variant="h4" as="h4">
