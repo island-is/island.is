@@ -1,5 +1,6 @@
 import React from 'react'
-import { IntlFormatters, useIntl } from 'react-intl'
+import { formatCustodyRestrictions } from './restrictions'
+import { IntlFormatters, useIntl, createIntl } from 'react-intl'
 import { MockedProvider } from '@apollo/client/testing'
 import { render, screen, getDefaultNormalizer } from '@testing-library/react'
 
@@ -169,5 +170,80 @@ describe('formatRequestedCustodyRestrictions', () => {
     expect(
       await screen.findByText('The accused should stay home.'),
     ).toBeInTheDocument()
+  })
+})
+
+describe('formatCustodyRestrictions', () => {
+  const formatMessage = createIntl({ locale: 'is', onError: jest.fn() })
+    .formatMessage
+
+  it('should return empty string if no custody restrictions', () => {
+    const caseType = CaseType.CUSTODY
+    const restrictions = [] as CaseCustodyRestrictions[]
+
+    const res = formatCustodyRestrictions(formatMessage, caseType, restrictions)
+
+    expect(res).toEqual('')
+  })
+
+  it('should return empty string if undefined custody restrictions', () => {
+    const caseType = CaseType.CUSTODY
+    const restrictions = undefined
+
+    const res = formatCustodyRestrictions(formatMessage, caseType, restrictions)
+
+    expect(res).toEqual('')
+  })
+
+  it('should return formatted string for custody case with one restrictions', () => {
+    const caseType = CaseType.CUSTODY
+    const restrictions = [CaseCustodyRestrictions.VISITAION]
+
+    const res = formatCustodyRestrictions(formatMessage, caseType, restrictions)
+
+    expect(res).toEqual(
+      'Sækjandi kynnir kærða tilhögun gæsluvarðhaldsins, sem sé með takmörkunum skv. c-lið 1. mgr. 99. gr. laga nr. 88/2008.',
+    )
+  })
+
+  it('should return formatted string for admission to facility case with two restrictions', () => {
+    const caseType = CaseType.ADMISSION_TO_FACILITY
+    const restrictions = [
+      CaseCustodyRestrictions.VISITAION,
+      CaseCustodyRestrictions.NECESSITIES,
+    ]
+
+    const res = formatCustodyRestrictions(formatMessage, caseType, restrictions)
+
+    expect(res).toEqual(
+      'Sækjandi kynnir kærða tilhögun vistunarinnar, sem sé með takmörkunum skv. a- og c-liðum 1. mgr. 99. gr. laga nr. 88/2008.',
+    )
+  })
+
+  it('should return formatted string for admission to facility case with tree restrictions', () => {
+    const caseType = CaseType.ADMISSION_TO_FACILITY
+    const restrictions = [
+      CaseCustodyRestrictions.VISITAION,
+      CaseCustodyRestrictions.NECESSITIES,
+      CaseCustodyRestrictions.MEDIA,
+    ]
+
+    const res = formatCustodyRestrictions(formatMessage, caseType, restrictions)
+
+    expect(res).toEqual(
+      'Sækjandi kynnir kærða tilhögun vistunarinnar, sem sé með takmörkunum skv. a-, c- og e-liðum 1. mgr. 99. gr. laga nr. 88/2008.',
+    )
+  })
+
+  it('should filter out non supported restrictions', () => {
+    const caseType = CaseType.ADMISSION_TO_FACILITY
+    const restrictions = [
+      CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION,
+      CaseCustodyRestrictions.ISOLATION,
+    ]
+
+    const res = formatCustodyRestrictions(formatMessage, caseType, restrictions)
+
+    expect(res).toEqual('')
   })
 })
