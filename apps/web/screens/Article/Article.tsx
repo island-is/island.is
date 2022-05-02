@@ -612,7 +612,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
         <LiveChatIncChatPanel {...liveChatIncConfig[article.id]} />
       ) : (
         <OrganizationChatPanel
-          slugs={article.organization.map((x) => x.slug)}
+          organizationIds={article.organization.map((x) => x.id)}
           pushUp={isVisible}
         />
       )}
