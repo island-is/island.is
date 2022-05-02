@@ -13,10 +13,10 @@ import { m } from './messages'
 import { Events, States, Roles } from './constants'
 import { dataSchema } from './utils/dataSchema'
 
-const FinancialStatementApplication: ApplicationTemplate<
-ApplicationContext,
-ApplicationStateSchema<Events>,
-Events
+const FinancialStatementInaoApplication: ApplicationTemplate<
+  ApplicationContext,
+  ApplicationStateSchema<Events>,
+  Events
 > = {
   type: ApplicationTypes.EXAMPLE,
   name: m.applicationTitle,
@@ -85,4 +85,4 @@ Events
   },
 }
 
-export default FinancialStatementApplication
+export default FinancialStatementInaoApplication

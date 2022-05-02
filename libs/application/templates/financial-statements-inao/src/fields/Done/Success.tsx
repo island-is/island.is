@@ -12,7 +12,6 @@ interface PropTypes extends FieldBaseProps {
   field: CustomField
 }
 
-
 export const Success = ({ application }: PropTypes): JSX.Element => {
   const { formatMessage } = useLocale()
 
@@ -22,11 +21,7 @@ export const Success = ({ application }: PropTypes): JSX.Element => {
         <ContentBlock>
           <AlertMessage
             type="success"
-            title={`${formatText(
-              m.success,
-              application,
-              formatMessage,
-            )} `}
+            title={`${formatText(m.success, application, formatMessage)} `}
           />
         </ContentBlock>
       </Box>

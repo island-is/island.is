@@ -16,7 +16,7 @@ import { ApiActions } from '../shared'
 import { m } from '../lib/messages'
 
 export const Application: Form = buildForm({
-  id: 'FinancialStatement',
+  id: 'FinancialStatementsInao',
   title: '',
   mode: FormModes.APPLYING,
   children: [
@@ -33,7 +33,7 @@ export const Application: Form = buildForm({
               id: 'sampleData',
               type: 'SampleDataProvider',
               title: '',
-              subTitle: m.fundInfo
+              subTitle: m.fundInfo,
             }),
           ],
         }),
@@ -126,7 +126,7 @@ export const Application: Form = buildForm({
           uploadMultiple: false,
           doesNotRequireAnswer: true,
         }),
-      ]
+      ],
     }),
     buildSection({
       id: 'confirmation',
@@ -138,16 +138,13 @@ export const Application: Form = buildForm({
             buildDescriptionField({
               id: 'overview',
               title: m.overviewSectionTitle,
-              description:
-                m.overviewSectionDescription,
+              description: m.overviewSectionDescription,
             }),
             buildSubmitField({
               id: 'submit',
               placement: 'screen',
               title: m.send,
-              actions: [
-                { event: 'SUBMIT', name: m.send, type: 'primary' },
-              ],
+              actions: [{ event: 'SUBMIT', name: m.send, type: 'primary' }],
             }),
           ],
         }),

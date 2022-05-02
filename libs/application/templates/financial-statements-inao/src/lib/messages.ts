@@ -78,45 +78,43 @@ export const m = defineMessages({
   },
   personalIncome: {
     id: 'fs.application:income.personal',
-    defaultMessage:
-      'Eigin tekjur',
+    defaultMessage: 'Eigin tekjur',
     description: 'personal income',
   },
   capitalIncome: {
     id: 'fs.application:income.capital',
-    defaultMessage:
-      'Fjármagnstekjur',
-    description: 'capital income'
+    defaultMessage: 'Fjármagnstekjur',
+    description: 'capital income',
   },
   financialStatement: {
     id: 'fs.application:financial.statment',
     defaultMessage: 'Ársreikningur',
-    description: 'financial statements'
+    description: 'financial statements',
   },
   upload: {
     id: 'fs.application:upload',
     defaultMessage: 'Hlaða upp ársreikningi',
-    description: 'Upload financial statements'
+    description: 'Upload financial statements',
   },
   uploadIntro: {
     id: 'fs.application:upload.intro',
     defaultMessage: 'Vinsamlegast hlaðið upp ársreikning hér að neðan.',
-    description: 'Upload financial statements intro'
+    description: 'Upload financial statements intro',
   },
   uploadDescription: {
     id: 'fs.application:upload.description',
     defaultMessage: 'Vinsamlegast hlaðið upp ársreikning hér að neðan.',
-    description: 'Upload financial statements intro'
+    description: 'Upload financial statements intro',
   },
   confirm: {
     id: 'fs.application:confirmation',
     defaultMessage: 'Staðfesta',
-    description: 'confirm application'
+    description: 'confirm application',
   },
   send: {
     id: 'fs.application:send',
     defaultMessage: 'Senda umsókn',
-    description: 'Send application'
+    description: 'Send application',
   },
   overviewTitle: {
     id: 'fs.application:overviewTitle',
@@ -137,7 +135,7 @@ export const m = defineMessages({
   success: {
     id: 'fs.application:success',
     defaultMessage: 'Skil á árskýrslu mótteking',
-    description: 'financial statement success'
+    description: 'financial statement success',
   },
   dataCollectionCheckboxLabel: {
     id: 'ps.application:dataCollectionCheckboxLabel',
@@ -147,12 +145,12 @@ export const m = defineMessages({
   thankYou: {
     id: 'fs.application:final',
     defaultMessage: 'Takk fyrir',
-    description: 'Upload financial statements intro'
+    description: 'Upload financial statements intro',
   },
   outroMessage: {
     id: 'fs.application:upload.description',
     defaultMessage: 'Takk fyrir',
-    description: 'Upload financial statements intro'
+    description: 'Upload financial statements intro',
   },
   dataSchemePhoneNumber: {
     id: 'fs.application:dataSchema.phoneNumber',

@@ -3039,9 +3039,9 @@
         }
       }
     },
-    "application-templates-financial-statements": {
-      "root": "libs/application/templates/financial-statements",
-      "sourceRoot": "libs/application/templates/financial-statements/src",
+    "application-templates-financial-statements-inao": {
+      "root": "libs/application/templates/financial-statements-inao",
+      "sourceRoot": "libs/application/templates/financial-statements-inao/src",
       "projectType": "library",
       "schematics": {},
       "architect": {
@@ -3050,25 +3050,25 @@
           "options": {
             "linter": "eslint",
             "tsConfig": [
-              "libs/application/templates/financial-statements/tsconfig.lib.json",
-              "libs/application/templates/financial-statements/tsconfig.spec.json"
+              "libs/application/templates/financial-statements-inao/tsconfig.lib.json",
+              "libs/application/templates/financial-statements-inao/tsconfig.spec.json"
             ],
             "exclude": [
               "**/node_modules/**",
-              "!libs/application/templates/financial-statements/**/*"
+              "!libs/application/templates/financial-statements-inao/**/*"
             ]
           }
         },
         "extract-strings": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/financial-statements/src/lib/messages.ts"
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/financial-statements-inao/src/lib/messages.ts"
           }
         },
         "schemas/codegen": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "graphql-codegen --config libs/application/templates/financial-statements/codegen.yml"
+            "command": "graphql-codegen --config libs/application/templates/financial-statements-inao/codegen.yml"
           }
         }
       }

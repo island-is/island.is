@@ -29,8 +29,7 @@ export const dataSchema = z.object({
     personal: z.string(),
     capital: z.string(),
   }),
-  attachment: z
-      .object({
-        file: z.array(FileSchema),
-      })
-    })
+  attachment: z.object({
+    file: z.array(FileSchema),
+  }),
+})
