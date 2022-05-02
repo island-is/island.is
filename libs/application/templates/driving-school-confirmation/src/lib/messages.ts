@@ -119,10 +119,16 @@ export const m = defineMessages({
     description: 'school',
   },
 
-  /* No student was found */
-  noStudentFoundMessage: {
-    id: 'dsc.application:noStudentFoundMessage',
-    defaultMessage: 'Enginn nemandi fannst. Reyndu aftur',
+  /* Errors */
+  noStudentInfoFoundMessage: {
+    id: 'dsc.application:noStudentInfoFoundMessage',
+    defaultMessage:
+      'Tókst ekki að sækja upplýsingar um nemanda. Vinsamlegast reynið aftur síðar',
     description: 'No student found alert message',
+  },
+  noStudentFoundForGivenNationalIdMessage: {
+    id: 'dsc.application:noStudentFoundForGivenNationalIdMessage',
+    defaultMessage: 'Tókst ekki að sækja nafn út frá þessari kennitölu.',
+    description: 'No name for given national Id',
   },
 })

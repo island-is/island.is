@@ -51,13 +51,10 @@ export const getDrivingSchoolConfirmation = (): Form => {
         id: 'studentsInfo',
         title: m.studentInfoTitle,
         children: [
-          buildTextField({
-            id: 'nationalId',
-            title: m.studentInfoNationalId,
-            width: 'half',
-            backgroundColor: 'blue',
-            format: '######-####',
-            required: true,
+          buildCustomField({
+            title: '',
+            id: 'student',
+            component: 'NationalIdwithName',
           }),
         ],
       }),
