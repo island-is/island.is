@@ -9,7 +9,7 @@ import {
   PersonalTaxReturn,
   UserType,
 } from '@island.is/financial-aid/shared/lib'
-import { DataProviderTypes, Applicant, TaxData } from '../lib/types'
+import { DataProviderTypes, TaxData } from '../lib/types'
 
 const personalTaxReturnQuery = `
 query PersonalTaxReturnQuery($input: MunicipalitiesFinancialAidPersonalTaxReturnInput!) {

@@ -30,18 +30,22 @@ export interface ExternalData {
       municipality: Municipality
     }
     date: string
+    status: StatusProvider
   }
   veita: {
     data: CurrentApplication
     date: string
+    status: StatusProvider
   }
   taxDataFetch: {
     data: TaxData
     date: string
+    status: StatusProvider
   }
   taxDataFetchSpouse?: {
     data: TaxData
     date: string
+    status: StatusProvider
   }
 }
 
@@ -110,6 +114,8 @@ export interface InputTypes {
   id: string
   error?: string
 }
+
+export type StatusProvider = 'failure' | 'success'
 
 export type UploadFileType =
   | 'otherFiles'
