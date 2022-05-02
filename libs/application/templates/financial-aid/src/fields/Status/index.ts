@@ -7,4 +7,3 @@ export { default as RejectionMessage } from './RejectionMessage/RejectionMessage
 export { default as SpouseAlert } from './SpouseAlert/SpouseAlert'
 export { default as SpouseApproved } from './SpouseApproved/SpouseApproved'
 export { default as Timeline } from './Timeline/Timeline'
-export { default as Status } from './Status'
