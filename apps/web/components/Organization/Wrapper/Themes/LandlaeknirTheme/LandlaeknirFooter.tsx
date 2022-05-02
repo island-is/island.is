@@ -1,3 +1,4 @@
+import React from 'react'
 import {
   ArrowLink,
   Box,
@@ -7,9 +8,9 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { FooterItem } from '@island.is/web/graphql/schema'
-// TODO: get the facebook logo from somewhere else
-import { Icon } from 'libs/island-ui/core/src/lib/Icon/Icon'
-import React from 'react'
+
+const FACEBOOK_LOGO =
+  'https://images.ctfassets.net/8k0h54kbe6bj/1hx4HeCK1OFzPIjtKkMmrL/fa769439b9221a92bfb124b598494ba4/Facebook-Logo-Dark.svg'
 
 interface LandLaeknirFooterProps {
   footerItems: Array<FooterItem>
@@ -43,10 +44,13 @@ export const LandLaeknirFooter = ({
             </GridColumn>
             <GridColumn span={['12/12', '12/12', '3/12']}>
               <GridRow alignItems="center">
-                <ArrowLink color="blue400">
+                <ArrowLink
+                  href="https://www.facebook.com/landlaeknir"
+                  color="blue400"
+                >
                   Vertu vinur okkar á Facebook
                 </ArrowLink>
-                <Icon height="24" width="24" type="facebook" />
+                <img src={FACEBOOK_LOGO} alt="facebookLogo" />
               </GridRow>
             </GridColumn>
             <GridColumn span={['12/12', '12/12', '3/12']}>
@@ -54,7 +58,6 @@ export const LandLaeknirFooter = ({
                 <ArrowLink color="blue400">
                   Vertu vinur okkar á Facebook
                 </ArrowLink>
-                <Icon height="24" width="24" type="facebook" />
               </GridRow>
             </GridColumn>
             <GridColumn span={['12/12', '12/12', '3/12']}>
@@ -62,7 +65,6 @@ export const LandLaeknirFooter = ({
                 <ArrowLink color="blue400">
                   Vertu vinur okkar á Facebook
                 </ArrowLink>
-                <Icon height="24" width="24" type="facebook" />
               </GridRow>
             </GridColumn>
           </GridRow>
