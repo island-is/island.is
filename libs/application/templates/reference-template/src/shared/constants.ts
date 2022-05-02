@@ -9,8 +9,13 @@ export enum ApiActions {
   getAnotherReferenceData = 'getAnotherReferenceData',
 }
 
-export class ReferenceApplicationProviders {
-  public static readonly referenceProvider: DataProviderTemplateApi = {
+export const ReferenceApplicationDataProviders = {
+  anotherReferenceProvider: {
+    apiModuleAction: ApiActions.getAnotherReferenceData,
+    externalDataId: 'anotherReference',
+    shouldPersistToExternalData: true,
+  },
+  referenceProvider: {
     apiModuleAction: ApiActions.getReferenceData,
     externalDataId: 'reference',
     shouldPersistToExternalData: true,
@@ -23,10 +28,10 @@ export class ReferenceApplicationProviders {
       },
       success: true,
     },
-  }
-  public static readonly anotherReferenceProvider: DataProviderTemplateApi = {
-    apiModuleAction: ApiActions.getAnotherReferenceData,
-    externalDataId: 'anotherReference',
-    shouldPersistToExternalData: true,
-  }
+  },
+} as ReferenceApplicationDataProviders
+
+export interface ReferenceApplicationDataProviders {
+  referenceProvider: DataProviderTemplateApi
+  anotherReferenceProvider: DataProviderTemplateApi
 }

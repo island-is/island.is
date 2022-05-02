@@ -2,8 +2,8 @@ import { Application } from '../types/Application'
 import { DataProviderTemplateApi } from '../types/StateMachine'
 import { PerformActionResult } from '../types/TemplateApiModuleTypes'
 
-export class SharedDataProviders {
-  public static readonly NationalRegistryProvider: DataProviderTemplateApi = {
+export const SharedDataProviders = {
+  nationalRegistryProvider: {
     apiModuleAction: 'nationalRegistry.nationalRegistry',
     externalDataId: 'nationalRegistry',
     shouldPersistToExternalData: true,
@@ -19,5 +19,11 @@ export class SharedDataProviders {
         success: true,
       }
     },
-  }
+  },
+} as AvailableSharedDataProviders
+
+export interface AvailableSharedDataProviders {
+  nationalRegistryProvider: DataProviderTemplateApi
+  userProfileProvider: DataProviderTemplateApi
+  familyInformationProvider: DataProviderTemplateApi
 }

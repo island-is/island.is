@@ -37,14 +37,6 @@ export interface RoleInState<T extends EventObject = AnyEventObject> {
   api?: DataProviderTemplateApi[]
 }
 
-export interface ApiDataProvider {
-  id: string
-  apiAction: string
-  shouldPersisttoExternalData?: boolean
-  useMockData?: boolean
-  mockData?: unknown | ((application: Application) => unknown)
-}
-
 export interface ApplicationContext {
   application: Application
 }
