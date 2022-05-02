@@ -26,7 +26,7 @@ export class FinancialAidService {
   }
 
   private formatFiles(files: UploadFile[], type: FileType) {
-    if (!files) {
+    if (!files || files.length <= 0) {
       return []
     }
     return files.map((f) => {
@@ -50,35 +50,36 @@ export class FinancialAidService {
       )
       .concat(
         this.formatFiles(
-          [
-            externalData?.taxDataFetchSpouse?.data
-              ?.municipalitiesPersonalTaxReturn?.personalTaxReturn,
-          ],
+          externalData?.taxDataFetchSpouse?.data
+            ?.municipalitiesPersonalTaxReturn?.personalTaxReturn != null
+            ? [
+                externalData?.taxDataFetchSpouse?.data
+                  ?.municipalitiesPersonalTaxReturn?.personalTaxReturn,
+              ]
+            : [],
           FileType.SPOUSEFILES,
         ),
       )
       .concat(
         this.formatFiles(
-          [
-            externalData?.taxDataFetch?.data?.municipalitiesPersonalTaxReturn
-              ?.personalTaxReturn,
-          ],
+          externalData?.taxDataFetch?.data?.municipalitiesPersonalTaxReturn
+            ?.personalTaxReturn != null
+            ? [
+                externalData?.taxDataFetch?.data
+                  ?.municipalitiesPersonalTaxReturn?.personalTaxReturn,
+              ]
+            : [],
           FileType.TAXRETURN,
         ),
       )
 
     const directTaxPayments = externalData?.taxDataFetchSpouse?.data
-      ? [
-          externalData?.taxDataFetch?.data?.municipalitiesDirectTaxPayments
-            ?.directTaxPayments,
-        ].concat([
+      ? externalData?.taxDataFetch?.data?.municipalitiesDirectTaxPayments?.directTaxPayments.concat(
           externalData?.taxDataFetchSpouse?.data.municipalitiesDirectTaxPayments
             ?.directTaxPayments,
-        ])
-      : [
-          externalData?.taxDataFetch?.data?.municipalitiesDirectTaxPayments
-            ?.directTaxPayments,
-        ]
+        )
+      : externalData?.taxDataFetch?.data?.municipalitiesDirectTaxPayments
+          ?.directTaxPayments
 
     const newApplication = {
       name: externalData.nationalRegistry.data.applicant.fullName,

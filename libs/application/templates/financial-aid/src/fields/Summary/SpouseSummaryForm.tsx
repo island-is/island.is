@@ -45,16 +45,16 @@ const SpouseSummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
 
       <FormInfo items={spouseFormItems(answers)} goToScreen={goToScreen} />
 
-      {externalData?.taxDataFetch && (
+      {externalData?.taxDataFetchSpouse && (
         <DirectTaxPaymentCell
           setIsModalOpen={setIsModalOpen}
           hasFetchedPayments={
-            externalData?.taxDataFetch?.data?.municipalitiesDirectTaxPayments
-              ?.success
+            externalData?.taxDataFetchSpouse?.data
+              ?.municipalitiesDirectTaxPayments?.success
           }
           directTaxPayments={
-            externalData?.taxDataFetch?.data?.municipalitiesDirectTaxPayments
-              ?.directTaxPayments
+            externalData?.taxDataFetchSpouse?.data
+              ?.municipalitiesDirectTaxPayments?.directTaxPayments
           }
         />
       )}
@@ -87,12 +87,12 @@ const SpouseSummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
         comment={answers?.spouseFormComment}
       />
 
-      {externalData?.taxDataFetch?.data?.municipalitiesDirectTaxPayments
+      {externalData?.taxDataFetchSpouse?.data?.municipalitiesDirectTaxPayments
         ?.directTaxPayments && (
         <DirectTaxPaymentsModal
           items={
-            externalData?.taxDataFetch?.data?.municipalitiesDirectTaxPayments
-              ?.directTaxPayments
+            externalData?.taxDataFetchSpouse?.data
+              ?.municipalitiesDirectTaxPayments?.directTaxPayments
           }
           dateDataWasFetched={externalData?.nationalRegistry?.date}
           isVisible={isModalOpen}
