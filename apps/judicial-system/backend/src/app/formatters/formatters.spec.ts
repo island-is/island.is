@@ -8,6 +8,7 @@ import {
   User,
   UserRole,
   InstitutionType,
+  CaseCustodyRestrictions,
 } from '@island.is/judicial-system/types'
 
 import {
@@ -25,6 +26,7 @@ import {
   formatProsecutorReceivedByCourtSmsNotification,
   formatCourtResubmittedToCourtSmsNotification,
   formatProsecutorReadyForCourtEmailNotification,
+  formatCustodyRestrictions,
 } from './formatters'
 
 export const makeProsecutor = (): User => {
@@ -1627,5 +1629,117 @@ describe('stripHtmlTags', () => {
 
     // Assert
     expect(res).toBe('blablabla\n\nblablablabla')
+  })
+})
+
+describe('formatCustodyRestrictions', () => {
+  const formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
+    .formatMessage
+
+  const format = (
+    caseType: CaseType,
+    requestedRestrictions?: CaseCustodyRestrictions[],
+    isCustodyIsolation?: boolean,
+  ) =>
+    formatCustodyRestrictions(
+      formatMessage,
+      caseType,
+      requestedRestrictions,
+      isCustodyIsolation,
+    )
+
+  test('should format custody without further restrictions', () => {
+    const caseType = CaseType.CUSTODY
+    const requestedRestrictions = [] as CaseCustodyRestrictions[]
+    const isCustodyIsolation = false
+
+    const result = format(caseType, requestedRestrictions, isCustodyIsolation)
+
+    expect(result).toEqual(
+      'Sækjandi tekur fram að gæsluvarðhaldið verði án takmarkana.',
+    )
+  })
+
+  test('should format admission case without further restrictions', () => {
+    // Arrange
+    const caseType = CaseType.ADMISSION_TO_FACILITY
+    const requestedRestrictions = [] as CaseCustodyRestrictions[]
+    const isCustodyIsolation = false
+
+    // Act
+    const result = format(caseType, requestedRestrictions, isCustodyIsolation)
+
+    // Assert
+    expect(result).toEqual('Sækjandi tekur fram að vistun verði án takmarkana.')
+  })
+
+  test('should format custody with isolation, without further restrictions', () => {
+    // Arrange
+    const caseType = CaseType.CUSTODY
+    const requestedRestrictions = [] as CaseCustodyRestrictions[]
+    const isCustodyIsolation = true
+
+    // Act
+    const result = format(caseType, requestedRestrictions, isCustodyIsolation)
+
+    // Assert
+    expect(result).toEqual(
+      'Sækjandi tekur fram að gæsluvarðhaldið verði án annara takmarkana.',
+    )
+  })
+
+  test('should return formatted restrictions for isolation and one other restriction', () => {
+    // Arrange
+    const caseType = CaseType.CUSTODY
+    const requestedRestrictions = [
+      CaseCustodyRestrictions.ISOLATION,
+      CaseCustodyRestrictions.MEDIA,
+    ]
+    const isCustodyIsolation = false
+
+    // Act
+    const res = format(caseType, requestedRestrictions, isCustodyIsolation)
+
+    // Assert
+    expect(res).toBe(
+      'Sækjandi tekur fram að gæsluvarðhaldið verði með fjölmiðlabanni skv. 99. gr. laga nr. 88/2008.',
+    )
+  })
+
+  test('should return formatted message for admission cases with two additional restrictions', () => {
+    // Arrange
+    const caseType = CaseType.ADMISSION_TO_FACILITY
+    const requestedRestrictions = [
+      CaseCustodyRestrictions.COMMUNICATION,
+      CaseCustodyRestrictions.MEDIA,
+    ]
+    const isCustodyIsolation = false
+
+    // Act
+    const res = format(caseType, requestedRestrictions, isCustodyIsolation)
+
+    // Assert
+    expect(res).toBe(
+      'Sækjandi tekur fram að vistun verði með bréfaskoðun og símabanni og fjölmiðlabanni skv. 99. gr. laga nr. 88/2008.',
+    )
+  })
+
+  test('should return formatted restrictions for all but isolation', () => {
+    // Arrange
+    const caseType = CaseType.CUSTODY
+    const requestedRestrictions = [
+      CaseCustodyRestrictions.NECESSITIES,
+      CaseCustodyRestrictions.WORKBAN,
+      CaseCustodyRestrictions.COMMUNICATION,
+    ]
+    const isCustodyIsolation = false
+
+    // Act
+    const res = format(caseType, requestedRestrictions, isCustodyIsolation)
+
+    // Assert
+    expect(res).toBe(
+      'Sækjandi tekur fram að gæsluvarðhaldið verði með banni við útvegun persónulegra nauðsynja, bréfaskoðun og símabanni og vinnubanni skv. 99. gr. laga nr. 88/2008.',
+    )
   })
 })

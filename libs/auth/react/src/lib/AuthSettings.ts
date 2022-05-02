@@ -1,12 +1,9 @@
-import { UserManagerSettings, WebStorageStateStore } from 'oidc-client'
+import { UserManagerSettings, WebStorageStateStore } from 'oidc-client-ts'
 import { storageFactory } from './storageFactory'
+import { toStringScope } from './utils/toStringScope'
 
-export interface AuthSettings extends Omit<UserManagerSettings, 'scope'> {
-  /**
-   * Make client id required.
-   */
-  client_id: string
-
+export interface AuthSettings
+  extends Omit<UserManagerSettings, 'scope' | 'redirect_uri'> {
   /*
    * Used to create redirect uris. Should not end with slash.
    * Default: window.location.origin
@@ -48,7 +45,7 @@ export interface AuthSettings extends Omit<UserManagerSettings, 'scope'> {
   checkSessionPath?: string
 }
 
-export const mergeAuthSettings = (settings: AuthSettings) => {
+export const mergeAuthSettings = (settings: AuthSettings): AuthSettings => {
   const baseUrl = settings.baseUrl ?? window.location.origin
   const redirectPath = settings.redirectPath ?? '/auth/callback'
   const redirectPathSilent =
@@ -61,19 +58,19 @@ export const mergeAuthSettings = (settings: AuthSettings) => {
     baseUrl,
     redirectPath,
     redirectPathSilent,
-    authority: 'https://innskra.island.is',
     checkSessionPath: '/connect/sessioninfo',
     silent_redirect_uri: `${baseUrl}${redirectPathSilent}`,
-    redirect_uri: `${baseUrl}${redirectPath}`,
     post_logout_redirect_uri: baseUrl,
     response_type: 'code',
-    revokeAccessTokenOnSignout: true,
+    revokeTokenTypes: ['access_token', 'refresh_token'],
+    revokeTokensOnSignout: true,
     loadUserInfo: true,
     monitorSession: onIdsDomain,
     userStore: new WebStorageStateStore({
       store: storageFactory(() => sessionStorage),
       prefix: settings.userStorePrefix,
     }),
+    mergeClaims: true,
     ...settings,
   }
 }
