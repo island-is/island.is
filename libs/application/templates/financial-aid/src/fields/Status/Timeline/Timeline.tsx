@@ -48,8 +48,8 @@ const Timeline = ({ state, modified, created, showSpouseStep }: Props) => {
             })}
           >
             <Box paddingLeft={3}>
-              <Text variant="h5">{item.name}</Text>
-              <Text marginBottom={2}>{item.text}</Text>
+              <Text variant="h5">{formatMessage(item.name)}</Text>
+              <Text marginBottom={2}>{formatMessage(item.text)}</Text>
 
               <Text variant="small" color="dark300" marginBottom={5}>
                 {(index === 0 || index === activeState) && item.date}

@@ -158,7 +158,11 @@ export const getStateMessageAndColor: KeyMapping<
   DataNeeded: [m.header.inProgress, 'blue400'],
 }
 
-export const timelineSections = (created: Date, modified: Date, showSpouseStep?: boolean) => {
+export const timelineSections = (
+  created: Date,
+  modified: Date,
+  showSpouseStep?: boolean,
+) => {
   const sections = [
     {
       name: m.timeline.receivedTitle,
