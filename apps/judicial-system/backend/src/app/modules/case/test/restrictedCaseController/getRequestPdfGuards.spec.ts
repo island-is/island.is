@@ -30,6 +30,7 @@ describe('RestrictedCaseController - Get request pdf guards', () => {
     })
 
     it('should have JwtAuthGuard as quard 1', () => {
+      // TODO: Verify that true is passed to the constructor
       expect(guard).toBeInstanceOf(JwtAuthGuard)
     })
   })
