@@ -43,7 +43,7 @@ const api_resource_user_claims = [
 ]
 
 const client = {
-  client_id: 'ids-admin',
+  client_id: '@island.is/auth-admin-web',
   client_type: 'web',
   require_client_secret: true,
   enable_local_login: true,
@@ -71,7 +71,7 @@ const client = {
   allow_access_token_via_browser: false,
   front_channel_logout_session_required: true,
   allow_remember_consent: true,
-  client_claims_prefix: 'ids-admin_',
+  client_claims_prefix: '@island.is/auth-admin-webn_',
   protocol_type: 'oidc',
   consent_lifetime: 3600,
 
