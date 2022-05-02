@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Text, Box } from '@island.is/island-ui/core'
@@ -39,18 +39,19 @@ const Estimation = ({ application }: Props) => {
     }
   }
 
-  let aidAmount
-  if (
-    application.answers.homeCircumstances.type &&
-    nationalRegistry?.data?.municipality
-  ) {
-    aidAmount = aidCalculator(
-      application.answers.homeCircumstances.type,
-      getAidType()
-        ? nationalRegistry.data.municipality.individualAid
-        : nationalRegistry.data.municipality.cohabitationAid,
-    )
-  }
+  const aidAmount = useMemo(() => {
+    if (
+      application.answers.homeCircumstances.type &&
+      nationalRegistry?.data?.municipality
+    ) {
+      return aidCalculator(
+        application.answers.homeCircumstances.type,
+        getAidType()
+          ? nationalRegistry.data.municipality.individualAid
+          : nationalRegistry.data.municipality.cohabitationAid,
+      )
+    }
+  }, [nationalRegistry?.data?.municipality])
 
   return (
     <>
