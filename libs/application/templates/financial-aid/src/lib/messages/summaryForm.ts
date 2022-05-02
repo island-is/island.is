@@ -100,6 +100,12 @@ export const summaryForm = {
       defaultMessage: 'Staðgreiðsluskrá sótt',
       description: 'Confirmation title that direct payments was fetched',
     },
+    getBreakDown: {
+      id: 'fa.application:section.summaryForm.directPayments.getBreakDown',
+      defaultMessage: 'Opna sundurliðun',
+      description:
+        'Button text that opens the direct payments modal with tax break down',
+    },
   }),
   block: defineMessages({
     buttonLabel: {

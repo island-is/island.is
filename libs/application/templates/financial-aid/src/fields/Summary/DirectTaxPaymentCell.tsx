@@ -1,6 +1,8 @@
 import React from 'react'
+import { useIntl } from 'react-intl'
 import { Box, Text, Button, Divider } from '@island.is/island-ui/core'
 import { DirectTaxPayment } from '@island.is/financial-aid/shared/lib'
+import { summaryForm, directTaxPaymentModal } from '../../lib/messages'
 
 interface Props {
   directTaxPayments: DirectTaxPayment[]
@@ -16,6 +18,9 @@ const DirectTaxPaymentCell = ({
   if (!hasFetchedPayments) {
     return null
   }
+
+  const { formatMessage } = useIntl()
+
   return (
     <>
       <Divider />
@@ -27,13 +32,15 @@ const DirectTaxPaymentCell = ({
       >
         <Box marginRight={3}>
           <Text fontWeight="semiBold" color={'dark400'}>
-            Staðgreiðsluskrá
+            {formatMessage(summaryForm.directPayments.title)}
           </Text>
-          <Text>Staðgreiðsluskrá sótt</Text>
+          <Text> {formatMessage(summaryForm.directPayments.fetched)}</Text>
         </Box>
 
         {directTaxPayments.length === 0 ? (
-          <Text marginTop={3}>Engin staðgreiðsla</Text>
+          <Text marginTop={3}>
+            {formatMessage(directTaxPaymentModal.taxBreakdown.empty)}
+          </Text>
         ) : (
           <Button
             onClick={() => setIsModalOpen(true)}
@@ -41,7 +48,7 @@ const DirectTaxPaymentCell = ({
             iconType="outline"
             variant="utility"
           >
-            Opna sundurliðun
+            {formatMessage(summaryForm.directPayments.getBreakDown)}
           </Button>
         )}
       </Box>
