@@ -49,15 +49,6 @@ jobs:
           node -v
           ls -l `which node`
 
-      - name: Calculate cache key for node_modules
-        id: calculate_node_modules_hash
-        run: |
-          PACKAGE_JSON_HASH=$(cat package.json | jq '{resolutions,dependencies,devDependencies}' | sha1sum -t | cut -f1 -d" ")
-          echo "PACKAGE_JSON_HASH: $PACKAGE_JSON_HASH"
-          export NODE_MODULES_HASH=${{ runner.os }}-${{ hashFiles('yarn.lock') }}-$PACKAGE_JSON_HASH
-          echo "NODE_MODULES_HASH: $NODE_MODULES_HASH"
-          echo "::set-output name=node-modules-hash::$NODE_MODULES_HASH"
-
       - name: Checking out relevant branches
         run: |
           git checkout $GITHUB_HEAD_REF
@@ -78,6 +69,14 @@ jobs:
           path: event.json
           retention-days: 60
 
+      - name: Calculate cache key for node_modules
+        id: calculate_node_modules_hash
+        run: |
+          PACKAGE_JSON_HASH=$(cat package.json | jq '{resolutions,dependencies,devDependencies}' | sha1sum -t | cut -f1 -d" ")
+          echo "PACKAGE_JSON_HASH: $PACKAGE_JSON_HASH"
+          export NODE_MODULES_HASH=${{ runner.os }}-${{ hashFiles('yarn.lock') }}-$PACKAGE_JSON_HASH
+          echo "NODE_MODULES_HASH: $NODE_MODULES_HASH"
+          echo "::set-output name=node-modules-hash::$NODE_MODULES_HASH"
 
       - name: Calculate cache keys for generated files
         id: calculate_generated_files_cache_key
