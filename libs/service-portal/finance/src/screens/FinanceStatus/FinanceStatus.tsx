@@ -101,7 +101,7 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
                 {!isDelegation && (
                   <Box paddingRight={2}>
                     <a
-                      href="https://island.is/umsoknir/greidsluaaetlun/"
+                      href="/umsoknir/greidsluaaetlun/"
                       target="_blank"
                       rel="noreferrer"
                     >
