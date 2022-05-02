@@ -1,97 +1,92 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "version": "1.0.0",
-    "title": "Fyrirtækjaskrá",
-    "description": "Vefþjónusta fyrirtækjaskrár fyrir XROAD samskiptalag.",
-    "contact": {
-      "name": "XROAD Þjónustur - Skatturinn",
-      "url": "https://api.skattur.is/xroad",
-      "email": "xroad@skattur.is"
-    },
-    "x-category": ["personal", "official"],
-    "x-pricing": ["free"],
-    "x-links": [
-      ["documentation", "https://api.skattur.is/ft/xroad/docs"],
-      ["responsibleParty", "mailto:xroad@skattur.is"],
-      ["bugReport", "https://api.skattur.is/ft/bugs"],
-      ["featureRequest", "https://api.skattur.is/ft/features"]
-    ]
+    "title": "Company registry",
+    "description": "Iceland Company Registry - XRoad - REST API",
+    "version": "0.5.0"
   },
   "servers": [
     {
-      "url": "https://straumur.skattur.is/r1/IS/GOV/5402696029/Skatturinn/ft-v1",
-      "description": "XROAD - Production server (uses live data)"
-    },
-    {
-      "url": "https://straumur-test.skattur.is/r1/IS-TEST/GOV/5402696029/Skatturinn/ft-v1",
-      "description": "XROAD - Test server (uses live data)"
-    },
-    {
-      "url": "https://straumur-dev.skattur.is/r1/IS-DEV/GOV/10006/Skatturinn-Public/ft-v1",
-      "description": "XROAD - Dev server (uses development data)"
+      "url": "/ords/devapi",
+      "description": "Ríkisskattstjóri - Company Registry v0.5.0"
     }
   ],
   "paths": {
-    "/": {
+    "/v1/ft/search/{search_string}": {
       "get": {
-        "summary": "Service Information",
-        "description": "Service Information.",
-        "operationId": "info",
-        "tags": ["Service Information"],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/responseInfo" }
-              }
+        "description": "Search Company Registry with search string. If left null then shows 100 newest entries.",
+        "parameters": [
+          {
+            "name": "search_string",
+            "in": "path",
+            "required": true,
+            "description": "The social security id for company being searched for",
+            "schema": {
+              "type": "string",
+              "default": "Miracle%20ehf"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer"
             }
           }
-        }
-      }
-    },
-    "/openapi.json": {
-      "get": {
-        "summary": "Openapi 3.0.1",
-        "description": "Openapi 3.0.1 service description",
-        "operationId": "openapi",
-        "tags": ["Service Information"],
+        ],
         "responses": {
           "200": {
-            "description": "Version and contact information for API",
+            "description": "Search company registry",
             "content": {
-              "application/json": { "schema": { "type": "string" } }
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/search_company_items"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
             }
           },
           "default": {
             "description": "Unexpected error",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/error" }
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
               }
             }
           }
         }
       }
     },
-    "/{nationalId}": {
+    "/v1/ft/{ssid}": {
       "get": {
-        "summary": "Get company by National Id",
         "description": "Information about company",
-        "operationId": "getCompany",
-        "tags": ["Get company"],
         "parameters": [
           {
-            "name": "nationalId",
+            "name": "ssid",
             "in": "path",
             "required": true,
             "description": "The social security id for company being searched for",
             "schema": {
               "type": "string",
-              "pattern": "^\\d{10}$",
-              "maximum": 10,
-              "example": "4710032980"
+              "default": "4710032980"
             }
           }
         ],
@@ -101,16 +96,8 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/responseCompanyDetailed"
+                  "$ref": "#/components/schemas/company_item"
                 }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/error" }
               }
             }
           },
@@ -118,7 +105,9 @@
             "description": "Not found",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/error" }
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
               }
             }
           },
@@ -126,76 +115,26 @@
             "description": "Unexpected error",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/error" }
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
               }
             }
           }
         }
       }
     },
-    "/search/{search_string}": {
+    "/v1/ft/": {
       "get": {
-        "summary": "Search company registry",
-        "description": "Search Company Registry with search string. If left null then shows 100 newest entries.",
-        "operationId": "searchCompanies",
-        "tags": ["Search company registry"],
-        "parameters": [
-          {
-            "name": "search_string",
-            "in": "path",
-            "required": true,
-            "description": "The social security id for company being searched for",
-            "schema": {
-              "type": "string",
-              "minimum": 3,
-              "example": "Miracle%20ehf"
-            }
-          },
-          {
-            "name": "fetch_offset",
-            "in": "query",
-            "required": false,
-            "description": "The fetch_offset query parameter is used to indicate the zero based offset of the first row to display in a given page.",
-            "schema": { "type": "integer", "default": 0, "example": 0 }
-          },
-          {
-            "name": "fetch_size",
-            "in": "query",
-            "required": false,
-            "description": "The fetch_size query parameter is used to indicate the maximum number of rows to retrieve on a page.",
-            "schema": { "type": "integer", "default": 100, "example": 10 }
-          }
-        ],
+        "description": "Service Information.",
         "responses": {
           "200": {
-            "description": "Search company registry",
+            "description": "OK",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/responseSearch" }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/error" }
-              }
-            }
-          },
-          "404": {
-            "description": "Not found",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/error" }
-              }
-            }
-          },
-          "default": {
-            "description": "Unexpected error",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/error" }
+                "schema": {
+                  "$ref": "#/components/schemas/serviceinfo"
+                }
               }
             }
           }
@@ -205,39 +144,156 @@
   },
   "components": {
     "schemas": {
-      "companyType": {
-        "type": "object",
-        "required": ["tegund", "heiti"],
-        "properties": {
-          "tegund": { "type": "string" },
-          "heiti": { "type": "string" }
+      "resultlinks": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/link"
         }
       },
-      "categoryInfo": {
+      "link": {
         "type": "object",
-        "required": ["gerd", "flokkunarkerfi", "numer", "heiti"],
+        "required": [
+          "rel",
+          "href"
+        ],
         "properties": {
-          "gerd": { "type": "string" },
-          "flokkunarkerfi": { "type": "string" },
-          "numer": { "type": "string" },
-          "heiti": { "type": "string" }
-        }
-      },
-      "vatInfo": {
-        "type": "object",
-        "required": ["vsk_numer", "skrad", "stada", "afskraning"],
-        "properties": {
-          "vsk_numer": { "type": "string" },
-          "skrad": { "type": "string" },
-          "stada": { "type": "string" },
-          "afskraning": { "type": "string" },
-          "categoryInfo": {
-            "type": "array",
-            "items": { "$ref": "#/components/schemas/categoryInfo" }
+          "rel": {
+            "type": "string"
+          },
+          "href": {
+            "type": "string"
           }
         }
       },
-      "addressInfo": {
+      "search_company_item": {
+        "type": "object",
+        "properties": {
+          "kennitala": {
+            "type": "string"
+          },
+          "nafn": {
+            "type": "string"
+          },
+          "skrad": {
+            "type": "string"
+          },
+          "stada": {
+            "type": "string"
+          },
+          "vsk_numer": {
+            "type": "string"
+          },
+          "sidast_uppfaert": {
+            "type": "string"
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/link"
+            }
+          }
+        }
+      },
+      "search_company_items": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/search_company_item"
+            }
+          },
+          "hasMore": {
+            "type": "boolean"
+          },
+          "limit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "offset": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "count": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/link"
+            }
+          }
+        }
+      },
+      "rekstrarform": {
+        "type": "object",
+        "required": [
+          "tegund",
+          "heiti"
+        ],
+        "properties": {
+          "tegund": {
+            "type": "string"
+          },
+          "heiti": {
+            "type": "string"
+          }
+        }
+      },
+      "flokkun": {
+        "type": "object",
+        "required": [
+          "gerd",
+          "flokkunarkerfi",
+          "numer",
+          "heiti"
+        ],
+        "properties": {
+          "gerd": {
+            "type": "string"
+          },
+          "flokkunarkerfi": {
+            "type": "string"
+          },
+          "numer": {
+            "type": "string"
+          },
+          "heiti": {
+            "type": "string"
+          }
+        }
+      },
+      "virdisaukaskattur_item": {
+        "type": "object",
+        "required": [
+          "vsk_numer",
+          "skrad",
+          "stada",
+          "afskraning"
+        ],
+        "properties": {
+          "vsk_numer": {
+            "type": "string"
+          },
+          "skrad": {
+            "type": "string"
+          },
+          "stada": {
+            "type": "string"
+          },
+          "afskraning": {
+            "type": "string"
+          },
+          "flokkun": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/flokkun"
+            }
+          }
+        }
+      },
+      "heimilisfang_item": {
         "type": "object",
         "required": [
           "heimilisfang1",
@@ -248,53 +304,106 @@
           "land"
         ],
         "properties": {
-          "heimilisfang1": { "type": "string" },
-          "heimilisfang2": { "type": "string" },
-          "postnumer": { "type": "string" },
-          "sveitarfelag": { "type": "string" },
-          "sveitarfelagsnumer": { "type": "string" },
-          "land": { "type": "string" }
-        }
-      },
-      "personInfo": {
-        "type": "object",
-        "required": ["tegund", "kennitala", "nafn"],
-        "properties": {
-          "tegund": { "type": "string" },
-          "kennitala": { "type": "string", "pattern": "^\\d{10}$" },
-          "nafn": { "type": "string" }
-        }
-      },
-      "companySimple": {
-        "type": "object",
-        "properties": {
-          "kennitala": { "type": "string", "pattern": "^\\d{10}$" },
-          "nafn": { "type": "string" },
-          "skrad": { "type": "string" },
-          "stada": { "type": "string" },
-          "vsk_numer": { "type": "string" },
-          "sidast_uppfaert": { "type": "string" },
-          "links": {
-            "type": "array",
-            "items": { "$ref": "#/components/schemas/link" }
+          "heimilisfang1": {
+            "type": "string"
+          },
+          "heimilisfang2": {
+            "type": "string"
+          },
+          "postnumer": {
+            "type": "string"
+          },
+          "sveitarfelag": {
+            "type": "string"
+          },
+          "sveitarfelagsnumer": {
+            "type": "string"
+          },
+          "land": {
+            "type": "string"
           }
         }
       },
-      "link": {
+      "tengduradili_item": {
         "type": "object",
-        "required": ["rel", "href"],
+        "required": [
+          "tegund",
+          "kennitala",
+          "nafn"
+        ],
         "properties": {
-          "rel": { "type": "string" },
-          "href": { "type": "string" }
+          "tegund": {
+            "type": "string"
+          },
+          "kennitala": {
+            "type": "string"
+          },
+          "nafn": {
+            "type": "string"
+          }
         }
       },
-      "links": {
-        "type": "array",
-        "items": { "$ref": "#/components/schemas/link" }
-      },
-      "responseInfo": {
+      "company_item": {
         "type": "object",
-        "discriminator": { "propertyName": "serviceInfoType" },
+        "required": [
+          "kennitala",
+          "nafn",
+          "skrad",
+          "stada"
+        ],
+        "properties": {
+          "kennitala": {
+            "type": "string"
+          },
+          "nafn": {
+            "type": "string"
+          },
+          "skrad": {
+            "type": "string"
+          },
+          "stada": {
+            "type": "string"
+          },
+          "rekstrarform": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/rekstrarform"
+            }
+          },
+          "virdisaukaskattur": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/virdisaukaskattur_item"
+            }
+          },
+          "heimilisfang": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/heimilisfang_item"
+            }
+          },
+          "tengdir_adilar": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/tengduradili_item"
+            }
+          },
+          "sidast_uppfaert": {
+            "type": "string"
+          },
+          "link": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/link"
+            }
+          }
+        }
+      },
+      "serviceinfo": {
+        "type": "object",
+        "discriminator": {
+          "propertyName": "serviceinfoType"
+        },
         "required": [
           "service",
           "version",
@@ -303,68 +412,45 @@
           "publisher_email"
         ],
         "properties": {
-          "service": { "type": "string" },
-          "version": { "type": "string" },
-          "publisher": { "type": "string" },
-          "publisher_website": { "type": "string" },
-          "publisher_email": { "type": "string" }
-        }
-      },
-      "responseCompanyDetailed": {
-        "type": "object",
-        "required": ["kennitala", "nafn", "skrad", "stada"],
-        "properties": {
-          "kennitala": { "type": "string", "pattern": "^\\d{10}$" },
-          "nafn": { "type": "string" },
-          "skrad": { "type": "string" },
-          "stada": { "type": "string" },
-          "companyType": {
-            "type": "array",
-            "items": { "$ref": "#/components/schemas/companyType" }
+          "service": {
+            "type": "string"
           },
-          "virdisaukaskattur": {
-            "type": "array",
-            "items": { "$ref": "#/components/schemas/vatInfo" }
+          "version": {
+            "type": "string"
           },
-          "responseAddress": {
-            "type": "array",
-            "items": { "$ref": "#/components/schemas/addressInfo" }
+          "publisher": {
+            "type": "string"
           },
-          "tengdir_adilar": {
-            "type": "array",
-            "items": { "$ref": "#/components/schemas/personInfo" }
+          "publisher_website": {
+            "type": "string"
           },
-          "sidast_uppfaert": { "type": "string" },
-          "link": {
-            "type": "array",
-            "items": { "$ref": "#/components/schemas/link" }
-          }
-        }
-      },
-      "responseSearch": {
-        "type": "object",
-        "properties": {
-          "items": {
-            "type": "array",
-            "items": { "$ref": "#/components/schemas/companySimple" }
-          },
-          "hasMore": { "type": "boolean" },
-          "limit": { "type": "integer", "format": "int32" },
-          "offset": { "type": "integer", "format": "int32" },
-          "count": { "type": "integer", "format": "int32" },
-          "links": {
-            "type": "array",
-            "items": { "$ref": "#/components/schemas/links" }
+          "publisher_email": {
+            "type": "string"
           }
         }
       },
       "error": {
         "type": "object",
-        "required": ["error_code", "error_message", "error_ui_message"],
+        "required": [
+          "code",
+          "message",
+          "type",
+          "instance"
+        ],
         "properties": {
-          "error_code": { "type": "integer", "format": "int32" },
-          "error_message": { "type": "string" },
-          "error_ui_message": { "type": "string" }
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "instance": {
+            "type": "string"
+          }
         }
       }
     }
