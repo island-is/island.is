@@ -23,7 +23,7 @@ import {
 } from '@island.is/judicial-system/auth'
 import type { User as TUser } from '@island.is/judicial-system/types'
 
-import { defenderRule } from '../../guards/rolesRules'
+import { defenderRule } from '../../guards'
 import { User } from '../user'
 import { CaseExistsGuard } from './guards/caseExists.guard'
 import { RestrictedCaseExistsGuard } from './guards/restrictedCaseExists.guard'

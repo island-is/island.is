@@ -18,11 +18,12 @@ import { FileService } from '../../file'
 import { AwsS3Service } from '../../aws-s3'
 import { DefendantService } from '../../defendant'
 import { Case } from '../models/case.model'
+import { CaseArchive } from '../models/caseArchive.model'
 import { caseModuleConfig } from '../case.config'
 import { CaseService } from '../case.service'
 import { RestrictedCaseService } from '../restrictedCase.service'
 import { CaseController } from '../case.controller'
-import { CaseArchive } from '../models/caseArchive.model'
+import { RestrictedCaseController } from '../restrictedCase.controller'
 
 jest.mock('@island.is/dokobit-signing')
 jest.mock('@island.is/email-service')
@@ -41,7 +42,7 @@ export const createTestingCaseModule = async () => {
         secretToken: environment.auth.secretToken,
       }),
     ],
-    controllers: [CaseController],
+    controllers: [CaseController, RestrictedCaseController],
     providers: [
       CourtService,
       UserService,
@@ -116,6 +117,10 @@ export const createTestingCaseModule = async () => {
 
   const caseController = caseModule.get<CaseController>(CaseController)
 
+  const restrictedCaseController = caseModule.get<RestrictedCaseController>(
+    RestrictedCaseController,
+  )
+
   return {
     courtService,
     userService,
@@ -130,5 +135,6 @@ export const createTestingCaseModule = async () => {
     caseService,
     restrictedCaseService,
     caseController,
+    restrictedCaseController,
   }
 }
