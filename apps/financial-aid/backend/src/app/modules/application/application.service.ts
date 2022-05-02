@@ -218,6 +218,45 @@ export class ApplicationService {
     return application
   }
 
+  async findByApplicationSystemId(
+    id: string,
+  ): Promise<ApplicationModel | null> {
+    const application = await this.applicationModel.findOne({
+      where: { applicationSystemId: id },
+      include: [
+        {
+          model: ApplicationEventModel,
+          as: 'applicationEvents',
+          separate: true,
+          order: [['created', 'DESC']],
+        },
+        {
+          model: ApplicationFileModel,
+          as: 'files',
+          separate: true,
+          order: [['created', 'DESC']],
+        },
+        {
+          model: AmountModel,
+          as: 'amount',
+          include: [{ model: DeductionFactorsModel, as: 'deductionFactors' }],
+          separate: true,
+          order: [['created', 'DESC']],
+        },
+        {
+          model: DirectTaxPaymentModel,
+          as: 'directTaxPayments',
+        },
+      ],
+    })
+
+    if (application?.amount) {
+      application.setDataValue('amount', application.amount['0'])
+    }
+
+    return application
+  }
+
   async getAllFilters(
     staffId: string,
     municipalityCodes: string[],
