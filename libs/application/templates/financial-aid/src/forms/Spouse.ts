@@ -44,8 +44,10 @@ export const Spouse: Form = buildForm({
     }),
     buildSection({
       condition: (_, externalData) =>
-        ((externalData as unknown) as ExternalData).taxDataFetchSpouse
-          ?.status === 'failure',
+        ((externalData as unknown) as ExternalData)?.taxDataFetchSpouse?.data
+          ?.municipalitiesDirectTaxPayments?.success === false ||
+        ((externalData as unknown) as ExternalData)?.taxDataFetchSpouse?.data
+          ?.municipalitiesPersonalTaxReturn?.personalTaxReturn == null,
       id: 'taxReturnFilesForm',
       title: m.taxReturnForm.general.sectionTitle,
       children: [
