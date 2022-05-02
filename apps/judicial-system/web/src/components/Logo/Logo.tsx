@@ -9,7 +9,7 @@ interface Props {
   defaultInstitution?: string
 }
 
-const Logo: React.FC<Props> = ({ defaultInstitution }) => {
+const Logo: React.FC<Props> = ({ defaultInstitution = '' }) => {
   const { user } = useContext(UserContext)
 
   return (
@@ -18,7 +18,7 @@ const Logo: React.FC<Props> = ({ defaultInstitution }) => {
         <LandWightsLogo />
       </Box>
       <p className={styles.logoText}>
-        {user?.institution?.name ?? defaultInstitution ?? ''}
+        {user?.institution?.name ?? defaultInstitution}
       </p>
     </div>
   )
