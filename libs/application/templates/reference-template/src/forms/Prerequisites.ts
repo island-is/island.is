@@ -13,7 +13,7 @@ import {
   SharedDataProviders,
 } from '@island.is/application/core'
 import { m } from '../lib/messages'
-import { ReferenceApplicationProviders } from '../shared'
+import { ReferenceApplicationDataProviders } from '../shared'
 
 export const Prerequisites: Form = buildForm({
   id: 'PrerequisitesDraft',
@@ -30,10 +30,10 @@ export const Prerequisites: Form = buildForm({
           dataProviders: [
             buildDataProviderItem({
               id:
-                ReferenceApplicationProviders.anotherReferenceProvider
+                ReferenceApplicationDataProviders.anotherReferenceProvider
                   .externalDataId,
               type:
-                ReferenceApplicationProviders.anotherReferenceProvider
+                ReferenceApplicationDataProviders.anotherReferenceProvider
                   .externalDataId,
               title: 'getAnotherReferenceData',
               subTitle: 'Another Refernence Data',
@@ -41,15 +41,17 @@ export const Prerequisites: Form = buildForm({
             }),
             buildDataProviderItem({
               id:
-                ReferenceApplicationProviders.referenceProvider.externalDataId,
+                ReferenceApplicationDataProviders.referenceProvider
+                  .externalDataId,
               type:
-                ReferenceApplicationProviders.referenceProvider.externalDataId,
+                ReferenceApplicationDataProviders.referenceProvider
+                  .externalDataId,
               title: 'getReferenceData',
               subTitle: 'Reference data',
             }),
             buildDataProviderItem({
-              id: SharedDataProviders.NationalRegistryProvider.externalDataId,
-              type: SharedDataProviders.NationalRegistryProvider.externalDataId,
+              id: SharedDataProviders.nationalRegistryProvider.externalDataId,
+              type: SharedDataProviders.nationalRegistryProvider.externalDataId,
               title: 'Þjóðskrá',
               subTitle: 'Náum í national registry dót',
               order: 1,

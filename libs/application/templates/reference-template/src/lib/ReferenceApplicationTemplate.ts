@@ -115,7 +115,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
                 {
                   ...SharedDataProviders.nationalRegistryProvider,
                   useMockData: (application: Application) => {
-                    return true
+                    return false
                   },
                 },
                 ReferenceApplicationDataProviders.referenceProvider,
