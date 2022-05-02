@@ -19,8 +19,8 @@ ApplicationStateSchema<Events>,
 Events
 > = {
   type: ApplicationTypes.EXAMPLE,
-  name: 'Stafræn skil ársreikninga',
-  institution: m.applicationTitle,
+  name: m.applicationTitle,
+  institution: m.institutionName,
   dataSchema,
   readyForProduction: false,
   featureFlag: Features.exampleApplication,

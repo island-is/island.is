@@ -33,7 +33,7 @@ export const Application: Form = buildForm({
               id: 'sampleData',
               type: 'SampleDataProvider',
               title: '',
-              subTitle: 'Upplýsingar um sjóð og vörsluaðila'
+              subTitle: m.fundInfo
             }),
           ],
         }),

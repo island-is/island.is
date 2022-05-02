@@ -24,22 +24,27 @@ export const m = defineMessages({
   infoSection: {
     id: 'fs.application:intro.section',
     defaultMessage: 'Upplýsingar',
-    description: 'Some description',
+    description: 'Info',
+  },
+  fundInfo: {
+    id: 'fs.application:fund',
+    defaultMessage: 'Upplýsingar um sjóð og vörsluaðila',
+    description: 'fund info',
   },
   about: {
     id: 'fs.application:about',
     defaultMessage: 'Um þig',
-    description: 'Some description',
+    description: 'about',
   },
   email: {
     id: 'fs.application:person.email',
     defaultMessage: 'Netfang',
-    description: 'Some description',
+    description: 'email',
   },
   phoneNumber: {
     id: 'fs.application:about.phoneNumber',
     defaultMessage: 'Símanúmer',
-    description: 'Some description',
+    description: 'phone number',
   },
   keyNumbers: {
     id: 'fs.application:keyNumbers',
