@@ -246,6 +246,9 @@
     "application-templates-financial-aid": {
       "tags": []
     },
+    "application-templates-financial-statements-inao": {
+      "tags": []
+    },
     "application-templates-funding-government-projects": {
       "tags": []
     },
@@ -283,9 +286,6 @@
       "tags": []
     },
     "application-templates-reference-template": {
-      "tags": []
-    },
-    "application-templates-financial-statements-inao": {
       "tags": []
     },
     "application-ui-components": {

@@ -2559,6 +2559,40 @@
         }
       }
     },
+    "application-templates-financial-statements-inao": {
+      "root": "libs/application/templates/financial-statements-inao",
+      "sourceRoot": "libs/application/templates/financial-statements-inao/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/financial-statements-inao/tsconfig.lib.json",
+              "libs/application/templates/financial-statements-inao/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/financial-statements-inao/**/*"
+            ]
+          }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/financial-statements-inao/src/lib/messages.ts"
+          }
+        },
+        "schemas/codegen": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "graphql-codegen --config libs/application/templates/financial-statements-inao/codegen.yml"
+          }
+        }
+      }
+    },
     "application-templates-funding-government-projects": {
       "root": "libs/application/templates/funding-government-projects",
       "sourceRoot": "libs/application/templates/funding-government-projects/src",
@@ -3035,40 +3069,6 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/public-debt-payment-plan/src/**/*.{js,ts,tsx}'"
-          }
-        }
-      }
-    },
-    "application-templates-financial-statements-inao": {
-      "root": "libs/application/templates/financial-statements-inao",
-      "sourceRoot": "libs/application/templates/financial-statements-inao/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/application/templates/financial-statements-inao/tsconfig.lib.json",
-              "libs/application/templates/financial-statements-inao/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/application/templates/financial-statements-inao/**/*"
-            ]
-          }
-        },
-        "extract-strings": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/financial-statements-inao/src/lib/messages.ts"
-          }
-        },
-        "schemas/codegen": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "graphql-codegen --config libs/application/templates/financial-statements-inao/codegen.yml"
           }
         }
       }

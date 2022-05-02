@@ -206,6 +206,9 @@
       "@island.is/application/templates/financial-aid": [
         "libs/application/templates/financial-aid/src/index.ts"
       ],
+      "@island.is/application/templates/financial-statements-inao": [
+        "libs/application/templates/financial-statements-inao/src/index.ts"
+      ],
       "@island.is/application/templates/funding-government-projects": [
         "libs/application/templates/funding-government-projects/src/index.ts"
       ],
@@ -247,9 +250,6 @@
       ],
       "@island.is/application/templates/reference-template": [
         "libs/application/templates/reference-template/src/index.ts"
-      ],
-      "@island.is/application/templates/financial-statements-inao": [
-        "libs/application/templates/financial-statements-inao/src/index.ts"
       ],
       "@island.is/application/ui-components": [
         "libs/application/ui-components/src/index.ts"
