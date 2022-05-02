@@ -5,8 +5,7 @@ import {
   getNextPeriod,
   estimatedBreakDown,
   aidCalculator,
-  martialStatusTypeFromMartialCode,
-  MartialStatusType,
+  FamilyStatus,
 } from '@island.is/financial-aid/shared/lib'
 
 import * as m from '../../lib/messages'
@@ -29,6 +28,7 @@ import {
 } from './index'
 
 import { DirectTaxPaymentsModal } from '..'
+import { findFamilyStatus } from '../../lib/utils'
 
 const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
@@ -37,21 +37,6 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
 
   const [isModalOpen, setIsModalOpen] = useState(false)
 
-  const getFamilyStatus = (
-    spouse?: Spouse,
-    unregisteredCohabitation?: ApproveOptions,
-  ) => {
-    if (spouse) {
-      return (
-        martialStatusTypeFromMartialCode(spouse?.maritalStatus) ===
-        MartialStatusType.SINGLE
-      )
-    }
-    if (unregisteredCohabitation) {
-      return unregisteredCohabitation === ApproveOptions.Yes ? false : true
-    }
-  }
-
   const aidAmount = useMemo(() => {
     if (
       externalData.nationalRegistry?.data?.municipality &&
@@ -59,10 +44,8 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
     ) {
       return aidCalculator(
         answers.homeCircumstances.type,
-        getFamilyStatus(
-          externalData.nationalRegistry?.data?.applicant?.spouse,
-          answers?.relationshipStatus?.unregisteredCohabitation,
-        )
+        findFamilyStatus(answers, externalData) ===
+          FamilyStatus.NOT_COHABITATION
           ? externalData.nationalRegistry?.data?.municipality?.individualAid
           : externalData.nationalRegistry?.data?.municipality?.cohabitationAid,
       )

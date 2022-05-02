@@ -12,16 +12,8 @@ const TaxReturnFilesForm = ({ field, application }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
   const { id, answers, externalData, assignees } = application
 
-  const isSpouse = (assignees: string[], nationalId?: string) => {
-    if (!nationalId) {
-      return
-    }
-    return assignees.includes(nationalId)
-  }
-
   const { municipalitiesDirectTaxPayments, municipalitiesPersonalTaxReturn } =
-    isSpouse(
-      assignees,
+    assignees.includes(
       externalData?.nationalRegistry?.data?.applicant?.nationalId,
     ) && externalData?.taxDataFetchSpouse?.data
       ? externalData.taxDataFetchSpouse.data

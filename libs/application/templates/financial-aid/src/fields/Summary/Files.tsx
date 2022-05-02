@@ -40,7 +40,6 @@ const Files = ({
         {formatMessage(summaryForm.formInfo.filesTitle)}
       </Text>
       {allFiles &&
-        allFiles.length > 0 &&
         allFiles.map((file: UploadFile, index: number) => {
           if (file) {
             return (
