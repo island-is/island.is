@@ -11,7 +11,7 @@ const PersonalAllowance = z
       .string()
       .refine((x) => parseFloat(x) >= 0 && parseFloat(x) <= 100)
       .optional(),
-    useAsMuchAsPossible: z.enum([YES, NO]).optional(),
+    useAsMuchAsPossible: z.enum([YES, NO]),
   })
   .optional()
 
