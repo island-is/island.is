@@ -1,11 +1,7 @@
 import React, { FC } from 'react'
 
 const Logo: FC = () => (
-  <svg
-    width="100%"
-    height="100%"
-    viewBox="0 0 291 45"
-  >
+  <svg width="100%" height="100%" viewBox="0 0 291 45">
     <use
       id="Background"
       href="#_Image1"
