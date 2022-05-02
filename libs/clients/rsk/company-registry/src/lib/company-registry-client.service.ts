@@ -1,7 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common'
 
 import { handle404 } from '@island.is/clients/middlewares'
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 
 import { CompanyItem, DefaultApi, SearchCompanyItem } from './gen/fetch'
 import {

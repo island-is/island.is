@@ -152,10 +152,7 @@
       },
       "link": {
         "type": "object",
-        "required": [
-          "rel",
-          "href"
-        ],
+        "required": ["rel", "href"],
         "properties": {
           "rel": {
             "type": "string"
@@ -228,10 +225,7 @@
       },
       "rekstrarform": {
         "type": "object",
-        "required": [
-          "tegund",
-          "heiti"
-        ],
+        "required": ["tegund", "heiti"],
         "properties": {
           "tegund": {
             "type": "string"
@@ -243,12 +237,7 @@
       },
       "flokkun": {
         "type": "object",
-        "required": [
-          "gerd",
-          "flokkunarkerfi",
-          "numer",
-          "heiti"
-        ],
+        "required": ["gerd", "flokkunarkerfi", "numer", "heiti"],
         "properties": {
           "gerd": {
             "type": "string"
@@ -266,12 +255,7 @@
       },
       "virdisaukaskattur_item": {
         "type": "object",
-        "required": [
-          "vsk_numer",
-          "skrad",
-          "stada",
-          "afskraning"
-        ],
+        "required": ["vsk_numer", "skrad", "stada", "afskraning"],
         "properties": {
           "vsk_numer": {
             "type": "string"
@@ -334,11 +318,7 @@
       },
       "tengduradili_item": {
         "type": "object",
-        "required": [
-          "tegund",
-          "kennitala",
-          "nafn"
-        ],
+        "required": ["tegund", "kennitala", "nafn"],
         "properties": {
           "tegund": {
             "type": "string"
@@ -353,12 +333,7 @@
       },
       "company_item": {
         "type": "object",
-        "required": [
-          "kennitala",
-          "nafn",
-          "skrad",
-          "stada"
-        ],
+        "required": ["kennitala", "nafn", "skrad", "stada"],
         "properties": {
           "kennitala": {
             "type": "string"
@@ -439,12 +414,7 @@
       },
       "error": {
         "type": "object",
-        "required": [
-          "code",
-          "message",
-          "type",
-          "instance"
-        ],
+        "required": ["code", "message", "type", "instance"],
         "properties": {
           "code": {
             "type": "integer",
