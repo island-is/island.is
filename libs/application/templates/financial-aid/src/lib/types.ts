@@ -90,7 +90,6 @@ export interface TaxData {
     directTaxPayments: DirectTaxPayment[]
     success: boolean
   }
-  userType: UserType
 }
 
 export interface CurrentApplication {
