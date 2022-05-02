@@ -43,7 +43,7 @@ import {
   UtlendingastofnunFooter,
   UtlendingastofnunHeader,
 } from './Themes/UtlendingastofnunTheme'
-import { endpoints as chatPanelEndpoints } from '../../ChatPanel/config'
+import { boostChatPanelEndpoints } from '@island.is/web/components'
 import MannaudstorgFooter from './Themes/MannaudstorgTheme/MannaudstorgFooter'
 import { useNamespace } from '@island.is/web/hooks'
 import * as styles from './OrganizationWrapper.css'
@@ -227,7 +227,7 @@ export const OrganizationChatPanel = ({
 
   return slug ? (
     <BoostChatPanel
-      endpoint={slug as keyof typeof chatPanelEndpoints}
+      endpoint={slug as keyof typeof boostChatPanelEndpoints}
       pushUp={pushUp}
     />
   ) : null
