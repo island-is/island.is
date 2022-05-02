@@ -12,12 +12,14 @@ import {
   buildExternalDataProvider,
   buildDataProviderItem,
 } from '@island.is/application/core'
+import { Logo } from '../assets'
 import { ApiActions } from '../shared'
 import { m } from '../lib/messages'
 
 export const Application: Form = buildForm({
   id: 'FinancialStatementsInao',
   title: '',
+  logo: Logo,
   mode: FormModes.APPLYING,
   children: [
     buildSection({
