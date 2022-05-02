@@ -5,6 +5,7 @@ describe('mergeAuthSettings', () => {
     // act
     const settings = mergeAuthSettings({
       client_id: 'test-client',
+      authority: 'https://innskra.island.is',
     })
 
     // assert
@@ -15,15 +16,22 @@ describe('mergeAuthSettings', () => {
         "checkSessionPath": "/connect/sessioninfo",
         "client_id": "test-client",
         "loadUserInfo": true,
+        "mergeClaims": true,
         "monitorSession": false,
         "post_logout_redirect_uri": "http://localhost",
         "redirectPath": "/auth/callback",
         "redirectPathSilent": "/auth/callback-silent",
-        "redirect_uri": "http://localhost/auth/callback",
         "response_type": "code",
-        "revokeAccessTokenOnSignout": true,
+        "revokeTokenTypes": Array [
+          "access_token",
+          "refresh_token",
+        ],
+        "revokeTokensOnSignout": true,
         "silent_redirect_uri": "http://localhost/auth/callback-silent",
-        "userStore": t {
+        "userStore": WebStorageStateStore {
+          "_logger": Logger {
+            "_name": "WebStorageStateStore",
+          },
           "_prefix": "oidc.",
           "_store": Storage {},
         },
@@ -34,6 +42,7 @@ describe('mergeAuthSettings', () => {
   it('creates uris from baseUrl and redirect paths', () => {
     // act
     const settings = mergeAuthSettings({
+      authority: 'https://innskra.island.is',
       client_id: 'test-client',
       baseUrl: 'https://island.is',
       redirectPath: '/auth',
@@ -46,7 +55,6 @@ describe('mergeAuthSettings', () => {
       post_logout_redirect_uri: 'https://island.is',
       redirectPath: '/auth',
       redirectPathSilent: '/auth-silent',
-      redirect_uri: 'https://island.is/auth',
       silent_redirect_uri: 'https://island.is/auth-silent',
     })
   })

@@ -1,34 +1,38 @@
-import React from 'react'
-import flatten from 'lodash/flatten'
 import { gql, useQuery } from '@apollo/client'
-import { ServicePortalModuleComponent, m } from '@island.is/service-portal/core'
-import { GridColumn, GridRow, Table as T } from '@island.is/island-ui/core'
 import subYears from 'date-fns/subYears'
-import { Query } from '@island.is/api/schema'
+import flatten from 'lodash/flatten'
+import React from 'react'
 import { defineMessage } from 'react-intl'
+
+import { Query } from '@island.is/api/schema'
 import {
-  Box,
-  Text,
-  Stack,
-  Button,
-  SkeletonLoader,
   AlertBanner,
+  Box,
+  Button,
+  GridColumn,
+  GridRow,
+  SkeletonLoader,
+  Stack,
+  Table as T,
+  Text,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import {
+  amountFormat,
+  ExpandHeader,
+  ExpandRow,
+  formSubmit,
+  m,
+  ServicePortalModuleComponent,
+} from '@island.is/service-portal/core'
+
+import DropdownExport from '../../components/DropdownExport/DropdownExport'
+import FinanceStatusTableRow from '../../components/FinanceStatusTableRow/FinanceStatusTableRow'
+import { exportGreidslustadaFile } from '../../utils/filesGreidslustada'
 import {
   FinanceStatusDataType,
   FinanceStatusOrganizationType,
 } from './FinanceStatusData.types'
-import {
-  ExpandHeader,
-  ExpandRow,
-  amountFormat,
-  formSubmit,
-} from '@island.is/service-portal/core'
-import { exportGreidslustadaFile } from '../../utils/filesGreidslustada'
-import DropdownExport from '../../components/DropdownExport/DropdownExport'
-import FinanceStatusTableRow from '../../components/FinanceStatusTableRow/FinanceStatusTableRow'
-import { Link } from 'react-router-dom'
 
 const GetFinanceStatusQuery = gql`
   query GetFinanceStatusQuery {
@@ -211,7 +215,6 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
                           chargeType={chargeType}
                           organization={org}
                           downloadURL={financeStatusData.downloadServiceURL}
-                          userInfo={userInfo}
                           key={`${org.id}-${chargeType.id}-${i}-${ii}`}
                         />
                       )),
