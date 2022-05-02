@@ -220,8 +220,8 @@ export const DelegationsScreen = ({
       </Page>
     )
   }
-  if(noAllowed && user?.profile.actor) {
-    const {name, nationalId} = user?.profile.actor
+  if (noAllowed && user?.profile.actor) {
+    const { name, nationalId } = user?.profile.actor
     return (
       <Page>
         <GridContainer>
@@ -248,7 +248,9 @@ export const DelegationsScreen = ({
                 ) + formatKennitala(nationalId)
               }
               cta={{
-                label: formatMessage(coreDelegationsMessages.delegationErrorButton),
+                label: formatMessage(
+                  coreDelegationsMessages.delegationErrorButton,
+                ),
                 variant: 'text',
                 size: 'medium',
                 onClick: () => handleClick(nationalId),

@@ -23,7 +23,10 @@ import {
 } from '@island.is/localization'
 
 import { ApplicationLoading } from '../components/ApplicationsLoading/ApplicationLoading'
-import { findProblemInApolloError, ProblemType } from '@island.is/shared/problem'
+import {
+  findProblemInApolloError,
+  ProblemType,
+} from '@island.is/shared/problem'
 
 export const Applications: FC = () => {
   const { slug } = useParams<{ slug: string }>()
