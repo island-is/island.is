@@ -12,6 +12,7 @@ const MissingFilesCard = () => {
       <ActionCard
         heading={formatMessage(missingFilesCard.title)}
         text={formatMessage(missingFilesCard.description)}
+        // TODO: redirect user to page to upload files
         cta={{
           label: formatMessage(missingFilesCard.action),
           icon: undefined,
