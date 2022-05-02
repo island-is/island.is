@@ -3,9 +3,12 @@ import {
   HomeCircumstances,
   KeyMapping,
   FamilyStatus,
+  ApplicationState,
 } from '@island.is/financial-aid/shared/lib'
+import { Colors } from '@island.is/island-ui/theme'
 
 import { MessageDescriptor } from 'react-intl'
+import format from 'date-fns/format'
 
 import * as m from './messages'
 import { Routes } from './constants'
@@ -143,3 +146,52 @@ export const spouseFormItems = (answers: OverrideAnswerSchema) => [
     info: getMessageApproveOptionsForIncome[answers?.spouseIncome],
   },
 ]
+
+export const getStateMessageAndColor: KeyMapping<
+  ApplicationState,
+  [MessageDescriptor, Colors]
+> = {
+  New: [m.header.new, 'blue400'],
+  Approved: [m.header.approved, 'mint600'],
+  Rejected: [m.header.rejected, 'red400'],
+  InProgress: [m.header.inProgress, 'blue400'],
+  DataNeeded: [m.header.inProgress, 'blue400'],
+}
+
+export const timelineSections = (
+  created: Date,
+  modified: Date,
+  showSpouseStep?: boolean,
+) => {
+  const sections = [
+    {
+      name: m.timeline.receivedTitle,
+      text: m.timeline.receivedDescription,
+      state: [ApplicationState.NEW],
+      date: format(new Date(created), 'dd/MM/yyyy HH:mm'),
+    },
+    {
+      name: m.timeline.inProgressTitle,
+      text: m.timeline.inProgressDescription,
+      state: [ApplicationState.INPROGRESS, ApplicationState.DATANEEDED],
+      date: format(new Date(modified), 'dd/MM/yyyy HH:mm'),
+    },
+    {
+      name: m.timeline.resultsTitle,
+      text: m.timeline.resultsDescription,
+      state: [ApplicationState.REJECTED, ApplicationState.APPROVED],
+      date: format(new Date(modified), 'dd/MM/yyyy HH:mm'),
+    },
+  ]
+
+  if (showSpouseStep) {
+    sections.splice(1, 0, {
+      name: m.timeline.spouseTitle,
+      text: m.timeline.spouseDescription,
+      state: [ApplicationState.NEW],
+      date: format(new Date(created), 'dd/MM/yyyy HH:mm'),
+    })
+  }
+
+  return sections
+}
