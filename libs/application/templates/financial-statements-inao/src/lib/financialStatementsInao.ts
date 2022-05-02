@@ -8,7 +8,6 @@ import {
   DefaultEvents,
   DefaultStateLifeCycle,
 } from '@island.is/application/core'
-import { Features } from '@island.is/feature-flags'
 import { m } from './messages'
 import { Events, States, Roles } from './constants'
 import { dataSchema } from './utils/dataSchema'
@@ -18,12 +17,11 @@ const FinancialStatementInaoApplication: ApplicationTemplate<
   ApplicationStateSchema<Events>,
   Events
 > = {
-  type: ApplicationTypes.EXAMPLE,
+  type: ApplicationTypes.FINANCIAL_STATEMENTS_INAO,
   name: m.applicationTitle,
   institution: m.institutionName,
   dataSchema,
   readyForProduction: false,
-  featureFlag: Features.exampleApplication,
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {
