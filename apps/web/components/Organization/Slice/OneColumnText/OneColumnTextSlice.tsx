@@ -37,8 +37,8 @@ export const OneColumnTextSlice: React.FC<SliceProps> = ({
             {slice.title}
           </Text>
           {richText(slice.content as SliceType[])}
-          {slice.link && (
-            <Link href="#">
+          {slice.link && slice.link.url && (
+            <Link href={slice.link.url}>
               <Button
                 icon="arrowForward"
                 iconType="filled"

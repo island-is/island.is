@@ -266,6 +266,7 @@ export const SignedVerdictOverview: React.FC = () => {
       modification = formatMessage(
         m.sections.modifyDatesModal.validToDateAndIsolationToDateAreTheSame,
         {
+          caseType: workingCase.type,
           date: `${formatDate(modifiedValidToDate?.value, 'PPPP')?.replace(
             'dagur,',
             'dagsins',
@@ -280,6 +281,7 @@ export const SignedVerdictOverview: React.FC = () => {
         modification = formatMessage(
           m.sections.modifyDatesModal.validToDateChanged,
           {
+            caseType: workingCase.type,
             date: `${formatDate(modifiedValidToDate?.value, 'PPPP')?.replace(
               'dagur,',
               'dagsins',
@@ -648,8 +650,12 @@ export const SignedVerdictOverview: React.FC = () => {
               transition={{ duration: 0.5 }}
             >
               <Modal
-                title={formatMessage(m.sections.modifyDatesModal.title)}
-                text={formatMessage(m.sections.modifyDatesModal.text)}
+                title={formatMessage(m.sections.modifyDatesModal.titleV2, {
+                  caseType: workingCase.type,
+                })}
+                text={formatMessage(m.sections.modifyDatesModal.textV2, {
+                  caseType: workingCase.type,
+                })}
                 primaryButtonText={formatMessage(
                   m.sections.modifyDatesModal.primaryButtonText,
                 )}
@@ -692,7 +698,8 @@ export const SignedVerdictOverview: React.FC = () => {
                       m.sections.modifyDatesModal.reasonForChangeLabel,
                     )}
                     placeholder={formatMessage(
-                      m.sections.modifyDatesModal.reasonForChangePlaceholder,
+                      m.sections.modifyDatesModal.reasonForChangePlaceholderV2,
+                      { caseType: workingCase.type },
                     )}
                     onChange={(event) => {
                       handleCaseModifiedExplanationChange(event.target.value)
@@ -779,7 +786,10 @@ export const SignedVerdictOverview: React.FC = () => {
               transition={{ duration: 0.5 }}
             >
               <Modal
-                title={formatMessage(m.sections.modifyDatesModal.successTitle)}
+                title={formatMessage(
+                  m.sections.modifyDatesModal.successTitleV2,
+                  { caseType: workingCase.type },
+                )}
                 text={getModificationSuccessText()}
                 secondaryButtonText={formatMessage(
                   m.sections.modifyDatesModal.secondaryButtonTextSuccess,
