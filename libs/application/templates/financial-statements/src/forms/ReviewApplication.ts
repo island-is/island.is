@@ -20,30 +20,13 @@ export const ReviewApplication: Form = buildForm({
   children: [
     buildSection({
       id: 'intro',
-      title: m.introSection,
+      title: m.infoSection,
       children: [
         buildMultiField({
           id: 'about',
           title: m.about,
           children: [
             buildDividerField({ title: 'Umsækjandi' }),
-            buildTextField({
-              id: 'person.name',
-              title: m.personName,
-              disabled: true,
-            }),
-            buildTextField({
-              id: 'person.nationalId',
-              title: m.nationalId,
-              disabled: true,
-              width: 'half',
-            }),
-            buildTextField({
-              id: 'person.age',
-              title: m.age,
-              disabled: true,
-              width: 'half',
-            }),
             buildTextField({
               id: 'person.email',
               title: m.email,
@@ -58,8 +41,8 @@ export const ReviewApplication: Form = buildForm({
             }),
             buildDividerField({ title: 'Atvinna' }),
             buildRadioField({
-              id: 'careerHistory',
-              title: m.careerHistory,
+              id: 'properties',
+              title: m.properties,
               width: 'half',
               disabled: true,
               options: [
@@ -67,17 +50,7 @@ export const ReviewApplication: Form = buildForm({
                 { value: 'no', label: m.noOptionLabel },
               ],
             }),
-            buildCheckboxField({
-              id: 'careerHistoryCompanies',
-              title: m.careerHistoryCompanies,
-              disabled: true,
-              width: 'half',
-              options: [
-                { value: 'government', label: m.governmentOptionLabel },
-                { value: 'aranja', label: 'Aranja' },
-                { value: 'advania', label: 'Advania' },
-              ],
-            }),
+
             buildTextField({
               id: 'dreamJob',
               title: m.dreamJob,

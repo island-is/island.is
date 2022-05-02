@@ -9,46 +9,51 @@ import {
   Form,
   FormModes,
   buildFileUploadField,
+  buildExternalDataProvider,
+  buildDataProviderItem,
 } from '@island.is/application/core'
 import { ApiActions } from '../shared'
 import { m } from '../lib/messages'
 
-
-export const FinancialStatements: Form = buildForm({
+export const Application: Form = buildForm({
   id: 'FinancialStatement',
   title: '',
   mode: FormModes.APPLYING,
   children: [
     buildSection({
       id: 'conditions',
-      title: m.conditionsSection,
-      children: [],
+      title: m.dataCollectionTitle,
+      children: [
+        buildExternalDataProvider({
+          id: 'approveExternalData',
+          title: m.dataCollectionTitle,
+          checkboxLabel: m.dataCollectionCheckboxLabel,
+          dataProviders: [
+            buildDataProviderItem({
+              id: 'sampleData',
+              type: 'SampleDataProvider',
+              title: '',
+              subTitle: 'Upplýsingar um sjóð og vörsluaðila'
+            }),
+          ],
+        }),
+      ],
     }),
     buildSection({
-      id: 'intro',
-      title: m.introSection,
+      id: 'info',
+      title: m.infoSection,
       children: [
-        buildDescriptionField({
-          id: 'field',
-          title: m.introField,
-          description: (application) => ({
-            ...m.introIntroduction,
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            values: { name: application.answers.name },
-          }),
-        }),
         buildMultiField({
           id: 'about',
           title: m.about,
           children: [
             buildTextField({
-              id: 'person.email',
+              id: 'about.email',
               title: m.email,
               width: 'half',
             }),
             buildTextField({
-              id: 'person.phoneNumber',
+              id: 'about.phoneNumber',
               title: m.phoneNumber,
               width: 'half',
             }),
@@ -58,23 +63,23 @@ export const FinancialStatements: Form = buildForm({
     }),
     buildSection({
       id: 'keyNumbers',
-      title: 'Lykiltölur',
+      title: m.keyNumbers,
       children: [
         buildSubSection({
           id: 'properties',
-          title: 'Eignir',
+          title: m.properties,
           children: [
             buildMultiField({
               title: '',
               children: [
                 buildTextField({
                   id: 'properties.short',
-                  title: 'Skammtímarkröfur',
+                  title: m.propertiesShort,
                   width: 'half',
                 }),
                 buildTextField({
                   id: 'properties.cash',
-                  title: 'Bankainnistæður og sjóðir',
+                  title: m.propertiesCash,
                   width: 'half',
                 }),
               ],
@@ -83,24 +88,24 @@ export const FinancialStatements: Form = buildForm({
         }),
         buildSubSection({
           id: 'income',
-          title: 'Tekjur',
+          title: m.income,
           children: [
             buildMultiField({
               title: '',
               children: [
                 buildTextField({
                   id: 'income.donations',
-                  title: 'Framlög lögaðila',
+                  title: m.donations,
                   width: 'half',
                 }),
                 buildTextField({
-                  id: 'income.peronal',
-                  title: 'Eigin tekjur',
+                  id: 'income.personal',
+                  title: m.personalIncome,
                   width: 'half',
                 }),
                 buildTextField({
                   id: 'income.capital',
-                  title: 'Fjármagnskostnaður',
+                  title: m.capitalIncome,
                   width: 'half',
                 }),
               ],
@@ -110,44 +115,45 @@ export const FinancialStatements: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'upload',
-      title: 'Ársreikningur',
+      id: 'documents',
+      title: m.financialStatement,
       children: [
         buildFileUploadField({
-          id: 'attachments',
-          title: 'Hlaða upp ársreikningi',
-          introduction: 'Vinsamlegast hlaðið upp ársreikning hér að neðan.',
-          description: 'Heiti skjals þarf að vera á forminu “TegundViðskiptavinar-Kennitala-TegundKosninga-ÁrtalMánuðurKosninga ”. Dæmi: 1-2808705799-3-2020-08.pdf',
+          id: 'attachment',
+          title: m.upload,
+          introduction: m.uploadIntro,
+          description: m.uploadDescription,
           uploadMultiple: false,
+          doesNotRequireAnswer: true,
         }),
       ]
     }),
     buildSection({
       id: 'confirmation',
-      title: 'Staðfesta',
+      title: m.confirm,
       children: [
         buildMultiField({
           title: '',
           children: [
-            buildSubmitField({
-              id: 'submit',
-              placement: 'footer',
-              title: 'Senda inn umsókn',
-              actions: [
-                { event: 'SUBMIT', name: 'Senda inn umsókn', type: 'primary' },
-              ],
-            }),
             buildDescriptionField({
               id: 'overview',
-              title: 'Takk fyrir að sækja um',
+              title: m.overviewSectionTitle,
               description:
-                'Með því að smella á "Senda" hér að neðan, þá sendist umsóknin inn til úrvinnslu. Við látum þig vita þegar hún er samþykkt eða henni er hafnað.',
+                m.overviewSectionDescription,
+            }),
+            buildSubmitField({
+              id: 'submit',
+              placement: 'screen',
+              title: m.send,
+              actions: [
+                { event: 'SUBMIT', name: m.send, type: 'primary' },
+              ],
             }),
           ],
         }),
         buildDescriptionField({
           id: 'final',
-          title: 'Takk',
+          title: m.thankYou,
           description: (application) => {
             const sendApplicationActionResult =
               application.externalData[ApiActions.createApplication]

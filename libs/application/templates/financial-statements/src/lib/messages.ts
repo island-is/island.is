@@ -1,136 +1,157 @@
 import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
-  conditionsSection: {
-    id: 'example.application:conditions.section',
-    defaultMessage: 'Skilyrði',
-    description: 'Some description',
+  applicationTitle: {
+    id: 'fs.application:applicationTitle',
+    defaultMessage: 'Stafræn skil ársreikninga',
+    description: 'Application for Digital',
   },
   institutionName: {
     id: 'example.application.institution',
-    defaultMessage: 'Institution reference',
+    defaultMessage: 'Ríkisendurskoðun',
     description: `Institution's name`,
   },
   name: {
-    id: 'example.application:name',
+    id: 'fs.application:name',
     defaultMessage: 'Umsókn',
     description: `Application's name`,
   },
-  draftTitle: {
-    id: 'example.application:draft.title',
-    defaultMessage: 'Drög',
-    description: 'First state title',
+  dataCollectionTitle: {
+    id: 'fs.application:applicationDataCollectionTitle',
+    defaultMessage: 'Gagnaöflun',
+    description: 'Title for data collection section',
   },
-  draftDescription: {
-    id: 'example.application:draft.description',
-    defaultMessage: 'Notendur hafa ekkert að gera á þessu stigi',
-    description: 'Description of the state',
-  },
-  introSection: {
-    id: 'example.application:intro.section',
+  infoSection: {
+    id: 'fs.application:intro.section',
     defaultMessage: 'Upplýsingar',
     description: 'Some description',
   },
-  introField: {
-    id: 'example.application:intro.field',
-    defaultMessage: 'Velkomin(n)',
-    description: 'Some description',
-  },
-  introIntroduction: {
-    id: 'example.application:intro.introduction',
-    defaultMessage:
-      '*Hello*, **{name}**! [This is a link to Google!](http://google.com)',
-    description: 'Some description',
-  },
   about: {
-    id: 'example.application:about',
+    id: 'fs.application:about',
     defaultMessage: 'Um þig',
     description: 'Some description',
   },
-  personName: {
-    id: 'example.application:person.name',
-    defaultMessage: 'Nafn',
-    description: 'Some description',
-  },
-  nationalId: {
-    id: 'example.application:person.nationalId',
-    defaultMessage: 'Kennitala',
-    description: 'Some description',
-  },
-  age: {
-    id: 'example.application:person.age',
-    defaultMessage: 'Aldur',
-    description: 'Some description',
-  },
   email: {
-    id: 'example.application:person.email',
+    id: 'fs.application:person.email',
     defaultMessage: 'Netfang',
     description: 'Some description',
   },
   phoneNumber: {
-    id: 'example.application:person.phoneNumber',
+    id: 'fs.application:about.phoneNumber',
     defaultMessage: 'Símanúmer',
     description: 'Some description',
   },
-  career: {
-    id: 'example.application:career',
-    defaultMessage: 'Starfsferill',
-    description: 'Some description',
+  keyNumbers: {
+    id: 'fs.application:keyNumbers',
+    defaultMessage: 'Lykiltölur',
+    description: 'Statement key numbers',
   },
-  history: {
-    id: 'example.application:history',
-    defaultMessage: 'Hvar hefur þú unnið áður?',
-    description: 'Some description',
+  properties: {
+    id: 'fs.application:properties',
+    defaultMessage: 'Eignir',
+    description: 'List of applicants properties',
   },
-  careerHistory: {
-    id: 'example.application:careerHistory',
-    defaultMessage: 'Hefurðu unnið yfir höfuð einhvern tímann áður?',
-    description: 'Some description',
+  propertiesShort: {
+    id: 'fs.application:properties.short',
+    defaultMessage: 'Skammtímakröfur',
+    description: 'Short term',
   },
-  careerHistoryCompanies: {
-    id: 'example.application:careerHistoryCompanies',
-    defaultMessage: 'Hefurðu unnið fyrir eftirfarandi aðila?',
-    description: 'Some description',
+  propertiesCash: {
+    id: 'fs.application:properties.cash',
+    defaultMessage: 'Bankainnistæður og sjóðir',
+    description: 'Cash is king',
   },
-  future: {
-    id: 'example.application:future',
-    defaultMessage: 'Hvar langar þig að vinna?',
-    description: 'Some description',
+  income: {
+    id: 'fs.application:income',
+    defaultMessage: 'Tekjur',
+    description: 'Applicants income',
   },
-  dreamJob: {
-    id: 'example.application:dreamJob',
-    defaultMessage: 'Einhver draumavinnustaður?',
-    description: 'Some description',
+  donations: {
+    id: 'fs.application:income.donations',
+    defaultMessage: 'Framlög lögaðila',
+    description: 'Donations',
   },
-  yesOptionLabel: {
-    id: 'example.application:yes.option.label',
-    defaultMessage: 'Já',
-    description: 'Some description',
+  personalIncome: {
+    id: 'fs.application:income.personal',
+    defaultMessage:
+      'Eigin tekjur',
+    description: 'personal income',
   },
-  noOptionLabel: {
-    id: 'example.application:no.option.label',
-    defaultMessage: 'Nei',
-    description: 'Some description',
+  capitalIncome: {
+    id: 'fs.application:income.capital',
+    defaultMessage:
+      'Fjármagnstekjur',
+    description: 'capital income'
   },
-  governmentOptionLabel: {
-    id: 'example.application:government.option.label',
-    defaultMessage: 'The government',
-    description: 'Some description',
+  financialStatement: {
+    id: 'fs.application:financial.statment',
+    defaultMessage: 'Ársreikningur',
+    description: 'financial statements'
+  },
+  upload: {
+    id: 'fs.application:upload',
+    defaultMessage: 'Hlaða upp ársreikningi',
+    description: 'Upload financial statements'
+  },
+  uploadIntro: {
+    id: 'fs.application:upload.intro',
+    defaultMessage: 'Vinsamlegast hlaðið upp ársreikning hér að neðan.',
+    description: 'Upload financial statements intro'
+  },
+  uploadDescription: {
+    id: 'fs.application:upload.description',
+    defaultMessage: 'Vinsamlegast hlaðið upp ársreikning hér að neðan.',
+    description: 'Upload financial statements intro'
+  },
+  confirm: {
+    id: 'fs.application:confirmation',
+    defaultMessage: 'Staðfesta',
+    description: 'confirm application'
+  },
+  send: {
+    id: 'fs.application:send',
+    defaultMessage: 'Senda umsókn',
+    description: 'Send application'
+  },
+  overviewTitle: {
+    id: 'fs.application:overviewTitle',
+    defaultMessage: 'Yfirlit',
+    description: 'Title for overview section',
+  },
+  overviewSectionTitle: {
+    id: 'fs.application:overviewTitle',
+    defaultMessage: 'Yfirlit',
+    description: 'Title for overview section',
+  },
+  overviewSectionDescription: {
+    id: 'fs.application:overviewSectionDescription',
+    defaultMessage:
+      'Vinsamlegast lestu yfir umsóknina og vertu viss um að allar upplýsingar séu rétt uppgefnar. Að loknum yfirlestri getur þú sent inn umsóknina.',
+    description: 'Description for overview section',
+  },
+  success: {
+    id: 'fs.application:success',
+    defaultMessage: 'Skil á árskýrslu mótteking',
+    description: 'financial statement success'
+  },
+  dataCollectionCheckboxLabel: {
+    id: 'ps.application:dataCollectionCheckboxLabel',
+    defaultMessage: 'Ég samþykki að láta sækja gögn',
+    description: 'Checkbox label for data collection section',
+  },
+  thankYou: {
+    id: 'fs.application:final',
+    defaultMessage: 'Takk fyrir',
+    description: 'Upload financial statements intro'
   },
   outroMessage: {
-    id: 'example.application:outro.message',
-    defaultMessage:
-      'Your application #{id} is now in review. The ID of the application is returned by the createApplication API action and read from application.externalData',
-    description: 'Some description',
+    id: 'fs.application:upload.description',
+    defaultMessage: 'Takk fyrir',
+    description: 'Upload financial statements intro'
   },
   dataSchemePhoneNumber: {
-    id: 'example.application:dataSchema.phoneNumber',
+    id: 'fs.application:dataSchema.phoneNumber',
     defaultMessage: 'Símanúmerið þarf að vera gilt.',
     description: 'Error message when phone number is invalid.',
-  },
-  dataSchemeNationalId: {
-    id: 'example.application:dataSchema.national.id',
-    defaultMessage: 'Kennitala þarf að vera gild.',
-    description: 'Error message when the kennitala is invalid.',
   },
 })
