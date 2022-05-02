@@ -56,7 +56,7 @@ export const Applications: FC = () => {
     variables: {
       input: { typeId: type },
     },
-    skip: !type,
+    skip: !type && !delegationsChecked,
   })
 
   const [createApplicationMutation, { error: createError }] = useMutation(
