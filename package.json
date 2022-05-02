@@ -198,7 +198,7 @@
     "next-cookies": "2.0.3",
     "node-fetch": "2.6.7",
     "nodemailer": "6.7.2",
-    "oidc-client": "1.10.1",
+    "oidc-client-ts": "2.0.3",
     "openapi3-ts": "2.0.0",
     "opossum": "6.1.0",
     "passport": "0.4.1",
