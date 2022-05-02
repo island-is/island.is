@@ -8,17 +8,20 @@ import {
 } from '@island.is/financial-aid/shared/lib'
 import TaxBreakdownHeadline from './TaxBreakdownHeadline'
 import groupBy from 'lodash/groupBy'
+import { directTaxPaymentModal } from '../../lib/messages'
+
 interface Dictionary<T> {
   [index: string]: T
 }
 
 import * as styles from './TaxBreakdown.css'
+import { useIntl } from 'react-intl'
 
 export const taxBreakDownHeaders = [
-  'Fyrirtæki',
-  'Heildarlaun',
-  'Persónuafsláttur',
-  'Staðgreiðsla',
+  directTaxPaymentModal.taxBreakdown.company,
+  directTaxPaymentModal.taxBreakdown.totalSalary,
+  directTaxPaymentModal.taxBreakdown.personalAllowance,
+  directTaxPaymentModal.taxBreakdown.withheldAtSource,
 ]
 
 interface Props {
@@ -27,6 +30,8 @@ interface Props {
 }
 
 const TaxBreakdown = ({ items, dateDataWasFetched }: Props) => {
+  const { formatMessage } = useIntl()
+
   const date = dateDataWasFetched ? new Date(dateDataWasFetched) : new Date()
 
   const isKeyInArray = (
@@ -61,11 +66,11 @@ const TaxBreakdown = ({ items, dateDataWasFetched }: Props) => {
     <table className={styles.tableContainer}>
       <thead>
         <tr className={styles.tableHeaders}>
-          {taxBreakDownHeaders.map((head) => {
+          {taxBreakDownHeaders.map((head, index) => {
             return (
-              <th key={head}>
+              <th key={'headers-' + index}>
                 <Text variant="small" fontWeight="semiBold">
-                  {head}
+                  {formatMessage(head)}
                 </Text>
               </th>
             )
@@ -100,7 +105,11 @@ const TaxBreakdown = ({ items, dateDataWasFetched }: Props) => {
                       ]}
                     />
                   ) : (
-                    <TaxBreakdownItem items={['Engin staðgreiðsla']} />
+                    <TaxBreakdownItem
+                      items={[
+                        formatMessage(directTaxPaymentModal.taxBreakdown.empty),
+                      ]}
+                    />
                   ),
                 )}
               </>
