@@ -191,6 +191,8 @@ export class AuthController {
         jwtToken = this.sharedAuthService.signJwt(defender, csrfToken)
         redirectRoute = requestedRedirectRoute
       }
+    } else {
+      return undefined
     }
 
     return { userId, jwtToken, redirectRoute }
@@ -202,17 +204,19 @@ export class AuthController {
     requestedRedirectRoute: string,
     csrfToken?: string,
   ) {
-    const { userId, jwtToken, redirectRoute } = await this.authorizeUser(
+    const authorization = await this.authorizeUser(
       authUser,
       csrfToken,
       requestedRedirectRoute,
     )
 
-    if (!userId || !jwtToken || !redirectRoute) {
+    if (!authorization) {
       this.logger.error('Blocking login attempt from an unauthorized user')
 
       return res.redirect('/?villa=innskraning-ekki-notandi')
     }
+
+    const { userId, jwtToken, redirectRoute } = authorization
 
     this.auditTrailService.audit(
       userId,
