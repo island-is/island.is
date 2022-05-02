@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { config, endpoints } from './config'
+import { config, boostChatPanelEndpoints } from './config'
 import { useWindowSize } from 'react-use'
 import { ChatBubble } from '../ChatBubble'
 import { BoostChatPanelProps } from '../types'
@@ -35,19 +35,22 @@ export const BoostChatPanel: React.FC<BoostChatPanelProps> = ({
                 ...config.chatPanel.styling.settings,
                 conversationId:
                   window.sessionStorage.getItem(
-                    endpoints[endpoint].conversationKey,
+                    boostChatPanelEndpoints[endpoint].conversationKey,
                   ) ?? null,
               },
             },
           },
         }
 
-        window.boost = window.boostInit(endpoints[endpoint].id, settings)
+        window.boost = window.boostInit(
+          boostChatPanelEndpoints[endpoint].id,
+          settings,
+        )
         window.boostEndpoint = endpoint
 
         const onConversationIdChanged = (e) => {
           window.sessionStorage.setItem(
-            endpoints[endpoint].conversationKey,
+            boostChatPanelEndpoints[endpoint].conversationKey,
             e.detail.conversationId,
           )
         }
@@ -60,7 +63,7 @@ export const BoostChatPanel: React.FC<BoostChatPanelProps> = ({
         setShowButton(true)
       })
 
-      el.src = endpoints[endpoint].url
+      el.src = boostChatPanelEndpoints[endpoint].url
       el.id = 'boost-script'
       document.body.appendChild(el)
     }
