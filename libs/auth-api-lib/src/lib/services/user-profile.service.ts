@@ -3,25 +3,39 @@ import { Inject, Injectable } from '@nestjs/common'
 import type { Auth, User } from '@island.is/auth-nest-tools'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import {
-  NationalRegistryClientService,
   AddressDto as NationalRegistryAddress,
+  NationalRegistryClientService,
 } from '@island.is/clients/national-registry-v2'
-import { GetCompanyApi } from '@island.is/clients/rsk/company-registry'
+import { CompanyRegistryClientService } from '@island.is/clients/rsk/company-registry'
 import { UserProfileApi } from '@island.is/clients/user-profile'
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { UserProfileDTO } from '../entities/dto/user-profile.dto'
 import type { GenderValue } from '../entities/dto/user-profile.dto'
+import { UserProfileDTO } from '../entities/dto/user-profile.dto'
 import { AddressDTO } from '../entities/dto/address.dto'
 import { FetchError } from '@island.is/clients/middlewares'
 
+interface Address extends NationalRegistryAddress {
+  country?: string
+}
+
+// REMOVE this after upgrading to TypeScript 4.5
+type CountryFormatter = { of: (countryCode: string) => string }
+
 @Injectable()
 export class UserProfileService {
+  // REMOVE these ignores after upgrading to TypeScript 4.5
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  countryFormatter: CountryFormatter = new Intl.DisplayNames(['is', 'en'], {
+    type: 'region',
+  })
+
   constructor(
     private individualClient: NationalRegistryClientService,
     private userProfileApi: UserProfileApi,
-    private companyRegistryApi: GetCompanyApi,
+    private companyRegistryApi: CompanyRegistryClientService,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
@@ -68,13 +82,24 @@ export class UserProfileService {
   private async getClaimsFromCompanyRegistry(
     auth: User,
   ): Promise<UserProfileDTO> {
-    const companyInfo = await this.companyRegistryApi.getCompany({
-      nationalId: auth.nationalId,
-    })
+    const companyInfo = await this.companyRegistryApi.getCompany(
+      auth.nationalId,
+    )
 
-    // TODO: Add address and domicile claims when company registry integration has been fixed.
+    if (!companyInfo) {
+      return {}
+    }
+
+    const legalDomicile = this.formatAddress(
+      companyInfo.legalDomicile ?? null,
+      true,
+    )
+    const address =
+      this.formatAddress(companyInfo.address ?? null, true) ?? legalDomicile
     return {
-      name: companyInfo.nafn,
+      name: companyInfo.name,
+      address,
+      legalDomicile,
     }
   }
 
@@ -119,45 +144,56 @@ export class UserProfileService {
   }
 
   private formatAddress(
-    address: NationalRegistryAddress | null,
+    address: Address | null,
+    hasCountryCode = false,
   ): AddressDTO | undefined {
     if (!address) {
       return undefined
     }
 
+    // When individuals live abroad, the national registry stores the country name under "heiti" or streetAddress.
     const likelyForeign =
       address.streetAddress != null &&
       address.locality == null &&
       address.postalCode == null &&
       address.municipalityNumber == null
     if (likelyForeign) {
-      // When individuals live abroad, the national registry stores the country name under "heiti".
       return {
         country: address.streetAddress,
       }
     }
 
+    const country = this.formatCountry(address.country, hasCountryCode)
     return {
-      formatted: this.formattedAddressString(address),
+      formatted: this.formattedAddressString(address, country),
       streetAddress: address.streetAddress ?? undefined,
       locality: address.locality ?? undefined,
       postalCode: address.postalCode ?? undefined,
+      country,
     }
   }
 
   private formattedAddressString(
-    address: NationalRegistryAddress,
+    address: Address,
+    country: string,
   ): string | undefined {
-    const icelandicAddress =
-      address.streetAddress &&
-      address.locality &&
-      address.postalCode &&
-      address.municipalityNumber
+    const validAddress =
+      address.streetAddress && address.locality && address.postalCode
 
-    if (icelandicAddress) {
-      return `${address.streetAddress}\n${address.postalCode} ${address.locality}\nÍsland`
+    if (validAddress) {
+      return `${address.streetAddress}\n${address.postalCode} ${address.locality}\n${country}`
     }
     return undefined
+  }
+
+  private formatCountry(
+    country: string | undefined,
+    hasCountryCode: boolean,
+  ): string {
+    if (country && hasCountryCode) {
+      return this.countryFormatter.of(country)
+    }
+    return country ?? 'Ísland'
   }
 
   private formatBirthdate(date?: Date): string | undefined {

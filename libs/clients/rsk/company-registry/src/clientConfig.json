@@ -12,7 +12,7 @@
     }
   ],
   "paths": {
-    "/v1/ft/search/{search_string}": {
+    "/search/{search_string}": {
       "get": {
         "description": "Search Company Registry with search string. If left null then shows 100 newest entries.",
         "parameters": [
@@ -75,7 +75,7 @@
         }
       }
     },
-    "/v1/ft/{ssid}": {
+    "/{ssid}": {
       "get": {
         "description": "Information about company",
         "parameters": [
@@ -124,7 +124,7 @@
         }
       }
     },
-    "/v1/ft/": {
+    "/": {
       "get": {
         "description": "Service Information.",
         "responses": {
@@ -296,30 +296,38 @@
       "heimilisfang_item": {
         "type": "object",
         "required": [
-          "heimilisfang1",
-          "heimilisfang2",
+          "gerd",
+          "heimilisfang",
           "postnumer",
-          "sveitarfelag",
-          "sveitarfelagsnumer",
-          "land"
+          "stadur",
+          "sveitarfelaganumer",
+          "land",
+          "er_postholf",
+          "byggd"
         ],
         "properties": {
-          "heimilisfang1": {
+          "gerd": {
             "type": "string"
           },
-          "heimilisfang2": {
+          "heimilisfang": {
             "type": "string"
           },
           "postnumer": {
             "type": "string"
           },
-          "sveitarfelag": {
+          "stadur": {
             "type": "string"
           },
-          "sveitarfelagsnumer": {
+          "sveitarfelaganumer": {
             "type": "string"
           },
           "land": {
+            "type": "string"
+          },
+          "er_postholf": {
+            "type": "string"
+          },
+          "byggd": {
             "type": "string"
           }
         }
