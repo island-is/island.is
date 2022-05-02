@@ -9,6 +9,7 @@ import { ApplicationState } from '@island.is/financial-aid/shared/lib'
 
 import * as styles from './Timeline.css'
 import { timeline } from '../../../lib/messages'
+import { timelineSections } from '../../../lib/formatters'
 
 interface Props {
   state: ApplicationState
@@ -20,35 +21,7 @@ interface Props {
 const Timeline = ({ state, modified, created, showSpouseStep }: Props) => {
   const { formatMessage } = useIntl()
 
-  const sections = [
-    {
-      name: formatMessage(timeline.receivedTitle),
-      text: formatMessage(timeline.receivedDescription),
-      state: [ApplicationState.NEW],
-      date: format(new Date(created), 'dd/MM/yyyy HH:mm'),
-    },
-    {
-      name: formatMessage(timeline.inProgressTitle),
-      text: formatMessage(timeline.inProgressDescription),
-      state: [ApplicationState.INPROGRESS, ApplicationState.DATANEEDED],
-      date: format(new Date(modified), 'dd/MM/yyyy HH:mm'),
-    },
-    {
-      name: formatMessage(timeline.resultsTitle),
-      text: formatMessage(timeline.resultsDescription),
-      state: [ApplicationState.REJECTED, ApplicationState.APPROVED],
-      date: format(new Date(modified), 'dd/MM/yyyy HH:mm'),
-    },
-  ]
-
-  if (showSpouseStep) {
-    sections.splice(1, 0, {
-      name: formatMessage(timeline.spouseTitle),
-      text: formatMessage(timeline.spouseDescription),
-      state: [ApplicationState.NEW],
-      date: format(new Date(created), 'dd/MM/yyyy HH:mm'),
-    })
-  }
+  const sections = timelineSections(created, modified, showSpouseStep)
 
   const [activeState] = useState(
     findLastIndex(sections, (el) => el.state.includes(state)),
