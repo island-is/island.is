@@ -27,7 +27,7 @@ describe(`${RECEPTION_AND_ASSIGNMENT_ROUTE}/:id`, () => {
     cy.getByTestid('courtCaseNumber').click().blur()
     cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
     cy.getByTestid('courtCaseNumber').type('R-X/2021')
-    cy.getByTestid('inputErrorMessage').should('exits')
+    cy.getByTestid('inputErrorMessage').should('be.visible')
 
     cy.getByTestid('courtCaseNumber').clear().type('R-1/2021')
     cy.getByTestid('inputErrorMessage').should('not.exist')
