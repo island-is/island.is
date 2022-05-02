@@ -30,10 +30,10 @@ export const Application: Form = buildForm({
           checkboxLabel: m.dataCollectionCheckboxLabel,
           dataProviders: [
             buildDataProviderItem({
-              id: 'sampleData',
-              type: 'SampleDataProvider',
-              title: '',
-              subTitle: m.fundInfo,
+              id: 'nationalRegistry',
+              type: 'NationalRegistryProvider',
+              title: m.dataCollectionNationalRegistryTitle,
+              subTitle: m.dataCollectionNationalRegistrySubtitle,
             }),
           ],
         }),
