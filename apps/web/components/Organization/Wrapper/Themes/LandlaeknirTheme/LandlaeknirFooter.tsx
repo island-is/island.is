@@ -28,7 +28,7 @@ export const LandLaeknirFooter = ({
           <GridRow>
             <img
               src="/assets/landlaeknir_heilbrigdisraduneytid.png"
-              alt="landlaeknir-logo"
+              alt="landlaeknirLogo"
             />
           </GridRow>
           <GridRow></GridRow>
