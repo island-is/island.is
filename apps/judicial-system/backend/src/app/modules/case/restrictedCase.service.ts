@@ -1,8 +1,7 @@
 import { Op } from 'sequelize'
-import { Sequelize } from 'sequelize-typescript'
 
 import { Injectable, NotFoundException } from '@nestjs/common'
-import { InjectConnection, InjectModel } from '@nestjs/sequelize'
+import { InjectModel } from '@nestjs/sequelize'
 
 import { CaseState, UserRole } from '@island.is/judicial-system/types'
 
@@ -44,10 +43,7 @@ const attributes: (keyof Case)[] = [
 
 @Injectable()
 export class RestrictedCaseService {
-  constructor(
-    @InjectConnection() private readonly sequelize: Sequelize,
-    @InjectModel(Case) private readonly caseModel: typeof Case,
-  ) {}
+  constructor(@InjectModel(Case) private readonly caseModel: typeof Case) {}
 
   async findById(caseId: string): Promise<Case> {
     const theCase = await this.caseModel.findOne({
@@ -98,10 +94,7 @@ export class RestrictedCaseService {
     return theCase
   }
 
-  async findDefenderNationalId(
-    theCase: Case,
-    nationalId: string,
-  ): Promise<User> {
+  findDefenderNationalId(theCase: Case, nationalId: string): User {
     if (theCase.defenderNationalId !== nationalId) {
       throw new NotFoundException('Defendant not found')
     }

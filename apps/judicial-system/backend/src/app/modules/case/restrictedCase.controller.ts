@@ -25,7 +25,6 @@ import type { User as TUser } from '@island.is/judicial-system/types'
 
 import { defenderRule } from '../../guards'
 import { User } from '../user'
-import { CaseExistsGuard } from './guards/caseExists.guard'
 import { RestrictedCaseExistsGuard } from './guards/restrictedCaseExists.guard'
 import { CaseCompletedGuard } from './guards/caseCompleted.guard'
 import { CaseDefenderGuard } from './guards/caseDefender.guard'
@@ -62,17 +61,17 @@ export class RestrictedCaseController {
     return theCase
   }
 
-  @UseGuards(TokenGuard, CaseExistsGuard)
+  @UseGuards(TokenGuard, RestrictedCaseExistsGuard)
   @Get('defender/restricted')
   @ApiOkResponse({
     type: User,
     description: 'Gets a case defender by national id',
   })
-  findDefenderNationalId(
+  findDefenderByNationalId(
     @Param('caseId') caseId: string,
     @CurrentCase() theCase: Case,
     @Query('nationalId') nationalId: string,
-  ): Promise<User> {
+  ): User {
     this.logger.debug(`Getting a defender by national id from case ${caseId}`)
 
     return this.restrictedCaseService.findDefenderNationalId(
