@@ -58,7 +58,7 @@ const template: ApplicationTemplate<
                 })
               },
               write: 'all',
-              delete: true
+              delete: true,
             },
           ],
         },
@@ -88,7 +88,7 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
-              delete: true
+              delete: true,
             },
           ],
         },
