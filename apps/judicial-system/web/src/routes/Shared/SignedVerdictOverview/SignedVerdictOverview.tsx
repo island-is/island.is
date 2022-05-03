@@ -280,6 +280,7 @@ export const SignedVerdictOverview: React.FC = () => {
       modification = formatMessage(
         m.sections.modifyDatesModal.validToDateAndIsolationToDateAreTheSame,
         {
+          caseType: workingCase.type,
           date: `${formatDate(modifiedValidToDate?.value, 'PPPP')?.replace(
             'dagur,',
             'dagsins',
@@ -294,6 +295,7 @@ export const SignedVerdictOverview: React.FC = () => {
         modification = formatMessage(
           m.sections.modifyDatesModal.validToDateChanged,
           {
+            caseType: workingCase.type,
             date: `${formatDate(modifiedValidToDate?.value, 'PPPP')?.replace(
               'dagur,',
               'dagsins',
