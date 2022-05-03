@@ -18,7 +18,7 @@
     "@fluffy-spoon/substitute": "^1.208.0",
     "@octokit/rest": "18.12.0",
     "@types/debug": "4.1.7",
-    "@types/jest": "^27.4.1",
+    "@types/jest": "^27.5.0",
     "@vercel/ncc": "^0.33.4",
     "debug": "4.3.4",
     "esbuild-runner": "2.2.1",
