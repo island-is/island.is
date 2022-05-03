@@ -43,7 +43,9 @@ const SchoolConfirmed: FC<FieldBaseProps> = ({ application }) => {
         <GridColumn span={['12/12', '4/12']} paddingBottom={[3, 0]}>
           <Text variant="h4">{formatMessage(m.confirmation)}</Text>
           <Text variant="default">
-            {formatMessage(m.school) + (answers.confirmation as any)?.school}
+            {formatMessage(m.school) +
+              ' ' +
+              (answers.confirmation as any)?.school}
           </Text>
         </GridColumn>
       </GridRow>
