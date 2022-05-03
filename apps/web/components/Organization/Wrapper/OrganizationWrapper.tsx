@@ -211,6 +211,8 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
           footerItems={organization.footerItems}
           phone={organization.phone}
           email={organization.email}
+          phoneLabel={n('telephone', 'Sími')}
+          emailLabel={n('email,', 'Tölvupóstur')}
         />
       )
   }
