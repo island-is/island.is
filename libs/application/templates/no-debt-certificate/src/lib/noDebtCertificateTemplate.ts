@@ -10,7 +10,6 @@ import {
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
 import * as z from 'zod'
-import { ApiActions } from '../shared'
 import { m } from './messages'
 
 const NoDebtCertificateSchema = z.object({

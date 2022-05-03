@@ -50,7 +50,7 @@ export class DebtLessCertificateResult {
 
 @ObjectType()
 export class DebtLessCertificateModel {
-  @Field(() => DebtLessCertificateResult, { nullable: true})
+  @Field(() => DebtLessCertificateResult, { nullable: true })
   debtLessCertificateResult?: DebtLessCertificateResult
 
   @Field(() => DebtLessCertificateError, { nullable: true })

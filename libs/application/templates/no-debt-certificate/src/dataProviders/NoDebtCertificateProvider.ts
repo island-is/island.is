@@ -4,14 +4,13 @@ import {
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
 } from '@island.is/application/core'
-import { info } from 'kennitala'
 import { m } from '../lib/messages'
 import { MessageDescriptor } from '@formatjs/intl'
 
 export class NoDebtCertificateProvider extends BasicDataProvider {
   type = 'NoDebtCertificateProvider'
 
-  async provide(application: Application): Promise<unknown> {
+  async provide(): Promise<unknown> {
     const query = `
     query GetDebtLessCertificate {
         getDebtLessCertificate {

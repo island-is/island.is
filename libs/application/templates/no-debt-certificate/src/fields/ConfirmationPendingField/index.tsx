@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useState } from 'react'
 import { useMutation } from '@apollo/client'
 import { FieldBaseProps, DefaultEvents } from '@island.is/application/core'
 import { Box, LoadingDots } from '@island.is/island-ui/core'
@@ -6,7 +6,6 @@ import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 
 export const ConfirmationPendingField: FC<FieldBaseProps> = ({
   application,
-  field,
   refetch,
 }) => {
   const applicationId = application.id
@@ -29,16 +28,14 @@ export const ConfirmationPendingField: FC<FieldBaseProps> = ({
             answers: application.answers,
           },
         },
+      }).then(({ data, errors } = {}) => {
+        if (data && !errors?.length) {
+          // Takes them to the next state (which loads the relevant form)
+          refetch?.()
+        } else {
+          return Promise.reject()
+        }
       })
-        .then(({ data, errors } = {}) => {
-          if (data && !errors?.length) {
-            // Takes them to the next state (which loads the relevant form)
-            refetch?.()
-          } else {
-            return Promise.reject()
-          }
-        })
-        .catch(() => {})
     }
   }
 
