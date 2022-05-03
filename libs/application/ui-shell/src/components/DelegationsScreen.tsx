@@ -17,33 +17,15 @@ import {
 } from '@island.is/application/core'
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
 import { LoadingShell } from './LoadingShell'
-import { ErrorShell } from './ErrorShell'
 import { format as formatKennitala } from 'kennitala'
 import { useLocale } from '@island.is/localization'
 import { useHistory } from 'react-router-dom'
+import { ScreenType, DelegationsScreenDataType, Delegation } from '../types'
 
-type Delegation = {
-  type: string
-  from: {
-    nationalId: string
-    name: string
-  }
-}
 interface DelegationsScreenProps {
   alternativeSubjects?: { nationalId: string }[]
   checkDelegation: Dispatch<SetStateAction<boolean>>
   slug: string
-}
-enum SCREEN_TYPE {
-  NEW,
-  ON_GOING,
-  NOT_SUPPORTED,
-  LOADING,
-}
-type DelegationsScreenDataType = {
-  screenType: SCREEN_TYPE
-  allowedDelegations?: string[]
-  authDelegations?: Delegation[]
 }
 
 export const DelegationsScreen = ({
@@ -52,33 +34,32 @@ export const DelegationsScreen = ({
   checkDelegation,
 }: DelegationsScreenProps) => {
   const [screenData, setScreenData] = useState<DelegationsScreenDataType>({
-    screenType: SCREEN_TYPE.LOADING,
+    screenType: ScreenType.LOADING,
   })
-
   const { formatMessage } = useLocale()
   const type = getTypeFromSlug(slug)
   const { switchUser, userInfo: user } = useAuth()
   const history = useHistory()
 
   // Check for user delegations if application supports delegations
-  const { data: delegations, loading } = useQuery(ACTOR_DELEGATIONS, {
+  const { data: delegations } = useQuery(ACTOR_DELEGATIONS, {
     skip: !alternativeSubjects && !screenData.allowedDelegations,
   })
 
-  // Does application support delegations
+  // Check whether application supports delegations
   useEffect(() => {
     async function applicationSupportsDelegations() {
       if (type) {
         const template = await getApplicationTemplateByTypeId(type)
         if (template.allowedDelegations) {
-          setScreenData({
-            ...screenData,
+          setScreenData((prev) => ({
+            ...prev,
             allowedDelegations: template.allowedDelegations,
-          })
+          }))
         } else {
           if (user?.profile.actor) {
             setScreenData({
-              screenType: SCREEN_TYPE.NOT_SUPPORTED,
+              screenType: ScreenType.NOT_SUPPORTED,
               authDelegations: [
                 {
                   type: 'user',
@@ -116,15 +97,15 @@ export const DelegationsScreen = ({
             (delegation: Delegation) =>
               subjects.includes(delegation.from.nationalId),
           )
-          setScreenData({
-            ...screenData,
-            screenType: SCREEN_TYPE.ON_GOING,
+          setScreenData((prev) => ({
+            ...prev,
+            screenType: ScreenType.ONGOING,
             authDelegations: [found],
-          })
+          }))
         } else {
-          setScreenData({
-            ...screenData,
-            screenType: SCREEN_TYPE.NEW,
+          setScreenData((prev) => ({
+            ...prev,
+            screenType: ScreenType.NEW,
             authDelegations: [
               {
                 type: 'user',
@@ -140,7 +121,7 @@ export const DelegationsScreen = ({
               },
               ...authActorDelegations,
             ],
-          })
+          }))
         }
       }
     }
@@ -149,10 +130,11 @@ export const DelegationsScreen = ({
     screenData.allowedDelegations,
     alternativeSubjects,
     checkDelegation,
+    user,
   ])
 
   const handleClick = (nationalId?: string) => {
-    if (screenData.screenType !== SCREEN_TYPE.ON_GOING) {
+    if (screenData.screenType !== ScreenType.ONGOING) {
       history.push('?delegationChecked=true')
     }
     if (nationalId) {
@@ -162,38 +144,42 @@ export const DelegationsScreen = ({
     }
   }
 
-  if (screenData.screenType === SCREEN_TYPE.LOADING) {
-    return <LoadingShell />
-  } else {
-    return (
-      <Page>
-        <GridContainer>
+  const screenTexts = {
+    title: formatMessage(
+      screenData.screenType === ScreenType.ONGOING
+        ? coreDelegationsMessages.delegationScreenTitleForOngoingApplication
+        : screenData.screenType === ScreenType.NEW
+        ? coreDelegationsMessages.delegationScreenTitle
+        : coreDelegationsMessages.delegationScreenTitleApplicationNoDelegationSupport,
+    ),
+    subtitle: formatMessage(
+      screenData.screenType === ScreenType.ONGOING
+        ? coreDelegationsMessages.delegationScreenSubtitleForOngoingApplication
+        : screenData.screenType === ScreenType.NEW
+        ? coreDelegationsMessages.delegationScreenSubtitle
+        : coreDelegationsMessages.delegationScreenSubtitleApplicationNoDelegationSupport,
+    ),
+    actionCardCtaLabel: formatMessage(
+      screenData.screenType === ScreenType.ONGOING
+        ? coreMessages.buttonNext
+        : screenData.screenType === ScreenType.NEW
+        ? coreDelegationsMessages.delegationActionCardButton
+        : coreDelegationsMessages.delegationErrorButton,
+    ),
+  }
+
+  return (
+    <Page>
+      <GridContainer>
+        {screenData.screenType === ScreenType.LOADING ? (
+          <LoadingShell />
+        ) : (
           <Box>
             <Box marginTop={5} marginBottom={5}>
               <Text marginBottom={2} variant="h1">
-                {screenData.screenType === SCREEN_TYPE.ON_GOING
-                  ? formatMessage(
-                      coreDelegationsMessages.delegationScreenTitleForOngoingApplication,
-                    )
-                  : screenData.screenType === SCREEN_TYPE.NEW
-                  ? formatMessage(coreDelegationsMessages.delegationScreenTitle)
-                  : formatMessage(
-                      coreDelegationsMessages.delegationScreenTitleApplicationNoDelegationSupport,
-                    )}
+                {screenTexts.title}
               </Text>
-              <Text>
-                {screenData.screenType === SCREEN_TYPE.ON_GOING
-                  ? formatMessage(
-                      coreDelegationsMessages.delegationScreenSubtitleForOngoingApplication,
-                    )
-                  : screenData.screenType === SCREEN_TYPE.NEW
-                  ? formatMessage(
-                      coreDelegationsMessages.delegationScreenSubtitle,
-                    )
-                  : formatMessage(
-                      coreDelegationsMessages.delegationScreenSubtitleApplicationNoDelegationSupport,
-                    )}
-              </Text>
+              <Text>{screenTexts.subtitle}</Text>
             </Box>
             <Stack space={2}>
               {screenData.authDelegations?.map((delegation: Delegation) => (
@@ -207,16 +193,7 @@ export const DelegationsScreen = ({
                     ) + formatKennitala(delegation.from.nationalId)
                   }
                   cta={{
-                    label:
-                      screenData.screenType === SCREEN_TYPE.ON_GOING
-                        ? formatMessage(coreMessages.buttonNext)
-                        : screenData.screenType === SCREEN_TYPE.NEW
-                        ? formatMessage(
-                            coreDelegationsMessages.delegationActionCardButton,
-                          )
-                        : formatMessage(
-                            coreDelegationsMessages.delegationErrorButton,
-                          ),
+                    label: screenTexts.actionCardCtaLabel,
                     variant: 'text',
                     size: 'medium',
                     onClick: () => handleClick(delegation.from.nationalId),
@@ -225,8 +202,8 @@ export const DelegationsScreen = ({
               ))}
             </Stack>
           </Box>
-        </GridContainer>
-      </Page>
-    )
-  }
+        )}
+      </GridContainer>
+    </Page>
+  )
 }
