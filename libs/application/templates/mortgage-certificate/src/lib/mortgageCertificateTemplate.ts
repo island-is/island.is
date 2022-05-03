@@ -12,6 +12,10 @@ import { Events, States, Roles, MCEvents } from './constants'
 import * as z from 'zod'
 import { ApiActions } from '../shared'
 import { m } from './messages'
+import {
+  existsAndKMarking,
+  exists,
+} from '../util/mortgageCertificateValidation'
 
 const MortgageCertificateSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -56,7 +60,7 @@ const template: ApplicationTemplate<
             whenToPrune: 24 * 3600 * 1000,
           },
           onExit: {
-            apiModuleAction: ApiActions.getPropertyDetails,
+            apiModuleAction: ApiActions.validateMortgageCertificate,
           },
           roles: [
             {
@@ -67,7 +71,7 @@ const template: ApplicationTemplate<
                 ),
               actions: [
                 {
-                  event: DefaultEvents.PAYMENT,
+                  event: DefaultEvents.SUBMIT,
                   name: 'Staðfesta',
                   type: 'primary',
                 },
@@ -77,9 +81,19 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.PAYMENT]: { target: States.PAYMENT_INFO },
-          [MCEvents.PENDING_REJECTED]: { target: States.PENDING_REJECTED },
-          [DefaultEvents.SUBMIT]: { target: States.PAYMENT_INFO },
+          [DefaultEvents.SUBMIT]: [
+            {
+              target: States.PAYMENT_INFO,
+              cond: existsAndKMarking,
+            },
+            {
+              target: States.PENDING_REJECTED,
+              cond: exists,
+            },
+            {
+              target: States.DRAFT,
+            },
+          ],
         },
       },
       [States.PENDING_REJECTED]: {
@@ -136,6 +150,9 @@ const template: ApplicationTemplate<
             // Applications that stay in this state for 3x30 days (approx. 3 months) will be pruned automatically
             whenToPrune: 3 * 30 * 24 * 3600 * 1000,
           },
+          onExit: {
+            apiModuleAction: ApiActions.validateMortgageCertificate,
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -145,7 +162,7 @@ const template: ApplicationTemplate<
                 ),
               actions: [
                 {
-                  event: DefaultEvents.PAYMENT,
+                  event: DefaultEvents.SUBMIT,
                   name: 'Staðfesta',
                   type: 'primary',
                 },
@@ -155,8 +172,15 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.PAYMENT]: { target: States.PAYMENT_INFO },
-          [DefaultEvents.SUBMIT]: { target: States.PAYMENT_INFO },
+          [DefaultEvents.SUBMIT]: [
+            {
+              target: States.PAYMENT_INFO,
+              cond: existsAndKMarking,
+            },
+            {
+              target: States.PENDING_REJECTED_TRY_AGAIN,
+            },
+          ],
         },
       },
       [States.PAYMENT_INFO]: {

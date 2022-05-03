@@ -1,143 +1,232 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { useQuery } from '@apollo/client'
 import { useAuth } from '@island.is/auth/react'
-import { APPLICANT_DELEGATIONS } from '@island.is/application/graphql'
+import { ACTOR_DELEGATIONS } from '@island.is/application/graphql'
 import {
   Text,
   Box,
   Page,
   ActionCard,
   GridContainer,
+  Stack,
 } from '@island.is/island-ui/core'
-import { coreDelegationsMessages } from '@island.is/application/core'
-import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
-import { ApplicationTypes } from '@island.is/application/core'
-import { LoadingShell } from './LoadingShell'
 import {
-  ActorValidationFailedProblem,
-  findProblemInApolloError,
-  ProblemType,
-} from '@island.is/shared/problem'
+  coreDelegationsMessages,
+  coreMessages,
+  getTypeFromSlug,
+} from '@island.is/application/core'
+import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
+import { LoadingShell } from './LoadingShell'
 import { ErrorShell } from './ErrorShell'
 import { format as formatKennitala } from 'kennitala'
 import { useLocale } from '@island.is/localization'
+import { useHistory } from 'react-router-dom'
 
 type Delegation = {
   type: string
-  nationalId: string
-  name: string
+  from: {
+    nationalId: string
+    name: string
+  }
 }
 interface DelegationsScreenProps {
-  type: ApplicationTypes
-  setDelegationsChecked: Dispatch<SetStateAction<boolean>>
-  applicationId: string
+  alternativeSubjects?: { nationalId: string }[]
+  checkDelegation: Dispatch<SetStateAction<boolean>>
+  slug: string
+}
+enum SCREEN_TYPE {
+  NEW,
+  ON_GOING,
+  NOT_SUPPORTED,
+  LOADING,
+}
+type DelegationsScreenDataType = {
+  screenType: SCREEN_TYPE
+  allowedDelegations?: string[]
+  authDelegations?: Delegation[]
 }
 
 export const DelegationsScreen = ({
-  type,
-  setDelegationsChecked,
-  applicationId,
+  slug,
+  alternativeSubjects,
+  checkDelegation,
 }: DelegationsScreenProps) => {
-  const [allowedDelegations, setAllowedDelegations] = useState<string[]>()
-  const [applicant, setApplicant] = useState<Delegation>()
+  const [screenData, setScreenData] = useState<DelegationsScreenDataType>({
+    screenType: SCREEN_TYPE.LOADING,
+  })
+
   const { formatMessage } = useLocale()
+  const type = getTypeFromSlug(slug)
+  const { switchUser, userInfo: user } = useAuth()
+  const history = useHistory()
 
-  const { switchUser } = useAuth()
+  // Check for user delegations if application supports delegations
+  const { data: delegations, loading } = useQuery(ACTOR_DELEGATIONS, {
+    skip: !alternativeSubjects && !screenData.allowedDelegations,
+  })
 
-  // Check if template supports delegations
+  // Does application support delegations
   useEffect(() => {
-    async function checkDelegations() {
-      const template = await getApplicationTemplateByTypeId(type)
-      if (template.allowedDelegations) {
-        setAllowedDelegations(template.allowedDelegations)
-      } else {
-        setDelegationsChecked(true)
+    async function applicationSupportsDelegations() {
+      if (type) {
+        const template = await getApplicationTemplateByTypeId(type)
+        if (template.allowedDelegations) {
+          setScreenData({
+            ...screenData,
+            allowedDelegations: template.allowedDelegations,
+          })
+        } else {
+          if (user?.profile.actor) {
+            setScreenData({
+              screenType: SCREEN_TYPE.NOT_SUPPORTED,
+              authDelegations: [
+                {
+                  type: 'user',
+                  from: {
+                    nationalId: user.profile.actor.nationalId,
+                    name: user.profile.actor.name,
+                  },
+                },
+              ],
+            })
+          } else {
+            checkDelegation(true)
+          }
+        }
       }
     }
-    checkDelegations()
-  }, [type])
+    applicationSupportsDelegations()
+  }, [type, user?.profile.actor, switchUser, checkDelegation])
 
-  // Only check if user has delegations if the template supports delegations
-  const { error: delegationCheckError, loading } = useQuery(
-    APPLICANT_DELEGATIONS,
-    {
-      variables: {
-        input: {
-          id: applicationId,
-        },
-      },
-      // Setting this so that refetch causes a re-render
-      // https://github.com/apollographql/react-apollo/issues/321#issuecomment-599087392
-      // We want to refetch after setting the application back to 'draft', so that
-      // it loads the correct form for the 'draft' state.
-      skip: !applicationId,
-    },
-  )
-  // Check if user has the delegations of the delegation types the application supports
+  // Check if user has delegations of the delegation types the application supports
   useEffect(() => {
-    const foundError = findProblemInApolloError(delegationCheckError as any, [
-      ProblemType.ACTOR_VALIDATION_FAILED,
-    ])
-    if (
-      allowedDelegations &&
-      foundError?.type === ProblemType.ACTOR_VALIDATION_FAILED
-    ) {
-      const problem: ActorValidationFailedProblem = foundError
-
-      // Does the actor have delegation for the applicant of the application
-      const found = problem.fields.delegations.find(
+    if (delegations && !!screenData.allowedDelegations && user) {
+      const authActorDelegations: Delegation[] = delegations.authActorDelegations.filter(
         (delegation: Delegation) =>
-          delegation.nationalId === problem.fields.delegatedUser &&
-          (allowedDelegations.includes(delegation.type) ||
-            delegation.type === 'ACTOR'),
+          screenData.allowedDelegations?.includes(delegation.type),
       )
-
-      if (!found) setDelegationsChecked(true)
-      setApplicant(found)
+      if (authActorDelegations.length <= 0) {
+        checkDelegation(true)
+      } else {
+        if (alternativeSubjects) {
+          const subjects: string[] = alternativeSubjects.map(
+            (subject) => subject.nationalId,
+          )
+          const found: Delegation = delegations.authActorDelegations.find(
+            (delegation: Delegation) =>
+              subjects.includes(delegation.from.nationalId),
+          )
+          setScreenData({
+            ...screenData,
+            screenType: SCREEN_TYPE.ON_GOING,
+            authDelegations: [found],
+          })
+        } else {
+          setScreenData({
+            ...screenData,
+            screenType: SCREEN_TYPE.NEW,
+            authDelegations: [
+              {
+                type: 'user',
+                from: user.profile.actor
+                  ? {
+                      nationalId: user.profile.actor.nationalId,
+                      name: user.profile.actor.name,
+                    }
+                  : {
+                      nationalId: user.profile.nationalId,
+                      name: user.profile.name,
+                    },
+              },
+              ...authActorDelegations,
+            ],
+          })
+        }
+      }
     }
-  }, [allowedDelegations, delegationCheckError])
+  }, [
+    delegations,
+    screenData.allowedDelegations,
+    alternativeSubjects,
+    checkDelegation,
+  ])
 
   const handleClick = (nationalId?: string) => {
-    if (nationalId) switchUser(nationalId)
-    else setDelegationsChecked(true)
+    if (screenData.screenType !== SCREEN_TYPE.ON_GOING) {
+      history.push('?delegationChecked=true')
+    }
+    if (nationalId) {
+      switchUser(nationalId)
+    } else {
+      checkDelegation(true)
+    }
   }
-  if (!loading && applicant) {
+
+  if (screenData.screenType === SCREEN_TYPE.LOADING) {
+    return <LoadingShell />
+  } else {
     return (
       <Page>
         <GridContainer>
           <Box>
             <Box marginTop={5} marginBottom={5}>
               <Text marginBottom={2} variant="h1">
-                {formatMessage(
-                  coreDelegationsMessages.delegationScreenTitleForOngoingApplication,
-                )}
+                {screenData.screenType === SCREEN_TYPE.ON_GOING
+                  ? formatMessage(
+                      coreDelegationsMessages.delegationScreenTitleForOngoingApplication,
+                    )
+                  : screenData.screenType === SCREEN_TYPE.NEW
+                  ? formatMessage(coreDelegationsMessages.delegationScreenTitle)
+                  : formatMessage(
+                      coreDelegationsMessages.delegationScreenTitleApplicationNoDelegationSupport,
+                    )}
               </Text>
               <Text>
-                {formatMessage(
-                  coreDelegationsMessages.delegationScreenSubtitleForOngoingApplication,
-                )}
+                {screenData.screenType === SCREEN_TYPE.ON_GOING
+                  ? formatMessage(
+                      coreDelegationsMessages.delegationScreenSubtitleForOngoingApplication,
+                    )
+                  : screenData.screenType === SCREEN_TYPE.NEW
+                  ? formatMessage(
+                      coreDelegationsMessages.delegationScreenSubtitle,
+                    )
+                  : formatMessage(
+                      coreDelegationsMessages.delegationScreenSubtitleApplicationNoDelegationSupport,
+                    )}
               </Text>
             </Box>
-
-            <ActionCard
-              avatar
-              heading={applicant.name}
-              text={'Kennitala: ' + formatKennitala(applicant.nationalId)}
-              cta={{
-                label: 'Halda áfram',
-                variant: 'text',
-                size: 'medium',
-                onClick: () => handleClick(applicant.nationalId),
-              }}
-            />
+            <Stack space={2}>
+              {screenData.authDelegations?.map((delegation: Delegation) => (
+                <ActionCard
+                  key={delegation.from.nationalId}
+                  avatar
+                  heading={delegation.from.name}
+                  text={
+                    formatMessage(
+                      coreDelegationsMessages.delegationScreenNationalId,
+                    ) + formatKennitala(delegation.from.nationalId)
+                  }
+                  cta={{
+                    label:
+                      screenData.screenType === SCREEN_TYPE.ON_GOING
+                        ? formatMessage(coreMessages.buttonNext)
+                        : screenData.screenType === SCREEN_TYPE.NEW
+                        ? formatMessage(
+                            coreDelegationsMessages.delegationActionCardButton,
+                          )
+                        : formatMessage(
+                            coreDelegationsMessages.delegationErrorButton,
+                          ),
+                    variant: 'text',
+                    size: 'medium',
+                    onClick: () => handleClick(delegation.from.nationalId),
+                  }}
+                />
+              ))}
+            </Stack>
           </Box>
         </GridContainer>
       </Page>
     )
   }
-  if (!loading && applicant) {
-    return <ErrorShell />
-  }
-
-  return <LoadingShell />
 }

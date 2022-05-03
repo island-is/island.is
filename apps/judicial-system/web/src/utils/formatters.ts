@@ -1,45 +1,9 @@
-import type { CaseTransition } from '@island.is/judicial-system/types'
 import formatISO from 'date-fns/formatISO'
 import setHours from 'date-fns/setHours'
 import setMinutes from 'date-fns/setMinutes'
 import setSeconds from 'date-fns/setSeconds'
 
 import { validate } from './validate'
-
-export const parseArray = (property: string, array: string[]) => {
-  try {
-    const json = JSON.parse(`{"${property}": [${array.map((a) => `"${a}"`)}]}`)
-    return json
-  } catch (e) {
-    return null
-  }
-}
-
-export const parseString = (
-  property: string,
-  value: string | Date | boolean,
-) => {
-  try {
-    const json = JSON.parse(`{"${property}": ${JSON.stringify(value)}}`)
-    return json
-  } catch (e) {
-    return null
-  }
-}
-
-export const parseTransition = (
-  modified: string,
-  transition: CaseTransition,
-) => {
-  try {
-    const json = JSON.parse(
-      `{"modified": "${modified}", "transition": "${transition}"}`,
-    )
-    return json
-  } catch (e) {
-    return null
-  }
-}
 
 export const parseTime = (date: string, time: string) => {
   const timeWithoutColon = time.replace(':', '')
@@ -68,24 +32,6 @@ export const parseTime = (date: string, time: string) => {
     return dateMinutes
   } else {
     return date.indexOf('T') > -1 ? date.substring(0, date.indexOf('T')) : date
-  }
-}
-
-export const parseNull = (property: string) => {
-  try {
-    const json = JSON.parse(`{"${property}": ${null}}`)
-    return json
-  } catch (e) {
-    return null
-  }
-}
-
-export const parseBoolean = (property: string, value: boolean) => {
-  try {
-    const json = JSON.parse(`{"${property}": ${value}}`)
-    return json
-  } catch (e) {
-    return null
   }
 }
 

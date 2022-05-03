@@ -41,11 +41,12 @@ export const ApplicationQuery = gql`
       state
       formComment
       spouseFormComment
+      municipalityCode
       studentCustom
       rejection
       staff {
         name
-        municipalityId
+        municipalityIds
         nationalId
       }
       applicationEvents {
@@ -69,6 +70,8 @@ export const ApplicationQuery = gql`
           amount
         }
       }
+      spouseHasFetchedDirectTaxPayment
+      hasFetchedDirectTaxPayment
       directTaxPayments {
         totalSalary
         payerNationalId
@@ -97,6 +100,25 @@ export const ApplicationSearchQuery = gql`
   }
 `
 
+export const ApplicationFilterQuery = gql`
+  query ApplicationFilterQuery($input: FilterApplicationsInput!) {
+    filterApplications(input: $input) {
+      applications {
+        id
+        nationalId
+        name
+        state
+        modified
+        created
+        staff {
+          name
+        }
+      }
+      totalCount
+    }
+  }
+`
+
 export const UpdateApplicationTableMutation = gql`
   mutation UpdateApplicationTableMutation(
     $input: UpdateApplicationInputTable!
@@ -113,7 +135,7 @@ export const UpdateApplicationTableMutation = gql`
         state
         staff {
           name
-          municipalityId
+          municipalityIds
         }
       }
       filters {
@@ -195,7 +217,7 @@ export const ApplicationEventMutation = gql`
       rejection
       staff {
         name
-        municipalityId
+        municipalityIds
       }
       applicationEvents {
         id
@@ -206,6 +228,8 @@ export const ApplicationEventMutation = gql`
         staffNationalId
         staffName
       }
+      spouseHasFetchedDirectTaxPayment
+      hasFetchedDirectTaxPayment
       directTaxPayments {
         totalSalary
         payerNationalId
@@ -229,12 +253,11 @@ export const CurrentUserQuery = gql`
         id
         nationalId
         name
-        municipalityId
+        municipalityIds
         phoneNumber
         roles
         active
         nickname
-        municipalityHomepage
         email
         usePseudoName
       }
@@ -268,6 +291,7 @@ export const UpdateApplicationMutation = gql`
       spouseName
       spouseEmail
       spousePhoneNumber
+      municipalityCode
       city
       streetName
       postalCode
@@ -295,9 +319,11 @@ export const UpdateApplicationMutation = gql`
       }
       staff {
         name
-        municipalityId
+        municipalityIds
         nationalId
       }
+      spouseHasFetchedDirectTaxPayment
+      hasFetchedDirectTaxPayment
       directTaxPayments {
         totalSalary
         payerNationalId
@@ -345,6 +371,7 @@ export const StaffQuery = gql`
       active
       nickname
       email
+      municipalityIds
     }
   }
 `
@@ -370,6 +397,7 @@ export const MunicipalityMutation = gql`
   mutation MunicipalityMutation($input: CreateMunicipalityInput!) {
     createMunicipality(input: $input) {
       id
+      municipalityId
     }
   }
 `
@@ -411,12 +439,11 @@ export const UpdateStaffMutation = gql`
       id
       nationalId
       name
-      municipalityId
+      municipalityIds
       phoneNumber
       roles
       active
       nickname
-      municipalityHomepage
       email
       usePseudoName
     }
@@ -451,6 +478,11 @@ export const MunicipalityQuery = gql`
         email
         active
         id
+      }
+      allAdminUsers {
+        name
+        id
+        municipalityIds
       }
       individualAid {
         ownPlace
@@ -489,6 +521,16 @@ export const AdminUsersQuery = gql`
   }
 `
 
+export const AllAdminsQuery = gql`
+  query allAdminsQuery {
+    admins {
+      id
+      name
+      municipalityIds
+    }
+  }
+`
+
 export const SupervisorsQuery = gql`
   query supervisorsQuery {
     supervisors {
@@ -497,6 +539,15 @@ export const SupervisorsQuery = gql`
       name
       roles
       active
+    }
+  }
+`
+
+export const GetAllSignedUrlQuery = gql`
+  query GetAllSignedUrlQuery($input: GetSignedUrlForIdInput!) {
+    getSignedUrlForAllFilesId(input: $input) {
+      url
+      key
     }
   }
 `

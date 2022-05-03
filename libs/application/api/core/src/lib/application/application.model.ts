@@ -56,7 +56,7 @@ export class Application extends Model<Application> {
     type: DataType.ARRAY(DataType.STRING),
   })
   @ApiProperty()
-  actors!: string[]
+  applicantActors!: string[]
 
   @Column({
     type: DataType.STRING,
@@ -127,4 +127,10 @@ export class Application extends Model<Application> {
   })
   @ApiProperty()
   pruned!: boolean
+
+  @Column({
+    type: DataType.ARRAY(DataType.STRING),
+  })
+  @ApiProperty()
+  assignNonces!: string[]
 }

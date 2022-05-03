@@ -1,9 +1,12 @@
-import React, { FC, Suspense, useCallback, useMemo } from 'react'
+import React, { FC, Suspense, useEffect, useMemo } from 'react'
+import { useLocation } from 'react-router-dom'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useStore } from '../../store/stateProvider'
 import {
   ServicePortalWidget,
   ServicePortalModule,
+  PlausiblePageviewDetail,
+  ServicePortalPath,
 } from '@island.is/service-portal/core'
 import WidgetLoading from './WidgetLoading/WidgetLoading'
 import { useModuleProps } from '../../hooks/useModuleProps/useModuleProps'
@@ -82,6 +85,11 @@ const WidgetLoader: FC<{
 export const Dashboard: FC<{}> = () => {
   const [{ modules, modulesPending }] = useStore()
   const { userInfo, client } = useModuleProps()
+  const location = useLocation()
+
+  useEffect(() => {
+    PlausiblePageviewDetail(ServicePortalPath.MinarSidurRoot)
+  }, [location])
 
   return (
     <Box>

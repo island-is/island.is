@@ -506,6 +506,45 @@ export interface IEmbeddedVideo extends Entry<IEmbeddedVideoFields> {
   }
 }
 
+export interface IEnhancedAssetFields {
+  /** Title */
+  title?: string | undefined
+
+  /** File */
+  file: Asset
+
+  /** Generic Tags */
+  genericTags?: IGenericTag[] | undefined
+
+  /** Release Date */
+  releaseDate?: string | undefined
+
+  /** Organization */
+  organization?: IOrganization | undefined
+
+  /** Description */
+  description?: string | undefined
+}
+
+/** An Asset that can be tagged with generic tags */
+
+export interface IEnhancedAsset extends Entry<IEnhancedAssetFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'enhancedAsset'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IErrorPageFields {
   /** Error Code */
   errorCode: string
@@ -897,6 +936,9 @@ export interface IGenericTagFields {
 
   /** Slug */
   slug: string
+
+  /** Generic Tag Group */
+  genericTagGroup?: IGenericTagGroup | undefined
 }
 
 /** A generic uniquely named tag that can be used for tag miscellaneous things. */
@@ -911,6 +953,33 @@ export interface IGenericTag extends Entry<IGenericTagFields> {
     contentType: {
       sys: {
         id: 'genericTag'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IGenericTagGroupFields {
+  /** Title */
+  title: string
+
+  /** Slug */
+  slug: string
+}
+
+/** A way to group together generic tags */
+
+export interface IGenericTagGroup extends Entry<IGenericTagGroupFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'genericTagGroup'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -1840,6 +1909,15 @@ export interface IOrganizationFields {
 
   /** Birta á þjónustuvef */
   serviceWebEnabled?: boolean | undefined
+
+  /** Namespace */
+  namespace?: IUiConfiguration | undefined
+
+  /** Service Web Featured Image */
+  serviceWebFeaturedImage?: Asset | undefined
+
+  /** Published Material Search Filter Generic Tags */
+  publishedMaterialSearchFilterGenericTags?: IGenericTag[] | undefined
 }
 
 export interface IOrganization extends Entry<IOrganizationFields> {
@@ -1942,6 +2020,9 @@ export interface IOrganizationPageFields {
 
   /** Alert Banner */
   alertBanner?: IAlertBanner | undefined
+
+  /** Default Header Image */
+  defaultHeaderImage?: Asset | undefined
 }
 
 export interface IOrganizationPage extends Entry<IOrganizationPageFields> {
@@ -2120,6 +2201,7 @@ export interface IProcessEntryFields {
     | 'Digital w/login'
     | 'Not digital w/login'
     | 'No type'
+    | 'Application system'
 
   /** Process title */
   processTitle: string
@@ -2199,6 +2281,15 @@ export interface IProjectPageFields {
 
   /** Featured Image */
   featuredImage?: Asset | undefined
+
+  /** Default Header Image */
+  defaultHeaderImage?: Asset | undefined
+
+  /** Default Header Background Color */
+  defaultHeaderBackgroundColor?: string | undefined
+
+  /** Featured Description */
+  featuredDescription?: string | undefined
 }
 
 export interface IProjectPage extends Entry<IProjectPageFields> {
@@ -2771,6 +2862,12 @@ export interface ISupportQnaFields {
 
   /** Importance */
   importance?: number | undefined
+
+  /** Related links */
+  relatedLinks?: (ILink | ISupportQna)[] | undefined
+
+  /** Contact Link */
+  contactLink?: string | undefined
 }
 
 /** Helpdesk support questions and answer */
@@ -3427,6 +3524,7 @@ export type CONTENT_TYPE =
   | 'contactUs'
   | 'districts'
   | 'embeddedVideo'
+  | 'enhancedAsset'
   | 'errorPage'
   | 'eventSlice'
   | 'faqList'
@@ -3438,6 +3536,7 @@ export type CONTENT_TYPE =
   | 'genericOverviewPage'
   | 'genericPage'
   | 'genericTag'
+  | 'genericTagGroup'
   | 'graphCard'
   | 'groupedMenu'
   | 'iconBullet'

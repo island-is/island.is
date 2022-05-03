@@ -27,9 +27,9 @@ import {
   Inline,
 } from '@island.is/island-ui/core'
 import {
-  ChatPanel,
   HeadWithSocialSharing,
   Sticky,
+  BoostChatPanel,
 } from '@island.is/web/components'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { SyslumennHeader, SyslumennFooter } from './Themes/SyslumennTheme'
@@ -44,7 +44,8 @@ import {
   UtlendingastofnunHeader,
 } from './Themes/UtlendingastofnunTheme'
 import { endpoints as chatPanelEndpoints } from '../../ChatPanel/config'
-
+import MannaudstorgFooter from './Themes/MannaudstorgTheme/MannaudstorgFooter'
+import { useNamespace } from '@island.is/web/hooks'
 import * as styles from './OrganizationWrapper.css'
 
 interface NavigationData {
@@ -73,8 +74,8 @@ interface HeaderProps {
   organizationPage: OrganizationPage
 }
 
-export const lightThemes = ['digital_iceland', 'utlendingastofnun']
-export const footerEnabled = ['syslumenn']
+export const lightThemes = ['digital_iceland', 'utlendingastofnun', 'default']
+export const footerEnabled = ['syslumenn', 'mannaudstorg']
 
 export const getThemeConfig = (
   theme: string,
@@ -159,10 +160,14 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
   const organization = force
     ? organizations[0]
     : organizations.find((x) => footerEnabled.includes(x.slug))
+
+  const n = useNamespace(organization?.namespace)
+
   if (!organization) return null
 
   switch (organization.slug) {
     case 'syslumenn':
+    case 'district-commissioner':
       return (
         <SyslumennFooter
           title={organization.title}
@@ -171,6 +176,7 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
         />
       )
     case 'sjukratryggingar':
+    case 'icelandic-health-insurance':
       return (
         <SjukratryggingarFooter
           title={organization.title}
@@ -179,11 +185,22 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
         />
       )
     case 'utlendingastofnun':
+    case 'directorate-of-immigration':
       return (
         <UtlendingastofnunFooter
           title={organization.title}
           logo={organization.logo?.url}
           footerItems={organization.footerItems}
+        />
+      )
+    case 'mannaudstorg':
+      return (
+        <MannaudstorgFooter
+          title={organization.title}
+          logoSrc={organization.logo?.url}
+          phone={organization.phone}
+          contactLink={organization.link}
+          telephoneText={n('telephone', 'Sími')}
         />
       )
   }
@@ -209,7 +226,7 @@ export const OrganizationChatPanel = ({
   const slug = slugs.find((x) => chatEnabled.includes(x))
 
   return slug ? (
-    <ChatPanel
+    <BoostChatPanel
       endpoint={slug as keyof typeof chatPanelEndpoints}
       pushUp={pushUp}
     />

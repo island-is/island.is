@@ -11,6 +11,7 @@ import {
   IsObject,
   IsString,
   IsArray,
+  IsBoolean,
 } from 'class-validator'
 
 class ActionCardTag {
@@ -40,6 +41,11 @@ class ActionCardMetaData {
   @Expose()
   @IsObject()
   tag?: ActionCardTag
+
+  @ApiPropertyOptional()
+  @Expose()
+  @IsBoolean()
+  deleteButton?: boolean
 }
 
 export class ApplicationResponseDto {
@@ -71,7 +77,7 @@ export class ApplicationResponseDto {
   @ApiProperty()
   @Expose()
   @IsArray()
-  actors!: string[]
+  applicantActors!: string[]
 
   @ApiProperty()
   @Expose()

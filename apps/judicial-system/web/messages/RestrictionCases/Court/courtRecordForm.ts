@@ -2,6 +2,29 @@ import { defineMessages } from 'react-intl'
 
 export const rcCourtRecord = {
   sections: {
+    courtDocuments: {
+      title: {
+        id:
+          'judicial.system.restriction_cases:court_record.court_documents.title',
+        defaultMessage: 'Dómskjöl',
+        description: 'Notaður sem titill fyrir "Dómskjöl" hlutan',
+      },
+      firstDocument: {
+        title: {
+          id:
+            'judicial.system.restriction_cases:court_record.court_documents.firstDocument.title',
+          defaultMessage: 'Krafa um {caseType}',
+          description:
+            'Notaður sem titill fyrir fyrsta dómskjal í dómskjala hlutaunum',
+        },
+        label: {
+          id:
+            'judicial.system.restriction_cases.court_record.court_documents.firstDocument.label',
+          defaultMessage: 'Rannsóknargögn málsins liggja frammi.',
+          description: 'Notaður sem text fyrir afan fyrsta þingskjal',
+        },
+      },
+    },
     sessionBookings: defineMessages({
       title: {
         id:
@@ -77,6 +100,14 @@ export const rcCourtRecord = {
           'judicial.system.restriction_cases:court_record.session_bookings.autofill_presentations#markdown',
         defaultMessage:
           'Sækjandi ítrekar kröfu um gæsluvarðhald, reifar og rökstyður kröfuna og leggur málið í úrskurð með venjulegum fyrirvara.\n\nVerjandi {accused} ítrekar mótmæli hans, krefst þess að kröfunni verði hafnað, til vara að {accused} verði gert að sæta farbanni í stað gæsluvarðhalds, en til þrautavara að gæsluvarðhaldi verði markaður skemmri tími en krafist er og að {accused} verði ekki gert að sæta einangrun á meðan á gæsluvarðhaldi stendur. Verjandinn reifar og rökstyður mótmælin og leggur málið í úrskurð með venjulegum fyrirvara.',
+        description:
+          'Sjálfgefinn texti í "Afstaða varnaraðila, málflutningur og aðrar bókanir" textaboxi á þingbókar skrefi í gæsluvarðhaldsmálum.',
+      },
+      autofillPresentationsV2: {
+        id:
+          'judicial.system.restriction_cases:court_record.session_bookings.autofill_presentations_v2#markdown',
+        defaultMessage:
+          'Sækjandi ítrekar kröfu um {caseType, select, ADMISSION_TO_FACILITY {vistun á viðeigandi stofnun} other {gæsluvarðhald}}, reifar og rökstyður kröfuna og leggur málið í úrskurð með venjulegum fyrirvara.\n\nVerjandi {accused} ítrekar mótmæli hans, krefst þess að kröfunni verði hafnað, til vara að {accused} verði gert að sæta farbanni í stað {caseType, select, ADMISSION_TO_FACILITY {vistunar} other {gæsluvarðhalds}}, en til þrautavara að {caseType, select, ADMISSION_TO_FACILITY {vistun} other {gæsluvarðhaldi}} verði markaður skemmri tími en krafist er og að {accused} verði ekki gert að sæta einangrun á meðan á {caseType, select, ADMISSION_TO_FACILITY {vistun} other {gæsluvarðhaldi}} stendur. Verjandinn reifar og rökstyður mótmælin og leggur málið í úrskurð með venjulegum fyrirvara.',
         description:
           'Sjálfgefinn texti í "Afstaða varnaraðila, málflutningur og aðrar bókanir" textaboxi á þingbókar skrefi í gæsluvarðhaldsmálum.',
       },
@@ -243,6 +274,14 @@ export const rcCourtRecord = {
           'judicial.system.restriction_cases:court_record.custody_restrictions.disclaimer',
         defaultMessage:
           'Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt að bera atriði er lúta að framkvæmd {caseType} undir dómara.',
+        description:
+          'Notaður sem upplýsingatexti í upplýsingasvæði við "greinargerð um lagarök" titlinn á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+      disclaimerV2: {
+        id:
+          'judicial.system.restriction_cases:court_record.custody_restrictions.disclaimer_v2',
+        defaultMessage:
+          'Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt að bera atriði er lúta að framkvæmd {caseType, select, ADMISSION_TO_FACILITY {vistunarinnar á viðeigandi stofnun} TRAVEL_BAN {farbannsins} other {gæsluvarðhaldsins}} undir dómara.',
         description:
           'Notaður sem upplýsingatexti í upplýsingasvæði við "greinargerð um lagarök" titlinn á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },

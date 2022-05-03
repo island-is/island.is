@@ -74,3 +74,37 @@ Run `ng test application-templates-reference-template` to execute the unit tests
 ## Custom API functionality
 
 Should your template require custom API actions, like calling an external API or sending an email you should head over to `libs/application/template-api-modules/README.md`
+
+## Applications that support delegations
+
+Applications do not support user delegations by default, however it is simple to add this feature to your application type.
+
+When an application supports user delegations of a specific type then a user with actor delegations of the corresponding delegation type will be prompted to choose what user they are applying for before creating a new application. They can choose to switch to a subject from their actor delegations and the subject will be the applicant for a new application and the actor's national id will be stored in the applicantActors field on the application.
+
+If a user should open up a drafted application where the applicant is a user they have correct delegation for the user will be prompted to switch to the correct subject.
+
+If another user with the correct delegation rights for the applicant should update the application they will be added to the applicantActors list.
+
+Should your template require user delegation support you will need to configure the types of delegations that the application should support to the template:
+
+```ts
+import { DelegationType } from '@island.is/auth-api-lib'
+
+const ExampleApplicationTemplate: ApplicationTemplate<
+  ApplicationContext,
+  ApplicationStateSchema<ExampleTemplateEvent>,
+  ExampleTemplateEvent
+> = {
+  ...
+  // In this example we configure the legal guardian delegation type as an allowed delegation type for the example application
+  allowedDelegations: [DelegationType.LegalGuardian],
+  ...
+}
+
+```
+
+To access the list of national ids for applicantActors that have come in contact with the application:
+
+```ts
+const applicantActors = application.applicantActors
+```

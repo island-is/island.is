@@ -34,6 +34,8 @@ import { OrganizationWrapper } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { useRouter } from 'next/router'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import { richText, SliceType } from '@island.is/island-ui/contentful'
 
 const DEBOUNCE_TIMER = 400
 const PAGE_SIZE = 10
@@ -234,6 +236,8 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
   const { format } = useDateUtils()
   const DATE_FORMAT = n('operatingLicenseDateFormat', 'd. MMMM yyyy')
 
+  useContentfulId(organizationPage.id, subpage.id)
+
   const pageUrl = Router.pathname
 
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
@@ -337,6 +341,7 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
           {subpage.title}
         </Text>
       </Box>
+      {richText(subpage.description as SliceType[])}
       <Box marginBottom={3}>
         <Input
           name="operatingLicenseSearchInput"
@@ -524,7 +529,7 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
       >
         {search.hasNextPage && (
           <Button
-            onClick={() => onLoadMore()}
+            onClick={onLoadMore}
             disabled={search.isLoadingFirstPage || search.isLoadingNextPage}
           >
             {n('operatingLicensesSeeMore', 'Sjá fleiri')} (
@@ -536,7 +541,15 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
   )
 }
 
-OperatingLicenses.getInitialProps = async ({ apolloClient, locale }) => {
+OperatingLicenses.getInitialProps = async ({
+  apolloClient,
+  locale,
+  pathname,
+}) => {
+  const path = pathname?.split('/') ?? []
+  const slug = path?.[path.length - 2] ?? 'syslumenn'
+  const subSlug = path.pop() ?? 'rekstrarleyfi'
+
   const [
     {
       data: { getOrganizationPage },
@@ -550,7 +563,7 @@ OperatingLicenses.getInitialProps = async ({ apolloClient, locale }) => {
       query: GET_ORGANIZATION_PAGE_QUERY,
       variables: {
         input: {
-          slug: 'syslumenn',
+          slug: slug,
           lang: locale as ContentLanguage,
         },
       },
@@ -559,8 +572,8 @@ OperatingLicenses.getInitialProps = async ({ apolloClient, locale }) => {
       query: GET_ORGANIZATION_SUBPAGE_QUERY,
       variables: {
         input: {
-          organizationSlug: 'syslumenn',
-          slug: 'rekstrarleyfi',
+          organizationSlug: slug,
+          slug: subSlug,
           lang: locale as ContentLanguage,
         },
       },

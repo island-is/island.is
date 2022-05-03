@@ -39,6 +39,8 @@ import { useI18n } from '@island.is/web/i18n'
 import { ValueType } from 'react-select'
 import { ParsedUrlQuery } from 'querystring'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
+import { GetNamespaceQuery } from '@island.is/web/graphql/schema'
+import { useNamespace } from '@island.is/web/hooks'
 
 const ANSWER_DELIMITER = ','
 export const STEPPER_HELPER_ENABLED_KEY = 'show-stepper-config-helper'
@@ -54,6 +56,7 @@ interface StepperProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   optionsFromNamespace: { slug: string; data: Record<string, any>[] }[]
   scrollUpWhenNextStepAppears?: boolean
+  namespace: GetNamespaceQuery['getNamespace']
 }
 
 interface StepOptionSelectItem {
@@ -152,10 +155,13 @@ const StepperFSMWrapper = (
 const StepperFSM = ({
   stepper,
   optionsFromNamespace,
+  namespace,
   scrollUpWhenNextStepAppears = true,
 }: StepperProps) => {
   const router = useRouter()
   const { activeLocale } = useI18n()
+
+  const n = useNamespace(namespace)
 
   // eslint-disable-next-line @typescript-eslint/naming-convention
   const [_, setCounter] = useState(0)
@@ -248,7 +254,6 @@ const StepperFSM = ({
   const renderQuestionsAndAnswers = (
     questionsAndAnswers: QuestionAndAnswer[],
     urlWithoutQueryParams: string,
-    activeLocale: string,
   ) => {
     const accumulatedAnswers = []
 
@@ -284,7 +289,7 @@ const StepperFSM = ({
                 query: query,
               }}
             >
-              {activeLocale === 'en' ? 'Change' : 'Breyta'}
+              {n('changeSelection', 'Breyta')}
             </Link>
           </Box>
         </Box>
@@ -333,9 +338,10 @@ const StepperFSM = ({
 
             if (!transitionWorked) {
               setTransitionErrorMessage(
-                activeLocale === 'en'
-                  ? 'Sadly, the next step could not be loaded'
-                  : 'Því miður gekk ekki að hlaða niður næsta skrefi',
+                n(
+                  'couldNotLoadNextStep',
+                  'Því miður gekk ekki að hlaða niður næsta skrefi',
+                ),
               )
             } else {
               setTransitionErrorMessage('')
@@ -346,7 +352,7 @@ const StepperFSM = ({
         }}
         size="small"
       >
-        {activeLocale === 'en' ? 'Continue' : 'Áfram'}
+        {n('continue', 'Áfram')}
       </Button>
     </Box>
   )
@@ -354,6 +360,7 @@ const StepperFSM = ({
   const QuestionTitle = () => (
     <Box
       marginBottom={3}
+      marginTop={1}
       onClick={(ev) => {
         // If the user clicks four times in a row on the question title, we enable the helper if we're not in production
         if (ev.detail === 4) {
@@ -396,9 +403,7 @@ const StepperFSM = ({
               <Select
                 size="sm"
                 name="step-option-select"
-                noOptionsMessage={
-                  activeLocale === 'en' ? 'No options' : 'Enginn valmöguleiki'
-                }
+                noOptionsMessage={n('noOptions', 'Enginn valmöguleiki')}
                 value={{
                   label: selectedOption?.label ?? '',
                   value: selectedOption?.slug ?? '',
@@ -439,7 +444,7 @@ const StepperFSM = ({
       {!isOnFirstStep && (
         <Box marginTop={10}>
           <Text variant="h3" marginBottom={2}>
-            {activeLocale === 'en' ? 'Your answers' : 'Svörin þín'}
+            {n('yourAnswers', 'Svörin þín')}
           </Text>
           <Box marginBottom={3}>
             <Link
@@ -449,14 +454,13 @@ const StepperFSM = ({
               color="blue400"
               href={router.asPath.split('?')[0]}
             >
-              {activeLocale === 'en' ? 'Start again' : 'Byrja aftur'}
+              {n('startAgain', 'Byrja aftur')}
             </Link>
           </Box>
 
           {renderQuestionsAndAnswers(
             questionsAndAnswers,
             router.asPath.split('?')[0],
-            activeLocale,
           )}
         </Box>
       )}

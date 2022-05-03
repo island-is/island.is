@@ -2,74 +2,13 @@ import React from 'react'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
-import { CaseTransition, Gender } from '@island.is/judicial-system/types'
+import { Gender } from '@island.is/judicial-system/types'
 import { getShortGender, isDirty } from './stepHelper'
 import { validate } from './validate'
 
 import * as formatters from './formatters'
 
 describe('Formatters utils', () => {
-  describe('Parse array', () => {
-    test('given a property name and an array of strings should parse correctly into JSON', () => {
-      // Arrange
-      const property = 'test'
-      const array = ['lorem', 'ipsum']
-
-      // Act
-      const parsedArray = formatters.parseArray(property, array)
-
-      // Assert
-      expect(parsedArray).not.toEqual(null)
-      expect(parsedArray).toEqual({ test: ['lorem', 'ipsum'] })
-    })
-  })
-
-  describe('Parse string', () => {
-    test('given a property name and a value should parse correctly into JSON', () => {
-      // Arrange
-      const property = 'test'
-      const value = 'lorem'
-
-      // Act
-      const parsedString = formatters.parseString(property, value)
-
-      // Assert
-      expect(parsedString).toEqual({ test: 'lorem' })
-    })
-
-    test('given a value with special characters should parse correctly into JSON', () => {
-      //Arrange
-      const property = 'test'
-      const value = `lorem
-ipsum`
-
-      // Act
-      const parsedString = formatters.parseString(property, value)
-
-      // Assert
-      expect(parsedString).toEqual({
-        test: 'lorem\nipsum',
-      })
-    })
-  })
-
-  describe('Parse transition', () => {
-    test('given a last modified timestamp and a transition should parse correnctly into JSON', () => {
-      // Arrange
-      const modified = 'timestamp'
-      const transition = CaseTransition.SUBMIT
-
-      // Act
-      const parsedTransition = formatters.parseTransition(modified, transition)
-
-      // Assert
-      expect(parsedTransition).toEqual({
-        modified: 'timestamp',
-        transition: CaseTransition.SUBMIT,
-      })
-    })
-  })
-
   describe('Parse time', () => {
     test('should return a valid date with time given a valid date and time', () => {
       // Arrange

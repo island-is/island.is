@@ -22,20 +22,12 @@ export interface ValidationFailedProblem extends BaseProblem {
   fields: ValidationFailedFields
 }
 
-export type Delegation = {
-  name: string
+export type AlternativeSubject = {
   nationalId: string
-  type: string
 }
-
-export type ActorValidationFailedFields = {
-  delegatedUser: string
-  delegations: Delegation[]
-}
-
-export interface ActorValidationFailedProblem extends BaseProblem {
-  type: ProblemType.ACTOR_VALIDATION_FAILED
-  fields: ActorValidationFailedFields
+export interface BadSubjectProblem extends BaseProblem {
+  type: ProblemType.BAD_SUBJECT
+  alternativeSubjects?: AlternativeSubject[]
 }
 
 // Should be avoided whenever possible in favour of typed problems.

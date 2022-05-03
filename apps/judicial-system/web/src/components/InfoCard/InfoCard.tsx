@@ -2,7 +2,10 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Text } from '@island.is/island-ui/core'
-import { Defendant } from '@island.is/judicial-system/types'
+import {
+  Defendant,
+  SessionArrangements,
+} from '@island.is/judicial-system/types'
 import {
   capitalize,
   formatNationalId,
@@ -16,14 +19,15 @@ interface Props {
   defendants?: Defendant[]
   defender?: {
     name: string
+    defenderNationalId?: string
     email?: string
     phoneNumber?: string
-    defenderIsSpokesperson?: boolean
   }
+  sessionArrangement: SessionArrangements | undefined
 }
 
 const InfoCard: React.FC<Props> = (props) => {
-  const { data, defendants, defender } = props
+  const { data, defendants, defender, sessionArrangement } = props
   const { formatMessage } = useIntl()
 
   return (
@@ -41,12 +45,12 @@ const InfoCard: React.FC<Props> = (props) => {
             {defendants.map((defendant, index) => (
               <Text fontWeight="semiBold" key={index}>
                 {defendant.name}
-                <Text as="span">{`, `}</Text>
-                {`${defendant.noNationalId ? 'fd.' : 'kt.'} ${
-                  defendant.noNationalId
-                    ? defendant.nationalId
-                    : formatNationalId(defendant.nationalId ?? '')
-                }`}
+                {(!defendant.noNationalId || defendant.nationalId) &&
+                  `${defendant.noNationalId ? ', fd.' : ', kt.'} ${
+                    defendant.noNationalId
+                      ? defendant.nationalId
+                      : formatNationalId(defendant.nationalId ?? '')
+                  }`}
                 {defendant.citizenship && ` (${defendant.citizenship})`}
                 {defendant.address && (
                   <Text as="span">{`, ${defendant.address}`}</Text>
@@ -58,7 +62,9 @@ const InfoCard: React.FC<Props> = (props) => {
       )}
       <Box className={styles.infoCardTitleContainer}>
         <Text variant="h4">
-          {defender?.defenderIsSpokesperson ? 'Talsmaður' : 'Verjandi'}
+          {sessionArrangement === SessionArrangements.ALL_PRESENT_SPOKESPERSON
+            ? 'Talsmaður'
+            : 'Verjandi'}
         </Text>
         {defender?.name ? (
           <Box display="flex">

@@ -1,6 +1,5 @@
 import { Box, Text, ItemCmpProps } from '@island.is/island-ui/core'
 import React, { FC, ReactElement } from 'react'
-import * as kennitala from 'kennitala'
 
 interface CompanySearchItemProps extends ItemCmpProps {
   name: string
@@ -12,7 +11,10 @@ export const CompanySearchItem: FC<
   CompanySearchItemProps & { loading?: boolean }
 > = ({ active, nationalId, query, name }): ReactElement => {
   const splitCompanyName = name.split(new RegExp(query, 'i'))
-  const splitNationalId = kennitala.format(nationalId).split(query)
+  let cleanNationalId = nationalId.replace(/(\D)+/g, '')
+  cleanNationalId =
+    cleanNationalId.substring(0, 6) + '-' + cleanNationalId.substring(6, 10)
+  const splitNationalId = cleanNationalId.split(query)
   return (
     <Box
       key={`searchItem_${nationalId}`}

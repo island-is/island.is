@@ -12,7 +12,7 @@ export const application = factory<Application>({
   modified: () => faker.date.past().toISOString(),
   applicant: () => faker.random.alphaNumeric(10),
   assignees: [],
-  actors: [],
+  applicantActors: [],
   state: 'draft',
   typeId: 'ExampleForm',
   answers: [],

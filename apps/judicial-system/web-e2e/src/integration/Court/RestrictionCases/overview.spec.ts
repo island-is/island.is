@@ -5,22 +5,22 @@ import {
   CaseLegalProvisions,
   CaseCustodyRestrictions,
   CaseState,
+  SessionArrangements,
 } from '@island.is/judicial-system/types'
-import {
-  makeCustodyCase,
-  makeProsecutor,
-} from '@island.is/judicial-system/formatters'
 import {
   HEARING_ARRANGEMENTS_ROUTE,
   OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
 
-import { intercept } from '../../../utils'
+import { makeCustodyCase, makeProsecutor, intercept } from '../../../utils'
 
 describe(`${OVERVIEW_ROUTE}/:id`, () => {
   const demands = faker.lorem.paragraph()
   const lawsBroken = faker.lorem.words(5)
   const legalBasis = faker.lorem.words(5)
+  const defenderName = faker.name.findName()
+  const defenderEmail = faker.internet.email()
+  const defenderPhoneNumber = faker.phone.phoneNumber()
 
   beforeEach(() => {
     const caseData = makeCustodyCase()
@@ -39,6 +39,10 @@ describe(`${OVERVIEW_ROUTE}/:id`, () => {
         CaseCustodyRestrictions.ISOLATION,
         CaseCustodyRestrictions.MEDIA,
       ],
+      defenderName,
+      defenderEmail,
+      defenderPhoneNumber,
+      sessionArrangements: SessionArrangements.ALL_PRESENT_SPOKESPERSON,
     }
 
     cy.stubAPIResponses()
@@ -50,6 +54,11 @@ describe(`${OVERVIEW_ROUTE}/:id`, () => {
   it('should have an overview of the current case', () => {
     cy.getByTestid('infoCard').contains(
       'Donald Duck, kt. 000000-0000, Batcave 1337',
+    )
+
+    cy.getByTestid('infoCard').contains('Talsmaður')
+    cy.getByTestid('infoCard').contains(
+      `${defenderName}, ${defenderEmail}, s. ${defenderPhoneNumber}`,
     )
     cy.getByTestid('infoCardDataContainer0').contains(
       'Lögreglan á Höfuðborgarsvæðinu',

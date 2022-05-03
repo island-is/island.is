@@ -22,7 +22,6 @@ class ActionCardTag {
   @Field(() => String, { nullable: true })
   variant?: string
 }
-
 @ObjectType()
 class ActionCardMetaData {
   @Field(() => String, { nullable: true })
@@ -33,6 +32,9 @@ class ActionCardMetaData {
 
   @Field(() => ActionCardTag, { nullable: true })
   tag?: ActionCardTag
+
+  @Field(() => Boolean, { nullable: true })
+  deleteButton?: boolean
 }
 
 @ObjectType()
@@ -53,7 +55,7 @@ export class Application {
   assignees!: string[]
 
   @Field(() => [String])
-  actors!: string[]
+  applicantActors!: string[]
 
   @Field(() => String)
   state!: string

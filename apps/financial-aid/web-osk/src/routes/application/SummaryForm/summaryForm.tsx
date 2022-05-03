@@ -156,6 +156,7 @@ const SummaryForm = () => {
             <Estimation
               usePersonalTaxCredit={form.usePersonalTaxCredit}
               homeCircumstances={form.homeCircumstances}
+              familyStatus={form.familyStatus}
               aboutText={
                 <Text marginBottom={[2, 2, 3]}>
                   Athugaðu að þessi útreikningur er eingöngu til viðmiðunar og{' '}
@@ -177,6 +178,7 @@ const SummaryForm = () => {
 
         <DirectTaxPaymentCell
           setIsModalOpen={setIsModalOpen}
+          hasFetchedPayments={form?.hasFetchedPayments}
           directTaxPayments={form?.directTaxPayments}
         />
         <ContactInfo

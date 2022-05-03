@@ -27,7 +27,7 @@ const createMockApplication = (
 ): Application => ({
   id: '123',
   assignees: [],
-  actors: [],
+  applicantActors: [],
   state: data.state || 'draft',
   applicant: '111111-3000',
   typeId: data.typeId || ApplicationTypes.EXAMPLE,

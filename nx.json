@@ -109,6 +109,9 @@
     "api-domains-driving-license": {
       "tags": []
     },
+    "api-domains-driving-license-book": {
+      "tags": []
+    },
     "api-domains-education": {
       "tags": []
     },
@@ -119,6 +122,9 @@
       "tags": []
     },
     "api-domains-finance": {
+      "tags": []
+    },
+    "api-domains-fishing-license": {
       "tags": []
     },
     "api-domains-health-insurance": {
@@ -134,6 +140,9 @@
       "tags": []
     },
     "api-domains-mortgage-certificate": {
+      "tags": []
+    },
+    "api-domains-municipalities-financial-aid": {
       "tags": []
     },
     "api-domains-national-registry": {
@@ -212,7 +221,13 @@
     "application-templates-driving-assessment-approval": {
       "tags": []
     },
+    "application-templates-driving-instructor-registrations": {
+      "tags": []
+    },
     "application-templates-driving-license": {
+      "tags": []
+    },
+    "application-templates-driving-school-confirmation": {
       "tags": []
     },
     "application-templates-example-payment": {
@@ -221,7 +236,13 @@
     "application-templates-family-matters-core": {
       "tags": []
     },
+    "application-templates-financial-aid": {
+      "tags": []
+    },
     "application-templates-funding-government-projects": {
+      "tags": []
+    },
+    "application-templates-general-fishing-license": {
       "tags": []
     },
     "application-templates-general-petition": {
@@ -307,7 +328,13 @@
     "clients-driving-license": {
       "tags": []
     },
+    "clients-driving-license-book": {
+      "tags": []
+    },
     "clients-finance": {
+      "tags": []
+    },
+    "clients-fishing-license": {
       "tags": []
     },
     "clients-health-insurance-v2": {
@@ -320,6 +347,9 @@
       "tags": []
     },
     "clients-mms": {
+      "tags": []
+    },
+    "clients-municipalities-financial-aid": {
       "tags": []
     },
     "clients-national-registry-v1": {
@@ -344,9 +374,6 @@
       "tags": []
     },
     "clients-rsk-procuring": {
-      "tags": []
-    },
-    "clients-rsk-v1": {
       "tags": []
     },
     "clients-syslumenn": {
@@ -523,6 +550,9 @@
     "judicial-system-formatters": {
       "tags": []
     },
+    "judicial-system-scheduler": {
+      "tags": []
+    },
     "judicial-system-types": {
       "tags": []
     },
@@ -646,6 +676,9 @@
       "tags": []
     },
     "service-portal-finance": {
+      "tags": []
+    },
+    "service-portal-finance-schedule": {
       "tags": []
     },
     "service-portal-graphql": {

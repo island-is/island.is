@@ -4,15 +4,10 @@ import { Text, Box } from '@island.is/island-ui/core'
 import * as styles from './ProfileUnit.css'
 import cn from 'classnames'
 import { LinkItem, ButtonItem, OtherItem } from './GetUnitContent'
+import { ApplicationProfileInfo } from '@island.is/financial-aid/shared/lib'
 
 interface Props {
-  info: {
-    title: string
-    content?: string
-    link?: string
-    onclick?: () => void
-    other?: string
-  }[]
+  info: ApplicationProfileInfo[]
   className?: string
 }
 
@@ -28,7 +23,12 @@ const Unit = ({ info, className }: Props) => {
         const content = getContent(item)
 
         return (
-          <Box key={'profile-' + index}>
+          <Box
+            key={'profile-' + index}
+            className={cn({
+              [`${styles.fullWidth} `]: item.fullWidth,
+            })}
+          >
             <Text variant="eyebrow" marginBottom={1}>
               {item.title}
             </Text>
@@ -43,13 +43,7 @@ const Unit = ({ info, className }: Props) => {
 
 export default Unit
 
-const getContent = (item: {
-  title: string
-  content?: string
-  link?: string
-  onclick?: () => void
-  other?: string
-}) => {
+const getContent = (item: ApplicationProfileInfo) => {
   const { content, link, onclick, other } = item
   switch (true) {
     case Boolean(link):

@@ -22,11 +22,18 @@ function buildApplication(
     assignees: [],
     applicant: MOCK_APPLICANT_NATIONAL_ID,
     typeId: ApplicationTypes.MORTGAGE_CERTIFICATE,
+    applicantActors: [],
     created: new Date(),
     modified: new Date(),
     answers: {},
     state,
-    externalData: {},
+    externalData: {
+      validateMortgageCertificate: {
+        data: { validation: { exists: true, hasKMarking: true } },
+        date: new Date(),
+        status: 'success',
+      },
+    },
     status: ApplicationStatus.IN_PROGRESS,
   }
 }
@@ -39,7 +46,7 @@ describe('Mortgage certificate Application Template', () => {
         MortgageCertificateTemplate,
       )
       const [hasChanged, newState] = helper.changeState({
-        type: DefaultEvents.PAYMENT,
+        type: DefaultEvents.SUBMIT,
       })
       expect(hasChanged).toBe(true)
       expect(newState).toBe(States.PAYMENT_INFO)

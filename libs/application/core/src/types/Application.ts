@@ -26,6 +26,7 @@ export interface ActionCardMetaData {
     label?: string
     variant?: ActionCardTag
   }
+  deleteButton?: boolean
 }
 
 export interface Application {
@@ -34,7 +35,7 @@ export interface Application {
   actionCard?: ActionCardMetaData
   applicant: string
   assignees: string[]
-  actors: string[]
+  applicantActors: string[]
   typeId: ApplicationTypes
   modified: Date
   created: Date

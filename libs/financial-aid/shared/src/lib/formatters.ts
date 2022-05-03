@@ -7,7 +7,6 @@ import {
   ApplicationEventType,
   ApplicationStateUrl,
   FileType,
-  RolesRule,
   FamilyStatus,
   MartialStatusType,
 } from './enums'
@@ -55,14 +54,6 @@ export const getStateFromUrl: KeyMapping<
   InProgress: [ApplicationState.INPROGRESS, ApplicationState.DATANEEDED],
   MyCases: [ApplicationState.INPROGRESS, ApplicationState.DATANEEDED],
   Processed: [ApplicationState.REJECTED, ApplicationState.APPROVED],
-}
-
-export const getEventTypesFromService: KeyMapping<
-  RolesRule,
-  ApplicationEventType[]
-> = {
-  osk: [ApplicationEventType.DATANEEDED],
-  veita: Object.values(ApplicationEventType),
 }
 
 export const getStateUrlFromRoute: KeyMapping<string, ApplicationStateUrl> = {
@@ -275,7 +266,7 @@ export const getApplicantEmailDataFromEventType = (
         data: {
           title: 'Fjárhagsaðstoð Umsókn synjað',
           header: 'Umsókn þinni um aðstoð hefur verið synjað',
-          content: `Umsókn þinni um fjárhagsaðstoð í ${getPeriod.month} hefur verið synjað <b>${rejectionComment}</b>. Þú getur kynnt þér nánar <a href="${municipality.rulesHomepage}" target="_blank">reglur um fjárhagsaðstoð.</a>`,
+          content: `Umsókn þinni um fjárhagsaðstoð í ${getPeriod.month} hefur verið synjað <b>${rejectionComment}</b>. Þú getur kynnt þér nánar <a href="${municipality.rulesHomepage}" target="_blank">reglur um fjárhagsaðstoð.</a> <br><br> <b>Málskot</b> <br> Bent skal á að unnt er að skjóta ákvörðun þessari til áfrýjunarnefndar þíns sveitarfélags. Skal það gert skriflega og innan fjögurra vikna. Fyrir frekari upplýsingar um málskot hafðu samband með tölvupósti á netfangið <a href="mailto:${municipality.email}">${municipality.email}</a>. <br><br> Ákvörðun ráðsins má síðan skjóta til úrskurðarnefndar velferðarmála, Katrínartúni 2, 105 Reykjavík innan þriggja mánaða.`,
           applicationLinkText: 'Opna stöðusíðu',
           applicationChange: 'Umsókn synjað',
           applicationMonth: getPeriod.month,

@@ -5,5 +5,5 @@ export enum ProblemType {
   HTTP_NOT_FOUND = 'https://httpstatuses.com/404',
   HTTP_INTERNAL_SERVER_ERROR = 'https://httpstatuses.com/500',
   VALIDATION_FAILED = 'https://docs.devland.is/reference/problems/validation-failed',
-  ACTOR_VALIDATION_FAILED = 'https://docs.devland.is/reference/problems/actor-validation-failed',
+  BAD_SUBJECT = 'https://docs.devland.is/reference/problems/bad-subject',
 }

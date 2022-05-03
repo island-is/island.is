@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useEffect, useState, useCallback } from 'react'
 import { useQuery } from '@apollo/client'
 import * as Sentry from '@sentry/react'
 
@@ -38,6 +38,9 @@ const ApplicationLoader: FC<{
   const [delegationsChecked, setDelegationsChecked] = useState(
     type ? false : true,
   )
+  const checkDelegation = useCallback(() => {
+    setDelegationsChecked((d) => !d)
+  }, [])
 
   const { lang: locale } = useLocale()
   const { data, error, loading, refetch } = useQuery(APPLICATION_APPLICATION, {
@@ -62,12 +65,19 @@ const ApplicationLoader: FC<{
   }
 
   if (!applicationId || error) {
-    if (applicationId && !delegationsChecked && type) {
+    const foundError = findProblemInApolloError(error as any, [
+      ProblemType.BAD_SUBJECT,
+    ])
+    if (
+      foundError?.type === ProblemType.BAD_SUBJECT &&
+      type &&
+      !delegationsChecked
+    ) {
       return (
         <DelegationsScreen
-          type={type}
-          setDelegationsChecked={setDelegationsChecked}
-          applicationId={applicationId}
+          slug={slug}
+          alternativeSubjects={foundError.alternativeSubjects}
+          checkDelegation={checkDelegation}
         />
       )
     }

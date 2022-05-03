@@ -2,15 +2,11 @@ import faker from 'faker'
 
 import { Case, CaseState } from '@island.is/judicial-system/types'
 import {
-  makeInvestigationCase,
-  makeCourt,
-} from '@island.is/judicial-system/formatters'
-import {
   IC_COURT_HEARING_ARRANGEMENTS_ROUTE,
   IC_RULING_ROUTE,
 } from '@island.is/judicial-system/consts'
 
-import { intercept } from '../../../utils'
+import { makeInvestigationCase, makeCourt, intercept } from '../../../utils'
 
 describe(`${IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
   beforeEach(() => {
@@ -31,6 +27,33 @@ describe(`${IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
     intercept(caseDataAddition)
 
     cy.contains(comment)
+  })
+
+  it('should ask for defender info depending on selected session arrangement', () => {
+    const caseData = makeInvestigationCase()
+    const caseDataAddition: Case = {
+      ...caseData,
+      court: makeCourt(),
+      requestedCourtDate: '2020-09-16T19:50:08.033Z',
+      state: CaseState.RECEIVED,
+    }
+
+    intercept(caseDataAddition)
+
+    cy.get('[name="session-arrangements-all-present"]').click()
+    cy.get('[name="defenderName"]').should('exist')
+    cy.get('[name="defenderEmail"]').should('exist')
+    cy.get('[name="defenderPhoneNumber"]').should('exist')
+
+    cy.get('[name="session-arrangements-all-present_spokesperson"]').click()
+    cy.get('[name="defenderName"]').should('exist')
+    cy.get('[name="defenderEmail"]').should('exist')
+    cy.get('[name="defenderPhoneNumber"]').should('exist')
+
+    cy.get('[name="session-arrangements-prosecutor-present"]').click()
+    cy.get('[name="defenderName"]').should('not.exist')
+    cy.get('[name="defenderEmail"]').should('not.exist')
+    cy.get('[name="defenderPhoneNumber"]').should('not.exist')
   })
 
   it('should allow users to choose if they send COURT_DATE notification', () => {
