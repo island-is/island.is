@@ -65,7 +65,7 @@ const FinancialAidTemplate: ApplicationTemplate<
                 ),
               write: {
                 answers: ['approveExternalData'],
-                externalData: ['nationalRegistry', 'veita'],
+                externalData: ['nationalRegistry', 'veita', 'taxDataFetch'],
               },
             },
           ],
@@ -121,13 +121,46 @@ const FinancialAidTemplate: ApplicationTemplate<
         },
         on: {
           SUBMIT: [
-            { target: ApplicationStates.SPOUSE, cond: hasSpouseCheck },
+            {
+              target: ApplicationStates.PREREQUISITESSPOUSE,
+              cond: hasSpouseCheck,
+            },
             { target: ApplicationStates.SUBMITTED },
           ],
         },
       },
-      [ApplicationStates.SPOUSE]: {
+      [ApplicationStates.PREREQUISITESSPOUSE]: {
         entry: 'assignToSpouse',
+        meta: {
+          name: application.name.defaultMessage,
+          lifecycle: oneMonthLifeCycle,
+          roles: [
+            {
+              id: Roles.SPOUSE,
+              formLoader: () =>
+                import('../forms/PrerequisitesSpouse').then((module) =>
+                  Promise.resolve(module.PrerequisitesSpouse),
+                ),
+              read: 'all',
+              write: {
+                answers: ['approveExternalDataSpouse'],
+                externalData: ['taxDataFetchSpouse'],
+              },
+            },
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/WaitingForSpouse').then((module) =>
+                  Promise.resolve(module.WaitingForSpouse),
+                ),
+            },
+          ],
+        },
+        on: {
+          SUBMIT: { target: ApplicationStates.SPOUSE },
+        },
+      },
+      [ApplicationStates.SPOUSE]: {
         meta: {
           name: application.name.defaultMessage,
           lifecycle: oneMonthLifeCycle,
