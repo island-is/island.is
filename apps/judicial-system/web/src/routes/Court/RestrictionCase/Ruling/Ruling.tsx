@@ -64,8 +64,6 @@ export function getConclutionAutofill(
   workingCase: Case,
 ) {
   if (
-    workingCase.conclusion ||
-    workingCase.conclusion === '' ||
     !workingCase.decision ||
     !workingCase.defendants ||
     workingCase.defendants.length <= 0
@@ -81,74 +79,79 @@ export function getConclutionAutofill(
   const accusedSuffix =
     workingCase.defendants[0].gender === Gender.MALE ? 'i' : 'a'
 
-  return workingCase.decision === CaseDecision.DISMISSING
-    ? formatMessage(m.sections.conclusion.dismissingAutofillV2, {
-        genderedAccused: formatMessage(core.accused, {
-          suffix: accusedSuffix,
-        }),
-        accusedName: workingCase.defendants[0].name,
-        isExtended:
-          workingCase.parentCase &&
-          isAcceptingCaseDecision(workingCase.parentCase.decision)
-            ? 'yes'
-            : 'no',
-        caseType: workingCase.type,
-      })
-    : workingCase.decision === CaseDecision.REJECTING
-    ? formatMessage(m.sections.conclusion.rejectingAutofillV2, {
-        genderedAccused: formatMessage(core.accused, {
-          suffix: accusedSuffix,
-        }),
-        accusedName: workingCase.defendants[0].name,
-        accusedNationalId: workingCase.defendants[0].noNationalId
-          ? ', '
-          : `, kt. ${formatNationalId(
-              workingCase.defendants[0].nationalId ?? '',
-            )}, `,
-        isExtended:
-          workingCase.parentCase &&
-          isAcceptingCaseDecision(workingCase.parentCase.decision)
-            ? 'yes'
-            : 'no',
-        caseType: workingCase.type,
-      })
-    : formatMessage(m.sections.conclusion.acceptingAutofillV2, {
-        genderedAccused: capitalize(
-          formatMessage(core.accused, {
+  const conclusion =
+    workingCase.decision === CaseDecision.DISMISSING
+      ? formatMessage(m.sections.conclusion.dismissingAutofillV2, {
+          genderedAccused: formatMessage(core.accused, {
             suffix: accusedSuffix,
           }),
-        ),
-        accusedName: workingCase.defendants[0].name,
-        accusedNationalId: workingCase.defendants[0].noNationalId
-          ? ', '
-          : `, kt. ${formatNationalId(
-              workingCase.defendants[0].nationalId ?? '',
-            )}, `,
-        isExtended:
-          workingCase.parentCase &&
-          isAcceptingCaseDecision(workingCase.parentCase.decision) &&
-          workingCase.decision !== CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-            ? 'yes'
-            : '',
-        caseType:
-          workingCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-            ? CaseType.TRAVEL_BAN
-            : workingCase.type,
-        validToDate: `${formatDate(workingCase.validToDate, 'PPPPp')
-          ?.replace('dagur,', 'dagsins')
-          ?.replace(' kl.', ', kl.')}`,
-        hasIsolation:
-          isAcceptingCaseDecision(workingCase.decision) &&
-          workingCase.isCustodyIsolation
+          accusedName: workingCase.defendants[0].name,
+          isExtended:
+            workingCase.parentCase &&
+            isAcceptingCaseDecision(workingCase.parentCase.decision)
+              ? 'yes'
+              : 'no',
+          caseType: workingCase.type,
+        })
+      : workingCase.decision === CaseDecision.REJECTING
+      ? formatMessage(m.sections.conclusion.rejectingAutofillV2, {
+          genderedAccused: formatMessage(core.accused, {
+            suffix: accusedSuffix,
+          }),
+          accusedName: workingCase.defendants[0].name,
+          accusedNationalId: workingCase.defendants[0].noNationalId
+            ? ', '
+            : `, kt. ${formatNationalId(
+                workingCase.defendants[0].nationalId ?? '',
+              )}, `,
+          isExtended:
+            workingCase.parentCase &&
+            isAcceptingCaseDecision(workingCase.parentCase.decision)
+              ? 'yes'
+              : 'no',
+          caseType: workingCase.type,
+        })
+      : formatMessage(m.sections.conclusion.acceptingAutofillV2, {
+          genderedAccused: capitalize(
+            formatMessage(core.accused, {
+              suffix: accusedSuffix,
+            }),
+          ),
+          accusedName: workingCase.defendants[0].name,
+          accusedNationalId: workingCase.defendants[0].noNationalId
+            ? ', '
+            : `, kt. ${formatNationalId(
+                workingCase.defendants[0].nationalId ?? '',
+              )}, `,
+          isExtended:
+            workingCase.parentCase &&
+            isAcceptingCaseDecision(workingCase.parentCase.decision) &&
+            workingCase.decision !==
+              CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+              ? 'yes'
+              : '',
+          caseType:
+            workingCase.decision ===
+            CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+              ? CaseType.TRAVEL_BAN
+              : workingCase.type,
+          validToDate: `${formatDate(workingCase.validToDate, 'PPPPp')
+            ?.replace('dagur,', 'dagsins')
+            ?.replace(' kl.', ', kl.')}`,
+          hasIsolation:
+            isAcceptingCaseDecision(workingCase.decision) &&
+            workingCase.isCustodyIsolation
+              ? 'yes'
+              : 'no',
+          isolationEndsBeforeValidToDate: isolationEndsBeforeValidToDate
             ? 'yes'
             : 'no',
-        isolationEndsBeforeValidToDate: isolationEndsBeforeValidToDate
-          ? 'yes'
-          : 'no',
-        isolationToDate: formatDate(workingCase.isolationToDate, 'PPPPp')
-          ?.replace('dagur,', 'dagsins')
-          ?.replace(' kl.', ', kl.'),
-      })
+          isolationToDate: formatDate(workingCase.isolationToDate, 'PPPPp')
+            ?.replace('dagur,', 'dagsins')
+            ?.replace(' kl.', ', kl.'),
+        })
+
+  return conclusion === workingCase.conclusion ? undefined : conclusion
 }
 
 export const Ruling: React.FC = () => {
@@ -243,10 +246,11 @@ export const Ruling: React.FC = () => {
     }
 
     const conclution = getConclutionAutofill(formatMessage, workingCase)
+
     if (conclution) {
       autofill('conclusion', conclution, workingCase)
 
-      setWorkingCase({ ...workingCase })
+      setWorkingCase({ ...workingCase, conclusion: conclution })
     }
   }, [
     autofill,

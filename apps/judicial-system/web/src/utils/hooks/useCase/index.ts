@@ -52,6 +52,7 @@ export type autofillFunc = (
   key: keyof autofillProperties,
   value: string,
   workingCase: Case,
+  force?: boolean,
 ) => void
 
 interface CreateCaseMutationResponse {
@@ -327,8 +328,11 @@ const useCase = () => {
   )
 
   const autofill: autofillFunc = useMemo(
-    () => (key, value, workingCase) => {
-      if (workingCase[key] === undefined || workingCase[key] === null) {
+    () => (key, value, workingCase, force) => {
+      if (force) {
+        workingCase[key] = value
+        updateCase(workingCase.id, { [key]: value })
+      } else if (workingCase[key] === undefined || workingCase[key] === null) {
         workingCase[key] = value
 
         if (workingCase[key]) {
