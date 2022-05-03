@@ -4,9 +4,10 @@ import HeaderRow from './HeaderRow'
 import Column from './Column'
 import Row from './Row'
 import { Box } from '@island.is/island-ui/core'
+import { CurrentOwnerInfo } from '@island.is/api/schema'
 
 interface PropTypes {
-  data: any
+  data: CurrentOwnerInfo
 }
 
 const OwnerInfoItem = ({ data }: PropTypes) => {
@@ -60,13 +61,15 @@ const OwnerInfoItem = ({ data }: PropTypes) => {
           })}
           value={data.city}
         />
-        <Column
-          label={formatMessage({
-            id: 'sp.vehicles:owner-purchase-date',
-            defaultMessage: 'Kaupdagur',
-          })}
-          value={data.dateOfPurchase}
-        />
+        {data.dateOfPurchase && (
+          <Column
+            label={formatMessage({
+              id: 'sp.vehicles:owner-purchase-date',
+              defaultMessage: 'Kaupdagur',
+            })}
+            value={new Date(data.dateOfPurchase).toLocaleDateString()}
+          />
+        )}
       </Row>
     </Box>
   )

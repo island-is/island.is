@@ -4,9 +4,10 @@ import HeaderRow from './HeaderRow'
 import Column from './Column'
 import Row from './Row'
 import { Box } from '@island.is/island-ui/core'
+import { Axle, TechnicalInfo } from '@island.is/api/schema'
 
 interface PropTypes {
-  data: any
+  data: TechnicalInfo
 }
 
 const TechnicalInfoItem = ({ data }: PropTypes) => {
@@ -42,7 +43,7 @@ const TechnicalInfoItem = ({ data }: PropTypes) => {
             id: 'sp.vehicles:tech-slagrymi',
             defaultMessage: 'Slagrými',
           })}
-          value={data.capactiy + ' cc.'}
+          value={data.cubicCapacity + ' cc.'}
         />
 
         <Column
@@ -107,7 +108,7 @@ const TechnicalInfoItem = ({ data }: PropTypes) => {
             id: 'sp.vehicles:tech-carrying-capacity',
             defaultMessage: 'Burðargeta',
           })}
-          value={data.carryingCapacity && data.carryingCapacity + ' kg'}
+          value={data.carryingCapacity + ' kg'}
         />
         <Column
           label={formatMessage({
@@ -117,7 +118,7 @@ const TechnicalInfoItem = ({ data }: PropTypes) => {
           value={data.axleTotalWeight + ' kg'}
         />
       </Row>
-      {data.axle.map((item: any | null, index: number) => {
+      {data.axle?.map((item: Axle | null, index: number) => {
         const axleTitle = formatMessage({
           id: 'sp.vehicles:tech-axle-1',
           defaultMessage: 'Ás',
@@ -127,9 +128,9 @@ const TechnicalInfoItem = ({ data }: PropTypes) => {
           defaultMessage: 'Stærð hjólbarða',
         })
         return (
-          <Row key={item.axleNumber + index}>
-            <Column label={axleTitle} value={item.axleNumber} />
-            <Column label={axleWheel} value={item.wheelAxle} />
+          <Row key={'Axle: ' + index}>
+            <Column label={axleTitle} value={index + 1} />
+            <Column label={axleWheel} value={item?.wheelAxle} />
           </Row>
         )
       })}

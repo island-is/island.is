@@ -1,9 +1,10 @@
 import React from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Box, Table as T, Text } from '@island.is/island-ui/core'
+import { Owners } from '@island.is/api/schema'
 
 interface PropTypes {
-  data: any
+  data: Owners[]
 }
 
 const OwnersTable = ({ data }: PropTypes) => {
@@ -50,13 +51,16 @@ const OwnersTable = ({ data }: PropTypes) => {
           </T.HeadData>
         </T.Head>
         <T.Body>
-          {data.map((owner: any | null, index: number) => {
+          {data?.map((owner: Owners | null, index: number) => {
             return (
-              <T.Row key={index + owner.name}>
-                <T.Data>{owner.ownerNumber}</T.Data>
-                <T.Data>{owner.name}</T.Data>
-                <T.Data>{owner.address}</T.Data>
-                <T.Data>{owner.dateOfPurchase}</T.Data>
+              <T.Row key={index + 'owners table'}>
+                <T.Data>{index + 1}</T.Data>
+                <T.Data>{owner?.name}</T.Data>
+                <T.Data>{owner?.address}</T.Data>
+                <T.Data>
+                  {owner?.dateOfPurchase &&
+                    new Date(owner.dateOfPurchase).toLocaleDateString()}
+                </T.Data>
               </T.Row>
             )
           })}

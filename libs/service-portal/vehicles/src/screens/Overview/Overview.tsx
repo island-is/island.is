@@ -57,13 +57,35 @@ import { vehiclesList } from '../../mock/vehiclesList'
 const GET_USERS_VEHICLES = gql`
   query GetUsersVehicles {
     getVehiclesForUser {
+      persidno
       name
+      address
+      postStation
       vehicleList {
+        isCurrent
         permno
         regno
+        vin
         type
         color
+        firstRegDate
+        modelYear
+        productYear
+        registrationType
+        role
+        operatorStartDate
+        operatorEndDate
+        outOfUse
+        otherOwners
+        termination
+        buyerPersidno
+        ownerPersidno
+        vehicleStatus
+        useGroup
+        vehGroup
+        plateStatus
       }
+      createdTimestamp
     }
   }
 `
@@ -103,8 +125,8 @@ export const VehiclesOverview: ServicePortalModuleComponent = () => {
     defaultFilterValues,
   )
   const { data, loading, error, called } = useQuery<Query>(GET_USERS_VEHICLES)
-  console.log(data)
   const vehicles = data?.getVehiclesForUser?.vehicleList || []
+  console.log(vehicles)
   const filteredVehicles = getFilteredVehicles(vehicles, filterValue)
 
   const handleSearchChange = useCallback((value: string) => {
@@ -156,7 +178,7 @@ export const VehiclesOverview: ServicePortalModuleComponent = () => {
         </GridRow>
       </Box>
       <Stack space={2}>
-        {called && !loading && !error && (
+        {called && !loading && !error && vehicles.length <= 0 && (
           <AlertMessage type="info" title={formatMessage(m.noDataPresent)} />
         )}
         <GridRow>

@@ -3965,18 +3965,6 @@
             "passWithNoTests": true
           }
         },
-        "update-openapi-document": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "commands": [
-              "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" http://localhost:8081/r1/IS-DEV/GOV/10017/Samgongustofa-Protected/getOpenAPI?serviceCode=Mitt-Svaedi-V1 > src/clientConfig.json",
-              "jq '.paths[][].tags = [\"Vehicles\"]' src/clientConfig.json > _.tmp && mv _.tmp src/clientConfig.json",
-              "jq '.components.schemas.ProblemDetails.additionalProperties = false' src/clientConfig.json > _.tmp && mv _.tmp src/clientConfig.json"
-            ],
-            "parallel": false,
-            "cwd": "libs/clients/vehicles"
-          }
-        },
         "schemas/external-openapi-generator": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {

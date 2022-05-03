@@ -4,9 +4,10 @@ import HeaderRow from './HeaderRow'
 import Column from './Column'
 import Row from './Row'
 import { Box } from '@island.is/island-ui/core'
+import { InspectionInfo } from '@island.is/api/schema'
 
 interface PropTypes {
-  data: any
+  data: InspectionInfo
 }
 
 const InspectionInfoItem = ({ data }: PropTypes) => {
@@ -59,7 +60,7 @@ const InspectionInfoItem = ({ data }: PropTypes) => {
             id: 'sp.vehicles:insp-taxes',
             defaultMessage: 'Bifreiðagjöld',
           })}
-          value={data.carTaxes}
+          value={'MISSING'}
         />
 
         <Column
@@ -68,15 +69,15 @@ const InspectionInfoItem = ({ data }: PropTypes) => {
             defaultMessage: 'Tryggt',
           })}
           value={
-            data.insuranceStatus
-              ? formatMessage({
-                  id: 'sp.vehicles:insp-insured-yes',
-                  defaultMessage: 'Já',
-                })
-              : formatMessage({
-                  id: 'sp.vehicles:insp-insured-no',
-                  defaultMessage: 'Nei',
-                })
+            'MISSING'
+            // ? formatMessage({
+            //     id: 'sp.vehicles:insp-insured-yes',
+            //     defaultMessage: 'Já',
+            //   })
+            // : formatMessage({
+            //     id: 'sp.vehicles:insp-insured-no',
+            //     defaultMessage: 'Nei',
+            //   })
           }
         />
       </Row>
@@ -86,45 +87,51 @@ const InspectionInfoItem = ({ data }: PropTypes) => {
             id: 'sp.vehicles:insp-next-insp',
             defaultMessage: 'Næsta aðalskoðun',
           })}
-          value={data.nextInspectionDate}
+          value={
+            data.nextInspectionDate &&
+            new Date(data.nextInspectionDate).toLocaleDateString()
+          }
         />
         <Column
           label={formatMessage({
             id: 'sp.vehicles:insp-last-insp',
             defaultMessage: 'Síðasta skoðun',
           })}
-          value={data.lastInspectionDate}
+          value={
+            data.lastInspectionDate &&
+            new Date(data.lastInspectionDate).toLocaleDateString()
+          }
         />
       </Row>
-      {(data.mortages || data.negligenceFee) && (
-        <Row>
-          <Column
-            label={formatMessage({
-              id: 'sp.vehicles:insp-mortages',
-              defaultMessage: 'Veðbönd',
-            })}
-            value={data.mortages}
-          />
-          <Column
-            label={formatMessage({
-              id: 'sp.vehicles:insp-negligence',
-              defaultMessage: 'Vanrækslugjald',
-            })}
-            value={data.negligenceFee}
-          />
-        </Row>
-      )}
-      {data.plateLocation && (
-        <Row>
-          <Column
-            label={formatMessage({
-              id: 'sp.vehicles:insp-plate-location',
-              defaultMessage: 'Geymslustaður',
-            })}
-            value={data.plateLocation}
-          />
-        </Row>
-      )}
+      {/* {(data.mortages || data.negligenceFee) && ( */}
+      <Row>
+        <Column
+          label={formatMessage({
+            id: 'sp.vehicles:insp-mortages',
+            defaultMessage: 'Veðbönd',
+          })}
+          value={'MISSING'}
+        />
+        <Column
+          label={formatMessage({
+            id: 'sp.vehicles:insp-negligence',
+            defaultMessage: 'Vanrækslugjald',
+          })}
+          value={'MISSING'}
+        />
+      </Row>
+      {/* )} */}
+      {/* {data.plateLocation && ( */}
+      <Row>
+        <Column
+          label={formatMessage({
+            id: 'sp.vehicles:insp-plate-location',
+            defaultMessage: 'Geymslustaður',
+          })}
+          value={'MISSING'}
+        />
+      </Row>
+      {/* )} */}
     </Box>
   )
 }

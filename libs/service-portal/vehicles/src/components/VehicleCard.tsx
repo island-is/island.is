@@ -11,7 +11,7 @@ interface Props {
 export const VehicleCard: FC<Props> = ({ vehicle }) => {
   const { formatMessage } = useLocale()
   const history = useHistory()
-
+  console.log('vehicleCard', vehicle)
   const handleClick = () =>
     vehicle.permno &&
     history.push(
@@ -22,7 +22,7 @@ export const VehicleCard: FC<Props> = ({ vehicle }) => {
       heading={
         vehicle.type && vehicle.productYear
           ? `${vehicle.type}${', '}${vehicle.productYear}`
-          : ''
+          : vehicle.type
       }
       headingVariant="h4"
       text={vehicle.regno || vehicle.permno || ''}

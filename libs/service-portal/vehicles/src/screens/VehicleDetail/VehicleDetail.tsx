@@ -12,6 +12,7 @@ import {
   Table as T,
   Stack,
   Text,
+  LoadingDots,
 } from '@island.is/island-ui/core'
 import {
   ServicePortalModuleComponent,
@@ -19,16 +20,7 @@ import {
   ServicePortalPath,
 } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import {
-  vehicleDetail,
-  vehicleDetailReal,
-  basicInfo,
-  currentOwner,
-  inspectionInfo,
-  owners,
-  registration,
-  technicalInfo,
-} from '../../mock/vehiclesList'
+
 import BaseInfoItem from '../../components/DetailTable/BaseInfoItem'
 import RegistrationInfoItem from '../../components/DetailTable/RegistrationInfoItem'
 import OwnerInfoItem from '../../components/DetailTable/OwnerInfoItem'
@@ -41,19 +33,83 @@ import { Query } from '@island.is/api/schema'
 const GET_USERS_VEHICLE_DETAIL = gql`
   query GetUsersVehicles($input: GetVehicleDetailInput!) {
     getVehicleDetail(input: $input) {
-      
+      mainInfo {
+        model
+        subModel
+        regno
+        year
+        co2
+        cubicCapacity
+        trailerWithBrakesWeight
+        trailerWithoutBrakesWeight
+      }
+      basicInfo {
+        model
+        regno
+        subModel
+        permno
+        verno
+        year
+        country
+        preregDateYear
+        formerCountry
+        importStatus
+      }
+      registrationInfo {
+        firstRegistrationDate
+        preRegistrationDate
+        newRegistrationDate
+        vehicleGroup
+        color
+        reggroup
+        passengers
+        useGroup
+        driversPassengers
+        standingPassengers
+      }
+      currentOwnerInfo {
+        owner
+        persidno
+        address
+        postalcode
+        city
+        dateOfPurchase
+      }
+      inspectionInfo {
+        type
+        date
+        result
+        plateStatus
+        nextInspectionDate
+        lastInspectionDate
+      }
+      technicalInfo {
+        engine
+        totalWeight
+        cubicCapacity
+        capacityWeight
+        length
+        vehicleWeight
+        width
+        trailerWithoutBrakesWeight
+        horsepower
+        trailerWithBrakesWeight
+        carryingCapacity
+        axleTotalWeight
+        axle {
+          axleMaxWeight
+          wheelAxle
+        }
+      }
+      ownersInfo {
+        name
+        address
+        dateOfPurchase
+      }
     }
   }
 `
 
-/** permno?: string
-  regno!: string
-  vin?: string 
-  
-   query GenericLicenseQuery($input: GetGenericLicenseInput!, $locale: String) {
-    genericLicense(input: $input, locale: $locale) {
-  
-  */
 const VehicleDetail: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.vehicle')
   const { formatMessage } = useLocale()
@@ -65,14 +121,25 @@ const VehicleDetail: ServicePortalModuleComponent = ({ userInfo }) => {
     variables: {
       input: {
         regno: 'kzp28',
+        permno: '',
+        vin: '',
       },
     },
   })
 
+  const {
+    mainInfo,
+    basicInfo,
+    registrationInfo,
+    currentOwnerInfo,
+    inspectionInfo,
+    technicalInfo,
+    ownersInfo,
+  } = data?.getVehicleDetail || {}
   console.log(data)
-  const year = dateParse(
-    vehicleDetailReal.firstregdate.replace('-', ''),
-  ).getFullYear()
+
+  const year = mainInfo?.year ? '(' + mainInfo.year + ')' : ''
+
   return (
     <>
       <Box marginBottom={6}>
@@ -80,12 +147,11 @@ const VehicleDetail: ServicePortalModuleComponent = ({ userInfo }) => {
           <GridColumn span={['12/12', '12/12', '6/8', '6/8']}>
             <Stack space={2}>
               <Text variant="h3" as="h1">
-                {vehicleDetailReal.make +
-                  ' ' +
-                  vehicleDetailReal.vehcom +
-                  ' (' +
-                  year +
-                  ')'}
+                {loading ? (
+                  <LoadingDots />
+                ) : (
+                  mainInfo?.model + ' ' + mainInfo?.subModel + ' ' + year
+                )}
               </Text>
               <Text>
                 {formatMessage({
@@ -104,8 +170,8 @@ const VehicleDetail: ServicePortalModuleComponent = ({ userInfo }) => {
             id: 'sp.vehicles:type',
             defaultMessage: 'Tegund',
           })}
-          content={vehicleDetailReal.make}
-          loading={false}
+          content={mainInfo?.model ?? ''}
+          loading={loading}
         />
         <Divider />
         <UserInfoLine
@@ -113,11 +179,8 @@ const VehicleDetail: ServicePortalModuleComponent = ({ userInfo }) => {
             id: 'sp.vehicles:subtype',
             defaultMessage: 'Undirtegund',
           })}
-          content={
-            vehicleDetailReal.vehcom +
-            (vehicleDetailReal.speccom ? ' ' + vehicleDetailReal.speccom : '')
-          }
-          loading={false}
+          content={mainInfo?.subModel ?? ''}
+          loading={loading}
         />
         <Divider />
         <UserInfoLine
@@ -125,8 +188,8 @@ const VehicleDetail: ServicePortalModuleComponent = ({ userInfo }) => {
             id: 'sp.vehicles:number-plate',
             defaultMessage: 'Skráningarnúmer',
           })}
-          content={vehicleDetailReal.regno}
-          loading={false}
+          content={mainInfo?.regno ?? ''}
+          loading={loading}
         />
         <Divider />
 
@@ -135,8 +198,8 @@ const VehicleDetail: ServicePortalModuleComponent = ({ userInfo }) => {
             id: 'sp.vehicles:capacity',
             defaultMessage: 'Slagrými',
           })}
-          content={vehicleDetailReal.techincal.capacity.toString() + ' cc.'}
-          loading={false}
+          content={mainInfo?.cubicCapacity?.toString() + ' cc.'}
+          loading={loading}
         />
         <Divider />
         <UserInfoLine
@@ -144,8 +207,8 @@ const VehicleDetail: ServicePortalModuleComponent = ({ userInfo }) => {
             id: 'sp.vehicles:trailer-with-brakes',
             defaultMessage: 'Hemlaður eftirvagn',
           })}
-          content={vehicleDetailReal.techincal.tMassoftrbr.toString() + ' kg.'}
-          loading={false}
+          content={mainInfo?.trailerWithBrakesWeight?.toString() + ' kg.'}
+          loading={loading}
         />
         <Divider />
         <UserInfoLine
@@ -153,20 +216,18 @@ const VehicleDetail: ServicePortalModuleComponent = ({ userInfo }) => {
             id: 'sp.vehicles:trailer-without-brakes',
             defaultMessage: 'Óhemlaður eftirvagn',
           })}
-          content={
-            vehicleDetailReal.techincal.tMassoftrunbr.toString() + ' kg.'
-          }
-          loading={false}
+          content={mainInfo?.trailerWithoutBrakesWeight?.toString() + ' kg.'}
+          loading={loading}
         />
         <Divider />
       </Stack>
       <Box marginBottom={5} />
-      <BaseInfoItem data={basicInfo} />
-      <RegistrationInfoItem data={registration} />
-      <OwnerInfoItem data={currentOwner} />
-      <InspectionInfoItem data={inspectionInfo} />
-      <TechnicalInfoItem data={technicalInfo} />
-      <OwnersTable data={owners} />
+      {basicInfo && <BaseInfoItem data={basicInfo} />}
+      {registrationInfo && <RegistrationInfoItem data={registrationInfo} />}
+      {currentOwnerInfo && <OwnerInfoItem data={currentOwnerInfo} />}
+      {inspectionInfo && <InspectionInfoItem data={inspectionInfo} />}
+      {technicalInfo && <TechnicalInfoItem data={technicalInfo} />}
+      {ownersInfo && <OwnersTable data={ownersInfo} />}
     </>
   )
 }

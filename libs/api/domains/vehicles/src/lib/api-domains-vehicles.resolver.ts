@@ -14,6 +14,7 @@ import {
 } from '@island.is/auth-nest-tools'
 import { GetVehiclesForUserInput } from '../dto/getVehiclesForUserInput'
 import { GetVehicleDetailInput } from '../dto/getVehicleDetailInput'
+import { VehicleDetail } from '../models/getVehicleDetail.model'
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
 export class VehiclesResolver {
@@ -27,17 +28,18 @@ export class VehiclesResolver {
     return res?.data ?? null
   }
 
-  @Query(() => UsersVehicles, { name: 'getVehicleDetail' })
+  @Query(() => VehicleDetail, { name: 'getVehicleDetail' })
   @Audit()
   async getVehicleDetail(
     @Args('input') input: GetVehicleDetailInput,
     @CurrentUser() user: User,
   ) {
-    return await this.vehiclesService.getVehicleDetail({
+    const res = await this.vehiclesService.getVehicleDetail({
       clientPersidno: user.nationalId,
       permno: input.permno,
       regno: input.regno,
       vin: input.vin,
     })
+    return res ?? null
   }
 }

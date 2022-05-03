@@ -4,9 +4,10 @@ import HeaderRow from './HeaderRow'
 import Column from './Column'
 import Row from './Row'
 import { Box } from '@island.is/island-ui/core'
+import { BasicInfo } from '@island.is/api/schema'
 
 interface PropTypes {
-  data: any
+  data: BasicInfo
 }
 
 const BaseInfoItem = ({ data }: PropTypes) => {
@@ -26,14 +27,14 @@ const BaseInfoItem = ({ data }: PropTypes) => {
             id: 'sp.vehicles:basic-model',
             defaultMessage: 'Tegund',
           })}
-          value={data.model}
+          value={data.model || ''}
         />
         <Column
           label={formatMessage({
             id: 'sp.vehicles:basic-regno',
             defaultMessage: 'Skráningarnúmer',
           })}
-          value={data.regno}
+          value={data.regno || ''}
         />
       </Row>
       <Row>
@@ -42,14 +43,14 @@ const BaseInfoItem = ({ data }: PropTypes) => {
             id: 'sp.vehicles:basic-sub-model',
             defaultMessage: 'Undirtegund',
           })}
-          value={data.subModel}
+          value={data.subModel || ''}
         />
         <Column
           label={formatMessage({
             id: 'sp.vehicles:basic-permno',
             defaultMessage: 'Fastanúmer',
           })}
-          value={data.permno}
+          value={data.permno || ''}
         />
       </Row>
       <Row>
@@ -58,14 +59,14 @@ const BaseInfoItem = ({ data }: PropTypes) => {
             id: 'sp.vehicles:basic-verno',
             defaultMessage: 'Verksmiðjunúmer',
           })}
-          value={data.verno}
+          value={data.verno || ''}
         />
         <Column
           label={formatMessage({
             id: 'sp.vehicles:basic-year',
             defaultMessage: 'Árgerð',
           })}
-          value={data.firstRegDateYear}
+          value={data.year || ''}
         />
       </Row>
       <Row>
@@ -74,14 +75,14 @@ const BaseInfoItem = ({ data }: PropTypes) => {
             id: 'sp.vehicles:basic-country',
             defaultMessage: 'Framleiðsluland',
           })}
-          value={data.country}
+          value={data.country || ''}
         />
         <Column
           label={formatMessage({
             id: 'sp.vehicles:basic-pre-reg-year',
             defaultMessage: 'Framleiðsluár',
           })}
-          value={data.preregDateYear}
+          value={data.preregDateYear || ''}
         />
       </Row>
       <Row>
@@ -90,14 +91,14 @@ const BaseInfoItem = ({ data }: PropTypes) => {
             id: 'sp.vehicles:basic-pre-country',
             defaultMessage: 'Fyrra skráningarland',
           })}
-          value={data.formerCountry}
+          value={data.formerCountry || ''}
         />
         <Column
           label={formatMessage({
             id: 'sp.vehicles:basic-import-status',
             defaultMessage: 'Innflutningsástand',
           })}
-          value={data.importStatus}
+          value={data.importStatus || ''}
         />
       </Row>
     </Box>

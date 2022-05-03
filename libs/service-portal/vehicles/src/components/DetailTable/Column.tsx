@@ -4,7 +4,7 @@ import * as styles from './DetailTable.css'
 
 interface PropTypes {
   label: string
-  value: string | null
+  value: string | null | number | undefined
 }
 
 const Column = ({ label, value }: PropTypes) => {

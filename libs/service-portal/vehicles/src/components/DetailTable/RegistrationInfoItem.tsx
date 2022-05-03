@@ -4,9 +4,10 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import HeaderRow from './HeaderRow'
 import Column from './Column'
 import Row from './Row'
+import { RegistrationInfo } from '@island.is/api/schema'
 
 interface PropTypes {
-  data: any
+  data: RegistrationInfo
 }
 
 const RegistrationInfoItem = ({ data }: PropTypes) => {
@@ -26,14 +27,20 @@ const RegistrationInfoItem = ({ data }: PropTypes) => {
             id: 'sp.vehicles:reg-first-reg',
             defaultMessage: 'Fyrsta skráning',
           })}
-          value={data.firstRegistrationDate}
+          value={
+            data.firstRegistrationDate &&
+            new Date(data.firstRegistrationDate).toLocaleDateString()
+          }
         />
         <Column
           label={formatMessage({
             id: 'sp.vehicles:reg-pre-reg',
             defaultMessage: 'Forskráning',
           })}
-          value={data.preRegistrationDate}
+          value={
+            data.preRegistrationDate &&
+            new Date(data.preRegistrationDate).toLocaleDateString()
+          }
         />
       </Row>
       <Row>
@@ -42,7 +49,10 @@ const RegistrationInfoItem = ({ data }: PropTypes) => {
             id: 'sp.vehicles:reg-new-reg',
             defaultMessage: 'Nýskráning',
           })}
-          value={data.newRegistrationDate}
+          value={
+            data.newRegistrationDate &&
+            new Date(data.newRegistrationDate).toLocaleDateString()
+          }
         />
         <Column
           label={formatMessage({
@@ -66,7 +76,7 @@ const RegistrationInfoItem = ({ data }: PropTypes) => {
             id: 'sp.vehicles:reg-type',
             defaultMessage: 'Skráningarflokkur',
           })}
-          value={data.taxGroup}
+          value={data.reggroup}
         />
       </Row>
       <Row>
@@ -91,7 +101,7 @@ const RegistrationInfoItem = ({ data }: PropTypes) => {
             id: 'sp.vehicles:reg-drivers-passengers',
             defaultMessage: 'Farþegar hjá ökumanni',
           })}
-          value={data.driversPassengers}
+          value={data.driversPassengers ? 'Já' : 'Nei'}
         />
         <Column
           label={formatMessage({
@@ -101,17 +111,6 @@ const RegistrationInfoItem = ({ data }: PropTypes) => {
           value={data.standingPassengers}
         />
       </Row>
-      {data.specialName && (
-        <Row>
-          <Column
-            label={formatMessage({
-              id: 'sp.vehicles:reg-special-name',
-              defaultMessage: 'Sérheiti',
-            })}
-            value={data.specialName}
-          />
-        </Row>
-      )}
     </Box>
   )
 }
