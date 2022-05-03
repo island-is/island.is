@@ -23,7 +23,6 @@ import {
   MortgageCertificateSubmissionService,
   FinancialAidService,
   DrivingSchoolConfirmationService,
-  NoDebtCertificateSubmissionService,
 } from './templates'
 
 interface ApplicationApiAction {
@@ -66,7 +65,6 @@ export class TemplateAPIService {
     private readonly mortgageCertificateSubmissionService: MortgageCertificateSubmissionService,
     private readonly financialAidService: FinancialAidService,
     private readonly drivingSchoolConfirmationService: DrivingSchoolConfirmationService,
-    private readonly noDebtCertificateSubmissionService: NoDebtCertificateSubmissionService,
   ) {}
 
   private async tryRunningActionOnService(
@@ -92,7 +90,6 @@ export class TemplateAPIService {
       | MortgageCertificateSubmissionService
       | FinancialAidService
       | DrivingSchoolConfirmationService
-      | NoDebtCertificateSubmissionService
       | MortgageCertificateSubmissionService,
     action: ApplicationApiAction,
   ): Promise<PerformActionResult> {
@@ -227,11 +224,6 @@ export class TemplateAPIService {
       case ApplicationTypes.DRIVING_SCHOOL_CONFIRMATION:
         return this.tryRunningActionOnService(
           this.drivingSchoolConfirmationService,
-          action,
-        )
-      case ApplicationTypes.NO_DEBT_CERTIFICATE:
-        return this.tryRunningActionOnService(
-          this.noDebtCertificateSubmissionService,
           action,
         )
     }
