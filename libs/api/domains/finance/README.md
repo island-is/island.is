@@ -2,7 +2,7 @@
 
 # API Domains Finance
 
-This api utilises the [financeService](libs/clients/finance/src/lib/FinanceClientService.ts)
+This api utilises the [financeService](/libs/clients/finance/src/lib/FinanceClientService.ts)
 
 # How to use
 
