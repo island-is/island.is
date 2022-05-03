@@ -177,7 +177,7 @@ export const useS3Upload = (workingCase: Case) => {
       const index = newFiles.findIndex((f) => f.key === file.key)
       newFiles[index] = file
     } else {
-      newFiles.push(file)
+      newFiles.unshift(file)
     }
 
     setFilesRefAndState(newFiles)
