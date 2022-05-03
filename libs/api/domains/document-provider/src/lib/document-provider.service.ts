@@ -210,12 +210,6 @@ export class DocumentProviderService {
     clientName: string,
     authorization: Auth,
   ): Promise<ClientCredentials> {
-    // return new ClientCredentials(
-    //   '5016d8d5cb6ce0758107b9969ea3c301',
-    //   '7a557951364a960a608735371db61ed8ed320d6bfc59f52fe37fc08e23dbd8d1',
-    //   'd6a4d279-6243-46d1-81c0-d98b825959bc',
-    // )
-
     const isLastModifier = await this.isLastModifierOfOrganisation(
       nationalId,
       authorization,
@@ -241,14 +235,23 @@ export class DocumentProviderService {
   }
 
   async updateEndpointOnTest(
+    nationalId: string,
     endpoint: string,
     providerId: string,
     xroad: boolean,
+    authorization: Auth,
   ): Promise<AudienceAndScope> {
-    // return new AudienceAndScope(
-    //   'https://test-skjalaveita-island-is.azurewebsites.net',
-    //   'https://test-skjalaveita-island-is.azurewebsites.net/api/v1/customer/.default',
-    // )
+    const isLastModifier = await this.isLastModifierOfOrganisation(
+      nationalId,
+      authorization,
+    )
+
+    if (!isLastModifier) {
+      throw new ApolloError(
+        'Forbidden. User is not last modifier of organisation.',
+        '403',
+      )
+    }
 
     const result = await this.documentProviderClientTest
       .updateEndpoint(providerId, endpoint, xroad)
@@ -259,11 +262,23 @@ export class DocumentProviderService {
   }
 
   async runEndpointTests(
+    nationalId: string,
     recipient: string,
     documentId: string,
     providerId: string,
+    authorization: Auth,
   ): Promise<TestResult[]> {
-    //return [new TestResult('getMessageFromMailbox', true, 'Skjal fannst.')]
+    const isLastModifier = await this.isLastModifierOfOrganisation(
+      nationalId,
+      authorization,
+    )
+
+    if (!isLastModifier) {
+      throw new ApolloError(
+        'Forbidden. User is not last modifier of organisation.',
+        '403',
+      )
+    }
 
     const results = await this.documentProviderClientTest
       .runTests(providerId, recipient, documentId)
@@ -279,12 +294,6 @@ export class DocumentProviderService {
     clientName: string,
     authorization: Auth,
   ): Promise<ClientCredentials> {
-    // return new ClientCredentials(
-    //   '5016d8d5cb6ce0758107b9969ea3c301',
-    //   '7a557951364a960a608735371db61ed8ed320d6bfc59f52fe37fc08e23dbd8d1',
-    //   'd6a4d279-6243-46d1-81c0-d98b825959bc',
-    // )
-
     const isLastModifier = await this.isLastModifierOfOrganisation(
       nationalId,
       authorization,
@@ -334,15 +343,23 @@ export class DocumentProviderService {
   }
 
   async updateEndpoint(
+    nationalId: string,
     endpoint: string,
     providerId: string,
     xroad: boolean,
     authorization: Auth,
   ): Promise<AudienceAndScope> {
-    // return new AudienceAndScope(
-    //   'https://test-skjalaveita-island-is.azurewebsites.net',
-    //   'https://test-skjalaveita-island-is.azurewebsites.net/api/v1/customer/.default',
-    // )
+    const isLastModifier = await this.isLastModifierOfOrganisation(
+      nationalId,
+      authorization,
+    )
+
+    if (!isLastModifier) {
+      throw new ApolloError(
+        'Forbidden. User is not last modifier of organisation.',
+        '403',
+      )
+    }
 
     const result = await this.documentProviderClientProd
       .updateEndpoint(providerId, endpoint, xroad)
