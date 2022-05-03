@@ -151,49 +151,41 @@ export class UserProfileService {
       return undefined
     }
 
+    let { streetAddress, country } = address as Partial<Address>
+    const locality = address.locality ?? undefined
+    const postalCode = address.postalCode ?? undefined
+    let formatted = undefined
+    const valid = streetAddress && locality && postalCode
+
+    if (country && hasCountryCode) {
+      country = this.countryFormatter.of(country)
+    }
+
     // When individuals live abroad, the national registry stores the country name under "heiti" or streetAddress.
     const likelyForeign =
-      address.streetAddress != null &&
-      address.locality == null &&
-      address.postalCode == null &&
-      address.municipalityNumber == null
+      streetAddress != null &&
+      locality == null &&
+      postalCode == null &&
+      country == null
     if (likelyForeign) {
-      return {
-        country: address.streetAddress,
-      }
+      country = streetAddress
+      streetAddress = undefined
     }
 
-    const country = this.formatCountry(address.country, hasCountryCode)
+    if (valid) {
+      if (!country) {
+        country = 'Ísland'
+      }
+      formatted = `${streetAddress}\n${postalCode} ${locality}\n${country}`
+    }
+
     return {
-      formatted: this.formattedAddressString(address, country),
-      streetAddress: address.streetAddress ?? undefined,
-      locality: address.locality ?? undefined,
-      postalCode: address.postalCode ?? undefined,
+      formatted,
+      streetAddress,
+      locality,
+      postalCode,
       country,
     }
-  }
-
-  private formattedAddressString(
-    address: Address,
-    country: string,
-  ): string | undefined {
-    const validAddress =
-      address.streetAddress && address.locality && address.postalCode
-
-    if (validAddress) {
-      return `${address.streetAddress}\n${address.postalCode} ${address.locality}\n${country}`
-    }
-    return undefined
-  }
-
-  private formatCountry(
-    country: string | undefined,
-    hasCountryCode: boolean,
-  ): string {
-    if (country && hasCountryCode) {
-      return this.countryFormatter.of(country)
-    }
-    return country ?? 'Ísland'
   }
 
   private formatBirthdate(date?: Date): string | undefined {
