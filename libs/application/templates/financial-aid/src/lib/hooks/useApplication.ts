@@ -36,8 +36,7 @@ const useApplication = (applicationSystemId: string) => {
   })
 
   return {
-    currentApplication:
-      data?.municipalitiesFinancialAidApplication ?? ({} as Application),
+    currentApplication: data?.municipalitiesFinancialAidApplication,
   }
 }
 

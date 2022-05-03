@@ -11,26 +11,28 @@ import {
   SpouseApproved,
   Timeline,
 } from './index'
+import useApplication from '../../lib/hooks/useApplication'
 
 const SpouseStatus = ({ application }: FAFieldBaseProps) => {
+  const { currentApplication } = useApplication(application.id)
   const { nationalRegistry } = application.externalData
-  const state = application.externalData?.veita?.data?.state
+  const state = currentApplication?.state
 
   return (
     <Box paddingBottom={5}>
       <Header state={state} />
 
-      {application.externalData?.veita?.data?.state ===
-        ApplicationState.APPROVED && <SpouseApproved />}
+      {state === ApplicationState.APPROVED && <SpouseApproved />}
 
       {/* TODO: redirect user to page to upload files when button is clicked insied of MissingFilesCard*/}
       {state === ApplicationState.DATANEEDED && <MissingFilesCard />}
 
-      {/* TODO: we might need to use the dates from Veita*/}
       <Timeline
         state={state}
-        created={application.created}
-        modified={application.modified}
+        created={currentApplication?.created ?? application.created.toString()}
+        modified={
+          currentApplication?.modified ?? application.modified.toString()
+        }
       />
 
       <MoreActions

@@ -12,13 +12,17 @@ import { timeline } from '../../../lib/messages'
 import { timelineSections } from '../../../lib/formatters'
 
 interface Props {
-  state: ApplicationState
-  modified: Date
-  created: Date
+  state?: ApplicationState
+  modified?: string
+  created?: string
   showSpouseStep?: boolean
 }
 
 const Timeline = ({ state, modified, created, showSpouseStep }: Props) => {
+  if (!state) {
+    return null
+  }
+
   const { formatMessage } = useIntl()
 
   const sections = timelineSections(created, modified, showSpouseStep)

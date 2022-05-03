@@ -9,7 +9,7 @@ import {
 import { getStateMessageAndColor } from '../../../lib/formatters'
 
 interface Props {
-  state: ApplicationState
+  state?: ApplicationState
 }
 
 const Header = ({ state }: Props) => {

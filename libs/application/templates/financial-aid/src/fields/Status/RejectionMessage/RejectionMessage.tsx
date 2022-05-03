@@ -6,7 +6,7 @@ import { rejectionMessage } from '../../../lib/messages'
 import DescriptionText from '../../DescriptionText/DescriptionText'
 
 interface Props {
-  rejectionComment: string
+  rejectionComment?: string
   rulesPage?: string
   homepage?: string
   email?: string
