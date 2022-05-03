@@ -168,18 +168,16 @@ export class AuthController {
   ) {
     const user = await this.authService.findUser(authUser.nationalId)
 
-    let userId: string | undefined
-    let jwtToken: string | undefined
-    let redirectRoute: string | undefined
-
     if (user && this.authService.validateUser(user)) {
-      userId = user.id
-      jwtToken = this.sharedAuthService.signJwt(user, csrfToken)
-      redirectRoute = requestedRedirectRoute
-        ? requestedRedirectRoute
-        : user.role === UserRole.ADMIN
-        ? '/notendur'
-        : '/krofur'
+      return {
+        userId: user.id,
+        jwtToken: this.sharedAuthService.signJwt(user, csrfToken),
+        redirectRoute: requestedRedirectRoute
+          ? requestedRedirectRoute
+          : user.role === UserRole.ADMIN
+          ? '/notendur'
+          : '/krofur',
+      }
     } else if (requestedRedirectRoute?.startsWith('/verjandi/')) {
       const defender = await this.authService.findDefender(
         requestedRedirectRoute.substring(10),
@@ -187,15 +185,15 @@ export class AuthController {
       )
 
       if (defender && this.authService.validateUser(defender)) {
-        userId = defender.id
-        jwtToken = this.sharedAuthService.signJwt(defender, csrfToken)
-        redirectRoute = requestedRedirectRoute
+        return {
+          userId: defender.id,
+          jwtToken: this.sharedAuthService.signJwt(defender, csrfToken),
+          redirectRoute: requestedRedirectRoute,
+        }
       }
-    } else {
-      return undefined
     }
 
-    return { userId, jwtToken, redirectRoute }
+    return undefined
   }
 
   private async redirectAuthenticatedUser(
