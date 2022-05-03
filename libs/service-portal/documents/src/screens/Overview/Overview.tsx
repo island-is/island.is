@@ -16,6 +16,7 @@ import {
   GridColumn,
   LoadingDots,
   Hidden,
+  Checkbox,
 } from '@island.is/island-ui/core'
 import { useListDocuments } from '@island.is/service-portal/graphql'
 import {
@@ -51,6 +52,7 @@ const defaultFilterValues = {
   dateTo: defaultEndDate,
   activeCategory: defaultCategory,
   searchQuery: '',
+  showUnread: false,
 }
 
 type FilterValues = {
@@ -58,13 +60,20 @@ type FilterValues = {
   dateTo: Date | null
   activeCategory: Option
   searchQuery: string
+  showUnread: boolean
 }
 
 const getFilteredDocuments = (
   documents: Document[],
   filterValues: FilterValues,
 ): Document[] => {
-  const { dateFrom, dateTo, activeCategory, searchQuery } = filterValues
+  const {
+    dateFrom,
+    dateTo,
+    activeCategory,
+    searchQuery,
+    showUnread,
+  } = filterValues
   let filteredDocuments = documents.filter((document) => {
     const minDate = dateFrom || new Date('1900-01-01')
     const maxDate = dateTo || addMonths(new Date(), 3)
@@ -80,8 +89,12 @@ const getFilteredDocuments = (
     )
   }
 
+  if (showUnread) {
+    filteredDocuments = filteredDocuments.filter((x) => !x.opened)
+  }
+
   if (searchQuery) {
-    return filteredDocuments.filter((x) =>
+    filteredDocuments = filteredDocuments.filter((x) =>
       x.subject.toLowerCase().includes(searchQuery.toLowerCase()),
     )
   }
@@ -147,7 +160,10 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
 
   const handleSearchChange = useCallback((value: string) => {
     setPage(1)
-    setFilterValue({ ...defaultFilterValues, searchQuery: value })
+    setFilterValue((prevFilter) => ({
+      ...prevFilter,
+      searchQuery: value,
+    }))
     if (!searchInteractionEventSent) {
       documentsSearchDocumentsInitialized(pathname)
       setSearchInteractionEventSent(true)
@@ -157,6 +173,14 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   const handleClearFilters = useCallback(() => {
     setPage(1)
     setFilterValue({ ...defaultFilterValues })
+  }, [])
+
+  const handleShowUnread = useCallback((eh) => {
+    setPage(1)
+    setFilterValue((prevFilter) => ({
+      ...prevFilter,
+      showUnread: eh.target.checked,
+    }))
   }, [])
 
   const handleDateRangeButtonClick = () => setIsDateRangeOpen(!isDateRangeOpen)
@@ -198,6 +222,12 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
             </Text>
           </Column>
         </Columns>
+        <Checkbox
+          id="show-unread"
+          label="Sýna einungis ólesið"
+          checked={filterValue.showUnread}
+          onChange={handleShowUnread}
+        />
         <Box marginTop={[1, 1, 2, 2, 6]}>
           <Hidden print>
             <GridRow alignItems="flexEnd">
