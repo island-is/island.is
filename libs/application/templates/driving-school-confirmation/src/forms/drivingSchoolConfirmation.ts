@@ -7,7 +7,6 @@ import {
   buildDataProviderItem,
   buildMultiField,
   buildCustomField,
-  buildTextField,
   buildSubmitField,
   DefaultEvents,
 } from '@island.is/application/core'
@@ -47,17 +46,21 @@ export const getDrivingSchoolConfirmation = (): Form => {
           }),
         ],
       }),
-      buildMultiField({
-        id: 'studentsInfo',
+      buildSection({
+        id: 'studentsInfoSection',
         title: m.studentInfoTitle,
         children: [
-          buildTextField({
-            id: 'nationalId',
-            title: m.studentInfoNationalId,
-            width: 'half',
-            backgroundColor: 'blue',
-            format: '######-####',
-            required: true,
+          buildMultiField({
+            id: 'studentsInfo',
+            title: m.studentInfoTitle,
+            description: m.studentInfoSubtitle,
+            children: [
+              buildCustomField({
+                id: 'student',
+                title: '',
+                component: 'NationalIdwithName',
+              }),
+            ],
           }),
         ],
       }),

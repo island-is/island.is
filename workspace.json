@@ -1169,6 +1169,29 @@
         }
       }
     },
+    "api-domains-financial-statements-inao": {
+      "root": "libs/api/domains/financial-statements-inao",
+      "sourceRoot": "libs/api/domains/financial-statements-inao/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/api/domains/financial-statements-inao/**/*.ts"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/api/domains/financial-statements-inao"],
+          "options": {
+            "jestConfig": "libs/api/domains/financial-statements-inao/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "api-domains-fishing-license": {
       "root": "libs/api/domains/fishing-license",
       "sourceRoot": "libs/api/domains/fishing-license/src",
