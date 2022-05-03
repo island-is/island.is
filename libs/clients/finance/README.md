@@ -1,6 +1,6 @@
 <!-- gitbook-navigation: "Finance" -->
 
-# Finance client
+# Finance Client
 
 See [examples](/libs/api/mocks/src/domains/finance/index.ts) in mock data.
 
