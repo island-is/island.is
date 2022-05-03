@@ -21,4 +21,13 @@ export class Institution implements TInstitution {
 
   @Field()
   readonly name!: string
+
+  @Field()
+  readonly active!: boolean
+
+  @Field({ nullable: true })
+  readonly defaultCourtId?: string
+
+  @Field({ nullable: true })
+  readonly lokePrefix?: string
 }

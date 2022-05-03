@@ -12,4 +12,7 @@ export interface Institution {
   modified: string
   type: InstitutionType
   name: string
+  active: boolean
+  defaultCourtId?: string
+  lokePrefix?: string
 }

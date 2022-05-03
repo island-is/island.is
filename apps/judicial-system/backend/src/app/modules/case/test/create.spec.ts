@@ -60,7 +60,11 @@ describe('CaseController - Create', () => {
 
   describe('case created', () => {
     const userId = uuid()
-    const user = { id: userId } as TUser
+    const courtId = uuid()
+    const user = {
+      id: userId,
+      institution: { defaultCourtId: courtId },
+    } as TUser
     const caseToCreate = {
       type: CaseType.AUTOPSY,
       description: 'Some details',
@@ -70,7 +74,6 @@ describe('CaseController - Create', () => {
       defenderEmail: 'john@dummy.is',
       defenderPhoneNumber: '1234567',
       sendRequestToDefender: false,
-      courtId: uuid(),
       leadInvestigator: 'The Boss',
     }
 
@@ -85,6 +88,7 @@ describe('CaseController - Create', () => {
           origin: CaseOrigin.RVG,
           creatingProsecutorId: userId,
           prosecutorId: userId,
+          courtId,
         },
         { transaction },
       )

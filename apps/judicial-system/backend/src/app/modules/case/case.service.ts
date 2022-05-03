@@ -528,23 +528,11 @@ export class CaseService {
 
   private async createCase(
     caseToCreate: CreateCaseDto,
-    prosecutorId?: string,
     transaction?: Transaction,
   ): Promise<string> {
     const theCase = await (transaction
-      ? this.caseModel.create(
-          {
-            ...caseToCreate,
-            creatingProsecutorId: prosecutorId,
-            prosecutorId,
-          },
-          { transaction },
-        )
-      : this.caseModel.create({
-          ...caseToCreate,
-          creatingProsecutorId: prosecutorId,
-          prosecutorId,
-        }))
+      ? this.caseModel.create(caseToCreate, { transaction })
+      : this.caseModel.create(caseToCreate))
 
     return theCase.id
   }
@@ -597,6 +585,7 @@ export class CaseService {
 
   async internalCreate(caseToCreate: InternalCreateCaseDto): Promise<Case> {
     let prosecutorId: string | undefined
+    let courtId: string | undefined
 
     if (caseToCreate.prosecutorNationalId) {
       const prosecutor = await this.userService.findByNationalId(
@@ -610,6 +599,7 @@ export class CaseService {
       }
 
       prosecutorId = prosecutor.id
+      courtId = prosecutor.institution?.defaultCourtId
     }
 
     return this.sequelize
@@ -618,8 +608,10 @@ export class CaseService {
           {
             ...caseToCreate,
             origin: CaseOrigin.LOKE,
+            creatingProsecutorId: prosecutorId,
+            prosecutorId,
+            courtId,
           } as InternalCreateCaseDto,
-          prosecutorId,
           transaction,
         )
 
@@ -639,15 +631,17 @@ export class CaseService {
       .then((caseId) => this.findById(caseId))
   }
 
-  async create(
-    caseToCreate: CreateCaseDto,
-    prosecutorId?: string,
-  ): Promise<Case> {
+  async create(caseToCreate: CreateCaseDto, prosecutor: TUser): Promise<Case> {
     return this.sequelize
       .transaction(async (transaction) => {
         const caseId = await this.createCase(
-          { ...caseToCreate, origin: CaseOrigin.RVG } as CreateCaseDto,
-          prosecutorId,
+          {
+            ...caseToCreate,
+            origin: CaseOrigin.RVG,
+            creatingProsecutorId: prosecutor.id,
+            prosecutorId: prosecutor.id,
+            courtId: prosecutor.institution?.defaultCourtId,
+          } as CreateCaseDto,
           transaction,
         )
 
@@ -899,8 +893,9 @@ export class CaseService {
             prosecutorOnlySessionRequest: theCase.prosecutorOnlySessionRequest,
             parentCaseId: theCase.id,
             initialRulingDate: theCase.initialRulingDate ?? theCase.rulingDate,
+            creatingProsecutorId: user.id,
+            prosecutorId: user.id,
           } as CreateCaseDto,
-          user.id,
           transaction,
         )
 
