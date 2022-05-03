@@ -56,8 +56,6 @@
 	<string>Used for license scanning capabilities</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Used for unlocking the app</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Used for determining your location while using the app</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Used for license scanning capabilities</string>
 	<key>UIAppFonts</key>
