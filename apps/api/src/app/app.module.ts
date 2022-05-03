@@ -58,6 +58,7 @@ import { maskOutFieldsMiddleware } from './graphql.middleware'
 import { FishingLicenseModule } from '@island.is/api/domains/fishing-license'
 import { CompanyRegistryConfig } from '@island.is/clients/rsk/company-registry'
 import { FishingLicenseClientConfig } from '@island.is/clients/fishing-license'
+import { FinancialStatementsInaoModule } from '@island.is/api/domains/financial-statements-inao'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -210,6 +211,7 @@ const autoSchemaFile = environment.production
       url: environment.regulationsDomain.url!,
     }),
     FinanceModule,
+    FinancialStatementsInaoModule,
     AssetsModule,
     NationalRegistryXRoadModule,
     ApiDomainsPaymentModule.register({
