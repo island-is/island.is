@@ -294,7 +294,7 @@ export class DrivingLicenseBookService {
 
   async getSchoolForSchoolStaff(user: User): Promise<Organization> {
     const api = await this.apiWithAuth()
-    const employee = await api.apiSchoolGetSchoolForSchoolStaffGet({
+    const employee = await api.apiSchoolGetSchoolForSchoolStaffUserSsnGet({
       userSsn: user.nationalId,
     })
     if (!employee) {
@@ -336,7 +336,7 @@ export class DrivingLicenseBookService {
 
   async isSchoolStaff(user: User): Promise<boolean> {
     const api = await this.apiWithAuth()
-    const employee = await api.apiSchoolGetSchoolForSchoolStaffGet({
+    const employee = await api.apiSchoolGetSchoolForSchoolStaffUserSsnGet({
       userSsn: user.nationalId,
     })
     if (!employee) {

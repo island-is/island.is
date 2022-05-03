@@ -1,18 +1,15 @@
+import { useQuery } from '@apollo/client'
 import React, { FC } from 'react'
+
+import { Query } from '@island.is/api/schema'
+import { SkeletonLoader } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
-import DocumentScreen from '../../components/DocumentScreen/DocumentScreen'
-import { User } from 'oidc-client'
-import { SkeletonLoader } from '@island.is/island-ui/core'
-import { Query } from '@island.is/api/schema'
-import { useQuery } from '@apollo/client'
 import { GET_TAPS_QUERY } from '@island.is/service-portal/graphql'
 
-interface Props {
-  userInfo: User
-}
+import DocumentScreen from '../../components/DocumentScreen/DocumentScreen'
 
-const LocalTax: FC<Props> = ({ userInfo }) => {
+const LocalTax: FC = () => {
   useNamespaces('sp.local-tax')
   const { formatMessage } = useLocale()
   const { loading: tabLoading } = useQuery<Query>(GET_TAPS_QUERY)
@@ -30,7 +27,6 @@ const LocalTax: FC<Props> = ({ userInfo }) => {
       })}
       listPath="localTax"
       defaultDateRangeMonths={12}
-      userInfo={userInfo}
     />
   )
 }
