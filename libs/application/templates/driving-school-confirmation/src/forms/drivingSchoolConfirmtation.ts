@@ -59,13 +59,6 @@ export const getDrivingSchoolConfirmation = (): Form => {
             format: '######-####',
             required: true,
           }),
-          buildTextField({
-            id: 'email',
-            title: m.studentInfoEmail,
-            width: 'half',
-            backgroundColor: 'blue',
-            variant: 'email',
-          }),
         ],
       }),
       buildSection({
@@ -101,7 +94,7 @@ export const getDrivingSchoolConfirmation = (): Form => {
                 actions: [
                   {
                     event: DefaultEvents.SUBMIT,
-                    name: 'Senda inn umsókn',
+                    name: m.confirmSchoolButton,
                     type: 'primary',
                   },
                 ],

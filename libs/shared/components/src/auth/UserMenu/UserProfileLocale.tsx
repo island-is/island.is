@@ -1,9 +1,7 @@
-import { useLazyQuery } from '@apollo/client'
-import { Query } from '@island.is/api/schema'
 import { useLocale, useNamespaces, isLocale } from '@island.is/localization'
-import { USER_PROFILE } from '@island.is/service-portal/graphql'
 import { useEffect } from 'react'
 import { useAuth } from '@island.is/auth/react'
+import { useGetUserProfileLocaleLazyQuery } from '../../../gen/graphql'
 
 /**
  * If the user has set a preferred language in his user
@@ -17,12 +15,13 @@ export const UserProfileLocale = () => {
   const { changeLanguage } = useNamespaces()
   const { lang } = useLocale()
   const { userInfo } = useAuth()
-  const [getUserProfile, { data }] = useLazyQuery<Query>(USER_PROFILE)
+  const [getUserProfile, { data }] = useGetUserProfileLocaleLazyQuery()
+
   const userProfile = data?.getUserProfile || null
 
   useEffect(() => {
     if (userInfo?.profile.nationalId) getUserProfile()
-  }, [userInfo])
+  }, [userInfo, getUserProfile])
 
   useEffect(() => {
     if (

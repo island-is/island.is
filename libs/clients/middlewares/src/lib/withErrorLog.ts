@@ -1,6 +1,6 @@
 import { Logger } from '@island.is/logging'
 
-import { FetchAPI, FetchMiddlewareOptions } from './nodeFetch'
+import { FetchMiddlewareOptions, MiddlewareAPI } from './nodeFetch'
 import { FetchError } from './FetchError'
 
 interface ErrorLogOptions extends FetchMiddlewareOptions {
@@ -14,9 +14,9 @@ export function withErrorLog({
   fetch,
   treat400ResponsesAsErrors,
   logger,
-}: ErrorLogOptions): FetchAPI {
-  return (input, init) => {
-    return fetch(input, init).catch((error: Error) => {
+}: ErrorLogOptions): MiddlewareAPI {
+  return (request) => {
+    return fetch(request).catch((error: Error) => {
       const logLevel =
         error instanceof FetchError &&
         error.status < 500 &&
@@ -31,7 +31,7 @@ export function withErrorLog({
       logger.log(logLevel, {
         ...error,
         stack: error.stack,
-        url: input,
+        url: request.url,
         message: `Fetch failure (${name}): ${error.message}`,
         cacheStatus,
         // Do not log large response objects.

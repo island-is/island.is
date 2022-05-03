@@ -12,6 +12,7 @@ export type Validation =
   | 'email-format'
   | 'phonenumber'
   | 'date-format'
+  | 'court-case-number'
 
 const someDefendantIsInvalid = (workingCase: Case) => {
   return (
@@ -75,6 +76,12 @@ const getRegexByValidation = (validation: Validation) => {
       return {
         regex: new RegExp(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(.\d{3})?Z$/),
         errorMessage: '',
+      }
+    }
+    case 'court-case-number': {
+      return {
+        regex: new RegExp(/^R-[0-9]{1,4}\/[0-9]{4}$/),
+        errorMessage: `Dæmi: R-1234/${new Date().getFullYear()}`,
       }
     }
   }

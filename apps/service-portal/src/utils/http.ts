@@ -1,4 +1,4 @@
-import { User } from 'oidc-client'
+import { User } from '@island.is/shared/types'
 
 export const fetchWithAuth = (url: string, userInfo: User) =>
   fetch(url, {
