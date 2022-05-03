@@ -21,6 +21,7 @@ import {
   CreateStaff,
   CreateMunicipality,
   ApplicationPagination,
+  UserType,
 } from '@island.is/financial-aid/shared/lib'
 
 import { environment } from '../environments'
@@ -190,8 +191,8 @@ class BackendAPI extends RESTDataSource {
     return this.get(`personalTaxReturn/id/${id}`)
   }
 
-  getDirectTaxPayments(): Promise<DirectTaxPaymentsResponse> {
-    return this.get('personalTaxReturn/directTaxPayments')
+  getDirectTaxPayments(userType: UserType): Promise<DirectTaxPaymentsResponse> {
+    return this.get(`personalTaxReturn/directTaxPayments?userType=${userType}`)
   }
 
   getFilteredApplications(

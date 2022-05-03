@@ -24,8 +24,8 @@ query PersonalTaxReturnQuery($input: MunicipalitiesFinancialAidPersonalTaxReturn
 `
 
 const directTaxPaymentsQuery = `
-  query DirectTaxPaymentsQuery {
-    municipalitiesDirectTaxPayments {
+  query DirectTaxPaymentsQuery($input: MunicipalitiesGetDirectTaxPaymentsInput!) {
+    municipalitiesDirectTaxPayments(input: $input) {
       success
       directTaxPayments {
         totalSalary
@@ -69,14 +69,16 @@ export class TaxDataFetchProvider extends BasicDataProvider {
       input: { id: application.id },
     })
 
-    const directTaxPayments = await this.runQuery<{
-      directTaxPayments: DirectTaxPayment[]
-      success: boolean
-    }>(directTaxPaymentsQuery, 'municipalitiesDirectTaxPayments')
-
     const getUserType = application?.externalData?.taxDataFetch
       ? UserType.SPOUSE
       : UserType.APPLICANT
+
+    const directTaxPayments = await this.runQuery<{
+      directTaxPayments: DirectTaxPayment[]
+      success: boolean
+    }>(directTaxPaymentsQuery, 'municipalitiesDirectTaxPayments', {
+      input: { userType: getUserType },
+    })
 
     const addUserTypeDirectPayments = directTaxPayments.directTaxPayments.map(
       (el) => {

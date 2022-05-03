@@ -4,7 +4,10 @@ import { Audit } from '@island.is/nest/audit'
 import { Args, Context, Query } from '@nestjs/graphql'
 import { PersonalTaxReturnResponse, DirectTaxPaymentsResponse } from './models/'
 import BackendAPI from '../../../services/backend'
-import { MunicipalitiesPersonalTaxReturnIdInput } from './dto/municipalitiesPersonalTaxReturn.input'
+import {
+  MunicipalitiesDirectTaxPaymentsInput,
+  MunicipalitiesPersonalTaxReturnIdInput,
+} from './dto'
 
 @UseGuards(IdsUserGuard)
 @Audit({ namespace: '@island.is/api/personal-tax-return' })
@@ -20,8 +23,10 @@ export class PersonalTaxReturnResolver {
 
   @Query(() => DirectTaxPaymentsResponse)
   async municipalitiesDirectTaxPayments(
+    @Args('input', { type: () => MunicipalitiesDirectTaxPaymentsInput })
+    input: MunicipalitiesDirectTaxPaymentsInput,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<DirectTaxPaymentsResponse> {
-    return await backendApi.getDirectTaxPayments()
+    return await backendApi.getDirectTaxPayments(input.userType)
   }
 }

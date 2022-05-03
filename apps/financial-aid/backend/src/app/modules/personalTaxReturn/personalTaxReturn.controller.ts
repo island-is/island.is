@@ -1,7 +1,7 @@
-import { Controller, Get, Param, UseGuards } from '@nestjs/common'
+import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
-import { apiBasePath } from '@island.is/financial-aid/shared/lib'
+import { apiBasePath, UserType } from '@island.is/financial-aid/shared/lib'
 
 import type { User } from '@island.is/financial-aid/shared/lib'
 
@@ -53,10 +53,12 @@ export class PersonalTaxReturnController {
     description: 'Fetches direct tax payments for last three months from user.',
   })
   async municipalitiesDirectTaxPayments(
+    @Query('userType') userType: UserType,
     @CurrentUser() user: User,
   ): Promise<DirectTaxPaymentsResponse> {
     return await this.personalTaxReturnService.directTaxPayments(
       user.nationalId,
+      userType,
     )
   }
 }

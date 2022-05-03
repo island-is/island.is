@@ -3,6 +3,7 @@ import { Base64 } from 'js-base64'
 import { PersonalTaxReturnApi } from '@island.is/clients/rsk/personal-tax-return'
 import { FileService } from '../file'
 import fetch from 'isomorphic-fetch'
+import { UserType } from 'aws-sdk/clients/workdocs'
 
 @Injectable()
 export class PersonalTaxReturnService {
@@ -11,7 +12,7 @@ export class PersonalTaxReturnService {
     private fileService: FileService,
   ) {}
 
-  async directTaxPayments(nationalId: string) {
+  async directTaxPayments(nationalId: string, userType: UserType) {
     return await this.personalTaxReturnApi
       .directTaxPayments(nationalId, this.createPeriod(3), this.createPeriod(1))
       .then((res) => {
@@ -25,6 +26,7 @@ export class PersonalTaxReturnService {
                   withheldAtSource: salary.salaryWithheldAtSource,
                   month: salary.period,
                   year: salary.year,
+                  userType: userType,
                 }
               })
             : [],

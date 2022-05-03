@@ -10,6 +10,7 @@ import {
 } from '@island.is/clients/municipalities-financial-aid'
 import { FetchError } from '@island.is/clients/middlewares'
 import { CreateSignedUrlInput, MunicipalityInput } from './dto'
+import { UserType } from '@island.is/financial-aid/shared/lib'
 
 @Injectable()
 export class MunicipalitiesFinancialAidService {
@@ -66,10 +67,12 @@ export class MunicipalitiesFinancialAidService {
     })
   }
 
-  async directTaxPaymentsForFinancialAId(auth: Auth) {
+  async directTaxPaymentsForFinancialAId(auth: Auth, userType: UserType) {
     return await this.personalTaxReturnApiWithAuth(
       auth,
-    ).personalTaxReturnControllerMunicipalitiesDirectTaxPayments()
+    ).personalTaxReturnControllerMunicipalitiesDirectTaxPayments({
+      userType: userType,
+    })
   }
 
   async municipalitiesFinancialAidCreateSignedUrl(

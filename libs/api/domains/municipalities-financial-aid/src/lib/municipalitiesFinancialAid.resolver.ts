@@ -16,6 +16,7 @@ import {
 } from './models'
 import {
   CreateSignedUrlInput,
+  GetDirectTaxPaymentsInput,
   MunicipalityInput,
   PersonalTaxReturnInput,
 } from './dto'
@@ -62,10 +63,13 @@ export class MunicipalitiesFinancialAidResolver {
 
   @Query(() => DirectTaxPaymentsResponse)
   async municipalitiesDirectTaxPayments(
+    @Args('input', { type: () => GetDirectTaxPaymentsInput })
+    input: GetDirectTaxPaymentsInput,
     @CurrentUser() user: User,
   ): Promise<DirectTaxPaymentsResponse> {
     return await this.municipalitiesFinancialAidService.directTaxPaymentsForFinancialAId(
       user,
+      input.userType,
     )
   }
 
