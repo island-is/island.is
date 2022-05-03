@@ -1,26 +1,22 @@
+import { userMonitoring } from '@island.is/user-monitoring'
 import '@island.is/api/mocks'
 import React from 'react'
 import ReactDOM from 'react-dom'
-import * as Sentry from '@sentry/react'
-import { Integrations } from '@sentry/tracing'
 
-import {
-  getActiveEnvironment,
-  isRunningOnEnvironment,
-} from '@island.is/shared/utils'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 import './auth'
 import { environment } from './environments'
 import App from './app/App'
 
-const activeEnvironment = getActiveEnvironment()
-
-Sentry.init({
-  dsn: environment.sentry.dsn,
-  integrations: [new Integrations.BrowserTracing()],
-  enabled: !isRunningOnEnvironment('local'),
-  environment: activeEnvironment,
-  tracesSampleRate: 0.01,
-})
+if (!isRunningOnEnvironment('local')) {
+  userMonitoring.initDdRum({
+    service: 'service-portal',
+    applicationId: environment.DD_RUM_APPLICATION_ID,
+    clientToken: environment.DD_RUM_CLIENT_TOKEN,
+    env: environment.ENVIRONMENT,
+    version: environment.APP_VERSION,
+  })
+}
 
 ReactDOM.render(<App />, document.getElementById('root'))
