@@ -131,4 +131,9 @@ export const m = defineMessages({
     defaultMessage: 'Tókst ekki að sækja nafn út frá þessari kennitölu.',
     description: 'No name for given national Id',
   },
+  invalidNationalIdValue: {
+    id: 'an.application:error.invalidNationalIdValue',
+    defaultMessage: 'Kennitala er ekki á réttu sniðmáti',
+    description: 'Error message when a value is invalid.',
+  },
 })
