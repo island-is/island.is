@@ -3,7 +3,7 @@ import { buildOpenApi } from '@island.is/infra-nest-server'
 import { QueueModule } from '@island.is/message-queue'
 import { openApi } from './openApi'
 import { NotificationsController } from './app/modules/notifications/notifications.controller'
-
+import { MagicBellModule } from './app/modules/magic-bell/magicBell.module'
 @Module({
   imports: [
     QueueModule.register({
@@ -13,6 +13,7 @@ import { NotificationsController } from './app/modules/notifications/notificatio
         queueName: '',
       },
     }),
+    MagicBellModule,
   ],
   controllers: [NotificationsController],
 })

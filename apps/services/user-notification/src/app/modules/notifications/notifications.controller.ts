@@ -25,7 +25,7 @@ import {
 } from './dto/createNotification.dto'
 import { InjectQueue, QueueService } from '@island.is/message-queue'
 import { CreateNotificationResponse } from './dto/createNotification.response'
-import { MagicBellService } from './magicBell.service'
+import { MagicBellService } from '../magic-bell/magicBell.service'
 
 const throwIfError = (errors: ValidationError[]): void => {
   if (errors.length > 0) {
@@ -61,7 +61,7 @@ export class NotificationsController {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     @InjectQueue('notifications') private queue: QueueService,
-    @Inject(MagicBellService)
+    // @Inject(MagicBellService)
     private readonly magicBellService: MagicBellService,
   ) {}
 

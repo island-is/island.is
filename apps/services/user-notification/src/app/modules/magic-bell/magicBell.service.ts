@@ -1,6 +1,9 @@
-import { MagicBellCreateResponse, Message } from './dto/createNotification.dto'
+import {
+  MagicBellCreateResponse,
+  Message,
+} from '../notifications/dto/createNotification.dto'
 import { Inject, Injectable } from '@nestjs/common'
-import { CreateNotificationResponse } from './dto/createNotification.response'
+import { CreateNotificationResponse } from '../notifications/dto/createNotification.response'
 
 export const MAGICBELL_API_SECRET = Symbol('MAGICBELL_API_SECRET')
 export const MAGICBELL_API_KEY = Symbol('MAGICBELL_API_KEY')
