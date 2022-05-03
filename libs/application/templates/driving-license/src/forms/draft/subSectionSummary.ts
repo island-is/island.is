@@ -16,6 +16,7 @@ import { format as formatKennitala } from 'kennitala'
 import { StudentAssessment } from '@island.is/api/schema'
 import { YES } from '../../lib/constants'
 import { B_TEMP } from '../../shared/constants'
+import { hasHealthRemarks } from '../../lib/utils/formUtils';
 import {
   hasNoDrivingLicenseInOtherCountry,
   hasYes,
@@ -116,7 +117,7 @@ export const subSectionSummary = buildSubSection({
           },
         }),
         buildDividerField({
-          condition: (answers) => hasYes(answers?.healthDeclaration || []),
+          condition: needsHealthCertificateCondition(YES) ,
         }),
         buildDescriptionField({
           id: 'bringalong',
@@ -137,7 +138,7 @@ export const subSectionSummary = buildSubSection({
               label: m.overviewBringCertificateData,
             },
           ],
-          condition: (answers) => hasYes(answers?.healthDeclaration || {}),
+          condition: needsHealthCertificateCondition(YES) ,
         }),
         buildDividerField({}),
         buildKeyValueField({
