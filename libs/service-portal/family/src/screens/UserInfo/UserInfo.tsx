@@ -214,7 +214,7 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           loading={loading || familyLoading}
         />
         <Divider />
-        {nationalRegistryFamily && nationalRegistryFamily.length > 1
+        {nationalRegistryFamily && nationalRegistryFamily.length > 0
           ? nationalRegistryFamily?.map((item) => (
               <React.Fragment key={item.nationalId}>
                 <UserInfoLine
