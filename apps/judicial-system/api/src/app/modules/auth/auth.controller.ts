@@ -22,7 +22,6 @@ import {
   EXPIRES_IN_MILLISECONDS,
 } from '@island.is/judicial-system/consts'
 import { UserRole } from '@island.is/judicial-system/types'
-import type { User } from '@island.is/judicial-system/types'
 import { SharedAuthService } from '@island.is/judicial-system/auth'
 import {
   AuditedAction,
@@ -138,8 +137,6 @@ export class AuthController {
       return this.redirectAuthenticatedUser(
         {
           nationalId,
-          name: '',
-          mobile: '',
         },
         res,
         redirectRoute,
@@ -164,29 +161,63 @@ export class AuthController {
     return res.json({ logout: true })
   }
 
-  private async redirectAuthenticatedUser(
+  private async authorizeUser(
     authUser: AuthUser,
-    res: Response,
-    redirectRoute: string,
-    csrfToken?: string,
+    csrfToken: string | undefined,
+    requestedRedirectRoute: string,
   ) {
     const user = await this.authService.findUser(authUser.nationalId)
 
-    if (!user || !this.authService.validateUser(user)) {
-      this.logger.error('Blocking login attempt from an unknown user')
+    if (user && this.authService.validateUser(user)) {
+      return {
+        userId: user.id,
+        jwtToken: this.sharedAuthService.signJwt(user, csrfToken),
+        redirectRoute: requestedRedirectRoute
+          ? requestedRedirectRoute
+          : user.role === UserRole.ADMIN
+          ? '/notendur'
+          : '/krofur',
+      }
+    } else if (requestedRedirectRoute?.startsWith('/verjandi/')) {
+      const defender = await this.authService.findDefender(
+        requestedRedirectRoute.substring(10),
+        authUser.nationalId,
+      )
+
+      if (defender && this.authService.validateUser(defender)) {
+        return {
+          userId: defender.id,
+          jwtToken: this.sharedAuthService.signJwt(defender, csrfToken),
+          redirectRoute: requestedRedirectRoute,
+        }
+      }
+    }
+
+    return undefined
+  }
+
+  private async redirectAuthenticatedUser(
+    authUser: AuthUser,
+    res: Response,
+    requestedRedirectRoute: string,
+    csrfToken?: string,
+  ) {
+    const authorization = await this.authorizeUser(
+      authUser,
+      csrfToken,
+      requestedRedirectRoute,
+    )
+
+    if (!authorization) {
+      this.logger.error('Blocking login attempt from an unauthorized user')
 
       return res.redirect('/?villa=innskraning-ekki-notandi')
     }
 
-    const jwtToken = this.sharedAuthService.signJwt(user as User, csrfToken)
-
-    const tokenParts = jwtToken.split('.')
-    if (tokenParts.length !== 3) {
-      return res.redirect('/?villa=innskraning-ogild')
-    }
+    const { userId, jwtToken, redirectRoute } = authorization
 
     this.auditTrailService.audit(
-      user.id,
+      userId,
       AuditedAction.LOGIN,
       res
         .cookie(
@@ -201,14 +232,8 @@ export class AuthController {
           ...ACCESS_TOKEN_COOKIE.options,
           maxAge: EXPIRES_IN_MILLISECONDS,
         })
-        .redirect(
-          redirectRoute
-            ? redirectRoute
-            : user.role === UserRole.ADMIN
-            ? '/notendur'
-            : '/krofur',
-        ),
-      user.id,
+        .redirect(redirectRoute),
+      userId,
     )
   }
 }

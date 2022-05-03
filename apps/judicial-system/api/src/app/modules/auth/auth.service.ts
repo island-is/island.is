@@ -23,6 +23,24 @@ export class AuthService {
     return await res.json()
   }
 
+  async findDefender(
+    caseId: string,
+    nationalId: string,
+  ): Promise<User | undefined> {
+    const res = await fetch(
+      `${environment.backend.url}/api/case/${caseId}/defender/restricted?nationalId=${nationalId}`,
+      {
+        headers: { authorization: `Bearer ${environment.auth.secretToken}` },
+      },
+    )
+
+    if (!res.ok) {
+      return undefined
+    }
+
+    return await res.json()
+  }
+
   validateUser(user: User): boolean {
     return user.active
   }
