@@ -16,6 +16,7 @@ import { validate, ValidationError } from 'class-validator'
 import { Request } from 'express'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { Documentation } from '@island.is/nest/swagger'
 import {
   NewDocumentMessage,
   Message,
@@ -24,6 +25,7 @@ import {
 } from './dto/createNotification.dto'
 import { InjectQueue, QueueService } from '@island.is/message-queue'
 import { CreateNotificationResponse } from './dto/createNotification.response'
+import { MagicBellService } from './magicBell.service'
 
 const throwIfError = (errors: ValidationError[]): void => {
   if (errors.length > 0) {
@@ -59,6 +61,8 @@ export class NotificationsController {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     @InjectQueue('notifications') private queue: QueueService,
+    @Inject(MagicBellService)
+    private readonly magicBellService: MagicBellService,
   ) {}
 
   @Post()
@@ -77,5 +81,30 @@ export class NotificationsController {
     const id = await this.queue.add(message)
     this.logger.info('Message queued', { messageId: id, ...message })
     return { id }
+  }
+
+  @Post('magic-bell')
+  @Documentation({
+    description: 'Send notification to user using MagicBell',
+    response: { status: 201, type: CreateNotificationResponse },
+    request: {
+      query: {
+        req: {
+          required: true,
+          schema: {
+            type: 'object',
+            oneOf: [{ $ref: getSchemaPath(Message) }], // Should be something more concrete
+          },
+        },
+      },
+    },
+  })
+  async createNotificationMagicBell(
+    @Req() req: Request,
+  ): Promise<CreateNotificationResponse> {
+    const message = await validateMessage(req.body)
+    const notification = await this.magicBellService.createNotification(message)
+
+    return { id: notification.id } // TODO change id parameter
   }
 }

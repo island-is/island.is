@@ -1,4 +1,4 @@
-import { IsEnum, IsNotEmpty, IsString } from 'class-validator'
+import { IsEnum, IsNotEmpty, IsString, IsUrl } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 import { IsNationalId } from '@island.is/nest/validators'
 import { MessageTypes } from '../types'
@@ -9,9 +9,8 @@ export class TypeValidator {
   type!: MessageTypes
 }
 
-export class NewDocumentMessage {
-  @ApiProperty({ enum: [MessageTypes.NewDocumentMessage] })
-  type!: MessageTypes.NewDocumentMessage
+export class Message {
+  type!: MessageTypes
 
   @IsString()
   @ApiProperty()
@@ -20,6 +19,11 @@ export class NewDocumentMessage {
   @IsNationalId()
   @ApiProperty()
   recipient!: string
+}
+
+export class NewDocumentMessage extends Message {
+  @ApiProperty({ enum: [MessageTypes.NewDocumentMessage] })
+  type!: MessageTypes.NewDocumentMessage
 
   @IsString()
   @IsNotEmpty()
@@ -27,8 +31,30 @@ export class NewDocumentMessage {
   documentId!: string
 }
 
-export type Message = NewDocumentMessage
+export class OneshotMessage extends Message {
+  @ApiProperty({ enum: [MessageTypes.OneshotMessage] })
+  type!: MessageTypes.OneshotMessage
+
+  @IsUrl()
+  @IsNotEmpty()
+  @ApiProperty()
+  url!: string
+}
 
 export const ValidatorTypeMap = {
   [MessageTypes.NewDocumentMessage]: NewDocumentMessage,
+  [MessageTypes.OneshotMessage]: OneshotMessage,
+}
+
+export interface MagicBellCreateResponse {
+  notification: {
+    id: string
+    title: string
+    content?: string
+    action_url?: string
+    category: string
+    topic?: string
+    custom_attributes?: string
+    sent_at: number
+  }
 }

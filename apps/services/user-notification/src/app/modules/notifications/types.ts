@@ -1,11 +1,12 @@
 export enum MessageTypes {
   NewDocumentMessage = 'newDocumentMessage',
+  OneshotMessage = 'oneshotMessage',
 }
 
 export interface Notification {
   messageType: MessageTypes
   title: string
   body: string
-  category: 'NEW_DOCUMENT'
+  category: MessageTypes
   appURI?: string
 }
