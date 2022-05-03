@@ -4,6 +4,7 @@ import {
   VirkLeyfi,
   Skilabod,
   VedbandayfirlitReguverkiSvarSkeyti,
+  SkraningaradiliDanarbusSkeyti,
 } from '../../../gen/fetch'
 import { AssetName, SyslumennApiPaginationInfo } from '../syslumennClient.types'
 
@@ -117,6 +118,52 @@ export const VEDBANDAYFIRLRIT_REGLUVERKI_RESPONSE: Array<VedbandayfirlitReguverk
     byggd: 'string',
     embaetti: 'string',
     embaettiNumer: 'string',
+  },
+]
+
+export const ESTATE_REGISTRANT_RESPONSE: Array<SkraningaradiliDanarbusSkeyti> = [
+  {
+    eignir: [
+      {
+        lysing: 'Húsið 1',
+        fastanumer: '2010005',
+        tegundAngalgs: 0,
+        eignarhlutfall: 0.5,
+      },
+      {
+        lysing: 'Nissan Terrano II',
+        fastanumer: 'VA334',
+        tegundAngalgs: 1,
+        eignarhlutfall: 0.5,
+      },
+    ],
+    embaetti: 'Sýslumaðurinn á höfuðborgarsvæðinu',
+    kaupmaili: false,
+    malsnumer: '2020-000123',
+    danardagur: new Date('2023-04-29T14:02:59.332Z'),
+    nafnLatins: 'Gervimaður Ameríku',
+    eiginRekstur: false,
+    adilarDanarbus: [
+      {
+        nafn: 'Gervimaður Færeyja',
+        kennitala: '0101302399',
+        tegundTengsla: 'Maki',
+      },
+      {
+        nafn: 'Gervimaður Bretland',
+        kennitala: '0101304929',
+        tegundTengsla: 'Faðir',
+      },
+    ],
+    eignirErlendis: false,
+    kennitalaLatins: '0101302989',
+    simiSkraningaradila: '5005000',
+    kennitalaSkreningaradila: '0101302399',
+    vitneskjaUmAdraErfdaskra: false,
+    erfdaskraIVorsluSyslumanns: false,
+    tolvuposturSkreningaradila: 'adili@postur.is',
+    buseturetturVegnaKaupleiguIbuda: false,
+    bankareikningarVerdbrefEdaHlutabref: false,
   },
 ]
 
