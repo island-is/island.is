@@ -3,7 +3,6 @@ import streamBuffers from 'stream-buffers'
 
 import {
   capitalize,
-  formatCustodyRestrictions,
   formatDate,
   formatNationalId,
 } from '@island.is/judicial-system/formatters'
@@ -13,6 +12,7 @@ import { Gender, SessionArrangements } from '@island.is/judicial-system/types'
 import { environment } from '../../environments'
 import { Case } from '../modules/case'
 import { core, custodyNotice } from '../messages'
+import { formatCustodyRestrictions } from './formatters'
 import {
   addEmptyLines,
   addHugeHeading,
@@ -151,6 +151,8 @@ function constructCustodyNoticePdf(
   )
 
   const custodyRestrictions = formatCustodyRestrictions(
+    formatMessage,
+    theCase.type,
     theCase.requestedCustodyRestrictions,
     theCase.isCustodyIsolation,
   )

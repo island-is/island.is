@@ -17,6 +17,7 @@ const {
   DD_RUM_CLIENT_TOKEN,
   APP_VERSION,
   ENVIRONMENT,
+  CONFIGCAT_SDK_KEY,
 } = process.env
 
 module.exports = withVanillaExtract(
@@ -101,6 +102,7 @@ module.exports = withVanillaExtract(
       ddRumClientToken: DD_RUM_CLIENT_TOKEN,
       appVersion: APP_VERSION,
       environment: ENVIRONMENT,
+      configCatSdkKey: CONFIGCAT_SDK_KEY,
     },
 
     env: {

@@ -1,11 +1,11 @@
+import { act, render, screen, waitFor } from '@testing-library/react'
+import { UserManagerEvents } from 'oidc-client-ts'
 import React, { FC } from 'react'
 import { MemoryRouter } from 'react-router-dom'
-import { screen, render, waitFor, act } from '@testing-library/react'
-import { UserManagerEvents } from 'oidc-client'
 
-import { Authenticator } from './Authenticator'
-import { getUserManager, getAuthSettings } from '../userManager'
+import { getAuthSettings, getUserManager } from '../userManager'
 import { useAuth } from './AuthContext'
+import { Authenticator } from './Authenticator'
 
 jest.mock('../userManager')
 const mockedGetUserManager = getUserManager as jest.Mock

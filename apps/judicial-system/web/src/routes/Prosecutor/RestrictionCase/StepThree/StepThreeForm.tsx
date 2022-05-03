@@ -1,14 +1,7 @@
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import {
-  Box,
-  Text,
-  Input,
-  Checkbox,
-  GridRow,
-  GridColumn,
-} from '@island.is/island-ui/core'
+import { Box, Text, Input, Checkbox } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   CaseCustodyRestrictions,
@@ -46,6 +39,8 @@ import { core } from '@island.is/judicial-system-web/messages'
 import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system/consts'
+
+import * as styles from './StepThree.css'
 
 interface Props {
   workingCase: Case
@@ -104,7 +99,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
           </Box>
           <BlueBox>
             <Box
-              marginBottom={workingCase.type !== CaseType.TRAVEL_BAN ? 3 : 0}
+              marginBottom={workingCase.type !== CaseType.TRAVEL_BAN ? 2 : 0}
             >
               <DateTime
                 name="reqValidToDate"
@@ -129,58 +124,56 @@ const StepThreeForm: React.FC<Props> = (props) => {
               />
             </Box>
             {workingCase.type !== CaseType.TRAVEL_BAN && (
-              <GridRow>
-                <GridColumn span="1/2">
-                  <Checkbox
-                    name="isIsolation"
-                    label={formatMessage(rcDemands.sections.demands.isolation)}
-                    tooltip={formatMessage(rcDemands.sections.demands.tooltip)}
-                    checked={workingCase.requestedCustodyRestrictions?.includes(
-                      CaseCustodyRestrictions.ISOLATION,
-                    )}
-                    onChange={() =>
-                      setCheckboxAndSendToServer(
-                        'requestedCustodyRestrictions',
-                        'ISOLATION',
-                        workingCase,
-                        setWorkingCase,
-                        updateCase,
-                      )
+              <div className={styles.grid}>
+                <Checkbox
+                  name="isIsolation"
+                  label={formatMessage(rcDemands.sections.demands.isolation)}
+                  tooltip={formatMessage(rcDemands.sections.demands.tooltip)}
+                  checked={workingCase.requestedCustodyRestrictions?.includes(
+                    CaseCustodyRestrictions.ISOLATION,
+                  )}
+                  onChange={() =>
+                    setCheckboxAndSendToServer(
+                      'requestedCustodyRestrictions',
+                      'ISOLATION',
+                      workingCase,
+                      setWorkingCase,
+                      updateCase,
+                    )
+                  }
+                  large
+                  filled
+                />
+                <Checkbox
+                  name="isAdmissionToFacility"
+                  tooltip={formatMessage(
+                    rcDemands.sections.demands
+                      .admissionToAppropriateFacilityTooltip,
+                  )}
+                  label={formatMessage(
+                    rcDemands.sections.demands.admissionToAppropriateFacility,
+                  )}
+                  checked={workingCase.type === CaseType.ADMISSION_TO_FACILITY}
+                  onChange={(event) => {
+                    if (workingCase.parentCase) {
+                      return
                     }
-                    large
-                    filled
-                  />
-                </GridColumn>
-                <GridColumn span="1/2">
-                  <Checkbox
-                    name="isAdmissionToFacility"
-                    label={formatMessage(
-                      rcDemands.sections.demands.admissionToAppropriateFacility,
-                    )}
-                    checked={
-                      workingCase.type === CaseType.ADMISSION_TO_FACILITY
-                    }
-                    onChange={(event) => {
-                      if (workingCase.parentCase) {
-                        return
-                      }
 
-                      setAndSendToServer(
-                        'type',
-                        event.target.checked
-                          ? CaseType.ADMISSION_TO_FACILITY
-                          : CaseType.CUSTODY,
-                        workingCase,
-                        setWorkingCase,
-                        updateCase,
-                      )
-                    }}
-                    large
-                    filled
-                    disabled={Boolean(workingCase.parentCase)}
-                  />
-                </GridColumn>
-              </GridRow>
+                    setAndSendToServer(
+                      'type',
+                      event.target.checked
+                        ? CaseType.ADMISSION_TO_FACILITY
+                        : CaseType.CUSTODY,
+                      workingCase,
+                      setWorkingCase,
+                      updateCase,
+                    )
+                  }}
+                  large
+                  filled
+                  disabled={Boolean(workingCase.parentCase)}
+                />
+              </div>
             )}
           </BlueBox>
         </Box>
