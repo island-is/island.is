@@ -9,6 +9,10 @@ const {
   SENTRY_DSN,
   // SENTRY_AUTH_TOKEN,
   NODE_ENV,
+  DD_RUM_APPLICATION_ID,
+  DD_RUM_CLIENT_TOKEN,
+  APP_VERSION,
+  ENVIRONMENT,
 } = process.env
 const apiPath = '/api'
 const graphqlPath = '/api/graphql'
@@ -45,6 +49,10 @@ module.exports = withSourceMaps(
         apiUrl: `${WEB_PUBLIC_URL}/api`,
         SENTRY_DSN,
         graphqlEndpoint: graphqlPath,
+        ddRumApplicationId: DD_RUM_APPLICATION_ID,
+        ddRumClientToken: DD_RUM_CLIENT_TOKEN,
+        appVersion: APP_VERSION,
+        environment: ENVIRONMENT,
       },
       env: {
         API_MOCKS: process.env.API_MOCKS || '',
