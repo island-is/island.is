@@ -33,7 +33,7 @@ export type {
   CreateFile,
 } from './lib/file'
 
-export { UserRole, courtRoles } from './lib/user'
+export { UserRole, courtRoles, isCourtRole } from './lib/user'
 export type { User, CreateUser, UpdateUser } from './lib/user'
 
 export {

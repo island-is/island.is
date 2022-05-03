@@ -2529,6 +2529,12 @@
           "options": {
             "jestConfig": "libs/application/templates/financial-aid/jest.config.js"
           }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/financial-aid/src/**/*.{js,ts,tsx}'"
+          }
         }
       }
     },

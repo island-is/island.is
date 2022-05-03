@@ -265,7 +265,7 @@ function constructRestrictionCourtRecordPdf(
     completedCaseStates.includes(theCase.state) && user
       ? formatMessage(courtRecord.smallPrint, {
           actorName: user.name,
-          actorInstitution: user.institution?.name,
+          actorInstitution: user.institution?.name ?? 'NONE',
           date: formatDate(nowFactory(), 'PPPp'),
         })
       : undefined,
