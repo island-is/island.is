@@ -1,3 +1,39 @@
+#MAGICBELL UP AND RUNNING
+envs:
+X_MAGICBELL_API_KEY
+X_MAGICBELL_API_SECRET
+
+kubectl port-forward svc/socat-soffia 8443:443 -n socat
+kubectl -n socat port-forward svc/socat-xroad 8081:80
+yarn start api
+yarn start service-portal
+http://localhost:4200/
+
+#MAGICBELL MESSAGE
+curl https://api.magicbell.com/notifications \
+ --request POST \
+ --header 'accept: application/json' \
+ --header 'content-type: application/json' \
+ --header 'X-MAGICBELL-API-SECRET: X_MAGICBELL_API_SECRET' \
+ --header 'X-MAGICBELL-API-KEY: NEXT_PUBLIC_X_MAGICBELL_API_KEY' \
+ --data '{
+"notification": {
+"title": "nifty title",
+"content": "nifty content",
+"category": "new_message",
+"action_url": "http://localhost:4200",
+"recipients": [{
+"external_id": "1234567890"
+}],
+"custom_attributes": {
+"order": {
+"id": "1202983",
+"title": "A title you can use in your templates"
+}
+}
+}
+}'
+
 # Ísland.is
 
 This [GitHub organization](https://github.com/island-is) is the center of development for digital government services on `island.is`. It is managed by the [Digital Iceland](https://stafraent.island.is/) department inside the [Ministry of Finance and Economic Affairs](https://www.government.is/ministries/ministry-of-finance-and-economic-affairs/).

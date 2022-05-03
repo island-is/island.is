@@ -5,6 +5,58 @@ import { UserButton } from './UserButton'
 import { UserDropdown } from './UserDropdown'
 import { UserLanguageSwitcher } from './UserLanguageSwitcher'
 
+import MagicBell, {
+  FloatingNotificationInbox,
+} from '@magicbell/magicbell-react'
+
+export const Notifications = ({
+  userExternalId,
+}: {
+  userExternalId: string
+}) => {
+  const theme = {
+    icon: { borderColor: '#0061ff', width: '24px' },
+    unseenBadge: { backgroundColor: '#DF4759' },
+    header: {
+      backgroundColor: '#0061ff',
+      textColor: '#ffffff',
+      borderRadius: '16px',
+    },
+    footer: {
+      backgroundColor: '#0061ff',
+      textColor: '#ffffff',
+      borderRadius: '16px',
+    },
+    notification: {
+      default: {
+        textColor: '#15091F',
+        borderRadius: '8px',
+        backgroundColor: '#0061ff',
+      },
+      unseen: {
+        backgroundColor: '#0061ff',
+        textColor: '#15091F',
+        borderRadius: '8px',
+      },
+      unread: {
+        backgroundColor: '#0061ff',
+        textColor: '#15091F',
+        borderRadius: '8px',
+      },
+    },
+  }
+  const magicBellApiKey = 'cdd9891950d1aa151ca687c13469e2043db818ec'
+  return (
+    <MagicBell
+      apiKey={magicBellApiKey}
+      userExternalId={userExternalId}
+      theme={theme}
+    >
+      {(props) => <FloatingNotificationInbox height={500} {...props} />}
+    </MagicBell>
+  )
+}
+
 export const UserMenu = ({
   fullscreen = false,
   showDropdownLanguage = false,
@@ -42,6 +94,7 @@ export const UserMenu = ({
 
   return (
     <Box display="flex" position="relative" height="full">
+      <Notifications userExternalId={user.profile.nationalId}></Notifications>
       <Hidden below="md">
         <UserLanguageSwitcher user={user} />
       </Hidden>
