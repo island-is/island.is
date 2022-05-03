@@ -478,7 +478,8 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
         <Divider />
       </Box>
       {user?.role === UserRole.PROSECUTOR &&
-        user.institution?.id === workingCase.prosecutor?.institution?.id &&
+        user.institution?.id ===
+          workingCase.creatingProsecutor?.institution?.id &&
         isRestrictionCase(workingCase.type) && (
           <Box marginBottom={9}>
             <Box marginBottom={3}>
