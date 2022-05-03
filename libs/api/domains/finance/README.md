@@ -1,6 +1,6 @@
 <!-- gitbook-ignore -->
 
-# Finance service
+# API Domains Finance
 
 This api utilises the [financeService](libs/clients/finance/src/lib/FinanceClientService.ts)
 
@@ -35,10 +35,6 @@ Service portal needs to be running.
 The data for assets api has been fully mocked, for mock usage and testing purposes try the API_MOCKS.
 
 Add `API_MOCKS=true` to your `.env` file and make sure it is available in your webpack browser bundles ([Next.JS example](../../../apps/web/next.config.js)).
-
-# API Domains Assets
-
-This library was generated with [Nx](https://nx.dev).
 
 ## Running unit tests
 
