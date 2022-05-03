@@ -151,6 +151,15 @@ export class UserProfileService {
       return undefined
     }
 
+    // Take an address object from National Registry and Company Registry and try to make it consistent.
+    // According to schemas and experience:
+    //
+    // The national registry only requires the "heiti" field and does not include a country field. If the person
+    // lives abroad, the "heiti" field stores the country name and the other fields are empty.
+    //
+    // The company registry includes a country code field, but the quality of the fields is unknown, including
+    // which fields are always set.
+
     let { streetAddress, country } = address as Partial<Address>
     const locality = address.locality ?? undefined
     const postalCode = address.postalCode ?? undefined
