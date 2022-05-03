@@ -9,7 +9,7 @@ import { Election } from './models/election.model'
 @Resolver()
 export class FinancialStatementsInaoResolver {
   @Query(() => [Election], { nullable: true })
-  async getFinancialStatementsInaoElections() {
+  async financialStatementsInaoElections() {
     //Return mocked results while the cloud service is not ready
     return [
       {
