@@ -40,32 +40,41 @@ export class NoDebtCertificateProvider extends BasicDataProvider {
     return this.useGraphqlGateway(query).then(async (res: Response) => {
       const response = await res.json()
 
-      //TODOx skoða líka ef response.error... og er það er ekki skuldlaust... þá færðu ekkert vottorð
-
       if (response.errors) {
-        console.log(JSON.stringify(response))
         console.error(
           `graphql error in ${this.type}: ${response.errors[0].message}`,
         )
         return Promise.reject({})
       }
 
-      // if (!response.data.getDebtLessCertificate?.debtLessCertificateResult) {
-      //   return Promise.reject({})
-      // }
+      if (response.data.getDebtLessCertificate.error) {
+        console.error(
+          `graphql error in ${this.type}: ${response.data.getDebtLessCertificate.error}`,
+        )
+        return Promise.reject({})
+      }
 
-      // return Promise.resolve()
+      if (
+        !response.data.getDebtLessCertificate.debtLessCertificateResult.debtLess
+      ) {
+        return Promise.reject({
+          reason: m.missingCertificate,
+        })
+      }
 
-      return Promise.reject({})
+      return Promise.resolve({
+        certificate:
+          response.data.getDebtLessCertificate.debtLessCertificateResult
+            .certificate.document,
+      })
     })
   }
 
   onProvideError(errorMessage: MessageDescriptor): FailedDataProviderResult {
-    console.log('---------errorMessage: ' + JSON.stringify(errorMessage))
     return {
       date: new Date(),
-      reason: errorMessage?.id
-        ? errorMessage
+      reason: errorMessage?.reason
+        ? errorMessage.reason
         : m.errorDataProviderNoDebtCertificate,
       status: 'failure',
       data: {},

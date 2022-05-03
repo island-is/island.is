@@ -192,4 +192,9 @@ export const m = defineMessages({
     defaultMessage: 'Reyna aftur',
     description: '',
   },
+  missingCertificate: {
+    id: 'debtCertificate:missingCertificate',
+    defaultMessage: 'Ekki tókst að sækja skuldleysisvottorð fyrir þig',
+    description: '',
+  },
 })

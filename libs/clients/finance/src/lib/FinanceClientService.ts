@@ -208,13 +208,11 @@ export class FinanceClientService {
     language: string,
     auth: Auth,
   ): Promise<DebtLessCertificateType | null> {
-    console.log('-------------------getDebtLessCertificate')
     const res = await this.get<DebtLessCertificateType | null>(
       `/debtLessCertificate`,
       { nationalID, language },
       auth,
     )
-    console.log('--------------------res ' + res)
     return res
   }
 }
