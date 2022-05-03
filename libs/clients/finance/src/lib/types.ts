@@ -147,7 +147,7 @@ export type DebtLessCertificateError = {
 export type DebtLessCertificateType = {
   debtLessCertificateResult?: {
     debtLess: boolean
-    certificate: {
+    certificate?: {
       type: string
       document: string
     }

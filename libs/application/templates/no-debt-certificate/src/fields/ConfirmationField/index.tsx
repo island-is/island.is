@@ -28,9 +28,9 @@ type ConfirmationFieldProps = {
   }
   application: {
     externalData: {
-      getNoDebtCertificate: {
+      noDebtCertificate: {
         data: {
-          contentBase64: string
+          certificate: string
         }
       }
     }
@@ -43,8 +43,7 @@ export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
   const { externalData } = application
   const { formatMessage } = useLocale()
   const [viewNoDebtCertificate, setViewNoDebtCertificate] = useState(false)
-
-  //TODOx fix the way we get PDF string from external data
+  const { certificate } = externalData.noDebtCertificate.data
 
   function renderFooter() {
     return (
@@ -69,7 +68,6 @@ export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
       </>
     )
   }
-
   if (viewNoDebtCertificate) {
     return (
       <>
@@ -87,7 +85,7 @@ export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
             title="Go back"
           />
           <a
-            href={`data:application/pdf;base64,${externalData.getNoDebtCertificate.data.contentBase64}`}
+            href={`data:application/pdf;base64,${certificate}`}
             download="skuldleysisvottord.pdf"
             className={styles.linkWithoutDecorations}
           >
@@ -100,10 +98,7 @@ export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
             </Button>
           </a>
         </Box>
-
-        <PdfViewer
-          file={`data:application/pdf;base64,${externalData.getNoDebtCertificate.data.contentBase64}`}
-        />
+        <PdfViewer file={`data:application/pdf;base64,${certificate}`} />
         {renderFooter()}
       </>
     )

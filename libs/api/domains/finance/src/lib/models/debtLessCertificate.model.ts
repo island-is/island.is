@@ -44,15 +44,15 @@ export class DebtLessCertificateResult {
   @Field()
   debtLess!: boolean
 
-  @Field(() => DebtLessCertificateResultData)
+  @Field(() => DebtLessCertificateResultData, { nullable: true })
   certificate!: DebtLessCertificateResultData
 }
 
 @ObjectType()
 export class DebtLessCertificateModel {
-  @Field(() => DebtLessCertificateResult)
+  @Field(() => DebtLessCertificateResult, { nullable: true})
   debtLessCertificateResult?: DebtLessCertificateResult
 
-  @Field(() => DebtLessCertificateError)
+  @Field(() => DebtLessCertificateError, { nullable: true })
   error?: DebtLessCertificateError
 }
