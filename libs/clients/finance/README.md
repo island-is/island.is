@@ -1,5 +1,9 @@
 <!-- gitbook-navigation: "Finance" -->
 
+# Finance client
+
+See [examples](libs/api/mocks/src/domains/finance/index.ts) in mock data.
+
 # Finance Client
 
 This library was generated with [Nx](https://nx.dev).
