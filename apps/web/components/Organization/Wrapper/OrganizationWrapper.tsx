@@ -210,6 +210,7 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
         <LandlaeknirFooter
           footerItems={organization.footerItems}
           phone={organization.phone}
+          email={organization.email}
         />
       )
   }
