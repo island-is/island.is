@@ -29,5 +29,5 @@ export class Institution implements TInstitution {
   readonly defaultCourtId?: string
 
   @Field({ nullable: true })
-  readonly lokePrefix?: string
+  readonly policeCaseNumberPrefix?: string
 }

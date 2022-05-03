@@ -14,5 +14,5 @@ export interface Institution {
   name: string
   active: boolean
   defaultCourtId?: string
-  lokePrefix?: string
+  policeCaseNumberPrefix?: string
 }

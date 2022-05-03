@@ -69,5 +69,5 @@ export class Institution extends Model<Institution> {
     allowNull: true,
   })
   @ApiProperty()
-  lokePrefix?: string
+  policeCaseNumberPrefix?: string
 }
