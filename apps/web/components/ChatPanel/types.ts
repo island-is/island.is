@@ -20,6 +20,8 @@ export interface WatsonChatPanelProps {
   carbonTheme?: string
   cssVariables?: Record<string, string>
   languagePack?: Record<string, string>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onLoad?: (instance: any) => void
 
   // Whether the default launcher is shown
   showLauncher?: boolean

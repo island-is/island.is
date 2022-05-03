@@ -22,6 +22,7 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
     showLauncher = true,
     cssVariables,
     languagePack,
+    onLoad,
   } = props
 
   const { data } = useQuery<Query, QueryGetNamespaceArgs>(GET_NAMESPACE_QUERY, {
@@ -55,6 +56,9 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
         }
         if (languagePack) {
           instance.updateLanguagePack(languagePack)
+        }
+        if (onLoad) {
+          onLoad(instance)
         }
         instance.render().then(() => setIsButtonVisible(true))
       },
