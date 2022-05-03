@@ -77,24 +77,14 @@ export class TaxDataFetchProvider extends BasicDataProvider {
       directTaxPayments: DirectTaxPayment[]
       success: boolean
     }>(directTaxPaymentsQuery, 'municipalitiesDirectTaxPayments', {
-      input: { userType: getUserType },
-    })
-
-    const addUserTypeDirectPayments = directTaxPayments.directTaxPayments.map(
-      (el) => {
-        return {
-          ...el,
-          userType: getUserType,
-        }
+      input: {
+        userType: getUserType,
       },
-    )
+    })
 
     return {
       municipalitiesPersonalTaxReturn: personalTaxReturn,
-      municipalitiesDirectTaxPayments: {
-        directTaxPayments: addUserTypeDirectPayments,
-        success: directTaxPayments.success,
-      },
+      municipalitiesDirectTaxPayments: directTaxPayments,
     }
   }
   handleError(error: Error | unknown) {
