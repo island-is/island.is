@@ -18,7 +18,7 @@ export const ReferenceApplicationDataProviders = {
   referenceProvider: {
     apiModuleAction: ApiActions.getReferenceData,
     externalDataId: 'reference',
-    shouldPersistToExternalData: true,
+    shouldPersistToExternalData: false,
     useMockData: false,
     mockData: {
       response: {

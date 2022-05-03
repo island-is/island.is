@@ -20,7 +20,6 @@ export class ReferenceTemplateService {
       'nationalRegistry.data.name',
     ) as string
 
-    console.log(`name is ${name} waht is is  `)
     return {
       referenceData: {
         name,

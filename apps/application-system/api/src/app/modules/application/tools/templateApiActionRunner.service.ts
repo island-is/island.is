@@ -46,9 +46,9 @@ export class TemplateApiActionRunner {
     this.oldExternalData = application.externalData
 
     const groupedActions = this.groupByOrder(actions)
-    this.runActions(groupedActions)
+    await this.runActions(groupedActions)
 
-    this.persistExternalData(actions)
+    await this.persistExternalData(actions)
 
     return this.application
   }
@@ -88,23 +88,11 @@ export class TemplateApiActionRunner {
   }
 
   async callProvider(action: ApplicationTemplateAPIAction) {
-    console.log(
-      `makeCall to ${action.apiModuleAction} for application ${this.application.id}`,
-    )
-
-    const {
-      apiModuleAction,
-      shouldPersistToExternalData,
-      externalDataId,
-      useMockData,
-      mockData,
-    } = action
+    const { apiModuleAction, externalDataId, useMockData, mockData } = action
 
     let actionResult: PerformActionResult | undefined
 
     if (useMockData) {
-      console.log('USING MOOOOKXS')
-      console.log({ mockData })
       actionResult =
         typeof mockData === 'function' ? mockData(this.application) : mockData
     } else {
@@ -117,47 +105,35 @@ export class TemplateApiActionRunner {
         },
       })
     }
-    console.log({ actionResult })
+
     if (!actionResult)
       throw new Error(`No Action or mock is defined for ${apiModuleAction}`)
 
-    await this.updateExternalData(
-      actionResult,
-      apiModuleAction,
-      externalDataId,
-      shouldPersistToExternalData ?? false,
-    )
-    console.log(
-      `done!!!!! makeCall to ${action.apiModuleAction} for application ${this.application.id}`,
-    )
+    await this.updateExternalData(actionResult, apiModuleAction, externalDataId)
   }
 
   async persistExternalData(
     actions: ApplicationTemplateAPIAction[],
   ): Promise<void> {
-    /*   actions.map((action) => {
+    actions.map((action) => {
       if (!action.shouldPersistToExternalData) {
-        delete this.application.externalData[
+        delete this.newExternalData[
           action.externalDataId || action.apiModuleAction
         ]
       }
-    })*/
+    })
 
-    const {
-      updatedApplication: withExternalData,
-    } = await this.applicationService.updateExternalData(
+    await this.applicationService.updateExternalData(
       this.application.id,
       this.oldExternalData,
       this.newExternalData,
     )
-    this.application = withExternalData as ApplicationWithAttachments
   }
 
   async updateExternalData(
     actionResult: PerformActionResult,
     apiModuleAction: string,
     externalDataId?: string,
-    persist?: boolean,
   ): Promise<void> {
     const newExternalDataEntry: ExternalData = {
       [externalDataId || apiModuleAction]: {
@@ -175,6 +151,5 @@ export class TemplateApiActionRunner {
       ...this.application.externalData,
       ...this.newExternalData,
     }
-    console.log(this.application.externalData)
   }
 }

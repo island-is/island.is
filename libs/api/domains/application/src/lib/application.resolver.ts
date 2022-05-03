@@ -113,6 +113,7 @@ export class ApplicationResolver {
     @Args('input') input: UpdateApplicationExternalDataInput,
     @CurrentUser() user: User,
   ): Promise<Application | void> {
+    console.log({ input })
     const res = await this.applicationService.updateExternalData(
       input,
       user,
