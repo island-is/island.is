@@ -81,7 +81,7 @@ export const UserInfoLine: FC<Props> = ({
             height="full"
             overflow="hidden"
           >
-            <Text variant={'h5'} as="span" lineHeight="lg">
+            <Text variant="h5" as="span" lineHeight="lg">
               {formatMessage(label)} {tooltip && <Tooltip text={tooltip} />}
             </Text>
           </Box>
