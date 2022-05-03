@@ -211,7 +211,7 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           title={formatMessage(spmm.family.userFamilyMembersOnNumber)}
           label={userInfo.profile.name}
           content={formatNationalId(userInfo.profile.nationalId)}
-          light
+          // light
           loading={loading || familyLoading}
         />
         <Divider />
@@ -221,7 +221,7 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
                 <UserInfoLine
                   label={item.fullName}
                   content={formatNationalId(item.nationalId)}
-                  light
+                  // light
                   loading={loading}
                 />
                 <Divider />

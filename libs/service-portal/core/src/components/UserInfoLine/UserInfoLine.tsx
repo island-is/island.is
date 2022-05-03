@@ -29,7 +29,6 @@ interface Props {
   content?: string | JSX.Element
   renderContent?: () => JSX.Element
   loading?: boolean
-  light?: boolean
   labelColumnSpan?: GridColumnProps['span']
   valueColumnSpan?: GridColumnProps['span']
   editColumnSpan?: GridColumnProps['span']
@@ -55,7 +54,6 @@ export const UserInfoLine: FC<Props> = ({
   tooltip,
   paddingY = 2,
   paddingBottom,
-  light,
 }) => {
   const trackExternalLinkClick = () => {
     servicePortalOutboundLink()
@@ -83,7 +81,7 @@ export const UserInfoLine: FC<Props> = ({
             height="full"
             overflow="hidden"
           >
-            <Text variant={light ? 'default' : 'h5'} as="span" lineHeight="lg">
+            <Text variant={'h5'} as="span" lineHeight="lg">
               {formatMessage(label)} {tooltip && <Tooltip text={tooltip} />}
             </Text>
           </Box>
