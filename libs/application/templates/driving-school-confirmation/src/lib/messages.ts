@@ -41,6 +41,11 @@ export const m = defineMessages({
     defaultMessage: 'Upplýsingar um ökunema',
     description: 'Student info section title',
   },
+  studentInfoSubtitle: {
+    id: 'dsc.application:studentInfoSubtitle',
+    defaultMessage: 'Sláðu inn kennitölu og netfang ökunema',
+    description: 'Student info section subtitle',
+  },
   studentInfoNationalId: {
     id: 'dsc.application:studentInfoNationalId',
     defaultMessage: 'Kennitala umsækjanda',
