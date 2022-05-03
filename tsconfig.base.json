@@ -88,6 +88,9 @@
       "@island.is/api/domains/finance": [
         "libs/api/domains/finance/src/index.ts"
       ],
+      "@island.is/api/domains/financial-statements-inao": [
+        "libs/api/domains/financial-statements-inao/src/index.ts"
+      ],
       "@island.is/api/domains/fishing-license": [
         "libs/api/domains/fishing-license/src/index.ts"
       ],
