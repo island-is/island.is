@@ -188,6 +188,9 @@ export const LandLaeknirFooter = ({
 
             <GridRow>
               <GridColumn span="12/12">
+                <Hidden above="sm">
+                  <Box className={styles.borderBottom} />
+                </Hidden>
                 <Hidden above="md">
                   <Box
                     marginLeft={1}
