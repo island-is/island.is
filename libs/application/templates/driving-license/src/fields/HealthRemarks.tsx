@@ -26,7 +26,7 @@ const HealthRemarks: FC<FieldBaseProps> = ({ application }) => {
   }, [remarks, setValue])
 
   return (
-    <Box>
+    <Box marginBottom={3}>
       <AlertMessage
         type="warning"
         title={formatText(m.healthRemarksTitle, application, formatMessage)}

@@ -10,7 +10,7 @@ import {
   buildSubSection,
   getValueViaPath,
 } from '@island.is/application/core'
-import { NationalRegistryUser, Teacher, UserProfile } from '../../types/schema'
+import { NationalRegistryUser, Teacher } from '../../types/schema'
 import { m } from '../../lib/messages'
 import { format as formatKennitala } from 'kennitala'
 import { StudentAssessment } from '@island.is/api/schema'
@@ -18,7 +18,6 @@ import { YES } from '../../lib/constants'
 import { B_TEMP } from '../../shared/constants'
 import {
   hasNoDrivingLicenseInOtherCountry,
-  hasYes,
   needsHealthCertificateCondition,
 } from '../../lib/utils'
 

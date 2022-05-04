@@ -6,7 +6,7 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { DrivingLicenseFakeData, NO, YES } from '../../lib/constants'
-import { allowFakeCondition, hasYes } from '../../lib/utils'
+import { allowFakeCondition } from '../../lib/utils'
 
 export const sectionFakeData = buildSubSection({
   id: 'fakeData',
@@ -99,7 +99,7 @@ export const sectionFakeData = buildSubSection({
           options: [
             {
               value: NO,
-              label: 'Enging tákntala',
+              label: 'Engin tákntala',
             },
             {
               value: YES,
