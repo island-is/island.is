@@ -22,10 +22,12 @@ import {
   Message,
   TypeValidator,
   ValidatorTypeMap,
+  OneshotMessage,
 } from './dto/createNotification.dto'
 import { InjectQueue, QueueService } from '@island.is/message-queue'
 import { CreateNotificationResponse } from './dto/createNotification.response'
 import MagicBellClient, { Notification } from '@magicbell/core'
+import * as OneSignal from 'onesignal-node'
 
 const throwIfError = (errors: ValidationError[]): void => {
   if (errors.length > 0) {
@@ -81,7 +83,7 @@ export class NotificationsController {
     return { id }
   }
 
-  @Post('magic-bell')
+  @Post('magicBell')
   @Documentation({
     description: 'Send notification to user using MagicBell',
     response: { status: 201, type: CreateNotificationResponse },
@@ -101,17 +103,53 @@ export class NotificationsController {
     @Req() req: Request,
   ): Promise<CreateNotificationResponse> {
     const message = await validateMessage(req.body)
-
     MagicBellClient.configure({
       apiKey: process.env.MAGICBELL_API_KEY ?? '',
       apiSecret: process.env.MAGICBELL_API_SECRET ?? '',
     })
-
     const notification = await Notification.create({
       title: 'New reply: I want to book a demo',
       content: 'Hi, I would like to book it on Monday, please',
-      recipients: [{ email: 'customer@example.com' }],
+      recipients: [{ email: message.recipient }],
     })
+    return { id: notification.id } // TODO change id parameter
+  }
+
+  @Post('oneSignal')
+  @Documentation({
+    description: 'Send notification to user using OneSignal',
+    response: { status: 201, type: CreateNotificationResponse },
+    request: {
+      query: {
+        req: {
+          required: true,
+          schema: {
+            type: 'object',
+            oneOf: [{ $ref: getSchemaPath(Message) }], // Should be something more concrete
+          },
+        },
+      },
+    },
+  })
+  async createNotificationOneSignal(
+    @Req() req: Request,
+  ): Promise<CreateNotificationResponse> {
+    const message = await validateMessage(req.body)
+
+    const client = new OneSignal.Client(
+      process.env.ONESIGNAL_APP_ID ?? '',
+      process.env.ONESIGNAL_API_KEY ?? '',
+    )
+
+    const notification = await client
+      .createNotification({
+        contents: {
+          tr: 'Yeni bildirim',
+          en: 'New notification',
+        },
+        included_segments: ['Subscribed Users'],
+      })
+      .then((res) => res.body)
 
     return { id: notification.id } // TODO change id parameter
   }

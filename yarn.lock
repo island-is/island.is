@@ -23604,6 +23604,14 @@ one-time@^1.0.0:
   dependencies:
     fn.name "1.x.x"
 
+onesignal-node@3.3.0:
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/onesignal-node/-/onesignal-node-3.3.0.tgz#24c381788f32cd776b0d8fb74dacf26f8d511a1c"
+  integrity sha512-f/G5zpkm7hpQj8mKRQsw3KPu+xJEVIKwC5fB7pARalGzdjEGgD6/Nzc9MYSurA8pbbXwsUeRPCf0xVkiH+xHfg==
+  dependencies:
+    request "^2.88.2"
+    request-promise "^4.2.5"
+
 onetime@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/onetime/-/onetime-1.1.0.tgz#a1f7838f8314c516f05ecefcbc4ccfe04b4ed789"
@@ -27030,6 +27038,16 @@ request-promise-native@^1.0.5, request-promise-native@^1.0.9:
   resolved "https://registry.yarnpkg.com/request-promise-native/-/request-promise-native-1.0.9.tgz#e407120526a5efdc9a39b28a5679bf47b9d9dc28"
   integrity sha512-wcW+sIUiWnKgNY0dqCpOZkUbF/I+YPi+f09JZIDa39Ec+q82CpSYniDp+ISgTTbKmnpJWASeJBPZmoxH84wt3g==
   dependencies:
+    request-promise-core "1.1.4"
+    stealthy-require "^1.1.1"
+    tough-cookie "^2.3.3"
+
+request-promise@^4.2.5:
+  version "4.2.6"
+  resolved "https://registry.yarnpkg.com/request-promise/-/request-promise-4.2.6.tgz#7e7e5b9578630e6f598e3813c0f8eb342a27f0a2"
+  integrity sha512-HCHI3DJJUakkOr8fNoCc73E5nU5bqITjOYFMDrKHYOXWXrgD/SBaC7LjwuPymUprRyuF06UK7hd/lMHkmUXglQ==
+  dependencies:
+    bluebird "^3.5.0"
     request-promise-core "1.1.4"
     stealthy-require "^1.1.1"
     tough-cookie "^2.3.3"
