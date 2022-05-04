@@ -13,6 +13,8 @@ import { UserProfile } from './userProfile.model'
 import { User } from '@island.is/auth-nest-tools'
 import { UserDeviceTokens } from './userDeviceTokens.model'
 import { DeviceTokenDto } from './dto/deviceToken.dto'
+import MagicBellClient, { Notification } from '@magicbell/core'
+import * as OneSignal from 'onesignal-node'
 
 @Injectable()
 export class UserProfileService {
@@ -94,10 +96,34 @@ export class UserProfileService {
   }
 
   async notifyViaMagicBell(nationalId:string) {
-    return {nationalId}
+    MagicBellClient.configure({
+      apiKey: process.env.MAGICBELL_API_KEY ?? '',
+      apiSecret: process.env.MAGICBELL_API_SECRET ?? '',
+    })
+    const notification = await Notification.create({
+      title: 'New reply: I want to book a demo',
+      content: 'Hi, I would like to book it on Monday, please',
+      recipients: [{ email: nationalId }],
+    })
+    return { id: notification.id } // TODO change id parameter
   }
 
   async notifyViaOneSignal(nationalId:string) {
-    return {nationalId}
+    const client = new OneSignal.Client(
+      process.env.ONESIGNAL_APP_ID ?? '',
+      process.env.ONESIGNAL_API_KEY ?? '',
+    )
+
+    const notification = await client
+      .createNotification({
+        contents: {
+          tr: 'Yeni bildirim',
+          en: 'New notification',
+        },
+        included_segments: ['Subscribed Users'],
+      })
+      .then((res) => res.body)
+
+    return { id: notification.id } // TODO change id parameter
   }
 }
