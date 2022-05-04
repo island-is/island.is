@@ -120,6 +120,23 @@ export const serializeService: SerializeMethod = (
     }
   }
 
+<<<<<<< HEAD
+=======
+  result.hpa = {
+    scaling: {
+      replicas: {
+        min: result.replicaCount.min,
+        max: result.replicaCount.max,
+      },
+      metric: {
+        cpuAverageUtilization: 70,
+      },
+    },
+  }
+  result.hpa.scaling.metric.nginxRequestsIrate =
+    serviceDef.replicaCount?.scalingMagicNumber || 2
+
+>>>>>>> 604bf766c (feat: configuration DSL supports the new rendering of the HPA, which supports ingress metric scaling)
   // extra attributes
   if (serviceDef.extraAttributes) {
     const { envs, errors } = serializeExtraVariables(
