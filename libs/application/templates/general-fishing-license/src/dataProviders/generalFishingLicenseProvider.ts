@@ -4,16 +4,25 @@ import {
   StaticText,
   SuccessfulDataProviderResult,
 } from '@island.is/application/core'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import { FishingLicenseShip } from '@island.is/api/schema'
 import * as Sentry from '@sentry/react'
 import { queryShips } from '../graphql/queries'
 import { error } from '../lib/messages'
-
+import { Inject, Injectable, Logger } from '@nestjs/common'
 interface GeneralFishingLicenseProps {
   ships: FishingLicenseShip[]
 }
 
+@Injectable()
 export class GeneralFishingLicenseProvider extends BasicDataProvider {
+  constructor(
+    @Inject(LOGGER_PROVIDER)
+    private logger: Logger,
+  ) {
+    super()
+  }
+
   type = 'GeneralFishingLicenseProvider'
 
   async queryShips(): Promise<FishingLicenseShip[]> {
@@ -23,13 +32,13 @@ export class GeneralFishingLicenseProvider extends BasicDataProvider {
         if (response.errors) {
           return this.handleError(response.errors)
         }
-
         return Promise.resolve(response.data.fishingLicenseShips)
       })
       .catch((error) => this.handleError(error))
   }
 
   async provide(): Promise<GeneralFishingLicenseProps> {
+    this.logger.debug(`Looking up ships owned by the applicant`)
     const ships = await this.queryShips()
     if (!ships || ships.length <= 0) {
       return Promise.reject({
@@ -53,13 +62,14 @@ export class GeneralFishingLicenseProvider extends BasicDataProvider {
   }
 
   onProvideError(error: { reason: StaticText }): FailedDataProviderResult {
-    console.log(error)
-    return {
+    const returnedError = {
       date: new Date(),
       data: {},
       reason: error.reason,
-      status: 'failure',
+      status: 'failure' as const,
     }
+    this.logger.error(returnedError)
+    return returnedError
   }
 
   handleError(error: Error | unknown) {
