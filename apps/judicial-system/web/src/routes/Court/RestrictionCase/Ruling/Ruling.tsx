@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useIntl, IntlShape } from 'react-intl'
 import { useRouter } from 'next/router'
+import formatISO from 'date-fns/formatISO'
 
 import {
   Accordion,
@@ -63,8 +64,10 @@ export function getConclutionAutofill(
   formatMessage: IntlShape['formatMessage'],
   workingCase: Case,
   decision: CaseDecision,
+  validToDate: string,
   force?: boolean,
 ) {
+  console.log(validToDate)
   if (!workingCase.defendants || workingCase.defendants.length === 0) {
     return undefined
   } else if (
@@ -77,9 +80,9 @@ export function getConclutionAutofill(
   }
 
   const isolationEndsBeforeValidToDate =
-    workingCase.validToDate &&
+    validToDate &&
     workingCase.isolationToDate &&
-    new Date(workingCase.validToDate) > new Date(workingCase.isolationToDate)
+    new Date(validToDate) > new Date(workingCase.isolationToDate)
 
   const accusedSuffix =
     workingCase.defendants[0].gender === Gender.MALE ? 'i' : 'a'
@@ -137,7 +140,7 @@ export function getConclutionAutofill(
           decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
             ? CaseType.TRAVEL_BAN
             : workingCase.type,
-        validToDate: `${formatDate(workingCase.validToDate, 'PPPPp')
+        validToDate: `${formatDate(validToDate, 'PPPPp')
           ?.replace('dagur,', 'dagsins')
           ?.replace(' kl.', ', kl.')}`,
         hasIsolation:
@@ -244,11 +247,12 @@ export const Ruling: React.FC = () => {
       setWorkingCase({ ...workingCase })
     }
 
-    if (workingCase.decision) {
+    if (workingCase.decision && workingCase.validToDate) {
       const conclution = getConclutionAutofill(
         formatMessage,
         workingCase,
         workingCase.decision,
+        workingCase.validToDate,
       )
 
       if (conclution) {
@@ -553,17 +557,20 @@ export const Ruling: React.FC = () => {
                 },
               )}
               onChange={(decision) => {
-                const conclution = getConclutionAutofill(
-                  formatMessage,
-                  workingCase,
-                  decision,
-                  true,
-                )
+                if (workingCase.validToDate) {
+                  const conclution = getConclutionAutofill(
+                    formatMessage,
+                    workingCase,
+                    decision,
+                    workingCase.validToDate,
+                    true,
+                  )
 
-                if (conclution) {
-                  autofill('conclusion', conclution, workingCase, true)
+                  if (conclution) {
+                    autofill('conclusion', conclution, workingCase, true)
 
-                  setWorkingCase({ ...workingCase, conclusion: conclution })
+                    setWorkingCase({ ...workingCase, conclusion: conclution })
+                  }
                 }
               }}
             />
@@ -617,6 +624,34 @@ export const Ruling: React.FC = () => {
                     setWorkingCase,
                     updateCase,
                   )
+
+                  if (
+                    date &&
+                    (workingCase.decision === CaseDecision.ACCEPTING ||
+                      workingCase.decision ===
+                        CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
+                      workingCase.decision === CaseDecision.ACCEPTING_PARTIALLY)
+                  ) {
+                    const conclution = getConclutionAutofill(
+                      formatMessage,
+                      workingCase,
+                      workingCase.decision,
+                      formatISO(date),
+                      true,
+                    )
+
+                    if (conclution && date) {
+                      autofill('conclusion', conclution, workingCase, true)
+
+                      setWorkingCase({
+                        ...workingCase,
+                        conclusion: conclution,
+                        validToDate: formatISO(date, {
+                          representation: 'complete',
+                        }),
+                      })
+                    }
+                  }
                 }}
                 required
               />
