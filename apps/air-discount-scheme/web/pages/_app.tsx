@@ -33,6 +33,10 @@ if (ddRumApplicationId && ddRumClientToken && typeof window !== 'undefined') {
   })
 }
 
+Sentry.init({
+  dsn: SENTRY_DSN,
+})
+
 const getLanguage = (path) => {
   if (path === undefined) {
     return 'is'
