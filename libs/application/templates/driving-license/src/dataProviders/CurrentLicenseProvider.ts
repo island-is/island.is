@@ -26,7 +26,10 @@ export class CurrentLicenseProvider extends BasicDataProvider {
     if (fakeData?.useFakeData === YES) {
       return {
         currentLicense: fakeData.currentLicense === 'temp' ? 'B' : null,
-        healthRemarks: fakeData.currentLicense === 'temp' ? ['Gervilimur eða gervilimir/stoðtæki fyrir fætur og hendur.'] : undefined,
+        healthRemarks:
+          fakeData.healthRemarks === YES
+            ? ['Gervilimur eða gervilimir/stoðtæki fyrir fætur og hendur.']
+            : undefined,
       }
     }
 
@@ -58,14 +61,14 @@ export class CurrentLicenseProvider extends BasicDataProvider {
     if (response.errors) {
       return Promise.reject({ error: response.errors })
     }
-    console.log("REMARKS", response.data?.drivingLicense?.healthRemarks)
+    console.log('REMARKS', response.data?.drivingLicense?.healthRemarks)
     const categoryB = (response.data?.drivingLicense?.categories ?? []).find(
       (cat) => cat.name === 'B',
     )
 
     return {
       currentLicense: categoryB ? categoryB.name : null,
-      healthRemarks: response.data?.drivingLicense?.healthRemarks
+      healthRemarks: response.data?.drivingLicense?.healthRemarks,
     }
   }
 

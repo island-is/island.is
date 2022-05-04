@@ -49,10 +49,11 @@ export class DrivingLicenseApi {
       const filteredRemarks: string[] = remarks
         .filter(
           (remark: v1.TegundAthugasemdaDto) =>
-            !!remark.heiti && licenseRemarks.includes(remark.nr || ''), //&& !remark.athugasemd)
+            !!remark.heiti &&
+            licenseRemarks.includes(remark.nr || ('' && !remark.athugasemd)),
         )
         .map((remark: v1.TegundAthugasemdaDto) => remark.heiti || '')
-        return {...license, healthRemarks: filteredRemarks}
+      return { ...license, healthRemarks: filteredRemarks }
     }
 
     return license
@@ -77,11 +78,8 @@ export class DrivingLicenseApi {
           expires: rettindi.gildirTil ?? null,
           comments: rettindi.aths ?? '',
         })) ?? [],
-
     }
   }
-
-  
 
   public async getAllLicenses(input: {
     nationalId: string

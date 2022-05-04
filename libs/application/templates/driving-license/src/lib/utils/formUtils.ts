@@ -22,7 +22,10 @@ export const allowFakeCondition = (result = YES) => (answers: FormValue) =>
 export const needsHealthCertificateCondition = (result = YES) => (
   answers: FormValue,
 ) => {
-  return Object.values(answers?.healthDeclaration || {}).includes(result)
+  return (
+    Object.values(answers?.healthDeclaration || {}).includes(result) ||
+    answers?.hasHealthRemarks === result
+  )
 }
 
 export const isVisible = (...fns: ConditionFn[]) => (answers: FormValue) => {
@@ -71,18 +74,21 @@ export const hasCompletedPrerequisitesStep = (value = false) => ({
   return requirementsMet === value
 }
 
-export const hasHealthRemarks = ( externalData:ExternalData )=> {
-
-    console.log((
+export const hasHealthRemarks = (externalData: ExternalData) => {
+  console.log(
+    (
       getValueViaPath<CurrentLicenseProviderResult>(
         externalData,
         'currentLicense.data',
       )?.healthRemarks || []
-    ).length > 0)
-  return  (
-        getValueViaPath<CurrentLicenseProviderResult>(
-          externalData,
-          'currentLicense.data',
-        )?.healthRemarks || []
-      ).length > 0
+    ).length > 0,
+  )
+  return (
+    (
+      getValueViaPath<CurrentLicenseProviderResult>(
+        externalData,
+        'currentLicense.data',
+      )?.healthRemarks || []
+    ).length > 0
+  )
 }

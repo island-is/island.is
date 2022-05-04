@@ -7,7 +7,7 @@ import {
 import { CurrentLicenseProviderResult } from '../../dataProviders/CurrentLicenseProvider'
 import { m } from '../../lib/messages'
 import { hasNoDrivingLicenseInOtherCountry } from '../../lib/utils'
-import { hasHealthRemarks } from '../../lib/utils/formUtils';
+import { hasHealthRemarks } from '../../lib/utils/formUtils'
 
 export const subSectionHealthDeclaration = buildSubSection({
   id: 'healthDeclaration',
@@ -23,8 +23,7 @@ export const subSectionHealthDeclaration = buildSubSection({
           id: 'remarks',
           title: '',
           component: 'HealthRemarks',
-          condition: (_, externalData) => hasHealthRemarks(externalData)
-          
+          condition: (_, externalData) => hasHealthRemarks(externalData),
         }),
         buildCustomField(
           {

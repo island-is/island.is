@@ -698,7 +698,8 @@ export const m = defineMessages({
   },
   healthRemarksDescription: {
     id: 'dl.application:healthRemarksDescription',
-    defaultMessage: 'Á bráðabirgðaskírteini eru tákntölur, því þarft þú að skila læknisvottorði til sýslumanns miðað við þá heilbrigðisyfirlýsingu sem fyllt var út í þeirri umsókn. Tákntölurnar eru eftirfarandi: ',
+    defaultMessage:
+      'Á bráðabirgðaskírteini eru tákntölur, því þarft þú að skila læknisvottorði til sýslumanns miðað við þá heilbrigðisyfirlýsingu sem fyllt var út í þeirri umsókn. Tákntölurnar eru eftirfarandi: ',
     description:
       'Alert message for health remarks on temporary driving license',
   },
