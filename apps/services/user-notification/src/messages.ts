@@ -15,5 +15,29 @@ export default {
         defaultMessage: 'Þú átt nýtt skjal á island.is frá: {organization}',
       },
     }),
+    [MessageTypes.OneshotMessage]: defineMessages({
+      title: {
+        id: 'user-notification.messages:oneshot-title',
+        description: 'Title of a simple notification',
+        defaultMessage: 'Þú ert með tilkynningu',
+      },
+      body: {
+        id: 'user-notification.messages:oneshot-body',
+        description: 'Body of message letting user know of a simple notification',
+        defaultMessage: '{organization} er að tilkynna þér eitthvað',
+      },
+    }),
+    [MessageTypes.Invalid]: defineMessages({
+      title: {
+        id: 'user-notification.messages:invalid-title',
+        description: 'Invalid notification title',
+        defaultMessage: '',
+      },
+      body: {
+        id: 'user-notification.messages:invalid-body',
+        description: 'Invalid notification body',
+        defaultMessage: '',
+      },
+    }),
   },
 }

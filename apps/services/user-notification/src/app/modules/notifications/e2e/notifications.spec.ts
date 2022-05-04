@@ -3,7 +3,7 @@ import { INestApplication, Injectable } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import { NotificationsController } from '../notifications.controller'
 import { NotificationsWorkerService } from '../notificationsWorker.service'
-import { Message } from '../dto/createNotification.dto'
+import { Message, NewDocumentMessage } from '../dto/createNotification.dto'
 import { LoggingModule } from '@island.is/logging'
 import { environment } from '../../../../environments/environment'
 import {
@@ -72,7 +72,7 @@ describe('Notifications API', () => {
   })
 
   it('Accepts a valid message input', async () => {
-    const msg: Message = {
+    const msg: NewDocumentMessage = {
       type: MessageTypes.NewDocumentMessage,
       organization: 'Skatturinn',
       recipient: '0409084390',

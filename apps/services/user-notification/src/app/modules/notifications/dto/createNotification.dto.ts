@@ -41,9 +41,15 @@ export class OneshotMessage extends Message {
   url!: string
 }
 
+export class InvalidMessage extends Message {
+  @ApiProperty({ enum: [MessageTypes.OneshotMessage] })
+  type!: MessageTypes.Invalid
+}
+
 export const ValidatorTypeMap = {
   [MessageTypes.NewDocumentMessage]: NewDocumentMessage,
   [MessageTypes.OneshotMessage]: OneshotMessage,
+  [MessageTypes.Invalid]: InvalidMessage,
 }
 
 export interface MagicBellCreateResponse {

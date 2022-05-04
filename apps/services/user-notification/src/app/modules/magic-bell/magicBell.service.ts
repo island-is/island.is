@@ -10,12 +10,10 @@ export const MAGICBELL_API_KEY = Symbol('MAGICBELL_API_KEY')
 
 @Injectable()
 export class MagicBellService {
-  /* TODO Use injected api keys rather than environment keys
   constructor(
     @Inject(MAGICBELL_API_KEY) private readonly apiKey: string,
     @Inject(MAGICBELL_API_SECRET) private readonly apiSecret: string,
   ) {}
-  */
 
   async createNotification(
     message: Message,

@@ -1,6 +1,7 @@
 export enum MessageTypes {
   NewDocumentMessage = 'newDocumentMessage',
   OneshotMessage = 'oneshotMessage',
+  Invalid = 'invalid',
 }
 
 export interface Notification {
