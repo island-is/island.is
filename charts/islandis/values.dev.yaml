@@ -19,14 +19,6 @@ air-discount-scheme-api:
       initialDelaySeconds: 3
       path: '/liveness'
       timeoutSeconds: 3
-  hpa:
-    scaling:
-      metric:
-        cpuAverageUtilization: '70%'
-        nginxRequestsIrate: 2
-      replicas:
-        max: 3
-        min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-api'
   ingress:
@@ -100,14 +92,6 @@ air-discount-scheme-backend:
       initialDelaySeconds: 3
       path: '/liveness'
       timeoutSeconds: 3
-  hpa:
-    scaling:
-      metric:
-        cpuAverageUtilization: '70%'
-        nginxRequestsIrate: 2
-      replicas:
-        max: 3
-        min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-backend'
   ingress:
@@ -190,14 +174,6 @@ air-discount-scheme-web:
       initialDelaySeconds: 3
       path: '/readiness'
       timeoutSeconds: 3
-  hpa:
-    scaling:
-      metric:
-        cpuAverageUtilization: '70%'
-        nginxRequestsIrate: 2
-      replicas:
-        max: 3
-        min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-web'
   ingress:
@@ -308,14 +284,6 @@ api:
       initialDelaySeconds: 3
       path: '/health'
       timeoutSeconds: 3
-  hpa:
-    scaling:
-      metric:
-        cpuAverageUtilization: '70%'
-        nginxRequestsIrate: 2
-      replicas:
-        max: 3
-        min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/api'
   ingress:
@@ -464,14 +432,6 @@ application-system-api:
       initialDelaySeconds: 3
       path: '/liveness'
       timeoutSeconds: 3
-  hpa:
-    scaling:
-      metric:
-        cpuAverageUtilization: '70%'
-        nginxRequestsIrate: 2
-      replicas:
-        max: 60
-        min: 10
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api'
   ingress:
@@ -597,14 +557,6 @@ application-system-api-worker:
       initialDelaySeconds: 3
       path: '/'
       timeoutSeconds: 3
-  hpa:
-    scaling:
-      metric:
-        cpuAverageUtilization: '70%'
-        nginxRequestsIrate: 2
-      replicas:
-        max: 3
-        min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api'
   namespace: 'application-system'
@@ -661,14 +613,6 @@ application-system-form:
       initialDelaySeconds: 3
       path: '/readiness'
       timeoutSeconds: 3
-  hpa:
-    scaling:
-      metric:
-        cpuAverageUtilization: '70%'
-        nginxRequestsIrate: 2
-      replicas:
-        max: 3
-        min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-form'
   ingress:
@@ -716,14 +660,6 @@ contentful-translation-extension:
       initialDelaySeconds: 3
       path: '/readiness'
       timeoutSeconds: 3
-  hpa:
-    scaling:
-      metric:
-        cpuAverageUtilization: '70%'
-        nginxRequestsIrate: 2
-      replicas:
-        max: 3
-        min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/contentful-translation-extension'
   ingress:
@@ -778,14 +714,6 @@ download-service:
       initialDelaySeconds: 3
       path: 'download/v1/readiness'
       timeoutSeconds: 3
-  hpa:
-    scaling:
-      metric:
-        cpuAverageUtilization: '70%'
-        nginxRequestsIrate: 2
-      replicas:
-        max: 3
-        min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/download-service'
   ingress:
@@ -849,14 +777,6 @@ endorsement-system-api:
       initialDelaySeconds: 3
       path: '/liveness'
       timeoutSeconds: 3
-  hpa:
-    scaling:
-      metric:
-        cpuAverageUtilization: '70%'
-        nginxRequestsIrate: 2
-      replicas:
-        max: 3
-        min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-endorsements-api'
   initContainer:
@@ -935,14 +855,6 @@ external-contracts-tests:
       initialDelaySeconds: 3
       path: '/'
       timeoutSeconds: 3
-  hpa:
-    scaling:
-      metric:
-        cpuAverageUtilization: '70%'
-        nginxRequestsIrate: 2
-      replicas:
-        max: 3
-        min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/external-contracts-tests'
   namespace: 'external-contracts-tests'
@@ -989,14 +901,6 @@ github-actions-cache:
       initialDelaySeconds: 3
       path: '/health'
       timeoutSeconds: 3
-  hpa:
-    scaling:
-      metric:
-        cpuAverageUtilization: '70%'
-        nginxRequestsIrate: 2
-      replicas:
-        max: 8
-        min: 3
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/github-actions-cache'
   ingress:
@@ -1065,14 +969,6 @@ icelandic-names-registry-backend:
       initialDelaySeconds: 3
       path: '/liveness'
       timeoutSeconds: 3
-  hpa:
-    scaling:
-      metric:
-        cpuAverageUtilization: '70%'
-        nginxRequestsIrate: 2
-      replicas:
-        max: 3
-        min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/icelandic-names-registry-backend'
   initContainer:
@@ -1147,14 +1043,6 @@ island-ui-storybook:
       initialDelaySeconds: 3
       path: '/readiness'
       timeoutSeconds: 3
-  hpa:
-    scaling:
-      metric:
-        cpuAverageUtilization: '70%'
-        nginxRequestsIrate: 2
-      replicas:
-        max: 3
-        min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/island-ui-storybook'
   ingress:
@@ -1224,14 +1112,6 @@ search-indexer-service:
       initialDelaySeconds: 3
       path: '/'
       timeoutSeconds: 3
-  hpa:
-    scaling:
-      metric:
-        cpuAverageUtilization: '70%'
-        nginxRequestsIrate: 2
-      replicas:
-        max: 1
-        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-search-indexer'
   ingress:
@@ -1342,14 +1222,6 @@ service-portal:
       initialDelaySeconds: 3
       path: '/readiness'
       timeoutSeconds: 3
-  hpa:
-    scaling:
-      metric:
-        cpuAverageUtilization: '70%'
-        nginxRequestsIrate: 2
-      replicas:
-        max: 30
-        min: 5
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/service-portal'
   ingress:
@@ -1407,14 +1279,6 @@ service-portal-api:
       initialDelaySeconds: 3
       path: '/readiness'
       timeoutSeconds: 3
-  hpa:
-    scaling:
-      metric:
-        cpuAverageUtilization: '70%'
-        nginxRequestsIrate: 2
-      replicas:
-        max: 30
-        min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-profile'
   ingress:
@@ -1502,14 +1366,6 @@ services-documents:
       initialDelaySeconds: 3
       path: '/readiness'
       timeoutSeconds: 3
-  hpa:
-    scaling:
-      metric:
-        cpuAverageUtilization: '70%'
-        nginxRequestsIrate: 2
-      replicas:
-        max: 3
-        min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-documents'
   initContainer:
@@ -1571,14 +1427,6 @@ skilavottord-web:
       initialDelaySeconds: 3
       path: '/liveness'
       timeoutSeconds: 3
-  hpa:
-    scaling:
-      metric:
-        cpuAverageUtilization: '70%'
-        nginxRequestsIrate: 2
-      replicas:
-        max: 3
-        min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/skilavottord-web'
   ingress:
@@ -1634,14 +1482,6 @@ skilavottord-ws:
       initialDelaySeconds: 3
       path: '/liveness'
       timeoutSeconds: 3
-  hpa:
-    scaling:
-      metric:
-        cpuAverageUtilization: '70%'
-        nginxRequestsIrate: 2
-      replicas:
-        max: 3
-        min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/skilavottord-ws'
   ingress:
@@ -1725,14 +1565,6 @@ user-notification:
       initialDelaySeconds: 3
       path: '/liveness'
       timeoutSeconds: 3
-  hpa:
-    scaling:
-      metric:
-        cpuAverageUtilization: '70%'
-        nginxRequestsIrate: 2
-      replicas:
-        max: 3
-        min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
   ingress:
@@ -1796,14 +1628,6 @@ user-notification-worker:
       initialDelaySeconds: 3
       path: '/liveness'
       timeoutSeconds: 3
-  hpa:
-    scaling:
-      metric:
-        cpuAverageUtilization: '70%'
-        nginxRequestsIrate: 2
-      replicas:
-        max: 3
-        min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
   namespace: 'user-notification'
@@ -1859,14 +1683,6 @@ web:
       initialDelaySeconds: 3
       path: '/readiness'
       timeoutSeconds: 3
-  hpa:
-    scaling:
-      metric:
-        cpuAverageUtilization: '70%'
-        nginxRequestsIrate: 2
-      replicas:
-        max: 50
-        min: 10
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/web'
   ingress:
@@ -1924,14 +1740,6 @@ xroad-collector:
       initialDelaySeconds: 3
       path: '/'
       timeoutSeconds: 3
-  hpa:
-    scaling:
-      metric:
-        cpuAverageUtilization: '70%'
-        nginxRequestsIrate: 2
-      replicas:
-        max: 3
-        min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-xroad-collector'
   namespace: 'xroad-collector'

@@ -111,11 +111,7 @@ export const serializeService: SerializeMethod = (
 
   // replicas
   if (serviceDef.replicaCount) {
-    result.replicaCount = {
-      min: serviceDef.replicaCount.min,
-      max: serviceDef.replicaCount.max,
-      default: serviceDef.replicaCount.default,
-    }
+    result.replicaCount = serviceDef.replicaCount
   } else {
     result.replicaCount = {
       min: uberChart.env.defaultMinReplicas,
@@ -123,20 +119,6 @@ export const serializeService: SerializeMethod = (
       default: uberChart.env.defaultMinReplicas,
     }
   }
-
-  result.hpa = {
-    scaling: {
-      replicas: {
-        min: result.replicaCount.min,
-        max: result.replicaCount.max,
-      },
-      metric: {
-        cpuAverageUtilization: '70%',
-      },
-    },
-  }
-  result.hpa.scaling.metric.nginxRequestsIrate =
-    serviceDef.replicaCount?.scalingMagicNumber || 2
 
   // extra attributes
   if (serviceDef.extraAttributes) {
