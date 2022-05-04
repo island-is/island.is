@@ -192,17 +192,6 @@ export class DocumentProviderService {
       .catch(handleError)
   }
 
-  async isLastModifierOfOrganisation(
-    organisationNationalId: string,
-    authorization: Auth,
-  ): Promise<boolean> {
-    return await this.organisationsApiWithAuth(
-      authorization,
-    ).organisationControllerIsLastModifierOfOrganisation({
-      nationalId: organisationNationalId,
-    })
-  }
-
   //-------------------- PROVIDER --------------------------
 
   async createProviderOnTest(
@@ -210,17 +199,7 @@ export class DocumentProviderService {
     clientName: string,
     authorization: Auth,
   ): Promise<ClientCredentials> {
-    const isLastModifier = await this.isLastModifierOfOrganisation(
-      nationalId,
-      authorization,
-    )
-
-    if (!isLastModifier) {
-      throw new ApolloError(
-        'Forbidden. User is not last modifier of organisation.',
-        '403',
-      )
-    }
+    await this.checkIfLastModifier(nationalId, authorization)
 
     const result = await this.documentProviderClientTest
       .createClient(nationalId, clientName)
@@ -241,17 +220,7 @@ export class DocumentProviderService {
     xroad: boolean,
     authorization: Auth,
   ): Promise<AudienceAndScope> {
-    const isLastModifier = await this.isLastModifierOfOrganisation(
-      nationalId,
-      authorization,
-    )
-
-    if (!isLastModifier) {
-      throw new ApolloError(
-        'Forbidden. User is not last modifier of organisation.',
-        '403',
-      )
-    }
+    await this.checkIfLastModifier(nationalId, authorization)
 
     const result = await this.documentProviderClientTest
       .updateEndpoint(providerId, endpoint, xroad)
@@ -268,17 +237,7 @@ export class DocumentProviderService {
     providerId: string,
     authorization: Auth,
   ): Promise<TestResult[]> {
-    const isLastModifier = await this.isLastModifierOfOrganisation(
-      nationalId,
-      authorization,
-    )
-
-    if (!isLastModifier) {
-      throw new ApolloError(
-        'Forbidden. User is not last modifier of organisation.',
-        '403',
-      )
-    }
+    await this.checkIfLastModifier(nationalId, authorization)
 
     const results = await this.documentProviderClientTest
       .runTests(providerId, recipient, documentId)
@@ -294,17 +253,7 @@ export class DocumentProviderService {
     clientName: string,
     authorization: Auth,
   ): Promise<ClientCredentials> {
-    const isLastModifier = await this.isLastModifierOfOrganisation(
-      nationalId,
-      authorization,
-    )
-
-    if (!isLastModifier) {
-      throw new ApolloError(
-        'Forbidden. User is not last modifier of organisation.',
-        '403',
-      )
-    }
+    await this.checkIfLastModifier(nationalId, authorization)
 
     const result = await this.documentProviderClientProd
       .createClient(nationalId, clientName)
@@ -349,17 +298,7 @@ export class DocumentProviderService {
     xroad: boolean,
     authorization: Auth,
   ): Promise<AudienceAndScope> {
-    const isLastModifier = await this.isLastModifierOfOrganisation(
-      nationalId,
-      authorization,
-    )
-
-    if (!isLastModifier) {
-      throw new ApolloError(
-        'Forbidden. User is not last modifier of organisation.',
-        '403',
-      )
-    }
+    await this.checkIfLastModifier(nationalId, authorization)
 
     const result = await this.documentProviderClientProd
       .updateEndpoint(providerId, endpoint, xroad)
@@ -439,5 +378,25 @@ export class DocumentProviderService {
       result.notifications,
       result.opened,
     )
+  }
+
+  //-------------------- HELPER FUNCTIONS --------------------------
+
+  async checkIfLastModifier(
+    organisationNationalId: string,
+    authorization: Auth,
+  ): Promise<void> {
+    const isLastModifier = await this.organisationsApiWithAuth(
+      authorization,
+    ).organisationControllerIsLastModifierOfOrganisation({
+      nationalId: organisationNationalId,
+    })
+
+    if (!isLastModifier) {
+      throw new ApolloError(
+        'Forbidden. User is not last modifier of organisation.',
+        '403',
+      )
+    }
   }
 }
