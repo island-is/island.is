@@ -62,13 +62,16 @@ import * as Constants from '@island.is/judicial-system/consts'
 export function getConclutionAutofill(
   formatMessage: IntlShape['formatMessage'],
   workingCase: Case,
+  decision: CaseDecision,
+  force?: boolean,
 ) {
-  if (
-    workingCase.conclusion ||
-    workingCase.conclusion === '' ||
-    !workingCase.decision ||
-    !workingCase.defendants ||
-    workingCase.defendants.length <= 0
+  if (!workingCase.defendants || workingCase.defendants.length === 0) {
+    return undefined
+  } else if (
+    !force &&
+    (workingCase.conclusion ||
+      workingCase.conclusion === '' ||
+      !workingCase.decision)
   ) {
     return undefined
   }
@@ -81,7 +84,7 @@ export function getConclutionAutofill(
   const accusedSuffix =
     workingCase.defendants[0].gender === Gender.MALE ? 'i' : 'a'
 
-  return workingCase.decision === CaseDecision.DISMISSING
+  return decision === CaseDecision.DISMISSING
     ? formatMessage(m.sections.conclusion.dismissingAutofillV2, {
         genderedAccused: formatMessage(core.accused, {
           suffix: accusedSuffix,
@@ -94,7 +97,7 @@ export function getConclutionAutofill(
             : 'no',
         caseType: workingCase.type,
       })
-    : workingCase.decision === CaseDecision.REJECTING
+    : decision === CaseDecision.REJECTING
     ? formatMessage(m.sections.conclusion.rejectingAutofillV2, {
         genderedAccused: formatMessage(core.accused, {
           suffix: accusedSuffix,
@@ -127,19 +130,18 @@ export function getConclutionAutofill(
         isExtended:
           workingCase.parentCase &&
           isAcceptingCaseDecision(workingCase.parentCase.decision) &&
-          workingCase.decision !== CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+          decision !== CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
             ? 'yes'
             : '',
         caseType:
-          workingCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+          decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
             ? CaseType.TRAVEL_BAN
             : workingCase.type,
         validToDate: `${formatDate(workingCase.validToDate, 'PPPPp')
           ?.replace('dagur,', 'dagsins')
           ?.replace(' kl.', ', kl.')}`,
         hasIsolation:
-          isAcceptingCaseDecision(workingCase.decision) &&
-          workingCase.isCustodyIsolation
+          isAcceptingCaseDecision(decision) && workingCase.isCustodyIsolation
             ? 'yes'
             : 'no',
         isolationEndsBeforeValidToDate: isolationEndsBeforeValidToDate
@@ -242,11 +244,18 @@ export const Ruling: React.FC = () => {
       setWorkingCase({ ...workingCase })
     }
 
-    const conclution = getConclutionAutofill(formatMessage, workingCase)
-    if (conclution) {
-      autofill('conclusion', conclution, workingCase)
+    if (workingCase.decision) {
+      const conclution = getConclutionAutofill(
+        formatMessage,
+        workingCase,
+        workingCase.decision,
+      )
 
-      setWorkingCase({ ...workingCase })
+      if (conclution) {
+        autofill('conclusion', conclution, workingCase)
+
+        setWorkingCase({ ...workingCase })
+      }
     }
   }, [
     autofill,
@@ -543,6 +552,20 @@ export const Ruling: React.FC = () => {
                   }),
                 },
               )}
+              onChange={(decision) => {
+                const conclution = getConclutionAutofill(
+                  formatMessage,
+                  workingCase,
+                  decision,
+                  true,
+                )
+
+                if (conclution) {
+                  autofill('conclusion', conclution, workingCase, true)
+
+                  setWorkingCase({ ...workingCase, conclusion: conclution })
+                }
+              }}
             />
           </Box>
         </Box>

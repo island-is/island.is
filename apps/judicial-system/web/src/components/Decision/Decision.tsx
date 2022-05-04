@@ -14,6 +14,7 @@ interface Props {
   partiallyAcceptedLabelText: string
   dismissLabelText: string
   acceptingAlternativeTravelBanLabelText?: string
+  onChange?: (decision: CaseDecision) => void
 }
 
 const Decision: React.FC<Props> = (props) => {
@@ -25,6 +26,7 @@ const Decision: React.FC<Props> = (props) => {
     rejectedLabelText,
     partiallyAcceptedLabelText,
     dismissLabelText,
+    onChange,
   } = props
   const { updateCase } = useCase()
 
@@ -37,6 +39,7 @@ const Decision: React.FC<Props> = (props) => {
           label={acceptedLabelText}
           checked={workingCase.decision === CaseDecision.ACCEPTING}
           onChange={() => {
+            onChange && onChange(CaseDecision.ACCEPTING)
             setAndSendToServer(
               'decision',
               CaseDecision.ACCEPTING,
@@ -57,6 +60,7 @@ const Decision: React.FC<Props> = (props) => {
             label={partiallyAcceptedLabelText}
             checked={workingCase.decision === CaseDecision.ACCEPTING_PARTIALLY}
             onChange={() => {
+              onChange && onChange(CaseDecision.ACCEPTING_PARTIALLY)
               setAndSendToServer(
                 'decision',
                 CaseDecision.ACCEPTING_PARTIALLY,
@@ -77,6 +81,7 @@ const Decision: React.FC<Props> = (props) => {
           label={rejectedLabelText}
           checked={workingCase.decision === CaseDecision.REJECTING}
           onChange={() => {
+            onChange && onChange(CaseDecision.REJECTING)
             setAndSendToServer(
               'decision',
               CaseDecision.REJECTING,
@@ -101,6 +106,8 @@ const Decision: React.FC<Props> = (props) => {
               CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
             }
             onChange={() => {
+              onChange &&
+                onChange(CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN)
               setAndSendToServer(
                 'decision',
                 CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
@@ -121,6 +128,7 @@ const Decision: React.FC<Props> = (props) => {
           label={dismissLabelText}
           checked={workingCase.decision === CaseDecision.DISMISSING}
           onChange={() => {
+            onChange && onChange(CaseDecision.DISMISSING)
             setAndSendToServer(
               'decision',
               CaseDecision.DISMISSING,
