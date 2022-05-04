@@ -23,7 +23,8 @@ export default {
       },
       body: {
         id: 'user-notification.messages:oneshot-body',
-        description: 'Body of message letting user know of a simple notification',
+        description:
+          'Body of message letting user know of a simple notification',
         defaultMessage: '{organization} er að tilkynna þér eitthvað',
       },
     }),

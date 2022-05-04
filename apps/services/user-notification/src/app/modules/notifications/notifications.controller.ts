@@ -25,7 +25,7 @@ import {
 } from './dto/createNotification.dto'
 import { InjectQueue, QueueService } from '@island.is/message-queue'
 import { CreateNotificationResponse } from './dto/createNotification.response'
-import { MagicBellService } from '../magic-bell/magicBell.service'
+import MagicBellClient, { Notification } from '@magicbell/core'
 
 const throwIfError = (errors: ValidationError[]): void => {
   if (errors.length > 0) {
@@ -61,8 +61,6 @@ export class NotificationsController {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     @InjectQueue('notifications') private queue: QueueService,
-    // @Inject(MagicBellService)
-    private readonly magicBellService: MagicBellService,
   ) {}
 
   @Post()
@@ -103,7 +101,17 @@ export class NotificationsController {
     @Req() req: Request,
   ): Promise<CreateNotificationResponse> {
     const message = await validateMessage(req.body)
-    const notification = await this.magicBellService.createNotification(message)
+
+    MagicBellClient.configure({
+      apiKey: process.env.MAGICBELL_API_KEY ?? '',
+      apiSecret: process.env.MAGICBELL_API_SECRET ?? '',
+    })
+
+    const notification = await Notification.create({
+      title: 'New reply: I want to book a demo',
+      content: 'Hi, I would like to book it on Monday, please',
+      recipients: [{ email: 'customer@example.com' }],
+    })
 
     return { id: notification.id } // TODO change id parameter
   }
