@@ -123,6 +123,7 @@ module.exports = {
     '<rootDir>/libs/application/templates/health-insurance',
     '<rootDir>/libs/application/templates/login-service',
     '<rootDir>/libs/application/templates/mortgage-certificate',
+    '<rootDir>/libs/application/templates/no-debt-certificate',
     '<rootDir>/libs/application/templates/parental-leave',
     '<rootDir>/libs/application/templates/passport',
     '<rootDir>/libs/application/templates/public-debt-payment-plan',
