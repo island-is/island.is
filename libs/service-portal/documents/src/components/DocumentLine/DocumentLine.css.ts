@@ -49,3 +49,7 @@ export const image = style({
   height: 30,
   marginRight: theme.spacing[2],
 })
+
+export const icon = style({
+  marginLeft: 6,
+})

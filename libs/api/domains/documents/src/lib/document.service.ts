@@ -40,8 +40,24 @@ export class DocumentService {
   async listDocuments(nationalId: string): Promise<Document[]> {
     try {
       const body = await this.documentClient.getDocumentList(nationalId)
+      const bodyMessages = body?.messages || []
 
-      return (body?.messages || []).reduce(
+      const aww = [
+        {
+          id: 'this-is-a-test-id-please-remove',
+          subject: 'Niðurstaða álagningar 2021 (eingöngu rafræn skilríki)',
+          senderName: 'Ríkisskattstjóri',
+          senderKennitala: '5402696029',
+          documentDate: '2021-05-28T15:13:08.000Z',
+          fileType: 'url',
+          url: 'https://thjonustusidur.rsk.is/alagningarsedill',
+          opened: false,
+          __typename: 'Document',
+        },
+        ...bodyMessages,
+      ]
+
+      return (aww || []).reduce(
         (result: Document[], documentMessage: DocumentInfoDTO) => {
           if (documentMessage)
             result.push(this.documentBuilder.buildDocument(documentMessage))

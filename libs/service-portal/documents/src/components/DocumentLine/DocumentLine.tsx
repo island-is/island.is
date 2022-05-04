@@ -5,7 +5,14 @@ import { useWindowSize } from 'react-use'
 
 import { Document } from '@island.is/api/schema'
 import { getAccessToken } from '@island.is/auth/react'
-import { Box, GridColumn, GridRow, Link, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  GridColumn,
+  GridRow,
+  Link,
+  Text,
+  Icon,
+} from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { dateFormat } from '@island.is/shared/constants'
 
@@ -60,24 +67,25 @@ const DocumentLine: FC<Props> = ({ documentLine, img }) => {
   )
 
   const image = img && <img className={styles.image} src={img} alt="" />
+  const isLink = documentLine.fileType === 'url' && documentLine.url
 
-  const subject =
-    documentLine.fileType === 'url' && documentLine.url ? (
-      <Link href={documentLine.url}>
-        <button
-          className={cn(styles.button, !documentLine.opened && styles.unopened)}
-        >
-          {documentLine.subject}
-        </button>
-      </Link>
-    ) : (
-      <button
-        className={cn(styles.button, !documentLine.opened && styles.unopened)}
-        onClick={onClickHandler}
-      >
+  const subject = isLink ? (
+    <Link href={documentLine.url} newTab>
+      <button className={styles.button}>
         {documentLine.subject}
+        <Icon type="outline" icon="open" size="small" className={styles.icon} />
       </button>
-    )
+    </Link>
+  ) : (
+    <button
+      className={cn(styles.button, {
+        [styles.unopened]: !documentLine.opened,
+      })}
+      onClick={onClickHandler}
+    >
+      {documentLine.subject}
+    </button>
+  )
 
   const sender = (variant: 'eyebrow' | 'medium') => (
     <Text variant={variant} id="senderName">
@@ -87,10 +95,9 @@ const DocumentLine: FC<Props> = ({ documentLine, img }) => {
   return (
     <Box
       position="relative"
-      className={cn(
-        styles.line,
-        !documentLine.opened && styles.unopenedWrapper,
-      )}
+      className={cn(styles.line, {
+        [styles.unopenedWrapper]: !documentLine.opened && !isLink,
+      })}
       paddingY={2}
     >
       {isMobile ? (
