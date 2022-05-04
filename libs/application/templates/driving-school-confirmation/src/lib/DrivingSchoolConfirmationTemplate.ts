@@ -22,7 +22,7 @@ const DrivingSchoolConfirmationTemplate: ApplicationTemplate<
   name: m.applicationTitle,
   dataSchema: dataSchema,
   readyForProduction: false,
-  featureFlag: Features.drivingSchoolConfirmation,
+  featureFlag: Features.drivingSchoolConfirmations,
   stateMachineConfig: {
     initial: States.CONFIRM,
     states: {

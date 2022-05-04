@@ -16,5 +16,5 @@ export enum Features {
   exampleApplication = 'isExampleApplicationEnabled',
   accidentNotification = 'isAccidentNotificationEnabled',
   drivingInstructorRegistrations = 'isDrivingInstructorRegistrationsEnabled',
-  drivingSchoolConfirmation = 'isDrivingSchoolConfirmationsEnabled',
+  drivingSchoolConfirmations = 'isDrivingSchoolConfirmationsEnabled',
 }
