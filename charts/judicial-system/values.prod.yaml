@@ -44,8 +44,6 @@ judicial-system-api:
       initialDelaySeconds: 3
       path: '/liveness'
       timeoutSeconds: 3
-<<<<<<< HEAD
-=======
   hpa:
     scaling:
       metric:
@@ -54,7 +52,6 @@ judicial-system-api:
       replicas:
         max: 10
         min: 3
->>>>>>> 604bf766c (feat: configuration DSL supports the new rendering of the HPA, which supports ingress metric scaling)
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-api'
   ingress:
@@ -140,8 +137,6 @@ judicial-system-backend:
       initialDelaySeconds: 3
       path: '/liveness'
       timeoutSeconds: 3
-<<<<<<< HEAD
-=======
   hpa:
     scaling:
       metric:
@@ -150,7 +145,6 @@ judicial-system-backend:
       replicas:
         max: 10
         min: 4
->>>>>>> 604bf766c (feat: configuration DSL supports the new rendering of the HPA, which supports ingress metric scaling)
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-backend'
   initContainer:
@@ -245,8 +239,6 @@ judicial-system-scheduler:
       initialDelaySeconds: 3
       path: '/'
       timeoutSeconds: 3
-<<<<<<< HEAD
-=======
   hpa:
     scaling:
       metric:
@@ -255,7 +247,6 @@ judicial-system-scheduler:
       replicas:
         max: 1
         min: 1
->>>>>>> 604bf766c (feat: configuration DSL supports the new rendering of the HPA, which supports ingress metric scaling)
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-scheduler'
   namespace: 'judicial-system'
@@ -296,8 +287,6 @@ judicial-system-web:
       initialDelaySeconds: 3
       path: '/readiness'
       timeoutSeconds: 3
-<<<<<<< HEAD
-=======
   hpa:
     scaling:
       metric:
@@ -306,7 +295,6 @@ judicial-system-web:
       replicas:
         max: 10
         min: 3
->>>>>>> 604bf766c (feat: configuration DSL supports the new rendering of the HPA, which supports ingress metric scaling)
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-web'
   ingress:
@@ -357,8 +345,6 @@ judicial-system-xrd-api:
       initialDelaySeconds: 3
       path: '/liveness'
       timeoutSeconds: 3
-<<<<<<< HEAD
-=======
   hpa:
     scaling:
       metric:
@@ -367,7 +353,6 @@ judicial-system-xrd-api:
       replicas:
         max: 10
         min: 3
->>>>>>> 604bf766c (feat: configuration DSL supports the new rendering of the HPA, which supports ingress metric scaling)
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-xrd-api'
   ingress:

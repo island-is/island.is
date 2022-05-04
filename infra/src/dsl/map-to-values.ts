@@ -120,8 +120,6 @@ export const serializeService: SerializeMethod = (
     }
   }
 
-<<<<<<< HEAD
-=======
   result.hpa = {
     scaling: {
       replicas: {
@@ -136,7 +134,6 @@ export const serializeService: SerializeMethod = (
   result.hpa.scaling.metric.nginxRequestsIrate =
     serviceDef.replicaCount?.scalingMagicNumber || 2
 
->>>>>>> 604bf766c (feat: configuration DSL supports the new rendering of the HPA, which supports ingress metric scaling)
   // extra attributes
   if (serviceDef.extraAttributes) {
     const { envs, errors } = serializeExtraVariables(
