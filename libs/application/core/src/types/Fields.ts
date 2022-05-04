@@ -127,6 +127,7 @@ export interface DescriptionField extends BaseField {
   tooltip?: FormText
   titleTooltip?: FormText
   space?: BoxProps['paddingTop']
+  marginBottom?: BoxProps['marginBottom']
   titleVariant?: TitleVariants
 }
 

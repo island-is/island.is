@@ -8,6 +8,7 @@ import {
 } from '@island.is/application/core'
 import { Box, Text } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
+import { Answers } from '../../types'
 
 type FilesRecipientCardProps = {
   field: {
@@ -19,7 +20,7 @@ type FilesRecipientCardProps = {
 }
 
 export const FilesRecipientCard: FC<
-  FieldBaseProps & FilesRecipientCardProps
+  FieldBaseProps<Answers> & FilesRecipientCardProps
 > = ({ application, field }) => {
   const { formatMessage } = useLocale()
 
@@ -50,7 +51,7 @@ export const FilesRecipientCard: FC<
             id={field.id}
             name={field.id}
             backgroundColor="blue"
-            defaultValue={field.defaultValue}
+            defaultValue={field.defaultValue || ''}
             placeholder={
               field.props.placeholder
                 ? formatText(
@@ -60,13 +61,12 @@ export const FilesRecipientCard: FC<
                   )
                 : ''
             }
-            options={(application.answers.estateMembers as {
-              nationalId: string
-              relation: string
-            }[])?.map((estateMember) => ({
-              label: estateMember.nationalId,
-              value: estateMember.nationalId,
-            }))}
+            options={application.answers?.estateMembers?.map(
+              (estateMember) => ({
+                label: estateMember.name,
+                value: estateMember.nationalId,
+              }),
+            )}
           />
         </Box>
       )}

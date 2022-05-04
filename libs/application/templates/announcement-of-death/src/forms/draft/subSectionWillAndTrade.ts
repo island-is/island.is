@@ -32,6 +32,7 @@ export const subSectionWillAndTrade = buildSubSection({
           width: 'full',
           largeButtons: false,
           space: 3,
+          defaultValue: '',
           options: [
             {
               value: 'yes',

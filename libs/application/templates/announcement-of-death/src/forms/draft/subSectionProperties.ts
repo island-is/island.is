@@ -53,6 +53,7 @@ export const subSectionProperties = buildSubSection({
           large: false,
           backgroundColor: 'white',
           doesNotRequireAnswer: true,
+          defaultValue: '',
           options: [
             {
               label: m.otherPropertiesAccounts,

@@ -19,7 +19,7 @@ import {
   Button,
   ProfileCard,
 } from '@island.is/island-ui/core'
-import { EstateMember, RelationEnum } from '../../types'
+import { Answers, EstateMember, RelationEnum } from '../../types'
 
 import * as styles from './EstateMemberRepeater.css'
 import { gql, useLazyQuery } from '@apollo/client'
@@ -35,48 +35,63 @@ const IdentityQuery = gql`
     }
   }
 `
-export const EstateMemberRepeater: FC<FieldBaseProps> = ({ field }) => {
+export const EstateMemberRepeater: FC<FieldBaseProps<Answers>> = ({
+  field,
+  application,
+}) => {
   const { id } = field
   const { formatMessage } = useLocale()
-  const { fields, append, remove } = useFieldArray<EstateMember>({ name: id })
-
+  const { fields, append, remove } = useFieldArray<EstateMember>({
+    name: id,
+  })
   const handleAddMember = () =>
     append({
       nationalId: '',
       relation: RelationEnum.PARENT,
+      initial: false,
+      name: '',
     })
 
   return (
     <Box marginTop={2}>
       <GridRow>
-        <GridColumn span={['12/12', '12/12', '6/12']} paddingBottom={3}>
-          <ProfileCard
-            // TODO: Get value
-            title="Karl Sveinn Markúsarson"
-            description={[
-              '010142-2569',
-              'Maki',
-              <Box marginTop={1} as="span">
-                <Button
-                  variant="text"
-                  icon="trash"
-                  size="small"
-                  iconType="outline"
-                >
-                  {formatMessage(m.inheritanceRemoveMember)}
-                </Button>
-              </Box>,
-            ]}
-          />
-        </GridColumn>
+        {fields.reduce((acc, member, index) => {
+          if (!member.initial) {
+            return acc
+          }
+          return [
+            ...acc,
+            <GridColumn
+              key={index}
+              span={['12/12', '12/12', '6/12']}
+              paddingBottom={3}
+            >
+              <ProfileCard
+                title={member.name}
+                description={[
+                  member.nationalId || '',
+                  member.relation || '',
+                  <Box marginTop={1} as="span">
+                    <Button
+                      variant="text"
+                      icon="trash"
+                      size="small"
+                      iconType="outline"
+                      onClick={() => remove(index)}
+                    >
+                      {formatMessage(m.inheritanceRemoveMember)}
+                    </Button>
+                  </Box>,
+                ]}
+              />
+            </GridColumn>,
+          ]
+        }, [] as JSX.Element[])}
       </GridRow>
-      {fields.map((estateField, index) => (
-        <Item
-          key={estateField.id}
-          field={estateField}
-          index={index}
-          remove={remove}
-        />
+      {fields.map((member, index) => (
+        <Box key={member.id} hidden={member.initial}>
+          <Item field={member} fieldName={id} index={index} remove={remove} />
+        </Box>
       ))}
       <Box marginTop={1}>
         <Button
@@ -97,19 +112,22 @@ const Item = ({
   field,
   index,
   remove,
+  fieldName,
 }: {
   field: Partial<ArrayField<EstateMember, 'id'>>
   index: number
   remove: (index?: number | number[] | undefined) => void
+  fieldName: string
 }) => {
   const { formatMessage } = useLocale()
-  const fieldIndex = `${field.id}[${index}]`
+  const fieldIndex = `${fieldName}[${index}]`
   const nameField = `${fieldIndex}.name`
   const nationalIdField = `${fieldIndex}.nationalId`
   const relationField = `${fieldIndex}.relation`
   const custodianField = `${fieldIndex}.custodian`
   const dateOfBirthField = `${fieldIndex}.dateOfBirth`
   const foreignCitizenshipField = `${fieldIndex}.foreignCitizenship`
+  const initialField = `${fieldIndex}.initial`
   const nationalIdInput = useWatch({ name: nationalIdField, defaultValue: '' })
   const name = useWatch({ name: nameField, defaultValue: '' })
   const foreignCitizenship = useWatch({
@@ -117,7 +135,7 @@ const Item = ({
     defaultValue: '',
   })
 
-  const { setValue } = useFormContext()
+  const { register, setValue } = useFormContext()
 
   const [
     getIdentity,
@@ -144,9 +162,21 @@ const Item = ({
       setValue(nameField, '')
     }
   }, [getIdentity, name, nameField, nationalIdInput, setValue])
+  useEffect(() => {
+    // TODO: This needs to be better implemented, initial value gets removed from all fields when one is removed
+    // forcing initial value to be set on all fields - and add hidden field to form to prevent the value from being overwritten
+    setValue(initialField, field.initial || false)
+  }, [field.initial, setValue, initialField])
 
   return (
     <Box position="relative" key={field.id} marginTop={2}>
+      <input
+        type="checkbox"
+        hidden={true}
+        name={initialField}
+        ref={register}
+        defaultChecked={field.initial}
+      />
       <Box position="absolute" className={styles.removeFieldButton}>
         <Button
           variant="ghost"
@@ -163,6 +193,7 @@ const Item = ({
           <>
             <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
               <InputController
+                key={nationalIdField}
                 id={nationalIdField}
                 name={nationalIdField}
                 label={formatMessage(m.inheritanceKtLabel)}
@@ -180,6 +211,7 @@ const Item = ({
             </GridColumn>
             <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
               <SelectController
+                key={relationField}
                 id={relationField}
                 name={relationField}
                 label={formatMessage(m.inheritanceRelationLabel)}
@@ -208,16 +240,20 @@ const Item = ({
             </GridColumn>
             <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
               <InputController
+                key={nameField}
                 id={nameField}
                 name={nameField}
+                defaultValue={field.name}
                 label={formatMessage(m.inheritanceNameLabel)}
                 readOnly
               />
             </GridColumn>
             <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
               <InputController
+                key={custodianField}
                 id={custodianField}
                 name={custodianField}
+                defaultValue={field.custodian}
                 label={formatMessage(m.inheritanceCustodyLabel)}
                 readOnly
               />
@@ -227,13 +263,17 @@ const Item = ({
           <>
             <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
               <InputController
+                key={nameField}
                 id={nameField}
                 name={nameField}
+                backgroundColor="blue"
+                defaultValue={field.name}
                 label={formatMessage(m.inheritanceNameLabel)}
               />
             </GridColumn>
             <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
               <SelectController
+                key={relationField}
                 id={relationField}
                 name={relationField}
                 label={formatMessage(m.inheritanceRelationLabel)}
@@ -262,8 +302,11 @@ const Item = ({
             </GridColumn>
             <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
               <InputController
+                key={dateOfBirthField}
                 id={dateOfBirthField}
                 name={dateOfBirthField}
+                backgroundColor="blue"
+                defaultValue={field.dateOfBirth}
                 label={formatMessage(m.inheritanceDayOfBirthLabel)}
               />
             </GridColumn>
@@ -271,8 +314,10 @@ const Item = ({
         )}
         <GridColumn span="1/1" paddingBottom={2}>
           <CheckboxController
+            key={foreignCitizenshipField}
             id={foreignCitizenshipField}
             name={foreignCitizenshipField}
+            defaultValue={field?.foreignCitizenship || []}
             options={[
               {
                 label: formatMessage(m.inheritanceForeignCitizenshipLabel),

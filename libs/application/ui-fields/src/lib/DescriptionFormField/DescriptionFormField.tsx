@@ -17,7 +17,7 @@ export const DescriptionFormField: FC<{
   const { formatMessage } = useLocale()
 
   return (
-    <Box paddingTop={field.space}>
+    <Box paddingTop={field.space} marginBottom={field.marginBottom}>
       {showFieldName && (
         <Text variant={field.titleVariant}>
           {formatText(field.title, application, formatMessage)}

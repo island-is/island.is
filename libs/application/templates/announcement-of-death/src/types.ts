@@ -10,6 +10,22 @@ export enum RelationEnum {
   SPOUSE = 'spouse',
 }
 
+// TODO: WIP
+export interface Answers {
+  applicantEmail: string
+  applicantName: string
+  applicantPhone: string
+  applicantRelation: RelationEnum
+  approveExternalData: true
+  authorizationForFuneralExpenses?: boolean
+  certificateOfDeathAnnouncement: string
+  estateMembers: EstateMember[]
+  financesDataCollectionPermission?: boolean
+  knowledgeOfOtherWills: 'yes' | 'no'
+  otherProperties: Property[]
+  roleConfirmation: RoleConfirmationEnum
+}
+
 export interface ElectPersonType {
   roleConfirmation: RoleConfirmationEnum
   electedPersonName?: string
@@ -21,7 +37,10 @@ export interface EstateMember {
   name: string
   nationalId: string
   relation: RelationEnum
-  hasForeignCitizenship?: boolean
+  initial?: boolean
+  dateOfBirth?: string
+  custodian?: string
+  foreignCitizenship?: ('yes' | 'no')[]
 }
 
 export interface Property {

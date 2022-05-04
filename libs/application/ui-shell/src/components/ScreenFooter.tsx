@@ -99,7 +99,7 @@ export const ScreenFooter: FC<FooterProps> = ({
           const buttonConfig = submitButtonConfig[type]
 
           return (
-            <Box key={`cta-${event}`} marginX={1}>
+            <Box key={`cta-${event}`}>
               <Button
                 type="submit"
                 loading={!canProceed || loading}
