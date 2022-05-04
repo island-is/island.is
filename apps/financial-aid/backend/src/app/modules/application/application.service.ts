@@ -11,7 +11,7 @@ import {
   SpouseResponse,
 } from './models'
 
-import { Op } from 'sequelize'
+import { Includeable, Op } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 
 import {
@@ -59,6 +59,42 @@ interface Recipient {
 
 const linkToStatusPage = (applicationId: string) => {
   return `${environment.oskBaseUrl}/stada/${applicationId}"`
+}
+
+const applicationInlcudeClause = (isEmployee: boolean) => {
+  return [
+    { model: StaffModel, as: 'staff' },
+    {
+      model: ApplicationEventModel,
+      as: 'applicationEvents',
+      separate: true,
+      where: {
+        eventType: {
+          [Op.in]: isEmployee
+            ? Object.values(ApplicationEventType)
+            : [ApplicationEventType.DATANEEDED],
+        },
+      },
+      order: [['created', 'DESC']],
+    },
+    {
+      model: ApplicationFileModel,
+      as: 'files',
+      separate: true,
+      order: [['created', 'DESC']],
+    },
+    {
+      model: AmountModel,
+      as: 'amount',
+      include: [{ model: DeductionFactorsModel, as: 'deductionFactors' }],
+      separate: true,
+      order: [['created', 'DESC']],
+    },
+    {
+      model: DirectTaxPaymentModel,
+      as: 'directTaxPayments',
+    },
+  ] as Includeable[]
 }
 
 @Injectable()
@@ -176,39 +212,7 @@ export class ApplicationService {
   ): Promise<ApplicationModel | null> {
     const application = await this.applicationModel.findOne({
       where: { id },
-      include: [
-        { model: StaffModel, as: 'staff' },
-        {
-          model: ApplicationEventModel,
-          as: 'applicationEvents',
-          separate: true,
-          where: {
-            eventType: {
-              [Op.in]: isEmployee
-                ? Object.values(ApplicationEventType)
-                : [ApplicationEventType.DATANEEDED],
-            },
-          },
-          order: [['created', 'DESC']],
-        },
-        {
-          model: ApplicationFileModel,
-          as: 'files',
-          separate: true,
-          order: [['created', 'DESC']],
-        },
-        {
-          model: AmountModel,
-          as: 'amount',
-          include: [{ model: DeductionFactorsModel, as: 'deductionFactors' }],
-          separate: true,
-          order: [['created', 'DESC']],
-        },
-        {
-          model: DirectTaxPaymentModel,
-          as: 'directTaxPayments',
-        },
-      ],
+      include: applicationInlcudeClause(isEmployee),
     })
 
     if (application?.amount) {
@@ -223,31 +227,7 @@ export class ApplicationService {
   ): Promise<ApplicationModel | null> {
     const application = await this.applicationModel.findOne({
       where: { applicationSystemId: id },
-      include: [
-        {
-          model: ApplicationEventModel,
-          as: 'applicationEvents',
-          separate: true,
-          order: [['created', 'DESC']],
-        },
-        {
-          model: ApplicationFileModel,
-          as: 'files',
-          separate: true,
-          order: [['created', 'DESC']],
-        },
-        {
-          model: AmountModel,
-          as: 'amount',
-          include: [{ model: DeductionFactorsModel, as: 'deductionFactors' }],
-          separate: true,
-          order: [['created', 'DESC']],
-        },
-        {
-          model: DirectTaxPaymentModel,
-          as: 'directTaxPayments',
-        },
-      ],
+      include: applicationInlcudeClause(false),
     })
 
     if (application?.amount) {
