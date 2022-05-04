@@ -21,6 +21,8 @@ export class GeneralFishingLicenseProvider extends BasicDataProvider {
       .then(async (res: Response) => {
         const response = await res.json()
 
+        console.log(`Response ${JSON.stringify(response)}`)
+
         if (response.errors) {
           return this.handleError(response.errors)
         }
@@ -32,8 +34,8 @@ export class GeneralFishingLicenseProvider extends BasicDataProvider {
 
   async provide(): Promise<GeneralFishingLicenseProps> {
     const ships = await this.queryShips()
-
-    if (ships.length <= 0) {
+    console.log(`Ships ${JSON.stringify(ships)}`)
+    if (!ships || ships.length <= 0) {
       return Promise.reject({
         reason: error.noShipsFoundError,
       })
@@ -55,6 +57,7 @@ export class GeneralFishingLicenseProvider extends BasicDataProvider {
   }
 
   onProvideError(error: { reason: StaticText }): FailedDataProviderResult {
+    console.log(error)
     return {
       date: new Date(),
       data: {},
