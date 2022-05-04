@@ -61,7 +61,6 @@ export class CurrentLicenseProvider extends BasicDataProvider {
     if (response.errors) {
       return Promise.reject({ error: response.errors })
     }
-    console.log('REMARKS', response.data?.drivingLicense?.healthRemarks)
     const categoryB = (response.data?.drivingLicense?.categories ?? []).find(
       (cat) => cat.name === 'B',
     )

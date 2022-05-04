@@ -75,14 +75,6 @@ export const hasCompletedPrerequisitesStep = (value = false) => ({
 }
 
 export const hasHealthRemarks = (externalData: ExternalData) => {
-  console.log(
-    (
-      getValueViaPath<CurrentLicenseProviderResult>(
-        externalData,
-        'currentLicense.data',
-      )?.healthRemarks || []
-    ).length > 0,
-  )
   return (
     (
       getValueViaPath<CurrentLicenseProviderResult>(
