@@ -9,6 +9,7 @@ import {
   Image,
   Organization,
   OrganizationPage,
+  Query,
 } from '@island.is/web/graphql/schema'
 import {
   Box,
@@ -25,6 +26,7 @@ import {
   Text,
   Button,
   Inline,
+  Logo,
 } from '@island.is/island-ui/core'
 import {
   HeadWithSocialSharing,
@@ -45,7 +47,11 @@ import {
 } from './Themes/UtlendingastofnunTheme'
 import { endpoints as chatPanelEndpoints } from '../../ChatPanel/config'
 import MannaudstorgFooter from './Themes/MannaudstorgTheme/MannaudstorgFooter'
-import { useNamespace } from '@island.is/web/hooks'
+import { useNamespaceStrict } from '@island.is/web/hooks'
+import { useI18n } from '@island.is/web/i18n'
+import { useQuery } from '@apollo/client'
+import { GET_NAMESPACE_QUERY } from '@island.is/web/screens/queries'
+import { QueryGetNamespaceArgs } from '@island.is/api/schema'
 import * as styles from './OrganizationWrapper.css'
 
 interface NavigationData {
@@ -148,6 +154,60 @@ export const OrganizationExternalLinks: React.FC<ExternalLinksProps> = ({
   return null
 }
 
+const IslandFooter = () => {
+  const { activeLocale } = useI18n()
+  const { data } = useQuery<Query, QueryGetNamespaceArgs>(GET_NAMESPACE_QUERY, {
+    variables: {
+      input: { lang: activeLocale, namespace: 'OrganizationIslandFooter' },
+    },
+  })
+
+  const namespace = useMemo(
+    () => JSON.parse(data?.getNamespace?.fields ?? '{}'),
+    [data?.getNamespace?.fields],
+  )
+
+  const n = useNamespaceStrict(namespace)
+
+  return (
+    <footer>
+      <Box width="full" padding={5}>
+        <GridContainer>
+          <GridRow align="spaceBetween" alignItems="center">
+            <Inline alignY="center" space={3}>
+              <Logo iconOnly={true} />
+              <Link href={n('digitalIcelandLink', '/s/stafraent-island')}>
+                {n('digitalIceland', 'Stafrænt Ísland')}
+              </Link>
+              <Link href={n('servicesLink', '/flokkur')}>
+                {n('services', 'Þjónustuflokkar')}
+              </Link>
+            </Inline>
+            <Inline alignY="center" space={2}>
+              <Link href={n('organizationsLink', '/s')}>
+                {n('organizations', 'Stofnanir')}
+              </Link>
+              <Link
+                href={n(
+                  'privacyPolicyLink',
+                  '/personuverndarstefna-stafraent-islands',
+                )}
+              >
+                {n('privacyPolicy', 'Persónuverndarstefna')}
+              </Link>
+              <Inline alignY="center" space={1}>
+                <Link href={activeLocale === 'en' ? '/' : '/en'}>
+                  {activeLocale === 'en' ? 'Íslenska' : 'English'}
+                </Link>
+              </Inline>
+            </Inline>
+          </GridRow>
+        </GridContainer>
+      </Box>
+    </footer>
+  )
+}
+
 interface FooterProps {
   organizations: Array<Organization>
   force?: boolean
@@ -161,7 +221,7 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
     ? organizations[0]
     : organizations.find((x) => footerEnabled.includes(x.slug))
 
-  const n = useNamespace(organization?.namespace)
+  const n = useNamespaceStrict(organization?.namespace)
 
   let OrganizationFooterComponent = null
 
@@ -212,7 +272,7 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
   return (
     <>
       {OrganizationFooterComponent}
-      <div>Footer</div>
+      <IslandFooter />
     </>
   )
 }
