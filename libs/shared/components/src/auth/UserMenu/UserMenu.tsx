@@ -46,6 +46,7 @@ export const Notifications = ({
     },
   }
   const magicBellApiKey = 'cdd9891950d1aa151ca687c13469e2043db818ec'
+  // TODO - HMAC AUTH NEEDS TO BE IMPLEMENTED BEFORE GOING LIVE
   return (
     <MagicBell
       apiKey={magicBellApiKey}
