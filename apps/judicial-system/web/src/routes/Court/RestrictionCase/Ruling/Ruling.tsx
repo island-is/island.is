@@ -65,9 +65,10 @@ export function getConclutionAutofill(
   workingCase: Case,
   decision: CaseDecision,
   validToDate: string,
+  isCustodyIsolation: boolean,
+  isolationToDate: string,
   force?: boolean,
 ) {
-  console.log(validToDate)
   if (!workingCase.defendants || workingCase.defendants.length === 0) {
     return undefined
   } else if (
@@ -82,7 +83,7 @@ export function getConclutionAutofill(
   const isolationEndsBeforeValidToDate =
     validToDate &&
     workingCase.isolationToDate &&
-    new Date(validToDate) > new Date(workingCase.isolationToDate)
+    new Date(validToDate) > new Date(isolationToDate)
 
   const accusedSuffix =
     workingCase.defendants[0].gender === Gender.MALE ? 'i' : 'a'
@@ -144,13 +145,13 @@ export function getConclutionAutofill(
           ?.replace('dagur,', 'dagsins')
           ?.replace(' kl.', ', kl.')}`,
         hasIsolation:
-          isAcceptingCaseDecision(decision) && workingCase.isCustodyIsolation
+          isAcceptingCaseDecision(decision) && isCustodyIsolation
             ? 'yes'
             : 'no',
         isolationEndsBeforeValidToDate: isolationEndsBeforeValidToDate
           ? 'yes'
           : 'no',
-        isolationToDate: formatDate(workingCase.isolationToDate, 'PPPPp')
+        isolationToDate: formatDate(isolationToDate, 'PPPPp')
           ?.replace('dagur,', 'dagsins')
           ?.replace(' kl.', ', kl.'),
       })
@@ -247,12 +248,18 @@ export const Ruling: React.FC = () => {
       setWorkingCase({ ...workingCase })
     }
 
-    if (workingCase.decision && workingCase.validToDate) {
+    if (
+      workingCase.decision &&
+      workingCase.validToDate &&
+      workingCase.isolationToDate
+    ) {
       const conclution = getConclutionAutofill(
         formatMessage,
         workingCase,
         workingCase.decision,
         workingCase.validToDate,
+        workingCase.isCustodyIsolation || false,
+        workingCase.isolationToDate,
       )
 
       if (conclution) {
@@ -557,12 +564,14 @@ export const Ruling: React.FC = () => {
                 },
               )}
               onChange={(decision) => {
-                if (workingCase.validToDate) {
+                if (workingCase.validToDate && workingCase.isolationToDate) {
                   const conclution = getConclutionAutofill(
                     formatMessage,
                     workingCase,
                     decision,
                     workingCase.validToDate,
+                    workingCase.isCustodyIsolation || false,
+                    workingCase.isolationToDate,
                     true,
                   )
 
@@ -627,6 +636,7 @@ export const Ruling: React.FC = () => {
 
                   if (
                     date &&
+                    workingCase.isolationToDate &&
                     (workingCase.decision === CaseDecision.ACCEPTING ||
                       workingCase.decision ===
                         CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
@@ -637,10 +647,12 @@ export const Ruling: React.FC = () => {
                       workingCase,
                       workingCase.decision,
                       formatISO(date),
+                      workingCase.isCustodyIsolation || false,
+                      workingCase.isolationToDate,
                       true,
                     )
 
-                    if (conclution && date) {
+                    if (conclution) {
                       autofill('conclusion', conclution, workingCase, true)
 
                       setWorkingCase({
@@ -691,6 +703,36 @@ export const Ruling: React.FC = () => {
                         setWorkingCase,
                         updateCase,
                       )
+
+                      if (
+                        workingCase.validToDate &&
+                        workingCase.isolationToDate &&
+                        (workingCase.decision === CaseDecision.ACCEPTING ||
+                          workingCase.decision ===
+                            CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
+                          workingCase.decision ===
+                            CaseDecision.ACCEPTING_PARTIALLY)
+                      ) {
+                        const conclution = getConclutionAutofill(
+                          formatMessage,
+                          workingCase,
+                          workingCase.decision,
+                          workingCase.validToDate,
+                          !workingCase.isCustodyIsolation,
+                          workingCase.isolationToDate,
+                          true,
+                        )
+
+                        if (conclution) {
+                          autofill('conclusion', conclution, workingCase, true)
+
+                          setWorkingCase({
+                            ...workingCase,
+                            conclusion: conclution,
+                            isCustodyIsolation: !workingCase.isCustodyIsolation,
+                          })
+                        }
+                      }
                     }}
                     filled
                     large
@@ -723,6 +765,38 @@ export const Ruling: React.FC = () => {
                       setWorkingCase,
                       updateCase,
                     )
+
+                    if (
+                      workingCase.validToDate &&
+                      date &&
+                      (workingCase.decision === CaseDecision.ACCEPTING ||
+                        workingCase.decision ===
+                          CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
+                        workingCase.decision ===
+                          CaseDecision.ACCEPTING_PARTIALLY)
+                    ) {
+                      const conclution = getConclutionAutofill(
+                        formatMessage,
+                        workingCase,
+                        workingCase.decision,
+                        workingCase.validToDate,
+                        workingCase.isCustodyIsolation || false,
+                        formatISO(date, {
+                          representation: 'complete',
+                        }),
+                        true,
+                      )
+
+                      if (conclution) {
+                        autofill('conclusion', conclution, workingCase, true)
+
+                        setWorkingCase({
+                          ...workingCase,
+                          conclusion: conclution,
+                          isolationToDate: formatISO(date),
+                        })
+                      }
+                    }
                   }}
                   blueBox={false}
                   backgroundColor={
