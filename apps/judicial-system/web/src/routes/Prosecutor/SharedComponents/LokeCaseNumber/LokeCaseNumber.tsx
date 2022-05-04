@@ -27,7 +27,6 @@ const LokeCaseNumber: React.FC<Props> = (props) => {
   ] = useState<string>('')
 
   useEffect(() => {
-    console.log('updating')
     if (!workingCase.policeCaseNumber) {
       setWorkingCase({
         ...workingCase,
