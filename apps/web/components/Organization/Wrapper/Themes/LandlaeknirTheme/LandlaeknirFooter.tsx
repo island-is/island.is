@@ -92,8 +92,8 @@ export const LandLaeknirFooter = ({
               </GridColumn>
               <GridColumn span={['12/12', '12/12', '3/12']}>
                 <Box className={styles.borderTop} />
-                {footerItems.slice(3, 5).map((item) => (
-                  <Box>
+                {footerItems.slice(3, 5).map((item, index) => (
+                  <Box key={index}>
                     <Text fontWeight="semiBold" marginBottom={2}>
                       <Hyphen>{item.title}</Hyphen>
                     </Text>
@@ -157,8 +157,8 @@ export const LandLaeknirFooter = ({
 
               <GridColumn span={['12/12', '12/12', '3/12']}>
                 {footerItems?.[6] && (
-                  <GridRow>
-                    <Box marginLeft={1}>
+                  <GridRow align="center">
+                    <Box marginRight={1}>
                       {renderParagraphs(footerItems[6].content, 0)}
                     </Box>
                     <img
