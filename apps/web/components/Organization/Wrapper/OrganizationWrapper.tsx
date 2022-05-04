@@ -163,38 +163,41 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
 
   const n = useNamespace(organization?.namespace)
 
-  if (!organization) return null
+  let OrganizationFooterComponent = null
 
-  switch (organization.slug) {
+  switch (organization?.slug) {
     case 'syslumenn':
     case 'district-commissioner':
-      return (
+      OrganizationFooterComponent = (
         <SyslumennFooter
           title={organization.title}
           logo={organization.logo?.url}
           footerItems={organization.footerItems}
         />
       )
+      break
     case 'sjukratryggingar':
     case 'icelandic-health-insurance':
-      return (
+      OrganizationFooterComponent = (
         <SjukratryggingarFooter
           title={organization.title}
           logo={organization.logo?.url}
           footerItems={organization.footerItems}
         />
       )
+      break
     case 'utlendingastofnun':
     case 'directorate-of-immigration':
-      return (
+      OrganizationFooterComponent = (
         <UtlendingastofnunFooter
           title={organization.title}
           logo={organization.logo?.url}
           footerItems={organization.footerItems}
         />
       )
+      break
     case 'mannaudstorg':
-      return (
+      OrganizationFooterComponent = (
         <MannaudstorgFooter
           title={organization.title}
           logoSrc={organization.logo?.url}
@@ -203,8 +206,15 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
           telephoneText={n('telephone', 'Sími')}
         />
       )
+      break
   }
-  return null
+
+  return (
+    <>
+      {OrganizationFooterComponent}
+      <div>Footer</div>
+    </>
+  )
 }
 
 export const OrganizationChatPanel = ({
