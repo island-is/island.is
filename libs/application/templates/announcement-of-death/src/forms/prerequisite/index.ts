@@ -62,8 +62,8 @@ export const prerequisite = (): Form => {
               buildDataProviderItem({
                 id: 'deathNotice',
                 type: 'DeathNoticeProvider',
-                title: 'Dauðir...',
-                subTitle: '...menn segja engar sögur',
+                title: m.dataCollectionEstateTitle,
+                subTitle: m.dataCollectionEstateSubtitle,
               }),
             ],
           }),

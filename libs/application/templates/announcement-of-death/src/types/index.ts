@@ -26,8 +26,3 @@ export interface NationalRegistry extends Person {
 export enum DataProviderTypes {
   NationalRegistry = 'NationalRegistryProvider',
 }
-
-export interface DeadRelative {
-  name: string
-  nationalId: string
-}

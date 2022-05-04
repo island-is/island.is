@@ -4,54 +4,23 @@ import {
   FailedDataProviderResult,
   Application,
 } from '@island.is/application/core'
-import { DistrictCommissionerAgencies } from '../types/schema'
 import { m } from '../lib/messages'
-import { DeadRelative } from '../types/index'
 
 export class DeathNoticeProvider extends BasicDataProvider {
   type = 'DeathNoticeProvider'
 
-  async provide(application: Application): Promise<DeadRelative[]> {
-    if (application.applicant !== '0101302399') {
+  async provide(application: Application): Promise<boolean> {
+    const applicationData: any =
+      application.externalData?.syslumennOnEntry?.data
+    if (
+      !applicationData?.estates?.length ||
+      applicationData.estates.length == 0
+    ) {
       return Promise.reject({
-        message: 'Engir dauðir ættingjar buddy',
+        message: m.dataCollectionNoEstatesError,
       })
-    } else {
-      await new Promise((resolve) => setTimeout(resolve, 500))
-
-      const data: DeadRelative[] = [
-        {
-          name: 'Jóna Bóna Beikon',
-          nationalId: '0101301337',
-        },
-      ]
-
-      return Promise.resolve(data)
     }
-    /*
-    const query = `
-        query getDeathNotice {
-          getDeathnotice{
-            properties
-            go
-            here
-          }
-        }
-      `
-
-    return this.useGraphqlGateway(query)
-      .then(async (res: Response) => {
-        const response = await res.json()
-        if (response.errors?.length > 0) {
-          return this.handleError(response.errors[0])
-        }
-
-        return Promise.resolve(
-          response.data.whatever,
-        )
-      })
-      .catch((error) => this.handleError(error))
-  */
+    return true
   }
 
   handleError(error: any) {
@@ -59,7 +28,6 @@ export class DeathNoticeProvider extends BasicDataProvider {
   }
 
   onProvideError(result: { message: string }): FailedDataProviderResult {
-    console.log('GAGGALAGOOGOOGAGA', result)
     return {
       date: new Date(),
       reason: result.message,

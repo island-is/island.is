@@ -43,6 +43,10 @@ export class AnnouncementOfDeathService {
       application.applicant,
     )
 
+    // TODO: Move this to some other function that happens on a transition from
+    // a selection of a deceased relative.
+    // That is: if multiple deceased relatives exist have some selection.
+    // OR: think about a way to select from the mapper.
     const updatedAnswers = {
       ...application.answers,
       ...estateMapper(estates[0]),

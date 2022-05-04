@@ -354,4 +354,21 @@ export class SyslumennService {
     }
     return []
   }
+
+  async changeEstateRegistrant(
+    currentRegistrantNationalId: string,
+    newRegistrantNationalId: string,
+    caseNumber: string,
+  ): Promise<unknown> {
+    const { id, api } = await this.createApi()
+    const res = await api.skiptaUmSkraningaradilaDanarbusPost({
+      payload: {
+        audkenni: id,
+        kennitalaFra: currentRegistrantNationalId,
+        kennitalaTil: newRegistrantNationalId,
+        malsnumer: caseNumber,
+      },
+    })
+    return res
+  }
 }

@@ -63,6 +63,25 @@ export const m = defineMessages({
     description:
       'In order to apply for this application we need your email and phone number',
   },
+  dataCollectionEstateTitle: {
+    id: 'aod.application:dataCollectionEstateTitle',
+    defaultMessage: 'Uppfletting dánarbús hjá Sýslu',
+    description: 'Title for notifying user of estate registry lookup',
+  },
+  dataCollectionEstateSubtitle: {
+    id: 'aod.application:dataCollectionEstateSubtitle',
+    defaultMessage:
+      'Athugað verður í grunn hjá Sýslu um hvort kennitalan þín sé tengd dánarbúi.',
+    description:
+      'Subtitle for estates, notifying the user about the lookup at Sysla in regards to estates',
+  },
+  dataCollectionNoEstatesError: {
+    id: 'aod.application:dataCollectionNoEstatesError',
+    defaultMessage:
+      'Þú ert ekki skráð/ur fyrir dánarbúi hjá Sýslumanni. Ef þú telur svo vera skaltu hafa samband við Sýslumann.',
+    description:
+      'User not eligible for estate or no estates found bound to their national id',
+  },
 
   /* The deceased */
   deceasedName: {
