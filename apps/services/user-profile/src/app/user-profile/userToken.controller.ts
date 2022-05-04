@@ -5,6 +5,7 @@ import {
   Get,
   NotFoundException,
   Param,
+  Post,
   UseGuards,
 } from '@nestjs/common'
 import {
@@ -57,5 +58,41 @@ export class UserTokenController {
       )
     }
     return userProfile
+  }
+
+
+  // focus on getting this one done ....
+  @ApiOperation({
+    summary: 'admin access - tests magicbell',
+  })
+  @Scopes(UserProfileScope.admin)
+  @ApiSecurity('oauth2', [UserProfileScope.admin])
+  @Post('userProfile/:nationalId/magic-bell-notification')
+  @ApiOkResponse({ type: UserProfile })
+  async notifyViaMagicBell(
+    @Param('nationalId')
+    nationalId: string,
+  ): Promise<{}> {
+    return await this.userProfileService.notifyViaMagicBell(
+      nationalId
+    )
+  }
+
+
+  // maybe do this if we have time ................
+  @ApiOperation({
+    summary: 'admin access - tests onesignal',
+  })
+  @Scopes(UserProfileScope.admin)
+  @ApiSecurity('oauth2', [UserProfileScope.admin])
+  @Post('userProfile/:nationalId/one-signal-notification')
+  @ApiOkResponse({ type: UserProfile })
+  async notifyViaOneSignal(
+    @Param('nationalId')
+    nationalId: string,
+  ): Promise<{}> {
+    return await this.userProfileService.notifyViaOneSignal(
+      nationalId
+    )
   }
 }

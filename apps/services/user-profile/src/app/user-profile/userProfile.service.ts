@@ -92,4 +92,12 @@ export class UserProfileService {
       throw new NotFoundException()
     }
   }
+
+  async notifyViaMagicBell(nationalId:string) {
+    return {nationalId}
+  }
+
+  async notifyViaOneSignal(nationalId:string) {
+    return {nationalId}
+  }
 }
