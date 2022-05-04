@@ -1,12 +1,11 @@
 import React from 'react'
 import {
-  ArrowLink,
   Box,
   GridColumn,
   GridContainer,
   GridRow,
+  Hidden,
   Hyphen,
-  Link,
   ResponsiveSpace,
   Text,
 } from '@island.is/island-ui/core'
@@ -54,7 +53,7 @@ export const LandLaeknirFooter = ({
         <GridContainer className={styles.mainColumn}>
           <GridColumn>
             <GridRow>
-              <Box marginLeft={3}>
+              <Box marginLeft={2}>
                 <img
                   src="https://images.ctfassets.net/8k0h54kbe6bj/3aKn7lTVtvZVVHJVPSs6Gh/bf8844713aa03d44916e98ae612ea5da/landlaeknir-heilbrigdisraduneytid.png"
                   alt="landlaeknirLogo"
@@ -138,42 +137,99 @@ export const LandLaeknirFooter = ({
 
             <GridRow>
               <GridColumn span={['12/12', '12/12', '3/12']}>
-                <Box
-                  marginLeft={2}
-                  display="flex"
-                  flexDirection="row"
-                  alignItems="center"
-                >
-                  <img
-                    src="https://images.ctfassets.net/8k0h54kbe6bj/3vtLh2dJ55PA1Y1aOXIkM9/6c60a95ed3db8136a49e9734adbc8c7c/Jafnlaunavottun.svg"
-                    alt="jafnlaunavottunLogo"
-                  />
-                  <Box marginLeft={2}>
-                    {footerItems?.[5] &&
-                      renderParagraphs(footerItems[5].content, 0, true)}
-                  </Box>
-                </Box>
-              </GridColumn>
-
-              <GridColumn span={['12/12', '12/12', '3/12']}>
-                {footerItems?.[6] && (
-                  <GridRow align="center">
-                    <Box marginRight={1}>
-                      {renderParagraphs(footerItems[6].content, 0)}
-                    </Box>
+                <Hidden below="lg">
+                  <Box
+                    marginLeft={1}
+                    display="flex"
+                    flexDirection="row"
+                    alignItems="center"
+                  >
                     <img
-                      src="https://images.ctfassets.net/8k0h54kbe6bj/1hx4HeCK1OFzPIjtKkMmrL/fa769439b9221a92bfb124b598494ba4/Facebook-Logo-Dark.svg"
-                      alt="facebookLogo"
+                      src="https://images.ctfassets.net/8k0h54kbe6bj/3vtLh2dJ55PA1Y1aOXIkM9/6c60a95ed3db8136a49e9734adbc8c7c/Jafnlaunavottun.svg"
+                      alt="jafnlaunavottunLogo"
                     />
-                  </GridRow>
-                )}
+                    <Box marginLeft={2}>
+                      {footerItems?.[5] &&
+                        renderParagraphs(footerItems[5].content, 0, true)}
+                    </Box>
+                  </Box>
+                </Hidden>
               </GridColumn>
 
               <GridColumn span={['12/12', '12/12', '3/12']}>
-                {footerItems?.[7] && renderParagraphs(footerItems[7].content)}
+                <Hidden below="lg">
+                  {footerItems?.[6] && (
+                    <Box className={styles.row}>
+                      <Box marginLeft={2} marginRight={1}>
+                        {renderParagraphs(footerItems[6].content, 0)}
+                      </Box>
+                      <img
+                        className={styles.facebookLogo}
+                        src="https://images.ctfassets.net/8k0h54kbe6bj/1hx4HeCK1OFzPIjtKkMmrL/fa769439b9221a92bfb124b598494ba4/Facebook-Logo-Dark.svg"
+                        alt="facebookLogo"
+                      />
+                    </Box>
+                  )}
+                </Hidden>
               </GridColumn>
+
               <GridColumn span={['12/12', '12/12', '3/12']}>
-                {footerItems?.[8] && renderParagraphs(footerItems[8].content)}
+                <Hidden below="lg">
+                  {footerItems?.[7] && renderParagraphs(footerItems[7].content)}
+                </Hidden>
+              </GridColumn>
+
+              <GridColumn span={['12/12', '12/12', '3/12']}>
+                <Hidden below="lg">
+                  {footerItems?.[8] && renderParagraphs(footerItems[8].content)}
+                </Hidden>
+              </GridColumn>
+            </GridRow>
+
+            <GridRow>
+              <GridColumn span="12/12">
+                <Hidden above="md">
+                  <Box
+                    marginLeft={1}
+                    marginBottom={3}
+                    display="flex"
+                    flexDirection="row"
+                    alignItems="center"
+                  >
+                    <img
+                      src="https://images.ctfassets.net/8k0h54kbe6bj/3vtLh2dJ55PA1Y1aOXIkM9/6c60a95ed3db8136a49e9734adbc8c7c/Jafnlaunavottun.svg"
+                      alt="jafnlaunavottunLogo"
+                    />
+                    <Box marginLeft={2}>
+                      {footerItems?.[5] &&
+                        renderParagraphs(footerItems[5].content, 0, true)}
+                    </Box>
+                  </Box>
+                </Hidden>
+                <Hidden above="md">
+                  {footerItems?.[6] && (
+                    <Box
+                      marginBottom={2}
+                      display="flex"
+                      flexDirection="row"
+                      alignItems="center"
+                    >
+                      <Box marginRight={1}>
+                        {renderParagraphs(footerItems[6].content, 0)}
+                      </Box>
+                      <img
+                        src="https://images.ctfassets.net/8k0h54kbe6bj/1hx4HeCK1OFzPIjtKkMmrL/fa769439b9221a92bfb124b598494ba4/Facebook-Logo-Dark.svg"
+                        alt="facebookLogo"
+                      />
+                    </Box>
+                  )}
+                </Hidden>
+                <Hidden above="md">
+                  {footerItems?.[7] && renderParagraphs(footerItems[7].content)}
+                </Hidden>
+                <Hidden above="md">
+                  {footerItems?.[8] && renderParagraphs(footerItems[8].content)}
+                </Hidden>
               </GridColumn>
             </GridRow>
           </GridColumn>

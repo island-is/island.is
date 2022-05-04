@@ -30,3 +30,17 @@ export const bottomLine = style({
     },
   }),
 })
+
+export const row = style({
+  display: 'flex',
+  flexFlow: 'row nowrap',
+  alignItems: 'center',
+})
+
+export const facebookLogo = style({
+  '@media': {
+    'screen and (max-width: 1330px)': {
+      display: 'none',
+    },
+  },
+})
