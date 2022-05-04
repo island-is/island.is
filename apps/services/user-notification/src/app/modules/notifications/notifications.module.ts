@@ -17,8 +17,6 @@ import {
 import { FIREBASE_PROVIDER } from '../../../constants'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import * as userProfile from '@island.is/clients/user-profile'
-import { MagicBellService } from '../magic-bell/magicBell.service'
-import { MagicBellModule } from '../magic-bell/magicBell.module'
 
 @Module({
   imports: [
@@ -34,11 +32,9 @@ import { MagicBellModule } from '../magic-bell/magicBell.module'
         },
       },
     }),
-    MagicBellModule,
   ],
   controllers: [NotificationsController],
   providers: [
-    MagicBellService,
     NotificationDispatchService,
     NotificationsWorkerService,
     MessageProcessorService,
