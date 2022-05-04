@@ -69,6 +69,7 @@
     "@island.is/login": "1.2.1",
     "@island.is/regulations-tools": "0.7.8",
     "@magicbell/core": "5.0.3",
+    "@magicbell/magicbell-react": "9.1.0",
     "@nestjs/bull": "0.1.2",
     "@nestjs/common": "7.4.4",
     "@nestjs/config": "0.5.0",
