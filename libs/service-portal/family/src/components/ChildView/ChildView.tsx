@@ -109,7 +109,7 @@ const ChildView: FC<Props> = ({
         <Divider />
         <UserInfoLine
           label={defineMessage(m.legalResidence)}
-          content={person?.homeAddress || '...'}
+          content={person?.legalResidence || ''}
           loading={loading}
         />
         <Divider />
