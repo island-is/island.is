@@ -139,7 +139,8 @@ export const m = defineMessages({
   },
   successDescription: {
     id: 'cr.application:successDescription',
-    defaultMessage: 'Þú getur nú nálgast umsóknina þína inni á mínum síðum',
+    defaultMessage:
+      'Þú getur nálgast skuldleysisvottorðið hér að neðan. Vottorðið birtist jafnframt í pósthólfinu á mínum síðum',
     description: '',
   },
   vertificationDescription: {
@@ -194,7 +195,7 @@ export const m = defineMessages({
   },
   missingCertificate: {
     id: 'debtCertificate:missingCertificate',
-    defaultMessage: 'Ekki tókst að sækja skuldleysisvottorð fyrir þig',
+    defaultMessage: 'Ekki tókst að staðfesta skuldleysi',
     description: '',
   },
 })

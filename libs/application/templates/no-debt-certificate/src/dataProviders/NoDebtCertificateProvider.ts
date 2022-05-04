@@ -3,9 +3,9 @@ import {
   Application,
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
+  StaticText,
 } from '@island.is/application/core'
 import { m } from '../lib/messages'
-import { MessageDescriptor } from '@formatjs/intl'
 
 export class NoDebtCertificateProvider extends BasicDataProvider {
   type = 'NoDebtCertificateProvider'
@@ -69,12 +69,10 @@ export class NoDebtCertificateProvider extends BasicDataProvider {
     })
   }
 
-  onProvideError(errorMessage: MessageDescriptor): FailedDataProviderResult {
+  onProvideError(error?: { reason?: StaticText }): FailedDataProviderResult {
     return {
       date: new Date(),
-      reason: errorMessage?.reason
-        ? errorMessage.reason
-        : m.errorDataProviderNoDebtCertificate,
+      reason: error?.reason ?? m.errorDataProvider,
       status: 'failure',
       data: {},
     }
