@@ -8,12 +8,12 @@ import {
   Gender,
 } from '@island.is/judicial-system/types'
 
-import { getConclutionAutofill } from './Ruling'
+import { getConclusionAutofill } from './Ruling'
 
-describe('getConclutionAutofill', () => {
+describe('getConclusionAutofill', () => {
   const intl = createIntl({ locale: 'is', onError: () => jest.fn() })
   const autofill = (theCase: Case) =>
-    getConclutionAutofill(intl.formatMessage, theCase)
+    getConclusionAutofill(intl.formatMessage, theCase)
 
   const defentantBase = {
     name: 'Blær',

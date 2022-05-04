@@ -60,7 +60,7 @@ import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
 import { autofillRuling } from '@island.is/judicial-system-web/src/components/RulingInput/RulingInput'
 import * as Constants from '@island.is/judicial-system/consts'
 
-export function getConclutionAutofill(
+export function getConclusionAutofill(
   formatMessage: IntlShape['formatMessage'],
   workingCase: Case,
   decision: CaseDecision,
@@ -253,7 +253,7 @@ export const Ruling: React.FC = () => {
       workingCase.validToDate &&
       workingCase.isolationToDate
     ) {
-      const conclution = getConclutionAutofill(
+      const conclusion = getConclusionAutofill(
         formatMessage,
         workingCase,
         workingCase.decision,
@@ -262,8 +262,8 @@ export const Ruling: React.FC = () => {
         workingCase.isolationToDate,
       )
 
-      if (conclution) {
-        autofill('conclusion', conclution, workingCase)
+      if (conclusion) {
+        autofill('conclusion', conclusion, workingCase)
 
         setWorkingCase({ ...workingCase })
       }
@@ -565,7 +565,7 @@ export const Ruling: React.FC = () => {
               )}
               onChange={(decision) => {
                 if (workingCase.validToDate && workingCase.isolationToDate) {
-                  const conclution = getConclutionAutofill(
+                  const conclusion = getConclusionAutofill(
                     formatMessage,
                     workingCase,
                     decision,
@@ -575,10 +575,10 @@ export const Ruling: React.FC = () => {
                     true,
                   )
 
-                  if (conclution) {
-                    autofill('conclusion', conclution, workingCase, true)
+                  if (conclusion) {
+                    autofill('conclusion', conclusion, workingCase, true)
 
-                    setWorkingCase({ ...workingCase, conclusion: conclution })
+                    setWorkingCase({ ...workingCase, conclusion: conclusion })
                   }
                 }
               }}
@@ -642,7 +642,7 @@ export const Ruling: React.FC = () => {
                         CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
                       workingCase.decision === CaseDecision.ACCEPTING_PARTIALLY)
                   ) {
-                    const conclution = getConclutionAutofill(
+                    const conclusion = getConclusionAutofill(
                       formatMessage,
                       workingCase,
                       workingCase.decision,
@@ -652,12 +652,12 @@ export const Ruling: React.FC = () => {
                       true,
                     )
 
-                    if (conclution) {
-                      autofill('conclusion', conclution, workingCase, true)
+                    if (conclusion) {
+                      autofill('conclusion', conclusion, workingCase, true)
 
                       setWorkingCase({
                         ...workingCase,
-                        conclusion: conclution,
+                        conclusion: conclusion,
                         validToDate: formatISO(date, {
                           representation: 'complete',
                         }),
@@ -713,7 +713,7 @@ export const Ruling: React.FC = () => {
                           workingCase.decision ===
                             CaseDecision.ACCEPTING_PARTIALLY)
                       ) {
-                        const conclution = getConclutionAutofill(
+                        const conclusion = getConclusionAutofill(
                           formatMessage,
                           workingCase,
                           workingCase.decision,
@@ -723,12 +723,12 @@ export const Ruling: React.FC = () => {
                           true,
                         )
 
-                        if (conclution) {
-                          autofill('conclusion', conclution, workingCase, true)
+                        if (conclusion) {
+                          autofill('conclusion', conclusion, workingCase, true)
 
                           setWorkingCase({
                             ...workingCase,
-                            conclusion: conclution,
+                            conclusion: conclusion,
                             isCustodyIsolation: !workingCase.isCustodyIsolation,
                           })
                         }
@@ -775,7 +775,7 @@ export const Ruling: React.FC = () => {
                         workingCase.decision ===
                           CaseDecision.ACCEPTING_PARTIALLY)
                     ) {
-                      const conclution = getConclutionAutofill(
+                      const conclusion = getConclusionAutofill(
                         formatMessage,
                         workingCase,
                         workingCase.decision,
@@ -787,12 +787,12 @@ export const Ruling: React.FC = () => {
                         true,
                       )
 
-                      if (conclution) {
-                        autofill('conclusion', conclution, workingCase, true)
+                      if (conclusion) {
+                        autofill('conclusion', conclusion, workingCase, true)
 
                         setWorkingCase({
                           ...workingCase,
-                          conclusion: conclution,
+                          conclusion: conclusion,
                           isolationToDate: formatISO(date),
                         })
                       }
