@@ -13,6 +13,7 @@ import { UserRole, Case } from '@island.is/judicial-system/types'
 import { Sections } from '@island.is/judicial-system-web/src/types'
 import * as Constants from '@island.is/judicial-system/consts'
 import { sections } from '@island.is/judicial-system-web/messages/Core/sections'
+import { pageLayout } from '@island.is/judicial-system-web/messages/Core/pageLayout'
 
 import { UserContext } from '../UserProvider/UserProvider'
 import Logo from '../Logo/Logo'
@@ -54,22 +55,30 @@ const PageLayout: React.FC<PageProps> = ({
     <AlertBanner
       title={
         user?.role === UserRole.ADMIN
-          ? 'Notandi fannst ekki'
-          : 'Mál fannst ekki'
+          ? formatMessage(pageLayout.adminRole.alertTitle)
+          : user?.role === UserRole.DEFENDER
+          ? formatMessage(pageLayout.defenderRole.alertTitle)
+          : formatMessage(pageLayout.otherRoles.alertTitle)
       }
       description={
         user?.role === UserRole.ADMIN
-          ? 'Vinsamlegast reynið aftur með því að opna notandann aftur frá yfirlitssíðunni'
-          : 'Vinsamlegast reynið aftur með því að opna málið aftur frá yfirlitssíðunni'
+          ? formatMessage(pageLayout.adminRole.alertMessage)
+          : user?.role === UserRole.DEFENDER
+          ? formatMessage(pageLayout.defenderRole.alertMessage)
+          : formatMessage(pageLayout.otherRoles.alertMessage)
       }
       variant="error"
-      link={{
-        href:
-          user?.role === UserRole.ADMIN
-            ? Constants.USER_LIST_ROUTE
-            : Constants.CASE_LIST_ROUTE,
-        title: 'Fara á yfirlitssíðu',
-      }}
+      link={
+        user?.role === UserRole.DEFENDER
+          ? undefined
+          : {
+              href:
+                user?.role === UserRole.ADMIN
+                  ? Constants.USER_LIST_ROUTE
+                  : Constants.CASE_LIST_ROUTE,
+              title: 'Fara á yfirlitssíðu',
+            }
+      }
     />
   ) : children ? (
     <Box
@@ -94,7 +103,7 @@ const PageLayout: React.FC<PageProps> = ({
               <div className={styles.formStepperContainer}>
                 <Box marginLeft={2}>
                   <Box marginBottom={5}>
-                    <Logo />
+                    <Logo defaultInstitution={workingCase?.court?.name} />
                   </Box>
                   <FormStepper
                     // Remove the extension parts of the formstepper if the user is not applying for an extension

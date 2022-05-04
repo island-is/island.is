@@ -103,7 +103,7 @@ const CourtCaseNumber: React.FC<Props> = (props) => {
                   removeTabsValidateAndSet(
                     'courtCaseNumber',
                     event.target.value,
-                    ['empty'],
+                    ['empty', 'court-case-number'],
                     workingCase,
                     setWorkingCase,
                     courtCaseNumberEM,
@@ -114,7 +114,7 @@ const CourtCaseNumber: React.FC<Props> = (props) => {
                   validateAndSendToServer(
                     'courtCaseNumber',
                     event.target.value,
-                    ['empty'],
+                    ['empty', 'court-case-number'],
                     workingCase,
                     updateAndReceiveCase,
                     setCourtCaseNumberEM,

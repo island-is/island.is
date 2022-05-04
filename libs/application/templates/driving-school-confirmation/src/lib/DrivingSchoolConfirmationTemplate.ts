@@ -47,7 +47,7 @@ const DrivingSchoolConfirmationTemplate: ApplicationTemplate<
             {
               id: Roles.SCHOOL_EMPLOYEE,
               formLoader: () =>
-                import('../forms/drivingSchoolConfirmtation').then((val) =>
+                import('../forms/drivingSchoolConfirmation').then((val) =>
                   Promise.resolve(val.getDrivingSchoolConfirmation()),
                 ),
               actions: [
