@@ -10,7 +10,7 @@ import { m } from '../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { CurrentLicenseProviderResult } from '../dataProviders/CurrentLicenseProvider'
 import { useFormContext } from 'react-hook-form'
-import {YES, NO} from '../lib/constants'
+import { YES, NO } from '../lib/constants'
 
 const HealthRemarks: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
