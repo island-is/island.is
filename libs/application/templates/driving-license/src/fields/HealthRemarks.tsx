@@ -10,6 +10,7 @@ import { m } from '../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { CurrentLicenseProviderResult } from '../dataProviders/CurrentLicenseProvider'
 import { useFormContext } from 'react-hook-form'
+import {YES, NO} from '../lib/constants'
 
 const HealthRemarks: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
@@ -22,7 +23,7 @@ const HealthRemarks: FC<FieldBaseProps> = ({ application }) => {
   const { setValue } = useFormContext()
 
   useEffect(() => {
-    setValue('hasHealthRemarks', remarks?.length > 0 ? 'yes' : 'no')
+    setValue('hasHealthRemarks', remarks?.length > 0 ? YES : NO)
   }, [remarks, setValue])
 
   return (
