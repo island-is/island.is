@@ -15,9 +15,9 @@ const devConfig = {
   },
   email: {
     fromEmail: 'ben10@omnitrix.is',
-    fromName: 'Guðjón Guðjónsson',
+    fromName: 'Réttarvörslugátt',
     replyToEmail: 'ben10@omnitrix.is',
-    replyToName: 'Guðjón Guðjónsson',
+    replyToName: 'Réttarvörslugátt',
   },
   smsOptions: {
     url: 'https://smsapi.devnova.is',

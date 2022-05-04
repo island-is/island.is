@@ -25,7 +25,8 @@ export const personalTaxCreditForm = {
       description: 'Student form description of tax credit ',
     },
     recommendedChoice: {
-      id: 'fa.application:section.personalTaxCreditForm.general.description',
+      id:
+        'fa.application:section.personalTaxCreditForm.general.recommendedChoice',
       defaultMessage:
         'Langflestir sem fá fjárhagsaðstoð kjósa að nýta sér persónuafsláttinn. Almennt má segja að „Já“ sé besti kostur nema þú vitir sérstaklega um annað sem þú vilt nýta hann í.',
       description:
