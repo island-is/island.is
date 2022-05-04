@@ -163,12 +163,8 @@ export const timelineSections = (
   modified?: string,
   showSpouseStep?: boolean,
 ) => {
-  const createdFormatted = created
-    ? format(new Date(created), 'dd/MM/yyyy HH:mm')
-    : null
-  const modifiedFormatted = modified
-    ? format(new Date(modified), 'dd/MM/yyyy HH:mm')
-    : null
+  const createdFormatted = formatDate(created)
+  const modifiedFormatted = formatDate(modified)
 
   const sections = [
     {
@@ -201,4 +197,8 @@ export const timelineSections = (
   }
 
   return sections
+}
+
+export const formatDate = (date?: string) => {
+  return date ? format(new Date(date), 'dd/MM/yyyy HH:mm') : null
 }
