@@ -95,24 +95,28 @@ export class UserProfileService {
     }
   }
 
-  async notifyViaMagicBell(nationalId:string) {
+  async notifyViaMagicBell(nationalId: string) {
+    console.log("Notifying via MagicBell")
     MagicBellClient.configure({
       apiKey: process.env.MAGICBELL_API_KEY ?? '',
       apiSecret: process.env.MAGICBELL_API_SECRET ?? '',
     })
+    console.log("Got client:", MagicBellClient)
     const notification = await Notification.create({
       title: 'New reply: I want to book a demo',
       content: 'Hi, I would like to book it on Monday, please',
-      recipients: [{ email: nationalId }],
+      recipients: [{ email: "kristofer@juni.is" }],
     })
+    console.log("Got notification response:", notification)
     return { id: notification.id } // TODO change id parameter
   }
 
-  async notifyViaOneSignal(nationalId:string) {
+  async notifyViaOneSignal(nationalId: string) {
     const client = new OneSignal.Client(
       process.env.ONESIGNAL_APP_ID ?? '',
       process.env.ONESIGNAL_API_KEY ?? '',
     )
+    console.log("Got client:", client)
 
     const notification = await client
       .createNotification({
@@ -120,9 +124,11 @@ export class UserProfileService {
           tr: 'Yeni bildirim',
           en: 'New notification',
         },
-        included_segments: ['Subscribed Users'],
+        // included_segments: ['Subscribed Users'],
+        include_email_tokens: ['kristofer@juni.is']
       })
       .then((res) => res.body)
+    console.log("Got notification response:", notification)
 
     return { id: notification.id } // TODO change id parameter
   }

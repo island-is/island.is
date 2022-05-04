@@ -60,7 +60,6 @@ export class UserTokenController {
     return userProfile
   }
 
-
   // focus on getting this one done ....
   @ApiOperation({
     summary: 'admin access - tests magicbell',
@@ -73,11 +72,8 @@ export class UserTokenController {
     @Param('nationalId')
     nationalId: string,
   ): Promise<{}> {
-    return await this.userProfileService.notifyViaMagicBell(
-      nationalId
-    )
+    return await this.userProfileService.notifyViaMagicBell(nationalId)
   }
-
 
   // maybe do this if we have time ................
   @ApiOperation({
@@ -91,8 +87,6 @@ export class UserTokenController {
     @Param('nationalId')
     nationalId: string,
   ): Promise<{}> {
-    return await this.userProfileService.notifyViaOneSignal(
-      nationalId
-    )
+    return await this.userProfileService.notifyViaOneSignal(nationalId)
   }
 }
