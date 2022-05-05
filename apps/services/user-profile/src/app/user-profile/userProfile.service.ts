@@ -14,7 +14,7 @@ import { User } from '@island.is/auth-nest-tools'
 import { UserDeviceTokens } from './userDeviceTokens.model'
 import { DeviceTokenDto } from './dto/deviceToken.dto'
 import MagicBellClient, { Notification } from '@magicbell/core'
-// import * as OneSignal from 'onesignal-node'
+import * as OneSignal from 'onesignal-node'
 import { CreateNotificationDto } from './dto/createNotificationDto'
 import { environment } from '../../environments'
 
@@ -116,25 +116,25 @@ export class UserProfileService {
     }
   }
 
-  // async notifyViaOneSignal(nationalId: string) {
-  //   const client = new OneSignal.Client(
-  //     process.env.ONESIGNAL_APP_ID ?? '',
-  //     process.env.ONESIGNAL_API_KEY ?? '',
-  //   )
-  //   console.log("Got client:", client)
-
-  //   const notification = await client
-  //     .createNotification({
-  //       contents: {
-  //         tr: 'Yeni bildirim',
-  //         en: 'New notification',
-  //       },
-  //       // included_segments: ['Subscribed Users'],
-  //       include_email_tokens: ['kristofer@juni.is']
-  //     })
-  //     .then((res) => res.body)
-  //   console.log("Got notification response:", notification)
-
-  //   return { id: notification.id } // TODO change id parameter
-  // }
+  async notifyViaOneSignal(nationalId: string, createNotificationDto:CreateNotificationDto) {
+    const client = new OneSignal.Client(
+      process.env.ONESIGNAL_APP_ID ?? '',
+      process.env.ONESIGNAL_API_KEY ?? '',
+    )
+    console.log("Got client:", client)
+    const notification = await client
+      .createNotification({
+        headings: {
+          is: createNotificationDto.title,
+        },
+        contents: {
+          is: createNotificationDto.content
+        },
+        include_external_user_ids: [nationalId],
+        web_url: createNotificationDto.action_url,
+      })
+      .then((res) => res.body)
+    console.log("Got notification response:", notification)
+    return { id: notification.id } // TODO change id parameter
+  }
 }

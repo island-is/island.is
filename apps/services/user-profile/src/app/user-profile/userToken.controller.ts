@@ -90,18 +90,18 @@ export class UserTokenController {
     return await this.userProfileService.notifyViaMagicBell(nationalId,createNotificationDto)
   }
 
-  // // maybe do this if we have time ................
-  // @ApiOperation({
-  //   summary: 'admin access - tests onesignal',
-  // })
-  // @Scopes(UserProfileScope.admin)
-  // @ApiSecurity('oauth2', [UserProfileScope.admin])
-  // @Post('userProfile/:nationalId/one-signal-notification')
-  // @ApiOkResponse({ type: UserProfile })
-  // async notifyViaOneSignal(
-  //   @Param('nationalId')
-  //   nationalId: string,
-  // ): Promise<{}> {
-  //   return await this.userProfileService.notifyViaOneSignal(nationalId)
-  // }
+  // maybe do this if we have time ................
+  @ApiOperation({
+    summary: 'admin access - tests onesignal',
+  })
+  @Scopes(UserProfileScope.admin)
+  @ApiSecurity('oauth2', [UserProfileScope.admin])
+  @Post('userProfile/:nationalId/one-signal-notification')
+  @ApiOkResponse({ type: UserProfile })
+  async notifyViaOneSignal(
+    @Param('nationalId')
+    nationalId: string,
+  ): Promise<{}> {
+    return await this.userProfileService.notifyViaOneSignal(nationalId)
+  }
 }
