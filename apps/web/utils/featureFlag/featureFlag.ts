@@ -5,7 +5,6 @@ import {
 } from '@island.is/feature-flags'
 import getConfig from 'next/config'
 
-const config = getConfig()
 let client: FeatureFlagClient | undefined
 
 /**
@@ -17,6 +16,7 @@ export const getFeatureFlag = async (
   user?: FeatureFlagUser,
 ) => {
   if (!client) {
+    const config = getConfig()
     client = createClient({
       sdkKey: config?.publicRuntimeConfig.configCatSdkKey,
     })
