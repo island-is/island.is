@@ -34,7 +34,7 @@ export interface ServiceHelm {
         min: number
         max: number
       }
-      metric: { nginxRequestsIrate?: number; cpuAverageUtilization: string }
+      metric: { nginxRequestsIrate?: number; cpuAverageUtilization: number }
     }
   }
   healthCheck: {

@@ -47,7 +47,7 @@ judicial-system-api:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: '70%'
+        cpuAverageUtilization: 70
         nginxRequestsIrate: 2
       replicas:
         max: 3
@@ -140,7 +140,7 @@ judicial-system-backend:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: '70%'
+        cpuAverageUtilization: 70
         nginxRequestsIrate: 2
       replicas:
         max: 10
@@ -242,7 +242,7 @@ judicial-system-scheduler:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: '70%'
+        cpuAverageUtilization: 70
         nginxRequestsIrate: 2
       replicas:
         max: 1
@@ -290,7 +290,7 @@ judicial-system-web:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: '70%'
+        cpuAverageUtilization: 70
         nginxRequestsIrate: 2
       replicas:
         max: 3
@@ -348,7 +348,7 @@ judicial-system-xrd-api:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: '70%'
+        cpuAverageUtilization: 70
         nginxRequestsIrate: 2
       replicas:
         max: 3

@@ -131,7 +131,7 @@ export const serializeService: SerializeMethod = (
         max: result.replicaCount.max,
       },
       metric: {
-        cpuAverageUtilization: '70%',
+        cpuAverageUtilization: 70,
       },
     },
   }
