@@ -228,15 +228,13 @@ export const CourtRecord: React.FC = () => {
           m.sections.sessionBookings.autofillPresentationsTravelBan,
         )}`
 
-        if (isAcceptingCaseDecision(workingCase.decision)) {
+        if (
+          isAcceptingCaseDecision(workingCase.decision) &&
+          workingCase.requestedOtherRestrictions
+        ) {
           autofill(
             'endOfSessionBookings',
-            `${
-              workingCase.requestedOtherRestrictions &&
-              `${workingCase.requestedOtherRestrictions}\n\n`
-            }${formatMessage(m.sections.custodyRestrictions.disclaimerV2, {
-              caseType: workingCase.type,
-            })}`,
+            workingCase.requestedOtherRestrictions,
             workingCase,
           )
         }
