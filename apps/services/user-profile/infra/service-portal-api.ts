@@ -26,6 +26,11 @@ export const serviceSetup = (): ServiceBuilder<'service-portal-api'> =>
       EMAIL_FROM_NAME: '/k8s/service-portal/api/EMAIL_FROM_NAME',
       EMAIL_REPLY_TO: '/k8s/service-portal/api/EMAIL_REPLY_TO',
       EMAIL_REPLY_TO_NAME: '/k8s/service-portal/api/EMAIL_REPLY_TO_NAME',
+      X_MAGICBELL_API_KEY: '/k8s/services-user-profile/MAGICBELL_API_KEY',
+      X_MAGICBELL_API_SECRET: '/k8s/services-user-profile/MAGICBELL_API_SECRET',
+      ONESIGNAL_API_KEY: '/k8s/services-user-profile/ONESIGNAL_API_KEY',
+      ONESIGNAL_APP_ID: '/k8s/services-user-profile/ONESIGNAL_APP_ID'
+
     })
     .initContainer({
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],

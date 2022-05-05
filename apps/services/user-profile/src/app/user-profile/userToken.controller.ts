@@ -1,6 +1,7 @@
 import { UserProfileScope } from '@island.is/auth/scopes'
 import { Scopes, ScopesGuard, IdsAuthGuard } from '@island.is/auth-nest-tools'
 import {
+  Body,
   Controller,
   Get,
   NotFoundException,
@@ -18,6 +19,7 @@ import {
 import { UserDeviceTokenDto } from './dto/userDeviceToken.dto'
 import { UserProfileService } from './userProfile.service'
 import { UserProfile } from './userProfile.model'
+import { CreateNotificationDto } from './dto/createNotificationDto'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @ApiTags('User Profile')
@@ -71,22 +73,23 @@ export class UserTokenController {
   async notifyViaMagicBell(
     @Param('nationalId')
     nationalId: string,
+    @Body() createNotificationDto: CreateNotificationDto
   ): Promise<{}> {
-    return await this.userProfileService.notifyViaMagicBell(nationalId)
+    return await this.userProfileService.notifyViaMagicBell(nationalId,createNotificationDto)
   }
 
-  // maybe do this if we have time ................
-  @ApiOperation({
-    summary: 'admin access - tests onesignal',
-  })
-  @Scopes(UserProfileScope.admin)
-  @ApiSecurity('oauth2', [UserProfileScope.admin])
-  @Post('userProfile/:nationalId/one-signal-notification')
-  @ApiOkResponse({ type: UserProfile })
-  async notifyViaOneSignal(
-    @Param('nationalId')
-    nationalId: string,
-  ): Promise<{}> {
-    return await this.userProfileService.notifyViaOneSignal(nationalId)
-  }
+  // // maybe do this if we have time ................
+  // @ApiOperation({
+  //   summary: 'admin access - tests onesignal',
+  // })
+  // @Scopes(UserProfileScope.admin)
+  // @ApiSecurity('oauth2', [UserProfileScope.admin])
+  // @Post('userProfile/:nationalId/one-signal-notification')
+  // @ApiOkResponse({ type: UserProfile })
+  // async notifyViaOneSignal(
+  //   @Param('nationalId')
+  //   nationalId: string,
+  // ): Promise<{}> {
+  //   return await this.userProfileService.notifyViaOneSignal(nationalId)
+  // }
 }

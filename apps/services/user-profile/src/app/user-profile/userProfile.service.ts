@@ -14,7 +14,8 @@ import { User } from '@island.is/auth-nest-tools'
 import { UserDeviceTokens } from './userDeviceTokens.model'
 import { DeviceTokenDto } from './dto/deviceToken.dto'
 import MagicBellClient, { Notification } from '@magicbell/core'
-import * as OneSignal from 'onesignal-node'
+// import * as OneSignal from 'onesignal-node'
+import { CreateNotificationDto } from './dto/createNotificationDto'
 
 @Injectable()
 export class UserProfileService {
@@ -95,41 +96,44 @@ export class UserProfileService {
     }
   }
 
-  async notifyViaMagicBell(nationalId: string) {
-    console.log("Notifying via MagicBell")
+  async notifyViaMagicBell(nationalId: string, createNotificationDto:CreateNotificationDto) {
     MagicBellClient.configure({
       apiKey: process.env.MAGICBELL_API_KEY ?? '',
       apiSecret: process.env.MAGICBELL_API_SECRET ?? '',
     })
+    console.log("asdf",process.env.MAGICBELL_API_KEY,"asdf",process.env.MAGICBELL_API_SECRET)
     console.log("Got client:", MagicBellClient)
-    const notification = await Notification.create({
-      title: 'New reply: I want to book a demo',
-      content: 'Hi, I would like to book it on Monday, please',
-      recipients: [{ email: "kristofer@juni.is" }],
-    })
-    console.log("Got notification response:", notification)
-    return { id: notification.id } // TODO change id parameter
-  }
-
-  async notifyViaOneSignal(nationalId: string) {
-    const client = new OneSignal.Client(
-      process.env.ONESIGNAL_APP_ID ?? '',
-      process.env.ONESIGNAL_API_KEY ?? '',
-    )
-    console.log("Got client:", client)
-
-    const notification = await client
-      .createNotification({
-        contents: {
-          tr: 'Yeni bildirim',
-          en: 'New notification',
-        },
-        // included_segments: ['Subscribed Users'],
-        include_email_tokens: ['kristofer@juni.is']
+    try {
+      const notification = await Notification.create({
+        ...createNotificationDto,
+        recipients: [{ external_id: nationalId }],
       })
-      .then((res) => res.body)
-    console.log("Got notification response:", notification)
-
-    return { id: notification.id } // TODO change id parameter
+      console.log("Got notification response:", notification)
+      return { id: notification.id } // TODO change id parameter
+    } catch (e) {
+      throw new BadRequestException(e.errors)
+    }
   }
+
+  // async notifyViaOneSignal(nationalId: string) {
+  //   const client = new OneSignal.Client(
+  //     process.env.ONESIGNAL_APP_ID ?? '',
+  //     process.env.ONESIGNAL_API_KEY ?? '',
+  //   )
+  //   console.log("Got client:", client)
+
+  //   const notification = await client
+  //     .createNotification({
+  //       contents: {
+  //         tr: 'Yeni bildirim',
+  //         en: 'New notification',
+  //       },
+  //       // included_segments: ['Subscribed Users'],
+  //       include_email_tokens: ['kristofer@juni.is']
+  //     })
+  //     .then((res) => res.body)
+  //   console.log("Got notification response:", notification)
+
+  //   return { id: notification.id } // TODO change id parameter
+  // }
 }
