@@ -18,7 +18,6 @@ import {
 import { EnvironmentServices } from './dsl/types/charts'
 import { ServiceHelm } from './dsl/types/output-types'
 import { OpsEnv } from './dsl/types/input-types'
-const { hideBin } = require('yargs/helpers')
 
 type ChartName = 'islandis'
 

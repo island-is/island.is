@@ -117,6 +117,7 @@ export const getDependantServices = (
 }
 
 export function featureSpecificServiceDef(
+  env: OpsEnv,
   feature: string,
   featureSpecificServices: Service[],
 ) {
@@ -127,10 +128,10 @@ export function featureSpecificServiceDef(
   })
   featureSpecificServices.forEach((s) => {
     Object.entries(s.serviceDef.ingress).forEach(([name, ingress]) => {
-      if (!Array.isArray(ingress.host.dev)) {
-        ingress.host.dev = [ingress.host.dev]
-      }
-      ingress.host.dev = ingress.host.dev.map((host) => `${feature}-${host}`)
+      const hosts: string[] = !Array.isArray(ingress.host[env])
+        ? [ingress.host[env] as string]
+        : (ingress.host[env] as string[])
+      ingress.host[env] = hosts.map((host) => `${feature}-${host}`)
     })
   })
   featureSpecificServices.forEach((s) => {
@@ -148,6 +149,7 @@ export function featureSpecificServiceDef(
 }
 
 function featureSpecificServicesPrepare(
+  env: OpsEnv,
   uberChart: UberChart,
   habitat: Service[],
   services: Service[],
@@ -158,11 +160,12 @@ function featureSpecificServicesPrepare(
     habitat,
     ...services,
   )
-  featureSpecificServiceDef(feature, featureSpecificServices)
+  featureSpecificServiceDef(env, feature, featureSpecificServices)
   return featureSpecificServices
 }
 
 export const generateYamlForFeature = (
+  env: OpsEnv,
   uberChart: UberChart,
   habitat: Service[],
   services: Service[],
@@ -173,6 +176,7 @@ export const generateYamlForFeature = (
     const excludedServiceNames = excludedServices.map((f) => f.serviceDef.name)
 
     const featureSpecificServices = featureSpecificServicesPrepare(
+      env,
       uberChart,
       habitat,
       services,
