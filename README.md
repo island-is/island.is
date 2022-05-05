@@ -1,38 +1,23 @@
-#MAGICBELL UP AND RUNNING
+# PROOF OF CONCEPT - - UP AND RUNNING
 envs:
-X_MAGICBELL_API_KEY
-X_MAGICBELL_API_SECRET
+MAGICBELL_API_KEY
+MAGICBELL_API_SECRET
+ONESIGNAL_API_KEY
+ONESIGNAL_APP_ID
 
+proxies:
 kubectl port-forward svc/socat-soffia 8443:443 -n socat
 kubectl -n socat port-forward svc/socat-xroad 8081:80
-yarn start api
-yarn start service-portal
-http://localhost:4200/
 
-#MAGICBELL MESSAGE
-curl https://api.magicbell.com/notifications \
- --request POST \
- --header 'accept: application/json' \
- --header 'content-type: application/json' \
- --header 'X-MAGICBELL-API-SECRET: X_MAGICBELL_API_SECRET' \
- --header 'X-MAGICBELL-API-KEY: NEXT_PUBLIC_X_MAGICBELL_API_KEY' \
- --data '{
-"notification": {
-"title": "nifty title",
-"content": "nifty content",
-"category": "new_message",
-"action_url": "http://localhost:4200",
-"recipients": [{
-"external_id": "1234567890"
-}],
-"custom_attributes": {
-"order": {
-"id": "1202983",
-"title": "A title you can use in your templates"
-}
-}
-}
-}'
+frontend: http://localhost:4200/
+-yarn start api
+-yarn start service-portal
+
+backend:http://localhost:3366/
+-yarn start services-user-profile 
+
+
+
 
 # Ísland.is
 
