@@ -16,6 +16,7 @@ import { DeviceTokenDto } from './dto/deviceToken.dto'
 import MagicBellClient, { Notification } from '@magicbell/core'
 // import * as OneSignal from 'onesignal-node'
 import { CreateNotificationDto } from './dto/createNotificationDto'
+import { environment } from '../../environments'
 
 @Injectable()
 export class UserProfileService {
@@ -98,9 +99,10 @@ export class UserProfileService {
 
   async notifyViaMagicBell(nationalId: string, createNotificationDto:CreateNotificationDto) {
     MagicBellClient.configure({
-      apiKey: process.env.MAGICBELL_API_KEY ?? '',
-      apiSecret: process.env.MAGICBELL_API_SECRET ?? '',
+      apiKey: environment.notification.magicBell.apiKey,
+      apiSecret: environment.notification.magicBell.apiSecret,
     })
+    console.log(environment)
     console.log("asdf",process.env.MAGICBELL_API_KEY,"asdf",process.env.MAGICBELL_API_SECRET)
     console.log("Got client:", MagicBellClient)
     try {

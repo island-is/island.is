@@ -21,6 +21,7 @@ import { UserProfileService } from './userProfile.service'
 import { UserProfile } from './userProfile.model'
 import { CreateNotificationDto } from './dto/createNotificationDto'
 
+
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @ApiTags('User Profile')
 @Controller()
