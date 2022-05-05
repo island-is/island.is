@@ -462,29 +462,6 @@
     "github-actions-cache": {
       "tags": []
     },
-    "gjafakort-api": {
-      "tags": []
-    },
-    "gjafakort-application": {
-      "tags": []
-    },
-    "gjafakort-consts": {
-      "tags": []
-    },
-    "gjafakort-queue-listener": {
-      "tags": []
-    },
-    "gjafakort-types": {
-      "tags": []
-    },
-    "gjafakort-web": {
-      "tags": [],
-      "implicitDependencies": ["gjafakort-api"]
-    },
-    "gjafakort-web-e2e": {
-      "tags": [],
-      "implicitDependencies": ["gjafakort-web"]
-    },
     "health-insurance": {
       "tags": []
     },
