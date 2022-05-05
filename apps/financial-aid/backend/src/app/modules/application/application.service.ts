@@ -61,42 +61,6 @@ const linkToStatusPage = (applicationId: string) => {
   return `${environment.oskBaseUrl}/stada/${applicationId}"`
 }
 
-const applicationInlcudeClause = (isEmployee: boolean) => {
-  return [
-    { model: StaffModel, as: 'staff' },
-    {
-      model: ApplicationEventModel,
-      as: 'applicationEvents',
-      separate: true,
-      where: {
-        eventType: {
-          [Op.in]: isEmployee
-            ? Object.values(ApplicationEventType)
-            : [ApplicationEventType.DATANEEDED],
-        },
-      },
-      order: [['created', 'DESC']],
-    },
-    {
-      model: ApplicationFileModel,
-      as: 'files',
-      separate: true,
-      order: [['created', 'DESC']],
-    },
-    {
-      model: AmountModel,
-      as: 'amount',
-      include: [{ model: DeductionFactorsModel, as: 'deductionFactors' }],
-      separate: true,
-      order: [['created', 'DESC']],
-    },
-    {
-      model: DirectTaxPaymentModel,
-      as: 'directTaxPayments',
-    },
-  ] as Includeable[]
-}
-
 @Injectable()
 export class ApplicationService {
   constructor(
@@ -212,22 +176,39 @@ export class ApplicationService {
   ): Promise<ApplicationModel | null> {
     const application = await this.applicationModel.findOne({
       where: { id },
-      include: applicationInlcudeClause(isEmployee),
-    })
-
-    if (application?.amount) {
-      application.setDataValue('amount', application.amount['0'])
-    }
-
-    return application
-  }
-
-  async findByApplicationSystemId(
-    id: string,
-  ): Promise<ApplicationModel | null> {
-    const application = await this.applicationModel.findOne({
-      where: { applicationSystemId: id },
-      include: applicationInlcudeClause(false),
+      include: [
+        { model: StaffModel, as: 'staff' },
+        {
+          model: ApplicationEventModel,
+          as: 'applicationEvents',
+          separate: true,
+          where: {
+            eventType: {
+              [Op.in]: isEmployee
+                ? Object.values(ApplicationEventType)
+                : [ApplicationEventType.DATANEEDED],
+            },
+          },
+          order: [['created', 'DESC']],
+        },
+        {
+          model: ApplicationFileModel,
+          as: 'files',
+          separate: true,
+          order: [['created', 'DESC']],
+        },
+        {
+          model: AmountModel,
+          as: 'amount',
+          include: [{ model: DeductionFactorsModel, as: 'deductionFactors' }],
+          separate: true,
+          order: [['created', 'DESC']],
+        },
+        {
+          model: DirectTaxPaymentModel,
+          as: 'directTaxPayments',
+        },
+      ],
     })
 
     if (application?.amount) {

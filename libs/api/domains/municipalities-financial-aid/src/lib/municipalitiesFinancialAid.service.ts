@@ -67,7 +67,7 @@ export class MunicipalitiesFinancialAidService {
     applicationId: ApplicationInput,
   ) {
     return await this.applicationApiWithAuth(auth)
-      .applicationControllerGetByApplicationSystemId(applicationId)
+      .applicationControllerGetById(applicationId)
       .catch(this.handle404)
   }
 }

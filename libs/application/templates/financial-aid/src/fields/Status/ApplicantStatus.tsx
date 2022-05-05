@@ -18,7 +18,9 @@ import {
 import useApplication from '../../lib/hooks/useApplication'
 
 const ApplicantStatus = ({ application }: FAFieldBaseProps) => {
-  const { currentApplication } = useApplication(application.id)
+  const { currentApplication } = useApplication(
+    application.externalData.veita.data.currentApplicationId,
+  )
   const { nationalRegistry } = application.externalData
   const state =
     !currentApplication && application.state === ApplicationStates.SPOUSE

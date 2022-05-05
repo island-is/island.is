@@ -169,6 +169,8 @@ const FinancialAidTemplate: ApplicationTemplate<
           lifecycle: oneMonthLifeCycle,
           onEntry: {
             apiModuleAction: ApiActions.CREATEAPPLICATION,
+            shouldPersistToExternalData: true,
+            externalDataId: 'veita',
           },
           roles: [
             {

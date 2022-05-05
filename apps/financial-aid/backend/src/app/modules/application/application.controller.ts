@@ -371,30 +371,4 @@ export class ApplicationController {
     this.logger.debug('Application controller: Filter applications')
     return this.applicationService.filter(filters, staff.municipalityIds)
   }
-
-  @Scopes(
-    MunicipalitiesFinancialAidScope.read,
-    MunicipalitiesFinancialAidScope.applicant,
-  )
-  @Get('applicationSystemId/:id')
-  @ApiOkResponse({
-    type: ApplicationModel,
-    description: 'Get application by the application system id',
-  })
-  async getByApplicationSystemId(
-    @Param('id') id: string,
-  ): Promise<ApplicationModel> {
-    this.logger.debug(
-      'Application controller: Getting application by the appication system id',
-    )
-    const application = await this.applicationService.findByApplicationSystemId(
-      id,
-    )
-
-    if (application === null) {
-      throw new NotFoundException('Application not found')
-    }
-
-    return application
-  }
 }

@@ -68,7 +68,7 @@ export interface Applicant {
 }
 
 export interface CurrentApplication {
-  currentApplicationId?: string
+  currentApplicationId: string
 }
 
 export interface Address {

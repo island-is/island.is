@@ -26,11 +26,11 @@ export const ApplicationQuery = gql`
   }
 `
 
-const useApplication = (applicationSystemId: string) => {
+const useApplication = (id: string) => {
   const { data } = useQuery<{
     municipalitiesFinancialAidApplication: Application
   }>(ApplicationQuery, {
-    variables: { input: { id: applicationSystemId } },
+    variables: { input: { id } },
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
