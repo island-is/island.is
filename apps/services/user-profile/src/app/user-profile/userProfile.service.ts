@@ -110,7 +110,7 @@ export class UserProfileService {
         recipients: [{ external_id: nationalId }],
       })
       console.log("Got notification response:", notification)
-      return { notification } // TODO change id parameter
+      return { notification }
     } catch (e) {
       throw new BadRequestException(e.errors)
     }
