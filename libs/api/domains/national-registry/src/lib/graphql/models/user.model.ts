@@ -40,6 +40,9 @@ export class NationalRegistryUser {
   @Field(() => String, { nullable: true })
   religion?: string
 
+  @Field(() => String, { nullable: true })
+  familyNr?: string
+
   @Field(() => MaritalStatus, { nullable: true })
   maritalStatus?: MaritalStatus
 
