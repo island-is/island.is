@@ -82,7 +82,8 @@ function constructRestrictionRequestPdf(
   setLineGap(doc, 4)
   addLargeHeading(
     doc,
-    theCase.prosecutor?.institution?.name ?? formatMessage(m.noDistrict),
+    theCase.creatingProsecutor?.institution?.name ??
+      formatMessage(m.noDistrict),
     'Times-Bold',
   )
   setLineGap(doc, 24)
@@ -248,7 +249,8 @@ function constructInvestigationRequestPdf(
   setLineGap(doc, 4)
   addLargeHeading(
     doc,
-    theCase.prosecutor?.institution?.name ?? formatMessage(m.noDistrict),
+    theCase.creatingProsecutor?.institution?.name ??
+      formatMessage(m.noDistrict),
     'Times-Bold',
   )
   setLineGap(doc, 24)
