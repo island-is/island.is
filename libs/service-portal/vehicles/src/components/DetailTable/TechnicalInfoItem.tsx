@@ -115,7 +115,7 @@ const TechnicalInfoItem = ({ data }: PropTypes) => {
             id: 'sp.vehicles:tech-axle-total-weight',
             defaultMessage: 'Leyfð ásþyngd',
           })}
-          value={data.axleTotalWeight + ' kg'}
+          value={data.axleTotalWeight ? data.axleTotalWeight + ' kg' : ''}
         />
       </Row>
       {data.axle?.map((item: Axle | null, index: number) => {

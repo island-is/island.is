@@ -1,13 +1,14 @@
 import React, { useCallback, useState } from 'react'
 import {
-  InfoScreen,
   ServicePortalModuleComponent,
   m,
+  CardLoader,
+  EmptyState,
 } from '@island.is/service-portal/core'
 import { defineMessage } from 'react-intl'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { useQuery, gql } from '@apollo/client'
-import { Query } from '@island.is/api/schema'
+import { Query, Vehicle } from '@island.is/api/schema'
 import {
   AlertMessage,
   Box,
@@ -20,40 +21,7 @@ import {
 } from '@island.is/island-ui/core'
 import isEqual from 'lodash/isEqual'
 import { VehicleCard } from '../../components/VehicleCard'
-import { vehiclesList } from '../../mock/vehiclesList'
 
-/*
- {
-      persidno
-      name
-      address
-      postStation
-      vehicleList {
-        isCurrent
-        permno
-        regno
-        vin
-        type
-        color
-        firstRegDate
-        modelYear
-        productYear
-        registrationType
-        role
-        operationStartDate
-        operationEndDate
-        outOfUse
-        otherOwners
-        termination
-        buyerPersidno
-        ownerPersidno
-        vehicleStatus
-        useGroup
-        vehGroup
-        plateStatus
-      }
-      createdTimestamp
-    } */
 const GET_USERS_VEHICLES = gql`
   query GetUsersVehicles {
     getVehiclesForUser {
@@ -98,14 +66,14 @@ type FilterValues = {
 }
 
 const getFilteredVehicles = (
-  vehicles: any[],
+  vehicles: Vehicle[],
   filterValues: FilterValues,
-): any[] => {
+): Vehicle[] => {
   const { searchQuery } = filterValues
 
   if (searchQuery) {
     return vehicles.filter(
-      (x: any) =>
+      (x: Vehicle) =>
         x.permno?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         x.regno?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         x.type?.toLowerCase().includes(searchQuery.toLowerCase()),
@@ -126,7 +94,6 @@ export const VehiclesOverview: ServicePortalModuleComponent = () => {
   )
   const { data, loading, error, called } = useQuery<Query>(GET_USERS_VEHICLES)
   const vehicles = data?.getVehiclesForUser?.vehicleList || []
-  console.log(vehicles)
   const filteredVehicles = getFilteredVehicles(vehicles, filterValue)
 
   const handleSearchChange = useCallback((value: string) => {
@@ -170,33 +137,40 @@ export const VehiclesOverview: ServicePortalModuleComponent = () => {
               <Text as="p" variant="default">
                 {formatMessage({
                   id: 'sp.vehicles:vehicles-intro',
-                  defaultMessage: `Hér færðu upplýsingar úr ökutækjaskrá um ökutæki sem fyrirtækið er skráð eigandi að.`,
+                  defaultMessage: `Hér færðu upplýsingar úr ökutækjaskrá um ökutæki sem þú ert skráð/ur eigandi að.`,
                 })}
               </Text>
             </Stack>
           </GridColumn>
         </GridRow>
       </Box>
+      {vehicles.length === 0 && (
+        <Box marginTop={8}>
+          <EmptyState title={m.noDataFound} />
+        </Box>
+      )}
       <Stack space={2}>
         {called && !loading && !error && vehicles.length <= 0 && (
           <AlertMessage type="info" title={formatMessage(m.noDataPresent)} />
         )}
-        <GridRow>
-          <GridColumn span={['12/12', '12/12', '5/12', '4/12', '3/12']}>
-            <Stack space={2}>
-              <Input
-                icon="search"
-                backgroundColor="blue"
-                size="xs"
-                value={filterValue.searchQuery}
-                onChange={(ev) => handleSearchChange(ev.target.value)}
-                name="rafraen-skjol-leit"
-                label={formatMessage(m.searchLabel)}
-                placeholder={formatMessage(m.searchPlaceholder)}
-              />
-            </Stack>
-          </GridColumn>
-        </GridRow>
+        {!loading && !error && vehicles.length > 4 && (
+          <GridRow>
+            <GridColumn span={['12/12', '12/12', '5/12', '4/12', '3/12']}>
+              <Stack space={2}>
+                <Input
+                  icon="search"
+                  backgroundColor="blue"
+                  size="xs"
+                  value={filterValue.searchQuery}
+                  onChange={(ev) => handleSearchChange(ev.target.value)}
+                  name="rafraen-skjol-leit"
+                  label={formatMessage(m.searchLabel)}
+                  placeholder={formatMessage(m.searchPlaceholder)}
+                />
+              </Stack>
+            </GridColumn>
+          </GridRow>
+        )}
         {hasActiveFilters() && (
           <GridRow>
             <GridColumn span={['12/12', '12/12']}>
@@ -222,6 +196,8 @@ export const VehiclesOverview: ServicePortalModuleComponent = () => {
             </GridColumn>
           </GridRow>
         )}
+        {loading && <CardLoader />}
+
         {filteredVehicles.length > 0 && (
           <Box width="full">
             <Stack space={2}>
@@ -231,17 +207,7 @@ export const VehiclesOverview: ServicePortalModuleComponent = () => {
             </Stack>
           </Box>
         )}
-        <Box paddingTop={4}>
-          <Text variant="small">
-            Hér þarf örugglega að koma einhver texti með vísan í lög,
-            grunnupplýsingar osfrv. eða eitthvað álíka. Sed nulla adipiscing
-            consequat tristique. A mauris nisl ut vestibulum cum velit ultrices
-            proin. Scelerisque purus sagittis vulputate sapien accumsan neque.
-            Dolor sapien bibendum id enim feugiat tortor, neque. Volutpat at sit
-            lectus at lectus augue. Magna facilisi pellentesque eu blandit in.
-            Turpis nunc congue cras arcu.
-          </Text>
-        </Box>
+
         {/* <FamilyMemberCard
             title={userInfo.profile.name || ''}
             nationalId={userInfo.profile.nationalId}

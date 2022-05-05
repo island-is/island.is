@@ -3,16 +3,13 @@ import { UseGuards } from '@nestjs/common'
 import type { User } from '@island.is/auth-nest-tools'
 import { VehiclesService } from './api-domains-vehicles.service'
 import { UsersVehicles } from '../models/usersVehicles.model'
-import { Audit, AuditService } from '@island.is/nest/audit'
-import graphqlTypeJson from 'graphql-type-json'
+import { Audit } from '@island.is/nest/audit'
 
 import {
   IdsUserGuard,
   ScopesGuard,
   CurrentUser,
-  Scopes,
 } from '@island.is/auth-nest-tools'
-import { GetVehiclesForUserInput } from '../dto/getVehiclesForUserInput'
 import { GetVehicleDetailInput } from '../dto/getVehicleDetailInput'
 import { VehicleDetail } from '../models/getVehicleDetail.model'
 @UseGuards(IdsUserGuard, ScopesGuard)

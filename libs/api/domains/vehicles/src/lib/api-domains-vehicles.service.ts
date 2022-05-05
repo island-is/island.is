@@ -5,17 +5,11 @@ import { Inject, Injectable } from '@nestjs/common'
 import {
   VehiclesApi,
   BasicVehicleInformationGetRequest,
-  BasicVehicleInformation,
-  BasicVehicleInformationResult,
-  PersidnoLookup,
   PersidnoLookupResult,
   BasicVehicleInformationTechnicalMass,
   BasicVehicleInformationTechnicalAxle,
 } from '@island.is/clients/vehicles'
-import { GetVehiclesForUserInput } from '../dto/getVehiclesForUserInput'
-import { UsersVehicles } from './api-domains-vehicles.type'
 import { Axle, VehicleDetail } from '../models/getVehicleDetail.model'
-import { zip } from 'rxjs'
 
 @Injectable()
 export class VehiclesService {
@@ -27,9 +21,8 @@ export class VehiclesService {
 
   async getVehiclesForUser(nationalId: string): Promise<PersidnoLookupResult> {
     const res = await this.vehiclesApi.vehicleHistoryGet({
-      requestedPersidno: '2312892249',
+      requestedPersidno: nationalId,
     })
-    console.log('REEES', { res })
     return res
   }
 
@@ -37,12 +30,11 @@ export class VehiclesService {
     input: BasicVehicleInformationGetRequest,
   ): Promise<VehicleDetail | null> {
     const res = await this.vehiclesApi.basicVehicleInformationGet({
-      clientPersidno: '2312892249',
+      clientPersidno: input.clientPersidno,
       permno: input.permno,
       regno: input.regno,
       vin: input.vin,
     })
-    console.log('REEES DETAIL', { res })
     const { data } = res
     if (!data) return null
     const newestInspection = data.inspections?.sort((a, b) => {
@@ -81,13 +73,22 @@ export class VehiclesService {
       }
     }
 
+    const year =
+      data.modelyear ??
+      data.productyear ??
+      (data.firstregdate ? new Date(data?.firstregdate).getFullYear() : null)
+
+    const operator = data.operators?.find((x) => x.current)
+
+    const coOwners = data.owners?.find((x) => x.current)?.coOwners
+
     const response: VehicleDetail = {
       mainInfo: {
         model: data.make,
         subModel: data.vehcom ?? '' + data.speccom ?? '',
         regno: data.regno,
-        year: data.modelyear,
-        co2: 'MISSING',
+        year: year,
+        co2: null,
         cubicCapacity: data.techincal?.capacity,
         trailerWithBrakesWeight: data.techincal?.tMassoftrbr,
         trailerWithoutBrakesWeight: data.techincal?.tMassoftrunbr,
@@ -98,7 +99,7 @@ export class VehiclesService {
         subModel: data.vehcom ?? '' + data.speccom ?? '',
         permno: data.permno,
         verno: data.vin,
-        year: data.modelyear,
+        year: year,
         country: data.country,
         preregDateYear: data.preregdate?.slice(0, 4), // "2013-09-26" return only year as string
         formerCountry: data.formercountry,
@@ -149,7 +150,7 @@ export class VehiclesService {
         vehicleWeight: data.techincal?.mass?.massinro,
         width: data.techincal?.size?.width,
         trailerWithoutBrakesWeight: data.techincal?.tMassoftrunbr,
-        horsepower: 'MISSING',
+        horsepower: null,
         trailerWithBrakesWeight: data.techincal?.tMassoftrbr,
         carryingCapacity: data.techincal?.mass?.masscapacity,
         axleTotalWeight: axleMaxWeight,
@@ -159,10 +160,32 @@ export class VehiclesService {
         data.owners?.map((x) => {
           return {
             name: x.fullname,
+            persidno: x.persidno,
             address: x.address + ', ' + x.postalcode + ' ' + x.city,
             dateOfPurchase: x.purchasedate,
           }
         }) || [],
+      coOwners:
+        coOwners?.map((x) => {
+          return {
+            owner: x.fullname,
+            persidno: x.persidno,
+            address: x.address,
+            postalCode: x.postalcode,
+            city: x.city,
+          }
+        }) || [],
+      operator:
+        (operator && {
+          persidno: operator.persidno,
+          name: operator.fullname,
+          address: operator.address,
+          postalcode: operator.postalcode,
+          city: operator.city,
+          startDate: operator.startdate,
+          endDate: operator.enddate,
+        }) ||
+        undefined,
     }
 
     return response

@@ -189,6 +189,9 @@ export class TechnicalInfo {
 @ObjectType()
 export class Owners {
   @Field(() => String, { nullable: true })
+  persidno?: string | null // owners -> persidno
+
+  @Field(() => String, { nullable: true })
   name?: string | null // owners -> name
 
   @Field(() => String, { nullable: true })
@@ -196,6 +199,30 @@ export class Owners {
 
   @Field(() => String, { nullable: true })
   dateOfPurchase?: string | null // owners -> purchasedate
+}
+
+@ObjectType()
+export class Operator {
+  @Field(() => String, { nullable: true })
+  persidno?: string | null // owners -> persidno
+
+  @Field(() => String, { nullable: true })
+  name?: string | null // owners -> name
+
+  @Field(() => String, { nullable: true })
+  address?: string | null // owners -> address + city
+
+  @Field(() => String, { nullable: true })
+  postalcode?: string | null // owners -> address + city
+
+  @Field(() => String, { nullable: true })
+  city?: string | null // owners -> address + city
+
+  @Field(() => String, { nullable: true })
+  startDate?: string | null // owners -> coOwner(current) -> startdate
+
+  @Field(() => String, { nullable: true })
+  endDate?: string | null // owners -> coOwner(current) -> enddate
 }
 
 @ObjectType()
@@ -220,4 +247,10 @@ export class VehicleDetail {
 
   @Field(() => [Owners])
   ownersInfo!: Owners[]
+
+  @Field(() => [CurrentOwnerInfo])
+  coOwners!: CurrentOwnerInfo[]
+
+  @Field(() => Operator, { nullable: true })
+  operator?: Operator
 }

@@ -35,7 +35,7 @@ const InspectionInfoItem = ({ data }: PropTypes) => {
             id: 'sp.vehicles:insp-date',
             defaultMessage: 'Dagsetning',
           })}
-          value={data.date}
+          value={data.date && new Date(data.date).toLocaleDateString()}
         />
       </Row>
       <Row>
@@ -60,7 +60,7 @@ const InspectionInfoItem = ({ data }: PropTypes) => {
             id: 'sp.vehicles:insp-taxes',
             defaultMessage: 'Bifreiðagjöld',
           })}
-          value={'MISSING'}
+          value={null}
         />
 
         <Column
@@ -69,7 +69,7 @@ const InspectionInfoItem = ({ data }: PropTypes) => {
             defaultMessage: 'Tryggt',
           })}
           value={
-            'MISSING'
+            null
             // ? formatMessage({
             //     id: 'sp.vehicles:insp-insured-yes',
             //     defaultMessage: 'Já',
@@ -103,35 +103,31 @@ const InspectionInfoItem = ({ data }: PropTypes) => {
           }
         />
       </Row>
-      {/* {(data.mortages || data.negligenceFee) && ( */}
       <Row>
         <Column
           label={formatMessage({
             id: 'sp.vehicles:insp-mortages',
             defaultMessage: 'Veðbönd',
           })}
-          value={'MISSING'}
+          value={null}
         />
         <Column
           label={formatMessage({
             id: 'sp.vehicles:insp-negligence',
             defaultMessage: 'Vanrækslugjald',
           })}
-          value={'MISSING'}
+          value={null}
         />
       </Row>
-      {/* )} */}
-      {/* {data.plateLocation && ( */}
       <Row>
         <Column
           label={formatMessage({
             id: 'sp.vehicles:insp-plate-location',
             defaultMessage: 'Geymslustaður',
           })}
-          value={'MISSING'}
+          value={null}
         />
       </Row>
-      {/* )} */}
     </Box>
   )
 }

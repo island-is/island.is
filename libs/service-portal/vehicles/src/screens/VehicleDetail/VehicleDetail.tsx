@@ -1,8 +1,4 @@
 import React from 'react'
-import {
-  dateParse,
-  PlausiblePageviewDetail,
-} from '@island.is/service-portal/core'
 
 import {
   Box,
@@ -17,7 +13,6 @@ import {
 import {
   ServicePortalModuleComponent,
   UserInfoLine,
-  ServicePortalPath,
 } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 
@@ -28,7 +23,9 @@ import InspectionInfoItem from '../../components/DetailTable/InspectionInfoItem'
 import TechnicalInfoItem from '../../components/DetailTable/TechnicalInfoItem'
 import OwnersTable from '../../components/DetailTable/OwnersTable'
 import { gql, useQuery } from '@apollo/client'
-import { Query } from '@island.is/api/schema'
+import { CurrentOwnerInfo, Query } from '@island.is/api/schema'
+import OperatorInfoItem from '../../components/DetailTable/OperatorInfoItem'
+import CoOwnerInfoItem from '../../components/DetailTable/CoOwnerInfoItem'
 
 const GET_USERS_VEHICLE_DETAIL = gql`
   query GetUsersVehicles($input: GetVehicleDetailInput!) {
@@ -106,6 +103,23 @@ const GET_USERS_VEHICLE_DETAIL = gql`
         address
         dateOfPurchase
       }
+      coOwners {
+        persidno
+        owner
+        address
+        postalcode
+        city
+        dateOfPurchase
+      }
+      operator {
+        persidno
+        name
+        address
+        postalcode
+        city
+        startDate
+        endDate
+      }
     }
   }
 `
@@ -114,9 +128,6 @@ const VehicleDetail: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.vehicle')
   const { formatMessage } = useLocale()
 
-  PlausiblePageviewDetail(
-    ServicePortalPath.AssetsVehiclesDetail.replace(':id', 'detail'),
-  )
   const { data, loading, error } = useQuery<Query>(GET_USERS_VEHICLE_DETAIL, {
     variables: {
       input: {
@@ -135,6 +146,8 @@ const VehicleDetail: ServicePortalModuleComponent = ({ userInfo }) => {
     inspectionInfo,
     technicalInfo,
     ownersInfo,
+    operator,
+    coOwners,
   } = data?.getVehicleDetail || {}
   console.log(data)
 
@@ -227,7 +240,30 @@ const VehicleDetail: ServicePortalModuleComponent = ({ userInfo }) => {
       {currentOwnerInfo && <OwnerInfoItem data={currentOwnerInfo} />}
       {inspectionInfo && <InspectionInfoItem data={inspectionInfo} />}
       {technicalInfo && <TechnicalInfoItem data={technicalInfo} />}
-      {ownersInfo && <OwnersTable data={ownersInfo} />}
+      {coOwners &&
+        coOwners?.length > 0 &&
+        coOwners.map((owner: CurrentOwnerInfo, index) => (
+          <CoOwnerInfoItem key={index} data={owner} />
+        ))}
+      {operator && <OperatorInfoItem data={operator} />}
+      {ownersInfo && (
+        <OwnersTable
+          data={ownersInfo}
+          title={formatMessage({
+            id: 'sp.vehicles:operators-title',
+            defaultMessage: 'Eigendaferill',
+          })}
+        />
+      )}
+      <Box paddingTop={4}>
+        <Text variant="small">
+          {formatMessage({
+            id: 'sp.vehicles:detail-info-note',
+            defaultMessage:
+              'Samgöngustofa hefur umsjón með ökutækjaskrá. Í skránni er að finna upplýsingar um ökutæki sem þú er skráð/ur eigandi, meðeigandi og umráðamaður að.',
+          })}
+        </Text>
+      </Box>
     </>
   )
 }

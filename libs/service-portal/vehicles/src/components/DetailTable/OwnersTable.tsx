@@ -5,18 +5,16 @@ import { Owners } from '@island.is/api/schema'
 
 interface PropTypes {
   data: Owners[]
+  title: string
 }
 
-const OwnersTable = ({ data }: PropTypes) => {
+const OwnersTable = ({ data, title }: PropTypes) => {
   useNamespaces('sp.vehicles')
   const { formatMessage } = useLocale()
   return (
     <Box marginBottom={4}>
       <Text variant="h4" fontWeight="semiBold" paddingBottom={2}>
-        {formatMessage({
-          id: 'sp.vehicles:owners-title',
-          defaultMessage: 'Eigendaferill',
-        })}
+        {title}
       </Text>
       <T.Table>
         <T.Head>

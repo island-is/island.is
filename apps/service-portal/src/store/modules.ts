@@ -55,6 +55,7 @@ export const featureFlaggedModules: ModuleKeys[] = [
   'personalInformation',
   'petitions',
   'financeSchedule',
+  'vehicles',
 ]
 
 export const modules: Record<ModuleKeys, ServicePortalModule> = {
