@@ -11,7 +11,7 @@ import {
   SpouseResponse,
 } from './models'
 
-import { Includeable, Op } from 'sequelize'
+import { Op } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 
 import {
