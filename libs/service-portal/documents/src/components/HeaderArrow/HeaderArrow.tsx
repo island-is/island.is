@@ -1,25 +1,32 @@
-import React, { FC, ReactNode } from 'react'
+import React, { FC } from 'react'
 import { Box, Button, Icon } from '@island.is/island-ui/core'
+
+import * as styles from './HeaderArrow.css'
 
 interface Props {
   direction?: 'asc' | 'desc'
   active?: boolean
   onClick?: () => void
-  children?: ReactNode
+  title?: string
 }
 
 export const HeaderArrow: FC<Props> = ({
   onClick,
   direction,
-  children,
+  title,
   active,
 }) => {
   return (
     <Button variant="text" size="small" onClick={onClick}>
-      <Box display="flex" flexDirection="row" alignItems="center">
-        {children}
+      <Box
+        className={styles.item}
+        display="flex"
+        flexDirection="row"
+        alignItems="center"
+      >
+        <span className={styles.title}>{title}</span>
         {active && (
-          <Box marginLeft="p1" display="flex">
+          <Box marginLeft={[0, 0, 0, 'p1']} display="flex">
             {direction === 'asc' && (
               <Icon color="dark400" icon="chevronUp" size="small" />
             )}

@@ -400,20 +400,17 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                       <HeaderArrow
                         active={sortState?.key === 'date'}
                         direction={sortState?.direction}
+                        title={formatMessage({
+                          id: 'sp.documents:table-header-date',
+                          defaultMessage: 'Dagsetning',
+                        })}
                         onClick={() =>
                           setSortState({
                             direction: getSortDirection(sortState?.direction),
                             key: 'date',
                           })
                         }
-                      >
-                        <Text fontWeight="semiBold" variant="medium">
-                          {formatMessage({
-                            id: 'sp.documents:table-header-date',
-                            defaultMessage: 'Dagsetning',
-                          })}
-                        </Text>
-                      </HeaderArrow>
+                      />
                     </Box>
                   </GridColumn>
                   <GridColumn span={['1/1', '6/12', '6/12', '6/12', '7/12']}>
@@ -421,20 +418,17 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                       <HeaderArrow
                         active={sortState?.key === 'subject'}
                         direction={sortState?.direction}
+                        title={formatMessage({
+                          id: 'sp.documents:table-header-information',
+                          defaultMessage: 'Upplýsingar',
+                        })}
                         onClick={() =>
                           setSortState({
                             direction: getSortDirection(sortState?.direction),
                             key: 'subject',
                           })
                         }
-                      >
-                        <Text fontWeight="semiBold" variant="medium">
-                          {formatMessage({
-                            id: 'sp.documents:table-header-information',
-                            defaultMessage: 'Upplýsingar',
-                          })}
-                        </Text>
-                      </HeaderArrow>
+                      />
                     </Box>
                   </GridColumn>
                   <GridColumn span={['1/1', '4/12', '4/12', '4/12', '3/12']}>
@@ -442,20 +436,17 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                       <HeaderArrow
                         active={sortState?.key === 'senderName'}
                         direction={sortState?.direction}
+                        title={formatMessage({
+                          id: 'sp.documents:table-header-institution',
+                          defaultMessage: 'Stofnun',
+                        })}
                         onClick={() =>
                           setSortState({
                             direction: getSortDirection(sortState?.direction),
                             key: 'senderName',
                           })
                         }
-                      >
-                        <Text fontWeight="semiBold" variant="medium">
-                          {formatMessage({
-                            id: 'sp.documents:table-header-institution',
-                            defaultMessage: 'Stofnun',
-                          })}
-                        </Text>
-                      </HeaderArrow>
+                      />
                     </Box>
                   </GridColumn>
                 </GridRow>
