@@ -53,31 +53,31 @@ export const unknownRelationship = {
   inputs: defineMessages({
     spouseNationalId: {
       id:
-        'fa.application:section.personalInterest.inRelationship.inputs.spouseNationalId',
+        'fa.application:section.personalInterest.unknownRelationship.inputs.spouseNationalId',
       defaultMessage: 'Kennitala maka',
       description: 'Spouse national id input label',
     },
     spouseNationalIdPlaceholder: {
       id:
-        'fa.application:section.personalInterest.inRelationship.inputs.spouseNationalIdPlaceholder',
+        'fa.application:section.personalInterest.unknownRelationship.inputs.spouseNationalIdPlaceholder',
       defaultMessage: 'Sláðu inn netfang maka',
       description: 'Spouse national id input placeholder',
     },
     spouseEmail: {
       id:
-        'fa.application:section.personalInterest.inRelationship.inputs.spouseEmail',
+        'fa.application:section.personalInterest.unknownRelationship.inputs.spouseEmail',
       defaultMessage: 'Netfang maka',
       description: 'Spouse email input label',
     },
     spouseEmailPlaceholder: {
       id:
-        'fa.application:section.personalInterest.inRelationship.inputs.spouseEmailPlaceholder',
+        'fa.application:section.personalInterest.unknownRelationship.inputs.spouseEmailPlaceholder',
       defaultMessage: 'Sláðu inn netfang maka',
       description: 'Spouse email input placeholder',
     },
     checkboxLabel: {
       id:
-        'fa.application:section.personalInterest.inRelationship.inputs.checkboxLabel',
+        'fa.application:section.personalInterest.unknownRelationship.inputs.checkboxLabel',
       defaultMessage:
         'Ég skil að maki minn þarf líka að skila inn umsókn áður en úrvinnsla hefst',
       description: 'Spouse checkbox label about agreeing with terms',

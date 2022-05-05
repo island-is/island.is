@@ -275,7 +275,7 @@ export class NotificationService {
       const courtEnd = new Date(theCase.courtDate.getTime() + 30 * 60000)
 
       const icalendar = new ICalendar({
-        title: `Fyrirtaka í máli ${theCase.courtCaseNumber} - ${theCase.prosecutor?.institution?.name} gegn X`,
+        title: `Fyrirtaka í máli ${theCase.courtCaseNumber} - ${theCase.creatingProsecutor?.institution?.name} gegn X`,
         location: `${theCase.court?.name} - ${
           theCase.courtRoom
             ? `Dómsalur ${theCase.courtRoom}`
@@ -586,7 +586,7 @@ export class NotificationService {
       theCase.judge?.name,
       theCase.registrar?.name,
       theCase.prosecutor?.name,
-      theCase.prosecutor?.institution?.name,
+      theCase.creatingProsecutor?.institution?.name,
     )
     const calendarInvite = this.createICalAttachment(theCase)
     const attachments: Attachment[] = calendarInvite ? [calendarInvite] : []
