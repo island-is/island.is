@@ -11,6 +11,7 @@ import {
   MortgageCertificate,
   MortgageCertificateValidation,
   AssetName,
+  EstateRegistrant,
 } from './syslumennClient.types'
 import {
   mapSyslumennAuction,
@@ -21,6 +22,7 @@ import {
   mapDataUploadResponse,
   constructUploadDataObject,
   mapAssetName,
+  mapEstateRegistrant,
 } from './syslumennClient.utils'
 import { Injectable, Inject } from '@nestjs/common'
 import {
@@ -240,6 +242,10 @@ export class SyslumennService {
         }
         throw e
       })
+
+    console.log({
+      assetSponse: response,
+    })
     return response.map(assetMapper)
   }
 
@@ -341,7 +347,7 @@ export class SyslumennService {
 
   async getEstateRegistrant(
     registrantNationalId: string,
-  ): Promise<Array<SkraningaradiliDanarbusSkeyti>> {
+  ): Promise<Array<EstateRegistrant>> {
     const { id, api } = await this.createApi()
 
     const res = await api.skraningaradiliDanarbusGet({
@@ -350,7 +356,7 @@ export class SyslumennService {
     })
 
     if (res.length > 0) {
-      return res
+      return res.map(mapEstateRegistrant)
     }
     return []
   }

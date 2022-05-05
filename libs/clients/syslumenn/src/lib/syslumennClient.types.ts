@@ -150,3 +150,36 @@ export enum AssetType {
 export type AssetName = {
   name: string
 }
+
+export type EstateMember = {
+  name: string
+  nationalId: string
+  relation: string
+}
+
+export type EstateAsset = {
+  description: string
+  assetNumber: string
+  share: number
+}
+
+export type EstateRegistrant = {
+  applicantEmail: string
+  applicantPhone: string
+  knowledgeOfOtherWills: 'yes' | 'no'
+  assets: EstateAsset[]
+  vehicles: EstateAsset[]
+  ships: EstateAsset[]
+  cash: EstateAsset[]
+  flyers: EstateAsset[]
+  estateMembers: EstateMember[]
+  marriageSettlement: boolean
+  office: string
+  caseNumber: string
+  dateOfDeath: Date
+  nameOfDeceased: string
+  ownBusinessManagement: boolean
+  assetsAbroad: boolean
+  occupationRightViaCondominium: boolean
+  bankStockOrShares: boolean
+}

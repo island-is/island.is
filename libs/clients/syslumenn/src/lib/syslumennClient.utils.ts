@@ -8,6 +8,10 @@ import {
   SyslMottakaGognPostRequest,
   AdiliTegund,
   VedbandayfirlitReguverkiSvarSkeyti,
+  SkraningaradiliDanarbusSkeyti,
+  SvarSkeytiFromJSON,
+  TegundAndlags,
+  AdiliDanarbus,
 } from '../../gen/fetch'
 import { uuid } from 'uuidv4'
 import {
@@ -24,6 +28,9 @@ import {
   DistrictCommissionerAgencies,
   PersonType,
   AssetName,
+  EstateMember,
+  EstateAsset,
+  EstateRegistrant,
 } from './syslumennClient.types'
 const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
 
@@ -205,4 +212,68 @@ export const mapAssetName = (
   response: VedbandayfirlitReguverkiSvarSkeyti,
 ): AssetName => {
   return { name: response.heiti ?? '' }
+}
+
+export const estateMemberMapper = (estateRaw: AdiliDanarbus): EstateMember => {
+  return {
+    name: estateRaw.nafn ?? '',
+    nationalId: estateRaw.kennitala ?? '',
+    relation: estateRaw.tegundTengsla ?? 'Annað',
+  }
+}
+
+export const assetMapper = (assetRaw: any): EstateAsset => {
+  return {
+    description: assetRaw.lysing ?? '',
+    assetNumber: assetRaw.fastanumer ?? '',
+    share: assetRaw.eignarhlutfall ?? 1,
+  }
+}
+
+export const mapEstateRegistrant = (
+  syslaData: SkraningaradiliDanarbusSkeyti,
+): EstateRegistrant => {
+  return {
+    applicantEmail: syslaData.tolvuposturSkreningaradila ?? '',
+    applicantPhone: syslaData.simiSkraningaradila ?? '',
+    knowledgeOfOtherWills: syslaData.vitneskjaUmAdraErfdaskra ? 'yes' : 'no',
+    assets: syslaData.eignir
+      ? syslaData.eignir
+          .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_0)
+          .map(assetMapper)
+      : [],
+    vehicles: syslaData.eignir
+      ? syslaData.eignir
+          .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_1)
+          .map(assetMapper)
+      : [],
+    ships: syslaData.eignir
+      ? syslaData.eignir
+          .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_2)
+          .map(assetMapper)
+      : [],
+    cash: syslaData.eignir
+      ? syslaData.eignir
+          .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_3)
+          .map(assetMapper)
+      : [],
+    flyers: syslaData.eignir
+      ? syslaData.eignir
+          .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_4)
+          .map(assetMapper)
+      : [],
+    estateMembers: syslaData.adilarDanarbus
+      ? syslaData.adilarDanarbus.map(estateMemberMapper)
+      : [],
+    marriageSettlement: syslaData.kaupmaili ?? false,
+    office: syslaData.embaetti ?? '',
+    caseNumber: syslaData.malsnumer ?? '',
+    dateOfDeath: syslaData.danardagur ?? '',
+    nameOfDeceased: syslaData.nafnLatins ?? '',
+    ownBusinessManagement: syslaData.eiginRekstur ?? false,
+    assetsAbroad: syslaData.eignirErlendis ?? false,
+    occupationRightViaCondominium:
+      syslaData.buseturetturVegnaKaupleiguIbuda ?? false,
+    bankStockOrShares: syslaData.bankareikningarVerdbrefEdaHlutabref ?? false,
+  }
 }

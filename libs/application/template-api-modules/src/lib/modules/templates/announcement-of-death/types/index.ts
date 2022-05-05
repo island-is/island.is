@@ -1,3 +1,7 @@
+export enum RoleConfirmationEnum {
+  CONTINUE = 'continue',
+  DELEGATE = 'delegate',
+}
 export interface Address {
   streetAddress: string
   postalCode: string

@@ -65,20 +65,20 @@ export const m = defineMessages({
   },
   dataCollectionEstateTitle: {
     id: 'aod.application:dataCollectionEstateTitle',
-    defaultMessage: 'Uppfletting dánarbús hjá Sýslu',
+    defaultMessage: 'Uppfletting dánarbús hjá sýslumanni',
     description: 'Title for notifying user of estate registry lookup',
   },
   dataCollectionEstateSubtitle: {
     id: 'aod.application:dataCollectionEstateSubtitle',
     defaultMessage:
-      'Athugað verður í grunn hjá Sýslu um hvort kennitalan þín sé tengd dánarbúi.',
+      'Athugað verður hjá sýslumanni hvort að kennitalan þín sé tengd dánarbúi.',
     description:
       'Subtitle for estates, notifying the user about the lookup at Sysla in regards to estates',
   },
   dataCollectionNoEstatesError: {
     id: 'aod.application:dataCollectionNoEstatesError',
     defaultMessage:
-      'Þú ert ekki skráð/ur fyrir dánarbúi hjá Sýslumanni. Ef þú telur svo vera skaltu hafa samband við Sýslumann.',
+      'Þú ert ekki skráð/ur fyrir dánarbúi hjá sýslumanni. Ef þú telur svo vera skaltu hafa samband við sýslumann.',
     description:
       'User not eligible for estate or no estates found bound to their national id',
   },
