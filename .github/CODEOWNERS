@@ -179,7 +179,7 @@ infra/                                                                          
 /apps/services/personal-representative/                                                             @island-is/programm
 /apps/services/personal-representative-public/                                                      @island-is/programm
 /libs/api/domains/financial-statements-inao/                                                        @island-is/programm
-/libs/application/templates/financial-statements-inao/                                                           @island-is/programm
+/libs/application/templates/financial-statements-inao/                                              @island-is/programm
 
 /libs/application/templates/criminal-record/                                                        @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/criminal-record-submission         @island-is/origo
