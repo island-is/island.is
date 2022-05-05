@@ -5,7 +5,7 @@ import {
 } from '@island.is/feature-flags'
 import getConfig from 'next/config'
 
-let client: FeatureFlagClient | undefined
+let client: FeatureFlagClient | undefined = undefined
 
 /**
  * Returns a feature flag from ConfigCat
