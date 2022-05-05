@@ -86,9 +86,6 @@ const template: ApplicationTemplate<
               variant: 'blueberry',
             },
           },
-          // onEntry: {
-          //   apiModuleAction: ApiActions.getNoDebtCertificate,
-          // },
           roles: [
             {
               id: Roles.APPLICANT,
