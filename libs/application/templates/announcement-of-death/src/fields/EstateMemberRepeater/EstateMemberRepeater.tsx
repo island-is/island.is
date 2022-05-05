@@ -1,6 +1,7 @@
 import React, { FC, useEffect } from 'react'
 import {
   ArrayField,
+  Controller,
   useFieldArray,
   useFormContext,
   useWatch,
@@ -135,7 +136,7 @@ const Item = ({
     defaultValue: '',
   })
 
-  const { register, setValue } = useFormContext()
+  const { control, setValue } = useFormContext()
 
   const [
     getIdentity,
@@ -162,20 +163,13 @@ const Item = ({
       setValue(nameField, '')
     }
   }, [getIdentity, name, nameField, nationalIdInput, setValue])
-  useEffect(() => {
-    // TODO: This needs to be better implemented, initial value gets removed from all fields when one is removed
-    // forcing initial value to be set on all fields - and add hidden field to form to prevent the value from being overwritten
-    setValue(initialField, field.initial || false)
-  }, [field.initial, setValue, initialField])
 
   return (
     <Box position="relative" key={field.id} marginTop={2}>
-      <input
-        type="checkbox"
-        hidden={true}
+      <Controller
         name={initialField}
-        ref={register}
-        defaultChecked={field.initial}
+        control={control}
+        defaultValue={field.initial || false}
       />
       <Box position="absolute" className={styles.removeFieldButton}>
         <Button
