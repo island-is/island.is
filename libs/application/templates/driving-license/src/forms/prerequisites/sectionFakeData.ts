@@ -3,8 +3,9 @@ import {
   buildMultiField,
   buildRadioField,
   buildSubSection,
+  getValueViaPath,
 } from '@island.is/application/core'
-import { NO, YES } from '../../lib/constants'
+import { DrivingLicenseFakeData, NO, YES } from '../../lib/constants'
 import { allowFakeCondition } from '../../lib/utils'
 
 export const sectionFakeData = buildSubSection({
@@ -78,6 +79,31 @@ export const sectionFakeData = buildSubSection({
             {
               value: NO,
               label: 'Engin mynd',
+            },
+          ],
+        }),
+        buildRadioField({
+          id: 'fakeData.healthRemarks',
+          title: 'Heilbrigðis tákntala',
+          width: 'half',
+          condition: (answers) => {
+            const fakeData = getValueViaPath<DrivingLicenseFakeData>(
+              answers,
+              'fakeData',
+            )
+            return (
+              fakeData?.currentLicense === 'temp' &&
+              fakeData.useFakeData === YES
+            )
+          },
+          options: [
+            {
+              value: NO,
+              label: 'Engin tákntala',
+            },
+            {
+              value: YES,
+              label: 'Tákntala',
             },
           ],
         }),
