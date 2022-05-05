@@ -343,4 +343,4 @@ ServicesPage.getInitialProps = async ({ apolloClient, locale, query }) => {
   }
 }
 
-export default withMainLayout(ServicesPage)
+export default withMainLayout(ServicesPage, { showFooter: false })

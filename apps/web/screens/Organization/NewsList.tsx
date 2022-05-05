@@ -417,4 +417,4 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
   }
 }
 
-export default withMainLayout(NewsList)
+export default withMainLayout(NewsList, { showFooter: false })

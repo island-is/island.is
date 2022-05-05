@@ -38,7 +38,7 @@ export const rightContent = style({
   display: 'flex',
   flexFlow: 'row nowrap',
   alignItems: 'center',
-  gap: '12px',
+  gap: '20px',
   ...themeUtils.responsiveStyle({
     xs: {
       paddingTop: '12px',

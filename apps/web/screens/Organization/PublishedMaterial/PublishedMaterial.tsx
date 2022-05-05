@@ -502,4 +502,4 @@ PublishedMaterial.getInitialProps = async ({ apolloClient, locale, query }) => {
   }
 }
 
-export default withMainLayout(PublishedMaterial)
+export default withMainLayout(PublishedMaterial, { showFooter: false })

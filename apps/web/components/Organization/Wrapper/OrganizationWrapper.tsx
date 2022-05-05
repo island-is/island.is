@@ -77,7 +77,21 @@ interface HeaderProps {
 }
 
 export const lightThemes = ['digital_iceland', 'utlendingastofnun', 'default']
-export const footerEnabled = ['syslumenn', 'mannaudstorg']
+export const footerEnabled = [
+  'syslumenn',
+  'district-commissioner',
+
+  'utlendingastofnun',
+  'directorate-of-immigration',
+
+  'landlaeknir',
+  'directorate-of-health',
+
+  'sjukratryggingar',
+  'icelandic-health-insurance',
+
+  'mannaudstorg',
+]
 
 export const getThemeConfig = (
   theme: string,
@@ -214,7 +228,7 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
   return (
     <>
       {OrganizationFooterComponent}
-      <OrganizationIslandFooter />
+      {OrganizationFooterComponent && <OrganizationIslandFooter />}
     </>
   )
 }
