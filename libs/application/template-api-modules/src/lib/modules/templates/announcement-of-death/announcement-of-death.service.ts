@@ -10,7 +10,11 @@ import {
   DataUploadResponse,
 } from '@island.is/clients/syslumenn'
 import { FasteignirApi } from '@island.is/clients/assets'
-import { NationalRegistry, RealEstateAddress } from './types'
+import {
+  NationalRegistry,
+  RealEstateAddress,
+  RoleConfirmationEnum,
+} from './types'
 import {
   ApplicationWithAttachments as Application,
   getValueViaPath,
@@ -18,7 +22,9 @@ import {
 import { SharedTemplateApiService } from '../../shared'
 import { generateTestEmail } from './emailGenerators'
 import { EinstaklingarApi } from '@island.is/clients/national-registry-v2'
-import { estateMapper } from './announcement-of-death-utils'
+import { baseMapper } from './announcement-of-death-utils'
+
+import { isPerson } from 'kennitala'
 
 const UPDATE_APPLICATION = `
 mutation UpdateApplication($input: UpdateApplicationInput!) {
@@ -43,13 +49,33 @@ export class AnnouncementOfDeathService {
       application.applicant,
     )
 
+    // On entry shouldn't throw errors but rather be handled
+    // in the frontend
+    if (!estates?.length || estates.length === 0) {
+      return {
+        success: false,
+        estates: [],
+      }
+    }
+
+    // TODO IMPORTANT: Address edge cases for multiple deceased familiy members in
+    //                 the next iteration before feature flag is lifted
+    const estate = estates[0]
+
+    // Mark answer state
+    estate.assets = estate.assets.map(baseMapper)
+    estate.vehicles = estate.assets.map(baseMapper)
+    estate.ships = estate.ships.map(baseMapper)
+    estate.flyers = estate.flyers.map(baseMapper)
+    estate.estateMembers = estate.estateMembers.map(baseMapper)
+
     // TODO: Move this to some other function that happens on a transition from
     // a selection of a deceased relative.
     // That is: if multiple deceased relatives exist have some selection.
     // OR: think about a way to select from the mapper.
     const updatedAnswers = {
       ...application.answers,
-      ...estateMapper(estates[0]),
+      ...estate,
     }
 
     const updateApplicationResponse = await this.sharedTemplateAPIService
@@ -82,6 +108,37 @@ export class AnnouncementOfDeathService {
   }
 
   async submitApplication({ application }: TemplateApiModuleActionProps) {
+    if (
+      application.answers?.roleConfirmation === RoleConfirmationEnum.DELEGATE
+    ) {
+      const syslumennOnEntryData: any =
+        application.externalData.syslumennOnEntry
+      const electPerson: any = application.answers?.electPerson
+      const electPersonNationalId: string =
+        electPerson.electedPersonNationalId ?? ''
+
+      if (!isPerson(electPersonNationalId)) {
+        return {
+          success: false,
+        }
+      }
+
+      const changeEstateParams = {
+        from: application.applicant,
+        to: electPersonNationalId,
+        caseNumber: syslumennOnEntryData?.data?.malsnumer ?? '',
+      }
+      try {
+        await this.syslumennService.changeEstateRegistrant(
+          changeEstateParams.from,
+          changeEstateParams.to,
+          changeEstateParams.caseNumber,
+        )
+      } catch (e) {
+        return { success: false }
+      }
+    }
+
     return { success: true }
   }
 }
