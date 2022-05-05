@@ -106,10 +106,11 @@ export class UserProfileService {
     try {
       const notification = await Notification.create({
         ...createNotificationDto,
+        category: "new_message",
         recipients: [{ external_id: nationalId }],
       })
       console.log("Got notification response:", notification)
-      return { id: notification.id } // TODO change id parameter
+      return { notification } // TODO change id parameter
     } catch (e) {
       throw new BadRequestException(e.errors)
     }

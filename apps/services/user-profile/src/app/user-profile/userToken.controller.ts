@@ -21,6 +21,7 @@ import { UserProfileService } from './userProfile.service'
 import { UserProfile } from './userProfile.model'
 import { CreateNotificationDto } from './dto/createNotificationDto'
 
+import { Documentation } from '@island.is/nest/swagger'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @ApiTags('User Profile')
@@ -64,13 +65,23 @@ export class UserTokenController {
   }
 
   // focus on getting this one done ....
-  @ApiOperation({
-    summary: 'admin access - tests magicbell',
-  })
+  @Post('userProfile/:nationalId/magic-bell-notification')
   @Scopes(UserProfileScope.admin)
   @ApiSecurity('oauth2', [UserProfileScope.admin])
-  @Post('userProfile/:nationalId/magic-bell-notification')
-  @ApiOkResponse({ type: UserProfile })
+  @Documentation({
+    summary: 'admin access - tests magicbell',
+    description: 'admin access - tests magicbell',
+    response: { status: 201, type: CreateNotificationDto },
+    request: {
+      query: {},
+      params: {
+        nationalId: {
+          type: 'string',
+          description: 'ID of the animal',
+        },
+      }
+    },
+  })
   async notifyViaMagicBell(
     @Param('nationalId')
     nationalId: string,
