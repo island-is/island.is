@@ -34,11 +34,13 @@ import { m } from '@island.is/service-portal/core'
 import AnimateHeight from 'react-animate-height'
 import DocumentLine from '../../components/DocumentLine/DocumentLine'
 import getOrganizationLogoUrl from '../../utils/getOrganizationLogoUrl'
+import HeaderArrow from '../../components/HeaderArrow/HeaderArrow'
 import isAfter from 'date-fns/isAfter'
 import isBefore from 'date-fns/isBefore'
 import isEqual from 'lodash/isEqual'
 import isWithinInterval from 'date-fns/isWithinInterval'
 import addMonths from 'date-fns/addMonths'
+import orderBy from 'lodash/orderBy'
 import * as Sentry from '@sentry/react'
 import * as styles from './Overview.css'
 
@@ -54,6 +56,9 @@ const defaultFilterValues = {
   searchQuery: '',
   showUnread: false,
 }
+
+type SortKeyType = 'date' | 'subject' | 'senderName'
+type SortDirectionType = 'asc' | 'desc'
 
 type FilterValues = {
   dateFrom: Date | null
@@ -101,6 +106,10 @@ const getFilteredDocuments = (
   return filteredDocuments
 }
 
+const getSortDirection = (direction: SortDirectionType) => {
+  return direction === 'asc' ? 'desc' : 'asc'
+}
+
 export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   userInfo,
 }) => {
@@ -111,6 +120,13 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
 
   const { formatMessage, lang } = useLocale()
   const [page, setPage] = useState(1)
+  const [sortState, setSortState] = useState<{
+    direction: SortDirectionType
+    key: SortKeyType
+  }>({
+    direction: 'desc',
+    key: 'date',
+  })
   const [isDateRangeOpen, setIsDateRangeOpen] = useState(false)
   const [searchInteractionEventSent, setSearchInteractionEventSent] = useState(
     false,
@@ -121,9 +137,28 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   const [filterValue, setFilterValue] = useState<FilterValues>(
     defaultFilterValues,
   )
+
+  const getFilteredSorted = (
+    documents: Document[],
+    filterValues: FilterValues,
+  ): Document[] => {
+    const filteredArray = getFilteredDocuments(documents, filterValues)
+    const sortedFiltered =
+      sortState?.key && sortState?.direction
+        ? orderBy(
+            filteredArray,
+            sortState.key === 'date'
+              ? (item) => new Date(item[sortState.key])
+              : sortState.key,
+            sortState.direction,
+          )
+        : filteredArray
+    return sortedFiltered
+  }
+
   const { data, loading, error } = useListDocuments(userInfo.profile.nationalId)
   const categories = [defaultCategory, ...data.categories]
-  const filteredDocuments = getFilteredDocuments(data.documents, filterValue)
+  const filteredDocuments = getFilteredSorted(data.documents, filterValue)
   const pagedDocuments = {
     from: (page - 1) * pageSize,
     to: pageSize * page,
@@ -362,32 +397,65 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                 <GridRow>
                   <GridColumn span={['1/1', '2/12']}>
                     <Box paddingX={2}>
-                      <Text fontWeight="semiBold" variant="medium">
-                        {formatMessage({
-                          id: 'sp.documents:table-header-date',
-                          defaultMessage: 'Dagsetning',
-                        })}
-                      </Text>
+                      <HeaderArrow
+                        active={sortState?.key === 'date'}
+                        direction={sortState?.direction}
+                        onClick={() =>
+                          setSortState({
+                            direction: getSortDirection(sortState?.direction),
+                            key: 'date',
+                          })
+                        }
+                      >
+                        <Text fontWeight="semiBold" variant="medium">
+                          {formatMessage({
+                            id: 'sp.documents:table-header-date',
+                            defaultMessage: 'Dagsetning',
+                          })}
+                        </Text>
+                      </HeaderArrow>
                     </Box>
                   </GridColumn>
                   <GridColumn span={['1/1', '6/12', '6/12', '6/12', '7/12']}>
                     <Box paddingX={2}>
-                      <Text fontWeight="semiBold" variant="medium">
-                        {formatMessage({
-                          id: 'sp.documents:table-header-information',
-                          defaultMessage: 'Upplýsingar',
-                        })}
-                      </Text>
+                      <HeaderArrow
+                        active={sortState?.key === 'subject'}
+                        direction={sortState?.direction}
+                        onClick={() =>
+                          setSortState({
+                            direction: getSortDirection(sortState?.direction),
+                            key: 'subject',
+                          })
+                        }
+                      >
+                        <Text fontWeight="semiBold" variant="medium">
+                          {formatMessage({
+                            id: 'sp.documents:table-header-information',
+                            defaultMessage: 'Upplýsingar',
+                          })}
+                        </Text>
+                      </HeaderArrow>
                     </Box>
                   </GridColumn>
                   <GridColumn span={['1/1', '4/12', '4/12', '4/12', '3/12']}>
                     <Box paddingX={2}>
-                      <Text fontWeight="semiBold" variant="medium">
-                        {formatMessage({
-                          id: 'sp.documents:table-header-institution',
-                          defaultMessage: 'Stofnun',
-                        })}
-                      </Text>
+                      <HeaderArrow
+                        active={sortState?.key === 'senderName'}
+                        direction={sortState?.direction}
+                        onClick={() =>
+                          setSortState({
+                            direction: getSortDirection(sortState?.direction),
+                            key: 'senderName',
+                          })
+                        }
+                      >
+                        <Text fontWeight="semiBold" variant="medium">
+                          {formatMessage({
+                            id: 'sp.documents:table-header-institution',
+                            defaultMessage: 'Stofnun',
+                          })}
+                        </Text>
+                      </HeaderArrow>
                     </Box>
                   </GridColumn>
                 </GridRow>
