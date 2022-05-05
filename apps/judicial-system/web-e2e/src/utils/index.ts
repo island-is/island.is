@@ -97,6 +97,7 @@ export const makeInvestigationCase = (): Case => {
       modified: '2020-09-16T19:50:08.033Z',
       type: InstitutionType.COURT,
       name: 'Héraðsdómur Reykjavíkur',
+      active: true,
     },
     policeCaseNumber: '007-2021-202000',
     defendants: [
@@ -132,6 +133,7 @@ export const makeProsecutor = (): User => {
       modified: '',
       type: InstitutionType.PROSECUTORS_OFFICE,
       name: 'Lögreglan á Höfuðborgarsvæðinu',
+      active: true,
     },
   }
 }
@@ -143,5 +145,6 @@ export const makeCourt = (): Institution => {
     modified: '2020-09-16T19:50:08.033Z',
     type: InstitutionType.COURT,
     name: 'Héraðsdómur Reykjavíkur',
+    active: true,
   }
 }
