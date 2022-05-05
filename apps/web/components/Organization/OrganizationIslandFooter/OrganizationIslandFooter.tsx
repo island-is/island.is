@@ -63,7 +63,7 @@ export const OrganizationIslandFooter = () => {
                 {n('privacyPolicy', 'Persónuverndarstefna')}
               </Link>
             </Text>
-            <Box className={styles.langageToggleContainer}>
+            <Box className={styles.languageToggleContainer}>
               <Icon color="blue400" icon="globe" className={styles.globeIcon} />
               <Text color="blue600" variant="small">
                 <Link

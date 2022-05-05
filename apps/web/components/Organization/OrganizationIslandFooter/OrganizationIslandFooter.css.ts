@@ -20,7 +20,7 @@ export const globeIcon = style({
   height: '15px',
 })
 
-export const langageToggleContainer = style({
+export const languageToggleContainer = style({
   display: 'flex',
   flexFlow: 'row nowrap',
   alignItems: 'center',
