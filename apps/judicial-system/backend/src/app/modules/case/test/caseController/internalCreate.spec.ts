@@ -131,7 +131,12 @@ describe('CaseController - Internal create', () => {
       leadInvestigator: 'The Boss',
     }
     const userId = uuid()
-    const user = { id: userId, role: UserRole.PROSECUTOR } as User
+    const courtId = uuid()
+    const user = {
+      id: userId,
+      role: UserRole.PROSECUTOR,
+      institution: { defaultCourtId: courtId },
+    } as User
 
     beforeEach(async () => {
       const mockFindByNationalId = mockUserService.findByNationalId as jest.Mock
@@ -147,6 +152,7 @@ describe('CaseController - Internal create', () => {
           origin: CaseOrigin.LOKE,
           creatingProsecutorId: userId,
           prosecutorId: userId,
+          courtId,
         },
         {
           transaction,
