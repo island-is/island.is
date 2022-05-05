@@ -24,9 +24,7 @@ import {
   ApplicationFilters,
   ApplicationState,
   ApplicationStateUrl,
-  getEventTypesFromService,
   getStateFromUrl,
-  RolesRule,
   User,
   Staff,
   FileType,
@@ -174,7 +172,7 @@ export class ApplicationService {
 
   async findById(
     id: string,
-    service: RolesRule,
+    isEmployee: boolean,
   ): Promise<ApplicationModel | null> {
     const application = await this.applicationModel.findOne({
       where: { id },
@@ -186,7 +184,9 @@ export class ApplicationService {
           separate: true,
           where: {
             eventType: {
-              [Op.in]: getEventTypesFromService[service],
+              [Op.in]: isEmployee
+                ? Object.values(ApplicationEventType)
+                : [ApplicationEventType.DATANEEDED],
             },
           },
           order: [['created', 'DESC']],
@@ -267,17 +267,20 @@ export class ApplicationService {
     application: CreateApplicationDto,
     user: User,
   ): Promise<ApplicationModel> {
-    const hasAppliedForPeriod = await this.getCurrentApplicationId(
-      user.nationalId,
-    )
+    //When there is mismatch in DB between AS and financial-aid-backend
+    if (!application.applicationSystemId) {
+      const hasAppliedForPeriod = await this.getCurrentApplicationId(
+        user.nationalId,
+      )
 
-    if (hasAppliedForPeriod) {
-      throw new ForbiddenException('User or spouse has applied for period')
+      if (hasAppliedForPeriod) {
+        throw new ForbiddenException('User or spouse has applied for period')
+      }
     }
 
     const appModel = await this.applicationModel.create({
-      nationalId: user.nationalId,
       ...application,
+      nationalId: application.nationalId || user.nationalId,
     })
 
     await Promise.all([
@@ -297,12 +300,23 @@ export class ApplicationService {
           type: f.type,
         })
       }),
-      this.createApplicationEmails(application, appModel, user),
+      this.createApplicationEmails(application, appModel),
       this.applicationEventService.create({
         applicationId: appModel.id,
         eventType: ApplicationEventType[appModel.state.toUpperCase()],
       }),
     ])
+
+    //For application system to map to json
+    if (appModel.getDataValue('files') === undefined) {
+      appModel.setDataValue('files', [])
+    }
+    if (appModel.getDataValue('applicationEvents') === undefined) {
+      appModel.setDataValue('applicationEvents', [])
+    }
+    if (appModel.getDataValue('directTaxPayments') === undefined) {
+      appModel.setDataValue('directTaxPayments', [])
+    }
 
     return appModel
   }
@@ -310,7 +324,6 @@ export class ApplicationService {
   private async createApplicationEmails(
     application: CreateApplicationDto,
     appModel: ApplicationModel,
-    user: User,
   ) {
     const municipality = await this.municipalityService.findByMunicipalityId(
       application.municipalityCode,
@@ -329,7 +342,7 @@ export class ApplicationService {
     emailPromises.push(
       this.sendEmail(
         {
-          name: user.name,
+          name: application.name,
           address: appModel.email,
         },
         emailData.subject,

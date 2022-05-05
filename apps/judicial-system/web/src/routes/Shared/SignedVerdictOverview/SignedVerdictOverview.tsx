@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useLazyQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
 import { ValueType } from 'react-select/src/types'
-import { useIntl } from 'react-intl'
+import { IntlShape, useIntl } from 'react-intl'
 import compareAsc from 'date-fns/compareAsc'
 import formatISO from 'date-fns/formatISO'
 import differenceInMilliseconds from 'date-fns/differenceInMilliseconds'
@@ -12,7 +12,6 @@ import subMilliseconds from 'date-fns/subMilliseconds'
 import {
   CaseDecision,
   CaseState,
-  CaseType,
   InstitutionType,
   isRestrictionCase,
   NotificationType,
@@ -31,15 +30,11 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import {
-  CaseData,
-  ReactSelectOption,
-} from '@island.is/judicial-system-web/src/types'
+import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { Box, Input, Text } from '@island.is/island-ui/core'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
-import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages'
 import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
@@ -108,6 +103,7 @@ export const SignedVerdictOverview: React.FC = () => {
     setWorkingCase,
     isLoadingWorkingCase,
     caseNotFound,
+    refreshCase,
   } = useContext(FormContext)
   const { user } = useContext(UserContext)
   const router = useRouter()
@@ -134,9 +130,7 @@ export const SignedVerdictOverview: React.FC = () => {
           setCourtRecordSignatureConfirmationResponse(
             courtRecordSignatureConfirmationData.courtRecordSignatureConfirmation,
           )
-          if (workingCase) {
-            reloadCase({ variables: { input: { id: workingCase.id } } })
-          }
+          refreshCase()
         } else {
           setCourtRecordSignatureConfirmationResponse({ documentSigned: false })
         }
@@ -147,15 +141,6 @@ export const SignedVerdictOverview: React.FC = () => {
       },
     },
   )
-
-  const [reloadCase] = useLazyQuery<CaseData>(CaseQuery, {
-    fetchPolicy: 'no-cache',
-    onCompleted: (caseData) => {
-      if (caseData?.case) {
-        setWorkingCase(caseData.case)
-      }
-    },
-  })
 
   useEffect(() => {
     if (workingCase.validToDate) {
@@ -220,44 +205,48 @@ export const SignedVerdictOverview: React.FC = () => {
     }
   }
 
-  const getExtensionInfoText = (workingCase: Case): string | undefined => {
+  const getExtensionInfoText = (
+    workingCase: Case,
+    formatMessage: IntlShape['formatMessage'],
+  ): string | undefined => {
     if (user?.role !== UserRole.PROSECUTOR) {
       // Only prosecutors should see the explanation.
       return undefined
-    } else if (
-      workingCase.state === CaseState.REJECTED ||
-      workingCase.state === CaseState.DISMISSED
-    ) {
-      return `Ekki hægt að framlengja ${
-        workingCase.type === CaseType.CUSTODY
-          ? 'gæsluvarðhald'
-          : workingCase.type === CaseType.TRAVEL_BAN
-          ? 'farbann'
-          : 'heimild'
-      } sem var ${
-        workingCase.state === CaseState.REJECTED ? 'hafnað' : 'vísað frá'
-      }.`
+    }
+
+    let rejectReason:
+      | 'rejected'
+      | 'dismissed'
+      | 'isValidToDateInThePast'
+      | 'acceptingAlternativeTravelBan'
+      | 'hasChildCase'
+      | 'none' = 'none'
+
+    if (workingCase.state === CaseState.REJECTED) {
+      rejectReason = 'rejected'
+    } else if (workingCase.state === CaseState.DISMISSED) {
+      rejectReason = 'dismissed'
     } else if (
       workingCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
     ) {
-      return 'Ekki hægt að framlengja kröfu þegar dómari hefur úrskurðað um annað en dómkröfur sögðu til um.'
+      rejectReason = 'acceptingAlternativeTravelBan'
     } else if (workingCase.childCase) {
-      return 'Framlengingarkrafa hefur þegar verið útbúin.'
+      rejectReason = 'hasChildCase'
     } else if (workingCase.isValidToDateInThePast) {
       // This must be after the rejected and alternatice decision cases as the custody
       // end date only applies to cases that were accepted by the judge. This must also
       // be after the already extended case as the custody end date may expire after
       // the case has been extended.
-      return `Ekki hægt að framlengja ${
-        workingCase.type === CaseType.CUSTODY
-          ? 'gæsluvarðhald'
-          : workingCase.type === CaseType.TRAVEL_BAN
-          ? 'farbann'
-          : 'heimild'
-      } sem er lokið.`
-    } else {
-      return undefined
+      rejectReason = 'isValidToDateInThePast'
     }
+
+    return rejectReason === 'none'
+      ? undefined
+      : formatMessage(m.sections.caseExtension.extensionInfo, {
+          hasChildCase: workingCase.childCase ? 'yes' : 'no',
+          caseType: workingCase.type,
+          rejectReason,
+        })
   }
 
   const getModificationSuccessText = () => {
@@ -274,32 +263,50 @@ export const SignedVerdictOverview: React.FC = () => {
         0
 
     if (validToDateAndIsolationToDateAreTheSame) {
-      modification = `Gæsluvarðhald og einangrun til ${formatDate(
-        modifiedValidToDate?.value,
-        'PPPP',
-      )?.replace('dagur,', 'dagsins')} kl. ${formatDate(
-        modifiedValidToDate?.value,
-        Constants.TIME_FORMAT,
-      )}`
+      modification = formatMessage(
+        m.sections.modifyDatesModal.validToDateAndIsolationToDateAreTheSame,
+        {
+          caseType: workingCase.type,
+          date: `${formatDate(modifiedValidToDate?.value, 'PPPP')?.replace(
+            'dagur,',
+            'dagsins',
+          )} kl. ${formatDate(
+            modifiedValidToDate?.value,
+            Constants.TIME_FORMAT,
+          )}`,
+        },
+      )
     } else if (validToDateChanged || isolationToDateChanged) {
       if (validToDateChanged) {
-        modification = `Gæsluvarðhald til ${formatDate(
-          modifiedValidToDate?.value,
-          'PPPP',
-        )?.replace('dagur,', 'dagsins')} kl. ${formatDate(
-          modifiedValidToDate?.value,
-          Constants.TIME_FORMAT,
-        )}. `
+        modification = formatMessage(
+          m.sections.modifyDatesModal.validToDateChanged,
+          {
+            caseType: workingCase.type,
+            date: `${formatDate(modifiedValidToDate?.value, 'PPPP')?.replace(
+              'dagur,',
+              'dagsins',
+            )} kl. ${formatDate(
+              modifiedValidToDate?.value,
+              Constants.TIME_FORMAT,
+            )}`,
+          },
+        )
       }
 
       if (isolationToDateChanged) {
-        modification = `${modification}Einangrun til ${formatDate(
-          modifiedIsolationToDate?.value,
-          'PPPP',
-        )?.replace('dagur,', 'dagsins')} kl. ${formatDate(
-          modifiedIsolationToDate?.value,
-          Constants.TIME_FORMAT,
-        )}.`
+        const isolationText = formatMessage(
+          m.sections.modifyDatesModal.isolationDateChanged,
+          {
+            date: `${formatDate(
+              modifiedIsolationToDate?.value,
+              'PPPP',
+            )?.replace('dagur,', 'dagsins')} kl. ${formatDate(
+              modifiedIsolationToDate?.value,
+              Constants.TIME_FORMAT,
+            )}`,
+          },
+        )
+        modification = `${modification} ${isolationText}`
       }
     }
 
@@ -376,10 +383,9 @@ export const SignedVerdictOverview: React.FC = () => {
           }),
           text: (
             <MarkdownWrapper
-              text={m.sections.shareCaseModal.closeText}
-              format={{
+              markdown={formatMessage(m.sections.shareCaseModal.closeText, {
                 prosecutorsOffice: workingCase.sharedWithProsecutorsOffice.name,
-              }}
+              })}
             />
           ),
         })
@@ -401,10 +407,9 @@ export const SignedVerdictOverview: React.FC = () => {
           }),
           text: (
             <MarkdownWrapper
-              text={m.sections.shareCaseModal.openText}
-              format={{
+              markdown={formatMessage(m.sections.shareCaseModal.openText, {
                 prosecutorsOffice: (institution as ReactSelectOption).label,
-              }}
+              })}
             />
           ),
         })
@@ -599,30 +604,31 @@ export const SignedVerdictOverview: React.FC = () => {
           setIsModifyingDates(!isModifyingDates)
         }
       />
-      <FormContentContainer isFooter>
-        <FormFooter
-          previousUrl={Constants.CASE_LIST_ROUTE}
-          hideNextButton={
-            user?.role !== UserRole.PROSECUTOR ||
-            workingCase.decision ===
-              CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
-            workingCase.state === CaseState.REJECTED ||
-            workingCase.state === CaseState.DISMISSED ||
-            workingCase.isValidToDateInThePast ||
-            Boolean(workingCase.childCase)
-          }
-          nextButtonText={`Framlengja ${
-            workingCase.type === CaseType.CUSTODY
-              ? 'gæslu'
-              : workingCase.type === CaseType.TRAVEL_BAN
-              ? 'farbann'
-              : 'heimild'
-          }`}
-          onNextButtonClick={() => handleCaseExtension()}
-          nextIsLoading={isExtendingCase}
-          infoBoxText={getExtensionInfoText(workingCase)}
-        />
-      </FormContentContainer>
+      {user?.role !== UserRole.DEFENDER && (
+        <FormContentContainer isFooter>
+          <FormFooter
+            previousUrl={Constants.CASE_LIST_ROUTE}
+            hideNextButton={
+              user?.role !== UserRole.PROSECUTOR ||
+              workingCase.decision ===
+                CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
+              workingCase.state === CaseState.REJECTED ||
+              workingCase.state === CaseState.DISMISSED ||
+              workingCase.isValidToDateInThePast ||
+              Boolean(workingCase.childCase)
+            }
+            nextButtonText={formatMessage(
+              m.sections.caseExtension.buttonLabel,
+              {
+                caseType: workingCase.type,
+              },
+            )}
+            onNextButtonClick={() => handleCaseExtension()}
+            nextIsLoading={isExtendingCase}
+            infoBoxText={getExtensionInfoText(workingCase, formatMessage)}
+          />
+        </FormContentContainer>
+      )}
       {shareCaseModal?.open && (
         <Modal
           title={shareCaseModal.title}
@@ -644,8 +650,12 @@ export const SignedVerdictOverview: React.FC = () => {
               transition={{ duration: 0.5 }}
             >
               <Modal
-                title={formatMessage(m.sections.modifyDatesModal.title)}
-                text={formatMessage(m.sections.modifyDatesModal.text)}
+                title={formatMessage(m.sections.modifyDatesModal.titleV2, {
+                  caseType: workingCase.type,
+                })}
+                text={formatMessage(m.sections.modifyDatesModal.textV2, {
+                  caseType: workingCase.type,
+                })}
                 primaryButtonText={formatMessage(
                   m.sections.modifyDatesModal.primaryButtonText,
                 )}
@@ -688,7 +698,8 @@ export const SignedVerdictOverview: React.FC = () => {
                       m.sections.modifyDatesModal.reasonForChangeLabel,
                     )}
                     placeholder={formatMessage(
-                      m.sections.modifyDatesModal.reasonForChangePlaceholder,
+                      m.sections.modifyDatesModal.reasonForChangePlaceholderV2,
+                      { caseType: workingCase.type },
                     )}
                     onChange={(event) => {
                       handleCaseModifiedExplanationChange(event.target.value)
@@ -709,7 +720,10 @@ export const SignedVerdictOverview: React.FC = () => {
                       name="modifiedValidToDate"
                       size="sm"
                       datepickerLabel={formatMessage(
-                        m.sections.modifyDatesModal.modifiedValidToDateLabel,
+                        m.sections.modifyDatesModal.modifiedValidToDateLabelV2,
+                        {
+                          caseType: workingCase.type,
+                        },
                       )}
                       selectedDate={modifiedValidToDate?.value}
                       onChange={(value, valid) => {
@@ -743,8 +757,8 @@ export const SignedVerdictOverview: React.FC = () => {
                               value !== undefined &&
                                 workingCase.isolationToDate !== undefined &&
                                 compareAsc(
-                                  value,
                                   new Date(workingCase.isolationToDate),
+                                  value,
                                 ) !== 0,
                             )
                           }}
@@ -772,7 +786,10 @@ export const SignedVerdictOverview: React.FC = () => {
               transition={{ duration: 0.5 }}
             >
               <Modal
-                title={formatMessage(m.sections.modifyDatesModal.successTitle)}
+                title={formatMessage(
+                  m.sections.modifyDatesModal.successTitleV2,
+                  { caseType: workingCase.type },
+                )}
                 text={getModificationSuccessText()}
                 secondaryButtonText={formatMessage(
                   m.sections.modifyDatesModal.secondaryButtonTextSuccess,

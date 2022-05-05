@@ -14,6 +14,7 @@ import { useQuery } from '@apollo/client'
 import { ViewSingleStudentQuery } from '../../graphql/queries'
 import { useFormContext } from 'react-hook-form'
 import kennitala from 'kennitala'
+import { Student } from '../../types'
 
 const ViewStudent: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
@@ -22,7 +23,7 @@ const ViewStudent: FC<FieldBaseProps> = ({ application }) => {
   const { data, loading, error } = useQuery(ViewSingleStudentQuery, {
     variables: {
       input: {
-        nationalId: application.answers.nationalId,
+        nationalId: (application.answers.student as Student).nationalId,
       },
     },
     notifyOnNetworkStatusChange: true,
@@ -31,14 +32,9 @@ const ViewStudent: FC<FieldBaseProps> = ({ application }) => {
   useEffect(() => {
     if (data) {
       setValue('studentBookTypes', student.book?.drivingSchoolExams)
-      setValue('studentName', student.name)
       setValue('studentBookId', student.book?.id)
     }
-
-    if (loading) {
-      setValue('studentBookTypes', undefined)
-    }
-  }, [data, loading])
+  }, [data])
 
   const student = data?.drivingLicenseBookStudent
 
@@ -95,7 +91,7 @@ const ViewStudent: FC<FieldBaseProps> = ({ application }) => {
       ) : error ? (
         <AlertMessage
           type="error"
-          message={formatMessage(m.noStudentFoundMessage)}
+          message={formatMessage(m.noStudentInfoFoundMessage)}
         />
       ) : (
         <Skeleton />

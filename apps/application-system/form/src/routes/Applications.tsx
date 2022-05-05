@@ -32,15 +32,17 @@ export const Applications: FC = () => {
 
   useApplicationNamespaces(type)
 
-  const { data, loading, error: applicationsError } = useLocalizedQuery(
-    APPLICATION_APPLICATIONS,
-    {
-      variables: {
-        input: { typeId: type },
-      },
-      skip: !type,
+  const {
+    data,
+    loading,
+    error: applicationsError,
+    refetch,
+  } = useLocalizedQuery(APPLICATION_APPLICATIONS, {
+    variables: {
+      input: { typeId: type },
     },
-  )
+    skip: !type,
+  })
 
   const [createApplicationMutation, { error: createError }] = useMutation(
     CREATE_APPLICATION,
@@ -110,6 +112,7 @@ export const Applications: FC = () => {
                 onClick={(applicationUrl) =>
                   history.push(`../${applicationUrl}`)
                 }
+                refetch={refetch}
               />
             )}
 

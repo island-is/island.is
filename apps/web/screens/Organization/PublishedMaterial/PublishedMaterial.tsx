@@ -115,6 +115,10 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
       },
     },
   })
+  const [publishedMaterial, setPublishedMaterial] = useState({
+    items: [],
+    total: 0,
+  })
 
   const { data, loading, fetchMore } = useQuery<
     Query,
@@ -125,6 +129,11 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
     () => getFilterCategories(genericTagFilters),
     [genericTagFilters],
   )
+
+  useEffect(() => {
+    if (data?.getPublishedMaterial)
+      setPublishedMaterial(data.getPublishedMaterial)
+  }, [data?.getPublishedMaterial])
 
   const filterCategories = initialFilterCategories.map((category) => ({
     ...category,
@@ -201,7 +210,7 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
   const isMobile = width < theme.breakpoints.md
 
   const numberOfItemsThatCouldBeLoaded =
-    (data?.getPublishedMaterial?.total ?? page * ASSETS_PER_PAGE) -
+    (publishedMaterial?.total ?? page * ASSETS_PER_PAGE) -
     page * ASSETS_PER_PAGE
 
   const selectedFilters = getFilterTags(filterCategories)
@@ -290,7 +299,7 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
           </GridRow>
           <GridRow>
             <Filter
-              resultCount={data?.getPublishedMaterial.total ?? 0}
+              resultCount={publishedMaterial?.total ?? 0}
               variant={isMobile ? 'dialog' : 'popover'}
               align="right"
               labelClear={n('clearFilter', 'Hreinsa síu')}
@@ -412,7 +421,7 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
               </GridRow>
             </GridColumn>
           </GridRow>
-          {(data?.getPublishedMaterial.items ?? []).map((item, index) => {
+          {(publishedMaterial?.items ?? []).map((item, index) => {
             return (
               <GridRow
                 key={`${item.id}-${index}`}

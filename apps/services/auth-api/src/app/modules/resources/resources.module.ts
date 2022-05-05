@@ -13,6 +13,7 @@ import {
   IdentityResourceUserClaim,
   ApiScopeGroup,
   Domain,
+  TranslationModule,
 } from '@island.is/auth-api-lib'
 
 @Module({
@@ -29,6 +30,7 @@ import {
       ApiScopeGroup,
       Domain,
     ]),
+    TranslationModule,
   ],
   controllers: [ResourcesController],
   providers: [ResourcesService],

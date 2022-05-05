@@ -63,8 +63,8 @@
 /libs/application/template-api-modules/src/lib/modules/templates/example-payment-actions            @island-is/juni
 /libs/application/templates/driving-school-confirmation/                                            @island-is/juni
 /libs/application/templates/driving-instructor-registrations/                                       @island-is/juni
-/libs/api/domains/driving-license-book/                                                             @island-is/juni 
-/libs/clients/driving-license-book/                                                                 @island-is/juni  
+/libs/api/domains/driving-license-book/                                                             @island-is/juni
+/libs/clients/driving-license-book/                                                                 @island-is/juni
 
 /libs/clients/auth-public-api/                                                                      @island-is/aranja
 /libs/clients/middlewares/                                                                          @island-is/aranja
@@ -82,6 +82,10 @@
 /libs/financial-aid/                                                                                @island-is/kolibri-robin-hood
 /libs/next-ids-auth/                                                                                @island-is/kolibri-robin-hood
 /libs/clients/rsk/personal-tax-return                                                               @island-is/kolibri-robin-hood
+/libs/application/templates/financial-aid/                                                          @island-is/kolibri-robin-hood
+/libs/api/domains/municipalities-financial-aid                                                      @island-is/kolibri-robin-hood
+/libs/clients/municipalities-financial-aid                                                          @island-is/kolibri-robin-hood
+
 
 /apps/download-service/                                                                             @island-is/hugsmidjan
 /apps/service-portal*/                                                                              @island-is/hugsmidjan
@@ -124,6 +128,8 @@
 /libs/api/domains/company-registry                                                                  @island-is/sendiradid
 /libs/clients/health-insurance-v2/                                                                  @island-is/sendiradid
 /libs/clients/data-protection-complaint/                                                            @island-is/sendiradid
+/libs/application/templates/general-fishing-license/                                                @island-is/sendiradid
+/libs/application/template-api-modules/src/lib/modules/templates/general-fishing-license/           @island-is/sendiradid
 /libs/application/template-api-modules/src/lib/modules/templates/data-protection-complaint/         @island-is/sendiradid
 
 /libs/api/domains/application/                                                                      @island-is/sendiradid-applications
@@ -168,6 +174,7 @@ infra/                                                                          
 
 /apps/services/personal-representative/                                                             @island-is/programm
 /apps/services/personal-representative-public/                                                      @island-is/programm
+/libs/api/domains/financial-statements-inao/                                                        @island-is/programm
 
 /libs/application/templates/criminal-record/                                                        @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/criminal-record-submission         @island-is/origo

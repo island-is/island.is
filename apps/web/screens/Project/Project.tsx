@@ -51,12 +51,14 @@ interface PageProps {
   namespace: Query['getNamespace']
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   stepOptionsFromNamespace: { data: Record<string, any>[]; slug: string }[]
+  stepperNamespace: Query['getNamespace']
 }
 
 const ProjectPage: Screen<PageProps> = ({
   projectPage,
   news,
   namespace,
+  stepperNamespace,
   stepOptionsFromNamespace,
 }) => {
   const n = useNamespace(namespace)
@@ -214,6 +216,7 @@ const ProjectPage: Screen<PageProps> = ({
               scrollUpWhenNextStepAppears={false}
               stepper={projectPage.stepper}
               optionsFromNamespace={stepOptionsFromNamespace}
+              namespace={stepperNamespace}
             />
           </Box>
         )}
@@ -259,6 +262,7 @@ ProjectPage.getInitialProps = async ({ apolloClient, locale, query }) => {
       data: { getProjectPage },
     },
     namespace,
+    stepperNamespace,
   ] = await Promise.all([
     apolloClient.query<Query, QueryGetProjectPageArgs>({
       query: GET_PROJECT_PAGE_QUERY,
@@ -274,7 +278,22 @@ ProjectPage.getInitialProps = async ({ apolloClient, locale, query }) => {
         query: GET_NAMESPACE_QUERY,
         variables: {
           input: {
-            namespace: 'Syslumenn',
+            namespace: 'ProjectPages',
+            lang: locale,
+          },
+        },
+      })
+      .then((variables) =>
+        variables.data.getNamespace.fields
+          ? JSON.parse(variables.data.getNamespace.fields)
+          : {},
+      ),
+    apolloClient
+      .query<Query, QueryGetNamespaceArgs>({
+        query: GET_NAMESPACE_QUERY,
+        variables: {
+          input: {
+            namespace: 'StepperFSM',
             lang: locale,
           },
         },
@@ -319,6 +338,7 @@ ProjectPage.getInitialProps = async ({ apolloClient, locale, query }) => {
     projectPage: getProjectPage,
     stepOptionsFromNamespace,
     namespace,
+    stepperNamespace,
     news: getNewsQuery?.data.getNews.items,
     showSearchInHeader: false,
     ...getThemeConfig(getProjectPage.theme),

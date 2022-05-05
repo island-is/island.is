@@ -1169,6 +1169,50 @@
         }
       }
     },
+    "api-domains-financial-statements-inao": {
+      "root": "libs/api/domains/financial-statements-inao",
+      "sourceRoot": "libs/api/domains/financial-statements-inao/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/api/domains/financial-statements-inao/**/*.ts"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/api/domains/financial-statements-inao"],
+          "options": {
+            "jestConfig": "libs/api/domains/financial-statements-inao/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "api-domains-fishing-license": {
+      "root": "libs/api/domains/fishing-license",
+      "sourceRoot": "libs/api/domains/fishing-license/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/api/domains/fishing-license/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/api/domains/fishing-license"],
+          "options": {
+            "jestConfig": "libs/api/domains/fishing-license/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "api-domains-health-insurance": {
       "root": "libs/api/domains/health-insurance",
       "sourceRoot": "libs/api/domains/health-insurance/src",
@@ -1292,6 +1336,36 @@
             "jestConfig": "libs/api/domains/mortgage-certificate/jest.config.js",
             "passWithNoTests": true
           }
+        }
+      }
+    },
+    "api-domains-municipalities-financial-aid": {
+      "root": "libs/api/domains/municipalities-financial-aid",
+      "sourceRoot": "libs/api/domains/municipalities-financial-aid/src ",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/api/domains/municipalities-financial-aid/tsconfig.lib.json",
+              "libs/api/domains/municipalities-financial-aid/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/api/domains/municipalities-financial-aid/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/api/domains/municipalities-financial-aid/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/libs/api/domains/municipalities-financial-aid"]
         }
       }
     },
@@ -2450,6 +2524,41 @@
         }
       }
     },
+    "application-templates-financial-aid": {
+      "root": "libs/application/templates/financial-aid",
+      "sourceRoot": "libs/application/templates/financial-aid/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/financial-aid/tsconfig.lib.json",
+              "libs/application/templates/financial-aid/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/financial-aid/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/application/templates/financial-aid"],
+          "options": {
+            "jestConfig": "libs/application/templates/financial-aid/jest.config.js"
+          }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/financial-aid/src/**/*.{js,ts,tsx}'"
+          }
+        }
+      }
+    },
     "application-templates-funding-government-projects": {
       "root": "libs/application/templates/funding-government-projects",
       "sourceRoot": "libs/application/templates/funding-government-projects/src",
@@ -2483,6 +2592,34 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/funding-government-projects/src/**/*.{js,ts,tsx}'"
+          }
+        }
+      }
+    },
+    "application-templates-general-fishing-license": {
+      "root": "libs/application/templates/general-fishing-license",
+      "sourceRoot": "libs/application/templates/general-fishing-license/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/general-fishing-license/tsconfig.lib.json",
+              "libs/application/templates/general-fishing-license/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/general-fishing-license/**/*"
+            ]
+          }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/general-fishing-license/src/lib/messages/*.ts'"
           }
         }
       }
@@ -3517,6 +3654,45 @@
         }
       }
     },
+    "clients-fishing-license": {
+      "root": "libs/clients/fishing-license",
+      "sourceRoot": "libs/clients/fishing-license/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/clients/fishing-license/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/clients/fishing-license"],
+          "options": {
+            "jestConfig": "libs/clients/fishing-license/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "update-openapi-document": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" https://veidileyfitest.azurewebsites.net/swagger/v1/swagger.json -H 'Accept: application/json' > src/clientConfig.json",
+              "jq '.components.schemas.ProblemDetails.additionalProperties = false' src/clientConfig.json > _.tmp && mv _.tmp src/clientConfig.json",
+              "prettier --write src/clientConfig.json"
+            ],
+            "parallel": false,
+            "cwd": "libs/clients/fishing-license"
+          }
+        },
+        "schemas/external-openapi-generator": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn openapi-generator -o libs/clients/fishing-license/src/lib/gen/fetch -i libs/clients/fishing-license/src/clientConfig.json"
+          }
+        }
+      }
+    },
     "clients-health-insurance-v2": {
       "root": "libs/clients/health-insurance-v2",
       "sourceRoot": "libs/clients/health-insurance-v2/src",
@@ -3615,6 +3791,39 @@
           "options": {
             "jestConfig": "libs/clients/mms/jest.config.js",
             "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "clients-municipalities-financial-aid": {
+      "root": "libs/clients/municipalities-financial-aid",
+      "sourceRoot": "libs/clients/municipalities-financial-aid/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/clients/municipalities-financial-aid/**/*.ts"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/clients/municipalities-financial-aid"],
+          "options": {
+            "jestConfig": "libs/clients/municipalities-financial-aid/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "schemas/external-openapi-generator": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "nx run financial-aid-backend:schemas/build-openapi-internal $NX_OPTIONS",
+              "yarn openapi-generator -o libs/clients/municipalities-financial-aid/gen/fetch -i apps/financial-aid/backend/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
+            ],
+            "parallel": false
           }
         }
       }
@@ -4645,6 +4854,12 @@
           }
         },
         "schemas/build-openapi": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn nx run financial-aid-backend:schemas/build-openapi-internal $NX_OPTIONS"
+          }
+        },
+        "schemas/build-openapi-internal": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "outputPath": "apps/financial-aid/backend/src/openapi.yaml",

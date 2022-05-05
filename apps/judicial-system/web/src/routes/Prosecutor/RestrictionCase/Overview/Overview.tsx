@@ -29,7 +29,6 @@ import {
   CaseInfo,
   AccordionListItem,
 } from '@island.is/judicial-system-web/src/components'
-import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system/formatters'
 import {
   ProsecutorSubsections,
   Sections,
@@ -42,6 +41,7 @@ import {
   rcOverview,
   requestCourtDate,
 } from '@island.is/judicial-system-web/messages'
+import { restrictionsV2 } from '@island.is/judicial-system-web/messages'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import CommentsAccordionItem from '@island.is/judicial-system-web/src/components/AccordionItems/CommentsAccordionItem/CommentsAccordionItem'
 import { createCaseResentExplanation } from '@island.is/judicial-system-web/src/utils/stepHelper'
@@ -49,6 +49,7 @@ import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader
 import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
 import type { CaseLegalProvisions } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system/consts'
+import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
 
 import * as styles from './Overview.css'
 
@@ -126,12 +127,9 @@ export const Overview: React.FC = () => {
       <FormContentContainer>
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
-            {formatMessage(rcOverview.heading, {
-              caseType: `${workingCase.parentCase ? 'framlengingu á ' : ''}${
-                workingCase.type === CaseType.CUSTODY
-                  ? 'gæsluvarðhald'
-                  : 'farbann'
-              }${workingCase.parentCase ? 'i' : ''}`,
+            {formatMessage(rcOverview.headingV2, {
+              isExtended: workingCase?.parentCase ? 'yes' : 'no',
+              caseType: workingCase.type,
             })}
           </Text>
         </Box>
@@ -200,11 +198,9 @@ export const Overview: React.FC = () => {
               },
               {
                 title: workingCase.parentCase
-                  ? `${
-                      workingCase.type === CaseType.CUSTODY
-                        ? formatMessage(core.pastCustody)
-                        : formatMessage(core.pastTravelBan)
-                    }`
+                  ? formatMessage(core.pastRestrictionCase, {
+                      caseType: workingCase.type,
+                    })
                   : formatMessage(core.arrestDate),
                 value: workingCase.parentCase
                   ? `${capitalize(
@@ -287,11 +283,12 @@ export const Overview: React.FC = () => {
             <AccordionItem
               labelVariant="h3"
               id="id_3"
-              label={`Takmarkanir og tilhögun ${
-                workingCase.type === CaseType.CUSTODY ? 'gæslu' : 'farbanns'
-              }`}
+              label={formatMessage(restrictionsV2.title, {
+                caseType: workingCase.type,
+              })}
             >
               {formatRequestedCustodyRestrictions(
+                formatMessage,
                 workingCase.type,
                 workingCase.requestedCustodyRestrictions,
                 workingCase.requestedOtherRestrictions,
@@ -424,11 +421,8 @@ export const Overview: React.FC = () => {
       <AnimatePresence>
         {modalVisible && (
           <Modal
-            title={formatMessage(rcOverview.sections.modal.heading, {
-              caseType:
-                workingCase.type === CaseType.CUSTODY
-                  ? 'gæsluvarðhald'
-                  : 'farbann',
+            title={formatMessage(rcOverview.sections.modal.headingV2, {
+              caseType: workingCase.type,
             })}
             text={modalText}
             handleClose={() => router.push(Constants.CASE_LIST_ROUTE)}

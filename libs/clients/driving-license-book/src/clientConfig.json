@@ -418,15 +418,16 @@
         }
       }
     },
-    "/api/School/GetSchoolForSchoolStaff": {
+    "/api/School/GetSchoolForSchoolStaff/{userSsn}": {
       "get": {
         "tags": ["DrivingLicenseBook"],
         "summary": "Gets the school a person with a given SSN is associated with, if any. Returns null if person is not a school employee.",
         "parameters": [
           {
             "name": "userSsn",
-            "in": "query",
+            "in": "path",
             "description": "",
+            "required": true,
             "schema": {
               "type": "string"
             }
@@ -2262,6 +2263,62 @@
               }
             }
           },
+          "200": {
+            "description": "Success"
+          },
+          "204": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        }
+      }
+    },
+    "/api/TestCenter/StudentLicenseNumber": {
+      "get": {
+        "tags": ["DrivingLicenseBook"],
+        "summary": "Get student license number",
+        "parameters": [
+          {
+            "name": "ssn",
+            "in": "query",
+            "description": "Social security number of student",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "licenseCategory",
+            "in": "query",
+            "description": "License category",
+            "schema": {
+              "type": "string",
+              "default": "B"
+            }
+          }
+        ],
+        "responses": {
           "200": {
             "description": "Success"
           },

@@ -1,25 +1,22 @@
-import React, { FC } from 'react'
-import { Document } from '@island.is/api/schema'
-import { useLocale } from '@island.is/localization'
-import { Text, Box, GridRow, GridColumn, Link } from '@island.is/island-ui/core'
-import format from 'date-fns/format'
-import { dateFormat } from '@island.is/shared/constants'
-import * as styles from './DocumentLine.css'
-import { User } from 'oidc-client'
 import cn from 'classnames'
-import { m } from '@island.is/service-portal/core'
-import { getAccessToken } from '@island.is/auth/react'
+import format from 'date-fns/format'
+import React, { FC } from 'react'
 import { useWindowSize } from 'react-use'
+
+import { Document } from '@island.is/api/schema'
+import { getAccessToken } from '@island.is/auth/react'
+import { Box, GridColumn, GridRow, Link, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
+import { dateFormat } from '@island.is/shared/constants'
+
+import * as styles from './DocumentLine.css'
 
 interface Props {
   documentLine: Document
-  userInfo: User
   img?: string
 }
 
-const DocumentLine: FC<Props> = ({ documentLine, userInfo, img }) => {
-  const { formatMessage } = useLocale()
+const DocumentLine: FC<Props> = ({ documentLine, img }) => {
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.sm
 
@@ -62,13 +59,7 @@ const DocumentLine: FC<Props> = ({ documentLine, userInfo, img }) => {
     </Text>
   )
 
-  const image = img && (
-    <img
-      className={styles.image}
-      src={img}
-      alt={`${formatMessage(m.altText)} ${documentLine.subject}`}
-    />
-  )
+  const image = img && <img className={styles.image} src={img} alt="" />
 
   const subject =
     documentLine.fileType === 'url' && documentLine.url ? (

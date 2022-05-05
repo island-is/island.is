@@ -52,7 +52,7 @@ const useNationalRegistry = (nationalId?: string) => {
     } else {
       isMounted.current = true
     }
-  }, [nationalId])
+  }, [nationalId, shouldFetch])
 
   useEffect(() => {
     if (
