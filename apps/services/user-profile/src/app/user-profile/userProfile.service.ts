@@ -102,8 +102,6 @@ export class UserProfileService {
       apiKey: environment.notification.magicBell.apiKey,
       apiSecret: environment.notification.magicBell.apiSecret,
     })
-    console.log(environment)
-    console.log("asdf",process.env.MAGICBELL_API_KEY,"asdf",process.env.MAGICBELL_API_SECRET)
     console.log("Got client:", MagicBellClient)
     try {
       const notification = await Notification.create({

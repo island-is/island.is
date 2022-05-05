@@ -9,17 +9,17 @@ export class CreateNotificationDto {
 
   @IsNotEmpty()
   @IsString()
-  @ApiProperty()
+  @ApiProperty({ required: true, example: "Kominn tími á skoðun?" })
   readonly title!: string
 
   @IsNotEmpty()
   @IsString()
-  @ApiProperty()
+  @ApiProperty({ required: true, example: "Gaur, hvar er bíllinn þinn? kv,Samgöngustofa" })
   readonly content!: string
 
   @IsNotEmpty()
   @IsString()
-  @ApiProperty()
+  @ApiProperty({ required: true, example: "/minarsidur/okutaeki" })
   readonly action_url!: string
 
 }
