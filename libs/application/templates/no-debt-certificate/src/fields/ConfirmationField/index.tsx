@@ -30,7 +30,12 @@ type ConfirmationFieldProps = {
     externalData: {
       noDebtCertificate: {
         data: {
-          certificate: string
+          debtLessCertificateResult: {
+            certificate: {
+              type: string
+              document: string
+            }
+          }
         }
       }
     }
@@ -43,7 +48,9 @@ export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
   const { externalData } = application
   const { formatMessage } = useLocale()
   const [viewNoDebtCertificate, setViewNoDebtCertificate] = useState(false)
-  const { certificate } = externalData.noDebtCertificate.data
+  const {
+    document,
+  } = externalData.noDebtCertificate.data.debtLessCertificateResult.certificate
 
   function renderFooter() {
     return (
@@ -85,7 +92,7 @@ export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
             title="Go back"
           />
           <a
-            href={`data:application/pdf;base64,${certificate}`}
+            href={`data:application/pdf;base64,${document}`}
             download="skuldleysisvottord.pdf"
             className={styles.linkWithoutDecorations}
           >
@@ -98,7 +105,7 @@ export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
             </Button>
           </a>
         </Box>
-        <PdfViewer file={`data:application/pdf;base64,${certificate}`} />
+        <PdfViewer file={`data:application/pdf;base64,${document}`} />
         {renderFooter()}
       </>
     )

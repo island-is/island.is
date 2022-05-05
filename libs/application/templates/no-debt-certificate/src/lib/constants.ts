@@ -5,6 +5,7 @@ export type Events = { type: DefaultEvents.SUBMIT }
 export enum States {
   DRAFT = 'draft',
   COMPLETED = 'completed',
+  INCOMPLETED = 'incompleted',
 }
 
 export enum Roles {

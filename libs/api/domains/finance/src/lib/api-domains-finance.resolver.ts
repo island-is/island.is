@@ -223,11 +223,11 @@ export class FinanceResolver {
   @Audit()
   async getDebtLessCertificate(
     @CurrentUser() user: User,
-    //@Args('input') input: GetDebtLessCertificateInput,
+    @Args('input') language: string,
   ) {
     return this.financeService.getDebtLessCertificate(
       user.nationalId,
-      'IS', //TODOx get from input //input.language,
+      language,
       user,
     )
   }

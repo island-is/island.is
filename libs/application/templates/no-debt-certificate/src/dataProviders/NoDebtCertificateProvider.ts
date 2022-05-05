@@ -6,14 +6,14 @@ import {
   StaticText,
 } from '@island.is/application/core'
 import { m } from '../lib/messages'
-
+import { useLocale } from '@island.is/localization'
 export class NoDebtCertificateProvider extends BasicDataProvider {
   type = 'NoDebtCertificateProvider'
 
   async provide(): Promise<unknown> {
     const query = `
-    query GetDebtLessCertificate {
-        getDebtLessCertificate {
+    query GetDebtLessCertificate($input: String!) {
+        getDebtLessCertificate(input: $input) {
           debtLessCertificateResult {
             debtLess
             certificate {
@@ -36,7 +36,9 @@ export class NoDebtCertificateProvider extends BasicDataProvider {
       }
     `
 
-    return this.useGraphqlGateway(query).then(async (res: Response) => {
+    return this.useGraphqlGateway(query, {
+      input: this.config.locale === 'is' ? 'IS' : 'EN',
+    }).then(async (res: Response) => {
       const response = await res.json()
 
       if (response.errors) {
@@ -56,16 +58,13 @@ export class NoDebtCertificateProvider extends BasicDataProvider {
       if (
         !response.data.getDebtLessCertificate.debtLessCertificateResult.debtLess
       ) {
+        // todo add title to error
         return Promise.reject({
           reason: m.missingCertificate,
         })
       }
 
-      return Promise.resolve({
-        certificate:
-          response.data.getDebtLessCertificate.debtLessCertificateResult
-            .certificate.document,
-      })
+      return Promise.resolve(response.data.getDebtLessCertificate)
     })
   }
 
