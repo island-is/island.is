@@ -8,6 +8,7 @@ import {
 } from './Shared'
 import { ComplaineeTable } from '../ComplaineeRepeater/ComplaineeTable'
 import { useLocale } from '@island.is/localization'
+import { Box, Text } from '@island.is/island-ui/core'
 
 export const Applicant: FC<{ answers: DataProtectionComplaint }> = ({
   answers,
@@ -115,20 +116,25 @@ export const Complaint: FC<{ answers: DataProtectionComplaint }> = ({
   return (
     <>
       <SectionHeading title={complaint.general.complaintPageTitle} />
-      <ValueLine
-        label={complaint.general.subjectOfComplaintPageTitle}
-        value={
-          answers.subjectOfComplaint.values
-            ?.map((x) =>
-              formatMessage(
-                subjectOfComplaintValueLabelMapper[
-                  x as keyof typeof subjectOfComplaintValueLabelMapper
-                ],
-              ),
+      {answers.subjectOfComplaint.values &&
+      answers.subjectOfComplaint.values.length > 0 ? (
+        <Box paddingY={3}>
+          <Text variant="h5">
+            {formatMessage(complaint.general.subjectOfComplaintPageTitle)}
+          </Text>
+          {answers.subjectOfComplaint.values?.map((x) => {
+            return (
+              <Text>
+                {formatMessage(
+                  subjectOfComplaintValueLabelMapper[
+                    x as keyof typeof subjectOfComplaintValueLabelMapper
+                  ],
+                )}
+              </Text>
             )
-            .join(', ') || ''
-        }
-      />
+          })}
+        </Box>
+      ) : null}
       {answers.subjectOfComplaint.somethingElse && (
         <ValueLine
           label={complaint.labels.subjectOtherOther}
