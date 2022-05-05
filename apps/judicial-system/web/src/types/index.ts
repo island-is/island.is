@@ -51,6 +51,10 @@ export interface CaseData {
   case?: Case
 }
 
+export interface RestrictedCaseData {
+  restrictedCase?: Case
+}
+
 export interface UserData {
   users: User[]
 }

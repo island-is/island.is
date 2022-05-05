@@ -120,6 +120,20 @@ export const serializeService: SerializeMethod = (
     }
   }
 
+  result.hpa = {
+    scaling: {
+      replicas: {
+        min: result.replicaCount.min,
+        max: result.replicaCount.max,
+      },
+      metric: {
+        cpuAverageUtilization: 70,
+      },
+    },
+  }
+  result.hpa.scaling.metric.nginxRequestsIrate =
+    serviceDef.replicaCount?.scalingMagicNumber || 2
+
   // extra attributes
   if (serviceDef.extraAttributes) {
     const { envs, errors } = serializeExtraVariables(
