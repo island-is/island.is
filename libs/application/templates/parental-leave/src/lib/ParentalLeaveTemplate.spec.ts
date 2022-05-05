@@ -266,6 +266,66 @@ describe('Parental Leave Application Template', () => {
         expect(hasChanged).toBe(true)
         expect(newApplication.answers.personalAllowance).toEqual(null)
       })
+
+      it('should remove usage if useAsMuchAsPossible in personalAllowance is set to YES', () => {
+        const helper = new ApplicationTemplateHelper(
+          buildApplication({
+            answers: {
+              usePersonalAllowance: YES,
+              personalAllowance: {
+                usage: '0',
+                useAsMuchAsPossible: YES,
+              },
+              employer: {
+                isSelfEmployed: 'no',
+              },
+            },
+          }),
+          ParentalLeaveTemplate,
+        )
+
+        const answer = {
+          useAsMuchAsPossible: YES,
+        }
+
+        const [hasChanged, _, newApplication] = helper.changeState({
+          type: DefaultEvents.SUBMIT,
+        })
+
+        expect(hasChanged).toBe(true)
+        expect(newApplication.answers.personalAllowance).toEqual(answer)
+      })
+
+      it('should remove usage if useAsMuchAsPossible in personalAllowanceFromSpouse is set to YES', () => {
+        const helper = new ApplicationTemplateHelper(
+          buildApplication({
+            answers: {
+              usePersonalAllowanceFromSpouse: YES,
+              personalAllowanceFromSpouse: {
+                usage: '0',
+                useAsMuchAsPossible: YES,
+              },
+              employer: {
+                isSelfEmployed: 'no',
+              },
+            },
+          }),
+          ParentalLeaveTemplate,
+        )
+
+        const answer = {
+          useAsMuchAsPossible: YES,
+        }
+
+        const [hasChanged, _, newApplication] = helper.changeState({
+          type: DefaultEvents.SUBMIT,
+        })
+
+        expect(hasChanged).toBe(true)
+        expect(newApplication.answers.personalAllowanceFromSpouse).toEqual(
+          answer,
+        )
+      })
     })
   })
 
