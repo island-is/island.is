@@ -43,7 +43,7 @@ const api_resource_user_claims = [
 ]
 
 const client = {
-  client_id: 'island-is-1',
+  client_id: '@island.is/web',
   client_type: 'spa',
   require_client_secret: false,
   enable_local_login: true,

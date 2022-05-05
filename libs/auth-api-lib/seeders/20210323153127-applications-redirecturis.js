@@ -1,6 +1,6 @@
 'use strict'
 
-const client_id = 'island-is-1'
+const client_id = '@island.is/web'
 
 const client_redirect_uris = [
   {
