@@ -29,6 +29,7 @@ const devConfig = {
     magicBell:{
       apiKey: process.env.MAGICBELL_API_KEY ?? '',
       apiSecret: process.env.MAGICBELL_API_SECRET ?? '',
+      apiTrash: process.env.MAGICBELL_API_TRASH ?? '',
     },
     oneSignal:{
       apiKey: process.env.MAGICBELL_API_KEY ?? '',
@@ -69,6 +70,7 @@ const prodConfig = {
     magicBell:{
       apiKey: process.env.MAGICBELL_API_KEY ?? '',
       apiSecret: process.env.MAGICBELL_API_SECRET ?? '',
+      apiTrash: process.env.MAGICBELL_API_TRASH ?? '',
     },
     oneSignal:{
       apiKey: process.env.ONESIGNAL_API_KEY ?? '',

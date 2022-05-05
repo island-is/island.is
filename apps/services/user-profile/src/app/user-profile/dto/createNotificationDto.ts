@@ -19,7 +19,7 @@ export class CreateNotificationDto {
 
   @IsNotEmpty()
   @IsString()
-  @ApiProperty({ required: true, example: "/minarsidur/okutaeki" })
+  @ApiProperty({ required: false, example: "/minarsidur/okutaeki" })
   readonly action_url!: string
 
 }
