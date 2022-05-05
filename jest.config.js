@@ -82,6 +82,7 @@ module.exports = {
     '<rootDir>/libs/api/domains/education',
     '<rootDir>/libs/api/domains/file-upload',
     '<rootDir>/libs/api/domains/finance',
+    '<rootDir>/libs/api/domains/financial-statements-inao',
     '<rootDir>/libs/api/domains/fishing-license',
     '<rootDir>/libs/api/domains/health-insurance',
     '<rootDir>/libs/api/domains/identity',

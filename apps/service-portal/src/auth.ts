@@ -38,6 +38,7 @@ if (userMocked) {
       'profile',
       'api_resource.scope',
       ApplicationScope.read,
+      ApplicationScope.write,
       UserProfileScope.read,
       UserProfileScope.write,
       AuthScope.actorDelegations,

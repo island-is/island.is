@@ -124,6 +124,9 @@
     "api-domains-finance": {
       "tags": []
     },
+    "api-domains-financial-statements-inao": {
+      "tags": []
+    },
     "api-domains-fishing-license": {
       "tags": []
     },
