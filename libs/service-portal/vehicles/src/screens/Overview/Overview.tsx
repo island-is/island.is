@@ -144,7 +144,7 @@ export const VehiclesOverview: ServicePortalModuleComponent = () => {
           </GridColumn>
         </GridRow>
       </Box>
-      {vehicles.length === 0 && (
+      {!loading && vehicles.length === 0 && (
         <Box marginTop={8}>
           <EmptyState title={m.noDataFound} />
         </Box>
