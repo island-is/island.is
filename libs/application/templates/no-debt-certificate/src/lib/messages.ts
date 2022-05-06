@@ -148,14 +148,14 @@ export const m = defineMessages({
     defaultMessage: 'Nánari upplýsingar um sannreyningu má finna á',
     description: '',
   },
-  vertificationLinkUrl: {
-    id: 'cr.application:vertificationLinkUrl',
+  verificationLinkUrl: {
+    id: 'cr.application:verificationLinkUrl',
     defaultMessage: 'https://island.is/sannreyna',
     description:
       'The url for the link to further information about the verification',
   },
-  vertificationLinkTitle: {
-    id: 'cr.application:vertificationLinkTitle',
+  verificationLinkTitle: {
+    id: 'cr.application:verificationLinkTitle',
     defaultMessage: 'island.is/sannreyna',
     description:
       'The title for the link to further information about the verification',

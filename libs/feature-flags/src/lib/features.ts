@@ -15,4 +15,5 @@ export enum Features {
   // Application visibility flags
   exampleApplication = 'isExampleApplicationEnabled',
   accidentNotification = 'isAccidentNotificationEnabled',
+  noDebtCertificate = 'applicationTemplateNoDebtCertificateEnabled',
 }

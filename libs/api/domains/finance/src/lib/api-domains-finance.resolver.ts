@@ -34,7 +34,7 @@ import { DebtStatusModel } from './models/debtStatus.model'
 import { GetFinancePaymentScheduleInput } from './dto/getFinancePaymentSchedule.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(ApiScope.financeOverview, ApiScope.internal)
+@Scopes(ApiScope.financeOverview)
 @Resolver()
 @Audit({ namespace: '@island.is/api/finance' })
 export class FinanceResolver {
@@ -221,6 +221,7 @@ export class FinanceResolver {
 
   @Query(() => DebtLessCertificateModel)
   @Audit()
+  @Scopes(ApiScope.financeOverview, ApiScope.internal)
   async getDebtLessCertificate(
     @CurrentUser() user: User,
     @Args('input') language: string,

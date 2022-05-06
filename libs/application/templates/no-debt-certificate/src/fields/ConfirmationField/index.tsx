@@ -105,7 +105,10 @@ export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
             </Button>
           </a>
         </Box>
-        <PdfViewer file={`data:application/pdf;base64,${document}`} />
+        <PdfViewer
+          renderMode="svg"
+          file={`data:application/pdf;base64,${document}`}
+        />
         {renderFooter()}
       </>
     )
@@ -156,10 +159,14 @@ export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
           }}
         >
           <Text variant="small">
-            {formatText(m.vertificationDescription, application, formatMessage)}{' '}
+            {`${formatText(
+              m.vertificationDescription,
+              application,
+              formatMessage,
+            )} `}
             <Link
               href={formatText(
-                m.vertificationLinkUrl,
+                m.verificationLinkUrl,
                 application,
                 formatMessage,
               )}
@@ -167,7 +174,7 @@ export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
               underline="normal"
               underlineVisibility="always"
             >
-              {formatText(m.vertificationLinkTitle, application, formatMessage)}
+              {formatText(m.verificationLinkTitle, application, formatMessage)}
             </Link>
           </Text>
         </LinkContext.Provider>
