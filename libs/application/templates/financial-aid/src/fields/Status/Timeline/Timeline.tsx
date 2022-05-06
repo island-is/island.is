@@ -9,12 +9,12 @@ import { ApplicationState } from '@island.is/financial-aid/shared/lib'
 
 import * as styles from './Timeline.css'
 import { timeline } from '../../../lib/messages'
-import { timelineSections } from '../../../lib/formatters'
+import { formatDate, timelineSections } from '../../../lib/formatters'
 
 interface Props {
   state?: ApplicationState
-  modified?: string
-  created?: string
+  modified: Date
+  created: Date
   showSpouseStep?: boolean
 }
 
@@ -56,7 +56,8 @@ const Timeline = ({ state, modified, created, showSpouseStep }: Props) => {
               <Text marginBottom={2}>{formatMessage(item.text)}</Text>
 
               <Text variant="small" color="dark300" marginBottom={5}>
-                {(index === 0 || index === activeState) && item.date}
+                {(index === 0 || index === activeState) &&
+                  formatDate(item.date)}
               </Text>
             </Box>
           </Box>

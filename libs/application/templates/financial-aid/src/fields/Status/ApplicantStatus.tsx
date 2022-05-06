@@ -55,9 +55,15 @@ const ApplicantStatus = ({ application }: FAFieldBaseProps) => {
 
       <Timeline
         state={state}
-        created={currentApplication?.created ?? application.created.toString()}
+        created={
+          currentApplication?.created
+            ? new Date(currentApplication.created)
+            : application.created
+        }
         modified={
-          currentApplication?.modified ?? application.modified.toString()
+          currentApplication?.modified
+            ? new Date(currentApplication.modified)
+            : application.modified
         }
         showSpouseStep={hasSpouse(
           application.answers,
