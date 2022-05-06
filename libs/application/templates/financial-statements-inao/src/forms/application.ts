@@ -11,9 +11,9 @@ import {
   buildFileUploadField,
   buildExternalDataProvider,
   buildDataProviderItem,
+  DefaultEvents,
 } from '@island.is/application/core'
 import { Logo } from '../assets'
-import { ApiActions } from '../shared'
 import { m } from '../lib/messages'
 
 export const Application: Form = buildForm({
@@ -144,33 +144,17 @@ export const Application: Form = buildForm({
             }),
             buildSubmitField({
               id: 'submit',
+              title: '',
               placement: 'screen',
-              title: m.send,
-              actions: [{ event: 'SUBMIT', name: m.send, type: 'primary' }],
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Senda inn umsókn',
+                  type: 'primary',
+                },
+              ],
             }),
           ],
-        }),
-        buildDescriptionField({
-          id: 'final',
-          title: m.thankYou,
-          description: (application) => {
-            const sendApplicationActionResult =
-              application.externalData[ApiActions.createApplication]
-
-            let id = 'unknown'
-            if (sendApplicationActionResult) {
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore
-              id = sendApplicationActionResult.data.id
-            }
-
-            return {
-              ...m.outroMessage,
-              values: {
-                id,
-              },
-            }
-          },
         }),
       ],
     }),
