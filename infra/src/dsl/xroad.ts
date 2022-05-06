@@ -312,3 +312,13 @@ export const FishingLicense = new XroadConf({
     },
   },
 })
+
+export const Vehicles = new XroadConf({
+  env: {
+    VEHICLES_XROAD_PATH: {
+      dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Mitt-Svaedi-V1',
+      staging: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Mitt-Svaedi-V1',
+      prod: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Mitt-Svaedi-V1',
+    },
+  },
+})

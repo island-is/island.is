@@ -14,11 +14,11 @@ export const VehiclesClientConfig = defineConfig<z.infer<typeof schema>>({
   load(env) {
     return {
       xRoadServicePath: env.required(
-        'VEHICLES_XROAD_PATH', //TODO setja upp env breytu
+        'VEHICLES_XROAD_PATH',
         'IS-DEV/GOV/10017/Samgongustofa-Protected/Mitt-Svaedi-V1',
       ),
       fetch: {
-        timeout: 10000, //env.optionalJSON('XROAD_DRIVING_LICENSE_BOOK_TIMEOUT') ??
+        timeout: 10000,
       },
     }
   },
