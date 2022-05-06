@@ -16,115 +16,19 @@ import {
   UserInfoLine,
 } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-
 import BaseInfoItem from '../../components/DetailTable/BaseInfoItem'
 import RegistrationInfoItem from '../../components/DetailTable/RegistrationInfoItem'
 import OwnerInfoItem from '../../components/DetailTable/OwnerInfoItem'
 import InspectionInfoItem from '../../components/DetailTable/InspectionInfoItem'
 import TechnicalInfoItem from '../../components/DetailTable/TechnicalInfoItem'
 import OwnersTable from '../../components/DetailTable/OwnersTable'
-import { gql, useQuery } from '@apollo/client'
+import { useQuery } from '@apollo/client'
 import { CurrentOwnerInfo, Query } from '@island.is/api/schema'
 import OperatorInfoItem from '../../components/DetailTable/OperatorInfoItem'
 import CoOwnerInfoItem from '../../components/DetailTable/CoOwnerInfoItem'
 import { useParams } from 'react-router-dom'
 import { messages } from '../../lib/messages'
-const GET_USERS_VEHICLE_DETAIL = gql`
-  query GetUsersVehicles($input: GetVehicleDetailInput!) {
-    getVehicleDetail(input: $input) {
-      mainInfo {
-        model
-        subModel
-        regno
-        year
-        co2
-        cubicCapacity
-        trailerWithBrakesWeight
-        trailerWithoutBrakesWeight
-      }
-      basicInfo {
-        model
-        regno
-        subModel
-        permno
-        verno
-        year
-        country
-        preregDateYear
-        formerCountry
-        importStatus
-      }
-      registrationInfo {
-        firstRegistrationDate
-        preRegistrationDate
-        newRegistrationDate
-        vehicleGroup
-        color
-        reggroup
-        passengers
-        useGroup
-        driversPassengers
-        standingPassengers
-      }
-      currentOwnerInfo {
-        owner
-        persidno
-        address
-        postalcode
-        city
-        dateOfPurchase
-      }
-      inspectionInfo {
-        type
-        date
-        result
-        plateStatus
-        nextInspectionDate
-        lastInspectionDate
-      }
-      technicalInfo {
-        engine
-        totalWeight
-        cubicCapacity
-        capacityWeight
-        length
-        vehicleWeight
-        width
-        trailerWithoutBrakesWeight
-        horsepower
-        trailerWithBrakesWeight
-        carryingCapacity
-        axleTotalWeight
-        axle {
-          axleMaxWeight
-          wheelAxle
-        }
-      }
-      ownersInfo {
-        name
-        address
-        dateOfPurchase
-      }
-      coOwners {
-        persidno
-        owner
-        address
-        postalcode
-        city
-        dateOfPurchase
-      }
-      operator {
-        persidno
-        name
-        address
-        postalcode
-        city
-        startDate
-        endDate
-      }
-    }
-  }
-`
+import { GET_USERS_VEHICLE_DETAIL } from '@island.is/service-portal/graphql'
 
 const VehicleDetail: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.vehicles')
@@ -152,7 +56,6 @@ const VehicleDetail: ServicePortalModuleComponent = ({ userInfo }) => {
     operator,
     coOwners,
   } = data?.getVehicleDetail || {}
-  console.log(data)
 
   const year = mainInfo?.year ? '(' + mainInfo.year + ')' : ''
 
