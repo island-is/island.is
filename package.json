@@ -227,6 +227,7 @@
     "react-keyed-flatten-children": "1.2.0",
     "react-modal": "3.12.1",
     "react-number-format": "4.9.1",
+    "react-onesignal": "2.0.3",
     "react-pdf": "5.2.0",
     "react-popper": "2.2.5",
     "react-remove-scroll": "2.4.0",

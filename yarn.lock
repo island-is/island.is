@@ -26362,6 +26362,11 @@ react-onclickoutside@^6.9.0:
   resolved "https://registry.yarnpkg.com/react-onclickoutside/-/react-onclickoutside-6.10.0.tgz#05abb592575b08b4d129003494056b9dff46eeeb"
   integrity sha512-7i2L3ef+0ILXpL6P+Hg304eCQswh4jl3ynwR71BSlMU49PE2uk31k8B2GkP6yE9s2D4jTGKnzuSpzWxu4YxfQQ==
 
+react-onesignal@2.0.3:
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/react-onesignal/-/react-onesignal-2.0.3.tgz#3c4cd656f811c3502f40b61854fbbfb86bbf499c"
+  integrity sha512-zX27Hig31g7wypEaJSzgSIjO/DsxqPqTaJA1/l1T0qmbRTyabL/FslWjjnPQDvQQHtix+KNw8q4pQ5BzGPXEig==
+
 react-pdf@5.2.0:
   version "5.2.0"
   resolved "https://registry.yarnpkg.com/react-pdf/-/react-pdf-5.2.0.tgz#a0c3b8fb953eb3aaad58d7cb35aba2dc71a0cc9e"

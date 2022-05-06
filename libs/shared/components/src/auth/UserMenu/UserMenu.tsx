@@ -4,6 +4,7 @@ import { useAuth } from '@island.is/auth/react'
 import { UserButton } from './UserButton'
 import { UserDropdown } from './UserDropdown'
 import { UserLanguageSwitcher } from './UserLanguageSwitcher'
+import OneSignal from 'react-onesignal'
 
 import MagicBell, {
   FloatingNotificationInbox,
@@ -74,6 +75,7 @@ export const UserMenu = ({
   const [dropdownState, setDropdownState] = useState<'closed' | 'open'>(
     'closed',
   )
+  const [initialized, setInitialized] = useState<boolean>(false)
   const { signOut, switchUser, userInfo: user } = useAuth()
 
   const handleClick = () => {
@@ -92,6 +94,33 @@ export const UserMenu = ({
   if (!user) {
     return null
   }
+
+  useEffect(() => {
+    async function initNotification() {
+      if(!initialized){
+         await OneSignal.init({
+        appId: 'cefc0ead-8d4a-494f-95d2-8d040669b54a',
+      }).then(() => {
+        setInitialized(true)
+       
+      })
+      await OneSignal.showSlidedownPrompt().then(() => {
+        // do other stuff
+        console.log(initialized, initialized)
+      })
+      }
+      await OneSignal.isPushNotificationsEnabled(function(isEnabled) {
+        if (isEnabled)
+          console.log("Push notifications are enabled!");
+        else
+          console.log("Push notifications are not enabled yet.");    
+      });
+      console.log("HELLO", initialized)
+    }
+     
+    initNotification()
+  }, [initialized])
+
 
   return (
     <Box display="flex" position="relative" height="full">
