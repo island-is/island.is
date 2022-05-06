@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import * as kennitala from 'kennitala'
 
 import { useAuth } from '@island.is/auth/react'
 import { ServicePortalModule } from '@island.is/service-portal/core'
@@ -40,7 +41,9 @@ export const useModules = () => {
          * nationalIdType is included in the token. Need to somehow extract.
          * if (userInfo.nationalIdType === 'company')
          */
-        const IS_COMPANY = true // Todo make this proper
+        const IS_COMPANY = kennitala.isCompany(
+          userInfo?.profile?.nationalId || '',
+        ) // TODO: Use other way to do this
         if (IS_COMPANY && !companyModules.includes(moduleKey as ModuleKeys)) {
           return ffModules
         }

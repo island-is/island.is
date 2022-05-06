@@ -1,6 +1,6 @@
 import React from 'react'
 import { defineMessage } from 'react-intl'
-import { useQuery } from '@apollo/client'
+import { useQuery, gql } from '@apollo/client'
 import { spmm } from '../../lib/messages'
 import { Query } from '@island.is/api/schema'
 import {
@@ -18,18 +18,28 @@ import {
   m,
 } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { NATIONAL_REGISTRY_USER } from '../../lib/queries/getNationalRegistryUser'
+import { COMPANY_REGISTRY_INFORMATION } from '../../lib/queries/getCompanyRegistryCompany'
 
 const dataNotFoundMessage = defineMessage({
   id: 'sp.company:data-not-found',
   defaultMessage: 'Gögn fundust ekki',
 })
 
-const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
+const CompanyInfo: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.company')
   const { formatMessage } = useLocale()
-  const { data, loading, error } = useQuery<Query>(NATIONAL_REGISTRY_USER)
-  const { nationalRegistryUser } = data || {}
+  const { data, loading, error } = useQuery<Query>(
+    COMPANY_REGISTRY_INFORMATION,
+    {
+      variables: { input: { nationalId: '4710032980' } },
+    },
+  )
+  const { companyRegistryCompany } = data || {}
+
+  /**
+   * TODO: Look into multiple renders for this page:
+   * console.log('RENDER')
+   */
   return (
     <>
       <Box marginBottom={5}>
@@ -53,7 +63,7 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           content={
             error
               ? formatMessage(dataNotFoundMessage)
-              : nationalRegistryUser?.birthPlace || ''
+              : companyRegistryCompany?.name || ''
           }
           loading={loading}
         />
@@ -70,7 +80,9 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           content={
             error
               ? formatMessage(dataNotFoundMessage)
-              : formatNationalId('1111112222')
+              : formatNationalId(
+                  companyRegistryCompany?.nationalId || '1111112222',
+                )
           }
           loading={loading}
         />
@@ -80,14 +92,14 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           content={
             error
               ? formatMessage(dataNotFoundMessage)
-              : `${nationalRegistryUser?.legalResidence || ''}`
+              : `Kringlan 7, 103 Reykjavík`
           }
           loading={loading}
         />
         <Divider />
         <UserInfoLine
           label={formatMessage(spmm.company.taxNr)}
-          content={error ? formatMessage(dataNotFoundMessage) : '12345'}
+          content={error ? formatMessage(dataNotFoundMessage) : '80600'}
           loading={loading}
         />
         <Divider />
@@ -106,7 +118,7 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           content={
             error
               ? formatMessage(dataNotFoundMessage)
-              : '64.19.0 Önnur fjármálafyrirtæki'
+              : '62.02.0 Ráðgjafarstarfsemi á sviði upplýsingatækni'
           }
           loading={loading}
         />
@@ -116,4 +128,4 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
   )
 }
 
-export default SubjectInfo
+export default CompanyInfo

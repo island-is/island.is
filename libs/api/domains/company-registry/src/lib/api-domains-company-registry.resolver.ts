@@ -13,7 +13,7 @@ import { RskCompanySearchItems } from './models/rskCompanySearchItems.model'
 import { RskCompanyInfoSearchInput } from './dto/RskCompanyInfoSearch.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(ApiScope.internal)
+@Scopes(ApiScope.internal) // TODO: What is the scope for the procuringholders to allow for company lookup
 @Resolver(() => RskCompany)
 @Audit({ namespace: '@island.is/api/company-registry' })
 export class CompanyRegistryResolver {
