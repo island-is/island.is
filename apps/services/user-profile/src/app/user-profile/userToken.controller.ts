@@ -101,7 +101,8 @@ export class UserTokenController {
   async notifyViaOneSignal(
     @Param('nationalId')
     nationalId: string,
+    @Body() createNotificationDto: CreateNotificationDto
   ): Promise<{}> {
-    return await this.userProfileService.notifyViaOneSignal(nationalId)
+    return await this.userProfileService.notifyViaOneSignal(nationalId, createNotificationDto)
   }
 }
