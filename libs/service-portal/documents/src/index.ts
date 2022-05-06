@@ -6,8 +6,8 @@ import {
   ServicePortalModule,
   ServicePortalPath,
 } from '@island.is/service-portal/core'
-import { User } from '@island.is/auth/react'
 import differenceInYears from 'date-fns/differenceInYears'
+import { User } from '@island.is/shared/types'
 
 const rootName = defineMessage({
   id: 'sp.documents:title',
@@ -16,6 +16,7 @@ const rootName = defineMessage({
 
 const enabled = (userInfo: User) => {
   const hasScope = userInfo.scopes?.includes(DocumentsScope.main)
+  console.log(userInfo)
   const isLegalGuardian = userInfo.profile.delegationType?.includes(
     'LegalGuardian',
   )
