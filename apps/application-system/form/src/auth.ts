@@ -22,7 +22,7 @@ if (userMocked) {
     redirectPath: '/signin-oidc',
     redirectPathSilent: '/silent/signin-oidc',
     authority: environment.identityServer.authority,
-    client_id: 'island-is-1',
+    client_id: '@island.is/web',
     scope: [
       'openid',
       'profile',

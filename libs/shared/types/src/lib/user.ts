@@ -1,4 +1,4 @@
-import { IDTokenClaims, User as OidcUser } from 'oidc-client'
+import { IdTokenClaims, User as OidcUser } from 'oidc-client-ts'
 
 interface IdsAuthClaims {
   nationalId: string
@@ -12,5 +12,5 @@ interface IdsAuthClaims {
 }
 
 export type User = Omit<OidcUser, 'profile'> & {
-  profile: IDTokenClaims & IdsAuthClaims
+  profile: IdTokenClaims & IdsAuthClaims
 }
