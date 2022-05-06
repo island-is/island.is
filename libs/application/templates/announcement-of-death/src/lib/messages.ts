@@ -560,6 +560,11 @@ Ef ekkert á við sem hér að ofan er talið rennur arfur í ríkissjóð. Nán
     * Ef spurningar vakna varðandi næstu skref þá er hægt að snúa sér til "réttur  sýslumaður"`,
     description: 'Inheritance step title',
   },
+  announcementComplete: {
+    id: 'aod.application:announcementComplete',
+    defaultMessage: 'Tilkynning móttekin',
+    description: 'announcement complete text',
+  },
 
   /* Error */
   errorUnknown: {
