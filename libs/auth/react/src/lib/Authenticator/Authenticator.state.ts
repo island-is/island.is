@@ -1,8 +1,6 @@
 import { Dispatch } from 'react'
 import { User } from '@island.is/shared/types'
 import kennitala from 'kennitala'
-import { DelegationType } from '@island.is/auth-api-lib'
-import differenceInYears from 'date-fns/differenceInYears'
 
 export type AuthState =
   | 'logged-out'
