@@ -21,7 +21,7 @@ import {
   ProfileCard,
 } from '@island.is/island-ui/core'
 import { Answers, EstateMember, RelationEnum } from '../../types'
-
+import { format as formatNationalId } from 'kennitala'
 import * as styles from './EstateMemberRepeater.css'
 import { gql, useLazyQuery } from '@apollo/client'
 import { IdentityInput, Query } from '@island.is/api/schema'
@@ -70,7 +70,7 @@ export const EstateMemberRepeater: FC<FieldBaseProps<Answers>> = ({
               <ProfileCard
                 title={member.name}
                 description={[
-                  member.nationalId || '',
+                  formatNationalId(member.nationalId || ''),
                   member.relation || '',
                   <Box marginTop={1} as="span">
                     <Button

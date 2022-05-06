@@ -31,6 +31,7 @@ export const subSectionInfo = buildSubSection({
         buildTextField({
           id: 'applicantPhone',
           title: m.applicantsPhoneNumber,
+          format: '###-####',
           placeholder: '',
           width: 'half',
           defaultValue: (application: Application) =>

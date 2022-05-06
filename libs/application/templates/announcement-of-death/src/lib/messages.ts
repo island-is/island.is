@@ -125,12 +125,12 @@ export const m = defineMessages({
   },
   roleConfirmationContinue: {
     id: 'aod.application:roleConfirmationContinue',
-    defaultMessage: 'Samþykki að halda áfram með tilkynningu.',
+    defaultMessage: 'Samþykki að halda áfram með tilkynningu',
     description: 'Role confirmation continue with role',
   },
   roleConfirmationDelegate: {
     id: 'aod.application:roleConfirmationDelegate',
-    defaultMessage: 'Senda umsókn áfram á annan aðila.',
+    defaultMessage: 'Senda umsókn áfram á annan aðila',
     description: 'Role confirmation delegate role',
   },
   delegateRoleDisclaimer: {

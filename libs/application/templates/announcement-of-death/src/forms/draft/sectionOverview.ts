@@ -12,8 +12,9 @@ import {
   Answer,
 } from '@island.is/application/core'
 import { format as formatNationalId } from 'kennitala'
-import { NationalRegistryUser, UserProfile } from '../../types/schema'
+import { UserProfile } from '../../types/schema'
 import { m } from '../../lib/messages'
+import { formatPhoneNumber } from '../../utils/index'
 
 const theDeceased: Field[] = [
   buildDividerField({}),
@@ -58,7 +59,9 @@ const theAnnouncer: Field[] = [
     label: m.applicantsPhoneNumber,
     width: 'half',
     value: ({ externalData: { userProfile } }) =>
-      (userProfile.data as UserProfile).mobilePhoneNumber as string,
+      formatPhoneNumber(
+        (userProfile.data as UserProfile).mobilePhoneNumber as string,
+      ),
   }),
   buildKeyValueField({
     label: m.applicantsEmail,
@@ -70,7 +73,9 @@ const theAnnouncer: Field[] = [
     label: m.applicantsRelation,
     width: 'half',
     value: ({ externalData: { userProfile } }) =>
-      (userProfile.data as UserProfile).mobilePhoneNumber as string,
+      formatPhoneNumber(
+        (userProfile.data as UserProfile).mobilePhoneNumber as string,
+      ),
   }),
 ]
 
@@ -86,19 +91,25 @@ const testament: Field[] = [
     label: m.testamentTestamentAvailable,
     width: 'half',
     value: ({ externalData: { userProfile } }) =>
-      (userProfile.data as UserProfile).mobilePhoneNumber as string,
+      formatPhoneNumber(
+        (userProfile.data as UserProfile).mobilePhoneNumber as string,
+      ),
   }),
   buildKeyValueField({
     label: m.testamentBuyration,
     width: 'half',
     value: ({ externalData: { userProfile } }) =>
-      (userProfile.data as UserProfile).mobilePhoneNumber as string,
+      formatPhoneNumber(
+        (userProfile.data as UserProfile).mobilePhoneNumber as string,
+      ),
   }),
   buildKeyValueField({
     label: m.testamentKnowledgeOfOtherTestament,
     width: 'half',
     value: ({ externalData: { userProfile } }) =>
-      (userProfile.data as UserProfile).mobilePhoneNumber as string,
+      formatPhoneNumber(
+        (userProfile.data as UserProfile).mobilePhoneNumber as string,
+      ),
   }),
 ]
 const inheritance: Field[] = [
@@ -130,7 +141,7 @@ const inheritance: Field[] = [
           relation: string
         }[]).map((member) => ({
           title: member.name,
-          description: [member.nationalId, member.relation],
+          description: [formatNationalId(member.nationalId), member.relation],
         })),
     },
   ),
