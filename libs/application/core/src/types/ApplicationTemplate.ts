@@ -11,6 +11,7 @@ import { ApplicationTypes } from './ApplicationTypes'
 import { Schema, StaticText } from './Form'
 import { AnswerValidator } from '../validation/AnswerValidator'
 import { Features } from '@island.is/feature-flags'
+import { AuthDelegationType } from '@island.is/auth-nest-tools'
 
 export interface ApplicationTemplate<
   TContext extends ApplicationContext,
@@ -26,7 +27,7 @@ export interface ApplicationTemplate<
   readonly name: StaticText
   readonly institution?: StaticText
   readonly translationNamespaces?: string[]
-  readonly allowedDelegations?: string[]
+  readonly allowedDelegations?: AuthDelegationType[]
   readonly dataSchema: Schema
   readonly stateMachineConfig: MachineConfig<
     TContext,

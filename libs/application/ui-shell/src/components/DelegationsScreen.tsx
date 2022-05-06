@@ -21,6 +21,7 @@ import { format as formatKennitala } from 'kennitala'
 import { useLocale } from '@island.is/localization'
 import { useHistory } from 'react-router-dom'
 import { ScreenType, DelegationsScreenDataType, Delegation } from '../types'
+import { ErrorShell } from './ErrorShell'
 
 interface DelegationsScreenProps {
   alternativeSubjects?: { nationalId: string }[]
@@ -42,7 +43,7 @@ export const DelegationsScreen = ({
   const history = useHistory()
 
   // Check for user delegations if application supports delegations
-  const { data: delegations } = useQuery(ACTOR_DELEGATIONS, {
+  const { data: delegations, error } = useQuery(ACTOR_DELEGATIONS, {
     skip: !alternativeSubjects && !screenData.allowedDelegations,
   })
 
@@ -166,6 +167,9 @@ export const DelegationsScreen = ({
         ? coreDelegationsMessages.delegationActionCardButton
         : coreDelegationsMessages.delegationErrorButton,
     ),
+  }
+  if (error) {
+    return <ErrorShell />
   }
 
   return (

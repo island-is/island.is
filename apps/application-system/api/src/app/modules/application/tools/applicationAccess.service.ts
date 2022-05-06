@@ -24,21 +24,16 @@ export class ApplicationAccessService {
     )
 
     if (!existingApplication) {
+      const actorNationalId = user.actor
+        ? user.actor.nationalId
+        : user.nationalId
       const actorApplication = await this.applicationService.findByApplicantActor(
         id,
-        user.nationalId,
+        actorNationalId,
       )
+
       if (actorApplication) {
         throw new BadSubject([{ nationalId: actorApplication.applicant }])
-      }
-      if (user.actor?.nationalId) {
-        const userActorApplication = await this.applicationService.findByApplicantActor(
-          id,
-          user.actor.nationalId,
-        )
-        if (userActorApplication) {
-          throw new BadSubject([{ nationalId: userActorApplication.applicant }])
-        }
       }
 
       throw new NotFoundException(
