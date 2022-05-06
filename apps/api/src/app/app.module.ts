@@ -87,17 +87,7 @@ const autoSchemaFile = environment.production
     ContentSearchModule,
     CmsModule,
     DrivingLicenseModule,
-    // DrivingLicenseBook has drivingIstructorGuard that uses drivingLicenseService
-    // DrivingLicenseBookModule needs to register DrivingLicenseModule and uses the same config to do so
-    DrivingLicenseBookModule.register({
-      clientConfig: {
-        xroadBaseUrl: environment.xroad.baseUrl!,
-        xroadClientId: environment.xroad.clientId!,
-        secret: environment.drivingLicense.secret!,
-        xroadPathV1: environment.drivingLicense.v1.xroadPath!,
-        xroadPathV2: environment.drivingLicense.v2.xroadPath!,
-      },
-    }),
+    DrivingLicenseBookModule,
     EducationModule.register({
       xroad: {
         baseUrl: environment.xroad.baseUrl!,
