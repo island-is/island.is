@@ -1,5 +1,7 @@
 import { Base64 } from 'js-base64'
-import { Injectable, HttpService } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
+import { HttpService } from '@nestjs/axios'
+import { lastValueFrom } from 'rxjs'
 
 import { environment } from '../../../environments'
 
@@ -23,9 +25,9 @@ export class FjarsyslaService {
           `${restUsername}:${restPassword}`,
         )}`,
       }
-      const response = await this.httpService
-        .post(restUrl, data, { headers: headersRequest })
-        .toPromise()
+      const response = await lastValueFrom(
+        this.httpService.post(restUrl, data, { headers: headersRequest }),
+      )
       if (!response) {
         throw new Error(
           `Failed on FjarsyslaRest request with error: ${response.statusText}`,

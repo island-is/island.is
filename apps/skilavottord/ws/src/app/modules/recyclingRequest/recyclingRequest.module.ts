@@ -1,4 +1,5 @@
-import { Module, HttpModule, forwardRef } from '@nestjs/common'
+import { Module, forwardRef } from '@nestjs/common'
+import { HttpModule } from '@nestjs/axios'
 import { SequelizeModule } from '@nestjs/sequelize'
 
 import { VehicleModule } from '../vehicle/vehicle.module'

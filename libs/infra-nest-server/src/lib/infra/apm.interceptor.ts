@@ -1,5 +1,5 @@
 import { CallHandler, ExecutionContext, NestInterceptor } from '@nestjs/common'
-import { from, Observable } from 'rxjs'
+import { from, lastValueFrom, Observable } from 'rxjs'
 import tracer from 'dd-trace'
 
 export class ApmInterceptor implements NestInterceptor {
@@ -16,7 +16,7 @@ export class ApmInterceptor implements NestInterceptor {
         {
           resource: `${handlerClass.name}#${handlerFn.name}`,
         },
-        (span) => next.handle().toPromise(),
+        (span) => lastValueFrom(next.handle()),
       ),
     )
   }

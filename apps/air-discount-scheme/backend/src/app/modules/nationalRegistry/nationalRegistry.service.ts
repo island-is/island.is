@@ -1,4 +1,5 @@
-import { Inject, Injectable, CACHE_MANAGER, HttpService } from '@nestjs/common'
+import { Inject, Injectable, CACHE_MANAGER } from '@nestjs/common'
+import { HttpService } from '@nestjs/axios'
 import * as kennitala from 'kennitala'
 
 import type { Logger } from '@island.is/logging'
