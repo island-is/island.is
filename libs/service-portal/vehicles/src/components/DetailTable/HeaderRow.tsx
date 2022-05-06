@@ -7,12 +7,17 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import * as styles from './DetailTable.css'
+import { MessageDescriptor } from '@formatjs/intl'
+import { useLocale, useNamespaces } from '@island.is/localization'
 
 interface PropTypes {
-  children: string
+  children: MessageDescriptor
 }
 
 const HeaderRow = ({ children }: PropTypes) => {
+  const { formatMessage } = useLocale()
+  useNamespaces('sp.vehicles')
+
   return (
     <GridRow className={styles.row}>
       <GridColumn
@@ -23,7 +28,7 @@ const HeaderRow = ({ children }: PropTypes) => {
       >
         <Box background="blue100" paddingY="p2" paddingLeft={3}>
           <Text variant="small" fontWeight="semiBold">
-            {children}
+            {formatMessage(children)}
           </Text>
         </Box>
         <Divider />

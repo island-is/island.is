@@ -2,6 +2,7 @@ import React from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Box, Table as T, Text } from '@island.is/island-ui/core'
 import { Owners } from '@island.is/api/schema'
+import { messages } from '../../lib/messages'
 
 interface PropTypes {
   data: Owners[]
@@ -25,26 +26,17 @@ const OwnersTable = ({ data, title }: PropTypes) => {
           </T.HeadData>
           <T.HeadData>
             <Text variant="small" fontWeight="semiBold">
-              {formatMessage({
-                id: 'sp.vehicles:owners-name',
-                defaultMessage: 'Nafn',
-              })}
+              {formatMessage(messages.name)}
             </Text>
           </T.HeadData>
           <T.HeadData>
             <Text variant="small" fontWeight="semiBold">
-              {formatMessage({
-                id: 'sp.vehicles:owners-address',
-                defaultMessage: 'Heimilisfang',
-              })}
+              {formatMessage(messages.address)}
             </Text>
           </T.HeadData>
           <T.HeadData>
             <Text variant="small" fontWeight="semiBold">
-              {formatMessage({
-                id: 'sp.vehicles:owners-date',
-                defaultMessage: 'Kaupdagur',
-              })}
+              {formatMessage(messages.purchaseDate)}
             </Text>
           </T.HeadData>
         </T.Head>

@@ -1,10 +1,11 @@
 import React from 'react'
-import { useLocale, useNamespaces } from '@island.is/localization'
+import { useNamespaces } from '@island.is/localization'
 import HeaderRow from './HeaderRow'
 import Column from './Column'
 import Row from './Row'
 import { Box } from '@island.is/island-ui/core'
 import { CurrentOwnerInfo } from '@island.is/api/schema'
+import { messages } from '../../lib/messages'
 
 interface PropTypes {
   data: CurrentOwnerInfo
@@ -12,61 +13,22 @@ interface PropTypes {
 
 const OwnerInfoItem = ({ data }: PropTypes) => {
   useNamespaces('sp.vehicles')
-  const { formatMessage } = useLocale()
   return (
     <Box marginBottom={4}>
-      <HeaderRow>
-        {formatMessage({
-          id: 'sp.vehicles:owner-title',
-          defaultMessage: 'Eigandi',
-        })}
-      </HeaderRow>
+      <HeaderRow>{messages.owner}</HeaderRow>
       <Row>
-        <Column
-          label={formatMessage({
-            id: 'sp.vehicles:owner-owner',
-            defaultMessage: 'Eigandi',
-          })}
-          value={data.owner}
-        />
-        <Column
-          label={formatMessage({
-            id: 'sp.vehicles:owner-ssn',
-            defaultMessage: 'Kennitala',
-          })}
-          value={data.persidno}
-        />
+        <Column label={messages.owner} value={data.owner} />
+        <Column label={messages.nationalId} value={data.persidno} />
       </Row>
       <Row>
-        <Column
-          label={formatMessage({
-            id: 'sp.vehicles:owner-address',
-            defaultMessage: 'Heimilisfang',
-          })}
-          value={data.address}
-        />
-        <Column
-          label={formatMessage({
-            id: 'sp.vehicles:owner-postalcode',
-            defaultMessage: 'Póstnúmer',
-          })}
-          value={data.postalcode}
-        />
+        <Column label={messages.address} value={data.address} />
+        <Column label={messages.postalCode} value={data.postalcode} />
       </Row>
       <Row>
-        <Column
-          label={formatMessage({
-            id: 'sp.vehicles:owner-city',
-            defaultMessage: 'Borg/bær',
-          })}
-          value={data.city}
-        />
+        <Column label={messages.city} value={data.city} />
         {data.dateOfPurchase && (
           <Column
-            label={formatMessage({
-              id: 'sp.vehicles:owner-purchase-date',
-              defaultMessage: 'Kaupdagur',
-            })}
+            label={messages.purchaseDate}
             value={new Date(data.dateOfPurchase).toLocaleDateString()}
           />
         )}

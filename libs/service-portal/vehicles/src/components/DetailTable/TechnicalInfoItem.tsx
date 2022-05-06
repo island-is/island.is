@@ -1,132 +1,68 @@
 import React from 'react'
-import { useLocale, useNamespaces } from '@island.is/localization'
 import HeaderRow from './HeaderRow'
 import Column from './Column'
 import Row from './Row'
 import { Box } from '@island.is/island-ui/core'
 import { Axle, TechnicalInfo } from '@island.is/api/schema'
+import { messages } from '../../lib/messages'
 
 interface PropTypes {
   data: TechnicalInfo
 }
 
 const TechnicalInfoItem = ({ data }: PropTypes) => {
-  useNamespaces('sp.vehicles')
-  const { formatMessage } = useLocale()
   return (
     <Box marginBottom={4}>
-      <HeaderRow>
-        {formatMessage({
-          id: 'sp.vehicles:tech-title',
-          defaultMessage: 'Tæknilegar upplýsingar',
-        })}
-      </HeaderRow>
+      <HeaderRow>{messages.techTitle}</HeaderRow>
       <Row>
+        <Column label={messages.engineType} value={data.engine} />
         <Column
-          label={formatMessage({
-            id: 'sp.vehicles:tech-engine',
-            defaultMessage: 'Vélargerð',
-          })}
-          value={data.engine}
-        />
-        <Column
-          label={formatMessage({
-            id: 'sp.vehicles:tech-vehicleWeight',
-            defaultMessage: 'Eiginþyngd',
-          })}
+          label={messages.vehicleWeight}
           value={data.vehicleWeight + ' kg'}
         />
       </Row>
       <Row>
-        <Column
-          label={formatMessage({
-            id: 'sp.vehicles:tech-slagrymi',
-            defaultMessage: 'Slagrými',
-          })}
-          value={data.cubicCapacity + ' cc.'}
-        />
+        <Column label={messages.capacity} value={data.cubicCapacity + ' cc.'} />
 
         <Column
-          label={formatMessage({
-            id: 'sp.vehicles:tech-capacity-weight',
-            defaultMessage: 'Þyngd vagnlestar',
-          })}
+          label={messages.vehicleWeight}
           value={data.capacityWeight + ' kg'}
         />
       </Row>
       <Row>
-        <Column
-          label={formatMessage({
-            id: 'sp.vehicles:tech-length',
-            defaultMessage: 'Lengd',
-          })}
-          value={data.length + ' mm'}
-        />
-        <Column
-          label={formatMessage({
-            id: 'sp.vehicles:tech-total-weight',
-            defaultMessage: 'Heildarþyngd',
-          })}
-          value={data.totalWeight + ' kg'}
-        />
+        <Column label={messages.length} value={data.length + ' mm'} />
+        <Column label={messages.totalWeight} value={data.totalWeight + ' kg'} />
       </Row>
       <Row>
+        <Column label={messages.width} value={data.width + ' mm'} />
         <Column
-          label={formatMessage({
-            id: 'sp.vehicles:tech-width',
-            defaultMessage: 'Breidd',
-          })}
-          value={data.width + ' mm'}
-        />
-        <Column
-          label={formatMessage({
-            id: 'sp.vehicles:tech-trailer-without-brakes',
-            defaultMessage: 'Óhemlaður eftirvagn',
-          })}
+          label={messages.trailerWithoutBrakes}
           value={data.trailerWithoutBrakesWeight + ' kg'}
         />
       </Row>
       <Row>
         <Column
-          label={formatMessage({
-            id: 'sp.vehicles:tech-horsepower',
-            defaultMessage: 'Afl (hö)',
-          })}
+          label={messages.horsePower}
           value={data.horsepower && data.horsepower + ' hö'}
         />
         <Column
-          label={formatMessage({
-            id: 'sp.vehicles:tech-trailer-with-brakes',
-            defaultMessage: 'Hemlaður eftirvagn',
-          })}
+          label={messages.trailerWithBrakes}
           value={data.trailerWithBrakesWeight + ' kg'}
         />
       </Row>
       <Row>
         <Column
-          label={formatMessage({
-            id: 'sp.vehicles:tech-carrying-capacity',
-            defaultMessage: 'Burðargeta',
-          })}
+          label={messages.carryingCapacity}
           value={data.carryingCapacity + ' kg'}
         />
         <Column
-          label={formatMessage({
-            id: 'sp.vehicles:tech-axle-total-weight',
-            defaultMessage: 'Leyfð ásþyngd',
-          })}
+          label={messages.axleTotalWeight}
           value={data.axleTotalWeight ? data.axleTotalWeight + ' kg' : ''}
         />
       </Row>
       {data.axle?.map((item: Axle | null, index: number) => {
-        const axleTitle = formatMessage({
-          id: 'sp.vehicles:tech-axle-1',
-          defaultMessage: 'Ás',
-        })
-        const axleWheel = formatMessage({
-          id: 'sp.vehicles:tech-axle-wheel',
-          defaultMessage: 'Stærð hjólbarða',
-        })
+        const axleTitle = messages.axle
+        const axleWheel = messages.axleWheel
         return (
           <Row key={'Axle: ' + index}>
             <Column label={axleTitle} value={index + 1} />

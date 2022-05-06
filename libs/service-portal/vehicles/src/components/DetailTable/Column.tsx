@@ -1,13 +1,18 @@
 import React from 'react'
 import { Box, GridColumn, Text } from '@island.is/island-ui/core'
 import * as styles from './DetailTable.css'
+import { MessageDescriptor } from '@formatjs/intl'
+import { useLocale, useNamespaces } from '@island.is/localization'
 
 interface PropTypes {
-  label: string
+  label: MessageDescriptor
   value: string | null | number | undefined
 }
 
 const Column = ({ label, value }: PropTypes) => {
+  const { formatMessage } = useLocale()
+  useNamespaces('sp.vehicles')
+
   return (
     <>
       <GridColumn
@@ -21,7 +26,7 @@ const Column = ({ label, value }: PropTypes) => {
           display="flex"
           alignItems="center"
         >
-          <p className={styles.pTitle}>{label}</p>
+          <p className={styles.pTitle}>{formatMessage(label)}</p>
         </Box>
       </GridColumn>
       <GridColumn

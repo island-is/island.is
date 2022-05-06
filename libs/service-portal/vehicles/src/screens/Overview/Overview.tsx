@@ -5,7 +5,6 @@ import {
   CardLoader,
   EmptyState,
 } from '@island.is/service-portal/core'
-import { defineMessage } from 'react-intl'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { useQuery, gql } from '@apollo/client'
 import { Query, Vehicle } from '@island.is/api/schema'
@@ -21,7 +20,7 @@ import {
 } from '@island.is/island-ui/core'
 import isEqual from 'lodash/isEqual'
 import { VehicleCard } from '../../components/VehicleCard'
-
+import { messages } from '../../lib/messages'
 const GET_USERS_VEHICLES = gql`
   query GetUsersVehicles {
     getVehiclesForUser {
@@ -107,14 +106,8 @@ export const VehiclesOverview: ServicePortalModuleComponent = () => {
   const vehiclesFoundText = () =>
     filteredVehicles.length === 1 ||
     (lang === 'is' && filteredVehicles.length % 10 === 1)
-      ? defineMessage({
-          id: 'sp.vehicles:found-singular',
-          defaultMessage: 'skjal fannst',
-        })
-      : defineMessage({
-          id: 'sp.vehicles:found',
-          defaultMessage: 'skjöl fundust',
-        })
+      ? formatMessage(messages.foundSingular)
+      : formatMessage(messages.found)
   const hasActiveFilters = () => !isEqual(filterValue, defaultFilterValues)
 
   const handleClearFilters = useCallback(() => {
@@ -129,16 +122,10 @@ export const VehiclesOverview: ServicePortalModuleComponent = () => {
           <GridColumn span={['12/12', '12/12', '6/8', '6/8']}>
             <Stack space={2}>
               <Text variant="h3" as="h1">
-                {formatMessage({
-                  id: 'sp.vehicles:vehicles-title',
-                  defaultMessage: 'Ökutæki',
-                })}
+                {formatMessage(messages.title)}
               </Text>
               <Text as="p" variant="default">
-                {formatMessage({
-                  id: 'sp.vehicles:vehicles-intro',
-                  defaultMessage: `Hér færðu upplýsingar úr ökutækjaskrá um ökutæki sem þú ert skráð/ur eigandi að.`,
-                })}
+                {formatMessage(messages.intro)}
               </Text>
             </Stack>
           </GridColumn>
@@ -185,10 +172,7 @@ export const VehiclesOverview: ServicePortalModuleComponent = () => {
                   } ${formatMessage(vehiclesFoundText())}`}</Text>
                   <div>
                     <Button variant="text" onClick={handleClearFilters}>
-                      {formatMessage({
-                        id: 'sp.vehicles:clear-filters',
-                        defaultMessage: 'Hreinsa filter',
-                      })}
+                      {formatMessage(messages.clearFilter)}
                     </Button>
                   </div>
                 </Box>
