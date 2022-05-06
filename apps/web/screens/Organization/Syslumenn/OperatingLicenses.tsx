@@ -610,4 +610,5 @@ OperatingLicenses.getInitialProps = async ({
 export default withMainLayout(OperatingLicenses, {
   headerButtonColorScheme: 'negative',
   headerColorScheme: 'white',
+  footerVersion: 'organization',
 })
