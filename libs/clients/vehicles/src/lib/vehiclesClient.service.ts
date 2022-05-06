@@ -32,15 +32,3 @@ export const VehiclesApiProvider: Provider<VehiclesApi> = {
     ),
   inject: [XRoadConfig.KEY, VehiclesClientConfig.KEY],
 }
-/**
-    requestedPersidno?: string;  // kennitala
-    showDeregistered?: boolean;
-    showHistory?: boolean;
-    dtFrom?: Date;
-    cursor?: string;
-    limit?: number;
-   */
-// public async getVehiclesForUser(ssn: string): Promise<PersidnoLookup> {
-//   return await this.api.rootGet({ requestedPersidno: ssn })
-// }
-// }
