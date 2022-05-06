@@ -28,16 +28,18 @@ export const ArticleChatPanel = ({
   )
   if (loading) return null
 
+  const syslumennOrganizationId = 'kENblMMMvZ3DlyXw1dwxQ'
+
   let Component = null
 
   if (article.id in liveChatIncConfig) {
     Component = <LiveChatIncChatPanel {...liveChatIncConfig[article.id]} />
-  } else if (isWatsonChatPanelEnabled) {
-    if (article.id in watsonConfig) {
-      Component = <WatsonChatPanel {...watsonConfig[article.id]} />
-    } else {
-      Component = <WatsonChatPanel {...syslumennWatsonConfig} />
-    }
+  } else if (isWatsonChatPanelEnabled && article.id in watsonConfig) {
+    Component = <WatsonChatPanel {...watsonConfig[article.id]} />
+  } else if (
+    article.organization?.some((o) => o.id === syslumennOrganizationId)
+  ) {
+    Component = <WatsonChatPanel {...syslumennWatsonConfig} />
   } else if (
     article.organization?.some((o) => o.id in boostChatPanelEndpoints)
   ) {

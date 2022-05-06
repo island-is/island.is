@@ -59,19 +59,6 @@ export const watsonConfig: Record<string, WatsonChatPanelProps> = {
       suggestions_sectionTitleAlternateResponses:
         'Sendu eitthvað af eftirfarandi skilaboðum',
     },
-    onLoad: (instance) => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const preSendhandler = (event: any) => {
-        event.data.context.skills['main skill'].user_defined.category =
-          'stafræntökuskírteini'
-      }
-
-      instance.on({ type: 'pre:send', handler: preSendhandler })
-
-      instance.updateHomeScreenConfig({
-        is_on: false,
-      })
-    },
   },
 }
 
