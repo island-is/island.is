@@ -127,7 +127,7 @@ const GET_USERS_VEHICLE_DETAIL = gql`
 `
 
 const VehicleDetail: ServicePortalModuleComponent = ({ userInfo }) => {
-  useNamespaces('sp.vehicle')
+  useNamespaces('sp.vehicles')
   const { formatMessage } = useLocale()
   const { id }: { id: string | undefined } = useParams()
 

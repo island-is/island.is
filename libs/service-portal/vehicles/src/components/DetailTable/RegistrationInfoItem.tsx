@@ -5,12 +5,15 @@ import Column from './Column'
 import Row from './Row'
 import { RegistrationInfo } from '@island.is/api/schema'
 import { messages } from '../../lib/messages'
+import { useLocale, useNamespaces } from '@island.is/localization'
 
 interface PropTypes {
   data: RegistrationInfo
 }
 
 const RegistrationInfoItem = ({ data }: PropTypes) => {
+  useNamespaces('sp.vehicles')
+  const { formatMessage } = useLocale()
   return (
     <Box marginBottom={4}>
       <HeaderRow>{messages.regTitle}</HeaderRow>
@@ -52,7 +55,11 @@ const RegistrationInfoItem = ({ data }: PropTypes) => {
       <Row>
         <Column
           label={messages.driversPassengers}
-          value={data.driversPassengers ? 'Já' : 'Nei'}
+          value={
+            data.driversPassengers
+              ? formatMessage(messages.yes)
+              : formatMessage(messages.no)
+          }
         />
         <Column
           label={messages.standingPassengers}

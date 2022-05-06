@@ -279,4 +279,12 @@ export const messages = defineMessages({
     id: 'sp.vehicles:axle-wheel',
     defaultMessage: 'Stærð hjólbarða',
   },
+  yes: {
+    id: 'sp.vehicles:yes',
+    defaultMessage: 'Já',
+  },
+  no: {
+    id: 'sp.vehicles:no',
+    defaultMessage: 'Nei',
+  },
 })
