@@ -46,6 +46,7 @@ import {
 import { endpoints as chatPanelEndpoints } from '../../ChatPanel/config'
 import MannaudstorgFooter from './Themes/MannaudstorgTheme/MannaudstorgFooter'
 import { useNamespace } from '@island.is/web/hooks'
+import LandlaeknirFooter from './Themes/LandlaeknirTheme/LandlaeknirFooter'
 import * as styles from './OrganizationWrapper.css'
 
 interface NavigationData {
@@ -167,6 +168,7 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
 
   switch (organization.slug) {
     case 'syslumenn':
+    case 'district-commissioner':
       return (
         <SyslumennFooter
           title={organization.title}
@@ -175,6 +177,7 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
         />
       )
     case 'sjukratryggingar':
+    case 'icelandic-health-insurance':
       return (
         <SjukratryggingarFooter
           title={organization.title}
@@ -183,6 +186,7 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
         />
       )
     case 'utlendingastofnun':
+    case 'directorate-of-immigration':
       return (
         <UtlendingastofnunFooter
           title={organization.title}
@@ -198,6 +202,17 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
           phone={organization.phone}
           contactLink={organization.link}
           telephoneText={n('telephone', 'Sími')}
+        />
+      )
+    case 'landlaeknir':
+    case 'directorate-of-health':
+      return (
+        <LandlaeknirFooter
+          footerItems={organization.footerItems}
+          phone={organization.phone}
+          email={organization.email}
+          phoneLabel={n('telephone', 'Sími')}
+          emailLabel={n('email,', 'Tölvupóstur')}
         />
       )
   }

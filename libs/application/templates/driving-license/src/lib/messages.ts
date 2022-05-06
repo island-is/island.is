@@ -409,7 +409,7 @@ export const m = defineMessages({
   },
   applicationForDrivingLicense: {
     id: 'dl.application:applicationForDrivingLicense',
-    defaultMessage: 'Umsókn um ökuskírteini',
+    defaultMessage: 'Umsókn um skírteini',
     description: 'Application for driving license',
   },
   eligibilityRequirementTitle: {
@@ -689,6 +689,19 @@ export const m = defineMessages({
     defaultMessage: 'Leiðbeiningar',
     description:
       'Title of the section that explains the next steps when they have a driving license in a different country',
+  },
+  healthRemarksTitle: {
+    id: 'dl.application:healthRemarksTitle',
+    defaultMessage: 'Athugið',
+    description:
+      'Alert message title for health remarks on temporary driving license',
+  },
+  healthRemarksDescription: {
+    id: 'dl.application:healthRemarksDescription',
+    defaultMessage:
+      'Á bráðabirgðaskírteini eru tákntölur, því þarft þú að skila læknisvottorði til sýslumanns miðað við þá heilbrigðisyfirlýsingu sem fyllt var út í þeirri umsókn. Tákntölurnar eru eftirfarandi: ',
+    description:
+      'Alert message for health remarks on temporary driving license',
   },
 })
 
