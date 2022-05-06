@@ -17,6 +17,10 @@ on:
       - synchronize
       - labeled
 
+defaults:
+  run:
+    shell: bash
+
 env:
   DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
   DOCKER_BASE_IMAGE_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/ecr-public
@@ -27,7 +31,9 @@ env:
 jobs:
   pre-checks:
     name: Check if job should run
-    runs-on: kubernetes-runner
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     env:
       CREATE_PATTERNS: ^release/
     outputs:
@@ -103,7 +109,9 @@ jobs:
           echo "::set-output name=PRE_CHECK::push"
 
   prepare:
-    runs-on: kubernetes-runner
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 90
 
     if: needs.pre-checks.outputs.PRE_CHECK
@@ -124,10 +132,10 @@ jobs:
       node-modules-hash: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
       generated-files-cache-key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
           node-version: '14'
 
@@ -138,14 +146,6 @@ jobs:
         run: |
           node -v
           ls -l `which node`
-
-      - name: Cleanup disk space
-        run: |
-          df -h
-          # https://github.com/actions/virtual-environments/issues/709#issuecomment-612569242
-          sudo rm -rf "/usr/local/share/boost"
-          sudo apt clean
-          df -h
 
       - name: Git refs
         id: git_refs
@@ -241,7 +241,7 @@ jobs:
       - name: Calculate cache keys for generated files
         id: calculate_generated_files_cache_key
         run: |
-          export HASH=${{ hashFiles('scripts/schemas.js', 'libs/cms/src/lib/generated/contentfulTypes.d.ts', 'apps/air-discount-scheme/web/i18n/withLocale.tsx', 'apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx', 'apps/air-discount-scheme/web/components/Header/Header.tsx', 'apps/air-discount-scheme/web/screens/**.tsx', 'apps/gjafakort/api/src/**.typeDefs.ts', 'apps/**/codegen.yml', 'libs/**/codegen.yml', 'apps/**/*.model.ts', 'libs/**/*.model.ts', 'apps/**/*.enum.ts', 'libs/**/*.enum.ts', 'apps/**/queries/**/*.tsx?', 'apps/**/queries/**/*.ts', 'libs/**/queries/**/*.tsx?', 'apps/**/*.resolver.ts', 'libs/**/*.resolver.ts', 'apps/**/*.service.ts', 'libs/**/*.service.ts', 'apps/**/*.dto.ts', 'libs/**/*.dto.ts', 'apps/**/*.input.ts', 'libs/**/*.input.ts', 'apps/**/*.module.ts', 'libs/**/*.module.ts', 'apps/**/*.controller.ts', 'libs/**/*.controller.ts', 'apps/**/*.union.ts', 'libs/**/*.union.ts', 'apps/**/*.graphql.ts', 'libs/**/*.graphql.ts') }}
+          export HASH=${{ hashFiles('scripts/schemas.js', 'libs/cms/src/lib/generated/contentfulTypes.d.ts', 'apps/air-discount-scheme/web/i18n/withLocale.tsx', 'apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx', 'apps/air-discount-scheme/web/components/Header/Header.tsx', 'apps/air-discount-scheme/web/screens/**.tsx', 'apps/**/codegen.yml', 'libs/**/codegen.yml', 'apps/**/*.model.ts', 'libs/**/*.model.ts', 'apps/**/*.enum.ts', 'libs/**/*.enum.ts', 'apps/**/queries/**/*.tsx?', 'apps/**/queries/**/*.ts', 'libs/**/queries/**/*.tsx?', 'apps/**/*.resolver.ts', 'libs/**/*.resolver.ts', 'apps/**/*.service.ts', 'libs/**/*.service.ts', 'apps/**/*.dto.ts', 'libs/**/*.dto.ts', 'apps/**/*.input.ts', 'libs/**/*.input.ts', 'apps/**/*.module.ts', 'libs/**/*.module.ts', 'apps/**/*.controller.ts', 'libs/**/*.controller.ts', 'apps/**/*.union.ts', 'libs/**/*.union.ts', 'apps/**/*.graphql.ts', 'libs/**/*.graphql.ts') }}
           export GENERATED_FILES_KEY=${{ runner.os }}-$HASH-files-generated
           echo "GENERATED_FILES_KEY: $GENERATED_FILES_KEY"
           echo "::set-output name=generated-files-cache-key::$GENERATED_FILES_KEY"
@@ -382,7 +382,9 @@ jobs:
     needs:
       - prepare
     if: needs.prepare.outputs.TEST_CHUNKS
-    runs-on: kubernetes-runner
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 25
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
@@ -391,11 +393,11 @@ jobs:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      
-      - uses: actions/setup-node@v2
+
+      - uses: actions/setup-node@v3
         with:
           node-version: '14'
 
@@ -426,7 +428,7 @@ jobs:
 
       - name: Untar generated files
         run: tar zxvf generated_files.tar.gz
-        shell: bash
+
 
       - uses: ./.github/actions/unit-test
         with:
@@ -439,7 +441,9 @@ jobs:
     needs:
       - pre-checks
       - prepare
-    runs-on: ubuntu-20.04
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 35
     if: needs.prepare.outputs.BUILD_CHUNKS
     env:
@@ -460,12 +464,12 @@ jobs:
           echo "AFFECTED_PROJECTS=$AFFECTED_PROJECTS" >> $GITHUB_ENV
           echo "DOCKER_TYPE=$DOCKER_TYPE" >> $GITHUB_ENV
         continue-on-error: true
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
           node-version: '14'
         if: steps.gather.outcome == 'success'
 
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
           node-version: '14'
         if: steps.gather.outcome == 'success'
@@ -473,8 +477,8 @@ jobs:
       - name: Setup yarn
         run: npm install -g yarn
         if: steps.gather.outcome == 'success'
-      
-      - uses: actions/checkout@v2
+
+      - uses: actions/checkout@v3
         if: steps.gather.outcome == 'success'
       - name: Cache for generated files
         id: generated-files-cache
@@ -549,14 +553,16 @@ jobs:
       - prepare
       - pre-checks
     if: needs.prepare.outputs.IMAGES && needs.pre-checks.outputs.PRE_CHECK != 'push'
-    runs-on: kubernetes-runner
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 5
     env:
       FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
       DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
       GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Docker login
         run: ./scripts/ci/docker-login-ecr.sh
@@ -606,7 +612,9 @@ jobs:
             })
 
   retag-unaffected:
-    runs-on: kubernetes-runner
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 5
     if: always() && needs.pre-checks.result == 'success' && needs.prepare.result != 'skipped'
     needs:
@@ -624,7 +632,7 @@ jobs:
         run: '[[ ${{ needs.prepare.result }} == "success" ]] || exit 1'
       - name: Check docker-build success
         run: '[[ ${{ needs.docker-build.result }} != "failure" ]] || exit 1'
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -636,7 +644,9 @@ jobs:
         run: ./scripts/ci/retag-unaffected.sh "$UNAFFECTED"
 
   deploy:
-    runs-on: kubernetes-runner
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     if: always() && needs.retag-unaffected.result == 'success' && needs.helm-docker-build.result != 'failure'
     needs:
       - retag-unaffected
@@ -652,10 +662,9 @@ jobs:
       matrix:
         service:
           - islandis
-          - gjafakort
           - identity-auth-api
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Trigger Deployment for service
         env:
           SPINNAKER_WEBHOOK_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_TOKEN }}
@@ -675,7 +684,9 @@ jobs:
           BODY
 
   push-success:
-    runs-on: kubernetes-runner
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     if: always()
     needs:
       - pre-checks
@@ -697,7 +708,9 @@ jobs:
         run: echo "Build was skipped"
 
   failure-notification:
-    runs-on: kubernetes-runner
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     if: failure() && needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK != 'feature-deploy'
     needs:
       - pre-checks

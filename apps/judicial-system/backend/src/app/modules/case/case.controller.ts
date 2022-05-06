@@ -119,7 +119,7 @@ export class CaseController {
   ): Promise<Case> {
     this.logger.debug('Creating a new case')
 
-    const createdCase = await this.caseService.create(caseToCreate, user.id)
+    const createdCase = await this.caseService.create(caseToCreate, user)
 
     this.eventService.postEvent(CaseEvent.CREATE, createdCase as Case)
 
@@ -203,7 +203,7 @@ export class CaseController {
     @Param('caseId') caseId: string,
     @CurrentCase() theCase: Case,
     @Body() transition: TransitionCaseDto,
-  ): Promise<Case | null> {
+  ): Promise<Case> {
     this.logger.debug(`Transitioning case ${caseId}`)
 
     // Use theCase.modified when client is ready to send last modified timestamp with all updates
@@ -216,17 +216,18 @@ export class CaseController {
       update.parentCaseId = null
     }
 
-    const updatedCase = (await this.caseService.update(
+    const updatedCase = await this.caseService.update(
       caseId,
       update as UpdateCaseDto,
-    )) as Case
+      state !== CaseState.DELETED,
+    )
 
     this.eventService.postEvent(
       (transition.transition as unknown) as CaseEvent,
-      updatedCase,
+      updatedCase ?? theCase,
     )
 
-    return updatedCase
+    return updatedCase ?? theCase
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -336,7 +337,10 @@ export class CaseController {
       `Getting the custody notice for case ${caseId} as a pdf document`,
     )
 
-    if (theCase.type !== CaseType.CUSTODY) {
+    if (
+      theCase.type !== CaseType.CUSTODY &&
+      theCase.type !== CaseType.ADMISSION_TO_FACILITY
+    ) {
       throw new BadRequestException(
         `Cannot generate a custody notice for ${theCase.type} cases`,
       )

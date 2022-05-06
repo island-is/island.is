@@ -58,7 +58,8 @@ export const lowercase = (text?: string): string => {
 }
 
 export const formatNationalId = (nationalId: string): string => {
-  if (nationalId?.length === 10) {
+  const regex = new RegExp(/^\d{10}$/)
+  if (regex.test(nationalId)) {
     return `${nationalId.slice(0, 6)}-${nationalId.slice(6)}`
   } else {
     return nationalId
@@ -96,25 +97,6 @@ export const caseTypes: CaseTypes = {
   OTHER: 'annað',
 }
 
-const getRestrictionByValue = (value: CaseCustodyRestrictions) => {
-  switch (value) {
-    case CaseCustodyRestrictions.COMMUNICATION:
-      return 'D - Bréfskoðun, símabann'
-    case CaseCustodyRestrictions.ISOLATION:
-      return 'B - Einangrun'
-    case CaseCustodyRestrictions.MEDIA:
-      return 'E - Fjölmiðlabann'
-    case CaseCustodyRestrictions.VISITAION:
-      return 'C - Heimsóknarbann'
-    case CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION:
-      return 'Tilkynningaskylda'
-    case CaseCustodyRestrictions.NECESSITIES:
-      return 'A - Eigin nauðsynjar'
-    case CaseCustodyRestrictions.WORKBAN:
-      return 'F - Vinnubann'
-  }
-}
-
 export const getShortRestrictionByValue = (value: CaseCustodyRestrictions) => {
   switch (value) {
     case CaseCustodyRestrictions.COMMUNICATION:
@@ -134,125 +116,46 @@ export const getShortRestrictionByValue = (value: CaseCustodyRestrictions) => {
   }
 }
 
-// Formats prefilled restrictions
-// Note that only the predetermined list of restrictions is relevant here
-export function formatCustodyRestrictions(
-  requestedCustodyRestrictions?: CaseCustodyRestrictions[],
-  isCustodyIsolation?: boolean,
-  isRuling?: boolean,
-): string {
-  const caseCustodyRestrictions = [
-    {
-      id: 'a',
-      type: CaseCustodyRestrictions.NECESSITIES,
-      shortText: 'banni við útvegun persónulegra nauðsynja',
-    },
-    {
-      id: 'c',
-      type: CaseCustodyRestrictions.VISITAION,
-      shortText: 'heimsóknarbanni',
-    },
-    {
-      id: 'd',
-      type: CaseCustodyRestrictions.COMMUNICATION,
-      shortText: 'bréfaskoðun og símabanni',
-    },
-    {
-      id: 'e',
-      type: CaseCustodyRestrictions.MEDIA,
-      shortText: 'fjölmiðlabanni',
-    },
-    {
-      id: 'f',
-      type: CaseCustodyRestrictions.WORKBAN,
-      shortText: 'vinnubanni',
-    },
-  ]
-
-  const relevantCustodyRestrictions = caseCustodyRestrictions
-    .filter((restriction) =>
-      requestedCustodyRestrictions?.includes(restriction.type),
-    )
-    .sort((a, b) => {
-      return a.id > b.id ? 1 : -1
-    })
-
-  if (
-    !(relevantCustodyRestrictions && relevantCustodyRestrictions.length > 0)
-  ) {
-    return !isRuling
-      ? isCustodyIsolation
-        ? 'Sækjandi tekur fram að gæsluvarðhaldið verði án annarra takmarkana.'
-        : 'Sækjandi tekur fram að gæsluvarðhaldið verði án takmarkana.'
-      : ''
-  }
-
-  const custodyRestrictionSuffix = (index: number): string => {
-    const isNextLast = index === relevantCustodyRestrictions.length - 2
-    const isLast = index === relevantCustodyRestrictions.length - 1
-    const isOnly = relevantCustodyRestrictions.length === 1
-
-    return isRuling && isOnly
-      ? 'lið '
-      : isRuling && isLast
-      ? 'liðum '
-      : isLast
-      ? ' '
-      : isNextLast && !isOnly
-      ? ' og '
-      : ', '
-  }
-
-  const filteredCustodyRestrictionsAsString = relevantCustodyRestrictions.reduce(
-    (res, custodyRestriction, index) => {
-      const { id, shortText } = custodyRestriction
-      const suffix = custodyRestrictionSuffix(index)
-
-      return (res += isRuling ? `${id}-${suffix}` : `${shortText}${suffix}`)
-    },
-    '',
-  )
-
-  return isRuling
-    ? `Sækjandi kynnir kærða tilhögun gæsluvarðhaldsins, sem sé með takmörkunum skv. ${filteredCustodyRestrictionsAsString}1. mgr. 99. gr. laga nr. 88/2008.`
-    : `Sækjandi tekur fram að gæsluvarðhaldið verði með ${filteredCustodyRestrictionsAsString}skv. 99. gr. laga nr. 88/2008.`
+/**
+ * Enumerates a list of string, f.x
+ * enumerate(['alice', 'bob', 'paul'], 'and'), returns "alice, bob and paul"
+ * @param values list of strings to enumerate
+ * @param endWord the word before last value is enumerated
+ */
+export function enumerate(values: string[], endWord: string): string {
+  return values.join(', ').replace(/, ([^,]*)$/, ` ${endWord} $1`)
 }
 
-// Formats the requested restrictions from the prosecutor
-export const formatRequestedCustodyRestrictions = (
-  type: CaseType,
-  requestedCustodyRestrictions?: CaseCustodyRestrictions[],
-  requestedOtherRestrictions?: string,
-) => {
-  const hasRequestedCustodyRestrictions =
-    requestedCustodyRestrictions && requestedCustodyRestrictions?.length > 0
-  const hasRequestedOtherRestrictions =
-    requestedOtherRestrictions && requestedOtherRestrictions?.length > 0
+type SupportedCaseCustodyRestriction = {
+  id: string
+  type:
+    | CaseCustodyRestrictions.NECESSITIES
+    | CaseCustodyRestrictions.VISITAION
+    | CaseCustodyRestrictions.COMMUNICATION
+    | CaseCustodyRestrictions.MEDIA
+    | CaseCustodyRestrictions.WORKBAN
+}
 
-  // No restrictions
-  if (!hasRequestedCustodyRestrictions && !hasRequestedOtherRestrictions) {
-    return `Ekki er farið fram á takmarkanir á ${
-      type === CaseType.CUSTODY ? 'gæslu' : 'farbanni'
-    }.`
+const supportedCaseCustodyRestrictions: SupportedCaseCustodyRestriction[] = [
+  { id: 'a', type: CaseCustodyRestrictions.NECESSITIES },
+  { id: 'c', type: CaseCustodyRestrictions.VISITAION },
+  { id: 'd', type: CaseCustodyRestrictions.COMMUNICATION },
+  { id: 'e', type: CaseCustodyRestrictions.MEDIA },
+  { id: 'f', type: CaseCustodyRestrictions.WORKBAN },
+]
+
+export function getSupportedCaseCustodyRestrictions(
+  requestedRestrictions?: CaseCustodyRestrictions[],
+): SupportedCaseCustodyRestriction[] {
+  const restrictions = supportedCaseCustodyRestrictions.filter((restriction) =>
+    requestedRestrictions?.includes(restriction.type),
+  )
+
+  if (!restrictions || restrictions.length === 0) {
+    return [] as SupportedCaseCustodyRestriction[]
   }
 
-  const requestedCustodyRestrictionsText = hasRequestedCustodyRestrictions
-    ? requestedCustodyRestrictions &&
-      requestedCustodyRestrictions.reduce(
-        (acc, restriction, index) =>
-          `${acc}${index > 0 ? '\n' : ''}${getRestrictionByValue(restriction)}`,
-        '',
-      )
-    : ''
-
-  const paragraphBreak =
-    hasRequestedCustodyRestrictions && hasRequestedOtherRestrictions ? '\n' : ''
-
-  const requestedOtherRestrictionsText = hasRequestedOtherRestrictions
-    ? requestedOtherRestrictions
-    : ''
-
-  return `${requestedCustodyRestrictionsText}${paragraphBreak}${requestedOtherRestrictionsText}`
+  return restrictions.sort((a, b) => (a.id > b.id ? 1 : -1))
 }
 
 export function formatGender(gender?: Gender): string {

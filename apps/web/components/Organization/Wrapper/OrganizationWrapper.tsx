@@ -27,9 +27,9 @@ import {
   Inline,
 } from '@island.is/island-ui/core'
 import {
-  ChatPanel,
   HeadWithSocialSharing,
   Sticky,
+  BoostChatPanel,
 } from '@island.is/web/components'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { SyslumennHeader, SyslumennFooter } from './Themes/SyslumennTheme'
@@ -44,9 +44,10 @@ import {
   UtlendingastofnunHeader,
 } from './Themes/UtlendingastofnunTheme'
 import { endpoints as chatPanelEndpoints } from '../../ChatPanel/config'
-
-import * as styles from './OrganizationWrapper.css'
 import MannaudstorgFooter from './Themes/MannaudstorgTheme/MannaudstorgFooter'
+import { useNamespace } from '@island.is/web/hooks'
+import LandlaeknirFooter from './Themes/LandlaeknirTheme/LandlaeknirFooter'
+import * as styles from './OrganizationWrapper.css'
 
 interface NavigationData {
   title: string
@@ -160,10 +161,14 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
   const organization = force
     ? organizations[0]
     : organizations.find((x) => footerEnabled.includes(x.slug))
+
+  const n = useNamespace(organization?.namespace)
+
   if (!organization) return null
 
   switch (organization.slug) {
     case 'syslumenn':
+    case 'district-commissioner':
       return (
         <SyslumennFooter
           title={organization.title}
@@ -172,6 +177,7 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
         />
       )
     case 'sjukratryggingar':
+    case 'icelandic-health-insurance':
       return (
         <SjukratryggingarFooter
           title={organization.title}
@@ -180,6 +186,7 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
         />
       )
     case 'utlendingastofnun':
+    case 'directorate-of-immigration':
       return (
         <UtlendingastofnunFooter
           title={organization.title}
@@ -194,6 +201,18 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
           logoSrc={organization.logo?.url}
           phone={organization.phone}
           contactLink={organization.link}
+          telephoneText={n('telephone', 'Sími')}
+        />
+      )
+    case 'landlaeknir':
+    case 'directorate-of-health':
+      return (
+        <LandlaeknirFooter
+          footerItems={organization.footerItems}
+          phone={organization.phone}
+          email={organization.email}
+          phoneLabel={n('telephone', 'Sími')}
+          emailLabel={n('email,', 'Tölvupóstur')}
         />
       )
   }
@@ -219,7 +238,7 @@ export const OrganizationChatPanel = ({
   const slug = slugs.find((x) => chatEnabled.includes(x))
 
   return slug ? (
-    <ChatPanel
+    <BoostChatPanel
       endpoint={slug as keyof typeof chatPanelEndpoints}
       pushUp={pushUp}
     />

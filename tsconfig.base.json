@@ -88,6 +88,12 @@
       "@island.is/api/domains/finance": [
         "libs/api/domains/finance/src/index.ts"
       ],
+      "@island.is/api/domains/financial-statements-inao": [
+        "libs/api/domains/financial-statements-inao/src/index.ts"
+      ],
+      "@island.is/api/domains/fishing-license": [
+        "libs/api/domains/fishing-license/src/index.ts"
+      ],
       "@island.is/api/domains/health-insurance": [
         "libs/api/domains/health-insurance/src/index.ts"
       ],
@@ -108,6 +114,9 @@
       ],
       "@island.is/api/domains/mortgage-certificate": [
         "libs/api/domains/mortgage-certificate/src/index.ts"
+      ],
+      "@island.is/api/domains/municipalities-financial-aid": [
+        "libs/api/domains/municipalities-financial-aid/src/index.ts"
       ],
       "@island.is/api/domains/national-registry": [
         "libs/api/domains/national-registry/src/index.ts"
@@ -191,8 +200,14 @@
       "@island.is/application/templates/family-matters-core/*": [
         "libs/application/templates/family-matters/core/src/*"
       ],
+      "@island.is/application/templates/financial-aid": [
+        "libs/application/templates/financial-aid/src/index.ts"
+      ],
       "@island.is/application/templates/funding-government-projects": [
         "libs/application/templates/funding-government-projects/src/index.ts"
+      ],
+      "@island.is/application/templates/general-fishing-license": [
+        "libs/application/templates/general-fishing-license/src/index.ts"
       ],
       "@island.is/application/templates/general-petition": [
         "libs/application/templates/general-petition/src/index.ts"
@@ -265,6 +280,9 @@
         "libs/clients/driving-license-book/src/index.ts"
       ],
       "@island.is/clients/finance": ["libs/clients/finance/src/index.ts"],
+      "@island.is/clients/fishing-license": [
+        "libs/clients/fishing-license/src/index.ts"
+      ],
       "@island.is/clients/health-insurance-v2": [
         "libs/clients/health-insurance-v2/src/index.ts"
       ],
@@ -273,6 +291,9 @@
         "libs/clients/middlewares/src/index.ts"
       ],
       "@island.is/clients/mms": ["libs/clients/mms/src/index.ts"],
+      "@island.is/clients/municipalities-financial-aid": [
+        "libs/clients/municipalities-financial-aid/src/index.ts"
+      ],
       "@island.is/clients/national-registry-v1": [
         "libs/clients/national-registry/v1/src/index.ts"
       ],
@@ -338,12 +359,6 @@
       "@island.is/financial-aid/shared/lib": [
         "libs/financial-aid/shared/src/lib/index.ts"
       ],
-      "@island.is/gjafakort-web/*": ["apps/gjafakort/web/*"],
-      "@island.is/gjafakort/application/*": [
-        "apps/gjafakort/application/src/*"
-      ],
-      "@island.is/gjafakort/consts": ["libs/gjafakort/consts/src/index.ts"],
-      "@island.is/gjafakort/types": ["libs/gjafakort/types/src/index.ts"],
       "@island.is/health-insurance": ["libs/health-insurance/src/index.ts"],
       "@island.is/icelandic-names-registry-types": [
         "libs/icelandic-names-registry/types/src/index.ts"

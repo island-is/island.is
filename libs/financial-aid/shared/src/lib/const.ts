@@ -71,3 +71,5 @@ export const getNextPeriod = {
 }
 
 export const apiBasePath = 'api/financial-aid'
+
+export const applicationPageSize = 300

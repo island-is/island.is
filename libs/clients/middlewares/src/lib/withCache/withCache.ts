@@ -1,6 +1,13 @@
 import CachePolicy from 'http-cache-semantics'
 
-import { FetchAPI, Headers, HeadersInit, Request, Response } from '../nodeFetch'
+import {
+  Headers,
+  HeadersInit,
+  MiddlewareAPI,
+  Request,
+  Response,
+} from '../nodeFetch'
+import { FetchError } from '../FetchError'
 import { CacheEntry, CacheMiddlewareConfig, CachePolicyInternal } from './types'
 import { CacheResponse } from './CacheResponse'
 
@@ -17,7 +24,7 @@ export function withCache({
   overrideCacheControl,
   overrideForPost = false,
   cacheManager,
-}: CacheMiddlewareConfig): FetchAPI {
+}: CacheMiddlewareConfig): MiddlewareAPI {
   const sharedFor = typeof shared === 'function' ? shared : () => shared
   const overrideCacheControlFor =
     typeof overrideCacheControl === 'function'
@@ -25,9 +32,7 @@ export function withCache({
       : () => overrideCacheControl
   const debug = DEBUG_NAMES.includes('*') || DEBUG_NAMES.includes(name)
 
-  const fetchWithCache: FetchAPI = async (input, init) => {
-    const request = new Request(input, init)
-
+  const fetchWithCache: MiddlewareAPI = async (request) => {
     const isShared = sharedFor(request)
     if (!isShared && !request.auth?.nationalId) {
       logger.warn(
@@ -40,7 +45,7 @@ export function withCache({
     const entry = await cacheManager.get<CacheEntry>(cacheKey)
 
     if (!entry) {
-      const response = await fetch(request)
+      const response = await fetch(request).catch(handleFetchErrors)
       const policy = new CachePolicy(
         policyRequestFrom(request),
         policyResponseFrom(
@@ -52,8 +57,9 @@ export function withCache({
           shared: isShared,
         },
       ) as CachePolicyInternal
-      const cacheResponse = CacheResponse.fromResponse(response, policy)
+      const cacheResponse = CacheResponse.fromServerResponse(response, policy)
 
+      cacheResponse.cacheStatus.fwd = 'miss'
       debugLog('Miss', cacheResponse)
       await maybeStoreResponse(cacheKey, cacheResponse)
 
@@ -75,6 +81,7 @@ export function withCache({
       if (cacheResponse.policy.useStaleWhileRevalidate()) {
         // Well actually, in this case it's fine to return the stale response.
         // But we'll update the cache in the background.
+        cacheResponse.cacheStatus.hit = true
         debugLog('Stale while revalidate', cacheResponse)
         revalidate(cacheKey, request, cacheResponse).catch((error) =>
           logStaleWhileRevalidateError(cacheResponse.policy, error),
@@ -85,10 +92,18 @@ export function withCache({
         cacheResponse = await revalidate(cacheKey, request, cacheResponse)
       }
     } else {
+      cacheResponse.cacheStatus.hit = true
       debugLog('Hit', cacheResponse)
     }
 
     return cacheResponse.getResponse()
+  }
+
+  function handleFetchErrors(error: Error): Response {
+    if (error instanceof FetchError) {
+      return error.response
+    }
+    throw error
   }
 
   /**
@@ -130,12 +145,14 @@ export function withCache({
       // Respect standard HTTP cache semantics
       !cacheResponse.policy.storable()
     ) {
+      cacheResponse.cacheStatus.stored = false
       debugLog('Not storing', cacheResponse)
       return
     }
 
     const ttl = Math.round(cacheResponse.policy.timeToLive() / 1000)
     if (ttl <= 0) {
+      cacheResponse.cacheStatus.stored = false
       debugLog('Not storing', cacheResponse)
       return
     }
@@ -146,6 +163,7 @@ export function withCache({
       body,
     }
 
+    cacheResponse.cacheStatus.stored = true
     debugLog('Storing', cacheResponse)
     await cacheManager.set(cacheKey, entry, {
       ttl,
@@ -171,6 +189,7 @@ export function withCache({
       revalidationResponse = await fetch(revalidationRequest)
     } catch (fetchError) {
       if (cacheResponse.policy._useStaleIfError()) {
+        cacheResponse.cacheStatus.hit = true
         debugLog('Revalidate error, return stale', cacheResponse)
         return cacheResponse
       }
@@ -193,31 +212,32 @@ export function withCache({
     // parent's _isShared value.
     revalidatedPolicy._isShared = cacheResponse.policy._isShared
 
+    // Update cache response.
+    cacheResponse.cacheStatus.fwd = 'stale'
+    cacheResponse.policy = revalidatedPolicy
+
     // Is the response body different from what we already have in the cache?
     if (modified) {
+      cacheResponse.setResponse(revalidationResponse)
       debugLog('Revalidate miss', cacheResponse)
-      cacheResponse = CacheResponse.fromResponse(
-        revalidationResponse,
-        revalidatedPolicy,
-      )
     } else {
+      cacheResponse.cacheStatus.fwdStatus = revalidationResponse.status
       debugLog('Revalidate hit', cacheResponse)
-      cacheResponse.policy = revalidatedPolicy
     }
 
     await maybeStoreResponse(cacheKey, cacheResponse)
     return cacheResponse
   }
 
-  function debugLog(message: string, { policy }: CacheResponse) {
+  function debugLog(message: string, cacheResponse: CacheResponse) {
     if (debug) {
+      const { policy } = cacheResponse
       logger.info(`Fetch cache (${name}): ${message} - ${policy._url}`, {
         url: policy._url,
         status: policy._status,
-        storable: policy.storable(),
-        ttl: Math.round(policy.timeToLive() / 1000),
         shared: policy._isShared,
         cacheControl: policy._resHeaders['cache-control'],
+        cacheStatus: cacheResponse.getCacheStatus(),
       })
     }
   }

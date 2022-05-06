@@ -50,10 +50,15 @@ import {
 import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 import { ProblemModule } from '@island.is/nest/problem'
 import { CriminalRecordModule } from '@island.is/api/domains/criminal-record'
+import { MunicipalitiesFinancialAidModule } from '@island.is/api/domains/municipalities-financial-aid'
+import { MunicipalitiesFinancialAidConfig } from '@island.is/clients/municipalities-financial-aid'
 import { MortgageCertificateModule } from '@island.is/api/domains/mortgage-certificate'
 
 import { maskOutFieldsMiddleware } from './graphql.middleware'
+import { FishingLicenseModule } from '@island.is/api/domains/fishing-license'
 import { CompanyRegistryConfig } from '@island.is/clients/rsk/company-registry'
+import { FishingLicenseClientConfig } from '@island.is/clients/fishing-license'
+import { FinancialStatementsInaoModule } from '@island.is/api/domains/financial-statements-inao'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -206,6 +211,7 @@ const autoSchemaFile = environment.production
       url: environment.regulationsDomain.url!,
     }),
     FinanceModule,
+    FinancialStatementsInaoModule,
     AssetsModule,
     NationalRegistryXRoadModule,
     ApiDomainsPaymentModule.register({
@@ -249,6 +255,8 @@ const autoSchemaFile = environment.production
         xroadPath: environment.criminalRecord.xroadPath!,
       },
     }),
+    MunicipalitiesFinancialAidModule,
+    FishingLicenseModule,
     MortgageCertificateModule,
     ConfigModule.forRoot({
       isGlobal: true,
@@ -263,7 +271,9 @@ const autoSchemaFile = environment.production
         SyslumennClientConfig,
         FeatureFlagConfig,
         XRoadConfig,
+        MunicipalitiesFinancialAidConfig,
         CompanyRegistryConfig,
+        FishingLicenseClientConfig,
         DrivingLicenseBookClientConfig,
       ],
     }),

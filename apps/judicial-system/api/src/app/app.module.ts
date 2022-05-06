@@ -17,7 +17,9 @@ import {
   FeatureModule,
   PoliceModule,
   DefendantModule,
+  fileModuleConfig,
 } from './modules'
+import { ConfigModule } from '@nestjs/config'
 
 const debug = !environment.production
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -50,6 +52,7 @@ const autoSchemaFile = environment.production
     CmsTranslationsModule,
     PoliceModule,
     ProblemModule.forRoot({ logAllErrors: true }),
+    ConfigModule.forRoot({ isGlobal: true, load: [fileModuleConfig] }),
   ],
 })
 export class AppModule {}

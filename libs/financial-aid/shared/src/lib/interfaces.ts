@@ -4,7 +4,6 @@ import {
   FileType,
   Employment,
   ApplicationEventType,
-  RolesRule,
   StaffRole,
   ApplicationStateUrl,
   FamilyStatus,
@@ -13,6 +12,7 @@ import {
 } from './enums'
 
 export interface GetSignedUrl {
+  folder: string
   fileName: string
 }
 
@@ -98,8 +98,6 @@ export interface User {
   nationalId: string
   name: string
   phoneNumber?: string
-  folder: string
-  service: RolesRule
   currentApplicationId?: string
   spouse?: Spouse
   staff?: Staff
@@ -391,4 +389,9 @@ export interface ApplicationProfileInfo {
   onclick?: () => void
   other?: string
   fullWidth?: boolean
+}
+
+export interface ApplicationPagination {
+  applications: Application[]
+  totalCount: number
 }

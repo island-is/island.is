@@ -1,34 +1,38 @@
-import React from 'react'
-import flatten from 'lodash/flatten'
 import { gql, useQuery } from '@apollo/client'
-import { ServicePortalModuleComponent, m } from '@island.is/service-portal/core'
-import { GridColumn, GridRow, Table as T } from '@island.is/island-ui/core'
 import subYears from 'date-fns/subYears'
-import { Query } from '@island.is/api/schema'
+import flatten from 'lodash/flatten'
+import React from 'react'
 import { defineMessage } from 'react-intl'
+
+import { Query } from '@island.is/api/schema'
 import {
-  Box,
-  Text,
-  Stack,
-  Button,
-  SkeletonLoader,
   AlertBanner,
+  Box,
+  Button,
+  GridColumn,
+  GridRow,
+  SkeletonLoader,
+  Stack,
+  Table as T,
+  Text,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import {
+  amountFormat,
+  ExpandHeader,
+  ExpandRow,
+  formSubmit,
+  m,
+  ServicePortalModuleComponent,
+} from '@island.is/service-portal/core'
+
+import DropdownExport from '../../components/DropdownExport/DropdownExport'
+import FinanceStatusTableRow from '../../components/FinanceStatusTableRow/FinanceStatusTableRow'
+import { exportGreidslustadaFile } from '../../utils/filesGreidslustada'
 import {
   FinanceStatusDataType,
   FinanceStatusOrganizationType,
 } from './FinanceStatusData.types'
-import {
-  ExpandHeader,
-  ExpandRow,
-  amountFormat,
-  formSubmit,
-} from '@island.is/service-portal/core'
-import { exportGreidslustadaFile } from '../../utils/filesGreidslustada'
-import DropdownExport from '../../components/DropdownExport/DropdownExport'
-import FinanceStatusTableRow from '../../components/FinanceStatusTableRow/FinanceStatusTableRow'
-import { Link } from 'react-router-dom'
 
 const GetFinanceStatusQuery = gql`
   query GetFinanceStatusQuery {
@@ -39,6 +43,9 @@ const GetFinanceStatusQuery = gql`
 const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.finance-status')
   const { formatMessage } = useLocale()
+
+  const actor = userInfo.profile.actor
+  const isDelegation = Boolean(actor)
 
   const { loading, error, ...statusQuery } = useQuery<Query>(
     GetFinanceStatusQuery,
@@ -83,35 +90,42 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
               {formatMessage({
                 id: 'sp.finance-status:intro',
                 defaultMessage:
-                  'Hér er að finna sundurliðun skulda og inneigna við ríkissjóð og stofnanir á þeim degi sem skoðað er.',
+                  'Hér sérð þú sundurliðun skulda og/eða inneigna hjá ríkissjóði og stofnunum.',
               })}
             </Text>
           </GridColumn>
           {financeStatusData.organizations?.length > 0 || financeStatusZero ? (
             <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
-              <Box display="flex" justifyContent="flexEnd" marginTop={1}>
-                <Box paddingRight={2}>
-                  <a
-                    href="https://island.is/umsoknir/greidsluaaetlun/"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    <Button
-                      colorScheme="default"
-                      icon="receipt"
-                      iconType="outline"
-                      preTextIconType="outline"
-                      size="default"
-                      type="button"
-                      variant="utility"
+              <Box
+                display="flex"
+                justifyContent="flexEnd"
+                marginTop={1}
+                printHidden
+              >
+                {!isDelegation && (
+                  <Box paddingRight={2}>
+                    <a
+                      href="/umsoknir/greidsluaaetlun/"
+                      target="_blank"
+                      rel="noreferrer"
                     >
-                      {formatMessage({
-                        id: 'sp.finance-status:make-payment-schedule',
-                        defaultMessage: 'Gera greiðsluáætlun',
-                      })}
-                    </Button>
-                  </a>
-                </Box>
+                      <Button
+                        colorScheme="default"
+                        icon="receipt"
+                        iconType="outline"
+                        preTextIconType="outline"
+                        size="default"
+                        type="button"
+                        variant="utility"
+                      >
+                        {formatMessage({
+                          id: 'sp.finance-status:make-payment-schedule',
+                          defaultMessage: 'Gera greiðsluáætlun',
+                        })}
+                      </Button>
+                    </a>
+                  </Box>
+                )}
                 <Box paddingRight={2}>
                   <Button
                     colorScheme="default"
@@ -201,7 +215,6 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
                           chargeType={chargeType}
                           organization={org}
                           downloadURL={financeStatusData.downloadServiceURL}
-                          userInfo={userInfo}
                           key={`${org.id}-${chargeType.id}-${i}-${ii}`}
                         />
                       )),

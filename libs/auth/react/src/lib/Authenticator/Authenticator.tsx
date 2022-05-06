@@ -2,7 +2,7 @@ import React, { FC, useCallback, useEffect, useMemo, useReducer } from 'react'
 import { Route, Switch, useHistory } from 'react-router-dom'
 import { CompatRoute } from 'react-router-dom-v5-compat'
 import type { History } from 'history'
-import type { User } from 'oidc-client'
+import type { User } from 'oidc-client-ts'
 
 import OidcSignIn from './OidcSignIn'
 import OidcSilentSignIn from './OidcSilentSignIn'

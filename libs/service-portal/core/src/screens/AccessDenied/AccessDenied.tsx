@@ -4,6 +4,7 @@ import { useLocale } from '@island.is/localization'
 import { ErrorScreen } from '../ErrorScreen/ErrorScreen'
 import { useLocation } from 'react-router-dom'
 import { servicePortalMasterNavigation } from '@island.is/service-portal/core'
+import { useAuth } from '@island.is/auth/react'
 
 export const AccessDenied: ServicePortalModuleComponent = () => {
   const { formatMessage } = useLocale()
@@ -11,17 +12,28 @@ export const AccessDenied: ServicePortalModuleComponent = () => {
   const navItem = servicePortalMasterNavigation[0].children?.find(
     (x) => x.path === pathname,
   )
+  const { userInfo: user } = useAuth()
+
+  const actor = user?.profile.actor
+  const isDelegation = Boolean(actor)
+
   return (
     <ErrorScreen
-      tag={formatMessage(m.accessDenied)}
-      tagVariant="red"
-      title={
+      tag={
         (navItem && formatMessage(navItem?.name)) ||
         formatMessage(m.accessDenied).toString()
       }
-      figure="./assets/images/hourglass.svg"
+      tagVariant="red"
+      title={
+        isDelegation
+          ? formatMessage(m.accessNeeded)
+          : formatMessage(m.accessDenied)
+      }
+      figure="./assets/images/jobsGrid.svg"
     >
-      {formatMessage(m.accessDeniedText)}
+      {isDelegation
+        ? formatMessage(m.accessDeniedText)
+        : formatMessage(m.accessNeededText)}
     </ErrorScreen>
   )
 }

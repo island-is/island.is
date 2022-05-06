@@ -2,6 +2,7 @@ import {
   Column,
   CreatedAt,
   DataType,
+  ForeignKey,
   Model,
   Table,
   UpdatedAt,
@@ -46,12 +47,27 @@ export class Institution extends Model {
     unique: true,
   })
   @ApiProperty()
-  name?: string
+  name!: string
 
   @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
   })
   @ApiProperty()
-  active?: boolean
+  active!: boolean
+
+  @ForeignKey(() => Institution)
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  @ApiProperty()
+  defaultCourtId?: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  policeCaseNumberPrefix?: string
 }

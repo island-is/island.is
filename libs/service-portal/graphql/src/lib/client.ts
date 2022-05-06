@@ -34,5 +34,11 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
 
 export const client = new ApolloClient({
   link: ApolloLink.from([retryLink, errorLink, authLink, httpLink]),
-  cache: new InMemoryCache(),
+  cache: new InMemoryCache({
+    typePolicies: {
+      UserProfile: {
+        keyFields: ['nationalId'],
+      },
+    },
+  }),
 })
