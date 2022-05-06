@@ -598,7 +598,7 @@ jobs:
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
-            const updateComment = require('./github/actions/update-comments.js')
+            const updateComment = require('./.github/actions/update-comments.js')
             const { COMMENT } = process.env
             await updateComment({github, context, comment: COMMENT})
 
