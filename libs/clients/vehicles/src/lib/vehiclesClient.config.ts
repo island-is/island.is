@@ -14,7 +14,7 @@ export const VehiclesClientConfig = defineConfig<z.infer<typeof schema>>({
   load(env) {
     return {
       xRoadServicePath: env.required(
-        'VEHICLES_XROAD_PATH',
+        'XROAD_VEHICLES_PATH',
         'IS-DEV/GOV/10017/Samgongustofa-Protected/Mitt-Svaedi-V1',
       ),
       fetch: {
