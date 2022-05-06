@@ -58,7 +58,7 @@ import {
   pathIsRoute,
 } from '../hooks/useLinkResolver'
 import { stringHash } from '@island.is/web/utils/stringHash'
-
+import { OrganizationIslandFooter } from '../components/Organization/OrganizationIslandFooter'
 import Illustration from './Illustration'
 import * as styles from './main.css'
 
@@ -103,6 +103,7 @@ export interface LayoutProps {
   namespace: Record<string, string | string[]>
   alertBannerContent?: GetAlertBannerQuery['getAlertBanner']
   organizationAlertBannerContent?: GetAlertBannerQuery['getAlertBanner']
+  footerVersion?: 'default' | 'organization'
   respOrigin
   megaMenuData
 }
@@ -157,6 +158,7 @@ const Layout: NextComponentType<
   namespace,
   alertBannerContent,
   organizationAlertBannerContent,
+  footerVersion = 'default',
   respOrigin,
   children,
   megaMenuData,
@@ -373,28 +375,33 @@ const Layout: NextComponentType<
         </MenuTabsContext.Provider>
         {showFooter && (
           <Hidden print={true}>
-            {showFooterIllustration && (
-              <Illustration className={styles.illustration} />
+            {footerVersion === 'default' && (
+              <>
+                {showFooterIllustration && (
+                  <Illustration className={styles.illustration} />
+                )}
+                <Footer
+                  topLinks={footerUpperInfo}
+                  {...(activeLocale === 'is'
+                    ? {
+                        linkToHelpWeb: SHOULD_LINK_TO_SERVICE_WEB
+                          ? linkResolver('serviceweb').href
+                          : '',
+                      }
+                    : { topLinksContact: footerUpperContact })}
+                  bottomLinks={footerLowerMenu}
+                  middleLinks={footerMiddleMenu}
+                  bottomLinksTitle={t.siteExternalTitle}
+                  middleLinksTitle={String(namespace.footerMiddleLabel)}
+                  languageSwitchLink={{
+                    title: activeLocale === 'en' ? 'Íslenska' : 'English',
+                    href: activeLocale === 'en' ? '/' : '/en',
+                  }}
+                  showMiddleLinks
+                />
+              </>
             )}
-            <Footer
-              topLinks={footerUpperInfo}
-              {...(activeLocale === 'is'
-                ? {
-                    linkToHelpWeb: SHOULD_LINK_TO_SERVICE_WEB
-                      ? linkResolver('serviceweb').href
-                      : '',
-                  }
-                : { topLinksContact: footerUpperContact })}
-              bottomLinks={footerLowerMenu}
-              middleLinks={footerMiddleMenu}
-              bottomLinksTitle={t.siteExternalTitle}
-              middleLinksTitle={String(namespace.footerMiddleLabel)}
-              languageSwitchLink={{
-                title: activeLocale === 'en' ? 'Íslenska' : 'English',
-                href: activeLocale === 'en' ? '/' : '/en',
-              }}
-              showMiddleLinks
-            />
+            {footerVersion === 'organization' && <OrganizationIslandFooter />}
           </Hidden>
         )}
         <style jsx global>{`

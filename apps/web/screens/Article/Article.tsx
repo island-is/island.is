@@ -31,6 +31,7 @@ import {
   Webreader,
   AppendedArticleComponents,
   LiveChatIncChatPanel,
+  footerEnabled,
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from '../queries'
@@ -65,6 +66,17 @@ import * as styles from './Article.css'
 
 type Article = GetSingleArticleQuery['getSingleArticle']
 type SubArticle = GetSingleArticleQuery['getSingleArticle']['subArticles'][0]
+
+const getThemeConfig = (article: Article) => {
+  const organizationFooterPresent = article?.organization?.some((o) =>
+    footerEnabled.includes(o.slug),
+  )
+  return {
+    themeConfig: {
+      footerVersion: organizationFooterPresent ? 'organization' : 'default',
+    },
+  }
+}
 
 const createSubArticleNavigation = (body: Slice[]) => {
   // on sub-article page the main article title is h1, sub-article title is h2
@@ -690,6 +702,7 @@ ArticleScreen.getInitialProps = async ({ apolloClient, query, locale }) => {
     namespace,
     stepOptionsFromNamespace,
     stepperNamespace,
+    ...getThemeConfig(article),
   }
 }
 
