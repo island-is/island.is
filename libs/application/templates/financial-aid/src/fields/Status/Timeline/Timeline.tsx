@@ -56,8 +56,7 @@ const Timeline = ({ state, modified, created, showSpouseStep }: Props) => {
               <Text marginBottom={2}>{formatMessage(item.text)}</Text>
 
               <Text variant="small" color="dark300" marginBottom={5}>
-                {(index === 0 || index === activeState) &&
-                  formatDate(item.date)}
+                {(index === 0 || index === activeState) && item.date}
               </Text>
             </Box>
           </Box>
