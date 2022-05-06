@@ -388,6 +388,12 @@ export const ParentalLeaveForm: Form = buildForm({
           id: 'employer',
           title: parentalLeaveFormMessages.employer.subSection,
           children: [
+            buildCustomField({
+              component: 'SelfEmployed',
+              id: 'employer.selfEmployed',
+              title:
+                parentalLeaveFormMessages.selfEmployed.description,
+            }),
             buildRadioField({
               id: 'employer.isSelfEmployed',
               title: parentalLeaveFormMessages.selfEmployed.title,
