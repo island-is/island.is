@@ -1,18 +1,18 @@
-import { serviceSetup as authAdminApiSetup } from '../../../apps/services/auth-admin-api/infra/infra'
+import { serviceSetup as authAdminWebSetup } from '../../../apps/services/auth-admin-api/infra/infra'
 import { EnvironmentServices } from '../dsl/types/charts'
 
 
-const authAdminApi = authAdminApiSetup();
+const authAdminWeb = authAdminWebSetup();
 export const Services: EnvironmentServices = {
   
   prod: [
-    authAdminApi
+    authAdminWeb
   ],
   staging: [
-    authAdminApi
+    authAdminWeb
   ],
   dev: [
-    authAdminApi
+    authAdminWeb
   ],
 }
 
