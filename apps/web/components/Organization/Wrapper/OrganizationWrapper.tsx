@@ -45,7 +45,7 @@ import {
 } from './Themes/UtlendingastofnunTheme'
 import { endpoints as chatPanelEndpoints } from '../../ChatPanel/config'
 import MannaudstorgFooter from './Themes/MannaudstorgTheme/MannaudstorgFooter'
-import { useNamespace } from '@island.is/web/hooks'
+import { useNamespaceStrict } from '@island.is/web/hooks'
 import LandlaeknirFooter from './Themes/LandlaeknirTheme/LandlaeknirFooter'
 import * as styles from './OrganizationWrapper.css'
 
@@ -76,16 +76,38 @@ interface HeaderProps {
 }
 
 export const lightThemes = ['digital_iceland', 'utlendingastofnun', 'default']
-export const footerEnabled = ['syslumenn', 'mannaudstorg']
+export const footerEnabled = [
+  'syslumenn',
+  'district-commissioner',
+
+  'utlendingastofnun',
+  'directorate-of-immigration',
+
+  'landlaeknir',
+  'directorate-of-health',
+
+  'sjukratryggingar',
+  'icelandic-health-insurance',
+
+  'mannaudstorg',
+]
 
 export const getThemeConfig = (
   theme: string,
+  slug: string,
 ): { themeConfig: Partial<LayoutProps> } => {
+  let footerVersion: LayoutProps['footerVersion'] = 'default'
+
+  if (footerEnabled.includes(slug)) {
+    footerVersion = 'organization'
+  }
+
   if (theme === 'sjukratryggingar')
     return {
       themeConfig: {
         headerButtonColorScheme: 'blueberry',
         headerColorScheme: 'blueberry',
+        footerVersion,
       },
     }
 
@@ -95,9 +117,10 @@ export const getThemeConfig = (
         themeConfig: {
           headerColorScheme: 'white',
           headerButtonColorScheme: 'negative',
+          footerVersion,
         },
       }
-    : { themeConfig: {} }
+    : { themeConfig: { footerVersion } }
 }
 
 const OrganizationHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
@@ -162,40 +185,43 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
     ? organizations[0]
     : organizations.find((x) => footerEnabled.includes(x.slug))
 
-  const n = useNamespace(organization?.namespace)
+  const n = useNamespaceStrict(organization?.namespace)
 
-  if (!organization) return null
+  let OrganizationFooterComponent = null
 
-  switch (organization.slug) {
+  switch (organization?.slug) {
     case 'syslumenn':
     case 'district-commissioner':
-      return (
+      OrganizationFooterComponent = (
         <SyslumennFooter
           title={organization.title}
           logo={organization.logo?.url}
           footerItems={organization.footerItems}
         />
       )
+      break
     case 'sjukratryggingar':
     case 'icelandic-health-insurance':
-      return (
+      OrganizationFooterComponent = (
         <SjukratryggingarFooter
           title={organization.title}
           logo={organization.logo?.url}
           footerItems={organization.footerItems}
         />
       )
+      break
     case 'utlendingastofnun':
     case 'directorate-of-immigration':
-      return (
+      OrganizationFooterComponent = (
         <UtlendingastofnunFooter
           title={organization.title}
           logo={organization.logo?.url}
           footerItems={organization.footerItems}
         />
       )
+      break
     case 'mannaudstorg':
-      return (
+      OrganizationFooterComponent = (
         <MannaudstorgFooter
           title={organization.title}
           logoSrc={organization.logo?.url}
@@ -204,9 +230,10 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
           telephoneText={n('telephone', 'Sími')}
         />
       )
+      break
     case 'landlaeknir':
     case 'directorate-of-health':
-      return (
+      OrganizationFooterComponent = (
         <LandlaeknirFooter
           footerItems={organization.footerItems}
           phone={organization.phone}
@@ -215,8 +242,10 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
           emailLabel={n('email,', 'Tölvupóstur')}
         />
       )
+      break
   }
-  return null
+
+  return OrganizationFooterComponent
 }
 
 export const OrganizationChatPanel = ({
