@@ -6,11 +6,11 @@ import {
   StaticText,
 } from '@island.is/application/core'
 import { m } from '../lib/messages'
-import { useLocale } from '@island.is/localization'
+import { DebtLessCertificateModel } from '../types/schema'
 export class NoDebtCertificateProvider extends BasicDataProvider {
   type = 'NoDebtCertificateProvider'
 
-  async provide(): Promise<unknown> {
+  async provide(): Promise<DebtLessCertificateModel> {
     const query = `
     query GetDebtLessCertificate($input: String!) {
         getDebtLessCertificate(input: $input) {
@@ -42,16 +42,10 @@ export class NoDebtCertificateProvider extends BasicDataProvider {
       const response = await res.json()
 
       if (response.errors) {
-        console.error(
-          `graphql error in ${this.type}: ${response.errors[0].message}`,
-        )
         return Promise.reject({})
       }
 
       if (response.data.getDebtLessCertificate.error) {
-        console.error(
-          `graphql error in ${this.type}: ${response.data.getDebtLessCertificate.error}`,
-        )
         return Promise.reject({})
       }
 
@@ -78,7 +72,7 @@ export class NoDebtCertificateProvider extends BasicDataProvider {
   }
 
   onProvideSuccess(
-    result: Record<string, unknown>,
+    result: Record<string, DebtLessCertificateModel>,
   ): SuccessfulDataProviderResult {
     return { date: new Date(), status: 'success', data: result }
   }
