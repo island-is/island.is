@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react'
-import { useQuery, gql } from '@apollo/client'
+import { useQuery } from '@apollo/client'
 import {
   Text,
   Box,
@@ -401,7 +401,6 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                         organizations,
                       )}
                       documentLine={document}
-                      userInfo={userInfo}
                     />
                   </Box>
                 ))}

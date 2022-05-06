@@ -62,7 +62,7 @@ const api_resource_scopes = [
   },
 ]
 
-const client_id = 'ids-admin'
+const client_id = '@island.is/auth-admin-web'
 
 const client_allowed_scopes = [
   {

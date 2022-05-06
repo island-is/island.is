@@ -1,14 +1,16 @@
-import { useStore } from '../../store/stateProvider'
+import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
+import flatten from 'lodash/flatten'
 import { useEffect } from 'react'
+
 import {
   ServicePortalModule,
   ServicePortalRoute,
 } from '@island.is/service-portal/core'
+import { User } from '@island.is/shared/types'
+
 import { Action, ActionType } from '../../store/actions'
+import { useStore } from '../../store/stateProvider'
 import { useModuleProps } from '../useModuleProps/useModuleProps'
-import { User } from 'oidc-client'
-import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
-import flatten from 'lodash/flatten'
 
 export const useRoutes = () => {
   const [{ modules, modulesPending }, dispatch] = useStore()

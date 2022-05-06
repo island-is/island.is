@@ -12,10 +12,11 @@ import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import Jobs from '../../assets/Jobs'
 import kennitala from 'kennitala'
+import { Student } from '../../types'
 
 const SchoolConfirmed: FC<FieldBaseProps> = ({ application }) => {
   const { answers } = application
-  const nationalId = kennitala.format(answers.nationalId as string)
+  const nationalId = kennitala.format((answers.student as Student).nationalId)
   const { formatMessage } = useLocale()
 
   return (
@@ -31,7 +32,7 @@ const SchoolConfirmed: FC<FieldBaseProps> = ({ application }) => {
       <GridRow>
         <GridColumn span={['12/12', '4/12']} paddingBottom={[3, 0]}>
           <Text variant="h4">{formatMessage(m.confirmationSectionName)}</Text>
-          <Text variant="default">{answers.studentName}</Text>
+          <Text variant="default">{(answers.student as Student).name}</Text>
         </GridColumn>
         <GridColumn span={['12/12', '4/12']} paddingBottom={[3, 0]}>
           <Text variant="h4">
@@ -42,7 +43,9 @@ const SchoolConfirmed: FC<FieldBaseProps> = ({ application }) => {
         <GridColumn span={['12/12', '4/12']} paddingBottom={[3, 0]}>
           <Text variant="h4">{formatMessage(m.confirmation)}</Text>
           <Text variant="default">
-            {formatMessage(m.school) + (answers.confirmation as any)?.school}
+            {formatMessage(m.school) +
+              ' ' +
+              (answers.confirmation as any)?.school}
           </Text>
         </GridColumn>
       </GridRow>

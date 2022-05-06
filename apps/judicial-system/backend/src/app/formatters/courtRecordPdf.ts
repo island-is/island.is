@@ -105,7 +105,8 @@ function constructRestrictionCourtRecordPdf(
   addNormalJustifiedText(
     doc,
     `${formatMessage(courtRecord.prosecutorIs)} ${
-      theCase.prosecutor?.institution?.name ?? courtRecord.missingDistrict
+      theCase.creatingProsecutor?.institution?.name ??
+      courtRecord.missingDistrict
     }.`,
   )
   addNormalJustifiedText(
@@ -264,7 +265,7 @@ function constructRestrictionCourtRecordPdf(
     completedCaseStates.includes(theCase.state) && user
       ? formatMessage(courtRecord.smallPrint, {
           actorName: user.name,
-          actorInstitution: user.institution?.name,
+          actorInstitution: user.institution?.name ?? 'NONE',
           date: formatDate(nowFactory(), 'PPPp'),
         })
       : undefined,
@@ -346,7 +347,8 @@ function constructInvestigationCourtRecordPdf(
   addNormalJustifiedText(
     doc,
     `${formatMessage(courtRecord.prosecutorIs)} ${
-      theCase.prosecutor?.institution?.name ?? courtRecord.missingDistrict
+      theCase.creatingProsecutor?.institution?.name ??
+      courtRecord.missingDistrict
     }.`,
   )
   addNormalJustifiedText(

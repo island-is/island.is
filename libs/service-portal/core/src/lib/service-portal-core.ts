@@ -1,9 +1,11 @@
-import { LazyExoticComponent, FC } from 'react'
-import { User } from 'oidc-client'
-import { ServicePortalPath } from './navigation/paths'
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
+import { FC, LazyExoticComponent } from 'react'
 import { MessageDescriptor } from 'react-intl'
+
 import { IconProps } from '@island.is/island-ui/core'
+import { User } from '@island.is/shared/types'
+
+import { ServicePortalPath } from './navigation/paths'
 
 /**
  * A navigational item used by the service portal
