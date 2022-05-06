@@ -46,6 +46,7 @@ import {
 import { endpoints as chatPanelEndpoints } from '../../ChatPanel/config'
 import MannaudstorgFooter from './Themes/MannaudstorgTheme/MannaudstorgFooter'
 import { useNamespaceStrict } from '@island.is/web/hooks'
+import LandlaeknirFooter from './Themes/LandlaeknirTheme/LandlaeknirFooter'
 import * as styles from './OrganizationWrapper.css'
 
 interface NavigationData {
@@ -227,6 +228,18 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
           phone={organization.phone}
           contactLink={organization.link}
           telephoneText={n('telephone', 'Sími')}
+        />
+      )
+      break
+    case 'landlaeknir':
+    case 'directorate-of-health':
+      OrganizationFooterComponent = (
+        <LandlaeknirFooter
+          footerItems={organization.footerItems}
+          phone={organization.phone}
+          email={organization.email}
+          phoneLabel={n('telephone', 'Sími')}
+          emailLabel={n('email,', 'Tölvupóstur')}
         />
       )
       break

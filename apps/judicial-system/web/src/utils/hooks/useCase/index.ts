@@ -10,6 +10,7 @@ import type {
   RequestSignatureResponse,
   UpdateCase,
   SessionArrangements,
+  CreateCase,
 } from '@island.is/judicial-system/types'
 import { toast } from '@island.is/island-ui/core'
 import { errors } from '@island.is/judicial-system-web/messages'
@@ -125,13 +126,14 @@ const useCase = () => {
   ] = useMutation<ExtendCaseMutationResponse>(ExtendCaseMutation)
 
   const createCase = useMemo(
-    () => async (theCase: Case): Promise<Case | undefined> => {
+    () => async (theCase: CreateCase): Promise<Case | undefined> => {
       try {
         if (isCreatingCase === false) {
           const { data } = await createCaseMutation({
             variables: {
               input: {
                 type: theCase.type,
+                description: theCase.description,
                 policeCaseNumber: theCase.policeCaseNumber,
                 defenderName: theCase.defenderName,
                 defenderNationalId: theCase.defenderNationalId,
@@ -139,8 +141,6 @@ const useCase = () => {
                 defenderPhoneNumber: theCase.defenderPhoneNumber,
                 sendRequestToDefender: theCase.sendRequestToDefender,
                 leadInvestigator: theCase.leadInvestigator,
-                courtId: theCase.court?.id,
-                description: theCase.description,
               },
             },
           })
