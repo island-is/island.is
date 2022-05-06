@@ -47,6 +47,7 @@ import MannaudstorgFooter from './Themes/MannaudstorgTheme/MannaudstorgFooter'
 import { useFeatureFlag, useNamespace } from '@island.is/web/hooks'
 import { watsonConfig } from './config'
 import { WatsonChatPanel } from '@island.is/web/components'
+import LandlaeknirFooter from './Themes/LandlaeknirTheme/LandlaeknirFooter'
 import * as styles from './OrganizationWrapper.css'
 
 interface NavigationData {
@@ -206,6 +207,17 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
           phone={organization.phone}
           contactLink={organization.link}
           telephoneText={n('telephone', 'Sími')}
+        />
+      )
+    case 'landlaeknir':
+    case 'directorate-of-health':
+      return (
+        <LandlaeknirFooter
+          footerItems={organization.footerItems}
+          phone={organization.phone}
+          email={organization.email}
+          phoneLabel={n('telephone', 'Sími')}
+          emailLabel={n('email,', 'Tölvupóstur')}
         />
       )
   }
