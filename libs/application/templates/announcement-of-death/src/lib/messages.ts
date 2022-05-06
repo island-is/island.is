@@ -550,6 +550,16 @@ Ef ekkert á við sem hér að ofan er talið rennur arfur í ríkissjóð. Nán
     defaultMessage: 'Reyndu aftur síðar',
     description: 'Unhandled error in data provider',
   },
+  nextStepsText: {
+    id: 'aod.application:nextStepsText#markdown',
+    defaultMessage: `Takk fyrir að gefa þér tíma til þess að sinna þessu ferli. Þegar tilkynningin hefur verið afgreidd færðu senda staðfestingu og heimildir í þitt pósthólf á Mínar síður á Ísland.is.
+    * Þegar búið er að staðfesta tilkynninguna og móttöku dánarvottorðs getur útför farið fram. 
+    * Heimildir verða sendar í pósthólf á Mínar síður á Ísland.is hjá þeim aðilum sem óskað var eftir.
+    * Erfingjar þurfa að taka ákvörðun um frágang dánarbúsins innan fjögurra mánaða frá dánardegi. Nánari upplýsingar má finna á vefsíðu sýslumanns.
+    * Mikilvægt er að koma frumriti af erfðaskrám til sýslumanns sem fyrst þar sem innihald hennar getur haft áhrif á dánarbú hins látna.
+    * Ef spurningar vakna varðandi næstu skref þá er hægt að snúa sér til "réttur  sýslumaður"`,
+    description: 'Inheritance step title',
+  },
 
   /* Error */
   errorUnknown: {

@@ -1,4 +1,10 @@
-import { Bullet, BulletList, Link, Stack } from '@island.is/island-ui/core'
+import {
+  Bullet,
+  BulletList,
+  Link,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
 import { MarkdownToJSX } from 'markdown-to-jsx'
 import React from 'react'
 
@@ -11,6 +17,12 @@ const markdownOverrides: MarkdownToJSX.Overrides = {
       color: 'blue400',
       underline: 'small',
       underlineVisibility: 'always',
+    },
+  },
+  h1: {
+    component: Text,
+    props: {
+      variant: 'h3',
     },
   },
 }

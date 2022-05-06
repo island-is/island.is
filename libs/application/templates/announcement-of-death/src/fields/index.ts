@@ -1,5 +1,5 @@
 export { ElectPerson } from './ElectPerson/index'
-export { Completed, Delegated } from './Done'
+export { Completed, Delegated, AnnouncementCompleteImage } from './Done'
 export { SubmitAndDelegate } from './SubmitAndDelegate'
 export { EstateMemberRepeater } from './EstateMemberRepeater'
 export { RealEstateAndLandsRepeater } from './RealEstateAndLandsRepeater'

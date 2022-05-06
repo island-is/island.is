@@ -3,17 +3,31 @@ import {
   buildCustomField,
   Form,
   FormModes,
+  buildMultiField,
+  buildDescriptionField,
+  buildKeyValueField,
 } from '@island.is/application/core'
+import { m } from '../lib/messages'
+import { markdownOptions } from '../lib/markdownOptions'
 
 export const done: Form = buildForm({
   id: 'done',
-  title: 'Andlátstilkynning móttekin',
+  title: 'Tilkynning móttekin',
   mode: FormModes.APPLYING,
   children: [
-    buildCustomField({
-      id: 'overview',
-      component: 'Completed',
-      title: 'Andlátstilkynning móttekin',
+    buildMultiField({
+      id: 'done',
+      title: 'Tilkynning móttekin',
+      description: m.nextStepsText,
+      descriptionMarkdownOptions: markdownOptions,
+      space: 1,
+      children: [
+        buildCustomField({
+          id: 'completeStepImage',
+          title: '',
+          component: 'AnnouncementCompleteImage',
+        }),
+      ],
     }),
   ],
 })
