@@ -199,8 +199,8 @@ NewsItem.getInitialProps = async ({ apolloClient, locale, query }) => {
     organizationPage: getOrganizationPage,
     newsItem,
     namespace,
-    ...getThemeConfig(getOrganizationPage.theme),
+    ...getThemeConfig(getOrganizationPage.theme, getOrganizationPage.slug),
   }
 }
 
-export default withMainLayout(NewsItem, { showFooter: false })
+export default withMainLayout(NewsItem)

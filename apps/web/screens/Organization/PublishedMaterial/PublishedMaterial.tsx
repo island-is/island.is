@@ -498,8 +498,8 @@ PublishedMaterial.getInitialProps = async ({ apolloClient, locale, query }) => {
     genericTagFilters:
       getOrganization.publishedMaterialSearchFilterGenericTags ?? [],
     namespace,
-    ...getThemeConfig(getOrganizationPage.theme),
+    ...getThemeConfig(getOrganizationPage.theme, getOrganizationPage.slug),
   }
 }
 
-export default withMainLayout(PublishedMaterial, { showFooter: false })
+export default withMainLayout(PublishedMaterial)

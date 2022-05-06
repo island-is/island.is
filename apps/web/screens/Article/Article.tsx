@@ -68,11 +68,12 @@ type Article = GetSingleArticleQuery['getSingleArticle']
 type SubArticle = GetSingleArticleQuery['getSingleArticle']['subArticles'][0]
 
 const getThemeConfig = (article: Article) => {
+  const organizationFooterPresent = article?.organization?.some((o) =>
+    footerEnabled.includes(o.slug),
+  )
   return {
     themeConfig: {
-      showFooter: !article?.organization?.some((o) =>
-        footerEnabled.includes(o.slug),
-      ),
+      footerVersion: organizationFooterPresent ? 'organization' : 'default',
     },
   }
 }

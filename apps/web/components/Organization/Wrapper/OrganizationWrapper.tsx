@@ -46,8 +46,6 @@ import {
 import { endpoints as chatPanelEndpoints } from '../../ChatPanel/config'
 import MannaudstorgFooter from './Themes/MannaudstorgTheme/MannaudstorgFooter'
 import { useNamespaceStrict } from '@island.is/web/hooks'
-
-import { OrganizationIslandFooter } from '../OrganizationIslandFooter'
 import * as styles from './OrganizationWrapper.css'
 
 interface NavigationData {
@@ -95,12 +93,20 @@ export const footerEnabled = [
 
 export const getThemeConfig = (
   theme: string,
+  slug: string,
 ): { themeConfig: Partial<LayoutProps> } => {
+  let footerVersion: LayoutProps['footerVersion'] = 'default'
+
+  if (footerEnabled.includes(slug)) {
+    footerVersion = 'organization'
+  }
+
   if (theme === 'sjukratryggingar')
     return {
       themeConfig: {
         headerButtonColorScheme: 'blueberry',
         headerColorScheme: 'blueberry',
+        footerVersion,
       },
     }
 
@@ -110,9 +116,10 @@ export const getThemeConfig = (
         themeConfig: {
           headerColorScheme: 'white',
           headerButtonColorScheme: 'negative',
+          footerVersion,
         },
       }
-    : { themeConfig: {} }
+    : { themeConfig: { footerVersion } }
 }
 
 const OrganizationHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
@@ -225,12 +232,7 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
       break
   }
 
-  return (
-    <>
-      {OrganizationFooterComponent}
-      {OrganizationFooterComponent && <OrganizationIslandFooter />}
-    </>
-  )
+  return OrganizationFooterComponent
 }
 
 export const OrganizationChatPanel = ({

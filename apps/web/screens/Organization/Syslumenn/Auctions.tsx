@@ -1034,5 +1034,5 @@ Auctions.getInitialProps = async ({ apolloClient, locale, pathname }) => {
 export default withMainLayout(Auctions, {
   headerButtonColorScheme: 'negative',
   headerColorScheme: 'white',
-  showFooter: false,
+  footerVersion: 'organization',
 })

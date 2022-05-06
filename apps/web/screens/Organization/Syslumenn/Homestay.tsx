@@ -279,5 +279,5 @@ Homestay.getInitialProps = async ({ apolloClient, locale, pathname }) => {
 export default withMainLayout(Homestay, {
   headerButtonColorScheme: 'negative',
   headerColorScheme: 'white',
-  showFooter: false,
+  footerVersion: 'organization',
 })

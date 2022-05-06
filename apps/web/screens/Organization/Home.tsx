@@ -152,8 +152,8 @@ Home.getInitialProps = async ({ apolloClient, locale, query }) => {
     organizationPage: getOrganizationPage,
     namespace,
     showSearchInHeader: false,
-    ...getThemeConfig(getOrganizationPage.theme),
+    ...getThemeConfig(getOrganizationPage.theme, getOrganizationPage.slug),
   }
 }
 
-export default withMainLayout(Home, { showFooter: false })
+export default withMainLayout(Home)
