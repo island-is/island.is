@@ -196,7 +196,6 @@ export interface CreateCase {
   defenderEmail?: string
   defenderPhoneNumber?: string
   sendRequestToDefender?: boolean
-  courtId?: string
   leadInvestigator?: string
 }
 
