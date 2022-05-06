@@ -36,6 +36,7 @@ export const NATIONAL_REGISTRY_FAMILY_DETAIL = gql`
       religion
       homeAddress
       nationality
+      legalResidence
     }
   }
 `

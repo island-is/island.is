@@ -167,7 +167,7 @@ export const calculatePeriodLength = (
   let currentDate = start
   let cost = 0
 
-  while (currentDate < end) {
+  while (currentDate <= end) {
     const daysInMonth = getDaysInMonth(currentDate)
     const dayOfMonth = currentDate.getDate()
     const daysTillEndOfMonth = daysInMonth - dayOfMonth

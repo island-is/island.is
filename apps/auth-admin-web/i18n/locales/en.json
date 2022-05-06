@@ -1033,7 +1033,7 @@
         },
         "key": {
           "label": "Key",
-          "placeholder": "island-is-1",
+          "placeholder": "@island.is/web",
           "helpText": "The key of the item that is being translated",
           "errorMessage": "The key is required and needs to be in the right format"
         },
