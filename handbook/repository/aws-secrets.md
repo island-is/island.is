@@ -185,6 +185,10 @@ AWS_PROFILE=<profile-name> create-secret
 yarn create-secret
 ```
 
+{% hint style="warning" %}
+Only alphanumeric characters, `/` and `-` are allowed. The length of the _secret name_ should be from 6-128 characters long.
+{% endhint %}
+
 You will be asked for a _secret name_ that will be added to the `/k8s/` secrets namespace, a _secret value_ and the _secret type_ (`SecureString` or `String`).
 
 ### Example
@@ -228,10 +232,6 @@ AWS_PROFILE=islandis-staging yarn create-secret
 AWS_PROFILE=islandis-prod yarn create-secret
 ```
 
-{% endhint %}
-
-{% hint style="warning" %}
-Only alphanumeric characters, `/` and `-` are allowed. The length of the _secret name_ should be from 6-128 characters long.
 {% endhint %}
 
 ## Making dev secrets available locally
