@@ -43,7 +43,7 @@ export class DelegationGuard implements CanActivate {
       return true
     } else {
       // typeId is type of appliation / applications the user is trying to access
-      // Directlly accessable in request params or body
+      // Directly accessible in request params or body
       // If the request has the application id in params or the body contains a coded token from the assign application function
       // then we get the application to get its typeId
       const typeId =
