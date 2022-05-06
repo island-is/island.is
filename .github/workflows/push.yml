@@ -41,7 +41,6 @@ jobs:
       GIT_BRANCH_DEPLOY: ${{ steps.git-branch-deploy.outputs.GIT_BRANCH_DEPLOY }}
       FEATURE_NAME: ${{ steps.git-branch-deploy.outputs.FEATURE_NAME }}
       PRE_CHECK: ${{ steps.should-run.outputs.PRE_CHECK }}
-      LABELED_FOR_DEPLOY: ${{ steps.should-run.outputs.LABELED_FOR_DEPLOY }}
     steps:
       - name: Get git branch
         id: git-branch
@@ -90,10 +89,6 @@ jobs:
             if [[ "${{ github.event.action }}" == "labeled" ]]; then
               echo "Action is labeled, using label that was applied: '${{ github.event.label.name }}'"
               deployFeature=$([[ "${{ github.event.label.name }}" == "deploy-feature" ]] && echo true || echo false )
-              if [[ "$deployFeature" == "true" ]]; then
-                echo "Pull request just labeled as feature-deploy"
-                echo "::set-output name=LABELED_FOR_DEPLOY::true"
-              fi
             else
               echo "Action is ${{ github.event.action }}, using labels on PR"
               deployFeature=${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
@@ -598,18 +593,15 @@ jobs:
         run: ./scripts/ci/retag-unaffected.sh "$UNAFFECTED"
 
       - name: Comment on PR
-        if: needs.pre-checks.outputs.LABELED_FOR_DEPLOY == 'true'
+        if: needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy'
         uses: actions/github-script@v6
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
+            const updateComment = require('./github/actions/update-comments.js')
             const { COMMENT } = process.env
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: `${COMMENT}`
-            })
+            await updateComment({github, context, comment: COMMENT})
+
 
   retag-unaffected:
     runs-on: ec2-runners
