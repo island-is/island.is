@@ -11,6 +11,7 @@ import {
   LoadingDots,
 } from '@island.is/island-ui/core'
 import {
+  NotFound,
   ServicePortalModuleComponent,
   UserInfoLine,
 } from '@island.is/service-portal/core'
@@ -26,6 +27,8 @@ import { gql, useQuery } from '@apollo/client'
 import { CurrentOwnerInfo, Query } from '@island.is/api/schema'
 import OperatorInfoItem from '../../components/DetailTable/OperatorInfoItem'
 import CoOwnerInfoItem from '../../components/DetailTable/CoOwnerInfoItem'
+import { useParams } from 'react-router-dom'
+import { NoDataScreen } from '@island.is/service-portal/core'
 
 const GET_USERS_VEHICLE_DETAIL = gql`
   query GetUsersVehicles($input: GetVehicleDetailInput!) {
@@ -127,11 +130,12 @@ const GET_USERS_VEHICLE_DETAIL = gql`
 const VehicleDetail: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.vehicle')
   const { formatMessage } = useLocale()
+  const { id }: { id: string | undefined } = useParams()
 
   const { data, loading, error } = useQuery<Query>(GET_USERS_VEHICLE_DETAIL, {
     variables: {
       input: {
-        regno: 'kzp28',
+        regno: id,
         permno: '',
         vin: '',
       },
@@ -153,6 +157,16 @@ const VehicleDetail: ServicePortalModuleComponent = ({ userInfo }) => {
 
   const year = mainInfo?.year ? '(' + mainInfo.year + ')' : ''
 
+  if (error && !loading) {
+    return (
+      <NotFound
+        title={formatMessage({
+          id: 'sp.vehicles:not-found',
+          defaultMessage: 'Ökutæki fannst ekki',
+        })}
+      />
+    )
+  }
   return (
     <>
       <Box marginBottom={6}>
