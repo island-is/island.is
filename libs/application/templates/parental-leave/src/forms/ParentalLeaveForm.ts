@@ -312,7 +312,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   id: 'personalAllowance.useAsMuchAsPossible',
                   title:
                     parentalLeaveFormMessages.personalAllowance
-                      .useAsMuchAsPossibleFromSpouse,
+                      .useAsMuchAsPossible,
                 }),
                 buildTextField({
                   id: 'personalAllowance.usage',

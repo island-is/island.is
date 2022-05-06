@@ -37,7 +37,7 @@ describe('Dummy', () => {
 //   type: 'audkenni',
 //   subjectId: '0123456789',
 //   sessionId: '0123456789',
-//   clientId: 'island-is-1',
+//   clientId: '@island.is/web',
 //   description: 'grant_description',
 //   creationTime: new Date(),
 //   expiration: new Date(),
@@ -107,13 +107,13 @@ describe('Dummy', () => {
 //   })
 
 //   // Clients
-//   it(`GET /clients/island-is-1 should return a valid client`, async () => {
+//   it(`GET /clients/@island.is/web1 should return a valid client`, async () => {
 //     // Act
 //     const response = await request(app.getHttpServer())
-//       .get('/clients/island-is-1')
+//       .get('/clients/@island.is/web')
 //       .expect(200)
 
-//     expect(response.body.clientId).toEqual('island-is-1')
+//     expect(response.body.clientId).toEqual('@island.is/web')
 //     // expect(response.body.allowedScopes).toHaveLength(4)
 //     // expect(response.body.allowedCorsOrigins).toHaveLength(4)
 //     // expect(response.body.redirectUris).toHaveLength(12)
@@ -144,11 +144,11 @@ describe('Dummy', () => {
 //     expect(response.body.subjectId).toEqual('0123456789')
 //   })
 
-//   it(`GET /grants?subjectId=0123456789&sessionId=0123456789&clientId=island-is-1&type=audkenni and expect a list of length 1`, async () => {
+//   it(`GET /grants?subjectId=0123456789&sessionId=0123456789&clientId=@island.is/web&type=audkenni and expect a list of length 1`, async () => {
 //     // Act
 //     const response = await request(app.getHttpServer())
 //       .get(
-//         '/grants?subjectId=0123456789&sessionId=0123456789&clientId=island-is-1&type=audkenni',
+//         '/grants?subjectId=0123456789&sessionId=0123456789&clientId=@island.is/web&type=audkenni',
 //       )
 //       .expect(200)
 
@@ -156,22 +156,22 @@ describe('Dummy', () => {
 //     expect(response.body[0].key).toEqual('12345')
 //   })
 
-//   it(`GET /grants?subjectId=0123456788&sessionId=0123456789&clientId=island-is-1&type=audkenni and expect a list of length zero`, async () => {
+//   it(`GET /grants?subjectId=0123456788&sessionId=0123456789&clientId=@island.is/web&type=audkenni and expect a list of length zero`, async () => {
 //     // Act
 //     const response = await request(app.getHttpServer())
 //       .get(
-//         '/grants?subjectId=0123456788&sessionId=0123456789&clientId=island-is-1&type=audkenni',
+//         '/grants?subjectId=0123456788&sessionId=0123456789&clientId=@island.is/web&type=audkenni',
 //       )
 //       .expect(200)
 
 //     expect(response.body).toHaveLength(0)
 //   })
 
-//   it(`DELETE /grants?subjectId=0123456789&sessionId=0123456789&clientId=island-is-1&type=audkenni should delete one item`, async () => {
+//   it(`DELETE /grants?subjectId=0123456789&sessionId=0123456789&clientId=@island.is/web&type=audkenni should delete one item`, async () => {
 //     // Act
 //     const response = await request(app.getHttpServer())
 //       .delete(
-//         '/grants?subjectId=0123456789&sessionId=0123456789&clientId=island-is-1&type=audkenni',
+//         '/grants?subjectId=0123456789&sessionId=0123456789&clientId=@island.is/web&type=audkenni',
 //       )
 //       .expect(200)
 

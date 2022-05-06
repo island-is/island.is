@@ -34,7 +34,6 @@
 /libs/clients/rsk/                                                                                  @island-is/juni
 /libs/clients/zendesk/                                                                              @island-is/juni
 /libs/icelandic-names-registry/                                                                     @island-is/juni
-/*/gjafakort/                                                                                       @island-is/juni
 /libs/service-portal/endorsements/                                                                  @island-is/juni
 /libs/service-portal/education/                                                                     @island-is/juni
 /libs/service-portal/education-career/                                                              @island-is/juni
@@ -159,8 +158,8 @@
 infra/                                                                                              @island-is/devops
 /charts                                                                                             @island-is/devops
 
-/apps/skilavottord/                                                                                 @island-is/deloitte @island-is/vice-versa
-/libs/skilavottord/                                                                                 @island-is/deloitte @island-is/vice-versa
+/apps/skilavottord/                                                                                 @island-is/deloitte
+/libs/skilavottord/                                                                                 @island-is/deloitte
 /libs/application/templates/parental-leave/                                                         @island-is/deloitte
 /libs/application/template-api-modules/src/lib/modules/templates/parental-leave/                    @island-is/deloitte
 
