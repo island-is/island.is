@@ -1,17 +1,17 @@
 {
   "data": {
-    "persidno": "2811882089",
-    "name": "Kristleifur Þorsteinsson",
-    "address": "Háaleitisbraut 17",
-    "postStation": "108",
+    "persidno": "0101307789",
+    "name": "Gervimaður útlönd",
+    "address": "Gervibraut 111",
+    "postStation": "100",
     "vehicleList": [
       {
         "isCurrent": true,
-        "permno": "RIF88",
-        "regno": "RIO",
+        "permno": "ABC123",
+        "regno": "BÍLÓ",
         "vin": "KNADM514AG6817531",
-        "type": "KIA RIO",
-        "color": "Blár",
+        "type": "KIA BÍLÓ",
+        "color": "Rauður",
         "firstRegDate": "2017-03-15T12:00:00.00Z",
         "modelYear": null,
         "productYear": null,

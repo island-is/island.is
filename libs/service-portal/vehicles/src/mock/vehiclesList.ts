@@ -4,8 +4,8 @@ import { nullEvent } from 'xstate/lib/actionTypes'
 export const vehiclesList: any[] = [
   {
     isCurrent: true,
-    permno: 'KZP28',
-    regno: 'KZP28',
+    permno: 'ABC123',
+    regno: 'ABC123',
     vin: 'TMBLG9NE5E0055360',
     type: 'Skoda Octavia',
     color: 'Brúnn',
@@ -19,8 +19,8 @@ export const vehiclesList: any[] = [
     outOfUse: false,
     otherOwners: null,
     termination: null,
-    buyerPersidno: '2312892249',
-    ownerPersidno: '2312892249',
+    buyerPersidno: '0101307789',
+    ownerPersidno: '0101307789',
     vehicleStatus: 'Í lagi',
     useGroup: 'Almenn notkun',
     vehGroup: 'N1',
@@ -28,8 +28,8 @@ export const vehiclesList: any[] = [
   },
   {
     isCurrent: true,
-    permno: 'KZP28',
-    regno: 'KZP28',
+    permno: 'ABC123',
+    regno: 'ABC123',
     vin: 'TMBLG9NE5E0055360',
     type: 'Volvo',
     color: 'Brúnn',
@@ -43,8 +43,8 @@ export const vehiclesList: any[] = [
     outOfUse: false,
     otherOwners: null,
     termination: null,
-    buyerPersidno: '2312892249',
-    ownerPersidno: '2312892249',
+    buyerPersidno: '0101307789',
+    ownerPersidno: '0101307789',
     vehicleStatus: 'Í lagi',
     useGroup: 'Almenn notkun',
     vehGroup: 'N1',
@@ -54,16 +54,16 @@ export const vehiclesList: any[] = [
 
 export const vehicleDetail = {
   message: 'message',
-  permno: 'KZP28',
-  regno: 'KZP28',
-  vin: 'TMBLG9NE5E0055360',
-  typeno: 'Skoda Octavia',
+  permno: 'ABC123',
+  regno: 'ABC123',
+  vin: 'TMBLG9NE5E0033360',
+  typeno: 'Skoda Kolumbio',
   typeapproval: 0,
   typeapprovalextensionvalue: 0,
   eutypeapproval: 'Almenn notkun',
-  variant: 'Skoda Octavia',
-  version: 'Skoda Octavia',
-  modelcode: 'Skoda Octavia',
+  variant: 'Skoda Kolumbio',
+  version: 'Skoda Kolumbio',
+  modelcode: 'Skoda Kolumbio',
   make: 'Skoda',
   vehcom: 'Skoda',
   speccom: 'Skoda',
@@ -80,7 +80,7 @@ export const vehicleDetail = {
   manufacturer: 'Skoda',
   country: 'Iceland',
   formercountry: 'Iceland',
-  importerpersidno: '2312892249',
+  importerpersidno: '0101307789',
   importername: 'Skoda',
   import: 'Skoda',
   vehiclestatus: 'Í lagi',
@@ -231,18 +231,18 @@ export const vehicleDetail = {
       purchasedate: '2014-02-03',
       ownregdate: '2014-02-03',
       receptiondate: '2014-02-03',
-      persidno: '2312892249',
-      fullname: 'Tryggvi Geir Magnusson',
-      address: 'Fannafold 29',
-      postalcode: '112',
+      persidno: '0101307789',
+      fullname: 'Gervimaður útlönd',
+      address: 'Gervigata 199',
+      postalcode: '100',
       city: 'Reykjavík',
-      ownerinsurancecode: '2312892249',
+      ownerinsurancecode: '0101307789',
       coOwners: [
         {
-          persidno: '1801912409',
-          fullname: 'Asdis Erna Gudmundsdottir',
-          address: 'Fannafold 29',
-          postalcode: '112',
+          persidno: '0101307789',
+          fullname: 'Gervimaður útlönd',
+          address: 'Gervigata 111',
+          postalcode: '100',
           city: 'Reykjavík',
         },
       ],
@@ -255,17 +255,17 @@ export const vehicleDetail = {
       serial: 123,
       startdate: '2014-02-03',
       enddate: '2024-02-03',
-      persidno: '2312892249',
-      fullname: 'Tryggvi Geir Magnusson',
-      address: 'Fannafold 29',
-      postalcode: '112',
+      persidno: '0101307789',
+      fullname: 'Gervimaður útlönd',
+      address: 'Gervigata 100',
+      postalcode: '100',
       city: 'Reykjavík',
     },
   ],
   plates: [
     {
       date: '2014-02-03',
-      regno: 'KZP28',
+      regno: 'ABC123',
       reggroup: 'A1',
       reggroupname: 'Alemenn notkun',
     },
@@ -334,8 +334,8 @@ export const vehicleDetail = {
   ownerregistrationerrors: [
     {
       purchasedate: '2014-02-03',
-      persidno: '2312892249',
-      ownerinsurancecode: '2312892249',
+      persidno: '0101307789',
+      ownerinsurancecode: '0101307789',
     },
   ],
   vehicleChanges: [
@@ -415,9 +415,9 @@ export const vehicleDetail = {
 // * Innflutningsástand
 export const basicInfo = {
   model: 'KIA',
-  regno: 'RIF88',
+  regno: 'ABC123',
   subModel: 'RIO', //vehcom (+ speccom?) // Undirtegund
-  permno: 'RIF88', // Fastanúmer
+  permno: 'ABC123', // Fastanúmer
   verno: 'KNADM514AG6817531',
   year: null, // modelYear || productYear // ef ekkert er skráð þá er þetta null
   country: 'Suður Kórea',
@@ -458,9 +458,9 @@ export const registration = {
 // * Borg/bær
 // * Kaupdagur
 export const currentOwner = {
-  owner: 'Kristlind Þóra Sigurðardóttir', // owners -> current -> fullname
-  persidno: '2312892249', // owners -> current -> persidno
-  address: 'Fannafold 29', // owners -> current -> address
+  owner: 'Gervimaður útlönd', // owners -> current -> fullname
+  persidno: '0101307789', // owners -> current -> persidno
+  address: 'Gervigata 100', // owners -> current -> address
   postalcode: '112', // owners -> current -> postalcode
   city: 'Reykjavík', // owners -> current -> city
   dateOfPurchase: '2017-03-15', // owners -> current -> purchasedate
@@ -542,28 +542,28 @@ export const technicalInfo = {
 export const owners = [
   {
     ownerNumber: '3',
-    name: 'Kristlind Þóra Sigurðardóttir',
-    address: 'Fannafold 29',
+    name: 'Gervimaður útlönd',
+    address: 'Gervigata 100',
     dateOfPurchase: '2019-03-15',
   },
   {
     ownerNumber: '2',
-    name: 'Kristlind Þóra Sigurðardóttir',
-    address: 'Fannafold 29',
+    name: 'Gervimaður útlönd',
+    address: 'Gervigata 100',
     dateOfPurchase: '2018-03-15',
   },
   {
     ownerNumber: '1',
-    name: 'Kristlind Þóra Sigurðardóttir',
-    address: 'Fannafold 29',
+    name: 'Gervimaður útlönd',
+    address: 'Gervigata 100',
     dateOfPurchase: '2017-03-15',
   },
 ]
 
 export const vehicleDetailReal = {
   message: null,
-  permno: 'RIF88', // Fastanúmer
-  regno: 'RIF88', // Skráningarnúmer (t.d ef einkanúmer)
+  permno: 'ABC123', // Fastanúmer
+  regno: 'ABC123', // Skráningarnúmer (t.d ef einkanúmer)
   vin: 'KNADM514AG6817531', // Vehicle Information Number (kennitala bílsins)
   typeno: 'KNADM5140034',
   typeapproval: 1314,
@@ -588,8 +588,8 @@ export const vehicleDetailReal = {
   manufacturer: 'KIA',
   country: 'Suður Kórea',
   formercountry: null,
-  importerpersidno: '4507042290',
-  importername: 'Bílaumboðið Askja ehf.',
+  importerpersidno: '0101307789',
+  importername: 'Bílaumboðið',
   import: '4',
   vehiclestatus: 'Í lagi',
   disastertype: '',
@@ -720,9 +720,9 @@ export const vehicleDetailReal = {
       purchasedate: '2017-04-07',
       ownregdate: '2017-04-10',
       receptiondate: '2017-04-10',
-      persidno: '2811882089',
-      fullname: 'Kristleifur Þorsteinsson',
-      address: 'Háaleitisbraut',
+      persidno: '0101307789',
+      fullname: 'Gervimaður útlönd',
+      address: 'Gervibraut',
       postalcode: '108',
       city: 'Reykjavík',
       ownerinsurancecode: '6070',
@@ -734,9 +734,9 @@ export const vehicleDetailReal = {
       purchasedate: '2017-04-07',
       ownregdate: '2017-04-07',
       receptiondate: '2017-04-07',
-      persidno: '4507042290',
-      fullname: 'Bílaumboðið Askja ehf.',
-      address: 'Krókhálsi',
+      persidno: '0101307789',
+      fullname: 'Bílaumboðið',
+      address: 'Gerviháls',
       postalcode: '110',
       city: 'Reykjavík',
       ownerinsurancecode: '6070',
@@ -748,10 +748,10 @@ export const vehicleDetailReal = {
       purchasedate: '2017-03-15',
       ownregdate: '2017-03-15',
       receptiondate: '2017-03-15',
-      persidno: '5810080150',
-      fullname: 'Arion banki hf.',
-      address: 'Borgartúni',
-      postalcode: '105',
+      persidno: '0101307789',
+      fullname: 'Banki',
+      address: 'Gervitún',
+      postalcode: '100',
       city: 'Reykjavík',
       ownerinsurancecode: '6070',
       coOwners: [],
@@ -764,10 +764,10 @@ export const vehicleDetailReal = {
       serial: 1,
       startdate: '2017-03-15',
       enddate: '2017-04-07',
-      persidno: '4507042290',
-      fullname: 'Bílaumboðið Askja ehf.',
-      address: 'Krókhálsi',
-      postalcode: '110',
+      persidno: '0101307789',
+      fullname: 'Bílaumboðið',
+      address: 'Gerviháls',
+      postalcode: '100',
       city: 'Reykjavík',
     },
     {
@@ -776,17 +776,17 @@ export const vehicleDetailReal = {
       serial: 0,
       startdate: '2016-12-29',
       enddate: '2017-03-15',
-      persidno: '4507042290',
-      fullname: 'Bílaumboðið Askja ehf.',
-      address: 'Krókhálsi',
-      postalcode: '110',
+      persidno: '0101307789',
+      fullname: 'Bílaumboðið',
+      address: 'Gerviháls',
+      postalcode: '100',
       city: 'Reykjavík',
     },
   ],
   plates: [
     {
       date: '2017-04-10',
-      regno: 'RIF88',
+      regno: 'ABC123',
       reggroup: 'N1',
       reggroupname: 'Almenn merki',
     },
@@ -798,7 +798,7 @@ export const vehicleDetailReal = {
     },
     {
       date: '2017-03-15',
-      regno: 'RIF88',
+      regno: 'ABC123',
       reggroup: 'N1',
       reggroupname: 'Almenn merki',
     },
@@ -829,9 +829,9 @@ export const vehicleDetailReal = {
     {
       date: '2017-03-15',
       reinspectiondate: null,
-      station: 'Bílaumboðið Askja ehf.',
+      station: 'Bílaumboðið',
       type: 'Fulltrúaskoðun',
-      officer: 'Grétar Freyr Sævarsson',
+      officer: 'Gervimaður útlönd',
       result: 'Án athugasemda',
       odometer: '12',
       remarks: [],
@@ -852,27 +852,27 @@ export const vehicleDetailReal = {
 }
 
 export const vehicleSearchReal = {
-  permno: 'RIF88',
-  regno: 'RIF88',
-  vin: 'KNADM514AG6817531',
-  type: 'KIA RIO',
+  permno: 'ABC123',
+  regno: 'ABC123',
+  vin: 'KNADM514A33817531',
+  type: 'KIA BÍLÓ',
   color: 'Blár',
   firstregdate: '2017-03-15',
   latestregistration: 'Nýskráð',
 }
 
 export const vehicleListReal = {
-  persidno: '2811882089',
-  name: 'Kristleifur Þorsteinsson',
-  address: 'Háaleitisbraut 17',
+  persidno: '0101307789',
+  name: 'Gervimaður útlönd',
+  address: 'Gervibraut 17',
   postStation: '108',
   vehicleList: [
     {
       isCurrent: true,
-      permno: 'RIF88',
+      permno: 'ABC123',
       regno: 'RIO',
-      vin: 'KNADM514AG6817531',
-      type: 'KIA RIO',
+      vin: 'KNADM514336817531',
+      type: 'KIA BÍLÓ',
       color: 'Blár',
       firstRegDate: '2017-03-15T12:00:00.00Z',
       modelYear: null,
@@ -885,7 +885,7 @@ export const vehicleListReal = {
       otherOwners: false,
       termination: null,
       buyerPersidno: null,
-      ownerPersidno: '4507042290',
+      ownerPersidno: '0101307789',
       vehicleStatus: 'Í lagi',
       useGroup: 'Almenn notkun',
       vehGroup: 'Fólksbifreið (M1)',

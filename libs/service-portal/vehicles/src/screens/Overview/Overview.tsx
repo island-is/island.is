@@ -207,33 +207,6 @@ export const VehiclesOverview: ServicePortalModuleComponent = () => {
             </Stack>
           </Box>
         )}
-
-        {/* <FamilyMemberCard
-            title={userInfo.profile.name || ''}
-            nationalId={userInfo.profile.nationalId}
-            currentUser
-          />
-          {loading && <FamilyMemberCardLoader />}
-          {spouseData && (
-            <FamilyMemberCard
-              key={nationalRegistryUser?.spouse?.nationalId}
-              title={nationalRegistryUser?.spouse?.name || ''}
-              nationalId={nationalRegistryUser?.spouse?.nationalId || ''}
-              familyRelation="spouse"
-            />
-          )}
-          {childrenLoading &&
-            [...Array(2)].map((_key, index) => (
-              <FamilyMemberCardLoader key={index} />
-            ))}
-          {nationalRegistryChildren?.map((familyMember) => (
-            <FamilyMemberCard
-              key={familyMember.nationalId}
-              title={familyMember.fullName || familyMember.displayName || ''}
-              nationalId={familyMember.nationalId}
-              familyRelation="child"
-            />
-          ))} */}
       </Stack>
     </>
   )
