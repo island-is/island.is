@@ -11,6 +11,7 @@ module.exports = async ({ github, context, comment }) => {
     },
   )
   let commentId
+  console.log(`Looking for a comment to update on this PR`)
   for await (const comments of runsIterator) {
     for (const comment of comments.data) {
       if (comment.body?.startsWith('Affected services are: ')) {
@@ -19,6 +20,7 @@ module.exports = async ({ github, context, comment }) => {
     }
   }
   if (commentId) {
+    console.log(`Updating comment for PR`)
     await github.rest.issues.updateComment({
       issue_number: issueNr,
       owner: owner,
@@ -27,6 +29,7 @@ module.exports = async ({ github, context, comment }) => {
       body: `${comment}`,
     })
   } else {
+    console.log(`Creating new comment for PR`)
     await github.rest.issues.createComment({
       issue_number: issueNr,
       owner: owner,
