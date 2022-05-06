@@ -3,12 +3,8 @@ import { CaseDecision, CaseType } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import React from 'react'
 import { BlueBox } from '..'
-import { setAndSendToServer } from '../../utils/formHelper'
-import { useCase } from '../../utils/hooks'
-
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   acceptedLabelText: string
   rejectedLabelText: string
   partiallyAcceptedLabelText: string
@@ -20,7 +16,6 @@ interface Props {
 const Decision: React.FC<Props> = (props) => {
   const {
     workingCase,
-    setWorkingCase,
     acceptedLabelText,
     acceptingAlternativeTravelBanLabelText,
     rejectedLabelText,
@@ -28,7 +23,6 @@ const Decision: React.FC<Props> = (props) => {
     dismissLabelText,
     onChange,
   } = props
-  const { updateCase } = useCase()
 
   return (
     <BlueBox>
@@ -40,13 +34,6 @@ const Decision: React.FC<Props> = (props) => {
           checked={workingCase.decision === CaseDecision.ACCEPTING}
           onChange={() => {
             onChange && onChange(CaseDecision.ACCEPTING)
-            setAndSendToServer(
-              'decision',
-              CaseDecision.ACCEPTING,
-              workingCase,
-              setWorkingCase,
-              updateCase,
-            )
           }}
           large
           backgroundColor="white"
@@ -61,13 +48,6 @@ const Decision: React.FC<Props> = (props) => {
             checked={workingCase.decision === CaseDecision.ACCEPTING_PARTIALLY}
             onChange={() => {
               onChange && onChange(CaseDecision.ACCEPTING_PARTIALLY)
-              setAndSendToServer(
-                'decision',
-                CaseDecision.ACCEPTING_PARTIALLY,
-                workingCase,
-                setWorkingCase,
-                updateCase,
-              )
             }}
             large
             backgroundColor="white"
@@ -82,13 +62,6 @@ const Decision: React.FC<Props> = (props) => {
           checked={workingCase.decision === CaseDecision.REJECTING}
           onChange={() => {
             onChange && onChange(CaseDecision.REJECTING)
-            setAndSendToServer(
-              'decision',
-              CaseDecision.REJECTING,
-              workingCase,
-              setWorkingCase,
-              updateCase,
-            )
           }}
           large
           backgroundColor="white"
@@ -108,13 +81,6 @@ const Decision: React.FC<Props> = (props) => {
             onChange={() => {
               onChange &&
                 onChange(CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN)
-              setAndSendToServer(
-                'decision',
-                CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
-                workingCase,
-                setWorkingCase,
-                updateCase,
-              )
             }}
             large
             backgroundColor="white"
@@ -129,13 +95,6 @@ const Decision: React.FC<Props> = (props) => {
           checked={workingCase.decision === CaseDecision.DISMISSING}
           onChange={() => {
             onChange && onChange(CaseDecision.DISMISSING)
-            setAndSendToServer(
-              'decision',
-              CaseDecision.DISMISSING,
-              workingCase,
-              setWorkingCase,
-              updateCase,
-            )
           }}
           large
           backgroundColor="white"

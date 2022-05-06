@@ -59,7 +59,10 @@ export const HearingArrangements: React.FC = () => {
   useEffect(() => {
     if (isCaseUpToDate && !initialAutoFillDone) {
       if (workingCase.requestedCourtDate) {
-        autofill('courtDate', workingCase.requestedCourtDate, workingCase)
+        autofill(
+          [{ key: 'courtDate', value: workingCase.requestedCourtDate }],
+          workingCase,
+        )
       }
 
       setInitialAutoFillDone(true)

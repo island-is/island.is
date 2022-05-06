@@ -33,7 +33,6 @@ const ConclusionDraft: React.FC<Props> = (props) => {
       <Box marginBottom={3}>
         <Decision
           workingCase={workingCase}
-          setWorkingCase={setWorkingCase}
           acceptedLabelText={
             isRestrictionCase(workingCase.type)
               ? formatMessage(rcRuling.sections.decision.acceptLabel, {

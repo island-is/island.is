@@ -64,33 +64,40 @@ export const StepFour: React.FC = () => {
     if (isCaseUpToDate && !initialAutoFillDone) {
       if (workingCase.defendants && workingCase.defendants.length > 0) {
         autofill(
-          'demands',
-          formatMessage(rcReportForm.sections.demands.autofillV2, {
-            accusedName: workingCase.defendants[0].name,
-            accusedNationalId: workingCase.defendants[0].noNationalId
-              ? ' '
-              : `, kt. ${formatNationalId(
-                  workingCase.defendants[0].nationalId ?? '',
-                )}, `,
-            isExtended:
-              workingCase.parentCase &&
-              isAcceptingCaseDecision(workingCase.parentCase.decision)
-                ? 'yes'
-                : 'no',
-            caseType: workingCase.type,
-            court: workingCase.court?.name.replace('Héraðsdómur', 'Héraðsdóms'),
-            requestedValidToDate: formatDate(
-              workingCase.requestedValidToDate,
-              'PPPPp',
-            )
-              ?.replace('dagur,', 'dagsins')
-              ?.replace(' kl.', ', kl.'),
-            hasIsolationRequest: workingCase.requestedCustodyRestrictions?.includes(
-              CaseCustodyRestrictions.ISOLATION,
-            )
-              ? 'yes'
-              : 'no',
-          }),
+          [
+            {
+              key: 'demands',
+              value: formatMessage(rcReportForm.sections.demands.autofillV2, {
+                accusedName: workingCase.defendants[0].name,
+                accusedNationalId: workingCase.defendants[0].noNationalId
+                  ? ' '
+                  : `, kt. ${formatNationalId(
+                      workingCase.defendants[0].nationalId ?? '',
+                    )}, `,
+                isExtended:
+                  workingCase.parentCase &&
+                  isAcceptingCaseDecision(workingCase.parentCase.decision)
+                    ? 'yes'
+                    : 'no',
+                caseType: workingCase.type,
+                court: workingCase.court?.name.replace(
+                  'Héraðsdómur',
+                  'Héraðsdóms',
+                ),
+                requestedValidToDate: formatDate(
+                  workingCase.requestedValidToDate,
+                  'PPPPp',
+                )
+                  ?.replace('dagur,', 'dagsins')
+                  ?.replace(' kl.', ', kl.'),
+                hasIsolationRequest: workingCase.requestedCustodyRestrictions?.includes(
+                  CaseCustodyRestrictions.ISOLATION,
+                )
+                  ? 'yes'
+                  : 'no',
+              }),
+            },
+          ],
           workingCase,
         )
 

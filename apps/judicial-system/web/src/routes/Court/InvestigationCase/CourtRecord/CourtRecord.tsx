@@ -35,17 +35,24 @@ const CourtRecord = () => {
   useEffect(() => {
     if (isCaseUpToDate && !initialAutoFillDone) {
       if (workingCase.courtDate) {
-        autofill('courtStartDate', workingCase.courtDate, workingCase)
+        autofill(
+          [{ key: 'courtStartDate', value: workingCase.courtDate }],
+          workingCase,
+        )
       }
 
       if (workingCase.court) {
         autofill(
-          'courtLocation',
-          `í ${
-            workingCase.court.name.indexOf('dómur') > -1
-              ? workingCase.court.name.replace('dómur', 'dómi')
-              : workingCase.court.name
-          }`,
+          [
+            {
+              key: 'courtLocation',
+              value: `í ${
+                workingCase.court.name.indexOf('dómur') > -1
+                  ? workingCase.court.name.replace('dómur', 'dómi')
+                  : workingCase.court.name
+              }`,
+            },
+          ],
           workingCase,
         )
       }
@@ -86,19 +93,32 @@ const CourtRecord = () => {
           }
         }
 
-        autofill('courtAttendees', autofillAttendees, workingCase)
+        autofill(
+          [{ key: 'courtAttendees', value: autofillAttendees }],
+          workingCase,
+        )
       }
 
       if (workingCase.type === CaseType.RESTRAINING_ORDER) {
         autofill(
-          'sessionBookings',
-          formatMessage(m.sections.sessionBookings.autofillRestrainingOrder),
+          [
+            {
+              key: 'sessionBookings',
+              value: formatMessage(
+                m.sections.sessionBookings.autofillRestrainingOrder,
+              ),
+            },
+          ],
           workingCase,
         )
       } else if (workingCase.type === CaseType.AUTOPSY) {
         autofill(
-          'sessionBookings',
-          formatMessage(m.sections.sessionBookings.autofillAutopsy),
+          [
+            {
+              key: 'sessionBookings',
+              value: formatMessage(m.sections.sessionBookings.autofillAutopsy),
+            },
+          ],
           workingCase,
         )
       } else if (
@@ -132,14 +152,23 @@ const CourtRecord = () => {
           m.sections.sessionBookings.autofillAccusedPlea,
         )}\n\n${formatMessage(m.sections.sessionBookings.autofillAllPresent)}`
 
-        autofill('sessionBookings', autofillSessionBookings, workingCase)
+        autofill(
+          [{ key: 'sessionBookings', value: autofillSessionBookings }],
+          workingCase,
+        )
       } else if (
         workingCase.sessionArrangements ===
         SessionArrangements.ALL_PRESENT_SPOKESPERSON
       ) {
         autofill(
-          'sessionBookings',
-          formatMessage(m.sections.sessionBookings.autofillSpokeperson),
+          [
+            {
+              key: 'sessionBookings',
+              value: formatMessage(
+                m.sections.sessionBookings.autofillSpokeperson,
+              ),
+            },
+          ],
           workingCase,
         )
       } else if (
@@ -147,8 +176,14 @@ const CourtRecord = () => {
         SessionArrangements.PROSECUTOR_PRESENT
       ) {
         autofill(
-          'sessionBookings',
-          formatMessage(m.sections.sessionBookings.autofillProsecutor),
+          [
+            {
+              key: 'sessionBookings',
+              value: formatMessage(
+                m.sections.sessionBookings.autofillProsecutor,
+              ),
+            },
+          ],
           workingCase,
         )
       }

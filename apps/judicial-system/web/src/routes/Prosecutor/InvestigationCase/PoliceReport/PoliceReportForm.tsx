@@ -48,8 +48,14 @@ const PoliceReportForm: React.FC<Props> = (props) => {
       workingCase.requestProsecutorOnlySession
     ) {
       autofill(
-        'prosecutorOnlySessionRequest',
-        formatMessage(icReportForm.prosecutorOnly.input.defaultValue),
+        [
+          {
+            key: 'prosecutorOnlySessionRequest',
+            value: formatMessage(
+              icReportForm.prosecutorOnly.input.defaultValue,
+            ),
+          },
+        ],
         workingCase,
       )
 

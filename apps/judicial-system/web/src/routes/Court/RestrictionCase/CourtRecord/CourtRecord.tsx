@@ -102,21 +102,25 @@ export const CourtRecord: React.FC = () => {
 
   useEffect(() => {
     if (isCaseUpToDate && !initialAutoFillDone) {
-      if (workingCase.courtDate) {
-        autofill('courtStartDate', workingCase.courtDate, workingCase)
-      }
-
-      if (workingCase.court) {
-        autofill(
-          'courtLocation',
-          `í ${
-            workingCase.court.name.indexOf('dómur') > -1
-              ? workingCase.court.name.replace('dómur', 'dómi')
-              : workingCase.court.name
-          }`,
-          workingCase,
-        )
-      }
+      autofill(
+        [
+          {
+            key: 'courtStartDate',
+            value: workingCase.courtDate,
+          },
+          {
+            key: 'courtLocation',
+            value:
+              workingCase.court &&
+              `í ${
+                workingCase.court.name.indexOf('dómur') > -1
+                  ? workingCase.court.name.replace('dómur', 'dómi')
+                  : workingCase.court.name
+              }`,
+          },
+        ],
+        workingCase,
+      )
 
       if (workingCase.courtAttendees !== '') {
         let autofillAttendees = ''
@@ -151,7 +155,10 @@ export const CourtRecord: React.FC = () => {
           })}`
         }
 
-        autofill('courtAttendees', autofillAttendees, workingCase)
+        autofill(
+          [{ key: 'courtAttendees', value: autofillAttendees }],
+          workingCase,
+        )
       }
 
       let autofillSessionBookings = ''
@@ -204,22 +211,26 @@ export const CourtRecord: React.FC = () => {
           workingCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
         ) {
           autofill(
-            'endOfSessionBookings',
-            `${
-              isAcceptingCaseDecision(workingCase.decision)
-                ? `${formatCustodyRestrictions(
-                    formatMessage,
-                    workingCase.type,
-                    workingCase.requestedCustodyRestrictions,
-                  )}\n\n`
-                : ''
-            }${formatMessage(m.sections.custodyRestrictions.disclaimerV2, {
-              caseType:
-                workingCase.decision ===
-                CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                  ? CaseType.TRAVEL_BAN
-                  : workingCase.type,
-            })}`,
+            [
+              {
+                key: 'endOfSessionBookings',
+                value: `${
+                  isAcceptingCaseDecision(workingCase.decision)
+                    ? `${formatCustodyRestrictions(
+                        formatMessage,
+                        workingCase.type,
+                        workingCase.requestedCustodyRestrictions,
+                      )}\n\n`
+                    : ''
+                }${formatMessage(m.sections.custodyRestrictions.disclaimerV2, {
+                  caseType:
+                    workingCase.decision ===
+                    CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+                      ? CaseType.TRAVEL_BAN
+                      : workingCase.type,
+                })}`,
+              },
+            ],
             workingCase,
           )
         }
@@ -230,19 +241,26 @@ export const CourtRecord: React.FC = () => {
 
         if (isAcceptingCaseDecision(workingCase.decision)) {
           autofill(
-            'endOfSessionBookings',
-            `${
-              workingCase.requestedOtherRestrictions &&
-              `${workingCase.requestedOtherRestrictions}\n\n`
-            }${formatMessage(m.sections.custodyRestrictions.disclaimerV2, {
-              caseType: workingCase.type,
-            })}`,
+            [
+              {
+                key: 'endOfSessionBookings',
+                value: `${
+                  workingCase.requestedOtherRestrictions &&
+                  `${workingCase.requestedOtherRestrictions}\n\n`
+                }${formatMessage(m.sections.custodyRestrictions.disclaimerV2, {
+                  caseType: workingCase.type,
+                })}`,
+              },
+            ],
             workingCase,
           )
         }
       }
 
-      autofill('sessionBookings', autofillSessionBookings, workingCase)
+      autofill(
+        [{ key: 'sessionBookings', value: autofillSessionBookings }],
+        workingCase,
+      )
 
       setInitialAutoFillDone(true)
       setWorkingCase({ ...workingCase })

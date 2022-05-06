@@ -31,7 +31,10 @@ const HearingArrangements = () => {
   useEffect(() => {
     if (isCaseUpToDate && !initialAutoFillDone) {
       if (workingCase.requestedCourtDate) {
-        autofill('courtDate', workingCase.requestedCourtDate, workingCase)
+        autofill(
+          [{ key: 'courtDate', value: workingCase.requestedCourtDate }],
+          workingCase,
+        )
       }
 
       if (workingCase.defenderName) {

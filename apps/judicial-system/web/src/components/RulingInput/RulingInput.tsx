@@ -26,17 +26,24 @@ export const autofillRuling = (
 ) => {
   if (!workingCase.parentCase) {
     autofill(
-      'ruling',
-      `\n${formatMessage(m.autofill, {
-        judgeName: workingCase.judge?.name,
-      })}`,
+      [
+        {
+          key: 'ruling',
+          value: `\n${formatMessage(m.autofill, {
+            judgeName: workingCase.judge?.name,
+          })}`,
+        },
+      ],
       workingCase,
     )
   } else if (
     workingCase.parentCase.ruling &&
     isAcceptingCaseDecision(workingCase.decision)
   ) {
-    autofill('ruling', workingCase.parentCase.ruling, workingCase)
+    autofill(
+      [{ key: 'ruling', value: workingCase.parentCase.ruling }],
+      workingCase,
+    )
   }
 }
 
@@ -54,7 +61,7 @@ export const useRulingAutofill = (
       autofillRuling(workingCase, autofill, formatMessage)
 
       setInitialAutoFillDone(true)
-      setWorkingCase({ ...workingCase })
+      // setWorkingCase({ ...workingCase })
     }
   }, [
     autofill,

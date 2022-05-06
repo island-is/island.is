@@ -33,24 +33,28 @@ const Ruling = () => {
   useEffect(() => {
     if (isCaseUpToDate && !initialAutoFillDone) {
       autofill(
-        'introduction',
-        formatMessage(m.sections.introduction.autofill, {
-          date: formatDate(workingCase.courtDate, 'PPP'),
-        }),
+        [
+          {
+            key: 'introduction',
+            value: formatMessage(m.sections.introduction.autofill, {
+              date: formatDate(workingCase.courtDate, 'PPP'),
+            }),
+          },
+          {
+            key: 'prosecutorDemands',
+            value: workingCase.demands,
+          },
+          {
+            key: 'courtCaseFacts',
+            value: workingCase.caseFacts,
+          },
+          {
+            key: 'courtLegalArguments',
+            value: workingCase.legalArguments,
+          },
+        ],
         workingCase,
       )
-
-      if (workingCase.demands) {
-        autofill('prosecutorDemands', workingCase.demands, workingCase)
-      }
-
-      if (workingCase.caseFacts) {
-        autofill('courtCaseFacts', workingCase.caseFacts, workingCase)
-      }
-
-      if (workingCase.legalArguments) {
-        autofill('courtLegalArguments', workingCase.legalArguments, workingCase)
-      }
 
       autofillRuling(workingCase, autofill, formatMessage)
 
@@ -64,7 +68,7 @@ const Ruling = () => {
       isAcceptingCaseDecision(workingCase.decision) &&
       workingCase.demands
     ) {
-      autofill('conclusion', workingCase.demands, workingCase)
+      autofill([{ key: 'conclusion', value: workingCase.demands }], workingCase)
 
       setWorkingCase({ ...workingCase })
     }

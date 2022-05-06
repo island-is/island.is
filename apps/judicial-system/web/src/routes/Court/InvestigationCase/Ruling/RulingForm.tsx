@@ -287,7 +287,6 @@ const RulingForm: React.FC<Props> = (props) => {
           <Box marginBottom={5}>
             <Decision
               workingCase={workingCase}
-              setWorkingCase={setWorkingCase}
               acceptedLabelText={formatMessage(m.sections.decision.acceptLabel)}
               rejectedLabelText={formatMessage(m.sections.decision.rejectLabel)}
               partiallyAcceptedLabelText={formatMessage(
