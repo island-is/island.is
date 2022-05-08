@@ -15,10 +15,17 @@ import {
   SpouseAlert,
   Timeline,
 } from './index'
+import useApplication from '../../lib/hooks/useApplication'
 
 const ApplicantStatus = ({ application }: FAFieldBaseProps) => {
+  const { currentApplication } = useApplication(
+    application.externalData.veita.data.currentApplicationId,
+  )
   const { nationalRegistry } = application.externalData
-  const state = application.externalData?.veita?.data?.state
+  const state =
+    !currentApplication && application.state === ApplicationStates.SPOUSE
+      ? ApplicationState.NEW
+      : currentApplication?.state
 
   return (
     <Box paddingBottom={5}>
@@ -26,10 +33,9 @@ const ApplicantStatus = ({ application }: FAFieldBaseProps) => {
 
       {application.state === ApplicationStates.SPOUSE && <SpouseAlert />}
 
-      {/* TODO: use correct rejectionMessage */}
       {state === ApplicationState.REJECTED && (
         <RejectionMessage
-          rejectionComment="hóhóhóhó"
+          rejectionComment={currentApplication?.rejection}
           rulesPage={nationalRegistry?.data?.municipality?.rulesHomepage}
           homepage={nationalRegistry?.data?.municipality?.homepage}
           email={nationalRegistry?.data?.municipality?.email}
@@ -39,16 +45,26 @@ const ApplicantStatus = ({ application }: FAFieldBaseProps) => {
       {/* TODO: redirect user to page to upload files when button is clicked insied of MissingFilesCard*/}
       {state === ApplicationState.DATANEEDED && <MissingFilesCard />}
 
-      {/* TODO: use correct aid amount inside AidAmount component*/}
       {state !== ApplicationState.REJECTED && (
-        <AidAmount application={application} state={state} />
+        <AidAmount
+          application={application}
+          state={state}
+          amount={currentApplication?.amount}
+        />
       )}
 
-      {/* TODO: we might need to use the dates from Veita*/}
       <Timeline
         state={state}
-        created={application.created}
-        modified={application.modified}
+        created={
+          currentApplication?.created
+            ? new Date(currentApplication.created)
+            : application.created
+        }
+        modified={
+          currentApplication?.modified
+            ? new Date(currentApplication.modified)
+            : application.modified
+        }
         showSpouseStep={hasSpouse(
           application.answers,
           application.externalData,

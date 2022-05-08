@@ -159,28 +159,31 @@ export const getStateMessageAndColor: KeyMapping<
 }
 
 export const timelineSections = (
-  created: Date,
-  modified: Date,
+  created?: Date,
+  modified?: Date,
   showSpouseStep?: boolean,
 ) => {
+  const createdFormatted = formatDate(created)
+  const modifiedFormatted = formatDate(modified)
+
   const sections = [
     {
       name: m.timeline.receivedTitle,
       text: m.timeline.receivedDescription,
       state: [ApplicationState.NEW],
-      date: format(new Date(created), 'dd/MM/yyyy HH:mm'),
+      date: createdFormatted,
     },
     {
       name: m.timeline.inProgressTitle,
       text: m.timeline.inProgressDescription,
       state: [ApplicationState.INPROGRESS, ApplicationState.DATANEEDED],
-      date: format(new Date(modified), 'dd/MM/yyyy HH:mm'),
+      date: modifiedFormatted,
     },
     {
       name: m.timeline.resultsTitle,
       text: m.timeline.resultsDescription,
       state: [ApplicationState.REJECTED, ApplicationState.APPROVED],
-      date: format(new Date(modified), 'dd/MM/yyyy HH:mm'),
+      date: modifiedFormatted,
     },
   ]
 
@@ -189,9 +192,13 @@ export const timelineSections = (
       name: m.timeline.spouseTitle,
       text: m.timeline.spouseDescription,
       state: [ApplicationState.NEW],
-      date: format(new Date(created), 'dd/MM/yyyy HH:mm'),
+      date: createdFormatted,
     })
   }
 
   return sections
+}
+
+export const formatDate = (date?: Date) => {
+  return date ? format(date, 'dd/MM/yyyy HH:mm') : null
 }

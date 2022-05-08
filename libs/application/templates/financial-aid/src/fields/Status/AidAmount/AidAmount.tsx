@@ -4,6 +4,7 @@ import { useIntl } from 'react-intl'
 import { Box, Text } from '@island.is/island-ui/core'
 import {
   acceptedAmountBreakDown,
+  Amount,
   ApplicationState,
 } from '@island.is/financial-aid/shared/lib'
 
@@ -14,10 +15,11 @@ import { Estimation } from '../index'
 
 interface Props {
   application: FAApplication
-  state: ApplicationState
+  state?: ApplicationState
+  amount?: Amount
 }
 
-const AidAmount = ({ application, state }: Props) => {
+const AidAmount = ({ application, state, amount }: Props) => {
   const { formatMessage } = useIntl()
 
   return (
@@ -27,15 +29,7 @@ const AidAmount = ({ application, state }: Props) => {
           <Text as="h3" variant="h3" marginBottom={2}>
             {formatMessage(aidAmount.titleApproved)}
           </Text>
-          {/* TODO: use real aid amount */}
-          <Breakdown
-            calculations={acceptedAmountBreakDown({
-              aidAmount: 10000,
-              personalTaxCredit: 2000,
-              tax: 1000,
-              finalAmount: 20000,
-            })}
-          />
+          <Breakdown calculations={acceptedAmountBreakDown(amount)} />
         </>
       ) : (
         <Estimation application={application} />

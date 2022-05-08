@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import cn from 'classnames'
-import format from 'date-fns/format'
 import { useIntl } from 'react-intl'
 import findLastIndex from 'lodash/findLastIndex'
 
@@ -12,13 +11,17 @@ import { timeline } from '../../../lib/messages'
 import { timelineSections } from '../../../lib/formatters'
 
 interface Props {
-  state: ApplicationState
+  state?: ApplicationState
   modified: Date
   created: Date
   showSpouseStep?: boolean
 }
 
 const Timeline = ({ state, modified, created, showSpouseStep }: Props) => {
+  if (!state) {
+    return null
+  }
+
   const { formatMessage } = useIntl()
 
   const sections = timelineSections(created, modified, showSpouseStep)

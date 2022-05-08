@@ -8,8 +8,12 @@ import {
 import { UseGuards } from '@nestjs/common'
 
 import { MunicipalitiesFinancialAidService } from './municipalitiesFinancialAid.service'
-import { MunicipalityModel, SignedUrlModel } from './models'
-import { CreateSignedUrlInput, MunicipalityInput } from './dto'
+import { ApplicationModel, MunicipalityModel, SignedUrlModel } from './models'
+import {
+  CreateSignedUrlInput,
+  MunicipalityInput,
+  ApplicationInput,
+} from './dto'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -48,6 +52,18 @@ export class MunicipalitiesFinancialAidResolver {
     @CurrentUser() user: User,
   ): Promise<SignedUrlModel | null> {
     return this.municipalitiesFinancialAidService.municipalitiesFinancialAidCreateSignedUrl(
+      user,
+      input,
+    )
+  }
+
+  @Query(() => ApplicationModel, { nullable: true })
+  async municipalitiesFinancialAidApplication(
+    @Args('input', { type: () => ApplicationInput })
+    input: ApplicationInput,
+    @CurrentUser() user: User,
+  ): Promise<ApplicationModel | null> {
+    return await this.municipalitiesFinancialAidService.municipalitiesFinancialAidApplication(
       user,
       input,
     )
