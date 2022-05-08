@@ -23,6 +23,7 @@ export const CurrentUserQuery = gql`
         id
         name
         type
+        policeCaseNumberPrefix
       }
     }
   }

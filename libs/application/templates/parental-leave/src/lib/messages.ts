@@ -141,7 +141,7 @@ export const parentalLeaveFormMessages: MessageDir = {
     pensionFund: {
       id: 'pl.application:payment.information.pensionfund',
       defaultMessage: 'Lífeyrissjóður',
-      description: 'Pension fund (optional)',
+      description: 'Pension fund',
     },
     union: {
       id: 'pl.application:payment.information.union',

@@ -188,7 +188,7 @@ const CaseFilesForm: React.FC<Props> = (props) => {
             </Text>
           </Box>
           <MarkdownWrapper
-            text={m.sections.description.list}
+            markdown={formatMessage(m.sections.description.list)}
             textProps={{ marginBottom: 0 }}
           />
         </Box>
