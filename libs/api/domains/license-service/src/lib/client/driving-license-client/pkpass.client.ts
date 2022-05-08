@@ -355,6 +355,11 @@ export class PkPassClient {
         accessToken: `smart ${accessToken}`,
       }
 
+      this.logger.debug(
+        `Sending form like: ${formData.getBuffer().toString()} ${pdf417Text}`,
+      )
+      this.logger.debug(`Pdf field: ${pdf417Text}`)
+
       return fetch(`${this.pkpassApiUrl}/verifyDriversLicense`, {
         method: 'POST',
         headers: { ...authHeaders, ...formData.getHeaders() },
