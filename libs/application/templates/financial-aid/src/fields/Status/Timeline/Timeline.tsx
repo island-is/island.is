@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import cn from 'classnames'
-import format from 'date-fns/format'
 import { useIntl } from 'react-intl'
 import findLastIndex from 'lodash/findLastIndex'
 
@@ -9,7 +8,7 @@ import { ApplicationState } from '@island.is/financial-aid/shared/lib'
 
 import * as styles from './Timeline.css'
 import { timeline } from '../../../lib/messages'
-import { formatDate, timelineSections } from '../../../lib/formatters'
+import { timelineSections } from '../../../lib/formatters'
 
 interface Props {
   state?: ApplicationState
