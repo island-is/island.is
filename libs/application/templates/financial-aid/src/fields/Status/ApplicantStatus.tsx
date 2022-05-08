@@ -58,12 +58,12 @@ const ApplicantStatus = ({ application }: FAFieldBaseProps) => {
         created={
           currentApplication?.created
             ? new Date(currentApplication.created)
-            : application.created
+            : new Date(application.created)
         }
         modified={
           currentApplication?.modified
             ? new Date(currentApplication.modified)
-            : application.modified
+            : new Date(application.modified)
         }
         showSpouseStep={hasSpouse(
           application.answers,
