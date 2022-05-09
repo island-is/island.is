@@ -1,5 +1,5 @@
 import { Args, Context, Query, Resolver } from '@nestjs/graphql'
-import { Inject, UseGuards } from '@nestjs/common'
+import { Inject, UseGuards, UseInterceptors } from '@nestjs/common'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
@@ -14,6 +14,7 @@ import {
 import type { User } from '@island.is/judicial-system/types'
 
 import { BackendApi } from '../../data-sources'
+import { CaseInterceptor } from './interceptors/case.interceptor'
 import { CaseQueryInput } from './dto/case.input'
 import { Case } from './models/case.model'
 
@@ -27,6 +28,7 @@ export class RestrictedCaseResolver {
   ) {}
 
   @Query(() => Case, { nullable: true })
+  @UseInterceptors(CaseInterceptor)
   async restrictedCase(
     @Args('input', { type: () => CaseQueryInput })
     input: CaseQueryInput,
