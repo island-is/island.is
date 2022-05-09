@@ -145,7 +145,6 @@ const CourtRecord = () => {
       )
 
       setInitialAutoFillDone(true)
-      setWorkingCase({ ...workingCase })
     }
   }, [
     autofill,

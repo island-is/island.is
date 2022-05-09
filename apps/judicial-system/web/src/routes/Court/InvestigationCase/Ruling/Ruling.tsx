@@ -61,25 +61,18 @@ const Ruling = () => {
               ? workingCase.parentCase.ruling
               : undefined,
           },
+          {
+            key: 'conclusion',
+            value: isAcceptingCaseDecision(workingCase.decision)
+              ? workingCase.demands
+              : undefined,
+          },
         ],
         workingCase,
         setWorkingCase,
       )
 
       setInitialAutoFillDone(true)
-    }
-
-    if (
-      (workingCase.conclusion === undefined ||
-        workingCase.conclusion === null) &&
-      isAcceptingCaseDecision(workingCase.decision) &&
-      workingCase.demands
-    ) {
-      autofill(
-        [{ key: 'conclusion', value: workingCase.demands }],
-        workingCase,
-        setWorkingCase,
-      )
     }
   }, [
     isCaseUpToDate,

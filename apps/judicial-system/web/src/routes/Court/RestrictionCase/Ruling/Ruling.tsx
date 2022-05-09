@@ -567,8 +567,10 @@ export const Ruling: React.FC = () => {
                 },
               )}
               onChange={(decision) => {
+                let conclusion = undefined
+
                 if (workingCase.validToDate && workingCase.isolationToDate) {
-                  const conclusion = getConclusionAutofill(
+                  conclusion = getConclusionAutofill(
                     formatMessage,
                     workingCase,
                     decision,
@@ -577,22 +579,20 @@ export const Ruling: React.FC = () => {
                     workingCase.isolationToDate,
                     true,
                   )
-
-                  if (conclusion) {
-                    autofill(
-                      [
-                        { key: 'conclusion', value: conclusion, force: true },
-                        {
-                          key: 'decision',
-                          value: decision,
-                          force: true,
-                        },
-                      ],
-                      workingCase,
-                      setWorkingCase,
-                    )
-                  }
                 }
+
+                autofill(
+                  [
+                    { key: 'conclusion', value: conclusion, force: true },
+                    {
+                      key: 'decision',
+                      value: decision,
+                      force: true,
+                    },
+                  ],
+                  workingCase,
+                  setWorkingCase,
+                )
               }}
             />
           </Box>
