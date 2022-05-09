@@ -3,11 +3,11 @@ import HeaderRow from './HeaderRow'
 import Column from './Column'
 import Row from './Row'
 import { Box } from '@island.is/island-ui/core'
-import { Operator } from '@island.is/api/schema'
+import { VehiclesOperator } from '@island.is/api/schema'
 import { messages } from '../../lib/messages'
 
 interface PropTypes {
-  data: Operator
+  data: VehiclesOperator
 }
 
 const OperatorInfoItem = ({ data }: PropTypes) => {
@@ -16,7 +16,7 @@ const OperatorInfoItem = ({ data }: PropTypes) => {
       <HeaderRow>{messages.operator}</HeaderRow>
       <Row>
         <Column label={messages.name} value={data.name} />
-        <Column label={messages.nationalId} value={data.persidno} />
+        <Column label={messages.nationalId} value={data.nationalId} />
       </Row>
       <Row>
         <Column label={messages.address} value={data.address} />

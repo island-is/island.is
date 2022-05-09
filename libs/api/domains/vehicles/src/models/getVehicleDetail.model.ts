@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
-export class MainInfo {
+export class VehiclesMainInfo {
   @Field(() => String, { nullable: true })
   model?: string | null
 
@@ -28,7 +28,7 @@ export class MainInfo {
 }
 
 @ObjectType()
-export class Axle {
+export class VehiclesAxle {
   @Field(() => Number, { nullable: true })
   axleMaxWeight?: number | null // technical -> mass -> `massdaxle${i}` ??
 
@@ -37,7 +37,7 @@ export class Axle {
 }
 
 @ObjectType()
-export class BasicInfo {
+export class VehiclesBasicInfo {
   @Field(() => String, { nullable: true })
   model?: string | null // make
 
@@ -70,7 +70,7 @@ export class BasicInfo {
 }
 
 @ObjectType()
-export class RegistrationInfo {
+export class VehiclesRegistrationInfo {
   @Field(() => String, { nullable: true })
   firstRegistrationDate?: string | null // firstregdate
 
@@ -103,12 +103,12 @@ export class RegistrationInfo {
 }
 
 @ObjectType()
-export class CurrentOwnerInfo {
+export class VehiclesCurrentOwnerInfo {
   @Field(() => String, { nullable: true })
   owner?: string | null // owners -> current -> fullname
 
   @Field(() => String, { nullable: true })
-  persidno?: string | null // owners -> current -> persidno
+  nationalId?: string | null // owners -> current -> persidno
 
   @Field(() => String, { nullable: true })
   address?: string | null // owners -> current -> address
@@ -124,7 +124,7 @@ export class CurrentOwnerInfo {
 }
 
 @ObjectType()
-export class InspectionInfo {
+export class VehiclesInspectionInfo {
   @Field(() => String, { nullable: true })
   type?: string | null // inspections[0] -> type
 
@@ -145,7 +145,7 @@ export class InspectionInfo {
 }
 
 @ObjectType()
-export class TechnicalInfo {
+export class VehiclesTechnicalInfo {
   @Field(() => String, { nullable: true })
   engine?: string | null // technical -> engine
 
@@ -182,14 +182,14 @@ export class TechnicalInfo {
   @Field(() => Number, { nullable: true })
   axleTotalWeight?: number | null // technical -> mass -> // massmaxle1 + massmaxle2 + massmaxle3 + massmaxle4 + massmaxle5
 
-  @Field(() => [Axle], { nullable: true })
-  axle?: Axle[] // smíða
+  @Field(() => [VehiclesAxle], { nullable: true })
+  axle?: VehiclesAxle[] // smíða
 }
 
 @ObjectType()
-export class Owners {
+export class VehiclesOwners {
   @Field(() => String, { nullable: true })
-  persidno?: string | null // owners -> persidno
+  nationalId?: string | null // owners -> persidno
 
   @Field(() => String, { nullable: true })
   name?: string | null // owners -> name
@@ -202,9 +202,9 @@ export class Owners {
 }
 
 @ObjectType()
-export class Operator {
+export class VehiclesOperator {
   @Field(() => String, { nullable: true })
-  persidno?: string | null // owners -> persidno
+  nationalId?: string | null // owners -> persidno
 
   @Field(() => String, { nullable: true })
   name?: string | null // owners -> name
@@ -227,30 +227,30 @@ export class Operator {
 
 @ObjectType()
 export class VehicleDetail {
-  @Field(() => MainInfo)
-  mainInfo!: MainInfo
+  @Field(() => VehiclesMainInfo)
+  mainInfo!: VehiclesMainInfo
 
-  @Field(() => BasicInfo)
-  basicInfo!: BasicInfo
+  @Field(() => VehiclesBasicInfo)
+  basicInfo!: VehiclesBasicInfo
 
-  @Field(() => RegistrationInfo)
-  registrationInfo!: RegistrationInfo
+  @Field(() => VehiclesRegistrationInfo)
+  registrationInfo!: VehiclesRegistrationInfo
 
-  @Field(() => CurrentOwnerInfo)
-  currentOwnerInfo!: CurrentOwnerInfo
+  @Field(() => VehiclesCurrentOwnerInfo)
+  currentOwnerInfo!: VehiclesCurrentOwnerInfo
 
-  @Field(() => InspectionInfo)
-  inspectionInfo!: InspectionInfo
+  @Field(() => VehiclesInspectionInfo)
+  inspectionInfo!: VehiclesInspectionInfo
 
-  @Field(() => TechnicalInfo)
-  technicalInfo!: TechnicalInfo
+  @Field(() => VehiclesTechnicalInfo)
+  technicalInfo!: VehiclesTechnicalInfo
 
-  @Field(() => [Owners])
-  ownersInfo!: Owners[]
+  @Field(() => [VehiclesOwners])
+  ownersInfo!: VehiclesOwners[]
 
-  @Field(() => [CurrentOwnerInfo])
-  coOwners!: CurrentOwnerInfo[]
+  @Field(() => [VehiclesCurrentOwnerInfo])
+  coOwners!: VehiclesCurrentOwnerInfo[]
 
-  @Field(() => Operator, { nullable: true })
-  operator?: Operator
+  @Field(() => VehiclesOperator, { nullable: true })
+  operator?: VehiclesOperator
 }

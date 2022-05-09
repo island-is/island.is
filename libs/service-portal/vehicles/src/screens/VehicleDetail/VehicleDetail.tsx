@@ -16,19 +16,19 @@ import {
   UserInfoLine,
 } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import { useQuery } from '@apollo/client'
+import { useParams } from 'react-router-dom'
+import { GET_USERS_VEHICLE_DETAIL } from '../../queries/getUsersVehicleDetail'
+import { VehiclesCurrentOwnerInfo, Query } from '@island.is/api/schema'
+import { messages } from '../../lib/messages'
 import BaseInfoItem from '../../components/DetailTable/BaseInfoItem'
 import RegistrationInfoItem from '../../components/DetailTable/RegistrationInfoItem'
 import OwnerInfoItem from '../../components/DetailTable/OwnerInfoItem'
 import InspectionInfoItem from '../../components/DetailTable/InspectionInfoItem'
 import TechnicalInfoItem from '../../components/DetailTable/TechnicalInfoItem'
 import OwnersTable from '../../components/DetailTable/OwnersTable'
-import { useQuery } from '@apollo/client'
-import { CurrentOwnerInfo, Query } from '@island.is/api/schema'
 import OperatorInfoItem from '../../components/DetailTable/OperatorInfoItem'
 import CoOwnerInfoItem from '../../components/DetailTable/CoOwnerInfoItem'
-import { useParams } from 'react-router-dom'
-import { messages } from '../../lib/messages'
-import { GET_USERS_VEHICLE_DETAIL } from '@island.is/service-portal/graphql'
 
 const VehicleDetail: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.vehicles')
@@ -55,7 +55,7 @@ const VehicleDetail: ServicePortalModuleComponent = ({ userInfo }) => {
     ownersInfo,
     operator,
     coOwners,
-  } = data?.getVehicleDetail || {}
+  } = data?.vehiclesUserVehicleDetail || {}
 
   const year = mainInfo?.year ? '(' + mainInfo.year + ')' : ''
 
@@ -127,7 +127,7 @@ const VehicleDetail: ServicePortalModuleComponent = ({ userInfo }) => {
       {technicalInfo && <TechnicalInfoItem data={technicalInfo} />}
       {coOwners &&
         coOwners?.length > 0 &&
-        coOwners.map((owner: CurrentOwnerInfo, index) => (
+        coOwners.map((owner: VehiclesCurrentOwnerInfo, index) => (
           <CoOwnerInfoItem key={index} data={owner} />
         ))}
       {operator && <OperatorInfoItem data={operator} />}

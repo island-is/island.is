@@ -3,11 +3,11 @@ import HeaderRow from './HeaderRow'
 import Column from './Column'
 import Row from './Row'
 import { Box } from '@island.is/island-ui/core'
-import { Axle, TechnicalInfo } from '@island.is/api/schema'
+import { VehiclesAxle, VehiclesTechnicalInfo } from '@island.is/api/schema'
 import { messages } from '../../lib/messages'
 
 interface PropTypes {
-  data: TechnicalInfo
+  data: VehiclesTechnicalInfo
 }
 
 const TechnicalInfoItem = ({ data }: PropTypes) => {
@@ -60,7 +60,7 @@ const TechnicalInfoItem = ({ data }: PropTypes) => {
           value={data.axleTotalWeight ? data.axleTotalWeight + ' kg' : ''}
         />
       </Row>
-      {data.axle?.map((item: Axle | null, index: number) => {
+      {data.axle?.map((item: VehiclesAxle | null, index: number) => {
         const axleTitle = messages.axle
         const axleWheel = messages.axleWheel
         return (

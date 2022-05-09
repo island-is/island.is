@@ -1,11 +1,11 @@
 import React from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Box, Table as T, Text } from '@island.is/island-ui/core'
-import { Owners } from '@island.is/api/schema'
+import { VehiclesOwners } from '@island.is/api/schema'
 import { messages } from '../../lib/messages'
 
 interface PropTypes {
-  data: Owners[]
+  data: VehiclesOwners[]
   title: string
 }
 
@@ -41,7 +41,7 @@ const OwnersTable = ({ data, title }: PropTypes) => {
           </T.HeadData>
         </T.Head>
         <T.Body>
-          {data?.map((owner: Owners | null, index: number) => {
+          {data?.map((owner: VehiclesOwners | null, index: number) => {
             return (
               <T.Row key={index + 'owners table'}>
                 <T.Data>{index + 1}</T.Data>

@@ -9,7 +9,7 @@ import {
   BasicVehicleInformationTechnicalMass,
   BasicVehicleInformationTechnicalAxle,
 } from '@island.is/clients/vehicles'
-import { Axle, VehicleDetail } from '../models/getVehicleDetail.model'
+import { VehiclesAxle, VehicleDetail } from '../models/getVehicleDetail.model'
 
 @Injectable()
 export class VehiclesService {
@@ -36,6 +36,7 @@ export class VehiclesService {
       vin: input.vin,
     })
     const { data } = res
+
     if (!data) return null
     const newestInspection = data.inspections?.sort((a, b) => {
       if (a && b && a.date && b.date)
@@ -44,20 +45,23 @@ export class VehiclesService {
     })[0]
 
     const axleMaxWeight =
-      data.techincal?.mass?.massdaxle1 &&
-      data.techincal.mass?.massdaxle2 &&
-      data.techincal?.mass?.massdaxle3 &&
-      data.techincal?.mass?.massdaxle4 &&
-      data.techincal?.mass?.massdaxle5 &&
-      data.techincal?.mass?.massdaxle1 +
-        data.techincal?.mass?.massdaxle2 +
-        data.techincal?.mass?.massdaxle3 +
-        data.techincal?.mass?.massdaxle4 +
-        data.techincal?.mass?.massdaxle5
+      (data.techincal?.mass?.massdaxle1
+        ? data.techincal?.mass?.massdaxle1
+        : 0) +
+      (data.techincal?.mass?.massdaxle2
+        ? data.techincal?.mass?.massdaxle2
+        : 0) +
+      (data.techincal?.mass?.massdaxle3
+        ? data.techincal?.mass?.massdaxle3
+        : 0) +
+      (data.techincal?.mass?.massdaxle4
+        ? data.techincal?.mass?.massdaxle4
+        : 0) +
+      (data.techincal?.mass?.massdaxle5 ? data.techincal?.mass?.massdaxle5 : 0)
 
     const numberOfAxles = data.techincal?.axle?.axleno ?? 0
 
-    const axles: Axle[] = []
+    const axles: VehiclesAxle[] = []
 
     if (data && data.techincal && data.techincal.axle && data.techincal.mass) {
       for (let i = 1; i <= numberOfAxles; i++) {
@@ -108,7 +112,7 @@ export class VehiclesService {
       registrationInfo: {
         firstRegistrationDate: data.firstregdate,
         preRegistrationDate: data.preregdate,
-        newRegistrationDate: data.newregdate,
+        newRegistrationDate: data.newregdate ?? data.firstregdate,
         vehicleGroup: data.techincal?.vehgroup,
         color: data.color,
         reggroup: data.plates
@@ -123,7 +127,7 @@ export class VehiclesService {
       },
       currentOwnerInfo: {
         owner: data.owners?.find((x) => x.current === true)?.fullname,
-        persidno: data.owners?.find((x) => x.current === true)?.persidno,
+        nationalId: data.owners?.find((x) => x.current === true)?.persidno,
         address: data.owners?.find((x) => x.current === true)?.address,
         postalcode: data.owners?.find((x) => x.current === true)?.postalcode,
         city: data.owners?.find((x) => x.current === true)?.city,
@@ -160,7 +164,7 @@ export class VehiclesService {
         data.owners?.map((x) => {
           return {
             name: x.fullname,
-            persidno: x.persidno,
+            nationalId: x.persidno,
             address: x.address + ', ' + x.postalcode + ' ' + x.city,
             dateOfPurchase: x.purchasedate,
           }
@@ -169,7 +173,7 @@ export class VehiclesService {
         coOwners?.map((x) => {
           return {
             owner: x.fullname,
-            persidno: x.persidno,
+            nationalId: x.persidno,
             address: x.address,
             postalCode: x.postalcode,
             city: x.city,
@@ -177,7 +181,7 @@ export class VehiclesService {
         }) || [],
       operator:
         (operator && {
-          persidno: operator.persidno,
+          nationalId: operator.persidno,
           name: operator.fullname,
           address: operator.address,
           postalcode: operator.postalcode,

@@ -3,11 +3,11 @@ import HeaderRow from './HeaderRow'
 import Column from './Column'
 import Row from './Row'
 import { Box } from '@island.is/island-ui/core'
-import { InspectionInfo } from '@island.is/api/schema'
+import { VehiclesInspectionInfo } from '@island.is/api/schema'
 import { messages } from '../../lib/messages'
 
 interface PropTypes {
-  data: InspectionInfo
+  data: VehiclesInspectionInfo
 }
 
 const InspectionInfoItem = ({ data }: PropTypes) => {

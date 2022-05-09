@@ -2,8 +2,8 @@ import { gql } from '@apollo/client'
 
 export const GET_USERS_VEHICLES = gql`
   query GetUsersVehicles {
-    getVehiclesForUser {
-      persidno
+    vehiclesUserVehicles {
+      nationalId
       name
       address
       postStation
@@ -24,8 +24,8 @@ export const GET_USERS_VEHICLES = gql`
         outOfUse
         otherOwners
         termination
-        buyerPersidno
-        ownerPersidno
+        buyerNationalId
+        ownerNationalId
         vehicleStatus
         useGroup
         vehGroup

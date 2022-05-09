@@ -3,12 +3,12 @@ import { Box } from '@island.is/island-ui/core'
 import HeaderRow from './HeaderRow'
 import Column from './Column'
 import Row from './Row'
-import { RegistrationInfo } from '@island.is/api/schema'
+import { VehiclesRegistrationInfo } from '@island.is/api/schema'
 import { messages } from '../../lib/messages'
 import { useLocale, useNamespaces } from '@island.is/localization'
 
 interface PropTypes {
-  data: RegistrationInfo
+  data: VehiclesRegistrationInfo
 }
 
 const RegistrationInfoItem = ({ data }: PropTypes) => {

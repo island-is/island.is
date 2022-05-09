@@ -2,7 +2,7 @@ import { gql } from '@apollo/client'
 
 export const GET_USERS_VEHICLE_DETAIL = gql`
   query GetUsersVehiclesDetail($input: GetVehicleDetailInput!) {
-    getVehicleDetail(input: $input) {
+    vehiclesUserVehicleDetail(input: $input) {
       mainInfo {
         model
         subModel
@@ -39,7 +39,7 @@ export const GET_USERS_VEHICLE_DETAIL = gql`
       }
       currentOwnerInfo {
         owner
-        persidno
+        nationalId
         address
         postalcode
         city
@@ -77,7 +77,7 @@ export const GET_USERS_VEHICLE_DETAIL = gql`
         dateOfPurchase
       }
       coOwners {
-        persidno
+        nationalId
         owner
         address
         postalcode
@@ -85,7 +85,7 @@ export const GET_USERS_VEHICLE_DETAIL = gql`
         dateOfPurchase
       }
       operator {
-        persidno
+        nationalId
         name
         address
         postalcode
