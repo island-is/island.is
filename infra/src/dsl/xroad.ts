@@ -312,3 +312,13 @@ export const FishingLicense = new XroadConf({
     },
   },
 })
+
+export const MunicipalitiesFinancialAid = new XroadConf({
+  env: {
+    XROAD_FINANCIAL_AID_BACKEND_SERVICE_PATH: {
+      dev: 'IS-DEV/MUN/10023/samband-sveitarfelaga/financial-aid-backend',
+      staging: '...',
+      prod: '...',
+    },
+  },
+})
