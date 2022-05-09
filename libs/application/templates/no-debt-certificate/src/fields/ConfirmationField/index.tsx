@@ -143,12 +143,7 @@ export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
           value={{
             linkRenderer: (href, children) => (
               <a
-                style={{
-                  color: '#0061ff',
-                  textDecoration: 'none',
-                  boxShadow: 'inset 0 -1px 0 0 currentColor',
-                  paddingBottom: 4,
-                }}
+                className={styles.linkStyle}
                 href={href}
                 rel="noopener noreferrer"
                 target="_blank"
