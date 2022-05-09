@@ -49,8 +49,6 @@ type autofillProperties = Pick<
 
 type autofillSessionArrangementProperties = Pick<Case, 'sessionArrangements'>
 
-type autofillBooleanProperties = Pick<Case, 'isCustodyIsolation'>
-
 export type autofillFunc = (
   entries: Array<{
     key: keyof autofillProperties
@@ -372,21 +370,6 @@ const useCase = () => {
     [updateCase],
   )
 
-  const autofillBoolean = useMemo(
-    () => (
-      key: keyof autofillBooleanProperties,
-      value: boolean,
-      workingCase: Case,
-    ) => {
-      if (workingCase[key] === undefined || workingCase[key] === null) {
-        workingCase[key] = value
-
-        updateCase(workingCase.id, { [key]: value })
-      }
-    },
-    [updateCase],
-  )
-
   return {
     createCase,
     isCreatingCase,
@@ -406,7 +389,6 @@ const useCase = () => {
     isExtendingCase,
     autofill,
     autofillSessionArrangements,
-    autofillBoolean,
   }
 }
 
