@@ -83,6 +83,7 @@ export const serviceSetup = (): ServiceBuilder<'auth-public-api'> => {
           prod: 'innskra.island.is',
         },
         paths: ['/api(/|$)(.*)'],
+        pathType: 'Prefix',
         public: true,
       },
     })

@@ -86,6 +86,7 @@ export interface Ingress {
     [name in OpsEnv]: string | string[]
   }
   paths: string[]
+  pathType?: string 
   public?: boolean
   extraAnnotations?: { [name in OpsEnv]: { [idx: string]: string | null } }
 }
