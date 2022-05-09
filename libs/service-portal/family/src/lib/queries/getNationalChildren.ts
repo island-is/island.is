@@ -25,6 +25,7 @@ export const NATIONAL_REGISTRY_CHILDREN = gql`
       religion
       homeAddress
       nationality
+      legalResidence
     }
   }
 `

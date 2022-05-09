@@ -428,7 +428,11 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
               <PdfRow
                 caseId={workingCase.id}
                 title={formatMessage(core.pdfButtonRequest)}
-                pdfType="request"
+                pdfType={
+                  user?.role === UserRole.DEFENDER
+                    ? 'request/restricted'
+                    : 'request'
+                }
               />
             )}
             {user?.role !== UserRole.DEFENDER &&
@@ -446,7 +450,11 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
             <PdfRow
               caseId={workingCase.id}
               title={formatMessage(core.pdfButtonRulingShortVersion)}
-              pdfType="courtRecord"
+              pdfType={
+                user?.role === UserRole.DEFENDER
+                  ? 'courtRecord/restricted'
+                  : 'courtRecord'
+              }
             >
               {workingCase.courtRecordSignatory ? (
                 <SignedDocument
@@ -472,7 +480,11 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
               <PdfRow
                 caseId={workingCase.id}
                 title={formatMessage(core.pdfButtonRuling)}
-                pdfType="ruling"
+                pdfType={
+                  user?.role === UserRole.DEFENDER
+                    ? 'ruling/restricted'
+                    : 'ruling'
+                }
               >
                 <SignedDocument
                   signatory={workingCase.judge?.name}
@@ -485,7 +497,8 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
         <Divider />
       </Box>
       {user?.role === UserRole.PROSECUTOR &&
-        user.institution?.id === workingCase.prosecutor?.institution?.id &&
+        user.institution?.id ===
+          workingCase.creatingProsecutor?.institution?.id &&
         isRestrictionCase(workingCase.type) && (
           <Box marginBottom={9}>
             <Box marginBottom={3}>

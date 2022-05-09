@@ -339,7 +339,7 @@ ServicesPage.getInitialProps = async ({ apolloClient, locale, query }) => {
     groups,
     sort: (query.sort as string) ?? 'popular',
     showSearchInHeader: false,
-    ...getThemeConfig(getOrganizationPage.theme),
+    ...getThemeConfig(getOrganizationPage.theme, getOrganizationPage.slug),
   }
 }
 
