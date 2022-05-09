@@ -22,6 +22,13 @@ export const ApplicationQuery = gql`
           amount
         }
       }
+      applicationEvents {
+        id
+        applicationId
+        eventType
+        comment
+        created
+      }
     }
   }
 `

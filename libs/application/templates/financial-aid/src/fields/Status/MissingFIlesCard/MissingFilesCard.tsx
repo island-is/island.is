@@ -4,7 +4,11 @@ import { useIntl } from 'react-intl'
 import { Box, ActionCard } from '@island.is/island-ui/core'
 import { missingFilesCard } from '../../../lib/messages'
 
-const MissingFilesCard = () => {
+interface Props {
+  onClick: () => void
+}
+
+const MissingFilesCard = ({ onClick }: Props) => {
   const { formatMessage } = useIntl()
 
   return (
@@ -12,11 +16,10 @@ const MissingFilesCard = () => {
       <ActionCard
         heading={formatMessage(missingFilesCard.title)}
         text={formatMessage(missingFilesCard.description)}
-        // TODO: redirect user to page to upload files
         cta={{
           label: formatMessage(missingFilesCard.action),
           icon: undefined,
-          onClick: () => {},
+          onClick: onClick,
         }}
         backgroundColor="blue"
       />

@@ -17,7 +17,7 @@ import {
 } from './index'
 import useApplication from '../../lib/hooks/useApplication'
 
-const ApplicantStatus = ({ application }: FAFieldBaseProps) => {
+const ApplicantStatus = ({ application, goToScreen }: FAFieldBaseProps) => {
   const { currentApplication } = useApplication(
     application.externalData.veita.data.currentApplicationId,
   )
@@ -42,8 +42,11 @@ const ApplicantStatus = ({ application }: FAFieldBaseProps) => {
         />
       )}
 
-      {/* TODO: redirect user to page to upload files when button is clicked insied of MissingFilesCard*/}
-      {state === ApplicationState.DATANEEDED && <MissingFilesCard />}
+      {state === ApplicationState.DATANEEDED && (
+        <MissingFilesCard
+          onClick={() => goToScreen && goToScreen('missingFiles')}
+        />
+      )}
 
       {state !== ApplicationState.REJECTED && (
         <AidAmount

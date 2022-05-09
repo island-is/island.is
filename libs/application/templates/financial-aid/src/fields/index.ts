@@ -25,3 +25,4 @@ export { default as PrivacyPolicyAccordion } from './PrivacyPolicyAccordion/Priv
 export { default as ServiceCenter } from './ServiceCenter/ServiceCenter'
 export { default as ApplicantStatus } from './Status/ApplicantStatus'
 export { default as SpouseStatus } from './Status/SpouseStatus'
+export { default as MissingFiles } from './MissingFiles/MissingFiles'

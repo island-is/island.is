@@ -1,4 +1,11 @@
-import { buildCustomField, buildForm, Form } from '@island.is/application/core'
+import {
+  buildCustomField,
+  buildForm,
+  buildMultiField,
+  buildSubmitField,
+  DefaultEvents,
+  Form,
+} from '@island.is/application/core'
 
 import * as m from '../lib/messages'
 
@@ -10,6 +17,33 @@ export const ApplicantSubmitted: Form = buildForm({
       id: 'applicantStatus',
       title: m.status.pageTitle,
       component: 'ApplicantStatus',
+    }),
+    buildMultiField({
+      id: 'missingFiles',
+      title: m.missingFiles.general.pageTitle,
+      children: [
+        buildCustomField({
+          id: 'missingFiles',
+          title: m.missingFiles.general.pageTitle,
+          component: 'MissingFiles',
+        }),
+        buildSubmitField({
+          id: 'missingFilesSubmit',
+          title: '',
+          actions: [
+            {
+              event: DefaultEvents.SUBMIT,
+              name: m.missingFiles.general.submit,
+              type: 'primary',
+            },
+          ],
+        }),
+      ],
+    }),
+    buildMultiField({
+      id: '',
+      title: '',
+      children: [],
     }),
   ],
 })
