@@ -48,7 +48,7 @@ export interface ElectPersonType {
 export interface EstateMember {
   name: string
   nationalId: string
-  relation: RelationEnum
+  relation: RelationEnum | string
   initial?: boolean
   dateOfBirth?: string
   custodian?: string

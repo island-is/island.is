@@ -75,6 +75,9 @@ export class AnnouncementOfDeathService {
       })
       .then((response) => response.json())
 
+    const relationOptions = (await this.syslumennService.getEstateRelations())
+      .relations
+
     if ('errors' in updateApplicationResponse) {
       this.logger.error(
         'Failed to insert Syslumenn Data into answers',
@@ -85,6 +88,7 @@ export class AnnouncementOfDeathService {
     return {
       success: true,
       estates,
+      relationOptions,
     }
   }
 
