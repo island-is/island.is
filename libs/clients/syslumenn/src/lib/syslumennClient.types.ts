@@ -182,4 +182,9 @@ export type EstateRegistrant = {
   assetsAbroad: boolean
   occupationRightViaCondominium: boolean
   bankStockOrShares: boolean
+  districtCommissionerHasWill: boolean
+}
+
+export type EstateRelations = {
+  relations: string[]
 }
