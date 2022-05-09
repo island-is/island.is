@@ -5,7 +5,7 @@ import { AmountModel } from './models'
 
 import { DeductionFactorsService } from '../deductionFactors'
 
-import { Sequelize } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 import { Amount } from '@island.is/financial-aid/shared/lib'
 
 @Injectable()

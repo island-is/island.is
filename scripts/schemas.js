@@ -40,7 +40,7 @@ const main = async () => {
 
     try {
       await exec(
-        `nx run-many --target=${target} --all --with-deps --parallel --maxParallel=6 $NX_OPTIONS`,
+        `nx run-many --target=${target} --all --parallel --maxParallel=6 $NX_OPTIONS`,
         {
           env: skipCache
             ? { ...process.env, NX_OPTIONS: '--skip-nx-cache' }
