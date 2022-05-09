@@ -10,7 +10,7 @@ interface Props {
   partiallyAcceptedLabelText: string
   dismissLabelText: string
   acceptingAlternativeTravelBanLabelText?: string
-  onChange?: (decision: CaseDecision) => void
+  onChange: (decision: CaseDecision) => void
 }
 
 const Decision: React.FC<Props> = (props) => {
@@ -33,7 +33,7 @@ const Decision: React.FC<Props> = (props) => {
           label={acceptedLabelText}
           checked={workingCase.decision === CaseDecision.ACCEPTING}
           onChange={() => {
-            onChange && onChange(CaseDecision.ACCEPTING)
+            onChange(CaseDecision.ACCEPTING)
           }}
           large
           backgroundColor="white"
@@ -47,7 +47,7 @@ const Decision: React.FC<Props> = (props) => {
             label={partiallyAcceptedLabelText}
             checked={workingCase.decision === CaseDecision.ACCEPTING_PARTIALLY}
             onChange={() => {
-              onChange && onChange(CaseDecision.ACCEPTING_PARTIALLY)
+              onChange(CaseDecision.ACCEPTING_PARTIALLY)
             }}
             large
             backgroundColor="white"
@@ -61,7 +61,7 @@ const Decision: React.FC<Props> = (props) => {
           label={rejectedLabelText}
           checked={workingCase.decision === CaseDecision.REJECTING}
           onChange={() => {
-            onChange && onChange(CaseDecision.REJECTING)
+            onChange(CaseDecision.REJECTING)
           }}
           large
           backgroundColor="white"
@@ -79,8 +79,7 @@ const Decision: React.FC<Props> = (props) => {
               CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
             }
             onChange={() => {
-              onChange &&
-                onChange(CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN)
+              onChange(CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN)
             }}
             large
             backgroundColor="white"
@@ -94,7 +93,7 @@ const Decision: React.FC<Props> = (props) => {
           label={dismissLabelText}
           checked={workingCase.decision === CaseDecision.DISMISSING}
           onChange={() => {
-            onChange && onChange(CaseDecision.DISMISSING)
+            onChange(CaseDecision.DISMISSING)
           }}
           large
           backgroundColor="white"
