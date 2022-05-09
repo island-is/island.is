@@ -47,7 +47,9 @@ export const RestrictedCaseQuery = gql`
         }
       }
       courtCaseNumber
+      courtEndTime
       validToDate
+      isValidToDateInThePast
       isCustodyIsolation
       isolationToDate
       conclusion
@@ -79,6 +81,7 @@ export const RestrictedCaseQuery = gql`
       childCase {
         id
       }
+      caseModifiedExplanation
     }
   }
 `

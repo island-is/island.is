@@ -37,6 +37,7 @@ export const ArticleChatPanel = ({
   } else if (isWatsonChatPanelEnabled && article.id in watsonConfig) {
     Component = <WatsonChatPanel {...watsonConfig[article.id]} />
   } else if (
+    isWatsonChatPanelEnabled &&
     article.organization?.some((o) => o.id === syslumennOrganizationId)
   ) {
     Component = <WatsonChatPanel {...syslumennWatsonConfig} />
