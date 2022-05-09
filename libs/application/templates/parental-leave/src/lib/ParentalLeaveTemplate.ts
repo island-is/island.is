@@ -24,6 +24,7 @@ import {
   NO,
   MANUAL,
   SPOUSE,
+  NO_PRIVATE_PENSION_FUND,
 } from '../constants'
 import { dataSchema } from './dataSchema'
 import { answerValidators } from './answerValidators'
@@ -105,6 +106,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           'setOtherParentIdIfSelectedSpouse',
           'clearPersonalAllowanceIfUsePersonalAllowanceIsNo',
           'clearSpouseAllowanceIfUseSpouseAllowanceIsNo',
+          'clearPrivatePensionIfUsePrivatePensionIsNo',
         ],
         meta: {
           name: States.DRAFT,
@@ -718,6 +720,27 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           (answers.spouseUsage || answers.spouseUseAsMuchAsPossible)
         ) {
           set(application.answers, 'personalAllowanceFromSpouse', null)
+        }
+
+        return context
+      }),
+
+      clearPrivatePensionIfUsePrivatePensionIsNo: assign((context) => {
+        const { application } = context
+
+        const answers = getApplicationAnswers(application.answers)
+
+        if (
+          answers.usePrivatePensionFund === NO &&
+          (answers.privatePensionFund !== NO_PRIVATE_PENSION_FUND ||
+            answers.privatePensionFundPercentage !== '')
+        ) {
+          set(
+            application.answers,
+            'payments.privatePensionFund',
+            NO_PRIVATE_PENSION_FUND,
+          )
+          set(application.answers, 'payments.privatePensionFundPercentage', '')
         }
 
         return context
