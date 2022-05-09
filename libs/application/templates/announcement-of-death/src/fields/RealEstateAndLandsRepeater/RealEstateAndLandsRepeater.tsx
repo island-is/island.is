@@ -71,7 +71,6 @@ export const RealEstateAndLandsRepeater: FC<FieldBaseProps<Answers>> = ({
         }, [] as JSX.Element[])}
       </GridRow>
       {fields.map((field, index) => {
-        console.log('mapper', field)
         const fieldIndex = `${id}[${index}]`
         const propertyNumberField = `${fieldIndex}.assetNumber`
         const addressField = `${fieldIndex}.description`
