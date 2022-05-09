@@ -263,6 +263,9 @@
     "application-templates-mortgage-certificate": {
       "tags": []
     },
+    "application-templates-no-debt-certificate": {
+      "tags": []
+    },
     "application-templates-p-sign": {
       "tags": []
     },
