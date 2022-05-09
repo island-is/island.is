@@ -6,6 +6,7 @@ import {
   buildCheckboxField,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
+import { OtherPropertiesEnum } from '../../types'
 
 export const subSectionProperties = buildSubSection({
   id: 'propertiesStep',
@@ -25,7 +26,7 @@ export const subSectionProperties = buildSubSection({
         }),
         buildCustomField({
           title: 'realEstateAndLandsRepeater',
-          id: 'realEstateAndLandsRepeater',
+          id: 'assets',
           component: 'RealEstateAndLandsRepeater',
         }),
         buildDescriptionField({
@@ -57,19 +58,19 @@ export const subSectionProperties = buildSubSection({
           options: [
             {
               label: m.otherPropertiesAccounts,
-              value: 'option1',
+              value: OtherPropertiesEnum.ACCOUNTS,
             },
             {
               label: m.otherPropertiesOwnBusiness,
-              value: 'option2',
+              value: OtherPropertiesEnum.OWN_BUSINESS,
             },
             {
               label: m.otherPropertiesResidence,
-              value: 'option3',
+              value: OtherPropertiesEnum.RESIDENCE,
             },
             {
               label: m.otherPropertiesAssetsAbroad,
-              value: 'option4',
+              value: OtherPropertiesEnum.ASSETS_ABROAD,
             },
           ],
         }),

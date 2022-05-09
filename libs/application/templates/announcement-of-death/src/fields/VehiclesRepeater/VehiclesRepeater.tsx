@@ -10,53 +10,70 @@ import {
   Button,
   ProfileCard,
 } from '@island.is/island-ui/core'
-import { Property } from '../../types'
+import { Answers, Asset } from '../../types'
 
 import * as styles from './VehiclesRepeater.css'
 import { m } from '../../lib/messages'
 
-export const VehiclesRepeater: FC<FieldBaseProps> = ({ field }) => {
+export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({ field }) => {
   const { id } = field
   const { formatMessage } = useLocale()
-  const { fields, append, remove } = useFieldArray<Property>({ name: id })
+  const { fields, append, remove } = useFieldArray<Asset>({ name: id })
 
   const handleAddVehicle = () =>
     append({
-      propertyNumber: 'F2012397',
+      assetNumber: '',
+      description: '',
     })
   const handleRemoveVehicle = (index: number) => remove(index)
 
   return (
     <Box marginTop={2}>
       <GridRow>
-        <GridColumn span={['12/12', '12/12', '6/12']} paddingBottom={3}>
-          <ProfileCard
-            // TODO: Get data
-            title="VU-U52"
-            description={[
-              'Alfa Romeo',
-              <Box marginTop={1} as="span">
-                <Button
-                  variant="text"
-                  icon="trash"
-                  size="small"
-                  iconType="outline"
-                >
-                  {formatMessage(m.inheritanceRemoveMember)}
-                </Button>
-              </Box>,
-            ]}
-            heightFull
-          />
-        </GridColumn>
+        {fields.reduce((acc, asset, index) => {
+          if (!asset.initial) {
+            return acc
+          }
+          return [
+            <GridColumn
+              key={asset.id}
+              span={['12/12', '12/12', '6/12']}
+              paddingBottom={3}
+            >
+              <ProfileCard
+                title={asset.assetNumber}
+                description={[
+                  `${asset.description}`,
+                  <Box marginTop={1} as="span">
+                    <Button
+                      variant="text"
+                      icon="trash"
+                      size="small"
+                      iconType="outline"
+                      onClick={() => remove(index)}
+                    >
+                      {formatMessage(m.inheritanceRemoveMember)}
+                    </Button>
+                  </Box>,
+                ]}
+                heightFull
+              />
+            </GridColumn>,
+          ]
+        }, [] as JSX.Element[])}
       </GridRow>
       {fields.map((field, index) => {
         const fieldIndex = `${id}[${index}]`
-        const vehicleNumberField = `${fieldIndex}.vehicleNumber`
+        const vehicleNumberField = `${fieldIndex}.plateNumber`
         const vehicleTypeField = `${fieldIndex}.vehicleType`
 
         return (
-          <Box position="relative" key={field.id} marginTop={2}>
+          <Box
+            position="relative"
+            key={field.id}
+            marginTop={2}
+            hidden={field.initial}
+          >
             <Box position="absolute" className={styles.removeFieldButton}>
               <Button
                 variant="ghost"

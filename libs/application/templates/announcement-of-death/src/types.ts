@@ -1,3 +1,5 @@
+import { EstateAsset } from '@island.is/clients/syslumenn'
+
 export enum RoleConfirmationEnum {
   CONTINUE = 'continue',
   DELEGATE = 'delegate',
@@ -9,6 +11,14 @@ export enum RelationEnum {
   SIBLING = 'sibling',
   SPOUSE = 'spouse',
 }
+export enum OtherPropertiesEnum {
+  ACCOUNTS = 'accounts',
+  OWN_BUSINESS = 'ownBusiness',
+  RESIDENCE = 'residence',
+  ASSETS_ABROAD = 'assetsAbroad',
+}
+
+export type Asset = Partial<EstateAsset & { initial: boolean }>
 
 // TODO: WIP
 export interface Answers {
@@ -22,7 +32,9 @@ export interface Answers {
   estateMembers: EstateMember[]
   financesDataCollectionPermission?: boolean
   knowledgeOfOtherWills: 'yes' | 'no'
-  otherProperties: Property[]
+  assets: Asset[]
+  vehicles: Asset[]
+  otherProperties: OtherPropertiesEnum
   roleConfirmation: RoleConfirmationEnum
 }
 
@@ -46,6 +58,7 @@ export interface EstateMember {
 export interface Property {
   propertyNumber: string
   address?: string
+  initial?: boolean
 }
 
 export interface Vehicle {
@@ -53,6 +66,7 @@ export interface Vehicle {
   numberOfWheels: number
   weight: number
   year: number
+  initial?: boolean
 }
 
 export interface Will {
