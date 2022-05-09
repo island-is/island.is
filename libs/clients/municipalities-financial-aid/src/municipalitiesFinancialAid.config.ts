@@ -11,7 +11,7 @@ export const MunicipalitiesFinancialAidConfig = defineConfig({
   load(env) {
     return {
       xRoadServicePath: env.required(
-        'XROAD_FINANCIAL_AID_BACKEND_SERVICE_PATH',
+        'XROAD_FINANCIAL_AID_BACKEND_PATH',
         'IS-DEV/MUN/10023/samband-sveitarfelaga/financial-aid-backend',
       ),
     }
