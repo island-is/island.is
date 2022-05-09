@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { useFieldArray } from 'react-hook-form'
+import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
 import { FieldBaseProps } from '@island.is/application/core'
@@ -21,11 +21,13 @@ export const RealEstateAndLandsRepeater: FC<FieldBaseProps<Answers>> = ({
   const { id } = field
   const { formatMessage } = useLocale()
   const { fields, append, remove } = useFieldArray<Asset>({ name: id })
+  const { control } = useFormContext()
 
   const handleAddProperty = () =>
     append({
       assetNumber: '',
       description: '',
+      initial: false,
     })
   const handleRemoveProperty = (index: number) => remove(index)
 
@@ -69,9 +71,11 @@ export const RealEstateAndLandsRepeater: FC<FieldBaseProps<Answers>> = ({
         }, [] as JSX.Element[])}
       </GridRow>
       {fields.map((field, index) => {
+        console.log('mapper', field)
         const fieldIndex = `${id}[${index}]`
         const propertyNumberField = `${fieldIndex}.assetNumber`
         const addressField = `${fieldIndex}.description`
+        const initialField = `${fieldIndex}.initial`
 
         return (
           <Box
@@ -80,6 +84,11 @@ export const RealEstateAndLandsRepeater: FC<FieldBaseProps<Answers>> = ({
             marginTop={2}
             hidden={field.initial}
           >
+            <Controller
+              name={initialField}
+              control={control}
+              defaultValue={field.initial || false}
+            />
             <Box position="absolute" className={styles.removeFieldButton}>
               <Button
                 variant="ghost"
@@ -96,7 +105,7 @@ export const RealEstateAndLandsRepeater: FC<FieldBaseProps<Answers>> = ({
                   name={propertyNumberField}
                   label={formatMessage(m.propertyNumber)}
                   backgroundColor="blue"
-                  defaultValue={''}
+                  defaultValue={field.assetNumber}
                 />
               </GridColumn>
               <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
@@ -105,6 +114,7 @@ export const RealEstateAndLandsRepeater: FC<FieldBaseProps<Answers>> = ({
                   name={addressField}
                   label={formatMessage(m.address)}
                   readOnly
+                  defaultValue={field.description}
                 />
               </GridColumn>
             </GridRow>
