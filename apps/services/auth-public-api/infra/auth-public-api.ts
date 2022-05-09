@@ -87,9 +87,6 @@ export const serviceSetup = (): ServiceBuilder<'auth-public-api'> => {
         public: true,
       },
     })
-    .secrets({
-        CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    })
     .readiness('/liveness')
     .liveness('/liveness')
 }
