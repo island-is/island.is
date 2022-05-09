@@ -26,11 +26,9 @@ import {
   InstitutionPanel,
   InstitutionsPanel,
   OrganizationFooter,
-  OrganizationChatPanel,
   Sticky,
   Webreader,
   AppendedArticleComponents,
-  LiveChatIncChatPanel,
   footerEnabled,
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
@@ -61,7 +59,7 @@ import { useScrollPosition } from '../../hooks/useScrollPosition'
 import { scrollTo } from '../../hooks/useScrollSpy'
 import StepperFSM from '../../components/StepperFSM/StepperFSM'
 import { getStepOptionsFromUIConfiguration } from '../../components/StepperFSM/StepperFSMUtils'
-import { liveChatIncConfig } from './config'
+import { ArticleChatPanel } from './components/ArticleChatPanel'
 import * as styles from './Article.css'
 
 type Article = GetSingleArticleQuery['getSingleArticle']
@@ -620,14 +618,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
             portalRef.current,
           )}
       </SidebarLayout>
-      {article.id in liveChatIncConfig ? (
-        <LiveChatIncChatPanel {...liveChatIncConfig[article.id]} />
-      ) : (
-        <OrganizationChatPanel
-          slugs={article.organization.map((x) => x.slug)}
-          pushUp={isVisible}
-        />
-      )}
+      <ArticleChatPanel article={article} pushUp={isVisible} />
       <OrganizationFooter
         organizations={article.organization as Organization[]}
       />

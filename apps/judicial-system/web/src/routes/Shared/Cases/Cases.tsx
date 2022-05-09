@@ -134,7 +134,6 @@ export const Cases: React.FC = () => {
 
   const openCase = (caseToOpen: Case, role: UserRole) => {
     let routeTo = null
-
     if (
       caseToOpen.state === CaseState.ACCEPTED ||
       caseToOpen.state === CaseState.REJECTED ||
@@ -151,27 +150,13 @@ export const Cases: React.FC = () => {
       }
     } else {
       if (isRestrictionCase(caseToOpen.type)) {
-        if (
-          caseToOpen.state === CaseState.RECEIVED ||
-          caseToOpen.state === CaseState.SUBMITTED
-        ) {
-          routeTo = `${Constants.STEP_SIX_ROUTE}/${caseToOpen.id}`
-        } else {
-          routeTo = findLastValidStep(
-            getRestrictionCaseProsecutorSection(caseToOpen),
-          ).href
-        }
+        routeTo = findLastValidStep(
+          getRestrictionCaseProsecutorSection(caseToOpen),
+        ).href
       } else {
-        if (
-          caseToOpen.state === CaseState.RECEIVED ||
-          caseToOpen.state === CaseState.SUBMITTED
-        ) {
-          routeTo = `${Constants.IC_POLICE_CONFIRMATION_ROUTE}/${caseToOpen.id}`
-        } else {
-          routeTo = findLastValidStep(
-            getInvestigationCaseProsecutorSection(caseToOpen),
-          ).href
-        }
+        routeTo = findLastValidStep(
+          getInvestigationCaseProsecutorSection(caseToOpen),
+        ).href
       }
     }
 
