@@ -1,10 +1,12 @@
 import { Sequelize } from 'sequelize-typescript'
 import { execSync } from 'child_process'
 import request from 'supertest'
+import { MessageDescriptor } from '@formatjs/intl'
 
 import { getConnectionToken } from '@nestjs/sequelize'
 import { INestApplication, Type } from '@nestjs/common'
 
+import { IntlService } from '@island.is/cms-translations'
 import { testServer } from '@island.is/infra-nest-server'
 import {
   CaseState,
@@ -36,7 +38,6 @@ import {
   Notification,
   SendNotificationResponse,
 } from '../src/app/modules/notification'
-import { IntlService } from '@island.is/cms-translations'
 
 interface CUser extends TUser {
   institutionId: string
@@ -80,7 +81,7 @@ beforeAll(async () => {
       builder.overrideProvider(IntlService).useValue({
         useIntl: () =>
           Promise.resolve({
-            formatMessage: (descriptor: StaticText) => {
+            formatMessage: (descriptor: MessageDescriptor | string) => {
               if (typeof descriptor === 'string') {
                 return descriptor
               }
