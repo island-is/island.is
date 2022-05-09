@@ -27,35 +27,36 @@ const getSessionBookingsAutofill = (
   formatMessage: IntlShape['formatMessage'],
   workingCase: Case,
 ) => {
-  let autofillSessionBookings = ''
+  const autofillSessionBookings = []
 
   if (workingCase.defenderName) {
-    autofillSessionBookings += `${formatMessage(
-      m.sections.sessionBookings.autofillDefender,
-      {
+    autofillSessionBookings.push(
+      `${formatMessage(m.sections.sessionBookings.autofillDefender, {
         defender: workingCase.defenderName,
-      },
-    )}\n\n`
+      })}\n\n`,
+    )
   }
 
   if (workingCase.translator) {
-    autofillSessionBookings += `${formatMessage(
-      m.sections.sessionBookings.autofillTranslator,
-      {
+    autofillSessionBookings.push(
+      `${formatMessage(m.sections.sessionBookings.autofillTranslator, {
         translator: workingCase.translator,
-      },
-    )}\n\n`
+      })}\n\n`,
+    )
   }
 
-  autofillSessionBookings += `${formatMessage(
-    m.sections.sessionBookings.autofillRightToRemainSilent,
-  )}\n\n${formatMessage(
-    m.sections.sessionBookings.autofillCourtDocumentOne,
-  )}\n\n${formatMessage(
-    m.sections.sessionBookings.autofillAccusedPlea,
-  )}\n\n${formatMessage(m.sections.sessionBookings.autofillAllPresent)}`
-
-  return autofillSessionBookings
+  autofillSessionBookings.push(
+    `${formatMessage(
+      m.sections.sessionBookings.autofillRightToRemainSilent,
+    )}\n\n${formatMessage(
+      m.sections.sessionBookings.autofillCourtDocumentOne,
+    )}\n\n${formatMessage(
+      m.sections.sessionBookings.autofillAccusedPlea,
+    )}\n\n${formatMessage(m.sections.sessionBookings.autofillAllPresent)}`,
+  )
+  return autofillSessionBookings.length > 0
+    ? autofillSessionBookings.join('')
+    : undefined
 }
 
 const CourtRecord = () => {
@@ -73,11 +74,13 @@ const CourtRecord = () => {
 
   useEffect(() => {
     if (isCaseUpToDate && !initialAutoFillDone) {
-      let autofillAttendees = ''
+      const autofillAttendees = []
 
       if (workingCase.courtAttendees !== '') {
         if (workingCase.prosecutor) {
-          autofillAttendees += `${workingCase.prosecutor.name} ${workingCase.prosecutor.title}`
+          autofillAttendees.push(
+            `${workingCase.prosecutor.name} ${workingCase.prosecutor.title}`,
+          )
         }
 
         if (
@@ -85,13 +88,15 @@ const CourtRecord = () => {
           workingCase.sessionArrangements !==
             SessionArrangements.PROSECUTOR_PRESENT
         ) {
-          autofillAttendees += `\n${workingCase.defenderName} skipaður ${
-            workingCase.defenderIsSpokesperson ? 'talsmaður' : 'verjandi'
-          } ${formatMessage(core.defendant, { suffix: 'a' })}`
+          autofillAttendees.push(
+            `\n${workingCase.defenderName} skipaður ${
+              workingCase.defenderIsSpokesperson ? 'talsmaður' : 'verjandi'
+            } ${formatMessage(core.defendant, { suffix: 'a' })}`,
+          )
         }
 
         if (workingCase.translator) {
-          autofillAttendees += `\n${workingCase.translator} túlkur`
+          autofillAttendees.push(`\n${workingCase.translator} túlkur`)
         }
 
         if (workingCase.defendants && workingCase.defendants.length > 0) {
@@ -99,12 +104,11 @@ const CourtRecord = () => {
             workingCase.sessionArrangements === SessionArrangements.ALL_PRESENT
           ) {
             workingCase.defendants.forEach((defendant) => {
-              autofillAttendees += `\n${defendant.name} ${formatMessage(
-                core.defendant,
-                {
+              autofillAttendees.push(
+                `\n${defendant.name} ${formatMessage(core.defendant, {
                   suffix: 'i',
-                },
-              )}`
+                })}`,
+              )
             })
           }
         }
@@ -126,7 +130,10 @@ const CourtRecord = () => {
           },
           {
             key: 'courtAttendees',
-            value: autofillAttendees !== '' ? autofillAttendees : undefined,
+            value:
+              autofillAttendees.length > 0
+                ? autofillAttendees.join('')
+                : undefined,
             force: true,
           },
           {
