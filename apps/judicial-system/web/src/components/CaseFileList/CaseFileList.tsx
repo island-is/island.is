@@ -50,7 +50,7 @@ const CaseFileList: React.FC<Props> = (props) => {
   const xFiles = [...files] as CaseFile[]
 
   if (xFiles.length <= 0) {
-    return <Text>Engin rannsóknargögn fylgja kröfunni í Réttarvörslugátt.</Text>
+    return <Text>{formatMessage(m.noFilesFound)}</Text>
   }
 
   return (
