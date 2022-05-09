@@ -1,8 +1,12 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { useIntl } from 'react-intl'
+import { IntlShape, useIntl } from 'react-intl'
 
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
-import { CaseType, SessionArrangements } from '@island.is/judicial-system/types'
+import {
+  Case,
+  CaseType,
+  SessionArrangements,
+} from '@island.is/judicial-system/types'
 import {
   CourtSubsections,
   Sections,
@@ -18,6 +22,41 @@ import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader
 import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
 
 import CourtRecordForm from './CourtRecordForm'
+
+const getSessionBookingsAutofill = (
+  formatMessage: IntlShape['formatMessage'],
+  workingCase: Case,
+) => {
+  let autofillSessionBookings = ''
+
+  if (workingCase.defenderName) {
+    autofillSessionBookings += `${formatMessage(
+      m.sections.sessionBookings.autofillDefender,
+      {
+        defender: workingCase.defenderName,
+      },
+    )}\n\n`
+  }
+
+  if (workingCase.translator) {
+    autofillSessionBookings += `${formatMessage(
+      m.sections.sessionBookings.autofillTranslator,
+      {
+        translator: workingCase.translator,
+      },
+    )}\n\n`
+  }
+
+  autofillSessionBookings += `${formatMessage(
+    m.sections.sessionBookings.autofillRightToRemainSilent,
+  )}\n\n${formatMessage(
+    m.sections.sessionBookings.autofillCourtDocumentOne,
+  )}\n\n${formatMessage(
+    m.sections.sessionBookings.autofillAccusedPlea,
+  )}\n\n${formatMessage(m.sections.sessionBookings.autofillAllPresent)}`
+
+  return autofillSessionBookings
+}
 
 const CourtRecord = () => {
   const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
@@ -35,7 +74,6 @@ const CourtRecord = () => {
   useEffect(() => {
     if (isCaseUpToDate && !initialAutoFillDone) {
       let autofillAttendees = ''
-      let autofillSessionBookings = ''
 
       if (workingCase.courtAttendees !== '') {
         if (workingCase.prosecutor) {
@@ -72,34 +110,6 @@ const CourtRecord = () => {
         }
       }
 
-      if (workingCase.sessionArrangements === SessionArrangements.ALL_PRESENT) {
-        if (workingCase.defenderName) {
-          autofillSessionBookings += `${formatMessage(
-            m.sections.sessionBookings.autofillDefender,
-            {
-              defender: workingCase.defenderName,
-            },
-          )}\n\n`
-        }
-
-        if (workingCase.translator) {
-          autofillSessionBookings += `${formatMessage(
-            m.sections.sessionBookings.autofillTranslator,
-            {
-              translator: workingCase.translator,
-            },
-          )}\n\n`
-        }
-
-        autofillSessionBookings += `${formatMessage(
-          m.sections.sessionBookings.autofillRightToRemainSilent,
-        )}\n\n${formatMessage(
-          m.sections.sessionBookings.autofillCourtDocumentOne,
-        )}\n\n${formatMessage(
-          m.sections.sessionBookings.autofillAccusedPlea,
-        )}\n\n${formatMessage(m.sections.sessionBookings.autofillAllPresent)}`
-      }
-
       autofill(
         [
           { key: 'courtStartDate', value: workingCase.courtDate, force: true },
@@ -130,7 +140,7 @@ const CourtRecord = () => {
                 ? formatMessage(m.sections.sessionBookings.autofillAutopsy)
                 : workingCase.sessionArrangements ===
                   SessionArrangements.ALL_PRESENT
-                ? autofillSessionBookings
+                ? getSessionBookingsAutofill(formatMessage, workingCase)
                 : workingCase.sessionArrangements ===
                   SessionArrangements.ALL_PRESENT_SPOKESPERSON
                 ? formatMessage(m.sections.sessionBookings.autofillSpokeperson)
