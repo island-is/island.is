@@ -21,6 +21,7 @@ interface Props {
 
 export const autofillRuling = (
   workingCase: Case,
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
   autofill: autofillFunc,
   formatMessage: IntlFormatters['formatMessage'],
 ) => {
@@ -35,6 +36,7 @@ export const autofillRuling = (
         },
       ],
       workingCase,
+      setWorkingCase,
     )
   } else if (
     workingCase.parentCase.ruling &&
@@ -43,6 +45,7 @@ export const autofillRuling = (
     autofill(
       [{ key: 'ruling', value: workingCase.parentCase.ruling }],
       workingCase,
+      setWorkingCase,
     )
   }
 }
@@ -58,10 +61,9 @@ export const useRulingAutofill = (
 
   useEffect(() => {
     if (isCaseUpToDate && !initialAutoFillDone) {
-      autofillRuling(workingCase, autofill, formatMessage)
+      autofillRuling(workingCase, setWorkingCase, autofill, formatMessage)
 
       setInitialAutoFillDone(true)
-      // setWorkingCase({ ...workingCase })
     }
   }, [
     autofill,

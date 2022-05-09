@@ -57,7 +57,7 @@ export type autofillFunc = (
     force?: boolean
   }>,
   workingCase: Case,
-  setWorkingCase?: React.Dispatch<React.SetStateAction<Case>>,
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
 ) => void
 
 interface CreateCaseMutationResponse {
@@ -351,10 +351,7 @@ const useCase = () => {
       return
     }
 
-    if (setWorkingCase) {
-      setWorkingCase({ ...workingCase, ...flatEntries })
-    }
-
+    setWorkingCase({ ...workingCase, ...flatEntries })
     updateCase(workingCase.id, flatEntries)
   }
 

@@ -120,6 +120,7 @@ export const CourtRecord: React.FC = () => {
           },
         ],
         workingCase,
+        setWorkingCase,
       )
 
       if (workingCase.courtAttendees !== '') {
@@ -158,6 +159,7 @@ export const CourtRecord: React.FC = () => {
         autofill(
           [{ key: 'courtAttendees', value: autofillAttendees }],
           workingCase,
+          setWorkingCase,
         )
       }
 
@@ -232,6 +234,7 @@ export const CourtRecord: React.FC = () => {
               },
             ],
             workingCase,
+            setWorkingCase,
           )
         }
       } else if (workingCase.type === CaseType.TRAVEL_BAN) {
@@ -253,6 +256,7 @@ export const CourtRecord: React.FC = () => {
               },
             ],
             workingCase,
+            setWorkingCase,
           )
         }
       }
@@ -260,10 +264,10 @@ export const CourtRecord: React.FC = () => {
       autofill(
         [{ key: 'sessionBookings', value: autofillSessionBookings }],
         workingCase,
+        setWorkingCase,
       )
 
       setInitialAutoFillDone(true)
-      setWorkingCase({ ...workingCase })
     }
   }, [
     autofill,

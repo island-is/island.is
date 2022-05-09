@@ -48,9 +48,8 @@ export const StepThree: React.FC = () => {
           },
         ],
         workingCase,
+        setWorkingCase,
       )
-
-      setWorkingCase({ ...workingCase })
     }
   }, [autofill, formatMessage, setWorkingCase, workingCase])
 

@@ -160,9 +160,11 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
             })
           : ''
 
-        autofill([{ key: 'demands', value: courtClaimText }], workingCase)
-
-        setWorkingCase({ ...workingCase })
+        autofill(
+          [{ key: 'demands', value: courtClaimText }],
+          workingCase,
+          setWorkingCase,
+        )
       }
 
       setInitialAutoFillDone(true)

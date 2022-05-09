@@ -39,10 +39,8 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import {
-  setAndSendDateToServer,
   removeTabsValidateAndSet,
   validateAndSendToServer,
-  setAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { DateTime } from '@island.is/judicial-system-web/src/components'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -61,7 +59,6 @@ import {
 import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
-import { autofillRuling } from '@island.is/judicial-system-web/src/components/RulingInput/RulingInput'
 import * as Constants from '@island.is/judicial-system/consts'
 
 export function getConclusionAutofill(
@@ -192,13 +189,13 @@ export const Ruling: React.FC = () => {
 
   const { user } = useContext(UserContext)
   const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
-  const { updateCase, autofill, autofillBoolean } = useCase()
+  const { updateCase, autofill } = useCase()
   const { formatMessage } = useIntl()
 
-  // useDeb(workingCase, 'prosecutorDemands')
-  // useDeb(workingCase, 'courtCaseFacts')
-  // useDeb(workingCase, 'courtLegalArguments')
-  // useDeb(workingCase, 'conclusion')
+  useDeb(workingCase, 'prosecutorDemands')
+  useDeb(workingCase, 'courtCaseFacts')
+  useDeb(workingCase, 'courtLegalArguments')
+  useDeb(workingCase, 'conclusion')
 
   useEffect(() => {
     if (isCaseUpToDate && !initialAutoFillDone) {

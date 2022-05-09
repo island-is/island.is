@@ -10,8 +10,7 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { icRuling as m } from '@island.is/judicial-system-web/messages'
-import { autofillRuling } from '@island.is/judicial-system-web/src/components/RulingInput/RulingInput'
+import { icRuling as m, ruling } from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
 
@@ -52,14 +51,22 @@ const Ruling = () => {
             key: 'courtLegalArguments',
             value: workingCase.legalArguments,
           },
+          {
+            key: 'ruling',
+            value: !workingCase.parentCase
+              ? `\n${formatMessage(ruling.autofill, {
+                  judgeName: workingCase.judge?.name,
+                })}`
+              : isAcceptingCaseDecision(workingCase.decision)
+              ? workingCase.parentCase.ruling
+              : undefined,
+          },
         ],
         workingCase,
+        setWorkingCase,
       )
 
-      autofillRuling(workingCase, autofill, formatMessage)
-
       setInitialAutoFillDone(true)
-      setWorkingCase({ ...workingCase })
     }
 
     if (
@@ -68,9 +75,11 @@ const Ruling = () => {
       isAcceptingCaseDecision(workingCase.decision) &&
       workingCase.demands
     ) {
-      autofill([{ key: 'conclusion', value: workingCase.demands }], workingCase)
-
-      setWorkingCase({ ...workingCase })
+      autofill(
+        [{ key: 'conclusion', value: workingCase.demands }],
+        workingCase,
+        setWorkingCase,
+      )
     }
   }, [
     isCaseUpToDate,

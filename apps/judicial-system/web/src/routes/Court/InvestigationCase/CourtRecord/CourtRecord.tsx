@@ -34,32 +34,10 @@ const CourtRecord = () => {
 
   useEffect(() => {
     if (isCaseUpToDate && !initialAutoFillDone) {
-      if (workingCase.courtDate) {
-        autofill(
-          [{ key: 'courtStartDate', value: workingCase.courtDate }],
-          workingCase,
-        )
-      }
-
-      if (workingCase.court) {
-        autofill(
-          [
-            {
-              key: 'courtLocation',
-              value: `í ${
-                workingCase.court.name.indexOf('dómur') > -1
-                  ? workingCase.court.name.replace('dómur', 'dómi')
-                  : workingCase.court.name
-              }`,
-            },
-          ],
-          workingCase,
-        )
-      }
+      let autofillAttendees = ''
+      let autofillSessionBookings = ''
 
       if (workingCase.courtAttendees !== '') {
-        let autofillAttendees = ''
-
         if (workingCase.prosecutor) {
           autofillAttendees += `${workingCase.prosecutor.name} ${workingCase.prosecutor.title}`
         }
@@ -92,40 +70,9 @@ const CourtRecord = () => {
             })
           }
         }
-
-        autofill(
-          [{ key: 'courtAttendees', value: autofillAttendees }],
-          workingCase,
-        )
       }
 
-      if (workingCase.type === CaseType.RESTRAINING_ORDER) {
-        autofill(
-          [
-            {
-              key: 'sessionBookings',
-              value: formatMessage(
-                m.sections.sessionBookings.autofillRestrainingOrder,
-              ),
-            },
-          ],
-          workingCase,
-        )
-      } else if (workingCase.type === CaseType.AUTOPSY) {
-        autofill(
-          [
-            {
-              key: 'sessionBookings',
-              value: formatMessage(m.sections.sessionBookings.autofillAutopsy),
-            },
-          ],
-          workingCase,
-        )
-      } else if (
-        workingCase.sessionArrangements === SessionArrangements.ALL_PRESENT
-      ) {
-        let autofillSessionBookings = ''
-
+      if (workingCase.sessionArrangements === SessionArrangements.ALL_PRESENT) {
         if (workingCase.defenderName) {
           autofillSessionBookings += `${formatMessage(
             m.sections.sessionBookings.autofillDefender,
@@ -151,42 +98,51 @@ const CourtRecord = () => {
         )}\n\n${formatMessage(
           m.sections.sessionBookings.autofillAccusedPlea,
         )}\n\n${formatMessage(m.sections.sessionBookings.autofillAllPresent)}`
-
-        autofill(
-          [{ key: 'sessionBookings', value: autofillSessionBookings }],
-          workingCase,
-        )
-      } else if (
-        workingCase.sessionArrangements ===
-        SessionArrangements.ALL_PRESENT_SPOKESPERSON
-      ) {
-        autofill(
-          [
-            {
-              key: 'sessionBookings',
-              value: formatMessage(
-                m.sections.sessionBookings.autofillSpokeperson,
-              ),
-            },
-          ],
-          workingCase,
-        )
-      } else if (
-        workingCase.sessionArrangements ===
-        SessionArrangements.PROSECUTOR_PRESENT
-      ) {
-        autofill(
-          [
-            {
-              key: 'sessionBookings',
-              value: formatMessage(
-                m.sections.sessionBookings.autofillProsecutor,
-              ),
-            },
-          ],
-          workingCase,
-        )
       }
+
+      autofill(
+        [
+          { key: 'courtStartDate', value: workingCase.courtDate, force: true },
+          {
+            key: 'courtLocation',
+            value: workingCase.court
+              ? `í ${
+                  workingCase.court.name.indexOf('dómur') > -1
+                    ? workingCase.court.name.replace('dómur', 'dómi')
+                    : workingCase.court.name
+                }`
+              : undefined,
+            force: true,
+          },
+          {
+            key: 'courtAttendees',
+            value: autofillAttendees !== '' ? autofillAttendees : undefined,
+            force: true,
+          },
+          {
+            key: 'sessionBookings',
+            value:
+              workingCase.type === CaseType.RESTRAINING_ORDER
+                ? formatMessage(
+                    m.sections.sessionBookings.autofillRestrainingOrder,
+                  )
+                : workingCase.type === CaseType.AUTOPSY
+                ? formatMessage(m.sections.sessionBookings.autofillAutopsy)
+                : workingCase.sessionArrangements ===
+                  SessionArrangements.ALL_PRESENT
+                ? autofillSessionBookings
+                : workingCase.sessionArrangements ===
+                  SessionArrangements.ALL_PRESENT_SPOKESPERSON
+                ? formatMessage(m.sections.sessionBookings.autofillSpokeperson)
+                : workingCase.sessionArrangements ===
+                  SessionArrangements.PROSECUTOR_PRESENT
+                ? formatMessage(m.sections.sessionBookings.autofillProsecutor)
+                : undefined,
+          },
+        ],
+        workingCase,
+        setWorkingCase,
+      )
 
       setInitialAutoFillDone(true)
       setWorkingCase({ ...workingCase })

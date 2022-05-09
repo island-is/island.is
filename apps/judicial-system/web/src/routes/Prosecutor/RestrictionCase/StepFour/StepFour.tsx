@@ -99,9 +99,8 @@ export const StepFour: React.FC = () => {
             },
           ],
           workingCase,
+          setWorkingCase,
         )
-
-        setWorkingCase({ ...workingCase })
       }
 
       setInitialAutoFillDone(true)

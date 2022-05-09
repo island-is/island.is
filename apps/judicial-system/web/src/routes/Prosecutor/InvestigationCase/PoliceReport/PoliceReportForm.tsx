@@ -57,9 +57,8 @@ const PoliceReportForm: React.FC<Props> = (props) => {
           },
         ],
         workingCase,
+        setWorkingCase,
       )
-
-      setWorkingCase({ ...workingCase })
     }
   }, [autofill, formatMessage, setWorkingCase, workingCase])
 
