@@ -82,6 +82,17 @@ export const m = defineMessages({
     description:
       'User not eligible for estate or no estates found bound to their national id',
   },
+  existingApplicationTitle: {
+    id: 'aod.application:error.existingApplication',
+    defaultMessage: 'Fyrri umsóknir um andlátstilkynningu',
+    description: 'Title of the data needed to fetch existing applications',
+  },
+  existingApplicationExists: {
+    id: 'aod.application:error.existingApplicationExists',
+    defaultMessage: 'Þú átt nú þegar umsókn í vinnslu',
+    description:
+      'Message letting the applicant know they already have an application in progress',
+  },
 
   /* The deceased */
   deceasedName: {
