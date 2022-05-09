@@ -1,4 +1,4 @@
-import { defineMessages } from 'react-intl'
+import { defineMessages, defineMessage } from 'react-intl'
 
 export const caseFiles = {
   modal: {
@@ -18,4 +18,10 @@ export const caseFiles = {
       },
     }),
   },
+  fileUnsupportedInCourt: defineMessage({
+    id: 'judicial.system.core:case_files.file_unsupported_in_court',
+    defaultMessage: 'Skráartegund ekki studd í Auði',
+    description:
+      'Notaður sem texti þegar tekst ekki að flytja gögn í Auði þegar skrá er ekki studd',
+  }),
 }
