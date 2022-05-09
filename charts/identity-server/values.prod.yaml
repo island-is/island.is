@@ -17,6 +17,14 @@ auth-admin-api:
       initialDelaySeconds: 3
       path: '/liveness'
       timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 2
+      replicas:
+        max: 10
+        min: 3
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/auth-admin-api'
   ingress:
@@ -64,6 +72,14 @@ auth-admin-web:
       initialDelaySeconds: 3
       path: '/liveness'
       timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 2
+      replicas:
+        max: 10
+        min: 3
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/auth-admin-web'
   ingress:
@@ -123,6 +139,14 @@ auth-api:
       initialDelaySeconds: 3
       path: '/liveness'
       timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 2
+      replicas:
+        max: 10
+        min: 3
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/auth-api'
   ingress:
@@ -181,6 +205,14 @@ auth-public-api:
       initialDelaySeconds: 3
       path: '/liveness'
       timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 2
+      replicas:
+        max: 10
+        min: 3
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/auth-public-api'
   ingress:
@@ -220,6 +252,83 @@ global:
   initContainer:
     env:
       AWS_REGION: 'eu-west-1'
+identity-server:
+  enabled: true
+  env:
+    AWS__SystemsManager__ParameterStore__DataProtectionPrefix: '/k8s/identity-server/DataProtectionSecret'
+    Application__MinCompletionPortThreads: '10'
+    CacheSettings__Enabled: 'true'
+    CacheSettings__Memcached__Address: 'identity-server.dnugi2.cfg.euw1.cache.amazonaws.com'
+    CacheSettings__Memcached__Port: '11211'
+    CacheSettings__Redis__Address: 'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com'
+    CacheSettings__Redis__Port: '6379'
+    IdentityServer__EnableDelegation: ''
+    IdentityServer__EnableFakeLogin: 'true'
+    IdentityServer__EnableFeatureDeploymentWildcards: 'https://innskra.island.is'
+    NODE_OPTIONS: '--max-old-space-size=208'
+    PersistenceSettings__BaseAddress: 'http://web-services-auth-api'
+    PersistenceSettings__UserProfileBaseAddress: 'http://web-service-portal-api.service-portal.svc.cluster.local'
+    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
+  grantNamespaces: []
+  grantNamespacesEnabled: false
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: '/liveness'
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: '/liveness'
+      timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 2
+      replicas:
+        max: 10
+        min: 3
+  image:
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/identity-server'
+  ingress:
+    primary-alb:
+      annotations:
+        kubernetes.io/ingress.class: 'nginx-external-alb'
+      hosts:
+        - host: 'innskra.island.is'
+          paths:
+            - '/'
+  namespace: 'identity-server'
+  podSecurityContext:
+    fsGroup: 65534
+  replicaCount:
+    default: 3
+    max: 10
+    min: 3
+  resources:
+    limits:
+      cpu: '200m'
+      memory: '256Mi'
+    requests:
+      cpu: '100m'
+      memory: '128Mi'
+  secrets:
+    AudkenniSettings__ClientId: '/k8s/identity-server/AudkenniClientId'
+    AudkenniSettings__ClientSecret: '/k8s/identity-server/AudkenniClientSecret'
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    FeatureFlags__ConfigCatSdkKey: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    IdentityServer__FakePersons: '/k8s/identity-server/FakePersons'
+    IdentityServer__SigningCertificate__Passphrase: '/k8s/identity-server/SigningCertificatePassphrase'
+    PersistenceSettings__AccessTokenManagementSettings__ClientSecret: '/k8s/identity-server/ClientSecret'
+    Scopes__Admin__RootAccessList: '/k8s/identity-server/AdminRootAccessList'
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/identity-server'
+    create: true
+    name: 'identity-server'
 namespaces:
   labels: {}
   namespaces:
@@ -242,6 +351,14 @@ personal-representative:
       initialDelaySeconds: 3
       path: '/liveness'
       timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 2
+      replicas:
+        max: 10
+        min: 3
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/personal-representative'
   ingress:
@@ -295,6 +412,14 @@ personal-representative-public:
       initialDelaySeconds: 3
       path: '/liveness'
       timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 2
+      replicas:
+        max: 10
+        min: 3
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/personal-representative-public'
   ingress:
