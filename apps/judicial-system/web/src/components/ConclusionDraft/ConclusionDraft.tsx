@@ -1,20 +1,14 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { useIntl } from 'react-intl'
 import { Box, Text } from '@island.is/island-ui/core'
-import {
-  isAcceptingCaseDecision,
-  isRestrictionCase,
-} from '@island.is/judicial-system/types'
+import { isRestrictionCase } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import {
   Decision,
   RulingInput,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  icRuling,
-  rcRuling,
-  ruling,
-} from '@island.is/judicial-system-web/messages'
+import { icRuling, rcRuling } from '@island.is/judicial-system-web/messages'
+
 import { useCase } from '../../utils/hooks'
 
 interface Props {
@@ -26,25 +20,6 @@ const ConclusionDraft: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase } = props
   const { formatMessage } = useIntl()
   const { autofill } = useCase()
-
-  useEffect(() => {
-    autofill(
-      [
-        {
-          key: 'ruling',
-          value: !workingCase.parentCase
-            ? `\n${formatMessage(ruling.autofill, {
-                judgeName: workingCase.judge?.name,
-              })}`
-            : isAcceptingCaseDecision(workingCase.decision)
-            ? workingCase.parentCase.ruling
-            : undefined,
-        },
-      ],
-      workingCase,
-      setWorkingCase,
-    )
-  }, [autofill, formatMessage, setWorkingCase, workingCase])
 
   return (
     <>
@@ -111,6 +86,19 @@ const ConclusionDraft: React.FC<Props> = (props) => {
               }),
             },
           )}
+          onChange={(decision) => {
+            autofill(
+              [
+                {
+                  key: 'decision',
+                  value: decision,
+                  force: true,
+                },
+              ],
+              workingCase,
+              setWorkingCase,
+            )
+          }}
         />
       </Box>
       <Box marginBottom={3}>
