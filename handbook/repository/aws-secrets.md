@@ -231,15 +231,20 @@ AWS_PROFILE=islandis-dev yarn create-secret
 AWS_PROFILE=islandis-staging yarn create-secret
 AWS_PROFILE=islandis-prod yarn create-secret
 ```
+
 {% endhint %}
 
 ### Finalizing creating secrets
-In order to use the secrets in your app you need to add it to its `infra` configuration. 
+
+In order to use the secrets in your app you need to add it to its `infra` configuration.
+
 1. Add the new secret to `your-app/infra/your-app.ts`
 2. Generate helm charts for your app with
-  ```
-  yarn charts islandis
-  ```
+
+```
+yarn charts islandis
+```
+
 3. Follow the documentation on [Config Module](/libs/nest/config)
 
 ## Making dev secrets available locally
