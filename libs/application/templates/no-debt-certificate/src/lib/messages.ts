@@ -194,7 +194,7 @@ export const m = defineMessages({
     description: '',
   },
   missingCertificate: {
-    id: 'ndc.debtCertificate:missingCertificate',
+    id: 'ndc.application:missingCertificate',
     defaultMessage: 'Ekki tókst að staðfesta skuldleysi',
     description: '',
   },
