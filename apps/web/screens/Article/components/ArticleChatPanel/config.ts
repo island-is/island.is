@@ -298,7 +298,7 @@ export const watsonConfig: Record<string, WatsonChatPanelProps> = {
 }
 
 export const syslumennWatsonConfig = {
-  integrationID: 'b1a80e76-da12-4333-8872-936b08246eaa',
+  integrationID: '0c96e8fb-d4dc-420e-97db-18b0f8bb4e3f',
   region: 'eu-gb',
   serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
   showLauncher: false,
