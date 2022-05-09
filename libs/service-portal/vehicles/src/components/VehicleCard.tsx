@@ -29,7 +29,7 @@ export const VehicleCard: FC<Props> = ({ vehicle }) => {
   const heading = vehicle.type + ' ' + year
   const plate = vehicle.regno || vehicle.permno || ''
   const text = vehicle.color ? vehicle.color + ' - ' + plate : plate
-  console.log(vehicle)
+
   return (
     <ActionCard
       heading={heading}
