@@ -2853,6 +2853,49 @@
         }
       }
     },
+    "application-templates-no-debt-certificate": {
+      "root": "libs/application/templates/no-debt-certificate",
+      "sourceRoot": "libs/application/templates/no-debt-certificate/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/no-debt-certificate/tsconfig.lib.json",
+              "libs/application/templates/no-debt-certificate/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/no-debt-certificate/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": [
+            "coverage/libs/application/templates/no-debt-certificate"
+          ],
+          "options": {
+            "jestConfig": "libs/application/templates/no-debt-certificate/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "schemas/codegen": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "graphql-codegen --config libs/application/templates/no-debt-certificate/codegen.yml"
+          }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/no-debt-certificate/src/**/*.{js,ts,tsx}'"
+          }
+        }
+      }
+    },
     "application-templates-p-sign": {
       "root": "libs/application/templates/p-sign",
       "sourceRoot": "libs/application/templates/p-sign/src",
