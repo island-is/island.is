@@ -1,8 +1,8 @@
 <!-- gitbook-ignore -->
 
-# Mortgage Certificate Application
+# No Debt Certificate Application
 
-This library was generated with [Nx](https://nx.dev). (yarn generate @nrwl/node:lib application/templates/mortgage-certificate)
+This library was generated with [Nx](https://nx.dev). (yarn generate @nrwl/node:lib application/templates/no-debt-certificate)
 
 ## Setup
 
@@ -62,7 +62,7 @@ yarn start services-user-profile
 
 ## Running unit tests
 
-Run `nx test application-templates-mortgage-certificate` to execute the unit tests via [Jest](https://jestjs.io).
+Run `nx test application-templates-no-debt-certificate` to execute the unit tests via [Jest](https://jestjs.io).
 
 ## Code owners and maintainers
 
