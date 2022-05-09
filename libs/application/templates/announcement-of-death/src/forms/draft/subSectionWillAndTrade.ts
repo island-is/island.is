@@ -18,12 +18,18 @@ export const subSectionWillAndTrade = buildSubSection({
       children: [
         buildKeyValueField({
           label: m.testamentTestamentAvailable,
-          value: 'Já', // TODO: Get value
+          value: ({ answers }) =>
+            answers.districtCommissionerHasWill
+              ? m.testamentKnowledgeOfOtherTestamentYes
+              : m.testamentKnowledgeOfOtherTestamentNo,
           width: 'half',
         }),
         buildKeyValueField({
           label: m.testamentBuyration,
-          value: 'Nei', // TODO: Get value
+          value: ({ answers }) =>
+            answers.marriageSettlement
+              ? m.testamentKnowledgeOfOtherTestamentYes
+              : m.testamentKnowledgeOfOtherTestamentNo,
           width: 'half',
         }),
         buildRadioField({

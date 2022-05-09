@@ -70,8 +70,8 @@ export const RealEstateAndLandsRepeater: FC<FieldBaseProps<Answers>> = ({
       </GridRow>
       {fields.map((field, index) => {
         const fieldIndex = `${id}[${index}]`
-        const propertyNumberField = `${fieldIndex}.propertyNumber`
-        const addressField = `${fieldIndex}.address`
+        const propertyNumberField = `${fieldIndex}.assetNumber`
+        const addressField = `${fieldIndex}.description`
 
         return (
           <Box

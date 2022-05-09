@@ -64,8 +64,8 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({ field }) => {
       </GridRow>
       {fields.map((field, index) => {
         const fieldIndex = `${id}[${index}]`
-        const vehicleNumberField = `${fieldIndex}.plateNumber`
-        const vehicleTypeField = `${fieldIndex}.vehicleType`
+        const vehicleNumberField = `${fieldIndex}.assetNumber`
+        const vehicleTypeField = `${fieldIndex}.description`
 
         return (
           <Box
