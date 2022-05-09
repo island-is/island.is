@@ -1,4 +1,4 @@
-import { serviceSetup as identityServerSetup } from '../../../apps/identity-server/identity-server'
+import { serviceSetup as identityServerSetup } from '../../../apps/identity-server/infra/identity-server'
 import { serviceSetup as authAdminWebSetup } from '../../../apps/auth-admin-web/infra/auth-admin-web'
 import { serviceSetup as authAdminApiSetup } from '../../../apps/services/auth-admin-api/infra/auth-admin-api'
 import { serviceSetup as authApiSetup } from '../../../apps/services/auth-api/infra/auth-api'
