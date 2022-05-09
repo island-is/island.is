@@ -60,6 +60,7 @@ export type Icon =
   | 'reload'
   | 'remove'
   | 'QRCode'
+  | 'globe'
 
 export default {
   filled: {
@@ -123,6 +124,7 @@ export default {
     remove: 'Remove',
     time: 'Time',
     QRCode: 'QRCodeOutline',
+    globe: 'Globe',
   },
   outline: {
     accessibility: 'AccessibilityOutline',
@@ -185,5 +187,6 @@ export default {
     remove: 'Remove',
     time: 'TimeOutline',
     QRCode: 'QRCodeOutline',
+    globe: 'Globe',
   },
 }

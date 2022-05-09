@@ -235,9 +235,11 @@ export class DocumentProviderResolver {
         meta: { fields: Object.keys(input) },
       },
       this.documentProviderService.updateEndpointOnTest(
+        input.nationalId,
         input.endpoint,
         input.providerId,
         input.xroad || false,
+        user,
       ),
     )
   }
@@ -259,9 +261,11 @@ export class DocumentProviderResolver {
         resources: input.nationalId,
       },
       this.documentProviderService.runEndpointTests(
+        input.nationalId,
         input.recipient,
         input.documentId,
         input.providerId,
+        user,
       ),
     )
   }
@@ -308,6 +312,7 @@ export class DocumentProviderResolver {
         meta: { fields: Object.keys(input) },
       },
       this.documentProviderService.updateEndpoint(
+        input.nationalId,
         input.endpoint,
         input.providerId,
         input.xroad || false,

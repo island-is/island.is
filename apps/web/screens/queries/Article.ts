@@ -23,6 +23,7 @@ export const GET_ARTICLE_QUERY = gql`
         buttonText
       }
       organization {
+        id
         title
         shortTitle
         slug

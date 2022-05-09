@@ -242,7 +242,10 @@ export const CourtRecord: React.FC = () => {
           m.sections.sessionBookings.autofillPresentationsTravelBan,
         )}`
 
-        if (isAcceptingCaseDecision(workingCase.decision)) {
+        if (
+          isAcceptingCaseDecision(workingCase.decision) &&
+          workingCase.requestedOtherRestrictions
+        ) {
           autofill(
             [
               {

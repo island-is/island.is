@@ -148,7 +148,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
               }),
               ...(courtClaim.format?.institution && {
                 institution: formatInstitutionName(
-                  workingCase.prosecutor?.institution?.name,
+                  workingCase.creatingProsecutor?.institution?.name,
                 ),
               }),
               ...(courtClaim.format?.live && {
