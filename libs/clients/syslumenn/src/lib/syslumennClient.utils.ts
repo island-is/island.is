@@ -205,6 +205,8 @@ function mapPersonEnum(e: PersonType) {
       return AdiliTegund.NUMBER_0
     case PersonType.MortgageCertificateApplicant:
       return AdiliTegund.NUMBER_0
+    case PersonType.AnnouncerOfDeathCertificate:
+      return AdiliTegund.NUMBER_0
   }
 }
 
@@ -271,6 +273,7 @@ export const mapEstateRegistrant = (
     caseNumber: syslaData.malsnumer ?? '',
     dateOfDeath: syslaData.danardagur ?? '',
     nameOfDeceased: syslaData.nafnLatins ?? '',
+    nationalIdOfDeceased: syslaData.kennitalaLatins ?? '',
     ownBusinessManagement: syslaData.eiginRekstur ?? false,
     assetsAbroad: syslaData.eignirErlendis ?? false,
     occupationRightViaCondominium:

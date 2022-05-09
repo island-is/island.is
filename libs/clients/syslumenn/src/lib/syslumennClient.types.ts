@@ -125,6 +125,7 @@ export enum PersonType {
   Child,
   CriminalRecordApplicant,
   MortgageCertificateApplicant,
+  AnnouncerOfDeathCertificate,
 }
 
 export interface MortgageCertificate {
@@ -178,6 +179,7 @@ export type EstateRegistrant = {
   caseNumber: string
   dateOfDeath: Date
   nameOfDeceased: string
+  nationalIdOfDeceased: string
   ownBusinessManagement: boolean
   assetsAbroad: boolean
   occupationRightViaCondominium: boolean
