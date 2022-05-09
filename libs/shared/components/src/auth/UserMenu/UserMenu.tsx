@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Box, Hidden } from '@island.is/island-ui/core'
+import { Box, Hidden, Icon } from '@island.is/island-ui/core'
 import { useAuth } from '@island.is/auth/react'
 import { UserButton } from './UserButton'
 import { UserDropdown } from './UserDropdown'
@@ -97,33 +97,34 @@ export const UserMenu = ({
 
   useEffect(() => {
     async function initNotification() {
-      if(!initialized){
-         await OneSignal.init({
-        appId: 'cefc0ead-8d4a-494f-95d2-8d040669b54a',
-      }).then(() => {
-        setInitialized(true)
-       
-      })
-      await OneSignal.showSlidedownPrompt().then(() => {
-        // do other stuff
-        console.log(initialized, initialized)
-      })
+      if (!initialized) {
+        await OneSignal.init({
+          appId: 'cefc0ead-8d4a-494f-95d2-8d040669b54a',
+        }).then(() => {
+          setInitialized(true)
+        })
+        await OneSignal.showSlidedownPrompt().then(() => {
+          // do other stuff
+          console.log(initialized, initialized)
+        })
       }
-      await OneSignal.isPushNotificationsEnabled(function(isEnabled) {
-        if (isEnabled)
-          console.log("Push notifications are enabled!");
-        else
-          console.log("Push notifications are not enabled yet.");    
-      });
-      console.log("HELLO", initialized)
+
+      await OneSignal.isPushNotificationsEnabled(function (isEnabled) {
+        if (isEnabled) {
+          console.log('Push notifications are enabled!')
+        } else {
+          console.log('Push notifications are not enabled yet.')
+        }
+      })
     }
-     
+
     initNotification()
   }, [initialized])
 
 
   return (
     <Box display="flex" position="relative" height="full">
+      <Icon icon="eye" />
       <Notifications userExternalId={user.profile.nationalId}></Notifications>
       <Hidden below="md">
         <UserLanguageSwitcher user={user} />

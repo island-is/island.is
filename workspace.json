@@ -7220,6 +7220,7 @@
             "assets": [
               "apps/service-portal/src/favicon.ico",
               "apps/service-portal/src/mockServiceWorker.js",
+              "apps/service-portal/src/OneSignalSDKWorker.js",
               "apps/service-portal/src/assets"
             ],
             "styles": ["apps/service-portal/src/styles.css"],
