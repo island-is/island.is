@@ -55,7 +55,7 @@ const VehicleDetail: ServicePortalModuleComponent = ({ userInfo }) => {
     ownersInfo,
     operator,
     coOwners,
-  } = data?.vehiclesUserVehicleDetail || {}
+  } = data?.vehiclesDetail || {}
 
   const year = mainInfo?.year ? '(' + mainInfo.year + ')' : ''
 

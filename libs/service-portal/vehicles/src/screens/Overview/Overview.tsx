@@ -7,7 +7,7 @@ import {
 } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { useQuery } from '@apollo/client'
-import { Query, VehiclesUserVehicle } from '@island.is/api/schema'
+import { Query, VehiclesVehicle } from '@island.is/api/schema'
 import {
   AlertMessage,
   Box,
@@ -31,14 +31,14 @@ type FilterValues = {
 }
 
 const getFilteredVehicles = (
-  vehicles: VehiclesUserVehicle[],
+  vehicles: VehiclesVehicle[],
   filterValues: FilterValues,
-): VehiclesUserVehicle[] => {
+): VehiclesVehicle[] => {
   const { searchQuery } = filterValues
 
   if (searchQuery) {
     return vehicles.filter(
-      (x: VehiclesUserVehicle) =>
+      (x: VehiclesVehicle) =>
         x.permno?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         x.regno?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         x.type?.toLowerCase().includes(searchQuery.toLowerCase()),
@@ -58,7 +58,7 @@ export const VehiclesOverview: ServicePortalModuleComponent = () => {
     defaultFilterValues,
   )
   const { data, loading, error, called } = useQuery<Query>(GET_USERS_VEHICLES)
-  const vehicles = data?.vehiclesUserVehicles?.vehicleList || []
+  const vehicles = data?.vehiclesList?.vehicleList || []
   const filteredVehicles = getFilteredVehicles(vehicles, filterValue)
 
   const handleSearchChange = useCallback((value: string) => {

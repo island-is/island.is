@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
-export class Vehicle {
+export class VehiclesVehicle {
   @Field({ nullable: true })
   isCurrent?: boolean
 
@@ -70,7 +70,7 @@ export class Vehicle {
 }
 
 @ObjectType()
-export class UsersVehicles {
+export class VehiclesList {
   @Field({ nullable: true })
   persidno?: string
 
@@ -83,8 +83,8 @@ export class UsersVehicles {
   @Field({ nullable: true })
   postStation?: string
 
-  @Field(() => [Vehicle], { nullable: true })
-  vehicleList?: Vehicle[]
+  @Field(() => [VehiclesVehicle], { nullable: true })
+  vehicleList?: VehiclesVehicle[]
 
   @Field({ nullable: true })
   createdTimestamp?: string

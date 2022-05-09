@@ -226,7 +226,7 @@ export class VehiclesOperator {
 }
 
 @ObjectType()
-export class VehicleDetail {
+export class VehiclesDetail {
   @Field(() => VehiclesMainInfo)
   mainInfo!: VehiclesMainInfo
 

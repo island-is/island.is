@@ -9,7 +9,7 @@ import {
   BasicVehicleInformationTechnicalMass,
   BasicVehicleInformationTechnicalAxle,
 } from '@island.is/clients/vehicles'
-import { VehiclesAxle, VehicleDetail } from '../models/getVehicleDetail.model'
+import { VehiclesAxle, VehiclesDetail } from '../models/getVehicleDetail.model'
 
 @Injectable()
 export class VehiclesService {
@@ -28,7 +28,7 @@ export class VehiclesService {
 
   async getVehicleDetail(
     input: BasicVehicleInformationGetRequest,
-  ): Promise<VehicleDetail | null> {
+  ): Promise<VehiclesDetail | null> {
     const res = await this.vehiclesApi.basicVehicleInformationGet({
       clientPersidno: input.clientPersidno,
       permno: input.permno,
@@ -86,7 +86,7 @@ export class VehiclesService {
 
     const coOwners = data.owners?.find((x) => x.current)?.coOwners
 
-    const response: VehicleDetail = {
+    const response: VehiclesDetail = {
       mainInfo: {
         model: data.make,
         subModel: data.vehcom ?? '' + data.speccom ?? '',
