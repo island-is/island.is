@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { Input } from '@island.is/island-ui/core'
-import { IntlFormatters, useIntl } from 'react-intl'
+import { useIntl } from 'react-intl'
 
-import { Case, isAcceptingCaseDecision } from '@island.is/judicial-system/types'
+import { Case } from '@island.is/judicial-system/types'
 import { ruling as m } from '@island.is/judicial-system-web/messages'
 
-import { useCase, autofillFunc } from '../../utils/hooks'
+import { useCase } from '../../utils/hooks'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
@@ -17,62 +17,6 @@ interface Props {
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   isRequired: boolean
   rows?: number
-}
-
-export const autofillRuling = (
-  workingCase: Case,
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
-  autofill: autofillFunc,
-  formatMessage: IntlFormatters['formatMessage'],
-) => {
-  if (!workingCase.parentCase) {
-    autofill(
-      [
-        {
-          key: 'ruling',
-          value: `\n${formatMessage(m.autofill, {
-            judgeName: workingCase.judge?.name,
-          })}`,
-        },
-      ],
-      workingCase,
-      setWorkingCase,
-    )
-  } else if (
-    workingCase.parentCase.ruling &&
-    isAcceptingCaseDecision(workingCase.decision)
-  ) {
-    autofill(
-      [{ key: 'ruling', value: workingCase.parentCase.ruling }],
-      workingCase,
-      setWorkingCase,
-    )
-  }
-}
-
-export const useRulingAutofill = (
-  isCaseUpToDate: boolean,
-  workingCase: Case,
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
-) => {
-  const { formatMessage } = useIntl()
-  const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
-  const { autofill } = useCase()
-
-  useEffect(() => {
-    if (isCaseUpToDate && !initialAutoFillDone) {
-      autofillRuling(workingCase, setWorkingCase, autofill, formatMessage)
-
-      setInitialAutoFillDone(true)
-    }
-  }, [
-    autofill,
-    formatMessage,
-    initialAutoFillDone,
-    isCaseUpToDate,
-    setWorkingCase,
-    workingCase,
-  ])
 }
 
 const RulingInput: React.FC<Props> = (props) => {
