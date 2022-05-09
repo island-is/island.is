@@ -38,7 +38,6 @@ const IdentityQuery = gql`
 `
 export const EstateMemberRepeater: FC<FieldBaseProps<Answers>> = ({
   field,
-  application,
 }) => {
   const { id } = field
   const { formatMessage } = useLocale()

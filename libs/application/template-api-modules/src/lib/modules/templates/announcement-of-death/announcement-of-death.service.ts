@@ -2,23 +2,9 @@ import { Inject, Injectable } from '@nestjs/common'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { TemplateApiModuleActionProps } from '../../../types'
-import {
-  SyslumennService,
-  Person,
-  Attachment,
-  PersonType,
-  DataUploadResponse,
-} from '@island.is/clients/syslumenn'
+import { SyslumennService } from '@island.is/clients/syslumenn'
 import { FasteignirApi } from '@island.is/clients/assets'
-import {
-  NationalRegistry,
-  RealEstateAddress,
-  RoleConfirmationEnum,
-} from './types'
-import {
-  ApplicationWithAttachments as Application,
-  getValueViaPath,
-} from '@island.is/application/core'
+import { RoleConfirmationEnum } from './types'
 import { SharedTemplateApiService } from '../../shared'
 import { generateTestEmail } from './emailGenerators'
 import { EinstaklingarApi } from '@island.is/clients/national-registry-v2'
@@ -64,9 +50,11 @@ export class AnnouncementOfDeathService {
 
     // Mark answer state
     estate.assets = estate.assets.map(baseMapper)
-    estate.vehicles = estate.assets.map(baseMapper)
-    estate.ships = estate.ships.map(baseMapper)
-    estate.flyers = estate.flyers.map(baseMapper)
+    estate.vehicles = [
+      ...estate.vehicles,
+      ...estate.ships,
+      ...estate.flyers,
+    ].map(baseMapper)
     estate.estateMembers = estate.estateMembers.map(baseMapper)
 
     // TODO: Move this to some other function that happens on a transition from

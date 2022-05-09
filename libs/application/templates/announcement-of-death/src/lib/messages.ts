@@ -321,6 +321,11 @@ Ef ekkert á við sem hér að ofan er talið rennur arfur í ríkissjóð. Nán
     defaultMessage: 'Fastanúmer',
     description: 'Property number label',
   },
+  propertyShare: {
+    id: 'aod.application:propertyShare',
+    defaultMessage: 'Eignarhluti',
+    description: 'Property share label',
+  },
   address: {
     id: 'aod.application:address',
     defaultMessage: 'Heimilisfang',

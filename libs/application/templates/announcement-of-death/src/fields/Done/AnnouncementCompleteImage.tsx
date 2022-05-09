@@ -5,7 +5,7 @@ import { Box } from '@island.is/island-ui/core'
 
 export const AnnouncementCompleteImage = () => {
   return (
-    <Box marginTop={5} marginBottom={10} display="flex" justifyContent="center">
+    <Box marginTop={3} marginBottom={10} display="flex" justifyContent="center">
       <AOD />
     </Box>
   )
