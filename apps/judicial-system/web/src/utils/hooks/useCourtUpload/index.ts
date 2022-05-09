@@ -126,20 +126,18 @@ export const useCourtUpload = (
             )
           }
         } catch (error) {
-          if (
+          const errorCode =
             error instanceof ApolloError &&
-            (error as ApolloError).graphQLErrors[0].extensions?.code ===
-              'https://httpstatuses.com/404'
-          ) {
+            (error as ApolloError).graphQLErrors[0].extensions?.code
+
+          if (errorCode === 'https://httpstatuses.com/404') {
             setFileUploadStatus(
               workingCase,
               { ...file, key: undefined },
               'broken',
             )
           } else if (
-            error instanceof ApolloError &&
-            (error as ApolloError).graphQLErrors[0].extensions?.code ===
-              'https:/httpstatuses.com/415' // Unsupported Media Type
+            errorCode === 'https:/httpstatuses.com/415' // Unsupported Media Type
           ) {
             setFileUploadStatus(
               workingCase,
