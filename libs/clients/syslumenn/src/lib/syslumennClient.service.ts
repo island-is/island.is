@@ -12,6 +12,7 @@ import {
   MortgageCertificateValidation,
   AssetName,
   EstateRegistrant,
+  EstateRelations,
 } from './syslumennClient.types'
 import {
   mapSyslumennAuction,
@@ -359,6 +360,43 @@ export class SyslumennService {
       return res.map(mapEstateRegistrant)
     }
     return []
+  }
+
+  async getEstateRelations(): Promise<EstateRelations> {
+    const { id, api } = await this.createApi()
+    const res = await api.danarbuAlgengTengslGet({
+      audkenni: id,
+    })
+    //return res TODO: change when generated api is fixed
+    return {
+      relations: [
+        'Systir',
+        'Bróðir',
+        'Móðir',
+        'Faðir',
+        'Dóttir',
+        'Sonur',
+        'Dótturdóttir',
+        'Dóttursonur',
+        'Sonardóttir',
+        'Sonarsonur',
+        'Maki',
+        'Bréferfingi',
+        'Systkinabarn',
+        'Systkinabarnabarn',
+        'Afi',
+        'Amma',
+        'Stjúpdóttir',
+        'Stjúpsonur',
+        'Fósturdóttir',
+        'Fóstursonur',
+        'Útfararþjónusta',
+        'Skv. erfðaskrá',
+        'Annað',
+        'Dóttir látins maka',
+        'Sonur látins maka',
+      ],
+    }
   }
 
   async changeEstateRegistrant(
