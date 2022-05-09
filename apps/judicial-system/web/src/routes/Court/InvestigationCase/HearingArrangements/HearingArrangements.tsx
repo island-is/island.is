@@ -26,30 +26,28 @@ const HearingArrangements = () => {
   const { formatMessage } = useIntl()
   const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
 
-  const { autofill, autofillSessionArrangements } = useCase()
+  const { autofill } = useCase()
 
   useEffect(() => {
     if (isCaseUpToDate && !initialAutoFillDone) {
       autofill(
-        [{ key: 'courtDate', value: workingCase.requestedCourtDate }],
+        [
+          { key: 'courtDate', value: workingCase.requestedCourtDate },
+          {
+            key: 'sessionArrangements',
+            value: workingCase.defenderName
+              ? SessionArrangements.ALL_PRESENT
+              : undefined,
+          },
+        ],
         workingCase,
         setWorkingCase,
       )
 
-      if (workingCase.defenderName) {
-        autofillSessionArrangements(
-          'sessionArrangements',
-          SessionArrangements.ALL_PRESENT,
-          workingCase,
-        )
-      }
-
       setInitialAutoFillDone(true)
-      setWorkingCase({ ...workingCase })
     }
   }, [
     autofill,
-    autofillSessionArrangements,
     initialAutoFillDone,
     isCaseUpToDate,
     setWorkingCase,
