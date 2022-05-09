@@ -2,199 +2,199 @@ import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
   name: {
-    id: 'cr.application:name',
+    id: 'ndc.application:name',
     defaultMessage: 'Umsókn um skuldleysisvottorð',
     description: `Application's name`,
   },
   noDebtCertificate: {
-    id: 'cr.application:noDebtCertificate',
+    id: 'ndc.application:noDebtCertificate',
     defaultMessage: 'Skuldleysisvottorð',
     description: `NoDebtCertificate`,
   },
   externalDataSection: {
-    id: 'cr.application:externalData.section',
+    id: 'ndc.application:externalData.section',
     defaultMessage: 'Gagnaöflun',
     description: 'Some description',
   },
   externalDataTitle: {
-    id: 'cr.application:application.title',
+    id: 'ndc.application:application.title',
     defaultMessage: 'Umsókn um skuldleysisvottorð',
     description: 'Application for no debt certificate for companies',
   },
   externalDataSubTitle: {
-    id: 'cr.application:externalData.title',
+    id: 'ndc.application:externalData.title',
     defaultMessage: 'Eftirfarandi gögn verða sótt rafrænt',
     description: 'he following data will be retrieved electronically',
   },
   externalDataAgreement: {
-    id: 'cr.application:externalData.agreement',
+    id: 'ndc.application:externalData.agreement',
     defaultMessage: 'Ég hef kynnt mér ofangreint',
     description: 'I understand',
   },
   nationalRegistryTitle: {
-    id: 'cr.application:nationalRegistry.title',
+    id: 'ndc.application:nationalRegistry.title',
     defaultMessage: 'Persónuupplýsingar úr Þjóðskrá',
     description: 'Personal information from the National Registry',
   },
   nationalRegistrySubTitle: {
-    id: 'cr.application:nationalRegistry.subTitle',
+    id: 'ndc.application:nationalRegistry.subTitle',
     defaultMessage:
       'Til þess að auðvelda fyrir sækjum við persónuupplýsingar úr Þjóðskrá til þess að fylla út umsóknina',
     description:
       'Information from the National Registry will be used to prefill the data in the application',
   },
   userProfileInformationTitle: {
-    id: 'cr.application:userprofile.title',
+    id: 'ndc.application:userprofile.title',
     defaultMessage: 'Netfang og símanúmer úr þínum stillingum',
     description: 'Your user profile information',
   },
   userProfileInformationSubTitle: {
-    id: 'cr.application:userprofile.subTitle',
+    id: 'ndc.application:userprofile.subTitle',
     defaultMessage:
       'Til þess að auðvelda umsóknarferlið er gott að hafa fyllt út netfang og símanúmer á mínum síðum',
     description:
       'In order to apply for this application we need your email and phone number',
   },
   actionCardDraft: {
-    id: 'cr.application:actionCardDraft',
+    id: 'ndc.application:actionCardDraft',
     defaultMessage: 'Í vinnslu',
     description:
       'Description of application state/status when the application is in progress',
   },
   actionCardDone: {
-    id: 'cr.application:actionCardDone',
+    id: 'ndc.application:actionCardDone',
     defaultMessage: 'Afgreidd',
     description:
       'Description of application state/status when application is processed',
   },
   confirmation: {
-    id: 'cr.application:confirmation',
+    id: 'ndc.application:confirmation',
     defaultMessage: 'Staðfesting',
     description: 'confirmation',
   },
   confirm: {
-    id: 'cr.application:confirm',
+    id: 'ndc.application:confirm',
     defaultMessage: 'Staðfesta',
     description: 'confirm',
   },
   institutionName: {
-    id: 'cr.application:institution',
+    id: 'ndc.application:institution',
     defaultMessage: 'Fjársýsla ríkisins',
     description: `Institution's name`,
   },
   draftTitle: {
-    id: 'cr.application:draft.title',
+    id: 'ndc.application:draft.title',
     defaultMessage: 'Drög',
     description: 'First state title',
   },
   draftDescription: {
-    id: 'cr.application:draft.description',
+    id: 'ndc.application:draft.description',
     defaultMessage: 'Á eftir að samþykkja gagnaöflun',
     description: 'Description of the state',
   },
   errorDataProviderNoDebtCertificate: {
-    id: 'cr.application:error.errorDataProviderNoDebtCertificate',
+    id: 'ndc.application:error.errorDataProviderNoDebtCertificate',
     defaultMessage: 'Reyndu aftur síðar',
     description: 'Unhandled error in no debt certificate data provider',
   },
   errorDataProvider: {
-    id: 'cr.application:error.dataProvider',
+    id: 'ndc.application:error.dataProvider',
     defaultMessage: 'Reyndu aftur síðar',
     description: 'Unhandled error in data provider',
   },
   noDebtCertificateInformationTitle: {
-    id: 'cr.application:noDebtCertificate.title',
+    id: 'ndc.application:noDebtCertificate.title',
     defaultMessage: 'Upplýsingar úr gagnagrunni fjársýslu ríkisins',
     description: 'Information from the state treasury database',
   },
   noDebtCertificateInformationSubTitle: {
-    id: 'cr.application:noDebtCertificate.subTitle',
+    id: 'ndc.application:noDebtCertificate.subTitle',
     defaultMessage: 'Skjal sem inniheldur skuldleysisvottorðið þitt.',
     description:
       'Document that contains your no debt certificate for companies.',
   },
   submitErrorButtonCaption: {
-    id: 'cr.application:submitErrorButtonCaption',
+    id: 'ndc.application:submitErrorButtonCaption',
     defaultMessage: 'Reyna aftur',
     description:
       'Button that shows up when submitting the application fails, allowing you to retry',
   },
   submitErrorTitle: {
-    id: 'cr.application:submitErrorTitle',
+    id: 'ndc.application:submitErrorTitle',
     defaultMessage: 'Móttaka umsóknar tókst ekki',
     description:
       'title that shows up when an error occurs while submitting the application',
   },
   submitErrorMessage: {
-    id: 'cr.application:submitErrorMessage',
+    id: 'ndc.application:submitErrorMessage',
     defaultMessage:
       'Eitthvað fór úrskeiðis við að senda inn umsókn. Reyndu aftur síðar.',
     description:
       'Text that shows up when an error occurs while submitting the application',
   },
   successTitle: {
-    id: 'cr.application:successTitle',
+    id: 'ndc.application:successTitle',
     defaultMessage: 'Umsókn þín um skuldleysisvottorð hefur verið staðfest',
     description: '',
   },
   successDescription: {
-    id: 'cr.application:successDescription',
+    id: 'ndc.application:successDescription',
     defaultMessage:
       'Þú getur nálgast skuldleysisvottorðið hér að neðan. Vottorðið birtist jafnframt í pósthólfinu á mínum síðum',
     description: '',
   },
   vertificationDescription: {
-    id: 'cr.application:vertificationDescription',
+    id: 'ndc.application:vertificationDescription',
     defaultMessage: 'Nánari upplýsingar um sannreyningu má finna á',
     description: '',
   },
   verificationLinkUrl: {
-    id: 'cr.application:verificationLinkUrl',
+    id: 'ndc.application:verificationLinkUrl',
     defaultMessage: 'https://island.is/sannreyna',
     description:
       'The url for the link to further information about the verification',
   },
   verificationLinkTitle: {
-    id: 'cr.application:verificationLinkTitle',
+    id: 'ndc.application:verificationLinkTitle',
     defaultMessage: 'island.is/sannreyna',
     description:
       'The title for the link to further information about the verification',
   },
   noDebtCertificateInboxText: {
-    id: 'cr.application:noDebtCertificateInboxText',
+    id: 'ndc.application:noDebtCertificateInboxText',
     defaultMessage:
       'Þú getur einning fundið skuldleysisvottorðið í pósthólfinu þínu',
     description:
       'You can also find the no debt certificate for companies in your inbox',
   },
   noDebtCertificateInboxLink: {
-    id: 'cr.application:noDebtCertificateInboxLink',
+    id: 'ndc.application:noDebtCertificateInboxLink',
     defaultMessage: 'https://island.is/minarsidur/postholf',
     description: 'Link to the island.is inbox',
   },
   downloadNoDebtCertificate: {
-    id: 'cr.application:downloadNoDebtCertificate',
+    id: 'ndc.application:downloadNoDebtCertificate',
     defaultMessage: 'Hlaða niður skuldleysisvottorði',
     description: 'Download no debt certificate for companies',
   },
   openMySites: {
-    id: 'cr.application:openMySites',
+    id: 'ndc.application:openMySites',
     defaultMessage: 'Opna mínar síður',
     description: 'Open my sites',
   },
   outroMessage: {
-    id: 'cr.application:outro.message',
+    id: 'ndc.application:outro.message',
     defaultMessage:
       'Your application #{id} is now in review. The ID of the application is returned by the createApplication API action and read from application.externalData',
     description: '',
   },
   tryAgain: {
-    id: 'cr.application:tryAgain',
+    id: 'ndc.application:tryAgain',
     defaultMessage: 'Reyna aftur',
     description: '',
   },
   missingCertificate: {
-    id: 'debtCertificate:missingCertificate',
+    id: 'ndc.debtCertificate:missingCertificate',
     defaultMessage: 'Ekki tókst að staðfesta skuldleysi',
     description: '',
   },
