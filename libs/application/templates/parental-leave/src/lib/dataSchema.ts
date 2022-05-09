@@ -80,12 +80,23 @@ export const dataSchema = z.object({
   ]),
   otherParent: z.enum([SPOUSE, NO, MANUAL]).optional(),
   otherParentName: z.string().optional(),
-  otherParentId: z
-    .string()
-    .optional()
+  otherParentId: z.string().optional()
     .refine((n) => !n || (kennitala.isValid(n) && kennitala.isPerson(n)), {
       params: errorMessages.otherParentId,
     }),
+  // parent: z.object({
+  //   otherParent: z.enum([SPOUSE, NO, MANUAL]).optional(),
+  //   otherParentName: z.string().optional(),
+  //   otherParentId: z.string().optional()
+  //     .refine((n) => console.log('id: ', n), {
+  //       params: errorMessages.otherParentId,
+  //     }),
+  // })
+  // .refine((n) => n.otherParent === MANUAL ? console.log('manual!') : console.log('ekki manual!'),
+  //   {
+  //     params: errorMessages.otherParentId,
+  //   }
+  // ),
   otherParentRightOfAccess: z.enum([YES, NO]).optional(),
   otherParentEmail: z.string().email(),
   usePersonalAllowance: z.enum([YES, NO]),
