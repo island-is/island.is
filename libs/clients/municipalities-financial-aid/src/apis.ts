@@ -1,4 +1,4 @@
-import { ConfigType } from '@island.is/nest/config'
+import { ConfigType, XRoadConfig } from '@island.is/nest/config'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import {
   ApplicationApi,
@@ -12,17 +12,43 @@ export const exportedApis = [ApplicationApi, FilesApi, MunicipalityApi].map(
   (Api) => ({
     provide: Api,
     useFactory: (
+      xRoadConfig: ConfigType<typeof XRoadConfig>,
       config: ConfigType<typeof MunicipalitiesFinancialAidConfig>,
     ) => {
+      console.log('client', { 'X-Road-Client': xRoadConfig.xRoadClient })
+      console.log(
+        'basePath',
+        `${xRoadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
+      )
       return new Api(
         new Configuration({
           fetchApi: createEnhancedFetch({
             name: Api.name,
           }),
-          basePath: config.baseApiUrl,
+          headers: { 'X-Road-Client': xRoadConfig.xRoadClient },
+          basePath: `${xRoadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
         }),
       )
     },
-    inject: [MunicipalitiesFinancialAidConfig.KEY],
+    inject: [XRoadConfig.KEY, MunicipalitiesFinancialAidConfig.KEY],
   }),
 )
+
+// export const exportedApis = [ApplicationApi, FilesApi, MunicipalityApi].map(
+//   (Api) => ({
+//     provide: Api,
+//     useFactory: (
+//       config: ConfigType<typeof MunicipalitiesFinancialAidConfig>,
+//     ) => {
+//       return new Api(
+//         new Configuration({
+//           fetchApi: createEnhancedFetch({
+//             name: Api.name,
+//           }),
+//           basePath: config.baseApiUrl,
+//         }),
+//       )
+//     },
+//     inject: [MunicipalitiesFinancialAidConfig.KEY],
+//   }),
+// )
