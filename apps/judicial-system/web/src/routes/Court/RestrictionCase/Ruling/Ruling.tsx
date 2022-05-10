@@ -65,26 +65,15 @@ export function getConclusionAutofill(
   formatMessage: IntlShape['formatMessage'],
   workingCase: Case,
   decision: CaseDecision,
-  validToDate: string,
-  isCustodyIsolation: boolean,
-  isolationToDate: string,
-  force?: boolean,
 ) {
   if (!workingCase.defendants || workingCase.defendants.length === 0) {
-    return undefined
-  } else if (
-    !force &&
-    (workingCase.conclusion ||
-      workingCase.conclusion === '' ||
-      !workingCase.decision)
-  ) {
     return undefined
   }
 
   const isolationEndsBeforeValidToDate =
-    validToDate &&
+    workingCase.validToDate &&
     workingCase.isolationToDate &&
-    new Date(validToDate) > new Date(isolationToDate)
+    new Date(workingCase.validToDate) > new Date(workingCase.isolationToDate)
 
   const accusedSuffix =
     workingCase.defendants[0].gender === Gender.MALE ? 'i' : 'a'
@@ -142,17 +131,17 @@ export function getConclusionAutofill(
           decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
             ? CaseType.TRAVEL_BAN
             : workingCase.type,
-        validToDate: `${formatDate(validToDate, 'PPPPp')
+        validToDate: `${formatDate(workingCase.validToDate, 'PPPPp')
           ?.replace('dagur,', 'dagsins')
           ?.replace(' kl.', ', kl.')}`,
         hasIsolation:
-          isAcceptingCaseDecision(decision) && isCustodyIsolation
+          isAcceptingCaseDecision(decision) && workingCase.isCustodyIsolation
             ? 'yes'
             : 'no',
         isolationEndsBeforeValidToDate: isolationEndsBeforeValidToDate
           ? 'yes'
           : 'no',
-        isolationToDate: formatDate(isolationToDate, 'PPPPp')
+        isolationToDate: formatDate(workingCase.isolationToDate, 'PPPPp')
           ?.replace('dagur,', 'dagsins')
           ?.replace(' kl.', ', kl.'),
       })
@@ -260,9 +249,6 @@ export const Ruling: React.FC = () => {
                     formatMessage,
                     workingCase,
                     workingCase.decision,
-                    workingCase.validToDate,
-                    workingCase.isCustodyIsolation || false,
-                    workingCase.isolationToDate,
                   )
                 : undefined,
           },
@@ -569,17 +555,11 @@ export const Ruling: React.FC = () => {
               onChange={(decision) => {
                 let conclusion = undefined
 
-                if (workingCase.validToDate && workingCase.isolationToDate) {
-                  conclusion = getConclusionAutofill(
-                    formatMessage,
-                    workingCase,
-                    decision,
-                    workingCase.validToDate,
-                    workingCase.isCustodyIsolation || false,
-                    workingCase.isolationToDate,
-                    true,
-                  )
-                }
+                conclusion = getConclusionAutofill(
+                  formatMessage,
+                  workingCase,
+                  decision,
+                )
 
                 autofill(
                   [
@@ -647,10 +627,6 @@ export const Ruling: React.FC = () => {
                       formatMessage,
                       workingCase,
                       workingCase.decision,
-                      formatISO(date),
-                      workingCase.isCustodyIsolation || false,
-                      workingCase.isolationToDate,
-                      true,
                     )
 
                     autofill(
@@ -716,10 +692,6 @@ export const Ruling: React.FC = () => {
                           formatMessage,
                           workingCase,
                           workingCase.decision,
-                          workingCase.validToDate,
-                          !workingCase.isCustodyIsolation,
-                          workingCase.isolationToDate,
-                          true,
                         )
 
                         autofill(
@@ -781,12 +753,6 @@ export const Ruling: React.FC = () => {
                         formatMessage,
                         workingCase,
                         workingCase.decision,
-                        workingCase.validToDate,
-                        workingCase.isCustodyIsolation || false,
-                        formatISO(date, {
-                          representation: 'complete',
-                        }),
-                        true,
                       )
 
                       autofill(
