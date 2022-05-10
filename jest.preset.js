@@ -18,6 +18,7 @@ module.exports = {
     '!**/*.config.*',
     '!**/infra/*',
     '!**/seeders/*',
-    '!**/migration/*',
+    '!**/migrations/*',
+    '!**/{buildOpenApi,openApi,main,index}.ts',
   ],
 }
