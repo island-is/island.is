@@ -7,9 +7,9 @@ import {
   Link,
   Text,
 } from '@island.is/island-ui/core'
-import * as styles from './UtlendingastofnunHeader.css'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import * as styles from './UtlendingastofnunHeader.css'
 
 interface HeaderProps {
   organizationPage: OrganizationPage
@@ -69,7 +69,7 @@ export const UtlendingastofnunHeader: React.FC<HeaderProps> = ({
                   linkResolver('organizationpage', [organizationPage.slug]).href
                 }
               >
-                <Text variant="h1" color="dark400">
+                <Text variant="h1" color="white">
                   {organizationPage.title}
                 </Text>
               </Link>

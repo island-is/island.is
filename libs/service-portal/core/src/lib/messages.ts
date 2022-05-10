@@ -201,6 +201,11 @@ export const m = defineMessages({
     id: 'service.portal:vehicles',
     defaultMessage: 'Ökutæki',
   },
+
+  yourVehicles: {
+    id: 'service.portal:your-vehicles',
+    defaultMessage: 'Þín ökutæki',
+  },
   incoming: {
     id: 'service.portal:incoming',
     defaultMessage: 'Á döfinni',
