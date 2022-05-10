@@ -12,7 +12,7 @@ import { getConclusionAutofill } from './Ruling'
 
 describe('getConclusionAutofill', () => {
   const intl = createIntl({ locale: 'is', onError: () => jest.fn() })
-  const autofill = (theCase: Case, decision: CaseDecision) =>
+  const fn = (theCase: Case, decision: CaseDecision) =>
     getConclusionAutofill(intl.formatMessage, theCase, decision)
 
   const defentantBase = {
@@ -29,7 +29,7 @@ describe('getConclusionAutofill', () => {
         type: CaseType.CUSTODY,
       } as Case
 
-      const result = autofill(theCase, decision)
+      const result = fn(theCase, decision)
 
       expect(result).toBeUndefined()
     })
@@ -41,7 +41,7 @@ describe('getConclusionAutofill', () => {
         type: CaseType.CUSTODY,
       } as Case
 
-      const result = autofill(theCase, decision)
+      const result = fn(theCase, decision)
 
       expect(result).toBeUndefined()
     })
@@ -56,7 +56,7 @@ describe('getConclusionAutofill', () => {
         type: CaseType.CUSTODY,
       } as Case
 
-      const result = autofill(theCase, decision)
+      const result = fn(theCase, decision)
 
       expect(result).toEqual(
         'Kröfu um að kærða, Blær, sæti gæsluvarðhaldi er vísað frá.',
@@ -70,7 +70,7 @@ describe('getConclusionAutofill', () => {
         parentCase: { decision: CaseDecision.ACCEPTING },
       } as Case
 
-      const result = autofill(theCase, decision)
+      const result = fn(theCase, decision)
 
       expect(result).toEqual(
         'Kröfu um að kærða, Blær, sæti áframhaldandi farbanni er vísað frá.',
@@ -90,7 +90,7 @@ describe('getConclusionAutofill', () => {
         type: CaseType.ADMISSION_TO_FACILITY,
       } as Case
 
-      const result = autofill(theCase, decision)
+      const result = fn(theCase, decision)
 
       expect(result).toEqual(
         'Kröfu um að kærði, Blær, sæti vistun á viðeigandi stofnun er vísað frá.',
@@ -107,7 +107,7 @@ describe('getConclusionAutofill', () => {
         type: CaseType.CUSTODY,
       } as Case
 
-      const result = autofill(theCase, decision)
+      const result = fn(theCase, decision)
 
       expect(result).toEqual(
         'Kröfu um að kærða, Blær, sæti gæsluvarðhaldi er hafnað.',
@@ -127,7 +127,7 @@ describe('getConclusionAutofill', () => {
         type: CaseType.CUSTODY,
       } as Case
 
-      const result = autofill(theCase, decision)
+      const result = fn(theCase, decision)
 
       expect(result).toEqual(
         'Kröfu um að kærði, Blær, kt. 000000-0000, sæti gæsluvarðhaldi er hafnað.',
@@ -143,7 +143,7 @@ describe('getConclusionAutofill', () => {
         parentCase: { decision: CaseDecision.ACCEPTING },
       } as Case
 
-      const result = autofill(theCase, decision)
+      const result = fn(theCase, decision)
 
       expect(result).toEqual(
         'Kröfu um að kærða, Blær, kt. 000000-0000, sæti áframhaldandi vistun á viðeigandi stofnun er hafnað.',
@@ -164,7 +164,7 @@ describe('getConclusionAutofill', () => {
         type: CaseType.CUSTODY,
       } as Case
 
-      const result = autofill(theCase, decision)
+      const result = fn(theCase, decision)
 
       expect(result).toEqual(
         'Kærða, Blær, skal sæta gæsluvarðhaldi, þó ekki lengur en til miðvikudagsins 1. janúar 2020, kl. 12:31.',
@@ -180,7 +180,7 @@ describe('getConclusionAutofill', () => {
         isolationToDate: '2020-01-01T12:30:00Z',
       } as Case
 
-      const result = autofill(theCase, decision)
+      const result = fn(theCase, decision)
 
       expect(result).toEqual(
         'Kærða, Blær, skal sæta gæsluvarðhaldi, þó ekki lengur en til miðvikudagsins 1. janúar 2020, kl. 12:31. Kærða skal sæta einangrun ekki lengur en til miðvikudagsins 1. janúar 2020, kl. 12:30.',
@@ -196,7 +196,7 @@ describe('getConclusionAutofill', () => {
         isolationToDate: '2020-01-01T12:31:00Z',
       } as Case
 
-      const result = autofill(theCase, decision)
+      const result = fn(theCase, decision)
 
       expect(result).toEqual(
         'Kærði, Blær, skal sæta vistun á viðeigandi stofnun, þó ekki lengur en til miðvikudagsins 1. janúar 2020, kl. 12:31. Kærði skal sæta einangrun á meðan á vistunni stendur.',
@@ -219,7 +219,7 @@ describe('getConclusionAutofill', () => {
         isolationToDate: '2020-01-01T12:31:00Z',
       } as Case
 
-      const result = autofill(theCase, decision)
+      const result = fn(theCase, decision)
 
       expect(result).toEqual(
         'Kærða, Blær, kt. 000000-0000, skal sæta vistun á viðeigandi stofnun, þó ekki lengur en til miðvikudagsins 1. janúar 2020, kl. 12:31. Kærða skal sæta einangrun á meðan á vistunni stendur.',
@@ -241,7 +241,7 @@ describe('getConclusionAutofill', () => {
         parentCase: { decision: CaseDecision.ACCEPTING } as Case,
       } as Case
 
-      const result = autofill(theCase, decision)
+      const result = fn(theCase, decision)
 
       expect(result).toEqual(
         'Kærði, Blær, skal sæta farbanni, þó ekki lengur en til miðvikudagsins 1. janúar 2020, kl. 12:31.',
@@ -255,7 +255,7 @@ describe('getConclusionAutofill', () => {
         type: CaseType.CUSTODY,
       } as Case
 
-      const result = autofill(theCase, decision)
+      const result = fn(theCase, decision)
 
       expect(result).toEqual(
         'Kærða, Blær, skal sæta farbanni, þó ekki lengur en til miðvikudagsins 1. janúar 2020, kl. 12:31.',
