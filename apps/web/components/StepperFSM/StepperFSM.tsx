@@ -50,9 +50,6 @@ const STEPPER_HELPER_ENABLED =
 
 interface StepperProps {
   stepper: Stepper
-  startAgainLabel?: string
-  answerLabel?: string
-  backLabel?: string
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   optionsFromNamespace: { slug: string; data: Record<string, any>[] }[]
   scrollUpWhenNextStepAppears?: boolean
