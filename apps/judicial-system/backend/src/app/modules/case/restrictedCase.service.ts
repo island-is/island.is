@@ -29,6 +29,7 @@ const attributes: (keyof Case)[] = [
   'creatingProsecutorId',
   'prosecutorId',
   'courtCaseNumber',
+  'courtDate',
   'courtEndTime',
   'validToDate',
   'isCustodyIsolation',

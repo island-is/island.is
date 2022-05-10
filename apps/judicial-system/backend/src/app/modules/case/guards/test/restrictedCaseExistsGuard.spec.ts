@@ -69,6 +69,7 @@ describe('Restricted Case Exists Guard', () => {
       'creatingProsecutorId',
       'prosecutorId',
       'courtCaseNumber',
+      'courtDate',
       'courtEndTime',
       'validToDate',
       'isCustodyIsolation',
