@@ -15,11 +15,6 @@ export const exportedApis = [ApplicationApi, FilesApi, MunicipalityApi].map(
       xRoadConfig: ConfigType<typeof XRoadConfig>,
       config: ConfigType<typeof MunicipalitiesFinancialAidConfig>,
     ) => {
-      console.log('client', { 'X-Road-Client': xRoadConfig.xRoadClient })
-      console.log(
-        'basePath',
-        `${xRoadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
-      )
       return new Api(
         new Configuration({
           fetchApi: createEnhancedFetch({
@@ -33,22 +28,3 @@ export const exportedApis = [ApplicationApi, FilesApi, MunicipalityApi].map(
     inject: [XRoadConfig.KEY, MunicipalitiesFinancialAidConfig.KEY],
   }),
 )
-
-// export const exportedApis = [ApplicationApi, FilesApi, MunicipalityApi].map(
-//   (Api) => ({
-//     provide: Api,
-//     useFactory: (
-//       config: ConfigType<typeof MunicipalitiesFinancialAidConfig>,
-//     ) => {
-//       return new Api(
-//         new Configuration({
-//           fetchApi: createEnhancedFetch({
-//             name: Api.name,
-//           }),
-//           basePath: config.baseApiUrl,
-//         }),
-//       )
-//     },
-//     inject: [MunicipalitiesFinancialAidConfig.KEY],
-//   }),
-// )
