@@ -40,7 +40,7 @@ interface Props {
 const RulingForm: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase, isLoading } = props
   const { user } = useContext(UserContext)
-  const { updateCase } = useCase()
+  const { updateCase, autofill } = useCase()
   const { formatMessage } = useIntl()
 
   const [courtCaseFactsEM, setCourtCaseFactsEM] = useState<string>('')
@@ -287,13 +287,25 @@ const RulingForm: React.FC<Props> = (props) => {
           <Box marginBottom={5}>
             <Decision
               workingCase={workingCase}
-              setWorkingCase={setWorkingCase}
               acceptedLabelText={formatMessage(m.sections.decision.acceptLabel)}
               rejectedLabelText={formatMessage(m.sections.decision.rejectLabel)}
               partiallyAcceptedLabelText={formatMessage(
                 m.sections.decision.partiallyAcceptLabel,
               )}
               dismissLabelText={formatMessage(m.sections.decision.dismissLabel)}
+              onChange={(decision) => {
+                autofill(
+                  [
+                    {
+                      key: 'decision',
+                      value: decision,
+                      force: true,
+                    },
+                  ],
+                  workingCase,
+                  setWorkingCase,
+                )
+              }}
             />
           </Box>
         </Box>

@@ -103,9 +103,6 @@ export const VehiclesOverview: ServicePortalModuleComponent = () => {
         </Box>
       )}
       <Stack space={2}>
-        {called && !loading && !error && vehicles.length <= 0 && (
-          <AlertMessage type="info" title={formatMessage(m.noDataPresent)} />
-        )}
         {!loading && !error && vehicles.length > 4 && (
           <GridRow>
             <GridColumn span={['12/12', '12/12', '5/12', '4/12', '3/12']}>
