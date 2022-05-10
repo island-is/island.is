@@ -25,7 +25,7 @@ const MissingFiles = ({
   const { formatMessage } = useIntl()
   const { setValue, getValues } = useFormContext()
   const { uploadStateFiles } = useFileUpload(
-    application.answers.otherFiles,
+    getValues('otherFiles'),
     application.id,
   )
   const [error, setError] = useState(false)
