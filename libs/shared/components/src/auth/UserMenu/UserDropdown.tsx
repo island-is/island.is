@@ -56,11 +56,6 @@ export const UserDropdown = ({
   const actorName = actor?.name
   const isDelegationCompany = false
 
-  const { value: showPersonalInfo } = useFeatureFlag(
-    Features.personalInformation,
-    false,
-  )
-
   const showDelegations =
     useFeatureFlag(Features.delegationsEnabled, false).value || Boolean(actor)
 
@@ -157,7 +152,7 @@ export const UserDropdown = ({
           )}
           {/* End of user delegations */}
           {/* User settings */}
-          {!isDelegation && (showPersonalInfo || showDelegations) && (
+          {!isDelegation && showDelegations && (
             <>
               <UserProfileInfo onClick={() => onClose()} />
               <Divider />
