@@ -30,6 +30,7 @@ import {
   CaseDecision,
   CaseType,
   completedCaseStates,
+  Defendant,
   Gender,
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
@@ -65,25 +66,21 @@ export function getConclusionAutofill(
   formatMessage: IntlShape['formatMessage'],
   workingCase: Case,
   decision: CaseDecision,
+  defendant: Defendant,
 ) {
-  if (!workingCase.defendants || workingCase.defendants.length === 0) {
-    return undefined
-  }
-
   const isolationEndsBeforeValidToDate =
     workingCase.validToDate &&
     workingCase.isolationToDate &&
     new Date(workingCase.validToDate) > new Date(workingCase.isolationToDate)
 
-  const accusedSuffix =
-    workingCase.defendants[0].gender === Gender.MALE ? 'i' : 'a'
+  const accusedSuffix = defendant.gender === Gender.MALE ? 'i' : 'a'
 
   return decision === CaseDecision.DISMISSING
     ? formatMessage(m.sections.conclusion.dismissingAutofillV2, {
         genderedAccused: formatMessage(core.accused, {
           suffix: accusedSuffix,
         }),
-        accusedName: workingCase.defendants[0].name,
+        accusedName: defendant.name,
         isExtended:
           workingCase.parentCase &&
           isAcceptingCaseDecision(workingCase.parentCase.decision)
@@ -96,12 +93,10 @@ export function getConclusionAutofill(
         genderedAccused: formatMessage(core.accused, {
           suffix: accusedSuffix,
         }),
-        accusedName: workingCase.defendants[0].name,
-        accusedNationalId: workingCase.defendants[0].noNationalId
+        accusedName: defendant.name,
+        accusedNationalId: defendant.noNationalId
           ? ', '
-          : `, kt. ${formatNationalId(
-              workingCase.defendants[0].nationalId ?? '',
-            )}, `,
+          : `, kt. ${formatNationalId(defendant.nationalId ?? '')}, `,
         isExtended:
           workingCase.parentCase &&
           isAcceptingCaseDecision(workingCase.parentCase.decision)
@@ -115,12 +110,10 @@ export function getConclusionAutofill(
             suffix: accusedSuffix,
           }),
         ),
-        accusedName: workingCase.defendants[0].name,
-        accusedNationalId: workingCase.defendants[0].noNationalId
+        accusedName: defendant.name,
+        accusedNationalId: defendant.noNationalId
           ? ', '
-          : `, kt. ${formatNationalId(
-              workingCase.defendants[0].nationalId ?? '',
-            )}, `,
+          : `, kt. ${formatNationalId(defendant.nationalId ?? '')}, `,
         isExtended:
           workingCase.parentCase &&
           isAcceptingCaseDecision(workingCase.parentCase.decision) &&
@@ -243,12 +236,13 @@ export const Ruling: React.FC = () => {
             key: 'conclusion',
             value:
               workingCase.decision &&
-              workingCase.validToDate &&
-              workingCase.isolationToDate
+              workingCase.defendants &&
+              workingCase.defendants.length > 0
                 ? getConclusionAutofill(
                     formatMessage,
                     workingCase,
                     workingCase.decision,
+                    workingCase.defendants[0],
                   )
                 : undefined,
           },
@@ -555,11 +549,17 @@ export const Ruling: React.FC = () => {
               onChange={(decision) => {
                 let conclusion = undefined
 
-                conclusion = getConclusionAutofill(
-                  formatMessage,
-                  workingCase,
-                  decision,
-                )
+                if (
+                  workingCase.defendants &&
+                  workingCase.defendants.length > 0
+                ) {
+                  conclusion = getConclusionAutofill(
+                    formatMessage,
+                    workingCase,
+                    decision,
+                    workingCase.defendants[0],
+                  )
+                }
 
                 autofill(
                   [
@@ -617,40 +617,40 @@ export const Ruling: React.FC = () => {
                 selectedDate={workingCase.validToDate}
                 minDate={new Date()}
                 onChange={(date: Date | undefined, valid: boolean) => {
+                  let conclusion = undefined
+
                   if (
                     workingCase.decision &&
-                    workingCase.isolationToDate &&
-                    date &&
-                    valid
+                    workingCase.defendants &&
+                    workingCase.defendants.length > 0 &&
+                    (isAcceptingCaseDecision(workingCase.decision) ||
+                      workingCase.decision ===
+                        CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN)
                   ) {
-                    const conclusion = getConclusionAutofill(
+                    conclusion = getConclusionAutofill(
                       formatMessage,
                       workingCase,
                       workingCase.decision,
-                    )
-
-                    autofill(
-                      [
-                        {
-                          key: 'validToDate',
-                          value: formatISO(date),
-                          force: true,
-                        },
-                        {
-                          key: 'conclusion',
-                          value:
-                            isAcceptingCaseDecision(workingCase.decision) ||
-                            workingCase.decision ===
-                              CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                              ? conclusion
-                              : undefined,
-                          force: true,
-                        },
-                      ],
-                      workingCase,
-                      setWorkingCase,
+                      workingCase.defendants[0],
                     )
                   }
+
+                  autofill(
+                    [
+                      {
+                        key: 'validToDate',
+                        value: date && valid ? formatISO(date) : undefined,
+                        force: true,
+                      },
+                      {
+                        key: 'conclusion',
+                        value: conclusion,
+                        force: true,
+                      },
+                    ],
+                    workingCase,
+                    setWorkingCase,
+                  )
                 }}
                 required
               />
@@ -683,42 +683,40 @@ export const Ruling: React.FC = () => {
                     )}
                     checked={workingCase.isCustodyIsolation}
                     onChange={() => {
+                      let conclusion = undefined
+
                       if (
                         workingCase.decision &&
-                        workingCase.validToDate &&
-                        workingCase.isolationToDate
+                        workingCase.defendants &&
+                        workingCase.defendants.length > 0 &&
+                        (isAcceptingCaseDecision(workingCase.decision) ||
+                          workingCase.decision ===
+                            CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN)
                       ) {
-                        const conclusion = getConclusionAutofill(
+                        conclusion = getConclusionAutofill(
                           formatMessage,
                           workingCase,
                           workingCase.decision,
-                        )
-
-                        autofill(
-                          [
-                            {
-                              key: 'isCustodyIsolation',
-                              value: !workingCase.isCustodyIsolation,
-                              force: true,
-                            },
-                            {
-                              key: 'conclusion',
-                              value:
-                                workingCase.decision ===
-                                  CaseDecision.ACCEPTING ||
-                                workingCase.decision ===
-                                  CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
-                                workingCase.decision ===
-                                  CaseDecision.ACCEPTING_PARTIALLY
-                                  ? conclusion
-                                  : undefined,
-                              force: true,
-                            },
-                          ],
-                          workingCase,
-                          setWorkingCase,
+                          workingCase.defendants[0],
                         )
                       }
+
+                      autofill(
+                        [
+                          {
+                            key: 'isCustodyIsolation',
+                            value: !workingCase.isCustodyIsolation,
+                            force: true,
+                          },
+                          {
+                            key: 'conclusion',
+                            value: conclusion,
+                            force: true,
+                          },
+                        ],
+                        workingCase,
+                        setWorkingCase,
+                      )
                     }}
                     filled
                     large
@@ -743,42 +741,40 @@ export const Ruling: React.FC = () => {
                       : undefined
                   }
                   onChange={(date: Date | undefined, valid: boolean) => {
+                    let conclusion = undefined
+
                     if (
                       workingCase.decision &&
-                      workingCase.validToDate &&
-                      date &&
-                      valid
+                      workingCase.defendants &&
+                      workingCase.defendants.length > 0 &&
+                      (isAcceptingCaseDecision(workingCase.decision) ||
+                        workingCase.decision ===
+                          CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN)
                     ) {
-                      const conclusion = getConclusionAutofill(
+                      conclusion = getConclusionAutofill(
                         formatMessage,
                         workingCase,
                         workingCase.decision,
-                      )
-
-                      autofill(
-                        [
-                          {
-                            key: 'isolationToDate',
-                            value: formatISO(date, {
-                              representation: 'complete',
-                            }),
-                            force: true,
-                          },
-                          {
-                            key: 'conclusion',
-                            value:
-                              isAcceptingCaseDecision(workingCase.decision) ||
-                              workingCase.decision ===
-                                CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                                ? conclusion
-                                : undefined,
-                            force: true,
-                          },
-                        ],
-                        workingCase,
-                        setWorkingCase,
+                        workingCase.defendants[0],
                       )
                     }
+
+                    autofill(
+                      [
+                        {
+                          key: 'isolationToDate',
+                          value: date && valid ? formatISO(date) : undefined,
+                          force: true,
+                        },
+                        {
+                          key: 'conclusion',
+                          value: conclusion,
+                          force: true,
+                        },
+                      ],
+                      workingCase,
+                      setWorkingCase,
+                    )
                   }}
                   blueBox={false}
                   backgroundColor={
