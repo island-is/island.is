@@ -31,6 +31,7 @@ const attributes: (keyof Case)[] = [
   'courtCaseNumber',
   'courtDate',
   'courtEndTime',
+  'decision',
   'validToDate',
   'isCustodyIsolation',
   'isolationToDate',

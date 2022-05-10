@@ -8,7 +8,6 @@ import {
   Box,
   Button,
   Select,
-  Tag,
   Text,
   Tooltip,
   Stack,
@@ -28,7 +27,6 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseAppealDecision,
-  CaseCustodyRestrictions,
   CaseDecision,
   CaseState,
   CaseType,
@@ -39,12 +37,10 @@ import {
   isAcceptingCaseDecision,
   Case,
 } from '@island.is/judicial-system/types'
-import { getRestrictionTagVariant } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import {
   capitalize,
   caseTypes,
   formatDate,
-  getShortRestrictionByValue,
 } from '@island.is/judicial-system/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { core } from '@island.is/judicial-system-web/messages'
@@ -52,11 +48,12 @@ import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages/Core/signedVerdictOverview'
 import * as Constants from '@island.is/judicial-system/consts'
+import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 import AppealSection from './Components/AppealSection/AppealSection'
 import { SignedDocument } from './Components/SignedDocument'
 import CaseDates from './Components/CaseDates/CaseDates'
 import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
-import { TIME_FORMAT } from '@island.is/judicial-system/consts'
+import RestrictionTags from '@island.is/judicial-system-web/src/components/RestrictionTags/RestrictionTags'
 
 interface Props {
   workingCase: Case
@@ -85,13 +82,6 @@ function showCustodyNotice(
   return (
     (type === CaseType.CUSTODY || type === CaseType.ADMISSION_TO_FACILITY) &&
     state === CaseState.ACCEPTED &&
-    isAcceptingCaseDecision(decision)
-  )
-}
-
-function showRestrictionTags(type: CaseType, decision?: CaseDecision) {
-  return (
-    (type === CaseType.CUSTODY || type === CaseType.ADMISSION_TO_FACILITY) &&
     isAcceptingCaseDecision(decision)
   )
 }
@@ -173,17 +163,15 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
   return (
     <FormContentContainer>
       <Box marginBottom={5}>
-        {user?.role !== UserRole.DEFENDER && (
-          <Box marginBottom={3}>
-            <Button
-              variant="text"
-              preTextIcon="arrowBack"
-              onClick={() => router.push(Constants.CASE_LIST_ROUTE)}
-            >
-              Til baka
-            </Button>
-          </Box>
-        )}
+        <Box marginBottom={3}>
+          <Button
+            variant="text"
+            preTextIcon="arrowBack"
+            onClick={() => router.push(Constants.CASE_LIST_ROUTE)}
+          >
+            Til baka
+          </Button>
+        </Box>
         <Box display="flex" justifyContent="spaceBetween" marginBottom={3}>
           <Box>
             <Box marginBottom={1}>
@@ -203,69 +191,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
             </Box>
           </Box>
           <Box display="flex" flexDirection="column">
-            {workingCase.isCustodyIsolation && (
-              <Box marginBottom={1}>
-                <Tag
-                  variant={getRestrictionTagVariant(
-                    CaseCustodyRestrictions.ISOLATION,
-                  )}
-                  outlined
-                  disabled
-                >
-                  {getShortRestrictionByValue(
-                    CaseCustodyRestrictions.ISOLATION,
-                  )}
-                </Tag>
-              </Box>
-            )}
-            {
-              // Custody restrictions
-              showRestrictionTags(workingCase.type, workingCase.decision) &&
-                workingCase.requestedCustodyRestrictions
-                  ?.filter((restriction) =>
-                    [
-                      CaseCustodyRestrictions.VISITAION,
-                      CaseCustodyRestrictions.COMMUNICATION,
-                      CaseCustodyRestrictions.MEDIA,
-                      CaseCustodyRestrictions.WORKBAN,
-                      CaseCustodyRestrictions.NECESSITIES,
-                    ].includes(restriction),
-                  )
-                  ?.map((custodyRestriction, index) => (
-                    <Box marginTop={index > 0 ? 1 : 0} key={index}>
-                      <Tag
-                        variant={getRestrictionTagVariant(custodyRestriction)}
-                        outlined
-                        disabled
-                      >
-                        {getShortRestrictionByValue(custodyRestriction)}
-                      </Tag>
-                    </Box>
-                  ))
-            }
-            {
-              // Travel ban restrictions
-              workingCase.type === CaseType.TRAVEL_BAN &&
-                (workingCase.decision === CaseDecision.ACCEPTING ||
-                  workingCase.decision === CaseDecision.ACCEPTING_PARTIALLY) &&
-                workingCase.requestedCustodyRestrictions
-                  ?.filter(
-                    (restriction) =>
-                      CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION ===
-                      restriction,
-                  )
-                  ?.map((custodyRestriction, index) => (
-                    <Box marginTop={index > 0 ? 1 : 0} key={index}>
-                      <Tag
-                        variant={getRestrictionTagVariant(custodyRestriction)}
-                        outlined
-                        disabled
-                      >
-                        {getShortRestrictionByValue(custodyRestriction)}
-                      </Tag>
-                    </Box>
-                  ))
-            }
+            <RestrictionTags workingCase={workingCase} />
           </Box>
         </Box>
         {isRestrictionCase(workingCase.type) &&

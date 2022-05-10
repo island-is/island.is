@@ -71,6 +71,7 @@ describe('Restricted Case Exists Guard', () => {
       'courtCaseNumber',
       'courtDate',
       'courtEndTime',
+      'decision',
       'validToDate',
       'isCustodyIsolation',
       'isolationToDate',

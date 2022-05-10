@@ -587,31 +587,26 @@ export const SignedVerdictOverview: React.FC = () => {
           setIsModifyingDates(!isModifyingDates)
         }
       />
-      {user?.role !== UserRole.DEFENDER && (
-        <FormContentContainer isFooter>
-          <FormFooter
-            previousUrl={Constants.CASE_LIST_ROUTE}
-            hideNextButton={
-              user?.role !== UserRole.PROSECUTOR ||
-              workingCase.decision ===
-                CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
-              workingCase.state === CaseState.REJECTED ||
-              workingCase.state === CaseState.DISMISSED ||
-              workingCase.isValidToDateInThePast ||
-              Boolean(workingCase.childCase)
-            }
-            nextButtonText={formatMessage(
-              m.sections.caseExtension.buttonLabel,
-              {
-                caseType: workingCase.type,
-              },
-            )}
-            onNextButtonClick={() => handleCaseExtension()}
-            nextIsLoading={isExtendingCase}
-            infoBoxText={getExtensionInfoText(workingCase, formatMessage)}
-          />
-        </FormContentContainer>
-      )}
+      <FormContentContainer isFooter>
+        <FormFooter
+          previousUrl={Constants.CASE_LIST_ROUTE}
+          hideNextButton={
+            user?.role !== UserRole.PROSECUTOR ||
+            workingCase.decision ===
+              CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
+            workingCase.state === CaseState.REJECTED ||
+            workingCase.state === CaseState.DISMISSED ||
+            workingCase.isValidToDateInThePast ||
+            Boolean(workingCase.childCase)
+          }
+          nextButtonText={formatMessage(m.sections.caseExtension.buttonLabel, {
+            caseType: workingCase.type,
+          })}
+          onNextButtonClick={() => handleCaseExtension()}
+          nextIsLoading={isExtendingCase}
+          infoBoxText={getExtensionInfoText(workingCase, formatMessage)}
+        />
+      </FormContentContainer>
       {shareCaseModal?.open && (
         <Modal
           title={shareCaseModal.title}
