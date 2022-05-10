@@ -169,6 +169,7 @@
     - [Procuring](libs/clients/rsk/procuring/README.md)
   - [Syslumenn](libs/clients/syslumenn/README.md)
   - [User Profile](libs/clients/user-profile/README.md)
+  - [Driving License](libs/clients/vehicles/README.md)
   - [VMST](libs/clients/vmst/README.md)
   - [Zendesk](libs/clients/zendesk/README.md)
 - [CMS](libs/cms/README.md)

@@ -32,6 +32,7 @@ import { RegulationsModule } from '@island.is/api/domains/regulations'
 import { RegulationsAdminModule } from '@island.is/api/domains/regulations-admin'
 import { RegulationsAdminClientConfig } from '@island.is/clients/regulations-admin'
 import { FinanceModule } from '@island.is/api/domains/finance'
+import { VehiclesModule } from '@island.is/api/domains/vehicles'
 import { AssetsModule } from '@island.is/api/domains/assets'
 import { EndorsementSystemModule } from '@island.is/api/domains/endorsement-system'
 import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-registry-x-road'
@@ -59,6 +60,7 @@ import { MortgageCertificateModule } from '@island.is/api/domains/mortgage-certi
 import { maskOutFieldsMiddleware } from './graphql.middleware'
 import { FishingLicenseModule } from '@island.is/api/domains/fishing-license'
 import { CompanyRegistryConfig } from '@island.is/clients/rsk/company-registry'
+import { VehiclesClientConfig } from '@island.is/clients/vehicles'
 import { FishingLicenseClientConfig } from '@island.is/clients/fishing-license'
 import { FinancialStatementsInaoModule } from '@island.is/api/domains/financial-statements-inao'
 
@@ -217,6 +219,7 @@ const autoSchemaFile = environment.production
       regulationsApiUrl: environment.regulationsAdmin.regulationsApiUrl!,
     }),
     FinanceModule,
+    VehiclesModule,
     FinancialStatementsInaoModule,
     AssetsModule,
     NationalRegistryXRoadModule,
@@ -268,6 +271,7 @@ const autoSchemaFile = environment.production
       isGlobal: true,
       load: [
         AssetsClientConfig,
+        VehiclesClientConfig,
         AuthPublicApiClientConfig,
         DownloadServiceConfig,
         FeatureFlagConfig,

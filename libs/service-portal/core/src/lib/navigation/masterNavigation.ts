@@ -236,11 +236,20 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
       // Ökutæki
       {
         name: m.vehicles,
-        path: ServicePortalPath.AssetsVehicles,
-        systemRoute: true,
+        path: ServicePortalPath.AssetsMyVehicles,
         icon: {
           icon: 'car',
         },
+        // children: [
+        //   {
+        //     name: 'Ökutækin mín',
+        //     path: ServicePortalPath.AssetsMyVehicles,
+        //   },
+        // {
+        //   name: 'Uppfletting í ökutækjaskrá',
+        //   path: ServicePortalPath.AssetsVehiclesLookup,
+        // },
+        // ],
       },
       // Stillingar - hidden from nav
       {
