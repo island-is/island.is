@@ -1,4 +1,4 @@
-import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
+import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
 export const serviceSetup = (): ServiceBuilder<'auth-admin-api'> => {
   return service('auth-admin-api')
