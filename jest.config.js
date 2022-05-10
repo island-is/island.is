@@ -127,6 +127,7 @@ module.exports = {
     '<rootDir>/libs/application/templates/reference-template',
     '<rootDir>/libs/auth/react',
     '<rootDir>/libs/auth/scopes',
+    '<rootDir>/libs/clients/aosh',
     '<rootDir>/libs/clients/assets',
     '<rootDir>/libs/clients/auth-public-api',
     '<rootDir>/libs/clients/criminal-record',

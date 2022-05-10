@@ -3411,6 +3411,33 @@
         }
       }
     },
+    "clients-aosh": {
+      "root": "libs/clients/aosh",
+      "sourceRoot": "libs/clients/aosh/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/clients/aosh/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/clients/aosh"],
+          "options": {
+            "jestConfig": "libs/clients/aosh/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "schemas/external-openapi-generator": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn openapi-generator -o libs/clients/aosh/gen/fetch -i libs/clients/aosh/src/clientConfig.yaml"
+          }
+        }
+      }
+    },
     "clients-assets": {
       "root": "libs/clients/assets",
       "sourceRoot": "libs/clients/assets/src",
