@@ -12,18 +12,18 @@ interface Props {
 
 export const SignedDocument = (props: Props) => {
   const { formatMessage } = useIntl()
-  const { signatory: judge, signingDate: rulingDate } = props
+  const { signatory, signingDate } = props
 
   return (
     <Box display="flex" alignItems="center">
       <Box textAlign="right" marginX="gutter">
         <Text>
           {formatMessage(m.signedDocument, {
-            date: formatDate(rulingDate, 'dd.MM.yyyy'),
-            time: formatDate(rulingDate, 'HH:mm'),
+            date: formatDate(signingDate, 'dd.MM.yyyy'),
+            time: formatDate(signingDate, 'HH:mm'),
           })}
         </Text>
-        <Text variant="small">{judge}</Text>
+        <Text variant="small">{signatory}</Text>
       </Box>
       <Icon icon="checkmark" size="large" color="mint600"></Icon>
     </Box>
