@@ -106,7 +106,7 @@ export const answerValidators: Record<string, AnswerValidator> = {
       return buildError(coreErrorMessages.defaultError, 'privatePensionFund')
     }
 
-    // This case will only happen if the users has first selected NO 
+    // This case will only happen if the users has first selected NO
     // and then goes back and changes to YES without filling in data for pritvatePensionFundPercentage
     if (
       privatePensionFund === NO_PRIVATE_PENSION_FUND &&
