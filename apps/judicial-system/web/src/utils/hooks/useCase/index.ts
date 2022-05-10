@@ -43,16 +43,19 @@ type autofillProperties = Pick<
   | 'endOfSessionBookings'
   | 'introduction'
   | 'requestedOtherRestrictions'
+  | 'isCustodyIsolation'
+  | 'decision'
+  | 'sessionArrangements'
 >
 
-type autofillSessionArrangementProperties = Pick<Case, 'sessionArrangements'>
-
-type autofillBooleanProperties = Pick<Case, 'isCustodyIsolation'>
-
 export type autofillFunc = (
-  key: keyof autofillProperties,
-  value: string,
+  entries: Array<{
+    key: keyof autofillProperties
+    value?: string | boolean | SessionArrangements
+    force?: boolean
+  }>,
   workingCase: Case,
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
 ) => void
 
 interface CreateCaseMutationResponse {
@@ -326,50 +329,28 @@ const useCase = () => {
     [extendCaseMutation, formatMessage],
   )
 
-  const autofill: autofillFunc = useMemo(
-    () => (key, value, workingCase) => {
-      if (workingCase[key] === undefined || workingCase[key] === null) {
-        workingCase[key] = value
+  const autofill: autofillFunc = (entries, workingCase, setWorkingCase) => {
+    const validEntries = entries.filter(
+      (item) =>
+        item.value !== undefined &&
+        item.value !== null &&
+        (item.force ||
+          workingCase[item.key] === undefined ||
+          workingCase[item.key] === null),
+    )
 
-        if (workingCase[key]) {
-          updateCase(workingCase.id, { [key]: value })
-        }
-      }
-    },
-    [updateCase],
-  )
+    const flatEntries = Object.assign(
+      {},
+      ...validEntries.map((entry) => ({ [entry.key]: entry.value })),
+    )
 
-  const autofillSessionArrangements = useMemo(
-    () => (
-      key: keyof autofillSessionArrangementProperties,
-      value: SessionArrangements,
-      workingCase: Case,
-    ) => {
-      if (!workingCase[key]) {
-        workingCase[key] = value
+    if (Object.keys(flatEntries).length === 0) {
+      return
+    }
 
-        if (workingCase[key]) {
-          updateCase(workingCase.id, { [key]: value })
-        }
-      }
-    },
-    [updateCase],
-  )
-
-  const autofillBoolean = useMemo(
-    () => (
-      key: keyof autofillBooleanProperties,
-      value: boolean,
-      workingCase: Case,
-    ) => {
-      if (workingCase[key] === undefined || workingCase[key] === null) {
-        workingCase[key] = value
-
-        updateCase(workingCase.id, { [key]: value })
-      }
-    },
-    [updateCase],
-  )
+    setWorkingCase({ ...workingCase, ...flatEntries })
+    updateCase(workingCase.id, flatEntries)
+  }
 
   return {
     createCase,
@@ -389,8 +370,6 @@ const useCase = () => {
     extendCase,
     isExtendingCase,
     autofill,
-    autofillSessionArrangements,
-    autofillBoolean,
   }
 }
 
