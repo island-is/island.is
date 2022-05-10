@@ -82,7 +82,7 @@ const FinanceSchedule: ServicePortalModuleComponent = ({ userInfo }) => {
           internal: false,
           text: applicationButtonText,
           variant: 'primary',
-          link: 'https://island.is/umsoknir/greidsluaaetlun/',
+          link: '/umsoknir/greidsluaaetlun/',
         }}
       >
         <Text>
@@ -131,7 +131,7 @@ const FinanceSchedule: ServicePortalModuleComponent = ({ userInfo }) => {
                 height="full"
               >
                 <a
-                  href="https://island.is/umsoknir/greidsluaaetlun/"
+                  href="/umsoknir/greidsluaaetlun/"
                   target="_blank"
                   rel="noreferrer"
                 >

@@ -10,6 +10,7 @@ import {
   ExternalData,
   FormValue,
 } from '../types/Application'
+import { FormatMessage } from '../types/external'
 import {
   ApplicationContext,
   ApplicationRole,
@@ -21,7 +22,7 @@ import {
   RoleInState,
 } from '../types/StateMachine'
 import { ApplicationTemplate } from '../types/ApplicationTemplate'
-import { FormatMessage, StaticText } from '../types/Form'
+import { StaticText } from '../types/Form'
 
 enum FinalStates {
   REJECTED = 'rejected',

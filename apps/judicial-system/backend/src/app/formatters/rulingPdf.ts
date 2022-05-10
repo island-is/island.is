@@ -74,7 +74,7 @@ function constructRulingPdf(
   addNormalJustifiedText(
     doc,
     `${formatMessage(ruling.prosecutorIs)} ${
-      theCase.prosecutor?.institution?.name ?? ruling.missingDistrict
+      theCase.creatingProsecutor?.institution?.name ?? ruling.missingDistrict
     }.`,
   )
   addNormalJustifiedText(

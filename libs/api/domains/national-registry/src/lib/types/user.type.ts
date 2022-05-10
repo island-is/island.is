@@ -11,6 +11,7 @@ export interface User {
   gender: Gender
   maritalStatus: MaritalStatus
   religion: string
+  familyNr: string
   banMarking: {
     banMarked: boolean
     startDate: string

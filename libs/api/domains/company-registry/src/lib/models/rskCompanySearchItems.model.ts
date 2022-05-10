@@ -9,7 +9,4 @@ export class RskCompanySearchItems {
 
   @Field(() => PageInfoDto)
   pageInfo!: PageInfoDto
-
-  @Field(() => Int)
-  totalCount!: number
 }

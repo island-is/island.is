@@ -202,6 +202,7 @@
     "nodemailer": "6.7.2",
     "oidc-client": "1.10.1",
     "onesignal-node": "3.3.0",
+    "oidc-client-ts": "2.0.3",
     "openapi3-ts": "2.0.0",
     "opossum": "6.1.0",
     "passport": "0.4.1",
