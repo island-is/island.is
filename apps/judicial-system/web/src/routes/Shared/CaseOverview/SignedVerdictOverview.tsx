@@ -563,24 +563,6 @@ export const SignedVerdictOverview: React.FC = () => {
     )
   }
 
-  /**
-   * We assume that the signed verdict page is only opened for
-   * cases in state REJECTED or ACCEPTED.
-   *
-   * Based on the judge's decision the signed verdict page can
-   * be in one of five states:
-   *
-   * 1. Rejected
-   *    - state === REJECTED and decision === REJECTING
-   * 2. Alternative travel ban accepted and the travel ban end date is in the past
-   *    - state === ACCEPTED and decision === ACCEPTING_ALTERNATIVE_TRAVEL_BAN and validToDate < today
-   * 3. Accepted and the custody end date is in the past
-   *    - state === ACCEPTED and decision === ACCEPTING/ACCEPTING_PARTIALLY and validToDate < today
-   * 5. Alternative travel ban accepted and the travel ban end date is not in the past
-   *    - state === ACCEPTED and decision === ACCEPTING_ALTERNATIVE_TRAVEL_BAN and validToDate > today
-   * 3. Accepted and the custody end date is not in the past
-   *    - state === ACCEPTED and decision === ACCEPTING/ACCEPTING_PARTIALLY and validToDate > today
-   */
   return (
     <PageLayout
       workingCase={workingCase}
