@@ -1,4 +1,9 @@
-import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
+import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
+import {
+  Base,
+  Client,
+  RskProcuring,
+} from '../../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (): ServiceBuilder<'auth-api'> => {
   return service('auth-api')
@@ -23,21 +28,6 @@ export const serviceSetup = (): ServiceBuilder<'auth-api'> => {
         dev: 'https://identity-server.dev01.devland.is/api',
         staging: 'https://identity-server.staging01.devland.is/api',
         prod: 'https://innskra.island.is/api',
-      },
-      XROAD_BASE_PATH: {
-        dev: 'http://securityserver.dev01.devland.is',
-        staging: 'http://securityserver.staging01.devland.is',
-        prod: 'http://securityserver.island.is',
-      },
-      XROAD_BASE_PATH_WITH_ENV: {
-        dev: 'http://securityserver.dev01.devland.is/r1/IS-DEV',
-        staging: 'http://securityserver.staging01.devland.is/r1/IS-TEST',
-        prod: 'http://securityserver.island.is/r1/IS',
-      },
-      XROAD_CLIENT_ID: {
-        dev: 'IS-DEV/GOV/10000/island-is-client',
-        staging: 'IS-TEST/GOV/5501692829/island-is-client',
-        prod: 'IS/GOV/5501692829/island-is-client',
       },
       XROAD_RSK_MEMBER_CODE: {
         dev: '10006',
@@ -69,22 +59,17 @@ export const serviceSetup = (): ServiceBuilder<'auth-api'> => {
         staging: '6503760649',
         prod: '6503760649',
       },
-      XROAD_RSK_PROCURING_PATH: {
-        dev: 'IS-DEV/GOV/10006/Skatturinn/prokura-v1',
-        staging: 'IS-TEST/GOV/5402696029/Skatturinn/prokura-v1',
-        prod: 'IS/GOV/5402696029/Skatturinn/prokura-v1',
-      },
-      XROAD_RSK_PROCURING_REDIS_NODES: {
-        dev: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]',
-        staging: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]',
-        prod: '["clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379"]',
-      },
       COMPANY_REGISTRY_XROAD_PROVIDER_ID: {
         dev: 'IS-DEV/GOV/10006/Skatturinn/ft-v1',
         staging: 'IS-TEST/GOV/5402696029/Skatturinn/ft-v1',
         prod: 'IS/GOV/5402696029/Skatturinn/ft-v1',
       },
     })
+    .xroad(
+      Base,
+      Client,
+      RskProcuring,
+    )
     .ingress({
       primary: {
         host: {
