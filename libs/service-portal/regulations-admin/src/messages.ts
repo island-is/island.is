@@ -292,6 +292,10 @@ export const editorMsgs = defineMessages({
     id: 'ap.regulations-admin:draft-opts-type-amending',
     defaultMessage: 'Breytingareglugerð',
   },
+  type_repealing: {
+    id: 'ap.regulations-admin:draft-opts-type-amending',
+    defaultMessage: 'Brottfellingarreglugerð',
+  },
 
   cancellation_add: {
     id: 'ap.regulations-admin:draft-btn-cancellation-add',

@@ -1,10 +1,12 @@
-import React from 'react'
+import React, { useState } from 'react'
+import * as s from './EditBasics.css'
 import {
   Box,
   Accordion,
   AccordionItem,
   Divider,
   Text,
+  Button,
 } from '@island.is/island-ui/core'
 import { EditorInput } from './EditorInput'
 import { editorMsgs as msg } from '../messages'
@@ -16,6 +18,7 @@ import { useDraftingState } from '../state/useDraftingState'
 export const EditBasics = () => {
   const t = useLocale().formatMessage
   const { draft, actions } = useDraftingState()
+  const [pristineTitle, setPristineTitle] = useState(true)
 
   const { text, appendixes } = draft
   const { updateState } = actions
@@ -30,11 +33,55 @@ export const EditBasics = () => {
   return (
     <>
       <Box marginBottom={3}>
+        {!draft.title.value && pristineTitle && (
+          <Box className={s.shortcuts} marginBottom={[2, 2, 3]}>
+            Flýtileiðir:
+            <Box className={s.shortcutsButton}>
+              <Button
+                onClick={() => updateState('title', 'Reglugerð um ')}
+                variant="text"
+                size="small"
+              >
+                {t(msg.type_base)}
+              </Button>
+            </Box>
+            <Box className={s.shortcutsButton}>
+              <Button
+                onClick={() =>
+                  updateState('title', 'Reglugerð um breytingu á reglugerð um ')
+                }
+                variant="text"
+                size="small"
+              >
+                {t(msg.type_amending)}
+              </Button>
+            </Box>
+            <Box className={s.shortcutsButton}>
+              <Button
+                onClick={() =>
+                  updateState(
+                    'title',
+                    'Reglugerð um brottfellingu reglugerðar um ',
+                  )
+                }
+                variant="text"
+                size="small"
+              >
+                {t(msg.type_repealing)}
+              </Button>
+            </Box>
+          </Box>
+        )}
         <MagicTextarea
           label={t(msg.title)}
           name="title"
           defaultValue={draft.title.value}
-          onBlur={(value) => updateState('title', value)}
+          onBlur={(value) => {
+            if (pristineTitle) {
+              setPristineTitle(false)
+            }
+            updateState('title', value)
+          }}
           error={
             draft.title.showError && draft.title.error && t(draft.title.error)
           }
