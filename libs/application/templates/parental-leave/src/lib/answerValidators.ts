@@ -102,6 +102,12 @@ export const answerValidators: Record<string, AnswerValidator> = {
       return buildError(coreErrorMessages.defaultError, 'privatePensionFund')
     }
 
+    if (!payments.privatePensionFund) {
+      return buildError(coreErrorMessages.defaultError, 'privatePensionFund')
+    }
+
+    // This case will only happen if the users has first selected NO 
+    // and then goes back and changes to YES without filling in data for pritvatePensionFundPercentage
     if (
       privatePensionFund === NO_PRIVATE_PENSION_FUND &&
       privatePensionFundPercentage === '0' &&
@@ -111,18 +117,6 @@ export const answerValidators: Record<string, AnswerValidator> = {
         coreErrorMessages.defaultError,
         'privatePensionFundPercentage',
       )
-    }
-
-    if (!payments.privatePensionFund) {
-      return buildError(coreErrorMessages.defaultError, 'privatePensionFund')
-    }
-
-    // validate that the privatePensionFundPercentage is either 2 or 4 percent
-    if (
-      payments.privatePensionFundPercentage === '2' ||
-      payments.privatePensionFundPercentage === '4'
-    ) {
-      return undefined
     }
 
     if (
@@ -140,6 +134,14 @@ export const answerValidators: Record<string, AnswerValidator> = {
         coreErrorMessages.defaultError,
         'privatePensionFundPercentage',
       )
+    }
+
+    // validate that the privatePensionFundPercentage is either 2 or 4 percent
+    if (
+      payments.privatePensionFundPercentage === '2' ||
+      payments.privatePensionFundPercentage === '4'
+    ) {
+      return undefined
     }
 
     return undefined
