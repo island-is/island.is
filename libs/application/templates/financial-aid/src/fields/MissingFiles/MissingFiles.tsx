@@ -4,6 +4,7 @@ import { useIntl } from 'react-intl'
 import { Text, Box, AlertMessage, Input } from '@island.is/island-ui/core'
 import {
   ApplicationEventType,
+  ApplicationState,
   FileType,
   getCommentFromLatestEvent,
 } from '@island.is/financial-aid/shared/lib'
@@ -19,7 +20,7 @@ const MissingFiles = ({
   application,
   setBeforeSubmitCallback,
 }: FAFieldBaseProps) => {
-  const { currentApplication } = useApplication(
+  const { currentApplication, updateApplication } = useApplication(
     application.externalData.veita.data.currentApplicationId,
   )
   const { formatMessage } = useIntl()
@@ -55,6 +56,11 @@ const MissingFiles = ({
         await uploadStateFiles(
           application.externalData.veita.data.currentApplicationId,
           FileType.OTHER,
+        )
+        await updateApplication(
+          ApplicationState.INPROGRESS,
+          ApplicationEventType.FILEUPLOAD,
+          getValues('fileUploadComment'),
         )
       } catch (e) {
         return [false, 'Failed to upload files']

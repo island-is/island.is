@@ -19,6 +19,7 @@ import {
   MunicipalityInput,
   ApplicationInput,
   ApplicationFilesInput,
+  UpdateApplicationInput,
 } from './dto'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -82,6 +83,18 @@ export class MunicipalitiesFinancialAidResolver {
     @CurrentUser() user: User,
   ): Promise<CreateFilesModel | null> {
     return await this.municipalitiesFinancialAidService.municipalitiesFinancialAidCreateFiles(
+      user,
+      input,
+    )
+  }
+
+  @Mutation(() => ApplicationModel, { nullable: true })
+  async updateMunicipalitiesFinancialAidApplication(
+    @Args('input', { type: () => UpdateApplicationInput })
+    input: UpdateApplicationInput,
+    @CurrentUser() user: User,
+  ): Promise<ApplicationModel | null> {
+    return await this.municipalitiesFinancialAidService.municipalitiesFinancialAidUpdateApplication(
       user,
       input,
     )

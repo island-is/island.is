@@ -14,6 +14,7 @@ import {
   MunicipalityInput,
 } from './dto'
 import { ApplicationInput } from './dto/application.input'
+import { UpdateApplicationInput } from './dto/updateApplication.input'
 
 @Injectable()
 export class MunicipalitiesFinancialAidService {
@@ -81,6 +82,18 @@ export class MunicipalitiesFinancialAidService {
   ) {
     return await this.fileApiWithAuth(auth)
       .fileControllerCreateFiles({ createFilesDto: files as any })
+      .catch(this.handle404)
+  }
+
+  async municipalitiesFinancialAidUpdateApplication(
+    auth: Auth,
+    updates: UpdateApplicationInput,
+  ) {
+    return await this.applicationApiWithAuth(auth)
+      .applicationControllerUpdate({
+        id: updates.id,
+        updateApplicationDto: updates as any,
+      })
       .catch(this.handle404)
   }
 }
