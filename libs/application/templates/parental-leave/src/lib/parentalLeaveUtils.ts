@@ -10,7 +10,6 @@ import {
   Application,
   ExternalData,
   Field,
-  FormatMessage,
   FormValue,
   getValueViaPath,
   Option,
@@ -39,6 +38,7 @@ import {
   ChildrenAndExistingApplications,
 } from '../dataProviders/Children/types'
 import { YesOrNo, Period, PersonInformation } from '../types'
+import { FormatMessage } from '@island.is/localization'
 
 export function getExpectedDateOfBirth(
   application: Application,

@@ -23,11 +23,6 @@ export type StaticTextObject = MessageDescriptor & {
 
 export type StaticText = StaticTextObject | string
 
-export type FormatMessage = (
-  descriptor: StaticText,
-  values?: RecordObject<any>,
-) => string
-
 export type FormText =
   | StaticText
   | ((application: Application) => StaticText | null | undefined)
