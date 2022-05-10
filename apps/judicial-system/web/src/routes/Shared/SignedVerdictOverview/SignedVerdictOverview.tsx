@@ -422,6 +422,7 @@ export const SignedVerdictOverview: React.FC = () => {
             type: InstitutionType.PROSECUTORS_OFFICE,
             created: new Date().toString(),
             modified: new Date().toString(),
+            active: true,
           },
           isHeightenedSecurityLevel: workingCase.isHeightenedSecurityLevel
             ? false
