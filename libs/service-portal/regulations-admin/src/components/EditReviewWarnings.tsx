@@ -1,4 +1,4 @@
-import { MessageFormatter } from '@island.is/application/core'
+import { FormatMessage } from '@island.is/cms-translations'
 import { Box, Text, Button, AlertMessage } from '@island.is/island-ui/core'
 import React, { useMemo } from 'react'
 import { useHistory } from 'react-router'
@@ -18,7 +18,7 @@ type ReviewMessage = {
 
 export const useCollectMessages = (
   state: DraftingState,
-  t: MessageFormatter,
+  t: FormatMessage,
 ): Array<ReviewMessage> | undefined =>
   useMemo(() => {
     if (isDraftErrorFree(state)) {
