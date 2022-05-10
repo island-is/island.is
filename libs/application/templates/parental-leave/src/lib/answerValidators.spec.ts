@@ -2,7 +2,6 @@ import {
   Application,
   ApplicationStatus,
   ApplicationTypes,
-  coreErrorMessages,
 } from '@island.is/application/core'
 import addDays from 'date-fns/addDays'
 import format from 'date-fns/format'
@@ -92,83 +91,6 @@ describe('answerValidators', () => {
       path: 'periods[0].startDate',
       values: { usageMaxMonths: 23.5 },
     })
-  })
-
-  it('should create error when privatePensionFund is empty', () => {
-    const newAnswers = {
-      bank: '123456789012',
-      pensionFund: 'id-frjalsi',
-      privatePensionFund: '',
-      privatePensionFundPercentage: '',
-    }
-
-    expect(answerValidators['payments'](newAnswers, application)).toStrictEqual(
-      {
-        message: coreErrorMessages.defaultError,
-        path: 'payments.privatePensionFund',
-        values: undefined,
-      },
-    )
-  })
-
-  it('should create error when privatePensionFundPercentage is empty', () => {
-    const newAnswers = {
-      bank: '123456789012',
-      pensionFund: 'id-frjalsi',
-      privatePensionFund: 'id-frjalsi',
-      privatePensionFundPercentage: '',
-    }
-
-    expect(answerValidators['payments'](newAnswers, application)).toStrictEqual(
-      {
-        message: coreErrorMessages.defaultError,
-        path: 'payments.privatePensionFundPercentage',
-        values: undefined,
-      },
-    )
-  })
-
-  it('should only accept 2 or 4 as values for privatePensionFundPercentage', () => {
-    const newAnswers = {
-      bank: '123456789012',
-      pensionFund: 'id-frjalsi',
-      privatePensionFund: 'id-frjalsi',
-      privatePensionFundPercentage: 'test input',
-    }
-
-    expect(answerValidators['payments'](newAnswers, application)).toStrictEqual(
-      {
-        message: coreErrorMessages.defaultError,
-        path: 'payments.privatePensionFundPercentage',
-        values: undefined,
-      },
-    )
-  })
-
-  it('should accept 2 as a value for privatePensionFundPercentage', () => {
-    const newAnswers = {
-      bank: '123456789012',
-      pensionFund: 'id-frjalsi',
-      privatePensionFund: 'id-frjalsi',
-      privatePensionFundPercentage: '2',
-    }
-
-    expect(answerValidators['payments'](newAnswers, application)).toStrictEqual(
-      undefined,
-    )
-  })
-
-  it('should accept 4 as a value for privatePensionFundPercentage', () => {
-    const newAnswers = {
-      bank: '123456789012',
-      pensionFund: 'id-frjalsi',
-      privatePensionFund: 'id-frjalsi',
-      privatePensionFundPercentage: '4',
-    }
-
-    expect(answerValidators['payments'](newAnswers, application)).toStrictEqual(
-      undefined,
-    )
   })
 })
 

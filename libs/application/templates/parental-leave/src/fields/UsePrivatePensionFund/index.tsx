@@ -54,9 +54,6 @@ export const UsePrivatePensionFund: FC<FieldBaseProps> = ({
               setValue('payments.privatePensionFund', NO_PRIVATE_PENSION_FUND)
               setValue('payments.privatePensionFundPercentage', '')
             }
-            if (s === YES) {
-              setValue('payments.privatePensionFund', '')
-            }
           },
         }}
       />
