@@ -167,7 +167,7 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
             }
           }
 
-          let inputColor: InputProps['color'] | undefined
+          let inputColor: InputProps['color'] | undefined = undefined
           if (whiteColorScheme) {
             inputColor = 'white'
           } else if (colorScheme === 'blueberry') {
@@ -305,7 +305,7 @@ export const AsyncSearchInput = forwardRef<
 
     const iconColor = getIconColor(whiteColorScheme, blueberryColorScheme)
 
-    let inputColor: InputProps['color'] | undefined
+    let inputColor: InputProps['color'] | undefined = undefined
 
     if (whiteColorScheme) {
       inputColor = 'white'
