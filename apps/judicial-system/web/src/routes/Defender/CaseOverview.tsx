@@ -1,8 +1,11 @@
 import React, { useContext } from 'react'
+import { useIntl } from 'react-intl'
 
 import { Sections } from '@island.is/judicial-system-web/src/types'
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
 
 import CaseOverviewForm from './CaseOverviewForm'
 
@@ -10,6 +13,8 @@ export const CaseOverview: React.FC = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
     FormContext,
   )
+
+  const { formatMessage } = useIntl()
 
   return (
     <PageLayout
@@ -20,6 +25,7 @@ export const CaseOverview: React.FC = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
+      <PageHeader title={formatMessage(titles.defender.caseOverview)} />
       <CaseOverviewForm workingCase={workingCase} />
     </PageLayout>
   )
