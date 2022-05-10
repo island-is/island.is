@@ -4,7 +4,7 @@ import { AnimatePresence } from 'framer-motion'
 
 import { Box, AccordionItem, Button } from '@island.is/island-ui/core'
 import { UploadState } from '@island.is/judicial-system-web/src/utils/hooks/useCourtUpload'
-import { UploadStateMessage } from '@island.is/judicial-system-web/src/routes/Shared/SignedVerdictOverview/Components/UploadStateMessage'
+import { UploadStateMessage } from '@island.is/judicial-system-web/src/routes/Shared/CaseOverview/Components/UploadStateMessage'
 import { useCourtUpload } from '@island.is/judicial-system-web/src/utils/hooks/useCourtUpload'
 import {
   Case,
