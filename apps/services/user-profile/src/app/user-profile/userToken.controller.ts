@@ -91,13 +91,23 @@ export class UserTokenController {
   }
 
   // maybe do this if we have time ................
-  @ApiOperation({
-    summary: 'admin access - tests onesignal',
-  })
+  @Post('userProfile/:nationalId/one-signal-notification')
   @Scopes(UserProfileScope.admin)
   @ApiSecurity('oauth2', [UserProfileScope.admin])
-  @Post('userProfile/:nationalId/one-signal-notification')
-  @ApiOkResponse({ type: UserProfile })
+  @Documentation({
+    summary: 'admin access - tests magicbell',
+    description: 'admin access - tests magicbell',
+    response: { status: 201, type: CreateNotificationDto },
+    request: {
+      query: {},
+      params: {
+        nationalId: {
+          type: 'string',
+          description: 'ID of the animal',
+        },
+      }
+    },
+  })
   async notifyViaOneSignal(
     @Param('nationalId')
     nationalId: string,
