@@ -28,7 +28,6 @@ export const serviceSetup = (): ServiceBuilder<'service-portal-api'> =>
       EMAIL_REPLY_TO_NAME: '/k8s/service-portal/api/EMAIL_REPLY_TO_NAME',
       MAGICBELL_API_KEY: '/k8s/services-user-profile/MAGICBELL_API_KEY',
       MAGICBELL_API_SECRET: '/k8s/services-user-profile/MAGICBELL_API_SECRET',
-      // MAGICBELL_API_TRASH: '/k8s/services-user-profile/MAGICBELL_API_TRASH',
       ONESIGNAL_API_KEY: '/k8s/services-user-profile/ONESIGNAL_API_KEY',
       ONESIGNAL_APP_ID: '/k8s/services-user-profile/ONESIGNAL_APP_ID'
 
