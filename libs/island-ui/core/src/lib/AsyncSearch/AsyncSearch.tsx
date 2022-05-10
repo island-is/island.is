@@ -167,6 +167,13 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
             }
           }
 
+          let inputColor: InputProps['color'] | undefined
+          if (whiteColorScheme) {
+            inputColor = 'white'
+          } else if (colorScheme === 'blueberry') {
+            inputColor = 'blueberry'
+          }
+
           return (
             <AsyncSearchInput
               hasFocus={focused}
@@ -189,7 +196,7 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
                 colored,
                 hasLabel,
                 placeholder,
-                white: whiteColorScheme,
+                color: inputColor,
               }}
               buttonProps={{
                 onFocus,
@@ -298,6 +305,14 @@ export const AsyncSearchInput = forwardRef<
 
     const iconColor = getIconColor(whiteColorScheme, blueberryColorScheme)
 
+    let inputColor: InputProps['color'] | undefined
+
+    if (whiteColorScheme) {
+      inputColor = 'white'
+    } else if (blueberryColorScheme) {
+      inputColor = 'blueberry'
+    }
+
     return (
       <div
         {...rootProps}
@@ -307,13 +322,7 @@ export const AsyncSearchInput = forwardRef<
           [styles.white]: whiteColorScheme,
         })}
       >
-        <Input
-          {...inputProps}
-          white={whiteColorScheme}
-          blueberry={blueberryColorScheme}
-          isOpen={isOpen}
-          ref={ref}
-        />
+        <Input color={inputColor} {...inputProps} isOpen={isOpen} ref={ref} />
         {!loading ? (
           <button
             className={cn(styles.icon, styles.iconSizes[size], {
