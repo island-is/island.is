@@ -13,7 +13,7 @@ import {
   CaseOrigin,
 } from '@island.is/judicial-system/types'
 import type { UpdateCase, User } from '@island.is/judicial-system/types'
-import { CaseQuery } from '@island.is/judicial-system-web/graphql'
+import { CaseQuery } from '@island.is/judicial-system-web/src/components/FormProvider/caseGql'
 import { CurrentUserQuery } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import {
   InstitutionsQuery,

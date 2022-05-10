@@ -270,5 +270,5 @@ const sortSupportCategories = (items: SupportCategory[]) =>
 
 export default withMainLayout(Home, {
   showHeader: false,
-  showFooter: false,
+  footerVersion: 'organization',
 })

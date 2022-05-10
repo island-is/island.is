@@ -22,7 +22,7 @@ import { environment } from './environments'
 configure({
   // You should usually configure these:
   authority: environment.identityServer.authority,
-  client_id: 'island-is-1',
+  client_id: '@island.is/web',
   scope: [
     'openid',
     'profile',

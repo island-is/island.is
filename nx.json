@@ -124,6 +124,9 @@
     "api-domains-finance": {
       "tags": []
     },
+    "api-domains-financial-statements-inao": {
+      "tags": []
+    },
     "api-domains-fishing-license": {
       "tags": []
     },
@@ -164,6 +167,9 @@
       "tags": []
     },
     "api-domains-user-profile": {
+      "tags": []
+    },
+    "api-domains-vehicles": {
       "tags": []
     },
     "api-mocks": {
@@ -258,6 +264,9 @@
       "tags": []
     },
     "application-templates-mortgage-certificate": {
+      "tags": []
+    },
+    "application-templates-no-debt-certificate": {
       "tags": []
     },
     "application-templates-p-sign": {
@@ -383,6 +392,9 @@
       "tags": [],
       "implicitDependencies": ["services-user-profile"]
     },
+    "clients-vehicles": {
+      "tags": []
+    },
     "clients-vmst": {
       "tags": []
     },
@@ -458,29 +470,6 @@
     },
     "github-actions-cache": {
       "tags": []
-    },
-    "gjafakort-api": {
-      "tags": []
-    },
-    "gjafakort-application": {
-      "tags": []
-    },
-    "gjafakort-consts": {
-      "tags": []
-    },
-    "gjafakort-queue-listener": {
-      "tags": []
-    },
-    "gjafakort-types": {
-      "tags": []
-    },
-    "gjafakort-web": {
-      "tags": [],
-      "implicitDependencies": ["gjafakort-api"]
-    },
-    "gjafakort-web-e2e": {
-      "tags": [],
-      "implicitDependencies": ["gjafakort-web"]
     },
     "health-insurance": {
       "tags": []
@@ -697,6 +686,9 @@
       "tags": []
     },
     "service-portal-settings-personal-information": {
+      "tags": []
+    },
+    "service-portal-vehicles": {
       "tags": []
     },
     "service-portal-wip": {
