@@ -18,7 +18,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks/useCourtUpload'
 import { useRulingAutofill } from '@island.is/judicial-system-web/src/components/RulingInput/RulingInput'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
+import { titles } from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system/consts'
 
 import OverviewForm from './OverviewForm'

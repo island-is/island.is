@@ -13,7 +13,7 @@ import {
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
-import { caseFilesAccordion as m } from '@island.is/judicial-system-web/messages/Core/caseFilesAccordion'
+import { caseFilesAccordion as m } from '@island.is/judicial-system-web/messages'
 
 import { CaseFileList, InfoBox } from '../..'
 import { UploadStateMessage } from './UploadStateMessage'

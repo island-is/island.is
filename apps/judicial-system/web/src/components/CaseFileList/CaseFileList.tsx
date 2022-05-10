@@ -6,9 +6,9 @@ import {
   CaseFile as TCaseFile,
   CaseFileState,
 } from '@island.is/judicial-system/types'
+import { caseFiles as m } from '@island.is/judicial-system-web/messages'
 import { Modal } from '..'
 import { useFileList } from '../../utils/hooks'
-import { caseFiles as m } from '@island.is/judicial-system-web/messages/Core/caseFiles'
 import { CaseFile } from '../../utils/hooks/useCourtUpload'
 
 interface Props {

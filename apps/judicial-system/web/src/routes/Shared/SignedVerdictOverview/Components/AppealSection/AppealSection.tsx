@@ -14,7 +14,10 @@ import {
 import { BlueBox } from '@island.is/judicial-system-web/src/components'
 import InfoBox from '@island.is/judicial-system-web/src/components/InfoBox/InfoBox'
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
-import { signedVerdictOverview } from '@island.is/judicial-system-web/messages/Core/signedVerdictOverview'
+import {
+  signedVerdictOverview,
+  core,
+} from '@island.is/judicial-system-web/messages'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import type { Case } from '@island.is/judicial-system/types'
 
@@ -23,7 +26,6 @@ import ProsecutorAppealInfo from '../Prosecutor/ProsecutorAppealInfo'
 import AccusedAppealDatePicker from '../Accused/AccusedAppealDatePicker'
 import ProsecutorAppealDatePicker from '../Prosecutor/ProsecutorAppealDatePicker'
 import * as styles from './AppealSection.css'
-import { core } from '@island.is/judicial-system-web/messages'
 
 interface Props {
   workingCase: Case

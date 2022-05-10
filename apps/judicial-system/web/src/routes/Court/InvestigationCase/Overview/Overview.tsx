@@ -9,7 +9,7 @@ import {
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { useRulingAutofill } from '@island.is/judicial-system-web/src/components/RulingInput/RulingInput'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
+import { titles } from '@island.is/judicial-system-web/messages'
 
 import OverviewForm from './OverviewForm'
 

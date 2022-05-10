@@ -43,10 +43,12 @@ import {
   formatDate,
 } from '@island.is/judicial-system/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
-import { core } from '@island.is/judicial-system-web/messages'
+import {
+  core,
+  signedVerdictOverview as m,
+} from '@island.is/judicial-system-web/messages'
 import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
-import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages/Core/signedVerdictOverview'
 import * as Constants from '@island.is/judicial-system/consts'
 import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 import AppealSection from './Components/AppealSection/AppealSection'

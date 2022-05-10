@@ -14,9 +14,9 @@ import {
 } from '@island.is/judicial-system/types'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { TIME_FORMAT } from '@island.is/judicial-system/consts'
-import { defenderCaseOverview } from '@island.is/judicial-system-web/messages/Core/defenderCaseOverview'
+import { defenderCaseOverview } from '@island.is/judicial-system-web/messages'
 import RestrictionTags from '@island.is/judicial-system-web/src/components/RestrictionTags/RestrictionTags'
-import CaseDates from '../../components/CaseDates/CaseDates'
+import CaseDates from '@island.is/judicial-system-web/src/components/CaseDates/CaseDates'
 
 interface Props {
   workingCase: Case

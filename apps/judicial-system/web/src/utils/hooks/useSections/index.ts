@@ -6,9 +6,8 @@ import {
   isRestrictionCase,
   User,
 } from '@island.is/judicial-system/types'
-import { core } from '@island.is/judicial-system-web/messages'
+import { core, sections } from '@island.is/judicial-system-web/messages'
 import { caseResult } from '@island.is/judicial-system-web/src/components/PageLayout/utils'
-import { sections } from '@island.is/judicial-system-web/messages/Core/sections'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import * as Constants from '@island.is/judicial-system/consts'
 import {

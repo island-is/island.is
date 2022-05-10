@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 
 import { Box, Icon, Text } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages/Core/signedVerdictOverview'
+import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages'
 
 interface Props {
   signatory?: string
