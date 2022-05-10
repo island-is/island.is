@@ -90,15 +90,27 @@ export const answerValidators: Record<string, AnswerValidator> = {
     // if privatePensionFund is NO_PRIVATE_PENSION_FUND and privatePensionFundPercentage is an empty string, allow the user to continue.
     // this will only happen when the usePrivatePensionFund field is set to NO
     if (
-      (payments.privatePensionFund === NO_PRIVATE_PENSION_FUND &&
-        payments.privatePensionFundPercentage === '') ||
-      (privatePensionFund === NO_PRIVATE_PENSION_FUND &&
-        privatePensionFundPercentage === '')
+      payments.privatePensionFund === NO_PRIVATE_PENSION_FUND &&
+      payments.privatePensionFundPercentage === '0'
     )
       return undefined
 
-    if (payments.privatePensionFund === '' || privatePensionFund === '') {
+    if (
+      payments.privatePensionFund === '' ||
+      payments.privatePensionFund === NO_PRIVATE_PENSION_FUND
+    ) {
       return buildError(coreErrorMessages.defaultError, 'privatePensionFund')
+    }
+
+    if (
+      privatePensionFund === NO_PRIVATE_PENSION_FUND &&
+      privatePensionFundPercentage === '0' &&
+      payments.privatePensionFundPercentage === ''
+    ) {
+      return buildError(
+        coreErrorMessages.defaultError,
+        'privatePensionFundPercentage',
+      )
     }
 
     if (!payments.privatePensionFund) {
@@ -107,16 +119,16 @@ export const answerValidators: Record<string, AnswerValidator> = {
 
     // validate that the privatePensionFundPercentage is either 2 or 4 percent
     if (
-      typeof privatePensionFundPercentage === 'string' ||
-      typeof payments.privatePensionFundPercentage === 'string'
+      payments.privatePensionFundPercentage === '2' ||
+      payments.privatePensionFundPercentage === '4'
     ) {
-      if (
-        payments.privatePensionFundPercentage === '2' ||
-        payments.privatePensionFundPercentage === '4'
-      ) {
-        return undefined
-      }
+      return undefined
+    }
 
+    if (
+      payments.privatePensionFundPercentage !== '2' &&
+      payments.privatePensionFundPercentage !== '4'
+    ) {
       return buildError(
         coreErrorMessages.defaultError,
         'privatePensionFundPercentage',
