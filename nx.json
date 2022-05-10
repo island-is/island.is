@@ -169,6 +169,9 @@
     "api-domains-user-profile": {
       "tags": []
     },
+    "api-domains-vehicles": {
+      "tags": []
+    },
     "api-mocks": {
       "tags": []
     },
@@ -388,6 +391,9 @@
     "clients-user-profile": {
       "tags": [],
       "implicitDependencies": ["services-user-profile"]
+    },
+    "clients-vehicles": {
+      "tags": []
     },
     "clients-vmst": {
       "tags": []
@@ -680,6 +686,9 @@
       "tags": []
     },
     "service-portal-settings-personal-information": {
+      "tags": []
+    },
+    "service-portal-vehicles": {
       "tags": []
     },
     "service-portal-wip": {
