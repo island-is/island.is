@@ -67,11 +67,14 @@ export function getConclusionAutofill(
   workingCase: Case,
   decision: CaseDecision,
   defendant: Defendant,
+  validToDate?: string,
+  isCustodyIsolation?: boolean,
+  isolationToDate?: string,
 ) {
   const isolationEndsBeforeValidToDate =
-    workingCase.validToDate &&
-    workingCase.isolationToDate &&
-    new Date(workingCase.validToDate) > new Date(workingCase.isolationToDate)
+    validToDate &&
+    isolationToDate &&
+    new Date(validToDate) > new Date(isolationToDate)
 
   const accusedSuffix = defendant.gender === Gender.MALE ? 'i' : 'a'
 
@@ -124,17 +127,17 @@ export function getConclusionAutofill(
           decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
             ? CaseType.TRAVEL_BAN
             : workingCase.type,
-        validToDate: `${formatDate(workingCase.validToDate, 'PPPPp')
+        validToDate: `${formatDate(validToDate, 'PPPPp')
           ?.replace('dagur,', 'dagsins')
           ?.replace(' kl.', ', kl.')}`,
         hasIsolation:
-          isAcceptingCaseDecision(decision) && workingCase.isCustodyIsolation
+          isAcceptingCaseDecision(decision) && isCustodyIsolation
             ? 'yes'
             : 'no',
         isolationEndsBeforeValidToDate: isolationEndsBeforeValidToDate
           ? 'yes'
           : 'no',
-        isolationToDate: formatDate(workingCase.isolationToDate, 'PPPPp')
+        isolationToDate: formatDate(isolationToDate, 'PPPPp')
           ?.replace('dagur,', 'dagsins')
           ?.replace(' kl.', ', kl.'),
       })
@@ -194,10 +197,6 @@ export const Ruling: React.FC = () => {
             value: workingCase.demands,
           },
           {
-            key: 'validToDate',
-            value: workingCase.requestedValidToDate,
-          },
-          {
             key: 'isolationToDate',
             value: workingCase.validToDate,
           },
@@ -243,6 +242,7 @@ export const Ruling: React.FC = () => {
                     workingCase,
                     workingCase.decision,
                     workingCase.defendants[0],
+                    workingCase.validToDate,
                   )
                 : undefined,
           },
@@ -623,6 +623,8 @@ export const Ruling: React.FC = () => {
                     workingCase.decision &&
                     workingCase.defendants &&
                     workingCase.defendants.length > 0 &&
+                    date &&
+                    valid &&
                     (isAcceptingCaseDecision(workingCase.decision) ||
                       workingCase.decision ===
                         CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN)
@@ -632,6 +634,9 @@ export const Ruling: React.FC = () => {
                       workingCase,
                       workingCase.decision,
                       workingCase.defendants[0],
+                      formatISO(date),
+                      workingCase.isCustodyIsolation,
+                      workingCase.isolationToDate,
                     )
                   }
 
@@ -698,6 +703,9 @@ export const Ruling: React.FC = () => {
                           workingCase,
                           workingCase.decision,
                           workingCase.defendants[0],
+                          workingCase.validToDate,
+                          !workingCase.isCustodyIsolation,
+                          workingCase.isolationToDate,
                         )
                       }
 
@@ -747,6 +755,8 @@ export const Ruling: React.FC = () => {
                       workingCase.decision &&
                       workingCase.defendants &&
                       workingCase.defendants.length > 0 &&
+                      date &&
+                      valid &&
                       (isAcceptingCaseDecision(workingCase.decision) ||
                         workingCase.decision ===
                           CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN)
@@ -756,6 +766,9 @@ export const Ruling: React.FC = () => {
                         workingCase,
                         workingCase.decision,
                         workingCase.defendants[0],
+                        workingCase.validToDate,
+                        workingCase.isCustodyIsolation,
+                        formatISO(date),
                       )
                     }
 

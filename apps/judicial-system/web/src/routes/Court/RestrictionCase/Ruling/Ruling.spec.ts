@@ -22,7 +22,19 @@ describe('getConclusionAutofill', () => {
     theCase: Case,
     decision: CaseDecision,
     defendant = defentantBase,
-  ) => getConclusionAutofill(intl.formatMessage, theCase, decision, defendant)
+    validToDate?: string,
+    isCustodyIsolation = false,
+    isolationToDate?: string,
+  ) =>
+    getConclusionAutofill(
+      intl.formatMessage,
+      theCase,
+      decision,
+      defendant,
+      validToDate,
+      isCustodyIsolation,
+      isolationToDate,
+    )
 
   describe('dismissing decision', () => {
     const decision = CaseDecision.DISMISSING
@@ -129,18 +141,14 @@ describe('getConclusionAutofill', () => {
 
   describe('accepting decision', () => {
     const decision = CaseDecision.ACCEPTING
-    const baseCase = {
-      validToDate: '2020-01-01T12:31:00Z',
-    } as Case
+    const validToDate = '2020-01-01T12:31:00Z'
 
     it('should format custody case', () => {
       const theCase = {
-        ...baseCase,
-        defendants: [{ ...defentantBase }],
         type: CaseType.CUSTODY,
       } as Case
 
-      const result = fn(theCase, decision)
+      const result = fn(theCase, decision, defentantBase, validToDate)
 
       expect(result).toEqual(
         'Kærða, Blær, skal sæta gæsluvarðhaldi, þó ekki lengur en til miðvikudagsins 1. janúar 2020, kl. 12:31.',
@@ -148,18 +156,23 @@ describe('getConclusionAutofill', () => {
     })
 
     it('should format custody case with isolation', () => {
+      const isCustodyIsolation = true
+      const isolationToDate = '2020-01-01T12:00:00Z'
       const theCase = {
-        ...baseCase,
-        defendants: [{ ...defentantBase }],
         type: CaseType.CUSTODY,
-        isCustodyIsolation: true,
-        isolationToDate: '2020-01-01T12:30:00Z',
       } as Case
 
-      const result = fn(theCase, decision)
+      const result = fn(
+        theCase,
+        decision,
+        defentantBase,
+        validToDate,
+        isCustodyIsolation,
+        isolationToDate,
+      )
 
       expect(result).toEqual(
-        'Kærða, Blær, skal sæta gæsluvarðhaldi, þó ekki lengur en til miðvikudagsins 1. janúar 2020, kl. 12:31. Kærða skal sæta einangrun ekki lengur en til miðvikudagsins 1. janúar 2020, kl. 12:30.',
+        'Kærða, Blær, skal sæta gæsluvarðhaldi, þó ekki lengur en til miðvikudagsins 1. janúar 2020, kl. 12:31. Kærða skal sæta einangrun ekki lengur en til miðvikudagsins 1. janúar 2020, kl. 12:00.',
       )
     })
 
@@ -168,14 +181,20 @@ describe('getConclusionAutofill', () => {
         ...defentantBase,
         gender: Gender.MALE,
       }
+      const isCustodyIsolation = true
+      const isolationToDate = '2020-01-01T12:31:00Z'
       const theCase = {
-        ...baseCase,
         type: CaseType.ADMISSION_TO_FACILITY,
-        isCustodyIsolation: true,
-        isolationToDate: '2020-01-01T12:31:00Z',
       } as Case
 
-      const result = fn(theCase, decision, defendant)
+      const result = fn(
+        theCase,
+        decision,
+        defendant,
+        validToDate,
+        isCustodyIsolation,
+        isolationToDate,
+      )
 
       expect(result).toEqual(
         'Kærði, Blær, skal sæta vistun á viðeigandi stofnun, þó ekki lengur en til miðvikudagsins 1. janúar 2020, kl. 12:31. Kærði skal sæta einangrun á meðan á vistunni stendur.',
@@ -189,14 +208,20 @@ describe('getConclusionAutofill', () => {
         noNationalId: false,
         nationalId: '0000000000',
       }
+      const isCustodyIsolation = true
+      const isolationToDate = '2020-01-01T12:31:00Z'
       const theCase = {
-        ...baseCase,
         type: CaseType.ADMISSION_TO_FACILITY,
-        isCustodyIsolation: true,
-        isolationToDate: '2020-01-01T12:31:00Z',
       } as Case
 
-      const result = fn(theCase, decision, defendant)
+      const result = fn(
+        theCase,
+        decision,
+        defendant,
+        validToDate,
+        isCustodyIsolation,
+        isolationToDate,
+      )
 
       expect(result).toEqual(
         'Kærða, Blær, kt. 000000-0000, skal sæta vistun á viðeigandi stofnun, þó ekki lengur en til miðvikudagsins 1. janúar 2020, kl. 12:31. Kærða skal sæta einangrun á meðan á vistunni stendur.',
@@ -206,19 +231,16 @@ describe('getConclusionAutofill', () => {
 
   describe('accepting alternative travel ban', () => {
     const decision = CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-    const baseCase = {
-      validToDate: '2020-01-01T12:31:00Z',
-    } as Case
+    const validToDate = '2020-01-01T12:31:00Z'
 
     it('should format as non extended travel ban case', () => {
       const defendant = { ...defentantBase, gender: Gender.MALE }
       const theCase = {
-        ...baseCase,
         type: CaseType.CUSTODY,
         parentCase: { decision: CaseDecision.ACCEPTING } as Case,
       } as Case
 
-      const result = fn(theCase, decision, defendant)
+      const result = fn(theCase, decision, defendant, validToDate)
 
       expect(result).toEqual(
         'Kærði, Blær, skal sæta farbanni, þó ekki lengur en til miðvikudagsins 1. janúar 2020, kl. 12:31.',
@@ -227,12 +249,10 @@ describe('getConclusionAutofill', () => {
 
     it('should format custody case as travel ban case', () => {
       const theCase = {
-        ...baseCase,
-        defendants: [{ ...defentantBase }],
         type: CaseType.CUSTODY,
       } as Case
 
-      const result = fn(theCase, decision)
+      const result = fn(theCase, decision, defentantBase, validToDate)
 
       expect(result).toEqual(
         'Kærða, Blær, skal sæta farbanni, þó ekki lengur en til miðvikudagsins 1. janúar 2020, kl. 12:31.',

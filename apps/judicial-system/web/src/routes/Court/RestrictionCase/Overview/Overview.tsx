@@ -54,6 +54,10 @@ export const JudgeOverview: React.FC = () => {
               ? workingCase.parentCase.ruling
               : undefined,
           },
+          {
+            key: 'validToDate',
+            value: workingCase.requestedValidToDate,
+          },
         ],
         workingCase,
         setWorkingCase,
