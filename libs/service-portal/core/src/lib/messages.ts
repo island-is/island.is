@@ -539,7 +539,7 @@ export const m = defineMessages({
   },
   religion: {
     id: 'service.portal:religion',
-    defaultMessage: 'Trúfélag / lífsskoðunarfélag',
+    defaultMessage: 'Lífsskoðunarfélag',
   },
   goBack: {
     id: 'service.portal:go-back',

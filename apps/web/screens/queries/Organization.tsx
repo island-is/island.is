@@ -28,6 +28,8 @@ export const GET_ORGANIZATION_QUERY = gql`
     getOrganization(input: $input) {
       id
       slug
+      email
+      phone
       title
       logo {
         title
@@ -100,8 +102,11 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
         }
       }
       organization {
+        id
         title
         slug
+        email
+        phone
         logo {
           url
         }

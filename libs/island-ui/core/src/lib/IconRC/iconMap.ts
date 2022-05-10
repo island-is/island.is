@@ -63,6 +63,7 @@ export type Icon =
   | 'bookmark'
   | 'share'
   | 'QRCode'
+  | 'globe'
 
 export default {
   filled: {
@@ -129,6 +130,7 @@ export default {
     bookmark: 'Bookmark',
     share: 'Share',
     QRCode: 'QRCodeOutline',
+    globe: 'Globe',
   },
   outline: {
     accessibility: 'AccessibilityOutline',
@@ -194,5 +196,6 @@ export default {
     bookmark: 'BookmarkOutline',
     share: 'ShareOutline',
     QRCode: 'QRCodeOutline',
+    globe: 'Globe',
   },
 }

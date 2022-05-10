@@ -118,6 +118,7 @@ export class DrivingLicenseSubmissionService {
       'B-full'
 
     const needsHealthCert = calculateNeedsHealthCert(answers.healthDeclaration)
+    const healthRemarks = answers.hasHealthRemarks === 'yes'
     const needsQualityPhoto = answers.willBringQualityPhoto === 'yes'
     const juristictionId = answers.juristiction
     const teacher = answers.drivingInstructor as string
@@ -127,7 +128,7 @@ export class DrivingLicenseSubmissionService {
     if (applicationFor === 'B-full') {
       return this.drivingLicenseService.newDrivingLicense(nationalId, {
         juristictionId: juristictionId as number,
-        needsToPresentHealthCertificate: needsHealthCert,
+        needsToPresentHealthCertificate: needsHealthCert || healthRemarks,
         needsToPresentQualityPhoto: needsQualityPhoto,
       })
     } else if (applicationFor === 'B-temp') {

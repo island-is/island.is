@@ -41,6 +41,11 @@ export const m = defineMessages({
     defaultMessage: 'Upplýsingar um ökunema',
     description: 'Student info section title',
   },
+  studentInfoSubtitle: {
+    id: 'dsc.application:studentInfoSubtitle',
+    defaultMessage: 'Sláðu inn kennitölu og netfang ökunema',
+    description: 'Student info section subtitle',
+  },
   studentInfoNationalId: {
     id: 'dsc.application:studentInfoNationalId',
     defaultMessage: 'Kennitala umsækjanda',
@@ -113,11 +118,27 @@ export const m = defineMessages({
     defaultMessage: 'Ökuskóli',
     description: 'school',
   },
+  confirmSchoolButton: {
+    id: 'dsc.application:confirmSchoolButton',
+    defaultMessage: 'Staðfesta skráningu',
+    description: 'school',
+  },
 
-  /* No student was found */
-  noStudentFoundMessage: {
-    id: 'dsc.application:noStudentFoundMessage',
-    defaultMessage: 'Enginn nemandi fannst. Reyndu aftur',
+  /* Errors */
+  noStudentInfoFoundMessage: {
+    id: 'dsc.application:noStudentInfoFoundMessage',
+    defaultMessage:
+      'Tókst ekki að sækja upplýsingar um nemanda. Vinsamlegast reynið aftur síðar',
     description: 'No student found alert message',
+  },
+  noStudentFoundForGivenNationalIdMessage: {
+    id: 'dsc.application:noStudentFoundForGivenNationalIdMessage',
+    defaultMessage: 'Tókst ekki að sækja nafn út frá þessari kennitölu.',
+    description: 'No name for given national Id',
+  },
+  invalidNationalIdValue: {
+    id: 'an.application:error.invalidNationalIdValue',
+    defaultMessage: 'Kennitala er ekki á réttu sniðmáti',
+    description: 'Error message when a value is invalid.',
   },
 })

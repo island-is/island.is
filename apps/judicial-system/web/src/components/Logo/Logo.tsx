@@ -5,7 +5,11 @@ import LandWightsLogo from './LandWightsLogo'
 
 import * as styles from './Logo.css'
 
-const Logo: React.FC = () => {
+interface Props {
+  defaultInstitution?: string
+}
+
+const Logo: React.FC<Props> = ({ defaultInstitution = '' }) => {
   const { user } = useContext(UserContext)
 
   return (
@@ -13,7 +17,9 @@ const Logo: React.FC = () => {
       <Box marginRight={2}>
         <LandWightsLogo />
       </Box>
-      <p className={styles.logoText}>{user?.institution?.name ?? ''}</p>
+      <p className={styles.logoText}>
+        {user?.institution?.name ?? defaultInstitution}
+      </p>
     </div>
   )
 }

@@ -302,5 +302,5 @@ ServiceWebFormsPage.getInitialProps = async ({
 
 export default withMainLayout(ServiceWebFormsPage, {
   showHeader: false,
-  showFooter: false,
+  footerVersion: 'organization',
 })

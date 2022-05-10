@@ -27,7 +27,6 @@ import {
 import {
   capitalize,
   caseTypes,
-  formatCustodyRestrictions,
   formatDate,
 } from '@island.is/judicial-system/formatters'
 import {
@@ -64,6 +63,7 @@ import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
 import * as Constants from '@island.is/judicial-system/consts'
 
 import { isCourtRecordStepValidRC } from '../../../../utils/validate'
+import { formatCustodyRestrictions } from '../../../../utils/restrictions'
 
 export const CourtRecord: React.FC = () => {
   const {
@@ -208,9 +208,9 @@ export const CourtRecord: React.FC = () => {
             `${
               isAcceptingCaseDecision(workingCase.decision)
                 ? `${formatCustodyRestrictions(
+                    formatMessage,
+                    workingCase.type,
                     workingCase.requestedCustodyRestrictions,
-                    workingCase.isCustodyIsolation,
-                    true,
                   )}\n\n`
                 : ''
             }${formatMessage(m.sections.custodyRestrictions.disclaimerV2, {
@@ -228,15 +228,13 @@ export const CourtRecord: React.FC = () => {
           m.sections.sessionBookings.autofillPresentationsTravelBan,
         )}`
 
-        if (isAcceptingCaseDecision(workingCase.decision)) {
+        if (
+          isAcceptingCaseDecision(workingCase.decision) &&
+          workingCase.requestedOtherRestrictions
+        ) {
           autofill(
             'endOfSessionBookings',
-            `${
-              workingCase.requestedOtherRestrictions &&
-              `${workingCase.requestedOtherRestrictions}\n\n`
-            }${formatMessage(m.sections.custodyRestrictions.disclaimerV2, {
-              caseType: workingCase.type,
-            })}`,
+            workingCase.requestedOtherRestrictions,
             workingCase,
           )
         }
