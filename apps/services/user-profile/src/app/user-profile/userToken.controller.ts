@@ -79,15 +79,18 @@ export class UserTokenController {
           type: 'string',
           description: 'ID of the animal',
         },
-      }
+      },
     },
   })
   async notifyViaMagicBell(
     @Param('nationalId')
     nationalId: string,
-    @Body() createNotificationDto: CreateNotificationDto
+    @Body() createNotificationDto: CreateNotificationDto,
   ): Promise<{}> {
-    return await this.userProfileService.notifyViaMagicBell(nationalId,createNotificationDto)
+    return await this.userProfileService.notifyViaMagicBell(
+      nationalId,
+      createNotificationDto,
+    )
   }
 
   // maybe do this if we have time ................
@@ -105,14 +108,17 @@ export class UserTokenController {
           type: 'string',
           description: 'ID of the animal',
         },
-      }
+      },
     },
   })
   async notifyViaOneSignal(
     @Param('nationalId')
     nationalId: string,
-    @Body() createNotificationDto: CreateNotificationDto
+    @Body() createNotificationDto: CreateNotificationDto,
   ): Promise<{}> {
-    return await this.userProfileService.notifyViaOneSignal(nationalId, createNotificationDto)
+    return await this.userProfileService.notifyViaOneSignal(
+      nationalId,
+      createNotificationDto,
+    )
   }
 }

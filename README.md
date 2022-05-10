@@ -1,4 +1,5 @@
 # PROOF OF CONCEPT - - UP AND RUNNING
+
 envs:
 MAGICBELL_API_KEY
 MAGICBELL_API_SECRET
@@ -14,10 +15,7 @@ frontend: http://localhost:4200/
 -yarn start service-portal
 
 backend:http://localhost:3366/
--yarn start services-user-profile 
-
-
-
+-yarn start services-user-profile
 
 # Ísland.is
 

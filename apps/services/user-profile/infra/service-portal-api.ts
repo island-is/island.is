@@ -29,8 +29,7 @@ export const serviceSetup = (): ServiceBuilder<'service-portal-api'> =>
       MAGICBELL_API_KEY: '/k8s/services-user-profile/MAGICBELL_API_KEY',
       MAGICBELL_API_SECRET: '/k8s/services-user-profile/MAGICBELL_API_SECRET',
       ONESIGNAL_API_KEY: '/k8s/services-user-profile/ONESIGNAL_API_KEY',
-      ONESIGNAL_APP_ID: '/k8s/services-user-profile/ONESIGNAL_APP_ID'
-
+      ONESIGNAL_APP_ID: '/k8s/services-user-profile/ONESIGNAL_APP_ID',
     })
     .initContainer({
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],

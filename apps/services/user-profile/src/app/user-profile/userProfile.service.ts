@@ -97,44 +97,50 @@ export class UserProfileService {
     }
   }
 
-  async notifyViaMagicBell(nationalId: string, createNotificationDto:CreateNotificationDto) {
+  async notifyViaMagicBell(
+    nationalId: string,
+    createNotificationDto: CreateNotificationDto,
+  ) {
     MagicBellClient.configure({
       apiKey: environment.notification.magicBell.apiKey,
       apiSecret: environment.notification.magicBell.apiSecret,
     })
-    console.log("Got client:", MagicBellClient)
+    console.log('Got client:', MagicBellClient)
     try {
       const notification = await Notification.create({
         ...createNotificationDto,
-        category: "new_message",
+        category: 'new_message',
         recipients: [{ external_id: nationalId }],
       })
-      console.log("Got notification response:", notification)
+      console.log('Got notification response:', notification)
       return { notification }
     } catch (e) {
       throw new BadRequestException(e.errors)
     }
   }
 
-  async notifyViaOneSignal(nationalId: string, createNotificationDto:CreateNotificationDto) {
+  async notifyViaOneSignal(
+    nationalId: string,
+    createNotificationDto: CreateNotificationDto,
+  ) {
     const client = new OneSignal.Client(
       process.env.ONESIGNAL_APP_ID ?? '',
       process.env.ONESIGNAL_API_KEY ?? '',
     )
-    console.log("Got client:", client)
+    console.log('Got client:', client)
     const notification = await client
       .createNotification({
         headings: {
           is: createNotificationDto.title,
         },
         contents: {
-          is: createNotificationDto.content
+          is: createNotificationDto.content,
         },
         include_external_user_ids: [nationalId],
         web_url: createNotificationDto.action_url,
       })
       .then((res) => res.body)
-    console.log("Got notification response:", notification)
+    console.log('Got notification response:', notification)
     return { id: notification.id } // TODO change id parameter
   }
 }

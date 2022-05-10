@@ -25,16 +25,16 @@ const devConfig = {
     issuer: 'https://identity-server.dev01.devland.is',
     audience: '@island.is',
   },
-  notification:{
-    magicBell:{
+  notification: {
+    magicBell: {
       apiKey: process.env.MAGICBELL_API_KEY ?? '',
       apiSecret: process.env.MAGICBELL_API_SECRET ?? '',
     },
-    oneSignal:{
+    oneSignal: {
       apiKey: process.env.MAGICBELL_API_KEY ?? '',
       apiSecret: process.env.MAGICBELL_API_SECRET ?? '',
-    }
-  }
+    },
+  },
 }
 
 const prodConfig = {
@@ -65,16 +65,16 @@ const prodConfig = {
     issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
     audience: '@island.is',
   },
-  notification:{
-    magicBell:{
+  notification: {
+    magicBell: {
       apiKey: process.env.MAGICBELL_API_KEY ?? '',
       apiSecret: process.env.MAGICBELL_API_SECRET ?? '',
     },
-    oneSignal:{
+    oneSignal: {
       apiKey: process.env.ONESIGNAL_API_KEY ?? '',
       appId: process.env.ONESIGNAL_APP_ID ?? '',
-    }
-  }
+    },
+  },
 }
 
 export default process.env.NODE_ENV === 'production' ? prodConfig : devConfig

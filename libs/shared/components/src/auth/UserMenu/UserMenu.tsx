@@ -121,7 +121,6 @@ export const UserMenu = ({
     initNotification()
   }, [initialized])
 
-
   return (
     <Box display="flex" position="relative" height="full">
       <Icon icon="eye" />
