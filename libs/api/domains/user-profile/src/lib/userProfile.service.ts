@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { logger } from '@island.is/logging'
 import differenceInMonths from 'date-fns/differenceInMonths'
-import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { ApolloError, ForbiddenError } from 'apollo-server-express'
 import {
   ConfirmationDtoResponse,
@@ -38,7 +37,6 @@ export class UserProfileService {
   constructor(
     private userProfileApi: UserProfileApi,
     private readonly islyklarService: IslykillService,
-    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   userProfileApiWithAuth(auth: Auth) {
@@ -208,8 +206,6 @@ export class UserProfileService {
           }) // Current version does not return the updated user in the response.
           .catch(handleError)
       }
-    } else {
-      logger.info('User profile create is feature flagged for user')
     }
 
     return userProfileResponse
