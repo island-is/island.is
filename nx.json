@@ -322,6 +322,9 @@
     "cache": {
       "tags": []
     },
+    "clients-aosh": {
+      "tags": []
+    },
     "clients-assets": {
       "tags": []
     },

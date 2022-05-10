@@ -274,6 +274,7 @@
       "@island.is/auth/react": ["libs/auth/react/src/index.ts"],
       "@island.is/auth/scopes": ["libs/auth/scopes/src/index.ts"],
       "@island.is/cache": ["libs/cache/src/index.ts"],
+      "@island.is/clients/aosh": ["libs/clients/aosh/src/index.ts"],
       "@island.is/clients/assets": ["libs/clients/assets/src/index.ts"],
       "@island.is/clients/auth-public-api": [
         "libs/clients/auth-public-api/src/index.ts"

@@ -1,0 +1,212 @@
+openapi: 3.0.1
+info:
+  title: Ver Rettindi API
+  description: Vefþjónustan vetir upplýsingar um vinnuvélaréttindi og adr réttindi einstaklinga.
+  contact:
+    name: Upplýsingatæknideild Vinnueftirlitsins
+    email: ut@ver.is
+  version: v1
+servers:
+  - url: /rettindi
+paths:
+  /api/Adr:
+    get:
+      tags:
+        - Adr
+      operationId: GetAdr
+      parameters:
+        - name: kennitala
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdrDto'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '500':
+          description: Server Error
+    options:
+      tags:
+        - Adr
+      responses:
+        '200':
+          description: Success
+  /api/Vinnuvela:
+    get:
+      tags:
+        - Vinnuvela
+      operationId: GetVinnuvela
+      parameters:
+        - name: kennitala
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VinnuvelaDto'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '500':
+          description: Server Error
+    options:
+      tags:
+        - Vinnuvela
+      responses:
+        '200':
+          description: Success
+components:
+  schemas:
+    AdrDto:
+      type: object
+      properties:
+        kennitala:
+          type: string
+          nullable: true
+        fulltNafn:
+          type: string
+          nullable: true
+        skirteinisNumer:
+          type: string
+          nullable: true
+        faedingarDagur:
+          type: string
+          nullable: true
+        rikisfang:
+          type: string
+          nullable: true
+        gildirTil:
+          type: string
+          nullable: true
+        adrRettindi:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdrRettindiDto'
+          nullable: true
+      additionalProperties: false
+    AdrHeitiDto:
+      type: object
+      properties:
+        flokkur:
+          type: string
+          nullable: true
+        heiti:
+          type: string
+          nullable: true
+      additionalProperties: false
+    AdrRettindiDto:
+      type: object
+      properties:
+        flokkur:
+          type: string
+          nullable: true
+        grunn:
+          type: boolean
+        tankar:
+          type: boolean
+        heiti:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdrHeitiDto'
+          nullable: true
+          readOnly: true
+      additionalProperties: false
+    ProblemDetails:
+      type: object
+      properties:
+        type:
+          type: string
+          nullable: true
+        title:
+          type: string
+          nullable: true
+        status:
+          type: integer
+          format: int32
+          nullable: true
+        detail:
+          type: string
+          nullable: true
+        instance:
+          type: string
+          nullable: true
+      additionalProperties: {}
+    VinnuvelaDto:
+      type: object
+      properties:
+        kennitala:
+          type: string
+          nullable: true
+        fulltNafn:
+          type: string
+          nullable: true
+        skirteinisNumer:
+          type: string
+          nullable: true
+        fyrstiUtgafuDagur:
+          type: string
+          nullable: true
+        utgafuStadur:
+          type: string
+          nullable: true
+        utgafuLand:
+          type: string
+          nullable: true
+        okuskirteinisNumer:
+          type: string
+          nullable: true
+        vinnuvelaRettindi:
+          type: array
+          items:
+            $ref: '#/components/schemas/VinnuvelaRettindiDto'
+          nullable: true
+      additionalProperties: false
+    VinnuvelaRettindiDto:
+      type: object
+      properties:
+        flokkur:
+          type: string
+          nullable: true
+        stjorna:
+          type: string
+          nullable: true
+        kenna:
+          type: string
+          nullable: true
+        fulltHeiti:
+          type: string
+          nullable: true
+          readOnly: true
+        stuttHeiti:
+          type: string
+          nullable: true
+          readOnly: true
+      additionalProperties: false
