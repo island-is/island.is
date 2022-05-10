@@ -90,10 +90,8 @@ export const answerValidators: Record<string, AnswerValidator> = {
     // if privatePensionFund is NO_PRIVATE_PENSION_FUND and privatePensionFundPercentage is an empty string, allow the user to continue.
     // this will only happen when the usePrivatePensionFund field is set to NO
     if (
-      (payments.privatePensionFund === NO_PRIVATE_PENSION_FUND &&
-        payments.privatePensionFundPercentage === '') ||
-      (privatePensionFund === NO_PRIVATE_PENSION_FUND &&
-        privatePensionFundPercentage === '')
+      payments.privatePensionFund === NO_PRIVATE_PENSION_FUND &&
+      payments.privatePensionFundPercentage === ''
     )
       return undefined
 
