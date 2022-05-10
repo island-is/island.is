@@ -51,7 +51,7 @@ import * as Constants from '@island.is/judicial-system/consts'
 import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 import AppealSection from './Components/AppealSection/AppealSection'
 import { SignedDocument } from './Components/SignedDocument'
-import CaseDates from './Components/CaseDates/CaseDates'
+import CaseDates from '@island.is/judicial-system-web/src/components/CaseDates/CaseDates'
 import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
 import RestrictionTags from '@island.is/judicial-system-web/src/components/RestrictionTags/RestrictionTags'
 

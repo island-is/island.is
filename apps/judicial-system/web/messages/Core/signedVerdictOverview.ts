@@ -407,28 +407,5 @@ export const signedVerdictOverview = {
           'Notaður sem upplýsingatexti á info búbblu hjá framlengja mál takka',
       },
     }),
-    caseDates: defineMessages({
-      restrictionExpired: {
-        id:
-          'judicial.system.core:signed_verdict_overview.case_dates.restriction_expired',
-        defaultMessage:
-          '{caseType, select, ADMISSION_TO_FACILITY {Vistun} TRAVEL_BAN {Farbann} other {Gæsla}} rann út {date}',
-        description: 'Texti sem tilgreinir hvenær gæsla/vistun/farbann rann út',
-      },
-      restrictionValidTo: {
-        id:
-          'judicial.system.core:signed_verdict_overview.case_dates.restriction_valid_to',
-        defaultMessage:
-          '{caseType, select, ADMISSION_TO_FACILITY {Vistun} TRAVEL_BAN {Farbann} other {Gæsla}} til {date}',
-        description:
-          'Texti sem tilgreinir hversu lengi gæsla/vistun/farbann er í gildi',
-      },
-      isolationValidTo: {
-        id:
-          'judicial.system.core:signed_verdict_overview.case_dates.isolation_valid_to',
-        defaultMessage: 'Einangrun til {date}',
-        description: 'Texti sem tilgreinir hversu lengi einangrun er í gildi',
-      },
-    }),
   },
 }

@@ -10,11 +10,13 @@ import {
   CaseType,
   completedCaseStates,
   isInvestigationCase,
+  isRestrictionCase,
 } from '@island.is/judicial-system/types'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 import { defenderCaseOverview } from '@island.is/judicial-system-web/messages/Core/defenderCaseOverview'
 import RestrictionTags from '@island.is/judicial-system-web/src/components/RestrictionTags/RestrictionTags'
+import CaseDates from '../../components/CaseDates/CaseDates'
 
 interface Props {
   workingCase: Case
@@ -100,6 +102,11 @@ const CaseOverviewForm: React.FC<Props> = (props) => {
             </Box>
           )}
         </Box>
+        {completedCaseStates.includes(workingCase.state) &&
+          isRestrictionCase(workingCase.type) &&
+          workingCase.state === CaseState.ACCEPTED && (
+            <CaseDates workingCase={workingCase} />
+          )}
       </Box>
     </FormContentContainer>
   )
