@@ -106,7 +106,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           'setOtherParentIdIfSelectedSpouse',
           'clearPersonalAllowanceIfUsePersonalAllowanceIsNo',
           'clearSpouseAllowanceIfUseSpouseAllowanceIsNo',
-          'clearPrivatePensionIfUsePrivatePensionIsNo',
+          'setPrivatePensionValuesIfUsePrivatePensionFundIsNO',
         ],
         meta: {
           name: States.DRAFT,
@@ -724,23 +724,27 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
         return context
       }),
-
-      clearPrivatePensionIfUsePrivatePensionIsNo: assign((context) => {
+      setPrivatePensionValuesIfUsePrivatePensionFundIsNO: assign((context) => {
         const { application } = context
 
         const answers = getApplicationAnswers(application.answers)
 
         if (
           answers.usePrivatePensionFund === NO &&
-          (answers.privatePensionFund !== NO_PRIVATE_PENSION_FUND ||
-            answers.privatePensionFundPercentage !== '')
+          answers.privatePensionFund !== NO_PRIVATE_PENSION_FUND
         ) {
           set(
             application.answers,
             'payments.privatePensionFund',
             NO_PRIVATE_PENSION_FUND,
           )
-          set(application.answers, 'payments.privatePensionFundPercentage', '')
+        }
+
+        if (
+          answers.usePrivatePensionFund === NO &&
+          answers.privatePensionFundPercentage !== '0'
+        ) {
+          set(application.answers, 'payments.privatePensionFundPercentage', '0')
         }
 
         return context
