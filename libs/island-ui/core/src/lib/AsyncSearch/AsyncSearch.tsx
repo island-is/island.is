@@ -322,7 +322,7 @@ export const AsyncSearchInput = forwardRef<
           [styles.white]: whiteColorScheme,
         })}
       >
-        <Input color={inputColor} {...inputProps} isOpen={isOpen} ref={ref} />
+        <Input {...inputProps} color={inputColor} isOpen={isOpen} ref={ref} />
         {!loading ? (
           <button
             className={cn(styles.icon, styles.iconSizes[size], {
