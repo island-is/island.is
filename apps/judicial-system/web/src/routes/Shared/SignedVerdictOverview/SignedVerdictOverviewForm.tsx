@@ -114,7 +114,9 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
   const router = useRouter()
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
-  const { prosecutorsOffices } = useInstitution()
+
+  // skip loading institutions if the user does not have an id
+  const { prosecutorsOffices } = useInstitution(!user?.id)
 
   /**
    * If the case is not rejected it must be accepted because
@@ -171,15 +173,17 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
   return (
     <FormContentContainer>
       <Box marginBottom={5}>
-        <Box marginBottom={3}>
-          <Button
-            variant="text"
-            preTextIcon="arrowBack"
-            onClick={() => router.push(Constants.CASE_LIST_ROUTE)}
-          >
-            Til baka
-          </Button>
-        </Box>
+        {user?.role !== UserRole.DEFENDER && (
+          <Box marginBottom={3}>
+            <Button
+              variant="text"
+              preTextIcon="arrowBack"
+              onClick={() => router.push(Constants.CASE_LIST_ROUTE)}
+            >
+              Til baka
+            </Button>
+          </Box>
+        )}
         <Box display="flex" justifyContent="spaceBetween" marginBottom={3}>
           <Box>
             <Box marginBottom={1}>
@@ -245,10 +249,10 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
                 (workingCase.decision === CaseDecision.ACCEPTING ||
                   workingCase.decision === CaseDecision.ACCEPTING_PARTIALLY) &&
                 workingCase.requestedCustodyRestrictions
-                  ?.filter((restriction) =>
-                    [
-                      CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION,
-                    ].includes(restriction),
+                  ?.filter(
+                    (restriction) =>
+                      CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION ===
+                      restriction,
                   )
                   ?.map((custodyRestriction, index) => (
                     <Box marginTop={index > 0 ? 1 : 0} key={index}>
@@ -372,26 +376,28 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
         )}
       {user?.role !== UserRole.STAFF && (
         <>
-          <Box marginBottom={5} data-testid="accordionItems">
-            <Accordion>
-              <PoliceRequestAccordionItem workingCase={workingCase} />
-              <CourtRecordAccordionItem workingCase={workingCase} />
-              <RulingAccordionItem workingCase={workingCase} />
-              {user && (
-                <CaseFilesAccordionItem
-                  workingCase={workingCase}
-                  setWorkingCase={setWorkingCase}
-                  user={user}
-                />
-              )}
-              {(workingCase.comments ||
-                workingCase.caseFilesComments ||
-                workingCase.caseResentExplanation) && (
-                <CommentsAccordionItem workingCase={workingCase} />
-              )}
-            </Accordion>
-          </Box>
-          <Box marginBottom={7}>
+          {user?.role !== UserRole.DEFENDER && (
+            <Box marginBottom={5} data-testid="accordionItems">
+              <Accordion>
+                <PoliceRequestAccordionItem workingCase={workingCase} />
+                <CourtRecordAccordionItem workingCase={workingCase} />
+                <RulingAccordionItem workingCase={workingCase} />
+                {user && (
+                  <CaseFilesAccordionItem
+                    workingCase={workingCase}
+                    setWorkingCase={setWorkingCase}
+                    user={user}
+                  />
+                )}
+                {(workingCase.comments ||
+                  workingCase.caseFilesComments ||
+                  workingCase.caseResentExplanation) && (
+                  <CommentsAccordionItem workingCase={workingCase} />
+                )}
+              </Accordion>
+            </Box>
+          )}
+          <Box marginBottom={6}>
             <BlueBox>
               <Box marginBottom={2} textAlign="center">
                 <Text as="h3" variant="h3">
@@ -422,24 +428,33 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
               <PdfRow
                 caseId={workingCase.id}
                 title={formatMessage(core.pdfButtonRequest)}
-                pdfType="request"
+                pdfType={
+                  user?.role === UserRole.DEFENDER
+                    ? 'request/restricted'
+                    : 'request'
+                }
               />
             )}
-            {showCustodyNotice(
-              workingCase.type,
-              workingCase.state,
-              workingCase.decision,
-            ) && (
-              <PdfRow
-                caseId={workingCase.id}
-                title={formatMessage(core.pdfButtonCustodyNotice)}
-                pdfType="custodyNotice"
-              />
-            )}
+            {user?.role !== UserRole.DEFENDER &&
+              showCustodyNotice(
+                workingCase.type,
+                workingCase.state,
+                workingCase.decision,
+              ) && (
+                <PdfRow
+                  caseId={workingCase.id}
+                  title={formatMessage(core.pdfButtonCustodyNotice)}
+                  pdfType="custodyNotice"
+                />
+              )}
             <PdfRow
               caseId={workingCase.id}
               title={formatMessage(core.pdfButtonRulingShortVersion)}
-              pdfType="courtRecord"
+              pdfType={
+                user?.role === UserRole.DEFENDER
+                  ? 'courtRecord/restricted'
+                  : 'courtRecord'
+              }
             >
               {workingCase.courtRecordSignatory ? (
                 <SignedDocument
@@ -465,7 +480,11 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
               <PdfRow
                 caseId={workingCase.id}
                 title={formatMessage(core.pdfButtonRuling)}
-                pdfType="ruling"
+                pdfType={
+                  user?.role === UserRole.DEFENDER
+                    ? 'ruling/restricted'
+                    : 'ruling'
+                }
               >
                 <SignedDocument
                   signatory={workingCase.judge?.name}
@@ -478,7 +497,8 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
         <Divider />
       </Box>
       {user?.role === UserRole.PROSECUTOR &&
-        user.institution?.id === workingCase.prosecutor?.institution?.id &&
+        user.institution?.id ===
+          workingCase.creatingProsecutor?.institution?.id &&
         isRestrictionCase(workingCase.type) && (
           <Box marginBottom={9}>
             <Box marginBottom={3}>

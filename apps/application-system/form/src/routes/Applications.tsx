@@ -15,12 +15,8 @@ import {
 } from '@island.is/island-ui/core'
 import { coreMessages, getTypeFromSlug } from '@island.is/application/core'
 import { ApplicationList } from '@island.is/application/ui-components'
-import { ErrorShell, DelegationsScreen } from '@island.is/application/ui-shell'
-import {
-  useApplicationNamespaces,
-  useLocale,
-  useLocalizedQuery,
-} from '@island.is/localization'
+import { ErrorShell, DelegationsScreen, useApplicationNamespaces } from '@island.is/application/ui-shell'
+import { useLocale, useLocalizedQuery } from '@island.is/localization'
 
 import { ApplicationLoading } from '../components/ApplicationsLoading/ApplicationLoading'
 import {

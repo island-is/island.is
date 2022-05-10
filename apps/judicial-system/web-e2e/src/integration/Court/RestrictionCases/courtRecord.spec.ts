@@ -80,7 +80,7 @@ describe(`${COURT_RECORD_ROUTE}/:id`, () => {
     cy.getByTestid('sessionBookings').should('not.match', ':empty')
   })
 
-  it('should autofill endOfSessionBookings in accepted travel ban cases', () => {
+  it('should autofill endOfSessionBookings with requestedOtherRestrictions in accepted travel ban cases', () => {
     const caseData = makeCustodyCase()
 
     const caseDataAddition: Case = {
@@ -88,13 +88,14 @@ describe(`${COURT_RECORD_ROUTE}/:id`, () => {
       type: CaseType.TRAVEL_BAN,
       prosecutor: makeProsecutor(),
       decision: CaseDecision.ACCEPTING,
+      requestedOtherRestrictions: 'other restrictions',
     }
 
     cy.visit(`${COURT_RECORD_ROUTE}/test_id_stadfest`)
 
     intercept(caseDataAddition)
 
-    cy.getByTestid('endOfSessionBookings').should('not.match', ':empty')
+    cy.getByTestid('endOfSessionBookings').contains('other restrictions')
   })
 
   it('should require a accused and prosecutor appeal decisions to be made', () => {
