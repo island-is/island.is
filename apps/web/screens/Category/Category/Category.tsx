@@ -40,7 +40,7 @@ import {
   QueryGetLifeEventsInCategoryArgs,
   Image,
   ArticleGroup,
-} from '../../graphql/schema'
+} from '../../../graphql/schema'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { scrollTo } from '@island.is/web/hooks/useScrollSpy'

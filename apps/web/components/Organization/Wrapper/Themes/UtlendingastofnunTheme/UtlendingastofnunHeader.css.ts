@@ -1,22 +1,19 @@
 import { style } from '@vanilla-extract/css'
-import { blueberry100, themeUtils } from '@island.is/island-ui/theme'
+import { themeUtils } from '@island.is/island-ui/theme'
 
 export const headerBg = style({
   height: 385,
   marginTop: -130,
-  background: '#F6F6FD',
+  background:
+    'url(https://images.ctfassets.net/8k0h54kbe6bj/70WAintbuEXuwg8M3ab2A2/de41b5695a2c527180771048537890a5/Utlendingastofnun-Header.png)',
+  backgroundSize: 'cover',
+  backgroundPosition: 'center',
 })
 
 export const headerContainer = style({
   position: 'initial',
   paddingTop: 130,
   height: 385,
-  ...themeUtils.responsiveStyle({
-    lg: {
-      background: `url('https://images.ctfassets.net/8k0h54kbe6bj/1UwZEiLUXwiy0qyMcFQztZ/1f74ca98866e4ad7e85c45c58bf64568/image_65_shutterstock__1_.png')`,
-      backgroundRepeat: 'no-repeat !important',
-    },
-  }),
 })
 
 export const iconCircle = style({
