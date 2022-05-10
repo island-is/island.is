@@ -15,6 +15,7 @@ import { FAFieldBaseProps } from '../../lib/types'
 import useApplication from '../../lib/hooks/useApplication'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useFileUpload } from '../../lib/hooks/useFileUpload'
+import DescriptionText from '../DescriptionText/DescriptionText'
 
 const MissingFiles = ({
   application,
@@ -29,7 +30,9 @@ const MissingFiles = ({
     getValues('otherFiles'),
     application.id,
   )
+
   const [error, setError] = useState(false)
+  const [filesError, setFilesError] = useState(false)
 
   const fileComment = useMemo(() => {
     if (currentApplication?.applicationEvents) {
@@ -41,17 +44,19 @@ const MissingFiles = ({
   }, [currentApplication])
 
   useEffect(() => {
-    if (error) {
-      setError(false)
+    if (filesError) {
+      setFilesError(false)
     }
   }, [getValues('otherFiles')])
 
   setBeforeSubmitCallback &&
     setBeforeSubmitCallback(async () => {
+      setError(false)
       if (getValues('otherFiles').length <= 0) {
-        setError(true)
+        setFilesError(true)
         return [false, formatMessage(filesText.errorMessage)]
       }
+
       try {
         await uploadStateFiles(
           application.externalData.veita.data.currentApplicationId,
@@ -63,6 +68,7 @@ const MissingFiles = ({
           getValues('fileUploadComment'),
         )
       } catch (e) {
+        setError(true)
         return [false, 'Failed to upload files']
       }
       return [true, null]
@@ -86,12 +92,12 @@ const MissingFiles = ({
         </Box>
       )}
 
-      <Box marginBottom={[6, 6, 7]}>
+      <Box marginBottom={[7, 7, 8]}>
         <Files
           fileKey="otherFiles"
           uploadFiles={application.answers.otherFiles}
           folderId={application.id}
-          hasError={error}
+          hasError={filesError}
         />
       </Box>
 
@@ -126,6 +132,21 @@ const MissingFiles = ({
           />
         </Box>
       </>
+
+      {error &&
+        <>
+          <Text as="h3" variant="h4" color="red400" marginTop={[8, 8, 9]}>
+            {formatMessage(missingFiles.error.title)}
+          </Text>
+          <DescriptionText
+            textProps={{ marginTop: 1 }}
+            text={missingFiles.error.message}
+            format={{
+              email: application.externalData.nationalRegistry.data.municipality.email ?? '',
+            }}
+          />
+        </>
+      }
     </>
   )
 }
