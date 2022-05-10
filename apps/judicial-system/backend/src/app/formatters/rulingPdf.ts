@@ -56,7 +56,7 @@ function constructRulingPdf(
   setLineGap(doc, 2)
   addMediumHeading(
     doc,
-    `${title} ${formatDate(theCase.rulingDate ?? nowFactory(), 'PPP')}`,
+    `${title} ${formatDate(theCase.courtEndTime ?? nowFactory(), 'PPP')}`,
   )
   setLineGap(doc, 30)
   addMediumHeading(
