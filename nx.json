@@ -691,9 +691,6 @@
     "service-portal-vehicles": {
       "tags": []
     },
-    "service-portal-wip": {
-      "tags": []
-    },
     "services-auth-admin-api": {
       "tags": []
     },

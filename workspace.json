@@ -7843,27 +7843,6 @@
         }
       }
     },
-    "service-portal-wip": {
-      "root": "libs/service-portal/wip",
-      "sourceRoot": "libs/service-portal/wip/src",
-      "projectType": "library",
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["libs/service-portal/wip/**/*.{ts,tsx,js,jsx}"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/service-portal/wip"],
-          "options": {
-            "jestConfig": "libs/service-portal/wip/jest.config.js",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
     "services-auth-admin-api": {
       "root": "apps/services/auth-admin-api",
       "sourceRoot": "apps/services/auth-admin-api/src",

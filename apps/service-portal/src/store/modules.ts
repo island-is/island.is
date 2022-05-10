@@ -15,7 +15,6 @@ import { educationCareerModule } from '@island.is/service-portal/education-caree
 import { educationStudentAssessmentModule } from '@island.is/service-portal/education-student-assessment'
 import { applicationsModule } from '@island.is/service-portal/applications'
 import { licensesModule } from '@island.is/service-portal/licenses'
-import { wipModule } from '@island.is/service-portal/wip'
 import { vehiclesModule } from '@island.is/service-portal/vehicles'
 /**
  * NOTE:
@@ -44,7 +43,6 @@ export type ModuleKeys =
   | 'assets'
   | 'applications'
   | 'licenses'
-  | 'wip'
   | 'petitions'
   | 'vehicles'
 
@@ -61,11 +59,11 @@ export const featureFlaggedModules: ModuleKeys[] = [
 export const companyModules: ModuleKeys[] = [
   'documents',
   'applications',
-  'wip',
   'assets',
   'finance',
   // 'licenses',
   'information',
+  'vehicles',
 ]
 
 export const modules: Record<ModuleKeys, ServicePortalModule> = {
@@ -86,5 +84,4 @@ export const modules: Record<ModuleKeys, ServicePortalModule> = {
   accessControl: accessControlModule,
   licenses: licensesModule,
   vehicles: vehiclesModule,
-  wip: wipModule,
 }
