@@ -27,7 +27,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           [styles.colored]: colored,
           [styles.hasLabel]: hasLabel,
           [styles.white]: white,
-          [styles.blueberry]: blueberry,
+          [styles.blueberry]: !white && blueberry,
         })}
         ref={ref}
       />
