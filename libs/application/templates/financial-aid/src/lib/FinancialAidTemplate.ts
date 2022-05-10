@@ -27,7 +27,7 @@ import {
 } from './utils'
 import { FAApplication } from '..'
 
-type Events = { type: DefaultEvents.SUBMIT }
+type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.EDIT }
 
 const oneMonthLifeCycle = {
   shouldBeListed: true,
@@ -180,7 +180,9 @@ const FinancialAidTemplate: ApplicationTemplate<
                   Promise.resolve(module.ApplicantSubmitted),
                 ),
               read: 'all',
-              write: 'all',
+              write: {
+                answers: ['otherFiles'],
+              },
             },
             {
               id: Roles.SPOUSE,
@@ -189,12 +191,14 @@ const FinancialAidTemplate: ApplicationTemplate<
                   Promise.resolve(module.SpouseSubmitted),
                 ),
               read: 'all',
-              write: 'all',
+              write: {
+                answers: ['otherFiles'],
+              },
             },
           ],
         },
         on: {
-          SUBMIT: { target: ApplicationStates.SUBMITTED },
+          EDIT: { target: ApplicationStates.SUBMITTED },
         },
       },
       [ApplicationStates.MUNCIPALITYNOTREGISTERED]: {

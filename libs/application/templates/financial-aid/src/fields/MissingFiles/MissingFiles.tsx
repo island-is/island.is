@@ -1,18 +1,14 @@
-import React, { useMemo } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import {
-  Text,
-  Box,
-  AlertMessage,
-  Input,
-} from '@island.is/island-ui/core'
+import { Text, Box, AlertMessage, Input } from '@island.is/island-ui/core'
 import {
   ApplicationEventType,
+  FileType,
   getCommentFromLatestEvent,
 } from '@island.is/financial-aid/shared/lib'
 
-import { missingFiles } from '../../lib/messages'
+import { filesText, missingFiles } from '../../lib/messages'
 import { Files } from '..'
 import { FAFieldBaseProps } from '../../lib/types'
 import useApplication from '../../lib/hooks/useApplication'
@@ -23,13 +19,16 @@ const MissingFiles = ({
   application,
   setBeforeSubmitCallback,
 }: FAFieldBaseProps) => {
-  const { currentApplication } = useApplication(application.externalData.veita.data.currentApplicationId)
+  const { currentApplication } = useApplication(
+    application.externalData.veita.data.currentApplicationId,
+  )
   const { formatMessage } = useIntl()
   const { setValue, getValues } = useFormContext()
   const { uploadStateFiles } = useFileUpload(
     application.answers.otherFiles,
     application.id,
   )
+  const [error, setError] = useState(false)
 
   const fileComment = useMemo(() => {
     if (currentApplication?.applicationEvents) {
@@ -40,9 +39,26 @@ const MissingFiles = ({
     }
   }, [currentApplication])
 
+  useEffect(() => {
+    if (error) {
+      setError(false)
+    }
+  }, [getValues('otherFiles')])
+
   setBeforeSubmitCallback &&
     setBeforeSubmitCallback(async () => {
-      await uploadStateFiles(router.query.id as string, FileType.OTHER)
+      if (getValues('otherFiles').length <= 0) {
+        setError(true)
+        return [false, formatMessage(filesText.errorMessage)]
+      }
+      try {
+        await uploadStateFiles(
+          application.externalData.veita.data.currentApplicationId,
+          FileType.OTHER,
+        )
+      } catch (e) {
+        return [false, 'Failed to upload files']
+      }
       return [true, null]
     })
 
@@ -69,6 +85,7 @@ const MissingFiles = ({
           fileKey="otherFiles"
           uploadFiles={application.answers.otherFiles}
           folderId={application.id}
+          hasError={error}
         />
       </Box>
 

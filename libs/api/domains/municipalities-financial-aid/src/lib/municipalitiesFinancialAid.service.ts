@@ -8,7 +8,11 @@ import {
   FilesApi,
 } from '@island.is/clients/municipalities-financial-aid'
 import { FetchError } from '@island.is/clients/middlewares'
-import { CreateSignedUrlInput, MunicipalityInput } from './dto'
+import {
+  ApplicationFilesInput,
+  CreateSignedUrlInput,
+  MunicipalityInput,
+} from './dto'
 import { ApplicationInput } from './dto/application.input'
 
 @Injectable()
@@ -68,6 +72,15 @@ export class MunicipalitiesFinancialAidService {
   ) {
     return await this.applicationApiWithAuth(auth)
       .applicationControllerGetById(applicationId)
+      .catch(this.handle404)
+  }
+
+  async municipalitiesFinancialAidCreateFiles(
+    auth: Auth,
+    files: ApplicationFilesInput,
+  ) {
+    return await this.fileApiWithAuth(auth)
+      .fileControllerCreateFiles({ createFilesDto: files as any })
       .catch(this.handle404)
   }
 }

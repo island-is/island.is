@@ -17,8 +17,10 @@ export const CreateSignedUrlMutation = gql`
 `
 
 const ApplicationFilesMutation = gql`
-  mutation createApplicationFiles($input: CreateApplicationFilesInput!) {
-    createApplicationFiles(input: $input) {
+  mutation CreateMunicipalitiesFinancialAidFilesMutation(
+    $input: MunicipalitiesFinancialAidApplicationFilesInput!
+  ) {
+    createMunicipalitiesFinancialAidApplicationFiles(input: $input) {
       success
     }
   }

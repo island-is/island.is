@@ -32,7 +32,7 @@ export const ApplicantSubmitted: Form = buildForm({
           title: '',
           actions: [
             {
-              event: DefaultEvents.SUBMIT,
+              event: DefaultEvents.EDIT,
               name: m.missingFiles.general.submit,
               type: 'primary',
             },
