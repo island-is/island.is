@@ -8,7 +8,7 @@ import {
 
 import { CaseState } from '@island.is/judicial-system/types'
 
-import { CaseCompletedGuard } from '../caseCompleted.guard'
+import { CaseScheduledGuard } from '../caseScheduled.guard'
 
 interface Then {
   result: boolean
@@ -17,13 +17,13 @@ interface Then {
 
 type GivenWhenThen = () => Then
 
-describe('Case Completed Guard', () => {
+describe('Case Scheduled Guard', () => {
   const mockRequest = jest.fn()
   let givenWhenThen: GivenWhenThen
 
   beforeEach(() => {
     givenWhenThen = (): Then => {
-      const guard = new CaseCompletedGuard()
+      const guard = new CaseScheduledGuard()
       const then = {} as Then
 
       try {
@@ -57,6 +57,22 @@ describe('Case Completed Guard', () => {
     })
   })
 
+  describe('scheduled case', () => {
+    let then: Then
+
+    beforeEach(() => {
+      mockRequest.mockImplementationOnce(() => ({
+        case: { state: CaseState.RECEIVED, courtDate: new Date() },
+      }))
+
+      then = givenWhenThen()
+    })
+
+    it('should activate', () => {
+      expect(then.result).toBe(true)
+    })
+  })
+
   each`
     state
     ${CaseState.NEW}
@@ -64,7 +80,7 @@ describe('Case Completed Guard', () => {
     ${CaseState.SUBMITTED}
     ${CaseState.RECEIVED}
     ${CaseState.DELETED}
-  `.describe('uncompleted case', ({ state }) => {
+  `.describe('unscheduled case', ({ state }) => {
     let then: Then
 
     beforeEach(() => {
@@ -75,7 +91,7 @@ describe('Case Completed Guard', () => {
 
     it('should throw ForbiddenException', () => {
       expect(then.error).toBeInstanceOf(ForbiddenException)
-      expect(then.error.message).toBe('Forbidden for uncompleted cases')
+      expect(then.error.message).toBe('Forbidden for unscheduled cases')
     })
   })
 
