@@ -2,6 +2,7 @@ import { ApplicationTypes } from './ApplicationTypes'
 import { DataProviderResult } from './DataProviderResult'
 
 export enum ApplicationStatus {
+  NOT_STARTED = 'notstarted',
   IN_PROGRESS = 'inprogress',
   COMPLETED = 'completed',
   REJECTED = 'rejected',

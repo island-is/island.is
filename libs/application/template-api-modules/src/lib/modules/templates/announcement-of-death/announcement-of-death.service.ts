@@ -4,6 +4,7 @@ import type { Logger } from '@island.is/logging'
 import { TemplateApiModuleActionProps } from '../../../types'
 import {
   DataUploadResponse,
+  EstateRegistrant,
   Person,
   PersonType,
   SyslumennService,
@@ -51,9 +52,22 @@ export class AnnouncementOfDeathService {
 
     // TODO IMPORTANT: Address edge cases for multiple deceased familiy members in
     //                 the next iteration before feature flag is lifted
-    const estate = estates[0]
+    if(estates.length === 1) {
+      await this.updateEstateAnswer({application, auth}, estates[0])
+    }
+    
+    const relationOptions = (await this.syslumennService.getEstateRelations())
+      .relations
 
-    // Mark answer state
+    return {
+      success: true,
+      estates,
+      relationOptions,
+    }
+  }
+
+  async updateEstateAnswer({ application, auth }: TemplateApiModuleActionProps, estate: EstateRegistrant) {
+ // Mark answer state
     estate.assets = estate.assets.map(baseMapper)
     estate.vehicles = [
       ...estate.vehicles,
@@ -80,8 +94,6 @@ export class AnnouncementOfDeathService {
       })
       .then((response) => response.json())
 
-    const relationOptions = (await this.syslumennService.getEstateRelations())
-      .relations
 
     if ('errors' in updateApplicationResponse) {
       this.logger.error(
@@ -89,13 +101,8 @@ export class AnnouncementOfDeathService {
         updateApplicationResponse,
       )
     }
-
-    return {
-      success: true,
-      estates,
-      relationOptions,
-    }
   }
+
 
   async sendTestEmail({ application }: TemplateApiModuleActionProps) {
     await this.sharedTemplateAPIService.sendEmail(

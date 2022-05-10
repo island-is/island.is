@@ -17,9 +17,15 @@ export const sectionExistingApplication = buildSubSection({
         externalData,
         'existingApplication.data',
         [],
-      ) ?? []
+      ) ?? [] 
 
-    return existing.length > 0
+      const estates =
+      getValueViaPath<Application[]>(
+        externalData,
+        'syslumennOnEntry.data.estates',
+        [],
+      ) ?? [] 
+    return existing.length > 0 || estates?.length > 1
   },
   children: [
     buildMultiField({
