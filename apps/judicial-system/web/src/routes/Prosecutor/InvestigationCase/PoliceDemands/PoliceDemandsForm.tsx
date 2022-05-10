@@ -158,7 +158,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
                 year: new Date().getFullYear(),
               }),
             })
-          : ''
+          : undefined
 
         autofill(
           [{ key: 'demands', value: courtClaimText }],
