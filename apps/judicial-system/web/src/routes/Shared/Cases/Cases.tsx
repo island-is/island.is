@@ -42,7 +42,7 @@ export const Cases: React.FC = () => {
   const { user } = useContext(UserContext)
   const {
     findLastValidStep,
-    getCourtSections,
+    getRestrictionCaseCourtSections,
     getInvestigationCaseCourtSections,
     getRestrictionCaseProsecutorSection,
     getInvestigationCaseProsecutorSection,
@@ -142,7 +142,9 @@ export const Cases: React.FC = () => {
       routeTo = `${Constants.SIGNED_VERDICT_OVERVIEW}/${caseToOpen.id}`
     } else if (role === UserRole.JUDGE || role === UserRole.REGISTRAR) {
       if (isRestrictionCase(caseToOpen.type)) {
-        routeTo = findLastValidStep(getCourtSections(caseToOpen, user)).href
+        routeTo = findLastValidStep(
+          getRestrictionCaseCourtSections(caseToOpen, user),
+        ).href
       } else {
         routeTo = findLastValidStep(
           getInvestigationCaseCourtSections(caseToOpen, user),
@@ -151,11 +153,11 @@ export const Cases: React.FC = () => {
     } else {
       if (isRestrictionCase(caseToOpen.type)) {
         routeTo = findLastValidStep(
-          getRestrictionCaseProsecutorSection(caseToOpen),
+          getRestrictionCaseProsecutorSection(caseToOpen, user),
         ).href
       } else {
         routeTo = findLastValidStep(
-          getInvestigationCaseProsecutorSection(caseToOpen),
+          getInvestigationCaseProsecutorSection(caseToOpen, user),
         ).href
       }
     }
