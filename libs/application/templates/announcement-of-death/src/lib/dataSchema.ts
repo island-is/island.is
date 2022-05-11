@@ -15,17 +15,33 @@ const isValidPhoneNumber = (phoneNumber: string) => {
 // todo: set message strings for the error messages
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
-  roleConfirmation: z
-    .enum([RoleConfirmationEnum.CONTINUE, RoleConfirmationEnum.DELEGATE])
-    .refine((x) => x !== undefined, { params: m.errorRoleConfirmation }),
-  electPerson: z.object({
-    electedPersonNationalId: z.undefined().or(
-      z.string().refine((x) => (x ? kennitala.isPerson(x) : false), {
-        params: m.errorNationalIdIncorrect,
+  pickRole: z
+    .object({
+      roleConfirmation: z
+        .enum([RoleConfirmationEnum.CONTINUE, RoleConfirmationEnum.DELEGATE]),
+      electPerson: z.object({
+        electedPersonNationalId: z.string(),
+        electedPersonName: z.string(),
       }),
-    ),
-    electedPersonName: z.string().nonempty(),
-  }),
+    })
+    .refine(
+      ({ roleConfirmation, electPerson }) =>
+        !!roleConfirmation &&
+        ((roleConfirmation === RoleConfirmationEnum.DELEGATE &&
+          kennitala.isPerson(electPerson?.electedPersonNationalId) &&
+          electPerson?.electedPersonName !== '') ||
+          (roleConfirmation === RoleConfirmationEnum.CONTINUE &&
+            electPerson.electedPersonNationalId === '' &&
+            electPerson.electedPersonName === '')),
+      {
+        message: m.errorNationalIdIncorrect.defaultMessage,
+        path: ['electPerson', 'electedPersonNationalId'],
+      },
+    )
+    .refine(({ roleConfirmation }) => !!roleConfirmation, {
+      message: m.errorRoleConfirmation.defaultMessage,
+      path: ['roleConfirmation'],
+    }),
   applicantPhone: z.string().refine((v) => isValidPhoneNumber(v), {
     params: m.errorPhoneNumber,
   }),

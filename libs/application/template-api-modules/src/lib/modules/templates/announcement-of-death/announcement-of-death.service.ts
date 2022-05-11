@@ -4,7 +4,7 @@ import type { Logger } from '@island.is/logging'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { SyslumennService } from '@island.is/clients/syslumenn'
 import { FasteignirApi } from '@island.is/clients/assets'
-import { RoleConfirmationEnum } from './types'
+import { RoleConfirmationEnum, PickRole } from './types'
 import { SharedTemplateApiService } from '../../shared'
 import { generateTestEmail } from './emailGenerators'
 import { EinstaklingarApi } from '@island.is/clients/national-registry-v2'
@@ -97,11 +97,13 @@ export class AnnouncementOfDeathService {
 
   async submitApplication({ application }: TemplateApiModuleActionProps) {
     if (
-      application.answers?.roleConfirmation === RoleConfirmationEnum.DELEGATE
+      (application.answers?.pickRole as PickRole).roleConfirmation ===
+      RoleConfirmationEnum.DELEGATE
     ) {
       const syslumennOnEntryData: any =
         application.externalData.syslumennOnEntry
-      const electPerson: any = application.answers?.electPerson
+      const electPerson: any = (application.answers?.pickRole as PickRole)
+        .electPerson
       const electPersonNationalId: string =
         electPerson.electedPersonNationalId ?? ''
 

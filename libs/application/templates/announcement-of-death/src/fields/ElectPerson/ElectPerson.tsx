@@ -21,7 +21,7 @@ interface ElectPersonFieldBaseProps extends FieldBaseProps {
   errors: FieldErrors<FieldValues>
 }
 
-const prefix = 'electPerson'
+const prefix = 'pickRole.electPerson'
 
 const fieldNames = {
   roleConfirmation: `${prefix}.roleConfirmation`,
@@ -30,15 +30,7 @@ const fieldNames = {
   electedPersonName: `${prefix}.electedPersonName`,
 }
 
-const ElectPerson: FC<ElectPersonFieldBaseProps> = (
-  { application },
-  ...test
-) => {
-  console.log(
-    '🚀 ~ file: ElectPerson.tsx ~ line 44 ~ application',
-    application,
-    test,
-  )
+const ElectPerson: FC<ElectPersonFieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
   const { setValue, watch, errors, clearErrors, setError } = useFormContext()
 
@@ -103,8 +95,8 @@ const ElectPerson: FC<ElectPersonFieldBaseProps> = (
             icon={electedPersonName ? 'checkmarkCircle' : undefined}
             loading={queryLoading}
             error={
-              errors?.electPerson?.lookupError?.message ||
-              errors?.electPerson?.electedPersonNationalId ||
+              errors?.pickRole?.electPerson?.lookupError?.message ||
+              errors?.pickRole?.electPerson?.electedPersonNationalId ||
               undefined
             }
           />
