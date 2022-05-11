@@ -47,22 +47,27 @@ const InfoCard: React.FC<Props> = (props) => {
           </Text>
           <Box marginBottom={[2, 2, 3, 3]}>
             {defendants.map((defendant, index) => (
-              <Text fontWeight="semiBold" key={index}>
-                <Text as="span">{`${defendant.name}, `}</Text>
-                <Text as="span">
-                  {(!defendant.noNationalId || defendant.nationalId) &&
-                    `${defendant.noNationalId ? 'fd.' : ', kt.'} ${
-                      defendant.noNationalId
-                        ? defendant.nationalId
-                        : formatNationalId(defendant.nationalId ?? '')
-                    }, `}
-                </Text>
-                <Text as="span">
-                  {defendant.citizenship && ` (${defendant.citizenship}),`}
-                </Text>
-                {defendant.address && (
-                  <Text as="span">{`${defendant.address}`}</Text>
-                )}
+              <Text key={index}>
+                <span className={styles.infoCardDefendant}>
+                  <Text
+                    as="span"
+                    fontWeight="semiBold"
+                  >{`${defendant.name}, `}</Text>
+                  <Text as="span" fontWeight="semiBold">
+                    {(!defendant.noNationalId || defendant.nationalId) &&
+                      `${defendant.noNationalId ? 'fd.' : ', kt.'} ${
+                        defendant.noNationalId
+                          ? defendant.nationalId
+                          : formatNationalId(defendant.nationalId ?? '')
+                      }, `}
+                  </Text>
+                  <Text as="span">
+                    {defendant.citizenship && ` (${defendant.citizenship}), `}
+                  </Text>
+                  {defendant.address && (
+                    <Text as="span">{`${defendant.address}`}</Text>
+                  )}
+                </span>
               </Text>
             ))}
           </Box>
