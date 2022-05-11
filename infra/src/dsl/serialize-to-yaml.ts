@@ -131,7 +131,12 @@ export function featureSpecificServiceDef(
       const hosts: string[] = !Array.isArray(ingress.host[env])
         ? [ingress.host[env] as string]
         : (ingress.host[env] as string[])
-      ingress.host[env] = hosts.map((host) => `${feature}-${host}`)
+      ingress.host[env] = hosts.map(
+        (host) =>
+          `${feature}${
+            host.startsWith('.') || host.length === 0 ? '' : '-'
+          }${host}`,
+      )
     })
   })
   featureSpecificServices.forEach((s) => {
