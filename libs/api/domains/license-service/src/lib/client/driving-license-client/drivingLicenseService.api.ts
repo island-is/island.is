@@ -343,81 +343,82 @@ export class GenericDrivingLicenseApi
     data: string,
     nationalId: string,
   ): Promise<PkPassVerification | null> {
-    const result = await this.pkpassClient.verifyPkpassByPdf417(data)
-
-    if (!result) {
-      this.logger.warn('Missing pkpass verify from client', {
-        category: LOG_CATEGORY,
-      })
-      return null
-    }
-
+    // const result = await this.pkpassClient.verifyPkpassByPdf417(data)
+    //
+    // if (!result) {
+    //   this.logger.warn('Missing pkpass verify from client', {
+    //     category: LOG_CATEGORY,
+    //   })
+    //   return null
+    // }
+    //
     let error: PkPassVerificationError | undefined
-
-    if (result.error) {
-      let data = ''
-
-      try {
-        data = JSON.stringify(result.error.serviceError?.data)
-      } catch {
-        // noop
-      }
-
-      // Is there a status code from the service?
-      const serviceErrorStatus = result.error.serviceError?.status
-
-      // Use status code, or http status code from serivce, or "0" for unknown
-      const status = serviceErrorStatus ?? (result.error.statusCode || 0)
-
-      error = {
-        status: status.toString(),
-        message: result.error.serviceError?.message || 'Unknown error',
-        data,
-      }
-
-      return {
-        valid: false,
-        data: undefined,
-        error,
-      }
-    }
+    //
+    // if (result.error) {
+    //   let data = ''
+    //
+    //   try {
+    //     data = JSON.stringify(result.error.serviceError?.data)
+    //   } catch {
+    //     // noop
+    //   }
+    //
+    //   // Is there a status code from the service?
+    //   const serviceErrorStatus = result.error.serviceError?.status
+    //
+    //   // Use status code, or http status code from serivce, or "0" for unknown
+    //   const status = serviceErrorStatus ?? (result.error.statusCode || 0)
+    //
+    //   error = {
+    //     status: status.toString(),
+    //     message: result.error.serviceError?.message || 'Unknown error',
+    //     data,
+    //   }
+    //
+    //   return {
+    //     valid: false,
+    //     data: undefined,
+    //     error,
+    //   }
+    // }
 
     let response:
       | Record<string, string | null | GenericDrivingLicenseResponse['mynd']>
       | undefined = undefined
 
     if (data) {
-      // const trimmedNationalId = nationalId.replace('-', '')
-      // const licenses = await this.requestFromXroadApi(trimmedNationalId)
+      const trimmedNationalId = nationalId.replace('-', '')
+      const licenses = await this.requestFromXroadApi(trimmedNationalId)
 
-      // if (!licenses) {
-      //   this.logger.warn(
-      //     'Missing licenses from x-road, unable to return license info for pkpass verify',
-      //     { category: LOG_CATEGORY },
-      //   )
-      //   error = {
-      //     status: '0',
-      //     message: 'missing licenses',
-      //   }
-      // }
+      if (!licenses) {
+        this.logger.warn(
+          'Missing licenses from x-road, unable to return license info for pkpass verify',
+          { category: LOG_CATEGORY },
+        )
+        error = {
+          status: '0',
+          message: 'missing licenses',
+        }
+      }
 
-      // const licenseNationalId = licenses?.[0]?.kennitala ?? null
-      // const name = licenses?.[0]?.nafn ?? null
-      // const photo = licenses?.[0]?.mynd ?? null
+      const licenseNationalId = licenses?.[0]?.kennitala ?? null
+      const name = licenses?.[0]?.nafn ?? null
+      const photo = licenses?.[0]?.mynd ?? null
 
-      // const rawData = licenses?.[0] ? JSON.stringify(licenses?.[0]) : undefined
+      const rawData = licenses?.[0] ? JSON.stringify(licenses?.[0]) : undefined
 
       response = {
-        nationalId: data,
-        name: 'Dave',
-        photo: 'my photo',
-        rawData: 'raw data',
+        nationalId: licenseNationalId,
+        name,
+        photo,
+        rawData,
       }
     }
 
     return {
       valid: true,
       data: response ? JSON.stringify(response) : undefined,
+      error,
     }
   }
 }
