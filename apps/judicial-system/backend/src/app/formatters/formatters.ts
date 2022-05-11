@@ -150,7 +150,7 @@ export function formatProsecutorReadyForCourtEmailNotification(
 
   const body = formatMessage(notifications.readyForCourt.prosecutorHtmlV2, {
     caseType,
-    courtName: courtName,
+    courtName: courtName?.replace('dómur', 'dóm'),
     policeCaseNumber,
     linkStart: `<a href="${overviewUrl}">`,
     linkEnd: '</a>',
