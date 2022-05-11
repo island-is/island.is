@@ -286,7 +286,7 @@ describe('Parental Leave Application Template', () => {
 
         const answer = {
           useAsMuchAsPossible: YES,
-          usage: '100'
+          usage: '100',
         }
 
         const [hasChanged, _, newApplication] = helper.changeState({
@@ -316,7 +316,7 @@ describe('Parental Leave Application Template', () => {
 
         const answer = {
           useAsMuchAsPossible: YES,
-          usage: '100'
+          usage: '100',
         }
 
         const [hasChanged, _, newApplication] = helper.changeState({
