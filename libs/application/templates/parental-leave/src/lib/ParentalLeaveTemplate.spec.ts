@@ -267,7 +267,7 @@ describe('Parental Leave Application Template', () => {
         expect(newApplication.answers.personalAllowance).toEqual(null)
       })
 
-      it('should remove usage if useAsMuchAsPossible in personalAllowance is set to YES', () => {
+      it('should set usage to 100 if useAsMuchAsPossible in personalAllowance is set to YES', () => {
         const helper = new ApplicationTemplateHelper(
           buildApplication({
             answers: {
@@ -286,6 +286,7 @@ describe('Parental Leave Application Template', () => {
 
         const answer = {
           useAsMuchAsPossible: YES,
+          usage: '100'
         }
 
         const [hasChanged, _, newApplication] = helper.changeState({
@@ -296,7 +297,7 @@ describe('Parental Leave Application Template', () => {
         expect(newApplication.answers.personalAllowance).toEqual(answer)
       })
 
-      it('should remove usage if useAsMuchAsPossible in personalAllowanceFromSpouse is set to YES', () => {
+      it('should set usage to 100 if useAsMuchAsPossible in personalAllowanceFromSpouse is set to YES', () => {
         const helper = new ApplicationTemplateHelper(
           buildApplication({
             answers: {
@@ -315,6 +316,7 @@ describe('Parental Leave Application Template', () => {
 
         const answer = {
           useAsMuchAsPossible: YES,
+          usage: '100'
         }
 
         const [hasChanged, _, newApplication] = helper.changeState({
