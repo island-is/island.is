@@ -2,7 +2,10 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 
 import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
-import { FormContentContainer } from '@island.is/judicial-system-web/src/components'
+import {
+  FormContentContainer,
+  InfoCard,
+} from '@island.is/judicial-system-web/src/components'
 import {
   Case,
   CaseDecision,
@@ -12,9 +15,16 @@ import {
   isInvestigationCase,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
-import { formatDate } from '@island.is/judicial-system/formatters'
+import {
+  capitalize,
+  caseTypes,
+  formatDate,
+} from '@island.is/judicial-system/formatters'
 import { TIME_FORMAT } from '@island.is/judicial-system/consts'
-import { defenderCaseOverview } from '@island.is/judicial-system-web/messages'
+import {
+  core,
+  defenderCaseOverview,
+} from '@island.is/judicial-system-web/messages'
 import RestrictionTags from '@island.is/judicial-system-web/src/components/RestrictionTags/RestrictionTags'
 import CaseDates from '@island.is/judicial-system-web/src/components/CaseDates/CaseDates'
 import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
@@ -126,6 +136,61 @@ const CaseOverviewForm: React.FC<Props> = (props) => {
             />
           </Box>
         )}
+      <Box marginBottom={6}>
+        <InfoCard
+          data={[
+            {
+              title: formatMessage(core.policeCaseNumber),
+              value: workingCase.policeCaseNumber,
+            },
+            {
+              title: formatMessage(core.courtCaseNumber),
+              value: workingCase.courtCaseNumber,
+            },
+            {
+              title: formatMessage(core.prosecutor),
+              value: `${workingCase.creatingProsecutor?.institution?.name}`,
+            },
+            {
+              title: formatMessage(core.court),
+              value: workingCase.court?.name,
+            },
+            {
+              title: formatMessage(core.prosecutorPerson),
+              value: workingCase.prosecutor?.name,
+            },
+            {
+              title: formatMessage(core.judge),
+              value: workingCase.judge?.name,
+            },
+            // Conditionally add this field based on case type
+            ...(isInvestigationCase(workingCase.type)
+              ? [
+                  {
+                    title: formatMessage(core.caseType),
+                    value: capitalize(caseTypes[workingCase.type]),
+                  },
+                ]
+              : []),
+            ...(workingCase.registrar
+              ? [
+                  {
+                    title: formatMessage(core.registrar),
+                    value: workingCase.registrar?.name,
+                  },
+                ]
+              : []),
+          ]}
+          defendants={workingCase.defendants ?? []}
+          defender={{
+            name: workingCase.defenderName ?? '',
+            defenderNationalId: workingCase.defenderNationalId,
+            email: workingCase.defenderEmail,
+            phoneNumber: workingCase.defenderPhoneNumber,
+          }}
+          sessionArrangement={workingCase.sessionArrangements}
+        />
+      </Box>
     </FormContentContainer>
   )
 }

@@ -173,10 +173,7 @@ export const Overview: React.FC = () => {
               },
               {
                 title: formatMessage(core.prosecutor),
-                value: `${
-                  workingCase.creatingProsecutor?.institution?.name ??
-                  'Ekki skráð'
-                }`,
+                value: `${workingCase.creatingProsecutor?.institution?.name}`,
               },
               ...(workingCase.judge
                 ? [
