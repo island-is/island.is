@@ -83,12 +83,12 @@ const PageLayout: React.FC<PageProps> = ({
   ) : children ? (
     <Box
       paddingY={[0, 0, 3, 6]}
-      paddingX={[0, 0, 4, 4]}
+      paddingX={[0, 0, 4]}
       background="purple100"
       className={styles.processContainer}
     >
       <GridContainer className={styles.container}>
-        <GridRow direction={['columnReverse', 'columnReverse', 'row', 'row']}>
+        <GridRow direction={['columnReverse', 'columnReverse', 'row']}>
           <GridColumn span={['12/12', '12/12', '9/12', '9/12']}>
             <Box
               background="white"
@@ -100,9 +100,9 @@ const PageLayout: React.FC<PageProps> = ({
             </Box>
           </GridColumn>
           {showSidepanel && (
-            <GridColumn span={['12/12', '12/12', '3/12', '3/12']}>
+            <GridColumn span={['12/12', '12/12', '3/12']}>
               <div className={styles.formStepperContainer}>
-                <Box marginLeft={2}>
+                <Box marginLeft={[0, 0, 2]}>
                   <Box marginBottom={5} display={['none', 'none', 'block']}>
                     <Logo defaultInstitution={workingCase?.court?.name} />
                   </Box>
