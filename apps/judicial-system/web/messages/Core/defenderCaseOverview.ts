@@ -60,11 +60,17 @@ export const defenderCaseOverview = {
     defaultMessage: 'Úrskurðað {courtEndTime}',
     description: 'Notaður fyrir tíma úrskurðar á yfirlitsskjá verjanda.',
   }),
-  modifiedDatesHeading: {
+  modifiedDatesHeading: defineMessage({
     id: 'judicial.system.core:defender_case_overview.modified_dates_heading',
     defaultMessage:
       'Lengd {caseType, select, ADMISSION_TO_FACILITY {vistunar} other {gæslu}} uppfærð',
     description:
       'Notaður sem titill í upplýsingaboxi um uppfærða lengd gæslu á yfirlitsskjá verjanda.',
-  },
+  }),
+  conclusionHeading: defineMessage({
+    id: 'judicial.system.core:defender_case_overview.conclusion_heading',
+    defaultMessage: 'Úrskurðarorð',
+    description:
+      'Notaður sem titill fyrir úrskurðarorð á yfirlitsskjá verjanda.',
+  }),
 }

@@ -3,6 +3,7 @@ import { useIntl } from 'react-intl'
 
 import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import {
+  BlueBox,
   FormContentContainer,
   InfoCard,
 } from '@island.is/judicial-system-web/src/components'
@@ -191,6 +192,25 @@ const CaseOverviewForm: React.FC<Props> = (props) => {
           sessionArrangement={workingCase.sessionArrangements}
         />
       </Box>
+      {completedCaseStates.includes(workingCase.state) && (
+        <Box marginBottom={6}>
+          <BlueBox>
+            <Box marginBottom={2} textAlign="center">
+              <Text as="h3" variant="h3">
+                {formatMessage(defenderCaseOverview.conclusionHeading)}
+              </Text>
+            </Box>
+            <Box marginBottom={3}>
+              <Box marginTop={1}>
+                <Text variant="intro">{workingCase.conclusion}</Text>
+              </Box>
+            </Box>
+            <Box marginBottom={1} textAlign="center">
+              <Text variant="h4">{workingCase?.judge?.name}</Text>
+            </Box>
+          </BlueBox>
+        </Box>
+      )}
     </FormContentContainer>
   )
 }
