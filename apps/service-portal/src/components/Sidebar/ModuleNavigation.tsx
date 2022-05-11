@@ -12,6 +12,7 @@ import SubNavModal from './SubNavModal'
 import { servicePortalOutboundLink } from '@island.is/plausible'
 import { useStore } from '../../store/stateProvider'
 import SubNav from './NavItem/SubNav'
+import { setTimeout } from 'timers'
 import * as styles from './Sidebar.css'
 interface Props {
   nav: ServicePortalNavigationItem
@@ -21,6 +22,8 @@ interface Props {
 
 const ModuleNavigation: FC<Props> = ({ nav, onItemClick, badge }) => {
   const [expand, setExpand] = useState(false)
+  const [hover, setHover] = useState(false)
+  const [clicked, setClicked] = useState(false)
   const [{ sidebarState }] = useStore()
   const { formatMessage } = useLocale()
   const { pathname } = useLocation()
@@ -51,7 +54,21 @@ const ModuleNavigation: FC<Props> = ({ nav, onItemClick, badge }) => {
   }, [isModuleActive, setExpand])
 
   return (
-    <Box position="relative" className={styles.itemWrapper}>
+    <Box
+      position="relative"
+      onMouseOver={() => {
+        setHover(true)
+      }}
+      onMouseLeave={() => {
+        setHover(false)
+      }}
+      onClick={() => {
+        setClicked(true)
+        setTimeout(() => {
+          setClicked(false)
+        }, 1000)
+      }}
+    >
       {navArray && nav.enabled !== false && collapsed && (
         <SubNavModal>
           <SubNav
@@ -66,6 +83,7 @@ const ModuleNavigation: FC<Props> = ({ nav, onItemClick, badge }) => {
         path={nav.path}
         icon={nav.icon}
         active={isModuleActive}
+        clicked={clicked}
         expanded={expand}
         hasArray={navArray}
         enabled={nav.enabled}

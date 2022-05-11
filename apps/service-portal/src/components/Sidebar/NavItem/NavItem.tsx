@@ -14,6 +14,11 @@ interface Props {
   icon?: Pick<IconProps, 'icon' | 'type'>
   active: boolean
   chevron?: boolean
+<<<<<<< HEAD
+=======
+  hover: boolean
+  clicked: boolean
+>>>>>>> e95b49cdf8 (feat: animate icon on click)
   enabled?: boolean
   expanded?: boolean
   external?: boolean
@@ -30,6 +35,7 @@ const NavItemContent: FC<Props> = ({
   enabled,
   hasArray,
   onClick,
+  clicked,
   children,
   badge = false,
 }) => {
@@ -97,7 +103,7 @@ const NavItemContent: FC<Props> = ({
             /> */}
             <div className={styles.testIconWrapper}>
               <svg
-                className={hover ? styles.testIconHover : styles.testIcon}
+                className={clicked ? styles.testIconHover : styles.testIcon}
                 viewBox="0 0 512 512"
               >
                 <path
@@ -105,17 +111,17 @@ const NavItemContent: FC<Props> = ({
                   d="M411.204 144v-30a50 50 0 0 0-59.36-49.1l-263.36 44.95c-23.593 4.496-40.656 25.132-40.64 49.15v49"
                 />
                 <rect
-                  className={hover ? styles.testCardHover : styles.testCard}
+                  className={clicked ? styles.testCardHover : styles.testCard}
                   rx="48"
                   ry="48"
                 />
                 <rect
-                  className={hover ? styles.testFrontHover : styles.testFront}
+                  className={clicked ? styles.testFrontHover : styles.testFront}
                   rx="48"
                   ry="48"
                 />
                 <path
-                  className={hover ? styles.testDotHover : styles.testDot}
+                  className={clicked ? styles.testDotHover : styles.testDot}
                   d="M368 320c-17.673 0-32-14.327-32-32s14.327-32 32-32 32 14.327 32 32-14.327 32-32 32Z"
                 />
               </svg>
