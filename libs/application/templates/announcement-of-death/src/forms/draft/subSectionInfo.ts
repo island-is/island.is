@@ -56,7 +56,7 @@ export const subSectionInfo = buildSubSection({
               syslumennOnEntry: { data },
             },
           }) => {
-            return (data as { relationOptions: string[] }).relationOptions.map(
+            return (data as { relationOptions: string[] }).relationOptions?.map(
               (relation) => ({
                 value: relation,
                 label: relation,
