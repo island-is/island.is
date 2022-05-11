@@ -9,11 +9,11 @@ import {
   Accordion,
   AccordionItem,
   Input,
+  AlertMessage,
 } from '@island.is/island-ui/core'
 import {
   NotificationType,
   CaseState,
-  CaseType,
   CaseTransition,
   completedCaseStates,
 } from '@island.is/judicial-system/types'
@@ -125,6 +125,18 @@ export const Overview: React.FC = () => {
         title={formatMessage(titles.prosecutor.restrictionCases.overview)}
       />
       <FormContentContainer>
+        {workingCase.state === CaseState.RECEIVED && (
+          <div
+            className={styles.resendInfoPanelContainer}
+            data-testid="rc-overview-info-panel"
+          >
+            <AlertMessage
+              title={formatMessage(rcOverview.receivedAlert.title)}
+              message={formatMessage(rcOverview.receivedAlert.message)}
+              type="info"
+            />
+          </div>
+        )}
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
             {formatMessage(rcOverview.headingV2, {

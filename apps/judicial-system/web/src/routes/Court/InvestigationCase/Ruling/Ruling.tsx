@@ -10,8 +10,11 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { icRuling as m, titles } from '@island.is/judicial-system-web/messages'
-import { autofillRuling } from '@island.is/judicial-system-web/src/components/RulingInput/RulingInput'
+import {
+  icRuling as m,
+  ruling,
+  titles,
+} from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 
 import RulingForm from './RulingForm'
@@ -32,40 +35,47 @@ const Ruling = () => {
   useEffect(() => {
     if (isCaseUpToDate && !initialAutoFillDone) {
       autofill(
-        'introduction',
-        formatMessage(m.sections.introduction.autofill, {
-          date: formatDate(workingCase.courtDate, 'PPP'),
-        }),
+        [
+          {
+            key: 'introduction',
+            value: formatMessage(m.sections.introduction.autofill, {
+              date: formatDate(workingCase.courtDate, 'PPP'),
+            }),
+          },
+          {
+            key: 'prosecutorDemands',
+            value: workingCase.demands,
+          },
+          {
+            key: 'courtCaseFacts',
+            value: workingCase.caseFacts,
+          },
+          {
+            key: 'courtLegalArguments',
+            value: workingCase.legalArguments,
+          },
+          {
+            key: 'ruling',
+            value: !workingCase.parentCase
+              ? `\n${formatMessage(ruling.autofill, {
+                  judgeName: workingCase.judge?.name,
+                })}`
+              : isAcceptingCaseDecision(workingCase.decision)
+              ? workingCase.parentCase.ruling
+              : undefined,
+          },
+          {
+            key: 'conclusion',
+            value: isAcceptingCaseDecision(workingCase.decision)
+              ? workingCase.demands
+              : undefined,
+          },
+        ],
         workingCase,
+        setWorkingCase,
       )
 
-      if (workingCase.demands) {
-        autofill('prosecutorDemands', workingCase.demands, workingCase)
-      }
-
-      if (workingCase.caseFacts) {
-        autofill('courtCaseFacts', workingCase.caseFacts, workingCase)
-      }
-
-      if (workingCase.legalArguments) {
-        autofill('courtLegalArguments', workingCase.legalArguments, workingCase)
-      }
-
-      autofillRuling(workingCase, autofill, formatMessage)
-
       setInitialAutoFillDone(true)
-      setWorkingCase({ ...workingCase })
-    }
-
-    if (
-      (workingCase.conclusion === undefined ||
-        workingCase.conclusion === null) &&
-      isAcceptingCaseDecision(workingCase.decision) &&
-      workingCase.demands
-    ) {
-      autofill('conclusion', workingCase.demands, workingCase)
-
-      setWorkingCase({ ...workingCase })
     }
   }, [
     isCaseUpToDate,

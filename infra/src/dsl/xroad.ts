@@ -317,8 +317,8 @@ export const Vehicles = new XroadConf({
   env: {
     XROAD_VEHICLES_PATH: {
       dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Mitt-Svaedi-V1',
-      staging: 'IS-PROD/GOV/5405131040/Samgongustofa-Protected/Mitt-Svaedi-V1',
-      prod: 'IS-PROD/GOV/5405131040/Samgongustofa-Protected/Mitt-Svaedi-V1',
+      staging: 'IS/GOV/5405131040/Samgongustofa-Protected/Mitt-Svaedi-V1',
+      prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Mitt-Svaedi-V1',
     },
   },
 })
