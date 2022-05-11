@@ -21,7 +21,7 @@ function callProvider(
     return Promise.resolve({
       date: new Date(),
       status: 'failure',
-      reason: 'unable to build provider',
+      reason: { summary: 'unable to build provider' },
     })
   }
   return provider.provide(application, customTemplateFindQuery).then(
@@ -29,9 +29,13 @@ function callProvider(
       return Promise.resolve(provider.onProvideSuccess(result))
     },
     (error) => {
+      console.log({ error })
       const reason =
         typeof error.reason === 'object'
-          ? formatMessage(error.reason)
+          ? {
+              title: formatMessage(error.reason.title),
+              summary: formatMessage(error.reason.summary),
+            }
           : error.reason
 
       return Promise.resolve(

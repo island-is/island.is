@@ -63,7 +63,7 @@ const ProviderItem: FC<{
   dataProviderResult: DataProviderResult
   provider: DataProviderItem
   suppressProviderError: boolean
-}> = ({ dataProviderResult = {}, provider, suppressProviderError }) => {
+}> = ({ dataProviderResult, provider, suppressProviderError }) => {
   const { title, subTitle } = provider
   const { formatMessage } = useLocale()
 
@@ -72,6 +72,9 @@ const ProviderItem: FC<{
     dataProviderResult?.status === 'failure' &&
     !suppressProviderError
 
+  const errorCode = dataProviderResult?.statusCode ?? 500
+  const errorType = errorCode < 500 ? 'warning' : 'error'
+
   return (
     <Box marginBottom={3}>
       <ItemHeader title={title} subTitle={subTitle} />
@@ -79,12 +82,16 @@ const ProviderItem: FC<{
       {showError && (
         <Box marginTop={2}>
           <AlertMessage
-            type="error"
-            title={formatMessage(coreErrorMessages.errorDataProvider)}
+            type={errorType}
+            title={
+              dataProviderResult?.reason?.title
+                ? formatMessage(dataProviderResult?.reason?.title)
+                : formatMessage(coreErrorMessages.errorDataProvider)
+            }
             message={
-              isTranslationObject(dataProviderResult?.reason)
-                ? formatMessage(dataProviderResult.reason!)
-                : typeof dataProviderResult?.reason === 'string'
+              isTranslationObject(dataProviderResult?.reason?.summary)
+                ? formatMessage(dataProviderResult.reason?.summary!)
+                : typeof dataProviderResult?.reason?.summary === 'string'
                 ? dataProviderResult.reason
                 : formatMessage(coreErrorMessages.failedDataProvider)
             }
