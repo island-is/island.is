@@ -89,7 +89,7 @@ const PageLayout: React.FC<PageProps> = ({
     >
       <GridContainer className={styles.container}>
         <GridRow direction={['columnReverse', 'columnReverse', 'row']}>
-          <GridColumn span={['12/12', '12/12', '9/12', '9/12']}>
+          <GridColumn span={['12/12', '12/12', '8/12', '8/12']}>
             <Box
               background="white"
               borderColor="white"
@@ -100,7 +100,7 @@ const PageLayout: React.FC<PageProps> = ({
             </Box>
           </GridColumn>
           {showSidepanel && (
-            <GridColumn span={['12/12', '12/12', '3/12']}>
+            <GridColumn span={['12/12', '12/12', '4/12', '3/12']}>
               <div className={styles.formStepperContainer}>
                 <Box marginLeft={[0, 0, 2]}>
                   <Box marginBottom={7} display={['none', 'none', 'block']}>
