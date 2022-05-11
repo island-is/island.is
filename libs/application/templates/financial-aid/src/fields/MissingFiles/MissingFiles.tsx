@@ -58,10 +58,12 @@ const MissingFiles = ({
       }
 
       try {
-        await uploadStateFiles(
+        const uploadedFiles = await uploadStateFiles(
           application.externalData.veita.data.currentApplicationId,
           FileType.OTHER,
         )
+        setValue('otherFiles', uploadedFiles)
+
         await updateApplication(
           ApplicationState.INPROGRESS,
           ApplicationEventType.FILEUPLOAD,
@@ -133,7 +135,7 @@ const MissingFiles = ({
         </Box>
       </>
 
-      {error &&
+      {error && (
         <>
           <Text as="h3" variant="h4" color="red400" marginTop={[8, 8, 9]}>
             {formatMessage(missingFiles.error.title)}
@@ -142,11 +144,13 @@ const MissingFiles = ({
             textProps={{ marginTop: 1 }}
             text={missingFiles.error.message}
             format={{
-              email: application.externalData.nationalRegistry.data.municipality.email ?? '',
+              email:
+                application.externalData.nationalRegistry.data.municipality
+                  .email ?? '',
             }}
           />
         </>
-      }
+      )}
     </>
   )
 }

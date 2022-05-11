@@ -40,10 +40,10 @@ export const ApplicantSubmitted: Form = buildForm({
         }),
       ],
     }),
-    buildMultiField({
-      id: '',
-      title: '',
-      children: [],
+    buildCustomField({
+      id: 'missingFilesConfirmation',
+      title: m.missingFiles.confirmation.title,
+      component: 'MissingFilesConfirmation',
     }),
   ],
 })

@@ -56,8 +56,36 @@ export const missingFiles = {
     },
     message: {
       id: 'fa.application:section.missingFiles.error.message#markup',
-      defaultMessage: 'Þú getur reynt aftur síðar eða sent gögnin með tölvupósti á [{email}]({email}). Gættu þess að láta kennitölu þína fylgja með gögnunum ef þú sendir þau með tölvupósti.',
+      defaultMessage:
+        'Þú getur reynt aftur síðar eða sent gögnin með tölvupósti á [{email}]({email}). Gættu þess að láta kennitölu þína fylgja með gögnunum ef þú sendir þau með tölvupósti.',
       description: 'Message of the error',
+    },
+  }),
+  confirmation: defineMessages({
+    title: {
+      id: 'fa.application:section.missingFiles.confirmation.title',
+      defaultMessage: 'Senda inn gögn',
+      description: 'Title of the confirmation page',
+    },
+    subtitle: {
+      id: 'fa.application:section.missingFiles.confirmation.subtitle',
+      defaultMessage: 'Eftirfarandi gögn hafa verið send inn',
+      description: 'Subtitle of the confirmation page',
+    },
+    linkStatusPage: {
+      id: 'fa.application:section.missingFiles.confirmation.linkStatusPage',
+      defaultMessage: 'Til baka á forsíðu',
+      description: 'Text of link to status page',
+    },
+    commentTitle: {
+      id: 'fa.application:section.missingFiles.confirmation.commentTitle',
+      defaultMessage: 'Athugasemd með gögnum',
+      description: 'Text of the comment box',
+    },
+    file: {
+      id: 'fa.application:section.missingFiles.confirmation.file',
+      defaultMessage: 'Skjal',
+      description: 'Text for the file title',
     },
   }),
 }
