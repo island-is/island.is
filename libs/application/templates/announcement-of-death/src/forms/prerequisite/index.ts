@@ -110,7 +110,7 @@ export const prerequisite = (): Form => {
                 id: 'roleConfirmationNotice',
               }),
               buildRadioField({
-                id: 'roleConfirmation',
+                id: 'pickRole.roleConfirmation',
                 title: '',
                 options: [
                   {
@@ -126,10 +126,10 @@ export const prerequisite = (): Form => {
               }),
               buildCustomField({
                 title: '',
-                id: 'electPerson',
+                id: 'pickRole.electPerson',
                 component: 'ElectPerson',
                 condition: (answers) =>
-                  getValueViaPath(answers, 'roleConfirmation') ===
+                  getValueViaPath(answers, 'pickRole.roleConfirmation') ===
                   RoleConfirmationEnum.DELEGATE,
               }),
               buildSubmitField({

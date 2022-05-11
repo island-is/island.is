@@ -2,6 +2,7 @@ export enum RoleConfirmationEnum {
   CONTINUE = 'continue',
   DELEGATE = 'delegate',
 }
+
 export interface Address {
   streetAddress: string
   postalCode: string
@@ -24,4 +25,12 @@ export interface RealEstateAddress {
   display: string
   displayShort: string
   */
+}
+
+export type PickRole = {
+  roleConfirmation: RoleConfirmationEnum
+  electPerson: {
+    electedPersonNationalId: string
+    electedPersonName: string
+  }
 }

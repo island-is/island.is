@@ -71,7 +71,7 @@ export const RadioFormField: FC<Props> = ({
             (getValueViaPath(application.answers, id) as string[]) ??
             getDefaultValue(field, application)
           }
-          options={finalOptions.map(({ label, tooltip, ...o }) => ({
+          options={finalOptions?.map(({ label, tooltip, ...o }) => ({
             ...o,
             label: HtmlParser(formatText(label, application, formatMessage)),
             ...(tooltip && {
