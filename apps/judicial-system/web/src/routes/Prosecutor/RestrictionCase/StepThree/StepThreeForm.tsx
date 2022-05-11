@@ -26,6 +26,7 @@ import {
 import {
   removeTabsValidateAndSet,
   setCheckboxAndSendToServer,
+  toggleInArray,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
@@ -204,7 +205,10 @@ const StepThreeForm: React.FC<Props> = (props) => {
                   onChange={() =>
                     onDemandsChange({
                       key: 'requestedCustodyRestrictions',
-                      value: CaseCustodyRestrictions.ISOLATION,
+                      value: toggleInArray(
+                        workingCase.requestedCustodyRestrictions,
+                        CaseCustodyRestrictions.ISOLATION,
+                      ),
                       force: true,
                     })
                   }

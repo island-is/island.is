@@ -11,6 +11,7 @@ import type {
   UpdateCase,
   SessionArrangements,
   CreateCase,
+  CaseCustodyRestrictions,
 } from '@island.is/judicial-system/types'
 import { toast } from '@island.is/island-ui/core'
 import { errors } from '@island.is/judicial-system-web/messages'
@@ -53,12 +54,12 @@ type autofillProperties = Pick<
 
 export type autofillEntry = {
   key: keyof autofillProperties
-  value?: string | boolean | SessionArrangements
+  value?: string | boolean | SessionArrangements | CaseCustodyRestrictions[]
   force?: boolean
 }
 
 export type autofillFunc = (
-  entries: autofillEntry[],
+  entries: Array<autofillEntry>,
   workingCase: Case,
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
 ) => void
