@@ -13,6 +13,7 @@ export type CaseFileStatus =
   | 'done'
   | 'error'
   | 'uploading'
+  | 'unsupported'
 
 export interface CaseFile extends TCaseFile {
   status: CaseFileStatus
@@ -125,15 +126,23 @@ export const useCourtUpload = (
             )
           }
         } catch (error) {
-          if (
+          const errorCode =
             error instanceof ApolloError &&
-            (error as ApolloError).graphQLErrors[0].extensions?.code ===
-              'https://httpstatuses.com/404'
-          ) {
+            (error as ApolloError).graphQLErrors[0].extensions?.code
+
+          if (errorCode === 'https://httpstatuses.com/404') {
             setFileUploadStatus(
               workingCase,
               { ...file, key: undefined },
               'broken',
+            )
+          } else if (
+            errorCode === 'https:/httpstatuses.com/415' // Unsupported Media Type
+          ) {
+            setFileUploadStatus(
+              workingCase,
+              { ...file, key: undefined },
+              'unsupported',
             )
           } else {
             setFileUploadStatus(workingCase, file, 'error')
