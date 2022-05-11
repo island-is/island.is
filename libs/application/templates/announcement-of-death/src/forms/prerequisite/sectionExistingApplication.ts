@@ -17,14 +17,14 @@ export const sectionExistingApplication = buildSubSection({
         externalData,
         'existingApplication.data',
         [],
-      ) ?? [] 
+      ) ?? []
 
-      const estates =
+    const estates =
       getValueViaPath<Application[]>(
         externalData,
         'syslumennOnEntry.data.estates',
         [],
-      ) ?? [] 
+      ) ?? []
     return existing.length > 0 || estates?.length > 1
   },
   children: [
@@ -43,9 +43,7 @@ export const sectionExistingApplication = buildSubSection({
           title: '',
           placement: 'footer',
           refetchApplicationAfterSubmit: true,
-          actions: [
-          
-          ],
+          actions: [],
         }),
       ],
     }),

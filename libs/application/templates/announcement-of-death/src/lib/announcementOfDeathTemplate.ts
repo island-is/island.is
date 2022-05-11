@@ -57,7 +57,7 @@ const AnnouncementOfDeathTemplate: ApplicationTemplate<
                 },
               ],
               write: 'all',
-              delete: true
+              delete: true,
             },
           ],
         },

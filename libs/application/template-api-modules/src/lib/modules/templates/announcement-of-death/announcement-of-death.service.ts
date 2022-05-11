@@ -52,10 +52,10 @@ export class AnnouncementOfDeathService {
 
     // TODO IMPORTANT: Address edge cases for multiple deceased familiy members in
     //                 the next iteration before feature flag is lifted
-    if(estates.length === 1) {
-      await this.updateEstateAnswer({application, auth}, estates[0])
+    if (estates.length === 1) {
+      await this.updateEstateAnswer({ application, auth }, estates[0])
     }
-    
+
     const relationOptions = (await this.syslumennService.getEstateRelations())
       .relations
 
@@ -66,8 +66,11 @@ export class AnnouncementOfDeathService {
     }
   }
 
-  async updateEstateAnswer({ application, auth }: TemplateApiModuleActionProps, estate: EstateRegistrant) {
- // Mark answer state
+  async updateEstateAnswer(
+    { application, auth }: TemplateApiModuleActionProps,
+    estate: EstateRegistrant,
+  ) {
+    // Mark answer state
     estate.assets = estate.assets.map(baseMapper)
     estate.vehicles = [
       ...estate.vehicles,
@@ -94,7 +97,6 @@ export class AnnouncementOfDeathService {
       })
       .then((response) => response.json())
 
-
     if ('errors' in updateApplicationResponse) {
       this.logger.error(
         'Failed to insert Syslumenn Data into answers',
@@ -102,7 +104,6 @@ export class AnnouncementOfDeathService {
       )
     }
   }
-
 
   async sendTestEmail({ application }: TemplateApiModuleActionProps) {
     await this.sharedTemplateAPIService.sendEmail(

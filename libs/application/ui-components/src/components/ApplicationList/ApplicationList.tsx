@@ -68,7 +68,7 @@ const DefaultData: Record<ApplicationStatus, DefaultStateData> = {
   },
   [ApplicationStatus.NOT_STARTED]: {
     tag: {
-      variant: 'blue',
+      variant: 'blueberry',
       label: coreMessages.newApplication,
     },
     progress: {
@@ -81,7 +81,10 @@ const DefaultData: Record<ApplicationStatus, DefaultStateData> = {
 }
 
 interface Props {
-  applications: Pick<Application, 'actionCard' | 'id' | 'typeId' | 'status' |'modified' | 'name' | 'progress'>[]
+  applications: Pick<
+    Application,
+    'actionCard' | 'id' | 'typeId' | 'status' | 'modified' | 'name' | 'progress'
+  >[]
   onClick: (id: string) => void
   refetch?: (() => void) | undefined
 }
