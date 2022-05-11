@@ -1,35 +1,26 @@
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import {
-  Text,
-  Input,
-  Box,
-  Tooltip,
-  AlertMessage,
-} from '@island.is/island-ui/core'
+import { Text, Input, Box, Tooltip } from '@island.is/island-ui/core'
 import {
   FormContentContainer,
   FormFooter,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  CaseState,
-  CaseType,
-  UpdateDefendant,
-} from '@island.is/judicial-system/types'
+import { CaseType, UpdateDefendant } from '@island.is/judicial-system/types'
 import { isDefendantStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import DefenderInfo from '@island.is/judicial-system-web/src/components/DefenderInfo/DefenderInfo'
 import { accused as m } from '@island.is/judicial-system-web/messages'
 import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDefendants'
-import type { Case } from '@island.is/judicial-system/types'
-import * as Constants from '@island.is/judicial-system/consts'
-import LokeCaseNumber from '../../SharedComponents/LokeCaseNumber/LokeCaseNumber'
-import DefendantInfo from '../../SharedComponents/DefendantInfo/DefendantInfo'
 import {
   validateAndSendToServer,
   validateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import type { Case } from '@island.is/judicial-system/types'
+import * as Constants from '@island.is/judicial-system/consts'
+
+import LokeCaseNumber from '../../SharedComponents/LokeCaseNumber/LokeCaseNumber'
+import DefendantInfo from '../../SharedComponents/DefendantInfo/DefendantInfo'
 
 interface Props {
   workingCase: Case
@@ -72,15 +63,6 @@ export const StepOneForm: React.FC<Props> = (props) => {
   return (
     <>
       <FormContentContainer>
-        {workingCase.state === CaseState.RECEIVED && (
-          <Box marginBottom={5}>
-            <AlertMessage
-              title={formatMessage(m.receivedAlert.title)}
-              message={formatMessage(m.receivedAlert.message)}
-              type="warning"
-            />
-          </Box>
-        )}
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
             {formatMessage(m.heading)}

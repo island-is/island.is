@@ -102,6 +102,7 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
         }
       }
       organization {
+        id
         title
         slug
         email
@@ -183,7 +184,6 @@ export const GET_ORGANIZATION_SUBPAGE_QUERY = gql`
       }
       sliceCustomRenderer
       sliceExtraText
-      parentSubpage
       featuredImage {
         url
         title

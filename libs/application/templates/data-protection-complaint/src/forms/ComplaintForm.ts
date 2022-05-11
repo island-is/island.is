@@ -99,6 +99,7 @@ export const ComplaintForm: Form = buildForm({
                       {
                         title: delimitation.links.inCourtProceedingsTitle,
                         url: delimitation.links.inCourtProceedingsUrl,
+                        isExternal: true,
                       },
                     ],
                   },
@@ -138,11 +139,13 @@ export const ComplaintForm: Form = buildForm({
                         title:
                           delimitation.links.concernsMediaCoverageFirstTitle,
                         url: delimitation.links.concernsMediaCoverageFirstUrl,
+                        isExternal: true,
                       },
                       {
                         title:
                           delimitation.links.concernsMediaCoverageSecondTitle,
                         url: delimitation.links.concernsMediaCoverageSecondUrl,
+                        isExternal: true,
                       },
                     ],
                   },
@@ -186,6 +189,7 @@ export const ComplaintForm: Form = buildForm({
                       {
                         title: delimitation.links.concernsBanMarkingSecondTitle,
                         url: delimitation.links.concernsBanMarkingSecondUrl,
+                        isExternal: true,
                       },
                     ],
                   },
@@ -223,6 +227,7 @@ export const ComplaintForm: Form = buildForm({
                       {
                         title: delimitation.links.concernsLibelTitle,
                         url: delimitation.links.concernsLibelUrl,
+                        isExternal: true,
                       },
                     ],
                   },
