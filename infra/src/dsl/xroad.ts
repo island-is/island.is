@@ -317,8 +317,8 @@ export const MunicipalitiesFinancialAid = new XroadConf({
   env: {
     XROAD_FINANCIAL_AID_BACKEND_PATH: {
       dev: 'IS-DEV/MUN/10023/samband-sveitarfelaga/financial-aid-backend',
-      staging: '...',
-      prod: '...',
+      staging: 'IS-TEST/MUN/5502694739/samband-sveitarfelaga/financial-aid-backend',
+      prod: 'IS/MUN/5502694739/samband-sveitarfelaga/financial-aid-backend',
     },
   },
 })
