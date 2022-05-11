@@ -12,6 +12,7 @@ import subMilliseconds from 'date-fns/subMilliseconds'
 import {
   CaseDecision,
   CaseState,
+  Institution,
   InstitutionType,
   isRestrictionCase,
   NotificationType,
@@ -420,9 +421,7 @@ export const SignedVerdictOverview: React.FC = () => {
             id: (institution as ReactSelectOption).value as string,
             name: (institution as ReactSelectOption).label,
             type: InstitutionType.PROSECUTORS_OFFICE,
-            created: new Date().toString(),
-            modified: new Date().toString(),
-          },
+          } as Institution,
           isHeightenedSecurityLevel: workingCase.isHeightenedSecurityLevel
             ? false
             : workingCase.isHeightenedSecurityLevel,

@@ -82,7 +82,7 @@ const PageLayout: React.FC<PageProps> = ({
     />
   ) : children ? (
     <Box
-      paddingY={[3, 3, 3, 6]}
+      paddingY={[0, 0, 3, 6]}
       background="purple100"
       className={styles.processContainer}
     >
@@ -93,6 +93,7 @@ const PageLayout: React.FC<PageProps> = ({
               background="white"
               borderColor="white"
               borderRadius="large"
+              paddingTop={[3, 3, 10, 10]}
               className={styles.processContent}
             >
               {children}
