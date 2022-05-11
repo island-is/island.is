@@ -301,27 +301,25 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
         )}
       {user?.role !== UserRole.STAFF && (
         <>
-          {user?.role !== UserRole.DEFENDER && (
-            <Box marginBottom={5} data-testid="accordionItems">
-              <Accordion>
-                <PoliceRequestAccordionItem workingCase={workingCase} />
-                <CourtRecordAccordionItem workingCase={workingCase} />
-                <RulingAccordionItem workingCase={workingCase} />
-                {user && (
-                  <CaseFilesAccordionItem
-                    workingCase={workingCase}
-                    setWorkingCase={setWorkingCase}
-                    user={user}
-                  />
-                )}
-                {(workingCase.comments ||
-                  workingCase.caseFilesComments ||
-                  workingCase.caseResentExplanation) && (
-                  <CommentsAccordionItem workingCase={workingCase} />
-                )}
-              </Accordion>
-            </Box>
-          )}
+          <Box marginBottom={5} data-testid="accordionItems">
+            <Accordion>
+              <PoliceRequestAccordionItem workingCase={workingCase} />
+              <CourtRecordAccordionItem workingCase={workingCase} />
+              <RulingAccordionItem workingCase={workingCase} />
+              {user && (
+                <CaseFilesAccordionItem
+                  workingCase={workingCase}
+                  setWorkingCase={setWorkingCase}
+                  user={user}
+                />
+              )}
+              {(workingCase.comments ||
+                workingCase.caseFilesComments ||
+                workingCase.caseResentExplanation) && (
+                <CommentsAccordionItem workingCase={workingCase} />
+              )}
+            </Accordion>
+          </Box>
           <Box marginBottom={6}>
             <BlueBox>
               <Box marginBottom={2} textAlign="center">
@@ -351,33 +349,24 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
               <PdfRow
                 caseId={workingCase.id}
                 title={formatMessage(core.pdfButtonRequest)}
-                pdfType={
-                  user?.role === UserRole.DEFENDER
-                    ? 'request/restricted'
-                    : 'request'
-                }
+                pdfType={'request'}
               />
             )}
-            {user?.role !== UserRole.DEFENDER &&
-              showCustodyNotice(
-                workingCase.type,
-                workingCase.state,
-                workingCase.decision,
-              ) && (
-                <PdfRow
-                  caseId={workingCase.id}
-                  title={formatMessage(core.pdfButtonCustodyNotice)}
-                  pdfType="custodyNotice"
-                />
-              )}
+            {showCustodyNotice(
+              workingCase.type,
+              workingCase.state,
+              workingCase.decision,
+            ) && (
+              <PdfRow
+                caseId={workingCase.id}
+                title={formatMessage(core.pdfButtonCustodyNotice)}
+                pdfType="custodyNotice"
+              />
+            )}
             <PdfRow
               caseId={workingCase.id}
               title={formatMessage(core.pdfButtonRulingShortVersion)}
-              pdfType={
-                user?.role === UserRole.DEFENDER
-                  ? 'courtRecord/restricted'
-                  : 'courtRecord'
-              }
+              pdfType={'courtRecord'}
             >
               {workingCase.courtRecordSignatory ? (
                 <SignedDocument
@@ -403,11 +392,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
               <PdfRow
                 caseId={workingCase.id}
                 title={formatMessage(core.pdfButtonRuling)}
-                pdfType={
-                  user?.role === UserRole.DEFENDER
-                    ? 'ruling/restricted'
-                    : 'ruling'
-                }
+                pdfType={'ruling'}
               >
                 <SignedDocument
                   signatory={workingCase.judge?.name}
