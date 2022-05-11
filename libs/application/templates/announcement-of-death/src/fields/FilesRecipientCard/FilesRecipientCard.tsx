@@ -2,11 +2,12 @@ import React, { FC } from 'react'
 import { useLocale } from '@island.is/localization'
 import { SelectController } from '@island.is/shared/form-fields'
 import {
+  Application,
   FieldBaseProps,
   formatText,
   FormText,
 } from '@island.is/application/core'
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, Tag, Text } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { Answers } from '../../types'
 
@@ -15,6 +16,7 @@ type FilesRecipientCardProps = {
     props: {
       noOptions: boolean
       placeholder?: FormText
+      tag?: (application: Application<Answers>) => string
     }
   }
 }
@@ -65,16 +67,21 @@ export const FilesRecipientCard: FC<
               application.answers?.estateMembers.length !== 0
                 ? application.answers?.estateMembers?.map((estateMember) => ({
                     label: estateMember.name,
-                    value: estateMember.nationalId,
+                    value: estateMember.name,
                   }))
                 : [
                     {
                       label: application.answers.applicantName,
-                      value: application.applicant,
+                      value: application.answers.applicantName,
                     },
                   ]
             }
           />
+        </Box>
+      )}
+      {field.props.tag && (
+        <Box marginTop={1}>
+          <Tag disabled>{field.props.tag(application)}</Tag>
         </Box>
       )}
     </Box>

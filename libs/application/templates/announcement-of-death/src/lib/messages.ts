@@ -525,6 +525,26 @@ Ef ekkert á við sem hér að ofan er talið rennur arfur í ríkissjóð. Nán
     defaultMessage: 'Gildistími',
     description: 'Card validity label',
   },
+  additionalInfoTitle: {
+    id: 'aod.application:additionalInfoTitle',
+    defaultMessage: 'Viðbótarupplýsingar',
+    description: 'Additional info title',
+  },
+  additionalInfoDescription: {
+    id: 'aod.application:additionalInfoDescription',
+    defaultMessage: 'Hér getur þú skráð viðbótarupplýsingar ef við á. ',
+    description: 'Additional info description',
+  },
+  additionalInfoLabel: {
+    id: 'aod.application:additionalInfoLabel',
+    defaultMessage: 'Upplýsingar',
+    description: 'Additional info label',
+  },
+  additionalInfoPlaceholder: {
+    id: 'aod.application:additionalInfoPlaceholder',
+    defaultMessage: 'Skráðu inn viðbótarupplýsingar hér.',
+    description: 'Additional info placeholder',
+  },
 
   /* Delegated */
   delegatedTitle: {
