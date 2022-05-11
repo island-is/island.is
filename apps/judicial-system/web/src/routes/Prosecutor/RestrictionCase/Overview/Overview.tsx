@@ -126,13 +126,16 @@ export const Overview: React.FC = () => {
       />
       <FormContentContainer>
         {workingCase.state === CaseState.RECEIVED && (
-          <Box marginBottom={5}>
+          <div
+            className={styles.resendInfoPanelContainer}
+            data-testid="rc-overview-info-panel"
+          >
             <AlertMessage
               title={formatMessage(rcOverview.receivedAlert.title)}
               message={formatMessage(rcOverview.receivedAlert.message)}
               type="info"
             />
-          </Box>
+          </div>
         )}
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
