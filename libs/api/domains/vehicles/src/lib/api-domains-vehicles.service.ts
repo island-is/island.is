@@ -29,9 +29,7 @@ export class VehiclesService {
       return res
     } catch (e) {
       const errMsg = 'Failed to get vehicle list'
-      const error = e.toJSON()
-      const errorDesc = error.message
-      this.logger.error(errMsg, { message: errorDesc })
+      this.logger.error(errMsg, { e })
 
       return null
     }
@@ -213,9 +211,7 @@ export class VehiclesService {
       return response
     } catch (e) {
       const errMsg = 'Failed to get vehicle details'
-      const error = e.toJSON()
-      const errorDesc = error.message
-      this.logger.error(errMsg, { message: errorDesc })
+      this.logger.error(errMsg, { e })
       return null
     }
   }
