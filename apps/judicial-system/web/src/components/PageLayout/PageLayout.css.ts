@@ -17,6 +17,12 @@ export const formStepperContainer = style({
 export const processContent = style({
   minHeight: '644px',
   paddingBottom: theme.spacing[5],
+
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      borderRadius: theme.border.radius.large,
+    },
+  },
 })
 
 export const loadingWrapper = style({

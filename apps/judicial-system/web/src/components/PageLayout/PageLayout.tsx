@@ -93,7 +93,6 @@ const PageLayout: React.FC<PageProps> = ({
             <Box
               background="white"
               borderColor="white"
-              borderRadius="large"
               paddingTop={[3, 3, 10, 10]}
               className={styles.processContent}
             >
