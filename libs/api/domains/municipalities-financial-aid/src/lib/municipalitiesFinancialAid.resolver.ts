@@ -20,6 +20,7 @@ import {
   ApplicationInput,
   ApplicationFilesInput,
   UpdateApplicationInput,
+  GetSignedUrlInput,
 } from './dto'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -95,6 +96,18 @@ export class MunicipalitiesFinancialAidResolver {
     @CurrentUser() user: User,
   ): Promise<ApplicationModel | null> {
     return await this.municipalitiesFinancialAidService.municipalitiesFinancialAidUpdateApplication(
+      user,
+      input,
+    )
+  }
+
+  @Query(() => SignedUrlModel)
+  async municipalitiesFinancialAidApplicationSignedUrl(
+    @Args('input', { type: () => GetSignedUrlInput })
+    input: GetSignedUrlInput,
+    @CurrentUser() user: User,
+  ): Promise<SignedUrlModel> {
+    return await this.municipalitiesFinancialAidService.municipalitiesFinancialAidGetSignedUrl(
       user,
       input,
     )

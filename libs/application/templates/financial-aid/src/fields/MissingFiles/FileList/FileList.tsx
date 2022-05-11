@@ -1,43 +1,29 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
-import { gql, useLazyQuery } from '@apollo/client'
 
 import { Text, Box, UploadFile } from '@island.is/island-ui/core'
-
 import {
   getFileSizeInKilo,
   getFileType,
 } from '@island.is/financial-aid/shared/lib'
+
 import * as styles from './FileList.css'
 import { missingFiles } from '../../../lib/messages'
-
-export const GetSignedUrlQuery = gql`
-  query GetSignedUrlQuery($input: GetSignedUrlForIdInput!) {
-    getSignedUrlForId(input: $input) {
-      url
-      key
-    }
-  }
-`
+import { useFileUpload } from '../../../lib/hooks/useFileUpload'
 
 interface Props {
+  applicationSystemId: string
   files?: UploadFile[]
 }
 
-const FileList = ({ files }: Props) => {
+const FileList = ({ files, applicationSystemId }: Props) => {
   if (files === undefined || files.length === 0) {
     return null
   }
 
   const { formatMessage } = useIntl()
-
-  const [openFile] = useLazyQuery(GetSignedUrlQuery, {
-    fetchPolicy: 'no-cache',
-    onCompleted: (data: { getSignedUrlForId: { url: string } }) => {
-      window.open(data.getSignedUrlForId.url, '_blank')
-    },
-  })
+  const { openFileById } = useFileUpload(files, applicationSystemId)
 
   return (
     <Box marginBottom={2}>
@@ -53,7 +39,7 @@ const FileList = ({ files }: Props) => {
               if (file.id === undefined) {
                 return
               }
-              openFile({ variables: { input: { id: file.id } } })
+              openFileById(file.id)
             }}
           >
             <div className={styles.container}>

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { useMutation } from '@apollo/client'
+import { useLazyQuery, useMutation } from '@apollo/client'
 import { UploadFile } from '@island.is/island-ui/core'
 import {
   CreateFilesResponse,
@@ -36,6 +36,17 @@ const ApplicationFilesMutation = gql`
   }
 `
 
+export const SignedUrlQuery = gql`
+  query MunicipalitiesFinancialAidApplicationSignedUrlQuery(
+    $input: MunicipalitiesFinancialAidGetSignedUrlInput!
+  ) {
+    municipalitiesFinancialAidApplicationSignedUrl(input: $input) {
+      url
+      key
+    }
+  }
+`
+
 export const useFileUpload = (formFiles: UploadFile[], folderId: string) => {
   const [files, _setFiles] = useState<UploadFile[]>([])
   const filesRef = useRef<UploadFile[]>(files)
@@ -44,6 +55,18 @@ export const useFileUpload = (formFiles: UploadFile[], folderId: string) => {
   const [createApplicationFiles] = useMutation<{
     createMunicipalitiesFinancialAidApplicationFiles: CreateFilesResponse
   }>(ApplicationFilesMutation)
+
+  const [openFile] = useLazyQuery(SignedUrlQuery, {
+    fetchPolicy: 'no-cache',
+    onCompleted: (data: {
+      municipalitiesFinancialAidApplicationSignedUrl: SignedUrl
+    }) => {
+      window.open(
+        data.municipalitiesFinancialAidApplicationSignedUrl.url,
+        '_blank',
+      )
+    },
+  })
 
   const requests: { [Key: string]: XMLHttpRequest } = {}
 
@@ -254,6 +277,10 @@ export const useFileUpload = (formFiles: UploadFile[], folderId: string) => {
     onChange([file as File], true)
   }
 
+  const openFileById = (fileId: String) => {
+    return openFile({ variables: { input: { id: fileId } } })
+  }
+
   return {
     files,
     uploadErrorMessage,
@@ -262,5 +289,6 @@ export const useFileUpload = (formFiles: UploadFile[], folderId: string) => {
     onRetry,
     uploadFiles,
     uploadStateFiles,
+    openFileById,
   }
 }

@@ -19,7 +19,10 @@ const MissingFilesConfirmation = ({ application }: FAFieldBaseProps) => {
       </Text>
 
       <Box>
-        <FileList files={getValues('otherFiles')} />
+        <FileList
+          files={getValues('otherFiles')}
+          applicationSystemId={application.id}
+        />
       </Box>
 
       {getValues('fileUploadComment') && (

@@ -11,6 +11,7 @@ import { FetchError } from '@island.is/clients/middlewares'
 import {
   ApplicationFilesInput,
   CreateSignedUrlInput,
+  GetSignedUrlInput,
   MunicipalityInput,
 } from './dto'
 import { ApplicationInput } from './dto/application.input'
@@ -95,5 +96,14 @@ export class MunicipalitiesFinancialAidService {
         updateApplicationDto: updates as any,
       })
       .catch(this.handle404)
+  }
+
+  async municipalitiesFinancialAidGetSignedUrl(
+    auth: Auth,
+    id: GetSignedUrlInput,
+  ) {
+    return await this.fileApiWithAuth(auth).fileControllerCreateSignedUrlForId(
+      id,
+    )
   }
 }
