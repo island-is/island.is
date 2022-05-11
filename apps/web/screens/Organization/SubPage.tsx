@@ -246,7 +246,7 @@ SubPage.getInitialProps = async ({ apolloClient, locale, query, pathname }) => {
     subpage: getOrganizationSubpage,
     namespace,
     showSearchInHeader: false,
-    ...getThemeConfig(getOrganizationPage.theme),
+    ...getThemeConfig(getOrganizationPage.theme, getOrganizationPage.slug),
   }
 }
 
