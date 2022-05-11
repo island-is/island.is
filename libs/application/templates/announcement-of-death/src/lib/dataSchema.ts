@@ -17,8 +17,10 @@ export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   pickRole: z
     .object({
-      roleConfirmation: z
-        .enum([RoleConfirmationEnum.CONTINUE, RoleConfirmationEnum.DELEGATE]),
+      roleConfirmation: z.enum([
+        RoleConfirmationEnum.CONTINUE,
+        RoleConfirmationEnum.DELEGATE,
+      ]),
       electPerson: z.object({
         electedPersonNationalId: z.string(),
         electedPersonName: z.string(),

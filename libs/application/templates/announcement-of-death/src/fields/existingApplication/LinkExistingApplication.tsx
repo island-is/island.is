@@ -67,7 +67,7 @@ export const LinkExistingApplication: FC<FieldBaseProps> = ({
 
   const getNewEstateFromUrl = (url: string) => {
     const caseNumber = url.split('/').pop()
-    return estates.find((estate) => estate.caseNumber == caseNumber)
+    return estates.find((estate) => estate.caseNumber === caseNumber)
   }
 
   useEffect(() => {
@@ -75,24 +75,29 @@ export const LinkExistingApplication: FC<FieldBaseProps> = ({
       if (continueConf) {
         switch (continueConf.action) {
           case ACTION.EXISTING:
-            // delete current application
-            await deleteApplication(application.id)
-            if (!deleteLoading) {
-              // push to existing application
-              history.push(`../../${continueConf.url}`)
+            {
+              // delete current application
+              await deleteApplication(application.id)
+              if (!deleteLoading) {
+                // push to existing application
+                history.push(`../../${continueConf.url}`)
+              }
             }
             break
           case ACTION.NEW:
-            // get estate from casenumber in url
-            const estate = getNewEstateFromUrl(continueConf.url)
-            // update answers with estate
-            await assignEstateToAnswers(estate)
-            // continue to next screen
-            if (!loading) {
-              changeScreens('list')
+            {
+              // get estate from casenumber in url
+              const estate = getNewEstateFromUrl(continueConf.url)
+              // update answers with estate
+              await assignEstateToAnswers(estate)
+              // continue to next screen
+              if (!loading) {
+                changeScreens('list')
+              }
             }
             break
           default:
+            break
         }
       }
     }
@@ -112,7 +117,7 @@ export const LinkExistingApplication: FC<FieldBaseProps> = ({
       [],
     ) ?? []
 
-  var caseNumbers: string[] = []
+  const caseNumbers: string[] = []
 
   const mappedExisting = existing.map((app) => {
     const name =
