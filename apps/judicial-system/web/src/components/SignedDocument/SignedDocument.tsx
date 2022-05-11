@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 
 import { Box, Icon, Text } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages'
+import { signedDocument } from '@island.is/judicial-system-web/messages'
 
 interface Props {
   signatory?: string
@@ -18,7 +18,7 @@ export const SignedDocument = (props: Props) => {
     <Box display="flex" alignItems="center">
       <Box textAlign="right" marginX="gutter">
         <Text>
-          {formatMessage(m.signedDocument, {
+          {formatMessage(signedDocument, {
             date: formatDate(signingDate, 'dd.MM.yyyy'),
             time: formatDate(signingDate, 'HH:mm'),
           })}

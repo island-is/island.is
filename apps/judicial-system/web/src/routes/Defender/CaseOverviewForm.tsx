@@ -1,11 +1,18 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 
-import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Divider,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
 import {
   BlueBox,
   FormContentContainer,
   InfoCard,
+  PdfRow,
 } from '@island.is/judicial-system-web/src/components'
 import {
   Case,
@@ -29,6 +36,7 @@ import {
 import RestrictionTags from '@island.is/judicial-system-web/src/components/RestrictionTags/RestrictionTags'
 import CaseDates from '@island.is/judicial-system-web/src/components/CaseDates/CaseDates'
 import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
+import { SignedDocument } from '@island.is/judicial-system-web/src/components/SignedDocument/SignedDocument'
 
 interface Props {
   workingCase: Case
@@ -211,6 +219,51 @@ const CaseOverviewForm: React.FC<Props> = (props) => {
           </BlueBox>
         </Box>
       )}
+      <Box marginBottom={10}>
+        <Text as="h3" variant="h3" marginBottom={5}>
+          {formatMessage(defenderCaseOverview.documentHeading)}
+        </Text>
+        <Box marginBottom={2}>
+          <Stack space={2} dividers>
+            <PdfRow
+              caseId={workingCase.id}
+              title={formatMessage(core.pdfButtonRequest)}
+              pdfType={'request/restricted'}
+            />
+            {completedCaseStates.includes(workingCase.state) && (
+              <>
+                <PdfRow
+                  caseId={workingCase.id}
+                  title={formatMessage(core.pdfButtonRulingShortVersion)}
+                  pdfType={'courtRecord/restricted'}
+                >
+                  {workingCase.courtRecordSignatory ? (
+                    <SignedDocument
+                      signatory={workingCase.courtRecordSignatory.name}
+                      signingDate={workingCase.courtRecordSignatureDate}
+                    />
+                  ) : (
+                    <Text>
+                      {formatMessage(defenderCaseOverview.unsignedDocument)}
+                    </Text>
+                  )}
+                </PdfRow>
+                <PdfRow
+                  caseId={workingCase.id}
+                  title={formatMessage(core.pdfButtonRuling)}
+                  pdfType={'ruling/restricted'}
+                >
+                  <SignedDocument
+                    signatory={workingCase.judge?.name}
+                    signingDate={workingCase.rulingDate}
+                  />
+                </PdfRow>
+              </>
+            )}
+          </Stack>
+        </Box>
+        <Divider />
+      </Box>
     </FormContentContainer>
   )
 }

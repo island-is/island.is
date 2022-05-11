@@ -73,4 +73,16 @@ export const defenderCaseOverview = {
     description:
       'Notaður sem titill fyrir úrskurðarorð á yfirlitsskjá verjanda.',
   }),
+  documentHeading: defineMessage({
+    id: 'judicial.system.core:defender_case_overview.document_heading',
+    defaultMessage: 'Skjöl málsins',
+    description:
+      'Notaður sem titill fyrir skjöl málsins á yfirlitsskjá verjanda.',
+  }),
+  unsignedDocument: defineMessage({
+    id: 'judicial.system.core:defender_case_overview.unsigned_document',
+    defaultMessage: 'Bíður undirritunar',
+    description:
+      'Notaður sem texti fyrir óundirritað skjal á yfirlitsskjá verjanda.',
+  }),
 }
