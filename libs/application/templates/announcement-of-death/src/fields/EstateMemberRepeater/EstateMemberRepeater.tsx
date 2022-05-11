@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import {
   ArrayField,
   Controller,
@@ -23,19 +23,12 @@ import {
 import { Answers, EstateMember, RelationEnum } from '../../types'
 import { format as formatNationalId } from 'kennitala'
 import * as styles from './EstateMemberRepeater.css'
-import { gql, useLazyQuery } from '@apollo/client'
+import { useLazyQuery } from '@apollo/client'
 import { IdentityInput, Query } from '@island.is/api/schema'
+import { IDENTITY_QUERY, ESTATE_RELATIONS_QUERY } from '../../graphql/'
 import * as kennitala from 'kennitala'
 import { m } from '../../lib/messages'
 
-const IdentityQuery = gql`
-  query IdentityQuery($input: IdentityInput!) {
-    identity(input: $input) {
-      name
-      nationalId
-    }
-  }
-`
 export const EstateMemberRepeater: FC<FieldBaseProps<Answers>> = ({
   field,
 }) => {
@@ -47,10 +40,36 @@ export const EstateMemberRepeater: FC<FieldBaseProps<Answers>> = ({
   const handleAddMember = () =>
     append({
       nationalId: '',
-      relation: RelationEnum.PARENT,
       initial: false,
       name: '',
     })
+
+  const [relationOptions, setRelationOptions] = useState<
+    { value: string; label: string }[]
+  >([])
+
+  const [
+    getEstateRelations,
+    { loading: queryLoading, error: queryError },
+  ] = useLazyQuery<Query>(ESTATE_RELATIONS_QUERY, {
+    onError: (error: unknown) => {
+      console.log('getEstateRelationsError: ', error)
+    },
+    onCompleted: (data) => {
+      setRelationOptions(
+        data.getSyslumennEstateRelations.relations.map((relation) => {
+          return {
+            value: relation,
+            label: relation,
+          }
+        }),
+      )
+    },
+  })
+
+  useEffect(() => {
+    getEstateRelations()
+  }, [])
 
   return (
     <Box marginTop={2}>
@@ -90,7 +109,13 @@ export const EstateMemberRepeater: FC<FieldBaseProps<Answers>> = ({
       </GridRow>
       {fields.map((member, index) => (
         <Box key={member.id} hidden={member.initial}>
-          <Item field={member} fieldName={id} index={index} remove={remove} />
+          <Item
+            field={member}
+            fieldName={id}
+            index={index}
+            relationOptions={relationOptions}
+            remove={remove}
+          />
         </Box>
       ))}
       <Box marginTop={1}>
@@ -113,11 +138,13 @@ const Item = ({
   index,
   remove,
   fieldName,
+  relationOptions,
 }: {
   field: Partial<ArrayField<EstateMember, 'id'>>
   index: number
   remove: (index?: number | number[] | undefined) => void
   fieldName: string
+  relationOptions: { value: string; label: string }[]
 }) => {
   const { formatMessage } = useLocale()
   const fieldIndex = `${fieldName}[${index}]`
@@ -140,7 +167,7 @@ const Item = ({
   const [
     getIdentity,
     { loading: queryLoading, error: queryError },
-  ] = useLazyQuery<Query, { input: IdentityInput }>(IdentityQuery, {
+  ] = useLazyQuery<Query, { input: IdentityInput }>(IDENTITY_QUERY, {
     onError: (error: unknown) => {
       console.log('getIdentity error:', error)
     },
@@ -209,25 +236,7 @@ const Item = ({
                 name={relationField}
                 label={formatMessage(m.inheritanceRelationLabel)}
                 defaultValue={field.relation}
-                options={[
-                  // TODO: Get value
-                  {
-                    value: RelationEnum.CHILD,
-                    label: 'Barn',
-                  },
-                  {
-                    value: RelationEnum.PARENT,
-                    label: 'Foreldri',
-                  },
-                  {
-                    value: RelationEnum.SIBLING,
-                    label: 'Systkini',
-                  },
-                  {
-                    value: RelationEnum.SPOUSE,
-                    label: 'Maki',
-                  },
-                ]}
+                options={relationOptions}
                 backgroundColor="blue"
               />
             </GridColumn>
@@ -271,25 +280,7 @@ const Item = ({
                 name={relationField}
                 label={formatMessage(m.inheritanceRelationLabel)}
                 defaultValue={field.relation}
-                options={[
-                  // TODO: Get value
-                  {
-                    value: RelationEnum.CHILD,
-                    label: 'Barn',
-                  },
-                  {
-                    value: RelationEnum.PARENT,
-                    label: 'Foreldri',
-                  },
-                  {
-                    value: RelationEnum.SIBLING,
-                    label: 'Systkini',
-                  },
-                  {
-                    value: RelationEnum.SPOUSE,
-                    label: 'Maki',
-                  },
-                ]}
+                options={relationOptions}
                 backgroundColor="blue"
               />
             </GridColumn>

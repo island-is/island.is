@@ -2,9 +2,14 @@ import { Inject, Injectable } from '@nestjs/common'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { TemplateApiModuleActionProps } from '../../../types'
-import { SyslumennService } from '@island.is/clients/syslumenn'
+import {
+  DataUploadResponse,
+  Person,
+  PersonType,
+  SyslumennService,
+} from '@island.is/clients/syslumenn'
 import { FasteignirApi } from '@island.is/clients/assets'
-import { RoleConfirmationEnum, PickRole } from './types'
+import { NationalRegistry, RoleConfirmationEnum, PickRole } from './types'
 import { SharedTemplateApiService } from '../../shared'
 import { generateTestEmail } from './emailGenerators'
 import { EinstaklingarApi } from '@island.is/clients/national-registry-v2'
@@ -75,6 +80,9 @@ export class AnnouncementOfDeathService {
       })
       .then((response) => response.json())
 
+    const relationOptions = (await this.syslumennService.getEstateRelations())
+      .relations
+
     if ('errors' in updateApplicationResponse) {
       this.logger.error(
         'Failed to insert Syslumenn Data into answers',
@@ -85,6 +93,7 @@ export class AnnouncementOfDeathService {
     return {
       success: true,
       estates,
+      relationOptions,
     }
   }
 
@@ -127,8 +136,75 @@ export class AnnouncementOfDeathService {
       } catch (e) {
         return { success: false }
       }
-    }
+    } else {
+      const syslumennOnEntryData: any =
+        application.externalData.syslumennOnEntry
 
-    return { success: true }
+      const nationalRegistryData = application.externalData.nationalRegistry
+        ?.data as NationalRegistry
+      const person: Person = {
+        name: nationalRegistryData?.fullName,
+        ssn: application.applicant,
+        phoneNumber: application.answers.applicantPhone as string,
+        city: nationalRegistryData?.address.city,
+        homeAddress: nationalRegistryData?.address.streetAddress,
+        postalCode: nationalRegistryData?.address.postalCode,
+        signed: false,
+        type: PersonType.AnnouncerOfDeathCertificate,
+        email: application.answers.applicantEmail as string,
+      }
+
+      const uploadDataName = 'aod0.1'
+      const uploadDataId = 'aod0.1'
+
+      const extraData = {
+        caseNumber: application.answers.caseNumber as string,
+        notifier: JSON.stringify({
+          name: application.answers.applicantName as string,
+          ssn: application.applicant,
+          phoneNumber: application.answers.applicantPhone as string,
+          email: application.answers.applicantEmail as string,
+          relation: application.answers.applicantRelation as string,
+        }),
+        knowledgeOfOtherWill: application.answers.knowledgeOfOtherWills.toString(),
+        estateMembers: JSON.stringify(application.answers.estateMembers),
+        assets: JSON.stringify(application.answers.assets),
+        vehicles: JSON.stringify(application.answers.vehicles),
+        bankcodeSecuritiesOrShares: application.answers.bankStockOrShares.toString(),
+        selfOperatedCompany: application.answers.ownBusinessManagement.toString(),
+        occupationRightViaCondominium: application.answers.occupationRightViaCondominium.toString(),
+        assetsAbroad: application.answers.assetsAbroad.toString(),
+        districtCommissionerHasWill: application.answers.districtCommissionerHasWill.toString(),
+        prenuptialAgreement: application.answers.marriageSettlement as string,
+        certificateOfDeathAnnouncement: application.answers
+          .certificateOfDeathAnnouncement as string,
+        authorizationForFuneralExpenses: application.answers
+          .authorizationForFuneralExpenses as string,
+        financesDataCollectionPermission: application.answers
+          .financesDataCollectionPermission as string,
+      }
+
+      const result: DataUploadResponse = await this.syslumennService
+        .uploadData(
+          [person],
+          undefined,
+          extraData,
+          uploadDataName,
+          uploadDataId,
+        )
+        .catch((e) => {
+          return {
+            success: false,
+            errorMessage: e.message,
+          }
+        })
+
+      if (!result.success) {
+        throw new Error(
+          'Application submission failed on syslumadur upload data',
+        )
+      }
+      return { success: result.success, id: result.caseNumber }
+    }
   }
 }

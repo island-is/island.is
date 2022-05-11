@@ -51,25 +51,18 @@ export const subSectionInfo = buildSubSection({
           title: m.applicantsRelation,
           placeholder: m.applicantsRelationPlaceholder,
           width: 'half',
-          options: [
-            // TODO: Get value
-            {
-              value: RelationEnum.CHILD,
-              label: 'Barn',
+          options: ({
+            externalData: {
+              syslumennOnEntry: { data },
             },
-            {
-              value: RelationEnum.PARENT,
-              label: 'Foreldri',
-            },
-            {
-              value: RelationEnum.SIBLING,
-              label: 'Systkini',
-            },
-            {
-              value: RelationEnum.SPOUSE,
-              label: 'Maki',
-            },
-          ],
+          }) => {
+            return (data as { relationOptions: string[] }).relationOptions.map(
+              (relation) => ({
+                value: relation,
+                label: relation,
+              }),
+            )
+          },
         }),
       ],
     }),

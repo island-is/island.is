@@ -476,7 +476,7 @@ describe('formatProsecutorReadyForCourtEmailNotification', () => {
 
     // Assert
     expect(res.body).toBe(
-      'Þú hefur sent kröfu um gæsluvarðhald á Héraðsdómur Reykjavíkur vegna LÖKE máls 1234567. Skjalið er aðgengilegt undir <a href="https://rettarvorslugatt.island.is/test/overview">málinu í Réttarvörslugátt</a>.',
+      'Þú hefur sent kröfu um gæsluvarðhald á Héraðsdóm Reykjavíkur vegna LÖKE máls 1234567. Skjalið er aðgengilegt undir <a href="https://rettarvorslugatt.island.is/test/overview">málinu í Réttarvörslugátt</a>.',
     )
   })
 
@@ -498,7 +498,7 @@ describe('formatProsecutorReadyForCourtEmailNotification', () => {
 
     // Assert
     expect(res.body).toBe(
-      'Þú hefur sent kröfu um farbann á Héraðsdómur Reykjaness vegna LÖKE máls 66666. Skjalið er aðgengilegt undir <a href="https://rettarvorslugatt.island.is/test/overview">málinu í Réttarvörslugátt</a>.',
+      'Þú hefur sent kröfu um farbann á Héraðsdóm Reykjaness vegna LÖKE máls 66666. Skjalið er aðgengilegt undir <a href="https://rettarvorslugatt.island.is/test/overview">málinu í Réttarvörslugátt</a>.',
     )
   })
 
@@ -520,7 +520,7 @@ describe('formatProsecutorReadyForCourtEmailNotification', () => {
 
     // Assert
     expect(res.body).toBe(
-      'Þú hefur sent kröfu um vistun á viðeigandi stofnun á Héraðsdómur Reykjaness vegna LÖKE máls 66666. Skjalið er aðgengilegt undir <a href="https://rettarvorslugatt.island.is/test/overview">málinu í Réttarvörslugátt</a>.',
+      'Þú hefur sent kröfu um vistun á viðeigandi stofnun á Héraðsdóm Reykjaness vegna LÖKE máls 66666. Skjalið er aðgengilegt undir <a href="https://rettarvorslugatt.island.is/test/overview">málinu í Réttarvörslugátt</a>.',
     )
   })
 })

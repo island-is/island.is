@@ -205,6 +205,8 @@ function mapPersonEnum(e: PersonType) {
       return AdiliTegund.NUMBER_0
     case PersonType.MortgageCertificateApplicant:
       return AdiliTegund.NUMBER_0
+    case PersonType.AnnouncerOfDeathCertificate:
+      return AdiliTegund.NUMBER_0
   }
 }
 
@@ -237,6 +239,7 @@ export const mapEstateRegistrant = (
     applicantEmail: syslaData.tolvuposturSkreningaradila ?? '',
     applicantPhone: syslaData.simiSkraningaradila ?? '',
     knowledgeOfOtherWills: syslaData.vitneskjaUmAdraErfdaskra ? 'yes' : 'no',
+    districtCommissionerHasWill: syslaData.erfdaskraIVorsluSyslumanns ?? false,
     assets: syslaData.eignir
       ? syslaData.eignir
           .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_0)
@@ -270,6 +273,7 @@ export const mapEstateRegistrant = (
     caseNumber: syslaData.malsnumer ?? '',
     dateOfDeath: syslaData.danardagur ?? '',
     nameOfDeceased: syslaData.nafnLatins ?? '',
+    nationalIdOfDeceased: syslaData.kennitalaLatins ?? '',
     ownBusinessManagement: syslaData.eiginRekstur ?? false,
     assetsAbroad: syslaData.eignirErlendis ?? false,
     occupationRightViaCondominium:

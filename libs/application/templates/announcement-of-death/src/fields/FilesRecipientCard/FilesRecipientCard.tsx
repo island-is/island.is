@@ -61,12 +61,19 @@ export const FilesRecipientCard: FC<
                   )
                 : ''
             }
-            options={application.answers?.estateMembers?.map(
-              (estateMember) => ({
-                label: estateMember.name,
-                value: estateMember.nationalId,
-              }),
-            )}
+            options={
+              application.answers?.estateMembers.length !== 0
+                ? application.answers?.estateMembers?.map((estateMember) => ({
+                    label: estateMember.name,
+                    value: estateMember.nationalId,
+                  }))
+                : [
+                    {
+                      label: application.answers.applicantName,
+                      value: application.applicant,
+                    },
+                  ]
+            }
           />
         </Box>
       )}

@@ -9,14 +9,8 @@ import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { gql, useLazyQuery } from '@apollo/client'
 import { IdentityInput, Query } from '@island.is/api/schema'
+import { IDENTITY_QUERY } from '../../graphql/'
 
-const IdentityQuery = gql`
-  query IdentityQuery($input: IdentityInput!) {
-    identity(input: $input) {
-      name
-    }
-  }
-`
 interface ElectPersonFieldBaseProps extends FieldBaseProps {
   errors: FieldErrors<FieldValues>
 }
@@ -37,7 +31,7 @@ const ElectPerson: FC<ElectPersonFieldBaseProps> = ({ application }) => {
   const [getIdentity, { loading: queryLoading }] = useLazyQuery<
     Query,
     { input: IdentityInput }
-  >(IdentityQuery, {
+  >(IDENTITY_QUERY, {
     onError: (error: unknown) => {
       setError(fieldNames.lookupError, {
         type: 'serverError',

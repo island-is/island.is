@@ -25,6 +25,7 @@ import { m } from '../../lib/messages'
 import { RoleConfirmationEnum } from '../../types'
 import CoatOfArms from '../../assets/CoatOfArms'
 import { subSectionDelegate } from '../draft/subSectionDelegate'
+import { sectionExistingApplication } from './sectionExistingApplication'
 
 export const prerequisite = (): Form => {
   return buildForm({
@@ -63,8 +64,15 @@ export const prerequisite = (): Form => {
                 title: m.dataCollectionEstateTitle,
                 subTitle: m.dataCollectionEstateSubtitle,
               }),
+              buildDataProviderItem({
+                id: 'existingApplication',
+                type: 'ExistingApplicationProvider',
+                title: '',
+              }),
             ],
           }),
+          sectionExistingApplication,
+
         ],
       }),
       buildSection({

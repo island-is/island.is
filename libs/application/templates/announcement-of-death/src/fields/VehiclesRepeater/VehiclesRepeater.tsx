@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { useFieldArray } from 'react-hook-form'
+import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
 import { FieldBaseProps } from '@island.is/application/core'
@@ -19,6 +19,7 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({ field }) => {
   const { id } = field
   const { formatMessage } = useLocale()
   const { fields, append, remove } = useFieldArray<Asset>({ name: id })
+  const { control } = useFormContext()
 
   const handleAddVehicle = () =>
     append({
@@ -64,8 +65,9 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({ field }) => {
       </GridRow>
       {fields.map((field, index) => {
         const fieldIndex = `${id}[${index}]`
-        const vehicleNumberField = `${fieldIndex}.plateNumber`
-        const vehicleTypeField = `${fieldIndex}.vehicleType`
+        const vehicleNumberField = `${fieldIndex}.assetNumber`
+        const vehicleTypeField = `${fieldIndex}.description`
+        const initialField = `${fieldIndex}.initial`
 
         return (
           <Box
@@ -74,6 +76,11 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({ field }) => {
             marginTop={2}
             hidden={field.initial}
           >
+            <Controller
+              name={initialField}
+              control={control}
+              defaultValue={field.initial || false}
+            />
             <Box position="absolute" className={styles.removeFieldButton}>
               <Button
                 variant="ghost"
@@ -90,6 +97,7 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({ field }) => {
                   name={vehicleNumberField}
                   label={formatMessage(m.vehicleNumberLabel)}
                   backgroundColor="blue"
+                  defaultValue={field.assetNumber}
                 />
               </GridColumn>
               <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
@@ -97,6 +105,7 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({ field }) => {
                   id={vehicleTypeField}
                   name={vehicleTypeField}
                   label={formatMessage(m.vehicleTypeLabel)}
+                  defaultValue={field.description}
                   readOnly
                 />
               </GridColumn>

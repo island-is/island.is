@@ -20,6 +20,7 @@ import {
 import type { User } from '@island.is/auth-nest-tools'
 import { PropertyDetail } from '@island.is/api/domains/assets'
 import { SearchForPropertyInput } from './dto/searchForProperty.input'
+import { EstateRelations } from './models/relations'
 
 const cacheTime = process.env.CACHE_TIME || 300
 
@@ -94,5 +95,11 @@ export class SyslumennResolver {
     @Args('input') input: SearchForPropertyInput,
   ): Promise<PropertyDetail> {
     return this.syslumennService.getPropertyDetails(input.propertyNumber)
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => EstateRelations)
+  getSyslumennEstateRelations(): Promise<EstateRelations> {
+    return this.syslumennService.getEstateRelations()
   }
 }
