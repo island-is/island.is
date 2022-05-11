@@ -105,13 +105,38 @@ const NavItemContent: FC<Props> = ({
                 collapsed && styles.badgeCollapsed,
               )}
             ></Box>
-            <Icon
+            {/* <Icon
               type={active ? 'filled' : 'outline'}
               icon={icon.icon}
               color={active || hover ? 'blue400' : 'blue600'}
               size="medium"
               className={styles.icon}
-            />
+            /> */}
+            <div className={styles.testIconWrapper}>
+              <svg
+                className={hover ? styles.testIconHover : styles.testIcon}
+                viewBox="0 0 512 512"
+              >
+                <path
+                  className={styles.testBack}
+                  d="M411.204 144v-30a50 50 0 0 0-59.36-49.1l-263.36 44.95c-23.593 4.496-40.656 25.132-40.64 49.15v49"
+                />
+                <rect
+                  className={hover ? styles.testCardHover : styles.testCard}
+                  rx="48"
+                  ry="48"
+                />
+                <rect
+                  className={hover ? styles.testFrontHover : styles.testFront}
+                  rx="48"
+                  ry="48"
+                />
+                <path
+                  className={hover ? styles.testDotHover : styles.testDot}
+                  d="M368 320c-17.673 0-32-14.327-32-32s14.327-32 32-32 32 14.327 32 32-14.327 32-32 32Z"
+                />
+              </svg>
+            </div>
           </Box>
         ) : null}
         {!collapsed ? <Box className={styles.text}>{children}</Box> : ''}

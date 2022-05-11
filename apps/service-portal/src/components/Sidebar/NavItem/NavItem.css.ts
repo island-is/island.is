@@ -187,3 +187,77 @@ export const subLinkActive = style({
   color: theme.color.blue400,
   fontWeight: theme.typography.semiBold,
 })
+
+// TEST
+
+export const testIconWrapper = style({})
+
+export const testCard = style({
+  fill: '#fff',
+  width: 424,
+  height: 288,
+  transformOrigin: 'left',
+  transform: 'rotate(0deg) translate(48px, 140px)',
+  transition: 'all 0.2s ease-out',
+})
+
+export const testCardHover = style({
+  width: 424,
+  height: 288,
+  transformOrigin: 'left',
+  transition: 'all 0.2s ease-out',
+
+  transform: 'rotate(-18deg) translate(60px, 140px)',
+  fill: '#0061ff',
+})
+
+export const testBack = style({
+  fill: 'none',
+  strokeWidth: 32,
+  transition: 'color 0.2s ease-in-out',
+})
+
+export const testFront = style({
+  fill: '#fff',
+  strokeWidth: 32,
+  width: 416,
+  height: 288,
+  transform: 'translate(48px, 144px)',
+  transition: 'all 0.2s ease-in-out',
+})
+
+export const testFrontHover = style({
+  fill: '#fff',
+  strokeWidth: 32,
+  width: 416,
+  height: 288,
+  transform: 'translate(48px, 144px)',
+  transition: 'all 0.2s ease-in-out',
+  stroke: '#0061ff',
+})
+
+export const testDot = style({
+  fill: '#0044b3',
+  transition: 'all 0.2s ease-out',
+})
+
+export const testDotHover = style({
+  transform: 'translateX(-24px)',
+  fill: ' #0061ff',
+})
+export const testIcon = style({
+  width: 24,
+  height: 24,
+  stroke: '#0044b3',
+  strokeLinejoin: 'round',
+  ':hover': {
+    stroke: '#0061ff',
+  },
+})
+
+export const testIconHover = style({
+  width: 24,
+  height: 24,
+  strokeLinejoin: 'round',
+  stroke: '#0061ff',
+})
