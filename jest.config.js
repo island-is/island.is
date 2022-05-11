@@ -187,7 +187,6 @@ module.exports = {
     '<rootDir>/libs/service-portal/information',
     '<rootDir>/libs/service-portal/licenses',
     '<rootDir>/libs/service-portal/vehicles',
-    '<rootDir>/libs/service-portal/wip',
     '<rootDir>/libs/service-portal/settings/access-control',
     '<rootDir>/libs/service-portal/settings/islykill',
     '<rootDir>/libs/service-portal/settings/personal-information',

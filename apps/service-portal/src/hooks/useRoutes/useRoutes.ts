@@ -1,7 +1,6 @@
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import flatten from 'lodash/flatten'
 import { useEffect } from 'react'
-import * as kennitala from 'kennitala'
 
 import {
   ServicePortalModule,
@@ -23,7 +22,7 @@ export const useRoutes = () => {
     modules: ServicePortalModule[],
     client: ApolloClient<NormalizedCacheObject>,
   ) => {
-    const IS_COMPANY = kennitala.isCompany(userInfo?.profile?.nationalId || '') // TODO: Use other way to do this
+    const IS_COMPANY = userInfo?.profile?.subjectType === 'legalEntity'
     const routes = await Promise.all(
       Object.values(modules).map((module) => {
         const routesObject =

@@ -503,7 +503,6 @@
       "@island.is/service-portal/vehicles": [
         "libs/service-portal/vehicles/src/index.ts"
       ],
-      "@island.is/service-portal/wip": ["libs/service-portal/wip/src/index.ts"],
       "@island.is/shared/components": ["libs/shared/components/src/index.ts"],
       "@island.is/shared/connected": ["libs/shared/connected/src/index.ts"],
       "@island.is/shared/constants": ["libs/shared/constants/src/index.ts"],

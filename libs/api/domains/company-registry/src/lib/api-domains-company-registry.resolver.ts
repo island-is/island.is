@@ -1,6 +1,6 @@
 import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
 import { Inject, UseGuards } from '@nestjs/common'
-import { ApiScope } from '@island.is/auth/scopes'
+import { ApiScope, NationalRegistryScope } from '@island.is/auth/scopes'
 import { IdsUserGuard, ScopesGuard, Scopes } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
 
@@ -13,7 +13,11 @@ import { RskCompanySearchItems } from './models/rskCompanySearchItems.model'
 import { RskCompanyInfoSearchInput } from './dto/RskCompanyInfoSearch.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(ApiScope.internal) // TODO: What is the scope for the procuringholders to allow for company lookup
+/**
+ * TODO: Before merge to main;
+ * Add the scope for the procuringholders to allow for company lookup.
+ */
+@Scopes(ApiScope.internal, NationalRegistryScope.individuals)
 @Resolver(() => RskCompany)
 @Audit({ namespace: '@island.is/api/company-registry' })
 export class CompanyRegistryResolver {
