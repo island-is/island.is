@@ -12,6 +12,7 @@ import SubNavModal from './SubNavModal'
 import { servicePortalOutboundLink } from '@island.is/plausible'
 import { useStore } from '../../store/stateProvider'
 import SubNav from './NavItem/SubNav'
+import { setTimeout } from 'timers'
 
 interface Props {
   nav: ServicePortalNavigationItem
@@ -22,6 +23,7 @@ interface Props {
 const ModuleNavigation: FC<Props> = ({ nav, onItemClick, badge }) => {
   const [expand, setExpand] = useState(false)
   const [hover, setHover] = useState(false)
+  const [clicked, setClicked] = useState(false)
   const [{ sidebarState }] = useStore()
   const { formatMessage } = useLocale()
   const { pathname } = useLocation()
@@ -60,6 +62,12 @@ const ModuleNavigation: FC<Props> = ({ nav, onItemClick, badge }) => {
       onMouseLeave={() => {
         setHover(false)
       }}
+      onClick={() => {
+        setClicked(true)
+        setTimeout(() => {
+          setClicked(false)
+        }, 1000)
+      }}
     >
       {navArray && nav.enabled !== false && collapsed && (
         <SubNavModal active={hover}>
@@ -92,6 +100,7 @@ const ModuleNavigation: FC<Props> = ({ nav, onItemClick, badge }) => {
         icon={nav.icon}
         hover={hover}
         active={isModuleActive}
+        clicked={clicked}
         expanded={expand}
         hasArray={navArray}
         enabled={nav.enabled}

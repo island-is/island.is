@@ -190,6 +190,51 @@ export const subLinkActive = style({
 
 // TEST
 
+const hoverDot = keyframes({
+  '0%': {
+    transform: 'translateX(0px)',
+    fill: '#0044b3',
+  },
+  '50%': {
+    transform: 'translateX(-24px)',
+    fill: '#0061ff',
+  },
+  '100%': {
+    transform: 'translateX(0px)',
+    fill: '#0044b3',
+  },
+})
+
+const hoverCard = keyframes({
+  '0%': {
+    transform: 'rotate(0deg) translate(60px, 140px)',
+    fill: '#fff',
+  },
+  '50%': {
+    transform: 'rotate(-18deg) translate(60px, 140px)',
+    fill: '#0061ff',
+  },
+  '100%': {
+    transform: 'rotate(0deg) translate(60px, 140px)',
+    fill: '#fff',
+  },
+})
+
+const hoverColor = keyframes({
+  '0%': {
+    transform: 'scale(1)',
+    stroke: '#0044b3',
+  },
+  '50%': {
+    transform: 'scale(0.96)',
+    fill: '#0061ff',
+  },
+  '100%': {
+    transform: 'scale(1)',
+    fill: '#0044b3',
+  },
+})
+
 export const testIconWrapper = style({})
 
 export const testCard = style({
@@ -198,23 +243,26 @@ export const testCard = style({
   height: 288,
   transformOrigin: 'left',
   transform: 'rotate(0deg) translate(48px, 140px)',
-  transition: 'all 0.2s ease-out',
+  //transition: 'all 0.2s ease-out',
 })
 
 export const testCardHover = style({
   width: 424,
   height: 288,
   transformOrigin: 'left',
-  transition: 'all 0.2s ease-out',
+  fill: '#fff',
+  transform: 'rotate(0deg) translate(48px, 140px)',
+  //transition: 'all 0.2s ease-out',
 
-  transform: 'rotate(-18deg) translate(60px, 140px)',
-  fill: '#0061ff',
+  // transform: 'rotate(-18deg) translate(60px, 140px)',
+  //fill: '#0061ff',
+  animation: `${hoverCard} .45s cubic-bezier(0.4, 0, 0.2, 1)`,
 })
 
 export const testBack = style({
   fill: 'none',
   strokeWidth: 32,
-  transition: 'color 0.2s ease-in-out',
+  //transition: 'color 0.2s ease-in-out',
 })
 
 export const testFront = style({
@@ -223,7 +271,7 @@ export const testFront = style({
   width: 416,
   height: 288,
   transform: 'translate(48px, 144px)',
-  transition: 'all 0.2s ease-in-out',
+  //transition: 'all 0.2s ease-in-out',
 })
 
 export const testFrontHover = style({
@@ -232,32 +280,38 @@ export const testFrontHover = style({
   width: 416,
   height: 288,
   transform: 'translate(48px, 144px)',
-  transition: 'all 0.2s ease-in-out',
-  stroke: '#0061ff',
+  // fill: '#fff',
+  // strokeWidth: 32,
+  // width: 416,
+  // height: 288,
+  // transform: 'translate(48px, 144px)',
+  // transition: 'all 0.2s ease-in-out',
+  // stroke: '#0061ff',
 })
 
 export const testDot = style({
   fill: '#0044b3',
-  transition: 'all 0.2s ease-out',
+  transform: 'translateX(0px)',
+  // transition: 'all 0.2s ease-out',
 })
 
 export const testDotHover = style({
-  transform: 'translateX(-24px)',
-  fill: ' #0061ff',
+  fill: '#0061ff',
+  //transform: 'translateX(-24px)',
+  transform: 'translateX(0px)',
+  animation: `${hoverDot} .45s cubic-bezier(0.4, 0, 0.2, 1)`,
 })
 export const testIcon = style({
   width: 24,
   height: 24,
   stroke: '#0044b3',
   strokeLinejoin: 'round',
-  ':hover': {
-    stroke: '#0061ff',
-  },
 })
 
 export const testIconHover = style({
   width: 24,
   height: 24,
-  strokeLinejoin: 'round',
   stroke: '#0061ff',
+  strokeLinejoin: 'round',
+  animation: `${hoverColor} .45s cubic-bezier(0.4, 0, 0.2, 1)`,
 })
