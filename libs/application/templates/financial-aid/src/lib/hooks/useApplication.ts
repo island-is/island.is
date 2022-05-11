@@ -57,7 +57,7 @@ const useApplication = (id: string) => {
   })
 
   const [updateApplicationMutation] = useMutation<{
-    updateApplication: Application
+    updateMunicipalitiesFinancialAidApplication: Application
   }>(ApplicationMutation)
 
   const updateApplication = async (
@@ -65,16 +65,18 @@ const useApplication = (id: string) => {
     event: ApplicationEventType,
     comment: string,
   ) => {
-    return await updateApplicationMutation({
-      variables: {
-        input: {
-          id: id,
-          state: state,
-          event: event,
-          comment: comment,
+    return (
+      await updateApplicationMutation({
+        variables: {
+          input: {
+            id: id,
+            state: state,
+            event: event,
+            comment: comment,
+          },
         },
-      },
-    })
+      })
+    ).data?.updateMunicipalitiesFinancialAidApplication
   }
 
   return {

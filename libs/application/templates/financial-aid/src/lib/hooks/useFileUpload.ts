@@ -1,7 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
 import { useMutation } from '@apollo/client'
 import { UploadFile } from '@island.is/island-ui/core'
-import { FileType, SignedUrl } from '@island.is/financial-aid/shared/lib'
+import {
+  CreateFilesResponse,
+  FileType,
+  SignedUrl,
+} from '@island.is/financial-aid/shared/lib'
 import { gql } from '@apollo/client'
 import { encodeFilenames } from '../utils'
 
@@ -22,6 +26,12 @@ const ApplicationFilesMutation = gql`
   ) {
     createMunicipalitiesFinancialAidApplicationFiles(input: $input) {
       success
+      files {
+        id
+        key
+        name
+        size
+      }
     }
   }
 `
@@ -31,7 +41,9 @@ export const useFileUpload = (formFiles: UploadFile[], folderId: string) => {
   const filesRef = useRef<UploadFile[]>(files)
   const [uploadErrorMessage, setUploadErrorMessage] = useState<string>()
   const [createSignedUrlMutation] = useMutation(CreateSignedUrlMutation)
-  const [createApplicationFiles] = useMutation(ApplicationFilesMutation)
+  const [createApplicationFiles] = useMutation<{
+    createMunicipalitiesFinancialAidApplicationFiles: CreateFilesResponse
+  }>(ApplicationFilesMutation)
 
   const requests: { [Key: string]: XMLHttpRequest } = {}
 
@@ -126,11 +138,13 @@ export const useFileUpload = (formFiles: UploadFile[], folderId: string) => {
   }
 
   const uploadStateFiles = async (applicationId: string, type: FileType) => {
-    return await createApplicationFiles({
-      variables: {
-        input: { files: formatFiles(files, applicationId, type) },
-      },
-    })
+    return (
+      await createApplicationFiles({
+        variables: {
+          input: { files: formatFiles(files, applicationId, type) },
+        },
+      })
+    ).data?.createMunicipalitiesFinancialAidApplicationFiles.files
   }
 
   const uploadFiles = async (

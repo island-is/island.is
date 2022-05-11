@@ -42,15 +42,17 @@ export class FileService {
       }),
     )
     return await Promise.all(promises)
-      .then(() => {
+      .then((values) => {
         return {
+          files: values,
           success: true,
-        }
+        } as CreateFilesModel
       })
       .catch(() => {
         return {
+          files: null,
           success: false,
-        }
+        } as CreateFilesModel
       })
   }
 

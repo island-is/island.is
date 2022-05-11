@@ -29,6 +29,7 @@ export interface SignedUrl {
 
 export interface CreateFilesResponse {
   success: boolean
+  files?: ApplicationFile[]
 }
 
 export interface Staff {
