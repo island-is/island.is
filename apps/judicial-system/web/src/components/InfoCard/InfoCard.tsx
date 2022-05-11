@@ -104,7 +104,6 @@ const InfoCard: React.FC<Props> = (props) => {
             <Box
               data-testid={`infoCardDataContainer${index}`}
               className={styles.infoCardData}
-              // Should be applied to every element except the last two
               marginBottom={[
                 isLastItem ? 0 : 2,
                 isLastItem ? 0 : 2,
