@@ -19,6 +19,6 @@ module.exports = {
     '!**/infra/*',
     '!**/seeders/*',
     '!**/migrations/*',
-    '!**/{buildOpenApi,openApi,main,index}.ts',
+    '!**/{buildOpenApi,openApi,main}.ts',
   ],
 }
