@@ -4,10 +4,16 @@ import { style } from '@vanilla-extract/css'
 export const logoText = style({
   fontWeight: theme.typography.semiBold,
   textTransform: 'uppercase',
+  alignSelf: 'center',
 })
 
 export const logoContainer = style({
   display: 'flex',
-  alignItems: 'center',
   flexDirection: 'row',
+
+  '@media': {
+    [`(min-width: ${theme.breakpoints.md}px) and (max-width: ${theme.breakpoints.lg}px)`]: {
+      flexDirection: 'column',
+    },
+  },
 })

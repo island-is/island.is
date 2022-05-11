@@ -12,7 +12,7 @@ export const infoCardTitleContainer = style({
 
 export const infoCardDataContainer = style({
   '@media': {
-    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+    [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
       display: 'flex',
       flexWrap: 'wrap',
     },
@@ -28,7 +28,7 @@ export const infoCardDefendant = style({
   flexDirection: 'column',
 
   '@media': {
-    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+    [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
       display: 'block',
     },
   },
