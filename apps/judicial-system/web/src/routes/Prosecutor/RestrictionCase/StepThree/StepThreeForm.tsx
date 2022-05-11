@@ -1,13 +1,20 @@
 import React, { useState } from 'react'
-import { useIntl } from 'react-intl'
+import { IntlShape, useIntl } from 'react-intl'
+import formatISO from 'date-fns/formatISO'
 
 import { Box, Text, Input, Checkbox } from '@island.is/island-ui/core'
-import { formatDate } from '@island.is/judicial-system/formatters'
+import {
+  formatDate,
+  formatNationalId,
+} from '@island.is/judicial-system/formatters'
 import {
   CaseCustodyRestrictions,
   CaseType,
+  Defendant,
   Gender,
+  isAcceptingCaseDecision,
   User,
+  Case,
 } from '@island.is/judicial-system/types'
 import {
   BlueBox,
@@ -17,7 +24,6 @@ import {
   FormFooter,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  setAndSendDateToServer,
   removeTabsValidateAndSet,
   setCheckboxAndSendToServer,
   validateAndSendToServer,
@@ -34,12 +40,44 @@ import {
   restrictionsCheckboxes,
 } from '@island.is/judicial-system-web/src/utils/restrictions'
 import { isPoliceDemandsStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
-import { rcDemands, core } from '@island.is/judicial-system-web/messages'
+import {
+  rcDemands,
+  rcReportForm,
+  core,
+} from '@island.is/judicial-system-web/messages'
 import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
-import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system/consts'
 
 import * as styles from './StepThree.css'
+
+export function getDemandsAutofill(
+  formatMessage: IntlShape['formatMessage'],
+  defentant: Defendant,
+  requestedValidToDate: Date,
+  workingCase: Case,
+): string {
+  return formatMessage(rcReportForm.sections.demands.autofillV2, {
+    accusedName: defentant.name,
+    accusedNationalId: defentant.noNationalId
+      ? ' '
+      : `, kt. ${formatNationalId(defentant.nationalId ?? '')}, `,
+    isExtended:
+      workingCase.parentCase &&
+      isAcceptingCaseDecision(workingCase.parentCase.decision)
+        ? 'yes'
+        : 'no',
+    caseType: workingCase.type,
+    court: workingCase.court?.name.replace('Héraðsdómur', 'Héraðsdóms'),
+    requestedValidToDate: formatDate(requestedValidToDate, 'PPPPp')
+      ?.replace('dagur,', 'dagsins')
+      ?.replace(' kl.', ', kl.'),
+    hasIsolationRequest: workingCase.requestedCustodyRestrictions?.includes(
+      CaseCustodyRestrictions.ISOLATION,
+    )
+      ? 'yes'
+      : 'no',
+  })
+}
 
 interface Props {
   workingCase: Case
@@ -53,7 +91,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
     '',
   )
 
-  const { updateCase } = useCase()
+  const { updateCase, autofill } = useCase()
   const { formatMessage } = useIntl()
 
   useDeb(workingCase, 'lawsBroken')
@@ -109,14 +147,35 @@ const StepThreeForm: React.FC<Props> = (props) => {
                 minDate={new Date()}
                 selectedDate={workingCase.requestedValidToDate}
                 onChange={(date: Date | undefined, valid: boolean) => {
-                  setAndSendDateToServer(
-                    'requestedValidToDate',
-                    date,
-                    valid,
-                    workingCase,
-                    setWorkingCase,
-                    updateCase,
-                  )
+                  if (date && valid) {
+                    autofill(
+                      [
+                        {
+                          key: 'requestedValidToDate',
+                          value: formatISO(date, {
+                            representation: 'complete',
+                          }),
+                          force: true,
+                        },
+                        {
+                          key: 'demands',
+                          value:
+                            workingCase.defendants &&
+                            workingCase.defendants.length > 0
+                              ? getDemandsAutofill(
+                                  formatMessage,
+                                  workingCase.defendants[0],
+                                  date,
+                                  workingCase,
+                                )
+                              : undefined,
+                          force: true,
+                        },
+                      ],
+                      workingCase,
+                      setWorkingCase,
+                    )
+                  }
                 }}
                 required
                 blueBox={false}
