@@ -27,9 +27,12 @@ import {
   removeTabsValidateAndSet,
   setCheckboxAndSendToServer,
   validateAndSendToServer,
-  setAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  useCase,
+  autofillEntry,
+  useDeb,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import CheckboxList from '@island.is/judicial-system-web/src/components/CheckboxList/CheckboxList'
 import {
   legalProvisions,
@@ -45,7 +48,6 @@ import {
   rcReportForm,
   core,
 } from '@island.is/judicial-system-web/messages'
-import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import * as Constants from '@island.is/judicial-system/consts'
 
 import * as styles from './StepThree.css'
@@ -53,7 +55,7 @@ import * as styles from './StepThree.css'
 export function getDemandsAutofill(
   formatMessage: IntlShape['formatMessage'],
   defentant: Defendant,
-  requestedValidToDate: Date,
+  requestedValidToDate: Date | string | undefined,
   workingCase: Case,
 ): string {
   return formatMessage(rcReportForm.sections.demands.autofillV2, {
@@ -97,6 +99,32 @@ const StepThreeForm: React.FC<Props> = (props) => {
   useDeb(workingCase, 'lawsBroken')
   useDeb(workingCase, 'legalBasis')
   useDeb(workingCase, 'requestedOtherRestrictions')
+
+  const onDemandsChange = React.useCallback(
+    (entry: autofillEntry, requestedValidToDate?: Date) => {
+      autofill(
+        [
+          entry,
+          {
+            key: 'demands',
+            value:
+              workingCase.defendants && workingCase.defendants.length
+                ? getDemandsAutofill(
+                    formatMessage,
+                    workingCase.defendants[0],
+                    requestedValidToDate || workingCase.requestedValidToDate,
+                    workingCase,
+                  )
+                : undefined,
+            force: true,
+          },
+        ],
+        workingCase,
+        setWorkingCase,
+      )
+    },
+    [workingCase, formatMessage, setWorkingCase, autofill],
+  )
 
   return (
     <>
@@ -148,32 +176,15 @@ const StepThreeForm: React.FC<Props> = (props) => {
                 selectedDate={workingCase.requestedValidToDate}
                 onChange={(date: Date | undefined, valid: boolean) => {
                   if (date && valid) {
-                    autofill(
-                      [
-                        {
-                          key: 'requestedValidToDate',
-                          value: formatISO(date, {
-                            representation: 'complete',
-                          }),
-                          force: true,
-                        },
-                        {
-                          key: 'demands',
-                          value:
-                            workingCase.defendants &&
-                            workingCase.defendants.length > 0
-                              ? getDemandsAutofill(
-                                  formatMessage,
-                                  workingCase.defendants[0],
-                                  date,
-                                  workingCase,
-                                )
-                              : undefined,
-                          force: true,
-                        },
-                      ],
-                      workingCase,
-                      setWorkingCase,
+                    onDemandsChange(
+                      {
+                        key: 'requestedValidToDate',
+                        value: formatISO(date, {
+                          representation: 'complete',
+                        }),
+                        force: true,
+                      },
+                      date,
                     )
                   }
                 }}
@@ -191,13 +202,11 @@ const StepThreeForm: React.FC<Props> = (props) => {
                     CaseCustodyRestrictions.ISOLATION,
                   )}
                   onChange={() =>
-                    setCheckboxAndSendToServer(
-                      'requestedCustodyRestrictions',
-                      'ISOLATION',
-                      workingCase,
-                      setWorkingCase,
-                      updateCase,
-                    )
+                    onDemandsChange({
+                      key: 'requestedCustodyRestrictions',
+                      value: CaseCustodyRestrictions.ISOLATION,
+                      force: true,
+                    })
                   }
                   large
                   filled
@@ -217,15 +226,13 @@ const StepThreeForm: React.FC<Props> = (props) => {
                       return
                     }
 
-                    setAndSendToServer(
-                      'type',
-                      event.target.checked
+                    onDemandsChange({
+                      key: 'type',
+                      value: event.target.checked
                         ? CaseType.ADMISSION_TO_FACILITY
                         : CaseType.CUSTODY,
-                      workingCase,
-                      setWorkingCase,
-                      updateCase,
-                    )
+                      force: true,
+                    })
                   }}
                   large
                   filled

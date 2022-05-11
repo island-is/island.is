@@ -41,20 +41,24 @@ type autofillProperties = Pick<
   | 'isolationToDate'
   | 'prosecutorDemands'
   | 'prosecutorOnlySessionRequest'
+  | 'requestedCustodyRestrictions'
   | 'requestedOtherRestrictions'
   | 'requestedValidToDate'
   | 'ruling'
   | 'sessionArrangements'
   | 'sessionBookings'
+  | 'type'
   | 'validToDate'
 >
 
+export type autofillEntry = {
+  key: keyof autofillProperties
+  value?: string | boolean | SessionArrangements
+  force?: boolean
+}
+
 export type autofillFunc = (
-  entries: Array<{
-    key: keyof autofillProperties
-    value?: string | boolean | SessionArrangements
-    force?: boolean
-  }>,
+  entries: autofillEntry[],
   workingCase: Case,
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
 ) => void
