@@ -211,7 +211,14 @@ const autoSchemaFile = environment.production
       url: environment.regulationsDomain.url!,
     }),
     FinanceModule,
-    FinancialStatementsInaoModule,
+    FinancialStatementsInaoModule.register({
+      basePath: environment.financialStatementsInao.basePath!,
+      issuer: environment.financialStatementsInao.issuer!,
+      clientId: environment.financialStatementsInao.clientId!,
+      clientSecret: environment.financialStatementsInao.clientSecret!,
+      scope: environment.financialStatementsInao.scope!,
+      tokenEndpoint: environment.financialStatementsInao.tokenEndpoint!,
+    }),
     AssetsModule,
     NationalRegistryXRoadModule,
     ApiDomainsPaymentModule.register({

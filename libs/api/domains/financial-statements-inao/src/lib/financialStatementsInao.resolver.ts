@@ -4,10 +4,16 @@ import { Query, Resolver } from '@nestjs/graphql'
 import { IdsUserGuard, ScopesGuard } from '@island.is/auth-nest-tools'
 
 import { Election } from './models/election.model'
+import { FinancialStatementsInaoService } from './financialStatementsInao.service'
+import { ClientType } from './models/clientType.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
 export class FinancialStatementsInaoResolver {
+  constructor(
+    private financialStatementsService: FinancialStatementsInaoService,
+  ) {}
+
   @Query(() => [Election], { nullable: true })
   async financialStatementsInaoElections() {
     //Return mocked results while the cloud service is not ready
@@ -24,5 +30,12 @@ export class FinancialStatementsInaoResolver {
         month: 9,
       },
     ]
+
+    //return this.financialStatementsService.getElections()
+  }
+
+  @Query(() => [ClientType], { nullable: true })
+  async financialStatementsInaoClientTypes() {
+    return this.financialStatementsService.getClientTypes()
   }
 }

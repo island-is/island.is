@@ -132,6 +132,14 @@ const prodConfig = () => ({
     passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
     basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
   },
+  financialStatementsInao: {
+    basePath: process.env.FINANCIAL_STATEMENTS_INAO_BASE_PATH,
+    issuer: process.env.FINANCIAL_STATEMENTS_INAO_ISSUER,
+    clientId: process.env.FINANCIAL_STATEMENTS_INAO_CLIENT_ID,
+    clientSecret: process.env.FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET,
+    scope: process.env.FINANCIAL_STATEMENTS_INAO_SCOPE,
+    tokenEndpoint: process.env.FINANCIAL_STATEMENTS_INAO_TOKEN_ENDPOINT,
+  },
 })
 const devConfig = () => ({
   production: false,
@@ -289,6 +297,14 @@ const devConfig = () => ({
     cert: process.env.ISLYKILL_CERT,
     passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
     basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
+  },
+  financialStatementsInao: {
+    basePath: process.env.FINANCIAL_STATEMENTS_INAO_BASE_PATH,
+    issuer: process.env.FINANCIAL_STATEMENTS_INAO_ISSUER,
+    clientId: process.env.FINANCIAL_STATEMENTS_INAO_CLIENT_ID,
+    clientSecret: process.env.FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET,
+    scope: process.env.FINANCIAL_STATEMENTS_INAO_SCOPE,
+    tokenEndpoint: process.env.FINANCIAL_STATEMENTS_INAO_TOKEN_ENDPOINT,
   },
 })
 export const getConfig =
