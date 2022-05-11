@@ -114,6 +114,7 @@ const NavItemContent: FC<Props> = ({
               size="medium"
               className={styles.icon}
             /> */}
+
             <div className={styles.testIconWrapper}>
               <svg
                 className={clicked ? styles.testIconHover : styles.testIcon}
