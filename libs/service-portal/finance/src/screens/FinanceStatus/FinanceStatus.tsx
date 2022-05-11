@@ -40,6 +40,17 @@ const GetFinanceStatusQuery = gql`
   }
 `
 
+const GetDebtStatusQuery = gql`
+  query FinanceStatusGetDebtStatus {
+    getDebtStatus {
+      myDebtStatus {
+        approvedSchedule
+        possibleToSchedule
+      }
+    }
+  }
+`
+
 const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.finance-status')
   const { formatMessage } = useLocale()
@@ -50,6 +61,19 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
   const { loading, error, ...statusQuery } = useQuery<Query>(
     GetFinanceStatusQuery,
   )
+
+  const { data: debtStatusData, loading: debtStatusLoading } = useQuery<Query>(
+    GetDebtStatusQuery,
+  )
+
+  const debtStatus = debtStatusData?.getDebtStatus
+  let scheduleButtonVisible = false
+  if (debtStatusData && !debtStatusLoading) {
+    scheduleButtonVisible =
+      debtStatus.myDebtStatus[0].approvedSchedule > 0 ||
+      debtStatus.myDebtStatus[0].possibleToSchedule > 0
+  }
+
   const financeStatusData: FinanceStatusDataType =
     statusQuery.data?.getFinanceStatus || {}
 
@@ -63,6 +87,7 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
       allChargeTypes.length > 0
         ? allChargeTypes.reduce((a, b) => a + b.totals, 0)
         : 0
+
     return amountFormat(chargeTypeTotal)
   }
 
@@ -102,7 +127,7 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
                 marginTop={1}
                 printHidden
               >
-                {!isDelegation && (
+                {!isDelegation && scheduleButtonVisible && (
                   <Box paddingRight={2}>
                     <a
                       href="/umsoknir/greidsluaaetlun/"

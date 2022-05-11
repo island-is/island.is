@@ -198,7 +198,7 @@ export class FinanceResolver {
     return null
   }
 
-  @Query(() => graphqlTypeJson)
+  @Query(() => DebtStatusModel)
   @Audit()
   @Scopes(ApiScope.financeOverview, ApiScope.financeSchedule)
   async getDebtStatus(@CurrentUser() user: User) {
