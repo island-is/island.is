@@ -79,7 +79,7 @@ export const parentalLeaveFormMessages: MessageDir = {
     otherParentSubTitle: {
       id: 'pl.application:otherParent.sub.title',
       defaultMessage: 'Annað foreldri',
-      description: 'Sub title for the other parent question',
+      description: 'Other parent',
     },
     otherParentName: {
       id: 'pl.application:otherParent.name',
@@ -320,6 +320,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       id: 'pl.application:transferRights.option.give',
       defaultMessage: 'Ég vil færa daga yfir á hitt foreldrið',
       description: 'I want to give days to the other parent',
+    },
+    transferRightsGiveTitle: {
+      id: 'pl.application:transferRights.option.give.title',
+      defaultMessage: 'Hversu marga daga viltu færa yfir á hitt foreldrið?',
+      description: 'How many days do you want to transfer to the other parent?',
     },
     rightsTotalSmallPrint: {
       id: 'pl.application:months.total.smallprint',
@@ -797,7 +802,7 @@ export const parentalLeaveFormMessages: MessageDir = {
     usage: {
       id: 'pl.application:period.usage',
       defaultMessage: 'Þú hefur notað {alreadyUsed} af {rights} dögum',
-      description: 'Copy of how many days are being used and how many are left',
+      description: 'You have used {alreadyUsed} of {rights} days',
     },
     cannotCreatePeriod: {
       id: 'pl.application:period.cannotCreatePeriod',

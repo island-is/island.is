@@ -37,16 +37,19 @@ export const StepThree: React.FC = () => {
       workingCase.defendants
     ) {
       autofill(
-        'requestedOtherRestrictions',
-        formatMessage(
-          rcDemands.sections.custodyRestrictions
-            .requestedOtherRestrictionsAutofill,
-          { gender: workingCase.defendants[0].gender },
-        ),
+        [
+          {
+            key: 'requestedOtherRestrictions',
+            value: formatMessage(
+              rcDemands.sections.custodyRestrictions
+                .requestedOtherRestrictionsAutofill,
+              { gender: workingCase.defendants[0].gender },
+            ),
+          },
+        ],
         workingCase,
+        setWorkingCase,
       )
-
-      setWorkingCase({ ...workingCase })
     }
   }, [autofill, formatMessage, setWorkingCase, workingCase])
 

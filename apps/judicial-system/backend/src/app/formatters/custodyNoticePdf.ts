@@ -115,7 +115,7 @@ function constructCustodyNoticePdf(
   addNormalText(
     doc,
     `Úrskurður kveðinn upp ${
-      formatDate(theCase.rulingDate, 'PPPp')?.replace(' kl.', ', kl.') ?? '?'
+      formatDate(theCase.courtEndTime, 'PPPp')?.replace(' kl.', ', kl.') ?? '?'
     }`,
   )
   addNormalText(

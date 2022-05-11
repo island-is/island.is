@@ -2,8 +2,7 @@ import {
   ApplicationTypes,
   ApplicationConfigurations,
 } from '@island.is/application/core'
-
-import { useNamespaces } from './useNamespaces'
+import { useNamespaces } from '@island.is/localization'
 
 export const useApplicationNamespaces = (type?: ApplicationTypes) => {
   const array = [
