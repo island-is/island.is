@@ -1,0 +1,13 @@
+{
+    "name": "OneSignal Example",
+    "description": "OneSignal Push Notifications Example Chrome app.",
+    "manifest_version": 2,
+    "version": "1.0.2",
+    "app": {
+      "background": {
+        "scripts": ["OneSignal.js", "background.js"]
+      }
+    },
+    "permissions": ["gcm", "storage", "notifications", "identity", "browser"],
+    "icons": { "128": "OneSignal_icon.png" }
+  }
