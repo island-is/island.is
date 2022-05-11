@@ -23,19 +23,17 @@ describe('Ingress definitions', () => {
     const sut = service('api').ingress({
       primary: {
         host: { dev: 'a', staging: 'a', prod: 'a' },
-        paths:
-        [
+        paths: [
           {
-          path: '/api',
+            path: '/api',
           },
         ],
       },
       secondary: {
         host: { dev: 'b', staging: 'b', prod: 'b' },
-        paths:
-        [
+        paths: [
           {
-          path: '/',
+            path: '/',
           },
         ],
       },
@@ -50,13 +48,13 @@ describe('Ingress definitions', () => {
         annotations: {
           'kubernetes.io/ingress.class': 'nginx-external-alb',
         },
-        hosts: [{ host: 'a.staging01.devland.is', paths: [{ path: '/api' }]}],
+        hosts: [{ host: 'a.staging01.devland.is', paths: [{ path: '/api' }] }],
       },
       'secondary-alb': {
         annotations: {
           'kubernetes.io/ingress.class': 'nginx-external-alb',
         },
-        hosts: [{ host: 'b.staging01.devland.is', paths: [{ path: '/'}]}],
+        hosts: [{ host: 'b.staging01.devland.is', paths: [{ path: '/' }] }],
       },
     })
   })
@@ -84,36 +82,40 @@ describe('Ingress definitions', () => {
           'kubernetes.io/ingress.class': 'nginx-external-alb',
           A: 'B',
         },
-        hosts: [{ host: 'staging01.devland.is', paths: [{ path: '/api' }]}],
+        hosts: [{ host: 'staging01.devland.is', paths: [{ path: '/api' }] }],
       },
     })
   })
 
   it('Ingress Prefix PathType', () => {
     const sut = service('api').ingress({
-    primary : {
-      host: { dev: 'a', staging: 'staging01.devland.is', prod: 'a' },
-      paths:
-      [
-        {
-        path: '/api(/|$)(.*)',
-        pathType: 'Prefix'
-        },
-      ],
-    },
-  })
-  const result = serializeService(
-    sut,
-    new UberChart(Staging)
-  ) as SerializeSuccess
-
-  expect(result.serviceDef.ingress).toEqual({
-    'primary-alb': {
-      annotations: {
-        'kubernetes.io/ingress.class': 'nginx-external-alb',
+      primary: {
+        host: { dev: 'a', staging: 'staging01.devland.is', prod: 'a' },
+        paths: [
+          {
+            path: '/api(/|$)(.*)',
+            pathType: 'Prefix',
+          },
+        ],
       },
-      hosts: [{ host: 'staging01.devland.is', paths: [{ path: '/api(/|$)(.*)', pathType: 'Prefix' }]}], 
-    },
+    })
+    const result = serializeService(
+      sut,
+      new UberChart(Staging),
+    ) as SerializeSuccess
+
+    expect(result.serviceDef.ingress).toEqual({
+      'primary-alb': {
+        annotations: {
+          'kubernetes.io/ingress.class': 'nginx-external-alb',
+        },
+        hosts: [
+          {
+            host: 'staging01.devland.is',
+            paths: [{ path: '/api(/|$)(.*)', pathType: 'Prefix' }],
+          },
+        ],
+      },
     })
   })
 
@@ -164,7 +166,12 @@ describe('Ingress definitions', () => {
         annotations: {
           'kubernetes.io/ingress.class': 'nginx-internal-alb',
         },
-        hosts: [{ host: '007.internal.staging01.devland.is', paths: [{ path: '/api' }]}],
+        hosts: [
+          {
+            host: '007.internal.staging01.devland.is',
+            paths: [{ path: '/api' }],
+          },
+        ],
       },
     })
   })

@@ -4,7 +4,7 @@ export const serviceSetup = (): ServiceBuilder<'identity-server'> => {
   return service('identity-server')
     .namespace('identity-server')
     .env({
-        AWS__SystemsManager__ParameterStore__DataProtectionPrefix: {
+      AWS__SystemsManager__ParameterStore__DataProtectionPrefix: {
         dev: '/k8s/identity-server/DataProtectionSecret',
         staging: '/k8s/identity-server/DataProtectionSecret',
         prod: '/k8s/identity-server/DataProtectionSecret',
@@ -25,9 +25,12 @@ export const serviceSetup = (): ServiceBuilder<'identity-server'> => {
         prod: '11211',
       },
       CacheSettings__Redis__Address: {
-        dev: 'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com',
-        staging: 'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com',
-        prod: 'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com',
+        dev:
+          'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com',
+        staging:
+          'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com',
+        prod:
+          'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com',
       },
       CacheSettings__Redis__Port: {
         dev: '6379',
@@ -56,23 +59,27 @@ export const serviceSetup = (): ServiceBuilder<'identity-server'> => {
       },
       PersistenceSettings__UserProfileBaseAddress: {
         dev: 'http://web-service-portal-api.service-portal.svc.cluster.local',
-        staging: 'http://web-service-portal-api.service-portal.svc.cluster.local',
+        staging:
+          'http://web-service-portal-api.service-portal.svc.cluster.local',
         prod: 'http://web-service-portal-api.service-portal.svc.cluster.local',
       },
       Application__MinCompletionPortThreads: {
         dev: '',
         staging: '',
-        prod: '10'
-      }
+        prod: '10',
+      },
     })
     .secrets({
       AudkenniSettings__ClientId: '/k8s/identity-server/AudkenniClientId',
-      AudkenniSettings__ClientSecret: '/k8s/identity-server/AudkenniClientSecret',
+      AudkenniSettings__ClientSecret:
+        '/k8s/identity-server/AudkenniClientSecret',
       IdentityServer__FakePersons: '/k8s/identity-server/FakePersons',
-      IdentityServer__SigningCertificate__Passphrase: '/k8s/identity-server/SigningCertificatePassphrase',
-      PersistenceSettings__AccessTokenManagementSettings__ClientSecret: '/k8s/identity-server/ClientSecret',
+      IdentityServer__SigningCertificate__Passphrase:
+        '/k8s/identity-server/SigningCertificatePassphrase',
+      PersistenceSettings__AccessTokenManagementSettings__ClientSecret:
+        '/k8s/identity-server/ClientSecret',
       Scopes__Admin__RootAccessList: '/k8s/identity-server/AdminRootAccessList',
-      FeatureFlags__ConfigCatSdkKey: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+      FeatureFlags__ConfigCatSdkKey: '/k8s/configcat/CONFIGCAT_SDK_KEY',
     })
     .ingress({
       primary: {
@@ -82,16 +89,15 @@ export const serviceSetup = (): ServiceBuilder<'identity-server'> => {
           prod: 'innskra.island.is',
         },
         extraAnnotations: {
-            dev: {
-              'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
-            },
-            staging: {
-              'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
-            },
-            prod: {},
+          dev: {
+            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
+          },
+          staging: {
+            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
+          },
+          prod: {},
         },
-        paths:
-        [
+        paths: [
           {
             path: '/',
           },

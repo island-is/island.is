@@ -41,10 +41,9 @@ export const serviceSetup = (services: {
             'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
           },
         },
-        paths:
-        [
+        paths: [
           {
-          path: '/',
+            path: '/',
           },
         ],
       },

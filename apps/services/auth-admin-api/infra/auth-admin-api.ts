@@ -5,7 +5,8 @@ export const serviceSetup = (): ServiceBuilder<'auth-admin-api'> => {
     .namespace('identity-server')
     .env({
       DB_REPLICAS_HOST: {
-        dev: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com',
+        dev:
+          'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com',
         staging: '',
         prod: '',
       },
@@ -27,8 +28,7 @@ export const serviceSetup = (): ServiceBuilder<'auth-admin-api'> => {
           staging: 'identity-server.staging01.devland.is',
           prod: 'innskra.island.is',
         },
-        paths:
-        [
+        paths: [
           {
             path: '/backend',
           },

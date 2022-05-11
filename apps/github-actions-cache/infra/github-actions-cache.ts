@@ -19,8 +19,7 @@ export const serviceSetup = (): ServiceBuilder<'github-actions-cache'> => {
           staging: [''],
           prod: ['', ''],
         },
-        paths:
-        [
+        paths: [
           {
             path: '/',
           },

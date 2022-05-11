@@ -49,8 +49,7 @@ export const serviceSetup = (services: {
           staging: 'judicial-system',
           prod: 'rettarvorslugatt.island.is',
         },
-        paths:
-        [
+        paths: [
           {
             path: '/api/graphql',
           },
@@ -61,8 +60,8 @@ export const serviceSetup = (services: {
             path: '/api/case',
           },
           {
-            path: '/api/feature'
-          }
+            path: '/api/feature',
+          },
         ],
       },
     })

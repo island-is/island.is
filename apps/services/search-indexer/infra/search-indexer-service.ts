@@ -106,10 +106,9 @@ export const serviceSetup = (): ServiceBuilder<'search-indexer-service'> =>
           staging: 'search-indexer-service',
           prod: 'search-indexer-service.devland.is',
         },
-        paths:
-        [
+        paths: [
           {
-          path: '/',
+            path: '/',
           },
         ],
         extraAnnotations: {

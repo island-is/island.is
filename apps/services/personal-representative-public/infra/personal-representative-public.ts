@@ -15,10 +15,11 @@ export const serviceSetup = (): ServiceBuilder<'personal-representative-public'>
         prod: 'https://innskra.island.is',
       },
       DB_REPLICAS_HOST: {
-        dev: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com',
+        dev:
+          'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com',
         staging: '',
         prod: '',
-      }
+      },
     })
     .ingress({
       primary: {
@@ -27,8 +28,7 @@ export const serviceSetup = (): ServiceBuilder<'personal-representative-public'>
           staging: 'personal-representative-xrd.internal.staging01.devland.is',
           prod: 'personal-representative-xrd.internal.innskra.island.is',
         },
-        paths:
-        [
+        paths: [
           {
             path: '/',
           },
@@ -41,14 +41,13 @@ export const serviceSetup = (): ServiceBuilder<'personal-representative-public'>
           staging: '',
           prod: '',
         },
-        paths:
-        [
+        paths: [
           {
             path: '/',
           },
         ],
         public: true,
-      }
+      },
     })
     .readiness('/liveness')
     .liveness('/liveness')

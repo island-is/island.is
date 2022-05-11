@@ -22,8 +22,7 @@ export const serviceSetup = (): ServiceBuilder<'personal-representative'> => {
           staging: 'personal-representative-xrd.internal.staging01.devland.is',
           prod: 'personal-representative-xrd.internal.innskra.island.is',
         },
-        paths:
-        [
+        paths: [
           {
             path: '/',
           },
@@ -36,14 +35,13 @@ export const serviceSetup = (): ServiceBuilder<'personal-representative'> => {
           staging: '',
           prod: '',
         },
-        paths:
-        [
+        paths: [
           {
             path: '/',
           },
         ],
         public: true,
-      }
+      },
     })
     .readiness('/liveness')
     .liveness('/liveness')

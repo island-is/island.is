@@ -8,16 +8,15 @@ import { serviceSetup as personalRepresentativePublicSetup } from '../../../apps
 
 import { EnvironmentServices } from '../dsl/types/charts'
 
-const identityServer = identityServerSetup();
-const authAdminWeb = authAdminWebSetup();
-const authAdminApi = authAdminApiSetup();
-const authApi = authApiSetup();
-const authPublicApi = authPublicApiSetup();
-const personalRepresentative = personalRepresentativeSetup();
-const personalRepresentativePublic = personalRepresentativePublicSetup();
+const identityServer = identityServerSetup()
+const authAdminWeb = authAdminWebSetup()
+const authAdminApi = authAdminApiSetup()
+const authApi = authApiSetup()
+const authPublicApi = authPublicApiSetup()
+const personalRepresentative = personalRepresentativeSetup()
+const personalRepresentativePublic = personalRepresentativePublicSetup()
 
 export const Services: EnvironmentServices = {
-  
   prod: [
     identityServer,
     authAdminWeb,

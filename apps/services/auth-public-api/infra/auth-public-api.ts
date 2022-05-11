@@ -1,9 +1,5 @@
 import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
-import {
-  Base,
-  Client,
-  RskProcuring,
-} from '../../../../infra/src/dsl/xroad'
+import { Base, Client, RskProcuring } from '../../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (): ServiceBuilder<'auth-public-api'> => {
   return service('auth-public-api')
@@ -35,9 +31,12 @@ export const serviceSetup = (): ServiceBuilder<'auth-public-api'> => {
         prod: 'IS/GOV/6503760649/SKRA-Protected/Einstaklingar-v1',
       },
       XROAD_NATIONAL_REGISTRY_REDIS_NODES: {
-        dev: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]',
-        staging: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]',
-        prod: '["clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379"]',
+        dev:
+          '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]',
+        staging:
+          '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]',
+        prod:
+          '["clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379"]',
       },
       XROAD_NATIONAL_REGISTRY_API_PATH: {
         dev: '/SKRA-Protected/Einstaklingar-v1',
@@ -55,11 +54,7 @@ export const serviceSetup = (): ServiceBuilder<'auth-public-api'> => {
         prod: '6503760649',
       },
     })
-    .xroad(
-      Base,
-      Client,
-      RskProcuring
-    )
+    .xroad(Base, Client, RskProcuring)
     .ingress({
       primary: {
         host: {
@@ -67,8 +62,7 @@ export const serviceSetup = (): ServiceBuilder<'auth-public-api'> => {
           staging: 'identity-server.staging01.devland.is',
           prod: 'innskra.island.is',
         },
-        paths:
-        [
+        paths: [
           {
             path: '/api(/|$)(.*)',
             pathType: 'Prefix',

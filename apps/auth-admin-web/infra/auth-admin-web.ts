@@ -8,19 +8,19 @@ export const serviceSetup = (): ServiceBuilder<'auth-admin-web'> => {
       IDENTITYSERVER_DOMAIN: {
         dev: 'identity-server.dev01.devland.is',
         staging: 'identity-server.staging01.devland.is',
-        prod: 'innskra.island.is'
+        prod: 'innskra.island.is',
       },
       BASE_URL: {
         dev: 'https://identity-server.dev01.devland.is/admin',
         staging: 'https://identity-server.staging01.devland.is/admin',
-        prod: 'https://innskra.island.is/admin'
+        prod: 'https://innskra.island.is/admin',
       },
       NEXTAUTH_URL: {
         dev: 'https://identity-server.dev01.devland.is/admin/api/auth',
         staging: 'https://identity-server.staging01.devland.is/admin/api/auth',
-        prod: 'https://innskra.island.is/admin/api/auth'
-    },
-  })
+        prod: 'https://innskra.island.is/admin/api/auth',
+      },
+    })
     .ingress({
       primary: {
         host: {
@@ -28,8 +28,7 @@ export const serviceSetup = (): ServiceBuilder<'auth-admin-web'> => {
           staging: 'identity-server.staging01.devland.is',
           prod: 'innskra.island.is',
         },
-        paths:
-        [
+        paths: [
           {
             path: '/admin',
           },

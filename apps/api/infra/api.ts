@@ -202,10 +202,9 @@ export const serviceSetup = (services: {
           staging: ['beta'],
           prod: ['', 'www.island.is'],
         },
-        paths:
-        [
+        paths: [
           {
-          path: '/api',
+            path: '/api',
           },
         ],
         extraAnnotations: {

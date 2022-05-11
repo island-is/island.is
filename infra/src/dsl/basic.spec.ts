@@ -40,10 +40,9 @@ describe('Basic serialization', () => {
     .ingress({
       primary: {
         host: { dev: 'a', staging: 'a', prod: 'a' },
-        paths:
-        [
+        paths: [
           {
-          path: 'api',
+            path: 'api',
           },
         ],
       },
@@ -136,10 +135,9 @@ describe('Basic serialization', () => {
         hosts: [
           {
             host: 'a.staging01.devland.is',
-            paths:
-            [
+            paths: [
               {
-              path: 'api',
+                path: 'api',
               },
             ],
           },

@@ -28,8 +28,7 @@ export const serviceSetup = (services: {
           staging: ['beta'],
           prod: ['', 'www.island.is'],
         },
-        paths:
-        [
+        paths: [
           {
             path: '/app/skilavottord/',
           },
