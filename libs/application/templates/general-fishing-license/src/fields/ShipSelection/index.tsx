@@ -97,7 +97,7 @@ export const ShipSelection: FC<FieldBaseProps> = ({
                   message={ship.deprivations.map(
                     ({ explanation, validFrom }, index) => {
                       return (
-                        <span
+                        <div
                           key={`${index}-${explanation}`}
                         >{`${explanation} ${format(
                           parseISO(validFrom),
@@ -105,7 +105,7 @@ export const ShipSelection: FC<FieldBaseProps> = ({
                           {
                             locale: is,
                           },
-                        )}`}</span>
+                        )}`}</div>
                       )
                     },
                   )}
