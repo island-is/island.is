@@ -70,8 +70,8 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
   let scheduleButtonVisible = false
   if (debtStatusData && !debtStatusLoading) {
     scheduleButtonVisible =
-      debtStatus.myDebtStatus[0].approvedSchedule > 0 ||
-      debtStatus.myDebtStatus[0].possibleToSchedule > 0
+      debtStatus.myDebtStatus[0]?.approvedSchedule > 0 ||
+      debtStatus.myDebtStatus[0]?.possibleToSchedule > 0
   }
 
   const financeStatusData: FinanceStatusDataType =
