@@ -65,9 +65,9 @@ const FileList = ({ files }: Props) => {
               <div className={styles.name}>
                 <Text variant="small">{file.name}</Text>
               </div>
-              <Text variant="small">{`${formatMessage(missingFiles.confirmation.file)} • ${getFileSizeInKilo(
-                file,
-              )} KB`}</Text>
+              <Text variant="small">{`${formatMessage(
+                missingFiles.confirmation.file,
+              )} • ${getFileSizeInKilo(file)} KB`}</Text>
             </div>
           </button>
         )
