@@ -90,7 +90,12 @@ export const serviceSetup = (): ServiceBuilder<'identity-server'> => {
             },
             prod: {},
         },
-        paths: ['/'],
+        paths:
+        [
+          {
+            path: '/',
+          },
+        ],
         public: true,
       },
     })

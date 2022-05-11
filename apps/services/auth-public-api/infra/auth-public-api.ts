@@ -67,8 +67,13 @@ export const serviceSetup = (): ServiceBuilder<'auth-public-api'> => {
           staging: 'identity-server.staging01.devland.is',
           prod: 'innskra.island.is',
         },
-        paths: ['/api(/|$)(.*)'],
-        pathType: 'Prefix',
+        paths:
+        [
+          {
+            path: '/api(/|$)(.*)',
+            pathType: 'Prefix',
+          },
+        ],
         public: true,
       },
     })

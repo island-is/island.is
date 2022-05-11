@@ -61,10 +61,10 @@ judicial-system-api:
       hosts:
         - host: 'judicial-system.staging01.devland.is'
           paths:
-            - '/api/graphql'
-            - '/api/auth'
-            - '/api/case'
-            - '/api/feature'
+            - path: '/api/graphql'
+            - path: '/api/auth'
+            - path: '/api/case'
+            - path: '/api/feature'
   namespace: 'judicial-system'
   podSecurityContext:
     fsGroup: 65534
@@ -304,7 +304,7 @@ judicial-system-web:
       hosts:
         - host: 'judicial-system.staging01.devland.is'
           paths:
-            - '/'
+            - path: '/'
   namespace: 'judicial-system'
   replicaCount:
     default: 2
@@ -362,7 +362,7 @@ judicial-system-xrd-api:
       hosts:
         - host: 'judicial-system-xrd-api.internal.staging01.devland.is'
           paths:
-            - '/'
+            - path: '/'
   namespace: 'judicial-system'
   podSecurityContext:
     fsGroup: 65534

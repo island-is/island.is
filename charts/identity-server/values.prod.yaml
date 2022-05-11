@@ -34,7 +34,7 @@ auth-admin-api:
       hosts:
         - host: 'innskra.island.is'
           paths:
-            - '/backend'
+            - path: '/backend'
   namespace: 'identity-server'
   replicaCount:
     default: 3
@@ -89,7 +89,7 @@ auth-admin-web:
       hosts:
         - host: 'innskra.island.is'
           paths:
-            - '/admin'
+            - path: '/admin'
   namespace: 'identity-server'
   replicaCount:
     default: 3
@@ -157,9 +157,9 @@ auth-api:
         kubernetes.io/ingress.class: 'nginx-external-alb'
       hosts:
         - host: 'innskra.island.is'
-          pathType: 'Prefix'
           paths:
-            - '/api(/|$)(.*)'
+            - path: '/api(/|$)(.*)'
+              pathType: 'Prefix'
   namespace: 'identity-server'
   replicaCount:
     default: 3
@@ -225,9 +225,9 @@ auth-public-api:
         kubernetes.io/ingress.class: 'nginx-external-alb'
       hosts:
         - host: 'innskra.island.is'
-          pathType: 'Prefix'
           paths:
-            - '/api(/|$)(.*)'
+            - path: '/api(/|$)(.*)'
+              pathType: 'Prefix'
   namespace: 'identity-server'
   replicaCount:
     default: 3
@@ -301,7 +301,7 @@ identity-server:
       hosts:
         - host: 'innskra.island.is'
           paths:
-            - '/'
+            - path: '/'
   namespace: 'identity-server'
   podSecurityContext:
     fsGroup: 65534
@@ -372,14 +372,14 @@ personal-representative:
       hosts:
         - host: 'island.is'
           paths:
-            - '/'
+            - path: '/'
     primary-alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-internal-alb'
       hosts:
         - host: 'personal-representative-xrd.internal.innskra.island.is'
           paths:
-            - '/'
+            - path: '/'
   namespace: 'identity-server'
   replicaCount:
     default: 3
@@ -433,14 +433,14 @@ personal-representative-public:
       hosts:
         - host: 'island.is'
           paths:
-            - '/'
+            - path: '/'
     primary-alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-internal-alb'
       hosts:
         - host: 'personal-representative-xrd.internal.innskra.island.is'
           paths:
-            - '/'
+            - path: '/'
   namespace: 'identity-server'
   replicaCount:
     default: 3

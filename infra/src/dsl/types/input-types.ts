@@ -81,14 +81,18 @@ export type ServiceDefinition = {
   files: MountedFile[]
 }
 
+export type Path = {
+  path: string
+  pathType?: PathType
+}
+
 export type PathType = 'ImplementationSpecific' | 'Exact' | 'Prefix'
 
 export interface Ingress {
   host: {
     [name in OpsEnv]: string | string[]
   }
-  paths: string[]
-  pathType?: PathType
+  paths: Path[]
   public?: boolean
   extraAnnotations?: { [name in OpsEnv]: { [idx: string]: string | null } }
 }

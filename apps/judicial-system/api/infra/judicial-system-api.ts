@@ -49,7 +49,21 @@ export const serviceSetup = (services: {
           staging: 'judicial-system',
           prod: 'rettarvorslugatt.island.is',
         },
-        paths: ['/api/graphql', '/api/auth', '/api/case', '/api/feature'],
+        paths:
+        [
+          {
+            path: '/api/graphql',
+          },
+          {
+            path: '/api/auth',
+          },
+          {
+            path: '/api/case',
+          },
+          {
+            path: '/api/feature'
+          }
+        ],
       },
     })
     .grantNamespaces('nginx-ingress-external')

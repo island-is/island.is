@@ -27,7 +27,12 @@ export const serviceSetup = (): ServiceBuilder<'personal-representative-public'>
           staging: 'personal-representative-xrd.internal.staging01.devland.is',
           prod: 'personal-representative-xrd.internal.innskra.island.is',
         },
-        paths: ['/'],
+        paths:
+        [
+          {
+            path: '/',
+          },
+        ],
         public: false,
       },
       demoALB: {
@@ -36,7 +41,12 @@ export const serviceSetup = (): ServiceBuilder<'personal-representative-public'>
           staging: '',
           prod: '',
         },
-        paths: ['/'],
+        paths:
+        [
+          {
+            path: '/',
+          },
+        ],
         public: true,
       }
     })

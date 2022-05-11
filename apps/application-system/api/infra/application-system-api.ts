@@ -221,7 +221,15 @@ export const serviceSetup = (services: {
           staging: 'application-payment-callback-xrd',
           prod: 'application-payment-callback-xrd',
         },
-        paths: ['/application-payment', '/applications'],
+        paths:
+        [
+          {
+            path: '/application-payment',
+          },
+          {
+            path: '/applications'
+          },
+        ],
         public: false,
       },
     })

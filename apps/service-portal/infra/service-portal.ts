@@ -42,6 +42,11 @@ export const serviceSetup = (services: {}): ServiceBuilder<'service-portal'> =>
           },
           prod: {},
         },
-        paths: ['/minarsidur'],
+        paths:
+        [
+          {
+          path: '/minarsidur',
+          },
+        ],
       },
     })

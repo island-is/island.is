@@ -21,7 +21,12 @@ export const serviceSetup = (): ServiceBuilder<'contentful-translation-extension
           staging: 'contentful-translation-extension',
           prod: 'contentful-translation-extension.devland.is',
         },
-        paths: ['/'],
+        paths:
+        [
+          {
+            path: '/',
+          },
+        ],
       },
     })
     .grantNamespaces('nginx-ingress-external')

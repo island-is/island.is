@@ -28,7 +28,12 @@ export const serviceSetup = (): ServiceBuilder<'auth-admin-web'> => {
           staging: 'identity-server.staging01.devland.is',
           prod: 'innskra.island.is',
         },
-        paths: ['/admin'],
+        paths:
+        [
+          {
+            path: '/admin',
+          },
+        ],
         public: true,
       },
     })

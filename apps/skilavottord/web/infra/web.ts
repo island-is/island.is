@@ -28,7 +28,12 @@ export const serviceSetup = (services: {
           staging: ['beta'],
           prod: ['', 'www.island.is'],
         },
-        paths: ['/app/skilavottord/'],
+        paths:
+        [
+          {
+            path: '/app/skilavottord/',
+          },
+        ],
       },
     })
     .grantNamespaces('nginx-ingress-external')

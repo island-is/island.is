@@ -1,4 +1,4 @@
-import { Hash, ReplicaCount, Service } from './input-types'
+import { Hash, Path, ReplicaCount, Service } from './input-types'
 import { UberChartType } from './charts'
 import { FeatureNames } from '../features'
 
@@ -76,7 +76,7 @@ export interface ServiceHelm {
       annotations: {
         [anntName: string]: string
       }
-      hosts: { host: string; paths: string[] }[]
+      hosts: { host: string; paths: Path[] }[]
     }
   }
 

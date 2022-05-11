@@ -33,6 +33,11 @@ export const serviceSetup = (services: {}): ServiceBuilder<'application-system-f
           },
           prod: {},
         },
-        paths: ['/umsoknir'],
+        paths:
+        [
+          {
+          path: '/umsoknir'
+          },
+        ],
       },
     })

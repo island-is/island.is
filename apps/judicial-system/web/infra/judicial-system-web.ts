@@ -27,6 +27,11 @@ export const serviceSetup = (services: {
           staging: 'judicial-system',
           prod: 'rettarvorslugatt.island.is',
         },
-        paths: ['/'],
+        paths:
+        [
+          {
+            path: '/',
+          },
+        ],
       },
     })

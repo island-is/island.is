@@ -1,5 +1,5 @@
 import { generateYamlForEnv } from '../dsl/serialize-to-yaml'
-import { OpsEnv } from '../dsl/types/input-types'
+import { OpsEnv, Path } from '../dsl/types/input-types'
 import { ServiceHelm } from '../dsl/types/output-types'
 import { UberChart } from '../dsl/uber-chart'
 import { Envs } from '../environments'
@@ -9,7 +9,7 @@ const renderUrlsForService = ({ ingress = {} }: ServiceHelm) => {
   const urls: string[] = []
   Object.keys(ingress).forEach((ingressName) => {
     ingress[ingressName].hosts.forEach((host) => {
-      host.paths.forEach((path: string) => {
+      host.paths.forEach((path: Path) => {
         urls.push(`https://${host.host}${path}`)
       })
     })

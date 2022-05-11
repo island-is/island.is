@@ -444,7 +444,6 @@ function serializeIngress(
     hosts: hosts.map((host) => ({
       host: host,
       paths: ingressConf.paths,
-      pathType: ingressConf.pathType
     })),
   }
 }

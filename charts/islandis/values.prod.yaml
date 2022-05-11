@@ -37,7 +37,7 @@ air-discount-scheme-api:
       hosts:
         - host: 'loftbru.island.is'
           paths:
-            - '/api/graphql'
+            - path: '/api/graphql'
   namespace: 'air-discount-scheme'
   podSecurityContext:
     fsGroup: 65534
@@ -116,8 +116,8 @@ air-discount-scheme-backend:
       hosts:
         - host: 'loftbru.island.is'
           paths:
-            - '/api/swagger'
-            - '/api/public'
+            - path: '/api/swagger'
+            - path: '/api/public'
   initContainer:
     containers:
       - args:
@@ -204,7 +204,7 @@ air-discount-scheme-web:
       hosts:
         - host: 'loftbru.island.is'
           paths:
-            - '/'
+            - path: '/'
   namespace: 'air-discount-scheme'
   replicaCount:
     default: 3
@@ -326,10 +326,10 @@ api:
       hosts:
         - host: 'island.is'
           paths:
-            - '/api'
+            - path: '/api'
         - host: 'www.island.is'
           paths:
-            - '/api'
+            - path: '/api'
   namespace: 'islandis'
   podSecurityContext:
     fsGroup: 65534
@@ -484,8 +484,8 @@ application-system-api:
       hosts:
         - host: 'application-payment-callback-xrd.internal.island.is'
           paths:
-            - '/application-payment'
-            - '/applications'
+            - path: '/application-payment'
+            - path: '/applications'
   initContainer:
     containers:
       - args:
@@ -681,10 +681,10 @@ application-system-form:
       hosts:
         - host: 'island.is'
           paths:
-            - '/umsoknir'
+            - path: '/umsoknir'
         - host: 'www.island.is'
           paths:
-            - '/umsoknir'
+            - path: '/umsoknir'
   namespace: 'application-system'
   replicaCount:
     default: 3
@@ -739,7 +739,7 @@ contentful-translation-extension:
       hosts:
         - host: 'contentful-translation-extension.devland.is'
           paths:
-            - '/'
+            - path: '/'
   namespace: 'contentful-translation-extension'
   replicaCount:
     default: 3
@@ -800,7 +800,7 @@ download-service:
       hosts:
         - host: 'api.island.is'
           paths:
-            - '/download'
+            - path: '/download'
   namespace: 'download-service'
   replicaCount:
     default: 3
@@ -1048,7 +1048,7 @@ island-ui-storybook:
       hosts:
         - host: 'ui.devland.is'
           paths:
-            - '/'
+            - path: '/'
   namespace: 'storybook'
   replicaCount:
     default: 3
@@ -1123,7 +1123,7 @@ search-indexer-service:
       hosts:
         - host: 'search-indexer-service.devland.is'
           paths:
-            - '/'
+            - path: '/'
   initContainer:
     containers:
       - args:
@@ -1240,10 +1240,10 @@ service-portal:
       hosts:
         - host: 'island.is'
           paths:
-            - '/minarsidur'
+            - path: '/minarsidur'
         - host: 'www.island.is'
           paths:
-            - '/minarsidur'
+            - path: '/minarsidur'
   namespace: 'service-portal'
   replicaCount:
     default: 5
@@ -1308,7 +1308,7 @@ service-portal-api:
       hosts:
         - host: 'service-portal-api.internal.island.is'
           paths:
-            - '/'
+            - path: '/'
   initContainer:
     containers:
       - args:
@@ -1472,10 +1472,10 @@ skilavottord-web:
       hosts:
         - host: 'island.is'
           paths:
-            - '/app/skilavottord/'
+            - path: '/app/skilavottord/'
         - host: 'www.island.is'
           paths:
-            - '/app/skilavottord/'
+            - path: '/app/skilavottord/'
   namespace: 'skilavottord'
   replicaCount:
     default: 3
@@ -1538,10 +1538,10 @@ skilavottord-ws:
       hosts:
         - host: 'island.is'
           paths:
-            - '/app/skilavottord/api/graphql'
+            - path: '/app/skilavottord/api/graphql'
         - host: 'www.island.is'
           paths:
-            - '/app/skilavottord/api/graphql'
+            - path: '/app/skilavottord/api/graphql'
   initContainer:
     containers:
       - args:
@@ -1632,7 +1632,7 @@ user-notification:
       hosts:
         - host: 'user-notification-xrd.internal.island.is'
           paths:
-            - '/'
+            - path: '/'
   namespace: 'user-notification'
   podSecurityContext:
     fsGroup: 65534
@@ -1767,10 +1767,10 @@ web:
       hosts:
         - host: 'island.is'
           paths:
-            - '/'
+            - path: '/'
         - host: 'www.island.is'
           paths:
-            - '/'
+            - path: '/'
   namespace: 'islandis'
   replicaCount:
     default: 10

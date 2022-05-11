@@ -36,10 +36,10 @@ air-discount-scheme-api:
       hosts:
         - host: 'loftbru.dev01.devland.is'
           paths:
-            - '/api/graphql'
+            - path: '/api/graphql'
         - host: 'loftbru-cf.dev01.devland.is'
           paths:
-            - '/api/graphql'
+            - path: '/api/graphql'
   namespace: 'air-discount-scheme'
   podSecurityContext:
     fsGroup: 65534
@@ -118,12 +118,12 @@ air-discount-scheme-backend:
       hosts:
         - host: 'loftbru.dev01.devland.is'
           paths:
-            - '/api/swagger'
-            - '/api/public'
+            - path: '/api/swagger'
+            - path: '/api/public'
         - host: 'loftbru-cf.dev01.devland.is'
           paths:
-            - '/api/swagger'
-            - '/api/public'
+            - path: '/api/swagger'
+            - path: '/api/public'
   initContainer:
     containers:
       - args:
@@ -209,10 +209,10 @@ air-discount-scheme-web:
       hosts:
         - host: 'loftbru.dev01.devland.is'
           paths:
-            - '/'
+            - path: '/'
         - host: 'loftbru-cf.dev01.devland.is'
           paths:
-            - '/'
+            - path: '/'
   namespace: 'air-discount-scheme'
   replicaCount:
     default: 2
@@ -334,10 +334,10 @@ api:
       hosts:
         - host: 'beta.dev01.devland.is'
           paths:
-            - '/api'
+            - path: '/api'
         - host: 'api-catalogue.dev01.devland.is'
           paths:
-            - '/api'
+            - path: '/api'
   namespace: 'islandis'
   podSecurityContext:
     fsGroup: 65534
@@ -492,8 +492,8 @@ application-system-api:
       hosts:
         - host: 'application-payment-callback-xrd.internal.dev01.devland.is'
           paths:
-            - '/application-payment'
-            - '/applications'
+            - path: '/application-payment'
+            - path: '/applications'
   initContainer:
     containers:
       - args:
@@ -689,7 +689,7 @@ application-system-form:
       hosts:
         - host: 'beta.dev01.devland.is'
           paths:
-            - '/umsoknir'
+            - path: '/umsoknir'
   namespace: 'application-system'
   replicaCount:
     default: 2
@@ -745,7 +745,7 @@ contentful-translation-extension:
       hosts:
         - host: 'contentful-translation-extension.dev01.devland.is'
           paths:
-            - '/'
+            - path: '/'
   namespace: 'contentful-translation-extension'
   replicaCount:
     default: 2
@@ -806,7 +806,7 @@ download-service:
       hosts:
         - host: 'api.dev01.devland.is'
           paths:
-            - '/download'
+            - path: '/download'
   namespace: 'download-service'
   replicaCount:
     default: 2
@@ -1018,7 +1018,7 @@ github-actions-cache:
       hosts:
         - host: 'cache.dev01.devland.is'
           paths:
-            - '/'
+            - path: '/'
   namespace: 'github-actions-cache'
   podSecurityContext:
     fsGroup: 65534
@@ -1176,7 +1176,7 @@ island-ui-storybook:
       hosts:
         - host: 'ui.dev01.devland.is'
           paths:
-            - '/'
+            - path: '/'
   namespace: 'storybook'
   replicaCount:
     default: 2
@@ -1253,7 +1253,7 @@ search-indexer-service:
       hosts:
         - host: 'search-indexer-service.dev01.devland.is'
           paths:
-            - '/'
+            - path: '/'
   initContainer:
     containers:
       - args:
@@ -1370,7 +1370,7 @@ service-portal:
       hosts:
         - host: 'beta.dev01.devland.is'
           paths:
-            - '/minarsidur'
+            - path: '/minarsidur'
   namespace: 'service-portal'
   replicaCount:
     default: 5
@@ -1435,7 +1435,7 @@ service-portal-api:
       hosts:
         - host: 'service-portal-api.internal.dev01.devland.is'
           paths:
-            - '/'
+            - path: '/'
   initContainer:
     containers:
       - args:
@@ -1599,7 +1599,7 @@ skilavottord-web:
       hosts:
         - host: 'beta.dev01.devland.is'
           paths:
-            - '/app/skilavottord/'
+            - path: '/app/skilavottord/'
   namespace: 'skilavottord'
   replicaCount:
     default: 2
@@ -1662,7 +1662,7 @@ skilavottord-ws:
       hosts:
         - host: 'beta.dev01.devland.is'
           paths:
-            - '/app/skilavottord/api/graphql'
+            - path: '/app/skilavottord/api/graphql'
   initContainer:
     containers:
       - args:
@@ -1753,7 +1753,7 @@ user-notification:
       hosts:
         - host: 'user-notification-xrd.internal.dev01.devland.is'
           paths:
-            - '/'
+            - path: '/'
   namespace: 'user-notification'
   podSecurityContext:
     fsGroup: 65534
@@ -1887,7 +1887,7 @@ web:
       hosts:
         - host: 'beta.dev01.devland.is'
           paths:
-            - '/'
+            - path: '/'
   namespace: 'islandis'
   replicaCount:
     default: 10

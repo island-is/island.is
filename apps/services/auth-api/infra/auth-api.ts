@@ -10,9 +10,9 @@ export const serviceSetup = (): ServiceBuilder<'auth-api'> => {
     .namespace('identity-server')
     .env({
       DB_REPLICAS_HOST: {
-          dev: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com',
-          staging: '',
-          prod: '',
+        dev: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com',
+        staging: '',
+        prod: '',
       },
       IDS_ISSUER: {
         dev: 'https://identity-server.dev01.devland.is',
@@ -77,8 +77,13 @@ export const serviceSetup = (): ServiceBuilder<'auth-api'> => {
           staging: 'identity-server.staging01.devland.is',
           prod: 'innskra.island.is',
         },
-        paths: ['/api(/|$)(.*)'],
-        pathType: 'Prefix',
+        paths:
+          [
+            {
+            path: '/api(/|$)(.*)',
+            pathType: 'Prefix',
+            },
+          ],
         public: true,
       },
     })
