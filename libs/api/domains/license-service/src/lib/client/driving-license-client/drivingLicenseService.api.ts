@@ -343,44 +343,44 @@ export class GenericDrivingLicenseApi
     data: string,
     nationalId: string,
   ): Promise<PkPassVerification | null> {
-    // const result = await this.pkpassClient.verifyPkpassByPdf417(data)
-    //
-    // if (!result) {
-    //   this.logger.warn('Missing pkpass verify from client', {
-    //     category: LOG_CATEGORY,
-    //   })
-    //   return null
-    // }
-    //
+    const result = await this.pkpassClient.verifyPkpassByPdf417(data)
+
+    if (!result) {
+      this.logger.warn('Missing pkpass verify from client', {
+        category: LOG_CATEGORY,
+      })
+      return null
+    }
+
     let error: PkPassVerificationError | undefined
-    //
-    // if (result.error) {
-    //   let data = ''
-    //
-    //   try {
-    //     data = JSON.stringify(result.error.serviceError?.data)
-    //   } catch {
-    //     // noop
-    //   }
-    //
-    //   // Is there a status code from the service?
-    //   const serviceErrorStatus = result.error.serviceError?.status
-    //
-    //   // Use status code, or http status code from serivce, or "0" for unknown
-    //   const status = serviceErrorStatus ?? (result.error.statusCode || 0)
-    //
-    //   error = {
-    //     status: status.toString(),
-    //     message: result.error.serviceError?.message || 'Unknown error',
-    //     data,
-    //   }
-    //
-    //   return {
-    //     valid: false,
-    //     data: undefined,
-    //     error,
-    //   }
-    // }
+
+    if (result.error) {
+      let data = ''
+
+      try {
+        data = JSON.stringify(result.error.serviceError?.data)
+      } catch {
+        // noop
+      }
+
+      // Is there a status code from the service?
+      const serviceErrorStatus = result.error.serviceError?.status
+
+      // Use status code, or http status code from serivce, or "0" for unknown
+      const status = serviceErrorStatus ?? (result.error.statusCode || 0)
+
+      error = {
+        status: status.toString(),
+        message: result.error.serviceError?.message || 'Unknown error',
+        data,
+      }
+
+      return {
+        valid: false,
+        data: undefined,
+        error,
+      }
+    }
 
     let response:
       | Record<string, string | null | GenericDrivingLicenseResponse['mynd']>
@@ -416,7 +416,7 @@ export class GenericDrivingLicenseApi
     }
 
     return {
-      valid: true,
+      valid: result.valid,
       data: response ? JSON.stringify(response) : undefined,
       error,
     }
