@@ -22,7 +22,8 @@ export const useDrivingLicense = (): GetDrivingLicenseProps => {
     variables: {
       locale,
       input: {
-        licenseType: 'DriversLicense',
+        //CHANGE THIS BACK!
+        licenseType: 'AdrLicense',
       },
     },
   })
