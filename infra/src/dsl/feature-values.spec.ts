@@ -39,7 +39,7 @@ describe('Feature-deployment support', () => {
     .ingress({
       primary: {
         host: { dev: 'a', staging: 'a', prod: 'a' },
-        paths: ['/'],
+        paths: [{ path: '/' }],
       },
     })
     .postgres()
@@ -103,7 +103,7 @@ describe('Feature-deployment support', () => {
         hosts: [
           {
             host: 'feature-A-a.staging01.devland.is',
-            paths: ['/'],
+            paths: [{ path: '/' }],
           },
         ],
       },
