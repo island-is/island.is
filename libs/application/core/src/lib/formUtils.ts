@@ -22,6 +22,7 @@ import {
   StaticTextObject,
   SubSection,
 } from '../types/Form'
+import { FormatMessage } from '../types/external'
 
 const containsArray = (obj: RecordObject) => {
   let contains = false
@@ -207,14 +208,9 @@ export function mergeAnswers(
   })
 }
 
-export type MessageFormatter = (
-  descriptor: StaticText,
-  values?: StaticTextObject['values'],
-) => string
-
 const handleMessageFormatting = (
   message: StaticText,
-  formatMessage: MessageFormatter,
+  formatMessage: FormatMessage,
 ) => {
   if (typeof message === 'string' || !message) {
     return formatMessage(message)
@@ -225,46 +221,46 @@ const handleMessageFormatting = (
   return formatMessage(descriptor, values)
 }
 
-export function formatText<T extends FormTextArray | FormText>(
-  text: T,
+export function formatText(
+  text: FormText,
   application: Application,
-  formatMessage: MessageFormatter,
-): T extends FormTextArray ? string[] : string {
+  formatMessage: FormatMessage,
+): string
+export function formatText(
+  text: FormTextArray,
+  application: Application,
+  formatMessage: FormatMessage,
+): string[]
+export function formatText(
+  text: FormText | FormTextArray,
+  application: Application,
+  formatMessage: FormatMessage,
+): string | string[] {
   if (typeof text === 'function') {
     const message = (text as (_: Application) => StaticText | StaticText[])(
       application,
     )
     if (Array.isArray(message)) {
-      return message.map((m) =>
-        handleMessageFormatting(m, formatMessage),
-      ) as T extends FormTextArray ? string[] : string
+      return message.map((m) => handleMessageFormatting(m, formatMessage))
     }
-    return handleMessageFormatting(
-      message,
-      formatMessage,
-    ) as T extends FormTextArray ? string[] : string
+    return handleMessageFormatting(message, formatMessage)
   } else if (Array.isArray(text)) {
     const texts = text as StaticText[]
-    return texts.map((m) =>
-      handleMessageFormatting(m, formatMessage),
-    ) as T extends FormTextArray ? string[] : string
+    return texts.map((m) => handleMessageFormatting(m, formatMessage))
   } else if (typeof text === 'object') {
     const staticTextObject = text as StaticTextObject
     if (staticTextObject.values) {
-      return formatMessage(
-        staticTextObject,
-        staticTextObject.values,
-      ) as T extends FormTextArray ? string[] : string
+      return formatMessage(staticTextObject, staticTextObject.values)
     }
   }
 
-  return formatMessage(text) as T extends FormTextArray ? string[] : string
+  return formatMessage(text)
 }
 
 export function formatAndParseAsHTML(
   text: FormText,
   application: Application,
-  formatMessage: MessageFormatter,
+  formatMessage: FormatMessage,
 ): React.ReactElement[] {
   return HtmlParser(formatText(text, application, formatMessage))
 }
