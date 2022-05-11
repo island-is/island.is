@@ -66,12 +66,12 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
     GetDebtStatusQuery,
   )
 
-  const debtStatus = debtStatusData?.getDebtStatus
+  const debtStatus = debtStatusData?.getDebtStatus?.myDebtStatus
   let scheduleButtonVisible = false
-  if (debtStatus && !debtStatusLoading) {
+  if (debtStatus && debtStatus.length > 0 && !debtStatusLoading) {
     scheduleButtonVisible =
-      debtStatus.myDebtStatus[0]?.approvedSchedule > 0 ||
-      debtStatus.myDebtStatus[0]?.possibleToSchedule > 0
+      debtStatus[0]?.approvedSchedule > 0 ||
+      debtStatus[0]?.possibleToSchedule > 0
   }
 
   const financeStatusData: FinanceStatusDataType =

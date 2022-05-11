@@ -45,11 +45,11 @@ export const financeScheduleModule: ServicePortalModule = {
         query: GET_DEBT_STATUS,
       })
 
-      const debtStatus = data?.getDebtStatus
-      if (debtStatus && debtStatus.myDebtStatus[0]) {
+      const debtStatus = data?.getDebtStatus?.myDebtStatus || []
+      if (debtStatus && debtStatus.length > 0) {
         if (
-          debtStatus.myDebtStatus[0].approvedSchedule > 0 ||
-          debtStatus.myDebtStatus[0].possibleToSchedule > 0
+          debtStatus[0].approvedSchedule > 0 ||
+          debtStatus[0].possibleToSchedule > 0
         ) {
           routes.push({
             ...tabRoutes.schedules,
