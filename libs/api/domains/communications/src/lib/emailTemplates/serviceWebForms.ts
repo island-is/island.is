@@ -4,55 +4,55 @@ import { environment } from '../environments/environment'
 
 type StringOrNull = string | null
 
+// Fjölskyldumál
+const FJOLSKYLDUMAL = '4vQ4htPOAZvzcXBcjx06SH'
+
+// Skírteini
+const SKIRTEINI = '7nWhQCER920RakQ7BZpEmV'
+
+// Andlát og dánarbú
+const ANDLAT_OG_DANARBU = '2TkJynZlamqTHdjUziXDG0'
+
+// Þinglýsingar, staðfestingar og skráningar
+const THINGLYSINGAR = '6K9stHLAB2mEyGqtqjnXxf'
+
+// Gjöld og innheimta
+const GJOLD_OG_INNHEIMTA = '5u2M09Kw3p1Spva1GSuAzB'
+
+// Löggildingar
+const LOGGILDINGAR = 'WrQIftmx61sHJMoIr1QRW'
+
+// Vottorð
+const VOTTORD = '76Expbwtudon1Gz5lrKOit'
+
+// Lögráðamál
+const LOGRADAMAL = '4tvRkPgKP3kerbyRJDvaWF'
+
+// Önnur þjónusta sýslumanna
+const ONNUR_THJONUSTA_SYSLUMANNA = '4LNbNB3GvH3RcoIGpuZKhG'
+
+// Leyfi
+const LEYFI = '7HbSNTUHJReJ2GPeT1ni1C'
+
+// Fullnustugerðir
+const FULLNUSTUGERDIR = '7LkzuYSzqwM7k8fJyeRbm6'
+
+// Default/fallback email address
+const DEFAULT = 'default'
+
 type Categories =
-  /**
-   * Fjölskyldumál
-   */
-  | '4vQ4htPOAZvzcXBcjx06SH'
-  /**
-   * Skírteini
-   */
-  | '7nWhQCER920RakQ7BZpEmV'
-  /**
-   * Andlát og dánarbú
-   */
-  | '2TkJynZlamqTHdjUziXDG0'
-  /**
-   * Þinglýsingar, staðfestingar og skráningar
-   */
-  | '6K9stHLAB2mEyGqtqjnXxf'
-  /**
-   * Gjöld og innheimta
-   */
-  | '5u2M09Kw3p1Spva1GSuAzB'
-  /**
-   * Löggildingar
-   */
-  | 'WrQIftmx61sHJMoIr1QRW'
-  /**
-   * Vottorð
-   */
-  | '76Expbwtudon1Gz5lrKOit'
-  /**
-   * Lögráðamál
-   */
-  | '4tvRkPgKP3kerbyRJDvaWF'
-  /**
-   * Önnur þjónusta sýslumanna
-   */
-  | '4LNbNB3GvH3RcoIGpuZKhG'
-  /**
-   * Leyfi
-   */
-  | '7HbSNTUHJReJ2GPeT1ni1C'
-  /**
-   * Fullnustugerðir
-   */
-  | '7LkzuYSzqwM7k8fJyeRbm6'
-  /**
-   * Default/fallback email address
-   */
-  | 'default'
+  | typeof FJOLSKYLDUMAL
+  | typeof SKIRTEINI
+  | typeof ANDLAT_OG_DANARBU
+  | typeof THINGLYSINGAR
+  | typeof GJOLD_OG_INNHEIMTA
+  | typeof LOGGILDINGAR
+  | typeof VOTTORD
+  | typeof LOGRADAMAL
+  | typeof ONNUR_THJONUSTA_SYSLUMANNA
+  | typeof LEYFI
+  | typeof FULLNUSTUGERDIR
+  | typeof DEFAULT
 
 type Syslumenn =
   /**
@@ -96,131 +96,158 @@ export const syslumennEmails: Record<
   Syslumenn,
   Record<Categories, StringOrNull>
 > = {
+  /**
+   * Sýslumaðurinn i Vestmannaeyjum
+   */
   '145ctmpqLPrOM7rHZIpC6F': {
-    '4vQ4htPOAZvzcXBcjx06SH': 'vestmannaeyjar.fjolskylda@syslumenn.is',
-    '7nWhQCER920RakQ7BZpEmV': 'vestmannaeyjar.vegabref@syslumenn.is',
-    '2TkJynZlamqTHdjUziXDG0': 'vestmannaeyjar.danarbu@syslumenn.is',
-    '6K9stHLAB2mEyGqtqjnXxf': 'vestmannaeyjar.thinglysing@syslumenn.is',
-    '5u2M09Kw3p1Spva1GSuAzB': 'vestmannaeyjar.innheimta@syslumenn.is',
-    WrQIftmx61sHJMoIr1QRW: null,
-    '76Expbwtudon1Gz5lrKOit': null,
-    '4tvRkPgKP3kerbyRJDvaWF': 'vestmannaeyjar.logradamal@syslumenn.is',
-    '4LNbNB3GvH3RcoIGpuZKhG': null,
-    '7HbSNTUHJReJ2GPeT1ni1C': 'vestmannaeyjar.leyfi@syslumenn.is',
-    '7LkzuYSzqwM7k8fJyeRbm6': 'vestmannaeyjar.fullnusta@syslumenn.is',
-    default: 'vestmannaeyjar@syslumenn.is',
+    [FJOLSKYLDUMAL]: 'vestmannaeyjar.fjolskylda@syslumenn.is',
+    [SKIRTEINI]: 'vestmannaeyjar.vegabref@syslumenn.is',
+    [ANDLAT_OG_DANARBU]: 'vestmannaeyjar.danarbu@syslumenn.is',
+    [THINGLYSINGAR]: 'vestmannaeyjar.thinglysing@syslumenn.is',
+    [GJOLD_OG_INNHEIMTA]: 'vestmannaeyjar.innheimta@syslumenn.is',
+    [LOGGILDINGAR]: null,
+    [VOTTORD]: null,
+    [LOGRADAMAL]: 'vestmannaeyjar.logradamal@syslumenn.is',
+    [ONNUR_THJONUSTA_SYSLUMANNA]: null,
+    [LEYFI]: 'vestmannaeyjar.leyfi@syslumenn.is',
+    [FULLNUSTUGERDIR]: 'vestmannaeyjar.fullnusta@syslumenn.is',
+    [DEFAULT]: 'vestmannaeyjar@syslumenn.is',
   },
+  /**
+   * Sýslumaðurinn á Norðurlandi eystra
+   */
   '12JLsyDmODBfZedYPOQXtX': {
-    '4vQ4htPOAZvzcXBcjx06SH': 'nordurlandeystra.fjolskylda@syslumenn.is',
-    '7nWhQCER920RakQ7BZpEmV': 'nordurlandeystra.vegabref@syslumenn.is',
-    '2TkJynZlamqTHdjUziXDG0': 'nordurlandeystra.danarbu@syslumenn.is',
-    '6K9stHLAB2mEyGqtqjnXxf': 'nordurlandeystra.thinglysing@syslumenn.is',
-    '5u2M09Kw3p1Spva1GSuAzB': 'nordurlandeystra.innheimta@syslumenn.is',
-    WrQIftmx61sHJMoIr1QRW: null,
-    '76Expbwtudon1Gz5lrKOit': null,
-    '4tvRkPgKP3kerbyRJDvaWF': 'nordurlandeystra.logradamal@syslumenn.is',
-    '4LNbNB3GvH3RcoIGpuZKhG': null,
-    '7HbSNTUHJReJ2GPeT1ni1C': 'nordurlandeystra.leyfi@syslumenn.is',
-    '7LkzuYSzqwM7k8fJyeRbm6': null,
-    default: 'nordurlandeystra@syslumenn.is',
+    [FJOLSKYLDUMAL]: 'nordurlandeystra.fjolskylda@syslumenn.is',
+    [SKIRTEINI]: 'nordurlandeystra.vegabref@syslumenn.is',
+    [ANDLAT_OG_DANARBU]: 'nordurlandeystra.danarbu@syslumenn.is',
+    [THINGLYSINGAR]: 'nordurlandeystra.thinglysing@syslumenn.is',
+    [GJOLD_OG_INNHEIMTA]: 'nordurlandeystra.innheimta@syslumenn.is',
+    [LOGGILDINGAR]: null,
+    [VOTTORD]: null,
+    [LOGRADAMAL]: 'nordurlandeystra.logradamal@syslumenn.is',
+    [ONNUR_THJONUSTA_SYSLUMANNA]: null,
+    [LEYFI]: 'nordurlandeystra.leyfi@syslumenn.is',
+    [FULLNUSTUGERDIR]: null,
+    [DEFAULT]: 'nordurlandeystra@syslumenn.is',
   },
+  /**
+   * Sýslumaðurinn á Austurlandi
+   */
   Xnes7x1ccvBvuZxInRXDm: {
-    '4vQ4htPOAZvzcXBcjx06SH': 'austurland.fjolskylda@syslumenn.is',
-    '7nWhQCER920RakQ7BZpEmV': 'austurland.vegabref@syslumenn.is',
-    '2TkJynZlamqTHdjUziXDG0': 'austurland.danarbu@syslumenn.is',
-    '6K9stHLAB2mEyGqtqjnXxf': 'austurland.thinglysing@syslumenn.is',
-    '5u2M09Kw3p1Spva1GSuAzB': 'austurland.innheimta@syslumenn.is',
-    WrQIftmx61sHJMoIr1QRW: null,
-    '76Expbwtudon1Gz5lrKOit': null,
-    '4tvRkPgKP3kerbyRJDvaWF': 'austurland.logradamal@syslumenn.is',
-    '4LNbNB3GvH3RcoIGpuZKhG': null,
-    '7HbSNTUHJReJ2GPeT1ni1C': 'austurland.leyfi@syslumenn.is',
-    '7LkzuYSzqwM7k8fJyeRbm6': 'austurland.fullnusta@syslumenn.is',
-    default: 'austurland@syslumenn.is',
+    [FJOLSKYLDUMAL]: 'austurland.fjolskylda@syslumenn.is',
+    [SKIRTEINI]: 'austurland.vegabref@syslumenn.is',
+    [ANDLAT_OG_DANARBU]: 'austurland.danarbu@syslumenn.is',
+    [THINGLYSINGAR]: 'austurland.thinglysing@syslumenn.is',
+    [GJOLD_OG_INNHEIMTA]: 'austurland.innheimta@syslumenn.is',
+    [LOGGILDINGAR]: null,
+    [VOTTORD]: null,
+    [LOGRADAMAL]: 'austurland.logradamal@syslumenn.is',
+    [ONNUR_THJONUSTA_SYSLUMANNA]: null,
+    [LEYFI]: 'austurland.leyfi@syslumenn.is',
+    [FULLNUSTUGERDIR]: 'austurland.fullnusta@syslumenn.is',
+    [DEFAULT]: 'austurland@syslumenn.is',
   },
+  /**
+   * Sýslumaðurinn á Vesturlandi
+   */
   '43KqapFNoM9m4MNXXc8UPU': {
-    '4vQ4htPOAZvzcXBcjx06SH': 'vesturland.fjolskylda@syslumenn.is',
-    '7nWhQCER920RakQ7BZpEmV': 'vesturland.vegabref@syslumenn.is',
-    '2TkJynZlamqTHdjUziXDG0': 'vesturland.danarbu@syslumenn.is',
-    '6K9stHLAB2mEyGqtqjnXxf': 'vesturland.thinglysing@syslumenn.is',
-    '5u2M09Kw3p1Spva1GSuAzB': 'vesturland.innheimta@syslumenn.is',
-    WrQIftmx61sHJMoIr1QRW: null,
-    '76Expbwtudon1Gz5lrKOit': null,
-    '4tvRkPgKP3kerbyRJDvaWF': 'vesturland.logradamal@syslumenn.is',
-    '4LNbNB3GvH3RcoIGpuZKhG': null,
-    '7HbSNTUHJReJ2GPeT1ni1C': null,
-    '7LkzuYSzqwM7k8fJyeRbm6': 'vesturland.fullnusta@syslumenn.is',
-    default: 'vesturland@syslumenn.is',
+    [FJOLSKYLDUMAL]: 'vesturland.fjolskylda@syslumenn.is',
+    [SKIRTEINI]: 'vesturland.vegabref@syslumenn.is',
+    [ANDLAT_OG_DANARBU]: 'vesturland.danarbu@syslumenn.is',
+    [THINGLYSINGAR]: 'vesturland.thinglysing@syslumenn.is',
+    [GJOLD_OG_INNHEIMTA]: 'vesturland.innheimta@syslumenn.is',
+    [LOGGILDINGAR]: null,
+    [VOTTORD]: null,
+    [LOGRADAMAL]: 'vesturland.logradamal@syslumenn.is',
+    [ONNUR_THJONUSTA_SYSLUMANNA]: null,
+    [LEYFI]: null,
+    [FULLNUSTUGERDIR]: 'vesturland.fullnusta@syslumenn.is',
+    [DEFAULT]: 'vesturland@syslumenn.is',
   },
+  /**
+   * Sýslumaðurinn á höfuðborgarsvæðinu
+   */
   '6puIJvhGxFBzxExVHxi5sr': {
-    '4vQ4htPOAZvzcXBcjx06SH': 'fjolskylda@syslumenn.is',
-    '7nWhQCER920RakQ7BZpEmV': 'vegabref@syslumenn.is',
-    '2TkJynZlamqTHdjUziXDG0': 'danarbu@syslumenn.is',
-    '6K9stHLAB2mEyGqtqjnXxf': 'thinglysing@syslumenn.is',
-    '5u2M09Kw3p1Spva1GSuAzB': null,
-    WrQIftmx61sHJMoIr1QRW: null,
-    '76Expbwtudon1Gz5lrKOit': null,
-    '4tvRkPgKP3kerbyRJDvaWF': 'fjolskylda@syslumenn.is',
-    '4LNbNB3GvH3RcoIGpuZKhG': null,
-    '7HbSNTUHJReJ2GPeT1ni1C': 'leyfi@syslumenn.is',
-    '7LkzuYSzqwM7k8fJyeRbm6': 'fullnusta@syslumenn.is',
-    default: 'smh@syslumenn.is',
+    [FJOLSKYLDUMAL]: 'fjolskylda@syslumenn.is',
+    [SKIRTEINI]: 'vegabref@syslumenn.is',
+    [ANDLAT_OG_DANARBU]: 'danarbu@syslumenn.is',
+    [THINGLYSINGAR]: 'thinglysing@syslumenn.is',
+    [GJOLD_OG_INNHEIMTA]: null,
+    [LOGGILDINGAR]: null,
+    [VOTTORD]: null,
+    [LOGRADAMAL]: 'fjolskylda@syslumenn.is',
+    [ONNUR_THJONUSTA_SYSLUMANNA]: null,
+    [LEYFI]: 'leyfi@syslumenn.is',
+    [FULLNUSTUGERDIR]: 'fullnusta@syslumenn.is',
+    [DEFAULT]: 'smh@syslumenn.is',
   },
+  /**
+   * Sýslumaðurinn á Suðurnesjum
+   */
   cRCuTTXXSrpBj27nBiLbc: {
-    '4vQ4htPOAZvzcXBcjx06SH': 'sudurnes.fjolskylda@syslumenn.is',
-    '7nWhQCER920RakQ7BZpEmV': 'sudurnes.vegabref@syslumenn.is',
-    '2TkJynZlamqTHdjUziXDG0': 'sudurnes.danarbu@syslumenn.is',
-    '6K9stHLAB2mEyGqtqjnXxf': 'sudurnes.thinglysing@syslumenn.is',
-    '5u2M09Kw3p1Spva1GSuAzB': 'sudurnes.innheimta@syslumenn.is',
-    WrQIftmx61sHJMoIr1QRW: null,
-    '76Expbwtudon1Gz5lrKOit': null,
-    '4tvRkPgKP3kerbyRJDvaWF': 'sudurnes.logradamal@syslumenn.is',
-    '4LNbNB3GvH3RcoIGpuZKhG': null,
-    '7HbSNTUHJReJ2GPeT1ni1C': 'sudurnes.leyfi@syslumenn.is',
-    '7LkzuYSzqwM7k8fJyeRbm6': 'sudurnes.fullnusta@syslumenn.is',
-    default: 'sudurnes@syslumenn.is',
+    [FJOLSKYLDUMAL]: 'sudurnes.fjolskylda@syslumenn.is',
+    [SKIRTEINI]: 'sudurnes.vegabref@syslumenn.is',
+    [ANDLAT_OG_DANARBU]: 'sudurnes.danarbu@syslumenn.is',
+    [THINGLYSINGAR]: 'sudurnes.thinglysing@syslumenn.is',
+    [GJOLD_OG_INNHEIMTA]: 'sudurnes.innheimta@syslumenn.is',
+    [LOGGILDINGAR]: null,
+    [VOTTORD]: null,
+    [LOGRADAMAL]: 'sudurnes.logradamal@syslumenn.is',
+    [ONNUR_THJONUSTA_SYSLUMANNA]: null,
+    [LEYFI]: 'sudurnes.leyfi@syslumenn.is',
+    [FULLNUSTUGERDIR]: 'sudurnes.fullnusta@syslumenn.is',
+    [DEFAULT]: 'sudurnes@syslumenn.is',
   },
+  /**
+   * Sýslumaðurinn á Suðurlandi
+   */
   '2uyNnLcRooCNk7u6CMpsIv': {
-    '4vQ4htPOAZvzcXBcjx06SH': 'sudurland.fjolskylda@syslumenn.is',
-    '7nWhQCER920RakQ7BZpEmV': 'sudurland.vegabref@syslumenn.is',
-    '2TkJynZlamqTHdjUziXDG0': 'sudurland.danarbu@syslumenn.is',
-    '6K9stHLAB2mEyGqtqjnXxf': 'sudurland.thinglysing@syslumenn.is',
-    '5u2M09Kw3p1Spva1GSuAzB': 'sudurland.innheimta@syslumenn.is',
-    WrQIftmx61sHJMoIr1QRW: null,
-    '76Expbwtudon1Gz5lrKOit': null,
-    '4tvRkPgKP3kerbyRJDvaWF': 'sudurland.logradamal@syslumenn.is',
-    '4LNbNB3GvH3RcoIGpuZKhG': null,
-    '7HbSNTUHJReJ2GPeT1ni1C': 'sudurland.leyfi@syslumenn.is',
-    '7LkzuYSzqwM7k8fJyeRbm6': 'sudurland.fullnusta@syslumenn.is',
-    default: 'sudurland@syslumenn.is',
+    [FJOLSKYLDUMAL]: 'sudurland.fjolskylda@syslumenn.is',
+    [SKIRTEINI]: 'sudurland.vegabref@syslumenn.is',
+    [ANDLAT_OG_DANARBU]: 'sudurland.danarbu@syslumenn.is',
+    [THINGLYSINGAR]: 'sudurland.thinglysing@syslumenn.is',
+    [GJOLD_OG_INNHEIMTA]: 'sudurland.innheimta@syslumenn.is',
+    [LOGGILDINGAR]: null,
+    [VOTTORD]: null,
+    [LOGRADAMAL]: 'sudurland.logradamal@syslumenn.is',
+    [ONNUR_THJONUSTA_SYSLUMANNA]: null,
+    [LEYFI]: 'sudurland.leyfi@syslumenn.is',
+    [FULLNUSTUGERDIR]: 'sudurland.fullnusta@syslumenn.is',
+    [DEFAULT]: 'sudurland@syslumenn.is',
   },
+  /**
+   * Sýslumaðurinn á Norðurlandi vestra
+   */
   ZefqpCw4y5oy9lREilQY3: {
-    '4vQ4htPOAZvzcXBcjx06SH': 'nordurlandvestra.fjolskylda@syslumenn.is',
-    '7nWhQCER920RakQ7BZpEmV': 'nordurlandvestra.vegabref@syslumenn.is',
-    '2TkJynZlamqTHdjUziXDG0': 'nordurlandvestra.danarbu@syslumenn.is',
-    '6K9stHLAB2mEyGqtqjnXxf': 'nordurlandvestra.thinglysing@syslumenn.is',
-    '5u2M09Kw3p1Spva1GSuAzB': 'innheimta@syslumenn.is',
-    WrQIftmx61sHJMoIr1QRW: null,
-    '76Expbwtudon1Gz5lrKOit': null,
-    '4tvRkPgKP3kerbyRJDvaWF': 'nordurlandvestra.logradamal@syslumenn.is',
-    '4LNbNB3GvH3RcoIGpuZKhG': null,
-    '7HbSNTUHJReJ2GPeT1ni1C': 'nordurlandvestra.leyfi@syslumenn.is',
-    '7LkzuYSzqwM7k8fJyeRbm6': null,
-    default: 'nordurlandvestra@syslumenn.is',
+    [FJOLSKYLDUMAL]: 'nordurlandvestra.fjolskylda@syslumenn.is',
+    [SKIRTEINI]: 'nordurlandvestra.vegabref@syslumenn.is',
+    [ANDLAT_OG_DANARBU]: 'nordurlandvestra.danarbu@syslumenn.is',
+    [THINGLYSINGAR]: 'nordurlandvestra.thinglysing@syslumenn.is',
+    [GJOLD_OG_INNHEIMTA]: 'innheimta@syslumenn.is',
+    [LOGGILDINGAR]: null,
+    [VOTTORD]: null,
+    [LOGRADAMAL]: 'nordurlandvestra.logradamal@syslumenn.is',
+    [ONNUR_THJONUSTA_SYSLUMANNA]: null,
+    [LEYFI]: 'nordurlandvestra.leyfi@syslumenn.is',
+    [FULLNUSTUGERDIR]: null,
+    [DEFAULT]: 'nordurlandvestra@syslumenn.is',
   },
+  /**
+   * Sýslumaðurinn á Vestfjörðum
+   */
   '5MDZoq1DGsJospUnQz4y98': {
-    '4vQ4htPOAZvzcXBcjx06SH': 'vestfirdir.fjolskylda@syslumenn.is',
-    '7nWhQCER920RakQ7BZpEmV': 'vestfirdir.vegabref@syslumenn.is',
-    '2TkJynZlamqTHdjUziXDG0': 'vestfirdir.danarbu@syslumenn.is',
-    '6K9stHLAB2mEyGqtqjnXxf': 'vestfirdir.thinglysing@syslumenn.is',
-    '5u2M09Kw3p1Spva1GSuAzB': 'vestfirdir.innheimta@syslumenn.is',
-    WrQIftmx61sHJMoIr1QRW: null,
-    '76Expbwtudon1Gz5lrKOit': null,
-    '4tvRkPgKP3kerbyRJDvaWF': 'vestfirdir.logradamal@syslumenn.is',
-    '4LNbNB3GvH3RcoIGpuZKhG': null,
-    '7HbSNTUHJReJ2GPeT1ni1C': 'vestfirdir.leyfi@syslumenn.is',
-    '7LkzuYSzqwM7k8fJyeRbm6': 'vestfirdir.fullnusta@syslumenn.is',
-    default: 'vestfirdir@syslumenn.is',
+    [FJOLSKYLDUMAL]: 'vestfirdir.fjolskylda@syslumenn.is',
+    [SKIRTEINI]: 'vestfirdir.vegabref@syslumenn.is',
+    [ANDLAT_OG_DANARBU]: 'vestfirdir.danarbu@syslumenn.is',
+    [THINGLYSINGAR]: 'vestfirdir.thinglysing@syslumenn.is',
+    [GJOLD_OG_INNHEIMTA]: 'vestfirdir.innheimta@syslumenn.is',
+    [LOGGILDINGAR]: null,
+    [VOTTORD]: null,
+    [LOGRADAMAL]: 'vestfirdir.logradamal@syslumenn.is',
+    [ONNUR_THJONUSTA_SYSLUMANNA]: null,
+    [LEYFI]: 'vestfirdir.leyfi@syslumenn.is',
+    [FULLNUSTUGERDIR]: 'vestfirdir.fullnusta@syslumenn.is',
+    [DEFAULT]: 'vestfirdir@syslumenn.is',
   },
 }
 
