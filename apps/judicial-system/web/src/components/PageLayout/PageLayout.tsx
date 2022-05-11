@@ -103,7 +103,7 @@ const PageLayout: React.FC<PageProps> = ({
             <GridColumn span={['12/12', '12/12', '3/12']}>
               <div className={styles.formStepperContainer}>
                 <Box marginLeft={[0, 0, 2]}>
-                  <Box marginBottom={5} display={['none', 'none', 'block']}>
+                  <Box marginBottom={7} display={['none', 'none', 'block']}>
                     <Logo defaultInstitution={workingCase?.court?.name} />
                   </Box>
                   <FormStepper
