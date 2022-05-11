@@ -46,7 +46,7 @@ export const financeScheduleModule: ServicePortalModule = {
       })
 
       const debtStatus = data?.getDebtStatus
-      if (debtStatus.myDebtStatus) {
+      if (debtStatus && debtStatus.myDebtStatus[0]) {
         if (
           debtStatus.myDebtStatus[0].approvedSchedule > 0 ||
           debtStatus.myDebtStatus[0].possibleToSchedule > 0
