@@ -95,7 +95,7 @@ const CaseOverviewForm: React.FC<Props> = (props) => {
       <Box marginBottom={5}>
         <Box display="flex" justifyContent="spaceBetween" marginBottom={3}>
           <Box>
-            <Box marginBottom={1}>
+            <Box marginBottom={1} data-testid="caseTitle">
               <Text as="h1" variant="h1">
                 {titleForCase(workingCase)}
               </Text>

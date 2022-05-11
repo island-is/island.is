@@ -21,6 +21,12 @@ export const intercept = (res: Case) => {
           case: res,
         },
       })
+    } else if (hasOperationName(req, 'RestrictedCaseQuery')) {
+      req.reply({
+        data: {
+          restrictedCase: res,
+        },
+      })
     }
   }).as('gqlCaseQuery')
 }
