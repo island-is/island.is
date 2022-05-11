@@ -2,6 +2,7 @@ import React, { FC, useContext } from 'react'
 import { FooterItem } from '@island.is/web/graphql/schema'
 import {
   Box,
+  Button,
   GridColumn,
   GridContainer,
   GridRow,
@@ -22,14 +23,19 @@ interface FooterProps {
   title: string
   logo?: string
   footerItems: Array<FooterItem>
+  questionsAndAnswersText?: string
+  canWeHelpText?: string
 }
 
 export const SyslumennFooter: React.FC<FooterProps> = ({
   title,
   logo,
   footerItems,
+  questionsAndAnswersText = 'Spurningar og svör',
+  canWeHelpText = 'Getum við aðstoðað?',
 }) => {
-  const { isServiceWeb, shouldLinkToServiceWeb } = useContext(GlobalContext)
+  const { isServiceWeb } = useContext(GlobalContext)
+  const { linkResolver } = useLinkResolver()
 
   const items = footerItems.map((item, index) => (
     <GridColumn
@@ -95,25 +101,34 @@ export const SyslumennFooter: React.FC<FooterProps> = ({
             </div>
           </Box>
           <GridRow>
-            {!shouldLinkToServiceWeb || isServiceWeb ? (
-              items
-            ) : (
-              <>
-                <GridColumn span={['12/12', '12/12', '1/5']} paddingBottom={4}>
-                  <HeaderLink
-                    linkType="serviceweborganization"
-                    slug="syslumenn"
+            <GridColumn span={['12/12', '12/12', '1/5']} paddingBottom={4}>
+              <HeaderLink linkType="serviceweborganization" slug="syslumenn">
+                {questionsAndAnswersText}
+              </HeaderLink>
+              <Box marginTop={3}>
+                <Link
+                  href={
+                    linkResolver('serviceweborganization', ['syslumenn'])?.href
+                  }
+                  skipTab
+                >
+                  <Button
+                    size="small"
+                    colorScheme="negative"
+                    icon="arrowForward"
+                    variant="text"
+                    as="span"
                   >
-                    Spurningar og svör
-                  </HeaderLink>
-                </GridColumn>
-                <GridColumn span={['12/12', '12/12', '4/5']}>
-                  <GridContainer>
-                    <GridRow>{items}</GridRow>
-                  </GridContainer>
-                </GridColumn>
-              </>
-            )}
+                    {canWeHelpText}
+                  </Button>
+                </Link>
+              </Box>
+            </GridColumn>
+            <GridColumn span={['12/12', '12/12', '4/5']}>
+              <GridContainer>
+                <GridRow>{items}</GridRow>
+              </GridContainer>
+            </GridColumn>
           </GridRow>
         </Box>
       </GridContainer>
