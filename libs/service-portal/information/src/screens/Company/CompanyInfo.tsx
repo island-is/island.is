@@ -1,6 +1,8 @@
 import React from 'react'
 import { defineMessage } from 'react-intl'
-import { useQuery, gql } from '@apollo/client'
+import { useQuery } from '@apollo/client'
+import format from 'date-fns/format'
+import { dateFormat } from '@island.is/shared/constants'
 import { spmm } from '../../lib/messages'
 import { Query } from '@island.is/api/schema'
 import {
@@ -31,15 +33,31 @@ const CompanyInfo: ServicePortalModuleComponent = ({ userInfo }) => {
   const { data, loading, error } = useQuery<Query>(
     COMPANY_REGISTRY_INFORMATION,
     {
-      variables: { input: { nationalId: '4710032980' } },
+      variables: { input: { nationalId: '4710032980' } }, // TODO: Revert this: userInfo.profile.nationalId
     },
   )
   const { companyRegistryCompany } = data || {}
 
-  /**
-   * TODO: Look into multiple renders for this page:
-   * console.log('RENDER')
-   */
+  const companyAddress =
+    companyRegistryCompany?.companyInfo?.address?.streetAddress &&
+    companyRegistryCompany?.companyInfo?.address?.postalCode &&
+    companyRegistryCompany?.companyInfo?.address?.locality
+      ? `${companyRegistryCompany.companyInfo.address.streetAddress}, ${companyRegistryCompany.companyInfo.address.postalCode} ${companyRegistryCompany.companyInfo.address.locality}`
+      : ''
+
+  const companyOperation =
+    companyRegistryCompany?.companyInfo?.formOfOperation?.[0]?.name &&
+    companyRegistryCompany?.companyInfo?.formOfOperation?.[0]?.type
+      ? `${companyRegistryCompany?.companyInfo?.formOfOperation?.[0]?.type} - ${companyRegistryCompany?.companyInfo?.formOfOperation?.[0]?.name}`
+      : ''
+
+  const vatClassification =
+    companyRegistryCompany?.companyInfo?.vat?.[0]?.classification?.[0]
+      ?.number &&
+    companyRegistryCompany?.companyInfo?.vat?.[0]?.classification?.[0]?.name
+      ? `${companyRegistryCompany?.companyInfo?.vat?.[0]?.classification?.[0]?.number} ${companyRegistryCompany?.companyInfo?.vat?.[0]?.classification?.[0]?.name}`
+      : ''
+
   return (
     <>
       <Box marginBottom={5}>
@@ -70,7 +88,16 @@ const CompanyInfo: ServicePortalModuleComponent = ({ userInfo }) => {
         <Divider />
         <UserInfoLine
           label={formatMessage(spmm.company.registration)}
-          content={error ? formatMessage(dataNotFoundMessage) : '10.01.2012'}
+          content={
+            error
+              ? formatMessage(dataNotFoundMessage)
+              : companyRegistryCompany?.dateOfRegistration
+              ? format(
+                  new Date(companyRegistryCompany.dateOfRegistration),
+                  dateFormat.is,
+                )
+              : ''
+          }
           loading={loading}
         />
 
@@ -80,35 +107,33 @@ const CompanyInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           content={
             error
               ? formatMessage(dataNotFoundMessage)
-              : formatNationalId(
-                  companyRegistryCompany?.nationalId || '1111112222',
-                )
+              : companyRegistryCompany?.nationalId
+              ? formatNationalId(companyRegistryCompany.nationalId)
+              : ''
           }
           loading={loading}
         />
         <Divider />
         <UserInfoLine
           label={m.address}
-          content={
-            error
-              ? formatMessage(dataNotFoundMessage)
-              : `Kringlan 7, 103 Reykjavík`
-          }
+          content={error ? formatMessage(dataNotFoundMessage) : companyAddress}
           loading={loading}
         />
         <Divider />
         <UserInfoLine
           label={formatMessage(spmm.company.taxNr)}
-          content={error ? formatMessage(dataNotFoundMessage) : '80600'}
+          content={
+            error
+              ? formatMessage(dataNotFoundMessage)
+              : companyRegistryCompany?.companyInfo?.vat?.[0]?.vatNumber || ''
+          }
           loading={loading}
         />
         <Divider />
         <UserInfoLine
           label={formatMessage(spmm.company.operationForm)}
           content={
-            error
-              ? formatMessage(dataNotFoundMessage)
-              : 'E1 - Einkahlutafélag (ehf)'
+            error ? formatMessage(dataNotFoundMessage) : companyOperation
           }
           loading={loading}
         />
@@ -116,9 +141,7 @@ const CompanyInfo: ServicePortalModuleComponent = ({ userInfo }) => {
         <UserInfoLine
           label={formatMessage(spmm.company.industryClass)}
           content={
-            error
-              ? formatMessage(dataNotFoundMessage)
-              : '62.02.0 Ráðgjafarstarfsemi á sviði upplýsingatækni'
+            error ? formatMessage(dataNotFoundMessage) : vatClassification
           }
           loading={loading}
         />
