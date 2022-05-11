@@ -9,11 +9,11 @@ import {
   Accordion,
   AccordionItem,
   Input,
+  AlertMessage,
 } from '@island.is/island-ui/core'
 import {
   NotificationType,
   CaseState,
-  CaseType,
   CaseTransition,
   completedCaseStates,
 } from '@island.is/judicial-system/types'
@@ -40,8 +40,8 @@ import {
   laws,
   rcOverview,
   requestCourtDate,
+  restrictionsV2,
 } from '@island.is/judicial-system-web/messages'
-import { restrictionsV2 } from '@island.is/judicial-system-web/messages'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import CommentsAccordionItem from '@island.is/judicial-system-web/src/components/AccordionItems/CommentsAccordionItem/CommentsAccordionItem'
 import { createCaseResentExplanation } from '@island.is/judicial-system-web/src/utils/stepHelper'
@@ -125,6 +125,15 @@ export const Overview: React.FC = () => {
         title={formatMessage(titles.prosecutor.restrictionCases.overview)}
       />
       <FormContentContainer>
+        {workingCase.state === CaseState.RECEIVED && (
+          <Box marginBottom={5}>
+            <AlertMessage
+              title={formatMessage(rcOverview.receivedAlert.title)}
+              message={formatMessage(rcOverview.receivedAlert.message)}
+              type="info"
+            />
+          </Box>
+        )}
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
             {formatMessage(rcOverview.headingV2, {
