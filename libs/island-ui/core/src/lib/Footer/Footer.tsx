@@ -16,6 +16,7 @@ import Hyphen from '../Hyphen/Hyphen'
 import { LinkContext } from '../context/LinkContext/LinkContext'
 
 import * as styles from './Footer.css'
+import { Stack } from '../Stack/Stack'
 
 export interface FooterLinkProps {
   title: string
@@ -34,7 +35,7 @@ interface FooterProps {
   middleLinksTitle?: string
   bottomLinksTitle?: string
   languageSwitchLink?: FooterLinkProps
-  hideLanguageSwith?: boolean
+  hideLanguageSwitch?: boolean
   showMiddleLinks?: boolean
   /**
    * The link to the help web. If used it will be shown instead of the contact information links.
@@ -53,7 +54,7 @@ export const Footer = ({
   bottomLinksTitle = 'Aðrir opinberir vefir',
   showMiddleLinks = false,
   languageSwitchLink = defaultLanguageSwitchLink,
-  hideLanguageSwith = false,
+  hideLanguageSwitch = false,
   linkToHelpWeb,
   linkToHelpWebText = 'Getum við aðstoðað?',
   languageSwitchOnClick,
@@ -137,8 +138,8 @@ export const Footer = ({
                   )}
                 </Box>
                 <div>
-                  <Inline space={3}>
-                    {!hideLanguageSwith && (
+                  <Stack space={1}>
+                    {!hideLanguageSwitch && (
                       <Inline space={1} alignY="center">
                         <Icon
                           height="15"
@@ -169,7 +170,23 @@ export const Footer = ({
                         </Link>
                       </Text>
                     </Inline>
-                  </Inline>
+                    <Inline space={1} alignY="center">
+                      <Icon
+                        type="info"
+                        height="15"
+                        width="15"
+                        color="blue400"
+                      />
+                      <Text variant="h5" color="blue600" fontWeight="light">
+                        <Link
+                          href={languageSwitchLink.href}
+                          onClick={languageSwitchOnClick}
+                        >
+                          Persónuverndarstefna
+                        </Link>
+                      </Text>
+                    </Inline>
+                  </Stack>
                 </div>
               </Box>
             </GridColumn>
