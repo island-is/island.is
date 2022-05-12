@@ -106,11 +106,11 @@ const MissingFiles = ({
         />
       </Box>
 
-      <>
-        <Text as="h3" variant="h3">
+      <Box marginBottom={[8, 8, 9]}>
+        <Text as="h3" variant="h3" marginBottom={[3, 3, 4]}>
           {formatMessage(missingFiles.comment.title)}
         </Text>
-        <Box marginTop={[3, 3, 4]} marginBottom={4}>
+        <Box marginBottom={4}>
           <Controller
             name={commentType}
             defaultValue={''}
@@ -136,15 +136,14 @@ const MissingFiles = ({
             }}
           />
         </Box>
-      </>
+      </Box>
 
       {error && (
         <>
-          <Text as="h3" variant="h4" color="red400" marginTop={[8, 8, 9]}>
+          <Text as="h3" variant="h4" color="red400" marginBottom={1}>
             {formatMessage(missingFiles.error.title)}
           </Text>
           <DescriptionText
-            textProps={{ marginTop: 1 }}
             text={missingFiles.error.message}
             format={{
               email:
