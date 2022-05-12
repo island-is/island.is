@@ -13,10 +13,21 @@ export const ApplicantSubmitted: Form = buildForm({
   id: 'FinancialAidApplication',
   title: m.status.sectionTitle,
   children: [
-    buildCustomField({
+    buildMultiField({
       id: 'applicantStatus',
       title: m.status.pageTitle,
-      component: 'ApplicantStatus',
+      children: [
+        buildCustomField({
+          id: 'applicantStatus',
+          title: m.status.pageTitle,
+          component: 'ApplicantStatus',
+        }),
+        buildSubmitField({
+          id: '',
+          title: '',
+          actions: [],
+        }),
+      ],
     }),
     buildMultiField({
       id: 'missingFiles',
