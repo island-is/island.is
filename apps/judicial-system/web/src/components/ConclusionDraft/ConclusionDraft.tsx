@@ -9,6 +9,8 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { icRuling, rcRuling } from '@island.is/judicial-system-web/messages'
 
+import { useCase } from '../../utils/hooks'
+
 interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
@@ -17,6 +19,7 @@ interface Props {
 const ConclusionDraft: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase } = props
   const { formatMessage } = useIntl()
+  const { autofill } = useCase()
 
   return (
     <>
@@ -33,7 +36,6 @@ const ConclusionDraft: React.FC<Props> = (props) => {
       <Box marginBottom={3}>
         <Decision
           workingCase={workingCase}
-          setWorkingCase={setWorkingCase}
           acceptedLabelText={
             isRestrictionCase(workingCase.type)
               ? formatMessage(rcRuling.sections.decision.acceptLabel, {
@@ -84,6 +86,19 @@ const ConclusionDraft: React.FC<Props> = (props) => {
               }),
             },
           )}
+          onChange={(decision) => {
+            autofill(
+              [
+                {
+                  key: 'decision',
+                  value: decision,
+                  force: true,
+                },
+              ],
+              workingCase,
+              setWorkingCase,
+            )
+          }}
         />
       </Box>
       <Box marginBottom={3}>

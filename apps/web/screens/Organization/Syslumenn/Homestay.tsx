@@ -30,12 +30,9 @@ import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { OrganizationWrapper } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
-import getConfig from 'next/config'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { useRouter } from 'next/router'
-
-const { publicRuntimeConfig } = getConfig()
 
 interface HomestayProps {
   organizationPage: Query['getOrganizationPage']
@@ -50,13 +47,6 @@ const Homestay: Screen<HomestayProps> = ({
   homestays,
   namespace,
 }) => {
-  const { disableSyslumennPage: disablePage } = publicRuntimeConfig
-  /*
-  if (disablePage === 'true') {
-    throw new CustomNextError(404, 'Not found')
-  }
-  */
-
   useContentfulId(organizationPage.id, subpage.id)
 
   const n = useNamespace(namespace)

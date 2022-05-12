@@ -168,7 +168,7 @@ export const Review: FC<ReviewScreenProps> = ({
   const validatePrivatePensionFundPercentage = () => {
     if (usePrivatePensionFund !== YES) return undefined
 
-    if (privatePensionFundPercentage === '') {
+    if (privatePensionFundPercentage === '0') {
       return formatMessage(coreErrorMessages.defaultError)
     }
 
@@ -521,7 +521,7 @@ export const Review: FC<ReviewScreenProps> = ({
                     const privatePensionFund =
                       s === NO ? NO_PRIVATE_PENSION_FUND : ''
                     const privatePensionFundPercentage =
-                      s === NO ? '' : prev.privatePensionFundPercentage
+                      s === NO ? '0' : prev.privatePensionFundPercentage
                     setValue('payments.privatePensionFund', privatePensionFund)
                     setValue(
                       'payments.privatePensionFundPercentage',

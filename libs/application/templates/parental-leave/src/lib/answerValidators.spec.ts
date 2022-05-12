@@ -94,81 +94,83 @@ describe('answerValidators', () => {
     })
   })
 
-  it('should create error when privatePensionFund is empty', () => {
-    const newAnswers = {
-      bank: '123456789012',
-      pensionFund: 'id-frjalsi',
-      privatePensionFund: '',
-      privatePensionFundPercentage: '',
-    }
+  describe('privatePensionFund', () => {
+    it('should create error when privatePensionFund is empty', () => {
+      const newAnswers = {
+        bank: '123456789012',
+        pensionFund: 'id-frjalsi',
+        privatePensionFund: '',
+        privatePensionFundPercentage: '',
+      }
 
-    expect(answerValidators['payments'](newAnswers, application)).toStrictEqual(
-      {
+      expect(
+        answerValidators['payments'](newAnswers, application),
+      ).toStrictEqual({
         message: coreErrorMessages.defaultError,
         path: 'payments.privatePensionFund',
         values: undefined,
-      },
-    )
-  })
+      })
+    })
 
-  it('should create error when privatePensionFundPercentage is empty', () => {
-    const newAnswers = {
-      bank: '123456789012',
-      pensionFund: 'id-frjalsi',
-      privatePensionFund: 'id-frjalsi',
-      privatePensionFundPercentage: '',
-    }
+    it('should create error when privatePensionFundPercentage is empty', () => {
+      const newAnswers = {
+        bank: '123456789012',
+        pensionFund: 'id-frjalsi',
+        privatePensionFund: 'id-frjalsi',
+        privatePensionFundPercentage: '',
+      }
 
-    expect(answerValidators['payments'](newAnswers, application)).toStrictEqual(
-      {
+      expect(
+        answerValidators['payments'](newAnswers, application),
+      ).toStrictEqual({
         message: coreErrorMessages.defaultError,
         path: 'payments.privatePensionFundPercentage',
         values: undefined,
-      },
-    )
-  })
+      })
+    })
 
-  it('should only accept 2 or 4 as values for privatePensionFundPercentage', () => {
-    const newAnswers = {
-      bank: '123456789012',
-      pensionFund: 'id-frjalsi',
-      privatePensionFund: 'id-frjalsi',
-      privatePensionFundPercentage: 'test input',
-    }
+    it('should only accept 2 or 4 as values for privatePensionFundPercentage', () => {
+      const newAnswers = {
+        bank: '123456789012',
+        pensionFund: 'id-frjalsi',
+        privatePensionFund: 'id-frjalsi',
+        privatePensionFundPercentage: 'test input',
+      }
 
-    expect(answerValidators['payments'](newAnswers, application)).toStrictEqual(
-      {
+      expect(
+        answerValidators['payments'](newAnswers, application),
+      ).toStrictEqual({
         message: coreErrorMessages.defaultError,
         path: 'payments.privatePensionFundPercentage',
         values: undefined,
-      },
-    )
-  })
+      })
+    })
 
-  it('should accept 2 as a value for privatePensionFundPercentage', () => {
-    const newAnswers = {
-      bank: '123456789012',
-      pensionFund: 'id-frjalsi',
-      privatePensionFund: 'id-frjalsi',
-      privatePensionFundPercentage: '2',
-    }
+    it('should accept 2 as a value for privatePensionFundPercentage', () => {
+      const newAnswers = {
+        bank: '123456789012',
+        pensionFund: 'id-frjalsi',
+        privatePensionFund: 'id-frjalsi',
+        privatePensionFundPercentage: '2',
+      }
 
-    expect(answerValidators['payments'](newAnswers, application)).toStrictEqual(
-      undefined,
-    )
-  })
+      expect(
+        answerValidators['payments'](newAnswers, application),
+      ).toStrictEqual(undefined)
+    })
 
-  it('should accept 4 as a value for privatePensionFundPercentage', () => {
-    const newAnswers = {
-      bank: '123456789012',
-      pensionFund: 'id-frjalsi',
-      privatePensionFund: 'id-frjalsi',
-      privatePensionFundPercentage: '4',
-    }
+    it('should accept 4 as a value for privatePensionFundPercentage', () => {
+      const newAnswers = {
+        bank: '123456789012',
+        pensionFund: 'id-frjalsi',
+        privatePensionFund: 'id-frjalsi',
+        privatePensionFundPercentage: '4',
+      }
 
-    expect(answerValidators['payments'](newAnswers, application)).toStrictEqual(
-      undefined,
-    )
+      expect(
+        answerValidators['payments'](newAnswers, application),
+      ).toStrictEqual(undefined)
+    })
   })
 })
 
