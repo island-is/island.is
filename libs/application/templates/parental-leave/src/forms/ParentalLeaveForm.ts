@@ -521,7 +521,8 @@ export const ParentalLeaveForm: Form = buildForm({
                 'requestRights.isRequestingRights',
                 'requestRights.requestDays',
               ],
-              title: parentalLeaveFormMessages.shared.transferRightsRequestTitle,
+              title:
+                parentalLeaveFormMessages.shared.transferRightsRequestTitle,
               condition: (answers, externalData) => {
                 const canTransferRights =
                   getSelectedChild(answers, externalData)?.parentalRelation ===
