@@ -97,6 +97,7 @@ const DocumentLine: FC<Props> = ({ documentLine, img }) => {
       position="relative"
       className={cn(styles.line, {
         [styles.unopenedWrapper]: !documentLine.opened && !isLink,
+        [styles.linkWrapper]: isLink,
       })}
       paddingY={2}
     >

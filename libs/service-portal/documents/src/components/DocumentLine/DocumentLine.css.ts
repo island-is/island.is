@@ -53,3 +53,7 @@ export const image = style({
 export const icon = style({
   marginLeft: 6,
 })
+
+export const linkWrapper = style({
+  backgroundColor: theme.color.blueberry100,
+})
