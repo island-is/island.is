@@ -18,12 +18,12 @@ import {
   getStepBySlug,
   getStateMeta,
   StepperMachine,
-} from './StepperFSMUtils'
+} from './StepperUtils'
 
 import { useI18n } from '@island.is/web/i18n'
-import * as styles from './StepperFSMHelper.css'
+import * as styles from './StepperHelper.css'
 import { scrollTo } from '@island.is/web/hooks/useScrollSpy'
-import { STEPPER_HELPER_ENABLED_KEY } from './StepperFSM'
+import { STEPPER_HELPER_ENABLED_KEY } from './Stepper'
 import { useRouter } from 'next/router'
 
 const SUCCESS_SYMBOL = '✔️'

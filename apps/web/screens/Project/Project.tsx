@@ -33,8 +33,8 @@ import { QueryGetNewsArgs } from '@island.is/api/schema'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 import slugify from '@sindresorhus/slugify'
-import { getStepOptionsFromUIConfiguration } from '../../components/StepperFSM/StepperFSMUtils'
-import StepperFSM from '../../components/StepperFSM/StepperFSM'
+import { getStepOptionsFromUIConfiguration } from '../../components/Stepper/StepperUtils'
+import Stepper from '../../components/Stepper/Stepper'
 import {
   assignNavigationActive,
   convertLinkGroupsToNavigationItems,
@@ -212,7 +212,7 @@ const ProjectPage: Screen<PageProps> = ({
         {content && richText(content)}
         {!subpage && projectPage.stepper && (
           <Box marginTop={6}>
-            <StepperFSM
+            <Stepper
               scrollUpWhenNextStepAppears={false}
               stepper={projectPage.stepper}
               optionsFromNamespace={stepOptionsFromNamespace}
@@ -293,7 +293,7 @@ ProjectPage.getInitialProps = async ({ apolloClient, locale, query }) => {
         query: GET_NAMESPACE_QUERY,
         variables: {
           input: {
-            namespace: 'StepperFSM',
+            namespace: 'Stepper',
             lang: locale,
           },
         },

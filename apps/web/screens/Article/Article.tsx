@@ -57,8 +57,8 @@ import {
 import { Locale } from '@island.is/shared/types'
 import { useScrollPosition } from '../../hooks/useScrollPosition'
 import { scrollTo } from '../../hooks/useScrollSpy'
-import StepperFSM from '../../components/StepperFSM/StepperFSM'
-import { getStepOptionsFromUIConfiguration } from '../../components/StepperFSM/StepperFSMUtils'
+import Stepper from '../../components/Stepper/Stepper'
+import { getStepOptionsFromUIConfiguration } from '../../components/Stepper/StepperUtils'
 import { ArticleChatPanel } from './components/ArticleChatPanel'
 import * as styles from './Article.css'
 
@@ -550,7 +550,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
               activeLocale,
             )}
             {subArticle && subArticle.stepper && (
-              <StepperFSM
+              <Stepper
                 stepper={subArticle.stepper}
                 optionsFromNamespace={stepOptionsFromNamespace}
                 namespace={stepperNamespace}

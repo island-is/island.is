@@ -17,8 +17,8 @@ import { Stepper } from '@island.is/api/schema'
 import {
   renderStepperAndStepConfigErrors,
   StepperHelper,
-} from './StepperFSMHelper'
-import * as styles from './StepperFSM.css'
+} from './StepperHelper'
+import * as styles from './Stepper.css'
 
 import {
   getStepperMachine,
@@ -32,7 +32,7 @@ import {
   getCurrentStepAndStepType,
   validateStepperConfig,
   validateStepConfig,
-} from './StepperFSMUtils'
+} from './StepperUtils'
 import { useRouter } from 'next/router'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
 import { useI18n } from '@island.is/web/i18n'
@@ -115,8 +115,8 @@ const getInitialStateAndAnswersByQueryParams = (
   return { initialState, questionsAndAnswers }
 }
 
-const StepperFSMWrapper = (
-  StepperFSMComponent: React.ComponentType<StepperProps>,
+const StepperWrapper = (
+  StepperComponent: React.ComponentType<StepperProps>,
 ) => {
   const Component = (props: StepperProps) => {
     const configErrors = validateStepperConfig(props.stepper)
@@ -143,13 +143,13 @@ const StepperFSMWrapper = (
         : null
     }
 
-    return <StepperFSMComponent {...props} />
+    return <StepperComponent {...props} />
   }
 
   return Component
 }
 
-const StepperFSM = ({
+const Stepper = ({
   stepper,
   optionsFromNamespace,
   namespace,
@@ -475,4 +475,4 @@ const StepperFSM = ({
   )
 }
 
-export default StepperFSMWrapper(StepperFSM)
+export default StepperWrapper(Stepper)
