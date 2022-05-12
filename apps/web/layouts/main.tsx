@@ -396,6 +396,13 @@ const Layout: NextComponentType<
                     title: activeLocale === 'en' ? 'Íslenska' : 'English',
                     href: activeLocale === 'en' ? '/' : '/en',
                   }}
+                  privacyPolicyLink={{
+                    title: n('privacyPolicyTitle', 'Persónuverndarstefna'),
+                    href: n(
+                      'privacyPolicyHref',
+                      '/personuverndarstefna-stafraent-islands',
+                    ),
+                  }}
                   showMiddleLinks
                 />
               </>
