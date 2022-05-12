@@ -21,7 +21,7 @@ function callProvider(
     return Promise.resolve({
       date: new Date(),
       status: 'failure',
-      reason: { summary: 'unable to build provider' },
+      reason: 'unable to build provider',
     })
   }
   return provider.provide(application, customTemplateFindQuery).then(
@@ -29,13 +29,23 @@ function callProvider(
       return Promise.resolve(provider.onProvideSuccess(result))
     },
     (error) => {
-      console.log({ error })
+      if (
+        (!('title' in error.reason) && 'summary' in error.reason) ||
+        ('title' in error.reason && !('summary' in error.reason))
+      ) {
+        throw new TypeError(
+          'Must supply title and summary or just summary when defining a reason object',
+        )
+      }
+
       const reason =
         typeof error.reason === 'object'
-          ? {
-              title: formatMessage(error.reason.title),
-              summary: formatMessage(error.reason.summary),
-            }
+          ? 'title' in error.reason && 'summary' in error.reason
+            ? {
+                title: formatMessage(error.reason.title),
+                summary: formatMessage(error.reason.summary),
+              }
+            : formatMessage(error.reason)
           : error.reason
 
       return Promise.resolve(

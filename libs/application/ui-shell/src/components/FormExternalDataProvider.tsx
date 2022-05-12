@@ -23,6 +23,7 @@ import {
   SetBeforeSubmitCallback,
   coreErrorMessages,
   StaticText,
+  ProviderErrorReason,
 } from '@island.is/application/core'
 import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
 import { useLocale } from '@island.is/localization'
@@ -51,19 +52,55 @@ const ItemHeader: React.FC<{ title: StaticText; subTitle?: StaticText }> = ({
   )
 }
 
-const isTranslationObject = (reason?: StaticText) => {
-  if (typeof reason !== 'object') {
+const isTranslationObject = (text?: StaticText) => {
+  if (typeof text !== 'object') {
     return false
   }
 
-  return reason.id !== undefined
+  return text.id !== undefined
+}
+
+const isProviderErrorReason = (
+  reason: ProviderErrorReason | StaticText,
+): reason is ProviderErrorReason => {
+  if (typeof reason === 'string') {
+    return false
+  }
+  if ('title' in reason && 'summary' in reason) {
+    return true
+  }
+  return false
+}
+
+const getErrorMessageAndTitle = (results: DataProviderResult | {}) => {
+  if (results && 'reason' in results) {
+    // if reason message and title are supplied, use them
+    if (results.reason && isProviderErrorReason(results.reason)) {
+      return {
+        errorMessage: results.reason.summary,
+        errorTitle: results.reason.title,
+      }
+    }
+    // if there is a reason but not a title, use the reason and default title
+    if (results.reason) {
+      return {
+        errorMessage: results.reason,
+        errorTitle: coreErrorMessages.errorDataProvider,
+      }
+    }
+  }
+  // if there is no reason, use the default message and title
+  return {
+    errorMessage: coreErrorMessages.failedDataProvider,
+    errorTitle: coreErrorMessages.errorDataProvider,
+  }
 }
 
 const ProviderItem: FC<{
   dataProviderResult: DataProviderResult
   provider: DataProviderItem
   suppressProviderError: boolean
-}> = ({ dataProviderResult, provider, suppressProviderError }) => {
+}> = ({ dataProviderResult = {}, provider, suppressProviderError }) => {
   const { title, subTitle } = provider
   const { formatMessage } = useLocale()
 
@@ -74,6 +111,9 @@ const ProviderItem: FC<{
 
   const errorCode = dataProviderResult?.statusCode ?? 500
   const errorType = errorCode < 500 ? 'warning' : 'error'
+  const { errorMessage, errorTitle } = getErrorMessageAndTitle(
+    dataProviderResult,
+  )
 
   return (
     <Box marginBottom={3}>
@@ -84,16 +124,14 @@ const ProviderItem: FC<{
           <AlertMessage
             type={errorType}
             title={
-              dataProviderResult?.reason?.title
-                ? formatMessage(dataProviderResult?.reason?.title)
-                : formatMessage(coreErrorMessages.errorDataProvider)
+              isTranslationObject(errorTitle)
+                ? formatMessage(errorTitle)
+                : (errorTitle as string)
             }
             message={
-              isTranslationObject(dataProviderResult?.reason?.summary)
-                ? formatMessage(dataProviderResult.reason?.summary!)
-                : typeof dataProviderResult?.reason?.summary === 'string'
-                ? dataProviderResult.reason
-                : formatMessage(coreErrorMessages.failedDataProvider)
+              isTranslationObject(errorMessage)
+                ? formatMessage(errorMessage)
+                : errorMessage
             }
           />
         </Box>

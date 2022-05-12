@@ -3,13 +3,13 @@ import { StaticText } from './Form'
 export interface DataProviderResult {
   data?: object | string | boolean | number
   date: Date
-  reason?: ProviderErrorReason
+  reason?: ProviderErrorReason | StaticText
   status: 'failure' | 'success'
   statusCode?: number
 }
 
 export interface FailedDataProviderResult extends DataProviderResult {
-  reason?: ProviderErrorReason
+  reason?: ProviderErrorReason | StaticText
   status: 'failure'
 }
 
@@ -18,6 +18,6 @@ export interface SuccessfulDataProviderResult extends DataProviderResult {
 }
 
 export interface ProviderErrorReason {
-  title?: StaticText
-  summary?: StaticText
+  title: StaticText
+  summary: StaticText
 }
