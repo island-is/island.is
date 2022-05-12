@@ -26,7 +26,7 @@ const MissingFiles = ({
   )
   const fileType: UploadFileType = 'otherFiles'
   const commentType = 'fileUploadComment'
-  
+
   const { formatMessage } = useIntl()
   const { setValue, getValues } = useFormContext()
   const { uploadStateFiles } = useFileUpload(
@@ -68,7 +68,7 @@ const MissingFiles = ({
         setValue(fileType, uploadedFiles)
 
         await updateApplication(
-          ApplicationState.DATANEEDED,
+          ApplicationState.INPROGRESS,
           ApplicationEventType.FILEUPLOAD,
           getValues(commentType),
         )
