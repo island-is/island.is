@@ -6,8 +6,9 @@ import {
   Einstaklingsupplysingar,
 } from '@island.is/clients/national-registry-v2'
 import {
-  GetCompanyApi,
-  ResponseCompanyDetailed,
+  CompanyAddressType,
+  CompanyExtendedInfo,
+  CompanyRegistryClientService,
 } from '@island.is/clients/rsk/company-registry'
 import {
   UserProfile,
@@ -17,6 +18,7 @@ import {
 import { TestApp } from '@island.is/testing/nest'
 import {
   createCurrentUser,
+  createNationalId,
   createNationalRegistryUser,
 } from '@island.is/testing/fixtures'
 
@@ -38,10 +40,36 @@ const mockNationalRegistry = (
   })
 }
 
-function createCompany(): ResponseCompanyDetailed {
+function createCompany(): CompanyExtendedInfo {
   return {
-    nafn: faker.company.companyName(),
-  } as ResponseCompanyDetailed
+    name: faker.company.companyName(),
+    address: {
+      type: CompanyAddressType.address,
+      streetAddress: faker.address.streetAddress(),
+      locality: faker.address.city(),
+      postalCode: faker.address.zipCode(),
+      region: faker.address.state(),
+      municipalityNumber: faker.random.word(),
+      isPostbox: faker.datatype.boolean(),
+      country: 'US',
+    },
+    legalDomicile: {
+      type: CompanyAddressType.legalDomicile,
+      streetAddress: faker.address.streetAddress(),
+      locality: faker.address.city(),
+      postalCode: faker.address.zipCode(),
+      region: faker.address.state(),
+      municipalityNumber: faker.random.word(),
+      isPostbox: faker.datatype.boolean(),
+      country: 'US',
+    },
+    addresses: [],
+    formOfOperation: [],
+    relatedParty: [],
+    vat: [],
+    nationalId: createNationalId('company'),
+    status: faker.random.word(),
+  } as CompanyExtendedInfo
 }
 
 function createUserProfile(): UserProfile {
@@ -173,6 +201,7 @@ describe('UserProfileController', () => {
             locality: address.stadur,
             postalCode: address.postnumer,
             streetAddress: address.heiti,
+            country: 'Ísland',
           },
           birthdate: individual.faedingardagur.toISOString().split('T')[0],
           legalDomicile: {
@@ -180,6 +209,7 @@ describe('UserProfileController', () => {
             streetAddress: domicile.heiti,
             postalCode: domicile.postnumer,
             locality: domicile.stadur,
+            country: 'Ísland',
           },
           email: userProfile.email,
           emailVerified: userProfile.emailVerified,
@@ -290,9 +320,9 @@ describe('UserProfileController', () => {
         const errorLog = jest
           .spyOn(app.get<Logger>(LOGGER_PROVIDER), 'error')
           .mockImplementation()
-        mocked(app.get(GetCompanyApi).getCompany).mockRejectedValue(
-          new Error('test error'),
-        )
+        mocked(
+          app.get(CompanyRegistryClientService).getCompany,
+        ).mockRejectedValue(new Error('test error'))
 
         // Act
         const res = await server.get(path).expect(200)
@@ -302,18 +332,53 @@ describe('UserProfileController', () => {
         expect(res.body).toEqual({})
       })
 
-      it('with full registries should return company claims', async () => {
+      it('with missing data should return no claims', async () => {
         // Arrange
-        const company = createCompany()
-        mocked(app.get(GetCompanyApi).getCompany).mockResolvedValue(company)
+        mocked(
+          app.get(CompanyRegistryClientService).getCompany,
+        ).mockResolvedValue(null)
 
         // Act
         const res = await server.get(path).expect(200)
 
         // Assert
-        expect(res.body).toEqual({
-          name: company.nafn,
-        })
+        expect(res.body).toEqual({})
+      })
+
+      it('with full registries should return company claims', async () => {
+        // Arrange
+        const company = createCompany()
+        mocked(
+          app.get(CompanyRegistryClientService).getCompany,
+        ).mockResolvedValue(company)
+
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        const domicile = company.legalDomicile!
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        const address = company.address!
+        const expected = {
+          name: company.name,
+          address: {
+            formatted: `${address.streetAddress}\n${address.postalCode} ${address.locality}\nBandaríkin`,
+            locality: address.locality,
+            postalCode: address.postalCode,
+            streetAddress: address.streetAddress,
+            country: 'Bandaríkin',
+          },
+          legalDomicile: {
+            formatted: `${domicile.streetAddress}\n${domicile.postalCode} ${domicile.locality}\nBandaríkin`,
+            locality: domicile.locality,
+            postalCode: domicile.postalCode,
+            streetAddress: domicile.streetAddress,
+            country: 'Bandaríkin',
+          },
+        }
+
+        // Act
+        const res = await server.get(path).expect(200)
+
+        // Assert
+        expect(res.body).toEqual(expected)
       })
     })
   })

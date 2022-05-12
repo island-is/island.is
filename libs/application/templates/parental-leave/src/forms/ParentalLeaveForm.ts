@@ -317,7 +317,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   id: 'personalAllowance.useAsMuchAsPossible',
                   title:
                     parentalLeaveFormMessages.personalAllowance
-                      .useAsMuchAsPossibleFromSpouse,
+                      .useAsMuchAsPossible,
                 }),
                 buildTextField({
                   id: 'personalAllowance.usage',
@@ -545,7 +545,7 @@ export const ParentalLeaveForm: Form = buildForm({
                 'giveRights.isGivingRights',
                 'giveRights.giveDays',
               ],
-              title: 'Hversu marga daga viltu færa yfir á hitt foreldrið?',
+              title: parentalLeaveFormMessages.shared.transferRightsGiveTitle,
               condition: (answers, externalData) => {
                 const canTransferRights =
                   getSelectedChild(answers, externalData)?.parentalRelation ===

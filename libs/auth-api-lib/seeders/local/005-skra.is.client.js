@@ -91,7 +91,7 @@ const client = {
   allow_access_token_via_browser: false,
   front_channel_logout_session_required: true,
   allow_remember_consent: true,
-  client_claims_prefix: 'ids-admin_',
+  client_claims_prefix: '@island.is/auth-admin-web_',
   protocol_type: 'oidc',
   consent_lifetime: 3600,
 

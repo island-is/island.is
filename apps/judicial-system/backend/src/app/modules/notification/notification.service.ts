@@ -32,7 +32,6 @@ import {
   formatCourtHeadsUpSmsNotification,
   formatPrisonCourtDateEmailNotification,
   formatCourtReadyForCourtSmsNotification,
-  getRequestPdfAsString,
   formatDefenderCourtDateEmailNotification,
   stripHtmlTags,
   formatPrisonRulingEmailNotification,
@@ -587,19 +586,13 @@ export class NotificationService {
       theCase.registrar?.name,
       theCase.prosecutor?.name,
       theCase.creatingProsecutor?.institution?.name,
+      theCase.sessionArrangements,
+      theCase.sendRequestToDefender,
+      theCase.defenderNationalId &&
+        `${environment.deepLinks.defenderCompletedCaseOverviewUrl}${theCase.id}`,
     )
     const calendarInvite = this.createICalAttachment(theCase)
     const attachments: Attachment[] = calendarInvite ? [calendarInvite] : []
-
-    if (theCase.sendRequestToDefender) {
-      const pdf = await getRequestPdfAsString(theCase, this.formatMessage)
-
-      attachments.push({
-        filename: `${theCase.policeCaseNumber}.pdf`,
-        content: pdf,
-        encoding: 'binary',
-      })
-    }
 
     const recipient = await this.sendEmail(
       subject,

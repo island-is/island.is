@@ -5,7 +5,7 @@ import { ValueType } from 'react-select'
 import { Box, Select, Text, Option } from '@island.is/island-ui/core'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import type { Case, Institution } from '@island.is/judicial-system/types'
-import { selectCourt as m } from '@island.is/judicial-system-web/messages/Core/selectCourt'
+import { selectCourt as m } from '@island.is/judicial-system-web/messages'
 
 interface Props {
   workingCase: Case

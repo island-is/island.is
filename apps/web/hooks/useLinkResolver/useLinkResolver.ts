@@ -41,6 +41,10 @@ export const routesTemplate = {
     is: '/leit',
     en: '/en/search',
   },
+  articlecategories: {
+    is: '/flokkur',
+    en: '/en/category',
+  },
   articlecategory: {
     is: '/flokkur/[slug]',
     en: '/en/category/[slug]',
