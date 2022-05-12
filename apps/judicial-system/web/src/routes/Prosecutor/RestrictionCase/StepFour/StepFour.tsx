@@ -21,7 +21,7 @@ import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { rcReportForm } from '@island.is/judicial-system-web/messages'
+import { rcReportForm, titles } from '@island.is/judicial-system-web/messages'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   formatDate,
@@ -31,7 +31,6 @@ import { UserContext } from '@island.is/judicial-system-web/src/components/UserP
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
 import * as Constants from '@island.is/judicial-system/consts'
 
 export const StepFour: React.FC = () => {
@@ -64,37 +63,43 @@ export const StepFour: React.FC = () => {
     if (isCaseUpToDate && !initialAutoFillDone) {
       if (workingCase.defendants && workingCase.defendants.length > 0) {
         autofill(
-          'demands',
-          formatMessage(rcReportForm.sections.demands.autofillV2, {
-            accusedName: workingCase.defendants[0].name,
-            accusedNationalId: workingCase.defendants[0].noNationalId
-              ? ' '
-              : `, kt. ${formatNationalId(
-                  workingCase.defendants[0].nationalId ?? '',
-                )}, `,
-            isExtended:
-              workingCase.parentCase &&
-              isAcceptingCaseDecision(workingCase.parentCase.decision)
-                ? 'yes'
-                : 'no',
-            caseType: workingCase.type,
-            court: workingCase.court?.name.replace('Héraðsdómur', 'Héraðsdóms'),
-            requestedValidToDate: formatDate(
-              workingCase.requestedValidToDate,
-              'PPPPp',
-            )
-              ?.replace('dagur,', 'dagsins')
-              ?.replace(' kl.', ', kl.'),
-            hasIsolationRequest: workingCase.requestedCustodyRestrictions?.includes(
-              CaseCustodyRestrictions.ISOLATION,
-            )
-              ? 'yes'
-              : 'no',
-          }),
+          [
+            {
+              key: 'demands',
+              value: formatMessage(rcReportForm.sections.demands.autofillV2, {
+                accusedName: workingCase.defendants[0].name,
+                accusedNationalId: workingCase.defendants[0].noNationalId
+                  ? ' '
+                  : `, kt. ${formatNationalId(
+                      workingCase.defendants[0].nationalId ?? '',
+                    )}, `,
+                isExtended:
+                  workingCase.parentCase &&
+                  isAcceptingCaseDecision(workingCase.parentCase.decision)
+                    ? 'yes'
+                    : 'no',
+                caseType: workingCase.type,
+                court: workingCase.court?.name.replace(
+                  'Héraðsdómur',
+                  'Héraðsdóms',
+                ),
+                requestedValidToDate: formatDate(
+                  workingCase.requestedValidToDate,
+                  'PPPPp',
+                )
+                  ?.replace('dagur,', 'dagsins')
+                  ?.replace(' kl.', ', kl.'),
+                hasIsolationRequest: workingCase.requestedCustodyRestrictions?.includes(
+                  CaseCustodyRestrictions.ISOLATION,
+                )
+                  ? 'yes'
+                  : 'no',
+              }),
+            },
+          ],
           workingCase,
+          setWorkingCase,
         )
-
-        setWorkingCase({ ...workingCase })
       }
 
       setInitialAutoFillDone(true)
