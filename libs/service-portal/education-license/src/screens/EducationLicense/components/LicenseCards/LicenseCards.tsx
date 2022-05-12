@@ -47,7 +47,7 @@ const LicenseCards = () => {
     fetchEducationSignedLicenseUrl,
     { loading: mutationLoading },
   ] = useMutation<Mutation>(FetchEducationSignedLicenseUrlMutation)
-  useNamespaces('sp.education-career')
+  useNamespaces('sp.education-license')
   const { formatMessage } = useLocale()
 
   useEffect(() => {
@@ -82,11 +82,11 @@ const LicenseCards = () => {
             cta={{
               label: mutationLoading
                 ? formatMessage({
-                    id: 'sp.education-career:downloading',
+                    id: 'sp.education-license:downloading',
                     defaultMessage: 'Innsiglun skjals í vinnslu…',
                   })
                 : formatMessage({
-                    id: 'sp.education-career:send-file',
+                    id: 'sp.education-license:send-file',
                     defaultMessage: 'Senda skjal í undirritun',
                   }),
               onClick: () => handleDownload(license),
@@ -98,13 +98,13 @@ const LicenseCards = () => {
               outlined: false,
             }}
             text={`${formatMessage({
-              id: 'sp.education-career:date',
+              id: 'sp.education-license:date',
               defaultMessage: 'Útgáfudagur',
             })}: ${format(new Date(license.date), 'dd. MMMM yyyy', {
               locale: is,
             })}`}
             heading={`${formatMessage({
-              id: 'sp.education-career:programme',
+              id: 'sp.education-license:programme',
               defaultMessage: 'Leyfisbréf',
             })} - ${license.programme}`}
           />
@@ -135,14 +135,14 @@ const LicenseCards = () => {
               <Stack space={2}>
                 <Text variant="h1">
                   {formatMessage({
-                    id: 'sp.education-career:doc-ready-for-dl',
+                    id: 'sp.education-license:doc-ready-for-dl',
                     defaultMessage: 'Skjal tilbúið í niðurhal',
                   })}
                 </Text>
                 <Box marginTop={2}>
                   <Text variant="intro">
                     {formatMessage({
-                      id: 'sp.education-career:doc-ready-sealed',
+                      id: 'sp.education-license:doc-ready-sealed',
                       defaultMessage:
                         'Leyfisbréfið þitt hefur verið innsiglað og er tilbúið til niðurhals.',
                     })}
@@ -151,7 +151,7 @@ const LicenseCards = () => {
                 {expiry > 0 ? (
                   <Text>
                     {formatMessage({
-                      id: 'sp.education-career:download-link-expiry',
+                      id: 'sp.education-license:download-link-expiry',
                       defaultMessage:
                         'Athugið að niðurhalslinkurinn rennur út eftir',
                     })}{' '}
@@ -159,14 +159,14 @@ const LicenseCards = () => {
                       {expiry}
                     </Text>{' '}
                     {formatMessage({
-                      id: 'sp.education-career:seconds',
+                      id: 'sp.education-license:seconds',
                       defaultMessage: 'sekúndur.',
                     })}
                   </Text>
                 ) : (
                   <Text color="red400">
                     {formatMessage({
-                      id: 'sp.education-career:download-link-expired',
+                      id: 'sp.education-license:download-link-expired',
                       defaultMessage: 'Niðurhalslinkurinn er útrunninn.',
                     })}
                   </Text>
@@ -179,14 +179,14 @@ const LicenseCards = () => {
               >
                 <Button variant="ghost" onClick={closeModal}>
                   {formatMessage({
-                    id: 'sp.education-career:cancel',
+                    id: 'sp.education-license:cancel',
                     defaultMessage: 'Hætta við',
                   })}
                 </Button>
                 <Button disabled={expiry <= 0}>
                   <a download href={href} target="_blank" rel="noreferrer">
                     {formatMessage({
-                      id: 'sp.education-career:download',
+                      id: 'sp.education-license:download',
                       defaultMessage: 'Hlaða niður',
                     })}
                   </a>
