@@ -33,11 +33,14 @@ export const ApplicantSubmitted: Form = buildForm({
       id: 'missingFiles',
       title: m.missingFiles.general.pageTitle,
       children: [
-        buildCustomField({
-          id: 'missingFiles',
-          title: m.missingFiles.general.pageTitle,
-          component: 'MissingFiles',
-        }),
+        buildCustomField(
+          {
+            id: 'missingFiles',
+            title: m.missingFiles.general.pageTitle,
+            component: 'MissingFiles',
+          },
+          { isSpouse: false },
+        ),
         buildSubmitField({
           id: 'missingFilesSubmit',
           title: '',
