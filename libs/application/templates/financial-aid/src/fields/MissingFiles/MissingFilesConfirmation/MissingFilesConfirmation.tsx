@@ -4,13 +4,16 @@ import { useFormContext } from 'react-hook-form'
 
 import { Text, Box, Link } from '@island.is/island-ui/core'
 
-import { FAFieldBaseProps } from '../../../lib/types'
+import { FAFieldBaseProps, UploadFileType } from '../../../lib/types'
 import { missingFiles } from '../../../lib/messages'
 import FileList from '../FileList/FileList'
 
 const MissingFilesConfirmation = ({ application }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
   const { getValues } = useFormContext()
+
+  const fileType: UploadFileType = 'otherFiles'
+  const commentType = 'fileUploadComment'
 
   return (
     <>
@@ -20,12 +23,12 @@ const MissingFilesConfirmation = ({ application }: FAFieldBaseProps) => {
 
       <Box>
         <FileList
-          files={getValues('otherFiles')}
+          files={getValues(fileType)}
           applicationSystemId={application.id}
         />
       </Box>
 
-      {getValues('fileUploadComment') && (
+      {getValues(commentType) && (
         <Box
           background="purple100"
           paddingX={4}
@@ -35,7 +38,7 @@ const MissingFilesConfirmation = ({ application }: FAFieldBaseProps) => {
           <Text variant="eyebrow" marginBottom={1}>
             {formatMessage(missingFiles.confirmation.commentTitle)}
           </Text>
-          <Text>{getValues('fileUploadComment')}</Text>
+          <Text>{getValues(commentType)}</Text>
         </Box>
       )}
 

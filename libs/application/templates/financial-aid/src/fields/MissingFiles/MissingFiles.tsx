@@ -11,7 +11,7 @@ import {
 
 import { filesText, missingFiles } from '../../lib/messages'
 import { Files } from '..'
-import { FAFieldBaseProps } from '../../lib/types'
+import { FAFieldBaseProps, UploadFileType } from '../../lib/types'
 import useApplication from '../../lib/hooks/useApplication'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useFileUpload } from '../../lib/hooks/useFileUpload'
@@ -24,10 +24,13 @@ const MissingFiles = ({
   const { currentApplication, updateApplication } = useApplication(
     application.externalData.veita.data.currentApplicationId,
   )
+  const fileType: UploadFileType = 'otherFiles'
+  const commentType = 'fileUploadComment'
+  
   const { formatMessage } = useIntl()
   const { setValue, getValues } = useFormContext()
   const { uploadStateFiles } = useFileUpload(
-    getValues('otherFiles'),
+    getValues(fileType),
     application.id,
   )
 
@@ -47,12 +50,12 @@ const MissingFiles = ({
     if (filesError) {
       setFilesError(false)
     }
-  }, [getValues('otherFiles')])
+  }, [getValues(fileType)])
 
   setBeforeSubmitCallback &&
     setBeforeSubmitCallback(async () => {
       setError(false)
-      if (getValues('otherFiles').length <= 0) {
+      if (getValues(fileType).length <= 0) {
         setFilesError(true)
         return [false, formatMessage(filesText.errorMessage)]
       }
@@ -62,12 +65,12 @@ const MissingFiles = ({
           application.externalData.veita.data.currentApplicationId,
           FileType.OTHER,
         )
-        setValue('otherFiles', uploadedFiles)
+        setValue(fileType, uploadedFiles)
 
         await updateApplication(
-          ApplicationState.INPROGRESS,
+          ApplicationState.DATANEEDED,
           ApplicationEventType.FILEUPLOAD,
-          getValues('fileUploadComment'),
+          getValues(commentType),
         )
       } catch (e) {
         setError(true)
@@ -96,8 +99,8 @@ const MissingFiles = ({
 
       <Box marginBottom={[7, 7, 8]}>
         <Files
-          fileKey="otherFiles"
-          uploadFiles={application.answers.otherFiles}
+          fileKey={fileType}
+          uploadFiles={getValues(fileType)}
           folderId={application.id}
           hasError={filesError}
         />
@@ -109,13 +112,13 @@ const MissingFiles = ({
         </Text>
         <Box marginTop={[3, 3, 4]} marginBottom={4}>
           <Controller
-            name={'fileUploadComment'}
-            defaultValue={application.answers.fileUploadComment}
+            name={commentType}
+            defaultValue={''}
             render={({ value, onChange }) => {
               return (
                 <Input
-                  id={'fileUploadComment'}
-                  name={'fileUploadComment'}
+                  id={commentType}
+                  name={commentType}
                   label={formatMessage(missingFiles.comment.inputTitle)}
                   placeholder={formatMessage(
                     missingFiles.comment.inputPlaceholder,
@@ -126,7 +129,7 @@ const MissingFiles = ({
                   backgroundColor="blue"
                   onChange={(e) => {
                     onChange(e.target.value)
-                    setValue('fileUploadComment', e.target.value)
+                    setValue(commentType, e.target.value)
                   }}
                 />
               )
