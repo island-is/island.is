@@ -74,7 +74,7 @@ const MissingFiles = ({
         )
       } catch (e) {
         setError(true)
-        return [false, 'Failed to upload files']
+        return [false, formatMessage(missingFiles.error.title)]
       }
       return [true, null]
     })
