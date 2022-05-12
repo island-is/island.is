@@ -77,7 +77,7 @@ export class UserTokenController {
       params: {
         nationalId: {
           type: 'string',
-          description: 'ID of the animal',
+          description: 'ID of the user',
         },
       },
     },
@@ -98,15 +98,15 @@ export class UserTokenController {
   @Scopes(UserProfileScope.admin)
   @ApiSecurity('oauth2', [UserProfileScope.admin])
   @Documentation({
-    summary: 'admin access - tests magicbell',
-    description: 'admin access - tests magicbell',
+    summary: 'admin access - tests onesignal',
+    description: 'admin access - tests onesignal',
     response: { status: 201, type: CreateNotificationDto },
     request: {
       query: {},
       params: {
         nationalId: {
           type: 'string',
-          description: 'ID of the animal',
+          description: 'ID of the user',
         },
       },
     },
