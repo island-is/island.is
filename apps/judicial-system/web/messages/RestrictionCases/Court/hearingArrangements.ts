@@ -87,6 +87,15 @@ export const rcHearingArrangements = {
       },
     }),
   },
+  continueButton: defineMessages({
+    title: {
+      id:
+        'judicial.system.restriction_cases:hearing_arrangements.continue_button.title',
+      defaultMessage: 'Staðfesta fyrirtökutíma',
+      description:
+        'Notaður sem titill á halda áfram takka í fyrirtöku skrefi gæsluvarðhalds- og farbannsmálum.',
+    },
+  }),
   modal: {
     custodyCases: defineMessages({
       heading: {
