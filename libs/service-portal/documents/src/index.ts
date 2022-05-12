@@ -16,12 +16,14 @@ const rootName = defineMessage({
 
 const enabled = (userInfo: User) => {
   const hasScope = userInfo.scopes?.includes(DocumentsScope.main)
+  const dateOfBirth = userInfo.profile?.dateOfBirth
   console.log(userInfo)
   const isLegalGuardian = userInfo.profile.delegationType?.includes(
     'LegalGuardian',
   )
-  const isOver15 =
-    differenceInYears(new Date(), userInfo.profile.dateOfBirth) > 15
+  const isOver15 = dateOfBirth
+    ? differenceInYears(new Date(), dateOfBirth) > 15
+    : false
   if (isLegalGuardian && isOver15) {
     return false
   }
