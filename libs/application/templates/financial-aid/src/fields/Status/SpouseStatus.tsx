@@ -12,6 +12,7 @@ import {
   Timeline,
 } from './index'
 import useApplication from '../../lib/hooks/useApplication'
+import * as styles from './Status.css'
 
 const SpouseStatus = ({ application, goToScreen }: FAFieldBaseProps) => {
   const { currentApplication } = useApplication(
@@ -21,7 +22,7 @@ const SpouseStatus = ({ application, goToScreen }: FAFieldBaseProps) => {
   const state = currentApplication?.state
 
   return (
-    <Box paddingBottom={5}>
+    <Box paddingBottom={5} className={styles.container}>
       <Header state={state} />
 
       {state === ApplicationState.APPROVED && <SpouseApproved />}

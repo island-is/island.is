@@ -16,6 +16,7 @@ import {
   Timeline,
 } from './index'
 import useApplication from '../../lib/hooks/useApplication'
+import * as styles from './Status.css'
 
 const ApplicantStatus = ({ application, goToScreen }: FAFieldBaseProps) => {
   const { currentApplication } = useApplication(
@@ -28,7 +29,7 @@ const ApplicantStatus = ({ application, goToScreen }: FAFieldBaseProps) => {
       : currentApplication?.state
 
   return (
-    <Box paddingBottom={5}>
+    <Box paddingBottom={5} className={styles.container}>
       <Header state={state} />
 
       {application.state === ApplicationStates.SPOUSE && <SpouseAlert />}
