@@ -61,9 +61,11 @@ export const companyModules: ModuleKeys[] = [
   'applications',
   'assets',
   'finance',
-  // 'licenses',
   'information',
   'vehicles',
+
+  // TODO: Next in:
+  // 'licenses',
 ]
 
 export const modules: Record<ModuleKeys, ServicePortalModule> = {
