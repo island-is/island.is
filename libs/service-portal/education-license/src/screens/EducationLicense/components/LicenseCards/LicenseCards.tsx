@@ -11,10 +11,12 @@ import {
   ModalBase,
   Stack,
   Text,
+  ActionCard,
 } from '@island.is/island-ui/core'
-import { EducationCard, EmptyState, m } from '@island.is/service-portal/core'
+import { EmptyState, m } from '@island.is/service-portal/core'
 
 import * as styles from './LicenseCards.css'
+import { useLocale, useNamespaces } from '@island.is/localization'
 
 const EducationLicenseQuery = gql`
   query EducationLicenseQuery {
@@ -45,6 +47,8 @@ const LicenseCards = () => {
     fetchEducationSignedLicenseUrl,
     { loading: mutationLoading },
   ] = useMutation<Mutation>(FetchEducationSignedLicenseUrlMutation)
+  useNamespaces('sp.education-career')
+  const { formatMessage } = useLocale()
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -74,30 +78,35 @@ const LicenseCards = () => {
     <>
       {educationLicense.map((license, index) => (
         <Box marginBottom={3} key={index}>
-          <EducationCard
-            eyebrow={license.school}
-            title={`Leyfisbréf - ${license.programme}`}
-            description={`Útgáfudagur: ${format(
-              new Date(license.date),
-              'dd. MMMM yyyy',
-              {
-                locale: is,
-              },
-            )}`}
-            CTA={
-              <Button
-                variant="text"
-                icon={mutationLoading ? undefined : 'download'}
-                iconType="outline"
-                nowrap
-                onClick={() => handleDownload(license)}
-                disabled={mutationLoading}
-              >
-                {mutationLoading
-                  ? 'Innsiglun skjals í vinnslu…'
-                  : 'Senda skjal í undirritun'}
-              </Button>
-            }
+          <ActionCard
+            cta={{
+              label: mutationLoading
+                ? formatMessage({
+                    id: 'sp.education-career:downloading',
+                    defaultMessage: 'Innsiglun skjals í vinnslu…',
+                  })
+                : formatMessage({
+                    id: 'sp.education-career:send-file',
+                    defaultMessage: 'Senda skjal í undirritun',
+                  }),
+              onClick: () => handleDownload(license),
+              variant: 'text',
+            }}
+            tag={{
+              label: license.school,
+              variant: 'purple',
+              outlined: false,
+            }}
+            text={`${formatMessage({
+              id: 'sp.education-career:date',
+              defaultMessage: 'Útgáfudagur',
+            })}: ${format(new Date(license.date), 'dd. MMMM yyyy', {
+              locale: is,
+            })}`}
+            heading={`${formatMessage({
+              id: 'sp.education-career:programme',
+              defaultMessage: 'Leyfisbréf',
+            })} - ${license.programme}`}
           />
         </Box>
       ))}
@@ -124,23 +133,43 @@ const LicenseCards = () => {
           >
             <Stack space={4}>
               <Stack space={2}>
-                <Text variant="h1">Skjal tilbúið í niðurhal</Text>
+                <Text variant="h1">
+                  {formatMessage({
+                    id: 'sp.education-career:doc-ready-for-dl',
+                    defaultMessage: 'Skjal tilbúið í niðurhal',
+                  })}
+                </Text>
                 <Box marginTop={2}>
                   <Text variant="intro">
-                    Leyfisbréfið þitt hefur verið innsiglað og er tilbúið til
-                    niðurhals.
+                    {formatMessage({
+                      id: 'sp.education-career:doc-ready-sealed',
+                      defaultMessage:
+                        'Leyfisbréfið þitt hefur verið innsiglað og er tilbúið til niðurhals.',
+                    })}
                   </Text>
                 </Box>
                 {expiry > 0 ? (
                   <Text>
-                    Athugið að niðurhalslinkurinn rennur út eftir{' '}
+                    {formatMessage({
+                      id: 'sp.education-career:download-link-expiry',
+                      defaultMessage:
+                        'Athugið að niðurhalslinkurinn rennur út eftir',
+                    })}{' '}
                     <Text as="span" variant="intro" color="red400">
                       {expiry}
                     </Text>{' '}
-                    sekúndur.
+                    {formatMessage({
+                      id: 'sp.education-career:seconds',
+                      defaultMessage: 'sekúndur.',
+                    })}
                   </Text>
                 ) : (
-                  <Text color="red400">Niðurhalslinkurinn er útrunninn</Text>
+                  <Text color="red400">
+                    {formatMessage({
+                      id: 'sp.education-career:download-link-expired',
+                      defaultMessage: 'Niðurhalslinkurinn er útrunninn.',
+                    })}
+                  </Text>
                 )}
               </Stack>
               <Box
@@ -149,11 +178,17 @@ const LicenseCards = () => {
                 justifyContent="spaceBetween"
               >
                 <Button variant="ghost" onClick={closeModal}>
-                  Hætta við
+                  {formatMessage({
+                    id: 'sp.education-career:cancel',
+                    defaultMessage: 'Hætta við',
+                  })}
                 </Button>
                 <Button disabled={expiry <= 0}>
                   <a download href={href} target="_blank" rel="noreferrer">
-                    Hlaða niður
+                    {formatMessage({
+                      id: 'sp.education-career:download',
+                      defaultMessage: 'Hlaða niður',
+                    })}
                   </a>
                 </Button>
               </Box>
