@@ -2,11 +2,11 @@
 
 ## Skjalatilkynning OpenApi
 
-Test http://test-skjalatilkynning-island-is.azurewebsites.net/swagger/ui/index 
+Test http://test-skjalatilkynning-island-is.azurewebsites.net/swagger/ui/index
 
-Production: https://skjalatilkynning-island-is.azurewebsites.net/swagger/ui/index 
+Production: https://skjalatilkynning-island-is.azurewebsites.net/swagger/ui/index
 
-##	Skjalaveita OpenApi
+## Skjalaveita OpenApi
 
 ```json
 {
@@ -18,9 +18,7 @@ Production: https://skjalatilkynning-island-is.azurewebsites.net/swagger/ui/inde
   "paths": {
     "/api/v1/customer/{kennitala}/documents/{documentId}": {
       "get": {
-        "tags": [
-          "Documents"
-        ],
+        "tags": ["Documents"],
         "parameters": [
           {
             "name": "kennitala",
@@ -123,7 +121,6 @@ Production: https://skjalatilkynning-island-is.azurewebsites.net/swagger/ui/inde
     }
   }
 }
-
 ```
 
 Also available here:

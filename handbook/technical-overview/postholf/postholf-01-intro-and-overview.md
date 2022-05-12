@@ -6,7 +6,6 @@ Communication between island.is and the document provider is through api (Rest).
 
 Document providers will therefore need to implement their service (api), which the system has access to. The service needs to be created according to pre-defined interface. Thus, the system will be able to make a homogeneous query on any document provider where the endpoint is just different for each document provider.
 
-
 # Overview
 
 ![](./assets/overview.png)
