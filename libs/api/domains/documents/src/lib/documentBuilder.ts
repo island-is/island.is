@@ -32,7 +32,7 @@ export class DocumentBuilder {
       ...builtDocument,
       url,
       fileType,
-      opened: fileType === FileType.URL, // URL documents should not display as unopened as they do not have the same behaviour as pdf documents.
+      opened: fileType === FileType.URL, // URL documents should not display as unopened as we do not have the ability to mark them as read.
     }
   }
 
