@@ -326,6 +326,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Hversu marga daga viltu færa yfir á hitt foreldrið?',
       description: 'How many days do you want to transfer to the other parent?',
     },
+    transferRightsRequestTitle: {
+      id: 'pl.application:transferRights.option.request.title',
+      defaultMessage: 'Hversu mörgum dögum viltu óska eftir?',
+      description: 'How many days do you want to request?',
+    },
     rightsTotalSmallPrint: {
       id: 'pl.application:months.total.smallprint',
       defaultMessage:
