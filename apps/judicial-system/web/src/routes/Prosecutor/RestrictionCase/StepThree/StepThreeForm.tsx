@@ -1,13 +1,20 @@
 import React, { useState } from 'react'
-import { useIntl } from 'react-intl'
+import { IntlShape, useIntl } from 'react-intl'
+import formatISO from 'date-fns/formatISO'
 
 import { Box, Text, Input, Checkbox } from '@island.is/island-ui/core'
-import { formatDate } from '@island.is/judicial-system/formatters'
+import {
+  formatDate,
+  formatNationalId,
+} from '@island.is/judicial-system/formatters'
 import {
   CaseCustodyRestrictions,
   CaseType,
+  Defendant,
   Gender,
+  isAcceptingCaseDecision,
   User,
+  Case,
 } from '@island.is/judicial-system/types'
 import {
   BlueBox,
@@ -17,13 +24,16 @@ import {
   FormFooter,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  setAndSendDateToServer,
   removeTabsValidateAndSet,
   setCheckboxAndSendToServer,
+  toggleInArray,
   validateAndSendToServer,
-  setAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  useCase,
+  autofillEntry,
+  useDeb,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import CheckboxList from '@island.is/judicial-system-web/src/components/CheckboxList/CheckboxList'
 import {
   legalProvisions,
@@ -34,12 +44,43 @@ import {
   restrictionsCheckboxes,
 } from '@island.is/judicial-system-web/src/utils/restrictions'
 import { isPoliceDemandsStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
-import { rcDemands, core } from '@island.is/judicial-system-web/messages'
-import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
-import type { Case } from '@island.is/judicial-system/types'
+import {
+  rcDemands,
+  rcReportForm,
+  core,
+} from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system/consts'
 
 import * as styles from './StepThree.css'
+
+export function getDemandsAutofill(
+  formatMessage: IntlShape['formatMessage'],
+  defentant: Defendant,
+  requestedValidToDate: Date | string | undefined,
+  workingCase: Case,
+): string {
+  return formatMessage(rcReportForm.sections.demands.autofillV2, {
+    accusedName: defentant.name,
+    accusedNationalId: defentant.noNationalId
+      ? ' '
+      : `, kt. ${formatNationalId(defentant.nationalId ?? '')}, `,
+    isExtended:
+      workingCase.parentCase &&
+      isAcceptingCaseDecision(workingCase.parentCase.decision)
+        ? 'yes'
+        : 'no',
+    caseType: workingCase.type,
+    court: workingCase.court?.name.replace('Héraðsdómur', 'Héraðsdóms'),
+    requestedValidToDate: formatDate(requestedValidToDate, 'PPPPp')
+      ?.replace('dagur,', 'dagsins')
+      ?.replace(' kl.', ', kl.'),
+    hasIsolationRequest: workingCase.requestedCustodyRestrictions?.includes(
+      CaseCustodyRestrictions.ISOLATION,
+    )
+      ? 'yes'
+      : 'no',
+  })
+}
 
 interface Props {
   workingCase: Case
@@ -53,12 +94,38 @@ const StepThreeForm: React.FC<Props> = (props) => {
     '',
   )
 
-  const { updateCase } = useCase()
+  const { updateCase, autofill } = useCase()
   const { formatMessage } = useIntl()
 
   useDeb(workingCase, 'lawsBroken')
   useDeb(workingCase, 'legalBasis')
   useDeb(workingCase, 'requestedOtherRestrictions')
+
+  const onDemandsChange = React.useCallback(
+    (entry: autofillEntry, requestedValidToDate?: Date) => {
+      autofill(
+        [
+          entry,
+          {
+            key: 'demands',
+            value:
+              workingCase.defendants && workingCase.defendants.length
+                ? getDemandsAutofill(
+                    formatMessage,
+                    workingCase.defendants[0],
+                    requestedValidToDate || workingCase.requestedValidToDate,
+                    workingCase,
+                  )
+                : undefined,
+            force: true,
+          },
+        ],
+        workingCase,
+        setWorkingCase,
+      )
+    },
+    [workingCase, formatMessage, setWorkingCase, autofill],
+  )
 
   return (
     <>
@@ -109,14 +176,18 @@ const StepThreeForm: React.FC<Props> = (props) => {
                 minDate={new Date()}
                 selectedDate={workingCase.requestedValidToDate}
                 onChange={(date: Date | undefined, valid: boolean) => {
-                  setAndSendDateToServer(
-                    'requestedValidToDate',
-                    date,
-                    valid,
-                    workingCase,
-                    setWorkingCase,
-                    updateCase,
-                  )
+                  if (date && valid) {
+                    onDemandsChange(
+                      {
+                        key: 'requestedValidToDate',
+                        value: formatISO(date, {
+                          representation: 'complete',
+                        }),
+                        force: true,
+                      },
+                      date,
+                    )
+                  }
                 }}
                 required
                 blueBox={false}
@@ -132,13 +203,14 @@ const StepThreeForm: React.FC<Props> = (props) => {
                     CaseCustodyRestrictions.ISOLATION,
                   )}
                   onChange={() =>
-                    setCheckboxAndSendToServer(
-                      'requestedCustodyRestrictions',
-                      'ISOLATION',
-                      workingCase,
-                      setWorkingCase,
-                      updateCase,
-                    )
+                    onDemandsChange({
+                      key: 'requestedCustodyRestrictions',
+                      value: toggleInArray(
+                        workingCase.requestedCustodyRestrictions,
+                        CaseCustodyRestrictions.ISOLATION,
+                      ),
+                      force: true,
+                    })
                   }
                   large
                   filled
@@ -158,15 +230,13 @@ const StepThreeForm: React.FC<Props> = (props) => {
                       return
                     }
 
-                    setAndSendToServer(
-                      'type',
-                      event.target.checked
+                    onDemandsChange({
+                      key: 'type',
+                      value: event.target.checked
                         ? CaseType.ADMISSION_TO_FACILITY
                         : CaseType.CUSTODY,
-                      workingCase,
-                      setWorkingCase,
-                      updateCase,
-                    )
+                      force: true,
+                    })
                   }}
                   large
                   filled
