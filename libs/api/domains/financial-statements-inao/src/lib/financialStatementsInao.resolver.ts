@@ -1,13 +1,15 @@
 import { UseGuards } from '@nestjs/common'
 import { Query, Resolver } from '@nestjs/graphql'
 
-import { IdsUserGuard, ScopesGuard } from '@island.is/auth-nest-tools'
+import { ApiScope } from '@island.is/auth/scopes'
+import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 
-import { Election } from './models/election.model'
 import { FinancialStatementsInaoService } from './financialStatementsInao.service'
+import { Election } from './models/election.model'
 import { ClientType } from './models/clientType.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
+@Scopes(ApiScope.internal)
 @Resolver()
 export class FinancialStatementsInaoResolver {
   constructor(

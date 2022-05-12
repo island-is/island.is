@@ -1,26 +1,21 @@
-import { DynamicModule } from '@nestjs/common'
+import { Module } from '@nestjs/common'
+import { ConfigModule } from '@island.is/nest/config'
 
 import { DataverseClient } from './client/dataverseClient'
-import {
-  DataverseClientConfig,
-  DATAVERSE_CLIENT_CONFIG,
-} from './client/dataverseClientConfig'
+import { dataverseClientConfig } from './client/dataverseClient.config'
 import { FinancialStatementsInaoResolver } from './financialStatementsInao.resolver'
 import { FinancialStatementsInaoService } from './financialStatementsInao.service'
 
-export class FinancialStatementsInaoModule {
-  static register(config: DataverseClientConfig): DynamicModule {
-    return {
-      module: FinancialStatementsInaoModule,
-      providers: [
-        FinancialStatementsInaoResolver,
-        FinancialStatementsInaoService,
-        DataverseClient,
-        {
-          provide: DATAVERSE_CLIENT_CONFIG,
-          useValue: config,
-        },
-      ],
-    }
-  }
-}
+@Module({
+  imports: [
+    ConfigModule.forRoot({
+      load: [dataverseClientConfig],
+    }),
+  ],
+  providers: [
+    FinancialStatementsInaoResolver,
+    FinancialStatementsInaoService,
+    DataverseClient,
+  ],
+})
+export class FinancialStatementsInaoModule {}

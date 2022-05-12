@@ -1,31 +1,30 @@
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
+import type { ConfigType } from '@island.is/nest/config'
+
 import { Inject, Injectable } from '@nestjs/common'
 
+import { dataverseClientConfig } from './dataverseClient.config'
 import { ClientType } from '../models/clientType.model'
 import { Election } from '../models/election.model'
-import {
-  DataverseClientConfig,
-  DATAVERSE_CLIENT_CONFIG,
-} from './dataverseClientConfig'
 
 @Injectable()
 export class DataverseClient {
   constructor(
-    @Inject(DATAVERSE_CLIENT_CONFIG)
-    private clientConfig: DataverseClientConfig,
+    @Inject(dataverseClientConfig.KEY)
+    private config: ConfigType<typeof dataverseClientConfig>,
   ) {}
 
-  basePath = this.clientConfig.basePath
+  basePath = this.config.basePath
 
   fetch = createEnhancedFetch({
     name: 'financialStatementsInao-odata',
     autoAuth: {
-      issuer: this.clientConfig.issuer,
-      clientId: this.clientConfig.clientId,
-      clientSecret: this.clientConfig.clientSecret,
-      scope: [this.clientConfig.scope],
+      issuer: this.config.issuer,
+      clientId: this.config.clientId,
+      clientSecret: this.config.clientSecret,
+      scope: [this.config.scope],
       mode: 'token',
-      tokenEndpoint: this.clientConfig.tokenEndpoint,
+      tokenEndpoint: this.config.tokenEndpoint,
     },
   })
 
