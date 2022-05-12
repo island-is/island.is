@@ -24,7 +24,6 @@ describe('Defender case overview', () => {
       policeCaseNumber: '007-2021-202000',
     }
 
-    cy.stubAPIResponses()
     cy.visit(`${DEFENDER_ROUTE}/test_id`)
 
     intercept(theCase)
