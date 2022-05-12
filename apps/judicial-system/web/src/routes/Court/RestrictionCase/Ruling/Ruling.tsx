@@ -558,6 +558,9 @@ export const Ruling: React.FC = () => {
                     workingCase,
                     decision,
                     workingCase.defendants[0],
+                    workingCase.validToDate,
+                    workingCase.isCustodyIsolation,
+                    workingCase.isolationToDate,
                   )
                 }
 
