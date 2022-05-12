@@ -30,9 +30,9 @@ export const signedVerdictOverview = {
   }),
   investigationAccepted: defineMessage({
     id: 'judicial.system.core:signed_verdict_overview.investigation_accepted',
-    defaultMessage: 'Krafa um rannsóknarheimid samþykkt',
+    defaultMessage: 'Krafa um rannsóknarheimild samþykkt',
     description:
-      'Notaður sem titil á yfirlitsskjá afreiddra mála krafa um rannsóknarheimid samþykkt.',
+      'Notaður sem titil á yfirlitsskjá afreiddra mála krafa um rannsóknarheimild samþykkt.',
   }),
   conclusionTitle: defineMessage({
     id: 'judicial.system.core:signed_verdict_overview.conclusion_title',

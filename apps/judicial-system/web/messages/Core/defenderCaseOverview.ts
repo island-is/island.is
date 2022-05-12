@@ -6,7 +6,7 @@ export const defenderCaseOverview = {
     investigationCaseRejected: defineMessage({
       id:
         'judicial.system.core:defender_case_overview.title.investigation_case_rejected',
-      defaultMessage: 'Kröfu um rannsóknarheimid hafnað',
+      defaultMessage: 'Kröfu um rannsóknarheimild hafnað',
       description:
         'Notaður sem titil á yfirlitsskjá verjanda þegar kr0fu um rannsóknarheimild hefur verið hafnað.',
     }),
@@ -26,9 +26,9 @@ export const defenderCaseOverview = {
     investigationCaseAccepted: defineMessage({
       id:
         'judicial.system.core:defender_case_overview.title.investigation_case_accepted',
-      defaultMessage: 'Krafa um rannsóknarheimid samþykkt',
+      defaultMessage: 'Krafa um rannsóknarheimild samþykkt',
       description:
-        'Notaður sem titil á yfirlitsskjá verjanda þegar krafa um rannsóknarheimid hefur verið samþykkt.',
+        'Notaður sem titil á yfirlitsskjá verjanda þegar krafa um rannsóknarheimild hefur verið samþykkt.',
     }),
     restrictionCaseExpired: defineMessage({
       id:
