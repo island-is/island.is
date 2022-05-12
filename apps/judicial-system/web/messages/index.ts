@@ -1,6 +1,7 @@
 export * from './RestrictionCases/Prosecutor/accusedForm'
 export * from './RestrictionCases/Prosecutor/requestedHearingArrangementsForm'
 export * from './RestrictionCases/Prosecutor/reportForm'
+export * from './RestrictionCases/Prosecutor/demandsForm'
 export * from './RestrictionCases/Prosecutor/caseFiles'
 export * from './RestrictionCases/Prosecutor/overview'
 export * from './/RestrictionCases/Prosecutor/demandsForm'
