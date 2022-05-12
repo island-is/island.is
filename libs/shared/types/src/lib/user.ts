@@ -9,8 +9,8 @@ interface IdsAuthClaims {
     nationalId: string
     name: string
   }
-  delegationType: string[]
-  dateOfBirth: Date
+  delegationType?: string[]
+  dateOfBirth?: Date
 }
 
 export type User = Omit<OidcUser, 'profile'> & {
