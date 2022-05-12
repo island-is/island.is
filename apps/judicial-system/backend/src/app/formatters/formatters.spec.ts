@@ -1117,6 +1117,7 @@ describe('formatDefenderCourtDateEmailNotification', () => {
     const registrarName = 'Robin'
     const prosecutor = makeProsecutor()
     const sessionArrangements = SessionArrangements.ALL_PRESENT
+    const sendRequestToDefender = false
 
     // Act
     const res = formatDefenderCourtDateEmailNotification(
@@ -1130,11 +1131,80 @@ describe('formatDefenderCourtDateEmailNotification', () => {
       prosecutor.name,
       prosecutor.institution?.name,
       sessionArrangements,
+      sendRequestToDefender,
     )
 
     // Assert
     expect(res).toBe(
       'Héraðsdómur Norðurlands hefur boðað þig í fyrirtöku sem verjanda sakbornings.<br /><br />Fyrirtaka mun fara fram laugardaginn 19. desember 2020, kl. 10:19.<br /><br />Málsnúmer: R-77/2021.<br /><br />Dómsalur: 101.<br /><br />Dómari: Judy.<br /><br />Dómritari: Robin.<br /><br />Sækjandi: Áki Ákærandi (Lögreglan á Höfuðborgarsvæðinu).',
+    )
+  })
+
+  test('should format defender court date notification with RVG link', () => {
+    // Arrange
+    const court = 'Héraðsdómur Norðurlands'
+    const courtCaseNumber = 'R-77/2021'
+    const courtDate = new Date('2020-12-19T10:19')
+    const courtRoom = '101'
+    const judgeName = 'Judy'
+    const registrarName = 'Robin'
+    const prosecutor = makeProsecutor()
+    const sessionArrangements = SessionArrangements.ALL_PRESENT
+    const sendRequestToDefender = true
+    const overviewUrl = 'https://www.rvg.is/verjandi/case-id'
+
+    // Act
+    const res = formatDefenderCourtDateEmailNotification(
+      formatMessage,
+      court,
+      courtCaseNumber,
+      courtDate,
+      courtRoom,
+      judgeName,
+      registrarName,
+      prosecutor.name,
+      prosecutor.institution?.name,
+      sessionArrangements,
+      sendRequestToDefender,
+      overviewUrl,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Héraðsdómur Norðurlands hefur boðað þig í fyrirtöku sem verjanda sakbornings.<br /><br />Fyrirtaka mun fara fram laugardaginn 19. desember 2020, kl. 10:19.<br /><br />Málsnúmer: R-77/2021.<br /><br />Dómsalur: 101.<br /><br />Dómari: Judy.<br /><br />Dómritari: Robin.<br /><br />Sækjandi: Áki Ákærandi (Lögreglan á Höfuðborgarsvæðinu).<br /><br />Þú getur nálgast gögn málsins í <a href="https://www.rvg.is/verjandi/case-id">Réttarvörslugátt</a> með rafrænum skilríkjum.',
+    )
+  })
+
+  test('should format defender court date notification with referral to court', () => {
+    // Arrange
+    const court = 'Héraðsdómur Norðurlands'
+    const courtCaseNumber = 'R-77/2021'
+    const courtDate = new Date('2020-12-19T10:19')
+    const courtRoom = '101'
+    const judgeName = 'Judy'
+    const registrarName = 'Robin'
+    const prosecutor = makeProsecutor()
+    const sessionArrangements = SessionArrangements.ALL_PRESENT
+    const sendRequestToDefender = true
+
+    // Act
+    const res = formatDefenderCourtDateEmailNotification(
+      formatMessage,
+      court,
+      courtCaseNumber,
+      courtDate,
+      courtRoom,
+      judgeName,
+      registrarName,
+      prosecutor.name,
+      prosecutor.institution?.name,
+      sessionArrangements,
+      sendRequestToDefender,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Héraðsdómur Norðurlands hefur boðað þig í fyrirtöku sem verjanda sakbornings.<br /><br />Fyrirtaka mun fara fram laugardaginn 19. desember 2020, kl. 10:19.<br /><br />Málsnúmer: R-77/2021.<br /><br />Dómsalur: 101.<br /><br />Dómari: Judy.<br /><br />Dómritari: Robin.<br /><br />Sækjandi: Áki Ákærandi (Lögreglan á Höfuðborgarsvæðinu).<br /><br />Þú getur nálgast gögn málsins hjá Héraðsdómi Norðurlands ef þau hafa ekki þegar verið afhent.',
     )
   })
 
