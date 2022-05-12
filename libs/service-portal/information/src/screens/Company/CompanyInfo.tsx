@@ -33,7 +33,7 @@ const CompanyInfo: ServicePortalModuleComponent = ({ userInfo }) => {
   const { data, loading, error } = useQuery<Query>(
     COMPANY_REGISTRY_INFORMATION,
     {
-      variables: { input: { nationalId: '4710032980' } }, // TODO: Revert this: userInfo.profile.nationalId
+      variables: { input: { nationalId: userInfo.profile.nationalId } },
     },
   )
   const { companyRegistryCompany } = data || {}
