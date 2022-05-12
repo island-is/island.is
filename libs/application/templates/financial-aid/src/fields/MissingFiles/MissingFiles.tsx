@@ -24,15 +24,15 @@ const MissingFiles = ({
   const { currentApplication, updateApplication } = useApplication(
     application.externalData.veita.data.currentApplicationId,
   )
-  const fileType: UploadFileType = 'otherFiles'
-  const commentType = 'fileUploadComment'
 
   const { formatMessage } = useIntl()
   const { setValue, getValues } = useFormContext()
-  const { uploadStateFiles } = useFileUpload(
-    getValues(fileType),
-    application.id,
-  )
+
+  const fileType: UploadFileType = 'otherFiles'
+  const commentType = 'fileUploadComment'
+  const files = getValues(fileType)
+
+  const { uploadFiles } = useFileUpload(files, application.id)
 
   const [error, setError] = useState(false)
   const [filesError, setFilesError] = useState(false)
@@ -50,20 +50,21 @@ const MissingFiles = ({
     if (filesError) {
       setFilesError(false)
     }
-  }, [getValues(fileType)])
+  }, [files])
 
   setBeforeSubmitCallback &&
     setBeforeSubmitCallback(async () => {
       setError(false)
-      if (getValues(fileType).length <= 0) {
+      if (files.length <= 0) {
         setFilesError(true)
         return [false, formatMessage(filesText.errorMessage)]
       }
 
       try {
-        const uploadedFiles = await uploadStateFiles(
+        const uploadedFiles = await uploadFiles(
           application.externalData.veita.data.currentApplicationId,
           FileType.OTHER,
+          files,
         )
         setValue(fileType, uploadedFiles)
 
@@ -100,7 +101,7 @@ const MissingFiles = ({
       <Box marginBottom={[7, 7, 8]}>
         <Files
           fileKey={fileType}
-          uploadFiles={getValues(fileType)}
+          uploadFiles={files}
           folderId={application.id}
           hasError={filesError}
         />
