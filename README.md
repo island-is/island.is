@@ -1,6 +1,8 @@
 # PROOF OF CONCEPT - - UP AND RUNNING
 
-envs:
+-aws sso login
+-yarn get-secrets service-portal-api
+make sure you get these envs:
 MAGICBELL_API_KEY
 MAGICBELL_API_SECRET
 ONESIGNAL_API_KEY
@@ -17,6 +19,8 @@ frontend: http://localhost:4200/
 backend:http://localhost:3366/
 -yarn start services-user-profile
 
+dev feature 
+https://hnipponesignal-beta.dev01.devland.is/minarsidur/postholf
 # Ísland.is
 
 This [GitHub organization](https://github.com/island-is) is the center of development for digital government services on `island.is`. It is managed by the [Digital Iceland](https://stafraent.island.is/) department inside the [Ministry of Finance and Economic Affairs](https://www.government.is/ministries/ministry-of-finance-and-economic-affairs/).
