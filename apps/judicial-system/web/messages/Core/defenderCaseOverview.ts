@@ -8,7 +8,7 @@ export const defenderCaseOverview = {
         'judicial.system.core:defender_case_overview.title.investigation_case_rejected',
       defaultMessage: 'Kröfu um rannsóknarheimild hafnað',
       description:
-        'Notaður sem titil á yfirlitsskjá verjanda þegar kr0fu um rannsóknarheimild hefur verið hafnað.',
+        'Notaður sem titil á yfirlitsskjá verjanda þegar kröfu um rannsóknarheimild hefur verið hafnað.',
     }),
     restrictionCaseRejected: defineMessage({
       id:
