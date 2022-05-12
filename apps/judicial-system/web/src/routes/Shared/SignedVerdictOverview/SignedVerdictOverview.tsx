@@ -36,10 +36,12 @@ import { Box, Input, Text } from '@island.is/island-ui/core'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
-import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages'
+import {
+  signedVerdictOverview as m,
+  titles,
+} from '@island.is/judicial-system-web/messages'
 import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
 import * as Constants from '@island.is/judicial-system/consts'
 
 import { CourtRecordSignatureConfirmationQuery } from './courtRecordSignatureConfirmationGql'
@@ -421,7 +423,10 @@ export const SignedVerdictOverview: React.FC = () => {
             id: (institution as ReactSelectOption).value as string,
             name: (institution as ReactSelectOption).label,
             type: InstitutionType.PROSECUTORS_OFFICE,
-          } as Institution,
+            created: new Date().toString(),
+            modified: new Date().toString(),
+            active: true,
+          },
           isHeightenedSecurityLevel: workingCase.isHeightenedSecurityLevel
             ? false
             : workingCase.isHeightenedSecurityLevel,
@@ -561,24 +566,6 @@ export const SignedVerdictOverview: React.FC = () => {
     )
   }
 
-  /**
-   * We assume that the signed verdict page is only opened for
-   * cases in state REJECTED or ACCEPTED.
-   *
-   * Based on the judge's decision the signed verdict page can
-   * be in one of five states:
-   *
-   * 1. Rejected
-   *    - state === REJECTED and decision === REJECTING
-   * 2. Alternative travel ban accepted and the travel ban end date is in the past
-   *    - state === ACCEPTED and decision === ACCEPTING_ALTERNATIVE_TRAVEL_BAN and validToDate < today
-   * 3. Accepted and the custody end date is in the past
-   *    - state === ACCEPTED and decision === ACCEPTING/ACCEPTING_PARTIALLY and validToDate < today
-   * 5. Alternative travel ban accepted and the travel ban end date is not in the past
-   *    - state === ACCEPTED and decision === ACCEPTING_ALTERNATIVE_TRAVEL_BAN and validToDate > today
-   * 3. Accepted and the custody end date is not in the past
-   *    - state === ACCEPTED and decision === ACCEPTING/ACCEPTING_PARTIALLY and validToDate > today
-   */
   return (
     <PageLayout
       workingCase={workingCase}
@@ -603,31 +590,26 @@ export const SignedVerdictOverview: React.FC = () => {
           setIsModifyingDates(!isModifyingDates)
         }
       />
-      {user?.role !== UserRole.DEFENDER && (
-        <FormContentContainer isFooter>
-          <FormFooter
-            previousUrl={Constants.CASE_LIST_ROUTE}
-            hideNextButton={
-              user?.role !== UserRole.PROSECUTOR ||
-              workingCase.decision ===
-                CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
-              workingCase.state === CaseState.REJECTED ||
-              workingCase.state === CaseState.DISMISSED ||
-              workingCase.isValidToDateInThePast ||
-              Boolean(workingCase.childCase)
-            }
-            nextButtonText={formatMessage(
-              m.sections.caseExtension.buttonLabel,
-              {
-                caseType: workingCase.type,
-              },
-            )}
-            onNextButtonClick={() => handleCaseExtension()}
-            nextIsLoading={isExtendingCase}
-            infoBoxText={getExtensionInfoText(workingCase, formatMessage)}
-          />
-        </FormContentContainer>
-      )}
+      <FormContentContainer isFooter>
+        <FormFooter
+          previousUrl={Constants.CASE_LIST_ROUTE}
+          hideNextButton={
+            user?.role !== UserRole.PROSECUTOR ||
+            workingCase.decision ===
+              CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
+            workingCase.state === CaseState.REJECTED ||
+            workingCase.state === CaseState.DISMISSED ||
+            workingCase.isValidToDateInThePast ||
+            Boolean(workingCase.childCase)
+          }
+          nextButtonText={formatMessage(m.sections.caseExtension.buttonLabel, {
+            caseType: workingCase.type,
+          })}
+          onNextButtonClick={() => handleCaseExtension()}
+          nextIsLoading={isExtendingCase}
+          infoBoxText={getExtensionInfoText(workingCase, formatMessage)}
+        />
+      </FormContentContainer>
       {shareCaseModal?.open && (
         <Modal
           title={shareCaseModal.title}
