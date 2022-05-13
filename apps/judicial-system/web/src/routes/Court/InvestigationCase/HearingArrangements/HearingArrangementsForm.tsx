@@ -269,7 +269,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
           nextIsDisabled={
             !isCourtHearingArrangementsStepValidIC(workingCase, courtDate)
           }
-          nextButtonText={formatMessage(m.continueButton.title)}
+          nextButtonText={formatMessage(m.continueButton.label)}
         />
       </FormContentContainer>
       {modalVisible && (

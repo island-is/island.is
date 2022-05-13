@@ -219,6 +219,7 @@ const OverviewForm: React.FC<Props> = (props) => {
           nextIsLoading={isLoading}
           nextUrl={`${Constants.IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
           nextIsDisabled={uploadState === UploadState.UPLOADING}
+          nextButtonText={formatMessage(icCourtOverview.continueButton.label)}
         />
       </FormContentContainer>
     </>

@@ -88,9 +88,9 @@ export const rcHearingArrangements = {
     }),
   },
   continueButton: defineMessages({
-    title: {
+    label: {
       id:
-        'judicial.system.restriction_cases:hearing_arrangements.continue_button.title',
+        'judicial.system.restriction_cases:hearing_arrangements.continue_button.label',
       defaultMessage: 'Staðfesta fyrirtökutíma',
       description:
         'Notaður sem titill á halda áfram takka í fyrirtöku skrefi gæsluvarðhalds- og farbannsmálum.',
