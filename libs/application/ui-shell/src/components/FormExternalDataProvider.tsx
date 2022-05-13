@@ -63,7 +63,7 @@ const isTranslationObject = (text?: StaticText) => {
 const isProviderErrorReason = (
   reason: ProviderErrorReason | StaticText,
 ): reason is ProviderErrorReason => {
-  if (typeof reason === 'string') {
+  if (typeof reason === 'string' || reason instanceof String) {
     return false
   }
   if ('title' in reason && 'summary' in reason) {
