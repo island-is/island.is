@@ -256,10 +256,12 @@ export const ParentalLeaveForm: Form = buildForm({
                     })
 
                     return (
-                      data?.getPrivatePensionFunds?.filter(({ id }) => id !== NO_PRIVATE_PENSION_FUND).map(({ id, name }) => ({
-                        label: name,
-                        value: id,
-                      })) ?? []
+                      data?.getPrivatePensionFunds
+                        ?.filter(({ id }) => id !== NO_PRIVATE_PENSION_FUND)
+                        .map(({ id, name }) => ({
+                          label: name,
+                          value: id,
+                        })) ?? []
                     )
                   },
                 }),

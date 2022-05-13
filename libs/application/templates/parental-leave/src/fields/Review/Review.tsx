@@ -90,7 +90,9 @@ export const Review: FC<ReviewScreenProps> = ({
 }) => {
   const editable = field.props?.editable ?? false
   const pensionFundOptions = usePensionFundOptions()
-  const privatePensionFundOptions = usePrivatePensionFundOptions().filter(({ value }) => value !== NO_PRIVATE_PENSION_FUND)
+  const privatePensionFundOptions = usePrivatePensionFundOptions().filter(
+    ({ value }) => value !== NO_PRIVATE_PENSION_FUND,
+  )
   const unionOptions = useUnionOptions()
   const { locale, formatMessage } = useLocale()
   const [
