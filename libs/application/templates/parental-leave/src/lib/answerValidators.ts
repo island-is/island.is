@@ -84,6 +84,11 @@ export const answerValidators: Record<string, AnswerValidator> = {
       'payments.privatePensionFundPercentage',
     )
 
+    const usePrivatePensionFund = getValueViaPath(
+      application.answers,
+      'usePrivatePensionFund',
+    )
+
     const buildError = (message: StaticText, path: string) =>
       buildValidationError(`${PAYMENTS}.${path}`)(message)
 
@@ -95,14 +100,22 @@ export const answerValidators: Record<string, AnswerValidator> = {
     )
       return undefined
 
+    if (usePrivatePensionFund === NO || usePrivatePensionFund === YES) {
+      if (payments.privatePensionFund === '') {
+        return buildError(coreErrorMessages.defaultError, 'privatePensionFund')
+      }
+      if (payments.privatePensionFundPercentage === '') {
+        return buildError(
+          coreErrorMessages.defaultError,
+          'privatePensionFundPercentage',
+        )
+      }
+    }
+
     if (
       payments.privatePensionFund === '' ||
       payments.privatePensionFund === NO_PRIVATE_PENSION_FUND
     ) {
-      return buildError(coreErrorMessages.defaultError, 'privatePensionFund')
-    }
-
-    if (!payments.privatePensionFund) {
       return buildError(coreErrorMessages.defaultError, 'privatePensionFund')
     }
 
@@ -123,13 +136,6 @@ export const answerValidators: Record<string, AnswerValidator> = {
       payments.privatePensionFundPercentage !== '2' &&
       payments.privatePensionFundPercentage !== '4'
     ) {
-      return buildError(
-        coreErrorMessages.defaultError,
-        'privatePensionFundPercentage',
-      )
-    }
-
-    if (!payments.privatePensionFundPercentage) {
       return buildError(
         coreErrorMessages.defaultError,
         'privatePensionFundPercentage',

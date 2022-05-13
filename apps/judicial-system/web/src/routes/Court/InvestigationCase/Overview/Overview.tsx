@@ -8,9 +8,8 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { ruling } from '@island.is/judicial-system-web/messages'
+import { ruling, titles } from '@island.is/judicial-system-web/messages'
 import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
 
 import OverviewForm from './OverviewForm'
