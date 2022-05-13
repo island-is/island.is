@@ -42,6 +42,61 @@ export const parentalLeaveFormMessages: MessageDir = {
       description:
         'Could not retrieve the date of birth. Please try again later.',
     },
+    mockDataTitle: {
+      id: 'pl.application:mock.data.title',
+      defaultMessage: 'Gervigögn',
+      description: 'Mock data',
+    },
+    mockDataUse: {
+      id: 'pl.application:mock.data.use',
+      defaultMessage: 'Viltu nota gervigögn?',
+      description: 'Want to use mock data?',
+    },
+    mockDataRelationship: {
+      id: 'pl.application:mock.data.relationship',
+      defaultMessage: 'Tengsl við barn:',
+      description: 'Relationship with a child:',
+    },
+    mockDataMother: {
+      id: 'pl.application:mock.data.mother',
+      defaultMessage: 'Móðir',
+      description: 'Mother',
+    },
+    mockDataOtherParent: {
+      id: 'pl.application:mock.data.other.parent',
+      defaultMessage: 'Hitt foreldri',
+      description: 'Other parent',
+    },
+    mockDataExistingApplication: {
+      id: 'pl.application:mock.data.existing.application',
+      defaultMessage: 'Notaðu núverandi umsókn frá aðalforeldra',
+      description: 'Use an existing application from primary parent',
+    },
+    mockDataApplicationID: {
+      id: 'pl.application:mock.data.application.id',
+      defaultMessage: 'Umsóknarnúmer frá aðalforeldri',
+      description: 'Application id from primary parent',
+    },
+    mockDataEstimatedDateOfBirth: {
+      id: 'pl.application:mock.data.estimated.date.of.birth',
+      defaultMessage: 'Áætlaður fæðingardagur:',
+      description: 'Estimated date of birth:',
+    },
+    mockDataPrimaryParentRights: {
+      id: 'pl.application:mock.data.primary.parent.rights',
+      defaultMessage: 'Réttindi aðalforeldris (0 - 180 dagar)',
+      description: 'Primary parent rights days (0 — 180)',
+    },
+    mockDataSecondaryParentRights: {
+      id: 'pl.application:mock.data.secondary.parent.rights',
+      defaultMessage: 'Réttindi hins foreldris (0 - 180 dagar)',
+      description: 'Secondary parent rights in days  (0 — 180)',
+    },
+    mockDataPrimaryParentNationalID: {
+      id: 'pl.application:mock.data.primary.parent.national.id',
+      defaultMessage: 'Kennitala móður:',
+      description: 'Mothers national ID:',
+    },
     externalDataSubSection: {
       id: 'pl.application:externalData.subSection',
       defaultMessage: 'Sækja gögn',
@@ -79,7 +134,7 @@ export const parentalLeaveFormMessages: MessageDir = {
     otherParentSubTitle: {
       id: 'pl.application:otherParent.sub.title',
       defaultMessage: 'Annað foreldri',
-      description: 'Sub title for the other parent question',
+      description: 'Other parent',
     },
     otherParentName: {
       id: 'pl.application:otherParent.name',
@@ -320,6 +375,16 @@ export const parentalLeaveFormMessages: MessageDir = {
       id: 'pl.application:transferRights.option.give',
       defaultMessage: 'Ég vil færa daga yfir á hitt foreldrið',
       description: 'I want to give days to the other parent',
+    },
+    transferRightsGiveTitle: {
+      id: 'pl.application:transferRights.option.give.title',
+      defaultMessage: 'Hversu marga daga viltu færa yfir á hitt foreldrið?',
+      description: 'How many days do you want to transfer to the other parent?',
+    },
+    transferRightsRequestTitle: {
+      id: 'pl.application:transferRights.option.request.title',
+      defaultMessage: 'Hversu mörgum dögum viltu óska eftir?',
+      description: 'How many days do you want to request?',
     },
     rightsTotalSmallPrint: {
       id: 'pl.application:months.total.smallprint',
@@ -797,7 +862,7 @@ export const parentalLeaveFormMessages: MessageDir = {
     usage: {
       id: 'pl.application:period.usage',
       defaultMessage: 'Þú hefur notað {alreadyUsed} af {rights} dögum',
-      description: 'Copy of how many days are being used and how many are left',
+      description: 'You have used {alreadyUsed} of {rights} days',
     },
     cannotCreatePeriod: {
       id: 'pl.application:period.cannotCreatePeriod',
