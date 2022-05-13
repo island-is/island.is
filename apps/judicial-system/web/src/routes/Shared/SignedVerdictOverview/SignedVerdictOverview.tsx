@@ -12,6 +12,7 @@ import subMilliseconds from 'date-fns/subMilliseconds'
 import {
   CaseDecision,
   CaseState,
+  Institution,
   InstitutionType,
   isRestrictionCase,
   NotificationType,
