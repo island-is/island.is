@@ -20,6 +20,7 @@ export const VehicleCard: FC<Props> = ({ vehicle }) => {
   if (!vehicle) {
     return null
   }
+  const ForceABuild = ""
   const year = vehicle.productYear
     ? '(' + vehicle.productYear + ')'
     : vehicle.firstRegDate
