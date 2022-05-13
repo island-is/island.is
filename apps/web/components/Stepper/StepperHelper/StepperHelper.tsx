@@ -8,7 +8,7 @@ import {
   TableOfContents,
   Text,
 } from '@island.is/island-ui/core'
-import { Step, Stepper } from '@island.is/api/schema'
+import { Step, Stepper } from '@island.is/web/graphql/schema'
 import { useI18n } from '@island.is/web/i18n'
 import { scrollTo } from '@island.is/web/hooks/useScrollSpy'
 import {

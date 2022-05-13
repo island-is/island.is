@@ -1,4 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react'
+import { useRouter } from 'next/router'
+import { ValueType } from 'react-select'
+import { ParsedUrlQuery } from 'querystring'
+
 import {
   Box,
   Text,
@@ -10,14 +14,19 @@ import {
   GridRow,
   GridContainer,
 } from '@island.is/island-ui/core'
-import { Stepper as StepperSchema } from '@island.is/api/schema'
+import { richText, SliceType } from '@island.is/island-ui/contentful'
+import { useI18n } from '@island.is/web/i18n'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
+import {
+  GetNamespaceQuery,
+  Stepper as StepperSchema,
+} from '@island.is/web/graphql/schema'
+import { useNamespace } from '@island.is/web/hooks'
 
 import {
   renderStepperAndStepConfigErrors,
   StepperHelper,
 } from '../StepperHelper/StepperHelper'
-import * as styles from './Stepper.css'
-
 import {
   getStepperMachine,
   resolveStepType,
@@ -31,14 +40,8 @@ import {
   validateStepperConfig,
   validateStepConfig,
 } from '../utils'
-import { useRouter } from 'next/router'
-import { richText, SliceType } from '@island.is/island-ui/contentful'
-import { useI18n } from '@island.is/web/i18n'
-import { ValueType } from 'react-select'
-import { ParsedUrlQuery } from 'querystring'
-import { isRunningOnEnvironment } from '@island.is/shared/utils'
-import { GetNamespaceQuery } from '@island.is/web/graphql/schema'
-import { useNamespace } from '@island.is/web/hooks'
+
+import * as styles from './Stepper.css'
 
 const ANSWER_DELIMITER = ','
 export const STEPPER_HELPER_ENABLED_KEY = 'show-stepper-config-helper'
