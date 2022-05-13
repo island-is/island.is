@@ -9,7 +9,7 @@ import { UserRole } from '@island.is/judicial-system/types'
 import { CreateUserMutation } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
+import { titles } from '@island.is/judicial-system-web/messages'
 import type { User } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system/consts'
 
