@@ -30,11 +30,12 @@ function callProvider(
     },
     (error) => {
       if (
-        (!('title' in error.reason) && 'summary' in error.reason) ||
-        ('title' in error.reason && !('summary' in error.reason))
+        error.reason &&
+        ((!('title' in error.reason) && 'summary' in error.reason) ||
+          ('title' in error.reason && !('summary' in error.reason)))
       ) {
         throw new TypeError(
-          'Must supply title and summary or just summary when defining a reason object',
+          'Must supply title and summary or just reason string when defining a reason object',
         )
       }
 
