@@ -34,13 +34,11 @@ import {
   SliceDropdown,
 } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
-import getConfig from 'next/config'
 import { Namespace } from '@island.is/api/schema'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
 import { ParsedUrlQuery } from 'querystring'
-
-const { publicRuntimeConfig } = getConfig()
+import { useRouter } from 'next/router'
 
 interface SubPageProps {
   organizationPage: Query['getOrganizationPage']
@@ -53,31 +51,24 @@ const SubPage: Screen<SubPageProps> = ({
   subpage,
   namespace,
 }) => {
-  const { disableSyslumennPage: disablePage } = publicRuntimeConfig
-  if (disablePage === 'true') {
-    throw new CustomNextError(404, 'Not found')
-  }
+  const router = useRouter()
 
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
 
   useContentfulId(organizationPage.id, subpage.id)
 
-  const pageUrl = `${organizationPage.slug}/${subpage.slug}`
-  const parentSubpageUrl = `${organizationPage.slug}/${subpage.parentSubpage}`
-
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink.text,
       href: primaryLink.url,
       active:
-        primaryLink.url.includes(pageUrl) ||
-        childrenLinks.some((link) => link.url.includes(pageUrl)) ||
-        childrenLinks.some((link) => link.url.includes(parentSubpageUrl)),
+        primaryLink.url === router.asPath ||
+        childrenLinks.some((link) => link.url === router.asPath),
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
         href: url,
-        active: url.includes(pageUrl) || url.includes(parentSubpageUrl),
+        active: url === router.asPath,
       })),
     }),
   )

@@ -16,10 +16,12 @@ import { createEnhancedFetch } from '../createEnhancedFetch'
 
 type Protocol = 'http' | 'https'
 
+jest.setTimeout(20000)
+
 interface TestServer {
   url: string
   requestSpy: jest.SpyInstance<Promise<void>, [IncomingMessage]>
-  close(): void
+  close(): Promise<void>
 }
 
 const selfSignedPfx = fs.readFileSync(join(__dirname, 'test-cert.pfx'))
@@ -49,9 +51,10 @@ const startServer = (protocol: Protocol = 'http'): Promise<TestServer> =>
       resolve({
         url: `${protocol}://localhost:${address.port}`,
         requestSpy,
-        close() {
-          server.close()
-        },
+        close: () =>
+          new Promise((resolve, reject) => {
+            server.close((err) => (err ? reject(err) : resolve()))
+          }),
       })
     })
     server.on('error', (err) => {
@@ -71,8 +74,8 @@ describe('Enhanced Fetch against http server', () => {
     jest.resetAllMocks()
   })
 
-  afterAll(() => {
-    server.close()
+  afterAll(async () => {
+    await server.close()
   })
 
   it('should work', async () => {
@@ -84,7 +87,7 @@ describe('Enhanced Fetch against http server', () => {
 
     // Assert
     expect(response.status).toBe(200)
-    expect(response.text()).resolves.toBe('{"result":"success"}')
+    await expect(response.text()).resolves.toBe('{"result":"success"}')
   })
 
   describe('with timeout', () => {
@@ -112,13 +115,34 @@ describe('Enhanced Fetch against http server', () => {
       await expect(fetchPromise).rejects.toThrow('network timeout')
     })
 
-    // Behind the scenes, agentkeepalive configures a socket timeout which is 2x the keepAlive value. This test
-    // is to make sure it doesn't override the actual Enhanced Fetch timeout.
+    // This tests that enhancedFetch timeout options sets it correctly disabling the agent timeout handling.
     it('should not throw if keepAlive is too low', async () => {
       // Arrange
-      const keepAlive = 50
-      const fetch = createEnhancedFetch({ name: 'test', keepAlive })
-      server.requestSpy.mockImplementation(() => sleep(keepAlive * 4))
+      const keepAlive = 1000 * 5 // 5 sec keepAlive
+      const fetch = createEnhancedFetch({
+        name: 'test',
+        keepAlive,
+        timeout: 1000 * 20, // 20 sec socket timeout
+      })
+      server.requestSpy.mockImplementation(() => sleep(keepAlive * 2)) // 10 sec server operation
+
+      // Act
+      const response = await fetch(server.url)
+
+      // Assert
+      expect(response.status).toBe(200)
+    })
+  })
+
+  describe('without timeout', () => {
+    // This tests that enhancedFetch is correctly disabling the timeout handling on the agent.
+    it('should not throw if timeout is disabled', async () => {
+      // Arrange
+      const fetch = createEnhancedFetch({
+        name: 'test',
+        timeout: false,
+      })
+      server.requestSpy.mockImplementation(() => sleep(1000 * 9)) // 9 sec operation
 
       // Act
       const response = await fetch(server.url)
@@ -192,8 +216,8 @@ describe('Enhanced Fetch against https server', () => {
     jest.resetAllMocks()
   })
 
-  afterAll(() => {
-    server.close()
+  afterAll(async () => {
+    await server.close()
   })
 
   it('should work', async () => {
@@ -208,7 +232,7 @@ describe('Enhanced Fetch against https server', () => {
 
     // Assert
     expect(response.status).toBe(200)
-    expect(response.text()).resolves.toBe('{"result":"success"}')
+    await expect(response.text()).resolves.toBe('{"result":"success"}')
   })
 
   it('should support client certificate', async () => {

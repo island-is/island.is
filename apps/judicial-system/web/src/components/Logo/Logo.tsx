@@ -14,7 +14,7 @@ const Logo: React.FC<Props> = ({ defaultInstitution = '' }) => {
 
   return (
     <div className={styles.logoContainer}>
-      <Box marginRight={2}>
+      <Box marginRight={[0, 0, 0, 2]} marginBottom={[0, 0, 1, 0]}>
         <LandWightsLogo />
       </Box>
       <p className={styles.logoText}>
