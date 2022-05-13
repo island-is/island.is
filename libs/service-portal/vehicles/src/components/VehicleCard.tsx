@@ -13,14 +13,13 @@ export const VehicleCard: FC<Props> = ({ vehicle }) => {
   const { formatMessage } = useLocale()
   const history = useHistory()
   const handleClick = () =>
-    vehicle.regn &&
+    vehicle.regno &&
     history.push(
       ServicePortalPath.AssetsVehiclesDetail.replace(':id', vehicle.regno),
     )
   if (!vehicle) {
     return null
   }
-  const ForceABuild = ""
   const year = vehicle.productYear
     ? '(' + vehicle.productYear + ')'
     : vehicle.firstRegDate
