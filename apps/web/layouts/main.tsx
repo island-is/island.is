@@ -242,11 +242,7 @@ const Layout: NextComponentType<
   const isServiceWeb = pathIsRoute(asPath, 'serviceweb')
 
   return (
-    <GlobalContextProvider
-      namespace={namespace}
-      shouldLinkToServiceWeb={SHOULD_LINK_TO_SERVICE_WEB}
-      isServiceWeb={isServiceWeb}
-    >
+    <GlobalContextProvider namespace={namespace} isServiceWeb={isServiceWeb}>
       <Page component="div">
         <Head>
           {preloadedFonts.map((href, index) => {
