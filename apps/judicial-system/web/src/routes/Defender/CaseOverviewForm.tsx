@@ -220,7 +220,7 @@ const CaseOverviewForm: React.FC<Props> = (props) => {
         </Box>
       )}
       <Box marginBottom={10}>
-        <Text as="h3" variant="h3" marginBottom={5}>
+        <Text as="h3" variant="h3" marginBottom={3}>
           {formatMessage(defenderCaseOverview.documentHeading)}
         </Text>
         <Box marginBottom={2}>
