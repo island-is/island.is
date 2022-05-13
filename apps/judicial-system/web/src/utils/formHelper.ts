@@ -211,6 +211,17 @@ export const setAndSendToServer = (
   }
 }
 
+/**If entry is included in values then it is removed
+ * otherwise it is appended
+ */
+export function toggleInArray<T>(values: T[] | undefined, entry: T) {
+  if (!values) return undefined
+
+  return values.includes(entry)
+    ? values.filter((x) => x !== entry)
+    : [...values, entry]
+}
+
 export const setCheckboxAndSendToServer = (
   field: keyof UpdateCase,
   value: string,

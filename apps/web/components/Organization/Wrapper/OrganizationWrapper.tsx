@@ -44,7 +44,7 @@ import {
 } from './Themes/UtlendingastofnunTheme'
 import { boostChatPanelEndpoints } from '@island.is/web/components'
 import MannaudstorgFooter from './Themes/MannaudstorgTheme/MannaudstorgFooter'
-import { useFeatureFlag, useNamespaceStrict } from '@island.is/web/hooks'
+import { useFeatureFlag, useNamespace } from '@island.is/web/hooks'
 import { watsonConfig } from './config'
 import { WatsonChatPanel } from '@island.is/web/components'
 import LandlaeknirFooter from './Themes/LandlaeknirTheme/LandlaeknirFooter'
@@ -186,7 +186,7 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
     ? organizations[0]
     : organizations.find((x) => footerEnabled.includes(x.slug))
 
-  const n = useNamespaceStrict(organization?.namespace)
+  const n = useNamespace(organization?.namespace ?? {})
 
   let OrganizationFooterComponent = null
 
@@ -198,6 +198,11 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
           title={organization.title}
           logo={organization.logo?.url}
           footerItems={organization.footerItems}
+          questionsAndAnswersText={n(
+            'questionsAndAnswers',
+            'Spurningar og svör',
+          )}
+          canWeHelpText={n('canWeHelp', 'Getum við aðstoðað?')}
         />
       )
       break
