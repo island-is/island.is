@@ -33,8 +33,8 @@ import { QueryGetNewsArgs } from '@island.is/api/schema'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 import slugify from '@sindresorhus/slugify'
-import { getStepOptionsFromUIConfiguration } from '../../components/Stepper/StepperUtils'
-import Stepper from '../../components/Stepper/Stepper'
+import { getStepOptionsFromUIConfiguration } from '../../components/Stepper/utils'
+import Stepper from '../../components/Stepper/Stepper/Stepper'
 import {
   assignNavigationActive,
   convertLinkGroupsToNavigationItems,

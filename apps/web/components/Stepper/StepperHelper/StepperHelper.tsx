@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from 'react'
-
+import { useRouter } from 'next/router'
 import {
   AccordionItem,
   ArrowLink,
@@ -8,9 +8,9 @@ import {
   TableOfContents,
   Text,
 } from '@island.is/island-ui/core'
-
 import { Step, Stepper } from '@island.is/api/schema'
-
+import { useI18n } from '@island.is/web/i18n'
+import { scrollTo } from '@island.is/web/hooks/useScrollSpy'
 import {
   StepperState,
   resolveStepType,
@@ -18,13 +18,10 @@ import {
   getStepBySlug,
   getStateMeta,
   StepperMachine,
-} from './StepperUtils'
+} from '../utils'
+import { STEPPER_HELPER_ENABLED_KEY } from '../Stepper/Stepper'
 
-import { useI18n } from '@island.is/web/i18n'
 import * as styles from './StepperHelper.css'
-import { scrollTo } from '@island.is/web/hooks/useScrollSpy'
-import { STEPPER_HELPER_ENABLED_KEY } from './Stepper'
-import { useRouter } from 'next/router'
 
 const SUCCESS_SYMBOL = '✔️'
 const ERROR_SYMBOL = '❌'

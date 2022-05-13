@@ -57,8 +57,8 @@ import {
 import { Locale } from '@island.is/shared/types'
 import { useScrollPosition } from '../../hooks/useScrollPosition'
 import { scrollTo } from '../../hooks/useScrollSpy'
-import Stepper from '../../components/Stepper/Stepper'
-import { getStepOptionsFromUIConfiguration } from '../../components/Stepper/StepperUtils'
+import Stepper from '../../components/Stepper/Stepper/Stepper'
+import { getStepOptionsFromUIConfiguration } from '../../components/Stepper/utils'
 import { ArticleChatPanel } from './components/ArticleChatPanel'
 import * as styles from './Article.css'
 

@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState } from 'react'
-
 import {
   Box,
   Text,
@@ -11,13 +10,12 @@ import {
   GridRow,
   GridContainer,
 } from '@island.is/island-ui/core'
-
-import { Stepper } from '@island.is/api/schema'
+import { Stepper as StepperSchema } from '@island.is/api/schema'
 
 import {
   renderStepperAndStepConfigErrors,
   StepperHelper,
-} from './StepperHelper'
+} from '../StepperHelper/StepperHelper'
 import * as styles from './Stepper.css'
 
 import {
@@ -32,7 +30,7 @@ import {
   getCurrentStepAndStepType,
   validateStepperConfig,
   validateStepConfig,
-} from './StepperUtils'
+} from '../utils'
 import { useRouter } from 'next/router'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
 import { useI18n } from '@island.is/web/i18n'
@@ -49,7 +47,7 @@ const STEPPER_HELPER_ENABLED =
   isRunningOnEnvironment('dev') || isRunningOnEnvironment('local')
 
 interface StepperProps {
-  stepper: Stepper
+  stepper: StepperSchema
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   optionsFromNamespace: { slug: string; data: Record<string, any>[] }[]
   scrollUpWhenNextStepAppears?: boolean
@@ -69,7 +67,7 @@ interface QuestionAndAnswer {
 }
 
 const getInitialStateAndAnswersByQueryParams = (
-  stepper: Stepper,
+  stepper: StepperSchema,
   stepperMachine: StepperMachine,
   query: ParsedUrlQuery,
   activeLocale: string,
