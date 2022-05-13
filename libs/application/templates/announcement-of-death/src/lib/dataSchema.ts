@@ -37,7 +37,7 @@ export const dataSchema = z.object({
           (electPerson?.electedPersonName === '' ||
             electPerson?.electedPersonName !== '')),
       {
-        message:  'Villa kom upp við að sækja nafn útfrá kennitölu. Vinsamlegast prófaðu aftur síðar', //m.errorNationalIdIncorrect.defaultMessage,
+        message: m.errorNationalIdNoName.defaultMessage,
         path: ['electPerson', 'electedPersonNationalId'],
       },
     )
@@ -55,7 +55,6 @@ export const dataSchema = z.object({
         path: ['electPerson', 'electedPersonNationalId'],
       },
     )
-
     .refine(({ roleConfirmation }) => !!roleConfirmation, {
       message: m.errorRoleConfirmation.defaultMessage,
       path: ['roleConfirmation'],

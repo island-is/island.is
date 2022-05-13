@@ -112,6 +112,35 @@ export class AnnouncementOfDeathService {
     )
   }
 
+  async assignElectedPerson({ application }: TemplateApiModuleActionProps) {
+    const syslumennOnEntryData: any = application.externalData.syslumennOnEntry
+    const electPerson: any = (application.answers?.pickRole as PickRole)
+      .electPerson
+    const electPersonNationalId: string =
+      electPerson.electedPersonNationalId ?? ''
+
+    if (!isPerson(electPersonNationalId)) {
+      return {
+        success: false,
+      }
+    }
+
+    const changeEstateParams = {
+      from: application.applicant,
+      to: electPersonNationalId,
+      caseNumber: syslumennOnEntryData?.data?.malsnumer ?? '',
+    }
+    try {
+      await this.syslumennService.changeEstateRegistrant(
+        changeEstateParams.from,
+        changeEstateParams.to,
+        changeEstateParams.caseNumber,
+      )
+    } catch (e) {
+      return { success: false }
+    }
+  }
+
   async submitApplication({ application }: TemplateApiModuleActionProps) {
     if (
       (application.answers?.pickRole as PickRole).roleConfirmation ===

@@ -6,17 +6,13 @@ import {
   buildExternalDataProvider,
   buildDataProviderItem,
   buildMultiField,
-  Application,
   buildCustomField,
   buildDescriptionField,
-  FormValue,
-  buildDividerField,
   buildKeyValueField,
   buildSubmitField,
   DefaultEvents,
   getValueViaPath,
   buildTextField,
-  buildSubSection,
   buildRadioField,
 } from '@island.is/application/core'
 import { format as formatNationalId } from 'kennitala'
@@ -24,7 +20,6 @@ import { NationalRegistryUser, UserProfile } from '../../types/schema'
 import { m } from '../../lib/messages'
 import { RoleConfirmationEnum } from '../../types'
 import CoatOfArms from '../../assets/CoatOfArms'
-import { subSectionDelegate } from '../draft/subSectionDelegate'
 import { sectionExistingApplication } from './sectionExistingApplication'
 
 export const prerequisite = (): Form => {
@@ -64,14 +59,14 @@ export const prerequisite = (): Form => {
                 title: m.dataCollectionEstateTitle,
                 subTitle: m.dataCollectionEstateSubtitle,
               }),
-              // buildDataProviderItem({
-              //   id: 'existingApplication',
-              //   type: 'ExistingApplicationProvider',
-              //   title: '',
-              // }),
+              buildDataProviderItem({
+                id: 'existingApplication',
+                type: 'ExistingApplicationProvider',
+                title: '',
+              }),
             ],
           }),
-          // sectionExistingApplication,
+          sectionExistingApplication,
         ],
       }),
       buildSection({
@@ -139,15 +134,25 @@ export const prerequisite = (): Form => {
                 refetchApplicationAfterSubmit: true,
                 actions: [
                   {
-                    event: DefaultEvents.SUBMIT,
+                    name: 'Senda áfram',
+                    type: 'subtle',
+                    event: DefaultEvents.REJECT,
+                    condition: (answers) =>
+                      getValueViaPath(answers, 'pickRole.roleConfirmation') ===
+                      RoleConfirmationEnum.DELEGATE,
+                  },
+                  {
                     name: 'Halda áfram',
                     type: 'primary',
+                    event: DefaultEvents.SUBMIT,
+                    condition: (answers) =>
+                      getValueViaPath(answers, 'pickRole.roleConfirmation') !==
+                      RoleConfirmationEnum.DELEGATE,
                   },
                 ],
               }),
             ],
           }),
-          subSectionDelegate,
         ],
       }),
       buildSection({
@@ -162,12 +167,4 @@ export const prerequisite = (): Form => {
       }),
     ],
   })
-}
-
-export const isDelegating = (formValue: FormValue) => {
-  const roleConfirmationContinue = getValueViaPath(
-    formValue,
-    'roleConfirmationContinue.answer',
-  ) as RoleConfirmationEnum
-  return roleConfirmationContinue === RoleConfirmationEnum.DELEGATE
 }

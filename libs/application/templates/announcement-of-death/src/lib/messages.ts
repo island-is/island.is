@@ -440,6 +440,12 @@ Ef ekkert á við sem hér að ofan er talið rennur arfur í ríkissjóð. Nán
     defaultMessage: 'Þú verður að velja einn möguleika',
     description: 'Role confirmation is invalid',
   },
+  errorNationalIdNoName: {
+    id: 'aod.application:error.errorNationalIdNoName',
+    defaultMessage:
+      'Villa kom upp við að sækja nafn útfrá kennitölu. Vinsamlegast prófaðu aftur síðar',
+    description: 'No name found for national id in national registry',
+  },
   errorNationalIdIncorrect: {
     id: 'aod.application:error.nationalIdIncorrect',
     defaultMessage: 'Þessi kennitala virðist ekki vera rétt',

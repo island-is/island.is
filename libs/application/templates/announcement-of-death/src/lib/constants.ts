@@ -27,4 +27,5 @@ export interface AnnouncementOfDeathFakeData {
 export enum ApiActions {
   submitApplication = 'submitApplication',
   syslumennOnEntry = 'syslumennOnEntry',
+  assignElectedPerson = 'assignElectedPerson',
 }

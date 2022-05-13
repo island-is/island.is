@@ -8,20 +8,15 @@ export const Delegated = ({ application }: FieldBaseProps): JSX.Element => {
   const { formatMessage } = useLocale()
 
   return (
-    <Stack space={2}>
-      <Text>
-        {formatText(m.delegatedDescription, application, formatMessage)}
-      </Text>
-      <Button
-        icon="arrowForward"
-        size="small"
-        iconType="outline"
-        onClick={() => {
-          window.open(`${window.location.origin}/minarsidur`, '_blank')
-        }}
-      >
-        {formatText(m.delegatedMyPagesLinkText, application, formatMessage)}
-      </Button>
-    </Stack>
+    <Button
+      icon="arrowForward"
+      size="small"
+      iconType="outline"
+      onClick={() => {
+        window.open(`${window.location.origin}/minarsidur`, '_blank')
+      }}
+    >
+      {formatText(m.delegatedMyPagesLinkText, application, formatMessage)}
+    </Button>
   )
 }

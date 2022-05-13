@@ -55,9 +55,9 @@ const ElectPerson: FC<ElectPersonFieldBaseProps> = ({ application }) => {
     },
   })
 
-  // Clear inital error if continue with no roleconfirmation was selected
+  // Clear inital errors on mount
   useEffect(() => {
-    clearErrors(fieldNames.electedPersonNationalId)
+    clearErrors()
   }, [])
 
   const electedPersonNationalId: string = watch(

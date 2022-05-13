@@ -50,11 +50,3 @@ export const draft = (): Form => {
     ],
   })
 }
-
-export const isDelegating = (formValue: FormValue) => {
-  const roleConfirmationContinue = getValueViaPath(
-    formValue,
-    'roleConfirmationContinue.answer',
-  ) as RoleConfirmationEnum
-  return roleConfirmationContinue === RoleConfirmationEnum.DELEGATE
-}

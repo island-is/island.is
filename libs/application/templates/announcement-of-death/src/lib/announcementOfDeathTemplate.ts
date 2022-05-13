@@ -55,6 +55,7 @@ const AnnouncementOfDeathTemplate: ApplicationTemplate<
                   name: 'Submit',
                   type: 'primary',
                 },
+                { event: DefaultEvents.REJECT, name: 'Reject', type: 'reject' },
               ],
               write: 'all',
               delete: true,
@@ -63,6 +64,7 @@ const AnnouncementOfDeathTemplate: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.SUBMIT]: { target: States.DRAFT },
+          [DefaultEvents.REJECT]: { target: States.DELEGATED },
         },
       },
       [States.DRAFT]: {
@@ -98,7 +100,6 @@ const AnnouncementOfDeathTemplate: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.SUBMIT]: { target: States.DONE },
-          [DefaultEvents.REJECT]: { target: States.DELEGATED },
         },
       },
       [States.DONE]: {
@@ -122,6 +123,11 @@ const AnnouncementOfDeathTemplate: ApplicationTemplate<
           name: 'Delegated',
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
+          onEntry: {
+            apiModuleAction: ApiActions.assignElectedPerson,
+            shouldPersistToExternalData: false,
+            throwOnError: true,
+          },
           roles: [
             {
               id: Roles.APPLICANT,
