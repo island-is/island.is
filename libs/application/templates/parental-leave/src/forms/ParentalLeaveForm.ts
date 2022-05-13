@@ -41,6 +41,7 @@ import {
   FILE_SIZE_LIMIT,
   MANUAL,
   NO,
+  NO_PRIVATE_PENSION_FUND,
   ParentalRelations,
   StartDateOptions,
   YES,
@@ -255,7 +256,7 @@ export const ParentalLeaveForm: Form = buildForm({
                     })
 
                     return (
-                      data?.getPrivatePensionFunds?.map(({ id, name }) => ({
+                      data?.getPrivatePensionFunds?.filter(({ id }) => id !== NO_PRIVATE_PENSION_FUND).map(({ id, name }) => ({
                         label: name,
                         value: id,
                       })) ?? []
