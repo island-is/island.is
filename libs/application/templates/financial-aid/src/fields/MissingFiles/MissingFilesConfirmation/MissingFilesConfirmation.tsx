@@ -42,7 +42,7 @@ const MissingFilesConfirmation = ({ application }: FAFieldBaseProps) => {
         </Box>
       )}
 
-      <Box position="absolute" bottom={0}>
+      <Box marginTop={10}>
         <Link
           href={''}
           underline="normal"
