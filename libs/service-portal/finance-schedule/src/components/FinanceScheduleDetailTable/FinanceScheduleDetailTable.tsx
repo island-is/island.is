@@ -27,18 +27,6 @@ const FinanceScheduleDetailTable: FC<Props> = ({ data }) => {
   const { formatMessage } = useLocale()
   useNamespaces('sp.finance-schedule')
 
-  const arr: DetailData = data.map((x, i) => {
-    const sum =
-      x.payments?.reduce(
-        (sum: number, current: { payAmount: number }) =>
-          sum + Math.abs(current.payAmount),
-        0,
-      ) || 0
-    return {
-      ...data[i],
-      paid: sum >= x.plannedAmount,
-    }
-  })
   const headerArray = [
     {
       value: formatMessage({
@@ -102,7 +90,7 @@ const FinanceScheduleDetailTable: FC<Props> = ({ data }) => {
           </T.Row>
         </T.Head>
         <T.Body>
-          {arr?.map((row, i) => (
+          {data?.map((row, i) => (
             <T.Row key={i + row.paymentNumber}>
               {[
                 {
@@ -113,7 +101,7 @@ const FinanceScheduleDetailTable: FC<Props> = ({ data }) => {
                   value: (
                     <Box display="flex">
                       {amountFormat(row.plannedAmount)}
-                      {i === arr.length - 1 ? (
+                      {i === data.length - 1 ? (
                         <Tooltip
                           placement="bottom"
                           text={formatMessage({
@@ -135,37 +123,30 @@ const FinanceScheduleDetailTable: FC<Props> = ({ data }) => {
                   align: 'left',
                 },
                 {
-                  value: row.paidDate.includes('*')
-                    ? row.payments &&
-                      format(
-                        dateParse(
-                          row.payments[row.payments.length - 1].payDate,
-                        ),
-                        dateFormat.is,
-                      )
-                    : row.paidDate.length <= 0
-                    ? ''
-                    : format(dateParse(row.paidDate), dateFormat.is),
+                  value:
+                    row.paidDate &&
+                    format(dateParse(row.paidDate), dateFormat.is),
                   align: 'left',
                 },
                 {
-                  value: row.paid ? (
-                    <Box
-                      marginRight={1}
-                      display="flex"
-                      alignItems="center"
-                      justifyContent="center"
-                      textAlign="center"
-                    >
-                      <Icon
-                        icon="checkmarkCircle"
-                        color="mint600"
-                        type="filled"
-                      />
-                    </Box>
-                  ) : (
-                    ''
-                  ),
+                  value:
+                    row.paidAmount * -1 === row.plannedAmount ? (
+                      <Box
+                        marginRight={1}
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="center"
+                        textAlign="center"
+                      >
+                        <Icon
+                          icon="checkmarkCircle"
+                          color="mint600"
+                          type="filled"
+                        />
+                      </Box>
+                    ) : (
+                      ''
+                    ),
                   element: true,
                   align: 'center',
                 },
