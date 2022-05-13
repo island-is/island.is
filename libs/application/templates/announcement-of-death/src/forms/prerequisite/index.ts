@@ -12,15 +12,14 @@ import {
   buildSubmitField,
   DefaultEvents,
   getValueViaPath,
-  buildTextField,
   buildRadioField,
 } from '@island.is/application/core'
-import { format as formatNationalId } from 'kennitala'
-import { NationalRegistryUser, UserProfile } from '../../types/schema'
 import { m } from '../../lib/messages'
 import { RoleConfirmationEnum } from '../../types'
 import CoatOfArms from '../../assets/CoatOfArms'
 import { sectionExistingApplication } from './sectionExistingApplication'
+import kennitala from 'kennitala'
+import format from 'date-fns/format'
 
 export const prerequisite = (): Form => {
   return buildForm({
@@ -79,17 +78,19 @@ export const prerequisite = (): Form => {
             children: [
               buildKeyValueField({
                 label: m.deceasedName,
-                value: 'Jóna Jónsdóttir',
+                value: ({ answers }) => answers.nameOfDeceased as string,
                 colSpan: ['1/2', '1/2', '1/3'],
               }),
               buildKeyValueField({
                 label: m.deceasedNationalId,
-                value: '112233-4455',
+                value: ({ answers }) =>
+                  kennitala.format(answers.nationalIdOfDeceased as string),
                 colSpan: ['1/2', '1/2', '1/3'],
               }),
               buildKeyValueField({
                 label: m.deceasedDate,
-                value: '05.02.2022',
+                value: ({ answers }) =>
+                  format(new Date(answers.dateOfDeath as string), 'dd.MM.yyyy'),
                 colSpan: ['1/1', '1/1', '1/3'],
               }),
               buildDescriptionField({

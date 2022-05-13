@@ -10,11 +10,14 @@ import {
   Field,
   buildCustomField,
   Answer,
+  buildTextField,
 } from '@island.is/application/core'
 import { format as formatNationalId } from 'kennitala'
-import { UserProfile } from '../../types/schema'
 import { m } from '../../lib/messages'
 import { formatPhoneNumber } from '../../utils/index'
+import format from 'date-fns/format'
+import { Asset } from '../../types'
+import { FormatMessage } from '@island.is/localization'
 
 const theDeceased: Field[] = [
   buildDividerField({}),
@@ -27,18 +30,19 @@ const theDeceased: Field[] = [
   buildKeyValueField({
     label: m.deceasedName,
     width: 'half',
-    value: (data) => (console.log(data), 'test'),
+    value: ({ answers }) => (answers.nameOfDeceased as string) || '',
   }),
   buildKeyValueField({
     label: m.deceasedNationalId,
     width: 'half',
-    value: (application: Application) =>
-      formatNationalId(application.applicant),
+    value: ({ answers }) =>
+      formatNationalId(answers.nationalIdOfDeceased as string) || '',
   }),
   buildKeyValueField({
     label: m.deceasedDate,
     width: 'half',
-    value: () => 'test',
+    value: ({ answers }) =>
+      format(new Date(answers.dateOfDeath as string), 'dd.MM.yy') || '',
   }),
 ]
 
@@ -53,29 +57,23 @@ const theAnnouncer: Field[] = [
   buildKeyValueField({
     label: m.applicantsName,
     width: 'half',
-    value: () => 'test',
+    value: ({ answers }) => (answers.applicantName as string) || '',
   }),
   buildKeyValueField({
     label: m.applicantsPhoneNumber,
     width: 'half',
-    value: ({ externalData: { userProfile } }) =>
-      formatPhoneNumber(
-        (userProfile.data as UserProfile).mobilePhoneNumber as string,
-      ),
+    value: ({ answers }) =>
+      formatPhoneNumber(answers.applicantPhone as string) || '',
   }),
   buildKeyValueField({
     label: m.applicantsEmail,
     width: 'half',
-    value: ({ externalData: { userProfile } }) =>
-      (userProfile.data as UserProfile).email as string,
+    value: ({ answers }) => (answers.applicantEmail as string) || '',
   }),
   buildKeyValueField({
     label: m.applicantsRelation,
     width: 'half',
-    value: ({ externalData: { userProfile } }) =>
-      formatPhoneNumber(
-        (userProfile.data as UserProfile).mobilePhoneNumber as string,
-      ),
+    value: ({ answers }) => (answers.applicantRelation as string) || '',
   }),
 ]
 
@@ -90,26 +88,26 @@ const testament: Field[] = [
   buildKeyValueField({
     label: m.testamentTestamentAvailable,
     width: 'half',
-    value: ({ externalData: { userProfile } }) =>
-      formatPhoneNumber(
-        (userProfile.data as UserProfile).mobilePhoneNumber as string,
-      ),
+    value: ({ answers }) =>
+      answers.districtCommissionerHasWill
+        ? m.testamentKnowledgeOfOtherTestamentYes
+        : m.testamentKnowledgeOfOtherTestamentNo,
   }),
   buildKeyValueField({
     label: m.testamentBuyration,
     width: 'half',
-    value: ({ externalData: { userProfile } }) =>
-      formatPhoneNumber(
-        (userProfile.data as UserProfile).mobilePhoneNumber as string,
-      ),
+    value: ({ answers }) =>
+      answers.marriageSettlement
+        ? m.testamentKnowledgeOfOtherTestamentYes
+        : m.testamentKnowledgeOfOtherTestamentNo,
   }),
   buildKeyValueField({
     label: m.testamentKnowledgeOfOtherTestament,
     width: 'half',
-    value: ({ externalData: { userProfile } }) =>
-      formatPhoneNumber(
-        (userProfile.data as UserProfile).mobilePhoneNumber as string,
-      ),
+    value: ({ answers }) =>
+      answers.knowledgeOfOtherWills === 'yes'
+        ? m.testamentKnowledgeOfOtherTestamentYes
+        : m.testamentKnowledgeOfOtherTestamentNo,
   }),
 ]
 const inheritance: Field[] = [
@@ -146,6 +144,125 @@ const inheritance: Field[] = [
     },
   ),
 ]
+const properties: Field[] = [
+  buildDividerField({}),
+  buildDescriptionField({
+    id: 'realEstatesAndLandsTitle',
+    title: m.realEstatesTitle,
+    titleVariant: 'h3',
+    description: m.realEstatesDescription,
+  }),
+  buildCustomField(
+    {
+      title: '',
+      id: 'assets',
+      component: 'InfoCard',
+      width: 'full',
+      condition: (application) => (application?.assets as Asset[])?.length > 0,
+    },
+    {
+      cards: ({ answers }: Application) =>
+        (answers?.assets as Asset[]).map((property) => ({
+          title: property.description,
+          description: (formatMessage: FormatMessage) => [
+            `${formatMessage(m.propertyNumber)}: ${property.assetNumber}`,
+            property.share
+              ? `${formatMessage(m.propertyShare)}: ${property.share * 100}%`
+              : '',
+          ],
+        })),
+    },
+  ),
+  buildDescriptionField({
+    id: 'vehiclesTitle',
+    title: m.vehiclesTitle,
+    description: m.vehiclesDescription,
+    space: 5,
+    titleVariant: 'h3',
+  }),
+  buildCustomField(
+    {
+      title: '',
+      id: 'vehicles',
+      component: 'InfoCard',
+      width: 'full',
+      condition: (application) =>
+        (application?.vehicles as Asset[])?.length > 0,
+    },
+    {
+      cards: ({ answers }: Application) =>
+        (answers?.vehicles as Asset[]).map((vehicle) => ({
+          title: vehicle.assetNumber,
+          description: [vehicle.description],
+        })),
+    },
+  ),
+]
+const files: Field[] = [
+  buildDividerField({}),
+  buildDescriptionField({
+    id: 'selectMainRecipient',
+    title: m.filesSelectMainRecipient,
+    titleVariant: 'h3',
+  }),
+  buildCustomField(
+    {
+      title: m.certificateOfDeathAnnouncementTitle,
+      description: m.certificateOfDeathAnnouncementDescription,
+      id: 'certificateOfDeathAnnouncement',
+      component: 'FilesRecipientCard',
+    },
+    {
+      noOptions: true,
+      tag: ({ answers }: Application) =>
+        (answers.certificateOfDeathAnnouncement as string) || '',
+    },
+  ),
+  buildCustomField(
+    {
+      title: m.financesDataCollectionPermissionTitle,
+      description: m.financesDataCollectionPermissionDescription,
+      id: 'financesDataCollectionPermission',
+      component: 'FilesRecipientCard',
+    },
+    {
+      noOptions: true,
+      tag: ({ answers }: Application) =>
+        (answers.financesDataCollectionPermission as string) || '',
+    },
+  ),
+  buildCustomField(
+    {
+      title: m.authorizationForFuneralExpensesTitle,
+      description: m.authorizationForFuneralExpensesDescription,
+      id: 'authorizationForFuneralExpenses',
+      component: 'FilesRecipientCard',
+    },
+    {
+      noOptions: true,
+      tag: ({ answers }: Application) =>
+        (answers.authorizationForFuneralExpenses as string) || '',
+    },
+  ),
+]
+
+const additionalInfo: Field[] = [
+  buildDividerField({}),
+  buildDescriptionField({
+    id: 'additionalInfoTitle',
+    title: m.additionalInfoTitle,
+    description: m.additionalInfoDescription,
+    titleVariant: 'h3',
+  }),
+  buildTextField({
+    id: 'additionalInfo',
+    title: m.additionalInfoLabel,
+    placeholder: m.additionalInfoPlaceholder,
+    variant: 'textarea',
+    rows: 4,
+    defaultValue: '',
+  }),
+]
 
 export const sectionOverview = buildSection({
   id: 'overview',
@@ -161,6 +278,9 @@ export const sectionOverview = buildSection({
         ...theAnnouncer,
         ...testament,
         ...inheritance,
+        ...properties,
+        ...files,
+        ...additionalInfo,
         buildSubmitField({
           id: 'submit',
           title: '',

@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useEffect } from 'react'
 import {
   ArrayField,
   Controller,
@@ -20,18 +20,26 @@ import {
   Button,
   ProfileCard,
 } from '@island.is/island-ui/core'
-import { Answers, EstateMember, RelationEnum } from '../../types'
+import { Answers, EstateMember } from '../../types'
 import { format as formatNationalId } from 'kennitala'
 import * as styles from './EstateMemberRepeater.css'
 import { useLazyQuery } from '@apollo/client'
 import { IdentityInput, Query } from '@island.is/api/schema'
-import { IDENTITY_QUERY, ESTATE_RELATIONS_QUERY } from '../../graphql/'
+import { IDENTITY_QUERY } from '../../graphql/'
 import * as kennitala from 'kennitala'
 import { m } from '../../lib/messages'
 
 export const EstateMemberRepeater: FC<FieldBaseProps<Answers>> = ({
+  application,
   field,
 }) => {
+  const relations =
+    (application.externalData.syslumennOnEntry?.data as {
+      relationOptions: string[]
+    }).relationOptions.map((relation) => ({
+      value: relation,
+      label: relation,
+    })) || []
   const { id } = field
   const { formatMessage } = useLocale()
   const { fields, append, remove } = useFieldArray<EstateMember>({
@@ -43,33 +51,6 @@ export const EstateMemberRepeater: FC<FieldBaseProps<Answers>> = ({
       initial: false,
       name: '',
     })
-
-  const [relationOptions, setRelationOptions] = useState<
-    { value: string; label: string }[]
-  >([])
-
-  const [
-    getEstateRelations,
-    { loading: queryLoading, error: queryError },
-  ] = useLazyQuery<Query>(ESTATE_RELATIONS_QUERY, {
-    onError: (error: unknown) => {
-      console.log('getEstateRelationsError: ', error)
-    },
-    onCompleted: (data) => {
-      setRelationOptions(
-        data.getSyslumennEstateRelations.relations.map((relation) => {
-          return {
-            value: relation,
-            label: relation,
-          }
-        }),
-      )
-    },
-  })
-
-  useEffect(() => {
-    getEstateRelations()
-  }, [])
 
   return (
     <Box marginTop={2}>
@@ -113,7 +94,7 @@ export const EstateMemberRepeater: FC<FieldBaseProps<Answers>> = ({
             field={member}
             fieldName={id}
             index={index}
-            relationOptions={relationOptions}
+            relationOptions={relations}
             remove={remove}
           />
         </Box>
