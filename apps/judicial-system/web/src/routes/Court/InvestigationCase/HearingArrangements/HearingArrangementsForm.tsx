@@ -209,7 +209,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
               <Box marginBottom={2}>
                 <DateTime
                   name="courtDate"
-                  selectedDate={workingCase.courtDate}
+                  selectedDate={courtDate}
                   minDate={new Date()}
                   onChange={(date: Date | undefined, valid: boolean) => {
                     if (date && valid) {

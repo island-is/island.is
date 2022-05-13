@@ -85,8 +85,13 @@ describe(`${IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
     intercept(caseDataAddition)
 
     cy.get('[name="session-arrangements-all-present"]').click()
+
     cy.getByTestid('continueButton').should('not.be.disabled')
     cy.getByTestid('continueButton').click()
+    cy.wait('@UpdateCaseMutation')
+      .its('response.body.data.updateCase')
+      .should('have.any.key', 'courtDate')
+
     cy.getByTestid('modalSecondaryButton').click()
     cy.url().should('include', IC_RULING_ROUTE)
   })

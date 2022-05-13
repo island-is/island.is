@@ -16,32 +16,29 @@ import {
 export const intercept = (res: Case) => {
   cy.intercept('POST', '**/api/graphql', (req) => {
     if (hasOperationName(req, 'CaseQuery')) {
+      req.alias = 'gqlCaseQuery'
       req.reply({
         data: {
           case: res,
         },
       })
     } else if (hasOperationName(req, 'RestrictedCaseQuery')) {
+      req.alias = 'gqlCaseQuery'
       req.reply({
         data: {
           restrictedCase: res,
         },
       })
-    }
-  }).as('gqlCaseQuery')
-}
-
-export const interceptUpdateCase = () => {
-  cy.intercept('POST', '**/api/graphql', (req) => {
-    if (hasOperationName(req, 'UpdateCaseMutation')) {
+    } else if (hasOperationName(req, 'UpdateCaseMutation')) {
       const { body } = req
+      req.alias = 'UpdateCaseMutation'
       req.reply({
         data: {
           updateCase: { ...body.variables?.input, __typename: 'Case' },
         },
       })
     }
-  }).as('UpdateCaseMutation')
+  })
 }
 
 export const hasOperationName = (
