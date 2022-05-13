@@ -48,7 +48,6 @@ const Layout: FC = ({ children }) => {
         </Hidden>
       </Hidden>
       <Box
-        overflow="hidden"
         className={cn(
           styles.layoutWrapper,
           sidebarState === 'closed' && styles.layoutWrapperWide,
