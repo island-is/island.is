@@ -43,6 +43,7 @@ const FormFooter: React.FC<Props> = (props: Props) => {
           }}
           icon={isMobile ? 'arrowBack' : undefined}
           circle={isMobile}
+          aria-label="Til baka"
         >
           {!isMobile && 'Til baka'}
         </Button>
