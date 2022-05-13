@@ -64,14 +64,14 @@ export const prerequisite = (): Form => {
                 title: m.dataCollectionEstateTitle,
                 subTitle: m.dataCollectionEstateSubtitle,
               }),
-              buildDataProviderItem({
-                id: 'existingApplication',
-                type: 'ExistingApplicationProvider',
-                title: '',
-              }),
+              // buildDataProviderItem({
+              //   id: 'existingApplication',
+              //   type: 'ExistingApplicationProvider',
+              //   title: '',
+              // }),
             ],
           }),
-          sectionExistingApplication,
+          // sectionExistingApplication,
         ],
       }),
       buildSection({

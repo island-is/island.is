@@ -27,7 +27,7 @@ const fieldNames = {
 const ElectPerson: FC<ElectPersonFieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
   const { setValue, watch, errors, clearErrors, setError } = useFormContext()
-
+  console.log('ERR', errors)
   const [getIdentity, { loading: queryLoading }] = useLazyQuery<
     Query,
     { input: IdentityInput }
@@ -43,10 +43,22 @@ const ElectPerson: FC<ElectPersonFieldBaseProps> = ({ application }) => {
     onCompleted: (data) => {
       if (data.identity?.name) {
         clearErrors(fieldNames.lookupError)
+        clearErrors(fieldNames.electedPersonName)
         setValue(fieldNames.electedPersonName, data.identity?.name ?? '')
+      } else {
+        setError(fieldNames.lookupError, {
+          type: 'serverError',
+          message:
+            'Villa kom upp við að sækja nafn útfrá kennitölu. Vinsamlegast prófaðu aftur síðar',
+        })
       }
     },
   })
+
+  // Clear inital error if continue with no roleconfirmation was selected
+  useEffect(() => {
+    clearErrors(fieldNames.electedPersonNationalId)
+  }, [])
 
   const electedPersonNationalId: string = watch(
     fieldNames.electedPersonNationalId,

@@ -26,24 +26,41 @@ export const dataSchema = z.object({
         electedPersonName: z.string(),
       }),
     })
+    .partial()
     .refine(
       ({ roleConfirmation, electPerson }) =>
-        !!roleConfirmation &&
-        ((roleConfirmation === RoleConfirmationEnum.DELEGATE &&
-          kennitala.isPerson(electPerson?.electedPersonNationalId) &&
-          electPerson?.electedPersonName !== '') ||
-          (roleConfirmation === RoleConfirmationEnum.CONTINUE &&
-            electPerson.electedPersonNationalId === '' &&
-            electPerson.electedPersonName === '')),
+        (roleConfirmation === RoleConfirmationEnum.DELEGATE &&
+        electPerson?.electedPersonName
+          ? electPerson?.electedPersonName !== ''
+          : false) ||
+        (roleConfirmation === RoleConfirmationEnum.CONTINUE &&
+          (electPerson?.electedPersonName === '' ||
+            electPerson?.electedPersonName !== '')),
+      {
+        message:  'Villa kom upp við að sækja nafn útfrá kennitölu. Vinsamlegast prófaðu aftur síðar', //m.errorNationalIdIncorrect.defaultMessage,
+        path: ['electPerson', 'electedPersonNationalId'],
+      },
+    )
+    .refine(
+      ({ roleConfirmation, electPerson }) =>
+        (roleConfirmation === RoleConfirmationEnum.DELEGATE &&
+        electPerson?.electedPersonNationalId
+          ? kennitala.isPerson(electPerson?.electedPersonNationalId)
+          : false) ||
+        (roleConfirmation === RoleConfirmationEnum.CONTINUE &&
+          (electPerson?.electedPersonNationalId === '' ||
+            electPerson?.electedPersonNationalId !== '')),
       {
         message: m.errorNationalIdIncorrect.defaultMessage,
         path: ['electPerson', 'electedPersonNationalId'],
       },
     )
+
     .refine(({ roleConfirmation }) => !!roleConfirmation, {
       message: m.errorRoleConfirmation.defaultMessage,
       path: ['roleConfirmation'],
     }),
+
   applicantPhone: z.string().refine((v) => isValidPhoneNumber(v), {
     params: m.errorPhoneNumber,
   }),
