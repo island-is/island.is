@@ -1,5 +1,6 @@
 import React from 'react'
-import { GridColumn } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
+
 import * as styles from './FormContentContainer.css'
 
 interface Props {
@@ -8,12 +9,7 @@ interface Props {
 
 const FormContentContainer: React.FC<Props> = (props) => {
   const renderContainer = () => (
-    <GridColumn
-      span={['9/9', '9/9', '7/9', '7/9']}
-      offset={['0', '0', '1/9', '1/9']}
-    >
-      {props.children}
-    </GridColumn>
+    <Box paddingX={[3, 3, 3, 14]}>{props.children}</Box>
   )
 
   return props.isFooter ? (
