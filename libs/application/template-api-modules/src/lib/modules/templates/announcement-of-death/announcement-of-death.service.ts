@@ -191,8 +191,8 @@ export class AnnouncementOfDeathService {
         email: application.answers.applicantEmail as string,
       }
 
-      const uploadDataName = 'aod0.1'
-      const uploadDataId = 'aod0.1'
+      const uploadDataName = 'andlatstilkynning1.0 '
+      const uploadDataId = 'andlatstilkynning1.0 '
 
       const extraData = {
         caseNumber: application.answers.caseNumber as string,
