@@ -18,6 +18,7 @@ export const spacing = {
   9: UNIT * 9,
   10: UNIT * 10,
   12: UNIT * 12,
+  14: UNIT * 14,
   15: UNIT * 15,
   20: UNIT * 20,
   21: UNIT * 21,
@@ -47,7 +48,7 @@ export const theme = {
   breakpoints: {
     xs: 0,
     sm: 576,
-    md: 768,
+    md: 767,
     lg: 992,
     xl: 1440,
   },

@@ -18,16 +18,17 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import {
   Case,
-  CaseType,
   isInvestigationCase,
   isRestrictionCase,
   SessionArrangements,
   UserRole,
 } from '@island.is/judicial-system/types'
-import { accused } from '@island.is/judicial-system-web/messages'
-import { defendant } from '@island.is/judicial-system-web/messages'
-import { rcHearingArrangements } from '@island.is/judicial-system-web/messages'
-import { icHearingArrangements } from '@island.is/judicial-system-web/messages'
+import {
+  accused,
+  defendant,
+  rcHearingArrangements,
+  icHearingArrangements,
+} from '@island.is/judicial-system-web/messages'
 
 import { BlueBox } from '..'
 import { useCase, useLawyers } from '../../utils/hooks'

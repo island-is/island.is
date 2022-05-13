@@ -4,7 +4,7 @@ import { Case, CaseDecision, CaseType } from '@island.is/judicial-system/types'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { Box, Button, IconMapIcon, Text } from '@island.is/island-ui/core'
 import { TIME_FORMAT } from '@island.is/judicial-system/consts'
-import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages'
+import { caseDates } from '@island.is/judicial-system-web/messages'
 
 import * as styles from './CaseDates.css'
 import { useIntl } from 'react-intl'
@@ -31,7 +31,7 @@ const CaseDates: React.FC<Props> = (props) => {
       <div className={styles.caseDateContainer}>
         {workingCase.isValidToDateInThePast ? (
           <Text variant="h5">
-            {formatMessage(m.sections.caseDates.restrictionExpired, {
+            {formatMessage(caseDates.restrictionExpired, {
               caseType: isTravelBan ? CaseType.TRAVEL_BAN : workingCase.type,
               date: `${formatDate(
                 workingCase.validToDate,
@@ -47,7 +47,7 @@ const CaseDates: React.FC<Props> = (props) => {
           >
             <Box>
               <Text variant="h5">
-                {formatMessage(m.sections.caseDates.restrictionValidTo, {
+                {formatMessage(caseDates.restrictionValidTo, {
                   caseType: isTravelBan
                     ? CaseType.TRAVEL_BAN
                     : workingCase.type,
@@ -59,7 +59,7 @@ const CaseDates: React.FC<Props> = (props) => {
               </Text>
               {workingCase.isCustodyIsolation && workingCase.isolationToDate && (
                 <Text variant="h5" as="h5">
-                  {formatMessage(m.sections.caseDates.isolationValidTo, {
+                  {formatMessage(caseDates.isolationValidTo, {
                     date: `${formatDate(
                       workingCase.isolationToDate,
                       'PPP',

@@ -49,6 +49,7 @@ export const RestrictedCaseQuery = gql`
       courtCaseNumber
       courtEndTime
       validToDate
+      decision
       isValidToDateInThePast
       isCustodyIsolation
       isolationToDate

@@ -17,8 +17,7 @@ import {
   useCourtUpload,
 } from '@island.is/judicial-system-web/src/utils/hooks/useCourtUpload'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
-import { ruling } from '@island.is/judicial-system-web/messages'
+import { titles, ruling } from '@island.is/judicial-system-web/messages'
 import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import * as Constants from '@island.is/judicial-system/consts'
