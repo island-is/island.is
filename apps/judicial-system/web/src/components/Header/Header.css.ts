@@ -7,10 +7,16 @@ export const header = style({
   justifyContent: 'space-between',
   height: 112,
   borderBottom: `1px solid ${theme.color.blue200}`,
-  padding: `0 ${theme.spacing[6]}px`,
+  padding: `0 ${theme.spacing[3]}px`,
+
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      padding: `0 ${theme.spacing[6]}px`,
+    },
+  },
 })
 
-export const headerTextContainer = style({
+export const logoContainer = style({
   flexDirection: 'column',
 
   '@media': {
@@ -21,15 +27,19 @@ export const headerTextContainer = style({
   },
 })
 
-export const headerTextWrapper = style({
-  marginTop: '5px',
-})
-
-export const headerDivider = style({
+export const logoContainerRvgName = style({
   display: 'none',
 
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      display: 'flex',
+      marginTop: '5px',
+    },
+  },
+
+  selectors: {
+    '&::before': {
+      content: '',
       display: 'inline-block',
       height: '19px',
       width: '2px',

@@ -1,4 +1,5 @@
 import React, { useContext } from 'react'
+import { useWindowSize } from 'react-use'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 
@@ -6,6 +7,7 @@ import { Logo, Text, Box, Button } from '@island.is/island-ui/core'
 import { api } from '@island.is/judicial-system-web/src/services'
 import { UserContext } from '../UserProvider/UserProvider'
 import { UserRole } from '@island.is/judicial-system/types'
+import { theme } from '@island.is/island-ui/theme'
 import * as Constants from '@island.is/judicial-system/consts'
 
 import * as styles from './Header.css'
@@ -13,6 +15,8 @@ import * as styles from './Header.css'
 const Header: React.FC = () => {
   const router = useRouter()
   const { isAuthenticated, user } = useContext(UserContext)
+  const { width } = useWindowSize()
+  const isMobile = width <= theme.breakpoints.md
 
   return (
     <header className={styles.header}>
@@ -28,20 +32,12 @@ const Header: React.FC = () => {
         }
         data-testid="link-to-home"
       >
-        <Box
-          display="flex"
-          cursor="pointer"
-          className={styles.headerTextContainer}
-        >
-          <Logo width={146} />
+        <Box display="flex" cursor="pointer" className={styles.logoContainer}>
+          <Logo width={isMobile ? undefined : 146} iconOnly={isMobile} />
           {router.pathname !== '/' && (
-            <>
-              {/* Text does not allow className prop so we need to do this on a separate span */}
-              <span className={styles.headerDivider} />
-              <span className={styles.headerTextWrapper}>
-                <Text>Réttarvörslugátt</Text>
-              </span>
-            </>
+            <span className={styles.logoContainerRvgName}>
+              <Text>Réttarvörslugátt</Text>
+            </span>
           )}
         </Box>
       </Link>
