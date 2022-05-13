@@ -31,6 +31,7 @@ function callProvider(
     (error) => {
       if (
         error.reason &&
+        error.reason === 'object' &&
         ((!('title' in error.reason) && 'summary' in error.reason) ||
           ('title' in error.reason && !('summary' in error.reason)))
       ) {
