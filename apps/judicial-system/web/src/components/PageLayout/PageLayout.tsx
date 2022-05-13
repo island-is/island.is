@@ -12,8 +12,7 @@ import {
 import { UserRole, Case } from '@island.is/judicial-system/types'
 import { Sections } from '@island.is/judicial-system-web/src/types'
 import * as Constants from '@island.is/judicial-system/consts'
-import { sections } from '@island.is/judicial-system-web/messages/Core/sections'
-import { pageLayout } from '@island.is/judicial-system-web/messages/Core/pageLayout'
+import { sections, pageLayout } from '@island.is/judicial-system-web/messages'
 
 import { UserContext } from '../UserProvider/UserProvider'
 import Logo from '../Logo/Logo'
