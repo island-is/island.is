@@ -13,7 +13,7 @@ export const VehicleCard: FC<Props> = ({ vehicle }) => {
   const { formatMessage } = useLocale()
   const history = useHistory()
   const handleClick = () =>
-    vehicle.regno &&
+    vehicle.regn &&
     history.push(
       ServicePortalPath.AssetsVehiclesDetail.replace(':id', vehicle.regno),
     )
