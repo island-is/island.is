@@ -269,7 +269,7 @@ jobs:
       CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
       API_MOCKS: 'true'
       NODE_OPTIONS: --max-old-space-size=4096
-      E2E_BUILD_ID: ${{needs.prepare.outputs.E2E_BUILD_ID}}-$GITHUB_RUN_ATTEMPT
+      E2E_BUILD_ID: ${{needs.prepare.outputs.E2E_BUILD_ID}}-${GITHUB_RUN_ATTEMPT}
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.E2E_CHUNKS) }}
