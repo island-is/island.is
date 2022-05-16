@@ -1,4 +1,3 @@
-// scope-test.ts
 import { createScope } from './helpers'
 export const up = createScope({
   // Required:
