@@ -9,13 +9,9 @@ import { ApiProperty } from '@nestjs/swagger'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { ConfigType } from '@island.is/nest/config'
 
-export const SIGNING_OPTIONS = 'SIGNING_OPTIONS'
-
-export interface SigningServiceOptions {
-  url: string
-  accessToken: string
-}
+import { signingModuleConfig } from './signing.config'
 
 export class SigningServiceResponse {
   @ApiProperty()
@@ -61,8 +57,8 @@ interface DokobitStatusResponse {
 @Injectable() // extends RESTDataSource
 export class SigningService extends DataSource {
   constructor(
-    @Inject(SIGNING_OPTIONS)
-    private readonly options: SigningServiceOptions,
+    @Inject(signingModuleConfig.KEY)
+    private readonly config: ConfigType<typeof signingModuleConfig>,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {
@@ -101,7 +97,7 @@ export class SigningService extends DataSource {
     form.append('pdf[files][0][digest]', digest)
 
     const res = await fetch(
-      `${this.options.url}/mobile/sign.json?access_token=${this.options.accessToken}`,
+      `${this.config.url}/mobile/sign.json?access_token=${this.config.accessToken}`,
       {
         method: 'POST',
         body: form,
@@ -131,7 +127,7 @@ export class SigningService extends DataSource {
     // Later, we may decide to return after one call and let the caller handle retries
     for (let i = 1; i < 120; i++) {
       const res = await fetch(
-        `${this.options.url}/mobile/sign/status/${documentToken}.json?access_token=${this.options.accessToken}`,
+        `${this.config.url}/mobile/sign/status/${documentToken}.json?access_token=${this.config.accessToken}`,
       )
 
       const resStatus: DokobitStatusResponse = await res.json()

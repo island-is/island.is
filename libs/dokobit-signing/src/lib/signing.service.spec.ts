@@ -1,17 +1,17 @@
 import { Base64 } from 'js-base64'
 import { createHash } from 'crypto'
+import { uuid } from 'uuidv4'
 
 import { Test, TestingModule } from '@nestjs/testing'
 
 import { LoggingModule } from '@island.is/logging'
+import { ConfigModule } from '@island.is/nest/config'
 
 import { SigningModule } from './signing.module'
 import { SigningService } from './signing.service'
+import { signingModuleConfig } from './signing.config'
 
-const testOptions = {
-  url: 'Test Url',
-  accessToken: 'Test Access Token',
-}
+const testAccessToken = uuid()
 const testMobileNumber = '1111111'
 const testMessage = 'Test Message'
 const testContact = 'Test Contact'
@@ -19,14 +19,14 @@ const testLocation = 'Test Location'
 const testDocumentName = 'Test Document Name'
 const testDocumentContent = 'Test Document Content'
 
-const testSignUrl = `${testOptions.url}/mobile/sign.json?access_token=${testOptions.accessToken}`
+const testSignUrl = `https://developers.dokobit.com/mobile/sign.json?access_token=${testAccessToken}`
 const testSignResponse = {
   status: 'ok',
   control_code: 'Test Control Code',
   token: 'Test Document Token',
 }
 
-const testStatusUrl = `${testOptions.url}/mobile/sign/status/${testSignResponse.token}.json?access_token=${testOptions.accessToken}`
+const testStatusUrl = `https://developers.dokobit.com/mobile/sign/status/${testSignResponse.token}.json?access_token=${testAccessToken}`
 const testSignedDocumentContent = 'Test Signed Document Content'
 const testStatusResponse = {
   status: 'ok',
@@ -82,8 +82,14 @@ describe('SigningService', () => {
   beforeEach(async () => {
     fetchMock.mockClear()
 
+    process.env.DOKOBIT_ACCESS_TOKEN = testAccessToken
+
     const module: TestingModule = await Test.createTestingModule({
-      imports: [LoggingModule, SigningModule.register(testOptions)],
+      imports: [
+        LoggingModule,
+        SigningModule,
+        ConfigModule.forRoot({ isGlobal: true, load: [signingModuleConfig] }),
+      ],
     }).compile()
 
     signingService = module.get<SigningService>(SigningService)

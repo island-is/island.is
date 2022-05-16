@@ -62,7 +62,7 @@ if (process.env.INIT_SCHEMA === 'true') {
     AwsModule,
     FileStorageModule.register(environment.fileStorage),
     BullModule,
-    SigningModule.register(environment.signingOptions),
+    SigningModule,
     CmsTranslationsModule,
     FeatureFlagModule,
     LoggingModule,
