@@ -13403,7 +13403,7 @@ config-chain@^1.1.12:
     ini "^1.3.4"
     proto-list "~1.2.1"
 
-configcat-common@^4.4.0:
+configcat-common@4.4.2, configcat-common@^4.4.0:
   version "4.4.2"
   resolved "https://registry.yarnpkg.com/configcat-common/-/configcat-common-4.4.2.tgz#12740536e3fe965f09d10b954e53d960f553b247"
   integrity sha512-QTNZ0vz/PAyJ5r/EBThybKSexy+SYOMqcA5qdv97JUuk67kX8gtAibtSrlcOxYOThBiF+YJaAeiKSk/43+StVQ==
