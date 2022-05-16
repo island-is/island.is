@@ -527,7 +527,8 @@ export const ParentalLeaveForm: Form = buildForm({
                 'requestRights.isRequestingRights',
                 'requestRights.requestDays',
               ],
-              title: 'Hversu mörgum dögum viltu óska eftir?',
+              title:
+                parentalLeaveFormMessages.shared.transferRightsRequestTitle,
               condition: (answers, externalData) => {
                 const canTransferRights =
                   getSelectedChild(answers, externalData)?.parentalRelation ===
@@ -546,7 +547,7 @@ export const ParentalLeaveForm: Form = buildForm({
                 'giveRights.isGivingRights',
                 'giveRights.giveDays',
               ],
-              title: 'Hversu marga daga viltu færa yfir á hitt foreldrið?',
+              title: parentalLeaveFormMessages.shared.transferRightsGiveTitle,
               condition: (answers, externalData) => {
                 const canTransferRights =
                   getSelectedChild(answers, externalData)?.parentalRelation ===

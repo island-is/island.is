@@ -24,16 +24,34 @@ const LokeCaseNumber: React.FC<Props> = (props) => {
   const [
     policeCaseNumberErrorMessage,
     setPoliceCaseNumberErrorMessage,
-  ] = useState<string>('')
+  ] = useState('')
+  const [
+    policeCaseNumberInitialized,
+    setPoliceCaseNumberInitialized,
+  ] = useState(false)
 
   useEffect(() => {
-    if (!workingCase.policeCaseNumber) {
-      setWorkingCase({
-        ...workingCase,
-        policeCaseNumber: user?.institution?.policeCaseNumberPrefix ?? '',
-      })
+    if (
+      !policeCaseNumberInitialized &&
+      user?.institution?.policeCaseNumberPrefix &&
+      workingCase
+    ) {
+      if (!workingCase.policeCaseNumber) {
+        setWorkingCase({
+          ...workingCase,
+          policeCaseNumber: user?.institution?.policeCaseNumberPrefix ?? '',
+        })
+      }
+
+      setPoliceCaseNumberInitialized(true)
     }
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [
+    policeCaseNumberInitialized,
+    setPoliceCaseNumberInitialized,
+    setWorkingCase,
+    user?.institution?.policeCaseNumberPrefix,
+    workingCase,
+  ])
 
   return (
     <>

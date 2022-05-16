@@ -427,5 +427,5 @@ const getSortedSupportSubCategoryTitles = (
 
 export default withMainLayout(SubPage, {
   showHeader: false,
-  showFooter: false,
+  footerVersion: 'organization',
 })

@@ -1,13 +1,10 @@
 import { theme } from '@island.is/island-ui/theme'
 import { BoostChatPanelConfig } from './types'
 
-export const endpoints = {
-  'covid-island': {
-    id: '246covid-island',
-    conversationKey: '246covid-island-conversationId',
-    url: 'https://246covid-island.boost.ai/chatPanel/chatPanel.js',
-  },
-  syslumenn: {
+export const boostChatPanelEndpoints = {
+  // Sýslumenn organization
+  // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/kENblMMMvZ3DlyXw1dwxQ
+  kENblMMMvZ3DlyXw1dwxQ: {
     id: 'syslumenn',
     conversationKey: 'syslumenn',
     url: 'https://syslumenn.boost.ai/chatPanel/chatPanel.js',

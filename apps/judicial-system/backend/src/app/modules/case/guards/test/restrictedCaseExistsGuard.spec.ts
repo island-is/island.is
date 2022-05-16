@@ -69,6 +69,9 @@ describe('Restricted Case Exists Guard', () => {
       'creatingProsecutorId',
       'prosecutorId',
       'courtCaseNumber',
+      'courtDate',
+      'courtEndTime',
+      'decision',
       'validToDate',
       'isCustodyIsolation',
       'isolationToDate',
@@ -79,6 +82,7 @@ describe('Restricted Case Exists Guard', () => {
       'courtRecordSignatoryId',
       'courtRecordSignatureDate',
       'parentCaseId',
+      'caseModifiedExplanation',
     ]
 
     beforeEach(async () => {

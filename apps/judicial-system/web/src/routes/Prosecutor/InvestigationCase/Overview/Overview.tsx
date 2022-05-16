@@ -22,13 +22,13 @@ import { FormContext } from '@island.is/judicial-system-web/src/components/FormP
 import {
   icOverview,
   icOverview as m,
+  titles,
 } from '@island.is/judicial-system-web/messages'
 import { createCaseResentExplanation } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import * as Constants from '@island.is/judicial-system/consts'
 
 import OverviewForm from './OverviewForm'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
 
 export const Overview: React.FC = () => {
   const router = useRouter()
