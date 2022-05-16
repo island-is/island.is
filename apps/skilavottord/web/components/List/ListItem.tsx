@@ -39,23 +39,24 @@ export const ListItem: FC<CompanyProps> = ({
           {content.map((row, key) => {
             if (!row?.text) return null
             return (
-            <Text
-              key={key}
-              color={row.isHighlighted ? 'blue400' : 'currentColor'}
-            >
-              {row.href ? (
-                <Link
-                  href={createLink(row.href)}
-                  color="blue400"
-                  underline="small"
-                >
-                  {row.text}
-                </Link>
-              ) : (
-                row.text
-              )}
-            </Text>
-          )})}
+              <Text
+                key={key}
+                color={row.isHighlighted ? 'blue400' : 'currentColor'}
+              >
+                {row.href ? (
+                  <Link
+                    href={createLink(row.href)}
+                    color="blue400"
+                    underline="small"
+                  >
+                    {row.text}
+                  </Link>
+                ) : (
+                  row.text
+                )}
+              </Text>
+            )
+          })}
         </Stack>
       </Box>
       {buttons}

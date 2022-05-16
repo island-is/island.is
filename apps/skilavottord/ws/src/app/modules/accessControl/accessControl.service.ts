@@ -35,7 +35,7 @@ export class AccessControlService {
     partnerId: string,
   ): Promise<AccessControlModel[]> {
     return this.accessControlModel.findAll({
-      where: { partnerId,  role: ['recyclingCompany', 'recyclingCompanyAdmin'] },
+      where: { partnerId, role: ['recyclingCompany', 'recyclingCompanyAdmin'] },
       include: [
         {
           model: RecyclingPartnerModel,

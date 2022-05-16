@@ -2,7 +2,10 @@ import React, { FC, useContext } from 'react'
 import { useForm } from 'react-hook-form'
 
 import { Option } from '@island.is/island-ui/core'
-import { ModalProps, PartnerPageLayout } from '@island.is/skilavottord-web/components'
+import {
+  ModalProps,
+  PartnerPageLayout,
+} from '@island.is/skilavottord-web/components'
 import {
   CreateAccessControlInput,
   AccessControlRole,

@@ -29,18 +29,22 @@ export class AccessControlResolver {
   private verifyRecyclingCompanyInput(
     input: CreateAccessControlInput | UpdateAccessControlInput,
   ) {
-    if ((input.role === Role.recyclingCompany || input.role === Role.recyclingCompanyAdmin ) && !input.partnerId) {
+    if (
+      (input.role === Role.recyclingCompany ||
+        input.role === Role.recyclingCompanyAdmin) &&
+      !input.partnerId
+    ) {
       throw new BadRequestException(
         `User is not recyclingCompany/recyclingCompanyAdmin or partnerId not found`,
       )
     }
   }
 
-  private verifyRecyclingCompanyAdminInput(
-    role: Role,
-    user: User,
-  ) {
-    if (user.role === Role.recyclingCompanyAdmin && !(role === Role.recyclingCompany || role === Role.recyclingCompanyAdmin )) {
+  private verifyRecyclingCompanyAdminInput(role: Role, user: User) {
+    if (
+      user.role === Role.recyclingCompanyAdmin &&
+      !(role === Role.recyclingCompany || role === Role.recyclingCompanyAdmin)
+    ) {
       throw new BadRequestException(
         `RecyclingCompanyAdmin does not have permission on ${role}`,
       )

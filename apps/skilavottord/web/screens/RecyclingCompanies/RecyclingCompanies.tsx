@@ -201,23 +201,36 @@ const RecyclingCompanies: FC = () => {
                     <Data>{partner.address}</Data>
                     <Data>{partner.postnumber}</Data>
                     <Data>{partner.email}</Data>
-                    <Data>{partner.active ? <Text color="mint400" fontWeight='semiBold'  variant='eyebrow'>
-                                      {t.status.active}
-                                    </Text> : <Text color="red600" fontWeight='semiBold' variant='eyebrow'>
-                                      {t.status.inactive}
-                                    </Text>}
+                    <Data>
+                      {partner.active ? (
+                        <Text
+                          color="mint400"
+                          fontWeight="semiBold"
+                          variant="eyebrow"
+                        >
+                          {t.status.active}
+                        </Text>
+                      ) : (
+                        <Text
+                          color="red600"
+                          fontWeight="semiBold"
+                          variant="eyebrow"
+                        >
+                          {t.status.inactive}
+                        </Text>
+                      )}
                     </Data>
                     <Data>
-                          <Button
-                            variant="text"
-                            icon="chevronForward"
-                            size="small"
-                            nowrap
-                            onClick={() => handleUpdate(partner.companyId)}
-                          >
-                            {t.buttons.view}
-                          </Button>
-                        
+                      <Button
+                        variant="text"
+                        icon="chevronForward"
+                        size="small"
+                        nowrap
+                        onClick={() => handleUpdate(partner.companyId)}
+                      >
+                        {t.buttons.view}
+                      </Button>
+
                       {/* <DropdownMenu
                         disclosure={
                           <Button
