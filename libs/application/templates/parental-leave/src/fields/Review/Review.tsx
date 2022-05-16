@@ -93,7 +93,9 @@ export const Review: FC<ReviewScreenProps> = ({
   const privatePensionFundOptions = usePrivatePensionFundOptions().filter(
     ({ value }) => value !== NO_PRIVATE_PENSION_FUND,
   )
-  const unionOptions = useUnionOptions()
+  const unionOptions = useUnionOptions().filter(
+    ({ value }) => value !== NO_UNION,
+  )
   const { locale, formatMessage } = useLocale()
   const [
     {
