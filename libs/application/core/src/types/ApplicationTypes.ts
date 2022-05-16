@@ -127,6 +127,7 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.NO_DEBT_CERTIFICATE]: {
     slug: 'skuldleysisvottord',
     translation: 'ndc.application',
+  },
   [ApplicationTypes.FINANCIAL_STATEMENTS_INAO]: {
     slug: 'skilarsreikninga',
     translation: 'fsn.application',
