@@ -372,7 +372,7 @@
     "contentful-cli": "1.5.14",
     "cross-env": "7.0.2",
     "cross-spawn": "7.0.3",
-    "csstype": "2.6.13",
+    "csstype": "3.0.11",
     "csv-parse": "4.16.0",
     "cypress": "8.4.1",
     "dotenv": "14.3.2",
