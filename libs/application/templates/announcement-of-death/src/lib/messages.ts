@@ -469,8 +469,8 @@ Ef ekkert á við sem hér að ofan er talið rennur arfur í ríkissjóð. Nán
   errorAge: {
     id: 'aod.application:error.errorAge',
     defaultMessage:
-      'Einstaklingurinn sem þú ert að reyna að senda tilkynningaferlið áfram á hefur ekki náð 18 ára aldri og getur því ekki tekið við ferli',
-    description: 'Elected person is not 18 years old or over.',
+      'Viðtakandi þarf að hafa náð 18 ára aldri',
+    description: 'Elected person must be at least 18 years old.',
   },
 
   /* Announcement */
