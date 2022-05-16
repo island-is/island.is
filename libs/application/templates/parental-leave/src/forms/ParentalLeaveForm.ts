@@ -390,25 +390,10 @@ export const ParentalLeaveForm: Form = buildForm({
           children: [
             buildCustomField({
               component: 'SelfEmployed',
-              id: 'employer.selfEmployed',
-              title:
-                parentalLeaveFormMessages.selfEmployed.description,
-            }),
-            buildRadioField({
               id: 'employer.isSelfEmployed',
               title: parentalLeaveFormMessages.selfEmployed.title,
               description: parentalLeaveFormMessages.selfEmployed.description,
               width: 'half',
-              options: [
-                {
-                  label: parentalLeaveFormMessages.shared.yesOptionLabel,
-                  value: YES,
-                },
-                {
-                  label: parentalLeaveFormMessages.shared.noOptionLabel,
-                  value: NO,
-                },
-              ],
             }),
             buildMultiField({
               id: 'employer.selfEmployed.attachment',
