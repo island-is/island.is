@@ -21,6 +21,7 @@ import { defaultRenderNode } from './defaultRenderNode'
 import { defaultRenderMark } from './defaultRenderMark'
 import { defaultRenderComponent } from './defaultRenderComponents'
 import { Box } from '@island.is/island-ui/core'
+import { EmbedProps } from '../Embed/Embed'
 
 type HtmlSlice = { __typename: 'Html'; id: string; document: Document }
 type FaqListSlice = { __typename: 'FaqList'; id: string } & FaqListProps
@@ -63,6 +64,11 @@ type SectionWithImageSlice = {
   id: string
 } & SectionWithImageProps
 
+type EmbedSlice = {
+  __typename: 'EmbedSlice'
+  id: string
+} & EmbedProps
+
 export type SliceType =
   | HtmlSlice
   | FaqListSlice
@@ -77,6 +83,7 @@ export type SliceType =
   | LocationSlice
   | TellUsAStorySlice
   | SectionWithImageSlice
+  | EmbedSlice
   | {
       // TODO: these are used on the about page - we need to move their rendering
       // to here to make them re-usable by other page types

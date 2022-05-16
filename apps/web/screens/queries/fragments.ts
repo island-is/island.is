@@ -465,6 +465,12 @@ export const slices = gql`
     }
   }
 
+  fragment EmbedSliceFields on EmbedSlice {
+    title
+    url
+    height
+  }
+
   fragment BaseSlices on Slice {
     ...TimelineFields
     ...MailingListSignupFields
@@ -494,6 +500,7 @@ export const slices = gql`
     ...AccordionSliceFields
     ...OverviewLinksField
     ...EventSliceFields
+    ...EmbedSliceFields
   }
 
   fragment AllSlices on Slice {

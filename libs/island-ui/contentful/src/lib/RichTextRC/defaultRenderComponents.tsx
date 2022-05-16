@@ -15,6 +15,7 @@ import { SectionWithImage } from '../SectionWithImage/SectionWithImage'
 import { TeamList } from '../TeamList/TeamList'
 import { ContactUs } from '../ContactUs/ContactUs'
 import { Location } from '../Location/Location'
+import { Embed } from '../Embed/Embed'
 
 const renderConnectedComponent = (slice) => {
   const data = slice.json
@@ -76,4 +77,6 @@ export const defaultRenderComponent = {
       state="edit"
     />
   ),
+
+  EmbedSlice: (slice) => <Embed {...slice} />,
 }
