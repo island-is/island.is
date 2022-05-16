@@ -157,10 +157,9 @@ export class VehiclesService {
           result: newestInspection?.result,
           plateStatus: data.platestatus,
           nextInspectionDate: data.nextinspectiondate,
-          lastInspectionDate:
-            data.inspections && data.inspections.length > 1
-              ? data.inspections[1]?.date
-              : null,
+          lastInspectionDate: data.inspections
+            ? data.inspections[0]?.date
+            : null,
         },
         technicalInfo: {
           engine: data.techincal?.engine,
