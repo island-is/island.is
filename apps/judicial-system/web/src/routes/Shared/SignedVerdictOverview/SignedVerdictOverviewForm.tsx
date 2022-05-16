@@ -340,7 +340,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
         </>
       )}
       <Box marginBottom={10}>
-        <Text as="h3" variant="h3" marginBottom={5}>
+        <Text as="h3" variant="h3" marginBottom={3}>
           {formatMessage(m.caseDocuments)}
         </Text>
         <Box marginBottom={2}>
