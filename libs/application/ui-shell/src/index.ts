@@ -4,6 +4,7 @@ export * from './types'
 export { ErrorShell } from './components/ErrorShell'
 export { LoadingShell } from './components/LoadingShell'
 export { default as RefetchContext } from './context/RefetchContext'
+export { useApplicationNamespaces } from './hooks/useApplicationNamespaces'
 export {
   HeaderInfoContext,
   HeaderInfoProvider,

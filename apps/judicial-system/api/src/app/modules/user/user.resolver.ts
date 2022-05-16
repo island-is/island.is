@@ -19,7 +19,6 @@ import { UpdateUserInput } from './dto/updateUser.input'
 import { UserQueryInput } from './dto/user.input'
 import { User } from './user.model'
 
-@UseGuards(JwtGraphQlAuthGuard)
 @Resolver(() => User)
 export class UserResolver {
   constructor(
@@ -28,6 +27,7 @@ export class UserResolver {
     private readonly logger: Logger,
   ) {}
 
+  @UseGuards(JwtGraphQlAuthGuard)
   @Query(() => [User], { nullable: true })
   users(
     @CurrentGraphQlUser() user: TUser,
@@ -43,6 +43,7 @@ export class UserResolver {
     )
   }
 
+  @UseGuards(JwtGraphQlAuthGuard)
   @Query(() => User, { nullable: true })
   async user(
     @Args('input', { type: () => UserQueryInput })
@@ -60,6 +61,7 @@ export class UserResolver {
     )
   }
 
+  @UseGuards(new JwtGraphQlAuthGuard(true))
   @Query(() => User, { nullable: true })
   async currentUser(
     @CurrentGraphQlUser() user: TUser,
@@ -69,6 +71,7 @@ export class UserResolver {
     return user as User
   }
 
+  @UseGuards(JwtGraphQlAuthGuard)
   @Mutation(() => User, { nullable: true })
   createUser(
     @Args('input', { type: () => CreateUserInput })
@@ -86,6 +89,7 @@ export class UserResolver {
     )
   }
 
+  @UseGuards(JwtGraphQlAuthGuard)
   @Mutation(() => User, { nullable: true })
   updateUser(
     @Args('input', { type: () => UpdateUserInput })

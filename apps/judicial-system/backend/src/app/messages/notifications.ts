@@ -218,10 +218,18 @@ export const notifications = {
         'Notaður sem texti í pósti til dómara og dómritara vegna undirritunar úrskúrðar ef ekki tókst að vista þingbók eða úrskurð í Auði',
     },
     defenderBodyAttachment: {
+      // TODO: Remove this message
       id:
         'judicial.system.backend:notifications.signed_ruling.defender_body_attachment',
       defaultMessage:
         '{courtName} hefur sent þér endurrit úr þingbók í máli {courtCaseNumber} ásamt úrskurði dómara í heild sinni í meðfylgjandi viðhengi.',
+      description:
+        'Notaður sem texti í pósti til verjanda/talsmanns vegna undirritunar úrskúrðar',
+    },
+    defenderBody: {
+      id: 'judicial.system.backend:notifications.signed_ruling.defender_body',
+      defaultMessage:
+        'Dómari hefur undirritað og staðfest úrskurð í máli {courtCaseNumber} hjá {courtName}.<br /><br />{defenderHasAccessToRvg, select, FALSE {Þú getur nálgast gögn málsins hjá {courtName} ef þau hafa ekki þegar verið afhent} other {{signedVerdictAvailableInS3, select, FALSE {Þú getur nálgast undirritaðan úrskurð hjá {courtName} ef upp koma vandamál við að sækja hann í {linkStart}Réttarvörslugátt{linkEnd}} other {Þú getur nálgast gögn málsins í {linkStart}Réttarvörslugátt{linkEnd} með rafrænum skilríkjum}}}}.',
       description:
         'Notaður sem texti í pósti til verjanda/talsmanns vegna undirritunar úrskúrðar',
     },
@@ -380,6 +388,14 @@ export const notifications = {
         '{sessionArrangementsText}<br /><br />{courtDateText}<br /><br />{courtCaseNumberText}<br /><br />{courtRoomText}<br /><br />{judgeText}{registrarText, select, NONE {} other {<br /><br />{registrarText}}}<br /><br />{prosecutorText}',
       description:
         'Notaður sem beinagrind á pósti til verjanda/talsmanns þegar dómstóll boðar í fyrirtöku',
+    },
+    link: {
+      id:
+        'judicial.system.backend:notifications.defender_court_date_email.link',
+      defaultMessage:
+        '<br /><br />{defenderHasAccessToRvg, select, false {Þú getur nálgast gögn málsins hjá {courtName} ef þau hafa ekki þegar verið afhent} other {Þú getur nálgast gögn málsins í {linkStart}Réttarvörslugátt{linkEnd} með rafrænum skilríkjum}}.',
+      description:
+        'Notaður sem vísun í gögn málsins í pósti til verjanda/talsmanns þegar dómstóll boðar í fyrirtöku',
     },
   }),
   defenderRevokedEmail: defineMessages({

@@ -40,7 +40,7 @@ const FinancialAidTemplate: ApplicationTemplate<
   ApplicationStateSchema<Events>,
   Events
 > = {
-  readyForProduction: false,
+  readyForProduction: true,
   type: ApplicationTypes.FINANCIAL_AID,
   name: application.name,
   dataSchema,

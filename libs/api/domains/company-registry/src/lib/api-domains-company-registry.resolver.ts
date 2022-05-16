@@ -65,8 +65,8 @@ export class CompanyRegistryResolver {
     if (rskCompanyItem.companyInfo) return rskCompanyItem.companyInfo
 
     const company = await this.rskCompanyInfoService.getCompanyInformationWithExtra(
-      rskCompanyItem.nationalId ?? '',
+      rskCompanyItem.nationalId,
     )
-    return company.companyInfo
+    return company ? company.companyInfo : undefined
   }
 }

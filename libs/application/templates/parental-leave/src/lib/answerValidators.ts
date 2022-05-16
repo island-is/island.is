@@ -84,6 +84,11 @@ export const answerValidators: Record<string, AnswerValidator> = {
       'payments.privatePensionFundPercentage',
     )
 
+    const usePrivatePensionFund = getValueViaPath(
+      application.answers,
+      'usePrivatePensionFund',
+    )
+
     const buildError = (message: StaticText, path: string) =>
       buildValidationError(`${PAYMENTS}.${path}`)(message)
 
@@ -91,41 +96,58 @@ export const answerValidators: Record<string, AnswerValidator> = {
     // this will only happen when the usePrivatePensionFund field is set to NO
     if (
       payments.privatePensionFund === NO_PRIVATE_PENSION_FUND &&
-      payments.privatePensionFundPercentage === ''
+      payments.privatePensionFundPercentage === '0'
     )
       return undefined
 
-    if (payments.privatePensionFund === '' || privatePensionFund === '') {
+    if (usePrivatePensionFund === NO || usePrivatePensionFund === YES) {
+      if (payments.privatePensionFund === '') {
+        return buildError(coreErrorMessages.defaultError, 'privatePensionFund')
+      }
+      if (payments.privatePensionFundPercentage === '') {
+        return buildError(
+          coreErrorMessages.defaultError,
+          'privatePensionFundPercentage',
+        )
+      }
+    }
+
+    if (
+      payments.privatePensionFund === '' ||
+      payments.privatePensionFund === NO_PRIVATE_PENSION_FUND
+    ) {
       return buildError(coreErrorMessages.defaultError, 'privatePensionFund')
     }
 
-    if (!payments.privatePensionFund) {
-      return buildError(coreErrorMessages.defaultError, 'privatePensionFund')
+    // This case will only happen if the users has first selected NO
+    // and then goes back and changes to YES without filling in data for pritvatePensionFundPercentage
+    if (
+      privatePensionFund === NO_PRIVATE_PENSION_FUND &&
+      privatePensionFundPercentage === '0' &&
+      payments.privatePensionFundPercentage === ''
+    ) {
+      return buildError(
+        coreErrorMessages.defaultError,
+        'privatePensionFundPercentage',
+      )
+    }
+
+    if (
+      payments.privatePensionFundPercentage !== '2' &&
+      payments.privatePensionFundPercentage !== '4'
+    ) {
+      return buildError(
+        coreErrorMessages.defaultError,
+        'privatePensionFundPercentage',
+      )
     }
 
     // validate that the privatePensionFundPercentage is either 2 or 4 percent
     if (
-      typeof privatePensionFundPercentage === 'string' ||
-      typeof payments.privatePensionFundPercentage === 'string'
+      payments.privatePensionFundPercentage === '2' ||
+      payments.privatePensionFundPercentage === '4'
     ) {
-      if (
-        payments.privatePensionFundPercentage === '2' ||
-        payments.privatePensionFundPercentage === '4'
-      ) {
-        return undefined
-      }
-
-      return buildError(
-        coreErrorMessages.defaultError,
-        'privatePensionFundPercentage',
-      )
-    }
-
-    if (!payments.privatePensionFundPercentage) {
-      return buildError(
-        coreErrorMessages.defaultError,
-        'privatePensionFundPercentage',
-      )
+      return undefined
     }
 
     return undefined

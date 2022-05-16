@@ -1169,6 +1169,29 @@
         }
       }
     },
+    "api-domains-financial-statements-inao": {
+      "root": "libs/api/domains/financial-statements-inao",
+      "sourceRoot": "libs/api/domains/financial-statements-inao/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/api/domains/financial-statements-inao/**/*.ts"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/api/domains/financial-statements-inao"],
+          "options": {
+            "jestConfig": "libs/api/domains/financial-statements-inao/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "api-domains-fishing-license": {
       "root": "libs/api/domains/fishing-license",
       "sourceRoot": "libs/api/domains/fishing-license/src",
@@ -1549,6 +1572,27 @@
             "passWithNoTests": true
           },
           "outputs": ["coverage/libs/api/domains/user-profile"]
+        }
+      }
+    },
+    "api-domains-vehicles": {
+      "root": "libs/api/domains/vehicles",
+      "sourceRoot": "libs/api/domains/vehicles/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/api/domains/vehicles/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/api/domains/vehicles"],
+          "options": {
+            "jestConfig": "libs/api/domains/vehicles/jest.config.js",
+            "passWithNoTests": true
+          }
         }
       }
     },
@@ -2506,6 +2550,12 @@
           "options": {
             "jestConfig": "libs/application/templates/financial-aid/jest.config.js"
           }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/financial-aid/src/**/*.{js,ts,tsx}'"
+          }
         }
       }
     },
@@ -2799,6 +2849,49 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/mortgage-certificate/src/**/*.{js,ts,tsx}'"
+          }
+        }
+      }
+    },
+    "application-templates-no-debt-certificate": {
+      "root": "libs/application/templates/no-debt-certificate",
+      "sourceRoot": "libs/application/templates/no-debt-certificate/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/no-debt-certificate/tsconfig.lib.json",
+              "libs/application/templates/no-debt-certificate/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/no-debt-certificate/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": [
+            "coverage/libs/application/templates/no-debt-certificate"
+          ],
+          "options": {
+            "jestConfig": "libs/application/templates/no-debt-certificate/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "schemas/codegen": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "graphql-codegen --config libs/application/templates/no-debt-certificate/codegen.yml"
+          }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/no-debt-certificate/src/**/*.{js,ts,tsx}'"
           }
         }
       }
@@ -3958,8 +4051,9 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
-              "curl --location --request GET 'localhost:8080/r1/IS-DEV/GOV/10006/Skatturinn/ft-v1/openapi.json' --header 'X-Road-Client: IS-DEV/GOV/10000/island-is-client' > src/clientConfig.json",
-              "prettier --write src/clientConfig.json"
+              "curl 'http://localhost:8081/r1/IS-DEV/GOV/10006/Skatturinn/ft-v1/openapi.json' --header 'X-Road-Client: IS-DEV/GOV/10000/island-is-client' > src/clientConfig.json",
+              "jq '.paths.\"/v1/ft/search/{search_string}\".get.parameters += [{\"name\": \"offset\",\"in\": \"query\",\"schema\":{\"type\":\"integer\"}},{\"name\":\"limit\",\"in\":\"query\",\"schema\":{\"type\":\"integer\"}}]' src/clientConfig.json > _.tmp && mv _.tmp src/clientConfig.json",
+              "echo 'WARNING: Company Registry schema has manual edits. Please check git history and verify that everything still works.'"
             ],
             "parallel": false,
             "cwd": "libs/clients/rsk/company-registry"
@@ -4101,6 +4195,35 @@
               "yarn openapi-generator -o libs/clients/user-profile/gen/fetch -i apps/services/user-profile/src/openapi.yaml"
             ],
             "parallel": false
+          }
+        }
+      }
+    },
+    "clients-vehicles": {
+      "root": "libs/clients/vehicles",
+      "sourceRoot": "libs/clients/vehicles/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/clients/vehicles/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/clients/vehicles"],
+          "options": {
+            "jestConfig": "libs/clients/vehicles/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "schemas/external-openapi-generator": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "yarn openapi-generator -o libs/clients/vehicles/gen/fetch -i libs/clients/vehicles/src/clientConfig.json"
+            ]
           }
         }
       }
@@ -5109,393 +5232,6 @@
           }
         },
         "docker-express": {}
-      }
-    },
-    "gjafakort-api": {
-      "root": "apps/gjafakort/api",
-      "sourceRoot": "apps/gjafakort/api/src",
-      "projectType": "application",
-      "prefix": "gjafakort-api",
-      "schematics": {},
-      "architect": {
-        "build": {
-          "builder": "@irdnis/esbuildnx:build",
-          "options": {
-            "outputPath": "dist/apps/gjafakort/api",
-            "main": "apps/gjafakort/api/src/main.ts",
-            "tsConfig": "apps/gjafakort/api/tsconfig.app.json",
-            "assets": [],
-            "maxWorkers": 2
-          },
-          "configurations": {
-            "production": {
-              "optimization": true,
-              "extractLicenses": true,
-              "inspect": false
-            }
-          },
-          "outputs": ["{options.outputPath}"]
-        },
-        "serve": {
-          "builder": "@nrwl/node:execute",
-          "options": {
-            "buildTarget": "gjafakort-api:build"
-          }
-        },
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "apps/gjafakort/api/tsconfig.app.json",
-              "apps/gjafakort/api/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!apps/gjafakort/api/**/*"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "apps/gjafakort/api/jest.config.js",
-            "passWithNoTests": true
-          },
-          "outputs": ["coverage/apps/gjafakort/api"]
-        },
-        "schemas/codegen": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "graphql-codegen --config apps/gjafakort/codegen.yml"
-          }
-        },
-        "docker-express": {}
-      }
-    },
-    "gjafakort-application": {
-      "root": "apps/gjafakort/application",
-      "sourceRoot": "apps/gjafakort/application/src",
-      "projectType": "application",
-      "prefix": "gjafakort-application",
-      "schematics": {},
-      "architect": {
-        "build": {
-          "builder": "@irdnis/esbuildnx:build",
-          "options": {
-            "outputPath": "dist/apps/gjafakort/application",
-            "main": "apps/gjafakort/application/src/main.ts",
-            "tsConfig": "apps/gjafakort/application/tsconfig.app.json",
-            "assets": [
-              {
-                "glob": "*sequelize*",
-                "input": "apps/gjafakort/application",
-                "output": "./"
-              },
-              {
-                "glob": "migrations/**",
-                "input": "apps/gjafakort/application",
-                "output": "./"
-              },
-              {
-                "glob": ".sequelizerc",
-                "input": "apps/gjafakort/application",
-                "output": "./"
-              }
-            ],
-            "maxWorkers": 2
-          },
-          "configurations": {
-            "production": {
-              "optimization": true,
-              "extractLicenses": true,
-              "inspect": false
-            }
-          },
-          "outputs": ["{options.outputPath}"]
-        },
-        "serve": {
-          "builder": "@nrwl/node:execute",
-          "options": {
-            "buildTarget": "gjafakort-application:build"
-          }
-        },
-        "migrate": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "sequelize-cli db:migrate",
-            "cwd": "apps/gjafakort/application"
-          }
-        },
-        "migrate/generate": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "sequelize-cli migration:generate --name $(whoami)",
-            "cwd": "apps/gjafakort/application"
-          }
-        },
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "apps/gjafakort/application/tsconfig.app.json",
-              "apps/gjafakort/application/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/gjafakort/application/**/*"
-            ]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "apps/gjafakort/application/jest.config.js",
-            "passWithNoTests": true
-          },
-          "outputs": ["coverage/apps/gjafakort/application"]
-        },
-        "dev-services": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "docker-compose up -d",
-            "cwd": "apps/gjafakort/application"
-          }
-        },
-        "docker-express": {}
-      }
-    },
-    "gjafakort-consts": {
-      "root": "libs/gjafakort/consts",
-      "sourceRoot": "libs/gjafakort/consts/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/gjafakort/consts/tsconfig.lib.json",
-              "libs/gjafakort/consts/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!libs/gjafakort/consts/**/*"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/gjafakort/consts/jest.config.js",
-            "passWithNoTests": true
-          },
-          "outputs": ["coverage/libs/gjafakort/consts"]
-        }
-      }
-    },
-    "gjafakort-queue-listener": {
-      "root": "apps/gjafakort/queue-listener",
-      "sourceRoot": "apps/gjafakort/queue-listener/src",
-      "projectType": "application",
-      "prefix": "gjafakort-queue-listener",
-      "schematics": {},
-      "architect": {
-        "build": {
-          "builder": "@irdnis/esbuildnx:build",
-          "options": {
-            "outputPath": "dist/apps/gjafakort/queue-listener",
-            "main": "apps/gjafakort/queue-listener/src/main.ts",
-            "tsConfig": "apps/gjafakort/queue-listener/tsconfig.app.json",
-            "maxWorkers": 2
-          },
-          "configurations": {
-            "production": {
-              "optimization": true,
-              "extractLicenses": true,
-              "inspect": false
-            }
-          },
-          "outputs": ["{options.outputPath}"]
-        },
-        "serve": {
-          "builder": "@nrwl/node:execute",
-          "options": {
-            "buildTarget": "gjafakort-queue-listener:build"
-          }
-        },
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "apps/gjafakort/queue-listener/tsconfig.app.json",
-              "apps/gjafakort/queue-listener/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/gjafakort/queue-listener/**/*"
-            ]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "apps/gjafakort/queue-listener/jest.config.js",
-            "passWithNoTests": true
-          },
-          "outputs": ["coverage/apps/gjafakort/queue-listener"]
-        },
-        "docker-express": {}
-      }
-    },
-    "gjafakort-types": {
-      "root": "libs/gjafakort/types",
-      "sourceRoot": "libs/gjafakort/types/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/gjafakort/types/tsconfig.lib.json",
-              "libs/gjafakort/types/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!libs/gjafakort/types/**/*"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/gjafakort/types/jest.config.js",
-            "passWithNoTests": true
-          },
-          "outputs": ["coverage/libs/gjafakort/types"]
-        }
-      }
-    },
-    "gjafakort-web": {
-      "root": "apps/gjafakort/web",
-      "sourceRoot": "apps/gjafakort/web",
-      "projectType": "application",
-      "schematics": {},
-      "architect": {
-        "build": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "outputPath": "dist/apps/gjafakort/web",
-            "commands": [
-              "yarn nx build-next gjafakort-web",
-              "yarn nx build-server gjafakort-web"
-            ]
-          },
-          "configurations": {
-            "production": {
-              "args": "--prod"
-            }
-          }
-        },
-        "build-next": {
-          "builder": "@nrwl/next:build",
-          "options": {
-            "root": "apps/gjafakort/web",
-            "outputPath": "dist/apps/gjafakort/web"
-          },
-          "configurations": {
-            "production": {}
-          },
-          "outputs": ["{options.outputPath}"]
-        },
-        "build-server": {
-          "builder": "@nrwl/node:build",
-          "options": {
-            "outputPath": "dist/apps/gjafakort/web",
-            "main": "apps/gjafakort/web/server.ts",
-            "tsConfig": "apps/gjafakort/web/tsconfig.json",
-            "maxWorkers": 2,
-            "assets": ["apps/gjafakort/web/next-modules"]
-          },
-          "configurations": {
-            "production": {
-              "optimization": true,
-              "extractLicenses": true,
-              "inspect": false
-            }
-          },
-          "outputs": ["{options.outputPath}"]
-        },
-        "translations": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "quicktype is.json -o translation.d.ts --top-level Translation",
-            "cwd": "apps/gjafakort/web/i18n/locales"
-          }
-        },
-        "serve": {
-          "builder": "@nrwl/node:execute",
-          "options": {
-            "buildTarget": "gjafakort-web:build-server"
-          }
-        },
-        "export": {
-          "builder": "@nrwl/next:export",
-          "options": {
-            "buildTarget": "gjafakort-web:build:production"
-          }
-        },
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "apps/gjafakort/web/tsconfig.json",
-              "apps/gjafakort/web/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!apps/gjafakort/web/**/*"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "apps/gjafakort/web/jest.config.js",
-            "passWithNoTests": true
-          },
-          "outputs": ["coverage/apps/gjafakort/web"]
-        },
-        "docker-next": {}
-      }
-    },
-    "gjafakort-web-e2e": {
-      "root": "apps/gjafakort/web-e2e",
-      "sourceRoot": "apps/gjafakort/web-e2e/src",
-      "projectType": "application",
-      "architect": {
-        "e2e": {
-          "builder": "@nrwl/cypress:cypress",
-          "options": {
-            "cypressConfig": "apps/gjafakort/web-e2e/cypress.json",
-            "tsConfig": "apps/gjafakort/web-e2e/tsconfig.e2e.json",
-            "baseUrl": "http://localhost:4200",
-            "devServerTarget": "gjafakort-web:serve"
-          },
-          "configurations": {
-            "production": {
-              "devServerTarget": ""
-            }
-          }
-        },
-        "e2e-ci": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "yarn e2e-ci -n gjafakort-web-e2e -d dist/apps/gjafakort/web -c"
-          }
-        },
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": ["apps/gjafakort/web-e2e/tsconfig.e2e.json"],
-            "exclude": ["**/node_modules/**", "!apps/gjafakort/web-e2e/**/*"]
-          }
-        }
       }
     },
     "health-insurance": {
@@ -8087,6 +7823,29 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/service-portal/settings/personal-information/src/{lib,components,screens}/**/*.{js,ts,tsx}'"
+          }
+        }
+      }
+    },
+    "service-portal-vehicles": {
+      "root": "libs/service-portal/vehicles",
+      "sourceRoot": "libs/service-portal/vehicles/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/service-portal/vehicles/**/*.{ts,tsx,js,jsx}"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/service-portal/vehicles"],
+          "options": {
+            "jestConfig": "libs/service-portal/vehicles/jest.config.js",
+            "passWithNoTests": true
           }
         }
       }

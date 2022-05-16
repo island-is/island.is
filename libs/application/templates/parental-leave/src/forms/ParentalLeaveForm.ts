@@ -41,6 +41,7 @@ import {
   FILE_SIZE_LIMIT,
   MANUAL,
   NO,
+  NO_PRIVATE_PENSION_FUND,
   ParentalRelations,
   StartDateOptions,
   YES,
@@ -255,10 +256,12 @@ export const ParentalLeaveForm: Form = buildForm({
                     })
 
                     return (
-                      data?.getPrivatePensionFunds?.map(({ id, name }) => ({
-                        label: name,
-                        value: id,
-                      })) ?? []
+                      data?.getPrivatePensionFunds
+                        ?.filter(({ id }) => id !== NO_PRIVATE_PENSION_FUND)
+                        .map(({ id, name }) => ({
+                          label: name,
+                          value: id,
+                        })) ?? []
                     )
                   },
                 }),
@@ -312,7 +315,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   id: 'personalAllowance.useAsMuchAsPossible',
                   title:
                     parentalLeaveFormMessages.personalAllowance
-                      .useAsMuchAsPossibleFromSpouse,
+                      .useAsMuchAsPossible,
                 }),
                 buildTextField({
                   id: 'personalAllowance.usage',
@@ -521,7 +524,8 @@ export const ParentalLeaveForm: Form = buildForm({
                 'requestRights.isRequestingRights',
                 'requestRights.requestDays',
               ],
-              title: 'Hversu mörgum dögum viltu óska eftir?',
+              title:
+                parentalLeaveFormMessages.shared.transferRightsRequestTitle,
               condition: (answers, externalData) => {
                 const canTransferRights =
                   getSelectedChild(answers, externalData)?.parentalRelation ===
@@ -540,7 +544,7 @@ export const ParentalLeaveForm: Form = buildForm({
                 'giveRights.isGivingRights',
                 'giveRights.giveDays',
               ],
-              title: 'Hversu marga daga viltu færa yfir á hitt foreldrið?',
+              title: parentalLeaveFormMessages.shared.transferRightsGiveTitle,
               condition: (answers, externalData) => {
                 const canTransferRights =
                   getSelectedChild(answers, externalData)?.parentalRelation ===

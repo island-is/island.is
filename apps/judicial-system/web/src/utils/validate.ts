@@ -201,6 +201,7 @@ export const isPoliceReportStepValidIC = (workingCase: Case) => {
 export const isReceptionAndAssignmentStepValidRC = (workingCase: Case) => {
   return (
     validate(workingCase.courtCaseNumber || '', 'empty').isValid &&
+    validate(workingCase.courtCaseNumber || '', 'court-case-number').isValid &&
     workingCase.judge
   )
 }
@@ -208,6 +209,7 @@ export const isReceptionAndAssignmentStepValidRC = (workingCase: Case) => {
 export const isReceptionAndAssignmentStepValidIC = (workingCase: Case) => {
   return (
     validate(workingCase.courtCaseNumber || '', 'empty').isValid &&
+    validate(workingCase.courtCaseNumber || '', 'court-case-number').isValid &&
     workingCase.judge
   )
 }

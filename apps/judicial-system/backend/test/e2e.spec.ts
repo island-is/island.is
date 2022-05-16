@@ -37,7 +37,7 @@ import {
   SendNotificationResponse,
 } from '../src/app/modules/notification'
 import { IntlService } from '@island.is/cms-translations'
-import { StaticText } from '@island.is/application/core'
+import { MessageDescriptor } from '@formatjs/intl'
 
 interface CUser extends TUser {
   institutionId: string
@@ -81,7 +81,7 @@ beforeAll(async () => {
       builder.overrideProvider(IntlService).useValue({
         useIntl: () =>
           Promise.resolve({
-            formatMessage: (descriptor: StaticText) => {
+            formatMessage: (descriptor: MessageDescriptor | string) => {
               if (typeof descriptor === 'string') {
                 return descriptor
               }

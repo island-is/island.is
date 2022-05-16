@@ -90,7 +90,9 @@ export const Review: FC<ReviewScreenProps> = ({
 }) => {
   const editable = field.props?.editable ?? false
   const pensionFundOptions = usePensionFundOptions()
-  const privatePensionFundOptions = usePrivatePensionFundOptions()
+  const privatePensionFundOptions = usePrivatePensionFundOptions().filter(
+    ({ value }) => value !== NO_PRIVATE_PENSION_FUND,
+  )
   const unionOptions = useUnionOptions()
   const { locale, formatMessage } = useLocale()
   const [
@@ -168,7 +170,7 @@ export const Review: FC<ReviewScreenProps> = ({
   const validatePrivatePensionFundPercentage = () => {
     if (usePrivatePensionFund !== YES) return undefined
 
-    if (privatePensionFundPercentage === '') {
+    if (privatePensionFundPercentage === '0') {
       return formatMessage(coreErrorMessages.defaultError)
     }
 
@@ -521,7 +523,7 @@ export const Review: FC<ReviewScreenProps> = ({
                     const privatePensionFund =
                       s === NO ? NO_PRIVATE_PENSION_FUND : ''
                     const privatePensionFundPercentage =
-                      s === NO ? '' : prev.privatePensionFundPercentage
+                      s === NO ? '0' : prev.privatePensionFundPercentage
                     setValue('payments.privatePensionFund', privatePensionFund)
                     setValue(
                       'payments.privatePensionFundPercentage',
