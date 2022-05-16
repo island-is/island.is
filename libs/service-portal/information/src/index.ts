@@ -54,7 +54,7 @@ export const informationModule: ServicePortalModule = {
     {
       name: 'Um fyrirtæki',
       path: ServicePortalPath.Company,
-      enabled: true, // TODO: Add when ready.
+      enabled: userInfo.scopes.includes(ApiScope.company),
       render: () => lazy(() => import('./screens/Company/CompanyInfo')),
     },
   ],
