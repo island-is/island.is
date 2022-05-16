@@ -145,12 +145,16 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
                     component="span"
                     height="full"
                     width="full"
-                    display="flex"
+                    display="block"
                     alignItems="center"
                   >
-                    <Text variant={labelVariant} as="span" color={labelColor}>
-                      {label}
-                    </Text>
+                    {typeof label === 'string' ? (
+                      <Text variant={labelVariant} as="span" color={labelColor}>
+                        {label}
+                      </Text>
+                    ) : (
+                      label
+                    )}
                   </Box>
                   {visibleContent && (
                     <Box paddingTop={2}>
