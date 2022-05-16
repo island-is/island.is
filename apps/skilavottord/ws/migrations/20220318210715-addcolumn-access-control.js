@@ -15,6 +15,7 @@ module.exports = {
     return queryInterface.sequelize.query(`
       ALTER TABLE access_control DROP COLUMN email;
       ALTER TABLE access_control DROP COLUMN phone;
+      ALTER TABLE access_control DROP COLUMN recycling_location;
     `)
   },
 }
