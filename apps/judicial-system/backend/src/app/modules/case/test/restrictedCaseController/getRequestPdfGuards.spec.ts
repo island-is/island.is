@@ -3,7 +3,7 @@ import { CanActivate } from '@nestjs/common'
 import { JwtAuthGuard, RolesGuard } from '@island.is/judicial-system/auth'
 
 import { RestrictedCaseExistsGuard } from '../../guards/restrictedCaseExists.guard'
-import { CaseCompletedGuard } from '../../guards/caseCompleted.guard'
+import { CaseScheduledGuard } from '../../guards/caseScheduled.guard'
 import { CaseDefenderGuard } from '../../guards/caseDefender.guard'
 import { RestrictedCaseController } from '../../restrictedCase.controller'
 
@@ -59,15 +59,15 @@ describe('RestrictedCaseController - Get request pdf guards', () => {
     })
   })
 
-  describe('CaseCompletedGuard', () => {
+  describe('CaseScheduledGuard', () => {
     let guard: CanActivate
 
     beforeEach(() => {
       guard = new guards[3]()
     })
 
-    it('should have CaseCompletedGuard as quard 4', () => {
-      expect(guard).toBeInstanceOf(CaseCompletedGuard)
+    it('should have CaseScheduledGuard as quard 4', () => {
+      expect(guard).toBeInstanceOf(CaseScheduledGuard)
     })
   })
 
