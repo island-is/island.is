@@ -146,6 +146,9 @@ export class LicenseServiceService {
             async () => await licenseService.getLicense(nationalId),
             force ? 0 : license.timeout,
           )
+          console.log('data from serive')
+          console.log(licenseDataFromService)
+          console.log(licenseDataFromService.data.payload)
 
           if (!licenseDataFromService) {
             this.logger.warn('No license data returned from service', {

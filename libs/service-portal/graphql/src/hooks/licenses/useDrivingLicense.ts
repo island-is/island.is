@@ -6,7 +6,7 @@ import { useUserProfile } from '../..'
 import { GET_GENERIC_LICENSE } from '../../lib/queries/getDrivingLicense'
 import { DrivingLicenseType } from '@island.is/service-portal/core'
 
-interface GetDrivingLicenseProps {
+interface GetLicenseProps {
   data?: DrivingLicenseType
   status: GenericUserLicenseStatus | ''
   loading?: boolean
@@ -15,7 +15,7 @@ interface GetDrivingLicenseProps {
 
 /* Collects only Driving License */
 // TODO: Generate hook for collecting all licenses when other services are ready
-export const useDrivingLicense = (): GetDrivingLicenseProps => {
+export const useDrivingLicense = (): GetLicenseProps => {
   const { data: userProfile } = useUserProfile()
   const locale = (userProfile?.locale as Locale) ?? 'is'
   const { data, loading, error } = useQuery<Query>(GET_GENERIC_LICENSE, {
@@ -23,7 +23,7 @@ export const useDrivingLicense = (): GetDrivingLicenseProps => {
       locale,
       input: {
         //CHANGE THIS BACK!
-        licenseType: 'AdrLicense',
+        licenseType: 'DriversLicense',
       },
     },
   })

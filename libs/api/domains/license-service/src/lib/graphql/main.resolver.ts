@@ -115,7 +115,6 @@ export class MainResolver {
       locale,
       input.licenseType,
     )
-
     return license
   }
 

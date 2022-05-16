@@ -10,13 +10,16 @@ import {
 } from '@island.is/service-portal/core'
 import LicenseCards from '../../components/LicenseCards/LicenseCards'
 import { LicenseLoader } from '../../components/LicenseLoader/LicenseLoader'
-import { useDrivingLicense } from '@island.is/service-portal/graphql'
+import { useLicenses } from '@island.is/service-portal/graphql'
 import { m } from '../../lib/messages'
 
 export const LicensesOverview: ServicePortalModuleComponent = () => {
   useNamespaces('sp.license')
   const { formatMessage } = useLocale()
-  const { data, status, loading, error } = useDrivingLicense()
+  const { data, loading, error } = useLicenses()
+
+  console.log('data')
+  console.log(data)
 
   return (
     <>
@@ -28,14 +31,6 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
       </Box>
       {loading && <LicenseLoader />}
       {data && <LicenseCards data={data} />}
-
-      {!loading &&
-        !error &&
-        (status === 'Unknown' || status === 'NotAvailable') && (
-          <Box marginTop={8}>
-            <EmptyState title={m.errorNoData} />
-          </Box>
-        )}
 
       {error && (
         <Box>
