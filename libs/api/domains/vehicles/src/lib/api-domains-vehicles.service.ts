@@ -5,11 +5,13 @@ import { Inject, Injectable } from '@nestjs/common'
 import {
   VehiclesApi,
   BasicVehicleInformationGetRequest,
-  PersidnoLookupResult,
   BasicVehicleInformationTechnicalMass,
   BasicVehicleInformationTechnicalAxle,
+  PersidnoLookup,
 } from '@island.is/clients/vehicles'
 import { VehiclesAxle, VehiclesDetail } from '../models/getVehicleDetail.model'
+import { ApolloError } from 'apollo-server-express'
+import { FetchError } from '@island.is/clients/middlewares'
 
 @Injectable()
 export class VehiclesService {
@@ -19,25 +21,36 @@ export class VehiclesService {
     private vehiclesApi: VehiclesApi,
   ) {}
 
+  private handle4xx(error: FetchError): ApolloError | null {
+    if (error.status === 403 || error.status === 404) {
+      return null
+    }
+    throw new ApolloError(
+      'Failed to resolve request',
+      error?.message || error?.status.toString(),
+    )
+  }
+
   async getVehiclesForUser(
     nationalId: string,
-  ): Promise<PersidnoLookupResult | null> {
+  ): Promise<PersidnoLookup | null | ApolloError> {
     try {
       const res = await this.vehiclesApi.vehicleHistoryGet({
         requestedPersidno: nationalId,
       })
-      return res
+      const { data } = res
+      if (!data) return {}
+      return data
     } catch (e) {
       const errMsg = 'Failed to get vehicle list'
       this.logger.error(errMsg, { e })
-
-      return null
+      return this.handle4xx(e)
     }
   }
 
   async getVehicleDetail(
     input: BasicVehicleInformationGetRequest,
-  ): Promise<VehiclesDetail | null> {
+  ): Promise<VehiclesDetail | null | ApolloError> {
     try {
       const res = await this.vehiclesApi.basicVehicleInformationGet({
         clientPersidno: input.clientPersidno,
@@ -47,7 +60,7 @@ export class VehiclesService {
       })
       const { data } = res
 
-      if (!data) return null
+      if (!data) return {}
       const newestInspection = data.inspections?.sort((a, b) => {
         if (a && b && a.date && b.date)
           return new Date(a.date).getTime() - new Date(b.date).getTime()
@@ -99,7 +112,7 @@ export class VehiclesService {
         data.productyear ??
         (data.firstregdate ? new Date(data?.firstregdate).getFullYear() : null)
 
-      const operator = data.operators?.find((x) => x.current)
+      const operators = data.operators?.filter((x) => x.current)
 
       const coOwners = data.owners?.find((x) => x.current)?.coOwners
 
@@ -195,23 +208,24 @@ export class VehiclesService {
               city: x.city,
             }
           }) || [],
-        operator:
-          (operator && {
-            nationalId: operator.persidno,
-            name: operator.fullname,
-            address: operator.address,
-            postalcode: operator.postalcode,
-            city: operator.city,
-            startDate: operator.startdate,
-            endDate: operator.enddate,
-          }) ||
-          undefined,
+        operators:
+          operators?.map((operator) => {
+            return {
+              nationalId: operator.persidno,
+              name: operator.fullname,
+              address: operator.address,
+              postalcode: operator.postalcode,
+              city: operator.city,
+              startDate: operator.startdate,
+              endDate: operator.enddate,
+            }
+          }) || undefined,
       }
       return response
     } catch (e) {
       const errMsg = 'Failed to get vehicle details'
       this.logger.error(errMsg, { e })
-      return null
+      return this.handle4xx(e)
     }
   }
 }
