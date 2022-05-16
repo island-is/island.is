@@ -27,7 +27,6 @@ const fieldNames = {
 const ElectPerson: FC<ElectPersonFieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
   const { setValue, watch, errors, clearErrors, setError } = useFormContext()
-  console.log('ERR', errors)
   const [getIdentity, { loading: queryLoading }] = useLazyQuery<
     Query,
     { input: IdentityInput }
@@ -35,8 +34,7 @@ const ElectPerson: FC<ElectPersonFieldBaseProps> = ({ application }) => {
     onError: (error: unknown) => {
       setError(fieldNames.lookupError, {
         type: 'serverError',
-        message:
-          'Villa kom upp við að sækja nafn útfrá kennitölu. Vinsamlegast prófaðu aftur síðar',
+        message: m.errorNationalIdNoName.defaultMessage,
       })
       console.log('getIdentity error:', error)
     },
@@ -48,8 +46,7 @@ const ElectPerson: FC<ElectPersonFieldBaseProps> = ({ application }) => {
       } else {
         setError(fieldNames.lookupError, {
           type: 'serverError',
-          message:
-            'Villa kom upp við að sækja nafn útfrá kennitölu. Vinsamlegast prófaðu aftur síðar',
+          message: m.errorNationalIdNoName.defaultMessage,
         })
       }
     },

@@ -55,6 +55,20 @@ export const dataSchema = z.object({
         path: ['electPerson', 'electedPersonNationalId'],
       },
     )
+    .refine(
+      ({ roleConfirmation, electPerson }) =>
+        (roleConfirmation === RoleConfirmationEnum.DELEGATE &&
+        electPerson?.electedPersonNationalId
+          ? kennitala.info(electPerson?.electedPersonNationalId).age >= 18
+          : false) ||
+        (roleConfirmation === RoleConfirmationEnum.CONTINUE &&
+          (electPerson?.electedPersonNationalId === '' ||
+            electPerson?.electedPersonNationalId !== '')),
+      {
+        message: m.errorAge.defaultMessage,
+        path: ['electPerson', 'electedPersonNationalId'],
+      },
+    )
     .refine(({ roleConfirmation }) => !!roleConfirmation, {
       message: m.errorRoleConfirmation.defaultMessage,
       path: ['roleConfirmation'],
