@@ -90,8 +90,12 @@ export const Review: FC<ReviewScreenProps> = ({
 }) => {
   const editable = field.props?.editable ?? false
   const pensionFundOptions = usePensionFundOptions()
-  const privatePensionFundOptions = usePrivatePensionFundOptions()
-  const unionOptions = useUnionOptions()
+  const privatePensionFundOptions = usePrivatePensionFundOptions().filter(
+    ({ value }) => value !== NO_PRIVATE_PENSION_FUND,
+  )
+  const unionOptions = useUnionOptions().filter(
+    ({ value }) => value !== NO_UNION,
+  )
   const { locale, formatMessage } = useLocale()
   const [
     {
@@ -155,6 +159,16 @@ export const Review: FC<ReviewScreenProps> = ({
     application.externalData,
   )
 
+  const validateUnion = () => {
+    if (useUnion !== YES) return undefined
+
+    if (union === '') {
+      return formatMessage(coreErrorMessages.defaultError)
+    }
+
+    return undefined
+  }
+
   const validatePrivatePensionFund = () => {
     if (usePrivatePensionFund !== YES) return undefined
 
@@ -181,6 +195,7 @@ export const Review: FC<ReviewScreenProps> = ({
     if (typeof validatePrivatePensionFund() === 'string') return false
     else if (typeof validatePrivatePensionFundPercentage() === 'string')
       return false
+    else if (typeof validateUnion() === 'string') return false
 
     return groupHasNoErrors(ids)
   }
@@ -461,7 +476,7 @@ export const Review: FC<ReviewScreenProps> = ({
                 ]}
                 onSelect={(s: string) => {
                   setStateful((prev) => {
-                    const union = s === NO ? NO_UNION : prev.union
+                    const union = s === NO ? NO_UNION : ''
                     setValue('payments.union', union)
                     return {
                       ...prev,
@@ -486,7 +501,7 @@ export const Review: FC<ReviewScreenProps> = ({
                       union: s.value as string,
                     }))
                   }}
-                  error={hasError('payments.union')}
+                  error={validateUnion()}
                 />
               )}
             </Stack>
