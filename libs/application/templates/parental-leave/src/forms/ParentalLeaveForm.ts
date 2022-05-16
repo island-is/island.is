@@ -42,6 +42,7 @@ import {
   MANUAL,
   NO,
   NO_PRIVATE_PENSION_FUND,
+  NO_UNION,
   ParentalRelations,
   StartDateOptions,
   YES,
@@ -226,10 +227,12 @@ export const ParentalLeaveForm: Form = buildForm({
                     })
 
                     return (
-                      data?.getUnions?.map(({ id, name }) => ({
-                        label: name,
-                        value: id,
-                      })) ?? []
+                      data?.getUnions
+                        ?.filter(({ id }) => id !== NO_UNION)
+                        .map(({ id, name }) => ({
+                          label: name,
+                          value: id,
+                        })) ?? []
                     )
                   },
                 }),
