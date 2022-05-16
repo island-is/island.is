@@ -19,7 +19,11 @@ export const hasPermission = (page: Page, role: Role) => {
 
   const permittedRoutes = {
     recyclingCompany: ['deregisterVehicle', 'companyInfo'],
-    recyclingCompanyAdmin: ['deregisterVehicle', 'companyInfo', 'accessControlCompany'],
+    recyclingCompanyAdmin: [
+      'deregisterVehicle',
+      'companyInfo',
+      'accessControlCompany',
+    ],
     citizen: ['myCars', 'recycleVehicle'],
     recyclingFund: ['recycledVehicles', 'recyclingCompanies', 'accessControl'],
   }

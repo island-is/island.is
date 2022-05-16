@@ -106,13 +106,11 @@ export const AccessControlModal: FC<AccessControlModalProps> = ({
             rules={{
               required: {
                 value: true,
-                message:
-                  t.modal.inputs.email.rules?.required,
+                message: t.modal.inputs.email.rules?.required,
               },
               pattern: {
                 value: /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i,
-                message:
-                  t.modal.inputs.email.rules?.validate,
+                message: t.modal.inputs.email.rules?.validate,
               },
             }}
             error={errors?.email?.message}
@@ -127,8 +125,7 @@ export const AccessControlModal: FC<AccessControlModalProps> = ({
             rules={{
               required: {
                 value: true,
-                message:
-                  t.modal.inputs.phone.rules?.required,
+                message: t.modal.inputs.phone.rules?.required,
               },
             }}
             type="tel"
@@ -143,13 +140,11 @@ export const AccessControlModal: FC<AccessControlModalProps> = ({
             rules={{
               validate: {
                 value: (value: string) => {
-                  if (
-                    value.toString().length > 32
-                  ) {
+                  if (value.toString().length > 32) {
                     return t.modal.inputs.recyclingLocation.rules?.validate
                   }
                 },
-              }
+              },
             }}
             error={errors?.recyclingLocation?.message}
             backgroundColor="blue"

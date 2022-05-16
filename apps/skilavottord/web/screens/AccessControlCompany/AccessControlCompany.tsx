@@ -136,7 +136,7 @@ const AccessControlCompany: FC = () => {
   } else if (!hasPermission('accessControlCompany', user?.role as Role)) {
     return <NotFound />
   }
-  
+
   // const {
   //   data: recyclingPartnerData,
   //   error: recyclingPartnerError,
@@ -147,11 +147,10 @@ const AccessControlCompany: FC = () => {
   //   error: accessControlsError,
   //   loading: accessControlsLoading,
   // } = useQuery<Query>(SkilavottordAccessControlsQuery, { ssr: false })
-  const {
-    data: accessControlsData,
-    error,
-    loading
-  } = useQuery<Query>(SkilavottordAccessControlsByRecyclingPartnerQuery, { ssr: false })
+  const { data: accessControlsData, error, loading } = useQuery<Query>(
+    SkilavottordAccessControlsByRecyclingPartnerQuery,
+    { ssr: false },
+  )
 
   const [createSkilavottordAccessControl] = useMutation(
     CreateSkilavottordAccessControlMutation,
@@ -195,7 +194,8 @@ const AccessControlCompany: FC = () => {
   // const isData = !!recyclingPartnerData && !!accessControlsData
   const isData = !!accessControlsData
 
-  const accessControls = accessControlsData?.skilavottordAccessControlsByRecyclingPartner || []
+  const accessControls =
+    accessControlsData?.skilavottordAccessControlsByRecyclingPartner || []
 
   // const partners = recyclingPartnerData?.skilavottordAllRecyclingPartners || []
   // const recyclingPartners = filterInternalPartners(partners).map((partner) => ({
@@ -207,8 +207,9 @@ const AccessControlCompany: FC = () => {
     .filter((role) =>
       !isDeveloper(user?.role) ? role !== Role.developer : role,
     )
-    .filter((role) =>
-      role === Role.recyclingCompany || role === Role.recyclingCompanyAdmin
+    .filter(
+      (role) =>
+        role === Role.recyclingCompany || role === Role.recyclingCompanyAdmin,
     )
     .map((role) => ({
       label: getRoleTranslation(role as Role, activeLocale),
@@ -277,7 +278,10 @@ const AccessControlCompany: FC = () => {
         <Box>
           <Breadcrumbs
             items={[
-              { title: 'Ísland.is', href: `${BASE_PATH}${routes.home['recyclingCompany']}` },
+              {
+                title: 'Ísland.is',
+                href: `${BASE_PATH}${routes.home['recyclingCompany']}`,
+              },
               {
                 title: t.title,
               },
@@ -299,7 +303,10 @@ const AccessControlCompany: FC = () => {
           <GridRow marginBottom={7}>
             <GridColumn span={['8/8', '6/8', '5/8']} order={[2, 1]}>
               <Text variant="h1" as="h1" marginBottom={4}>
-                {t.title} {accessControls.length > 0 ? accessControls[0]?.recyclingPartner?.companyName : ''}
+                {t.title}{' '}
+                {accessControls.length > 0
+                  ? accessControls[0]?.recyclingPartner?.companyName
+                  : ''}
               </Text>
               <Text variant="intro">{t.info}</Text>
             </GridColumn>
@@ -355,7 +362,9 @@ const AccessControlCompany: FC = () => {
                     <Text variant="eyebrow">{t.tableHeaders.role}</Text>
                   </HeadData>
                   <HeadData>
-                    <Text variant="eyebrow">{t.tableHeaders.recyclingLocation}</Text>
+                    <Text variant="eyebrow">
+                      {t.tableHeaders.recyclingLocation}
+                    </Text>
                   </HeadData>
                   <HeadData></HeadData>
                 </Row>
@@ -367,10 +376,12 @@ const AccessControlCompany: FC = () => {
                     <Data>{item.name}</Data>
                     <Data>{item.email}</Data>
                     <Data>{item.phone}</Data>
-                    <Data>{getRoleTranslation(
+                    <Data>
+                      {getRoleTranslation(
                         item.role as AccessControlRole & Role,
                         activeLocale,
-                      )}</Data>
+                      )}
+                    </Data>
                     <Data>{item.recyclingLocation}</Data>
                     <Data>
                       <DropdownMenu

@@ -5,7 +5,9 @@ import { Authorize, CurrentUser, User, Role } from '../auth'
 import { Fjarsysla } from './fjarsysla.model'
 import { FjarsyslaService } from './fjarsysla.service'
 
-@Authorize({ roles: [Role.developer, Role.recyclingCompany, Role.recyclingCompanyAdmin] })
+@Authorize({
+  roles: [Role.developer, Role.recyclingCompany, Role.recyclingCompanyAdmin],
+})
 @Resolver(() => Fjarsysla)
 export class FjarsyslaResolver {
   constructor(private fjarsyslaService: FjarsyslaService) {}

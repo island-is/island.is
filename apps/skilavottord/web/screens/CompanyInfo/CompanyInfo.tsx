@@ -79,13 +79,14 @@ const CompanyInfo: FC = () => {
               title: `${sidenavText.companyInfo}`,
               link: `${routes.companyInfo.baseRoute}`,
             },
-            { ...(hasPermission('accessControlCompany', user?.role)
-            ? {
-              icon: 'lockClosed',
-              title: `${sidenavText.accessControl}`,
-              link: `${routes.accessControlCompany}`,
-            }
-          : null)
+            {
+              ...(hasPermission('accessControlCompany', user?.role)
+                ? {
+                    icon: 'lockClosed',
+                    title: `${sidenavText.accessControl}`,
+                    link: `${routes.accessControlCompany}`,
+                  }
+                : null),
             } as React.ComponentProps<typeof Sidenav>['sections'][0],
           ].filter(Boolean)}
           activeSection={1}
@@ -95,7 +96,9 @@ const CompanyInfo: FC = () => {
       <GridColumn span={['8/8', '8/8', '7/8', '7/8']}>
         <Stack space={4}>
           <Breadcrumbs>
-            <Link href={`${BASE_PATH}${routes.home['recyclingCompany']}`}>Ísland.is</Link>
+            <Link href={`${BASE_PATH}${routes.home['recyclingCompany']}`}>
+              Ísland.is
+            </Link>
             <span>{t.title}</span>
           </Breadcrumbs>
           <Stack space={2}>
@@ -116,11 +119,19 @@ const CompanyInfo: FC = () => {
                       {
                         text: `${partner.address}, ${partner.postnumber}`,
                       },
-                      { ...( partner?.nationalId ?
-                        {text: `${partner.nationalId}`} : null) as React.ComponentProps<typeof ListItem>['content'][0],
+                      {
+                        ...((partner?.nationalId
+                          ? { text: `${partner.nationalId}` }
+                          : null) as React.ComponentProps<
+                          typeof ListItem
+                        >['content'][0]),
                       },
-                      { ...( partner?.email ?
-                        {text: `${partner.email}`} : null) as React.ComponentProps<typeof ListItem>['content'][0],
+                      {
+                        ...((partner?.email
+                          ? { text: `${partner.email}` }
+                          : null) as React.ComponentProps<
+                          typeof ListItem
+                        >['content'][0]),
                       },
                       {
                         text: `${partner.phone}`,
