@@ -76,11 +76,11 @@ const AccessModal: FC<Props> = ({
               )}
               {scopes && (
                 <Box display="flex" flexDirection="row" flexWrap="wrap">
-                  {scopes.map((scope, index) => {
+                  {scopes.map((scope) => {
                     return scope?.displayName ? (
                       <Box
-                        padding={1}
-                        paddingLeft={index === 0 ? 0 : 1}
+                        paddingRight={2}
+                        paddingY={1}
                         key={scope?.displayName}
                       >
                         <Tag>{scope.displayName}</Tag>
@@ -98,7 +98,7 @@ const AccessModal: FC<Props> = ({
                       ? `assets/images/${img}.svg`
                       : 'assets/images/myInfo.svg'
                   }
-                  alt="Skrautmynd"
+                  alt=""
                   style={{ float: 'right' }}
                   width="80%"
                 />

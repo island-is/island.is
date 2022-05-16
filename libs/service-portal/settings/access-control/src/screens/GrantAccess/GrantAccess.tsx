@@ -24,7 +24,7 @@ import {
   ServicePortalPath,
   m,
 } from '@island.is/service-portal/core'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 
 import { AuthDelegationsQuery } from '../AccessControl'
 import * as styles from './GrantAccess.css'
@@ -51,6 +51,8 @@ const IdentityQuery = gql`
 `
 
 function GrantAccess() {
+  useNamespaces('sp.settings-access-control')
+
   const noUserFoundToast = () => {
     toast.error(
       formatMessage({
@@ -137,11 +139,14 @@ function GrantAccess() {
   return (
     <Box>
       <IntroHeader
-        title={m.accessControlGrant}
+        title={defineMessage({
+          id: 'sp.settings-access-control:grant-intro-title',
+          defaultMessage: 'Veita aðgang',
+        })}
         intro={defineMessage({
           id: 'sp.settings-access-control:grant-intro',
           defaultMessage:
-            'Hér velur þú einstakling sem á að fá umboð til að sjá gögn á Mínum síðum. Í næsta skrefi velur þú hvaða umboð þessi einstaklingur fær.',
+            'Hér getur þú gefið öðrum aðgang til að sýsla með þín gögn hjá island.is',
         })}
       />
 

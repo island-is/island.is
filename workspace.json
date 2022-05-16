@@ -1000,6 +1000,36 @@
         }
       }
     },
+    "api-domains-driving-license-book": {
+      "root": "libs/api/domains/driving-license-book",
+      "sourceRoot": "libs/api/domains/driving-license-book/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/api/domains/driving-license-book/tsconfig.lib.json",
+              "libs/api/domains/driving-license-book/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/api/domains/driving-license-book/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/api/domains/driving-license-book/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/libs/api/domains/driving-license-book"]
+        }
+      }
+    },
     "api-domains-education": {
       "root": "libs/api/domains/education",
       "sourceRoot": "libs/api/domains/education/src",
@@ -1139,6 +1169,50 @@
         }
       }
     },
+    "api-domains-financial-statements-inao": {
+      "root": "libs/api/domains/financial-statements-inao",
+      "sourceRoot": "libs/api/domains/financial-statements-inao/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/api/domains/financial-statements-inao/**/*.ts"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/api/domains/financial-statements-inao"],
+          "options": {
+            "jestConfig": "libs/api/domains/financial-statements-inao/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "api-domains-fishing-license": {
+      "root": "libs/api/domains/fishing-license",
+      "sourceRoot": "libs/api/domains/fishing-license/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/api/domains/fishing-license/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/api/domains/fishing-license"],
+          "options": {
+            "jestConfig": "libs/api/domains/fishing-license/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "api-domains-health-insurance": {
       "root": "libs/api/domains/health-insurance",
       "sourceRoot": "libs/api/domains/health-insurance/src",
@@ -1262,6 +1336,36 @@
             "jestConfig": "libs/api/domains/mortgage-certificate/jest.config.js",
             "passWithNoTests": true
           }
+        }
+      }
+    },
+    "api-domains-municipalities-financial-aid": {
+      "root": "libs/api/domains/municipalities-financial-aid",
+      "sourceRoot": "libs/api/domains/municipalities-financial-aid/src ",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/api/domains/municipalities-financial-aid/tsconfig.lib.json",
+              "libs/api/domains/municipalities-financial-aid/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/api/domains/municipalities-financial-aid/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/api/domains/municipalities-financial-aid/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/libs/api/domains/municipalities-financial-aid"]
         }
       }
     },
@@ -1468,6 +1572,27 @@
             "passWithNoTests": true
           },
           "outputs": ["coverage/libs/api/domains/user-profile"]
+        }
+      }
+    },
+    "api-domains-vehicles": {
+      "root": "libs/api/domains/vehicles",
+      "sourceRoot": "libs/api/domains/vehicles/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/api/domains/vehicles/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/api/domains/vehicles"],
+          "options": {
+            "jestConfig": "libs/api/domains/vehicles/jest.config.js",
+            "passWithNoTests": true
+          }
         }
       }
     },
@@ -2232,6 +2357,40 @@
         }
       }
     },
+    "application-templates-driving-instructor-registrations": {
+      "root": "libs/application/templates/driving-instructor-registrations",
+      "sourceRoot": "libs/application/templates/driving-instructor-registrations/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/driving-instructor-registrations/tsconfig.lib.json",
+              "libs/application/templates/driving-instructor-registrations/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/driving-instructor-registrations/**/*"
+            ]
+          }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/driving-instructor-registrations/src/lib/messages.ts"
+          }
+        },
+        "schemas/codegen": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "graphql-codegen --config libs/application/templates/driving-instructor-registrations/codegen.yml"
+          }
+        }
+      }
+    },
     "application-templates-driving-license": {
       "root": "libs/application/templates/driving-license",
       "sourceRoot": "libs/application/templates/driving-license/src",
@@ -2270,6 +2429,40 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "graphql-codegen --config libs/application/templates/driving-license/codegen.yml"
+          }
+        }
+      }
+    },
+    "application-templates-driving-school-confirmation": {
+      "root": "libs/application/templates/driving-school-confirmation",
+      "sourceRoot": "libs/application/templates/driving-school-confirmation/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/driving-school-confirmation/tsconfig.lib.json",
+              "libs/application/templates/driving-school-confirmation/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/driving-school-confirmation/**/*"
+            ]
+          }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/driving-school-confirmation/src/lib/messages.ts"
+          }
+        },
+        "schemas/codegen": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "graphql-codegen --config libs/application/templates/driving-school-confirmation/codegen.yml"
           }
         }
       }
@@ -2331,6 +2524,41 @@
         }
       }
     },
+    "application-templates-financial-aid": {
+      "root": "libs/application/templates/financial-aid",
+      "sourceRoot": "libs/application/templates/financial-aid/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/financial-aid/tsconfig.lib.json",
+              "libs/application/templates/financial-aid/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/financial-aid/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/application/templates/financial-aid"],
+          "options": {
+            "jestConfig": "libs/application/templates/financial-aid/jest.config.js"
+          }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/financial-aid/src/**/*.{js,ts,tsx}'"
+          }
+        }
+      }
+    },
     "application-templates-funding-government-projects": {
       "root": "libs/application/templates/funding-government-projects",
       "sourceRoot": "libs/application/templates/funding-government-projects/src",
@@ -2364,6 +2592,34 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/funding-government-projects/src/**/*.{js,ts,tsx}'"
+          }
+        }
+      }
+    },
+    "application-templates-general-fishing-license": {
+      "root": "libs/application/templates/general-fishing-license",
+      "sourceRoot": "libs/application/templates/general-fishing-license/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/general-fishing-license/tsconfig.lib.json",
+              "libs/application/templates/general-fishing-license/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/general-fishing-license/**/*"
+            ]
+          }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/general-fishing-license/src/lib/messages/*.ts'"
           }
         }
       }
@@ -2593,6 +2849,49 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/mortgage-certificate/src/**/*.{js,ts,tsx}'"
+          }
+        }
+      }
+    },
+    "application-templates-no-debt-certificate": {
+      "root": "libs/application/templates/no-debt-certificate",
+      "sourceRoot": "libs/application/templates/no-debt-certificate/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/no-debt-certificate/tsconfig.lib.json",
+              "libs/application/templates/no-debt-certificate/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/no-debt-certificate/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": [
+            "coverage/libs/application/templates/no-debt-certificate"
+          ],
+          "options": {
+            "jestConfig": "libs/application/templates/no-debt-certificate/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "schemas/codegen": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "graphql-codegen --config libs/application/templates/no-debt-certificate/codegen.yml"
+          }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/no-debt-certificate/src/**/*.{js,ts,tsx}'"
           }
         }
       }
@@ -3336,6 +3635,47 @@
         }
       }
     },
+    "clients-driving-license-book": {
+      "root": "libs/clients/driving-license-book",
+      "sourceRoot": "libs/clients/driving-license-book/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/clients/driving-license-book/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/clients/driving-license-book"],
+          "options": {
+            "jestConfig": "libs/clients/driving-license-book/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "update-openapi-document": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" http://localhost:8081/r1/IS-DEV/GOV/10017/Samgongustofa-Protected/getOpenAPI?serviceCode=Okunamsbok-V1 > src/clientConfig.json",
+              "jq '.paths[][].tags = [\"DrivingLicenseBook\"]' src/clientConfig.json > _.tmp && mv _.tmp src/clientConfig.json",
+              "jq '.components.schemas.ProblemDetails.additionalProperties = false' src/clientConfig.json > _.tmp && mv _.tmp src/clientConfig.json"
+            ],
+            "parallel": false,
+            "cwd": "libs/clients/driving-license-book"
+          }
+        },
+        "schemas/external-openapi-generator": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "yarn openapi-generator -o libs/clients/driving-license-book/gen/fetch -i libs/clients/driving-license-book/src/clientConfig.json"
+            ]
+          }
+        }
+      }
+    },
     "clients-finance": {
       "root": "libs/clients/finance",
       "sourceRoot": "libs/clients/finance/src",
@@ -3353,6 +3693,45 @@
           "options": {
             "jestConfig": "libs/clients/finance/jest.config.js",
             "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "clients-fishing-license": {
+      "root": "libs/clients/fishing-license",
+      "sourceRoot": "libs/clients/fishing-license/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/clients/fishing-license/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/clients/fishing-license"],
+          "options": {
+            "jestConfig": "libs/clients/fishing-license/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "update-openapi-document": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" https://veidileyfitest.azurewebsites.net/swagger/v1/swagger.json -H 'Accept: application/json' > src/clientConfig.json",
+              "jq '.components.schemas.ProblemDetails.additionalProperties = false' src/clientConfig.json > _.tmp && mv _.tmp src/clientConfig.json",
+              "prettier --write src/clientConfig.json"
+            ],
+            "parallel": false,
+            "cwd": "libs/clients/fishing-license"
+          }
+        },
+        "schemas/external-openapi-generator": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn openapi-generator -o libs/clients/fishing-license/src/lib/gen/fetch -i libs/clients/fishing-license/src/clientConfig.json"
           }
         }
       }
@@ -3455,6 +3834,39 @@
           "options": {
             "jestConfig": "libs/clients/mms/jest.config.js",
             "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "clients-municipalities-financial-aid": {
+      "root": "libs/clients/municipalities-financial-aid",
+      "sourceRoot": "libs/clients/municipalities-financial-aid/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/clients/municipalities-financial-aid/**/*.ts"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/clients/municipalities-financial-aid"],
+          "options": {
+            "jestConfig": "libs/clients/municipalities-financial-aid/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "schemas/external-openapi-generator": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "nx run financial-aid-backend:schemas/build-openapi-internal $NX_OPTIONS",
+              "yarn openapi-generator -o libs/clients/municipalities-financial-aid/gen/fetch -i apps/financial-aid/backend/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
+            ],
+            "parallel": false
           }
         }
       }
@@ -3639,8 +4051,9 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
-              "curl --location --request GET 'localhost:8080/r1/IS-DEV/GOV/10006/Skatturinn/ft-v1/openapi.json' --header 'X-Road-Client: IS-DEV/GOV/10000/island-is-client' > src/clientConfig.json",
-              "prettier --write src/clientConfig.json"
+              "curl 'http://localhost:8081/r1/IS-DEV/GOV/10006/Skatturinn/ft-v1/openapi.json' --header 'X-Road-Client: IS-DEV/GOV/10000/island-is-client' > src/clientConfig.json",
+              "jq '.paths.\"/v1/ft/search/{search_string}\".get.parameters += [{\"name\": \"offset\",\"in\": \"query\",\"schema\":{\"type\":\"integer\"}},{\"name\":\"limit\",\"in\":\"query\",\"schema\":{\"type\":\"integer\"}}]' src/clientConfig.json > _.tmp && mv _.tmp src/clientConfig.json",
+              "echo 'WARNING: Company Registry schema has manual edits. Please check git history and verify that everything still works.'"
             ],
             "parallel": false,
             "cwd": "libs/clients/rsk/company-registry"
@@ -3714,33 +4127,6 @@
         }
       }
     },
-    "clients-rsk-v1": {
-      "root": "libs/clients/rsk/v1",
-      "sourceRoot": "libs/clients/rsk/v1/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/clients/rsk/v1/tsconfig.lib.json",
-              "libs/clients/rsk/v1/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!libs/clients/rsk/v1/**/*"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/clients/rsk/v1/jest.config.js",
-            "passWithNoTests": true
-          },
-          "outputs": ["coverage/libs/clients/rsk/v1"]
-        }
-      }
-    },
     "clients-syslumenn": {
       "root": "libs/clients/syslumenn",
       "sourceRoot": "libs/clients/syslumenn/src",
@@ -3800,11 +4186,44 @@
             "passWithNoTests": true
           }
         },
-        "schemas/openapi-generator": {
+        "schemas/external-openapi-generator": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "outputPath": "libs/clients/user-profile/gen",
-            "command": "yarn openapi-generator -o libs/clients/user-profile/gen/fetch -i apps/services/user-profile/src/openapi.yaml"
+            "commands": [
+              "nx run services-user-profile:schemas/build-openapi-internal $NX_OPTIONS",
+              "yarn openapi-generator -o libs/clients/user-profile/gen/fetch -i apps/services/user-profile/src/openapi.yaml"
+            ],
+            "parallel": false
+          }
+        }
+      }
+    },
+    "clients-vehicles": {
+      "root": "libs/clients/vehicles",
+      "sourceRoot": "libs/clients/vehicles/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/clients/vehicles/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/clients/vehicles"],
+          "options": {
+            "jestConfig": "libs/clients/vehicles/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "schemas/external-openapi-generator": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "yarn openapi-generator -o libs/clients/vehicles/gen/fetch -i libs/clients/vehicles/src/clientConfig.json"
+            ]
           }
         }
       }
@@ -4481,6 +4900,12 @@
         "schemas/build-openapi": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
+            "command": "yarn nx run financial-aid-backend:schemas/build-openapi-internal $NX_OPTIONS"
+          }
+        },
+        "schemas/build-openapi-internal": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
             "outputPath": "apps/financial-aid/backend/src/openapi.yaml",
             "command": "yarn ts-node -P apps/financial-aid/backend/tsconfig.app.json apps/financial-aid/backend/src/buildOpenApi.ts"
           }
@@ -4807,393 +5232,6 @@
           }
         },
         "docker-express": {}
-      }
-    },
-    "gjafakort-api": {
-      "root": "apps/gjafakort/api",
-      "sourceRoot": "apps/gjafakort/api/src",
-      "projectType": "application",
-      "prefix": "gjafakort-api",
-      "schematics": {},
-      "architect": {
-        "build": {
-          "builder": "@irdnis/esbuildnx:build",
-          "options": {
-            "outputPath": "dist/apps/gjafakort/api",
-            "main": "apps/gjafakort/api/src/main.ts",
-            "tsConfig": "apps/gjafakort/api/tsconfig.app.json",
-            "assets": [],
-            "maxWorkers": 2
-          },
-          "configurations": {
-            "production": {
-              "optimization": true,
-              "extractLicenses": true,
-              "inspect": false
-            }
-          },
-          "outputs": ["{options.outputPath}"]
-        },
-        "serve": {
-          "builder": "@nrwl/node:execute",
-          "options": {
-            "buildTarget": "gjafakort-api:build"
-          }
-        },
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "apps/gjafakort/api/tsconfig.app.json",
-              "apps/gjafakort/api/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!apps/gjafakort/api/**/*"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "apps/gjafakort/api/jest.config.js",
-            "passWithNoTests": true
-          },
-          "outputs": ["coverage/apps/gjafakort/api"]
-        },
-        "schemas/codegen": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "graphql-codegen --config apps/gjafakort/codegen.yml"
-          }
-        },
-        "docker-express": {}
-      }
-    },
-    "gjafakort-application": {
-      "root": "apps/gjafakort/application",
-      "sourceRoot": "apps/gjafakort/application/src",
-      "projectType": "application",
-      "prefix": "gjafakort-application",
-      "schematics": {},
-      "architect": {
-        "build": {
-          "builder": "@irdnis/esbuildnx:build",
-          "options": {
-            "outputPath": "dist/apps/gjafakort/application",
-            "main": "apps/gjafakort/application/src/main.ts",
-            "tsConfig": "apps/gjafakort/application/tsconfig.app.json",
-            "assets": [
-              {
-                "glob": "*sequelize*",
-                "input": "apps/gjafakort/application",
-                "output": "./"
-              },
-              {
-                "glob": "migrations/**",
-                "input": "apps/gjafakort/application",
-                "output": "./"
-              },
-              {
-                "glob": ".sequelizerc",
-                "input": "apps/gjafakort/application",
-                "output": "./"
-              }
-            ],
-            "maxWorkers": 2
-          },
-          "configurations": {
-            "production": {
-              "optimization": true,
-              "extractLicenses": true,
-              "inspect": false
-            }
-          },
-          "outputs": ["{options.outputPath}"]
-        },
-        "serve": {
-          "builder": "@nrwl/node:execute",
-          "options": {
-            "buildTarget": "gjafakort-application:build"
-          }
-        },
-        "migrate": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "sequelize-cli db:migrate",
-            "cwd": "apps/gjafakort/application"
-          }
-        },
-        "migrate/generate": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "sequelize-cli migration:generate --name $(whoami)",
-            "cwd": "apps/gjafakort/application"
-          }
-        },
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "apps/gjafakort/application/tsconfig.app.json",
-              "apps/gjafakort/application/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/gjafakort/application/**/*"
-            ]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "apps/gjafakort/application/jest.config.js",
-            "passWithNoTests": true
-          },
-          "outputs": ["coverage/apps/gjafakort/application"]
-        },
-        "dev-services": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "docker-compose up -d",
-            "cwd": "apps/gjafakort/application"
-          }
-        },
-        "docker-express": {}
-      }
-    },
-    "gjafakort-consts": {
-      "root": "libs/gjafakort/consts",
-      "sourceRoot": "libs/gjafakort/consts/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/gjafakort/consts/tsconfig.lib.json",
-              "libs/gjafakort/consts/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!libs/gjafakort/consts/**/*"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/gjafakort/consts/jest.config.js",
-            "passWithNoTests": true
-          },
-          "outputs": ["coverage/libs/gjafakort/consts"]
-        }
-      }
-    },
-    "gjafakort-queue-listener": {
-      "root": "apps/gjafakort/queue-listener",
-      "sourceRoot": "apps/gjafakort/queue-listener/src",
-      "projectType": "application",
-      "prefix": "gjafakort-queue-listener",
-      "schematics": {},
-      "architect": {
-        "build": {
-          "builder": "@irdnis/esbuildnx:build",
-          "options": {
-            "outputPath": "dist/apps/gjafakort/queue-listener",
-            "main": "apps/gjafakort/queue-listener/src/main.ts",
-            "tsConfig": "apps/gjafakort/queue-listener/tsconfig.app.json",
-            "maxWorkers": 2
-          },
-          "configurations": {
-            "production": {
-              "optimization": true,
-              "extractLicenses": true,
-              "inspect": false
-            }
-          },
-          "outputs": ["{options.outputPath}"]
-        },
-        "serve": {
-          "builder": "@nrwl/node:execute",
-          "options": {
-            "buildTarget": "gjafakort-queue-listener:build"
-          }
-        },
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "apps/gjafakort/queue-listener/tsconfig.app.json",
-              "apps/gjafakort/queue-listener/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/gjafakort/queue-listener/**/*"
-            ]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "apps/gjafakort/queue-listener/jest.config.js",
-            "passWithNoTests": true
-          },
-          "outputs": ["coverage/apps/gjafakort/queue-listener"]
-        },
-        "docker-express": {}
-      }
-    },
-    "gjafakort-types": {
-      "root": "libs/gjafakort/types",
-      "sourceRoot": "libs/gjafakort/types/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/gjafakort/types/tsconfig.lib.json",
-              "libs/gjafakort/types/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!libs/gjafakort/types/**/*"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/gjafakort/types/jest.config.js",
-            "passWithNoTests": true
-          },
-          "outputs": ["coverage/libs/gjafakort/types"]
-        }
-      }
-    },
-    "gjafakort-web": {
-      "root": "apps/gjafakort/web",
-      "sourceRoot": "apps/gjafakort/web",
-      "projectType": "application",
-      "schematics": {},
-      "architect": {
-        "build": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "outputPath": "dist/apps/gjafakort/web",
-            "commands": [
-              "yarn nx build-next gjafakort-web",
-              "yarn nx build-server gjafakort-web"
-            ]
-          },
-          "configurations": {
-            "production": {
-              "args": "--prod"
-            }
-          }
-        },
-        "build-next": {
-          "builder": "@nrwl/next:build",
-          "options": {
-            "root": "apps/gjafakort/web",
-            "outputPath": "dist/apps/gjafakort/web"
-          },
-          "configurations": {
-            "production": {}
-          },
-          "outputs": ["{options.outputPath}"]
-        },
-        "build-server": {
-          "builder": "@nrwl/node:build",
-          "options": {
-            "outputPath": "dist/apps/gjafakort/web",
-            "main": "apps/gjafakort/web/server.ts",
-            "tsConfig": "apps/gjafakort/web/tsconfig.json",
-            "maxWorkers": 2,
-            "assets": ["apps/gjafakort/web/next-modules"]
-          },
-          "configurations": {
-            "production": {
-              "optimization": true,
-              "extractLicenses": true,
-              "inspect": false
-            }
-          },
-          "outputs": ["{options.outputPath}"]
-        },
-        "translations": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "quicktype is.json -o translation.d.ts --top-level Translation",
-            "cwd": "apps/gjafakort/web/i18n/locales"
-          }
-        },
-        "serve": {
-          "builder": "@nrwl/node:execute",
-          "options": {
-            "buildTarget": "gjafakort-web:build-server"
-          }
-        },
-        "export": {
-          "builder": "@nrwl/next:export",
-          "options": {
-            "buildTarget": "gjafakort-web:build:production"
-          }
-        },
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "apps/gjafakort/web/tsconfig.json",
-              "apps/gjafakort/web/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!apps/gjafakort/web/**/*"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "apps/gjafakort/web/jest.config.js",
-            "passWithNoTests": true
-          },
-          "outputs": ["coverage/apps/gjafakort/web"]
-        },
-        "docker-next": {}
-      }
-    },
-    "gjafakort-web-e2e": {
-      "root": "apps/gjafakort/web-e2e",
-      "sourceRoot": "apps/gjafakort/web-e2e/src",
-      "projectType": "application",
-      "architect": {
-        "e2e": {
-          "builder": "@nrwl/cypress:cypress",
-          "options": {
-            "cypressConfig": "apps/gjafakort/web-e2e/cypress.json",
-            "tsConfig": "apps/gjafakort/web-e2e/tsconfig.e2e.json",
-            "baseUrl": "http://localhost:4200",
-            "devServerTarget": "gjafakort-web:serve"
-          },
-          "configurations": {
-            "production": {
-              "devServerTarget": ""
-            }
-          }
-        },
-        "e2e-ci": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "yarn e2e-ci -n gjafakort-web-e2e -d dist/apps/gjafakort/web -c"
-          }
-        },
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": ["apps/gjafakort/web-e2e/tsconfig.e2e.json"],
-            "exclude": ["**/node_modules/**", "!apps/gjafakort/web-e2e/**/*"]
-          }
-        }
       }
     },
     "health-insurance": {
@@ -5828,11 +5866,6 @@
                 "output": "./migrations"
               },
               {
-                "glob": "*",
-                "input": "apps/judicial-system/backend/seeders",
-                "output": "./seeders"
-              },
-              {
                 "glob": ".sequelizerc",
                 "input": "apps/judicial-system/backend",
                 "output": "./"
@@ -5899,14 +5932,21 @@
         "migrate": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "../../../node_modules/.bin/sequelize-cli db:migrate",
+            "command": "sequelize-cli db:migrate",
+            "cwd": "apps/judicial-system/backend"
+          }
+        },
+        "migrate/undo": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "sequelize-cli db:migrate:undo",
             "cwd": "apps/judicial-system/backend"
           }
         },
         "migrate/generate": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "../../../node_modules/.bin/sequelize-cli migration:generate --name $(whoami)",
+            "command": "sequelize-cli migration:generate --name $(whoami)",
             "cwd": "apps/judicial-system/backend"
           }
         },
@@ -6020,6 +6060,60 @@
           },
           "outputs": ["coverage/libs/judicial-system/formatters"]
         }
+      }
+    },
+    "judicial-system-scheduler": {
+      "root": "apps/judicial-system/scheduler",
+      "sourceRoot": "apps/judicial-system/scheduler/src",
+      "projectType": "application",
+      "prefix": "judicial-system-scheduler",
+      "architect": {
+        "build": {
+          "builder": "@irdnis/esbuildnx:build",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/apps/judicial-system/scheduler",
+            "main": "apps/judicial-system/scheduler/src/main.ts",
+            "tsConfig": "apps/judicial-system/scheduler/tsconfig.app.json",
+            "maxWorkers": 2
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "judicial-system-scheduler:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "apps/judicial-system/scheduler/tsconfig.app.json",
+              "apps/judicial-system/scheduler/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!apps/judicial-system/scheduler/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/apps/judicial-system/scheduler"],
+          "options": {
+            "jestConfig": "apps/judicial-system/scheduler/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "docker-express": {}
       }
     },
     "judicial-system-types": {
@@ -7492,6 +7586,35 @@
         }
       }
     },
+    "service-portal-finance-schedule": {
+      "root": "libs/service-portal/finance-schedule",
+      "sourceRoot": "libs/service-portal/finance-schedule/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/service-portal/finance-schedule/**/*.{ts,tsx,js,jsx}"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/service-portal/finance-schedule"],
+          "options": {
+            "jestConfig": "libs/service-portal/finance-schedule/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/service-portal/finance-schedule/src/{lib,components,screens}/**/*.{js,ts,tsx}'"
+          }
+        }
+      }
+    },
     "service-portal-graphql": {
       "root": "libs/service-portal/graphql",
       "sourceRoot": "libs/service-portal/graphql/src",
@@ -7700,6 +7823,29 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/service-portal/settings/personal-information/src/{lib,components,screens}/**/*.{js,ts,tsx}'"
+          }
+        }
+      }
+    },
+    "service-portal-vehicles": {
+      "root": "libs/service-portal/vehicles",
+      "sourceRoot": "libs/service-portal/vehicles/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/service-portal/vehicles/**/*.{ts,tsx,js,jsx}"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/service-portal/vehicles"],
+          "options": {
+            "jestConfig": "libs/service-portal/vehicles/jest.config.js",
+            "passWithNoTests": true
           }
         }
       }
@@ -8563,6 +8709,12 @@
           }
         },
         "schemas/build-openapi": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn nx run services-user-profile:schemas/build-openapi-internal $NX_OPTIONS"
+          }
+        },
+        "schemas/build-openapi-internal": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "outputPath": "apps/services/user-profile/src/openapi.yaml",

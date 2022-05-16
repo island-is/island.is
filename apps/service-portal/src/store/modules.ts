@@ -4,6 +4,7 @@ import { documentsModule } from '@island.is/service-portal/documents'
 import { assetsModule } from '@island.is/service-portal/assets'
 import { familyModule } from '@island.is/service-portal/family'
 import { financeModule } from '@island.is/service-portal/finance'
+import { financeScheduleModule } from '@island.is/service-portal/finance-schedule'
 import { icelandicNamesRegistryModule } from '@island.is/service-portal/icelandic-names-registry'
 import { personalInformationModule } from '@island.is/service-portal/settings/personal-information'
 import { accessControlModule } from '@island.is/service-portal/settings/access-control'
@@ -15,7 +16,7 @@ import { educationStudentAssessmentModule } from '@island.is/service-portal/educ
 import { applicationsModule } from '@island.is/service-portal/applications'
 import { licensesModule } from '@island.is/service-portal/licenses'
 import { wipModule } from '@island.is/service-portal/wip'
-
+import { vehiclesModule } from '@island.is/service-portal/vehicles'
 /**
  * NOTE:
  * Modules should only be here if they are production ready
@@ -33,6 +34,7 @@ export type ModuleKeys =
   | 'documents'
   | 'family'
   | 'finance'
+  | 'financeSchedule'
   | 'icelandicNamesRegistry'
   | 'personalInformation'
   | 'education'
@@ -44,6 +46,7 @@ export type ModuleKeys =
   | 'licenses'
   | 'wip'
   | 'petitions'
+  | 'vehicles'
 
 export const featureFlaggedModules: ModuleKeys[] = [
   'accessControl',
@@ -51,6 +54,8 @@ export const featureFlaggedModules: ModuleKeys[] = [
   'icelandicNamesRegistry',
   'personalInformation',
   'petitions',
+  'financeSchedule',
+  'vehicles',
 ]
 
 export const modules: Record<ModuleKeys, ServicePortalModule> = {
@@ -58,6 +63,7 @@ export const modules: Record<ModuleKeys, ServicePortalModule> = {
   documents: documentsModule,
   family: familyModule,
   finance: financeModule,
+  financeSchedule: financeScheduleModule,
   icelandicNamesRegistry: icelandicNamesRegistryModule,
   personalInformation: personalInformationModule,
   education: educationModule,
@@ -69,5 +75,6 @@ export const modules: Record<ModuleKeys, ServicePortalModule> = {
   applications: applicationsModule,
   accessControl: accessControlModule,
   licenses: licensesModule,
+  vehicles: vehiclesModule,
   wip: wipModule,
 }

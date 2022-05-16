@@ -1,30 +1,38 @@
-import React from 'react'
-import flatten from 'lodash/flatten'
 import { gql, useQuery } from '@apollo/client'
-import { ServicePortalModuleComponent, m } from '@island.is/service-portal/core'
-import { GridColumn, GridRow, Table as T } from '@island.is/island-ui/core'
 import subYears from 'date-fns/subYears'
-import { Query } from '@island.is/api/schema'
+import flatten from 'lodash/flatten'
+import React from 'react'
 import { defineMessage } from 'react-intl'
+
+import { Query } from '@island.is/api/schema'
 import {
-  Box,
-  Text,
-  Stack,
-  Button,
-  SkeletonLoader,
   AlertBanner,
+  Box,
+  Button,
+  GridColumn,
+  GridRow,
+  SkeletonLoader,
+  Stack,
+  Table as T,
+  Text,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { formSubmit } from '../../utils/documentFormSubmission'
+import {
+  amountFormat,
+  ExpandHeader,
+  ExpandRow,
+  formSubmit,
+  m,
+  ServicePortalModuleComponent,
+} from '@island.is/service-portal/core'
+
+import DropdownExport from '../../components/DropdownExport/DropdownExport'
+import FinanceStatusTableRow from '../../components/FinanceStatusTableRow/FinanceStatusTableRow'
+import { exportGreidslustadaFile } from '../../utils/filesGreidslustada'
 import {
   FinanceStatusDataType,
   FinanceStatusOrganizationType,
 } from './FinanceStatusData.types'
-import { ExpandHeader, ExpandRow } from '../../components/ExpandableTable'
-import amountFormat from '../../utils/amountFormat'
-import { exportGreidslustadaFile } from '../../utils/filesGreidslustada'
-import DropdownExport from '../../components/DropdownExport/DropdownExport'
-import FinanceStatusTableRow from '../../components/FinanceStatusTableRow/FinanceStatusTableRow'
 
 const GetFinanceStatusQuery = gql`
   query GetFinanceStatusQuery {
@@ -32,13 +40,40 @@ const GetFinanceStatusQuery = gql`
   }
 `
 
+const GetDebtStatusQuery = gql`
+  query FinanceStatusGetDebtStatus {
+    getDebtStatus {
+      myDebtStatus {
+        approvedSchedule
+        possibleToSchedule
+      }
+    }
+  }
+`
+
 const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.finance-status')
   const { formatMessage } = useLocale()
 
+  const actor = userInfo.profile.actor
+  const isDelegation = Boolean(actor)
+
   const { loading, error, ...statusQuery } = useQuery<Query>(
     GetFinanceStatusQuery,
   )
+
+  const { data: debtStatusData, loading: debtStatusLoading } = useQuery<Query>(
+    GetDebtStatusQuery,
+  )
+
+  const debtStatus = debtStatusData?.getDebtStatus?.myDebtStatus
+  let scheduleButtonVisible = false
+  if (debtStatus && debtStatus.length > 0 && !debtStatusLoading) {
+    scheduleButtonVisible =
+      debtStatus[0]?.approvedSchedule > 0 ||
+      debtStatus[0]?.possibleToSchedule > 0
+  }
+
   const financeStatusData: FinanceStatusDataType =
     statusQuery.data?.getFinanceStatus || {}
 
@@ -52,6 +87,7 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
       allChargeTypes.length > 0
         ? allChargeTypes.reduce((a, b) => a + b.totals, 0)
         : 0
+
     return amountFormat(chargeTypeTotal)
   }
 
@@ -74,32 +110,61 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
           })}
         </Text>
         <GridRow>
-          <GridColumn span={['12/12', '8/12']}>
+          <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
             <Text variant="default">
               {formatMessage({
                 id: 'sp.finance-status:intro',
                 defaultMessage:
-                  'Hér er að finna sundurliðun skulda og inneigna við ríkissjóð og stofnanir á þeim degi sem skoðað er.',
+                  'Hér sérð þú sundurliðun skulda og/eða inneigna hjá ríkissjóði og stofnunum.',
               })}
             </Text>
           </GridColumn>
           {financeStatusData.organizations?.length > 0 || financeStatusZero ? (
-            <Box display="flex" marginLeft="auto" marginTop={1}>
-              <GridColumn>
-                <Button
-                  colorScheme="default"
-                  icon="print"
-                  iconType="filled"
-                  onClick={() => window.print()}
-                  preTextIconType="filled"
-                  size="default"
-                  type="button"
-                  variant="utility"
-                >
-                  {formatMessage(m.print)}
-                </Button>
-              </GridColumn>
-              <GridColumn>
+            <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+              <Box
+                display="flex"
+                justifyContent="flexEnd"
+                marginTop={1}
+                printHidden
+              >
+                {!isDelegation && scheduleButtonVisible && (
+                  <Box paddingRight={2}>
+                    <a
+                      href="/umsoknir/greidsluaaetlun/"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      <Button
+                        colorScheme="default"
+                        icon="receipt"
+                        iconType="outline"
+                        preTextIconType="outline"
+                        size="default"
+                        type="button"
+                        variant="utility"
+                      >
+                        {formatMessage({
+                          id: 'sp.finance-status:make-payment-schedule',
+                          defaultMessage: 'Gera greiðsluáætlun',
+                        })}
+                      </Button>
+                    </a>
+                  </Box>
+                )}
+                <Box paddingRight={2}>
+                  <Button
+                    colorScheme="default"
+                    icon="print"
+                    iconType="filled"
+                    onClick={() => window.print()}
+                    preTextIconType="filled"
+                    size="default"
+                    type="button"
+                    variant="utility"
+                  >
+                    {formatMessage(m.print)}
+                  </Button>
+                </Box>
                 <DropdownExport
                   onGetCSV={() =>
                     exportGreidslustadaFile(financeStatusData, 'csv')
@@ -130,8 +195,8 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
                     },
                   ]}
                 />
-              </GridColumn>
-            </Box>
+              </Box>
+            </GridColumn>
           ) : null}
         </GridRow>
         <Box marginTop={[3, 4, 4, 4, 5]}>
@@ -161,6 +226,7 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
               <T.Table>
                 <ExpandHeader
                   data={[
+                    { value: '', align: 'left' },
                     { value: formatMessage(m.feeCategory) },
                     { value: formatMessage(m.guardian) },
                     { value: formatMessage(m.status), align: 'right' },
@@ -174,7 +240,6 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
                           chargeType={chargeType}
                           organization={org}
                           downloadURL={financeStatusData.downloadServiceURL}
-                          userInfo={userInfo}
                           key={`${org.id}-${chargeType.id}-${i}-${ii}`}
                         />
                       )),

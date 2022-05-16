@@ -22,14 +22,14 @@ export class CaseFile implements TCaseFile {
   @Field()
   readonly name!: string
 
-  @Field({ nullable: true })
+  @Field()
   readonly type!: string
 
   @Field(() => String)
   readonly state!: CaseFileState
 
-  @Field()
-  readonly key!: string
+  @Field({ nullable: true })
+  readonly key?: string
 
   @Field()
   readonly size!: number

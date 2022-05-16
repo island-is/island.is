@@ -77,11 +77,14 @@ const Home: Screen<HomeProps> = ({
     n('canWeAssist', 'Getum við aðstoðað?'),
   )
 
-  const pageTitle = `${
-    institutionSlug && organization && organization.title
-      ? organization.title + ' | '
-      : ''
-  }${o('serviceWebPageTitle', headerTitle)}`
+  const pageTitle = o(
+    'serviceWebPageTitle',
+    `${
+      institutionSlug && organization && organization.title
+        ? organization.title + ' | '
+        : ''
+    }${o('serviceWebPageTitleSuffix', headerTitle)}`,
+  )
 
   const hasContent = !!supportCategories?.length
 
@@ -94,6 +97,7 @@ const Home: Screen<HomeProps> = ({
   return (
     <ServiceWebWrapper
       pageTitle={pageTitle}
+      pageDescription={o('serviceWebFeaturedDescription', '')}
       headerTitle={headerTitle}
       institutionSlug={institutionSlug}
       logoUrl={logoUrl}
@@ -266,5 +270,5 @@ const sortSupportCategories = (items: SupportCategory[]) =>
 
 export default withMainLayout(Home, {
   showHeader: false,
-  showFooter: false,
+  footerVersion: 'organization',
 })

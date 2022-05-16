@@ -4,7 +4,7 @@ import {
   BasicDataProvider,
   CustomTemplateFindQuery,
 } from '../types/BasicDataProvider'
-import { FormatMessage } from '../types/Form'
+import { FormatMessage } from '../types/external'
 
 export interface FulfilledPromise<T> {
   status: 'fulfilled'

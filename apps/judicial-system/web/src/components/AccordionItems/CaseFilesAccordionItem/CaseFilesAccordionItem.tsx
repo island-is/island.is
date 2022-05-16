@@ -4,7 +4,6 @@ import { AnimatePresence } from 'framer-motion'
 
 import { Box, AccordionItem, Button } from '@island.is/island-ui/core'
 import { UploadState } from '@island.is/judicial-system-web/src/utils/hooks/useCourtUpload'
-import { UploadStateMessage } from '@island.is/judicial-system-web/src/routes/Shared/SignedVerdictOverview/Components/UploadStateMessage'
 import { useCourtUpload } from '@island.is/judicial-system-web/src/utils/hooks/useCourtUpload'
 import {
   Case,
@@ -14,9 +13,10 @@ import {
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
-import { caseFilesAccordion as m } from '@island.is/judicial-system-web/messages/Core/caseFilesAccordion'
+import { caseFilesAccordion as m } from '@island.is/judicial-system-web/messages'
 
 import { CaseFileList, InfoBox } from '../..'
+import { UploadStateMessage } from './UploadStateMessage'
 
 interface Props {
   workingCase: Case
@@ -108,6 +108,7 @@ const CaseFilesAccordionItem: React.FC<Props> = (props) => {
             ],
           ])
         }
+        isCaseCompleted={completedCaseStates.includes(workingCase.state)}
       />
       {canCaseFilesBeUploaded() && (
         <Box display="flex" justifyContent="flexEnd">

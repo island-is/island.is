@@ -41,6 +41,7 @@ import {
   FILE_SIZE_LIMIT,
   MANUAL,
   NO,
+  NO_PRIVATE_PENSION_FUND,
   ParentalRelations,
   StartDateOptions,
   YES,
@@ -255,10 +256,12 @@ export const ParentalLeaveForm: Form = buildForm({
                     })
 
                     return (
-                      data?.getPrivatePensionFunds?.map(({ id, name }) => ({
-                        label: name,
-                        value: id,
-                      })) ?? []
+                      data?.getPrivatePensionFunds
+                        ?.filter(({ id }) => id !== NO_PRIVATE_PENSION_FUND)
+                        .map(({ id, name }) => ({
+                          label: name,
+                          value: id,
+                        })) ?? []
                     )
                   },
                 }),
@@ -307,22 +310,12 @@ export const ParentalLeaveForm: Form = buildForm({
               description:
                 parentalLeaveFormMessages.personalAllowance.description,
               children: [
-                buildRadioField({
+                buildCustomField({
+                  component: 'PersonalUseAsMuchAsPossible',
                   id: 'personalAllowance.useAsMuchAsPossible',
                   title:
                     parentalLeaveFormMessages.personalAllowance
                       .useAsMuchAsPossible,
-                  width: 'half',
-                  options: [
-                    {
-                      label: parentalLeaveFormMessages.shared.yesOptionLabel,
-                      value: YES,
-                    },
-                    {
-                      label: parentalLeaveFormMessages.shared.noOptionLabel,
-                      value: NO,
-                    },
-                  ],
                 }),
                 buildTextField({
                   id: 'personalAllowance.usage',
@@ -360,27 +353,18 @@ export const ParentalLeaveForm: Form = buildForm({
             buildMultiField({
               id: 'personalAllowanceFromSpouse',
               condition: (answers) =>
-                answers.usePersonalAllowanceFromSpouse === YES,
+                answers.usePersonalAllowanceFromSpouse === YES &&
+                allowOtherParent(answers),
               title: parentalLeaveFormMessages.personalAllowance.spouseTitle,
               description:
                 parentalLeaveFormMessages.personalAllowance.spouseDescription,
               children: [
-                buildRadioField({
+                buildCustomField({
+                  component: 'SpouseUseAsMuchAsPossible',
                   id: 'personalAllowanceFromSpouse.useAsMuchAsPossible',
                   title:
                     parentalLeaveFormMessages.personalAllowance
                       .useAsMuchAsPossibleFromSpouse,
-                  width: 'half',
-                  options: [
-                    {
-                      label: parentalLeaveFormMessages.shared.yesOptionLabel,
-                      value: YES,
-                    },
-                    {
-                      label: parentalLeaveFormMessages.shared.noOptionLabel,
-                      value: NO,
-                    },
-                  ],
                 }),
                 buildTextField({
                   id: 'personalAllowanceFromSpouse.usage',
@@ -540,7 +524,8 @@ export const ParentalLeaveForm: Form = buildForm({
                 'requestRights.isRequestingRights',
                 'requestRights.requestDays',
               ],
-              title: 'Hversu mörgum dögum viltu óska eftir?',
+              title:
+                parentalLeaveFormMessages.shared.transferRightsRequestTitle,
               condition: (answers, externalData) => {
                 const canTransferRights =
                   getSelectedChild(answers, externalData)?.parentalRelation ===
@@ -559,7 +544,7 @@ export const ParentalLeaveForm: Form = buildForm({
                 'giveRights.isGivingRights',
                 'giveRights.giveDays',
               ],
-              title: 'Hversu marga daga viltu færa yfir á hitt foreldrið?',
+              title: parentalLeaveFormMessages.shared.transferRightsGiveTitle,
               condition: (answers, externalData) => {
                 const canTransferRights =
                   getSelectedChild(answers, externalData)?.parentalRelation ===

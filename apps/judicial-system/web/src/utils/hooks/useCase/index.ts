@@ -2,10 +2,6 @@ import { useMemo, useState } from 'react'
 import { useMutation } from '@apollo/client'
 import { useIntl } from 'react-intl'
 
-import {
-  parseString,
-  parseTransition,
-} from '@island.is/judicial-system-web/src/utils/formatters'
 import type {
   NotificationType,
   SendNotificationResponse,
@@ -14,6 +10,8 @@ import type {
   RequestSignatureResponse,
   UpdateCase,
   SessionArrangements,
+  CreateCase,
+  CaseCustodyRestrictions,
 } from '@island.is/judicial-system/types'
 import { toast } from '@island.is/island-ui/core'
 import { errors } from '@island.is/judicial-system-web/messages'
@@ -29,33 +27,41 @@ import { ExtendCaseMutation } from './extendCaseGql'
 
 type autofillProperties = Pick<
   Case,
-  | 'demands'
-  | 'courtAttendees'
-  | 'prosecutorDemands'
-  | 'courtStartDate'
-  | 'courtCaseFacts'
-  | 'courtLegalArguments'
-  | 'validToDate'
-  | 'isolationToDate'
-  | 'prosecutorOnlySessionRequest'
   | 'conclusion'
+  | 'courtAttendees'
+  | 'courtCaseFacts'
   | 'courtDate'
+  | 'courtLegalArguments'
   | 'courtLocation'
-  | 'sessionBookings'
-  | 'ruling'
+  | 'courtStartDate'
+  | 'decision'
+  | 'demands'
   | 'endOfSessionBookings'
   | 'introduction'
+  | 'isCustodyIsolation'
+  | 'isolationToDate'
+  | 'prosecutorDemands'
+  | 'prosecutorOnlySessionRequest'
+  | 'requestedCustodyRestrictions'
   | 'requestedOtherRestrictions'
+  | 'requestedValidToDate'
+  | 'ruling'
+  | 'sessionArrangements'
+  | 'sessionBookings'
+  | 'type'
+  | 'validToDate'
 >
 
-type autofillSessionArrangementProperties = Pick<Case, 'sessionArrangements'>
-
-type autofillBooleanProperties = Pick<Case, 'isCustodyIsolation'>
+export type autofillEntry = {
+  key: keyof autofillProperties
+  value?: string | boolean | SessionArrangements | CaseCustodyRestrictions[]
+  force?: boolean
+}
 
 export type autofillFunc = (
-  key: keyof autofillProperties,
-  value: string,
+  entries: Array<autofillEntry>,
   workingCase: Case,
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
 ) => void
 
 interface CreateCaseMutationResponse {
@@ -129,21 +135,21 @@ const useCase = () => {
   ] = useMutation<ExtendCaseMutationResponse>(ExtendCaseMutation)
 
   const createCase = useMemo(
-    () => async (theCase: Case): Promise<Case | undefined> => {
+    () => async (theCase: CreateCase): Promise<Case | undefined> => {
       try {
         if (isCreatingCase === false) {
           const { data } = await createCaseMutation({
             variables: {
               input: {
                 type: theCase.type,
+                description: theCase.description,
                 policeCaseNumber: theCase.policeCaseNumber,
                 defenderName: theCase.defenderName,
+                defenderNationalId: theCase.defenderNationalId,
                 defenderEmail: theCase.defenderEmail,
                 defenderPhoneNumber: theCase.defenderPhoneNumber,
                 sendRequestToDefender: theCase.sendRequestToDefender,
                 leadInvestigator: theCase.leadInvestigator,
-                courtId: theCase.court?.id,
-                description: theCase.description,
               },
             },
           })
@@ -223,13 +229,14 @@ const useCase = () => {
       setWorkingCase?: React.Dispatch<React.SetStateAction<Case>>,
     ): Promise<boolean> => {
       try {
-        const transitionRequest = parseTransition(
-          workingCase.modified,
-          transition,
-        )
-
         const { data } = await transitionCaseMutation({
-          variables: { input: { id: workingCase.id, ...transitionRequest } },
+          variables: {
+            input: {
+              id: workingCase.id,
+              modified: workingCase.modified,
+              transition,
+            },
+          },
         })
 
         if (!data?.transitionCase?.state) {
@@ -328,50 +335,28 @@ const useCase = () => {
     [extendCaseMutation, formatMessage],
   )
 
-  const autofill: autofillFunc = useMemo(
-    () => (key, value, workingCase) => {
-      if (workingCase[key] === undefined || workingCase[key] === null) {
-        workingCase[key] = value
+  const autofill: autofillFunc = (entries, workingCase, setWorkingCase) => {
+    const validEntries = entries.filter(
+      (item) =>
+        item.value !== undefined &&
+        item.value !== null &&
+        (item.force ||
+          workingCase[item.key] === undefined ||
+          workingCase[item.key] === null),
+    )
 
-        if (workingCase[key]) {
-          updateCase(workingCase.id, parseString(key, value))
-        }
-      }
-    },
-    [updateCase],
-  )
+    const flatEntries = Object.assign(
+      {},
+      ...validEntries.map((entry) => ({ [entry.key]: entry.value })),
+    )
 
-  const autofillSessionArrangements = useMemo(
-    () => (
-      key: keyof autofillSessionArrangementProperties,
-      value: SessionArrangements,
-      workingCase: Case,
-    ) => {
-      if (!workingCase[key]) {
-        workingCase[key] = value
+    if (Object.keys(flatEntries).length === 0) {
+      return
+    }
 
-        if (workingCase[key]) {
-          updateCase(workingCase.id, parseString(key, value))
-        }
-      }
-    },
-    [updateCase],
-  )
-
-  const autofillBoolean = useMemo(
-    () => (
-      key: keyof autofillBooleanProperties,
-      value: boolean,
-      workingCase: Case,
-    ) => {
-      if (workingCase[key] === undefined || workingCase[key] === null) {
-        workingCase[key] = value
-
-        updateCase(workingCase.id, parseString(key, value))
-      }
-    },
-    [updateCase],
-  )
+    setWorkingCase({ ...workingCase, ...flatEntries })
+    updateCase(workingCase.id, flatEntries)
+  }
 
   return {
     createCase,
@@ -391,8 +376,6 @@ const useCase = () => {
     extendCase,
     isExtendingCase,
     autofill,
-    autofillSessionArrangements,
-    autofillBoolean,
   }
 }
 

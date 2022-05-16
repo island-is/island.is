@@ -44,6 +44,14 @@ judicial-system-api:
       initialDelaySeconds: 3
       path: '/liveness'
       timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 2
+      replicas:
+        max: 3
+        min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-api'
   ingress:
@@ -73,9 +81,9 @@ judicial-system-api:
       memory: '128Mi'
   secrets:
     AUTH_JWT_SECRET: '/k8s/judicial-system/AUTH_JWT_SECRET'
+    BACKEND_ACCESS_TOKEN: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_ACCESS_TOKEN: '/k8s/judicial-system/CONTENTFUL_ACCESS_TOKEN'
-    SECRET_TOKEN: '/k8s/judicial-system/SECRET_TOKEN'
     XROAD_CLIENT_CERT: '/k8s/judicial-system/XROAD_CLIENT_CERT'
     XROAD_CLIENT_KEY: '/k8s/judicial-system/XROAD_CLIENT_KEY'
     XROAD_CLIENT_PEM: '/k8s/judicial-system/XROAD_CLIENT_PEM'
@@ -97,6 +105,7 @@ judicial-system-backend:
     DB_NAME: 'judicial_system'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'judicial_system'
+    DEFENDER_COMPLETED_CASE_OVERVIEW_URL: 'https://judicial-system.staging01.devland.is/verjandi/'
     DOKOBIT_URL: 'https://developers.dokobit.com'
     EMAIL_REGION: 'eu-west-1'
     NODE_OPTIONS: '--max-old-space-size=464'
@@ -128,6 +137,14 @@ judicial-system-backend:
       initialDelaySeconds: 3
       path: '/liveness'
       timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 2
+      replicas:
+        max: 10
+        min: 4
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-backend'
   initContainer:
@@ -168,7 +185,9 @@ judicial-system-backend:
       memory: '256Mi'
   secrets:
     ADMIN_USERS: '/k8s/judicial-system/ADMIN_USERS'
+    ARCHIVE_ENCRYPTION_KEY: '/k8s/judicial-system/ARCHIVE_ENCRYPTION_KEY'
     AUTH_JWT_SECRET: '/k8s/judicial-system/AUTH_JWT_SECRET'
+    BACKEND_ACCESS_TOKEN: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_ACCESS_TOKEN: '/k8s/judicial-system/CONTENTFUL_ACCESS_TOKEN'
     COURTS_MOBILE_NUMBERS: '/k8s/judicial-system/COURTS_MOBILE_NUMBERS'
@@ -185,7 +204,6 @@ judicial-system-backend:
     NOVA_USERNAME: '/k8s/judicial-system/NOVA_USERNAME'
     PRISON_ADMIN_EMAIL: '/k8s/judicial-system/PRISON_ADMIN_EMAIL'
     PRISON_EMAIL: '/k8s/judicial-system/PRISON_EMAIL'
-    SECRET_TOKEN: '/k8s/judicial-system/SECRET_TOKEN'
     XROAD_CLIENT_CERT: '/k8s/judicial-system/XROAD_CLIENT_CERT'
     XROAD_CLIENT_KEY: '/k8s/judicial-system/XROAD_CLIENT_KEY'
     XROAD_CLIENT_PEM: '/k8s/judicial-system/XROAD_CLIENT_PEM'
@@ -198,6 +216,58 @@ judicial-system-backend:
       eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/judicial-system-backend'
     create: true
     name: 'judicial-system-backend'
+judicial-system-scheduler:
+  args:
+    - 'main.js'
+  command:
+    - 'node'
+  enabled: true
+  env:
+    BACKEND_URL: 'http://web-judicial-system-backend'
+    NODE_OPTIONS: '--max-old-space-size=208'
+    SERVERSIDE_FEATURES_ON: ''
+    TIME_TO_LIVE_MINUTES: '30'
+  grantNamespaces:
+    - 'nginx-ingress-external'
+  grantNamespacesEnabled: true
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: '/'
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: '/'
+      timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 2
+      replicas:
+        max: 1
+        min: 1
+  image:
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-scheduler'
+  namespace: 'judicial-system'
+  replicaCount:
+    default: 1
+    max: 1
+    min: 1
+  resources:
+    limits:
+      cpu: '200m'
+      memory: '256Mi'
+    requests:
+      cpu: '100m'
+      memory: '128Mi'
+  schedule: '0 2 * * *'
+  secrets:
+    BACKEND_ACCESS_TOKEN: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN'
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
 judicial-system-web:
   enabled: true
   env:
@@ -217,6 +287,14 @@ judicial-system-web:
       initialDelaySeconds: 3
       path: '/readiness'
       timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 2
+      replicas:
+        max: 3
+        min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-web'
   ingress:
@@ -241,6 +319,7 @@ judicial-system-web:
       memory: '128Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    LAWYERS_ICELAND_API_KEY: '/k8s/judicial-system/LAWYERS_ICELAND_API_KEY'
     NATIONAL_REGISTRY_API_KEY: '/k8s/judicial-system/NATIONAL_REGISTRY_API_KEY'
   securityContext:
     allowPrivilegeEscalation: false
@@ -266,6 +345,14 @@ judicial-system-xrd-api:
       initialDelaySeconds: 3
       path: '/liveness'
       timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 2
+      replicas:
+        max: 3
+        min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-xrd-api'
   ingress:
@@ -291,8 +378,8 @@ judicial-system-xrd-api:
       cpu: '100m'
       memory: '128Mi'
   secrets:
+    BACKEND_ACCESS_TOKEN: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    SECRET_TOKEN: '/k8s/judicial-system/SECRET_TOKEN'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false

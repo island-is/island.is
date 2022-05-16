@@ -49,6 +49,11 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
         prod:
           'https://rettarvorslugatt.island.is/krafa/rannsoknarheimild/stadfesta/',
       },
+      DEFENDER_COMPLETED_CASE_OVERVIEW_URL: {
+        dev: 'https://judicial-system.dev01.devland.is/verjandi/',
+        staging: 'https://judicial-system.staging01.devland.is/verjandi/',
+        prod: 'https://rettarvorslugatt.island.is/verjandi/',
+      },
     })
     .xroad(Base, JudicialSystem)
     .secrets({
@@ -65,10 +70,11 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
       PRISON_ADMIN_EMAIL: '/k8s/judicial-system/PRISON_ADMIN_EMAIL',
       AUTH_JWT_SECRET: '/k8s/judicial-system/AUTH_JWT_SECRET',
       ADMIN_USERS: '/k8s/judicial-system/ADMIN_USERS',
-      SECRET_TOKEN: '/k8s/judicial-system/SECRET_TOKEN',
+      BACKEND_ACCESS_TOKEN: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN',
       CONTENTFUL_ACCESS_TOKEN: '/k8s/judicial-system/CONTENTFUL_ACCESS_TOKEN',
       EVENT_URL: '/k8s/judicial-system/EVENT_URL',
       ERROR_EVENT_URL: '/k8s/judicial-system/ERROR_EVENT_URL',
+      ARCHIVE_ENCRYPTION_KEY: '/k8s/judicial-system/ARCHIVE_ENCRYPTION_KEY',
     })
     .initContainer({
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],

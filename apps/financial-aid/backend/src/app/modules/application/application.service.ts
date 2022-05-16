@@ -5,25 +5,33 @@ import {
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
-import { ApplicationModel, SpouseResponse } from './models'
+import {
+  ApplicationModel,
+  FilterApplicationsResponse,
+  SpouseResponse,
+} from './models'
 
 import { Op } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 
-import { CreateApplicationDto, UpdateApplicationDto } from './dto'
+import {
+  CreateApplicationDto,
+  FilterApplicationsDto,
+  UpdateApplicationDto,
+} from './dto'
 import {
   ApplicationEventType,
   ApplicationFilters,
   ApplicationState,
   ApplicationStateUrl,
-  getEventTypesFromService,
   getStateFromUrl,
-  RolesRule,
   User,
   Staff,
   FileType,
   getApplicantEmailDataFromEventType,
   firstDateOfMonth,
   UserType,
+  applicationPageSize,
 } from '@island.is/financial-aid/shared/lib'
 import { FileService } from '../file'
 import {
@@ -91,18 +99,18 @@ export class ApplicationService {
 
   async findByNationalId(
     nationalId: string,
-    municipalityCode: string,
+    municipalityCodes: string[],
   ): Promise<ApplicationModel[]> {
     return this.applicationModel.findAll({
       where: {
         [Op.or]: [
           {
             nationalId,
-            municipalityCode,
+            municipalityCode: { [Op.in]: municipalityCodes },
           },
           {
             spouseNationalId: nationalId,
-            municipalityCode,
+            municipalityCode: { [Op.in]: municipalityCodes },
           },
         ],
       },
@@ -143,7 +151,7 @@ export class ApplicationService {
   async getAll(
     stateUrl: ApplicationStateUrl,
     staffId: string,
-    municipalityCode: string,
+    municipalityCodes: string[],
   ): Promise<ApplicationModel[]> {
     return this.applicationModel.findAll({
       where:
@@ -151,11 +159,11 @@ export class ApplicationService {
           ? {
               state: { [Op.in]: getStateFromUrl[stateUrl] },
               staffId,
-              municipalityCode,
+              municipalityCode: { [Op.in]: municipalityCodes },
             }
           : {
               state: { [Op.in]: getStateFromUrl[stateUrl] },
-              municipalityCode,
+              municipalityCode: { [Op.in]: municipalityCodes },
             },
       order: [['modified', 'DESC']],
       include: [{ model: StaffModel, as: 'staff' }],
@@ -164,7 +172,7 @@ export class ApplicationService {
 
   async findById(
     id: string,
-    service: RolesRule,
+    isEmployee: boolean,
   ): Promise<ApplicationModel | null> {
     const application = await this.applicationModel.findOne({
       where: { id },
@@ -176,7 +184,9 @@ export class ApplicationService {
           separate: true,
           where: {
             eventType: {
-              [Op.in]: getEventTypesFromService[service],
+              [Op.in]: isEmployee
+                ? Object.values(ApplicationEventType)
+                : [ApplicationEventType.DATANEEDED],
             },
           },
           order: [['created', 'DESC']],
@@ -193,7 +203,6 @@ export class ApplicationService {
           include: [{ model: DeductionFactorsModel, as: 'deductionFactors' }],
           separate: true,
           order: [['created', 'DESC']],
-          limit: 1,
         },
         {
           model: DirectTaxPaymentModel,
@@ -211,7 +220,7 @@ export class ApplicationService {
 
   async getAllFilters(
     staffId: string,
-    municipalityCode: string,
+    municipalityCodes: string[],
   ): Promise<ApplicationFilters> {
     const statesToCount = [
       ApplicationState.NEW,
@@ -223,7 +232,10 @@ export class ApplicationService {
 
     const countPromises = statesToCount.map((item) =>
       this.applicationModel.count({
-        where: { state: item, municipalityCode },
+        where: {
+          state: item,
+          municipalityCode: { [Op.in]: municipalityCodes },
+        },
       }),
     )
 
@@ -231,7 +243,7 @@ export class ApplicationService {
       this.applicationModel.count({
         where: {
           staffId,
-          municipalityCode,
+          municipalityCode: { [Op.in]: municipalityCodes },
           state: {
             [Op.or]: [ApplicationState.INPROGRESS, ApplicationState.DATANEEDED],
           },
@@ -255,17 +267,20 @@ export class ApplicationService {
     application: CreateApplicationDto,
     user: User,
   ): Promise<ApplicationModel> {
-    const hasAppliedForPeriod = await this.getCurrentApplicationId(
-      user.nationalId,
-    )
+    //When there is mismatch in DB between AS and financial-aid-backend
+    if (!application.applicationSystemId) {
+      const hasAppliedForPeriod = await this.getCurrentApplicationId(
+        user.nationalId,
+      )
 
-    if (hasAppliedForPeriod) {
-      throw new ForbiddenException('User or spouse has applied for period')
+      if (hasAppliedForPeriod) {
+        throw new ForbiddenException('User or spouse has applied for period')
+      }
     }
 
     const appModel = await this.applicationModel.create({
-      nationalId: user.nationalId,
       ...application,
+      nationalId: application.nationalId || user.nationalId,
     })
 
     await Promise.all([
@@ -285,12 +300,23 @@ export class ApplicationService {
           type: f.type,
         })
       }),
-      this.createApplicationEmails(application, appModel, user),
+      this.createApplicationEmails(application, appModel),
       this.applicationEventService.create({
         applicationId: appModel.id,
         eventType: ApplicationEventType[appModel.state.toUpperCase()],
       }),
     ])
+
+    //For application system to map to json
+    if (appModel.getDataValue('files') === undefined) {
+      appModel.setDataValue('files', [])
+    }
+    if (appModel.getDataValue('applicationEvents') === undefined) {
+      appModel.setDataValue('applicationEvents', [])
+    }
+    if (appModel.getDataValue('directTaxPayments') === undefined) {
+      appModel.setDataValue('directTaxPayments', [])
+    }
 
     return appModel
   }
@@ -298,7 +324,6 @@ export class ApplicationService {
   private async createApplicationEmails(
     application: CreateApplicationDto,
     appModel: ApplicationModel,
-    user: User,
   ) {
     const municipality = await this.municipalityService.findByMunicipalityId(
       application.municipalityCode,
@@ -317,7 +342,7 @@ export class ApplicationService {
     emailPromises.push(
       this.sendEmail(
         {
-          name: user.name,
+          name: application.name,
           address: appModel.email,
         },
         emailData.subject,
@@ -423,6 +448,58 @@ export class ApplicationService {
     ])
 
     return updatedApplication
+  }
+
+  async filter(
+    filters: FilterApplicationsDto,
+    municipalityCodes: string[],
+  ): Promise<FilterApplicationsResponse> {
+    const whereOptions = {
+      state: {
+        [Op.in]:
+          filters.states.length > 0
+            ? filters.states
+            : [ApplicationState.APPROVED, ApplicationState.REJECTED],
+      },
+      municipalityCode: { [Op.in]: municipalityCodes },
+    }
+
+    if (filters.months.length > 0) {
+      const date = new Date()
+      const currentYear = date.getFullYear()
+      const currentMonth = date.getMonth()
+
+      whereOptions[Op.or] = filters.months.map((month) =>
+        Sequelize.and(
+          Sequelize.where(
+            Sequelize.fn(
+              'date_part',
+              'month',
+              Sequelize.col('ApplicationModel.created'),
+            ),
+            (month + 1).toString(),
+          ),
+          Sequelize.where(
+            Sequelize.fn(
+              'date_part',
+              'year',
+              Sequelize.col('ApplicationModel.created'),
+            ),
+            (month > currentMonth ? currentYear - 1 : currentYear).toString(),
+          ),
+        ),
+      )
+    }
+
+    const results = await this.applicationModel.findAndCountAll({
+      where: whereOptions,
+      order: [['modified', 'DESC']],
+      include: [{ model: StaffModel, as: 'staff' }],
+      offset: (filters.page - 1) * applicationPageSize,
+      limit: applicationPageSize,
+    })
+
+    return { applications: results.rows, totalCount: results.count }
   }
 
   private async sendApplicationUpdateEmail(

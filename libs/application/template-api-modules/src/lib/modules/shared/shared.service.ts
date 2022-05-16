@@ -13,7 +13,7 @@ import {
   AttachmentEmailTemplateGenerator,
   BaseTemplateApiApplicationService,
 } from '../../types'
-import { createAssignToken, getConfigValue } from './shared.utils'
+import { getConfigValue } from './shared.utils'
 import {
   PAYMENT_QUERY,
   PAYMENT_STATUS_QUERY,
@@ -69,7 +69,7 @@ export class SharedTemplateApiService {
     expiresIn: number,
     locale = 'is',
   ) {
-    const token = createAssignToken(
+    const token = await this.applicationService.createAssignToken(
       application,
       getConfigValue(this.configService, 'jwtSecret'),
       expiresIn,

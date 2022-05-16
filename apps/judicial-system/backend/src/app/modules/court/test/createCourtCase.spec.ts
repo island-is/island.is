@@ -6,7 +6,7 @@ import { CourtClientService } from '@island.is/judicial-system/court-client'
 import { CaseType, User } from '@island.is/judicial-system/types'
 
 import { randomBoolean, randomDate, randomEnum } from '../../../test'
-import { now } from '../../../factories'
+import { nowFactory } from '../../../factories'
 import { subTypes } from '../court.service'
 import { createTestingCourtModule } from './createTestingCourtModule'
 
@@ -39,7 +39,7 @@ describe('CourtService - Create court case', () => {
 
     mockCourtClientService = courtClientService
 
-    const mockToday = now as jest.Mock
+    const mockToday = nowFactory as jest.Mock
     mockToday.mockReturnValueOnce(date)
 
     givenWhenThen = async (
@@ -71,6 +71,7 @@ describe('CourtService - Create court case', () => {
 
   each`
     type
+    ${CaseType.ADMISSION_TO_FACILITY}
     ${CaseType.SEARCH_WARRANT}
     ${CaseType.BANKING_SECRECY_WAIVER}
     ${CaseType.PHONE_TAPPING}

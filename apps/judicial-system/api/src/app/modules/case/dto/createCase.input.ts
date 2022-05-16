@@ -24,6 +24,10 @@ export class CreateCaseInput implements CreateCase {
 
   @Allow()
   @Field({ nullable: true })
+  readonly defenderNationalId?: string
+
+  @Allow()
+  @Field({ nullable: true })
   readonly defenderEmail?: string
 
   @Allow()
@@ -33,10 +37,6 @@ export class CreateCaseInput implements CreateCase {
   @Allow()
   @Field({ nullable: true })
   readonly sendRequestToDefender?: boolean
-
-  @Allow()
-  @Field({ nullable: true })
-  readonly courtId?: string
 
   @Allow()
   @Field({ nullable: true })

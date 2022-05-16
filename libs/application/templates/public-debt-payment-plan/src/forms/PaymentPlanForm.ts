@@ -1,10 +1,7 @@
-import { PaymentScheduleDebts } from '@island.is/api/schema'
+import { Application, PaymentScheduleDebts } from '@island.is/api/schema'
 import {
   buildCompanySearchField,
   buildCustomField,
-  buildDataProviderItem,
-  buildDescriptionField,
-  buildExternalDataProvider,
   buildForm,
   buildMultiField,
   buildRadioField,
@@ -24,10 +21,9 @@ import {
   info,
   overview,
   section,
+  paymentPlan,
+  betaTest,
 } from '../lib/messages'
-import { externalData } from '../lib/messages/externalData'
-import { paymentPlan } from '../lib/messages/paymentPlan'
-import { prerequisitesFailed } from '../lib/paymentPlanUtils'
 import { NO, YES } from '../shared/constants'
 import {
   PaymentPlanBuildIndex,
@@ -35,7 +31,6 @@ import {
   paymentPlanIndexKeyMapper,
   PublicDebtPaymentPlan,
 } from '../types'
-import { betaTestSection } from './BetaTestSection'
 
 // Builds a payment plan step that exists of two custom fields:
 // The overview step detailing a list of all payment plans and their status
@@ -72,67 +67,19 @@ export const PaymentPlanForm: Form = buildForm({
   mode: FormModes.APPLYING,
   logo: Logo,
   children: [
-    betaTestSection,
+    // TODO remove section on official release
+    buildSection({
+      id: 'betaTest.section',
+      title: betaTest.title,
+      children: [],
+    }),
     buildSection({
       id: 'externalData',
       title: section.externalData,
-      children: [
-        buildExternalDataProvider({
-          id: 'approveExternalData',
-          title: externalData.general.pageTitle,
-          description: externalData.general.description,
-          subTitle: externalData.general.subTitle,
-          checkboxLabel: externalData.general.checkboxLabel,
-          dataProviders: [
-            buildDataProviderItem({
-              id: 'nationalRegistry',
-              type: 'NationalRegistryProvider',
-              title: externalData.labels.nationalRegistryTitle,
-              subTitle: externalData.labels.nationalRegistrySubTitle,
-            }),
-            buildDataProviderItem({
-              id: 'userProfile',
-              type: 'UserProfileProvider',
-              title: externalData.labels.userProfileTitle,
-              subTitle: externalData.labels.userProfileSubTitle,
-            }),
-            buildDataProviderItem({
-              id: 'paymentPlanPrerequisites',
-              title: externalData.labels.paymentPlanTitle,
-              type: 'PaymentPlanPrerequisitesProvider',
-              subTitle: externalData.labels.paymentPlanSubtitle,
-            }),
-
-            buildDataProviderItem({
-              id: 'additionalDataProviderMessage',
-              type: '',
-              title: externalData.labels.paymentEmployerTitle,
-              subTitle: externalData.labels.paymentEmployerSubtitle,
-            }),
-          ],
-        }),
-        buildMultiField({
-          id: 'prerequisitesErrorWall',
-          title: externalData.general.pageTitle,
-          children: [
-            buildDescriptionField({
-              id: 'prerequisitesErrorDescriptionField',
-              title: '',
-              description: '',
-            }),
-            buildCustomField({
-              id: 'prerequisitesErrorModal',
-              component: 'PrerequisitesErrorModal',
-              title: '',
-              doesNotRequireAnswer: true,
-            }),
-          ],
-          condition: (_formValue, externalData) => {
-            return prerequisitesFailed(externalData)
-          },
-        }),
-      ],
+      children: [],
     }),
+    // The info section is repeated in order to let the user change his info in the later state
+    // Its basically a hack to make the flow seem more seamless from the dataprovider.
     buildSection({
       id: 'info',
       title: section.info,
@@ -148,7 +95,7 @@ export const PaymentPlanForm: Form = buildForm({
               backgroundColor: 'white',
               required: true,
               disabled: true,
-              defaultValue: (application: any) => {
+              defaultValue: (application: Application) => {
                 return (application.externalData as PaymentPlanExternalData)
                   ?.nationalRegistry?.data?.fullName
               },
@@ -161,7 +108,7 @@ export const PaymentPlanForm: Form = buildForm({
               backgroundColor: 'white',
               required: true,
               disabled: true,
-              defaultValue: (application: any) =>
+              defaultValue: (application: Application) =>
                 (application.externalData as PaymentPlanExternalData)
                   ?.nationalRegistry?.data?.nationalId,
             }),
@@ -172,7 +119,7 @@ export const PaymentPlanForm: Form = buildForm({
               backgroundColor: 'white',
               required: true,
               disabled: true,
-              defaultValue: (application: any) =>
+              defaultValue: (application: Application) =>
                 (application.externalData as PaymentPlanExternalData)
                   ?.nationalRegistry?.data?.address?.streetAddress,
             }),
@@ -183,7 +130,7 @@ export const PaymentPlanForm: Form = buildForm({
               backgroundColor: 'white',
               required: true,
               disabled: true,
-              defaultValue: (application: any) =>
+              defaultValue: (application: Application) =>
                 (application.externalData as PaymentPlanExternalData)
                   ?.nationalRegistry?.data?.address?.postalCode,
             }),
@@ -194,7 +141,7 @@ export const PaymentPlanForm: Form = buildForm({
               backgroundColor: 'white',
               required: true,
               disabled: true,
-              defaultValue: (application: any) =>
+              defaultValue: (application: Application) =>
                 (application.externalData as PaymentPlanExternalData)
                   ?.nationalRegistry?.data?.address?.city,
             }),
@@ -205,7 +152,7 @@ export const PaymentPlanForm: Form = buildForm({
               variant: 'email',
               backgroundColor: 'blue',
               required: true,
-              defaultValue: (application: any) =>
+              defaultValue: (application: Application) =>
                 (application.externalData as PaymentPlanExternalData)
                   ?.userProfile?.data?.email,
             }),
@@ -217,7 +164,7 @@ export const PaymentPlanForm: Form = buildForm({
               variant: 'tel',
               backgroundColor: 'blue',
               required: true,
-              defaultValue: (application: any) =>
+              defaultValue: (application: Application) =>
                 (application.externalData as PaymentPlanExternalData)
                   ?.userProfile?.data?.mobilePhoneNumber,
             }),

@@ -1,6 +1,7 @@
 import React from 'react'
 import { defineMessage } from 'react-intl'
 import { useQuery } from '@apollo/client'
+import { spmm } from '../../lib/messages'
 
 import { Query } from '@island.is/api/schema'
 import {
@@ -23,6 +24,7 @@ import {
   natRegMaritalStatusMessageDescriptorRecord,
 } from '../../helpers/localizationHelpers'
 import { NATIONAL_REGISTRY_USER } from '../../lib/queries/getNationalRegistryUser'
+import { NATIONAL_REGISTRY_FAMILY } from '../../lib/queries/getNationalRegistryFamily'
 
 const dataNotFoundMessage = defineMessage({
   id: 'sp.family:data-not-found',
@@ -34,6 +36,12 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
   const { formatMessage } = useLocale()
   const { data, loading, error } = useQuery<Query>(NATIONAL_REGISTRY_USER)
   const { nationalRegistryUser } = data || {}
+
+  // User's Family members
+  const { data: famData, loading: familyLoading } = useQuery<Query>(
+    NATIONAL_REGISTRY_FAMILY,
+  )
+  const { nationalRegistryFamily } = famData || {}
   return (
     <>
       <Box marginBottom={5}>
@@ -44,11 +52,7 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
                 {userInfo.profile.name}
               </Text>
               <Text as="p" variant="default">
-                {formatMessage({
-                  id: 'sp.family:user-info-description',
-                  defaultMessage:
-                    'Hér eru þín gögn frá þjóðskrá. Þú hefur kost á að gera breytingar á þessum gögnum.',
-                })}
+                {formatMessage(spmm.family.userInfoDesc)}
               </Text>
             </Stack>
           </GridColumn>
@@ -57,7 +61,7 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
       <Stack space={2}>
         <UserInfoLine
           title={formatMessage(m.myRegistration)}
-          label={m.displayName}
+          label={m.fullName}
           content={userInfo.profile.name}
           editLink={{
             external: true,
@@ -103,6 +107,16 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
             error
               ? formatMessage(dataNotFoundMessage)
               : nationalRegistryUser?.birthPlace || ''
+          }
+          loading={loading}
+        />
+        <Divider />
+        <UserInfoLine
+          label={m.familyNumber}
+          content={
+            error
+              ? formatMessage(dataNotFoundMessage)
+              : nationalRegistryUser?.familyNr || ''
           }
           loading={loading}
         />
@@ -192,6 +206,26 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           loading={loading}
         />
         <Divider />
+        <Box marginY={3} />
+        <UserInfoLine
+          title={formatMessage(spmm.family.userFamilyMembersOnNumber)}
+          label={userInfo.profile.name}
+          content={formatNationalId(userInfo.profile.nationalId)}
+          loading={loading || familyLoading}
+        />
+        <Divider />
+        {nationalRegistryFamily && nationalRegistryFamily.length > 0
+          ? nationalRegistryFamily?.map((item) => (
+              <React.Fragment key={item.nationalId}>
+                <UserInfoLine
+                  label={item.fullName}
+                  content={formatNationalId(item.nationalId)}
+                  loading={loading}
+                />
+                <Divider />
+              </React.Fragment>
+            ))
+          : null}
       </Stack>
     </>
   )

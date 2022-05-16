@@ -4,13 +4,21 @@ import { useMutation } from '@apollo/client'
 import get from 'lodash/get'
 import has from 'lodash/has'
 
+import { format as formatKennitala } from 'kennitala'
 import {
   Application,
   buildFieldOptions,
   RecordObject,
   Field,
+  coreErrorMessages,
 } from '@island.is/application/core'
-import { Box, GridColumn, GridRow, Stack } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  GridColumn,
+  GridRow,
+  Stack,
+} from '@island.is/island-ui/core'
 import {
   InputController,
   RadioController,
@@ -19,6 +27,8 @@ import {
 import { useLocale } from '@island.is/localization'
 import {
   DataValue,
+  formatBankInfo,
+  formatPhoneNumber,
   handleServerError,
   Label,
   RadioValue,
@@ -42,7 +52,15 @@ import {
 // import PaymentsTable from '../PaymentSchedule/PaymentsTable'
 // import { getEstimatedPayments } from '../PaymentSchedule/estimatedPaymentsQuery'
 import { parentalLeaveFormMessages } from '../../lib/messages'
-import { YES, NO, MANUAL, SPOUSE, ParentalRelations } from '../../constants'
+import {
+  YES,
+  NO,
+  MANUAL,
+  SPOUSE,
+  ParentalRelations,
+  NO_UNION,
+  NO_PRIVATE_PENSION_FUND,
+} from '../../constants'
 import { YesOrNo } from '../../types'
 import { SummaryTimeline } from '../components/SummaryTimeline/SummaryTimeline'
 import { SummaryRights } from '../Rights/SummaryRights'
@@ -51,6 +69,8 @@ import { usePrivatePensionFund as usePrivatePensionFundOptions } from '../../hoo
 import { usePensionFund as usePensionFundOptions } from '../../hooks/usePensionFund'
 import { useStatefulAnswers } from '../../hooks/useStatefulAnswers'
 import { getSelectOptionLabel } from '../../lib/parentalLeaveClientUtils'
+
+import * as styles from './Review.css'
 
 type ValidOtherParentAnswer = typeof NO | typeof MANUAL | undefined
 
@@ -70,7 +90,9 @@ export const Review: FC<ReviewScreenProps> = ({
 }) => {
   const editable = field.props?.editable ?? false
   const pensionFundOptions = usePensionFundOptions()
-  const privatePensionFundOptions = usePrivatePensionFundOptions()
+  const privatePensionFundOptions = usePrivatePensionFundOptions().filter(
+    ({ value }) => value !== NO_PRIVATE_PENSION_FUND,
+  )
   const unionOptions = useUnionOptions()
   const { locale, formatMessage } = useLocale()
   const [
@@ -135,7 +157,36 @@ export const Review: FC<ReviewScreenProps> = ({
     application.externalData,
   )
 
+  const validatePrivatePensionFund = () => {
+    if (usePrivatePensionFund !== YES) return undefined
+
+    if (privatePensionFund === '') {
+      return formatMessage(coreErrorMessages.defaultError)
+    }
+
+    return undefined
+  }
+
+  const validatePrivatePensionFundPercentage = () => {
+    if (usePrivatePensionFund !== YES) return undefined
+
+    if (privatePensionFundPercentage === '0') {
+      return formatMessage(coreErrorMessages.defaultError)
+    }
+
+    return undefined
+  }
+
   const hasError = (id: string) => get(errors, id) as string
+
+  const checkPaymentErrors = (ids: string[]) => {
+    if (typeof validatePrivatePensionFund() === 'string') return false
+    else if (typeof validatePrivatePensionFundPercentage() === 'string')
+      return false
+
+    return groupHasNoErrors(ids)
+  }
+
   const groupHasNoErrors = (ids: string[]) =>
     ids.every((id) => !has(errors, id))
 
@@ -156,6 +207,16 @@ export const Review: FC<ReviewScreenProps> = ({
 
   return (
     <>
+      <Box className={styles.printButton} position="absolute">
+        <Button
+          variant="utility"
+          icon="print"
+          onClick={(e) => {
+            e.preventDefault()
+            window.print()
+          }}
+        />
+      </Box>
       <ReviewGroup
         isEditable={editable}
         canCloseEdit={groupHasNoErrors([
@@ -226,7 +287,7 @@ export const Review: FC<ReviewScreenProps> = ({
                 label={formatMessage(
                   parentalLeaveFormMessages.applicant.nationalId,
                 )}
-                value={application.applicant}
+                value={formatKennitala(application.applicant)}
               />
             </GridColumn>
           </GridRow>
@@ -246,7 +307,7 @@ export const Review: FC<ReviewScreenProps> = ({
               label={formatMessage(
                 parentalLeaveFormMessages.applicant.phoneNumber,
               )}
-              value={applicantPhoneNumber}
+              value={formatPhoneNumber(applicantPhoneNumber)}
               error={hasError('applicant.phoneNumber')}
             />
           </GridColumn>
@@ -296,14 +357,6 @@ export const Review: FC<ReviewScreenProps> = ({
                 )}
                 value={otherParentName}
               />
-              {otherParentWillApprove && (
-                <DataValue
-                  label={formatMessage(
-                    parentalLeaveFormMessages.shared.otherParentEmailSubSection,
-                  )}
-                  value={otherParentEmail}
-                />
-              )}
             </GridColumn>
 
             <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
@@ -311,7 +364,9 @@ export const Review: FC<ReviewScreenProps> = ({
                 label={formatMessage(
                   parentalLeaveFormMessages.shared.otherParentID,
                 )}
-                value={otherParentId}
+                value={
+                  otherParentId ? formatKennitala(otherParentId) : otherParentId
+                }
               />
             </GridColumn>
           </GridRow>
@@ -333,13 +388,14 @@ export const Review: FC<ReviewScreenProps> = ({
       <ReviewGroup
         saveAction={saveApplication}
         isEditable={editable}
-        canCloseEdit={groupHasNoErrors([
+        canCloseEdit={checkPaymentErrors([
           'payments.bank',
           'payments.pensionFund',
           'useUnion',
           'payments.union',
           'usePrivatePensionFund',
           'payments.privatePensionFund',
+          'payments.privatePensionFundPercentage',
         ])}
         editChildren={
           <Stack space={3}>
@@ -407,7 +463,7 @@ export const Review: FC<ReviewScreenProps> = ({
                 ]}
                 onSelect={(s: string) => {
                   setStateful((prev) => {
-                    const union = s === NO ? '' : prev.union
+                    const union = s === NO ? NO_UNION : prev.union
                     setValue('payments.union', union)
                     return {
                       ...prev,
@@ -465,9 +521,9 @@ export const Review: FC<ReviewScreenProps> = ({
                 onSelect={(s: string) => {
                   setStateful((prev) => {
                     const privatePensionFund =
-                      s === NO ? '' : prev.privatePensionFund
+                      s === NO ? NO_PRIVATE_PENSION_FUND : ''
                     const privatePensionFundPercentage =
-                      s === NO ? '' : prev.privatePensionFundPercentage
+                      s === NO ? '0' : prev.privatePensionFundPercentage
                     setValue('payments.privatePensionFund', privatePensionFund)
                     setValue(
                       'payments.privatePensionFundPercentage',
@@ -501,7 +557,7 @@ export const Review: FC<ReviewScreenProps> = ({
                           privatePensionFund: s.value as string,
                         }))
                       }
-                      error={hasError('payments.privatePensionFund')}
+                      error={validatePrivatePensionFund()}
                     />
                   </GridColumn>
 
@@ -527,7 +583,7 @@ export const Review: FC<ReviewScreenProps> = ({
                           privatePensionFundPercentage: s.value as string,
                         }))
                       }
-                      error={hasError('payments.privatePensionFundPercentage')}
+                      error={validatePrivatePensionFundPercentage()}
                     />
                   </GridColumn>
                 </GridRow>
@@ -544,7 +600,7 @@ export const Review: FC<ReviewScreenProps> = ({
                 label={formatMessage(
                   parentalLeaveFormMessages.shared.paymentInformationBank,
                 )}
-                value={bank}
+                value={formatBankInfo(bank)}
               />
             </GridColumn>
           </GridRow>

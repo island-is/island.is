@@ -2,7 +2,7 @@ const devConfig = {
   production: false,
   auth: {
     jwtSecret: 'jwt-secret',
-    secretToken: 'secret-token',
+    secretToken: 'secret-backend-api-token',
   },
   notifications: {
     prisonEmail: process.env.PRISON_EMAIL,
@@ -15,9 +15,9 @@ const devConfig = {
   },
   email: {
     fromEmail: 'ben10@omnitrix.is',
-    fromName: 'Guðjón Guðjónsson',
+    fromName: 'Réttarvörslugátt',
     replyToEmail: 'ben10@omnitrix.is',
-    replyToName: 'Guðjón Guðjónsson',
+    replyToName: 'Réttarvörslugátt',
   },
   smsOptions: {
     url: 'https://smsapi.devnova.is',
@@ -65,6 +65,7 @@ const devConfig = {
       'http://localhost:4200/krafa/stadfesta/',
     prosecutorInvestigationCaseOverviewUrl:
       'http://localhost:4200/krafa/rannsoknarheimild/stadfesta/',
+    defenderCompletedCaseOverviewUrl: 'http://localhost:4200/verjandi/',
   },
 }
 
@@ -72,8 +73,8 @@ if (process.env.NODE_ENV === 'production') {
   if (!process.env.AUTH_JWT_SECRET) {
     throw new Error('Missing AUTH_JWT_SECRET environment.')
   }
-  if (!process.env.SECRET_TOKEN) {
-    throw new Error('Missing SECRET_TOKEN environment.')
+  if (!process.env.BACKEND_ACCESS_TOKEN) {
+    throw new Error('Missing BACKEND_ACCESS_TOKEN environment.')
   }
   if (!process.env.COURTS_MOBILE_NUMBERS) {
     throw new Error('Missing COURTS_MOBILE_NUMBERS environment.')
@@ -169,7 +170,7 @@ const prodConfig = {
   production: true,
   auth: {
     jwtSecret: process.env.AUTH_JWT_SECRET ?? '',
-    secretToken: process.env.SECRET_TOKEN ?? '',
+    secretToken: process.env.BACKEND_ACCESS_TOKEN ?? '',
   },
   notifications: {
     courtsMobileNumbers: JSON.parse(
@@ -231,6 +232,8 @@ const prodConfig = {
       process.env.PROSECUTOR_RESTRICTION_CASE_OVERVIEW_URL,
     prosecutorInvestigationCaseOverviewUrl:
       process.env.PROSECUTOR_INVESTIGATION_CASE_OVERVIEW_URL,
+    defenderCompletedCaseOverviewUrl:
+      process.env.DEFENDER_COMPLETED_CASE_OVERVIEW_URL,
   },
 }
 

@@ -109,6 +109,9 @@
     "api-domains-driving-license": {
       "tags": []
     },
+    "api-domains-driving-license-book": {
+      "tags": []
+    },
     "api-domains-education": {
       "tags": []
     },
@@ -119,6 +122,12 @@
       "tags": []
     },
     "api-domains-finance": {
+      "tags": []
+    },
+    "api-domains-financial-statements-inao": {
+      "tags": []
+    },
+    "api-domains-fishing-license": {
       "tags": []
     },
     "api-domains-health-insurance": {
@@ -134,6 +143,9 @@
       "tags": []
     },
     "api-domains-mortgage-certificate": {
+      "tags": []
+    },
+    "api-domains-municipalities-financial-aid": {
       "tags": []
     },
     "api-domains-national-registry": {
@@ -155,6 +167,9 @@
       "tags": []
     },
     "api-domains-user-profile": {
+      "tags": []
+    },
+    "api-domains-vehicles": {
       "tags": []
     },
     "api-mocks": {
@@ -212,7 +227,13 @@
     "application-templates-driving-assessment-approval": {
       "tags": []
     },
+    "application-templates-driving-instructor-registrations": {
+      "tags": []
+    },
     "application-templates-driving-license": {
+      "tags": []
+    },
+    "application-templates-driving-school-confirmation": {
       "tags": []
     },
     "application-templates-example-payment": {
@@ -221,7 +242,13 @@
     "application-templates-family-matters-core": {
       "tags": []
     },
+    "application-templates-financial-aid": {
+      "tags": []
+    },
     "application-templates-funding-government-projects": {
+      "tags": []
+    },
+    "application-templates-general-fishing-license": {
       "tags": []
     },
     "application-templates-general-petition": {
@@ -237,6 +264,9 @@
       "tags": []
     },
     "application-templates-mortgage-certificate": {
+      "tags": []
+    },
+    "application-templates-no-debt-certificate": {
       "tags": []
     },
     "application-templates-p-sign": {
@@ -307,7 +337,13 @@
     "clients-driving-license": {
       "tags": []
     },
+    "clients-driving-license-book": {
+      "tags": []
+    },
     "clients-finance": {
+      "tags": []
+    },
+    "clients-fishing-license": {
       "tags": []
     },
     "clients-health-insurance-v2": {
@@ -320,6 +356,9 @@
       "tags": []
     },
     "clients-mms": {
+      "tags": []
+    },
+    "clients-municipalities-financial-aid": {
       "tags": []
     },
     "clients-national-registry-v1": {
@@ -346,15 +385,15 @@
     "clients-rsk-procuring": {
       "tags": []
     },
-    "clients-rsk-v1": {
-      "tags": []
-    },
     "clients-syslumenn": {
       "tags": []
     },
     "clients-user-profile": {
       "tags": [],
       "implicitDependencies": ["services-user-profile"]
+    },
+    "clients-vehicles": {
+      "tags": []
     },
     "clients-vmst": {
       "tags": []
@@ -432,29 +471,6 @@
     "github-actions-cache": {
       "tags": []
     },
-    "gjafakort-api": {
-      "tags": []
-    },
-    "gjafakort-application": {
-      "tags": []
-    },
-    "gjafakort-consts": {
-      "tags": []
-    },
-    "gjafakort-queue-listener": {
-      "tags": []
-    },
-    "gjafakort-types": {
-      "tags": []
-    },
-    "gjafakort-web": {
-      "tags": [],
-      "implicitDependencies": ["gjafakort-api"]
-    },
-    "gjafakort-web-e2e": {
-      "tags": [],
-      "implicitDependencies": ["gjafakort-web"]
-    },
     "health-insurance": {
       "tags": []
     },
@@ -521,6 +537,9 @@
       "tags": []
     },
     "judicial-system-formatters": {
+      "tags": []
+    },
+    "judicial-system-scheduler": {
       "tags": []
     },
     "judicial-system-types": {
@@ -648,6 +667,9 @@
     "service-portal-finance": {
       "tags": []
     },
+    "service-portal-finance-schedule": {
+      "tags": []
+    },
     "service-portal-graphql": {
       "tags": []
     },
@@ -664,6 +686,9 @@
       "tags": []
     },
     "service-portal-settings-personal-information": {
+      "tags": []
+    },
+    "service-portal-vehicles": {
       "tags": []
     },
     "service-portal-wip": {

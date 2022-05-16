@@ -151,6 +151,13 @@ export const core = defineMessages({
     defaultMessage: 'Tegund kröfu',
     description: 'Notað fyrir orðið Tegund Kröfu í öllum flæðum.',
   },
+  pastRestrictionCase: {
+    id: 'judicial.system.core:past_restriction_case',
+    defaultMessage:
+      '{caseType, select, ADMISSION_TO_FACILITY {Fyrri vistun} TRAVEL_BAN {Fyrra farbann} other {Fyrri gæsla}}',
+    description: 'Notað fyrir fyrri mál í öllum flæðum.',
+  },
+  // TODO: remove pastCustody and pastTravelBan, use pastRestrictionCase instead
   pastCustody: {
     id: 'judicial.system.core:past_custody',
     defaultMessage: 'Fyrri gæsla',

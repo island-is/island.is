@@ -1,5 +1,4 @@
 import { defineMessage } from 'react-intl'
-import { signedVerdictOverview } from './signedVerdictOverview'
 
 export const titles = {
   prosecutor: {
@@ -173,6 +172,13 @@ export const titles = {
           'Notaður sem titill fyrir Yfirlit úrskurðar skjá hjá dómstólum í gæslu- og farbannsmálum',
       }),
     },
+  },
+  defender: {
+    caseOverview: defineMessage({
+      id: 'judicial.system.core:titles.defender.case_overview',
+      defaultMessage: 'Yfirlit - Verjandi - Réttarvörslugátt',
+      description: 'Notaður sem titill fyrir Yfirlit máls skjá hjá verjanda',
+    }),
   },
   shared: {
     login: defineMessage({
