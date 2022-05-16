@@ -43,34 +43,3 @@ export const GET_GENERIC_LICENSE = gql`
   }
   ${dataFragment}
 `
-
-export const GET_ALL_GENERIC_LICENSES = gql`
-  query AllGenericLicensesQuery(
-    $input: GetGenericLicensesInput!
-    $locale: String
-  ) {
-    genericLicenses(input: $input, locale: $locale) {
-      nationalId
-      license {
-        type
-        provider {
-          id
-        }
-        pkpass
-        timeout
-        status
-      }
-      fetch {
-        status
-        updated
-      }
-      payload {
-        data {
-          ...genericLicenseDataFieldFragment
-        }
-        rawData
-      }
-    }
-  }
-  ${dataFragment}
-`

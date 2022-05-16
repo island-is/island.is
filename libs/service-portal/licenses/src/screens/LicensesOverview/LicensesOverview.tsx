@@ -12,7 +12,7 @@ import LicenseCards from '../../components/LicenseCards/LicenseCards'
 import { LicenseLoader } from '../../components/LicenseLoader/LicenseLoader'
 import {
   useDrivingLicense,
-  useAllLicenses,
+  // useAllLicenses,
 } from '@island.is/service-portal/graphql'
 import { m } from '../../lib/messages'
 import { passportDetail } from '../../mock/passport'
@@ -28,16 +28,10 @@ export const LicensesOverview: ServicePortalModuleComponent = (userInfo) => {
     error: drivingLicenseError,
   } = useDrivingLicense()
 
-  const {
-    data: allLicenseData,
-    loading: allLicenseLoading,
-    error: allLicenseError,
-  } = useAllLicenses()
   const passportData = passportDetail
   const passportLoading = false
   const passportError = false
 
-  console.log('allLicenseData', allLicenseData)
   console.log('drivingLicenseData', drivingLicenseData)
 
   return (
