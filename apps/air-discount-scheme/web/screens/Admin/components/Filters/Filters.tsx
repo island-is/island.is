@@ -117,6 +117,22 @@ function Filters({ onSubmit, defaultValues }: PropTypes) {
               />
             </Stack>
             <Stack space={2}>
+              <Typography variant="h5">Einstakur notandi</Typography>
+              <Divider weight="alternate" />
+              <Controller
+                name="nationalId"
+                defaultValue=""
+                render={({ onChange, value }) => (
+                  <Input
+                    name="nationalId"
+                    placeholder="Kennitala"
+                    value={value}
+                    onChange={onChange}
+                  />
+                )}
+              />
+            </Stack>
+            <Stack space={2}>
               <Typography variant="h5">Notandi</Typography>
               <Divider weight="alternate" />
               <Controller
