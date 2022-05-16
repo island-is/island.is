@@ -20,18 +20,17 @@ import { defineMessage } from 'react-intl'
 import { isExpired, toDate } from '../../utils/dateUtils'
 import { m } from '../../lib/messages'
 import { passportDetail, passportDetailChildren } from '../../mock/passport'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom'
 
 const PassportDetail: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.license')
   const { formatMessage } = useLocale()
   const { pathname } = useLocation()
-  const findIdArr = pathname.split('/')
-  const findId = findIdArr[findIdArr.length - 1]
+  const { id }: { id: string | undefined } = useParams()
 
   //const { data, loading, error } = useDrivingLicense()
   let data = passportDetail
-  const childrenData = passportDetailChildren.find((x) => x.number === findId)
+  const childrenData = passportDetailChildren.find((x) => x.number === id)
 
   const loading = false
   const error = false
