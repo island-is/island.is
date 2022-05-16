@@ -23,7 +23,7 @@ import {
   SetBeforeSubmitCallback,
   coreErrorMessages,
   StaticText,
-  ProviderErrorReason,
+  getErrorReasonIfPresent,
 } from '@island.is/application/core'
 import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
 import { useLocale } from '@island.is/localization'
@@ -60,42 +60,6 @@ const isTranslationObject = (text?: StaticText) => {
   return text.id !== undefined
 }
 
-const isProviderErrorReason = (
-  reason: ProviderErrorReason | StaticText,
-): reason is ProviderErrorReason => {
-  if (typeof reason === 'string' || reason instanceof String) {
-    return false
-  }
-  if ('title' in reason && 'summary' in reason) {
-    return true
-  }
-  return false
-}
-
-const getErrorMessageAndTitle = (results: DataProviderResult | {}) => {
-  if (results && 'reason' in results) {
-    // if reason message and title are supplied, use them
-    if (results.reason && isProviderErrorReason(results.reason)) {
-      return {
-        errorMessage: results.reason.summary,
-        errorTitle: results.reason.title,
-      }
-    }
-    // if there is a reason but not a title, use the reason and default title
-    if (results.reason) {
-      return {
-        errorMessage: results.reason,
-        errorTitle: coreErrorMessages.errorDataProvider,
-      }
-    }
-  }
-  // if there is no reason, use the default message and title
-  return {
-    errorMessage: coreErrorMessages.failedDataProvider,
-    errorTitle: coreErrorMessages.errorDataProvider,
-  }
-}
-
 const ProviderItem: FC<{
   dataProviderResult: DataProviderResult
   provider: DataProviderItem
@@ -111,8 +75,8 @@ const ProviderItem: FC<{
 
   const errorCode = dataProviderResult?.statusCode ?? 500
   const errorType = errorCode < 500 ? 'warning' : 'error'
-  const { errorMessage, errorTitle } = getErrorMessageAndTitle(
-    dataProviderResult,
+  const { title: errorTitle, summary } = getErrorReasonIfPresent(
+    dataProviderResult?.reason,
   )
 
   return (
@@ -129,9 +93,7 @@ const ProviderItem: FC<{
                 : (errorTitle as string)
             }
             message={
-              isTranslationObject(errorMessage)
-                ? formatMessage(errorMessage)
-                : errorMessage
+              isTranslationObject(summary) ? formatMessage(summary) : summary
             }
           />
         </Box>

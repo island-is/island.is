@@ -10,7 +10,6 @@ import {
   FailedDataProviderResult,
   getValueViaPath,
   ProviderErrorReason,
-  StaticText,
   SuccessfulDataProviderResult,
 } from '@island.is/application/core'
 import {
