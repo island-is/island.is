@@ -79,6 +79,7 @@ export const serializeService: SerializeMethod = (
     },
     secrets: {},
     healthCheck: {
+      port: serviceDef.healthPort,
       liveness: {
         path: serviceDef.liveness.path,
         initialDelaySeconds: serviceDef.liveness.initialDelaySeconds,

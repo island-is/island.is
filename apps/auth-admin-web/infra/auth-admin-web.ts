@@ -2,8 +2,14 @@ import { service, ServiceBuilder } from '../../../infra/src/dsl/dsl'
 
 export const serviceSetup = (): ServiceBuilder<'auth-admin-web'> => {
   return service('auth-admin-web')
-    .namespace('identity-server')
+    .namespace('identity-server-admin')
+    .image('auth-admin-web')
     .env({
+      IDENTITYSERVER_SCOPE:
+        'openid profile auth-admin-api.full_control offline_access',
+      IDENTITYSERVER_CLIENT_ID: 'ids-admin',
+      NEXT_PUBLIC_BACKEND_URL: '/backend',
+      NEXT_PUBLIC_SESSION_KEEP_ALIVE_SECONDS: '300',
       IDENTITYSERVER_ID: 'identity-server',
       IDENTITYSERVER_DOMAIN: {
         dev: 'identity-server.dev01.devland.is',
@@ -34,8 +40,24 @@ export const serviceSetup = (): ServiceBuilder<'auth-admin-web'> => {
           },
         ],
         public: true,
+        extraAnnotations: {
+          dev: {
+            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
+          },
+          staging: {
+            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
+            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
+          },
+          prod: {
+            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
+          },
+        },
       },
     })
+    .targetPort(4200)
     .readiness('/liveness')
     .liveness('/liveness')
 }

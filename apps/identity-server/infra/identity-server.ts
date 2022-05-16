@@ -3,7 +3,18 @@ import { service, ServiceBuilder } from '../../../infra/src/dsl/dsl'
 export const serviceSetup = (): ServiceBuilder<'identity-server'> => {
   return service('identity-server')
     .namespace('identity-server')
+    .image('identity-server')
     .env({
+      AWS__CloudWatch__AuditLogGroup: '/identity-server/audit-log',
+      ASPNETCORE_URLS: 'http://*:5000',
+      CORECLR_ENABLE_PROFILING: '1',
+      CORECLR_PROFILER: '{846F5F1C-F9AE-4B07-969E-05C26BC060D8}',
+      CORECLR_PROFILER_PATH: '/opt/datadog/Datadog.Trace.ClrProfiler.Native.so',
+      DD_INTEGRATIONS: '/opt/datadog/integrations.json',
+      DD_DOTNET_TRACER_HOME: '/opt/datadog',
+      Datadog__Metrics__Port: '5003',
+      AudkenniSettings__Retries: '24',
+
       AWS__SystemsManager__ParameterStore__DataProtectionPrefix: {
         dev: '/k8s/identity-server/DataProtectionSecret',
         staging: '/k8s/identity-server/DataProtectionSecret',
@@ -88,24 +99,37 @@ export const serviceSetup = (): ServiceBuilder<'identity-server'> => {
           staging: 'identity-server.staging01.devland.is',
           prod: 'innskra.island.is',
         },
-        extraAnnotations: {
-          dev: {
-            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
-          },
-          staging: {
-            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
-          },
-          prod: {},
-        },
         paths: [
           {
             path: '/',
           },
         ],
         public: true,
+        extraAnnotations: {
+          dev: {
+            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
+            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
+          },
+          staging: {
+            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
+            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
+          },
+          prod: {
+            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
+          },
+        },
       },
     })
+    .files({
+      filename: 'pathids-signing.pfx',
+      env: 'IdentityServer__SigningCertificate__Path',
+    })
+    .healthPort(5010)
+    .targetPort(5000)
     .serviceAccount('identity-server')
-    .readiness('/liveness')
+    .readiness('/readiness')
     .liveness('/liveness')
 }

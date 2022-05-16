@@ -54,6 +54,7 @@ export type MountedFile = { filename: string; env: string }
 export type ServiceDefinition = {
   liveness: HealthProbe
   readiness: HealthProbe
+  healthPort?: number
   port?: number
   initContainers?: InitContainers
   env: EnvironmentVariables

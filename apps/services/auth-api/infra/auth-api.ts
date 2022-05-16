@@ -1,15 +1,16 @@
 import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 import { Base, Client, RskProcuring } from '../../../../infra/src/dsl/xroad'
 
-export const serviceSetup = (): ServiceBuilder<'auth-api'> => {
-  return service('auth-api')
+export const serviceSetup = (): ServiceBuilder<'services-auth-api'> => {
+  return service('services-auth-api')
     .namespace('identity-server')
+    .image('services-auth-api')
     .env({
       DB_REPLICAS_HOST: {
         dev:
           'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com',
-        staging: '',
-        prod: '',
+        staging: 'postgres-ids.internal',
+        prod: 'postgres-ids.internal',
       },
       IDS_ISSUER: {
         dev: 'https://identity-server.dev01.devland.is',
@@ -65,6 +66,13 @@ export const serviceSetup = (): ServiceBuilder<'auth-api'> => {
         prod: 'IS/GOV/5402696029/Skatturinn/ft-v1',
       },
     })
+    .secrets({
+      DB_PASS: '/k8s/services-auth/api/DB_PASSWORD',
+      IDENTITY_SERVER_CLIENT_SECRET:
+        '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET',
+      RSK_USERNAME: '/k8s/xroad/client/RSK/USERNAME',
+      RSK_PASSWORD: '/k8s/xroad/client/RSK/PASSWORD',
+    })
     .xroad(Base, Client, RskProcuring)
     .ingress({
       primary: {
@@ -80,8 +88,43 @@ export const serviceSetup = (): ServiceBuilder<'auth-api'> => {
           },
         ],
         public: true,
+        extraAnnotations: {
+          dev: {
+            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
+          },
+          staging: {
+            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
+            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
+          },
+          prod: {
+            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
+          },
+        },
       },
     })
     .readiness('/liveness')
     .liveness('/liveness')
+    .initContainer({
+      envs: {
+        DB_HOST: 'postgres-ids.internal',
+        DB_REPLICAS_HOST: 'postgres-ids.internal',
+        DB_USER: 'servicesauth',
+        DB_NAME: 'servicesauth',
+      },
+      containers: [
+        {
+          name: 'migrations',
+          command: 'npx',
+          args: ['sequelize-cli', 'db:migrate'],
+        },
+        {
+          name: 'seed',
+          command: 'npx',
+          args: ['sequelize-cli', 'db:seed:all'],
+        },
+      ],
+    })
 }
