@@ -10,9 +10,12 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { icRuling as m, ruling } from '@island.is/judicial-system-web/messages'
+import {
+  icRuling as m,
+  ruling,
+  titles,
+} from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
 
 import RulingForm from './RulingForm'
 

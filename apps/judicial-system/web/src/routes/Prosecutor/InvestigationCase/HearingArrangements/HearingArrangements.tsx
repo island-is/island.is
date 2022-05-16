@@ -27,9 +27,11 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { setAndSendToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
-import { icRequestedHearingArrangements as m } from '@island.is/judicial-system-web/messages'
+import {
+  icRequestedHearingArrangements as m,
+  titles,
+} from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
 import type { User } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system/consts'
 
