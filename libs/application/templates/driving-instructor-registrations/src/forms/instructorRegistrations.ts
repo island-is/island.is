@@ -47,16 +47,10 @@ export const getInstructorRegistrations = (): Form => {
         id: 'students',
         title: m.studentsOverviewSideTitle,
         children: [
-          buildMultiField({
-            id: 'students',
+          buildCustomField({
             title: m.studentsOverviewTitle,
-            children: [
-              buildCustomField({
-                title: '',
-                id: 'table',
-                component: 'StudentsOverview',
-              }),
-            ],
+            id: 'table',
+            component: 'StudentsOverview',
           }),
         ],
       }),

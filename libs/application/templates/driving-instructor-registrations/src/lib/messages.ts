@@ -108,6 +108,11 @@ export const m = defineMessages({
   },
 
   /* View Single Student Section */
+  viewStudentTitle: {
+    id: 'dir.application:viewStudentTitle',
+    defaultMessage: 'Skrá ökutíma',
+    description: 'Registration page title',
+  },
   viewStudentName: {
     id: 'dir.application:viewStudentName',
     defaultMessage: 'Ökunemi',

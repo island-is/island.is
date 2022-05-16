@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { useDebounce } from 'react-use'
 import {
   Button,
@@ -10,7 +10,7 @@ import {
 import { Table as T } from '@island.is/island-ui/core'
 import { PAGE_SIZE, pages, paginate } from './pagination'
 import ViewStudent from '../ViewStudent/index'
-import { Application } from '@island.is/application/core'
+import { Application, FieldBaseProps } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import FindStudentModal from '../FindStudentModal/index'
@@ -20,13 +20,8 @@ import Skeleton from './Skeleton'
 import { DrivingLicenseBookStudentForTeacher as Student } from '../../types/schema'
 import * as styles from '../style.css'
 
-interface Props {
-  application: Application
-}
-
-const StudentsOverview = ({ application }: Props) => {
+const StudentsOverview: FC<FieldBaseProps> = ({ field, application }) => {
   const { formatMessage } = useLocale()
-
   /* table pagination */
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(0)
@@ -70,6 +65,25 @@ const StudentsOverview = ({ application }: Props) => {
     500,
     [data?.drivingLicenseBookStudentsForTeacher, searchTerm],
   )
+
+  useEffect(() => {
+    if(showTable) {
+      Object.defineProperties(field, {
+      title: {
+        value: "Mínir ökunemar",
+        writable: true,
+      },
+    })
+    } else {
+      Object.defineProperties(field, {
+        title: {
+          value: "Skrá ökutíma",
+          writable: true,
+        },
+      })
+    }
+    
+  }, [showTable, field])
 
   return (
     <Box marginBottom={10}>
