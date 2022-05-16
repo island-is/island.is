@@ -53,6 +53,9 @@ export const SelfEmployed: FC<FieldBaseProps> = ({
             if (s === YES) {
               setValue('employer.email', '')
             }
+            if (s !== YES) {
+              setValue('employer.selfEmployed.file', null)
+            }
           },
         }}
       />
