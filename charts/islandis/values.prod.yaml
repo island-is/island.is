@@ -19,6 +19,14 @@ air-discount-scheme-api:
       initialDelaySeconds: 3
       path: '/liveness'
       timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 2
+      replicas:
+        max: 10
+        min: 3
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-api'
   ingress:
@@ -90,6 +98,14 @@ air-discount-scheme-backend:
       initialDelaySeconds: 3
       path: '/liveness'
       timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 2
+      replicas:
+        max: 10
+        min: 3
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-backend'
   ingress:
@@ -153,6 +169,7 @@ air-discount-scheme-web:
   enabled: true
   env:
     API_URL: 'http://web-air-discount-scheme-api'
+    ENVIRONMENT: 'prod'
     IDENTITY_SERVER_ISSUER_DOMAIN: 'innskra.island.is'
     NEXTAUTH_URL: 'https://loftbru.island.is'
     NODE_OPTIONS: '--max-old-space-size=208'
@@ -168,6 +185,14 @@ air-discount-scheme-web:
       initialDelaySeconds: 3
       path: '/readiness'
       timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 2
+      replicas:
+        max: 10
+        min: 3
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-web'
   ingress:
@@ -194,6 +219,8 @@ air-discount-scheme-web:
       memory: '128Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID'
+    DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN'
     IDENTITY_SERVER_SECRET: '/k8s/air-discount-scheme/web/IDENTITY_SERVER_SECRET'
     SENTRY_DSN: '/k8s/air-discount-scheme-api/SENTRY_DSN'
   securityContext:
@@ -223,7 +250,6 @@ api:
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/api'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     ISLYKILL_CERT: '/etc/config/islyklar.p12'
-    MUNICIPALITIES_FINANCIAL_AID_BACKEND_URL: 'http://web-financial-aid-backend'
     NODE_OPTIONS: '--max-old-space-size=464'
     PAYMENT_SCHEDULE_XROAD_PROVIDER_ID: 'IS/GOV/5402697509/FJS-Public'
     SEND_FROM_EMAIL: 'island@island.is'
@@ -240,6 +266,7 @@ api:
     XROAD_DRIVING_LICENSE_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v1'
     XROAD_DRIVING_LICENSE_V2_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v2'
     XROAD_FINANCES_PATH: 'IS/GOV/5402697509/FJS-Public/financeIsland'
+    XROAD_FINANCIAL_AID_BACKEND_PATH: 'IS/MUN/5502694739/samband-sveitarfelaga/financial-aid-backend'
     XROAD_HEALTH_INSURANCE_ID: 'IS/GOV/4804080550/SJUKRA-Protected'
     XROAD_HEALTH_INSURANCE_WSDLURL: 'https://huld.sjukra.is/islandrg?wsdl'
     XROAD_MMS_GRADE_SERVICE_ID: 'IS/EDU/5708150320/MMS-Protected/grade-api-v1'
@@ -257,6 +284,7 @@ api:
     XROAD_TJODSKRA_MEMBER_CODE: '6503760649'
     XROAD_TLS_BASE_PATH: 'https://securityserver.island.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
+    XROAD_VEHICLES_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Mitt-Svaedi-V1'
     XROAD_VMST_API_PATH: '/VMST-ParentalLeave-Protected/ParentalLeaveApplication-v1'
     XROAD_VMST_MEMBER_CODE: '7005942039'
     ZENDESK_CONTACT_FORM_SUBDOMAIN: 'digitaliceland'
@@ -276,6 +304,14 @@ api:
       initialDelaySeconds: 3
       path: '/health'
       timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 2
+      replicas:
+        max: 10
+        min: 3
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/api'
   ingress:
@@ -385,7 +421,6 @@ application-system-api:
     INSTITUTION_APPLICATION_RECIPIENT_NAME: 'Stafrænt Ísland'
     LOGIN_SERVICE_APPLICATION_RECIPIENT_EMAIL_ADDRESS: 'island@island.is'
     LOGIN_SERVICE_APPLICATION_RECIPIENT_NAME: 'Stafrænt Ísland'
-    MUNICIPALITIES_FINANCIAL_AID_BACKEND_URL: 'http://web-financial-aid-backend'
     NODE_OPTIONS: '--max-old-space-size=976'
     NOVA_USERNAME: 'IslandIs_User_Production'
     PAYMENT_SCHEDULE_XROAD_PROVIDER_ID: 'IS/GOV/5402697509/FJS-Public'
@@ -398,6 +433,7 @@ application-system-api:
     XROAD_CRIMINAL_RECORD_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Sakaskra-v1'
     XROAD_DRIVING_LICENSE_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v1'
     XROAD_DRIVING_LICENSE_V2_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v2'
+    XROAD_FINANCIAL_AID_BACKEND_PATH: 'IS/MUN/5502694739/samband-sveitarfelaga/financial-aid-backend'
     XROAD_HEALTH_INSURANCE_ID: 'IS/GOV/4804080550/SJUKRA-Protected'
     XROAD_HEALTH_INSURANCE_WSDLURL: 'https://huld.sjukra.is/islandrg?wsdl'
     XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
@@ -424,6 +460,14 @@ application-system-api:
       initialDelaySeconds: 3
       path: '/liveness'
       timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 2
+      replicas:
+        max: 60
+        min: 10
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api'
   ingress:
@@ -549,6 +593,14 @@ application-system-api-worker:
       initialDelaySeconds: 3
       path: '/'
       timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 2
+      replicas:
+        max: 10
+        min: 3
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api'
   namespace: 'application-system'
@@ -590,6 +642,7 @@ application-system-form:
     BASEPATH: '/umsoknir'
     NODE_OPTIONS: '--max-old-space-size=208'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
+    SI_PUBLIC_ENVIRONMENT: 'prod'
     SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
   grantNamespaces:
     - 'nginx-ingress-internal'
@@ -604,6 +657,14 @@ application-system-form:
       initialDelaySeconds: 3
       path: '/readiness'
       timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 2
+      replicas:
+        max: 10
+        min: 3
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-form'
   ingress:
@@ -632,6 +693,8 @@ application-system-form:
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     SI_PUBLIC_CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    SI_PUBLIC_DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID'
+    SI_PUBLIC_DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -652,6 +715,14 @@ contentful-translation-extension:
       initialDelaySeconds: 3
       path: '/readiness'
       timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 2
+      replicas:
+        max: 10
+        min: 3
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/contentful-translation-extension'
   ingress:
@@ -705,6 +776,14 @@ download-service:
       initialDelaySeconds: 3
       path: 'download/v1/readiness'
       timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 2
+      replicas:
+        max: 10
+        min: 3
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/download-service'
   ingress:
@@ -768,6 +847,14 @@ endorsement-system-api:
       initialDelaySeconds: 3
       path: '/liveness'
       timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 2
+      replicas:
+        max: 10
+        min: 3
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-endorsements-api'
   initContainer:
@@ -855,6 +942,14 @@ icelandic-names-registry-backend:
       initialDelaySeconds: 3
       path: '/liveness'
       timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 2
+      replicas:
+        max: 10
+        min: 3
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/icelandic-names-registry-backend'
   initContainer:
@@ -929,6 +1024,14 @@ island-ui-storybook:
       initialDelaySeconds: 3
       path: '/readiness'
       timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 2
+      replicas:
+        max: 10
+        min: 3
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/island-ui-storybook'
   ingress:
@@ -995,6 +1098,14 @@ search-indexer-service:
       initialDelaySeconds: 3
       path: '/'
       timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 2
+      replicas:
+        max: 1
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-search-indexer'
   ingress:
@@ -1088,6 +1199,7 @@ service-portal:
     BASEPATH: '/minarsidur'
     NODE_OPTIONS: '--max-old-space-size=464'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
+    SI_PUBLIC_ENVIRONMENT: 'prod'
     SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
   grantNamespaces:
     - 'nginx-ingress-internal'
@@ -1104,6 +1216,14 @@ service-portal:
       initialDelaySeconds: 3
       path: '/readiness'
       timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 2
+      replicas:
+        max: 30
+        min: 5
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/service-portal'
   ingress:
@@ -1132,6 +1252,8 @@ service-portal:
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     SI_PUBLIC_CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    SI_PUBLIC_DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID'
+    SI_PUBLIC_DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -1162,6 +1284,14 @@ service-portal-api:
       initialDelaySeconds: 3
       path: '/readiness'
       timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 2
+      replicas:
+        max: 30
+        min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-profile'
   ingress:
@@ -1249,6 +1379,14 @@ services-documents:
       initialDelaySeconds: 3
       path: '/readiness'
       timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 2
+      replicas:
+        max: 10
+        min: 3
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-documents'
   initContainer:
@@ -1295,6 +1433,7 @@ skilavottord-web:
   enabled: true
   env:
     API_URL: 'http://web-skilavottord-ws'
+    ENVIRONMENT: 'prod'
     NODE_OPTIONS: '--max-old-space-size=208'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
@@ -1309,6 +1448,14 @@ skilavottord-web:
       initialDelaySeconds: 3
       path: '/liveness'
       timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 2
+      replicas:
+        max: 10
+        min: 3
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/skilavottord-web'
   ingress:
@@ -1336,6 +1483,8 @@ skilavottord-web:
       memory: '128Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID'
+    DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/skilavottord/web/IDENTITY_SERVER_CLIENT_SECRET'
     IDENTITY_SERVER_DOMAIN: '/k8s/skilavottord/web/IDENTITY_SERVER_DOMAIN'
     IDENTITY_SERVER_LOGOUT_REDIRECT_URL: '/k8s/skilavottord/web/IDENTITY_SERVER_LOGOUT_REDIRECT_URL'
@@ -1365,6 +1514,14 @@ skilavottord-ws:
       initialDelaySeconds: 3
       path: '/liveness'
       timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 2
+      replicas:
+        max: 10
+        min: 3
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/skilavottord-ws'
   ingress:
@@ -1451,6 +1608,14 @@ user-notification:
       initialDelaySeconds: 3
       path: '/liveness'
       timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 2
+      replicas:
+        max: 10
+        min: 3
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
   ingress:
@@ -1514,6 +1679,14 @@ user-notification-worker:
       initialDelaySeconds: 3
       path: '/liveness'
       timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 2
+      replicas:
+        max: 10
+        min: 3
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
   namespace: 'user-notification'
@@ -1569,6 +1742,14 @@ web:
       initialDelaySeconds: 3
       path: '/readiness'
       timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 2
+      replicas:
+        max: 50
+        min: 10
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/web'
   ingress:
@@ -1630,6 +1811,14 @@ xroad-collector:
       initialDelaySeconds: 3
       path: '/'
       timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 2
+      replicas:
+        max: 10
+        min: 3
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-xroad-collector'
   namespace: 'xroad-collector'

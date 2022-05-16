@@ -201,6 +201,11 @@ export const m = defineMessages({
     id: 'service.portal:vehicles',
     defaultMessage: 'Ökutæki',
   },
+
+  yourVehicles: {
+    id: 'service.portal:your-vehicles',
+    defaultMessage: 'Þín ökutæki',
+  },
   incoming: {
     id: 'service.portal:incoming',
     defaultMessage: 'Á döfinni',
@@ -539,7 +544,7 @@ export const m = defineMessages({
   },
   religion: {
     id: 'service.portal:religion',
-    defaultMessage: 'Trúfélag / lífsskoðunarfélag',
+    defaultMessage: 'Lífsskoðunarfélag',
   },
   goBack: {
     id: 'service.portal:go-back',

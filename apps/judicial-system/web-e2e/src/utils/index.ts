@@ -21,8 +21,27 @@ export const intercept = (res: Case) => {
           case: res,
         },
       })
+    } else if (hasOperationName(req, 'RestrictedCaseQuery')) {
+      req.reply({
+        data: {
+          restrictedCase: res,
+        },
+      })
     }
   }).as('gqlCaseQuery')
+}
+
+export const interceptUpdateCase = () => {
+  cy.intercept('POST', '**/api/graphql', (req) => {
+    if (hasOperationName(req, 'UpdateCaseMutation')) {
+      const { body } = req
+      req.reply({
+        data: {
+          updateCase: { ...body.variables?.input, __typename: 'Case' },
+        },
+      })
+    }
+  }).as('UpdateCaseMutation')
 }
 
 export const hasOperationName = (
@@ -97,6 +116,7 @@ export const makeInvestigationCase = (): Case => {
       modified: '2020-09-16T19:50:08.033Z',
       type: InstitutionType.COURT,
       name: 'Héraðsdómur Reykjavíkur',
+      active: true,
     },
     policeCaseNumber: '007-2021-202000',
     defendants: [
@@ -132,6 +152,7 @@ export const makeProsecutor = (): User => {
       modified: '',
       type: InstitutionType.PROSECUTORS_OFFICE,
       name: 'Lögreglan á Höfuðborgarsvæðinu',
+      active: true,
     },
   }
 }
@@ -143,5 +164,6 @@ export const makeCourt = (): Institution => {
     modified: '2020-09-16T19:50:08.033Z',
     type: InstitutionType.COURT,
     name: 'Héraðsdómur Reykjavíkur',
+    active: true,
   }
 }

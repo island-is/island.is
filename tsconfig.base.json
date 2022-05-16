@@ -88,6 +88,9 @@
       "@island.is/api/domains/finance": [
         "libs/api/domains/finance/src/index.ts"
       ],
+      "@island.is/api/domains/financial-statements-inao": [
+        "libs/api/domains/financial-statements-inao/src/index.ts"
+      ],
       "@island.is/api/domains/fishing-license": [
         "libs/api/domains/fishing-license/src/index.ts"
       ],
@@ -138,6 +141,9 @@
       ],
       "@island.is/api/domains/user-profile": [
         "libs/api/domains/user-profile/src/index.ts"
+      ],
+      "@island.is/api/domains/vehicles": [
+        "libs/api/domains/vehicles/src/index.ts"
       ],
       "@island.is/api/mocks": ["libs/api/mocks/src/index.ts"],
       "@island.is/api/mocks-react": ["libs/api/mocks/src/react.ts"],
@@ -223,6 +229,9 @@
       ],
       "@island.is/application/templates/mortgage-certificate": [
         "libs/application/templates/mortgage-certificate/src/index.ts"
+      ],
+      "@island.is/application/templates/no-debt-certificate": [
+        "libs/application/templates/no-debt-certificate/src/index.ts"
       ],
       "@island.is/application/templates/p-sign": [
         "libs/application/templates/p-sign/src/index.ts"
@@ -317,6 +326,7 @@
       "@island.is/clients/user-profile": [
         "libs/clients/user-profile/src/index.ts"
       ],
+      "@island.is/clients/vehicles": ["libs/clients/vehicles/src/index.ts"],
       "@island.is/clients/vmst": ["libs/clients/vmst/src/index.ts"],
       "@island.is/clients/zendesk": ["libs/clients/zendesk/src/index.ts"],
       "@island.is/cms": ["libs/cms/src/index.ts"],
@@ -356,12 +366,6 @@
       "@island.is/financial-aid/shared/lib": [
         "libs/financial-aid/shared/src/lib/index.ts"
       ],
-      "@island.is/gjafakort-web/*": ["apps/gjafakort/web/*"],
-      "@island.is/gjafakort/application/*": [
-        "apps/gjafakort/application/src/*"
-      ],
-      "@island.is/gjafakort/consts": ["libs/gjafakort/consts/src/index.ts"],
-      "@island.is/gjafakort/types": ["libs/gjafakort/types/src/index.ts"],
       "@island.is/health-insurance": ["libs/health-insurance/src/index.ts"],
       "@island.is/icelandic-names-registry-types": [
         "libs/icelandic-names-registry/types/src/index.ts"
@@ -495,6 +499,9 @@
       ],
       "@island.is/service-portal/settings/personal-information": [
         "libs/service-portal/settings/personal-information/src/index.ts"
+      ],
+      "@island.is/service-portal/vehicles": [
+        "libs/service-portal/vehicles/src/index.ts"
       ],
       "@island.is/service-portal/wip": ["libs/service-portal/wip/src/index.ts"],
       "@island.is/shared/components": ["libs/shared/components/src/index.ts"],

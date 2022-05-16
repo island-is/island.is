@@ -56,7 +56,7 @@ function constructRulingPdf(
   setLineGap(doc, 2)
   addMediumHeading(
     doc,
-    `${title} ${formatDate(theCase.rulingDate ?? nowFactory(), 'PPP')}`,
+    `${title} ${formatDate(theCase.courtEndTime ?? nowFactory(), 'PPP')}`,
   )
   setLineGap(doc, 30)
   addMediumHeading(
@@ -74,7 +74,7 @@ function constructRulingPdf(
   addNormalJustifiedText(
     doc,
     `${formatMessage(ruling.prosecutorIs)} ${
-      theCase.prosecutor?.institution?.name ?? ruling.missingDistrict
+      theCase.creatingProsecutor?.institution?.name ?? ruling.missingDistrict
     }.`,
   )
   addNormalJustifiedText(

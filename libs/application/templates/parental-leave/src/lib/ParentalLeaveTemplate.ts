@@ -24,6 +24,8 @@ import {
   NO,
   MANUAL,
   SPOUSE,
+  NO_PRIVATE_PENSION_FUND,
+  NO_UNION,
 } from '../constants'
 import { dataSchema } from './dataSchema'
 import { answerValidators } from './answerValidators'
@@ -105,6 +107,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           'setOtherParentIdIfSelectedSpouse',
           'clearPersonalAllowanceIfUsePersonalAllowanceIsNo',
           'clearSpouseAllowanceIfUseSpouseAllowanceIsNo',
+          'setPrivatePensionValuesIfUsePrivatePensionFundIsNO',
+          'setUnionValuesIfUseUnionIsNO',
         ],
         meta: {
           name: States.DRAFT,
@@ -718,6 +722,42 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           (answers.spouseUsage || answers.spouseUseAsMuchAsPossible)
         ) {
           set(application.answers, 'personalAllowanceFromSpouse', null)
+        }
+
+        return context
+      }),
+      setPrivatePensionValuesIfUsePrivatePensionFundIsNO: assign((context) => {
+        const { application } = context
+
+        const answers = getApplicationAnswers(application.answers)
+
+        if (
+          answers.usePrivatePensionFund === NO &&
+          answers.privatePensionFund !== NO_PRIVATE_PENSION_FUND
+        ) {
+          set(
+            application.answers,
+            'payments.privatePensionFund',
+            NO_PRIVATE_PENSION_FUND,
+          )
+        }
+
+        if (
+          answers.usePrivatePensionFund === NO &&
+          answers.privatePensionFundPercentage !== '0'
+        ) {
+          set(application.answers, 'payments.privatePensionFundPercentage', '0')
+        }
+
+        return context
+      }),
+      setUnionValuesIfUseUnionIsNO: assign((context) => {
+        const { application } = context
+
+        const answers = getApplicationAnswers(application.answers)
+
+        if (answers.useUnion === NO && answers.union !== NO_UNION) {
+          set(application.answers, 'payments.union', NO_UNION)
         }
 
         return context
