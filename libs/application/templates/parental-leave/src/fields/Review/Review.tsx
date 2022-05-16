@@ -766,6 +766,8 @@ export const Review: FC<ReviewScreenProps> = ({
                         ...prev,
                         personalUseAsMuchAsPossible: s as YesOrNo,
                       }))
+                      if (s === YES) setValue('personalAllowance.usage', '100')
+                      if (s === NO) setValue('personalAllowance.usage', '')
                     }}
                     error={hasError('personalAllowance.useAsMuchAsPossible')}
                   />
