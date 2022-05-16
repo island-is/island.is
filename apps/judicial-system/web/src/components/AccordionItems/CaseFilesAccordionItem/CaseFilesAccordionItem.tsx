@@ -2,7 +2,7 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
-import { Box, AccordionItem, Button } from '@island.is/island-ui/core'
+import { Box, AccordionItem, Button, Text } from '@island.is/island-ui/core'
 import { UploadState } from '@island.is/judicial-system-web/src/utils/hooks/useCourtUpload'
 import { useCourtUpload } from '@island.is/judicial-system-web/src/utils/hooks/useCourtUpload'
 import {
@@ -67,11 +67,17 @@ const CaseFilesAccordionItem: React.FC<Props> = (props) => {
     <AccordionItem
       id="caseFilesAccordionItem"
       label={
-        <Box display="flex" alignItems="center" overflow="hidden">
-          {`Rannsóknargögn (${
-            workingCase.caseFiles ? workingCase.caseFiles.length : 0
-          })`}
-
+        <Box
+          display="flex"
+          alignItems="center"
+          overflow="hidden"
+          justifyContent="spaceBetween"
+        >
+          <Text variant="h3">
+            {formatMessage(m.title, {
+              fileCount: workingCase.caseFiles?.length || 0,
+            })}
+          </Text>
           {canCaseFilesBeUploaded() && (
             <AnimatePresence>
               {uploadState === UploadState.UPLOAD_ERROR && (
@@ -86,6 +92,7 @@ const CaseFilesAccordionItem: React.FC<Props> = (props) => {
                   icon="checkmark"
                   iconColor="blue400"
                   message={formatMessage(m.allFilesUploadedToCourtText)}
+                  data-testid="all-uploaded-success-message"
                 />
               )}
             </AnimatePresence>
@@ -111,13 +118,14 @@ const CaseFilesAccordionItem: React.FC<Props> = (props) => {
         isCaseCompleted={completedCaseStates.includes(workingCase.state)}
       />
       {canCaseFilesBeUploaded() && (
-        <Box display="flex" justifyContent="flexEnd">
+        <Box display="flex" justifyContent="flexEnd" marginTop={3}>
           {(workingCase.caseFiles || []).length === 0 ? null : uploadState ===
             UploadState.NONE_CAN_BE_UPLOADED ? (
             <InfoBox text={formatMessage(m.uploadToCourtAllBrokenText)} />
           ) : (
             <Button
               size="small"
+              data-testid="upload-to-court-button"
               onClick={() => uploadFilesToCourt(workingCase.caseFiles)}
               loading={uploadState === UploadState.UPLOADING}
               disabled={
