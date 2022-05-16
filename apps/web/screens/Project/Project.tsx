@@ -20,6 +20,8 @@ import {
   HeadWithSocialSharing,
   OneColumnTextSlice,
   NewsItems,
+  Stepper,
+  stepperUtils,
 } from '@island.is/web/components'
 import {
   Box,
@@ -33,8 +35,6 @@ import { QueryGetNewsArgs } from '@island.is/api/schema'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 import slugify from '@sindresorhus/slugify'
-import { getStepOptionsFromUIConfiguration } from '../../components/Stepper/utils'
-import Stepper from '../../components/Stepper/Stepper/Stepper'
 import {
   assignNavigationActive,
   convertLinkGroupsToNavigationItems,
@@ -328,11 +328,12 @@ ProjectPage.getInitialProps = async ({ apolloClient, locale, query }) => {
 
   let stepOptionsFromNamespace = []
 
-  if (getProjectPage.stepper)
-    stepOptionsFromNamespace = await getStepOptionsFromUIConfiguration(
+  if (getProjectPage.stepper) {
+    stepOptionsFromNamespace = await stepperUtils.getStepOptionsFromUIConfiguration(
       getProjectPage.stepper,
       apolloClient,
     )
+  }
 
   return {
     projectPage: getProjectPage,
