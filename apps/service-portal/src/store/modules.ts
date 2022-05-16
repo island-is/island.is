@@ -63,6 +63,7 @@ export const companyModules: ModuleKeys[] = [
   'finance',
   'information',
   'vehicles',
+  'personalInformation',
 
   // TODO: Next in:
   // 'licenses',
