@@ -6,7 +6,12 @@ import {
   IC_RULING_ROUTE,
 } from '@island.is/judicial-system/consts'
 
-import { makeInvestigationCase, makeCourt, intercept } from '../../../utils'
+import {
+  makeInvestigationCase,
+  makeCourt,
+  intercept,
+  interceptUpdateCase,
+} from '../../../utils'
 
 describe(`${IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
   beforeEach(() => {
@@ -29,7 +34,7 @@ describe(`${IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
     cy.contains(comment)
   })
 
-  it.only('should ask for defender info depending on selected session arrangement and warn users if defender is not found in the lawyer registry', () => {
+  it('should ask for defender info depending on selected session arrangement and warn users if defender is not found in the lawyer registry', () => {
     const caseData = makeInvestigationCase()
     const caseDataAddition: Case = {
       ...caseData,
@@ -45,8 +50,10 @@ describe(`${IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
     cy.get('[name="defenderEmail"]').should('exist')
     cy.get('[name="defenderPhoneNumber"]').should('exist')
 
-    cy.get('[name="defenderName"]').type(faker.name.firstName())
-    cy.get('[name="defenderNotFound"]').should('exist')
+    cy.get('#react-select-defenderName-input')
+      .type('click', { force: true })
+      .type('{enter}')
+    cy.getByTestid('defenderNotFound').should('exist')
 
     cy.get('[name="session-arrangements-all-present_spokesperson"]').click()
     cy.get('[name="defenderName"]').should('exist')

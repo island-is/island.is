@@ -80,6 +80,21 @@ export const defendant = {
         description:
           'Notaður sem titill fyrir "upplýsingar um verjanda varnaraðila" hlutann á varnaraðila skrefi í rannsóknarheimildum.',
       }),
+      defenderNotFoundTitle: {
+        id:
+          'judicial.system.investigation_cases:hearing_arrangements.defender.defender_not_found_title',
+        defaultMessage: 'Lögmaður finnst ekki í félagatali Lögmannafélagsins',
+        description:
+          'Notaður sem titill í upplýsingasvæði við "Verjanda" svæði á sakbornings skrefi í gæsluvarðhalds- og farbannsmálum þegar verjandi finnst ekki í lögmannaskrá.',
+      },
+      defenderNotFoundMessage: {
+        id:
+          'judicial.system.investigation_cases:hearing_arrangements.defender.defender_not_found_message',
+        defaultMessage:
+          'Ekki tókst að finna skráðan lögmann í félagatali LMFÍ. Lögmaður mun ekki fá aðgengi að skjölum málsins í gegnum Réttarvörslugátt.',
+        description:
+          'Notaður sem texti í upplýsingasvæði við "Verjanda" svæði á sakbornings skrefi í gæsluvarðhalds- og farbannsmálum þegar verjandi finnst ekki í lögmannaskrá.',
+      },
       name: defineMessages({
         label: {
           id:

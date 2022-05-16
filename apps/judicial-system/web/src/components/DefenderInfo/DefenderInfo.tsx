@@ -4,6 +4,7 @@ import { useIntl } from 'react-intl'
 import { ValueType } from 'react-select/src/types'
 
 import {
+  AlertMessage,
   Box,
   Checkbox,
   Input,
@@ -60,6 +61,8 @@ const DefenderInfo: React.FC<Props> = (props) => {
     setDefenderPhoneNumberErrorMessage,
   ] = useState<string>('')
 
+  const [defenderNotFound, setDefenderNotFound] = useState<boolean>(false)
+
   const lawyers = useLawyers()
 
   const handleDefenderChange = useCallback(
@@ -72,7 +75,14 @@ const DefenderInfo: React.FC<Props> = (props) => {
       }
 
       if (selectedOption) {
-        const { label, value } = selectedOption as ReactSelectOption
+        const {
+          label,
+          value,
+          __isNew__: defenderNotFound,
+        } = selectedOption as ReactSelectOption
+
+        setDefenderNotFound(defenderNotFound || false)
+
         const lawyer = lawyers.find(
           (l: Lawyer) => l.email === (value as string),
         )
@@ -91,11 +101,16 @@ const DefenderInfo: React.FC<Props> = (props) => {
     [lawyers, setWorkingCase, workingCase, updateCase],
   )
 
+  // TODO: Rewrite this in CF strings
   const getTranslations = () => {
     if (isRestrictionCase(workingCase.type)) {
       if (user?.role === UserRole.PROSECUTOR) {
         return {
           title: accused.sections.defenderInfo.heading,
+          defenderNotFoundTitle:
+            accused.sections.defenderInfo.defenderNotFoundTitle,
+          defenderNotFoundMessage:
+            accused.sections.defenderInfo.defenderNotFoundMessage,
           defenderName: {
             label: accused.sections.defenderInfo.name.label,
             placeholder: accused.sections.defenderInfo.name.placeholder,
@@ -112,6 +127,10 @@ const DefenderInfo: React.FC<Props> = (props) => {
       } else {
         return {
           title: rcHearingArrangements.sections.defender.title,
+          defenderNotFoundTitle:
+            rcHearingArrangements.sections.defender.defenderNotFoundTitle,
+          defenderNotFoundMessage:
+            rcHearingArrangements.sections.defender.defenderNotFoundMessage,
           defenderName: {
             label: rcHearingArrangements.sections.defender.nameLabel,
             placeholder:
@@ -133,6 +152,10 @@ const DefenderInfo: React.FC<Props> = (props) => {
       if (user?.role === UserRole.PROSECUTOR) {
         return {
           title: defendant.sections.defenderInfo.heading,
+          defenderNotFoundTitle:
+            defendant.sections.defenderInfo.defenderNotFoundTitle,
+          defenderNotFoundMessage:
+            defendant.sections.defenderInfo.defenderNotFoundMessage,
           defenderName: {
             label: defendant.sections.defenderInfo.name.label,
             placeholder: defendant.sections.defenderInfo.name.placeholder,
@@ -150,6 +173,10 @@ const DefenderInfo: React.FC<Props> = (props) => {
       } else {
         return {
           title: icHearingArrangements.sections.defender.title,
+          defenderNotFoundTitle:
+            icHearingArrangements.sections.defender.defenderNotFoundTitle,
+          defenderNotFoundMessage:
+            icHearingArrangements.sections.defender.defenderNotFoundMessage,
           defenderName: {
             label: icHearingArrangements.sections.defender.nameLabel,
             placeholder:
@@ -219,6 +246,15 @@ const DefenderInfo: React.FC<Props> = (props) => {
           {renderTooltip()}
         </Text>
       </Box>
+      {defenderNotFound && (
+        <Box marginBottom={3} data-testid="defenderNotFound">
+          <AlertMessage
+            type="warning"
+            title={formatMessage(getTranslations().defenderNotFoundTitle)}
+            message={formatMessage(getTranslations().defenderNotFoundMessage)}
+          />
+        </Box>
+      )}
       <BlueBox>
         <Box marginBottom={2}>
           <Select
