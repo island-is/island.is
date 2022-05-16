@@ -288,6 +288,7 @@ const ViewStudent = ({
                 size="sm"
                 hasError={dateError}
                 errorMessage={formatMessage(m.errorOnMissingDate)}
+                maxDate={new Date()}
                 handleChange={(date) => {
                   setDate(format(date, 'yyyy-MM-dd'))
                   setDateError(false)

@@ -43,7 +43,7 @@ export const m = defineMessages({
   },
   studentInfoSubtitle: {
     id: 'dsc.application:studentInfoSubtitle',
-    defaultMessage: 'Sláðu inn kennitölu og netfang ökunema',
+    defaultMessage: 'Sláðu inn kennitölu ökunema',
     description: 'Student info section subtitle',
   },
   studentInfoNationalId: {
@@ -123,12 +123,17 @@ export const m = defineMessages({
     defaultMessage: 'Staðfesta skráningu',
     description: 'school',
   },
+  newConfirmSchoolButton: {
+    id: 'dsc.application:newConfirmSchoolButton',
+    defaultMessage: 'Ný skráning',
+    description: 'new school confirmation',
+  },
 
   /* Errors */
   noStudentInfoFoundMessage: {
     id: 'dsc.application:noStudentInfoFoundMessage',
     defaultMessage:
-      'Tókst ekki að sækja upplýsingar um nemanda. Vinsamlegast reynið aftur síðar',
+      'Tókst ekki að sækja upplýsingar um ökunema. Vinsamlegast reynið aftur síðar',
     description: 'No student found alert message',
   },
   noStudentFoundForGivenNationalIdMessage: {

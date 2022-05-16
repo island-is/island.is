@@ -3,6 +3,7 @@ import { FieldBaseProps } from '@island.is/application/core'
 import {
   AlertMessage,
   Box,
+  Button,
   GridColumn,
   GridContainer,
   GridRow,
@@ -49,13 +50,21 @@ const SchoolConfirmed: FC<FieldBaseProps> = ({ application }) => {
           </Text>
         </GridColumn>
       </GridRow>
-      <GridRow>
-        <GridColumn>
-          <Box height="full" marginTop={6} marginBottom={10}>
-            <Jobs />
-          </Box>
-        </GridColumn>
-      </GridRow>
+      <Box height="full" marginTop={6} marginBottom={6}>
+        <Jobs />
+      </Box>
+      <Box marginBottom={10} display='flex' justifyContent='flexEnd'>
+        <Button
+          icon="arrowForward"
+          size="small"
+          iconType="outline"
+          onClick={() => {
+            window.open(`${window.location.origin}/umsoknir/okuskoli`, '_self')
+          }}
+        >
+          {formatMessage(m.newConfirmSchoolButton)}
+        </Button>
+      </Box>
     </GridContainer>
   )
 }

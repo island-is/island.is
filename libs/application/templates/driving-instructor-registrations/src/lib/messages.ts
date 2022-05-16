@@ -58,7 +58,7 @@ export const m = defineMessages({
   },
   studentsOverviewTableHeaderCol1: {
     id: 'dir.application:studentsOverviewTableHeaderCol1',
-    defaultMessage: 'Nemandi',
+    defaultMessage: 'Ökunemi',
     description: 'Table header 1',
   },
   studentsOverviewTableHeaderCol2: {
@@ -88,7 +88,7 @@ export const m = defineMessages({
   },
   studentsOverviewOtherStudentIdModalDescription: {
     id: 'dir.application:studentsOverviewOtherStudentIdDecription',
-    defaultMessage: 'Sláðu inn kennitölu nemanda',
+    defaultMessage: 'Sláðu inn kennitölu ökunema',
     description: 'Modal description',
   },
   studentsOverviewOtherStudentInputLabel: {
@@ -98,12 +98,12 @@ export const m = defineMessages({
   },
   studentsOverviewNoStudentFound: {
     id: 'dir.application:studentsOverviewNoStudentFound',
-    defaultMessage: 'Enginn nemandi fannst',
+    defaultMessage: 'Enginn ökunemi fannst',
     description: 'No students',
   },
   studentsOverviewNoStudentFoundInModal: {
     id: 'dir.application:studentsOverviewNoStudentFoundInModal',
-    defaultMessage: 'Enginn nemandi skráður á eftirfarandi kennitölu',
+    defaultMessage: 'Enginn ökunemi skráður á eftirfarandi kennitölu',
     description: 'No students error in modal',
   },
 
