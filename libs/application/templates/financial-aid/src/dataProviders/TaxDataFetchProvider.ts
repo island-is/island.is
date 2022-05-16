@@ -5,6 +5,7 @@ import {
   SuccessfulDataProviderResult,
 } from '@island.is/application/core'
 import {
+  addUserTypeDirectPayments,
   DirectTaxPayment,
   PersonalTaxReturn,
   UserType,
@@ -74,23 +75,15 @@ export class TaxDataFetchProvider extends BasicDataProvider {
       success: boolean
     }>(directTaxPaymentsQuery, 'municipalitiesDirectTaxPayments')
 
-    const getUserType = application?.externalData?.taxDataFetch
-      ? UserType.SPOUSE
-      : UserType.APPLICANT
-
-    const addUserTypeDirectPayments = directTaxPayments.directTaxPayments.map(
-      (el) => {
-        return {
-          ...el,
-          userType: getUserType,
-        }
-      },
-    )
-
     return {
       municipalitiesPersonalTaxReturn: personalTaxReturn,
       municipalitiesDirectTaxPayments: {
-        directTaxPayments: addUserTypeDirectPayments,
+        directTaxPayments: addUserTypeDirectPayments(
+          application?.externalData?.taxDataFetch
+            ? UserType.SPOUSE
+            : UserType.APPLICANT,
+          directTaxPayments.directTaxPayments,
+        ),
         success: directTaxPayments.success,
       },
     }
