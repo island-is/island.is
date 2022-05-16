@@ -101,7 +101,6 @@ const DefenderInfo: React.FC<Props> = (props) => {
     [lawyers, setWorkingCase, workingCase, updateCase],
   )
 
-  // TODO: Rewrite this in CF strings
   const getTranslations = () => {
     if (isRestrictionCase(workingCase.type)) {
       if (user?.role === UserRole.PROSECUTOR) {
