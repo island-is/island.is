@@ -293,6 +293,7 @@ const DefendantForm: React.FC<Props> = (props) => {
           <AnimatePresence>
             {[
               CaseType.RESTRAINING_ORDER,
+              CaseType.EXPULSION_FROM_HOME,
               CaseType.PSYCHIATRIC_EXAMINATION,
               CaseType.OTHER,
             ].includes(workingCase.type) && (
