@@ -65,6 +65,40 @@ export class SigningService extends DataSource {
     super()
   }
 
+  private getVerifiedDocument(
+    documentName: string,
+    resStatus: DokobitStatusResponse,
+  ) {
+    if (resStatus.file.name !== documentName) {
+      throw new DokobitError(
+        502, // Bad gateway
+        99999,
+        'File name verification failed',
+      )
+    }
+
+    const base64 = resStatus.file.content
+
+    const documentContent = Base64.atob(base64)
+    const digest = createHash('sha1')
+      .update(documentContent, 'ascii')
+      .digest('hex')
+
+    if (digest !== resStatus.file.digest) {
+      throw new DokobitError(
+        502, // Bad gateway
+        99999,
+        'Checksum verification failed',
+      )
+    }
+
+    return documentContent
+  }
+
+  private delay(ms: number) {
+    return new Promise((resolve) => setTimeout(resolve, ms))
+  }
+
   async requestSignature(
     mobileNumber: string,
     message: string,
@@ -153,39 +187,5 @@ export class SigningService extends DataSource {
       99999,
       'Timeout while retrieving document',
     )
-  }
-
-  private getVerifiedDocument(
-    documentName: string,
-    resStatus: DokobitStatusResponse,
-  ) {
-    if (resStatus.file.name !== documentName) {
-      throw new DokobitError(
-        502, // Bad gateway
-        99999,
-        'File name verification failed',
-      )
-    }
-
-    const base64 = resStatus.file.content
-
-    const documentContent = Base64.atob(base64)
-    const digest = createHash('sha1')
-      .update(documentContent, 'ascii')
-      .digest('hex')
-
-    if (digest !== resStatus.file.digest) {
-      throw new DokobitError(
-        502, // Bad gateway
-        99999,
-        'Checksum verification failed',
-      )
-    }
-
-    return documentContent
-  }
-
-  private delay(ms: number) {
-    return new Promise((resolve) => setTimeout(resolve, ms))
   }
 }
