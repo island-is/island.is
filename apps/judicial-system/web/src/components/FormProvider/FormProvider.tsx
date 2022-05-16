@@ -9,6 +9,7 @@ import {
   CaseType,
   Defendant,
 } from '@island.is/judicial-system/types'
+import { DEFENDER_ROUTE } from '@island.is/judicial-system/consts'
 
 import { CaseData, RestrictedCaseData } from '../../types'
 import { CaseQuery } from './caseGql'
@@ -58,7 +59,7 @@ export const FormContext = createContext<FormProvider>({
 
 const FormProvider = ({ children }: Props) => {
   const router = useRouter()
-  const restricted = router.pathname.includes('verjandi')
+  const restricted = router.pathname.includes(DEFENDER_ROUTE)
   const id = router.query.id
 
   const caseType = router.pathname.includes('farbann')

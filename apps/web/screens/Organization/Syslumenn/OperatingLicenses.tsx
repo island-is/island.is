@@ -244,7 +244,7 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink.text,
       href: primaryLink.url,
-      active: pageUrl.includes(primaryLink.url),
+      active: pageUrl === primaryLink.url,
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
         href: url,

@@ -11,6 +11,7 @@ import type {
   UpdateCase,
   SessionArrangements,
   CreateCase,
+  CaseCustodyRestrictions,
 } from '@island.is/judicial-system/types'
 import { toast } from '@island.is/island-ui/core'
 import { errors } from '@island.is/judicial-system-web/messages'
@@ -26,34 +27,39 @@ import { ExtendCaseMutation } from './extendCaseGql'
 
 type autofillProperties = Pick<
   Case,
-  | 'demands'
-  | 'courtAttendees'
-  | 'prosecutorDemands'
-  | 'courtStartDate'
-  | 'courtCaseFacts'
-  | 'courtLegalArguments'
-  | 'validToDate'
-  | 'isolationToDate'
-  | 'prosecutorOnlySessionRequest'
   | 'conclusion'
+  | 'courtAttendees'
+  | 'courtCaseFacts'
   | 'courtDate'
+  | 'courtLegalArguments'
   | 'courtLocation'
-  | 'sessionBookings'
-  | 'ruling'
+  | 'courtStartDate'
+  | 'decision'
+  | 'demands'
   | 'endOfSessionBookings'
   | 'introduction'
-  | 'requestedOtherRestrictions'
   | 'isCustodyIsolation'
-  | 'decision'
+  | 'isolationToDate'
+  | 'prosecutorDemands'
+  | 'prosecutorOnlySessionRequest'
+  | 'requestedCustodyRestrictions'
+  | 'requestedOtherRestrictions'
+  | 'requestedValidToDate'
+  | 'ruling'
   | 'sessionArrangements'
+  | 'sessionBookings'
+  | 'type'
+  | 'validToDate'
 >
 
+export type autofillEntry = {
+  key: keyof autofillProperties
+  value?: string | boolean | SessionArrangements | CaseCustodyRestrictions[]
+  force?: boolean
+}
+
 export type autofillFunc = (
-  entries: Array<{
-    key: keyof autofillProperties
-    value?: string | boolean | SessionArrangements
-    force?: boolean
-  }>,
+  entries: Array<autofillEntry>,
   workingCase: Case,
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
 ) => void
