@@ -10,12 +10,12 @@ import TaxBreakdownHeadline from './TaxBreakdownHeadline'
 import groupBy from 'lodash/groupBy'
 import { directTaxPaymentModal } from '../../lib/messages'
 
+import * as styles from './TaxBreakdown.css'
+import { useIntl } from 'react-intl'
+
 interface Dictionary<T> {
   [index: string]: T
 }
-
-import * as styles from './TaxBreakdown.css'
-import { useIntl } from 'react-intl'
 
 export const taxBreakDownHeaders = [
   directTaxPaymentModal.taxBreakdown.company,

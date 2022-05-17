@@ -15,11 +15,11 @@ const DirectTaxPaymentCell = ({
   hasFetchedPayments,
   setIsModalOpen,
 }: Props) => {
+  const { formatMessage } = useIntl()
+
   if (!hasFetchedPayments) {
     return null
   }
-
-  const { formatMessage } = useIntl()
 
   return (
     <>
