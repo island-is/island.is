@@ -98,7 +98,7 @@ const mockCasesQuery = [
             modified: '2021-02-16T19:51:39.466Z',
             state: CaseState.SUBMITTED,
             policeCaseNumber: '008-2020-X',
-            defendants: [{ nationalId: '10.10.2000', name: 'Moe' }],
+            defendants: [{ nationalId: '012345-6789', name: 'Moe' }],
             validToDate: '2020-11-11T12:31:00.000Z',
           },
         ],
