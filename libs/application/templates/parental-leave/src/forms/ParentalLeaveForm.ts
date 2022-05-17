@@ -399,7 +399,6 @@ export const ParentalLeaveForm: Form = buildForm({
               id: 'employer.isSelfEmployed',
               title: parentalLeaveFormMessages.selfEmployed.title,
               description: parentalLeaveFormMessages.selfEmployed.description,
-              width: 'half',
             }),
             buildMultiField({
               id: 'employer.selfEmployed.attachment',
