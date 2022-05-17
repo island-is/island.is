@@ -16,7 +16,7 @@ import { parseMachineLicensePayload } from './MachineLicenseMapper'
 import { GenericMachineLicenseResponse } from './genericMachineLicense.type'
 
 @Injectable()
-export class GenericLicenseApi
+export class GenericMachineLicenseApi
   implements GenericLicenseClient<GenericMachineLicenseResponse> {
   constructor(
     private machineLicenseApi: VinnuvelaApi,
@@ -28,10 +28,8 @@ export class GenericLicenseApi
   async getLicense(
     nationalId: User['nationalId'],
   ): Promise<GenericLicenseUserdataExternal | null> {
-    const kennitala = '0101303019'
-
     const license = (await this.machineLicenseApi.getVinnuvela({
-      kennitala,
+      kennitala: nationalId,
     })) as GenericMachineLicenseResponse
 
     const payload = parseMachineLicensePayload(license)

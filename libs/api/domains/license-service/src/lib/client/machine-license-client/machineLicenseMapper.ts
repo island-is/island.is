@@ -12,21 +12,24 @@ export const parseMachineLicensePayload = (
   const data = [
     {
       type: GenericLicenseDataFieldType.Value,
+      name: 'skirteinisNumer',
       value: license.skirteinisNumer?.toString(),
     },
     {
       type: GenericLicenseDataFieldType.Value,
       label: '1. Fullt nafn',
-      name: 'full-name',
+      name: 'fulltNafn',
       value: license?.fulltNafn,
     },
     {
       type: GenericLicenseDataFieldType.Value,
+      name: 'kennitala',
       label: '2. Kennitala',
       value: license.kennitala,
     },
     {
       type: GenericLicenseDataFieldType.Value,
+      name: 'utgafustadur',
       label: '3. Útgáfustaður',
       value: license.utgafuStadur,
     },
@@ -38,6 +41,7 @@ export const parseMachineLicensePayload = (
     {
       type: GenericLicenseDataFieldType.Value,
       label: '5. Gildir til',
+      name: 'gildirTil',
       value: 'Sjá bakhlið',
     },
     {
@@ -51,30 +55,33 @@ export const parseMachineLicensePayload = (
       value: license.utgafuLand,
     },
     {
-      type: GenericLicenseDataFieldType.Category,
+      type: GenericLicenseDataFieldType.Group,
       label: 'Vinnuvélaréttindi',
-      fields: (license.vinnuvelaRettindi ?? []).map((field) => [
-        {
-          type: GenericLicenseDataFieldType.Value,
-          label: 'Flokkur',
-          value: field.flokkur,
-        },
-        {
-          type: GenericLicenseDataFieldType.Value,
-          label: 'Stjórna',
-          value: field.stjorna,
-        },
-        {
-          type: GenericLicenseDataFieldType.Value,
-          label: 'Kenna',
-          value: field.kenna,
-        },
-        {
-          type: GenericLicenseDataFieldType.Value,
-          label: 'Fullt heiti',
-          value: field.fulltHeiti,
-        },
-      ]),
+      fields: (license.vinnuvelaRettindi ?? []).map((field) => ({
+        type: GenericLicenseDataFieldType.Category,
+        fields: [
+          {
+            type: GenericLicenseDataFieldType.Value,
+            label: 'Flokkur',
+            value: field.flokkur,
+          },
+          {
+            type: GenericLicenseDataFieldType.Value,
+            label: 'Stjórna',
+            value: field.stjorna,
+          },
+          {
+            type: GenericLicenseDataFieldType.Value,
+            label: 'Kenna',
+            value: field.kenna,
+          },
+          {
+            type: GenericLicenseDataFieldType.Value,
+            label: 'Fullt heiti',
+            value: field.fulltHeiti,
+          },
+        ],
+      })),
     },
   ]
 

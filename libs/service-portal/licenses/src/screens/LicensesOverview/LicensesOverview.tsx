@@ -16,6 +16,7 @@ import {
   GenericUserLicenseFetchStatus,
 } from '@island.is/api/schema'
 import { useHistory } from 'react-router-dom'
+import { useLicenses } from '@island.is/service-portal/graphql'
 
 export const LicensesOverview: ServicePortalModuleComponent = () => {
   useNamespaces('sp.license')
@@ -33,6 +34,8 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
         ?.value ?? undefined
     )
   }
+
+  //Need to decide how/where the type logic for the cards should be
 
   return (
     <>
@@ -58,25 +61,29 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
                 ? m.isExpired.defaultMessage
                 : 'í Gildi'
 
+            let title
+
+            switch (item.license.type) {
+              case 'DriversLicense':
+                title = m.drivingLicense.defaultMessage
+                break
+              case 'AdrLicense':
+                title = m.adrLicense.defaultMessage
+                break
+              case 'MachineLicense':
+                title = m.machineLicense.defaultMessage
+                break
+            }
+
             return (
               <ActionCard
                 key={i}
-                heading={
-                  item.license.type === 'DriversLicense'
-                    ? m.drivingLicense.defaultMessage
-                    : m.adrLicense.defaultMessage
-                }
+                heading={title}
                 text={`${m.licenseNumber.defaultMessage} - ${text}`}
                 tag={{ label: tag }}
                 cta={{
                   label: 'click me',
-                  onClick: () =>
-                    history.push(
-                      ServicePortalPath.LicensesDrivingDetail.replace(
-                        ':id',
-                        text as string,
-                      ),
-                    ),
+                  onClick: () => console.log('clicked'),
                 }}
               />
             )

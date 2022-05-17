@@ -19,16 +19,19 @@ export const parseAdrLicensePayload = (
     },
     {
       type: GenericLicenseDataFieldType.Value,
+      name: 'fulltNafn',
       label: '2. 3.',
       value: license.fulltNafn,
     },
     {
       type: GenericLicenseDataFieldType.Value,
+      name: 'faedingardagur',
       label: '4',
       value: license.faedingarDagur,
     },
     {
       type: GenericLicenseDataFieldType.Value,
+      name: 'rikisfang',
       label: '5.',
       value: license.rikisfang,
     },
@@ -40,6 +43,7 @@ export const parseAdrLicensePayload = (
     },
     {
       type: GenericLicenseDataFieldType.Category,
+      name: 'rettindiTankar',
       label: 'Tankar 9.',
       fields: (license.adrRettindi ?? [])
         .filter((field) => field.tankar)
@@ -50,7 +54,8 @@ export const parseAdrLicensePayload = (
     },
     {
       type: GenericLicenseDataFieldType.Category,
-      label: 'Ekki tankar 10.',
+      name: 'rettindiEkkiTankar',
+      label: 'Annað en tankar 10.',
       fields: (license.adrRettindi ?? [])
         .filter((field) => !field.tankar)
         .map((field) => ({

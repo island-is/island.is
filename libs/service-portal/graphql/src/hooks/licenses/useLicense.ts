@@ -1,10 +1,14 @@
 import { useQuery } from '@apollo/client'
-import { GenericUserLicenseStatus, Query } from '@island.is/api/schema'
+import {
+  GenericLicenseType,
+  GenericUserLicenseStatus,
+  Query,
+} from '@island.is/api/schema'
 import { Locale } from 'locale'
 import { useEffect, useState } from 'react'
 import { useUserProfile } from '../..'
-import { GET_GENERIC_LICENSE } from '../../lib/queries/getDrivingLicense'
 import { DrivingLicenseType } from '@island.is/service-portal/core'
+import { GET_GENERIC_LICENSE } from '../../lib/queries/getLicenses'
 
 interface GetLicenseProps {
   data?: DrivingLicenseType
@@ -15,7 +19,9 @@ interface GetLicenseProps {
 
 /* Collects only Driving License */
 // TODO: Generate hook for collecting all licenses when other services are ready
-export const useDrivingLicense = (): GetLicenseProps => {
+export const useLicense = (
+  licenseType: GenericLicenseType,
+): GetLicenseProps => {
   const { data: userProfile } = useUserProfile()
   const locale = (userProfile?.locale as Locale) ?? 'is'
   const { data, loading, error } = useQuery<Query>(GET_GENERIC_LICENSE, {
@@ -23,7 +29,7 @@ export const useDrivingLicense = (): GetLicenseProps => {
       locale,
       input: {
         //CHANGE THIS BACK!
-        licenseType: 'DriversLicense',
+        licenseType,
       },
     },
   })

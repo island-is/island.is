@@ -10,7 +10,7 @@ import {
   GenericUserLicenseStatus,
   PkPassVerification,
 } from '../../licenceService.type'
-import { GenericAdrLicenseResponse } from './genrericAdrLicense.type'
+import { GenericAdrLicenseResponse } from './genericAdrLicense.type'
 import { User } from '@island.is/auth-nest-tools'
 import { AdrApi } from '@island.is/clients/aosh'
 import { parseAdrLicensePayload } from './adrLicenseMapper'
@@ -28,10 +28,8 @@ export class GenericAdrLicenseApi
   async getLicense(
     nationalId: User['nationalId'],
   ): Promise<GenericLicenseUserdataExternal | null> {
-    const kennitala = '0101303019'
-
     const license = (await this.adrLicenseApi.getAdr({
-      kennitala,
+      kennitala: nationalId,
     })) as GenericAdrLicenseResponse
 
     const payload = parseAdrLicensePayload(license)
