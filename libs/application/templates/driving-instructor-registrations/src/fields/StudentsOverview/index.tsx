@@ -22,6 +22,10 @@ import * as styles from '../style.css'
 
 const StudentsOverview: FC<FieldBaseProps> = ({ field, application }) => {
   const { formatMessage } = useLocale()
+  
+  const changeTitleEvent = (title: string) =>
+    new CustomEvent('changeTitle', { detail: title })
+  const element = document.getElementById('students')
   /* table pagination */
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(0)
@@ -67,26 +71,17 @@ const StudentsOverview: FC<FieldBaseProps> = ({ field, application }) => {
   )
 
   useEffect(() => {
-    if(showTable) {
-      Object.defineProperties(field, {
-      title: {
-        value: "Mínir ökunemar",
-        writable: true,
-      },
-    })
-    } else {
-      Object.defineProperties(field, {
-        title: {
-          value: "Skrá ökutíma",
-          writable: true,
-        },
-      })
+    if (element) {
+      if (showTable) {
+        element.dispatchEvent(changeTitleEvent('Mínir ökunemar'))
+      } else {
+        element.dispatchEvent(changeTitleEvent('Skrá ökutíma'))
+      }
     }
-    
-  }, [showTable, field])
+  }, [showTable, element])
 
   return (
-    <Box marginBottom={10}>
+    <Box marginBottom={10} id="students">
       {showTable ? (
         <Stack space={5}>
           <Box

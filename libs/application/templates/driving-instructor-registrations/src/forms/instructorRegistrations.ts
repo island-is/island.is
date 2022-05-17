@@ -9,6 +9,8 @@ import {
   buildCustomField,
 } from '@island.is/application/core'
 import { m } from '../lib/messages'
+import { getTitle } from '../lib/utils'
+
 
 export const getInstructorRegistrations = (): Form => {
   return buildForm({
@@ -48,7 +50,7 @@ export const getInstructorRegistrations = (): Form => {
         title: m.studentsOverviewSideTitle,
         children: [
           buildCustomField({
-            title: m.studentsOverviewTitle,
+            title: getTitle,
             id: 'table',
             component: 'StudentsOverview',
           }),
