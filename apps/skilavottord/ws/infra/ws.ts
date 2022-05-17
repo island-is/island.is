@@ -43,10 +43,6 @@ export const serviceSetup = (): ServiceBuilder<'skilavottord-ws'> =>
           staging: ['beta'],
           prod: ['', 'www.island.is'],
         },
-        paths: [
-          {
-            path: '/app/skilavottord/api/graphql',
-          },
-        ],
+        paths: ['/app/skilavottord/api/graphql'],
       },
     })

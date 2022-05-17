@@ -1,13 +1,9 @@
 import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
-export const serviceSetup = (): ServiceBuilder<'services-personal-representative-public'> => {
-  return service('services-personal-representative-public')
-    .namespace('personal-representative')
-    .image('services-personal-representative-public')
+export const serviceSetup = (): ServiceBuilder<'personal-representative-public'> => {
+  return service('personal-representative-public')
+    .namespace('identity-server')
     .env({
-      DB_HOST: 'postgres-ids.internal',
-      DB_USER: 'servicesauth',
-      DB_NAME: 'servicesauth',
       IDS_ISSUER: {
         dev: 'https://identity-server.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',
@@ -21,8 +17,8 @@ export const serviceSetup = (): ServiceBuilder<'services-personal-representative
       DB_REPLICAS_HOST: {
         dev:
           'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com',
-        staging: 'postgres-ids.internal',
-        prod: 'postgres-ids.internal',
+        staging: '',
+        prod: '',
       },
     })
     .ingress({
@@ -32,11 +28,7 @@ export const serviceSetup = (): ServiceBuilder<'services-personal-representative
           staging: 'personal-representative-xrd.internal.staging01.devland.is',
           prod: 'personal-representative-xrd.internal.innskra.island.is',
         },
-        paths: [
-          {
-            path: '/',
-          },
-        ],
+        paths: ['/'],
         public: false,
       },
       demoALB: {
@@ -45,11 +37,7 @@ export const serviceSetup = (): ServiceBuilder<'services-personal-representative
           staging: '',
           prod: '',
         },
-        paths: [
-          {
-            path: '/',
-          },
-        ],
+        paths: ['/'],
         public: true,
       },
     })

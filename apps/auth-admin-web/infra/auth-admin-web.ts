@@ -34,11 +34,7 @@ export const serviceSetup = (): ServiceBuilder<'auth-admin-web'> => {
           staging: 'identity-server',
           prod: 'innskra.island.is',
         },
-        paths: [
-          {
-            path: '/admin',
-          },
-        ],
+        paths: ['/admin'],
         public: true,
         extraAnnotations: {
           dev: {

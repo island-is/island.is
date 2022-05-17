@@ -24,11 +24,7 @@ export const serviceSetup = (services: {
           staging: 'judicial-system-xrd-api',
           prod: 'judicial-system-xrd-api',
         },
-        paths: [
-          {
-            path: '/',
-          },
-        ],
+        paths: ['/'],
         public: false,
       },
     })

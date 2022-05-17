@@ -29,11 +29,7 @@ export const serviceSetup = (): ServiceBuilder<'download-service'> =>
           staging: ['api'],
           prod: ['api'],
         },
-        paths: [
-          {
-            path: '/download',
-          },
-        ],
+        paths: ['/download'],
         extraAnnotations: {
           dev: {},
           staging: {

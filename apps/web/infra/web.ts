@@ -41,11 +41,7 @@ export const serviceSetup = (services: {
             'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
           },
         },
-        paths: [
-          {
-            path: '/',
-          },
-        ],
+        paths: ['/'],
       },
     })
     .liveness('/liveness')

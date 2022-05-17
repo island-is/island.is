@@ -98,11 +98,7 @@ export const serviceSetup = (services: {
           staging: 'identity-server',
           prod: 'innskra.island.is',
         },
-        paths: [
-          {
-            path: '/',
-          },
-        ],
+        paths: ['/'],
         public: true,
         extraAnnotations: {
           dev: {

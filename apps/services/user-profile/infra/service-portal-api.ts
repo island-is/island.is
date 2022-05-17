@@ -45,11 +45,7 @@ export const serviceSetup = (): ServiceBuilder<'service-portal-api'> =>
           staging: 'service-portal-api',
           prod: 'service-portal-api',
         },
-        paths: [
-          {
-            path: '/',
-          },
-        ],
+        paths: ['/'],
         public: false,
       },
     })

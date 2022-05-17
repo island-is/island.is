@@ -49,11 +49,7 @@ export const serviceSetup = (services: {
               'rewrite /$ https://island.is/loftbru; rewrite /en$ https://island.is/en/lower-airfares-for-residents-in-rural-areas;',
           },
         },
-        paths: [
-          {
-            path: '/',
-          },
-        ],
+        paths: ['/'],
         public: true,
       },
     })

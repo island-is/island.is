@@ -21,11 +21,7 @@ export const serviceSetup = (services: {}): ServiceBuilder<'island-ui-storybook'
           staging: 'ui',
           prod: 'ui.devland.is',
         },
-        paths: [
-          {
-            path: '/',
-          },
-        ],
+        paths: ['/'],
       },
     })
     .grantNamespaces('nginx-ingress-external')

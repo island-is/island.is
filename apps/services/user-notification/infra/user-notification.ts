@@ -26,11 +26,7 @@ export const userNotificationServiceSetup = (): ServiceBuilder<'user-notificatio
           staging: 'user-notification-xrd',
           prod: 'user-notification-xrd',
         },
-        paths: [
-          {
-            path: '/',
-          },
-        ],
+        paths: ['/'],
         public: false,
       },
     })

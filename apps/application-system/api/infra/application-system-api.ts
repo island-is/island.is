@@ -10,7 +10,6 @@ import {
   DataProtectionComplaint,
   NationalRegistry,
   FishingLicense,
-  MunicipalitiesFinancialAid,
 } from '../../../../infra/src/dsl/xroad'
 import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 import { PostgresInfo } from '../../../../infra/src/dsl/types/input-types'
@@ -157,6 +156,11 @@ export const serviceSetup = (services: {
       ENDORSEMENTS_API_BASE_PATH: ref(
         (h) => `http://${h.svc(services.servicesEndorsementApi)}`,
       ),
+      MUNICIPALITIES_FINANCIAL_AID_BACKEND_URL: {
+        dev: 'http://web-financial-aid-backend',
+        staging: 'http://web-financial-aid-backend',
+        prod: 'http://web-financial-aid-backend',
+      },
     })
     .xroad(
       Base,
@@ -170,7 +174,6 @@ export const serviceSetup = (services: {
       CriminalRecord,
       DataProtectionComplaint,
       FishingLicense,
-      MunicipalitiesFinancialAid,
     )
     .secrets({
       NOVA_URL: '/k8s/application-system-api/NOVA_URL',
@@ -221,14 +224,7 @@ export const serviceSetup = (services: {
           staging: 'application-payment-callback-xrd',
           prod: 'application-payment-callback-xrd',
         },
-        paths: [
-          {
-            path: '/application-payment',
-          },
-          {
-            path: '/applications',
-          },
-        ],
+        paths: ['/application-payment', '/applications'],
         public: false,
       },
     })
