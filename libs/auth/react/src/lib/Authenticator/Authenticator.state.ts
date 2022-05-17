@@ -1,6 +1,6 @@
 import { Dispatch } from 'react'
 import { User } from '@island.is/shared/types'
-import kennitala from 'kennitala'
+import * as kennitala from 'kennitala'
 
 export type AuthState =
   | 'logged-out'
