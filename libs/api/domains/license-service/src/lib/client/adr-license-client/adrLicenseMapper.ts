@@ -3,7 +3,7 @@ import {
   GenericLicenseDataFieldType,
   GenericUserLicensePayload,
 } from '../../licenceService.type'
-import { GenericAdrLicenseResponse } from './genrericAdrLicense.type'
+import { GenericAdrLicenseResponse } from './genericAdrLicense.type'
 
 export const parseAdrLicensePayload = (
   license: GenericAdrLicenseResponse,
@@ -14,7 +14,8 @@ export const parseAdrLicensePayload = (
     {
       type: GenericLicenseDataFieldType.Value,
       label: '1.',
-      value: (license?.skirteinisNumber ?? '').toString(),
+      name: 'skirteinisNumer',
+      value: (license?.skirteinisNumer ?? '').toString(),
     },
     {
       type: GenericLicenseDataFieldType.Value,
@@ -24,7 +25,7 @@ export const parseAdrLicensePayload = (
     {
       type: GenericLicenseDataFieldType.Value,
       label: '4',
-      value: license.faedingardagur,
+      value: license.faedingarDagur,
     },
     {
       type: GenericLicenseDataFieldType.Value,
@@ -34,6 +35,7 @@ export const parseAdrLicensePayload = (
     {
       type: GenericLicenseDataFieldType.Value,
       label: '8. Gildi til: ',
+      name: 'gildirTil',
       value: license.gildirTil,
     },
     {

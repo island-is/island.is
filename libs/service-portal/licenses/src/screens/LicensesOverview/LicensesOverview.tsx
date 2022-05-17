@@ -10,33 +10,29 @@ import {
 } from '@island.is/service-portal/core'
 import LicenseCards from '../../components/LicenseCards/LicenseCards'
 import { LicenseLoader } from '../../components/LicenseLoader/LicenseLoader'
-<<<<<<< HEAD
-=======
-import { useLicenses } from '@island.is/service-portal/graphql'
->>>>>>> 932a196f8 (wip: ADR license integration)
 import { m } from '../../lib/messages'
-import { useHistory } from 'react-router-dom'
 import {
-  GenericLicenseType,
+  GenericUserLicense,
   GenericUserLicenseFetchStatus,
-  useLicenses,
-} from '@island.is/service-portal/graphql'
+} from '@island.is/api/schema'
+import { useHistory } from 'react-router-dom'
 
 export const LicensesOverview: ServicePortalModuleComponent = () => {
   useNamespaces('sp.license')
   const { formatMessage } = useLocale()
   const { data, loading, error } = useLicenses()
-<<<<<<< HEAD
   const history = useHistory()
 
   const isError = data?.every(
     (item) => item.fetch.status === GenericUserLicenseFetchStatus.Error,
   )
-=======
 
-  console.log('data')
-  console.log(data)
->>>>>>> 932a196f8 (wip: ADR license integration)
+  const getGenericFieldByName = (item: GenericUserLicense, name: string) => {
+    return (
+      item.payload?.data.find((field) => field.name === name.toString())
+        ?.value ?? undefined
+    )
+  }
 
   return (
     <>
@@ -53,49 +49,41 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
             if (item.license.status !== 'HasLicense') {
               return null
             }
+            const text = getGenericFieldByName(item, 'skirteinisNumer')
+            const expireDate =
+              getGenericFieldByName(item, 'gildirTil') ?? undefined
 
-<<<<<<< HEAD
-            const text = 'skírteinisnúmer'
-            const tag = 'Placeholder'
-            let title
-
-            switch (item.license.type) {
-              case 'DriversLicense':
-                title = m.drivingLicense.defaultMessage
-                break
-              default:
-                title = 'Generic License Title'
-                break
-            }
-
-            let servicePortalPath: ServicePortalPath
-
-            switch (item.license.type) {
-              case GenericLicenseType.DriversLicense:
-                servicePortalPath = ServicePortalPath.LicensesDrivingDetail
-                break
-            }
+            const tag =
+              new Date() > new Date(expireDate ?? 0)
+                ? m.isExpired.defaultMessage
+                : 'í Gildi'
 
             return (
               <ActionCard
                 key={i}
-                heading={title}
+                heading={
+                  item.license.type === 'DriversLicense'
+                    ? m.drivingLicense.defaultMessage
+                    : m.adrLicense.defaultMessage
+                }
                 text={`${m.licenseNumber.defaultMessage} - ${text}`}
                 tag={{ label: tag }}
                 cta={{
-                  label: 'Skoða nánar',
-                  onClick: () => history.push(servicePortalPath),
+                  label: 'click me',
+                  onClick: () =>
+                    history.push(
+                      ServicePortalPath.LicensesDrivingDetail.replace(
+                        ':id',
+                        text as string,
+                      ),
+                    ),
                 }}
               />
             )
           })}
         </LicenseCards>
       )}
-
-      {(error || isError) && (
-=======
       {error && (
->>>>>>> 932a196f8 (wip: ADR license integration)
         <Box>
           <AlertBanner
             description={formatMessage(m.errorFetch)}
