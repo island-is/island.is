@@ -47,8 +47,8 @@ SupportApplication.getInitialProps = async (appContext) => {
 }
 
 const { serverRuntimeConfig } = getConfig()
-const { graphqlEndpoint, apiUrl } = serverRuntimeConfig
-const externalEndpointDependencies = [graphqlEndpoint, apiUrl]
+const { graphqlEndpoint } = serverRuntimeConfig
+const externalEndpointDependencies = [graphqlEndpoint]
 
 export default withHealthchecks(externalEndpointDependencies)(
   appWithLocale(SupportApplication),
