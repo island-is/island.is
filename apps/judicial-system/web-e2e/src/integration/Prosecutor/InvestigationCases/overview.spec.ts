@@ -1,6 +1,6 @@
 import faker from 'faker'
 
-import { Case } from '@island.is/judicial-system/types'
+import { Case, CaseState } from '@island.is/judicial-system/types'
 import { IC_POLICE_CONFIRMATION_ROUTE } from '@island.is/judicial-system/consts'
 
 import {
@@ -16,12 +16,27 @@ describe(`${IC_POLICE_CONFIRMATION_ROUTE}/:id`, () => {
   const defenderName = faker.name.findName()
   const defenderEmail = faker.internet.email()
   const defenderPhoneNumber = faker.phone.phoneNumber()
+  const caseData = makeInvestigationCase()
 
   beforeEach(() => {
-    const caseData = makeInvestigationCase()
+    cy.stubAPIResponses()
+    cy.visit(`${IC_POLICE_CONFIRMATION_ROUTE}/test_id`)
+  })
+
+  it('should have a info panel about how to resend a case if the case has been received', () => {
     const caseDataAddition: Case = {
       ...caseData,
-      demands,
+      state: CaseState.RECEIVED,
+    }
+
+    intercept(caseDataAddition)
+
+    cy.getByTestid('ic-overview-info-panel').should('exist')
+  })
+
+  it('should display information about the case in an info card', () => {
+    const caseDataAddition: Case = {
+      ...caseData,
       defenderName,
       defenderEmail,
       defenderPhoneNumber,
@@ -30,13 +45,8 @@ describe(`${IC_POLICE_CONFIRMATION_ROUTE}/:id`, () => {
       requestedCourtDate: '2020-09-20T19:50:08.033Z',
     }
 
-    cy.stubAPIResponses()
-    cy.visit(`${IC_POLICE_CONFIRMATION_ROUTE}/test_id`)
-
     intercept(caseDataAddition)
-  })
 
-  it('should display information about the case in an info card', () => {
     cy.getByTestid('infoCard').contains(
       `${investigationCaseAccusedName}, kt. 000000-0000, ${investigationCaseAccusedAddress}`,
     )
@@ -54,14 +64,24 @@ describe(`${IC_POLICE_CONFIRMATION_ROUTE}/:id`, () => {
   })
 
   it('should display the demands', () => {
+    const caseDataAddition: Case = {
+      ...caseData,
+      demands,
+    }
+
+    intercept(caseDataAddition)
     cy.contains(demands)
   })
 
   it('should display a button to view request as PDF', () => {
+    intercept(caseData)
+
     cy.getByTestid('requestPDFButton').should('exist')
   })
 
   it.skip('should navigate to /krofur on successful confirmation', () => {
+    intercept(caseData)
+
     cy.getByTestid('continueButton').click()
     cy.getByTestid('modalSecondaryButton').click()
     cy.url().should('contain', '/krofur')
