@@ -6,12 +6,7 @@ import {
   IC_RULING_ROUTE,
 } from '@island.is/judicial-system/consts'
 
-import {
-  makeInvestigationCase,
-  makeCourt,
-  intercept,
-  interceptUpdateCase,
-} from '../../../utils'
+import { makeInvestigationCase, makeCourt, intercept } from '../../../utils'
 
 describe(`${IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
   beforeEach(() => {
