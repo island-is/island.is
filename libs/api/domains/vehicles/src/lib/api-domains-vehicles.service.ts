@@ -140,7 +140,7 @@ export class VehiclesService {
           passengers: data.techincal?.pass,
           useGroup: data.usegroup,
           driversPassengers: data.techincal?.passbydr,
-          standingPassengers: null, // Todo: VANTAR I ÞJONUSTUKALLIÐ
+          standingPassengers: data.techincal?.standingno,
         },
         currentOwnerInfo: {
           owner: data.owners?.find((x) => x.current === true)?.fullname,
@@ -161,6 +161,7 @@ export class VehiclesService {
             data.inspections && data.inspections.length > 1
               ? data.inspections[1]?.date
               : null,
+          insuranceStatus: data.insurancestatus,
         },
         technicalInfo: {
           engine: data.techincal?.engine,
