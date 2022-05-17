@@ -19,7 +19,11 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { useQuery } from '@apollo/client'
 import { useParams } from 'react-router-dom'
 import { GET_USERS_VEHICLE_DETAIL } from '../../queries/getUsersVehicleDetail'
-import { VehiclesCurrentOwnerInfo, Query } from '@island.is/api/schema'
+import {
+  VehiclesCurrentOwnerInfo,
+  Query,
+  VehiclesOperator,
+} from '@island.is/api/schema'
 import { messages } from '../../lib/messages'
 import BaseInfoItem from '../../components/DetailTable/BaseInfoItem'
 import RegistrationInfoItem from '../../components/DetailTable/RegistrationInfoItem'
@@ -53,7 +57,7 @@ const VehicleDetail: ServicePortalModuleComponent = ({ userInfo }) => {
     inspectionInfo,
     technicalInfo,
     ownersInfo,
-    operator,
+    operators,
     coOwners,
   } = data?.vehiclesDetail || {}
 
@@ -126,11 +130,15 @@ const VehicleDetail: ServicePortalModuleComponent = ({ userInfo }) => {
       {inspectionInfo && <InspectionInfoItem data={inspectionInfo} />}
       {technicalInfo && <TechnicalInfoItem data={technicalInfo} />}
       {coOwners &&
-        coOwners?.length > 0 &&
+        coOwners.length > 0 &&
         coOwners.map((owner: VehiclesCurrentOwnerInfo, index) => (
           <CoOwnerInfoItem key={index} data={owner} />
         ))}
-      {operator && <OperatorInfoItem data={operator} />}
+      {operators &&
+        operators.length > 0 &&
+        operators.map((operator: VehiclesOperator, index) => (
+          <OperatorInfoItem key={index} data={operator} />
+        ))}
       {ownersInfo && (
         <OwnersTable
           data={ownersInfo}
