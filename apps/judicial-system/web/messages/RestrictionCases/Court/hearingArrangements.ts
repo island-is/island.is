@@ -43,21 +43,6 @@ export const rcHearingArrangements = {
         description:
           'Notaður sem upplýsingatexti í upplýsingasvæði við "Verjanda" fyrirsögn á sakbornings skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
-      defenderNotFoundTitle: {
-        id:
-          'judicial.system.restriction_cases:hearing_arrangements.defender.defender_not_found_title',
-        defaultMessage: 'Lögmaður finnst ekki í félagatali Lögmannafélagsins',
-        description:
-          'Notaður sem titill í upplýsingasvæði við "Verjanda" svæði á sakbornings skrefi í gæsluvarðhalds- og farbannsmálum þegar verjandi finnst ekki í lögmannaskrá.',
-      },
-      defenderNotFoundMessage: {
-        id:
-          'judicial.system.restriction_cases:hearing_arrangements.defender.defender_not_found_message',
-        defaultMessage:
-          'Ekki tókst að finna skráðan lögmann í félagatali LMFÍ. Lögmaður mun ekki fá aðgengi að skjölum málsins í gegnum Réttarvörslugátt.',
-        description:
-          'Notaður sem texti í upplýsingasvæði við "Verjanda" svæði á sakbornings skrefi í gæsluvarðhalds- og farbannsmálum þegar verjandi finnst ekki í lögmannaskrá.',
-      },
       nameLabel: {
         id:
           'judicial.system.restriction_cases:hearing_arrangements.defender.name_label',

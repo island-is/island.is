@@ -29,6 +29,7 @@ import {
   defendant,
   rcHearingArrangements,
   icHearingArrangements,
+  defenderInfo,
 } from '@island.is/judicial-system-web/messages'
 
 import { BlueBox } from '..'
@@ -106,10 +107,6 @@ const DefenderInfo: React.FC<Props> = (props) => {
       if (user?.role === UserRole.PROSECUTOR) {
         return {
           title: accused.sections.defenderInfo.heading,
-          defenderNotFoundTitle:
-            accused.sections.defenderInfo.defenderNotFoundTitle,
-          defenderNotFoundMessage:
-            accused.sections.defenderInfo.defenderNotFoundMessage,
           defenderName: {
             label: accused.sections.defenderInfo.name.label,
             placeholder: accused.sections.defenderInfo.name.placeholder,
@@ -126,10 +123,6 @@ const DefenderInfo: React.FC<Props> = (props) => {
       } else {
         return {
           title: rcHearingArrangements.sections.defender.title,
-          defenderNotFoundTitle:
-            rcHearingArrangements.sections.defender.defenderNotFoundTitle,
-          defenderNotFoundMessage:
-            rcHearingArrangements.sections.defender.defenderNotFoundMessage,
           defenderName: {
             label: rcHearingArrangements.sections.defender.nameLabel,
             placeholder:
@@ -151,10 +144,6 @@ const DefenderInfo: React.FC<Props> = (props) => {
       if (user?.role === UserRole.PROSECUTOR) {
         return {
           title: defendant.sections.defenderInfo.heading,
-          defenderNotFoundTitle:
-            defendant.sections.defenderInfo.defenderNotFoundTitle,
-          defenderNotFoundMessage:
-            defendant.sections.defenderInfo.defenderNotFoundMessage,
           defenderName: {
             label: defendant.sections.defenderInfo.name.label,
             placeholder: defendant.sections.defenderInfo.name.placeholder,
@@ -172,10 +161,6 @@ const DefenderInfo: React.FC<Props> = (props) => {
       } else {
         return {
           title: icHearingArrangements.sections.defender.title,
-          defenderNotFoundTitle:
-            icHearingArrangements.sections.defender.defenderNotFoundTitle,
-          defenderNotFoundMessage:
-            icHearingArrangements.sections.defender.defenderNotFoundMessage,
           defenderName: {
             label: icHearingArrangements.sections.defender.nameLabel,
             placeholder:
@@ -249,8 +234,8 @@ const DefenderInfo: React.FC<Props> = (props) => {
         <Box marginBottom={3} data-testid="defenderNotFound">
           <AlertMessage
             type="warning"
-            title={formatMessage(getTranslations().defenderNotFoundTitle)}
-            message={formatMessage(getTranslations().defenderNotFoundMessage)}
+            title={formatMessage(defenderInfo.defenderNotFound.title)}
+            message={formatMessage(defenderInfo.defenderNotFound.message)}
           />
         </Box>
       )}
