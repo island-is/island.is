@@ -1,12 +1,16 @@
-import React, { FC } from 'react'
+import React, { FC, useContext } from 'react'
 import { useForm } from 'react-hook-form'
 
 import { Option } from '@island.is/island-ui/core'
-import { ModalProps } from '@island.is/skilavottord-web/components'
+import {
+  ModalProps,
+  PartnerPageLayout,
+} from '@island.is/skilavottord-web/components'
 import {
   CreateAccessControlInput,
-  Role,
+  AccessControlRole,
 } from '@island.is/skilavottord-web/graphql/schema'
+import { UserContext } from '@island.is/skilavottord-web/context'
 
 import { AccessControlModal } from '../AccessControlModal/AccessControlModal'
 
@@ -16,7 +20,7 @@ interface AccessControlCreateProps
     'onContinue' | 'continueButtonText' | 'cancelButtonText'
   > {
   onSubmit: (partner: CreateAccessControlInput) => Promise<void>
-  recyclingPartners: Option[]
+  // recyclingPartners: Option[]
   roles: Option[]
 }
 
@@ -26,22 +30,25 @@ export const AccessControlCreate: FC<AccessControlCreateProps> = ({
   show,
   onCancel,
   onSubmit,
-  recyclingPartners,
+  // recyclingPartners,
   roles,
 }) => {
   const { control, errors, handleSubmit, watch } = useForm({
     mode: 'onChange',
   })
+  const { user } = useContext(UserContext)
 
   const handleOnSubmit = handleSubmit(
-    ({ nationalId, name, role, partnerId, email, phone }) => {
+    ({ nationalId, name, role, email, phone, recyclingLocation }) => {
       return onSubmit({
         nationalId,
         name,
         phone,
         email,
+        recyclingLocation,
+        // role: AccessControlRole.recyclingCompany,
         role: role.value,
-        partnerId: partnerId?.value,
+        partnerId: user?.partnerId,
       })
     },
   )
@@ -53,11 +60,11 @@ export const AccessControlCreate: FC<AccessControlCreateProps> = ({
       show={show}
       onCancel={onCancel}
       onSubmit={handleOnSubmit}
-      recyclingPartners={recyclingPartners}
+      // recyclingPartners={recyclingPartners}
       roles={roles}
       control={control}
       errors={errors}
-      partnerIdRequired={watch('role')?.value === Role.recyclingCompanyAdmin}
+      // partnerIdRequired={watch('role')?.value === Role.recyclingCompanyAdmin}
     />
   )
 }
