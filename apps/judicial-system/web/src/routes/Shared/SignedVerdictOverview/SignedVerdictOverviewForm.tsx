@@ -398,6 +398,12 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
                   signatory={workingCase.judge?.name}
                   signingDate={workingCase.rulingDate}
                 />
+                {(user?.role === UserRole.JUDGE ||
+                  user?.role === UserRole.REGISTRAR) && (
+                  <Button variant="ghost">
+                    {capitalize(formatMessage(core.amend))}
+                  </Button>
+                )}
               </PdfRow>
             )}
           </Stack>

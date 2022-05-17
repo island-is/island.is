@@ -188,4 +188,9 @@ export const core = defineMessages({
     defaultMessage: 'og',
     description: 'Notað fyrir orðið og',
   },
+  amend: {
+    id: 'judicial.system.core:amend',
+    defaultMessage: 'leiðrétta',
+    description: 'Notað fyrir orðið "leiðrétta" í öllum flæðum.',
+  },
 })
