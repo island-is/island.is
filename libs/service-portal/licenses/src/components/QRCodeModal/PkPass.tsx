@@ -25,7 +25,7 @@ type PkPassProps = {
 export const PkPass = ({ expireDate }: PkPassProps) => {
   const [pkpassQRCode, setPkpassQRCode] = useState<string | null>(null)
   const [pkpassUrl, setPkpassUrl] = useState<string | null>(null)
-  const [generatePkPass, { loading: urlLoading }] = useMutation(CREATE_PK_PASS)
+  const [generatePkPass] = useMutation(CREATE_PK_PASS)
   const [generatePkPassQrCode, { loading: QRCodeLoading }] = useMutation(
     CREATE_PK_PASS_QR_CODE,
   )
@@ -33,6 +33,7 @@ export const PkPass = ({ expireDate }: PkPassProps) => {
   const [displayLoader, setDisplayLoader] = useState<boolean>(false)
   const [modalOpen, setModalOpen] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
+  const [fetched, setFetched] = useState(false)
   const locale = (userProfile?.locale as Locale) ?? 'is'
   const { formatMessage } = useLocale()
   const { width } = useWindowSize()
@@ -51,28 +52,32 @@ export const PkPass = ({ expireDate }: PkPassProps) => {
     setIsMobile(false)
   }, [width])
 
-  /* Fetch pkpass on load  */
-  useEffect(() => {
-    width < theme.breakpoints.md ? getLink() : getCode()
-  }, [])
-
   const getCode = async () => {
+    if (pkpassQRCode && !isTimeMoreThen30Minutes()) {
+      return
+    }
     const response = await generatePkPassQrCode({
       variables: { locale, input: { licenseType } },
     })
-
     if (!response.errors) {
       setPkpassQRCode(response?.data?.generatePkPassQrCode?.pkpassQRCode)
     }
   }
 
   const getLink = async () => {
+    if (pkpassUrl && !isTimeMoreThen30Minutes()) {
+      window.open(pkpassUrl)
+      setDisplayLoader(false)
+      return
+    }
     const response = await generatePkPass({
       variables: { locale, input: { licenseType } },
     })
-
-    if (!response.errors) {
+    if (!response.errors && window && typeof window !== 'undefined') {
       setPkpassUrl(response?.data?.generatePkPass?.pkpassUrl)
+      window.open(response?.data?.generatePkPass?.pkpassUrl)
+      setFetched(true)
+      setDisplayLoader(false)
     }
   }
 
@@ -94,8 +99,7 @@ export const PkPass = ({ expireDate }: PkPassProps) => {
             icon="QRCode"
             iconType="outline"
             onClick={() => {
-              const isExpired = isTimeMoreThen30Minutes()
-              if (isExpired) getCode()
+              getCode()
               toggleModal()
             }}
           >
@@ -123,15 +127,17 @@ export const PkPass = ({ expireDate }: PkPassProps) => {
         </>
       )}
 
-      {/* Display "fake" button with loading dots if user clicks when url not ready */}
-      {isMobile && urlLoading && (
+      {isMobile && (
         <Box className={styles.pkpassButton}>
           <Button
             variant="text"
             size="small"
-            icon={displayLoader ? undefined : 'QRCode'}
+            icon={fetched ? 'checkmark' : displayLoader ? undefined : 'QRCode'}
             iconType="outline"
-            onClick={() => setDisplayLoader(true)}
+            onClick={() => {
+              setDisplayLoader(true)
+              getLink()
+            }}
           >
             {formatMessage(m.sendToPhone)}{' '}
             {displayLoader && (
@@ -141,30 +147,6 @@ export const PkPass = ({ expireDate }: PkPassProps) => {
             )}
           </Button>
         </Box>
-      )}
-      {/* Display link button when url is ready. */}
-      {isMobile && pkpassUrl && !urlLoading && (
-        <a
-          className={styles.pkpassButton}
-          href={pkpassUrl}
-          id="pkpass-url"
-          target="_blank"
-          rel="noreferrer"
-          onClick={(e) => {
-            const isExpired = isTimeMoreThen30Minutes()
-            if (isExpired) {
-              e.preventDefault()
-              getLink()
-              document
-                .getElementById('pkpass-url')
-                ?.setAttribute('href', pkpassUrl)
-            }
-          }}
-        >
-          <Button variant="text" size="small" icon="QRCode" iconType="outline">
-            {formatMessage(m.sendToPhone)}{' '}
-          </Button>
-        </a>
       )}
     </>
   )

@@ -5,13 +5,13 @@ import {
   State,
   StateMachine,
 } from 'xstate'
+import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 
-import { Step, Stepper } from '@island.is/api/schema'
+import { Step, Stepper } from '@island.is/web/graphql/schema'
 import {
   GetNamespaceQuery,
   QueryGetNamespaceArgs,
 } from '@island.is/web/graphql/schema'
-import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import { GET_NAMESPACE_QUERY } from '@island.is/web/screens/queries'
 
 const sourceNamespacesThatNeedToBeSorted = ['Countries']

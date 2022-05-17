@@ -1,7 +1,7 @@
 import React from 'react'
 
-import { Box, Button } from '@island.is/island-ui/core'
-import { EducationCard, EmptyState, m } from '@island.is/service-portal/core'
+import { ActionCard, Box } from '@island.is/island-ui/core'
+import { EmptyState, m } from '@island.is/service-portal/core'
 
 const educationDegrees = [
   {
@@ -29,16 +29,20 @@ const DegreeCards = () => {
     <>
       {educationDegrees.map((degree, index) => (
         <Box marginBottom={3} key={index}>
-          <EducationCard
-            eyebrow={degree.school}
-            imgPlaceholder={degree.schoolShortName}
-            title={`Leyfisbréf - ${degree.programme}`}
-            description={`Dags: ${degree.date}`}
-            CTA={
-              <Button variant="text" icon="download" iconType="outline" nowrap>
-                Sækja skjal
-              </Button>
-            }
+          <ActionCard
+            cta={{
+              label: 'Sækja skjal',
+              variant: 'text',
+              size: 'small',
+            }}
+            tag={{
+              label: degree.school,
+              variant: 'purple',
+              outlined: false,
+            }}
+            heading={`Leyfisbréf - ${degree.programme}`}
+            text={`Dags: ${degree.date}`}
+            avatar
           />
         </Box>
       ))}
