@@ -23,19 +23,11 @@ describe('Ingress definitions', () => {
     const sut = service('api').ingress({
       primary: {
         host: { dev: 'a', staging: 'a', prod: 'a' },
-        paths: [
-          {
-            path: '/api',
-          },
-        ],
+        paths: ['/api'],
       },
       secondary: {
         host: { dev: 'b', staging: 'b', prod: 'b' },
-        paths: [
-          {
-            path: '/',
-          },
-        ],
+        paths: ['/'],
       },
     })
     const result = serializeService(
@@ -48,13 +40,13 @@ describe('Ingress definitions', () => {
         annotations: {
           'kubernetes.io/ingress.class': 'nginx-external-alb',
         },
-        hosts: [{ host: 'a.staging01.devland.is', paths: [{ path: '/api' }] }],
+        hosts: [{ host: 'a.staging01.devland.is', paths: ['/api'] }],
       },
       'secondary-alb': {
         annotations: {
           'kubernetes.io/ingress.class': 'nginx-external-alb',
         },
-        hosts: [{ host: 'b.staging01.devland.is', paths: [{ path: '/' }] }],
+        hosts: [{ host: 'b.staging01.devland.is', paths: ['/'] }],
       },
     })
   })
@@ -63,7 +55,7 @@ describe('Ingress definitions', () => {
     const sut = service('api').ingress({
       primary: {
         host: { dev: 'a', staging: 'staging01.devland.is', prod: 'a' },
-        paths: [{ path: '/api' }],
+        paths: ['/api'],
         extraAnnotations: {
           dev: {},
           staging: { A: 'B' },
@@ -82,40 +74,32 @@ describe('Ingress definitions', () => {
           'kubernetes.io/ingress.class': 'nginx-external-alb',
           A: 'B',
         },
-        hosts: [{ host: 'staging01.devland.is', paths: [{ path: '/api' }] }],
+        hosts: [{ host: 'staging01.devland.is', paths: ['/api'] }],
       },
     })
   })
 
   it('Ingress Prefix PathType', () => {
     const sut = service('api').ingress({
-      primary: {
-        host: { dev: 'a', staging: 'staging01.devland.is', prod: 'a' },
-        paths: [
-          {
-            path: '/api(/|$)(.*)',
-            pathType: 'Prefix',
-          },
-        ],
-      },
-    })
-    const result = serializeService(
-      sut,
-      new UberChart(Staging),
-    ) as SerializeSuccess
+    primary : {
+      host: { dev: 'a', staging: 'staging01.devland.is', prod: 'a' },
+      paths: ['/api(/|$)(.*)'],
+      pathType: 'Prefix'
+    },
+  })
+  const result = serializeService(
+    sut,
+    new UberChart(Staging)
+  ) as SerializeSuccess
 
-    expect(result.serviceDef.ingress).toEqual({
-      'primary-alb': {
-        annotations: {
-          'kubernetes.io/ingress.class': 'nginx-external-alb',
-        },
-        hosts: [
-          {
-            host: 'staging01.devland.is',
-            paths: [{ path: '/api(/|$)(.*)', pathType: 'Prefix' }],
-          },
-        ],
+  expect(result.serviceDef.ingress).toEqual({
+    'primary-alb': {
+      annotations: {
+        'kubernetes.io/ingress.class': 'nginx-external-alb',
       },
+      hosts: [{ host: 'staging01.devland.is', paths: ['/api(/|$)(.*)'],
+      pathType: 'Prefix' }],
+    },
     })
   })
 
@@ -127,7 +111,7 @@ describe('Ingress definitions', () => {
           staging: MissingSetting,
           prod: MissingSetting,
         },
-        paths: [{ path: '/api' }],
+        paths: ['/api'],
       },
       secondary: {
         host: {
@@ -135,7 +119,7 @@ describe('Ingress definitions', () => {
           staging: MissingSetting,
           prod: MissingSetting,
         },
-        paths: [{ path: '/api' }],
+        paths: ['/api'],
       },
     })
     const result = serializeService(
@@ -153,7 +137,7 @@ describe('Ingress definitions', () => {
       primary: {
         public: false,
         host: { dev: 'a', staging: '007', prod: 'a' },
-        paths: [{ path: '/api' }],
+        paths: ['/api'],
       },
     })
     const result = serializeService(
@@ -166,12 +150,7 @@ describe('Ingress definitions', () => {
         annotations: {
           'kubernetes.io/ingress.class': 'nginx-internal-alb',
         },
-        hosts: [
-          {
-            host: '007.internal.staging01.devland.is',
-            paths: [{ path: '/api' }],
-          },
-        ],
+        hosts: [{ host: '007.internal.staging01.devland.is', paths: ['/api'] }],
       },
     })
   })
