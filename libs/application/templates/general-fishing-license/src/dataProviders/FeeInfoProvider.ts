@@ -12,8 +12,16 @@ export class FeeInfoProvider extends PaymentCatalogProvider {
   type = 'FeeInfoProvider'
 
   async provide(): Promise<PaymentCatalogItem[]> {
-    const items =
-      (await this.getCatalogForOrganization(FISKISTOFA_NATIONAL_ID)) || []
+    const items = [
+      {
+        performingOrgID: '',
+        chargeType: '',
+        chargeItemCode: '',
+        chargeItemName: '',
+        priceAmount: 0,
+      },
+    ]
+    // (await this.getCatalogForOrganization(FISKISTOFA_NATIONAL_ID)) || []
 
     return items
   }
