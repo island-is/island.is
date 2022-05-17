@@ -11,7 +11,6 @@ import {
 import { m } from '../lib/messages'
 import { getTitle } from '../lib/utils'
 
-
 export const getInstructorRegistrations = (): Form => {
   return buildForm({
     id: 'InstructorRegistrationsTemplate',

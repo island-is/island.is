@@ -53,7 +53,7 @@ const SchoolConfirmed: FC<FieldBaseProps> = ({ application }) => {
       <Box height="full" marginTop={6} marginBottom={6}>
         <Jobs />
       </Box>
-      <Box marginBottom={10} display='flex' justifyContent='flexEnd'>
+      <Box marginBottom={10} display="flex" justifyContent="flexEnd">
         <Button
           icon="arrowForward"
           size="small"

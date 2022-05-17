@@ -6,7 +6,7 @@ import { useLocale } from '@island.is/localization'
 import * as styles from '../style.css'
 import { FindStudentQuery } from '../../graphql/queries'
 import { useQuery } from '@apollo/client'
-import { InputController } from '@island.is/shared/form-fields';
+import { InputController } from '@island.is/shared/form-fields'
 
 interface FindStudentsModalProps {
   application?: Application
@@ -97,7 +97,7 @@ const FindStudentModal = ({
             </Text>
             <Box marginTop={5} marginBottom={7}>
               <InputController
-                id='nationalId'
+                id="nationalId"
                 label={formatMessage(m.studentsOverviewOtherStudentInputLabel)}
                 format="######-####"
                 backgroundColor="blue"
@@ -105,9 +105,11 @@ const FindStudentModal = ({
                 onChange={(v) =>
                   setStudentNationalId(v.target.value.replace(/\W/g, ''))
                 }
-                error={studentNotFoundError ? formatMessage(
-                  m.studentsOverviewNoStudentFoundInModal,
-                ) : undefined}
+                error={
+                  studentNotFoundError
+                    ? formatMessage(m.studentsOverviewNoStudentFoundInModal)
+                    : undefined
+                }
               />
             </Box>
             <Box display={'flex'} justifyContent={'spaceBetween'}>

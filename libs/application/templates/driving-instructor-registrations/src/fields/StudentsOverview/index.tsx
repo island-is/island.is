@@ -22,7 +22,7 @@ import * as styles from '../style.css'
 
 const StudentsOverview: FC<FieldBaseProps> = ({ field, application }) => {
   const { formatMessage } = useLocale()
-  
+
   const changeTitleEvent = (title: string) =>
     new CustomEvent('changeTitle', { detail: title })
   const element = document.getElementById('students')

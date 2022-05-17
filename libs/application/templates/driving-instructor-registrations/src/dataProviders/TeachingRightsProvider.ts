@@ -28,7 +28,9 @@ export class TeachingRightsProvider extends BasicDataProvider {
 
       if (response.errors) {
         console.error('response errors', { response })
-        return Promise.reject({ reason: 'Þú hefur ekki ökukennararéttindi í ökuskírteinaskrá.' })
+        return Promise.reject({
+          reason: 'Þú hefur ekki ökukennararéttindi í ökuskírteinaskrá.',
+        })
       }
 
       const drivingLicenseTeachingRights =
@@ -42,7 +44,8 @@ export class TeachingRightsProvider extends BasicDataProvider {
         return Promise.resolve(drivingLicenseTeachingRights)
       } else {
         return Promise.reject({
-          reason: 'Þú hefur ekki ökukennararéttindi í ökuskírteinaskrá. Vinsamlega hafðu samband við næsta sýslumannsembætti ef þú telur um villu vera að ræða',
+          reason:
+            'Þú hefur ekki ökukennararéttindi í ökuskírteinaskrá. Vinsamlega hafðu samband við næsta sýslumannsembætti ef þú telur um villu vera að ræða',
         })
       }
     })
