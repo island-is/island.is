@@ -42,36 +42,40 @@ export class FinancialAidService {
   async createApplication({ application, auth }: Props) {
     const { id, answers, externalData } = application
 
+    const spouseTaxFiles = () => {
+      if (
+        externalData?.taxDataFetchSpouse?.data?.municipalitiesPersonalTaxReturn
+          ?.personalTaxReturn == null
+      ) {
+        return []
+      }
+      return [
+        externalData?.taxDataFetchSpouse?.data?.municipalitiesPersonalTaxReturn
+          ?.personalTaxReturn,
+      ]
+    }
+
+    const applicantTaxFiles = () => {
+      if (
+        externalData?.taxDataFetch?.data?.municipalitiesPersonalTaxReturn
+          ?.personalTaxReturn == null
+      ) {
+        return []
+      }
+      return [
+        externalData?.taxDataFetch?.data?.municipalitiesPersonalTaxReturn
+          ?.personalTaxReturn,
+      ]
+    }
+
     const files = this.formatFiles(answers.taxReturnFiles, FileType.TAXRETURN)
       .concat(this.formatFiles(answers.incomeFiles, FileType.INCOME))
       .concat(this.formatFiles(answers.spouseIncomeFiles, FileType.SPOUSEFILES))
       .concat(
         this.formatFiles(answers.spouseTaxReturnFiles, FileType.SPOUSEFILES),
       )
-      .concat(
-        this.formatFiles(
-          externalData?.taxDataFetchSpouse?.data
-            ?.municipalitiesPersonalTaxReturn?.personalTaxReturn != null
-            ? [
-                externalData?.taxDataFetchSpouse?.data
-                  ?.municipalitiesPersonalTaxReturn?.personalTaxReturn,
-              ]
-            : [],
-          FileType.SPOUSEFILES,
-        ),
-      )
-      .concat(
-        this.formatFiles(
-          externalData?.taxDataFetch?.data?.municipalitiesPersonalTaxReturn
-            ?.personalTaxReturn != null
-            ? [
-                externalData?.taxDataFetch?.data
-                  ?.municipalitiesPersonalTaxReturn?.personalTaxReturn,
-              ]
-            : [],
-          FileType.TAXRETURN,
-        ),
-      )
+      .concat(this.formatFiles(spouseTaxFiles(), FileType.SPOUSEFILES))
+      .concat(this.formatFiles(applicantTaxFiles(), FileType.TAXRETURN))
 
     const directTaxPayments = externalData?.taxDataFetchSpouse?.data
       ? externalData?.taxDataFetch?.data?.municipalitiesDirectTaxPayments?.directTaxPayments.concat(
