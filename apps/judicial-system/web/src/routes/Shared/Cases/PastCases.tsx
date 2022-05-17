@@ -18,7 +18,7 @@ import {
   capitalize,
   caseTypes,
   formatDate,
-  formatNationalId,
+  formatDOB,
 } from '@island.is/judicial-system/formatters'
 import { Table } from '@island.is/judicial-system-web/src/components'
 import { core, requests } from '@island.is/judicial-system-web/messages'
@@ -79,15 +79,10 @@ const PastCases: React.FC<Props> = (props) => {
               </Box>
               <Text as="span" variant="small">
                 {theCase.defendants.length === 1
-                  ? (!theCase.defendants[0].noNationalId ||
-                      theCase.defendants[0].nationalId) &&
-                    `${theCase.defendants[0].noNationalId ? 'fd.' : 'kt.'} ${
-                      theCase.defendants[0].nationalId
-                        ? theCase.defendants[0].noNationalId
-                          ? theCase.defendants[0].nationalId
-                          : formatNationalId(theCase.defendants[0].nationalId)
-                        : '-'
-                    }`
+                  ? formatDOB(
+                      theCase.defendants[0].nationalId,
+                      theCase.defendants[0].noNationalId,
+                    )
                   : `+ ${theCase.defendants.length - 1}`}
               </Text>
             </>

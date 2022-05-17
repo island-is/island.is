@@ -429,29 +429,6 @@ describe('Cases', () => {
       })
     })
   })
-
-  describe('All user types - past cases', () => {
-    test("should display defendants birthday if they don't have a national id and ssn if they do", async () => {
-      render(
-        <MockedProvider
-          mocks={[...mockCasesQuery, ...mockProsecutorQuery]}
-          addTypename={false}
-        >
-          <UserProvider authenticated={true}>
-            <LocaleProvider locale="is" messages={{}}>
-              <Cases />
-            </LocaleProvider>
-          </UserProvider>
-        </MockedProvider>,
-      )
-
-      const tableRows = await screen.findAllByTestId('custody-cases-table-row')
-
-      expect(tableRows[0]).toHaveTextContent('fd. 10.10.2000')
-      expect(tableRows[1]).toHaveTextContent('kt. 012345-6789')
-    })
-  })
-
   describe('All user types - sorting', () => {
     test('should order the table data by accused name in ascending order when the user clicks the accused name table header', async () => {
       render(

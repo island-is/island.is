@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { SkeletonLoader, Text, Box } from '@island.is/island-ui/core'
+import { SkeletonLoader, Box } from '@island.is/island-ui/core'
 
 import * as styles from './Cases.css'
 
