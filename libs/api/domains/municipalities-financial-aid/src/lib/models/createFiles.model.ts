@@ -7,5 +7,5 @@ export class CreateFilesModel {
   readonly success!: boolean
 
   @Field(() => [ApplicationFileModel])
-  readonly files?: ApplicationFileModel[] | null
+  readonly files!: ApplicationFileModel[]
 }

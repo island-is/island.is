@@ -7,6 +7,6 @@ export class CreateFilesModel extends Model<CreateFilesResponse> {
   @ApiProperty()
   success: boolean
 
-  @ApiProperty({ type: ApplicationFileModel, isArray: true, nullable: true })
+  @ApiProperty({ type: ApplicationFileModel, isArray: true })
   files: ApplicationFileModel[]
 }

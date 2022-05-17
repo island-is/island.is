@@ -179,7 +179,7 @@ export const useFileUpload = (formFiles: UploadFile[], folderId: string) => {
           input: { files: formatFiles(uploadFile, applicationId, type) },
         },
       })
-    ).data?.createMunicipalitiesFinancialAidApplicationFiles.files
+    ).data?.createMunicipalitiesFinancialAidApplicationFiles?.files
   }
 
   const uploadToCloudFront = (file: UploadFile, url: string) => {

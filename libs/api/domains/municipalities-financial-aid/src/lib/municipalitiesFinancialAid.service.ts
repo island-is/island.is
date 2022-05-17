@@ -83,7 +83,6 @@ export class MunicipalitiesFinancialAidService {
   ) {
     return await this.fileApiWithAuth(auth)
       .fileControllerCreateFiles({ createFilesDto: files as any })
-      .catch(this.handle404)
   }
 
   async municipalitiesFinancialAidUpdateApplication(

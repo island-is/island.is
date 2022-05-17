@@ -82,7 +82,7 @@ export class MunicipalitiesFinancialAidResolver {
     @Args('input', { type: () => ApplicationFilesInput })
     input: ApplicationFilesInput,
     @CurrentUser() user: User,
-  ): Promise<CreateFilesModel | null> {
+  ): Promise<CreateFilesModel> {
     return await this.municipalitiesFinancialAidService.municipalitiesFinancialAidCreateFiles(
       user,
       input,

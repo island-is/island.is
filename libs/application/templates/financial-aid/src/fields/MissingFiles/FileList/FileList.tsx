@@ -35,7 +35,8 @@ const FileList = ({ files, applicationSystemId }: Props) => {
               [styles.hoverState]: file.id,
             })}
             key={'file-' + i}
-            onClick={() => {
+            onClick={(e) => {
+              e.preventDefault()
               if (file.id === undefined) {
                 return
               }

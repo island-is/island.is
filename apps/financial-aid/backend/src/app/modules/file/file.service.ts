@@ -50,7 +50,7 @@ export class FileService {
       })
       .catch(() => {
         return {
-          files: null,
+          files: [],
           success: false,
         } as CreateFilesModel
       })
