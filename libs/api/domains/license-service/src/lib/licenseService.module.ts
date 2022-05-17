@@ -9,6 +9,7 @@ import { MainResolver } from './graphql/main.resolver'
 
 import { GenericDrivingLicenseApi } from './client/driving-license-client'
 import { GenericAdrLicenseApi } from './client/adr-license-client/adrLicenseService.api'
+import { GenericMachineLicenseApi } from './client/machine-license-client'
 import {
   CONFIG_PROVIDER,
   GenericLicenseClient,
@@ -18,7 +19,6 @@ import {
   GENERIC_LICENSE_FACTORY,
 } from './licenceService.type'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
-import { GenericMachineLicenseApi } from './client/machine-license-client'
 
 export interface Config {
   xroad: {

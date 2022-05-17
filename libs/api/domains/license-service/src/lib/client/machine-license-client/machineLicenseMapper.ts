@@ -11,8 +11,9 @@ export const parseMachineLicensePayload = (
   if (!license) return null
   const data = [
     {
+      //is this gross? feels gross
       type: GenericLicenseDataFieldType.Value,
-      name: 'skirteinisNumer',
+      label: 'Vinnuvélaskírteini NR: ',
       value: license.skirteinisNumer?.toString(),
     },
     {
