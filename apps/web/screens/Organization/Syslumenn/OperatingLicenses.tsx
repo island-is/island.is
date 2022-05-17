@@ -36,10 +36,6 @@ import { useRouter } from 'next/router'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
-import {
-  getOrganizationPageSlugFromPathname,
-  getOrganizationSubpageSlugFromPathname,
-} from '@island.is/web/utils/organizationUtils'
 
 const DEBOUNCE_TIMER = 400
 const PAGE_SIZE = 10
@@ -248,7 +244,7 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink.text,
       href: primaryLink.url,
-      active: pageUrl.includes(primaryLink.url),
+      active: pageUrl === primaryLink.url,
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
         href: url,
@@ -614,4 +610,5 @@ OperatingLicenses.getInitialProps = async ({
 export default withMainLayout(OperatingLicenses, {
   headerButtonColorScheme: 'negative',
   headerColorScheme: 'white',
+  footerVersion: 'organization',
 })

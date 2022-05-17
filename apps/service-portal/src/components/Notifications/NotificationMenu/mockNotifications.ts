@@ -37,7 +37,7 @@ export const notifications: NotificationsContainer = {
           text: defineMessage({
             id: 'sp.messages:mock-1-text',
             defaultMessage:
-              'Hér kemur þú til með að fá skilaboð frá öllum helstu stofnunum Íslands.',
+              'Hér birtast skilaboð sem þú færð send frá helstu stofnunum hins opinbera.',
           }),
           link: {
             title: m.continue,

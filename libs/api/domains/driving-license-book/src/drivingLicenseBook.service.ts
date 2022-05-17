@@ -20,7 +20,10 @@ import {
   DrivingLicenseBookStudent,
   PracticalDrivingLesson,
   DrivingLicenseBookStudentOverview,
+  Organization,
+  SchoolType,
 } from './drivinLicenceBook.type'
+import { CreateDrivingSchoolTestResultInput } from './dto/createDrivingSchoolTestResult.input'
 
 @Injectable()
 export class DrivingLicenseBookService {
@@ -287,5 +290,90 @@ export class DrivingLicenseBookService {
       licenseCategory: LICENSE_CATEGORY,
     })
     return data?.bookId || null
+  }
+
+  async getSchoolForSchoolStaff(user: User): Promise<Organization> {
+    const api = await this.apiWithAuth()
+    const employee = await api.apiSchoolGetSchoolForSchoolStaffUserSsnGet({
+      userSsn: user.nationalId,
+    })
+    if (!employee) {
+      throw new NotFoundException(
+        `School for user ${user.nationalId} not found`,
+      )
+    }
+    const { data } = await api.apiSchoolGetSchoolTypesGet({
+      licenseCategory: 'B',
+    })
+
+    const allowedSchoolTypes = data
+      ?.filter(
+        (type) =>
+          type?.schoolTypeCode &&
+          employee.allowedDrivingSchoolTypes?.includes(type?.schoolTypeCode),
+      )
+      .map(
+        (type) =>
+          ({
+            schoolTypeId: type.schoolTypeId ?? -1,
+            schoolTypeName: type.schoolTypeName ?? '',
+            schoolTypeCode: type.schoolTypeCode ?? '',
+            licenseCategory: type.licenseCategory ?? '',
+          } as SchoolType),
+      )
+
+    return {
+      nationalId: employee.ssn ?? '',
+      name: employee.name ?? '',
+      address: employee.address ?? '',
+      zipCode: employee.zipCode ?? '',
+      phoneNumber: employee.phoneNumber ?? '',
+      email: employee.email ?? '',
+      website: employee.website ?? '',
+      allowedDrivingSchoolTypes: allowedSchoolTypes ?? [],
+    }
+  }
+
+  async isSchoolStaff(user: User): Promise<boolean> {
+    const api = await this.apiWithAuth()
+    const employee = await api.apiSchoolGetSchoolForSchoolStaffUserSsnGet({
+      userSsn: user.nationalId,
+    })
+    if (!employee) {
+      return false
+    }
+    return true
+  }
+
+  async createDrivingSchoolTestResult(
+    input: CreateDrivingSchoolTestResultInput,
+  ): Promise<{ id: string } | null> {
+    const api = await this.apiWithAuth()
+    const { data } = await api.apiSchoolCreateSchoolTestResultPost({
+      schoolTestResultCreateRequestBody: {
+        bookId: input.bookId,
+        schoolTypeId: input.schoolTypeId,
+        schoolSsn: input.schoolNationalId,
+        schoolEmployeeSsn: input.schoolEmployeeNationalId,
+        createdOn: input.createdOn,
+        comments: input.comments,
+      },
+    })
+    return data?.id ? { id: data.id } : null
+  }
+
+  async getSchoolTypes(): Promise<SchoolType[] | null> {
+    const api = await this.apiWithAuth()
+    const { data } = await api.apiSchoolGetSchoolTypesGet({
+      licenseCategory: 'B',
+    })
+    return (
+      data?.map((type) => ({
+        schoolTypeId: type.schoolTypeId ?? -1,
+        schoolTypeName: type.schoolTypeName ?? '',
+        schoolTypeCode: type.schoolTypeCode ?? '',
+        licenseCategory: type.licenseCategory ?? '',
+      })) || null
+    )
   }
 }

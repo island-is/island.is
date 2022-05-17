@@ -29,6 +29,7 @@ import {
   PaymentScheduleDetailModel,
   PaymentScheduleModel,
 } from './models/paymentSchedule.model'
+import { DebtLessCertificateModel } from './models/debtLessCertificate.model'
 import { DebtStatusModel } from './models/debtStatus.model'
 import { GetFinancePaymentScheduleInput } from './dto/getFinancePaymentSchedule.input'
 
@@ -173,6 +174,7 @@ export class FinanceResolver {
 
   @Query(() => PaymentScheduleModel, { nullable: true })
   @Audit()
+  @Scopes(ApiScope.financeOverview, ApiScope.financeSchedule)
   async getPaymentSchedule(@CurrentUser() user: User) {
     const res = await this.financeService.getPaymentSchedules(
       user.nationalId,
@@ -196,14 +198,16 @@ export class FinanceResolver {
     return null
   }
 
-  @Query(() => graphqlTypeJson)
+  @Query(() => DebtStatusModel)
   @Audit()
+  @Scopes(ApiScope.financeOverview, ApiScope.financeSchedule)
   async getDebtStatus(@CurrentUser() user: User) {
     return this.financeService.getDebtStatus(user.nationalId, user)
   }
 
   @Query(() => PaymentScheduleDetailModel)
   @Audit()
+  @Scopes(ApiScope.financeOverview, ApiScope.financeSchedule)
   async getPaymentScheduleById(
     @CurrentUser() user: User,
     @Args('input') input: GetFinancePaymentScheduleInput,
@@ -211,6 +215,20 @@ export class FinanceResolver {
     return this.financeService.getPaymentScheduleById(
       user.nationalId,
       input.scheduleNumber,
+      user,
+    )
+  }
+
+  @Query(() => DebtLessCertificateModel)
+  @Audit()
+  @Scopes(ApiScope.financeOverview, ApiScope.internal)
+  async getDebtLessCertificate(
+    @CurrentUser() user: User,
+    @Args('input') language: string,
+  ) {
+    return this.financeService.getDebtLessCertificate(
+      user.nationalId,
+      language,
       user,
     )
   }

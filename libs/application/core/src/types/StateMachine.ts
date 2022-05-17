@@ -32,6 +32,7 @@ export interface RoleInState<T extends EventObject = AnyEventObject> {
   id: ApplicationRole
   read?: ReadWriteValues
   write?: ReadWriteValues
+  delete?: boolean
   formLoader?: FormLoader
   actions?: CallToAction<T>[]
   api?: DataProviderTemplateApi[]

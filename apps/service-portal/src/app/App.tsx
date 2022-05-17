@@ -16,7 +16,7 @@ import Layout from '../components/Layout/Layout'
 import Modules from '../screens/Modules/Modules'
 import * as styles from './App.css'
 import { GlobalModules } from '../components/GlobalModules/GlobalModules'
-import { UserProfileLocale } from '../components/UserProfileLocale/UserProfileLocale'
+import { UserProfileLocale } from '@island.is/shared/components'
 import ApplicationErrorBoundary from './../components/ApplicationErrorBoundary/ApplicationErrorBoundary'
 
 export const App = () => {

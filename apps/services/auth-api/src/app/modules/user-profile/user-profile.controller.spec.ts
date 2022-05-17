@@ -1,10 +1,14 @@
 import request from 'supertest'
 import * as faker from 'faker'
 
-import { EinstaklingarApi } from '@island.is/clients/national-registry-v2'
 import {
-  GetCompanyApi,
-  ResponseCompanyDetailed,
+  EinstaklingarApi,
+  Einstaklingsupplysingar,
+} from '@island.is/clients/national-registry-v2'
+import {
+  CompanyAddressType,
+  CompanyExtendedInfo,
+  CompanyRegistryClientService,
 } from '@island.is/clients/rsk/company-registry'
 import {
   UserProfile,
@@ -14,6 +18,7 @@ import {
 import { TestApp } from '@island.is/testing/nest'
 import {
   createCurrentUser,
+  createNationalId,
   createNationalRegistryUser,
 } from '@island.is/testing/fixtures'
 
@@ -25,10 +30,46 @@ function mocked<T extends (...args: any) => any>(value: T) {
   return (value as unknown) as jest.Mock<ReturnType<T>, Parameters<T>>
 }
 
-function createCompany(): ResponseCompanyDetailed {
+const mockNationalRegistry = (
+  einstaklingarApi: EinstaklingarApi,
+  data: Einstaklingsupplysingar,
+) => {
+  mocked(einstaklingarApi.einstaklingarGetEinstaklingurRaw).mockResolvedValue({
+    value: () => Promise.resolve(data),
+    raw: { status: 200 } as Response,
+  })
+}
+
+function createCompany(): CompanyExtendedInfo {
   return {
-    nafn: faker.company.companyName(),
-  } as ResponseCompanyDetailed
+    name: faker.company.companyName(),
+    address: {
+      type: CompanyAddressType.address,
+      streetAddress: faker.address.streetAddress(),
+      locality: faker.address.city(),
+      postalCode: faker.address.zipCode(),
+      region: faker.address.state(),
+      municipalityNumber: faker.random.word(),
+      isPostbox: faker.datatype.boolean(),
+      country: 'US',
+    },
+    legalDomicile: {
+      type: CompanyAddressType.legalDomicile,
+      streetAddress: faker.address.streetAddress(),
+      locality: faker.address.city(),
+      postalCode: faker.address.zipCode(),
+      region: faker.address.state(),
+      municipalityNumber: faker.random.word(),
+      isPostbox: faker.datatype.boolean(),
+      country: 'US',
+    },
+    addresses: [],
+    formOfOperation: [],
+    relatedParty: [],
+    vat: [],
+    nationalId: createNationalId('company'),
+    status: faker.random.word(),
+  } as CompanyExtendedInfo
 }
 
 function createUserProfile(): UserProfile {
@@ -77,11 +118,46 @@ describe('UserProfileController', () => {
 
     describe('GET /user-profile', () => {
       it('with empty registries should return no claims', async () => {
+        // Arrange
+        const errorLog = jest
+          .spyOn(app.get<Logger>(LOGGER_PROVIDER), 'error')
+          .mockImplementation()
+        mocked(
+          app.get(UserProfileApi).userProfileControllerFindOneByNationalId,
+        ).mockRejectedValue({ status: 404 })
+        mocked(
+          app.get(EinstaklingarApi).einstaklingarGetEinstaklingurRaw,
+        ).mockRejectedValue({ status: 404 })
+
         // Act
         const res = await server.get(path).expect(200)
 
         // Assert
         expect(res.body).toEqual({})
+        expect(errorLog).toHaveBeenCalledTimes(0)
+      })
+
+      it('with 204 response from natreg should return no claims', async () => {
+        // Arrange
+        const errorLog = jest
+          .spyOn(app.get<Logger>(LOGGER_PROVIDER), 'error')
+          .mockImplementation()
+        mocked(
+          app.get(UserProfileApi).userProfileControllerFindOneByNationalId,
+        ).mockRejectedValue({ status: 404 })
+        mocked(
+          app.get(EinstaklingarApi).einstaklingarGetEinstaklingurRaw,
+        ).mockResolvedValue({
+          value: () => Promise.reject('JSON ERROR'),
+          raw: { status: 204 } as Response,
+        })
+
+        // Act
+        const res = await server.get(path).expect(200)
+
+        // Assert
+        expect(res.body).toEqual({})
+        expect(errorLog).toHaveBeenCalledTimes(0)
       })
 
       it('with failing registries should log and return no claims', async () => {
@@ -91,10 +167,10 @@ describe('UserProfileController', () => {
           .mockImplementation()
         mocked(
           app.get(UserProfileApi).userProfileControllerFindOneByNationalId,
-        ).mockRejectedValue(new Error('test error 1'))
+        ).mockRejectedValue(new Error('500'))
         mocked(
-          app.get(EinstaklingarApi).einstaklingarGetEinstaklingur,
-        ).mockRejectedValue(new Error('test error 2'))
+          app.get(EinstaklingarApi).einstaklingarGetEinstaklingurRaw,
+        ).mockRejectedValue(new Error('500'))
 
         // Act
         const res = await server.get(path).expect(200)
@@ -113,9 +189,7 @@ describe('UserProfileController', () => {
         mocked(
           app.get(UserProfileApi).userProfileControllerFindOneByNationalId,
         ).mockResolvedValue(userProfile)
-        mocked(
-          app.get(EinstaklingarApi).einstaklingarGetEinstaklingur,
-        ).mockResolvedValue(individual)
+        mockNationalRegistry(app.get(EinstaklingarApi), individual)
 
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const domicile = individual.logheimili!
@@ -127,13 +201,15 @@ describe('UserProfileController', () => {
             locality: address.stadur,
             postalCode: address.postnumer,
             streetAddress: address.heiti,
+            country: 'Ísland',
           },
           birthdate: individual.faedingardagur.toISOString().split('T')[0],
-          domicile: {
+          legalDomicile: {
             formatted: `${domicile.heiti}\n${domicile.postnumer} ${domicile.stadur}\nÍsland`,
             streetAddress: domicile.heiti,
             postalCode: domicile.postnumer,
             locality: domicile.stadur,
+            country: 'Ísland',
           },
           email: userProfile.email,
           emailVerified: userProfile.emailVerified,
@@ -159,9 +235,7 @@ describe('UserProfileController', () => {
         // Arrange
         const individual = createNationalRegistryUser()
         individual.adsetur = null
-        mocked(
-          app.get(EinstaklingarApi).einstaklingarGetEinstaklingur,
-        ).mockResolvedValue(individual)
+        mockNationalRegistry(app.get(EinstaklingarApi), individual)
 
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const domicile = individual.logheimili!
@@ -185,9 +259,7 @@ describe('UserProfileController', () => {
         // Arrange
         const individual = createNationalRegistryUser()
         individual.kynkodi = faker.random.arrayElement(['2', '4'])
-        mocked(
-          app.get(EinstaklingarApi).einstaklingarGetEinstaklingur,
-        ).mockResolvedValue(individual)
+        mockNationalRegistry(app.get(EinstaklingarApi), individual)
         const expected = {
           gender: 'female',
         }
@@ -203,9 +275,7 @@ describe('UserProfileController', () => {
         // Arrange
         const individual = createNationalRegistryUser()
         individual.kynkodi = faker.random.arrayElement(['7', '8'])
-        mocked(
-          app.get(EinstaklingarApi).einstaklingarGetEinstaklingur,
-        ).mockResolvedValue(individual)
+        mockNationalRegistry(app.get(EinstaklingarApi), individual)
         const expected = {
           gender: 'non-binary',
         }
@@ -250,9 +320,9 @@ describe('UserProfileController', () => {
         const errorLog = jest
           .spyOn(app.get<Logger>(LOGGER_PROVIDER), 'error')
           .mockImplementation()
-        mocked(app.get(GetCompanyApi).getCompany).mockRejectedValue(
-          new Error('test error'),
-        )
+        mocked(
+          app.get(CompanyRegistryClientService).getCompany,
+        ).mockRejectedValue(new Error('test error'))
 
         // Act
         const res = await server.get(path).expect(200)
@@ -262,18 +332,53 @@ describe('UserProfileController', () => {
         expect(res.body).toEqual({})
       })
 
-      it('with full registries should return company claims', async () => {
+      it('with missing data should return no claims', async () => {
         // Arrange
-        const company = createCompany()
-        mocked(app.get(GetCompanyApi).getCompany).mockResolvedValue(company)
+        mocked(
+          app.get(CompanyRegistryClientService).getCompany,
+        ).mockResolvedValue(null)
 
         // Act
         const res = await server.get(path).expect(200)
 
         // Assert
-        expect(res.body).toEqual({
-          name: company.nafn,
-        })
+        expect(res.body).toEqual({})
+      })
+
+      it('with full registries should return company claims', async () => {
+        // Arrange
+        const company = createCompany()
+        mocked(
+          app.get(CompanyRegistryClientService).getCompany,
+        ).mockResolvedValue(company)
+
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        const domicile = company.legalDomicile!
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        const address = company.address!
+        const expected = {
+          name: company.name,
+          address: {
+            formatted: `${address.streetAddress}\n${address.postalCode} ${address.locality}\nBandaríkin`,
+            locality: address.locality,
+            postalCode: address.postalCode,
+            streetAddress: address.streetAddress,
+            country: 'Bandaríkin',
+          },
+          legalDomicile: {
+            formatted: `${domicile.streetAddress}\n${domicile.postalCode} ${domicile.locality}\nBandaríkin`,
+            locality: domicile.locality,
+            postalCode: domicile.postalCode,
+            streetAddress: domicile.streetAddress,
+            country: 'Bandaríkin',
+          },
+        }
+
+        // Act
+        const res = await server.get(path).expect(200)
+
+        // Assert
+        expect(res.body).toEqual(expected)
       })
     })
   })

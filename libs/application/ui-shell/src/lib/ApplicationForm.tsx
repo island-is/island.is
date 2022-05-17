@@ -14,12 +14,13 @@ import {
   getApplicationTemplateByTypeId,
   getApplicationUIFields,
 } from '@island.is/application/template-loader'
-import { useApplicationNamespaces, useLocale } from '@island.is/localization'
+import { useLocale } from '@island.is/localization'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 
 import { RefetchProvider } from '../context/RefetchContext'
 import { FieldProvider, useFields } from '../context/FieldContext'
 import { LoadingShell } from '../components/LoadingShell'
+import { useApplicationNamespaces } from '../hooks/useApplicationNamespaces'
 import { FormShell } from './FormShell'
 import { ErrorShell } from '../components/ErrorShell'
 

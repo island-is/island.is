@@ -2,7 +2,6 @@ import React, { ReactNode, useEffect, useState, useMemo } from 'react'
 import { useWindowSize } from 'react-use'
 import { useRouter } from 'next/router'
 import NextLink from 'next/link'
-import getConfig from 'next/config'
 import { theme } from '@island.is/island-ui/theme'
 import { LayoutProps } from '@island.is/web/layouts/main'
 import {
@@ -27,9 +26,9 @@ import {
   Inline,
 } from '@island.is/island-ui/core'
 import {
-  ChatPanel,
   HeadWithSocialSharing,
   Sticky,
+  BoostChatPanel,
 } from '@island.is/web/components'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { SyslumennHeader, SyslumennFooter } from './Themes/SyslumennTheme'
@@ -43,10 +42,13 @@ import {
   UtlendingastofnunFooter,
   UtlendingastofnunHeader,
 } from './Themes/UtlendingastofnunTheme'
-import { endpoints as chatPanelEndpoints } from '../../ChatPanel/config'
-
-import * as styles from './OrganizationWrapper.css'
+import { boostChatPanelEndpoints } from '@island.is/web/components'
 import MannaudstorgFooter from './Themes/MannaudstorgTheme/MannaudstorgFooter'
+import { useFeatureFlag, useNamespace } from '@island.is/web/hooks'
+import { watsonConfig } from './config'
+import { WatsonChatPanel } from '@island.is/web/components'
+import LandlaeknirFooter from './Themes/LandlaeknirTheme/LandlaeknirFooter'
+import * as styles from './OrganizationWrapper.css'
 
 interface NavigationData {
   title: string
@@ -74,17 +76,39 @@ interface HeaderProps {
   organizationPage: OrganizationPage
 }
 
-export const lightThemes = ['digital_iceland', 'utlendingastofnun', 'default']
-export const footerEnabled = ['syslumenn', 'mannaudstorg']
+export const lightThemes = ['digital_iceland', 'default']
+export const footerEnabled = [
+  'syslumenn',
+  'district-commissioner',
+
+  'utlendingastofnun',
+  'directorate-of-immigration',
+
+  'landlaeknir',
+  'directorate-of-health',
+
+  'sjukratryggingar',
+  'icelandic-health-insurance',
+
+  'mannaudstorg',
+]
 
 export const getThemeConfig = (
   theme: string,
+  slug: string,
 ): { themeConfig: Partial<LayoutProps> } => {
+  let footerVersion: LayoutProps['footerVersion'] = 'default'
+
+  if (footerEnabled.includes(slug)) {
+    footerVersion = 'organization'
+  }
+
   if (theme === 'sjukratryggingar')
     return {
       themeConfig: {
         headerButtonColorScheme: 'blueberry',
         headerColorScheme: 'blueberry',
+        footerVersion,
       },
     }
 
@@ -94,9 +118,10 @@ export const getThemeConfig = (
         themeConfig: {
           headerColorScheme: 'white',
           headerButtonColorScheme: 'negative',
+          footerVersion,
         },
       }
-    : { themeConfig: {} }
+    : { themeConfig: { footerVersion } }
 }
 
 const OrganizationHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
@@ -160,70 +185,104 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
   const organization = force
     ? organizations[0]
     : organizations.find((x) => footerEnabled.includes(x.slug))
-  if (!organization) return null
 
-  switch (organization.slug) {
+  const n = useNamespace(organization?.namespace ?? {})
+
+  let OrganizationFooterComponent = null
+
+  switch (organization?.slug) {
     case 'syslumenn':
-      return (
+    case 'district-commissioner':
+      OrganizationFooterComponent = (
         <SyslumennFooter
           title={organization.title}
           logo={organization.logo?.url}
           footerItems={organization.footerItems}
+          questionsAndAnswersText={n(
+            'questionsAndAnswers',
+            'Spurningar og svör',
+          )}
+          canWeHelpText={n('canWeHelp', 'Getum við aðstoðað?')}
         />
       )
+      break
     case 'sjukratryggingar':
-      return (
+    case 'icelandic-health-insurance':
+      OrganizationFooterComponent = (
         <SjukratryggingarFooter
           title={organization.title}
           logo={organization.logo?.url}
           footerItems={organization.footerItems}
         />
       )
+      break
     case 'utlendingastofnun':
-      return (
+    case 'directorate-of-immigration':
+      OrganizationFooterComponent = (
         <UtlendingastofnunFooter
           title={organization.title}
           logo={organization.logo?.url}
           footerItems={organization.footerItems}
         />
       )
+      break
     case 'mannaudstorg':
-      return (
+      OrganizationFooterComponent = (
         <MannaudstorgFooter
           title={organization.title}
           logoSrc={organization.logo?.url}
           phone={organization.phone}
           contactLink={organization.link}
+          telephoneText={n('telephone', 'Sími')}
         />
       )
+      break
+    case 'landlaeknir':
+    case 'directorate-of-health':
+      OrganizationFooterComponent = (
+        <LandlaeknirFooter
+          footerItems={organization.footerItems}
+          phone={organization.phone}
+          email={organization.email}
+          phoneLabel={n('telephone', 'Sími')}
+          emailLabel={n('email,', 'Tölvupóstur')}
+        />
+      )
+      break
   }
-  return null
+
+  return OrganizationFooterComponent
 }
 
 export const OrganizationChatPanel = ({
-  slugs,
+  organizationIds,
   pushUp = false,
 }: {
-  slugs: string[]
+  organizationIds: string[]
   pushUp?: boolean
 }) => {
-  // remove when organization chat-bot is ready for release
-  const { publicRuntimeConfig } = getConfig()
-  const { disableOrganizationChatbot } = publicRuntimeConfig
-  if (disableOrganizationChatbot === 'true') {
-    return null
+  const { loading, value: isWatsonChatPanelEnabled } = useFeatureFlag(
+    'isWatsonChatPanelEnabled',
+    false,
+  )
+
+  if (loading) return null
+
+  const id = organizationIds.find((id) => {
+    if (!isWatsonChatPanelEnabled) return id in boostChatPanelEndpoints
+    return id in watsonConfig
+  })
+
+  if (!isWatsonChatPanelEnabled) {
+    return id ? (
+      <BoostChatPanel
+        endpoint={id as keyof typeof boostChatPanelEndpoints}
+        pushUp={pushUp}
+      />
+    ) : null
   }
 
-  const chatEnabled = ['syslumenn']
-
-  const slug = slugs.find((x) => chatEnabled.includes(x))
-
-  return slug ? (
-    <ChatPanel
-      endpoint={slug as keyof typeof chatPanelEndpoints}
-      pushUp={pushUp}
-    />
-  ) : null
+  return id in watsonConfig ? <WatsonChatPanel {...watsonConfig[id]} /> : null
 }
 
 const SecondaryMenu = ({
@@ -463,7 +522,9 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
           force={true}
         />
       )}
-      <OrganizationChatPanel slugs={[organizationPage?.slug]} />
+      <OrganizationChatPanel
+        organizationIds={[organizationPage?.organization?.id]}
+      />
     </>
   )
 }

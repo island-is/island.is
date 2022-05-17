@@ -34,7 +34,6 @@
 /libs/clients/rsk/                                                                                  @island-is/juni
 /libs/clients/zendesk/                                                                              @island-is/juni
 /libs/icelandic-names-registry/                                                                     @island-is/juni
-/*/gjafakort/                                                                                       @island-is/juni
 /libs/service-portal/endorsements/                                                                  @island-is/juni
 /libs/service-portal/education/                                                                     @island-is/juni
 /libs/service-portal/education-career/                                                              @island-is/juni
@@ -61,6 +60,10 @@
 /libs/message-queue/                                                                                @island-is/juni
 /libs/application/templates/example-payment/                                                        @island-is/juni
 /libs/application/template-api-modules/src/lib/modules/templates/example-payment-actions            @island-is/juni
+/libs/application/templates/driving-school-confirmation/                                            @island-is/juni
+/libs/application/templates/driving-instructor-registrations/                                       @island-is/juni
+/libs/api/domains/driving-license-book/                                                             @island-is/juni
+/libs/clients/driving-license-book/                                                                 @island-is/juni
 
 /libs/clients/auth-public-api/                                                                      @island-is/aranja
 /libs/clients/middlewares/                                                                          @island-is/aranja
@@ -78,6 +81,10 @@
 /libs/financial-aid/                                                                                @island-is/kolibri-robin-hood
 /libs/next-ids-auth/                                                                                @island-is/kolibri-robin-hood
 /libs/clients/rsk/personal-tax-return                                                               @island-is/kolibri-robin-hood
+/libs/application/templates/financial-aid/                                                          @island-is/kolibri-robin-hood
+/libs/api/domains/municipalities-financial-aid                                                      @island-is/kolibri-robin-hood
+/libs/clients/municipalities-financial-aid                                                          @island-is/kolibri-robin-hood
+
 
 /apps/download-service/                                                                             @island-is/hugsmidjan
 /apps/service-portal*/                                                                              @island-is/hugsmidjan
@@ -90,10 +97,12 @@
 /libs/api/domains/license-service/                                                                  @island-is/hugsmidjan
 /libs/api/domains/national-registry/                                                                @island-is/hugsmidjan
 /libs/api/domains/user-profile/                                                                     @island-is/hugsmidjan @island-is/juni
+/libs/api/domains/vehicles/                                                                         @island-is/hugsmidjan
 /libs/clients/documents/                                                                            @island-is/hugsmidjan
 /libs/clients/finance/                                                                              @island-is/hugsmidjan
 /libs/clients/national-registry/v1/                                                                 @island-is/hugsmidjan
 /libs/clients/regulations/                                                                          @island-is/hugsmidjan
+/libs/clients/vehicles/                                                                             @island-is/hugsmidjan
 /libs/api/domains/regulations/                                                                      @island-is/hugsmidjan
 /libs/regulations/                                                                                  @island-is/hugsmidjan
 
@@ -120,6 +129,8 @@
 /libs/api/domains/company-registry                                                                  @island-is/sendiradid
 /libs/clients/health-insurance-v2/                                                                  @island-is/sendiradid
 /libs/clients/data-protection-complaint/                                                            @island-is/sendiradid
+/libs/application/templates/general-fishing-license/                                                @island-is/sendiradid
+/libs/application/template-api-modules/src/lib/modules/templates/general-fishing-license/           @island-is/sendiradid
 /libs/application/template-api-modules/src/lib/modules/templates/data-protection-complaint/         @island-is/sendiradid
 
 /libs/api/domains/application/                                                                      @island-is/sendiradid-applications
@@ -149,21 +160,22 @@
 infra/                                                                                              @island-is/devops
 /charts                                                                                             @island-is/devops
 
-/apps/skilavottord/                                                                                 @island-is/deloitte @island-is/vice-versa
-/libs/skilavottord/                                                                                 @island-is/deloitte @island-is/vice-versa
+/apps/skilavottord/                                                                                 @island-is/deloitte
+/libs/skilavottord/                                                                                 @island-is/deloitte
 /libs/application/templates/parental-leave/                                                         @island-is/deloitte
 /libs/application/template-api-modules/src/lib/modules/templates/parental-leave/                    @island-is/deloitte
 
-/apps/services/auth-api/                                                                            @island-is/fuglar
-/apps/services/auth-admin-api/                                                                      @island-is/fuglar
+/apps/services/auth-api/                                                                            @island-is/fuglar @island-is/aranja
+/apps/services/auth-admin-api/                                                                      @island-is/fuglar @island-is/aranja
 /apps/services/auth-public-api/                                                                     @island-is/fuglar @island-is/aranja
-/apps/auth-admin-web/                                                                               @island-is/fuglar
-/apps/auth-admin-web-e2e/                                                                           @island-is/fuglar
+/apps/auth-admin-web/                                                                               @island-is/fuglar @island-is/aranja
+/apps/auth-admin-web-e2e/                                                                           @island-is/fuglar @island-is/aranja
 /libs/auth-api-lib/                                                                                 @island-is/fuglar @island-is/aranja
 /libs/auth-nest-tools/                                                                              @island-is/fuglar @island-is/aranja
 
 /apps/services/personal-representative/                                                             @island-is/programm
 /apps/services/personal-representative-public/                                                      @island-is/programm
+/libs/api/domains/financial-statements-inao/                                                        @island-is/programm
 
 /libs/application/templates/criminal-record/                                                        @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/criminal-record-submission         @island-is/origo
@@ -173,3 +185,5 @@ infra/                                                                          
 /libs/application/templates/mortgage-certificate/                                                   @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/mortgage-certificate-submission    @island-is/origo
 /libs/api/domains/mortgage-certificate/                                                             @island-is/origo
+
+/libs/application/templates/no-debt-certificate/                                                    @island-is/origo

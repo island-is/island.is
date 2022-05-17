@@ -409,7 +409,7 @@ export const m = defineMessages({
   },
   applicationForDrivingLicense: {
     id: 'dl.application:applicationForDrivingLicense',
-    defaultMessage: 'Umsókn um ökuskírteini',
+    defaultMessage: 'Umsókn um skírteini',
     description: 'Application for driving license',
   },
   eligibilityRequirementTitle: {
@@ -651,20 +651,33 @@ export const m = defineMessages({
     description:
       'Option description for selecting to apply for temporary driving license',
   },
-  declinedHelpText: {
-    id: 'dl.application:declinedHelpText',
-    defaultMessage: '[declinedHelpText]',
-    description: '[declinedHelpText]',
+  declinedOtherCountryHelpText: {
+    id: 'dl.application:declinedOtherCountryHelpText',
+    defaultMessage:
+      'Vinsamlega hafðu samband við næsta sýslumannsembætti til að fá frekari upplýsingar.',
+    description: 'Requirement not met for driving license application',
   },
-  declinedOtherCountryTitle: {
-    id: 'dl.application:declinedOtherCountryTitle',
-    defaultMessage: '[declinedOtherCountryTitle]',
-    description: '[declinedOtherCountryTitle]',
+  declinedOtherEESCountryTitle: {
+    id: 'dl.application:declinedOtherEESCountryTitle',
+    defaultMessage: 'Ökuskírteini frá EES',
+    description: 'Driving license from other EES country title',
   },
-  declinedOtherCountryDescription: {
-    id: 'dl.application:declinedOtherCountryDescription',
-    defaultMessage: '[declinedOtherCountryDescription]',
-    description: '[declinedOtherCountryDescription]',
+  declinedOtherEESCountryDescription: {
+    id: 'dl.application:declinedOtherEESCountryDescription',
+    defaultMessage:
+      'Umsækjandi með ökuskírteini frá landi innan EES, Bretlandi og Japan má skipta yfir í íslenskt ökuskírteini án þess að taka próf.',
+    description: 'Driving license from other EES country description',
+  },
+  declinedOtherNonEESCountryTitle: {
+    id: 'dl.application:declinedOtherNonEESCountryTitle',
+    defaultMessage: 'Ökuskírteini utan EES',
+    description: 'Driving license from other country title',
+  },
+  declinedOtherNonEESCountryDescription: {
+    id: 'dl.application:declinedOtherNonEESCountryDescription',
+    defaultMessage:
+      'Umsækjandi með ökuskírteini utan EES getur sótt um að skipta yfir í íslenskt ökuskírteini eftir 6 mánaða fasta búsetu. Taka þarf bæði bóklegt og verklegt próf og öðlast fullnaðarskírteini.',
+    description: 'Driving license from other country description',
   },
   nationalCommissionerOfPolice: {
     id: 'dl.application:nationalCommissionerOfPolice',
@@ -676,6 +689,19 @@ export const m = defineMessages({
     defaultMessage: 'Leiðbeiningar',
     description:
       'Title of the section that explains the next steps when they have a driving license in a different country',
+  },
+  healthRemarksTitle: {
+    id: 'dl.application:healthRemarksTitle',
+    defaultMessage: 'Athugið',
+    description:
+      'Alert message title for health remarks on temporary driving license',
+  },
+  healthRemarksDescription: {
+    id: 'dl.application:healthRemarksDescription',
+    defaultMessage:
+      'Á bráðabirgðaskírteini eru tákntölur, því þarft þú að skila læknisvottorði til sýslumanns miðað við þá heilbrigðisyfirlýsingu sem fyllt var út í þeirri umsókn. Tákntölurnar eru eftirfarandi: ',
+    description:
+      'Alert message for health remarks on temporary driving license',
   },
 })
 

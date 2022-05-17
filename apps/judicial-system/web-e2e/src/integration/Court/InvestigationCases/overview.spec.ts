@@ -6,17 +6,18 @@ import {
   SessionArrangements,
 } from '@island.is/judicial-system/types'
 import {
-  investigationCaseAccusedAddress,
-  investigationCaseAccusedName,
-  makeInvestigationCase,
-  makeProsecutor,
-} from '@island.is/judicial-system/formatters'
-import {
   IC_COURT_HEARING_ARRANGEMENTS_ROUTE,
   IC_OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
 
-import { intercept } from '../../../utils'
+import {
+  investigationCaseAccusedAddress,
+  investigationCaseAccusedName,
+  makeInvestigationCase,
+  makeProsecutor,
+  makeCaseFile,
+  intercept,
+} from '../../../utils'
 
 describe(`${IC_OVERVIEW_ROUTE}/:id`, () => {
   const demands = faker.lorem.paragraph()
@@ -50,6 +51,7 @@ describe(`${IC_OVERVIEW_ROUTE}/:id`, () => {
       requestedCourtDate: '2020-09-20T19:50:08.033Z',
       state: CaseState.RECEIVED,
       sessionArrangements: SessionArrangements.ALL_PRESENT,
+      caseFiles: [makeCaseFile()],
     }
 
     cy.stubAPIResponses()
@@ -99,6 +101,15 @@ describe(`${IC_OVERVIEW_ROUTE}/:id`, () => {
     cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
     cy.getByTestid('ruling').type('lorem')
     cy.getByTestid('inputErrorMessage').should('not.exist')
+  })
+
+  it.only('should upload files to court', () => {
+    cy.get('button[aria-controls="caseFilesAccordionItem"]').click()
+    cy.getByTestid('upload-to-court-button').click()
+
+    cy.wait('@UploadFileToCourtMutation')
+
+    cy.getByTestid('upload-state-message').should('be.visible')
   })
 
   it('should navigate to the next step when all input data is valid and the continue button is clicked', () => {

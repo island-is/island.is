@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
@@ -11,7 +11,7 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
+import { titles } from '@island.is/judicial-system-web/messages'
 
 import HearingArrangementsForm from './HearingArrangementsForm'
 const HearingArrangements = () => {
@@ -24,30 +24,31 @@ const HearingArrangements = () => {
   } = useContext(FormContext)
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
+  const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
 
-  const { autofill, autofillSessionArrangements } = useCase()
+  const { autofill } = useCase()
 
   useEffect(() => {
-    if (isCaseUpToDate) {
-      const theCase = workingCase
+    if (isCaseUpToDate && !initialAutoFillDone) {
+      autofill(
+        [
+          { key: 'courtDate', value: workingCase.requestedCourtDate },
+          {
+            key: 'sessionArrangements',
+            value: workingCase.defenderName
+              ? SessionArrangements.ALL_PRESENT
+              : undefined,
+          },
+        ],
+        workingCase,
+        setWorkingCase,
+      )
 
-      if (theCase.requestedCourtDate) {
-        autofill('courtDate', theCase.requestedCourtDate, theCase)
-      }
-
-      if (theCase.defenderName) {
-        autofillSessionArrangements(
-          'sessionArrangements',
-          SessionArrangements.ALL_PRESENT,
-          theCase,
-        )
-      }
-
-      setWorkingCase(theCase)
+      setInitialAutoFillDone(true)
     }
   }, [
     autofill,
-    autofillSessionArrangements,
+    initialAutoFillDone,
     isCaseUpToDate,
     setWorkingCase,
     workingCase,

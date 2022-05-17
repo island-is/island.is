@@ -7,7 +7,6 @@ import { useRouter } from 'next/router'
 import {
   CaseState,
   CaseTransition,
-  CaseType,
   NotificationType,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -26,13 +25,15 @@ import {
   useCase,
   useInstitution,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { rcRequestedHearingArrangements } from '@island.is/judicial-system-web/messages'
+import {
+  rcRequestedHearingArrangements,
+  titles,
+} from '@island.is/judicial-system-web/messages'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import type { User } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system/consts'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
 
 import StepTwoForm from './StepTwoForm'
 
@@ -190,11 +191,8 @@ export const StepTwo: React.FC = () => {
               title={formatMessage(
                 rcRequestedHearingArrangements.modal.heading,
               )}
-              text={formatMessage(rcRequestedHearingArrangements.modal.text, {
-                caseType:
-                  workingCase.type === CaseType.CUSTODY
-                    ? 'gæsluvarðhald'
-                    : 'farbann',
+              text={formatMessage(rcRequestedHearingArrangements.modal.textV2, {
+                caseType: workingCase.type,
               })}
               primaryButtonText="Senda tilkynningu"
               secondaryButtonText="Halda áfram með kröfu"

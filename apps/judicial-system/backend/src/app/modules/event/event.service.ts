@@ -44,6 +44,7 @@ const caseEvent = {
   DELETE: ':fire: Krafa dregin til baka',
   SCHEDULE_COURT_DATE: ':timer_clock: Kröfu úthlutað fyrirtökutíma',
   DISMISS: ':woman-shrugging: Kröfu vísað frá',
+  ARCHIVE: ':file_cabinet: Sett í geymslu',
 }
 
 export enum CaseEvent {
@@ -59,6 +60,7 @@ export enum CaseEvent {
   DELETE = 'DELETE',
   SCHEDULE_COURT_DATE = 'SCHEDULE_COURT_DATE',
   DISMISS = 'DISMISS',
+  ARCHIVE = 'ARCHIVE',
 }
 
 @Injectable()
@@ -76,8 +78,8 @@ export class EventService {
 
       const typeText = `${capitalize(caseTypes[theCase.type])} *${theCase.id}*`
       const prosecutionText = `${
-        theCase.prosecutor?.institution
-          ? `${theCase.prosecutor?.institution?.name} `
+        theCase.creatingProsecutor?.institution
+          ? `${theCase.creatingProsecutor?.institution?.name} `
           : ''
       }*${theCase.policeCaseNumber}*`
       const courtText = theCase.court

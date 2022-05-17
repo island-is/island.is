@@ -11,7 +11,7 @@ import {
 import { Modal } from '@island.is/service-portal/core'
 import { InputController } from '@island.is/shared/form-fields'
 import { useForm } from 'react-hook-form'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import { sharedMessages } from '@island.is/shared/translations'
 
 type RegistrationData = {
@@ -32,6 +32,7 @@ export const ChildRegistrationModal: FC<Props> = ({
   toggleClose,
   data,
 }) => {
+  useNamespaces('sp.family')
   const { handleSubmit, control, errors, reset } = useForm()
   const { formatMessage } = useLocale()
 
@@ -70,7 +71,7 @@ export const ChildRegistrationModal: FC<Props> = ({
             </Bullet>
             <Bullet>
               {formatMessage({
-                id: 'sp.family:child-registration-name',
+                id: 'sp.family:child-registration-ssn',
                 defaultMessage: 'Kennitala barns sem tilkynning á við: ',
               })}
               {data.childNationalId}
@@ -91,7 +92,7 @@ export const ChildRegistrationModal: FC<Props> = ({
                     required: {
                       value: true,
                       message: formatMessage({
-                        id: 'sp.family:tel-required-msg',
+                        id: 'sp.family:email-required-msg',
                         defaultMessage: 'Skylda er að fylla út netfang',
                       }),
                     },

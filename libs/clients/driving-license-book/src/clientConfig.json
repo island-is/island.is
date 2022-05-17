@@ -418,38 +418,31 @@
         }
       }
     },
-    "/api/School/IsUserSchoolEmployee": {
+    "/api/School/GetSchoolForSchoolStaff/{userSsn}": {
       "get": {
         "tags": ["DrivingLicenseBook"],
+        "summary": "Gets the school a person with a given SSN is associated with, if any. Returns null if person is not a school employee.",
         "parameters": [
           {
             "name": "userSsn",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "schoolSsn",
-            "in": "query",
+            "in": "path",
+            "description": "",
+            "required": true,
             "schema": {
               "type": "string"
             }
           }
         ],
         "responses": {
-          "201": {
+          "200": {
             "description": "Success",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "boolean"
+                  "$ref": "#/components/schemas/Organization"
                 }
               }
             }
-          },
-          "200": {
-            "description": "Success"
           },
           "204": {
             "description": "Success"
@@ -2302,6 +2295,62 @@
         }
       }
     },
+    "/api/TestCenter/StudentLicenseNumber": {
+      "get": {
+        "tags": ["DrivingLicenseBook"],
+        "summary": "Get student license number",
+        "parameters": [
+          {
+            "name": "ssn",
+            "in": "query",
+            "description": "Social security number of student",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "licenseCategory",
+            "in": "query",
+            "description": "License category",
+            "schema": {
+              "type": "string",
+              "default": "B"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "204": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        }
+      }
+    },
     "/api/TestCenter/ConfirmPracticalTestAndUpdateLicence": {
       "post": {
         "tags": ["DrivingLicenseBook"],
@@ -2334,9 +2383,17 @@
             }
           },
           {
-            "name": "hasFinishedDrivingSchoolThree",
+            "name": "drivingSchoolThreeExemption",
             "in": "query",
-            "description": "If true, has finished driving school three",
+            "description": "If true, has exemption from driving school three",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "onlyAutomaticAuto",
+            "in": "query",
+            "description": "If true, was performed on a car using a automatic transmission",
             "schema": {
               "type": "boolean"
             }
@@ -3390,6 +3447,55 @@
             "items": {
               "$ref": "#/components/schemas/Application"
             },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Organization": {
+        "type": "object",
+        "properties": {
+          "ssn": {
+            "type": "string",
+            "description": "Kennitala registered to the organization",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of organization",
+            "nullable": true
+          },
+          "address": {
+            "type": "string",
+            "description": "Address of organization",
+            "nullable": true
+          },
+          "zipCode": {
+            "type": "string",
+            "description": "Zipcode of organization's address",
+            "nullable": true
+          },
+          "phoneNumber": {
+            "type": "string",
+            "description": "Organization's phone number",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "description": "Oranization's email",
+            "nullable": true
+          },
+          "website": {
+            "type": "string",
+            "description": "Organization's website",
+            "nullable": true
+          },
+          "allowedDrivingSchoolTypes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Driving school types this organization is allowed to register",
             "nullable": true
           }
         },

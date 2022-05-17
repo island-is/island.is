@@ -1,12 +1,7 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Text, Box, Input, Tooltip } from '@island.is/island-ui/core'
-import {
-  CaseCustodyRestrictions,
-  CaseType,
-  isAcceptingCaseDecision,
-} from '@island.is/judicial-system/types'
 import { isPoliceReportStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import {
   FormFooter,
@@ -22,18 +17,12 @@ import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { rcReportForm } from '@island.is/judicial-system-web/messages'
+import { rcReportForm, titles } from '@island.is/judicial-system-web/messages'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import {
-  formatDate,
-  formatNationalId,
-} from '@island.is/judicial-system/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
-import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system/consts'
 
 export const StepFour: React.FC = () => {
@@ -42,7 +31,6 @@ export const StepFour: React.FC = () => {
     setWorkingCase,
     isLoadingWorkingCase,
     caseNotFound,
-    isCaseUpToDate,
   } = useContext(FormContext)
   const { user } = useContext(UserContext)
   const [demandsErrorMessage, setDemandsErrorMessage] = useState<string>('')
@@ -54,56 +42,12 @@ export const StepFour: React.FC = () => {
 
   const { formatMessage } = useIntl()
 
-  const { updateCase, autofill } = useCase()
+  const { updateCase } = useCase()
 
   useDeb(workingCase, 'demands')
   useDeb(workingCase, 'caseFacts')
   useDeb(workingCase, 'legalArguments')
   useDeb(workingCase, 'comments')
-
-  useEffect(() => {
-    if (isCaseUpToDate) {
-      const theCase: Case = workingCase
-
-      if (theCase.defendants && theCase.defendants.length > 0) {
-        autofill(
-          'demands',
-          `${formatMessage(rcReportForm.sections.demands.autofill, {
-            accusedName: theCase.defendants[0].name,
-            accusedNationalId: theCase.defendants[0].noNationalId
-              ? ' '
-              : `, kt. ${formatNationalId(
-                  theCase.defendants[0].nationalId ?? '',
-                )}, `,
-            extensionSuffix:
-              theCase.parentCase &&
-              isAcceptingCaseDecision(theCase.parentCase.decision)
-                ? ' áframhaldandi'
-                : '',
-            caseType:
-              theCase.type === CaseType.CUSTODY ? 'gæsluvarðhaldi' : 'farbanni',
-            court: theCase.court?.name.replace('Héraðsdómur', 'Héraðsdóms'),
-            requestedValidToDate: formatDate(
-              theCase.requestedValidToDate,
-              'PPPPp',
-            )
-              ?.replace('dagur,', 'dagsins')
-              ?.replace(' kl.', ', kl.'),
-            isolationSuffix:
-              theCase.type === CaseType.CUSTODY &&
-              theCase.requestedCustodyRestrictions?.includes(
-                CaseCustodyRestrictions.ISOLATION,
-              )
-                ? ', og verði gert að sæta einangrun á meðan á varðhaldi stendur'
-                : '',
-          })}`,
-          theCase,
-        )
-      }
-
-      setWorkingCase(theCase)
-    }
-  }, [autofill, formatMessage, isCaseUpToDate, setWorkingCase, workingCase])
 
   return (
     <PageLayout

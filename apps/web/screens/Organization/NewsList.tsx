@@ -89,7 +89,7 @@ const NewsList: Screen<NewsListProps> = ({
 
   const newsTitle =
     currentNavItem?.text ??
-    newsList[0]?.genericTags.find((x) => x.slug === selectedTag).title ??
+    newsList[0]?.genericTags.find((x) => x.slug === selectedTag)?.title ??
     n('newsTitle', 'Fréttir og tilkynningar')
 
   const years = Object.keys(datesMap)
@@ -413,7 +413,7 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
     datesMap: createDatesMap(newsDatesList),
     selectedPage,
     namespace,
-    ...getThemeConfig(organizationPage.theme),
+    ...getThemeConfig(organizationPage.theme, organizationPage.slug),
   }
 }
 

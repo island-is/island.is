@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react'
-import { useQuery, gql } from '@apollo/client'
+import { useQuery } from '@apollo/client'
 import {
   Text,
   Box,
@@ -193,7 +193,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
               {formatMessage({
                 id: 'sp.documents:intro',
                 defaultMessage:
-                  'Hér munt þú geta fundið öll þau skjöl sem eru send til þín frá stofnunum ríkisins',
+                  'Hér getur þú fundið skjöl sem send hafa verið til þín frá opinberum aðilum.',
               })}
             </Text>
           </Column>
@@ -374,7 +374,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                   {formatMessage({
                     id: 'sp.documents:not-found',
                     defaultMessage:
-                      'Engin skjöl fundust fyrir gefin leitarskilyrði',
+                      'Engin skjöl fundust fyrir gefin leitarskilyrði.',
                   })}
                 </Text>
               </Box>
@@ -385,7 +385,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                   {formatMessage({
                     id: 'sp.documents:error',
                     defaultMessage:
-                      'Tókst ekki að sækja rafræn skjöl, eitthvað fór úrskeiðis',
+                      'Tókst ekki að sækja rafræn skjöl, eitthvað fór úrskeiðis.',
                   })}
                 </Text>
               </Box>
@@ -401,7 +401,6 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                         organizations,
                       )}
                       documentLine={document}
-                      userInfo={userInfo}
                     />
                   </Box>
                 ))}

@@ -18,11 +18,14 @@ import {
   PublicDebtPaymentPlanTemplateService,
   GeneralPetitionService,
   CriminalRecordSubmissionService,
+  GeneralFishingLicenseService,
   DataProtectionComplaintService,
   PSignSubmissionService,
   ExamplePaymentActionsService,
   ComplaintsToAlthingiOmbudsmanTemplateService,
   MortgageCertificateSubmissionService,
+  FinancialAidService,
+  DrivingSchoolConfirmationService,
 } from './templates'
 import { NationalRegistryService } from './dataproviders/national-registry/national-registry.service'
 
@@ -48,11 +51,14 @@ export class TemplateAPIService {
     private readonly publicDebtPaymentPlanService: PublicDebtPaymentPlanTemplateService,
     private readonly generalPetitionService: GeneralPetitionService,
     private readonly criminalRecordSubmissionService: CriminalRecordSubmissionService,
+    private readonly generalFishingLicenseService: GeneralFishingLicenseService,
     private readonly dataProtectionComplaintService: DataProtectionComplaintService,
     private readonly pSignSubmissionService: PSignSubmissionService,
     private readonly examplePaymentActionsService: ExamplePaymentActionsService,
     private readonly complaintsToAlthingiOmbudsman: ComplaintsToAlthingiOmbudsmanTemplateService,
     private readonly mortgageCertificateSubmissionService: MortgageCertificateSubmissionService,
+    private readonly financialAidService: FinancialAidService,
+    private readonly drivingSchoolConfirmationService: DrivingSchoolConfirmationService,
     private readonly nationalRegistry: NationalRegistryService,
   ) {}
 
@@ -71,10 +77,14 @@ export class TemplateAPIService {
       | PublicDebtPaymentPlanTemplateService
       | GeneralPetitionService
       | CriminalRecordSubmissionService
+      | GeneralFishingLicenseService
       | DataProtectionComplaintService
       | PSignSubmissionService
       | ExamplePaymentActionsService
       | ComplaintsToAlthingiOmbudsmanTemplateService
+      | MortgageCertificateSubmissionService
+      | FinancialAidService
+      | DrivingSchoolConfirmationService
       | MortgageCertificateSubmissionService
       | NationalRegistryService,
     action: ApplicationApiAction,
@@ -186,6 +196,11 @@ export class TemplateAPIService {
           this.criminalRecordSubmissionService,
           action,
         )
+      case ApplicationTypes.GENERAL_FISHING_LICENSE:
+        return this.tryRunningActionOnService(
+          this.generalFishingLicenseService,
+          action,
+        )
       case ApplicationTypes.DATA_PROTECTION_AUTHORITY_COMPLAINT:
         return this.tryRunningActionOnService(
           this.dataProtectionComplaintService,
@@ -209,6 +224,13 @@ export class TemplateAPIService {
       case ApplicationTypes.MORTGAGE_CERTIFICATE:
         return this.tryRunningActionOnService(
           this.mortgageCertificateSubmissionService,
+          action,
+        )
+      case ApplicationTypes.FINANCIAL_AID:
+        return this.tryRunningActionOnService(this.financialAidService, action)
+      case ApplicationTypes.DRIVING_SCHOOL_CONFIRMATION:
+        return this.tryRunningActionOnService(
+          this.drivingSchoolConfirmationService,
           action,
         )
     }

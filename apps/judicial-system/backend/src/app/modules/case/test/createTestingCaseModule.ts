@@ -3,6 +3,7 @@ import { Sequelize } from 'sequelize-typescript'
 import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
+import { ConfigType } from '@island.is/nest/config'
 import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 import { IntlService } from '@island.is/cms-translations'
 import { SigningService } from '@island.is/dokobit-signing'
@@ -17,8 +18,12 @@ import { FileService } from '../../file'
 import { AwsS3Service } from '../../aws-s3'
 import { DefendantService } from '../../defendant'
 import { Case } from '../models/case.model'
+import { CaseArchive } from '../models/caseArchive.model'
+import { caseModuleConfig } from '../case.config'
 import { CaseService } from '../case.service'
+import { RestrictedCaseService } from '../restrictedCase.service'
 import { CaseController } from '../case.controller'
+import { RestrictedCaseController } from '../restrictedCase.controller'
 
 jest.mock('@island.is/dokobit-signing')
 jest.mock('@island.is/email-service')
@@ -37,7 +42,7 @@ export const createTestingCaseModule = async () => {
         secretToken: environment.auth.secretToken,
       }),
     ],
-    controllers: [CaseController],
+    controllers: [CaseController, RestrictedCaseController],
     providers: [
       CourtService,
       UserService,
@@ -70,13 +75,21 @@ export const createTestingCaseModule = async () => {
           update: jest.fn(),
         },
       },
+      {
+        provide: getModelToken(CaseArchive),
+        useValue: { create: jest.fn() },
+      },
+      { provide: caseModuleConfig.KEY, useValue: caseModuleConfig() },
       CaseService,
+      RestrictedCaseService,
     ],
   }).compile()
 
   const courtService = caseModule.get<CourtService>(CourtService)
 
   const userService = caseModule.get<UserService>(UserService)
+
+  const fileService = caseModule.get<FileService>(FileService)
 
   const awsS3Service = caseModule.get<AwsS3Service>(AwsS3Service)
 
@@ -88,19 +101,40 @@ export const createTestingCaseModule = async () => {
 
   const caseModel = caseModule.get<typeof Case>(getModelToken(Case))
 
+  const caseArchiveModel = caseModule.get<typeof CaseArchive>(
+    getModelToken(CaseArchive),
+  )
+
+  const caseConfig = caseModule.get<ConfigType<typeof caseModuleConfig>>(
+    caseModuleConfig.KEY,
+  )
+
   const caseService = caseModule.get<CaseService>(CaseService)
 
+  const restrictedCaseService = caseModule.get<RestrictedCaseService>(
+    RestrictedCaseService,
+  )
+
   const caseController = caseModule.get<CaseController>(CaseController)
+
+  const restrictedCaseController = caseModule.get<RestrictedCaseController>(
+    RestrictedCaseController,
+  )
 
   return {
     courtService,
     userService,
+    fileService,
     awsS3Service,
     defendantService,
     logger,
     sequelize,
     caseModel,
+    caseArchiveModel,
+    caseConfig,
     caseService,
+    restrictedCaseService,
     caseController,
+    restrictedCaseController,
   }
 }

@@ -19,16 +19,15 @@ import {
 } from '@island.is/judicial-system/types'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
-import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { CaseData } from '@island.is/judicial-system-web/src/types'
-import { requests as m } from '@island.is/judicial-system-web/messages/Core/requests'
+import { requests as m, titles } from '@island.is/judicial-system-web/messages'
 import useSections from '@island.is/judicial-system-web/src/utils/hooks/useSections'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
 import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system/consts'
 
+import { CaseQuery } from './caseGql'
 import ActiveCases from './ActiveCases'
 import PastCases from './PastCases'
 import TableSkeleton from './TableSkeleton'
@@ -42,9 +41,9 @@ export const Cases: React.FC = () => {
   const { user } = useContext(UserContext)
   const {
     findLastValidStep,
-    getCourtSections,
+    getRestrictionCaseCourtSections,
     getInvestigationCaseCourtSections,
-    getCustodyAndTravelBanProsecutorSection,
+    getRestrictionCaseProsecutorSection,
     getInvestigationCaseProsecutorSection,
   } = useSections()
 
@@ -134,7 +133,6 @@ export const Cases: React.FC = () => {
 
   const openCase = (caseToOpen: Case, role: UserRole) => {
     let routeTo = null
-
     if (
       caseToOpen.state === CaseState.ACCEPTED ||
       caseToOpen.state === CaseState.REJECTED ||
@@ -143,7 +141,9 @@ export const Cases: React.FC = () => {
       routeTo = `${Constants.SIGNED_VERDICT_OVERVIEW}/${caseToOpen.id}`
     } else if (role === UserRole.JUDGE || role === UserRole.REGISTRAR) {
       if (isRestrictionCase(caseToOpen.type)) {
-        routeTo = findLastValidStep(getCourtSections(caseToOpen, user)).href
+        routeTo = findLastValidStep(
+          getRestrictionCaseCourtSections(caseToOpen, user),
+        ).href
       } else {
         routeTo = findLastValidStep(
           getInvestigationCaseCourtSections(caseToOpen, user),
@@ -151,27 +151,13 @@ export const Cases: React.FC = () => {
       }
     } else {
       if (isRestrictionCase(caseToOpen.type)) {
-        if (
-          caseToOpen.state === CaseState.RECEIVED ||
-          caseToOpen.state === CaseState.SUBMITTED
-        ) {
-          routeTo = `${Constants.STEP_SIX_ROUTE}/${caseToOpen.id}`
-        } else {
-          routeTo = findLastValidStep(
-            getCustodyAndTravelBanProsecutorSection(caseToOpen),
-          ).href
-        }
+        routeTo = findLastValidStep(
+          getRestrictionCaseProsecutorSection(caseToOpen, user),
+        ).href
       } else {
-        if (
-          caseToOpen.state === CaseState.RECEIVED ||
-          caseToOpen.state === CaseState.SUBMITTED
-        ) {
-          routeTo = `${Constants.IC_POLICE_CONFIRMATION_ROUTE}/${caseToOpen.id}`
-        } else {
-          routeTo = findLastValidStep(
-            getInvestigationCaseProsecutorSection(caseToOpen),
-          ).href
-        }
+        routeTo = findLastValidStep(
+          getInvestigationCaseProsecutorSection(caseToOpen, user),
+        ).href
       }
     }
 

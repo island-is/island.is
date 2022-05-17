@@ -110,6 +110,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
               ],
               write: 'all',
+<<<<<<< HEAD
               read: 'all',
               api: [
                 {
@@ -121,6 +122,9 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
                 ReferenceApplicationDataProviders.referenceProvider,
                 ReferenceApplicationDataProviders.anotherReferenceProvider,
               ],
+=======
+              delete: true,
+>>>>>>> 01b8a5863282d87a2352171d887cb1a5d7656b41
             },
           ],
         },
@@ -150,6 +154,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
               ],
               write: 'all',
+              delete: true,
             },
           ],
         },

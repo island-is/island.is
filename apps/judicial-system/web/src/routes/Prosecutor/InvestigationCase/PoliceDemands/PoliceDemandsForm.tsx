@@ -101,6 +101,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase, isLoading, isCaseUpToDate } = props
 
   const { formatMessage } = useIntl()
+  const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
   const { updateCase, autofill } = useCase()
   const { user } = useContext(UserContext)
 
@@ -113,12 +114,8 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
   useDeb(workingCase, 'legalBasis')
 
   useEffect(() => {
-    if (isCaseUpToDate) {
-      if (
-        workingCase &&
-        workingCase.defendants &&
-        workingCase.defendants.length > 0
-      ) {
+    if (isCaseUpToDate && !initialAutoFillDone) {
+      if (workingCase.defendants && workingCase.defendants.length > 0) {
         const courtClaim = courtClaimPrefill[workingCase.type]
         const courtClaimText = courtClaim
           ? formatMessage(courtClaim.text, {
@@ -126,12 +123,14 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
                 accused: enumerate(
                   workingCase.defendants.map(
                     (defendant) =>
-                      `${defendant.name} ${
-                        defendant.noNationalId ? 'fd.' : 'kt.'
-                      } ${
+                      `${defendant.name}${
                         defendant.noNationalId
                           ? defendant.nationalId
-                          : formatNationalId(defendant.nationalId ?? '')
+                            ? ` fd. ${defendant.nationalId}`
+                            : ''
+                          : ` kt. ${formatNationalId(
+                              defendant.nationalId ?? '',
+                            )}`
                       }`,
                   ),
                   formatMessage(core.and),
@@ -145,7 +144,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
               }),
               ...(courtClaim.format?.institution && {
                 institution: formatInstitutionName(
-                  workingCase.prosecutor?.institution?.name,
+                  workingCase.creatingProsecutor?.institution?.name,
                 ),
               }),
               ...(courtClaim.format?.live && {
@@ -155,14 +154,25 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
                 year: new Date().getFullYear(),
               }),
             })
-          : ''
+          : undefined
 
-        autofill('demands', courtClaimText, workingCase)
-
-        setWorkingCase(workingCase)
+        autofill(
+          [{ key: 'demands', value: courtClaimText }],
+          workingCase,
+          setWorkingCase,
+        )
       }
+
+      setInitialAutoFillDone(true)
     }
-  }, [autofill, formatMessage, isCaseUpToDate, setWorkingCase, workingCase])
+  }, [
+    autofill,
+    formatMessage,
+    initialAutoFillDone,
+    isCaseUpToDate,
+    setWorkingCase,
+    workingCase,
+  ])
 
   return (
     <>

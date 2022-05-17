@@ -27,9 +27,11 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import DefenderInfo from '@island.is/judicial-system-web/src/components/DefenderInfo/DefenderInfo'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
-import { rcHearingArrangements as m } from '@island.is/judicial-system-web/messages'
+import {
+  rcHearingArrangements as m,
+  titles,
+} from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
 import * as Constants from '@island.is/judicial-system/consts'
 
 export const HearingArrangements: React.FC = () => {
@@ -47,6 +49,7 @@ export const HearingArrangements: React.FC = () => {
   const router = useRouter()
   const id = router.query.id
 
+  const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
   const {
     updateCase,
     autofill,
@@ -56,16 +59,22 @@ export const HearingArrangements: React.FC = () => {
   const { formatMessage } = useIntl()
 
   useEffect(() => {
-    if (isCaseUpToDate) {
-      const theCase = workingCase
+    if (isCaseUpToDate && !initialAutoFillDone) {
+      autofill(
+        [{ key: 'courtDate', value: workingCase.requestedCourtDate }],
+        workingCase,
+        setWorkingCase,
+      )
 
-      if (theCase.requestedCourtDate) {
-        autofill('courtDate', theCase.requestedCourtDate, theCase)
-      }
-
-      setWorkingCase(theCase)
+      setInitialAutoFillDone(true)
     }
-  }, [autofill, isCaseUpToDate, setWorkingCase, workingCase])
+  }, [
+    autofill,
+    initialAutoFillDone,
+    isCaseUpToDate,
+    setWorkingCase,
+    workingCase,
+  ])
 
   const handleNextButtonClick = () => {
     if (
@@ -183,12 +192,14 @@ export const HearingArrangements: React.FC = () => {
       {modalVisible && (
         <Modal
           title={formatMessage(
-            workingCase.type === CaseType.CUSTODY
+            workingCase.type === CaseType.CUSTODY ||
+              workingCase.type === CaseType.ADMISSION_TO_FACILITY
               ? m.modal.custodyCases.heading
               : m.modal.travelBanCases.heading,
           )}
           text={formatMessage(
-            workingCase.type === CaseType.CUSTODY
+            workingCase.type === CaseType.CUSTODY ||
+              workingCase.type === CaseType.ADMISSION_TO_FACILITY
               ? m.modal.custodyCases.text
               : m.modal.travelBanCases.text,
           )}

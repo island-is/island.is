@@ -43,14 +43,24 @@ const PoliceReportForm: React.FC<Props> = (props) => {
   useDeb(workingCase, 'comments')
 
   useEffect(() => {
-    if (workingCase.requestProsecutorOnlySession) {
+    if (
+      !workingCase.prosecutorOnlySessionRequest &&
+      workingCase.requestProsecutorOnlySession
+    ) {
       autofill(
-        'prosecutorOnlySessionRequest',
-        formatMessage(icReportForm.prosecutorOnly.input.defaultValue),
+        [
+          {
+            key: 'prosecutorOnlySessionRequest',
+            value: formatMessage(
+              icReportForm.prosecutorOnly.input.defaultValue,
+            ),
+          },
+        ],
         workingCase,
+        setWorkingCase,
       )
     }
-  }, [autofill, formatMessage, workingCase])
+  }, [autofill, formatMessage, setWorkingCase, workingCase])
 
   return (
     <>

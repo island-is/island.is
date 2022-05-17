@@ -194,7 +194,6 @@ export const NationalRegistry = new XroadConf({
       staging: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1',
       prod: 'IS/GOV/6503760649/SKRA-Protected/Einstaklingar-v1',
     },
-    // Only cache on dev for now.
     XROAD_NATIONAL_REGISTRY_REDIS_NODES: {
       dev: json([
         'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
@@ -265,6 +264,17 @@ export const RskCompanyInfo = new XroadConf({
       staging: 'IS-TEST/GOV/5402696029/Skatturinn/ft-v1',
       prod: 'IS/GOV/5402696029/Skatturinn/ft-v1',
     },
+    COMPANY_REGISTRY_REDIS_NODES: {
+      dev: json([
+        'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+      ]),
+      staging: json([
+        'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
+      ]),
+      prod: json([
+        'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
+      ]),
+    },
   },
 })
 
@@ -290,5 +300,36 @@ export const DrivingLicenseBook = new XroadConf({
     DRIVING_LICENSE_BOOK_XROAD_PATH: '/k8s/api/DRIVING_LICENSE_BOOK_XROAD_PATH',
     DRIVING_LICENSE_BOOK_USERNAME: '/k8s/api/DRIVING_LICENSE_BOOK_USERNAME',
     DRIVING_LICENSE_BOOK_PASSWORD: '/k8s/api/DRIVING_LICENSE_BOOK_PASSWORD',
+  },
+})
+
+export const FishingLicense = new XroadConf({
+  env: {
+    FISHING_LICENSE_XROAD_PROVIDER_ID: {
+      dev: 'IS-DEV/GOV/10012/Fiskistofa-Protected/veidileyfi-v1',
+      staging: 'IS-TEST/GOV/6608922069/Fiskistofa-Protected/veidileyfi-v1',
+      prod: 'IS/GOV/6608922069/Fiskistofa-Protected/veidileyfi-v1',
+    },
+  },
+})
+
+export const MunicipalitiesFinancialAid = new XroadConf({
+  env: {
+    XROAD_FINANCIAL_AID_BACKEND_PATH: {
+      dev: 'IS-DEV/MUN/10023/samband-sveitarfelaga/financial-aid-backend',
+      staging:
+        'IS-TEST/MUN/5502694739/samband-sveitarfelaga/financial-aid-backend',
+      prod: 'IS/MUN/5502694739/samband-sveitarfelaga/financial-aid-backend',
+    },
+  },
+})
+
+export const Vehicles = new XroadConf({
+  env: {
+    XROAD_VEHICLES_PATH: {
+      dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Mitt-Svaedi-V1',
+      staging: 'IS/GOV/5405131040/Samgongustofa-Protected/Mitt-Svaedi-V1',
+      prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Mitt-Svaedi-V1',
+    },
   },
 })

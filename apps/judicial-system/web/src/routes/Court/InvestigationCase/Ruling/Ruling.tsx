@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
@@ -10,10 +10,12 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { icRuling as m } from '@island.is/judicial-system-web/messages'
-import { autofillRuling } from '@island.is/judicial-system-web/src/components/RulingInput/RulingInput'
+import {
+  icRuling as m,
+  ruling,
+  titles,
+} from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
 
 import RulingForm from './RulingForm'
 
@@ -26,40 +28,64 @@ const Ruling = () => {
     isCaseUpToDate,
   } = useContext(FormContext)
 
+  const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
   const { autofill } = useCase()
   const { formatMessage } = useIntl()
 
   useEffect(() => {
-    if (isCaseUpToDate) {
+    if (isCaseUpToDate && !initialAutoFillDone) {
       autofill(
-        'introduction',
-        formatMessage(m.sections.introduction.autofill, {
-          date: formatDate(workingCase.courtDate, 'PPP'),
-        }),
+        [
+          {
+            key: 'introduction',
+            value: formatMessage(m.sections.introduction.autofill, {
+              date: formatDate(workingCase.courtDate, 'PPP'),
+            }),
+          },
+          {
+            key: 'prosecutorDemands',
+            value: workingCase.demands,
+          },
+          {
+            key: 'courtCaseFacts',
+            value: workingCase.caseFacts,
+          },
+          {
+            key: 'courtLegalArguments',
+            value: workingCase.legalArguments,
+          },
+          {
+            key: 'ruling',
+            value: !workingCase.parentCase
+              ? `\n${formatMessage(ruling.autofill, {
+                  judgeName: workingCase.judge?.name,
+                })}`
+              : isAcceptingCaseDecision(workingCase.decision)
+              ? workingCase.parentCase.ruling
+              : undefined,
+          },
+          {
+            key: 'conclusion',
+            value: isAcceptingCaseDecision(workingCase.decision)
+              ? workingCase.demands
+              : undefined,
+          },
+        ],
         workingCase,
+        setWorkingCase,
       )
 
-      if (workingCase.demands) {
-        autofill('prosecutorDemands', workingCase.demands, workingCase)
-      }
-
-      if (workingCase.caseFacts) {
-        autofill('courtCaseFacts', workingCase.caseFacts, workingCase)
-      }
-
-      if (workingCase.legalArguments) {
-        autofill('courtLegalArguments', workingCase.legalArguments, workingCase)
-      }
-
-      autofillRuling(workingCase, autofill, formatMessage)
+      setInitialAutoFillDone(true)
     }
-
-    if (isAcceptingCaseDecision(workingCase.decision) && workingCase.demands) {
-      autofill('conclusion', workingCase.demands, workingCase)
-    }
-
-    setWorkingCase(workingCase)
-  }, [isCaseUpToDate, autofill, workingCase, formatMessage, setWorkingCase])
+  }, [
+    isCaseUpToDate,
+    autofill,
+    workingCase,
+    formatMessage,
+    setWorkingCase,
+    initialAutoFillDone,
+    setInitialAutoFillDone,
+  ])
 
   return (
     <PageLayout

@@ -12,27 +12,31 @@ export class PersonalTaxReturnService {
   ) {}
 
   async directTaxPayments(nationalId: string) {
-    try {
-      const directTaxPayments = await this.personalTaxReturnApi.directTaxPayments(
-        nationalId,
-        this.createPeriod(3),
-        this.createPeriod(1),
-      )
-      return {
-        directTaxPayments: directTaxPayments.salaryBreakdown.map((salary) => {
-          return {
-            totalSalary: salary.salaryTotal,
-            payerNationalId: salary.payerNationalId.toString(),
-            personalAllowance: salary.personalAllowance,
-            withheldAtSource: salary.salaryWithheldAtSource,
-            month: salary.period,
-            year: salary.year,
-          }
-        }),
-      }
-    } catch {
-      return { directTaxPayments: [] }
-    }
+    return await this.personalTaxReturnApi
+      .directTaxPayments(nationalId, this.createPeriod(3), this.createPeriod(1))
+      .then((res) => {
+        return {
+          directTaxPayments: res.salaryBreakdown
+            ? res.salaryBreakdown.map((salary) => {
+                return {
+                  totalSalary: salary.salaryTotal,
+                  payerNationalId: salary.payerNationalId.toString(),
+                  personalAllowance: salary.personalAllowance,
+                  withheldAtSource: salary.salaryWithheldAtSource,
+                  month: salary.period,
+                  year: salary.year,
+                }
+              })
+            : [],
+          success: res.success,
+        }
+      })
+      .catch(() => {
+        return {
+          directTaxPayments: [],
+          success: false,
+        }
+      })
   }
 
   async personalTaxReturn(nationalId: string, folder: string) {
@@ -47,7 +51,6 @@ export class PersonalTaxReturnService {
             content: '',
           }
         })
-
       if (taxReturn.success === false) {
         changeableYear -= 1
         taxReturn = await this.personalTaxReturnApi
@@ -59,7 +62,6 @@ export class PersonalTaxReturnService {
             }
           })
       }
-
       if (taxReturn.success === false) {
         throw Error('Tax return was not successful')
       }
@@ -67,6 +69,7 @@ export class PersonalTaxReturnService {
       const fileName = `Framtal_${nationalId}_${changeableYear}.pdf`
 
       const presignedUrl = this.fileService.createSignedUrl(folder, fileName)
+
       const base64 = Base64.atob(taxReturn.content)
       const size = base64.length
 
@@ -79,12 +82,11 @@ export class PersonalTaxReturnService {
           'Content-Length': size.toString(),
         },
       })
-
       return {
         personalTaxReturn: { key: presignedUrl.key, name: fileName, size },
       }
     } catch {
-      return undefined
+      return { personalTaxReturn: undefined }
     }
   }
 
