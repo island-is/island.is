@@ -80,8 +80,6 @@ describe(`${IC_POLICE_CONFIRMATION_ROUTE}/:id`, () => {
   })
 
   it.skip('should navigate to /krofur on successful confirmation', () => {
-    intercept(caseData)
-
     cy.getByTestid('continueButton').click()
     cy.getByTestid('modalSecondaryButton').click()
     cy.url().should('contain', '/krofur')
