@@ -117,7 +117,7 @@ function Filters({ onSubmit, defaultValues }: PropTypes) {
               />
             </Stack>
             <Stack space={2}>
-              <Typography variant="h5">Einstakur notandi</Typography>
+              <Typography variant="h5">Einstaklingur</Typography>
               <Divider weight="alternate" />
               <Controller
                 name="nationalId"
