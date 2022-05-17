@@ -41,6 +41,31 @@ describe('EnhancedFetch#withAutoAuth', () => {
     )
   })
 
+  it('should request token when tokenEndpoint is configured', async () => {
+    // Arrange
+    env = setupTestEnv({
+      autoAuth: {
+        ...autoAuth,
+        mode: 'token',
+        tokenEndpoint: `${autoAuth.issuer}/oauth2/token`,
+      },
+    })
+
+    // Act
+    await env.enhancedFetch(testUrl)
+
+    // Assert
+    expect(env.authFetch).toHaveBeenCalledTimes(1)
+    expect(
+      env.authFetch.mock.calls[0][0].body.toString(),
+    ).toMatchInlineSnapshot(
+      `"grant_type=client_credentials&client_id=client&client_secret=secret&scope=testScope"`,
+    )
+    expect(env.fetch.mock.calls[0][0].headers.get('authorization')).toEqual(
+      fakeAuthentication,
+    )
+  })
+
   it('should cache token', async () => {
     // Arrange
     env = setupTestEnv({
