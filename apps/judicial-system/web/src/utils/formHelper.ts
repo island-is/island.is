@@ -215,7 +215,7 @@ export const setAndSendToServer = (
  * otherwise it is appended
  */
 export function toggleInArray<T>(values: T[] | undefined, entry: T) {
-  if (!values) return undefined
+  if (!values) return [entry]
 
   return values.includes(entry)
     ? values.filter((x) => x !== entry)
