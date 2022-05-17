@@ -270,15 +270,6 @@ export class ApplicationTemplateHelper<
     }
   }
 
-  getRoleInState(role: ApplicationRole): RoleInState<TEvents> | undefined {
-    const stateInformation = this.getApplicationStateInformation(
-      this.application.state,
-    )
-    if (!stateInformation) return undefined
-
-    return stateInformation.roles?.find(({ id }) => id === role)
-  }
-
   getDataProvidersFromRoleInState(
     role: ApplicationRole,
   ): ApplicationTemplateAPIAction[] {

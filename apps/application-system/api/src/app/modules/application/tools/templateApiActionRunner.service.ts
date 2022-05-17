@@ -11,6 +11,7 @@ import {
 import { TemplateAPIService } from '@island.is/application/template-api-modules'
 import { User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
+import { createConsoleLogger } from 'configcat-js'
 
 @Injectable()
 export class TemplateApiActionRunner {
@@ -88,17 +89,25 @@ export class TemplateApiActionRunner {
   }
 
   async callProvider(action: ApplicationTemplateAPIAction) {
-    const { apiModuleAction, externalDataId, useMockData, mockData } = action
-
+    const { apiModuleAction, externalDataId, mockData, namespace } = action
+    console.log(action)
     let actionResult: PerformActionResult | undefined
 
-    if (useMockData) {
+    const useMocks =
+      typeof action.useMockData === 'function'
+        ? action.useMockData(this.application)
+        : action.useMockData
+
+    if (useMocks) {
+      console.log('Using mock data for action', apiModuleAction)
       actionResult =
         typeof mockData === 'function' ? mockData(this.application) : mockData
     } else {
+      console.log('Calling provider for action', apiModuleAction)
       actionResult = await this.templateAPIService.performAction({
         templateId: this.application.typeId,
         type: apiModuleAction,
+        namespace,
         props: {
           application: this.application,
           auth: this.auth,

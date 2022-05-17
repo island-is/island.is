@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common'
-
-import { SharedTemplateApiService } from '../../shared'
-import { TemplateApiModuleActionProps } from '../../../types'
+import { SharedTemplateApiService } from '../..'
+import { TemplateApiModuleActionProps } from '../../../../types'
 
 @Injectable()
 export class NationalRegistryService {

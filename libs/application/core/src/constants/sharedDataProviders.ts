@@ -4,7 +4,8 @@ import { PerformActionResult } from '../types/TemplateApiModuleTypes'
 
 export const SharedDataProviders = {
   nationalRegistryProvider: {
-    apiModuleAction: 'nationalRegistry.nationalRegistry',
+    apiModuleAction: 'nationalRegistry',
+    namespace: 'nationalRegistry',
     externalDataId: 'nationalRegistry',
     shouldPersistToExternalData: true,
     throwOnError: true,

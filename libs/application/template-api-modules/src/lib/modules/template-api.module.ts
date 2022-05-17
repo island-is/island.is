@@ -3,7 +3,7 @@ import { DynamicModule } from '@nestjs/common'
 import { modules } from './templates'
 import { BaseTemplateAPIModuleConfig } from '../types'
 import { TemplateAPIService } from './template-api.service'
-import { NationalRegistryModule } from './dataproviders/national-registry/national-registry.module'
+import { DataProvidersModule } from './shared/data-providers/data-providers.module'
 
 export class TemplateAPIModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
@@ -11,7 +11,7 @@ export class TemplateAPIModule {
       module: TemplateAPIModule,
       imports: [
         ...Object.values(modules).map((Module) => Module.register(config)),
-        NationalRegistryModule.register(config),
+        DataProvidersModule.register(config),
       ],
       providers: [TemplateAPIService],
       exports: [TemplateAPIService],

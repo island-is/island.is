@@ -110,21 +110,19 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
               ],
               write: 'all',
-<<<<<<< HEAD
               read: 'all',
               api: [
                 {
                   ...SharedDataProviders.nationalRegistryProvider,
                   useMockData: (application: Application) => {
+                    console.log('Should use mock data for national registry')
                     return false
                   },
                 },
                 ReferenceApplicationDataProviders.referenceProvider,
                 ReferenceApplicationDataProviders.anotherReferenceProvider,
               ],
-=======
               delete: true,
->>>>>>> 01b8a5863282d87a2352171d887cb1a5d7656b41
             },
           ],
         },

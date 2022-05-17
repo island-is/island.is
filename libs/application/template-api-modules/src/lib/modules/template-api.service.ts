@@ -27,17 +27,19 @@ import {
   FinancialAidService,
   DrivingSchoolConfirmationService,
 } from './templates'
-import { NationalRegistryService } from './dataproviders/national-registry/national-registry.service'
+import { SharedDataProviderService, SharedServiceType } from './shared'
 
 interface ApplicationApiAction {
   templateId: string
   type: string
   props: TemplateApiModuleActionProps
+  namespace?: string
 }
 
 @Injectable()
 export class TemplateAPIService {
   constructor(
+    private readonly sharedServicesProvider: SharedDataProviderService,
     private readonly parentalLeaveService: ParentalLeaveService,
     private readonly referenceTemplateService: ReferenceTemplateService,
     private readonly documentProviderOnboardingService: DocumentProviderOnboardingService,
@@ -59,11 +61,11 @@ export class TemplateAPIService {
     private readonly mortgageCertificateSubmissionService: MortgageCertificateSubmissionService,
     private readonly financialAidService: FinancialAidService,
     private readonly drivingSchoolConfirmationService: DrivingSchoolConfirmationService,
-    private readonly nationalRegistry: NationalRegistryService,
   ) {}
 
   private async tryRunningActionOnService(
     service:
+      | SharedServiceType
       | ReferenceTemplateService
       | ParentalLeaveService
       | DocumentProviderOnboardingService
@@ -85,8 +87,7 @@ export class TemplateAPIService {
       | MortgageCertificateSubmissionService
       | FinancialAidService
       | DrivingSchoolConfirmationService
-      | MortgageCertificateSubmissionService
-      | NationalRegistryService,
+      | MortgageCertificateSubmissionService,
     action: ApplicationApiAction,
   ): Promise<PerformActionResult> {
     // No index signature with a parameter of type 'string' was found on type
@@ -120,15 +121,9 @@ export class TemplateAPIService {
   async performAction(
     action: ApplicationApiAction,
   ): Promise<PerformActionResult> {
-    if (action.type.includes('.')) {
-      const [serviceName, actionName] = action.type.split('.')
-      const service = (this as any)[serviceName]
-      if (service) {
-        return this.tryRunningActionOnService(service, {
-          ...action,
-          type: actionName,
-        })
-      }
+    if (action.namespace) {
+      const service = this.sharedServicesProvider.getProvider(action.namespace)
+      return this.tryRunningActionOnService(service, action)
     }
 
     switch (action.templateId) {

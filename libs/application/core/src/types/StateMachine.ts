@@ -67,6 +67,8 @@ export interface ApplicationTemplateAPIAction {
   mockData?:
     | PerformActionResult
     | ((application: Application) => PerformActionResult)
+  // Used for shared data providers
+  namespace?: string
 }
 
 export interface DataProviderTemplateApi
