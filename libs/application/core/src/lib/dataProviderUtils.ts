@@ -9,10 +9,10 @@ import {
 } from '../types/BasicDataProvider'
 import { FormatMessage, StaticText } from '../types/Form'
 import { coreErrorMessages } from './messages'
-import { isString } from 'lodash'
+import { isString, isObject } from 'lodash'
 
 export const isTranslationObject = (text?: StaticText) => {
-  if (typeof text !== 'object') {
+  if (!isObject(text)) {
     return false
   }
 
@@ -26,7 +26,7 @@ export const isProviderErrorReason = (
     return false
   }
   if (
-    typeof reason === 'object' &&
+    isObject(reason) &&
     'title' in reason &&
     'summary' in reason &&
     reason.title !== '' &&
