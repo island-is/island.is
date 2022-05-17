@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-export const getTitle = (): string => {
+export const useTitle = (): string => {
   const [title, setTitle] = useState('Mínir ökunemar')
   const element = document.getElementById('students')
   element?.addEventListener('changeTitle', (e) => {
