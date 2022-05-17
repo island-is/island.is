@@ -47,6 +47,7 @@ export const parseDrivingLicensePayload = (
     },
     {
       type: GenericLicenseDataFieldType.Value,
+      name: 'gildirTil',
       label: '4b. Lokadagur',
       value: license.gildirTil ? new Date(license.gildirTil).toISOString() : '',
     },
@@ -63,6 +64,7 @@ export const parseDrivingLicensePayload = (
     {
       type: GenericLicenseDataFieldType.Value,
       label: '5. Númer',
+      name: 'skirteinisNumer',
       value: (license?.id ?? '').toString(),
     },
     {

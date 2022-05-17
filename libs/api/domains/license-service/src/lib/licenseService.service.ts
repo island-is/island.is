@@ -47,7 +47,7 @@ export class LicenseServiceService {
   private async getCachedOrCache(
     license: GenericLicenseMetadata,
     nationalId: string,
-    fetch: () => Promise<GenericLicenseUserdata | null>,
+    fetch: () => Promise<GenericLicenseUserdataExternal | null>,
     ttl = 0,
   ): Promise<GenericLicenseCached> {
     const cacheKey = `${CACHE_KEY}_${license.type}_${nationalId}`
@@ -60,6 +60,8 @@ export class LicenseServiceService {
           const data = JSON.parse(cachedData as string) as GenericLicenseCached
 
           const cacheMaxAge = add(data.fetch.updated, { seconds: ttl })
+          console.log(typeof cacheMaxAge)
+          console.log(cacheMaxAge)
           if (compareAsc(cacheMaxAge, new Date()) < 0) {
             data.fetch.status = GenericUserLicenseFetchStatus.Stale
           }
@@ -72,9 +74,9 @@ export class LicenseServiceService {
       }
     }
 
-    const data = await fetch()
+    const fetchedData = await fetch()
 
-    if (!data) {
+    if (!fetchedData) {
       this.logger.warn('No data for generic license returned', {
         license,
       })
@@ -84,19 +86,25 @@ export class LicenseServiceService {
           status: GenericUserLicenseFetchStatus.Error,
           updated: new Date(),
         },
+        payload: undefined,
       }
     }
 
+    const { payload, ...userData } = fetchedData
+
     const dataWithFetch: GenericLicenseCached = {
-      data,
+      data: userData,
       fetch: {
         status: GenericUserLicenseFetchStatus.Fetched,
         updated: new Date(),
       },
+      payload: payload ?? undefined,
     }
 
     try {
-      await this.cacheManager.set(cacheKey, JSON.stringify(data), { ttl })
+      await this.cacheManager.set(cacheKey, JSON.stringify(dataWithFetch), {
+        ttl,
+      })
     } catch (e) {
       this.logger.warn('Unable to cache data for license', {
         license,
@@ -146,9 +154,6 @@ export class LicenseServiceService {
             async () => await licenseService.getLicense(nationalId),
             force ? 0 : license.timeout,
           )
-          console.log('data from serive')
-          console.log(licenseDataFromService)
-          console.log(licenseDataFromService.data.payload)
 
           if (!licenseDataFromService) {
             this.logger.warn('No license data returned from service', {
@@ -175,11 +180,11 @@ export class LicenseServiceService {
           ...licenseUserdata,
         },
         fetch,
+        payload: licenseDataFromService?.payload ?? undefined,
       }
 
       licenses.push(combined)
     }
-
     return licenses
   }
 

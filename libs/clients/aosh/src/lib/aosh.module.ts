@@ -4,7 +4,7 @@ import { DynamicModule } from '@nestjs/common'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { logger } from '@island.is/logging'
 
-import { Configuration, AdrApi } from '../../gen/fetch'
+import { Configuration, AdrApi, VinnuvelaApi } from '../../gen/fetch'
 
 export interface AoshApiModuleConfig {
   cert: string
@@ -29,8 +29,20 @@ export class AoshApiModule {
               }),
             ),
         },
+        {
+          provide: VinnuvelaApi,
+          useFactory: () =>
+            new VinnuvelaApi(
+              new Configuration({
+                basePath: config.basePath,
+                fetchApi: createEnhancedFetch({
+                  name: 'clients-vinnuvela',
+                }),
+              }),
+            ),
+        },
       ],
-      exports: [AdrApi],
+      exports: [AdrApi, VinnuvelaApi],
     }
   }
 }
