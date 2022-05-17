@@ -28,6 +28,8 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
     )
   }
 
+  //Need to decide how/where the type logic for the cards should be
+
   return (
     <>
       <Box marginBottom={[3, 4, 5]}>
@@ -40,6 +42,10 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
       {data && (
         <LicenseCards>
           {data.map((item, i) => {
+            if (item.license.status !== 'HasLicense') {
+              return null
+            }
+
             const text = getGenericFieldByName(item, 'skirteinisNumer')
             const expireDate =
               getGenericFieldByName(item, 'gildirTil') ?? undefined
@@ -49,25 +55,29 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
                 ? m.isExpired.defaultMessage
                 : 'í Gildi'
 
+            let title
+
+            switch (item.license.type) {
+              case 'DriversLicense':
+                title = m.drivingLicense.defaultMessage
+                break
+              case 'AdrLicense':
+                title = m.adrLicense.defaultMessage
+                break
+              case 'MachineLicense':
+                title = m.machineLicense.defaultMessage
+                break
+            }
+
             return (
               <ActionCard
                 key={i}
-                heading={
-                  item.license.type === 'DriversLicense'
-                    ? m.drivingLicense.defaultMessage
-                    : m.adrLicense.defaultMessage
-                }
+                heading={title}
                 text={`${m.licenseNumber.defaultMessage} - ${text}`}
                 tag={{ label: tag }}
                 cta={{
                   label: 'click me',
-                  onClick: () =>
-                    history.push(
-                      ServicePortalPath.LicensesDrivingDetail.replace(
-                        ':id',
-                        text as string,
-                      ),
-                    ),
+                  onClick: () => console.log('clicked'),
                 }}
               />
             )

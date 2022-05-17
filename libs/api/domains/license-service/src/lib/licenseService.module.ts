@@ -1,6 +1,6 @@
 import { Cache as CacheManager } from 'cache-manager'
 import { Module, DynamicModule, CacheModule } from '@nestjs/common'
-import { AdrApi, Configuration } from '@island.is/clients/aosh'
+import { AdrApi, Configuration, VinnuvelaApi } from '@island.is/clients/aosh'
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 import { LicenseServiceService } from './licenseService.service'
@@ -18,6 +18,7 @@ import {
   GENERIC_LICENSE_FACTORY,
 } from './licenceService.type'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
+import { GenericMachineLicenseApi } from './client/machine-license-client'
 
 export interface Config {
   xroad: {
@@ -48,6 +49,15 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
   },
   {
     type: GenericLicenseType.AdrLicense,
+    provider: {
+      id: GenericLicenseProviderId.AOSH,
+    },
+    pkpass: false,
+    pkpassVerify: false,
+    timeout: 100,
+  },
+  {
+    type: GenericLicenseType.MachineLicense,
     provider: {
       id: GenericLicenseProviderId.AOSH,
     },
@@ -94,6 +104,17 @@ export class LicenseServiceModule {
                       basePath: `https://ws.ver.is/rettindi`,
                       fetchApi: createEnhancedFetch({
                         name: 'clients-adr',
+                      }),
+                    }),
+                  ),
+                )
+              case GenericLicenseType.MachineLicense:
+                return new GenericMachineLicenseApi(
+                  new VinnuvelaApi(
+                    new Configuration({
+                      basePath: `https://ws.ver.is/rettindi`,
+                      fetchApi: createEnhancedFetch({
+                        name: 'clients-vinnuvela',
                       }),
                     }),
                   ),
