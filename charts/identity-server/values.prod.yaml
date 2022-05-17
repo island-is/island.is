@@ -63,7 +63,7 @@ auth-admin-web:
     targetPort: 4200
 global:
   env:
-    AUDIT_GROUP_NAME: '/island-is/audit-log'
+    AUDIT_GROUP_NAME: '/identity-server/audit-log'
     AWS_REGION: 'eu-west-1'
     PORT: '3333'
     name: 'prod'
@@ -94,13 +94,13 @@ identity-server:
     IdentityServer__EnableDelegation: ''
     IdentityServer__EnableFakeLogin: 'true'
     IdentityServer__EnableFeatureDeploymentWildcards: 'https://innskra.island.is'
-    IdentityServer__SigningCertificate__Path: '/etc/config/pathids-signing.pfx'
+    IdentityServer__SigningCertificate__Path: '/etc/config/ids-signing.pfx'
     NODE_OPTIONS: '--max-old-space-size=208'
     PersistenceSettings__BaseAddress: 'http://web-services-auth-api'
     PersistenceSettings__UserProfileBaseAddress: 'http://web-service-portal-api.service-portal.svc.cluster.local'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   files:
-    - 'pathids-signing.pfx'
+    - 'ids-signing.pfx'
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:
@@ -163,7 +163,7 @@ identity-server:
     targetPort: 5000
   serviceAccount:
     annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/identity-server'
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::567113216315:role/identity-server'
     create: true
     name: 'identity-server'
 namespaces:
@@ -171,127 +171,7 @@ namespaces:
   namespaces:
     - 'identity-server'
     - 'identity-server-admin'
-personal-representative:
-  enabled: true
-  env:
-    IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
-    IDS_ISSUER: 'https://innskra.island.is'
-    NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
-  grantNamespaces: []
-  grantNamespacesEnabled: false
-  healthCheck:
-    liveness:
-      initialDelaySeconds: 3
-      path: '/liveness'
-      timeoutSeconds: 3
-    readiness:
-      initialDelaySeconds: 3
-      path: '/liveness'
-      timeoutSeconds: 3
-  hpa:
-    scaling:
-      metric:
-        cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
-      replicas:
-        max: 10
-        min: 3
-  image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/personal-representative'
-  ingress:
-    demoALB-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-      hosts:
-        - host: 'island.is'
-          paths:
-            - '/'
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-internal-alb'
-      hosts:
-        - host: 'personal-representative-xrd.internal.innskra.island.is'
-          paths:
-            - '/'
-  namespace: 'identity-server'
-  replicaCount:
-    default: 3
-    max: 10
-    min: 3
-  resources:
-    limits:
-      cpu: '200m'
-      memory: '256Mi'
-    requests:
-      cpu: '100m'
-      memory: '128Mi'
-  secrets:
-    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-  securityContext:
-    allowPrivilegeEscalation: false
-    privileged: false
-personal-representative-public:
-  enabled: true
-  env:
-    DB_REPLICAS_HOST: ''
-    IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
-    IDS_ISSUER: 'https://innskra.island.is'
-    NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
-  grantNamespaces: []
-  grantNamespacesEnabled: false
-  healthCheck:
-    liveness:
-      initialDelaySeconds: 3
-      path: '/liveness'
-      timeoutSeconds: 3
-    readiness:
-      initialDelaySeconds: 3
-      path: '/liveness'
-      timeoutSeconds: 3
-  hpa:
-    scaling:
-      metric:
-        cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
-      replicas:
-        max: 10
-        min: 3
-  image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/personal-representative-public'
-  ingress:
-    demoALB-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-      hosts:
-        - host: 'island.is'
-          paths:
-            - '/'
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-internal-alb'
-      hosts:
-        - host: 'personal-representative-xrd.internal.innskra.island.is'
-          paths:
-            - '/'
-  namespace: 'identity-server'
-  replicaCount:
-    default: 3
-    max: 10
-    min: 3
-  resources:
-    limits:
-      cpu: '200m'
-      memory: '256Mi'
-    requests:
-      cpu: '100m'
-      memory: '128Mi'
-  secrets:
-    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-  securityContext:
-    allowPrivilegeEscalation: false
-    privileged: false
+    - 'personal-representative'
 services-auth-admin-api:
   enabled: true
   env:
@@ -395,16 +275,6 @@ services-auth-api:
         min: 3
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-api'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
-        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
-      hosts:
-        - host: 'innskra.island.is'
-          paths:
-            - '/api(/|$)(.*)'
   initContainer:
     containers:
       - args:
@@ -538,6 +408,127 @@ services-auth-public-api:
     NATIONAL_REGISTRY_IDS_CLIENT_SECRET: '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET'
     RSK_PASSWORD: '/k8s/xroad/client/RSK/PASSWORD'
     RSK_USERNAME: '/k8s/xroad/client/RSK/USERNAME'
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
+services-personal-representative:
+  enabled: true
+  env:
+    IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
+    IDS_ISSUER: 'https://innskra.island.is'
+    NODE_OPTIONS: '--max-old-space-size=208'
+    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
+  grantNamespaces: []
+  grantNamespacesEnabled: false
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: '/liveness'
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: '/liveness'
+      timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 2
+      replicas:
+        max: 10
+        min: 3
+  image:
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-personal-representative'
+  ingress:
+    demoALB-alb:
+      annotations:
+        kubernetes.io/ingress.class: 'nginx-external-alb'
+      hosts:
+        - host: 'island.is'
+          paths:
+            - '/'
+    primary-alb:
+      annotations:
+        kubernetes.io/ingress.class: 'nginx-internal-alb'
+      hosts:
+        - host: 'personal-representative-xrd.internal.innskra.island.is'
+          paths:
+            - '/'
+  namespace: 'personal-representative'
+  replicaCount:
+    default: 3
+    max: 10
+    min: 3
+  resources:
+    limits:
+      cpu: '200m'
+      memory: '256Mi'
+    requests:
+      cpu: '100m'
+      memory: '128Mi'
+  secrets:
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
+services-personal-representative-public:
+  enabled: true
+  env:
+    DB_REPLICAS_HOST: ''
+    IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
+    IDS_ISSUER: 'https://innskra.island.is'
+    NODE_OPTIONS: '--max-old-space-size=208'
+    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
+  grantNamespaces: []
+  grantNamespacesEnabled: false
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: '/liveness'
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: '/liveness'
+      timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 2
+      replicas:
+        max: 10
+        min: 3
+  image:
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-personal-representative-public'
+  ingress:
+    demoALB-alb:
+      annotations:
+        kubernetes.io/ingress.class: 'nginx-external-alb'
+      hosts:
+        - host: 'island.is'
+          paths:
+            - '/'
+    primary-alb:
+      annotations:
+        kubernetes.io/ingress.class: 'nginx-internal-alb'
+      hosts:
+        - host: 'personal-representative-xrd.internal.innskra.island.is'
+          paths:
+            - '/'
+  namespace: 'personal-representative'
+  replicaCount:
+    default: 3
+    max: 10
+    min: 3
+  resources:
+    limits:
+      cpu: '200m'
+      memory: '256Mi'
+    requests:
+      cpu: '100m'
+      memory: '128Mi'
+  secrets:
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false

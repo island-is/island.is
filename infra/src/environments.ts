@@ -61,6 +61,35 @@ export const Envs: EnvironmentConfigs = {
       },
     },
   },
+  // prod: {
+  //   auroraHost: 'postgres-applications.internal',
+  //   domain: 'island.is',
+  //   type: 'prod',
+  //   featuresOn: ['driving-license-use-v1-endpoint-for-v2-comms'],
+  //   defaultMaxReplicas: 10,
+  //   defaultMinReplicas: 3,
+  //   releaseName: 'web',
+  //   awsAccountId: '251502586493',
+  //   awsAccountRegion: 'eu-west-1',
+  //   global: {
+  //     global: {
+  //       env: {
+  //         AWS_REGION: 'eu-west-1',
+  //         PORT: '3333',
+  //         name: 'prod',
+  //         AUDIT_GROUP_NAME: '/island-is/audit-log',
+  //       },
+  //       image: {
+  //         tag: 'latest_master',
+  //       },
+  //       initContainer: {
+  //         env: {
+  //           AWS_REGION: 'eu-west-1',
+  //         },
+  //       },
+  //     },
+  //   },
+  // },
   prod: {
     auroraHost: 'postgres-applications.internal',
     domain: 'island.is',
@@ -69,7 +98,7 @@ export const Envs: EnvironmentConfigs = {
     defaultMaxReplicas: 10,
     defaultMinReplicas: 3,
     releaseName: 'web',
-    awsAccountId: '251502586493',
+    awsAccountId: '567113216315',
     awsAccountRegion: 'eu-west-1',
     global: {
       global: {
@@ -77,7 +106,7 @@ export const Envs: EnvironmentConfigs = {
           AWS_REGION: 'eu-west-1',
           PORT: '3333',
           name: 'prod',
-          AUDIT_GROUP_NAME: '/island-is/audit-log',
+          AUDIT_GROUP_NAME: '/identity-server/audit-log',
         },
         image: {
           tag: 'latest_master',

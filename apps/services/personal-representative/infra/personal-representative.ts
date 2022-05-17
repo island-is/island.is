@@ -1,8 +1,8 @@
 import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
-export const serviceSetup = (): ServiceBuilder<'personal-representative'> => {
-  return service('personal-representative')
-    .namespace('identity-server')
+export const serviceSetup = (): ServiceBuilder<'services-personal-representative'> => {
+  return service('services-personal-representative')
+    .namespace('personal-representative')
     .env({
       IDS_ISSUER: {
         dev: 'https://identity-server.dev01.devland.is',
@@ -33,7 +33,7 @@ export const serviceSetup = (): ServiceBuilder<'personal-representative'> => {
         },
         paths: ['/'],
         public: true,
-      }
+      },
     })
     .readiness('/liveness')
     .liveness('/liveness')

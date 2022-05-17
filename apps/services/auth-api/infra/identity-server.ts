@@ -119,8 +119,18 @@ export const serviceSetup = (services: {
       },
     })
     .files({
-      filename: 'pathids-signing.pfx',
+      filename: 'ids-signing.pfx',
       env: 'IdentityServer__SigningCertificate__Path',
+    })
+    .resources({
+      limits: {
+        cpu: '400m',
+        memory: '256Mi',
+      },
+      requests: {
+        cpu: '100m',
+        memory: '128Mi',
+      },
     })
     .healthPort(5010)
     .targetPort(5000)

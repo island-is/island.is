@@ -43,32 +43,6 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-api'> => {
         '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET',
     })
     .xroad(Base, Client, RskProcuring, NationalRegistry)
-    .ingress({
-      primary: {
-        host: {
-          dev: 'identity-server.dev01.devland.is',
-          staging: 'identity-server.staging01.devland.is',
-          prod: 'innskra.island.is',
-        },
-        paths: ['/api(/|$)(.*)'],
-        public: true,
-        extraAnnotations: {
-          dev: {
-            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
-            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
-          },
-          staging: {
-            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
-            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
-            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
-          },
-          prod: {
-            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
-            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
-          },
-        },
-      },
-    })
     .readiness('/liveness')
     .liveness('/liveness')
     .initContainer({

@@ -1,8 +1,8 @@
 import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
-export const serviceSetup = (): ServiceBuilder<'personal-representative-public'> => {
-  return service('personal-representative-public')
-    .namespace('identity-server')
+export const serviceSetup = (): ServiceBuilder<'services-personal-representative-public'> => {
+  return service('services-personal-representative-public')
+    .namespace('personal-representative')
     .env({
       IDS_ISSUER: {
         dev: 'https://identity-server.dev01.devland.is',
