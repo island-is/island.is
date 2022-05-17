@@ -109,7 +109,7 @@ describe(`${IC_OVERVIEW_ROUTE}/:id`, () => {
 
     cy.wait('@UploadFileToCourtMutation')
 
-    cy.getByTestid('all-uploaded-success-message').should('be.visible')
+    cy.getByTestid('upload-state-message').should('be.visible')
   })
 
   it('should navigate to the next step when all input data is valid and the continue button is clicked', () => {

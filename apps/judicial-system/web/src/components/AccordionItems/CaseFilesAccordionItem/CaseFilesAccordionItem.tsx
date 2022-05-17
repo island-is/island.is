@@ -92,7 +92,6 @@ const CaseFilesAccordionItem: React.FC<Props> = (props) => {
                   icon="checkmark"
                   iconColor="blue400"
                   message={formatMessage(m.allFilesUploadedToCourtText)}
-                  data-testid="all-uploaded-success-message"
                 />
               )}
             </AnimatePresence>
