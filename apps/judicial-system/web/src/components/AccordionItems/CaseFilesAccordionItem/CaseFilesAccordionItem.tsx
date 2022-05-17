@@ -70,6 +70,7 @@ const CaseFilesAccordionItem: React.FC<Props> = (props) => {
         <Box
           display="flex"
           alignItems="center"
+          flexGrow={1}
           overflow="hidden"
           justifyContent="spaceBetween"
         >

@@ -145,7 +145,7 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
                     component="span"
                     height="full"
                     width="full"
-                    display="block"
+                    display="flex"
                     alignItems="center"
                   >
                     {typeof label === 'string' ? (
