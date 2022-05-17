@@ -9,8 +9,9 @@ import {
 } from '../types/BasicDataProvider'
 import { FormatMessage, StaticText } from '../types/Form'
 import { coreErrorMessages } from './messages'
+import { isString } from 'lodash'
 
-const isTranslationObject = (text?: StaticText) => {
+export const isTranslationObject = (text?: StaticText) => {
   if (typeof text !== 'object') {
     return false
   }
@@ -46,11 +47,7 @@ export const getErrorReasonIfPresent = (
         summary: reason.summary,
       }
     }
-    if (
-      isTranslationObject(reason) ||
-      typeof reason === 'string' ||
-      reason instanceof String
-    ) {
+    if (isTranslationObject(reason) || isString(reason)) {
       return {
         title: coreErrorMessages.errorDataProvider,
         summary: reason,

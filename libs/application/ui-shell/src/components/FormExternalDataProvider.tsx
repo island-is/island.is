@@ -24,6 +24,7 @@ import {
   coreErrorMessages,
   StaticText,
   getErrorReasonIfPresent,
+  isTranslationObject,
 } from '@island.is/application/core'
 import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
 import { useLocale } from '@island.is/localization'
@@ -50,14 +51,6 @@ const ItemHeader: React.FC<{ title: StaticText; subTitle?: StaticText }> = ({
       )}
     </>
   )
-}
-
-const isTranslationObject = (text?: StaticText) => {
-  if (typeof text !== 'object') {
-    return false
-  }
-
-  return text.id !== undefined
 }
 
 const ProviderItem: FC<{
