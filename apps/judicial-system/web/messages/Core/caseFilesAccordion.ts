@@ -2,6 +2,12 @@ import { defineMessage } from 'react-intl'
 
 // Strings on signed verdict overview screen
 export const caseFilesAccordion = {
+  title: defineMessage({
+    id: 'judicial.system.core:case_files_accordion.title',
+    defaultMessage: 'Rannsóknargögn ({fileCount})',
+    description:
+      'Notaður sem titill yfir rannsóknargögn í harmoiku hluta í yfirliti.',
+  }),
   allFilesUploadedToCourtText: defineMessage({
     id:
       'judicial.system.core:signed_verdict_overview.all_files_uploaded_to_court_text',
