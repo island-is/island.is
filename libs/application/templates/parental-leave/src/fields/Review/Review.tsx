@@ -10,6 +10,7 @@ import {
   buildFieldOptions,
   RecordObject,
   Field,
+  coreErrorMessages,
 } from '@island.is/application/core'
 import {
   Box,
@@ -89,8 +90,12 @@ export const Review: FC<ReviewScreenProps> = ({
 }) => {
   const editable = field.props?.editable ?? false
   const pensionFundOptions = usePensionFundOptions()
-  const privatePensionFundOptions = usePrivatePensionFundOptions()
-  const unionOptions = useUnionOptions()
+  const privatePensionFundOptions = usePrivatePensionFundOptions().filter(
+    ({ value }) => value !== NO_PRIVATE_PENSION_FUND,
+  )
+  const unionOptions = useUnionOptions().filter(
+    ({ value }) => value !== NO_UNION,
+  )
   const { locale, formatMessage } = useLocale()
   const [
     {
@@ -154,7 +159,47 @@ export const Review: FC<ReviewScreenProps> = ({
     application.externalData,
   )
 
+  const validateUnion = () => {
+    if (useUnion !== YES) return undefined
+
+    if (union === '') {
+      return formatMessage(coreErrorMessages.defaultError)
+    }
+
+    return undefined
+  }
+
+  const validatePrivatePensionFund = () => {
+    if (usePrivatePensionFund !== YES) return undefined
+
+    if (privatePensionFund === '') {
+      return formatMessage(coreErrorMessages.defaultError)
+    }
+
+    return undefined
+  }
+
+  const validatePrivatePensionFundPercentage = () => {
+    if (usePrivatePensionFund !== YES) return undefined
+
+    if (privatePensionFundPercentage === '0') {
+      return formatMessage(coreErrorMessages.defaultError)
+    }
+
+    return undefined
+  }
+
   const hasError = (id: string) => get(errors, id) as string
+
+  const checkPaymentErrors = (ids: string[]) => {
+    if (typeof validatePrivatePensionFund() === 'string') return false
+    else if (typeof validatePrivatePensionFundPercentage() === 'string')
+      return false
+    else if (typeof validateUnion() === 'string') return false
+
+    return groupHasNoErrors(ids)
+  }
+
   const groupHasNoErrors = (ids: string[]) =>
     ids.every((id) => !has(errors, id))
 
@@ -356,13 +401,14 @@ export const Review: FC<ReviewScreenProps> = ({
       <ReviewGroup
         saveAction={saveApplication}
         isEditable={editable}
-        canCloseEdit={groupHasNoErrors([
+        canCloseEdit={checkPaymentErrors([
           'payments.bank',
           'payments.pensionFund',
           'useUnion',
           'payments.union',
           'usePrivatePensionFund',
           'payments.privatePensionFund',
+          'payments.privatePensionFundPercentage',
         ])}
         editChildren={
           <Stack space={3}>
@@ -430,7 +476,7 @@ export const Review: FC<ReviewScreenProps> = ({
                 ]}
                 onSelect={(s: string) => {
                   setStateful((prev) => {
-                    const union = s === NO ? NO_UNION : prev.union
+                    const union = s === NO ? NO_UNION : ''
                     setValue('payments.union', union)
                     return {
                       ...prev,
@@ -455,7 +501,7 @@ export const Review: FC<ReviewScreenProps> = ({
                       union: s.value as string,
                     }))
                   }}
-                  error={hasError('payments.union')}
+                  error={validateUnion()}
                 />
               )}
             </Stack>
@@ -488,11 +534,9 @@ export const Review: FC<ReviewScreenProps> = ({
                 onSelect={(s: string) => {
                   setStateful((prev) => {
                     const privatePensionFund =
-                      s === NO
-                        ? NO_PRIVATE_PENSION_FUND
-                        : prev.privatePensionFund
+                      s === NO ? NO_PRIVATE_PENSION_FUND : ''
                     const privatePensionFundPercentage =
-                      s === NO ? '' : prev.privatePensionFundPercentage
+                      s === NO ? '0' : prev.privatePensionFundPercentage
                     setValue('payments.privatePensionFund', privatePensionFund)
                     setValue(
                       'payments.privatePensionFundPercentage',
@@ -526,7 +570,7 @@ export const Review: FC<ReviewScreenProps> = ({
                           privatePensionFund: s.value as string,
                         }))
                       }
-                      error={hasError('payments.privatePensionFund')}
+                      error={validatePrivatePensionFund()}
                     />
                   </GridColumn>
 
@@ -552,7 +596,7 @@ export const Review: FC<ReviewScreenProps> = ({
                           privatePensionFundPercentage: s.value as string,
                         }))
                       }
-                      error={hasError('payments.privatePensionFundPercentage')}
+                      error={validatePrivatePensionFundPercentage()}
                     />
                   </GridColumn>
                 </GridRow>
@@ -722,6 +766,8 @@ export const Review: FC<ReviewScreenProps> = ({
                         ...prev,
                         personalUseAsMuchAsPossible: s as YesOrNo,
                       }))
+                      if (s === YES) setValue('personalAllowance.usage', '100')
+                      if (s === NO) setValue('personalAllowance.usage', '')
                     }}
                     error={hasError('personalAllowance.useAsMuchAsPossible')}
                   />
