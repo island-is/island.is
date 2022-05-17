@@ -150,7 +150,7 @@ export class SigningService extends DataSource {
     }
   }
 
-  async getSignedDocument(
+  async waitForSignature(
     documentName: string,
     documentToken: string,
   ): Promise<string> {

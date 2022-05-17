@@ -758,7 +758,7 @@ export class CaseService {
     // Production, or development with signing service access token
     if (this.config.production || this.config.dokobitAccessToken) {
       try {
-        const courtRecordPdf = await this.signingService.getSignedDocument(
+        const courtRecordPdf = await this.signingService.waitForSignature(
           'courtRecord.pdf',
           documentToken,
         )
@@ -856,7 +856,7 @@ export class CaseService {
     // Production, or development with signing service access token
     if (this.config.production || this.config.dokobitAccessToken) {
       try {
-        const signedPdf = await this.signingService.getSignedDocument(
+        const signedPdf = await this.signingService.waitForSignature(
           'ruling.pdf',
           documentToken,
         )

@@ -133,7 +133,7 @@ describe('SigningService', () => {
   })
 
   it('should get a signed document', async () => {
-    const res = await signingService.getSignedDocument(
+    const res = await signingService.waitForSignature(
       testDocumentName,
       testSignResponse.token,
     )
