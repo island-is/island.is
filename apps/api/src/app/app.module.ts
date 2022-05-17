@@ -6,6 +6,8 @@ import { AuthModule as AuthDomainModule } from '@island.is/api/domains/auth'
 import { ContentSearchModule } from '@island.is/api/domains/content-search'
 import { CmsModule } from '@island.is/cms'
 import { DrivingLicenseModule } from '@island.is/api/domains/driving-license'
+import { DrivingLicenseBookClientConfig } from '@island.is/clients/driving-license-book'
+import { DrivingLicenseBookModule } from '@island.is/api/domains/driving-license-book'
 import { EducationModule } from '@island.is/api/domains/education'
 import { ApplicationModule } from '@island.is/api/domains/application'
 import { DirectorateOfLabourModule } from '@island.is/api/domains/directorate-of-labour'
@@ -28,6 +30,7 @@ import { CompanyRegistryModule } from '@island.is/api/domains/company-registry'
 import { IcelandicNamesModule } from '@island.is/api/domains/icelandic-names-registry'
 import { RegulationsModule } from '@island.is/api/domains/regulations'
 import { FinanceModule } from '@island.is/api/domains/finance'
+import { VehiclesModule } from '@island.is/api/domains/vehicles'
 import { AssetsModule } from '@island.is/api/domains/assets'
 import { EndorsementSystemModule } from '@island.is/api/domains/endorsement-system'
 import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-registry-x-road'
@@ -48,10 +51,16 @@ import {
 import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 import { ProblemModule } from '@island.is/nest/problem'
 import { CriminalRecordModule } from '@island.is/api/domains/criminal-record'
+import { MunicipalitiesFinancialAidModule } from '@island.is/api/domains/municipalities-financial-aid'
+import { MunicipalitiesFinancialAidConfig } from '@island.is/clients/municipalities-financial-aid'
 import { MortgageCertificateModule } from '@island.is/api/domains/mortgage-certificate'
 
 import { maskOutFieldsMiddleware } from './graphql.middleware'
+import { FishingLicenseModule } from '@island.is/api/domains/fishing-license'
 import { CompanyRegistryConfig } from '@island.is/clients/rsk/company-registry'
+import { VehiclesClientConfig } from '@island.is/clients/vehicles'
+import { FishingLicenseClientConfig } from '@island.is/clients/fishing-license'
+import { FinancialStatementsInaoModule } from '@island.is/api/domains/financial-statements-inao'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -85,6 +94,17 @@ const autoSchemaFile = environment.production
     ContentSearchModule,
     CmsModule,
     DrivingLicenseModule.register({
+      clientConfig: {
+        xroadBaseUrl: environment.xroad.baseUrl!,
+        xroadClientId: environment.xroad.clientId!,
+        secret: environment.drivingLicense.secret!,
+        xroadPathV1: environment.drivingLicense.v1.xroadPath!,
+        xroadPathV2: environment.drivingLicense.v2.xroadPath!,
+      },
+    }),
+    // DrivingLicenseBook has drivingIstructorGuard that uses drivingLicenseService
+    // DrivingLicenseBookModule needs to register DrivingLicenseModule and uses the same config to do so
+    DrivingLicenseBookModule.register({
       clientConfig: {
         xroadBaseUrl: environment.xroad.baseUrl!,
         xroadClientId: environment.xroad.clientId!,
@@ -182,14 +202,7 @@ const autoSchemaFile = environment.production
     IdentityModule,
     AuthModule.register(environment.auth as AuthConfig),
     SyslumennModule,
-    CompanyRegistryModule.register({
-      password: environment.rskDomain.password!,
-      url: environment.rskDomain.url!,
-      username: environment.rskDomain.username!,
-      xRoadProviderId: environment.rskCompanyInfo.xRoadProviderId!,
-      xRoadBaseUrl: environment.rskCompanyInfo.xRoadBaseUrl!,
-      xRoadClientId: environment.rskCompanyInfo.xRoadClientId!,
-    }),
+    CompanyRegistryModule,
     IcelandicNamesModule.register({
       backendUrl: environment.icelandicNamesRegistry.backendUrl!,
     }),
@@ -200,6 +213,8 @@ const autoSchemaFile = environment.production
       url: environment.regulationsDomain.url!,
     }),
     FinanceModule,
+    FinancialStatementsInaoModule,
+    VehiclesModule,
     AssetsModule,
     NationalRegistryXRoadModule,
     ApiDomainsPaymentModule.register({
@@ -243,11 +258,14 @@ const autoSchemaFile = environment.production
         xroadPath: environment.criminalRecord.xroadPath!,
       },
     }),
+    MunicipalitiesFinancialAidModule,
+    FishingLicenseModule,
     MortgageCertificateModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
         AssetsClientConfig,
+        VehiclesClientConfig,
         AuthPublicApiClientConfig,
         DownloadServiceConfig,
         FeatureFlagConfig,
@@ -257,7 +275,10 @@ const autoSchemaFile = environment.production
         SyslumennClientConfig,
         FeatureFlagConfig,
         XRoadConfig,
+        MunicipalitiesFinancialAidConfig,
         CompanyRegistryConfig,
+        FishingLicenseClientConfig,
+        DrivingLicenseBookClientConfig,
       ],
     }),
   ],

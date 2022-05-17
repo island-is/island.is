@@ -2,6 +2,8 @@ import { uuid } from 'uuidv4'
 
 import { BadRequestException } from '@nestjs/common'
 
+import { CaseFileState } from '@island.is/judicial-system/types'
+
 import { randomDate } from '../../../test'
 import { CreateFileDto } from '../dto/createFile.dto'
 import { CaseFile } from '../models/file.model'
@@ -60,6 +62,7 @@ describe('FileController - Create case file', () => {
     it('should create a case file in the database', () => {
       expect(mockCreate).toHaveBeenCalledWith({
         type: 'text/plain',
+        state: CaseFileState.STORED_IN_RVG,
         key: `uploads/${caseId}/${uuId}/test.txt`,
         size: 99,
         caseId,

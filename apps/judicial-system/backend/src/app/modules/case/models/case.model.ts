@@ -22,6 +22,7 @@ import {
   CaseType,
   SessionArrangements,
   CourtDocument,
+  CaseOrigin,
 } from '@island.is/judicial-system/types'
 
 import { CaseFile } from '../../file'
@@ -59,6 +60,16 @@ export class Case extends Model<Case> {
   @UpdatedAt
   @ApiProperty()
   modified!: Date
+
+  /**********
+   * The case origin - example: RVG
+   **********/
+  @Column({
+    type: DataType.ENUM,
+    allowNull: false,
+    values: Object.values(CaseOrigin),
+  })
+  origin!: CaseOrigin
 
   /**********
    * The case type - example: CUSTODY
@@ -118,6 +129,16 @@ export class Case extends Model<Case> {
   })
   @ApiProperty()
   defenderName?: string
+
+  /**********
+   * The national of the accused's defender - optional
+   **********/
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  defenderNationalId?: string
 
   /**********
    * The email address of the accused's defender - optional
@@ -622,8 +643,7 @@ export class Case extends Model<Case> {
   isolationToDate?: Date
 
   /**********
-   * The case conclusion - optional for custody and travel ban cases as the core conclusions
-   * are auto generated
+   * The case conclusion
    **********/
   @Column({
     type: DataType.TEXT,
@@ -842,4 +862,15 @@ export class Case extends Model<Case> {
   })
   @ApiProperty()
   caseResentExplanation?: string
+
+  /**********
+   * Indicates whether the case has been archived - optional
+   **********/
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  @ApiProperty()
+  isArchived?: boolean
 }

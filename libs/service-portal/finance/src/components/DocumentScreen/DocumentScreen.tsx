@@ -1,33 +1,34 @@
-import React, { useState, useEffect, FC } from 'react'
 import { gql, useLazyQuery } from '@apollo/client'
-import { dateFormat } from '@island.is/shared/constants'
 import format from 'date-fns/format'
 import sub from 'date-fns/sub'
-import { Table as T } from '@island.is/island-ui/core'
+import React, { FC, useEffect, useState } from 'react'
+
 import {
-  Box,
-  Text,
-  Columns,
-  Column,
-  Stack,
-  GridRow,
-  GridColumn,
-  DatePicker,
-  Button,
   AlertBanner,
-  SkeletonLoader,
-  Pagination,
-  Input,
+  Box,
+  Button,
+  DatePicker,
+  GridColumn,
+  GridRow,
   Hidden,
+  Input,
+  Pagination,
+  SkeletonLoader,
+  Stack,
+  Table as T,
+  Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { m } from '@island.is/service-portal/core'
-import { DocumentsListItemTypes } from './DocumentScreen.types'
-import amountFormat from '../../utils/amountFormat'
+import {
+  amountFormat,
+  formSubmit,
+  m,
+  tableStyles,
+} from '@island.is/service-portal/core'
+import { dateFormat } from '@island.is/shared/constants'
+
 import { billsFilter } from '../../utils/simpleFilter'
-import { formSubmit } from '../../utils/documentFormSubmission'
-import { User } from 'oidc-client'
-import { tableStyles } from '@island.is/service-portal/core'
+import { DocumentsListItemTypes } from './DocumentScreen.types'
 
 const ITEMS_ON_PAGE = 20
 
@@ -36,7 +37,6 @@ interface Props {
   intro: string
   listPath: string
   defaultDateRangeMonths?: number
-  userInfo: User
 }
 
 const getFinanceDocumentsListQuery = gql`
@@ -61,7 +61,6 @@ const DocumentScreen: FC<Props> = ({
   intro,
   listPath,
   defaultDateRangeMonths = 3,
-  userInfo,
 }) => {
   const { formatMessage } = useLocale()
 
@@ -116,7 +115,7 @@ const DocumentScreen: FC<Props> = ({
           <GridColumn span={['12/12', '8/12']}>
             <Text variant="default">{intro}</Text>
           </GridColumn>
-          <Box display="flex" marginLeft="auto" marginTop={1}>
+          <Box display="flex" marginLeft="auto" marginTop={1} printHidden>
             <GridColumn>
               <Button
                 colorScheme="default"

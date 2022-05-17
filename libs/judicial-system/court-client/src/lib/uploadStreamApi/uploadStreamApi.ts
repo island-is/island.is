@@ -1,17 +1,6 @@
-import http, { Agent } from 'http'
+import { Agent } from 'http'
 import request from 'request'
 import FormData from 'form-data'
-
-class HttpError extends Error {
-  constructor(
-    public response: http.IncomingMessage,
-    public body: any, // eslint-disable-line @typescript-eslint/no-explicit-any
-    public statusCode?: number,
-  ) {
-    super('HTTP request failed')
-    this.name = 'HttpError'
-  }
-}
 
 export interface UploadFile {
   value: Buffer
@@ -62,7 +51,7 @@ export class UploadStreamApi {
           ) {
             resolve(body)
           } else {
-            reject(new HttpError(response, body, response.statusCode))
+            reject(body)
           }
         }
       })

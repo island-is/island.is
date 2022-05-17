@@ -6,9 +6,9 @@ export const serviceSetup = (services: {}): ServiceBuilder<'service-portal'> =>
     .liveness('/liveness')
     .readiness('/readiness')
     .replicaCount({
-      default: 2,
-      max: 20,
-      min: 2,
+      default: 5,
+      max: 30,
+      min: 5,
     })
     .resources({
       limits: { cpu: '400m', memory: '512Mi' },
@@ -21,9 +21,12 @@ export const serviceSetup = (services: {}): ServiceBuilder<'service-portal'> =>
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
+      SI_PUBLIC_ENVIRONMENT: ref((h) => h.env.type),
     })
     .secrets({
       SI_PUBLIC_CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY',
+      SI_PUBLIC_DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID',
+      SI_PUBLIC_DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN',
     })
     .ingress({
       primary: {

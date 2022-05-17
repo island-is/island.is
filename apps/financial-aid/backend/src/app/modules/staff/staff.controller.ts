@@ -14,22 +14,18 @@ import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import { StaffService } from './staff.service'
 import { StaffModel } from './models'
-import {
-  apiBasePath,
-  RolesRule,
-  StaffRole,
-} from '@island.is/financial-aid/shared/lib'
+import { apiBasePath, StaffRole } from '@island.is/financial-aid/shared/lib'
 
 import type { Staff } from '@island.is/financial-aid/shared/lib'
-import { IdsUserGuard } from '@island.is/auth-nest-tools'
-import { RolesGuard } from '../../guards/roles.guard'
-import { CurrentStaff, RolesRules } from '../../decorators'
+import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import { CurrentStaff } from '../../decorators/staff.decorator'
 import { StaffGuard } from '../../guards/staff.guard'
 import { StaffRolesRules } from '../../decorators/staffRole.decorator'
 import { UpdateStaffDto, CreateStaffDto } from './dto'
+import { MunicipalitiesFinancialAidScope } from '@island.is/auth/scopes'
 
-@UseGuards(IdsUserGuard, RolesGuard, StaffGuard)
-@RolesRules(RolesRule.VEITA)
+@UseGuards(IdsUserGuard, ScopesGuard, StaffGuard)
+@Scopes(MunicipalitiesFinancialAidScope.employee)
 @Controller(`${apiBasePath}/staff`)
 @ApiTags('staff')
 export class StaffController {
@@ -71,7 +67,7 @@ export class StaffController {
   async getStaffForMunicipality(
     @CurrentStaff() staff: Staff,
   ): Promise<StaffModel[]> {
-    return await this.staffService.findByMunicipalityId(staff.municipalityId)
+    return await this.staffService.findByMunicipalityId(staff.municipalityIds)
   }
 
   @Put('id/:id')
@@ -95,25 +91,16 @@ export class StaffController {
     return updatedStaff
   }
 
-  @StaffRolesRules(StaffRole.ADMIN)
+  @StaffRolesRules(StaffRole.ADMIN, StaffRole.SUPERADMIN)
   @Post('')
   @ApiOkResponse({
     type: StaffModel,
     description: 'Creates staff',
   })
   async createStaff(
-    @CurrentStaff() staff: Staff,
     @Body() createStaffInput: CreateStaffDto,
   ): Promise<StaffModel> {
-    return await this.staffService.createStaff(
-      createStaffInput,
-      {
-        municipalityId: createStaffInput.municipalityId ?? staff.municipalityId,
-        municipalityName:
-          createStaffInput.municipalityName ?? staff.municipalityName,
-      },
-      staff,
-    )
+    return await this.staffService.createStaff(createStaffInput)
   }
 
   @StaffRolesRules(StaffRole.SUPERADMIN)
@@ -138,6 +125,28 @@ export class StaffController {
     @Param('municipalityId') municipalityId: string,
   ): Promise<StaffModel[]> {
     return this.staffService.getUsers(municipalityId)
+  }
+
+  @StaffRolesRules(StaffRole.SUPERADMIN)
+  @Get('admins')
+  @ApiOkResponse({
+    type: [StaffModel],
+    description: 'Gets admins',
+  })
+  async getAdmins(): Promise<StaffModel[]> {
+    return this.staffService.getAdmins()
+  }
+
+  @StaffRolesRules(StaffRole.SUPERADMIN)
+  @Get('allAdminUsers/:municipalityId')
+  @ApiOkResponse({
+    type: [StaffModel],
+    description: 'Gets admin users by municipality id',
+  })
+  async allAdminUsers(
+    @Param('municipalityId') municipalityId: string,
+  ): Promise<StaffModel[]> {
+    return this.staffService.allAdminUsers(municipalityId)
   }
 
   @StaffRolesRules(StaffRole.SUPERADMIN)

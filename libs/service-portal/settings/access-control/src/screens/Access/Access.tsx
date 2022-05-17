@@ -25,7 +25,7 @@ import {
   NotFound,
   ServicePortalPath,
 } from '@island.is/service-portal/core'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 
 import { AuthDelegationsQuery } from '../AccessControl'
 import { AccessItem, AccessModal } from '../../components'
@@ -40,10 +40,11 @@ import {
   ScopeTag,
   SCOPE_PREFIX,
 } from '../../utils/types'
+import { servicePortalSaveAccessControl } from '@island.is/plausible'
 
 const AuthApiScopesQuery = gql`
-  query AuthApiScopesQuery {
-    authApiScopes {
+  query AuthApiScopesQuery($input: AuthApiScopesInput!) {
+    authApiScopes(input: $input) {
       name
       displayName
       type
@@ -108,7 +109,9 @@ const DeleteAuthDelegationMutation = gql`
 `
 
 const Access: FC = () => {
-  const { formatMessage } = useLocale()
+  useNamespaces('sp.settings-access-control')
+
+  const { formatMessage, lang } = useLocale()
   const { delegationId }: { delegationId: string } = useParams()
   const history = useHistory()
   const [closeModalOpen, setCloseModalOpen] = useState(false)
@@ -127,6 +130,13 @@ const Access: FC = () => {
   )
   const { data: apiScopeData, loading: apiScopeLoading } = useQuery<Query>(
     AuthApiScopesQuery,
+    {
+      variables: {
+        input: {
+          lang,
+        },
+      },
+    },
   )
   const { data: delegationData, loading: delegationLoading } = useQuery<Query>(
     AuthDelegationQuery,
@@ -148,6 +158,7 @@ const Access: FC = () => {
   const [formError, setFormError] = useState<boolean>(false)
 
   const onSubmit = handleSubmit(async (model: AccessForm) => {
+    formError && setFormError(false)
     const scopes = model[SCOPE_PREFIX].filter(
       (scope) => scope.name?.length > 0,
     ).map((scope) => ({
@@ -158,10 +169,14 @@ const Access: FC = () => {
       displayName: scope.displayName,
     }))
 
-    const err = getValues()?.[SCOPE_PREFIX]?.find((x) => x.name && !x.validTo)
+    const err = getValues()?.[SCOPE_PREFIX]?.find(
+      (x) => x.name.length > 0 && !x.validTo,
+    )
+
     if (err) {
       setSaveModalOpen(false)
       setFormError(true)
+      return
     }
 
     const { data, errors } = await updateDelegation({
@@ -169,6 +184,9 @@ const Access: FC = () => {
     })
     if (data && !errors && !err) {
       history.push(ServicePortalPath.SettingsAccessControl)
+      servicePortalSaveAccessControl(
+        ServicePortalPath.SettingsAccessControlGrant,
+      )
     }
   })
 
@@ -219,7 +237,7 @@ const Access: FC = () => {
         intro={defineMessage({
           id: 'sp.settings-access-control:access-intro',
           defaultMessage:
-            'Hér velur þú hvaða aðgangur er veittur með þessu umboði og hversu lengi. Reyndu að lágmarka þau réttindi sem þú vilt veita viðkomandi eins mikið og mögulegt er.',
+            'Reyndu að lágmarka þau réttindi sem þú vilt veita viðkomandi eins mikið og mögulegt er.',
         })}
       />
       {formError && (
@@ -236,12 +254,12 @@ const Access: FC = () => {
       )}
       <FormProvider {...hookFormData}>
         <form onSubmit={onSubmit}>
-          <Box marginBottom={[3, 3, 8]} display="flex" justifyContent="flexEnd">
-            <Inline space={3}>
+          <Box marginBottom={[3, 3, 4]} display="flex" justifyContent="flexEnd">
+            <Inline space={1}>
               {authDelegation?.scopes.length > 0 && (
                 <>
                   <Button
-                    variant="text"
+                    variant="ghost"
                     colorScheme="destructive"
                     size="small"
                     icon="close"
@@ -281,8 +299,8 @@ const Access: FC = () => {
                 </>
               )}
               <Button
+                variant="primary"
                 size="small"
-                variant="text"
                 loading={updateLoading}
                 onClick={() => setSaveModalOpen(true)}
                 icon="checkmark"

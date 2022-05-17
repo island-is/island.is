@@ -16,12 +16,14 @@ export const generateAssignOtherParentApplicationEmail: EmailTemplateGenerator =
   } = props
 
   const otherParentEmail = get(application.answers, 'otherParentEmail')
+  const applicantName = get(application.externalData, 'person.data.fullName')
 
   if (!otherParentEmail) {
     throw new Error('Could not find other parent email')
   }
 
   const subject = 'Yfirferð á umsókn um fæðingarorlof'
+  const link = `${clientLocationOrigin}/${ApplicationConfigurations.ParentalLeave.slug}/${application.id}`
 
   return {
     from: {
@@ -57,7 +59,7 @@ export const generateAssignOtherParentApplicationEmail: EmailTemplateGenerator =
         {
           component: 'Copy',
           context: {
-            copy: `Umsækjandi með kennitölu ${application.applicant} hefur skráð þig sem foreldri í umsókn sinni og er að óska eftir réttindum frá þér.`,
+            copy: `${applicantName} Kt:${application.applicant} hefur skráð þig sem foreldri í umsókn sinni og er að óska eftir réttindum frá þér.`,
           },
         },
         {
@@ -70,7 +72,21 @@ export const generateAssignOtherParentApplicationEmail: EmailTemplateGenerator =
           component: 'Button',
           context: {
             copy: 'Skoða umsókn',
-            href: `${clientLocationOrigin}/${ApplicationConfigurations.ParentalLeave.slug}/${application.id}`,
+            href: link,
+          },
+        },
+        {
+          component: 'Copy',
+          context: {
+            copy: `Athugið! Ef hnappur virkar ekki, getur þú afritað hlekkinn hér að neðan og límt hann inn í vafrann þinn.`,
+            small: true,
+          },
+        },
+        {
+          component: 'Copy',
+          context: {
+            copy: link,
+            small: true,
           },
         },
       ],

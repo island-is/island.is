@@ -19,6 +19,7 @@ interface Props {
   defendants?: Defendant[]
   defender?: {
     name: string
+    defenderNationalId?: string
     email?: string
     phoneNumber?: string
   }
@@ -30,7 +31,11 @@ const InfoCard: React.FC<Props> = (props) => {
   const { formatMessage } = useIntl()
 
   return (
-    <Box className={styles.infoCardContainer} data-testid="infoCard">
+    <Box
+      className={styles.infoCardContainer}
+      padding={[2, 2, 3, 3]}
+      data-testid="infoCard"
+    >
       {defendants && (
         <>
           <Text variant="h4">
@@ -40,26 +45,39 @@ const InfoCard: React.FC<Props> = (props) => {
               }),
             )}
           </Text>
-          <Box marginBottom={4}>
+          <Box marginBottom={[2, 2, 3, 3]}>
             {defendants.map((defendant, index) => (
-              <Text fontWeight="semiBold" key={index}>
-                {defendant.name}
-                <Text as="span">{`, `}</Text>
-                {`${defendant.noNationalId ? 'fd.' : 'kt.'} ${
-                  defendant.noNationalId
-                    ? defendant.nationalId
-                    : formatNationalId(defendant.nationalId ?? '')
-                }`}
-                {defendant.citizenship && ` (${defendant.citizenship})`}
-                {defendant.address && (
-                  <Text as="span">{`, ${defendant.address}`}</Text>
-                )}
+              <Text key={index}>
+                <span className={styles.infoCardDefendant}>
+                  <Text
+                    as="span"
+                    fontWeight="semiBold"
+                  >{`${defendant.name}, `}</Text>
+                  <Text as="span" fontWeight="semiBold">
+                    {(!defendant.noNationalId || defendant.nationalId) &&
+                      `${defendant.noNationalId ? 'fd.' : 'kt.'} ${
+                        defendant.noNationalId
+                          ? defendant.nationalId
+                          : formatNationalId(defendant.nationalId ?? '')
+                      }, `}
+                  </Text>
+                  <Text as="span">
+                    {defendant.citizenship && ` (${defendant.citizenship}), `}
+                  </Text>
+                  {defendant.address && (
+                    <Text as="span">{`${defendant.address}`}</Text>
+                  )}
+                </span>
               </Text>
             ))}
           </Box>
         </>
       )}
-      <Box className={styles.infoCardTitleContainer}>
+      <Box
+        className={styles.infoCardTitleContainer}
+        marginBottom={[2, 2, 3, 3]}
+        paddingBottom={[2, 2, 3, 3]}
+      >
         <Text variant="h4">
           {sessionArrangement === SessionArrangements.ALL_PRESENT_SPOKESPERSON
             ? 'Talsmaður'
@@ -78,18 +96,27 @@ const InfoCard: React.FC<Props> = (props) => {
         )}
       </Box>
       <Box className={styles.infoCardDataContainer}>
-        {data.map((dataItem, index) => (
-          <Box
-            data-testid={`infoCardDataContainer${index}`}
-            className={styles.infoCardData}
-            // Should be applied to every element except the last two
-            marginBottom={index < data.length - 2 ? 3 : 0}
-            key={index}
-          >
-            <Text variant="h4">{dataItem.title}</Text>
-            <Text>{dataItem.value}</Text>
-          </Box>
-        ))}
+        {data.map((dataItem, index) => {
+          const isLastItem = index === data.length - 1
+          const isLastTwoItems = isLastItem || index === data.length - 2
+
+          return (
+            <Box
+              data-testid={`infoCardDataContainer${index}`}
+              className={styles.infoCardData}
+              marginBottom={[
+                isLastItem ? 0 : 2,
+                isLastItem ? 0 : 2,
+                isLastTwoItems ? 0 : 3,
+                isLastTwoItems ? 0 : 3,
+              ]}
+              key={index}
+            >
+              <Text variant="h4">{dataItem.title}</Text>
+              <Text>{dataItem.value}</Text>
+            </Box>
+          )
+        })}
       </Box>
     </Box>
   )

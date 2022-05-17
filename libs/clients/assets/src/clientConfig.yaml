@@ -364,6 +364,10 @@ components:
               nullable: true
               oneOf:
                 - $ref: '#/components/schemas/NotkunareiningWrapper'
+            landeign:
+              nullable: true
+              oneOf:
+                - $ref: '#/components/schemas/LandeignWrapper'
     Fasteignamat:
       type: object
       additionalProperties: false
@@ -408,6 +412,30 @@ components:
           nullable: true
           oneOf:
             - $ref: '#/components/schemas/Pagination'
+    LandeignWrapper:
+      type: object
+      additionalProperties: false
+      properties:
+        landeignarnumer:
+          type: string
+          nullable: true
+        lodamat:
+          type: integer
+          format: int64
+          nullable: true
+        notkunBirting:
+          type: string
+          nullable: true
+        flatarmal:
+          type: string
+          nullable: true
+        flatarmalEining:
+          type: string
+          nullable: true
+        thinglystirEigendur:
+          nullable: true
+          oneOf:
+            - $ref: '#/components/schemas/ThinglysturEigandiWrapper'
     ThinglysturEigandi:
       type: object
       additionalProperties: false

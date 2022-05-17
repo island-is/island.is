@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react'
-import { useQuery, gql } from '@apollo/client'
+import { useQuery } from '@apollo/client'
 import {
   Text,
   Box,
@@ -37,7 +37,7 @@ import isAfter from 'date-fns/isAfter'
 import isBefore from 'date-fns/isBefore'
 import isEqual from 'lodash/isEqual'
 import isWithinInterval from 'date-fns/isWithinInterval'
-import startOfTomorrow from 'date-fns/startOfTomorrow'
+import addMonths from 'date-fns/addMonths'
 import * as Sentry from '@sentry/react'
 import * as styles from './Overview.css'
 
@@ -67,7 +67,7 @@ const getFilteredDocuments = (
   const { dateFrom, dateTo, activeCategory, searchQuery } = filterValues
   let filteredDocuments = documents.filter((document) => {
     const minDate = dateFrom || new Date('1900-01-01')
-    const maxDate = dateTo || startOfTomorrow()
+    const maxDate = dateTo || addMonths(new Date(), 3)
     return isWithinInterval(new Date(document.date), {
       start: isBefore(maxDate, minDate) ? maxDate : minDate,
       end: isAfter(minDate, maxDate) ? minDate : maxDate,
@@ -193,7 +193,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
               {formatMessage({
                 id: 'sp.documents:intro',
                 defaultMessage:
-                  'Hér munt þú geta fundið öll þau skjöl sem eru send til þín frá stofnunum ríkisins',
+                  'Hér getur þú fundið skjöl sem send hafa verið til þín frá opinberum aðilum.',
               })}
             </Text>
           </Column>
@@ -374,7 +374,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                   {formatMessage({
                     id: 'sp.documents:not-found',
                     defaultMessage:
-                      'Engin skjöl fundust fyrir gefin leitarskilyrði',
+                      'Engin skjöl fundust fyrir gefin leitarskilyrði.',
                   })}
                 </Text>
               </Box>
@@ -385,7 +385,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                   {formatMessage({
                     id: 'sp.documents:error',
                     defaultMessage:
-                      'Tókst ekki að sækja rafræn skjöl, eitthvað fór úrskeiðis',
+                      'Tókst ekki að sækja rafræn skjöl, eitthvað fór úrskeiðis.',
                   })}
                 </Text>
               </Box>
@@ -401,7 +401,6 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                         organizations,
                       )}
                       documentLine={document}
-                      userInfo={userInfo}
                     />
                   </Box>
                 ))}

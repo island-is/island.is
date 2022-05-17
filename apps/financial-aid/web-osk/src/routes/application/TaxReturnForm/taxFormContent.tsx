@@ -46,7 +46,7 @@ const TaxReturnInfo = () => {
             underlineVisibility="always"
           >
             leiðbeiningar
-          </Link>
+          </Link>{' '}
           um hvernig sækja má staðfest afrit skattframtals.
         </Text>
       </LinkContext.Provider>

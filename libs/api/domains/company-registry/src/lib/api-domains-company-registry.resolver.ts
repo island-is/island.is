@@ -1,17 +1,9 @@
 import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
 import { Inject, UseGuards } from '@nestjs/common'
 import { ApiScope } from '@island.is/auth/scopes'
-import type { User } from '@island.is/auth-nest-tools'
-import {
-  IdsUserGuard,
-  ScopesGuard,
-  CurrentUser,
-  Scopes,
-} from '@island.is/auth-nest-tools'
-import { RSKService } from '@island.is/clients/rsk/v1'
+import { IdsUserGuard, ScopesGuard, Scopes } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
 
-import { CurrentUserCompanies } from './models/currentUserCompanies.model'
 import { RskCompany, RskCompanyInfo } from './models/rskCompany.model'
 import { RskCompanyInfoInput } from './dto/RskCompanyInfo.input'
 import { RskCompanyInfoService } from './rsk-company-info.service'
@@ -29,14 +21,7 @@ export class CompanyRegistryResolver {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private rskCompanyInfoService: RskCompanyInfoService,
-    private rskService: RSKService,
   ) {}
-
-  @Query(() => [CurrentUserCompanies])
-  @Audit()
-  async rskCurrentUserCompanies(@CurrentUser() user: User) {
-    return this.rskService.getCompaniesByNationalId(user.nationalId)
-  }
 
   @Query(() => RskCompany, {
     name: 'companyRegistryCompany',
@@ -80,8 +65,8 @@ export class CompanyRegistryResolver {
     if (rskCompanyItem.companyInfo) return rskCompanyItem.companyInfo
 
     const company = await this.rskCompanyInfoService.getCompanyInformationWithExtra(
-      rskCompanyItem.nationalId ?? '',
+      rskCompanyItem.nationalId,
     )
-    return company.companyInfo
+    return company ? company.companyInfo : undefined
   }
 }

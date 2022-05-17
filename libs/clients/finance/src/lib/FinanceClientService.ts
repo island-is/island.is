@@ -7,7 +7,11 @@ import {
   DocumentTypes,
   FinanceStatus,
   FinanceStatusDetails,
+  PaymentScheduleType,
   TapsControlTypes,
+  PaymentScheduleDetailType,
+  DebtLessCertificateType,
+  DebtStatusType,
 } from './types'
 import {
   createEnhancedFetch,
@@ -168,5 +172,52 @@ export class FinanceClientService {
       { nationalID },
       auth,
     )
+  }
+
+  async getPaymentSchedules(
+    nationalId: string,
+    auth: Auth,
+  ): Promise<PaymentScheduleType | null> {
+    const res = await this.get<PaymentScheduleType>(
+      `/myPaymentSchedules`,
+      { nationalId },
+      auth,
+    )
+    return res
+  }
+
+  async getPaymentScheduleById(
+    nationalId: string,
+    scheduleNumber: string,
+    auth: Auth,
+  ): Promise<PaymentScheduleDetailType | null> {
+    const res = await this.get<PaymentScheduleDetailType>(
+      `/myDetailedSchedule`,
+      { nationalId, scheduleNumber },
+      auth,
+    )
+    return res
+  }
+
+  async getDebtStatus(nationalId: string, auth: Auth): Promise<any | null> {
+    const res = await this.get<DebtStatusType>(
+      `/myDebtStatus`,
+      { nationalId },
+      auth,
+    )
+    return res
+  }
+
+  async getDebtLessCertificate(
+    nationalID: string,
+    language: string,
+    auth: Auth,
+  ): Promise<DebtLessCertificateType | null> {
+    const res = await this.get<DebtLessCertificateType | null>(
+      `/debtLessCertificate`,
+      { nationalID, language },
+      auth,
+    )
+    return res
   }
 }

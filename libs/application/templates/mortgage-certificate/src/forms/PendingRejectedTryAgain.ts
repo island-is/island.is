@@ -15,6 +15,7 @@ export const PendingRejectedTryAgain: Form = buildForm({
   id: 'PendingForm',
   title: 'Pending',
   mode: FormModes.APPLYING,
+  renderLastScreenButton: true,
   children: [
     buildSection({
       id: 'externalData',
@@ -55,11 +56,6 @@ export const PendingRejectedTryAgain: Form = buildForm({
               ],
             }),
           ],
-        }),
-        buildDescriptionField({
-          id: 'final',
-          title: 'Takk',
-          description: '',
         }),
       ],
     }),

@@ -22,7 +22,11 @@ export const ReasonsForComplaint: FC<FieldBaseProps> = ({
 }) => {
   const { register, errors, setValue } = useFormContext()
   const [statefulOtherReason, setStatefulOtherReason] = useState(
-    getValueViaPath(application.answers, 'otherReason' || '') as string,
+    getValueViaPath(
+      application.answers,
+      'subjectOfComplaint.somethingElseValue',
+      '',
+    ) as string,
   )
   const [statefulCheckbox, setStatefulCheckbox] = useState(
     (getValueViaPath(

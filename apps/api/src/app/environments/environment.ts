@@ -88,16 +88,6 @@ const prodConfig = () => ({
     username: process.env.SYSLUMENN_USERNAME,
     password: process.env.SYSLUMENN_PASSWORD,
   },
-  rskDomain: {
-    username: process.env.RSK_API_USERNAME,
-    password: process.env.RSK_API_PASSWORD,
-    url: process.env.RSK_API_URL,
-  },
-  rskCompanyInfo: {
-    xRoadBaseUrl: process.env.XROAD_BASE_PATH,
-    xRoadProviderId: process.env.COMPANY_REGISTRY_XROAD_PROVIDER_ID,
-    xRoadClientId: process.env.XROAD_CLIENT_ID,
-  },
   icelandicNamesRegistry: {
     backendUrl: process.env.ICELANDIC_NAMES_REGISTRY_BACKEND_URL,
   },
@@ -263,7 +253,7 @@ const devConfig = () => ({
     baseApiUrl: 'http://localhost:4246',
   },
   paymentDomain: {
-    xRoadBaseUrl: process.env.XROAD_BASE_PATH,
+    xRoadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8080',
     xRoadProviderId:
       process.env.XROAD_PAYMENT_PROVIDER_ID ?? 'IS-DEV/GOV/10021/FJS-Public',
     xRoadClientId: process.env.XROAD_CLIENT_ID,

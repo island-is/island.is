@@ -1,9 +1,3 @@
-import { User } from 'oidc-client'
-
-export const userHasAccessToScope = (user: User, scope: string) => {
-  return true
-}
-
 export const getNameAbbreviation = (name: string) => {
   const names = name.split(' ')
   let initials = names[0].substring(0, 1).toUpperCase()
@@ -23,8 +17,7 @@ export const formatNationalId = (nationalId: string): string => {
 }
 
 export const tableStyles = {
-  paddingTop: '16px',
-  paddingBottom: '16px',
+  padding: '16px',
 }
 type DrivingLicenseSuspended = {
   /* ANY because response was null */

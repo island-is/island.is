@@ -18,6 +18,7 @@ import {
   ApplicationModel,
   UpdateApplicationTableResponse,
   SpouseResponse,
+  FilterApplicationsResponse,
 } from './models'
 
 import {
@@ -29,6 +30,7 @@ import {
   CreateApplicationDto,
   UpdateApplicationDto,
   CreateApplicationEventDto,
+  FilterApplicationsDto,
 } from './dto'
 
 import {
@@ -44,16 +46,13 @@ import type {
   Application,
 } from '@island.is/financial-aid/shared/lib'
 
-import { Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
 
-import {
-  ApplicationFilters,
-  RolesRule,
-} from '@island.is/financial-aid/shared/lib'
+import { Scopes, ScopesGuard, CurrentUser } from '@island.is/auth-nest-tools'
+
+import { ApplicationFilters } from '@island.is/financial-aid/shared/lib'
 import { IdsUserGuard } from '@island.is/auth-nest-tools'
-import { RolesGuard } from '../../guards/roles.guard'
-import { CurrentStaff, CurrentUser, RolesRules } from '../../decorators'
+import { CurrentStaff } from '../../decorators/staff.decorator'
 import { ApplicationGuard } from '../../guards/application.guard'
 import { StaffService } from '../staff'
 import { StaffGuard } from '../../guards/staff.guard'
@@ -62,7 +61,7 @@ import { StaffRolesRules } from '../../decorators/staffRole.decorator'
 import { AuditService } from '@island.is/nest/audit'
 import { MunicipalitiesFinancialAidScope } from '@island.is/auth/scopes'
 
-@UseGuards(IdsUserGuard)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @Controller(`${apiBasePath}/application`)
 @ApiTags('application')
 export class ApplicationController {
@@ -75,27 +74,33 @@ export class ApplicationController {
     private readonly auditService: AuditService,
   ) {}
 
-  @UseGuards(RolesGuard)
-  @RolesRules(RolesRule.OSK)
+  @Scopes(
+    MunicipalitiesFinancialAidScope.read,
+    MunicipalitiesFinancialAidScope.applicant,
+  )
   @Get('nationalId')
   @ApiOkResponse({
+    type: String,
     description: 'Checks if user has a current application for this period',
   })
   async getCurrentApplication(@CurrentUser() user: User): Promise<string> {
     this.logger.debug('Application controller: Getting current application')
-    const currentApplication = await this.applicationService.getCurrentApplicationId(
+    const currentApplicationId = await this.applicationService.getCurrentApplicationId(
       user.nationalId,
     )
 
-    if (currentApplication === null) {
+    if (currentApplicationId === null) {
       throw new NotFoundException(404, 'Current application not found')
     }
 
-    return currentApplication
+    return currentApplicationId
   }
 
-  @UseGuards(RolesGuard, StaffGuard)
-  @RolesRules(RolesRule.VEITA)
+  @Scopes(
+    MunicipalitiesFinancialAidScope.read,
+    MunicipalitiesFinancialAidScope.employee,
+  )
+  @UseGuards(StaffGuard)
   @StaffRolesRules(StaffRole.EMPLOYEE)
   @Get('find/:nationalId')
   @ApiOkResponse({
@@ -112,7 +117,7 @@ export class ApplicationController {
 
     const applications = await this.applicationService.findByNationalId(
       nationalId,
-      staff.municipalityId,
+      staff.municipalityIds,
     )
 
     this.auditService.audit({
@@ -124,8 +129,10 @@ export class ApplicationController {
     return applications
   }
 
-  @UseGuards(RolesGuard)
-  @RolesRules(RolesRule.OSK)
+  @Scopes(
+    MunicipalitiesFinancialAidScope.read,
+    MunicipalitiesFinancialAidScope.applicant,
+  )
   @Get('spouse')
   @ApiOkResponse({
     type: SpouseResponse,
@@ -137,8 +144,11 @@ export class ApplicationController {
     return await this.applicationService.getSpouseInfo(user.nationalId)
   }
 
-  @UseGuards(RolesGuard, StaffGuard)
-  @RolesRules(RolesRule.VEITA)
+  @Scopes(
+    MunicipalitiesFinancialAidScope.read,
+    MunicipalitiesFinancialAidScope.employee,
+  )
+  @UseGuards(StaffGuard)
   @StaffRolesRules(StaffRole.EMPLOYEE)
   @Get('state/:stateUrl')
   @ApiOkResponse({
@@ -154,10 +164,11 @@ export class ApplicationController {
     return this.applicationService.getAll(
       stateUrl,
       staff.id,
-      staff.municipalityId,
+      staff.municipalityIds,
     )
   }
 
+  @Scopes(MunicipalitiesFinancialAidScope.read)
   @UseGuards(ApplicationGuard)
   @Get('id/:id')
   @ApiOkResponse({
@@ -180,8 +191,11 @@ export class ApplicationController {
     return application
   }
 
-  @UseGuards(RolesGuard, StaffGuard)
-  @RolesRules(RolesRule.VEITA)
+  @Scopes(
+    MunicipalitiesFinancialAidScope.read,
+    MunicipalitiesFinancialAidScope.employee,
+  )
+  @UseGuards(StaffGuard)
   @StaffRolesRules(StaffRole.EMPLOYEE)
   @Get('filters')
   @ApiOkResponse({
@@ -191,9 +205,13 @@ export class ApplicationController {
     @CurrentStaff() staff: Staff,
   ): Promise<ApplicationFilters> {
     this.logger.debug('Application controller: Getting application filters')
-    return this.applicationService.getAllFilters(staff.id, staff.municipalityId)
+    return this.applicationService.getAllFilters(
+      staff.id,
+      staff.municipalityIds,
+    )
   }
 
+  @Scopes(MunicipalitiesFinancialAidScope.write)
   @UseGuards(ApplicationGuard)
   @Put('id/:id')
   @ApiOkResponse({
@@ -203,7 +221,7 @@ export class ApplicationController {
   async update(
     @Param('id') id: string,
     @Body() applicationToUpdate: UpdateApplicationDto,
-    @CurrentUser() user: FinancialAidUser,
+    @CurrentUser() user: User,
   ): Promise<ApplicationModel> {
     this.logger.debug(
       `Application controller: Updating application with id ${id}`,
@@ -226,7 +244,7 @@ export class ApplicationController {
       ApplicationEventType.FILEUPLOAD,
     ]
 
-    if (user.service === RolesRule.VEITA) {
+    if (user.scope.includes(MunicipalitiesFinancialAidScope.employee)) {
       staff = await this.staffService.findByNationalId(user.nationalId)
       if (!staff) {
         throw new ForbiddenException('Staff not found')
@@ -234,14 +252,18 @@ export class ApplicationController {
     }
 
     if (
-      (user.service === RolesRule.OSK &&
+      (user.scope.includes(MunicipalitiesFinancialAidScope.applicant) &&
         staffUpdateEvents.includes(applicationToUpdate.event)) ||
-      (user.service === RolesRule.VEITA &&
+      (user.scope.includes(MunicipalitiesFinancialAidScope.employee) &&
         applicantUpdateEvents.includes(applicationToUpdate.event))
     ) {
       throw new ForbiddenException(
         'User not allowed to make this change to application',
       )
+    }
+
+    if (user.scope.includes(MunicipalitiesFinancialAidScope.employee)) {
+      staff = await this.staffService.findByNationalId(user.nationalId)
     }
 
     const updatedApplication = await this.applicationService.update(
@@ -255,8 +277,11 @@ export class ApplicationController {
     return updatedApplication
   }
 
-  @UseGuards(RolesGuard, StaffGuard)
-  @RolesRules(RolesRule.VEITA)
+  @Scopes(
+    MunicipalitiesFinancialAidScope.write,
+    MunicipalitiesFinancialAidScope.employee,
+  )
+  @UseGuards(StaffGuard)
   @StaffRolesRules(StaffRole.EMPLOYEE)
   @Put(':id/:stateUrl')
   @ApiOkResponse({
@@ -275,17 +300,19 @@ export class ApplicationController {
       applications: await this.applicationService.getAll(
         stateUrl,
         staff.id,
-        staff.municipalityId,
+        staff.municipalityIds,
       ),
       filters: await this.applicationService.getAllFilters(
         staff.id,
-        staff.municipalityId,
+        staff.municipalityIds,
       ),
     }
   }
 
-  @UseGuards(RolesGuard)
-  @RolesRules(RolesRule.OSK)
+  @Scopes(
+    MunicipalitiesFinancialAidScope.write,
+    MunicipalitiesFinancialAidScope.applicant,
+  )
   @Post('')
   @ApiCreatedResponse({
     type: ApplicationModel,
@@ -299,7 +326,7 @@ export class ApplicationController {
     return this.applicationService.create(application, user)
   }
 
-  @UseGuards(ScopesGuard, ApplicationGuard)
+  @UseGuards(ApplicationGuard)
   @Scopes(MunicipalitiesFinancialAidScope.write)
   @Post('event')
   @ApiCreatedResponse({
@@ -308,13 +335,13 @@ export class ApplicationController {
   })
   async createEvent(
     @Body() applicationEvent: CreateApplicationEventDto,
-    @CurrentUser() user: FinancialAidUser,
+    @CurrentUser() user: User,
   ): Promise<ApplicationModel> {
     await this.applicationEventService.create(applicationEvent)
 
     const application = await this.applicationService.findById(
       applicationEvent.applicationId,
-      user.service,
+      user.scope.includes(MunicipalitiesFinancialAidScope.employee),
     )
 
     if (!application) {
@@ -324,5 +351,24 @@ export class ApplicationController {
     }
 
     return application
+  }
+
+  @Scopes(
+    MunicipalitiesFinancialAidScope.read,
+    MunicipalitiesFinancialAidScope.employee,
+  )
+  @UseGuards(StaffGuard)
+  @StaffRolesRules(StaffRole.EMPLOYEE)
+  @Post('filter')
+  @ApiOkResponse({
+    type: FilterApplicationsResponse,
+    description: 'Filter applications',
+  })
+  filter(
+    @Body() filters: FilterApplicationsDto,
+    @CurrentStaff() staff: Staff,
+  ): Promise<FilterApplicationsResponse> {
+    this.logger.debug('Application controller: Filter applications')
+    return this.applicationService.filter(filters, staff.municipalityIds)
   }
 }
