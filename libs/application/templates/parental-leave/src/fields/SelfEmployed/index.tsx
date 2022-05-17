@@ -15,10 +15,7 @@ import { useLocale } from '@island.is/localization'
 import { NO, YES } from '../../constants'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 
-export const SelfEmployed: FC<FieldBaseProps> = ({
-  application,
-  field,
-}) => {
+export const SelfEmployed: FC<FieldBaseProps> = ({ application, field }) => {
   const { errors, setValue } = useFormContext()
   const { formatMessage } = useLocale()
   const { id, title, description } = field
