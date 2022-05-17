@@ -13,9 +13,9 @@ export const VehicleCard: FC<Props> = ({ vehicle }) => {
   const { formatMessage } = useLocale()
   const history = useHistory()
   const handleClick = () =>
-    vehicle.permno &&
+    vehicle.regno &&
     history.push(
-      ServicePortalPath.AssetsVehiclesDetail.replace(':id', vehicle.permno),
+      ServicePortalPath.AssetsVehiclesDetail.replace(':id', vehicle.regno),
     )
   if (!vehicle) {
     return null

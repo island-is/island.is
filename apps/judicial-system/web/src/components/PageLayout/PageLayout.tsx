@@ -12,8 +12,7 @@ import {
 import { UserRole, Case } from '@island.is/judicial-system/types'
 import { Sections } from '@island.is/judicial-system-web/src/types'
 import * as Constants from '@island.is/judicial-system/consts'
-import { sections } from '@island.is/judicial-system-web/messages/Core/sections'
-import { pageLayout } from '@island.is/judicial-system-web/messages/Core/pageLayout'
+import { sections, pageLayout } from '@island.is/judicial-system-web/messages'
 
 import { UserContext } from '../UserProvider/UserProvider'
 import Logo from '../Logo/Logo'
@@ -82,27 +81,28 @@ const PageLayout: React.FC<PageProps> = ({
     />
   ) : children ? (
     <Box
-      paddingY={[3, 3, 3, 6]}
+      paddingY={[0, 0, 3, 6]}
+      paddingX={[0, 0, 4]}
       background="purple100"
       className={styles.processContainer}
     >
-      <GridContainer>
-        <GridRow>
-          <GridColumn span={['12/12', '12/12', '9/12', '9/12']}>
+      <GridContainer className={styles.container}>
+        <GridRow direction={['columnReverse', 'columnReverse', 'row']}>
+          <GridColumn span={['12/12', '12/12', '8/12', '8/12']}>
             <Box
               background="white"
               borderColor="white"
-              borderRadius="large"
+              paddingTop={[3, 3, 10, 10]}
               className={styles.processContent}
             >
               {children}
             </Box>
           </GridColumn>
           {showSidepanel && (
-            <GridColumn span={['0', '0', '3/12', '3/12']}>
+            <GridColumn span={['12/12', '12/12', '4/12', '3/12']}>
               <div className={styles.formStepperContainer}>
-                <Box marginLeft={2}>
-                  <Box marginBottom={5}>
+                <Box marginLeft={[0, 0, 2]}>
+                  <Box marginBottom={7} display={['none', 'none', 'block']}>
                     <Logo defaultInstitution={workingCase?.court?.name} />
                   </Box>
                   <FormStepper

@@ -316,6 +316,8 @@ export function formatDefenderCourtDateEmailNotification(
   prosecutorName?: string,
   prosecutorInstitution?: string,
   sessionArrangements?: SessionArrangements,
+  sendRequestToDefender?: boolean,
+  overviewUrl?: string,
 ): string {
   /** contentful strings */
   const cf = notifications.defenderCourtDateEmail
@@ -349,7 +351,7 @@ export function formatDefenderCourtDateEmailNotification(
     prosecutorInstitution: prosecutorInstitution,
   })
 
-  return formatMessage(cf.body, {
+  const body = formatMessage(cf.body, {
     courtCaseNumberText,
     courtDateText,
     courtRoomText,
@@ -358,6 +360,17 @@ export function formatDefenderCourtDateEmailNotification(
     registrarText: registrarText || 'NONE',
     sessionArrangementsText,
   })
+
+  const link = sendRequestToDefender
+    ? formatMessage(cf.link, {
+        defenderHasAccessToRvg: Boolean(overviewUrl),
+        courtName: court?.replace('dómur', 'dómi'),
+        linkStart: `<a href="${overviewUrl}">`,
+        linkEnd: '</a>',
+      })
+    : ''
+
+  return `${body}${link}`
 }
 
 // This function is only intended for case type CUSTODY and ADMISSION_TO_FACILITY
