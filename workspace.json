@@ -6607,6 +6607,27 @@
         }
       }
     },
+    "next-health": {
+      "root": "libs/next/health",
+      "sourceRoot": "libs/next/health/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/next/health/**/*.{ts,tsx,js,jsx}"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/next/health"],
+          "options": {
+            "jestConfig": "libs/next/health/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "next-ids-auth": {
       "root": "libs/next-ids-auth",
       "sourceRoot": "libs/next-ids-auth/src",

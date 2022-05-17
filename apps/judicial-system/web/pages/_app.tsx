@@ -8,9 +8,9 @@ import { ApolloProvider } from '@apollo/client'
 import { QueryGetTranslationsArgs, Query } from '@island.is/api/schema'
 import { LocaleProvider, GET_TRANSLATIONS } from '@island.is/localization'
 import { ToastContainer } from '@island.is/island-ui/core'
+import { withHealthchecks } from '@island.is/next/health'
 
 import { client } from '../graphql'
-import { withHealthchecks } from '../units/Healthchecks/withHealthchecks'
 import FormProvider from '../src/components/FormProvider/FormProvider'
 import { UserProvider, Header, FeatureProvider } from '../src/components'
 

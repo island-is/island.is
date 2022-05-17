@@ -9,7 +9,7 @@ import {
   AppProvider,
   AppLayout,
 } from '@island.is/financial-aid-web/osk/src/components'
-import { withHealthchecks } from '../units/Healthchecks/withHealthchecks'
+import { withHealthchecks } from '@island.is/next/health'
 import { Provider } from 'next-auth/client'
 
 import '@island.is/financial-aid-web/osk/src/styles.css'

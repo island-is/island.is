@@ -3,7 +3,7 @@ import getConfig from 'next/config'
 import { ApolloProvider } from '@apollo/client'
 import React from 'react'
 import { client } from '@island.is/financial-aid-web/veita/graphql'
-import { withHealthchecks } from '@island.is/financial-aid-web/veita/units/Healthchecks/withHealthchecks'
+import { withHealthchecks } from '@island.is/next/health'
 
 import {
   ApplicationFiltersProvider,

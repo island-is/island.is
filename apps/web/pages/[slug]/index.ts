@@ -1,10 +1,12 @@
 import '@island.is/api/mocks'
 
 import getConfig from 'next/config'
-import withApollo from '@island.is/web/graphql/withApollo'
-import { withLocale } from '@island.is/web/i18n'
-import articleScreen from '@island.is/web/screens/Article'
-import { withHealthchecks } from '@island.is/web/units/Healthchecks/withHealthchecks'
+
+import { withHealthchecks } from '@island.is/next/health'
+
+import withApollo from '../../graphql/withApollo'
+import { withLocale } from '../../i18n'
+import articleScreen from '../../screens/Article'
 
 const { serverRuntimeConfig } = getConfig()
 const { graphqlUrl } = serverRuntimeConfig

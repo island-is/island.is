@@ -1,9 +1,12 @@
-import React, { FC } from 'react'
+import getConfig from 'next/config'
 import Head from 'next/head'
+import React, { FC } from 'react'
 import { ApolloProvider } from 'react-apollo'
 
-import initApollo from '../graphql/client'
 import { appWithLocale } from '@island.is/localization'
+import { withHealthchecks } from '@island.is/next/health'
+
+import initApollo from '../graphql/client'
 
 const Layout: FC = ({ children }) => {
   return (
@@ -43,4 +46,10 @@ SupportApplication.getInitialProps = async (appContext) => {
   }
 }
 
-export default appWithLocale(SupportApplication)
+const { serverRuntimeConfig } = getConfig()
+const { graphqlEndpoint, apiUrl } = serverRuntimeConfig
+const externalEndpointDependencies = [graphqlEndpoint, apiUrl]
+
+export default withHealthchecks(externalEndpointDependencies)(
+  appWithLocale(SupportApplication),
+)

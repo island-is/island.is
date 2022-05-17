@@ -1,6 +1,5 @@
-/* eslint-disable  @typescript-eslint/no-explicit-any */
-import dns from 'dns'
 import React from 'react'
+import dns from 'dns'
 
 const checkExternalDependency = (url: string) =>
   new Promise((resolve, reject) => {
@@ -11,10 +10,13 @@ const checkExternalDependency = (url: string) =>
   })
 
 export const withHealthchecks = (externalEndpointDependencies: string[]) => (
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   Component: any,
 ) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const NewComponent = (props: any) => <Component {...props} />
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   NewComponent.getInitialProps = async (context: any) => {
     const ctx = context.ctx ?? context
     /*
