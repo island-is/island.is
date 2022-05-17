@@ -6,7 +6,7 @@ import { Box, Select, Text, Tooltip } from '@island.is/island-ui/core'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { Case } from '@island.is/judicial-system/types'
 import { Option } from '@island.is/island-ui/core'
-import { selectProsecutor as m } from '@island.is/judicial-system-web/messages/Core/selectProsecutor'
+import { selectProsecutor as m } from '@island.is/judicial-system-web/messages'
 
 interface Props {
   workingCase: Case

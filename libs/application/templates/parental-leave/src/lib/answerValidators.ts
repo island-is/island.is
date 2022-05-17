@@ -14,7 +14,7 @@ import {
 } from '@island.is/application/core'
 
 import { Period, Payments } from '../types'
-import { NO, NO_PRIVATE_PENSION_FUND, YES } from '../constants'
+import { NO, NO_PRIVATE_PENSION_FUND, NO_UNION, YES } from '../constants'
 import { isValidEmail } from './isValidEmail'
 import { errorMessages } from './messages'
 import {
@@ -84,8 +84,19 @@ export const answerValidators: Record<string, AnswerValidator> = {
       'payments.privatePensionFundPercentage',
     )
 
+    const usePrivatePensionFund = getValueViaPath(
+      application.answers,
+      'usePrivatePensionFund',
+    )
+
     const buildError = (message: StaticText, path: string) =>
       buildValidationError(`${PAYMENTS}.${path}`)(message)
+
+    if (payments.union !== NO_UNION) {
+      if (payments.union === '') {
+        return buildError(coreErrorMessages.defaultError, 'union')
+      }
+    }
 
     // if privatePensionFund is NO_PRIVATE_PENSION_FUND and privatePensionFundPercentage is an empty string, allow the user to continue.
     // this will only happen when the usePrivatePensionFund field is set to NO
@@ -95,14 +106,22 @@ export const answerValidators: Record<string, AnswerValidator> = {
     )
       return undefined
 
+    if (usePrivatePensionFund === NO || usePrivatePensionFund === YES) {
+      if (payments.privatePensionFund === '') {
+        return buildError(coreErrorMessages.defaultError, 'privatePensionFund')
+      }
+      if (payments.privatePensionFundPercentage === '') {
+        return buildError(
+          coreErrorMessages.defaultError,
+          'privatePensionFundPercentage',
+        )
+      }
+    }
+
     if (
       payments.privatePensionFund === '' ||
       payments.privatePensionFund === NO_PRIVATE_PENSION_FUND
     ) {
-      return buildError(coreErrorMessages.defaultError, 'privatePensionFund')
-    }
-
-    if (!payments.privatePensionFund) {
       return buildError(coreErrorMessages.defaultError, 'privatePensionFund')
     }
 
@@ -123,13 +142,7 @@ export const answerValidators: Record<string, AnswerValidator> = {
       payments.privatePensionFundPercentage !== '2' &&
       payments.privatePensionFundPercentage !== '4'
     ) {
-      return buildError(
-        coreErrorMessages.defaultError,
-        'privatePensionFundPercentage',
-      )
-    }
-
-    if (!payments.privatePensionFundPercentage) {
+      if (usePrivatePensionFund === NO) return undefined
       return buildError(
         coreErrorMessages.defaultError,
         'privatePensionFundPercentage',
