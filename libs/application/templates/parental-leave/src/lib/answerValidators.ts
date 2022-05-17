@@ -142,6 +142,7 @@ export const answerValidators: Record<string, AnswerValidator> = {
       payments.privatePensionFundPercentage !== '2' &&
       payments.privatePensionFundPercentage !== '4'
     ) {
+      if (usePrivatePensionFund === NO) return undefined
       return buildError(
         coreErrorMessages.defaultError,
         'privatePensionFundPercentage',
