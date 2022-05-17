@@ -14,36 +14,23 @@ import { DataProviderTypes } from '../lib/types'
 
 import * as m from '../lib/messages'
 
-export const Prerequisites: Form = buildForm({
+export const PrerequisitesSpouse: Form = buildForm({
   id: 'FinancialAidApplication',
   title: m.application.name,
   mode: FormModes.APPLYING,
   children: [
     buildSection({
-      id: 'externalData',
+      id: 'externalDataSpouse',
       title: m.section.dataGathering,
       children: [
         buildExternalDataProvider({
           title: m.externalData.general.pageTitle,
-          id: 'approveExternalData',
+          id: 'approveExternalDataSpouse',
           subTitle: m.externalData.general.subTitle,
-          description: m.externalData.general.description,
           checkboxLabel: m.externalData.general.checkboxLabel,
           dataProviders: [
             buildDataProviderItem({
-              id: 'nationalRegistry',
-              type: DataProviderTypes.NationalRegistry,
-              title: m.externalData.applicant.title,
-              subTitle: m.externalData.applicant.subTitle,
-            }),
-            buildDataProviderItem({
-              id: 'veita',
-              type: DataProviderTypes.Veita,
-              title: '',
-              subTitle: undefined,
-            }),
-            buildDataProviderItem({
-              id: 'taxDataFetch',
+              id: 'taxDataFetchSpouse',
               type: DataProviderTypes.TaxDataFetch,
               title: m.externalData.taxData.title,
               subTitle: m.externalData.taxData.dataInfo,
@@ -65,8 +52,8 @@ export const Prerequisites: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'aboutForm',
-      title: m.aboutForm.general.sectionTitle,
+      id: 'aboutSpouseForm',
+      title: m.aboutSpouseForm.general.sectionTitle,
       children: [
         buildMultiField({
           id: 'acceptContract',
@@ -74,8 +61,8 @@ export const Prerequisites: Form = buildForm({
           children: [
             buildCustomField({
               id: 'acceptContract',
-              title: m.aboutForm.general.pageTitle,
-              component: 'AboutForm',
+              title: m.aboutSpouseForm.general.pageTitle,
+              component: 'AboutSpouseForm',
             }),
             buildSubmitField({
               id: 'toDraft',
