@@ -142,6 +142,10 @@ export const RskProcuring = new XroadConf({
       prod: 'IS/GOV/5402696029/Skatturinn/prokura-v1',
     },
   },
+  secrets: {
+    RSK_USERNAME: '/k8s/xroad/client/RSK/USERNAME',
+    RSK_PASSWORD: '/k8s/xroad/client/RSK/PASSWORD',
+  },
 })
 
 export const Payment = new XroadConf({

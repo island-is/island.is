@@ -4,16 +4,12 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
   return service('services-auth-admin-api')
     .namespace('identity-server-admin')
     .image('services-auth-admin-api')
+    .postgres({
+      username: 'servicesauth',
+      name: 'servicesauth',
+      passwordSecret: '/k8s/services-auth/api/DB_PASSWORD',
+    })
     .env({
-      DB_HOST: 'postgres-ids.internal',
-      DB_USER: 'servicesauth',
-      DB_NAME: 'servicesauth',
-      DB_REPLICAS_HOST: {
-        dev:
-          'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com',
-        staging: 'postgres-ids.internal',
-        prod: 'postgres-ids.internal',
-      },
       IDS_ISSUER: {
         dev: 'https://identity-server.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',
@@ -39,9 +35,6 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
         ],
         public: true,
       },
-    })
-    .secrets({
-      DB_PASS: '/k8s/services-auth/api/DB_PASSWORD',
     })
     .readiness('/liveness')
     .liveness('/liveness')

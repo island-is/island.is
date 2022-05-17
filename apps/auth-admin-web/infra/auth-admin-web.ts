@@ -30,8 +30,8 @@ export const serviceSetup = (): ServiceBuilder<'auth-admin-web'> => {
     .ingress({
       primary: {
         host: {
-          dev: 'identity-server.dev01.devland.is',
-          staging: 'identity-server.staging01.devland.is',
+          dev: 'identity-server',
+          staging: 'identity-server',
           prod: 'innskra.island.is',
         },
         paths: [

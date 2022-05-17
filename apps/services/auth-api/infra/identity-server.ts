@@ -1,6 +1,11 @@
-import { service, ServiceBuilder } from '../../../infra/src/dsl/dsl'
+import { service, ServiceBuilder, ref } from '../../../../infra/src/dsl/dsl'
 
-export const serviceSetup = (): ServiceBuilder<'identity-server'> => {
+/**
+ * This setup is for the Identity Server, which is hosted in a different repository - https://github.com/island-is/identity-server.web
+ */
+export const serviceSetup = (services: {
+  authApi: ServiceBuilder<'services-auth-api'>
+}): ServiceBuilder<'identity-server'> => {
   return service('identity-server')
     .namespace('identity-server')
     .image('identity-server')
@@ -63,17 +68,11 @@ export const serviceSetup = (): ServiceBuilder<'identity-server'> => {
         staging: '',
         prod: '',
       },
-      PersistenceSettings__BaseAddress: {
-        dev: 'http://web-services-auth-api',
-        staging: 'http://web-services-auth-api',
-        prod: 'http://web-services-auth-api',
-      },
-      PersistenceSettings__UserProfileBaseAddress: {
-        dev: 'http://web-service-portal-api.service-portal.svc.cluster.local',
-        staging:
-          'http://web-service-portal-api.service-portal.svc.cluster.local',
-        prod: 'http://web-service-portal-api.service-portal.svc.cluster.local',
-      },
+      PersistenceSettings__BaseAddress: ref(
+        (h) => `http://${h.svc(services.authApi)}`,
+      ),
+      PersistenceSettings__UserProfileBaseAddress:
+        'http://web-service-portal-api.service-portal.svc.cluster.local',
       Application__MinCompletionPortThreads: {
         dev: '',
         staging: '',
@@ -95,8 +94,8 @@ export const serviceSetup = (): ServiceBuilder<'identity-server'> => {
     .ingress({
       primary: {
         host: {
-          dev: 'identity-server.dev01.devland.is',
-          staging: 'identity-server.staging01.devland.is',
+          dev: 'identity-server',
+          staging: 'identity-server',
           prod: 'innskra.island.is',
         },
         paths: [

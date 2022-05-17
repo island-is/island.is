@@ -176,7 +176,7 @@ namespaces:
 services-auth-admin-api:
   enabled: true
   env:
-    DB_HOST: 'postgres-ids.internal'
+    DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'servicesauth'
     DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
     DB_USER: 'servicesauth'
@@ -235,7 +235,10 @@ services-auth-api:
   enabled: true
   env:
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10006/Skatturinn/ft-v1'
+    DB_HOST: 'postgres-applications.internal'
+    DB_NAME: 'servicesauth'
     DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
+    DB_USER: 'servicesauth'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     IDS_ISSUER: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=208'
@@ -244,14 +247,12 @@ services-auth-api:
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
     XROAD_CLIENT_ID: 'IS-DEV/GOV/10000/island-is-client'
-    XROAD_NATIONAL_REGISTRY_API_PATH: '/SKRA-Protected/Einstaklingar-v1'
-    XROAD_NATIONAL_REGISTRY_CLIENT_ID: 'IS-DEV/GOV/10000/island-is-client'
-    XROAD_NATIONAL_REGISTRY_MEMBER_CODE: '10001'
     XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1'
-    XROAD_RSK_MEMBER_CODE: '10006'
     XROAD_RSK_PROCURING_PATH: 'IS-DEV/GOV/10006/Skatturinn/prokura-v1'
     XROAD_RSK_PROCURING_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
+    XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1'
+    XROAD_TJODSKRA_MEMBER_CODE: '10001'
     XROAD_TLS_BASE_PATH: 'https://securityserver.dev01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
   grantNamespaces: []
@@ -315,12 +316,13 @@ services-auth-api:
             cpu: '100m'
             memory: '128Mi'
     env:
-      DB_HOST: 'postgres-ids.internal'
+      DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'servicesauth'
-      DB_REPLICAS_HOST: 'postgres-ids.internal'
+      DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
       DB_USER: 'servicesauth'
       SERVERSIDE_FEATURES_ON: ''
-    secrets: {}
+    secrets:
+      DB_PASS: '/k8s/services-auth/api/DB_PASSWORD'
   namespace: 'identity-server'
   replicaCount:
     default: 2
@@ -345,9 +347,9 @@ services-auth-api:
 services-auth-public-api:
   enabled: true
   env:
-    DB_HOST: 'postgres-ids.internal'
+    DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'servicesauth'
-    DB_REPLICAS_HOST: 'postgres-ids.internal'
+    DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
     DB_USER: 'servicesauth'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
@@ -359,14 +361,12 @@ services-auth-public-api:
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
     XROAD_CLIENT_ID: 'IS-DEV/GOV/10000/island-is-client'
     XROAD_NATIONAL_REGISTRY_ACTOR_TOKEN: 'true'
-    XROAD_NATIONAL_REGISTRY_API_PATH: '/SKRA-Protected/Einstaklingar-v1'
-    XROAD_NATIONAL_REGISTRY_CLIENT_ID: 'IS-DEV/GOV/10000/island-is-client'
-    XROAD_NATIONAL_REGISTRY_MEMBER_CODE: '10001'
     XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1'
-    XROAD_RSK_MEMBER_CODE: '10006'
     XROAD_RSK_PROCURING_PATH: 'IS-DEV/GOV/10006/Skatturinn/prokura-v1'
     XROAD_RSK_PROCURING_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
+    XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1'
+    XROAD_TJODSKRA_MEMBER_CODE: '10001'
     XROAD_TLS_BASE_PATH: 'https://securityserver.dev01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
   grantNamespaces: []
