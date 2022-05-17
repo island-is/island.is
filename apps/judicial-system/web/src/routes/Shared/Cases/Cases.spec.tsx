@@ -98,9 +98,7 @@ const mockCasesQuery = [
             modified: '2021-02-16T19:51:39.466Z',
             state: CaseState.SUBMITTED,
             policeCaseNumber: '008-2020-X',
-            defendants: [
-              { nationalId: '10.10.2000', name: 'Moe', noNationalId: true },
-            ],
+            defendants: [{ nationalId: '10.10.2000', name: 'Moe' }],
             validToDate: '2020-11-11T12:31:00.000Z',
           },
         ],
@@ -123,12 +121,7 @@ const mockCourtCasesQuery = [
             created: '2020-09-16T19:50:08.033Z',
             state: CaseState.DRAFT,
             policeCaseNumber: 'string',
-            defendants: [
-              {
-                nationalId: 'string',
-                name: 'Jon Harring Sr.',
-              },
-            ],
+            defendants: [{ nationalId: 'string', name: 'Jon Harring Sr.' }],
             validToDate: null,
             parentCase: {
               id: '1337',
@@ -429,6 +422,7 @@ describe('Cases', () => {
       })
     })
   })
+
   describe('All user types - sorting', () => {
     test('should order the table data by accused name in ascending order when the user clicks the accused name table header', async () => {
       render(
