@@ -8,7 +8,14 @@ import {
   ApplicationStatus,
 } from '@island.is/application/core'
 import ParentalLeaveTemplate from './ParentalLeaveTemplate'
-import { NO, SPOUSE, States as ApplicationStates, YES } from '../constants'
+import {
+  NO,
+  NO_PRIVATE_PENSION_FUND,
+  NO_UNION,
+  SPOUSE,
+  States as ApplicationStates,
+  YES,
+} from '../constants'
 
 function buildApplication(data: {
   answers?: FormValue
@@ -327,6 +334,44 @@ describe('Parental Leave Application Template', () => {
         expect(newApplication.answers.personalAllowanceFromSpouse).toEqual(
           answer,
         )
+      })
+    })
+
+    describe('privatePensionFund and privatePensionFundPercentage', () => {
+      it('should set privatePensionFund and privatePensionFundPercentage to NO_PRIVATE_PENSION_FUND and 0 if use usePrivatePensionFund is NO', () => {
+        const helper = new ApplicationTemplateHelper(
+          buildApplication({
+            answers: {
+              payments: {
+                bank: '123454312300',
+                pensionFund: 'id-frjalsi',
+                union: NO_UNION,
+                privatePensionFund: '',
+                privatePensionFundPercentage: '',
+              },
+              usePrivatePensionFund: NO,
+              employer: {
+                isSelfEmployed: 'no',
+              },
+            },
+          }),
+          ParentalLeaveTemplate,
+        )
+
+        const answer = {
+          bank: '123454312300',
+          pensionFund: 'id-frjalsi',
+          union: NO_UNION,
+          privatePensionFund: NO_PRIVATE_PENSION_FUND,
+          privatePensionFundPercentage: '0',
+        }
+
+        const [hasChanged, _, newApplication] = helper.changeState({
+          type: DefaultEvents.SUBMIT,
+        })
+
+        expect(hasChanged).toBe(true)
+        expect(newApplication.answers.payments).toEqual(answer)
       })
     })
   })
