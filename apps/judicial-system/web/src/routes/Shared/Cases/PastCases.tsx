@@ -77,26 +77,19 @@ const PastCases: React.FC<Props> = (props) => {
               <Box component="span" display="block">
                 {theCase.defendants[0].name}
               </Box>
-              {theCase.defendants.length === 1 ? (
-                (!theCase.defendants[0].noNationalId ||
-                  theCase.defendants[0].nationalId) && (
-                  <Text>
-                    <Text as="span" variant="small" color="dark400">
-                      {`${theCase.defendants[0].noNationalId ? 'fd.' : 'kt.'} ${
-                        theCase.defendants[0].nationalId
-                          ? theCase.defendants[0].noNationalId
-                            ? theCase.defendants[0].nationalId
-                            : formatNationalId(theCase.defendants[0].nationalId)
-                          : '-'
-                      }`}
-                    </Text>
-                  </Text>
-                )
-              ) : (
-                <Text as="span" variant="small" color="dark400">
-                  {`+ ${theCase.defendants.length - 1}`}
-                </Text>
-              )}
+              <Text as="span" variant="small">
+                {theCase.defendants.length === 1
+                  ? (!theCase.defendants[0].noNationalId ||
+                      theCase.defendants[0].nationalId) &&
+                    `${theCase.defendants[0].noNationalId ? 'fd.' : 'kt.'} ${
+                      theCase.defendants[0].nationalId
+                        ? theCase.defendants[0].noNationalId
+                          ? theCase.defendants[0].nationalId
+                          : formatNationalId(theCase.defendants[0].nationalId)
+                        : '-'
+                    }`
+                  : `+ ${theCase.defendants.length - 1}`}
+              </Text>
             </>
           ) : (
             <Text as="span">-</Text>

@@ -18,396 +18,144 @@ const TableSkeleton = () => {
         <thead className={styles.thead}>
           <tr>
             <th className={styles.th}>
-              <Text fontWeight="regular">
-                <SkeletonLoader
-                  width={104}
-                  height={32}
-                  borderRadius="standard"
-                />
-              </Text>
+              <SkeletonLoader width={104} height={32} borderRadius="standard" />
             </th>
             <th className={styles.th}>
-              <Text fontWeight="regular">
-                <SkeletonLoader
-                  width={104}
-                  height={32}
-                  borderRadius="standard"
-                />
-              </Text>
+              <SkeletonLoader width={104} height={32} borderRadius="standard" />
             </th>
             <th className={styles.th}>
-              <Text fontWeight="regular">
-                <SkeletonLoader
-                  width={104}
-                  height={32}
-                  borderRadius="standard"
-                />
-              </Text>
+              <SkeletonLoader width={104} height={32} borderRadius="standard" />
             </th>
             <th className={styles.th}>
-              <Text fontWeight="regular">
-                <SkeletonLoader
-                  width={104}
-                  height={32}
-                  borderRadius="standard"
-                />
-              </Text>
+              <SkeletonLoader width={104} height={32} borderRadius="standard" />
             </th>
             <th className={styles.th}>
-              <Text fontWeight="regular">
-                <SkeletonLoader
-                  width={104}
-                  height={32}
-                  borderRadius="standard"
-                />
-              </Text>
+              <SkeletonLoader width={104} height={32} borderRadius="standard" />
             </th>
             <th className={styles.th}>
-              <Text fontWeight="regular">
-                <SkeletonLoader
-                  width={104}
-                  height={32}
-                  borderRadius="standard"
-                />
-              </Text>
+              <SkeletonLoader width={104} height={32} borderRadius="standard" />
             </th>
           </tr>
         </thead>
         <tbody>
           <tr className={styles.tableRowContainer}>
             <td className={styles.td}>
-              <Text>
-                <SkeletonLoader
-                  width={104}
-                  height={32}
-                  borderRadius="standard"
-                />
-              </Text>
+              <SkeletonLoader width={104} height={32} borderRadius="standard" />
             </td>
             <td className={styles.td}>
-              <Text>
-                <SkeletonLoader
-                  width={104}
-                  height={32}
-                  borderRadius="standard"
-                />
-              </Text>
+              <SkeletonLoader width={104} height={32} borderRadius="standard" />
             </td>
             <td className={styles.td}>
-              <Text>
-                <SkeletonLoader
-                  width={104}
-                  height={32}
-                  borderRadius="standard"
-                />
-              </Text>
+              <SkeletonLoader width={104} height={32} borderRadius="standard" />
             </td>
             <td className={styles.td}>
-              <Text>
-                <SkeletonLoader
-                  width={104}
-                  height={32}
-                  borderRadius="standard"
-                />
-              </Text>
+              <SkeletonLoader width={104} height={32} borderRadius="standard" />
             </td>
             <td className={styles.td}>
-              <Text>
-                <SkeletonLoader
-                  width={104}
-                  height={32}
-                  borderRadius="standard"
-                />
-              </Text>
+              <SkeletonLoader width={104} height={32} borderRadius="standard" />
             </td>
             <td className={styles.td}>
-              <Text>
-                <SkeletonLoader
-                  width={104}
-                  height={32}
-                  borderRadius="standard"
-                />
-              </Text>
+              <SkeletonLoader width={104} height={32} borderRadius="standard" />
             </td>
           </tr>
           <tr className={styles.tableRowContainer}>
             <td className={styles.td}>
-              <Text>
-                <SkeletonLoader
-                  width={104}
-                  height={32}
-                  borderRadius="standard"
-                />
-              </Text>
+              <SkeletonLoader width={104} height={32} borderRadius="standard" />
             </td>
             <td className={styles.td}>
-              <Text>
-                <SkeletonLoader
-                  width={104}
-                  height={32}
-                  borderRadius="standard"
-                />
-              </Text>
+              <SkeletonLoader width={104} height={32} borderRadius="standard" />
             </td>
             <td className={styles.td}>
-              <Text>
-                <SkeletonLoader
-                  width={104}
-                  height={32}
-                  borderRadius="standard"
-                />
-              </Text>
+              <SkeletonLoader width={104} height={32} borderRadius="standard" />
             </td>
             <td className={styles.td}>
-              <Text>
-                <SkeletonLoader
-                  width={104}
-                  height={32}
-                  borderRadius="standard"
-                />
-              </Text>
+              <SkeletonLoader width={104} height={32} borderRadius="standard" />
             </td>
             <td className={styles.td}>
-              <Text>
-                <SkeletonLoader
-                  width={104}
-                  height={32}
-                  borderRadius="standard"
-                />
-              </Text>
+              <SkeletonLoader width={104} height={32} borderRadius="standard" />
             </td>
             <td className={styles.td}>
-              <Text>
-                <SkeletonLoader
-                  width={104}
-                  height={32}
-                  borderRadius="standard"
-                />
-              </Text>
+              <SkeletonLoader width={104} height={32} borderRadius="standard" />
             </td>
           </tr>
           <tr className={styles.tableRowContainer}>
             <td className={styles.td}>
-              <Text>
-                <SkeletonLoader
-                  width={104}
-                  height={32}
-                  borderRadius="standard"
-                />
-              </Text>
+              <SkeletonLoader width={104} height={32} borderRadius="standard" />
             </td>
             <td className={styles.td}>
-              <Text>
-                <SkeletonLoader
-                  width={104}
-                  height={32}
-                  borderRadius="standard"
-                />
-              </Text>
+              <SkeletonLoader width={104} height={32} borderRadius="standard" />
             </td>
             <td className={styles.td}>
-              <Text>
-                <SkeletonLoader
-                  width={104}
-                  height={32}
-                  borderRadius="standard"
-                />
-              </Text>
+              <SkeletonLoader width={104} height={32} borderRadius="standard" />
             </td>
             <td className={styles.td}>
-              <Text>
-                <SkeletonLoader
-                  width={104}
-                  height={32}
-                  borderRadius="standard"
-                />
-              </Text>
+              <SkeletonLoader width={104} height={32} borderRadius="standard" />
             </td>
             <td className={styles.td}>
-              <Text>
-                <SkeletonLoader
-                  width={104}
-                  height={32}
-                  borderRadius="standard"
-                />
-              </Text>
+              <SkeletonLoader width={104} height={32} borderRadius="standard" />
             </td>
             <td className={styles.td}>
-              <Text>
-                <SkeletonLoader
-                  width={104}
-                  height={32}
-                  borderRadius="standard"
-                />
-              </Text>
+              <SkeletonLoader width={104} height={32} borderRadius="standard" />
             </td>
           </tr>
           <tr className={styles.tableRowContainer}>
             <td className={styles.td}>
-              <Text>
-                <SkeletonLoader
-                  width={104}
-                  height={32}
-                  borderRadius="standard"
-                />
-              </Text>
+              <SkeletonLoader width={104} height={32} borderRadius="standard" />
             </td>
             <td className={styles.td}>
-              <Text>
-                <SkeletonLoader
-                  width={104}
-                  height={32}
-                  borderRadius="standard"
-                />
-              </Text>
+              <SkeletonLoader width={104} height={32} borderRadius="standard" />
             </td>
             <td className={styles.td}>
-              <Text>
-                <SkeletonLoader
-                  width={104}
-                  height={32}
-                  borderRadius="standard"
-                />
-              </Text>
+              <SkeletonLoader width={104} height={32} borderRadius="standard" />
             </td>
             <td className={styles.td}>
-              <Text>
-                <SkeletonLoader
-                  width={104}
-                  height={32}
-                  borderRadius="standard"
-                />
-              </Text>
+              <SkeletonLoader width={104} height={32} borderRadius="standard" />
             </td>
             <td className={styles.td}>
-              <Text>
-                <SkeletonLoader
-                  width={104}
-                  height={32}
-                  borderRadius="standard"
-                />
-              </Text>
+              <SkeletonLoader width={104} height={32} borderRadius="standard" />
             </td>
             <td className={styles.td}>
-              <Text>
-                <SkeletonLoader
-                  width={104}
-                  height={32}
-                  borderRadius="standard"
-                />
-              </Text>
+              <SkeletonLoader width={104} height={32} borderRadius="standard" />
             </td>
           </tr>
           <tr className={styles.tableRowContainer}>
             <td className={styles.td}>
-              <Text>
-                <SkeletonLoader
-                  width={104}
-                  height={32}
-                  borderRadius="standard"
-                />
-              </Text>
+              <SkeletonLoader width={104} height={32} borderRadius="standard" />
             </td>
             <td className={styles.td}>
-              <Text>
-                <SkeletonLoader
-                  width={104}
-                  height={32}
-                  borderRadius="standard"
-                />
-              </Text>
+              <SkeletonLoader width={104} height={32} borderRadius="standard" />
             </td>
             <td className={styles.td}>
-              <Text>
-                <SkeletonLoader
-                  width={104}
-                  height={32}
-                  borderRadius="standard"
-                />
-              </Text>
+              <SkeletonLoader width={104} height={32} borderRadius="standard" />
             </td>
             <td className={styles.td}>
-              <Text>
-                <SkeletonLoader
-                  width={104}
-                  height={32}
-                  borderRadius="standard"
-                />
-              </Text>
+              <SkeletonLoader width={104} height={32} borderRadius="standard" />
             </td>
             <td className={styles.td}>
-              <Text>
-                <SkeletonLoader
-                  width={104}
-                  height={32}
-                  borderRadius="standard"
-                />
-              </Text>
+              <SkeletonLoader width={104} height={32} borderRadius="standard" />
             </td>
             <td className={styles.td}>
-              <Text>
-                <SkeletonLoader
-                  width={104}
-                  height={32}
-                  borderRadius="standard"
-                />
-              </Text>
+              <SkeletonLoader width={104} height={32} borderRadius="standard" />
             </td>
           </tr>
           <tr className={styles.tableRowContainer}>
             <td className={styles.td}>
-              <Text>
-                <SkeletonLoader
-                  width={104}
-                  height={32}
-                  borderRadius="standard"
-                />
-              </Text>
+              <SkeletonLoader width={104} height={32} borderRadius="standard" />
             </td>
             <td className={styles.td}>
-              <Text>
-                <SkeletonLoader
-                  width={104}
-                  height={32}
-                  borderRadius="standard"
-                />
-              </Text>
+              <SkeletonLoader width={104} height={32} borderRadius="standard" />
             </td>
             <td className={styles.td}>
-              <Text>
-                <SkeletonLoader
-                  width={104}
-                  height={32}
-                  borderRadius="standard"
-                />
-              </Text>
+              <SkeletonLoader width={104} height={32} borderRadius="standard" />
             </td>
             <td className={styles.td}>
-              <Text>
-                <SkeletonLoader
-                  width={104}
-                  height={32}
-                  borderRadius="standard"
-                />
-              </Text>
+              <SkeletonLoader width={104} height={32} borderRadius="standard" />
             </td>
             <td className={styles.td}>
-              <Text>
-                <SkeletonLoader
-                  width={104}
-                  height={32}
-                  borderRadius="standard"
-                />
-              </Text>
+              <SkeletonLoader width={104} height={32} borderRadius="standard" />
             </td>
             <td className={styles.td}>
-              <Text>
-                <SkeletonLoader
-                  width={104}
-                  height={32}
-                  borderRadius="standard"
-                />
-              </Text>
+              <SkeletonLoader width={104} height={32} borderRadius="standard" />
             </td>
           </tr>
         </tbody>

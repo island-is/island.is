@@ -98,7 +98,9 @@ const mockCasesQuery = [
             modified: '2021-02-16T19:51:39.466Z',
             state: CaseState.SUBMITTED,
             policeCaseNumber: '008-2020-X',
-            defendants: [{ nationalId: '012345-6789', name: 'Moe' }],
+            defendants: [
+              { nationalId: '10.10.2000', name: 'Moe', noNationalId: true },
+            ],
             validToDate: '2020-11-11T12:31:00.000Z',
           },
         ],
@@ -121,7 +123,12 @@ const mockCourtCasesQuery = [
             created: '2020-09-16T19:50:08.033Z',
             state: CaseState.DRAFT,
             policeCaseNumber: 'string',
-            defendants: [{ nationalId: 'string', name: 'Jon Harring Sr.' }],
+            defendants: [
+              {
+                nationalId: 'string',
+                name: 'Jon Harring Sr.',
+              },
+            ],
             validToDate: null,
             parentCase: {
               id: '1337',
@@ -420,6 +427,28 @@ describe('Cases', () => {
       await waitFor(() => {
         expect(screen.getAllByRole('table').length).toEqual(2)
       })
+    })
+  })
+
+  describe('All user types - past cases', () => {
+    test("should display defendants birthday if they don't have a national id and ssn if they do", async () => {
+      render(
+        <MockedProvider
+          mocks={[...mockCasesQuery, ...mockProsecutorQuery]}
+          addTypename={false}
+        >
+          <UserProvider authenticated={true}>
+            <LocaleProvider locale="is" messages={{}}>
+              <Cases />
+            </LocaleProvider>
+          </UserProvider>
+        </MockedProvider>,
+      )
+
+      const tableRows = await screen.findAllByTestId('custody-cases-table-row')
+
+      expect(tableRows[0]).toHaveTextContent('fd. 10.10.2000')
+      expect(tableRows[1]).toHaveTextContent('kt. 012345-6789')
     })
   })
 
