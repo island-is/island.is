@@ -7,10 +7,11 @@ import {
   BasicDataProvider,
   CustomTemplateFindQuery,
 } from '../types/BasicDataProvider'
-import { FormatMessage, StaticText } from '../types/Form'
+import { StaticText } from '../types/Form'
 import { coreErrorMessages } from './messages'
 import isObject from 'lodash/isObject'
 import isString from 'lodash/isString'
+import { FormatMessage } from '../types/external'
 
 export const isTranslationObject = (text?: StaticText) => {
   if (!isObject(text)) {

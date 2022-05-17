@@ -24,6 +24,8 @@ import {
   NO,
   MANUAL,
   SPOUSE,
+  NO_PRIVATE_PENSION_FUND,
+  NO_UNION,
 } from '../constants'
 import { dataSchema } from './dataSchema'
 import { answerValidators } from './answerValidators'
@@ -105,6 +107,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           'setOtherParentIdIfSelectedSpouse',
           'clearPersonalAllowanceIfUsePersonalAllowanceIsNo',
           'clearSpouseAllowanceIfUseSpouseAllowanceIsNo',
+          'setPrivatePensionValuesIfUsePrivatePensionFundIsNO',
+          'setUnionValuesIfUseUnionIsNO',
+          'setPersonalUsageToHundredIfUseAsMuchAsPossibleIsYes',
+          'setSpouseUsageToHundredIfUseAsMuchAsPossibleIsYes',
         ],
         meta: {
           name: States.DRAFT,
@@ -194,6 +200,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 ),
               read: 'all',
               write: 'all',
+              delete: true,
             },
           ],
         },
@@ -233,6 +240,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 ),
               read: 'all',
               write: 'all',
+              delete: true,
             },
           ],
         },
@@ -262,6 +270,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 ),
               read: 'all',
               write: 'all',
+              delete: true,
             },
           ],
         },
@@ -316,6 +325,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 ),
               read: 'all',
               write: 'all',
+              delete: true,
             },
           ],
         },
@@ -346,6 +356,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 ),
               read: 'all',
               write: 'all',
+              delete: true,
             },
           ],
         },
@@ -713,6 +724,76 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           (answers.spouseUsage || answers.spouseUseAsMuchAsPossible)
         ) {
           set(application.answers, 'personalAllowanceFromSpouse', null)
+        }
+
+        return context
+      }),
+      setPrivatePensionValuesIfUsePrivatePensionFundIsNO: assign((context) => {
+        const { application } = context
+
+        const answers = getApplicationAnswers(application.answers)
+
+        if (
+          answers.usePrivatePensionFund === NO &&
+          answers.privatePensionFund !== NO_PRIVATE_PENSION_FUND
+        ) {
+          set(
+            application.answers,
+            'payments.privatePensionFund',
+            NO_PRIVATE_PENSION_FUND,
+          )
+        }
+
+        if (
+          answers.usePrivatePensionFund === NO &&
+          answers.privatePensionFundPercentage !== '0'
+        ) {
+          set(application.answers, 'payments.privatePensionFundPercentage', '0')
+        }
+
+        return context
+      }),
+      setUnionValuesIfUseUnionIsNO: assign((context) => {
+        const { application } = context
+
+        const answers = getApplicationAnswers(application.answers)
+
+        if (answers.useUnion === NO && answers.union !== NO_UNION) {
+          set(application.answers, 'payments.union', NO_UNION)
+        }
+
+        return context
+      }),
+      setPersonalUsageToHundredIfUseAsMuchAsPossibleIsYes: assign((context) => {
+        const { application } = context
+
+        const answers = getApplicationAnswers(application.answers)
+
+        if (
+          answers.personalUseAsMuchAsPossible === YES &&
+          answers.personalUsage !== '100'
+        ) {
+          set(application.answers, 'personalAllowance', {
+            useAsMuchAsPossible: YES,
+            usage: '100',
+          })
+        }
+
+        return context
+      }),
+      setSpouseUsageToHundredIfUseAsMuchAsPossibleIsYes: assign((context) => {
+        const { application } = context
+
+        const answers = getApplicationAnswers(application.answers)
+
+        if (
+          answers.spouseUseAsMuchAsPossible === YES &&
+          answers.spouseUsage !== '100'
+        ) {
+          set(application.answers, 'personalAllowanceFromSpouse', {
+            useAsMuchAsPossible: YES,
+            usage: '100',
+          })
         }
 
         return context

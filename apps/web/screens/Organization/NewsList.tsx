@@ -413,7 +413,7 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
     datesMap: createDatesMap(newsDatesList),
     selectedPage,
     namespace,
-    ...getThemeConfig(organizationPage.theme),
+    ...getThemeConfig(organizationPage.theme, organizationPage.slug),
   }
 }
 

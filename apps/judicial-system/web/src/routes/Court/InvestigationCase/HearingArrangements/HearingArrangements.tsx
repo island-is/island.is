@@ -11,7 +11,7 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
+import { titles } from '@island.is/judicial-system-web/messages'
 
 import HearingArrangementsForm from './HearingArrangementsForm'
 const HearingArrangements = () => {
@@ -26,28 +26,28 @@ const HearingArrangements = () => {
   const { formatMessage } = useIntl()
   const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
 
-  const { autofill, autofillSessionArrangements } = useCase()
+  const { autofill } = useCase()
 
   useEffect(() => {
     if (isCaseUpToDate && !initialAutoFillDone) {
-      if (workingCase.requestedCourtDate) {
-        autofill('courtDate', workingCase.requestedCourtDate, workingCase)
-      }
-
-      if (workingCase.defenderName) {
-        autofillSessionArrangements(
-          'sessionArrangements',
-          SessionArrangements.ALL_PRESENT,
-          workingCase,
-        )
-      }
+      autofill(
+        [
+          { key: 'courtDate', value: workingCase.requestedCourtDate },
+          {
+            key: 'sessionArrangements',
+            value: workingCase.defenderName
+              ? SessionArrangements.ALL_PRESENT
+              : undefined,
+          },
+        ],
+        workingCase,
+        setWorkingCase,
+      )
 
       setInitialAutoFillDone(true)
-      setWorkingCase({ ...workingCase })
     }
   }, [
     autofill,
-    autofillSessionArrangements,
     initialAutoFillDone,
     isCaseUpToDate,
     setWorkingCase,

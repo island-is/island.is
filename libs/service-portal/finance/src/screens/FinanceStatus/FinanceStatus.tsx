@@ -1,38 +1,53 @@
-import React from 'react'
-import flatten from 'lodash/flatten'
 import { gql, useQuery } from '@apollo/client'
-import { ServicePortalModuleComponent, m } from '@island.is/service-portal/core'
-import { GridColumn, GridRow, Table as T } from '@island.is/island-ui/core'
 import subYears from 'date-fns/subYears'
-import { Query } from '@island.is/api/schema'
+import flatten from 'lodash/flatten'
+import React from 'react'
 import { defineMessage } from 'react-intl'
+
+import { Query } from '@island.is/api/schema'
 import {
-  Box,
-  Text,
-  Stack,
-  Button,
-  SkeletonLoader,
   AlertBanner,
+  Box,
+  Button,
+  GridColumn,
+  GridRow,
+  SkeletonLoader,
+  Stack,
+  Table as T,
+  Text,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import {
+  amountFormat,
+  ExpandHeader,
+  ExpandRow,
+  formSubmit,
+  m,
+  ServicePortalModuleComponent,
+} from '@island.is/service-portal/core'
+
+import DropdownExport from '../../components/DropdownExport/DropdownExport'
+import FinanceStatusTableRow from '../../components/FinanceStatusTableRow/FinanceStatusTableRow'
+import { exportGreidslustadaFile } from '../../utils/filesGreidslustada'
 import {
   FinanceStatusDataType,
   FinanceStatusOrganizationType,
 } from './FinanceStatusData.types'
-import {
-  ExpandHeader,
-  ExpandRow,
-  amountFormat,
-  formSubmit,
-} from '@island.is/service-portal/core'
-import { exportGreidslustadaFile } from '../../utils/filesGreidslustada'
-import DropdownExport from '../../components/DropdownExport/DropdownExport'
-import FinanceStatusTableRow from '../../components/FinanceStatusTableRow/FinanceStatusTableRow'
-import { Link } from 'react-router-dom'
 
 const GetFinanceStatusQuery = gql`
   query GetFinanceStatusQuery {
     getFinanceStatus
+  }
+`
+
+const GetDebtStatusQuery = gql`
+  query FinanceStatusGetDebtStatus {
+    getDebtStatus {
+      myDebtStatus {
+        approvedSchedule
+        possibleToSchedule
+      }
+    }
   }
 `
 
@@ -46,6 +61,19 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
   const { loading, error, ...statusQuery } = useQuery<Query>(
     GetFinanceStatusQuery,
   )
+
+  const { data: debtStatusData, loading: debtStatusLoading } = useQuery<Query>(
+    GetDebtStatusQuery,
+  )
+
+  const debtStatus = debtStatusData?.getDebtStatus?.myDebtStatus
+  let scheduleButtonVisible = false
+  if (debtStatus && debtStatus.length > 0 && !debtStatusLoading) {
+    scheduleButtonVisible =
+      debtStatus[0]?.approvedSchedule > 0 ||
+      debtStatus[0]?.possibleToSchedule > 0
+  }
+
   const financeStatusData: FinanceStatusDataType =
     statusQuery.data?.getFinanceStatus || {}
 
@@ -59,6 +87,7 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
       allChargeTypes.length > 0
         ? allChargeTypes.reduce((a, b) => a + b.totals, 0)
         : 0
+
     return amountFormat(chargeTypeTotal)
   }
 
@@ -98,10 +127,10 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
                 marginTop={1}
                 printHidden
               >
-                {!isDelegation && (
+                {!isDelegation && scheduleButtonVisible && (
                   <Box paddingRight={2}>
                     <a
-                      href="https://island.is/umsoknir/greidsluaaetlun/"
+                      href="/umsoknir/greidsluaaetlun/"
                       target="_blank"
                       rel="noreferrer"
                     >
@@ -211,7 +240,6 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
                           chargeType={chargeType}
                           organization={org}
                           downloadURL={financeStatusData.downloadServiceURL}
-                          userInfo={userInfo}
                           key={`${org.id}-${chargeType.id}-${i}-${ii}`}
                         />
                       )),

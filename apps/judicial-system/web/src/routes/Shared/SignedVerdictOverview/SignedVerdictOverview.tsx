@@ -12,6 +12,7 @@ import subMilliseconds from 'date-fns/subMilliseconds'
 import {
   CaseDecision,
   CaseState,
+  Institution,
   InstitutionType,
   isRestrictionCase,
   NotificationType,
@@ -30,19 +31,17 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import {
-  CaseData,
-  ReactSelectOption,
-} from '@island.is/judicial-system-web/src/types'
+import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { Box, Input, Text } from '@island.is/island-ui/core'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
-import { CaseQuery } from '@island.is/judicial-system-web/graphql'
-import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages'
+import {
+  signedVerdictOverview as m,
+  titles,
+} from '@island.is/judicial-system-web/messages'
 import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
 import * as Constants from '@island.is/judicial-system/consts'
 
 import { CourtRecordSignatureConfirmationQuery } from './courtRecordSignatureConfirmationGql'
@@ -107,6 +106,7 @@ export const SignedVerdictOverview: React.FC = () => {
     setWorkingCase,
     isLoadingWorkingCase,
     caseNotFound,
+    refreshCase,
   } = useContext(FormContext)
   const { user } = useContext(UserContext)
   const router = useRouter()
@@ -133,9 +133,7 @@ export const SignedVerdictOverview: React.FC = () => {
           setCourtRecordSignatureConfirmationResponse(
             courtRecordSignatureConfirmationData.courtRecordSignatureConfirmation,
           )
-          if (workingCase) {
-            reloadCase({ variables: { input: { id: workingCase.id } } })
-          }
+          refreshCase()
         } else {
           setCourtRecordSignatureConfirmationResponse({ documentSigned: false })
         }
@@ -146,15 +144,6 @@ export const SignedVerdictOverview: React.FC = () => {
       },
     },
   )
-
-  const [reloadCase] = useLazyQuery<CaseData>(CaseQuery, {
-    fetchPolicy: 'no-cache',
-    onCompleted: (caseData) => {
-      if (caseData?.case) {
-        setWorkingCase(caseData.case)
-      }
-    },
-  })
 
   useEffect(() => {
     if (workingCase.validToDate) {
@@ -280,6 +269,7 @@ export const SignedVerdictOverview: React.FC = () => {
       modification = formatMessage(
         m.sections.modifyDatesModal.validToDateAndIsolationToDateAreTheSame,
         {
+          caseType: workingCase.type,
           date: `${formatDate(modifiedValidToDate?.value, 'PPPP')?.replace(
             'dagur,',
             'dagsins',
@@ -294,6 +284,7 @@ export const SignedVerdictOverview: React.FC = () => {
         modification = formatMessage(
           m.sections.modifyDatesModal.validToDateChanged,
           {
+            caseType: workingCase.type,
             date: `${formatDate(modifiedValidToDate?.value, 'PPPP')?.replace(
               'dagur,',
               'dagsins',
@@ -434,6 +425,7 @@ export const SignedVerdictOverview: React.FC = () => {
             type: InstitutionType.PROSECUTORS_OFFICE,
             created: new Date().toString(),
             modified: new Date().toString(),
+            active: true,
           },
           isHeightenedSecurityLevel: workingCase.isHeightenedSecurityLevel
             ? false
@@ -574,24 +566,6 @@ export const SignedVerdictOverview: React.FC = () => {
     )
   }
 
-  /**
-   * We assume that the signed verdict page is only opened for
-   * cases in state REJECTED or ACCEPTED.
-   *
-   * Based on the judge's decision the signed verdict page can
-   * be in one of five states:
-   *
-   * 1. Rejected
-   *    - state === REJECTED and decision === REJECTING
-   * 2. Alternative travel ban accepted and the travel ban end date is in the past
-   *    - state === ACCEPTED and decision === ACCEPTING_ALTERNATIVE_TRAVEL_BAN and validToDate < today
-   * 3. Accepted and the custody end date is in the past
-   *    - state === ACCEPTED and decision === ACCEPTING/ACCEPTING_PARTIALLY and validToDate < today
-   * 5. Alternative travel ban accepted and the travel ban end date is not in the past
-   *    - state === ACCEPTED and decision === ACCEPTING_ALTERNATIVE_TRAVEL_BAN and validToDate > today
-   * 3. Accepted and the custody end date is not in the past
-   *    - state === ACCEPTED and decision === ACCEPTING/ACCEPTING_PARTIALLY and validToDate > today
-   */
   return (
     <PageLayout
       workingCase={workingCase}
@@ -657,8 +631,12 @@ export const SignedVerdictOverview: React.FC = () => {
               transition={{ duration: 0.5 }}
             >
               <Modal
-                title={formatMessage(m.sections.modifyDatesModal.title)}
-                text={formatMessage(m.sections.modifyDatesModal.text)}
+                title={formatMessage(m.sections.modifyDatesModal.titleV2, {
+                  caseType: workingCase.type,
+                })}
+                text={formatMessage(m.sections.modifyDatesModal.textV2, {
+                  caseType: workingCase.type,
+                })}
                 primaryButtonText={formatMessage(
                   m.sections.modifyDatesModal.primaryButtonText,
                 )}
@@ -701,7 +679,8 @@ export const SignedVerdictOverview: React.FC = () => {
                       m.sections.modifyDatesModal.reasonForChangeLabel,
                     )}
                     placeholder={formatMessage(
-                      m.sections.modifyDatesModal.reasonForChangePlaceholder,
+                      m.sections.modifyDatesModal.reasonForChangePlaceholderV2,
+                      { caseType: workingCase.type },
                     )}
                     onChange={(event) => {
                       handleCaseModifiedExplanationChange(event.target.value)
@@ -788,7 +767,10 @@ export const SignedVerdictOverview: React.FC = () => {
               transition={{ duration: 0.5 }}
             >
               <Modal
-                title={formatMessage(m.sections.modifyDatesModal.successTitle)}
+                title={formatMessage(
+                  m.sections.modifyDatesModal.successTitleV2,
+                  { caseType: workingCase.type },
+                )}
                 text={getModificationSuccessText()}
                 secondaryButtonText={formatMessage(
                   m.sections.modifyDatesModal.secondaryButtonTextSuccess,

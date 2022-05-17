@@ -1,8 +1,4 @@
-import {
-  CaseAppealDecision,
-  CaseCustodyRestrictions,
-  Gender,
-} from '@island.is/judicial-system/types'
+import { CaseAppealDecision, Gender } from '@island.is/judicial-system/types'
 
 import * as Constants from '@island.is/judicial-system/consts'
 
@@ -10,7 +6,6 @@ import {
   formatDate,
   capitalize,
   formatGender,
-  formatCustodyRestrictions,
   formatAppeal,
   formatNationalId,
 } from './formatters'
@@ -50,124 +45,6 @@ describe('formatDate', () => {
 
     // Assert
     expect(formattedDate).toEqual('fimmtud. 10. september 2020')
-  })
-})
-
-describe('formatCustodyRestrictions', () => {
-  test('should return formatted restrictions for no restrictions', () => {
-    // Arrange
-    const custodyRestrictions: Array<CaseCustodyRestrictions> = []
-    const isIsolation = false
-    const isRuling = true
-
-    // Act
-    const res = formatCustodyRestrictions(
-      custodyRestrictions,
-      isIsolation,
-      isRuling,
-    )
-
-    // Assert
-    expect(res).toBe('')
-  })
-
-  test('should return formatted restrictions for no restrictions in custody notice', () => {
-    // Arrange
-    const custodyRestrictions: Array<CaseCustodyRestrictions> = []
-
-    // Act
-    const res = formatCustodyRestrictions(custodyRestrictions)
-
-    // Assert
-    expect(res).toBe(
-      'Sækjandi tekur fram að gæsluvarðhaldið verði án takmarkana.',
-    )
-  })
-
-  test('should return formatted restrictions for isolation only', () => {
-    // Arrange
-    const custodyRestrictions: Array<CaseCustodyRestrictions> = []
-    const isIsolation = true
-    const isRuling = true
-
-    // Act
-    const res = formatCustodyRestrictions(
-      custodyRestrictions,
-      isIsolation,
-      isRuling,
-    )
-
-    // Assert
-    expect(res).toBe('')
-  })
-
-  test('should return formatted restrictions for isolation only in custody notice', () => {
-    // Arrange
-    const custodyRestrictions: Array<CaseCustodyRestrictions> = []
-    const isIsolation = true
-    const isRuling = false
-
-    // Act
-    const res = formatCustodyRestrictions(
-      custodyRestrictions,
-      isIsolation,
-      isRuling,
-    )
-
-    // Assert
-    expect(res).toBe(
-      'Sækjandi tekur fram að gæsluvarðhaldið verði án annarra takmarkana.',
-    )
-  })
-
-  test('should return formatted restrictions for isolation and one other restriction', () => {
-    // Arrange
-    const custodyRestrictions = [
-      CaseCustodyRestrictions.ISOLATION,
-      CaseCustodyRestrictions.MEDIA,
-    ]
-
-    // Act
-    const res = formatCustodyRestrictions(custodyRestrictions)
-
-    // Assert
-    expect(res).toBe(
-      'Sækjandi tekur fram að gæsluvarðhaldið verði með fjölmiðlabanni skv. 99. gr. laga nr. 88/2008.',
-    )
-  })
-
-  test('should return formatted restrictions for all but isolation', () => {
-    // Arrange
-    const custodyRestrictions = [
-      CaseCustodyRestrictions.COMMUNICATION,
-      CaseCustodyRestrictions.MEDIA,
-      CaseCustodyRestrictions.VISITAION,
-    ]
-
-    // Act
-    const res = formatCustodyRestrictions(custodyRestrictions)
-
-    // Assert
-    expect(res).toBe(
-      'Sækjandi tekur fram að gæsluvarðhaldið verði með heimsóknarbanni, bréfaskoðun og símabanni og fjölmiðlabanni skv. 99. gr. laga nr. 88/2008.',
-    )
-  })
-
-  test('should order non-isolation restrictions', () => {
-    // Arrange
-    const custodyRestrictions = [
-      CaseCustodyRestrictions.MEDIA,
-      CaseCustodyRestrictions.VISITAION,
-      CaseCustodyRestrictions.COMMUNICATION,
-    ]
-
-    // Act
-    const res = formatCustodyRestrictions(custodyRestrictions)
-
-    // Assert
-    expect(res).toBe(
-      'Sækjandi tekur fram að gæsluvarðhaldið verði með heimsóknarbanni, bréfaskoðun og símabanni og fjölmiðlabanni skv. 99. gr. laga nr. 88/2008.',
-    )
   })
 })
 

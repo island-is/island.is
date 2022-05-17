@@ -43,7 +43,7 @@ export const FormStepper: FC<{
   const hasSectionsToShow = sectionsWithNames.length > 0
 
   return (
-    <Box paddingTop={[0, 0, 1]} paddingBottom={[1, 1, 0]} width="full">
+    <Box width="full">
       {tag && <Box className={styles.tag}>{tag}</Box>}
 
       {hasHead && (

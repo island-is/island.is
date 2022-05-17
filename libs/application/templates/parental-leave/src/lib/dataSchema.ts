@@ -11,7 +11,7 @@ const PersonalAllowance = z
       .string()
       .refine((x) => parseFloat(x) >= 0 && parseFloat(x) <= 100)
       .optional(),
-    useAsMuchAsPossible: z.enum([YES, NO]).optional(),
+    useAsMuchAsPossible: z.enum([YES, NO]),
   })
   .optional()
 
@@ -46,7 +46,7 @@ export const dataSchema = z.object({
     ),
     pensionFund: z.string(),
     privatePensionFund: z.string().optional(),
-    privatePensionFundPercentage: z.enum(['2', '4', '']).optional(),
+    privatePensionFundPercentage: z.enum(['0', '2', '4', '']).optional(),
     union: z.string().optional(),
   }),
   shareInformationWithOtherParent: z.enum([YES, NO]),

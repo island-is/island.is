@@ -115,11 +115,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
 
   useEffect(() => {
     if (isCaseUpToDate && !initialAutoFillDone) {
-      if (
-        workingCase &&
-        workingCase.defendants &&
-        workingCase.defendants.length > 0
-      ) {
+      if (workingCase.defendants && workingCase.defendants.length > 0) {
         const courtClaim = courtClaimPrefill[workingCase.type]
         const courtClaimText = courtClaim
           ? formatMessage(courtClaim.text, {
@@ -148,7 +144,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
               }),
               ...(courtClaim.format?.institution && {
                 institution: formatInstitutionName(
-                  workingCase.prosecutor?.institution?.name,
+                  workingCase.creatingProsecutor?.institution?.name,
                 ),
               }),
               ...(courtClaim.format?.live && {
@@ -158,11 +154,13 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
                 year: new Date().getFullYear(),
               }),
             })
-          : ''
+          : undefined
 
-        autofill('demands', courtClaimText, workingCase)
-
-        setWorkingCase({ ...workingCase })
+        autofill(
+          [{ key: 'demands', value: courtClaimText }],
+          workingCase,
+          setWorkingCase,
+        )
       }
 
       setInitialAutoFillDone(true)

@@ -109,7 +109,7 @@ const ChildView: FC<Props> = ({
         <Divider />
         <UserInfoLine
           label={defineMessage(m.legalResidence)}
-          content={person?.homeAddress || '...'}
+          content={person?.legalResidence || ''}
           loading={loading}
         />
         <Divider />
@@ -183,26 +183,30 @@ const ChildView: FC<Props> = ({
           </>
         )}
         <Box marginY={3} />
-        <Parents
-          title={formatMessage({
-            id: 'sp.family:custody-and-parents',
-            defaultMessage: 'Forsjá & foreldrar',
-          })}
-          label={formatMessage({
-            id: 'sp.family:parents',
-            defaultMessage: 'Foreldrar',
-          })}
-          parent1={person?.nameParent1}
-          parent2={person?.nameParent2}
-          loading={loading}
-        />
-        <Parents
-          label={formatMessage(m.natreg)}
-          parent1={person?.parent1 ? formatNationalId(person.parent1) : ''}
-          parent2={person?.parent2 ? formatNationalId(person.parent2) : ''}
-          loading={loading}
-        />
-        <Divider />
+        {(person?.parent1 || person?.parent2 || loading) && (
+          <>
+            <Parents
+              title={formatMessage({
+                id: 'sp.family:custody-and-parents',
+                defaultMessage: 'Forsjá & foreldrar',
+              })}
+              label={formatMessage({
+                id: 'sp.family:parents',
+                defaultMessage: 'Foreldrar',
+              })}
+              parent1={person?.nameParent1}
+              parent2={person?.nameParent2}
+              loading={loading}
+            />
+            <Parents
+              label={formatMessage(m.natreg)}
+              parent1={person?.parent1 ? formatNationalId(person.parent1) : ''}
+              parent2={person?.parent2 ? formatNationalId(person.parent2) : ''}
+              loading={loading}
+            />
+            <Divider />
+          </>
+        )}
         {!person?.fate && !error && hasDetails ? (
           <>
             <Parents
