@@ -2,11 +2,14 @@ import {
   callDataProviders,
   getErrorReasonIfPresent,
   isProviderErrorReason,
+  isTranslationObject,
 } from './dataProviderUtils'
 import { BasicDataProvider } from '../types/BasicDataProvider'
 import { ApplicationTypes } from '../types/ApplicationTypes'
 import { Application, ApplicationStatus } from '../types/Application'
 import { coreErrorMessages } from './messages'
+import { StaticText } from '../types/Form'
+import { isString, isObject } from 'lodash'
 
 class ExampleProviderThatAlwaysFails extends BasicDataProvider {
   readonly type = 'ExampleFails'
@@ -91,6 +94,7 @@ describe('dataProviderUtils', () => {
   })
 
   it('Should not fail when providing custom error message with various test inputs for the error reason', async () => {
+    expect(isTranslationObject('test')).toBe(false)
     const mockErrorReason = {
       title: 'title',
       summary: 'summary',

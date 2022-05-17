@@ -9,7 +9,8 @@ import {
 } from '../types/BasicDataProvider'
 import { FormatMessage, StaticText } from '../types/Form'
 import { coreErrorMessages } from './messages'
-import { isString, isObject } from 'lodash'
+import isObject from 'lodash/isObject'
+import isString from 'lodash/isString'
 
 export const isTranslationObject = (text?: StaticText) => {
   if (!isObject(text)) {
