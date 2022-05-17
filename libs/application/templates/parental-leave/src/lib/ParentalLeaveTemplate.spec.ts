@@ -374,6 +374,44 @@ describe('Parental Leave Application Template', () => {
         expect(newApplication.answers.payments).toEqual(answer)
       })
     })
+
+    describe('union', () => {
+      it('should set union to NO_UNION if useUnion is NO', () => {
+        const helper = new ApplicationTemplateHelper(
+          buildApplication({
+            answers: {
+              payments: {
+                bank: '123454312300',
+                pensionFund: 'id-frjalsi',
+                union: '',
+                privatePensionFund: NO_PRIVATE_PENSION_FUND,
+                privatePensionFundPercentage: '0',
+              },
+              useUnion: NO,
+              employer: {
+                isSelfEmployed: 'no',
+              },
+            },
+          }),
+          ParentalLeaveTemplate,
+        )
+
+        const answer = {
+          bank: '123454312300',
+          pensionFund: 'id-frjalsi',
+          union: NO_UNION,
+          privatePensionFund: NO_PRIVATE_PENSION_FUND,
+          privatePensionFundPercentage: '0',
+        }
+
+        const [hasChanged, _, newApplication] = helper.changeState({
+          type: DefaultEvents.SUBMIT,
+        })
+
+        expect(hasChanged).toBe(true)
+        expect(newApplication.answers.payments).toEqual(answer)
+      })
+    })
   })
 
   describe('edit flow', () => {
