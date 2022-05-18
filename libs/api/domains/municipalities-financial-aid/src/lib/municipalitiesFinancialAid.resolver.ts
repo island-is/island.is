@@ -11,12 +11,15 @@ import { MunicipalitiesFinancialAidService } from './municipalitiesFinancialAid.
 import {
   ApplicationModel,
   CreateFilesModel,
+  DirectTaxPaymentsResponse,
   MunicipalityModel,
+  PersonalTaxReturnResponse,
   SignedUrlModel,
 } from './models'
 import {
   CreateSignedUrlInput,
   MunicipalityInput,
+  PersonalTaxReturnInput,
   ApplicationInput,
   ApplicationFilesInput,
   UpdateApplicationInput,
@@ -48,6 +51,27 @@ export class MunicipalitiesFinancialAidResolver {
     return await this.municipalitiesFinancialAidService.municipalityInfoForFinancialAId(
       user,
       input,
+    )
+  }
+
+  @Query(() => PersonalTaxReturnResponse)
+  async municipalitiesPersonalTaxReturn(
+    @Args('input', { type: () => PersonalTaxReturnInput })
+    input: PersonalTaxReturnInput,
+    @CurrentUser() user: User,
+  ): Promise<PersonalTaxReturnResponse> {
+    return await this.municipalitiesFinancialAidService.personalTaxReturnForFinancialAId(
+      user,
+      input.id,
+    )
+  }
+
+  @Query(() => DirectTaxPaymentsResponse)
+  async municipalitiesDirectTaxPayments(
+    @CurrentUser() user: User,
+  ): Promise<DirectTaxPaymentsResponse> {
+    return await this.municipalitiesFinancialAidService.directTaxPaymentsForFinancialAId(
+      user,
     )
   }
 

@@ -1,7 +1,8 @@
 import { Application, FieldBaseProps } from '@island.is/application/core'
 import {
-  ApplicationState,
+  DirectTaxPayment,
   Municipality,
+  PersonalTaxReturn,
 } from '@island.is/financial-aid/shared/lib'
 import { UploadFile } from '@island.is/island-ui/core'
 import { answersSchema } from './dataSchema'
@@ -9,6 +10,7 @@ import { answersSchema } from './dataSchema'
 export enum DataProviderTypes {
   NationalRegistry = 'NationalRegistryProvider',
   Veita = 'VeitaProvider',
+  TaxDataFetch = 'TaxDataFetchProvider',
 }
 
 export enum ApproveOptions {
@@ -27,10 +29,22 @@ export interface ExternalData {
       municipality: Municipality
     }
     date: string
+    status: StatusProvider
   }
   veita: {
     data: CurrentApplication
     date: string
+    status: StatusProvider
+  }
+  taxDataFetch: {
+    data: TaxData
+    date: string
+    status: StatusProvider
+  }
+  taxDataFetchSpouse?: {
+    data: TaxData
+    date: string
+    status: StatusProvider
   }
 }
 
@@ -67,6 +81,16 @@ export interface Applicant {
   spouse?: Spouse
 }
 
+export interface TaxData {
+  municipalitiesPersonalTaxReturn: {
+    personalTaxReturn: PersonalTaxReturn | null
+  }
+  municipalitiesDirectTaxPayments: {
+    directTaxPayments: DirectTaxPayment[]
+    success: boolean
+  }
+}
+
 export interface CurrentApplication {
   currentApplicationId: string
 }
@@ -88,6 +112,8 @@ export interface InputTypes {
   id: string
   error?: string
 }
+
+export type StatusProvider = 'failure' | 'success'
 
 export type UploadFileType =
   | 'otherFiles'
