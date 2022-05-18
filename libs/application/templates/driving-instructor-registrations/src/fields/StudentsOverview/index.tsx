@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useState } from 'react'
 import { useDebounce } from 'react-use'
 import {
   Button,
@@ -6,11 +6,12 @@ import {
   Input,
   Pagination,
   Stack,
+  Text,
 } from '@island.is/island-ui/core'
 import { Table as T } from '@island.is/island-ui/core'
 import { PAGE_SIZE, pages, paginate } from './pagination'
 import ViewStudent from '../ViewStudent/index'
-import { Application, FieldBaseProps } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import FindStudentModal from '../FindStudentModal/index'
@@ -20,12 +21,9 @@ import Skeleton from './Skeleton'
 import { DrivingLicenseBookStudentForTeacher as Student } from '../../types/schema'
 import * as styles from '../style.css'
 
-const StudentsOverview: FC<FieldBaseProps> = ({ field, application }) => {
+const StudentsOverview: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
 
-  const changeTitleEvent = (title: string) =>
-    new CustomEvent('changeTitle', { detail: title })
-  const element = document.getElementById('students')
   /* table pagination */
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(0)
@@ -70,18 +68,13 @@ const StudentsOverview: FC<FieldBaseProps> = ({ field, application }) => {
     [data?.drivingLicenseBookStudentsForTeacher, searchTerm],
   )
 
-  useEffect(() => {
-    if (element) {
-      if (showTable) {
-        element.dispatchEvent(changeTitleEvent('Mínir ökunemar'))
-      } else {
-        element.dispatchEvent(changeTitleEvent('Skrá ökutíma'))
-      }
-    }
-  }, [showTable, element])
-
   return (
-    <Box marginBottom={10} id="students">
+    <Box marginBottom={10}>
+      <Text variant="h2" marginBottom={3}>
+        {showTable
+          ? formatMessage(m.studentsOverviewTitle)
+          : formatMessage(m.viewStudentTitle)}
+      </Text>
       {showTable ? (
         <Stack space={5}>
           <Box

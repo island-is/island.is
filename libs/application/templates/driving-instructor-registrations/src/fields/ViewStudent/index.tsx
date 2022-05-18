@@ -167,7 +167,7 @@ const ViewStudent = ({
         },
       },
     }).catch(() => {
-      toast.success(formatMessage(m.errorOnDeleteLesson))
+      toast.error(formatMessage(m.errorOnDeleteLesson))
     })
 
     if (
