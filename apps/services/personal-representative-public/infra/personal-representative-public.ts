@@ -31,7 +31,7 @@ export const serviceSetup = (): ServiceBuilder<'services-personal-representative
         paths: ['/'],
         public: false,
       },
-      demoALB: {
+      demo: {
         host: {
           dev: 'personal-representative-xrd.dev01.devland.is',
           staging: '',
@@ -43,4 +43,19 @@ export const serviceSetup = (): ServiceBuilder<'services-personal-representative
     })
     .readiness('/liveness')
     .liveness('/liveness')
+    .resources({
+      limits: {
+        cpu: "400m",
+        memory: "256Mi",
+      },
+      requests: {
+        cpu: "100m",
+        memory: "128Mi",
+      }      
+    })
+    .replicaCount({
+      default: 2,
+      min: 2,
+      max: 10
+    })
 }

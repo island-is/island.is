@@ -1,3 +1,4 @@
+import { max } from 'lodash'
 import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
 export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
@@ -34,4 +35,19 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
     })
     .readiness('/liveness')
     .liveness('/liveness')
+    .resources({
+      limits: {
+        cpu: '400m',
+        memory: '256Mi'
+      }, 
+      requests: {
+        cpu: '100m',
+        memory: '128Mi'
+      }
+    })
+    .replicaCount({
+      default: 2,
+      min: 2,
+      max: 10
+    })
 }

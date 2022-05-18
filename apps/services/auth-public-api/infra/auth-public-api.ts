@@ -71,4 +71,14 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-public-api'> => {
     })
     .readiness('/liveness')
     .liveness('/liveness')
+    .resources({
+      limits: {
+        cpu: "400m",
+        memory: "256Mi",
+      },
+      requests: {
+        cpu: "100m",
+        memory: "128Mi",
+      }      
+    })
 }
