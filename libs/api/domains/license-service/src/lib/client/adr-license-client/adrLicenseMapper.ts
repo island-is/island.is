@@ -1,3 +1,5 @@
+import { flatten } from '@nestjs/common'
+import { INSTANCE_METADATA_SYMBOL } from '@nestjs/core/injector/instance-wrapper'
 import { GenericLicenseDataField } from '../../graphql/payload.model'
 import {
   GenericLicenseDataFieldType,
@@ -10,11 +12,45 @@ export const parseAdrLicensePayload = (
 ): GenericUserLicensePayload | null => {
   if (!license) return null
 
+  const flattenAdrRights = () => {
+    const rights: Array<GenericLicenseDataField> = []
+
+    license.adrRettindi?.forEach((field) => {
+      const heiti = field.heiti ?? [
+        {
+          flokkur: field.flokkur,
+          heiti: '',
+        },
+      ]
+      heiti.forEach((item) => {
+        const to = {
+          type: GenericLicenseDataFieldType.Category,
+          name: item.flokkur?.toString(),
+          label: item.heiti,
+          fields: [
+            {
+              type: GenericLicenseDataFieldType.Value,
+              label: 'Grunn',
+              value: String(field.grunn),
+            },
+            {
+              type: GenericLicenseDataFieldType.Value,
+              label: 'Tankar',
+              value: String(field.tankar),
+            },
+          ],
+        }
+        rights.push(to)
+      })
+    })
+    return rights
+  }
+
   const data = [
     {
       type: GenericLicenseDataFieldType.Value,
-      label: '1.',
       name: 'skirteinisNumer',
+      label: '1.',
       value: (license?.skirteinisNumer ?? '').toString(),
     },
     {
@@ -37,31 +73,14 @@ export const parseAdrLicensePayload = (
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: '8. Gildi til: ',
+      label: '8. Gildir til: ',
       name: 'gildirTil',
       value: license.gildirTil,
     },
     {
-      type: GenericLicenseDataFieldType.Category,
-      name: 'rettindiTankar',
-      label: 'Tankar 9.',
-      fields: (license.adrRettindi ?? [])
-        .filter((field) => field.tankar)
-        .map((field) => ({
-          type: GenericLicenseDataFieldType.Value,
-          value: (field.flokkur ?? '').toString(),
-        })),
-    },
-    {
-      type: GenericLicenseDataFieldType.Category,
-      name: 'rettindiEkkiTankar',
-      label: 'Annað en tankar 10.',
-      fields: (license.adrRettindi ?? [])
-        .filter((field) => !field.tankar)
-        .map((field) => ({
-          type: GenericLicenseDataFieldType.Value,
-          value: (field.flokkur ?? '').toString(),
-        })),
+      type: GenericLicenseDataFieldType.Group,
+      label: 'ADR réttindi',
+      fields: flattenAdrRights(),
     },
   ]
 
