@@ -1,10 +1,9 @@
 import React from 'react'
 import { defineMessage } from 'react-intl'
-import { useQuery } from '@apollo/client'
 import format from 'date-fns/format'
 import { dateFormat } from '@island.is/shared/constants'
+import { useCompanyRegistry } from '@island.is/service-portal/graphql'
 import { spmm } from '../../lib/messages'
-import { Query } from '@island.is/api/schema'
 import {
   Text,
   Box,
@@ -20,7 +19,6 @@ import {
   m,
 } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { COMPANY_REGISTRY_INFORMATION } from '../../lib/queries/getCompanyRegistryCompany'
 
 const dataNotFoundMessage = defineMessage({
   id: 'sp.company:data-not-found',
@@ -30,34 +28,31 @@ const dataNotFoundMessage = defineMessage({
 const CompanyInfo: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.company')
   const { formatMessage } = useLocale()
-  const { data, loading, error } = useQuery<Query>(
-    COMPANY_REGISTRY_INFORMATION,
-    {
-      variables: { input: { nationalId: userInfo.profile.nationalId } },
-    },
+
+  const { data, loading, error } = useCompanyRegistry(
+    userInfo.profile.nationalId,
   )
-  const { companyRegistryCompany } = data || {}
 
   const companyAddress =
-    companyRegistryCompany?.companyInfo?.address?.streetAddress &&
-    companyRegistryCompany?.companyInfo?.address?.postalCode &&
-    companyRegistryCompany?.companyInfo?.address?.locality
-      ? `${companyRegistryCompany.companyInfo.address.streetAddress}, ${companyRegistryCompany.companyInfo.address.postalCode} ${companyRegistryCompany.companyInfo.address.locality}`
+    data?.companyInfo?.address?.streetAddress &&
+    data?.companyInfo?.address?.postalCode &&
+    data?.companyInfo?.address?.locality
+      ? `${data.companyInfo.address.streetAddress}, ${data.companyInfo.address.postalCode} ${data.companyInfo.address.locality}`
       : ''
 
   const companyOperation =
-    companyRegistryCompany?.companyInfo?.formOfOperation?.[0]?.name &&
-    companyRegistryCompany?.companyInfo?.formOfOperation?.[0]?.type
-      ? `${companyRegistryCompany?.companyInfo?.formOfOperation?.[0]?.type} - ${companyRegistryCompany?.companyInfo?.formOfOperation?.[0]?.name}`
+    data?.companyInfo?.formOfOperation?.[0]?.name &&
+    data?.companyInfo?.formOfOperation?.[0]?.type
+      ? `${data?.companyInfo?.formOfOperation?.[0]?.type} - ${data?.companyInfo?.formOfOperation?.[0]?.name}`
       : ''
 
   const vatClassification =
-    companyRegistryCompany?.companyInfo?.vat?.[0]?.classification?.[0]
-      ?.number &&
-    companyRegistryCompany?.companyInfo?.vat?.[0]?.classification?.[0]?.name
-      ? `${companyRegistryCompany?.companyInfo?.vat?.[0]?.classification?.[0]?.number} ${companyRegistryCompany?.companyInfo?.vat?.[0]?.classification?.[0]?.name}`
+    data?.companyInfo?.vat?.[0]?.classification?.[0]?.number &&
+    data?.companyInfo?.vat?.[0]?.classification?.[0]?.name
+      ? `${data?.companyInfo?.vat?.[0]?.classification?.[0]?.number} ${data?.companyInfo?.vat?.[0]?.classification?.[0]?.name}`
       : ''
 
+  console.log('data', data)
   return (
     <>
       <Box marginBottom={5}>
@@ -79,9 +74,7 @@ const CompanyInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           title={formatMessage(m.info)}
           label={formatMessage(spmm.company.name)}
           content={
-            error
-              ? formatMessage(dataNotFoundMessage)
-              : companyRegistryCompany?.name || ''
+            error ? formatMessage(dataNotFoundMessage) : data?.name || ''
           }
           loading={loading}
         />
@@ -91,11 +84,8 @@ const CompanyInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           content={
             error
               ? formatMessage(dataNotFoundMessage)
-              : companyRegistryCompany?.dateOfRegistration
-              ? format(
-                  new Date(companyRegistryCompany.dateOfRegistration),
-                  dateFormat.is,
-                )
+              : data?.dateOfRegistration
+              ? format(new Date(data.dateOfRegistration), dateFormat.is)
               : ''
           }
           loading={loading}
@@ -107,8 +97,8 @@ const CompanyInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           content={
             error
               ? formatMessage(dataNotFoundMessage)
-              : companyRegistryCompany?.nationalId
-              ? formatNationalId(companyRegistryCompany.nationalId)
+              : data?.nationalId
+              ? formatNationalId(data.nationalId)
               : ''
           }
           loading={loading}
@@ -125,7 +115,7 @@ const CompanyInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           content={
             error
               ? formatMessage(dataNotFoundMessage)
-              : companyRegistryCompany?.companyInfo?.vat?.[0]?.vatNumber || ''
+              : data?.companyInfo?.vat?.[0]?.vatNumber || ''
           }
           loading={loading}
         />
