@@ -72,7 +72,7 @@ const MissingFiles = ({
         setValue(fileType, uploadedFiles)
 
         await updateApplication(
-          ApplicationState.DATANEEDED,
+          ApplicationState.INPROGRESS,
           isSpouse
             ? ApplicationEventType.SPOUSEFILEUPLOAD
             : ApplicationEventType.FILEUPLOAD,
