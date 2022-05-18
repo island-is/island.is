@@ -1,6 +1,5 @@
 import { join } from 'path'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
-import { SkraningaradiliDanarbusSkeyti } from '../../../../../../../clients/syslumenn/gen/fetch'
 
 export const pathToAsset = (file: string) => {
   if (isRunningOnEnvironment('local')) {
