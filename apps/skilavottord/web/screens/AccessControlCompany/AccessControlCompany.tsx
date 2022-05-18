@@ -39,6 +39,7 @@ import {
   UpdateAccessControlInput,
   AccessControlRole,
 } from '@island.is/skilavottord-web/graphql/schema'
+import { BASE_PATH } from '@island.is/skilavottord/consts'
 
 import {
   AccessControlImage,
@@ -48,24 +49,25 @@ import {
 
 import * as styles from './AccessControl.css'
 
-const SkilavottordAllRecyclingPartnersQuery = gql`
-  query skilavottordAllRecyclingPartnersQuery {
-    skilavottordAllRecyclingPartners {
-      companyId
-      companyName
-      active
-    }
-  }
-`
+// const SkilavottordAllRecyclingPartnersQuery = gql`
+//   query skilavottordAllRecyclingPartnersQuery {
+//     skilavottordAllRecyclingPartners {
+//       companyId
+//       companyName
+//       active
+//     }
+//   }
+// `
 
-const SkilavottordAccessControlsQuery = gql`
-  query skilavottordAccessControlsQuery {
-    skilavottordAccessControls {
+const SkilavottordAccessControlsByRecyclingPartnerQuery = gql`
+  query skilavottordAccessControlsByRecyclingPartnerQuery {
+    skilavottordAccessControlsByRecyclingPartner {
       nationalId
       name
       role
       email
       phone
+      recyclingLocation
       recyclingPartner {
         companyId
         companyName
@@ -84,6 +86,7 @@ export const CreateSkilavottordAccessControlMutation = gql`
       role
       email
       phone
+      recyclingLocation
       recyclingPartner {
         companyId
         companyName
@@ -102,6 +105,7 @@ export const UpdateSkilavottordAccessControlMutation = gql`
       role
       email
       phone
+      recyclingLocation
       recyclingPartner {
         companyId
         companyName
@@ -118,26 +122,42 @@ export const DeleteSkilavottordAccessControlMutation = gql`
   }
 `
 
-const AccessControl: FC = () => {
+const AccessControlCompany: FC = () => {
   const { Table, Head, Row, HeadData, Body, Data } = T
   const { user } = useContext(UserContext)
+
   const {
-    data: recyclingPartnerData,
-    error: recyclingPartnerError,
-    loading: recyclingPartnerLoading,
-  } = useQuery<Query>(SkilavottordAllRecyclingPartnersQuery, { ssr: false })
-  const {
-    data: accessControlsData,
-    error: accessControlsError,
-    loading: accessControlsLoading,
-  } = useQuery<Query>(SkilavottordAccessControlsQuery, { ssr: false })
+    t: { accessControl: t, deregisterSidenav: sidenavText, routes },
+    activeLocale,
+  } = useI18n()
+
+  if (!user) {
+    return null
+  } else if (!hasPermission('accessControlCompany', user?.role as Role)) {
+    return <NotFound />
+  }
+
+  // const {
+  //   data: recyclingPartnerData,
+  //   error: recyclingPartnerError,
+  //   loading: recyclingPartnerLoading,
+  // } = useQuery<Query>(SkilavottordAllRecyclingPartnersQuery, { ssr: false })
+  // const {
+  //   data: accessControlsData,
+  //   error: accessControlsError,
+  //   loading: accessControlsLoading,
+  // } = useQuery<Query>(SkilavottordAccessControlsQuery, { ssr: false })
+  const { data: accessControlsData, error, loading } = useQuery<Query>(
+    SkilavottordAccessControlsByRecyclingPartnerQuery,
+    { ssr: false },
+  )
 
   const [createSkilavottordAccessControl] = useMutation(
     CreateSkilavottordAccessControlMutation,
     {
       refetchQueries: [
         {
-          query: SkilavottordAccessControlsQuery,
+          query: SkilavottordAccessControlsByRecyclingPartnerQuery,
         },
       ],
     },
@@ -147,7 +167,7 @@ const AccessControl: FC = () => {
     {
       refetchQueries: [
         {
-          query: SkilavottordAccessControlsQuery,
+          query: SkilavottordAccessControlsByRecyclingPartnerQuery,
         },
       ],
     },
@@ -157,7 +177,7 @@ const AccessControl: FC = () => {
     {
       refetchQueries: [
         {
-          query: SkilavottordAccessControlsQuery,
+          query: SkilavottordAccessControlsByRecyclingPartnerQuery,
         },
       ],
     },
@@ -169,32 +189,27 @@ const AccessControl: FC = () => {
   ] = useState(false)
   const [partner, setPartner] = useState<AccessControlType>()
 
-  const error = recyclingPartnerError || accessControlsError
-  const loading = recyclingPartnerLoading || accessControlsLoading
-  const isData = !!recyclingPartnerData && !!accessControlsData
+  // const error = recyclingPartnerError || accessControlsError
+  // const loading = recyclingPartnerLoading || accessControlsLoading
+  // const isData = !!recyclingPartnerData && !!accessControlsData
+  const isData = !!accessControlsData
 
-  const {
-    t: { accessControl: t, recyclingFundSidenav: sidenavText, routes },
-    activeLocale,
-  } = useI18n()
+  const accessControls =
+    accessControlsData?.skilavottordAccessControlsByRecyclingPartner || []
 
-  if (!user) {
-    return null
-  } else if (!hasPermission('accessControl', user?.role as Role)) {
-    return <NotFound />
-  }
-
-  const accessControls = accessControlsData?.skilavottordAccessControls || []
-
-  const partners = recyclingPartnerData?.skilavottordAllRecyclingPartners || []
-  const recyclingPartners = filterInternalPartners(partners).map((partner) => ({
-    label: partner.companyName,
-    value: partner.companyId,
-  }))
+  // const partners = recyclingPartnerData?.skilavottordAllRecyclingPartners || []
+  // const recyclingPartners = filterInternalPartners(partners).map((partner) => ({
+  //   label: partner.companyName,
+  //   value: partner.companyId,
+  // }))
 
   const roles = Object.keys(AccessControlRole)
     .filter((role) =>
       !isDeveloper(user?.role) ? role !== Role.developer : role,
+    )
+    .filter(
+      (role) =>
+        role === Role.recyclingCompany || role === Role.recyclingCompanyAdmin,
     )
     .map((role) => ({
       label: getRoleTranslation(role as Role, activeLocale),
@@ -241,18 +256,18 @@ const AccessControl: FC = () => {
           sections={[
             {
               icon: 'car',
-              title: `${sidenavText.recycled}`,
-              link: `${routes.recycledVehicles}`,
+              title: `${sidenavText.deregister}`,
+              link: `${routes.deregisterVehicle.baseRoute}`,
             },
             {
               icon: 'business',
-              title: `${sidenavText.companies}`,
-              link: `${routes.recyclingCompanies.baseRoute}`,
+              title: `${sidenavText.companyInfo}`,
+              link: `${routes.companyInfo.baseRoute}`,
             },
             {
               icon: 'lockClosed',
               title: `${sidenavText.accessControl}`,
-              link: `${routes.accessControl}`,
+              link: `${routes.accessControlCompany}`,
             },
           ]}
           activeSection={2}
@@ -263,7 +278,10 @@ const AccessControl: FC = () => {
         <Box>
           <Breadcrumbs
             items={[
-              { title: 'Ísland.is', href: routes.home['recyclingCompany'] },
+              {
+                title: 'Ísland.is',
+                href: `${BASE_PATH}${routes.home['recyclingCompany']}`,
+              },
               {
                 title: t.title,
               },
@@ -285,7 +303,10 @@ const AccessControl: FC = () => {
           <GridRow marginBottom={7}>
             <GridColumn span={['8/8', '6/8', '5/8']} order={[2, 1]}>
               <Text variant="h1" as="h1" marginBottom={4}>
-                {t.title}
+                {t.title}{' '}
+                {accessControls.length > 0
+                  ? accessControls[0]?.recyclingPartner?.companyName
+                  : ''}
               </Text>
               <Text variant="intro">{t.info}</Text>
             </GridColumn>
@@ -305,7 +326,7 @@ const AccessControl: FC = () => {
             show={isCreateAccessControlModalVisible}
             onCancel={handleCreateAccessControlCloseModal}
             onSubmit={handleCreateAccessControl}
-            recyclingPartners={recyclingPartners}
+            // recyclingPartners={recyclingPartners}
             roles={roles}
           />
         </Box>
@@ -332,10 +353,18 @@ const AccessControl: FC = () => {
                     <Text variant="eyebrow">{t.tableHeaders.name}</Text>
                   </HeadData>
                   <HeadData>
+                    <Text variant="eyebrow">{t.tableHeaders.email}</Text>
+                  </HeadData>
+                  <HeadData>
+                    <Text variant="eyebrow">{t.tableHeaders.phone}</Text>
+                  </HeadData>
+                  <HeadData>
                     <Text variant="eyebrow">{t.tableHeaders.role}</Text>
                   </HeadData>
                   <HeadData>
-                    <Text variant="eyebrow">{t.tableHeaders.partner}</Text>
+                    <Text variant="eyebrow">
+                      {t.tableHeaders.recyclingLocation}
+                    </Text>
                   </HeadData>
                   <HeadData></HeadData>
                 </Row>
@@ -345,13 +374,15 @@ const AccessControl: FC = () => {
                   <Row key={item.nationalId}>
                     <Data>{kennitala.format(item.nationalId)}</Data>
                     <Data>{item.name}</Data>
+                    <Data>{item.email}</Data>
+                    <Data>{item.phone}</Data>
                     <Data>
                       {getRoleTranslation(
                         item.role as AccessControlRole & Role,
                         activeLocale,
                       )}
                     </Data>
-                    <Data>{item?.recyclingPartner?.companyName || '-'} </Data>
+                    <Data>{item.recyclingLocation}</Data>
                     <Data>
                       <DropdownMenu
                         disclosure={
@@ -418,7 +449,7 @@ const AccessControl: FC = () => {
         show={!!partner}
         onCancel={handleUpdateAccessControlCloseModal}
         onSubmit={handleUpdateAccessControl}
-        recyclingPartners={recyclingPartners}
+        // recyclingPartners={recyclingPartners}
         roles={roles}
         currentPartner={partner}
       />
@@ -426,4 +457,4 @@ const AccessControl: FC = () => {
   )
 }
 
-export default AccessControl
+export default AccessControlCompany

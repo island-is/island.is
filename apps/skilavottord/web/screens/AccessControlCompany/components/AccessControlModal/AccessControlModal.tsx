@@ -17,12 +17,12 @@ interface AccessControlModalProps
   onSubmit: (
     e?: BaseSyntheticEvent<object, any, any> | undefined,
   ) => Promise<void>
-  recyclingPartners: Option[]
+  // recyclingPartners?: Option[]
   roles: Option[]
   errors: DeepMap<FieldValues, FieldError>
   control: Control<FieldValues>
   nationalIdDisabled?: boolean
-  partnerIdRequired?: boolean
+  // partnerIdRequired?: boolean
 }
 
 export const AccessControlModal: FC<AccessControlModalProps> = ({
@@ -31,10 +31,10 @@ export const AccessControlModal: FC<AccessControlModalProps> = ({
   show,
   onCancel,
   onSubmit,
-  recyclingPartners,
+  // recyclingPartners,
   roles,
   nationalIdDisabled = false,
-  partnerIdRequired = false,
+  // partnerIdRequired = false,
   errors,
   control,
 }) => {
@@ -132,6 +132,23 @@ export const AccessControlModal: FC<AccessControlModalProps> = ({
             error={errors?.phone?.message}
             backgroundColor="blue"
           />
+          <InputController
+            id="recyclingLocation"
+            control={control}
+            label={t.modal.inputs.recyclingLocation.label}
+            placeholder={t.modal.inputs.recyclingLocation.placeholder}
+            rules={{
+              validate: {
+                value: (value: string) => {
+                  if (value.toString().length > 32) {
+                    return t.modal.inputs.recyclingLocation.rules?.validate
+                  }
+                },
+              },
+            }}
+            error={errors?.recyclingLocation?.message}
+            backgroundColor="blue"
+          />
           <Controller
             name="role"
             control={control}
@@ -159,7 +176,7 @@ export const AccessControlModal: FC<AccessControlModalProps> = ({
               )
             }}
           />
-          <Controller
+          {/* <Controller
             name="partnerId"
             control={control}
             rules={
@@ -183,14 +200,14 @@ export const AccessControlModal: FC<AccessControlModalProps> = ({
                   hasError={!!errors?.partnerId?.message}
                   errorMessage={errors?.partnerId?.message}
                   backgroundColor="blue"
-                  options={recyclingPartners}
+                  options={recyclingPartners || []}
                   onChange={onChange}
                   required={partnerIdRequired}
                   isCreatable
                 />
               )
             }}
-          />
+          /> */}
         </Stack>
         <Box display="flex" justifyContent="spaceBetween" marginTop={7}>
           <Button variant="ghost" onClick={onCancel} fluid>
