@@ -1,4 +1,4 @@
-# clients-aosh
+# Clients Aosh
 
 This library was generated with [Nx](https://nx.dev).
 
