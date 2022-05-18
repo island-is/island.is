@@ -2,7 +2,7 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { useFormContext } from 'react-hook-form'
 
-import { Text, Box, Link } from '@island.is/island-ui/core'
+import { Text, Box, Link, Button } from '@island.is/island-ui/core'
 
 import { FAFieldBaseProps, UploadFileType } from '../../../lib/types'
 import { missingFiles } from '../../../lib/messages'
@@ -42,16 +42,10 @@ const MissingFilesConfirmation = ({ application }: FAFieldBaseProps) => {
         </Box>
       )}
 
-      <Box marginTop={10}>
-        <Link
-          href={''}
-          underline="normal"
-          underlineVisibility="always"
-          color="blue400"
-          onClick={() => window.location.reload()}
-        >
+      <Box marginTop={10} width="full" display="flex" justifyContent="flexEnd">
+        <Button onClick={() => window.location.reload()}>
           {formatMessage(missingFiles.confirmation.linkStatusPage)}
-        </Link>
+        </Button>
       </Box>
     </>
   )
