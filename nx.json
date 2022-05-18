@@ -169,6 +169,9 @@
     "api-domains-user-profile": {
       "tags": []
     },
+    "api-domains-vehicles": {
+      "tags": []
+    },
     "api-mocks": {
       "tags": []
     },
@@ -261,6 +264,9 @@
       "tags": []
     },
     "application-templates-mortgage-certificate": {
+      "tags": []
+    },
+    "application-templates-no-debt-certificate": {
       "tags": []
     },
     "application-templates-p-sign": {
@@ -385,6 +391,9 @@
     "clients-user-profile": {
       "tags": [],
       "implicitDependencies": ["services-user-profile"]
+    },
+    "clients-vehicles": {
+      "tags": []
     },
     "clients-vmst": {
       "tags": []
@@ -652,9 +661,6 @@
     "service-portal-endorsements": {
       "tags": []
     },
-    "service-portal-family": {
-      "tags": []
-    },
     "service-portal-finance": {
       "tags": []
     },
@@ -670,6 +676,9 @@
     "service-portal-icelandic-names-registry": {
       "tags": []
     },
+    "service-portal-information": {
+      "tags": []
+    },
     "service-portal-licenses": {
       "tags": []
     },
@@ -679,7 +688,7 @@
     "service-portal-settings-personal-information": {
       "tags": []
     },
-    "service-portal-wip": {
+    "service-portal-vehicles": {
       "tags": []
     },
     "services-auth-admin-api": {

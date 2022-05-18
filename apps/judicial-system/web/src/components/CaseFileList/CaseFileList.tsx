@@ -1,15 +1,21 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
-import { Box, Text, UploadedFile, UploadFile } from '@island.is/island-ui/core'
+import {
+  Box,
+  StatusColor,
+  Text,
+  UploadedFile,
+  UploadFile,
+} from '@island.is/island-ui/core'
 import {
   CaseFile as TCaseFile,
   CaseFileState,
 } from '@island.is/judicial-system/types'
+import { caseFiles as m } from '@island.is/judicial-system-web/messages'
 import { Modal } from '..'
 import { useFileList } from '../../utils/hooks'
-import { caseFiles as m } from '@island.is/judicial-system-web/messages/Core/caseFiles'
-import { CaseFile } from '../../utils/hooks/useCourtUpload'
+import { CaseFile, CaseFileStatus } from '../../utils/hooks/useCourtUpload'
 
 interface Props {
   caseId: string
@@ -18,6 +24,12 @@ interface Props {
   canOpenFiles?: boolean
   handleRetryClick?: (id: string) => void
   isCaseCompleted: boolean
+}
+
+const getBackgroundColor = (status: CaseFileStatus): StatusColor => {
+  if (status === 'broken') return { background: 'dark100', border: 'dark200' }
+
+  return { background: 'blue100', border: 'blue300' }
 }
 
 const CaseFileList: React.FC<Props> = (props) => {
@@ -35,45 +47,57 @@ const CaseFileList: React.FC<Props> = (props) => {
   })
   const { formatMessage } = useIntl()
 
-  const xFiles = files as CaseFile[]
+  const xFiles = [...files] as CaseFile[]
 
-  return xFiles.length > 0 ? (
+  if (xFiles.length <= 0) {
+    return <Text>{formatMessage(m.noFilesFound)}</Text>
+  }
+
+  return (
     <>
-      {xFiles.map((file, index) => {
-        return (
-          <Box marginBottom={index !== xFiles.length - 1 ? 3 : 0} key={index}>
-            <UploadedFile
-              file={file as TCaseFile}
-              showFileSize={true}
-              defaultBackgroundColor={
-                file.status === 'broken' ? 'dark100' : 'blue100'
-              }
-              doneIcon="checkmark"
-              hideIcons={
-                hideIcons || file.status === 'broken' || file.status !== 'error'
-              }
-              onOpenFile={
-                canOpenFiles &&
-                file.key &&
-                !(
-                  isCaseCompleted &&
-                  file.state === CaseFileState.STORED_IN_COURT
-                )
-                  ? (file: UploadFile) => {
-                      if (file.id) {
-                        handleOpenFile(file.id)
-                      }
+      {xFiles.map((file, index) => (
+        <Box
+          marginBottom={
+            index === xFiles.length - 1 || file.status === 'unsupported' ? 0 : 3
+          }
+          key={`${file.id}-${index}`}
+        >
+          <UploadedFile
+            file={
+              {
+                ...file,
+                status: file.status === 'unsupported' ? 'error' : file.status,
+              } as TCaseFile
+            }
+            showFileSize={true}
+            defaultBackgroundColor={getBackgroundColor(file.status)}
+            doneIcon="checkmark"
+            hideIcons={
+              hideIcons || file.status === 'broken' || file.status !== 'error'
+            }
+            onOpenFile={
+              canOpenFiles &&
+              file.key &&
+              !(isCaseCompleted && file.state === CaseFileState.STORED_IN_COURT)
+                ? (file: UploadFile) => {
+                    if (file.id) {
+                      handleOpenFile(file.id)
                     }
-                  : undefined
-              }
-              onRemoveClick={() =>
-                canOpenFiles ? handleOpenFile(file.id) : null
-              }
-              onRetryClick={() => handleRetryClick && handleRetryClick(file.id)}
-            />
-          </Box>
-        )
-      })}
+                  }
+                : undefined
+            }
+            onRemoveClick={() =>
+              canOpenFiles ? handleOpenFile(file.id) : null
+            }
+            onRetryClick={() => handleRetryClick && handleRetryClick(file.id)}
+          />
+          {file.status === 'unsupported' && (
+            <Text color="red600" variant="eyebrow" lineHeight="lg">
+              {formatMessage(m.fileUnsupportedInCourt)}
+            </Text>
+          )}
+        </Box>
+      ))}
       <AnimatePresence>
         {fileNotFound && (
           <Modal
@@ -86,8 +110,6 @@ const CaseFileList: React.FC<Props> = (props) => {
         )}
       </AnimatePresence>
     </>
-  ) : (
-    <Text>Engin rannsóknargögn fylgja kröfunni í Réttarvörslugátt.</Text>
   )
 }
 

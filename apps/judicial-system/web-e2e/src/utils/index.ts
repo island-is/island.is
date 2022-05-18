@@ -11,18 +11,51 @@ import {
   User,
   UserRole,
   CaseOrigin,
+  CaseFile,
+  CaseFileState,
 } from '@island.is/judicial-system/types'
 
 export const intercept = (res: Case) => {
   cy.intercept('POST', '**/api/graphql', (req) => {
     if (hasOperationName(req, 'CaseQuery')) {
+      req.alias = 'gqlCaseQuery'
       req.reply({
         data: {
           case: res,
         },
       })
+    } else if (hasOperationName(req, 'RestrictedCaseQuery')) {
+      req.alias = 'gqlCaseQuery'
+      req.reply({
+        data: {
+          restrictedCase: res,
+        },
+      })
+    } else if (hasOperationName(req, 'UploadFileToCourtMutation')) {
+      req.alias = 'UploadFileToCourtMutation'
+      req.reply({
+        data: {
+          uploadFileToCourt: {
+            success: true,
+            __typename: 'UploadFileToCourtResponse',
+          },
+        },
+      })
     }
-  }).as('gqlCaseQuery')
+  })
+}
+
+export const interceptUpdateCase = () => {
+  cy.intercept('POST', '**/api/graphql', (req) => {
+    if (hasOperationName(req, 'UpdateCaseMutation')) {
+      const { body } = req
+      req.reply({
+        data: {
+          updateCase: { ...body.variables?.input, __typename: 'Case' },
+        },
+      })
+    }
+  }).as('UpdateCaseMutation')
 }
 
 export const hasOperationName = (
@@ -146,5 +179,27 @@ export const makeCourt = (): Institution => {
     type: InstitutionType.COURT,
     name: 'Héraðsdómur Reykjavíkur',
     active: true,
+  }
+}
+
+export const makeCaseFile = (
+  caseId = 'test_id',
+  name = 'test_file_name',
+  type = 'pdf',
+  state = CaseFileState.STORED_IN_RVG,
+  id = 'test_case_file_id',
+  key = 'test_id',
+  size = 100,
+): CaseFile => {
+  return {
+    id: 'test_case_file_id',
+    created: '2020-09-16T19:50:08.033Z',
+    modified: '2020-09-16T19:50:08.033Z',
+    caseId,
+    type,
+    name,
+    state,
+    key,
+    size,
   }
 }
