@@ -1,4 +1,3 @@
-import { GenericLicenseDataField } from '../../graphql/payload.model'
 import {
   GenericLicenseDataFieldType,
   GenericUserLicensePayload,
@@ -11,26 +10,22 @@ export const parseMachineLicensePayload = (
   if (!license) return null
   const data = [
     {
-      //is this gross? feels gross
       type: GenericLicenseDataFieldType.Value,
-      label: 'Vinnuvélaskírteini NR: ',
+      label: 'Vinnuvélaskírteini Nr: ',
       value: license.skirteinisNumer?.toString(),
     },
     {
       type: GenericLicenseDataFieldType.Value,
       label: '1. Fullt nafn',
-      name: 'fulltNafn',
       value: license?.fulltNafn,
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      name: 'kennitala',
       label: '2. Kennitala',
       value: license.kennitala,
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      name: 'utgafustadur',
       label: '3. Útgáfustaður',
       value: license.utgafuStadur,
     },
@@ -38,12 +33,6 @@ export const parseMachineLicensePayload = (
       type: GenericLicenseDataFieldType.Value,
       label: '4. Fyrsti útgáfustaður',
       value: license.fyrstiUtgafuDagur?.toString(),
-    },
-    {
-      type: GenericLicenseDataFieldType.Value,
-      label: '5. Gildir til',
-      name: 'gildirTil',
-      value: 'Sjá bakhlið',
     },
     {
       type: GenericLicenseDataFieldType.Value,
