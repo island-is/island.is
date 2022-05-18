@@ -73,12 +73,12 @@ export const bootstrap = async (options: BootstrapOptions) => {
   const expressApp = createExpressApp()
 
   await setupProxy(expressApp, options.proxyConfig, dev)
-  setupHealthchecks(expressApp, options.externalEndpointDependencies)
 
   const nextConfig = getNextConfig(options.appDir, dev)
   const nextApp = next(nextConfig)
   const handle = nextApp.getRequestHandler()
 
+  setupHealthchecks(expressApp, options.externalEndpointDependencies)
   expressApp.all('*', (req, res) => handle(req, res))
 
   startServer(expressApp, options.port)
