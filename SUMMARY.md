@@ -148,6 +148,7 @@
   - [Migrating Data in the IDS](libs/auth-api-lib/seeders/README.md)
 - [Auth Nest Tools](libs/auth-nest-tools/README.md)
 - [Clients](libs/clients/README.md)
+  - [Clients Aosh](libs/clients/aosh/README.md)
   - [Assets](libs/clients/assets/README.md)
   - [Auth Public API](libs/clients/auth-public-api/README.md)
   - [Criminal Record](libs/clients/criminal-record/README.md)
