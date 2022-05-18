@@ -1,5 +1,5 @@
 module.exports = {
-  displayName: 'service-portal-wip',
+  displayName: 'service-portal-information',
   preset: '../../../jest.preset.js',
   transform: {
     '^.+\\.[tj]sx?$': [
@@ -8,5 +8,5 @@ module.exports = {
     ],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../../coverage/libs/service-portal/wip',
+  coverageDirectory: '../../../coverage/libs/service-portal/information',
 }
