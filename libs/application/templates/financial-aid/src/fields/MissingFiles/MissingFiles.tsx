@@ -8,7 +8,7 @@ import {
   FileType,
   getCommentFromLatestEvent,
 } from '@island.is/financial-aid/shared/lib'
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, RecordObject } from '@island.is/application/core'
 
 import { filesText, missingFiles } from '../../lib/messages'
 import { Files } from '..'
@@ -26,7 +26,7 @@ const MissingFiles = ({
   const { currentApplication, updateApplication } = useApplication(
     application.externalData.veita.data.currentApplicationId,
   )
-  const isSpouse = getValueViaPath(field as any, 'props.isSpouse')
+  const isSpouse = getValueViaPath(field as RecordObject<any>, 'props.isSpouse')
 
   const { formatMessage } = useIntl()
   const { setValue, getValues } = useFormContext()
@@ -72,7 +72,7 @@ const MissingFiles = ({
         setValue(fileType, uploadedFiles)
 
         await updateApplication(
-          ApplicationState.INPROGRESS,
+          ApplicationState.DATANEEDED,
           isSpouse
             ? ApplicationEventType.SPOUSEFILEUPLOAD
             : ApplicationEventType.FILEUPLOAD,
