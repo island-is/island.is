@@ -172,6 +172,8 @@ export const Ruling: React.FC = () => {
   const router = useRouter()
   const id = router.query.id
 
+  const isCorrectingRuling = router.pathname.includes('leidretta')
+
   const { user } = useContext(UserContext)
   const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
   const { updateCase, autofill } = useCase()
@@ -306,8 +308,7 @@ export const Ruling: React.FC = () => {
               />
             </AccordionItem>
           </Accordion>
-        </Box>
-        <Box component="section" marginBottom={5}>
+          <Box component="section" marginBottom={5}></Box>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
               {formatMessage(m.sections.introduction.title)}
@@ -846,8 +847,20 @@ export const Ruling: React.FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${Constants.HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
+          previousButtonText={
+            isCorrectingRuling
+              ? formatMessage(
+                  m.sections.formFooter.correctRulingBackButtonLabel,
+                )
+              : undefined
+          }
           nextUrl={`${Constants.COURT_RECORD_ROUTE}/${id}`}
           nextIsDisabled={!isRulingValidRC(workingCase)}
+          nextButtonText={
+            isCorrectingRuling
+              ? formatMessage(m.sections.formFooter.correctRulingButtonLabel)
+              : undefined
+          }
         />
       </FormContentContainer>
     </PageLayout>

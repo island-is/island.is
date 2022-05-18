@@ -193,4 +193,14 @@ export const core = defineMessages({
     defaultMessage: 'leiðrétta',
     description: 'Notað fyrir orðið "leiðrétta" í öllum flæðum.',
   },
+  back: {
+    id: 'judicial.system.core:back',
+    defaultMessage: 'Til baka',
+    description: 'Notað fyrir "Til baka" takka í öllum flæðum.',
+  },
+  continue: {
+    id: 'judicial.system.core:continue',
+    defaultMessage: 'Halda áfram',
+    description: 'Notað fyrir "Halda áfram" takka í öllum flæðum.',
+  },
 })
