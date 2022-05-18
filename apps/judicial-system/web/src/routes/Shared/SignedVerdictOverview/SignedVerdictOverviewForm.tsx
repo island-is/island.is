@@ -400,7 +400,16 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
                 />
                 {(user?.role === UserRole.JUDGE ||
                   user?.role === UserRole.REGISTRAR) && (
-                  <Button variant="ghost">
+                  <Button
+                    variant="ghost"
+                    data-testid="amendRulingButton"
+                    onClick={(event) => {
+                      event.stopPropagation()
+                      router.push(
+                        `${Constants.AMEND_RULING_ROUTE}/${workingCase.id}`,
+                      )
+                    }}
+                  >
                     {capitalize(formatMessage(core.amend))}
                   </Button>
                 )}

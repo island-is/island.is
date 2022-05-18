@@ -109,6 +109,7 @@ export const HEARING_ARRANGEMENTS_ROUTE = '/domur/fyrirtokutimi'
 export const COURT_RECORD_ROUTE = '/domur/thingbok'
 export const RULING_ROUTE = '/domur/urskurdur'
 export const CONFIRMATION_ROUTE = '/domur/stadfesta'
+export const AMEND_RULING_ROUTE = '/domur/urskurdur/leidretta'
 
 // Investigation cases - court
 export const IC_RECEPTION_AND_ASSIGNMENT_ROUTE =
