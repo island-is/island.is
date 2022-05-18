@@ -28,7 +28,7 @@ const FileList = ({ files, applicationSystemId }: Props) => {
   return (
     <Box marginBottom={2}>
       {files.map((file, i) => {
-        file.id ? (
+        return file.id ? (
           <button
             className={cn({
               [`${styles.filesLink}`]: true,
