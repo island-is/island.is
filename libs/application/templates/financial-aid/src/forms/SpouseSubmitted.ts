@@ -37,7 +37,7 @@ export const SpouseSubmitted: Form = buildForm({
       children: [
         buildCustomField(
           {
-            id: 'missingFiles',
+            id: Routes.MISSINGFILES,
             title: m.missingFiles.general.pageTitle,
             component: 'MissingFiles',
           },
