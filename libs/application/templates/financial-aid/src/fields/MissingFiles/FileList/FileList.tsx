@@ -28,7 +28,7 @@ const FileList = ({ files, applicationSystemId }: Props) => {
   return (
     <Box marginBottom={2}>
       {files.map((file, i) => {
-        return (
+        file.id ? (
           <button
             className={cn({
               [`${styles.filesLink}`]: true,
@@ -37,10 +37,7 @@ const FileList = ({ files, applicationSystemId }: Props) => {
             key={'file-' + i}
             onClick={(e) => {
               e.preventDefault()
-              if (file.id === undefined) {
-                return
-              }
-              openFileById(file.id)
+              openFileById(file.id as string)
             }}
           >
             <div className={styles.container}>
@@ -57,7 +54,7 @@ const FileList = ({ files, applicationSystemId }: Props) => {
               )} • ${getFileSizeInKilo(file)} KB`}</Text>
             </div>
           </button>
-        )
+        ) : null
       })}
     </Box>
   )
