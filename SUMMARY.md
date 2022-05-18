@@ -204,7 +204,6 @@
   - [Problem](libs/nest/problem/README.md)
   - [Sequelize](libs/nest/sequelize/README.md)
   - [Swagger](libs/nest/swagger/README.md)
-- [Next Modules](libs/next/README.md)
 - [Next Ids Auth Lib](libs/next-ids-auth/README.md)
 - [NOVA SMS](libs/nova-sms/README.md)
 - [Plausible](libs/plausible/README.md)
