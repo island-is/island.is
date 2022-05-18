@@ -60,12 +60,9 @@ export const parseMachineLicensePayload = (
       label: 'Vinnuvélaréttindi',
       fields: (license.vinnuvelaRettindi ?? []).map((field) => ({
         type: GenericLicenseDataFieldType.Category,
+        name: field.flokkur,
+        label: field.fulltHeiti ?? field.stuttHeiti,
         fields: [
-          {
-            type: GenericLicenseDataFieldType.Value,
-            label: 'Flokkur',
-            value: field.flokkur,
-          },
           {
             type: GenericLicenseDataFieldType.Value,
             label: 'Stjórna',
@@ -75,11 +72,6 @@ export const parseMachineLicensePayload = (
             type: GenericLicenseDataFieldType.Value,
             label: 'Kenna',
             value: field.kenna,
-          },
-          {
-            type: GenericLicenseDataFieldType.Value,
-            label: 'Fullt heiti',
-            value: field.fulltHeiti,
           },
         ],
       })),

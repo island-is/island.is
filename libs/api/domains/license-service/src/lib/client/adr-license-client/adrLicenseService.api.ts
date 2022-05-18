@@ -34,6 +34,8 @@ export class GenericAdrLicenseApi
 
     const payload = parseAdrLicensePayload(license)
 
+    console.log(payload)
+
     return {
       status: GenericUserLicenseStatus.HasLicense,
       payload,

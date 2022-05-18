@@ -13,6 +13,6 @@ export interface GenericAdrLicenseResponse {
     heiti?: {
       flokkur?: number
       heiti?: string
-    }
+    }[]
   }[]
 }
