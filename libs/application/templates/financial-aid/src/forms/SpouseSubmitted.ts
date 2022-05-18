@@ -22,6 +22,7 @@ export const SpouseSubmitted: Form = buildForm({
           title: m.status.spousePageTitle,
           component: 'SpouseStatus',
         }),
+        // Empty submit field to hide all buttons in the footer
         buildSubmitField({
           id: '',
           title: '',
