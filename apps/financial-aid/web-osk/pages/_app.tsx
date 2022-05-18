@@ -1,6 +1,5 @@
 import React from 'react'
 import App, { AppProps } from 'next/app'
-import getConfig from 'next/config'
 import { ApolloProvider } from '@apollo/client'
 
 import { client } from '../graphql'
@@ -9,7 +8,6 @@ import {
   AppProvider,
   AppLayout,
 } from '@island.is/financial-aid-web/osk/src/components'
-import { withHealthchecks } from '@island.is/next/health'
 import { Provider } from 'next-auth/client'
 
 import '@island.is/financial-aid-web/osk/src/styles.css'
@@ -98,10 +96,4 @@ class FinancialAidApplication extends App<AppProps> {
   }
 }
 
-const { serverRuntimeConfig } = getConfig()
-const { graphqlEndpoint, apiUrl } = serverRuntimeConfig
-const externalEndpointDependencies = [graphqlEndpoint, apiUrl]
-
-export default withHealthchecks(externalEndpointDependencies)(
-  FinancialAidApplication,
-)
+export default FinancialAidApplication

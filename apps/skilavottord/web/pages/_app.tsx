@@ -10,7 +10,6 @@ import { Provider } from 'next-auth/client'
 import { ApolloProvider } from '@apollo/client'
 import * as Sentry from '@sentry/node'
 import get from 'lodash/get'
-import { withHealthchecks } from '@island.is/next/health'
 
 import { client as initApollo } from '../graphql'
 import { AppLayout } from '../components/Layouts'
@@ -87,9 +86,4 @@ class Skilavottord extends App<AppProps> {
   }
 }
 
-const { serverRuntimeConfig } = getConfig()
-const { graphqlEndpoint } = serverRuntimeConfig
-
-export default appWithTranslation(
-  withHealthchecks([graphqlEndpoint])(Skilavottord),
-)
+export default appWithTranslation(Skilavottord)
