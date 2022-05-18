@@ -228,6 +228,20 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
           />
         </Box>
       )}
+      {workingCase.rulingModifiedHistory && (
+        <Box marginBottom={5}>
+          <AlertMessage
+            type="info"
+            title={formatMessage(m.sections.modifyRulingInfo.title)}
+            message={
+              <MarkdownWrapper
+                markdown={workingCase.rulingModifiedHistory}
+                textProps={{ variant: 'small' }}
+              />
+            }
+          />
+        </Box>
+      )}
       <Box marginBottom={6}>
         <InfoCard
           data={[
