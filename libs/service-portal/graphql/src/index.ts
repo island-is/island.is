@@ -1,4 +1,4 @@
-export * from './lib/fragments/companyInfo'
+export { CompanyInfoFragment } from './lib/fragments/companyInfo'
 export * from './lib/queries/getDocument'
 export * from './lib/queries/listDocuments'
 export * from './lib/queries/getOrganizations'
