@@ -34,6 +34,17 @@ export const m = defineMessages({
       'Við munum sækja skráningu þína úr ökuskírteinaskrá til að athuga hvort þú hafir sannarlega ökukennararéttindi.',
     description: 'Data provider subtitle',
   },
+  dataCollectionNoRightsError: {
+    id: 'dir.application:dataCollectionNoRightsError',
+    defaultMessage:
+      'Þú hefur ekki ökukennararéttindi í ökuskírteinaskrá. Vinsamlega hafðu samband við næsta sýslumannsembætti ef þú telur um villu vera að ræða',
+    description: 'Data provider no teaching rights error',
+  },
+  dataCollectionNoConnection: {
+    id: 'dir.application:dataCollectionNoConnection',
+    defaultMessage: 'Náði ekki sambandi við vefþjónustu',
+    description: 'Data provider no connection',
+  },
 
   /* Students Overview Table Section */
   studentsOverviewSideTitle: {

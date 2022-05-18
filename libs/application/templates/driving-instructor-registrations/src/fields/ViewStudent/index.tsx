@@ -297,6 +297,7 @@ const ViewStudent = ({
                 placeholderText={formatMessage(
                   m.viewStudentSelectDatePlaceholder,
                 )}
+                maxDate={new Date()}
                 required
                 selected={date ? new Date(date) : null}
               />
