@@ -6,7 +6,6 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   IntroHeader,
   ServicePortalModuleComponent,
-  ServicePortalPath,
 } from '@island.is/service-portal/core'
 import LicenseCards from '../../components/LicenseCards/LicenseCards'
 import { LicenseLoader } from '../../components/LicenseLoader/LicenseLoader'
@@ -19,16 +18,6 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
   useNamespaces('sp.license')
   const { formatMessage } = useLocale()
   const { data, loading, error } = useLicenses()
-  const history = useHistory()
-
-  const getGenericFieldByName = (item: GenericUserLicense, name: string) => {
-    return (
-      item.payload?.data.find((field) => field.name === name.toString())
-        ?.value ?? undefined
-    )
-  }
-
-  //Need to decide how/where the type logic for the cards should be
 
   return (
     <>
@@ -46,14 +35,9 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
               return null
             }
 
-            const text = getGenericFieldByName(item, 'skirteinisNumer')
-            const expireDate =
-              getGenericFieldByName(item, 'gildirTil') ?? undefined
+            const text = 'skírteinisnúmer'
 
-            const tag =
-              new Date() > new Date(expireDate ?? 0)
-                ? m.isExpired.defaultMessage
-                : 'í Gildi'
+            const tag = 'Placeholder'
 
             let title
 

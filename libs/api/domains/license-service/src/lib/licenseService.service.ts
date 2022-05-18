@@ -126,7 +126,7 @@ export class LicenseServiceService {
   ): Promise<GenericUserLicense[]> {
     const licenses: GenericUserLicense[] = []
 
-    nationalId = '0101303019'
+    //nationalId = '0101303019'
 
     for (const license of AVAILABLE_LICENSES) {
       if (excludedTypes && excludedTypes.indexOf(license.type) >= 0) {
@@ -184,7 +184,6 @@ export class LicenseServiceService {
         fetch,
         payload: licenseDataFromService?.payload ?? undefined,
       }
-
       licenses.push(combined)
     }
     return licenses
