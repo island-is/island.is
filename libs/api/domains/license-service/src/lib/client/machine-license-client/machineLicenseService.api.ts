@@ -12,7 +12,7 @@ import {
 } from '../../licenceService.type'
 import { User } from '@island.is/auth-nest-tools'
 import { VinnuvelaApi } from '@island.is/clients/aosh'
-import { parseMachineLicensePayload } from './MachineLicenseMapper'
+import { parseMachineLicensePayload } from './machineLicenseMappers'
 import { GenericMachineLicenseResponse } from './genericMachineLicense.type'
 
 @Injectable()
