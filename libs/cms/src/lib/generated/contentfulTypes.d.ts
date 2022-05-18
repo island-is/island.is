@@ -506,6 +506,36 @@ export interface IEmbeddedVideo extends Entry<IEmbeddedVideoFields> {
   }
 }
 
+export interface IEmbedSliceFields {
+  /** Title */
+  title?: string | undefined
+
+  /** URL */
+  url: string
+
+  /** Frame Height */
+  frameHeight?: number | undefined
+}
+
+/** A slice that you can use to create an iframe */
+
+export interface IEmbedSlice extends Entry<IEmbedSliceFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'embedSlice'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IEnhancedAssetFields {
   /** Title */
   title?: string | undefined
@@ -2018,11 +2048,11 @@ export interface IOrganizationPageFields {
   /** External Links */
   externalLinks?: ILink[] | undefined
 
-  /** Alert Banner */
-  alertBanner?: IAlertBanner | undefined
-
   /** Default Header Image */
   defaultHeaderImage?: Asset | undefined
+
+  /** Alert Banner */
+  alertBanner?: IAlertBanner | undefined
 }
 
 export interface IOrganizationPage extends Entry<IOrganizationPageFields> {
@@ -3524,6 +3554,7 @@ export type CONTENT_TYPE =
   | 'contactUs'
   | 'districts'
   | 'embeddedVideo'
+  | 'embedSlice'
   | 'enhancedAsset'
   | 'errorPage'
   | 'eventSlice'

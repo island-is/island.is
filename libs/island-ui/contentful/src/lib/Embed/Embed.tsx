@@ -4,17 +4,17 @@ import * as styles from './Embed.css'
 export interface EmbedProps {
   title: string
   url: string
-  height: number
+  frameHeight: number
 }
 
-export const Embed = ({ title, url, height }: EmbedProps) => {
+export const Embed = ({ title, url, frameHeight }: EmbedProps) => {
   return (
     <iframe
-      className={styles.container}
+      className={`${styles.container} ${frameHeight ? '' : styles.fullHeight}`}
       src={url}
-      width="100%"
-      height={height}
       title={title}
+      width="100%"
+      height={frameHeight}
     />
   )
 }

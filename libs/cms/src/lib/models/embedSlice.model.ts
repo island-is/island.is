@@ -1,5 +1,5 @@
 import { Field, ID, Int, ObjectType } from '@nestjs/graphql'
-// import { IEmbedSlice } from '../generated/contentfulTypes'
+import { IEmbedSlice } from '../generated/contentfulTypes'
 import { SystemMetadata } from '@island.is/shared/types'
 
 @ObjectType()
@@ -13,22 +13,17 @@ export class EmbedSlice {
   @Field()
   url!: string
 
-  @Field(() => Int)
-  height!: number
+  @Field(() => Int, { nullable: true })
+  frameHeight?: number
 }
 
 export const mapEmbedSlice = ({
   fields,
   sys,
-}: {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  fields: Record<string, any>
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  sys: Record<string, any>
-}): SystemMetadata<EmbedSlice> => ({
+}: IEmbedSlice): SystemMetadata<EmbedSlice> => ({
   typename: 'EmbedSlice',
   id: sys.id,
   title: fields.title ?? '',
   url: fields.url ?? '',
-  height: fields.height ?? 300,
+  frameHeight: fields.frameHeight,
 })

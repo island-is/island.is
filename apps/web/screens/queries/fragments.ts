@@ -468,7 +468,7 @@ export const slices = gql`
   fragment EmbedSliceFields on EmbedSlice {
     title
     url
-    height
+    frameHeight
   }
 
   fragment BaseSlices on Slice {
