@@ -14,6 +14,7 @@ import {
   MORTGAGE_CERTIFICATE_MESSAGE_NO_KMARKING,
   VEHICLE_TYPE_NAME,
   REAL_ESTATE_ADDRESS_NAME,
+  ESTATE_REGISTRANT_RESPONSE,
 } from './responses'
 
 export const MOCK_PROPERTY_NUMBER_OK = 'F2003292'
@@ -70,6 +71,20 @@ export const requestHandlers = [
       return res(ctx.status(401), ctx.json(VHFAIL))
     }
   }),
+  rest.get(
+    url('/api/SkraningaradiliDanarbus/:nationalid/:id'),
+    (req, res, ctx) => {
+      const success =
+        req.params.nationalid && req.params.nationalid === '0101302399'
+
+      if (success) {
+        return res(ctx.status(200), ctx.json(ESTATE_REGISTRANT_RESPONSE))
+      } else {
+        // TODO: get confirmation from Syslumenn, currently returns 500
+        return res(ctx.status(404))
+      }
+    },
+  ),
   rest.post(url('/api/v1/SyslMottakaGogn'), (req, res, ctx) => {
     return res(ctx.status(200), ctx.json(DATA_UPLOAD))
   }),

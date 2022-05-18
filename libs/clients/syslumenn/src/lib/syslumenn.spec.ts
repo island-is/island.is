@@ -15,12 +15,14 @@ import {
   REAL_ESTATE_ADDRESS,
   MORTGAGE_CERTIFICATE_CONTENT_NO_KMARKING,
   VEHICLE_TYPE,
+  ESTATE_REGISTRANT_RESPONSE,
 } from './__mock-data__/responses'
 import {
   mapHomestay,
   mapSyslumennAuction,
   mapDataUploadResponse,
   mapPaginatedOperatingLicenses,
+  mapEstateRegistrant,
 } from './syslumennClient.utils'
 import { SYSLUMENN_AUCTION } from './__mock-data__/responses'
 import { PersonType } from './syslumennClient.types'
@@ -46,6 +48,9 @@ const ATTACHMENT = {
   name: 'attachment',
   content: 'content',
 }
+
+const VALID_ESTATE_APPLICANT = '0101302399'
+const INVALID_ESTATE_APPLICANT = '0101303019'
 
 const config = defineConfig({
   name: 'SyslumennApi',
@@ -126,6 +131,15 @@ describe('SyslumennService', () => {
         'Lögheimilisbreyting barns',
       )
       expect(response).toStrictEqual(mapDataUploadResponse(DATA_UPLOAD))
+    })
+  })
+
+  describe('getEstateRegistrant', () => {
+    it('should return estate registry for a valid nationalId', async () => {
+      const response = await service.getEstateRegistrant(VALID_ESTATE_APPLICANT)
+      expect(response).toStrictEqual(
+        ESTATE_REGISTRANT_RESPONSE.map(mapEstateRegistrant),
+      )
     })
   })
 
