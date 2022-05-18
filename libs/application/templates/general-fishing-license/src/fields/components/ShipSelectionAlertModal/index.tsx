@@ -1,13 +1,5 @@
 import { FishingLicenseUnfulfilledLicense } from '@island.is/api/schema'
-import {
-  Box,
-  Text,
-  Stack,
-  ModalBase,
-  BulletList,
-  Bullet,
-  Button,
-} from '@island.is/island-ui/core'
+import { Box, Text, ModalBase, Icon } from '@island.is/island-ui/core'
 import React, { FC, useState } from 'react'
 import AnimateHeight from 'react-animate-height'
 import * as styles from './ShipSelectionAlertModal.css'
@@ -24,9 +16,9 @@ export const ShipSelectionAlertModal: FC<ShipSelectionAlertModalProps> = ({
   setVisibility,
   unfulfilledLicenses,
 }) => {
-  console.log(unfulfilledLicenses)
-  if (!unfulfilledLicenses) return null
-  console.log('hello')
+  const closeModal = () => {
+    setVisibility(false)
+  }
   return (
     <ModalBase
       baseId="ship-selection-alert-modal"
@@ -35,7 +27,16 @@ export const ShipSelectionAlertModal: FC<ShipSelectionAlertModalProps> = ({
       onVisibilityChange={(visibility) => setVisibility(visibility)}
     >
       <Box background="white" padding={10}>
-        {unfulfilledLicenses.map((license, index) => (
+        <Box
+          className={styles.close}
+          onClick={closeModal}
+          role="button"
+          aria-label="close button"
+        >
+          <Icon icon="close" size="large" />
+        </Box>
+        <Text variant="h3">Ekki er hægt að sækja um tiltekin veiðileyfi</Text>
+        {unfulfilledLicenses?.map((license, index) => (
           <UnfulfilledLicenseReasons
             unfulfilledLicense={license}
             key={`unfulfilled-license-${index}`}

@@ -67,11 +67,8 @@ export const ShipSelection: FC<FieldBaseProps> = ({
         continue
       }
 
-      const handleShowAlertModal = (
-        licenses: FishingLicenseUnfulfilledLicense[],
-      ) => {
-        console.log('hello')
-        setUnfulfilledLicenses(licenses)
+      const handleShowAlertModal = () => {
+        setUnfulfilledLicenses(ship.unfulfilledLicenses)
         setVisibility(true)
       }
       const isDisabled = ship.doesNotFulfillFishingLicenses
@@ -95,13 +92,26 @@ export const ShipSelection: FC<FieldBaseProps> = ({
                 isExpired={isExpired}
                 isDisabled={isDisabled}
               />
-              <Box>
+              <Box
+                display="flex"
+                flexDirection="column"
+                justifyContent="spaceBetween"
+                alignItems="flexEnd"
+              >
                 <Tag
                   variant={isExpired || isDisabled ? 'disabled' : 'purple'}
                   disabled
                 >
                   {formatMessage(shipSelection.tags.noFishingLicensesFound)}
                 </Tag>
+
+                {ship.unfulfilledLicenses.length > 0 && (
+                  <Box>
+                    <Button variant="text" onClick={handleShowAlertModal}>
+                      Upplýsingar um ógild veiðileyfi
+                    </Button>
+                  </Box>
+                )}
               </Box>
             </Box>
             {isExpired && (
@@ -115,15 +125,7 @@ export const ShipSelection: FC<FieldBaseProps> = ({
                 />
               </Box>
             )}
-            {ship.unfulfilledLicenses.length > 0 && (
-              <Button
-                variant="text"
-                onClick={() => handleShowAlertModal(ship.unfulfilledLicenses)}
-              >
-                Press me
-              </Button>
-            )}
-            {hasDeprivations && (
+            {/* hasDeprivations && (
               <Box marginTop={2}>
                 <AlertMessage
                   type="warning"
@@ -145,7 +147,7 @@ export const ShipSelection: FC<FieldBaseProps> = ({
                   )}
                 />
               </Box>
-            )}
+                  ) */}
           </>
         ),
         disabled: isDisabled || isExpired,
