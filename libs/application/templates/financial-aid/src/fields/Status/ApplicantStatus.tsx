@@ -4,8 +4,7 @@ import { ApplicationState } from '@island.is/financial-aid/shared/lib'
 import { Box } from '@island.is/island-ui/core'
 
 import { FAFieldBaseProps } from '../../lib/types'
-import { ApplicationStates } from '../../lib/constants'
-import { hasSpouse } from '../../lib/utils'
+import { hasSpouse, waitingForSpouse } from '../../lib/utils'
 import {
   AidAmount,
   Header,
@@ -23,7 +22,7 @@ const ApplicantStatus = ({ application }: FAFieldBaseProps) => {
   )
   const { nationalRegistry } = application.externalData
   const state =
-    !currentApplication && application.state === ApplicationStates.SPOUSE
+    !currentApplication && waitingForSpouse(application.state)
       ? ApplicationState.NEW
       : currentApplication?.state
 
@@ -31,7 +30,7 @@ const ApplicantStatus = ({ application }: FAFieldBaseProps) => {
     <Box paddingBottom={5}>
       <Header state={state} />
 
-      {application.state === ApplicationStates.SPOUSE && <SpouseAlert />}
+      {waitingForSpouse(application.state) && <SpouseAlert />}
 
       {state === ApplicationState.REJECTED && (
         <RejectionMessage
