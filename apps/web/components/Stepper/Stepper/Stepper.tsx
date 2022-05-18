@@ -1,4 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
+import { useRouter } from 'next/router'
+import { ValueType } from 'react-select'
+import { ParsedUrlQuery } from 'querystring'
 
 import {
   Box,
@@ -11,15 +14,19 @@ import {
   GridRow,
   GridContainer,
 } from '@island.is/island-ui/core'
-
-import { Stepper } from '@island.is/api/schema'
+import { richText, SliceType } from '@island.is/island-ui/contentful'
+import { useI18n } from '@island.is/web/i18n'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
+import {
+  GetNamespaceQuery,
+  Stepper as StepperSchema,
+} from '@island.is/web/graphql/schema'
+import { useNamespace } from '@island.is/web/hooks'
 
 import {
   renderStepperAndStepConfigErrors,
   StepperHelper,
-} from './StepperFSMHelper'
-import * as styles from './StepperFSM.css'
-
+} from '../StepperHelper/StepperHelper'
 import {
   getStepperMachine,
   resolveStepType,
@@ -32,15 +39,9 @@ import {
   getCurrentStepAndStepType,
   validateStepperConfig,
   validateStepConfig,
-} from './StepperFSMUtils'
-import { useRouter } from 'next/router'
-import { richText, SliceType } from '@island.is/island-ui/contentful'
-import { useI18n } from '@island.is/web/i18n'
-import { ValueType } from 'react-select'
-import { ParsedUrlQuery } from 'querystring'
-import { isRunningOnEnvironment } from '@island.is/shared/utils'
-import { GetNamespaceQuery } from '@island.is/web/graphql/schema'
-import { useNamespace } from '@island.is/web/hooks'
+} from '../utils'
+
+import * as styles from './Stepper.css'
 
 const ANSWER_DELIMITER = ','
 export const STEPPER_HELPER_ENABLED_KEY = 'show-stepper-config-helper'
@@ -49,10 +50,7 @@ const STEPPER_HELPER_ENABLED =
   isRunningOnEnvironment('dev') || isRunningOnEnvironment('local')
 
 interface StepperProps {
-  stepper: Stepper
-  startAgainLabel?: string
-  answerLabel?: string
-  backLabel?: string
+  stepper: StepperSchema
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   optionsFromNamespace: { slug: string; data: Record<string, any>[] }[]
   scrollUpWhenNextStepAppears?: boolean
@@ -72,7 +70,7 @@ interface QuestionAndAnswer {
 }
 
 const getInitialStateAndAnswersByQueryParams = (
-  stepper: Stepper,
+  stepper: StepperSchema,
   stepperMachine: StepperMachine,
   query: ParsedUrlQuery,
   activeLocale: string,
@@ -118,8 +116,8 @@ const getInitialStateAndAnswersByQueryParams = (
   return { initialState, questionsAndAnswers }
 }
 
-const StepperFSMWrapper = (
-  StepperFSMComponent: React.ComponentType<StepperProps>,
+const StepperWrapper = (
+  StepperComponent: React.ComponentType<StepperProps>,
 ) => {
   const Component = (props: StepperProps) => {
     const configErrors = validateStepperConfig(props.stepper)
@@ -146,13 +144,13 @@ const StepperFSMWrapper = (
         : null
     }
 
-    return <StepperFSMComponent {...props} />
+    return <StepperComponent {...props} />
   }
 
   return Component
 }
 
-const StepperFSM = ({
+const Stepper = ({
   stepper,
   optionsFromNamespace,
   namespace,
@@ -478,4 +476,4 @@ const StepperFSM = ({
   )
 }
 
-export default StepperFSMWrapper(StepperFSM)
+export default StepperWrapper(Stepper)
