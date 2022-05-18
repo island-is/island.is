@@ -12,7 +12,6 @@ import {
 import { FasteignirApi } from '@island.is/clients/assets'
 import { NationalRegistry, RoleConfirmationEnum, PickRole } from './types'
 import { SharedTemplateApiService } from '../../shared'
-import { generateTestEmail } from './emailGenerators'
 import { EinstaklingarApi } from '@island.is/clients/national-registry-v2'
 import { baseMapper } from './announcement-of-death-utils'
 
@@ -103,13 +102,6 @@ export class AnnouncementOfDeathService {
         updateApplicationResponse,
       )
     }
-  }
-
-  async sendTestEmail({ application }: TemplateApiModuleActionProps) {
-    await this.sharedTemplateAPIService.sendEmail(
-      generateTestEmail,
-      application,
-    )
   }
 
   async assignElectedPerson({ application }: TemplateApiModuleActionProps) {
