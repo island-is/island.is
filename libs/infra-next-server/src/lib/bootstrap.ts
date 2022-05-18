@@ -34,6 +34,8 @@ type BootstrapOptions = {
 
   /**
    * External dependencies to do DNS lookup for the /readiness healthcheck
+   * If values needs to be read from the next config of the app you can provide
+   * a callback function, which is called when the next config has loaded.
    */
   externalEndpointDependencies?: ExternalEndpointDependencies
 }
