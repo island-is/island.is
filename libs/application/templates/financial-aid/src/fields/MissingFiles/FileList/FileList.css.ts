@@ -16,7 +16,7 @@ export const hoverState = style({
     '&:hover': {
       cursor: 'pointer',
       backgroundColor: theme.color.purple200,
-      textDecoration: 'none !important',
+      textDecoration: 'none',
     },
   },
 })
