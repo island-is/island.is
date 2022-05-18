@@ -148,9 +148,13 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
                     display="flex"
                     alignItems="center"
                   >
-                    <Text variant={labelVariant} as="span" color={labelColor}>
-                      {label}
-                    </Text>
+                    {typeof label === 'string' ? (
+                      <Text variant={labelVariant} as="span" color={labelColor}>
+                        {label}
+                      </Text>
+                    ) : (
+                      label
+                    )}
                   </Box>
                   {visibleContent && (
                     <Box paddingTop={2}>

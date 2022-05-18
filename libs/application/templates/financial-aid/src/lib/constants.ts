@@ -3,6 +3,7 @@ export enum ApplicationStates {
   DRAFT = 'draft',
   SUBMITTED = 'submitted',
   SPOUSE = 'spouse',
+  PREREQUISITESSPOUSE = 'prerequisitesSpouse',
   MUNCIPALITYNOTREGISTERED = 'muncipalityNotRegistered',
 }
 

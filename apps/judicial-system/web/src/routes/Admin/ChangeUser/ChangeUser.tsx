@@ -10,7 +10,7 @@ import {
   UserQuery,
 } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
-import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
+import { titles } from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import type { User } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system/consts'

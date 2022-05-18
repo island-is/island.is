@@ -30,9 +30,9 @@ export const signedVerdictOverview = {
   }),
   investigationAccepted: defineMessage({
     id: 'judicial.system.core:signed_verdict_overview.investigation_accepted',
-    defaultMessage: 'Krafa um rannsóknarheimid samþykkt',
+    defaultMessage: 'Krafa um rannsóknarheimild samþykkt',
     description:
-      'Notaður sem titil á yfirlitsskjá afreiddra mála krafa um rannsóknarheimid samþykkt.',
+      'Notaður sem titil á yfirlitsskjá afreiddra mála krafa um rannsóknarheimild samþykkt.',
   }),
   conclusionTitle: defineMessage({
     id: 'judicial.system.core:signed_verdict_overview.conclusion_title',
@@ -45,12 +45,6 @@ export const signedVerdictOverview = {
     defaultMessage: 'Skjöl málsins',
     description:
       'Notaður sem titill í "Skjöl málsins" hlutanum á úrskurðar skrefi á yfirlitsskjá afgreiddra mála.',
-  }),
-  signedDocument: defineMessage({
-    id: 'judicial.system.core:signed_verdict_overview.signed_document',
-    defaultMessage: 'Undirritað - {date} kl. {time}',
-    description:
-      'Notaður sem texti fyrir undirritað í "Skjöl málsins" hlutanum á úrskurðar skrefi á yfirlitsskjá afgreiddra mála.',
   }),
   unsignedDocument: defineMessage({
     id: 'judicial.system.core:signed_verdict_overview.unsigned_document',
@@ -391,29 +385,6 @@ export const signedVerdictOverview = {
           '{hasChildCase, select, yes {Framlengingarkrafa hefur þegar verið útbúin} other {Ekki hægt að framlengja {caseType, select, ADMISSION_TO_FACILITY {vistun á viðeigandi stofnun} TRAVEL_BAN {farbann} CUSTODY {gæsluvarðhald} other {kröfu}} {rejectReason, select, rejected {sem var hafnað} dismissed {sem var vísað frá} isValidToDateInThePast {sem er lokið} acceptingAlternativeTravelBan {þegar dómari hefur úrskurðað um annað en dómkröfur sögðu til um} other {}}}}.',
         description:
           'Notaður sem upplýsingatexti á info búbblu hjá framlengja mál takka',
-      },
-    }),
-    caseDates: defineMessages({
-      restrictionExpired: {
-        id:
-          'judicial.system.core:signed_verdict_overview.case_dates.restriction_expired',
-        defaultMessage:
-          '{caseType, select, ADMISSION_TO_FACILITY {Vistun} TRAVEL_BAN {Farbann} other {Gæsla}} rann út {date}',
-        description: 'Texti sem tilgreinir hvenær gæsla/vistun/farbann rann út',
-      },
-      restrictionValidTo: {
-        id:
-          'judicial.system.core:signed_verdict_overview.case_dates.restriction_valid_to',
-        defaultMessage:
-          '{caseType, select, ADMISSION_TO_FACILITY {Vistun} TRAVEL_BAN {Farbann} other {Gæsla}} til {date}',
-        description:
-          'Texti sem tilgreinir hversu lengi gæsla/vistun/farbann er í gildi',
-      },
-      isolationValidTo: {
-        id:
-          'judicial.system.core:signed_verdict_overview.case_dates.isolation_valid_to',
-        defaultMessage: 'Einangrun til {date}',
-        description: 'Texti sem tilgreinir hversu lengi einangrun er í gildi',
       },
     }),
     appeal: defineMessages({

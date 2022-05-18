@@ -1,21 +1,23 @@
-import CircuitBreaker from 'opossum'
 import nodeFetch from 'node-fetch'
+import CircuitBreaker from 'opossum'
 import { Logger } from 'winston'
-import { logger as defaultLogger } from '@island.is/logging'
+
 import { DogStatsD } from '@island.is/infra-metrics'
-import { withTimeout } from './withTimeout'
-import { withMetrics } from './withMetrics'
+import { logger as defaultLogger } from '@island.is/logging'
+
+import { buildFetch } from './buildFetch'
 import { FetchAPI as NodeFetchAPI } from './nodeFetch'
 import { EnhancedFetchAPI } from './types'
+import { AgentOptions, ClientCertificateOptions, withAgent } from './withAgent'
 import { withAuth } from './withAuth'
 import { AutoAuthOptions, withAutoAuth } from './withAutoAuth'
-import { withErrorLog } from './withErrorLog'
-import { withResponseErrors } from './withResponseErrors'
-import { withCircuitBreaker } from './withCircuitBreaker'
-import { AgentOptions, ClientCertificateOptions, withAgent } from './withAgent'
-import { withCache } from './withCache/withCache'
 import { CacheConfig } from './withCache/types'
-import { buildFetch } from './buildFetch'
+import { withCache } from './withCache/withCache'
+import { withCircuitBreaker } from './withCircuitBreaker'
+import { withErrorLog } from './withErrorLog'
+import { withMetrics } from './withMetrics'
+import { withResponseErrors } from './withResponseErrors'
+import { withTimeout } from './withTimeout'
 
 const DEFAULT_TIMEOUT = 1000 * 10 // seconds
 const DEFAULT_FREE_SOCKET_TIMEOUT = 1000 * 10 // 10 seconds
@@ -129,7 +131,12 @@ export const createEnhancedFetch = (
 
   builder.wrap(withAgent, {
     clientCertificate,
-    agentOptions,
+    agentOptions: {
+      ...agentOptions,
+      // We disable the timeout handling on the agent, as it is handled in withTimeout to allow for per request overwrite.
+      // https://github.com/node-modules/agentkeepalive#new-agentoptions
+      timeout: 0,
+    },
     keepAlive: !!keepAlive,
     freeSocketTimeout,
   })
