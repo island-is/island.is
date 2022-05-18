@@ -6,8 +6,8 @@ import {
 
 import { Redirect } from 'react-router-dom'
 
-export const SettingsWIP: ServicePortalModuleComponent = () => {
+export const SettingsRoot: ServicePortalModuleComponent = () => {
   return <Redirect to={ServicePortalPath.SettingsPersonalInformation} />
 }
 
-export default SettingsWIP
+export default SettingsRoot
