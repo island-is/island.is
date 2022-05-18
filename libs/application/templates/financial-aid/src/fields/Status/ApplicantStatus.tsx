@@ -44,9 +44,7 @@ const ApplicantStatus = ({ application, goToScreen }: FAFieldBaseProps) => {
       )}
 
       {state === ApplicationState.DATANEEDED && (
-        <MissingFilesCard
-          onClick={() => goToScreen && goToScreen('missingFiles')}
-        />
+        <MissingFilesCard goToScreen={goToScreen} />
       )}
 
       {state !== ApplicationState.REJECTED && (

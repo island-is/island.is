@@ -6,6 +6,7 @@ import {
   DefaultEvents,
   Form,
 } from '@island.is/application/core'
+import { Routes } from '../lib/constants'
 
 import * as m from '../lib/messages'
 
@@ -31,7 +32,7 @@ export const SpouseSubmitted: Form = buildForm({
       ],
     }),
     buildMultiField({
-      id: 'missingFiles',
+      id: Routes.MISSINGFILES,
       title: m.missingFiles.general.pageTitle,
       children: [
         buildCustomField(

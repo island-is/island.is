@@ -29,6 +29,7 @@ export enum Routes {
   SPOUSEINCOMEFILES = 'spouseIncomeFiles',
   SPOUSETAXRETURNFILES = 'spouseTaxReturnFiles',
   SPOUSECONTACTINFO = 'spouseContactInfo',
+  MISSINGFILES = 'missingFiles',
 }
 
 export enum ApiActions {

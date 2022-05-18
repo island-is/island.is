@@ -3,12 +3,13 @@ import { useIntl } from 'react-intl'
 
 import { Box, ActionCard } from '@island.is/island-ui/core'
 import { missingFilesCard } from '../../../lib/messages'
+import { Routes } from '../../../lib/constants'
 
 interface Props {
-  onClick: () => void
+  goToScreen?: (id: string) => void
 }
 
-const MissingFilesCard = ({ onClick }: Props) => {
+const MissingFilesCard = ({ goToScreen }: Props) => {
   const { formatMessage } = useIntl()
 
   return (
@@ -19,7 +20,7 @@ const MissingFilesCard = ({ onClick }: Props) => {
         cta={{
           label: formatMessage(missingFilesCard.action),
           icon: undefined,
-          onClick: onClick,
+          onClick: () => goToScreen?.(Routes.MISSINGFILES),
         }}
         backgroundColor="blue"
       />

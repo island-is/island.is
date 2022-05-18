@@ -28,9 +28,7 @@ const SpouseStatus = ({ application, goToScreen }: FAFieldBaseProps) => {
       {state === ApplicationState.APPROVED && <SpouseApproved />}
 
       {state === ApplicationState.DATANEEDED && (
-        <MissingFilesCard
-          onClick={() => goToScreen && goToScreen('missingFiles')}
-        />
+        <MissingFilesCard goToScreen={goToScreen} />
       )}
 
       <Timeline
