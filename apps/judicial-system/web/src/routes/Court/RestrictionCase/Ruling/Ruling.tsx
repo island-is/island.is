@@ -172,7 +172,9 @@ export const Ruling: React.FC = () => {
   const router = useRouter()
   const id = router.query.id
 
-  const isCorrectingRuling = router.pathname.includes('leidretta')
+  const isCorrectingRuling = router.pathname.includes(
+    Constants.MODIFY_RULING_ROUTE,
+  )
 
   const { user } = useContext(UserContext)
   const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)

@@ -406,7 +406,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
                     onClick={(event) => {
                       event.stopPropagation()
                       router.push(
-                        `${Constants.AMEND_RULING_ROUTE}/${workingCase.id}`,
+                        `${Constants.MODIFY_RULING_ROUTE}/${workingCase.id}`,
                       )
                     }}
                   >

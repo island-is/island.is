@@ -1,5 +1,5 @@
 import {
-  AMEND_RULING_ROUTE,
+  MODIFY_RULING_ROUTE,
   SIGNED_VERDICT_OVERVIEW,
 } from '@island.is/judicial-system/consts'
 import { Case, UserRole } from '@island.is/judicial-system/types'
@@ -45,6 +45,6 @@ describe('Signed verdict overview for court users', () => {
 
   it('should have a button for amending the ruling that navigates to a amend ruling page', () => {
     cy.get('[data-testid="amendRulingButton"]').should('exist').click()
-    cy.url().should('include', AMEND_RULING_ROUTE)
+    cy.url().should('include', MODIFY_RULING_ROUTE)
   })
 })
