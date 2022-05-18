@@ -9,6 +9,10 @@ import { m } from '../lib/messages'
 export class DeathNoticeProvider extends BasicDataProvider {
   type = 'DeathNoticeProvider'
 
+  // Note:
+  // This provider acts as a barrier to persons with no
+  // relevant estates and is reliant on the
+  // meta.onEntry for the initial state
   async provide(application: Application): Promise<boolean> {
     const applicationData: any =
       application.externalData?.syslumennOnEntry?.data
