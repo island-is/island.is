@@ -17,26 +17,23 @@ import { VehiclesDetail } from '../models/getVehicleDetail.model'
 export class VehiclesResolver {
   constructor(private readonly vehiclesService: VehiclesService) {}
 
-  @Query(() => VehiclesList, { name: 'vehiclesList' })
+  @Query(() => VehiclesList, { name: 'vehiclesList', nullable: true })
   @Audit()
   async getVehicleList(@CurrentUser() user: User) {
-    const res = await this.vehiclesService.getVehiclesForUser(user.nationalId)
-
-    return res?.data ?? null
+    return await this.vehiclesService.getVehiclesForUser(user.nationalId)
   }
 
-  @Query(() => VehiclesDetail, { name: 'vehiclesDetail' })
+  @Query(() => VehiclesDetail, { name: 'vehiclesDetail', nullable: true })
   @Audit()
   async getVehicleDetail(
     @Args('input') input: GetVehicleDetailInput,
     @CurrentUser() user: User,
   ) {
-    const res = await this.vehiclesService.getVehicleDetail({
+    return await this.vehiclesService.getVehicleDetail({
       clientPersidno: user.nationalId,
       permno: input.permno,
       regno: input.regno,
       vin: input.vin,
     })
-    return res ?? null
   }
 }

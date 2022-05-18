@@ -1,13 +1,21 @@
 import React, { useState } from 'react'
-import { useIntl } from 'react-intl'
+import { IntlShape, useIntl } from 'react-intl'
+import formatISO from 'date-fns/formatISO'
 
 import { Box, Text, Input, Checkbox } from '@island.is/island-ui/core'
-import { formatDate } from '@island.is/judicial-system/formatters'
+import {
+  formatDate,
+  formatNationalId,
+} from '@island.is/judicial-system/formatters'
 import {
   CaseCustodyRestrictions,
   CaseType,
+  Defendant,
   Gender,
+  isAcceptingCaseDecision,
   User,
+  Case,
+  CaseDecision,
 } from '@island.is/judicial-system/types'
 import {
   BlueBox,
@@ -17,13 +25,16 @@ import {
   FormFooter,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  setAndSendDateToServer,
   removeTabsValidateAndSet,
   setCheckboxAndSendToServer,
+  toggleInArray,
   validateAndSendToServer,
-  setAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  useCase,
+  autofillEntry,
+  useDeb,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import CheckboxList from '@island.is/judicial-system-web/src/components/CheckboxList/CheckboxList'
 import {
   legalProvisions,
@@ -34,13 +45,50 @@ import {
   restrictionsCheckboxes,
 } from '@island.is/judicial-system-web/src/utils/restrictions'
 import { isPoliceDemandsStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
-import { rcDemands } from '@island.is/judicial-system-web/messages/RestrictionCases/Prosecutor/demandsForm'
-import { core } from '@island.is/judicial-system-web/messages'
-import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
-import type { Case } from '@island.is/judicial-system/types'
+import {
+  rcDemands,
+  rcReportForm,
+  core,
+} from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system/consts'
 
 import * as styles from './StepThree.css'
+
+export interface DemandsAutofillProps {
+  defentant: Defendant
+  caseType: CaseType
+  requestedValidToDate?: string | Date
+  requestedCustodyRestrictions?: CaseCustodyRestrictions[]
+  parentCaseDecision?: CaseDecision
+  courtName?: string
+}
+
+export const getDemandsAutofill = (
+  formatMessage: IntlShape['formatMessage'],
+  props: DemandsAutofillProps,
+): string => {
+  return formatMessage(rcReportForm.sections.demands.autofillV2, {
+    accusedName: props.defentant.name,
+    accusedNationalId: props.defentant.noNationalId
+      ? ' '
+      : `, kt. ${formatNationalId(props.defentant.nationalId ?? '')}, `,
+    isExtended:
+      props.parentCaseDecision &&
+      isAcceptingCaseDecision(props.parentCaseDecision)
+        ? 'yes'
+        : 'no',
+    caseType: props.caseType,
+    court: props.courtName?.replace('Héraðsdómur', 'Héraðsdóms'),
+    requestedValidToDate: formatDate(props.requestedValidToDate, 'PPPPp')
+      ?.replace('dagur,', 'dagsins')
+      ?.replace(' kl.', ', kl.'),
+    hasIsolationRequest: props.requestedCustodyRestrictions?.includes(
+      CaseCustodyRestrictions.ISOLATION,
+    )
+      ? 'yes'
+      : 'no',
+  })
+}
 
 interface Props {
   workingCase: Case
@@ -54,12 +102,45 @@ const StepThreeForm: React.FC<Props> = (props) => {
     '',
   )
 
-  const { updateCase } = useCase()
+  const { updateCase, autofill } = useCase()
   const { formatMessage } = useIntl()
 
   useDeb(workingCase, 'lawsBroken')
   useDeb(workingCase, 'legalBasis')
   useDeb(workingCase, 'requestedOtherRestrictions')
+
+  const onDemandsChange = React.useCallback(
+    (
+      entry: autofillEntry,
+      caseType: CaseType,
+      requestedValidToDate: Date | string | undefined,
+      requestedCustodyRestrictions: CaseCustodyRestrictions[] | undefined,
+    ) => {
+      autofill(
+        [
+          entry,
+          {
+            key: 'demands',
+            value:
+              workingCase.defendants && workingCase.defendants.length
+                ? getDemandsAutofill(formatMessage, {
+                    defentant: workingCase.defendants[0],
+                    caseType,
+                    requestedValidToDate: requestedValidToDate,
+                    parentCaseDecision: workingCase.parentCase?.decision,
+                    requestedCustodyRestrictions: requestedCustodyRestrictions,
+                    courtName: workingCase.court?.name,
+                  })
+                : undefined,
+            force: true,
+          },
+        ],
+        workingCase,
+        setWorkingCase,
+      )
+    },
+    [workingCase, formatMessage, setWorkingCase, autofill],
+  )
 
   return (
     <>
@@ -110,14 +191,20 @@ const StepThreeForm: React.FC<Props> = (props) => {
                 minDate={new Date()}
                 selectedDate={workingCase.requestedValidToDate}
                 onChange={(date: Date | undefined, valid: boolean) => {
-                  setAndSendDateToServer(
-                    'requestedValidToDate',
-                    date,
-                    valid,
-                    workingCase,
-                    setWorkingCase,
-                    updateCase,
-                  )
+                  if (date && valid) {
+                    onDemandsChange(
+                      {
+                        key: 'requestedValidToDate',
+                        value: formatISO(date, {
+                          representation: 'complete',
+                        }),
+                        force: true,
+                      },
+                      workingCase.type,
+                      date,
+                      workingCase.requestedCustodyRestrictions,
+                    )
+                  }
                 }}
                 required
                 blueBox={false}
@@ -132,15 +219,22 @@ const StepThreeForm: React.FC<Props> = (props) => {
                   checked={workingCase.requestedCustodyRestrictions?.includes(
                     CaseCustodyRestrictions.ISOLATION,
                   )}
-                  onChange={() =>
-                    setCheckboxAndSendToServer(
-                      'requestedCustodyRestrictions',
-                      'ISOLATION',
-                      workingCase,
-                      setWorkingCase,
-                      updateCase,
+                  onChange={() => {
+                    const nextRequestedCustodyRestrictions = toggleInArray(
+                      workingCase.requestedCustodyRestrictions,
+                      CaseCustodyRestrictions.ISOLATION,
                     )
-                  }
+                    onDemandsChange(
+                      {
+                        key: 'requestedCustodyRestrictions',
+                        value: nextRequestedCustodyRestrictions,
+                        force: true,
+                      },
+                      workingCase.type,
+                      workingCase.requestedCourtDate,
+                      nextRequestedCustodyRestrictions,
+                    )
+                  }}
                   large
                   filled
                 />
@@ -159,14 +253,18 @@ const StepThreeForm: React.FC<Props> = (props) => {
                       return
                     }
 
-                    setAndSendToServer(
-                      'type',
-                      event.target.checked
-                        ? CaseType.ADMISSION_TO_FACILITY
-                        : CaseType.CUSTODY,
-                      workingCase,
-                      setWorkingCase,
-                      updateCase,
+                    const nextCaseType = event.target.checked
+                      ? CaseType.ADMISSION_TO_FACILITY
+                      : CaseType.CUSTODY
+                    onDemandsChange(
+                      {
+                        key: 'type',
+                        value: nextCaseType,
+                        force: true,
+                      },
+                      nextCaseType,
+                      workingCase.requestedCourtDate,
+                      workingCase.requestedCustodyRestrictions,
                     )
                   }}
                   large

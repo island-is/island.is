@@ -50,6 +50,9 @@ export const UseUnion: FC<FieldBaseProps> = ({ application, field }) => {
             if (s === NO) {
               setValue('payments.union', NO_UNION)
             }
+            if (s === YES) {
+              setValue('payments.union', '')
+            }
           },
         }}
       />

@@ -3,7 +3,7 @@ import {
   STEP_THREE_ROUTE,
 } from '@island.is/judicial-system/consts'
 
-import { makeCustodyCase, intercept } from '../../../utils'
+import { makeCustodyCase, intercept, interceptUpdateCase } from '../../../utils'
 
 describe(`${STEP_THREE_ROUTE}/:id`, () => {
   beforeEach(() => {
@@ -15,7 +15,9 @@ describe(`${STEP_THREE_ROUTE}/:id`, () => {
     intercept(caseData)
   })
 
-  it('should require a valid requested custody end time', () => {
+  it('should validate form', () => {
+    cy.getByTestid('continueButton').should('be.disabled')
+
     cy.getByTestid('datepicker').click()
     cy.getByTestid('datepickerIncreaseMonth').click()
     cy.contains('15').click()
@@ -25,28 +27,33 @@ describe(`${STEP_THREE_ROUTE}/:id`, () => {
     cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
     cy.getByTestid('reqValidToDate-time').clear().type('1333')
     cy.getByTestid('inputErrorMessage').should('not.exist')
-  })
 
-  it('should require a valid laws broken value', () => {
+    cy.getByTestid('continueButton').should('be.disabled')
     cy.getByTestid('lawsBroken').click().blur()
     cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
     cy.getByTestid('lawsBroken').type('Lorem ipsum')
     cy.getByTestid('inputErrorMessage').should('not.exist')
-  })
 
-  it('should require at lease one custody provision to be selected or a valid legal basis value', () => {
-    cy.getByTestid('datepicker').click()
-    cy.getByTestid('datepickerIncreaseMonth').click()
-    cy.contains('15').click()
-    cy.getByTestid('reqValidToDate-time').clear().type('1333')
-    cy.getByTestid('lawsBroken').type('Lorem ipsum')
     cy.getByTestid('continueButton').should('be.disabled')
     cy.getByTestid('checkbox').first().click()
     cy.getByTestid('continueButton').should('not.be.disabled')
     cy.getByTestid('checkbox').first().click()
     cy.getByTestid('continueButton').should('be.disabled')
     cy.getByTestid('legalBasis').type('Lorem ipsum')
+
     cy.getByTestid('continueButton').should('not.be.disabled')
+  })
+
+  it('should overwrite demands when requested valid date is updated', () => {
+    cy.getByTestid('datepicker').click()
+    cy.getByTestid('datepickerIncreaseMonth').click()
+    cy.contains('15').click()
+
+    interceptUpdateCase()
+    cy.getByTestid('reqValidToDate-time').clear().type('1333')
+    cy.wait('@UpdateCaseMutation')
+      .its('response.body.data.updateCase')
+      .should('have.any.key', 'demands')
   })
 
   it('should navigate to the next step when all input data is valid and the continue button is clicked', () => {

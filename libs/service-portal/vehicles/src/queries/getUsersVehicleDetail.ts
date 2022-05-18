@@ -84,7 +84,7 @@ export const GET_USERS_VEHICLE_DETAIL = gql`
         city
         dateOfPurchase
       }
-      operator {
+      operators {
         nationalId
         name
         address
