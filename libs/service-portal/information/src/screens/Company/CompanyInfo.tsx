@@ -2,7 +2,11 @@ import React from 'react'
 import { defineMessage } from 'react-intl'
 import format from 'date-fns/format'
 import { dateFormat } from '@island.is/shared/constants'
-import { useCompanyRegistry } from '@island.is/service-portal/graphql'
+import { gql } from '@apollo/client'
+import {
+  useCompanyRegistry,
+  CompanyInfoFragment,
+} from '@island.is/service-portal/graphql'
 import { spmm } from '../../lib/messages'
 import {
   Text,
@@ -20,6 +24,20 @@ import {
 } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 
+const COMPANY_REGISTRY_INFORMATION = gql`
+  query companyRegistryCompanyQuery($input: RskCompanyInfoInput!) {
+    companyRegistryCompany(input: $input) {
+      name
+      nationalId
+      dateOfRegistration
+      companyInfo {
+        ...CompanyInfo
+      }
+    }
+  }
+  ${CompanyInfoFragment}
+`
+
 const dataNotFoundMessage = defineMessage({
   id: 'sp.company:data-not-found',
   defaultMessage: 'Gögn fundust ekki',
@@ -29,9 +47,10 @@ const CompanyInfo: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.company')
   const { formatMessage } = useLocale()
 
-  const { data, loading, error } = useCompanyRegistry(
-    userInfo.profile.nationalId,
-  )
+  const { data, loading, error } = useCompanyRegistry({
+    nationalId: userInfo.profile.nationalId,
+    query: COMPANY_REGISTRY_INFORMATION,
+  })
 
   const companyAddress =
     data?.companyInfo?.address?.streetAddress &&
