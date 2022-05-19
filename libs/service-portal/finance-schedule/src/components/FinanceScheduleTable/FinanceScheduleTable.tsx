@@ -33,7 +33,7 @@ const FinanceScheduleTable: FC<Props> = ({ recordsArray }) => {
     return {
       ...x,
       approvalDate:
-        x.approvalDate.length > 0
+        x.approvalDate && x.approvalDate.length > 0
           ? format(dateParse(x.approvalDate), dateFormat.is)
           : '',
     }

@@ -41,22 +41,26 @@ const FinanceScheduleTableRow: FC<Props> = ({ paymentSchedule }) => {
     <T.Row>
       <T.Data>
         <Text variant="medium" as="span">
-          {paymentSchedule.approvalDate}
+          {paymentSchedule.approvalDate || ''}
         </Text>
       </T.Data>
       <T.Data>
         <Text variant="medium" as="span">
-          {paymentSchedule.scheduleName}
+          {paymentSchedule.scheduleName || ''}
         </Text>
       </T.Data>
       <T.Data>
         <Text variant="medium" as="span">
-          {amountFormat(paymentSchedule.totalAmount)}
+          {paymentSchedule.totalAmount
+            ? amountFormat(paymentSchedule.totalAmount)
+            : ''}
         </Text>
       </T.Data>
       <T.Data>
         <Text variant="medium" as="span">
-          {amountFormat(paymentSchedule.unpaidAmount)}
+          {paymentSchedule.unpaidAmount
+            ? amountFormat(paymentSchedule.unpaidAmount)
+            : ''}
         </Text>
       </T.Data>
       <T.Data>
