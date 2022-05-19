@@ -71,7 +71,7 @@ export class RecyclingPartnerModel extends Model<RecyclingPartnerModel> {
     type: DataType.STRING,
     allowNull: true,
   })
-  website!: string
+  website?: string
 
   @Field()
   @Column({
