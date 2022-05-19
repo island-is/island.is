@@ -4,7 +4,7 @@ import {
 } from '@island.is/judicial-system/consts'
 import { CaseType } from '@island.is/judicial-system/types'
 
-import { makeCustodyCase, intercept, interceptUpdateCase } from '../../../utils'
+import { makeCustodyCase, intercept } from '../../../utils'
 
 describe(`${STEP_THREE_ROUTE}/:id`, () => {
   beforeEach(() => {
@@ -50,7 +50,6 @@ describe(`${STEP_THREE_ROUTE}/:id`, () => {
     cy.getByTestid('datepickerIncreaseMonth').click()
     cy.contains('15').click()
 
-    interceptUpdateCase()
     cy.getByTestid('reqValidToDate-time').clear().type('1333')
     cy.wait('@UpdateCaseMutation')
       .its('response.body.data.updateCase')

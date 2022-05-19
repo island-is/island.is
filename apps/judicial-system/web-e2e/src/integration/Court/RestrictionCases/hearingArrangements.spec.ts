@@ -66,6 +66,10 @@ describe(`${HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
     intercept(caseDataAddition)
 
     cy.getByTestid('continueButton').click()
+    cy.wait('@UpdateCaseMutation')
+      .its('response.body.data.updateCase')
+      .should('have.any.key', 'courtDate')
+
     cy.getByTestid('modalSecondaryButton').click()
     cy.url().should('include', `${RULING_ROUTE}/test_id_stadfest`)
   })
