@@ -26,7 +26,9 @@ const Timeline = ({ state, modified, created, showSpouseStep }: Props) => {
 
   const { formatMessage } = useIntl()
   const [activeState] = useState(
-    findLastIndex(sections, (el) => el.state.includes(state as ApplicationState)),
+    findLastIndex(sections, (el) =>
+      el.state.includes(state as ApplicationState),
+    ),
   )
 
   if (!state) {

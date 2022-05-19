@@ -20,7 +20,7 @@ interface Props {
 const FileList = ({ files, applicationSystemId }: Props) => {
   const { formatMessage } = useIntl()
   const { openFileById } = useFileUpload(files ?? [], applicationSystemId)
-  
+
   if (files === undefined || files.length === 0) {
     return null
   }
