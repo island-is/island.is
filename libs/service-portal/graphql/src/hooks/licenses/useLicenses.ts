@@ -1,5 +1,9 @@
 import { useQuery } from '@apollo/client'
-import { GenericUserLicense, Query } from '@island.is/api/schema'
+import {
+  GenericLicenseTypeType,
+  GenericUserLicense,
+  Query,
+} from '@island.is/api/schema'
 import { Locale } from 'locale'
 import { useEffect, useState } from 'react'
 import { useUserProfile } from '../..'
@@ -12,13 +16,16 @@ interface Props {
 
 /* Collects only Driving License */
 // TODO: Generate hook for collecting all licenses when other services are ready
-export const useLicenses = (): Props => {
+export const useLicenses = (type?: GenericLicenseTypeType): Props => {
   const { data: userProfile } = useUserProfile()
   const locale = (userProfile?.locale as Locale) ?? 'is'
+
+  const input = type ? { includedTypes: [type] } : {}
+
   const { data, loading, error } = useQuery<Query>(GET_GENERIC_LICENSES, {
     variables: {
       locale,
-      input: {},
+      input: input,
     },
   })
 

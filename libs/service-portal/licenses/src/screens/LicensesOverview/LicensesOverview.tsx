@@ -6,11 +6,13 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   IntroHeader,
   ServicePortalModuleComponent,
+  ServicePortalPath,
 } from '@island.is/service-portal/core'
 import LicenseCards from '../../components/LicenseCards/LicenseCards'
 import { LicenseLoader } from '../../components/LicenseLoader/LicenseLoader'
 import { m } from '../../lib/messages'
 import {
+  GenericLicenseType,
   GenericUserLicenseFetchStatus,
   useLicenses,
 } from '@island.is/service-portal/graphql'
@@ -20,6 +22,7 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
   useNamespaces('sp.license')
   const { formatMessage } = useLocale()
   const { data, loading, error } = useLicenses()
+  const history = useHistory()
 
   const isError = data?.every(
     (item) => item.fetch.status === GenericUserLicenseFetchStatus.Error,
@@ -57,6 +60,20 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
                 break
             }
 
+            let servicePortalPath: ServicePortalPath
+
+            switch (item.license.type) {
+              case GenericLicenseType.AdrLicense:
+                servicePortalPath = ServicePortalPath.LicensesAdrDetail
+                break
+              case GenericLicenseType.MachineLicense:
+                servicePortalPath = ServicePortalPath.LicensesMachineDetail
+                break
+              case GenericLicenseType.DriversLicense:
+                servicePortalPath = ServicePortalPath.LicensesDrivingDetail
+                break
+            }
+
             return (
               <ActionCard
                 key={i}
@@ -64,8 +81,8 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
                 text={`${m.licenseNumber.defaultMessage} - ${text}`}
                 tag={{ label: tag }}
                 cta={{
-                  label: 'click me',
-                  onClick: () => console.log('clicked'),
+                  label: 'Skoða nánar',
+                  onClick: () => history.push(servicePortalPath),
                 }}
               />
             )

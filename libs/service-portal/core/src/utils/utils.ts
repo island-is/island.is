@@ -55,17 +55,38 @@ export type DrivingLicenseType = {
   svipting: Array<DrivingLicenseSuspended>
 }
 
+export type MachineLicenseCategoryType = {
+  flokkur?: string
+  stjorna: string
+  kenna?: string
+  fulltHeiti?: string
+  stuttHeiti?: string
+}
+
+export type MachineLicenseType = {
+  id?: number
+  kennitala?: string
+  fulltNafn?: string
+  skirteinisNumer?: number
+  fyrstiUtgafuDagur?: string
+  utgafuStadur?: string
+  utgafuLand?: string
+  okuskirteinisNumer?: number
+  vinnuvelaRettindi?: Array<MachineLicenseCategoryType>
+}
+
 export type AdrLicenseCategoryType = {
   flokkur?: number
   grunn?: boolean
   tankar?: boolean
+  heiti?: string
 }
 
 export type AdrLicenseType = {
   id?: number
   kennitala?: string
   fulltNafn?: string
-  skirteinisNumber?: number
+  skirteinisNumer?: number
   faedingardagur?: string
   rikisfang?: string
   gildirTil?: string

@@ -25,10 +25,27 @@ export const licensesModule: ServicePortalModule = {
     {
       name: m.drivingLicense,
       path: ServicePortalPath.LicensesDrivingDetail,
+
       enabled: userInfo.scopes.includes(ApiScope.internal),
       render: () =>
         lazy(() =>
           import('./screens/DrivingLicenseDetail/DrivingLicenseDetail'),
+        ),
+    },
+    {
+      name: m.adrLicense,
+      path: ServicePortalPath.LicensesAdrDetail,
+      enabled: userInfo.scopes.includes(ApiScope.internal),
+      render: () =>
+        lazy(() => import('./screens/AdrLicenseDetail/AdrLicenseDetail')),
+    },
+    {
+      name: m.machineLicense,
+      path: ServicePortalPath.LicensesMachineDetail,
+      enabled: userInfo.scopes.includes(ApiScope.internal),
+      render: () =>
+        lazy(() =>
+          import('./screens/MachineLicenseDetail/MachineLicenseDetail'),
         ),
     },
   ],
