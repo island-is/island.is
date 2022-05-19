@@ -7,11 +7,11 @@ export interface GenericAdrLicenseResponse {
   rikisfang?: string
   gildirTil?: string
   adrRettindi?: {
-    flokkur?: number
+    flokkur?: string
     grunn?: boolean
     tankar?: boolean
     heiti?: {
-      flokkur?: number
+      flokkur?: string
       heiti?: string
     }[]
   }[]

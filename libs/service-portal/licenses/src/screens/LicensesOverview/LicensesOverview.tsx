@@ -10,13 +10,19 @@ import {
 import LicenseCards from '../../components/LicenseCards/LicenseCards'
 import { LicenseLoader } from '../../components/LicenseLoader/LicenseLoader'
 import { m } from '../../lib/messages'
-import { useHistory } from 'react-router-dom'
-import { useLicenses } from '@island.is/service-portal/graphql'
+import {
+  GenericUserLicenseFetchStatus,
+  useLicenses,
+} from '@island.is/service-portal/graphql'
 
 export const LicensesOverview: ServicePortalModuleComponent = () => {
   useNamespaces('sp.license')
   const { formatMessage } = useLocale()
   const { data, loading, error } = useLicenses()
+
+  const isError = data?.every(
+    (item) => item.fetch.status === GenericUserLicenseFetchStatus.Error,
+  )
 
   return (
     <>
@@ -36,7 +42,6 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
 
             const text = 'skírteinisnúmer'
             const tag = 'Placeholder'
-
             let title
 
             switch (item.license.type) {
@@ -66,7 +71,8 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
           })}
         </LicenseCards>
       )}
-      {error && (
+
+      {(error || isError) && (
         <Box>
           <AlertBanner
             description={formatMessage(m.errorFetch)}
