@@ -85,6 +85,7 @@
 /libs/api/domains/municipalities-financial-aid                                                      @island-is/kolibri-robin-hood
 /libs/clients/municipalities-financial-aid                                                          @island-is/kolibri-robin-hood
 
+
 /apps/download-service/                                                                             @island-is/hugsmidjan
 /apps/service-portal*/                                                                              @island-is/hugsmidjan
 /apps/services/user-profile/                                                                        @island-is/hugsmidjan @island-is/juni
