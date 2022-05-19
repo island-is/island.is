@@ -227,7 +227,7 @@ const handleMessageFormatting = (
 
 export function formatText<T extends FormTextArray | FormText>(
   text: T,
-  application: Application<any>,
+  application: Application,
   formatMessage: MessageFormatter,
 ): T extends FormTextArray ? string[] : string {
   if (typeof text === 'function') {

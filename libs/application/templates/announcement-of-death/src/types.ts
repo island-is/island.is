@@ -1,3 +1,4 @@
+import { FormValue } from '@island.is/application/core'
 import { EstateAsset } from '@island.is/clients/syslumenn'
 
 export enum RoleConfirmationEnum {
@@ -21,7 +22,7 @@ export enum OtherPropertiesEnum {
 export type Asset = Partial<EstateAsset & { initial: boolean }>
 
 // TODO: WIP
-export interface Answers {
+export type Answers = {
   additionalInfo: string
   applicantEmail: string
   applicantName: string
@@ -44,7 +45,7 @@ export interface Answers {
   ownBusinessManagement: boolean
   roleConfirmation: RoleConfirmationEnum
   vehicles: Asset[]
-}
+} & FormValue
 
 export interface ElectPersonType {
   roleConfirmation: RoleConfirmationEnum

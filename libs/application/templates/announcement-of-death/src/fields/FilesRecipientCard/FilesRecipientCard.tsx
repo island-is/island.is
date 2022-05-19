@@ -6,23 +6,25 @@ import {
   FieldBaseProps,
   formatText,
   FormText,
+  FormValue,
 } from '@island.is/application/core'
 import { Box, Tag, Text } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
-import { Answers } from '../../types'
+import { Answers as AODAnswers } from '../../types'
+import { FieldValue } from 'aws-sdk/clients/cloudsearch'
 
 type FilesRecipientCardProps = {
   field: {
     props: {
       noOptions: boolean
       placeholder?: FormText
-      tag?: (application: Application<Answers>) => string
+      tag?: (application: Application<AODAnswers>) => string
     }
   }
 }
 
 export const FilesRecipientCard: FC<
-  FieldBaseProps<Answers> & FilesRecipientCardProps
+  FieldBaseProps<AODAnswers> & FilesRecipientCardProps
 > = ({ application, field }) => {
   const { formatMessage } = useLocale()
 

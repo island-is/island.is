@@ -30,7 +30,7 @@ export interface ActionCardMetaData {
   deleteButton?: boolean
 }
 
-export interface Application<Answers = FormValue> {
+export interface Application<TAnswers = FormValue> {
   id: string
   state: string
   actionCard?: ActionCardMetaData
@@ -39,7 +39,7 @@ export interface Application<Answers = FormValue> {
   typeId: ApplicationTypes
   modified: Date
   created: Date
-  answers: Answers
+  answers: TAnswers
   externalData: ExternalData
   name?: string
   institution?: string
