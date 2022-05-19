@@ -184,7 +184,7 @@
     "jsonwebtoken": "8.5.1",
     "juice": "8.0.0",
     "jwks-rsa": "1.10.1",
-    "kennitala": "1.2.4",
+    "kennitala": "2.0.0-beta.1",
     "libphonenumber-js": "1.7.53",
     "lodash": "4.17.21",
     "lottie-web": "5.7.13",
