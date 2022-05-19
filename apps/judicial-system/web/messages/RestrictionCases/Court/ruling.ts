@@ -278,16 +278,16 @@ export const rcRuling = {
       },
     }),
     formFooter: defineMessages({
-      correctRulingButtonLabel: {
+      modifyRulingButtonLabel: {
         id:
-          'judicial.system.restriction_cases:ruling.form_footer.correct_ruling_button_label',
+          'judicial.system.restriction_cases:ruling.form_footer.modify_ruling_button_label',
         defaultMessage: 'Undirrita nýjan úrskurð',
         description:
           'Notaður sem label á hnappinn "Halda áfram" í úrskurðar skrefi þegar úrskuður er leiðréttur.',
       },
-      correctRulingBackButtonLabel: {
+      modifyRulingBackButtonLabel: {
         id:
-          'judicial.system.restriction_cases:ruling.form_footer.correct_ruling_back_button_label',
+          'judicial.system.restriction_cases:ruling.form_footer.modify_ruling_back_button_label',
         defaultMessage: 'Hætta við',
         description:
           'Notaður sem label á hnappinn "til baka" í úrskurðar skrefi þegar úrskuður er leiðréttur.',

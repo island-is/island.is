@@ -61,6 +61,9 @@ import {
 import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import * as Constants from '@island.is/judicial-system/consts'
+import SigningModal, {
+  useRequestRulingSignature,
+} from '@island.is/judicial-system-web/src/components/SigningModal/SigningModal'
 
 export function getConclusionAutofill(
   formatMessage: IntlShape['formatMessage'],
@@ -143,6 +146,8 @@ export function getConclusionAutofill(
       })
 }
 
+type availableModals = 'NoModal' | 'SigningModal'
+
 export const Ruling: React.FC = () => {
   const {
     workingCase,
@@ -170,11 +175,9 @@ export const Ruling: React.FC = () => {
   ] = useState<string>('')
 
   const router = useRouter()
-  const id = router.query.id
 
-  const isCorrectingRuling = router.pathname.includes(
-    Constants.MODIFY_RULING_ROUTE,
-  )
+  const isModifyingRuling = Boolean(workingCase.rulingDate)
+  const [modalVisible, setModalVisible] = useState<availableModals>('NoModal')
 
   const { user } = useContext(UserContext)
   const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
@@ -185,6 +188,14 @@ export const Ruling: React.FC = () => {
   useDeb(workingCase, 'courtCaseFacts')
   useDeb(workingCase, 'courtLegalArguments')
   useDeb(workingCase, 'conclusion')
+
+  const {
+    requestRulingSignature,
+    requestRulingSignatureResponse,
+    isRequestingRulingSignature,
+  } = useRequestRulingSignature(workingCase.id, () =>
+    setModalVisible('SigningModal'),
+  )
 
   useEffect(() => {
     if (isCaseUpToDate && !initialAutoFillDone) {
@@ -848,23 +859,42 @@ export const Ruling: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${Constants.HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
+          previousUrl={
+            isModifyingRuling
+              ? `${Constants.SIGNED_VERDICT_OVERVIEW}/${workingCase.id}`
+              : `${Constants.HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`
+          }
           previousButtonText={
-            isCorrectingRuling
-              ? formatMessage(
-                  m.sections.formFooter.correctRulingBackButtonLabel,
-                )
+            isModifyingRuling
+              ? formatMessage(m.sections.formFooter.modifyRulingBackButtonLabel)
               : undefined
           }
-          nextUrl={`${Constants.COURT_RECORD_ROUTE}/${id}`}
+          nextIsLoading={
+            isModifyingRuling ? isRequestingRulingSignature : false
+          }
+          onNextButtonClick={() => {
+            if (isModifyingRuling) {
+              requestRulingSignature()
+            } else {
+              router.push(`${Constants.COURT_RECORD_ROUTE}/${workingCase.id}`)
+            }
+          }}
           nextIsDisabled={!isRulingValidRC(workingCase)}
           nextButtonText={
-            isCorrectingRuling
-              ? formatMessage(m.sections.formFooter.correctRulingButtonLabel)
+            isModifyingRuling
+              ? formatMessage(m.sections.formFooter.modifyRulingButtonLabel)
               : undefined
           }
         />
       </FormContentContainer>
+      {modalVisible === 'SigningModal' && (
+        <SigningModal
+          workingCase={workingCase}
+          setWorkingCase={setWorkingCase}
+          requestRulingSignatureResponse={requestRulingSignatureResponse}
+          onClose={() => setModalVisible('NoModal')}
+        />
+      )}
     </PageLayout>
   )
 }
