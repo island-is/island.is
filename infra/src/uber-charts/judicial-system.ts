@@ -14,7 +14,6 @@ const jsScheduler = jsSchedulerSetup({ backend: jsBack })
 
 export const Services: EnvironmentServices = {
   prod: [jsApi, jsBack, jsWeb, jsXrdApi, jsScheduler],
-  staging01: [jsApi, jsBack, jsWeb, jsXrdApi, jsScheduler],
-  dev01: [jsApi, jsBack, jsWeb, jsXrdApi, jsScheduler],
-  'prod-ids': [],
+  staging: [jsApi, jsBack, jsWeb, jsXrdApi, jsScheduler],
+  dev: [jsApi, jsBack, jsWeb, jsXrdApi, jsScheduler],
 }

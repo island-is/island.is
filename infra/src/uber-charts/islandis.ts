@@ -109,7 +109,7 @@ export const Services: EnvironmentServices = {
     userNotificationService,
     userNotificationWorkerService,
   ],
-  staging01: [
+  staging: [
     appSystemApi,
     appSystemForm,
     servicePortal,
@@ -133,7 +133,7 @@ export const Services: EnvironmentServices = {
     userNotificationService,
     userNotificationWorkerService,
   ],
-  dev01: [
+  dev: [
     appSystemApi,
     appSystemForm,
     servicePortal,
@@ -159,7 +159,6 @@ export const Services: EnvironmentServices = {
     externalContractsTests,
     appSystemApiWorker,
   ],
-  'prod-ids': [],
 }
 
 // Services that are not included in any environment above but should be used in feature deployments

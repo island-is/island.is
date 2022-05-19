@@ -17,6 +17,7 @@ import {
 } from './uber-charts/islandis'
 import { EnvironmentServices } from './dsl/types/charts'
 import { ServiceHelm } from './dsl/types/output-types'
+import { Deployments } from './uber-charts/all-charts'
 
 type ChartName = 'islandis'
 
@@ -62,10 +63,13 @@ const writeToOutput = async (data: string, output?: string) => {
 const parseArguments = (argv: Arguments) => {
   const feature = argv.feature
   const images = argv.images.split(',') // Docker images that have changed
-  const env = 'dev01'
+  const env = 'dev'
   const chart = argv.chart as ChartName
 
-  const ch = new UberChart({ ...Envs[env], feature: feature })
+  const ch = new UberChart({
+    ...Envs[Deployments[chart][env]],
+    feature: feature,
+  })
 
   const habitat = charts[chart][env]
 

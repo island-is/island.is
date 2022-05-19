@@ -1,21 +1,17 @@
 import { renderEnv } from './render-env'
 import { OpsEnvName } from '../dsl/types/charts'
-import { ChartName } from '../uber-charts/all-charts'
+import { ChartName, Deployments } from '../uber-charts/all-charts'
 import { writeFileSync } from 'fs'
 import { Envs } from '../environments'
+import { OpsEnv } from '../dsl/types/input-types'
 
 // this is to render all chart values
 
-const deployments: { [name in ChartName]: OpsEnvName[] } = {
-  'judicial-system': ['dev01', 'staging01', 'prod'],
-  islandis: ['dev01', 'staging01', 'prod'],
-  'identity-server': ['dev01', 'staging01', 'prod-ids'],
-}
-for (const [name, envs] of Object.entries(deployments)) {
-  for (const env of envs) {
+for (const [name, envs] of Object.entries(Deployments)) {
+  for (const [envType, envName] of Object.entries(envs)) {
     writeFileSync(
-      `${__dirname}/../../../charts/${name}/values.${Envs[env].type}.yaml`,
-      renderEnv(env, name as ChartName),
+      `${__dirname}/../../../charts/${name}/values.${Envs[envName].type}.yaml`,
+      renderEnv(envType as OpsEnv, name as ChartName),
       { encoding: 'utf8' },
     )
   }

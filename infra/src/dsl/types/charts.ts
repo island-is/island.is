@@ -24,6 +24,6 @@ export interface EnvironmentConfig {
 
 export type OpsEnvName = 'dev01' | 'staging01' | 'prod' | 'prod-ids'
 
-export type EnvironmentServices = { [name in OpsEnvName]: Service[] }
+export type EnvironmentServices = { [name in OpsEnv]: Service[] }
 
 export type EnvironmentConfigs = { [name in OpsEnvName]: EnvironmentConfig }

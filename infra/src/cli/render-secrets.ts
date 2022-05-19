@@ -38,7 +38,7 @@ export const renderSecrets = async (service: string) => {
   const urls: string[] = []
   const uberChart = new UberChart(Envs.dev01)
   const services = Object.values(charts).map(
-    (chart) => generateYamlForEnv(uberChart, ...chart.dev01).services,
+    (chart) => generateYamlForEnv(uberChart, ...chart.dev).services,
   )
 
   const secretRequests: [string, string][] = services
