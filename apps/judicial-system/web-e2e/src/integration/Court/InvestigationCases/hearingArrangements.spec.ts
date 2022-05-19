@@ -29,7 +29,7 @@ describe(`${IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
     cy.contains(comment)
   })
 
-  it('should ask for defender info depending on selected session arrangement', () => {
+  it('should ask for defender info depending on selected session arrangement and warn users if defender is not found in the lawyer registry', () => {
     const caseData = makeInvestigationCase()
     const caseDataAddition: Case = {
       ...caseData,
@@ -44,6 +44,11 @@ describe(`${IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
     cy.get('[name="defenderName"]').should('exist')
     cy.get('[name="defenderEmail"]').should('exist')
     cy.get('[name="defenderPhoneNumber"]').should('exist')
+
+    cy.get('#react-select-defenderName-input')
+      .type('click', { force: true })
+      .type('{enter}')
+    cy.getByTestid('defenderNotFound').should('exist')
 
     cy.get('[name="session-arrangements-all-present_spokesperson"]').click()
     cy.get('[name="defenderName"]').should('exist')
