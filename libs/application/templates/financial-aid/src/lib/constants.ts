@@ -31,6 +31,9 @@ export enum Routes {
   SPOUSETAXRETURNFILES = 'spouseTaxReturnFiles',
   SPOUSECONTACTINFO = 'spouseContactInfo',
   MISSINGFILES = 'missingFiles',
+  APPLICANTSTATUS = 'applicantStatus',
+  MISSINGFILESCONFIRMATION = 'missingFilesConfirmation',
+  SPOUSESTATUS = 'spouseStatus'
 }
 
 export enum ApiActions {

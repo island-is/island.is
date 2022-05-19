@@ -15,11 +15,11 @@ export const SpouseSubmitted: Form = buildForm({
   title: m.status.sectionTitle,
   children: [
     buildMultiField({
-      id: 'spouseStatus',
+      id: Routes.SPOUSESTATUS,
       title: m.status.pageTitle,
       children: [
         buildCustomField({
-          id: 'spouseStatus',
+          id: Routes.SPOUSESTATUS,
           title: m.status.spousePageTitle,
           component: 'SpouseStatus',
         }),
@@ -57,7 +57,7 @@ export const SpouseSubmitted: Form = buildForm({
       ],
     }),
     buildCustomField({
-      id: 'missingFilesConfirmation',
+      id: Routes.MISSINGFILESCONFIRMATION,
       title: m.missingFiles.confirmation.title,
       component: 'MissingFilesConfirmation',
     }),
