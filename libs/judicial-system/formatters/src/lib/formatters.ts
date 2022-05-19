@@ -92,6 +92,7 @@ export const caseTypes: CaseTypes = {
   BODY_SEARCH: 'leit og líkamsrannsókn',
   INTERNET_USAGE: 'upplýsingar um vefnotkun',
   RESTRAINING_ORDER: 'nálgunarbann',
+  EXPULSION_FROM_HOME: 'brottvísun af heimili',
   ELECTRONIC_DATA_DISCOVERY_INVESTIGATION: 'rannsókn á rafrænum gögnum',
   VIDEO_RECORDING_EQUIPMENT: 'myndupptökubúnaði komið fyrir',
   OTHER: 'annað',
@@ -201,6 +202,7 @@ export function formatAppeal(
 export function formatRequestCaseType(type: CaseType): string {
   return isRestrictionCase(type) ||
     type === CaseType.RESTRAINING_ORDER ||
+    type === CaseType.EXPULSION_FROM_HOME ||
     type === CaseType.PSYCHIATRIC_EXAMINATION
     ? caseTypes[type]
     : 'rannsóknarheimild'

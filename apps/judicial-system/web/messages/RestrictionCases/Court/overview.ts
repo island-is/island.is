@@ -19,4 +19,12 @@ export const rcCourtOverview = {
       },
     }),
   },
+  continueButton: defineMessages({
+    label: {
+      id: 'judicial.system.restriction_cases:court.continue_button.label',
+      defaultMessage: 'Skrá fyrirtökutíma',
+      description:
+        'Titill takka sem sendir notanda í næstu síðu í yfirlitssíðu í gæsluvarðhanlds- og farbannsmálum.',
+    },
+  }),
 }

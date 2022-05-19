@@ -137,6 +137,12 @@ export interface ServicePortalModule {
    */
   routes: (props: ServicePortalModuleProps) => ServicePortalRoute[]
   /**
+   * Works the same way as routes.
+   * The key difference is that if there are company routes present when
+   * the logged in user is a company SSN only the company routes will be rendered.
+   */
+  companyRoutes?: (props: ServicePortalModuleProps) => ServicePortalRoute[]
+  /**
    * Dynamic routes that might have a slow response time will be loaded after inital routes.
    */
   dynamicRoutes?: (
