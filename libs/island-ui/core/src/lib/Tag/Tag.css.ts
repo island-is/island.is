@@ -1,5 +1,5 @@
 import { styleVariants, style } from '@vanilla-extract/css'
-import { theme } from '@island.is/island-ui/theme'
+import { spacing, theme } from '@island.is/island-ui/theme'
 
 export const container = style({
   borderRadius: theme.border.radius.large,
@@ -161,4 +161,9 @@ export const focusable = style({
     backgroundColor: theme.color.blue400,
     color: theme.color.white,
   },
+})
+
+export const closeIcon = style({
+  verticalAlign: 'middle',
+  marginLeft: spacing[1],
 })

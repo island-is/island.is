@@ -6,6 +6,7 @@ import { Hyphen } from '../Hyphen/Hyphen'
 import { shouldLinkOpenInNewWindow } from '@island.is/shared/utils'
 
 import * as styles from './Tag.css'
+import { Icon } from '../IconRC/Icon'
 
 export type TagVariant =
   | 'blue'
@@ -34,6 +35,12 @@ export interface TagProps {
   hyphenate?: boolean
   textLeft?: boolean
   CustomLink?: FC
+  /** Renders a small "x" icon to indicate that invoking the
+   * `onClick` handler will (likely) remove/delete  the tag.
+   *
+   * Only appears on `<button>`s with an `onClick` handler defined
+   */
+  removable?: boolean
 }
 
 export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
@@ -42,6 +49,7 @@ export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
       children,
       href,
       onClick,
+      removable,
       variant = 'blue',
       active,
       disabled,
@@ -79,10 +87,12 @@ export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
     const hyphenated = hyphenate && typeof children === 'string' && (
       <Hyphen>{children}</Hyphen>
     )
+    const renderCloseIcon = removable && !!onClick && !href
 
     const content = (
       <Text variant="eyebrow" as="span" truncate={truncate}>
         {!truncate && hyphenate ? hyphenated : children}
+        {renderCloseIcon && <Icon icon="close" className={styles.closeIcon} />}
       </Text>
     )
 
