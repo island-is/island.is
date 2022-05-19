@@ -214,20 +214,28 @@ export const isReceptionAndAssignmentStepValidIC = (workingCase: Case) => {
   )
 }
 
-export const isCourtHearingArrangemenstStepValidRC = (workingCase: Case) => {
+export const isCourtHearingArrangemenstStepValidRC = (
+  workingCase: Case,
+  courtDate?: string,
+) => {
+  const date = courtDate || workingCase.courtDate
   return (
     validate(workingCase.defenderEmail || '', 'email-format').isValid &&
     validate(workingCase.defenderPhoneNumber || '', 'phonenumber').isValid &&
-    validate(workingCase.courtDate || '', 'empty').isValid &&
-    validate(workingCase.courtDate || '', 'date-format').isValid
+    validate(date || '', 'empty').isValid &&
+    validate(date || '', 'date-format').isValid
   )
 }
 
-export const isCourtHearingArrangementsStepValidIC = (workingCase: Case) => {
+export const isCourtHearingArrangementsStepValidIC = (
+  workingCase: Case,
+  courtDate?: string,
+) => {
+  const date = courtDate || workingCase.courtDate
   return (
     workingCase.sessionArrangements &&
-    validate(workingCase.courtDate || '', 'empty').isValid &&
-    validate(workingCase.courtDate || '', 'date-format').isValid &&
+    validate(date || '', 'empty').isValid &&
+    validate(date || '', 'date-format').isValid &&
     validate(workingCase.defenderEmail || '', 'email-format').isValid &&
     validate(workingCase.defenderPhoneNumber || '', 'phonenumber').isValid
   )

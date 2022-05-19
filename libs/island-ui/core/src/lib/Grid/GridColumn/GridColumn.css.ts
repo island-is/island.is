@@ -151,7 +151,7 @@ export const orderMd = makeOrder('md')
 export const orderLg = makeOrder('lg')
 export const orderXl = makeOrder('xl')
 
-// Treat gotcha:
+// Vanilla-extract gotcha:
 // The style order matters.
 // `base` has to be at the bottom because it uses a media query.
 export const base = style({

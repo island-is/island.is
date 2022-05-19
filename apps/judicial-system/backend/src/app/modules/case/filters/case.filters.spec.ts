@@ -466,6 +466,7 @@ describe('isCaseBlockedFromUser', () => {
     ${CaseType.BODY_SEARCH}
     ${CaseType.INTERNET_USAGE}
     ${CaseType.RESTRAINING_ORDER}
+    ${CaseType.EXPULSION_FROM_HOME}
     ${CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION}
     ${CaseType.VIDEO_RECORDING_EQUIPMENT}
     ${CaseType.OTHER}

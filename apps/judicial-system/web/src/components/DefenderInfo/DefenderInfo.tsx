@@ -4,6 +4,7 @@ import { useIntl } from 'react-intl'
 import { ValueType } from 'react-select/src/types'
 
 import {
+  AlertMessage,
   Box,
   Checkbox,
   Input,
@@ -18,16 +19,18 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import {
   Case,
-  CaseType,
   isInvestigationCase,
   isRestrictionCase,
   SessionArrangements,
   UserRole,
 } from '@island.is/judicial-system/types'
-import { accused } from '@island.is/judicial-system-web/messages'
-import { defendant } from '@island.is/judicial-system-web/messages'
-import { rcHearingArrangements } from '@island.is/judicial-system-web/messages'
-import { icHearingArrangements } from '@island.is/judicial-system-web/messages'
+import {
+  accused,
+  defendant,
+  rcHearingArrangements,
+  icHearingArrangements,
+  defenderInfo,
+} from '@island.is/judicial-system-web/messages'
 
 import { BlueBox } from '..'
 import { useCase, useLawyers } from '../../utils/hooks'
@@ -59,6 +62,8 @@ const DefenderInfo: React.FC<Props> = (props) => {
     setDefenderPhoneNumberErrorMessage,
   ] = useState<string>('')
 
+  const [defenderNotFound, setDefenderNotFound] = useState<boolean>(false)
+
   const lawyers = useLawyers()
 
   const handleDefenderChange = useCallback(
@@ -71,7 +76,14 @@ const DefenderInfo: React.FC<Props> = (props) => {
       }
 
       if (selectedOption) {
-        const { label, value } = selectedOption as ReactSelectOption
+        const {
+          label,
+          value,
+          __isNew__: defenderNotFound,
+        } = selectedOption as ReactSelectOption
+
+        setDefenderNotFound(defenderNotFound || false)
+
         const lawyer = lawyers.find(
           (l: Lawyer) => l.email === (value as string),
         )
@@ -218,6 +230,15 @@ const DefenderInfo: React.FC<Props> = (props) => {
           {renderTooltip()}
         </Text>
       </Box>
+      {defenderNotFound && (
+        <Box marginBottom={3} data-testid="defenderNotFound">
+          <AlertMessage
+            type="warning"
+            title={formatMessage(defenderInfo.defenderNotFound.title)}
+            message={formatMessage(defenderInfo.defenderNotFound.message)}
+          />
+        </Box>
+      )}
       <BlueBox>
         <Box marginBottom={2}>
           <Select
