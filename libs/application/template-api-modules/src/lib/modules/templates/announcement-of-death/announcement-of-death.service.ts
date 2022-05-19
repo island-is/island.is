@@ -9,6 +9,7 @@ import {
   PersonType,
   SyslumennService,
 } from '@island.is/clients/syslumenn'
+import { Answers as aodAnswers } from '@island.is/application/templates/announcement-of-death/types'
 import { FasteignirApi } from '@island.is/clients/assets'
 import { NationalRegistry, RoleConfirmationEnum, PickRole } from './types'
 import { SharedTemplateApiService } from '../../shared'
@@ -166,9 +167,6 @@ export class AnnouncementOfDeathService {
         return { success: false }
       }
     } else {
-      const syslumennOnEntryData: any =
-        application.externalData.syslumennOnEntry
-
       const nationalRegistryData = application.externalData.nationalRegistry
         ?.data as NationalRegistry
       const person: Person = {
@@ -186,31 +184,35 @@ export class AnnouncementOfDeathService {
       const uploadDataName = 'andlatstilkynning1.0 '
       const uploadDataId = 'andlatstilkynning1.0 '
 
+      const answers = (application.answers as unknown) as aodAnswers
+
       const extraData = {
-        caseNumber: application.answers.caseNumber as string,
+        caseNumber: answers.caseNumber,
         notifier: JSON.stringify({
-          name: application.answers.applicantName as string,
+          name: answers.applicantName,
           ssn: application.applicant,
-          phoneNumber: application.answers.applicantPhone as string,
-          email: application.answers.applicantEmail as string,
-          relation: application.answers.applicantRelation as string,
+          phoneNumber: answers.applicantPhone,
+          email: answers.applicantEmail,
+          relation: answers.applicantRelation,
         }),
-        knowledgeOfOtherWill: application.answers.knowledgeOfOtherWills.toString(),
-        estateMembers: JSON.stringify(application.answers.estateMembers),
-        assets: JSON.stringify(application.answers.assets),
-        vehicles: JSON.stringify(application.answers.vehicles),
-        bankcodeSecuritiesOrShares: application.answers.bankStockOrShares.toString(),
-        selfOperatedCompany: application.answers.ownBusinessManagement.toString(),
-        occupationRightViaCondominium: application.answers.occupationRightViaCondominium.toString(),
-        assetsAbroad: application.answers.assetsAbroad.toString(),
-        districtCommissionerHasWill: application.answers.districtCommissionerHasWill.toString(),
-        prenuptialAgreement: application.answers.marriageSettlement as string,
-        certificateOfDeathAnnouncement: application.answers
-          .certificateOfDeathAnnouncement as string,
-        authorizationForFuneralExpenses: application.answers
-          .authorizationForFuneralExpenses as string,
-        financesDataCollectionPermission: application.answers
-          .financesDataCollectionPermission as string,
+        knowledgeOfOtherWill: answers.knowledgeOfOtherWills,
+        estateMembers: JSON.stringify(answers.estateMembers),
+        assets: JSON.stringify(answers.assets),
+        vehicles: JSON.stringify(answers.vehicles),
+        bankcodeSecuritiesOrShares: answers.bankStockOrShares.toString(),
+        selfOperatedCompany: answers.ownBusinessManagement.toString(),
+        occupationRightViaCondominium: answers.occupationRightViaCondominium.toString(),
+        assetsAbroad: answers.assetsAbroad.toString(),
+        districtCommissionerHasWill: answers.districtCommissionerHasWill.toString(),
+        prenuptialAgreement: answers.marriageSettlement.toString(),
+        certificateOfDeathAnnouncement: answers.certificateOfDeathAnnouncement,
+        authorizationForFuneralExpenses: answers.authorizationForFuneralExpenses
+          ? answers.authorizationForFuneralExpenses.toString()
+          : 'false',
+        financesDataCollectionPermission: answers.financesDataCollectionPermission
+          ? answers.financesDataCollectionPermission.toString()
+          : 'false',
+        additionalInfo: answers.additionalInfo,
       }
 
       const result: DataUploadResponse = await this.syslumennService

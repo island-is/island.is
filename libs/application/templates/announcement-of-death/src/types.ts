@@ -22,20 +22,28 @@ export type Asset = Partial<EstateAsset & { initial: boolean }>
 
 // TODO: WIP
 export interface Answers {
+  additionalInfo: string
   applicantEmail: string
   applicantName: string
   applicantPhone: string
   applicantRelation: RelationEnum
   approveExternalData: true
+  assets: Asset[]
+  assetsAbroad: boolean
   authorizationForFuneralExpenses?: boolean
+  bankStockOrShares: boolean
+  caseNumber: string
   certificateOfDeathAnnouncement: string
+  districtCommissionerHasWill: boolean
   estateMembers: EstateMember[]
   financesDataCollectionPermission?: boolean
   knowledgeOfOtherWills: 'yes' | 'no'
-  assets: Asset[]
-  vehicles: Asset[]
+  marriageSettlement: boolean
+  occupationRightViaCondominium: boolean
   otherProperties: OtherPropertiesEnum
+  ownBusinessManagement: boolean
   roleConfirmation: RoleConfirmationEnum
+  vehicles: Asset[]
 }
 
 export interface ElectPersonType {

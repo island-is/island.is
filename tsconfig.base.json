@@ -173,6 +173,9 @@
       "@island.is/application/templates/announcement-of-death": [
         "libs/application/templates/announcement-of-death/src/index.ts"
       ],
+      "@island.is/application/templates/announcement-of-death/types": [
+        "libs/application/templates/announcement-of-death/src/types.ts"
+      ],
       "@island.is/application/templates/children-residence-change": [
         "libs/application/templates/family-matters/children-residence-change/src/index.ts"
       ],
