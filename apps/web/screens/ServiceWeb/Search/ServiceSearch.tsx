@@ -210,6 +210,7 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
                     'serviceWebSearchPlaceholder',
                     'Leitaðu á þjónustuvefnum',
                   )}
+                  tags={searchTags}
                 />
 
                 {!!q &&
@@ -325,6 +326,12 @@ ServiceSearch.getInitialProps = async ({ apolloClient, locale, query }) => {
 
   const queryString = ServiceWebModifySearchTerms(q)
 
+  const institutionSlugBelongsToMannaudstorg = slug.includes('mannaudstorg')
+
+  const searchTags = institutionSlugBelongsToMannaudstorg
+    ? [{ key: 'mannaudstorg', type: SearchableTags.Organization }]
+    : undefined
+
   const [
     organization,
     {
@@ -349,6 +356,7 @@ ServiceSearch.getInitialProps = async ({ apolloClient, locale, query }) => {
           language: locale as ContentLanguage,
           queryString,
           types,
+          tags: searchTags,
           size: PERPAGE,
           page,
         },
