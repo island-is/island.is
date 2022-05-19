@@ -95,14 +95,13 @@ const FinanceScheduleTableRow: FC<Props> = ({ paymentSchedule }) => {
         },
         { value: getType(paymentSchedule.scheduleStatus) },
         {
-          value: (
+          value: paymentSchedule.documentID ? (
             <Box display="flex" flexDirection="row" alignItems="center">
               <Button
                 size="small"
                 variant="text"
                 icon="document"
                 iconType="outline"
-                disabled={paymentSchedule.documentID ? false : true}
                 onClick={() =>
                   formSubmit(`${paymentSchedule.downloadServiceURL}`)
                 }
@@ -110,6 +109,8 @@ const FinanceScheduleTableRow: FC<Props> = ({ paymentSchedule }) => {
                 PDF
               </Button>
             </Box>
+          ) : (
+            ''
           ),
           align: 'right',
         },

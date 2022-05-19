@@ -2,6 +2,7 @@ import React, { BaseSyntheticEvent, FC } from 'react'
 import { Control, Controller, FieldError } from 'react-hook-form'
 import { FieldValues } from 'react-hook-form/dist/types/form'
 import { DeepMap } from 'react-hook-form/dist/types/utils'
+import * as kennitala from 'kennitala'
 
 import {
   Box,
@@ -83,6 +84,68 @@ const RecyclingCompanyForm: FC<RecyclingCompanyForm> = ({
                   },
                 }}
                 error={errors?.companyName?.message}
+                backgroundColor="blue"
+              />
+            </GridColumn>
+          </GridRow>
+          <GridRow>
+            <GridColumn
+              span={['12/12', '12/12', '12/12', '6/12']}
+              paddingBottom={[3, 3, 3, 0]}
+            >
+              <InputController
+                id="nationalId"
+                control={control}
+                required
+                label={t.recyclingCompany.form.inputs.nationalId.label}
+                placeholder={
+                  t.recyclingCompany.form.inputs.nationalId.placeholder
+                }
+                rules={{
+                  required: {
+                    value: true,
+                    message:
+                      t.recyclingCompany.form.inputs.nationalId.rules?.required,
+                  },
+                  validate: {
+                    value: (value: number) => {
+                      if (
+                        value.toString().length === 10 &&
+                        !kennitala.isValid(value)
+                      ) {
+                        return t.recyclingCompany.form.inputs.nationalId.rules
+                          ?.validate
+                      }
+                    },
+                  },
+                }}
+                type="tel"
+                format="######-####"
+                error={errors?.nationalId?.message}
+                disabled={editView}
+                backgroundColor="blue"
+              />
+            </GridColumn>
+            <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+              <InputController
+                id="email"
+                control={control}
+                required
+                label={t.recyclingCompany.form.inputs.email.label}
+                placeholder={t.recyclingCompany.form.inputs.email.placeholder}
+                rules={{
+                  required: {
+                    value: true,
+                    message:
+                      t.recyclingCompany.form.inputs.email.rules?.required,
+                  },
+                  pattern: {
+                    value: /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i,
+                    message:
+                      t.recyclingCompany.form.inputs.email.rules?.validate,
+                  },
+                }}
+                error={errors?.email?.message}
                 backgroundColor="blue"
               />
             </GridColumn>
