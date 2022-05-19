@@ -100,7 +100,15 @@ export const icCourtRecord = {
         id:
           'judicial.system.investigation_cases:court_record.session_bookings.autofill_restraining_order#markdown',
         defaultMessage:
-          'Sækjanda, réttargæslumanni og verjanda varnaraðila  er gefinn kostur á að tjá sig um kröfuna. Verjandi krefst þess að kröfunni verði hafnað en til vara að nálgunnarbanni verði markaður skemmri tími. Þá krefjast verjandi og réttargæslumaður þóknunar sér til handa.\n\nMálið er tekið til úrskurðar.\n\nÍ málinu er kveðinn upp úrskurður.',
+          'Sækjanda, réttargæslumanni og verjanda varnaraðila er gefinn kostur á að tjá sig um kröfuna. Verjandi krefst þess að kröfunni verði hafnað en til vara að nálgunnarbanni verði markaður skemmri tími. Þá krefjast verjandi og réttargæslumaður þóknunar sér til handa.\n\nMálið er tekið til úrskurðar.\n\nÍ málinu er kveðinn upp úrskurður.',
+        description:
+          'Sjálfgefinn texti í "Afstaða varnaraðila, málflutningur og aðrar bókanir" textaboxi á þingbókar skrefi í nálgunarbannsmálum.',
+      },
+      autofillExpulsionFromHome: {
+        id:
+          'judicial.system.investigation_cases:court_record.session_bookings.autofill_expulsion_from_home#markdown',
+        defaultMessage:
+          'Sækjanda, réttargæslumanni og verjanda varnaraðila er gefinn kostur á að tjá sig um kröfuna. Verjandi krefst þess að kröfunni verði hafnað. Þá krefjast verjandi og réttargæslumaður þóknunar sér til handa.\n\nMálið er tekið til úrskurðar.\n\nÍ málinu er kveðinn upp úrskurður.',
         description:
           'Sjálfgefinn texti í "Afstaða varnaraðila, málflutningur og aðrar bókanir" textaboxi á þingbókar skrefi í nálgunarbannsmálum.',
       },

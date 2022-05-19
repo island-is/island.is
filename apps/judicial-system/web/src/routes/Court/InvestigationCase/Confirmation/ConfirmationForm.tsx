@@ -13,7 +13,6 @@ import {
   RulingAccordionItem,
 } from '@island.is/judicial-system-web/src/components'
 import { CaseDecision } from '@island.is/judicial-system/types'
-import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   core,
   icConfirmation as m,
