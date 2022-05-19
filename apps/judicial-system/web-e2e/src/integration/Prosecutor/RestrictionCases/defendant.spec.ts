@@ -55,6 +55,13 @@ describe(STEP_ONE_CUSTODY_REQUEST_ROUTE, () => {
     cy.getByTestid('inputErrorMessage').should('not.exist')
   })
 
+  it('should display a warning if the user enters a lawyer that is not in the lawyer registry', () => {
+    cy.get('#react-select-defenderName-input')
+      .type('click', { force: true })
+      .type('{enter}')
+    cy.getByTestid('defenderNotFound').should('exist')
+  })
+
   it.skip('should not allow users to move forward if they entered an invalid defender email address', () => {
     cy.getByTestid('policeCaseNumber').type('00000000000')
     cy.getByTestid('nationalId').type('0000000000')
