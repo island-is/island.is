@@ -7,8 +7,8 @@ import {
   m,
 } from '@island.is/service-portal/core'
 
-export const familyModule: ServicePortalModule = {
-  name: 'Fjölskyldan',
+export const informationModule: ServicePortalModule = {
+  name: 'Upplýsingar',
   widgets: () => [],
   routes: ({ userInfo }) => [
     {
@@ -48,6 +48,14 @@ export const familyModule: ServicePortalModule = {
       path: ServicePortalPath.Spouse,
       enabled: userInfo.scopes.includes(ApiScope.meDetails),
       render: () => lazy(() => import('./screens/Spouse/Spouse')),
+    },
+  ],
+  companyRoutes: ({ userInfo }) => [
+    {
+      name: 'Um fyrirtæki',
+      path: ServicePortalPath.Company,
+      enabled: userInfo.scopes.includes(ApiScope.company),
+      render: () => lazy(() => import('./screens/Company/CompanyInfo')),
     },
   ],
 }
