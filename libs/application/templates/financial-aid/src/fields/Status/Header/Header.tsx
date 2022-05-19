@@ -13,10 +13,11 @@ interface Props {
 }
 
 const Header = ({ state }: Props) => {
+  const { formatMessage } = useIntl()
+
   if (!state) {
     return null
   }
-  const { formatMessage } = useIntl()
 
   return (
     <Text

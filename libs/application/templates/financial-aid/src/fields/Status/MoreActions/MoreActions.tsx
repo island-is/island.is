@@ -11,11 +11,11 @@ interface Props {
 }
 
 const MoreActions = ({ municipalityRulesPage, municipalityEmail }: Props) => {
+  const { formatMessage } = useIntl()
+
   if (!municipalityRulesPage && !municipalityEmail) {
     return null
   }
-
-  const { formatMessage } = useIntl()
 
   return (
     <>

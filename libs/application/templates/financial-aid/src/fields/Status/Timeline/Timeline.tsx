@@ -18,21 +18,20 @@ interface Props {
 }
 
 const Timeline = ({ state, modified, created, showSpouseStep }: Props) => {
-  if (!state) {
-    return null
-  }
-
-  const { formatMessage } = useIntl()
-
   const sections = timelineSections(
     new Date(created),
     new Date(modified),
     showSpouseStep,
   )
 
+  const { formatMessage } = useIntl()
   const [activeState] = useState(
-    findLastIndex(sections, (el) => el.state.includes(state)),
+    findLastIndex(sections, (el) => el.state.includes(state as ApplicationState)),
   )
+
+  if (!state) {
+    return null
+  }
 
   return (
     <>
