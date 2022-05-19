@@ -419,7 +419,9 @@ export const ParentalLeaveForm: Form = buildForm({
                   maxSize: FILE_SIZE_LIMIT,
                   uploadAccept: '.pdf',
                   uploadHeader: '',
-                  uploadDescription: '',
+                  uploadDescription:
+                    parentalLeaveFormMessages.selfEmployed
+                      .fileUploadDescription,
                   uploadButtonLabel:
                     parentalLeaveFormMessages.selfEmployed.attachmentButton,
                 }),

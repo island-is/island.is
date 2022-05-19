@@ -22,6 +22,7 @@ import { InputImageUpload } from '@island.is/application/ui-components'
 
 import { uploadFileToS3 } from './utils'
 import { Action, ActionTypes } from './types'
+import { FileRejection } from 'react-dropzone'
 
 type UploadFileAnswer = {
   name: string
@@ -147,6 +148,18 @@ export const FileUploadController: FC<FileUploadControllerProps> = ({
     }
   }
 
+  const onFileUploadError = async (failedFiles: FileRejection[]) => {
+    failedFiles.forEach((file: FileRejection) => {
+      if (maxSize && file.file.size > maxSize) {
+        return setUploadError(
+          'The file is larger than the allowed file size of ' +
+            maxSize / 1000000 +
+            'MB',
+        )
+      } else setUploadError(formatMessage(coreErrorMessages.fileUpload))
+    })
+  }
+
   const onFileChange = async (newFiles: File[]) => {
     const addedUniqueFiles = newFiles.filter((newFile: File) => {
       let isUnique = true
@@ -241,6 +254,7 @@ export const FileUploadController: FC<FileUploadControllerProps> = ({
           description={description}
           buttonLabel={buttonLabel}
           onChange={onFileChange}
+          onUploadError={onFileUploadError}
           onRemove={onRemoveFile}
           errorMessage={uploadError || error}
           multiple={multiple}

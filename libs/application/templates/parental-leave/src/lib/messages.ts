@@ -1058,6 +1058,12 @@ export const parentalLeaveFormMessages: MessageDir = {
         'Sjálfstætt starfandi foreldri þarf að skila staðfestingu á lækkun á reiknuðu endurgjaldi ef við á (fæst hjá RSK).',
       description: 'Description for the attachement required for self employed',
     },
+    fileUploadDescription: {
+      id: 'hi.application:fileUpload.description',
+      defaultMessage:
+        'Hámark 10 MB á skrá. Samþykktar skráartegundir eru .pdf ',
+      description: 'Max 10 MB per file. Accepted document type is .pdf',
+    },
     attachmentButton: {
       id: 'pl.application:selfEmployed.attachment.button',
       defaultMessage: 'Veldu skjal',
