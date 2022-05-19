@@ -203,9 +203,9 @@ export const SearchInput = ({
           return onSelect(activeItem)
         }
 
-        const pathname = `${
-          linkResolver('serviceweb').href
-        }/${institutionSlug}/leit`
+        const pathname = `${linkResolver('serviceweb').href}${
+          institutionSlug ? `/${institutionSlug}` : ''
+        }/leit`
 
         Router.push({
           pathname,
