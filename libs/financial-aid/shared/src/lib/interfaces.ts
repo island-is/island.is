@@ -262,7 +262,7 @@ export interface DirectTaxPayment {
   withheldAtSource: number
   month: number
   year: number
-  userType?: UserType
+  userType: UserType
 }
 
 export interface Application {
