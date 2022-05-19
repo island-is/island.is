@@ -12,7 +12,6 @@ import {
   Stack,
   Text,
   AlertBanner,
-  Space,
 } from '@island.is/island-ui/core'
 import {
   ServicePortalModuleComponent,

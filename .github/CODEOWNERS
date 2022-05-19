@@ -100,6 +100,7 @@
 /libs/api/domains/vehicles/                                                                         @island-is/hugsmidjan
 /libs/clients/documents/                                                                            @island-is/hugsmidjan
 /libs/clients/finance/                                                                              @island-is/hugsmidjan
+/libs/clients/aosh/                                                                                 @island-is/hugsmidjan
 /libs/clients/national-registry/v1/                                                                 @island-is/hugsmidjan
 /libs/clients/regulations/                                                                          @island-is/hugsmidjan
 /libs/clients/vehicles/                                                                             @island-is/hugsmidjan
