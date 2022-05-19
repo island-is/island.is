@@ -85,7 +85,7 @@ describe('PersonalTaxReturnController - Municipalities Personal Tax Return', () 
     })
 
     it('should return undefined', () => {
-      expect(then.result).toBeUndefined()
+      expect(then.result.personalTaxReturn).toBeUndefined()
     })
   })
 
@@ -223,7 +223,7 @@ describe('PersonalTaxReturnController - Municipalities Personal Tax Return', () 
     })
 
     it('should return undefined', () => {
-      expect(then.result).toBeUndefined()
+      expect(then.result.personalTaxReturn).toBeUndefined()
     })
   })
 })

@@ -27,10 +27,10 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import SigningModal from '@island.is/judicial-system-web/src/components/SigningModal/SigningModal'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
 import {
   core,
   rcConfirmation as m,
+  titles,
 } from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system/consts'
 
@@ -116,9 +116,7 @@ export const Confirmation: React.FC = () => {
               </Box>
             </Box>
             <Box marginBottom={1} textAlign="center">
-              <Text variant="h4">
-                {workingCase?.judge ? workingCase.judge.name : user?.name}
-              </Text>
+              <Text variant="h4">{workingCase?.judge?.name}</Text>
             </Box>
           </BlueBox>
         </Box>

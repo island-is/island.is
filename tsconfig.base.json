@@ -142,6 +142,9 @@
       "@island.is/api/domains/user-profile": [
         "libs/api/domains/user-profile/src/index.ts"
       ],
+      "@island.is/api/domains/vehicles": [
+        "libs/api/domains/vehicles/src/index.ts"
+      ],
       "@island.is/api/mocks": ["libs/api/mocks/src/index.ts"],
       "@island.is/api/mocks-react": ["libs/api/mocks/src/react.ts"],
       "@island.is/api/schema": ["libs/api/schema/src/index.ts"],
@@ -323,6 +326,7 @@
       "@island.is/clients/user-profile": [
         "libs/clients/user-profile/src/index.ts"
       ],
+      "@island.is/clients/vehicles": ["libs/clients/vehicles/src/index.ts"],
       "@island.is/clients/vmst": ["libs/clients/vmst/src/index.ts"],
       "@island.is/clients/zendesk": ["libs/clients/zendesk/src/index.ts"],
       "@island.is/cms": ["libs/cms/src/index.ts"],
@@ -463,9 +467,6 @@
       "@island.is/service-portal/endorsements": [
         "libs/service-portal/endorsements/src/index.ts"
       ],
-      "@island.is/service-portal/family": [
-        "libs/service-portal/family/src/index.ts"
-      ],
       "@island.is/service-portal/finance": [
         "libs/service-portal/finance/src/index.ts"
       ],
@@ -480,6 +481,9 @@
       ],
       "@island.is/service-portal/icelandic-names-registry": [
         "libs/service-portal/icelandic-names-registry/src/index.ts"
+      ],
+      "@island.is/service-portal/information": [
+        "libs/service-portal/information/src/index.ts"
       ],
       "@island.is/service-portal/licenses": [
         "libs/service-portal/licenses/src/index.ts"
@@ -496,7 +500,9 @@
       "@island.is/service-portal/settings/personal-information": [
         "libs/service-portal/settings/personal-information/src/index.ts"
       ],
-      "@island.is/service-portal/wip": ["libs/service-portal/wip/src/index.ts"],
+      "@island.is/service-portal/vehicles": [
+        "libs/service-portal/vehicles/src/index.ts"
+      ],
       "@island.is/shared/components": ["libs/shared/components/src/index.ts"],
       "@island.is/shared/connected": ["libs/shared/connected/src/index.ts"],
       "@island.is/shared/constants": ["libs/shared/constants/src/index.ts"],

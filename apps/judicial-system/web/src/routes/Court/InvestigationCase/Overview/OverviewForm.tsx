@@ -85,10 +85,7 @@ const OverviewForm: React.FC<Props> = (props) => {
               },
               {
                 title: formatMessage(core.prosecutor),
-                value: `${
-                  workingCase.creatingProsecutor?.institution?.name ??
-                  'Ekki skráð'
-                }`,
+                value: `${workingCase.creatingProsecutor?.institution?.name}`,
               },
               {
                 title: formatMessage(requestCourtDate.heading),

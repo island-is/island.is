@@ -112,7 +112,6 @@ export class GenericDrivingLicenseApi
       })
       return null
     }
-
     return json
   }
 

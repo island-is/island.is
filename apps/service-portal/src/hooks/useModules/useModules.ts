@@ -6,11 +6,16 @@ import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 
 import { useStore } from '../../store/stateProvider'
 import { ActionType } from '../../store/actions'
-import { featureFlaggedModules, ModuleKeys } from '../../store/modules'
+import {
+  featureFlaggedModules,
+  ModuleKeys,
+  companyModules,
+} from '../../store/modules'
 
 export const useModules = () => {
   const featureFlagClient = useFeatureFlagClient()
   const [{ modules }, dispatch] = useStore()
+  const { userInfo } = useAuth()
 
   async function filterModulesBasedOnFeatureFlags() {
     const flagValues = await Promise.all(
@@ -23,12 +28,28 @@ export const useModules = () => {
       }),
     )
 
+    const FEATURE_FLAG_COMPANY_VIEW = await featureFlagClient.getValue(
+      'isServicePortalCompanyViewEnabled',
+      false,
+    )
+
     const filteredModules = Object.entries(modules).reduce(
       (ffModules, [moduleKey, module]) => {
         const index = featureFlaggedModules.indexOf(moduleKey as ModuleKeys)
         if (index >= 0 && !flagValues[index]) {
           return ffModules
         }
+
+        /**
+         * If logged in as a company, only include the company modules.
+         */
+        const IS_COMPANY =
+          userInfo?.profile?.subjectType === 'legalEntity' &&
+          FEATURE_FLAG_COMPANY_VIEW
+        if (IS_COMPANY && !companyModules.includes(moduleKey as ModuleKeys)) {
+          return ffModules
+        }
+
         return { ...ffModules, [moduleKey]: module }
       },
       {} as Record<ModuleKeys, ServicePortalModule>,
