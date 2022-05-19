@@ -6,27 +6,6 @@ ROOT="$DIR/.."
 
 export PATH=$ROOT/node_modules/.bin:$PATH
 
-render() {
-    APP=$1
-    ENVS=("dev" "staging" "prod")
-    for env in "${ENVS[@]}"; do
-        # avoid clearing values file if render-env fails
-        tmp_file=$(mktemp)
-        ts-node --dir "$ROOT" "$ROOT"/src/cli/cli render-env --chart="$APP" --env="${env}" > "$tmp_file"
-        mv "$tmp_file" "$ROOT"/../charts/"$APP"/values."${env}".yaml
-    done
-}
-
-APPS=("islandis" "judicial-system" "identity-server")
-
-echo "$1"
-case "$1" in
-    "all" )
-        for app in "${APPS[@]}"; do
-            render "$app"
-        done
-        ;;
-    *)
-        render "$1"
-        ;;
-esac
+cd "$ROOT"
+node -r esbuild-register "$ROOT"/src/cli/generate-chart-values.ts
+cd -

@@ -62,7 +62,7 @@ const writeToOutput = async (data: string, output?: string) => {
 const parseArguments = (argv: Arguments) => {
   const feature = argv.feature
   const images = argv.images.split(',') // Docker images that have changed
-  const env = 'dev'
+  const env = 'dev01'
   const chart = argv.chart as ChartName
 
   const ch = new UberChart({ ...Envs[env], feature: feature })

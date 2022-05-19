@@ -17,7 +17,8 @@ const personalRepresentative = personalRepresentativeSetup()
 const personalRepresentativePublic = personalRepresentativePublicSetup()
 
 export const Services: EnvironmentServices = {
-  prod: [
+  prod: [],
+  'prod-ids': [
     identityServer,
     authAdminWeb,
     authAdminApi,
@@ -26,7 +27,7 @@ export const Services: EnvironmentServices = {
     personalRepresentative,
     personalRepresentativePublic,
   ],
-  staging: [
+  staging01: [
     identityServer,
     authAdminWeb,
     authAdminApi,
@@ -35,7 +36,7 @@ export const Services: EnvironmentServices = {
     personalRepresentative,
     personalRepresentativePublic,
   ],
-  dev: [
+  dev01: [
     identityServer,
     authAdminWeb,
     authAdminApi,

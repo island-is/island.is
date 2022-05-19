@@ -1,7 +1,7 @@
 import { EnvironmentConfigs } from './dsl/types/charts'
 
 export const Envs: EnvironmentConfigs = {
-  dev: {
+  dev01: {
     auroraHost: 'postgres-applications.internal',
     auroraReplica:
       'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com',
@@ -32,7 +32,7 @@ export const Envs: EnvironmentConfigs = {
       },
     },
   },
-  staging: {
+  staging01: {
     auroraHost: 'postgres-applications.internal',
     domain: 'staging01.devland.is',
     type: 'staging',
@@ -61,36 +61,36 @@ export const Envs: EnvironmentConfigs = {
       },
     },
   },
-  // prod: {
-  //   auroraHost: 'postgres-applications.internal',
-  //   domain: 'island.is',
-  //   type: 'prod',
-  //   featuresOn: ['driving-license-use-v1-endpoint-for-v2-comms'],
-  //   defaultMaxReplicas: 10,
-  //   defaultMinReplicas: 3,
-  //   releaseName: 'web',
-  //   awsAccountId: '251502586493',
-  //   awsAccountRegion: 'eu-west-1',
-  //   global: {
-  //     global: {
-  //       env: {
-  //         AWS_REGION: 'eu-west-1',
-  //         PORT: '3333',
-  //         name: 'prod',
-  //         AUDIT_GROUP_NAME: '/island-is/audit-log',
-  //       },
-  //       image: {
-  //         tag: 'latest_master',
-  //       },
-  //       initContainer: {
-  //         env: {
-  //           AWS_REGION: 'eu-west-1',
-  //         },
-  //       },
-  //     },
-  //   },
-  // },
   prod: {
+    auroraHost: 'postgres-applications.internal',
+    domain: 'island.is',
+    type: 'prod',
+    featuresOn: ['driving-license-use-v1-endpoint-for-v2-comms'],
+    defaultMaxReplicas: 10,
+    defaultMinReplicas: 3,
+    releaseName: 'web',
+    awsAccountId: '251502586493',
+    awsAccountRegion: 'eu-west-1',
+    global: {
+      global: {
+        env: {
+          AWS_REGION: 'eu-west-1',
+          PORT: '3333',
+          name: 'prod',
+          AUDIT_GROUP_NAME: '/island-is/audit-log',
+        },
+        image: {
+          tag: 'latest_master',
+        },
+        initContainer: {
+          env: {
+            AWS_REGION: 'eu-west-1',
+          },
+        },
+      },
+    },
+  },
+  'prod-ids': {
     auroraHost: 'postgres-applications.internal',
     domain: 'island.is',
     type: 'prod',

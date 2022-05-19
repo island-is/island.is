@@ -4,6 +4,7 @@ import { ServiceHelm } from '../dsl/types/output-types'
 import { UberChart } from '../dsl/uber-chart'
 import { Envs } from '../environments'
 import { ChartName, ChartNames, charts } from '../uber-charts/all-charts'
+import { OpsEnvName } from '../dsl/types/charts'
 
 const renderUrlsForService = ({ ingress = {} }: ServiceHelm) => {
   const urls: string[] = []
@@ -17,7 +18,7 @@ const renderUrlsForService = ({ ingress = {} }: ServiceHelm) => {
   return urls
 }
 
-const renderUrlsForChart = (environment: OpsEnv, chartName: ChartName) => {
+const renderUrlsForChart = (environment: OpsEnvName, chartName: ChartName) => {
   const { services } = generateYamlForEnv(
     new UberChart(Envs[environment]),
     ...charts[chartName][environment],
@@ -31,7 +32,7 @@ const renderUrlsForChart = (environment: OpsEnv, chartName: ChartName) => {
   }, {})
 }
 
-export const renderUrls = (environment: OpsEnv) => {
+export const renderUrls = (environment: OpsEnvName) => {
   console.log(
     ChartNames.reduce((acc, chartName) => {
       return { ...acc, ...renderUrlsForChart(environment, chartName) }

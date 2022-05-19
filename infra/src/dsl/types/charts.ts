@@ -22,6 +22,8 @@ export interface EnvironmentConfig {
   global: any
 }
 
-export type EnvironmentServices = { [name in OpsEnv]: Service[] }
+export type OpsEnvName = 'dev01' | 'staging01' | 'prod' | 'prod-ids'
 
-export type EnvironmentConfigs = { [name in OpsEnv]: EnvironmentConfig }
+export type EnvironmentServices = { [name in OpsEnvName]: Service[] }
+
+export type EnvironmentConfigs = { [name in OpsEnvName]: EnvironmentConfig }
