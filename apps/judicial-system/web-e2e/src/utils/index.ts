@@ -41,21 +41,16 @@ export const intercept = (res: Case) => {
           },
         },
       })
-    }
-  })
-}
-
-export const interceptUpdateCase = () => {
-  cy.intercept('POST', '**/api/graphql', (req) => {
-    if (hasOperationName(req, 'UpdateCaseMutation')) {
+    } else if (hasOperationName(req, 'UpdateCaseMutation')) {
       const { body } = req
+      req.alias = 'UpdateCaseMutation'
       req.reply({
         data: {
           updateCase: { ...body.variables?.input, __typename: 'Case' },
         },
       })
     }
-  }).as('UpdateCaseMutation')
+  })
 }
 
 export const hasOperationName = (
