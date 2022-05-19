@@ -100,6 +100,7 @@ describe(NEW_IC_ROUTE, () => {
 
   it('should be able to select defender', () => {
     cy.wait('@lawyers')
+
     cy.getByTestid('creatable-select-defenderName')
       .click()
       .find('input')
@@ -108,5 +109,11 @@ describe(NEW_IC_ROUTE, () => {
       .click()
     cy.getByTestid('defenderEmail').should('have.value', 'logmadur@logmenn.is')
     cy.getByTestid('defenderPhoneNumber').should('have.value', '666-6666')
+    cy.getByTestid('defenderNotFound').should('not.exist')
+
+    cy.get('#react-select-defenderName-input')
+      .type('click', { force: true })
+      .type('{enter}')
+    cy.getByTestid('defenderNotFound').should('exist')
   })
 })

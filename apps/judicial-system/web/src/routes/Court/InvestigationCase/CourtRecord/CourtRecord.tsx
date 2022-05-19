@@ -143,6 +143,10 @@ const CourtRecord = () => {
                 ? formatMessage(
                     m.sections.sessionBookings.autofillRestrainingOrder,
                   )
+                : workingCase.type === CaseType.EXPULSION_FROM_HOME
+                ? formatMessage(
+                    m.sections.sessionBookings.autofillExpulsionFromHome,
+                  )
                 : workingCase.type === CaseType.AUTOPSY
                 ? formatMessage(m.sections.sessionBookings.autofillAutopsy)
                 : workingCase.sessionArrangements ===
