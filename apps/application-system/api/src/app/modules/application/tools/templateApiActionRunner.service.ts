@@ -90,7 +90,6 @@ export class TemplateApiActionRunner {
 
   async callProvider(action: ApplicationTemplateAPIAction) {
     const { apiModuleAction, externalDataId, mockData, namespace } = action
-    console.log(action)
     let actionResult: PerformActionResult | undefined
 
     const useMocks =

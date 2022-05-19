@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../..'
 import { TemplateApiModuleActionProps } from '../../../../types'
-
 @Injectable()
 export class NationalRegistryService {
   constructor(
@@ -21,4 +20,26 @@ export class NationalRegistryService {
       city: 'Toronto',
     }
   }
+
+  /*
+       query NationalRegistryUserQuery {
+        nationalRegistryUser {
+          nationalId
+          age
+          fullName
+          citizenship {
+            code
+            name
+          }
+          legalResidence
+          address {
+            code
+            postalCode
+            city
+            streetAddress
+            lastUpdated
+          }
+        }
+      }
+    `*/
 }
