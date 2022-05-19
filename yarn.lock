@@ -9083,10 +9083,10 @@
     "@types/react" "*"
     pdfjs-dist "^2.10.377"
 
-"@types/react-router-dom@5.1.6":
-  version "5.1.6"
-  resolved "https://registry.yarnpkg.com/@types/react-router-dom/-/react-router-dom-5.1.6.tgz#07b14e7ab1893a837c8565634960dc398564b1fb"
-  integrity sha512-gjrxYqxz37zWEdMVvQtWPFMFj1dRDb4TGOcgyOfSXTrEXdF92L00WE3C471O3TV/RF1oskcStkXsOU0Ete4s/g==
+"@types/react-router-dom@5.3.2":
+  version "5.3.2"
+  resolved "https://registry.yarnpkg.com/@types/react-router-dom/-/react-router-dom-5.3.2.tgz#ebd8e145cf056db5c66eb1dac63c72f52e8542ee"
+  integrity sha512-ELEYRUie2czuJzaZ5+ziIp9Hhw+juEw8b7C11YNA4QdLCVbQ3qLi2l4aq8XnlqM7V31LZX8dxUuFUCrzHm6sqQ==
   dependencies:
     "@types/history" "*"
     "@types/react" "*"
@@ -17321,6 +17321,11 @@ fresh@0.5.2:
   version "0.5.2"
   resolved "https://registry.yarnpkg.com/fresh/-/fresh-0.5.2.tgz#3d8cadd90d976569fa835ab1f8e4b23a105605a7"
   integrity sha1-PYyt2Q2XZWn6g1qx+OSyOhBWBac=
+
+fridagar@3.2.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/fridagar/-/fridagar-3.2.0.tgz#d28bd11e6299b45fe6aeb786ab75fe0a547fe47e"
+  integrity sha512-DY/0W923VID0FgMUQay6Tk1o83X80SmIEsyoTNOtuzFohsqrUXdZzjrTYjgVCpkZQX334XhDLn3DiDL87tkMlA==
 
 from2@^2.1.0:
   version "2.3.0"
