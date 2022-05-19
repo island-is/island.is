@@ -29,6 +29,17 @@ export const layoutWrapperWide = style({
   }),
 })
 
+export const layoutContainer = style({
+  paddingLeft: theme.grid.gutter.mobile * 2,
+  paddingRight: theme.grid.gutter.mobile * 2,
+  ...themeUtils.responsiveStyle({
+    md: {
+      paddingLeft: theme.grid.gutter.desktop * 2,
+      paddingRight: theme.grid.gutter.desktop * 2,
+    },
+  }),
+})
+
 export const layoutGrid = style({
   transition: 'margin 150ms ease-in-out, flex-basis 150ms ease-in-out',
   willChange: 'margin, flex-basis',
