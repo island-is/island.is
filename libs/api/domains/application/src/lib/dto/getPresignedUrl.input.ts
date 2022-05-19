@@ -1,4 +1,4 @@
-import { Field, InputType, registerEnumType } from '@nestjs/graphql'
+import { Field, InputType } from '@nestjs/graphql'
 import { IsString, IsEnum } from 'class-validator'
 @InputType()
 export class GetPresignedUrlInput {

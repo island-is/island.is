@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { config, boostChatPanelEndpoints } from './config'
-import { useWindowSize } from 'react-use'
 import { ChatBubble } from '../ChatBubble'
 import { BoostChatPanelProps } from '../types'
 

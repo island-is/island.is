@@ -2,10 +2,7 @@ import React from 'react'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 
-import {
-  GetNamespaceQuery,
-  GetSingleNewsItemQuery,
-} from '../../../graphql/schema'
+import { GetSingleNewsItemQuery } from '../../../graphql/schema'
 import {
   richText,
   Slice as SliceType,
@@ -14,13 +11,9 @@ import {
 
 interface NewsArticleProps {
   newsItem: GetSingleNewsItemQuery['getSingleNews']
-  namespace: GetNamespaceQuery['getNamespace']
 }
 
-export const NewsArticle: React.FC<NewsArticleProps> = ({
-  newsItem,
-  namespace,
-}) => {
+export const NewsArticle: React.FC<NewsArticleProps> = ({ newsItem }) => {
   const { format } = useDateUtils()
 
   const formattedDate = newsItem.date

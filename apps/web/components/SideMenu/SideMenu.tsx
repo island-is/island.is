@@ -77,20 +77,23 @@ export const SideMenu = ({
     [ref, isVisible, handleClose],
   )
 
-  const onKeyDown = useCallback((event, index) => {
-    switch (event.key.toLowerCase()) {
-      case 'arrowleft':
-        if (index > 0) {
-          setActiveTab(index - 1)
-        }
-        break
-      case 'arrowright':
-        if (index < tabList.length - 1) {
-          setActiveTab(index + 1)
-        }
-        break
-    }
-  }, [])
+  const onKeyDown = useCallback(
+    (event, index) => {
+      switch (event.key.toLowerCase()) {
+        case 'arrowleft':
+          if (index > 0) {
+            setActiveTab(index - 1)
+          }
+          break
+        case 'arrowright':
+          if (index < tabList.length - 1) {
+            setActiveTab(index + 1)
+          }
+          break
+      }
+    },
+    [tabList.length],
+  )
 
   useEffect(() => {
     setActiveTab(0)

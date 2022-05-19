@@ -2,18 +2,13 @@ import '@island.is/api/mocks'
 import React from 'react'
 import ReactDOM from 'react-dom'
 
-import {
-  getActiveEnvironment,
-  isRunningOnEnvironment,
-} from '@island.is/shared/utils'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 import './auth'
 
 import { environment } from './environments'
 import App from './app/App'
 import { userMonitoring } from '@island.is/user-monitoring'
-
-const activeEnvironment = getActiveEnvironment()
 
 if (!isRunningOnEnvironment('local')) {
   userMonitoring.initDdRum({

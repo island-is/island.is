@@ -63,12 +63,9 @@ describe('useNamespaceStrict', () => {
 
 describe('useNamespace', () => {
   const n = useNamespace(messages)
-  {
-    // Quick function signature testing to ensure it to returns `any`
-    n('asdfasdf')
-    n('asdfasdf', null)
-    n('asdfasdf', 'yo')
-  }
+  n('asdfasdf')
+  n('asdfasdf', null)
+  n('asdfasdf', 'yo')
 
   it('should return a string value', () => {
     expect(n('title')).toEqual('My Title')

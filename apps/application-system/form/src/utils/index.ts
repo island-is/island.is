@@ -10,7 +10,7 @@
  * - https://github.com/airbnb/lottie-web/issues/360#issuecomment-320243980
  *
  */
-export function fixSvgUrls(baseUrl: string) {
+export function fixSvgUrls(_: string) {
   function fixForAttribute(attrib: string) {
     const baseUrl = window.location.href
 

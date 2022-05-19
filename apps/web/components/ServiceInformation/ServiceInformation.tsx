@@ -42,12 +42,9 @@ export const ServiceInformation = ({
       value: x.environment,
     }
   })
-  const [
-    selectedEnviromentOption,
-    setSelectedEnviromentOption,
-  ] = useState<Option>(enviromentOptions[0])
+  const [selectedEnviromentOption, _1] = useState<Option>(enviromentOptions[0])
 
-  const [versionOptions, setVersionOptions] = useState<Option[]>(
+  const [versionOptions, _2] = useState<Option[]>(
     service.environments[0].details.map((x) => {
       return {
         label: x.version,

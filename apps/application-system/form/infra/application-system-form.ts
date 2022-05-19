@@ -1,6 +1,6 @@
 import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
-export const serviceSetup = (services: {}): ServiceBuilder<'application-system-form'> =>
+export const serviceSetup = (_: {}): ServiceBuilder<'application-system-form'> =>
   service('application-system-form')
     .namespace('application-system')
     .liveness('/liveness')
