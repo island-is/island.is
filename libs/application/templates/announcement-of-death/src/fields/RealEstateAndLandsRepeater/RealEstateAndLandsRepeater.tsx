@@ -158,9 +158,6 @@ const Item = ({
       })
     }
   }, [getProperty, address, addressField, propertyNumberInput, setValue])
-  console.log({
-    propertyNumberField,
-  })
 
   return (
     <Box
