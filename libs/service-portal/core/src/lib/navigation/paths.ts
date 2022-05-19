@@ -96,8 +96,8 @@ export enum ServicePortalPath {
   LicensesRoot = '/skirteini',
   LicensesDriving = '/skirteini/okuskirteini',
   LicensesDrivingDetail = '/skirteini/okuskirteini/:id',
-  LicensesAdr = '/skirteini/adrskirteini',
-  LicensesAdrDetail = '/skirteini/adrskirteini/:id',
+  LicensesAdrDetail = '/skirteini/adrskirteini',
+  LicensesMachineDetail = '/skirteini/vinnuvelaskirteini',
 
   // DocumentProvider
   // Temporary change to the value of DocumentProviderRoot; skjalaveita -> skjalaveitur. In the first
