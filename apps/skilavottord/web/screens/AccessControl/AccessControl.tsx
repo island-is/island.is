@@ -64,6 +64,8 @@ const SkilavottordAccessControlsQuery = gql`
       nationalId
       name
       role
+      email
+      phone
       recyclingPartner {
         companyId
         companyName
@@ -80,6 +82,8 @@ export const CreateSkilavottordAccessControlMutation = gql`
       nationalId
       name
       role
+      email
+      phone
       recyclingPartner {
         companyId
         companyName
@@ -96,6 +100,8 @@ export const UpdateSkilavottordAccessControlMutation = gql`
       nationalId
       name
       role
+      email
+      phone
       recyclingPartner {
         companyId
         companyName
