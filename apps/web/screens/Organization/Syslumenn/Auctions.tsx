@@ -36,15 +36,11 @@ import { Screen } from '../../../types'
 import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { OrganizationWrapper } from '@island.is/web/components'
-import { CustomNextError } from '@island.is/web/units/errors'
-import getConfig from 'next/config'
 import { useQuery } from '@apollo/client'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { useRouter } from 'next/router'
 import { theme } from '@island.is/island-ui/theme'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
-
-const { publicRuntimeConfig } = getConfig()
 
 interface AuctionsProps {
   organizationPage: Query['getOrganizationPage']
@@ -401,11 +397,6 @@ const Auctions: Screen<AuctionsProps> = ({
   namespace,
   subpage,
 }) => {
-  const { disableSyslumennPage: disablePage } = publicRuntimeConfig
-  if (disablePage === 'true') {
-    throw new CustomNextError(404, 'Not found')
-  }
-
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
   const { format } = useDateUtils()
