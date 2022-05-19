@@ -52,7 +52,7 @@
         "@typescript-eslint/no-parameter-properties": "off",
         "@typescript-eslint/ban-types": "warn",
         "@typescript-eslint/no-unused-vars": [
-          "warn",
+          "error",
           {
             "ignoreRestSiblings": true,
             "argsIgnorePattern": "^_([0-9])?$",
