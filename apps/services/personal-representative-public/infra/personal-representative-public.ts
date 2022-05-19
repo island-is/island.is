@@ -45,17 +45,17 @@ export const serviceSetup = (): ServiceBuilder<'services-personal-representative
     .liveness('/liveness')
     .resources({
       limits: {
-        cpu: "400m",
-        memory: "256Mi",
+        cpu: '400m',
+        memory: '256Mi',
       },
       requests: {
-        cpu: "100m",
-        memory: "128Mi",
-      }      
+        cpu: '100m',
+        memory: '128Mi',
+      },
     })
     .replicaCount({
       default: 2,
       min: 2,
-      max: 10
+      max: 10,
     })
 }
