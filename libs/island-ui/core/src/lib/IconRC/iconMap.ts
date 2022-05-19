@@ -59,6 +59,9 @@ export type Icon =
   | 'warning'
   | 'reload'
   | 'remove'
+  | 'save'
+  | 'bookmark'
+  | 'share'
   | 'QRCode'
   | 'globe'
 
@@ -123,6 +126,9 @@ export default {
     reload: 'Reload',
     remove: 'Remove',
     time: 'Time',
+    save: 'Save',
+    bookmark: 'Bookmark',
+    share: 'Share',
     QRCode: 'QRCodeOutline',
     globe: 'Globe',
   },
@@ -186,6 +192,9 @@ export default {
     reload: 'ReloadOutline',
     remove: 'Remove',
     time: 'TimeOutline',
+    save: 'SaveOutline',
+    bookmark: 'BookmarkOutline',
+    share: 'ShareOutline',
     QRCode: 'QRCodeOutline',
     globe: 'Globe',
   },
