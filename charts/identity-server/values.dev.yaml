@@ -201,7 +201,7 @@ services-auth-admin-api:
         cpuAverageUtilization: 70
         nginxRequestsIrate: 2
       replicas:
-        max: 3
+        max: 10
         min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-admin-api'
@@ -216,11 +216,11 @@ services-auth-admin-api:
   namespace: 'identity-server-admin'
   replicaCount:
     default: 2
-    max: 3
+    max: 10
     min: 2
   resources:
     limits:
-      cpu: '200m'
+      cpu: '400m'
       memory: '256Mi'
     requests:
       cpu: '100m'
@@ -272,7 +272,7 @@ services-auth-api:
         cpuAverageUtilization: 70
         nginxRequestsIrate: 2
       replicas:
-        max: 3
+        max: 10
         min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-api'
@@ -315,11 +315,11 @@ services-auth-api:
   namespace: 'identity-server'
   replicaCount:
     default: 2
-    max: 3
+    max: 10
     min: 2
   resources:
     limits:
-      cpu: '200m'
+      cpu: '400m'
       memory: '256Mi'
     requests:
       cpu: '100m'
@@ -397,7 +397,7 @@ services-auth-public-api:
     min: 2
   resources:
     limits:
-      cpu: '200m'
+      cpu: '400m'
       memory: '256Mi'
     requests:
       cpu: '100m'
@@ -436,12 +436,12 @@ services-personal-representative:
         cpuAverageUtilization: 70
         nginxRequestsIrate: 2
       replicas:
-        max: 3
+        max: 10
         min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-personal-representative'
   ingress:
-    demoALB-alb:
+    demo-alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
       hosts:
@@ -458,11 +458,11 @@ services-personal-representative:
   namespace: 'personal-representative'
   replicaCount:
     default: 2
-    max: 3
+    max: 10
     min: 2
   resources:
     limits:
-      cpu: '200m'
+      cpu: '400m'
       memory: '256Mi'
     requests:
       cpu: '100m'
@@ -497,12 +497,12 @@ services-personal-representative-public:
         cpuAverageUtilization: 70
         nginxRequestsIrate: 2
       replicas:
-        max: 3
+        max: 10
         min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-personal-representative-public'
   ingress:
-    demoALB-alb:
+    demo-alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
       hosts:
@@ -519,11 +519,11 @@ services-personal-representative-public:
   namespace: 'personal-representative'
   replicaCount:
     default: 2
-    max: 3
+    max: 10
     min: 2
   resources:
     limits:
-      cpu: '200m'
+      cpu: '400m'
       memory: '256Mi'
     requests:
       cpu: '100m'
