@@ -329,8 +329,8 @@ export class CaseService {
 
   private async sendEmail(
     to: Recipient | Recipient[],
+    subject: string,
     body: string,
-    courtCaseNumber?: string,
     attachments?: Attachment[],
   ) {
     try {
@@ -344,9 +344,7 @@ export class CaseService {
           address: this.config.email.replyToEmail,
         },
         to,
-        subject: this.formatMessage(m.signedRuling.subject, {
-          courtCaseNumber,
-        }),
+        subject,
         text: stripHtmlTags(body),
         html: body,
         attachments,
@@ -366,20 +364,17 @@ export class CaseService {
         name: theCase.prosecutor?.name ?? '',
         address: theCase.prosecutor?.email ?? '',
       },
-      rulingUploadedToS3
-        ? this.formatMessage(m.signedRuling.prosecutorBodyS3, {
-            courtCaseNumber: theCase.courtCaseNumber,
-            courtName: theCase.court?.name?.replace('dómur', 'dómi'),
-            linkStart: `<a href="${this.config.deepLinks.completedCaseOverviewUrl}${theCase.id}">`,
-            linkEnd: '</a>',
-          })
-        : this.formatMessage(m.signedRuling.prosecutorBodyAttachment, {
-            courtName: theCase.court?.name,
-            courtCaseNumber: theCase.courtCaseNumber,
-            linkStart: `<a href="${this.config.deepLinks.completedCaseOverviewUrl}${theCase.id}">`,
-            linkEnd: '</a>',
-          }),
-      theCase.courtCaseNumber,
+      this.formatMessage(m.signedRuling.subjectV2, {
+        courtCaseNumber: theCase.courtCaseNumber,
+        isModifyingRuling: Boolean(theCase.rulingDate),
+      }),
+      this.formatMessage(m.signedRuling.prosecutorBodyS3V2, {
+        courtCaseNumber: theCase.courtCaseNumber,
+        courtName: theCase.court?.name?.replace('dómur', 'dómi'),
+        linkStart: `<a href="${this.config.deepLinks.completedCaseOverviewUrl}${theCase.id}">`,
+        linkEnd: '</a>',
+        isModifyingRuling: Boolean(theCase.rulingDate),
+      }),
       rulingUploadedToS3 ? undefined : [rulingAttachment],
     )
   }
@@ -404,12 +399,15 @@ export class CaseService {
 
     return this.sendEmail(
       recipients,
+      this.formatMessage(m.signedRuling.subjectV2, {
+        courtCaseNumber: theCase.courtCaseNumber,
+        isModifyingRuling: Boolean(theCase.rulingDate),
+      }),
       this.formatMessage(m.signedRuling.courtBody, {
         courtCaseNumber: theCase.courtCaseNumber,
         linkStart: `<a href="${this.config.deepLinks.completedCaseOverviewUrl}${theCase.id}">`,
         linkEnd: '</a>',
       }),
-      theCase.courtCaseNumber,
       rulingUploadedToS3 ? undefined : [rulingAttachment],
     )
   }
@@ -420,7 +418,12 @@ export class CaseService {
         name: theCase.defenderName ?? '',
         address: theCase.defenderEmail ?? '',
       },
-      this.formatMessage(m.signedRuling.defenderBody, {
+      this.formatMessage(m.signedRuling.subjectV2, {
+        courtCaseNumber: theCase.courtCaseNumber,
+        isModifyingRuling: Boolean(theCase.rulingDate),
+      }),
+      this.formatMessage(m.signedRuling.defenderBodyV2, {
+        isModifyingRuling: Boolean(theCase.rulingDate),
         courtCaseNumber: theCase.courtCaseNumber,
         courtName: theCase.court?.name?.replace('dómur', 'dómi'),
         defenderHasAccessToRvg: theCase.defenderNationalId,
@@ -428,7 +431,6 @@ export class CaseService {
         linkEnd: '</a>',
         signedVerdictAvailableInS3: rulingUploadedToS3 ? 'TRUE' : 'FALSE',
       }),
-      theCase.courtCaseNumber,
     )
   }
 
