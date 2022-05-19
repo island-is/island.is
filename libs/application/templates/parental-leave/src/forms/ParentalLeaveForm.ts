@@ -42,6 +42,7 @@ import {
   MANUAL,
   NO,
   NO_PRIVATE_PENSION_FUND,
+  NO_UNION,
   ParentalRelations,
   StartDateOptions,
   YES,
@@ -226,10 +227,12 @@ export const ParentalLeaveForm: Form = buildForm({
                     })
 
                     return (
-                      data?.getUnions?.map(({ id, name }) => ({
-                        label: name,
-                        value: id,
-                      })) ?? []
+                      data?.getUnions
+                        ?.filter(({ id }) => id !== NO_UNION)
+                        .map(({ id, name }) => ({
+                          label: name,
+                          value: id,
+                        })) ?? []
                     )
                   },
                 }),
@@ -391,21 +394,11 @@ export const ParentalLeaveForm: Form = buildForm({
           id: 'employer',
           title: parentalLeaveFormMessages.employer.subSection,
           children: [
-            buildRadioField({
+            buildCustomField({
+              component: 'SelfEmployed',
               id: 'employer.isSelfEmployed',
               title: parentalLeaveFormMessages.selfEmployed.title,
               description: parentalLeaveFormMessages.selfEmployed.description,
-              width: 'half',
-              options: [
-                {
-                  label: parentalLeaveFormMessages.shared.yesOptionLabel,
-                  value: YES,
-                },
-                {
-                  label: parentalLeaveFormMessages.shared.noOptionLabel,
-                  value: NO,
-                },
-              ],
             }),
             buildMultiField({
               id: 'employer.selfEmployed.attachment',

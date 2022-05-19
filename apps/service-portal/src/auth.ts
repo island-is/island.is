@@ -57,6 +57,7 @@ if (userMocked) {
       ApiScope.internal,
       ApiScope.meDetails,
       ApiScope.licensesVerify,
+      ApiScope.company,
       RegulationsAdminScope.create,
       RegulationsAdminScope.manage,
     ],

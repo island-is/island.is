@@ -219,8 +219,8 @@ const autoSchemaFile = environment.production
       regulationsApiUrl: environment.regulationsAdmin.regulationsApiUrl!,
     }),
     FinanceModule,
-    VehiclesModule,
     FinancialStatementsInaoModule,
+    VehiclesModule,
     AssetsModule,
     NationalRegistryXRoadModule,
     ApiDomainsPaymentModule.register({
