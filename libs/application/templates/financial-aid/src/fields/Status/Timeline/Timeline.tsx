@@ -12,8 +12,8 @@ import { timelineSections } from '../../../lib/formatters'
 
 interface Props {
   state?: ApplicationState
-  modified: Date
-  created: Date
+  modified: Date | string
+  created: Date | string
   showSpouseStep?: boolean
 }
 
@@ -24,7 +24,11 @@ const Timeline = ({ state, modified, created, showSpouseStep }: Props) => {
 
   const { formatMessage } = useIntl()
 
-  const sections = timelineSections(created, modified, showSpouseStep)
+  const sections = timelineSections(
+    new Date(created),
+    new Date(modified),
+    showSpouseStep,
+  )
 
   const [activeState] = useState(
     findLastIndex(sections, (el) => el.state.includes(state)),

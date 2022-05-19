@@ -33,7 +33,7 @@ export enum Routes {
   MISSINGFILES = 'missingFiles',
   APPLICANTSTATUS = 'applicantStatus',
   MISSINGFILESCONFIRMATION = 'missingFilesConfirmation',
-  SPOUSESTATUS = 'spouseStatus'
+  SPOUSESTATUS = 'spouseStatus',
 }
 
 export enum ApiActions {
