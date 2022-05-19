@@ -27,6 +27,17 @@ describe(`${HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
     cy.contains(comment)
   })
 
+  it('should display a warning if the user enters a lawyer that is not in the lawyer registry', () => {
+    const caseData = makeCustodyCase()
+
+    intercept(caseData)
+
+    cy.get('#react-select-defenderName-input')
+      .type('click', { force: true })
+      .type('{enter}')
+    cy.getByTestid('defenderNotFound').should('exist')
+  })
+
   it('should allow users to choose if they send COURT_DATE notification', () => {
     const caseData = makeCustodyCase()
     const caseDataAddition: Case = {
