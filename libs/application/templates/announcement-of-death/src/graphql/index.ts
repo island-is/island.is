@@ -15,3 +15,13 @@ export const ESTATE_RELATIONS_QUERY = gql`
     }
   }
 `
+
+export const SEARCH_FOR_PROPERTY_QUERY = gql`
+  query SearchForProperty($input: SearchForPropertyInput!) {
+    searchForProperty(input: $input) {
+      defaultAddress {
+        display
+      }
+    }
+  }
+`
