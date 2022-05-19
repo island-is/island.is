@@ -1,6 +1,21 @@
 import { defineMessage, defineMessages } from 'react-intl'
 
 export const icOverview = {
+  receivedAlert: defineMessages({
+    title: {
+      id: 'judicial.system.investigation_cases:overview.received_alert.title',
+      defaultMessage: 'Athugið',
+      description:
+        'Notaður sem titill í upplýsingarboxi á yfirlits skrefi í rannsóknarheimildum.',
+    },
+    message: {
+      id: 'judicial.system.investigation_cases:overview.received_alert.message',
+      defaultMessage:
+        'Hægt er að breyta efni kröfunnar og bæta við rannsóknargögnum eftir að hún hefur verið send dómstól en til að breytingar skili sér í dómskjalið sem verður til hliðsjónar í þinghaldinu þarf að smella á Endursenda kröfu hér fyrir neðan.',
+      description:
+        'Notaður sem skilaboð í upplýsingarboxi á yfirlits skrefi í rannsóknarheimildum.',
+    },
+  }),
   heading: defineMessage({
     id: 'judicial.system.investigation_cases:overview.heading',
     defaultMessage: 'Yfirlit kröfu um rannsóknarheimild',
