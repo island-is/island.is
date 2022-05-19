@@ -5,7 +5,8 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { dateFormat } from '@island.is/shared/constants'
 import { ExpandHeader, dateParse } from '@island.is/service-portal/core'
 import { PaymentSchedule } from '@island.is/api/schema'
-import FinanceScheduleTableRow from './FinanceScheduleTableRow'
+// import FinanceScheduleTableRow from './FinanceScheduleTableRow'
+import FinanceScheduleTableRowCompressed from './FinanceScheduleTableRowCompressed'
 const ITEMS_ON_PAGE = 20
 
 interface Props {
@@ -47,7 +48,6 @@ const FinanceScheduleTable: FC<Props> = ({ recordsArray }) => {
       <T.Table>
         <ExpandHeader
           data={[
-            { value: '' },
             {
               value: formatMessage({
                 id: 'sp.finance-schedule:created-date',
@@ -88,12 +88,6 @@ const FinanceScheduleTable: FC<Props> = ({ recordsArray }) => {
             },
             {
               value: formatMessage({
-                id: 'sp.finance-schedule:payment-remaining',
-                defaultMessage: 'Greiðslur eftir',
-              }),
-            },
-            {
-              value: formatMessage({
                 id: 'sp.finance-schedule:status',
                 defaultMessage: 'Staða',
               }),
@@ -105,7 +99,7 @@ const FinanceScheduleTable: FC<Props> = ({ recordsArray }) => {
           {datedArray
             .slice(ITEMS_ON_PAGE * (page - 1), ITEMS_ON_PAGE * page)
             .map((x) => (
-              <FinanceScheduleTableRow
+              <FinanceScheduleTableRowCompressed
                 key={x.scheduleNumber}
                 paymentSchedule={x}
               />
