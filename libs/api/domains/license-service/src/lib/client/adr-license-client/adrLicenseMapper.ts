@@ -42,9 +42,6 @@ export const parseAdrLicensePayload = (
               flokkur: f.trim(),
               heiti: '',
             }))
-
-      console.log(heiti)
-
       heiti?.forEach((item) => {
         augmentedAdrRettindi.adrRettindi?.push({
           flokkur: item.flokkur,
@@ -54,7 +51,6 @@ export const parseAdrLicensePayload = (
         })
       })
     })
-    console.log(augmentedAdrRettindi)
     return augmentedAdrRettindi
   }
 
