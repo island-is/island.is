@@ -61,6 +61,7 @@ import { CaseArchive } from './models/caseArchive.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { ArchiveResponse } from './models/archive.response'
 import { caseModuleConfig } from './case.config'
+import { formatDate } from '@island.is/judicial-system/formatters'
 
 const caseEncryptionProperties: (keyof Case)[] = [
   'description',
@@ -233,8 +234,9 @@ export class CaseService {
         theCase.id,
         theCase.courtId ?? '',
         theCase.courtCaseNumber ?? '',
-        this.formatMessage(courtUpload.ruling, {
+        this.formatMessage(courtUpload.rulingV2, {
           courtCaseNumber: theCase.courtCaseNumber,
+          isModifyingRuling: Boolean(theCase.rulingDate),
         }),
         buffer,
       )
@@ -446,30 +448,36 @@ export class CaseService {
     ]
 
     if (theCase.courtId && theCase.courtCaseNumber) {
+      const isModifyingRuling = Boolean(theCase.rulingDate)
+
       uploadPromises.push(
         this.uploadSignedRulingPdfToCourt(theCase, user, signedRulingPdf).then(
           (res) => {
             rulingUploadedToCourt = res
           },
         ),
-        this.uploadCaseFilesPdfToCourt(theCase, user),
-        getCourtRecordPdfAsString(theCase, this.formatMessage)
-          .then((courtRecordPdf) => {
-            return this.uploadCourtRecordPdfToCourt(
-              theCase,
-              user,
-              courtRecordPdf,
-            ).then((res) => {
-              courtRecordUploadedToCourt = res
-            })
-          })
-          .catch((reason) => {
-            // Log and ignore this error. The court record can be uploaded manually.
-            this.logger.error(
-              `Failed to generate court record pdf for case ${theCase.id}`,
-              { reason },
-            )
-          }),
+        isModifyingRuling
+          ? this.uploadCaseFilesPdfToCourt(theCase, user)
+          : Promise.resolve(),
+        isModifyingRuling
+          ? getCourtRecordPdfAsString(theCase, this.formatMessage)
+              .then((courtRecordPdf) => {
+                return this.uploadCourtRecordPdfToCourt(
+                  theCase,
+                  user,
+                  courtRecordPdf,
+                ).then((res) => {
+                  courtRecordUploadedToCourt = res
+                })
+              })
+              .catch((reason) => {
+                // Log and ignore this error. The court record can be uploaded manually.
+                this.logger.error(
+                  `Failed to generate court record pdf for case ${theCase.id}`,
+                  { reason },
+                )
+              })
+          : Promise.resolve(),
       )
     }
 
@@ -834,10 +842,22 @@ export class CaseService {
     }
 
     // TODO: UpdateCaseDto does not contain rulingDate - create a new type for CaseService.update
+    const newRulingDate = nowFactory()
     await this.update(
       theCase.id,
       {
-        rulingDate: nowFactory(),
+        rulingDate: newRulingDate,
+        ...(!theCase.rulingDate
+          ? {}
+          : {
+              rulingModifiedHistory: `${
+                theCase.rulingModifiedHistory
+                  ? `${theCase.rulingModifiedHistory}\n\n`
+                  : ''
+              }${formatDate(newRulingDate, 'PPPp')} - ${theCase.judge?.name} ${
+                theCase?.judge?.title
+              }}`,
+            }),
       } as UpdateCaseDto,
       false,
     )
