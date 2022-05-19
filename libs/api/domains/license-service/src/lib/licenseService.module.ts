@@ -89,7 +89,7 @@ export class LicenseServiceModule {
           useFactory: () => async (
             type: GenericLicenseType,
             cacheManager: CacheManager,
-          ): Promise<GenericLicenseClient<unknown> | null | any> => {
+          ): Promise<GenericLicenseClient<unknown> | null> => {
             switch (type) {
               case GenericLicenseType.DriversLicense:
                 return new GenericDrivingLicenseApi(
@@ -99,25 +99,25 @@ export class LicenseServiceModule {
                 )
               case GenericLicenseType.AdrLicense:
                 return new GenericAdrLicenseApi(
-                  new AdrApi(
-                    new Configuration({
-                      basePath: `https://ws.ver.is/rettindi`,
-                      fetchApi: createEnhancedFetch({
-                        name: 'clients-adr',
-                      }),
+                  new Configuration({
+                    basePath: `https://ws.ver.is/rettindi`,
+                    fetchApi: createEnhancedFetch({
+                      name: 'clients-adr',
                     }),
-                  ),
+                  }),
+                  logger,
+                  cacheManager,
                 )
               case GenericLicenseType.MachineLicense:
                 return new GenericMachineLicenseApi(
-                  new VinnuvelaApi(
-                    new Configuration({
-                      basePath: `https://ws.ver.is/rettindi`,
-                      fetchApi: createEnhancedFetch({
-                        name: 'clients-vinnuvela',
-                      }),
+                  new Configuration({
+                    basePath: `https://ws.ver.is/rettindi`,
+                    fetchApi: createEnhancedFetch({
+                      name: 'clients-vinnuvela',
                     }),
-                  ),
+                  }),
+                  logger,
+                  cacheManager,
                 )
               default:
                 return null

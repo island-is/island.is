@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { LOGGER_PROVIDER } from '@island.is/logging'
+import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { Cache as CacheManager } from 'cache-manager'
-import { Inject, Injectable, Logger } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import {
   CONFIG_PROVIDER,
   GenericLicenseClient,
@@ -12,49 +12,76 @@ import {
 } from '../../licenceService.type'
 import { GenericAdrLicenseResponse } from './genericAdrLicense.type'
 import { User } from '@island.is/auth-nest-tools'
-import { AdrApi } from '@island.is/clients/aosh'
+import { AdrApi, Configuration } from '@island.is/clients/aosh'
 import { parseAdrLicensePayload } from './adrLicenseMapper'
+import { LicenseType } from 'aws-sdk/clients/sms'
+
+/** Category to attach each log message to */
+const LOG_CATEGORY = 'adrlicense-service'
 
 @Injectable()
 export class GenericAdrLicenseApi
   implements GenericLicenseClient<GenericAdrLicenseResponse> {
+  private readonly adrApi: AdrApi
+
   constructor(
-    private adrLicenseApi: AdrApi,
+    private config: Configuration,
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
     private cacheManager?: CacheManager | null,
   ) {
     this.cacheManager = cacheManager
+    this.adrApi = new AdrApi(config)
+  }
+
+  async fetchLicense(nationalId: string) {
+    let license: unknown
+
+    try {
+      license = await this.adrApi.getAdr({
+        kennitala: nationalId,
+      })
+      const k = license
+    } catch (e) {
+      this.logger.error('ADR license fetch failed', {
+        exception: e,
+        category: LOG_CATEGORY,
+      })
+      return null
+    }
+
+    return license as GenericAdrLicenseResponse
   }
 
   async getLicense(
     nationalId: User['nationalId'],
   ): Promise<GenericLicenseUserdataExternal | null> {
-    const license = (await this.adrLicenseApi.getAdr({
-      kennitala: nationalId,
-    })) as GenericAdrLicenseResponse
+    const license = await this.fetchLicense(nationalId)
 
+    if (!license) {
+      this.logger.warn('Missing ADR license, null from api', {
+        category: LOG_CATEGORY,
+      })
+      return null
+    }
     const payload = parseAdrLicensePayload(license)
 
     return {
       status: GenericUserLicenseStatus.HasLicense,
       payload,
-      pkpassStatus: GenericUserLicensePkPassStatus.Available,
+      pkpassStatus: GenericUserLicensePkPassStatus.NotAvailable,
     }
   }
 
   async getLicenseDetail(
-    nationalId: string,
+    nationalId: User['nationalId'],
   ): Promise<GenericLicenseUserdataExternal | null> {
     return this.getLicense(nationalId)
   }
-  async getPkPassUrl(
-    nationalId: string,
-    data?: GenericAdrLicenseResponse | undefined,
-  ): Promise<string | null> {
+  async getPkPassUrl(nationalId: User['nationalId']): Promise<string | null> {
     return null
   }
   async getPkPassQRCode(
-    nationalId: string,
-    data?: GenericAdrLicenseResponse | undefined,
+    nationalId: User['nationalId'],
   ): Promise<string | null> {
     return null
   }

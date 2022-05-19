@@ -1,3 +1,4 @@
+import { utimesSync } from 'fs'
 import {
   GenericLicenseDataFieldType,
   GenericUserLicensePayload,
@@ -13,7 +14,7 @@ interface AugmentedAdrLicenseResponse {
   rikisfang?: string
   gildirTil?: string
   adrRettindi?: {
-    flokkur?: number
+    flokkur?: string
     grunn?: boolean
     tankar?: boolean
     heiti?: string
@@ -34,14 +35,17 @@ export const parseAdrLicensePayload = (
     }
 
     adrRettindi?.forEach((field) => {
-      const heiti = field.heiti ?? [
-        {
-          flokkur: field.flokkur,
-          heiti: '',
-        },
-      ]
+      const heiti =
+        field.heiti && field.heiti.length
+          ? field.heiti
+          : field.flokkur?.split(',').map((f) => ({
+              flokkur: f.trim(),
+              heiti: '',
+            }))
 
-      heiti.forEach((item) => {
+      console.log(heiti)
+
+      heiti?.forEach((item) => {
         augmentedAdrRettindi.adrRettindi?.push({
           flokkur: item.flokkur,
           grunn: field.grunn,
@@ -89,7 +93,7 @@ export const parseAdrLicensePayload = (
         .filter((field) => field.tankar)
         .map((field) => ({
           type: GenericLicenseDataFieldType.Category,
-          name: field.flokkur?.toString(),
+          name: field.flokkur,
           label: field.heiti,
           fields: [
             {
@@ -107,7 +111,7 @@ export const parseAdrLicensePayload = (
         .filter((field) => !field.tankar)
         .map((field) => ({
           type: GenericLicenseDataFieldType.Category,
-          name: field.flokkur?.toString(),
+          name: field.flokkur,
           label: field.heiti,
           fields: [
             {
