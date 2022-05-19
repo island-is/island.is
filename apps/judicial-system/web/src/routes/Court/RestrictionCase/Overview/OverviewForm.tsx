@@ -1,7 +1,6 @@
 import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { CaseType } from '@island.is/judicial-system/types'
 import {
   AccordionListItem,
   CommentsAccordionItem,

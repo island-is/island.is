@@ -15,6 +15,7 @@ import {
   isAcceptingCaseDecision,
   User,
   Case,
+  CaseDecision,
 } from '@island.is/judicial-system/types'
 import {
   BlueBox,
@@ -53,28 +54,35 @@ import * as Constants from '@island.is/judicial-system/consts'
 
 import * as styles from './StepThree.css'
 
-export function getDemandsAutofill(
+export interface DemandsAutofillProps {
+  defentant: Defendant
+  caseType: CaseType
+  requestedValidToDate?: string | Date
+  requestedCustodyRestrictions?: CaseCustodyRestrictions[]
+  parentCaseDecision?: CaseDecision
+  courtName?: string
+}
+
+export const getDemandsAutofill = (
   formatMessage: IntlShape['formatMessage'],
-  defentant: Defendant,
-  requestedValidToDate: Date | string | undefined,
-  workingCase: Case,
-): string {
+  props: DemandsAutofillProps,
+): string => {
   return formatMessage(rcReportForm.sections.demands.autofillV2, {
-    accusedName: defentant.name,
-    accusedNationalId: defentant.noNationalId
+    accusedName: props.defentant.name,
+    accusedNationalId: props.defentant.noNationalId
       ? ' '
-      : `, kt. ${formatNationalId(defentant.nationalId ?? '')}, `,
+      : `, kt. ${formatNationalId(props.defentant.nationalId ?? '')}, `,
     isExtended:
-      workingCase.parentCase &&
-      isAcceptingCaseDecision(workingCase.parentCase.decision)
+      props.parentCaseDecision &&
+      isAcceptingCaseDecision(props.parentCaseDecision)
         ? 'yes'
         : 'no',
-    caseType: workingCase.type,
-    court: workingCase.court?.name.replace('Héraðsdómur', 'Héraðsdóms'),
-    requestedValidToDate: formatDate(requestedValidToDate, 'PPPPp')
+    caseType: props.caseType,
+    court: props.courtName?.replace('Héraðsdómur', 'Héraðsdóms'),
+    requestedValidToDate: formatDate(props.requestedValidToDate, 'PPPPp')
       ?.replace('dagur,', 'dagsins')
       ?.replace(' kl.', ', kl.'),
-    hasIsolationRequest: workingCase.requestedCustodyRestrictions?.includes(
+    hasIsolationRequest: props.requestedCustodyRestrictions?.includes(
       CaseCustodyRestrictions.ISOLATION,
     )
       ? 'yes'
@@ -102,7 +110,12 @@ const StepThreeForm: React.FC<Props> = (props) => {
   useDeb(workingCase, 'requestedOtherRestrictions')
 
   const onDemandsChange = React.useCallback(
-    (entry: autofillEntry, requestedValidToDate?: Date) => {
+    (
+      entry: autofillEntry,
+      caseType: CaseType,
+      requestedValidToDate: Date | string | undefined,
+      requestedCustodyRestrictions: CaseCustodyRestrictions[] | undefined,
+    ) => {
       autofill(
         [
           entry,
@@ -110,12 +123,14 @@ const StepThreeForm: React.FC<Props> = (props) => {
             key: 'demands',
             value:
               workingCase.defendants && workingCase.defendants.length
-                ? getDemandsAutofill(
-                    formatMessage,
-                    workingCase.defendants[0],
-                    requestedValidToDate || workingCase.requestedValidToDate,
-                    workingCase,
-                  )
+                ? getDemandsAutofill(formatMessage, {
+                    defentant: workingCase.defendants[0],
+                    caseType,
+                    requestedValidToDate: requestedValidToDate,
+                    parentCaseDecision: workingCase.parentCase?.decision,
+                    requestedCustodyRestrictions: requestedCustodyRestrictions,
+                    courtName: workingCase.court?.name,
+                  })
                 : undefined,
             force: true,
           },
@@ -185,7 +200,9 @@ const StepThreeForm: React.FC<Props> = (props) => {
                         }),
                         force: true,
                       },
+                      workingCase.type,
                       date,
+                      workingCase.requestedCustodyRestrictions,
                     )
                   }
                 }}
@@ -202,16 +219,22 @@ const StepThreeForm: React.FC<Props> = (props) => {
                   checked={workingCase.requestedCustodyRestrictions?.includes(
                     CaseCustodyRestrictions.ISOLATION,
                   )}
-                  onChange={() =>
-                    onDemandsChange({
-                      key: 'requestedCustodyRestrictions',
-                      value: toggleInArray(
-                        workingCase.requestedCustodyRestrictions,
-                        CaseCustodyRestrictions.ISOLATION,
-                      ),
-                      force: true,
-                    })
-                  }
+                  onChange={() => {
+                    const nextRequestedCustodyRestrictions = toggleInArray(
+                      workingCase.requestedCustodyRestrictions,
+                      CaseCustodyRestrictions.ISOLATION,
+                    )
+                    onDemandsChange(
+                      {
+                        key: 'requestedCustodyRestrictions',
+                        value: nextRequestedCustodyRestrictions,
+                        force: true,
+                      },
+                      workingCase.type,
+                      workingCase.requestedCourtDate,
+                      nextRequestedCustodyRestrictions,
+                    )
+                  }}
                   large
                   filled
                 />
@@ -230,13 +253,19 @@ const StepThreeForm: React.FC<Props> = (props) => {
                       return
                     }
 
-                    onDemandsChange({
-                      key: 'type',
-                      value: event.target.checked
-                        ? CaseType.ADMISSION_TO_FACILITY
-                        : CaseType.CUSTODY,
-                      force: true,
-                    })
+                    const nextCaseType = event.target.checked
+                      ? CaseType.ADMISSION_TO_FACILITY
+                      : CaseType.CUSTODY
+                    onDemandsChange(
+                      {
+                        key: 'type',
+                        value: nextCaseType,
+                        force: true,
+                      },
+                      nextCaseType,
+                      workingCase.requestedCourtDate,
+                      workingCase.requestedCustodyRestrictions,
+                    )
                   }}
                   large
                   filled
