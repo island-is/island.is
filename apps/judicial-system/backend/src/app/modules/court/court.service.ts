@@ -22,7 +22,7 @@ export const subTypes: SubTypes = {
   // 'Frestur',
   CUSTODY: ['Gæsluvarðhald', 'Framlenging gæsluvarðhalds'],
   // TODO: replace with appropriate type when it has been created in the court system
-  ADMISSION_TO_FACILITY: ['Gæsluvarðhald', 'Framlenging gæsluvarðhalds'],
+  ADMISSION_TO_FACILITY: 'Vistun á viðeigandi stofnun',
   PSYCHIATRIC_EXAMINATION: 'Geðrannsókn',
   // 'Handtaka',
   SOUND_RECORDING_EQUIPMENT: 'Hljóðupptökubúnaði komið fyrir',
@@ -32,6 +32,7 @@ export const subTypes: SubTypes = {
   BODY_SEARCH: 'Leit og líkamsrannsókn',
   // 'Lögmæti rannsóknarathafna',
   RESTRAINING_ORDER: 'Nálgunarbann',
+  EXPULSION_FROM_HOME: 'Nálgunarbann og brottvísun af heimili',
   // 'Réttarstaða afplánunarfanga',
   // 'Réttarstaða gæsluvarðhaldsfanga',
   // 'Rof á reynslulausn',
