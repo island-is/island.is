@@ -438,6 +438,10 @@ export const m = defineMessages({
     id: 'service.portal:adrLicense',
     defaultMessage: 'ADR réttindi',
   },
+  machineLicense: {
+    id: 'service.portal:machineLicense',
+    defaultMessage: 'Vinnuvélaréttindi',
+  },
   notFound: {
     id: 'service.portal:not-found',
     defaultMessage: 'Síða finnst ekki',
