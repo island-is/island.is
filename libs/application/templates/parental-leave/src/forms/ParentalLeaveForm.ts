@@ -131,24 +131,32 @@ export const ParentalLeaveForm: Form = buildForm({
                 parentalLeaveFormMessages.shared.otherParentDescription,
               children: [
                 // buildRadioField({
-                //   id: 'otherParent',
+                //   id: 'otherParent.chooseOtherParent',
                 //   title: parentalLeaveFormMessages.shared.otherParentSubTitle,
                 //   options: (application) => getOtherParentOptions(application),
                 // }),
                 buildCustomField({
                   component: 'OtherParent',
-                  id: 'otherParent',
+                  id: 'otherParent.chooseOtherParent',
                   title: parentalLeaveFormMessages.shared.otherParentSubTitle,
                 }),
                 buildTextField({
-                  id: 'otherParentName',
-                  condition: (answers) => answers.otherParent === MANUAL,
+                  id: 'otherParent.otherParentName',
+                  condition: (answers) => (answers as {
+                    otherParent: {
+                      chooseOtherParent: string
+                    }
+                  })?.otherParent?.chooseOtherParent === MANUAL,
                   title: parentalLeaveFormMessages.shared.otherParentName,
                   width: 'half',
                 }),
                 buildTextField({
-                  id: 'otherParentId',
-                  condition: (answers) => answers.otherParent === MANUAL,
+                  id: 'otherParent.otherParentId',
+                  condition: (answers) => (answers as {
+                    otherParent: {
+                      chooseOtherParent: string
+                    }
+                  })?.otherParent?.chooseOtherParent === MANUAL,
                   title: parentalLeaveFormMessages.shared.otherParentID,
                   width: 'half',
                   format: '######-####',
@@ -158,7 +166,11 @@ export const ParentalLeaveForm: Form = buildForm({
             }),
             buildRadioField({
               id: 'otherParentRightOfAccess',
-              condition: (answers) => answers.otherParent === MANUAL,
+              condition: (answers) => (answers as {
+                otherParent: {
+                  chooseOtherParent: string
+                }
+              })?.otherParent?.chooseOtherParent === MANUAL,
               title: parentalLeaveFormMessages.rightOfAccess.title,
               description: parentalLeaveFormMessages.rightOfAccess.description,
               options: [

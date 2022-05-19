@@ -28,13 +28,10 @@ export const OtherParent: FC<FieldBaseProps> = ({
                     children: undefined,
                     options: (application) => getOtherParentOptions(application),
                     onSelect: (s: string) => {
-                        console.log('first: ', getValues('otherParentId'))
                         if(s === SPOUSE || s === NO) {
-                            setValue('otherParentName', '')
-                            setValue('otherParentId', '')
+                            setValue('otherParent.otherParentName', '')
+                            setValue('otherParent.otherParentId', '')
                         }
-                        
-                        console.log('then: ', getValues('otherParentId'))
                     },
                 }} 
                 application={application}            

@@ -52,3 +52,9 @@ export interface Payments {
   privatePensionFundPercentage: string
   union: string
 }
+
+export interface OtherParent {
+  chooseOtherParent: string
+  otherParentName: string
+  otherParentId: string
+}

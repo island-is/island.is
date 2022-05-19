@@ -610,8 +610,8 @@ export const allowOtherParent = (answers: Application['answers']) => {
   )
 
   return (
-    otherParent === SPOUSE ||
-    (otherParent === MANUAL && otherParentRightOfAccess === YES)
+    otherParent?.chooseOtherParent === SPOUSE ||
+    (otherParent?.chooseOtherParent === MANUAL && otherParentRightOfAccess === YES)
   )
 }
 
@@ -622,7 +622,7 @@ export const getOtherParentId = (
     application.answers,
   )
 
-  if (otherParent === SPOUSE) {
+  if (otherParent?.chooseOtherParent === SPOUSE) {
     const spouse = getSpouse(application)
 
     if (!spouse || !spouse.nationalId) {
@@ -642,7 +642,7 @@ export const getOtherParentName = (
     application.answers,
   )
 
-  if (otherParent === SPOUSE) {
+  if (otherParent?.chooseOtherParent === SPOUSE) {
     const spouse = getSpouse(application)
 
     if (!spouse || !spouse.name) {
