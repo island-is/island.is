@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import cn from 'classnames'
 import { useIntl } from 'react-intl'
 import findLastIndex from 'lodash/findLastIndex'
@@ -24,12 +24,17 @@ const Timeline = ({ state, modified, created, showSpouseStep }: Props) => {
     showSpouseStep,
   )
 
+  const findActiveState = () =>
+    findLastIndex(sections, (el) => {
+      return el.state.includes(state as ApplicationState)
+    })
+
   const { formatMessage } = useIntl()
-  const [activeState] = useState(
-    findLastIndex(sections, (el) =>
-      el.state.includes(state as ApplicationState),
-    ),
-  )
+  const [activeState, setActiveState] = useState(findActiveState())
+
+  useEffect(() => {
+    setActiveState(findActiveState())
+  }, [state])
 
   if (!state) {
     return null
