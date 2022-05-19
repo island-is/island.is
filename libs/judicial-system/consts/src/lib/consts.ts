@@ -56,6 +56,10 @@ export const ICaseTypes = [
         value: CaseType.RESTRAINING_ORDER,
       },
       {
+        label: 'Brottvísun af heimili',
+        value: CaseType.EXPULSION_FROM_HOME,
+      },
+      {
         label: 'Rannsókn á rafrænum gögnum',
         value: CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION,
       },
