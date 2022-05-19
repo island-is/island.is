@@ -53,6 +53,16 @@ export const serviceSetup = (): ServiceBuilder<'auth-admin-web'> => {
         },
       },
     })
+    .resources({
+      limits: {
+        cpu: '400m',
+        memory: '256Mi'
+      },
+      requests: {
+        cpu: "200m",
+        memory: '128Mi'
+      }
+    })
     .targetPort(4200)
     .readiness('/liveness')
     .liveness('/liveness')

@@ -1,4 +1,3 @@
-import { max } from 'lodash'
 import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
 export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
