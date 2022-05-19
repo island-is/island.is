@@ -426,7 +426,7 @@ export const StandardForm = ({
               size="md"
             />
             <Box marginLeft={1} marginTop={1}>
-              <Text variant="small">
+              <Text variant="small" as="div">
                 <i>{categoryDescription}</i>
               </Text>
             </Box>
