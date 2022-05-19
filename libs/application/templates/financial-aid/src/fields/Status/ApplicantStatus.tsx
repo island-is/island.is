@@ -15,8 +15,9 @@ import {
   Timeline,
 } from './index'
 import useApplication from '../../lib/hooks/useApplication'
+import * as styles from './Status.css'
 
-const ApplicantStatus = ({ application }: FAFieldBaseProps) => {
+const ApplicantStatus = ({ application, goToScreen }: FAFieldBaseProps) => {
   const { currentApplication } = useApplication(
     application.externalData.veita.data.currentApplicationId,
   )
@@ -27,7 +28,7 @@ const ApplicantStatus = ({ application }: FAFieldBaseProps) => {
       : currentApplication?.state
 
   return (
-    <Box paddingBottom={5}>
+    <Box paddingBottom={5} className={styles.container}>
       <Header state={state} />
 
       {waitingForSpouse(application.state) && <SpouseAlert />}
@@ -41,8 +42,9 @@ const ApplicantStatus = ({ application }: FAFieldBaseProps) => {
         />
       )}
 
-      {/* TODO: redirect user to page to upload files when button is clicked insied of MissingFilesCard*/}
-      {state === ApplicationState.DATANEEDED && <MissingFilesCard />}
+      {state === ApplicationState.DATANEEDED && (
+        <MissingFilesCard goToScreen={goToScreen} />
+      )}
 
       {state !== ApplicationState.REJECTED && (
         <AidAmount
@@ -54,16 +56,8 @@ const ApplicantStatus = ({ application }: FAFieldBaseProps) => {
 
       <Timeline
         state={state}
-        created={
-          currentApplication?.created
-            ? new Date(currentApplication.created)
-            : application.created
-        }
-        modified={
-          currentApplication?.modified
-            ? new Date(currentApplication.modified)
-            : application.modified
-        }
+        created={currentApplication?.created ?? application.created}
+        modified={currentApplication?.modified ?? application.modified}
         showSpouseStep={hasSpouse(
           application.answers,
           application.externalData,

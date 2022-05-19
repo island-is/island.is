@@ -12,8 +12,9 @@ import {
   Timeline,
 } from './index'
 import useApplication from '../../lib/hooks/useApplication'
+import * as styles from './Status.css'
 
-const SpouseStatus = ({ application }: FAFieldBaseProps) => {
+const SpouseStatus = ({ application, goToScreen }: FAFieldBaseProps) => {
   const { currentApplication } = useApplication(
     application.externalData.veita.data.currentApplicationId,
   )
@@ -21,26 +22,19 @@ const SpouseStatus = ({ application }: FAFieldBaseProps) => {
   const state = currentApplication?.state
 
   return (
-    <Box paddingBottom={5}>
+    <Box paddingBottom={5} className={styles.container}>
       <Header state={state} />
 
       {state === ApplicationState.APPROVED && <SpouseApproved />}
 
-      {/* TODO: redirect user to page to upload files when button is clicked insied of MissingFilesCard*/}
-      {state === ApplicationState.DATANEEDED && <MissingFilesCard />}
+      {state === ApplicationState.DATANEEDED && (
+        <MissingFilesCard goToScreen={goToScreen} />
+      )}
 
       <Timeline
         state={state}
-        created={
-          currentApplication?.created
-            ? new Date(currentApplication.created)
-            : application.created
-        }
-        modified={
-          currentApplication?.modified
-            ? new Date(currentApplication.modified)
-            : application.modified
-        }
+        created={currentApplication?.created ?? application.created}
+        modified={currentApplication?.modified ?? application.modified}
       />
 
       <MoreActions

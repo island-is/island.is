@@ -27,7 +27,7 @@ import {
 } from './utils'
 import { FAApplication } from '..'
 
-type Events = { type: DefaultEvents.SUBMIT }
+type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.EDIT }
 
 const oneMonthLifeCycle = {
   shouldBeListed: true,
@@ -223,6 +223,9 @@ const FinancialAidTemplate: ApplicationTemplate<
               read: 'all',
             },
           ],
+        },
+        on: {
+          EDIT: { target: ApplicationStates.SUBMITTED },
         },
       },
       [ApplicationStates.MUNCIPALITYNOTREGISTERED]: {
