@@ -94,6 +94,24 @@ describe('answerValidators', () => {
     })
   })
 
+  describe('union', () => {
+    it('shoulde create error when union is empty', () => {
+      const newAnswers = {
+        bank: '123456789012',
+        pensionFund: 'id-frjalsi',
+        union: '',
+      }
+
+      expect(
+        answerValidators['payments'](newAnswers, application),
+      ).toStrictEqual({
+        message: coreErrorMessages.defaultError,
+        path: 'payments.union',
+        values: undefined,
+      })
+    })
+  })
+
   describe('privatePensionFund', () => {
     it('should create error when privatePensionFund is empty', () => {
       const newAnswers = {

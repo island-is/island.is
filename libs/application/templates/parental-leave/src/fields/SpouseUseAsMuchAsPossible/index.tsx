@@ -51,7 +51,10 @@ export const SpouseUseAsMuchAsPossible: FC<FieldBaseProps> = ({
           ],
           onSelect: (s: string) => {
             if (s === YES) {
-              setValue('personalAllowanceFromSpouse.usage', '0')
+              setValue('personalAllowanceFromSpouse.usage', '100')
+            }
+            if (s === NO) {
+              setValue('personalAllowanceFromSpouse.usage', '')
             }
           },
         }}
