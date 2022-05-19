@@ -31,7 +31,11 @@ export enum CourtSubsections {
   CONFIRMATION = 5,
 }
 
-export type ReactSelectOption = { label: string; value: string | number }
+export type ReactSelectOption = {
+  label: string
+  value: string | number
+  __isNew__?: boolean
+}
 
 export enum LoginErrorCodes {
   UNAUTHORIZED = 'innskraning-ekki-notandi',

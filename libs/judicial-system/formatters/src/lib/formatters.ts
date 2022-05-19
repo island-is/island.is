@@ -207,3 +207,13 @@ export function formatRequestCaseType(type: CaseType): string {
     ? caseTypes[type]
     : 'rannsóknarheimild'
 }
+
+export const formatDOB = (nationalId?: string, noNationalId?: boolean) => {
+  if (!nationalId) {
+    return '-'
+  }
+
+  return noNationalId
+    ? `fd. ${nationalId}`
+    : `kt. ${formatNationalId(nationalId)}`
+}
