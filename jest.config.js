@@ -90,6 +90,7 @@ module.exports = {
     '<rootDir>/libs/api/domains/license-service',
     '<rootDir>/libs/api/domains/mortgage-certificate',
     '<rootDir>/libs/api/domains/national-registry',
+    '<rootDir>/libs/api/domains/passport',
     '<rootDir>/libs/api/domains/payment',
     '<rootDir>/libs/api/domains/regulations',
     '<rootDir>/libs/api/domains/rsk',

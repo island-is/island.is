@@ -154,6 +154,9 @@
     "api-domains-national-registry-x-road": {
       "tags": []
     },
+    "api-domains-passport": {
+      "tags": []
+    },
     "api-domains-payment": {
       "tags": []
     },
