@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from 'react'
-import { Box, GridRow, GridColumn } from '@island.is/island-ui/core'
+import { Box, GridRow, GridColumn, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { FieldBaseProps, getErrorViaPath } from '@island.is/application/core'
@@ -54,6 +54,7 @@ const NationalIdWithName: FC<FieldBaseProps> = ({ field, application }) => {
 
   return (
     <Box>
+      <Text marginBottom={3}>{formatMessage(m.studentInfoSubtitle) + (application.externalData.employee.data as any)?.name + '.'}</Text>
       <GridRow>
         <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
           <InputController
