@@ -40,6 +40,7 @@ interface WrapperProps {
   searchTags?: Tag[]
   showLogoTitle?: boolean
   pageDescription?: string
+  indexableBySearchEngine?: boolean
 }
 
 export const Wrapper: FC<WrapperProps> = ({
@@ -55,6 +56,7 @@ export const Wrapper: FC<WrapperProps> = ({
   searchTags,
   showLogoTitle,
   pageDescription,
+  indexableBySearchEngine = false,
   children,
 }) => {
   const [options, setOptions] = useState<Options>({
@@ -75,24 +77,19 @@ export const Wrapper: FC<WrapperProps> = ({
 
   return (
     <>
-      {!organization.serviceWebFeaturedImage && (
-        <Head>
-          <title>{pageTitle}</title>
+      <HeadWithSocialSharing
+        title={pageTitle}
+        description={pageDescription}
+        imageUrl={organization.serviceWebFeaturedImage?.url}
+        imageContentType={organization.serviceWebFeaturedImage?.contentType}
+        imageWidth={organization.serviceWebFeaturedImage?.width?.toString()}
+        imageHeight={organization.serviceWebFeaturedImage?.height?.toString()}
+      >
+        {!indexableBySearchEngine && (
           <meta name="robots" content="noindex, nofollow" />
-        </Head>
-      )}
-      {organization.serviceWebFeaturedImage && (
-        <HeadWithSocialSharing
-          title={pageTitle}
-          description={pageDescription}
-          imageUrl={organization.serviceWebFeaturedImage?.url}
-          imageContentType={organization.serviceWebFeaturedImage?.contentType}
-          imageWidth={organization.serviceWebFeaturedImage?.width?.toString()}
-          imageHeight={organization.serviceWebFeaturedImage?.height?.toString()}
-        >
-          <meta name="robots" content="noindex, nofollow" />
-        </HeadWithSocialSharing>
-      )}
+        )}
+      </HeadWithSocialSharing>
+
       <ServiceWebContext.Provider value={{ textMode, institutionSlug }}>
         <ServiceWebHeader
           hideSearch={!smallBackground}
