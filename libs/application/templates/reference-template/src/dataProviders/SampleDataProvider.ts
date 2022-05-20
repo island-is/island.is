@@ -11,7 +11,7 @@ interface SampleProviderData {
 export class SampleDataProvider extends BasicDataProvider {
   type = 'SampleDataProvider'
 
-  async provide(application: Application): Promise<unknown> {
+  async provide(_: Application): Promise<unknown> {
     await new Promise((resolve) => setTimeout(resolve, 500))
 
     const data: SampleProviderData = {

@@ -16,7 +16,7 @@ const FORMER_INSURANCE = 'formerInsurance'
 
 // TODO: Add translation messages here
 export const answerValidators: Record<string, AnswerValidator> = {
-  [STATUS]: (newAnswer: unknown, application: Application) => {
+  [STATUS]: (newAnswer: unknown, _: Application) => {
     const status = newAnswer as Status
 
     if (!Object.values(StatusTypes).includes(status.type)) {

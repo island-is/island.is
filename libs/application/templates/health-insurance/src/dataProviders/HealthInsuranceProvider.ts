@@ -8,9 +8,9 @@ import {
 export class HealthInsuranceProvider extends BasicDataProvider {
   type = 'HealthInsuranceProvider'
 
-  provide(application: Application): Promise<boolean> {
+  provide(_: Application): Promise<boolean> {
     const query = `query HealthInsuranceIsHealthInsured {
-      healthInsuranceIsHealthInsured 
+      healthInsuranceIsHealthInsured
     }`
 
     return this.useGraphqlGateway(query)
