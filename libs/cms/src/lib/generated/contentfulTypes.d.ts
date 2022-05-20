@@ -2023,6 +2023,9 @@ export interface IOrganizationPageFields {
 
   /** Default Header Image */
   defaultHeaderImage?: Asset | undefined
+
+  /** Alert Banner */
+  alertBanner?: IAlertBanner | undefined
 }
 
 export interface IOrganizationPage extends Entry<IOrganizationPageFields> {
