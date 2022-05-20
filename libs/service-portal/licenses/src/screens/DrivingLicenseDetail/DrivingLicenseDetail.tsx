@@ -1,8 +1,5 @@
-import React, { useState } from 'react'
-import {
-  GenericLicenseType,
-  useLicense,
-} from '@island.is/service-portal/graphql'
+import React from 'react'
+import { useDriversLicense } from '@island.is/service-portal/graphql'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   Box,
@@ -29,11 +26,14 @@ import * as styles from './DrivingLicenseDetail.css'
 import { info } from 'kennitala'
 import { m } from '../../lib/messages'
 import { PkPass } from '../../components/QRCodeModal/PkPass'
+import { GenericLicenseType } from '@island.is/api/schema'
 
 const DrivingLicenseDetail: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.license')
   const { formatMessage } = useLocale()
-  const { data, loading, error } = useLicense(GenericLicenseType.DriversLicense)
+  const { data, loading, error } = useDriversLicense(
+    GenericLicenseType.DriversLicense,
+  )
 
   const licenseExpired = data && isExpired(new Date(), new Date(data.gildirTil))
 
