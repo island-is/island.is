@@ -31,6 +31,7 @@ type autofillProperties = Pick<
   | 'courtAttendees'
   | 'courtCaseFacts'
   | 'courtDate'
+  | 'courtDate'
   | 'courtLegalArguments'
   | 'courtLocation'
   | 'courtStartDate'
