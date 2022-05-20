@@ -1,4 +1,4 @@
-# Guide: Enable organisations to make requests to an application
+# Guide: Enable Organisations to Make Requests to an Application
 
 This document describes how you can go enable a an orginization to interact with the application system.
 
