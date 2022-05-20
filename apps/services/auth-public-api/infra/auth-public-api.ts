@@ -71,6 +71,11 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-public-api'> => {
     })
     .readiness('/liveness')
     .liveness('/liveness')
+    .replicaCount({
+      default: 2,
+      min: 2,
+      max: 10
+    })
     .resources({
       limits: {
         cpu: '400m',

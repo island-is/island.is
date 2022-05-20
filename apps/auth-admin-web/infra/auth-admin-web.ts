@@ -53,6 +53,11 @@ export const serviceSetup = (): ServiceBuilder<'auth-admin-web'> => {
         },
       },
     })
+    .replicaCount({
+      default: 2,
+      min: 2,
+      max: 10,
+    })
     .resources({
       limits: {
         cpu: '400m',
