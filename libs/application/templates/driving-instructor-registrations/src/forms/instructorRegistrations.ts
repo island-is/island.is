@@ -5,7 +5,6 @@ import {
   FormModes,
   buildExternalDataProvider,
   buildDataProviderItem,
-  buildMultiField,
   buildCustomField,
 } from '@island.is/application/core'
 import { m } from '../lib/messages'
@@ -47,16 +46,10 @@ export const getInstructorRegistrations = (): Form => {
         id: 'students',
         title: m.studentsOverviewSideTitle,
         children: [
-          buildMultiField({
-            id: 'students',
-            title: m.studentsOverviewTitle,
-            children: [
-              buildCustomField({
-                title: '',
-                id: 'table',
-                component: 'StudentsOverview',
-              }),
-            ],
+          buildCustomField({
+            title: '',
+            id: 'table',
+            component: 'StudentsOverview',
           }),
         ],
       }),

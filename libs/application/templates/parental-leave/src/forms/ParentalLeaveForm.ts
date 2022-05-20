@@ -285,11 +285,6 @@ export const ParentalLeaveForm: Form = buildForm({
         buildSubSection({
           id: 'personalAllowanceSubSection',
           title: parentalLeaveFormMessages.personalAllowance.title,
-          condition: (answers, externalData) => {
-            const selectedChild = getSelectedChild(answers, externalData)
-
-            return selectedChild?.parentalRelation === ParentalRelations.primary
-          },
           children: [
             buildRadioField({
               id: 'usePersonalAllowance',
@@ -340,7 +335,14 @@ export const ParentalLeaveForm: Form = buildForm({
             buildRadioField({
               id: 'usePersonalAllowanceFromSpouse',
               title: parentalLeaveFormMessages.personalAllowance.useFromSpouse,
-              condition: (answers) => allowOtherParent(answers),
+              condition: (answers, externalData) => {
+                const selectedChild = getSelectedChild(answers, externalData)
+
+                return (
+                  selectedChild?.parentalRelation ===
+                    ParentalRelations.primary && allowOtherParent(answers)
+                )
+              },
               width: 'half',
               options: [
                 {

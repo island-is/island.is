@@ -49,6 +49,16 @@ export const intercept = (res: Case) => {
           updateCase: { ...body.variables?.input, __typename: 'Case' },
         },
       })
+    } else if (hasOperationName(req, 'SendNotificationMutation')) {
+      req.alias = 'SendNotificationMutation'
+      req.reply({
+        data: {
+          sendNotification: {
+            notificationSent: true,
+            __typename: 'SendNotificationResponse',
+          },
+        },
+      })
     }
   })
 }
