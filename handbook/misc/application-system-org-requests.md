@@ -1,4 +1,4 @@
-# Guide: Enable Organisations to Make updat to an Application
+# Guide: Enable Organisations to Make update to an Application
 
 This document describes how you can go enable an orginization to interact with the application system.
 
