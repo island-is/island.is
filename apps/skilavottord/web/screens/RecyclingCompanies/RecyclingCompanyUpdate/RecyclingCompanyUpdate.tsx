@@ -31,7 +31,8 @@ const SkilavottordRecyclingPartnerQuery = gql`
     skilavottordRecyclingPartner(input: $input) {
       companyId
       companyName
-      active
+      nationalId
+      email
       address
       postnumber
       city
@@ -49,7 +50,8 @@ const UpdateSkilavottordRecyclingPartnerMutation = gql`
     updateSkilavottordRecyclingPartner(input: $input) {
       companyId
       companyName
-      active
+      nationalId
+      email
       address
       postnumber
       city

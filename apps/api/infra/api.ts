@@ -113,6 +113,19 @@ export const serviceSetup = (services: {
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
+      MUNICIPALITIES_FINANCIAL_AID_BACKEND_URL: {
+        dev: 'http://web-financial-aid-backend',
+        staging: 'http://web-financial-aid-backend',
+        prod: 'http://web-financial-aid-backend',
+      },
+      FINANCIAL_STATEMENTS_INAO_BASE_PATH:
+        'https://org2ecc07a8.crm4.dynamics.com/api/data/v9.1',
+      FINANCIAL_STATEMENTS_INAO_ISSUER:
+        'https://login.microsoftonline.com/2e211aa5-00d0-47b0-9100-94c6888248a4/v2.0',
+      FINANCIAL_STATEMENTS_INAO_SCOPE:
+        'https://org2ecc07a8.crm4.dynamics.com/.default',
+      FINANCIAL_STATEMENTS_INAO_TOKEN_ENDPOINT:
+        'https://login.microsoftonline.com/2e211aa5-00d0-47b0-9100-94c6888248a4/oauth2/v2.0/token',
     })
 
     .secrets({
@@ -157,6 +170,10 @@ export const serviceSetup = (services: {
       ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE',
       ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH',
       IDENTITY_SERVER_CLIENT_SECRET: '/k8s/api/IDENTITY_SERVER_CLIENT_SECRET',
+      FINANCIAL_STATEMENTS_INAO_CLIENT_ID:
+        '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_ID',
+      FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET:
+        '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET',
     })
     .xroad(
       Base,

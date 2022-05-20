@@ -20,9 +20,7 @@ export class VehiclesResolver {
   @Query(() => VehiclesList, { name: 'vehiclesList', nullable: true })
   @Audit()
   async getVehicleList(@CurrentUser() user: User) {
-    const res = await this.vehiclesService.getVehiclesForUser(user.nationalId)
-
-    return res?.data ?? null
+    return await this.vehiclesService.getVehiclesForUser(user.nationalId)
   }
 
   @Query(() => VehiclesDetail, { name: 'vehiclesDetail', nullable: true })
@@ -31,12 +29,11 @@ export class VehiclesResolver {
     @Args('input') input: GetVehicleDetailInput,
     @CurrentUser() user: User,
   ) {
-    const res = await this.vehiclesService.getVehicleDetail({
+    return await this.vehiclesService.getVehicleDetail({
       clientPersidno: user.nationalId,
       permno: input.permno,
       regno: input.regno,
       vin: input.vin,
     })
-    return res ?? null
   }
 }

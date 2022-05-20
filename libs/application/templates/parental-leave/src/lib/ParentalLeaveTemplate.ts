@@ -109,6 +109,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           'clearSpouseAllowanceIfUseSpouseAllowanceIsNo',
           'setPrivatePensionValuesIfUsePrivatePensionFundIsNO',
           'setUnionValuesIfUseUnionIsNO',
+          'setPersonalUsageToHundredIfUseAsMuchAsPossibleIsYes',
+          'setSpouseUsageToHundredIfUseAsMuchAsPossibleIsYes',
         ],
         meta: {
           name: States.DRAFT,
@@ -758,6 +760,40 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
         if (answers.useUnion === NO && answers.union !== NO_UNION) {
           set(application.answers, 'payments.union', NO_UNION)
+        }
+
+        return context
+      }),
+      setPersonalUsageToHundredIfUseAsMuchAsPossibleIsYes: assign((context) => {
+        const { application } = context
+
+        const answers = getApplicationAnswers(application.answers)
+
+        if (
+          answers.personalUseAsMuchAsPossible === YES &&
+          answers.personalUsage !== '100'
+        ) {
+          set(application.answers, 'personalAllowance', {
+            useAsMuchAsPossible: YES,
+            usage: '100',
+          })
+        }
+
+        return context
+      }),
+      setSpouseUsageToHundredIfUseAsMuchAsPossibleIsYes: assign((context) => {
+        const { application } = context
+
+        const answers = getApplicationAnswers(application.answers)
+
+        if (
+          answers.spouseUseAsMuchAsPossible === YES &&
+          answers.spouseUsage !== '100'
+        ) {
+          set(application.answers, 'personalAllowanceFromSpouse', {
+            useAsMuchAsPossible: YES,
+            usage: '100',
+          })
         }
 
         return context
