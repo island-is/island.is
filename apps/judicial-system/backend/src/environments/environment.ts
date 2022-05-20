@@ -24,10 +24,6 @@ const devConfig = {
     username: 'IslandIs_User_Development',
     password: process.env.NOVA_PASSWORD ?? '',
   },
-  signingOptions: {
-    url: 'https://developers.dokobit.com',
-    accessToken: process.env.DOKOBIT_ACCESS_TOKEN ?? '',
-  },
   emailOptions: {
     useTestAccount: (process.env.EMAIL_USE_TEST_ACCOUNT ?? 'true') === 'true',
     options: {
@@ -65,6 +61,7 @@ const devConfig = {
       'http://localhost:4200/krafa/stadfesta/',
     prosecutorInvestigationCaseOverviewUrl:
       'http://localhost:4200/krafa/rannsoknarheimild/stadfesta/',
+    defenderCompletedCaseOverviewUrl: 'http://localhost:4200/verjandi/',
   },
 }
 
@@ -104,12 +101,6 @@ if (process.env.NODE_ENV === 'production') {
   }
   if (!process.env.NOVA_PASSWORD) {
     throw new Error('Missing NOVA_PASSWORD environment.')
-  }
-  if (!process.env.DOKOBIT_URL) {
-    throw new Error('Missing DOKOBIT_URL environment.')
-  }
-  if (!process.env.DOKOBIT_ACCESS_TOKEN) {
-    throw new Error('Missing DOKOBIT_ACCESS_TOKEN environment.')
   }
   if (!process.env.EMAIL_REGION) {
     throw new Error('Missing EMAIL_REGION environment.')
@@ -191,10 +182,6 @@ const prodConfig = {
     username: process.env.NOVA_USERNAME ?? '',
     password: process.env.NOVA_PASSWORD ?? '',
   },
-  signingOptions: {
-    url: process.env.DOKOBIT_URL ?? '',
-    accessToken: process.env.DOKOBIT_ACCESS_TOKEN ?? '',
-  },
   emailOptions: {
     useTestAccount: false,
     options: {
@@ -231,6 +218,8 @@ const prodConfig = {
       process.env.PROSECUTOR_RESTRICTION_CASE_OVERVIEW_URL,
     prosecutorInvestigationCaseOverviewUrl:
       process.env.PROSECUTOR_INVESTIGATION_CASE_OVERVIEW_URL,
+    defenderCompletedCaseOverviewUrl:
+      process.env.DEFENDER_COMPLETED_CASE_OVERVIEW_URL,
   },
 }
 

@@ -508,23 +508,11 @@ export class CaseService {
 
   private async createCase(
     caseToCreate: CreateCaseDto,
-    prosecutorId?: string,
     transaction?: Transaction,
   ): Promise<string> {
     const theCase = await (transaction
-      ? this.caseModel.create(
-          {
-            ...caseToCreate,
-            creatingProsecutorId: prosecutorId,
-            prosecutorId,
-          },
-          { transaction },
-        )
-      : this.caseModel.create({
-          ...caseToCreate,
-          creatingProsecutorId: prosecutorId,
-          prosecutorId,
-        }))
+      ? this.caseModel.create(caseToCreate, { transaction })
+      : this.caseModel.create(caseToCreate))
 
     return theCase.id
   }
@@ -577,6 +565,7 @@ export class CaseService {
 
   async internalCreate(caseToCreate: InternalCreateCaseDto): Promise<Case> {
     let prosecutorId: string | undefined
+    let courtId: string | undefined
 
     if (caseToCreate.prosecutorNationalId) {
       const prosecutor = await this.userService.findByNationalId(
@@ -590,6 +579,7 @@ export class CaseService {
       }
 
       prosecutorId = prosecutor.id
+      courtId = prosecutor.institution?.defaultCourtId
     }
 
     return this.sequelize
@@ -598,8 +588,10 @@ export class CaseService {
           {
             ...caseToCreate,
             origin: CaseOrigin.LOKE,
+            creatingProsecutorId: prosecutorId,
+            prosecutorId,
+            courtId,
           } as InternalCreateCaseDto,
-          prosecutorId,
           transaction,
         )
 
@@ -619,15 +611,17 @@ export class CaseService {
       .then((caseId) => this.findById(caseId))
   }
 
-  async create(
-    caseToCreate: CreateCaseDto,
-    prosecutorId?: string,
-  ): Promise<Case> {
+  async create(caseToCreate: CreateCaseDto, prosecutor: TUser): Promise<Case> {
     return this.sequelize
       .transaction(async (transaction) => {
         const caseId = await this.createCase(
-          { ...caseToCreate, origin: CaseOrigin.RVG } as CreateCaseDto,
-          prosecutorId,
+          {
+            ...caseToCreate,
+            origin: CaseOrigin.RVG,
+            creatingProsecutorId: prosecutor.id,
+            prosecutorId: prosecutor.id,
+            courtId: prosecutor.institution?.defaultCourtId,
+          } as CreateCaseDto,
           transaction,
         )
 
@@ -728,14 +722,30 @@ export class CaseService {
 
     const pdf = await getCourtRecordPdfAsString(theCase, this.formatMessage)
 
-    return this.signingService.requestSignature(
-      user.mobileNumber ?? '',
-      'Undirrita skjal - Öryggistala',
-      user.name ?? '',
-      'Ísland',
-      'courtRecord.pdf',
-      pdf,
-    )
+    return this.signingService
+      .requestSignature(
+        user.mobileNumber ?? '',
+        'Undirrita skjal - Öryggistala',
+        user.name ?? '',
+        'Ísland',
+        'courtRecord.pdf',
+        pdf,
+      )
+      .catch((error) => {
+        this.eventService.postErrorEvent(
+          'Failed to request a court record signature',
+          {
+            caseId: theCase.id,
+            policeCaseNumber: theCase.policeCaseNumber,
+            courtCaseNumber: theCase.courtCaseNumber,
+            actor: user.name,
+            institution: user.institution?.name,
+          },
+          error,
+        )
+
+        throw error
+      })
   }
 
   async getCourtRecordSignatureConfirmation(
@@ -748,7 +758,7 @@ export class CaseService {
     // Production, or development with signing service access token
     if (this.config.production || this.config.dokobitAccessToken) {
       try {
-        const courtRecordPdf = await this.signingService.getSignedDocument(
+        const courtRecordPdf = await this.signingService.waitForSignature(
           'courtRecord.pdf',
           documentToken,
         )
@@ -763,6 +773,18 @@ export class CaseService {
             )
           })
       } catch (error) {
+        this.eventService.postErrorEvent(
+          'Failed to get a court record signature confirmation',
+          {
+            caseId: theCase.id,
+            policeCaseNumber: theCase.policeCaseNumber,
+            courtCaseNumber: theCase.courtCaseNumber,
+            actor: user.name,
+            institution: user.institution?.name,
+          },
+          error as Error,
+        )
+
         if (error instanceof DokobitError) {
           return {
             documentSigned: false,
@@ -798,14 +820,30 @@ export class CaseService {
 
     const pdf = await getRulingPdfAsString(theCase, this.formatMessage)
 
-    return this.signingService.requestSignature(
-      theCase.judge?.mobileNumber ?? '',
-      'Undirrita skjal - Öryggistala',
-      theCase.judge?.name ?? '',
-      'Ísland',
-      'ruling.pdf',
-      pdf,
-    )
+    return this.signingService
+      .requestSignature(
+        theCase.judge?.mobileNumber ?? '',
+        'Undirrita skjal - Öryggistala',
+        theCase.judge?.name ?? '',
+        'Ísland',
+        'ruling.pdf',
+        pdf,
+      )
+      .catch((error) => {
+        this.eventService.postErrorEvent(
+          'Failed to request a ruling signature',
+          {
+            caseId: theCase.id,
+            policeCaseNumber: theCase.policeCaseNumber,
+            courtCaseNumber: theCase.courtCaseNumber,
+            actor: theCase.judge?.name,
+            institution: theCase.judge?.institution?.name,
+          },
+          error,
+        )
+
+        throw error
+      })
   }
 
   async getRulingSignatureConfirmation(
@@ -818,7 +856,7 @@ export class CaseService {
     // Production, or development with signing service access token
     if (this.config.production || this.config.dokobitAccessToken) {
       try {
-        const signedPdf = await this.signingService.getSignedDocument(
+        const signedPdf = await this.signingService.waitForSignature(
           'ruling.pdf',
           documentToken,
         )
@@ -827,6 +865,18 @@ export class CaseService {
 
         await this.sendRulingAsSignedPdf(theCase, user, signedPdf)
       } catch (error) {
+        this.eventService.postErrorEvent(
+          'Failed to get a ruling signature confirmation',
+          {
+            caseId: theCase.id,
+            policeCaseNumber: theCase.policeCaseNumber,
+            courtCaseNumber: theCase.courtCaseNumber,
+            actor: user.name,
+            institution: user.institution?.name,
+          },
+          error as Error,
+        )
+
         if (error instanceof DokobitError) {
           return {
             documentSigned: false,
@@ -879,8 +929,9 @@ export class CaseService {
             prosecutorOnlySessionRequest: theCase.prosecutorOnlySessionRequest,
             parentCaseId: theCase.id,
             initialRulingDate: theCase.initialRulingDate ?? theCase.rulingDate,
+            creatingProsecutorId: user.id,
+            prosecutorId: user.id,
           } as CreateCaseDto,
-          user.id,
           transaction,
         )
 

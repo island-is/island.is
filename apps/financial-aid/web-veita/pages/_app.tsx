@@ -1,9 +1,7 @@
 import App, { AppProps } from 'next/app'
-import getConfig from 'next/config'
 import { ApolloProvider } from '@apollo/client'
 import React from 'react'
 import { client } from '@island.is/financial-aid-web/veita/graphql'
-import { withHealthchecks } from '@island.is/financial-aid-web/veita/units/Healthchecks/withHealthchecks'
 
 import {
   ApplicationFiltersProvider,
@@ -98,10 +96,4 @@ class FinancialAidApplication extends App<AppProps> {
   }
 }
 
-const { serverRuntimeConfig } = getConfig()
-const { graphqlEndpoint, apiUrl } = serverRuntimeConfig
-const externalEndpointDependencies = [graphqlEndpoint, apiUrl]
-
-export default withHealthchecks(externalEndpointDependencies)(
-  FinancialAidApplication,
-)
+export default FinancialAidApplication

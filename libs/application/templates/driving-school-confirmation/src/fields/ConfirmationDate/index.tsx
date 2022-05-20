@@ -24,6 +24,7 @@ const ConfirmationDate: FC<FieldBaseProps> = ({ field, error }) => {
             placeholder={formatMessage(m.confirmationSectionSelectDateLabel)}
             id={id}
             locale="is"
+            maxDate={new Date()}
             backgroundColor="white"
             onChange={(d) => {
               setValue(id, d)

@@ -1,7 +1,6 @@
 import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { CaseType } from '@island.is/judicial-system/types'
 import {
   AccordionListItem,
   CommentsAccordionItem,
@@ -78,10 +77,7 @@ const OverviewForm: React.FC<Props> = (props) => {
           data={[
             {
               title: formatMessage(core.prosecutor),
-              value: `${
-                workingCase.creatingProsecutor?.institution?.name ??
-                'Ekki skráð'
-              }`,
+              value: `${workingCase.creatingProsecutor?.institution?.name}`,
             },
             {
               title: formatMessage(requestCourtDate.heading),

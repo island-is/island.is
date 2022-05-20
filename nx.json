@@ -169,6 +169,9 @@
     "api-domains-user-profile": {
       "tags": []
     },
+    "api-domains-vehicles": {
+      "tags": []
+    },
     "api-mocks": {
       "tags": []
     },
@@ -261,6 +264,9 @@
       "tags": []
     },
     "application-templates-mortgage-certificate": {
+      "tags": []
+    },
+    "application-templates-no-debt-certificate": {
       "tags": []
     },
     "application-templates-p-sign": {
@@ -386,6 +392,9 @@
       "tags": [],
       "implicitDependencies": ["services-user-profile"]
     },
+    "clients-vehicles": {
+      "tags": []
+    },
     "clients-vmst": {
       "tags": []
     },
@@ -461,29 +470,6 @@
     },
     "github-actions-cache": {
       "tags": []
-    },
-    "gjafakort-api": {
-      "tags": []
-    },
-    "gjafakort-application": {
-      "tags": []
-    },
-    "gjafakort-consts": {
-      "tags": []
-    },
-    "gjafakort-queue-listener": {
-      "tags": []
-    },
-    "gjafakort-types": {
-      "tags": []
-    },
-    "gjafakort-web": {
-      "tags": [],
-      "implicitDependencies": ["gjafakort-api"]
-    },
-    "gjafakort-web-e2e": {
-      "tags": [],
-      "implicitDependencies": ["gjafakort-web"]
     },
     "health-insurance": {
       "tags": []
@@ -675,9 +661,6 @@
     "service-portal-endorsements": {
       "tags": []
     },
-    "service-portal-family": {
-      "tags": []
-    },
     "service-portal-finance": {
       "tags": []
     },
@@ -693,6 +676,9 @@
     "service-portal-icelandic-names-registry": {
       "tags": []
     },
+    "service-portal-information": {
+      "tags": []
+    },
     "service-portal-licenses": {
       "tags": []
     },
@@ -702,7 +688,7 @@
     "service-portal-settings-personal-information": {
       "tags": []
     },
-    "service-portal-wip": {
+    "service-portal-vehicles": {
       "tags": []
     },
     "services-auth-admin-api": {

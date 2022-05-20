@@ -10,7 +10,6 @@ import {
   Application,
   ExternalData,
   Field,
-  FormatMessage,
   FormValue,
   getValueViaPath,
   Option,
@@ -39,6 +38,7 @@ import {
   ChildrenAndExistingApplications,
 } from '../dataProviders/Children/types'
 import { YesOrNo, Period, PersonInformation } from '../types'
+import { FormatMessage } from '@island.is/localization'
 
 export function getExpectedDateOfBirth(
   application: Application,
@@ -647,6 +647,21 @@ export const getOtherParentName = (
 
     if (!spouse || !spouse.name) {
       return undefined
+    }
+
+    return spouse.name
+  }
+
+  // Second parent always has otherParent marks 'manual'
+  const selectedChild = getSelectedChild(
+    application.answers,
+    application.externalData,
+  )
+  if (selectedChild?.parentalRelation === ParentalRelations.secondary) {
+    const spouse = getSpouse(application)
+
+    if (!spouse || !spouse.name) {
+      return otherParentName
     }
 
     return spouse.name
