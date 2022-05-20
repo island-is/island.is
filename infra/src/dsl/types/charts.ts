@@ -22,7 +22,13 @@ export interface EnvironmentConfig {
   global: any
 }
 
-export type OpsEnvName = 'dev01' | 'staging01' | 'prod' | 'prod-ids'
+export type OpsEnvName =
+  | 'dev01'
+  | 'devIds'
+  | 'staging01'
+  | 'stagingIds'
+  | 'prod'
+  | 'prod-ids'
 
 export type EnvironmentServices = { [name in OpsEnv]: Service[] }
 

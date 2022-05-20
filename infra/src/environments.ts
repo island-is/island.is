@@ -1,66 +1,80 @@
-import { EnvironmentConfigs } from './dsl/types/charts'
+import { EnvironmentConfig, EnvironmentConfigs } from './dsl/types/charts'
+import { merge } from 'lodash'
 
-export const Envs: EnvironmentConfigs = {
-  dev01: {
-    auroraHost: 'postgres-applications.internal',
-    auroraReplica:
-      'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com',
-    domain: 'dev01.devland.is',
-    type: 'dev',
-    featuresOn: [],
-    defaultMaxReplicas: 3,
-    defaultMinReplicas: 2,
-    releaseName: 'web',
-    awsAccountId: '013313053092',
-    awsAccountRegion: 'eu-west-1',
+const dev01: EnvironmentConfig = {
+  auroraHost: 'postgres-applications.internal',
+  auroraReplica:
+    'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com',
+  domain: 'dev01.devland.is',
+  type: 'dev',
+  featuresOn: [],
+  defaultMaxReplicas: 3,
+  defaultMinReplicas: 2,
+  releaseName: 'web',
+  awsAccountId: '013313053092',
+  awsAccountRegion: 'eu-west-1',
+  global: {
     global: {
-      global: {
+      env: {
+        AWS_REGION: 'eu-west-1',
+        PORT: '3333',
+        name: 'dev',
+        AUDIT_GROUP_NAME: '/island-is/audit-log',
+      },
+      image: {
+        tag: 'latest_master',
+      },
+      initContainer: {
         env: {
           AWS_REGION: 'eu-west-1',
-          PORT: '3333',
-          name: 'dev',
-          AUDIT_GROUP_NAME: '/island-is/audit-log',
-        },
-        image: {
-          tag: 'latest_master',
-        },
-        initContainer: {
-          env: {
-            AWS_REGION: 'eu-west-1',
-          },
         },
       },
     },
   },
-  staging01: {
-    auroraHost: 'postgres-applications.internal',
-    domain: 'staging01.devland.is',
-    type: 'staging',
-    featuresOn: [],
-    defaultMaxReplicas: 3,
-    defaultMinReplicas: 2,
-    releaseName: 'web',
-    awsAccountId: '261174024191',
-    awsAccountRegion: 'eu-west-1',
+}
+const staging01: EnvironmentConfig = {
+  auroraHost: 'postgres-applications.internal',
+  domain: 'staging01.devland.is',
+  type: 'staging',
+  featuresOn: [],
+  defaultMaxReplicas: 3,
+  defaultMinReplicas: 2,
+  releaseName: 'web',
+  awsAccountId: '261174024191',
+  awsAccountRegion: 'eu-west-1',
+  global: {
     global: {
-      global: {
+      env: {
+        AWS_REGION: 'eu-west-1',
+        PORT: '3333',
+        name: 'staging',
+        AUDIT_GROUP_NAME: '/island-is/audit-log',
+      },
+      image: {
+        tag: 'latest_master',
+      },
+      initContainer: {
         env: {
           AWS_REGION: 'eu-west-1',
-          PORT: '3333',
-          name: 'staging',
-          AUDIT_GROUP_NAME: '/island-is/audit-log',
-        },
-        image: {
-          tag: 'latest_master',
-        },
-        initContainer: {
-          env: {
-            AWS_REGION: 'eu-west-1',
-          },
         },
       },
     },
   },
+}
+
+export let Envs: EnvironmentConfigs = {
+  dev01: dev01,
+  devIds: merge({}, dev01, {
+    global: {
+      global: { env: { AUDIT_GROUP_NAME: '/identity-server/audit-log' } },
+    },
+  }),
+  stagingIds: merge({}, staging01, {
+    global: {
+      global: { env: { AUDIT_GROUP_NAME: '/identity-server/audit-log' } },
+    },
+  }),
+  staging01: staging01,
   prod: {
     auroraHost: 'postgres-applications.internal',
     domain: 'island.is',

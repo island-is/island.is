@@ -64,7 +64,7 @@ auth-admin-web:
     targetPort: 4200
 global:
   env:
-    AUDIT_GROUP_NAME: '/island-is/audit-log'
+    AUDIT_GROUP_NAME: '/identity-server/audit-log'
     AWS_REGION: 'eu-west-1'
     PORT: '3333'
     name: 'staging'
