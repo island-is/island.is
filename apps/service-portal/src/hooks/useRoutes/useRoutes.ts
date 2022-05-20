@@ -22,13 +22,18 @@ export const useRoutes = () => {
     modules: ServicePortalModule[],
     client: ApolloClient<NormalizedCacheObject>,
   ) => {
+    const IS_COMPANY = userInfo?.profile?.subjectType === 'legalEntity'
     const routes = await Promise.all(
-      Object.values(modules).map((module) =>
-        module.routes({
+      Object.values(modules).map((module) => {
+        const routesObject =
+          module.companyRoutes && IS_COMPANY
+            ? module.companyRoutes
+            : module.routes
+        return routesObject({
           userInfo,
           client,
-        }),
-      ),
+        })
+      }),
     )
 
     dispatch({

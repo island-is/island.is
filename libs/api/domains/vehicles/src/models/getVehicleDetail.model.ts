@@ -230,30 +230,30 @@ export class VehiclesOperator {
 
 @ObjectType()
 export class VehiclesDetail {
-  @Field(() => VehiclesMainInfo)
-  mainInfo!: VehiclesMainInfo
+  @Field(() => VehiclesMainInfo, { nullable: true })
+  mainInfo?: VehiclesMainInfo
 
-  @Field(() => VehiclesBasicInfo)
-  basicInfo!: VehiclesBasicInfo
+  @Field(() => VehiclesBasicInfo, { nullable: true })
+  basicInfo?: VehiclesBasicInfo
 
-  @Field(() => VehiclesRegistrationInfo)
-  registrationInfo!: VehiclesRegistrationInfo
+  @Field(() => VehiclesRegistrationInfo, { nullable: true })
+  registrationInfo?: VehiclesRegistrationInfo
 
-  @Field(() => VehiclesCurrentOwnerInfo)
-  currentOwnerInfo!: VehiclesCurrentOwnerInfo
+  @Field(() => VehiclesCurrentOwnerInfo, { nullable: true })
+  currentOwnerInfo?: VehiclesCurrentOwnerInfo
 
-  @Field(() => VehiclesInspectionInfo)
-  inspectionInfo!: VehiclesInspectionInfo
+  @Field(() => VehiclesInspectionInfo, { nullable: true })
+  inspectionInfo?: VehiclesInspectionInfo
 
-  @Field(() => VehiclesTechnicalInfo)
-  technicalInfo!: VehiclesTechnicalInfo
+  @Field(() => VehiclesTechnicalInfo, { nullable: true })
+  technicalInfo?: VehiclesTechnicalInfo
 
-  @Field(() => [VehiclesOwners])
-  ownersInfo!: VehiclesOwners[]
+  @Field(() => [VehiclesOwners], { nullable: true })
+  ownersInfo?: VehiclesOwners[]
 
-  @Field(() => [VehiclesCurrentOwnerInfo])
-  coOwners!: VehiclesCurrentOwnerInfo[]
+  @Field(() => [VehiclesCurrentOwnerInfo], { nullable: true })
+  coOwners?: VehiclesCurrentOwnerInfo[]
 
-  @Field(() => VehiclesOperator, { nullable: true })
-  operator?: VehiclesOperator
+  @Field(() => [VehiclesOperator], { nullable: true })
+  operators?: VehiclesOperator[]
 }

@@ -287,7 +287,6 @@ export class ApplicationService {
       application.directTaxPayments.map((d) => {
         return this.directTaxPaymentService.create({
           applicationId: appModel.id,
-          userType: UserType.APPLICANT,
           ...d,
         })
       }),

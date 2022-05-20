@@ -11,7 +11,6 @@ import { ApolloProvider } from '@apollo/client'
 import * as Sentry from '@sentry/node'
 import get from 'lodash/get'
 
-import { withHealthchecks } from '../units/Healthchecks/withHealthchecks'
 import { client as initApollo } from '../graphql'
 import { AppLayout } from '../components/Layouts'
 import { appWithTranslation } from '../i18n'
@@ -87,9 +86,4 @@ class Skilavottord extends App<AppProps> {
   }
 }
 
-const { serverRuntimeConfig } = getConfig()
-const { graphqlEndpoint } = serverRuntimeConfig
-
-export default appWithTranslation(
-  withHealthchecks([graphqlEndpoint])(Skilavottord),
-)
+export default appWithTranslation(Skilavottord)
