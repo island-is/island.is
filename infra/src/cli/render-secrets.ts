@@ -1,7 +1,7 @@
 import { generateYamlForEnv } from '../dsl/serialize-to-yaml'
 import { UberChart } from '../dsl/uber-chart'
 import { Envs } from '../environments'
-import { charts } from '../uber-charts/all-charts'
+import { Charts } from '../uber-charts/all-charts'
 import { SSM } from '@aws-sdk/client-ssm'
 
 const API_INITIALIZATION_OPTIONS = {
@@ -37,7 +37,7 @@ export const renderSecretsCommand = async (service: string) => {
 export const renderSecrets = async (service: string) => {
   const urls: string[] = []
   const uberChart = new UberChart(Envs.dev01)
-  const services = Object.values(charts).map(
+  const services = Object.values(Charts).map(
     (chart) => generateYamlForEnv(uberChart, ...chart.dev).services,
   )
 

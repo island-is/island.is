@@ -5,7 +5,7 @@ import { Envs } from '../environments'
 import {
   ChartName,
   ChartNames,
-  charts,
+  Charts,
   Deployments,
 } from '../uber-charts/all-charts'
 import { OpsEnvName } from '../dsl/types/charts'
@@ -14,6 +14,6 @@ export const renderEnv = (env: OpsEnv, chartName: ChartName) => {
   let uberChart = new UberChart(Envs[Deployments[chartName][env]])
   return dumpYaml(
     uberChart,
-    generateYamlForEnv(uberChart, ...charts[chartName][env]),
+    generateYamlForEnv(uberChart, ...Charts[chartName][env]),
   )
 }

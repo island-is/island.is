@@ -11,7 +11,7 @@ export const ChartNames: ChartName[] = [
   'identity-server',
 ]
 export const OpsEnvNames: OpsEnv[] = ['dev', 'staging', 'prod']
-export const charts: { [name in ChartName]: EnvironmentServices } = {
+export const Charts: { [name in ChartName]: EnvironmentServices } = {
   'identity-server': IDSServices,
   islandis: ISServices,
   'judicial-system': JSServices,
