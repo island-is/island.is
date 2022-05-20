@@ -1,9 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Cache as CacheManager } from 'cache-manager'
 import { Inject, Injectable } from '@nestjs/common'
 import {
-  CONFIG_PROVIDER,
   GenericLicenseClient,
   GenericLicenseUserdataExternal,
   GenericUserLicensePkPassStatus,

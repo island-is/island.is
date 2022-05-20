@@ -1,6 +1,6 @@
 import { Cache as CacheManager } from 'cache-manager'
 import { Module, DynamicModule, CacheModule } from '@nestjs/common'
-import { AdrApi, Configuration, VinnuvelaApi } from '@island.is/clients/aosh'
+import { Configuration } from '@island.is/clients/aosh'
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 import { LicenseServiceService } from './licenseService.service'
