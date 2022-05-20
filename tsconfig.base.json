@@ -468,9 +468,6 @@
       "@island.is/service-portal/endorsements": [
         "libs/service-portal/endorsements/src/index.ts"
       ],
-      "@island.is/service-portal/family": [
-        "libs/service-portal/family/src/index.ts"
-      ],
       "@island.is/service-portal/finance": [
         "libs/service-portal/finance/src/index.ts"
       ],
@@ -485,6 +482,9 @@
       ],
       "@island.is/service-portal/icelandic-names-registry": [
         "libs/service-portal/icelandic-names-registry/src/index.ts"
+      ],
+      "@island.is/service-portal/information": [
+        "libs/service-portal/information/src/index.ts"
       ],
       "@island.is/service-portal/licenses": [
         "libs/service-portal/licenses/src/index.ts"
@@ -504,7 +504,6 @@
       "@island.is/service-portal/vehicles": [
         "libs/service-portal/vehicles/src/index.ts"
       ],
-      "@island.is/service-portal/wip": ["libs/service-portal/wip/src/index.ts"],
       "@island.is/shared/components": ["libs/shared/components/src/index.ts"],
       "@island.is/shared/connected": ["libs/shared/connected/src/index.ts"],
       "@island.is/shared/constants": ["libs/shared/constants/src/index.ts"],

@@ -1,7 +1,13 @@
 import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Accordion, AccordionItem, Box, Text } from '@island.is/island-ui/core'
+import {
+  Accordion,
+  AccordionItem,
+  AlertMessage,
+  Box,
+  Text,
+} from '@island.is/island-ui/core'
 import {
   CaseState,
   completedCaseStates,
@@ -46,6 +52,18 @@ const OverviewForm: React.FC<Props> = (props) => {
   return (
     <>
       <FormContentContainer>
+        {workingCase.state === CaseState.RECEIVED && (
+          <div
+            className={styles.resendInfoPanelContainer}
+            data-testid="ic-overview-info-panel"
+          >
+            <AlertMessage
+              title={formatMessage(icOverview.receivedAlert.title)}
+              message={formatMessage(icOverview.receivedAlert.message)}
+              type="info"
+            />
+          </div>
+        )}
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
             {formatMessage(icOverview.heading)}
@@ -79,10 +97,7 @@ const OverviewForm: React.FC<Props> = (props) => {
               },
               {
                 title: formatMessage(core.prosecutor),
-                value: `${
-                  workingCase.creatingProsecutor?.institution?.name ??
-                  'Ekki skráð'
-                }`,
+                value: `${workingCase.creatingProsecutor?.institution?.name}`,
               },
               ...(workingCase.judge
                 ? [

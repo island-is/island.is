@@ -112,6 +112,11 @@ export const Application: Form = buildForm({
           ],
         }),
         buildSubSection({
+          condition: (_, externalData) =>
+            ((externalData as unknown) as ExternalData).taxDataFetch?.data
+              .municipalitiesDirectTaxPayments.success === false ||
+            ((externalData as unknown) as ExternalData).taxDataFetch?.data
+              ?.municipalitiesPersonalTaxReturn?.personalTaxReturn == null,
           id: 'taxReturnFilesForm',
           title: m.taxReturnForm.general.sectionTitle,
           children: [

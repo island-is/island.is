@@ -27,6 +27,7 @@ import { defenderRule } from '../../guards'
 import { User } from '../user'
 import { RestrictedCaseExistsGuard } from './guards/restrictedCaseExists.guard'
 import { CaseCompletedGuard } from './guards/caseCompleted.guard'
+import { CaseScheduledGuard } from './guards/caseScheduled.guard'
 import { CaseDefenderGuard } from './guards/caseDefender.guard'
 import { CurrentCase } from './guards/case.decorator'
 import { Case } from './models/case.model'
@@ -46,7 +47,7 @@ export class RestrictedCaseController {
     new JwtAuthGuard(true),
     RolesGuard,
     RestrictedCaseExistsGuard,
-    CaseCompletedGuard,
+    CaseScheduledGuard,
     CaseDefenderGuard,
   )
   @RolesRules(defenderRule)
@@ -84,7 +85,7 @@ export class RestrictedCaseController {
     new JwtAuthGuard(true),
     RolesGuard,
     RestrictedCaseExistsGuard,
-    CaseCompletedGuard,
+    CaseScheduledGuard,
     CaseDefenderGuard,
   )
   @RolesRules(defenderRule)

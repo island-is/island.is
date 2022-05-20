@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { useIntl } from 'react-intl'
 
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
@@ -7,9 +7,10 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
-import { useRulingAutofill } from '@island.is/judicial-system-web/src/components/RulingInput/RulingInput'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { ruling, titles } from '@island.is/judicial-system-web/messages'
+import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
 
 import OverviewForm from './OverviewForm'
 
@@ -22,8 +23,28 @@ const Overview = () => {
     isCaseUpToDate,
   } = useContext(FormContext)
   const { formatMessage } = useIntl()
+  const { autofill } = useCase()
 
-  useRulingAutofill(isCaseUpToDate, workingCase, setWorkingCase)
+  useEffect(() => {
+    if (isCaseUpToDate) {
+      autofill(
+        [
+          {
+            key: 'ruling',
+            value: !workingCase.parentCase
+              ? `\n${formatMessage(ruling.autofill, {
+                  judgeName: workingCase.judge?.name,
+                })}`
+              : isAcceptingCaseDecision(workingCase.decision)
+              ? workingCase.parentCase.ruling
+              : undefined,
+          },
+        ],
+        workingCase,
+        setWorkingCase,
+      )
+    }
+  }, [autofill, formatMessage, isCaseUpToDate, setWorkingCase, workingCase])
 
   return (
     <PageLayout

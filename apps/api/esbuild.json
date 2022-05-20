@@ -28,6 +28,8 @@
     "bull",
     "pseudomap",
     "configcat-node",
+    "mock-aws-s3",
+    "nock",
     "@protobufjs/aspromise",
     "@protobufjs/base64",
     "@protobufjs/codegen",

@@ -13,6 +13,7 @@ export type CaseFileStatus =
   | 'done'
   | 'error'
   | 'uploading'
+  | 'unsupported'
 
 export interface CaseFile extends TCaseFile {
   status: CaseFileStatus
@@ -55,7 +56,12 @@ export const useCourtUpload = (
     const files = workingCase.caseFiles as CaseFile[]
 
     files
-      ?.filter((file) => file.status !== 'error' && file.status !== 'uploading')
+      ?.filter(
+        (file) =>
+          file.status !== 'error' &&
+          file.status !== 'unsupported' &&
+          file.status !== 'uploading',
+      )
       .forEach((file) => {
         if (
           file.state === CaseFileState.STORED_IN_COURT &&
@@ -84,9 +90,13 @@ export const useCourtUpload = (
     setUploadState(
       files?.some((file) => file.status === 'uploading')
         ? UploadState.UPLOADING
-        : files?.some((file) => file.status === 'error')
+        : files?.some(
+            (file) => file.status === 'error' || file.status === 'unsupported',
+          )
         ? UploadState.UPLOAD_ERROR
-        : files?.every((file) => file.status === 'broken')
+        : files?.every(
+            (file) => file.status === 'broken' || file.status === 'unsupported',
+          )
         ? UploadState.NONE_CAN_BE_UPLOADED
         : files?.every(
             (file) => file.status === 'done' || file.status === 'broken',
@@ -94,7 +104,9 @@ export const useCourtUpload = (
         ? UploadState.ALL_UPLOADED
         : files?.every(
             (file) =>
-              file.status === 'not-uploaded' || file.status === 'broken',
+              file.status === 'not-uploaded' ||
+              file.status === 'broken' ||
+              file.status === 'unsupported',
           )
         ? UploadState.NONE_UPLOADED
         : UploadState.SOME_NOT_UPLOADED,
@@ -125,15 +137,23 @@ export const useCourtUpload = (
             )
           }
         } catch (error) {
-          if (
+          const errorCode =
             error instanceof ApolloError &&
-            (error as ApolloError).graphQLErrors[0].extensions?.code ===
-              'https://httpstatuses.com/404'
-          ) {
+            (error as ApolloError).graphQLErrors[0].extensions?.code
+
+          if (errorCode === 'https://httpstatuses.com/404') {
             setFileUploadStatus(
               workingCase,
               { ...file, key: undefined },
               'broken',
+            )
+          } else if (
+            errorCode === 'https://httpstatuses.com/415' // Unsupported Media Type
+          ) {
+            setFileUploadStatus(
+              workingCase,
+              { ...file, key: undefined },
+              'unsupported',
             )
           } else {
             setFileUploadStatus(workingCase, file, 'error')

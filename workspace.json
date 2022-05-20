@@ -350,7 +350,7 @@
             "main": "apps/air-discount-scheme/web/server.ts",
             "tsConfig": "apps/air-discount-scheme/web/tsconfig.json",
             "maxWorkers": 2,
-            "assets": ["apps/air-discount-scheme/web/next-modules"]
+            "assets": []
           },
           "configurations": {
             "production": {
@@ -3207,7 +3207,7 @@
             "main": "apps/auth-admin-web/server.ts",
             "tsConfig": "apps/auth-admin-web/tsconfig.json",
             "maxWorkers": 2,
-            "assets": ["apps/auth-admin-web/next-modules"]
+            "assets": []
           },
           "configurations": {
             "production": {
@@ -5046,7 +5046,7 @@
             "main": "apps/financial-aid/web-osk/server.ts",
             "tsConfig": "apps/financial-aid/web-osk/tsconfig.json",
             "maxWorkers": 2,
-            "assets": ["apps/financial-aid/web-osk/next-modules"]
+            "assets": []
           },
           "configurations": {
             "production": {
@@ -5179,7 +5179,7 @@
             "main": "apps/financial-aid/web-veita/server.ts",
             "tsConfig": "apps/financial-aid/web-veita/tsconfig.json",
             "maxWorkers": 2,
-            "assets": ["apps/financial-aid/web-veita/next-modules"]
+            "assets": []
           },
           "configurations": {
             "production": {
@@ -6224,7 +6224,7 @@
             "main": "apps/judicial-system/web/server.ts",
             "tsConfig": "apps/judicial-system/web/tsconfig.json",
             "maxWorkers": 2,
-            "assets": ["apps/judicial-system/web/next-modules"]
+            "assets": []
           },
           "configurations": {
             "production": {
@@ -7553,42 +7553,6 @@
         }
       }
     },
-    "service-portal-family": {
-      "root": "libs/service-portal/family",
-      "sourceRoot": "libs/service-portal/family/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/service-portal/family/tsconfig.lib.json",
-              "libs/service-portal/family/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/service-portal/family/**/*"
-            ]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/service-portal/family/jest.config.js",
-            "passWithNoTests": true
-          },
-          "outputs": ["coverage/libs/service-portal/family"]
-        },
-        "extract-strings": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/service-portal/family/src/{screens,components}/**/*.{js,ts,tsx}'"
-          }
-        }
-      }
-    },
     "service-portal-finance": {
       "root": "libs/service-portal/finance",
       "sourceRoot": "libs/service-portal/finance/src",
@@ -7770,6 +7734,35 @@
         }
       }
     },
+    "service-portal-information": {
+      "root": "libs/service-portal/information",
+      "sourceRoot": "libs/service-portal/information/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/service-portal/information/**/*.{ts,tsx,js,jsx}"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/service-portal/information"],
+          "options": {
+            "jestConfig": "libs/service-portal/information/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/service-portal/information/src/{screens,components}/**/*.{js,ts,tsx}'"
+          }
+        }
+      }
+    },
     "service-portal-licenses": {
       "root": "libs/service-portal/licenses",
       "sourceRoot": "libs/service-portal/licenses/src",
@@ -7884,27 +7877,6 @@
           "outputs": ["coverage/libs/service-portal/vehicles"],
           "options": {
             "jestConfig": "libs/service-portal/vehicles/jest.config.js",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
-    "service-portal-wip": {
-      "root": "libs/service-portal/wip",
-      "sourceRoot": "libs/service-portal/wip/src",
-      "projectType": "library",
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["libs/service-portal/wip/**/*.{ts,tsx,js,jsx}"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/service-portal/wip"],
-          "options": {
-            "jestConfig": "libs/service-portal/wip/jest.config.js",
             "passWithNoTests": true
           }
         }
@@ -9201,7 +9173,7 @@
             "main": "apps/skilavottord/web/server.ts",
             "tsConfig": "apps/skilavottord/web/tsconfig.json",
             "maxWorkers": 2,
-            "assets": ["apps/skilavottord/web/next-modules"]
+            "assets": []
           },
           "configurations": {
             "production": {
@@ -9549,7 +9521,7 @@
             "main": "apps/web/server.ts",
             "tsConfig": "apps/web/tsconfig.json",
             "maxWorkers": 2,
-            "assets": ["apps/web/next-modules"]
+            "assets": []
           },
           "configurations": {
             "production": {
