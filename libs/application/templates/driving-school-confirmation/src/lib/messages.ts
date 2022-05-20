@@ -49,7 +49,8 @@ export const m = defineMessages({
   },
   studentInfoSubtitle: {
     id: 'dsc.application:studentInfoSubtitle',
-    defaultMessage: 'Sláðu inn kennitölu ökunema',
+    defaultMessage:
+      'Vinsamlega skráðu inn upplýsingar um ökunema. Athugaðu að þú ert að skrá fyrir: ',
     description: 'Student info section subtitle',
   },
   studentInfoNationalId: {
