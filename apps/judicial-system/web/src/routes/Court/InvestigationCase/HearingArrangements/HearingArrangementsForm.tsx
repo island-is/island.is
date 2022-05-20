@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState, useCallback } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
+import formatISO from 'date-fns/formatISO'
 
 import {
   Box,
@@ -23,7 +24,6 @@ import {
   SessionArrangements,
 } from '@island.is/judicial-system/types'
 import {
-  setAndSendDateToServer,
   removeTabsValidateAndSet,
   setAndSendToServer,
   validateAndSendToServer,
@@ -44,11 +44,25 @@ interface Props {
 const HearingArrangementsForm: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase, user } = props
   const [modalVisible, setModalVisible] = useState(false)
-  const { updateCase, sendNotification, isSendingNotification } = useCase()
+  const {
+    updateCase,
+    sendNotification,
+    isSendingNotification,
+    autofill,
+  } = useCase()
   const { formatMessage } = useIntl()
   const router = useRouter()
 
-  const handleNextButtonClick = () => {
+  const [courtDate, setCourtDate] = useState<Case['courtDate']>(
+    workingCase.courtDate,
+  )
+
+  const handleNextButtonClick = useCallback(() => {
+    autofill(
+      [{ key: 'courtDate', value: courtDate, force: true }],
+      workingCase,
+      setWorkingCase,
+    )
     if (
       workingCase.notifications?.find(
         (notification) => notification.type === NotificationType.COURT_DATE,
@@ -58,7 +72,14 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
     } else {
       setModalVisible(true)
     }
-  }
+  }, [
+    autofill,
+    courtDate,
+    workingCase,
+    setWorkingCase,
+    router,
+    setModalVisible,
+  ])
 
   return (
     <>
@@ -188,17 +209,14 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
               <Box marginBottom={2}>
                 <DateTime
                   name="courtDate"
-                  selectedDate={workingCase.courtDate}
+                  selectedDate={courtDate}
                   minDate={new Date()}
                   onChange={(date: Date | undefined, valid: boolean) => {
-                    setAndSendDateToServer(
-                      'courtDate',
-                      date,
-                      valid,
-                      workingCase,
-                      setWorkingCase,
-                      updateCase,
-                    )
+                    if (date && valid) {
+                      setCourtDate(
+                        formatISO(date, { representation: 'complete' }),
+                      )
+                    }
                   }}
                   blueBox={false}
                   required
@@ -248,7 +266,10 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
         <FormFooter
           previousUrl={`${Constants.IC_OVERVIEW_ROUTE}/${workingCase.id}`}
           onNextButtonClick={handleNextButtonClick}
-          nextIsDisabled={!isCourtHearingArrangementsStepValidIC(workingCase)}
+          nextIsDisabled={
+            !isCourtHearingArrangementsStepValidIC(workingCase, courtDate)
+          }
+          nextButtonText={formatMessage(m.continueButton.label)}
         />
       </FormContentContainer>
       {modalVisible && (

@@ -23,6 +23,8 @@ import {
   SetBeforeSubmitCallback,
   coreErrorMessages,
   StaticText,
+  getErrorReasonIfPresent,
+  isTranslationObject,
 } from '@island.is/application/core'
 import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
 import { useLocale } from '@island.is/localization'
@@ -51,14 +53,6 @@ const ItemHeader: React.FC<{ title: StaticText; subTitle?: StaticText }> = ({
   )
 }
 
-const isTranslationObject = (reason?: StaticText) => {
-  if (typeof reason !== 'object') {
-    return false
-  }
-
-  return reason.id !== undefined
-}
-
 const ProviderItem: FC<{
   dataProviderResult: DataProviderResult
   provider: DataProviderItem
@@ -72,6 +66,12 @@ const ProviderItem: FC<{
     dataProviderResult?.status === 'failure' &&
     !suppressProviderError
 
+  const errorCode = dataProviderResult?.statusCode ?? 500
+  const errorType = errorCode < 500 ? 'warning' : 'error'
+  const { title: errorTitle, summary } = getErrorReasonIfPresent(
+    dataProviderResult?.reason,
+  )
+
   return (
     <Box marginBottom={3}>
       <ItemHeader title={title} subTitle={subTitle} />
@@ -79,14 +79,14 @@ const ProviderItem: FC<{
       {showError && (
         <Box marginTop={2}>
           <AlertMessage
-            type="error"
-            title={formatMessage(coreErrorMessages.errorDataProvider)}
+            type={errorType}
+            title={
+              isTranslationObject(errorTitle)
+                ? formatMessage(errorTitle)
+                : (errorTitle as string)
+            }
             message={
-              isTranslationObject(dataProviderResult?.reason)
-                ? formatMessage(dataProviderResult.reason!)
-                : typeof dataProviderResult?.reason === 'string'
-                ? dataProviderResult.reason
-                : formatMessage(coreErrorMessages.failedDataProvider)
+              isTranslationObject(summary) ? formatMessage(summary) : summary
             }
           />
         </Box>

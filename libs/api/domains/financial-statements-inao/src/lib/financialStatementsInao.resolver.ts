@@ -2,7 +2,13 @@ import { UseGuards } from '@nestjs/common'
 import { Query, Resolver } from '@nestjs/graphql'
 
 import { ApiScope } from '@island.is/auth/scopes'
-import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
+import {
+  CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
+} from '@island.is/auth-nest-tools'
 
 import { FinancialStatementsInaoService } from './financialStatementsInao.service'
 import { Election } from './models/election.model'
@@ -15,6 +21,18 @@ export class FinancialStatementsInaoResolver {
   constructor(
     private financialStatementsService: FinancialStatementsInaoService,
   ) {}
+
+  @Query(() => ClientType, { nullable: true })
+  async financialStatementsInaoCurrentUserClientType(
+    @CurrentUser() user: User,
+  ): Promise<ClientType | null> {
+    return this.financialStatementsService.getUserClientType(user.nationalId)
+
+    // return {
+    //   code: 'individual', //individual, party, cemetery
+    //   name: 'Einstaklingur', //Einstaklingur, Stjórnmálasamtök, Kirkjugarður
+    // }
+  }
 
   @Query(() => [Election], { nullable: true })
   async financialStatementsInaoElections() {

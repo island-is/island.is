@@ -652,6 +652,21 @@ export const getOtherParentName = (
     return spouse.name
   }
 
+  // Second parent always has otherParent marks 'manual'
+  const selectedChild = getSelectedChild(
+    application.answers,
+    application.externalData,
+  )
+  if (selectedChild?.parentalRelation === ParentalRelations.secondary) {
+    const spouse = getSpouse(application)
+
+    if (!spouse || !spouse.name) {
+      return otherParentName
+    }
+
+    return spouse.name
+  }
+
   return otherParentName
 }
 
