@@ -74,7 +74,7 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-public-api'> => {
     .replicaCount({
       default: 2,
       min: 2,
-      max: 10
+      max: 10,
     })
     .resources({
       limits: {
