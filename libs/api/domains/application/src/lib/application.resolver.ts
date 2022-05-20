@@ -90,7 +90,7 @@ export class ApplicationResolver {
   @Mutation(() => Application, { nullable: true })
   async createApplication(
     @Args('locale', { type: () => String, nullable: true })
-    locale: Locale = 'is',
+    _: Locale = 'is',
     @Args('input') input: CreateApplicationInput,
     @CurrentUser() user: User,
   ): Promise<Application> {
