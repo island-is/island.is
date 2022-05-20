@@ -1,9 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Cache as CacheManager } from 'cache-manager'
 import { Inject, Injectable } from '@nestjs/common'
 import {
-  CONFIG_PROVIDER,
   GenericLicenseClient,
   GenericLicenseUserdataExternal,
   GenericUserLicensePkPassStatus,
@@ -14,7 +13,6 @@ import { GenericAdrLicenseResponse } from './genericAdrLicense.type'
 import { User } from '@island.is/auth-nest-tools'
 import { AdrApi, Configuration } from '@island.is/clients/aosh'
 import { parseAdrLicensePayload } from './adrLicenseMapper'
-import { LicenseType } from 'aws-sdk/clients/sms'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'adrlicense-service'
@@ -31,6 +29,7 @@ export class GenericAdrLicenseApi
   ) {
     this.cacheManager = cacheManager
     this.adrApi = new AdrApi(config)
+    this.logger = logger
   }
 
   async fetchLicense(nationalId: string) {
