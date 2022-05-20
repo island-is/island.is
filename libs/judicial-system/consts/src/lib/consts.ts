@@ -119,6 +119,8 @@ export const IC_COURT_HEARING_ARRANGEMENTS_ROUTE =
   '/domur/rannsoknarheimild/fyrirtaka'
 export const IC_COURT_RECORD_ROUTE = '/domur/rannsoknarheimild/thingbok'
 export const IC_RULING_ROUTE = '/domur/rannsoknarheimild/urskurdur'
+export const IC_MODIFY_RULING_ROUTE =
+  '/domur/rannsoknarheimild/urskurdur/leidretta'
 export const IC_CONFIRMATION_ROUTE = '/domur/rannsoknarheimild/stadfesta'
 
 // Feedback
