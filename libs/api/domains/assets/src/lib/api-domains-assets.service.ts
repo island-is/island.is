@@ -15,7 +15,7 @@ export class AssetsXRoadService {
   constructor(
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-    private FasteignirApi: fasteignirApi,
+    private fasteignirApi: FasteignirApi,
   ) {}
 
   handleError(error: any): any {
