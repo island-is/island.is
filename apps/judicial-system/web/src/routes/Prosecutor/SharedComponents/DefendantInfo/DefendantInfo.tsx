@@ -107,7 +107,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
         address: personData.items[0].permanent_address.street?.nominative,
       })
     }
-  }, [personData])
+  }, [personData, defendant.id, onChange, personError])
 
   useEffect(() => {
     if (businessError || (businessData && businessData.items?.length === 0)) {
@@ -128,7 +128,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
         citizenship: undefined,
       })
     }
-  }, [businessData])
+  }, [businessData, businessError, defendant.id, onChange])
 
   return (
     <BlueBox>

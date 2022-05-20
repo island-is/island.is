@@ -19,6 +19,11 @@ interface NewComponentProps<T> {
   translations: { [k: string]: string }
 }
 
+type NextContext = {
+  apolloClient: ApolloClient<NormalizedCacheObject>
+  locale: Locale
+} & NextPageContext
+
 export const withLocale = <Props,>(locale?: Locale) => (
   Component: NextPage<Props>,
 ): NextComponentType => {
@@ -37,11 +42,13 @@ export const withLocale = <Props,>(locale?: Locale) => (
     </I18n>
   )
 
-  NewComponent.getInitialProps = async (ctx: NextPageContext) => {
-    const newContext = {
+  NewComponent.getInitialProps = async (
+    ctx: Exclude<NextContext, 'locale'>,
+  ) => {
+    const newContext: NextContext = {
       ...ctx,
       locale: locale || getLocaleFromPath(ctx.asPath),
-    } as any
+    }
     const [props, translations] = await Promise.all([
       getInitialProps(newContext),
       getGlobalStrings(newContext),

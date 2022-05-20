@@ -17,7 +17,6 @@ export const BoostChatPanel: React.FC<BoostChatPanelProps> = ({
   endpoint,
   pushUp = false,
 }) => {
-  const { width } = useWindowSize()
   const [showButton, setShowButton] = useState(Boolean(window.boost)) // we show button when chat already loaded
 
   useEffect(() => {

@@ -74,25 +74,6 @@ export const ServiceInformation = ({
     onSelectChange(tempServiceDetail)
   }
 
-  const onSelectEnviroment = (enviromentOption: Option) => {
-    const tempServiceDetail = service.environments
-      .find((e) => e.environment === enviromentOption.value)
-      .details.find((e) => e.version === selectedVersionOption.value)
-    setServiceDetail(tempServiceDetail)
-    setSelectedEnviromentOption(enviromentOption)
-    setVersionOptions(
-      service.environments
-        .find((e) => e.environment === enviromentOption.value)
-        .details.map((x) => {
-          return {
-            label: x.version,
-            value: x.version,
-          }
-        }),
-    )
-    onSelectChange(tempServiceDetail)
-  }
-
   return (
     <Box>
       <Box marginTop={1} marginBottom={3}>
