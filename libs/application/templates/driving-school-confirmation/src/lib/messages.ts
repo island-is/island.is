@@ -34,6 +34,12 @@ export const m = defineMessages({
       'Við munum sækja skráningu þína frá Samgöngustofu til að athuga hvort þú hafir sannarlega réttindi til skráningar ökuskóla',
     description: 'Data provider subtitle',
   },
+  dataCollectionNoRightsError: {
+    id: 'dir.application:dataCollectionNoRightsError',
+    defaultMessage:
+      'Þú hefur ekki skráningarréttindi ökuskóla. Vinsamlega hafðu samband við næsta sýslumannsembætti ef þú telur um villu vera að ræða',
+    description: 'Data provider no teaching rights error',
+  },
 
   /* Student Info Section */
   studentInfoTitle: {
@@ -43,7 +49,7 @@ export const m = defineMessages({
   },
   studentInfoSubtitle: {
     id: 'dsc.application:studentInfoSubtitle',
-    defaultMessage: 'Sláðu inn kennitölu og netfang ökunema',
+    defaultMessage: 'Sláðu inn kennitölu ökunema',
     description: 'Student info section subtitle',
   },
   studentInfoNationalId: {
@@ -123,12 +129,17 @@ export const m = defineMessages({
     defaultMessage: 'Staðfesta skráningu',
     description: 'school',
   },
+  newConfirmSchoolButton: {
+    id: 'dsc.application:newConfirmSchoolButton',
+    defaultMessage: 'Ný skráning',
+    description: 'new school confirmation',
+  },
 
   /* Errors */
   noStudentInfoFoundMessage: {
     id: 'dsc.application:noStudentInfoFoundMessage',
     defaultMessage:
-      'Tókst ekki að sækja upplýsingar um nemanda. Vinsamlegast reynið aftur síðar',
+      'Tókst ekki að sækja upplýsingar um ökunema. Vinsamlegast reynið aftur síðar',
     description: 'No student found alert message',
   },
   noStudentFoundForGivenNationalIdMessage: {
