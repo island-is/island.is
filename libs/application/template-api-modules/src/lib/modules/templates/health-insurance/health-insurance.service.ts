@@ -31,16 +31,8 @@ export class HealthInsuranceService {
 
       logger.info(`Finished send Health Insurance application`)
     } catch (error) {
-      logger.error(
-        `Send health insurance application failed because: ${JSON.stringify(
-          error,
-        )}`,
-      )
-      throw new Error(
-        `Send health insurance application failed because: ${JSON.stringify(
-          error,
-        )}`,
-      )
+      logger.error(`Send health insurance application failed`)
+      throw new Error(`Send health insurance application failed`)
     }
   }
 }
