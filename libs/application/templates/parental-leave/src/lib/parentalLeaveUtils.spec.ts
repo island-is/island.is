@@ -263,17 +263,20 @@ describe('getOtherParentId', () => {
   })
 
   it('should return undefined if no parent is selected', () => {
-    application.answers.otherParent = NO
+    application.answers.otherParent = {
+      chooseOtherParent: NO,
+    }
 
     expect(getOtherParentId(application)).toBeUndefined()
   })
 
   it('should return answers.otherParentId if manual is selected', () => {
-    application.answers.otherParent = MANUAL
-
     const expectedId = '1234567899'
 
-    application.answers.otherParentId = expectedId
+    application.answers.otherParent = {
+      chooseOtherParent: MANUAL,
+      otherParentId: expectedId,
+    }
 
     expect(getOtherParentId(application)).toBe(expectedId)
   })
@@ -291,7 +294,10 @@ describe('getOtherParentId', () => {
       date: new Date(),
       status: 'success',
     }
-    application.answers.otherParent = 'spouse'
+    //application.answers.otherParent = 'spouse'
+    application.answers.otherParent = {
+      chooseOtherParent: 'spouse',
+    }
 
     expect(getOtherParentId(application)).toBe(expectedSpouse.nationalId)
   })

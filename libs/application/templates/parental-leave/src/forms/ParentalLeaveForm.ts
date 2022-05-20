@@ -142,21 +142,23 @@ export const ParentalLeaveForm: Form = buildForm({
                 }),
                 buildTextField({
                   id: 'otherParent.otherParentName',
-                  condition: (answers) => (answers as {
-                    otherParent: {
-                      chooseOtherParent: string
-                    }
-                  })?.otherParent?.chooseOtherParent === MANUAL,
+                  condition: (answers) =>
+                    (answers as {
+                      otherParent: {
+                        chooseOtherParent: string
+                      }
+                    })?.otherParent?.chooseOtherParent === MANUAL,
                   title: parentalLeaveFormMessages.shared.otherParentName,
                   width: 'half',
                 }),
                 buildTextField({
                   id: 'otherParent.otherParentId',
-                  condition: (answers) => (answers as {
-                    otherParent: {
-                      chooseOtherParent: string
-                    }
-                  })?.otherParent?.chooseOtherParent === MANUAL,
+                  condition: (answers) =>
+                    (answers as {
+                      otherParent: {
+                        chooseOtherParent: string
+                      }
+                    })?.otherParent?.chooseOtherParent === MANUAL,
                   title: parentalLeaveFormMessages.shared.otherParentID,
                   width: 'half',
                   format: '######-####',
@@ -166,11 +168,12 @@ export const ParentalLeaveForm: Form = buildForm({
             }),
             buildRadioField({
               id: 'otherParentRightOfAccess',
-              condition: (answers) => (answers as {
-                otherParent: {
-                  chooseOtherParent: string
-                }
-              })?.otherParent?.chooseOtherParent === MANUAL,
+              condition: (answers) =>
+                (answers as {
+                  otherParent: {
+                    chooseOtherParent: string
+                  }
+                })?.otherParent?.chooseOtherParent === MANUAL,
               title: parentalLeaveFormMessages.rightOfAccess.title,
               description: parentalLeaveFormMessages.rightOfAccess.description,
               options: [

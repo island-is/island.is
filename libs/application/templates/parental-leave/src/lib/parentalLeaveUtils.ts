@@ -389,8 +389,8 @@ export function getApplicationExternalData(
 export function getApplicationAnswers(answers: Application['answers']) {
   const otherParent = getValueViaPath(
     answers,
-    'otherParent',
-  ) as SchemaFormValues['otherParent']
+    'otherParent.chooseOtherParent',
+  ) as string
 
   const otherParentRightOfAccess = getValueViaPath(
     answers,
@@ -424,9 +424,15 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'employer.isSelfEmployed',
   ) as YesOrNo
 
-  const otherParentName = getValueViaPath(answers, 'otherParentName') as string
+  const otherParentName = getValueViaPath(
+    answers,
+    'otherParent.otherParentName',
+  ) as string
 
-  const otherParentId = getValueViaPath(answers, 'otherParentId') as string
+  const otherParentId = getValueViaPath(
+    answers,
+    'otherParent.otherParentId',
+  ) as string
 
   const otherParentEmail = getValueViaPath(
     answers,
@@ -610,8 +616,8 @@ export const allowOtherParent = (answers: Application['answers']) => {
   )
 
   return (
-    otherParent?.chooseOtherParent === SPOUSE ||
-    (otherParent?.chooseOtherParent === MANUAL && otherParentRightOfAccess === YES)
+    otherParent === SPOUSE ||
+    (otherParent === MANUAL && otherParentRightOfAccess === YES)
   )
 }
 
@@ -622,7 +628,7 @@ export const getOtherParentId = (
     application.answers,
   )
 
-  if (otherParent?.chooseOtherParent === SPOUSE) {
+  if (otherParent === SPOUSE) {
     const spouse = getSpouse(application)
 
     if (!spouse || !spouse.nationalId) {
@@ -642,7 +648,7 @@ export const getOtherParentName = (
     application.answers,
   )
 
-  if (otherParent?.chooseOtherParent === SPOUSE) {
+  if (otherParent === SPOUSE) {
     const spouse = getSpouse(application)
 
     if (!spouse || !spouse.name) {

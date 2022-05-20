@@ -331,16 +331,16 @@ export const Review: FC<ReviewScreenProps> = ({
         isEditable={editable && isPrimaryParent}
         editAction={() => goToScreen?.('otherParent')}
       >
-        {otherParent.chooseOtherParent === NO && (
+        {otherParent === NO && (
           <RadioValue
             label={formatMessage(
               parentalLeaveFormMessages.shared.otherParentTitle,
             )}
-            value={otherParent.chooseOtherParent}
+            value={otherParent}
           />
         )}
 
-        {otherParent.chooseOtherParent === SPOUSE && (
+        {otherParent === SPOUSE && (
           <GridRow>
             <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
               <DataValue
@@ -361,14 +361,14 @@ export const Review: FC<ReviewScreenProps> = ({
           </GridRow>
         )}
 
-        {otherParent.chooseOtherParent === MANUAL && (
+        {otherParent === MANUAL && (
           <GridRow>
             <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
               <DataValue
                 label={formatMessage(
                   parentalLeaveFormMessages.shared.otherParentName,
                 )}
-                value={otherParent.otherParentName}
+                value={otherParentName}
               />
             </GridColumn>
 
@@ -378,7 +378,7 @@ export const Review: FC<ReviewScreenProps> = ({
                   parentalLeaveFormMessages.shared.otherParentID,
                 )}
                 value={
-                  otherParent.otherParentId ? formatKennitala(otherParent.otherParentId) : otherParent.otherParentId
+                  otherParentId ? formatKennitala(otherParentId) : otherParentId
                 }
               />
             </GridColumn>

@@ -14,7 +14,13 @@ import {
 } from '@island.is/application/core'
 
 import { Period, Payments, OtherParent } from '../types'
-import { MANUAL, NO, NO_PRIVATE_PENSION_FUND, NO_UNION, YES } from '../constants'
+import {
+  MANUAL,
+  NO,
+  NO_PRIVATE_PENSION_FUND,
+  NO_UNION,
+  YES,
+} from '../constants'
 import { isValidEmail } from './isValidEmail'
 import { errorMessages } from './messages'
 import {
@@ -74,22 +80,22 @@ export const answerValidators: Record<string, AnswerValidator> = {
   },
   [OTHER_PARENT]: (newAnswer: unknown, application: Application) => {
     const otherParent = newAnswer as OtherParent
-    
+
     const buildError = (message: StaticText, path: string) =>
-      buildValidationError(`${OTHER_PARENT}.${path}`)(message)  
-    
+      buildValidationError(`${OTHER_PARENT}.${path}`)(message)
+
     // If no other parent option has been chosen
     // if(isEmpty(otherParent)) {
     //   return buildError('hey vantar að velja', 'chooseOtherParent')
     // }
 
     // If manual option is chosen then user have to insert name and national id
-    if(otherParent.chooseOtherParent === MANUAL) {
-      if(isEmpty(otherParent.otherParentName))
-        return buildError('hey vantar nafn', 'otherParentName')
-      
-      if(isEmpty(otherParent.otherParentId))
-        return buildError('hey vantar kennitölu', 'otherParentId')
+    if (otherParent.chooseOtherParent === MANUAL) {
+      if (isEmpty(otherParent.otherParentName))
+        return buildError(coreErrorMessages.missingAnswer, 'otherParentName')
+
+      if (isEmpty(otherParent.otherParentId))
+        return buildError(coreErrorMessages.missingAnswer, 'otherParentId')
     }
 
     return undefined
