@@ -54,7 +54,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
   const router = useRouter()
 
   const [courtDate, setCourtDate] = useState<Case['courtDate']>(
-    workingCase.courtDate,
+    workingCase.courtDate || workingCase.requestedCourtDate,
   )
 
   const handleNextButtonClick = useCallback(() => {
