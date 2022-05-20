@@ -61,7 +61,7 @@ import { CaseArchive } from './models/caseArchive.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { ArchiveResponse } from './models/archive.response'
 import { caseModuleConfig } from './case.config'
-import { formatDate } from '@island.is/judicial-system/formatters'
+import { formatRulingModifiedHistory } from '../../formatters/formatters'
 
 const caseEncryptionProperties: (keyof Case)[] = [
   'description',
@@ -908,13 +908,12 @@ export class CaseService {
         ...(!theCase.rulingDate
           ? {}
           : {
-              rulingModifiedHistory: `${
-                theCase.rulingModifiedHistory
-                  ? `${theCase.rulingModifiedHistory}\n\n`
-                  : ''
-              }${formatDate(newRulingDate, 'PPPp')} - ${theCase.judge?.name} ${
-                theCase?.judge?.title
-              }}`,
+              rulingModifiedHistory: formatRulingModifiedHistory(
+                theCase.rulingModifiedHistory,
+                newRulingDate,
+                theCase.judge?.name,
+                theCase.judge?.title,
+              ),
             }),
       } as UpdateCaseDto,
       false,
