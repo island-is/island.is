@@ -12,4 +12,12 @@ export const icCourtOverview = {
       },
     }),
   },
+  continueButton: defineMessages({
+    label: {
+      id: 'judicial.system.investigation_cases:court.continue_button.label',
+      defaultMessage: 'Skrá fyrirtökutíma',
+      description:
+        'Titill takka sem sendir notanda í næstu síðu í yfirlitssíðu í rannsóknarheimildum.',
+    },
+  }),
 }

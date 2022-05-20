@@ -25,7 +25,7 @@ const Header: React.FC = () => {
           !user || !isAuthenticated
             ? '/'
             : user.role === UserRole.DEFENDER
-            ? `/verjandi/${router.query.id}`
+            ? `${Constants.DEFENDER_ROUTE}/${router.query.id}`
             : user.role === UserRole.ADMIN
             ? Constants.USER_LIST_ROUTE
             : Constants.CASE_LIST_ROUTE

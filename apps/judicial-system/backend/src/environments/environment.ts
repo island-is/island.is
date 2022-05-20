@@ -24,10 +24,6 @@ const devConfig = {
     username: 'IslandIs_User_Development',
     password: process.env.NOVA_PASSWORD ?? '',
   },
-  signingOptions: {
-    url: 'https://developers.dokobit.com',
-    accessToken: process.env.DOKOBIT_ACCESS_TOKEN ?? '',
-  },
   emailOptions: {
     useTestAccount: (process.env.EMAIL_USE_TEST_ACCOUNT ?? 'true') === 'true',
     options: {
@@ -105,12 +101,6 @@ if (process.env.NODE_ENV === 'production') {
   }
   if (!process.env.NOVA_PASSWORD) {
     throw new Error('Missing NOVA_PASSWORD environment.')
-  }
-  if (!process.env.DOKOBIT_URL) {
-    throw new Error('Missing DOKOBIT_URL environment.')
-  }
-  if (!process.env.DOKOBIT_ACCESS_TOKEN) {
-    throw new Error('Missing DOKOBIT_ACCESS_TOKEN environment.')
   }
   if (!process.env.EMAIL_REGION) {
     throw new Error('Missing EMAIL_REGION environment.')
@@ -191,10 +181,6 @@ const prodConfig = {
     url: process.env.NOVA_URL ?? '',
     username: process.env.NOVA_USERNAME ?? '',
     password: process.env.NOVA_PASSWORD ?? '',
-  },
-  signingOptions: {
-    url: process.env.DOKOBIT_URL ?? '',
-    accessToken: process.env.DOKOBIT_ACCESS_TOKEN ?? '',
   },
   emailOptions: {
     useTestAccount: false,
