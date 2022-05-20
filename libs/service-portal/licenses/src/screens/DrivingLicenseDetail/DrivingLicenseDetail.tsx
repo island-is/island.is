@@ -1,5 +1,8 @@
 import React from 'react'
-import { useDriversLicense } from '@island.is/service-portal/graphql'
+import {
+  GenericLicenseType,
+  useDriversLicense,
+} from '@island.is/service-portal/graphql'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   Box,
@@ -26,7 +29,6 @@ import * as styles from './DrivingLicenseDetail.css'
 import { info } from 'kennitala'
 import { m } from '../../lib/messages'
 import { PkPass } from '../../components/QRCodeModal/PkPass'
-import { GenericLicenseType } from '@island.is/api/schema'
 
 const DrivingLicenseDetail: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.license')
