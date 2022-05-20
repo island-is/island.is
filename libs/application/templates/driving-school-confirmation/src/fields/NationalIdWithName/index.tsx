@@ -54,7 +54,11 @@ const NationalIdWithName: FC<FieldBaseProps> = ({ field, application }) => {
 
   return (
     <Box>
-      <Text marginBottom={3}>{formatMessage(m.studentInfoSubtitle) + (application.externalData.employee.data as any)?.name + '.'}</Text>
+      <Text marginBottom={3}>
+        {formatMessage(m.studentInfoSubtitle) +
+          (application.externalData.employee.data as any)?.name +
+          '.'}
+      </Text>
       <GridRow>
         <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
           <InputController
