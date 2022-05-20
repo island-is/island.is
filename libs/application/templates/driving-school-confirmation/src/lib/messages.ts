@@ -34,6 +34,12 @@ export const m = defineMessages({
       'Við munum sækja skráningu þína frá Samgöngustofu til að athuga hvort þú hafir sannarlega réttindi til skráningar ökuskóla',
     description: 'Data provider subtitle',
   },
+  dataCollectionNoRightsError: {
+    id: 'dir.application:dataCollectionNoRightsError',
+    defaultMessage:
+      'Þú hefur ekki skráningarréttindi ökuskóla. Vinsamlega hafðu samband við næsta sýslumannsembætti ef þú telur um villu vera að ræða',
+    description: 'Data provider no teaching rights error',
+  },
 
   /* Student Info Section */
   studentInfoTitle: {
