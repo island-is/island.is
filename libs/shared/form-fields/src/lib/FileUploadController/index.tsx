@@ -74,6 +74,7 @@ interface FileUploadControllerProps {
   readonly multiple?: boolean
   readonly accept?: string
   readonly maxSize?: number
+  readonly maxSizeUploadErrorText?: string
   readonly forImageUpload?: boolean
 }
 
@@ -87,6 +88,7 @@ export const FileUploadController: FC<FileUploadControllerProps> = ({
   multiple,
   accept,
   maxSize,
+  maxSizeUploadErrorText,
   forImageUpload,
 }) => {
   const { formatMessage } = useLocale()
@@ -149,15 +151,13 @@ export const FileUploadController: FC<FileUploadControllerProps> = ({
   }
 
   const onFileUploadError = async (failedFiles: FileRejection[]) => {
-    failedFiles.forEach((file: FileRejection) => {
-      if (maxSize && file.file.size > maxSize) {
-        return setUploadError(
-          'The file is larger than the allowed file size of ' +
-            maxSize / 1000000 +
-            'MB',
-        )
-      } else setUploadError(formatMessage(coreErrorMessages.fileUpload))
-    })
+    if (maxSize && maxSizeUploadErrorText) {
+      failedFiles.forEach((file: FileRejection) => {
+        if (file.file.size > maxSize) {
+          return setUploadError(maxSizeUploadErrorText)
+        }
+      })
+    }
   }
 
   const onFileChange = async (newFiles: File[]) => {

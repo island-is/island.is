@@ -193,6 +193,7 @@ export interface FileUploadField extends BaseField {
   readonly uploadMultiple?: boolean
   readonly uploadAccept?: string
   readonly maxSize?: number
+  readonly maxSizeErrorText?: FormText
   readonly forImageUpload?: boolean
 }
 
