@@ -1,6 +1,10 @@
 import {
   LiveChatIncChatPanelProps,
   WatsonChatPanelProps,
+  WatsonFont,
+  WatsonIntegration,
+  WatsonNamespaceKey,
+  WatsonServiceInstance,
 } from '@island.is/web/components'
 
 export const liveChatIncConfig: Record<string, LiveChatIncChatPanelProps> = {
@@ -37,23 +41,6 @@ const setupOneScreenWatsonChatBot = (
   })
 }
 
-enum WatsonIntegration {
-  ASKUR = 'b1a80e76-da12-4333-8872-936b08246eaa',
-  ASKUR_SYSLUMENN = '0c96e8fb-d4dc-420e-97db-18b0f8bb4e3f',
-}
-
-enum WatsonServiceInstance {
-  ASKUR = 'bc3d8312-d862-4750-b8bf-529db282050a',
-}
-
-enum Font {
-  IBM_PLEX_SANS = '"IBM Plex Sans", "Open Sans", Arial, sans-serif',
-}
-
-enum NamespaceKey {
-  DEFAULT = 'default',
-}
-
 export const watsonConfig: Record<string, WatsonChatPanelProps> = {
   // Rafræn skilríki
   // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/4lkmXszsB5q5kJkXqhW5Ex
@@ -64,14 +51,14 @@ export const watsonConfig: Record<string, WatsonChatPanelProps> = {
     showLauncher: false,
     carbonTheme: 'g10',
     cssVariables: {
-      'BASE-font-family': Font.IBM_PLEX_SANS,
+      'BASE-font-family': WatsonFont.IBM_PLEX_SANS,
     },
     namespaceKey: 'default',
     onLoad: (instance) =>
       setupOneScreenWatsonChatBot(
         instance,
         'rafraenskilriki',
-        'askurChatPanelCategory',
+        WatsonIntegration.ASKUR,
       ),
   },
 
@@ -84,15 +71,11 @@ export const watsonConfig: Record<string, WatsonChatPanelProps> = {
     showLauncher: false,
     carbonTheme: 'g10',
     cssVariables: {
-      'BASE-font-family': Font.IBM_PLEX_SANS,
+      'BASE-font-family': WatsonFont.IBM_PLEX_SANS,
     },
-    namespaceKey: NamespaceKey.DEFAULT,
+    namespaceKey: WatsonNamespaceKey.DEFAULT,
     onLoad: (instance) =>
-      setupOneScreenWatsonChatBot(
-        instance,
-        'loftbru',
-        'askurChatPanelCategory',
-      ),
+      setupOneScreenWatsonChatBot(instance, 'loftbru', WatsonIntegration.ASKUR),
   },
 
   // Ökuskírteini
@@ -104,14 +87,14 @@ export const watsonConfig: Record<string, WatsonChatPanelProps> = {
     showLauncher: false,
     carbonTheme: 'g10',
     cssVariables: {
-      'BASE-font-family': Font.IBM_PLEX_SANS,
+      'BASE-font-family': WatsonFont.IBM_PLEX_SANS,
     },
-    namespaceKey: NamespaceKey.DEFAULT,
+    namespaceKey: WatsonNamespaceKey.DEFAULT,
     onLoad: (instance) =>
       setupOneScreenWatsonChatBot(
         instance,
         'stafraentokuskirteini',
-        'askurChatPanelCategory',
+        WatsonIntegration.ASKUR,
       ),
   },
 
@@ -124,14 +107,14 @@ export const watsonConfig: Record<string, WatsonChatPanelProps> = {
     showLauncher: false,
     carbonTheme: 'g10',
     cssVariables: {
-      'BASE-font-family': Font.IBM_PLEX_SANS,
+      'BASE-font-family': WatsonFont.IBM_PLEX_SANS,
     },
-    namespaceKey: NamespaceKey.DEFAULT,
+    namespaceKey: WatsonNamespaceKey.DEFAULT,
     onLoad: (instance) =>
       setupOneScreenWatsonChatBot(
         instance,
         'islykill',
-        'askurChatPanelCategory',
+        WatsonIntegration.ASKUR,
       ),
   },
 
@@ -144,14 +127,14 @@ export const watsonConfig: Record<string, WatsonChatPanelProps> = {
     showLauncher: false,
     carbonTheme: 'g10',
     cssVariables: {
-      'BASE-font-family': Font.IBM_PLEX_SANS,
+      'BASE-font-family': WatsonFont.IBM_PLEX_SANS,
     },
-    namespaceKey: NamespaceKey.DEFAULT,
+    namespaceKey: WatsonNamespaceKey.DEFAULT,
     onLoad: (instance) =>
       setupOneScreenWatsonChatBot(
         instance,
         'faedingarorlof',
-        'askurChatPanelCategory',
+        WatsonIntegration.ASKUR,
       ),
   },
 
@@ -164,14 +147,14 @@ export const watsonConfig: Record<string, WatsonChatPanelProps> = {
     showLauncher: false,
     carbonTheme: 'g10',
     cssVariables: {
-      'BASE-font-family': Font.IBM_PLEX_SANS,
+      'BASE-font-family': WatsonFont.IBM_PLEX_SANS,
     },
-    namespaceKey: NamespaceKey.DEFAULT,
+    namespaceKey: WatsonNamespaceKey.DEFAULT,
     onLoad: (instance) =>
       setupOneScreenWatsonChatBot(
         instance,
         'hjonaband',
-        'syslumennChatPanelCategory',
+        WatsonIntegration.ASKUR_SYSLUMENN,
       ),
   },
   // Skilnaður
@@ -183,14 +166,14 @@ export const watsonConfig: Record<string, WatsonChatPanelProps> = {
     showLauncher: false,
     carbonTheme: 'g10',
     cssVariables: {
-      'BASE-font-family': Font.IBM_PLEX_SANS,
+      'BASE-font-family': WatsonFont.IBM_PLEX_SANS,
     },
-    namespaceKey: NamespaceKey.DEFAULT,
+    namespaceKey: WatsonNamespaceKey.DEFAULT,
     onLoad: (instance) =>
       setupOneScreenWatsonChatBot(
         instance,
         'skilnadur',
-        'syslumennChatPanelCategory',
+        WatsonIntegration.ASKUR_SYSLUMENN,
       ),
   },
   // Endurnýjun ökuskírteina
@@ -202,14 +185,14 @@ export const watsonConfig: Record<string, WatsonChatPanelProps> = {
     showLauncher: false,
     carbonTheme: 'g10',
     cssVariables: {
-      'BASE-font-family': Font.IBM_PLEX_SANS,
+      'BASE-font-family': WatsonFont.IBM_PLEX_SANS,
     },
-    namespaceKey: NamespaceKey.DEFAULT,
+    namespaceKey: WatsonNamespaceKey.DEFAULT,
     onLoad: (instance) =>
       setupOneScreenWatsonChatBot(
         instance,
         'endokuskirteini',
-        'syslumennChatPanelCategory',
+        WatsonIntegration.ASKUR_SYSLUMENN,
       ),
   },
   // Þinglýsing skjala
@@ -221,14 +204,14 @@ export const watsonConfig: Record<string, WatsonChatPanelProps> = {
     showLauncher: false,
     carbonTheme: 'g10',
     cssVariables: {
-      'BASE-font-family': Font.IBM_PLEX_SANS,
+      'BASE-font-family': WatsonFont.IBM_PLEX_SANS,
     },
-    namespaceKey: NamespaceKey.DEFAULT,
+    namespaceKey: WatsonNamespaceKey.DEFAULT,
     onLoad: (instance) =>
       setupOneScreenWatsonChatBot(
         instance,
         'thinglysing',
-        'syslumennChatPanelCategory',
+        WatsonIntegration.ASKUR_SYSLUMENN,
       ),
   },
   // Vegabréf, almennar upplýsingar
@@ -240,14 +223,14 @@ export const watsonConfig: Record<string, WatsonChatPanelProps> = {
     showLauncher: false,
     carbonTheme: 'g10',
     cssVariables: {
-      'BASE-font-family': Font.IBM_PLEX_SANS,
+      'BASE-font-family': WatsonFont.IBM_PLEX_SANS,
     },
-    namespaceKey: NamespaceKey.DEFAULT,
+    namespaceKey: WatsonNamespaceKey.DEFAULT,
     onLoad: (instance) =>
       setupOneScreenWatsonChatBot(
         instance,
         'vegabref',
-        'syslumennChatPanelCategory',
+        WatsonIntegration.ASKUR_SYSLUMENN,
       ),
   },
   // Sakavottorð til einstaklinga
@@ -259,14 +242,14 @@ export const watsonConfig: Record<string, WatsonChatPanelProps> = {
     showLauncher: false,
     carbonTheme: 'g10',
     cssVariables: {
-      'BASE-font-family': Font.IBM_PLEX_SANS,
+      'BASE-font-family': WatsonFont.IBM_PLEX_SANS,
     },
-    namespaceKey: NamespaceKey.DEFAULT,
+    namespaceKey: WatsonNamespaceKey.DEFAULT,
     onLoad: (instance) =>
       setupOneScreenWatsonChatBot(
         instance,
         'sakavottord',
-        'syslumennChatPanelCategory',
+        WatsonIntegration.ASKUR_SYSLUMENN,
       ),
   },
   // Erfðamál, upplýsingar um réttindi og skyldur erfingja
@@ -278,14 +261,14 @@ export const watsonConfig: Record<string, WatsonChatPanelProps> = {
     showLauncher: false,
     carbonTheme: 'g10',
     cssVariables: {
-      'BASE-font-family': Font.IBM_PLEX_SANS,
+      'BASE-font-family': WatsonFont.IBM_PLEX_SANS,
     },
-    namespaceKey: NamespaceKey.DEFAULT,
+    namespaceKey: WatsonNamespaceKey.DEFAULT,
     onLoad: (instance) =>
       setupOneScreenWatsonChatBot(
         instance,
         'erfdamal',
-        'syslumennChatPanelCategory',
+        WatsonIntegration.ASKUR_SYSLUMENN,
       ),
   },
 
@@ -298,9 +281,9 @@ export const watsonConfig: Record<string, WatsonChatPanelProps> = {
     showLauncher: false,
     carbonTheme: 'g10',
     cssVariables: {
-      'BASE-font-family': Font.IBM_PLEX_SANS,
+      'BASE-font-family': WatsonFont.IBM_PLEX_SANS,
     },
-    namespaceKey: NamespaceKey.DEFAULT,
+    namespaceKey: WatsonNamespaceKey.DEFAULT,
   },
 }
 
@@ -311,7 +294,7 @@ export const defaultWatsonConfig: WatsonChatPanelProps = {
   showLauncher: false,
   carbonTheme: 'g10',
   cssVariables: {
-    'BASE-font-family': Font.IBM_PLEX_SANS,
+    'BASE-font-family': WatsonFont.IBM_PLEX_SANS,
   },
-  namespaceKey: NamespaceKey.DEFAULT,
+  namespaceKey: WatsonNamespaceKey.DEFAULT,
 }

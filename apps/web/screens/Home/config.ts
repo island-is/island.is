@@ -1,13 +1,19 @@
-import { WatsonChatPanelProps } from '@island.is/web/components'
+import {
+  WatsonChatPanelProps,
+  WatsonFont,
+  WatsonIntegration,
+  WatsonNamespaceKey,
+  WatsonServiceInstance,
+} from '@island.is/web/components'
 
 export const watsonConfig: WatsonChatPanelProps = {
-  integrationID: 'b1a80e76-da12-4333-8872-936b08246eaa',
+  integrationID: WatsonIntegration.ASKUR,
   region: 'eu-gb',
-  serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+  serviceInstanceID: WatsonServiceInstance.ASKUR,
   showLauncher: false,
   carbonTheme: 'g10',
   cssVariables: {
-    'BASE-font-family': '"IBM Plex Sans", "Open Sans", Arial, sans-serif',
+    'BASE-font-family': WatsonFont.IBM_PLEX_SANS,
   },
-  namespaceKey: 'default',
+  namespaceKey: WatsonNamespaceKey.DEFAULT,
 }
