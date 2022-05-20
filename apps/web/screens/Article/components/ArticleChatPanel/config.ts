@@ -16,9 +16,27 @@ export const liveChatIncConfig: Record<string, LiveChatIncChatPanelProps> = {
   },
 }
 
+interface WatsonInstance {
+  on: (_: {
+    type: string
+    handler: (event: WatsonPreSendEvent) => void
+  }) => void
+  updateHomeScreenConfig: ({ is_on: boolean }) => void
+}
+
+interface WatsonPreSendEvent {
+  data: {
+    context: {
+      skills: {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        ['main skill']: { user_defined: Record<string, any> }
+      }
+    }
+  }
+}
+
 const setupOneScreenWatsonChatBot = (
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  instance: any,
+  instance: WatsonInstance,
   categoryTitle: string,
   categoryGroup: string,
 ) => {
@@ -28,12 +46,11 @@ const setupOneScreenWatsonChatBot = (
   sessionStorage.setItem(categoryGroup, categoryTitle)
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const preSendhandler = (event: any) => {
+  const preSendhandler = (event: WatsonPreSendEvent) => {
     event.data.context.skills['main skill'].user_defined[
       `category_${categoryTitle}`
     ] = true
   }
-
   instance.on({ type: 'pre:send', handler: preSendhandler })
 
   instance.updateHomeScreenConfig({
