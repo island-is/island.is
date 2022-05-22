@@ -13,7 +13,6 @@ export const DynamicWrapper: FC<Props> = ({ children }) => {
   const { activeDynamicRoutes, loading } = useDynamicRoutes()
 
   const matches = useRouteMatch(activeDynamicRoutes)
-  // This matches is taking too long, so you see a 404 flash when navigating.
 
   if (matches) {
     return <>{children}</>
