@@ -6,15 +6,18 @@ import {
   servicePortalMasterNavigation,
   ServicePortalNavigationItem,
   ServicePortalRoute,
+  ServicePortalPath,
 } from '@island.is/service-portal/core'
 import { User } from '@island.is/shared/types'
 
 import { useStore } from '../../store/stateProvider'
+import { useDynamicRoutes } from '@island.is/service-portal/core'
 
 const filterNavigationTree = (
   item: ServicePortalNavigationItem,
   routes: ServicePortalRoute[],
   userInfo: User,
+  dymamicRouteArray: ServicePortalPath[],
 ): boolean => {
   const routeItem = routes.find(
     (route) =>
@@ -28,7 +31,7 @@ const filterNavigationTree = (
 
   // Filters out any children that do not have a module route defined
   item.children = item.children?.filter((child) => {
-    return filterNavigationTree(child, routes, userInfo)
+    return filterNavigationTree(child, routes, userInfo, dymamicRouteArray)
   })
 
   // If the item is not included but one or more of it's descendants are
@@ -41,7 +44,14 @@ const filterNavigationTree = (
   item.enabled = routeItem?.enabled
 
   // Hides item from navigation
-  item.navHide = routeItem?.navHide ?? item.navHide
+  item.navHide = (routeItem?.navHide ?? item.navHide) || routeItem?.dynamic
+
+  // Makes dynamic item visible in navigation after dynamicArray hook is run
+  const solidPath = Array.isArray(routeItem?.path)
+    ? routeItem?.path[0]
+    : routeItem?.path
+  item.navHide =
+    routeItem?.dynamic && solidPath && !dymamicRouteArray?.includes(solidPath)
 
   return included || onlyDescendantsIncluded
 }
@@ -52,6 +62,7 @@ const filterNavigationTree = (
 const useNavigation = () => {
   const { userInfo } = useAuth()
   const [{ routes }] = useStore()
+  const { activeDynamicRoutes } = useDynamicRoutes()
   const [activeNavigation, setActiveNavigation] = useState<
     ServicePortalNavigationItem[]
   >([])
@@ -62,11 +73,11 @@ const useNavigation = () => {
       servicePortalMasterNavigation,
     )
     masterNav.filter((rootItem) =>
-      filterNavigationTree(rootItem, routes, userInfo),
+      filterNavigationTree(rootItem, routes, userInfo, activeDynamicRoutes),
     )
 
     setActiveNavigation(masterNav)
-  }, [routes, userInfo])
+  }, [routes, userInfo, activeDynamicRoutes])
 
   return activeNavigation
 }

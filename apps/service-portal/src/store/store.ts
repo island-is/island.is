@@ -51,11 +51,6 @@ export const reducer = (state: StoreState, action: Action): StoreState => {
         ...state,
         routes: action.payload,
       }
-    case ActionType.UpdateFulfilledRoutes:
-      return {
-        ...state,
-        routes: uniqBy([...action.payload, ...state.routes], 'path'),
-      }
     case ActionType.SetModulesList:
       return {
         ...state,
