@@ -78,36 +78,6 @@ describe('Ingress definitions', () => {
       },
     })
   })
-
-  it('Ingress Prefix PathType', () => {
-    const sut = service('api').ingress({
-      primary: {
-        host: { dev: 'a', staging: 'staging01.devland.is', prod: 'a' },
-        paths: ['/api(/|$)(.*)'],
-        pathType: 'Prefix',
-      },
-    })
-    const result = serializeService(
-      sut,
-      new UberChart(Staging),
-    ) as SerializeSuccess
-
-    expect(result.serviceDef.ingress).toEqual({
-      'primary-alb': {
-        annotations: {
-          'kubernetes.io/ingress.class': 'nginx-external-alb',
-        },
-        hosts: [
-          {
-            host: 'staging01.devland.is',
-            paths: ['/api(/|$)(.*)'],
-            pathType: 'Prefix',
-          },
-        ],
-      },
-    })
-  })
-
   it('Ingress missing generates errors', () => {
     const sut = service('api').ingress({
       primary: {

@@ -6,7 +6,7 @@ ROOT="$DIR/../.."
 export PATH=$ROOT/node_modules/.bin:$PATH
 
 case "$1" in
-    "islandis" | "judicial-system" | "air-discount-scheme")
+    "islandis" | "judicial-system" | "air-discount-scheme" | 'identity-server')
         ENVS=("dev" "staging" "prod")
         cd "$ROOT"
         for env in "${ENVS[@]}"; do
