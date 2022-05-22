@@ -16,5 +16,6 @@
     "**/*.spec.jsx",
     "**/*.test.jsx",
     "**/*.d.ts"
-  ]
+  ],
+  "exclude": ["node_modules"]
 }

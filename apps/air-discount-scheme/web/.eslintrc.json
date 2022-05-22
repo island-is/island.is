@@ -5,13 +5,13 @@
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
-      "parserOptions": {
-        "project": ["apps/air-discount-scheme/web/tsconfig.*?.json"]
-      },
       "rules": {}
     },
     {
       "files": ["*.ts", "*.tsx"],
+      "parserOptions": {
+        "project": ["apps/air-discount-scheme/web/tsconfig.*?.json"]
+      },
       "rules": {}
     },
     {

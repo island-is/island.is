@@ -4,9 +4,7 @@ module.exports = (nextConfig = {}) => {
     webpack: (config, options) => {
       // Fixes dependency on 'dns' module in frontend
       if (!options.isServer) {
-        config.node = {
-          dns: 'empty',
-        }
+        config.resolve.fallback.dns = false
       }
 
       // Overload the Webpack config if it was already overloaded
