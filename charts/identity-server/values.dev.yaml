@@ -28,7 +28,7 @@ auth-admin-web:
         cpuAverageUtilization: 70
         nginxRequestsIrate: 2
       replicas:
-        max: 3
+        max: 10
         min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/auth-admin-web'
@@ -45,7 +45,7 @@ auth-admin-web:
   namespace: 'identity-server-admin'
   replicaCount:
     default: 2
-    max: 3
+    max: 10
     min: 2
   resources:
     limits:
@@ -375,7 +375,7 @@ services-auth-public-api:
         cpuAverageUtilization: 70
         nginxRequestsIrate: 2
       replicas:
-        max: 3
+        max: 10
         min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-public-api'
@@ -393,7 +393,7 @@ services-auth-public-api:
   namespace: 'identity-server-admin'
   replicaCount:
     default: 2
-    max: 3
+    max: 10
     min: 2
   resources:
     limits:
