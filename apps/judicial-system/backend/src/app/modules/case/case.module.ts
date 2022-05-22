@@ -23,7 +23,7 @@ import { RestrictedCaseService } from './restrictedCase.service'
 
 @Module({
   imports: [
-    SigningModule.register(environment.signingOptions),
+    SigningModule,
     EmailModule.register(environment.emailOptions),
     CmsTranslationsModule,
     forwardRef(() => DefendantModule),

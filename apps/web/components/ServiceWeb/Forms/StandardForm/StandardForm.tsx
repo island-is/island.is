@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useState } from 'react'
+import React, { ReactNode, useEffect, useMemo, useState } from 'react'
 import { useLazyQuery } from '@apollo/client'
 import {
   useForm,
@@ -192,6 +192,10 @@ export const StandardForm = ({
   const [categoryId, setCategoryId] = useState<string>('')
   const [categoryLabel, setCategoryLabel] = useState<string>('')
   const [addonFields, setAddonFields] = useState<ReactNode | null>()
+  const categoryDescription = useMemo(
+    () => supportCategories.find((c) => c.id === categoryId)?.description ?? '',
+    [categoryId, supportCategories],
+  )
 
   const [fetch, { loading: loadingSuggestions, called, data }] = useLazyQuery<
     GetSupportSearchResultsQuery,
@@ -402,7 +406,7 @@ export const StandardForm = ({
   return (
     <>
       <GridContainer>
-        <GridRow marginTop={6}>
+        <GridRow marginTop={6} marginBottom={4}>
           <GridColumn span={['12/12', '12/12', '12/12', '8/12']}>
             <Select
               backgroundColor="blue"
@@ -421,6 +425,11 @@ export const StandardForm = ({
               placeholder="Veldu flokk"
               size="md"
             />
+            <Box marginLeft={1} marginTop={1}>
+              <Text variant="small" as="div">
+                <i>{categoryDescription}</i>
+              </Text>
+            </Box>
           </GridColumn>
         </GridRow>
 

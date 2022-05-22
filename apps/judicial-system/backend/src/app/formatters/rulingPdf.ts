@@ -2,10 +2,7 @@ import PDFDocument from 'pdfkit'
 import streamBuffers from 'stream-buffers'
 
 import { FormatMessage } from '@island.is/cms-translations'
-import {
-  formatDate,
-  formatNationalId,
-} from '@island.is/judicial-system/formatters'
+import { formatDate, formatDOB } from '@island.is/judicial-system/formatters'
 
 import { environment } from '../../environments'
 import { Case } from '../modules/case'
@@ -91,13 +88,10 @@ function constructRulingPdf(
               : index + 1 === theCase.defendants?.length
               ? ', og'
               : ','
-          } ${defendant.name ?? '-'}${
-            defendant.noNationalId
-              ? defendant.nationalId
-                ? `, fd. ${defendant.nationalId}`
-                : ''
-              : `, kt. ${formatNationalId(defendant.nationalId ?? '-')}`
-          }`,
+          } ${defendant.name ?? '-'}${`, ${formatDOB(
+            defendant.nationalId,
+            defendant.noNationalId,
+          )}`}`,
         '',
       ) ?? ` ${ruling.missingDefendants}`
     }.`,
