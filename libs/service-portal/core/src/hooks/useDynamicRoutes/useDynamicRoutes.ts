@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { gql } from '@apollo/client'
-import { GET_TAPS_QUERY } from '@island.is/service-portal/graphql'
 import { useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
 import { ServicePortalPath } from '@island.is/service-portal/core'
@@ -13,6 +12,16 @@ const GET_DEBT_STATUS = gql`
         approvedSchedule
         possibleToSchedule
       }
+    }
+  }
+`
+
+export const GET_TAPS_QUERY = gql`
+  query GetTapsQuery {
+    getCustomerTapControl {
+      RecordsTap
+      employeeClaimsTap
+      localTaxTap
     }
   }
 `
