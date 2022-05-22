@@ -272,10 +272,10 @@ describe('getOtherParentId', () => {
 
   it('should return answers.otherParentId if manual is selected', () => {
     const expectedId = '1234567899'
-
+    
     application.answers.otherParent = {
       chooseOtherParent: MANUAL,
-      otherParentId: expectedId,
+      otherParentId: expectedId
     }
 
     expect(getOtherParentId(application)).toBe(expectedId)
@@ -294,9 +294,8 @@ describe('getOtherParentId', () => {
       date: new Date(),
       status: 'success',
     }
-    //application.answers.otherParent = 'spouse'
     application.answers.otherParent = {
-      chooseOtherParent: 'spouse',
+      chooseOtherParent: 'spouse'    
     }
 
     expect(getOtherParentId(application)).toBe(expectedSpouse.nationalId)
