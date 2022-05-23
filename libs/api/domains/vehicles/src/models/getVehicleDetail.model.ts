@@ -143,8 +143,17 @@ export class VehiclesInspectionInfo {
   @Field(() => String, { nullable: true })
   lastInspectionDate?: string | null // inspections[1] -> date // EF LENGTH > 1
 
-  @Field(() => String, { nullable: true })
+  @Field(() => Boolean, { nullable: true })
   insuranceStatus?: boolean | null // insurancestatus
+
+  @Field(() => Number, { nullable: true })
+  encumbrances?: number | null // hasEncumbrances
+
+  @Field(() => Number, { nullable: true })
+  carTax?: number | null // bifreidagjald
+
+  @Field(() => Number, { nullable: true })
+  inspectionFine?: number | null // inspectionfine
 }
 
 @ObjectType()

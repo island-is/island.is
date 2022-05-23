@@ -3,7 +3,7 @@ import type { Logger } from '@island.is/logging'
 
 import { Inject, Injectable } from '@nestjs/common'
 import {
-  VehiclesApi,
+  VehicleSearchApi,
   BasicVehicleInformationGetRequest,
   BasicVehicleInformationTechnicalMass,
   BasicVehicleInformationTechnicalAxle,
@@ -17,8 +17,8 @@ import { FetchError } from '@island.is/clients/middlewares'
 export class VehiclesService {
   constructor(
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
-    @Inject(VehiclesApi)
-    private vehiclesApi: VehiclesApi,
+    @Inject(VehicleSearchApi)
+    private vehiclesApi: VehicleSearchApi,
   ) {}
 
   private handle4xx(error: FetchError): ApolloError | null {
@@ -63,7 +63,7 @@ export class VehiclesService {
       if (!data) return {}
       const newestInspection = data.inspections?.sort((a, b) => {
         if (a && b && a.date && b.date)
-          return new Date(a.date).getTime() - new Date(b.date).getTime()
+          return new Date(b.date).getTime() - new Date(a.date).getTime()
         else return 0
       })[0]
 
@@ -174,6 +174,9 @@ export class VehiclesService {
             ? data.inspections[0]?.date
             : null,
           insuranceStatus: data.insurancestatus,
+          encumbrances: data?.fees?.hasEncumbrances,
+          carTax: data?.fees?.gjold?.bifreidagjald,
+          inspectionFine: data?.fees?.inspectionfine,
         },
         technicalInfo: {
           engine: data.techincal?.engine,

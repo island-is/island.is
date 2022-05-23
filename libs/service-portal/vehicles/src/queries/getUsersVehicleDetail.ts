@@ -52,6 +52,10 @@ export const GET_USERS_VEHICLE_DETAIL = gql`
         plateStatus
         nextInspectionDate
         lastInspectionDate
+        insuranceStatus
+        encumbrances
+        carTax
+        inspectionFine
       }
       technicalInfo {
         engine

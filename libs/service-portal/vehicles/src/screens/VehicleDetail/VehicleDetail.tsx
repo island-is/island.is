@@ -127,13 +127,13 @@ const VehicleDetail: ServicePortalModuleComponent = ({ userInfo }) => {
       {basicInfo && <BaseInfoItem data={basicInfo} />}
       {registrationInfo && <RegistrationInfoItem data={registrationInfo} />}
       {currentOwnerInfo && <OwnerInfoItem data={currentOwnerInfo} />}
-      {inspectionInfo && <InspectionInfoItem data={inspectionInfo} />}
-      {technicalInfo && <TechnicalInfoItem data={technicalInfo} />}
       {coOwners &&
         coOwners.length > 0 &&
         coOwners.map((owner: VehiclesCurrentOwnerInfo, index) => (
           <CoOwnerInfoItem key={index} data={owner} />
         ))}
+      {inspectionInfo && <InspectionInfoItem data={inspectionInfo} />}
+      {technicalInfo && <TechnicalInfoItem data={technicalInfo} />}
       {operators &&
         operators.length > 0 &&
         operators.map((operator: VehiclesOperator, index) => (
