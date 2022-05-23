@@ -41,19 +41,14 @@ interface CompanyRegistryCompany {
   companyRegistryCompany: RskCompany
 }
 
-interface SearchField {
-  nationalId: string
-  label: string
-}
-
 export const InformationAboutApplication = ({
   application,
   errors,
 }: FieldBaseProps) => {
-  const { setValue } = useFormContext()
+  const { setValue, watch } = useFormContext()
   const { formatMessage } = useLocale()
+  const watchIsatNumber = watch('applicant.typeOfOperation', '')
   const [nationalId, setNationalId] = useState<string>('')
-  const [isatNumber, setIsatNumber] = useState<string>('')
 
   const searchFieldLabel = getValueViaPath(
     application.answers,
@@ -109,9 +104,6 @@ export const InformationAboutApplication = ({
           }
           return v
         })
-        setIsatNumber(
-          typeOfOperation.length > 2 ? typeOfOperation.slice(0, 2) : '',
-        )
       }
       setValue('applicant.typeOfOperation', typeOfOperation)
     }
@@ -184,7 +176,7 @@ export const InformationAboutApplication = ({
           disabled
         />
       </GridColumn>
-      {isatNumber !== '84' && isatNumber !== '' && (
+      {watchIsatNumber.slice(0, 2) !== '84' && watchIsatNumber !== '' && (
         <GridColumn span={['1/1', '1/1', '1/1']} paddingTop={2}>
           <AlertMessage
             type="warning"
