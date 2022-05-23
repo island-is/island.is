@@ -176,7 +176,9 @@ export const Ruling: React.FC = () => {
 
   const router = useRouter()
 
-  const isModifyingRuling = Boolean(workingCase.rulingDate)
+  const isModifyingRuling = router.pathname.includes(
+    Constants.MODIFY_RULING_ROUTE,
+  )
   const [modalVisible, setModalVisible] = useState<availableModals>('NoModal')
 
   const { user } = useContext(UserContext)

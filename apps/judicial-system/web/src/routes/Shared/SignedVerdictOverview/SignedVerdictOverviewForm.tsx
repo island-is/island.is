@@ -416,7 +416,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
                   user?.role === UserRole.REGISTRAR) && (
                   <Button
                     variant="ghost"
-                    data-testid="amendRulingButton"
+                    data-testid="modifyRulingButton"
                     onClick={(event) => {
                       event.stopPropagation()
                       router.push(
@@ -426,7 +426,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
                       )
                     }}
                   >
-                    {capitalize(formatMessage(core.amend))}
+                    {capitalize(formatMessage(core.modify))}
                   </Button>
                 )}
               </PdfRow>

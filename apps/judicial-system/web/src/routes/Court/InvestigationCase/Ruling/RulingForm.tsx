@@ -34,6 +34,7 @@ import * as Constants from '@island.is/judicial-system/consts'
 import SigningModal, {
   useRequestRulingSignature,
 } from '@island.is/judicial-system-web/src/components/SigningModal/SigningModal'
+import { IC_MODIFY_RULING_ROUTE } from '@island.is/judicial-system/consts'
 
 interface Props {
   workingCase: Case
@@ -70,7 +71,8 @@ const RulingForm: React.FC<Props> = (props) => {
   useDeb(workingCase, 'courtLegalArguments')
   useDeb(workingCase, 'conclusion')
 
-  const isModifyingRuling = Boolean(workingCase.rulingDate)
+  const isModifyingRuling = router.pathname.includes(IC_MODIFY_RULING_ROUTE)
+
   return (
     <>
       <FormContentContainer>

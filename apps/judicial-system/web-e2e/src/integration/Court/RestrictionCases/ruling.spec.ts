@@ -4,7 +4,7 @@ import {
   RULING_ROUTE,
 } from '@island.is/judicial-system/consts'
 
-import { makeCustodyCase, intercept } from '../../../utils'
+import { makeRestrictionCase, intercept } from '../../../utils'
 
 describe(`${RULING_ROUTE}/:id`, () => {
   beforeEach(() => {
@@ -12,7 +12,7 @@ describe(`${RULING_ROUTE}/:id`, () => {
   })
 
   it('should autofill prosecutor demands', () => {
-    const caseData = makeCustodyCase()
+    const caseData = makeRestrictionCase()
     const caseDataAddition: Case = {
       ...caseData,
       caseFacts: 'lorem ipsum',
@@ -30,7 +30,7 @@ describe(`${RULING_ROUTE}/:id`, () => {
   })
 
   it('should require a valid introduction', () => {
-    const caseData = makeCustodyCase()
+    const caseData = makeRestrictionCase()
     const caseDataAddition: Case = {
       ...caseData,
       courtDate: '2020-12-22T11:23:00.000Z',
@@ -41,9 +41,8 @@ describe(`${RULING_ROUTE}/:id`, () => {
     intercept(caseDataAddition)
 
     cy.wait('@gqlCaseQuery')
-    cy.getByTestid('introduction')
-      .contains('Mál þetta var tekið til úrskurðar 22. desember 2020.')
-      .clear()
+    cy.getByTestid('introduction').invoke('val').should('not.be.empty')
+    cy.getByTestid('introduction').clear()
     cy.clickOutside()
     cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
     cy.getByTestid('introduction').type('lorem')
@@ -51,7 +50,7 @@ describe(`${RULING_ROUTE}/:id`, () => {
   })
 
   it('should require a valid ruling', () => {
-    const caseData = makeCustodyCase()
+    const caseData = makeRestrictionCase()
     const caseDataAddition: Case = {
       ...caseData,
       caseFacts: 'lorem ipsum',
@@ -64,9 +63,8 @@ describe(`${RULING_ROUTE}/:id`, () => {
     intercept(caseDataAddition)
 
     cy.wait('@gqlCaseQuery')
-    cy.getByTestid('ruling')
-      .contains('héraðsdómari kveður upp úrskurð þennan.')
-      .clear()
+    cy.getByTestid('ruling').invoke('val').should('not.be.empty')
+    cy.getByTestid('ruling').clear()
     cy.clickOutside()
     cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
     cy.getByTestid('ruling').type('lorem')
@@ -74,7 +72,7 @@ describe(`${RULING_ROUTE}/:id`, () => {
   })
 
   it('should show appropriate valid to dates based on decision', () => {
-    const caseData = makeCustodyCase()
+    const caseData = makeRestrictionCase()
     const caseDataAddition: Case = {
       ...caseData,
       caseFacts: 'lorem ipsum',
@@ -96,7 +94,7 @@ describe(`${RULING_ROUTE}/:id`, () => {
   })
 
   it('should have a disabled isolationTo datepicker if isolation is nor selected and not if it is', () => {
-    const caseData = makeCustodyCase()
+    const caseData = makeRestrictionCase()
     const caseDataAddition: Case = {
       ...caseData,
       decision: CaseDecision.ACCEPTING,
@@ -112,7 +110,7 @@ describe(`${RULING_ROUTE}/:id`, () => {
   })
 
   it('should navigate to the next step when all input data is valid and the continue button is clicked', () => {
-    const caseData = makeCustodyCase()
+    const caseData = makeRestrictionCase()
     const caseDataAddition: Case = {
       ...caseData,
       caseFacts: 'lorem ipsum',
