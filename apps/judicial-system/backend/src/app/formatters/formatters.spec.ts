@@ -1832,7 +1832,7 @@ describe('formatRulingModifiedHistory', () => {
     )
   })
 
-  test('should format ruling modified history', () => {
+  test('should append to existing history', () => {
     const rulingModifiedHistory = 'Some history'
     const newRulingDate = new Date('2020-01-01')
     const judgeName = 'Test Judge'
