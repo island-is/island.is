@@ -142,7 +142,7 @@ export class FinancialAidService {
         createApplicationDto: newApplication as any,
       })
       .then((res) => {
-        return res
+        return { currentApplicationId: res.id }
       })
       .catch((error) => {
         throw error
