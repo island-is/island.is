@@ -8,3 +8,9 @@ export {
   WatsonNamespaceKey,
   WatsonServiceInstance,
 } from './types'
+
+export type {
+  BoostChatPanelProps,
+  LiveChatIncChatPanelProps,
+  WatsonChatPanelProps,
+} from './types'
