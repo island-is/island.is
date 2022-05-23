@@ -9,6 +9,7 @@ export const GET_ORGANIZATIONS_QUERY = gql`
         slug
         title
         description
+        showsUpOnTheOrganizationsPage
         logo {
           title
           url
