@@ -203,10 +203,15 @@ export class VehiclesService {
         },
         ownersInfo:
           data.owners?.map((x) => {
+            const ownerAdderss = x.address
+              ? `${x.address}, ${x.postalcode ? x.postalcode : ''} ${
+                  x.city ? x.city : ''
+                }`
+              : undefined
             return {
               name: x.fullname,
               nationalId: x.persidno,
-              address: x.address + ', ' + x.postalcode + ' ' + x.city,
+              address: ownerAdderss,
               dateOfPurchase: x.purchasedate,
             }
           }) || [],
