@@ -74,6 +74,8 @@ const CaseFileList: React.FC<Props> = (props) => {
                   file.status === 'case-not-found' ||
                   file.status === 'unsupported'
                     ? 'error'
+                    : file.status === 'done-broken'
+                    ? 'done'
                     : file.status,
               } as TCaseFile
             }
@@ -81,7 +83,10 @@ const CaseFileList: React.FC<Props> = (props) => {
             defaultBackgroundColor={getBackgroundColor(file.status)}
             doneIcon="checkmark"
             hideIcons={
-              hideIcons || (file.status !== 'done' && file.status !== 'error')
+              hideIcons ||
+              (file.status !== 'done' &&
+                file.status !== 'done-broken' &&
+                file.status !== 'error')
             }
             onOpenFile={
               canOpenFiles &&

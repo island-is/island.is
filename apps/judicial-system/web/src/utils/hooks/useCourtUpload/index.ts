@@ -23,6 +23,7 @@ export interface CaseFile extends TCaseFile {
 
 export enum UploadState {
   ALL_UPLOADED = 'ALL_UPLOADED',
+  ALL_UPLOADED_NONE_AVAILABLE = 'ALL_UPLOADED_NONE_AVAILABLE',
   NONE_AVAILABLE = 'NONE_AVAILABLE',
   NONE_CAN_BE_UPLOADED = 'NONE_CAN_BE_UPLOADED',
   SOME_NOT_UPLOADED = 'SOME_NOT_UPLOADED',
@@ -82,6 +83,8 @@ export const useCourtUpload = (
         ? UploadState.UPLOAD_ERROR
         : files?.some((file) => file.status === 'not-uploaded')
         ? UploadState.SOME_NOT_UPLOADED
+        : files?.every((file) => file.status === 'done-broken')
+        ? UploadState.ALL_UPLOADED_NONE_AVAILABLE
         : files?.every(
             (file) => file.status === 'done' || file.status === 'done-broken',
           )

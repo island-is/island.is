@@ -81,8 +81,9 @@ const CaseFilesAccordionItem: React.FC<Props> = (props) => {
           </Text>
           {canCaseFilesBeUploaded() && (
             <AnimatePresence>
-              {(uploadState === UploadState.UPLOAD_ERROR ||
-                uploadState === UploadState.NONE_CAN_BE_UPLOADED) && (
+              {(uploadState === UploadState.NONE_AVAILABLE ||
+                uploadState === UploadState.NONE_CAN_BE_UPLOADED ||
+                uploadState === UploadState.UPLOAD_ERROR) && (
                 <UploadStateMessage
                   icon="warning"
                   iconColor="red600"
@@ -90,7 +91,8 @@ const CaseFilesAccordionItem: React.FC<Props> = (props) => {
                 />
               )}
               {(workingCase.caseFiles || []).length > 0 &&
-                uploadState === UploadState.ALL_UPLOADED && (
+                (uploadState === UploadState.ALL_UPLOADED ||
+                  uploadState === UploadState.ALL_UPLOADED_NONE_AVAILABLE) && (
                   <UploadStateMessage
                     icon="checkmark"
                     iconColor="blue400"
@@ -122,7 +124,8 @@ const CaseFilesAccordionItem: React.FC<Props> = (props) => {
       {canCaseFilesBeUploaded() && (
         <Box display="flex" justifyContent="flexEnd" marginTop={3}>
           {(workingCase.caseFiles || []).length === 0 ? null : uploadState ===
-            UploadState.NONE_AVAILABLE ? (
+              UploadState.ALL_UPLOADED_NONE_AVAILABLE ||
+            uploadState === UploadState.NONE_AVAILABLE ? (
             <InfoBox text={formatMessage(m.uploadToCourtAllBrokenText)} />
           ) : (
             <Button
