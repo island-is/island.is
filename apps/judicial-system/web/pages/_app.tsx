@@ -1,6 +1,5 @@
 import React from 'react'
 import App, { AppProps } from 'next/app'
-import getConfig from 'next/config'
 import ApolloClient from 'apollo-client'
 import { NormalizedCacheObject } from 'apollo-cache-inmemory'
 import { ApolloProvider } from '@apollo/client'
@@ -10,7 +9,6 @@ import { LocaleProvider, GET_TRANSLATIONS } from '@island.is/localization'
 import { ToastContainer } from '@island.is/island-ui/core'
 
 import { client } from '../graphql'
-import { withHealthchecks } from '../units/Healthchecks/withHealthchecks'
 import FormProvider from '../src/components/FormProvider/FormProvider'
 import { UserProvider, Header, FeatureProvider } from '../src/components'
 
@@ -147,10 +145,4 @@ class JudicialSystemApplication extends App<Props> {
   }
 }
 
-const { serverRuntimeConfig } = getConfig()
-const { graphqlEndpoint, apiUrl } = serverRuntimeConfig
-const externalEndpointDependencies = [graphqlEndpoint, apiUrl]
-
-export default withHealthchecks(externalEndpointDependencies)(
-  JudicialSystemApplication,
-)
+export default JudicialSystemApplication

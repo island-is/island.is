@@ -55,6 +55,23 @@ describe(`${IC_COURT_RECORD_ROUTE}/:id`, () => {
     cy.getByTestid('sessionBookings').should('not.match', ':empty')
   })
 
+  it('should autofill sessionBookings in expulsion from home cases', () => {
+    const caseData = makeInvestigationCase()
+
+    const caseDataAddition: Case = {
+      ...caseData,
+      type: CaseType.EXPULSION_FROM_HOME,
+      prosecutor: makeProsecutor(),
+    }
+
+    cy.stubAPIResponses()
+    cy.visit(`${IC_COURT_RECORD_ROUTE}/test_id_stadfest`)
+
+    intercept(caseDataAddition)
+
+    cy.getByTestid('sessionBookings').should('not.match', ':empty')
+  })
+
   it('should autofill sessionBookings in autopsy cases', () => {
     const caseData = makeInvestigationCase()
 
