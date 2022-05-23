@@ -232,7 +232,7 @@ export const FileUploadController: FC<FileUploadControllerProps> = ({
     if (maxSize && maxSizeErrorText) {
       files.forEach((file: FileRejection) => {
         if (file.file.size > maxSize) {
-          setUploadError(maxSizeErrorText)
+          return setUploadError(maxSizeErrorText)
         }
       })
     }
