@@ -15,7 +15,6 @@ interface PropTypes {
 const InspectionInfoItem = ({ data }: PropTypes) => {
   const { formatMessage } = useLocale()
 
-  console.log('data.insuranceStatus', data.insuranceStatus)
   return (
     <Box marginBottom={4}>
       <HeaderRow>{messages.inspectionTitle}</HeaderRow>
