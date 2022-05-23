@@ -1,5 +1,5 @@
 export { BoostChatPanel } from './BoostChatPanel'
-export { boostChatPanelEndpoints, config } from './BoostChatPanel/config'
+export { boostChatPanelEndpoints } from './BoostChatPanel/config'
 export { LiveChatIncChatPanel } from './LiveChatIncChatPanel'
 export { WatsonChatPanel } from './WatsonChatPanel'
 export {
