@@ -5,4 +5,8 @@ bootstrap({
   name: 'judicial-system',
   appDir: 'apps/judicial-system/web',
   proxyConfig,
+  externalEndpointDependencies: (nextConfig) => {
+    const { graphqlEndpoint, apiUrl } = nextConfig.serverRuntimeConfig
+    return [graphqlEndpoint, apiUrl]
+  },
 })
