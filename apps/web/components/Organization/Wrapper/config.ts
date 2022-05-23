@@ -1,4 +1,6 @@
-export const watsonConfig = {
+import { WatsonChatPanelProps } from '../../ChatPanel'
+
+export const watsonConfig: Record<string, WatsonChatPanelProps> = {
   // District Commissioners (Sýslumenn) - Organization
   // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/kENblMMMvZ3DlyXw1dwxQ
   kENblMMMvZ3DlyXw1dwxQ: {
@@ -7,9 +9,6 @@ export const watsonConfig = {
     serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
     showLauncher: false,
     carbonTheme: 'g10',
-    cssVariables: {
-      'BASE-font-family': '"IBM Plex Sans", "Open Sans", Arial, sans-serif',
-    },
     namespaceKey: 'default',
   },
 
@@ -21,9 +20,6 @@ export const watsonConfig = {
     serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
     showLauncher: false,
     carbonTheme: 'g10',
-    cssVariables: {
-      'BASE-font-family': '"IBM Plex Sans", "Open Sans", Arial, sans-serif',
-    },
     namespaceKey: 'default',
   },
 }
