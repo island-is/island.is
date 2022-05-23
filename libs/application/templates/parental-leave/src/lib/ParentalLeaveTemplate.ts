@@ -220,7 +220,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       },
       [States.OTHER_PARENT_ACTION]: {
         entry: [
-          'removePeriodsOnSpouseRejection'
+          'removePeriodsOrAllowanceOnSpouseRejection'
         ],
         meta: {
           name: States.OTHER_PARENT_ACTION,
@@ -902,7 +902,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
         return context
       }),
-      removePeriodsOnSpouseRejection: assign((context) => {
+      removePeriodsOrAllowanceOnSpouseRejection: assign((context) => {
         const { application } = context
 
         const answers = getApplicationAnswers(application.answers)
@@ -911,6 +911,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           unset(application.answers, 'periods')
           unset(application.answers, 'validatedPeriods')
           unset(application.answers, 'requestRights')
+        }
+
+        if(answers.usePersonalAllowanceFromSpouse === YES) {
+          set(application.answers, 'personalAllowanceFromSpouse.usage', "0")
+          set(application.answers, 'personalAllowanceFromSpouse.useAsMuchAsPossible', NO)
         }
 
         return context
