@@ -81,6 +81,10 @@ export type ServicePortalRoute = {
    */
   navHide?: boolean
   /**
+   * Dynamic routes that might have a slow response time will be loaded after inital routes.
+   */
+  dynamic?: boolean
+  /**
    * The render value of this component
    */
   render?: (props: ServicePortalModuleProps) => ServicePortalModuleRenderValue
@@ -142,12 +146,6 @@ export interface ServicePortalModule {
    * the logged in user is a company SSN only the company routes will be rendered.
    */
   companyRoutes?: (props: ServicePortalModuleProps) => ServicePortalRoute[]
-  /**
-   * Dynamic routes that might have a slow response time will be loaded after inital routes.
-   */
-  dynamicRoutes?: (
-    props: ServicePortalModuleProps,
-  ) => Promise<ServicePortalRoute[]>
   /**
    * Global components will always be rendered by default
    * These are usually utility components that prompt the user about certain

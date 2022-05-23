@@ -57,7 +57,7 @@ const RouteLoader: FC<{
         <Route
           key={Array.isArray(route.path) ? route.path[0] : route.path}
           path={route.path}
-          component={AccessDenied}
+          render={() => AccessDenied}
         />
       ) : (
         <Route
