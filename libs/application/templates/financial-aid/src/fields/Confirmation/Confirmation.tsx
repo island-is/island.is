@@ -62,13 +62,15 @@ const Confirmation = ({
         {formatMessage(confirmation.nextSteps.title)}
       </Text>
       <Box marginTop={2}>
-        {firstStepText && <DescriptionText text={firstStepText} />}
-        <Box marginTop={2}>
-          <DescriptionText
-            text={confirmation.nextSteps.content}
-            format={{ nextMonth: getNextPeriod.month }}
-          />
-        </Box>
+        <DescriptionText text={confirmation.nextSteps.content} />
+      </Box>
+
+      {firstStepText && <DescriptionText text={firstStepText} />}
+      <Box marginTop={2}>
+        <DescriptionText
+          text={confirmation.nextSteps.content}
+          format={{ nextMonth: getNextPeriod.month }}
+        />
       </Box>
 
       {hasSpouse && (
@@ -99,7 +101,6 @@ const Confirmation = ({
           }}
         />
       </Box>
-
       <Box marginTop={[4, 4, 6]}>
         <ConfirmationSectionImage />
       </Box>

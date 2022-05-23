@@ -21,7 +21,7 @@ describe(`${STEP_SIX_ROUTE}/:id`, () => {
     cy.visit(`${STEP_SIX_ROUTE}/test_id_stadfesta`)
   })
 
-  it('should have a info panel about how to resend a case if the case has been sent', () => {
+  it('should have a info panel about how to resend a case if the case has been received', () => {
     const caseDataAddition: Case = {
       ...caseData,
       state: CaseState.RECEIVED,
