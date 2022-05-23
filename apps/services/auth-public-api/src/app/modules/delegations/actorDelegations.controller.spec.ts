@@ -356,6 +356,28 @@ describe('ActorDelegationsController', () => {
           expect(res.status).toEqual(200)
           expect(res.body).toHaveLength(0)
         })
+
+        it('should return a legal guardian delegation since the type is included in the delegationTypes filter', async () => {
+          // Act
+          const res = await server.get(
+            `${path}${query}&delegationTypes=${DelegationType.Custom}&delegationTypes=${DelegationType.LegalGuardian}`,
+          )
+
+          // Assert
+          expect(res.status).toEqual(200)
+          expect(res.body).toHaveLength(1)
+        })
+
+        it('should not return a legal guardian delegation since the type is not included in the delegationTypes filter', async () => {
+          // Act
+          const res = await server.get(
+            `${path}${query}&delegationTypes=${DelegationType.Custom}`,
+          )
+
+          // Assert
+          expect(res.status).toEqual(200)
+          expect(res.body).toHaveLength(0)
+        })
       })
 
       describe('with procuring delegations', () => {
@@ -394,7 +416,7 @@ describe('ActorDelegationsController', () => {
           expect(res.body[0]).toEqual(expectedDelegation)
         })
 
-        it('should not return delegations when client does not support legal guardian delegations', async () => {
+        it('should not return delegations when client does not support procuring holder delegations', async () => {
           // Arrange
           await clientModel.update(
             { supportsProcuringHolders: false },
@@ -403,6 +425,28 @@ describe('ActorDelegationsController', () => {
 
           // Act
           const res = await server.get(`${path}${query}`)
+
+          // Assert
+          expect(res.status).toEqual(200)
+          expect(res.body).toHaveLength(0)
+        })
+
+        it('should return a procuring holder delegation since the type is included in the delegationTypes filter', async () => {
+          // Act
+          const res = await server.get(
+            `${path}${query}&delegationTypes=${DelegationType.Custom}&delegationTypes=${DelegationType.ProcurationHolder}&delegationTypes=${DelegationType.PersonalRepresentative}`,
+          )
+
+          // Assert
+          expect(res.status).toEqual(200)
+          expect(res.body).toHaveLength(1)
+        })
+
+        it('should not return a procuring holder delegation since the type is not included in the delegationTypes filter', async () => {
+          // Act
+          const res = await server.get(
+            `${path}${query}&delegationTypes=${DelegationType.Custom}&delegationTypes=${DelegationType.LegalGuardian}&delegationTypes=${DelegationType.PersonalRepresentative}`,
+          )
 
           // Assert
           expect(res.status).toEqual(200)
@@ -510,6 +554,28 @@ describe('ActorDelegationsController', () => {
 
           // Act
           const res = await server.get(`${path}${query}`)
+
+          // Assert
+          expect(res.status).toEqual(200)
+          expect(res.body).toHaveLength(0)
+        })
+
+        it('should return a personal representative delegation since the type is included in the delegationTypes filter', async () => {
+          // Act
+          const res = await server.get(
+            `${path}${query}&delegationTypes=${DelegationType.Custom}&delegationTypes=${DelegationType.ProcurationHolder}&delegationTypes=${DelegationType.PersonalRepresentative}`,
+          )
+
+          // Assert
+          expect(res.status).toEqual(200)
+          expect(res.body).toHaveLength(1)
+        })
+
+        it('should not return a personal representative delegation since the type is not included in the delegationTypes filter', async () => {
+          // Act
+          const res = await server.get(
+            `${path}${query}&delegationTypes=${DelegationType.Custom}&delegationTypes=${DelegationType.LegalGuardian}&delegationTypes=${DelegationType.ProcurationHolder}`,
+          )
 
           // Assert
           expect(res.status).toEqual(200)
