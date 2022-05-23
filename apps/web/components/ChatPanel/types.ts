@@ -40,5 +40,3 @@ export type WatsonIntegration =
 export type WatsonServiceInstance =
   // Askur
   'bc3d8312-d862-4750-b8bf-529db282050a'
-
-export type WatsonFont = '"IBM Plex Sans", "Open Sans", Arial, sans-serif'
