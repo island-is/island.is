@@ -240,7 +240,6 @@ export class PersonalRepresentativeService {
         return result
       })
     } catch (err) {
-      console.log(err)
       throw new BadRequestException(
         `Error creating personal representative: ${err}`,
       )
