@@ -53,4 +53,5 @@ export type FlightLegsInput = {
   age?: RangeInput
   gender?: 'kk' | 'kvk' | 'hvk'
   postalCode?: number
+  nationalId?: string
 }

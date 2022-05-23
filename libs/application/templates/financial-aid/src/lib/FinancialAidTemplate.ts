@@ -27,7 +27,7 @@ import {
 } from './utils'
 import { FAApplication } from '..'
 
-type Events = { type: DefaultEvents.SUBMIT }
+type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.EDIT }
 
 const oneMonthLifeCycle = {
   shouldBeListed: true,
@@ -185,9 +185,10 @@ const FinancialAidTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/WaitingForSpouse').then((module) =>
-                  Promise.resolve(module.WaitingForSpouse),
+                import('../forms/ApplicantSubmitted').then((module) =>
+                  Promise.resolve(module.ApplicantSubmitted),
                 ),
+              read: 'all',
             },
           ],
         },
@@ -201,27 +202,30 @@ const FinancialAidTemplate: ApplicationTemplate<
           lifecycle: oneMonthLifeCycle,
           onEntry: {
             apiModuleAction: ApiActions.CREATEAPPLICATION,
+            shouldPersistToExternalData: true,
+            externalDataId: 'veita',
           },
           roles: [
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/Submitted').then((module) =>
-                  Promise.resolve(module.Submitted),
+                import('../forms/ApplicantSubmitted').then((module) =>
+                  Promise.resolve(module.ApplicantSubmitted),
                 ),
-              // TODO: Limit this
               read: 'all',
             },
             {
               id: Roles.SPOUSE,
               formLoader: () =>
-                import('../forms/Submitted').then((module) =>
-                  Promise.resolve(module.Submitted),
+                import('../forms/SpouseSubmitted').then((module) =>
+                  Promise.resolve(module.SpouseSubmitted),
                 ),
-              // TODO: Limit this
               read: 'all',
             },
           ],
+        },
+        on: {
+          EDIT: { target: ApplicationStates.SUBMITTED },
         },
       },
       [ApplicationStates.MUNCIPALITYNOTREGISTERED]: {
