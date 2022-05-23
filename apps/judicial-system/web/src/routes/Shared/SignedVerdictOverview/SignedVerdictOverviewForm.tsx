@@ -412,8 +412,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
                   signatory={workingCase.judge?.name}
                   signingDate={workingCase.rulingDate}
                 />
-                {(user?.role === UserRole.JUDGE ||
-                  user?.role === UserRole.REGISTRAR) && (
+                {user?.role === UserRole.JUDGE && (
                   <Button
                     variant="ghost"
                     data-testid="modifyRulingButton"
