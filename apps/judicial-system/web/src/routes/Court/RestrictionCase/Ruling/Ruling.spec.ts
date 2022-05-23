@@ -8,7 +8,7 @@ import {
   Gender,
 } from '@island.is/judicial-system/types'
 
-import { getConclusionAutofill, getFormButtonLabels } from './Ruling'
+import { getConclusionAutofill } from './Ruling'
 
 describe('getConclusionAutofill', () => {
   const intl = createIntl({ locale: 'is', onError: () => jest.fn() })
