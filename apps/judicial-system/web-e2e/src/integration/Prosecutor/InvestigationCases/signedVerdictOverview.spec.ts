@@ -3,7 +3,7 @@ import { Case } from '@island.is/judicial-system/types'
 
 import { intercept, makeRestrictionCase, makeProsecutor } from '../../../utils'
 
-describe('Signed verdict overview for prosecutors', () => {
+describe('Signed verdict overview - Prosecutor - Investigation cases', () => {
   beforeEach(() => {
     const caseData = makeRestrictionCase()
     const caseDataAddition: Case = {
