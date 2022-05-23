@@ -1,6 +1,10 @@
 'use strict'
 const faker = require('faker')
 
+// Good to have one test user accumulate more than the statistically
+// likely singular flight leg.
+const specific_test_user = faker.phone.phoneNumber('##########')
+
 const pairings = [
   [
     ['REK', 'AEY'],
@@ -64,7 +68,7 @@ module.exports = {
     const flight_legs = []
     for (let i = 0; i < 100; i++) {
       const nationalId =
-        i < 2 ? '0101303019' : faker.phone.phoneNumber('##########')
+        i < 2 ? specific_test_user : faker.phone.phoneNumber('##########')
       const pairingLeg = Math.round(Math.random() * (pairings[0].length - 1))
       const flight = getRandomFlight(nationalId)
       flights.push(flight)
