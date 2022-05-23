@@ -1,9 +1,9 @@
 import {
-  WatsonFont,
   WatsonIntegration,
-  WatsonNamespaceKey,
   WatsonServiceInstance,
-} from '../../ChatPanel'
+  WatsonFont,
+  WatsonNamespaceKey,
+} from '@island.is/web/components'
 
 export const watsonConfig = {
   // District Commissioners (Sýslumenn) - Organization
