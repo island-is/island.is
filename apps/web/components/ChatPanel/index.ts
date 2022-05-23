@@ -2,13 +2,11 @@ export { BoostChatPanel } from './BoostChatPanel'
 export { boostChatPanelEndpoints } from './BoostChatPanel/config'
 export { LiveChatIncChatPanel } from './LiveChatIncChatPanel'
 export { WatsonChatPanel } from './WatsonChatPanel'
-export {
+export type {
   WatsonFont,
   WatsonIntegration,
   WatsonNamespaceKey,
   WatsonServiceInstance,
-} from './types'
-export type {
   BoostChatPanelProps,
   LiveChatIncChatPanelProps,
   WatsonChatPanelProps,
