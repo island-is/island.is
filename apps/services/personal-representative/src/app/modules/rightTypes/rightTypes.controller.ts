@@ -103,7 +103,8 @@ export class RightTypesController {
   /** Removes a right type by it's code, by making it invalid */
   @Delete(':code')
   @Documentation({
-    summary: 'Delete a single right type by code',
+    summary:
+      'Mark a single personal right type invalid by code. Note that the type is not deleted but marked as invalid.',
     response: { status: 204 },
     request: {
       params: {
