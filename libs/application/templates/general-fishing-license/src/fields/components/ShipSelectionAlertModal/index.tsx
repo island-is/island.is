@@ -1,7 +1,8 @@
 import { FishingLicenseUnfulfilledLicense } from '@island.is/api/schema'
 import { Box, Text, ModalBase, Icon } from '@island.is/island-ui/core'
-import React, { FC, useState } from 'react'
-import AnimateHeight from 'react-animate-height'
+import { useLocale } from '@island.is/localization'
+import React, { FC } from 'react'
+import { shipSelection } from '../../../lib/messages'
 import * as styles from './ShipSelectionAlertModal.css'
 import { UnfulfilledLicenseReasons } from './UnfulfilledLicenseReasons'
 
@@ -16,6 +17,7 @@ export const ShipSelectionAlertModal: FC<ShipSelectionAlertModalProps> = ({
   setVisibility,
   unfulfilledLicenses,
 }) => {
+  const { formatMessage } = useLocale()
   const closeModal = () => {
     setVisibility(false)
   }
@@ -35,7 +37,9 @@ export const ShipSelectionAlertModal: FC<ShipSelectionAlertModalProps> = ({
         >
           <Icon icon="close" size="large" />
         </Box>
-        <Text variant="h3">Ekki er hægt að sækja um tiltekin veiðileyfi</Text>
+        <Text variant="h3">
+          {formatMessage(shipSelection.labels.unfulfilledLicensesModalTitle)}
+        </Text>
         {unfulfilledLicenses?.map((license, index) => (
           <UnfulfilledLicenseReasons
             unfulfilledLicense={license}

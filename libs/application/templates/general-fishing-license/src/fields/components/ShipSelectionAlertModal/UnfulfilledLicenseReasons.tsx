@@ -10,7 +10,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import React, { FC, useState } from 'react'
 import AnimateHeight from 'react-animate-height'
-import { fishingLicense } from '../../../lib/messages'
+import { fishingLicense, shipSelection } from '../../../lib/messages'
 
 interface UnfulfilledLicenseReasonsProps {
   unfulfilledLicense: FishingLicenseUnfulfilledLicense
@@ -62,7 +62,9 @@ export const UnfulfilledLicenseReasons: FC<UnfulfilledLicenseReasonsProps> = ({
               iconType="outline"
               onClick={handleExpandClick}
             >
-              Nánar
+              {formatMessage(
+                shipSelection.labels.unfulfilledLicensesModalExpandButton,
+              )}
             </Button>
           </Box>
         }

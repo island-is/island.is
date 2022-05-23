@@ -58,8 +58,6 @@ export const ShipSelection: FC<FieldBaseProps> = ({
     'directoryOfFisheries.data.ships',
   ) as Ship[]
 
-  console.log(ships)
-
   const shipOptions = (ships: Ship[]) => {
     const options = [] as Option[]
     for (const [index, ship] of ships.entries()) {
@@ -73,7 +71,6 @@ export const ShipSelection: FC<FieldBaseProps> = ({
       }
       const isDisabled = ship.doesNotFulfillFishingLicenses
       const isExpired = new Date(ship.seaworthiness.validTo) < new Date()
-      const hasDeprivations = ship.deprivations.length > 0
       const seaworthinessDate = format(
         parseISO(ship.seaworthiness.validTo),
         'dd.MM.yy',
@@ -108,7 +105,9 @@ export const ShipSelection: FC<FieldBaseProps> = ({
                 {ship.unfulfilledLicenses.length > 0 && (
                   <Box>
                     <Button variant="text" onClick={handleShowAlertModal}>
-                      Upplýsingar um ógild veiðileyfi
+                      {formatMessage(
+                        shipSelection.labels.unfulfilledLicensesButton,
+                      )}
                     </Button>
                   </Box>
                 )}
@@ -125,29 +124,6 @@ export const ShipSelection: FC<FieldBaseProps> = ({
                 />
               </Box>
             )}
-            {/* hasDeprivations && (
-              <Box marginTop={2}>
-                <AlertMessage
-                  type="warning"
-                  title={formatMessage(shipSelection.labels.deprivation)}
-                  message={ship.deprivations.map(
-                    ({ explanation, validFrom }, index) => {
-                      return (
-                        <div
-                          key={`${index}-${explanation}`}
-                        >{`${explanation} ${format(
-                          parseISO(validFrom),
-                          'dd.MM.yy',
-                          {
-                            locale: is,
-                          },
-                        )}`}</div>
-                      )
-                    },
-                  )}
-                />
-              </Box>
-                  ) */}
           </>
         ),
         disabled: isDisabled || isExpired,
