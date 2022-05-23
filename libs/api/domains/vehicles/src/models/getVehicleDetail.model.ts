@@ -37,6 +37,24 @@ export class VehiclesAxle {
 }
 
 @ObjectType()
+export class Tyres {
+  @Field(() => String, { nullable: true })
+  tyre1?: string | null // technical -> tyre -> `tyreaxle1`
+
+  @Field(() => String, { nullable: true })
+  tyre2?: string | null // technical -> tyre -> `tyreaxle2`
+
+  @Field(() => String, { nullable: true })
+  tyre3?: string | null // technical -> tyre -> `tyreaxle3`
+
+  @Field(() => String, { nullable: true })
+  tyre4?: string | null // technical -> tyre -> `tyreaxle4`
+
+  @Field(() => String, { nullable: true })
+  tyre5?: string | null // technical -> tyre -> `tyreaxle5`
+}
+
+@ObjectType()
 export class VehiclesBasicInfo {
   @Field(() => String, { nullable: true })
   model?: string | null // make
@@ -196,6 +214,9 @@ export class VehiclesTechnicalInfo {
 
   @Field(() => [VehiclesAxle], { nullable: true })
   axle?: VehiclesAxle[] // smíða
+
+  @Field(() => Tyres, { nullable: true })
+  tyres?: Tyres // smíða
 }
 
 @ObjectType()

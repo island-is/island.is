@@ -106,19 +106,31 @@ const VehicleDetail: ServicePortalModuleComponent = ({ userInfo }) => {
 
         <UserInfoLine
           label={formatMessage(messages.capacity)}
-          content={mainInfo?.cubicCapacity?.toString() + ' cc.'}
+          content={
+            mainInfo?.cubicCapacity
+              ? mainInfo?.cubicCapacity?.toString() + ' cc.'
+              : ''
+          }
           loading={loading}
         />
         <Divider />
         <UserInfoLine
           label={formatMessage(messages.trailerWithBrakes)}
-          content={mainInfo?.trailerWithBrakesWeight?.toString() + ' kg.'}
+          content={
+            mainInfo?.trailerWithBrakesWeight
+              ? mainInfo?.trailerWithBrakesWeight?.toString() + ' kg.'
+              : ''
+          }
           loading={loading}
         />
         <Divider />
         <UserInfoLine
           label={formatMessage(messages.trailerWithoutBrakes)}
-          content={mainInfo?.trailerWithoutBrakesWeight?.toString() + ' kg.'}
+          content={
+            mainInfo?.trailerWithoutBrakesWeight
+              ? mainInfo?.trailerWithoutBrakesWeight?.toString() + ' kg.'
+              : ''
+          }
           loading={loading}
         />
         <Divider />

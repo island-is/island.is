@@ -7,6 +7,7 @@ import {
   BasicVehicleInformationGetRequest,
   BasicVehicleInformationTechnicalMass,
   BasicVehicleInformationTechnicalAxle,
+  BasicVehicleInformationTechnicalTyre,
   PersidnoLookup,
 } from '@island.is/clients/vehicles'
 import { VehiclesAxle, VehiclesDetail } from '../models/getVehicleDetail.model'
@@ -192,6 +193,13 @@ export class VehiclesService {
           carryingCapacity: data.techincal?.mass?.masscapacity,
           axleTotalWeight: axleMaxWeight,
           axle: axles,
+          tyres: {
+            tyre1: data.techincal?.tyre?.tyreaxle1,
+            tyre2: data.techincal?.tyre?.tyreaxle2,
+            tyre3: data.techincal?.tyre?.tyreaxle3,
+            tyre4: data.techincal?.tyre?.tyreaxle4,
+            tyre5: data.techincal?.tyre?.tyreaxle5,
+          },
         },
         ownersInfo:
           data.owners?.map((x) => {

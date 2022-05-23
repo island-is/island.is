@@ -74,6 +74,13 @@ export const GET_USERS_VEHICLE_DETAIL = gql`
           axleMaxWeight
           wheelAxle
         }
+        tyres {
+          tyre1
+          tyre2
+          tyre3
+          tyre4
+          tyre5
+        }
       }
       ownersInfo {
         name
