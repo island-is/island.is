@@ -57,12 +57,12 @@ export const HeadWithSocialSharing: FC<HeadWithSocialSharingProps> = ({
         <>
           <meta
             property="og:image"
-            content={'https:' + imageUrl}
+            content={`${imageUrl.startsWith('//') ? 'https:' : ''}${imageUrl}`}
             key="ogImage"
           />
           <meta
             property="twitter:image"
-            content={'https:' + imageUrl}
+            content={`${imageUrl.startsWith('//') ? 'https:' : ''}${imageUrl}`}
             key="twitterImage"
           />
           <meta
