@@ -61,21 +61,36 @@ describe(`${IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
     cy.get('[name="defenderPhoneNumber"]').should('not.exist')
   })
 
-  it('should allow users to choose if they send COURT_DATE notification', () => {
+  it.only('should autofill form correctly and allow court to confirm court date and send notification', () => {
     const caseData = makeInvestigationCase()
     const caseDataAddition: Case = {
       ...caseData,
       court: makeCourt(),
       requestedCourtDate: '2020-09-16T19:50:08.033Z',
       state: CaseState.RECEIVED,
+      defenderName: 'Test Testesen',
     }
 
     intercept(caseDataAddition)
 
-    cy.get('[name="session-arrangements-all-present"]').click()
-    cy.getByTestid('courtroom').type('1337')
+    cy.wait('@UpdateCaseMutation')
+      .its('response.body.data.updateCase')
+      .should('have.keys', 'sessionArrangements', 'id', '__typename')
+
+    cy.get('[name="session-arrangements-all-present"]').should('be.checked')
+    cy.getByTestid('courtDate-time').should('have.value', '19:50')
+
+    cy.getByTestid('continueButton').should('not.be.disabled')
     cy.getByTestid('continueButton').click()
+    cy.wait('@UpdateCaseMutation')
+      .its('response.body.data.updateCase')
+      .should('have.any.key', 'courtDate')
+
     cy.getByTestid('modal').should('be.visible')
+    cy.getByTestid('modalSecondaryButton').click()
+    cy.wait('@SendNotificationMutation')
+      .its('request.body.variables.input.type')
+      .should('equal', 'COURT_DATE')
   })
 
   it('should navigate to the next step when all input data is valid and the continue button is clicked', () => {
@@ -93,10 +108,6 @@ describe(`${IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
 
     cy.getByTestid('continueButton').should('not.be.disabled')
     cy.getByTestid('continueButton').click()
-    cy.wait('@UpdateCaseMutation')
-      .its('response.body.data.updateCase')
-      .should('have.any.key', 'courtDate')
-
     cy.getByTestid('modalSecondaryButton').click()
     cy.url().should('include', IC_RULING_ROUTE)
   })
