@@ -14,8 +14,8 @@ export interface WatsonChatPanelProps {
   // The region your integration is hosted in.
   region: string
 
-  integrationID: string
-  serviceInstanceID: string
+  integrationID: WatsonIntegration
+  serviceInstanceID: WatsonServiceInstance
   version?: string
   carbonTheme?: string
   cssVariables?: Record<string, string>
@@ -30,19 +30,15 @@ export interface WatsonChatPanelProps {
   showLauncher?: boolean
 }
 
-export enum WatsonIntegration {
-  ASKUR = 'b1a80e76-da12-4333-8872-936b08246eaa',
-  ASKUR_SYSLUMENN = '0c96e8fb-d4dc-420e-97db-18b0f8bb4e3f',
-}
+export type WatsonIntegration =
+  // Askur
+  | 'b1a80e76-da12-4333-8872-936b08246eaa'
 
-export enum WatsonServiceInstance {
-  ASKUR = 'bc3d8312-d862-4750-b8bf-529db282050a',
-}
+  // Askur syslumenn
+  | '0c96e8fb-d4dc-420e-97db-18b0f8bb4e3f'
 
-export enum WatsonNamespaceKey {
-  DEFAULT = 'default',
-}
+export type WatsonServiceInstance =
+  // Askur
+  'bc3d8312-d862-4750-b8bf-529db282050a'
 
-export enum WatsonFont {
-  IBM_PLEX_SANS = '"IBM Plex Sans", "Open Sans", Arial, sans-serif',
-}
+export type WatsonFont = '"IBM Plex Sans", "Open Sans", Arial, sans-serif'

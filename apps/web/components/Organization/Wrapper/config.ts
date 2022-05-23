@@ -1,36 +1,25 @@
-import {
-  WatsonIntegration,
-  WatsonServiceInstance,
-  WatsonFont,
-  WatsonNamespaceKey,
-} from '@island.is/web/components'
+import { WatsonChatPanelProps } from '../../ChatPanel'
 
-export const watsonConfig = {
+export const watsonConfig: Record<string, WatsonChatPanelProps> = {
   // District Commissioners (Sýslumenn) - Organization
   // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/kENblMMMvZ3DlyXw1dwxQ
   kENblMMMvZ3DlyXw1dwxQ: {
-    integrationID: WatsonIntegration.ASKUR_SYSLUMENN,
+    integrationID: '0c96e8fb-d4dc-420e-97db-18b0f8bb4e3f',
     region: 'eu-gb',
-    serviceInstanceID: WatsonServiceInstance.ASKUR,
+    serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
     showLauncher: false,
     carbonTheme: 'g10',
-    cssVariables: {
-      'BASE-font-family': WatsonFont.IBM_PLEX_SANS,
-    },
-    namespaceKey: WatsonNamespaceKey.DEFAULT,
+    namespaceKey: 'default',
   },
 
   // Digital Iceland (Stafrænt Ísland) - Organization
   // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/1JHJe1NDwbBjEr7OVdjuFD
   '1JHJe1NDwbBjEr7OVdjuFD': {
-    integrationID: WatsonIntegration.ASKUR,
+    integrationID: 'b1a80e76-da12-4333-8872-936b08246eaa',
     region: 'eu-gb',
-    serviceInstanceID: WatsonServiceInstance.ASKUR,
+    serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
     showLauncher: false,
     carbonTheme: 'g10',
-    cssVariables: {
-      'BASE-font-family': WatsonFont.IBM_PLEX_SANS,
-    },
-    namespaceKey: WatsonNamespaceKey.DEFAULT,
+    namespaceKey: 'default',
   },
 }

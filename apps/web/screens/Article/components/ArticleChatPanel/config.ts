@@ -1,10 +1,7 @@
 import {
   LiveChatIncChatPanelProps,
   WatsonChatPanelProps,
-  WatsonFont,
   WatsonIntegration,
-  WatsonNamespaceKey,
-  WatsonServiceInstance,
 } from '@island.is/web/components'
 
 export const liveChatIncConfig: Record<string, LiveChatIncChatPanelProps> = {
@@ -38,7 +35,7 @@ interface WatsonPreSendEvent {
 const setupOneScreenWatsonChatBot = (
   instance: WatsonInstance,
   categoryTitle: string,
-  categoryGroup: string,
+  categoryGroup: WatsonIntegration,
 ) => {
   if (sessionStorage.getItem(categoryGroup) !== categoryTitle) {
     sessionStorage.clear()
@@ -62,256 +59,218 @@ export const watsonConfig: Record<string, WatsonChatPanelProps> = {
   // Rafræn skilríki
   // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/4lkmXszsB5q5kJkXqhW5Ex
   '4lkmXszsB5q5kJkXqhW5Ex': {
-    integrationID: WatsonIntegration.ASKUR,
+    integrationID: 'b1a80e76-da12-4333-8872-936b08246eaa',
     region: 'eu-gb',
-    serviceInstanceID: WatsonServiceInstance.ASKUR,
+    serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
     showLauncher: false,
     carbonTheme: 'g10',
-    cssVariables: {
-      'BASE-font-family': WatsonFont.IBM_PLEX_SANS,
-    },
     namespaceKey: 'default',
     onLoad: (instance) =>
       setupOneScreenWatsonChatBot(
         instance,
         'rafraenskilriki',
-        WatsonIntegration.ASKUR,
+        'b1a80e76-da12-4333-8872-936b08246eaa',
       ),
   },
 
   // Loftbrú
   // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/5xLPMSyKQNkP5sG4OelzKc
   '5xLPMSyKQNkP5sG4OelzKc': {
-    integrationID: WatsonIntegration.ASKUR,
+    integrationID: 'b1a80e76-da12-4333-8872-936b08246eaa',
     region: 'eu-gb',
-    serviceInstanceID: WatsonServiceInstance.ASKUR,
+    serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
     showLauncher: false,
     carbonTheme: 'g10',
-    cssVariables: {
-      'BASE-font-family': WatsonFont.IBM_PLEX_SANS,
-    },
-    namespaceKey: WatsonNamespaceKey.DEFAULT,
+    namespaceKey: 'default',
     onLoad: (instance) =>
-      setupOneScreenWatsonChatBot(instance, 'loftbru', WatsonIntegration.ASKUR),
+      setupOneScreenWatsonChatBot(
+        instance,
+        'loftbru',
+        'b1a80e76-da12-4333-8872-936b08246eaa',
+      ),
   },
 
   // Ökuskírteini
   // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/fZxwXvRXLTUgfeiQmoR3l
   fZxwXvRXLTUgfeiQmoR3l: {
-    integrationID: WatsonIntegration.ASKUR,
+    integrationID: 'b1a80e76-da12-4333-8872-936b08246eaa',
     region: 'eu-gb',
-    serviceInstanceID: WatsonServiceInstance.ASKUR,
+    serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
     showLauncher: false,
     carbonTheme: 'g10',
-    cssVariables: {
-      'BASE-font-family': WatsonFont.IBM_PLEX_SANS,
-    },
-    namespaceKey: WatsonNamespaceKey.DEFAULT,
+    namespaceKey: 'default',
     onLoad: (instance) =>
       setupOneScreenWatsonChatBot(
         instance,
         'stafraentokuskirteini',
-        WatsonIntegration.ASKUR,
+        'b1a80e76-da12-4333-8872-936b08246eaa',
       ),
   },
 
   // Íslykill
   // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/3zrd5HMiS59A9UVEoCsAi7
   '3zrd5HMiS59A9UVEoCsAi7': {
-    integrationID: WatsonIntegration.ASKUR,
+    integrationID: 'b1a80e76-da12-4333-8872-936b08246eaa',
     region: 'eu-gb',
-    serviceInstanceID: WatsonServiceInstance.ASKUR,
+    serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
     showLauncher: false,
     carbonTheme: 'g10',
-    cssVariables: {
-      'BASE-font-family': WatsonFont.IBM_PLEX_SANS,
-    },
-    namespaceKey: WatsonNamespaceKey.DEFAULT,
+    namespaceKey: 'default',
     onLoad: (instance) =>
       setupOneScreenWatsonChatBot(
         instance,
         'islykill',
-        WatsonIntegration.ASKUR,
+        'b1a80e76-da12-4333-8872-936b08246eaa',
       ),
   },
 
   // Fæðingarorlof
   // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/59HH2C3hOLYYhFVY4fiX0G
   '59HH2C3hOLYYhFVY4fiX0G': {
-    integrationID: WatsonIntegration.ASKUR,
+    integrationID: 'b1a80e76-da12-4333-8872-936b08246eaa',
     region: 'eu-gb',
-    serviceInstanceID: WatsonServiceInstance.ASKUR,
+    serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
     showLauncher: false,
     carbonTheme: 'g10',
-    cssVariables: {
-      'BASE-font-family': WatsonFont.IBM_PLEX_SANS,
-    },
-    namespaceKey: WatsonNamespaceKey.DEFAULT,
+    namespaceKey: 'default',
     onLoad: (instance) =>
       setupOneScreenWatsonChatBot(
         instance,
         'faedingarorlof',
-        WatsonIntegration.ASKUR,
+        'b1a80e76-da12-4333-8872-936b08246eaa',
       ),
   },
 
   // Um hjónaband
   // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/1ABPqOQMsYrqBu7zyP7itc
   '1ABPqOQMsYrqBu7zyP7itc': {
-    integrationID: WatsonIntegration.ASKUR_SYSLUMENN,
+    integrationID: '0c96e8fb-d4dc-420e-97db-18b0f8bb4e3f',
     region: 'eu-gb',
-    serviceInstanceID: WatsonServiceInstance.ASKUR,
+    serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
     showLauncher: false,
     carbonTheme: 'g10',
-    cssVariables: {
-      'BASE-font-family': WatsonFont.IBM_PLEX_SANS,
-    },
-    namespaceKey: WatsonNamespaceKey.DEFAULT,
+    namespaceKey: 'default',
     onLoad: (instance) =>
       setupOneScreenWatsonChatBot(
         instance,
         'hjonaband',
-        WatsonIntegration.ASKUR_SYSLUMENN,
+        '0c96e8fb-d4dc-420e-97db-18b0f8bb4e3f',
       ),
   },
   // Skilnaður
   // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/73z3JiTrAuOQgPlsVfqD1V
   '73z3JiTrAuOQgPlsVfqD1V': {
-    integrationID: WatsonIntegration.ASKUR_SYSLUMENN,
+    integrationID: '0c96e8fb-d4dc-420e-97db-18b0f8bb4e3f',
     region: 'eu-gb',
-    serviceInstanceID: WatsonServiceInstance.ASKUR,
+    serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
     showLauncher: false,
     carbonTheme: 'g10',
-    cssVariables: {
-      'BASE-font-family': WatsonFont.IBM_PLEX_SANS,
-    },
-    namespaceKey: WatsonNamespaceKey.DEFAULT,
+    namespaceKey: 'default',
     onLoad: (instance) =>
       setupOneScreenWatsonChatBot(
         instance,
         'skilnadur',
-        WatsonIntegration.ASKUR_SYSLUMENN,
+        '0c96e8fb-d4dc-420e-97db-18b0f8bb4e3f',
       ),
   },
   // Endurnýjun ökuskírteina
   // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/1vYhvJKy4TqxkAtPDIhaPx
   '1vYhvJKy4TqxkAtPDIhaPx': {
-    integrationID: WatsonIntegration.ASKUR_SYSLUMENN,
+    integrationID: '0c96e8fb-d4dc-420e-97db-18b0f8bb4e3f',
     region: 'eu-gb',
-    serviceInstanceID: WatsonServiceInstance.ASKUR,
+    serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
     showLauncher: false,
     carbonTheme: 'g10',
-    cssVariables: {
-      'BASE-font-family': WatsonFont.IBM_PLEX_SANS,
-    },
-    namespaceKey: WatsonNamespaceKey.DEFAULT,
+    namespaceKey: 'default',
     onLoad: (instance) =>
       setupOneScreenWatsonChatBot(
         instance,
         'endokuskirteini',
-        WatsonIntegration.ASKUR_SYSLUMENN,
+        '0c96e8fb-d4dc-420e-97db-18b0f8bb4e3f',
       ),
   },
   // Þinglýsing skjala
   // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/2evftN0gIe78zSEYLMB0aX
   '2evftN0gIe78zSEYLMB0aX': {
-    integrationID: WatsonIntegration.ASKUR_SYSLUMENN,
+    integrationID: '0c96e8fb-d4dc-420e-97db-18b0f8bb4e3f',
     region: 'eu-gb',
-    serviceInstanceID: WatsonServiceInstance.ASKUR,
+    serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
     showLauncher: false,
     carbonTheme: 'g10',
-    cssVariables: {
-      'BASE-font-family': WatsonFont.IBM_PLEX_SANS,
-    },
-    namespaceKey: WatsonNamespaceKey.DEFAULT,
+    namespaceKey: 'default',
     onLoad: (instance) =>
       setupOneScreenWatsonChatBot(
         instance,
         'thinglysing',
-        WatsonIntegration.ASKUR_SYSLUMENN,
+        '0c96e8fb-d4dc-420e-97db-18b0f8bb4e3f',
       ),
   },
   // Vegabréf, almennar upplýsingar
   // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/7Egh4yMfC48dDgceeBrWSB
   '7Egh4yMfC48dDgceeBrWSB': {
-    integrationID: WatsonIntegration.ASKUR_SYSLUMENN,
+    integrationID: '0c96e8fb-d4dc-420e-97db-18b0f8bb4e3f',
     region: 'eu-gb',
-    serviceInstanceID: WatsonServiceInstance.ASKUR,
+    serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
     showLauncher: false,
     carbonTheme: 'g10',
-    cssVariables: {
-      'BASE-font-family': WatsonFont.IBM_PLEX_SANS,
-    },
-    namespaceKey: WatsonNamespaceKey.DEFAULT,
+    namespaceKey: 'default',
     onLoad: (instance) =>
       setupOneScreenWatsonChatBot(
         instance,
         'vegabref',
-        WatsonIntegration.ASKUR_SYSLUMENN,
+        '0c96e8fb-d4dc-420e-97db-18b0f8bb4e3f',
       ),
   },
   // Sakavottorð til einstaklinga
   // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/gzKeBtRl57SzRmgUzHR3u
   gzKeBtRl57SzRmgUzHR3u: {
-    integrationID: WatsonIntegration.ASKUR_SYSLUMENN,
+    integrationID: '0c96e8fb-d4dc-420e-97db-18b0f8bb4e3f',
     region: 'eu-gb',
-    serviceInstanceID: WatsonServiceInstance.ASKUR,
+    serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
     showLauncher: false,
     carbonTheme: 'g10',
-    cssVariables: {
-      'BASE-font-family': WatsonFont.IBM_PLEX_SANS,
-    },
-    namespaceKey: WatsonNamespaceKey.DEFAULT,
+    namespaceKey: 'default',
     onLoad: (instance) =>
       setupOneScreenWatsonChatBot(
         instance,
         'sakavottord',
-        WatsonIntegration.ASKUR_SYSLUMENN,
+        '0c96e8fb-d4dc-420e-97db-18b0f8bb4e3f',
       ),
   },
   // Erfðamál, upplýsingar um réttindi og skyldur erfingja
   // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/2YsIiF44ECgUUlPkr9SqOh
   '2YsIiF44ECgUUlPkr9SqOh': {
-    integrationID: WatsonIntegration.ASKUR_SYSLUMENN,
+    integrationID: '0c96e8fb-d4dc-420e-97db-18b0f8bb4e3f',
     region: 'eu-gb',
-    serviceInstanceID: WatsonServiceInstance.ASKUR,
+    serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
     showLauncher: false,
     carbonTheme: 'g10',
-    cssVariables: {
-      'BASE-font-family': WatsonFont.IBM_PLEX_SANS,
-    },
-    namespaceKey: WatsonNamespaceKey.DEFAULT,
+    namespaceKey: 'default',
     onLoad: (instance) =>
       setupOneScreenWatsonChatBot(
         instance,
         'erfdamal',
-        WatsonIntegration.ASKUR_SYSLUMENN,
+        '0c96e8fb-d4dc-420e-97db-18b0f8bb4e3f',
       ),
   },
 
   // Sýslumenn - Organization
   // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/kENblMMMvZ3DlyXw1dwxQ
   kENblMMMvZ3DlyXw1dwxQ: {
-    integrationID: WatsonIntegration.ASKUR_SYSLUMENN,
+    integrationID: '0c96e8fb-d4dc-420e-97db-18b0f8bb4e3f',
     region: 'eu-gb',
-    serviceInstanceID: WatsonServiceInstance.ASKUR,
+    serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
     showLauncher: false,
     carbonTheme: 'g10',
-    cssVariables: {
-      'BASE-font-family': WatsonFont.IBM_PLEX_SANS,
-    },
-    namespaceKey: WatsonNamespaceKey.DEFAULT,
+    namespaceKey: 'default',
   },
 }
 
 export const defaultWatsonConfig: WatsonChatPanelProps = {
-  integrationID: WatsonIntegration.ASKUR,
+  integrationID: 'b1a80e76-da12-4333-8872-936b08246eaa',
   region: 'eu-gb',
-  serviceInstanceID: WatsonServiceInstance.ASKUR,
+  serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
   showLauncher: false,
   carbonTheme: 'g10',
-  cssVariables: {
-    'BASE-font-family': WatsonFont.IBM_PLEX_SANS,
-  },
-  namespaceKey: WatsonNamespaceKey.DEFAULT,
+  namespaceKey: 'default',
 }
