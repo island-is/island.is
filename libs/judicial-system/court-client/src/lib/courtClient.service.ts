@@ -57,7 +57,7 @@ type CreateThingbokArgs = Omit<CreateThingbokRequest, 'authenticationToken'>
 
 type CreateEmailArgs = Omit<CreateEmailData, 'authenticationToken'>
 
-interface CourtClientServiceOptions {
+interface CourtsCredentials {
   [key: string]: AuthenticateRequest
 }
 
@@ -71,8 +71,7 @@ export class CourtClientService {
   private readonly createThingbokApi: CreateThingbokApi
   private readonly createEmailApi: CreateEmailApi
   private readonly uploadStreamApi: UploadStreamApi
-
-  private readonly options: CourtClientServiceOptions
+  private readonly options: CourtsCredentials
   private readonly authenticationToken: { [key: string]: string } = {}
 
   constructor(

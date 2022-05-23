@@ -17,7 +17,11 @@ import {
   useCourtUpload,
 } from '@island.is/judicial-system-web/src/utils/hooks/useCourtUpload'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { titles, ruling } from '@island.is/judicial-system-web/messages'
+import {
+  titles,
+  ruling,
+  rcCourtOverview,
+} from '@island.is/judicial-system-web/messages'
 import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import * as Constants from '@island.is/judicial-system/consts'
@@ -83,6 +87,7 @@ export const JudgeOverview: React.FC = () => {
           previousUrl={`${Constants.RECEPTION_AND_ASSIGNMENT_ROUTE}/${id}`}
           nextUrl={`${Constants.HEARING_ARRANGEMENTS_ROUTE}/${id}`}
           nextIsDisabled={uploadState === UploadState.UPLOADING}
+          nextButtonText={formatMessage(rcCourtOverview.continueButton.label)}
         />
       </FormContentContainer>
     </PageLayout>

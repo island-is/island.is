@@ -5,7 +5,15 @@ import { UserDropdownItem } from './UserDropdownItem'
 import { m } from '@island.is/service-portal/core'
 import { Features, useFeatureFlag } from '@island.is/react/feature-flags'
 
-export const UserProfileInfo = ({ onClick }: { onClick: () => void }) => {
+interface UserProfileInfoProps {
+  onClick: () => void
+  isCompany?: boolean
+}
+
+export const UserProfileInfo = ({
+  onClick,
+  isCompany,
+}: UserProfileInfoProps) => {
   const { formatMessage } = useLocale()
   const origin = window.location.origin
   const baseUrl = `${origin}/minarsidur/stillingar`
@@ -36,7 +44,7 @@ export const UserProfileInfo = ({ onClick }: { onClick: () => void }) => {
           />
         </Box>
       )}
-      {showDelegations && (
+      {showDelegations && !isCompany && (
         <Box>
           <UserDropdownItem
             text={formatMessage(m.accessControl)}

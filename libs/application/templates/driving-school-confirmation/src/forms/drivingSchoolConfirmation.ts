@@ -50,17 +50,10 @@ export const getDrivingSchoolConfirmation = (): Form => {
         id: 'studentsInfoSection',
         title: m.studentInfoTitle,
         children: [
-          buildMultiField({
-            id: 'studentsInfo',
+          buildCustomField({
+            id: 'student',
             title: m.studentInfoTitle,
-            description: m.studentInfoSubtitle,
-            children: [
-              buildCustomField({
-                id: 'student',
-                title: '',
-                component: 'NationalIdwithName',
-              }),
-            ],
+            component: 'NationalIdwithName',
           }),
         ],
       }),

@@ -29,6 +29,7 @@ export interface SignedUrl {
 
 export interface CreateFilesResponse {
   success: boolean
+  files?: ApplicationFile[]
 }
 
 export interface Staff {
@@ -262,7 +263,7 @@ export interface DirectTaxPayment {
   withheldAtSource: number
   month: number
   year: number
-  userType?: UserType
+  userType: UserType
 }
 
 export interface Application {
