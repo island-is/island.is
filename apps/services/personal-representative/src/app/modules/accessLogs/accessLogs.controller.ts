@@ -35,7 +35,7 @@ export class AccessLogsController {
     },
   })
   @Audit<PaginatedPersonalRepresentativeAccessDto>({
-    resources: (pgData) => pgData.data.map((access) => access.id),
+    resources: (pgData) => pgData.data.map((access) => access.id ?? ''),
   })
   async getAll(
     @Query() query: PaginationWithNationalIdsDto,

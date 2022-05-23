@@ -103,7 +103,7 @@ describe(`${IC_OVERVIEW_ROUTE}/:id`, () => {
     cy.getByTestid('inputErrorMessage').should('not.exist')
   })
 
-  it.only('should upload files to court', () => {
+  it('should upload files to court', () => {
     cy.get('button[aria-controls="caseFilesAccordionItem"]').click()
     cy.getByTestid('upload-to-court-button').click()
 

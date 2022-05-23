@@ -32,7 +32,6 @@ const HearingArrangements = () => {
     if (isCaseUpToDate && !initialAutoFillDone) {
       autofill(
         [
-          { key: 'courtDate', value: workingCase.requestedCourtDate },
           {
             key: 'sessionArrangements',
             value: workingCase.defenderName
