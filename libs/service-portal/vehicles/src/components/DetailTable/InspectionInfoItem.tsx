@@ -4,13 +4,17 @@ import Column from './Column'
 import Row from './Row'
 import { Box } from '@island.is/island-ui/core'
 import { VehiclesInspectionInfo } from '@island.is/api/schema'
+import { useLocale } from '@island.is/localization'
 import { messages } from '../../lib/messages'
+import { amountFormat } from '@island.is/service-portal/core'
 
 interface PropTypes {
   data: VehiclesInspectionInfo
 }
 
 const InspectionInfoItem = ({ data }: PropTypes) => {
+  const { formatMessage } = useLocale()
+
   return (
     <Box marginBottom={4}>
       <HeaderRow>{messages.inspectionTitle}</HeaderRow>
@@ -27,20 +31,21 @@ const InspectionInfoItem = ({ data }: PropTypes) => {
         <Column label={messages.plateStatus} value={data.plateStatus} />
       </Row>
       <Row>
-        <Column label={messages.vehicleFee} value={null} />
+        <Column
+          label={messages.vehicleFee}
+          value={
+            data.carTax && data.carTax > 0 ? amountFormat(data.carTax) : ''
+          }
+        />
 
         <Column
           label={messages.insured}
           value={
-            null
-            // ? {
-            //     id: 'sp.vehicles:insp-insured-yes',
-            //     defaultMessage: 'Já',
-            //   })
-            // : {
-            //     id: 'sp.vehicles:insp-insured-no',
-            //     defaultMessage: 'Nei',
-            //   })
+            data.insuranceStatus === true
+              ? formatMessage(messages.yes)
+              : data.insuranceStatus === false
+              ? formatMessage(messages.no)
+              : ''
           }
         />
       </Row>
@@ -61,11 +66,22 @@ const InspectionInfoItem = ({ data }: PropTypes) => {
         />
       </Row>
       <Row>
-        <Column label={messages.mortages} value={null} />
-        <Column label={messages.negligence} value={null} />
-      </Row>
-      <Row>
-        <Column label={messages.plateLocation} value={null} />
+        <Column
+          label={messages.mortages}
+          value={
+            data.mortages && data.mortages > 0
+              ? amountFormat(data.mortages)
+              : ''
+          }
+        />
+        <Column
+          label={messages.negligence}
+          value={
+            data.inspectionFine && data.inspectionFine > 0
+              ? amountFormat(data.inspectionFine)
+              : ''
+          }
+        />
       </Row>
     </Box>
   )
