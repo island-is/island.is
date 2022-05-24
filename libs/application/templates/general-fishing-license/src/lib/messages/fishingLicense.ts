@@ -66,14 +66,14 @@ export const fishingLicense = {
       id:
         'gfl.application:fishingLicense.warningMessageDescription.hookCatchLimit',
       defaultMessage:
-        'Sjáðu ástæður fyrir því að ekki sé hægt að sækja um veiðileyfi með krókaaflamarki',
+        'Sjáðu ástæður fyrir því að ekki er hægt að sækja um veiðileyfi með krókaaflamarki',
       description:
         'Fishing license warning message description for hook catch limit',
     },
     catchMark: {
       id: 'gfl.application:fishingLicense.warningMessageDescription.catchMark',
       defaultMessage:
-        'Sjáðu ástæður fyrir því að ekki sé hægt að sækja um veiðileyfi með aflamarki',
+        'Sjáðu ástæður fyrir því að ekki er hægt að sækja um veiðileyfi með aflamarki',
       description: 'Fishing license warning message description for catch mark',
     },
   }),
