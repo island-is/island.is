@@ -219,9 +219,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.OTHER_PARENT_ACTION]: {
-        entry: [
-          'removePeriodsOrAllowanceOnSpouseRejection'
-        ],
+        entry: ['removePeriodsOrAllowanceOnSpouseRejection'],
         meta: {
           name: States.OTHER_PARENT_ACTION,
           actionCard: {
@@ -760,11 +758,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         const { application } = context
 
         const answers = getApplicationAnswers(application.answers)
-        
+
         if (answers.useUnion === NO && answers.union !== NO_UNION) {
           set(application.answers, 'payments.union', NO_UNION)
         }
-        
+
         return context
       }),
       setPersonalUsageToHundredIfUseAsMuchAsPossibleIsYes: assign((context) => {
@@ -907,15 +905,19 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
         const answers = getApplicationAnswers(application.answers)
 
-        if(answers.requestDays > 0) { 
+        if (answers.requestDays > 0) {
           unset(application.answers, 'periods')
           unset(application.answers, 'validatedPeriods')
           unset(application.answers, 'requestRights')
         }
 
-        if(answers.usePersonalAllowanceFromSpouse === YES) {
-          set(application.answers, 'personalAllowanceFromSpouse.usage', "0")
-          set(application.answers, 'personalAllowanceFromSpouse.useAsMuchAsPossible', NO)
+        if (answers.usePersonalAllowanceFromSpouse === YES) {
+          set(application.answers, 'personalAllowanceFromSpouse.usage', '0')
+          set(
+            application.answers,
+            'personalAllowanceFromSpouse.useAsMuchAsPossible',
+            NO,
+          )
         }
 
         return context
