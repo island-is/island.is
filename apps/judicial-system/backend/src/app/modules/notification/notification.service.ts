@@ -791,30 +791,29 @@ export class NotificationService {
       courtCaseNumber: theCase.courtCaseNumber,
       caseType: theCase.type,
     })
-    const html = `${
-      theCase.isCustodyIsolation
-        ? this.formatMessage(notifications.modified.isolationHtml, {
-            caseType: theCase.type,
-            actorInstitution: user.institution?.name,
-            actorName: user.name,
-            actorTitle: user.title,
-            courtCaseNumber: theCase.courtCaseNumber,
-            linkStart: `<a href="${environment.deepLinks.completedCaseOverviewUrl}${theCase.id}">`,
-            linkEnd: '</a>',
-            validToDate: formatDate(theCase.validToDate, 'PPPp'),
-            isolationToDate: formatDate(theCase.isolationToDate, 'PPPp'),
-          })
-        : this.formatMessage(notifications.modified.html, {
-            caseType: theCase.type,
-            actorInstitution: user.institution?.name,
-            actorName: user.name,
-            actorTitle: user.title,
-            courtCaseNumber: theCase.courtCaseNumber,
-            linkStart: `<a href="${environment.deepLinks.completedCaseOverviewUrl}${theCase.id}">`,
-            linkEnd: '</a>',
-            validToDate: formatDate(theCase.validToDate, 'PPPp'),
-          })
-    }`
+    const html = theCase.isCustodyIsolation
+      ? this.formatMessage(notifications.modified.isolationHtml, {
+          caseType: theCase.type,
+          actorInstitution: user.institution?.name,
+          actorName: user.name,
+          actorTitle: user.title,
+          courtCaseNumber: theCase.courtCaseNumber,
+          linkStart: `<a href="${environment.deepLinks.completedCaseOverviewUrl}${theCase.id}">`,
+          linkEnd: '</a>',
+          validToDate: formatDate(theCase.validToDate, 'PPPp'),
+          isolationToDate: formatDate(theCase.isolationToDate, 'PPPp'),
+        })
+      : this.formatMessage(notifications.modified.html, {
+          caseType: theCase.type,
+          actorInstitution: user.institution?.name,
+          actorName: user.name,
+          actorTitle: user.title,
+          courtCaseNumber: theCase.courtCaseNumber,
+          linkStart: `<a href="${environment.deepLinks.completedCaseOverviewUrl}${theCase.id}">`,
+          linkEnd: '</a>',
+          validToDate: formatDate(theCase.validToDate, 'PPPp'),
+        })
+
     const custodyNoticePdf = await getCustodyNoticePdfAsString(
       theCase,
       this.formatMessage,
