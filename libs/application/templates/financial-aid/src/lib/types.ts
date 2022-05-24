@@ -3,7 +3,6 @@ import {
   DirectTaxPayment,
   Municipality,
   PersonalTaxReturn,
-  UserType,
 } from '@island.is/financial-aid/shared/lib'
 import { UploadFile } from '@island.is/island-ui/core'
 import { answersSchema } from './dataSchema'
@@ -93,7 +92,7 @@ export interface TaxData {
 }
 
 export interface CurrentApplication {
-  currentApplicationId?: string
+  currentApplicationId: string
 }
 
 export interface Address {

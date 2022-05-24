@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-namespace */
 // ***********************************************************
 // This example support/index.js is processed and
 // loaded automatically before your test files.
@@ -13,7 +14,11 @@
 // https://on.cypress.io/configuration
 // ***********************************************************
 
-// Import commands.js using ES2015 syntax:
+// load type definitions that come with Cypress module
+/// <reference types="cypress" />
+
+import { UserRole } from '@island.is/judicial-system/types'
+
 import './commands'
 
 Cypress.on('uncaught:exception', () => {
@@ -21,3 +26,33 @@ Cypress.on('uncaught:exception', () => {
   // failing the test
   return false
 })
+
+declare global {
+  namespace Cypress {
+    interface Chainable {
+      /**
+       * Custom command to stub responses from the API
+       * @example cy.stubAPIResponses()
+       */
+      stubAPIResponses(): Chainable<Element>
+
+      /**
+       * Custom command to get by test-id
+       * @example cy.getByTestid('some-testid')
+       */
+      getByTestid(selector: string): Chainable<Element>
+
+      /**
+       * Custom command to set the csfr token. This authenticates a user
+       * @example cy.login()
+       */
+      login(userRole?: UserRole): Chainable<Element>
+
+      /**
+       * Custom command to click outside a selected element
+       * @example cy.clickOutside()
+       */
+      clickOutside(): Chainable<Element>
+    }
+  }
+}

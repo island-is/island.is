@@ -4,14 +4,14 @@ import { Case, CaseState, Defendant } from '@island.is/judicial-system/types'
 import { STEP_SIX_ROUTE } from '@island.is/judicial-system/consts'
 
 import {
-  makeCustodyCase,
+  makeRestrictionCase,
   makeCourt,
   makeProsecutor,
   intercept,
 } from '../../../utils'
 
 describe(`${STEP_SIX_ROUTE}/:id`, () => {
-  const caseData = makeCustodyCase()
+  const caseData = makeRestrictionCase()
   const defenderName = faker.name.findName()
   const defenderEmail = faker.internet.email()
   const defenderPhoneNumber = faker.phone.phoneNumber()
@@ -21,7 +21,7 @@ describe(`${STEP_SIX_ROUTE}/:id`, () => {
     cy.visit(`${STEP_SIX_ROUTE}/test_id_stadfesta`)
   })
 
-  it('should have a info panel about how to resend a case if the case has been sent', () => {
+  it('should have a info panel about how to resend a case if the case has been received', () => {
     const caseDataAddition: Case = {
       ...caseData,
       state: CaseState.RECEIVED,

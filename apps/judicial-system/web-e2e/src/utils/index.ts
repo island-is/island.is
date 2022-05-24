@@ -41,21 +41,26 @@ export const intercept = (res: Case) => {
           },
         },
       })
-    }
-  })
-}
-
-export const interceptUpdateCase = () => {
-  cy.intercept('POST', '**/api/graphql', (req) => {
-    if (hasOperationName(req, 'UpdateCaseMutation')) {
+    } else if (hasOperationName(req, 'UpdateCaseMutation')) {
       const { body } = req
+      req.alias = 'UpdateCaseMutation'
       req.reply({
         data: {
           updateCase: { ...body.variables?.input, __typename: 'Case' },
         },
       })
+    } else if (hasOperationName(req, 'SendNotificationMutation')) {
+      req.alias = 'SendNotificationMutation'
+      req.reply({
+        data: {
+          sendNotification: {
+            notificationSent: true,
+            __typename: 'SendNotificationResponse',
+          },
+        },
+      })
     }
-  }).as('UpdateCaseMutation')
+  })
 }
 
 export const hasOperationName = (
@@ -91,7 +96,7 @@ export const aliasMutation = (
 export const investigationCaseAccusedName = `${faker.name.firstName()} ${faker.name.lastName()}`
 export const investigationCaseAccusedAddress = faker.address.streetAddress()
 
-export const makeCustodyCase = (): Case => {
+export const makeRestrictionCase = (): Case => {
   return {
     id: 'test_id',
     created: '2020-09-16T19:50:08.033Z',

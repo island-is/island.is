@@ -350,7 +350,7 @@
             "main": "apps/air-discount-scheme/web/server.ts",
             "tsConfig": "apps/air-discount-scheme/web/tsconfig.json",
             "maxWorkers": 2,
-            "assets": ["apps/air-discount-scheme/web/next-modules"]
+            "assets": []
           },
           "configurations": {
             "production": {
@@ -3207,7 +3207,7 @@
             "main": "apps/auth-admin-web/server.ts",
             "tsConfig": "apps/auth-admin-web/tsconfig.json",
             "maxWorkers": 2,
-            "assets": ["apps/auth-admin-web/next-modules"]
+            "assets": []
           },
           "configurations": {
             "production": {
@@ -4222,7 +4222,9 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
-              "yarn openapi-generator -o libs/clients/vehicles/gen/fetch -i libs/clients/vehicles/src/clientConfig.json"
+              "yarn openapi-generator -o libs/clients/vehicles/gen/fetch -i libs/clients/vehicles/src/clientConfig.json",
+              "jq '.components.schemas.ProblemDetails.additionalProperties = false' libs/clients/vehicles/src/clientConfig.json > _.tmp && mv _.tmp libs/clients/vehicles/src/clientConfig.json",
+              "prettier --write libs/clients/vehicles/src/clientConfig.json"
             ]
           }
         }
@@ -5007,7 +5009,7 @@
             "main": "apps/financial-aid/web-osk/server.ts",
             "tsConfig": "apps/financial-aid/web-osk/tsconfig.json",
             "maxWorkers": 2,
-            "assets": ["apps/financial-aid/web-osk/next-modules"]
+            "assets": []
           },
           "configurations": {
             "production": {
@@ -5140,7 +5142,7 @@
             "main": "apps/financial-aid/web-veita/server.ts",
             "tsConfig": "apps/financial-aid/web-veita/tsconfig.json",
             "maxWorkers": 2,
-            "assets": ["apps/financial-aid/web-veita/next-modules"]
+            "assets": []
           },
           "configurations": {
             "production": {
@@ -6185,7 +6187,7 @@
             "main": "apps/judicial-system/web/server.ts",
             "tsConfig": "apps/judicial-system/web/tsconfig.json",
             "maxWorkers": 2,
-            "assets": ["apps/judicial-system/web/next-modules"]
+            "assets": []
           },
           "configurations": {
             "production": {
@@ -9134,7 +9136,7 @@
             "main": "apps/skilavottord/web/server.ts",
             "tsConfig": "apps/skilavottord/web/tsconfig.json",
             "maxWorkers": 2,
-            "assets": ["apps/skilavottord/web/next-modules"]
+            "assets": []
           },
           "configurations": {
             "production": {
@@ -9482,7 +9484,7 @@
             "main": "apps/web/server.ts",
             "tsConfig": "apps/web/tsconfig.json",
             "maxWorkers": 2,
-            "assets": ["apps/web/next-modules"]
+            "assets": []
           },
           "configurations": {
             "production": {

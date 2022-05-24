@@ -14,7 +14,6 @@ export class VeitaProvider extends BasicDataProvider {
           municipalitiesFinancialAidCurrentApplication
         }
       `
-
     return this.useGraphqlGateway<CurrentApplication>(query)
       .then(async (res: Response) => {
         const response = await res.json()
@@ -24,7 +23,9 @@ export class VeitaProvider extends BasicDataProvider {
         const returnObject =
           response.data.municipalitiesFinancialAidCurrentApplication
 
-        return Promise.resolve({ currentApplicationId: returnObject })
+        return Promise.resolve({
+          currentApplicationId: returnObject,
+        })
       })
       .catch((error) => {
         return this.handleError(error)
