@@ -5,6 +5,7 @@ import {
   caseTypes,
   getSupportedCaseCustodyRestrictions,
   enumerate,
+  capitalize,
 } from '@island.is/judicial-system/formatters'
 import type { FormatMessage } from '@island.is/cms-translations'
 import {
@@ -545,4 +546,15 @@ export function formatCustodyRestrictions(
     restrictions: formatedRestrictions,
     caseType: caseType,
   })
+}
+
+export function formatRulingModifiedHistory(
+  rulingModifiedHistory: string | undefined,
+  newRulingDate: Date,
+  judgeName?: string,
+  judgeTitle?: string,
+): string {
+  const history = rulingModifiedHistory ? `${rulingModifiedHistory}\n\n` : ''
+  const dateFormated = capitalize(formatDate(newRulingDate, 'PPPPp') || '')
+  return `${history}${dateFormated} - ${judgeName} ${judgeTitle}`
 }
