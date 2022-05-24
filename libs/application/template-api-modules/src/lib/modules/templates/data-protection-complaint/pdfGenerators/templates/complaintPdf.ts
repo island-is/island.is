@@ -102,7 +102,6 @@ function dpcApplicationPdf(
           : c,
         doc,
         PdfConstants.NORMAL_FONT,
-        PdfConstants.NORMAL_LINE_GAP,
       )
     })
 
