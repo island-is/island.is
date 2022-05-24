@@ -333,10 +333,6 @@ export class CaseService {
     body: string,
     attachments?: Attachment[],
   ) {
-    const subject = this.formatMessage(m.signedRuling.subject, {
-      courtCaseNumber,
-    })
-
     try {
       await this.emailService.sendEmail({
         from: {
@@ -359,7 +355,6 @@ export class CaseService {
       this.eventService.postErrorEvent(
         'Failed to send email',
         {
-          courtCaseNumber,
           subject,
           to: Array.isArray(to)
             ? to.reduce(
