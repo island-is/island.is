@@ -257,6 +257,14 @@ export const notifications = {
       description:
         'Notaður sem texti í pósti til verjanda/talsmanns vegna undirritunar úrskúrðar',
     },
+    prisonAdminBody: {
+      id:
+        'judicial.system.backend:notifications.signed_ruling.prison_admin_body',
+      defaultMessage:
+        'Dómari hefur undirritað og staðfest úrskurð í máli {courtCaseNumber} hjá {courtName}.<br /><br />Skjöl málsins eru aðengileg á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.',
+      description:
+        'Notaður sem texti í pósti til Fangelsismálastofnun vegna undirritunar úrskúrðar',
+    },
   }),
   prisonCourtDateEmail: defineMessages({
     isolationText: {

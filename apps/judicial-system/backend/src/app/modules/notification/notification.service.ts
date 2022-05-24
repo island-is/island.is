@@ -44,6 +44,7 @@ import {
   formatCourtResubmittedToCourtSmsNotification,
   getCourtRecordPdfAsString,
   formatProsecutorReadyForCourtEmailNotification,
+  formatPrisonAdministrationRulingNotification,
 } from '../../formatters'
 import { notifications } from '../../messages'
 import { Case } from '../case'
@@ -729,23 +730,18 @@ export class NotificationService {
 
   private async sendRulingEmailNotificationToPrisonAdministration(
     theCase: Case,
-    courtRecordPdf: string,
   ): Promise<Recipient> {
+    const { subject, body } = formatPrisonAdministrationRulingNotification(
+      this.formatMessage,
+      theCase.courtCaseNumber,
+      theCase.court?.name,
+      `${environment.deepLinks.completedCaseOverviewUrl}/${theCase.id}`,
+    )
     return this.sendEmail(
-      theCase.courtCaseNumber ?? '',
-      'Sjá viðhengi',
+      subject,
+      body,
       'Fangelsismálastofnun',
       environment.notifications.prisonAdminEmail,
-      [
-        {
-          filename: this.formatMessage(
-            notifications.signedRuling.courtRecordAttachment,
-            { courtCaseNumber: theCase.courtCaseNumber },
-          ),
-          content: courtRecordPdf,
-          encoding: 'binary',
-        },
-      ],
     )
   }
 
@@ -764,10 +760,7 @@ export class NotificationService {
     )
 
     const recipients = [
-      await this.sendRulingEmailNotificationToPrisonAdministration(
-        theCase,
-        courtRecordPdf,
-      ),
+      await this.sendRulingEmailNotificationToPrisonAdministration(theCase),
     ]
 
     if (
