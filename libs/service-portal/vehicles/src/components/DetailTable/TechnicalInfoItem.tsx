@@ -64,14 +64,14 @@ const TechnicalInfoItem = ({ data }: PropTypes) => {
           value={data.axleTotalWeight ? data.axleTotalWeight + ' kg' : ''}
         />
       </Row>
-      {data.axle?.map((item: VehiclesAxle | null, index: number) => {
+      {data.axles?.map((item: VehiclesAxle | null, index: number) => {
         const axleTitle = messages.axle
         const axleWheel = messages.axleWheel
-        const tyreNr = `axle${index + 1}` as keyof Tyres
+        const axleNr = `axle${index + 1}` as keyof Tyres
         return (
           <Row key={'Axle: ' + index}>
             <Column label={axleTitle} value={index + 1} />
-            <Column label={axleWheel} value={data.tyres?.[tyreNr]} />
+            <Column label={axleWheel} value={data.tyres?.[axleNr]} />
           </Row>
         )
       })}

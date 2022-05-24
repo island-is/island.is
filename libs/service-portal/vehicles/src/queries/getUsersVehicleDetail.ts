@@ -70,7 +70,7 @@ export const GET_USERS_VEHICLE_DETAIL = gql`
         trailerWithBrakesWeight
         carryingCapacity
         axleTotalWeight
-        axle {
+        axles {
           axleMaxWeight
           wheelAxle
         }

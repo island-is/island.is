@@ -213,7 +213,7 @@ export class VehiclesTechnicalInfo {
   axleTotalWeight?: number | null // technical -> mass -> // massmaxle1 + massmaxle2 + massmaxle3 + massmaxle4 + massmaxle5
 
   @Field(() => [VehiclesAxle], { nullable: true })
-  axle?: VehiclesAxle[]
+  axles?: VehiclesAxle[]
 
   @Field(() => Tyres, { nullable: true })
   tyres?: Tyres

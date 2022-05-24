@@ -192,7 +192,7 @@ export class VehiclesService {
           trailerWithBrakesWeight: data.techincal?.tMassoftrbr,
           carryingCapacity: data.techincal?.mass?.masscapacity,
           axleTotalWeight: axleMaxWeight,
-          axle: axles,
+          axles: axles,
           tyres: {
             axle1: data.techincal?.tyre?.tyreaxle1,
             axle2: data.techincal?.tyre?.tyreaxle2,
