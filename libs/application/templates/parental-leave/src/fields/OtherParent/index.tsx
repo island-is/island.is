@@ -23,7 +23,7 @@ export const OtherParent: FC<FieldBaseProps> = ({ application, field }) => {
         {formatText(title, application, formatMessage)}
       </Text>
       <RadioFormField
-        error = {errors && getErrorViaPath(errors, id)}
+        error={errors && getErrorViaPath(errors, id)}
         field={{
           id: id,
           type: FieldTypes.RADIO,
