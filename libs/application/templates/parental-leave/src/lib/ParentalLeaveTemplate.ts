@@ -157,7 +157,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       },
       [States.OTHER_PARENT_APPROVAL]: {
         entry: 'assignToOtherParent',
-        exit: 'clearAssignees',
+        exit: ['clearAssignees', 'removePeriodsOrAllowanceOnSpouseRejection'],
         meta: {
           name: States.OTHER_PARENT_APPROVAL,
           actionCard: {
@@ -219,7 +219,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.OTHER_PARENT_ACTION]: {
-        entry: ['removePeriodsOrAllowanceOnSpouseRejection'],
         meta: {
           name: States.OTHER_PARENT_ACTION,
           actionCard: {
@@ -908,16 +907,14 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         if (answers.requestDays > 0) {
           unset(application.answers, 'periods')
           unset(application.answers, 'validatedPeriods')
-          unset(application.answers, 'requestRights')
+          set(application.answers, 'requestRights.requestDays', "0")
+          set(application.answers, 'requestRights.isRequestingRights', "no")
+          set(application.answers, 'giveRights.giveDays', "0")
+          set(application.answers, 'giveRights.isGivingRights', "no")
         }
 
         if (answers.usePersonalAllowanceFromSpouse === YES) {
-          set(application.answers, 'personalAllowanceFromSpouse.usage', '0')
-          set(
-            application.answers,
-            'personalAllowanceFromSpouse.useAsMuchAsPossible',
-            NO,
-          )
+          unset(application.answers, 'personalAllowanceFromSpouse')
         }
 
         return context
