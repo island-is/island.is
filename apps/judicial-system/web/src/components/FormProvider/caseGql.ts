@@ -141,8 +141,8 @@ export const CaseQuery = gql`
       isAppealDeadlineExpired
       isAppealGracePeriodExpired
       caseModifiedExplanation
-      caseResentExplanation
       rulingModifiedHistory
+      caseResentExplanation
       origin
     }
   }
