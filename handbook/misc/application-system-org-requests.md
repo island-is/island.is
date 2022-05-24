@@ -1,17 +1,17 @@
 # Guide: Enable Organisations to Make Requests to an Application
 
-This document describes how you can go enable a an orginization to interact with the application system.
+This document describes how you can go enable an orginization to interact with the application system.
 
 ## Prerequisites
 
-For an orginasation to be able to able to read/update an application the set up is as follows
+For an orginasation to be able to able to read/update an application the setup is as follows
 
-1. Create a connection between their x-road server (handled by the institution) and our x-road server (handled by Andes)
+1. Create a connection between their x-road server (handled by the institution) and our x-road server (handled by [Andes](https://github.com/orgs/island-is/teams/andes))
 2. Create a new client In the IDS with:
    - Machine Client type
-   - client claims prefix: client\_
-   - relevant scopes application:read and or write
-   - claim with key: nationalId and The orginasations' national Id as value
+   - client claims prefix: `client_`
+   - relevant scopes `application:read` and/or `application:write`
+   - claim with key: nationalId and The orginasation's national Id as value
 
 This client can be created in the [IDS admin panel](https://beta.dev01.devland.is/admin) on dev using Gervimaður Útlönd 010-7789. For Staging and Prod a make request on #ids_changes
 
@@ -19,7 +19,7 @@ This client can be created in the [IDS admin panel](https://beta.dev01.devland.i
 
 ### 1. Add and map a role for the Orginization
 
-In the Application template map the orginasations' nationalId like so
+In the Application template map the orginasation's nationalId like so
 
 ```typescript
   mapUserToRole(
@@ -27,7 +27,7 @@ In the Application template map the orginasations' nationalId like so
     application: Application,
   ): ApplicationRole | undefined {
     ...
-      if (id === 'xxxxxx-xxxx') { // The nationalId added as claim in the Ids earlier.
+    if (id === 'xxxxxx-xxxx') { // The nationalId added as claim in the Ids earlier.
       return Roles.ORGINISATION_REVIEWER
     }
     ...

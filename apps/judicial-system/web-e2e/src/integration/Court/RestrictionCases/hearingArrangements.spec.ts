@@ -6,7 +6,7 @@ import {
   RULING_ROUTE,
 } from '@island.is/judicial-system/consts'
 
-import { makeCustodyCase, makeCourt, intercept } from '../../../utils'
+import { makeRestrictionCase, makeCourt, intercept } from '../../../utils'
 
 describe(`${HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
   beforeEach(() => {
@@ -15,7 +15,7 @@ describe(`${HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
   })
 
   it('should display case comments', () => {
-    const caseData = makeCustodyCase()
+    const caseData = makeRestrictionCase()
     const comment = faker.lorem.sentence(1)
     const caseDataAddition: Case = {
       ...caseData,
@@ -28,7 +28,7 @@ describe(`${HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
   })
 
   it('should display a warning if the user enters a lawyer that is not in the lawyer registry', () => {
-    const caseData = makeCustodyCase()
+    const caseData = makeRestrictionCase()
 
     intercept(caseData)
 
@@ -39,7 +39,7 @@ describe(`${HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
   })
 
   it('should allow users to choose if they send COURT_DATE notification', () => {
-    const caseData = makeCustodyCase()
+    const caseData = makeRestrictionCase()
     const caseDataAddition: Case = {
       ...caseData,
       court: makeCourt(),
@@ -55,7 +55,7 @@ describe(`${HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
   })
 
   it('should navigate to the next step when all input data is valid and the continue button is clicked', () => {
-    const caseData = makeCustodyCase()
+    const caseData = makeRestrictionCase()
     const caseDataAddition: Case = {
       ...caseData,
       court: makeCourt(),
