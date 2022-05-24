@@ -22,40 +22,20 @@ export class FinancialStatementsInaoResolver {
     private financialStatementsService: FinancialStatementsInaoService,
   ) {}
 
+  @Query(() => [ClientType], { nullable: true })
+  async financialStatementsInaoClientTypes() {
+    return this.financialStatementsService.getClientTypes()
+  }
+
   @Query(() => ClientType, { nullable: true })
   async financialStatementsInaoCurrentUserClientType(
     @CurrentUser() user: User,
   ): Promise<ClientType | null> {
     return this.financialStatementsService.getUserClientType(user.nationalId)
-
-    // return {
-    //   code: 'individual', //individual, party, cemetery
-    //   name: 'Einstaklingur', //Einstaklingur, Stjórnmálasamtök, Kirkjugarður
-    // }
   }
 
   @Query(() => [Election], { nullable: true })
   async financialStatementsInaoElections() {
-    //Return mocked results while the cloud service is not ready
-    return [
-      {
-        name: 'Forsetakosningar 2020',
-        year: 2020,
-        month: 6,
-        ageLimit: 35,
-      },
-      {
-        name: 'Alþingiskosningar 2021',
-        year: 2021,
-        month: 9,
-      },
-    ]
-
-    //return this.financialStatementsService.getElections()
-  }
-
-  @Query(() => [ClientType], { nullable: true })
-  async financialStatementsInaoClientTypes() {
-    return this.financialStatementsService.getClientTypes()
+    return this.financialStatementsService.getElections()
   }
 }

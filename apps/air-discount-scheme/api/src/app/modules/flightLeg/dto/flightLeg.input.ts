@@ -56,4 +56,7 @@ export class FlightLegsInput implements TFlightLegsInput {
 
   @Field((_) => Int, { nullable: true })
   postalCode: number
+
+  @Field((_) => String, { nullable: true })
+  nationalId: string
 }
