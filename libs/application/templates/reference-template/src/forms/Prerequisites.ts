@@ -29,32 +29,27 @@ export const Prerequisites: Form = buildForm({
           title: 'Utanaðkomandi gögn',
           dataProviders: [
             buildDataProviderItem({
-              id:
-                ReferenceApplicationDataProviders.anotherReferenceProvider
-                  .externalDataId,
+              id: 'anotherReference',
               type:
                 ReferenceApplicationDataProviders.anotherReferenceProvider
-                  .externalDataId,
+                  .dataProviderType,
               title: 'getAnotherReferenceData',
               subTitle: 'Another Refernence Data',
-              order: 2,
             }),
             buildDataProviderItem({
-              id:
-                ReferenceApplicationDataProviders.referenceProvider
-                  .externalDataId,
+              id: 'reference',
               type:
                 ReferenceApplicationDataProviders.referenceProvider
-                  .externalDataId,
+                  .dataProviderType,
               title: 'getReferenceData',
               subTitle: 'Reference data',
             }),
             buildDataProviderItem({
-              id: SharedDataProviders.nationalRegistryProvider.externalDataId,
-              type: SharedDataProviders.nationalRegistryProvider.externalDataId,
+              id: 'nationalRegistry',
+              type:
+                SharedDataProviders.nationalRegistryProvider.dataProviderType,
               title: 'Þjóðskrá',
               subTitle: 'Náum í national registry dót',
-              order: 1,
             }),
           ],
         }),

@@ -10,10 +10,6 @@ class DataProvider {
   @Field(() => String)
   @IsString()
   type!: string
-
-  @Field(() => Number, { nullable: true })
-  @IsNumber()
-  order?: number
 }
 
 @InputType()

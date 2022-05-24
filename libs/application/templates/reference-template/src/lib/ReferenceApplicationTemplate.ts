@@ -115,12 +115,17 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
                 {
                   ...SharedDataProviders.nationalRegistryProvider,
                   useMockData: (application: Application) => {
-                    console.log('Should use mock data for national registry')
                     return false
                   },
+                  order: 3,
                 },
-                ReferenceApplicationDataProviders.referenceProvider,
-                ReferenceApplicationDataProviders.anotherReferenceProvider,
+                {
+                  ...ReferenceApplicationDataProviders.referenceProvider,
+                  order: 1,
+                },
+                {
+                  ...ReferenceApplicationDataProviders.anotherReferenceProvider,
+                },
               ],
               delete: true,
             },

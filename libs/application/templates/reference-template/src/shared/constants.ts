@@ -1,21 +1,22 @@
-import { DataProviderTemplateApi } from '@island.is/application/core'
+import { ApplicationTemplateAPIAction } from '@island.is/application/core'
 
 export enum ApiActions {
   createApplication = 'createApplication',
   doStuffThatFails = 'doStuffThatFails',
   completeApplication = 'completeApplication',
   getReferenceData = 'getReferenceData',
-  nationalRegistry = 'nationalRegistry.nationalRegistry',
   getAnotherReferenceData = 'getAnotherReferenceData',
 }
 
 export const ReferenceApplicationDataProviders = {
   anotherReferenceProvider: {
+    dataProviderType: 'anotherReferenceProvider',
     apiModuleAction: ApiActions.getAnotherReferenceData,
     externalDataId: 'anotherReference',
     shouldPersistToExternalData: true,
   },
   referenceProvider: {
+    dataProviderType: 'referenceProvider',
     apiModuleAction: ApiActions.getReferenceData,
     externalDataId: 'reference',
     shouldPersistToExternalData: false,
@@ -32,6 +33,6 @@ export const ReferenceApplicationDataProviders = {
 } as ReferenceApplicationDataProviders
 
 export interface ReferenceApplicationDataProviders {
-  referenceProvider: DataProviderTemplateApi
-  anotherReferenceProvider: DataProviderTemplateApi
+  referenceProvider: ApplicationTemplateAPIAction
+  anotherReferenceProvider: ApplicationTemplateAPIAction
 }

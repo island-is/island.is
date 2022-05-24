@@ -11,6 +11,7 @@ export class NationalRegistryService {
     //application.externalData.data.reference
     //random number
     const randomNumber = Math.floor(Math.random() * (999999 - 100000)) + 100000
+
     return {
       nationalId: auth.nationalId,
       name: 'Justin Trudeau ' + randomNumber,

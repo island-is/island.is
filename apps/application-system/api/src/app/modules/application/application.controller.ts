@@ -526,14 +526,12 @@ export class ApplicationController {
 
     for (let i = 0; i < externalDataDto.dataProviders.length; i++) {
       const found = providersFromRole.find(
-        (x) => x.externalDataId === externalDataDto.dataProviders[i].id,
+        (x) => x.dataProviderType === externalDataDto.dataProviders[i].type,
       )
 
       if (found) {
-        listOfProviders.push({
-          ...found,
-          order: externalDataDto.dataProviders[i].order,
-        })
+        console.log({ found })
+        listOfProviders.push(found)
       } else {
         throw new BadRequestException(
           'Data provider not found with id ' +

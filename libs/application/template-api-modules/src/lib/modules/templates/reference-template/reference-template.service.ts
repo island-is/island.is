@@ -19,7 +19,7 @@ export class ReferenceTemplateService {
       application.externalData,
       'nationalRegistry.data.name',
     ) as string
-    throw Error('Yes this failed!')
+    //throw Error('Yes this failed!')
     return {
       referenceData: {
         name,

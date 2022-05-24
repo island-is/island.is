@@ -46,7 +46,7 @@ export class TemplateApiActionRunner {
     this.auth = auth
     this.oldExternalData = application.externalData
 
-    const groupedActions = this.groupByOrder(actions)
+    const groupedActions = this.sortAndGroupByOrder(actions)
     await this.runActions(groupedActions)
 
     await this.persistExternalData(actions)
@@ -54,7 +54,41 @@ export class TemplateApiActionRunner {
     return this.application
   }
 
+  sortAndGroupByOrder(
+    actions: ApplicationTemplateAPIAction[],
+  ): ApplicationTemplateAPIAction[][] {
+    //set default order to 0
+    const sortedActions = actions
+      .map((action) => {
+        if (!action.order) {
+          action.order = 0
+        }
+        return action
+      })
+      .sort((a, b) => {
+        return a.order! - b.order!
+      })
+
+    const groupedActions = sortedActions.reduce((acc, action) => {
+      const order = action.order ?? 0
+      if (!acc[order]) {
+        acc[order] = []
+      }
+      acc[order].push(action)
+      return acc
+    }, {} as { [key: number]: ApplicationTemplateAPIAction[] })
+
+    const result = Object.keys(groupedActions).map(
+      (value: string): ApplicationTemplateAPIAction[] => {
+        return groupedActions[(value as unknown) as number]
+      },
+    )
+
+    return result
+  }
+
   async runActions(actionGroups: ApplicationTemplateAPIAction[][]) {
+    console.log({ actionGroups })
     const result = actionGroups.reduce((accumulatorPromise, actions) => {
       return accumulatorPromise.then(() => {
         const ps = Promise.all(
@@ -69,26 +103,8 @@ export class TemplateApiActionRunner {
     await result
   }
 
-  groupByOrder(
-    actions: ApplicationTemplateAPIAction[],
-  ): ApplicationTemplateAPIAction[][] {
-    const groupedActions = actions.reduce((acc, action) => {
-      const order = action.order ?? -1
-      if (!acc[order]) {
-        acc[order] = []
-      }
-      acc[order].push(action)
-      return acc
-    }, {} as { [key: number]: ApplicationTemplateAPIAction[] })
-
-    return Object.keys(groupedActions).map(
-      (value: string): ApplicationTemplateAPIAction[] => {
-        return groupedActions[(value as unknown) as number]
-      },
-    )
-  }
-
   async callProvider(action: ApplicationTemplateAPIAction) {
+    console.log('Calling provider', action.apiModuleAction)
     const { apiModuleAction, externalDataId, mockData, namespace } = action
     let actionResult: PerformActionResult | undefined
 
@@ -102,7 +118,6 @@ export class TemplateApiActionRunner {
       actionResult =
         typeof mockData === 'function' ? mockData(this.application) : mockData
     } else {
-      console.log('Calling provider for action', apiModuleAction)
       actionResult = await this.templateAPIService.performAction({
         templateId: this.application.typeId,
         type: apiModuleAction,
@@ -116,7 +131,10 @@ export class TemplateApiActionRunner {
 
     if (!actionResult)
       throw new Error(`No Action or mock is defined for ${apiModuleAction}`)
-
+    console.log(
+      'Finished calling ',
+      action.apiModuleAction + ' with order ' + action.order,
+    )
     await this.updateExternalData(actionResult, apiModuleAction, externalDataId)
   }
 

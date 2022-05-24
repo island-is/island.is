@@ -35,7 +35,7 @@ export interface RoleInState<T extends EventObject = AnyEventObject> {
   delete?: boolean
   formLoader?: FormLoader
   actions?: CallToAction<T>[]
-  api?: DataProviderTemplateApi[]
+  api?: ApplicationTemplateAPIAction[]
 }
 
 export interface ApplicationContext {
@@ -49,6 +49,8 @@ export type CallToAction<T extends EventObject = AnyEventObject> = {
 }
 
 export interface ApplicationTemplateAPIAction {
+  //Data Provider type
+  dataProviderType?: string
   // Name of the action that will be run on the API
   // these actions are exported are found in:
   // /libs/application/template-api-modules
@@ -61,20 +63,22 @@ export interface ApplicationTemplateAPIAction {
   // defaults to true
   throwOnError?: boolean
 
+  // Order of execution of actions, defaults to 0
   order?: number
 
   useMockData?: boolean | ((application: Application) => boolean)
   mockData?:
     | PerformActionResult
     | ((application: Application) => PerformActionResult)
-  // Used for shared data providers
+  // Shared data providers namspace
   namespace?: string
 }
 
+/*
 export interface DataProviderTemplateApi
   extends Omit<ApplicationTemplateAPIAction, 'order'> {
   externalDataId: string
-}
+}*/
 
 export type StateLifeCycle =
   | {

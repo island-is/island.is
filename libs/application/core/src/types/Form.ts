@@ -122,11 +122,10 @@ export interface ExternalDataProvider extends FormItem {
 
 export interface DataProviderItem {
   readonly id: string
-  readonly type?: string | undefined
+  readonly type?: string
   readonly title: StaticText
   readonly subTitle?: StaticText
   readonly source?: string
-  readonly order?: number
 }
 
 export type DataProviderPermissionItem = Omit<

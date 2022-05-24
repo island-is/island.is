@@ -1,12 +1,12 @@
 import { Application } from '../types/Application'
-import { DataProviderTemplateApi } from '../types/StateMachine'
+import { ApplicationTemplateAPIAction } from '../types/StateMachine'
 import { PerformActionResult } from '../types/TemplateApiModuleTypes'
 
 export const SharedDataProviders = {
   nationalRegistryProvider: {
+    dataProviderType: 'nationalRegistryProvider',
     apiModuleAction: 'nationalRegistry',
     namespace: 'nationalRegistry',
-    externalDataId: 'nationalRegistry',
     shouldPersistToExternalData: true,
     throwOnError: true,
     useMockData: false,
@@ -21,10 +21,17 @@ export const SharedDataProviders = {
       }
     },
   },
+  nationalRegistryUserProvider: {
+    apiModuleAction: 'nationalRegistryUser',
+    namespace: 'nationalRegistry',
+    externalDataId: 'nationalRegistryUser',
+    shouldPersistToExternalData: true,
+  },
 } as AvailableSharedDataProviders
 
 export interface AvailableSharedDataProviders {
-  nationalRegistryProvider: DataProviderTemplateApi
-  userProfileProvider: DataProviderTemplateApi
-  familyInformationProvider: DataProviderTemplateApi
+  nationalRegistryProvider: ApplicationTemplateAPIAction
+  nationalRegistryUserProvider: ApplicationTemplateAPIAction
+  userProfileProvider: ApplicationTemplateAPIAction
+  familyInformationProvider: ApplicationTemplateAPIAction
 }

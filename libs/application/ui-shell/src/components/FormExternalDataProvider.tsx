@@ -67,7 +67,7 @@ const ProviderItem: FC<{
   const { title, subTitle } = provider
   const { formatMessage } = useLocale()
   const showError =
-    provider.type &&
+    provider.id &&
     dataProviderResult?.status === 'failure' &&
     !suppressProviderError
 
@@ -150,7 +150,7 @@ const FormExternalDataProvider: FC<{
     description,
     checkboxLabel,
   } = externalDataProvider
-  const relevantDataProviders = dataProviders.filter((p) => p.type)
+  const relevantDataProviders = dataProviders.filter((p) => p.id)
 
   const [suppressProviderErrors, setSuppressProviderErrors] = useState(true)
 
@@ -166,13 +166,10 @@ const FormExternalDataProvider: FC<{
           variables: {
             input: {
               id: applicationId,
-              dataProviders: relevantDataProviders.map(
-                ({ id, type, order }) => ({
-                  id,
-                  type,
-                  order,
-                }),
-              ),
+              dataProviders: relevantDataProviders.map(({ id, type }) => ({
+                id,
+                type,
+              })),
             },
             locale,
           },
