@@ -263,7 +263,7 @@ export const Overview: React.FC = () => {
           </Box>
           <Text>{workingCase.demands}</Text>
         </Box>
-        <Box component="section" marginBottom={10}>
+        <Box component="section" marginBottom={7}>
           <Accordion>
             <AccordionItem
               labelVariant="h3"

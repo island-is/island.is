@@ -185,6 +185,7 @@ export interface Case {
   notifications?: Notification[]
   caseFiles?: CaseFile[]
   caseModifiedExplanation?: string
+  rulingModifiedHistory?: string
   caseResentExplanation?: string
 }
 
@@ -262,6 +263,7 @@ export interface UpdateCase {
   registrarId?: string
   judgeId?: string
   caseModifiedExplanation?: string
+  rulingModifiedHistory?: string
   caseResentExplanation?: string
 }
 

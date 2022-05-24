@@ -182,5 +182,21 @@ export const icRuling = {
           'Notaður sem placeholder fyrir "Úrskurðarorð" innsláttarsvæði á úrskurðar skrefi í rannsóknarheimildum.',
       },
     }),
+    formFooter: defineMessages({
+      modifyRulingButtonLabel: {
+        id:
+          'judicial.system.investigation_cases:ruling.form_footer.modify_ruling_button_label',
+        defaultMessage: 'Undirrita nýjan úrskurð',
+        description:
+          'Notaður sem label á hnappinn "Halda áfram" í úrskurðar skrefi þegar úrskuður er leiðréttur.',
+      },
+      modifyRulingBackButtonLabel: {
+        id:
+          'judicial.system.investigation_cases:ruling.form_footer.modify_ruling_back_button_label',
+        defaultMessage: 'Hætta við',
+        description:
+          'Notaður sem label á hnappinn "til baka" í úrskurðar skrefi þegar úrskuður er leiðréttur.',
+      },
+    }),
   },
 }
