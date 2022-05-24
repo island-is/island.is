@@ -6,5 +6,5 @@ export const resendInfoPanelContainer = style({
 })
 
 export const prosecutorContainer = style({
-  paddingBottom: theme.spacing[7],
+  marginBottom: theme.spacing[7],
 })
