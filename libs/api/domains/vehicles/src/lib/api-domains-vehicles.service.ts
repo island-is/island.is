@@ -175,7 +175,7 @@ export class VehiclesService {
             ? data.inspections[0]?.date
             : null,
           insuranceStatus: data.insurancestatus,
-          encumbrances: data?.fees?.hasEncumbrances,
+          mortages: data?.fees?.hasEncumbrances,
           carTax: data?.fees?.gjold?.bifreidagjald,
           inspectionFine: data?.fees?.inspectionfine,
         },
@@ -194,19 +194,19 @@ export class VehiclesService {
           axleTotalWeight: axleMaxWeight,
           axle: axles,
           tyres: {
-            tyre1: data.techincal?.tyre?.tyreaxle1,
-            tyre2: data.techincal?.tyre?.tyreaxle2,
-            tyre3: data.techincal?.tyre?.tyreaxle3,
-            tyre4: data.techincal?.tyre?.tyreaxle4,
-            tyre5: data.techincal?.tyre?.tyreaxle5,
+            axle1: data.techincal?.tyre?.tyreaxle1,
+            axle2: data.techincal?.tyre?.tyreaxle2,
+            axle3: data.techincal?.tyre?.tyreaxle3,
+            axle4: data.techincal?.tyre?.tyreaxle4,
+            axle5: data.techincal?.tyre?.tyreaxle5,
           },
         },
         ownersInfo:
           data.owners?.map((x) => {
             const ownerAdderss = x.address
-              ? `${x.address}, ${x.postalcode ? x.postalcode : ''} ${
-                  x.city ? x.city : ''
-                }`
+              ? `${x.address}${x.postalcode || x.city ? ', ' : ''}${
+                  x.postalcode ? `${x.postalcode} ` : ''
+                }${x.city ?? ''}`
               : undefined
             return {
               name: x.fullname,

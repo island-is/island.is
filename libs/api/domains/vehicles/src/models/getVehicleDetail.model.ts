@@ -39,19 +39,19 @@ export class VehiclesAxle {
 @ObjectType()
 export class Tyres {
   @Field(() => String, { nullable: true })
-  tyre1?: string | null // technical -> tyre -> `tyreaxle1`
+  axle1?: string | null // technical -> tyre -> `tyreaxle1`
 
   @Field(() => String, { nullable: true })
-  tyre2?: string | null // technical -> tyre -> `tyreaxle2`
+  axle2?: string | null // technical -> tyre -> `tyreaxle2`
 
   @Field(() => String, { nullable: true })
-  tyre3?: string | null // technical -> tyre -> `tyreaxle3`
+  axle3?: string | null // technical -> tyre -> `tyreaxle3`
 
   @Field(() => String, { nullable: true })
-  tyre4?: string | null // technical -> tyre -> `tyreaxle4`
+  axle4?: string | null // technical -> tyre -> `tyreaxle4`
 
   @Field(() => String, { nullable: true })
-  tyre5?: string | null // technical -> tyre -> `tyreaxle5`
+  axle5?: string | null // technical -> tyre -> `tyreaxle5`
 }
 
 @ObjectType()
@@ -162,16 +162,16 @@ export class VehiclesInspectionInfo {
   lastInspectionDate?: string | null // inspections[1] -> date // EF LENGTH > 1
 
   @Field(() => Boolean, { nullable: true })
-  insuranceStatus?: boolean | null // insurancestatus
+  insuranceStatus?: boolean | null
 
   @Field(() => Number, { nullable: true })
-  encumbrances?: number | null // hasEncumbrances
+  mortages?: number | null
 
   @Field(() => Number, { nullable: true })
-  carTax?: number | null // bifreidagjald
+  carTax?: number | null
 
   @Field(() => Number, { nullable: true })
-  inspectionFine?: number | null // inspectionfine
+  inspectionFine?: number | null
 }
 
 @ObjectType()
@@ -213,10 +213,10 @@ export class VehiclesTechnicalInfo {
   axleTotalWeight?: number | null // technical -> mass -> // massmaxle1 + massmaxle2 + massmaxle3 + massmaxle4 + massmaxle5
 
   @Field(() => [VehiclesAxle], { nullable: true })
-  axle?: VehiclesAxle[] // smíða
+  axle?: VehiclesAxle[]
 
   @Field(() => Tyres, { nullable: true })
-  tyres?: Tyres // smíða
+  tyres?: Tyres
 }
 
 @ObjectType()

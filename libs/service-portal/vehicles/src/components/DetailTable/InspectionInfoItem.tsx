@@ -69,8 +69,8 @@ const InspectionInfoItem = ({ data }: PropTypes) => {
         <Column
           label={messages.mortages}
           value={
-            data.encumbrances && data.encumbrances > 0
-              ? amountFormat(data.encumbrances)
+            data.mortages && data.mortages > 0
+              ? amountFormat(data.mortages)
               : ''
           }
         />
@@ -83,9 +83,6 @@ const InspectionInfoItem = ({ data }: PropTypes) => {
           }
         />
       </Row>
-      {/* <Row>
-        <Column label={messages.plateLocation} value={null} />
-      </Row> */}
     </Box>
   )
 }

@@ -108,7 +108,7 @@ const VehicleDetail: ServicePortalModuleComponent = ({ userInfo }) => {
           label={formatMessage(messages.capacity)}
           content={
             mainInfo?.cubicCapacity
-              ? mainInfo?.cubicCapacity?.toString() + ' cc.'
+              ? mainInfo.cubicCapacity.toString() + ' cc.'
               : ''
           }
           loading={loading}
@@ -118,7 +118,7 @@ const VehicleDetail: ServicePortalModuleComponent = ({ userInfo }) => {
           label={formatMessage(messages.trailerWithBrakes)}
           content={
             mainInfo?.trailerWithBrakesWeight
-              ? mainInfo?.trailerWithBrakesWeight?.toString() + ' kg.'
+              ? mainInfo.trailerWithBrakesWeight.toString() + ' kg.'
               : ''
           }
           loading={loading}
@@ -128,7 +128,7 @@ const VehicleDetail: ServicePortalModuleComponent = ({ userInfo }) => {
           label={formatMessage(messages.trailerWithoutBrakes)}
           content={
             mainInfo?.trailerWithoutBrakesWeight
-              ? mainInfo?.trailerWithoutBrakesWeight?.toString() + ' kg.'
+              ? mainInfo.trailerWithoutBrakesWeight.toString() + ' kg.'
               : ''
           }
           loading={loading}

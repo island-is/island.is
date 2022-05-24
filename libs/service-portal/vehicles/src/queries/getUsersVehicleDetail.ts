@@ -53,7 +53,7 @@ export const GET_USERS_VEHICLE_DETAIL = gql`
         nextInspectionDate
         lastInspectionDate
         insuranceStatus
-        encumbrances
+        mortages
         carTax
         inspectionFine
       }
@@ -75,11 +75,11 @@ export const GET_USERS_VEHICLE_DETAIL = gql`
           wheelAxle
         }
         tyres {
-          tyre1
-          tyre2
-          tyre3
-          tyre4
-          tyre5
+          axle1
+          axle2
+          axle3
+          axle4
+          axle5
         }
       }
       ownersInfo {

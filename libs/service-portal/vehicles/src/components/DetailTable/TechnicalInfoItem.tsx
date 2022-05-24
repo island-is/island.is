@@ -67,7 +67,7 @@ const TechnicalInfoItem = ({ data }: PropTypes) => {
       {data.axle?.map((item: VehiclesAxle | null, index: number) => {
         const axleTitle = messages.axle
         const axleWheel = messages.axleWheel
-        const tyreNr = `tyre${index + 1}` as keyof Tyres
+        const tyreNr = `axle${index + 1}` as keyof Tyres
         return (
           <Row key={'Axle: ' + index}>
             <Column label={axleTitle} value={index + 1} />
