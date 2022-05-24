@@ -16,8 +16,8 @@ export const caseModuleConfig = defineConfig({
         'COMPLETED_CASE_OVERVIEW_URL',
         'http://localhost:4200/krafa/yfirlit/',
       ),
-      defenderCompletedCaseOverviewUrl: env.required(
-        'DEFENDER_COMPLETED_CASE_OVERVIEW_URL',
+      defenderCaseOverviewUrl: env.required(
+        'DEFENDER_CASE_OVERVIEW_URL',
         'http://localhost:4200/verjandi/',
       ),
     },
