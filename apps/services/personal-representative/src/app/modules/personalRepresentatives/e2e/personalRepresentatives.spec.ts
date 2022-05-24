@@ -89,7 +89,6 @@ describe('PersonalRepresentativeController - Without Scope and Auth', () => {
 
       // Act
       const res = await getRequestMethod(server, method)(endpoint)
-      console.log(res.body)
       // Assert
       expect(res.status).toEqual(401)
       expect(res.body).toMatchObject({
@@ -265,7 +264,6 @@ describe('PersonalRepresentativeController', () => {
     })
 
     // Test get personal rep
-    console.log(personalRep)
     const response = await server.get(`${path}/${personalRep.id}`).expect(200)
     expect(response.body).toMatchObject(personalRep)
   })
