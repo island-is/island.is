@@ -355,7 +355,7 @@ export const Review: FC<ReviewScreenProps> = ({
                 label={formatMessage(
                   parentalLeaveFormMessages.shared.otherParentID,
                 )}
-                value={otherParentId}
+                value={formatKennitala(otherParentId!)}
               />
             </GridColumn>
           </GridRow>

@@ -4,6 +4,7 @@ import {
   FieldComponents,
   FieldTypes,
   formatText,
+  getErrorViaPath,
 } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
 import { Box, Text } from '@island.is/island-ui/core'
@@ -15,13 +16,14 @@ import { useFormContext } from 'react-hook-form'
 export const OtherParent: FC<FieldBaseProps> = ({ application, field }) => {
   const { id, title } = field
   const { formatMessage } = useLocale()
-  const { setValue, getValues } = useFormContext()
+  const { errors, setValue } = useFormContext()
   return (
     <Box>
       <Text variant="h4" as="h4">
         {formatText(title, application, formatMessage)}
       </Text>
       <RadioFormField
+        error = {errors && getErrorViaPath(errors, id)}
         field={{
           id: id,
           type: FieldTypes.RADIO,

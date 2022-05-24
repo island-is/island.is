@@ -130,11 +130,6 @@ export const ParentalLeaveForm: Form = buildForm({
               description:
                 parentalLeaveFormMessages.shared.otherParentDescription,
               children: [
-                // buildRadioField({
-                //   id: 'otherParent.chooseOtherParent',
-                //   title: parentalLeaveFormMessages.shared.otherParentSubTitle,
-                //   options: (application) => getOtherParentOptions(application),
-                // }),
                 buildCustomField({
                   component: 'OtherParent',
                   id: 'otherParent.chooseOtherParent',
