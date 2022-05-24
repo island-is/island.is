@@ -81,20 +81,24 @@ const CaseFilesAccordionItem: React.FC<Props> = (props) => {
           </Text>
           {canCaseFilesBeUploaded() && (
             <AnimatePresence>
-              {uploadState === UploadState.UPLOAD_ERROR && (
+              {(uploadState === UploadState.NONE_AVAILABLE ||
+                uploadState === UploadState.NONE_CAN_BE_UPLOADED ||
+                uploadState === UploadState.UPLOAD_ERROR) && (
                 <UploadStateMessage
                   icon="warning"
                   iconColor="red600"
-                  message={formatMessage(m.someFilesUploadedToCourtText)}
+                  message={formatMessage(m.someFilesNotUploadedToCourtText)}
                 />
               )}
-              {uploadState === UploadState.ALL_UPLOADED && (
-                <UploadStateMessage
-                  icon="checkmark"
-                  iconColor="blue400"
-                  message={formatMessage(m.allFilesUploadedToCourtText)}
-                />
-              )}
+              {(workingCase.caseFiles || []).length > 0 &&
+                (uploadState === UploadState.ALL_UPLOADED ||
+                  uploadState === UploadState.ALL_UPLOADED_NONE_AVAILABLE) && (
+                  <UploadStateMessage
+                    icon="checkmark"
+                    iconColor="blue400"
+                    message={formatMessage(m.allFilesUploadedToCourtText)}
+                  />
+                )}
             </AnimatePresence>
           )}
         </Box>
@@ -120,7 +124,8 @@ const CaseFilesAccordionItem: React.FC<Props> = (props) => {
       {canCaseFilesBeUploaded() && (
         <Box display="flex" justifyContent="flexEnd" marginTop={3}>
           {(workingCase.caseFiles || []).length === 0 ? null : uploadState ===
-            UploadState.NONE_CAN_BE_UPLOADED ? (
+              UploadState.ALL_UPLOADED_NONE_AVAILABLE ||
+            uploadState === UploadState.NONE_AVAILABLE ? (
             <InfoBox text={formatMessage(m.uploadToCourtAllBrokenText)} />
           ) : (
             <Button
@@ -129,8 +134,8 @@ const CaseFilesAccordionItem: React.FC<Props> = (props) => {
               onClick={() => uploadFilesToCourt(workingCase.caseFiles)}
               loading={uploadState === UploadState.UPLOADING}
               disabled={
-                uploadState === UploadState.UPLOADING ||
-                uploadState === UploadState.ALL_UPLOADED
+                uploadState !== UploadState.SOME_NOT_UPLOADED &&
+                uploadState !== UploadState.UPLOAD_ERROR
               }
             >
               {formatMessage(

@@ -1,12 +1,12 @@
 import { PageInfoDto } from '@island.is/nest/pagination'
 import { ApiProperty } from '@nestjs/swagger'
-import { PersonalRepresentativeType } from '../models/personal-representative-type.model'
+import { PersonalRepresentativeTypeDTO } from './personal-representative-type.dto'
 
 export class PaginatedPersonalRepresentativeTypeDto {
   @ApiProperty()
   totalCount!: number
-  @ApiProperty({ type: [PersonalRepresentativeType] })
-  data!: PersonalRepresentativeType[]
+  @ApiProperty({ type: [PersonalRepresentativeTypeDTO] })
+  data!: PersonalRepresentativeTypeDTO[]
   @ApiProperty()
   pageInfo!: PageInfoDto
 }
