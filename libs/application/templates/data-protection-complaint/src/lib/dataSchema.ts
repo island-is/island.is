@@ -114,7 +114,9 @@ export const DataProtectionComplaintSchema = z.object({
       address: z.string().refine((x) => !!x, { params: error.required }),
       nationalId: z.string().optional(),
       operatesWithinEurope: z.enum([YES, NO]),
-      countryOfOperation: z.string().optional(),
+      countryOfOperation: z
+        .string()
+        .refine((x) => !!x, { params: error.required }),
     }),
   ),
   subjectOfComplaint: z.object({

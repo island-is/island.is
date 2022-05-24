@@ -11,6 +11,7 @@ import {
   SubjectOfComplaint,
   DataProtectionComplaint,
   yesNoValueLabelMapper,
+  messages,
 } from '@island.is/application/templates/data-protection-complaint'
 import { Application } from '@island.is/application/core'
 import * as kennitala from 'kennitala'
@@ -69,6 +70,29 @@ export const getAndFormatSubjectsOfComplaint = (
   }, [])
 
   return [...new Set(categories)]
+}
+
+export const getAndFormatSubjectsOfComplaintForPdf = (
+  answers: DataProtectionComplaint,
+): string[] => {
+  const values = extractAnswer<SubjectOfComplaint[]>(
+    answers,
+    'subjectOfComplaint.values',
+  )
+
+  const categories = values.map((val) => {
+    return messages.complaint.labels[val].defaultMessage
+  })
+  /* reduce((acc: string[], value) => {
+    const val = subjectOfComplaintToGoProValues(value)
+
+    if (Array.isArray(val)) return [...acc, ...val]
+
+    acc.push(val)
+    return acc
+  }, []) */
+
+  return categories
 }
 
 export const gatherContacts = (
@@ -201,7 +225,7 @@ export const applicationToComplaintPDF = (
     },
     contactInfo: getContactInfo(answers),
     targetsOfComplaint: getComplaintTargets(answers),
-    complaintCategories: getAndFormatSubjectsOfComplaint(answers),
+    complaintCategories: getAndFormatSubjectsOfComplaintForPdf(answers),
     somethingElse: answers.subjectOfComplaint.somethingElse ?? '',
     description: extractAnswer(application.answers, 'complaint.description'),
     submitDate: timestamp,

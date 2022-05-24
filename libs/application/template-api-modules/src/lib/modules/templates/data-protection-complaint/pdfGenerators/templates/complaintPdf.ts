@@ -3,6 +3,7 @@ import { ComplaintPDF } from '../../models'
 import { Application } from '@island.is/application/core'
 import { applicationToComplaintPDF } from '../../data-protection-utils'
 import { generatePdf } from '../pdfGenerator'
+import { messages } from '@island.is/application/templates/data-protection-complaint'
 import {
   addformFieldAndValue,
   addHeader,
@@ -54,7 +55,7 @@ function dpcApplicationPdf(
     addformFieldAndValue('Nafn', c.name, doc, PdfConstants.SMALL_LINE_GAP)
     if (c.nationalId) {
       addformFieldAndValue(
-        'Kt.',
+        'Kennitala',
         formatSsn(c.nationalId),
         doc,
         PdfConstants.SMALL_LINE_GAP,
@@ -72,31 +73,40 @@ function dpcApplicationPdf(
       'Starfsemi innan Evrópu?',
       operatesWithinEuropeAnswer,
       doc,
-      PdfConstants.LARGE_LINE_GAP,
+      PdfConstants.SMALL_LINE_GAP,
     )
+    if (c.operatesWithinEurope === 'yes') {
+      addValue(
+        messages.complaint.labels.complaineeOperatesWithinEuropeMessage
+          .defaultMessage,
+        doc,
+        PdfConstants.NORMAL_FONT,
+      )
+    }
+    doc.moveDown()
   })
 
-  addSubheader('Efni kvörtunar', doc)
-  const subjects = complaint.complaintCategories
-    .map((c) => c)
-    .filter((x) => x !== '')
-    .join(', ')
+  if (complaint.complaintCategories.length !== 0) {
+    addSubheader('Efni kvörtunar', doc)
+    const subjects = complaint.complaintCategories
+      .map((c) => c)
+      .filter((x) => x !== '')
+      .join(', ')
 
-  addValue(
-    subjects,
-    doc,
-    PdfConstants.NORMAL_FONT,
-    complaint.somethingElse
-      ? PdfConstants.SMALL_LINE_GAP
-      : PdfConstants.LARGE_LINE_GAP,
-  )
-  if (complaint.somethingElse) {
-    addValue(
-      `Annað hvað? : ${complaint.somethingElse}`,
-      doc,
-      PdfConstants.NORMAL_FONT,
-      PdfConstants.LARGE_LINE_GAP,
-    )
+    complaint.complaintCategories.forEach((c, index) => {
+      addValue(
+        complaint.complaintCategories.length === index + 1
+          ? complaint.somethingElse
+            ? `${c}: ${complaint.somethingElse}`
+            : c
+          : c,
+        doc,
+        PdfConstants.NORMAL_FONT,
+        PdfConstants.NORMAL_LINE_GAP,
+      )
+    })
+
+    doc.moveDown()
   }
 
   addSubheader('Yfir hverju er kvartað í meginatriðum?', doc)
@@ -127,7 +137,7 @@ function renderContactsAndComplainees(
 ): void {
   const contactHeading =
     complaint.onBehalf === OnBehalf.MYSELF ||
-    OnBehalf.ORGANIZATION_OR_INSTITUTION
+    complaint.onBehalf === OnBehalf.ORGANIZATION_OR_INSTITUTION
       ? 'Kvartandi'
       : 'Kvartendur'
   addSubheader(contactHeading, doc)
@@ -135,8 +145,8 @@ function renderContactsAndComplainees(
   renderAgencyComplainees(complaint, doc)
 
   if (
-    complaint.onBehalf !== OnBehalf.MYSELF ||
-    OnBehalf.ORGANIZATION_OR_INSTITUTION
+    complaint.onBehalf !== OnBehalf.MYSELF &&
+    complaint.onBehalf === OnBehalf.ORGANIZATION_OR_INSTITUTION
   ) {
     addSubheader('Tengiliður', doc)
   }

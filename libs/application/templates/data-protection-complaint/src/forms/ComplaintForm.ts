@@ -514,7 +514,7 @@ export const ComplaintForm: Form = buildForm({
           component: 'ComplaineeRepeater',
         }),
         buildSubSection({
-          id: 'subjectOfComplaint',
+          id: 'subjectOfComplaintSection',
           title: section.subjectOfComplaint,
           children: [
             buildMultiField({
@@ -524,7 +524,8 @@ export const ComplaintForm: Form = buildForm({
               children: [
                 buildCustomField({
                   component: 'ReasonsForComplaint',
-                  id: 'subjectOfComplaint.checkboxAndInput',
+                  id: 'subjectOfComplaint',
+                  doesNotRequireAnswer: true,
                   title: '',
                 }),
               ],
