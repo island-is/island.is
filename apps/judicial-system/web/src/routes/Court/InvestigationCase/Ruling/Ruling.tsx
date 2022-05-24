@@ -21,6 +21,7 @@ import { FormContext } from '@island.is/judicial-system-web/src/components/FormP
 import {
   isAcceptingCaseDecision,
   completedCaseStates,
+  CaseDecision,
 } from '@island.is/judicial-system/types'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
@@ -378,6 +379,14 @@ const Ruling = () => {
               onChange={(decision) => {
                 autofill(
                   [
+                    {
+                      key: 'conclusion',
+                      value:
+                        decision === CaseDecision.ACCEPTING
+                          ? workingCase.demands
+                          : '',
+                      force: true,
+                    },
                     {
                       key: 'decision',
                       value: decision,
