@@ -84,11 +84,6 @@ export const answerValidators: Record<string, AnswerValidator> = {
     const buildError = (message: StaticText, path: string) =>
       buildValidationError(`${OTHER_PARENT}.${path}`)(message)
 
-    // If no other parent option has been chosen
-    // if(isEmpty(otherParent)) {
-    //   return buildError('hey vantar að velja', 'chooseOtherParent')
-    // }
-
     // If manual option is chosen then user have to insert name and national id
     if (otherParent.chooseOtherParent === MANUAL) {
       if (isEmpty(otherParent.otherParentName))

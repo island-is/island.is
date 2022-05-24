@@ -89,6 +89,7 @@ export const Header: FC<HeaderProps> = ({
                         />
                       </Box>
                     )}
+
                     <Hidden below="lg">
                       <Box marginLeft={marginLeft}>
                         <Link {...linkResolver('login')} skipTab>
@@ -103,6 +104,20 @@ export const Header: FC<HeaderProps> = ({
                         </Link>
                       </Box>
                     </Hidden>
+
+                    <Hidden above="md">
+                      <Box marginLeft={marginLeft}>
+                        <Link {...linkResolver('login')} skipTab>
+                          <Button
+                            colorScheme={buttonColorScheme}
+                            variant="utility"
+                            icon="person"
+                            as="span"
+                          />
+                        </Link>
+                      </Box>
+                    </Hidden>
+
                     <Box
                       marginLeft={marginLeft}
                       display={['none', 'none', 'none', 'block']}

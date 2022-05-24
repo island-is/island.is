@@ -331,6 +331,10 @@ export class CaseService {
     courtCaseNumber?: string,
     attachments?: Attachment[],
   ) {
+    const subject = this.formatMessage(m.signedRuling.subject, {
+      courtCaseNumber,
+    })
+
     try {
       await this.emailService.sendEmail({
         from: {
@@ -342,15 +346,41 @@ export class CaseService {
           address: this.config.email.replyToEmail,
         },
         to,
-        subject: this.formatMessage(m.signedRuling.subject, {
-          courtCaseNumber,
-        }),
+        subject,
         text: stripHtmlTags(body),
         html: body,
         attachments,
       })
     } catch (error) {
       this.logger.error('Failed to send email', { error })
+
+      this.eventService.postErrorEvent(
+        'Failed to send email',
+        {
+          courtCaseNumber,
+          subject,
+          to: Array.isArray(to)
+            ? to.reduce(
+                (acc, recipient, index) =>
+                  index > 0
+                    ? `${acc}, ${recipient.name} (${recipient.address})`
+                    : `${recipient.name} (${recipient.address})`,
+                '',
+              )
+            : `${to.name} (${to.address})`,
+          attachments:
+            attachments && attachments.length > 0
+              ? attachments.reduce(
+                  (acc, attachment, index) =>
+                    index > 0
+                      ? `${acc}, ${attachment.filename}`
+                      : `${attachment.filename}`,
+                  '',
+                )
+              : undefined,
+        },
+        error as Error,
+      )
     }
   }
 
@@ -722,14 +752,30 @@ export class CaseService {
 
     const pdf = await getCourtRecordPdfAsString(theCase, this.formatMessage)
 
-    return this.signingService.requestSignature(
-      user.mobileNumber ?? '',
-      'Undirrita skjal - Öryggistala',
-      user.name ?? '',
-      'Ísland',
-      'courtRecord.pdf',
-      pdf,
-    )
+    return this.signingService
+      .requestSignature(
+        user.mobileNumber ?? '',
+        'Undirrita skjal - Öryggistala',
+        user.name ?? '',
+        'Ísland',
+        'courtRecord.pdf',
+        pdf,
+      )
+      .catch((error) => {
+        this.eventService.postErrorEvent(
+          'Failed to request a court record signature',
+          {
+            caseId: theCase.id,
+            policeCaseNumber: theCase.policeCaseNumber,
+            courtCaseNumber: theCase.courtCaseNumber,
+            actor: user.name,
+            institution: user.institution?.name,
+          },
+          error,
+        )
+
+        throw error
+      })
   }
 
   async getCourtRecordSignatureConfirmation(
@@ -742,7 +788,7 @@ export class CaseService {
     // Production, or development with signing service access token
     if (this.config.production || this.config.dokobitAccessToken) {
       try {
-        const courtRecordPdf = await this.signingService.getSignedDocument(
+        const courtRecordPdf = await this.signingService.waitForSignature(
           'courtRecord.pdf',
           documentToken,
         )
@@ -757,6 +803,18 @@ export class CaseService {
             )
           })
       } catch (error) {
+        this.eventService.postErrorEvent(
+          'Failed to get a court record signature confirmation',
+          {
+            caseId: theCase.id,
+            policeCaseNumber: theCase.policeCaseNumber,
+            courtCaseNumber: theCase.courtCaseNumber,
+            actor: user.name,
+            institution: user.institution?.name,
+          },
+          error as Error,
+        )
+
         if (error instanceof DokobitError) {
           return {
             documentSigned: false,
@@ -792,14 +850,30 @@ export class CaseService {
 
     const pdf = await getRulingPdfAsString(theCase, this.formatMessage)
 
-    return this.signingService.requestSignature(
-      theCase.judge?.mobileNumber ?? '',
-      'Undirrita skjal - Öryggistala',
-      theCase.judge?.name ?? '',
-      'Ísland',
-      'ruling.pdf',
-      pdf,
-    )
+    return this.signingService
+      .requestSignature(
+        theCase.judge?.mobileNumber ?? '',
+        'Undirrita skjal - Öryggistala',
+        theCase.judge?.name ?? '',
+        'Ísland',
+        'ruling.pdf',
+        pdf,
+      )
+      .catch((error) => {
+        this.eventService.postErrorEvent(
+          'Failed to request a ruling signature',
+          {
+            caseId: theCase.id,
+            policeCaseNumber: theCase.policeCaseNumber,
+            courtCaseNumber: theCase.courtCaseNumber,
+            actor: theCase.judge?.name,
+            institution: theCase.judge?.institution?.name,
+          },
+          error,
+        )
+
+        throw error
+      })
   }
 
   async getRulingSignatureConfirmation(
@@ -812,7 +886,7 @@ export class CaseService {
     // Production, or development with signing service access token
     if (this.config.production || this.config.dokobitAccessToken) {
       try {
-        const signedPdf = await this.signingService.getSignedDocument(
+        const signedPdf = await this.signingService.waitForSignature(
           'ruling.pdf',
           documentToken,
         )
@@ -821,6 +895,18 @@ export class CaseService {
 
         await this.sendRulingAsSignedPdf(theCase, user, signedPdf)
       } catch (error) {
+        this.eventService.postErrorEvent(
+          'Failed to get a ruling signature confirmation',
+          {
+            caseId: theCase.id,
+            policeCaseNumber: theCase.policeCaseNumber,
+            courtCaseNumber: theCase.courtCaseNumber,
+            actor: user.name,
+            institution: user.institution?.name,
+          },
+          error as Error,
+        )
+
         if (error instanceof DokobitError) {
           return {
             documentSigned: false,

@@ -4,7 +4,7 @@ import {
   ApplicationContext,
   getValueViaPath,
 } from '@island.is/application/core'
-import { UploadFile } from '@island.is/island-ui/core'
+
 import {
   FamilyStatus,
   MartialStatusType,
@@ -19,6 +19,8 @@ import {
   OverrideAnswerSchema,
   UploadFileType,
 } from '..'
+import { UploadFile } from '@island.is/island-ui/core'
+import { ApplicationStates } from './constants'
 
 const emailRegex = /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
 export const isValidEmail = (value: string) => emailRegex.test(value)
@@ -97,4 +99,11 @@ export const hasFiles = (
 ) => {
   const files = answers[fileType as keyof OverrideAnswerSchema] as UploadFile[]
   return files && files.length > 0
+}
+
+export const waitingForSpouse = (state: string) => {
+  return (
+    state === ApplicationStates.SPOUSE ||
+    state === ApplicationStates.PREREQUISITESSPOUSE
+  )
 }

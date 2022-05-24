@@ -27,8 +27,7 @@ describe('Logo', () => {
       </MockedProvider>,
     )
 
-    expect(
-      await screen.findByText('Héraðsdómur Reykjavíkur'),
-    ).toBeInTheDocument()
+    expect(await screen.findByText('Héraðsdómur')).toBeInTheDocument()
+    expect(await screen.findByText('Reykjavíkur')).toBeInTheDocument()
   })
 })
