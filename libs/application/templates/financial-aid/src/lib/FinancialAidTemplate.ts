@@ -151,6 +151,7 @@ const FinancialAidTemplate: ApplicationTemplate<
                 import('../forms/ApplicantSubmitted').then((module) =>
                   Promise.resolve(module.ApplicantSubmitted),
                 ),
+              read: 'all',
             },
           ],
         },
