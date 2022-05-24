@@ -214,10 +214,6 @@ export const Ruling: React.FC = () => {
             value: workingCase.demands,
           },
           {
-            key: 'isolationToDate',
-            value: workingCase.validToDate,
-          },
-          {
             key: 'courtCaseFacts',
             value: workingCase.caseFacts,
           },
@@ -236,19 +232,6 @@ export const Ruling: React.FC = () => {
               : undefined,
           },
           {
-            key: 'isCustodyIsolation',
-            value:
-              workingCase.type === CaseType.CUSTODY ||
-              workingCase.type === CaseType.ADMISSION_TO_FACILITY
-                ? workingCase.requestedCustodyRestrictions &&
-                  workingCase.requestedCustodyRestrictions.includes(
-                    CaseCustodyRestrictions.ISOLATION,
-                  )
-                  ? true
-                  : false
-                : undefined,
-          },
-          {
             key: 'conclusion',
             value:
               workingCase.decision &&
@@ -260,6 +243,8 @@ export const Ruling: React.FC = () => {
                     workingCase.decision,
                     workingCase.defendants[0],
                     workingCase.validToDate,
+                    workingCase.isCustodyIsolation,
+                    workingCase.isolationToDate,
                   )
                 : undefined,
           },
@@ -753,13 +738,7 @@ export const Ruling: React.FC = () => {
                   name="isolationToDate"
                   datepickerLabel="Einangrun til"
                   disabled={!workingCase.isCustodyIsolation}
-                  selectedDate={
-                    workingCase.isolationToDate
-                      ? workingCase.isolationToDate
-                      : workingCase.validToDate
-                      ? workingCase.validToDate
-                      : undefined
-                  }
+                  selectedDate={workingCase.isolationToDate}
                   // Isolation can never be set in the past.
                   minDate={new Date()}
                   maxDate={
