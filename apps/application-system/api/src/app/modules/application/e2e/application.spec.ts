@@ -55,9 +55,9 @@ class MockContentfulRepository {
   }
 }
 
-// eslint-disable-next-line local-rules/disallow-kennitalas
 let server: request.SuperTest<request.Test>
-const nationalId = '1234567890'
+// eslint-disable-next-line local-rules/disallow-kennitalas
+const nationalId = '1234564321'
 const mockAuthGuard = new MockAuthGuard({
   nationalId,
   scope: [ApplicationScope.read, ApplicationScope.write],

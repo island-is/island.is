@@ -34,7 +34,7 @@ i18n.locale(defaultLanguage)
 
 interface I18nContextType {
   activeLocale: Locale
-  t: string
+  t: any
   locale: (locale: string, dict?: object) => void
 }
 

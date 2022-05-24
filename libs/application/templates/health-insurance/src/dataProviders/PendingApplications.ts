@@ -8,7 +8,7 @@ import {
 export class PendingApplications extends BasicDataProvider {
   type = 'PendingApplications'
 
-  provide(_: Application): Promise<string[]> {
+  provide(_application: Application): Promise<string[]> {
     const query = `query HealthInsuranceGetPendingApplication {
       healthInsuranceGetPendingApplication
     }`

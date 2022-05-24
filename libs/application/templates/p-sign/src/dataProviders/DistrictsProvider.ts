@@ -35,7 +35,7 @@ export class DistrictsProvider extends BasicDataProvider {
       .catch((error) => this.handleError(error))
   }
 
-  handleError(_: any) {
+  handleError(_error: any) {
     return Promise.reject({})
   }
 

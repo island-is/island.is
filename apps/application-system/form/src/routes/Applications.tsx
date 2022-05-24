@@ -66,7 +66,7 @@ export const Applications: FC = () => {
     if (type && data && isEmpty(data.applicationApplications)) {
       createApplication()
     }
-  }, [type, data, createApplication])
+  }, [type, data])
 
   if (loading) {
     return <ApplicationLoading />

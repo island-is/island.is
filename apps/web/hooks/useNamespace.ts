@@ -37,7 +37,7 @@ export function useNamespaceStrict<M extends NamespaceMessages>(
 // (The "clever" signature above is entirely opt-in)
 // TODO: mark this as @deprecated
 export function useNamespace(namespace = {}) {
-  return (key: string, fallback?: string) => {
+  return (key: string, fallback?: any) => {
     return namespace[key as keyof typeof namespace] ?? fallback ?? key
   }
 }

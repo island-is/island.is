@@ -23,7 +23,7 @@ export const Sticky: FC<Props> = ({
         ),
       )
     }
-  }, [ref, constantSticky])
+  }, [ref])
 
   useEffect(() => {
     onResize()

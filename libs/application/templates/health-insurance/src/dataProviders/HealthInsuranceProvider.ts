@@ -8,7 +8,7 @@ import {
 export class HealthInsuranceProvider extends BasicDataProvider {
   type = 'HealthInsuranceProvider'
 
-  provide(_: Application): Promise<boolean> {
+  provide(_application: Application): Promise<boolean> {
     const query = `query HealthInsuranceIsHealthInsured {
       healthInsuranceIsHealthInsured
     }`

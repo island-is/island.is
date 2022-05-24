@@ -89,7 +89,7 @@ export const BackgroundImage = ({
     if (!shouldLoad && intersection?.isIntersecting) {
       setShouldLoad(true)
     }
-  }, [intersection, shouldLoad])
+  }, [intersection])
 
   const imageLoaded = useImageLoader(src, shouldLoad)
 

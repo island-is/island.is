@@ -9,7 +9,7 @@ import { HasTeachingRights } from '@island.is/api/schema'
 export class TeachingRightsProvider extends BasicDataProvider {
   type = 'TeachingRightsProvider'
 
-  async provide(_: Application): Promise<HasTeachingRights> {
+  async provide(_application: Application): Promise<HasTeachingRights> {
     const query = `
       query DrivingLicenseTeachingRights {
         drivingLicenseTeachingRights {
