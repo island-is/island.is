@@ -331,6 +331,10 @@ export class CaseService {
     courtCaseNumber?: string,
     attachments?: Attachment[],
   ) {
+    const subject = this.formatMessage(m.signedRuling.subject, {
+      courtCaseNumber,
+    })
+
     try {
       await this.emailService.sendEmail({
         from: {
@@ -342,15 +346,41 @@ export class CaseService {
           address: this.config.email.replyToEmail,
         },
         to,
-        subject: this.formatMessage(m.signedRuling.subject, {
-          courtCaseNumber,
-        }),
+        subject,
         text: stripHtmlTags(body),
         html: body,
         attachments,
       })
     } catch (error) {
       this.logger.error('Failed to send email', { error })
+
+      this.eventService.postErrorEvent(
+        'Failed to send email',
+        {
+          courtCaseNumber,
+          subject,
+          to: Array.isArray(to)
+            ? to.reduce(
+                (acc, recipient, index) =>
+                  index > 0
+                    ? `${acc}, ${recipient.name} (${recipient.address})`
+                    : `${recipient.name} (${recipient.address})`,
+                '',
+              )
+            : `${to.name} (${to.address})`,
+          attachments:
+            attachments && attachments.length > 0
+              ? attachments.reduce(
+                  (acc, attachment, index) =>
+                    index > 0
+                      ? `${acc}, ${attachment.filename}`
+                      : `${attachment.filename}`,
+                  '',
+                )
+              : undefined,
+        },
+        error as Error,
+      )
     }
   }
 
