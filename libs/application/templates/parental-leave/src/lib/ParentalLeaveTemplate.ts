@@ -907,10 +907,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         if (answers.requestDays > 0) {
           unset(application.answers, 'periods')
           unset(application.answers, 'validatedPeriods')
-          set(application.answers, 'requestRights.requestDays', "0")
-          set(application.answers, 'requestRights.isRequestingRights', "no")
-          set(application.answers, 'giveRights.giveDays', "0")
-          set(application.answers, 'giveRights.isGivingRights', "no")
+          set(application.answers, 'requestRights.requestDays', '0')
+          set(application.answers, 'requestRights.isRequestingRights', 'no')
+          set(application.answers, 'giveRights.giveDays', '0')
+          set(application.answers, 'giveRights.isGivingRights', 'no')
         }
 
         if (answers.usePersonalAllowanceFromSpouse === YES) {
