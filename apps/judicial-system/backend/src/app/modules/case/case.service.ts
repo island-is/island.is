@@ -360,22 +360,23 @@ export class CaseService {
           courtCaseNumber,
           subject,
           to: Array.isArray(to)
-            ? to
-                .reduce(
-                  (acc, recipient) =>
-                    `${acc}, ${recipient.name} (${recipient.address})`,
-                  '',
-                )
-                .slice(2)
+            ? to.reduce(
+                (acc, recipient, index) =>
+                  index > 0
+                    ? `${acc}, ${recipient.name} (${recipient.address})`
+                    : `${recipient.name} (${recipient.address})`,
+                '',
+              )
             : `${to.name} (${to.address})`,
           attachments:
             attachments && attachments.length > 0
-              ? attachments
-                  .reduce(
-                    (acc, attachment) => `${acc}, ${attachment.filename}`,
-                    '',
-                  )
-                  .slice(2)
+              ? attachments.reduce(
+                  (acc, attachment, index) =>
+                    index > 0
+                      ? `${acc}, ${attachment.filename}`
+                      : `${attachment.filename}`,
+                  '',
+                )
               : undefined,
         },
         error as Error,

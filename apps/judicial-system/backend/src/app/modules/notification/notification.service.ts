@@ -201,12 +201,13 @@ export class NotificationService {
           to: `${recipientName} (${recipientEmail})`,
           attachments:
             attachments && attachments.length > 0
-              ? attachments
-                  .reduce(
-                    (acc, attachment) => `${acc}, ${attachment.filename}`,
-                    '',
-                  )
-                  .slice(2)
+              ? attachments.reduce(
+                  (acc, attachment, index) =>
+                    index > 0
+                      ? `${acc}, ${attachment.filename}`
+                      : `${attachment.filename}`,
+                  '',
+                )
               : undefined,
         },
         error as Error,
