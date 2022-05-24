@@ -26,7 +26,6 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import {
   Case,
-  CaseCustodyRestrictions,
   CaseDecision,
   CaseType,
   completedCaseStates,
@@ -621,6 +620,14 @@ export const Ruling: React.FC = () => {
                 selectedDate={workingCase.validToDate}
                 minDate={new Date()}
                 onChange={(date: Date | undefined, valid: boolean) => {
+                  const validToDate =
+                    date && valid ? formatISO(date) : undefined
+                  const isolationToDate =
+                    validToDate &&
+                    workingCase.isolationToDate &&
+                    validToDate < workingCase.isolationToDate
+                      ? validToDate
+                      : workingCase.isolationToDate
                   let conclusion = undefined
 
                   if (
@@ -638,9 +645,9 @@ export const Ruling: React.FC = () => {
                       workingCase,
                       workingCase.decision,
                       workingCase.defendants[0],
-                      formatISO(date),
+                      validToDate,
                       workingCase.isCustodyIsolation,
-                      workingCase.isolationToDate,
+                      isolationToDate,
                     )
                   }
 
@@ -648,7 +655,12 @@ export const Ruling: React.FC = () => {
                     [
                       {
                         key: 'validToDate',
-                        value: date && valid ? formatISO(date) : undefined,
+                        value: validToDate,
+                        force: true,
+                      },
+                      {
+                        key: 'isolationToDate',
+                        value: isolationToDate,
                         force: true,
                       },
                       {
