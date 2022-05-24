@@ -25,11 +25,7 @@ import {
   Button,
   Inline,
 } from '@island.is/island-ui/core'
-import {
-  HeadWithSocialSharing,
-  Sticky,
-  BoostChatPanel,
-} from '@island.is/web/components'
+import { HeadWithSocialSharing, Sticky } from '@island.is/web/components'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { SyslumennHeader, SyslumennFooter } from './Themes/SyslumennTheme'
 import {

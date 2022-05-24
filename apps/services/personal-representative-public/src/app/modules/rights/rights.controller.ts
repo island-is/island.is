@@ -1,7 +1,7 @@
 import { AuthScope } from '@island.is/auth/scopes'
 import {
   PaginatedPersonalRepresentativeRightTypeDto,
-  PersonalRepresentativeRightType,
+  PersonalRepresentativeRightTypeDTO,
   PersonalRepresentativeRightTypeService,
 } from '@island.is/auth-api-lib/personal-representative'
 import { IdsAuthGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
@@ -58,7 +58,7 @@ export class RightsController {
     summary: 'Get a single right type by code',
     response: {
       status: 200,
-      type: PersonalRepresentativeRightType,
+      type: PersonalRepresentativeRightTypeDTO,
     },
     request: {
       params: {
@@ -72,7 +72,7 @@ export class RightsController {
   })
   async get(
     @Param('code') code: string,
-  ): Promise<PersonalRepresentativeRightType> {
+  ): Promise<PersonalRepresentativeRightTypeDTO> {
     const rightType = await this.rightTypesService.getPersonalRepresentativeRightType(
       code,
     )

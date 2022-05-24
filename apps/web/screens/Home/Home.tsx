@@ -22,11 +22,13 @@ import {
   NewLinks,
   NewsItems,
   LifeEventsSection,
+  WatsonChatPanel,
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { GlobalContext } from '@island.is/web/context'
 import { QueryGetNewsArgs } from '@island.is/api/schema'
 import { FRONTPAGE_NEWS_TAG_ID } from '@island.is/web/constants'
+import { watsonConfig } from './config'
 
 interface HomeProps {
   categories: GetArticleCategoriesQuery['getArticleCategories']
@@ -126,6 +128,7 @@ const Home: Screen<HomeProps> = ({ categories, news, page }) => {
           />
         </GridContainer>
       </Box>
+      <WatsonChatPanel {...watsonConfig} />
     </Box>
   )
 }

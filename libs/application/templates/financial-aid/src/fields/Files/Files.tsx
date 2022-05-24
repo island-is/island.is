@@ -47,7 +47,7 @@ const Files = ({ uploadFiles, fileKey, folderId, hasError = false }: Props) => {
   }, [files])
 
   return (
-    <FileUploadContainer>
+    <FileUploadContainer hasError={hasError}>
       <InputFileUpload
         fileList={files}
         header={formatMessage(filesText.header)}

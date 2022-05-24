@@ -1,12 +1,9 @@
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 import flatten from 'lodash/flatten'
-import { useEffect } from 'react'
+import { useLayoutEffect } from 'react'
 
-import {
-  ServicePortalModule,
-  ServicePortalRoute,
-} from '@island.is/service-portal/core'
+import { ServicePortalModule } from '@island.is/service-portal/core'
 import { User } from '@island.is/shared/types'
 
 import { Action, ActionType } from '../../store/actions'
@@ -48,37 +45,9 @@ export const useRoutes = () => {
     })
   }
 
-  const arrangeDynamicRoutes = async (
-    userInfo: User,
-    dispatch: (action: Action) => void,
-    modules: ServicePortalModule[],
-    client: ApolloClient<NormalizedCacheObject>,
-  ) => {
-    Promise.all(
-      Object.values(modules)
-        .filter((module) => module.dynamicRoutes)
-        .map((module) => {
-          if (module.dynamicRoutes) {
-            return module.dynamicRoutes({
-              userInfo,
-              client,
-            })
-          }
-        }),
-    ).then((dynamicRoutes) => {
-      if (dynamicRoutes.length > 0) {
-        dispatch({
-          type: ActionType.UpdateFulfilledRoutes,
-          payload: flatten(dynamicRoutes) as ServicePortalRoute[],
-        })
-      }
-    })
-  }
-
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (userInfo === null || modulesPending) return
     arrangeRoutes(userInfo, dispatch, Object.values(modules), client)
-    arrangeDynamicRoutes(userInfo, dispatch, Object.values(modules), client)
   }, [userInfo, dispatch, modules, client])
 }
 
