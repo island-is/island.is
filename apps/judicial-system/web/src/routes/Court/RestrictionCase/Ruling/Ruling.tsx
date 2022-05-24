@@ -759,6 +759,16 @@ export const Ruling: React.FC = () => {
                       : undefined
                   }
                   onChange={(date: Date | undefined, valid: boolean) => {
+                    let isolationToDate =
+                      date && valid ? formatISO(date) : undefined
+                    if (
+                      isolationToDate &&
+                      workingCase.validToDate &&
+                      isolationToDate > workingCase.validToDate
+                    ) {
+                      // Make sure the time component does not make the isolation to date larger than the valid to date.
+                      isolationToDate = workingCase.validToDate
+                    }
                     let conclusion = undefined
 
                     if (
@@ -786,7 +796,7 @@ export const Ruling: React.FC = () => {
                       [
                         {
                           key: 'isolationToDate',
-                          value: date && valid ? formatISO(date) : undefined,
+                          value: isolationToDate,
                           force: true,
                         },
                         {
