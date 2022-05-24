@@ -248,9 +248,9 @@ describe('Parental Leave Application Template', () => {
           type: DefaultEvents.SUBMIT,
         })
         expect(hasChanged).toBe(true)
-        expect(newApplication.answers.personalAllowanceFromSpouse).toEqual(
-          undefined,
-        )
+        expect(
+          newApplication.answers.personalAllowanceFromSpouse,
+        ).toBeUndefined()
       })
 
       it('should remove personalAllowance on submit, if usePersonalAllowance is equal to NO  and personalAllowance exists', () => {
@@ -273,7 +273,7 @@ describe('Parental Leave Application Template', () => {
           type: DefaultEvents.SUBMIT,
         })
         expect(hasChanged).toBe(true)
-        expect(newApplication.answers.personalAllowance).toEqual(undefined)
+        expect(newApplication.answers.personalAllowance).toBeUndefined()
       })
 
       it('should set usage to 100 if useAsMuchAsPossible in personalAllowance is set to YES', () => {
