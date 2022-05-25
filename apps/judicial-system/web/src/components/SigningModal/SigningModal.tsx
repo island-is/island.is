@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback } from 'react'
 import { useRouter } from 'next/router'
-import { useMutation, useQuery } from '@apollo/client'
+import { ApolloError, useMutation, useQuery } from '@apollo/client'
 import { useIntl } from 'react-intl'
 
 import {
@@ -87,6 +87,21 @@ export const useRequestRulingSignature = (
   }
 }
 
+type signingProcess = 'inProgress' | 'success' | 'error' | 'canceled'
+
+const getSigningProcess = (
+  rulingSignatureConfirmation: RulingSignatureConfirmationQueryQuery['rulingSignatureConfirmation'],
+  error: ApolloError | undefined,
+): signingProcess => {
+  if (rulingSignatureConfirmation?.documentSigned) return 'success'
+
+  if (rulingSignatureConfirmation?.code === 7023) return 'canceled'
+
+  if (!error && !rulingSignatureConfirmation) return 'inProgress'
+
+  return 'error'
+}
+
 const SigningModal: React.FC<SigningModalProps> = ({
   workingCase,
   setWorkingCase,
@@ -98,7 +113,7 @@ const SigningModal: React.FC<SigningModalProps> = ({
 
   const { transitionCase, sendNotification } = useCase()
 
-  const { data } = useQuery<RulingSignatureConfirmationQueryQuery>(
+  const { data, error } = useQuery<RulingSignatureConfirmationQueryQuery>(
     RulingSignatureConfirmationQuery,
     {
       variables: {
@@ -158,32 +173,37 @@ const SigningModal: React.FC<SigningModalProps> = ({
         })
   }
 
+  const signingProcess = getSigningProcess(
+    data?.rulingSignatureConfirmation,
+    error,
+  )
+
   return (
     <Modal
       title={
-        !data?.rulingSignatureConfirmation
+        signingProcess === 'inProgress'
           ? 'Rafræn undirritun'
-          : data.rulingSignatureConfirmation.documentSigned
+          : signingProcess === 'success'
           ? 'Úrskurður hefur verið staðfestur og undirritaður'
-          : data.rulingSignatureConfirmation.code === 7023 // User cancelled
+          : signingProcess === 'canceled'
           ? 'Notandi hætti við undirritun'
           : 'Undirritun tókst ekki'
       }
       text={
-        !data?.rulingSignatureConfirmation ? (
+        signingProcess === 'inProgress' ? (
           <ControlCode
             controlCode={requestRulingSignatureResponse?.controlCode}
           />
-        ) : data.rulingSignatureConfirmation.documentSigned ? (
+        ) : signingProcess === 'success' ? (
           <MarkdownWrapper markdown={renderSuccessText(workingCase.type)} />
         ) : (
           'Vinsamlegast reynið aftur svo hægt sé að senda úrskurðinn með undirritun.'
         )
       }
       secondaryButtonText={
-        !data?.rulingSignatureConfirmation
+        signingProcess === 'inProgress'
           ? undefined
-          : data.rulingSignatureConfirmation.documentSigned
+          : signingProcess === 'success'
           ? 'Loka glugga'
           : 'Loka og reyna aftur'
       }
