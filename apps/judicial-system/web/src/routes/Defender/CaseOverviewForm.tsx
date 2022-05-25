@@ -228,14 +228,14 @@ const CaseOverviewForm: React.FC<Props> = (props) => {
             <PdfRow
               caseId={workingCase.id}
               title={formatMessage(core.pdfButtonRequest)}
-              pdfType={'request/restricted'}
+              pdfType={'request/limitedAccess'}
             />
             {completedCaseStates.includes(workingCase.state) && (
               <>
                 <PdfRow
                   caseId={workingCase.id}
                   title={formatMessage(core.pdfButtonRulingShortVersion)}
-                  pdfType={'courtRecord/restricted'}
+                  pdfType={'courtRecord/limitedAccess'}
                 >
                   {workingCase.courtRecordSignatory ? (
                     <SignedDocument
@@ -251,7 +251,7 @@ const CaseOverviewForm: React.FC<Props> = (props) => {
                 <PdfRow
                   caseId={workingCase.id}
                   title={formatMessage(core.pdfButtonRuling)}
-                  pdfType={'ruling/restricted'}
+                  pdfType={'ruling/limitedAccess'}
                 >
                   <SignedDocument
                     signatory={workingCase.judge?.name}

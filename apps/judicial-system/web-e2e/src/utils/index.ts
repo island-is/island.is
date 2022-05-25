@@ -24,11 +24,11 @@ export const intercept = (res: Case) => {
           case: res,
         },
       })
-    } else if (hasOperationName(req, 'RestrictedCaseQuery')) {
+    } else if (hasOperationName(req, 'LimitedAccessCaseQuery')) {
       req.alias = 'gqlCaseQuery'
       req.reply({
         data: {
-          restrictedCase: res,
+          limitedAccessCase: res,
         },
       })
     } else if (hasOperationName(req, 'UploadFileToCourtMutation')) {

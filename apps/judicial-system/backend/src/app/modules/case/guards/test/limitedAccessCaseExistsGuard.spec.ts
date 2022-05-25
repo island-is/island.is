@@ -14,7 +14,7 @@ import { Defendant } from '../../../defendant'
 import { Institution } from '../../../institution'
 import { User } from '../../../user'
 import { Case } from '../../models/case.model'
-import { RestrictedCaseExistsGuard } from '../restrictedCaseExists.guard'
+import { LimitedAccessCaseExistsGuard } from '../limitedAccessCaseExists.guard'
 
 interface Then {
   result: boolean
@@ -29,12 +29,15 @@ describe('Restricted Case Exists Guard', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { caseModel, restrictedCaseService } = await createTestingCaseModule()
+    const {
+      caseModel,
+      limitedAccessCaseService,
+    } = await createTestingCaseModule()
 
     mockCaseModel = caseModel
 
     givenWhenThen = async (): Promise<Then> => {
-      const guard = new RestrictedCaseExistsGuard(restrictedCaseService)
+      const guard = new LimitedAccessCaseExistsGuard(limitedAccessCaseService)
       const then = {} as Then
 
       try {

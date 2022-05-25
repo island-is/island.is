@@ -10,17 +10,17 @@ interface Then {
 
 type GivenWhenThen = (caseId: string, theCase: Case) => Then
 
-describe('RestrictedCaseController - Get by id', () => {
+describe('LimitedAccessCaseController - Get by id', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { restrictedCaseController } = await createTestingCaseModule()
+    const { limitedAccessCaseController } = await createTestingCaseModule()
 
     givenWhenThen = (caseId: string, theCase: Case) => {
       const then = {} as Then
 
       try {
-        then.result = restrictedCaseController.getById(caseId, theCase)
+        then.result = limitedAccessCaseController.getById(caseId, theCase)
       } catch (error) {
         then.error = error as Error
       }

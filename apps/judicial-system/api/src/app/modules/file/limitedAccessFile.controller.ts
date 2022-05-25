@@ -31,7 +31,7 @@ export class RestrictedFileController {
     private readonly logger: Logger,
   ) {}
 
-  @Get('request/restricted')
+  @Get('request/limitedAccess')
   @Header('Content-Type', 'application/pdf')
   async getRequestPdf(
     @Param('id') id: string,
@@ -45,13 +45,13 @@ export class RestrictedFileController {
       user.id,
       AuditedAction.GET_REQUEST_PDF,
       id,
-      'request/restricted',
+      'request/limitedAccess',
       req,
       res,
     )
   }
 
-  @Get('courtRecord/restricted')
+  @Get('courtRecord/limitedAccess')
   @Header('Content-Type', 'application/pdf')
   async getCourtRecordPdf(
     @Param('id') id: string,
@@ -67,13 +67,13 @@ export class RestrictedFileController {
       user.id,
       AuditedAction.GET_COURT_RECORD,
       id,
-      'courtRecord/restricted',
+      'courtRecord/limitedAccess',
       req,
       res,
     )
   }
 
-  @Get('ruling/restricted')
+  @Get('ruling/limitedAccess')
   @Header('Content-Type', 'application/pdf')
   async getRulingPdf(
     @Param('id') id: string,
@@ -87,7 +87,7 @@ export class RestrictedFileController {
       user.id,
       AuditedAction.GET_RULING_PDF,
       id,
-      'ruling/restricted',
+      'ruling/limitedAccess',
       req,
       res,
     )
