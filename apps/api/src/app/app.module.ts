@@ -54,6 +54,7 @@ import { MortgageCertificateModule } from '@island.is/api/domains/mortgage-certi
 
 import { maskOutFieldsMiddleware } from './graphql.middleware'
 import { CompanyRegistryConfig } from '@island.is/clients/rsk/company-registry'
+import { DrivingLicenseApiConfig } from '@island.is/clients/driving-license'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -247,6 +248,7 @@ const autoSchemaFile = environment.production
         XRoadConfig,
         CompanyRegistryConfig,
         DrivingLicenseBookClientConfig,
+        DrivingLicenseApiConfig,
       ],
     }),
   ],

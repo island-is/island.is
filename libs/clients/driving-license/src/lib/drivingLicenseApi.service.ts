@@ -1,5 +1,4 @@
-import { ConfigType } from '@island.is/nest/config'
-import { Inject, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import {
   CanApplyErrorCodeBFull,
   CanApplyForCategoryResult,
@@ -9,15 +8,12 @@ import {
 } from '..'
 import * as v1 from '../v1'
 import * as v2 from '../v2'
-import { DrivingLicenseApiConfig } from './DrivingLicenseApi.config'
 import {
   CanApplyErrorCodeBTemporary,
   DriversLicense,
   Teacher,
 } from './drivingLicenseApi.types'
 import { handleCreateResponse } from './utils/handleCreateResponse'
-
-const DRIVING_LICENSE_SUCCESSFUL_RESPONSE_VALUE = ''
 
 @Injectable()
 export class DrivingLicenseApi {
