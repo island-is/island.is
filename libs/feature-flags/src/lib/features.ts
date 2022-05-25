@@ -18,4 +18,7 @@ export enum Features {
   noDebtCertificate = 'applicationTemplateNoDebtCertificateEnabled',
   drivingInstructorRegistrations = 'isDrivingInstructorRegistrationsEnabled',
   drivingSchoolConfirmations = 'isDrivingSchoolConfirmationsEnabled',
+
+  // Application System Delegations active
+  applicationSystemDelegations = 'applicationSystemDelegations',
 }

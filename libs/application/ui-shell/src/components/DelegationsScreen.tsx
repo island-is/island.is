@@ -22,7 +22,8 @@ import { useLocale } from '@island.is/localization'
 import { useHistory } from 'react-router-dom'
 import { ScreenType, DelegationsScreenDataType, Delegation } from '../types'
 import { ErrorShell } from './ErrorShell'
-
+import { FeatureFlagClient, Features } from '@island.is/feature-flags'
+import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 interface DelegationsScreenProps {
   alternativeSubjects?: { nationalId: string }[]
   checkDelegation: Dispatch<SetStateAction<boolean>>
@@ -41,7 +42,11 @@ export const DelegationsScreen = ({
   const type = getTypeFromSlug(slug)
   const { switchUser, userInfo: user } = useAuth()
   const history = useHistory()
+  const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
 
+  useEffect(() => {
+    // switchUser('0101307789')
+  }, [])
   // Check for user delegations if application supports delegations
   const { data: delegations, error } = useQuery(ACTOR_DELEGATIONS, {
     skip: !alternativeSubjects && !screenData.allowedDelegations,
@@ -52,7 +57,11 @@ export const DelegationsScreen = ({
     async function applicationSupportsDelegations() {
       if (type) {
         const template = await getApplicationTemplateByTypeId(type)
-        if (template.allowedDelegations) {
+        const featureFlagEnabled = await featureFlagClient.getValue(
+          Features.applicationSystemDelegations,
+          false,
+        )
+        if (template.allowedDelegations && featureFlagEnabled) {
           setScreenData((prev) => ({
             ...prev,
             allowedDelegations: template.allowedDelegations,
