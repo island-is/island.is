@@ -308,7 +308,9 @@ export const SignedVerdictOverview: React.FC = () => {
             )}`,
           },
         )
-        modification = `${modification} ${isolationText}`
+        modification = modification
+          ? `${modification} ${isolationText}`
+          : isolationText
       }
     }
 
@@ -446,37 +448,34 @@ export const SignedVerdictOverview: React.FC = () => {
     value: Date | undefined,
     valid: boolean,
   ) => {
+    const validToDate = value ?? modifiedValidToDate?.value
+
     if (
-      value &&
+      validToDate &&
       workingCase.isCustodyIsolation &&
-      workingCase.isolationToDate
+      (!modifiedIsolationToDate?.value ||
+        compareAsc(validToDate, new Date(modifiedIsolationToDate.value)) === -1)
     ) {
-      const validToDateIsBeforeIsolationToDate =
-        compareAsc(value, new Date(workingCase.isolationToDate)) === -1
+      setModifiedIsolationToDate({
+        value: validToDate,
+        isValid: valid,
+      })
 
-      const validToIsolationToDiff = validToDateIsBeforeIsolationToDate
-        ? differenceInMilliseconds(value, new Date(workingCase.isolationToDate))
-        : 0
-
-      if (validToDateIsBeforeIsolationToDate) {
-        setModifiedIsolationToDate({
-          value: subMilliseconds(value, Math.abs(validToIsolationToDiff)),
-          isValid: valid,
-        })
-
-        setIsolationToDateChanged(true)
-      }
+      setIsolationToDateChanged(
+        !workingCase.isolationToDate ||
+          compareAsc(validToDate, new Date(workingCase.isolationToDate)) !== 0,
+      )
     }
 
     setModifiedValidToDate({
-      value: value ?? modifiedValidToDate?.value,
+      value: validToDate,
       isValid: valid,
     })
 
     setValidToDateChanged(
-      value !== undefined &&
-        workingCase.validToDate !== undefined &&
-        compareAsc(value, new Date(workingCase.validToDate)) !== 0,
+      value &&
+        (!workingCase.validToDate ||
+          compareAsc(value, new Date(workingCase.validToDate)) !== 0),
     )
   }
 
