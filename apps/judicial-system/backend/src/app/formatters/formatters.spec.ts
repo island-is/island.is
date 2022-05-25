@@ -1905,7 +1905,7 @@ describe('formatPrisonAdministrationRulingNotification', () => {
 
     expect(result.subject).toBe('Úrskurður í máli 007-2022-06546')
     expect(result.body).toBe(
-      'Dómari hefur undirritað og staðfest úrskurð í máli 007-2022-06546 hjá Héraðsdómi.<br /><br />Skjöl málsins eru aðengileg á <a href="some url">yfirlitssíðu málsins í Réttarvörslugátt</a>.',
+      'Dómari hefur undirritað og staðfest úrskurð í máli 007-2022-06546 hjá Héraðsdómi.<br /><br />Skjöl málsins eru aðgengileg á <a href="some url">yfirlitssíðu málsins í Réttarvörslugátt</a>.',
     )
   })
 })
