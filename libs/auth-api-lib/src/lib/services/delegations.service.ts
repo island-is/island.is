@@ -337,28 +337,28 @@ export class DelegationsService {
     if (
       (!client || client.supportsLegalGuardians) &&
       (!hasDelegationTypeFilter ||
-        delegationTypes?.includes(DelegationType.LegalGuardian))
+        delegationTypes.includes(DelegationType.LegalGuardian))
     ) {
       delegationPromises.push(this.findAllWardsIncoming(user))
     }
     if (
       (!client || client.supportsProcuringHolders) &&
       (!hasDelegationTypeFilter ||
-        delegationTypes?.includes(DelegationType.ProcurationHolder))
+        delegationTypes.includes(DelegationType.ProcurationHolder))
     ) {
       delegationPromises.push(this.findAllCompaniesIncoming(user))
     }
     if (
       (!client || client.supportsDelegation) &&
       (!hasDelegationTypeFilter ||
-        delegationTypes?.includes(DelegationType.Custom))
+        delegationTypes.includes(DelegationType.Custom))
     ) {
       delegationPromises.push(this.findAllValidCustomIncoming(user))
     }
     if (
       (!client || client.supportsPersonalRepresentatives) &&
       (!hasDelegationTypeFilter ||
-        delegationTypes?.includes(DelegationType.PersonalRepresentative))
+        delegationTypes.includes(DelegationType.PersonalRepresentative))
     ) {
       delegationPromises.push(this.findAllRepresentedPersonsIncoming(user))
     }
