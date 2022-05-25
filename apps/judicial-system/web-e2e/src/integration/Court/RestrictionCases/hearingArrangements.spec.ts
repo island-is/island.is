@@ -55,7 +55,7 @@ describe(`${HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
   })
 
   it('should autofill properties', () => {
-    const caseData = makeCustodyCase()
+    const caseData = makeRestrictionCase()
     const caseDataAddition: Case = {
       ...caseData,
       requestedValidToDate: '2020-09-16T19:50:08.033Z',
