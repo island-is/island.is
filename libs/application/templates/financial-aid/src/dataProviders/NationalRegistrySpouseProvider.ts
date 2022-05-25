@@ -43,13 +43,14 @@ export class NationalRegistrySpouseProvider extends BasicDataProvider {
       nationalRegistryQuery,
       'nationalRegistryUserV2',
     )
-
     return { fullName: applicant.fullName }
   }
+
   handleError(error: Error | unknown) {
     console.error('Provider.FinancialAid.NationalRegistrySpouse:', error)
     return Promise.reject('Failed to fetch from national registry for spouse')
   }
+
   onProvideError(result: { message: string }): FailedDataProviderResult {
     return {
       date: new Date(),
@@ -57,6 +58,7 @@ export class NationalRegistrySpouseProvider extends BasicDataProvider {
       status: 'failure',
     }
   }
+
   onProvideSuccess(result: Applicant): SuccessfulDataProviderResult {
     return { date: new Date(), status: 'success', data: result }
   }
