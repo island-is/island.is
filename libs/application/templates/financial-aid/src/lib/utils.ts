@@ -90,7 +90,7 @@ export function hasActiveCurrentApplication(context: ApplicationContext) {
     externalData,
     'veita.data',
   ) as CurrentApplication
-  return !dataProvider.currentApplicationId
+  return dataProvider.currentApplicationId != null
 }
 
 export const hasFiles = (

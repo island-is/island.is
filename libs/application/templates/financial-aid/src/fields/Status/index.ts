@@ -1,5 +1,5 @@
 export { default as AidAmount } from './AidAmount/AidAmount'
-export { default as Estimation } from './Estimation/Estimation'
+export { Estimation, VeitaEstimation } from './Estimation/Estimation'
 export { default as Header } from './Header/Header'
 export { default as MissingFilesCard } from './MissingFilesCard/MissingFilesCard'
 export { default as MoreActions } from './MoreActions/MoreActions'

@@ -36,6 +36,12 @@ export const PrerequisitesSpouse: Form = buildForm({
               subTitle: m.externalData.taxData.dataInfo,
             }),
             buildDataProviderItem({
+              id: 'veita',
+              type: DataProviderTypes.Veita,
+              title: '',
+              subTitle: undefined,
+            }),
+            buildDataProviderItem({
               id: 'text',
               type: undefined,
               title: '',

@@ -2,7 +2,7 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { useFormContext } from 'react-hook-form'
 
-import { Text, Box, Link, Button } from '@island.is/island-ui/core'
+import { Text, Box, Button } from '@island.is/island-ui/core'
 
 import { FAFieldBaseProps, UploadFileType } from '../../../lib/types'
 import { missingFiles } from '../../../lib/messages'
