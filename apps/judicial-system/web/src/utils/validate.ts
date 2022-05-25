@@ -269,7 +269,8 @@ export const isCourtRecordStepValidRC = (workingCase: Case) => {
     validate(workingCase.courtEndTime || '', 'empty').isValid &&
     validate(workingCase.courtEndTime || '', 'date-format').isValid &&
     validate(workingCase.decision || '', 'empty').isValid &&
-    validate(workingCase.conclusion || '', 'empty').isValid
+    validate(workingCase.conclusion || '', 'empty').isValid &&
+    validate(workingCase.ruling || '', 'empty').isValid
   )
 }
 
