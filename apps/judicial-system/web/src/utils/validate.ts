@@ -245,8 +245,7 @@ export const isRulingValidRC = (workingCase: Case) => {
   return (
     validate(workingCase.prosecutorDemands || '', 'empty').isValid &&
     validate(workingCase.courtCaseFacts || '', 'empty').isValid &&
-    validate(workingCase.courtLegalArguments || '', 'empty').isValid &&
-    validate(workingCase.ruling || '', 'empty').isValid
+    validate(workingCase.courtLegalArguments || '', 'empty').isValid
   )
 }
 
