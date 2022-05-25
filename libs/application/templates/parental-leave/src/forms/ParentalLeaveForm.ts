@@ -5,7 +5,6 @@ import {
   buildAsyncSelectField,
   buildCustomField,
   buildDateField,
-  buildDescriptionField,
   buildFileUploadField,
   buildForm,
   buildMultiField,
@@ -24,7 +23,6 @@ import {
 import { parentalLeaveFormMessages } from '../lib/messages'
 import {
   getExpectedDateOfBirth,
-  getOtherParentOptions,
   getAllPeriodDates,
   getSelectedChild,
   requiresOtherParentApproval,
