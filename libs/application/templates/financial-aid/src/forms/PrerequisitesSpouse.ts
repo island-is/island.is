@@ -30,6 +30,12 @@ export const PrerequisitesSpouse: Form = buildForm({
           checkboxLabel: m.externalData.general.checkboxLabel,
           dataProviders: [
             buildDataProviderItem({
+              id: 'nationalRegistrySpouse',
+              type: DataProviderTypes.NationalRegistrySpouse,
+              title: '',
+              subTitle: undefined,
+            }),
+            buildDataProviderItem({
               id: 'taxDataFetchSpouse',
               type: DataProviderTypes.TaxDataFetch,
               title: m.externalData.taxData.title,

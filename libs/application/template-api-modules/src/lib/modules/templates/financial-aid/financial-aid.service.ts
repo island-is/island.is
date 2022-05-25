@@ -123,7 +123,9 @@ export class FinancialAidService {
         answers.spouse?.email ||
         answers.relationshipStatus?.spouseEmail,
       spousePhoneNumber: answers.spouseContactInfo?.phone,
-      spouseName: externalData.nationalRegistry.data.applicant.spouse?.name,
+      spouseName:
+        externalData.nationalRegistry.data.applicant.spouse?.name ||
+        externalData.nationalRegistrySpouse?.data.fullName,
       spouseFormComment: answers.spouseFormComment,
       familyStatus: findFamilyStatus(answers, externalData),
       streetName:

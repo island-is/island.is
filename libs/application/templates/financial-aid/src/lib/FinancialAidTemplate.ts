@@ -142,7 +142,11 @@ const FinancialAidTemplate: ApplicationTemplate<
               read: 'all',
               write: {
                 answers: ['approveExternalDataSpouse'],
-                externalData: ['taxDataFetchSpouse', 'veita'],
+                externalData: [
+                  'taxDataFetchSpouse',
+                  'veita',
+                  'nationalRegistrySpouse',
+                ],
               },
             },
             {
