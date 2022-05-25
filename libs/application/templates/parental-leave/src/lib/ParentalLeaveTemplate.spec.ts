@@ -573,5 +573,40 @@ describe('Parental Leave Application Template', () => {
       expect(newState).toBe(ApplicationStates.OTHER_PARENT_ACTION)
       expect(newApplication.answers.periods).toBeUndefined()
     })
+
+    it('should remove validatedPeriods on spouse rejection', () => {
+      const validatedPeriods =  [
+        {
+          "endDate": "2021-12-16",
+          "firstPeriodStart": "estimatedDateOfBirth",
+          "ratio": "100",
+          "rawIndex": 0,
+          "startDate": "2021-06-17",
+          "useLength": "yes"
+        }
+      ]
+
+      const helper = new ApplicationTemplateHelper(
+        buildApplication({
+          answers: {
+            validatedPeriods,
+            requestRights: {
+              isRequestingRights: YES,
+              requestDays: '45',
+            }
+          },
+          state: ApplicationStates.OTHER_PARENT_APPROVAL
+        }),
+        ParentalLeaveTemplate
+      )
+
+      const [hasChanged, newState, newApplication] = helper.changeState({
+        type: DefaultEvents.REJECT,
+      })
+
+      expect(hasChanged).toBe(true)
+      expect(newState).toBe(ApplicationStates.OTHER_PARENT_ACTION)
+      expect(newApplication.answers.validatedPeriods).toBeUndefined()
+    })
   })
 })
