@@ -49,12 +49,12 @@ const AidAmount = ({
           application={application}
           nationalRegistry={nationalRegistry}
         />
-      ) : (
+      ) : veitaApplication ? (
         <VeitaEstimation
           application={veitaApplication}
           nationalRegistry={nationalRegistry}
         />
-      )}
+      ) : null}
     </Box>
   )
 }

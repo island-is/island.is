@@ -22,7 +22,7 @@ interface EstimationProps {
 }
 
 interface VeitaEstiamtionProps {
-  application?: Application
+  application: Application
   nationalRegistry: ExternalData['nationalRegistry']
 }
 
@@ -91,10 +91,6 @@ export const VeitaEstimation = ({
   application,
   nationalRegistry,
 }: VeitaEstiamtionProps) => {
-  if (!application) {
-    return null
-  }
-
   const { formatMessage } = useIntl()
 
   const getAidType = () => {
@@ -107,9 +103,7 @@ export const VeitaEstimation = ({
           ) === MartialStatusType.SINGLE
         )
       case application.familyStatus != undefined:
-        if (application.familyStatus) {
-          return !showSpouseData[application.familyStatus]
-        }
+        return !showSpouseData[application.familyStatus]
       case application.spouseNationalId != undefined:
         return false
       case !nationalRegistry?.data?.applicant?.spouse:
