@@ -1,10 +1,20 @@
+// import { Module } from '@nestjs/common'
+// import { ApiV1 } from '../v1'
+// import { DrivingLicenseApi } from './drivingLicenseApi.service'
+// import { DrivingLicenseApiProvider } from './apiConfiguration'
+
+// @Module({
+//   providers: [DrivingLicenseApiProvider,DrivingLicenseApi],
+//   exports: [DrivingLicenseApi],
+// })
+// export class DrivingLicenseApiModule {}
+
 import { Module } from '@nestjs/common'
-import { ApiV1 } from '../v1'
 import { DrivingLicenseApi } from './drivingLicenseApi.service'
-import { DrivingLicenseApiProvider } from './apiConfiguration'
+import { exportedApis } from './apiConfiguration'
 
 @Module({
-  providers: [DrivingLicenseApiProvider],
+  providers: [...exportedApis, DrivingLicenseApi],
   exports: [DrivingLicenseApi],
 })
 export class DrivingLicenseApiModule {}
