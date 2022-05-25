@@ -52,7 +52,7 @@ import ArrestDate from './ArrestDate'
 import RequestCourtDate from '../../SharedComponents/RequestCourtDate/RequestCourtDate'
 import SelectProsecutor from '../../SharedComponents/SelectProsecutor/SelectProsecutor'
 
-export const StepTwo: React.FC = () => {
+export const HearingArrangements: React.FC = () => {
   const router = useRouter()
   const { formatMessage } = useIntl()
   const {
@@ -388,4 +388,4 @@ export const StepTwo: React.FC = () => {
   )
 }
 
-export default StepTwo
+export default HearingArrangements
