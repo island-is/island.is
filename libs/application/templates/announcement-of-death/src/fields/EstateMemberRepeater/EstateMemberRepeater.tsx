@@ -19,6 +19,7 @@ import {
   GridRow,
   Button,
   ProfileCard,
+  Text,
 } from '@island.is/island-ui/core'
 import { Answers, EstateMember } from '../../types'
 import { format as formatNationalId } from 'kennitala'
@@ -32,7 +33,9 @@ import { m } from '../../lib/messages'
 export const EstateMemberRepeater: FC<FieldBaseProps<Answers>> = ({
   application,
   field,
+  error,
 }) => {
+  const errors: any = error
   const relations =
     (application.externalData.syslumennOnEntry?.data as {
       relationOptions: string[]
@@ -96,6 +99,7 @@ export const EstateMemberRepeater: FC<FieldBaseProps<Answers>> = ({
             index={index}
             relationOptions={relations}
             remove={remove}
+            error={errors && errors[index] ? errors[index] : null}
           />
         </Box>
       ))}
@@ -120,19 +124,20 @@ const Item = ({
   remove,
   fieldName,
   relationOptions,
+  error,
 }: {
   field: Partial<ArrayField<EstateMember, 'id'>>
   index: number
   remove: (index?: number | number[] | undefined) => void
   fieldName: string
   relationOptions: { value: string; label: string }[]
+  error: any
 }) => {
   const { formatMessage } = useLocale()
   const fieldIndex = `${fieldName}[${index}]`
   const nameField = `${fieldIndex}.name`
   const nationalIdField = `${fieldIndex}.nationalId`
   const relationField = `${fieldIndex}.relation`
-  const custodianField = `${fieldIndex}.custodian`
   const dateOfBirthField = `${fieldIndex}.dateOfBirth`
   const foreignCitizenshipField = `${fieldIndex}.foreignCitizenship`
   const initialField = `${fieldIndex}.initial`
@@ -166,7 +171,7 @@ const Item = ({
           },
         },
       })
-    } else if (name !== '') {
+    } else if (name !== '' && !foreignCitizenship) {
       setValue(nameField, '')
     }
   }, [getIdentity, name, nameField, nationalIdInput, setValue])
@@ -219,6 +224,7 @@ const Item = ({
                 defaultValue={field.relation}
                 options={relationOptions}
                 backgroundColor="blue"
+                error={error?.relation ?? undefined}
               />
             </GridColumn>
             <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
@@ -228,16 +234,7 @@ const Item = ({
                 name={nameField}
                 defaultValue={field.name}
                 label={formatMessage(m.inheritanceNameLabel)}
-                readOnly
-              />
-            </GridColumn>
-            <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-              <InputController
-                key={custodianField}
-                id={custodianField}
-                name={custodianField}
-                defaultValue={field.custodian}
-                label={formatMessage(m.inheritanceCustodyLabel)}
+                error={error?.name ?? undefined}
                 readOnly
               />
             </GridColumn>
@@ -251,6 +248,7 @@ const Item = ({
                 name={nameField}
                 backgroundColor="blue"
                 defaultValue={field.name}
+                error={error?.name ?? undefined}
                 label={formatMessage(m.inheritanceNameLabel)}
               />
             </GridColumn>
@@ -262,6 +260,7 @@ const Item = ({
                 label={formatMessage(m.inheritanceRelationLabel)}
                 defaultValue={field.relation}
                 options={relationOptions}
+                error={error?.relation ?? undefined}
                 backgroundColor="blue"
               />
             </GridColumn>
@@ -272,6 +271,7 @@ const Item = ({
                 name={dateOfBirthField}
                 backgroundColor="blue"
                 defaultValue={field.dateOfBirth}
+                error={error?.dateOfBirth ?? undefined}
                 label={formatMessage(m.inheritanceDayOfBirthLabel)}
               />
             </GridColumn>

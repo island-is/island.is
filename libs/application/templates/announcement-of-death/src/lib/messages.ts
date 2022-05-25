@@ -471,6 +471,12 @@ Ef ekkert á við sem hér að ofan er talið rennur arfur í ríkissjóð. Nán
     defaultMessage: 'Viðtakandi þarf að hafa náð 18 ára aldri',
     description: 'Elected person must be at least 18 years old.',
   },
+  errorAssetNumber: {
+    id: 'aod.application:error.errorAssetNumber',
+    defaultMessage:
+      'Fasteignanúmer þarf að vera bókstafurinn F og 7 tölustafir',
+    description: 'Invalid asset number error message',
+  },
 
   /* Announcement */
   announcementTitle: {

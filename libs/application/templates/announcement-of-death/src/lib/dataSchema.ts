@@ -4,6 +4,8 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { m } from './messages'
 import { RoleConfirmationEnum } from '../types'
 
+import { customZodError } from './utils/customZodError'
+
 const emailRegex = /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
 const isValidEmail = (value: string) => emailRegex.test(value)
 
@@ -11,6 +13,13 @@ const isValidPhoneNumber = (phoneNumber: string) => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
   return phone && phone.isValid()
 }
+
+const asset = z.object({
+  share: z.number().optional(),
+  initial: z.boolean().optional(),
+  assetNumber: z.string().nonempty(),
+  description: z.string().nonempty(),
+})
 
 // todo: set message strings for the error messages
 export const dataSchema = z.object({
@@ -77,10 +86,21 @@ export const dataSchema = z.object({
   applicantPhone: z.string().refine((v) => isValidPhoneNumber(v), {
     params: m.errorPhoneNumber,
   }),
-  applicantEmail: z.string().refine((v) => isValidEmail(v), {
-    params: m.errorEmail,
-  }),
-  applicantRelation: z
-    .string()
-    .refine((x) => x !== undefined, { params: m.errorRelation }), // TODO: try to get custom error message
+  applicantEmail: customZodError(z.string().email(), m.errorEmail),
+  applicantRelation: customZodError(z.string().nonempty(), m.errorRelation),
+  assets: asset.partial().array(),
+  estateMembers: z
+    .object({
+      initial: z.boolean().optional(),
+      name: z.string().nonempty(),
+      relation: customZodError(z.string().nonempty(), m.errorRelation),
+      nationalId: z.string().optional(),
+      custodian: z.string().length(10).optional(),
+      foreignCitizenship: z.string().array().min(0).max(1).optional(),
+      dateOfBirth: z.string().nonempty().optional(),
+    })
+    .array(),
+  flyers: asset.partial().array(),
+  ships: asset.partial().array(),
+  vehicles: asset.partial().array(),
 })
