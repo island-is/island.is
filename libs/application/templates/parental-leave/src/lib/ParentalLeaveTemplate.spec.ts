@@ -609,7 +609,7 @@ describe('Parental Leave Application Template', () => {
       expect(newApplication.answers.validatedPeriods).toBeUndefined()
     })
 
-    it('should reset value of isRequestiongRights and requestDays on sposue rejection', () => {
+    it('should reset value of isRequestiongRights and requestDays on spouse rejection', () => {
       const helper = new ApplicationTemplateHelper(
         buildApplication({
           answers: {
@@ -632,6 +632,36 @@ describe('Parental Leave Application Template', () => {
       expect(newApplication.answers.requestRights).toEqual({
         isRequestingRights: NO,
         requestDays: '0',
+      })
+    })
+
+    it('should reset value of isGivingRights and giveDays on spouse rejection', () => {
+      const helper = new ApplicationTemplateHelper(
+        buildApplication({
+          answers: {
+            requestRights: {
+              isRequestingRights: YES,
+              requestDays: '45',
+            },
+            giveRights: {
+              isGivingRights: YES,
+              giveDays: '45',
+            }
+          },
+          state: ApplicationStates.OTHER_PARENT_APPROVAL
+        }),
+        ParentalLeaveTemplate
+      )
+
+      const [hasChanged, newState, newApplication] = helper.changeState({
+        type: DefaultEvents.REJECT,
+      })
+
+      expect(hasChanged).toBe(true)
+      expect(newState).toBe(ApplicationStates.OTHER_PARENT_ACTION)
+      expect(newApplication.answers.giveRights).toEqual({
+        isGivingRights: NO,
+        giveDays: '0',
       })
     })
   })
