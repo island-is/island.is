@@ -511,4 +511,158 @@ describe('Parental Leave Application Template', () => {
       expect(newApplication.assignees).toEqual([])
     })
   })
+
+  describe('Spouse rejection', () => {
+    it('should remove personalAllowanceFromSpouse on spouse rejection', () => {
+      const helper = new ApplicationTemplateHelper(
+        buildApplication({
+          answers: {
+            usePersonalAllowanceFromSpouse: YES,
+            personalAllowanceFromSpouse: {
+              useAsMuchAsPossible: YES,
+              usage: '100',
+            },
+          },
+          state: ApplicationStates.OTHER_PARENT_APPROVAL,
+        }),
+        ParentalLeaveTemplate,
+      )
+
+      const [hasChanged, newState, newApplication] = helper.changeState({
+        type: DefaultEvents.REJECT,
+      })
+
+      expect(hasChanged).toBe(true)
+      expect(newState).toBe(ApplicationStates.OTHER_PARENT_ACTION)
+      expect(newApplication.answers.personalAllowanceFromSpouse).toBeUndefined()
+    })
+
+    it('should remove periods on spouse rejection', () => {
+      const periods = [
+        {
+          ratio: '100',
+          endDate: '2021-05-15T00:00:00Z',
+          startDate: '2021-01-15',
+        },
+        {
+          ratio: '100',
+          endDate: '2021-06-16',
+          startDate: '2021-06-01',
+        },
+      ]
+
+      const helper = new ApplicationTemplateHelper(
+        buildApplication({
+          answers: {
+            periods,
+            requestRights: {
+              isRequestingRights: YES,
+              requestDays: '45',
+            },
+          },
+          state: ApplicationStates.OTHER_PARENT_APPROVAL,
+        }),
+        ParentalLeaveTemplate,
+      )
+
+      const [hasChanged, newState, newApplication] = helper.changeState({
+        type: DefaultEvents.REJECT,
+      })
+
+      expect(hasChanged).toBe(true)
+      expect(newState).toBe(ApplicationStates.OTHER_PARENT_ACTION)
+      expect(newApplication.answers.periods).toBeUndefined()
+    })
+
+    it('should remove validatedPeriods on spouse rejection', () => {
+      const validatedPeriods = [
+        {
+          endDate: '2021-12-16',
+          firstPeriodStart: 'estimatedDateOfBirth',
+          ratio: '100',
+          rawIndex: 0,
+          startDate: '2021-06-17',
+          useLength: 'yes',
+        },
+      ]
+
+      const helper = new ApplicationTemplateHelper(
+        buildApplication({
+          answers: {
+            validatedPeriods,
+            requestRights: {
+              isRequestingRights: YES,
+              requestDays: '45',
+            },
+          },
+          state: ApplicationStates.OTHER_PARENT_APPROVAL,
+        }),
+        ParentalLeaveTemplate,
+      )
+
+      const [hasChanged, newState, newApplication] = helper.changeState({
+        type: DefaultEvents.REJECT,
+      })
+
+      expect(hasChanged).toBe(true)
+      expect(newState).toBe(ApplicationStates.OTHER_PARENT_ACTION)
+      expect(newApplication.answers.validatedPeriods).toBeUndefined()
+    })
+
+    it('should reset value of isRequestiongRights and requestDays on spouse rejection', () => {
+      const helper = new ApplicationTemplateHelper(
+        buildApplication({
+          answers: {
+            requestRights: {
+              isRequestingRights: YES,
+              requestDays: '45',
+            },
+          },
+          state: ApplicationStates.OTHER_PARENT_APPROVAL,
+        }),
+        ParentalLeaveTemplate,
+      )
+
+      const [hasChanged, newState, newApplication] = helper.changeState({
+        type: DefaultEvents.REJECT,
+      })
+
+      expect(hasChanged).toBe(true)
+      expect(newState).toBe(ApplicationStates.OTHER_PARENT_ACTION)
+      expect(newApplication.answers.requestRights).toEqual({
+        isRequestingRights: NO,
+        requestDays: '0',
+      })
+    })
+
+    it('should reset value of isGivingRights and giveDays on spouse rejection', () => {
+      const helper = new ApplicationTemplateHelper(
+        buildApplication({
+          answers: {
+            requestRights: {
+              isRequestingRights: YES,
+              requestDays: '45',
+            },
+            giveRights: {
+              isGivingRights: YES,
+              giveDays: '45',
+            },
+          },
+          state: ApplicationStates.OTHER_PARENT_APPROVAL,
+        }),
+        ParentalLeaveTemplate,
+      )
+
+      const [hasChanged, newState, newApplication] = helper.changeState({
+        type: DefaultEvents.REJECT,
+      })
+
+      expect(hasChanged).toBe(true)
+      expect(newState).toBe(ApplicationStates.OTHER_PARENT_ACTION)
+      expect(newApplication.answers.giveRights).toEqual({
+        isGivingRights: NO,
+        giveDays: '0',
+      })
+    })
+  })
 })
