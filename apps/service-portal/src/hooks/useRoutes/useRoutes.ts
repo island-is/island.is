@@ -13,7 +13,6 @@ import { useModuleProps } from '../useModuleProps/useModuleProps'
 export const useRoutes = () => {
   const [{ modules, modulesPending }, dispatch] = useStore()
   const { userInfo, client } = useModuleProps()
-  const featureFlagClient = useFeatureFlagClient()
 
   const arrangeRoutes = async (
     userInfo: User,
