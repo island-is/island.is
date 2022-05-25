@@ -6,8 +6,6 @@ import { ValueType } from 'react-select/src/types'
 import { IntlShape, useIntl } from 'react-intl'
 import compareAsc from 'date-fns/compareAsc'
 import formatISO from 'date-fns/formatISO'
-import differenceInMilliseconds from 'date-fns/differenceInMilliseconds'
-import subMilliseconds from 'date-fns/subMilliseconds'
 
 import {
   CaseDecision,
