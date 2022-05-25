@@ -87,9 +87,9 @@ export const useRequestRulingSignature = (
   }
 }
 
-type signingProcess = 'inProgress' | 'success' | 'error' | 'canceled'
+export type signingProcess = 'inProgress' | 'success' | 'error' | 'canceled'
 
-const getSigningProcess = (
+export const getSigningProcess = (
   rulingSignatureConfirmation: RulingSignatureConfirmationQueryQuery['rulingSignatureConfirmation'],
   error: ApolloError | undefined,
 ): signingProcess => {
