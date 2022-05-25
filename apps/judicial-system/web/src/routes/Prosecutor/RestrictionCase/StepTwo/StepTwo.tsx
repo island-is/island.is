@@ -26,6 +26,7 @@ import {
   useInstitution,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
+  errors,
   rcRequestedHearingArrangements,
   titles,
 } from '@island.is/judicial-system-web/messages'
@@ -57,6 +58,7 @@ export const StepTwo: React.FC = () => {
   const {
     sendNotification,
     isSendingNotification,
+    sendNotificationError,
     transitionCase,
     isTransitioningCase,
     updateCase,
@@ -199,6 +201,11 @@ export const StepTwo: React.FC = () => {
               handleClose={() => setModalVisible(false)}
               handleSecondaryButtonClick={() =>
                 router.push(`${Constants.STEP_THREE_ROUTE}/${workingCase.id}`)
+              }
+              errorMessage={
+                sendNotificationError
+                  ? formatMessage(errors.sendNotification)
+                  : undefined
               }
               handlePrimaryButtonClick={async () => {
                 const notificationSent = await sendNotification(

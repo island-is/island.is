@@ -15,7 +15,7 @@ import {
   CaseFileState,
 } from '@island.is/judicial-system/types'
 
-export const intercept = (res: Case) => {
+export const intercept = (res: Case, shouldFail?: boolean) => {
   cy.intercept('POST', '**/api/graphql', (req) => {
     if (hasOperationName(req, 'CaseQuery')) {
       req.alias = 'gqlCaseQuery'
@@ -52,12 +52,9 @@ export const intercept = (res: Case) => {
     } else if (hasOperationName(req, 'SendNotificationMutation')) {
       req.alias = 'SendNotificationMutation'
       req.reply({
-        data: {
-          sendNotification: {
-            notificationSent: true,
-            __typename: 'SendNotificationResponse',
-          },
-        },
+        fixture: shouldFail
+          ? 'sendNotificationFailedMutationResponse'
+          : 'sendNotificationMutationResponse',
       })
     }
   })
