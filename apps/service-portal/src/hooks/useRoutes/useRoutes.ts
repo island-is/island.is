@@ -21,15 +21,11 @@ export const useRoutes = () => {
     modules: ServicePortalModule[],
     client: ApolloClient<NormalizedCacheObject>,
   ) => {
-    const FEATURE_FLAG_COMPANY_VIEW = await featureFlagClient.getValue(
-      'isServicePortalCompanyViewEnabled',
-      false,
-    )
     const IS_COMPANY = userInfo?.profile?.subjectType === 'legalEntity'
     const routes = await Promise.all(
       Object.values(modules).map((module) => {
         const routesObject =
-          module.companyRoutes && IS_COMPANY && FEATURE_FLAG_COMPANY_VIEW
+          module.companyRoutes && IS_COMPANY
             ? module.companyRoutes
             : module.routes
         return routesObject({
