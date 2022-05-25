@@ -69,7 +69,9 @@ describe('Parental Leave Application Template', () => {
             requestRights: {
               isRequestingRights: 'yes',
             },
-            otherParentId,
+            otherParent: {
+              otherParentId,
+            },
             selectedChild: '0',
           },
         }),
@@ -91,7 +93,9 @@ describe('Parental Leave Application Template', () => {
             requestRights: {
               isRequestingRights: 'no',
             },
-            otherParentId,
+            otherParent: {
+              otherParentId,
+            },
             employer: {
               isSelfEmployed: 'no',
             },
@@ -117,7 +121,9 @@ describe('Parental Leave Application Template', () => {
             requestRights: {
               isRequestingRights: 'yes',
             },
-            otherParentId,
+            otherParent: {
+              otherParentId,
+            },
             employer: {
               isSelfEmployed: 'no',
             },
@@ -157,7 +163,9 @@ describe('Parental Leave Application Template', () => {
             requestRights: {
               isRequestingRights: 'yes',
             },
-            otherParentId,
+            otherParent: {
+              otherParentId,
+            },
             employer: {
               isSelfEmployed: 'yes',
             },
@@ -208,7 +216,9 @@ describe('Parental Leave Application Template', () => {
                 },
               },
               answers: {
-                otherParent: SPOUSE,
+                otherParent: {
+                  chooseOtherParent: SPOUSE,
+                },
                 employer: {
                   email: 'selfemployed@test.test',
                   isSelfEmployed: YES,
@@ -228,7 +238,7 @@ describe('Parental Leave Application Template', () => {
     })
 
     describe('allowance', () => {
-      it('should remove spouse allowance useAll and usage on submit, if usePersonalAllowanceFromSpouse is equal to NO', () => {
+      it('should remove personalAllowanceFromSpouse on submit, if usePersonalAllowanceFromSpouse is equal to NO and personalAllowanceFromSpouse exists', () => {
         const helper = new ApplicationTemplateHelper(
           buildApplication({
             answers: {
@@ -248,10 +258,12 @@ describe('Parental Leave Application Template', () => {
           type: DefaultEvents.SUBMIT,
         })
         expect(hasChanged).toBe(true)
-        expect(newApplication.answers.personalAllowanceFromSpouse).toEqual(null)
+        expect(
+          newApplication.answers.personalAllowanceFromSpouse,
+        ).toBeUndefined()
       })
 
-      it('should remove allowance useAll and usage on submit, if usePersonalAllowance is equal to NO', () => {
+      it('should remove personalAllowance on submit, if usePersonalAllowance is equal to NO  and personalAllowance exists', () => {
         const helper = new ApplicationTemplateHelper(
           buildApplication({
             answers: {
@@ -271,7 +283,7 @@ describe('Parental Leave Application Template', () => {
           type: DefaultEvents.SUBMIT,
         })
         expect(hasChanged).toBe(true)
-        expect(newApplication.answers.personalAllowance).toEqual(null)
+        expect(newApplication.answers.personalAllowance).toBeUndefined()
       })
 
       it('should set usage to 100 if useAsMuchAsPossible in personalAllowance is set to YES', () => {

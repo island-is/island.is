@@ -7,7 +7,6 @@ import has from 'lodash/has'
 import { format as formatKennitala } from 'kennitala'
 import {
   Application,
-  buildFieldOptions,
   RecordObject,
   Field,
   coreErrorMessages,
@@ -41,7 +40,6 @@ import {
 } from '@island.is/shared/problem'
 
 import {
-  getOtherParentOptions,
   getSelectedChild,
   requiresOtherParentApproval,
   getApplicationExternalData,
@@ -145,12 +143,6 @@ export const Review: FC<ReviewScreenProps> = ({
   )
   const isPrimaryParent =
     selectedChild?.parentalRelation === ParentalRelations.primary
-
-  const otherParentOptions = useMemo(
-    () =>
-      buildFieldOptions(getOtherParentOptions(application), application, field),
-    [application],
-  )
 
   const hasSelectedOtherParent = otherParent !== NO
 
@@ -355,7 +347,7 @@ export const Review: FC<ReviewScreenProps> = ({
                 label={formatMessage(
                   parentalLeaveFormMessages.shared.otherParentID,
                 )}
-                value={otherParentId}
+                value={formatKennitala(otherParentId!)}
               />
             </GridColumn>
           </GridRow>

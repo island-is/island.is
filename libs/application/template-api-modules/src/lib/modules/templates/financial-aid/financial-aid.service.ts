@@ -42,6 +42,12 @@ export class FinancialAidService {
   async createApplication({ application, auth }: Props) {
     const { id, answers, externalData } = application
 
+    if (externalData.veita.data.currentApplicationId) {
+      return {
+        currentApplicationId: externalData.veita.data.currentApplicationId,
+      }
+    }
+
     const spouseTaxFiles = () => {
       if (
         externalData?.taxDataFetchSpouse?.data?.municipalitiesPersonalTaxReturn

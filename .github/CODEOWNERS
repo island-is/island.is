@@ -129,6 +129,8 @@
 /libs/api/domains/company-registry                                                                  @island-is/sendiradid
 /libs/clients/health-insurance-v2/                                                                  @island-is/sendiradid
 /libs/clients/data-protection-complaint/                                                            @island-is/sendiradid
+/libs/clients/fishing-license/                                                                      @island-is/sendiradid
+/libs/api/domains/fishing-license/                                                                  @island-is/sendiradid
 /libs/application/templates/general-fishing-license/                                                @island-is/sendiradid
 /libs/application/template-api-modules/src/lib/modules/templates/general-fishing-license/           @island-is/sendiradid
 /libs/application/template-api-modules/src/lib/modules/templates/data-protection-complaint/         @island-is/sendiradid
