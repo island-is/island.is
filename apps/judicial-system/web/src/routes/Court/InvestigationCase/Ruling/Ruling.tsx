@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
+import router from 'next/router'
 
 import {
   CaseFileList,
@@ -45,7 +46,15 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { isRulingValidIC } from '@island.is/judicial-system-web/src/utils/validate'
-import * as Constants from '@island.is/judicial-system/consts'
+import {
+  SIGNED_VERDICT_OVERVIEW,
+  IC_MODIFY_RULING_ROUTE,
+  IC_COURT_RECORD_ROUTE,
+  IC_HEARING_ARRANGEMENTS_ROUTE,
+} from '@island.is/judicial-system/consts'
+import SigningModal, {
+  useRequestRulingSignature,
+} from '@island.is/judicial-system-web/src/components/SigningModal/SigningModal'
 
 const Ruling = () => {
   const {
@@ -64,6 +73,19 @@ const Ruling = () => {
   const [courtLegalArgumentsEM, setCourtLegalArgumentsEM] = useState<string>('')
   const [prosecutorDemandsEM, setProsecutorDemandsEM] = useState<string>('')
   const [introductionEM, setIntroductionEM] = useState<string>('')
+
+  const [modalVisible, setModalVisible] = useState<'NoModal' | 'SigningModal'>(
+    'NoModal',
+  )
+
+  const {
+    requestRulingSignature,
+    requestRulingSignatureResponse,
+    isRequestingRulingSignature,
+  } = useRequestRulingSignature(workingCase.id, () =>
+    setModalVisible('SigningModal'),
+  )
+  const isModifyingRuling = router.pathname.includes(IC_MODIFY_RULING_ROUTE)
 
   useDeb(workingCase, 'prosecutorDemands')
   useDeb(workingCase, 'courtCaseFacts')
@@ -444,12 +466,45 @@ const Ruling = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${Constants.IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
-          nextIsLoading={isLoadingWorkingCase}
-          nextUrl={`${Constants.IC_COURT_RECORD_ROUTE}/${workingCase.id}`}
+          previousUrl={
+            isModifyingRuling
+              ? `${SIGNED_VERDICT_OVERVIEW}/${workingCase.id}`
+              : `${IC_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`
+          }
+          previousButtonText={
+            isModifyingRuling
+              ? formatMessage(m.sections.formFooter.modifyRulingBackButtonLabel)
+              : undefined
+          }
+          nextButtonText={
+            isModifyingRuling
+              ? formatMessage(m.sections.formFooter.modifyRulingButtonLabel)
+              : undefined
+          }
+          nextIsLoading={
+            isModifyingRuling
+              ? isRequestingRulingSignature || isLoadingWorkingCase
+              : isLoadingWorkingCase
+          }
+          nextUrl={`${IC_COURT_RECORD_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!isRulingValidIC(workingCase)}
+          onNextButtonClick={() => {
+            if (isModifyingRuling) {
+              requestRulingSignature()
+            } else {
+              router.push(`${IC_COURT_RECORD_ROUTE}/${workingCase.id}`)
+            }
+          }}
         />
       </FormContentContainer>
+      {modalVisible === 'SigningModal' && (
+        <SigningModal
+          workingCase={workingCase}
+          setWorkingCase={setWorkingCase}
+          requestRulingSignatureResponse={requestRulingSignatureResponse}
+          onClose={() => setModalVisible('NoModal')}
+        />
+      )}
     </PageLayout>
   )
 }
