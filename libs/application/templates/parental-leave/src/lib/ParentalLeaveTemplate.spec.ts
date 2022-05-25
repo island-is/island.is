@@ -69,7 +69,9 @@ describe('Parental Leave Application Template', () => {
             requestRights: {
               isRequestingRights: 'yes',
             },
-            otherParentId,
+            otherParent: {
+              otherParentId,
+            },
             selectedChild: '0',
           },
         }),
@@ -91,7 +93,9 @@ describe('Parental Leave Application Template', () => {
             requestRights: {
               isRequestingRights: 'no',
             },
-            otherParentId,
+            otherParent: {
+              otherParentId,
+            },
             employer: {
               isSelfEmployed: 'no',
             },
@@ -117,7 +121,9 @@ describe('Parental Leave Application Template', () => {
             requestRights: {
               isRequestingRights: 'yes',
             },
-            otherParentId,
+            otherParent: {
+              otherParentId,
+            },
             employer: {
               isSelfEmployed: 'no',
             },
@@ -157,7 +163,9 @@ describe('Parental Leave Application Template', () => {
             requestRights: {
               isRequestingRights: 'yes',
             },
-            otherParentId,
+            otherParent: {
+              otherParentId,
+            },
             employer: {
               isSelfEmployed: 'yes',
             },
@@ -208,7 +216,9 @@ describe('Parental Leave Application Template', () => {
                 },
               },
               answers: {
-                otherParent: SPOUSE,
+                otherParent: {
+                  chooseOtherParent: SPOUSE,
+                },
                 employer: {
                   email: 'selfemployed@test.test',
                   isSelfEmployed: YES,

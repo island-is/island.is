@@ -20,6 +20,7 @@ import {
   calculateEndDateForPeriodWithStartAndLength,
   calculatePeriodLengthInMonths,
   applicantIsMale,
+  getOtherParentName,
 } from './parentalLeaveUtils'
 import { PersonInformation } from '../types'
 
@@ -262,18 +263,21 @@ describe('getOtherParentId', () => {
     application = createApplicationBase()
   })
 
-  it('should return undefined if no parent is selected', () => {
-    application.answers.otherParent = NO
+  it('should return undefined if NO parent is selected', () => {
+    application.answers.otherParent = {
+      chooseOtherParent: NO,
+    }
 
     expect(getOtherParentId(application)).toBeUndefined()
   })
 
   it('should return answers.otherParentId if manual is selected', () => {
-    application.answers.otherParent = MANUAL
-
     const expectedId = '1234567899'
 
-    application.answers.otherParentId = expectedId
+    application.answers.otherParent = {
+      chooseOtherParent: MANUAL,
+      otherParentId: expectedId,
+    }
 
     expect(getOtherParentId(application)).toBe(expectedId)
   })
@@ -291,9 +295,73 @@ describe('getOtherParentId', () => {
       date: new Date(),
       status: 'success',
     }
-    application.answers.otherParent = 'spouse'
+    application.answers.otherParent = {
+      chooseOtherParent: 'spouse',
+    }
 
     expect(getOtherParentId(application)).toBe(expectedSpouse.nationalId)
+  })
+})
+
+describe('getOtherParentName', () => {
+  let id = 0
+  const createApplicationBase = (): Application => ({
+    answers: {},
+    applicant: '',
+    assignees: [],
+    attachments: {},
+    created: new Date(),
+    modified: new Date(),
+    externalData: {},
+    id: (id++).toString(),
+    state: '',
+    typeId: ApplicationTypes.PARENTAL_LEAVE,
+    name: '',
+    status: ApplicationStatus.IN_PROGRESS,
+  })
+
+  let application: Application
+  beforeEach(() => {
+    application = createApplicationBase()
+  })
+
+  it('should return undefined if NO parent is selected', () => {
+    application.answers.otherParent = {
+      chooseOtherParent: NO,
+    }
+
+    expect(getOtherParentName(application)).toBeUndefined()
+  })
+
+  it('should return answers.otherParentName if manual is selected', () => {
+    const expectedName = '1234567899'
+
+    application.answers.otherParent = {
+      chooseOtherParent: MANUAL,
+      otherParentName: expectedName,
+    }
+
+    expect(getOtherParentName(application)).toBe(expectedName)
+  })
+
+  it('should return spouse if spouse is selected', () => {
+    const expectedSpouse: PersonInformation['spouse'] = {
+      name: 'Spouse Spouseson',
+      nationalId: '1234567890',
+    }
+
+    application.externalData.person = {
+      data: {
+        spouse: expectedSpouse,
+      },
+      date: new Date(),
+      status: 'success',
+    }
+    application.answers.otherParent = {
+      chooseOtherParent: 'spouse',
+    }
+
+    expect(getOtherParentName(application)).toBe(expectedSpouse.name)
   })
 })
 
