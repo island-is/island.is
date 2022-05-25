@@ -520,12 +520,12 @@ describe('Parental Leave Application Template', () => {
             usePersonalAllowanceFromSpouse: YES,
             personalAllowanceFromSpouse: {
               useAsMuchAsPossible: YES,
-              usage: '100'
-            }
+              usage: '100',
+            },
           },
-          state: ApplicationStates.OTHER_PARENT_APPROVAL
+          state: ApplicationStates.OTHER_PARENT_APPROVAL,
         }),
-        ParentalLeaveTemplate
+        ParentalLeaveTemplate,
       )
 
       const [hasChanged, newState, newApplication] = helper.changeState({
@@ -558,11 +558,11 @@ describe('Parental Leave Application Template', () => {
             requestRights: {
               isRequestingRights: YES,
               requestDays: '45',
-            }
+            },
           },
-          state: ApplicationStates.OTHER_PARENT_APPROVAL
+          state: ApplicationStates.OTHER_PARENT_APPROVAL,
         }),
-        ParentalLeaveTemplate
+        ParentalLeaveTemplate,
       )
 
       const [hasChanged, newState, newApplication] = helper.changeState({
@@ -577,13 +577,13 @@ describe('Parental Leave Application Template', () => {
     it('should remove validatedPeriods on spouse rejection', () => {
       const validatedPeriods = [
         {
-          "endDate": "2021-12-16",
-          "firstPeriodStart": "estimatedDateOfBirth",
-          "ratio": "100",
-          "rawIndex": 0,
-          "startDate": "2021-06-17",
-          "useLength": "yes"
-        }
+          endDate: '2021-12-16',
+          firstPeriodStart: 'estimatedDateOfBirth',
+          ratio: '100',
+          rawIndex: 0,
+          startDate: '2021-06-17',
+          useLength: 'yes',
+        },
       ]
 
       const helper = new ApplicationTemplateHelper(
@@ -593,11 +593,11 @@ describe('Parental Leave Application Template', () => {
             requestRights: {
               isRequestingRights: YES,
               requestDays: '45',
-            }
+            },
           },
-          state: ApplicationStates.OTHER_PARENT_APPROVAL
+          state: ApplicationStates.OTHER_PARENT_APPROVAL,
         }),
-        ParentalLeaveTemplate
+        ParentalLeaveTemplate,
       )
 
       const [hasChanged, newState, newApplication] = helper.changeState({
@@ -616,11 +616,11 @@ describe('Parental Leave Application Template', () => {
             requestRights: {
               isRequestingRights: YES,
               requestDays: '45',
-            }
+            },
           },
-          state: ApplicationStates.OTHER_PARENT_APPROVAL
+          state: ApplicationStates.OTHER_PARENT_APPROVAL,
         }),
-        ParentalLeaveTemplate
+        ParentalLeaveTemplate,
       )
 
       const [hasChanged, newState, newApplication] = helper.changeState({
@@ -646,11 +646,11 @@ describe('Parental Leave Application Template', () => {
             giveRights: {
               isGivingRights: YES,
               giveDays: '45',
-            }
+            },
           },
-          state: ApplicationStates.OTHER_PARENT_APPROVAL
+          state: ApplicationStates.OTHER_PARENT_APPROVAL,
         }),
-        ParentalLeaveTemplate
+        ParentalLeaveTemplate,
       )
 
       const [hasChanged, newState, newApplication] = helper.changeState({
