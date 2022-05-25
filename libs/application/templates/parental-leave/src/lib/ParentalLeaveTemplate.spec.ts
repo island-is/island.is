@@ -575,7 +575,7 @@ describe('Parental Leave Application Template', () => {
     })
 
     it('should remove validatedPeriods on spouse rejection', () => {
-      const validatedPeriods =  [
+      const validatedPeriods = [
         {
           "endDate": "2021-12-16",
           "firstPeriodStart": "estimatedDateOfBirth",
@@ -607,6 +607,32 @@ describe('Parental Leave Application Template', () => {
       expect(hasChanged).toBe(true)
       expect(newState).toBe(ApplicationStates.OTHER_PARENT_ACTION)
       expect(newApplication.answers.validatedPeriods).toBeUndefined()
+    })
+
+    it('should reset value of isRequestiongRights and requestDays on sposue rejection', () => {
+      const helper = new ApplicationTemplateHelper(
+        buildApplication({
+          answers: {
+            requestRights: {
+              isRequestingRights: YES,
+              requestDays: '45',
+            }
+          },
+          state: ApplicationStates.OTHER_PARENT_APPROVAL
+        }),
+        ParentalLeaveTemplate
+      )
+
+      const [hasChanged, newState, newApplication] = helper.changeState({
+        type: DefaultEvents.REJECT,
+      })
+
+      expect(hasChanged).toBe(true)
+      expect(newState).toBe(ApplicationStates.OTHER_PARENT_ACTION)
+      expect(newApplication.answers.requestRights).toEqual({
+        isRequestingRights: NO,
+        requestDays: '0',
+      })
     })
   })
 })
