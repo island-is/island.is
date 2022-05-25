@@ -277,5 +277,21 @@ export const rcRuling = {
           'Notaður sem sjálfgefinn texti í "Úrskurðarorð" textaboxi þegar krafa er samþykkt á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
     }),
+    formFooter: defineMessages({
+      modifyRulingButtonLabel: {
+        id:
+          'judicial.system.restriction_cases:ruling.form_footer.modify_ruling_button_label',
+        defaultMessage: 'Undirrita nýjan úrskurð',
+        description:
+          'Notaður sem label á hnappinn "Halda áfram" í úrskurðar skrefi þegar úrskuður er leiðréttur.',
+      },
+      modifyRulingBackButtonLabel: {
+        id:
+          'judicial.system.restriction_cases:ruling.form_footer.modify_ruling_back_button_label',
+        defaultMessage: 'Hætta við',
+        description:
+          'Notaður sem label á hnappinn "til baka" í úrskurðar skrefi þegar úrskuður er leiðréttur.',
+      },
+    }),
   },
 }

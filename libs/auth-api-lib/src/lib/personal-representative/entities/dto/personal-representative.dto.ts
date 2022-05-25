@@ -4,13 +4,11 @@ import {
   IsDate,
   IsOptional,
   IsArray,
-  ArrayNotEmpty,
 } from 'class-validator'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
 import { PersonalRepresentativeRightTypeDTO } from './personal-representative-right-type.dto'
 import { PersonalRepresentative } from '../models/personal-representative.model'
-import { PersonalRepresentativePublicDTO } from './personal-representative-public.dto'
 
 export class PersonalRepresentativeDTO {
   @IsString()
@@ -78,7 +76,7 @@ export class PersonalRepresentativeDTO {
     description:
       'A list of right typess that the personal representative has on behalf of represented person',
   })
-  readonly rights!: PersonalRepresentativeRightTypeDTO[]
+  rights!: PersonalRepresentativeRightTypeDTO[]
 
   toModel(id: string): PersonalRepresentative {
     return {

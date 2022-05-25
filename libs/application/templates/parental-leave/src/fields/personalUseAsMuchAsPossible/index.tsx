@@ -54,7 +54,7 @@ export const PersonalUseAsMuchAsPossible: FC<FieldBaseProps> = ({
               setValue('personalAllowance.usage', '100')
             }
             if (s === NO) {
-              setValue('personalAllowance.usage', '')
+              setValue('personalAllowance.usage', '0')
             }
           },
         }}
