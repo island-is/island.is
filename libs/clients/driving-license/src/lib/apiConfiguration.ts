@@ -2,7 +2,7 @@ import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { ConfigType } from '@nestjs/config'
 import { ApiV1, ConfigV1 } from '../v1'
 import { ApiV2, ConfigV2 } from '../v2'
-import { DrivingLicenseApiConfig } from './DrivingLicenseApi.config'
+import { DrivingLicenseApiConfig } from './drivingLicenseApi.config'
 
 const configFactory = (
   config: ConfigType<typeof DrivingLicenseApiConfig>,
