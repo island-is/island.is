@@ -511,4 +511,30 @@ describe('Parental Leave Application Template', () => {
       expect(newApplication.assignees).toEqual([])
     })
   })
+
+  describe('Spouse rejection', () => {
+    it('should remove personalAllowanceFromSpouse on spouse rejection', () => {
+      const helper = new ApplicationTemplateHelper(
+        buildApplication({
+          answers: {
+            usePersonalAllowanceFromSpouse: YES,
+            personalAllowanceFromSpouse: {
+              useAsMuchAsPossible: YES,
+              usage: '100'
+            }
+          },
+          state: ApplicationStates.OTHER_PARENT_APPROVAL
+        }),
+        ParentalLeaveTemplate
+      )
+
+      const [hasChanged, newState, newApplication] = helper.changeState({
+        type: DefaultEvents.REJECT,
+      })
+
+      expect(hasChanged).toBe(true)
+      expect(newState).toBe(ApplicationStates.OTHER_PARENT_ACTION)
+      expect(newApplication.answers.personalAllowanceFromSpouse).toBeUndefined()
+    })
+  })
 })
