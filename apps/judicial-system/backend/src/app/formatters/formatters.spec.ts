@@ -27,6 +27,7 @@ import {
   formatCourtResubmittedToCourtSmsNotification,
   formatProsecutorReadyForCourtEmailNotification,
   formatCustodyRestrictions,
+  formatRulingModifiedHistory,
 } from './formatters'
 
 export const makeProsecutor = (): User => {
@@ -1811,6 +1812,36 @@ describe('formatCustodyRestrictions', () => {
     // Assert
     expect(res).toBe(
       'Sækjandi tekur fram að gæsluvarðhaldið verði með banni við útvegun persónulegra nauðsynja, bréfaskoðun og símabanni og vinnubanni skv. 99. gr. laga nr. 88/2008.',
+    )
+  })
+})
+
+describe('formatRulingModifiedHistory', () => {
+  const fn = formatRulingModifiedHistory
+
+  test('should format ruling modified history', () => {
+    const rulingModifiedHistory = undefined
+    const newRulingDate = new Date('2020-01-01')
+    const judgeName = 'Test Judge'
+    const judgeTitle = 'Title'
+
+    const r = fn(rulingModifiedHistory, newRulingDate, judgeName, judgeTitle)
+
+    expect(r).toEqual(
+      'Miðvikudagur, 1. janúar 2020 kl. 00:00 - Test Judge Title',
+    )
+  })
+
+  test('should append to existing history', () => {
+    const rulingModifiedHistory = 'Some history'
+    const newRulingDate = new Date('2020-01-01')
+    const judgeName = 'Test Judge'
+    const judgeTitle = 'Title'
+
+    const r = fn(rulingModifiedHistory, newRulingDate, judgeName, judgeTitle)
+
+    expect(r).toEqual(
+      'Some history\n\nMiðvikudagur, 1. janúar 2020 kl. 00:00 - Test Judge Title',
     )
   })
 })

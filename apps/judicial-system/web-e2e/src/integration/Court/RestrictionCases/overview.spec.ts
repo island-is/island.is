@@ -12,7 +12,7 @@ import {
   OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
 
-import { makeCustodyCase, makeProsecutor, intercept } from '../../../utils'
+import { makeRestrictionCase, makeProsecutor, intercept } from '../../../utils'
 
 describe(`${OVERVIEW_ROUTE}/:id`, () => {
   const demands = faker.lorem.paragraph()
@@ -23,7 +23,7 @@ describe(`${OVERVIEW_ROUTE}/:id`, () => {
   const defenderPhoneNumber = faker.phone.phoneNumber()
 
   beforeEach(() => {
-    const caseData = makeCustodyCase()
+    const caseData = makeRestrictionCase()
     const caseDataAddition: Case = {
       ...caseData,
       creatingProsecutor: makeProsecutor(),
