@@ -1,12 +1,13 @@
 import {
+  capitalize,
+  caseTypes,
+  enumerate,
   formatDate,
   formatNationalId,
-  laws,
-  caseTypes,
   getSupportedCaseCustodyRestrictions,
-  enumerate,
-  capitalize,
+  laws,
 } from '@island.is/judicial-system/formatters'
+
 import type { FormatMessage } from '@island.is/cms-translations'
 import {
   CaseCustodyRestrictions,
@@ -17,7 +18,7 @@ import {
 } from '@island.is/judicial-system/types'
 import type { Gender } from '@island.is/judicial-system/types'
 
-import { notifications, custodyNotice } from '../messages'
+import { notifications, custodyNotice, courtUpload } from '../messages'
 
 function legalProvisionsOrder(p: CaseLegalProvisions) {
   switch (p) {
@@ -374,7 +375,8 @@ export function formatDefenderCourtDateEmailNotification(
   return `${body}${link}`
 }
 
-// This function is only intended for case type CUSTODY and ADMISSION_TO_FACILITY
+// This function is only intended for case type CUSTODY and
+// ADMISSION_TO_FACILITY
 export function formatPrisonRulingEmailNotification(
   formatMessage: FormatMessage,
   type: CaseType,
@@ -557,4 +559,15 @@ export function formatRulingModifiedHistory(
   const history = rulingModifiedHistory ? `${rulingModifiedHistory}\n\n` : ''
   const dateFormated = capitalize(formatDate(newRulingDate, 'PPPPp') || '')
   return `${history}${dateFormated} - ${judgeName} ${judgeTitle}`
+}
+
+export function formatCourtUploadRulingTitle(
+  formatMessage: FormatMessage,
+  courtCaseNumber: string | undefined,
+  isModifyingRuling: boolean,
+) {
+  return formatMessage(courtUpload.rulingV2, {
+    courtCaseNumber: courtCaseNumber ?? '',
+    isModifyingRuling,
+  })
 }

@@ -43,6 +43,8 @@ import {
   stripHtmlTags,
   getCourtRecordPdfAsBuffer,
   getCourtRecordPdfAsString,
+  formatCourtUploadRulingTitle,
+  formatRulingModifiedHistory,
 } from '../../formatters'
 import { courtUpload, notifications as m } from '../../messages'
 import { CaseFile, FileService } from '../file'
@@ -61,7 +63,6 @@ import { CaseArchive } from './models/caseArchive.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { ArchiveResponse } from './models/archive.response'
 import { caseModuleConfig } from './case.config'
-import { formatRulingModifiedHistory } from '../../formatters/formatters'
 
 const caseEncryptionProperties: (keyof Case)[] = [
   'description',
@@ -234,10 +235,11 @@ export class CaseService {
         theCase.id,
         theCase.courtId ?? '',
         theCase.courtCaseNumber ?? '',
-        this.formatMessage(courtUpload.rulingV2, {
-          courtCaseNumber: theCase.courtCaseNumber,
-          isModifyingRuling: Boolean(theCase.rulingDate),
-        }),
+        formatCourtUploadRulingTitle(
+          this.formatMessage,
+          theCase.courtCaseNumber,
+          Boolean(theCase.rulingDate),
+        ),
         buffer,
       )
 
