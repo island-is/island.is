@@ -1,7 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
 import {
-  GridContainer,
   Box,
   GridRow,
   GridColumn,
@@ -20,7 +19,11 @@ import {
 import { GET_OPEN_DATA_SUBPAGE_QUERY } from '../queries'
 import NextLink from 'next/link'
 import { Screen } from '@island.is/web/types'
-import { StatisticsCard, ChartsCard } from '@island.is/web/components'
+import {
+  StatisticsCard,
+  ChartsCard,
+  GridContainer,
+} from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { useLinkResolver } from '../../hooks/useLinkResolver'
 

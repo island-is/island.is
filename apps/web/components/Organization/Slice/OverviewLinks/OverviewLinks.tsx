@@ -3,12 +3,12 @@ import {
   Box,
   Button,
   GridColumn,
-  GridContainer,
   GridRow,
   Stack,
   Text,
   Link,
 } from '@island.is/island-ui/core'
+import { GridContainer } from '@island.is/web/components'
 import { OverviewLinks } from '@island.is/web/graphql/schema'
 import { Image, richText, SliceType } from '@island.is/island-ui/contentful'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'

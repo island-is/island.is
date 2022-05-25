@@ -3,7 +3,6 @@ import {
   Box,
   Button,
   GridColumn,
-  GridContainer,
   GridRow,
   Hidden,
   Icon,
@@ -13,6 +12,7 @@ import {
   Tag,
   Text,
 } from '@island.is/island-ui/core'
+import { GridContainer } from '@island.is/web/components'
 import { TimelineSlice as Timeline } from '@island.is/web/graphql/schema'
 import cn from 'classnames'
 import * as timelineStyles from './TimelineSlice.css'

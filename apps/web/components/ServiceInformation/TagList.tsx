@@ -6,11 +6,11 @@ import {
   Tag,
   Text,
   GridColumn,
-  GridContainer,
   GridRow,
   DialogPrompt,
   Tooltip,
 } from '@island.is/island-ui/core'
+import { GridContainer } from '@island.is/web/components'
 import {
   DataCategory,
   TypeCategory,

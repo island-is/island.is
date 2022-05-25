@@ -12,11 +12,11 @@ import {
   LinkContext,
   Button,
   DatePicker,
-  GridContainer,
   GridRow,
   GridColumn,
   LoadingDots,
 } from '@island.is/island-ui/core'
+import { GridContainer } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   ContentLanguage,

@@ -1,11 +1,6 @@
 import React from 'react'
-import {
-  Box,
-  BoxProps,
-  Button,
-  GridContainer,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, BoxProps, Button, Text } from '@island.is/island-ui/core'
+import { GridContainer } from '@island.is/web/components'
 import { OneColumnText } from '@island.is/web/graphql/schema'
 import Link from 'next/link'
 import { richText, SliceType } from '@island.is/island-ui/contentful'

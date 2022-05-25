@@ -4,7 +4,6 @@ import {
   Box,
   Button,
   GridColumn,
-  GridContainer,
   GridRow,
   Hyphen,
   Link,
@@ -12,6 +11,7 @@ import {
   LinkProps,
   Text,
 } from '@island.is/island-ui/core'
+import { GridContainer } from '@island.is/web/components'
 import { LinkType, useFeatureFlag, useLinkResolver } from '@island.is/web/hooks'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
 import { GlobalContext } from '@island.is/web/context'

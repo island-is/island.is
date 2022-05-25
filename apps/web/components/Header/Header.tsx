@@ -8,7 +8,6 @@ import {
   Button,
   Hidden,
   ResponsiveSpace,
-  GridContainer,
   GridColumn,
   GridRow,
   ColorSchemeContext,
@@ -17,7 +16,7 @@ import {
   Link,
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
-import { FixedNav, SearchInput } from '@island.is/web/components'
+import { FixedNav, SearchInput, GridContainer } from '@island.is/web/components'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { LanguageToggler } from '../LanguageToggler'
 import { Menu } from '../Menu/Menu'

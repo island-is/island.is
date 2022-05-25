@@ -2,13 +2,14 @@ import React from 'react'
 import {
   Box,
   GridColumn,
-  GridContainer,
   GridRow,
   Hidden,
   Hyphen,
   ResponsiveSpace,
   Text,
 } from '@island.is/island-ui/core'
+import { GridContainer } from '@island.is/web/components'
+
 import { FooterItem, Slice } from '@island.is/web/graphql/schema'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
 import { BLOCKS } from '@contentful/rich-text-types'

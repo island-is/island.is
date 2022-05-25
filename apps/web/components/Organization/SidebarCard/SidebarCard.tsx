@@ -2,12 +2,12 @@ import {
   Box,
   Button,
   GridColumn,
-  GridContainer,
   GridRow,
   Icon,
   Link,
   Text,
 } from '@island.is/island-ui/core'
+import { GridContainer } from '@island.is/web/components'
 import React from 'react'
 import { SidebarCard as Card } from '@island.is/web/graphql/schema'
 import * as styles from './SidebarCard.css'

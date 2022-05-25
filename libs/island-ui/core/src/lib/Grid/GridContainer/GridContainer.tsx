@@ -4,13 +4,13 @@ import { Box } from '../../Box/Box'
 import * as styles from './GridContainer.css'
 
 type position = 'relative' | 'fixed' | 'absolute'
-interface Props {
+export interface GridContainerProps {
   className?: string
   id?: string
   position?: position | 'none'
 }
 
-export const GridContainer: FC<Props> = ({
+export const GridContainer: FC<GridContainerProps> = ({
   children,
   className,
   id,

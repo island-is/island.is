@@ -1,13 +1,7 @@
 import React, { useMemo } from 'react'
 import { useQuery } from '@apollo/client'
-import {
-  GridContainer,
-  Logo,
-  Icon,
-  Box,
-  Text,
-  Link,
-} from '@island.is/island-ui/core'
+import { Logo, Icon, Box, Text, Link } from '@island.is/island-ui/core'
+import { GridContainer } from '@island.is/web/components'
 import { useNamespaceStrict } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 import { GET_NAMESPACE_QUERY } from '@island.is/web/screens/queries'

@@ -1,5 +1,6 @@
 import React, { ReactElement } from 'react'
-import { GridColumn, GridContainer, GridRow } from '@island.is/island-ui/core'
+import { GridColumn, GridRow } from '@island.is/island-ui/core'
+import { GridContainer } from '@island.is/web/components'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 
 interface ProjectWrapperProps {

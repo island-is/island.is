@@ -3,12 +3,12 @@ import {
   Box,
   Button,
   GridColumn,
-  GridContainer,
   GridRow,
   Text,
   Link,
   Hidden,
 } from '@island.is/island-ui/core'
+import { GridContainer } from '@island.is/web/components'
 import { EventSlice as EventSliceProps } from '@island.is/web/graphql/schema'
 import * as styles from './EventSlice.css'
 

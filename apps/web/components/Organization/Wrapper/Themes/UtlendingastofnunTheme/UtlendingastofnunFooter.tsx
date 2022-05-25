@@ -1,13 +1,7 @@
 import React from 'react'
 import { FooterItem } from '@island.is/web/graphql/schema'
-import {
-  Box,
-  GridColumn,
-  GridContainer,
-  GridRow,
-  Link,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, GridColumn, GridRow, Link, Text } from '@island.is/island-ui/core'
+import { GridContainer } from '@island.is/web/components'
 import * as styles from './UtlendingastofnunFooter.css'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
 import { BLOCKS } from '@contentful/rich-text-types'

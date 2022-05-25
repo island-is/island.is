@@ -6,11 +6,11 @@ import {
   Box,
   GridColumn,
   GridColumnProps,
-  GridContainer,
   GridRow,
   Hidden,
   Inline,
 } from '@island.is/island-ui/core'
+import { GridContainer } from '@island.is/web/components'
 
 import * as styles from './SimpleStackedSlider.css'
 

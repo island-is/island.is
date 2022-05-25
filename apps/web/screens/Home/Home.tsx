@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { Box, GridContainer } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 import { Screen } from '@island.is/web/types'
 import { useNamespace } from '@island.is/web/hooks'
@@ -23,6 +23,7 @@ import {
   NewsItems,
   LifeEventsSection,
   WatsonChatPanel,
+  GridContainer,
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { GlobalContext } from '@island.is/web/context'

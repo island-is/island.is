@@ -3,13 +3,13 @@ import { Text } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   Box,
-  GridContainer,
   GridRow,
   GridColumn,
   Button,
   Table as T,
   Pagination,
 } from '@island.is/island-ui/core'
+import { GridContainer } from '@island.is/web/components'
 import { PAGE_SIZE, pages, paginate } from './pagination'
 import format from 'date-fns/format'
 import { useRouter } from 'next/router'

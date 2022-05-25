@@ -3,7 +3,6 @@ import { useWindowSize } from 'react-use'
 import dynamic from 'next/dynamic'
 import {
   Text,
-  GridContainer,
   GridRow,
   GridColumn,
   Box,
@@ -14,7 +13,7 @@ import {
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { Locale } from '@island.is/shared/types'
-import { SearchInput } from '@island.is/web/components'
+import { SearchInput, GridContainer } from '@island.is/web/components'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { GetFrontpageQuery } from '@island.is/web/graphql/schema'
 

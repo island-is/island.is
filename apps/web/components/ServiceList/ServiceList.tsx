@@ -1,10 +1,6 @@
 import React from 'react'
-import {
-  GridContainer,
-  GridRow,
-  GridColumn,
-  CategoryCard,
-} from '@island.is/island-ui/core'
+import { GridRow, GridColumn, CategoryCard } from '@island.is/island-ui/core'
+import { GridContainer } from '@island.is/web/components'
 import { Service } from '@island.is/api/schema'
 import { GetNamespaceQuery } from '@island.is/web/graphql/schema'
 import { capitalize } from '@island.is/web/utils/capitalize'

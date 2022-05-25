@@ -8,9 +8,9 @@ import {
   Box,
   Breadcrumbs,
   GridColumn,
-  GridContainer,
   GridRow,
 } from '@island.is/island-ui/core'
+import { GridContainer } from '@island.is/web/components'
 import { useNamespace } from '@island.is/web/hooks'
 import { SubpageLayout } from '@island.is/web/screens/Layouts/Layouts'
 import { useRegulationLinkResolver } from './regulationUtils'

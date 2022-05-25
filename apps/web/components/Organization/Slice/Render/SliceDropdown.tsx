@@ -1,13 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Slice } from '@island.is/web/graphql/schema'
-import { OrganizationSlice } from '@island.is/web/components'
-import {
-  GridColumn,
-  GridContainer,
-  GridRow,
-  Option,
-  Select,
-} from '@island.is/island-ui/core'
+import { OrganizationSlice, GridContainer } from '@island.is/web/components'
+import { GridColumn, GridRow, Option, Select } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 import slugify from '@sindresorhus/slugify'
 

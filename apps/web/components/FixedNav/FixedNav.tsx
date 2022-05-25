@@ -1,13 +1,13 @@
 import React, { FC, useState } from 'react'
 import cn from 'classnames'
 import {
-  GridContainer,
   Box,
   FocusableBox,
   Logo,
   Icon,
   Hidden,
 } from '@island.is/island-ui/core'
+import { GridContainer } from '@island.is/web/components'
 import { useI18n } from '@island.is/web/i18n'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { useScrollPosition } from '../../hooks/useScrollPosition'

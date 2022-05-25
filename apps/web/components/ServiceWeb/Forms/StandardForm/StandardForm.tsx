@@ -15,7 +15,6 @@ import { InputController } from '@island.is/shared/form-fields'
 import {
   Box,
   GridColumn,
-  GridContainer,
   GridRow,
   Select,
   Button,
@@ -28,6 +27,7 @@ import {
   LoadingDots,
   Checkbox,
 } from '@island.is/island-ui/core'
+import { GridContainer } from '@island.is/web/components'
 import { Organizations, SupportCategory } from '@island.is/api/schema'
 import { GET_SUPPORT_SEARCH_RESULTS_QUERY } from '@island.is/web/screens/queries'
 import {

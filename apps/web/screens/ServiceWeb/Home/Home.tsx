@@ -19,13 +19,7 @@ import {
   GET_SUPPORT_CATEGORIES_IN_ORGANIZATION,
 } from '../../queries'
 import { Screen } from '../../../types'
-import {
-  Box,
-  GridColumn,
-  GridContainer,
-  GridRow,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 
 import { CustomNextError } from '@island.is/web/units/errors'
 import {
@@ -33,6 +27,7 @@ import {
   SimpleStackedSlider,
   ServiceWebWrapper,
   ServiceWebContext,
+  GridContainer,
 } from '@island.is/web/components'
 import { useNamespace, LinkResolverResponse } from '@island.is/web/hooks'
 import ContactBanner from '../ContactBanner/ContactBanner'

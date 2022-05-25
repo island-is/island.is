@@ -6,7 +6,6 @@ import {
   FilterInput,
   FilterMultiChoice,
   GridColumn,
-  GridContainer,
   GridRow,
   Icon,
   Inline,
@@ -15,7 +14,11 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
-import { getThemeConfig, OrganizationWrapper } from '@island.is/web/components'
+import {
+  getThemeConfig,
+  OrganizationWrapper,
+  GridContainer,
+} from '@island.is/web/components'
 import {
   ContentLanguage,
   GenericTag,

@@ -12,8 +12,8 @@ import {
   Link,
   GridColumn,
   GridRow,
-  GridContainer,
 } from '@island.is/island-ui/core'
+import { GridContainer } from '@island.is/web/components'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
 import { useI18n } from '@island.is/web/i18n'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'

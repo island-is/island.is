@@ -15,13 +15,13 @@ import {
   Hidden,
   Link,
   Button,
-  GridContainer,
   GridRow,
   GridColumn,
   Box,
   FocusableBox,
   Logo,
 } from '@island.is/island-ui/core'
+import { GridContainer } from '@island.is/web/components'
 import { theme } from '@island.is/island-ui/theme'
 import { MenuTabsContext } from '@island.is/web/context/MenuTabsContext/MenuTabsContext'
 import { useI18n } from '@island.is/web/i18n'

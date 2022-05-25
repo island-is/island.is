@@ -1,7 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
 import {
-  GridContainer,
   Box,
   GridRow,
   GridColumn,
@@ -9,7 +8,7 @@ import {
 } from '@island.is/island-ui/core'
 import NextLink from 'next/link'
 import { Screen } from '@island.is/web/types'
-import { TellUsAStory } from '@island.is/web/components'
+import { TellUsAStory, GridContainer } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { useI18n } from '@island.is/web/i18n'
 import {

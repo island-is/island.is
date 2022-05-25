@@ -1,12 +1,10 @@
 import React from 'react'
+import { Text, GridRow, GridColumn, Box } from '@island.is/island-ui/core'
 import {
-  Text,
-  GridRow,
-  GridColumn,
+  BackgroundImage,
+  DataLinkCard,
   GridContainer,
-  Box,
-} from '@island.is/island-ui/core'
-import { BackgroundImage, DataLinkCard } from '@island.is/web/components'
+} from '@island.is/web/components'
 
 interface LinkCardProps {
   title: string

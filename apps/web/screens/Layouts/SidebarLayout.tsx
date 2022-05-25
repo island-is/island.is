@@ -1,11 +1,11 @@
 import React, { FC, ReactNode } from 'react'
 import {
   Box,
-  GridContainer,
   GridRow,
   GridColumn,
   ResponsiveSpace,
 } from '@island.is/island-ui/core'
+import { GridContainer } from '@island.is/web/components'
 
 import * as styles from './SidebarLayout.css'
 import cn from 'classnames'

@@ -7,12 +7,12 @@ import {
   Button,
   Checkbox,
   GridColumn,
-  GridContainer,
   GridRow,
   Input,
   Option,
   Select,
 } from '@island.is/island-ui/core'
+import { GridContainer } from '@island.is/web/components'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 import { useShortState, LawChapterTree, Ministry } from '@island.is/regulations'
 import { RegulationHomeTexts } from './RegulationTexts.types'

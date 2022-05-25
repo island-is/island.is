@@ -6,7 +6,6 @@ import {
   Box,
   Breadcrumbs,
   GridColumn,
-  GridContainer,
   GridRow,
   Text,
   ToastContainer,
@@ -16,6 +15,7 @@ import {
   Link,
   Button,
 } from '@island.is/island-ui/core'
+import { GridContainer } from '@island.is/web/components'
 import { useNamespace, useLinkResolver } from '@island.is/web/hooks'
 import {
   ServiceWebStandardForm,

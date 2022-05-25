@@ -14,7 +14,6 @@ import {
   BreadCrumbItem,
   Breadcrumbs,
   GridColumn,
-  GridContainer,
   GridRow,
   Link,
   Navigation,
@@ -25,7 +24,11 @@ import {
   Button,
   Inline,
 } from '@island.is/island-ui/core'
-import { HeadWithSocialSharing, Sticky } from '@island.is/web/components'
+import {
+  HeadWithSocialSharing,
+  Sticky,
+  GridContainer,
+} from '@island.is/web/components'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { SyslumennHeader, SyslumennFooter } from './Themes/SyslumennTheme'
 import {

@@ -3,11 +3,11 @@ import {
   Box,
   Button,
   GridColumn,
-  GridContainer,
   GridRow,
   Link,
   Text,
 } from '@island.is/island-ui/core'
+import { GridContainer } from '@island.is/web/components'
 import { MultipleStatistics as MultipleStatisticsSchema } from '@island.is/web/graphql/schema'
 
 interface SliceProps {

@@ -11,7 +11,6 @@ import {
   Breadcrumbs,
   Box,
   Button,
-  GridContainer,
   Navigation,
   Link,
   LoadingDots,
@@ -23,6 +22,7 @@ import {
   SubpageMainContent,
   RichText,
   ApiCatalogueFilter,
+  GridContainer,
 } from '@island.is/web/components'
 
 import getConfig from 'next/config'

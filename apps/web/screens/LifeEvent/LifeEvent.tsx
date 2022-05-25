@@ -10,7 +10,6 @@ import {
   Breadcrumbs,
   Text,
   Box,
-  GridContainer,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
@@ -18,6 +17,7 @@ import {
   BackgroundImage,
   HeadWithSocialSharing,
   Sticky,
+  GridContainer,
 } from '@island.is/web/components'
 import {
   GET_LIFE_EVENT_QUERY,

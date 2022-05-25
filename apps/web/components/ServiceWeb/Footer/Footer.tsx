@@ -2,7 +2,6 @@ import React, { FC } from 'react'
 import {
   Box,
   GridColumn,
-  GridContainer,
   GridRow,
   Hidden,
   Text,
@@ -13,6 +12,7 @@ import {
   Inline,
   Hyphen,
 } from '@island.is/island-ui/core'
+import { GridContainer } from '@island.is/web/components'
 import Illustration from './Illustration'
 import { Locale } from '@island.is/shared/types'
 

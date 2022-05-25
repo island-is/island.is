@@ -22,7 +22,6 @@ import {
   Box,
   Breadcrumbs,
   GridColumn,
-  GridContainer,
   GridRow,
   Stack,
   Text,
@@ -33,7 +32,7 @@ import {
   LinkContext,
   Button,
 } from '@island.is/island-ui/core'
-import { ServiceWebWrapper } from '@island.is/web/components'
+import { ServiceWebWrapper, GridContainer } from '@island.is/web/components'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { getSlugPart } from '../utils'
 

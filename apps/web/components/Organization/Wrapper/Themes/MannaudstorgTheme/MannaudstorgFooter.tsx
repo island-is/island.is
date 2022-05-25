@@ -2,7 +2,6 @@ import React, { FC } from 'react'
 import {
   Box,
   GridColumn,
-  GridContainer,
   GridRow,
   Hidden,
   Text,
@@ -13,6 +12,8 @@ import {
   Inline,
   Hyphen,
 } from '@island.is/island-ui/core'
+import { GridContainer } from '@island.is/web/components'
+
 import { useI18n } from '@island.is/web/i18n'
 
 import * as styles from './MannaudstorgFooter.css'

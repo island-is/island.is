@@ -1,6 +1,5 @@
 import React from 'react'
 import {
-  GridContainer,
   Box,
   GridColumn,
   GridRow,
@@ -11,7 +10,7 @@ import {
   Button,
   Hidden,
 } from '@island.is/island-ui/core'
-import { SvgLogin } from '@island.is/web/components'
+import { SvgLogin, GridContainer } from '@island.is/web/components'
 import { LoginPageTexts } from '@island.is/web/components'
 import { Screen } from '@island.is/web/types'
 import { withMainLayout } from '@island.is/web/layouts/main'

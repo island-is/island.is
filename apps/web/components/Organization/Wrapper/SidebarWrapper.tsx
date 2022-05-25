@@ -1,10 +1,6 @@
 import React, { FC, ReactNode } from 'react'
-import {
-  Box,
-  GridColumn,
-  GridContainer,
-  GridRow,
-} from '@island.is/island-ui/core'
+import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
+import { GridContainer } from '@island.is/web/components'
 
 import * as styles from './SidebarWrapper.css'
 

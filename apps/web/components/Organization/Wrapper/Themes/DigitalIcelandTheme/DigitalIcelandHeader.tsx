@@ -1,13 +1,7 @@
 import React from 'react'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import {
-  Box,
-  GridColumn,
-  GridContainer,
-  GridRow,
-  Link,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, GridColumn, GridRow, Link, Text } from '@island.is/island-ui/core'
+import { GridContainer } from '@island.is/web/components'
 import * as styles from './DigitalIcelandHeader.css'
 import cn from 'classnames'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'

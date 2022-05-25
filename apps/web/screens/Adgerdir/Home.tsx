@@ -9,7 +9,6 @@ import {
   GridColumn,
   Hidden,
   GridRow,
-  GridContainer,
   ColorSchemeContext,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
@@ -19,6 +18,7 @@ import {
   HeadWithSocialSharing,
   Header,
   Main,
+  GridContainer,
 } from '@island.is/web/components'
 import AdgerdirArticles from './components/AdgerdirArticles/AdgerdirArticles'
 import GroupedPages from './components/GroupedPages/GroupedPages'

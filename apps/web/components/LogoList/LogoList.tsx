@@ -1,13 +1,8 @@
 import React from 'react'
-import {
-  Text,
-  Box,
-  GridColumn,
-  GridContainer,
-  GridRow,
-} from '@island.is/island-ui/core'
-import * as styles from './LogoList.css'
+import { Text, Box, GridColumn, GridRow } from '@island.is/island-ui/core'
+import { GridContainer } from '@island.is/web/components'
 import cn from 'classnames'
+import * as styles from './LogoList.css'
 
 export interface LogoListProps {
   title: string

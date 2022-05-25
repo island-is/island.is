@@ -6,6 +6,7 @@ import {
   Card,
   CardTagsProps,
   ServiceWebWrapper,
+  GridContainer,
 } from '@island.is/web/components'
 import {
   Box,
@@ -14,7 +15,6 @@ import {
   Breadcrumbs,
   Pagination,
   Link,
-  GridContainer,
   GridColumn,
   GridRow,
   LinkContext,

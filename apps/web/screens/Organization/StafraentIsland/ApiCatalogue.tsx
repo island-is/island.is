@@ -5,7 +5,6 @@ import {
   Box,
   Button,
   ColorSchemeContext,
-  GridContainer,
   LoadingDots,
   NavigationItem,
   Text,
@@ -31,6 +30,7 @@ import {
   ApiCatalogueFilter,
   OrganizationWrapper,
   ServiceList,
+  GridContainer,
 } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { richText, SliceType } from '@island.is/island-ui/contentful'

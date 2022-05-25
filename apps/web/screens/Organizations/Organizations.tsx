@@ -7,7 +7,6 @@ import {
   Breadcrumbs,
   ColorSchemeContext,
   GridColumn,
-  GridContainer,
   GridRow,
   ResponsiveSpace,
   Pagination,
@@ -23,7 +22,7 @@ import {
   QueryGetOrganizationArgs,
 } from '@island.is/api/schema'
 import { withMainLayout } from '@island.is/web/layouts/main'
-import { HeadWithSocialSharing } from '@island.is/web/components'
+import { HeadWithSocialSharing, GridContainer } from '@island.is/web/components'
 import {
   GET_ORGANIZATIONS_QUERY,
   GET_NAMESPACE_QUERY,

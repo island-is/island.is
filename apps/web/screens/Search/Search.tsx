@@ -22,13 +22,17 @@ import {
   LinkContext,
   ColorSchemeContext,
   Inline,
-  GridContainer,
   GridRow,
   GridColumn,
   Tag,
   Button,
 } from '@island.is/island-ui/core'
-import { SearchInput, Card, CardTagsProps } from '@island.is/web/components'
+import {
+  SearchInput,
+  Card,
+  CardTagsProps,
+  GridContainer,
+} from '@island.is/web/components'
 import { useI18n } from '@island.is/web/i18n'
 import { useNamespace } from '@island.is/web/hooks'
 import { CustomNextError } from '@island.is/web/units/errors'

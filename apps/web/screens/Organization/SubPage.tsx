@@ -3,7 +3,6 @@ import React from 'react'
 import {
   Box,
   GridColumn,
-  GridContainer,
   GridRow,
   Link,
   NavigationItem,
@@ -32,6 +31,7 @@ import {
   OrganizationSlice,
   OrganizationWrapper,
   SliceDropdown,
+  GridContainer,
 } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { Namespace } from '@island.is/api/schema'

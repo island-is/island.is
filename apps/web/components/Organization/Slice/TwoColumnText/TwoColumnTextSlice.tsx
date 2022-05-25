@@ -3,11 +3,11 @@ import { TwoColumnText } from '@island.is/web/graphql/schema'
 import {
   Box,
   GridColumn,
-  GridContainer,
   GridRow,
   Hidden,
   Text,
 } from '@island.is/island-ui/core'
+import { GridContainer } from '@island.is/web/components'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
 
 interface SliceProps {

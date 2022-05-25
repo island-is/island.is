@@ -1,13 +1,6 @@
 import React from 'react'
-import {
-  Box,
-  Text,
-  Button,
-  GridContainer,
-  Hidden,
-  Link,
-} from '@island.is/island-ui/core'
-import { GridItems } from '@island.is/web/components'
+import { Box, Text, Button, Hidden, Link } from '@island.is/island-ui/core'
+import { GridItems, GridContainer } from '@island.is/web/components'
 import { GetNewsQuery } from '@island.is/web/graphql/schema'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import Item from './Item'

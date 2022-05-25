@@ -2,12 +2,12 @@ import React from 'react'
 import {
   Box,
   Text,
-  GridContainer,
   GridRow,
   GridColumn,
   Link,
   Hidden,
 } from '@island.is/island-ui/core'
+import { GridContainer } from '@island.is/web/components'
 import * as styles from './UkraineProjectHeader.css'
 import { ProjectPage } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'

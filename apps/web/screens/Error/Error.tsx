@@ -1,12 +1,7 @@
 import React, { ReactNode, Fragment, useEffect } from 'react'
 import { ErrorPageQuery } from '@island.is/web/graphql/schema'
-import {
-  Text,
-  Box,
-  GridContainer,
-  GridRow,
-  GridColumn,
-} from '@island.is/island-ui/core'
+import { Text, Box, GridRow, GridColumn } from '@island.is/island-ui/core'
+import { GridContainer } from '@island.is/web/components'
 import { Slice as SliceType, richText } from '@island.is/island-ui/contentful'
 import { Document } from '@contentful/rich-text-types'
 import { useRouter } from 'next/router'

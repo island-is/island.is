@@ -11,7 +11,6 @@ import {
   ContentLanguage,
 } from '@island.is/web/graphql/schema'
 import {
-  GridContainer,
   Box,
   GridRow,
   GridColumn,
@@ -30,6 +29,7 @@ import {
   ChartsCard,
   SectionTitle,
   Header,
+  GridContainer,
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { useLinkResolver } from '../../hooks/useLinkResolver'

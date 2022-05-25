@@ -3,7 +3,6 @@ import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
 import {
   Box,
-  GridContainer,
   GridRow,
   GridColumn,
   Stack,
@@ -11,7 +10,7 @@ import {
   Link,
 } from '@island.is/island-ui/core'
 import { News } from '@island.is/api/schema'
-import { BackgroundImage } from '@island.is/web/components'
+import { BackgroundImage, GridContainer } from '@island.is/web/components'
 import AdgerdirHeading from '../AdgerdirHeading/AdgerdirHeading'
 
 import * as styles from './FeaturedNews.css'

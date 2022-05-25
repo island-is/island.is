@@ -8,11 +8,14 @@ import {
   Box,
   Button,
   GridColumn,
-  GridContainer,
   GridRow,
   Text,
 } from '@island.is/island-ui/core'
-import { MarkdownText, RichText } from '@island.is/web/components'
+import {
+  MarkdownText,
+  RichText,
+  GridContainer,
+} from '@island.is/web/components'
 import { SliceType } from '@island.is/island-ui/contentful'
 
 export type RegulationsHomeIntroProps = {

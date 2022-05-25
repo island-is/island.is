@@ -7,7 +7,6 @@ import {
   Column,
   Columns,
   GridColumn,
-  GridContainer,
   GridRow,
   Hidden,
   Logo,
@@ -18,6 +17,7 @@ import {
 import {
   ServiceWebContext,
   ServiceWebSearchInput,
+  GridContainer,
 } from '@island.is/web/components'
 import { TextModes } from '../types'
 import { linkResolver } from '@island.is/web/hooks'

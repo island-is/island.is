@@ -14,7 +14,7 @@ import React, { useEffect, useState, useRef } from 'react'
 import omit from 'lodash/omit'
 import { Screen } from '@island.is/web/types'
 import { withMainLayout } from '@island.is/web/layouts/main'
-import { SubpageDetailsContent } from '@island.is/web/components'
+import { SubpageDetailsContent, GridContainer } from '@island.is/web/components'
 import { SubpageLayout } from '@island.is/web/screens/Layouts/Layouts'
 import {
   Box,
@@ -23,7 +23,6 @@ import {
   CategoryCard,
   GridColumn,
   GridColumnProps,
-  GridContainer,
   GridRow,
   Text,
 } from '@island.is/island-ui/core'

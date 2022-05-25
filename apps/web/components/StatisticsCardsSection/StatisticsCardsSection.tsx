@@ -1,5 +1,6 @@
 import React from 'react'
-import { GridContainer, Box } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
+import { GridContainer } from '@island.is/web/components'
 import { theme } from '@island.is/island-ui/theme'
 import { StatisticsCard, SimpleSlider } from '@island.is/web/components'
 

@@ -8,7 +8,6 @@ import {
   Stack,
   Box,
   GridColumn,
-  GridContainer,
   GridRow,
   Select,
   Option,
@@ -16,6 +15,7 @@ import {
   Inline,
   Tag,
 } from '@island.is/island-ui/core'
+import { GridContainer } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   ContentLanguage,
