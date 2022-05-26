@@ -41,38 +41,49 @@ yarn nx run clients-driving-license:schemas/external-openapi-generator
 
 ### Import into other NestJS modules
 
-Add the service to your module imports:
+#### app.module.ts
 
-```typescript
-import { DrivingLicenseApiModule } from '@island.is/clients/driving-license'
+```js
+import { ConfigModule } from '@island.is/nest/config'
+import { DrivingLicenseApiModule, DrivingLicenseApiConfig } from '@island.is/clients/driving-license'
 
 @Module({
   imports: [
-    DrivingLicenseApiModule.register({
-      xroadBaseUrl: XROAD_BASE_URL,
-      xroadClientId: XROAD_CLIENT_ID,
-      secret: DRIVING_LICENSE_SECRET,
-      xroadPathV1: DRIVING_LICENSE_XROAD_PATH,
-      xroadPathV2: DRIVING_LICENSE_XROAD_PATH_V2,
-    }),
-  ],
+      DrivingLicenseApiModule,
+      ConfigModule.forRoot({
+        isGlobal:true,
+        load:[DrivingLicenseApiConfig]
+      })
+    ],
 })
 ```
 
-Since the generated class names are pretty similar for v1 / v2 of the API, and neither
-is a subset of the other, all the API calls are wrapped, so that they share a uniform API,
-and the intent is that the consumer of the client does not need to be aware of which version
-of the API they are communicating with
+#### some-name.module.ts
 
-```typescript
+```js
+import { DrivingLicenseApiModule } from '@island.is/clients/driving-license'
+
+  imports: [
+    DrivingLicenseApiModule
+  ],
+```
+
+#### some-name.service.ts
+
+```js
 import { DrivingLicenseApi } from '@island.is/clients/driving-license'
+
 
 @Injectable()
 export class SomeService {
-  constructor(private readonly drivingLicenseApi: DrivingLicenseApi) {}
+  constructor(
+    @Inject(DrivingLicenseApi)
+    private readonly drivingLicenseApi: DrivingLicenseApi,
+  ) {}
 
-  // etc...
-}
+  async someMethod()
+      return this.drivingLicenseApi.getTeachers()
+
 ```
 
 ## Code owners and maintainers
