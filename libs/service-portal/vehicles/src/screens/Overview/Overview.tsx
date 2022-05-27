@@ -107,7 +107,7 @@ export const VehiclesOverview: ServicePortalModuleComponent = () => {
       )}
       {!loading && !error && vehicles.length === 0 && (
         <Box marginTop={8}>
-          <EmptyState title={m.noDataFound} />
+          <EmptyState />
         </Box>
       )}
       <Stack space={2}>
