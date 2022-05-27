@@ -72,8 +72,6 @@ const CompanyInfo: ServicePortalModuleComponent = ({ userInfo }) => {
       ? `${data?.companyInfo?.vat?.[0]?.classification?.[0]?.number} ${data?.companyInfo?.vat?.[0]?.classification?.[0]?.name}`
       : ''
 
-  console.log('data ', data)
-  console.log('data null ', data === null)
   const emptyData = data === null
   return (
     <>
