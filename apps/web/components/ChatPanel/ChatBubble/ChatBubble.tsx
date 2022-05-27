@@ -2,6 +2,8 @@ import React from 'react'
 import cn from 'classnames'
 import { FocusableBox, Text } from '@island.is/island-ui/core'
 import * as styles from './ChatBubble.css'
+import { useWindowSize } from '@island.is/web/hooks/useViewport'
+import { theme } from '@island.is/island-ui/theme'
 
 interface ChatBubbleProps {
   text: string
@@ -12,16 +14,19 @@ interface ChatBubbleProps {
 
 export const ChatBubble = ({
   text,
-  pushUp = false,
   isVisible = true,
   onClick,
 }: ChatBubbleProps) => {
+  const { width } = useWindowSize()
+
+  const isMobile = width < theme.breakpoints.md
+
   return (
     <div className={cn(styles.root, { [styles.hidden]: !isVisible })}>
       <FocusableBox
         component="button"
         tabIndex={0}
-        className={cn(styles.message, pushUp && styles.messagePushUp)}
+        className={cn(styles.message, isMobile && styles.messagePushUp)}
         onClick={onClick}
       >
         <Text variant="h5" color="white">
