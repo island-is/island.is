@@ -11,13 +11,21 @@ The client is generated from a copy of the openApi document provided in x-road.
 
 ## Quickstart
 
+you need to have the xroad proxy running locally
+
+```sh
+ ./scripts/run-xroad-proxy.sh
+```
+
 Run the following and start developing:
 
 ```sh
 yarn nx run clients-driving-license:dev
 ```
-
 This command bundles updating the api definition and regenerating the client.
+
+and make sure the environment variables `DRIVING_LICENSE_SECRET`, `DRIVING_LICENSE_XROAD_PATH`, `DRIVING_LICENSE_XROAD_PATH_V2`, `XROAD_BASE_PATH` and `XROAD_CLIENT_ID` are available.
+
 
 ## Usage
 
@@ -58,7 +66,7 @@ import { DrivingLicenseApiModule, DrivingLicenseApiConfig } from '@island.is/cli
 })
 ```
 
-#### some-name.module.ts
+#### module-name.module.ts
 
 ```typescript
 import { DrivingLicenseApiModule } from '@island.is/clients/driving-license'
@@ -68,7 +76,7 @@ import { DrivingLicenseApiModule } from '@island.is/clients/driving-license'
   ],
 ```
 
-#### some-name.service.ts
+#### module-name.service.ts
 
 ```typescript
 import { DrivingLicenseApi } from '@island.is/clients/driving-license'

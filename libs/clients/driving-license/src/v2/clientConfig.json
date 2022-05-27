@@ -12,7 +12,9 @@
   "paths": {
     "/api/okuskirteini/{kennitala}": {
       "get": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Get for person driver licence",
         "operationId": "GetCurrentLicenseV2",
         "parameters": [
@@ -102,7 +104,9 @@
     },
     "/api/okuskirteini/{kennitala}/canapplyfor/{category}/full": {
       "get": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Check if person can apply for full drivers license for a specific category",
         "parameters": [
           {
@@ -170,7 +174,9 @@
     },
     "/api/okuskirteini/applications/new/{category}": {
       "post": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Apply for drivers license for a category",
         "parameters": [
           {
@@ -244,27 +250,27 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "string"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               },
               "application/xml": {
                 "schema": {
-                  "type": "string"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               },
               "text/xml": {
                 "schema": {
-                  "type": "string"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "string"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "string"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -274,7 +280,9 @@
     },
     "/api/okuskirteini/svipting/{kennitala}": {
       "get": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Get for current licence revoke",
         "parameters": [
           {
@@ -333,7 +341,9 @@
     },
     "/api/okuskirteini/applications/new/temporary": {
       "post": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Apply for drivers license for a category",
         "parameters": [
           {
@@ -393,27 +403,27 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
+                  "$ref": "#/components/schemas/NewTemporaryLicsenseDto"
                 }
               },
               "application/xml": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
+                  "$ref": "#/components/schemas/NewTemporaryLicsenseDto"
                 }
               },
               "text/xml": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
+                  "$ref": "#/components/schemas/NewTemporaryLicsenseDto"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
+                  "$ref": "#/components/schemas/NewTemporaryLicsenseDto"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
+                  "$ref": "#/components/schemas/NewTemporaryLicsenseDto"
                 }
               }
             }
@@ -423,7 +433,9 @@
     },
     "/api/okuskirteini/applications/temporarytestfinished": {
       "post": {
-        "tags": ["Okuskirteini"],
+        "tags": [
+          "Okuskirteini"
+        ],
         "summary": "Endpoint to tell system that person has finished learning for temporary license and license can be ordered",
         "description": "Checks\r\n- Does person exist in national registry\r\n- Is the liecense that has not been ordered\r\n- Is person at least 17 years old\r\n- Does he have a deprivation\r\n- Does he have a quality marked picture\r\n- Does he have a quality marked signature",
         "parameters": [
@@ -484,27 +496,27 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
+                  "$ref": "#/components/schemas/PantaBBSkirteiniDto"
                 }
               },
               "application/xml": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
+                  "$ref": "#/components/schemas/PantaBBSkirteiniDto"
                 }
               },
               "text/xml": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
+                  "$ref": "#/components/schemas/PantaBBSkirteiniDto"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
+                  "$ref": "#/components/schemas/PantaBBSkirteiniDto"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
+                  "$ref": "#/components/schemas/PantaBBSkirteiniDto"
                 }
               }
             }
@@ -732,7 +744,10 @@
         "description": "Data transfer object for results when ordering temporary license"
       },
       "PostNewFinalLicense": {
-        "required": ["authorityNumber", "personIdNumber"],
+        "required": [
+          "authorityNumber",
+          "personIdNumber"
+        ],
         "type": "object",
         "properties": {
           "personIdNumber": {
@@ -772,7 +787,11 @@
         "description": "Model class to post new final license"
       },
       "PostTeachingDoneForTempLicenseV2": {
-        "required": ["dagsetning", "kennitala", "nrOkuskirteinis"],
+        "required": [
+          "dagsetning",
+          "kennitala",
+          "nrOkuskirteinis"
+        ],
         "type": "object",
         "properties": {
           "kennitala": {
