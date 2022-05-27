@@ -606,48 +606,61 @@ export class CaseService {
     let prosecutorId: string | undefined
     let courtId: string | undefined
 
-    if (caseToCreate.prosecutorNationalId) {
-      const prosecutor = await this.userService.findByNationalId(
-        caseToCreate.prosecutorNationalId,
-      )
-
-      if (!prosecutor || prosecutor.role !== UserRole.PROSECUTOR) {
-        throw new BadRequestException(
-          `User ${prosecutor.id} is not registered as a prosecutor`,
+    try {
+      if (caseToCreate.prosecutorNationalId) {
+        const prosecutor = await this.userService.findByNationalId(
+          caseToCreate.prosecutorNationalId,
         )
+
+        if (!prosecutor || prosecutor.role !== UserRole.PROSECUTOR) {
+          throw new BadRequestException(
+            `User ${prosecutor.id} is not registered as a prosecutor`,
+          )
+        }
+
+        prosecutorId = prosecutor.id
+        courtId = prosecutor.institution?.defaultCourtId
       }
 
-      prosecutorId = prosecutor.id
-      courtId = prosecutor.institution?.defaultCourtId
+      return this.sequelize
+        .transaction(async (transaction) => {
+          const caseId = await this.createCase(
+            {
+              ...caseToCreate,
+              origin: CaseOrigin.LOKE,
+              creatingProsecutorId: prosecutorId,
+              prosecutorId,
+              courtId,
+            } as InternalCreateCaseDto,
+            transaction,
+          )
+
+          await this.defendantService.create(
+            caseId,
+            {
+              nationalId: caseToCreate.accusedNationalId,
+              name: caseToCreate.accusedName,
+              gender: caseToCreate.accusedGender,
+              address: caseToCreate.accusedAddress,
+            },
+            transaction,
+          )
+
+          return caseId
+        })
+        .then((caseId) => this.findById(caseId))
+    } catch (error) {
+      this.eventService.postErrorEvent(
+        'Failed to create a internal case',
+        {
+          caseType: caseToCreate.type,
+          policeCaseNumber: caseToCreate.policeCaseNumber,
+          origin: CaseOrigin.LOKE,
+        },
+        error as Error,
+      )
+      throw error
     }
-
-    return this.sequelize
-      .transaction(async (transaction) => {
-        const caseId = await this.createCase(
-          {
-            ...caseToCreate,
-            origin: CaseOrigin.LOKE,
-            creatingProsecutorId: prosecutorId,
-            prosecutorId,
-            courtId,
-          } as InternalCreateCaseDto,
-          transaction,
-        )
-
-        await this.defendantService.create(
-          caseId,
-          {
-            nationalId: caseToCreate.accusedNationalId,
-            name: caseToCreate.accusedName,
-            gender: caseToCreate.accusedGender,
-            address: caseToCreate.accusedAddress,
-          },
-          transaction,
-        )
-
-        return caseId
-      })
-      .then((caseId) => this.findById(caseId))
   }
 
   async create(caseToCreate: CreateCaseDto, prosecutor: TUser): Promise<Case> {
