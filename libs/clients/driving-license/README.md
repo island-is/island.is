@@ -43,7 +43,7 @@ yarn nx run clients-driving-license:schemas/external-openapi-generator
 
 #### app.module.ts
 
-```js
+```typescript
 import { ConfigModule } from '@island.is/nest/config'
 import { DrivingLicenseApiModule, DrivingLicenseApiConfig } from '@island.is/clients/driving-license'
 
@@ -60,7 +60,7 @@ import { DrivingLicenseApiModule, DrivingLicenseApiConfig } from '@island.is/cli
 
 #### some-name.module.ts
 
-```js
+```typescript
 import { DrivingLicenseApiModule } from '@island.is/clients/driving-license'
 
   imports: [
@@ -70,7 +70,7 @@ import { DrivingLicenseApiModule } from '@island.is/clients/driving-license'
 
 #### some-name.service.ts
 
-```js
+```typescript
 import { DrivingLicenseApi } from '@island.is/clients/driving-license'
 
 
