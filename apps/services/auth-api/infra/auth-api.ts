@@ -3,6 +3,7 @@ import {
   Base,
   Client,
   NationalRegistry,
+  RskCompanyInfo,
   RskProcuring,
 } from '../../../../infra/src/dsl/xroad'
 
@@ -17,11 +18,6 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-api'> => {
     .image('services-auth-api')
     .postgres(postgresInfo)
     .env({
-      IDS_ISSUER: {
-        dev: 'https://identity-server.dev01.devland.is',
-        staging: 'https://identity-server.staging01.devland.is',
-        prod: 'https://innskra.island.is',
-      },
       IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',
@@ -32,17 +28,8 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-api'> => {
         staging: 'https://identity-server.staging01.devland.is/api',
         prod: 'https://innskra.island.is/api',
       },
-      COMPANY_REGISTRY_XROAD_PROVIDER_ID: {
-        dev: 'IS-DEV/GOV/10006/Skatturinn/ft-v1',
-        staging: 'IS-TEST/GOV/5402696029/Skatturinn/ft-v1',
-        prod: 'IS/GOV/5402696029/Skatturinn/ft-v1',
-      },
     })
-    .secrets({
-      IDENTITY_SERVER_CLIENT_SECRET:
-        '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET',
-    })
-    .xroad(Base, Client, RskProcuring, NationalRegistry)
+    .xroad(Base, Client, RskProcuring, NationalRegistry, RskCompanyInfo)
     .readiness('/liveness')
     .liveness('/liveness')
     .initContainer({

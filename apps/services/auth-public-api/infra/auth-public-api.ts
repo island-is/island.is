@@ -18,11 +18,6 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-public-api'> => {
     .env({
       IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api',
       XROAD_NATIONAL_REGISTRY_ACTOR_TOKEN: 'true',
-      IDS_ISSUER: {
-        dev: 'https://identity-server.dev01.devland.is',
-        staging: 'https://identity-server.staging01.devland.is',
-        prod: 'https://innskra.island.is',
-      },
       IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',

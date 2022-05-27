@@ -4,11 +4,6 @@ export const serviceSetup = (): ServiceBuilder<'services-personal-representative
   return service('services-personal-representative')
     .namespace('personal-representative')
     .env({
-      IDS_ISSUER: {
-        dev: 'https://identity-server.dev01.devland.is',
-        staging: 'https://identity-server.staging01.devland.is',
-        prod: 'https://innskra.island.is',
-      },
       IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',

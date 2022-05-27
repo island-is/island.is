@@ -5,12 +5,7 @@ export const serviceSetup = (): ServiceBuilder<'auth-admin-web'> => {
     .namespace('identity-server-admin')
     .image('auth-admin-web')
     .env({
-      IDENTITYSERVER_SCOPE:
-        'openid profile auth-admin-api.full_control offline_access',
-      IDENTITYSERVER_CLIENT_ID: 'ids-admin',
       NEXT_PUBLIC_BACKEND_URL: '/backend',
-      NEXT_PUBLIC_SESSION_KEEP_ALIVE_SECONDS: '300',
-      IDENTITYSERVER_ID: 'identity-server',
       IDENTITYSERVER_DOMAIN: {
         dev: 'identity-server.dev01.devland.is',
         staging: 'identity-server.staging01.devland.is',

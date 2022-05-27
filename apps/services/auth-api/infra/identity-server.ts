@@ -61,12 +61,7 @@ export const serviceSetup = (services: {
       IdentityServer__EnableFeatureDeploymentWildcards: {
         dev: 'true',
         staging: 'true',
-        prod: 'https://innskra.island.is',
-      },
-      IdentityServer__EnableDelegation: {
-        dev: 'true',
-        staging: '',
-        prod: '',
+        prod: 'false',
       },
       PersistenceSettings__BaseAddress: ref(
         (h) => `http://${h.svc(services.authApi)}`,
