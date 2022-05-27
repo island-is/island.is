@@ -22,10 +22,10 @@ Run the following and start developing:
 ```sh
 yarn nx run clients-driving-license:dev
 ```
+
 This command bundles updating the api definition and regenerating the client.
 
 and make sure the environment variables `DRIVING_LICENSE_SECRET`, `DRIVING_LICENSE_XROAD_PATH`, `DRIVING_LICENSE_XROAD_PATH_V2`, `XROAD_BASE_PATH` and `XROAD_CLIENT_ID` are available.
-
 
 ## Usage
 
