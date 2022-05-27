@@ -9,37 +9,15 @@ import {
 import { useLocale } from '@island.is/localization'
 import { useAuth } from '@island.is/auth/react'
 import { LEGACY_MY_PAGES_URL } from '@island.is/service-portal/constants'
-import { useQuery, gql } from '@apollo/client'
-import { Query } from '@island.is/api/schema'
 import { m } from '@island.is/service-portal/core'
-
-const NationalRegistryUserQuery = gql`
-  query NationalRegistryUserQuery {
-    nationalRegistryUser {
-      nationalId
-      gender
-    }
-  }
-`
 
 const Greeting: FC<{}> = () => {
   const { formatMessage } = useLocale()
-  const { data } = useQuery<Query>(NationalRegistryUserQuery)
   const { userInfo } = useAuth()
   const currentHour = new Date().getHours()
   const isEveningGreeting = currentHour > 17 || currentHour < 4
-  const { nationalRegistryUser } = data || {}
 
-  const isMale =
-    nationalRegistryUser?.gender === 'MALE' ||
-    nationalRegistryUser?.gender === 'MALE_MINOR'
-  const isFemale =
-    nationalRegistryUser?.gender === 'FEMALE' ||
-    nationalRegistryUser?.gender === 'FEMALE_MINOR'
-  const isNonBinary =
-    nationalRegistryUser?.gender === 'TRANSGENDER_MINOR' ||
-    nationalRegistryUser?.gender === 'TRANSGENDER'
-  const knownGender = isMale || isFemale || isNonBinary
+  const IS_COMPANY = userInfo?.profile?.subjectType === 'legalEntity'
 
   return (
     <GridRow>
@@ -51,13 +29,9 @@ const Greeting: FC<{}> = () => {
             fontWeight="semiBold"
             color="purple400"
           >
-            {isMale && formatMessage(m.maleGreeting)}
-            {isFemale && formatMessage(m.femaleGreeting)}
-            {isNonBinary && formatMessage(m.nonBinaryGreeting)}
-            {!knownGender &&
-              (isEveningGreeting
-                ? formatMessage(m.eveningGreeting)
-                : formatMessage(m.dayGreeting))}
+            {isEveningGreeting
+              ? formatMessage(m.eveningGreeting)
+              : formatMessage(m.dayGreeting)}
           </Text>
           <Text variant="h1" as="h1" marginBottom={1}>
             {userInfo?.profile.name}
@@ -83,8 +57,8 @@ const Greeting: FC<{}> = () => {
       </GridColumn>
       <GridColumn span={['12/12', '5/12']}>
         <img
-          src="./assets/images/school.svg"
-          alt={`${formatMessage(m.altText)} ${formatMessage(m.startPage)}`}
+          src={`./assets/images/${IS_COMPANY ? 'coffee.svg' : 'school.svg'}`}
+          alt=""
         />
       </GridColumn>
     </GridRow>

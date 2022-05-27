@@ -17,11 +17,13 @@ import {
 import { Case } from './models/case.model'
 import { CaseArchive } from './models/caseArchive.model'
 import { CaseController } from './case.controller'
+import { RestrictedCaseController } from './restrictedCase.controller'
 import { CaseService } from './case.service'
+import { RestrictedCaseService } from './restrictedCase.service'
 
 @Module({
   imports: [
-    SigningModule.register(environment.signingOptions),
+    SigningModule,
     EmailModule.register(environment.emailOptions),
     CmsTranslationsModule,
     forwardRef(() => DefendantModule),
@@ -32,8 +34,8 @@ import { CaseService } from './case.service'
     forwardRef(() => EventModule),
     SequelizeModule.forFeature([Case, CaseArchive]),
   ],
-  providers: [CaseService],
-  controllers: [CaseController],
+  providers: [CaseService, RestrictedCaseService],
+  controllers: [CaseController, RestrictedCaseController],
   exports: [CaseService],
 })
 export class CaseModule {}

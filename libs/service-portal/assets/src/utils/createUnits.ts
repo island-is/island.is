@@ -3,7 +3,7 @@ import isNumber from 'lodash/isNumber'
 import { format as formatKennitala } from 'kennitala'
 import amountFormat from './amountFormat'
 import { messages } from '../lib/messages'
-import { FormatMessage } from '@island.is/application/core'
+import { FormatMessage } from '@island.is/localization'
 
 import {
   PropertyOwner,

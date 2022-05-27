@@ -280,7 +280,7 @@ const DefendantForm: React.FC<Props> = (props) => {
                         !defendant.gender) ||
                       !defendant.name ||
                       !defendant.address ||
-                      !defendant.nationalId,
+                      (!defendant.noNationalId && !defendant.nationalId),
                   )}
                 >
                   {formatMessage(
@@ -293,6 +293,7 @@ const DefendantForm: React.FC<Props> = (props) => {
           <AnimatePresence>
             {[
               CaseType.RESTRAINING_ORDER,
+              CaseType.EXPULSION_FROM_HOME,
               CaseType.PSYCHIATRIC_EXAMINATION,
               CaseType.OTHER,
             ].includes(workingCase.type) && (

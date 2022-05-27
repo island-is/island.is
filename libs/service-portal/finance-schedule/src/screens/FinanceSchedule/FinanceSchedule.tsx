@@ -41,9 +41,12 @@ export const GET_FINANCE_PAYMENT_SCHEDULES = gql`
   }
 `
 
-const FinanceSchedule: ServicePortalModuleComponent = () => {
+const FinanceSchedule: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.finance-schedule')
   const { formatMessage } = useLocale()
+
+  const actor = userInfo.profile.actor
+  const isDelegation = Boolean(actor)
 
   const {
     data: paymentSchedulesData,
@@ -79,7 +82,7 @@ const FinanceSchedule: ServicePortalModuleComponent = () => {
           internal: false,
           text: applicationButtonText,
           variant: 'primary',
-          link: 'https://island.is/umsoknir/greidsluaaetlun/',
+          link: '/umsoknir/greidsluaaetlun/',
         }}
       >
         <Text>
@@ -103,48 +106,50 @@ const FinanceSchedule: ServicePortalModuleComponent = () => {
           })}
         </Text>
         <GridRow>
-          <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+          <GridColumn span={['12/12', '12/12', '12/12', '8/12']}>
             <Text variant="default">
               {formatMessage({
-                id: 'sp.finance-schedule:intro',
+                id: 'sp.finance-schedule:intro-text',
                 defaultMessage:
-                  'Hér getur þú gert greiðsluáætlun í allt að 12 mánuði ef þú vilt dreifa greiðslum á skuld þinni við ríkissjóð og stofnanir. Hér getur þú einnig séð eldri greiðsluáætlanir. ',
+                  'Hér getur þú gert greiðsluáætlun í allt að 12 mánuði ef þú vilt dreifa greiðslum á skuld þinni við ríkissjóð og stofnanir. Hér getur þú einnig séð eldri greiðsluáætlanir. Ef Greiðsluáætlunin er greidd hraðar niður en áætlunin segir til um, munu greiðsluseðlar ekki berast þegar hún er upp greidd og engar eftirstöðvar eftir.',
               })}
             </Text>
           </GridColumn>
-          <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
-            <Box
-              paddingRight={2}
-              paddingTop={[2, 2, 2, 0]}
-              display="flex"
-              justifyContent={[
-                'flexStart',
-                'flexStart',
-                'flexStart',
-                'flexEnd',
-              ]}
-              alignItems="flexEnd"
-              height="full"
-            >
-              <a
-                href="https://island.is/umsoknir/greidsluaaetlun/"
-                target="_blank"
-                rel="noreferrer"
+          {!isDelegation && (
+            <GridColumn span={['12/12', '12/12', '12/12', '4/12']}>
+              <Box
+                paddingRight={2}
+                paddingTop={[2, 2, 2, 0]}
+                display="flex"
+                justifyContent={[
+                  'flexStart',
+                  'flexStart',
+                  'flexStart',
+                  'flexEnd',
+                ]}
+                alignItems="flexEnd"
+                height="full"
               >
-                <Button
-                  colorScheme="default"
-                  icon="receipt"
-                  iconType="filled"
-                  preTextIconType="outline"
-                  size="default"
-                  type="button"
-                  variant="utility"
+                <a
+                  href="/umsoknir/greidsluaaetlun/"
+                  target="_blank"
+                  rel="noreferrer"
                 >
-                  {applicationButtonText}
-                </Button>
-              </a>
-            </Box>
-          </GridColumn>
+                  <Button
+                    colorScheme="default"
+                    icon="receipt"
+                    iconType="filled"
+                    preTextIconType="outline"
+                    size="default"
+                    type="button"
+                    variant="utility"
+                  >
+                    {applicationButtonText}
+                  </Button>
+                </a>
+              </Box>
+            </GridColumn>
+          )}
         </GridRow>
 
         <Box marginTop={4}>

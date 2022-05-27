@@ -5,8 +5,11 @@ import {
   PaymentScheduleInitialSchedule,
 } from '@island.is/api/schema'
 import {
+  Application,
   BasicDataProvider,
   FailedDataProviderResult,
+  getValueViaPath,
+  ProviderErrorReason,
   SuccessfulDataProviderResult,
 } from '@island.is/application/core'
 import {
@@ -15,6 +18,10 @@ import {
   queryPaymentScheduleEmployer,
   queryPaymentScheduleInitialSchedule,
 } from '../graphql/queries'
+import { errorModal } from '../lib/messages'
+import { NO, YES } from '../shared/constants'
+import { mockData } from './mockData'
+import * as Sentry from '@sentry/react'
 
 interface PaymentPlanPrerequisitesProps {
   conditions: PaymentScheduleConditions
@@ -92,7 +99,21 @@ export class PaymentPlanPrerequisitesProvider extends BasicDataProvider {
       .catch((error) => this.handleError(error))
   }
 
-  async provide(): Promise<PaymentPlanPrerequisitesProps> {
+  async provide(
+    application: Application,
+  ): Promise<PaymentPlanPrerequisitesProps> {
+    const fakeData = getValueViaPath(application.answers, 'mock') as {
+      useMockData: typeof YES | typeof NO
+    }
+    if (fakeData?.useMockData === YES) {
+      return {
+        conditions: mockData.data.conditions,
+        debts: mockData.data.debts as PaymentScheduleDebts[],
+        allInitialSchedules: mockData.data
+          .allInitialSchedules as PaymentScheduleInitialSchedule[],
+        employer: mockData.data.employer,
+      }
+    }
     const paymentScheduleConditions = await this.queryPaymentScheduleConditions()
     const paymentScheduleDebts = await this.queryPaymentScheduleDebts()
     const paymentScheduleEmployer = await this.queryPaymentScheduleEmployer()
@@ -106,6 +127,28 @@ export class PaymentPlanPrerequisitesProvider extends BasicDataProvider {
       )
 
       allInitialSchedules.push(initialSchedule)
+    }
+
+    // If no debts are found inform the applicant that they will not be able to apply for a payment plan
+    if (
+      paymentScheduleConditions.maxDebt ||
+      !paymentScheduleConditions.taxReturns ||
+      !paymentScheduleConditions.vatReturns ||
+      !paymentScheduleConditions.citReturns ||
+      !paymentScheduleConditions.accommodationTaxReturns ||
+      !paymentScheduleConditions.withholdingTaxReturns ||
+      !paymentScheduleConditions.wageReturns ||
+      paymentScheduleConditions.collectionActions ||
+      !paymentScheduleConditions.doNotOwe ||
+      paymentScheduleDebts.length <= 0
+    ) {
+      return Promise.reject({
+        reason: {
+          title: errorModal.noDebts.title,
+          summary: errorModal.noDebts.summary,
+        },
+        statusCode: 404,
+      })
     }
 
     return {
@@ -126,18 +169,22 @@ export class PaymentPlanPrerequisitesProvider extends BasicDataProvider {
     }
   }
 
-  onProvideError(): FailedDataProviderResult {
+  onProvideError(error: {
+    reason: ProviderErrorReason
+    statusCode?: number
+  }): FailedDataProviderResult {
     return {
       date: new Date(),
       data: {},
-      reason: 'Failed',
+      reason: error.reason,
       status: 'failure',
+      statusCode: error.statusCode,
     }
   }
 
   handleError(error: Error | unknown) {
     console.error(`Error in Payment Plan Prerequisites Provider:`, error)
-
+    Sentry.captureException(error)
     return Promise.reject('Failed to fetch data')
   }
 }

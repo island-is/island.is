@@ -26,7 +26,7 @@ import {
 import {
   capitalize,
   caseTypes,
-  formatNationalId,
+  formatDOB,
 } from '@island.is/judicial-system/formatters'
 import { core, requests } from '@island.is/judicial-system-web/messages'
 import type { Case } from '@island.is/judicial-system/types'
@@ -254,17 +254,17 @@ const ActiveCases: React.FC<Props> = (props) => {
                         </Box>
                       </Text>
                       {c.defendants.length === 1 ? (
-                        <Text>
-                          <Text as="span" variant="small" color="dark400">
-                            {`${c.defendants[0].noNationalId ? 'fd.' : 'kt.'} ${
-                              c.defendants[0].nationalId
-                                ? c.defendants[0].noNationalId
-                                  ? c.defendants[0].nationalId
-                                  : formatNationalId(c.defendants[0].nationalId)
-                                : '-'
-                            }`}
+                        (!c.defendants[0].noNationalId ||
+                          c.defendants[0].nationalId) && (
+                          <Text>
+                            <Text as="span" variant="small" color="dark400">
+                              {formatDOB(
+                                c.defendants[0].nationalId,
+                                c.defendants[0].noNationalId,
+                              )}
+                            </Text>
                           </Text>
-                        </Text>
+                        )
                       ) : (
                         <Text as="span" variant="small" color="dark400">
                           {`+ ${c.defendants.length - 1}`}

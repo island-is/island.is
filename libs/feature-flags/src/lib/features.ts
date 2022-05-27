@@ -1,4 +1,7 @@
 export enum Features {
+  // Integrate auth-api with user-profile-api.
+  userProfileClaims = 'shouldAuthApiReturnUserProfileClaims',
+
   // Shows delegation picker in Identity Server and the Service Portal.
   delegationsEnabled = 'identityserverDelegationsEnabled',
 
@@ -12,4 +15,7 @@ export enum Features {
   // Application visibility flags
   exampleApplication = 'isExampleApplicationEnabled',
   accidentNotification = 'isAccidentNotificationEnabled',
+  noDebtCertificate = 'applicationTemplateNoDebtCertificateEnabled',
+  drivingInstructorRegistrations = 'isDrivingInstructorRegistrationsEnabled',
+  drivingSchoolConfirmations = 'isDrivingSchoolConfirmationsEnabled',
 }

@@ -15,11 +15,13 @@ import {
   PublicDebtPaymentPlanTemplateService,
   GeneralPetitionService,
   CriminalRecordSubmissionService,
+  GeneralFishingLicenseService,
   DataProtectionComplaintService,
   PSignSubmissionService,
   ExamplePaymentActionsService,
   ComplaintsToAlthingiOmbudsmanTemplateService,
   MortgageCertificateSubmissionService,
+  FinancialAidService,
   DrivingSchoolConfirmationService,
 } from './templates'
 
@@ -55,11 +57,13 @@ export class TemplateAPIService {
     private readonly publicDebtPaymentPlanService: PublicDebtPaymentPlanTemplateService,
     private readonly generalPetitionService: GeneralPetitionService,
     private readonly criminalRecordSubmissionService: CriminalRecordSubmissionService,
+    private readonly generalFishingLicenseService: GeneralFishingLicenseService,
     private readonly dataProtectionComplaintService: DataProtectionComplaintService,
     private readonly pSignSubmissionService: PSignSubmissionService,
     private readonly examplePaymentActionsService: ExamplePaymentActionsService,
     private readonly complaintsToAlthingiOmbudsman: ComplaintsToAlthingiOmbudsmanTemplateService,
     private readonly mortgageCertificateSubmissionService: MortgageCertificateSubmissionService,
+    private readonly financialAidService: FinancialAidService,
     private readonly drivingSchoolConfirmationService: DrivingSchoolConfirmationService,
   ) {}
 
@@ -78,12 +82,15 @@ export class TemplateAPIService {
       | PublicDebtPaymentPlanTemplateService
       | GeneralPetitionService
       | CriminalRecordSubmissionService
+      | GeneralFishingLicenseService
       | DataProtectionComplaintService
       | PSignSubmissionService
       | ExamplePaymentActionsService
       | ComplaintsToAlthingiOmbudsmanTemplateService
       | MortgageCertificateSubmissionService
-      | DrivingSchoolConfirmationService,
+      | FinancialAidService
+      | DrivingSchoolConfirmationService
+      | MortgageCertificateSubmissionService,
     action: ApplicationApiAction,
   ): Promise<PerformActionResult> {
     // No index signature with a parameter of type 'string' was found on type
@@ -182,6 +189,11 @@ export class TemplateAPIService {
           this.criminalRecordSubmissionService,
           action,
         )
+      case ApplicationTypes.GENERAL_FISHING_LICENSE:
+        return this.tryRunningActionOnService(
+          this.generalFishingLicenseService,
+          action,
+        )
       case ApplicationTypes.DATA_PROTECTION_AUTHORITY_COMPLAINT:
         return this.tryRunningActionOnService(
           this.dataProtectionComplaintService,
@@ -207,6 +219,8 @@ export class TemplateAPIService {
           this.mortgageCertificateSubmissionService,
           action,
         )
+      case ApplicationTypes.FINANCIAL_AID:
+        return this.tryRunningActionOnService(this.financialAidService, action)
       case ApplicationTypes.DRIVING_SCHOOL_CONFIRMATION:
         return this.tryRunningActionOnService(
           this.drivingSchoolConfirmationService,

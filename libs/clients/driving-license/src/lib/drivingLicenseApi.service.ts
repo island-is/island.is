@@ -32,8 +32,29 @@ export class DrivingLicenseApi {
     if (!skirteini || !skirteini.id) {
       return null
     }
+    const license = DrivingLicenseApi.normalizeDrivingLicenseType(skirteini)
 
-    return DrivingLicenseApi.normalizeDrivingLicenseType(skirteini)
+    if (skirteini.athugasemdir) {
+      const remarks = await this.v1.apiOkuskirteiniTegundirathugasemdaGet({
+        apiVersion: v1.DRIVING_LICENSE_API_VERSION_V1,
+      })
+      const licenseRemarks: string[] = skirteini.athugasemdir
+        .filter(
+          (remark: v1.AtsSkirteini) =>
+            remark.id === skirteini.id && !!remark.nr,
+        )
+        .map((remark: v1.AtsSkirteini) => remark.nr || '')
+      const filteredRemarks: string[] = remarks
+        .filter(
+          (remark: v1.TegundAthugasemdaDto) =>
+            !!remark.heiti &&
+            licenseRemarks.includes(remark.nr || ('' && !remark.athugasemd)),
+        )
+        .map((remark: v1.TegundAthugasemdaDto) => remark.heiti || '')
+      return { ...license, healthRemarks: filteredRemarks }
+    }
+
+    return license
   }
 
   private static normalizeDrivingLicenseType(
@@ -42,7 +63,6 @@ export class DrivingLicenseApi {
     // Pretty sure none of these fallbacks can get triggered, since if the service
     // finds a driver's license, it's going to have the values. - this is mostly to
     // appease the type system, since the downstream type is actually wrong.
-
     return {
       id: skirteini.id ?? -1,
       name: skirteini.nafn ?? '',

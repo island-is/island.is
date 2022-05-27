@@ -33,10 +33,14 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/accident-notification'),
   [ApplicationTypes.GENERAL_PETITION]: () =>
     import('@island.is/application/templates/general-petition'),
+  [ApplicationTypes.GENERAL_FISHING_LICENSE]: () =>
+    import('@island.is/application/templates/general-fishing-license'),
   [ApplicationTypes.P_SIGN]: () =>
     import('@island.is/application/templates/p-sign'),
   [ApplicationTypes.CRIMINAL_RECORD]: () =>
     import('@island.is/application/templates/criminal-record'),
+  [ApplicationTypes.FINANCIAL_AID]: () =>
+    import('@island.is/application/templates/financial-aid'),
   [ApplicationTypes.DRIVING_INSTRUCTOR_REGISTRATIONS]: () =>
     import('@island.is/application/templates/driving-instructor-registrations'),
   [ApplicationTypes.EXAMPLE_PAYMENT]: () =>
@@ -45,6 +49,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/driving-school-confirmation'),
   [ApplicationTypes.MORTGAGE_CERTIFICATE]: () =>
     import('@island.is/application/templates/mortgage-certificate'),
+  [ApplicationTypes.NO_DEBT_CERTIFICATE]: () =>
+    import('@island.is/application/templates/no-debt-certificate'),
 }
 
 export default templates

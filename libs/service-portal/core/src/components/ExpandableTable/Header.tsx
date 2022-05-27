@@ -8,6 +8,7 @@ interface Props {
     value: string | React.ReactElement
     align?: 'left' | 'right'
     element?: boolean
+    printHidden?: boolean
   }>
 }
 
@@ -17,7 +18,10 @@ const ExpandableLine: FC<Props> = ({ data }) => {
       <T.Row>
         {data.map((item, i) => (
           <T.HeadData
-            box={item.align ? { textAlign: item.align } : undefined}
+            box={{
+              textAlign: item.align ?? 'left',
+              printHidden: item.printHidden,
+            }}
             scope="col"
             key={i}
             style={tableStyles}

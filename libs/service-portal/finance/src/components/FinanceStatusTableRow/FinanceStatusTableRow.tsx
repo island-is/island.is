@@ -1,13 +1,14 @@
-import React, { FC } from 'react'
 import { gql, useLazyQuery } from '@apollo/client'
-import { User } from 'oidc-client'
+import React, { FC } from 'react'
+
+import { amountFormat, ExpandRow } from '@island.is/service-portal/core'
+
+import FinanceStatusDetailTable from '../../components/FinanceStatusDetailTable/FinanceStatusDetailTable'
 import {
-  FinanceStatusOrganizationType,
   FinanceStatusDetailsType,
   FinanceStatusOrganizationChargeType,
+  FinanceStatusOrganizationType,
 } from '../../screens/FinanceStatus/FinanceStatusData.types'
-import FinanceStatusDetailTable from '../../components/FinanceStatusDetailTable/FinanceStatusDetailTable'
-import { ExpandRow, amountFormat } from '@island.is/service-portal/core'
 
 const GetFinanceStatusDetailsQuery = gql`
   query GetFinanceStatusDetailsQuery($input: GetFinancialOverviewInput!) {
@@ -19,14 +20,12 @@ interface Props {
   organization: FinanceStatusOrganizationType
   chargeType: FinanceStatusOrganizationChargeType
   downloadURL: string
-  userInfo: User
 }
 
 const FinanceStatusTableRow: FC<Props> = ({
   organization,
   chargeType,
   downloadURL,
-  userInfo,
 }) => {
   const [getDetailsQuery, { loading, error, ...detailsQuery }] = useLazyQuery(
     GetFinanceStatusDetailsQuery,
@@ -60,7 +59,6 @@ const FinanceStatusTableRow: FC<Props> = ({
           organization={organization}
           financeStatusDetails={financeStatusDetails}
           downloadURL={downloadURL}
-          userInfo={userInfo}
         />
       ) : null}
     </ExpandRow>

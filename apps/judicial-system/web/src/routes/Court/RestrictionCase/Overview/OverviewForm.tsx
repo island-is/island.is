@@ -1,7 +1,6 @@
 import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { CaseType } from '@island.is/judicial-system/types'
 import {
   AccordionListItem,
   CommentsAccordionItem,
@@ -17,11 +16,7 @@ import {
   Button,
   Text,
 } from '@island.is/island-ui/core'
-import {
-  capitalize,
-  formatDate,
-  formatRequestedCustodyRestrictions,
-} from '@island.is/judicial-system/formatters'
+import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import CaseFilesAccordionItem from '@island.is/judicial-system-web/src/components/AccordionItems/CaseFilesAccordionItem/CaseFilesAccordionItem'
 import {
@@ -29,6 +24,7 @@ import {
   laws,
   requestCourtDate,
   rcCourtOverview,
+  restrictionsV2,
 } from '@island.is/judicial-system-web/messages'
 import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
 import type {
@@ -38,6 +34,7 @@ import type {
 import * as constants from '@island.is/judicial-system/consts'
 
 import DraftConclusionModal from '../../SharedComponents/DraftConclusionModal/DraftConclusionModal'
+import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
 
 interface Props {
   workingCase: Case
@@ -60,7 +57,7 @@ const OverviewForm: React.FC<Props> = (props) => {
             )}
             message={
               <MarkdownWrapper
-                text={workingCase.caseResentExplanation}
+                markdown={workingCase.caseResentExplanation}
                 textProps={{ variant: 'small' }}
               />
             }
@@ -70,11 +67,9 @@ const OverviewForm: React.FC<Props> = (props) => {
       )}
       <Box marginBottom={7}>
         <Text as="h1" variant="h1">
-          {`Yfirlit ${
-            workingCase.type === CaseType.CUSTODY
-              ? 'gæsluvarðhaldskröfu'
-              : 'farbannskröfu'
-          }`}
+          {formatMessage(rcCourtOverview.sections.title, {
+            caseType: workingCase.type,
+          })}
         </Text>
       </Box>
       <Box component="section" marginBottom={5}>
@@ -82,10 +77,7 @@ const OverviewForm: React.FC<Props> = (props) => {
           data={[
             {
               title: formatMessage(core.prosecutor),
-              value: `${
-                workingCase.creatingProsecutor?.institution?.name ??
-                'Ekki skráð'
-              }`,
+              value: `${workingCase.creatingProsecutor?.institution?.name}`,
             },
             {
               title: formatMessage(requestCourtDate.heading),
@@ -102,11 +94,9 @@ const OverviewForm: React.FC<Props> = (props) => {
             },
             {
               title: workingCase.parentCase
-                ? `${
-                    workingCase.type === CaseType.CUSTODY
-                      ? formatMessage(core.pastCustody)
-                      : formatMessage(core.pastTravelBan)
-                  }`
+                ? formatMessage(core.pastRestrictionCase, {
+                    caseType: workingCase.type,
+                  })
                 : formatMessage(core.arrestDate),
               value: workingCase.parentCase
                 ? `${capitalize(
@@ -132,7 +122,6 @@ const OverviewForm: React.FC<Props> = (props) => {
           defendants={workingCase.defendants ?? []}
           defender={{
             name: workingCase.defenderName ?? '',
-            defenderNationalId: workingCase.defenderNationalId,
             email: workingCase.defenderEmail,
             phoneNumber: workingCase.defenderPhoneNumber,
           }}
@@ -177,11 +166,12 @@ const OverviewForm: React.FC<Props> = (props) => {
             <AccordionItem
               labelVariant="h3"
               id="id_3"
-              label={`Takmarkanir og tilhögun ${
-                workingCase.type === CaseType.CUSTODY ? 'gæslu' : 'farbanns'
-              }`}
+              label={formatMessage(restrictionsV2.title, {
+                caseType: workingCase.type,
+              })}
             >
               {formatRequestedCustodyRestrictions(
+                formatMessage,
                 workingCase.type,
                 workingCase.requestedCustodyRestrictions,
                 workingCase.requestedOtherRestrictions,
@@ -239,7 +229,7 @@ const OverviewForm: React.FC<Props> = (props) => {
           />
         </Box>
         <Button
-          data-testId="draftConclusionButton"
+          data-testid="draftConclusionButton"
           variant="ghost"
           icon="pencil"
           size="small"

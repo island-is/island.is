@@ -4,11 +4,11 @@ import {
   RECEPTION_AND_ASSIGNMENT_ROUTE,
 } from '@island.is/judicial-system/consts'
 
-import { makeCustodyCase, makeCourt, intercept } from '../../../utils'
+import { makeRestrictionCase, makeCourt, intercept } from '../../../utils'
 
 describe(`${RECEPTION_AND_ASSIGNMENT_ROUTE}/:id`, () => {
   beforeEach(() => {
-    const caseData = makeCustodyCase()
+    const caseData = makeRestrictionCase()
 
     const caseDataAddition = {
       ...caseData,
@@ -23,15 +23,24 @@ describe(`${RECEPTION_AND_ASSIGNMENT_ROUTE}/:id`, () => {
     intercept(caseDataAddition)
   })
 
-  it('should require a valid case id', () => {
+  it('should require a valid form', () => {
+    // case number validation
     cy.getByTestid('courtCaseNumber').click().blur()
     cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
     cy.getByTestid('courtCaseNumber').type('R-X/2021')
+    cy.getByTestid('inputErrorMessage').should('be.visible')
+
+    // continue button enabled when form becomes valid
+    cy.getByTestid('courtCaseNumber').clear().type('R-1/2021')
     cy.getByTestid('inputErrorMessage').should('not.exist')
+    cy.getByTestid('continueButton').should('be.disabled')
+    cy.getByTestid('select-judge').click()
+    cy.get('#react-select-judge-option-0').click()
+    cy.getByTestid('continueButton').should('be.enabled')
   })
 
   it('should navigate to the next step when all input data is valid and the continue button is clicked', () => {
-    cy.getByTestid('courtCaseNumber').type('R-X/2021')
+    cy.getByTestid('courtCaseNumber').type('R-1/2021')
     cy.getByTestid('select-judge').click()
     cy.get('#react-select-judge-option-0').click()
     cy.getByTestid('select-registrar').click()

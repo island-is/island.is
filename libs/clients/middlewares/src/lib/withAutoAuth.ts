@@ -3,13 +3,7 @@ import { Logger } from 'winston'
 import { buildCacheControl } from './withCache/buildCacheControl'
 import { CacheConfig } from './withCache/types'
 import { createEnhancedFetch } from './createEnhancedFetch'
-import {
-  FetchAPI,
-  Request,
-  RequestInfo,
-  RequestInit,
-  Headers,
-} from './nodeFetch'
+import { FetchAPI, Request, MiddlewareAPI } from './nodeFetch'
 
 export interface AutoAuthTokenExchangeOptions {
   /**
@@ -69,6 +63,11 @@ export interface AutoAuthOptions {
    * Additional configuration for token exchange.
    */
   tokenExchange?: AutoAuthTokenExchangeOptions
+
+  /**
+   * Optional configuration for token request URL. Used when the token endpoint doesn't follow the '{issuer}/connect/token' pattern.
+   */
+  tokenEndpoint?: string
 }
 
 export interface AuthMiddlewareOptions {
@@ -76,7 +75,7 @@ export interface AuthMiddlewareOptions {
   logger: Logger
   options: AutoAuthOptions
   cache?: CacheConfig
-  fetch: FetchAPI
+  fetch: MiddlewareAPI
   rootFetch: FetchAPI
 }
 
@@ -110,14 +109,15 @@ export const withAutoAuth = ({
   cache,
   rootFetch,
   options,
-}: AuthMiddlewareOptions): FetchAPI => {
+}: AuthMiddlewareOptions): MiddlewareAPI => {
   const {
     alwaysTokenExchange = false,
     requestActorToken = false,
     useCache = false,
   } = options.tokenExchange || {}
   const tokenCacheManager = caching({ store: 'memory', ttl: 0 })
-  const tokenEndpoint = `${options.issuer}/connect/token`
+  const tokenEndpoint =
+    options.tokenEndpoint ?? `${options.issuer}/connect/token`
   if (useCache && !cache) {
     logger.warn(
       `Fetch (${name}): AutoAuth configured to use cache but no cache manager configured.`,
@@ -145,17 +145,14 @@ export const withAutoAuth = ({
         : undefined,
   })
 
-  const getAuth = async (
-    input: RequestInfo,
-    init: RequestInit | undefined,
-  ): Promise<string> => {
-    const auth = init?.auth ?? (input as Request).auth
+  const getAuth = async (request: Request): Promise<string> => {
+    const auth = request.auth
     const isTokenExchange = options.mode !== 'token' && !!auth
 
     if (options.mode === 'tokenExchange' && !auth) {
       const message = `Fetch failure (${name}): Could not perform token exchange. Auth object was missing.`
       logger.error({
-        url: input,
+        url: request.url,
         message,
       })
       throw new Error(message)
@@ -239,10 +236,9 @@ export const withAutoAuth = ({
     return authorization
   }
 
-  return async (input, init) => {
-    const headers = new Headers(init?.headers)
-    const authorization = await getAuth(input, init)
-    headers.set('authorization', authorization)
-    return fetch(input, { ...init, headers })
+  return async (request) => {
+    const authorization = await getAuth(request)
+    request.headers.set('authorization', authorization)
+    return fetch(request)
   }
 }

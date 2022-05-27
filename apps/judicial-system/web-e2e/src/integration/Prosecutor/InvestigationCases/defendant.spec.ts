@@ -26,6 +26,7 @@ describe(NEW_IC_ROUTE, () => {
   })
 
   it('should have a disabled gender and citizenship if the defendant has a business national id', () => {
+    // eslint-disable-next-line local-rules/disallow-kennitalas
     cy.getByTestid('nationalId').type('5555555555')
     cy.wait('@getBusinessesByNationalId')
     cy.get('#defendantGender').should(
@@ -36,6 +37,7 @@ describe(NEW_IC_ROUTE, () => {
   })
 
   it('should not have a disabled gender and citizenship if the defendant has a person national id', () => {
+    // eslint-disable-next-line local-rules/disallow-kennitalas
     cy.getByTestid('nationalId').type('1111111111')
     cy.wait('@getPersonByNationalId')
     cy.get('#defendantGender').should(
@@ -46,6 +48,7 @@ describe(NEW_IC_ROUTE, () => {
   })
 
   it('should autofill name, address and gender after getting person by national id in national registry', () => {
+    // eslint-disable-next-line local-rules/disallow-kennitalas
     cy.getByTestid('nationalId').type('1111111111')
     cy.wait('@getPersonByNationalId')
     cy.getByTestid('accusedAddress').should('have.value', 'Jokersway 90')
@@ -53,12 +56,10 @@ describe(NEW_IC_ROUTE, () => {
     cy.getByTestid('select-defendantGender').should('contain', 'Karl')
   })
 
-  it('should require a valid accused date of birth if the user does not have a national id', () => {
+  it('should require a valid accused date of birth or empty if the user does not have a national id', () => {
     cy.get('[type="checkbox"]').check()
     cy.getByTestid('nationalId').type('0').blur()
     cy.getByTestid('inputErrorMessage').contains('Dæmi: 00.00.0000')
-    cy.getByTestid('nationalId').clear().blur()
-    cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
     cy.getByTestid('nationalId').clear().type('01.01.2000')
     cy.getByTestid('inputErrorMessage').should('not.exist')
   })
@@ -99,6 +100,7 @@ describe(NEW_IC_ROUTE, () => {
 
   it('should be able to select defender', () => {
     cy.wait('@lawyers')
+
     cy.getByTestid('creatable-select-defenderName')
       .click()
       .find('input')
@@ -107,5 +109,11 @@ describe(NEW_IC_ROUTE, () => {
       .click()
     cy.getByTestid('defenderEmail').should('have.value', 'logmadur@logmenn.is')
     cy.getByTestid('defenderPhoneNumber').should('have.value', '666-6666')
+    cy.getByTestid('defenderNotFound').should('not.exist')
+
+    cy.get('#react-select-defenderName-input')
+      .type('click', { force: true })
+      .type('{enter}')
+    cy.getByTestid('defenderNotFound').should('exist')
   })
 })

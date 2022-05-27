@@ -180,6 +180,26 @@ export const coreMessages = defineMessages({
     description:
       'Text indicating we are waiting for confirmation from 3rd party payment gateway',
   },
+  deleteApplicationDialogTitle: {
+    id: 'application.system:delete.application.dialog.title',
+    defaultMessage: 'Eyða umsókn',
+    description: 'Delete application dialog title',
+  },
+  deleteApplicationDialogDescription: {
+    id: 'application.system:delete.application.dialog.description',
+    defaultMessage: 'Ertu viss um að þú viljir eyða þessari umsókn?',
+    description: 'Delete application dialog description',
+  },
+  deleteApplicationDialogConfirmLabel: {
+    id: 'application.system:delete.application.dialog.confirm',
+    defaultMessage: 'Já, eyða',
+    description: 'Delete application dialog confirm',
+  },
+  deleteApplicationDialogCancelLabel: {
+    id: 'application.system:delete.application.dialog.cancel',
+    defaultMessage: 'Hætta við',
+    description: 'Delete application dialog cancel',
+  },
 })
 
 export const coreErrorMessages = defineMessages({
@@ -233,9 +253,14 @@ export const coreErrorMessages = defineMessages({
   failedDataProvider: {
     id: 'application.system:fetch.data.error',
     defaultMessage: 'Villa kom upp við að sækja gögn',
-    description: 'Copy when there was an error in one or more data providers',
+    description: 'Default error when dataprovider fails',
   },
-
+  failedDataProviderSubmit: {
+    id: 'application.system:fetch.data.failedDataProviderSubmit',
+    defaultMessage: 'Eitthvað fór úrskeiðis',
+    description:
+      'Error message for dataprovider screen when one of the dataproviders fails',
+  },
   paymentSubmitFailed: {
     id: 'application.system:core.payment.submitTitle',
     defaultMessage: 'Sending umsóknar mistókst',

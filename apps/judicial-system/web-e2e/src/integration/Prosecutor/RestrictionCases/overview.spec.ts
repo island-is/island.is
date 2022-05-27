@@ -1,21 +1,38 @@
 import faker from 'faker'
 
-import { Case, Defendant } from '@island.is/judicial-system/types'
+import { Case, CaseState, Defendant } from '@island.is/judicial-system/types'
 import { STEP_SIX_ROUTE } from '@island.is/judicial-system/consts'
 
 import {
-  makeCustodyCase,
+  makeRestrictionCase,
   makeCourt,
   makeProsecutor,
   intercept,
 } from '../../../utils'
 
 describe(`${STEP_SIX_ROUTE}/:id`, () => {
+  const caseData = makeRestrictionCase()
   const defenderName = faker.name.findName()
   const defenderEmail = faker.internet.email()
   const defenderPhoneNumber = faker.phone.phoneNumber()
+
   beforeEach(() => {
-    const caseData = makeCustodyCase()
+    cy.stubAPIResponses()
+    cy.visit(`${STEP_SIX_ROUTE}/test_id_stadfesta`)
+  })
+
+  it('should have a info panel about how to resend a case if the case has been received', () => {
+    const caseDataAddition: Case = {
+      ...caseData,
+      state: CaseState.RECEIVED,
+    }
+
+    intercept(caseDataAddition)
+
+    cy.getByTestid('rc-overview-info-panel').should('exist')
+  })
+
+  it('should have an overview of the current case', () => {
     const caseDataAddition: Case = {
       ...caseData,
       defendants: [
@@ -37,13 +54,8 @@ describe(`${STEP_SIX_ROUTE}/:id`, () => {
       defenderPhoneNumber,
     }
 
-    cy.stubAPIResponses()
-    cy.visit(`${STEP_SIX_ROUTE}/test_id_stadfesta`)
-
     intercept(caseDataAddition)
-  })
 
-  it('should have an overview of the current case', () => {
     cy.getByTestid('infoCard').contains(
       'Donald Duck, kt. 000000-0000, Batcave 1337',
     )
@@ -67,6 +79,8 @@ describe(`${STEP_SIX_ROUTE}/:id`, () => {
   })
 
   it('should have a button that links to a pdf of the case', () => {
+    intercept(caseData)
+
     cy.contains('button', 'Krafa - PDF')
   })
 

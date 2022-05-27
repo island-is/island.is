@@ -1,0 +1,514 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Vefþjónustur fyrir veiðileyfi",
+    "description": "Skjölun á núvernadi veiðileyfi vefþjónustun Fiskistofu.",
+    "contact": {
+      "name": "Ólafur Pálmi Guðnason",
+      "email": "olafur.palmi.gudnason@fiskistofa.is"
+    },
+    "version": "1.0"
+  },
+  "paths": {
+    "/v1/skip/{skipaskrarnumer}/veidileyfi": {
+      "get": {
+        "tags": ["Skip"],
+        "summary": "Sækir lista af veiðileyfum skips sem skip þarf ekki annað veiðileyfi til að sækja um.",
+        "parameters": [
+          {
+            "name": "skipaskrarnumer",
+            "in": "path",
+            "description": "Skipaskrárnúmer",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/VeidileyfiListi"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VeidileyfiListi"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VeidileyfiListi"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        }
+      }
+    },
+    "/v1/umsoknir/{umsoknid}": {
+      "get": {
+        "tags": ["Umsoknir"],
+        "summary": "Sækir veiðileyfi umsókn.",
+        "parameters": [
+          {
+            "name": "umsoknid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Umsokn"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Umsokn"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Umsokn"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        }
+      }
+    },
+    "/v1/umsoknir": {
+      "post": {
+        "tags": ["Umsoknir"],
+        "summary": "Býr til veiðileyfi umsókn.",
+        "requestBody": {
+          "description": "Veiðileyfi umsókn",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Umsokn"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Umsokn"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Umsokn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UmsoknResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UmsoknResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UmsoknResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        }
+      }
+    },
+    "/v1/utgerdir/{kennitala}/skip": {
+      "get": {
+        "tags": ["Utgerdir"],
+        "summary": "Sækir lista af skipum eftir kennitölu útgerðaraðila.",
+        "parameters": [
+          {
+            "name": "kennitala",
+            "in": "path",
+            "description": "Kennitala útgerðaraðila.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SkipaListi"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SkipaListi"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SkipaListi"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Astaeda": {
+        "required": ["leidbeining", "lysing"],
+        "type": "object",
+        "properties": {
+          "lysing": {
+            "type": "string",
+            "description": "Lýsing á ástæðun höfnunar."
+          },
+          "leidbeining": {
+            "type": "string",
+            "description": "Leiðbeining á hvernig skal lagfæra höfnun."
+          }
+        },
+        "additionalProperties": false
+      },
+      "Forsendur": {
+        "type": "object",
+        "properties": {
+          "veidileyfi": {
+            "$ref": "#/components/schemas/Veidileyfi"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Forsendur veiðileyfis. Þau veiðileyfi sem notandi þarf til að geta sókt um ákveðið veiðileyfi"
+      },
+      "Haffaeri": {
+        "type": "object",
+        "properties": {
+          "gildistimi": {
+            "type": "string",
+            "description": "Gildistími haffæris.",
+            "format": "date",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Hvort haffæri skips sé í gildi eða ekki."
+      },
+      "OuppfylltVeidileyfi": {
+        "type": "object",
+        "properties": {
+          "veidileyfi": {
+            "$ref": "#/components/schemas/Veidileyfi"
+          },
+          "astaedur": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Astaeda"
+            },
+            "description": "Listi af ástæðum af hverju notandi getur ekki sótt um veiðleyfi.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Skip": {
+        "required": ["einkenni", "heimahofn", "skipanafn", "sviptingar"],
+        "type": "object",
+        "properties": {
+          "skipanafn": {
+            "type": "string",
+            "description": "Nafn skipsins."
+          },
+          "skipaskrarnumer": {
+            "type": "integer",
+            "description": "Skipaskrárnúmer",
+            "format": "int32"
+          },
+          "einkenni": {
+            "type": "string",
+            "description": "Einkennisstafir og einkennisnúmer skips með bandstriki á milli."
+          },
+          "bruttotonn": {
+            "type": "number",
+            "description": "Brúttótonn skips.",
+            "format": "double",
+            "nullable": true
+          },
+          "lengd": {
+            "type": "number",
+            "description": "Lengd skips.",
+            "format": "double"
+          },
+          "heimahofn": {
+            "type": "string",
+            "description": "Heimahöfn skips."
+          },
+          "haffaeri": {
+            "$ref": "#/components/schemas/Haffaeri"
+          },
+          "sviptingar": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Svipting"
+            },
+            "description": "Listi af sviptingum."
+          },
+          "veidileyfi": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Veidileyfi"
+            },
+            "description": "Listi af veiðileyfum.",
+            "nullable": true
+          },
+          "uppfyllirEkkertVeidileyfi": {
+            "type": "boolean",
+            "description": "Segir til um hvort skip uppfyllir skilyrði fyrir ekkert veiðileyfi."
+          },
+          "ouppfylltSkilyrdiVeidileyfa": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OuppfylltVeidileyfi"
+            },
+            "description": "Listi af veiðileyfum ásamt þeim skilyrðum sem skip uppfyllir ekki.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SkipaListi": {
+        "type": "object",
+        "properties": {
+          "skip": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Skip"
+            },
+            "description": "Listi af skipum.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Svipting": {
+        "required": ["skyring"],
+        "type": "object",
+        "properties": {
+          "iGildi": {
+            "type": "string",
+            "description": "Dagsetning sem að svipting tók gildi.",
+            "format": "date-time"
+          },
+          "urGildi": {
+            "type": "string",
+            "description": "Dagsetning sem að svipting mun renna út.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "skyring": {
+            "type": "string",
+            "description": "Skýring sviptingar."
+          }
+        },
+        "additionalProperties": false
+      },
+      "Umsokn": {
+        "required": [
+          "skipaskrarnumer",
+          "umsaekjandiKennitala",
+          "utgerdKennitala",
+          "veidileyfiKodi"
+        ],
+        "type": "object",
+        "properties": {
+          "umsaekjandiKennitala": {
+            "pattern": "^\\d{10}$",
+            "type": "string",
+            "description": "Kennitala umsækjanda."
+          },
+          "simanumer": {
+            "type": "string",
+            "description": "Símanúmer umsækjanda.",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "description": "Email umsækjanda.",
+            "nullable": true
+          },
+          "utgerdKennitala": {
+            "pattern": "^\\d{10}$",
+            "type": "string",
+            "description": "Kennitala útgerðaraðila."
+          },
+          "skipaskrarnumer": {
+            "type": "integer",
+            "description": "Skipaskrárnúmer.",
+            "format": "int32"
+          },
+          "umbedinGildistaka": {
+            "type": "string",
+            "description": "Upphafsdagur veiða.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "veidileyfiKodi": {
+            "type": "string",
+            "description": "Auðkenning veiðileyfis sem sótt er um."
+          }
+        },
+        "additionalProperties": false
+      },
+      "UmsoknResponse": {
+        "type": "object",
+        "properties": {
+          "umsoknId": {
+            "type": "integer",
+            "description": "Umsóknarauðkenni.",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Veidileyfi": {
+        "required": ["kodi", "nafn"],
+        "type": "object",
+        "properties": {
+          "kodi": {
+            "type": "string",
+            "description": "Auðkenni veiðileyfis."
+          },
+          "nafn": {
+            "type": "string",
+            "description": "Nafn veiðileyfis."
+          },
+          "vorunumerfjs": {
+            "type": "string",
+            "description": "Vörunúmer veiðileyfis frá fjársýslu.\r\nNullable því það vantar vörunúmer fyrir öll veiðileyfi.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "VeidileyfiIBodi": {
+        "required": ["astaedur"],
+        "type": "object",
+        "properties": {
+          "veidileyfi": {
+            "$ref": "#/components/schemas/Veidileyfi"
+          },
+          "svar": {
+            "type": "boolean",
+            "description": "Hvort notandi geti sótt um veiðileyfi eða ekki.\r\nDefault er að hann getur það."
+          },
+          "astaedur": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Astaeda"
+            },
+            "description": "Listi af ástæðum af hverju notandi getur ekki sótt um veiðleyfi."
+          },
+          "forsendur": {
+            "$ref": "#/components/schemas/Forsendur"
+          }
+        },
+        "additionalProperties": false
+      },
+      "VeidileyfiListi": {
+        "required": ["veidileyfiIBodi"],
+        "type": "object",
+        "properties": {
+          "veidileyfiIBodi": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VeidileyfiIBodi"
+            },
+            "description": "Listi af veiðileyfum."
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProblemDetails": {
+        "additionalProperties": false
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "http",
+        "description": "Sláðu inn JWT bearer token, einungis það og ekkert á undan.\nEnter the JWT bearer token, only that, with nothing in front.",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "security": [
+    {
+      "Bearer": []
+    }
+  ]
+}

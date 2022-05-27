@@ -1,22 +1,32 @@
-import React, { FC, Suspense } from 'react'
-import { Route, Switch } from 'react-router-dom'
+import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
+import React, { FC, Suspense, useEffect } from 'react'
+import { Route, Switch, useLocation } from 'react-router-dom'
+
+import { Box } from '@island.is/island-ui/core'
 import {
-  ServicePortalRoute,
-  NotFound,
   AccessDenied,
+  NotFound,
+  PlausiblePageviewDetail,
+  ServicePortalRoute,
 } from '@island.is/service-portal/core'
+import { User } from '@island.is/shared/types'
+
+import { useModuleProps } from '../../hooks/useModuleProps/useModuleProps'
 import { useStore } from '../../store/stateProvider'
 import ModuleErrorScreen, { ModuleErrorBoundary } from './ModuleErrorScreen'
-import { Box } from '@island.is/island-ui/core'
-import { useModuleProps } from '../../hooks/useModuleProps/useModuleProps'
-import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
-import { User } from 'oidc-client'
 
 const RouteComponent: FC<{
   route: ServicePortalRoute
   userInfo: User
   client: ApolloClient<NormalizedCacheObject>
 }> = React.memo(({ route, userInfo, client }) => {
+  const location = useLocation()
+
+  useEffect(() => {
+    if (route.render !== undefined) {
+      PlausiblePageviewDetail(route.path)
+    }
+  }, [location])
   if (route.render === undefined) return null
 
   const App = route.render({

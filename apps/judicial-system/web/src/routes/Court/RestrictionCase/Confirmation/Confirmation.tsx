@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Accordion, Box, Text } from '@island.is/island-ui/core'
@@ -21,16 +21,16 @@ import {
   CaseDecision,
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
-import type { RequestSignatureResponse } from '@island.is/judicial-system/types'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import SigningModal from '@island.is/judicial-system-web/src/components/SigningModal/SigningModal'
+import SigningModal, {
+  useRequestRulingSignature,
+} from '@island.is/judicial-system-web/src/components/SigningModal/SigningModal'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
 import {
   core,
   rcConfirmation as m,
+  titles,
 } from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system/consts'
 
@@ -42,37 +42,15 @@ export const Confirmation: React.FC = () => {
     caseNotFound,
   } = useContext(FormContext)
   const [modalVisible, setModalVisible] = useState<boolean>(false)
-  const [
-    requestRulingSignatureResponse,
-    setRequestRulingSignatureResponse,
-  ] = useState<RequestSignatureResponse>()
 
-  const { requestRulingSignature, isRequestingRulingSignature } = useCase()
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
 
-  useEffect(() => {
-    if (!modalVisible) {
-      setRequestRulingSignatureResponse(undefined)
-    }
-  }, [modalVisible, setRequestRulingSignatureResponse])
-
-  const handleNextButtonClick: () => Promise<void> = async () => {
-    if (!workingCase) {
-      return
-    }
-
-    // Request ruling signature to get control code
-    const requestRulingSignatureResponse = await requestRulingSignature(
-      workingCase.id,
-    )
-    if (requestRulingSignatureResponse) {
-      setRequestRulingSignatureResponse(requestRulingSignatureResponse)
-      setModalVisible(true)
-    } else {
-      // TODO: Handle error
-    }
-  }
+  const {
+    requestRulingSignature,
+    requestRulingSignatureResponse,
+    isRequestingRulingSignature,
+  } = useRequestRulingSignature(workingCase.id, () => setModalVisible(true))
 
   return (
     <PageLayout
@@ -116,9 +94,7 @@ export const Confirmation: React.FC = () => {
               </Box>
             </Box>
             <Box marginBottom={1} textAlign="center">
-              <Text variant="h4">
-                {workingCase?.judge ? workingCase.judge.name : user?.name}
-              </Text>
+              <Text variant="h4">{workingCase?.judge?.name}</Text>
             </Box>
           </BlueBox>
         </Box>
@@ -166,7 +142,7 @@ export const Confirmation: React.FC = () => {
               ? 'default'
               : 'destructive'
           }
-          onNextButtonClick={handleNextButtonClick}
+          onNextButtonClick={requestRulingSignature}
           nextIsLoading={isRequestingRulingSignature}
           hideNextButton={workingCase.judge?.id !== user?.id}
           infoBoxText={
@@ -181,7 +157,7 @@ export const Confirmation: React.FC = () => {
           workingCase={workingCase}
           setWorkingCase={setWorkingCase}
           requestRulingSignatureResponse={requestRulingSignatureResponse}
-          setModalVisible={setModalVisible}
+          onClose={() => setModalVisible(false)}
         />
       )}
     </PageLayout>

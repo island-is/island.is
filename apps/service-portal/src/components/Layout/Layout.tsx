@@ -34,18 +34,20 @@ const Layout: FC = ({ children }) => {
     <>
       <AuthOverlay />
       <ToastContainer useKeyframeStyles={false} />
+
       <Header />
       {/* // counter intuitive, the scroll blocks all scrolling aside from the component that is wrapped */}
-      <RemoveScroll enabled={mobileMenuState === 'open'}>
-        <Hidden above="sm">
-          <MobileMenu />
+      <Hidden print>
+        <RemoveScroll enabled={mobileMenuState === 'open'}>
+          <Hidden above="sm">
+            <MobileMenu />
+          </Hidden>
+        </RemoveScroll>
+        <Hidden below="md">
+          <Sidebar />
         </Hidden>
-      </RemoveScroll>
-      <Hidden below="md">
-        <Sidebar />
       </Hidden>
       <Box
-        overflow="hidden"
         className={cn(
           styles.layoutWrapper,
           sidebarState === 'closed' && styles.layoutWrapperWide,
@@ -53,10 +55,12 @@ const Layout: FC = ({ children }) => {
         paddingBottom={7}
       >
         <Box as="main" component="main">
-          <GridContainer>
+          <GridContainer className={styles.layoutContainer}>
             <GridRow>
               <GridColumn span={'12/12'} className={styles.layoutGrid}>
-                <ContentBreadcrumbs />
+                <Hidden print>
+                  <ContentBreadcrumbs />
+                </Hidden>
                 <div>{children}</div>
               </GridColumn>
             </GridRow>

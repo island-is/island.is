@@ -2,12 +2,13 @@ import {
   Application,
   ApplicationStatus,
   ApplicationTypes,
+  coreErrorMessages,
 } from '@island.is/application/core'
 import addDays from 'date-fns/addDays'
 import format from 'date-fns/format'
 
 import { minimumPeriodStartBeforeExpectedDateOfBirth } from '../config'
-import { ParentalRelations } from '../constants'
+import { MANUAL, ParentalRelations } from '../constants'
 import { answerValidators, VALIDATE_LATEST_PERIOD } from './answerValidators'
 import { errorMessages } from './messages'
 import { NO, StartDateOptions } from '../constants'
@@ -90,6 +91,137 @@ describe('answerValidators', () => {
       message: errorMessages.periodsPeriodRange,
       path: 'periods[0].startDate',
       values: { usageMaxMonths: 23.5 },
+    })
+  })
+
+  describe('otherParent', () => {
+    it('should return error if MANUAL selected and name empty', () => {
+      const newAnswer = {
+        chooseOtherParent: MANUAL,
+        otherParentName: '',
+        otherParentId: '',
+      }
+
+      expect(
+        answerValidators['otherParent'](newAnswer, application),
+      ).toStrictEqual({
+        message: coreErrorMessages.missingAnswer,
+        path: 'otherParent.otherParentName',
+        values: undefined,
+      })
+    })
+
+    it('should return error if MANUAL selected and nation id empty', () => {
+      const newAnswer = {
+        chooseOtherParent: MANUAL,
+        otherParentName: 'Spouse Spousson',
+        otherParentId: '',
+      }
+
+      expect(
+        answerValidators['otherParent'](newAnswer, application),
+      ).toStrictEqual({
+        message: coreErrorMessages.missingAnswer,
+        path: 'otherParent.otherParentId',
+        values: undefined,
+      })
+    })
+  })
+
+  describe('union', () => {
+    it('shoulde create error when union is empty', () => {
+      const newAnswers = {
+        bank: '123456789012',
+        pensionFund: 'id-frjalsi',
+        union: '',
+      }
+
+      expect(
+        answerValidators['payments'](newAnswers, application),
+      ).toStrictEqual({
+        message: coreErrorMessages.defaultError,
+        path: 'payments.union',
+        values: undefined,
+      })
+    })
+  })
+
+  describe('privatePensionFund', () => {
+    it('should create error when privatePensionFund is empty', () => {
+      const newAnswers = {
+        bank: '123456789012',
+        pensionFund: 'id-frjalsi',
+        privatePensionFund: '',
+        privatePensionFundPercentage: '',
+      }
+
+      expect(
+        answerValidators['payments'](newAnswers, application),
+      ).toStrictEqual({
+        message: coreErrorMessages.defaultError,
+        path: 'payments.privatePensionFund',
+        values: undefined,
+      })
+    })
+
+    it('should create error when privatePensionFundPercentage is empty', () => {
+      const newAnswers = {
+        bank: '123456789012',
+        pensionFund: 'id-frjalsi',
+        privatePensionFund: 'id-frjalsi',
+        privatePensionFundPercentage: '',
+      }
+
+      expect(
+        answerValidators['payments'](newAnswers, application),
+      ).toStrictEqual({
+        message: coreErrorMessages.defaultError,
+        path: 'payments.privatePensionFundPercentage',
+        values: undefined,
+      })
+    })
+
+    it('should only accept 2 or 4 as values for privatePensionFundPercentage', () => {
+      const newAnswers = {
+        bank: '123456789012',
+        pensionFund: 'id-frjalsi',
+        privatePensionFund: 'id-frjalsi',
+        privatePensionFundPercentage: 'test input',
+      }
+
+      expect(
+        answerValidators['payments'](newAnswers, application),
+      ).toStrictEqual({
+        message: coreErrorMessages.defaultError,
+        path: 'payments.privatePensionFundPercentage',
+        values: undefined,
+      })
+    })
+
+    it('should accept 2 as a value for privatePensionFundPercentage', () => {
+      const newAnswers = {
+        bank: '123456789012',
+        pensionFund: 'id-frjalsi',
+        privatePensionFund: 'id-frjalsi',
+        privatePensionFundPercentage: '2',
+      }
+
+      expect(
+        answerValidators['payments'](newAnswers, application),
+      ).toStrictEqual(undefined)
+    })
+
+    it('should accept 4 as a value for privatePensionFundPercentage', () => {
+      const newAnswers = {
+        bank: '123456789012',
+        pensionFund: 'id-frjalsi',
+        privatePensionFund: 'id-frjalsi',
+        privatePensionFundPercentage: '4',
+      }
+
+      expect(
+        answerValidators['payments'](newAnswers, application),
+      ).toStrictEqual(undefined)
     })
   })
 })

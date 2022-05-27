@@ -12,6 +12,7 @@ export interface DriversLicense {
   issued?: Date | null
   expires?: Date | null
   categories: DriversLicenseCategory[]
+  healthRemarks?: string[]
 }
 
 export interface Teacher {

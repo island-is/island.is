@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -16,9 +16,14 @@ import {
   UploadState,
   useCourtUpload,
 } from '@island.is/judicial-system-web/src/utils/hooks/useCourtUpload'
-import { useRulingAutofill } from '@island.is/judicial-system-web/src/components/RulingInput/RulingInput'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
+import {
+  titles,
+  ruling,
+  rcCourtOverview,
+} from '@island.is/judicial-system-web/messages'
+import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import * as Constants from '@island.is/judicial-system/consts'
 
 import OverviewForm from './OverviewForm'
@@ -35,8 +40,33 @@ export const JudgeOverview: React.FC = () => {
   const router = useRouter()
   const id = router.query.id
 
-  useRulingAutofill(isCaseUpToDate, workingCase, setWorkingCase)
   const { uploadState } = useCourtUpload(workingCase, setWorkingCase)
+  const { autofill } = useCase()
+
+  useEffect(() => {
+    if (isCaseUpToDate) {
+      autofill(
+        [
+          {
+            key: 'ruling',
+            value: !workingCase.parentCase
+              ? `\n${formatMessage(ruling.autofill, {
+                  judgeName: workingCase.judge?.name,
+                })}`
+              : isAcceptingCaseDecision(workingCase.decision)
+              ? workingCase.parentCase.ruling
+              : undefined,
+          },
+          {
+            key: 'validToDate',
+            value: workingCase.requestedValidToDate,
+          },
+        ],
+        workingCase,
+        setWorkingCase,
+      )
+    }
+  }, [autofill, formatMessage, isCaseUpToDate, setWorkingCase, workingCase])
 
   return (
     <PageLayout
@@ -57,6 +87,7 @@ export const JudgeOverview: React.FC = () => {
           previousUrl={`${Constants.RECEPTION_AND_ASSIGNMENT_ROUTE}/${id}`}
           nextUrl={`${Constants.HEARING_ARRANGEMENTS_ROUTE}/${id}`}
           nextIsDisabled={uploadState === UploadState.UPLOADING}
+          nextButtonText={formatMessage(rcCourtOverview.continueButton.label)}
         />
       </FormContentContainer>
     </PageLayout>

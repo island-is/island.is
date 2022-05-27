@@ -151,6 +151,13 @@ export const core = defineMessages({
     defaultMessage: 'Tegund kröfu',
     description: 'Notað fyrir orðið Tegund Kröfu í öllum flæðum.',
   },
+  pastRestrictionCase: {
+    id: 'judicial.system.core:past_restriction_case',
+    defaultMessage:
+      '{caseType, select, ADMISSION_TO_FACILITY {Fyrri vistun} TRAVEL_BAN {Fyrra farbann} other {Fyrri gæsla}}',
+    description: 'Notað fyrir fyrri mál í öllum flæðum.',
+  },
+  // TODO: remove pastCustody and pastTravelBan, use pastRestrictionCase instead
   pastCustody: {
     id: 'judicial.system.core:past_custody',
     defaultMessage: 'Fyrri gæsla',
@@ -180,5 +187,20 @@ export const core = defineMessages({
     id: 'judicial.system.core:and',
     defaultMessage: 'og',
     description: 'Notað fyrir orðið og',
+  },
+  modify: {
+    id: 'judicial.system.core:modify',
+    defaultMessage: 'leiðrétta',
+    description: 'Notað fyrir orðið "leiðrétta" í öllum flæðum.',
+  },
+  back: {
+    id: 'judicial.system.core:back',
+    defaultMessage: 'Til baka',
+    description: 'Notað fyrir "Til baka" takka í öllum flæðum.',
+  },
+  continue: {
+    id: 'judicial.system.core:continue',
+    defaultMessage: 'Halda áfram',
+    description: 'Notað fyrir "Halda áfram" takka í öllum flæðum.',
   },
 })

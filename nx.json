@@ -2,6 +2,7 @@
   "implicitDependencies": {
     "workspace.json": "*",
     "package.json": {
+      "version": "*",
       "dependencies": "*",
       "devDependencies": "*",
       "resolutions": "*"
@@ -124,6 +125,12 @@
     "api-domains-finance": {
       "tags": []
     },
+    "api-domains-financial-statements-inao": {
+      "tags": []
+    },
+    "api-domains-fishing-license": {
+      "tags": []
+    },
     "api-domains-health-insurance": {
       "tags": []
     },
@@ -137,6 +144,9 @@
       "tags": []
     },
     "api-domains-mortgage-certificate": {
+      "tags": []
+    },
+    "api-domains-municipalities-financial-aid": {
       "tags": []
     },
     "api-domains-national-registry": {
@@ -158,6 +168,9 @@
       "tags": []
     },
     "api-domains-user-profile": {
+      "tags": []
+    },
+    "api-domains-vehicles": {
       "tags": []
     },
     "api-mocks": {
@@ -230,7 +243,13 @@
     "application-templates-family-matters-core": {
       "tags": []
     },
+    "application-templates-financial-aid": {
+      "tags": []
+    },
     "application-templates-funding-government-projects": {
+      "tags": []
+    },
+    "application-templates-general-fishing-license": {
       "tags": []
     },
     "application-templates-general-petition": {
@@ -246,6 +265,9 @@
       "tags": []
     },
     "application-templates-mortgage-certificate": {
+      "tags": []
+    },
+    "application-templates-no-debt-certificate": {
       "tags": []
     },
     "application-templates-p-sign": {
@@ -322,6 +344,9 @@
     "clients-finance": {
       "tags": []
     },
+    "clients-fishing-license": {
+      "tags": []
+    },
     "clients-health-insurance-v2": {
       "tags": []
     },
@@ -332,6 +357,9 @@
       "tags": []
     },
     "clients-mms": {
+      "tags": []
+    },
+    "clients-municipalities-financial-aid": {
       "tags": []
     },
     "clients-national-registry-v1": {
@@ -364,6 +392,9 @@
     "clients-user-profile": {
       "tags": [],
       "implicitDependencies": ["services-user-profile"]
+    },
+    "clients-vehicles": {
+      "tags": []
     },
     "clients-vmst": {
       "tags": []
@@ -440,29 +471,6 @@
     },
     "github-actions-cache": {
       "tags": []
-    },
-    "gjafakort-api": {
-      "tags": []
-    },
-    "gjafakort-application": {
-      "tags": []
-    },
-    "gjafakort-consts": {
-      "tags": []
-    },
-    "gjafakort-queue-listener": {
-      "tags": []
-    },
-    "gjafakort-types": {
-      "tags": []
-    },
-    "gjafakort-web": {
-      "tags": [],
-      "implicitDependencies": ["gjafakort-api"]
-    },
-    "gjafakort-web-e2e": {
-      "tags": [],
-      "implicitDependencies": ["gjafakort-web"]
     },
     "health-insurance": {
       "tags": []
@@ -654,9 +662,6 @@
     "service-portal-endorsements": {
       "tags": []
     },
-    "service-portal-family": {
-      "tags": []
-    },
     "service-portal-finance": {
       "tags": []
     },
@@ -672,6 +677,9 @@
     "service-portal-icelandic-names-registry": {
       "tags": []
     },
+    "service-portal-information": {
+      "tags": []
+    },
     "service-portal-licenses": {
       "tags": []
     },
@@ -681,7 +689,7 @@
     "service-portal-settings-personal-information": {
       "tags": []
     },
-    "service-portal-wip": {
+    "service-portal-vehicles": {
       "tags": []
     },
     "services-auth-admin-api": {

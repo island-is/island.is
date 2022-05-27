@@ -3,6 +3,7 @@ import { FieldBaseProps } from '@island.is/application/core'
 import {
   AlertMessage,
   Box,
+  Button,
   GridColumn,
   GridContainer,
   GridRow,
@@ -12,11 +13,14 @@ import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import Jobs from '../../assets/Jobs'
 import kennitala from 'kennitala'
+import { Student } from '../../types'
+import { useHistory } from 'react-router-dom'
 
 const SchoolConfirmed: FC<FieldBaseProps> = ({ application }) => {
   const { answers } = application
-  const nationalId = kennitala.format(answers.nationalId as string)
+  const nationalId = kennitala.format((answers.student as Student).nationalId)
   const { formatMessage } = useLocale()
+  const history = useHistory()
 
   return (
     <GridContainer>
@@ -31,7 +35,7 @@ const SchoolConfirmed: FC<FieldBaseProps> = ({ application }) => {
       <GridRow>
         <GridColumn span={['12/12', '4/12']} paddingBottom={[3, 0]}>
           <Text variant="h4">{formatMessage(m.confirmationSectionName)}</Text>
-          <Text variant="default">{answers.studentName}</Text>
+          <Text variant="default">{(answers.student as Student).name}</Text>
         </GridColumn>
         <GridColumn span={['12/12', '4/12']} paddingBottom={[3, 0]}>
           <Text variant="h4">
@@ -42,17 +46,24 @@ const SchoolConfirmed: FC<FieldBaseProps> = ({ application }) => {
         <GridColumn span={['12/12', '4/12']} paddingBottom={[3, 0]}>
           <Text variant="h4">{formatMessage(m.confirmation)}</Text>
           <Text variant="default">
-            {formatMessage(m.school) + (answers.confirmation as any)?.school}
+            {formatMessage(m.school) +
+              ' ' +
+              (answers.confirmation as any)?.school}
           </Text>
         </GridColumn>
       </GridRow>
-      <GridRow>
-        <GridColumn>
-          <Box height="full" marginTop={6} marginBottom={10}>
-            <Jobs />
-          </Box>
-        </GridColumn>
-      </GridRow>
+      <Box height="full" marginTop={6} marginBottom={6}>
+        <Jobs />
+      </Box>
+      <Box marginBottom={10} display="flex" justifyContent="flexEnd">
+        <Button
+          onClick={() => history.push('/okuskoli')}
+          icon="arrowForward"
+          type="button"
+        >
+          {formatMessage(m.newConfirmSchoolButton)}
+        </Button>
+      </Box>
     </GridContainer>
   )
 }

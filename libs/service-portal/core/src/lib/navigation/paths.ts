@@ -30,11 +30,13 @@ export enum ServicePortalPath {
 
   // Family
   FamilyRoot = '/min-gogn/fjolskyldan',
+  Child = '/min-gogn/fjolskyldan/barn/:nationalId',
   FamilyMember = '/min-gogn/fjolskyldan/:nationalId',
   Spouse = '/min-gogn/fjolskyldan/maki/:nationalId',
   MyInfoRoot = '/min-gogn',
   UserInfo = '/min-gogn/minar-upplysingar',
   Endorsements = '/min-gogn/medmaeli',
+  Company = '/fyrirtaeki',
 
   // General Petitions
   Petitions = '/min-gogn/medmaeli',
@@ -76,6 +78,9 @@ export enum ServicePortalPath {
   AssetsRoot = '/fasteignir',
   AssetsRealEstateDetail = '/fasteignir/:id',
   AssetsVehicles = '/okutaeki',
+  AssetsMyVehicles = '/okutaeki/min-okutaeki',
+  AssetsVehiclesDetail = '/okutaeki/min-okutaeki/:id',
+  AssetsVehiclesLookup = '/okutaeki/leit',
 
   // Messages
   MessagesRoot = '/skilabod',

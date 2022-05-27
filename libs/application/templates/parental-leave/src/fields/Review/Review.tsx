@@ -1,4 +1,4 @@
-import React, { FC, useMemo } from 'react'
+import React, { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useMutation } from '@apollo/client'
 import get from 'lodash/get'
@@ -7,9 +7,9 @@ import has from 'lodash/has'
 import { format as formatKennitala } from 'kennitala'
 import {
   Application,
-  buildFieldOptions,
   RecordObject,
   Field,
+  coreErrorMessages,
 } from '@island.is/application/core'
 import {
   Box,
@@ -40,7 +40,6 @@ import {
 } from '@island.is/shared/problem'
 
 import {
-  getOtherParentOptions,
   getSelectedChild,
   requiresOtherParentApproval,
   getApplicationExternalData,
@@ -71,8 +70,6 @@ import { getSelectOptionLabel } from '../../lib/parentalLeaveClientUtils'
 
 import * as styles from './Review.css'
 
-type ValidOtherParentAnswer = typeof NO | typeof MANUAL | undefined
-
 interface ReviewScreenProps {
   application: Application
   field: Field & { props?: { editable?: boolean } }
@@ -89,8 +86,12 @@ export const Review: FC<ReviewScreenProps> = ({
 }) => {
   const editable = field.props?.editable ?? false
   const pensionFundOptions = usePensionFundOptions()
-  const privatePensionFundOptions = usePrivatePensionFundOptions()
-  const unionOptions = useUnionOptions()
+  const privatePensionFundOptions = usePrivatePensionFundOptions().filter(
+    ({ value }) => value !== NO_PRIVATE_PENSION_FUND,
+  )
+  const unionOptions = useUnionOptions().filter(
+    ({ value }) => value !== NO_UNION,
+  )
   const { locale, formatMessage } = useLocale()
   const [
     {
@@ -141,12 +142,6 @@ export const Review: FC<ReviewScreenProps> = ({
   const isPrimaryParent =
     selectedChild?.parentalRelation === ParentalRelations.primary
 
-  const otherParentOptions = useMemo(
-    () =>
-      buildFieldOptions(getOtherParentOptions(application), application, field),
-    [application],
-  )
-
   const hasSelectedOtherParent = otherParent !== NO
 
   const otherParentWillApprove = requiresOtherParentApproval(
@@ -154,7 +149,47 @@ export const Review: FC<ReviewScreenProps> = ({
     application.externalData,
   )
 
+  const validateUnion = () => {
+    if (useUnion !== YES) return undefined
+
+    if (union === '') {
+      return formatMessage(coreErrorMessages.defaultError)
+    }
+
+    return undefined
+  }
+
+  const validatePrivatePensionFund = () => {
+    if (usePrivatePensionFund !== YES) return undefined
+
+    if (privatePensionFund === '') {
+      return formatMessage(coreErrorMessages.defaultError)
+    }
+
+    return undefined
+  }
+
+  const validatePrivatePensionFundPercentage = () => {
+    if (usePrivatePensionFund !== YES) return undefined
+
+    if (privatePensionFundPercentage === '0') {
+      return formatMessage(coreErrorMessages.defaultError)
+    }
+
+    return undefined
+  }
+
   const hasError = (id: string) => get(errors, id) as string
+
+  const checkPaymentErrors = (ids: string[]) => {
+    if (typeof validatePrivatePensionFund() === 'string') return false
+    else if (typeof validatePrivatePensionFundPercentage() === 'string')
+      return false
+    else if (typeof validateUnion() === 'string') return false
+
+    return groupHasNoErrors(ids)
+  }
+
   const groupHasNoErrors = (ids: string[]) =>
     ids.every((id) => !has(errors, id))
 
@@ -310,7 +345,7 @@ export const Review: FC<ReviewScreenProps> = ({
                 label={formatMessage(
                   parentalLeaveFormMessages.shared.otherParentID,
                 )}
-                value={otherParentId}
+                value={formatKennitala(otherParentId!)}
               />
             </GridColumn>
           </GridRow>
@@ -356,13 +391,14 @@ export const Review: FC<ReviewScreenProps> = ({
       <ReviewGroup
         saveAction={saveApplication}
         isEditable={editable}
-        canCloseEdit={groupHasNoErrors([
+        canCloseEdit={checkPaymentErrors([
           'payments.bank',
           'payments.pensionFund',
           'useUnion',
           'payments.union',
           'usePrivatePensionFund',
           'payments.privatePensionFund',
+          'payments.privatePensionFundPercentage',
         ])}
         editChildren={
           <Stack space={3}>
@@ -430,7 +466,7 @@ export const Review: FC<ReviewScreenProps> = ({
                 ]}
                 onSelect={(s: string) => {
                   setStateful((prev) => {
-                    const union = s === NO ? NO_UNION : prev.union
+                    const union = s === NO ? NO_UNION : ''
                     setValue('payments.union', union)
                     return {
                       ...prev,
@@ -455,7 +491,7 @@ export const Review: FC<ReviewScreenProps> = ({
                       union: s.value as string,
                     }))
                   }}
-                  error={hasError('payments.union')}
+                  error={validateUnion()}
                 />
               )}
             </Stack>
@@ -488,11 +524,9 @@ export const Review: FC<ReviewScreenProps> = ({
                 onSelect={(s: string) => {
                   setStateful((prev) => {
                     const privatePensionFund =
-                      s === NO
-                        ? NO_PRIVATE_PENSION_FUND
-                        : prev.privatePensionFund
+                      s === NO ? NO_PRIVATE_PENSION_FUND : ''
                     const privatePensionFundPercentage =
-                      s === NO ? '' : prev.privatePensionFundPercentage
+                      s === NO ? '0' : prev.privatePensionFundPercentage
                     setValue('payments.privatePensionFund', privatePensionFund)
                     setValue(
                       'payments.privatePensionFundPercentage',
@@ -526,7 +560,7 @@ export const Review: FC<ReviewScreenProps> = ({
                           privatePensionFund: s.value as string,
                         }))
                       }
-                      error={hasError('payments.privatePensionFund')}
+                      error={validatePrivatePensionFund()}
                     />
                   </GridColumn>
 
@@ -552,7 +586,7 @@ export const Review: FC<ReviewScreenProps> = ({
                           privatePensionFundPercentage: s.value as string,
                         }))
                       }
-                      error={hasError('payments.privatePensionFundPercentage')}
+                      error={validatePrivatePensionFundPercentage()}
                     />
                   </GridColumn>
                 </GridRow>
@@ -645,162 +679,156 @@ export const Review: FC<ReviewScreenProps> = ({
         </Stack>
       </ReviewGroup>
 
-      {isPrimaryParent && (
-        <ReviewGroup
-          isEditable={editable}
-          canCloseEdit={groupHasNoErrors([
-            'usePersonalAllowance',
-            'personalAllowance.useAsMuchAsPossible',
-            'personalAllowance.usage',
-          ])}
-          editChildren={
-            <>
-              <Label marginBottom={4}>
-                {formatMessage(
-                  parentalLeaveFormMessages.personalAllowance.title,
-                )}
-              </Label>
+      <ReviewGroup
+        isEditable={editable}
+        canCloseEdit={groupHasNoErrors([
+          'usePersonalAllowance',
+          'personalAllowance.useAsMuchAsPossible',
+          'personalAllowance.usage',
+        ])}
+        editChildren={
+          <>
+            <Label marginBottom={4}>
+              {formatMessage(parentalLeaveFormMessages.personalAllowance.title)}
+            </Label>
 
-              <RadioController
-                id="usePersonalAllowance"
-                name="usePersonalAllowance"
-                defaultValue={usePersonalAllowance}
-                split="1/2"
-                options={[
-                  {
-                    label: formatMessage(
-                      parentalLeaveFormMessages.shared.yesOptionLabel,
-                    ),
-                    value: YES,
-                  },
-                  {
-                    label: formatMessage(
-                      parentalLeaveFormMessages.shared.noOptionLabel,
-                    ),
-                    value: NO,
-                  },
-                ]}
-                onSelect={(s: string) => {
-                  setStateful((prev) => ({
-                    ...prev,
-                    usePersonalAllowance: s as YesOrNo,
-                  }))
-                }}
-                error={hasError('usePersonalAllowance')}
-              />
+            <RadioController
+              id="usePersonalAllowance"
+              name="usePersonalAllowance"
+              defaultValue={usePersonalAllowance}
+              split="1/2"
+              options={[
+                {
+                  label: formatMessage(
+                    parentalLeaveFormMessages.shared.yesOptionLabel,
+                  ),
+                  value: YES,
+                },
+                {
+                  label: formatMessage(
+                    parentalLeaveFormMessages.shared.noOptionLabel,
+                  ),
+                  value: NO,
+                },
+              ]}
+              onSelect={(s: string) => {
+                setStateful((prev) => ({
+                  ...prev,
+                  usePersonalAllowance: s as YesOrNo,
+                }))
+              }}
+              error={hasError('usePersonalAllowance')}
+            />
 
-              {usePersonalAllowance === YES && (
-                <>
-                  <Label marginTop={2} marginBottom={2}>
-                    {formatMessage(
-                      parentalLeaveFormMessages.personalAllowance
-                        .useAsMuchAsPossible,
-                    )}
-                  </Label>
+            {usePersonalAllowance === YES && (
+              <>
+                <Label marginTop={2} marginBottom={2}>
+                  {formatMessage(
+                    parentalLeaveFormMessages.personalAllowance
+                      .useAsMuchAsPossible,
+                  )}
+                </Label>
 
-                  <RadioController
-                    id="personalAllowance.useAsMuchAsPossible"
-                    name="personalAllowance.useAsMuchAsPossible"
-                    defaultValue={personalUseAsMuchAsPossible}
-                    split="1/2"
-                    options={[
-                      {
-                        label: formatMessage(
-                          parentalLeaveFormMessages.shared.yesOptionLabel,
-                        ),
-                        value: YES,
-                      },
-                      {
-                        label: formatMessage(
-                          parentalLeaveFormMessages.shared.noOptionLabel,
-                        ),
-                        value: NO,
-                      },
-                    ]}
-                    onSelect={(s: string) => {
-                      setStateful((prev) => ({
-                        ...prev,
-                        personalUseAsMuchAsPossible: s as YesOrNo,
-                      }))
-                    }}
-                    error={hasError('personalAllowance.useAsMuchAsPossible')}
-                  />
-                </>
+                <RadioController
+                  id="personalAllowance.useAsMuchAsPossible"
+                  name="personalAllowance.useAsMuchAsPossible"
+                  defaultValue={personalUseAsMuchAsPossible}
+                  split="1/2"
+                  options={[
+                    {
+                      label: formatMessage(
+                        parentalLeaveFormMessages.shared.yesOptionLabel,
+                      ),
+                      value: YES,
+                    },
+                    {
+                      label: formatMessage(
+                        parentalLeaveFormMessages.shared.noOptionLabel,
+                      ),
+                      value: NO,
+                    },
+                  ]}
+                  onSelect={(s: string) => {
+                    setStateful((prev) => ({
+                      ...prev,
+                      personalUseAsMuchAsPossible: s as YesOrNo,
+                    }))
+                    if (s === YES) setValue('personalAllowance.usage', '100')
+                    if (s === NO) setValue('personalAllowance.usage', '')
+                  }}
+                  error={hasError('personalAllowance.useAsMuchAsPossible')}
+                />
+              </>
+            )}
+
+            {personalUseAsMuchAsPossible === NO && (
+              <>
+                <Label marginTop={2} marginBottom={2}>
+                  {formatMessage(
+                    parentalLeaveFormMessages.personalAllowance.manual,
+                  )}
+                </Label>
+
+                <InputController
+                  id="personalAllowance.usage"
+                  name="personalAllowance.usage"
+                  suffix="%"
+                  placeholder="0%"
+                  type="number"
+                  defaultValue={personalUsage}
+                  onChange={(e) =>
+                    setStateful((prev) => ({
+                      ...prev,
+                      personalUsage: e.target.value?.replace('%', ''),
+                    }))
+                  }
+                  error={hasError('personalAllowance.usage')}
+                />
+              </>
+            )}
+          </>
+        }
+        triggerValidation
+      >
+        <GridRow marginBottom={2}>
+          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+            <RadioValue
+              label={formatMessage(
+                parentalLeaveFormMessages.personalAllowance.title,
               )}
+              value={usePersonalAllowance}
+            />
+          </GridColumn>
 
-              {personalUseAsMuchAsPossible === NO && (
-                <>
-                  <Label marginTop={2} marginBottom={2}>
-                    {formatMessage(
-                      parentalLeaveFormMessages.personalAllowance.manual,
-                    )}
-                  </Label>
-
-                  <InputController
-                    id="personalAllowance.usage"
-                    name="personalAllowance.usage"
-                    suffix="%"
-                    placeholder="0%"
-                    type="number"
-                    defaultValue={personalUsage}
-                    onChange={(e) =>
-                      setStateful((prev) => ({
-                        ...prev,
-                        personalUsage: e.target.value?.replace('%', ''),
-                      }))
-                    }
-                    error={hasError('personalAllowance.usage')}
-                  />
-                </>
-              )}
-            </>
-          }
-          triggerValidation
-        >
-          <GridRow marginBottom={2}>
-            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+          {usePersonalAllowance === YES && personalUseAsMuchAsPossible === YES && (
+            <GridColumn
+              paddingTop={[2, 2, 2, 0]}
+              span={['12/12', '12/12', '12/12', '5/12']}
+            >
               <RadioValue
                 label={formatMessage(
-                  parentalLeaveFormMessages.personalAllowance.title,
+                  parentalLeaveFormMessages.reviewScreen.usePersonalAllowance,
                 )}
-                value={usePersonalAllowance}
+                value={personalUseAsMuchAsPossible}
               />
             </GridColumn>
+          )}
 
-            {usePersonalAllowance === YES &&
-              personalUseAsMuchAsPossible === YES && (
-                <GridColumn
-                  paddingTop={[2, 2, 2, 0]}
-                  span={['12/12', '12/12', '12/12', '5/12']}
-                >
-                  <RadioValue
-                    label={formatMessage(
-                      parentalLeaveFormMessages.reviewScreen
-                        .usePersonalAllowance,
-                    )}
-                    value={personalUseAsMuchAsPossible}
-                  />
-                </GridColumn>
-              )}
-
-            {usePersonalAllowance === YES &&
-              personalUseAsMuchAsPossible === NO && (
-                <GridColumn
-                  paddingTop={[2, 2, 2, 0]}
-                  span={['12/12', '12/12', '12/12', '5/12']}
-                >
-                  <DataValue
-                    label={formatMessage(
-                      parentalLeaveFormMessages.personalAllowance
-                        .allowanceUsage,
-                    )}
-                    value={`${personalUsage ?? 0}%`}
-                  />
-                </GridColumn>
-              )}
-          </GridRow>
-        </ReviewGroup>
-      )}
+          {usePersonalAllowance === YES && personalUseAsMuchAsPossible === NO && (
+            <GridColumn
+              paddingTop={[2, 2, 2, 0]}
+              span={['12/12', '12/12', '12/12', '5/12']}
+            >
+              <DataValue
+                label={formatMessage(
+                  parentalLeaveFormMessages.personalAllowance.allowanceUsage,
+                )}
+                value={`${personalUsage ?? 0}%`}
+              />
+            </GridColumn>
+          )}
+        </GridRow>
+      </ReviewGroup>
 
       {isPrimaryParent && hasSelectedOtherParent && (
         <ReviewGroup

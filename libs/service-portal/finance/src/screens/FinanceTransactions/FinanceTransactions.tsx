@@ -6,7 +6,6 @@ import { Query } from '@island.is/api/schema'
 import {
   GET_CUSTOMER_CHARGETYPE,
   GET_CUSTOMER_RECORDS,
-  GET_TAPS_QUERY,
 } from '@island.is/service-portal/graphql'
 import format from 'date-fns/format'
 import FinanceTransactionsTable from '../../components/FinanceTransactionsTable/FinanceTransactionsTable'
@@ -15,7 +14,7 @@ import {
   CustomerRecords,
 } from './FinanceTransactionsData.types'
 import DropdownExport from '../../components/DropdownExport/DropdownExport'
-import { m } from '@island.is/service-portal/core'
+import { m, DynamicWrapper } from '@island.is/service-portal/core'
 import {
   Box,
   Text,
@@ -73,8 +72,6 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
     GET_CUSTOMER_RECORDS,
   )
 
-  const { loading: tabLoading } = useQuery<Query>(GET_TAPS_QUERY)
-
   useEffect(() => {
     if (toDate && fromDate && dropdownSelect) {
       loadCustomerRecords({
@@ -114,154 +111,154 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
     value: item.id,
   }))
 
-  if (tabLoading) {
-    return <SkeletonLoader space={1} height={30} repeat={4} />
-  }
-
   return (
-    <Box marginBottom={[6, 6, 10]}>
-      <Stack space={2}>
-        <Text variant="h3" as="h1">
-          {formatMessage({
-            id: 'sp.finance-transactions:title',
-            defaultMessage: 'Hreyfingar',
-          })}
-        </Text>
-        <GridRow>
-          <GridColumn span={['11/12', '6/12']}>
-            <Text variant="default">
-              {formatMessage({
-                id: 'sp.finance-transactions:intro',
-                defaultMessage:
-                  'Hér er að finna hreyfingar fyrir valin skilyrði. Hreyfingar geta verið gjöld, greiðslur, skuldajöfnuður o.fl.',
-              })}
-            </Text>
-          </GridColumn>
-          {recordsDataArray.length > 0 ? (
-            <Box display="flex" marginLeft="auto" marginTop={1}>
-              <GridColumn>
-                <Button
-                  colorScheme="default"
-                  icon="print"
-                  iconType="filled"
-                  onClick={() => window.print()}
-                  preTextIconType="filled"
-                  size="default"
-                  type="button"
-                  variant="utility"
-                >
-                  {formatMessage(m.print)}
-                </Button>
-              </GridColumn>
-              <GridColumn>
-                <DropdownExport
-                  onGetCSV={() => exportHreyfingarFile(recordsDataArray, 'csv')}
-                  onGetExcel={() =>
-                    exportHreyfingarFile(recordsDataArray, 'xlsx')
-                  }
-                />
-              </GridColumn>
-            </Box>
-          ) : null}
-        </GridRow>
-        <Hidden print={true}>
-          <Box marginTop={[1, 1, 2, 2, 5]}>
-            <GridRow>
-              <GridColumn
-                paddingBottom={[1, 0]}
-                span={['1/1', '1/1', '1/1', '1/1', '4/12']}
-              >
-                <Select
-                  name="faerslur"
-                  backgroundColor="blue"
-                  placeholder={formatMessage(m.transactions)}
-                  label={formatMessage(m.transactionsLabel)}
-                  defaultValue={allChargeTypes}
-                  size="xs"
-                  options={[allChargeTypes, ...chargeTypeSelect]}
-                  onChange={(sel) => onDropdownSelect(sel)}
-                />
-              </GridColumn>
-              <GridColumn
-                paddingTop={[2, 2, 2, 2, 0]}
-                span={['1/1', '6/12', '6/12', '6/12', '4/12']}
-              >
-                <DatePicker
-                  backgroundColor="blue"
-                  handleChange={(d) => setFromDate(d)}
-                  selected={fromDate}
-                  icon="calendar"
-                  iconType="outline"
-                  size="xs"
-                  label={formatMessage(m.dateFrom)}
-                  locale="is"
-                  placeholderText={formatMessage(m.chooseDate)}
-                />
-              </GridColumn>
-              <GridColumn
-                paddingTop={[2, 2, 2, 2, 0]}
-                span={['1/1', '6/12', '6/12', '6/12', '4/12']}
-              >
-                <DatePicker
-                  backgroundColor="blue"
-                  handleChange={(d) => setToDate(d)}
-                  selected={toDate}
-                  icon="calendar"
-                  iconType="outline"
-                  size="xs"
-                  label={formatMessage(m.dateTo)}
-                  locale="is"
-                  placeholderText={formatMessage(m.chooseDate)}
-                />
-              </GridColumn>
-            </GridRow>
-            <GridRow>
-              <GridColumn span={['1/1', '6/12', '6/12', '6/12', '4/12']}>
-                <Box marginTop={3}>
-                  <Input
-                    backgroundColor="blue"
-                    label={formatMessage(m.searchLabel)}
-                    name="Search"
-                    icon="search"
-                    placeholder={formatMessage(m.searchPlaceholder)}
-                    size="xs"
-                    onChange={(e) => setQ(e.target.value)}
-                    value={q}
+    <DynamicWrapper>
+      <Box marginBottom={[6, 6, 10]}>
+        <Stack space={2}>
+          <Text variant="h3" as="h1">
+            {formatMessage({
+              id: 'sp.finance-transactions:title',
+              defaultMessage: 'Hreyfingar',
+            })}
+          </Text>
+          <GridRow>
+            <GridColumn span={['11/12', '6/12']}>
+              <Text variant="default">
+                {formatMessage({
+                  id: 'sp.finance-transactions:intro',
+                  defaultMessage:
+                    'Hér er að finna hreyfingar fyrir valin skilyrði. Hreyfingar geta verið gjöld, greiðslur, skuldajöfnuður o.fl.',
+                })}
+              </Text>
+            </GridColumn>
+            {recordsDataArray.length > 0 ? (
+              <Box display="flex" marginLeft="auto" marginTop={1} printHidden>
+                <GridColumn>
+                  <Button
+                    colorScheme="default"
+                    icon="print"
+                    iconType="filled"
+                    onClick={() => window.print()}
+                    preTextIconType="filled"
+                    size="default"
+                    type="button"
+                    variant="utility"
+                  >
+                    {formatMessage(m.print)}
+                  </Button>
+                </GridColumn>
+                <GridColumn>
+                  <DropdownExport
+                    onGetCSV={() =>
+                      exportHreyfingarFile(recordsDataArray, 'csv')
+                    }
+                    onGetExcel={() =>
+                      exportHreyfingarFile(recordsDataArray, 'xlsx')
+                    }
                   />
-                </Box>
-              </GridColumn>
-            </GridRow>
-          </Box>
-        </Hidden>
-
-        <Box marginTop={2}>
-          {(error || chargeTypeDataError) && (
-            <AlertBanner
-              description={formatMessage(m.errorFetch)}
-              variant="error"
-            />
-          )}
-          {(loading || chargeTypeDataLoading || !called) &&
-            !chargeTypesEmpty &&
-            !chargeTypeDataError &&
-            !error && (
-              <Box padding={3}>
-                <SkeletonLoader space={1} height={40} repeat={5} />
+                </GridColumn>
               </Box>
+            ) : null}
+          </GridRow>
+          <Hidden print={true}>
+            <Box marginTop={[1, 1, 2, 2, 5]}>
+              <GridRow>
+                <GridColumn
+                  paddingBottom={[1, 0]}
+                  span={['1/1', '1/1', '1/1', '1/1', '4/12']}
+                >
+                  <Select
+                    name="faerslur"
+                    backgroundColor="blue"
+                    placeholder={formatMessage(m.transactions)}
+                    label={formatMessage(m.transactionsLabel)}
+                    defaultValue={allChargeTypes}
+                    size="xs"
+                    options={[allChargeTypes, ...chargeTypeSelect]}
+                    onChange={(sel) => onDropdownSelect(sel)}
+                  />
+                </GridColumn>
+                <GridColumn
+                  paddingTop={[2, 2, 2, 2, 0]}
+                  span={['1/1', '6/12', '6/12', '6/12', '4/12']}
+                >
+                  <DatePicker
+                    backgroundColor="blue"
+                    handleChange={(d) => setFromDate(d)}
+                    selected={fromDate}
+                    icon="calendar"
+                    iconType="outline"
+                    size="xs"
+                    label={formatMessage(m.dateFrom)}
+                    locale="is"
+                    placeholderText={formatMessage(m.chooseDate)}
+                  />
+                </GridColumn>
+                <GridColumn
+                  paddingTop={[2, 2, 2, 2, 0]}
+                  span={['1/1', '6/12', '6/12', '6/12', '4/12']}
+                >
+                  <DatePicker
+                    backgroundColor="blue"
+                    handleChange={(d) => setToDate(d)}
+                    selected={toDate}
+                    icon="calendar"
+                    iconType="outline"
+                    size="xs"
+                    label={formatMessage(m.dateTo)}
+                    locale="is"
+                    placeholderText={formatMessage(m.chooseDate)}
+                  />
+                </GridColumn>
+              </GridRow>
+              <GridRow>
+                <GridColumn span={['1/1', '6/12', '6/12', '6/12', '4/12']}>
+                  <Box marginTop={3}>
+                    <Input
+                      backgroundColor="blue"
+                      label={formatMessage(m.searchLabel)}
+                      name="Search"
+                      icon="search"
+                      placeholder={formatMessage(m.searchPlaceholder)}
+                      size="xs"
+                      onChange={(e) => setQ(e.target.value)}
+                      value={q}
+                    />
+                  </Box>
+                </GridColumn>
+              </GridRow>
+            </Box>
+          </Hidden>
+
+          <Box marginTop={2}>
+            {(error || chargeTypeDataError) && (
+              <AlertBanner
+                description={formatMessage(m.errorFetch)}
+                variant="error"
+              />
             )}
-          {((recordsDataArray.length === 0 && called && !loading && !error) ||
-            chargeTypesEmpty) && (
-            <AlertBanner
-              description={formatMessage(m.noResultsTryAgain)}
-              variant="warning"
-            />
-          )}
-          {recordsDataArray.length > 0 ? (
-            <FinanceTransactionsTable recordsArray={recordsDataArray} />
-          ) : null}
-        </Box>
-      </Stack>
-    </Box>
+            {(loading || chargeTypeDataLoading || !called) &&
+              !chargeTypesEmpty &&
+              !chargeTypeDataError &&
+              !error && (
+                <Box padding={3}>
+                  <SkeletonLoader space={1} height={40} repeat={5} />
+                </Box>
+              )}
+            {((recordsDataArray.length === 0 && called && !loading && !error) ||
+              chargeTypesEmpty) && (
+              <AlertBanner
+                description={formatMessage(m.noResultsTryAgain)}
+                variant="warning"
+              />
+            )}
+            {recordsDataArray.length > 0 ? (
+              <FinanceTransactionsTable recordsArray={recordsDataArray} />
+            ) : null}
+          </Box>
+        </Stack>
+      </Box>
+    </DynamicWrapper>
   )
 }
 

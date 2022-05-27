@@ -5,15 +5,28 @@ import LandWightsLogo from './LandWightsLogo'
 
 import * as styles from './Logo.css'
 
-const Logo: React.FC = () => {
+interface Props {
+  defaultInstitution?: string
+}
+
+const Logo: React.FC<Props> = ({ defaultInstitution = '' }) => {
   const { user } = useContext(UserContext)
+  const institutionName = user?.institution?.name ?? defaultInstitution
+  const institutionNameArr = institutionName.split(' ')
+  const institutionNameFirstHalf = institutionNameArr.slice(
+    0,
+    institutionNameArr.length - 1,
+  )
 
   return (
     <div className={styles.logoContainer}>
-      <Box marginRight={2}>
+      <Box marginRight={[0, 0, 0, 2]} marginBottom={[0, 0, 1, 0]}>
         <LandWightsLogo />
       </Box>
-      <p className={styles.logoText}>{user?.institution?.name ?? ''}</p>
+      <p className={styles.logoText}>
+        <span>{institutionNameFirstHalf.toString().replace(',', ' ')}</span>
+        <span>{institutionNameArr[institutionNameArr.length - 1]}</span>
+      </p>
     </div>
   )
 }

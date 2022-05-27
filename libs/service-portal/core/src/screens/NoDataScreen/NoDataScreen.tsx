@@ -8,8 +8,6 @@ import {
   Text,
   Button,
 } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
-import { m } from '@island.is/service-portal/core'
 import * as styles from '../ErrorScreen/ErrorScreen.css'
 import { Link } from 'react-router-dom'
 import { ServicePortalPath } from '../../lib/navigation/paths'
@@ -36,7 +34,6 @@ export const NoDataScreen: FC<Props> = ({
   figure,
   tagVariant = 'purple',
 }) => {
-  const { formatMessage } = useLocale()
   return (
     <GridRow>
       <GridColumn span={['1/1', '10/12']} offset={['0', '0']}>
@@ -97,7 +94,7 @@ export const NoDataScreen: FC<Props> = ({
         <Box display="flex" justifyContent="center">
           <img
             src={figure ? figure : './assets/images/jobsGrid.svg'}
-            alt={`${formatMessage(m.altText)} ${title}`}
+            alt=""
             className={styles.img}
           />
         </Box>

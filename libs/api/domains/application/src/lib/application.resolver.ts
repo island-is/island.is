@@ -30,6 +30,7 @@ import { ApplicationPaymentChargeInput } from './dto/applicationPaymentCharge.in
 import { ApplicationPaymentChargeResponse } from './dto/applicationPaymentCharge'
 import { CreatePaymentResponseDto } from '../../gen/fetch'
 import { AttachmentPresignedUrlInput } from './dto/AttachmentPresignedUrl.input'
+import { DeleteApplicationInput } from './dto/deleteApplication.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -89,7 +90,7 @@ export class ApplicationResolver {
   @Mutation(() => Application, { nullable: true })
   async createApplication(
     @Args('locale', { type: () => String, nullable: true })
-    locale: Locale = 'is',
+    _locale: Locale = 'is',
     @Args('input') input: CreateApplicationInput,
     @CurrentUser() user: User,
   ): Promise<Application> {
@@ -186,5 +187,13 @@ export class ApplicationResolver {
     @CurrentUser() user: User,
   ): Promise<PresignedUrlResponse> {
     return this.applicationService.attachmentPresignedURL(input, user)
+  }
+
+  @Mutation(() => Application, { nullable: true })
+  async deleteApplication(
+    @Args('input') input: DeleteApplicationInput,
+    @CurrentUser() user: User,
+  ): Promise<void> {
+    return this.applicationService.deleteApplication(input, user)
   }
 }

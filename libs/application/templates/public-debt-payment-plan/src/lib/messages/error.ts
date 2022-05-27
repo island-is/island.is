@@ -36,4 +36,25 @@ export const error = defineMessages({
     defaultMessage: 'Vinsamlegast athugaðu hvort að rétt var slegið inn.',
     description: 'No results found from company search error message title',
   },
+  noDebtsTitle: {
+    id: `pdpp.application:error.noDebtsTitle`,
+    defaultMessage: 'Engar ógreiddar kröfur',
+    description: 'Error Modal: Debts title',
+  },
+  noDebtsSummary: {
+    id: `pdpp.application:error.noDebtsSummary`,
+    defaultMessage: `Engar ógreiddar kröfur fundust á þinni kennitölu sem hægt er að gera greiðsluáætlun um í sjálfsafgreiðslu.
+        Vinsamlegast hafðu samband við innheimtumenn ríkissjóðs fyrir frekari upplýsingar.`,
+    description: 'Error Modal: Debts summary',
+  },
+  noDebtsLinkOne: {
+    id: `pdpp.application:error.noDebtsLinkOne`,
+    defaultMessage: 'https://island.is/minarsidur/fjarmal/stada',
+    description: 'Error Modal: Debts link one',
+  },
+  noDebtsLinkOneName: {
+    id: `pdpp.application:error.noDebtsLinkOneName`,
+    defaultMessage: 'Skoða fjármál á mínum síðum island.is',
+    description: 'Error Modal: Debts name of link one',
+  },
 })

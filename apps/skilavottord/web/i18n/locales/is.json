@@ -285,7 +285,8 @@
   "deregisterSidenav": {
     "title": "Aðgerðir",
     "deregister": "Afskrá ökutæki",
-    "companyInfo": "Upplýsingar fyrirtækis"
+    "companyInfo": "Upplýsingar fyrirtækis",
+    "accessControl": "Aðgangsstýring"
   },
   "deregisterVehicle": {
     "select": {
@@ -358,6 +359,14 @@
     "subtitles": {
       "companies": "Móttökuaðilar"
     },
+    "tableHeaders": {
+      "id": "ID",
+      "name": "Nafn",
+      "address": "Heimilisfang",
+      "postnumber": "Póstnúmer",
+      "email": "Netfang",
+      "status": "Staða"
+    },
     "status": {
       "active": "Virkt",
       "inactive": "Óvirkt"
@@ -394,6 +403,22 @@
             "placeholder": "Nafn fyrirtækis",
             "rules": {
               "required": "Skylda er að fylla út nafn fyrirtækis"
+            }
+          },
+          "nationalId": {
+            "label": "Kennitala fyrirtækis",
+            "placeholder": "Kennitala fyrirtækis",
+            "rules": {
+              "required": "Skylda er að fylla út kennitölu fyrirtækis",
+              "validate": "Kennitalan er ekki gild kennitala"
+            }
+          },
+          "email": {
+            "label": "Netfang fyrirtækis",
+            "placeholder": "Netfang fyrirtækis",
+            "rules": {
+              "required": "Skylda er að fylla út netfang fyrirtækis",
+              "validate": "Netfang er ekki réttu formi"
             }
           },
           "address": {
@@ -456,7 +481,10 @@
       "nationalId": "Kennitala",
       "name": "Nafn",
       "role": "Hlutverk",
-      "partner": "Móttökuaðili"
+      "partner": "Móttökuaðili",
+      "email": "Netfang",
+      "phone": "Sími",
+      "recyclingLocation": "Starfstöð"
     },
     "status": {
       "active": "Virkt",
@@ -493,6 +521,28 @@
           "placeholder": "Nafn",
           "rules": {
             "required": "Skylda er að fylla út nafn"
+          }
+        },
+        "email": {
+          "label": "Netfang",
+          "placeholder": "Netfang",
+          "rules": {
+            "required": "Skylda er að fylla út netfang",
+            "validate": "Netfang er ekki réttu formi"
+          }
+        },
+        "phone": {
+          "label": "Símanúmer",
+          "placeholder": "Símanúmer",
+          "rules": {
+            "required": "Skylda er að fylla út símanúmer"
+          }
+        },
+        "recyclingLocation": {
+          "label": "Starfstöð",
+          "placeholder": "Starfstöð",
+          "rules": {
+            "validate": "Starfstöð má ekki vera fleiri en 32 stafir"
           }
         },
         "role": {
@@ -550,6 +600,7 @@
     },
     "recycledVehicles": "/recycled-vehicles",
     "accessControl": "/access-control",
+    "accessControlCompany": "/access-control-company",
     "recyclingCompanies": {
       "baseRoute": "/recycling-companies",
       "add": "/recycling-companies/add",
