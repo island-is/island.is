@@ -5,7 +5,6 @@ import { Sequelize } from 'sequelize-typescript'
 import { AppModule } from '../src/app/app.module'
 import { EndorsementsScope } from '@island.is/auth/scopes'
 import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
-import { startMocking } from '@island.is/shared/mocking'
 
 export let app: INestApplication
 let sequelize: Sequelize
