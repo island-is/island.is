@@ -2,13 +2,9 @@ auth-admin-web:
   enabled: true
   env:
     BASE_URL: 'https://identity-server.staging01.devland.is/admin'
-    IDENTITYSERVER_CLIENT_ID: 'ids-admin'
     IDENTITYSERVER_DOMAIN: 'identity-server.staging01.devland.is'
-    IDENTITYSERVER_ID: 'identity-server'
-    IDENTITYSERVER_SCOPE: 'openid profile auth-admin-api.full_control offline_access'
     NEXTAUTH_URL: 'https://identity-server.staging01.devland.is/admin/api/auth'
     NEXT_PUBLIC_BACKEND_URL: '/backend'
-    NEXT_PUBLIC_SESSION_KEEP_ALIVE_SECONDS: '300'
     NODE_OPTIONS: '--max-old-space-size=208'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
@@ -92,7 +88,6 @@ identity-server:
     DD_DOTNET_TRACER_HOME: '/opt/datadog'
     DD_INTEGRATIONS: '/opt/datadog/integrations.json'
     Datadog__Metrics__Port: '5003'
-    IdentityServer__EnableDelegation: ''
     IdentityServer__EnableFakeLogin: 'true'
     IdentityServer__EnableFeatureDeploymentWildcards: 'true'
     IdentityServer__SigningCertificate__Path: '/etc/config/ids-signing.pfx'
@@ -182,7 +177,6 @@ services-auth-admin-api:
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'servicesauth'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
-    IDS_ISSUER: 'https://identity-server.staging01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=208'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
@@ -235,13 +229,13 @@ services-auth-admin-api:
 services-auth-api:
   enabled: true
   env:
+    COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS-TEST/GOV/5402696029/Skatturinn/ft-v1'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'servicesauth'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'servicesauth'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
-    IDS_ISSUER: 'https://identity-server.staging01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=208'
     PUBLIC_URL: 'https://identity-server.staging01.devland.is/api'
     SERVERSIDE_FEATURES_ON: ''
@@ -328,7 +322,6 @@ services-auth-api:
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/services-auth/api/DB_PASSWORD'
-    IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET'
     RSK_PASSWORD: '/k8s/xroad/client/RSK/PASSWORD'
     RSK_USERNAME: '/k8s/xroad/client/RSK/USERNAME'
   securityContext:
@@ -343,7 +336,6 @@ services-auth-public-api:
     DB_USER: 'servicesauth'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
-    IDS_ISSUER: 'https://identity-server.staging01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=208'
     PUBLIC_URL: 'https://identity-server.staging01.devland.is/api'
     SERVERSIDE_FEATURES_ON: ''
@@ -417,7 +409,6 @@ services-personal-representative:
   enabled: true
   env:
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
-    IDS_ISSUER: 'https://identity-server.staging01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=208'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
@@ -478,7 +469,6 @@ services-personal-representative-public:
   env:
     DB_REPLICAS_HOST: ''
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
-    IDS_ISSUER: 'https://identity-server.staging01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=208'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
