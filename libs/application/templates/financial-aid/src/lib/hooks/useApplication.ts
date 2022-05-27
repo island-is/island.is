@@ -10,10 +10,11 @@ export const ApplicationQuery = gql`
     $input: MunicipalitiesFinancialAidApplicationInput!
   ) {
     municipalitiesFinancialAidApplication(input: $input) {
+      id
+      applicationSystemId
+      homeCircumstances
+      usePersonalTaxCredit
       state
-      rejection
-      created
-      modified
       amount {
         aidAmount
         income
@@ -26,6 +27,12 @@ export const ApplicationQuery = gql`
           amount
         }
       }
+      rejection
+      created
+      modified
+      municipalityCode
+      spouseNationalId
+      familyStatus
       applicationEvents {
         id
         applicationId

@@ -6,7 +6,6 @@ import {
 } from '@island.is/testing/fixtures'
 
 import {
-  Application,
   ApplicationStatus,
   ApplicationTypes,
 } from '@island.is/application/core'
