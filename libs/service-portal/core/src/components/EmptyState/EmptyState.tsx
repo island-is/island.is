@@ -3,6 +3,7 @@ import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
 import { Text, Box, Columns, Column } from '@island.is/island-ui/core'
 import { m } from '@island.is/service-portal/core'
+import EmptyImageSmall from './EmptyImgSmall'
 
 interface Props {
   title?: MessageDescriptor
@@ -16,7 +17,7 @@ export const EmptyState = ({ title, description }: Props) => {
       <Columns>
         <Column width="3/12">
           <Box paddingLeft="containerGutter">
-            <img src="./assets/images/cardboardBox.svg" alt="" />
+            <EmptyImageSmall />
           </Box>
         </Column>
         <Column width="6/12">
