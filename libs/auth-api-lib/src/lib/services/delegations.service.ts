@@ -319,21 +319,43 @@ export class DelegationsService {
    * @param user
    * @returns
    */
-  async findAllIncoming(user: User): Promise<DelegationDTO[]> {
+  async findAllIncoming(
+    user: User,
+    delegationTypes?: DelegationType[],
+  ): Promise<DelegationDTO[]> {
     const client = await this.getClientDelegationInfo(user)
 
     const delegationPromises = []
 
-    if (!client || client.supportsLegalGuardians) {
+    const hasDelegationTypeFilter =
+      delegationTypes && delegationTypes.length > 0
+
+    if (
+      (!client || client.supportsLegalGuardians) &&
+      (!hasDelegationTypeFilter ||
+        delegationTypes?.includes(DelegationType.LegalGuardian))
+    ) {
       delegationPromises.push(this.findAllWardsIncoming(user))
     }
-    if (!client || client.supportsProcuringHolders) {
+    if (
+      (!client || client.supportsProcuringHolders) &&
+      (!hasDelegationTypeFilter ||
+        delegationTypes?.includes(DelegationType.ProcurationHolder))
+    ) {
       delegationPromises.push(this.findAllCompaniesIncoming(user))
     }
-    if (!client || client.supportsDelegation) {
+    if (
+      (!client || client.supportsDelegation) &&
+      (!hasDelegationTypeFilter ||
+        delegationTypes?.includes(DelegationType.Custom))
+    ) {
       delegationPromises.push(this.findAllValidCustomIncoming(user))
     }
-    if (!client || client.supportsPersonalRepresentatives) {
+    if (
+      (!client || client.supportsPersonalRepresentatives) &&
+      (!hasDelegationTypeFilter ||
+        delegationTypes?.includes(DelegationType.PersonalRepresentative))
+    ) {
       delegationPromises.push(this.findAllRepresentedPersonsIncoming(user))
     }
     const delegationSets = await Promise.all(delegationPromises)

@@ -71,7 +71,6 @@ export const BoostChatPanel: React.FC<BoostChatPanelProps> = ({
     <ChatBubble
       text={'Hæ, get ég aðstoðað?'}
       onClick={() => window.boost.chatPanel.show()}
-      pushUp={pushUp}
       isVisible={showButton}
     />
   )
