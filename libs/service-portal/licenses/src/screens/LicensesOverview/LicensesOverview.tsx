@@ -39,10 +39,7 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
 
       {error && (
         <Box>
-          <AlertBanner
-            description={formatMessage(m.errorFetch)}
-            variant="error"
-          />
+          <EmptyState description={m.errorFetch} />
         </Box>
       )}
     </>
