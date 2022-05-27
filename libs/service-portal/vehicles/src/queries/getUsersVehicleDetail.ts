@@ -2,7 +2,7 @@ import { gql } from '@apollo/client'
 
 export const GET_USERS_VEHICLE_DETAIL = gql`
   query GetUsersVehiclesDetail($input: GetVehicleDetailInput!) {
-    vehiclesUserVehicleDetail(input: $input) {
+    vehiclesDetail(input: $input) {
       mainInfo {
         model
         subModel
@@ -52,6 +52,10 @@ export const GET_USERS_VEHICLE_DETAIL = gql`
         plateStatus
         nextInspectionDate
         lastInspectionDate
+        insuranceStatus
+        mortages
+        carTax
+        inspectionFine
       }
       technicalInfo {
         engine
@@ -66,9 +70,16 @@ export const GET_USERS_VEHICLE_DETAIL = gql`
         trailerWithBrakesWeight
         carryingCapacity
         axleTotalWeight
-        axle {
+        axles {
           axleMaxWeight
           wheelAxle
+        }
+        tyres {
+          axle1
+          axle2
+          axle3
+          axle4
+          axle5
         }
       }
       ownersInfo {
@@ -84,7 +95,7 @@ export const GET_USERS_VEHICLE_DETAIL = gql`
         city
         dateOfPurchase
       }
-      operator {
+      operators {
         nationalId
         name
         address

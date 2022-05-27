@@ -19,7 +19,11 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { useQuery } from '@apollo/client'
 import { useParams } from 'react-router-dom'
 import { GET_USERS_VEHICLE_DETAIL } from '../../queries/getUsersVehicleDetail'
-import { VehiclesCurrentOwnerInfo, Query } from '@island.is/api/schema'
+import {
+  VehiclesCurrentOwnerInfo,
+  Query,
+  VehiclesOperator,
+} from '@island.is/api/schema'
 import { messages } from '../../lib/messages'
 import BaseInfoItem from '../../components/DetailTable/BaseInfoItem'
 import RegistrationInfoItem from '../../components/DetailTable/RegistrationInfoItem'
@@ -53,7 +57,7 @@ const VehicleDetail: ServicePortalModuleComponent = ({ userInfo }) => {
     inspectionInfo,
     technicalInfo,
     ownersInfo,
-    operator,
+    operators,
     coOwners,
   } = data?.vehiclesDetail || {}
 
@@ -102,19 +106,31 @@ const VehicleDetail: ServicePortalModuleComponent = ({ userInfo }) => {
 
         <UserInfoLine
           label={formatMessage(messages.capacity)}
-          content={mainInfo?.cubicCapacity?.toString() + ' cc.'}
+          content={
+            mainInfo?.cubicCapacity
+              ? mainInfo.cubicCapacity.toString() + ' cc.'
+              : ''
+          }
           loading={loading}
         />
         <Divider />
         <UserInfoLine
           label={formatMessage(messages.trailerWithBrakes)}
-          content={mainInfo?.trailerWithBrakesWeight?.toString() + ' kg.'}
+          content={
+            mainInfo?.trailerWithBrakesWeight
+              ? mainInfo.trailerWithBrakesWeight.toString() + ' kg.'
+              : ''
+          }
           loading={loading}
         />
         <Divider />
         <UserInfoLine
           label={formatMessage(messages.trailerWithoutBrakes)}
-          content={mainInfo?.trailerWithoutBrakesWeight?.toString() + ' kg.'}
+          content={
+            mainInfo?.trailerWithoutBrakesWeight
+              ? mainInfo.trailerWithoutBrakesWeight.toString() + ' kg.'
+              : ''
+          }
           loading={loading}
         />
         <Divider />
@@ -123,14 +139,18 @@ const VehicleDetail: ServicePortalModuleComponent = ({ userInfo }) => {
       {basicInfo && <BaseInfoItem data={basicInfo} />}
       {registrationInfo && <RegistrationInfoItem data={registrationInfo} />}
       {currentOwnerInfo && <OwnerInfoItem data={currentOwnerInfo} />}
-      {inspectionInfo && <InspectionInfoItem data={inspectionInfo} />}
-      {technicalInfo && <TechnicalInfoItem data={technicalInfo} />}
       {coOwners &&
-        coOwners?.length > 0 &&
+        coOwners.length > 0 &&
         coOwners.map((owner: VehiclesCurrentOwnerInfo, index) => (
           <CoOwnerInfoItem key={index} data={owner} />
         ))}
-      {operator && <OperatorInfoItem data={operator} />}
+      {inspectionInfo && <InspectionInfoItem data={inspectionInfo} />}
+      {technicalInfo && <TechnicalInfoItem data={technicalInfo} />}
+      {operators &&
+        operators.length > 0 &&
+        operators.map((operator: VehiclesOperator, index) => (
+          <OperatorInfoItem key={index} data={operator} />
+        ))}
       {ownersInfo && (
         <OwnersTable
           data={ownersInfo}

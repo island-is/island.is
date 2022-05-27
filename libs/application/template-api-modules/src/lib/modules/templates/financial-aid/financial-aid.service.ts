@@ -26,7 +26,7 @@ export class FinancialAidService {
   }
 
   private formatFiles(files: UploadFile[], type: FileType) {
-    if (!files) {
+    if (!files || files.length <= 0) {
       return []
     }
     return files.map((f) => {
@@ -42,12 +42,57 @@ export class FinancialAidService {
   async createApplication({ application, auth }: Props) {
     const { id, answers, externalData } = application
 
+    if (externalData.veita.data.currentApplicationId) {
+      return {
+        currentApplicationId: externalData.veita.data.currentApplicationId,
+      }
+    }
+
+    const spouseTaxFiles = () => {
+      if (
+        externalData?.taxDataFetchSpouse?.data?.municipalitiesPersonalTaxReturn
+          ?.personalTaxReturn == null
+      ) {
+        return []
+      }
+      return [
+        externalData?.taxDataFetchSpouse?.data?.municipalitiesPersonalTaxReturn
+          ?.personalTaxReturn,
+      ]
+    }
+
+    const applicantTaxFiles = () => {
+      if (
+        externalData?.taxDataFetch?.data?.municipalitiesPersonalTaxReturn
+          ?.personalTaxReturn == null
+      ) {
+        return []
+      }
+      return [
+        externalData?.taxDataFetch?.data?.municipalitiesPersonalTaxReturn
+          ?.personalTaxReturn,
+      ]
+    }
+
+    const directTaxPayments = () => {
+      if (externalData?.taxDataFetchSpouse?.data) {
+        return externalData?.taxDataFetch?.data?.municipalitiesDirectTaxPayments?.directTaxPayments.concat(
+          externalData?.taxDataFetchSpouse?.data.municipalitiesDirectTaxPayments
+            ?.directTaxPayments,
+        )
+      }
+      return externalData?.taxDataFetch?.data?.municipalitiesDirectTaxPayments
+        ?.directTaxPayments
+    }
+
     const files = this.formatFiles(answers.taxReturnFiles, FileType.TAXRETURN)
       .concat(this.formatFiles(answers.incomeFiles, FileType.INCOME))
       .concat(this.formatFiles(answers.spouseIncomeFiles, FileType.SPOUSEFILES))
       .concat(
         this.formatFiles(answers.spouseTaxReturnFiles, FileType.SPOUSEFILES),
       )
+      .concat(this.formatFiles(spouseTaxFiles(), FileType.SPOUSEFILES))
+      .concat(this.formatFiles(applicantTaxFiles(), FileType.TAXRETURN))
 
     const newApplication = {
       name: externalData.nationalRegistry.data.applicant.fullName,
@@ -88,8 +133,13 @@ export class FinancialAidService {
       city: externalData.nationalRegistry.data.applicant.address.city,
       municipalityCode:
         externalData.nationalRegistry.data.applicant.address.municipalityCode,
-      directTaxPayments: [],
-      hasFetchedDirectTaxPayment: false,
+      directTaxPayments: directTaxPayments(),
+      hasFetchedDirectTaxPayment:
+        externalData?.taxDataFetch?.data?.municipalitiesDirectTaxPayments
+          ?.success,
+      spouseHasFetchedDirectTaxPayment:
+        externalData?.taxDataFetchSpouse?.data?.municipalitiesDirectTaxPayments
+          ?.success,
       applicationSystemId: id,
     }
 
@@ -98,7 +148,7 @@ export class FinancialAidService {
         createApplicationDto: newApplication as any,
       })
       .then((res) => {
-        return res
+        return { currentApplicationId: res.id }
       })
       .catch((error) => {
         throw error

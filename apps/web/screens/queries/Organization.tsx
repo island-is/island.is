@@ -9,6 +9,7 @@ export const GET_ORGANIZATIONS_QUERY = gql`
         slug
         title
         description
+        showsUpOnTheOrganizationsPage
         logo {
           title
           url
@@ -184,7 +185,6 @@ export const GET_ORGANIZATION_SUBPAGE_QUERY = gql`
       }
       sliceCustomRenderer
       sliceExtraText
-      parentSubpage
       featuredImage {
         url
         title

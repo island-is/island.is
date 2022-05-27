@@ -9,7 +9,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { CaseType } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
-import { formatNationalId } from '@island.is/judicial-system/formatters'
+import { formatDOB } from '@island.is/judicial-system/formatters'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
@@ -115,11 +115,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
 
   useEffect(() => {
     if (isCaseUpToDate && !initialAutoFillDone) {
-      if (
-        workingCase &&
-        workingCase.defendants &&
-        workingCase.defendants.length > 0
-      ) {
+      if (workingCase.defendants && workingCase.defendants.length > 0) {
         const courtClaim = courtClaimPrefill[workingCase.type]
         const courtClaimText = courtClaim
           ? formatMessage(courtClaim.text, {
@@ -127,15 +123,10 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
                 accused: enumerate(
                   workingCase.defendants.map(
                     (defendant) =>
-                      `${defendant.name}${
-                        defendant.noNationalId
-                          ? defendant.nationalId
-                            ? ` fd. ${defendant.nationalId}`
-                            : ''
-                          : ` kt. ${formatNationalId(
-                              defendant.nationalId ?? '',
-                            )}`
-                      }`,
+                      `${defendant.name}${` ${formatDOB(
+                        defendant.nationalId,
+                        defendant.noNationalId,
+                      )}`}`,
                   ),
                   formatMessage(core.and),
                 ),
@@ -158,11 +149,13 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
                 year: new Date().getFullYear(),
               }),
             })
-          : ''
+          : undefined
 
-        autofill('demands', courtClaimText, workingCase)
-
-        setWorkingCase({ ...workingCase })
+        autofill(
+          [{ key: 'demands', value: courtClaimText }],
+          workingCase,
+          setWorkingCase,
+        )
       }
 
       setInitialAutoFillDone(true)

@@ -9,11 +9,11 @@ import {
   Accordion,
   AccordionItem,
   Input,
+  AlertMessage,
 } from '@island.is/island-ui/core'
 import {
   NotificationType,
   CaseState,
-  CaseType,
   CaseTransition,
   completedCaseStates,
 } from '@island.is/judicial-system/types'
@@ -40,13 +40,13 @@ import {
   laws,
   rcOverview,
   requestCourtDate,
+  restrictionsV2,
+  titles,
 } from '@island.is/judicial-system-web/messages'
-import { restrictionsV2 } from '@island.is/judicial-system-web/messages'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import CommentsAccordionItem from '@island.is/judicial-system-web/src/components/AccordionItems/CommentsAccordionItem/CommentsAccordionItem'
 import { createCaseResentExplanation } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
 import type { CaseLegalProvisions } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system/consts'
 import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
@@ -125,6 +125,18 @@ export const Overview: React.FC = () => {
         title={formatMessage(titles.prosecutor.restrictionCases.overview)}
       />
       <FormContentContainer>
+        {workingCase.state === CaseState.RECEIVED && (
+          <div
+            className={styles.resendInfoPanelContainer}
+            data-testid="rc-overview-info-panel"
+          >
+            <AlertMessage
+              title={formatMessage(rcOverview.receivedAlert.title)}
+              message={formatMessage(rcOverview.receivedAlert.message)}
+              type="info"
+            />
+          </div>
+        )}
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
             {formatMessage(rcOverview.headingV2, {
@@ -161,10 +173,7 @@ export const Overview: React.FC = () => {
               },
               {
                 title: formatMessage(core.prosecutor),
-                value: `${
-                  workingCase.creatingProsecutor?.institution?.name ??
-                  'Ekki skráð'
-                }`,
+                value: `${workingCase.creatingProsecutor?.institution?.name}`,
               },
               ...(workingCase.judge
                 ? [
@@ -254,7 +263,7 @@ export const Overview: React.FC = () => {
           </Box>
           <Text>{workingCase.demands}</Text>
         </Box>
-        <Box component="section" marginBottom={10}>
+        <Box component="section" marginBottom={7}>
           <Accordion>
             <AccordionItem
               labelVariant="h3"

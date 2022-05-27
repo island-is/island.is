@@ -134,6 +134,15 @@ export const icHearingArrangements = {
       },
     }),
   },
+  continueButton: defineMessages({
+    label: {
+      id:
+        'judicial.system.investigation_cases:hearing_arrangements.continue_button.label',
+      defaultMessage: 'Staðfesta fyrirtökutíma',
+      description:
+        'Notaður sem titil á takka til að halda áfram á fyrirtöku skrefi í rannsóknarheimildum.',
+    },
+  }),
   modal: defineMessages({
     heading: {
       id:

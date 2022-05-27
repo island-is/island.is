@@ -32,7 +32,6 @@ import {
   formatCourtHeadsUpSmsNotification,
   formatPrisonCourtDateEmailNotification,
   formatCourtReadyForCourtSmsNotification,
-  getRequestPdfAsString,
   formatDefenderCourtDateEmailNotification,
   stripHtmlTags,
   formatPrisonRulingEmailNotification,
@@ -194,6 +193,25 @@ export class NotificationService {
       })
     } catch (error) {
       this.logger.error('Failed to send email', { error })
+
+      this.eventService.postErrorEvent(
+        'Failed to send email',
+        {
+          subject,
+          to: `${recipientName} (${recipientEmail})`,
+          attachments:
+            attachments && attachments.length > 0
+              ? attachments.reduce(
+                  (acc, attachment, index) =>
+                    index > 0
+                      ? `${acc}, ${attachment.filename}`
+                      : `${attachment.filename}`,
+                  '',
+                )
+              : undefined,
+        },
+        error as Error,
+      )
 
       return {
         address: recipientEmail,
@@ -587,19 +605,13 @@ export class NotificationService {
       theCase.registrar?.name,
       theCase.prosecutor?.name,
       theCase.creatingProsecutor?.institution?.name,
+      theCase.sessionArrangements,
+      theCase.sendRequestToDefender,
+      theCase.defenderNationalId &&
+        `${environment.deepLinks.defenderCompletedCaseOverviewUrl}${theCase.id}`,
     )
     const calendarInvite = this.createICalAttachment(theCase)
     const attachments: Attachment[] = calendarInvite ? [calendarInvite] : []
-
-    if (theCase.sendRequestToDefender) {
-      const pdf = await getRequestPdfAsString(theCase, this.formatMessage)
-
-      attachments.push({
-        filename: `${theCase.policeCaseNumber}.pdf`,
-        content: pdf,
-        encoding: 'binary',
-      })
-    }
 
     const recipient = await this.sendEmail(
       subject,
@@ -810,6 +822,18 @@ export class NotificationService {
             validToDate: formatDate(theCase.validToDate, 'PPPp'),
           })
     }`
+    const custodyNoticePdf = await getCustodyNoticePdfAsString(
+      theCase,
+      this.formatMessage,
+    )
+
+    const attachments = [
+      {
+        filename: `Vistunarseðill ${theCase.courtCaseNumber}.pdf`,
+        content: custodyNoticePdf,
+        encoding: 'binary',
+      },
+    ]
 
     const recipients = [
       await this.sendEmail(
@@ -823,6 +847,7 @@ export class NotificationService {
         html,
         'Gæsluvarðhaldsfangelsi',
         environment.notifications.prisonEmail,
+        attachments,
       ),
     ]
 

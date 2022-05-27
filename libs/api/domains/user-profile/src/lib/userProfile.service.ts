@@ -307,41 +307,17 @@ export class UserProfileService {
         .catch(handleError)
     }
 
-    const profile = await this.userProfileApiWithAuth(user)
-      .userProfileControllerFindOneByNationalId({
-        nationalId: user.nationalId,
-      })
-      .catch((e) => {
-        if (e.status === 404) {
-          return null
-        }
-        handleError(e)
-      })
-
     const profileUpdate = {
-      emailStatus: input.email ? DataStatus.EMPTY : DataStatus.NOT_VERIFIED,
-      mobileStatus: input.mobilePhoneNumber
-        ? DataStatus.EMPTY
-        : DataStatus.NOT_VERIFIED,
+      ...(input.email && { emailStatus: DataStatus.EMPTY }),
+      ...(input.mobilePhoneNumber && { mobileStatus: DataStatus.EMPTY }),
     }
 
-    if (profile) {
-      await this.userProfileApiWithAuth(user)
-        .userProfileControllerUpdate({
-          nationalId: user.nationalId,
-          updateUserProfileDto: profileUpdate,
-        })
-        .catch(handleError)
-    } else {
-      await this.userProfileApiWithAuth(user)
-        .userProfileControllerCreate({
-          createUserProfileDto: {
-            ...profileUpdate,
-            nationalId: user.nationalId,
-          },
-        })
-        .catch(handleError)
-    }
+    await this.userProfileApiWithAuth(user)
+      .userProfileControllerUpdate({
+        nationalId: user.nationalId,
+        updateUserProfileDto: profileUpdate,
+      })
+      .catch(handleError)
 
     return {
       nationalId: user.nationalId,

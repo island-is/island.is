@@ -9,7 +9,6 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { useQuery } from '@apollo/client'
 import { Query, VehiclesVehicle } from '@island.is/api/schema'
 import {
-  AlertMessage,
   Box,
   Stack,
   Text,
@@ -17,6 +16,7 @@ import {
   GridRow,
   Input,
   Button,
+  AlertBanner,
 } from '@island.is/island-ui/core'
 import isEqual from 'lodash/isEqual'
 import { VehicleCard } from '../../components/VehicleCard'
@@ -97,15 +97,20 @@ export const VehiclesOverview: ServicePortalModuleComponent = () => {
           </GridColumn>
         </GridRow>
       </Box>
-      {!loading && vehicles.length === 0 && (
+      {error && (
+        <Box>
+          <AlertBanner
+            description={formatMessage(m.errorFetch)}
+            variant="error"
+          />
+        </Box>
+      )}
+      {!loading && !error && vehicles.length === 0 && (
         <Box marginTop={8}>
           <EmptyState title={m.noDataFound} />
         </Box>
       )}
       <Stack space={2}>
-        {called && !loading && !error && vehicles.length <= 0 && (
-          <AlertMessage type="info" title={formatMessage(m.noDataPresent)} />
-        )}
         {!loading && !error && vehicles.length > 4 && (
           <GridRow>
             <GridColumn span={['12/12', '12/12', '5/12', '4/12', '3/12']}>

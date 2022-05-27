@@ -18,7 +18,10 @@ const ExpandableLine: FC<Props> = ({ data }) => {
       <T.Row>
         {data.map((item, i) => (
           <T.HeadData
-            box={{ textAlign: item.align, printHidden: item.printHidden }}
+            box={{
+              textAlign: item.align ?? 'left',
+              printHidden: item.printHidden,
+            }}
             scope="col"
             key={i}
             style={tableStyles}

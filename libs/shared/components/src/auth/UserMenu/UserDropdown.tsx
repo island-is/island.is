@@ -54,7 +54,7 @@ export const UserDropdown = ({
   const isDelegation = Boolean(actor)
   const userName = user.profile.name
   const actorName = actor?.name
-  const isDelegationCompany = false
+  const isDelegationCompany = user.profile.subjectType === 'legalEntity'
 
   const showDelegations =
     useFeatureFlag(Features.delegationsEnabled, false).value || Boolean(actor)
@@ -152,9 +152,12 @@ export const UserDropdown = ({
           )}
           {/* End of user delegations */}
           {/* User settings */}
-          {!isDelegation && showDelegations && (
+          {(!isDelegation || isDelegationCompany) && showDelegations && (
             <>
-              <UserProfileInfo onClick={() => onClose()} />
+              <UserProfileInfo
+                isCompany={isDelegationCompany}
+                onClick={() => onClose()}
+              />
               <Divider />
             </>
           )}
