@@ -6,6 +6,7 @@ import { Entry } from './types'
 
 const SPACE_ID = '8k0h54kbe6bj'
 const ENVIRONMENT = process.env.CONTENTFUL_ENVIRONMENT || 'master'
+const MAX_TAGS_PER_ENVIRONMENT = 500
 
 const mapTagsToSysObjects = (tags?: TagProps[]) => {
   return (
@@ -38,20 +39,14 @@ export class AppRepository {
     return roles
   }
 
-  async getTags(count = 100) {
-    const managementClient = this.getManagementClient()
-    const space = await managementClient.getSpace(SPACE_ID)
-    const environment = await space.getEnvironment(ENVIRONMENT)
-    const tags = await environment.getTags({ limit: count })
-    return tags.items
-  }
-
   async tagEntry(entry: Entry, tags: string[]) {
     const managementClient = this.getManagementClient()
     const space = await managementClient.getSpace(SPACE_ID)
     const environment = await space.getEnvironment(ENVIRONMENT)
     const entryFromServer = await environment.getEntry(entry.sys.id)
-    const allTagsFromServer = await this.getTags()
+    const { items: allTagsFromServer } = await environment.getTags({
+      limit: MAX_TAGS_PER_ENVIRONMENT,
+    })
     const tagsToApply = allTagsFromServer.filter((serverTag) =>
       tags.includes(serverTag.name),
     )
