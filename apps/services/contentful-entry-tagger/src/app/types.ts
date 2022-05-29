@@ -9,7 +9,7 @@ interface MetaData {
 }
 
 export interface Entry {
-  metadata: MetaData
+  metadata?: MetaData
   sys: {
     space: { sys: { type: 'Link'; linkType: 'Space'; id: string } }
     id: string

@@ -8,6 +8,7 @@ export class AppController {
 
   @Post()
   async onEntryCreation(@Body() entry: Entry) {
-    return this.appService.handleEntryCreation(entry)
+    const result = await this.appService.handleEntryCreation(entry)
+    return result
   }
 }
