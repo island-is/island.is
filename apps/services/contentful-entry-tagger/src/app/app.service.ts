@@ -4,6 +4,8 @@ import { Entry } from './types'
 import { AppRepository } from './app.repository'
 import slugify from '@sindresorhus/slugify'
 
+const TAGGABLE_ENTRY_PREFIX = 'owner-'
+
 @Injectable()
 export class AppService {
   constructor(
@@ -17,8 +19,10 @@ export class AppService {
     )
 
     const tags = roles
-      // All roles with the "stofnun-" prefix need to have their entries tagged in order to manage user permissions
-      .filter((role) => role.name.toLowerCase().startsWith('stofnun-'))
+      // All roles with the prefix need to have their entries tagged in order to manage user permissions
+      .filter((role) =>
+        role.name.toLowerCase().startsWith(TAGGABLE_ENTRY_PREFIX),
+      )
       .map((role) => slugify(role.name))
 
     if (tags.length === 0) {

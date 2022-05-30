@@ -2,7 +2,7 @@
 
 ## About
 
-This service will add a tag to newly created entry if the entry was created by a user with a space role that has the prefix "Stofnun-".
+This service will add a tag to newly created entry if the entry was created by a user with a space role that has the prefix "Owner-".
 This is done so we can manage user permissions in Contentful, we do so via tags and roles.
 
 ## Getting started
