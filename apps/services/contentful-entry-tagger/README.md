@@ -1,4 +1,4 @@
-# Contentful entry tagger
+# Contentful Entry Tagger
 
 ## About
 
