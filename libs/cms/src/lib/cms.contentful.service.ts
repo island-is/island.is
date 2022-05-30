@@ -401,6 +401,7 @@ export class CmsContentfulService {
       .getEntry<{
         slug: Record<string, string>
         title: Record<string, string>
+        url: Record<string, string>
       }>(id, {
         locale: '*',
         include: 1,
@@ -409,22 +410,34 @@ export class CmsContentfulService {
 
     let slugs: TextFieldLocales = { is: '', en: '' }
     let titles: TextFieldLocales = { is: '', en: '' }
+    let urls: TextFieldLocales = { is: '', en: '' }
 
-    if (result?.fields?.slug && result?.fields.title) {
-      ;({ slugs, titles } = Object.keys(localeMap).reduce(
+    if (
+      result?.fields?.title &&
+      (result?.fields?.slug || result?.fields?.url)
+    ) {
+      ;({ slugs, titles, urls } = Object.keys(localeMap).reduce(
         (obj, k) => {
           obj.slugs[k] = result?.fields?.slug?.[localeMap[k]] ?? ''
           obj.titles[k] = result?.fields?.title?.[localeMap[k]] ?? ''
+          obj.urls[k] = result?.fields?.url?.[localeMap[k]] ?? ''
           return obj
         },
-        { slugs: {} as typeof localeMap, titles: {} as typeof localeMap },
+        {
+          slugs: {} as typeof localeMap,
+          titles: {} as typeof localeMap,
+          urls: {} as typeof localeMap,
+        },
       ))
     }
+
+    console.log(urls)
 
     return {
       id: result?.sys?.id,
       slug: slugs,
       title: titles,
+      url: urls,
       type: result?.sys?.contentType?.sys?.id ?? '',
     }
   }

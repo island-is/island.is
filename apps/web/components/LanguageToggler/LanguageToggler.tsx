@@ -13,8 +13,10 @@ import { Locale } from '@island.is/shared/types'
 import { GET_CONTENT_SLUG } from '@island.is/web/screens/queries/Article'
 import { GlobalContext } from '@island.is/web/context'
 import {
+  ContentSlug,
   GetContentSlugQuery,
   GetContentSlugQueryVariables,
+  TextFieldLocales,
 } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver, LinkType } from '@island.is/web/hooks/useLinkResolver'
@@ -71,44 +73,59 @@ export const LanguageToggler = ({
     const responses = await Promise.all(queries)
 
     const slugs = []
-    let index = 0
+    let title: TextFieldLocales = { is: '', en: '' }
+    let type = ''
 
-    for (const res of responses) {
-      const slug = res.data?.getContentSlug?.slug
-
-      if (!slug) {
-        break
+    // A subArticle has a url field instead of a slug field and the url field contains slashes
+    if (responses?.[1]?.data?.getContentSlug?.type === 'subArticle') {
+      const slug = responses[1].data.getContentSlug?.url
+      if (slug) {
+        title = responses[1].data.getContentSlug.title
+        type = responses[1].data.getContentSlug.type
+        const slugsIS = slug.is.split('/')
+        const slugsEN = slug.en.split('/')
+        for (let i = 0; i < slugsIS.length && i < slugsEN.length; i += 1) {
+          slugs.push({
+            is: slugsIS[i],
+            en: slugsEN[i],
+          })
+        }
       }
+    }
 
-      slugs.push(slug)
-
-      index += 1
-      const atLastResponse = index === responses.length
-      if (!atLastResponse) continue
-
-      const title = res.data?.getContentSlug?.title
-      let type = res.data?.getContentSlug?.type as LinkType
-
-      if (resolveLinkTypeLocally) {
-        type = typeResolver(pathWithoutQueryParams).type
+    // If the subArticle either wasn't there
+    if (slugs.length === 0) {
+      for (let i = 0; i < responses.length; i += 1) {
+        const res = responses[i]
+        const slug = res.data?.getContentSlug?.slug
+        if (!slug) {
+          break
+        }
+        slugs.push(slug)
+        title = res.data?.getContentSlug?.title
+        type = res.data?.getContentSlug?.type as LinkType
       }
+    }
 
-      // Some content models are set up such that a slug is generated from the title
-      // Unfortunately, Contentful generates slug for both locales which frequently
-      // results in bogus english content. Therefore we check whether the other language has a title as well.
-      if (
-        type &&
-        slugs.every((s) => s?.[otherLanguage]) &&
-        title?.[otherLanguage]
-      ) {
-        return goToOtherLanguagePage(
-          linkResolver(
-            type,
-            slugs.map((s) => s[otherLanguage]),
-            otherLanguage,
-          ).href,
-        )
-      }
+    if (resolveLinkTypeLocally) {
+      type = typeResolver(pathWithoutQueryParams).type
+    }
+
+    // Some content models are set up such that a slug is generated from the title
+    // Unfortunately, Contentful generates slug for both locales which frequently
+    // results in bogus english content. Therefore we check whether the other language has a title as well.
+    if (
+      type &&
+      slugs.every((s) => s?.[otherLanguage]) &&
+      title?.[otherLanguage]
+    ) {
+      return goToOtherLanguagePage(
+        linkResolver(
+          type as LinkType,
+          slugs.map((s) => s[otherLanguage]),
+          otherLanguage,
+        ).href,
+      )
     }
 
     setShowDialog(true)
