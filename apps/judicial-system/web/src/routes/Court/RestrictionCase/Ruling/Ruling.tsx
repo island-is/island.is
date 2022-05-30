@@ -26,7 +26,6 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import {
   Case,
-  CaseCustodyRestrictions,
   CaseDecision,
   CaseType,
   completedCaseStates,
@@ -61,6 +60,9 @@ import {
 import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import * as Constants from '@island.is/judicial-system/consts'
+import SigningModal, {
+  useRequestRulingSignature,
+} from '@island.is/judicial-system-web/src/components/SigningModal/SigningModal'
 
 export function getConclusionAutofill(
   formatMessage: IntlShape['formatMessage'],
@@ -143,6 +145,8 @@ export function getConclusionAutofill(
       })
 }
 
+type availableModals = 'NoModal' | 'SigningModal'
+
 export const Ruling: React.FC = () => {
   const {
     workingCase,
@@ -170,7 +174,11 @@ export const Ruling: React.FC = () => {
   ] = useState<string>('')
 
   const router = useRouter()
-  const id = router.query.id
+
+  const isModifyingRuling = router.pathname.includes(
+    Constants.MODIFY_RULING_ROUTE,
+  )
+  const [modalVisible, setModalVisible] = useState<availableModals>('NoModal')
 
   const { user } = useContext(UserContext)
   const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
@@ -181,6 +189,14 @@ export const Ruling: React.FC = () => {
   useDeb(workingCase, 'courtCaseFacts')
   useDeb(workingCase, 'courtLegalArguments')
   useDeb(workingCase, 'conclusion')
+
+  const {
+    requestRulingSignature,
+    requestRulingSignatureResponse,
+    isRequestingRulingSignature,
+  } = useRequestRulingSignature(workingCase.id, () =>
+    setModalVisible('SigningModal'),
+  )
 
   useEffect(() => {
     if (isCaseUpToDate && !initialAutoFillDone) {
@@ -195,10 +211,6 @@ export const Ruling: React.FC = () => {
           {
             key: 'prosecutorDemands',
             value: workingCase.demands,
-          },
-          {
-            key: 'isolationToDate',
-            value: workingCase.validToDate,
           },
           {
             key: 'courtCaseFacts',
@@ -219,19 +231,6 @@ export const Ruling: React.FC = () => {
               : undefined,
           },
           {
-            key: 'isCustodyIsolation',
-            value:
-              workingCase.type === CaseType.CUSTODY ||
-              workingCase.type === CaseType.ADMISSION_TO_FACILITY
-                ? workingCase.requestedCustodyRestrictions &&
-                  workingCase.requestedCustodyRestrictions.includes(
-                    CaseCustodyRestrictions.ISOLATION,
-                  )
-                  ? true
-                  : false
-                : undefined,
-          },
-          {
             key: 'conclusion',
             value:
               workingCase.decision &&
@@ -243,6 +242,8 @@ export const Ruling: React.FC = () => {
                     workingCase.decision,
                     workingCase.defendants[0],
                     workingCase.validToDate,
+                    workingCase.isCustodyIsolation,
+                    workingCase.isolationToDate,
                   )
                 : undefined,
           },
@@ -306,8 +307,7 @@ export const Ruling: React.FC = () => {
               />
             </AccordionItem>
           </Accordion>
-        </Box>
-        <Box component="section" marginBottom={5}>
+          <Box component="section" marginBottom={5}></Box>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
               {formatMessage(m.sections.introduction.title)}
@@ -620,6 +620,14 @@ export const Ruling: React.FC = () => {
                 selectedDate={workingCase.validToDate}
                 minDate={new Date()}
                 onChange={(date: Date | undefined, valid: boolean) => {
+                  const validToDate =
+                    date && valid ? formatISO(date) : undefined
+                  const isolationToDate =
+                    validToDate &&
+                    workingCase.isolationToDate &&
+                    validToDate < workingCase.isolationToDate
+                      ? validToDate
+                      : workingCase.isolationToDate
                   let conclusion = undefined
 
                   if (
@@ -637,9 +645,9 @@ export const Ruling: React.FC = () => {
                       workingCase,
                       workingCase.decision,
                       workingCase.defendants[0],
-                      formatISO(date),
+                      validToDate,
                       workingCase.isCustodyIsolation,
-                      workingCase.isolationToDate,
+                      isolationToDate,
                     )
                   }
 
@@ -647,7 +655,12 @@ export const Ruling: React.FC = () => {
                     [
                       {
                         key: 'validToDate',
-                        value: date && valid ? formatISO(date) : undefined,
+                        value: validToDate,
+                        force: true,
+                      },
+                      {
+                        key: 'isolationToDate',
+                        value: isolationToDate,
                         force: true,
                       },
                       {
@@ -737,13 +750,7 @@ export const Ruling: React.FC = () => {
                   name="isolationToDate"
                   datepickerLabel="Einangrun til"
                   disabled={!workingCase.isCustodyIsolation}
-                  selectedDate={
-                    workingCase.isolationToDate
-                      ? workingCase.isolationToDate
-                      : workingCase.validToDate
-                      ? workingCase.validToDate
-                      : undefined
-                  }
+                  selectedDate={workingCase.isolationToDate}
                   // Isolation can never be set in the past.
                   minDate={new Date()}
                   maxDate={
@@ -752,6 +759,16 @@ export const Ruling: React.FC = () => {
                       : undefined
                   }
                   onChange={(date: Date | undefined, valid: boolean) => {
+                    let isolationToDate =
+                      date && valid ? formatISO(date) : undefined
+                    if (
+                      isolationToDate &&
+                      workingCase.validToDate &&
+                      isolationToDate > workingCase.validToDate
+                    ) {
+                      // Make sure the time component does not make the isolation to date larger than the valid to date.
+                      isolationToDate = workingCase.validToDate
+                    }
                     let conclusion = undefined
 
                     if (
@@ -779,7 +796,7 @@ export const Ruling: React.FC = () => {
                       [
                         {
                           key: 'isolationToDate',
-                          value: date && valid ? formatISO(date) : undefined,
+                          value: isolationToDate,
                           force: true,
                         },
                         {
@@ -845,11 +862,42 @@ export const Ruling: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${Constants.HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
-          nextUrl={`${Constants.COURT_RECORD_ROUTE}/${id}`}
+          previousUrl={
+            isModifyingRuling
+              ? `${Constants.SIGNED_VERDICT_OVERVIEW}/${workingCase.id}`
+              : `${Constants.HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`
+          }
+          previousButtonText={
+            isModifyingRuling
+              ? formatMessage(m.sections.formFooter.modifyRulingBackButtonLabel)
+              : undefined
+          }
+          nextIsLoading={
+            isModifyingRuling ? isRequestingRulingSignature : false
+          }
+          onNextButtonClick={() => {
+            if (isModifyingRuling) {
+              requestRulingSignature()
+            } else {
+              router.push(`${Constants.COURT_RECORD_ROUTE}/${workingCase.id}`)
+            }
+          }}
           nextIsDisabled={!isRulingValidRC(workingCase)}
+          nextButtonText={
+            isModifyingRuling
+              ? formatMessage(m.sections.formFooter.modifyRulingButtonLabel)
+              : undefined
+          }
         />
       </FormContentContainer>
+      {modalVisible === 'SigningModal' && (
+        <SigningModal
+          workingCase={workingCase}
+          setWorkingCase={setWorkingCase}
+          requestRulingSignatureResponse={requestRulingSignatureResponse}
+          onClose={() => setModalVisible('NoModal')}
+        />
+      )}
     </PageLayout>
   )
 }

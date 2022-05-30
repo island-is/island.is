@@ -1,7 +1,7 @@
 import { Case, CaseDecision } from '@island.is/judicial-system/types'
 import { CONFIRMATION_ROUTE } from '@island.is/judicial-system/consts'
 
-import { makeCustodyCase, intercept } from '../../../utils'
+import { makeRestrictionCase, intercept } from '../../../utils'
 
 describe(`${CONFIRMATION_ROUTE}/:id`, () => {
   beforeEach(() => {
@@ -10,7 +10,7 @@ describe(`${CONFIRMATION_ROUTE}/:id`, () => {
   })
 
   it('should display the ruling statement', () => {
-    const caseData = makeCustodyCase()
+    const caseData = makeRestrictionCase()
     const caseDataAddition: Case = {
       ...caseData,
       conclusion:
@@ -27,7 +27,7 @@ describe(`${CONFIRMATION_ROUTE}/:id`, () => {
   })
 
   it('should display the ruling', () => {
-    const caseData = makeCustodyCase()
+    const caseData = makeRestrictionCase()
     const caseDataAddition: Case = {
       ...caseData,
       conclusion:
@@ -44,7 +44,7 @@ describe(`${CONFIRMATION_ROUTE}/:id`, () => {
   })
 
   it('should have the correct "confirm" button if decision is "ACCEPTING" in custody and travel ban cases', () => {
-    const caseData = makeCustodyCase()
+    const caseData = makeRestrictionCase()
     const caseDataAddition: Case = {
       ...caseData,
       decision: CaseDecision.ACCEPTING,
@@ -58,7 +58,7 @@ describe(`${CONFIRMATION_ROUTE}/:id`, () => {
   })
 
   it('should have the correct "confirm" button if decision is "REJECTING" in custody and travel ban cases', () => {
-    const caseData = makeCustodyCase()
+    const caseData = makeRestrictionCase()
     const caseDataAddition: Case = {
       ...caseData,
       decision: CaseDecision.REJECTING,
@@ -72,7 +72,7 @@ describe(`${CONFIRMATION_ROUTE}/:id`, () => {
   })
 
   it('should have the correct "confirm" button if decision is "DISMISSING" in custody and travel ban cases', () => {
-    const caseData = makeCustodyCase()
+    const caseData = makeRestrictionCase()
     const caseDataAddition: Case = {
       ...caseData,
       decision: CaseDecision.DISMISSING,
@@ -86,7 +86,7 @@ describe(`${CONFIRMATION_ROUTE}/:id`, () => {
   })
 
   it('should have the correct "confirm" button if decision is "ACCEPTING_ALTERNATIVE_TRAVEL_BAN" in custody and travel ban cases', () => {
-    const caseData = makeCustodyCase()
+    const caseData = makeRestrictionCase()
     const caseDataAddition: Case = {
       ...caseData,
       decision: CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,

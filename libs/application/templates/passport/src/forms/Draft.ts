@@ -1,7 +1,6 @@
 import {
   buildCheckboxField,
   buildDataProviderItem,
-  buildDateField,
   buildExternalDataProvider,
   buildForm,
   buildDescriptionField,
@@ -10,9 +9,7 @@ import {
   buildSection,
   buildSelectField,
   buildSubmitField,
-  buildSubSection,
   buildTextField,
-  buildDividerField,
   Form,
   FormModes,
 } from '@island.is/application/core'

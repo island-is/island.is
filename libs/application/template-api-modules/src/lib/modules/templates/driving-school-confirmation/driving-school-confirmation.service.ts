@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { DrivingLicenseBookService } from '@island.is/api/domains/driving-license-book'
-import { DrivingSchool, DrivingSchoolType } from './types'
+import { DrivingSchool } from './types'
 import { getValueViaPath } from '@island.is/application/core'
 
 @Injectable()
@@ -15,9 +15,6 @@ export class DrivingSchoolConfirmationService {
     auth,
   }: TemplateApiModuleActionProps) {
     // TODO: Confirmation email
-    const nationalId = getValueViaPath<string>(answers, 'nationalId')
-    const email = getValueViaPath<string>(answers, 'email')
-
     const studentBookId = getValueViaPath<string>(answers, 'studentBookId')
     const confirmation = getValueViaPath<{ date: string; school: string }>(
       answers,

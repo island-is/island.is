@@ -1,7 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
-import { useMutation } from '@apollo/client'
+import { useLazyQuery, useMutation } from '@apollo/client'
 import { UploadFile } from '@island.is/island-ui/core'
-import { FileType, SignedUrl } from '@island.is/financial-aid/shared/lib'
+import {
+  CreateFilesResponse,
+  FileType,
+  SignedUrl,
+} from '@island.is/financial-aid/shared/lib'
 import { gql } from '@apollo/client'
 import { encodeFilenames } from '../utils'
 
@@ -17,9 +21,28 @@ export const CreateSignedUrlMutation = gql`
 `
 
 const ApplicationFilesMutation = gql`
-  mutation createApplicationFiles($input: CreateApplicationFilesInput!) {
-    createApplicationFiles(input: $input) {
+  mutation CreateMunicipalitiesFinancialAidFilesMutation(
+    $input: MunicipalitiesFinancialAidApplicationFilesInput!
+  ) {
+    createMunicipalitiesFinancialAidApplicationFiles(input: $input) {
       success
+      files {
+        id
+        key
+        name
+        size
+      }
+    }
+  }
+`
+
+export const SignedUrlQuery = gql`
+  query MunicipalitiesFinancialAidApplicationSignedUrlQuery(
+    $input: MunicipalitiesFinancialAidGetSignedUrlInput!
+  ) {
+    municipalitiesFinancialAidApplicationSignedUrl(input: $input) {
+      url
+      key
     }
   }
 `
@@ -29,7 +52,21 @@ export const useFileUpload = (formFiles: UploadFile[], folderId: string) => {
   const filesRef = useRef<UploadFile[]>(files)
   const [uploadErrorMessage, setUploadErrorMessage] = useState<string>()
   const [createSignedUrlMutation] = useMutation(CreateSignedUrlMutation)
-  const [createApplicationFiles] = useMutation(ApplicationFilesMutation)
+  const [createApplicationFiles] = useMutation<{
+    createMunicipalitiesFinancialAidApplicationFiles: CreateFilesResponse
+  }>(ApplicationFilesMutation)
+
+  const [openFile] = useLazyQuery(SignedUrlQuery, {
+    fetchPolicy: 'no-cache',
+    onCompleted: (data: {
+      municipalitiesFinancialAidApplicationSignedUrl: SignedUrl
+    }) => {
+      window.open(
+        data.municipalitiesFinancialAidApplicationSignedUrl.url,
+        '_blank',
+      )
+    },
+  })
 
   const requests: { [Key: string]: XMLHttpRequest } = {}
 
@@ -136,11 +173,13 @@ export const useFileUpload = (formFiles: UploadFile[], folderId: string) => {
     type: FileType,
     uploadFile: UploadFile[],
   ) => {
-    return await createApplicationFiles({
-      variables: {
-        input: { files: formatFiles(uploadFile, applicationId, type) },
-      },
-    })
+    return (
+      await createApplicationFiles({
+        variables: {
+          input: { files: formatFiles(uploadFile, applicationId, type) },
+        },
+      })
+    ).data?.createMunicipalitiesFinancialAidApplicationFiles?.files
   }
 
   const uploadToCloudFront = (file: UploadFile, url: string) => {
@@ -238,6 +277,10 @@ export const useFileUpload = (formFiles: UploadFile[], folderId: string) => {
     onChange([file as File], true)
   }
 
+  const openFileById = (fileId: String) => {
+    return openFile({ variables: { input: { id: fileId } } })
+  }
+
   return {
     files,
     uploadErrorMessage,
@@ -246,5 +289,6 @@ export const useFileUpload = (formFiles: UploadFile[], folderId: string) => {
     onRetry,
     uploadFiles,
     uploadStateFiles,
+    openFileById,
   }
 }

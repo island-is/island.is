@@ -67,7 +67,7 @@ export class PersonalRepresentativeTypesController {
   @Get(':code')
   @Documentation({
     summary: 'Get a single personal representative type by code',
-    response: { status: 200, type: PersonalRepresentativeType },
+    response: { status: 200, type: PaginatedPersonalRepresentativeTypeDto },
     request: {
       params: {
         code: {
@@ -80,7 +80,7 @@ export class PersonalRepresentativeTypesController {
   })
   async getAsync(
     @Param('code') code: string,
-  ): Promise<PersonalRepresentativeType> {
+  ): Promise<PersonalRepresentativeTypeDTO> {
     if (!code) {
       throw new BadRequestException('Code needs to be provided')
     }
@@ -98,7 +98,8 @@ export class PersonalRepresentativeTypesController {
   /** Removes a right type by it's code, by making it invalid */
   @Delete(':code')
   @Documentation({
-    summary: 'Delete a single personal representative type by code',
+    summary:
+      'Mark a single personal representative type invalid by code. Note that the type is not deleted but marked as invalid.',
     response: { status: 204 },
     request: {
       params: {
@@ -130,12 +131,12 @@ export class PersonalRepresentativeTypesController {
   @Post()
   @Documentation({
     summary: 'Create a personal representative type',
-    response: { status: 201, type: PersonalRepresentativeType },
+    response: { status: 201, type: PersonalRepresentativeTypeDTO },
   })
   async create(
     @Body() rightType: PersonalRepresentativeTypeDTO,
     @CurrentAuth() user: Auth,
-  ): Promise<PersonalRepresentativeType> {
+  ): Promise<PersonalRepresentativeTypeDTO> {
     // Create a new right type
     return this.auditService.auditPromise(
       {
@@ -153,7 +154,7 @@ export class PersonalRepresentativeTypesController {
   @Put(':code')
   @Documentation({
     summary: 'Update a personal representative type by code',
-    response: { status: 200, type: PersonalRepresentativeType },
+    response: { status: 200, type: PersonalRepresentativeTypeDTO },
     request: {
       params: {
         code: {
@@ -168,7 +169,7 @@ export class PersonalRepresentativeTypesController {
     @Param('code') code: string,
     @Body() rightType: PersonalRepresentativeTypeDTO,
     @CurrentAuth() user: Auth,
-  ): Promise<PersonalRepresentativeType | null> {
+  ): Promise<PersonalRepresentativeTypeDTO | null> {
     // Update right type
     return this.auditService.auditPromise(
       {

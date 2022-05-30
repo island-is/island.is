@@ -6,6 +6,7 @@ export { DeductionFactorsModel } from './deductionFactors.model'
 export { ApplicationFileModel } from './file.model'
 export { MunicipalityModel } from './municipality.model'
 export { SignedUrlModel } from './signedUrl.model'
+export { CreateFilesModel } from './createFiles.model'
 export { PersonalTaxReturnResponse } from './personalTaxReturn.response'
 export {
   DirectTaxPaymentsResponse,

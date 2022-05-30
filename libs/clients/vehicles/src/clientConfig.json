@@ -26,7 +26,7 @@
   "paths": {
     "/VehicleSearch": {
       "get": {
-        "tags": ["Vehicles"],
+        "tags": ["VehicleSearch"],
         "parameters": [
           {
             "name": "permno",
@@ -77,16 +77,6 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
           "404": {
             "description": "Not Found",
             "content": {
@@ -96,13 +86,24 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
           }
-        }
+        },
+        "security": [
+          {
+            "OAuth2": ["OAuth2"]
+          }
+        ]
       }
     },
     "/BasicVehicleInformation": {
       "get": {
-        "tags": ["Vehicles"],
+        "tags": ["VehicleSearch"],
         "parameters": [
           {
             "name": "clientPersidno",
@@ -144,16 +145,6 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
           "404": {
             "description": "Not Found",
             "content": {
@@ -163,13 +154,24 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
           }
-        }
+        },
+        "security": [
+          {
+            "OAuth2": ["OAuth2"]
+          }
+        ]
       }
     },
     "/VehicleHistory": {
       "get": {
-        "tags": ["Vehicles"],
+        "tags": ["VehicleSearch"],
         "parameters": [
           {
             "name": "requestedPersidno",
@@ -230,12 +232,70 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
+          "404": {
+            "description": "Not Found",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "OAuth2": ["OAuth2"]
+          }
+        ]
+      }
+    },
+    "/AdditionalVehicleInformation": {
+      "get": {
+        "tags": ["VehicleSearch"],
+        "parameters": [
+          {
+            "name": "clientPersidno",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "permno",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "regno",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "vin",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdditionalVehicleInformationResult"
                 }
               }
             }
@@ -249,13 +309,326 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
           }
-        }
+        },
+        "security": [
+          {
+            "OAuth2": ["OAuth2"]
+          }
+        ]
       }
     }
   },
   "components": {
     "schemas": {
+      "AdditionalVehicleInformation": {
+        "type": "object",
+        "properties": {
+          "gjold": {
+            "$ref": "#/components/schemas/AdditionalVehicleInformationGjold"
+          },
+          "vorugjold": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdditionalVehicleInformationVorugjald"
+            },
+            "nullable": true
+          },
+          "heildarstada": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdditionalVehicleInformationHeildarstadaBifreidagjald"
+            },
+            "nullable": true
+          },
+          "alestrar": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdditionalVehicleInformationAlestur"
+            },
+            "nullable": true
+          },
+          "aaetludBifreidagjold": {
+            "$ref": "#/components/schemas/AdditionalVehicleInformationAaetludBifreidagjold"
+          },
+          "hasEncumbrances": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "inspectionfine": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "permno": {
+            "type": "string",
+            "nullable": true
+          },
+          "regno": {
+            "type": "string",
+            "nullable": true
+          },
+          "vin": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AdditionalVehicleInformationAaetludBifreidagjold": {
+        "type": "object",
+        "properties": {
+          "timabil1": {
+            "type": "string",
+            "nullable": true
+          },
+          "btGjald1": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "bkGjald1": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "timabil2": {
+            "type": "string",
+            "nullable": true
+          },
+          "btGjald2": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "bkGjald2": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AdditionalVehicleInformationAlestur": {
+        "type": "object",
+        "properties": {
+          "skfl": {
+            "type": "string",
+            "nullable": true
+          },
+          "aldags": {
+            "type": "string",
+            "nullable": true
+          },
+          "stMael": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "gjth": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "stat": {
+            "type": "string",
+            "nullable": true
+          },
+          "nrMael": {
+            "type": "string",
+            "nullable": true
+          },
+          "marg": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "vath": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "nofl": {
+            "type": "string",
+            "nullable": true
+          },
+          "uppr": {
+            "type": "string",
+            "nullable": true
+          },
+          "brst": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AdditionalVehicleInformationGjold": {
+        "type": "object",
+        "properties": {
+          "thungaskattur": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "ogjaldfallinnThungaskattur": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "drattarvextirVegnaThungaskatts": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "kostnadurVegnaThungaskatts": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "bifreidagjald": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "ogjaldfallidBifreidagjald": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "drattarvextirVegnaBifreidagjalds": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "kostnadurVegnaBifreidagjalds": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "vatryggingOkumanns": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "total": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AdditionalVehicleInformationHeildarstadaBifreidagjald": {
+        "type": "object",
+        "properties": {
+          "bkBifgjold": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "bkVatrygg": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "bkThunga": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "bkVextir": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "bkKostnad": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "bkOgjaldf": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "bkHrdags": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "gjaldfl": {
+            "type": "string",
+            "nullable": true
+          },
+          "kennitala": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AdditionalVehicleInformationResult": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/AdditionalVehicleInformation"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AdditionalVehicleInformationVorugjald": {
+        "type": "object",
+        "properties": {
+          "kennitala": {
+            "type": "string",
+            "nullable": true
+          },
+          "innflutn": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "advinnsl": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "vextir": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "kostnad": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "ogjaldf": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "hrdags": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "abending": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "BasicVehicleInformation": {
         "type": "object",
         "properties": {
@@ -572,6 +945,9 @@
               "$ref": "#/components/schemas/BasicVehicleInformationAdr"
             },
             "nullable": true
+          },
+          "fees": {
+            "$ref": "#/components/schemas/OutstandingFees"
           }
         },
         "additionalProperties": false
@@ -1589,6 +1965,48 @@
         },
         "additionalProperties": false
       },
+      "OutstandingFees": {
+        "type": "object",
+        "properties": {
+          "gjold": {
+            "$ref": "#/components/schemas/AdditionalVehicleInformationGjold"
+          },
+          "vorugjold": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdditionalVehicleInformationVorugjald"
+            },
+            "nullable": true
+          },
+          "heildarstada": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdditionalVehicleInformationHeildarstadaBifreidagjald"
+            },
+            "nullable": true
+          },
+          "alestrar": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdditionalVehicleInformationAlestur"
+            },
+            "nullable": true
+          },
+          "aaetludBifreidagjold": {
+            "$ref": "#/components/schemas/AdditionalVehicleInformationAaetludBifreidagjold"
+          },
+          "hasEncumbrances": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "inspectionfine": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "PersidnoLookupResult": {
         "type": "object",
         "properties": {
@@ -1806,6 +2224,18 @@
       }
     },
     "securitySchemes": {
+      "OAuth2": {
+        "type": "oauth2",
+        "flows": {
+          "authorizationCode": {
+            "authorizationUrl": "https://identity-server.dev01.devland.is/connect/authorize",
+            "tokenUrl": "https://identity-server.dev01.devland.is/connect/token",
+            "scopes": {
+              "@samgongustofa.is/vehicle-search": "Sækir OpenId, Profile og claimið sem þarf"
+            }
+          }
+        }
+      },
       "Bearer": {
         "type": "apiKey",
         "description": "JWT Authorization header using the Bearer scheme.",

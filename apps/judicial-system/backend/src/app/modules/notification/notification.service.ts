@@ -194,6 +194,25 @@ export class NotificationService {
     } catch (error) {
       this.logger.error('Failed to send email', { error })
 
+      this.eventService.postErrorEvent(
+        'Failed to send email',
+        {
+          subject,
+          to: `${recipientName} (${recipientEmail})`,
+          attachments:
+            attachments && attachments.length > 0
+              ? attachments.reduce(
+                  (acc, attachment, index) =>
+                    index > 0
+                      ? `${acc}, ${attachment.filename}`
+                      : `${attachment.filename}`,
+                  '',
+                )
+              : undefined,
+        },
+        error as Error,
+      )
+
       return {
         address: recipientEmail,
         success: false,
