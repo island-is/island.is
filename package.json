@@ -368,7 +368,6 @@
     "@types/yup": "0.29.6",
     "@typescript-eslint/eslint-plugin": "5.18.0",
     "@typescript-eslint/parser": "5.18.0",
-    "@zeit/next-source-maps": "0.0.3",
     "babel-jest": "27.2.3",
     "babel-loader": "8.0.6",
     "babel-plugin-transform-class-properties": "6.24.1",
