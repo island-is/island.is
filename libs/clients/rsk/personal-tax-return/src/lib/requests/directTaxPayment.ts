@@ -23,7 +23,7 @@ export const directTaxPaymentRequest = (
         <tem:inntak>
            <ns:KennitalaUmbodsmanns>${agentNationalId}</ns:KennitalaUmbodsmanns>
            <ns:AudkenniUmbodsmanns>${agentId}</ns:AudkenniUmbodsmanns>
-           <ns:KennitalaSkuldara>${NationalId.sanitize(
+           <ns:KennitalaSkuldara>${NationalId.clean(
              requesterNationalId,
            )}</ns:KennitalaSkuldara>
            <!--Optional:-->
