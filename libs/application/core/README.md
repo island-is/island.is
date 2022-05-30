@@ -329,7 +329,7 @@ You can add in custom error/warning title and summary to display for the user on
 An example of this would be if you dont meet the age requirements of an application and the team wants to stop the application from transitioning to the next state.
 
 In your dataprovider implementation add the following
-``` diff
+```diff
   export class SampleDataProvider extends BasicDataProvider {
   type = 'SampleDataProvider'
 
@@ -340,33 +340,37 @@ In your dataprovider implementation add the following
       value: 'Hello world',
     }
 
-    + if (!SampleProviderData.value) {
-    +   return Promise.reject({
-    +     reason: {
-    +       title: error.someFailMessage.title,
-    +       summary: error.someFailMessage.summary,
-    +     },
-    +     statusCode: 404,
-    +   })
-    }
++    if (!SampleProviderData.value) {
++      return Promise.reject({
++        reason: {
++          title: error.someFailMessage.title,
++          summary: error.someFailMessage.summary,
++        },
++        statusCode: 404,
++      })
++    }
 
     return Promise.resolve(data)
   }
 
-  + onProvideError(error: {
-  +   reason: ProviderErrorReason
-  +   statusCode?: number
-  + }): FailedDataProviderResult {
-  +   return {
-  +     date: new Date(),
-  +     data: {},
-  +     reason: error.reason,
-  +     status: 'failure',
-  +     statusCode: error.statusCode,
-  +   }
-  + }
++  onProvideError(error: {
++    reason: ProviderErrorReason
++    statusCode?: number
++  }): FailedDataProviderResult {
++    return {
++      date: new Date(),
++      data: {},
++      reason: error.reason,
++      status: 'failure',
++      statusCode: error.statusCode,
++    }
++  }
 }
 ```
+This would then display as a yellow box warning when the user has fetched the data and failed to meet the requirements like so:
+
+![image](https://user-images.githubusercontent.com/2814693/171011316-c97b0aec-7a8a-40a1-bbc5-64779ca7bc96.png)
+
 
 ## Code owners and maintainers
 
