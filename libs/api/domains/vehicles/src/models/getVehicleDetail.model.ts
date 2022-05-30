@@ -99,6 +99,9 @@ export class VehiclesRegistrationInfo {
   newRegistrationDate?: string | null // newregdate
 
   @Field(() => String, { nullable: true })
+  specialName?: string | null // Sérheiti - speccom
+
+  @Field(() => String, { nullable: true })
   vehicleGroup?: string | null // technical -> vehgroup // ökutækisflokkur
 
   @Field(() => String, { nullable: true })
@@ -109,6 +112,12 @@ export class VehiclesRegistrationInfo {
 
   @Field(() => String, { nullable: true })
   reggroupName?: string | null // Skráningarflokkur // plates -> reggroupname
+
+  @Field(() => String, { nullable: true })
+  plateLocation?: string | null // Geymslustaður plötu // plates -> reggroupname
+
+  @Field(() => String, { nullable: true })
+  plateStatus?: string | null // platestatus
 
   @Field(() => Number, { nullable: true })
   passengers?: number | null
@@ -154,9 +163,6 @@ export class VehiclesInspectionInfo {
 
   @Field(() => String, { nullable: true })
   result?: string | null // inspections[0] -> result
-
-  @Field(() => String, { nullable: true })
-  plateStatus?: string | null // platestatus
 
   @Field(() => String, { nullable: true })
   nextInspectionDate?: string | null // nextinspectiondate

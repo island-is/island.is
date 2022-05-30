@@ -160,6 +160,9 @@ export class VehiclesService {
           useGroup: data.usegroup,
           driversPassengers: data.techincal?.passbydr,
           standingPassengers: data.techincal?.standingno,
+          plateLocation: data.platestoragelocation,
+          specialName: data.speccom,
+          plateStatus: data.platestatus,
         },
         currentOwnerInfo: {
           owner: data.owners?.find((x) => x.current === true)?.fullname,
@@ -174,7 +177,6 @@ export class VehiclesService {
           type: newestInspection?.type,
           date: newestInspection?.date,
           result: newestInspection?.result,
-          plateStatus: data.platestatus,
           nextInspectionDate: data.nextinspectiondate,
           lastInspectionDate: data.inspections
             ? data.inspections[0]?.date
@@ -188,7 +190,7 @@ export class VehiclesService {
           engine: data.techincal?.engine,
           totalWeight: data.techincal?.mass?.massladen,
           cubicCapacity: data.techincal?.capacity,
-          capacityWeight: data.techincal?.mass?.masscapacity,
+          capacityWeight: data.techincal?.mass?.massofcomb,
           length: data.techincal?.size?.length,
           vehicleWeight: data.techincal?.mass?.massinro,
           width: data.techincal?.size?.width,

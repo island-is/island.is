@@ -7,6 +7,7 @@ import { VehiclesInspectionInfo } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
 import { messages } from '../../lib/messages'
 import { amountFormat } from '@island.is/service-portal/core'
+import isNumber from 'lodash/isNumber'
 
 interface PropTypes {
   data: VehiclesInspectionInfo
@@ -20,66 +21,18 @@ const InspectionInfoItem = ({ data }: PropTypes) => {
       <HeaderRow>{messages.inspectionTitle}</HeaderRow>
       <Row>
         <Column label={messages.inspectionType} value={data.type} />
-
+        <Column label={messages.result} value={data.result} />
+      </Row>
+      <Row>
         <Column
           label={messages.date}
           value={data.date && new Date(data.date).toLocaleDateString()}
         />
-      </Row>
-      <Row>
-        <Column label={messages.result} value={data.result} />
-        <Column label={messages.plateStatus} value={data.plateStatus} />
-      </Row>
-      <Row>
-        <Column
-          label={messages.vehicleFee}
-          value={
-            data.carTax && data.carTax > 0 ? amountFormat(data.carTax) : ''
-          }
-        />
-
-        <Column
-          label={messages.insured}
-          value={
-            data.insuranceStatus === true
-              ? formatMessage(messages.yes)
-              : data.insuranceStatus === false
-              ? formatMessage(messages.no)
-              : ''
-          }
-        />
-      </Row>
-      <Row>
         <Column
           label={messages.nextInspection}
           value={
             data.nextInspectionDate &&
             new Date(data.nextInspectionDate).toLocaleDateString()
-          }
-        />
-        <Column
-          label={messages.lastInspection}
-          value={
-            data.lastInspectionDate &&
-            new Date(data.lastInspectionDate).toLocaleDateString()
-          }
-        />
-      </Row>
-      <Row>
-        <Column
-          label={messages.mortages}
-          value={
-            data.mortages && data.mortages > 0
-              ? amountFormat(data.mortages)
-              : ''
-          }
-        />
-        <Column
-          label={messages.negligence}
-          value={
-            data.inspectionFine && data.inspectionFine > 0
-              ? amountFormat(data.inspectionFine)
-              : ''
           }
         />
       </Row>

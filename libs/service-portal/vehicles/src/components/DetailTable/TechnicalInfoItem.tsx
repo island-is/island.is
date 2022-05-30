@@ -29,8 +29,8 @@ const TechnicalInfoItem = ({ data }: PropTypes) => {
         <Column label={messages.capacity} value={data.cubicCapacity + ' cc.'} />
 
         <Column
-          label={messages.vehicleWeight}
-          value={data.capacityWeight + ' kg'}
+          label={messages.capacityWeight}
+          value={data.capacityWeight ? data.capacityWeight + ' kg' : ''}
         />
       </Row>
       <Row>

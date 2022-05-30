@@ -37,6 +37,9 @@ export const GET_USERS_VEHICLE_DETAIL = gql`
         useGroup
         driversPassengers
         standingPassengers
+        plateLocation
+        specialName
+        plateStatus
       }
       currentOwnerInfo {
         owner
@@ -50,7 +53,6 @@ export const GET_USERS_VEHICLE_DETAIL = gql`
         type
         date
         result
-        plateStatus
         nextInspectionDate
         lastInspectionDate
         insuranceStatus
