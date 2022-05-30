@@ -223,6 +223,10 @@ export const messages = defineMessages({
     id: 'sp.vehicles:next-insp',
     defaultMessage: 'Næsta aðalskoðun',
   },
+  nextAnyInspection: {
+    id: 'sp.vehicles:next-any-insp',
+    defaultMessage: 'Næsta skoðun',
+  },
   lastInspection: {
     id: 'sp.vehicles:last-insp',
     defaultMessage: 'Síðasta skoðun',
