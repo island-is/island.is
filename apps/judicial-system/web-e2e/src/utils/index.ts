@@ -193,7 +193,7 @@ export const makeCaseFile = (
   size = 100,
 ): CaseFile => {
   return {
-    id: 'test_case_file_id',
+    id,
     created: '2020-09-16T19:50:08.033Z',
     modified: '2020-09-16T19:50:08.033Z',
     caseId,

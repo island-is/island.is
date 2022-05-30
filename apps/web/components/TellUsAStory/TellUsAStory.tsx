@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React from 'react'
 import { MutationResult, useMutation } from '@apollo/client'
 import {
   TellUsAStoryForm,

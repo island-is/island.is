@@ -60,7 +60,6 @@ const getTimeline = (
   let i = 0
   let offset = 50
   let lastTimestamp = 0
-  let lastYear = 0
 
   let currentMonth = 0
 
@@ -86,7 +85,6 @@ const getTimeline = (
           offset={offset}
         />,
       )
-      lastYear = year
       monthEvents.map((event, idx) => {
         // we increase the space between items if they are far apart in time
         const timestamp = new Date(event.date).getTime()
