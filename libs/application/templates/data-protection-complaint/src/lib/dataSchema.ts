@@ -1,4 +1,3 @@
-import { DefaultEvents } from '@island.is/application/core'
 import * as kennitala from 'kennitala'
 import * as z from 'zod'
 import { NO, YES } from '../shared'

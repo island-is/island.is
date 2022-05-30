@@ -18,10 +18,6 @@ import {
   EnhancedFetchAPI,
 } from '@island.is/clients/middlewares'
 import { EinstaklingarApi } from '@island.is/clients/national-registry-v2'
-import type {
-  EinstaklingarGetEinstaklingurRequest,
-  EinstaklingarGetForsjaRequest,
-} from '@island.is/clients/national-registry-v2'
 import { RskProcuringClient } from '@island.is/clients/rsk/procuring'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'

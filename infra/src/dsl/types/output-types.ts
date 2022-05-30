@@ -38,6 +38,7 @@ export interface ServiceHelm {
     }
   }
   healthCheck: {
+    port?: number
     liveness: {
       path: string
       initialDelaySeconds: number
