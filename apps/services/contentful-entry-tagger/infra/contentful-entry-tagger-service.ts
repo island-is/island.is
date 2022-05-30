@@ -9,3 +9,22 @@ export const serviceSetup = (): ServiceBuilder<'contentful-entry-tagger-service'
       CONTENTFUL_MANAGEMENT_ACCESS_TOKEN:
         '/k8s/contentful-entry-tagger/CONTENTFUL_MANAGEMENT_ACCESS_TOKEN',
     })
+    .ingress({
+      primary: {
+        host: {
+          dev: 'contentful-entry-tagger-service',
+          staging: 'contentful-entry-tagger-service',
+          prod: 'contentful-entry-tagger-service.devland.is',
+        },
+        paths: ['/'],
+        extraAnnotations: {
+          dev: {
+            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
+          },
+          staging: {
+            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
+          },
+          prod: { 'nginx.ingress.kubernetes.io/enable-global-auth': 'false' },
+        },
+      },
+    })
