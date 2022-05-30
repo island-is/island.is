@@ -12,7 +12,6 @@ import * as m from '../../lib/messages'
 import {
   ApproveOptions,
   FAFieldBaseProps,
-  Spouse,
   SummaryComment as SummaryCommentType,
 } from '../../lib/types'
 import { Routes } from '../../lib/constants'
