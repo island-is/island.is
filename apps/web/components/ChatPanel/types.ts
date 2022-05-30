@@ -28,6 +28,9 @@ export interface WatsonChatPanelProps {
 
   // Whether the default launcher is shown
   showLauncher?: boolean
+
+  // If don't use the default launcher that IBM Watson provides, should the chat bubble launcher be pushed up?
+  pushUp?: boolean
 }
 
 export type WatsonIntegration =

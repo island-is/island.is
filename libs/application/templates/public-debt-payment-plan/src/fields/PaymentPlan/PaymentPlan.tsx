@@ -1,6 +1,5 @@
 import {
   GetScheduleDistributionInput,
-  PaymentScheduleDebts,
   PaymentScheduleDistribution,
 } from '@island.is/api/schema'
 import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
@@ -28,7 +27,6 @@ import {
   PaymentModeState,
   PaymentPlans,
   PrerequisitesResult,
-  PublicDebtPaymentPlan,
 } from '../../types'
 import { PaymentPlanTable } from '../components/PaymentPlanTable/PaymentPlanTable'
 import { PlanSlider } from '../components/PlanSlider/PlanSlider'
