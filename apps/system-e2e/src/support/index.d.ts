@@ -8,6 +8,6 @@ declare namespace Cypress {
      * Custom command to log in using cognito
      * @example cy.loginViaCognito()
      */
-    ensureLoggedIn({ url: string }): Chainable<Element>
+    ensureLoggedIn({ cognitoUsername: string, cognitoPassword: string, phoneNumber: string }): Chainable<Element>
   }
 }

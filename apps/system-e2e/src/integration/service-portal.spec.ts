@@ -5,7 +5,11 @@ Cypress.config(
 
 describe('web', () => {
   before(() => {
-    cy.ensureLoggedIn({ url: '/minarsidur/' })
+    cy.ensureLoggedIn({
+      Cypresss.env('COGNITO_USERNAME'),
+      Cypresss.env('COGNITO_PASSWORD'),
+      Cypresss.env('PHONE_NUMBER'),
+    })
   })
   it('should navigate serviceportal', () => {
     cy.visit('/minarsidur/')

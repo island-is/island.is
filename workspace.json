@@ -9352,7 +9352,7 @@
             "exclude": ["**/node_modules/**", "!apps/system-e2e/**/*"]
           }
         },
-        "system-test": {
+        "e2e": {
           "builder": "@nrwl/cypress:cypress",
           "options": {
             "cypressConfig": "apps/system-e2e/cypress.json",

@@ -374,7 +374,7 @@
     "cross-spawn": "7.0.3",
     "csstype": "2.6.13",
     "csv-parse": "4.16.0",
-    "cypress": "8.4.1",
+    "cypress": "9.6",
     "dotenv": "14.3.2",
     "esbuild": "0.12.1",
     "eslint": "7.21.0",
