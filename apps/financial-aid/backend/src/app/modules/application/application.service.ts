@@ -360,7 +360,7 @@ export class ApplicationService {
       ),
     )
 
-    if (application.spouseNationalId && !application.applicationSystemId) {
+    if (application.spouseNationalId && !isApplicationSystem) {
       const emailData = getApplicantEmailDataFromEventType(
         'SPOUSE',
         environment.oskBaseUrl,
