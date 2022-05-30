@@ -9,13 +9,3 @@ export const serviceSetup = (): ServiceBuilder<'contentful-entry-tagger-service'
       CONTENTFUL_MANAGEMENT_ACCESS_TOKEN:
         '/k8s/contentful-entry-tagger/CONTENTFUL_MANAGEMENT_ACCESS_TOKEN',
     })
-    .resources({
-      requests: {
-        cpu: '100m',
-        memory: '256Mi',
-      },
-      limits: {
-        cpu: '400m',
-        memory: '1024Mi',
-      },
-    })
