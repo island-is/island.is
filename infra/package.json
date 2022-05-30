@@ -21,8 +21,10 @@
   },
   "dependencies": {
     "@aws-sdk/client-ssm": "3.49.0",
+    "@types/lodash": "4.14.160",
     "aws-sdk": "^2.1003.0",
     "js-yaml": "4.0.0",
+    "lodash": "4.17.21",
     "yargs": "17.2.1"
   }
 }
