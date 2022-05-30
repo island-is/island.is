@@ -93,7 +93,6 @@ export const LanguageToggler = ({
       }
     }
 
-    // If the subArticle either wasn't there
     if (slugs.length === 0) {
       for (let i = 0; i < responses.length; i += 1) {
         const res = responses[i]
