@@ -40,10 +40,16 @@ export class AppRepository {
   }
 
   async tagEntry(entry: Entry, tags: string[]) {
+    const isAsset = entry.sys.type === 'Asset'
+
     const managementClient = this.getManagementClient()
     const space = await managementClient.getSpace(SPACE_ID)
     const environment = await space.getEnvironment(ENVIRONMENT)
-    const entryFromServer = await environment.getEntry(entry.sys.id)
+
+    const entryFromServer = isAsset
+      ? await environment.getAsset(entry.sys.id)
+      : await environment.getEntry(entry.sys.id)
+
     const { items: allTagsFromServer } = await environment.getTags({
       limit: MAX_TAGS_PER_ENVIRONMENT,
     })

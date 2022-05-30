@@ -22,10 +22,14 @@ export class AppService {
       .map((role) => slugify(role.name))
 
     if (tags.length === 0) {
-      return 'Entry creator does not belong to any tag-related role so no tag will be applied to the new entry'
+      return
     }
 
-    // TODO: create tags if they don't already exist
+    this.logger.info(
+      `Attempting to tag entry or asset with id: ${
+        entry.sys.id
+      } with tags ${tags.join(', ')}`,
+    )
 
     return await this.appRepository.tagEntry(entry, tags)
   }
@@ -33,6 +37,9 @@ export class AppService {
   async handleEntryCreation(entry: Entry) {
     try {
       const result = await this.tagEntry(entry)
+      this.logger.info(
+        `Entry or asset with id: ${entry.sys.id} has been tagged`,
+      )
       return result
     } catch (error) {
       this.logger.error(

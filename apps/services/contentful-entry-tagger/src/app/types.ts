@@ -13,7 +13,7 @@ export interface Entry {
   sys: {
     space: { sys: { type: 'Link'; linkType: 'Space'; id: string } }
     id: string
-    type: 'Entry'
+    type: string
     createdAt: string
     updatedAt: string
     environment: { sys: { id: string; type: 'Link'; linkType: 'Environment' } }
