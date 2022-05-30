@@ -431,8 +431,6 @@ export class CmsContentfulService {
       ))
     }
 
-    console.log(urls)
-
     return {
       id: result?.sys?.id,
       slug: slugs,
