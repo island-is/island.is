@@ -15,23 +15,31 @@ import {
   CaseFileState,
 } from '@island.is/judicial-system/types'
 
-export const intercept = (res: Case, shouldFail?: boolean) => {
+export enum Operation {
+  CaseQuery = 'CaseQuery',
+  RestrictedCaseQuery = 'RestrictedCaseQuery',
+  UploadFileToCourtMutation = 'UploadFileToCourtMutation',
+  UpdateCaseMutation = 'UpdateCaseMutation',
+  SendNotificationMutation = 'SendNotificationMutation',
+}
+
+export const intercept = (res: Case, forceFail?: Operation) => {
   cy.intercept('POST', '**/api/graphql', (req) => {
-    if (hasOperationName(req, 'CaseQuery')) {
+    if (hasOperationName(req, Operation.CaseQuery)) {
       req.alias = 'gqlCaseQuery'
       req.reply({
         data: {
           case: res,
         },
       })
-    } else if (hasOperationName(req, 'RestrictedCaseQuery')) {
+    } else if (hasOperationName(req, Operation.RestrictedCaseQuery)) {
       req.alias = 'gqlCaseQuery'
       req.reply({
         data: {
           restrictedCase: res,
         },
       })
-    } else if (hasOperationName(req, 'UploadFileToCourtMutation')) {
+    } else if (hasOperationName(req, Operation.UploadFileToCourtMutation)) {
       req.alias = 'UploadFileToCourtMutation'
       req.reply({
         data: {
@@ -41,7 +49,7 @@ export const intercept = (res: Case, shouldFail?: boolean) => {
           },
         },
       })
-    } else if (hasOperationName(req, 'UpdateCaseMutation')) {
+    } else if (hasOperationName(req, Operation.UpdateCaseMutation)) {
       const { body } = req
       req.alias = 'UpdateCaseMutation'
       req.reply({
@@ -49,12 +57,13 @@ export const intercept = (res: Case, shouldFail?: boolean) => {
           updateCase: { ...body.variables?.input, __typename: 'Case' },
         },
       })
-    } else if (hasOperationName(req, 'SendNotificationMutation')) {
+    } else if (hasOperationName(req, Operation.SendNotificationMutation)) {
       req.alias = 'SendNotificationMutation'
       req.reply({
-        fixture: shouldFail
-          ? 'sendNotificationFailedMutationResponse'
-          : 'sendNotificationMutationResponse',
+        fixture:
+          forceFail === Operation.SendNotificationMutation
+            ? 'sendNotificationFailedMutationResponse'
+            : 'sendNotificationMutationResponse',
       })
     }
   })
