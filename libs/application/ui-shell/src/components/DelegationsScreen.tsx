@@ -84,7 +84,7 @@ export const DelegationsScreen = ({
       }
     }
     applicationSupportsDelegations()
-  }, [type, user?.profile.actor, switchUser, checkDelegation])
+  }, [type, user?.profile.actor, switchUser, checkDelegation, featureFlagClient])
 
   // Check if user has delegations of the delegation types the application supports
   useEffect(() => {
