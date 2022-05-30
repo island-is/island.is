@@ -8088,6 +8088,60 @@
         "docker-express": {}
       }
     },
+    "services-contentful-entry-tagger": {
+      "root": "apps/services/contentful-entry-tagger",
+      "sourceRoot": "apps/services/contentful-entry-tagger/src",
+      "projectType": "application",
+      "prefix": "services-contentful-entry-tagger",
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/apps/services/contentful-entry-tagger",
+            "main": "apps/services/contentful-entry-tagger/src/main.ts",
+            "tsConfig": "apps/services/contentful-entry-tagger/tsconfig.app.json",
+            "assets": ["apps/services/contentful-entry-tagger/src/assets"]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/services/contentful-entry-tagger/src/environments/environment.ts",
+                  "with": "apps/services/contentful-entry-tagger/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "services-contentful-entry-tagger:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "apps/services/contentful-entry-tagger/**/*.ts"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/apps/services/contentful-entry-tagger"],
+          "options": {
+            "jestConfig": "apps/services/contentful-entry-tagger/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      },
+      "docker-express": {}
+    },
     "services-documents": {
       "root": "apps/services/documents",
       "sourceRoot": "apps/services/documents/src",
@@ -9566,59 +9620,6 @@
             "linter": "eslint",
             "tsConfig": ["apps/web-e2e/tsconfig.e2e.json"],
             "exclude": ["**/node_modules/**", "!apps/web-e2e/**/*"]
-          }
-        }
-      }
-    },
-    "services-contentful-entry-tagger": {
-      "root": "apps/services/contentful-entry-tagger",
-      "sourceRoot": "apps/services/contentful-entry-tagger/src",
-      "projectType": "application",
-      "prefix": "services-contentful-entry-tagger",
-      "architect": {
-        "build": {
-          "builder": "@nrwl/node:build",
-          "outputs": ["{options.outputPath}"],
-          "options": {
-            "outputPath": "dist/apps/services/contentful-entry-tagger",
-            "main": "apps/services/contentful-entry-tagger/src/main.ts",
-            "tsConfig": "apps/services/contentful-entry-tagger/tsconfig.app.json",
-            "assets": ["apps/services/contentful-entry-tagger/src/assets"]
-          },
-          "configurations": {
-            "production": {
-              "optimization": true,
-              "extractLicenses": true,
-              "inspect": false,
-              "fileReplacements": [
-                {
-                  "replace": "apps/services/contentful-entry-tagger/src/environments/environment.ts",
-                  "with": "apps/services/contentful-entry-tagger/src/environments/environment.prod.ts"
-                }
-              ]
-            }
-          }
-        },
-        "serve": {
-          "builder": "@nrwl/node:execute",
-          "options": {
-            "buildTarget": "services-contentful-entry-tagger:build"
-          }
-        },
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": [
-              "apps/services/contentful-entry-tagger/**/*.ts"
-            ]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/apps/services/contentful-entry-tagger"],
-          "options": {
-            "jestConfig": "apps/services/contentful-entry-tagger/jest.config.js",
-            "passWithNoTests": true
           }
         }
       }

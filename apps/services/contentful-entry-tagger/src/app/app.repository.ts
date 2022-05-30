@@ -69,8 +69,5 @@ export class AppRepository {
     }
 
     await updatedEntry.update()
-
-    // TODO: think about what should really be returned
-    return updatedEntry
   }
 }
