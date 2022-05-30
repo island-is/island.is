@@ -1,4 +1,5 @@
 import { Args, Query, Resolver } from '@nestjs/graphql'
+import { ApiScope } from '@island.is/auth/scopes'
 import { UseGuards } from '@nestjs/common'
 import type { User } from '@island.is/auth-nest-tools'
 import { VehiclesService } from './api-domains-vehicles.service'
@@ -8,11 +9,13 @@ import { Audit } from '@island.is/nest/audit'
 import {
   IdsUserGuard,
   ScopesGuard,
+  Scopes,
   CurrentUser,
 } from '@island.is/auth-nest-tools'
 import { GetVehicleDetailInput } from '../dto/getVehicleDetailInput'
 import { VehiclesDetail } from '../models/getVehicleDetail.model'
 @UseGuards(IdsUserGuard, ScopesGuard)
+// @Scopes(ApiScope.vehicles)
 @Resolver()
 export class VehiclesResolver {
   constructor(private readonly vehiclesService: VehiclesService) {}

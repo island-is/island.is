@@ -57,6 +57,8 @@ if (userMocked) {
       ApiScope.meDetails,
       ApiScope.licensesVerify,
       ApiScope.company,
+      //TODO: Add back vehicle API SCOPE WHEN FEATURE IS READY FOR MERGE.
+      // ApiScope.vehicles,
     ],
     post_logout_redirect_uri: `${window.location.origin}`,
     userStorePrefix: 'sp.',
