@@ -16,8 +16,9 @@ import { format as formatNationalId } from 'kennitala'
 import { m } from '../../lib/messages'
 import { formatPhoneNumber } from '../../utils/index'
 import format from 'date-fns/format'
-import { Asset } from '../../types'
+import { Asset, Answers as AODAnswers } from '../../types'
 import { FormatMessage } from '@island.is/localization'
+import { getFileRecipientName } from '../../lib/utils'
 
 const theDeceased: Field[] = [
   buildDividerField({}),
@@ -215,7 +216,10 @@ const files: Field[] = [
     {
       noOptions: true,
       tag: ({ answers }: Application) =>
-        (answers.certificateOfDeathAnnouncement as string) || '',
+        getFileRecipientName(
+          answers as AODAnswers,
+          answers.certificateOfDeathAnnouncement as string,
+        ),
     },
   ),
   buildCustomField(
@@ -228,7 +232,10 @@ const files: Field[] = [
     {
       noOptions: true,
       tag: ({ answers }: Application) =>
-        (answers.financesDataCollectionPermission as string) || '',
+        getFileRecipientName(
+          answers as AODAnswers,
+          answers.financesDataCollectionPermission as string,
+        ),
     },
   ),
   buildCustomField(
@@ -241,7 +248,10 @@ const files: Field[] = [
     {
       noOptions: true,
       tag: ({ answers }: Application) =>
-        (answers.authorizationForFuneralExpenses as string) || '',
+        getFileRecipientName(
+          answers as AODAnswers,
+          answers.authorizationForFuneralExpenses as string,
+        ),
     },
   ),
 ]

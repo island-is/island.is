@@ -80,12 +80,14 @@ export const RealEstateAndLandsRepeater: FC<FieldBaseProps<Answers>> = ({
         }, [] as JSX.Element[])}
       </GridRow>
       {fields.map((field, index) => (
-        <Item
-          field={field}
-          fieldName={id ?? index.toString()}
-          remove={handleRemoveProperty}
-          index={index}
-        />
+        <Box key={field.id} hidden={field.initial}>
+          <Item
+            field={field}
+            fieldName={id ?? index.toString()}
+            remove={handleRemoveProperty}
+            index={index}
+          />
+        </Box>
       ))}
       <Box marginTop={1}>
         <Button
@@ -160,12 +162,7 @@ const Item = ({
   }, [getProperty, address, addressField, propertyNumberInput, setValue])
 
   return (
-    <Box
-      position="relative"
-      key={field.id}
-      marginTop={2}
-      hidden={field.initial}
-    >
+    <Box position="relative" key={field.id} marginTop={2}>
       <Controller
         name={initialField}
         control={control}

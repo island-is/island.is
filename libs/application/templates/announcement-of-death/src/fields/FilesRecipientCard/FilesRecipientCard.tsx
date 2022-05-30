@@ -11,7 +11,6 @@ import {
 import { Box, Tag, Text } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { Answers as AODAnswers } from '../../types'
-import { FieldValue } from 'aws-sdk/clients/cloudsearch'
 
 type FilesRecipientCardProps = {
   field: {
@@ -27,7 +26,6 @@ export const FilesRecipientCard: FC<
   FieldBaseProps<AODAnswers> & FilesRecipientCardProps
 > = ({ application, field }) => {
   const { formatMessage } = useLocale()
-
   return (
     <Box
       marginTop={2}
@@ -69,12 +67,12 @@ export const FilesRecipientCard: FC<
               application.answers?.estateMembers.length !== 0
                 ? application.answers?.estateMembers?.map((estateMember) => ({
                     label: estateMember.name,
-                    value: estateMember.name,
+                    value: estateMember.nationalId,
                   }))
                 : [
                     {
                       label: application.answers.applicantName,
-                      value: application.answers.applicantName,
+                      value: application.applicant,
                     },
                   ]
             }
