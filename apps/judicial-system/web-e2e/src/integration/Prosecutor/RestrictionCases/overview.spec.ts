@@ -96,4 +96,20 @@ describe(`${STEP_SIX_ROUTE}/:id`, () => {
      */
     cy.getByTestid('tdTag').should('contain', 'Krafa móttekin')
   })
+
+  it.only('should show an error message if sending a notification failed', () => {
+    const caseData = makeRestrictionCase()
+    const caseDataAddition = {
+      ...caseData,
+      prosecutor: makeProsecutor(),
+      court: makeCourt(),
+    }
+    const shouldFail = true
+
+    intercept(caseDataAddition, shouldFail)
+
+    cy.getByTestid('continueButton').click()
+
+    cy.getByTestid('modalErrorMessage').should('exist')
+  })
 })
