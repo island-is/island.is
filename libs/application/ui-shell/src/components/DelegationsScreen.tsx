@@ -44,9 +44,6 @@ export const DelegationsScreen = ({
   const history = useHistory()
   const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
 
-  useEffect(() => {
-    // switchUser('0101307789')
-  }, [])
   // Check for user delegations if application supports delegations
   const { data: delegations, error } = useQuery(ACTOR_DELEGATIONS, {
     skip: !alternativeSubjects && !screenData.allowedDelegations,
