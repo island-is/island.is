@@ -32,6 +32,7 @@ export const GET_USERS_VEHICLE_DETAIL = gql`
         vehicleGroup
         color
         reggroup
+        reggroupName
         passengers
         useGroup
         driversPassengers

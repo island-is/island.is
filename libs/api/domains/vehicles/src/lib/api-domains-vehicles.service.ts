@@ -151,6 +151,11 @@ export class VehiclesService {
               ? data.plates[0].reggroup
               : null
             : null,
+          reggroupName: data.plates
+            ? data.plates.length > 0
+              ? data.plates[0].reggroupname
+              : null
+            : null,
           passengers: data.techincal?.pass,
           useGroup: data.usegroup,
           driversPassengers: data.techincal?.passbydr,

@@ -46,7 +46,7 @@ const RegistrationInfoItem = ({ data }: PropTypes) => {
       <Row>
         <Column label={messages.color} value={data.color} />
 
-        <Column label={messages.regType} value={data.reggroup} />
+        <Column label={messages.regType} value={data.reggroupName} />
       </Row>
       <Row>
         <Column label={messages.passengers} value={data.passengers} />

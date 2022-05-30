@@ -107,6 +107,9 @@ export class VehiclesRegistrationInfo {
   @Field(() => String, { nullable: true })
   reggroup?: string | null // Skráningarflokkur // plates -> reggroup
 
+  @Field(() => String, { nullable: true })
+  reggroupName?: string | null // Skráningarflokkur // plates -> reggroupname
+
   @Field(() => Number, { nullable: true })
   passengers?: number | null
 
