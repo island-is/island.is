@@ -28,9 +28,14 @@ import {
 } from './index'
 
 import { DirectTaxPaymentsModal } from '..'
-import { findFamilyStatus } from '../../lib/utils'
+import { findFamilyStatus, hasSpouse } from '../../lib/utils'
+import { useEmail } from '../../lib/hooks/useEmail'
 
-const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
+const SummaryForm = ({
+  application,
+  goToScreen,
+  setBeforeSubmitCallback,
+}: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
   const { id, answers, externalData } = application
   const summaryCommentType = SummaryCommentType.FORMCOMMENT
@@ -51,6 +56,19 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
       )
     }
   }, [externalData.nationalRegistry?.data?.municipality])
+
+  const { sendSpouseEmail } = useEmail(application)
+
+  if (hasSpouse(answers, externalData)) {
+    setBeforeSubmitCallback &&
+      setBeforeSubmitCallback(async () => {
+        const response = await sendSpouseEmail()
+        if (response) {
+          return [true, null]
+        }
+        return [false, 'Failed to send emails']
+      })
+  }
 
   return (
     <>
