@@ -69,5 +69,7 @@ export class AppRepository {
     }
 
     await updatedEntry.update()
+
+    return updatedEntry
   }
 }
