@@ -20976,10 +20976,10 @@ karma-source-map-support@1.4.0:
   dependencies:
     source-map-support "^0.5.5"
 
-kennitala@1.2.4:
-  version "1.2.4"
-  resolved "https://registry.yarnpkg.com/kennitala/-/kennitala-1.2.4.tgz#b478ae0d62b9687d458e611806692596e2bd6cac"
-  integrity sha512-hxnzr39l4SlJHvhnRtW5Z9hyNiY6LUKjGBMnakLpmYEnIrxXXx5+wpBTj59ixw7l40D5LJtrFdlqnBG8IQ0N8Q==
+kennitala@2.0.0-beta.1:
+  version "2.0.0-beta.1"
+  resolved "https://registry.yarnpkg.com/kennitala/-/kennitala-2.0.0-beta.1.tgz#6e1a73bbddb1d8411a00f1b78957956832115b85"
+  integrity sha512-TaJwpF9Z7yVJ3O5aGQWQk5PJNeQ5IBn5il4iLrARDehGq/KUsPFSyIskZnrOx5fnU3ViC+AR/XQzVwlJfY/Ycg==
 
 keyv@^3.0.0:
   version "3.1.0"
