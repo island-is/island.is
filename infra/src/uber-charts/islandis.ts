@@ -1,6 +1,7 @@
 import { serviceSetup as apiSetup } from '../../../apps/api/infra/api'
 import { serviceSetup as webSetup } from '../../../apps/web/infra/web'
 import { serviceSetup as searchIndexerSetup } from '../../../apps/services/search-indexer/infra/search-indexer-service'
+import { serviceSetup as contentfulEntryTaggerSetup } from '../../../apps/services/contentful-entry-tagger/infra/contentful-entry-tagger-service'
 
 import {
   serviceSetup as appSystemApiSetup,
@@ -61,6 +62,7 @@ const api = apiSetup({
 })
 const web = webSetup({ api: api })
 const searchIndexer = searchIndexerSetup()
+const contentfulEntryTagger = contentfulEntryTaggerSetup()
 
 const xroadCollector = xroadCollectorSetup()
 
@@ -108,6 +110,7 @@ export const Services: EnvironmentServices = {
     appSystemApiWorker,
     userNotificationService,
     userNotificationWorkerService,
+    contentfulEntryTagger,
   ],
   staging: [
     appSystemApi,
@@ -168,4 +171,5 @@ export const FeatureDeploymentServices = []
 export const ExcludedFeatureDeploymentServices = [
   userNotificationService,
   userNotificationWorkerService,
+  contentfulEntryTagger,
 ]
