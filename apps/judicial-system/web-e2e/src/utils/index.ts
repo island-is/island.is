@@ -189,7 +189,6 @@ export const makeCaseFile = (
   name = 'test_file_name',
   type = 'pdf',
   state = CaseFileState.STORED_IN_RVG,
-  id = 'test_case_file_id',
   key = 'test_id',
   size = 100,
 ): CaseFile => {
