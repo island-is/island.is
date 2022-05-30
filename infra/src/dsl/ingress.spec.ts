@@ -19,7 +19,7 @@ const Staging: EnvironmentConfig = {
 }
 
 describe('Ingress definitions', () => {
-  it('Support mutltiple ingresses', () => {
+  it('Support multiple ingresses', () => {
     const sut = service('api').ingress({
       primary: {
         host: { dev: 'a', staging: 'a', prod: 'a' },
