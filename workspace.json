@@ -8107,13 +8107,7 @@
             "production": {
               "optimization": true,
               "extractLicenses": true,
-              "inspect": false,
-              "fileReplacements": [
-                {
-                  "replace": "apps/services/contentful-entry-tagger/src/environments/environment.ts",
-                  "with": "apps/services/contentful-entry-tagger/src/environments/environment.prod.ts"
-                }
-              ]
+              "inspect": false
             }
           }
         },
