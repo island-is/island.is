@@ -3,7 +3,7 @@ import { ApiConfiguration } from './apiConfiguration'
 import { exportedApis } from './apis'
 import { DrivingLicenseBookClientApiFactory } from './drivingLicenseBookClient.service'
 
-// what check bare minimum 
+// what check bare minimum
 
 @Module({
   providers: [DrivingLicenseBookClientApiFactory],

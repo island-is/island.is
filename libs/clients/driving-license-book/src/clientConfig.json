@@ -9,31 +9,13 @@
       "email": "samgongustofa@samgongustofa.is"
     },
     "version": "v1",
-    "x-category": [
-      "personal",
-      "official"
-    ],
-    "x-pricing": [
-      "free",
-      "paid"
-    ],
+    "x-category": ["personal", "official"],
+    "x-pricing": ["free", "paid"],
     "x-links": [
-      [
-        "documentation",
-        "https://www.samgongustofa.is/"
-      ],
-      [
-        "responsibleParty",
-        "mailto:samgongustofa@samgongustofa.is"
-      ],
-      [
-        "bugReport",
-        "https://www.samgongustofa.is/"
-      ],
-      [
-        "featureRequest",
-        "https://www.samgongustofa.is/"
-      ]
+      ["documentation", "https://www.samgongustofa.is/"],
+      ["responsibleParty", "mailto:samgongustofa@samgongustofa.is"],
+      ["bugReport", "https://www.samgongustofa.is/"],
+      ["featureRequest", "https://www.samgongustofa.is/"]
     ]
   },
   "servers": [
@@ -44,9 +26,7 @@
   "paths": {
     "/api/Authentication/Authenticate": {
       "post": {
-        "tags": [
-          "DrivingLicenseBook"
-        ],
+        "tags": ["DrivingLicenseBook"],
         "summary": "Function to get jwt for user for authentication.",
         "requestBody": {
           "description": "username and password for user",
@@ -94,9 +74,7 @@
     },
     "/api/School/GetSchoolTypes": {
       "get": {
-        "tags": [
-          "DrivingLicenseBook"
-        ],
+        "tags": ["DrivingLicenseBook"],
         "summary": "Fetches all types of driving schools",
         "parameters": [
           {
@@ -157,9 +135,7 @@
     },
     "/api/School/GetSchoolTestResults/{bookId}": {
       "get": {
-        "tags": [
-          "DrivingLicenseBook"
-        ],
+        "tags": ["DrivingLicenseBook"],
         "summary": "Fetches all test results for student in driving schools,\r\nif id is sent in then only one test result is returned.",
         "parameters": [
           {
@@ -229,9 +205,7 @@
     },
     "/api/School/CreateSchoolTestResult": {
       "post": {
-        "tags": [
-          "DrivingLicenseBook"
-        ],
+        "tags": ["DrivingLicenseBook"],
         "summary": "Register test result from driving school",
         "requestBody": {
           "description": "Information about test result from driving school",
@@ -302,9 +276,7 @@
     },
     "/api/School/UpdateSchoolTestResult/{id}": {
       "put": {
-        "tags": [
-          "DrivingLicenseBook"
-        ],
+        "tags": ["DrivingLicenseBook"],
         "summary": "Updates result for certain test from driving school",
         "parameters": [
           {
@@ -392,9 +364,7 @@
     },
     "/api/School/DeleteSchoolTestResult/{id}": {
       "delete": {
-        "tags": [
-          "DrivingLicenseBook"
-        ],
+        "tags": ["DrivingLicenseBook"],
         "summary": "Deletes test result from driving school",
         "parameters": [
           {
@@ -450,9 +420,7 @@
     },
     "/api/School/GetSchoolForSchoolStaff/{userSsn}": {
       "get": {
-        "tags": [
-          "DrivingLicenseBook"
-        ],
+        "tags": ["DrivingLicenseBook"],
         "summary": "Gets the school a person with a given SSN is associated with, if any. Returns null if person is not a school employee.",
         "parameters": [
           {
@@ -507,9 +475,7 @@
     },
     "/api/Student/GetStudentList": {
       "get": {
-        "tags": [
-          "DrivingLicenseBook"
-        ],
+        "tags": ["DrivingLicenseBook"],
         "summary": "Fetches list of all students. Can search student by either name or social security number.",
         "parameters": [
           {
@@ -595,9 +561,7 @@
     },
     "/api/Student/CreateLicenseBook": {
       "post": {
-        "tags": [
-          "DrivingLicenseBook"
-        ],
+        "tags": ["DrivingLicenseBook"],
         "summary": "Registeres new driving license book",
         "requestBody": {
           "description": "Information in book to register",
@@ -668,9 +632,7 @@
     },
     "/api/Student/GetStudentActiveBookId/{ssn}": {
       "get": {
-        "tags": [
-          "DrivingLicenseBook"
-        ],
+        "tags": ["DrivingLicenseBook"],
         "summary": "Fetches book ID for student's active book for the selected license category",
         "parameters": [
           {
@@ -741,9 +703,7 @@
     },
     "/api/Student/GetStudentOverview/{ssn}": {
       "get": {
-        "tags": [
-          "DrivingLicenseBook"
-        ],
+        "tags": ["DrivingLicenseBook"],
         "summary": "Fetches more information about student, the student overview, including all driving license books",
         "parameters": [
           {
@@ -805,9 +765,7 @@
     },
     "/api/Student/GetLicenseBookList/{ssn}": {
       "get": {
-        "tags": [
-          "DrivingLicenseBook"
-        ],
+        "tags": ["DrivingLicenseBook"],
         "summary": "Fetches currently active driving license book for student",
         "parameters": [
           {
@@ -869,9 +827,7 @@
     },
     "/api/Student/GetLicenseBook/{id}": {
       "get": {
-        "tags": [
-          "DrivingLicenseBook"
-        ],
+        "tags": ["DrivingLicenseBook"],
         "summary": "Fetches the driving license book for student by id",
         "parameters": [
           {
@@ -933,9 +889,7 @@
     },
     "/api/Student/UpdateLicenseBook/{id}": {
       "put": {
-        "tags": [
-          "DrivingLicenseBook"
-        ],
+        "tags": ["DrivingLicenseBook"],
         "summary": "Updates driving license book",
         "parameters": [
           {
@@ -1023,9 +977,7 @@
     },
     "/api/Student/DeleteLicenseBook/{id}": {
       "delete": {
-        "tags": [
-          "DrivingLicenseBook"
-        ],
+        "tags": ["DrivingLicenseBook"],
         "summary": "Deletes driving license book",
         "parameters": [
           {
@@ -1081,9 +1033,7 @@
     },
     "/api/Teacher/GetPracticalDrivingLessons/{bookId}": {
       "get": {
-        "tags": [
-          "DrivingLicenseBook"
-        ],
+        "tags": ["DrivingLicenseBook"],
         "summary": "Fetches list of all practical lessons for student,\r\nif id is sent only that lesson is fetched.",
         "parameters": [
           {
@@ -1153,9 +1103,7 @@
     },
     "/api/Teacher/GetStudentOverviewForTeacher/{teacherSsn}": {
       "get": {
-        "tags": [
-          "DrivingLicenseBook"
-        ],
+        "tags": ["DrivingLicenseBook"],
         "summary": "Fetches an overview of all students assigned to teacher.",
         "parameters": [
           {
@@ -1243,9 +1191,7 @@
     },
     "/api/Teacher/GetStudentsForTeacher/{teacherSsn}": {
       "get": {
-        "tags": [
-          "DrivingLicenseBook"
-        ],
+        "tags": ["DrivingLicenseBook"],
         "summary": "Fetches list of all students assigned to teacher",
         "parameters": [
           {
@@ -1333,9 +1279,7 @@
     },
     "/api/Teacher/CreatePracticalDrivingLesson": {
       "post": {
-        "tags": [
-          "DrivingLicenseBook"
-        ],
+        "tags": ["DrivingLicenseBook"],
         "summary": "Register practical lesson",
         "requestBody": {
           "description": "Information about practial lesson",
@@ -1406,9 +1350,7 @@
     },
     "/api/Teacher/UpdatePracticalDrivingLesson/{id}": {
       "put": {
-        "tags": [
-          "DrivingLicenseBook"
-        ],
+        "tags": ["DrivingLicenseBook"],
         "summary": "Update practical lesson",
         "parameters": [
           {
@@ -1496,9 +1438,7 @@
     },
     "/api/Teacher/DeletePracticalDrivingLesson/{id}": {
       "delete": {
-        "tags": [
-          "DrivingLicenseBook"
-        ],
+        "tags": ["DrivingLicenseBook"],
         "summary": "Deletes practical lesson",
         "parameters": [
           {
@@ -1554,9 +1494,7 @@
     },
     "/api/Teacher/GetExemptionTypes": {
       "get": {
-        "tags": [
-          "DrivingLicenseBook"
-        ],
+        "tags": ["DrivingLicenseBook"],
         "summary": "Fetches all types of exemptions for students",
         "parameters": [
           {
@@ -1617,9 +1555,7 @@
     },
     "/api/Teacher/GetExemption": {
       "get": {
-        "tags": [
-          "DrivingLicenseBook"
-        ],
+        "tags": ["DrivingLicenseBook"],
         "summary": "Fetches current applications about exemptions for particular student/instructor,\r\nif id is sent only that record is fetched",
         "parameters": [
           {
@@ -1705,9 +1641,7 @@
     },
     "/api/Teacher/CreateExemption": {
       "post": {
-        "tags": [
-          "DrivingLicenseBook"
-        ],
+        "tags": ["DrivingLicenseBook"],
         "summary": "Register new application about exemption for student",
         "requestBody": {
           "description": "Information about exemption",
@@ -1778,9 +1712,7 @@
     },
     "/api/Teacher/UpdateExemption/{id}": {
       "put": {
-        "tags": [
-          "DrivingLicenseBook"
-        ],
+        "tags": ["DrivingLicenseBook"],
         "summary": "Updates application about exemption for student",
         "parameters": [
           {
@@ -1868,9 +1800,7 @@
     },
     "/api/Teacher/DeleteExemption/{id}": {
       "delete": {
-        "tags": [
-          "DrivingLicenseBook"
-        ],
+        "tags": ["DrivingLicenseBook"],
         "summary": "Deletes application for exemption for student",
         "parameters": [
           {
@@ -1926,9 +1856,7 @@
     },
     "/api/TestCenter/GetTestTypes": {
       "get": {
-        "tags": [
-          "DrivingLicenseBook"
-        ],
+        "tags": ["DrivingLicenseBook"],
         "summary": "Fetches all types of tests",
         "parameters": [
           {
@@ -1989,9 +1917,7 @@
     },
     "/api/TestCenter/GetTestExamRights/{ssn}": {
       "get": {
-        "tags": [
-          "DrivingLicenseBook"
-        ],
+        "tags": ["DrivingLicenseBook"],
         "summary": "Check to see if student has examination rights",
         "parameters": [
           {
@@ -2072,9 +1998,7 @@
     },
     "/api/TestCenter/GetTestResult/{bookId}": {
       "get": {
-        "tags": [
-          "DrivingLicenseBook"
-        ],
+        "tags": ["DrivingLicenseBook"],
         "summary": "Fetches test result for particular student,\r\nif id is sent then fetched by it",
         "parameters": [
           {
@@ -2153,9 +2077,7 @@
     },
     "/api/TestCenter/CreateTestResult": {
       "post": {
-        "tags": [
-          "DrivingLicenseBook"
-        ],
+        "tags": ["DrivingLicenseBook"],
         "summary": "Register test result",
         "requestBody": {
           "description": "Information about the test result to register",
@@ -2226,9 +2148,7 @@
     },
     "/api/TestCenter/UpdateTestResult/{id}": {
       "put": {
-        "tags": [
-          "DrivingLicenseBook"
-        ],
+        "tags": ["DrivingLicenseBook"],
         "summary": "Updates the test result",
         "parameters": [
           {
@@ -2316,9 +2236,7 @@
     },
     "/api/TestCenter/DeleteTestResult/{id}": {
       "delete": {
-        "tags": [
-          "DrivingLicenseBook"
-        ],
+        "tags": ["DrivingLicenseBook"],
         "summary": "Delete test result",
         "parameters": [
           {
@@ -2374,9 +2292,7 @@
     },
     "/api/TestCenter/NewApplications": {
       "get": {
-        "tags": [
-          "DrivingLicenseBook"
-        ],
+        "tags": ["DrivingLicenseBook"],
         "summary": "Returns new Digital books or books in process \r\ncreated today. If date range is supplied then \r\nbooks for those dates are fetched.",
         "parameters": [
           {
@@ -2452,9 +2368,7 @@
     },
     "/api/TestCenter/StudentLicenseNumber": {
       "get": {
-        "tags": [
-          "DrivingLicenseBook"
-        ],
+        "tags": ["DrivingLicenseBook"],
         "summary": "Get student license number",
         "parameters": [
           {
@@ -2517,9 +2431,7 @@
     },
     "/api/TestCenter/ConfirmPracticalTestAndUpdateLicence": {
       "post": {
-        "tags": [
-          "DrivingLicenseBook"
-        ],
+        "tags": ["DrivingLicenseBook"],
         "summary": "Confirm practical driving license test",
         "parameters": [
           {
@@ -2723,10 +2635,7 @@
         "additionalProperties": false
       },
       "AuthenticateModel": {
-        "required": [
-          "password",
-          "username"
-        ],
+        "required": ["password", "username"],
         "type": "object",
         "properties": {
           "username": {
@@ -3510,10 +3419,7 @@
         "description": ""
       },
       "ExemptionUpdateRequestBody": {
-        "required": [
-          "createdOn",
-          "reasonForApplication"
-        ],
+        "required": ["createdOn", "reasonForApplication"],
         "type": "object",
         "properties": {
           "reasonForApplication": {
@@ -3772,12 +3678,7 @@
         "description": ""
       },
       "PracticalDrivingLessonCreateRequestBody": {
-        "required": [
-          "bookId",
-          "createdOn",
-          "minutes",
-          "teacherSsn"
-        ],
+        "required": ["bookId", "createdOn", "minutes", "teacherSsn"],
         "type": "object",
         "properties": {
           "bookId": {
@@ -3850,10 +3751,7 @@
         "description": ""
       },
       "PracticalDrivingLessonUpdateRequestBody": {
-        "required": [
-          "createdOn",
-          "minutes"
-        ],
+        "required": ["createdOn", "minutes"],
         "type": "object",
         "properties": {
           "minutes": {
@@ -4111,9 +4009,7 @@
         "description": ""
       },
       "SchoolTestResultUpdateRequestBody": {
-        "required": [
-          "createdOn"
-        ],
+        "required": ["createdOn"],
         "type": "object",
         "properties": {
           "createdOn": {
@@ -4595,11 +4491,7 @@
         "description": ""
       },
       "TestResultUpdateRequestBody": {
-        "required": [
-          "createdOn",
-          "hasPassed",
-          "score"
-        ],
+        "required": ["createdOn", "hasPassed", "score"],
         "type": "object",
         "properties": {
           "hasPassed": {
