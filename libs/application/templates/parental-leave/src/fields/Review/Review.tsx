@@ -922,7 +922,7 @@ export const Review: FC<ReviewScreenProps> = ({
         isLast={true}
       >
         <SummaryTimeline application={application} />
-        {new Date(periods[0].startDate).getTime() < new Date().getTime() && <p style={{color: 'red'}}>Starting date is in the past! The form won't be sent</p>}
+        {new Date(periods[0].startDate).getTime() < new Date().getTime() && <p style={{color: '#B30038', fontSize: '14px', fontWeight: '500'}}>{formatMessage(parentalLeaveFormMessages.reviewScreen.startDateInThePast)}</p>}
       </ReviewGroup>
 
       {/**
