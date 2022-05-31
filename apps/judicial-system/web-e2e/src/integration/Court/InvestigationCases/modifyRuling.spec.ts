@@ -1,4 +1,4 @@
-import { Case } from '@island.is/judicial-system/types'
+import { Case, CaseDecision } from '@island.is/judicial-system/types'
 import {
   IC_MODIFY_RULING_ROUTE,
   SIGNED_VERDICT_OVERVIEW,
@@ -11,7 +11,7 @@ describe(`${IC_MODIFY_RULING_ROUTE}/:id`, () => {
     cy.stubAPIResponses()
   })
 
-  it.only('should lock input for some fields', () => {
+  it('should not allow changes to certain inputs', () => {
     const caseData = makeInvestigationCase()
     const caseDataAddition: Case = {
       ...caseData,
@@ -19,6 +19,7 @@ describe(`${IC_MODIFY_RULING_ROUTE}/:id`, () => {
       legalArguments: 'lorem ipsum',
       demands:
         'Þess er krafist að Donald Duck, kt. 000000-0000, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til miðvikudagsins 16. september 2020, kl. 19:50, og verði gert að sæta einangrun á meðan á varðhaldi stendur.',
+      decision: CaseDecision.ACCEPTING,
     }
     cy.visit(`${IC_MODIFY_RULING_ROUTE}/test_id_stadfest`)
 

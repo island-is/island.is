@@ -577,6 +577,7 @@ export const Ruling: React.FC = () => {
                   setWorkingCase,
                 )
               }}
+              disabled={isModifyingRuling}
             />
           </Box>
         </Box>
@@ -673,6 +674,7 @@ export const Ruling: React.FC = () => {
                     setWorkingCase,
                   )
                 }}
+                disabled={isModifyingRuling}
                 required
               />
             </Box>
@@ -749,7 +751,9 @@ export const Ruling: React.FC = () => {
                 <DateTime
                   name="isolationToDate"
                   datepickerLabel="Einangrun til"
-                  disabled={!workingCase.isCustodyIsolation}
+                  disabled={
+                    isModifyingRuling || !workingCase.isCustodyIsolation
+                  }
                   selectedDate={workingCase.isolationToDate}
                   // Isolation can never be set in the past.
                   minDate={new Date()}
@@ -850,6 +854,7 @@ export const Ruling: React.FC = () => {
             textarea
             rows={7}
             autoExpand={{ on: true, maxHeight: 300 }}
+            disabled={isModifyingRuling}
           />
         </Box>
         <Box marginBottom={10}>
