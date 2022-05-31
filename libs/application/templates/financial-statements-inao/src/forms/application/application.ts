@@ -11,6 +11,7 @@ import { clientInfoSection } from './personalElection/clientInfoSection'
 import { m } from '../../lib/messages'
 import { keyNumbersSection } from './shared/keyNumbers/keyNumbersSection'
 import { overviewSection } from './shared/overviewSection'
+import { Logo } from '../../assets'
 
 export const getApplication = (): Form => {
   return buildForm({
@@ -19,6 +20,7 @@ export const getApplication = (): Form => {
     renderLastScreenButton: true,
     renderLastScreenBackButton: true,
     mode: FormModes.APPLYING,
+    logo: Logo,
     children: [
       buildSection({
         id: 'conditions',

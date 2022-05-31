@@ -6,6 +6,16 @@ export const m = defineMessages({
     defaultMessage: 'Stafræn skil ársreikninga',
     description: 'Application for Digital',
   },
+  inao: {
+    id: 'fsn.application:inao',
+    defaultMessage: 'Ríkisendurskoðun',
+    description: 'icelandic national audit',
+  },
+  serviceProvider: {
+    id: 'fsn.application:serviceProvider',
+    defaultMessage: 'Þjónustuaðili',
+    description: 'service provider',
+  },
   institutionName: {
     id: 'fsn.application.institution',
     defaultMessage: 'Ríkisendurskoðun',

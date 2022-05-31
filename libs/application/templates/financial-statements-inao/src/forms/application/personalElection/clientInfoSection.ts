@@ -8,7 +8,6 @@ import {
   buildTextField,
   buildRadioField,
 } from '@island.is/application/core'
-import { format as formatNationalId } from 'kennitala'
 import type { User } from '@island.is/api/domains/national-registry'
 import { UserProfile } from '../../../types/schema'
 import { m } from '../../../lib/messages'

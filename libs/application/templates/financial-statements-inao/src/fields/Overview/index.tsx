@@ -9,7 +9,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FinancialStatementsInao } from '../../lib/utils/dataSchema'
-import kennitala from 'kennitala'
+import { format as formatNationalId } from 'kennitala'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
 import { m } from '../../lib/messages'
 import { ValueLine } from './ValueLine'
@@ -27,7 +27,7 @@ export const Overview = ({ application }: FieldBaseProps) => {
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
               label={m.nationalId}
-              value={kennitala.format(answers.about.nationalId)}
+              value={formatNationalId(answers.about.nationalId)}
             />
           </GridColumn>
           <GridColumn span={['12/12', '6/12']}>
@@ -46,7 +46,7 @@ export const Overview = ({ application }: FieldBaseProps) => {
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
               label={m.powerOfAttorneyNationalId}
-              value={answers.about.powerOfAttorneyNationalId}
+              value={formatNationalId(answers.about.powerOfAttorneyNationalId)}
             />
           </GridColumn>
         </GridRow>
