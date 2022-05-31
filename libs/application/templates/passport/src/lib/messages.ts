@@ -1,6 +1,55 @@
 import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
+  dataCollectionTitle: {
+    id: 'pp.application:dataCollection.title',
+    defaultMessage: 'Gagnaöflun',
+    description: 'Title for data collection section',
+  },
+  dataCollectionSubtitle: {
+    id: 'pp.application:dataCollection.subtitle',
+    defaultMessage: 'Eftirfarandi gögn verða sótt rafrænt',
+    description: 'Subtitle for data collection section',
+  },
+  dataCollectionCheckboxLabel: {
+    id: 'pp.application:dataCollection.checkboxLabel',
+    defaultMessage: 'Ég hef kynnt mér ofangreint varðandi gagnaöflun',
+    description: 'Checkbox label for data collection section',
+  },
+  dataCollectionDistrictCommissionersTitle: {
+    id: 'pp.application:dataCollection.districtCommissionersTitle',
+    defaultMessage: 'Persónuupplýsingar úr Sýslumenn',
+    description: 'District commissioners title',
+  },
+  dataCollectionDistrictCommissionersSubitle: {
+    id: 'pp.application:dataCollection.districtCommissionersSubitle',
+    defaultMessage:
+      'Til þess að auðvelda fyrir sækjum við persónuupplýsingar úr Sýslumenn til þess að fylla út umsóknina.',
+    description: 'District commissioners subtitle',
+  },
+  dataCollectionNationalRegistryTitle: {
+    id: 'pp.application:dataCollection.nationalRegistryTitle',
+    defaultMessage: 'Upplýsingar úr skilríkjaskrá Þjóðskrár',
+    description: 'National registry title',
+  },
+  dataCollectionNationalRegistrySubtitle: {
+    id: 'pp.application:dataCollection.nationalRegistrySubtitle',
+    defaultMessage:
+      'Til þess að auðvelda þér umsóknarferlið sækjum við núverandi skráningu þína í skílríkjaskrá Þjóðskrár.',
+    description: 'National registry subtitle',
+  },
+  dataCollectionUserProfileTitle: {
+    id: 'cr.application:dataCollection.userProfileTitle',
+    defaultMessage: 'Netfang og símanúmer úr þínum stillingum',
+    description: 'Your user profile information',
+  },
+  dataCollectionUserProfileSubtitle: {
+    id: 'pp.application:dataCollection.userProfileSubtitle',
+    defaultMessage:
+      'Til þess að auðvelda umsóknarferlið er gott að hafa fyllt út netfang og símanúmer á mínum síðum.',
+    description:
+      'In order to apply for this application we need your email and phone number',
+  },
   formName: {
     id: 'pp.application:form.name',
     defaultMessage: 'Umsókn um vegabréf',
@@ -132,8 +181,8 @@ export const m = defineMessages({
     defaultMessage: 'Ganga frá greiðslu',
     description: 'Some description',
   },
-  confirmationSection: {
-    id: 'pp.application:confirmation.section',
+  confirm: {
+    id: 'pp.application:confirm',
     defaultMessage: 'Staðfesta',
     description: 'Some description',
   },

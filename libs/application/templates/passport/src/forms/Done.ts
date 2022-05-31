@@ -5,7 +5,7 @@ import {
   FormModes,
 } from '@island.is/application/core'
 
-export const Approved: Form = buildForm({
+export const Done: Form = buildForm({
   id: 'ApprovedPassportApplication',
   title: 'Samþykkt',
   mode: FormModes.APPROVED,

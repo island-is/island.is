@@ -13,13 +13,45 @@ import {
   Form,
   FormModes,
 } from '@island.is/application/core'
-import { m } from './messages'
+import { m } from '../lib/messages'
 
 export const Draft: Form = buildForm({
   id: 'PassportApplicationDraftForm',
   title: m.formName,
   mode: FormModes.APPLYING,
   children: [
+    buildSection({
+      id: 'externalData',
+      title: m.dataCollectionTitle,
+      children: [
+        buildExternalDataProvider({
+          id: 'approveExternalData',
+          title: m.formName,
+          subTitle: m.dataCollectionSubtitle,
+          checkboxLabel: m.dataCollectionCheckboxLabel,
+          dataProviders: [
+            buildDataProviderItem({
+              id: 'districtCommissioners',
+              type: '', //todo: change to sýslumenn when ready
+              title: m.dataCollectionDistrictCommissionersTitle,
+              subTitle: m.dataCollectionDistrictCommissionersSubitle,
+            }),
+            buildDataProviderItem({
+              id: 'userProfile',
+              type: 'UserProfileProvider',
+              title: m.dataCollectionUserProfileTitle,
+              subTitle: m.dataCollectionUserProfileSubtitle,
+            }),
+            buildDataProviderItem({
+              id: 'nationalRegistry',
+              type: 'NationalRegistryProvider',
+              title: m.dataCollectionNationalRegistryTitle,
+              subTitle: m.dataCollectionNationalRegistrySubtitle,
+            }),
+          ],
+        }),
+      ],
+    }),
     buildSection({
       id: 'personalInfo',
       title: m.personalInfoSection,
