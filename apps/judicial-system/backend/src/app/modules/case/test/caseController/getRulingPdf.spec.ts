@@ -63,19 +63,14 @@ describe('CaseController - Get ruling pdf', () => {
     const theCase = { id: caseId } as Case
     const res = {} as Response
 
-    it('should lookup pdf', async () => {
+    beforeEach(async () => {
       await givenWhenThen(caseId, theCase, res)
+    })
 
+    it('should lookup pdf', () => {
       expect(mockAwsS3Service.getObject).toHaveBeenCalledWith(
         `generated/${caseId}/ruling.pdf`,
       )
-    })
-
-    it('should not lookup pdf if forceRegeneration is set to true', async () => {
-      const forceRegeneration = true
-      await givenWhenThen(caseId, theCase, res, forceRegeneration)
-
-      expect(mockAwsS3Service.getObject).not.toHaveBeenCalled()
     })
   })
 
@@ -130,6 +125,44 @@ describe('CaseController - Get ruling pdf', () => {
       mockGetObject.mockRejectedValueOnce(new Error('Some ignored error'))
 
       await givenWhenThen(caseId, theCase, res)
+    })
+
+    it('should generate pdf', () => {
+      expect(getRulingPdfAsBuffer).toHaveBeenCalledWith(
+        theCase,
+        undefined, // TODO Mock IntlService
+      )
+    })
+  })
+
+  describe('pdf generated', () => {
+    const caseId = uuid()
+    const theCase = { id: caseId } as Case
+    const res = {} as Response
+
+    beforeEach(async () => {
+      const mockGetObject = mockAwsS3Service.getObject as jest.Mock
+      mockGetObject.mockRejectedValueOnce(new Error('Some ignored error'))
+
+      await givenWhenThen(caseId, theCase, res)
+    })
+
+    it('should generate pdf', () => {
+      expect(getRulingPdfAsBuffer).toHaveBeenCalledWith(
+        theCase,
+        undefined, // TODO Mock IntlService
+      )
+    })
+  })
+
+  describe('pdf generated when forced to do so', () => {
+    const caseId = uuid()
+    const theCase = { id: caseId } as Case
+    const res = {} as Response
+    const forceRegeneration = true
+
+    beforeEach(async () => {
+      await givenWhenThen(caseId, theCase, res, forceRegeneration)
     })
 
     it('should generate pdf', () => {
