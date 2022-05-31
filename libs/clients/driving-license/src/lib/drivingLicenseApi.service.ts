@@ -253,7 +253,11 @@ export class DrivingLicenseApi {
         })
         return hasTemp.errorCode === 'HAS_B_CATEGORY'
       }
-      return false
+      throw new Error(
+        `POST apiOkuskirteiniApplicationsNewTemporaryPost was not successful, response was: ${
+          (e as { status: number })?.status
+        }`,
+      )
     }
   }
 
