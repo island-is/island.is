@@ -30,14 +30,13 @@ export const clientInfoSection = buildSection({
               id: 'about.nationalId',
               title: m.nationalId,
               width: 'half',
-              readOnly: true,
-              defaultValue: (application: Application) => formatNationalId(application.applicant)
+              defaultValue: (application: Application) =>
+                formatNationalId(application.applicant),
             }),
             buildTextField({
               id: 'about.fullName',
               title: m.fullName,
               width: 'half',
-              readOnly: true,
               defaultValue: (application: Application) => {
                 const nationalRegistry = application.externalData
                   .nationalRegistry.data as User
@@ -107,9 +106,9 @@ export const clientInfoSection = buildSection({
             buildDescriptionField({
               id: 'electionInfo.electionDescription',
               title: m.campaignCost,
-              titleVariant: "h3",
+              titleVariant: 'h3',
               description: m.pleaseSelect,
-              space: 5
+              space: 5,
             }),
             buildRadioField({
               id: 'electionInfo.incomeLimit',

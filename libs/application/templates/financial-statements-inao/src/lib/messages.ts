@@ -397,7 +397,6 @@ export const m = defineMessages({
     defaultMessage: 'Umsókn móttekin',
     description: 'applicaiton accept',
   },
-
 })
 
 export default m

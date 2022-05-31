@@ -13,8 +13,12 @@ export const ValueLine: FC<ValueLineProps> = ({ label, value = '-' }) => {
 
   return (
     <Box paddingBottom={3}>
-      <Text variant="h4" as="h4">{formatMessage(label)}</Text>
-      <Text variant="default" as="p">{value}</Text>
+      <Text variant="h4" as="h4">
+        {formatMessage(label)}
+      </Text>
+      <Text variant="default" as="p">
+        {value}
+      </Text>
     </Box>
   )
 }

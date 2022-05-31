@@ -22,7 +22,8 @@ export const overviewSection = buildSection({
           ? m.overviewTitle
           : m.statement,
       description: (application) =>
-      getValueViaPath(application.answers, 'electionInfo.incomeLimit') === GREATER
+        getValueViaPath(application.answers, 'electionInfo.incomeLimit') ===
+        GREATER
           ? m.overviewDescription
           : m.electionStatement,
       children: [
@@ -37,7 +38,8 @@ export const overviewSection = buildSection({
         buildCustomField({
           id: 'overviewStatementField',
           title: '',
-          condition: (answers) => getValueViaPath(answers, 'electionInfo.incomeLimit') === LESS,
+          condition: (answers) =>
+            getValueViaPath(answers, 'electionInfo.incomeLimit') === LESS,
           doesNotRequireAnswer: true,
           component: 'ElectionStatement',
         }),

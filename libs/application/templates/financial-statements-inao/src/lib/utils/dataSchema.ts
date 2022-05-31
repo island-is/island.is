@@ -45,7 +45,6 @@ const incomeAndExpenses = z.object({
   capitalIncome: z.string().optional(),
 })
 
-
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   about,
@@ -60,5 +59,3 @@ export const dataSchema = z.object({
 })
 
 export type FinancialStatementsInao = z.TypeOf<typeof dataSchema>
-export type ElectionInfo = z.TypeOf<typeof electionInfo>
-export type About = z.TypeOf<typeof about>
