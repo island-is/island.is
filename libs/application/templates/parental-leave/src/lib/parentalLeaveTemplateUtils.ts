@@ -19,6 +19,8 @@ export function needsOtherParentApproval(context: ApplicationContext) {
 }
 
 export function startDateInTheFuture(context: ApplicationContext) {
-  const currentApplicationAnswers = context.application.answers
-  return new Date(currentApplicationAnswers.startDate as string).getTime() > new Date().getTime()
+  const currentApplicationAnswers = context.application.answers as {
+    periods: [{startDate: string}]
+  }
+  return new Date(currentApplicationAnswers.periods[0].startDate).getTime() > new Date().getTime()
 }
