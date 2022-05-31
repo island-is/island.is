@@ -32,18 +32,18 @@ export class AppService {
     this.logger.info(
       `Attempting to tag entry or asset with id: ${
         entry.sys.id
-      } with tags ${tags.join(', ')}`,
+      } with tags: ${tags.join(', ')}`,
     )
 
-    return await this.appRepository.tagEntry(entry, tags)
+    const result = await this.appRepository.tagEntry(entry, tags)
+    this.logger.info(`Entry or asset with id: ${entry.sys.id} has been tagged`)
+    return result
   }
 
   async handleEntryCreation(entry: Entry) {
     try {
+      this.logger.info(`Entry or asset with id ${entry.sys.id} got created`)
       const result = await this.tagEntry(entry)
-      this.logger.info(
-        `Entry or asset with id: ${entry.sys.id} has been tagged`,
-      )
       return result
     } catch (error) {
       this.logger.error(
