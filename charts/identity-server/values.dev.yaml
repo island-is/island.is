@@ -125,7 +125,6 @@ identity-server:
         nginx.ingress.kubernetes.io/enable-global-auth: 'false'
         nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
         nginx.ingress.kubernetes.io/proxy-buffering: 'on'
-        petur-tests-things: 'true'
       hosts:
         - host: 'identity-server.dev01.devland.is'
           paths:
