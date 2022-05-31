@@ -22,6 +22,7 @@ module.exports = {
     '<rootDir>/apps/services/auth-admin-api',
     '<rootDir>/apps/services/auth-api',
     '<rootDir>/apps/services/auth-public-api',
+    '<rootDir>/apps/services/contentful-entry-tagger',
     '<rootDir>/apps/services/documents',
     '<rootDir>/apps/services/notifications',
     '<rootDir>/apps/services/personal-representative',
@@ -206,6 +207,5 @@ module.exports = {
     '<rootDir>/libs/testing/containers',
     '<rootDir>/libs/testing/fixtures',
     '<rootDir>/libs/testing/nest',
-    '<rootDir>/apps/services/contentful-entry-tagger',
   ],
 }
