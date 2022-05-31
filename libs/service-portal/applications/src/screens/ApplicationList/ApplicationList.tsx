@@ -1,7 +1,9 @@
 import React from 'react'
+import { defineMessage } from 'react-intl'
 import {
   ActionCardLoader,
   ServicePortalModuleComponent,
+  EmptyState,
 } from '@island.is/service-portal/core'
 import {
   Text,
@@ -58,12 +60,16 @@ const ApplicationList: ServicePortalModuleComponent = () => {
 
       {loading && <ActionCardLoader repeat={3} />}
 
-      {error && (
-        <Box display="flex" justifyContent="center" margin={[3, 3, 3, 6]}>
-          <Text variant="h4" as="h2">
-            {formatMessage(m.error)}
-          </Text>
-        </Box>
+      {error && <EmptyState description={m.error} />}
+
+      {!error && !loading && !applications && (
+        <EmptyState
+          description={defineMessage({
+            id: 'sp.applications:no-applications-available',
+            defaultMessage:
+              'Engar umsóknir fundust hjá Ísland.is á þessari kennitölu',
+          })}
+        />
       )}
 
       {applications && (

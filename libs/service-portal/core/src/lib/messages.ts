@@ -544,7 +544,12 @@ export const m = defineMessages({
   },
   noDataFound: {
     id: 'service.portal:no-data-found',
-    defaultMessage: 'Engin gögn fundust',
+    defaultMessage: 'Engin gögn fundust fyrir þig',
+  },
+  noDataFoundDetail: {
+    id: 'service.portal:no-data-found-detail',
+    defaultMessage:
+      'Ef þú telur þig eiga gögn sem ættu að birtast hér, vinsamlegast hafðu samband við þjónustuaðila.',
   },
   noDataPresent: {
     id: 'service.portal:no-data-present',

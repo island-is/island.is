@@ -16,7 +16,6 @@ import * as styles from './UserMenu.css'
 import { UserDelegations } from './UserDelegations'
 import { UserDropdownItem } from './UserDropdownItem'
 import { UserProfileInfo } from './UserProfileInfo'
-import * as kennitala from 'kennitala'
 import { Features, useFeatureFlag } from '@island.is/react/feature-flags'
 import { useActorDelegationsQuery } from '../../../gen/graphql'
 import { QueryResult } from '@apollo/client'
@@ -55,11 +54,6 @@ export const UserDropdown = ({
   const userName = user.profile.name
   const actorName = actor?.name
   const isDelegationCompany = user.profile.subjectType === 'legalEntity'
-
-  const { value: showPersonalInfo } = useFeatureFlag(
-    Features.personalInformation,
-    false,
-  )
 
   const showDelegations =
     useFeatureFlag(Features.delegationsEnabled, false).value || Boolean(actor)
@@ -157,16 +151,15 @@ export const UserDropdown = ({
           )}
           {/* End of user delegations */}
           {/* User settings */}
-          {(!isDelegation || isDelegationCompany) &&
-            (showPersonalInfo || showDelegations) && (
-              <>
-                <UserProfileInfo
-                  isCompany={isDelegationCompany}
-                  onClick={() => onClose()}
-                />
-                <Divider />
-              </>
-            )}
+          {(!isDelegation || isDelegationCompany) && showDelegations && (
+            <>
+              <UserProfileInfo
+                isCompany={isDelegationCompany}
+                onClick={() => onClose()}
+              />
+              <Divider />
+            </>
+          )}
           {/* End of user settings */}
 
           {/* Logout */}
