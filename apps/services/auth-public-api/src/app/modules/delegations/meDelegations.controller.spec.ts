@@ -1306,9 +1306,9 @@ describe('MeDelegationsController', () => {
             ? user
             : {
                 ...user,
+                delegationTypes: [delegationType as AuthDelegationType],
                 actor: {
                   nationalId: user.nationalId,
-                  delegationType: delegationType as AuthDelegationType,
                   scope: [],
                 },
               }

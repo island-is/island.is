@@ -168,9 +168,9 @@ describe('ScopesController', () => {
     const app = await setupWithAuth({
       user: {
         ...user,
+        delegationTypes: ['ProcurationHolder'],
         actor: {
           nationalId: user.nationalId,
-          delegationType: 'ProcurationHolder',
           scope: [],
         },
       },
@@ -198,9 +198,9 @@ describe('ScopesController', () => {
     const app = await setupWithAuth({
       user: {
         ...user,
+        delegationTypes: ['Custom'],
         actor: {
           nationalId: user.nationalId,
-          delegationType: 'Custom',
           scope: [],
         },
       },
