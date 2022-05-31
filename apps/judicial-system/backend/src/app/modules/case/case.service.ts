@@ -892,10 +892,6 @@ export class CaseService {
   ): Promise<SignatureConfirmationResponse> {
     // This method should be called immediately after requestRulingSignature
 
-    await this.refreshFormatMessage()
-
-    await this.sendRulingAsSignedPdf(theCase, user, 'signedPdf')
-
     // Production, or development with signing service access token
     if (this.config.production || this.config.dokobitAccessToken) {
       try {
