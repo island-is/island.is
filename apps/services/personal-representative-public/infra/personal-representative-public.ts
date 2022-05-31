@@ -20,7 +20,8 @@ export const serviceSetup = (): ServiceBuilder<'services-personal-representative
       primary: {
         host: {
           dev: 'personal-representative-public-xrd.internal.dev01.devland.is',
-          staging: 'personal-representative-public-xrd.internal.staging01.devland.is',
+          staging:
+            'personal-representative-public-xrd.internal.staging01.devland.is',
           prod: 'personal-representative-public-xrd.internal.innskra.island.is',
         },
         paths: ['/'],
