@@ -111,7 +111,7 @@ export const OtherParentApproval: Form = buildForm({
               title: 'Warning',
               description: (application: Application) => {
                 const {startDate} = getApplicationAnswers(application.answers).periods[0]
-                return `Parental leave (${startDate}) has already passed!`
+                return `Parental leave starting date (${startDate}) has already passed!`
               },
               condition: (answers) =>
                 new Date(getApplicationAnswers(answers).periods[0].startDate).getTime() < new Date().getTime(),
@@ -139,6 +139,20 @@ export const OtherParentApproval: Form = buildForm({
           id: 'final',
           title: coreMessages.thanks,
           description: coreMessages.thanksDescription,
+          condition: (answers) =>
+          new Date(getApplicationAnswers(answers).periods[0].startDate).getTime() > new Date().getTime(),
+        }),
+        buildMultiField({
+          title: '',
+          condition: (answers) =>
+          new Date(getApplicationAnswers(answers).periods[0].startDate).getTime() < new Date().getTime(),
+          children: [
+            buildDescriptionField({
+              id: 'final',
+              title: 'Application not processed',
+              description: 'Parental leave starting date is in the past, please reject this application',
+            }),
+          ],
         }),
       ],
     }),

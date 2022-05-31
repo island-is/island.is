@@ -1328,12 +1328,6 @@ export const parentalLeaveFormMessages: MessageDir = {
       description:
         'If parent decided to use all the other parent personal discount',
     },
-    startDateInThePast: {
-      id: 'pl.application:review.start.date.in.the.past',
-      defaultMessage: '--- icelandic translation ---',
-      description:
-        'Start date is in the past. The form will not be sent!',
-    },
   }),
 
   draftFlow: defineMessages({
@@ -1475,6 +1469,13 @@ export const parentalLeaveFormMessages: MessageDir = {
         'Að lokum fer umsóknin á borð Fæðingarorlofssjóðs þar sem lokaúrvinnsla hennar fer fram.',
       description:
         'Finally, the application goes to the Parental Leave Fund, where its final processing takes place.',
+    },
+    startDateInThePast: {
+      id: 'pl.application:finalscreen.start.date.in.the.past',
+      defaultMessage:
+        'icel-trans: "Parental leave starting date is in the past, please go back and correct this date"',
+      description:
+        'Parental leave starting date is in the past, please go back and correct this date',
     },
   }),
 }
@@ -1843,6 +1844,12 @@ export const errorMessages = defineMessages({
       'Villa kom upp við útreikning á tímabilum, veldu annað tímabil eða hafðu samband við okkur til að fá stuðning.',
     description:
       'An error happened while calculating your periods, choose another period or contact us for support.',
+  },
+  startDateInThePast: {
+    id: 'pl.application:errors.start.date.in.the.past',
+    defaultMessage: 'icel-trans: "Start date is in the past. The form will not be sent!"',
+    description:
+      'Start date is in the past. The form will not be sent!',
   },
 })
 
