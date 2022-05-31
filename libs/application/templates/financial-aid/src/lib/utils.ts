@@ -71,9 +71,10 @@ export function findFamilyStatus(
   answers: FAApplication['answers'],
   externalData: FAApplication['externalData'],
 ) {
-  const maritialStatus = martialStatusTypeFromMartialCode(externalData.nationalRegistry?.data?.applicant?.spouse?.maritalStatus)
   switch (true) {
-    case maritialStatus === MartialStatusType.MARRIED:
+    case martialStatusTypeFromMartialCode(
+      externalData.nationalRegistry?.data?.applicant?.spouse?.maritalStatus,
+    ) === MartialStatusType.MARRIED:
       return FamilyStatus.MARRIED
     case externalData.nationalRegistry?.data?.applicant?.spouse != null:
       return FamilyStatus.COHABITATION
