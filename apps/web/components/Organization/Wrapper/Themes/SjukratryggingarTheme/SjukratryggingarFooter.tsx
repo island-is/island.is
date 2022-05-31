@@ -12,14 +12,10 @@ import { richText, SliceType } from '@island.is/island-ui/contentful'
 import { BLOCKS } from '@contentful/rich-text-types'
 
 interface FooterProps {
-  title: string
-  logo?: string
   footerItems: Array<FooterItem>
 }
 
 export const SjukratryggingarFooter: React.FC<FooterProps> = ({
-  title,
-  logo,
   footerItems,
 }) => {
   return (

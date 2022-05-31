@@ -2,12 +2,11 @@ import {
   getValueViaPath,
   FormValue,
   ApplicationContext,
-  Application,
   ExternalData,
 } from '@island.is/application/core'
 import { m } from '../messages'
 import { ConditionFn } from '../types'
-import { NO, YES } from '../constants'
+import { YES } from '../constants'
 import {
   DrivingLicenseApplicationFor,
   B_FULL,

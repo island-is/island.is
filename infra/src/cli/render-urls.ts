@@ -3,7 +3,13 @@ import { OpsEnv } from '../dsl/types/input-types'
 import { ServiceHelm } from '../dsl/types/output-types'
 import { UberChart } from '../dsl/uber-chart'
 import { Envs } from '../environments'
-import { ChartName, ChartNames, charts } from '../uber-charts/all-charts'
+import {
+  ChartName,
+  ChartNames,
+  Charts,
+  Deployments,
+} from '../uber-charts/all-charts'
+import { OpsEnvName } from '../dsl/types/charts'
 
 const renderUrlsForService = ({ ingress = {} }: ServiceHelm) => {
   const urls: string[] = []
@@ -19,8 +25,8 @@ const renderUrlsForService = ({ ingress = {} }: ServiceHelm) => {
 
 const renderUrlsForChart = (environment: OpsEnv, chartName: ChartName) => {
   const { services } = generateYamlForEnv(
-    new UberChart(Envs[environment]),
-    ...charts[chartName][environment],
+    new UberChart(Envs[Deployments[chartName][environment]]),
+    ...Charts[chartName][environment],
   )
   return Object.keys(services).reduce((acc, serviceName) => {
     const urls = renderUrlsForService(services[serviceName])

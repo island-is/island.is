@@ -3,7 +3,6 @@ import {
   OnBehalf,
   YES,
 } from '@island.is/application/templates/data-protection-complaint'
-import { DocumentInfo } from '@island.is/clients/data-protection-complaint'
 
 export interface ComplaintPDF {
   applicantInfo: {

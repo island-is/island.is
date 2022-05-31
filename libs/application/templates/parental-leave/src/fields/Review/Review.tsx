@@ -1,4 +1,4 @@
-import React, { FC, useMemo } from 'react'
+import React, { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useMutation } from '@apollo/client'
 import get from 'lodash/get'
@@ -69,8 +69,6 @@ import { useStatefulAnswers } from '../../hooks/useStatefulAnswers'
 import { getSelectOptionLabel } from '../../lib/parentalLeaveClientUtils'
 
 import * as styles from './Review.css'
-
-type ValidOtherParentAnswer = typeof NO | typeof MANUAL | undefined
 
 interface ReviewScreenProps {
   application: Application

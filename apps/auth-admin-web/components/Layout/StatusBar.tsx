@@ -21,7 +21,7 @@ const StatusBar: React.FC = () => {
     if (typeof value?.message === 'string') {
       return <span>{value.message}</span>
     } else {
-      return value?.message.map((item, i) => <span>{item}</span>)
+      return value?.message.map((item) => <span>{item}</span>)
     }
   }
 

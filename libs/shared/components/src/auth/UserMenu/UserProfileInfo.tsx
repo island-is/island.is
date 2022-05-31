@@ -18,11 +18,6 @@ export const UserProfileInfo = ({
   const origin = window.location.origin
   const baseUrl = `${origin}/minarsidur/stillingar`
 
-  const { value: showPersonalInfo } = useFeatureFlag(
-    Features.personalInformation,
-    false,
-  )
-
   const { value: showDelegations } = useFeatureFlag(
     Features.delegationsEnabled,
     false,
@@ -34,16 +29,14 @@ export const UserProfileInfo = ({
         <Text variant="small">{formatMessage(m.settings)}</Text>
       </Box>
 
-      {showPersonalInfo && (
-        <Box>
-          <UserDropdownItem
-            text={formatMessage(m.personalInformation)}
-            link={`${baseUrl}/minar-stillingar`}
-            icon={{ type: 'outline', icon: 'person' }}
-            onClick={() => onClick()}
-          />
-        </Box>
-      )}
+      <Box>
+        <UserDropdownItem
+          text={formatMessage(m.personalInformation)}
+          link={`${baseUrl}/minar-stillingar`}
+          icon={{ type: 'outline', icon: 'person' }}
+          onClick={() => onClick()}
+        />
+      </Box>
       {showDelegations && !isCompany && (
         <Box>
           <UserDropdownItem
