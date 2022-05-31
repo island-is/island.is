@@ -50,7 +50,7 @@ import {
 // TODO: Bring back payment calculation info, once we have an api
 // import PaymentsTable from '../PaymentSchedule/PaymentsTable'
 // import { getEstimatedPayments } from '../PaymentSchedule/estimatedPaymentsQuery'
-import { parentalLeaveFormMessages } from '../../lib/messages'
+import { errorMessages, parentalLeaveFormMessages } from '../../lib/messages'
 import {
   YES,
   NO,
@@ -912,7 +912,7 @@ export const Review: FC<ReviewScreenProps> = ({
         isLast={true}
       >
         <SummaryTimeline application={application} />
-        {new Date(periods[0].startDate).getTime() < new Date().getTime() && <p style={{color: '#B30038', fontSize: '14px', fontWeight: '500'}}>{formatMessage(parentalLeaveFormMessages.reviewScreen.startDateInThePast)}</p>}
+        {new Date(periods[0].startDate).getTime() < new Date().getTime() && <p style={{color: '#B30038', fontSize: '14px', fontWeight: '500'}}>{formatMessage(errorMessages.startDateInThePast)}</p>}
       </ReviewGroup>
 
       {/**

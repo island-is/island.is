@@ -214,6 +214,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             },
             {
               target: States.VINNUMALASTOFNUN_APPROVAL,
+              cond: startDateInTheFuture,
             },
           ],
           [DefaultEvents.EDIT]: { target: States.DRAFT },

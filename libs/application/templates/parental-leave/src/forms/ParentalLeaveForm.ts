@@ -5,6 +5,7 @@ import {
   buildAsyncSelectField,
   buildCustomField,
   buildDateField,
+  buildDescriptionField,
   buildFileUploadField,
   buildForm,
   buildMultiField,
@@ -836,6 +837,15 @@ export const ParentalLeaveForm: Form = buildForm({
           id: 'thankYou',
           title: parentalLeaveFormMessages.finalScreen.title,
           component: 'Conclusion',
+          condition: (answers) =>
+          getApplicationAnswers(answers).periods.length > 0 && new Date(getApplicationAnswers(answers).periods[0].startDate).getTime() > new Date().getTime(),
+        }),
+        buildDescriptionField({
+          id: 'final',
+          title: 'Application not processed',
+          description: parentalLeaveFormMessages.finalScreen.startDateInThePast,
+          condition: (answers) =>
+          getApplicationAnswers(answers).periods.length > 0 && new Date(getApplicationAnswers(answers).periods[0].startDate).getTime() < new Date().getTime(),
         }),
       ],
     }),
