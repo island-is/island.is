@@ -9,3 +9,9 @@ export enum States {
 export enum Roles {
   APPLICANT = 'applicant',
 }
+
+export const YES = 'yes'
+export const NO = 'no'
+
+export const GREATER = 'greater'
+export const LESS = 'less'

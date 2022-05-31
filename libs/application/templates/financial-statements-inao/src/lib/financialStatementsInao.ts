@@ -42,7 +42,7 @@ const FinancialStatementInaoApplication: ApplicationTemplate<
               id: Roles.APPLICANT,
               formLoader: () =>
                 import('../forms/application').then((module) =>
-                  Promise.resolve(module.Application),
+                  Promise.resolve(module.getApplication()),
                 ),
               actions: [
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },

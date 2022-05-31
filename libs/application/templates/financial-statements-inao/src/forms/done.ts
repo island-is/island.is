@@ -4,6 +4,7 @@ import {
   Form,
   FormModes,
 } from '@island.is/application/core'
+import {m} from '../lib/messages'
 
 export const done: Form = buildForm({
   id: 'done',
@@ -13,7 +14,7 @@ export const done: Form = buildForm({
     buildCustomField({
       id: 'overview',
       component: 'Success',
-      title: 'Umsókn móttekin',
+      title: m.applicationAccept,
     }),
   ],
 })
