@@ -21,11 +21,6 @@ export const m = defineMessages({
     defaultMessage: 'Nafn umboðsmanns',
     description: `name for power of attorney`,
   },
-  name: {
-    id: 'fsn.application:name',
-    defaultMessage: 'Umsókn',
-    description: `Application's name`,
-  },
   dataCollectionTitle: {
     id: 'fsn.application:applicationDataCollectionTitle',
     defaultMessage: 'Gagnaöflun',
@@ -58,11 +53,6 @@ export const m = defineMessages({
     defaultMessage: 'Viðskiptavinur',
     description: 'Info',
   },
-  fundInfo: {
-    id: 'fsn.application:fund',
-    defaultMessage: 'Upplýsingar um sjóð og vörsluaðila',
-    description: 'fund info',
-  },
   generalInfo: {
     id: 'fsn.application:generalInfo',
     defaultMessage: 'Upplýsingar',
@@ -73,20 +63,10 @@ export const m = defineMessages({
     defaultMessage: 'Viðskiptavinur',
     description: 'about',
   },
-  status: {
-    id: 'fsn.application:status',
-    defaultMessage: 'Staða',
-    description: 'elctionStatus',
-  },
   fullName: {
     id: 'fsn.application:fullName',
     defaultMessage: 'Fullt nafn',
     description: 'Full name',
-  },
-  electionId: {
-    id: 'fsn.application:electionId',
-    defaultMessage: 'Kosningarnúmer',
-    description: 'election id',
   },
   electionCampaign: {
     id: 'fsn.application:electionCampaign',
@@ -113,21 +93,6 @@ export const m = defineMessages({
     defaultMessage: 'Veldu Tegund',
     description: 'Select election type',
   },
-  clientType: {
-    id: 'fsn.application:clientType',
-    defaultMessage: 'Tegund viðskiptavinar',
-    description: 'Type of client',
-  },
-  buisnessYear: {
-    id: 'fsn.application:buisnessYear',
-    defaultMessage: 'Rekstrarár',
-    description: 'Buisness year',
-  },
-  statementStatus: {
-    id: 'fsn.application:statementStatus',
-    defaultMessage: 'Staða',
-    description: 'Type of client',
-  },
   statement: {
     id: 'fsn.application:statement',
     defaultMessage: 'Yfirlýsing',
@@ -143,16 +108,6 @@ export const m = defineMessages({
     defaultMessage:
       'Með vísan í 3. mgr. 10. gr. laga nr. 162/2006, um starfsemi stjórnmálasamtaka, á því undanþága á uppgjörsskyldu vegna prófkjörs við.',
     description: 'statement',
-  },
-  date: {
-    id: 'fsn.application:date',
-    defaultMessage: 'Dagsetning',
-    description: 'date',
-  },
-  dateTime: {
-    id: 'fsn.application:dateTime',
-    defaultMessage: 'Dagsetning og tími skila',
-    description: 'date and time',
   },
   nationalId: {
     id: 'fsn.application:nationalId',
@@ -198,16 +153,6 @@ export const m = defineMessages({
     id: 'fsn.application:keyNumbers.debt',
     defaultMessage: 'Lykiltölur - Skuldir, eignir og eigið fé',
     description: 'Statement debts',
-  },
-  keyNumbersPersonal: {
-    id: 'fsn.application:keyNumbers.personal',
-    defaultMessage: 'Eigið fé',
-    description: 'personal cash',
-  },
-  keyNumbersTotalDebt: {
-    id: 'fsn.application:keyNumbers.totalDebt',
-    defaultMessage: 'Skuldir samtals',
-    description: 'Total debts',
   },
   keyNumbersExpenses: {
     id: 'fsn.application:keyNumbers.expenses',
@@ -309,17 +254,6 @@ export const m = defineMessages({
     defaultMessage: 'Senda umsókn',
     description: 'Send application',
   },
-  lessOverviewSectionTitle: {
-    id: 'fsn.application:overviewTitle',
-    defaultMessage: 'Yfirlit',
-    description: 'Title for overview section',
-  },
-  lessOverviewSectionDescription: {
-    id: 'fsn.application:lessOverviewSectionDescription',
-    defaultMessage:
-      'Vinsamlegast lestu yfir umsóknina og vertu viss um að allar upplýsingar séu rétt uppgefnar. Að loknum yfirlestri getur þú sent inn umsóknina.',
-    description: 'Description for overview section',
-  },
   overviewSectionTitle: {
     id: 'fsn.application:overview.general.sectionTitle',
     defaultMessage: 'Yfirlit',
@@ -350,16 +284,6 @@ export const m = defineMessages({
     defaultMessage: 'Ég samþykki að láta sækja gögn',
     description: 'Checkbox label for data collection section',
   },
-  thankYou: {
-    id: 'fsn.application:final',
-    defaultMessage: 'Takk fyrir',
-    description: 'Upload financial statements intro',
-  },
-  outroMessage: {
-    id: 'fsn.application:upload.description',
-    defaultMessage: 'Takk fyrir',
-    description: 'Upload financial statements intro',
-  },
   dataSchemePhoneNumber: {
     id: 'fsn.application:dataSchema.phoneNumber',
     defaultMessage: 'Símanúmerið þarf að vera gilt.',
@@ -381,11 +305,6 @@ export const m = defineMessages({
     id: 'fsn.application:campaignCost',
     defaultMessage: 'Heildartekjur við kosningabaráttu',
     description: 'Election campaign cost',
-  },
-  files: {
-    id: 'fsn.application:files',
-    defaultMessage: 'Skjöl',
-    description: 'files',
   },
   pleaseSelect: {
     id: 'fsn.application:pleaseSelect',

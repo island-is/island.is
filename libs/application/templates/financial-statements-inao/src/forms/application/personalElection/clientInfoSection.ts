@@ -30,8 +30,8 @@ export const clientInfoSection = buildSection({
               id: 'about.nationalId',
               title: m.nationalId,
               width: 'half',
-              defaultValue: (application: Application) =>
-                formatNationalId(application.applicant),
+              format: '######-####',
+              defaultValue: (application: Application) => application.applicant,
             }),
             buildTextField({
               id: 'about.fullName',
@@ -46,6 +46,7 @@ export const clientInfoSection = buildSection({
             buildTextField({
               id: 'about.powerOfAttorneyNationalId',
               title: m.powerOfAttorneyNationalId,
+              format: '######-####',
               width: 'half',
             }),
             buildTextField({
