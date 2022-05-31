@@ -9,13 +9,11 @@ import { Audit } from '@island.is/nest/audit'
 import {
   IdsUserGuard,
   ScopesGuard,
-  Scopes,
   CurrentUser,
 } from '@island.is/auth-nest-tools'
 import { GetVehicleDetailInput } from '../dto/getVehicleDetailInput'
 import { VehiclesDetail } from '../models/getVehicleDetail.model'
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(ApiScope.vehicles)
 @Resolver()
 export class VehiclesResolver {
   constructor(private readonly vehiclesService: VehiclesService) {}
