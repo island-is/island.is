@@ -53,17 +53,18 @@ export const m = defineMessages({
   formName: {
     id: 'pp.application:form.name',
     defaultMessage: 'Umsókn um vegabréf',
-    description: 'Some description',
-  },
-  personalInfoSection: {
-    id: 'pp.application:personalInfo.section',
-    defaultMessage: 'Upplýsingar',
-    description: 'Some description',
+    description: 'Passport Application',
   },
   personalInfoTitle: {
     id: 'pp.application:personalInfo.multifieldtitle',
     defaultMessage: 'Upplýsingar',
-    description: 'Some description',
+    description: 'Personal info title',
+  },
+  personalInfoSubtitle: {
+    id: 'pp.application:personalInfo.personalInfoSubtitle',
+    defaultMessage:
+      'Vinsamlegast farðu yfir þínar upplýsingar og gakktu úr skugga um að þær séu réttar.',
+    description: 'Personal info subtitle',
   },
   personalInfoName: {
     id: 'pp.application:personalInfo.name',

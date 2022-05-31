@@ -1,5 +1,6 @@
 import * as z from 'zod'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
+import { error } from './error'
 
 const nationalIdRegex = /([0-9]){6}-?([0-9]){4}/
 const emailRegex = /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
@@ -14,16 +15,14 @@ export const dataSchema = z.object({
   personalInfo: z.object({
     name: z.string().nonempty(),
     nationalId: z.string().refine((x) => (x ? nationalIdRegex.test(x) : false)),
-    phoneNumber: z
-      .string()
-      .min(7)
-      .refine((v) => isValidPhoneNumber(v)),
     email: z
       .string()
       .email()
-      .refine((v) => isValidEmail(v)),
-    otherEmail: z.string().email().nonempty(),
-    height: z.string().nonempty(),
+      .refine((v) => isValidEmail(v), { params: error.invalidValue }),
+    phoneNumber: z
+      .string()
+      .min(7)
+      .refine((v) => isValidPhoneNumber(v), { params: error.invalidValue }),
   }),
   /*service: z.object({
     type: z.enum(['regular', 'express']),

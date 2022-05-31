@@ -12,8 +12,10 @@ import {
   buildTextField,
   Form,
   FormModes,
+  Application,
 } from '@island.is/application/core'
 import { m } from '../lib/messages'
+import { format as formatKennitala } from 'kennitala'
 
 export const Draft: Form = buildForm({
   id: 'PassportApplicationDraftForm',
@@ -54,40 +56,58 @@ export const Draft: Form = buildForm({
     }),
     buildSection({
       id: 'personalInfo',
-      title: m.personalInfoSection,
+      title: m.personalInfoTitle,
       children: [
         buildMultiField({
           id: 'personalInfo',
           title: m.personalInfoTitle,
+          description: m.personalInfoSubtitle,
           children: [
             buildTextField({
               id: 'personalInfo.name',
               title: m.personalInfoName,
+              backgroundColor: 'white',
+              width: 'half',
+              readOnly: true,
+              defaultValue: (application: Application) =>
+                (application.externalData.nationalRegistry?.data as {
+                  fullName?: string
+                })?.fullName,
             }),
             buildTextField({
               id: 'personalInfo.nationalId',
               title: m.nationalId,
+              backgroundColor: 'white',
               width: 'half',
-            }),
-            buildTextField({
-              id: 'personalInfo.phoneNumber',
-              title: m.phoneNumber,
-              width: 'half',
+              readOnly: true,
+              defaultValue: (application: Application) => {
+                const nationalId =
+                  (application.externalData.nationalRegistry?.data as {
+                    nationalId?: string
+                  })?.nationalId ?? ''
+
+                return formatKennitala(nationalId)
+              },
             }),
             buildTextField({
               id: 'personalInfo.email',
               title: m.email,
               width: 'half',
+              defaultValue: (application: Application) =>
+                (application.externalData.userProfile?.data as {
+                  email?: string
+                })?.email,
             }),
             buildTextField({
-              id: 'personalInfo.otherEmail',
-              title: m.otherEmail,
+              id: 'personalInfo.phoneNumber',
+              title: m.phoneNumber,
               width: 'half',
-            }),
-            buildTextField({
-              id: 'personalInfo.height',
-              title: m.height,
-              width: 'half',
+              variant: 'tel',
+              format: '###-####',
+              defaultValue: (application: Application) =>
+                (application.externalData.userProfile?.data as {
+                  mobilePhoneNumber?: string
+                })?.mobilePhoneNumber,
             }),
           ],
         }),
