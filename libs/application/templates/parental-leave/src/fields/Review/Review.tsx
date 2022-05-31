@@ -45,6 +45,7 @@ import {
   getApplicationExternalData,
   getOtherParentId,
   getOtherParentName,
+  formatPeriods,
 } from '../../lib/parentalLeaveUtils'
 // TODO: Bring back payment calculation info, once we have an api
 // import PaymentsTable from '../PaymentSchedule/PaymentsTable'
@@ -207,6 +208,8 @@ export const Review: FC<ReviewScreenProps> = ({
       },
     })
   }
+
+  const periods = formatPeriods(application, formatMessage)
 
   return (
     <>
@@ -909,6 +912,7 @@ export const Review: FC<ReviewScreenProps> = ({
         isLast={true}
       >
         <SummaryTimeline application={application} />
+        {new Date(periods[0].startDate).getTime() < new Date().getTime() && <p style={{color: 'red'}}>Starting date is in the past! The form won't be sent</p>}
       </ReviewGroup>
 
       {/**

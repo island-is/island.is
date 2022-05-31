@@ -33,6 +33,7 @@ import { parentalLeaveFormMessages, statesMessages } from './messages'
 import {
   hasEmployer,
   needsOtherParentApproval,
+  startDateInTheFuture,
 } from './parentalLeaveTemplateUtils'
 import {
   getApplicationAnswers,
@@ -150,7 +151,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             },
             { target: States.EMPLOYER_WAITING_TO_ASSIGN, cond: hasEmployer },
             {
-              target: States.VINNUMALASTOFNUN_APPROVAL,
+              target: States.VINNUMALASTOFNUN_APPROVAL, cond: startDateInTheFuture
             },
           ],
         },

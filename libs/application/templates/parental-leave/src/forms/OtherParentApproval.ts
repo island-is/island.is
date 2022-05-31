@@ -111,7 +111,7 @@ export const OtherParentApproval: Form = buildForm({
               title: 'Warning',
               description: (application: Application) => {
                 const {startDate} = getApplicationAnswers(application.answers).periods[0]
-                return `Start date of parental leave (${startDate}) has already passed`
+                return `Parental leave (${startDate}) has already passed!`
               },
               condition: (answers) =>
                 new Date(getApplicationAnswers(answers).periods[0].startDate).getTime() < new Date().getTime(),
@@ -119,7 +119,7 @@ export const OtherParentApproval: Form = buildForm({
             buildSubmitField({
               id: 'submit',
               title: coreMessages.buttonSubmit,
-              placement: 'footer', 
+              placement: 'footer',
               actions: [
                 {
                   name: coreMessages.buttonReject,
