@@ -398,6 +398,7 @@ const Ruling = () => {
                 m.sections.decision.partiallyAcceptLabel,
               )}
               dismissLabelText={formatMessage(m.sections.decision.dismissLabel)}
+              disabled={isModifyingRuling}
               onChange={(decision) => {
                 autofill(
                   [
@@ -454,6 +455,7 @@ const Ruling = () => {
             rows={7}
             autoExpand={{ on: true, maxHeight: 300 }}
             textarea
+            disabled={isModifyingRuling}
           />
         </Box>
         <Box marginBottom={10}>

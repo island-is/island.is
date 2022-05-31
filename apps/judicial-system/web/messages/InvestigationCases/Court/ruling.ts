@@ -190,6 +190,7 @@ export const icRuling = {
         description:
           'Notaður sem label á hnappinn "Halda áfram" í úrskurðar skrefi þegar úrskuður er leiðréttur.',
       },
+      // TODO: remove
       modifyRulingBackButtonLabel: {
         id:
           'judicial.system.investigation_cases:ruling.form_footer.modify_ruling_back_button_label',
