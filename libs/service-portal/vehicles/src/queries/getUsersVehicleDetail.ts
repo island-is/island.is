@@ -9,6 +9,9 @@ export const GET_USERS_VEHICLE_DETAIL = gql`
         regno
         year
         co2
+        weightedCo2
+        co2Wltp
+        weightedco2Wltp
         cubicCapacity
         trailerWithBrakesWeight
         trailerWithoutBrakesWeight

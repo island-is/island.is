@@ -123,7 +123,10 @@ export class VehiclesService {
           subModel: data.vehcom ?? '' + data.speccom ?? '',
           regno: data.regno,
           year: year,
-          co2: null,
+          co2: data?.techincal?.co2,
+          weightedCo2: data?.techincal?.weightedCo2,
+          co2Wltp: data?.techincal?.co2Wltp,
+          weightedco2Wltp: data?.techincal?.weightedco2Wltp,
           cubicCapacity: data.techincal?.capacity,
           trailerWithBrakesWeight: data.techincal?.tMassoftrbr,
           trailerWithoutBrakesWeight: data.techincal?.tMassoftrunbr,
@@ -195,7 +198,9 @@ export class VehiclesService {
           vehicleWeight: data.techincal?.mass?.massinro,
           width: data.techincal?.size?.width,
           trailerWithoutBrakesWeight: data.techincal?.tMassoftrunbr,
-          horsepower: null,
+          horsepower: data.techincal?.maxNetPower
+            ? Math.round(data.techincal.maxNetPower * 1.359622 * 10) / 10
+            : null,
           trailerWithBrakesWeight: data.techincal?.tMassoftrbr,
           carryingCapacity: data.techincal?.mass?.masscapacity,
           axleTotalWeight: axleMaxWeight,

@@ -157,6 +157,50 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
           tooltip={formatMessage(messages.unpaidVehicleFeeText)}
         />
         <Divider />
+
+        {mainInfo?.co2 && (
+          <>
+            <UserInfoLine
+              label={formatMessage(messages.nedc)}
+              content={String(mainInfo.co2)}
+              loading={loading}
+            />
+            <Divider />
+          </>
+        )}
+
+        {mainInfo?.weightedCo2 && (
+          <>
+            <UserInfoLine
+              label={formatMessage(messages.nedcWeighted)}
+              content={String(mainInfo.weightedCo2)}
+              loading={loading}
+            />
+            <Divider />
+          </>
+        )}
+
+        {mainInfo?.co2Wltp && (
+          <>
+            <UserInfoLine
+              label={formatMessage(messages.wltp)}
+              content={String(mainInfo.co2Wltp)}
+              loading={loading}
+            />
+            <Divider />
+          </>
+        )}
+
+        {mainInfo?.weightedco2Wltp && (
+          <>
+            <UserInfoLine
+              label={formatMessage(messages.wltpWeighted)}
+              content={String(mainInfo.weightedco2Wltp)}
+              loading={loading}
+            />
+            <Divider />
+          </>
+        )}
       </Stack>
       <Box marginBottom={5} />
       {basicInfo && <BaseInfoItem data={basicInfo} />}

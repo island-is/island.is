@@ -236,6 +236,18 @@ export const messages = defineMessages({
     id: 'sp.vehicles:nedc',
     defaultMessage: 'Útblástursgildi (NEDC)',
   },
+  nedcWeighted: {
+    id: 'sp.vehicles:nedc-weighted',
+    defaultMessage: 'Vegið útblástursgildi (NEDC)',
+  },
+  wltp: {
+    id: 'sp.vehicles:wltp',
+    defaultMessage: 'Útblástursgildi (WLTP)',
+  },
+  wltpWeighted: {
+    id: 'sp.vehicles:wltp-weighted',
+    defaultMessage: 'Vegið útblástursgildi (WLTP)',
+  },
   insured: {
     id: 'sp.vehicles:insured',
     defaultMessage: 'Tryggt',

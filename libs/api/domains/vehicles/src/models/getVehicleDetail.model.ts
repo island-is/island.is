@@ -14,8 +14,17 @@ export class VehiclesMainInfo {
   @Field(() => Number, { nullable: true })
   year?: number | null // modelYear || currentYear ?? null
 
-  @Field(() => String, { nullable: true })
-  co2?: string | null // ??
+  @Field(() => Number, { nullable: true })
+  co2?: number | null // NEDC
+
+  @Field(() => Number, { nullable: true })
+  weightedCo2?: number | null // Weighted NEDC
+
+  @Field(() => Number, { nullable: true })
+  co2Wltp?: number | null // WLTP
+
+  @Field(() => Number, { nullable: true })
+  weightedco2Wltp?: number | null // Weighted WLTP
 
   @Field(() => Number, { nullable: true })
   cubicCapacity?: number | null // Slagrými ?? technical -> capacity
@@ -209,8 +218,8 @@ export class VehiclesTechnicalInfo {
   @Field(() => Number, { nullable: true })
   trailerWithoutBrakesWeight?: number | null // technical -> tMassoftrunbr
 
-  @Field(() => String, { nullable: true })
-  horsepower?: string | null // ?? HÖ
+  @Field(() => Number, { nullable: true })
+  horsepower?: number | null // maxNetPower * 1.359622 // Metric horsepower (hp(M))
 
   @Field(() => Number, { nullable: true })
   trailerWithBrakesWeight?: number | null // technical -> mass -> tMassoftrbr
