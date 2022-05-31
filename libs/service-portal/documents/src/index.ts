@@ -17,7 +17,6 @@ const rootName = defineMessage({
 const enabled = (userInfo: User) => {
   const hasScope = userInfo.scopes?.includes(DocumentsScope.main)
   const dateOfBirth = userInfo.profile?.dateOfBirth
-  console.log(userInfo)
   const isLegalGuardian = userInfo.profile.delegationType?.includes(
     'LegalGuardian',
   )

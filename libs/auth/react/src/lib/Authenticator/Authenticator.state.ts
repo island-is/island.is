@@ -1,6 +1,6 @@
 import { Dispatch } from 'react'
 import { User } from '@island.is/shared/types'
-import * as kennitala from 'kennitala'
+import { getBirthday } from '../utils/getBirthday'
 
 export type AuthState =
   | 'logged-out'
@@ -44,7 +44,7 @@ export type AuthDispatch = Dispatch<Action>
 // Add delegationType array to user profile
 const formatUser = (payload: User): User | null => {
   const delegationType = payload.profile.delegationType
-  const dateOfBirth = kennitala.info(payload.profile.nationalId).birthday
+  const dateOfBirth = getBirthday(payload?.profile?.nationalId)
 
   return {
     ...payload,
