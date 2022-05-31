@@ -10,6 +10,7 @@ import {
 } from '@island.is/application/core'
 import { dataSchema } from './dataSchema'
 import { Roles, States, Events } from './constants'
+import { Features } from '@island.is/feature-flags'
 import { m } from '../lib/messages'
 
 const PassportTemplate: ApplicationTemplate<
@@ -19,6 +20,7 @@ const PassportTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.PASSPORT,
   name: m.formName.defaultMessage,
+  featureFlag: Features.passportApplication,
   dataSchema,
   stateMachineConfig: {
     initial: States.DRAFT,
