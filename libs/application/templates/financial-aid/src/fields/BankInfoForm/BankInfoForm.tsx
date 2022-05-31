@@ -27,7 +27,9 @@ const BankInfoForm = ({ field, application }: FAFieldBaseProps) => {
               name={bankNumberId}
               defaultValue={answers?.bankInfo?.bankNumber}
               label={formatMessage(bankInfoForm.inputsLabels.bankNumber)}
-              placeholder={formatMessage(bankInfoForm.inputsPlaceholders.bankNumber)}
+              placeholder={formatMessage(
+                bankInfoForm.inputsPlaceholders.bankNumber,
+              )}
               format="####"
               backgroundColor="blue"
               autoFocus
@@ -41,7 +43,9 @@ const BankInfoForm = ({ field, application }: FAFieldBaseProps) => {
               name={ledgerId}
               defaultValue={answers?.bankInfo?.ledger}
               label={formatMessage(bankInfoForm.inputsLabels.ledger)}
-              placeholder={formatMessage(bankInfoForm.inputsPlaceholders.ledger)}
+              placeholder={formatMessage(
+                bankInfoForm.inputsPlaceholders.ledger,
+              )}
               format="##"
               backgroundColor="blue"
             />
@@ -54,7 +58,9 @@ const BankInfoForm = ({ field, application }: FAFieldBaseProps) => {
               name={accountNumberId}
               defaultValue={answers?.bankInfo?.accountNumber}
               label={formatMessage(bankInfoForm.inputsLabels.accountNumber)}
-              placeholder={formatMessage(bankInfoForm.inputsPlaceholders.accountNumber)}
+              placeholder={formatMessage(
+                bankInfoForm.inputsPlaceholders.accountNumber,
+              )}
               format="######"
               backgroundColor="blue"
             />
