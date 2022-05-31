@@ -20,7 +20,8 @@ describe('Signed verdict overview - Court - Restriction cases', () => {
     intercept(caseDataAddition)
   })
 
-  it('should have a button for modifying the ruling that navigates to a modify ruling page', () => {
+  // TODO: The button is currently under feature flag. Remove .skip() when feature flag is removed.
+  it.skip('should have a button for modifying the ruling that navigates to a modify ruling page', () => {
     cy.get('[data-testid="modifyRulingButton"]').should('exist').click()
     cy.url().should('include', MODIFY_RULING_ROUTE)
   })
