@@ -6,6 +6,7 @@ import formatISO from 'date-fns/formatISO'
 import {
   Accordion,
   AccordionItem,
+  AlertMessage,
   Box,
   Checkbox,
   Input,
@@ -59,10 +60,10 @@ import {
 } from '@island.is/judicial-system/formatters'
 import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import * as Constants from '@island.is/judicial-system/consts'
 import SigningModal, {
   useRequestRulingSignature,
 } from '@island.is/judicial-system-web/src/components/SigningModal/SigningModal'
+import * as Constants from '@island.is/judicial-system/consts'
 
 export function getConclusionAutofill(
   formatMessage: IntlShape['formatMessage'],
@@ -276,6 +277,15 @@ export const Ruling: React.FC = () => {
     >
       <PageHeader title={formatMessage(titles.court.restrictionCases.ruling)} />
       <FormContentContainer>
+        {isModifyingRuling && (
+          <Box marginBottom={3}>
+            <AlertMessage
+              type="warning"
+              title={formatMessage(m.sections.alertMessage.title)}
+              message={formatMessage(m.sections.alertMessage.message)}
+            />
+          </Box>
+        )}
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
             {formatMessage(m.title)}

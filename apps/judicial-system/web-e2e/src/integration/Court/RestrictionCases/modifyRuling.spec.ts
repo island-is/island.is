@@ -11,6 +11,14 @@ describe(`${MODIFY_RULING_ROUTE}/:id`, () => {
     cy.stubAPIResponses()
   })
 
+  it('should have an alert message', () => {
+    const caseData = makeRestrictionCase()
+    cy.visit(`${MODIFY_RULING_ROUTE}/test_id_stadfest`)
+    intercept(caseData)
+
+    cy.getByTestid('alertMessage').should('exist')
+  })
+
   it('should not allow changes to certain inputs', () => {
     const caseData = makeRestrictionCase()
     const caseDataAddition: Case = {

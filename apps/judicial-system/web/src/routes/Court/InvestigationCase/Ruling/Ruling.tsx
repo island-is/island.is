@@ -35,6 +35,7 @@ import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader
 import {
   Accordion,
   AccordionItem,
+  AlertMessage,
   Box,
   Input,
   Text,
@@ -161,6 +162,15 @@ const Ruling = () => {
         title={formatMessage(titles.court.investigationCases.ruling)}
       />
       <FormContentContainer>
+        {isModifyingRuling && (
+          <Box marginBottom={3}>
+            <AlertMessage
+              type="warning"
+              title={formatMessage(m.sections.alertMessage.title)}
+              message={formatMessage(m.sections.alertMessage.message)}
+            />
+          </Box>
+        )}
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
             {formatMessage(m.title)}
