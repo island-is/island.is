@@ -37,6 +37,7 @@ import OwnersTable from '../../components/DetailTable/OwnersTable'
 import OperatorInfoItem from '../../components/DetailTable/OperatorInfoItem'
 import CoOwnerInfoItem from '../../components/DetailTable/CoOwnerInfoItem'
 import FeeInfoItem from '../../components/DetailTable/FeeInfoItem'
+import { displayWithUnit } from '../../utils/displayWithUnit'
 
 const VehicleDetail: ServicePortalModuleComponent = () => {
   useNamespaces('sp.vehicles')
@@ -65,8 +66,8 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
     coOwners,
   } = data?.vehiclesDetail || {}
 
-  const year = mainInfo?.year ? '(' + mainInfo.year + ')' : ''
-  const color = registrationInfo?.color ? ` - ${registrationInfo.color}` : ''
+  const year = mainInfo?.year ? `(${mainInfo.year})` : ''
+  const color = registrationInfo?.color ? `- ${registrationInfo.color}` : ''
 
   if (error && !loading) {
     return <NotFound title={formatMessage(messages.notFound)} />
@@ -82,12 +83,9 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
                 {loading ? (
                   <LoadingDots />
                 ) : (
-                  mainInfo?.model +
-                  ' ' +
-                  mainInfo?.subModel +
-                  ' ' +
-                  year +
-                  color
+                  [mainInfo?.model, mainInfo?.subModel, year, color]
+                    .filter(Boolean)
+                    .join(' ')
                 )}
               </Text>
               <Text>{formatMessage(messages.introDetail)}</Text>
@@ -114,21 +112,19 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
         <Divider />
         <UserInfoLine
           label={formatMessage(messages.trailerWithBrakes)}
-          content={
-            mainInfo?.trailerWithBrakesWeight
-              ? mainInfo.trailerWithBrakesWeight.toString() + ' kg.'
-              : ''
-          }
+          content={displayWithUnit(
+            mainInfo?.trailerWithBrakesWeight?.toString(),
+            'kg',
+          )}
           loading={loading}
         />
         <Divider />
         <UserInfoLine
           label={formatMessage(messages.trailerWithoutBrakes)}
-          content={
-            mainInfo?.trailerWithoutBrakesWeight
-              ? mainInfo.trailerWithoutBrakesWeight.toString() + ' kg.'
-              : ''
-          }
+          content={displayWithUnit(
+            mainInfo?.trailerWithoutBrakesWeight?.toString(),
+            'kg',
+          )}
           loading={loading}
         />
         <Divider />

@@ -13,6 +13,9 @@ import { VehiclesAxle, VehiclesDetail } from '../models/getVehicleDetail.model'
 import { ApolloError } from 'apollo-server-express'
 import { FetchError } from '@island.is/clients/middlewares'
 
+// 1kW equals 1.359622 metric horsepower.
+const KW_TO_METRIC_HP = 1.359622
+
 @Injectable()
 export class VehiclesService {
   constructor(
@@ -153,11 +156,7 @@ export class VehiclesService {
               ? data.plates[0].reggroup
               : null
             : null,
-          reggroupName: data.plates
-            ? data.plates.length > 0
-              ? data.plates[0].reggroupname
-              : null
-            : null,
+          reggroupName: data.plates?.[0]?.reggroupname ?? null,
           passengers: data.techincal?.pass,
           useGroup: data.usegroup,
           driversPassengers: data.techincal?.passbydr,
@@ -198,7 +197,7 @@ export class VehiclesService {
           width: data.techincal?.size?.width,
           trailerWithoutBrakesWeight: data.techincal?.tMassoftrunbr,
           horsepower: data.techincal?.maxNetPower
-            ? Math.round(data.techincal.maxNetPower * 1.359622 * 10) / 10
+            ? Math.round(data.techincal.maxNetPower * KW_TO_METRIC_HP * 10) / 10
             : null,
           trailerWithBrakesWeight: data.techincal?.tMassoftrbr,
           carryingCapacity: data.techincal?.mass?.masscapacity,

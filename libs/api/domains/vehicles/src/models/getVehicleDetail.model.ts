@@ -204,7 +204,7 @@ export class VehiclesTechnicalInfo {
   cubicCapacity?: number | null // technical -> capacity
 
   @Field(() => Number, { nullable: true })
-  capacityWeight?: number | null // technical -> mass -> masscapacity
+  capacityWeight?: number | null // technical -> mass -> massofcomb (þyngd vagnlestar)
 
   @Field(() => Number, { nullable: true })
   length?: number | null // technical -> size -> length
