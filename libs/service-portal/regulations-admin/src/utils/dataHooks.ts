@@ -1,10 +1,17 @@
 import { useState } from 'react'
 import { useHistory } from 'react-router'
 import { Query } from '@island.is/api/schema'
-import { gql, useQuery, useMutation, ApolloError } from '@apollo/client'
+import {
+  gql,
+  useQuery,
+  useMutation,
+  ApolloError,
+  useLazyQuery,
+} from '@apollo/client'
 import {
   DraftImpact,
   DraftImpactName,
+  PresignedPost,
   RegulationDraft,
   TaskListType,
 } from '@island.is/regulations/admin'
@@ -36,7 +43,50 @@ type QueryResult<T> =
       loading?: never
       error: ApolloError | Error
     }
+// ---------------------------------------------------------------------------
 
+const CreatePresignedPostMutation = gql`
+  mutation CreatePresignedPost {
+    createPresignedPost
+  }
+`
+
+export const useS3Upload = () => {
+  type CreateStatus =
+    | { creating: boolean; error?: never; data?: never }
+    | { creating?: false; error: Error; data?: never }
+    | { creating?: false; error?: never; data: PresignedPost }
+
+  const [status, setStatus] = useState<CreateStatus>({ creating: false })
+  const [createNewPresignedPost] = useMutation(CreatePresignedPostMutation)
+
+  return {
+    ...status,
+
+    createPresignedPost: () => {
+      console.log(`status: ${status}`)
+      if (status.creating) {
+        return
+      }
+      setStatus({ creating: true })
+      createNewPresignedPost()
+        .then((res) => {
+          const presignedPost = res.data
+            ? (res.data.createPresignedPost as PresignedPost)
+            : undefined
+          if (!presignedPost) {
+            throw new Error('Presigned post not created')
+          }
+
+          setStatus({ creating: false, data: presignedPost })
+        })
+        .catch((e) => {
+          const error = e instanceof Error ? e : new Error(String(e))
+          setStatus({ error })
+        })
+    },
+  }
+}
 // ---------------------------------------------------------------------------
 
 const RegulationDraftQuery = gql`

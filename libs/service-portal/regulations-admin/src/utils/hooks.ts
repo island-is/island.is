@@ -1,9 +1,4 @@
-import {
-  RegName,
-  Regulation,
-  RegulationRedirect,
-  toISODate,
-} from '@island.is/regulations'
+import { RegName, Regulation, toISODate } from '@island.is/regulations'
 import {
   DraftImpact,
   RegulationDraftId,

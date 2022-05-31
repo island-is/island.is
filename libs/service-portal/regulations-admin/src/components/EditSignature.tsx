@@ -34,6 +34,8 @@ import { downloadUrl } from '../utils/files'
 import { DownloadDraftButton } from './DownloadDraftButton'
 import { useAuth } from '@island.is/auth/react'
 import { useLocale } from '@island.is/localization'
+import { useS3Upload } from '../utils/dataHooks'
+import { PresignedPost } from '@island.is/regulations/admin'
 
 // ---------------------------------------------------------------------------
 
@@ -192,6 +194,7 @@ export const EditSignature = () => {
   const { draft, actions } = useDraftingState()
   const { updateState } = actions
   const signedDocumentUrl = draft.signedDocumentUrl.value
+  const [presignedPost, setPresignedPost] = useState<PresignedPost>()
 
   const {
     uploadStatus,
@@ -205,6 +208,16 @@ export const EditSignature = () => {
   } = useSignedUploader(draft, (location) =>
     updateState('signedDocumentUrl', location),
   )
+
+  const { createPresignedPost, data } = useS3Upload()
+
+  const onUpload = () => {
+    createPresignedPost()
+  }
+
+  useEffect(() => {
+    setPresignedPost(data)
+  }, [data])
 
   return (
     <Box marginBottom={6}>
@@ -220,9 +233,9 @@ export const EditSignature = () => {
             t(msg.signedDocumentUploadDescr).replace(/^\s+$/, '') || undefined
           }
           buttonLabel={t(msg.signedDocumentUpload)}
-          onChange={uploadSignedPDF}
-          onRetry={retryUpload}
-          onRemove={cancelUpload}
+          onChange={onUpload}
+          onRetry={() => console.log('retry')}
+          onRemove={() => console.log('remove')}
           errorMessage={uploadStatus.error}
           accept=".pdf"
           multiple={false}

@@ -66,6 +66,12 @@ export type Author = {
 
 // ---------------------------------------------------------------------------
 
+export type PresignedPost = {
+  url: string
+  fields: { [key: string]: string }
+}
+// ---------------------------------------------------------------------------
+
 export type DraftSummary = Pick<
   RegulationDraft,
   'id' | 'title' | 'idealPublishDate' | 'fastTrack' | 'authors'

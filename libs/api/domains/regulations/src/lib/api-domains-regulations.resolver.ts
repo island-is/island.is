@@ -1,4 +1,4 @@
-import { Args, Query, Resolver } from '@nestjs/graphql'
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import graphqlTypeJson from 'graphql-type-json'
 
 import { RegulationsService } from '@island.is/clients/regulations'
@@ -20,12 +20,18 @@ import { GetRegulationInput } from './dto/getRegulation.input'
 import { GetRegulationsLawChaptersInput } from './dto/getRegulationsLawChapters.input'
 import { GetRegulationsMinistriesInput } from './dto/getRegulationsMinistriesInput.input'
 import { GetRegulationsSearchInput } from './dto/getRegulationsSearch.input'
+import { PresignedPost } from '@island.is/regulations/admin'
 
 const validPage = (page: number | undefined) => (page && page >= 1 ? page : 1)
 
 @Resolver()
 export class RegulationsResolver {
   constructor(private regulationsService: RegulationsService) {}
+
+  @Mutation(() => graphqlTypeJson)
+  createPresignedPost(): Promise<PresignedPost | null> {
+    return this.regulationsService.createPresignedPost()
+  }
 
   @Query(() => graphqlTypeJson)
   getRegulation(
