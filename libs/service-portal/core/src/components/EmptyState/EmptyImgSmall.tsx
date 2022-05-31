@@ -83,10 +83,10 @@ export function EmptyImageSmall(props: React.SVGProps<SVGSVGElement>) {
           y2="205.69"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#FF4C84" />
-          <stop offset="0.1681" stop-color="#DF599A" />
-          <stop offset="0.7433" stop-color="#7680E2" />
-          <stop offset="1" stop-color="#4C90FF" />
+          <stop stopColor="#FF4C84" />
+          <stop offset="0.1681" stopColor="#DF599A" />
+          <stop offset="0.7433" stopColor="#7680E2" />
+          <stop offset="1" stopColor="#4C90FF" />
         </linearGradient>
       </defs>
     </svg>
