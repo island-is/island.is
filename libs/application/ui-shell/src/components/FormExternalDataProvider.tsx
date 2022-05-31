@@ -187,7 +187,10 @@ const FormExternalDataProvider: FC<{
           return [true, null]
         }
 
-        return [false, formatMessage(coreErrorMessages.failedDataProvider)]
+        return [
+          false,
+          formatMessage(coreErrorMessages.failedDataProviderSubmit),
+        ]
       })
     } else {
       setBeforeSubmitCallback(null)

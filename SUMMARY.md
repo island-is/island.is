@@ -239,5 +239,6 @@
 ## Misc
 
 - [Guide: Adding a Payment Step to an Application](handbook/misc/application-payment-guide.md)
+- [Guide: Enable Organisations to Make Requests to an Application](handbook/misc/application-system-org-requests.md)
 - [GitBook Template](handbook/misc/gitbook-template.md)
 - [Glossary](handbook/misc/glossary.md)

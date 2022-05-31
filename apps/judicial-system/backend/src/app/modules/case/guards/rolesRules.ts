@@ -84,6 +84,7 @@ const courtFields: (keyof UpdateCase)[] = [
   'judgeId',
   'registrarId',
   'caseModifiedExplanation',
+  'rulingModifiedHistory',
 ]
 
 // Allows judges to update a specific set of fields

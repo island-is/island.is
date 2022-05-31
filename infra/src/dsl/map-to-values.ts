@@ -41,7 +41,10 @@ export const serializeService: SerializeMethod = (
     addToErrors(
       Object.keys(source)
         .filter((srcKey) => targetKeys.includes(srcKey))
-        .map((key) => `Collisions for environment or secrets for key ${key}`),
+        .map(
+          (key) =>
+            `Collisions in ${service.serviceDef.name} for environment or secrets for key ${key}`,
+        ),
     )
   }
   const mergeObjects = (
@@ -79,6 +82,7 @@ export const serializeService: SerializeMethod = (
     },
     secrets: {},
     healthCheck: {
+      port: serviceDef.healthPort,
       liveness: {
         path: serviceDef.liveness.path,
         initialDelaySeconds: serviceDef.liveness.initialDelaySeconds,

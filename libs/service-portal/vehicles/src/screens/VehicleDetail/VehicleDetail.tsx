@@ -79,7 +79,6 @@ const VehicleDetail: ServicePortalModuleComponent = ({ userInfo }) => {
                   mainInfo?.model + ' ' + mainInfo?.subModel + ' ' + year
                 )}
               </Text>
-              <Text>{formatMessage(messages.introDetail)}</Text>
             </Stack>
           </GridColumn>
         </GridRow>
@@ -106,19 +105,31 @@ const VehicleDetail: ServicePortalModuleComponent = ({ userInfo }) => {
 
         <UserInfoLine
           label={formatMessage(messages.capacity)}
-          content={mainInfo?.cubicCapacity?.toString() + ' cc.'}
+          content={
+            mainInfo?.cubicCapacity
+              ? mainInfo.cubicCapacity.toString() + ' cc.'
+              : ''
+          }
           loading={loading}
         />
         <Divider />
         <UserInfoLine
           label={formatMessage(messages.trailerWithBrakes)}
-          content={mainInfo?.trailerWithBrakesWeight?.toString() + ' kg.'}
+          content={
+            mainInfo?.trailerWithBrakesWeight
+              ? mainInfo.trailerWithBrakesWeight.toString() + ' kg.'
+              : ''
+          }
           loading={loading}
         />
         <Divider />
         <UserInfoLine
           label={formatMessage(messages.trailerWithoutBrakes)}
-          content={mainInfo?.trailerWithoutBrakesWeight?.toString() + ' kg.'}
+          content={
+            mainInfo?.trailerWithoutBrakesWeight
+              ? mainInfo.trailerWithoutBrakesWeight.toString() + ' kg.'
+              : ''
+          }
           loading={loading}
         />
         <Divider />
@@ -127,13 +138,13 @@ const VehicleDetail: ServicePortalModuleComponent = ({ userInfo }) => {
       {basicInfo && <BaseInfoItem data={basicInfo} />}
       {registrationInfo && <RegistrationInfoItem data={registrationInfo} />}
       {currentOwnerInfo && <OwnerInfoItem data={currentOwnerInfo} />}
-      {inspectionInfo && <InspectionInfoItem data={inspectionInfo} />}
-      {technicalInfo && <TechnicalInfoItem data={technicalInfo} />}
       {coOwners &&
         coOwners.length > 0 &&
         coOwners.map((owner: VehiclesCurrentOwnerInfo, index) => (
           <CoOwnerInfoItem key={index} data={owner} />
         ))}
+      {inspectionInfo && <InspectionInfoItem data={inspectionInfo} />}
+      {technicalInfo && <TechnicalInfoItem data={technicalInfo} />}
       {operators &&
         operators.length > 0 &&
         operators.map((operator: VehiclesOperator, index) => (

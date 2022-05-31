@@ -58,7 +58,11 @@ const CaseFileList: React.FC<Props> = (props) => {
       {xFiles.map((file, index) => (
         <Box
           marginBottom={
-            index === xFiles.length - 1 || file.status === 'unsupported' ? 0 : 3
+            index === xFiles.length - 1 ||
+            file.status === 'case-not-found' ||
+            file.status === 'unsupported'
+              ? 0
+              : 3
           }
           key={`${file.id}-${index}`}
         >
@@ -66,14 +70,23 @@ const CaseFileList: React.FC<Props> = (props) => {
             file={
               {
                 ...file,
-                status: file.status === 'unsupported' ? 'error' : file.status,
+                status:
+                  file.status === 'case-not-found' ||
+                  file.status === 'unsupported'
+                    ? 'error'
+                    : file.status === 'done-broken'
+                    ? 'done'
+                    : file.status,
               } as TCaseFile
             }
             showFileSize={true}
             defaultBackgroundColor={getBackgroundColor(file.status)}
             doneIcon="checkmark"
             hideIcons={
-              hideIcons || file.status === 'broken' || file.status !== 'error'
+              hideIcons ||
+              (file.status !== 'done' &&
+                file.status !== 'done-broken' &&
+                file.status !== 'error')
             }
             onOpenFile={
               canOpenFiles &&
@@ -94,6 +107,11 @@ const CaseFileList: React.FC<Props> = (props) => {
           {file.status === 'unsupported' && (
             <Text color="red600" variant="eyebrow" lineHeight="lg">
               {formatMessage(m.fileUnsupportedInCourt)}
+            </Text>
+          )}
+          {file.status === 'case-not-found' && (
+            <Text color="red600" variant="eyebrow" lineHeight="lg">
+              {formatMessage(m.caseNotFoundInCourt)}
             </Text>
           )}
         </Box>

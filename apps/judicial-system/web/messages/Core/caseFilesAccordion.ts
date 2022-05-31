@@ -15,9 +15,9 @@ export const caseFilesAccordion = {
     description:
       'Notaður sem upplýsingatexti sem útskýrir að tekist hafi að vista öll gögn í Auði á yfirlitsskjá afgreiddra mála.',
   }),
-  someFilesUploadedToCourtText: defineMessage({
+  someFilesNotUploadedToCourtText: defineMessage({
     id:
-      'judicial.system.core:signed_verdict_overview.some_files_uploaded_to_court_text',
+      'judicial.system.core:signed_verdict_overview.some_files_not_uploaded_to_court_text',
     defaultMessage: 'Ekki tókst að vista öll gögn í Auði',
     description:
       'Notaður sem upplýsingatexti sem útskýrir að ekki hafi tekist að vista öll gögn í Auði á yfirlitsskjá afgreiddra mála.',

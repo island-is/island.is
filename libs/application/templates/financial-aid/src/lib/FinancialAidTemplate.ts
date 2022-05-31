@@ -27,7 +27,7 @@ import {
 } from './utils'
 import { FAApplication } from '..'
 
-type Events = { type: DefaultEvents.SUBMIT }
+type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.EDIT }
 
 const oneMonthLifeCycle = {
   shouldBeListed: true,
@@ -72,20 +72,18 @@ const FinancialAidTemplate: ApplicationTemplate<
         },
         on: {
           SUBMIT: [
-            //TODO check if works when national registry works
             {
               target: ApplicationStates.MUNCIPALITYNOTREGISTERED,
               cond: isMuncipalityNotRegistered,
             },
             {
-              target: ApplicationStates.DRAFT,
+              target: ApplicationStates.SUBMITTED,
               cond: hasActiveCurrentApplication,
             },
             {
-              target: ApplicationStates.SUBMITTED,
+              target: ApplicationStates.DRAFT,
             },
           ],
-          // TODO: Add other states here depending on data received from Veita and þjóðskrá
         },
       },
       [ApplicationStates.DRAFT]: {
@@ -144,20 +142,27 @@ const FinancialAidTemplate: ApplicationTemplate<
               read: 'all',
               write: {
                 answers: ['approveExternalDataSpouse'],
-                externalData: ['taxDataFetchSpouse'],
+                externalData: ['taxDataFetchSpouse', 'veita'],
               },
             },
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/WaitingForSpouse').then((module) =>
-                  Promise.resolve(module.WaitingForSpouse),
+                import('../forms/ApplicantSubmitted').then((module) =>
+                  Promise.resolve(module.ApplicantSubmitted),
                 ),
+              read: 'all',
             },
           ],
         },
         on: {
-          SUBMIT: { target: ApplicationStates.SPOUSE },
+          SUBMIT: [
+            {
+              target: ApplicationStates.SUBMITTED,
+              cond: hasActiveCurrentApplication,
+            },
+            { target: ApplicationStates.SPOUSE },
+          ],
         },
       },
       [ApplicationStates.SPOUSE]: {
@@ -179,15 +184,17 @@ const FinancialAidTemplate: ApplicationTemplate<
                   'spouseTaxReturnFiles',
                   'spouseContactInfo',
                   'spouseFormComment',
+                  'spouseName',
                 ],
               },
             },
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/WaitingForSpouse').then((module) =>
-                  Promise.resolve(module.WaitingForSpouse),
+                import('../forms/ApplicantSubmitted').then((module) =>
+                  Promise.resolve(module.ApplicantSubmitted),
                 ),
+              read: 'all',
             },
           ],
         },
@@ -201,27 +208,30 @@ const FinancialAidTemplate: ApplicationTemplate<
           lifecycle: oneMonthLifeCycle,
           onEntry: {
             apiModuleAction: ApiActions.CREATEAPPLICATION,
+            shouldPersistToExternalData: true,
+            externalDataId: 'veita',
           },
           roles: [
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/Submitted').then((module) =>
-                  Promise.resolve(module.Submitted),
+                import('../forms/ApplicantSubmitted').then((module) =>
+                  Promise.resolve(module.ApplicantSubmitted),
                 ),
-              // TODO: Limit this
               read: 'all',
             },
             {
               id: Roles.SPOUSE,
               formLoader: () =>
-                import('../forms/Submitted').then((module) =>
-                  Promise.resolve(module.Submitted),
+                import('../forms/SpouseSubmitted').then((module) =>
+                  Promise.resolve(module.SpouseSubmitted),
                 ),
-              // TODO: Limit this
               read: 'all',
             },
           ],
+        },
+        on: {
+          EDIT: { target: ApplicationStates.SUBMITTED },
         },
       },
       [ApplicationStates.MUNCIPALITYNOTREGISTERED]: {

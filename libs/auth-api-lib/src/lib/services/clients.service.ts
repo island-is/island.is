@@ -539,7 +539,7 @@ export class ClientsService {
   }
 
   /** Finds available scopes for AdminUI to select allowed scopes */
-  async FindAvailabeScopes(): Promise<ApiScope[]> {
+  async findAvailabeScopes(): Promise<ApiScope[]> {
     const identityResources = (await this.identityResourceModel.findAll({
       where: { archived: null },
     })) as unknown
