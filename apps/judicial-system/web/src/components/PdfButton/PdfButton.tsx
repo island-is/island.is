@@ -7,9 +7,16 @@ interface Props {
   title: string
   pdfType: 'request' | 'courtRecord' | 'ruling' | 'custodyNotice'
   disabled?: boolean
+  forceRegeneration?: boolean
 }
 
-const PdfButton: React.FC<Props> = ({ caseId, title, pdfType, disabled }) => {
+const PdfButton: React.FC<Props> = ({
+  caseId,
+  title,
+  pdfType,
+  disabled,
+  forceRegeneration = false,
+}) => {
   return (
     <Button
       data-testid={
@@ -25,7 +32,12 @@ const PdfButton: React.FC<Props> = ({ caseId, title, pdfType, disabled }) => {
       iconType="outline"
       disabled={disabled}
       onClick={() =>
-        window.open(`${api.apiUrl}/api/case/${caseId}/${pdfType}`, '_blank')
+        window.open(
+          `${api.apiUrl}/api/case/${caseId}/${pdfType}${
+            forceRegeneration ? '?forceRegeneration=true' : ''
+          }`,
+          '_blank',
+        )
       }
     >
       {title}

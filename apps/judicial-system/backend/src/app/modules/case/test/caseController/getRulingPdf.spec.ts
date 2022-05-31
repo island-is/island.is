@@ -18,6 +18,7 @@ type GivenWhenThen = (
   caseId: string,
   theCase: Case,
   res: Response,
+  forceRegeneration?: boolean,
 ) => Promise<Then>
 
 describe('CaseController - Get ruling pdf', () => {
@@ -34,11 +35,21 @@ describe('CaseController - Get ruling pdf', () => {
     mockAwsS3Service = awsS3Service
     mockLogger = logger
 
-    givenWhenThen = async (caseId: string, theCase: Case, res: Response) => {
+    givenWhenThen = async (
+      caseId: string,
+      theCase: Case,
+      res: Response,
+      forceRegeneration?: boolean,
+    ) => {
       const then = {} as Then
 
       try {
-        await caseController.getRulingPdf(caseId, theCase, res)
+        await caseController.getRulingPdf(
+          caseId,
+          theCase,
+          res,
+          forceRegeneration,
+        )
       } catch (error) {
         then.error = error as Error
       }
@@ -52,14 +63,19 @@ describe('CaseController - Get ruling pdf', () => {
     const theCase = { id: caseId } as Case
     const res = {} as Response
 
-    beforeEach(async () => {
+    it('should lookup pdf', async () => {
       await givenWhenThen(caseId, theCase, res)
-    })
 
-    it('should lookup pdf', () => {
       expect(mockAwsS3Service.getObject).toHaveBeenCalledWith(
         `generated/${caseId}/ruling.pdf`,
       )
+    })
+
+    it('should not lookup pdf if forceRegeneration is set to true', async () => {
+      const forceRegeneration = true
+      await givenWhenThen(caseId, theCase, res, forceRegeneration)
+
+      expect(mockAwsS3Service.getObject).not.toHaveBeenCalled()
     })
   })
 

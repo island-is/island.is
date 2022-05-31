@@ -23,6 +23,7 @@ export class FileService {
 
   private async getPdf(
     id: string,
+    forceRegeneration: boolean,
     route: string,
     req: Request,
     res: Response,
@@ -33,7 +34,9 @@ export class FileService {
     headers.set('cookie', req.headers.cookie as string)
 
     const result = await fetch(
-      `${this.config.backendUrl}/api/case/${id}/${route}`,
+      `${this.config.backendUrl}/api/case/${id}/${route}${
+        forceRegeneration ? '?forceRegeneration=true' : ''
+      }`,
       { headers },
     ).then(async (res) => {
       if (res.ok) {
@@ -59,12 +62,13 @@ export class FileService {
     route: string,
     req: Request,
     res: Response,
+    forceRegeneration?: boolean,
   ): Promise<Response> {
     try {
       return this.auditTrailService.audit(
         userId,
         auditAction,
-        this.getPdf(id, route, req, res),
+        this.getPdf(id, forceRegeneration || false, route, req, res),
         id,
       )
     } catch (error) {
