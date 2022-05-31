@@ -33,19 +33,9 @@ export const Estimation = ({
   const { formatMessage } = useIntl()
 
   const getAidType = () => {
-    switch (true) {
-      case nationalRegistry?.data?.applicant?.spouse?.maritalStatus !=
-        undefined:
-        return (
-          martialStatusTypeFromMartialCode(
-            nationalRegistry?.data?.applicant?.spouse?.maritalStatus,
-          ) === MartialStatusType.SINGLE
-        )
-      default:
-        return !showSpouseData[
-          findFamilyStatus(application.answers, application.externalData)
-        ]
-    }
+    return !showSpouseData[
+      findFamilyStatus(application.answers, application.externalData)
+    ]
   }
 
   const aidAmount = useMemo(() => {
