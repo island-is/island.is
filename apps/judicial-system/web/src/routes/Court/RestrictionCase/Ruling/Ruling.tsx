@@ -872,11 +872,6 @@ export const Ruling: React.FC = () => {
               ? `${Constants.SIGNED_VERDICT_OVERVIEW}/${workingCase.id}`
               : `${Constants.HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`
           }
-          previousButtonText={
-            isModifyingRuling
-              ? formatMessage(m.sections.formFooter.modifyRulingBackButtonLabel)
-              : undefined
-          }
           nextIsLoading={
             isModifyingRuling ? isRequestingRulingSignature : false
           }

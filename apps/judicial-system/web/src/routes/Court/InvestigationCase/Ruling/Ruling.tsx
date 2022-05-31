@@ -473,11 +473,6 @@ const Ruling = () => {
               ? `${SIGNED_VERDICT_OVERVIEW}/${workingCase.id}`
               : `${IC_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`
           }
-          previousButtonText={
-            isModifyingRuling
-              ? formatMessage(m.sections.formFooter.modifyRulingBackButtonLabel)
-              : undefined
-          }
           nextButtonText={
             isModifyingRuling
               ? formatMessage(m.sections.formFooter.modifyRulingButtonLabel)
