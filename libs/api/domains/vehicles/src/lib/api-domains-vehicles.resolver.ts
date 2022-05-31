@@ -15,7 +15,7 @@ import {
 import { GetVehicleDetailInput } from '../dto/getVehicleDetailInput'
 import { VehiclesDetail } from '../models/getVehicleDetail.model'
 @UseGuards(IdsUserGuard, ScopesGuard)
-// @Scopes(ApiScope.vehicles)
+@Scopes(ApiScope.vehicles)
 @Resolver()
 export class VehiclesResolver {
   constructor(private readonly vehiclesService: VehiclesService) {}

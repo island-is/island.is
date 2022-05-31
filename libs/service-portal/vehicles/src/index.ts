@@ -14,15 +14,13 @@ export const vehiclesModule: ServicePortalModule = {
     {
       name: m.yourVehicles,
       path: ServicePortalPath.AssetsMyVehicles,
-      enabled: true,
-      // enabled: userInfo.scopes.includes(ApiScope.vehicles),
+      enabled: userInfo.scopes.includes(ApiScope.vehicles),
       render: () => lazy(() => import('./screens/Overview/Overview')),
     },
     {
       name: m.vehicles,
       path: ServicePortalPath.AssetsVehiclesDetail,
-      enabled: true,
-      // enabled: userInfo.scopes.includes(ApiScope.vehicles),
+      enabled: userInfo.scopes.includes(ApiScope.vehicles),
       render: () => lazy(() => import('./screens/VehicleDetail/VehicleDetail')),
     },
     // {

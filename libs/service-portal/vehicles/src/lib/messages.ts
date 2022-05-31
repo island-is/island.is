@@ -275,7 +275,7 @@ export const messages = defineMessages({
   negligenceText: {
     id: 'sp.vehicles:negligence-text',
     defaultMessage:
-      'Vinsamlegast athugið, á þessu ökutæki hvíla vanrækslugjöld',
+      'Vinsamlegast athugið, á þessu ökutæki hvíla vanrækslugjöld.',
   },
   engineType: {
     id: 'sp.vehicles:engine',

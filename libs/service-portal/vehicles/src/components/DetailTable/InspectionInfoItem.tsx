@@ -4,18 +4,13 @@ import Column from './Column'
 import Row from './Row'
 import { Box } from '@island.is/island-ui/core'
 import { VehiclesInspectionInfo } from '@island.is/api/schema'
-import { useLocale } from '@island.is/localization'
 import { messages } from '../../lib/messages'
-import { amountFormat } from '@island.is/service-portal/core'
-import isNumber from 'lodash/isNumber'
 
 interface PropTypes {
   data: VehiclesInspectionInfo
 }
 
 const InspectionInfoItem = ({ data }: PropTypes) => {
-  const { formatMessage } = useLocale()
-
   return (
     <Box marginBottom={4}>
       <HeaderRow>{messages.inspectionTitle}</HeaderRow>

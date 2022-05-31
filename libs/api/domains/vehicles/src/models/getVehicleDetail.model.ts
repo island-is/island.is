@@ -123,7 +123,7 @@ export class VehiclesRegistrationInfo {
   reggroupName?: string | null // Skráningarflokkur // plates -> reggroupname
 
   @Field(() => String, { nullable: true })
-  plateLocation?: string | null // Geymslustaður plötu // plates -> reggroupname
+  plateLocation?: string | null // Geymslustaður plötu
 
   @Field(() => String, { nullable: true })
   plateStatus?: string | null // platestatus
