@@ -204,11 +204,7 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
     case 'sjukratryggingar':
     case 'icelandic-health-insurance':
       OrganizationFooterComponent = (
-        <SjukratryggingarFooter
-          title={organization.title}
-          logo={organization.logo?.url}
-          footerItems={organization.footerItems}
-        />
+        <SjukratryggingarFooter footerItems={organization.footerItems} />
       )
       break
     case 'utlendingastofnun':

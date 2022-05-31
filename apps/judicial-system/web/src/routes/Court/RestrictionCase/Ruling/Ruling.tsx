@@ -26,7 +26,6 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import {
   Case,
-  CaseCustodyRestrictions,
   CaseDecision,
   CaseType,
   completedCaseStates,
@@ -214,10 +213,6 @@ export const Ruling: React.FC = () => {
             value: workingCase.demands,
           },
           {
-            key: 'isolationToDate',
-            value: workingCase.validToDate,
-          },
-          {
             key: 'courtCaseFacts',
             value: workingCase.caseFacts,
           },
@@ -236,19 +231,6 @@ export const Ruling: React.FC = () => {
               : undefined,
           },
           {
-            key: 'isCustodyIsolation',
-            value:
-              workingCase.type === CaseType.CUSTODY ||
-              workingCase.type === CaseType.ADMISSION_TO_FACILITY
-                ? workingCase.requestedCustodyRestrictions &&
-                  workingCase.requestedCustodyRestrictions.includes(
-                    CaseCustodyRestrictions.ISOLATION,
-                  )
-                  ? true
-                  : false
-                : undefined,
-          },
-          {
             key: 'conclusion',
             value:
               workingCase.decision &&
@@ -260,6 +242,8 @@ export const Ruling: React.FC = () => {
                     workingCase.decision,
                     workingCase.defendants[0],
                     workingCase.validToDate,
+                    workingCase.isCustodyIsolation,
+                    workingCase.isolationToDate,
                   )
                 : undefined,
           },
@@ -635,6 +619,14 @@ export const Ruling: React.FC = () => {
                 selectedDate={workingCase.validToDate}
                 minDate={new Date()}
                 onChange={(date: Date | undefined, valid: boolean) => {
+                  const validToDate =
+                    date && valid ? formatISO(date) : undefined
+                  const isolationToDate =
+                    validToDate &&
+                    workingCase.isolationToDate &&
+                    validToDate < workingCase.isolationToDate
+                      ? validToDate
+                      : workingCase.isolationToDate
                   let conclusion = undefined
 
                   if (
@@ -652,9 +644,9 @@ export const Ruling: React.FC = () => {
                       workingCase,
                       workingCase.decision,
                       workingCase.defendants[0],
-                      formatISO(date),
+                      validToDate,
                       workingCase.isCustodyIsolation,
-                      workingCase.isolationToDate,
+                      isolationToDate,
                     )
                   }
 
@@ -662,7 +654,12 @@ export const Ruling: React.FC = () => {
                     [
                       {
                         key: 'validToDate',
-                        value: date && valid ? formatISO(date) : undefined,
+                        value: validToDate,
+                        force: true,
+                      },
+                      {
+                        key: 'isolationToDate',
+                        value: isolationToDate,
                         force: true,
                       },
                       {
@@ -752,13 +749,7 @@ export const Ruling: React.FC = () => {
                   name="isolationToDate"
                   datepickerLabel="Einangrun til"
                   disabled={!workingCase.isCustodyIsolation}
-                  selectedDate={
-                    workingCase.isolationToDate
-                      ? workingCase.isolationToDate
-                      : workingCase.validToDate
-                      ? workingCase.validToDate
-                      : undefined
-                  }
+                  selectedDate={workingCase.isolationToDate}
                   // Isolation can never be set in the past.
                   minDate={new Date()}
                   maxDate={
@@ -767,6 +758,16 @@ export const Ruling: React.FC = () => {
                       : undefined
                   }
                   onChange={(date: Date | undefined, valid: boolean) => {
+                    let isolationToDate =
+                      date && valid ? formatISO(date) : undefined
+                    if (
+                      isolationToDate &&
+                      workingCase.validToDate &&
+                      isolationToDate > workingCase.validToDate
+                    ) {
+                      // Make sure the time component does not make the isolation to date larger than the valid to date.
+                      isolationToDate = workingCase.validToDate
+                    }
                     let conclusion = undefined
 
                     if (
@@ -794,7 +795,7 @@ export const Ruling: React.FC = () => {
                       [
                         {
                           key: 'isolationToDate',
-                          value: date && valid ? formatISO(date) : undefined,
+                          value: isolationToDate,
                           force: true,
                         },
                         {
