@@ -11,7 +11,6 @@ import {
 import { TemplateAPIService } from '@island.is/application/template-api-modules'
 import { User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
-import { createConsoleLogger } from 'configcat-js'
 
 @Injectable()
 export class TemplateApiActionRunner {
@@ -46,7 +45,9 @@ export class TemplateApiActionRunner {
     this.auth = auth
     this.oldExternalData = application.externalData
 
-    const groupedActions = this.sortAndGroupByOrder(actions)
+    const groupedActions = this.groupByOrder(
+      this.sortAndSetUndefinedOrderToZero(actions),
+    )
     await this.runActions(groupedActions)
 
     await this.persistExternalData(actions)
@@ -54,22 +55,31 @@ export class TemplateApiActionRunner {
     return this.application
   }
 
-  sortAndGroupByOrder(
+  sortAndSetUndefinedOrderToZero(actions: ApplicationTemplateAPIAction[]) {
+    const defaultsToZero = actions.map((action) => {
+      if (!action.order) {
+        action.order = 0
+      }
+      return action
+    })
+
+    const sortedActions = defaultsToZero.sort((a, b) => {
+      if (a.order === undefined) {
+        return 1
+      }
+      if (b.order === undefined) {
+        return -1
+      }
+      return a.order - b.order
+    })
+
+    return sortedActions
+  }
+
+  groupByOrder(
     actions: ApplicationTemplateAPIAction[],
   ): ApplicationTemplateAPIAction[][] {
-    //set default order to 0
-    const sortedActions = actions
-      .map((action) => {
-        if (!action.order) {
-          action.order = 0
-        }
-        return action
-      })
-      .sort((a, b) => {
-        return a.order! - b.order!
-      })
-
-    const groupedActions = sortedActions.reduce((acc, action) => {
+    const groupedActions = actions.reduce((acc, action) => {
       const order = action.order ?? 0
       if (!acc[order]) {
         acc[order] = []
@@ -88,7 +98,6 @@ export class TemplateApiActionRunner {
   }
 
   async runActions(actionGroups: ApplicationTemplateAPIAction[][]) {
-    console.log({ actionGroups })
     const result = actionGroups.reduce((accumulatorPromise, actions) => {
       return accumulatorPromise.then(() => {
         const ps = Promise.all(
@@ -138,24 +147,6 @@ export class TemplateApiActionRunner {
     await this.updateExternalData(actionResult, apiModuleAction, externalDataId)
   }
 
-  async persistExternalData(
-    actions: ApplicationTemplateAPIAction[],
-  ): Promise<void> {
-    actions.map((action) => {
-      if (!action.shouldPersistToExternalData) {
-        delete this.newExternalData[
-          action.externalDataId || action.apiModuleAction
-        ]
-      }
-    })
-
-    await this.applicationService.updateExternalData(
-      this.application.id,
-      this.oldExternalData,
-      this.newExternalData,
-    )
-  }
-
   async updateExternalData(
     actionResult: PerformActionResult,
     apiModuleAction: string,
@@ -175,7 +166,26 @@ export class TemplateApiActionRunner {
 
     this.application.externalData = {
       ...this.application.externalData,
-      ...this.newExternalData,
+      ...newExternalDataEntry,
     }
+  }
+
+  async persistExternalData(
+    actions: ApplicationTemplateAPIAction[],
+  ): Promise<void> {
+    actions.map((action) => {
+      if (action.shouldPersistToExternalData === false) {
+        //default should be true
+        delete this.newExternalData[
+          action.externalDataId || action.apiModuleAction
+        ]
+      }
+    })
+
+    await this.applicationService.updateExternalData(
+      this.application.id,
+      this.oldExternalData,
+      this.newExternalData,
+    )
   }
 }
