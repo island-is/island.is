@@ -79,7 +79,6 @@ const VehicleDetail: ServicePortalModuleComponent = ({ userInfo }) => {
                   mainInfo?.model + ' ' + mainInfo?.subModel + ' ' + year
                 )}
               </Text>
-              <Text>{formatMessage(messages.introDetail)}</Text>
             </Stack>
           </GridColumn>
         </GridRow>
