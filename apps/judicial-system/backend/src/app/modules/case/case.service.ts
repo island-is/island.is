@@ -725,11 +725,8 @@ export class CaseService {
     return getCourtRecordPdfAsBuffer(theCase, user, this.formatMessage)
   }
 
-  async getRulingPdf(
-    theCase: Case,
-    forceRegeneration = false,
-  ): Promise<Buffer> {
-    if (!forceRegeneration) {
+  async getRulingPdf(theCase: Case, useSigned = true): Promise<Buffer> {
+    if (useSigned) {
       try {
         return await this.awsS3Service.getObject(
           `generated/${theCase.id}/ruling.pdf`,

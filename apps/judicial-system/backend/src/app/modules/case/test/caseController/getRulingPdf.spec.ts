@@ -18,7 +18,7 @@ type GivenWhenThen = (
   caseId: string,
   theCase: Case,
   res: Response,
-  forceRegeneration?: boolean,
+  useSigned?: boolean,
 ) => Promise<Then>
 
 describe('CaseController - Get ruling pdf', () => {
@@ -39,17 +39,12 @@ describe('CaseController - Get ruling pdf', () => {
       caseId: string,
       theCase: Case,
       res: Response,
-      forceRegeneration?: boolean,
+      useSigned?: boolean,
     ) => {
       const then = {} as Then
 
       try {
-        await caseController.getRulingPdf(
-          caseId,
-          theCase,
-          res,
-          forceRegeneration,
-        )
+        await caseController.getRulingPdf(caseId, theCase, res, useSigned)
       } catch (error) {
         then.error = error as Error
       }
@@ -159,10 +154,10 @@ describe('CaseController - Get ruling pdf', () => {
     const caseId = uuid()
     const theCase = { id: caseId } as Case
     const res = {} as Response
-    const forceRegeneration = true
+    const useSigned = false
 
     beforeEach(async () => {
-      await givenWhenThen(caseId, theCase, res, forceRegeneration)
+      await givenWhenThen(caseId, theCase, res, useSigned)
     })
 
     it('should generate pdf', () => {

@@ -311,12 +311,11 @@ export class CaseController {
     @Param('caseId') caseId: string,
     @CurrentCase() theCase: Case,
     @Res() res: Response,
-    @Query('forceRegeneration') forceRegeneration = false,
+    @Query('useSigned') useSigned = true,
   ): Promise<void> {
     this.logger.debug(`Getting the ruling for case ${caseId} as a pdf document`)
-    this.logger.debug(`FORCE REGENERATION: ${forceRegeneration}`)
 
-    const pdf = await this.caseService.getRulingPdf(theCase, forceRegeneration)
+    const pdf = await this.caseService.getRulingPdf(theCase, useSigned)
 
     res.end(pdf)
   }

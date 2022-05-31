@@ -473,7 +473,7 @@ const Ruling = () => {
             caseId={workingCase.id}
             title={formatMessage(core.pdfButtonRuling)}
             pdfType="ruling"
-            forceRegeneration={isModifyingRuling}
+            useSigned={!isModifyingRuling}
           />
         </Box>
       </FormContentContainer>

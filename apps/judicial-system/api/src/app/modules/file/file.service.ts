@@ -23,7 +23,7 @@ export class FileService {
 
   private async getPdf(
     id: string,
-    forceRegeneration: boolean,
+    useSigned: boolean,
     route: string,
     req: Request,
     res: Response,
@@ -35,7 +35,7 @@ export class FileService {
 
     const result = await fetch(
       `${this.config.backendUrl}/api/case/${id}/${route}${
-        forceRegeneration ? '?forceRegeneration=true' : ''
+        useSigned ? '?useSigned=true' : ''
       }`,
       { headers },
     ).then(async (res) => {
@@ -62,13 +62,13 @@ export class FileService {
     route: string,
     req: Request,
     res: Response,
-    forceRegeneration?: boolean,
+    useSigned?: boolean,
   ): Promise<Response> {
     try {
       return this.auditTrailService.audit(
         userId,
         auditAction,
-        this.getPdf(id, forceRegeneration || false, route, req, res),
+        this.getPdf(id, useSigned || true, route, req, res),
         id,
       )
     } catch (error) {
