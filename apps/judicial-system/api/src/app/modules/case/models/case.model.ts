@@ -258,5 +258,8 @@ export class Case implements TCase {
   readonly caseModifiedExplanation?: string
 
   @Field({ nullable: true })
+  readonly rulingModifiedHistory?: string
+
+  @Field({ nullable: true })
   readonly caseResentExplanation?: string
 }

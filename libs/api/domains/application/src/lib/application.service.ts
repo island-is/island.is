@@ -1,6 +1,4 @@
 import { Injectable } from '@nestjs/common'
-import { logger } from '@island.is/logging'
-import { ApolloError } from 'apollo-server-express'
 import type { Auth, User } from '@island.is/auth-nest-tools'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import { Locale } from '@island.is/shared/types'
@@ -25,16 +23,16 @@ import { DeleteApplicationInput } from './dto/deleteApplication.input'
 @Injectable()
 export class ApplicationService {
   constructor(
-    private _applicationApi: ApplicationsApi,
-    private _applicationPaymentApi: PaymentsApi,
+    private applicationApi: ApplicationsApi,
+    private applicationPaymentApi: PaymentsApi,
   ) {}
 
   applicationApiWithAuth(auth: Auth) {
-    return this._applicationApi.withMiddleware(new AuthMiddleware(auth))
+    return this.applicationApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   paymentApiWithAuth(auth: Auth) {
-    return this._applicationPaymentApi.withMiddleware(new AuthMiddleware(auth))
+    return this.applicationPaymentApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   async findOne(id: string, auth: Auth, locale: Locale) {

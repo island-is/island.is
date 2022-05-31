@@ -4,11 +4,11 @@ import {
   IC_RECEPTION_AND_ASSIGNMENT_ROUTE,
 } from '@island.is/judicial-system/consts'
 
-import { makeCourt, makeCustodyCase, intercept } from '../../../utils'
+import { makeCourt, makeRestrictionCase, intercept } from '../../../utils'
 
 describe(`${IC_RECEPTION_AND_ASSIGNMENT_ROUTE}/:id`, () => {
   beforeEach(() => {
-    const caseData = makeCustodyCase()
+    const caseData = makeRestrictionCase()
 
     const caseDataAddition = {
       ...caseData,

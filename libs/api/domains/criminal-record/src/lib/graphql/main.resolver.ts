@@ -1,4 +1,4 @@
-import { Args, Query, Resolver } from '@nestjs/graphql'
+import { Query, Resolver } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 import type { User } from '@island.is/auth-nest-tools'
 import {

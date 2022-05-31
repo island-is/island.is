@@ -2,6 +2,7 @@
   "implicitDependencies": {
     "workspace.json": "*",
     "package.json": {
+      "version": "*",
       "dependencies": "*",
       "devDependencies": "*",
       "resolutions": "*"

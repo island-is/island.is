@@ -30,4 +30,10 @@ export const caseFiles = {
     description:
       'Notaður sem texti þegar tekst ekki að flytja gögn í Auði þegar skrá er ekki studd',
   }),
+  caseNotFoundInCourt: defineMessage({
+    id: 'judicial.system.core:case_files.case_not_found_in_court',
+    defaultMessage: 'Málsnúmer fannst ekki í Auði',
+    description:
+      'Notaður sem texti þegar tekst ekki að flytja gögn í Auði vegna þess að málsnúmerið er ekki til í Auði',
+  }),
 }
