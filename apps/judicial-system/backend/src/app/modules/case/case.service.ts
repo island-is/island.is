@@ -455,10 +455,10 @@ export class CaseService {
         isModifyingRuling: Boolean(theCase.rulingDate),
         courtCaseNumber: theCase.courtCaseNumber,
         courtName: theCase.court?.name?.replace('dómur', 'dómi'),
-        defenderHasAccessToRvg: theCase.defenderNationalId,
+        defenderHasAccessToRvg: Boolean(theCase.defenderNationalId),
         linkStart: `<a href="${this.config.deepLinks.defenderCompletedCaseOverviewUrl}${theCase.id}">`,
         linkEnd: '</a>',
-        signedVerdictAvailableInS3: rulingUploadedToS3 ? 'TRUE' : 'FALSE',
+        signedVerdictAvailableInS3: rulingUploadedToS3,
       }),
     )
   }
