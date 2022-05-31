@@ -7,7 +7,6 @@ import {
   BasicVehicleInformationGetRequest,
   BasicVehicleInformationTechnicalMass,
   BasicVehicleInformationTechnicalAxle,
-  BasicVehicleInformationTechnicalTyre,
   PersidnoLookup,
 } from '@island.is/clients/vehicles'
 import { VehiclesAxle, VehiclesDetail } from '../models/getVehicleDetail.model'
@@ -126,7 +125,7 @@ export class VehiclesService {
           co2: data?.techincal?.co2,
           weightedCo2: data?.techincal?.weightedCo2,
           co2Wltp: data?.techincal?.co2Wltp,
-          weightedco2Wltp: data?.techincal?.weightedco2Wltp,
+          weightedCo2Wltp: data?.techincal?.weightedco2Wltp,
           cubicCapacity: data.techincal?.capacity,
           trailerWithBrakesWeight: data.techincal?.tMassoftrbr,
           trailerWithoutBrakesWeight: data.techincal?.tMassoftrunbr,

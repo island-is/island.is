@@ -24,7 +24,7 @@ export class VehiclesMainInfo {
   co2Wltp?: number | null // WLTP
 
   @Field(() => Number, { nullable: true })
-  weightedco2Wltp?: number | null // Weighted WLTP
+  weightedCo2Wltp?: number | null // Weighted WLTP
 
   @Field(() => Number, { nullable: true })
   cubicCapacity?: number | null // Slagrými ?? technical -> capacity

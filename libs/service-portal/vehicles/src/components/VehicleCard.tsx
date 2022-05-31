@@ -39,14 +39,14 @@ export const VehicleCard: FC<Props> = ({ vehicle }) => {
       headingVariant="h4"
       text={text}
       tag={
-        vehicle?.nextInspection?.nextinspectiondate
+        vehicle?.nextInspection?.nextInspectionDate
           ? {
               label: `${formatMessage(messages.nextAnyInspection)} ${formatDate(
-                parseInt(vehicle.nextInspection.nextinspectiondate),
+                vehicle.nextInspection.nextInspectionDate,
               )}`,
               variant:
                 differenceInMonths(
-                  new Date(parseInt(vehicle.nextInspection.nextinspectiondate)),
+                  new Date(vehicle.nextInspection.nextInspectionDate),
                   new Date(),
                 ) > 0
                   ? 'blue'

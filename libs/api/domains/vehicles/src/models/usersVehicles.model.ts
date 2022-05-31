@@ -2,11 +2,14 @@ import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
 export class NextInspection {
-  @Field({ nullable: true })
-  nextinspectiondate?: string
+  @Field(() => Date, { name: 'nextInspectionDate', nullable: true })
+  nextinspectiondate?: Date
 
-  @Field({ nullable: true })
-  nextinspectiondateIfPassedInspectionToday?: string
+  @Field(() => Date, {
+    name: 'nextInspectionDateIfPassedInspectionToday',
+    nullable: true,
+  })
+  nextinspectiondateIfPassedInspectionToday?: Date
 }
 @ObjectType()
 export class VehiclesVehicle {

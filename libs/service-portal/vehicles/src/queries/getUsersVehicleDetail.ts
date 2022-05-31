@@ -11,7 +11,7 @@ export const GET_USERS_VEHICLE_DETAIL = gql`
         co2
         weightedCo2
         co2Wltp
-        weightedco2Wltp
+        weightedCo2Wltp
         cubicCapacity
         trailerWithBrakesWeight
         trailerWithoutBrakesWeight

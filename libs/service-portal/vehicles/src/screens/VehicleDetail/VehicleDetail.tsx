@@ -71,6 +71,7 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
   if (error && !loading) {
     return <NotFound title={formatMessage(messages.notFound)} />
   }
+
   return (
     <>
       <Box marginBottom={6}>
@@ -191,11 +192,11 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
           </>
         )}
 
-        {mainInfo?.weightedco2Wltp && (
+        {mainInfo?.weightedCo2Wltp && (
           <>
             <UserInfoLine
               label={formatMessage(messages.wltpWeighted)}
-              content={String(mainInfo.weightedco2Wltp)}
+              content={String(mainInfo.weightedCo2Wltp)}
               loading={loading}
             />
             <Divider />

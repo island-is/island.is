@@ -31,8 +31,8 @@ export const GET_USERS_VEHICLES = gql`
         vehGroup
         plateStatus
         nextInspection {
-          nextinspectiondate
-          nextinspectiondateIfPassedInspectionToday
+          nextInspectionDate
+          nextInspectionDateIfPassedInspectionToday
         }
       }
       createdTimestamp

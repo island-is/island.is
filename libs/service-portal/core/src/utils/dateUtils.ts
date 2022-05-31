@@ -8,8 +8,8 @@ export const dateParse = (startDate: string) => {
   return new Date(year, month - 1, day)
 }
 
-// Takes in UNIX ms timestamp
-export const formatDate = (date: number) => {
+// Takes in date string
+export const formatDate = (date: string) => {
   try {
     return format(new Date(date), 'dd.MM.yyyy')
   } catch {
