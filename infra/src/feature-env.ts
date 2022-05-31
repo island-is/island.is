@@ -10,23 +10,25 @@ import {
 import { generateJobsForFeature } from './dsl/feature-jobs'
 import { UberChart } from './dsl/uber-chart'
 import { Envs } from './environments'
-import * as Islandis from './uber-charts/islandis'
-import * as IDS from './uber-charts/identity-server'
+import {
+  Services,
+  FeatureDeploymentServices,
+  ExcludedFeatureDeploymentServices,
+} from './uber-charts/islandis'
 import { EnvironmentServices } from './dsl/types/charts'
 import { ServiceHelm } from './dsl/types/output-types'
 import { Deployments } from './uber-charts/all-charts'
 
-type ChartNames = 'islandis' | 'identity-server'
+type ChartName = 'islandis'
 
-const charts: { [name in ChartNames]: EnvironmentServices } = {
-  islandis : Islandis.Services,
-  "identity-server": IDS.Services
+const charts: { [name in ChartName]: EnvironmentServices } = {
+  islandis: Services,
 }
 
 interface Arguments {
   feature: string
   images: string
-  chart: ChartNames
+  chart: ChartName
   output?: string
   jobImage?: string
 }
@@ -62,7 +64,7 @@ const parseArguments = (argv: Arguments) => {
   const feature = argv.feature
   const images = argv.images.split(',') // Docker images that have changed
   const env = 'dev'
-  const chart = argv.chart as ChartNames
+  const chart = argv.chart as ChartName
 
   const ch = new UberChart({
     ...Envs[Deployments[chart][env]],
@@ -72,7 +74,7 @@ const parseArguments = (argv: Arguments) => {
   const habitat = charts[chart][env]
 
   const affectedServices = habitat
-    .concat(Islandis.FeatureDeploymentServices)
+    .concat(FeatureDeploymentServices)
     .filter((h) => images?.includes(h.serviceDef.image ?? h.serviceDef.name))
   return { ch, habitat, affectedServices }
 }
@@ -106,7 +108,7 @@ yargs(hideBin(process.argv))
         ch,
         habitat,
         affectedServices.slice(),
-        Islandis.ExcludedFeatureDeploymentServices,
+        ExcludedFeatureDeploymentServices,
       )
       await writeToOutput(dumpYaml(ch, featureYaml), argv.output)
     },
@@ -121,7 +123,7 @@ yargs(hideBin(process.argv))
         ch,
         habitat,
         affectedServices.slice(),
-        Islandis.ExcludedFeatureDeploymentServices,
+        ExcludedFeatureDeploymentServices,
       )
       await writeToOutput(buildComment(featureYaml.services), argv.output)
     },
@@ -160,7 +162,7 @@ yargs(hideBin(process.argv))
         'List of comma separated Docker image names that have changed',
     },
     chart: {
-      choices: ['islandis', 'identity-server'],
+      choices: ['islandis'],
       demandOption: true,
       description: 'Name of the umbrella chart to use',
     },
