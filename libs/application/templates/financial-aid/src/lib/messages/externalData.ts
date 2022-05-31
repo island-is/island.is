@@ -49,4 +49,34 @@ export const externalData = {
         'Subtitle: External Info about applicant from the National Registry',
     },
   }),
+  taxData: defineMessages({
+    title: {
+      id:
+        'fa.application:section.backgroundInformation.externalData.taxData.title',
+      defaultMessage: 'Skatturinn',
+      description:
+        'Title: External Info about applicant from the tax data gathering',
+    },
+    dataInfo: {
+      id:
+        'fa.application:section.backgroundInformation.externalData.taxData.dataInfo',
+      defaultMessage:
+        'Afrit af skattframtali og upplýsingar um staðgreiðslu í staðgreiðsluskrá.',
+      description: 'What data is retrived from the tax',
+    },
+    whyDataIsNeeded: {
+      id:
+        'fa.application:section.backgroundInformation.externalData.whyDataIsNeeded.',
+      defaultMessage:
+        'Við þurfum að afla þessara gagna til að staðfesta hjá hvaða sveitarfélagi þú eigir að sækja um fjárhagsaðstoð, einfalda umsóknar- og vinnsluferlið og staðfesta réttleika upplýsinga.',
+      description: 'Why we need the tax data',
+    },
+    process: {
+      id: 'fa.application:section.backgroundInformation.externalData.process.',
+      defaultMessage:
+        'Svo þurfum við að fá þig til að renna yfir nokkur atriði varðandi persónuhagi og fjármál til að reikna út fjárhagsaðstoð til útgreiðslu í byrjun næsta mánuðar. Í lok umsóknar getur þú sent hana inn eða eytt henni og öllum tengdum gögnum.',
+      description:
+        'Next steps in the application process and what will happen to the data that is gathered',
+    },
+  }),
 }

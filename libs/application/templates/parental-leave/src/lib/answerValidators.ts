@@ -13,8 +13,14 @@ import {
   AnswerValidationError,
 } from '@island.is/application/core'
 
-import { Period, Payments } from '../types'
-import { NO, NO_PRIVATE_PENSION_FUND, YES } from '../constants'
+import { Period, Payments, OtherParent } from '../types'
+import {
+  MANUAL,
+  NO,
+  NO_PRIVATE_PENSION_FUND,
+  NO_UNION,
+  YES,
+} from '../constants'
 import { isValidEmail } from './isValidEmail'
 import { errorMessages } from './messages'
 import {
@@ -27,6 +33,7 @@ import { validatePeriod } from './answerValidator-utils'
 
 const EMPLOYER = 'employer'
 const PAYMENTS = 'payments'
+const OTHER_PARENT = 'otherParent'
 // When attempting to continue from the periods repeater main screen
 // this validator will get called to validate all of the periods
 export const VALIDATE_PERIODS = 'validatedPeriods'
@@ -71,6 +78,23 @@ export const answerValidators: Record<string, AnswerValidator> = {
 
     return undefined
   },
+  [OTHER_PARENT]: (newAnswer: unknown, application: Application) => {
+    const otherParent = newAnswer as OtherParent
+
+    const buildError = (message: StaticText, path: string) =>
+      buildValidationError(`${OTHER_PARENT}.${path}`)(message)
+
+    // If manual option is chosen then user have to insert name and national id
+    if (otherParent.chooseOtherParent === MANUAL) {
+      if (isEmpty(otherParent.otherParentName))
+        return buildError(coreErrorMessages.missingAnswer, 'otherParentName')
+
+      if (isEmpty(otherParent.otherParentId))
+        return buildError(coreErrorMessages.missingAnswer, 'otherParentId')
+    }
+
+    return undefined
+  },
   [PAYMENTS]: (newAnswer: unknown, application: Application) => {
     const payments = newAnswer as Payments
 
@@ -91,6 +115,12 @@ export const answerValidators: Record<string, AnswerValidator> = {
 
     const buildError = (message: StaticText, path: string) =>
       buildValidationError(`${PAYMENTS}.${path}`)(message)
+
+    if (payments.union !== NO_UNION) {
+      if (payments.union === '') {
+        return buildError(coreErrorMessages.defaultError, 'union')
+      }
+    }
 
     // if privatePensionFund is NO_PRIVATE_PENSION_FUND and privatePensionFundPercentage is an empty string, allow the user to continue.
     // this will only happen when the usePrivatePensionFund field is set to NO
@@ -136,6 +166,7 @@ export const answerValidators: Record<string, AnswerValidator> = {
       payments.privatePensionFundPercentage !== '2' &&
       payments.privatePensionFundPercentage !== '4'
     ) {
+      if (usePrivatePensionFund === NO) return undefined
       return buildError(
         coreErrorMessages.defaultError,
         'privatePensionFundPercentage',

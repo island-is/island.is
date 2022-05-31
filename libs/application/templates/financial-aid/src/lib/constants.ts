@@ -3,6 +3,7 @@ export enum ApplicationStates {
   DRAFT = 'draft',
   SUBMITTED = 'submitted',
   SPOUSE = 'spouse',
+  PREREQUISITESSPOUSE = 'prerequisitesSpouse',
   MUNCIPALITYNOTREGISTERED = 'muncipalityNotRegistered',
 }
 
@@ -29,6 +30,10 @@ export enum Routes {
   SPOUSEINCOMEFILES = 'spouseIncomeFiles',
   SPOUSETAXRETURNFILES = 'spouseTaxReturnFiles',
   SPOUSECONTACTINFO = 'spouseContactInfo',
+  MISSINGFILES = 'missingFiles',
+  APPLICANTSTATUS = 'applicantStatus',
+  MISSINGFILESCONFIRMATION = 'missingFilesConfirmation',
+  SPOUSESTATUS = 'spouseStatus',
 }
 
 export enum ApiActions {

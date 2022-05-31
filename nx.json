@@ -2,6 +2,7 @@
   "implicitDependencies": {
     "workspace.json": "*",
     "package.json": {
+      "version": "*",
       "dependencies": "*",
       "devDependencies": "*",
       "resolutions": "*"
@@ -661,9 +662,6 @@
     "service-portal-endorsements": {
       "tags": []
     },
-    "service-portal-family": {
-      "tags": []
-    },
     "service-portal-finance": {
       "tags": []
     },
@@ -679,6 +677,9 @@
     "service-portal-icelandic-names-registry": {
       "tags": []
     },
+    "service-portal-information": {
+      "tags": []
+    },
     "service-portal-licenses": {
       "tags": []
     },
@@ -689,9 +690,6 @@
       "tags": []
     },
     "service-portal-vehicles": {
-      "tags": []
-    },
-    "service-portal-wip": {
       "tags": []
     },
     "services-auth-admin-api": {

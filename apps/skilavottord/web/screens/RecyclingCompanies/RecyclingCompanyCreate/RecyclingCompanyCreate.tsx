@@ -32,7 +32,8 @@ export const CreateSkilavottordRecyclingPartnerMutation = gql`
     createSkilavottordRecyclingPartner(input: $input) {
       companyId
       companyName
-      active
+      email
+      nationalId
       address
       postnumber
       city

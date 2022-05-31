@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useState } from 'react'
+import React, { ReactNode, useEffect, useMemo, useState } from 'react'
 import { useLazyQuery } from '@apollo/client'
 import {
   useForm,
@@ -26,6 +26,7 @@ import {
   Link,
   Stack,
   LoadingDots,
+  Checkbox,
 } from '@island.is/island-ui/core'
 import { Organizations, SupportCategory } from '@island.is/api/schema'
 import { GET_SUPPORT_SEARCH_RESULTS_QUERY } from '@island.is/web/screens/queries'
@@ -37,6 +38,7 @@ import {
 } from '@island.is/web/graphql/schema'
 import { ModifySearchTerms } from '../../SearchInput/SearchInput'
 import orderBy from 'lodash/orderBy'
+import { useNamespace } from '@island.is/web/hooks'
 
 type FormState = {
   message: string
@@ -54,6 +56,7 @@ interface StandardFormProps {
   loading: boolean
   onSubmit: (formState: FormState) => Promise<void>
   institutionSlug: string
+  namespace?: Record<string, string>
 }
 
 type CategoryId =
@@ -126,7 +129,6 @@ const labels: Record<string, string> = {
 const skippedLabelsInMessage: Array<keyof typeof labels> = [
   'nafn',
   'vidfangsefni',
-  'email',
   'erindi',
 ]
 
@@ -169,8 +171,10 @@ export const StandardForm = ({
   loading,
   onSubmit,
   institutionSlug,
+  namespace,
 }: StandardFormProps) => {
   const useFormMethods = useForm({})
+  const n = useNamespace(namespace)
   const {
     handleSubmit,
     getValues,
@@ -188,6 +192,10 @@ export const StandardForm = ({
   const [categoryId, setCategoryId] = useState<string>('')
   const [categoryLabel, setCategoryLabel] = useState<string>('')
   const [addonFields, setAddonFields] = useState<ReactNode | null>()
+  const categoryDescription = useMemo(
+    () => supportCategories.find((c) => c.id === categoryId)?.description ?? '',
+    [categoryId, supportCategories],
+  )
 
   const [fetch, { loading: loadingSuggestions, called, data }] = useLazyQuery<
     GetSupportSearchResultsQuery,
@@ -398,7 +406,7 @@ export const StandardForm = ({
   return (
     <>
       <GridContainer>
-        <GridRow marginTop={6}>
+        <GridRow marginTop={6} marginBottom={4}>
           <GridColumn span={['12/12', '12/12', '12/12', '8/12']}>
             <Select
               backgroundColor="blue"
@@ -417,6 +425,11 @@ export const StandardForm = ({
               placeholder="Veldu flokk"
               size="md"
             />
+            <Box marginLeft={1} marginTop={1}>
+              <Text variant="small" as="div">
+                <i>{categoryDescription}</i>
+              </Text>
+            </Box>
           </GridColumn>
         </GridRow>
 
@@ -616,6 +629,27 @@ export const StandardForm = ({
                             rows={10}
                             textarea
                             required
+                          />
+                        )}
+                      />
+                    </GridColumn>
+                  </GridRow>
+                  <GridRow marginTop={8}>
+                    <GridColumn>
+                      <Controller
+                        name="storageAllowed"
+                        defaultValue={false}
+                        control={control}
+                        rules={{ required: true }}
+                        render={(props) => (
+                          <Checkbox
+                            label={n(
+                              'serviceWebFormStorageAllowedCheckboxText',
+                              'Ég gef leyfi fyrir því að erindi mitt sé vistað í póstumsjónarkerfi',
+                            )}
+                            checked={props.value}
+                            onChange={(e) => props.onChange(e.target.checked)}
+                            hasError={errors.storageAllowed}
                           />
                         )}
                       />
