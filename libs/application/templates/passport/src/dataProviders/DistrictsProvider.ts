@@ -3,8 +3,14 @@ import {
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
 } from '@island.is/application/core'
-import { DistrictCommissionerAgencies } from '../types/schema'
 import { m } from '../lib/messages'
+
+export interface DistrictCommissionerAgencies {
+  name: string
+  place: string
+  address: string
+  id: string
+}
 
 export class DistrictsProvider extends BasicDataProvider {
   type = 'DistrictsProvider'

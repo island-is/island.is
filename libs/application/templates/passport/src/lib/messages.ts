@@ -197,4 +197,9 @@ export const m = defineMessages({
     defaultMessage: 'Sótt er gögn um hvort notandi sé öryrki',
     description: 'Some description',
   },
+  errorDataProvider: {
+    id: 'pp.application.system:core.error.dataProvider',
+    defaultMessage: 'Úps! Eitthvað fór úrskeiðis við að sækja gögnin',
+    description: 'Oops! Something went wrong when fetching your data',
+  },
 })
