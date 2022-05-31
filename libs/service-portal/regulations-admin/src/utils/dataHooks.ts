@@ -1,13 +1,7 @@
 import { useState } from 'react'
 import { useHistory } from 'react-router'
 import { Query } from '@island.is/api/schema'
-import {
-  gql,
-  useQuery,
-  useMutation,
-  ApolloError,
-  useLazyQuery,
-} from '@apollo/client'
+import { gql, useQuery, useMutation, ApolloError } from '@apollo/client'
 import {
   DraftImpact,
   DraftImpactName,
@@ -26,6 +20,7 @@ import {
 } from '@island.is/regulations'
 import { ShippedSummary } from '@island.is/regulations/admin'
 import { getEditUrl } from './routing'
+import { UploadFile } from '@island.is/island-ui/core'
 
 type QueryResult<T> =
   | {
@@ -60,11 +55,23 @@ export const useS3Upload = () => {
   const [status, setStatus] = useState<CreateStatus>({ creating: false })
   const [createNewPresignedPost] = useMutation(CreatePresignedPostMutation)
 
+  const createFormData = (
+    presignedPost: PresignedPost,
+    file: UploadFile,
+  ): FormData => {
+    const formData = new FormData()
+    Object.keys(presignedPost.fields).forEach((key) => {
+      formData.append(key, presignedPost.fields[key])
+    })
+
+    formData.append('file', file as File)
+    return formData
+  }
+
   return {
     ...status,
 
     createPresignedPost: () => {
-      console.log(`status: ${status}`)
       if (status.creating) {
         return
       }
@@ -84,6 +91,40 @@ export const useS3Upload = () => {
           const error = e instanceof Error ? e : new Error(String(e))
           setStatus({ error })
         })
+    },
+
+    uploadToS3: (file: UploadFile, presignedPost: PresignedPost) => {
+      const request = new XMLHttpRequest()
+      request.withCredentials = true
+      request.responseType = 'json'
+
+      request.upload.addEventListener('progress', (evt) => {
+        if (evt.lengthComputable) {
+          file.percent = (evt.loaded / evt.total) * 100
+          file.status = 'uploading'
+        }
+      })
+
+      request.upload.addEventListener('error', (evt) => {
+        if (evt.lengthComputable) {
+          file.percent = 0
+          file.status = 'error'
+        }
+      })
+
+      request.addEventListener('load', () => {
+        if (request.status >= 200 && request.status < 300) {
+          file.status = 'done'
+        } else {
+          file.status = 'error'
+          file.percent = 0
+        }
+      })
+
+      console.log(file.status)
+
+      request.open('POST', presignedPost.url)
+      request.send(createFormData(presignedPost, file))
     },
   }
 }

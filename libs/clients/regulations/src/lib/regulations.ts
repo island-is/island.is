@@ -25,6 +25,7 @@ import {
   RegulationYears,
 } from '@island.is/regulations/web'
 import {
+  PresignedPost,
   RegulationPdf,
   RegulationPdfInput,
   RegulationPdfResponse,
@@ -64,6 +65,19 @@ export class RegulationsService extends RESTDataSource {
   regulation/[name]/d/[date]/diff
   regulation/[name]/d/[date]/diff/[earlierDate]
 */
+  async createPresignedPost(): Promise<PresignedPost | null> {
+    const response = await this.post<PresignedPost | null>(
+      'http://localhost:3000/api/v1/file-presigned',
+      {},
+      {
+        headers: {
+          'X-ApiKey': process.env.REGULATIONS_API_KEY ?? '',
+        },
+      },
+    )
+    return response
+  }
+
   async getRegulation(
     viewType: RegulationViewTypes,
     name: RegQueryName,
