@@ -44,6 +44,7 @@ export const LifeEventsSection = ({
                   heading={shortTitle || title}
                   imgSrc={tinyThumbnail?.url}
                   alt={tinyThumbnail?.title}
+                  dataCy={'lifeevent-card'}
                   href={linkResolver(typename as LinkType, [slug]).href}
                 />
               )
