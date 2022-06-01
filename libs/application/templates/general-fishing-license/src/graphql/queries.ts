@@ -22,6 +22,18 @@ export const queryShips = `
         name
         chargeType
       }
+      doesNotFulfillFishingLicenses
+      unfulfilledLicenses {
+        fishingLicense {
+          code
+          name
+          chargeType
+        }
+        reasons {
+          description
+          directions
+        }
+      }
     }
   }
 `

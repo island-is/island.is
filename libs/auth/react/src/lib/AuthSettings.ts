@@ -62,7 +62,7 @@ export const mergeAuthSettings = (settings: AuthSettings): AuthSettings => {
     silent_redirect_uri: `${baseUrl}${redirectPathSilent}`,
     post_logout_redirect_uri: baseUrl,
     response_type: 'code',
-    revokeTokenTypes: ['access_token', 'refresh_token'],
+    revokeTokenTypes: ['refresh_token'],
     revokeTokensOnSignout: true,
     loadUserInfo: true,
     monitorSession: onIdsDomain,

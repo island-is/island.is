@@ -17,6 +17,7 @@ import {
 } from './uber-charts/islandis'
 import { EnvironmentServices } from './dsl/types/charts'
 import { ServiceHelm } from './dsl/types/output-types'
+import { Deployments } from './uber-charts/all-charts'
 
 type ChartName = 'islandis'
 
@@ -65,7 +66,10 @@ const parseArguments = (argv: Arguments) => {
   const env = 'dev'
   const chart = argv.chart as ChartName
 
-  const ch = new UberChart({ ...Envs[env], feature: feature })
+  const ch = new UberChart({
+    ...Envs[Deployments[chart][env]],
+    feature: feature,
+  })
 
   const habitat = charts[chart][env]
 

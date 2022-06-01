@@ -23,7 +23,7 @@ export class HealthInsuranceService {
       const applyInputs = transformApplicationToHealthInsuranceDTO(application)
       logger.info(`Finished transform Application to Health Insurance DTO`)
 
-      const res = await this.healthInsuranceAPI.applyInsurance(
+      await this.healthInsuranceAPI.applyInsurance(
         570,
         applyInputs.attachmentNames,
         applyInputs.vistaskjal,
@@ -31,16 +31,8 @@ export class HealthInsuranceService {
 
       logger.info(`Finished send Health Insurance application`)
     } catch (error) {
-      logger.error(
-        `Send health insurance application failed because: ${JSON.stringify(
-          error,
-        )}`,
-      )
-      throw new Error(
-        `Send health insurance application failed because: ${JSON.stringify(
-          error,
-        )}`,
-      )
+      logger.error(`Send health insurance application failed`)
+      throw new Error(`Send health insurance application failed`)
     }
   }
 }

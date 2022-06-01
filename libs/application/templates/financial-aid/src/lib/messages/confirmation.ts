@@ -20,28 +20,28 @@ export const confirmation = {
       description: 'Confirmation next step title',
     },
     content: {
-      id: 'fa.application:section.confirmation.nextSteps.content#markup',
+      id: 'fa.application:section.confirmation.nextSteps.content#markdown',
       defaultMessage:
         '* Vinnsluaðili sveitarfélagsins vinnur úr umsókninni. Umsóknin verður afgreidd eins fljótt og auðið er. \n* Ef umsóknin er samþykkt getur þú reiknað með útgreiðslu í byrjun {nextMonth}. \n* Ef þörf er á frekari upplýsingum eða gögnum til að vinna úr umsókninni mun vinnsluaðili sveitarfélagsins hafa samband.',
       description: 'Confirmation next steps',
     },
     contentMissingFiles: {
       id:
-        'fa.application:section.confirmation.nextSteps.contentMissingFiles#markup',
+        'fa.application:section.confirmation.nextSteps.contentMissingFiles#markdown',
       defaultMessage:
         '* Þú hleður upp nauðsynlegum gögnum í gegnum stöðusíðu umsóknar.',
       description: 'Confirmation first step if missing files',
     },
     contentSpouseMissingFiles: {
       id:
-        'fa.application:section.confirmation.nextSteps.contentSpouseMissingFiles#markup',
+        'fa.application:section.confirmation.nextSteps.contentSpouseMissingFiles#markdown',
       defaultMessage:
         '* Maki hleður upp nauðsynlegum gögnum sem þarf til úrvinnslu umsóknar.',
       description: 'Confirmation first step if spouse missing files',
     },
     contentBothMissingFiles: {
       id:
-        'fa.application:section.confirmation.nextSteps.contentBothMissingFiles#markup',
+        'fa.application:section.confirmation.nextSteps.contentBothMissingFiles#markdown',
       defaultMessage:
         '* Þú og maki þinn hlaðið upp nauðsynlegum gögnum sem þarf til úrvinnslu umsóknar.',
       description: 'Confirmation first step if both are missing files',
@@ -54,7 +54,7 @@ export const confirmation = {
       description: 'Confirmation links title',
     },
     content: {
-      id: 'fa.application:section.confirmation.links.content#markup',
+      id: 'fa.application:section.confirmation.links.content#markdown',
       defaultMessage:
         '[Sjá stöðu umsóknar]({statusPage}) \n \n [Reglur um fjárhagsaðstoð]({homePage})',
       description: 'Confirmation links',

@@ -25,11 +25,7 @@ import {
   Button,
   Inline,
 } from '@island.is/island-ui/core'
-import {
-  HeadWithSocialSharing,
-  Sticky,
-  BoostChatPanel,
-} from '@island.is/web/components'
+import { HeadWithSocialSharing, Sticky } from '@island.is/web/components'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { SyslumennHeader, SyslumennFooter } from './Themes/SyslumennTheme'
 import {
@@ -208,11 +204,7 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
     case 'sjukratryggingar':
     case 'icelandic-health-insurance':
       OrganizationFooterComponent = (
-        <SjukratryggingarFooter
-          title={organization.title}
-          logo={organization.logo?.url}
-          footerItems={organization.footerItems}
-        />
+        <SjukratryggingarFooter footerItems={organization.footerItems} />
       )
       break
     case 'utlendingastofnun':

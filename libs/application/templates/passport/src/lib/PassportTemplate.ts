@@ -91,7 +91,7 @@ const PassportTemplate: ApplicationTemplate<
       },
     },
   },
-  mapUserToRole(id: string, application: Application): ApplicationRole {
+  mapUserToRole(_id: string, _application: Application): ApplicationRole {
     return 'applicant'
   },
 }

@@ -96,7 +96,7 @@ export const aliasMutation = (
 export const investigationCaseAccusedName = `${faker.name.firstName()} ${faker.name.lastName()}`
 export const investigationCaseAccusedAddress = faker.address.streetAddress()
 
-export const makeCustodyCase = (): Case => {
+export const makeRestrictionCase = (): Case => {
   return {
     id: 'test_id',
     created: '2020-09-16T19:50:08.033Z',
@@ -197,7 +197,7 @@ export const makeCaseFile = (
   size = 100,
 ): CaseFile => {
   return {
-    id: 'test_case_file_id',
+    id,
     created: '2020-09-16T19:50:08.033Z',
     modified: '2020-09-16T19:50:08.033Z',
     caseId,
