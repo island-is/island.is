@@ -194,8 +194,8 @@ export const EditSignature = () => {
   const { draft, actions } = useDraftingState()
   const { updateState } = actions
   const signedDocumentUrl = draft.signedDocumentUrl.value
-  const [presignedPost, setPresignedPost] = useState<PresignedPost>()
-  const [uploadFile, setUploadFile] = useState<UploadFile>()
+
+  console.log(signedDocumentUrl)
 
   const {
     uploadStatus,
@@ -210,26 +210,13 @@ export const EditSignature = () => {
     updateState('signedDocumentUrl', location),
   )
 
-  const { createPresignedPost, uploadToS3, data, error } = useS3Upload()
-
-  const onUpload = (files: File[]) => {
-    if (files.length) {
-      const file = files[0]
-      setUploadFile(file)
-      createPresignedPost()
-    }
-  }
-
-  useEffect(() => {
-    setPresignedPost(data)
-  }, [data])
-
-  useEffect(() => {
-    if (presignedPost && uploadFile) {
-      const res = uploadToS3(uploadFile, presignedPost)
-      console.log(res)
-    }
-  }, [presignedPost, uploadFile, uploadToS3])
+  const {
+    uploadFile,
+    uploadErrorMessage,
+    onChange,
+    onRetry,
+    onRemove,
+  } = useS3Upload()
 
   return (
     <Box marginBottom={6}>
@@ -239,16 +226,16 @@ export const EditSignature = () => {
 
       <Box marginBottom={4}>
         <InputFileUpload
-          fileList={uploadStatus.file || []}
+          fileList={uploadFile ? [uploadFile] : []}
           header={t(msg.signedDocumentUploadDragPrompt)}
           description={
             t(msg.signedDocumentUploadDescr).replace(/^\s+$/, '') || undefined
           }
           buttonLabel={t(msg.signedDocumentUpload)}
-          onChange={onUpload}
-          onRetry={onUpload}
-          onRemove={() => console.log('remove')}
-          errorMessage={error ? error.message : undefined}
+          onChange={onChange}
+          onRetry={onRetry}
+          onRemove={onRemove}
+          errorMessage={uploadErrorMessage}
           accept=".pdf"
           multiple={false}
         />

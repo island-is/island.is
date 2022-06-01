@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useHistory } from 'react-router'
 import { Query } from '@island.is/api/schema'
 import { gql, useQuery, useMutation, ApolloError } from '@apollo/client'
@@ -47,13 +47,9 @@ const CreatePresignedPostMutation = gql`
 `
 
 export const useS3Upload = () => {
-  type CreateStatus =
-    | { creating: boolean; error?: never; data?: never }
-    | { creating?: false; error: Error; data?: never }
-    | { creating?: false; error?: never; data: PresignedPost }
-
-  const [status, setStatus] = useState<CreateStatus>({ creating: false })
   const [createNewPresignedPost] = useMutation(CreatePresignedPostMutation)
+  const [uploadErrorMessage, setUploadErrorMessage] = useState<string>()
+  const [uploadFile, setUploadFile] = useState<UploadFile>()
 
   const createFormData = (
     presignedPost: PresignedPost,
@@ -68,64 +64,123 @@ export const useS3Upload = () => {
     return formData
   }
 
-  return {
-    ...status,
+  useEffect(() => {
+    console.log(uploadFile)
+  }, [uploadFile])
 
-    createPresignedPost: () => {
-      if (status.creating) {
-        return
+  const createPresignedPost = async (): Promise<PresignedPost> => {
+    try {
+      const post = await createNewPresignedPost()
+
+      return post.data?.createPresignedPost
+    } catch (error) {
+      setUploadErrorMessage("Couldn't create presigned post!")
+      return { url: '', fields: {} }
+    }
+  }
+
+  const uploadToS3 = async (file: UploadFile, presignedPost: PresignedPost) => {
+    const formData = createFormData(presignedPost, file)
+
+    file.status = 'uploading'
+    setUploadFile(file)
+
+    return fetch(presignedPost.url, {
+      body: formData,
+      method: 'POST',
+      mode: 'cors',
+      headers: {
+        Accept: 'application/json',
+      },
+    }).then(
+      () => {
+        file.status = 'done'
+        setUploadFile(file)
+      },
+      () => {
+        file.status = 'error'
+        setUploadFile(file)
+      },
+    )
+
+    /*const request = new XMLHttpRequest()
+    //equest.withCredentials = true
+    request.responseType = 'json'
+    request.overrideMimeType('multipart/form-data')
+
+    request.upload.addEventListener('progress', (evt) => {
+      if (evt.lengthComputable) {
+        file.percent = (evt.loaded / evt.total) * 100
+        file.status = 'uploading'
+        setUploadFile(file)
       }
-      setStatus({ creating: true })
-      createNewPresignedPost()
-        .then((res) => {
-          const presignedPost = res.data
-            ? (res.data.createPresignedPost as PresignedPost)
-            : undefined
-          if (!presignedPost) {
-            throw new Error('Presigned post not created')
-          }
+    })
 
-          setStatus({ creating: false, data: presignedPost })
-        })
-        .catch((e) => {
-          const error = e instanceof Error ? e : new Error(String(e))
-          setStatus({ error })
-        })
-    },
+    request.upload.addEventListener('error', (evt) => {
+      if (evt.lengthComputable) {
+        file.percent = 0
+        file.status = 'error'
+        setUploadFile(file)
+      }
+    })
 
-    uploadToS3: (file: UploadFile, presignedPost: PresignedPost) => {
-      const request = new XMLHttpRequest()
-      request.withCredentials = true
-      request.responseType = 'json'
+    request.addEventListener('load', () => {
+      if (request.status >= 200 && request.status < 300) {
+        file.status = 'done'
+        setUploadFile(file)
+      } else {
+        file.status = 'error'
+        file.percent = 0
+        setUploadFile(file)
+      }
+    })
 
-      request.upload.addEventListener('progress', (evt) => {
-        if (evt.lengthComputable) {
-          file.percent = (evt.loaded / evt.total) * 100
-          file.status = 'uploading'
-        }
-      })
+    request.open('POST', presignedPost.url)
+    const formData = createFormData(presignedPost, file)
+    console.log(request)
+    formData.forEach((val, key) => {
+      console.log(`form key: ${key}, val: ${val}`)
+    })
+    const formfile = formData.get('file')
+    console.log(formfile)
+    request.send(formData)
+    */
+  }
 
-      request.upload.addEventListener('error', (evt) => {
-        if (evt.lengthComputable) {
-          file.percent = 0
-          file.status = 'error'
-        }
-      })
+  const onChange = async (newFiles: File[]) => {
+    setUploadErrorMessage(undefined)
 
-      request.addEventListener('load', () => {
-        if (request.status >= 200 && request.status < 300) {
-          file.status = 'done'
-        } else {
-          file.status = 'error'
-          file.percent = 0
-        }
-      })
+    if (!newFiles.length) {
+      return
+    }
 
-      console.log(file.status)
+    const file = newFiles[0] as UploadFile
+    const presignedPost = await createPresignedPost()
 
-      request.open('POST', presignedPost.url)
-      request.send(createFormData(presignedPost, file))
-    },
+    if (!presignedPost) {
+      return
+    }
+    file.key = presignedPost.fields.key
+    setUploadFile(file)
+
+    uploadToS3(file, presignedPost)
+  }
+
+  const onRetry = () => {
+    setUploadErrorMessage(undefined)
+    onChange([uploadFile as File])
+  }
+
+  const onRemove = (file: UploadFile) => {
+    //setUploadErrorMessage(undefined)
+    console.log('remove file')
+  }
+  return {
+    uploadFile,
+    uploadErrorMessage,
+    onChange,
+    onRemove,
+    onRetry,
   }
 }
 // ---------------------------------------------------------------------------
