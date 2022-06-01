@@ -7,6 +7,7 @@ import {
   Application,
   DefaultEvents,
   DefaultStateLifeCycle,
+  EphemeralStateLifeCycle,
 } from '@island.is/application/core'
 import { m } from './messages'
 import { Events, States, Roles } from './constants'
@@ -32,11 +33,8 @@ const FinancialStatementInaoApplication: ApplicationTemplate<
             title: m.applicationTitle,
           },
           progress: 0.4,
-          lifecycle: {
-            shouldBeListed: false,
-            shouldBePruned: true,
-            whenToPrune: 24 * 3600 * 1000,
-          },
+          lifecycle: EphemeralStateLifeCycle,
+
           roles: [
             {
               id: Roles.APPLICANT,
@@ -80,6 +78,7 @@ const FinancialStatementInaoApplication: ApplicationTemplate<
     if (application.applicant === nationalId) {
       return Roles.APPLICANT
     }
+    return undefined
   },
 }
 

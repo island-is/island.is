@@ -99,8 +99,8 @@ export const clientInfoSection = buildSection({
               width: 'half',
               placeholder: m.pickElectionType,
               options: [
-                { label: 'Forsetakosningar', value: 'Forsetakosningar' },
-                { label: 'Alþingiskosningar', value: 'Alþingiskosningar' },
+                { label: m.presidentalElection, value: 'Forsetakosningar' },
+                { label: m.parliamentaryElection, value: 'Alþingiskosningar' },
               ],
             }),
             buildDescriptionField({

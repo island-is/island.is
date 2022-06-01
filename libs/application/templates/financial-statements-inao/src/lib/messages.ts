@@ -83,6 +83,16 @@ export const m = defineMessages({
     defaultMessage: 'Kosningabarátta',
     description: 'Election Campaign',
   },
+  presidentalElection: {
+    id: 'fsn.application:presidentalElection',
+    defaultMessage: 'Forsetakosningar',
+    description: 'Presidental election',
+  },
+  parliamentaryElection: {
+    id: 'fsn.application:presidentalElection',
+    defaultMessage: 'Alþingiskosningar',
+    description: 'Election Campaign',
+  },
   electionType: {
     id: 'fsn.application:electionType',
     defaultMessage: 'Tegund Kosninga',
