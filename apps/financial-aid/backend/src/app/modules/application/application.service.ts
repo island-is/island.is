@@ -58,14 +58,12 @@ interface Recipient {
   address: string
 }
 
-const linkToStatusPage = (
-  applicationId: string,
-  applicationSystem?: boolean,
-) => {
-  if (applicationSystem) {
-    return `${environment.applicationSystemBaseUrl}/${applicationId}`
-  }
+const linkToStatusPage = (applicationId: string) => {
   return `${environment.oskBaseUrl}/stada/${applicationId}"`
+}
+
+const linkToApplicationSystem = (applicationId: string) => {
+  return `${environment.applicationSystemBaseUrl}/${applicationId}`
 }
 
 @Injectable()
@@ -338,10 +336,9 @@ export class ApplicationService {
 
     const emailData = getApplicantEmailDataFromEventType(
       ApplicationEventType.NEW,
-      linkToStatusPage(
-        isApplicationSystem ? application.applicationSystemId : appModel.id,
-        isApplicationSystem,
-      ),
+      isApplicationSystem
+        ? linkToApplicationSystem(application.applicationSystemId)
+        : linkToStatusPage(appModel.id),
       application.email,
       municipality,
       appModel.created,
@@ -391,7 +388,7 @@ export class ApplicationService {
 
       const applicantEmailData = getApplicantEmailDataFromEventType(
         'WAITINGSPOUSE',
-        linkToStatusPage(data.applicationSystemId, true),
+        linkToApplicationSystem(data.applicationSystemId),
         data.email,
         municipality,
         data.created,
@@ -399,7 +396,7 @@ export class ApplicationService {
 
       const spouseEmailData = getApplicantEmailDataFromEventType(
         'SPOUSE',
-        linkToStatusPage(data.applicationSystemId, true),
+        linkToApplicationSystem(data.applicationSystemId),
         data.spouseEmail,
         municipality,
         data.created,
@@ -575,12 +572,9 @@ export class ApplicationService {
 
       const emailData = getApplicantEmailDataFromEventType(
         update.event,
-        linkToStatusPage(
-          isApplicationSystem
-            ? updatedApplication.applicationSystemId
-            : updatedApplication.id,
-          isApplicationSystem,
-        ),
+        isApplicationSystem
+          ? linkToApplicationSystem(updatedApplication.applicationSystemId)
+          : linkToStatusPage(updatedApplication.id),
         updatedApplication.email,
         municipality,
         updatedApplication.created,
