@@ -13,7 +13,7 @@ export class SpouseEmailInput {
   readonly email!: string
 
   @Allow()
-  @Field()
+  @Field({ nullable: true })
   readonly spouseName!: string
 
   @Allow()

@@ -28,7 +28,7 @@ export const useEmail = (application: FAApplication) => {
               name: externalData.nationalRegistry.data.applicant.fullName,
               email: answers.contactInfo.email,
               spouseName:
-                externalData.nationalRegistry.data.applicant.spouse?.name ?? '',
+                externalData.nationalRegistry.data.applicant.spouse?.name,
               spouseEmail:
                 answers.spouse?.email ||
                 answers.relationshipStatus?.spouseEmail,
