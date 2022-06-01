@@ -15,9 +15,29 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { NationalRegistryXRoadService } from '@island.is/api/domains/national-registry-x-road'
 import ResidenceHistory from '../lib/__mock-data__/residenceHistory.json'
 import { ConfigModule, defineConfig, XRoadConfig } from '@island.is/nest/config'
+import * as z from 'zod'
 
+const schema = z.object({
+  xroadBaseUrl: z.string(),
+  xroadClientId: z.string(),
+  secret: z.string(),
+  xroadPathV1: z.string(),
+  xroadPathV2: z.string(),
+})
 
-
+export const TestDrivingLicenseApiConfig = defineConfig<z.infer<typeof schema>>({
+  name: 'DrivingLicenseApi',
+  schema,
+  load(env) {
+    return {
+      secret: '',
+      xroadBaseUrl: 'http://localhost',
+      xroadClientId: '',
+      xroadPathV1: 'v1',
+      xroadPathV2: 'v2',
+    }
+  },
+})
 
 startMocking(requestHandlers)
 describe('DrivingLicenseService', () => {
@@ -27,7 +47,7 @@ describe('DrivingLicenseService', () => {
     const module = await Test.createTestingModule({
       imports: [
         DrivingLicenseApiModule,
-        ConfigModule.forRoot({ isGlobal: true, load: [DrivingLicenseApiConfig] }),
+        ConfigModule.forRoot({ isGlobal: true, load: [TestDrivingLicenseApiConfig] }),
       ],
       providers: [
         DrivingLicenseService,
@@ -51,7 +71,9 @@ describe('DrivingLicenseService', () => {
   })
 
   describe('Module', () => {
+    
     it('should be defined', () => {
+      // console.log("***********************",DrivingLicenseApiConfig)
       expect(service).toBeTruthy()
     })
   })
