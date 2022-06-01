@@ -37,7 +37,7 @@ const MoreActions = ({ municipalityRulesPage, municipalityEmail }: Props) => {
             textProps={{ variant: 'small' }}
             text={moreActions.emailLink}
             format={{
-              email: municipalityEmail,
+              email: `mailto:${municipalityEmail}`,
             }}
           />
         )}
