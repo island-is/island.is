@@ -10,10 +10,12 @@ import {
   coreMessages,
   buildTextField,
   buildSubSection,
+  Application,
 } from '@island.is/application/core'
 
 import Logo from '../assets/Logo'
-import { employerFormMessages } from '../lib/messages'
+import { employerFormMessages, otherParentApprovalFormMessages, parentalLeaveFormMessages } from '../lib/messages'
+import { getApplicationAnswers } from '../lib/parentalLeaveUtils'
 
 export const EmployerApproval: Form = buildForm({
   id: 'EmployerApprovalForParentalLeave',
@@ -65,6 +67,17 @@ export const EmployerApproval: Form = buildForm({
                   title: '',
                   component: 'EmployerApprovalExtraInformation',
                 }),
+                buildDescriptionField({
+                  id: 'final',
+                  title: otherParentApprovalFormMessages.warning,
+                  titleVariant: 'h4',
+                  description: (application: Application) => {
+                    const {startDate} = getApplicationAnswers(application.answers).periods[0]
+                    return otherParentApprovalFormMessages.startDateInThePast
+                  },
+                  condition: (answers) =>
+                    new Date(getApplicationAnswers(answers).periods[0].startDate).getTime() < new Date().getTime(),
+                }),
                 buildSubmitField({
                   id: 'submit',
                   title: coreMessages.buttonSubmit,
@@ -84,6 +97,26 @@ export const EmployerApproval: Form = buildForm({
                 }),
               ],
             }),
+          ],
+        }),
+        buildSubSection({
+          title: '',
+          condition: (answers) =>
+          new Date(getApplicationAnswers(answers).periods[0].startDate).getTime() < new Date().getTime(),
+          children: [
+            buildSubmitField({
+              id: 'reject',
+              placement: 'footer',
+              title: parentalLeaveFormMessages.finalScreen.startDateInThePast,
+              actions: [],
+            }),
+          ],
+        }),
+        buildSubSection({
+          title: '',
+          condition: (answers) =>
+          new Date(getApplicationAnswers(answers).periods[0].startDate).getTime() > new Date().getTime(),
+          children: [
             buildDescriptionField({
               id: 'final.approve',
               title: coreMessages.thanks,
