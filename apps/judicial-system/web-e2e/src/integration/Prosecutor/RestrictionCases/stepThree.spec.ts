@@ -2,12 +2,13 @@ import {
   STEP_FOUR_ROUTE,
   STEP_THREE_ROUTE,
 } from '@island.is/judicial-system/consts'
+import { CaseType } from '@island.is/judicial-system/types'
 
-import { makeCustodyCase, intercept, interceptUpdateCase } from '../../../utils'
+import { makeRestrictionCase, intercept } from '../../../utils'
 
 describe(`${STEP_THREE_ROUTE}/:id`, () => {
   beforeEach(() => {
-    const caseData = makeCustodyCase()
+    const caseData = makeRestrictionCase()
 
     cy.stubAPIResponses()
     cy.visit(`${STEP_THREE_ROUTE}/test_id`)
@@ -49,7 +50,6 @@ describe(`${STEP_THREE_ROUTE}/:id`, () => {
     cy.getByTestid('datepickerIncreaseMonth').click()
     cy.contains('15').click()
 
-    interceptUpdateCase()
     cy.getByTestid('reqValidToDate-time').clear().type('1333')
     cy.wait('@UpdateCaseMutation')
       .its('response.body.data.updateCase')
@@ -65,5 +65,45 @@ describe(`${STEP_THREE_ROUTE}/:id`, () => {
     cy.getByTestid('checkbox').first().click()
     cy.getByTestid('continueButton').click()
     cy.url().should('include', STEP_FOUR_ROUTE)
+  })
+
+  it('should show custody restrictions for custody cases', () => {
+    cy.getByTestid('custodyRestrictions').should('exist')
+  })
+})
+
+describe(`${STEP_THREE_ROUTE}/:id - Admission to Facility`, () => {
+  beforeEach(() => {
+    const caseData = {
+      ...makeRestrictionCase(),
+      type: CaseType.ADMISSION_TO_FACILITY,
+    }
+
+    cy.stubAPIResponses()
+    cy.visit(`${STEP_THREE_ROUTE}/test_id`)
+
+    intercept(caseData)
+  })
+
+  it('should show custody restrictions for admission to facility cases', () => {
+    cy.getByTestid('custodyRestrictions').should('exist')
+  })
+})
+
+describe(`${STEP_THREE_ROUTE}/:id - Travel Ban`, () => {
+  beforeEach(() => {
+    const caseData = {
+      ...makeRestrictionCase(),
+      type: CaseType.TRAVEL_BAN,
+    }
+
+    cy.stubAPIResponses()
+    cy.visit(`${STEP_THREE_ROUTE}/test_id`)
+
+    intercept(caseData)
+  })
+
+  it('should show travel ban restrictions for travel ban cases', () => {
+    cy.getByTestid('travelBanRestrictions').should('exist')
   })
 })

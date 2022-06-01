@@ -3,6 +3,7 @@ import { FieldBaseProps } from '@island.is/application/core'
 import {
   AlertMessage,
   Box,
+  Button,
   GridColumn,
   GridContainer,
   GridRow,
@@ -13,11 +14,13 @@ import { m } from '../../lib/messages'
 import Jobs from '../../assets/Jobs'
 import kennitala from 'kennitala'
 import { Student } from '../../types'
+import { useHistory } from 'react-router-dom'
 
 const SchoolConfirmed: FC<FieldBaseProps> = ({ application }) => {
   const { answers } = application
   const nationalId = kennitala.format((answers.student as Student).nationalId)
   const { formatMessage } = useLocale()
+  const history = useHistory()
 
   return (
     <GridContainer>
@@ -49,13 +52,18 @@ const SchoolConfirmed: FC<FieldBaseProps> = ({ application }) => {
           </Text>
         </GridColumn>
       </GridRow>
-      <GridRow>
-        <GridColumn>
-          <Box height="full" marginTop={6} marginBottom={10}>
-            <Jobs />
-          </Box>
-        </GridColumn>
-      </GridRow>
+      <Box height="full" marginTop={6} marginBottom={6}>
+        <Jobs />
+      </Box>
+      <Box marginBottom={10} display="flex" justifyContent="flexEnd">
+        <Button
+          onClick={() => history.push('/okuskoli')}
+          icon="arrowForward"
+          type="button"
+        >
+          {formatMessage(m.newConfirmSchoolButton)}
+        </Button>
+      </Box>
     </GridContainer>
   )
 }

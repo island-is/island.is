@@ -6,10 +6,7 @@ import {
   Defendant,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
-import {
-  capitalize,
-  formatNationalId,
-} from '@island.is/judicial-system/formatters'
+import { capitalize, formatDOB } from '@island.is/judicial-system/formatters'
 import { core } from '@island.is/judicial-system-web/messages'
 
 import * as styles from './InfoCard.css'
@@ -54,12 +51,10 @@ const InfoCard: React.FC<Props> = (props) => {
                     fontWeight="semiBold"
                   >{`${defendant.name}, `}</Text>
                   <Text as="span" fontWeight="semiBold">
-                    {(!defendant.noNationalId || defendant.nationalId) &&
-                      `${defendant.noNationalId ? 'fd.' : 'kt.'} ${
-                        defendant.noNationalId
-                          ? defendant.nationalId
-                          : formatNationalId(defendant.nationalId ?? '')
-                      }, `}
+                    {`${formatDOB(
+                      defendant.nationalId,
+                      defendant.noNationalId,
+                    )}, `}
                   </Text>
                   <Text as="span">
                     {defendant.citizenship && ` (${defendant.citizenship}), `}

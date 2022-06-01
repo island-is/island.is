@@ -123,10 +123,6 @@ const devConfig = {
   fileStorage: {
     uploadBucket: process.env.FILE_STORAGE_UPLOAD_BUCKET,
   },
-  signingOptions: {
-    url: 'https://developers.dokobit.com',
-    accessToken: process.env.DOKOBIT_ACCESS_TOKEN,
-  },
   contentful: {
     accessToken: process.env.CONTENTFUL_ACCESS_TOKEN,
   },
@@ -242,10 +238,6 @@ const prodConfig = {
   },
   fileStorage: {
     uploadBucket: process.env.FILE_STORAGE_UPLOAD_BUCKET,
-  },
-  signingOptions: {
-    url: process.env.DOKOBIT_URL,
-    accessToken: process.env.DOKOBIT_ACCESS_TOKEN,
   },
   contentful: {
     accessToken: process.env.CONTENTFUL_ACCESS_TOKEN,

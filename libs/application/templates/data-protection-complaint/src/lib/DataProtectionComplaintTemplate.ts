@@ -6,7 +6,6 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
-  DefaultStateLifeCycle,
 } from '@island.is/application/core'
 import { DataProtectionComplaintSchema } from './dataSchema'
 import { application } from './messages'

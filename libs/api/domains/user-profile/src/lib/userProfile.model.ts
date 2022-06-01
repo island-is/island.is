@@ -1,5 +1,4 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { DataStatus } from './types/dataStatus.enum'
 
 @ObjectType()
 export class UserProfile {

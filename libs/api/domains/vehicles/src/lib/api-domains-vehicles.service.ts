@@ -3,10 +3,11 @@ import type { Logger } from '@island.is/logging'
 
 import { Inject, Injectable } from '@nestjs/common'
 import {
-  VehiclesApi,
+  VehicleSearchApi,
   BasicVehicleInformationGetRequest,
   BasicVehicleInformationTechnicalMass,
   BasicVehicleInformationTechnicalAxle,
+  BasicVehicleInformationTechnicalTyre,
   PersidnoLookup,
 } from '@island.is/clients/vehicles'
 import { VehiclesAxle, VehiclesDetail } from '../models/getVehicleDetail.model'
@@ -17,8 +18,8 @@ import { FetchError } from '@island.is/clients/middlewares'
 export class VehiclesService {
   constructor(
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
-    @Inject(VehiclesApi)
-    private vehiclesApi: VehiclesApi,
+    @Inject(VehicleSearchApi)
+    private vehiclesApi: VehicleSearchApi,
   ) {}
 
   private handle4xx(error: FetchError): ApolloError | null {
@@ -63,7 +64,7 @@ export class VehiclesService {
       if (!data) return {}
       const newestInspection = data.inspections?.sort((a, b) => {
         if (a && b && a.date && b.date)
-          return new Date(a.date).getTime() - new Date(b.date).getTime()
+          return new Date(b.date).getTime() - new Date(a.date).getTime()
         else return 0
       })[0]
 
@@ -153,7 +154,7 @@ export class VehiclesService {
           passengers: data.techincal?.pass,
           useGroup: data.usegroup,
           driversPassengers: data.techincal?.passbydr,
-          standingPassengers: null, // Todo: VANTAR I ÞJONUSTUKALLIÐ
+          standingPassengers: data.techincal?.standingno,
         },
         currentOwnerInfo: {
           owner: data.owners?.find((x) => x.current === true)?.fullname,
@@ -173,6 +174,10 @@ export class VehiclesService {
           lastInspectionDate: data.inspections
             ? data.inspections[0]?.date
             : null,
+          insuranceStatus: data.insurancestatus,
+          mortages: data?.fees?.hasEncumbrances,
+          carTax: data?.fees?.gjold?.bifreidagjald,
+          inspectionFine: data?.fees?.inspectionfine,
         },
         technicalInfo: {
           engine: data.techincal?.engine,
@@ -187,14 +192,26 @@ export class VehiclesService {
           trailerWithBrakesWeight: data.techincal?.tMassoftrbr,
           carryingCapacity: data.techincal?.mass?.masscapacity,
           axleTotalWeight: axleMaxWeight,
-          axle: axles,
+          axles: axles,
+          tyres: {
+            axle1: data.techincal?.tyre?.tyreaxle1,
+            axle2: data.techincal?.tyre?.tyreaxle2,
+            axle3: data.techincal?.tyre?.tyreaxle3,
+            axle4: data.techincal?.tyre?.tyreaxle4,
+            axle5: data.techincal?.tyre?.tyreaxle5,
+          },
         },
         ownersInfo:
           data.owners?.map((x) => {
+            const ownerAdderss = x.address
+              ? `${x.address}${x.postalcode || x.city ? ', ' : ''}${
+                  x.postalcode ? `${x.postalcode} ` : ''
+                }${x.city ?? ''}`
+              : undefined
             return {
               name: x.fullname,
               nationalId: x.persidno,
-              address: x.address + ', ' + x.postalcode + ' ' + x.city,
+              address: ownerAdderss,
               dateOfPurchase: x.purchasedate,
             }
           }) || [],

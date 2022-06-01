@@ -11,6 +11,12 @@ interface Props {
 
 const Logo: React.FC<Props> = ({ defaultInstitution = '' }) => {
   const { user } = useContext(UserContext)
+  const institutionName = user?.institution?.name ?? defaultInstitution
+  const institutionNameArr = institutionName.split(' ')
+  const institutionNameFirstHalf = institutionNameArr.slice(
+    0,
+    institutionNameArr.length - 1,
+  )
 
   return (
     <div className={styles.logoContainer}>
@@ -18,7 +24,8 @@ const Logo: React.FC<Props> = ({ defaultInstitution = '' }) => {
         <LandWightsLogo />
       </Box>
       <p className={styles.logoText}>
-        {user?.institution?.name ?? defaultInstitution}
+        <span>{institutionNameFirstHalf.toString().replace(',', ' ')}</span>
+        <span>{institutionNameArr[institutionNameArr.length - 1]}</span>
       </p>
     </div>
   )

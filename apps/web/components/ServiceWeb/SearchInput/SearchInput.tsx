@@ -19,6 +19,7 @@ import {
   SupportQna,
   Tag,
 } from '@island.is/web/graphql/schema'
+import { getSlugPart } from '@island.is/web/screens/ServiceWeb/utils'
 
 interface SearchInputProps {
   title?: string
@@ -60,6 +61,8 @@ export const SearchInput = ({
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const { linkResolver } = useLinkResolver()
   const Router = useRouter()
+
+  const institutionSlug = getSlugPart(Router.asPath, 2)
 
   const [fetch, { loading, data }] = useLazyQuery<
     GetSupportSearchResultsQuery,
@@ -200,8 +203,12 @@ export const SearchInput = ({
           return onSelect(activeItem)
         }
 
+        const pathname = `${linkResolver('serviceweb').href}${
+          institutionSlug ? `/${institutionSlug}` : ''
+        }/leit`
+
         Router.push({
-          pathname: linkResolver('servicewebsearch').href,
+          pathname,
           query: { q: value },
         })
       }}

@@ -4,7 +4,7 @@ import streamBuffers from 'stream-buffers'
 import {
   capitalize,
   formatDate,
-  formatNationalId,
+  formatDOB,
 } from '@island.is/judicial-system/formatters'
 import { FormatMessage } from '@island.is/cms-translations'
 import { Gender, SessionArrangements } from '@island.is/judicial-system/types'
@@ -69,24 +69,13 @@ function constructCustodyNoticePdf(
       : 'Nafn ekki skráð',
   )
 
-  if (
-    theCase.defendants &&
-    theCase.defendants.length > 0 &&
-    theCase.defendants[0].noNationalId
-  ) {
-    if (theCase.defendants[0].nationalId) {
-      addNormalText(doc, `fd. ${theCase.defendants[0].nationalId}`, 'Helvetica')
-    }
-  } else {
+  if (theCase.defendants && theCase.defendants.length > 0) {
     addNormalText(
       doc,
-      `kt. ${formatNationalId(
-        theCase.defendants &&
-          theCase.defendants.length > 0 &&
-          theCase.defendants[0].nationalId
-          ? theCase.defendants[0].nationalId
-          : 'ekki skráð',
-      )}`,
+      formatDOB(
+        theCase.defendants[0].nationalId,
+        theCase.defendants[0].noNationalId,
+      ),
       'Helvetica',
     )
   }

@@ -16,6 +16,7 @@ import { NationalRegistryClientConfig } from '@island.is/clients/national-regist
 import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 import { MunicipalitiesFinancialAidConfig } from '@island.is/clients/municipalities-financial-aid'
 import { FishingLicenseClientConfig } from '@island.is/clients/fishing-license'
+import { signingModuleConfig } from '@island.is/dokobit-signing'
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { FishingLicenseClientConfig } from '@island.is/clients/fishing-license'
         FeatureFlagConfig,
         MunicipalitiesFinancialAidConfig,
         FishingLicenseClientConfig,
+        signingModuleConfig,
       ],
     }),
   ],

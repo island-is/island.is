@@ -105,10 +105,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         entry: 'clearAssignees',
         exit: [
           'setOtherParentIdIfSelectedSpouse',
-          'clearPersonalAllowanceIfUsePersonalAllowanceIsNo',
-          'clearSpouseAllowanceIfUseSpouseAllowanceIsNo',
           'setPrivatePensionValuesIfUsePrivatePensionFundIsNO',
           'setUnionValuesIfUseUnionIsNO',
+          'clearPersonalAllowanceIfUsePersonalAllowanceIsNo',
+          'clearSpouseAllowanceIfUseSpouseAllowanceIsNo',
           'setPersonalUsageToHundredIfUseAsMuchAsPossibleIsYes',
           'setSpouseUsageToHundredIfUseAsMuchAsPossibleIsYes',
         ],
@@ -157,7 +157,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       },
       [States.OTHER_PARENT_APPROVAL]: {
         entry: 'assignToOtherParent',
-        exit: 'clearAssignees',
+        exit: ['clearAssignees', 'removePeriodsOrAllowanceOnSpouseRejection'],
         meta: {
           name: States.OTHER_PARENT_APPROVAL,
           actionCard: {
@@ -705,11 +705,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
         const answers = getApplicationAnswers(application.answers)
 
-        if (
-          answers.usePersonalAllowance === NO &&
-          (answers.personalUsage || answers.personalUseAsMuchAsPossible)
-        ) {
-          set(application.answers, 'personalAllowance', null)
+        if (answers.usePersonalAllowance === NO) {
+          if (application.answers.personalAllowance) {
+            unset(application.answers, 'personalAllowance')
+          }
         }
 
         return context
@@ -719,11 +718,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
         const answers = getApplicationAnswers(application.answers)
 
-        if (
-          answers.usePersonalAllowanceFromSpouse === NO &&
-          (answers.spouseUsage || answers.spouseUseAsMuchAsPossible)
-        ) {
-          set(application.answers, 'personalAllowanceFromSpouse', null)
+        if (answers.usePersonalAllowanceFromSpouse === NO) {
+          if (application.answers.personalAllowanceFromSpouse) {
+            unset(application.answers, 'personalAllowanceFromSpouse')
+          }
         }
 
         return context
@@ -896,6 +894,26 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
         set(answers, 'usePersonalAllowance', NO)
         set(answers, 'usePersonalAllowanceFromSpouse', NO)
+
+        return context
+      }),
+      removePeriodsOrAllowanceOnSpouseRejection: assign((context) => {
+        const { application } = context
+
+        const answers = getApplicationAnswers(application.answers)
+
+        if (answers.requestDays > 0) {
+          unset(application.answers, 'periods')
+          unset(application.answers, 'validatedPeriods')
+          set(application.answers, 'requestRights.requestDays', '0')
+          set(application.answers, 'requestRights.isRequestingRights', 'no')
+          set(application.answers, 'giveRights.giveDays', '0')
+          set(application.answers, 'giveRights.isGivingRights', 'no')
+        }
+
+        if (answers.usePersonalAllowanceFromSpouse === YES) {
+          unset(application.answers, 'personalAllowanceFromSpouse')
+        }
 
         return context
       }),

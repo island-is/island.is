@@ -38,7 +38,6 @@ const CustomTooltip = (props: CustomTooltipProps) => {
 }
 
 interface GraphDataProps {
-  title?: string
   data: string
   datakeys: string
 }
@@ -47,7 +46,7 @@ interface GraphProps {
 }
 
 export const SimplePieChart = ({ graphData }: GraphProps) => {
-  const { title, data, datakeys } = graphData
+  const { data, datakeys } = graphData
   const parsedData = JSON.parse(data)
   const { datakey, legendOn } = JSON.parse(datakeys)
 

@@ -1,8 +1,4 @@
-import {
-  buildCacheControl,
-  CacheConfig,
-  createEnhancedFetch,
-} from '@island.is/clients/middlewares'
+import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { ConfigType } from '@island.is/nest/config'
 import { UserProfileApi, Configuration } from '../../gen/fetch'
 
