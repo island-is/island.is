@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { useMutation } from '@apollo/client'
 import { useIntl } from 'react-intl'
 
@@ -117,6 +117,7 @@ const useCase = () => {
   ] = useMutation<TransitionCaseMutationResponse>(TransitionCaseMutation)
   const [
     sendNotificationMutation,
+    { loading: isSendingNotification, error: sendNotificationError },
   ] = useMutation<SendNotificationMutationResponse>(SendNotificationMutation)
   const [
     requestRulingSignatureMutation,
@@ -260,7 +261,6 @@ const useCase = () => {
     [formatMessage, transitionCaseMutation],
   )
 
-  const [isSendingNotification, setIsSendingNotification] = useState(false)
   const sendNotification = useMemo(
     () => async (
       id: string,
@@ -268,9 +268,6 @@ const useCase = () => {
       eventOnly?: boolean,
     ): Promise<boolean> => {
       try {
-        if (!eventOnly) {
-          setIsSendingNotification(true)
-        }
         const { data } = await sendNotificationMutation({
           variables: {
             input: {
@@ -280,15 +277,13 @@ const useCase = () => {
             },
           },
         })
-        setIsSendingNotification(false)
+
         return Boolean(data?.sendNotification?.notificationSent)
       } catch (e) {
-        setIsSendingNotification(false)
-        toast.error(formatMessage(errors.sendNotification))
         return false
       }
     },
-    [formatMessage, sendNotificationMutation],
+    [sendNotificationMutation],
   )
 
   const requestRulingSignature = useMemo(
@@ -370,6 +365,7 @@ const useCase = () => {
     isTransitioningCase,
     sendNotification,
     isSendingNotification,
+    sendNotificationError,
     requestRulingSignature,
     isRequestingRulingSignature,
     requestCourtRecordSignature,
