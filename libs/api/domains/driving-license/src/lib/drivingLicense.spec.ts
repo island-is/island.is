@@ -1,6 +1,9 @@
 import { Test } from '@nestjs/testing'
 import { DrivingLicenseService } from './drivingLicense.service'
-import { DrivingLicenseApiConfig, DrivingLicenseApiModule } from '@island.is/clients/driving-license'
+import {
+  DrivingLicenseApiConfig,
+  DrivingLicenseApiModule,
+} from '@island.is/clients/driving-license'
 import {
   MOCK_NATIONAL_ID,
   MOCK_NATIONAL_ID_EXPIRED,
@@ -25,19 +28,21 @@ const schema = z.object({
   xroadPathV2: z.string(),
 })
 
-export const TestDrivingLicenseApiConfig = defineConfig<z.infer<typeof schema>>({
-  name: 'DrivingLicenseApi',
-  schema,
-  load(env) {
-    return {
-      secret: '',
-      xroadBaseUrl: 'http://localhost',
-      xroadClientId: '',
-      xroadPathV1: 'v1',
-      xroadPathV2: 'v2',
-    }
+export const TestDrivingLicenseApiConfig = defineConfig<z.infer<typeof schema>>(
+  {
+    name: 'DrivingLicenseApi',
+    schema,
+    load(env) {
+      return {
+        secret: '',
+        xroadBaseUrl: 'http://localhost',
+        xroadClientId: '',
+        xroadPathV1: 'v1',
+        xroadPathV2: 'v2',
+      }
+    },
   },
-})
+)
 
 startMocking(requestHandlers)
 describe('DrivingLicenseService', () => {
@@ -47,7 +52,10 @@ describe('DrivingLicenseService', () => {
     const module = await Test.createTestingModule({
       imports: [
         DrivingLicenseApiModule,
-        ConfigModule.forRoot({ isGlobal: true, load: [TestDrivingLicenseApiConfig] }),
+        ConfigModule.forRoot({
+          isGlobal: true,
+          load: [TestDrivingLicenseApiConfig],
+        }),
       ],
       providers: [
         DrivingLicenseService,
@@ -71,7 +79,6 @@ describe('DrivingLicenseService', () => {
   })
 
   describe('Module', () => {
-    
     it('should be defined', () => {
       // console.log("***********************",DrivingLicenseApiConfig)
       expect(service).toBeTruthy()
