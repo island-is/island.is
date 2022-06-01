@@ -18,6 +18,7 @@ type GivenWhenThen = (
   caseId: string,
   theCase: Case,
   res: Response,
+  useSigned?: boolean,
 ) => Promise<Then>
 
 describe('CaseController - Get ruling pdf', () => {
@@ -34,11 +35,16 @@ describe('CaseController - Get ruling pdf', () => {
     mockAwsS3Service = awsS3Service
     mockLogger = logger
 
-    givenWhenThen = async (caseId: string, theCase: Case, res: Response) => {
+    givenWhenThen = async (
+      caseId: string,
+      theCase: Case,
+      res: Response,
+      useSigned?: boolean,
+    ) => {
       const then = {} as Then
 
       try {
-        await caseController.getRulingPdf(caseId, theCase, res)
+        await caseController.getRulingPdf(caseId, theCase, res, useSigned)
       } catch (error) {
         then.error = error as Error
       }
@@ -114,6 +120,44 @@ describe('CaseController - Get ruling pdf', () => {
       mockGetObject.mockRejectedValueOnce(new Error('Some ignored error'))
 
       await givenWhenThen(caseId, theCase, res)
+    })
+
+    it('should generate pdf', () => {
+      expect(getRulingPdfAsBuffer).toHaveBeenCalledWith(
+        theCase,
+        undefined, // TODO Mock IntlService
+      )
+    })
+  })
+
+  describe('pdf generated', () => {
+    const caseId = uuid()
+    const theCase = { id: caseId } as Case
+    const res = {} as Response
+
+    beforeEach(async () => {
+      const mockGetObject = mockAwsS3Service.getObject as jest.Mock
+      mockGetObject.mockRejectedValueOnce(new Error('Some ignored error'))
+
+      await givenWhenThen(caseId, theCase, res)
+    })
+
+    it('should generate pdf', () => {
+      expect(getRulingPdfAsBuffer).toHaveBeenCalledWith(
+        theCase,
+        undefined, // TODO Mock IntlService
+      )
+    })
+  })
+
+  describe('pdf generated when forced to do so', () => {
+    const caseId = uuid()
+    const theCase = { id: caseId } as Case
+    const res = {} as Response
+    const useSigned = false
+
+    beforeEach(async () => {
+      await givenWhenThen(caseId, theCase, res, useSigned)
     })
 
     it('should generate pdf', () => {
