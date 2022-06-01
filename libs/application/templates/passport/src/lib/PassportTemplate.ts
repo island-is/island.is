@@ -39,7 +39,7 @@ const PassportTemplate: ApplicationTemplate<
                 ),
               actions: [
                 {
-                  event: DefaultEvents.SUBMIT,
+                  event: DefaultEvents.PAYMENT,
                   name: m.confirm.defaultMessage,
                   type: 'primary',
                 },
@@ -49,11 +49,10 @@ const PassportTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          SUBMIT: {
-            target: States.DONE,
-          },
+          [DefaultEvents.PAYMENT]: { target: States.PAYMENT },
         },
-      },  [States.PAYMENT]: {
+      },
+      [States.PAYMENT]: {
         meta: {
           name: 'Payment state',
           actionCard: {
@@ -68,10 +67,11 @@ const PassportTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/Payment').then((val) => val.payment),
+                import('../forms/Payment').then((val) =>
+                  Promise.resolve(val.payment),
+                ),
               actions: [
                 { event: DefaultEvents.SUBMIT, name: 'Panta', type: 'primary' },
-         
               ],
               write: 'all',
             },

@@ -33,7 +33,6 @@ export class PassportService {
       id,
       chargeItemCode,
     )
-
     // last chance to validate before the user receives a dummy
     if (!response?.paymentUrl) {
       throw new Error('paymentUrl missing in response')
@@ -47,7 +46,6 @@ export class PassportService {
     auth,
   }: TemplateApiModuleActionProps): Promise<{ success: boolean }> {
     const { answers } = application
-    const nationalId = application.applicant
 
     const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
       auth.authorization,
@@ -55,9 +53,12 @@ export class PassportService {
     )
 
     if (!isPayment?.fulfilled) {
-      return {
-        success: false,
-      }
+      this.logger.error(
+        'Trying to submit Passportapplication that has not been paid.',
+      )
+      throw new Error(
+        'Ekki er hægt að skila inn umsókn af því að ekki hefur tekist að taka við greiðslu.',
+      )
     }
 
     let result

@@ -64,6 +64,8 @@
 /libs/application/templates/driving-instructor-registrations/                                       @island-is/juni
 /libs/api/domains/driving-license-book/                                                             @island-is/juni
 /libs/clients/driving-license-book/                                                                 @island-is/juni
+/libs/application/template-api-modules/src/lib/modules/templates/passport                           @island-is/juni
+/libs/application/templates/passport/                                                               @island-is/juni
 
 /libs/clients/auth-public-api/                                                                      @island-is/aranja
 /libs/clients/middlewares/                                                                          @island-is/aranja

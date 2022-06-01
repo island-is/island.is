@@ -67,4 +67,4 @@ export { ComplaintsToAlthingiOmbudsmanTemplateService } from './complaints-to-al
 export { MortgageCertificateSubmissionService } from './mortgage-certificate-submission/mortgage-certificate-submission.service'
 export { FinancialAidService } from './financial-aid/financial-aid.service'
 export { DrivingSchoolConfirmationService } from './driving-school-confirmation/driving-school-confirmation.service'
-export { PassportService} from './passport/passport.service'
+export { PassportService } from './passport/passport.service'

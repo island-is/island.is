@@ -1,6 +1,8 @@
 import { DefaultEvents } from '@island.is/application/core'
 
-export type Events = { type: DefaultEvents.SUBMIT }
+export type Events =
+  | { type: DefaultEvents.SUBMIT }
+  | { type: DefaultEvents.PAYMENT }
 
 export enum States {
   DRAFT = 'draft',
