@@ -48,7 +48,7 @@ describe('Env variable', () => {
     ) as SerializeErrors
 
     expect(serviceDef.errors).toStrictEqual([
-      'Collisions for environment or secrets for key A',
+      'Collisions in api for environment or secrets for key A',
     ])
   })
 
@@ -68,7 +68,7 @@ describe('Env variable', () => {
     ) as SerializeErrors
 
     expect(serviceDef.errors).toStrictEqual([
-      'Collisions for environment or secrets for key A',
+      'Collisions in api for environment or secrets for key A',
     ])
   })
 

@@ -34,7 +34,7 @@ export const Webreader: FC<WebReaderProps> = ({
   const { activeLocale } = useI18n()
 
   useEffect(() => {
-    const routeChangestart = (url) => {
+    const routeChangestart = () => {
       if (typeof ReadSpeaker !== 'undefined' && ReadSpeaker.PlayerAPI?.stop) {
         ReadSpeaker.PlayerAPI.stop()
 

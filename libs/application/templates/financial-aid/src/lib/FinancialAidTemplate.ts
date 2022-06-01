@@ -184,6 +184,7 @@ const FinancialAidTemplate: ApplicationTemplate<
                   'spouseTaxReturnFiles',
                   'spouseContactInfo',
                   'spouseFormComment',
+                  'spouseName',
                 ],
               },
             },

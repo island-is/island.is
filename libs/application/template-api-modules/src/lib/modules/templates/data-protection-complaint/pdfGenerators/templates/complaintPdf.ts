@@ -50,7 +50,7 @@ function dpcApplicationPdf(
     'Upplýsingar um fyrirtæki, stofnun eða einstakling sem kvartað er yfir',
     doc,
   )
-  complaint.targetsOfComplaint.map((c, i) => {
+  complaint.targetsOfComplaint.map((c) => {
     addformFieldAndValue('Nafn', c.name, doc, PdfConstants.SMALL_LINE_GAP)
     if (c.nationalId) {
       addformFieldAndValue(

@@ -13,7 +13,11 @@ import {
   Modal,
 } from '@island.is/judicial-system-web/src/components'
 import { isCourtHearingArrangemenstStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
-import { CaseType, NotificationType } from '@island.is/judicial-system/types'
+import {
+  CaseCustodyRestrictions,
+  CaseType,
+  NotificationType,
+} from '@island.is/judicial-system/types'
 import {
   CourtSubsections,
   Sections,
@@ -67,8 +71,48 @@ export const HearingArrangements: React.FC = () => {
 
         setInitialAutoFillDone(true)
       }
+
+      autofill(
+        [
+          // validToDate, isolationToDate and isCustodyIsolation are autofilled here
+          // so they are ready for conclusion autofill later
+          {
+            key: 'validToDate',
+            value: workingCase.requestedValidToDate,
+          },
+          {
+            key: 'isolationToDate',
+            value:
+              workingCase.type === CaseType.CUSTODY ||
+              workingCase.type === CaseType.ADMISSION_TO_FACILITY
+                ? workingCase.requestedValidToDate
+                : undefined,
+          },
+          {
+            key: 'isCustodyIsolation',
+            value:
+              workingCase.type === CaseType.CUSTODY ||
+              workingCase.type === CaseType.ADMISSION_TO_FACILITY
+                ? workingCase.requestedCustodyRestrictions &&
+                  workingCase.requestedCustodyRestrictions.includes(
+                    CaseCustodyRestrictions.ISOLATION,
+                  )
+                  ? true
+                  : false
+                : undefined,
+          },
+        ],
+        workingCase,
+        setWorkingCase,
+      )
     }
-  }, [initialAutoFillDone, isCaseUpToDate, setWorkingCase, workingCase])
+  }, [
+    autofill,
+    initialAutoFillDone,
+    isCaseUpToDate,
+    setWorkingCase,
+    workingCase,
+  ])
 
   const handleNextButtonClick = useCallback(() => {
     autofill(

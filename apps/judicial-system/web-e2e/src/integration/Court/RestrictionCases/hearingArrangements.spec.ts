@@ -54,6 +54,22 @@ describe(`${HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
     cy.getByTestid('modal').should('be.visible')
   })
 
+  it('should autofill properties', () => {
+    const caseData = makeRestrictionCase()
+    const caseDataAddition: Case = {
+      ...caseData,
+      requestedValidToDate: '2020-09-16T19:50:08.033Z',
+    }
+
+    intercept(caseDataAddition)
+
+    cy.wait('@UpdateCaseMutation')
+      .its('response.body.data.updateCase')
+      .should('have.any.key', 'validToDate')
+      .should('have.any.key', 'isolationToDate')
+      .should('have.any.key', 'isCustodyIsolation')
+  })
+
   it('should navigate to the next step when all input data is valid and the continue button is clicked', () => {
     const caseData = makeRestrictionCase()
     const caseDataAddition: Case = {
@@ -66,6 +82,7 @@ describe(`${HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
     intercept(caseDataAddition)
 
     cy.getByTestid('continueButton').click()
+    cy.wait('@UpdateCaseMutation')
     cy.wait('@UpdateCaseMutation')
       .its('response.body.data.updateCase')
       .should('have.any.key', 'courtDate')
