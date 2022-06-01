@@ -90,7 +90,6 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
                   color
                 )}
               </Text>
-              <Text>{formatMessage(messages.introDetail)}</Text>
             </Stack>
             {inspectionInfo?.inspectionFine &&
             inspectionInfo.inspectionFine > 0 ? (

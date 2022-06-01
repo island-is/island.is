@@ -23,7 +23,7 @@ export const incomeForm = {
   examplesOfIncome: defineMessages({
     leftSidedList: {
       id:
-        'fa.application:section.incomeForm.examplesOfIncome.leftSidedList#markup',
+        'fa.application:section.incomeForm.examplesOfIncome.leftSidedList#markdown',
       defaultMessage:
         '* Greiðslur frá atvinnurekanda \n* Greiðslur frá Vinnumálastofnun \n* Greiðslur frá Tryggingastofnun',
       description:
@@ -31,7 +31,7 @@ export const incomeForm = {
     },
     rightSidedList: {
       id:
-        'fa.application:section.incomeForm.examplesOfIncome.rightSidedList#markup',
+        'fa.application:section.incomeForm.examplesOfIncome.rightSidedList#markdown',
       defaultMessage:
         '* Greiðslur frá fæðingarorlofssjóði \n* Greiðslur frá Sjúkratryggingum Íslands  \n* Styrkir frá lífeyrissjóðum',
       description:
