@@ -9,7 +9,7 @@ import {
   DefaultEvents,
 } from '@island.is/application/core'
 import { dataSchema } from './dataSchema'
-import { Roles, States, Events } from './constants'
+import { Roles, States, Events, ApiActions } from './constants'
 import { Features } from '@island.is/feature-flags'
 import { m } from '../lib/messages'
 
@@ -52,6 +52,33 @@ const PassportTemplate: ApplicationTemplate<
           SUBMIT: {
             target: States.DONE,
           },
+        },
+      },  [States.PAYMENT]: {
+        meta: {
+          name: 'Payment state',
+          actionCard: {
+            description: m.payment,
+          },
+          progress: 0.9,
+          lifecycle: DefaultStateLifeCycle,
+          onEntry: {
+            apiModuleAction: ApiActions.createCharge,
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/Payment').then((val) => val.payment),
+              actions: [
+                { event: DefaultEvents.SUBMIT, name: 'Panta', type: 'primary' },
+         
+              ],
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: { target: States.DONE },
         },
       },
       [States.DONE]: {

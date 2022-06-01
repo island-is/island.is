@@ -1,0 +1,89 @@
+import { Inject, Injectable } from '@nestjs/common'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import { SharedTemplateApiService } from '../../shared'
+import { TemplateApiModuleActionProps } from '../../../types'
+import { getValueViaPath } from '@island.is/application/core'
+import { PASSPORT_CHARGE_CODES } from './constants'
+
+@Injectable()
+export class PassportService {
+  constructor(
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
+    private readonly sharedTemplateAPIService: SharedTemplateApiService,
+  ) {}
+
+  async createCharge({
+    application: { id, answers },
+    auth,
+  }: TemplateApiModuleActionProps) {
+    const type = getValueViaPath<'regular' | 'express'>(
+      answers,
+      'type',
+      'regular',
+    )
+
+    const chargeItemCode =
+      type === 'regular'
+        ? PASSPORT_CHARGE_CODES.REGULAR
+        : PASSPORT_CHARGE_CODES.EXPRESS
+
+    const response = await this.sharedTemplateAPIService.createCharge(
+      auth.authorization,
+      id,
+      chargeItemCode,
+    )
+
+    // last chance to validate before the user receives a dummy
+    if (!response?.paymentUrl) {
+      throw new Error('paymentUrl missing in response')
+    }
+
+    return response
+  }
+
+  async submitApplication({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps): Promise<{ success: boolean }> {
+    const { answers } = application
+    const nationalId = application.applicant
+
+    const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
+      auth.authorization,
+      application.id,
+    )
+
+    if (!isPayment?.fulfilled) {
+      return {
+        success: false,
+      }
+    }
+
+    let result
+    try {
+      // TODO: Submit to skilrikjaskra
+      result = { success: true, errorMessage: null }
+    } catch (e) {
+      this.log('error', 'Submitting passport failed', {
+        e,
+        applicationFor: answers.type,
+        jurisdiction: answers.dropLocation,
+      })
+
+      throw e
+    }
+
+    if (!result.success) {
+      throw new Error(`Application submission failed (${result.errorMessage})`)
+    }
+
+    return {
+      success: true,
+    }
+  }
+
+  private log(lvl: 'error' | 'info', message: string, meta: unknown) {
+    this.logger.log(lvl, `[passport] ${message}`, meta)
+  }
+}

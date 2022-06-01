@@ -50,6 +50,11 @@ export const Draft: Form = buildForm({
               title: m.dataCollectionNationalRegistryTitle,
               subTitle: m.dataCollectionNationalRegistrySubtitle,
             }),
+            buildDataProviderItem({
+              id: 'payment',
+              type: 'FeeInfoProvider',
+              title: '',
+            }),
           ],
         }),
       ],
