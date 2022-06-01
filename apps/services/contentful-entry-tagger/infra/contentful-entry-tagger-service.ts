@@ -8,6 +8,8 @@ export const serviceSetup = (): ServiceBuilder<'contentful-entry-tagger-service'
     .secrets({
       CONTENTFUL_MANAGEMENT_ACCESS_TOKEN:
         '/k8s/contentful-entry-tagger/CONTENTFUL_MANAGEMENT_ACCESS_TOKEN',
+      CONTENTFUL_REQUEST_TOKEN:
+        '/k8s/contentful-entry-tagger/CONTENTFUL_REQUEST_TOKEN',
     })
     .ingress({
       primary: {
