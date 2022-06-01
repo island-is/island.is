@@ -95,7 +95,7 @@ export const ComplaineeRepeaterItem: FC<Props> = ({
           required
           backgroundColor="blue"
           defaultValue={
-            (getValueViaPath(application.answers, nameField) as string) ?? ''
+            getValueViaPath(application.answers, nameField, '') as string
           }
         />
         <InputController
@@ -110,7 +110,7 @@ export const ComplaineeRepeaterItem: FC<Props> = ({
           required
           backgroundColor="blue"
           defaultValue={
-            (getValueViaPath(application.answers, addressField) as string) ?? ''
+            getValueViaPath(application.answers, addressField, '') as string
           }
         />
         <InputController
@@ -125,8 +125,7 @@ export const ComplaineeRepeaterItem: FC<Props> = ({
           error={errors && getErrorViaPath(errors, nationalIdField)}
           backgroundColor="blue"
           defaultValue={
-            (getValueViaPath(application.answers, nationalIdField) as string) ??
-            ''
+            getValueViaPath(application.answers, nationalIdField, '') as string
           }
         />
       </Stack>
@@ -169,10 +168,11 @@ export const ComplaineeRepeaterItem: FC<Props> = ({
             required
             error={errors && getErrorViaPath(errors, countryOfOperationField)}
             defaultValue={
-              (getValueViaPath(
+              getValueViaPath(
                 application.answers,
                 countryOfOperationField,
-              ) as string) ?? ''
+                '',
+              ) as string
             }
           />
         </Box>
