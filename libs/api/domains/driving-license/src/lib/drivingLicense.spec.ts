@@ -1,6 +1,6 @@
 import { Test } from '@nestjs/testing'
 import { DrivingLicenseService } from './drivingLicense.service'
-import { DrivingLicenseApiModule } from '@island.is/clients/driving-license'
+import { DrivingLicenseApiConfig, DrivingLicenseApiModule } from '@island.is/clients/driving-license'
 import {
   MOCK_NATIONAL_ID,
   MOCK_NATIONAL_ID_EXPIRED,
@@ -14,27 +14,20 @@ import { createLogger } from 'winston'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { NationalRegistryXRoadService } from '@island.is/api/domains/national-registry-x-road'
 import RecsidenceHistory from '../lib/__mock-data__/residenceHistory.json'
+import { ConfigModule, defineConfig } from '@island.is/nest/config'
+
+
+
 
 startMocking(requestHandlers)
-
 describe('DrivingLicenseService', () => {
   let service: DrivingLicenseService
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
       imports: [
-        DrivingLicenseApiModule.register({
-          secret: '',
-          xroadBaseUrl: 'http://localhost',
-          xroadClientId: '',
-          xroadPathV1: 'v1',
-          xroadPathV2: 'v2',
-          fetchOptions: {
-            logger: createLogger({
-              silent: true,
-            }),
-          },
-        }),
+        DrivingLicenseApiModule,
+        ConfigModule.forRoot({ isGlobal: true, load: [DrivingLicenseApiConfig] }),
       ],
       providers: [
         DrivingLicenseService,
@@ -66,7 +59,7 @@ describe('DrivingLicenseService', () => {
   describe('getDrivingLicense', () => {
     it('should return a license', async () => {
       const response = await service.getDrivingLicense(MOCK_NATIONAL_ID)
-
+      console.log(response)
       expect(response).toMatchObject({
         name: 'Valid Jónsson',
         issued: new Date('2021-05-25T06:43:15.327Z'),
