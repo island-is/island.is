@@ -57,15 +57,12 @@ export const incomeForm = {
     yes: {
       id: 'fa.application:section.incomeForm.options.yes',
       defaultMessage: 'Já, ég hef fengið tekjur',
-      description:
-        'Yes option for income question',
+      description: 'Yes option for income question',
     },
     no: {
       id: 'fa.application:section.incomeForm.options.no',
-      defaultMessage:
-        'Nei, engar tekjur',
-      description:
-        'No option for income question',
+      defaultMessage: 'Nei, engar tekjur',
+      description: 'No option for income question',
     },
   }),
 }
