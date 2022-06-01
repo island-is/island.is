@@ -108,15 +108,18 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
         assetData?.properties &&
         assetData?.properties?.length === 0 && (
           <Box marginTop={8}>
-            <EmptyState title={m.noDataFound} />
+            <EmptyState />
           </Box>
         )}
 
       {error && (
         <Box>
-          <AlertBanner
-            description={formatMessage(m.errorFetch)}
-            variant="error"
+          <EmptyState
+            description={defineMessage({
+              id: 'sp.assets:error-message',
+              defaultMessage:
+                'Ekki tókst að sækja upplýsingar úr fasteignaskrá.',
+            })}
           />
         </Box>
       )}
