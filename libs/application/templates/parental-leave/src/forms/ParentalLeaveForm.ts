@@ -5,7 +5,6 @@ import {
   buildAsyncSelectField,
   buildCustomField,
   buildDateField,
-  buildDescriptionField,
   buildFileUploadField,
   buildForm,
   buildMultiField,
