@@ -1,3 +1,4 @@
+import { ProblemType } from '@island.is/shared/problem'
 import { Application } from '../types/Application'
 import { ApplicationTemplateAPIAction } from '../types/StateMachine'
 import { PerformActionResult } from '../types/TemplateApiModuleTypes'
@@ -28,6 +29,16 @@ export const SharedDataProviders = {
         success: true,
       }
     },
+    errorReasons: [
+      {
+        problemType: ProblemType.HTTP_NOT_FOUND,
+        reason: {
+          title: 'Internal Server Error',
+          summary: 'Something went wrong in a bad bad way',
+        },
+        statusCode: 404,
+      },
+    ],
   },
   nationalRegistryUserProvider: {
     apiModuleAction: 'nationalRegistryUser',
@@ -54,5 +65,4 @@ export const SharedDataProviders = {
 export interface AvailableSharedDataProviders {
   nationalRegistryProvider: ApplicationTemplateAPIAction
   userProfileProvider: ApplicationTemplateAPIAction
-  //familyInformationProvider: ApplicationTemplateAPIAction
 }

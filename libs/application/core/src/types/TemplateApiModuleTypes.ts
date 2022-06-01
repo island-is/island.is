@@ -1,3 +1,5 @@
+import { ProblemType } from '@island.is/shared/problem'
+
 export type PerformActionResult =
   | {
       success: true
@@ -6,4 +8,5 @@ export type PerformActionResult =
   | {
       success: false
       error: string
+      problemType?: ProblemType
     }

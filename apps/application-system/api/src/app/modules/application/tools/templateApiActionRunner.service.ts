@@ -11,7 +11,6 @@ import {
 import { TemplateAPIService } from '@island.is/application/template-api-modules'
 import { User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
-
 @Injectable()
 export class TemplateApiActionRunner {
   private application: ApplicationWithAttachments = {} as ApplicationWithAttachments
@@ -113,17 +112,15 @@ export class TemplateApiActionRunner {
   }
 
   async callProvider(action: ApplicationTemplateAPIAction) {
-    console.log('Calling provider', action.apiModuleAction)
     const { apiModuleAction, externalDataId, mockData, namespace } = action
     let actionResult: PerformActionResult | undefined
 
     const useMocks =
       typeof action.useMockData === 'function'
         ? action.useMockData(this.application)
-        : action.useMockData
+        : action.useMockData === true
 
     if (useMocks) {
-      console.log('Using mock data for action', apiModuleAction)
       actionResult =
         typeof mockData === 'function' ? mockData(this.application) : mockData
     } else {
@@ -139,29 +136,58 @@ export class TemplateApiActionRunner {
     }
 
     if (!actionResult)
-      throw new Error(`No Action or mock is defined for ${apiModuleAction}`)
-    console.log(
-      'Finished calling ',
-      action.apiModuleAction + ' with order ' + action.order,
+      throw new Error(`No Action is defined for ${apiModuleAction}`)
+
+    await this.updateExternalData(
+      action,
+      actionResult,
+      apiModuleAction,
+      externalDataId,
     )
-    await this.updateExternalData(actionResult, apiModuleAction, externalDataId)
+  }
+
+  buildExternalData(
+    action: ApplicationTemplateAPIAction,
+    actionResult: PerformActionResult,
+    apiModuleAction: string,
+    externalDataId?: string,
+  ): ExternalData {
+    if (!actionResult.success) {
+      const errorReason = action.errorReasons?.find(
+        (x) => x.problemType === actionResult.problemType,
+      )
+      return {
+        [externalDataId || apiModuleAction]: {
+          status: 'failure',
+          date: new Date(),
+          data: {},
+          reason: errorReason?.reason,
+          statusCode: errorReason?.statusCode ?? 500,
+        },
+      }
+    }
+
+    return {
+      [externalDataId || apiModuleAction]: {
+        status: actionResult.success ? 'success' : 'failure',
+        date: new Date(),
+        data: actionResult.response as ExternalData['data'],
+      },
+    }
   }
 
   async updateExternalData(
+    action: ApplicationTemplateAPIAction,
     actionResult: PerformActionResult,
     apiModuleAction: string,
     externalDataId?: string,
   ): Promise<void> {
-    const newExternalDataEntry: ExternalData = {
-      [externalDataId || apiModuleAction]: {
-        status: actionResult.success ? 'success' : 'failure',
-        date: new Date(),
-        data: actionResult.success
-          ? (actionResult.response as ExternalData['data'])
-          : actionResult.error,
-      },
-    }
-
+    const newExternalDataEntry = this.buildExternalData(
+      action,
+      actionResult,
+      apiModuleAction,
+      externalDataId,
+    )
     this.newExternalData = { ...this.newExternalData, ...newExternalDataEntry }
 
     this.application.externalData = {

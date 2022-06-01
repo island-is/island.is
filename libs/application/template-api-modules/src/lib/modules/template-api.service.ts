@@ -28,6 +28,8 @@ import {
   DrivingSchoolConfirmationService,
 } from './templates'
 import { SharedDataProviderService, SharedServiceType } from './shared'
+import { ProblemError } from '@island.is/nest/problem'
+import { ProblemType } from '@island.is/shared/problem'
 
 interface ApplicationApiAction {
   templateId: string
@@ -108,6 +110,7 @@ export class TemplateAPIService {
         return {
           success: false,
           error: (e as Error).message,
+          problemType: (e as ProblemError).problem.type,
         }
       }
     }
@@ -115,6 +118,7 @@ export class TemplateAPIService {
     return {
       success: false,
       error: 'action.invalid',
+      problemType: ProblemType.HTTP_BAD_REQUEST,
     }
   }
 

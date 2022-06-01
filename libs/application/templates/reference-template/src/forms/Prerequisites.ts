@@ -30,6 +30,12 @@ export const Prerequisites: Form = buildForm({
           dataProviders: [
             buildDataProviderItem({
               id: 'anotherReference',
+              type: SharedDataProviders.userProfileProvider.dataProviderType,
+              title: 'getAnotherReferenceData',
+              subTitle: 'Another Refernence Data',
+            }),
+            buildDataProviderItem({
+              id: 'anotherReference',
               type:
                 ReferenceApplicationDataProviders.anotherReferenceProvider
                   .dataProviderType,

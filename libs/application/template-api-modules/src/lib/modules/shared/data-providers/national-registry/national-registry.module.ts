@@ -13,7 +13,6 @@ import { NationalRegistryService } from './national-registry.service'
 
 export class NationalRegistryModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
-    console.log(config.nationalRegistry)
     return {
       module: NationalRegistryModule,
       imports: [SharedTemplateAPIModule.register(config)],

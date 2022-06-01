@@ -10,6 +10,8 @@ import { AnyEventObject, MachineOptions, StateMachine } from 'xstate/lib/types'
 import { FormLoader, FormText, StaticText } from './Form'
 import { Application, ActionCardTag } from './Application'
 import { PerformActionResult } from './TemplateApiModuleTypes'
+import { ProviderErrorReason } from './DataProviderResult'
+import { ProblemType } from '@island.is/shared/problem'
 export type ApplicationRole = 'applicant' | 'assignee' | string
 
 export enum DefaultEvents {
@@ -72,13 +74,16 @@ export interface ApplicationTemplateAPIAction {
     | ((application: Application) => PerformActionResult)
   // Shared data providers namspace
   namespace?: string
-}
 
-/*
-export interface DataProviderTemplateApi
-  extends Omit<ApplicationTemplateAPIAction, 'order'> {
-  externalDataId: string
-}*/
+  //Error messages to be displayed to the user
+  errorReasons?: [
+    {
+      reason: ProviderErrorReason | StaticText
+      problemType: ProblemType
+      statusCode: number
+    },
+  ]
+}
 
 export type StateLifeCycle =
   | {

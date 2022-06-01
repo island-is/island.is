@@ -5,6 +5,8 @@ import { TemplateApiModuleActionProps } from '../../../types'
 
 import { generateApplicationApprovedEmail } from './emailGenerators'
 import { getValueViaPath } from '@island.is/application/core'
+import { ProblemType } from '@island.is/shared/problem'
+import { ProblemError } from '@island.is/nest/problem'
 
 @Injectable()
 export class ReferenceTemplateService {
@@ -19,7 +21,10 @@ export class ReferenceTemplateService {
       application.externalData,
       'nationalRegistry.data.name',
     ) as string
-    //throw Error('Yes this failed!')
+    throw new ProblemError({
+      type: ProblemType.HTTP_NOT_FOUND,
+      title: 'Bad Request',
+    })
     return {
       referenceData: {
         name,

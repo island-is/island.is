@@ -114,6 +114,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
               api: [
                 {
                   ...SharedDataProviders.userProfileProvider,
+                  useMockData: true,
                 },
                 {
                   ...SharedDataProviders.nationalRegistryProvider,

@@ -1,4 +1,6 @@
 import { ApplicationTemplateAPIAction } from '@island.is/application/core'
+import { ProblemType } from '@island.is/shared/problem'
+import { m } from '../lib/messages'
 
 export enum ApiActions {
   createApplication = 'createApplication',
@@ -20,15 +22,22 @@ export const ReferenceApplicationDataProviders = {
     apiModuleAction: ApiActions.getReferenceData,
     externalDataId: 'reference',
     //shouldPersistToExternalData: false,
-    useMockData: false,
+    useMockData: true,
     mockData: {
-      response: {
-        data: {
-          stone: 'stones',
-        },
-      },
-      success: true,
+      error: 'werror',
+      problemType: ProblemType.HTTP_NOT_FOUND,
+      success: false,
     },
+    errorReasons: [
+      {
+        problemType: ProblemType.HTTP_NOT_FOUND,
+        reason: {
+          title: m.careerHistory,
+          summary: m.draftDescription,
+        },
+        statusCode: 404,
+      },
+    ],
   },
 } as ReferenceApplicationDataProviders
 

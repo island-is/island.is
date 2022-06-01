@@ -71,7 +71,7 @@ describe('TemplateApi Action runner', () => {
     const result = templateApiRunnerService.sortAndSetUndefinedOrderToZero(
       actions,
     )
-    console.log(result)
+
     expect(result[0]).toBe(actions[2])
     expect(result[1]).toBe(actions[1])
   })
