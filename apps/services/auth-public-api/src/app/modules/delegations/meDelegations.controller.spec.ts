@@ -1284,17 +1284,20 @@ describe('MeDelegationsController', () => {
   })
 
   interface DelegationEachType {
-    delegationType: string
+    delegationTypes?: AuthDelegationType[]
     shouldWork: boolean
   }
   describe.each`
-    delegationType         | shouldWork
-    ${'None'}              | ${false}
-    ${'ProcurationHolder'} | ${true}
-    ${'Custom'}            | ${false}
+    delegationTypes                    | shouldWork
+    ${[]}                              | ${false}
+    ${['ProcurationHolder']}           | ${true}
+    ${['ProcurationHolder', 'Custom']} | ${true}
+    ${['LegalGuard', 'Custom']}        | ${false}
+    ${['Custom']}                      | ${false}
+    ${undefined}                       | ${false}
   `(
     'with auth (delegation=$delegationType)',
-    ({ delegationType, shouldWork }: DelegationEachType) => {
+    ({ delegationTypes, shouldWork }: DelegationEachType) => {
       const workOrFail = shouldWork ? 'work' : 'fail'
       let app: TestApp
       let server: request.SuperTest<request.Test>
@@ -1302,11 +1305,11 @@ describe('MeDelegationsController', () => {
       beforeAll(async () => {
         // TestApp setup with auth and database
         const testUser =
-          delegationType === 'None'
+          delegationTypes === []
             ? user
             : {
                 ...user,
-                delegationTypes: [delegationType as AuthDelegationType],
+                delegationTypes,
                 actor: {
                   nationalId: user.nationalId,
                   scope: [],

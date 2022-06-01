@@ -29,7 +29,12 @@ import {
 
 const user = createCurrentUser({
   nationalId: '1122334455',
-  scope: [AuthScope.readDelegations, Scopes[0].name, Scopes[3].name],
+  scope: [
+    AuthScope.readDelegations,
+    Scopes[0].name,
+    Scopes[3].name,
+    Scopes[6].name,
+  ],
 })
 const userName = 'Tester Tests'
 const nationalRegistryUser = createNationalRegistryUser({
@@ -178,6 +183,68 @@ describe('ScopesController', () => {
       nationalRegistryUser,
     })
     const apiScopeModel = app.get<typeof ApiScope>(getModelToken(ApiScope))
+    const expectedScopes = await apiScopeModel.findAll({
+      where: {
+        name: [Scopes[0].name, Scopes[3].name],
+      },
+    })
+
+    // Act
+    const res = await request(app.getHttpServer()).get('/v1/scopes')
+
+    // Assert
+    expect(res.status).toEqual(200)
+    expect(res.body).toHaveLength(2)
+    expect(res.body).toMatchObject(expectedScopes.map((scope) => scope.toDTO()))
+  })
+
+  it('should return some scope only for procuring holder and legal guardian delegations', async () => {
+    // Arrange
+    const app = await setupWithAuth({
+      user: {
+        ...user,
+        delegationTypes: ['ProcurationHolder', 'LegalGuardian'],
+        actor: {
+          nationalId: user.nationalId,
+          scope: [],
+        },
+      },
+      userName,
+      nationalRegistryUser,
+    })
+    const apiScopeModel = app.get<typeof ApiScope>(getModelToken(ApiScope))
+
+    const expectedScopes = await apiScopeModel.findAll({
+      where: {
+        name: [Scopes[0].name, Scopes[3].name, Scopes[6].name],
+      },
+    })
+
+    // Act
+    const res = await request(app.getHttpServer()).get('/v1/scopes')
+
+    // Assert
+    expect(res.status).toEqual(200)
+    expect(res.body).toHaveLength(3)
+    expect(res.body).toMatchObject(expectedScopes.map((scope) => scope.toDTO()))
+  })
+
+  it('should not return legal guardian delegation', async () => {
+    // Arrange
+    const app = await setupWithAuth({
+      user: {
+        ...user,
+        delegationTypes: ['ProcurationHolder', 'Custom'],
+        actor: {
+          nationalId: user.nationalId,
+          scope: [],
+        },
+      },
+      userName,
+      nationalRegistryUser,
+    })
+    const apiScopeModel = app.get<typeof ApiScope>(getModelToken(ApiScope))
+
     const expectedScopes = await apiScopeModel.findAll({
       where: {
         name: [Scopes[0].name, Scopes[3].name],
