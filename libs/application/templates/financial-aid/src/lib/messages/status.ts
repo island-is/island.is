@@ -25,12 +25,12 @@ export const moreActions = defineMessages({
     description: 'More action title',
   },
   rulesLink: {
-    id: 'fa.application:section.moreActions.rulesLink#markup',
+    id: 'fa.application:section.moreActions.rulesLink#markdown',
     defaultMessage: '[Reglur um fjárhagsaðstoð]({rulesPage})',
     description: 'More action link to rules',
   },
   emailLink: {
-    id: 'fa.application:section.moreActions.emailLink#markup',
+    id: 'fa.application:section.moreActions.emailLink#markdown',
     defaultMessage: '[Hafa samband]({email})',
     description: 'More action link to email',
   },
@@ -106,7 +106,7 @@ export const aidAmount = defineMessages({
     description: 'Aid amount title for approved applications',
   },
   description: {
-    id: 'fa.application:section.aidAmount.description#markup',
+    id: 'fa.application:section.aidAmount.description#markdown',
     defaultMessage:
       'Athugaðu að þessi útreikningur er <b style="color: #FF0050">eingöngu til viðmiðunar og getur tekið breytingum</b>. Þú færð skilaboð þegar frekari útreikningur liggur fyrir. Umsóknin verður afgreidd eins fljótt og auðið er.',
     description: 'Aid amount description',
@@ -139,7 +139,7 @@ export const header = defineMessages({
     description: 'New text',
   },
   inProgress: {
-    id: 'fa.application:section.header.inProgress#markup',
+    id: 'fa.application:section.header.inProgress#markdown',
     defaultMessage: 'Umsókn í vinnslu til útgreiðslu í {month} {year}',
     description: 'In progress text',
   },
@@ -157,7 +157,7 @@ export const header = defineMessages({
 
 export const rejectionMessage = defineMessages({
   explanation: {
-    id: 'fa.application:section.rejectionMessage.explanation#markup',
+    id: 'fa.application:section.rejectionMessage.explanation#markdown',
     defaultMessage:
       'Umsókn þinni um fjárhagsaðstoð í ágúst hefur verið synjað {rejectionComment}.',
     description: 'Explanation of rejection',
@@ -179,7 +179,7 @@ export const rejectionMessage = defineMessages({
     description: 'Appeal title',
   },
   appealDescription: {
-    id: 'fa.application:section.rejectionMessage.appealDescription#markup',
+    id: 'fa.application:section.rejectionMessage.appealDescription#markdown',
     defaultMessage:
       'Bent skal á að unnt er að skjóta ákvörðun þessari til áfrýjunarnefndar þíns sveitarfélags. Skal það gert skriflega og innan fjögurra vikna. Fyrir frekari upplýsingar um málskot hafðu samband með tölvupósti á netfangið [{email}]({email}). \n\n Ákvörðun ráðsins má síðan skjóta til úrskurðarnefndar velferðarmála, Katrínartúni 2, 105 Reykjavík innan þriggja mánaða.',
     description: 'Appeal title',
@@ -202,7 +202,7 @@ export const spouseAlert = defineMessages({
 
 export const spouseApproved = defineMessages({
   message: {
-    id: 'fa.application:section.spouseApproved.message#markup',
+    id: 'fa.application:section.spouseApproved.message#markdown',
     defaultMessage:
       'Umsóknin maka þíns um fjárhagsaðstoð í {month} er samþykkt. Maki þinn fær frekari upplýsingar um veitta aðstoð.',
     description: 'Message for spouse when application is apporoved',

@@ -116,7 +116,7 @@ const CourtRecord = () => {
 
       autofill(
         [
-          { key: 'courtStartDate', value: workingCase.courtDate, force: true },
+          { key: 'courtStartDate', value: workingCase.courtDate },
           {
             key: 'courtLocation',
             value: workingCase.court
@@ -126,7 +126,6 @@ const CourtRecord = () => {
                     : workingCase.court.name
                 }`
               : undefined,
-            force: true,
           },
           {
             key: 'courtAttendees',
@@ -134,7 +133,6 @@ const CourtRecord = () => {
               autofillAttendees.length > 0
                 ? autofillAttendees.join('')
                 : undefined,
-            force: true,
           },
           {
             key: 'sessionBookings',
