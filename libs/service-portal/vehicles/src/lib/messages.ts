@@ -15,7 +15,7 @@ export const messages = defineMessages({
   },
   intro: {
     id: 'sp.vehicles:vehicles-intro',
-    defaultMessage: `Hér færðu upplýsingar úr ökutækjaskrá um ökutæki sem þú ert skráð/ur eigandi að.`,
+    defaultMessage: `Hér má nálgast upplýsingar um þín ökutæki úr ökutækjaskrá Samgöngustofu.`,
   },
   clearFilter: {
     id: 'sp.vehicles:clear-filters',
@@ -24,11 +24,6 @@ export const messages = defineMessages({
   notFound: {
     id: 'sp.vehicles:not-found',
     defaultMessage: 'Ökutæki fannst ekki',
-  },
-  introDetail: {
-    id: 'sp.vehicles:data-info-detail',
-    defaultMessage:
-      'Hér færðu upplýsingar úr ökutækjaskrá um ökutæki sem þú er skráð/ur eigandi að. ',
   },
   infoNote: {
     id: 'sp.vehicles:detail-info-note',

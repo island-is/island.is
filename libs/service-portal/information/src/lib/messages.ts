@@ -95,7 +95,7 @@ export const spmm = {
     subtitle: {
       id: 'sp.company:company-subtitle',
       defaultMessage:
-        'Hér fyrir neðan eru þín gögn sem hafa verið sótt frá Ríkisskattstjóra.',
+        'Hér má nálgast upplýsingar úr fyrirtækjaskrá hjá Skattinum.',
     },
     name: {
       id: 'sp.company:name',
