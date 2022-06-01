@@ -15,7 +15,7 @@ export class AssetsXRoadService {
   constructor(
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-    private FasteignirApi: FasteignirApi,
+    private fasteignirApi: FasteignirApi,
   ) {}
 
   handleError(error: any): any {
@@ -35,7 +35,7 @@ export class AssetsXRoadService {
   }
 
   private getRealEstatesWithAuth(auth: Auth) {
-    return this.FasteignirApi.withMiddleware(
+    return this.fasteignirApi.withMiddleware(
       new AuthMiddleware(auth, { forwardUserInfo: true }),
     )
   }

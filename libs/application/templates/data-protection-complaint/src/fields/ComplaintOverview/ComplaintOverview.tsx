@@ -4,10 +4,10 @@ import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   delimitation,
+  externalData,
   info,
   overview,
   section,
-  externalData,
 } from '../../lib/messages'
 import { DataProtectionComplaint } from '../../lib/dataSchema'
 import {

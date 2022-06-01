@@ -1,10 +1,5 @@
 import React from 'react'
-import {
-  Box,
-  SkeletonLoader,
-  Stack,
-  Table as T,
-} from '@island.is/island-ui/core'
+import { SkeletonLoader, Table as T } from '@island.is/island-ui/core'
 
 const Skeleton = () => {
   const skeleton = Array(10).fill(

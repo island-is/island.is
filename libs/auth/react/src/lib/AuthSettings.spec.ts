@@ -23,7 +23,6 @@ describe('mergeAuthSettings', () => {
         "redirectPathSilent": "/auth/callback-silent",
         "response_type": "code",
         "revokeTokenTypes": Array [
-          "access_token",
           "refresh_token",
         ],
         "revokeTokensOnSignout": true,
