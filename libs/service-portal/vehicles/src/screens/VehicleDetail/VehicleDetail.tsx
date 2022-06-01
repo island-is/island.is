@@ -88,7 +88,6 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
                     .join(' ')
                 )}
               </Text>
-              <Text>{formatMessage(messages.introDetail)}</Text>
             </Stack>
             {inspectionInfo?.inspectionFine &&
             inspectionInfo.inspectionFine > 0 ? (

@@ -504,7 +504,7 @@ services-personal-representative-public:
       annotations:
         kubernetes.io/ingress.class: 'nginx-internal-alb'
       hosts:
-        - host: 'personal-representative-xrd.internal.staging01.devland.is'
+        - host: 'personal-representative-public-xrd.internal.staging01.devland.is'
           paths:
             - '/'
   namespace: 'personal-representative'

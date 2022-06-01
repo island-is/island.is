@@ -76,6 +76,8 @@ export function findFamilyStatus(
       externalData.nationalRegistry?.data?.applicant?.spouse?.maritalStatus,
     ) === MartialStatusType.MARRIED:
       return FamilyStatus.MARRIED
+    case externalData.nationalRegistry?.data?.applicant?.spouse != null:
+      return FamilyStatus.COHABITATION
     case answers?.relationshipStatus?.unregisteredCohabitation ===
       ApproveOptions.Yes:
       return FamilyStatus.UNREGISTERED_COBAHITATION
