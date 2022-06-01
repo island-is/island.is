@@ -17,15 +17,9 @@ const personalRepresentative = personalRepresentativeSetup()
 const personalRepresentativePublic = personalRepresentativePublicSetup()
 
 export const Services: EnvironmentServices = {
-  prod: [
-    identityServer,
-  ],
-  staging: [
-    identityServer,
-  ],
-  dev: [
-    identityServer,
-  ],
+  prod: [identityServer],
+  staging: [identityServer],
+  dev: [identityServer],
 }
 
 // Services that are not included in any environment above but should be used in feature deployments
