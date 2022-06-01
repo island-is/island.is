@@ -194,12 +194,6 @@ function renderContactsAndComplainees(
   complaint: ComplaintPDF,
   doc: PDFKit.PDFDocument,
 ): void {
-  /*
-  Kvartandi: 
-   MYSELF
-   ORGANIZATION_OR_INSTITUTION --- Ef að við bætum við um þig!!!
-   OTHERS --- Ef að það eru ekki fleiri en eitt umboð!!
-  */
   const contactHeading =
     complaint.onBehalf === OnBehalf.MYSELF ||
     complaint.onBehalf === OnBehalf.ORGANIZATION_OR_INSTITUTION ||

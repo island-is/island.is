@@ -57,9 +57,9 @@ export class DataProtectionComplaintService {
         attachments,
       )
 
-      /* await this.caseApiWithAuth.createCase({
+      await this.caseApiWithAuth.createCase({
         requestData: caseRequest,
-      }) */
+      })
 
       return {
         applicationPdfKey: key,
