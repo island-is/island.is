@@ -231,16 +231,16 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           progress: 0.4,
           onEntry: {
             apiModuleAction:
-              API_MODULE_ACTIONS.notifyApplicantOfRejectionFromOtherParent,
+            API_MODULE_ACTIONS.notifyApplicantOfRejectionFromOtherParent,
             throwOnError: true,
           },
           roles: [
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/DraftRequiresAction').then((val) =>
-                  Promise.resolve(val.DraftRequiresAction),
-                ),
+              import('../forms/DraftRequiresAction').then((val) =>
+              Promise.resolve(val.DraftRequiresAction),
+              ),
               read: 'all',
               write: 'all',
               delete: true,
@@ -268,9 +268,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/InReview').then((val) =>
-                  Promise.resolve(val.InReview),
-                ),
+              import('../forms/InReview').then((val) =>
+              Promise.resolve(val.InReview),
+              ),
               read: 'all',
               write: 'all',
               delete: true,
@@ -296,9 +296,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             {
               id: Roles.ASSIGNEE,
               formLoader: () =>
-                import('../forms/EmployerApproval').then((val) =>
-                  Promise.resolve(val.EmployerApproval),
-                ),
+              import('../forms/EmployerApproval').then((val) =>
+              Promise.resolve(val.EmployerApproval),
+              ),
               read: {
                 answers: [
                   'periods',
@@ -323,9 +323,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/InReview').then((val) =>
-                  Promise.resolve(val.InReview),
-                ),
+              import('../forms/InReview').then((val) =>
+              Promise.resolve(val.InReview),
+              ),
               read: 'all',
               write: 'all',
               delete: true,
@@ -336,6 +336,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           [DefaultEvents.APPROVE]: [
             {
               target: States.VINNUMALASTOFNUN_APPROVAL,
+              cond: startDateInTheFuture,
             },
           ],
           [DefaultEvents.REJECT]: { target: States.EMPLOYER_ACTION },
