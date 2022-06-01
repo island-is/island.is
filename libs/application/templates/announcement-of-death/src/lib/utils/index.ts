@@ -1,5 +1,4 @@
-import { Application } from '@island.is/application/core'
-import { RelationEnum, EstateMember, Answers } from '../../types'
+import { RelationEnum, Answers } from '../../types'
 
 export const getRelationOptions = (): Record<
   keyof typeof RelationEnum,
