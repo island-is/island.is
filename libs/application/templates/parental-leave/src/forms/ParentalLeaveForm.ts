@@ -819,20 +819,31 @@ export const ParentalLeaveForm: Form = buildForm({
             }),
           ],
         }),
+      ],
+    }),
+    buildSection({
+      title: '',
+      condition: (answers) =>
+         getApplicationAnswers(answers).periods.length > 0 && new Date(getApplicationAnswers(answers).periods[0].startDate).getTime() < new Date().getTime(),
+      children: [
+        buildSubmitField({
+          id: 'reject',
+          placement: 'footer',
+          title: parentalLeaveFormMessages.finalScreen.startDateInThePast,
+          actions: [],
+        }),
+      ],
+    }),
+    buildSection({
+      title: '',
+      condition: (answers) =>
+      getApplicationAnswers(answers).periods.length > 0 && new Date(getApplicationAnswers(answers).periods[0].startDate).getTime() > new Date().getTime(),
+      children: [
         buildCustomField({
           id: 'thankYou',
           title: parentalLeaveFormMessages.finalScreen.title,
           component: 'Conclusion',
-          condition: (answers) =>
-          getApplicationAnswers(answers).periods.length > 0 && new Date(getApplicationAnswers(answers).periods[0].startDate).getTime() > new Date().getTime(),
-        }),
-        buildDescriptionField({
-          id: 'final',
-          title: 'Application not processed',
-          description: parentalLeaveFormMessages.finalScreen.startDateInThePast,
-          condition: (answers) =>
-          getApplicationAnswers(answers).periods.length > 0 && new Date(getApplicationAnswers(answers).periods[0].startDate).getTime() < new Date().getTime(),
-        }),
+        }),        
       ],
     }),
   ],
