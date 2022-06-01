@@ -75,13 +75,13 @@ export const Overview = ({ application }: FieldBaseProps) => {
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
               label={m.capitalIncome}
-              value={answers.incomeAndExpenses.capital}
+              value={answers.incomeAndExpenses?.capital}
             />
           </GridColumn>
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
               label={m.personalIncome}
-              value={answers.incomeAndExpenses.personal}
+              value={answers.incomeAndExpenses?.personal}
             />
           </GridColumn>
         </GridRow>
@@ -91,13 +91,13 @@ export const Overview = ({ application }: FieldBaseProps) => {
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
               label={m.donations}
-              value={answers.incomeAndExpenses.donations}
+              value={answers.incomeAndExpenses?.donations}
             />
           </GridColumn>
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
               label={m.capitalIncome}
-              value={answers.incomeAndExpenses.capitalIncome}
+              value={answers.incomeAndExpenses?.capitalIncome}
             />
           </GridColumn>
         </GridRow>
@@ -107,7 +107,7 @@ export const Overview = ({ application }: FieldBaseProps) => {
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
               label={m.keyNumbersParty}
-              value={answers.incomeAndExpenses.partyRunning}
+              value={answers.incomeAndExpenses?.partyRunning}
             />
           </GridColumn>
         </GridRow>
@@ -123,13 +123,13 @@ export const Overview = ({ application }: FieldBaseProps) => {
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
               label={m.debtsShort}
-              value={answers.propertiesAndDebts.debtsShort}
+              value={answers.propertiesAndDebts?.debtsShort}
             />
           </GridColumn>
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
               label={m.debtsLong}
-              value={answers.propertiesAndDebts.longTermDebt}
+              value={answers.propertiesAndDebts?.longTermDebt}
             />
           </GridColumn>
         </GridRow>
@@ -139,13 +139,13 @@ export const Overview = ({ application }: FieldBaseProps) => {
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
               label={m.propertiesCash}
-              value={answers.propertiesAndDebts.propertiesCash}
+              value={answers.propertiesAndDebts?.propertiesCash}
             />
           </GridColumn>
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
               label={m.propertiesShort}
-              value={answers.propertiesAndDebts.propertiesShort}
+              value={answers.propertiesAndDebts?.propertiesShort}
             />
           </GridColumn>
         </GridRow>

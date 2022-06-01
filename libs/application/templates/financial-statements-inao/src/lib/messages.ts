@@ -280,7 +280,7 @@ export const m = defineMessages({
     description: 'Overview title',
   },
   overviewDescription: {
-    id: 'gfl.application:overview.general.description',
+    id: 'fsn.application:overview.general.description',
     defaultMessage: 'Farðu vel yfir efnið áður en þú sendir inn umsóknina.',
     description: 'Overview description',
   },
