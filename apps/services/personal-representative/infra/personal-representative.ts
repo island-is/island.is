@@ -13,7 +13,7 @@ export const serviceSetup = (): ServiceBuilder<'services-personal-representative
     .ingress({
       primary: {
         host: {
-          dev: 'personal-representative-public-xrd.internal.dev01.devland.is',
+          dev: 'personal-representative-xrd.internal.dev01.devland.is',
           staging: 'personal-representative-xrd.internal.staging01.devland.is',
           prod: 'personal-representative-xrd.internal.innskra.island.is',
         },

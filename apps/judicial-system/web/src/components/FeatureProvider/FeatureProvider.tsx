@@ -6,7 +6,7 @@ interface FeatureProvider {
   features: Feature[]
 }
 
-const availableFeatures: Feature[] = []
+const availableFeatures: Feature[] = [Feature.MODIFY_RULING]
 
 export const FeatureContext = createContext<FeatureProvider>({ features: [] })
 

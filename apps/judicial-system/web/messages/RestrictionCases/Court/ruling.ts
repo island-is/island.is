@@ -8,6 +8,23 @@ export const rcRuling = {
       'Notaður sem titill á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
   }),
   sections: {
+    alertMessage: defineMessages({
+      title: {
+        id:
+          'judicial.system.restriction_cases:ruling.sections.alert_message.title',
+        defaultMessage: 'Athugið',
+        description:
+          'Notaður sem titill í viðvörunarboxi þegar verið er að leiðrétta úrskurð',
+      },
+      message: {
+        id:
+          'judicial.system.restriction_cases:ruling.sections.alert_message.message',
+        defaultMessage:
+          'Allar breytingar á textum verða sýnilegar í yfirliti málsins, hvort sem nýr úrskurður er undirritaður eða ekki.',
+        description:
+          'Notaður sem texti í viðvörunarboxi þegar verið er að leiðrétta úrskurð',
+      },
+    }),
     introduction: defineMessages({
       title: {
         id:
