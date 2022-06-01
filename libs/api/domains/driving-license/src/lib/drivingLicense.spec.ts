@@ -327,9 +327,8 @@ describe('DrivingLicenseService', () => {
     })
 
     it('should handle error responses when creating a license', async () => {
-      expect.assertions(1)
 
-      return service
+      return await service
         .newTemporaryDrivingLicense(MOCK_NATIONAL_ID_NO_ASSESSMENT, {
           juristictionId: 11,
           needsToPresentHealthCertificate: false,
