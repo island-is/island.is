@@ -78,6 +78,7 @@ export const AlertMessage: React.FC<AlertMessageProps & TitleAndOrMessage> = ({
       background={variant.background}
       borderColor={variant.borderColor}
       borderWidth="standard"
+      data-testid="alertMessage"
     >
       <Box display="flex">
         <Box display="flex" marginRight={[1, 1, 2]}>
