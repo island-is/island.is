@@ -23,7 +23,7 @@ yarn nx run clients-driving-license-book:update-openapi-document
 yarn nx run clients-driving-license-book:schemas/external-openapi-generator
 ```
 
-### Import into other NestJS modules ****\*\*****\*\*\*\*****\*\*****\*****\*\*****\*\*\*\*****\*\*****
+### Import into other NestJS modules \***\*\*\*\*\***\*\*\*\*\***\*\*\*\*\***\*\***\*\*\*\*\***\*\*\*\*\***\*\*\*\*\***
 
 #### app.module.ts
 
