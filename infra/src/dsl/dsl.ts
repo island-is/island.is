@@ -39,6 +39,12 @@ export class ServiceBuilder<ServiceType> implements Service {
     }
     return this
   }
+
+  healthPort(port: number) {
+    this.serviceDef.healthPort = port
+    return this
+  }
+
   targetPort(port: number) {
     this.serviceDef.port = port
     return this
