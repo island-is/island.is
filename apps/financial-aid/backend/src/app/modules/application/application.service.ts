@@ -33,6 +33,7 @@ import {
   firstDateOfMonth,
   UserType,
   applicationPageSize,
+  Routes,
 } from '@island.is/financial-aid/shared/lib'
 import { FileService } from '../file'
 import {
@@ -59,7 +60,7 @@ interface Recipient {
 }
 
 const linkToStatusPage = (applicationId: string) => {
-  return `${environment.oskBaseUrl}/stada/${applicationId}"`
+  return `${environment.oskBaseUrl}${Routes.statusPage(applicationId)}`
 }
 
 const linkToApplicationSystem = (applicationId: string) => {
