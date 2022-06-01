@@ -11,7 +11,7 @@ import { clientInfoSection } from './personalElection/clientInfoSection'
 import { m } from '../../lib/messages'
 import { keyNumbersSection } from './shared/keyNumbers/keyNumbersSection'
 import { overviewSection } from './shared/overviewSection'
-import { Logo } from '../../assets'
+import { Logo } from '../../components'
 
 export const getApplication = (): Form => {
   return buildForm({

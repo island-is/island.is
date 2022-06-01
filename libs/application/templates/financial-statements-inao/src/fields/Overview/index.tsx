@@ -115,7 +115,7 @@ export const Overview = ({ application }: FieldBaseProps) => {
       <Divider />
       <Box paddingTop={4} paddingBottom={2}>
         <Text variant="h3" as="h3">
-          {formatMessage(m.debts)}
+          {formatMessage(m.keyNumbersDebt)}
         </Text>
       </Box>
       <Box paddingY={2}>
