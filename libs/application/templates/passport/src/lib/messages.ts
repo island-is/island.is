@@ -96,29 +96,34 @@ export const m = defineMessages({
     defaultMessage: 'Hæð',
     description: 'Some description',
   },
-  serviceSection: {
-    id: 'pp.application:service.section',
-    defaultMessage: 'Afgreiðsla',
-    description: 'Some description',
-  },
   serviceTitle: {
     id: 'pp.application:service.title',
-    defaultMessage: 'Afgreiðsla',
+    defaultMessage: 'Afhending',
     description: 'Some description',
   },
   serviceType: {
     id: 'pp.application:service.type',
-    defaultMessage: 'Veldu afgreiðslumáta',
+    defaultMessage: 'Veldu þann afgreiðslumáta sem hentar þér best.',
     description: 'Some description',
   },
   regularService: {
     id: 'pp.application:service.regular',
-    defaultMessage: 'Venjuleg afgreiðsla',
+    defaultMessage: 'Almenn afhending - 13.000 kr.',
+    description: 'Some description',
+  },
+  regularServiceSublabel: {
+    id: 'pp.application:service.regular.sublabel',
+    defaultMessage: 'Innan 10 virkra daga frá myndaöku.',
     description: 'Some description',
   },
   expressService: {
     id: 'pp.application:service.express',
-    defaultMessage: 'Hraðafgreiðsla',
+    defaultMessage: 'Hraðafhending - 26.000 kr.',
+    description: 'Some description',
+  },
+  expressServiceSublabel: {
+    id: 'pp.application:service.express.sublabel',
+    defaultMessage: 'Innan 2 virkra daga frá myndatöku',
     description: 'Some description',
   },
   dropLocation: {
@@ -126,19 +131,26 @@ export const m = defineMessages({
     defaultMessage: 'Afhendingarstaður',
     description: 'Some description',
   },
+  dropLocationDescription: {
+    id: 'pp.application:service.dropLocation',
+    defaultMessage:
+      'Fljótlegast er að sækja vegabréf hjá Þjóðskrá Íslands í Borgartúni 21, 105 Reykjavík. Á öðrum afhendingarstöðum getur afhending tekið allt að 6 - 10 daga.',
+    description: 'Some description',
+  },
   dropLocationPlaceholder: {
     id: 'pp.application:service.dropLocation.placeholder',
-    defaultMessage: 'Þjóðskrá',
+    defaultMessage: 'Veldu afhendingarstað',
     description: 'Some description',
   },
-  extraOptions: {
-    id: 'pp.application:service.extraOptions',
-    defaultMessage: 'Aukaval',
+  dropLocationAuthentication: {
+    id: 'pp.application:service.dropLocation.authentication',
+    defaultMessage: 'Auðkenning við afhendingu',
     description: 'Some description',
   },
-  extraOptionsBringOwnPhoto: {
-    id: 'pp.application:service.extraOptions.bringOwnPhoto',
-    defaultMessage: 'Ég kem með ljósmynd frá ljósmyndara',
+  dropLocationAuthenticationDescription: {
+    id: 'pp.application:service.dropLocation.authenticationDescription',
+    defaultMessage:
+      'Veldu þau skilríki sem munu auðkenna þig við afhendingu á vegabréfi. Ef eldra vegabréf er glatað skaltu framvísa persónuskílríki með mynd - ökuskírteini eða nafnskírteini.',
     description: 'Some description',
   },
   timeScheduleSection: {
