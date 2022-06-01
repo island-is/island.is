@@ -253,9 +253,14 @@ export const coreErrorMessages = defineMessages({
   failedDataProvider: {
     id: 'application.system:fetch.data.error',
     defaultMessage: 'Villa kom upp við að sækja gögn',
-    description: 'Copy when there was an error in one or more data providers',
+    description: 'Default error when dataprovider fails',
   },
-
+  failedDataProviderSubmit: {
+    id: 'application.system:fetch.data.failedDataProviderSubmit',
+    defaultMessage: 'Eitthvað fór úrskeiðis',
+    description:
+      'Error message for dataprovider screen when one of the dataproviders fails',
+  },
   paymentSubmitFailed: {
     id: 'application.system:core.payment.submitTitle',
     defaultMessage: 'Sending umsóknar mistókst',

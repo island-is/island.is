@@ -1,11 +1,7 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Text, Box, Input, Tooltip } from '@island.is/island-ui/core'
-import {
-  CaseCustodyRestrictions,
-  isAcceptingCaseDecision,
-} from '@island.is/judicial-system/types'
 import { isPoliceReportStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import {
   FormFooter,
@@ -21,17 +17,12 @@ import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { rcReportForm } from '@island.is/judicial-system-web/messages'
+import { rcReportForm, titles } from '@island.is/judicial-system-web/messages'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import {
-  formatDate,
-  formatNationalId,
-} from '@island.is/judicial-system/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
 import * as Constants from '@island.is/judicial-system/consts'
 
 export const StepFour: React.FC = () => {
@@ -40,7 +31,6 @@ export const StepFour: React.FC = () => {
     setWorkingCase,
     isLoadingWorkingCase,
     caseNotFound,
-    isCaseUpToDate,
   } = useContext(FormContext)
   const { user } = useContext(UserContext)
   const [demandsErrorMessage, setDemandsErrorMessage] = useState<string>('')
@@ -52,61 +42,12 @@ export const StepFour: React.FC = () => {
 
   const { formatMessage } = useIntl()
 
-  const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
-  const { updateCase, autofill } = useCase()
+  const { updateCase } = useCase()
 
   useDeb(workingCase, 'demands')
   useDeb(workingCase, 'caseFacts')
   useDeb(workingCase, 'legalArguments')
   useDeb(workingCase, 'comments')
-
-  useEffect(() => {
-    if (isCaseUpToDate && !initialAutoFillDone) {
-      if (workingCase.defendants && workingCase.defendants.length > 0) {
-        autofill(
-          'demands',
-          formatMessage(rcReportForm.sections.demands.autofillV2, {
-            accusedName: workingCase.defendants[0].name,
-            accusedNationalId: workingCase.defendants[0].noNationalId
-              ? ' '
-              : `, kt. ${formatNationalId(
-                  workingCase.defendants[0].nationalId ?? '',
-                )}, `,
-            isExtended:
-              workingCase.parentCase &&
-              isAcceptingCaseDecision(workingCase.parentCase.decision)
-                ? 'yes'
-                : 'no',
-            caseType: workingCase.type,
-            court: workingCase.court?.name.replace('Héraðsdómur', 'Héraðsdóms'),
-            requestedValidToDate: formatDate(
-              workingCase.requestedValidToDate,
-              'PPPPp',
-            )
-              ?.replace('dagur,', 'dagsins')
-              ?.replace(' kl.', ', kl.'),
-            hasIsolationRequest: workingCase.requestedCustodyRestrictions?.includes(
-              CaseCustodyRestrictions.ISOLATION,
-            )
-              ? 'yes'
-              : 'no',
-          }),
-          workingCase,
-        )
-
-        setWorkingCase({ ...workingCase })
-      }
-
-      setInitialAutoFillDone(true)
-    }
-  }, [
-    autofill,
-    formatMessage,
-    initialAutoFillDone,
-    isCaseUpToDate,
-    setWorkingCase,
-    workingCase,
-  ])
 
   return (
     <PageLayout

@@ -2,16 +2,18 @@ import {
   getValueViaPath,
   FormValue,
   ApplicationContext,
+  ExternalData,
 } from '@island.is/application/core'
 import { m } from '../messages'
 import { ConditionFn } from '../types'
-import { NO, YES } from '../constants'
+import { YES } from '../constants'
 import {
   DrivingLicenseApplicationFor,
   B_FULL,
   B_TEMP,
 } from '../../shared/constants'
 import { hasYes } from './hasYes'
+import { CurrentLicenseProviderResult } from '../../dataProviders/CurrentLicenseProvider'
 
 export const allowFakeCondition = (result = YES) => (answers: FormValue) =>
   getValueViaPath(answers, 'fakeData.useFakeData') === result
@@ -19,7 +21,10 @@ export const allowFakeCondition = (result = YES) => (answers: FormValue) =>
 export const needsHealthCertificateCondition = (result = YES) => (
   answers: FormValue,
 ) => {
-  return Object.values(answers?.healthDeclaration || {}).includes(result)
+  return (
+    Object.values(answers?.healthDeclaration || {}).includes(result) ||
+    answers?.hasHealthRemarks === result
+  )
 }
 
 export const isVisible = (...fns: ConditionFn[]) => (answers: FormValue) => {
@@ -66,4 +71,15 @@ export const hasCompletedPrerequisitesStep = (value = false) => ({
   // TODO: check for gdpr approval as well?
 
   return requirementsMet === value
+}
+
+export const hasHealthRemarks = (externalData: ExternalData) => {
+  return (
+    (
+      getValueViaPath<CurrentLicenseProviderResult>(
+        externalData,
+        'currentLicense.data',
+      )?.healthRemarks || []
+    ).length > 0
+  )
 }

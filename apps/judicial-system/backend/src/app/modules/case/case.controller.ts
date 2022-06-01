@@ -119,7 +119,7 @@ export class CaseController {
   ): Promise<Case> {
     this.logger.debug('Creating a new case')
 
-    const createdCase = await this.caseService.create(caseToCreate, user.id)
+    const createdCase = await this.caseService.create(caseToCreate, user)
 
     this.eventService.postEvent(CaseEvent.CREATE, createdCase as Case)
 
@@ -311,10 +311,11 @@ export class CaseController {
     @Param('caseId') caseId: string,
     @CurrentCase() theCase: Case,
     @Res() res: Response,
+    @Query('useSigned') useSigned = true,
   ): Promise<void> {
     this.logger.debug(`Getting the ruling for case ${caseId} as a pdf document`)
 
-    const pdf = await this.caseService.getRulingPdf(theCase)
+    const pdf = await this.caseService.getRulingPdf(theCase, useSigned)
 
     res.end(pdf)
   }

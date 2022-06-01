@@ -29,6 +29,9 @@ const attributes: (keyof Case)[] = [
   'creatingProsecutorId',
   'prosecutorId',
   'courtCaseNumber',
+  'courtDate',
+  'courtEndTime',
+  'decision',
   'validToDate',
   'isCustodyIsolation',
   'isolationToDate',
@@ -39,6 +42,7 @@ const attributes: (keyof Case)[] = [
   'courtRecordSignatoryId',
   'courtRecordSignatureDate',
   'parentCaseId',
+  'caseModifiedExplanation',
 ]
 
 @Injectable()

@@ -1918,6 +1918,9 @@ export interface IOrganizationFields {
 
   /** Published Material Search Filter Generic Tags */
   publishedMaterialSearchFilterGenericTags?: IGenericTag[] | undefined
+
+  /** Shows up on the organizations page */
+  showsUpOnTheOrganizationsPage?: boolean | undefined
 }
 
 export interface IOrganization extends Entry<IOrganizationFields> {
@@ -2018,11 +2021,11 @@ export interface IOrganizationPageFields {
   /** External Links */
   externalLinks?: ILink[] | undefined
 
-  /** Alert Banner */
-  alertBanner?: IAlertBanner | undefined
-
   /** Default Header Image */
   defaultHeaderImage?: Asset | undefined
+
+  /** Alert Banner */
+  alertBanner?: IAlertBanner | undefined
 }
 
 export interface IOrganizationPage extends Entry<IOrganizationPageFields> {

@@ -110,6 +110,7 @@ const Home: Screen<HomeProps> = ({
       )}
       searchTags={searchTags}
       showLogoTitle={!institutionSlugBelongsToMannaudstorg}
+      indexableBySearchEngine={institutionSlugBelongsToMannaudstorg}
     >
       {hasContent && (
         <ServiceWebContext.Consumer>
@@ -270,5 +271,5 @@ const sortSupportCategories = (items: SupportCategory[]) =>
 
 export default withMainLayout(Home, {
   showHeader: false,
-  showFooter: false,
+  footerVersion: 'organization',
 })

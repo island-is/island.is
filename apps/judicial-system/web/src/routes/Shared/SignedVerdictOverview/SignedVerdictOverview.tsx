@@ -6,8 +6,6 @@ import { ValueType } from 'react-select/src/types'
 import { IntlShape, useIntl } from 'react-intl'
 import compareAsc from 'date-fns/compareAsc'
 import formatISO from 'date-fns/formatISO'
-import differenceInMilliseconds from 'date-fns/differenceInMilliseconds'
-import subMilliseconds from 'date-fns/subMilliseconds'
 
 import {
   CaseDecision,
@@ -35,10 +33,12 @@ import { Box, Input, Text } from '@island.is/island-ui/core'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
-import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages'
+import {
+  signedVerdictOverview as m,
+  titles,
+} from '@island.is/judicial-system-web/messages'
 import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
 import * as Constants from '@island.is/judicial-system/consts'
 
 import { CourtRecordSignatureConfirmationQuery } from './courtRecordSignatureConfirmationGql'
@@ -306,7 +306,9 @@ export const SignedVerdictOverview: React.FC = () => {
             )}`,
           },
         )
-        modification = `${modification} ${isolationText}`
+        modification = modification
+          ? `${modification} ${isolationText}`
+          : isolationText
       }
     }
 
@@ -422,6 +424,7 @@ export const SignedVerdictOverview: React.FC = () => {
             type: InstitutionType.PROSECUTORS_OFFICE,
             created: new Date().toString(),
             modified: new Date().toString(),
+            active: true,
           },
           isHeightenedSecurityLevel: workingCase.isHeightenedSecurityLevel
             ? false
@@ -443,37 +446,34 @@ export const SignedVerdictOverview: React.FC = () => {
     value: Date | undefined,
     valid: boolean,
   ) => {
+    const validToDate = value ?? modifiedValidToDate?.value
+
     if (
-      value &&
+      validToDate &&
       workingCase.isCustodyIsolation &&
-      workingCase.isolationToDate
+      (!modifiedIsolationToDate?.value ||
+        compareAsc(validToDate, new Date(modifiedIsolationToDate.value)) === -1)
     ) {
-      const validToDateIsBeforeIsolationToDate =
-        compareAsc(value, new Date(workingCase.isolationToDate)) === -1
+      setModifiedIsolationToDate({
+        value: validToDate,
+        isValid: valid,
+      })
 
-      const validToIsolationToDiff = validToDateIsBeforeIsolationToDate
-        ? differenceInMilliseconds(value, new Date(workingCase.isolationToDate))
-        : 0
-
-      if (validToDateIsBeforeIsolationToDate) {
-        setModifiedIsolationToDate({
-          value: subMilliseconds(value, Math.abs(validToIsolationToDiff)),
-          isValid: valid,
-        })
-
-        setIsolationToDateChanged(true)
-      }
+      setIsolationToDateChanged(
+        !workingCase.isolationToDate ||
+          compareAsc(validToDate, new Date(workingCase.isolationToDate)) !== 0,
+      )
     }
 
     setModifiedValidToDate({
-      value: value ?? modifiedValidToDate?.value,
+      value: validToDate,
       isValid: valid,
     })
 
     setValidToDateChanged(
-      value !== undefined &&
-        workingCase.validToDate !== undefined &&
-        compareAsc(value, new Date(workingCase.validToDate)) !== 0,
+      value &&
+        (!workingCase.validToDate ||
+          compareAsc(value, new Date(workingCase.validToDate)) !== 0),
     )
   }
 
@@ -562,24 +562,6 @@ export const SignedVerdictOverview: React.FC = () => {
     )
   }
 
-  /**
-   * We assume that the signed verdict page is only opened for
-   * cases in state REJECTED or ACCEPTED.
-   *
-   * Based on the judge's decision the signed verdict page can
-   * be in one of five states:
-   *
-   * 1. Rejected
-   *    - state === REJECTED and decision === REJECTING
-   * 2. Alternative travel ban accepted and the travel ban end date is in the past
-   *    - state === ACCEPTED and decision === ACCEPTING_ALTERNATIVE_TRAVEL_BAN and validToDate < today
-   * 3. Accepted and the custody end date is in the past
-   *    - state === ACCEPTED and decision === ACCEPTING/ACCEPTING_PARTIALLY and validToDate < today
-   * 5. Alternative travel ban accepted and the travel ban end date is not in the past
-   *    - state === ACCEPTED and decision === ACCEPTING_ALTERNATIVE_TRAVEL_BAN and validToDate > today
-   * 3. Accepted and the custody end date is not in the past
-   *    - state === ACCEPTED and decision === ACCEPTING/ACCEPTING_PARTIALLY and validToDate > today
-   */
   return (
     <PageLayout
       workingCase={workingCase}
@@ -604,31 +586,26 @@ export const SignedVerdictOverview: React.FC = () => {
           setIsModifyingDates(!isModifyingDates)
         }
       />
-      {user?.role !== UserRole.DEFENDER && (
-        <FormContentContainer isFooter>
-          <FormFooter
-            previousUrl={Constants.CASE_LIST_ROUTE}
-            hideNextButton={
-              user?.role !== UserRole.PROSECUTOR ||
-              workingCase.decision ===
-                CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
-              workingCase.state === CaseState.REJECTED ||
-              workingCase.state === CaseState.DISMISSED ||
-              workingCase.isValidToDateInThePast ||
-              Boolean(workingCase.childCase)
-            }
-            nextButtonText={formatMessage(
-              m.sections.caseExtension.buttonLabel,
-              {
-                caseType: workingCase.type,
-              },
-            )}
-            onNextButtonClick={() => handleCaseExtension()}
-            nextIsLoading={isExtendingCase}
-            infoBoxText={getExtensionInfoText(workingCase, formatMessage)}
-          />
-        </FormContentContainer>
-      )}
+      <FormContentContainer isFooter>
+        <FormFooter
+          previousUrl={Constants.CASE_LIST_ROUTE}
+          hideNextButton={
+            user?.role !== UserRole.PROSECUTOR ||
+            workingCase.decision ===
+              CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
+            workingCase.state === CaseState.REJECTED ||
+            workingCase.state === CaseState.DISMISSED ||
+            workingCase.isValidToDateInThePast ||
+            Boolean(workingCase.childCase)
+          }
+          nextButtonText={formatMessage(m.sections.caseExtension.buttonLabel, {
+            caseType: workingCase.type,
+          })}
+          onNextButtonClick={() => handleCaseExtension()}
+          nextIsLoading={isExtendingCase}
+          infoBoxText={getExtensionInfoText(workingCase, formatMessage)}
+        />
+      </FormContentContainer>
       {shareCaseModal?.open && (
         <Modal
           title={shareCaseModal.title}

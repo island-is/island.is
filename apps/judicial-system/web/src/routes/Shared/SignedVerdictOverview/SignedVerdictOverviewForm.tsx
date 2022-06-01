@@ -8,7 +8,6 @@ import {
   Box,
   Button,
   Select,
-  Tag,
   Text,
   Tooltip,
   Stack,
@@ -28,7 +27,6 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseAppealDecision,
-  CaseCustodyRestrictions,
   CaseDecision,
   CaseState,
   CaseType,
@@ -38,25 +36,28 @@ import {
   UserRole,
   isAcceptingCaseDecision,
   Case,
+  Feature,
 } from '@island.is/judicial-system/types'
-import { getRestrictionTagVariant } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import {
   capitalize,
   caseTypes,
   formatDate,
-  getShortRestrictionByValue,
 } from '@island.is/judicial-system/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
-import { core } from '@island.is/judicial-system-web/messages'
+import {
+  core,
+  signedVerdictOverview as m,
+} from '@island.is/judicial-system-web/messages'
 import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
-import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages/Core/signedVerdictOverview'
 import * as Constants from '@island.is/judicial-system/consts'
-import AppealSection from './Components/AppealSection/AppealSection'
-import { SignedDocument } from './Components/SignedDocument'
-import CaseDates from './Components/CaseDates/CaseDates'
-import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
 import { TIME_FORMAT } from '@island.is/judicial-system/consts'
+import AppealSection from './Components/AppealSection/AppealSection'
+import { SignedDocument } from '@island.is/judicial-system-web/src/components/SignedDocument/SignedDocument'
+import CaseDates from '@island.is/judicial-system-web/src/components/CaseDates/CaseDates'
+import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
+import RestrictionTags from '@island.is/judicial-system-web/src/components/RestrictionTags/RestrictionTags'
+import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 
 interface Props {
   workingCase: Case
@@ -89,13 +90,6 @@ function showCustodyNotice(
   )
 }
 
-function showRestrictionTags(type: CaseType, decision?: CaseDecision) {
-  return (
-    (type === CaseType.CUSTODY || type === CaseType.ADMISSION_TO_FACILITY) &&
-    isAcceptingCaseDecision(decision)
-  )
-}
-
 const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
   const {
     workingCase,
@@ -117,6 +111,8 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
 
   // skip loading institutions if the user does not have an id
   const { prosecutorsOffices } = useInstitution(!user?.id)
+
+  const { features } = useContext(FeatureContext)
 
   /**
    * If the case is not rejected it must be accepted because
@@ -173,17 +169,15 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
   return (
     <FormContentContainer>
       <Box marginBottom={5}>
-        {user?.role !== UserRole.DEFENDER && (
-          <Box marginBottom={3}>
-            <Button
-              variant="text"
-              preTextIcon="arrowBack"
-              onClick={() => router.push(Constants.CASE_LIST_ROUTE)}
-            >
-              Til baka
-            </Button>
-          </Box>
-        )}
+        <Box marginBottom={3}>
+          <Button
+            variant="text"
+            preTextIcon="arrowBack"
+            onClick={() => router.push(Constants.CASE_LIST_ROUTE)}
+          >
+            Til baka
+          </Button>
+        </Box>
         <Box display="flex" justifyContent="spaceBetween" marginBottom={3}>
           <Box>
             <Box marginBottom={1}>
@@ -203,69 +197,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
             </Box>
           </Box>
           <Box display="flex" flexDirection="column">
-            {workingCase.isCustodyIsolation && (
-              <Box marginBottom={1}>
-                <Tag
-                  variant={getRestrictionTagVariant(
-                    CaseCustodyRestrictions.ISOLATION,
-                  )}
-                  outlined
-                  disabled
-                >
-                  {getShortRestrictionByValue(
-                    CaseCustodyRestrictions.ISOLATION,
-                  )}
-                </Tag>
-              </Box>
-            )}
-            {
-              // Custody restrictions
-              showRestrictionTags(workingCase.type, workingCase.decision) &&
-                workingCase.requestedCustodyRestrictions
-                  ?.filter((restriction) =>
-                    [
-                      CaseCustodyRestrictions.VISITAION,
-                      CaseCustodyRestrictions.COMMUNICATION,
-                      CaseCustodyRestrictions.MEDIA,
-                      CaseCustodyRestrictions.WORKBAN,
-                      CaseCustodyRestrictions.NECESSITIES,
-                    ].includes(restriction),
-                  )
-                  ?.map((custodyRestriction, index) => (
-                    <Box marginTop={index > 0 ? 1 : 0} key={index}>
-                      <Tag
-                        variant={getRestrictionTagVariant(custodyRestriction)}
-                        outlined
-                        disabled
-                      >
-                        {getShortRestrictionByValue(custodyRestriction)}
-                      </Tag>
-                    </Box>
-                  ))
-            }
-            {
-              // Travel ban restrictions
-              workingCase.type === CaseType.TRAVEL_BAN &&
-                (workingCase.decision === CaseDecision.ACCEPTING ||
-                  workingCase.decision === CaseDecision.ACCEPTING_PARTIALLY) &&
-                workingCase.requestedCustodyRestrictions
-                  ?.filter(
-                    (restriction) =>
-                      CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION ===
-                      restriction,
-                  )
-                  ?.map((custodyRestriction, index) => (
-                    <Box marginTop={index > 0 ? 1 : 0} key={index}>
-                      <Tag
-                        variant={getRestrictionTagVariant(custodyRestriction)}
-                        outlined
-                        disabled
-                      >
-                        {getShortRestrictionByValue(custodyRestriction)}
-                      </Tag>
-                    </Box>
-                  ))
-            }
+            <RestrictionTags workingCase={workingCase} />
           </Box>
         </Box>
         {isRestrictionCase(workingCase.type) &&
@@ -300,6 +232,20 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
           />
         </Box>
       )}
+      {workingCase.rulingModifiedHistory && (
+        <Box marginBottom={5}>
+          <AlertMessage
+            type="info"
+            title={formatMessage(m.sections.modifyRulingInfo.title)}
+            message={
+              <MarkdownWrapper
+                markdown={workingCase.rulingModifiedHistory}
+                textProps={{ variant: 'small' }}
+              />
+            }
+          />
+        </Box>
+      )}
       <Box marginBottom={6}>
         <InfoCard
           data={[
@@ -313,10 +259,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
             },
             {
               title: formatMessage(core.prosecutor),
-              value: `${
-                workingCase.creatingProsecutor?.institution?.name ??
-                'Ekki skráð'
-              }`,
+              value: `${workingCase.creatingProsecutor?.institution?.name}`,
             },
             {
               title: formatMessage(core.court),
@@ -376,27 +319,25 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
         )}
       {user?.role !== UserRole.STAFF && (
         <>
-          {user?.role !== UserRole.DEFENDER && (
-            <Box marginBottom={5} data-testid="accordionItems">
-              <Accordion>
-                <PoliceRequestAccordionItem workingCase={workingCase} />
-                <CourtRecordAccordionItem workingCase={workingCase} />
-                <RulingAccordionItem workingCase={workingCase} />
-                {user && (
-                  <CaseFilesAccordionItem
-                    workingCase={workingCase}
-                    setWorkingCase={setWorkingCase}
-                    user={user}
-                  />
-                )}
-                {(workingCase.comments ||
-                  workingCase.caseFilesComments ||
-                  workingCase.caseResentExplanation) && (
-                  <CommentsAccordionItem workingCase={workingCase} />
-                )}
-              </Accordion>
-            </Box>
-          )}
+          <Box marginBottom={5} data-testid="accordionItems">
+            <Accordion>
+              <PoliceRequestAccordionItem workingCase={workingCase} />
+              <CourtRecordAccordionItem workingCase={workingCase} />
+              <RulingAccordionItem workingCase={workingCase} />
+              {user && (
+                <CaseFilesAccordionItem
+                  workingCase={workingCase}
+                  setWorkingCase={setWorkingCase}
+                  user={user}
+                />
+              )}
+              {(workingCase.comments ||
+                workingCase.caseFilesComments ||
+                workingCase.caseResentExplanation) && (
+                <CommentsAccordionItem workingCase={workingCase} />
+              )}
+            </Accordion>
+          </Box>
           <Box marginBottom={6}>
             <BlueBox>
               <Box marginBottom={2} textAlign="center">
@@ -410,16 +351,14 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
                 </Box>
               </Box>
               <Box marginBottom={1} textAlign="center">
-                <Text variant="h4">
-                  {workingCase?.judge ? workingCase.judge.name : user?.name}
-                </Text>
+                <Text variant="h4">{workingCase?.judge?.name}</Text>
               </Box>
             </BlueBox>
           </Box>
         </>
       )}
       <Box marginBottom={10}>
-        <Text as="h3" variant="h3" marginBottom={5}>
+        <Text as="h3" variant="h3" marginBottom={3}>
           {formatMessage(m.caseDocuments)}
         </Text>
         <Box marginBottom={2}>
@@ -428,25 +367,24 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
               <PdfRow
                 caseId={workingCase.id}
                 title={formatMessage(core.pdfButtonRequest)}
-                pdfType="request"
+                pdfType={'request'}
               />
             )}
-            {user?.role !== UserRole.DEFENDER &&
-              showCustodyNotice(
-                workingCase.type,
-                workingCase.state,
-                workingCase.decision,
-              ) && (
-                <PdfRow
-                  caseId={workingCase.id}
-                  title={formatMessage(core.pdfButtonCustodyNotice)}
-                  pdfType="custodyNotice"
-                />
-              )}
+            {showCustodyNotice(
+              workingCase.type,
+              workingCase.state,
+              workingCase.decision,
+            ) && (
+              <PdfRow
+                caseId={workingCase.id}
+                title={formatMessage(core.pdfButtonCustodyNotice)}
+                pdfType="custodyNotice"
+              />
+            )}
             <PdfRow
               caseId={workingCase.id}
               title={formatMessage(core.pdfButtonRulingShortVersion)}
-              pdfType="courtRecord"
+              pdfType={'courtRecord'}
             >
               {workingCase.courtRecordSignatory ? (
                 <SignedDocument
@@ -456,6 +394,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
               ) : user?.role === UserRole.JUDGE ||
                 user?.role === UserRole.REGISTRAR ? (
                 <Button
+                  variant="ghost"
                   loading={isRequestingCourtRecordSignature}
                   onClick={(event) => {
                     event.stopPropagation()
@@ -472,12 +411,29 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
               <PdfRow
                 caseId={workingCase.id}
                 title={formatMessage(core.pdfButtonRuling)}
-                pdfType="ruling"
+                pdfType={'ruling'}
               >
                 <SignedDocument
                   signatory={workingCase.judge?.name}
                   signingDate={workingCase.rulingDate}
                 />
+                {user?.role === UserRole.JUDGE &&
+                  features.includes(Feature.MODIFY_RULING) && (
+                    <Button
+                      variant="ghost"
+                      data-testid="modifyRulingButton"
+                      onClick={(event) => {
+                        event.stopPropagation()
+                        router.push(
+                          isRestrictionCase(workingCase.type)
+                            ? `${Constants.MODIFY_RULING_ROUTE}/${workingCase.id}`
+                            : `${Constants.IC_MODIFY_RULING_ROUTE}/${workingCase.id}`,
+                        )
+                      }}
+                    >
+                      {capitalize(formatMessage(core.modify))}
+                    </Button>
+                  )}
               </PdfRow>
             )}
           </Stack>
@@ -485,7 +441,8 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
         <Divider />
       </Box>
       {user?.role === UserRole.PROSECUTOR &&
-        user.institution?.id === workingCase.prosecutor?.institution?.id &&
+        user.institution?.id ===
+          workingCase.creatingProsecutor?.institution?.id &&
         isRestrictionCase(workingCase.type) && (
           <Box marginBottom={9}>
             <Box marginBottom={3}>

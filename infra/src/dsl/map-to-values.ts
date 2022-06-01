@@ -41,7 +41,10 @@ export const serializeService: SerializeMethod = (
     addToErrors(
       Object.keys(source)
         .filter((srcKey) => targetKeys.includes(srcKey))
-        .map((key) => `Collisions for environment or secrets for key ${key}`),
+        .map(
+          (key) =>
+            `Collisions in ${service.serviceDef.name} for environment or secrets for key ${key}`,
+        ),
     )
   }
   const mergeObjects = (
@@ -79,6 +82,7 @@ export const serializeService: SerializeMethod = (
     },
     secrets: {},
     healthCheck: {
+      port: serviceDef.healthPort,
       liveness: {
         path: serviceDef.liveness.path,
         initialDelaySeconds: serviceDef.liveness.initialDelaySeconds,
@@ -111,7 +115,11 @@ export const serializeService: SerializeMethod = (
 
   // replicas
   if (serviceDef.replicaCount) {
-    result.replicaCount = serviceDef.replicaCount
+    result.replicaCount = {
+      min: serviceDef.replicaCount.min,
+      max: serviceDef.replicaCount.max,
+      default: serviceDef.replicaCount.default,
+    }
   } else {
     result.replicaCount = {
       min: uberChart.env.defaultMinReplicas,
@@ -119,6 +127,20 @@ export const serializeService: SerializeMethod = (
       default: uberChart.env.defaultMinReplicas,
     }
   }
+
+  result.hpa = {
+    scaling: {
+      replicas: {
+        min: result.replicaCount.min,
+        max: result.replicaCount.max,
+      },
+      metric: {
+        cpuAverageUtilization: 70,
+      },
+    },
+  }
+  result.hpa.scaling.metric.nginxRequestsIrate =
+    serviceDef.replicaCount?.scalingMagicNumber || 2
 
   // extra attributes
   if (serviceDef.extraAttributes) {

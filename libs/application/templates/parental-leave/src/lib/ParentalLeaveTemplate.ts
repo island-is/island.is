@@ -24,6 +24,8 @@ import {
   NO,
   MANUAL,
   SPOUSE,
+  NO_PRIVATE_PENSION_FUND,
+  NO_UNION,
 } from '../constants'
 import { dataSchema } from './dataSchema'
 import { answerValidators } from './answerValidators'
@@ -103,8 +105,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         entry: 'clearAssignees',
         exit: [
           'setOtherParentIdIfSelectedSpouse',
+          'setPrivatePensionValuesIfUsePrivatePensionFundIsNO',
+          'setUnionValuesIfUseUnionIsNO',
           'clearPersonalAllowanceIfUsePersonalAllowanceIsNo',
           'clearSpouseAllowanceIfUseSpouseAllowanceIsNo',
+          'setPersonalUsageToHundredIfUseAsMuchAsPossibleIsYes',
+          'setSpouseUsageToHundredIfUseAsMuchAsPossibleIsYes',
         ],
         meta: {
           name: States.DRAFT,
@@ -151,7 +157,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       },
       [States.OTHER_PARENT_APPROVAL]: {
         entry: 'assignToOtherParent',
-        exit: 'clearAssignees',
+        exit: ['clearAssignees', 'removePeriodsOrAllowanceOnSpouseRejection'],
         meta: {
           name: States.OTHER_PARENT_APPROVAL,
           actionCard: {
@@ -699,11 +705,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
         const answers = getApplicationAnswers(application.answers)
 
-        if (
-          answers.usePersonalAllowance === NO &&
-          (answers.personalUsage || answers.personalUseAsMuchAsPossible)
-        ) {
-          set(application.answers, 'personalAllowance', null)
+        if (answers.usePersonalAllowance === NO) {
+          if (application.answers.personalAllowance) {
+            unset(application.answers, 'personalAllowance')
+          }
         }
 
         return context
@@ -713,11 +718,80 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
         const answers = getApplicationAnswers(application.answers)
 
+        if (answers.usePersonalAllowanceFromSpouse === NO) {
+          if (application.answers.personalAllowanceFromSpouse) {
+            unset(application.answers, 'personalAllowanceFromSpouse')
+          }
+        }
+
+        return context
+      }),
+      setPrivatePensionValuesIfUsePrivatePensionFundIsNO: assign((context) => {
+        const { application } = context
+
+        const answers = getApplicationAnswers(application.answers)
+
         if (
-          answers.usePersonalAllowanceFromSpouse === NO &&
-          (answers.spouseUsage || answers.spouseUseAsMuchAsPossible)
+          answers.usePrivatePensionFund === NO &&
+          answers.privatePensionFund !== NO_PRIVATE_PENSION_FUND
         ) {
-          set(application.answers, 'personalAllowanceFromSpouse', null)
+          set(
+            application.answers,
+            'payments.privatePensionFund',
+            NO_PRIVATE_PENSION_FUND,
+          )
+        }
+
+        if (
+          answers.usePrivatePensionFund === NO &&
+          answers.privatePensionFundPercentage !== '0'
+        ) {
+          set(application.answers, 'payments.privatePensionFundPercentage', '0')
+        }
+
+        return context
+      }),
+      setUnionValuesIfUseUnionIsNO: assign((context) => {
+        const { application } = context
+
+        const answers = getApplicationAnswers(application.answers)
+
+        if (answers.useUnion === NO && answers.union !== NO_UNION) {
+          set(application.answers, 'payments.union', NO_UNION)
+        }
+
+        return context
+      }),
+      setPersonalUsageToHundredIfUseAsMuchAsPossibleIsYes: assign((context) => {
+        const { application } = context
+
+        const answers = getApplicationAnswers(application.answers)
+
+        if (
+          answers.personalUseAsMuchAsPossible === YES &&
+          answers.personalUsage !== '100'
+        ) {
+          set(application.answers, 'personalAllowance', {
+            useAsMuchAsPossible: YES,
+            usage: '100',
+          })
+        }
+
+        return context
+      }),
+      setSpouseUsageToHundredIfUseAsMuchAsPossibleIsYes: assign((context) => {
+        const { application } = context
+
+        const answers = getApplicationAnswers(application.answers)
+
+        if (
+          answers.spouseUseAsMuchAsPossible === YES &&
+          answers.spouseUsage !== '100'
+        ) {
+          set(application.answers, 'personalAllowanceFromSpouse', {
+            useAsMuchAsPossible: YES,
+            usage: '100',
+          })
         }
 
         return context
@@ -820,6 +894,26 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
         set(answers, 'usePersonalAllowance', NO)
         set(answers, 'usePersonalAllowanceFromSpouse', NO)
+
+        return context
+      }),
+      removePeriodsOrAllowanceOnSpouseRejection: assign((context) => {
+        const { application } = context
+
+        const answers = getApplicationAnswers(application.answers)
+
+        if (answers.requestDays > 0) {
+          unset(application.answers, 'periods')
+          unset(application.answers, 'validatedPeriods')
+          set(application.answers, 'requestRights.requestDays', '0')
+          set(application.answers, 'requestRights.isRequestingRights', 'no')
+          set(application.answers, 'giveRights.giveDays', '0')
+          set(application.answers, 'giveRights.isGivingRights', 'no')
+        }
+
+        if (answers.usePersonalAllowanceFromSpouse === YES) {
+          unset(application.answers, 'personalAllowanceFromSpouse')
+        }
 
         return context
       }),

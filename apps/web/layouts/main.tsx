@@ -45,7 +45,7 @@ import { MenuTabsContext } from '../context/MenuTabsContext/MenuTabsContext'
 import { useI18n } from '../i18n'
 import { GET_ALERT_BANNER_QUERY } from '../screens/queries/AlertBanner'
 import { environment } from '../environments'
-import { useNamespace } from '../hooks'
+import { useFeatureFlag, useNamespace } from '../hooks'
 import {
   formatMegaMenuCategoryLinks,
   formatMegaMenuLinks,
@@ -58,7 +58,7 @@ import {
   pathIsRoute,
 } from '../hooks/useLinkResolver'
 import { stringHash } from '@island.is/web/utils/stringHash'
-
+import { OrganizationIslandFooter } from '../components/Organization/OrganizationIslandFooter'
 import Illustration from './Illustration'
 import * as styles from './main.css'
 
@@ -66,8 +66,6 @@ const { publicRuntimeConfig = {} } = getConfig() ?? {}
 
 const IS_MOCK =
   process.env.NODE_ENV !== 'production' && process.env.API_MOCKS === 'true'
-
-const SHOULD_LINK_TO_SERVICE_WEB = false
 
 const absoluteUrl = (req, setLocalhost) => {
   let protocol = 'https:'
@@ -103,6 +101,7 @@ export interface LayoutProps {
   namespace: Record<string, string | string[]>
   alertBannerContent?: GetAlertBannerQuery['getAlertBanner']
   organizationAlertBannerContent?: GetAlertBannerQuery['getAlertBanner']
+  footerVersion?: 'default' | 'organization'
   respOrigin
   megaMenuData
 }
@@ -157,6 +156,7 @@ const Layout: NextComponentType<
   namespace,
   alertBannerContent,
   organizationAlertBannerContent,
+  footerVersion = 'default',
   respOrigin,
   children,
   megaMenuData,
@@ -166,6 +166,11 @@ const Layout: NextComponentType<
   const n = useNamespace(namespace)
   const { route, pathname, query, asPath } = useRouter()
   const fullUrl = `${respOrigin}${asPath}`
+
+  const { value: isWebFooterLinkingToSupportPage } = useFeatureFlag(
+    'iswebfooterlinkingtosupportpage',
+    false,
+  )
 
   Sentry.configureScope((scope) => {
     scope.setExtra('lang', activeLocale)
@@ -237,11 +242,7 @@ const Layout: NextComponentType<
   const isServiceWeb = pathIsRoute(asPath, 'serviceweb')
 
   return (
-    <GlobalContextProvider
-      namespace={namespace}
-      shouldLinkToServiceWeb={SHOULD_LINK_TO_SERVICE_WEB}
-      isServiceWeb={isServiceWeb}
-    >
+    <GlobalContextProvider namespace={namespace} isServiceWeb={isServiceWeb}>
       <Page component="div">
         <Head>
           {preloadedFonts.map((href, index) => {
@@ -373,28 +374,40 @@ const Layout: NextComponentType<
         </MenuTabsContext.Provider>
         {showFooter && (
           <Hidden print={true}>
-            {showFooterIllustration && (
-              <Illustration className={styles.illustration} />
+            {footerVersion === 'default' && (
+              <>
+                {showFooterIllustration && (
+                  <Illustration className={styles.illustration} />
+                )}
+                <Footer
+                  topLinks={footerUpperInfo}
+                  {...(activeLocale === 'is'
+                    ? {
+                        linkToHelpWeb: isWebFooterLinkingToSupportPage
+                          ? linkResolver('serviceweb').href
+                          : '',
+                      }
+                    : { topLinksContact: footerUpperContact })}
+                  bottomLinks={footerLowerMenu}
+                  middleLinks={footerMiddleMenu}
+                  bottomLinksTitle={t.siteExternalTitle}
+                  middleLinksTitle={String(namespace.footerMiddleLabel)}
+                  languageSwitchLink={{
+                    title: activeLocale === 'en' ? 'Íslenska' : 'English',
+                    href: activeLocale === 'en' ? '/' : '/en',
+                  }}
+                  privacyPolicyLink={{
+                    title: n('privacyPolicyTitle', 'Persónuverndarstefna'),
+                    href: n(
+                      'privacyPolicyHref',
+                      '/personuverndarstefna-stafraent-islands',
+                    ),
+                  }}
+                  showMiddleLinks
+                />
+              </>
             )}
-            <Footer
-              topLinks={footerUpperInfo}
-              {...(activeLocale === 'is'
-                ? {
-                    linkToHelpWeb: SHOULD_LINK_TO_SERVICE_WEB
-                      ? linkResolver('serviceweb').href
-                      : '',
-                  }
-                : { topLinksContact: footerUpperContact })}
-              bottomLinks={footerLowerMenu}
-              middleLinks={footerMiddleMenu}
-              bottomLinksTitle={t.siteExternalTitle}
-              middleLinksTitle={String(namespace.footerMiddleLabel)}
-              languageSwitchLink={{
-                title: activeLocale === 'en' ? 'Íslenska' : 'English',
-                href: activeLocale === 'en' ? '/' : '/en',
-              }}
-              showMiddleLinks
-            />
+            {footerVersion === 'organization' && <OrganizationIslandFooter />}
           </Hidden>
         )}
         <style jsx global>{`

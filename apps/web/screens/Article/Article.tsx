@@ -26,11 +26,12 @@ import {
   InstitutionPanel,
   InstitutionsPanel,
   OrganizationFooter,
-  OrganizationChatPanel,
   Sticky,
   Webreader,
   AppendedArticleComponents,
-  LiveChatIncChatPanel,
+  footerEnabled,
+  Stepper,
+  stepperUtils,
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from '../queries'
@@ -58,13 +59,23 @@ import {
 import { Locale } from '@island.is/shared/types'
 import { useScrollPosition } from '../../hooks/useScrollPosition'
 import { scrollTo } from '../../hooks/useScrollSpy'
-import StepperFSM from '../../components/StepperFSM/StepperFSM'
-import { getStepOptionsFromUIConfiguration } from '../../components/StepperFSM/StepperFSMUtils'
-import { liveChatIncConfig } from './config'
+
+import { ArticleChatPanel } from './components/ArticleChatPanel'
 import * as styles from './Article.css'
 
 type Article = GetSingleArticleQuery['getSingleArticle']
 type SubArticle = GetSingleArticleQuery['getSingleArticle']['subArticles'][0]
+
+const getThemeConfig = (article: Article) => {
+  const organizationFooterPresent = article?.organization?.some((o) =>
+    footerEnabled.includes(o.slug),
+  )
+  return {
+    themeConfig: {
+      footerVersion: organizationFooterPresent ? 'organization' : 'default',
+    },
+  }
+}
 
 const createSubArticleNavigation = (body: Slice[]) => {
   // on sub-article page the main article title is h1, sub-article title is h2
@@ -540,7 +551,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
               activeLocale,
             )}
             {subArticle && subArticle.stepper && (
-              <StepperFSM
+              <Stepper
                 stepper={subArticle.stepper}
                 optionsFromNamespace={stepOptionsFromNamespace}
                 namespace={stepperNamespace}
@@ -608,14 +619,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
             portalRef.current,
           )}
       </SidebarLayout>
-      {article.id in liveChatIncConfig ? (
-        <LiveChatIncChatPanel {...liveChatIncConfig[article.id]} />
-      ) : (
-        <OrganizationChatPanel
-          slugs={article.organization.map((x) => x.slug)}
-          pushUp={isVisible}
-        />
-      )}
+      <ArticleChatPanel article={article} pushUp={isVisible} />
       <OrganizationFooter
         organizations={article.organization as Organization[]}
       />
@@ -680,7 +684,7 @@ ArticleScreen.getInitialProps = async ({ apolloClient, query, locale }) => {
   let stepOptionsFromNamespace = []
 
   if (subArticle && subArticle.stepper)
-    stepOptionsFromNamespace = await getStepOptionsFromUIConfiguration(
+    stepOptionsFromNamespace = await stepperUtils.getStepOptionsFromUIConfiguration(
       subArticle.stepper,
       apolloClient,
     )
@@ -690,6 +694,7 @@ ArticleScreen.getInitialProps = async ({ apolloClient, query, locale }) => {
     namespace,
     stepOptionsFromNamespace,
     stepperNamespace,
+    ...getThemeConfig(article),
   }
 }
 

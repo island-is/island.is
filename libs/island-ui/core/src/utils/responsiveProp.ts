@@ -1,5 +1,9 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
+/**value
+ * [xsValue, smValue]
+ * [xsValue, smValue, mdValue]
+ * [xsValue, smValue, mdValue, lgValue]*/
 export type ResponsiveProp<AtomName> =
   | AtomName
   | Readonly<[AtomName, AtomName]>

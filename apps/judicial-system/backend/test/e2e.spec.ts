@@ -37,7 +37,7 @@ import {
   SendNotificationResponse,
 } from '../src/app/modules/notification'
 import { IntlService } from '@island.is/cms-translations'
-import { StaticText } from '@island.is/application/core'
+import { MessageDescriptor } from '@formatjs/intl'
 
 interface CUser extends TUser {
   institutionId: string
@@ -81,7 +81,7 @@ beforeAll(async () => {
       builder.overrideProvider(IntlService).useValue({
         useIntl: () =>
           Promise.resolve({
-            formatMessage: (descriptor: StaticText) => {
+            formatMessage: (descriptor: MessageDescriptor | string) => {
               if (typeof descriptor === 'string') {
                 return descriptor
               }
@@ -464,6 +464,9 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.parentCaseId ?? null).toBe(caseTwo.parentCaseId ?? null)
   expect(caseOne.caseModifiedExplanation ?? null).toBe(
     caseTwo.caseModifiedExplanation ?? null,
+  )
+  expect(caseOne.rulingModifiedHistory ?? null).toBe(
+    caseTwo.rulingModifiedHistory ?? null,
   )
   expect(caseOne.caseResentExplanation ?? null).toBe(
     caseTwo.caseResentExplanation ?? null,

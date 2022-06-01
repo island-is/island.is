@@ -31,7 +31,7 @@ env:
 jobs:
   pre-checks:
     name: Check if job should run
-    runs-on: ec2-runners    
+    runs-on: ec2-runners
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     env:
@@ -41,7 +41,6 @@ jobs:
       GIT_BRANCH_DEPLOY: ${{ steps.git-branch-deploy.outputs.GIT_BRANCH_DEPLOY }}
       FEATURE_NAME: ${{ steps.git-branch-deploy.outputs.FEATURE_NAME }}
       PRE_CHECK: ${{ steps.should-run.outputs.PRE_CHECK }}
-      LABELED_FOR_DEPLOY: ${{ steps.should-run.outputs.LABELED_FOR_DEPLOY }}
     steps:
       - name: Get git branch
         id: git-branch
@@ -90,10 +89,6 @@ jobs:
             if [[ "${{ github.event.action }}" == "labeled" ]]; then
               echo "Action is labeled, using label that was applied: '${{ github.event.label.name }}'"
               deployFeature=$([[ "${{ github.event.label.name }}" == "deploy-feature" ]] && echo true || echo false )
-              if [[ "$deployFeature" == "true" ]]; then
-                echo "Pull request just labeled as feature-deploy"
-                echo "::set-output name=LABELED_FOR_DEPLOY::true"
-              fi
             else
               echo "Action is ${{ github.event.action }}, using labels on PR"
               deployFeature=${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
@@ -108,7 +103,7 @@ jobs:
           fi
           echo "::set-output name=PRE_CHECK::push"
 
-  prepare:    
+  prepare:
     runs-on: ec2-runners
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
@@ -191,7 +186,7 @@ jobs:
           path: event.json
           retention-days: 60
 
-      - name: Generate docker image tag        
+      - name: Generate docker image tag
         id: docker_tags
         run: |
           export DOCKER_BRANCH_TAG=$(echo ${GIT_BRANCH:0:45} | tr "/." "-" )
@@ -241,7 +236,7 @@ jobs:
       - name: Calculate cache keys for generated files
         id: calculate_generated_files_cache_key
         run: |
-          export HASH=${{ hashFiles('scripts/schemas.js', 'libs/cms/src/lib/generated/contentfulTypes.d.ts', 'apps/air-discount-scheme/web/i18n/withLocale.tsx', 'apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx', 'apps/air-discount-scheme/web/components/Header/Header.tsx', 'apps/air-discount-scheme/web/screens/**.tsx', 'apps/gjafakort/api/src/**.typeDefs.ts', 'apps/**/codegen.yml', 'libs/**/codegen.yml', 'apps/**/*.model.ts', 'libs/**/*.model.ts', 'apps/**/*.enum.ts', 'libs/**/*.enum.ts', 'apps/**/queries/**/*.tsx?', 'apps/**/queries/**/*.ts', 'libs/**/queries/**/*.tsx?', 'apps/**/*.resolver.ts', 'libs/**/*.resolver.ts', 'apps/**/*.service.ts', 'libs/**/*.service.ts', 'apps/**/*.dto.ts', 'libs/**/*.dto.ts', 'apps/**/*.input.ts', 'libs/**/*.input.ts', 'apps/**/*.module.ts', 'libs/**/*.module.ts', 'apps/**/*.controller.ts', 'libs/**/*.controller.ts', 'apps/**/*.union.ts', 'libs/**/*.union.ts', 'apps/**/*.graphql.ts', 'libs/**/*.graphql.ts') }}
+          export HASH=${{ hashFiles('scripts/schemas.js', 'libs/cms/src/lib/generated/contentfulTypes.d.ts', 'apps/air-discount-scheme/web/i18n/withLocale.tsx', 'apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx', 'apps/air-discount-scheme/web/components/Header/Header.tsx', 'apps/air-discount-scheme/web/screens/**.tsx', 'apps/**/codegen.yml', 'libs/**/codegen.yml', 'apps/**/*.model.ts', 'libs/**/*.model.ts', 'apps/**/*.enum.ts', 'libs/**/*.enum.ts', 'apps/**/queries/**/*.tsx?', 'apps/**/queries/**/*.ts', 'libs/**/queries/**/*.tsx?', 'apps/**/*.resolver.ts', 'libs/**/*.resolver.ts', 'apps/**/*.service.ts', 'libs/**/*.service.ts', 'apps/**/*.dto.ts', 'libs/**/*.dto.ts', 'apps/**/*.input.ts', 'libs/**/*.input.ts', 'apps/**/*.module.ts', 'libs/**/*.module.ts', 'apps/**/*.controller.ts', 'libs/**/*.controller.ts', 'apps/**/*.union.ts', 'libs/**/*.union.ts', 'apps/**/*.graphql.ts', 'libs/**/*.graphql.ts') }}
           export GENERATED_FILES_KEY=${{ runner.os }}-$HASH-files-generated
           echo "GENERATED_FILES_KEY: $GENERATED_FILES_KEY"
           echo "::set-output name=generated-files-cache-key::$GENERATED_FILES_KEY"
@@ -254,7 +249,7 @@ jobs:
           path: node_modules
           key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-yarn
 
-      - name: Check cache success        
+      - name: Check cache success
         run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Building NodeJS dependencies
@@ -305,7 +300,7 @@ jobs:
           path: cache
           key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-docker-deps-1
 
-      - name: Check cache success        
+      - name: Check cache success
         run: '[[ "${{ steps.cache-deps.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Cache for NodeJS dependencies - Docker layer
@@ -316,7 +311,7 @@ jobs:
           path: cache_output
           key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-docker-output-base-1
 
-      - name: Check cache success        
+      - name: Check cache success
         run: '[[ "${{ steps.cache-deps-base.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Building NodeJS dependencies
@@ -334,7 +329,7 @@ jobs:
           path: generated_files.tar.gz
           key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
 
-      - name: Check cache success        
+      - name: Check cache success
         run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Generate schemas
@@ -366,6 +361,7 @@ jobs:
         id: deploy_map
         if: needs.pre-checks.outputs.PRE_CHECK != 'push'
         run: |
+          export BASE=$(git merge-base HEAD $GITHUB_BASE_REF)
           CHUNKS=$(./scripts/ci/generate-build-chunks.sh docker-express docker-next docker-static docker-cypress docker-jest)
           echo "CHUNKS: '$CHUNKS'"
           if [[ $CHUNKS != "[]" ]]; then
@@ -396,7 +392,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      
+
       - uses: actions/setup-node@v3
         with:
           node-version: '14'
@@ -412,7 +408,7 @@ jobs:
           path: node_modules
           key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
 
-      - name: Check cache success        
+      - name: Check cache success
         run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Cache for generated files
@@ -423,12 +419,12 @@ jobs:
           path: generated_files.tar.gz
           key: ${{ needs.prepare.outputs.generated-files-cache-key }}
 
-      - name: Check cache success        
+      - name: Check cache success
         run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Untar generated files
         run: tar zxvf generated_files.tar.gz
-        
+
 
       - uses: ./.github/actions/unit-test
         with:
@@ -441,7 +437,7 @@ jobs:
     needs:
       - pre-checks
       - prepare
-    runs-on: ec2-runners    
+    runs-on: ec2-runners
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 35
@@ -477,7 +473,7 @@ jobs:
       - name: Setup yarn
         run: npm install -g yarn
         if: steps.gather.outcome == 'success'
-      
+
       - uses: actions/checkout@v3
         if: steps.gather.outcome == 'success'
       - name: Cache for generated files
@@ -489,7 +485,7 @@ jobs:
           path: generated_files.tar.gz
           key: ${{ needs.prepare.outputs.generated-files-cache-key }}
 
-      - name: Check cache success        
+      - name: Check cache success
         run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Untar generated files
@@ -505,7 +501,7 @@ jobs:
           path: cache_output
           key: ${{ needs.prepare.outputs.node-modules-hash }}-docker-output-base-1
 
-      - name: Check cache success        
+      - name: Check cache success
         run: '[[ "${{ steps.cache-deps-base.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Cache for NodeJS dependencies - Docker layer
@@ -517,7 +513,7 @@ jobs:
           path: cache
           key: ${{ needs.prepare.outputs.node-modules-hash }}-docker-deps-1
 
-      - name: Check cache success        
+      - name: Check cache success
         run: '[[ "${{ steps.cache-deps.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Docker login to ECR repo
@@ -553,7 +549,7 @@ jobs:
       - prepare
       - pre-checks
     if: needs.prepare.outputs.IMAGES && needs.pre-checks.outputs.PRE_CHECK != 'push'
-    runs-on: ec2-runners    
+    runs-on: ec2-runners
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 5
@@ -598,21 +594,18 @@ jobs:
         run: ./scripts/ci/retag-unaffected.sh "$UNAFFECTED"
 
       - name: Comment on PR
-        if: needs.pre-checks.outputs.LABELED_FOR_DEPLOY == 'true'
+        if: needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy'
         uses: actions/github-script@v6
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
+            const updateComment = require('./.github/actions/update-comment.js')
             const { COMMENT } = process.env
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: `${COMMENT}`
-            })
+            await updateComment({github, context, comment: COMMENT})
+
 
   retag-unaffected:
-    runs-on: ec2-runners    
+    runs-on: ec2-runners
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 5
@@ -644,7 +637,7 @@ jobs:
         run: ./scripts/ci/retag-unaffected.sh "$UNAFFECTED"
 
   deploy:
-    runs-on: ec2-runners    
+    runs-on: ec2-runners
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     if: always() && needs.retag-unaffected.result == 'success' && needs.helm-docker-build.result != 'failure'
@@ -662,7 +655,6 @@ jobs:
       matrix:
         service:
           - islandis
-          - gjafakort
           - identity-auth-api
     steps:
       - uses: actions/checkout@v3
@@ -685,7 +677,7 @@ jobs:
           BODY
 
   push-success:
-    runs-on: ec2-runners    
+    runs-on: ec2-runners
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     if: always()
@@ -709,7 +701,7 @@ jobs:
         run: echo "Build was skipped"
 
   failure-notification:
-    runs-on: ec2-runners    
+    runs-on: ec2-runners
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     if: failure() && needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK != 'feature-deploy'

@@ -4,7 +4,7 @@ import {
   ReactSelectOption,
   StaffRole,
 } from '@island.is/financial-aid/shared/lib'
-import { isString } from 'lodash'
+import isString from 'lodash/isString'
 import { ValueType } from 'react-select'
 import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
 

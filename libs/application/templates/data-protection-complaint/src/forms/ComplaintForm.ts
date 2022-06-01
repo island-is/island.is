@@ -1,5 +1,4 @@
 import {
-  buildCheckboxField,
   buildCustomField,
   buildDataProviderItem,
   buildExternalDataProvider,
@@ -28,7 +27,7 @@ import {
   sharedFields,
 } from '../lib/messages'
 import { externalData } from '../lib/messages/externalData'
-import { FILE_SIZE_LIMIT, NO, SubjectOfComplaint, YES } from '../shared'
+import { FILE_SIZE_LIMIT, NO, YES } from '../shared'
 
 const yesOption = { value: YES, label: sharedFields.yes }
 const noOption = { value: NO, label: sharedFields.no }
@@ -99,6 +98,7 @@ export const ComplaintForm: Form = buildForm({
                       {
                         title: delimitation.links.inCourtProceedingsTitle,
                         url: delimitation.links.inCourtProceedingsUrl,
+                        isExternal: true,
                       },
                     ],
                   },
@@ -138,11 +138,13 @@ export const ComplaintForm: Form = buildForm({
                         title:
                           delimitation.links.concernsMediaCoverageFirstTitle,
                         url: delimitation.links.concernsMediaCoverageFirstUrl,
+                        isExternal: true,
                       },
                       {
                         title:
                           delimitation.links.concernsMediaCoverageSecondTitle,
                         url: delimitation.links.concernsMediaCoverageSecondUrl,
+                        isExternal: true,
                       },
                     ],
                   },
@@ -186,6 +188,7 @@ export const ComplaintForm: Form = buildForm({
                       {
                         title: delimitation.links.concernsBanMarkingSecondTitle,
                         url: delimitation.links.concernsBanMarkingSecondUrl,
+                        isExternal: true,
                       },
                     ],
                   },
@@ -223,6 +226,7 @@ export const ComplaintForm: Form = buildForm({
                       {
                         title: delimitation.links.concernsLibelTitle,
                         url: delimitation.links.concernsLibelUrl,
+                        isExternal: true,
                       },
                     ],
                   },

@@ -54,6 +54,7 @@ export type MountedFile = { filename: string; env: string }
 export type ServiceDefinition = {
   liveness: HealthProbe
   readiness: HealthProbe
+  healthPort?: number
   port?: number
   initContainers?: InitContainers
   env: EnvironmentVariables
@@ -104,6 +105,11 @@ export type ReplicaCount = {
   default: number
   max: number
   min: number
+  /**
+   * This is mostly for internal use by the DevOps team. If you would like to know more about it, please be in touch with them.
+   * For more info, see this - https://prometheus.io/docs/prometheus/latest/querying/functions/#irate
+   */
+  scalingMagicNumber?: number
 }
 
 export type InitContainers = {

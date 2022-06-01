@@ -9,6 +9,7 @@ export const GET_ORGANIZATIONS_QUERY = gql`
         slug
         title
         description
+        showsUpOnTheOrganizationsPage
         logo {
           title
           url
@@ -28,6 +29,8 @@ export const GET_ORGANIZATION_QUERY = gql`
     getOrganization(input: $input) {
       id
       slug
+      email
+      phone
       title
       logo {
         title
@@ -100,8 +103,11 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
         }
       }
       organization {
+        id
         title
         slug
+        email
+        phone
         logo {
           url
         }
@@ -179,7 +185,6 @@ export const GET_ORGANIZATION_SUBPAGE_QUERY = gql`
       }
       sliceCustomRenderer
       sliceExtraText
-      parentSubpage
       featuredImage {
         url
         title

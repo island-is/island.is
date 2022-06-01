@@ -2,10 +2,7 @@ import PDFDocument from 'pdfkit'
 import streamBuffers from 'stream-buffers'
 
 import { FormatMessage } from '@island.is/cms-translations'
-import {
-  formatDate,
-  formatNationalId,
-} from '@island.is/judicial-system/formatters'
+import { formatDate, formatDOB } from '@island.is/judicial-system/formatters'
 
 import { environment } from '../../environments'
 import { Case } from '../modules/case'
@@ -56,7 +53,7 @@ function constructRulingPdf(
   setLineGap(doc, 2)
   addMediumHeading(
     doc,
-    `${title} ${formatDate(theCase.rulingDate ?? nowFactory(), 'PPP')}`,
+    `${title} ${formatDate(theCase.courtEndTime ?? nowFactory(), 'PPP')}`,
   )
   setLineGap(doc, 30)
   addMediumHeading(
@@ -74,7 +71,7 @@ function constructRulingPdf(
   addNormalJustifiedText(
     doc,
     `${formatMessage(ruling.prosecutorIs)} ${
-      theCase.prosecutor?.institution?.name ?? ruling.missingDistrict
+      theCase.creatingProsecutor?.institution?.name ?? ruling.missingDistrict
     }.`,
   )
   addNormalJustifiedText(
@@ -91,13 +88,10 @@ function constructRulingPdf(
               : index + 1 === theCase.defendants?.length
               ? ', og'
               : ','
-          } ${defendant.name ?? '-'}${
-            defendant.noNationalId
-              ? defendant.nationalId
-                ? `, fd. ${defendant.nationalId}`
-                : ''
-              : `, kt. ${formatNationalId(defendant.nationalId ?? '-')}`
-          }`,
+          } ${defendant.name ?? '-'}${`, ${formatDOB(
+            defendant.nationalId,
+            defendant.noNationalId,
+          )}`}`,
         '',
       ) ?? ` ${ruling.missingDefendants}`
     }.`,

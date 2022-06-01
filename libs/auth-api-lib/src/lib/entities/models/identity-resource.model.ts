@@ -1,7 +1,6 @@
 import {
   Column,
   CreatedAt,
-  BelongsTo,
   DataType,
   Model,
   Table,

@@ -11,6 +11,7 @@ import { Eligibility, DrivingLicense } from '../types/schema'
 
 export interface CurrentLicenseProviderResult {
   currentLicense: Eligibility['name'] | null
+  healthRemarks?: string[]
 }
 export class CurrentLicenseProvider extends BasicDataProvider {
   type = 'CurrentLicenseProvider'
@@ -25,6 +26,10 @@ export class CurrentLicenseProvider extends BasicDataProvider {
     if (fakeData?.useFakeData === YES) {
       return {
         currentLicense: fakeData.currentLicense === 'temp' ? 'B' : null,
+        healthRemarks:
+          fakeData.healthRemarks === YES
+            ? ['Gervilimur eða gervilimir/stoðtæki fyrir fætur og hendur.']
+            : undefined,
       }
     }
 
@@ -34,6 +39,7 @@ export class CurrentLicenseProvider extends BasicDataProvider {
           categories {
             name
           }
+          healthRemarks
         }
       }
     `
@@ -55,13 +61,13 @@ export class CurrentLicenseProvider extends BasicDataProvider {
     if (response.errors) {
       return Promise.reject({ error: response.errors })
     }
-
     const categoryB = (response.data?.drivingLicense?.categories ?? []).find(
       (cat) => cat.name === 'B',
     )
 
     return {
       currentLicense: categoryB ? categoryB.name : null,
+      healthRemarks: response.data?.drivingLicense?.healthRemarks,
     }
   }
 

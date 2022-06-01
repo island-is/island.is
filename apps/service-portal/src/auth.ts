@@ -32,7 +32,7 @@ if (userMocked) {
     redirectPathSilent: '/silent/signin-oidc',
     switchUserRedirectUrl: '/',
     authority: environment.identityServer.authority,
-    client_id: 'island-is-1',
+    client_id: '@island.is/web',
     scope: [
       'openid',
       'profile',
@@ -56,6 +56,7 @@ if (userMocked) {
       ApiScope.internal,
       ApiScope.meDetails,
       ApiScope.licensesVerify,
+      ApiScope.company,
     ],
     post_logout_redirect_uri: `${window.location.origin}`,
     userStorePrefix: 'sp.',
