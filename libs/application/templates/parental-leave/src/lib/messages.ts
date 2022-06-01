@@ -1473,9 +1473,9 @@ export const parentalLeaveFormMessages: MessageDir = {
     startDateInThePast: {
       id: 'pl.application:finalscreen.start.date.in.the.past',
       defaultMessage:
-        'icel-trans: "Parental leave starting date is in the past, please go back and correct this date"',
+        'icel-trans: "Parental leave starting date is in the past, please correct this date"',
       description:
-        'Parental leave starting date is in the past, please go back and correct this date',
+        'Parental leave starting date is in the past, please correct this date',
     },
   }),
 }
@@ -1602,6 +1602,16 @@ export const otherParentApprovalFormMessages = defineMessages({
     id: 'pl.application:otherParent.final.title',
     defaultMessage: 'Takk fyrir',
     description: 'Thank you',
+  },
+  warning: {
+    id: 'pl.application:otherParent.warning',
+    defaultMessage: 'icel-trans: "Warning!"',
+    description: 'Warning!',
+  },
+  startDateInThePast: {
+    id: 'pl.application:otherParent.start.date.in.the.past',
+    defaultMessage: 'icel-trans: "Application will not be processsed! Parental leave starting date has already passed!"',
+    description: 'Application will not be processsed! Parental leave starting date has already passed!',
   },
 })
 
