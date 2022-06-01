@@ -249,9 +249,6 @@ const FinancialAidTemplate: ApplicationTemplate<
                 import('../forms/MuncipalityNotRegistered').then((module) =>
                   Promise.resolve(module.MuncipalityNotRegistered),
                 ),
-              write: {
-                externalData: ['nationalRegistry'],
-              },
               read: {
                 externalData: ['nationalRegistry'],
               },
