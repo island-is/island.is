@@ -56,8 +56,6 @@ export const ReasonsForComplaint: FC<FieldBaseProps> = ({
     return 'someValue'
   }
 
-  console.log(application.answers)
-
   return (
     <div>
       <CheckboxFormField

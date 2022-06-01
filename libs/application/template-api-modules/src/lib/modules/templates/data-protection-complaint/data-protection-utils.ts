@@ -1,9 +1,11 @@
 import get from 'lodash/get'
 import {
   Agency,
+  ApplicationMessages,
   ComplaintPDF,
   ContactInfo,
   ContactRole,
+  Information,
   TargetOfComplaint,
 } from './models'
 import {
@@ -83,15 +85,6 @@ export const getAndFormatSubjectsOfComplaintForPdf = (
   const categories = values.map((val) => {
     return messages.complaint.labels[val].defaultMessage
   })
-  /* reduce((acc: string[], value) => {
-    const val = subjectOfComplaintToGoProValues(value)
-
-    if (Array.isArray(val)) return [...acc, ...val]
-
-    acc.push(val)
-    return acc
-  }, []) */
-
   return categories
 }
 
@@ -232,6 +225,37 @@ export const applicationToComplaintPDF = (
     attachments: attachedFiles
       .map((x) => x.fileName ?? '')
       .filter((x) => x !== ''),
+    messages: getMessages(answers),
+  }
+}
+
+export const getMessages = (
+  answers: DataProtectionComplaint,
+): ApplicationMessages => {
+  return {
+    externalData: {
+      title: answers.overview.externalData.title,
+      subtitle: answers.overview.externalData.subtitle,
+      description: answers.overview.externalData.description,
+      nationalRegistryTitle:
+        answers.overview.externalData.nationalRegistryTitle,
+      nationalRegistryDescription:
+        answers.overview.externalData.nationalRegistryDescription,
+      userProfileTitle: answers.overview.externalData.userProfileTitle,
+      userProfileDescription:
+        answers.overview.externalData.userProfileDescription,
+      checkboxText: answers.overview.externalData.checkboxText,
+    },
+    information: {
+      title: answers.overview.information.title,
+      bullets: answers.overview.information.bullets.map((info) => {
+        return {
+          bullet: info.bullet,
+          link: info.link,
+          linkText: info.linktText,
+        }
+      }),
+    },
   }
 }
 

@@ -107,6 +107,17 @@ export const newDocument = () => {
   })
 }
 
+export const addList = (
+  list: string[] | PDFKit.PDFDocument[],
+  doc: PDFKit.PDFDocument,
+) => {
+  doc
+    .fillColor('#000')
+    .font(PdfConstants.NORMAL_FONT)
+    .fontSize(PdfConstants.VALUE_FONT_SIZE)
+    .list(list)
+}
+
 export const addLogo = (doc: PDFKit.PDFDocument, logo: string) => {
   doc
     .image(

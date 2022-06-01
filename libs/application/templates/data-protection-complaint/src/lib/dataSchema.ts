@@ -1,4 +1,3 @@
-import { DefaultEvents } from '@island.is/application/core'
 import * as kennitala from 'kennitala'
 import * as z from 'zod'
 import { NO, YES } from '../shared'
@@ -136,6 +135,26 @@ export const DataProtectionComplaintSchema = z.object({
       }),
 
     documents: z.array(FileSchema),
+  }),
+  externalDataMessage: z.object({
+    title: z.string(),
+    subtitle: z.string(),
+    description: z.string(),
+    nationalRegistryTitle: z.string(),
+    nationalRegistryDescription: z.string(),
+    userProfileTitle: z.string(),
+    userProfileDescription: z.string(),
+    checkboxText: z.string(),
+  }),
+  informationMessage: z.object({
+    title: z.string(),
+    bullets: z.array(
+      z.object({
+        bullet: z.string(),
+        link: z.string(),
+        linktText: z.string(),
+      }),
+    ),
   }),
 })
 

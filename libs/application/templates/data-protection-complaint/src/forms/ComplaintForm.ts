@@ -1,5 +1,4 @@
 import {
-  buildCheckboxField,
   buildCustomField,
   buildDataProviderItem,
   buildExternalDataProvider,
@@ -28,7 +27,7 @@ import {
   sharedFields,
 } from '../lib/messages'
 import { externalData } from '../lib/messages/externalData'
-import { FILE_SIZE_LIMIT, NO, SubjectOfComplaint, YES } from '../shared'
+import { FILE_SIZE_LIMIT, NO, YES } from '../shared'
 
 const yesOption = { value: YES, label: sharedFields.yes }
 const noOption = { value: NO, label: sharedFields.no }
@@ -581,7 +580,7 @@ export const ComplaintForm: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'overview',
+      id: 'overviewSection',
       title: section.overview,
       children: [
         buildMultiField({
@@ -589,7 +588,7 @@ export const ComplaintForm: Form = buildForm({
           title: overview.general.pageTitle,
           children: [
             buildCustomField({
-              id: 'overviewComplaintOverview',
+              id: 'overview',
               title: overview.general.pageTitle,
               doesNotRequireAnswer: true,
               component: 'ComplaintOverview',

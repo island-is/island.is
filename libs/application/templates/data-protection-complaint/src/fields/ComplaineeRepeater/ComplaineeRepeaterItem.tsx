@@ -48,6 +48,7 @@ export const ComplaineeRepeaterItem: FC<Props> = ({
   const nationalIdField = `${fieldIndex}.nationalId`
   const operatesWithinEuropeField = `${fieldIndex}.operatesWithinEurope`
   const countryOfOperationField = `${fieldIndex}.countryOfOperation`
+
   const initialIsOpen = getValueViaPath(
     answers,
     operatesWithinEuropeField,
@@ -93,6 +94,9 @@ export const ComplaineeRepeaterItem: FC<Props> = ({
           error={errors && getErrorViaPath(errors, nameField)}
           required
           backgroundColor="blue"
+          defaultValue={
+            (getValueViaPath(application.answers, nameField) as string) ?? ''
+          }
         />
         <InputController
           id={addressField}
@@ -105,6 +109,9 @@ export const ComplaineeRepeaterItem: FC<Props> = ({
           error={errors && getErrorViaPath(errors, addressField)}
           required
           backgroundColor="blue"
+          defaultValue={
+            (getValueViaPath(application.answers, addressField) as string) ?? ''
+          }
         />
         <InputController
           id={nationalIdField}
@@ -117,6 +124,10 @@ export const ComplaineeRepeaterItem: FC<Props> = ({
           )}
           error={errors && getErrorViaPath(errors, nationalIdField)}
           backgroundColor="blue"
+          defaultValue={
+            (getValueViaPath(application.answers, nationalIdField) as string) ??
+            ''
+          }
         />
       </Stack>
       <Text variant="h5" marginTop={4} marginBottom={2}>
@@ -133,30 +144,45 @@ export const ComplaineeRepeaterItem: FC<Props> = ({
         ]}
         split="1/2"
         onSelect={handleOnSelect}
+        defaultValue={
+          (getValueViaPath(
+            application.answers,
+            operatesWithinEuropeField,
+          ) as string) ?? undefined
+        }
       />
-      {isOpen && (
-        <Box padding={3} background="blue100" borderRadius="large">
-          <Box marginBottom={2}>
-            <InputController
-              id={countryOfOperationField}
-              name={countryOfOperationField}
-              label={formatText(
-                complaint.labels.complaineeCountryOfOperation,
-                application,
-                formatMessage,
-              )}
-              required
-              error={errors && getErrorViaPath(errors, countryOfOperationField)}
-            />
-          </Box>
-          <AlertMessage
-            type="info"
-            title={formatMessage(
-              complaint.labels.complaineeOperatesWithinEuropeMessage,
+      <Box
+        padding={3}
+        background="blue100"
+        borderRadius="large"
+        hidden={!isOpen}
+      >
+        <Box marginBottom={2}>
+          <InputController
+            id={countryOfOperationField}
+            name={countryOfOperationField}
+            label={formatText(
+              complaint.labels.complaineeCountryOfOperation,
+              application,
+              formatMessage,
             )}
+            required
+            error={errors && getErrorViaPath(errors, countryOfOperationField)}
+            defaultValue={
+              (getValueViaPath(
+                application.answers,
+                countryOfOperationField,
+              ) as string) ?? ''
+            }
           />
         </Box>
-      )}
+        <AlertMessage
+          type="info"
+          title={formatMessage(
+            complaint.labels.complaineeOperatesWithinEuropeMessage,
+          )}
+        />
+      </Box>
     </Box>
   )
 }
