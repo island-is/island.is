@@ -13,6 +13,7 @@ import { Events, States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
 import { m } from '../lib/messages'
 import { ApiActions } from './constants'
+import { Features } from '@island.is/feature-flags'
 
 const AnnouncementOfDeathTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -24,6 +25,7 @@ const AnnouncementOfDeathTemplate: ApplicationTemplate<
   institution: m.applicationInstitution,
   dataSchema: dataSchema,
   readyForProduction: false,
+  featureFlag: Features.announcementOfDeath,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {

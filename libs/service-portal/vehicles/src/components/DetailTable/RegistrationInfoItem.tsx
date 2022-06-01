@@ -61,10 +61,12 @@ const RegistrationInfoItem = ({ data }: PropTypes) => {
               : formatMessage(messages.no)
           }
         />
-        <Column
-          label={messages.standingPassengers}
-          value={data.standingPassengers}
-        />
+        {data.standingPassengers && (
+          <Column
+            label={messages.standingPassengers}
+            value={data.standingPassengers}
+          />
+        )}
       </Row>
     </Box>
   )

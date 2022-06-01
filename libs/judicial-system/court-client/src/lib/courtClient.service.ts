@@ -4,6 +4,7 @@ import {
   BadGatewayException,
   Inject,
   Injectable,
+  NotFoundException,
   UnsupportedMediaTypeException,
 } from '@nestjs/common'
 
@@ -169,6 +170,10 @@ export class CourtClientService {
     // Check for known errors
     if (reason === 'FileNotSupported') {
       return new UnsupportedMediaTypeException(reason)
+    }
+
+    if (typeof reason === 'string' && reason.startsWith('Case Not Found')) {
+      return new NotFoundException(reason)
     }
 
     // One step closer to forced relogin.

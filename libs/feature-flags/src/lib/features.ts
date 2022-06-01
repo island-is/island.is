@@ -10,11 +10,11 @@ export enum Features {
   companyDelegations = 'identityserverCompanyDelegations',
   legalGuardianDelegations = 'identityserverLegalGuardianDelegations',
   personalRepresentativeDelegations = 'identityserverPersonalRepresentative',
-  personalInformation = 'isServicePortalPersonalInformationModuleEnabled',
 
   // Application visibility flags
   exampleApplication = 'isExampleApplicationEnabled',
   accidentNotification = 'isAccidentNotificationEnabled',
+  announcementOfDeath = 'isAnnouncementOfDeathEnabled',
   noDebtCertificate = 'applicationTemplateNoDebtCertificateEnabled',
   drivingInstructorRegistrations = 'isDrivingInstructorRegistrationsEnabled',
   drivingSchoolConfirmations = 'isDrivingSchoolConfirmationsEnabled',

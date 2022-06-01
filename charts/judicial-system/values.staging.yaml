@@ -19,7 +19,7 @@ judicial-system-api:
     AUTH_AUDIENCE: 'judicial-system.staging01.devland.is'
     BACKEND_URL: 'http://web-judicial-system-backend'
     CONTENTFUL_HOST: 'cdn.contentful.com'
-    HIDDEN_FEATURES: ''
+    HIDDEN_FEATURES: 'MODIFY_RULING'
     NODE_OPTIONS: '--max-old-space-size=208'
     SAML_ENTRY_POINT: 'https://innskraning.island.is/?id=judicial-system.staging'
     SERVERSIDE_FEATURES_ON: ''

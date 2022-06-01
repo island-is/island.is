@@ -4,7 +4,7 @@ import {
 } from '@island.is/judicial-system/consts'
 
 import {
-  makeCustodyCase,
+  makeRestrictionCase,
   makeCourt,
   makeProsecutor,
   intercept,
@@ -12,7 +12,7 @@ import {
 
 describe(`${STEP_TWO_ROUTE}/:id`, () => {
   beforeEach(() => {
-    const caseData = makeCustodyCase()
+    const caseData = makeRestrictionCase()
     const caseDataAddition = {
       ...caseData,
       prosecutor: makeProsecutor(),
