@@ -375,6 +375,7 @@
     "csstype": "2.6.13",
     "csv-parse": "4.16.0",
     "cypress": "8.4.1",
+    "cypress-file-upload": "5.0.8",
     "dotenv": "14.3.2",
     "esbuild": "0.12.1",
     "eslint": "7.21.0",
