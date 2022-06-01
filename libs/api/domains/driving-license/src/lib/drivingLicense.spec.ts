@@ -13,8 +13,8 @@ import { startMocking } from '@island.is/shared/mocking'
 import { createLogger } from 'winston'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { NationalRegistryXRoadService } from '@island.is/api/domains/national-registry-x-road'
-import RecsidenceHistory from '../lib/__mock-data__/residenceHistory.json'
-import { ConfigModule, defineConfig } from '@island.is/nest/config'
+import ResidenceHistory from '../lib/__mock-data__/residenceHistory.json'
+import { ConfigModule, defineConfig, XRoadConfig } from '@island.is/nest/config'
 
 
 
@@ -41,7 +41,7 @@ describe('DrivingLicenseService', () => {
         {
           provide: NationalRegistryXRoadService,
           useClass: jest.fn(() => ({
-            getNationalRegistryResidenceHistory: () => RecsidenceHistory,
+            getNationalRegistryResidenceHistory: () => ResidenceHistory,
           })),
         },
       ],
