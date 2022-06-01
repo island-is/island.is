@@ -31,6 +31,7 @@ import {
   getRatio,
 } from './parental-leave.utils'
 import { apiConstants } from './constants'
+import { SmsService } from '@island.is/nova-sms'
 
 interface VMSTError {
   type: string
@@ -54,6 +55,7 @@ export class ParentalLeaveService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     @Inject(APPLICATION_ATTACHMENT_BUCKET)
     private readonly attachmentBucket: string,
+    private readonly smsService: SmsService,
   ) {}
 
   private parseErrors(e: Error | VMSTError) {
@@ -83,11 +85,21 @@ export class ParentalLeaveService {
   }
 
   async assignEmployer({ application }: TemplateApiModuleActionProps) {
+    const { employerPhoneNumber } = getApplicationAnswers(application.answers)
+
     await this.sharedTemplateAPIService.assignApplicationThroughEmail(
       generateAssignEmployerApplicationEmail,
       application,
       SIX_MONTHS_IN_SECONDS_EXPIRES,
     )
+
+    // send confirmation sms to employer
+    if (employerPhoneNumber) {
+      await this.smsService.sendSms(
+        employerPhoneNumber,
+        'confirm parental leave application from employee',
+      )
+    }
   }
 
   async getSelfEmployedPdf(application: Application) {
