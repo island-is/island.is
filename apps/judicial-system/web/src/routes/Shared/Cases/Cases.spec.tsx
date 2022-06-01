@@ -274,9 +274,8 @@ describe('Cases', () => {
         </MockedProvider>,
       )
 
-      expect(
-        await screen.findByText('Lögreglustjórinn á höfuðborgarsvæðinu'),
-      ).toBeInTheDocument()
+      expect(await screen.findByText('Lögreglustjórinn á')).toBeInTheDocument()
+      expect(await screen.findByText('höfuðborgarsvæðinu')).toBeInTheDocument()
     })
 
     test('should list all active cases in a list', async () => {
@@ -335,9 +334,8 @@ describe('Cases', () => {
         </MockedProvider>,
       )
 
-      expect(
-        await screen.findByText('Héraðsdómur Reykjavíkur'),
-      ).toBeInTheDocument()
+      expect(await screen.findByText('Héraðsdómur')).toBeInTheDocument()
+      expect(await screen.findByText('Reykjavíkur')).toBeInTheDocument()
     })
 
     test('should not display a button to create a cases', async () => {

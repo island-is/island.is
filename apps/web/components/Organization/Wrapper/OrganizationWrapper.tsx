@@ -25,11 +25,7 @@ import {
   Button,
   Inline,
 } from '@island.is/island-ui/core'
-import {
-  HeadWithSocialSharing,
-  Sticky,
-  BoostChatPanel,
-} from '@island.is/web/components'
+import { HeadWithSocialSharing, Sticky } from '@island.is/web/components'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { SyslumennHeader, SyslumennFooter } from './Themes/SyslumennTheme'
 import {
@@ -42,9 +38,8 @@ import {
   UtlendingastofnunFooter,
   UtlendingastofnunHeader,
 } from './Themes/UtlendingastofnunTheme'
-import { boostChatPanelEndpoints } from '@island.is/web/components'
 import MannaudstorgFooter from './Themes/MannaudstorgTheme/MannaudstorgFooter'
-import { useFeatureFlag, useNamespace } from '@island.is/web/hooks'
+import { useNamespace } from '@island.is/web/hooks'
 import { watsonConfig } from './config'
 import { WatsonChatPanel } from '@island.is/web/components'
 import LandlaeknirFooter from './Themes/LandlaeknirTheme/LandlaeknirFooter'
@@ -209,11 +204,7 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
     case 'sjukratryggingar':
     case 'icelandic-health-insurance':
       OrganizationFooterComponent = (
-        <SjukratryggingarFooter
-          title={organization.title}
-          logo={organization.logo?.url}
-          footerItems={organization.footerItems}
-        />
+        <SjukratryggingarFooter footerItems={organization.footerItems} />
       )
       break
     case 'utlendingastofnun':
@@ -256,33 +247,14 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
 
 export const OrganizationChatPanel = ({
   organizationIds,
-  pushUp = false,
 }: {
   organizationIds: string[]
   pushUp?: boolean
 }) => {
-  const { loading, value: isWatsonChatPanelEnabled } = useFeatureFlag(
-    'isWatsonChatPanelEnabled',
-    false,
-  )
-
-  if (loading) return null
-
   const id = organizationIds.find((id) => {
-    if (!isWatsonChatPanelEnabled) return id in boostChatPanelEndpoints
     return id in watsonConfig
   })
-
-  if (!isWatsonChatPanelEnabled) {
-    return id ? (
-      <BoostChatPanel
-        endpoint={id as keyof typeof boostChatPanelEndpoints}
-        pushUp={pushUp}
-      />
-    ) : null
-  }
-
-  return id in watsonConfig ? <WatsonChatPanel {...watsonConfig[id]} /> : null
+  return id ? <WatsonChatPanel {...watsonConfig[id]} /> : null
 }
 
 const SecondaryMenu = ({

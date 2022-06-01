@@ -36,6 +36,7 @@ import {
   UserRole,
   isAcceptingCaseDecision,
   Case,
+  Feature,
 } from '@island.is/judicial-system/types'
 import {
   capitalize,
@@ -56,6 +57,7 @@ import { SignedDocument } from '@island.is/judicial-system-web/src/components/Si
 import CaseDates from '@island.is/judicial-system-web/src/components/CaseDates/CaseDates'
 import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
 import RestrictionTags from '@island.is/judicial-system-web/src/components/RestrictionTags/RestrictionTags'
+import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 
 interface Props {
   workingCase: Case
@@ -109,6 +111,8 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
 
   // skip loading institutions if the user does not have an id
   const { prosecutorsOffices } = useInstitution(!user?.id)
+
+  const { features } = useContext(FeatureContext)
 
   /**
    * If the case is not rejected it must be accepted because
@@ -228,6 +232,20 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
           />
         </Box>
       )}
+      {workingCase.rulingModifiedHistory && (
+        <Box marginBottom={5}>
+          <AlertMessage
+            type="info"
+            title={formatMessage(m.sections.modifyRulingInfo.title)}
+            message={
+              <MarkdownWrapper
+                markdown={workingCase.rulingModifiedHistory}
+                textProps={{ variant: 'small' }}
+              />
+            }
+          />
+        </Box>
+      )}
       <Box marginBottom={6}>
         <InfoCard
           data={[
@@ -340,7 +358,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
         </>
       )}
       <Box marginBottom={10}>
-        <Text as="h3" variant="h3" marginBottom={5}>
+        <Text as="h3" variant="h3" marginBottom={3}>
           {formatMessage(m.caseDocuments)}
         </Text>
         <Box marginBottom={2}>
@@ -376,6 +394,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
               ) : user?.role === UserRole.JUDGE ||
                 user?.role === UserRole.REGISTRAR ? (
                 <Button
+                  variant="ghost"
                   loading={isRequestingCourtRecordSignature}
                   onClick={(event) => {
                     event.stopPropagation()
@@ -398,6 +417,23 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
                   signatory={workingCase.judge?.name}
                   signingDate={workingCase.rulingDate}
                 />
+                {user?.role === UserRole.JUDGE &&
+                  features.includes(Feature.MODIFY_RULING) && (
+                    <Button
+                      variant="ghost"
+                      data-testid="modifyRulingButton"
+                      onClick={(event) => {
+                        event.stopPropagation()
+                        router.push(
+                          isRestrictionCase(workingCase.type)
+                            ? `${Constants.MODIFY_RULING_ROUTE}/${workingCase.id}`
+                            : `${Constants.IC_MODIFY_RULING_ROUTE}/${workingCase.id}`,
+                        )
+                      }}
+                    >
+                      {capitalize(formatMessage(core.modify))}
+                    </Button>
+                  )}
               </PdfRow>
             )}
           </Stack>

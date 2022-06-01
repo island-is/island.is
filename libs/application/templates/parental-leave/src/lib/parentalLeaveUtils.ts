@@ -389,8 +389,8 @@ export function getApplicationExternalData(
 export function getApplicationAnswers(answers: Application['answers']) {
   const otherParent = getValueViaPath(
     answers,
-    'otherParent',
-  ) as SchemaFormValues['otherParent']
+    'otherParent.chooseOtherParent',
+  ) as string
 
   const otherParentRightOfAccess = getValueViaPath(
     answers,
@@ -424,9 +424,15 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'employer.isSelfEmployed',
   ) as YesOrNo
 
-  const otherParentName = getValueViaPath(answers, 'otherParentName') as string
+  const otherParentName = getValueViaPath(
+    answers,
+    'otherParent.otherParentName',
+  ) as string
 
-  const otherParentId = getValueViaPath(answers, 'otherParentId') as string
+  const otherParentId = getValueViaPath(
+    answers,
+    'otherParent.otherParentId',
+  ) as string
 
   const otherParentEmail = getValueViaPath(
     answers,
@@ -647,6 +653,21 @@ export const getOtherParentName = (
 
     if (!spouse || !spouse.name) {
       return undefined
+    }
+
+    return spouse.name
+  }
+
+  // Second parent always has otherParent marks 'manual'
+  const selectedChild = getSelectedChild(
+    application.answers,
+    application.externalData,
+  )
+  if (selectedChild?.parentalRelation === ParentalRelations.secondary) {
+    const spouse = getSpouse(application)
+
+    if (!spouse || !spouse.name) {
+      return otherParentName
     }
 
     return spouse.name

@@ -1,17 +1,12 @@
 import React from 'react'
 import { GetSingleArticleQuery } from '@island.is/web/graphql/schema'
 import {
-  liveChatIncConfig,
-  syslumennWatsonConfig,
-  watsonConfig,
-} from './config'
-import {
   BoostChatPanel,
   boostChatPanelEndpoints,
   LiveChatIncChatPanel,
   WatsonChatPanel,
 } from '@island.is/web/components'
-import { useFeatureFlag } from '@island.is/web/hooks'
+import { defaultWatsonConfig, liveChatIncConfig, watsonConfig } from './config'
 
 interface ArticleChatPanelProps {
   article: GetSingleArticleQuery['getSingleArticle']
@@ -22,37 +17,38 @@ export const ArticleChatPanel = ({
   article,
   pushUp,
 }: ArticleChatPanelProps) => {
-  const { loading, value: isWatsonChatPanelEnabled } = useFeatureFlag(
-    'isWatsonChatPanelEnabled',
-    false,
-  )
-  if (loading) return null
-
-  const syslumennOrganizationId = 'kENblMMMvZ3DlyXw1dwxQ'
-
   let Component = null
 
-  if (article.id in liveChatIncConfig) {
-    Component = <LiveChatIncChatPanel {...liveChatIncConfig[article.id]} />
-  } else if (isWatsonChatPanelEnabled && article.id in watsonConfig) {
-    Component = <WatsonChatPanel {...watsonConfig[article.id]} />
-  } else if (
-    isWatsonChatPanelEnabled &&
-    article.organization?.some((o) => o.id === syslumennOrganizationId)
-  ) {
-    Component = <WatsonChatPanel {...syslumennWatsonConfig} />
-  } else if (
-    article.organization?.some((o) => o.id in boostChatPanelEndpoints)
-  ) {
+  // LiveChatInc
+  if (article.organization?.some((o) => o.id in liveChatIncConfig)) {
+    const organizationId = article.organization.find(
+      (o) => o.id in liveChatIncConfig,
+    ).id
+    Component = <LiveChatIncChatPanel {...liveChatIncConfig[organizationId]} />
+  }
+  // Watson
+  else if (article.id in watsonConfig) {
     Component = (
-      <BoostChatPanel
-        endpoint={
-          article.organization?.find((o) => o.id in boostChatPanelEndpoints)
-            ?.id as keyof typeof boostChatPanelEndpoints
-        }
-        pushUp={pushUp}
-      />
+      <WatsonChatPanel {...watsonConfig[article.id]} pushUp={pushUp} />
     )
+  } else if (article.organization?.some((o) => o.id in watsonConfig)) {
+    const organizationId = article.organization.find(
+      (o) => o.id in watsonConfig,
+    ).id
+    Component = (
+      <WatsonChatPanel {...watsonConfig[organizationId]} pushUp={pushUp} />
+    )
+  }
+  // Boost
+  else if (article.organization?.some((o) => o.id in boostChatPanelEndpoints)) {
+    const organizationId = article.organization?.find(
+      (o) => o.id in boostChatPanelEndpoints,
+    )?.id as keyof typeof boostChatPanelEndpoints
+    Component = <BoostChatPanel endpoint={organizationId} pushUp={pushUp} />
+  }
+  // If none of the above then use the default watson chat bot
+  else {
+    Component = <WatsonChatPanel {...defaultWatsonConfig} pushUp={pushUp} />
   }
 
   return Component

@@ -1,6 +1,7 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState, useCallback } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
+import formatISO from 'date-fns/formatISO'
 
 import { Box, Input, Text, AlertMessage } from '@island.is/island-ui/core'
 import {
@@ -12,7 +13,11 @@ import {
   Modal,
 } from '@island.is/judicial-system-web/src/components'
 import { isCourtHearingArrangemenstStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
-import { CaseType, NotificationType } from '@island.is/judicial-system/types'
+import {
+  CaseCustodyRestrictions,
+  CaseType,
+  NotificationType,
+} from '@island.is/judicial-system/types'
 import {
   CourtSubsections,
   Sections,
@@ -20,7 +25,6 @@ import {
 import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
-  setAndSendDateToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { DateTime } from '@island.is/judicial-system-web/src/components'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -58,15 +62,49 @@ export const HearingArrangements: React.FC = () => {
   } = useCase()
   const { formatMessage } = useIntl()
 
+  const [courtDate, setCourtDate] = useState(workingCase.courtDate)
+
   useEffect(() => {
     if (isCaseUpToDate && !initialAutoFillDone) {
+      if (!workingCase.courtDate) {
+        setCourtDate(workingCase.requestedCourtDate)
+
+        setInitialAutoFillDone(true)
+      }
+
       autofill(
-        [{ key: 'courtDate', value: workingCase.requestedCourtDate }],
+        [
+          // validToDate, isolationToDate and isCustodyIsolation are autofilled here
+          // so they are ready for conclusion autofill later
+          {
+            key: 'validToDate',
+            value: workingCase.requestedValidToDate,
+          },
+          {
+            key: 'isolationToDate',
+            value:
+              workingCase.type === CaseType.CUSTODY ||
+              workingCase.type === CaseType.ADMISSION_TO_FACILITY
+                ? workingCase.requestedValidToDate
+                : undefined,
+          },
+          {
+            key: 'isCustodyIsolation',
+            value:
+              workingCase.type === CaseType.CUSTODY ||
+              workingCase.type === CaseType.ADMISSION_TO_FACILITY
+                ? workingCase.requestedCustodyRestrictions &&
+                  workingCase.requestedCustodyRestrictions.includes(
+                    CaseCustodyRestrictions.ISOLATION,
+                  )
+                  ? true
+                  : false
+                : undefined,
+          },
+        ],
         workingCase,
         setWorkingCase,
       )
-
-      setInitialAutoFillDone(true)
     }
   }, [
     autofill,
@@ -76,7 +114,12 @@ export const HearingArrangements: React.FC = () => {
     workingCase,
   ])
 
-  const handleNextButtonClick = () => {
+  const handleNextButtonClick = useCallback(() => {
+    autofill(
+      [{ key: 'courtDate', value: courtDate, force: true }],
+      workingCase,
+      setWorkingCase,
+    )
     if (
       workingCase?.notifications?.find(
         (notification) => notification.type === NotificationType.COURT_DATE,
@@ -86,7 +129,14 @@ export const HearingArrangements: React.FC = () => {
     } else {
       setModalVisible(true)
     }
-  }
+  }, [
+    autofill,
+    courtDate,
+    router,
+    setModalVisible,
+    workingCase,
+    setWorkingCase,
+  ])
 
   return (
     <PageLayout
@@ -130,17 +180,14 @@ export const HearingArrangements: React.FC = () => {
               <Box marginBottom={2}>
                 <DateTime
                   name="courtDate"
-                  selectedDate={workingCase.courtDate}
+                  selectedDate={courtDate}
                   minDate={new Date()}
                   onChange={(date: Date | undefined, valid: boolean) => {
-                    setAndSendDateToServer(
-                      'courtDate',
-                      date,
-                      valid,
-                      workingCase,
-                      setWorkingCase,
-                      updateCase,
-                    )
+                    if (date && valid) {
+                      setCourtDate(
+                        formatISO(date, { representation: 'complete' }),
+                      )
+                    }
                   }}
                   blueBox={false}
                   required
@@ -186,7 +233,10 @@ export const HearingArrangements: React.FC = () => {
         <FormFooter
           previousUrl={`${Constants.OVERVIEW_ROUTE}/${workingCase.id}`}
           onNextButtonClick={handleNextButtonClick}
-          nextIsDisabled={!isCourtHearingArrangemenstStepValidRC(workingCase)}
+          nextButtonText={formatMessage(m.continueButton.label)}
+          nextIsDisabled={
+            !isCourtHearingArrangemenstStepValidRC(workingCase, courtDate)
+          }
         />
       </FormContentContainer>
       {modalVisible && (

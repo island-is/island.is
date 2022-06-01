@@ -3,7 +3,7 @@ import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
 export class PageInfo {
-  @Field((type) => String, { nullable: true })
+  @Field(() => String, { nullable: true })
   @IsString()
   nextCursor!: string | null
 }

@@ -30,6 +30,12 @@ export const personalInformationModule: ServicePortalModule = {
         enabled: userInfo.scopes.includes(UserProfileScope.write),
         render: () => lazy(() => import('./screens/Messages/Messages')),
       },
+      {
+        name: 'Stillingar',
+        path: ServicePortalPath.SettingsRoot,
+        enabled: userInfo.scopes.includes(UserProfileScope.write),
+        render: () => lazy(() => import('./screens/SettingsRoot/SettingsRoot')),
+      },
     ]
 
     return routes

@@ -64,7 +64,7 @@ export const NameSignupForm = ({ namespace, slice }: NameSignupFormProps) => {
     },
     validateOnChange: false,
     validate,
-    onSubmit: (values) => {
+    onSubmit: () => {
       setLoading(true)
       jsonp(
         slice.signupUrl

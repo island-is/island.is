@@ -1,10 +1,6 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common'
 import { Document } from './models/document.model'
-import {
-  CategoryDTO,
-  DocumentInfoDTO,
-  DocumentDTO,
-} from '@island.is/clients/documents'
+import { CategoryDTO, DocumentInfoDTO } from '@island.is/clients/documents'
 import { logger } from '@island.is/logging'
 import { DocumentDetails } from './models/documentDetails.model'
 import { DocumentCategory } from './models/documentCategory.model'

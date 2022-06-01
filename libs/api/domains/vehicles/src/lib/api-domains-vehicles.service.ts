@@ -3,41 +3,55 @@ import type { Logger } from '@island.is/logging'
 
 import { Inject, Injectable } from '@nestjs/common'
 import {
-  VehiclesApi,
+  VehicleSearchApi,
   BasicVehicleInformationGetRequest,
-  PersidnoLookupResult,
   BasicVehicleInformationTechnicalMass,
   BasicVehicleInformationTechnicalAxle,
+  BasicVehicleInformationTechnicalTyre,
+  PersidnoLookup,
 } from '@island.is/clients/vehicles'
 import { VehiclesAxle, VehiclesDetail } from '../models/getVehicleDetail.model'
+import { ApolloError } from 'apollo-server-express'
+import { FetchError } from '@island.is/clients/middlewares'
 
 @Injectable()
 export class VehiclesService {
   constructor(
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
-    @Inject(VehiclesApi)
-    private vehiclesApi: VehiclesApi,
+    @Inject(VehicleSearchApi)
+    private vehiclesApi: VehicleSearchApi,
   ) {}
+
+  private handle4xx(error: FetchError): ApolloError | null {
+    if (error.status === 403 || error.status === 404) {
+      return null
+    }
+    throw new ApolloError(
+      'Failed to resolve request',
+      error?.message || error?.status.toString(),
+    )
+  }
 
   async getVehiclesForUser(
     nationalId: string,
-  ): Promise<PersidnoLookupResult | null> {
+  ): Promise<PersidnoLookup | null | ApolloError> {
     try {
       const res = await this.vehiclesApi.vehicleHistoryGet({
         requestedPersidno: nationalId,
       })
-      return res
+      const { data } = res
+      if (!data) return {}
+      return data
     } catch (e) {
       const errMsg = 'Failed to get vehicle list'
       this.logger.error(errMsg, { e })
-
-      return null
+      return this.handle4xx(e)
     }
   }
 
   async getVehicleDetail(
     input: BasicVehicleInformationGetRequest,
-  ): Promise<VehiclesDetail | null> {
+  ): Promise<VehiclesDetail | null | ApolloError> {
     try {
       const res = await this.vehiclesApi.basicVehicleInformationGet({
         clientPersidno: input.clientPersidno,
@@ -47,10 +61,10 @@ export class VehiclesService {
       })
       const { data } = res
 
-      if (!data) return null
+      if (!data) return {}
       const newestInspection = data.inspections?.sort((a, b) => {
         if (a && b && a.date && b.date)
-          return new Date(a.date).getTime() - new Date(b.date).getTime()
+          return new Date(b.date).getTime() - new Date(a.date).getTime()
         else return 0
       })[0]
 
@@ -99,7 +113,7 @@ export class VehiclesService {
         data.productyear ??
         (data.firstregdate ? new Date(data?.firstregdate).getFullYear() : null)
 
-      const operator = data.operators?.find((x) => x.current)
+      const operators = data.operators?.filter((x) => x.current)
 
       const coOwners = data.owners?.find((x) => x.current)?.coOwners
 
@@ -140,7 +154,7 @@ export class VehiclesService {
           passengers: data.techincal?.pass,
           useGroup: data.usegroup,
           driversPassengers: data.techincal?.passbydr,
-          standingPassengers: null, // Todo: VANTAR I ÞJONUSTUKALLIÐ
+          standingPassengers: data.techincal?.standingno,
         },
         currentOwnerInfo: {
           owner: data.owners?.find((x) => x.current === true)?.fullname,
@@ -157,10 +171,13 @@ export class VehiclesService {
           result: newestInspection?.result,
           plateStatus: data.platestatus,
           nextInspectionDate: data.nextinspectiondate,
-          lastInspectionDate:
-            data.inspections && data.inspections.length > 1
-              ? data.inspections[1]?.date
-              : null,
+          lastInspectionDate: data.inspections
+            ? data.inspections[0]?.date
+            : null,
+          insuranceStatus: data.insurancestatus,
+          mortages: data?.fees?.hasEncumbrances,
+          carTax: data?.fees?.gjold?.bifreidagjald,
+          inspectionFine: data?.fees?.inspectionfine,
         },
         technicalInfo: {
           engine: data.techincal?.engine,
@@ -175,14 +192,26 @@ export class VehiclesService {
           trailerWithBrakesWeight: data.techincal?.tMassoftrbr,
           carryingCapacity: data.techincal?.mass?.masscapacity,
           axleTotalWeight: axleMaxWeight,
-          axle: axles,
+          axles: axles,
+          tyres: {
+            axle1: data.techincal?.tyre?.tyreaxle1,
+            axle2: data.techincal?.tyre?.tyreaxle2,
+            axle3: data.techincal?.tyre?.tyreaxle3,
+            axle4: data.techincal?.tyre?.tyreaxle4,
+            axle5: data.techincal?.tyre?.tyreaxle5,
+          },
         },
         ownersInfo:
           data.owners?.map((x) => {
+            const ownerAdderss = x.address
+              ? `${x.address}${x.postalcode || x.city ? ', ' : ''}${
+                  x.postalcode ? `${x.postalcode} ` : ''
+                }${x.city ?? ''}`
+              : undefined
             return {
               name: x.fullname,
               nationalId: x.persidno,
-              address: x.address + ', ' + x.postalcode + ' ' + x.city,
+              address: ownerAdderss,
               dateOfPurchase: x.purchasedate,
             }
           }) || [],
@@ -196,23 +225,24 @@ export class VehiclesService {
               city: x.city,
             }
           }) || [],
-        operator:
-          (operator && {
-            nationalId: operator.persidno,
-            name: operator.fullname,
-            address: operator.address,
-            postalcode: operator.postalcode,
-            city: operator.city,
-            startDate: operator.startdate,
-            endDate: operator.enddate,
-          }) ||
-          undefined,
+        operators:
+          operators?.map((operator) => {
+            return {
+              nationalId: operator.persidno,
+              name: operator.fullname,
+              address: operator.address,
+              postalcode: operator.postalcode,
+              city: operator.city,
+              startDate: operator.startdate,
+              endDate: operator.enddate,
+            }
+          }) || undefined,
       }
       return response
     } catch (e) {
       const errMsg = 'Failed to get vehicle details'
       this.logger.error(errMsg, { e })
-      return null
+      return this.handle4xx(e)
     }
   }
 }

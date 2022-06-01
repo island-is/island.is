@@ -1,6 +1,6 @@
 {
   "name": "island.is",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "license": "MIT",
   "engines": {
     "npm": "please-use-yarn",
@@ -431,6 +431,7 @@
     "**/rollup-plugin-postcss/**/postcss": "8.2.10",
     "**/autoprefixer/**/postcss": "npm:@island.is/postcss@107.0.37",
     "**/@ampproject/toolbox-optimizer/**/postcss": "npm:@island.is/postcss@107.0.37",
+    "**/configcat-js/**/configcat-common": "4.4.2",
     "**/css-loader/**/postcss": "npm:@island.is/postcss@107.0.37",
     "**/cssnano-simple/**/postcss": "npm:@island.is/postcss@107.0.37",
     "**/cssnano/**/postcss": "npm:@island.is/postcss@107.0.37",

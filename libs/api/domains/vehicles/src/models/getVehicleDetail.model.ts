@@ -37,6 +37,24 @@ export class VehiclesAxle {
 }
 
 @ObjectType()
+export class Tyres {
+  @Field(() => String, { nullable: true })
+  axle1?: string | null // technical -> tyre -> `tyreaxle1`
+
+  @Field(() => String, { nullable: true })
+  axle2?: string | null // technical -> tyre -> `tyreaxle2`
+
+  @Field(() => String, { nullable: true })
+  axle3?: string | null // technical -> tyre -> `tyreaxle3`
+
+  @Field(() => String, { nullable: true })
+  axle4?: string | null // technical -> tyre -> `tyreaxle4`
+
+  @Field(() => String, { nullable: true })
+  axle5?: string | null // technical -> tyre -> `tyreaxle5`
+}
+
+@ObjectType()
 export class VehiclesBasicInfo {
   @Field(() => String, { nullable: true })
   model?: string | null // make
@@ -142,6 +160,18 @@ export class VehiclesInspectionInfo {
 
   @Field(() => String, { nullable: true })
   lastInspectionDate?: string | null // inspections[1] -> date // EF LENGTH > 1
+
+  @Field(() => Boolean, { nullable: true })
+  insuranceStatus?: boolean | null
+
+  @Field(() => Number, { nullable: true })
+  mortages?: number | null
+
+  @Field(() => Number, { nullable: true })
+  carTax?: number | null
+
+  @Field(() => Number, { nullable: true })
+  inspectionFine?: number | null
 }
 
 @ObjectType()
@@ -183,7 +213,10 @@ export class VehiclesTechnicalInfo {
   axleTotalWeight?: number | null // technical -> mass -> // massmaxle1 + massmaxle2 + massmaxle3 + massmaxle4 + massmaxle5
 
   @Field(() => [VehiclesAxle], { nullable: true })
-  axle?: VehiclesAxle[] // smíða
+  axles?: VehiclesAxle[]
+
+  @Field(() => Tyres, { nullable: true })
+  tyres?: Tyres
 }
 
 @ObjectType()
@@ -227,30 +260,30 @@ export class VehiclesOperator {
 
 @ObjectType()
 export class VehiclesDetail {
-  @Field(() => VehiclesMainInfo)
-  mainInfo!: VehiclesMainInfo
+  @Field(() => VehiclesMainInfo, { nullable: true })
+  mainInfo?: VehiclesMainInfo
 
-  @Field(() => VehiclesBasicInfo)
-  basicInfo!: VehiclesBasicInfo
+  @Field(() => VehiclesBasicInfo, { nullable: true })
+  basicInfo?: VehiclesBasicInfo
 
-  @Field(() => VehiclesRegistrationInfo)
-  registrationInfo!: VehiclesRegistrationInfo
+  @Field(() => VehiclesRegistrationInfo, { nullable: true })
+  registrationInfo?: VehiclesRegistrationInfo
 
-  @Field(() => VehiclesCurrentOwnerInfo)
-  currentOwnerInfo!: VehiclesCurrentOwnerInfo
+  @Field(() => VehiclesCurrentOwnerInfo, { nullable: true })
+  currentOwnerInfo?: VehiclesCurrentOwnerInfo
 
-  @Field(() => VehiclesInspectionInfo)
-  inspectionInfo!: VehiclesInspectionInfo
+  @Field(() => VehiclesInspectionInfo, { nullable: true })
+  inspectionInfo?: VehiclesInspectionInfo
 
-  @Field(() => VehiclesTechnicalInfo)
-  technicalInfo!: VehiclesTechnicalInfo
+  @Field(() => VehiclesTechnicalInfo, { nullable: true })
+  technicalInfo?: VehiclesTechnicalInfo
 
-  @Field(() => [VehiclesOwners])
-  ownersInfo!: VehiclesOwners[]
+  @Field(() => [VehiclesOwners], { nullable: true })
+  ownersInfo?: VehiclesOwners[]
 
-  @Field(() => [VehiclesCurrentOwnerInfo])
-  coOwners!: VehiclesCurrentOwnerInfo[]
+  @Field(() => [VehiclesCurrentOwnerInfo], { nullable: true })
+  coOwners?: VehiclesCurrentOwnerInfo[]
 
-  @Field(() => VehiclesOperator, { nullable: true })
-  operator?: VehiclesOperator
+  @Field(() => [VehiclesOperator], { nullable: true })
+  operators?: VehiclesOperator[]
 }
