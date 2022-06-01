@@ -7,10 +7,8 @@ import { messages } from '@island.is/application/templates/data-protection-compl
 import {
   addformFieldAndValue,
   addHeader,
-  addList,
   addLogo,
   addSubheader,
-  addSubtitle,
   addValue,
   formatSsn,
   setPageHeader,
@@ -92,32 +90,34 @@ function dpcApplicationPdf(
   if (complaint.complaintCategories.length !== 0) {
     addSubheader('Efni kvörtunar', doc)
 
-    const categories = complaint.complaintCategories.map((c, index) => {
-      return complaint.complaintCategories.length === index + 1
-        ? complaint.somethingElse
-          ? `${c}: ${complaint.somethingElse}`
-          : c
-        : c
+    complaint.complaintCategories.map((c, index) => {
+      return addValue(
+        complaint.complaintCategories.length === index + 1
+          ? complaint.somethingElse
+            ? `• ${c}: ${complaint.somethingElse}`
+            : `• ${c}`
+          : `• ${c}`,
+        doc,
+      )
     })
-
-    addList(categories, doc)
     doc.moveDown()
   }
 
   addSubheader('Yfir hverju er kvartað í meginatriðum?', doc)
   addValue(complaint.description, doc, PdfConstants.NORMAL_FONT)
-  doc.moveDown(2)
+  doc.moveDown()
   if (complaint.attachments.length > 0) {
     addSubheader('Fylgiskjöl', doc)
 
-    addValue(complaint.attachments.join(), doc, PdfConstants.NORMAL_FONT)
+    complaint.attachments.map((attachment) => {
+      return addValue(attachment, doc, PdfConstants.NORMAL_FONT)
+    })
+
     doc.moveDown()
   }
+  doc.moveDown()
 
-  doc.addPage()
   renderExternalDataMessages(complaint.messages.externalData, doc)
-
-  doc.addPage()
   renderInformationMessages(complaint.messages.information, doc)
 
   doc.end()
@@ -128,7 +128,7 @@ function renderExternalDataMessages(
   doc: PDFKit.PDFDocument,
 ): void {
   addHeader(externalData.title, doc)
-  addSubtitle(externalData.subtitle, doc)
+  addValue(externalData.subtitle, doc, PdfConstants.BOLD_FONT)
   addValue(externalData.description, doc)
   doc.moveDown()
   addValue(externalData.nationalRegistryTitle, doc, PdfConstants.BOLD_FONT)
@@ -152,42 +152,42 @@ function renderInformationMessages(
 ): void {
   addHeader(information.title, doc)
 
-  const bulletsWithLinks = information.bullets.map(
-    ({ bullet, link, linkText }) => {
-      const splitBullet = bullet.split('{link}')
-      if (splitBullet.length === 2) {
-        return doc
-          .text(splitBullet[0], { continued: true })
-          .fillColor('blue')
-          .text(linkText, {
-            continued: true,
-            link: link,
-          })
-          .fillColor('black')
-          .text(splitBullet[1])
-      } else {
-        return doc.text(bullet)
-      }
-    },
-  )
-  addList(bulletsWithLinks, doc)
+  const bulletsList = [
+    information.bullets.bulletOne,
+    information.bullets.bulletTwo,
+    information.bullets.bulletThree,
+    information.bullets.bulletFour,
+    information.bullets.bulletFive,
+    information.bullets.bulletSix,
+    information.bullets.bulletSeven,
+    information.bullets.bulletEight,
+  ]
 
-  /* addSubtitle(externalData.subtitle, doc)
-  addValue(externalData.description, doc)
-  doc.moveDown()
-  addValue(externalData.nationalRegistryTitle, doc, PdfConstants.BOLD_FONT)
-  addValue(
-    externalData.nationalRegistryDescription,
-    doc,
-    PdfConstants.NORMAL_FONT,
-  )
-  doc.moveDown()
-  addValue(externalData.userProfileTitle, doc, PdfConstants.BOLD_FONT)
-  addValue(externalData.userProfileDescription, doc, PdfConstants.NORMAL_FONT)
-  doc.moveDown()
-  addValue(externalData.checkboxText, doc, PdfConstants.BOLD_FONT)
-  addValue('Já', doc, PdfConstants.NORMAL_FONT)
-  doc.moveDown() */
+  bulletsList.map(({ bullet, link, linkText }) => {
+    const splitBullet = bullet.split('{link}')
+    if (splitBullet.length === 2) {
+      return doc
+        .font(PdfConstants.NORMAL_FONT)
+        .fontSize(PdfConstants.VALUE_FONT_SIZE)
+        .lineGap(PdfConstants.NORMAL_LINE_GAP)
+        .text('• ', { continued: true })
+        .text(splitBullet[0], { continued: true })
+        .fillColor('blue')
+        .text(linkText, {
+          continued: true,
+          link: link,
+        })
+        .fillColor('black')
+        .text(splitBullet[1], { paragraphGap: 10 })
+    } else {
+      return doc
+        .font(PdfConstants.NORMAL_FONT)
+        .fontSize(PdfConstants.VALUE_FONT_SIZE)
+        .lineGap(PdfConstants.NORMAL_LINE_GAP)
+        .text('• ', { continued: true })
+        .text(bullet, { paragraphGap: 10 })
+    }
+  })
 }
 
 function renderContactsAndComplainees(
@@ -210,7 +210,7 @@ function renderContactsAndComplainees(
       : 'Kvartendur'
 
   if (
-    complaint.onBehalf !== OnBehalf.ORGANIZATION_OR_INSTITUTION &&
+    complaint.onBehalf == OnBehalf.ORGANIZATION_OR_INSTITUTION ||
     complaint.onBehalf !== OnBehalf.OTHERS
   ) {
     addSubheader(contactHeading, doc)
@@ -258,10 +258,7 @@ function renderContactsAndComplainees(
 
   doc.moveDown()
 
-  if (
-    complaint.onBehalf === OnBehalf.ORGANIZATION_OR_INSTITUTION ||
-    complaint.onBehalf === OnBehalf.OTHERS
-  ) {
+  if (complaint.onBehalf === OnBehalf.OTHERS) {
     addSubheader(contactHeading, doc)
   }
 

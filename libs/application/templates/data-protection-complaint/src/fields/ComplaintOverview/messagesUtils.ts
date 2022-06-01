@@ -21,8 +21,8 @@ export const getExternalData = (formatMessage: FormatMessage) => {
 }
 
 export const getBullets = (formatMessage: FormatMessage) => {
-  return [
-    {
+  return {
+    bulletOne: {
       bullet: formatMessage(delimitation.labels.agreementDescriptionBulletOne),
       link: formatMessage(
         delimitation.labels.agreementDescriptionBulletOneLink,
@@ -31,7 +31,7 @@ export const getBullets = (formatMessage: FormatMessage) => {
         delimitation.labels.agreementDescriptionBulletOneLinkName,
       ),
     },
-    {
+    bulletTwo: {
       bullet: formatMessage(delimitation.labels.agreementDescriptionBulletTwo),
       link: formatMessage(
         delimitation.labels.agreementDescriptionBulletTwoLink,
@@ -40,7 +40,7 @@ export const getBullets = (formatMessage: FormatMessage) => {
         delimitation.labels.agreementDescriptionBulletTwoLinkName,
       ),
     },
-    {
+    bulletThree: {
       bullet: formatMessage(
         delimitation.labels.agreementDescriptionBulletThree,
       ),
@@ -51,7 +51,7 @@ export const getBullets = (formatMessage: FormatMessage) => {
         delimitation.labels.agreementDescriptionBulletThreeLinkName,
       ),
     },
-    {
+    bulletFour: {
       bullet: formatMessage(delimitation.labels.agreementDescriptionBulletFour),
       link: formatMessage(
         delimitation.labels.agreementDescriptionBulletFourLink,
@@ -60,7 +60,7 @@ export const getBullets = (formatMessage: FormatMessage) => {
         delimitation.labels.agreementDescriptionBulletFourLinkName,
       ),
     },
-    {
+    bulletFive: {
       bullet: formatMessage(delimitation.labels.agreementDescriptionBulletFive),
       link: formatMessage(
         delimitation.labels.agreementDescriptionBulletFiveLink,
@@ -69,7 +69,7 @@ export const getBullets = (formatMessage: FormatMessage) => {
         delimitation.labels.agreementDescriptionBulletFiveLinkName,
       ),
     },
-    {
+    bulletSix: {
       bullet: formatMessage(delimitation.labels.agreementDescriptionBulletSix),
       link: formatMessage(
         delimitation.labels.agreementDescriptionBulletSixLink,
@@ -78,7 +78,7 @@ export const getBullets = (formatMessage: FormatMessage) => {
         delimitation.labels.agreementDescriptionBulletSixLinkName,
       ),
     },
-    {
+    bulletSeven: {
       bullet: formatMessage(
         delimitation.labels.agreementDescriptionBulletSeven,
       ),
@@ -89,7 +89,7 @@ export const getBullets = (formatMessage: FormatMessage) => {
         delimitation.labels.agreementDescriptionBulletSevenLinkName,
       ),
     },
-    {
+    bulletEight: {
       bullet: formatMessage(
         delimitation.labels.agreementDescriptionBulletEight,
       ),
@@ -100,5 +100,5 @@ export const getBullets = (formatMessage: FormatMessage) => {
         delimitation.labels.agreementDescriptionBulletEightLinkName,
       ),
     },
-  ]
+  }
 }

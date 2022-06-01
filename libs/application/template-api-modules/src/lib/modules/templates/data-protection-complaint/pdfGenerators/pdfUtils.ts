@@ -44,7 +44,7 @@ export const addValue = (
   text: string,
   doc: PDFKit.PDFDocument,
   weight = PdfConstants.NORMAL_FONT,
-  lineGap = PdfConstants.NO_LINE_GAP,
+  lineGap = PdfConstants.NORMAL_LINE_GAP,
 ) => {
   addToDoc(weight, PdfConstants.VALUE_FONT_SIZE, lineGap, text, doc)
 }
@@ -105,17 +105,6 @@ export const newDocument = () => {
       right: PdfConstants.HORIZONTAL_MARGIN,
     },
   })
-}
-
-export const addList = (
-  list: string[] | PDFKit.PDFDocument[],
-  doc: PDFKit.PDFDocument,
-) => {
-  doc
-    .fillColor('#000')
-    .font(PdfConstants.NORMAL_FONT)
-    .fontSize(PdfConstants.VALUE_FONT_SIZE)
-    .list(list)
 }
 
 export const addLogo = (doc: PDFKit.PDFDocument, logo: string) => {

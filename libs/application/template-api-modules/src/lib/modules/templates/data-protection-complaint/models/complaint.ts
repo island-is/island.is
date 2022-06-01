@@ -41,10 +41,21 @@ export interface ApplicationMessages {
 
 export interface Information {
   title: string
-  bullets: Bullets[]
+  bullets: Bullets
 }
 
 export interface Bullets {
+  bulletOne: Bullet
+  bulletTwo: Bullet
+  bulletThree: Bullet
+  bulletFour: Bullet
+  bulletFive: Bullet
+  bulletSix: Bullet
+  bulletSeven: Bullet
+  bulletEight: Bullet
+}
+
+export interface Bullet {
   bullet: string
   link: string
   linkText: string

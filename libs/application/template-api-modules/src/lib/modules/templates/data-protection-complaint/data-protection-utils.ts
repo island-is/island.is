@@ -5,7 +5,6 @@ import {
   ComplaintPDF,
   ContactInfo,
   ContactRole,
-  Information,
   TargetOfComplaint,
 } from './models'
 import {
@@ -234,27 +233,21 @@ export const getMessages = (
 ): ApplicationMessages => {
   return {
     externalData: {
-      title: answers.overview.externalData.title,
-      subtitle: answers.overview.externalData.subtitle,
-      description: answers.overview.externalData.description,
+      title: answers.overview.externalDataMessage.title,
+      subtitle: answers.overview.externalDataMessage.subtitle,
+      description: answers.overview.externalDataMessage.description,
       nationalRegistryTitle:
-        answers.overview.externalData.nationalRegistryTitle,
+        answers.overview.externalDataMessage.nationalRegistryTitle,
       nationalRegistryDescription:
-        answers.overview.externalData.nationalRegistryDescription,
-      userProfileTitle: answers.overview.externalData.userProfileTitle,
+        answers.overview.externalDataMessage.nationalRegistryDescription,
+      userProfileTitle: answers.overview.externalDataMessage.userProfileTitle,
       userProfileDescription:
-        answers.overview.externalData.userProfileDescription,
-      checkboxText: answers.overview.externalData.checkboxText,
+        answers.overview.externalDataMessage.userProfileDescription,
+      checkboxText: answers.overview.externalDataMessage.checkboxText,
     },
     information: {
-      title: answers.overview.information.title,
-      bullets: answers.overview.information.bullets.map((info) => {
-        return {
-          bullet: info.bullet,
-          link: info.link,
-          linkText: info.linktText,
-        }
-      }),
+      title: answers.overview.informationMessage.title,
+      bullets: answers.overview.informationMessage.bullets,
     },
   }
 }

@@ -16,6 +16,12 @@ const FileSchema = z.object({
   url: z.string().optional(),
 })
 
+const Bullet = z.object({
+  bullet: z.string(),
+  link: z.string(),
+  linkText: z.string(),
+})
+
 // Validation on optional field: https://github.com/colinhacks/zod/issues/310
 const optionalEmail = z.string().email().optional().or(z.literal(''))
 
@@ -136,25 +142,30 @@ export const DataProtectionComplaintSchema = z.object({
 
     documents: z.array(FileSchema),
   }),
-  externalDataMessage: z.object({
-    title: z.string(),
-    subtitle: z.string(),
-    description: z.string(),
-    nationalRegistryTitle: z.string(),
-    nationalRegistryDescription: z.string(),
-    userProfileTitle: z.string(),
-    userProfileDescription: z.string(),
-    checkboxText: z.string(),
-  }),
-  informationMessage: z.object({
-    title: z.string(),
-    bullets: z.array(
-      z.object({
-        bullet: z.string(),
-        link: z.string(),
-        linktText: z.string(),
+  overview: z.object({
+    externalDataMessage: z.object({
+      title: z.string(),
+      subtitle: z.string(),
+      description: z.string(),
+      nationalRegistryTitle: z.string(),
+      nationalRegistryDescription: z.string(),
+      userProfileTitle: z.string(),
+      userProfileDescription: z.string(),
+      checkboxText: z.string(),
+    }),
+    informationMessage: z.object({
+      title: z.string(),
+      bullets: z.object({
+        bulletOne: Bullet,
+        bulletTwo: Bullet,
+        bulletThree: Bullet,
+        bulletFour: Bullet,
+        bulletFive: Bullet,
+        bulletSix: Bullet,
+        bulletSeven: Bullet,
+        bulletEight: Bullet,
       }),
-    ),
+    }),
   }),
 })
 
