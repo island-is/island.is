@@ -455,10 +455,10 @@ export class CaseService {
         isModifyingRuling: Boolean(theCase.rulingDate),
         courtCaseNumber: theCase.courtCaseNumber,
         courtName: theCase.court?.name?.replace('dómur', 'dómi'),
-        defenderHasAccessToRvg: theCase.defenderNationalId,
+        defenderHasAccessToRvg: Boolean(theCase.defenderNationalId),
         linkStart: `<a href="${this.config.deepLinks.defenderCompletedCaseOverviewUrl}${theCase.id}">`,
         linkEnd: '</a>',
-        signedVerdictAvailableInS3: rulingUploadedToS3 ? 'TRUE' : 'FALSE',
+        signedVerdictAvailableInS3: rulingUploadedToS3,
       }),
     )
   }
@@ -725,16 +725,18 @@ export class CaseService {
     return getCourtRecordPdfAsBuffer(theCase, user, this.formatMessage)
   }
 
-  async getRulingPdf(theCase: Case): Promise<Buffer> {
-    try {
-      return await this.awsS3Service.getObject(
-        `generated/${theCase.id}/ruling.pdf`,
-      )
-    } catch (error) {
-      this.logger.info(
-        `The ruling for case ${theCase.id} was not found in AWS S3`,
-        { error },
-      )
+  async getRulingPdf(theCase: Case, useSigned = true): Promise<Buffer> {
+    if (useSigned) {
+      try {
+        return await this.awsS3Service.getObject(
+          `generated/${theCase.id}/ruling.pdf`,
+        )
+      } catch (error) {
+        this.logger.info(
+          `The ruling for case ${theCase.id} was not found in AWS S3`,
+          { error },
+        )
+      }
     }
 
     await this.refreshFormatMessage()
