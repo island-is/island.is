@@ -14,7 +14,7 @@ import {
 
 import Logo from '../assets/Logo'
 import { YES } from '../constants'
-import { otherParentApprovalFormMessages } from '../lib/messages'
+import { otherParentApprovalFormMessages, parentalLeaveFormMessages } from '../lib/messages'
 import { getApplicationAnswers } from '../lib/parentalLeaveUtils'
 import { YesOrNo } from '../types'
 
@@ -108,10 +108,11 @@ export const OtherParentApproval: Form = buildForm({
             }),
             buildDescriptionField({
               id: 'final',
-              title: 'Warning',
+              title: otherParentApprovalFormMessages.warning,
+              titleVariant: 'h4',
               description: (application: Application) => {
                 const {startDate} = getApplicationAnswers(application.answers).periods[0]
-                return `Parental leave starting date (${startDate}) has already passed!`
+                return otherParentApprovalFormMessages.startDateInThePast
               },
               condition: (answers) =>
                 new Date(getApplicationAnswers(answers).periods[0].startDate).getTime() < new Date().getTime(),
@@ -135,24 +136,30 @@ export const OtherParentApproval: Form = buildForm({
             }),
           ],
         }),
+      ],
+    }),
+    buildSection({
+      title: '',
+      condition: (answers) =>
+      new Date(getApplicationAnswers(answers).periods[0].startDate).getTime() < new Date().getTime(),
+      children: [
+        buildSubmitField({
+          id: 'reject',
+          placement: 'footer',
+          title: parentalLeaveFormMessages.finalScreen.startDateInThePast,
+          actions: [],
+        }),
+      ],
+    }),
+    buildSection({
+      title: '',
+      condition: (answers) =>
+      new Date(getApplicationAnswers(answers).periods[0].startDate).getTime() > new Date().getTime(),
+      children: [
         buildDescriptionField({
           id: 'final',
           title: coreMessages.thanks,
           description: coreMessages.thanksDescription,
-          condition: (answers) =>
-          new Date(getApplicationAnswers(answers).periods[0].startDate).getTime() > new Date().getTime(),
-        }),
-        buildMultiField({
-          title: '',
-          condition: (answers) =>
-          new Date(getApplicationAnswers(answers).periods[0].startDate).getTime() < new Date().getTime(),
-          children: [
-            buildDescriptionField({
-              id: 'final',
-              title: 'Application not processed',
-              description: 'Parental leave starting date is in the past, please reject this application',
-            }),
-          ],
         }),
       ],
     }),
