@@ -1,5 +1,4 @@
 import {
-  buildCheckboxField,
   buildDataProviderItem,
   buildExternalDataProvider,
   buildForm,
@@ -13,9 +12,18 @@ import {
   Form,
   FormModes,
   Application,
+  buildCheckboxField,
 } from '@island.is/application/core'
 import { m } from '../lib/messages'
 import { format as formatKennitala } from 'kennitala'
+import { Services, AUTH_TYPES } from '../lib/constants'
+
+export interface DistrictCommissionerAgencies {
+  name: string
+  place: string
+  address: string
+  id: string
+}
 
 export const Draft: Form = buildForm({
   id: 'PassportApplicationDraftForm',
@@ -34,7 +42,7 @@ export const Draft: Form = buildForm({
           dataProviders: [
             buildDataProviderItem({
               id: 'districtCommissioners',
-              type: '', //todo: change to sýslumenn when ready
+              type: 'DistrictsProvider',
               title: m.dataCollectionDistrictCommissionersTitle,
               subTitle: m.dataCollectionDistrictCommissionersSubitle,
             }),
@@ -120,68 +128,69 @@ export const Draft: Form = buildForm({
     }),
     buildSection({
       id: 'serviceSection',
-      title: m.serviceSection,
+      title: m.serviceTitle,
       children: [
         buildMultiField({
           id: 'service',
           title: m.serviceTitle,
+          description: m.serviceType,
           children: [
             buildRadioField({
               id: 'service.type',
-              title: m.serviceType,
+              title: '',
+              width: 'half',
+              space: 'none',
               options: [
-                { value: 'regular', label: m.regularService },
-                { value: 'express', label: m.expressService },
+                {
+                  value: Services.REGULAR,
+                  label: m.regularService,
+                  subLabel: m.regularServiceSublabel.defaultMessage,
+                },
+                {
+                  value: Services.EXPRESS,
+                  label: m.expressService,
+                  subLabel: m.expressServiceSublabel.defaultMessage,
+                },
               ],
             }),
-
+            buildDescriptionField({
+              id: 'service.dropLocationDescription',
+              title: m.dropLocation,
+              titleVariant: 'h3',
+              space: 2,
+              description: m.dropLocationDescription,
+            }),
             buildSelectField({
               id: 'service.dropLocation',
               title: m.dropLocation,
               placeholder: m.dropLocationPlaceholder.defaultMessage,
-              options: [
-                {
-                  label: 'Kópavogur',
-                  value: '1',
+              options: ({
+                externalData: {
+                  districtCommissioners: { data },
                 },
-                {
-                  label: 'Akureyri',
-                  value: '2',
-                },
-                {
-                  label: 'Egilstaðir',
-                  value: '3',
-                },
-              ],
+              }) => {
+                return (data as DistrictCommissionerAgencies[])?.map(
+                  ({ id, name, place, address }) => ({
+                    value: id,
+                    label: `${name}, ${place}`,
+                    tooltip: `${address}`,
+                  }),
+                )
+              },
             }),
-
+            buildDescriptionField({
+              id: 'service.dropLocationAuthenticationDescription',
+              title: m.dropLocationAuthentication,
+              titleVariant: 'h3',
+              space: 4,
+              description: m.dropLocationAuthenticationDescription,
+            }),
             buildCheckboxField({
-              id: 'service.extraOptions',
-              title: m.extraOptions,
-              options: [
-                {
-                  label: m.extraOptionsBringOwnPhoto,
-                  value: 'bringOwnPhoto',
-                },
-              ],
-            }),
-          ],
-        }),
-      ],
-    }),
-    buildSection({
-      id: 'approveExternalData',
-      title: m.fetchDataSection,
-      children: [
-        buildExternalDataProvider({
-          title: m.fetchData,
-          id: 'fetchData',
-          dataProviders: [
-            buildDataProviderItem({
-              id: 'insuranceInfo',
-              title: m.insuranceInfoTitle,
-              subTitle: m.insuranceInfoSubtitle,
-              type: 'ExampleSucceeds',
+              id: 'service.authentication',
+              large: false,
+              backgroundColor: 'white',
+              title: '',
+              options: AUTH_TYPES,
             }),
           ],
         }),
