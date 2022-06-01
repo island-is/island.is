@@ -45,6 +45,15 @@ export interface BaseTemplateAPIModuleConfig {
   healthInsuranceV2: HealthInsuranceV2Options
   dataProtectionComplaint: DataProtectionComplaintClientConfig
   applicationService: Type<BaseTemplateApiApplicationService>
+  userProfile: {
+    serviceBasePath: string
+  }
+  nationalRegistry: {
+    baseSoapUrl: string
+    user: string
+    password: string
+    host: string
+  }
 }
 
 export interface TemplateApiModuleActionProps {

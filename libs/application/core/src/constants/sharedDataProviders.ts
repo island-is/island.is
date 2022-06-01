@@ -7,14 +7,22 @@ export const SharedDataProviders = {
     dataProviderType: 'nationalRegistryProvider',
     apiModuleAction: 'nationalRegistry',
     namespace: 'nationalRegistry',
-    shouldPersistToExternalData: true,
-    throwOnError: true,
-    useMockData: false,
     mockData: (application: Application): PerformActionResult => {
       return {
         response: {
-          names: {
-            rolling: 'stones',
+          nationalId: '123456789',
+          age: 12,
+          fullName: 'Gervimaður',
+          citizenship: {
+            code: 'XA',
+            name: 'Icelandic',
+          },
+          address: {
+            code: '123',
+            lastUpdated: '',
+            streetAddress: 'Dúfnahólar 10',
+            city: 'Reykjavík',
+            postalCode: '111',
           },
         },
         success: true,
@@ -27,11 +35,24 @@ export const SharedDataProviders = {
     externalDataId: 'nationalRegistryUser',
     shouldPersistToExternalData: true,
   },
+  userProfileProvider: {
+    apiModuleAction: 'getUserProfile',
+    namespace: 'userProfile',
+    dataProviderType: 'userProfileProvider',
+    mockData: (application: Application): PerformActionResult => {
+      return {
+        response: {
+          email: 'mockEmail@island.is',
+          mobilePhoneNumber: '9999999',
+        },
+        success: true,
+      }
+    },
+  },
 } as AvailableSharedDataProviders
 
 export interface AvailableSharedDataProviders {
   nationalRegistryProvider: ApplicationTemplateAPIAction
-  nationalRegistryUserProvider: ApplicationTemplateAPIAction
   userProfileProvider: ApplicationTemplateAPIAction
-  familyInformationProvider: ApplicationTemplateAPIAction
+  //familyInformationProvider: ApplicationTemplateAPIAction
 }

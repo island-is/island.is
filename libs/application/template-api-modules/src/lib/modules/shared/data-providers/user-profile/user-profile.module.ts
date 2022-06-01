@@ -1,4 +1,3 @@
-import { NationalRegistryApi } from '@island.is/clients/national-registry-v1'
 import { DynamicModule } from '@nestjs/common'
 
 // This is a shared module that gives you access to common methods
@@ -9,23 +8,29 @@ import { SharedTemplateAPIModule } from '../..'
 import { BaseTemplateAPIModuleConfig } from '../../../../types'
 
 // Here you import your module service
-import { NationalRegistryService } from './national-registry.service'
+import { UserProfileService } from './user-profile.service'
 
-export class NationalRegistryModule {
+import { Configuration, UserProfileApi } from '@island.is/clients/user-profile'
+
+export class UserProfileModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
-    console.log(config.nationalRegistry)
     return {
-      module: NationalRegistryModule,
+      module: UserProfileModule,
       imports: [SharedTemplateAPIModule.register(config)],
       providers: [
-        NationalRegistryService,
+        UserProfileService,
         {
-          provide: NationalRegistryApi,
-          useFactory: async () =>
-            NationalRegistryApi.instantiateClass(config.nationalRegistry),
+          provide: UserProfileApi,
+          useFactory: () =>
+            new UserProfileApi(
+              new Configuration({
+                fetchApi: fetch,
+                basePath: config.userProfile.serviceBasePath,
+              }),
+            ),
         },
       ],
-      exports: [NationalRegistryService],
+      exports: [UserProfileService],
     }
   }
 }

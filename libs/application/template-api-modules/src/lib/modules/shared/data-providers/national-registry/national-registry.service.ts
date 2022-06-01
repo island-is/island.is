@@ -1,46 +1,35 @@
+import { NationalRegistryApi } from '@island.is/clients/national-registry-v1'
 import { Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../..'
 import { TemplateApiModuleActionProps } from '../../../../types'
+import { NationalRegistryUser } from './models/nationalRegistryUser'
+import * as kennitala from 'kennitala'
 @Injectable()
 export class NationalRegistryService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
+    private readonly nationalRegistryApi: NationalRegistryApi,
   ) {}
 
-  async nationalRegistry({ application, auth }: TemplateApiModuleActionProps) {
-    //application.externalData.data.reference
-    //random number
-    const randomNumber = Math.floor(Math.random() * (999999 - 100000)) + 100000
-
+  async nationalRegistry({
+    auth,
+  }: TemplateApiModuleActionProps): Promise<NationalRegistryUser> {
+    const user = await this.nationalRegistryApi.getUser(auth.nationalId)
     return {
-      nationalId: auth.nationalId,
-      name: 'Justin Trudeau ' + randomNumber,
-      age: '42',
-      address: '123 Fake St',
-      phone: '123-456-7890',
-      city: 'Toronto',
+      nationalId: user.Kennitala,
+      fullName: user.Fulltnafn,
+      age: kennitala.info(auth.nationalId).age,
+      citizenship: {
+        code: user.Rikisfang,
+        name: user.RikisfangLand,
+      },
+      address: {
+        code: user.LoghHusk,
+        lastUpdated: user.LoghHuskBreytt,
+        streetAddress: user.Logheimili,
+        city: user.LogheimiliSveitarfelag,
+        postalCode: user.Postnr,
+      },
     }
   }
-
-  /*
-       query NationalRegistryUserQuery {
-        nationalRegistryUser {
-          nationalId
-          age
-          fullName
-          citizenship {
-            code
-            name
-          }
-          legalResidence
-          address {
-            code
-            postalCode
-            city
-            streetAddress
-            lastUpdated
-          }
-        }
-      }
-    `*/
 }

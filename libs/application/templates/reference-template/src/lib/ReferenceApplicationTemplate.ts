@@ -113,6 +113,9 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
               read: 'all',
               api: [
                 {
+                  ...SharedDataProviders.userProfileProvider,
+                },
+                {
                   ...SharedDataProviders.nationalRegistryProvider,
                   useMockData: (application: Application) => {
                     return false

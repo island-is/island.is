@@ -105,7 +105,17 @@ const devConfig = {
       xRoadClientId: process.env.XROAD_CLIENT_ID,
       xRoadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8080',
     },
+    userProfile: {
+      serviceBasePath: 'http://localhost:3366',
+    },
+    nationalRegistry: {
+      baseSoapUrl: 'https://localhost:8443',
+      user: process.env.SOFFIA_USER ?? '',
+      password: process.env.SOFFIA_PASS ?? '',
+      host: 'soffiaprufa.skra.is',
+    },
   },
+
   application: {
     attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,
     presignBucket: process.env.FILE_SERVICE_PRESIGN_BUCKET,
@@ -215,6 +225,15 @@ const prodConfig = {
       XRoadProviderId: process.env.DATA_PROTECTION_COMPLAINT_XROAD_PROVIDER_ID,
       xRoadClientId: process.env.XROAD_CLIENT_ID,
       xRoadBaseUrl: process.env.XROAD_BASE_PATH,
+    },
+    userProfile: {
+      serviceBasePath: process.env.SERVICE_USER_PROFILE_URL,
+    },
+    nationalRegistry: {
+      baseSoapUrl: process.env.SOFFIA_SOAP_URL,
+      user: process.env.SOFFIA_USER,
+      password: process.env.SOFFIA_PASS,
+      host: process.env.SOFFIA_HOST_URL,
     },
   },
   application: {
