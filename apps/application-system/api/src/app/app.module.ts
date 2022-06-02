@@ -14,6 +14,7 @@ import { ApplicationModule } from './modules/application/application.module'
 import { DrivingLicenseBookClientConfig } from '@island.is/clients/driving-license-book'
 import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
 import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
+import { DrivingLicenseApiConfig } from '@island.is/clients/driving-license'
 import { MunicipalitiesFinancialAidConfig } from '@island.is/clients/municipalities-financial-aid'
 import { FishingLicenseClientConfig } from '@island.is/clients/fishing-license'
 import { signingModuleConfig } from '@island.is/dokobit-signing'
@@ -31,6 +32,7 @@ import { signingModuleConfig } from '@island.is/dokobit-signing'
         IdsClientConfig,
         SyslumennClientConfig,
         XRoadConfig,
+        DrivingLicenseApiConfig,
         DrivingLicenseBookClientConfig,
         NationalRegistryClientConfig,
         FeatureFlagConfig,
