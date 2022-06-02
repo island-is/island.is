@@ -49,12 +49,6 @@ export const Prerequisites: Form = buildForm({
               subTitle: m.externalData.taxData.dataInfo,
             }),
             buildDataProviderItem({
-              id: 'text',
-              type: undefined,
-              title: '',
-              subTitle: m.externalData.taxData.whyDataIsNeeded,
-            }),
-            buildDataProviderItem({
               id: 'moreTaxInfo',
               type: undefined,
               title: '',
