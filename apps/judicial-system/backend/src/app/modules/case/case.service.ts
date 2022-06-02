@@ -479,37 +479,38 @@ export class CaseService {
     ]
 
     if (theCase.courtId && theCase.courtCaseNumber) {
-      const isModifyingRuling = Boolean(theCase.rulingDate)
-
       uploadPromises.push(
         this.uploadSignedRulingPdfToCourt(theCase, user, signedRulingPdf).then(
           (res) => {
             rulingUploadedToCourt = res
           },
         ),
-        isModifyingRuling
-          ? this.uploadCaseFilesPdfToCourt(theCase, user)
-          : Promise.resolve(),
-        isModifyingRuling
-          ? getCourtRecordPdfAsString(theCase, this.formatMessage)
-              .then((courtRecordPdf) => {
-                return this.uploadCourtRecordPdfToCourt(
-                  theCase,
-                  user,
-                  courtRecordPdf,
-                ).then((res) => {
-                  courtRecordUploadedToCourt = res
-                })
-              })
-              .catch((reason) => {
-                // Log and ignore this error. The court record can be uploaded manually.
-                this.logger.error(
-                  `Failed to generate court record pdf for case ${theCase.id}`,
-                  { reason },
-                )
-              })
-          : Promise.resolve(),
       )
+
+      const isModifyingRuling = Boolean(theCase.rulingDate)
+
+      if (!isModifyingRuling) {
+        uploadPromises.push(
+          this.uploadCaseFilesPdfToCourt(theCase, user),
+          getCourtRecordPdfAsString(theCase, this.formatMessage)
+            .then(async (courtRecordPdf) => {
+              return this.uploadCourtRecordPdfToCourt(
+                theCase,
+                user,
+                courtRecordPdf,
+              ).then((res) => {
+                courtRecordUploadedToCourt = res
+              })
+            })
+            .catch((reason) => {
+              // Log and ignore this error. The court record can be uploaded manually.
+              this.logger.error(
+                `Failed to generate court record pdf for case ${theCase.id}`,
+                { reason },
+              )
+            }),
+        )
+      }
     }
 
     await Promise.all(uploadPromises)
@@ -725,16 +726,18 @@ export class CaseService {
     return getCourtRecordPdfAsBuffer(theCase, user, this.formatMessage)
   }
 
-  async getRulingPdf(theCase: Case): Promise<Buffer> {
-    try {
-      return await this.awsS3Service.getObject(
-        `generated/${theCase.id}/ruling.pdf`,
-      )
-    } catch (error) {
-      this.logger.info(
-        `The ruling for case ${theCase.id} was not found in AWS S3`,
-        { error },
-      )
+  async getRulingPdf(theCase: Case, useSigned = true): Promise<Buffer> {
+    if (useSigned) {
+      try {
+        return await this.awsS3Service.getObject(
+          `generated/${theCase.id}/ruling.pdf`,
+        )
+      } catch (error) {
+        this.logger.info(
+          `The ruling for case ${theCase.id} was not found in AWS S3`,
+          { error },
+        )
+      }
     }
 
     await this.refreshFormatMessage()
