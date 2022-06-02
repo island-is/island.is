@@ -863,7 +863,7 @@ export const ParentalLeaveForm: Form = buildForm({
           id: 'thankYou',
           title: parentalLeaveFormMessages.finalScreen.title,
           component: 'Conclusion',
-        }),        
+        }),
       ],
     }),
   ],
