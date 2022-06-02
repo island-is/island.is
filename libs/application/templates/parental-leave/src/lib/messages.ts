@@ -1328,12 +1328,6 @@ export const parentalLeaveFormMessages: MessageDir = {
       description:
         'If parent decided to use all the other parent personal discount',
     },
-    startDateInThePast: {
-      id: 'pl.application:review.start.date.in.the.past',
-      defaultMessage: '--- icelandic translation ---',
-      description:
-        'Start date is in the past. The form will not be sent!',
-    },
   }),
 
   draftFlow: defineMessages({
