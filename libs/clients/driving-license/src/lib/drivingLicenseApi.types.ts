@@ -1,5 +1,3 @@
-import { Okuskirteini } from '../v1'
-
 export interface DriversLicenseCategory {
   id: number
   name: string
@@ -45,6 +43,7 @@ export type CanApplyErrorCodeBTemporary =
   | 'HAS_DEPRIVATION'
   | 'HAS_NO_PHOTO'
   | 'HAS_NO_SIGNATURE'
+  | 'HAS_B_CATEGORY'
 
 export type CanApplyErrorCodeBFull =
   | 'HAS_POINTS'

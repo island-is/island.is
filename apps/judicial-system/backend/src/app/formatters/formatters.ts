@@ -388,6 +388,25 @@ export function formatPrisonRulingEmailNotification(
   })
 }
 
+export function formatPrisonAdministrationRulingNotification(
+  formatMessage: FormatMessage,
+  courtCaseNumber: string | undefined,
+  courtName: string | undefined,
+  overviewUrl: string,
+) {
+  const subject = formatMessage(notifications.signedRuling.subject, {
+    courtCaseNumber,
+  })
+  const body = formatMessage(notifications.signedRuling.prisonAdminBody, {
+    courtCaseNumber: courtCaseNumber ?? '',
+    courtName: courtName?.replace('dómur', 'dómi') ?? '',
+    linkStart: `<a href="${overviewUrl}">`,
+    linkEnd: `</a>`,
+  })
+
+  return { subject, body }
+}
+
 export function formatCourtRevokedSmsNotification(
   formatMessage: FormatMessage,
   type: CaseType,
