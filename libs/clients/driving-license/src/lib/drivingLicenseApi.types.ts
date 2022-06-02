@@ -1,5 +1,3 @@
-import { Okuskirteini } from '../v1'
-
 export interface DriversLicenseCategory {
   id: number
   name: string
