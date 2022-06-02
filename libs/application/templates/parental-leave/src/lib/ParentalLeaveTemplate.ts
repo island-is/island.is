@@ -52,6 +52,7 @@ type Events =
 enum Roles {
   APPLICANT = 'applicant',
   ASSIGNEE = 'assignee',
+  ORGINISATION_REVIEWER = 'vmst',
 }
 
 const ParentalLeaveTemplate: ApplicationTemplate<
@@ -387,6 +388,14 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               read: 'all',
               write: 'all',
             },
+            {
+              id: Roles.ORGINISATION_REVIEWER,
+              formLoader: () =>
+              import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+              ),
+              write: 'all',
+          },
           ],
         },
         on: {
@@ -941,6 +950,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
     if (application.assignees.includes(id)) {
       return Roles.ASSIGNEE
+    }
+
+    // TODO: add VMST's id
+    if (id === 'xxxxxx-xxxx') { // The nationalId added as claim in the Ids earlier.
+      return Roles.ORGINISATION_REVIEWER
     }
 
     return undefined
