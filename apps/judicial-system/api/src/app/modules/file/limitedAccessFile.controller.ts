@@ -24,7 +24,7 @@ import { FileService } from './file.service'
 
 @UseGuards(new JwtInjectBearerAuthGuard(true))
 @Controller('api/case/:id')
-export class RestrictedFileController {
+export class LimitedAccessFileController {
   constructor(
     private readonly fileService: FileService,
     @Inject(LOGGER_PROVIDER)
