@@ -64,6 +64,7 @@
 /libs/application/templates/driving-instructor-registrations/                                       @island-is/juni
 /libs/api/domains/driving-license-book/                                                             @island-is/juni
 /libs/clients/driving-license-book/                                                                 @island-is/juni
+/libs/application/template-api-modules/src/lib/modules/templates/driving-school-confirmation/       @island-is/juni
 
 /libs/clients/auth-public-api/                                                                      @island-is/aranja
 /libs/clients/middlewares/                                                                          @island-is/aranja
@@ -179,6 +180,7 @@ infra/                                                                          
 /apps/services/personal-representative/                                                             @island-is/programm
 /apps/services/personal-representative-public/                                                      @island-is/programm
 /libs/api/domains/financial-statements-inao/                                                        @island-is/programm
+/libs/application/templates/financial-statements-inao/                                              @island-is/programm
 
 /libs/application/templates/criminal-record/                                                        @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/criminal-record-submission         @island-is/origo
