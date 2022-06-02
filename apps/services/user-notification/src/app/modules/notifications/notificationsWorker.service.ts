@@ -8,8 +8,6 @@ import { NotificationDispatchService } from './notificationDispatch.service'
 import { MessageProcessorService } from './messageProcessor.service'
 import { FetchError } from '@island.is/clients/middlewares'
 
-
-
 export const IS_RUNNING_AS_WORKER = Symbol('IS_NOTIFICATION_WORKER')
 
 @Injectable()
@@ -38,10 +36,11 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
         const messageId = job.id
         this.logger.info('Message received by worker', { messageId })
 
-        const profile = await this.userProfileApi
-          .userTokenControllerFindOneByNationalId({
+        const profile = await this.userProfileApi.userTokenControllerFindOneByNationalId(
+          {
             nationalId: message.recipient,
-          })
+          },
+        )
 
         // can't send message if user has no user profile
         if (!profile) {
