@@ -31,27 +31,42 @@ export const MOCK_USER = {
 } as User
 
 const url = (path: string) => {
-  return new URL(path,process.env.XROAD_BASE_PATH).toString()
+  return new URL(path, process.env.XROAD_BASE_PATH).toString()
 }
 
 export const requestHandlers = [
-  rest.get(url(`${process.env.DRIVING_LICENSE_XROAD_PATH}/api/okuskirteini/embaetti`), (req, res, ctx) => {
-    return res(ctx.status(200), ctx.json(Juristictions))
-  }),
-
-  rest.get(url(`${process.env.DRIVING_LICENSE_XROAD_PATH}/api/okuskirteini/okukennarar`), (req, res, ctx) => {
-    return res(ctx.status(200), ctx.json(Teachers))
-  }),
-
-  rest.get(url(`${process.env.DRIVING_LICENSE_XROAD_PATH}/api/okuskirteini/:nationalId/all`), (req, res, ctx) => {
-    const response =
-      req.params.nationalId === MOCK_NATIONAL_ID_EXPIRED
-        ? [ExpiredLicense]
-        : [ValidLicense]
-    return res(ctx.status(200), ctx.json(response))
-  }),
   rest.get(
-    url(`${process.env.DRIVING_LICENSE_XROAD_PATH}/api/okuskirteini/hasteachingrights/:nationalId`),
+    url(`${process.env.DRIVING_LICENSE_XROAD_PATH}/api/okuskirteini/embaetti`),
+    (req, res, ctx) => {
+      return res(ctx.status(200), ctx.json(Juristictions))
+    },
+  ),
+
+  rest.get(
+    url(
+      `${process.env.DRIVING_LICENSE_XROAD_PATH}/api/okuskirteini/okukennarar`,
+    ),
+    (req, res, ctx) => {
+      return res(ctx.status(200), ctx.json(Teachers))
+    },
+  ),
+
+  rest.get(
+    url(
+      `${process.env.DRIVING_LICENSE_XROAD_PATH}/api/okuskirteini/:nationalId/all`,
+    ),
+    (req, res, ctx) => {
+      const response =
+        req.params.nationalId === MOCK_NATIONAL_ID_EXPIRED
+          ? [ExpiredLicense]
+          : [ValidLicense]
+      return res(ctx.status(200), ctx.json(response))
+    },
+  ),
+  rest.get(
+    url(
+      `${process.env.DRIVING_LICENSE_XROAD_PATH}/api/okuskirteini/hasteachingrights/:nationalId`,
+    ),
     (req, res, ctx) => {
       const hasTeachingRights =
         req.params.nationalId === MOCK_NATIONAL_ID_TEACHER
@@ -61,7 +76,9 @@ export const requestHandlers = [
   ),
 
   rest.get(
-    url(`${process.env.DRIVING_LICENSE_XROAD_PATH}/api/okuskirteini/saekjaakstursmat/:nationalId`),
+    url(
+      `${process.env.DRIVING_LICENSE_XROAD_PATH}/api/okuskirteini/saekjaakstursmat/:nationalId`,
+    ),
     (req, res, ctx) => {
       const isFound = req.params.nationalId !== MOCK_NATIONAL_ID_NO_ASSESSMENT
       if (isFound) {
@@ -73,7 +90,9 @@ export const requestHandlers = [
   ),
 
   rest.get(
-    url(`${process.env.DRIVING_LICENSE_XROAD_PATH}/api/okuskirteini/:nationalId/finishedokugerdi`),
+    url(
+      `${process.env.DRIVING_LICENSE_XROAD_PATH}/api/okuskirteini/:nationalId/finishedokugerdi`,
+    ),
     (req, res, ctx) => {
       const isFound = req.params.nationalId !== MOCK_NATIONAL_ID_EXPIRED
 
@@ -85,7 +104,9 @@ export const requestHandlers = [
   ),
 
   rest.get(
-    url(`${process.env.DRIVING_LICENSE_XROAD_PATH_V2}/api/okuskirteini/:nationalId/canapplyfor/B/full`),
+    url(
+      `${process.env.DRIVING_LICENSE_XROAD_PATH_V2}/api/okuskirteini/:nationalId/canapplyfor/B/full`,
+    ),
     (req, res, ctx) => {
       const canApply = req.params.nationalId === MOCK_NATIONAL_ID
 
@@ -97,7 +118,9 @@ export const requestHandlers = [
   ),
 
   rest.get(
-    url(`${process.env.DRIVING_LICENSE_XROAD_PATH}/api/okuskirteini/:nationalId/canapplyfor/temporary`),
+    url(
+      `${process.env.DRIVING_LICENSE_XROAD_PATH}/api/okuskirteini/:nationalId/canapplyfor/temporary`,
+    ),
     (req, res, ctx) => {
       const canApply = req.params.nationalId === MOCK_NATIONAL_ID
 
@@ -109,7 +132,9 @@ export const requestHandlers = [
   ),
 
   rest.post(
-    url(`${process.env.DRIVING_LICENSE_XROAD_PATH}/api/okuskirteini/new/drivingassesment`),
+    url(
+      `${process.env.DRIVING_LICENSE_XROAD_PATH}/api/okuskirteini/new/drivingassesment`,
+    ),
     (req, res, ctx) => {
       const body = req.body as any
       const isSubmittedByTeacher =
@@ -123,19 +148,26 @@ export const requestHandlers = [
     },
   ),
 
-  rest.post(url(`${process.env.DRIVING_LICENSE_XROAD_PATH_V2}/api/okuskirteini/applications/new/B`), (req, res, ctx) => {
-    const body = req.body as any
-    const canApply = body.personIdNumber !== MOCK_NATIONAL_ID_NO_ASSESSMENT
+  rest.post(
+    url(
+      `${process.env.DRIVING_LICENSE_XROAD_PATH_V2}/api/okuskirteini/applications/new/B`,
+    ),
+    (req, res, ctx) => {
+      const body = req.body as any
+      const canApply = body.personIdNumber !== MOCK_NATIONAL_ID_NO_ASSESSMENT
 
-    if (canApply) {
-      return res(ctx.status(200), ctx.text(''))
-    } else {
-      return res(ctx.status(400), ctx.text('error message'))
-    }
-  }),
+      if (canApply) {
+        return res(ctx.status(200), ctx.text(''))
+      } else {
+        return res(ctx.status(400), ctx.text('error message'))
+      }
+    },
+  ),
 
   rest.post(
-    url(`${process.env.DRIVING_LICENSE_XROAD_PATH_V2}/api/okuskirteini/applications/new/temporary`),
+    url(
+      `${process.env.DRIVING_LICENSE_XROAD_PATH_V2}/api/okuskirteini/applications/new/temporary`,
+    ),
     (req, res, ctx) => {
       const body = req.body as any
       const canApply = body.kennitala !== MOCK_NATIONAL_ID_NO_ASSESSMENT
@@ -155,7 +187,6 @@ export const requestHandlers = [
     },
   ),
 
-
   rest.get(
     url(
       `${process.env.DRIVING_LICENSE_XROAD_PATH_V2}/api/okuskirteini/:nationalId`,
@@ -173,11 +204,16 @@ export const requestHandlers = [
     },
   ),
 
-  rest.get(url(`${process.env.DRIVING_LICENSE_XROAD_PATH}/einstaklingar/:nationalId/buseta`), (req, res, ctx) => {
-    const isExpired = req.params.nationalId === MOCK_NATIONAL_ID_EXPIRED
-    return res(
-      ctx.status(isExpired ? 400 : 200),
-      ctx.json(isExpired ? undefined : ResidenceHistory),
-    )
-  }),
+  rest.get(
+    url(
+      `${process.env.DRIVING_LICENSE_XROAD_PATH}/einstaklingar/:nationalId/buseta`,
+    ),
+    (req, res, ctx) => {
+      const isExpired = req.params.nationalId === MOCK_NATIONAL_ID_EXPIRED
+      return res(
+        ctx.status(isExpired ? 400 : 200),
+        ctx.json(isExpired ? undefined : ResidenceHistory),
+      )
+    },
+  ),
 ]
