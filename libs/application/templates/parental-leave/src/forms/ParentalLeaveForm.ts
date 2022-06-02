@@ -836,7 +836,7 @@ export const ParentalLeaveForm: Form = buildForm({
     buildSection({
       title: '',
       condition: (answers) =>
-      getApplicationAnswers(answers).periods.length > 0 && new Date(getApplicationAnswers(answers).periods[0].startDate).getTime() > new Date().getTime(),
+      getApplicationAnswers(answers).periods.length > 0 && new Date(getApplicationAnswers(answers).periods[0].startDate).getTime() >= new Date().getTime(),
       children: [
         buildCustomField({
           id: 'thankYou',
