@@ -72,6 +72,8 @@ import { getSelectOptionLabel } from '../../lib/parentalLeaveClientUtils'
 import * as styles from './Review.css'
 import { currentDateStartTime } from '../../lib/parentalLeaveTemplateUtils'
 
+type ValidOtherParentAnswer = typeof NO | typeof MANUAL | undefined
+
 interface ReviewScreenProps {
   application: Application
   field: Field & { props?: { editable?: boolean } }
