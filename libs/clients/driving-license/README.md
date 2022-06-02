@@ -11,6 +11,12 @@ The client is generated from a copy of the openApi document provided in x-road.
 
 ## Quickstart
 
+you need to have the xroad proxy running locally
+
+```sh
+ ./scripts/run-xroad-proxy.sh
+```
+
 Run the following and start developing:
 
 ```sh
@@ -18,6 +24,8 @@ yarn nx run clients-driving-license:dev
 ```
 
 This command bundles updating the api definition and regenerating the client.
+
+and make sure the environment variables `DRIVING_LICENSE_SECRET`, `DRIVING_LICENSE_XROAD_PATH`, `DRIVING_LICENSE_XROAD_PATH_V2`, `XROAD_BASE_PATH` and `XROAD_CLIENT_ID` are available.
 
 ## Usage
 
@@ -41,38 +49,49 @@ yarn nx run clients-driving-license:schemas/external-openapi-generator
 
 ### Import into other NestJS modules
 
-Add the service to your module imports:
+#### app.module.ts
+
+```typescript
+import { ConfigModule } from '@island.is/nest/config'
+import { DrivingLicenseApiModule, DrivingLicenseApiConfig } from '@island.is/clients/driving-license'
+
+@Module({
+  imports: [
+      DrivingLicenseApiModule,
+      ConfigModule.forRoot({
+        isGlobal:true,
+        load:[DrivingLicenseApiConfig]
+      })
+    ],
+})
+```
+
+#### module-name.module.ts
 
 ```typescript
 import { DrivingLicenseApiModule } from '@island.is/clients/driving-license'
 
-@Module({
   imports: [
-    DrivingLicenseApiModule.register({
-      xroadBaseUrl: XROAD_BASE_URL,
-      xroadClientId: XROAD_CLIENT_ID,
-      secret: DRIVING_LICENSE_SECRET,
-      xroadPathV1: DRIVING_LICENSE_XROAD_PATH,
-      xroadPathV2: DRIVING_LICENSE_XROAD_PATH_V2,
-    }),
+    DrivingLicenseApiModule
   ],
-})
 ```
 
-Since the generated class names are pretty similar for v1 / v2 of the API, and neither
-is a subset of the other, all the API calls are wrapped, so that they share a uniform API,
-and the intent is that the consumer of the client does not need to be aware of which version
-of the API they are communicating with
+#### module-name.service.ts
 
 ```typescript
 import { DrivingLicenseApi } from '@island.is/clients/driving-license'
 
+
 @Injectable()
 export class SomeService {
-  constructor(private readonly drivingLicenseApi: DrivingLicenseApi) {}
+  constructor(
+    @Inject(DrivingLicenseApi)
+    private readonly drivingLicenseApi: DrivingLicenseApi,
+  ) {}
 
-  // etc...
-}
+  async someMethod()
+      return this.drivingLicenseApi.getTeachers()
+
 ```
 
 ## Code owners and maintainers
