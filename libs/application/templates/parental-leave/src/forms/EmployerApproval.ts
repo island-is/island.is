@@ -10,7 +10,6 @@ import {
   coreMessages,
   buildTextField,
   buildSubSection,
-  Application,
 } from '@island.is/application/core'
 
 import Logo from '../assets/Logo'

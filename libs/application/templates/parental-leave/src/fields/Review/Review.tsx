@@ -71,6 +71,11 @@ import { getSelectOptionLabel } from '../../lib/parentalLeaveClientUtils'
 
 import * as styles from './Review.css'
 import { currentDateStartTime } from '../../lib/parentalLeaveTemplateUtils'
+<<<<<<< HEAD
+=======
+
+type ValidOtherParentAnswer = typeof NO | typeof MANUAL | undefined
+>>>>>>> a4cd238958a1d2800db8629957ccce55d265ddb2
 
 interface ReviewScreenProps {
   application: Application
@@ -913,11 +918,15 @@ export const Review: FC<ReviewScreenProps> = ({
         isLast={true}
       >
         <SummaryTimeline application={application} />
+<<<<<<< HEAD
         {new Date(periods[0].startDate).getTime() < currentDateStartTime() && (
           <p style={{ color: '#B30038', fontSize: '14px', fontWeight: '500' }}>
             {formatMessage(errorMessages.startDateInThePast)}
           </p>
         )}
+=======
+        {new Date(periods[0].startDate).getTime() < currentDateStartTime() && <p style={{color: '#B30038', fontSize: '14px', fontWeight: '500'}}>{formatMessage(errorMessages.startDateInThePast)}</p>}
+>>>>>>> a4cd238958a1d2800db8629957ccce55d265ddb2
       </ReviewGroup>
 
       {/**
