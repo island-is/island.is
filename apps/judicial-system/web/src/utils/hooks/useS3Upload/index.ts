@@ -95,7 +95,6 @@ export const useS3Upload = (workingCase: Case) => {
 
       return presignedPostData?.createPresignedPost
     } catch (error) {
-      console.log(error)
       return { url: '', fields: {} }
     }
   }
