@@ -1,13 +1,13 @@
 import React, { FC } from 'react'
 import { complaint, info } from '../../lib/messages'
 import { DataProtectionComplaint } from '../../lib/dataSchema'
-import {
-  SectionHeading,
-  subjectOfComplaintValueLabelMapper,
-  ValueLine,
-} from './Shared'
+import { SectionHeading, ValueLine } from './Shared'
 import { ComplaineeTable } from '../ComplaineeRepeater/ComplaineeTable'
 import { useLocale } from '@island.is/localization'
+import {
+  SubjectOfComplaint,
+  subjectOfComplaintValueLabelMapper,
+} from '../../shared'
 
 export const Applicant: FC<{ answers: DataProtectionComplaint }> = ({
   answers,
@@ -131,7 +131,7 @@ export const Complaint: FC<{ answers: DataProtectionComplaint }> = ({
       />
       {answers.subjectOfComplaint.somethingElse && (
         <ValueLine
-          label={complaint.labels.subjectOtherOther}
+          label={complaint.labels[SubjectOfComplaint.OTHER]}
           value={answers.subjectOfComplaint.somethingElse}
         />
       )}

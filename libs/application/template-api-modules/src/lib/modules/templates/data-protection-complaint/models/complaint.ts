@@ -20,6 +20,7 @@ export interface ComplaintPDF {
   description: string
   submitDate: Date
   attachments: string[]
+  messages: ApplicationMessages
 }
 
 export interface ContactInfo {
@@ -31,6 +32,44 @@ export interface ContactInfo {
   phone: string
   postalCode: string
   city: string
+}
+
+export interface ApplicationMessages {
+  externalData: ExternalDataMessages
+  information: Information
+}
+
+export interface Information {
+  title: string
+  bullets: Bullets
+}
+
+export interface Bullets {
+  bulletOne: Bullet
+  bulletTwo: Bullet
+  bulletThree: Bullet
+  bulletFour: Bullet
+  bulletFive: Bullet
+  bulletSix: Bullet
+  bulletSeven: Bullet
+  bulletEight: Bullet
+}
+
+export interface Bullet {
+  bullet: string
+  link: string
+  linkText: string
+}
+
+export interface ExternalDataMessages {
+  title: string
+  subtitle: string
+  description: string
+  nationalRegistryTitle: string
+  nationalRegistryDescription: string
+  userProfileTitle: string
+  userProfileDescription: string
+  checkboxText: string
 }
 
 export interface TargetOfComplaint {
