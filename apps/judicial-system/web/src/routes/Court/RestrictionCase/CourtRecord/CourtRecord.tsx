@@ -985,9 +985,15 @@ export const CourtRecord: React.FC = () => {
           previousUrl={`${Constants.RULING_ROUTE}/${workingCase.id}`}
           nextUrl={`${Constants.CONFIRMATION_ROUTE}/${id}`}
           nextIsDisabled={!isCourtRecordStepValidRC(workingCase)}
-          hideNextButton={!workingCase.decision || !workingCase.conclusion}
+          hideNextButton={
+            !workingCase.decision ||
+            !workingCase.conclusion ||
+            !workingCase.ruling
+          }
           infoBoxText={
-            !workingCase.decision || !workingCase.conclusion
+            !workingCase.decision ||
+            !workingCase.conclusion ||
+            !workingCase.ruling
               ? formatMessage(m.nextButtonInfo)
               : ''
           }
