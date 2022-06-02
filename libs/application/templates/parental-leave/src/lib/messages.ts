@@ -1470,6 +1470,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       description:
         'Finally, the application goes to the Parental Leave Fund, where its final processing takes place.',
     },
+    pastStartDate: {
+      id: 'pl.application:finalscreen.start.date.in.the.past',
+      defaultMessage:'Upphafsdagur fæðingarorlofs er í fortíðinni, vinsamlegast leiðréttu dagsetninguna',
+      description:'Parental leave starting date is in the past, please correct this date',
+    },
   }),
 }
 
@@ -1608,6 +1613,16 @@ export const errorMessages = defineMessages({
     id: 'pl.application:dataSchema.otherParent.id',
     defaultMessage: 'Kennitala þarf að vera gild.',
     description: 'Error message when the kennitala is invalid.',
+  },
+  warning: {
+    id: 'pl.application:otherParent.warning',
+    defaultMessage: 'Viðvörun!',
+    description: 'Warning!',
+  },
+  StartDateInThePast: {
+    id: 'pl.application:otherParent.start.date.in.the.past',
+    defaultMessage: 'Umsóknin um ekki vera afgreidd! Upphafsdagur fæðingarorlofs er þegar liðinn!',
+    description: 'Application will not be processsed! Parental leave starting date has already passed!',
   },
   email: {
     id: 'pl.application:answerValidators.email',
@@ -1840,6 +1855,11 @@ export const errorMessages = defineMessages({
     description:
       'An error happened while calculating your periods, choose another period or contact us for support.',
   },
+  startDateInThePast: {
+    id: 'pl.application:errors.start.date.in.the.past',
+    defaultMessage: 'Upphafsdagur er í fortíðinni. Umsóknin verður ekki send!',
+    description:'Start date is in the past. The form will not be sent!',
+  }
 })
 
 export const statesMessages = defineMessages({
