@@ -68,8 +68,9 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
 
   const year = mainInfo?.year ? `(${mainInfo.year})` : ''
   const color = registrationInfo?.color ? `- ${registrationInfo.color}` : ''
+  const noInfo = data?.vehiclesDetail === null
 
-  if (error && !loading) {
+  if ((error || noInfo) && !loading) {
     return <NotFound title={formatMessage(messages.notFound)} />
   }
 

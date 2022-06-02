@@ -701,6 +701,9 @@
     "services-auth-public-api": {
       "tags": []
     },
+    "services-contentful-entry-tagger": {
+      "tags": []
+    },
     "services-documents": {
       "tags": []
     },
