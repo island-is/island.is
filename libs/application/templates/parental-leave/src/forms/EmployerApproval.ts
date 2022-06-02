@@ -115,7 +115,7 @@ export const EmployerApproval: Form = buildForm({
         buildSubSection({
           title: '',
           condition: (answers) =>
-          new Date(getApplicationAnswers(answers).periods[0].startDate).getTime() > new Date().getTime(),
+          new Date(getApplicationAnswers(answers).periods[0].startDate).getTime() >= new Date().getTime(),
           children: [
             buildDescriptionField({
               id: 'final.approve',
