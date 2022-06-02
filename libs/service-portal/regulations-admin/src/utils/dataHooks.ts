@@ -54,14 +54,15 @@ export const useS3Upload = () => {
 
   const createFormData = (
     presignedPost: PresignedPost,
-    file: UploadFile,
+    file?: UploadFile,
   ): FormData => {
     const formData = new FormData()
     Object.keys(presignedPost.fields).forEach((key) => {
       formData.append(key, presignedPost.fields[key])
     })
-
-    formData.append('file', file as File)
+    if (file) {
+      formData.append('file', file as File)
+    }
     return formData
   }
 
@@ -113,6 +114,18 @@ export const useS3Upload = () => {
     )
   }
 
+  const deleteFromS3 = async (presignedPost: PresignedPost) => {
+    console.log('not implemented')
+    /*const formData = createFormData(presignedPost)
+    const res = await fetch(presignedPost.url, {
+      body: formData,
+      method: 'DELETE',
+      mode: 'cors',
+    })
+    console.log(presignedPost)
+    console.log(res)*/
+  }
+
   const onChange = async (newFiles: File[]) => {
     setUploadErrorMessage(undefined)
 
@@ -137,9 +150,20 @@ export const useS3Upload = () => {
     onChange([uploadFile as File])
   }
 
-  const onRemove = (file: UploadFile) => {
-    //setUploadErrorMessage(undefined)
-    console.log('remove file')
+  const onRemove = async (file: UploadFile) => {
+    setUploadErrorMessage(undefined)
+
+    if (!file) {
+      return
+    }
+
+    const presignedPost = await createPresignedPost(file)
+
+    if (!presignedPost) {
+      return
+    }
+
+    deleteFromS3(presignedPost)
   }
   return {
     uploadFile,
