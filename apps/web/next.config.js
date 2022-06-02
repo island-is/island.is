@@ -3,7 +3,7 @@ const withNx = require('@nrwl/next/plugins/with-nx')
 const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin')
 const withVanillaExtract = createVanillaExtractPlugin()
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
-const StatoscopeWebpackPlugin = require('@statoscope/ui-webpack')
+const StatoscopeWebpackPlugin = require('@statoscope/webpack-plugin').default
 const { DuplicatesPlugin } = require('inspectpack/plugin')
 
 const graphqlPath = '/api/graphql'
@@ -29,6 +29,8 @@ module.exports = withNx(
       ]
     },
     webpack: (config, { isServer }) => {
+      console.log(config.module.rules[3])
+
       if (!isServer) {
         config.resolve.alias['@sentry/node'] = '@sentry/browser'
       }
