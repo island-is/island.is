@@ -21,6 +21,8 @@ export enum Operation {
   UploadFileToCourtMutation = 'UploadFileToCourtMutation',
   UpdateCaseMutation = 'UpdateCaseMutation',
   SendNotificationMutation = 'SendNotificationMutation',
+  CreatePresignedPostMutation = 'CreatePresignedPostMutation',
+  CreateFileMutation = 'CreateFileMutation',
 }
 
 export const intercept = (res: Case, forceFail?: Operation) => {
@@ -64,6 +66,16 @@ export const intercept = (res: Case, forceFail?: Operation) => {
           forceFail === Operation.SendNotificationMutation
             ? 'sendNotificationFailedMutationResponse'
             : 'sendNotificationMutationResponse',
+      })
+    } else if (hasOperationName(req, Operation.CreatePresignedPostMutation)) {
+      req.alias = 'CreatePresignedPostMutation'
+      req.reply({
+        fixture: 'createPresignedPostMutationResponse',
+      })
+    } else if (hasOperationName(req, Operation.CreateFileMutation)) {
+      req.alias = 'CreateFileMutation'
+      req.reply({
+        fixture: 'createFileMutationResponse',
       })
     }
   })

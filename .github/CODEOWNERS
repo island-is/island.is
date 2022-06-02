@@ -64,6 +64,7 @@
 /libs/application/templates/driving-instructor-registrations/                                       @island-is/juni
 /libs/api/domains/driving-license-book/                                                             @island-is/juni
 /libs/clients/driving-license-book/                                                                 @island-is/juni
+/libs/application/template-api-modules/src/lib/modules/templates/driving-school-confirmation/       @island-is/juni
 
 /libs/clients/auth-public-api/                                                                      @island-is/aranja
 /libs/clients/middlewares/                                                                          @island-is/aranja
@@ -138,6 +139,7 @@
 /libs/api/domains/application/                                                                      @island-is/sendiradid-applications
 
 /apps/services/search-indexer/                                                                      @island-is/stefna @island-is/juni
+/apps/services/contentful-entry-tagger/                                                             @island-is/stefna
 /apps/web/screens/Organization/                                                                     @island-is/stefna
 /apps/web/components/Organization/                                                                  @island-is/stefna
 /libs/content-search-toolkit/                                                                       @island-is/stefna @island-is/juni

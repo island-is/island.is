@@ -313,7 +313,7 @@ describe('ApplicationController - Create', () => {
       employmentCustom: '',
       directTaxPayments: [],
       hasFetchedDirectTaxPayment: false,
-      applicationSystemId: '',
+      applicationSystemId: null,
       nationalId: user.nationalId,
       spouseHasFetchedDirectTaxPayment: false,
     }
