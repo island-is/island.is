@@ -33,7 +33,9 @@ const ApplicantStatus = ({ application, goToScreen }: FAFieldBaseProps) => {
     <Box paddingBottom={5} className={styles.container}>
       <Header state={state} />
 
-      {isWaitingForSpouse && <SpouseAlert />}
+      {isWaitingForSpouse && (
+        <SpouseAlert showCopyUrl={!application.answers.spouseEmailSuccess} />
+      )}
 
       {state === ApplicationState.REJECTED && (
         <RejectionMessage

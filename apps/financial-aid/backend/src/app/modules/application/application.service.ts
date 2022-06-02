@@ -17,6 +17,7 @@ import { Sequelize } from 'sequelize-typescript'
 import {
   CreateApplicationDto,
   FilterApplicationsDto,
+  SpouseEmailDto,
   UpdateApplicationDto,
 } from './dto'
 import {
@@ -32,6 +33,7 @@ import {
   firstDateOfMonth,
   UserType,
   applicationPageSize,
+  Routes,
 } from '@island.is/financial-aid/shared/lib'
 import { FileService } from '../file'
 import {
@@ -58,7 +60,11 @@ interface Recipient {
 }
 
 const linkToStatusPage = (applicationId: string) => {
-  return `${environment.oskBaseUrl}/stada/${applicationId}"`
+  return `${environment.oskBaseUrl}${Routes.statusPage(applicationId)}`
+}
+
+const linkToApplicationSystem = (applicationId: string) => {
+  return `${environment.applicationSystemBaseUrl}/${applicationId}`
 }
 
 @Injectable()
@@ -327,10 +333,13 @@ export class ApplicationService {
     const municipality = await this.municipalityService.findByMunicipalityId(
       application.municipalityCode,
     )
+    const isApplicationSystem = application.applicationSystemId != null
 
     const emailData = getApplicantEmailDataFromEventType(
       ApplicationEventType.NEW,
-      linkToStatusPage(appModel.id),
+      isApplicationSystem
+        ? linkToApplicationSystem(application.applicationSystemId)
+        : linkToStatusPage(appModel.id),
       application.email,
       municipality,
       appModel.created,
@@ -349,7 +358,7 @@ export class ApplicationService {
       ),
     )
 
-    if (application.spouseNationalId) {
+    if (application.spouseNationalId && !isApplicationSystem) {
       const emailData = getApplicantEmailDataFromEventType(
         'SPOUSE',
         environment.oskBaseUrl,
@@ -370,6 +379,53 @@ export class ApplicationService {
     }
 
     await Promise.all(emailPromises)
+  }
+
+  async sendSpouseEmail(data: SpouseEmailDto) {
+    try {
+      const municipality = await this.municipalityService.findByMunicipalityId(
+        data.municipalityCode,
+      )
+
+      const applicantEmailData = getApplicantEmailDataFromEventType(
+        'WAITINGSPOUSE',
+        linkToApplicationSystem(data.applicationSystemId),
+        data.email,
+        municipality,
+        data.created,
+      )
+
+      const spouseEmailData = getApplicantEmailDataFromEventType(
+        'SPOUSE',
+        linkToApplicationSystem(data.applicationSystemId),
+        data.spouseEmail,
+        municipality,
+        data.created,
+      )
+
+      await Promise.all([
+        this.sendEmail(
+          {
+            name: data.name,
+            address: data.email,
+          },
+          applicantEmailData.subject,
+          ApplicantEmailTemplate(applicantEmailData.data),
+        ),
+        this.sendEmail(
+          {
+            name: data.spouseName,
+            address: data.spouseEmail,
+          },
+          spouseEmailData.subject,
+          ApplicantEmailTemplate(spouseEmailData.data),
+        ),
+      ])
+
+      return { success: true }
+    } catch {
+      return { success: false }
+    }
   }
 
   async update(
@@ -513,10 +569,13 @@ export class ApplicationService {
       const municipality = await this.municipalityService.findByMunicipalityId(
         updatedApplication.municipalityCode,
       )
+      const isApplicationSystem = updatedApplication.applicationSystemId != null
 
       const emailData = getApplicantEmailDataFromEventType(
         update.event,
-        linkToStatusPage(updatedApplication.id),
+        isApplicationSystem
+          ? linkToApplicationSystem(updatedApplication.applicationSystemId)
+          : linkToStatusPage(updatedApplication.id),
         updatedApplication.email,
         municipality,
         updatedApplication.created,
