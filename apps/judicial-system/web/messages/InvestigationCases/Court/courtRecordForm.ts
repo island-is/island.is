@@ -346,7 +346,7 @@ export const icCourtRecord = {
     }),
   },
   nextButtonInfo: {
-    id: 'judicial.system.investigation_cases:court_record.next_button_info',
+    id: 'judicial.system.investigation_cases:court_record.next_button_info_v2',
     defaultMessage:
       'Til að halda áfram þarf að skrá lyktir máls og skrifa úrskurðarorð á skjánum Úrskurður.',
     description:
