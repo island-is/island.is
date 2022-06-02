@@ -1472,8 +1472,10 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     pastStartDate: {
       id: 'pl.application:finalscreen.start.date.in.the.past',
-      defaultMessage:'Upphafsdagur fæðingarorlofs er í fortíðinni, vinsamlegast leiðréttu dagsetninguna',
-      description:'Parental leave starting date is in the past, please correct this date',
+      defaultMessage:
+        'Upphafsdagur fæðingarorlofs er í fortíðinni, vinsamlegast leiðréttu dagsetninguna',
+      description:
+        'Parental leave starting date is in the past, please correct this date',
     },
   }),
 }
@@ -1621,8 +1623,10 @@ export const errorMessages = defineMessages({
   },
   StartDateInThePast: {
     id: 'pl.application:otherParent.start.date.in.the.past',
-    defaultMessage: 'Umsóknin um ekki vera afgreidd! Upphafsdagur fæðingarorlofs er þegar liðinn!',
-    description: 'Application will not be processsed! Parental leave starting date has already passed!',
+    defaultMessage:
+      'Umsóknin um ekki vera afgreidd! Upphafsdagur fæðingarorlofs er þegar liðinn!',
+    description:
+      'Application will not be processsed! Parental leave starting date has already passed!',
   },
   email: {
     id: 'pl.application:answerValidators.email',
@@ -1858,8 +1862,8 @@ export const errorMessages = defineMessages({
   startDateInThePast: {
     id: 'pl.application:errors.start.date.in.the.past',
     defaultMessage: 'Upphafsdagur er í fortíðinni. Umsóknin verður ekki send!',
-    description:'Start date is in the past. The form will not be sent!',
-  }
+    description: 'Start date is in the past. The form will not be sent!',
+  },
 })
 
 export const statesMessages = defineMessages({
