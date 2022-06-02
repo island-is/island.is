@@ -17,17 +17,17 @@ export const m = defineMessages({
     description: 'service provider',
   },
   institutionName: {
-    id: 'fsn.application.institution',
+    id: 'fsn.application:institution',
     defaultMessage: 'Ríkisendurskoðun',
     description: `Institution's name`,
   },
   powerOfAttorneyNationalId: {
-    id: 'fsn.application.powerOfAttorneyNationalId',
+    id: 'fsn.application:powerOfAttorneyNationalId',
     defaultMessage: 'Kennitala umboðsmanns',
     description: `national id for power of attorney`,
   },
   powerOfAttorneyName: {
-    id: 'fsn.application.powerOfAttorneyName',
+    id: 'fsn.application:powerOfAttorneyName',
     defaultMessage: 'Nafn umboðsmanns',
     description: `name for power of attorney`,
   },
@@ -89,7 +89,7 @@ export const m = defineMessages({
     description: 'Presidental election',
   },
   parliamentaryElection: {
-    id: 'fsn.application:presidentalElection',
+    id: 'fsn.application:parliamentaryElection',
     defaultMessage: 'Alþingiskosningar',
     description: 'Election Campaign',
   },
@@ -109,7 +109,7 @@ export const m = defineMessages({
     description: 'Election',
   },
   pickElectionType: {
-    id: 'fsn.application:election',
+    id: 'fsn.application:SelectElectionType',
     defaultMessage: 'Veldu Tegund',
     description: 'Select election type',
   },
@@ -175,7 +175,7 @@ export const m = defineMessages({
     description: 'Statement debts',
   },
   keyNumbersExpenses: {
-    id: 'fsn.application:keyNumbers.expenses',
+    id: 'fsn.application:keyNumbers.keyNumbersExpenses',
     defaultMessage: 'Lykiltölur - Gjöld',
     description: 'expenses',
   },
