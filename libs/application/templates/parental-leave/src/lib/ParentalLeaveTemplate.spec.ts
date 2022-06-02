@@ -75,8 +75,8 @@ describe('Parental Leave Application Template', () => {
             selectedChild: '0',
             periods: [
               {
-                startDate: '3000-01-01'
-              }
+                startDate: '3000-01-01',
+              },
             ],
           },
         }),
@@ -106,8 +106,8 @@ describe('Parental Leave Application Template', () => {
             },
             periods: [
               {
-                startDate: '3000-01-01'
-              }
+                startDate: '3000-01-01',
+              },
             ],
           },
         }),
@@ -140,8 +140,8 @@ describe('Parental Leave Application Template', () => {
             selectedChild: '0',
             periods: [
               {
-                startDate: '3000-01-01'
-              }
+                startDate: '3000-01-01',
+              },
             ],
           },
         }),
@@ -187,8 +187,8 @@ describe('Parental Leave Application Template', () => {
             selectedChild: '0',
             periods: [
               {
-                startDate: '3000-01-01'
-              }
+                startDate: '3000-01-01',
+              },
             ],
           },
         }),
@@ -245,8 +245,8 @@ describe('Parental Leave Application Template', () => {
                 },
                 periods: [
                   {
-                    startDate: '3000-01-01'
-                  }
+                    startDate: '3000-01-01',
+                  },
                 ],
               },
             }),
@@ -277,8 +277,8 @@ describe('Parental Leave Application Template', () => {
               },
               periods: [
                 {
-                  startDate: '3000-01-01'
-                }
+                  startDate: '3000-01-01',
+                },
               ],
             },
           }),
@@ -307,8 +307,8 @@ describe('Parental Leave Application Template', () => {
               },
               periods: [
                 {
-                  startDate: '3000-01-01'
-                }
+                  startDate: '3000-01-01',
+                },
               ],
             },
           }),
@@ -335,8 +335,8 @@ describe('Parental Leave Application Template', () => {
               },
               periods: [
                 {
-                  startDate: '3000-01-01'
-                }
+                  startDate: '3000-01-01',
+                },
               ],
             },
           }),
@@ -370,8 +370,8 @@ describe('Parental Leave Application Template', () => {
               },
               periods: [
                 {
-                  startDate: '3000-01-01'
-                }
+                  startDate: '3000-01-01',
+                },
               ],
             },
           }),
@@ -412,8 +412,8 @@ describe('Parental Leave Application Template', () => {
               },
               periods: [
                 {
-                  startDate: '3000-01-01'
-                }
+                  startDate: '3000-01-01',
+                },
               ],
             },
           }),
@@ -455,8 +455,8 @@ describe('Parental Leave Application Template', () => {
               },
               periods: [
                 {
-                  startDate: '3000-01-01'
-                }
+                  startDate: '3000-01-01',
+                },
               ],
             },
           }),
@@ -552,8 +552,8 @@ describe('Parental Leave Application Template', () => {
             },
             periods: [
               {
-                startDate: '3000-01-01'
-              }
+                startDate: '3000-01-01',
+              },
             ],
           },
           state: ApplicationStates.EDIT_OR_ADD_PERIODS,
