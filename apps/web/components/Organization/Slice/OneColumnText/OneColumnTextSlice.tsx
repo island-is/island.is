@@ -20,8 +20,7 @@ export const OneColumnTextSlice: React.FC<SliceProps> = ({
   boxProps = {
     borderTopWidth: 'standard',
     borderColor: 'standard',
-    paddingTop: [4, 4, 6],
-    paddingBottom: [4, 5, 10],
+    paddingTop: 4,
   },
 }) => {
   return (
