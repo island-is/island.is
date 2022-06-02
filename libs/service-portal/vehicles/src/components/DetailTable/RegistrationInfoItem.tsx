@@ -44,13 +44,13 @@ const RegistrationInfoItem = ({ data }: PropTypes) => {
         <Column label={messages.vehGroup} value={data.vehicleGroup} />
       </Row>
       <Row>
-        <Column label={messages.color} value={data.color} />
+        <Column label={messages.specialName} value={data.specialName} />
 
-        <Column label={messages.regType} value={data.reggroup} />
+        <Column label={messages.regType} value={data.reggroupName} />
       </Row>
       <Row>
         <Column label={messages.passengers} value={data.passengers} />
-        <Column label={messages.useGroup} value={data.useGroup} />
+        <Column label={messages.color} value={data.color} />
       </Row>
       <Row>
         <Column
@@ -61,6 +61,15 @@ const RegistrationInfoItem = ({ data }: PropTypes) => {
               : formatMessage(messages.no)
           }
         />
+        <Column label={messages.plateStatus} value={data.plateStatus} />
+      </Row>
+      <Row>
+        <Column label={messages.useGroup} value={data.useGroup} />
+        {data.plateLocation && (
+          <Column label={messages.plateLocation} value={data.plateLocation} />
+        )}
+      </Row>
+      <Row>
         {data.standingPassengers && (
           <Column
             label={messages.standingPassengers}
