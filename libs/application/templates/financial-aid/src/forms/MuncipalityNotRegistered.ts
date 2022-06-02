@@ -1,28 +1,15 @@
-import {
-  buildCustomField,
-  buildForm,
-  buildSection,
-  Form,
-  FormModes,
-} from '@island.is/application/core'
+import { buildCustomField, buildForm, Form } from '@island.is/application/core'
 
 import * as m from '../lib/messages'
 
 export const MuncipalityNotRegistered: Form = buildForm({
   id: 'FinancialAidApplication',
-  title: m.application.name,
-  mode: FormModes.REJECTED,
+  title: '',
   children: [
-    buildSection({
-      id: 'muncipalityNotRegistered',
-      title: m.serviceCenter.general.sectionTitle,
-      children: [
-        buildCustomField({
-          id: 'serviceCenter',
-          title: m.serviceCenter.general.pageTitle,
-          component: 'ServiceCenter',
-        }),
-      ],
+    buildCustomField({
+      id: 'serviceCenter',
+      title: m.serviceCenter.general.pageTitle,
+      component: 'ServiceCenter',
     }),
   ],
 })
