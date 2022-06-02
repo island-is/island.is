@@ -48,6 +48,12 @@ export const DelegationsScreen = ({
   const { data: delegations, error } = useQuery(ACTOR_DELEGATIONS, {
     skip: !alternativeSubjects && !screenData.allowedDelegations,
   })
+  // if error with fetching delegations set handle like application that does not support delegations
+  useEffect(() => {
+    if (error) {
+      checkDelegation(true)
+    }
+  }, [error, checkDelegation])
 
   // Check whether application supports delegations
   useEffect(() => {
@@ -179,9 +185,6 @@ export const DelegationsScreen = ({
         ? coreDelegationsMessages.delegationActionCardButton
         : coreDelegationsMessages.delegationErrorButton,
     ),
-  }
-  if (error) {
-    return <ErrorShell />
   }
 
   return (
