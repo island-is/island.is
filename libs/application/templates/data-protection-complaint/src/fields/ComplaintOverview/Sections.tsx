@@ -1,14 +1,10 @@
 import React, { FC } from 'react'
 import { complaint, info } from '../../lib/messages'
 import { DataProtectionComplaint } from '../../lib/dataSchema'
-import {
-  SectionHeading,
-  subjectOfComplaintValueLabelMapper,
-  ValueLine,
-} from './Shared'
+import { SectionHeading, ValueLine, ValueList } from './Shared'
 import { ComplaineeTable } from '../ComplaineeRepeater/ComplaineeTable'
 import { useLocale } from '@island.is/localization'
-import { Box, Text } from '@island.is/island-ui/core'
+import { subjectOfComplaintValueLabelMapper } from '../../shared'
 
 export const Applicant: FC<{ answers: DataProtectionComplaint }> = ({
   answers,
@@ -83,9 +79,9 @@ export const Commissions: FC<{ answers: DataProtectionComplaint }> = ({
 }) => (
   <>
     <SectionHeading title={info.general.commissionsPageTitle} />
-    <ValueLine
+    <ValueList
       label={info.labels.commissionDocuments}
-      value={answers.commissions.documents.map((x) => x.name).join(', ')}
+      list={answers.commissions.documents.map((x) => x.name)}
     />
     {answers.commissions.persons.map((person, index) => (
       <div key={index}>
@@ -118,36 +114,27 @@ export const Complaint: FC<{ answers: DataProtectionComplaint }> = ({
       <SectionHeading title={complaint.general.complaintPageTitle} />
       {answers.subjectOfComplaint.values &&
       answers.subjectOfComplaint.values.length > 0 ? (
-        <Box paddingY={3}>
-          <Text variant="h5">
-            {formatMessage(complaint.general.subjectOfComplaintPageTitle)}
-          </Text>
-          {answers.subjectOfComplaint.values?.map((x) => {
-            return (
-              <Text>
-                {formatMessage(
-                  subjectOfComplaintValueLabelMapper[
-                    x as keyof typeof subjectOfComplaintValueLabelMapper
-                  ],
-                )}
-              </Text>
-            )
-          })}
-        </Box>
-      ) : null}
-      {answers.subjectOfComplaint.somethingElse && (
-        <ValueLine
-          label={complaint.labels.subjectOtherOther}
-          value={answers.subjectOfComplaint.somethingElse}
+        <ValueList
+          label={complaint.general.subjectOfComplaintPageTitle}
+          list={answers.subjectOfComplaint.values?.map(
+            (x) =>
+              `${formatMessage(
+                subjectOfComplaintValueLabelMapper[
+                  x as keyof typeof subjectOfComplaintValueLabelMapper
+                ],
+              )}${
+                x === 'other' && `: ${answers.subjectOfComplaint.somethingElse}`
+              }`,
+          )}
         />
-      )}
+      ) : null}
       <ValueLine
         label={complaint.labels.complaintDescriptionLabel}
         value={answers.complaint.description}
       />
-      <ValueLine
+      <ValueList
         label={complaint.labels.complaintDocumentsTitle}
-        value={answers.complaint.documents.map((x) => x.name).join(', ')}
+        list={answers.complaint.documents.map((x) => x.name)}
       />
     </>
   )
