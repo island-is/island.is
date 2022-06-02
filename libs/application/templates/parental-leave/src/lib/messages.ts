@@ -1621,7 +1621,7 @@ export const errorMessages = defineMessages({
     defaultMessage: 'Viðvörun!',
     description: 'Warning!',
   },
-  StartDateInThePast: {
+  startDateInThePast: {
     id: 'pl.application:otherParent.start.date.in.the.past',
     defaultMessage:
       'Umsóknin um ekki vera afgreidd! Upphafsdagur fæðingarorlofs er þegar liðinn!',
