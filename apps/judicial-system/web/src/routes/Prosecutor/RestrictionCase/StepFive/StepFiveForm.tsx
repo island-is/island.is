@@ -340,6 +340,7 @@ export const StepFiveForm: React.FC<Props> = (props) => {
         <Box marginBottom={5}>
           <ContentBlock>
             <InputFileUpload
+              name="fileUpload"
               fileList={files}
               header={formatMessage(m.sections.files.label)}
               buttonLabel={formatMessage(m.sections.files.buttonLabel)}

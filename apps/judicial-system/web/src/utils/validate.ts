@@ -245,8 +245,7 @@ export const isRulingValidRC = (workingCase: Case) => {
   return (
     validate(workingCase.prosecutorDemands || '', 'empty').isValid &&
     validate(workingCase.courtCaseFacts || '', 'empty').isValid &&
-    validate(workingCase.courtLegalArguments || '', 'empty').isValid &&
-    validate(workingCase.ruling || '', 'empty').isValid
+    validate(workingCase.courtLegalArguments || '', 'empty').isValid
   )
 }
 
@@ -254,8 +253,7 @@ export const isRulingValidIC = (workingCase: Case) => {
   return (
     validate(workingCase.prosecutorDemands || '', 'empty').isValid &&
     validate(workingCase.courtCaseFacts || '', 'empty').isValid &&
-    validate(workingCase.courtLegalArguments || '', 'empty').isValid &&
-    validate(workingCase.ruling || '', 'empty').isValid
+    validate(workingCase.courtLegalArguments || '', 'empty').isValid
   )
 }
 
@@ -270,7 +268,8 @@ export const isCourtRecordStepValidRC = (workingCase: Case) => {
     validate(workingCase.courtEndTime || '', 'empty').isValid &&
     validate(workingCase.courtEndTime || '', 'date-format').isValid &&
     validate(workingCase.decision || '', 'empty').isValid &&
-    validate(workingCase.conclusion || '', 'empty').isValid
+    validate(workingCase.conclusion || '', 'empty').isValid &&
+    validate(workingCase.ruling || '', 'empty').isValid
   )
 }
 
@@ -285,7 +284,8 @@ export const isCourtRecordStepValidIC = (workingCase: Case) => {
     validate(workingCase.courtEndTime || '', 'empty').isValid &&
     validate(workingCase.courtEndTime || '', 'date-format').isValid &&
     validate(workingCase.decision || '', 'empty').isValid &&
-    validate(workingCase.conclusion || '', 'empty').isValid
+    validate(workingCase.conclusion || '', 'empty').isValid &&
+    validate(workingCase.ruling || '', 'empty').isValid
   )
 }
 
