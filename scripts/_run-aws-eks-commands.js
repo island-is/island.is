@@ -24,12 +24,12 @@ const error = (errorMessage) => {
   process.exit(1)
 }
 
-function buildDockerImage(dockerImage, builder, target) {
+function buildDockerImage(containerImage, builder, target) {
   console.log(
     `Preparing docker image for restarting deployments - \uD83D\uDE48`,
   )
   execSync(
-    `${builder} build -f ${__dirname}/Dockerfile.proxy --target ${target} -t ${dockerImage} ${__dirname}`,
+    `${builder} build -f ${__dirname}/Dockerfile.proxy --target ${target} -t ${containerImage} ${__dirname}`,
   )
 }
 
@@ -101,11 +101,11 @@ const args = argv
         .demandOption('service', 'Name of the Kubernetes service'),
     async (args) => {
       const credentials = await getCredentials(args.profile)
-      let dockerImage = `restart-${args.service}`
-      buildDockerImage(dockerImage, `restart-deployment`)
+      let containerImage = `restart-${args.service}`
+      buildDockerImage(containerImage, `restart-deployment`)
       console.log(`Now running the restart - \uD83D\uDE31`)
       execSync(
-        `${args.builder} run --rm --name ${args.service} -e AWS_ACCESS_KEY_ID=${credentials.accessKeyId} -e AWS_SECRET_ACCESS_KEY=${credentials.secretAccessKey} -e AWS_SESSION_TOKEN=${credentials.sessionToken} -e CLUSTER=${args.cluster} -e TARGET_SVC=${args.service} -e TARGET_NAMESPACE=${args.namespace} ${dockerImage}`,
+        `${args.builder} run --rm --name ${args.service} -e AWS_ACCESS_KEY_ID=${credentials.accessKeyId} -e AWS_SECRET_ACCESS_KEY=${credentials.secretAccessKey} -e AWS_SESSION_TOKEN=${credentials.sessionToken} -e CLUSTER=${args.cluster} -e TARGET_SVC=${args.service} -e TARGET_NAMESPACE=${args.namespace} ${containerImage}`,
         { stdio: 'inherit' },
       )
     },
