@@ -1,38 +1,45 @@
+const authDomain = 'identity-server.dev01.devland.is/'
 const testEnviron = Cypress.env('testEnvironment')
 
-const cookieName = `_oauth2_${testEnviron}`
-const authDomain = 'identity-server.dev01.devland.is/'
-const cognitoDomain = 'cognito.shared.devland.is/'
+Cypress.Commands.add(
+  'login',
+  ({ cognitoUsername, cognitoPassword, phoneNumber }) => {
+    cy.log('login args:', { cognitoUsername, cognitoPassword, phoneNumber })
+    cy.session([cognitoUsername, cognitoPassword, phoneNumber], () => {
+      if (Cypress.env('testEnvironment') !== 'prod') {
+        cy.session([cognitoUsername, cognitoPassword], () => {
+          cy.visit('/innskraning')
 
-Cypress.Commands.add('ensureLoggedIn', ({cognitoUsername, cognitoPassword, phoneNumber}) => {
-  const args = { username: cognitoUsername, password: cognitoPassword, phoneNumber }
-  cy.session(
-    args,
-    () => {
-      cy.visit('/innskraning')
+          cy.get('form[name="cognitoSignInForm"]').as('cognito')
 
-      cy.get('form[name="cognitoSignInForm"]').as('cognito')
-
-
-      // Cognito sign-in
-      cy.get('@cognito').get('input[id="signInFormUsername"]').filter(':visible').type(args.username)
-      cy.get('@cognito').get('input[id="signInFormPassword"]').filter(':visible').type(args.password)
-      cy.get('@cognito').get('input[name="signInSubmitButton"]').filter(':visible').click()
+          // Cognito sign-in
+          cy.get('@cognito')
+            .get('input[id="signInFormUsername"]')
+            .filter(':visible')
+            .type(cognitoUsername)
+          cy.get('@cognito')
+            .get('input[id="signInFormPassword"]')
+            .filter(':visible')
+            .type(cognitoPassword)
+          cy.get('@cognito')
+            .get('input[name="signInSubmitButton"]')
+            .filter(':visible')
+            .click()
+        })
+      }
 
       // Island.is login
-      cy.contains('Innskráning').find('button').click()
+      cy.visit('/minarsidur')
 
-      cy.origin(authDomain, { args }, ({ username, password }) => {
-        cy.contains('Username').find('input').type(username)
-        cy.contains('Password').find('input').type(password)
-        cy.get('button').contains('Login').click()
+      cy.origin(authDomain, { args: { phoneNumber } }, ({ phoneNumber }) => {
+        cy.get('input[id="phoneUserIdentifier"]').type(phoneNumber)
+        cy.get('button[id="submitPhoneNumber"]').click()
       })
-      cy.url().should('contain', '/home')
-    },
-    {
-      validate() {
-        cy.request('/api/user').its('status').should('eq', 200)
-      },
-    }
-  )
-})
+
+      cy.url().should(
+        'match',
+        new RegExp(`${Cypress.config().baseUrl}/minarsidur/?`),
+      )
+    })
+  },
+)

@@ -1,19 +1,13 @@
-Cypress.config(
-  'baseUrl',
-  `https://beta.${Cypress.env('testEnvironment')}01.devland.is`,
-)
-
 describe('web', () => {
-  before(() => {
-    cy.ensureLoggedIn({
-      Cypresss.env('COGNITO_USERNAME'),
-      Cypresss.env('COGNITO_PASSWORD'),
-      Cypresss.env('PHONE_NUMBER'),
+  beforeEach(() => {
+    cy.login({
+      cognitoUsername: Cypress.env('COGNITO_USERNAME') ?? '',
+      cognitoPassword: Cypress.env('COGNITO_PASSWORD') ?? '',
+      phoneNumber: Cypress.env('PHONE_NUMBER') ?? '',
     })
   })
-  it('should navigate serviceportal', () => {
+  it('test minarsidur', () => {
     cy.visit('/minarsidur/')
-    // TODO: IDS login
-    cy.contains('Skráðu þig inn')
+    cy.contains('Pósthólf')
   })
 })
