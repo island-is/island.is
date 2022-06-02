@@ -13,36 +13,10 @@ import {
   requestHandlers,
 } from './__mock-data__/requestHandlers'
 import { startMocking } from '@island.is/shared/mocking'
-import { createLogger } from 'winston'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { NationalRegistryXRoadService } from '@island.is/api/domains/national-registry-x-road'
 import ResidenceHistory from '../lib/__mock-data__/residenceHistory.json'
-import { ConfigModule, defineConfig, XRoadConfig } from '@island.is/nest/config'
-import * as z from 'zod'
-
-const schema = z.object({
-  xroadBaseUrl: z.string(),
-  xroadClientId: z.string(),
-  secret: z.string(),
-  xroadPathV1: z.string(),
-  xroadPathV2: z.string(),
-})
-
-export const TestDrivingLicenseApiConfig = defineConfig<z.infer<typeof schema>>(
-  {
-    name: 'DrivingLicenseApi',
-    schema,
-    load(env) {
-      return {
-        secret: '',
-        xroadBaseUrl: 'http://localhost',
-        xroadClientId: '',
-        xroadPathV1: 'v1',
-        xroadPathV2: 'v2',
-      }
-    },
-  },
-)
+import { ConfigModule } from '@island.is/nest/config'
 
 startMocking(requestHandlers)
 describe('DrivingLicenseService', () => {
@@ -54,7 +28,7 @@ describe('DrivingLicenseService', () => {
         DrivingLicenseApiModule,
         ConfigModule.forRoot({
           isGlobal: true,
-          load: [TestDrivingLicenseApiConfig],
+          load: [DrivingLicenseApiConfig],
         }),
       ],
       providers: [
@@ -80,7 +54,6 @@ describe('DrivingLicenseService', () => {
 
   describe('Module', () => {
     it('should be defined', () => {
-      // console.log("***********************",DrivingLicenseApiConfig)
       expect(service).toBeTruthy()
     })
   })
@@ -88,7 +61,6 @@ describe('DrivingLicenseService', () => {
   describe('getDrivingLicense', () => {
     it('should return a license', async () => {
       const response = await service.getDrivingLicense(MOCK_NATIONAL_ID)
-      console.log(response)
       expect(response).toMatchObject({
         name: 'Valid Jónsson',
         issued: new Date('2021-05-25T06:43:15.327Z'),
