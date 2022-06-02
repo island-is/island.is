@@ -4,6 +4,9 @@ import { useLocale } from '@island.is/localization'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import React, { FC } from 'react'
 import { useHistory } from 'react-router-dom'
+import { formatDate } from '@island.is/service-portal/core'
+import differenceInMonths from 'date-fns/differenceInMonths'
+import { messages } from '../lib/messages'
 
 interface Props {
   vehicle: VehiclesVehicle
@@ -35,6 +38,23 @@ export const VehicleCard: FC<Props> = ({ vehicle }) => {
       heading={heading}
       headingVariant="h4"
       text={text}
+      tag={
+        vehicle?.nextInspection?.nextInspectionDate
+          ? {
+              label: `${formatMessage(messages.nextAnyInspection)} ${formatDate(
+                vehicle.nextInspection.nextInspectionDate,
+              )}`,
+              variant:
+                differenceInMonths(
+                  new Date(vehicle.nextInspection.nextInspectionDate),
+                  new Date(),
+                ) > 0
+                  ? 'blue'
+                  : 'red',
+              outlined: false,
+            }
+          : undefined
+      }
       cta={{
         label: formatMessage({
           id: 'sp.vehicles:see-info',
