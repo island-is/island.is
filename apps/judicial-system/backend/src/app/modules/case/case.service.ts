@@ -455,7 +455,7 @@ export class CaseService {
         isModifyingRuling: Boolean(theCase.rulingDate),
         courtCaseNumber: theCase.courtCaseNumber,
         courtName: theCase.court?.name?.replace('dómur', 'dómi'),
-        defenderHasAccessToRvg: theCase.defenderNationalId,
+        defenderHasAccessToRvg: Boolean(theCase.defenderNationalId),
         linkStart: `<a href="${this.config.deepLinks.defenderCaseOverviewUrl}${theCase.id}">`,
         linkEnd: '</a>',
         signedVerdictAvailableInS3: rulingUploadedToS3,
