@@ -47,9 +47,7 @@ export class UserTokenController {
   async findOneByNationalId(
     @Param('nationalId')
     nationalId: string,
-  ): Promise<UserProfile|null> {
-    return await this.userProfileService.findByNationalId(
-      nationalId,
-    )
+  ): Promise<UserProfile | null> {
+    return await this.userProfileService.findByNationalId(nationalId)
   }
 }
