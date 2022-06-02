@@ -409,7 +409,7 @@ export const m = defineMessages({
   },
   applicationForDrivingLicense: {
     id: 'dl.application:applicationForDrivingLicense',
-    defaultMessage: 'Umsókn um skírteini',
+    defaultMessage: 'Umsókn um ökuskírteini',
     description: 'Application for driving license',
   },
   eligibilityRequirementTitle: {
