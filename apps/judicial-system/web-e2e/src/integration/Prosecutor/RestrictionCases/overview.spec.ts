@@ -8,6 +8,7 @@ import {
   makeCourt,
   makeProsecutor,
   intercept,
+  Operation,
 } from '../../../utils'
 
 describe(`${STEP_SIX_ROUTE}/:id`, () => {
@@ -95,5 +96,20 @@ describe(`${STEP_SIX_ROUTE}/:id`, () => {
      * way presents itself.
      */
     cy.getByTestid('tdTag').should('contain', 'Krafa móttekin')
+  })
+
+  it('should show an error message if sending a notification failed', () => {
+    const caseData = makeRestrictionCase()
+    const caseDataAddition = {
+      ...caseData,
+      prosecutor: makeProsecutor(),
+      court: makeCourt(),
+    }
+    const forceFail = Operation.SendNotificationMutation
+
+    intercept(caseDataAddition, forceFail)
+
+    cy.getByTestid('continueButton').click()
+    cy.getByTestid('modalErrorMessage').should('exist')
   })
 })
