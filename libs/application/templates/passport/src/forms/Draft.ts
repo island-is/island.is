@@ -12,11 +12,11 @@ import {
   Form,
   FormModes,
   Application,
-  buildCheckboxField,
+  buildCustomField,
 } from '@island.is/application/core'
 import { m } from '../lib/messages'
 import { format as formatKennitala } from 'kennitala'
-import { Services, AUTH_TYPES } from '../lib/constants'
+import { Services, AUTH_TYPES, Service } from '../lib/constants'
 
 export interface DistrictCommissionerAgencies {
   name: string
@@ -180,12 +180,19 @@ export const Draft: Form = buildForm({
               space: 4,
               description: m.dropLocationAuthenticationDescription,
             }),
-            buildCheckboxField({
+            buildRadioField({
               id: 'service.authentication',
-              large: false,
               backgroundColor: 'white',
               title: '',
+              largeButtons: false,
               options: AUTH_TYPES,
+            }),
+            buildCustomField({
+              id: 'service.warning',
+              title: '',
+              component: 'AuthenticationWarning',
+              condition: (answers) =>
+                (answers.service as Service)?.authentication === 'none',
             }),
           ],
         }),

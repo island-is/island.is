@@ -153,6 +153,12 @@ export const m = defineMessages({
       'Veldu þau skilríki sem munu auðkenna þig við afhendingu á vegabréfi. Ef eldra vegabréf er glatað skaltu framvísa persónuskílríki með mynd - ökuskírteini eða nafnskírteini.',
     description: 'Some description',
   },
+  noAuthenticationWarning: {
+    id: 'pp.application:service.dropLocation.authentication.warning',
+    defaultMessage:
+      'Ef þú átt ekki löggild skilríki þarftu að mæta með tvo sjálfráða sannvotta með löggild skilríki til þess að auðkenna þig.',
+    description: 'Some description',
+  },
   timeScheduleSection: {
     id: 'pp.application:timeSchedule.section',
     defaultMessage: 'Tímabókun og Skilríki',

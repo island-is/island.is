@@ -28,3 +28,9 @@ export const AUTH_TYPES = [
 
 export const YES = 'yes'
 export const NO = 'no'
+
+export type Service = {
+  type: Services
+  dropLocation: string
+  authentication: string
+}

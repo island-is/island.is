@@ -1,6 +1,7 @@
 import * as z from 'zod'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { error } from './error'
+import { Services } from './constants'
 
 const nationalIdRegex = /([0-9]){6}-?([0-9]){4}/
 const emailRegex = /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
@@ -24,13 +25,11 @@ export const dataSchema = z.object({
       .min(7)
       .refine((v) => isValidPhoneNumber(v), { params: error.invalidValue }),
   }),
-  /*service: z.object({
-    type: z.enum(['regular', 'express']),
-    dropLocation: z.enum(['1', '2', '3']),
-    extraOptions: z
-      .array(z.union([z.enum(['bringOwnPhoto']), z.undefined()]))
-      .nonempty(),
-  }),*/
+  service: z.object({
+    type: z.enum([Services.REGULAR, Services.EXPRESS]),
+    dropLocation: z.string().nonempty(),
+    authentication: z.string().nonempty(),
+  }),
 })
 
 export type PassportSchema = z.TypeOf<typeof dataSchema>
