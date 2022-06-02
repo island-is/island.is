@@ -70,15 +70,7 @@ export const intercept = (res: Case, forceFail?: Operation) => {
     } else if (hasOperationName(req, Operation.CreatePresignedPostMutation)) {
       req.alias = 'CreatePresignedPostMutation'
       req.reply({
-        data: {
-          createPresignedPost: {
-            url: 'https://example.com',
-            fields: {
-              key: 'value',
-            },
-            __typename: 'PresignedPost',
-          },
-        },
+        fixture: 'createPresignedPostMutationResponse',
       })
     } else if (hasOperationName(req, Operation.CreateFileMutation)) {
       req.alias = 'CreateFileMutation'

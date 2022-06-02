@@ -14,11 +14,11 @@ import {
 
 describe(`${STEP_FIVE_ROUTE}/:id`, () => {
   beforeEach(() => {
-    // cy.stubAPIResponses()
+    cy.stubAPIResponses()
     cy.visit(`${STEP_FIVE_ROUTE}/test_id`)
   })
 
-  it.only('should have a info panel about how to resend a case if the case has been received', () => {
+  it('should upload files to s3', () => {
     const caseData = makeRestrictionCase()
     const caseDataAddition: Case = {
       ...caseData,
