@@ -1,6 +1,17 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
+export class NextInspection {
+  @Field(() => Date, { name: 'nextInspectionDate', nullable: true })
+  nextinspectiondate?: Date
+
+  @Field(() => Date, {
+    name: 'nextInspectionDateIfPassedInspectionToday',
+    nullable: true,
+  })
+  nextinspectiondateIfPassedInspectionToday?: Date
+}
+@ObjectType()
 export class VehiclesVehicle {
   @Field({ nullable: true })
   isCurrent?: boolean
@@ -67,6 +78,9 @@ export class VehiclesVehicle {
 
   @Field({ nullable: true })
   plateStatus?: string
+
+  @Field({ nullable: true })
+  nextInspection?: NextInspection
 }
 
 @ObjectType()
