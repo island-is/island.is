@@ -123,7 +123,7 @@ export const OtherParentApproval: Form = buildForm({
             buildSubmitField({
               id: 'submit',
               title: coreMessages.buttonSubmit,
-              placement: 'footer',
+              placement: 'footer', 
               actions: [
                 {
                   name: coreMessages.buttonReject,
@@ -133,7 +133,7 @@ export const OtherParentApproval: Form = buildForm({
                 {
                   name: coreMessages.buttonApprove,
                   type: 'primary',
-                  event: '',
+                  event: 'APPROVE',
                 },
               ],
             }),
