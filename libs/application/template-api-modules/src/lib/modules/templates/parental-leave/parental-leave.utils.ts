@@ -254,6 +254,7 @@ export const transformApplicationToParentalLeaveDTO = (
     status: 'In Progress',
     rightsCode: getRightsCode(application),
     attachments,
+    testData: 'TRUE'
   }
 }
 

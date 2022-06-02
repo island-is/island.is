@@ -342,6 +342,8 @@ export class ParentalLeaveService {
         },
       )
 
+      console.log('respone set parental leave: ', response)
+
       if (!response.id) {
         throw new Error(
           `Failed to send the parental leave application, no response.id from VMST API: ${response}`,

@@ -368,6 +368,8 @@ components:
           nullable: true
           items:
             $ref: '#/components/schemas/Attachment'
+        testData:
+          type: string
     PaymentInfo:
       type: object
       additionalProperties: false
