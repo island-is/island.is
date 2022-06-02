@@ -14,6 +14,7 @@ import { useLocale } from '@island.is/localization'
 import { Appendixes } from './Appendixes'
 import { MagicTextarea } from './MagicTextarea'
 import { useDraftingState } from '../state/useDraftingState'
+import { cleanTitle } from '@island.is/regulations-tools/cleanTitle'
 
 export const EditBasics = () => {
   const t = useLocale().formatMessage
@@ -80,7 +81,7 @@ export const EditBasics = () => {
             if (pristineTitle) {
               setPristineTitle(false)
             }
-            updateState('title', value)
+            updateState('title', cleanTitle(value))
           }}
           error={
             draft.title.showError && draft.title.error && t(draft.title.error)

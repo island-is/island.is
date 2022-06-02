@@ -176,8 +176,8 @@ export class RegulationsAdminResolver {
 
     return {
       downloadService: true,
-      url: `${this.downloadServiceConfig.baseUrl}/download/v1/regulation/draft/${input.draftId}`,
-      //url: `https://regulationsadmin-deploy-api.dev01.devland.is/download/v1/regulation/draft/${input.draftId}`,
+      //url: `${this.downloadServiceConfig.baseUrl}/download/v1/regulation/draft/${input.draftId}`,
+      url: `https://regulationsadmin-deploy-api.dev01.devland.is/download/v1/regulation/draft/${input.draftId}`,
     }
   }
 

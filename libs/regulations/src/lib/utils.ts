@@ -62,10 +62,10 @@ export const getParams = <K extends string>(
 
 // ---------------------------------------------------------------------------
 
-const domid_prefix = '_' + /*@__PURE__*/ (Date.now() + '-').substr(6)
-let domid_incr = 0
+const domidPrefix = '_' + /*@__PURE__*/ (Date.now() + '-').substr(6)
+let domidIncr = 0
 
-export const domid = () => domid_prefix + domid_incr++
+export const domid = () => domidPrefix + domidIncr++
 
 // ---------------------------------------------------------------------------
 
