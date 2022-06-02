@@ -167,20 +167,6 @@ export const OtherParentApproval: Form = buildForm({
           id: 'final',
           title: coreMessages.thanks,
           description: coreMessages.thanksDescription,
-          condition: (answers) =>
-          new Date(getApplicationAnswers(answers).periods[0].startDate).getTime() > new Date().getTime(),
-        }),
-        buildMultiField({
-          title: '',
-          condition: (answers) =>
-          new Date(getApplicationAnswers(answers).periods[0].startDate).getTime() < new Date().getTime(),
-          children: [
-            buildDescriptionField({
-              id: 'final',
-              title: 'Application not processed',
-              description: 'Parental leave starting date is in the past, please reject this application',
-            }),
-          ],
         }),
       ],
     }),
