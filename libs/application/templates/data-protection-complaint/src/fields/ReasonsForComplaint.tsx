@@ -67,56 +67,56 @@ export const ReasonsForComplaint: FC<FieldBaseProps> = ({
           onSelect,
           type: FieldTypes.CHECKBOX,
           component: FieldComponents.CHECKBOX,
-          defaultValue: [],
           backgroundColor: 'blue',
           children: undefined,
           options: [
             {
-              label: complaint.labels.subjectAuthorities,
+              label: complaint.labels[SubjectOfComplaint.WITH_AUTHORITIES],
               value: SubjectOfComplaint.WITH_AUTHORITIES,
             },
             {
-              label: complaint.labels.subjectLackOfEducation,
+              label: complaint.labels[SubjectOfComplaint.LACK_OF_EDUCATION],
               value: SubjectOfComplaint.LACK_OF_EDUCATION,
             },
             {
-              label: complaint.labels.subjectSocialMedia,
+              label: complaint.labels[SubjectOfComplaint.SOCIAL_MEDIA],
               value: SubjectOfComplaint.SOCIAL_MEDIA,
             },
             {
-              label: complaint.labels.subjectRequestForAccess,
+              label: complaint.labels[SubjectOfComplaint.REQUEST_FOR_ACCESS],
               value: SubjectOfComplaint.REQUEST_FOR_ACCESS,
             },
             {
-              label: complaint.labels.subjectRightOfObjection,
+              label: complaint.labels[SubjectOfComplaint.RIGHTS_OF_OBJECTION],
               value: SubjectOfComplaint.RIGHTS_OF_OBJECTION,
             },
             {
-              label: complaint.labels.subjectEmail,
+              label: complaint.labels[SubjectOfComplaint.EMAIL],
               value: SubjectOfComplaint.EMAIL,
             },
             {
-              label: complaint.labels.subjectNationalId,
+              label: complaint.labels[SubjectOfComplaint.NATIONAL_ID],
               value: SubjectOfComplaint.NATIONAL_ID,
             },
             {
-              label: complaint.labels.subjectEmailInWorkplace,
+              label: complaint.labels[SubjectOfComplaint.EMAIL_IN_WORKPLACE],
               value: SubjectOfComplaint.EMAIL_IN_WORKPLACE,
             },
             {
-              label: complaint.labels.subjectUnauthorizedPublication,
+              label:
+                complaint.labels[SubjectOfComplaint.UNAUTHORIZED_PUBLICATION],
               value: SubjectOfComplaint.UNAUTHORIZED_PUBLICATION,
             },
             {
-              label: complaint.labels.subjectVanskilaskra,
+              label: complaint.labels[SubjectOfComplaint.VANSKILASKRA],
               value: SubjectOfComplaint.VANSKILASKRA,
             },
             {
-              label: complaint.labels.subjectVideoRecording,
+              label: complaint.labels[SubjectOfComplaint.VIDEO_RECORDINGS],
               value: SubjectOfComplaint.VIDEO_RECORDINGS,
             },
             {
-              label: complaint.labels.subjectOtherOther,
+              label: complaint.labels[SubjectOfComplaint.OTHER],
               value: SubjectOfComplaint.OTHER,
             },
           ],
