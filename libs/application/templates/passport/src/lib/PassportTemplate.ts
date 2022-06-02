@@ -9,7 +9,7 @@ import {
   DefaultEvents,
 } from '@island.is/application/core'
 import { dataSchema } from './dataSchema'
-import { Roles, States, Events } from './constants'
+import { Roles, States, Events, ApiActions } from './constants'
 import { Features } from '@island.is/feature-flags'
 import { m } from '../lib/messages'
 
@@ -39,7 +39,7 @@ const PassportTemplate: ApplicationTemplate<
                 ),
               actions: [
                 {
-                  event: DefaultEvents.SUBMIT,
+                  event: DefaultEvents.PAYMENT,
                   name: m.confirm.defaultMessage,
                   type: 'primary',
                 },
@@ -50,9 +50,36 @@ const PassportTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          SUBMIT: {
-            target: States.DONE,
+          [DefaultEvents.PAYMENT]: { target: States.PAYMENT },
+        },
+      },
+      [States.PAYMENT]: {
+        meta: {
+          name: 'Payment state',
+          actionCard: {
+            description: m.payment,
           },
+          progress: 0.9,
+          lifecycle: DefaultStateLifeCycle,
+          onEntry: {
+            apiModuleAction: ApiActions.createCharge,
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/Payment').then((val) =>
+                  Promise.resolve(val.payment),
+                ),
+              actions: [
+                { event: DefaultEvents.SUBMIT, name: 'Panta', type: 'primary' },
+              ],
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: { target: States.DONE },
         },
       },
       [States.DONE]: {

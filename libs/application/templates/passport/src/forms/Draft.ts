@@ -16,19 +16,20 @@ import {
 } from '@island.is/application/core'
 import { m } from '../lib/messages'
 import { format as formatKennitala } from 'kennitala'
-import { Services, AUTH_TYPES, Service } from '../lib/constants'
-
-export interface DistrictCommissionerAgencies {
-  name: string
-  place: string
-  address: string
-  id: string
-}
+import {
+  Services,
+  AUTH_TYPES,
+  Service,
+  DistrictCommissionerAgencies,
+} from '../lib/constants'
+import { DefaultEvents } from '@island.is/application/core'
 
 export const Draft: Form = buildForm({
   id: 'PassportApplicationDraftForm',
   title: m.formName,
   mode: FormModes.APPLYING,
+  renderLastScreenButton: true,
+  renderLastScreenBackButton: true,
   children: [
     buildSection({
       id: 'externalData',
@@ -57,6 +58,11 @@ export const Draft: Form = buildForm({
               type: 'NationalRegistryProvider',
               title: m.dataCollectionNationalRegistryTitle,
               subTitle: m.dataCollectionNationalRegistrySubtitle,
+            }),
+            buildDataProviderItem({
+              id: 'payment',
+              type: 'FeeInfoProvider',
+              title: '',
             }),
           ],
         }),
@@ -130,6 +136,20 @@ export const Draft: Form = buildForm({
           title: m.serviceTitle,
           description: m.serviceType,
           children: [
+            buildSubmitField({
+              id: 'payment',
+              placement: 'footer',
+              title: 'sick',
+              refetchApplicationAfterSubmit: true,
+              actions: [
+                {
+                  event: DefaultEvents.PAYMENT,
+                  name: 'Greiða',
+                  type: 'primary',
+                },
+              ],
+            }),
+
             buildRadioField({
               id: 'service.type',
               title: '',
@@ -195,38 +215,6 @@ export const Draft: Form = buildForm({
                 (answers.service as Service)?.authentication === 'none',
             }),
           ],
-        }),
-      ],
-    }),
-    buildSection({
-      id: 'payment',
-      title: m.paymentSection,
-      children: [
-        buildMultiField({
-          id: 'payment',
-          title: 'Yfirlit yfir greiðslu',
-          children: [
-            /*
-             * TODO Finish payment section when payment connection is ready
-             */
-            buildSubmitField({
-              id: 'submit',
-              placement: 'footer',
-              title: 'sick',
-              actions: [
-                {
-                  event: 'SUBMIT',
-                  name: 'Greiða',
-                  type: 'primary',
-                },
-              ],
-            }),
-          ],
-        }),
-        buildDescriptionField({
-          id: 'final',
-          title: 'Takk',
-          description: 'Umsókn þín er samþykkt',
         }),
       ],
     }),
