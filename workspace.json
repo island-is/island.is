@@ -8166,9 +8166,9 @@
             "jestConfig": "apps/services/contentful-entry-tagger/jest.config.js",
             "passWithNoTests": true
           }
-        }
-      },
-      "docker-express": {}
+        },
+        "docker-express": {}
+      }
     },
     "services-documents": {
       "root": "apps/services/documents",
