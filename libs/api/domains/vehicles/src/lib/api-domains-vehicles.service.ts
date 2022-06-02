@@ -1,6 +1,5 @@
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import includes from 'lodash/includes'
 
 import { Inject, Injectable } from '@nestjs/common'
 import {
