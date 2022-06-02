@@ -15,23 +15,33 @@ import {
   CaseFileState,
 } from '@island.is/judicial-system/types'
 
-export const intercept = (res: Case) => {
+export enum Operation {
+  CaseQuery = 'CaseQuery',
+  RestrictedCaseQuery = 'RestrictedCaseQuery',
+  UploadFileToCourtMutation = 'UploadFileToCourtMutation',
+  UpdateCaseMutation = 'UpdateCaseMutation',
+  SendNotificationMutation = 'SendNotificationMutation',
+  CreatePresignedPostMutation = 'CreatePresignedPostMutation',
+  CreateFileMutation = 'CreateFileMutation',
+}
+
+export const intercept = (res: Case, forceFail?: Operation) => {
   cy.intercept('POST', '**/api/graphql', (req) => {
-    if (hasOperationName(req, 'CaseQuery')) {
+    if (hasOperationName(req, Operation.CaseQuery)) {
       req.alias = 'gqlCaseQuery'
       req.reply({
         data: {
           case: res,
         },
       })
-    } else if (hasOperationName(req, 'RestrictedCaseQuery')) {
+    } else if (hasOperationName(req, Operation.RestrictedCaseQuery)) {
       req.alias = 'gqlCaseQuery'
       req.reply({
         data: {
           restrictedCase: res,
         },
       })
-    } else if (hasOperationName(req, 'UploadFileToCourtMutation')) {
+    } else if (hasOperationName(req, Operation.UploadFileToCourtMutation)) {
       req.alias = 'UploadFileToCourtMutation'
       req.reply({
         data: {
@@ -41,21 +51,34 @@ export const intercept = (res: Case) => {
           },
         },
       })
-    }
-  })
-}
-
-export const interceptUpdateCase = () => {
-  cy.intercept('POST', '**/api/graphql', (req) => {
-    if (hasOperationName(req, 'UpdateCaseMutation')) {
+    } else if (hasOperationName(req, Operation.UpdateCaseMutation)) {
       const { body } = req
+      req.alias = 'UpdateCaseMutation'
       req.reply({
         data: {
           updateCase: { ...body.variables?.input, __typename: 'Case' },
         },
       })
+    } else if (hasOperationName(req, Operation.SendNotificationMutation)) {
+      req.alias = 'SendNotificationMutation'
+      req.reply({
+        fixture:
+          forceFail === Operation.SendNotificationMutation
+            ? 'sendNotificationFailedMutationResponse'
+            : 'sendNotificationMutationResponse',
+      })
+    } else if (hasOperationName(req, Operation.CreatePresignedPostMutation)) {
+      req.alias = 'CreatePresignedPostMutation'
+      req.reply({
+        fixture: 'createPresignedPostMutationResponse',
+      })
+    } else if (hasOperationName(req, Operation.CreateFileMutation)) {
+      req.alias = 'CreateFileMutation'
+      req.reply({
+        fixture: 'createFileMutationResponse',
+      })
     }
-  }).as('UpdateCaseMutation')
+  })
 }
 
 export const hasOperationName = (
@@ -91,7 +114,7 @@ export const aliasMutation = (
 export const investigationCaseAccusedName = `${faker.name.firstName()} ${faker.name.lastName()}`
 export const investigationCaseAccusedAddress = faker.address.streetAddress()
 
-export const makeCustodyCase = (): Case => {
+export const makeRestrictionCase = (): Case => {
   return {
     id: 'test_id',
     created: '2020-09-16T19:50:08.033Z',
@@ -187,7 +210,6 @@ export const makeCaseFile = (
   name = 'test_file_name',
   type = 'pdf',
   state = CaseFileState.STORED_IN_RVG,
-  id = 'test_case_file_id',
   key = 'test_id',
   size = 100,
 ): CaseFile => {

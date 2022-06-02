@@ -4,6 +4,7 @@ import { renderUrls } from './render-urls'
 import { renderSecrets, renderSecretsCommand } from './render-secrets'
 import { ChartName, ChartNames, OpsEnvNames } from '../uber-charts/all-charts'
 import { OpsEnv } from '../dsl/types/input-types'
+import { OpsEnvName } from '../dsl/types/charts'
 
 yargs(process.argv.slice(2))
   .command(
@@ -15,7 +16,9 @@ yargs(process.argv.slice(2))
         .option('chart', { choices: ChartNames, demandOption: true })
     },
     (argv) => {
-      renderEnv(argv.env as OpsEnv, argv.chart as ChartName)
+      process.stdout.write(
+        renderEnv(argv.env as OpsEnv, argv.chart as ChartName),
+      )
     },
   )
   .command(

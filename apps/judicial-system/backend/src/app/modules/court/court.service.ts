@@ -32,6 +32,7 @@ export const subTypes: SubTypes = {
   BODY_SEARCH: 'Leit og líkamsrannsókn',
   // 'Lögmæti rannsóknarathafna',
   RESTRAINING_ORDER: 'Nálgunarbann',
+  EXPULSION_FROM_HOME: 'Nálgunarbann og brottvísun af heimili',
   // 'Réttarstaða afplánunarfanga',
   // 'Réttarstaða gæsluvarðhaldsfanga',
   // 'Rof á reynslulausn',

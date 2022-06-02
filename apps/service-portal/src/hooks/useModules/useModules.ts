@@ -28,11 +28,6 @@ export const useModules = () => {
       }),
     )
 
-    const FEATURE_FLAG_COMPANY_VIEW = await featureFlagClient.getValue(
-      'isServicePortalCompanyViewEnabled',
-      false,
-    )
-
     const filteredModules = Object.entries(modules).reduce(
       (ffModules, [moduleKey, module]) => {
         const index = featureFlaggedModules.indexOf(moduleKey as ModuleKeys)
@@ -43,9 +38,7 @@ export const useModules = () => {
         /**
          * If logged in as a company, only include the company modules.
          */
-        const IS_COMPANY =
-          userInfo?.profile?.subjectType === 'legalEntity' &&
-          FEATURE_FLAG_COMPANY_VIEW
+        const IS_COMPANY = userInfo?.profile?.subjectType === 'legalEntity'
         if (IS_COMPANY && !companyModules.includes(moduleKey as ModuleKeys)) {
           return ffModules
         }

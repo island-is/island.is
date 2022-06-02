@@ -9,7 +9,6 @@ import * as Sentry from '@sentry/node'
 import { Toast, ErrorBoundary, AppLayout, AuthProvider } from '../components'
 import { appWithTranslation } from '../i18n'
 import { isAuthenticated } from '../auth/utils'
-import { withHealthchecks } from '../utils/Healthchecks/withHealthchecks'
 import router from 'next/router'
 import { userMonitoring } from '@island.is/user-monitoring'
 
@@ -125,10 +124,4 @@ SupportApplication.getInitialProps = async (appContext) => {
   }
 }
 
-const { serverRuntimeConfig } = getConfig()
-const { graphqlEndpoint, apiUrl } = serverRuntimeConfig
-const externalEndpointDependencies = [graphqlEndpoint, apiUrl]
-
-export default appWithTranslation(
-  withHealthchecks(externalEndpointDependencies)(SupportApplication),
-)
+export default appWithTranslation(SupportApplication)

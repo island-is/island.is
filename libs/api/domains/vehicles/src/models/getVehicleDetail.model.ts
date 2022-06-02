@@ -14,8 +14,17 @@ export class VehiclesMainInfo {
   @Field(() => Number, { nullable: true })
   year?: number | null // modelYear || currentYear ?? null
 
-  @Field(() => String, { nullable: true })
-  co2?: string | null // ??
+  @Field(() => Number, { nullable: true })
+  co2?: number | null // NEDC
+
+  @Field(() => Number, { nullable: true })
+  weightedCo2?: number | null // Weighted NEDC
+
+  @Field(() => Number, { nullable: true })
+  co2Wltp?: number | null // WLTP
+
+  @Field(() => Number, { nullable: true })
+  weightedCo2Wltp?: number | null // Weighted WLTP
 
   @Field(() => Number, { nullable: true })
   cubicCapacity?: number | null // Slagrými ?? technical -> capacity
@@ -34,6 +43,24 @@ export class VehiclesAxle {
 
   @Field(() => String, { nullable: true })
   wheelAxle?: string | null // technical -> axle -> `wheelaxle${i}`
+}
+
+@ObjectType()
+export class Tyres {
+  @Field(() => String, { nullable: true })
+  axle1?: string | null // technical -> tyre -> `tyreaxle1`
+
+  @Field(() => String, { nullable: true })
+  axle2?: string | null // technical -> tyre -> `tyreaxle2`
+
+  @Field(() => String, { nullable: true })
+  axle3?: string | null // technical -> tyre -> `tyreaxle3`
+
+  @Field(() => String, { nullable: true })
+  axle4?: string | null // technical -> tyre -> `tyreaxle4`
+
+  @Field(() => String, { nullable: true })
+  axle5?: string | null // technical -> tyre -> `tyreaxle5`
 }
 
 @ObjectType()
@@ -81,6 +108,9 @@ export class VehiclesRegistrationInfo {
   newRegistrationDate?: string | null // newregdate
 
   @Field(() => String, { nullable: true })
+  specialName?: string | null // Sérheiti - speccom
+
+  @Field(() => String, { nullable: true })
   vehicleGroup?: string | null // technical -> vehgroup // ökutækisflokkur
 
   @Field(() => String, { nullable: true })
@@ -88,6 +118,15 @@ export class VehiclesRegistrationInfo {
 
   @Field(() => String, { nullable: true })
   reggroup?: string | null // Skráningarflokkur // plates -> reggroup
+
+  @Field(() => String, { nullable: true })
+  reggroupName?: string | null // Skráningarflokkur // plates -> reggroupname
+
+  @Field(() => String, { nullable: true })
+  plateLocation?: string | null // Geymslustaður plötu
+
+  @Field(() => String, { nullable: true })
+  plateStatus?: string | null // platestatus
 
   @Field(() => Number, { nullable: true })
   passengers?: number | null
@@ -135,13 +174,22 @@ export class VehiclesInspectionInfo {
   result?: string | null // inspections[0] -> result
 
   @Field(() => String, { nullable: true })
-  plateStatus?: string | null // platestatus
-
-  @Field(() => String, { nullable: true })
   nextInspectionDate?: string | null // nextinspectiondate
 
   @Field(() => String, { nullable: true })
   lastInspectionDate?: string | null // inspections[1] -> date // EF LENGTH > 1
+
+  @Field(() => Boolean, { nullable: true })
+  insuranceStatus?: boolean | null
+
+  @Field(() => Number, { nullable: true })
+  mortages?: number | null
+
+  @Field(() => Number, { nullable: true })
+  carTax?: number | null
+
+  @Field(() => Number, { nullable: true })
+  inspectionFine?: number | null
 }
 
 @ObjectType()
@@ -156,7 +204,7 @@ export class VehiclesTechnicalInfo {
   cubicCapacity?: number | null // technical -> capacity
 
   @Field(() => Number, { nullable: true })
-  capacityWeight?: number | null // technical -> mass -> masscapacity
+  capacityWeight?: number | null // technical -> mass -> massofcomb (þyngd vagnlestar)
 
   @Field(() => Number, { nullable: true })
   length?: number | null // technical -> size -> length
@@ -170,8 +218,8 @@ export class VehiclesTechnicalInfo {
   @Field(() => Number, { nullable: true })
   trailerWithoutBrakesWeight?: number | null // technical -> tMassoftrunbr
 
-  @Field(() => String, { nullable: true })
-  horsepower?: string | null // ?? HÖ
+  @Field(() => Number, { nullable: true })
+  horsepower?: number | null // maxNetPower * 1.359622 // Metric horsepower (hp(M))
 
   @Field(() => Number, { nullable: true })
   trailerWithBrakesWeight?: number | null // technical -> mass -> tMassoftrbr
@@ -183,7 +231,10 @@ export class VehiclesTechnicalInfo {
   axleTotalWeight?: number | null // technical -> mass -> // massmaxle1 + massmaxle2 + massmaxle3 + massmaxle4 + massmaxle5
 
   @Field(() => [VehiclesAxle], { nullable: true })
-  axle?: VehiclesAxle[] // smíða
+  axles?: VehiclesAxle[]
+
+  @Field(() => Tyres, { nullable: true })
+  tyres?: Tyres
 }
 
 @ObjectType()

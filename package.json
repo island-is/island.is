@@ -1,6 +1,6 @@
 {
   "name": "island.is",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "license": "MIT",
   "engines": {
     "npm": "please-use-yarn",
@@ -57,6 +57,7 @@
     "@aws-sdk/credential-provider-node": "3.49.0",
     "@contentful/forma-36-react-components": "3.78.4",
     "@contentful/forma-36-tokens": "0.10.1",
+    "@contentful/node-apps-toolkit": "2.0.2",
     "@contentful/rich-text-react-renderer": "13.4.0",
     "@contentful/rich-text-types": "14.1.0",
     "@datadog/browser-rum": "3.8.0",
@@ -375,6 +376,7 @@
     "csstype": "2.6.13",
     "csv-parse": "4.16.0",
     "cypress": "9.6",
+    "cypress-file-upload": "5.0.8",
     "dotenv": "14.3.2",
     "esbuild": "0.12.1",
     "eslint": "7.21.0",

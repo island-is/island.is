@@ -13,7 +13,6 @@ import { ComplainedFor } from './ComplainedFor'
 import { ComplaintInformation } from './ComplaintInformation'
 import { yesNoMessageMapper } from '../../utils'
 import { OmbudsmanComplaintTypeEnum } from '../../shared'
-import upperCase from 'lodash/upperCase'
 import { DocumentCard } from '../components'
 import { useLocale } from '@island.is/localization'
 
@@ -41,11 +40,6 @@ export const ComplaintOverview: FC<Props> = ({
 
   const complaintIsAboutDecision =
     complaintType === OmbudsmanComplaintTypeEnum.DECISION
-
-  const attachmentsText =
-    documents && documents.length > 0
-      ? documents?.map((x) => x.name).join(', ')
-      : complaintOverview.general.noAttachments
 
   return (
     <Box component="section" paddingTop={6}>
