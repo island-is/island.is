@@ -24,12 +24,12 @@ const IncomeForm = ({ field, errors, application }: FAFieldBaseProps) => {
           defaultValue={answers[field.id as keyof OverrideAnswerSchema]}
           options={[
             {
-              value: ApproveOptions.No,
-              label: formatMessage(approveOptions.no),
+              value: ApproveOptions.Yes,
+              label: formatMessage(incomeForm.options.yes),
             },
             {
-              value: ApproveOptions.Yes,
-              label: formatMessage(approveOptions.yes),
+              value: ApproveOptions.No,
+              label: formatMessage(incomeForm.options.no),
             },
           ]}
           largeButtons

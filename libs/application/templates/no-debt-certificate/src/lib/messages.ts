@@ -193,9 +193,15 @@ export const m = defineMessages({
     defaultMessage: 'Reyna aftur',
     description: '',
   },
-  missingCertificate: {
-    id: 'ndc.application:missingCertificate',
+  missingCertificateTitle: {
+    id: 'ndc.application:missingCertificateTitle',
     defaultMessage: 'Ekki tókst að staðfesta skuldleysi',
+    description: '',
+  },
+  missingCertificateSummary: {
+    id: 'ndc.application:missingCertificateSummary',
+    defaultMessage:
+      'Staðfesting á skuldleysi fékkst ekki úr gagnagrunni Fjársýslu ríkisins',
     description: '',
   },
 })
