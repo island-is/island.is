@@ -5,13 +5,13 @@
 declare namespace Cypress {
   interface Chainable {
     /**
-     * Custom command to log in using cognito
-     * @example cy.loginViaCognito()
+     * Custom command to log in using cognito and island.is SSO
+     * @example cy.login()
      */
     login({
       cognitoUsername: string,
       cognitoPassword: string,
       phoneNumber: string,
-    }): Chainable<Element>
+    }): Chainable<void>
   }
 }
