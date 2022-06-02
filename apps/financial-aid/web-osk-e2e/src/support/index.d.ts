@@ -13,6 +13,6 @@ declare namespace Cypress {
      * Custom command to get by test-id
      * @example cy.getByTestId('some-testId')
      */
-    getByTestId(selector: string): Chainable<Element>
+    getByTestId(selector: string): Chainable<JQuery<Element>>
   }
 }
