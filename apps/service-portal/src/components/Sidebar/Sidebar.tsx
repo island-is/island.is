@@ -50,9 +50,7 @@ export const Sidebar: FC<{}> = () => {
         display="flex"
         flexDirection="column"
         justifyContent="flexStart"
-        marginBottom={3}
         paddingLeft={collapsed ? 6 : 0}
-        paddingBottom={collapsed ? 6 : 3}
         paddingRight={collapsed ? 6 : 0}
         paddingTop={3}
       >

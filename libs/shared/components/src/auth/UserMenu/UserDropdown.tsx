@@ -62,6 +62,7 @@ export const UserDropdown = ({
     skip: !showDelegations,
     errorPolicy: 'all', // Return partial data, ignoring failed national registry lookups.
   })
+
   const hasDelegationsData = data && data.authActorDelegations?.length > 0
   const [isMobile, setIsMobile] = useState(false)
   const { width } = useWindowSize()
@@ -106,9 +107,6 @@ export const UserDropdown = ({
             alignItems="center"
             paddingBottom={3}
           >
-            {/* Check if actor is company - display company icon
-             * kennitala function is buggy - temp removal
-             */}
             {isDelegationCompany ? (
               <Box
                 borderRadius="circle"

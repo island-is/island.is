@@ -4,14 +4,15 @@ import * as styles from './NavItem.css'
 import { useStore } from '../../../store/stateProvider'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
-import { sharedMessages } from '@island.is/shared/translations'
-import { useLocale } from '@island.is/localization'
+import { sharedMessages, sharedNamespace } from '@island.is/shared/translations'
+import { useLocale, useNamespaces } from '@island.is/localization'
 
 interface Props {
   onClick?: () => void
 }
 
 const LogOutItem = ({ onClick }: Props) => {
+  useNamespaces(sharedNamespace)
   const { formatMessage } = useLocale()
   const [{ sidebarState }] = useStore()
   const [hover, setHover] = useState(false)

@@ -12,15 +12,16 @@ export const accessControlModule: ServicePortalModule = {
   name: 'Aðgangsstýring',
   widgets: () => [],
   routes: ({ userInfo }) => {
+    const isCompany = userInfo.profile.subjectType === 'legalEntity'
+    const isDelegation = Boolean(userInfo.profile.actor)
     const routes: ServicePortalRoute[] = [
       {
         name: m.accessControl,
         path: ServicePortalPath.SettingsAccessControl,
         enabled:
-          userInfo.profile.subjectType === 'legalEntity' ||
-          !userInfo.profile.actor
-            ? userInfo.scopes.includes(AuthScope.writeDelegations)
-            : false,
+          isCompany || isDelegation
+            ? false
+            : userInfo.scopes.includes(AuthScope.writeDelegations),
         render: () => lazy(() => import('./screens/AccessControl')),
       },
       {
