@@ -71,22 +71,6 @@ const ModuleNavigation: FC<Props> = ({ nav, onItemClick, badge }) => {
           />
         </SubNavModal>
       )}
-      {nav.heading && (
-        <Text
-          variant="eyebrow"
-          color="blue400"
-          fontWeight="semiBold"
-          marginBottom={2}
-          marginTop={2}
-        >
-          {formatMessage(nav.heading)}
-        </Text>
-      )}
-      {nav.divider && (
-        <Box paddingBottom={3}>
-          <Divider />
-        </Box>
-      )}
       <NavItem
         path={nav.path}
         icon={nav.icon}

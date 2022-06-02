@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from 'react'
-import { Box, Stack, Logo, Icon } from '@island.is/island-ui/core'
+import { Box, Stack, Logo, Icon, Button } from '@island.is/island-ui/core'
 import { ActionType } from '../../store/actions'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import { Link } from 'react-router-dom'
@@ -11,12 +11,15 @@ import cn from 'classnames'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
 import { useListDocuments } from '@island.is/service-portal/graphql'
+import { useAuth } from '@island.is/auth/react'
+import LogOutItem from './NavItem/LogOutItem'
 
 export const Sidebar: FC<{}> = () => {
   const navigation = useNavigation()
   const [{ sidebarState }, dispatch] = useStore()
   const [collapsed, setCollapsed] = useState(sidebarState === 'closed')
   const { width } = useWindowSize()
+  const { signOut } = useAuth()
   const isTablet = width < theme.breakpoints.lg && width >= theme.breakpoints.md
   const isMobile = width < theme.breakpoints.md
   const { unreadCounter } = useListDocuments('')
@@ -93,6 +96,7 @@ export const Sidebar: FC<{}> = () => {
             />
           </Box>
         </Box>
+
         {navigation.map((rootItem, rootIndex) => (
           <Stack space={1} key={rootIndex}>
             {rootItem.children?.map(
@@ -111,6 +115,9 @@ export const Sidebar: FC<{}> = () => {
           </Stack>
         ))}
       </Box>
+      <Stack space={1}>
+        <LogOutItem onClick={() => signOut()} />
+      </Stack>
     </aside>
   )
 }

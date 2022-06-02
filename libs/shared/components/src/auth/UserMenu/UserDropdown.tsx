@@ -109,22 +109,20 @@ export const UserDropdown = ({
             {/* Check if actor is company - display company icon
              * kennitala function is buggy - temp removal
              */}
-            {/* {isDelegationCompany ? (
-            <Box
-              borderRadius="circle"
-              background="blue100"
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-              className={styles.companyIconSize}
+            {isDelegationCompany ? (
+              <Box
+                borderRadius="circle"
+                background="blue100"
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                className={styles.companyIconSize}
               >
-              <Icon icon="business" type="filled" color="blue400" />
+                <Icon icon="business" type="filled" color="blue400" />
               </Box>
-              ) : (
-                <UserAvatar username={isDelegation ? actorName : userName} />
-          )} */}
-            <UserAvatar username={isDelegation ? actorName : userName} />
-
+            ) : (
+              <UserAvatar username={isDelegation ? actorName : userName} />
+            )}
             <Box marginLeft={1} marginRight={4}>
               <Text variant="h4" as="h4">
                 {userName}
@@ -132,7 +130,6 @@ export const UserDropdown = ({
               {isDelegation && <Text variant="small">{actorName}</Text>}
             </Box>
           </Box>
-          {/* <Divider /> */}
           {showDropdownLanguage && (
             <Hidden above="sm">
               {<UserLanguageSwitcher user={user} dropdown />}
@@ -152,25 +149,9 @@ export const UserDropdown = ({
           {/* End of user delegations */}
           {/* User settings */}
           {(!isDelegation || isDelegationCompany) && showDelegations && (
-            <>
-              <UserProfileInfo
-                isCompany={isDelegationCompany}
-                onClick={() => onClose()}
-              />
-              <Divider />
-            </>
+            <UserProfileInfo onClick={() => onClose()} />
           )}
           {/* End of user settings */}
-
-          {/* Logout */}
-          <Box paddingTop={[1, 2]}>
-            <UserDropdownItem
-              text={formatMessage(sharedMessages.logout)}
-              icon={{ type: 'outline', icon: 'logOut' }}
-              onClick={onLogout}
-            />
-          </Box>
-          {/* End of Logout */}
         </Box>
         <Hidden below="md">{closeButton}</Hidden>
       </Box>

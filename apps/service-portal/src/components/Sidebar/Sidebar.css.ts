@@ -16,6 +16,10 @@ export const sidebar = style({
   background: theme.color.white,
   transition: 'all 250ms ease-in-out',
   width: SERVICE_PORTAL_SIDEBAR_WIDTH,
+  display: 'flex',
+  justifyContent: 'space-between',
+  flexDirection: 'column',
+  paddingBottom: theme.spacing['3'],
 })
 export const collapsed = style({
   width: SERVICE_PORTAL_SIDEBAR_WIDTH_COLLAPSED,

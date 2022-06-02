@@ -16,7 +16,11 @@ export const accessControlModule: ServicePortalModule = {
       {
         name: m.accessControl,
         path: ServicePortalPath.SettingsAccessControl,
-        enabled: userInfo.scopes.includes(AuthScope.writeDelegations),
+        enabled:
+          userInfo.profile.subjectType === 'legalEntity' ||
+          !userInfo.profile.actor
+            ? userInfo.scopes.includes(AuthScope.writeDelegations)
+            : false,
         render: () => lazy(() => import('./screens/AccessControl')),
       },
       {
