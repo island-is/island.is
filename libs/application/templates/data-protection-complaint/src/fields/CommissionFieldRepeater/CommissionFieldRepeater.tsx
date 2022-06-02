@@ -5,7 +5,6 @@ import {
   formatText,
   getErrorViaPath,
 } from '@island.is/application/core'
-import get from 'lodash/get'
 import { InputController } from '@island.is/shared/form-fields'
 import {
   Box,

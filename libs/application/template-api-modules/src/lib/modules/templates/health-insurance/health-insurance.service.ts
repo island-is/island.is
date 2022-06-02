@@ -23,7 +23,7 @@ export class HealthInsuranceService {
       const applyInputs = transformApplicationToHealthInsuranceDTO(application)
       logger.info(`Finished transform Application to Health Insurance DTO`)
 
-      const res = await this.healthInsuranceAPI.applyInsurance(
+      await this.healthInsuranceAPI.applyInsurance(
         570,
         applyInputs.attachmentNames,
         applyInputs.vistaskjal,

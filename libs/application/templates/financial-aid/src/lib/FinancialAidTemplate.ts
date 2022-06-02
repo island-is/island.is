@@ -112,6 +112,7 @@ const FinancialAidTemplate: ApplicationTemplate<
                   'bankInfo',
                   'contactInfo',
                   'formComment',
+                  'spouseEmailSuccess',
                 ],
               },
             },
@@ -184,6 +185,7 @@ const FinancialAidTemplate: ApplicationTemplate<
                   'spouseTaxReturnFiles',
                   'spouseContactInfo',
                   'spouseFormComment',
+                  'spouseName',
                 ],
               },
             },
@@ -248,9 +250,6 @@ const FinancialAidTemplate: ApplicationTemplate<
                 import('../forms/MuncipalityNotRegistered').then((module) =>
                   Promise.resolve(module.MuncipalityNotRegistered),
                 ),
-              write: {
-                externalData: ['nationalRegistry'],
-              },
               read: {
                 externalData: ['nationalRegistry'],
               },

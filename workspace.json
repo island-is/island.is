@@ -2559,6 +2559,40 @@
         }
       }
     },
+    "application-templates-financial-statements-inao": {
+      "root": "libs/application/templates/financial-statements-inao",
+      "sourceRoot": "libs/application/templates/financial-statements-inao/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/financial-statements-inao/tsconfig.lib.json",
+              "libs/application/templates/financial-statements-inao/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/financial-statements-inao/**/*"
+            ]
+          }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/financial-statements-inao/src/lib/messages.ts"
+          }
+        },
+        "schemas/codegen": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "graphql-codegen --config libs/application/templates/financial-statements-inao/codegen.yml"
+          }
+        }
+      }
+    },
     "application-templates-funding-government-projects": {
       "root": "libs/application/templates/funding-government-projects",
       "sourceRoot": "libs/application/templates/funding-government-projects/src",
@@ -8083,6 +8117,54 @@
           "options": {
             "outputPath": "apps/services/auth-public-api/src/openapi.yaml",
             "command": "yarn ts-node -P apps/services/auth-public-api/tsconfig.app.json apps/services/auth-public-api/src/buildOpenApi.ts"
+          }
+        },
+        "docker-express": {}
+      }
+    },
+    "services-contentful-entry-tagger": {
+      "root": "apps/services/contentful-entry-tagger",
+      "sourceRoot": "apps/services/contentful-entry-tagger/src",
+      "projectType": "application",
+      "prefix": "services-contentful-entry-tagger",
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/apps/services/contentful-entry-tagger",
+            "main": "apps/services/contentful-entry-tagger/src/main.ts",
+            "tsConfig": "apps/services/contentful-entry-tagger/tsconfig.app.json",
+            "assets": ["apps/services/contentful-entry-tagger/src/assets"]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "services-contentful-entry-tagger:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "apps/services/contentful-entry-tagger/**/*.ts"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/apps/services/contentful-entry-tagger"],
+          "options": {
+            "jestConfig": "apps/services/contentful-entry-tagger/jest.config.js",
+            "passWithNoTests": true
           }
         },
         "docker-express": {}

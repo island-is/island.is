@@ -23,6 +23,7 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
     cssVariables,
     namespaceKey,
     onLoad,
+    pushUp = false,
   } = props
 
   const { data } = useQuery<Query, QueryGetNamespaceArgs>(GET_NAMESPACE_QUERY, {
@@ -90,6 +91,7 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
       text={n('chatBubbleText', 'Hæ, get ég aðstoðað?')}
       isVisible={isButtonVisible}
       onClick={watsonInstance.current?.openWindow}
+      pushUp={pushUp}
     />
   )
 }
