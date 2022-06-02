@@ -838,7 +838,10 @@ export const ParentalLeaveForm: Form = buildForm({
     buildSection({
       title: '',
       condition: (answers) =>
-         getApplicationAnswers(answers).periods.length > 0 && new Date(getApplicationAnswers(answers).periods[0].startDate).getTime() < currentDateStartTime(),
+        getApplicationAnswers(answers).periods.length > 0 &&
+        new Date(
+          getApplicationAnswers(answers).periods[0].startDate,
+        ).getTime() < currentDateStartTime(),
       children: [
         buildSubmitField({
           id: 'reject',
@@ -851,13 +854,16 @@ export const ParentalLeaveForm: Form = buildForm({
     buildSection({
       title: '',
       condition: (answers) =>
-      getApplicationAnswers(answers).periods.length > 0 && new Date(getApplicationAnswers(answers).periods[0].startDate).getTime() >= currentDateStartTime(),
+        getApplicationAnswers(answers).periods.length > 0 &&
+        new Date(
+          getApplicationAnswers(answers).periods[0].startDate,
+        ).getTime() >= currentDateStartTime(),
       children: [
         buildCustomField({
           id: 'thankYou',
           title: parentalLeaveFormMessages.finalScreen.title,
           component: 'Conclusion',
-        }),        
+        }),
       ],
     }),
   ],

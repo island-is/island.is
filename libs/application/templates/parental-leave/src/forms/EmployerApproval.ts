@@ -14,7 +14,11 @@ import {
 } from '@island.is/application/core'
 
 import Logo from '../assets/Logo'
-import { employerFormMessages, otherParentApprovalFormMessages, parentalLeaveFormMessages } from '../lib/messages'
+import {
+  employerFormMessages,
+  otherParentApprovalFormMessages,
+  parentalLeaveFormMessages,
+} from '../lib/messages'
 import { currentDateStartTime } from '../lib/parentalLeaveTemplateUtils'
 import { getApplicationAnswers } from '../lib/parentalLeaveUtils'
 
@@ -72,9 +76,12 @@ export const EmployerApproval: Form = buildForm({
                   id: 'final',
                   title: otherParentApprovalFormMessages.warning,
                   titleVariant: 'h4',
-                  description: otherParentApprovalFormMessages.startDateInThePast,
+                  description:
+                    otherParentApprovalFormMessages.startDateInThePast,
                   condition: (answers) =>
-                    new Date(getApplicationAnswers(answers).periods[0].startDate).getTime() < currentDateStartTime(),
+                    new Date(
+                      getApplicationAnswers(answers).periods[0].startDate,
+                    ).getTime() < currentDateStartTime(),
                 }),
                 buildSubmitField({
                   id: 'submit',
@@ -100,7 +107,9 @@ export const EmployerApproval: Form = buildForm({
         buildSubSection({
           title: '',
           condition: (answers) =>
-          new Date(getApplicationAnswers(answers).periods[0].startDate).getTime() < currentDateStartTime(),
+            new Date(
+              getApplicationAnswers(answers).periods[0].startDate,
+            ).getTime() < currentDateStartTime(),
           children: [
             buildSubmitField({
               id: 'reject',
@@ -113,7 +122,9 @@ export const EmployerApproval: Form = buildForm({
         buildSubSection({
           title: '',
           condition: (answers) =>
-          new Date(getApplicationAnswers(answers).periods[0].startDate).getTime() >= currentDateStartTime(),
+            new Date(
+              getApplicationAnswers(answers).periods[0].startDate,
+            ).getTime() >= currentDateStartTime(),
           children: [
             buildDescriptionField({
               id: 'final.approve',

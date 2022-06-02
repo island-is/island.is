@@ -1610,8 +1610,10 @@ export const otherParentApprovalFormMessages = defineMessages({
   },
   startDateInThePast: {
     id: 'pl.application:otherParent.start.date.in.the.past',
-    defaultMessage: 'icel-trans: "Application will not be processsed! Parental leave starting date has already passed!"',
-    description: 'Application will not be processsed! Parental leave starting date has already passed!',
+    defaultMessage:
+      'icel-trans: "Application will not be processsed! Parental leave starting date has already passed!"',
+    description:
+      'Application will not be processsed! Parental leave starting date has already passed!',
   },
 })
 
@@ -1859,9 +1861,9 @@ export const errorMessages = defineMessages({
   },
   startDateInThePast: {
     id: 'pl.application:errors.start.date.in.the.past',
-    defaultMessage: 'icel-trans: "Start date is in the past. The form will not be sent!"',
-    description:
-      'Start date is in the past. The form will not be sent!',
+    defaultMessage:
+      'icel-trans: "Start date is in the past. The form will not be sent!"',
+    description: 'Start date is in the past. The form will not be sent!',
   },
 })
 

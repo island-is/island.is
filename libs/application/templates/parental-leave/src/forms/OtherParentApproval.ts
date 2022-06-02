@@ -14,7 +14,10 @@ import {
 
 import Logo from '../assets/Logo'
 import { YES } from '../constants'
-import { otherParentApprovalFormMessages, parentalLeaveFormMessages } from '../lib/messages'
+import {
+  otherParentApprovalFormMessages,
+  parentalLeaveFormMessages,
+} from '../lib/messages'
 import { currentDateStartTime } from '../lib/parentalLeaveTemplateUtils'
 import { getApplicationAnswers } from '../lib/parentalLeaveUtils'
 import { YesOrNo } from '../types'
@@ -113,7 +116,9 @@ export const OtherParentApproval: Form = buildForm({
               titleVariant: 'h4',
               description: otherParentApprovalFormMessages.startDateInThePast,
               condition: (answers) =>
-                new Date(getApplicationAnswers(answers).periods[0].startDate).getTime() < currentDateStartTime(),
+                new Date(
+                  getApplicationAnswers(answers).periods[0].startDate,
+                ).getTime() < currentDateStartTime(),
             }),
             buildSubmitField({
               id: 'submit',
@@ -139,7 +144,9 @@ export const OtherParentApproval: Form = buildForm({
     buildSection({
       title: '',
       condition: (answers) =>
-      new Date(getApplicationAnswers(answers).periods[0].startDate).getTime() < currentDateStartTime(),
+        new Date(
+          getApplicationAnswers(answers).periods[0].startDate,
+        ).getTime() < currentDateStartTime(),
       children: [
         buildSubmitField({
           id: 'reject',
@@ -152,7 +159,9 @@ export const OtherParentApproval: Form = buildForm({
     buildSection({
       title: '',
       condition: (answers) =>
-      new Date(getApplicationAnswers(answers).periods[0].startDate).getTime() >= currentDateStartTime(),
+        new Date(
+          getApplicationAnswers(answers).periods[0].startDate,
+        ).getTime() >= currentDateStartTime(),
       children: [
         buildDescriptionField({
           id: 'final',

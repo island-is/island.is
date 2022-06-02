@@ -913,7 +913,11 @@ export const Review: FC<ReviewScreenProps> = ({
         isLast={true}
       >
         <SummaryTimeline application={application} />
-        {new Date(periods[0].startDate).getTime() < currentDateStartTime() && <p style={{color: '#B30038', fontSize: '14px', fontWeight: '500'}}>{formatMessage(errorMessages.startDateInThePast)}</p>}
+        {new Date(periods[0].startDate).getTime() < currentDateStartTime() && (
+          <p style={{ color: '#B30038', fontSize: '14px', fontWeight: '500' }}>
+            {formatMessage(errorMessages.startDateInThePast)}
+          </p>
+        )}
       </ReviewGroup>
 
       {/**
