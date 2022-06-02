@@ -16,28 +16,43 @@ import {
   ReactSelectOption,
 } from '@island.is/judicial-system-web/src/types'
 import {
+  BlueBox,
+  CaseInfo,
+  FormContentContainer,
+  FormFooter,
   Modal,
   PageLayout,
 } from '@island.is/judicial-system-web/src/components'
-import { setAndSendToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
+import {
+  removeTabsValidateAndSet,
+  setAndSendDateToServer,
+  setAndSendToServer,
+  validateAndSendToServer,
+} from '@island.is/judicial-system-web/src/utils/formHelper'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
+import { Box, Input, Text, Checkbox } from '@island.is/island-ui/core'
 import {
   useCase,
   useInstitution,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
+  errors,
   rcRequestedHearingArrangements,
   titles,
 } from '@island.is/judicial-system-web/messages'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { isHearingArrangementsStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import type { User } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system/consts'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 
-import StepTwoForm from './StepTwoForm'
+import SelectCourt from '../../SharedComponents/SelectCourt/SelectCourt'
+import ArrestDate from './ArrestDate'
+import RequestCourtDate from '../../SharedComponents/RequestCourtDate/RequestCourtDate'
+import SelectProsecutor from '../../SharedComponents/SelectProsecutor/SelectProsecutor'
 
-export const StepTwo: React.FC = () => {
+export const HearingArrangements: React.FC = () => {
   const router = useRouter()
   const { formatMessage } = useIntl()
   const {
@@ -57,6 +72,7 @@ export const StepTwo: React.FC = () => {
   const {
     sendNotification,
     isSendingNotification,
+    sendNotificationError,
     transitionCase,
     isTransitioningCase,
     updateCase,
@@ -175,17 +191,138 @@ export const StepTwo: React.FC = () => {
       />
       {prosecutors && !institutionLoading ? (
         <>
-          <StepTwoForm
-            workingCase={workingCase}
-            setWorkingCase={setWorkingCase}
-            prosecutors={prosecutors}
-            courts={courts}
-            handleNextButtonClick={handleNextButtonClick}
-            transitionLoading={isTransitioningCase}
-            user={user}
-            onProsecutorChange={handleProsecutorChange}
-            onCourtChange={handleCourtChange}
-          />
+          <FormContentContainer>
+            <Box marginBottom={7}>
+              <Text as="h1" variant="h1">
+                {formatMessage(rcRequestedHearingArrangements.heading)}
+              </Text>
+            </Box>
+            <Box component="section" marginBottom={7}>
+              <CaseInfo workingCase={workingCase} userRole={user?.role} />
+            </Box>
+            <Box component="section" marginBottom={5}>
+              <BlueBox>
+                <Box marginBottom={2}>
+                  <SelectProsecutor
+                    workingCase={workingCase}
+                    prosecutors={prosecutors}
+                    onChange={handleProsecutorChange}
+                  />
+                </Box>
+                <Checkbox
+                  name="isHeightenedSecurityLevel"
+                  label={formatMessage(
+                    rcRequestedHearingArrangements.sections.prosecutor
+                      .heightenSecurityLevelLabel,
+                  )}
+                  tooltip={formatMessage(
+                    rcRequestedHearingArrangements.sections.prosecutor
+                      .heightenSecurityLevelInfo,
+                  )}
+                  disabled={
+                    user?.id !== workingCase.creatingProsecutor?.id &&
+                    user?.id !==
+                      (((workingCase as unknown) as { prosecutorId: string })
+                        .prosecutorId ?? workingCase.prosecutor?.id)
+                  }
+                  checked={workingCase.isHeightenedSecurityLevel}
+                  onChange={(event) =>
+                    setAndSendToServer(
+                      'isHeightenedSecurityLevel',
+                      event.target.checked,
+                      workingCase,
+                      setWorkingCase,
+                      updateCase,
+                    )
+                  }
+                  large
+                  filled
+                />
+              </BlueBox>
+            </Box>
+            <Box component="section" marginBottom={5}>
+              <SelectCourt
+                workingCase={workingCase}
+                courts={courts}
+                onChange={handleCourtChange}
+              />
+            </Box>
+            {!workingCase.parentCase && (
+              <ArrestDate
+                title={formatMessage(
+                  rcRequestedHearingArrangements.sections.arrestDate.heading,
+                )}
+                workingCase={workingCase}
+                setWorkingCase={setWorkingCase}
+              />
+            )}
+            <Box component="section" marginBottom={5}>
+              <RequestCourtDate
+                workingCase={workingCase}
+                onChange={(date: Date | undefined, valid: boolean) =>
+                  setAndSendDateToServer(
+                    'requestedCourtDate',
+                    date,
+                    valid,
+                    workingCase,
+                    setWorkingCase,
+                    updateCase,
+                  )
+                }
+              />
+            </Box>
+            <Box component="section" marginBottom={10}>
+              <Box marginBottom={3}>
+                <Text as="h3" variant="h3">
+                  {formatMessage(
+                    rcRequestedHearingArrangements.sections.translator.heading,
+                  )}
+                </Text>
+              </Box>
+              <Input
+                data-testid="translator"
+                name="translator"
+                autoComplete="off"
+                label={formatMessage(
+                  rcRequestedHearingArrangements.sections.translator.label,
+                )}
+                placeholder={formatMessage(
+                  rcRequestedHearingArrangements.sections.translator
+                    .placeholder,
+                )}
+                value={workingCase.translator || ''}
+                onChange={(event) =>
+                  removeTabsValidateAndSet(
+                    'translator',
+                    event.target.value,
+                    [],
+                    workingCase,
+                    setWorkingCase,
+                  )
+                }
+                onBlur={(event) =>
+                  validateAndSendToServer(
+                    'translator',
+                    event.target.value,
+                    [],
+                    workingCase,
+                    updateCase,
+                  )
+                }
+              />
+            </Box>
+          </FormContentContainer>
+          <FormContentContainer isFooter>
+            <FormFooter
+              previousUrl={`${Constants.STEP_ONE_ROUTE}/${workingCase.id}`}
+              onNextButtonClick={async () => await handleNextButtonClick()}
+              nextIsDisabled={
+                !isHearingArrangementsStepValidRC(workingCase) ||
+                isTransitioningCase
+              }
+              nextIsLoading={isTransitioningCase}
+            />
+          </FormContentContainer>
           {modalVisible && (
             <Modal
               title={formatMessage(
@@ -199,6 +336,11 @@ export const StepTwo: React.FC = () => {
               handleClose={() => setModalVisible(false)}
               handleSecondaryButtonClick={() =>
                 router.push(`${Constants.STEP_THREE_ROUTE}/${workingCase.id}`)
+              }
+              errorMessage={
+                sendNotificationError
+                  ? formatMessage(errors.sendNotification)
+                  : undefined
               }
               handlePrimaryButtonClick={async () => {
                 const notificationSent = await sendNotification(
@@ -246,4 +388,4 @@ export const StepTwo: React.FC = () => {
   )
 }
 
-export default StepTwo
+export default HearingArrangements
