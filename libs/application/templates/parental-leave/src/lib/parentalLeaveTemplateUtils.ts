@@ -28,7 +28,7 @@ export function startDateInTheFuture(context: ApplicationContext) {
     periods: [{ startDate: string }]
   }
   return (
-    new Date(currentApplicationAnswers.periods[0].startDate).getTime() >=
+    currentApplicationAnswers.periods && new Date(currentApplicationAnswers.periods[0].startDate).getTime() >=
     currentDateStartTime()
   )
 }
