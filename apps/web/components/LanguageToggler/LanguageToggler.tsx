@@ -13,7 +13,6 @@ import { Locale } from '@island.is/shared/types'
 import { GET_CONTENT_SLUG } from '@island.is/web/screens/queries/Article'
 import { GlobalContext } from '@island.is/web/context'
 import {
-  ContentSlug,
   GetContentSlugQuery,
   GetContentSlugQueryVariables,
   TextFieldLocales,
