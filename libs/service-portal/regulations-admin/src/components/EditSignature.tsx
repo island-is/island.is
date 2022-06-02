@@ -64,106 +64,6 @@ import { PresignedPost } from '@island.is/regulations/admin'
 
 // ---------------------------------------------------------------------------
 
-type UploadResults =
-  | { location: URLString; error?: never }
-  | { location?: never; error: string }
-
-const uploadPDF = (file: File, draft: RegDraftForm) =>
-  new Promise<UploadResults>((resolve) => {
-    setTimeout(() => {
-      resolve({
-        location: `https://files.reglugerd.is/admin-drafts/${draft.id}/${file.name}` as URLString,
-      })
-    }, 500)
-  })
-
-type UploadingState =
-  | { uploading: false; file?: never; error?: string }
-  | { uploading: false; file: [UploadFile]; error?: never }
-  | { uploading: true; file?: never; error?: never }
-
-const useSignedUploader = (
-  draft: RegDraftForm,
-  setUrl: (location: URLString | undefined) => void,
-) => {
-  const signedDocumentUrl = draft.signedDocumentUrl.value
-  const [uploadStatus, setUploadStatus] = useState<UploadingState>({
-    uploading: false,
-  })
-
-  let reader: FileReader | undefined
-
-  const uploadSignedPDF = (newFiles: Array<File>) => {
-    const [newFile] = newFiles
-    const newUploadFile = fileToObject(newFile)
-    const _reader = (reader = new FileReader())
-    _reader.onabort = () => console.log('file reading was aborted')
-    _reader.onerror = () => console.log('file reading has failed')
-    _reader.onload = () => {
-      // Do whatever you want with the file contents
-      const binaryStr = _reader.result
-      console.log(binaryStr)
-    }
-    _reader.readAsArrayBuffer(newFile)
-
-    setUploadStatus({ uploading: true })
-
-    uploadPDF(newFile, draft).then(({ location, error }) => {
-      if (!uploadStatus.uploading) {
-        location && setUrl(location)
-        setUploadStatus({ uploading: false, error })
-      }
-    })
-  }
-  const cancelUpload = () => {
-    reader && reader.abort()
-    setUploadStatus(
-      produce((draft) => {
-        draft.uploading = false
-      }),
-    )
-  }
-  const retryUpload = ({ originalFileObj }: UploadFile) =>
-    originalFileObj instanceof File && uploadSignedPDF([originalFileObj])
-
-  const [previousDocUrl, setPreviousDocUrl] = useShortState<
-    URLString | undefined
-  >()
-  const undoPeriod = 5000
-  const clearSignedPDF = () => {
-    setPreviousDocUrl(signedDocumentUrl, undoPeriod)
-    setUrl(undefined)
-  }
-  const undoClearSignedPDF = () => {
-    setPreviousDocUrl(undefined)
-    setUrl(previousDocUrl)
-  }
-
-  useEffect(() => {
-    // reset uploadStatus whenever signedDocumentUrl changes.
-    // use immer to prevent unneccessary re-render
-    setUploadStatus(
-      produce((draft) => {
-        draft.uploading = false
-        delete draft.error
-      }),
-    )
-  }, [signedDocumentUrl])
-
-  return {
-    uploadStatus,
-    uploadSignedPDF,
-    cancelUpload,
-    retryUpload,
-    previousDocUrl,
-    undoPeriod,
-    clearSignedPDF,
-    undoClearSignedPDF,
-  }
-}
-
-// ---------------------------------------------------------------------------
-
 const defaultSignatureText = `
   <p class="Dags" align="center"><em>{ministry}nu, {dags}.</em></p>
   <p class="FHUndirskr" align="center">f.h.r.</p>
@@ -193,31 +93,15 @@ export const EditSignature = () => {
   const { formatMessage: t, formatDateFns } = useLocale()
   const { draft, actions } = useDraftingState()
   const { updateState } = actions
-  const signedDocumentUrl = draft.signedDocumentUrl.value
-
-  console.log(signedDocumentUrl)
-
-  const {
-    uploadStatus,
-    uploadSignedPDF,
-    cancelUpload,
-    retryUpload,
-    previousDocUrl,
-    undoPeriod,
-    clearSignedPDF,
-    undoClearSignedPDF,
-  } = useSignedUploader(draft, (location) =>
-    updateState('signedDocumentUrl', location),
-  )
 
   const {
     uploadFile,
     uploadErrorMessage,
+    uploadLocation,
     onChange,
     onRetry,
     onRemove,
   } = useS3Upload()
-
   return (
     <Box marginBottom={6}>
       <Box marginBottom={4}>
@@ -239,12 +123,12 @@ export const EditSignature = () => {
           accept=".pdf"
           multiple={false}
         />
-        {uploadStatus.error && (
-          <AlertMessage type="error" title={uploadStatus.error} />
+        {uploadErrorMessage && (
+          <AlertMessage type="error" title={uploadErrorMessage} />
         )}
       </Box>
 
-      {previousDocUrl && (
+      {/*uploadLocation && (
         <Box
           marginBottom={3}
           style={
@@ -265,16 +149,16 @@ export const EditSignature = () => {
             {t(msg.signedDocumentClearUndo)}
           </Button>
         </Box>
-      )}
+      )*/}
 
-      {signedDocumentUrl != null && (
+      {uploadLocation != null && (
         <>
           <Box marginBottom={3} display="flex" flexWrap="wrap">
             <Inline space={2} flexWrap="wrap">
-              <strong>{signedDocumentUrl.split('/').pop()}</strong>
+              <strong>{uploadLocation.split('/').pop()}</strong>
 
               <Button
-                onClick={() => downloadUrl(signedDocumentUrl)}
+                onClick={() => downloadUrl(uploadLocation)}
                 variant="text"
                 size="small"
                 as="button"
@@ -287,13 +171,13 @@ export const EditSignature = () => {
               </Button>
 
               <Button
-                onClick={clearSignedPDF}
+                onClick={uploadFile ? () => onRemove(uploadFile) : undefined}
                 variant="text"
                 size="small"
                 as="button"
                 iconType="outline"
                 icon="close"
-                disabled={uploadStatus.uploading}
+                disabled={uploadFile?.status === 'uploading'}
                 title={t(msg.signedDocumentClearLong)}
                 aria-label={t(msg.signedDocumentClearLong)}
               >

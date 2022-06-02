@@ -65,10 +65,14 @@ export class RegulationsService extends RESTDataSource {
   regulation/[name]/d/[date]/diff
   regulation/[name]/d/[date]/diff/[earlierDate]
 */
-  async createPresignedPost(): Promise<PresignedPost | null> {
+  async createPresignedPost(
+    fileName?: string,
+    type?: string,
+  ): Promise<PresignedPost | null> {
+    const body = { fileName, type }
     const response = await this.post<PresignedPost | null>(
       'http://localhost:3000/api/v1/file-presigned',
-      {},
+      JSON.stringify(body),
       {
         headers: {
           'X-ApiKey': process.env.REGULATIONS_API_KEY ?? '',

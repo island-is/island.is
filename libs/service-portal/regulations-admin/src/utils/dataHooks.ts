@@ -41,8 +41,8 @@ type QueryResult<T> =
 // ---------------------------------------------------------------------------
 
 const CreatePresignedPostMutation = gql`
-  mutation CreatePresignedPost {
-    createPresignedPost
+  mutation CreatePresignedPostMutation($input: CreatePresignedPostInput!) {
+    createPresignedPost(input: $input)
   }
 `
 
@@ -50,6 +50,7 @@ export const useS3Upload = () => {
   const [createNewPresignedPost] = useMutation(CreatePresignedPostMutation)
   const [uploadErrorMessage, setUploadErrorMessage] = useState<string>()
   const [uploadFile, setUploadFile] = useState<UploadFile>()
+  const [uploadLocation, setUploadLocation] = useState<string>()
 
   const createFormData = (
     presignedPost: PresignedPost,
@@ -64,13 +65,19 @@ export const useS3Upload = () => {
     return formData
   }
 
-  useEffect(() => {
-    console.log(uploadFile)
-  }, [uploadFile])
-
-  const createPresignedPost = async (): Promise<PresignedPost> => {
+  const createPresignedPost = async (
+    file: UploadFile,
+  ): Promise<PresignedPost> => {
     try {
-      const post = await createNewPresignedPost()
+      console.log(`name: ${file?.name} type: ${file?.type}`)
+      const post = await createNewPresignedPost({
+        variables: {
+          input: {
+            fileName: file?.name ?? 'default',
+            type: file?.type ?? 'multipart/form-data',
+          },
+        },
+      })
 
       return post.data?.createPresignedPost
     } catch (error) {
@@ -95,6 +102,8 @@ export const useS3Upload = () => {
     }).then(
       () => {
         file.status = 'done'
+        const loc = `${presignedPost.url}/${file.key}`
+        setUploadLocation(loc)
         setUploadFile(file)
       },
       () => {
@@ -102,49 +111,6 @@ export const useS3Upload = () => {
         setUploadFile(file)
       },
     )
-
-    /*const request = new XMLHttpRequest()
-    //equest.withCredentials = true
-    request.responseType = 'json'
-    request.overrideMimeType('multipart/form-data')
-
-    request.upload.addEventListener('progress', (evt) => {
-      if (evt.lengthComputable) {
-        file.percent = (evt.loaded / evt.total) * 100
-        file.status = 'uploading'
-        setUploadFile(file)
-      }
-    })
-
-    request.upload.addEventListener('error', (evt) => {
-      if (evt.lengthComputable) {
-        file.percent = 0
-        file.status = 'error'
-        setUploadFile(file)
-      }
-    })
-
-    request.addEventListener('load', () => {
-      if (request.status >= 200 && request.status < 300) {
-        file.status = 'done'
-        setUploadFile(file)
-      } else {
-        file.status = 'error'
-        file.percent = 0
-        setUploadFile(file)
-      }
-    })
-
-    request.open('POST', presignedPost.url)
-    const formData = createFormData(presignedPost, file)
-    console.log(request)
-    formData.forEach((val, key) => {
-      console.log(`form key: ${key}, val: ${val}`)
-    })
-    const formfile = formData.get('file')
-    console.log(formfile)
-    request.send(formData)
-    */
   }
 
   const onChange = async (newFiles: File[]) => {
@@ -155,7 +121,7 @@ export const useS3Upload = () => {
     }
 
     const file = newFiles[0] as UploadFile
-    const presignedPost = await createPresignedPost()
+    const presignedPost = await createPresignedPost(file)
 
     if (!presignedPost) {
       return
@@ -178,6 +144,7 @@ export const useS3Upload = () => {
   return {
     uploadFile,
     uploadErrorMessage,
+    uploadLocation,
     onChange,
     onRemove,
     onRetry,

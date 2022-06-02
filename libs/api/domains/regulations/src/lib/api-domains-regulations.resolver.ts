@@ -20,6 +20,7 @@ import { GetRegulationInput } from './dto/getRegulation.input'
 import { GetRegulationsLawChaptersInput } from './dto/getRegulationsLawChapters.input'
 import { GetRegulationsMinistriesInput } from './dto/getRegulationsMinistriesInput.input'
 import { GetRegulationsSearchInput } from './dto/getRegulationsSearch.input'
+import { CreatePresignedPostInput } from './dto/createPresignedPost.input'
 import { PresignedPost } from '@island.is/regulations/admin'
 
 const validPage = (page: number | undefined) => (page && page >= 1 ? page : 1)
@@ -29,8 +30,13 @@ export class RegulationsResolver {
   constructor(private regulationsService: RegulationsService) {}
 
   @Mutation(() => graphqlTypeJson)
-  createPresignedPost(): Promise<PresignedPost | null> {
-    return this.regulationsService.createPresignedPost()
+  createPresignedPost(
+    @Args('input') input: CreatePresignedPostInput,
+  ): Promise<PresignedPost | null> {
+    return this.regulationsService.createPresignedPost(
+      input.fileName,
+      input.type,
+    )
   }
 
   @Query(() => graphqlTypeJson)
