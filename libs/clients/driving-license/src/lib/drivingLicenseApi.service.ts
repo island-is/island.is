@@ -15,8 +15,6 @@ import {
 } from './drivingLicenseApi.types'
 import { handleCreateResponse } from './utils/handleCreateResponse'
 
-const DRIVING_LICENSE_SUCCESSFUL_RESPONSE_VALUE = ''
-
 @Injectable()
 export class DrivingLicenseApi {
   constructor(private readonly v1: v1.ApiV1, private readonly v2: v2.ApiV2) {}
