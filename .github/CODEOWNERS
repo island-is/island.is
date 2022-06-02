@@ -138,6 +138,7 @@
 /libs/api/domains/application/                                                                      @island-is/sendiradid-applications
 
 /apps/services/search-indexer/                                                                      @island-is/stefna @island-is/juni
+/apps/services/contentful-entry-tagger/                                                             @island-is/stefna
 /apps/web/screens/Organization/                                                                     @island-is/stefna
 /apps/web/components/Organization/                                                                  @island-is/stefna
 /libs/content-search-toolkit/                                                                       @island-is/stefna @island-is/juni
