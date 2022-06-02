@@ -8,12 +8,14 @@ import {
   BasicVehicleInformationGetRequest,
   BasicVehicleInformationTechnicalMass,
   BasicVehicleInformationTechnicalAxle,
-  BasicVehicleInformationTechnicalTyre,
   PersidnoLookup,
 } from '@island.is/clients/vehicles'
 import { VehiclesAxle, VehiclesDetail } from '../models/getVehicleDetail.model'
 import { ApolloError } from 'apollo-server-express'
 import { FetchError } from '@island.is/clients/middlewares'
+
+// 1kW equals 1.359622 metric horsepower.
+const KW_TO_METRIC_HP = 1.359622
 
 @Injectable()
 export class VehiclesService {
@@ -138,7 +140,10 @@ export class VehiclesService {
           subModel: data.vehcom ?? '' + data.speccom ?? '',
           regno: data.regno,
           year: year,
-          co2: null,
+          co2: data?.techincal?.co2,
+          weightedCo2: data?.techincal?.weightedCo2,
+          co2Wltp: data?.techincal?.co2Wltp,
+          weightedCo2Wltp: data?.techincal?.weightedco2Wltp,
           cubicCapacity: data.techincal?.capacity,
           trailerWithBrakesWeight: data.techincal?.tMassoftrbr,
           trailerWithoutBrakesWeight: data.techincal?.tMassoftrunbr,
@@ -166,10 +171,14 @@ export class VehiclesService {
               ? data.plates[0].reggroup
               : null
             : null,
+          reggroupName: data.plates?.[0]?.reggroupname ?? null,
           passengers: data.techincal?.pass,
           useGroup: data.usegroup,
           driversPassengers: data.techincal?.passbydr,
           standingPassengers: data.techincal?.standingno,
+          plateLocation: data.platestoragelocation,
+          specialName: data.speccom,
+          plateStatus: data.platestatus,
         },
         currentOwnerInfo: {
           owner: owner?.fullname,
@@ -183,7 +192,6 @@ export class VehiclesService {
           type: newestInspection?.type,
           date: newestInspection?.date,
           result: newestInspection?.result,
-          plateStatus: data.platestatus,
           nextInspectionDate: data.nextinspectiondate,
           lastInspectionDate: data.inspections
             ? data.inspections[0]?.date
@@ -197,12 +205,14 @@ export class VehiclesService {
           engine: data.techincal?.engine,
           totalWeight: data.techincal?.mass?.massladen,
           cubicCapacity: data.techincal?.capacity,
-          capacityWeight: data.techincal?.mass?.masscapacity,
+          capacityWeight: data.techincal?.mass?.massofcomb,
           length: data.techincal?.size?.length,
           vehicleWeight: data.techincal?.mass?.massinro,
           width: data.techincal?.size?.width,
           trailerWithoutBrakesWeight: data.techincal?.tMassoftrunbr,
-          horsepower: null,
+          horsepower: data.techincal?.maxNetPower
+            ? Math.round(data.techincal.maxNetPower * KW_TO_METRIC_HP * 10) / 10
+            : null,
           trailerWithBrakesWeight: data.techincal?.tMassoftrbr,
           carryingCapacity: data.techincal?.mass?.masscapacity,
           axleTotalWeight: axleMaxWeight,
