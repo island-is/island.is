@@ -12,6 +12,7 @@ import {
 import { m } from './messages'
 import { Events, States, Roles } from './constants'
 import { dataSchema } from './utils/dataSchema'
+import { Features } from '@island.is/feature-flags'
 
 const FinancialStatementInaoApplication: ApplicationTemplate<
   ApplicationContext,
@@ -22,7 +23,7 @@ const FinancialStatementInaoApplication: ApplicationTemplate<
   name: m.applicationTitle,
   institution: m.institutionName,
   dataSchema,
-  readyForProduction: false,
+  featureFlag: Features.financialStatementInao,
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {
