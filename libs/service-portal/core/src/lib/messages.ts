@@ -469,7 +469,7 @@ export const m = defineMessages({
   },
   accessDenied: {
     id: 'service.portal:accessDenied',
-    defaultMessage: 'Aðgangur læstur',
+    defaultMessage: 'Ekki með aðgang',
   },
 
   accessNeeded: {
