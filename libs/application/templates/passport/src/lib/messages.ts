@@ -55,8 +55,8 @@ export const m = defineMessages({
     defaultMessage: 'Umsókn um vegabréf',
     description: 'Passport Application',
   },
-  personalInfoTitle: {
-    id: 'pp.application:personalInfo.multifieldtitle',
+  infoTitle: {
+    id: 'pp.application:personalInfo.infoTitle',
     defaultMessage: 'Upplýsingar',
     description: 'Personal info title',
   },
@@ -66,7 +66,7 @@ export const m = defineMessages({
       'Vinsamlegast farðu yfir þínar upplýsingar og gakktu úr skugga um að þær séu réttar.',
     description: 'Personal info subtitle',
   },
-  personalInfoName: {
+  name: {
     id: 'pp.application:personalInfo.name',
     defaultMessage: 'Nafn',
     description: 'Some description',
@@ -86,19 +86,19 @@ export const m = defineMessages({
     defaultMessage: 'Netfang',
     description: 'Some description',
   },
-  otherEmail: {
-    id: 'pp.application:personalInfo.otherEmail',
-    defaultMessage: 'Netfang tengds aðila',
-    description: 'Some description',
-  },
-  height: {
-    id: 'pp.application:personalInfo.height',
-    defaultMessage: 'Hæð',
+  isCurrentPassportLost: {
+    id: 'pp.application:personalInfo.isCurrentPassportLost',
+    defaultMessage: 'Merktu hér ef vegabréfi hefur verið glatað',
     description: 'Some description',
   },
   serviceTitle: {
     id: 'pp.application:service.title',
     defaultMessage: 'Afhending',
+    description: 'Some description',
+  },
+  serviceTypeTitle: {
+    id: 'pp.application:service.typeTitle',
+    defaultMessage: 'Afgreiðslumáti',
     description: 'Some description',
   },
   serviceType: {
@@ -159,40 +159,35 @@ export const m = defineMessages({
       'Ef þú átt ekki löggild skilríki þarftu að mæta með tvo sjálfráða sannvotta með löggild skilríki til þess að auðkenna þig.',
     description: 'Some description',
   },
-  timeScheduleSection: {
-    id: 'pp.application:timeSchedule.section',
-    defaultMessage: 'Tímabókun og Skilríki',
+  overview: {
+    id: 'pp.application:overview.title',
+    defaultMessage: 'Yfirlit',
     description: 'Some description',
   },
-  timeScheduleTitle: {
-    id: 'pp.application:timeSchedule.title',
-    defaultMessage: 'Tímabókun',
-    description: 'Some description',
-  },
-  timeScheduleIntro: {
-    id: 'pp.application:timeSchedule.intro',
+  overviewDescription: {
+    id: 'pp.application:overview.description',
     defaultMessage:
-      'Veldu tíma og stað fyrir myndatöku, undirritun og fingrafaraskönnun',
+      'Endilega lestu yfir til að vera viss um að réttar upplýsingar hafi verið gefnar.',
     description: 'Some description',
   },
-  location: {
-    id: 'pp.application:timeSchedule.location',
-    defaultMessage: 'Staðsetning',
+  currentPassportStatus: {
+    id: 'pp.application:overview.currentPassport',
+    defaultMessage: 'Staða núverandi vegabréfs',
+    description: 'Some description',
+  },
+  authenticationType: {
+    id: 'pp.application:overview.authenticationType',
+    defaultMessage: 'Tegund skilríkja',
+    description: 'Some description',
+  },
+  willBringPassport: {
+    id: 'pp.application:overview.willBringPassport',
+    defaultMessage: 'Ég mun mæta með núverandi vegabréf í myndatökuna.',
     description: 'Some description',
   },
   paymentSection: {
     id: 'pp.application:payment.section',
     defaultMessage: 'Staðfesting og greiðsla',
-    description: 'Some description',
-  },
-  fetchDataSection: {
-    id: 'pp.application:fetchData.section',
-    defaultMessage: 'Sækja gögn',
-    description: 'Some description',
-  },
-  fetchData: {
-    id: 'pp.application:fetchData.provider',
-    defaultMessage: 'Sækja gögn',
     description: 'Some description',
   },
   payment: {
@@ -203,16 +198,6 @@ export const m = defineMessages({
   confirm: {
     id: 'pp.application:confirm',
     defaultMessage: 'Staðfesta',
-    description: 'Some description',
-  },
-  insuranceInfoTitle: {
-    id: 'pp.application:insuranceInfo.title',
-    defaultMessage: 'Gögn frá Tryggingarstofnun ríkisins',
-    description: 'Some description',
-  },
-  insuranceInfoSubtitle: {
-    id: 'pp.application:insuranceInfo.subtitle',
-    defaultMessage: 'Sótt er gögn um hvort notandi sé öryrki',
     description: 'Some description',
   },
   errorDataProvider: {

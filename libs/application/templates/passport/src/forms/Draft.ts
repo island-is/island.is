@@ -13,6 +13,9 @@ import {
   FormModes,
   Application,
   buildCustomField,
+  buildDividerField,
+  buildKeyValueField,
+  buildCheckboxField,
 } from '@island.is/application/core'
 import { m } from '../lib/messages'
 import { format as formatKennitala } from 'kennitala'
@@ -21,6 +24,8 @@ import {
   AUTH_TYPES,
   Service,
   DistrictCommissionerAgencies,
+  YES,
+  NO,
 } from '../lib/constants'
 import { DefaultEvents } from '@island.is/application/core'
 
@@ -70,16 +75,16 @@ export const Draft: Form = buildForm({
     }),
     buildSection({
       id: 'personalInfo',
-      title: m.personalInfoTitle,
+      title: m.infoTitle,
       children: [
         buildMultiField({
           id: 'personalInfo',
-          title: m.personalInfoTitle,
+          title: m.infoTitle,
           description: m.personalInfoSubtitle,
           children: [
             buildTextField({
               id: 'personalInfo.name',
-              title: m.personalInfoName,
+              title: m.infoTitle,
               backgroundColor: 'white',
               width: 'half',
               readOnly: true,
@@ -123,6 +128,25 @@ export const Draft: Form = buildForm({
                   mobilePhoneNumber?: string
                 })?.mobilePhoneNumber,
             }),
+            buildDescriptionField({
+              id: 'personalInfo.space',
+              title: '',
+              description: '',
+              space: 'gutter',
+            }),
+            buildCheckboxField({
+              id: 'personalInfo.isPassportLost',
+              title: '',
+              large: false,
+              backgroundColor: 'white',
+              defaultValue: [NO],
+              options: [
+                {
+                  value: YES,
+                  label: m.isCurrentPassportLost,
+                },
+              ],
+            }),
           ],
         }),
       ],
@@ -136,20 +160,6 @@ export const Draft: Form = buildForm({
           title: m.serviceTitle,
           description: m.serviceType,
           children: [
-            buildSubmitField({
-              id: 'payment',
-              placement: 'footer',
-              title: 'sick',
-              refetchApplicationAfterSubmit: true,
-              actions: [
-                {
-                  event: DefaultEvents.PAYMENT,
-                  name: 'Greiða',
-                  type: 'primary',
-                },
-              ],
-            }),
-
             buildRadioField({
               id: 'service.type',
               title: '',
@@ -215,6 +225,191 @@ export const Draft: Form = buildForm({
                 (answers.service as Service)?.authentication === 'none',
             }),
           ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'overview',
+      title: m.overview,
+      children: [
+        buildMultiField({
+          id: 'overview',
+          title: m.overview,
+          description: m.overviewDescription,
+          children: [
+            buildDividerField({}),
+            buildDescriptionField({
+              id: 'overview.infoTitle',
+              title: m.infoTitle,
+              titleVariant: 'h3',
+              description: '',
+              space: 'gutter',
+            }),
+            buildDescriptionField({
+              id: 'overview.space',
+              title: '',
+              description: '',
+              space: 'gutter',
+            }),
+            buildKeyValueField({
+              label: m.name,
+              width: 'half',
+              value: (application: Application) =>
+                (application.answers.personalInfo as {
+                  name?: string
+                })?.name,
+            }),
+            buildKeyValueField({
+              label: m.nationalId,
+              width: 'half',
+              value: (application: Application) =>
+                (application.answers.personalInfo as {
+                  nationalId?: string
+                })?.nationalId,
+            }),
+            buildDescriptionField({
+              id: 'overview.space1',
+              title: '',
+              description: '',
+              space: 'gutter',
+            }),
+            buildKeyValueField({
+              label: m.email,
+              width: 'half',
+              value: (application: Application) =>
+                (application.answers.personalInfo as {
+                  email?: string
+                })?.email,
+            }),
+            buildKeyValueField({
+              label: m.phoneNumber,
+              width: 'half',
+              value: (application: Application) =>
+                (application.answers.personalInfo as {
+                  phoneNumber?: string
+                })?.phoneNumber,
+            }),
+            buildDescriptionField({
+              id: 'overview.space2',
+              title: '',
+              description: '',
+              space: 'gutter',
+            }),
+            buildKeyValueField({
+              label: m.currentPassportStatus,
+              width: 'half',
+              value: 'halló',
+            }),
+            buildDescriptionField({
+              id: 'overview.space3',
+              title: '',
+              description: '',
+              space: 'gutter',
+            }),
+            buildDividerField({}),
+            buildDescriptionField({
+              id: 'overview.dropLocationTitle',
+              title: m.serviceTitle,
+              titleVariant: 'h3',
+              description: '',
+              space: 'gutter',
+            }),
+            buildDescriptionField({
+              id: 'overview.space4',
+              title: '',
+              description: '',
+              space: 'gutter',
+            }),
+            buildKeyValueField({
+              label: m.serviceTypeTitle,
+              width: 'half',
+              value: (application: Application) =>
+                (application.answers.service as Service).type,
+            }),
+            buildKeyValueField({
+              label: m.dropLocation,
+              width: 'half',
+              value: ({
+                externalData: {
+                  districtCommissioners: { data },
+                },
+                answers,
+              }) => {
+                const district = (data as DistrictCommissionerAgencies[]).find(
+                  (d) => d.id === (answers.service as Service).dropLocation,
+                )
+                return `${district?.name}, ${district?.place}`
+              },
+            }),
+            buildDescriptionField({
+              id: 'overview.space5',
+              title: '',
+              description: '',
+              space: 'gutter',
+            }),
+            buildKeyValueField({
+              label: m.authenticationType,
+              width: 'half',
+              value: (application: Application) =>
+                AUTH_TYPES.find(
+                  (o) =>
+                    o.value ===
+                    (application.answers.service as Service).authentication,
+                )?.label,
+            }),
+            buildDescriptionField({
+              id: 'overview.space6',
+              title: '',
+              description: '',
+              space: 'gutter',
+            }),
+            buildCheckboxField({
+              id: 'overview.willBringPassport',
+              title: '',
+              large: false,
+              backgroundColor: 'white',
+              defaultValue: [NO],
+              options: [
+                {
+                  value: YES,
+                  label: m.willBringPassport,
+                },
+              ],
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'payment',
+      title: m.paymentSection,
+      children: [
+        buildMultiField({
+          id: 'payment',
+          title: 'Yfirlit yfir greiðslu',
+          children: [
+            /*
+             * TODO Finish payment section when payment connection is ready
+             */
+            buildSubmitField({
+              id: 'payment',
+              placement: 'footer',
+              title: 'sick',
+              refetchApplicationAfterSubmit: true,
+              actions: [
+                {
+                  event: DefaultEvents.PAYMENT,
+                  name: 'Greiða',
+                  type: 'primary',
+                },
+              ],
+            }),
+          ],
+        }),
+        buildDescriptionField({
+          id: 'final',
+          title: 'Takk',
+          description: 'Umsókn þín er samþykkt',
         }),
       ],
     }),

@@ -24,6 +24,7 @@ export const dataSchema = z.object({
       .string()
       .min(7)
       .refine((v) => isValidPhoneNumber(v), { params: error.invalidValue }),
+    isPassportLost: z.array(z.string()),
   }),
   service: z.object({
     type: z.enum([Services.REGULAR, Services.EXPRESS]),
