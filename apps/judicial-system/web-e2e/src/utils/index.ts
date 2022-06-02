@@ -17,7 +17,6 @@ import {
 
 export enum Operation {
   CaseQuery = 'CaseQuery',
-  RestrictedCaseQuery = 'RestrictedCaseQuery',
   UploadFileToCourtMutation = 'UploadFileToCourtMutation',
   UpdateCaseMutation = 'UpdateCaseMutation',
   SendNotificationMutation = 'SendNotificationMutation',
