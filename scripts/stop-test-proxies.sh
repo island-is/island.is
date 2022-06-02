@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -euox pipefail
+set -euo pipefail
 
 function stop_proxy() {
   local proxy builder
