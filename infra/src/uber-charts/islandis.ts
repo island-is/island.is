@@ -110,6 +110,7 @@ export const Services: EnvironmentServices = {
     appSystemApiWorker,
     userNotificationService,
     userNotificationWorkerService,
+    contentfulEntryTagger,
   ],
   staging: [
     appSystemApi,
@@ -134,6 +135,7 @@ export const Services: EnvironmentServices = {
     appSystemApiWorker,
     userNotificationService,
     userNotificationWorkerService,
+    contentfulEntryTagger,
   ],
   dev: [
     appSystemApi,
