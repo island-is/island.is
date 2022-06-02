@@ -1,18 +1,18 @@
 #!/bin/bash
 
-set -euo pipefail
+set -euox pipefail
 
 function stop_proxy() {
   local proxy builder
   proxy=${1}
   builder=${2}
   echo "Killing ${proxy} ..."
-  ${builder} container stop $(${builder} container ls -q --filter name=${proxy})
+  ${builder} container rm -f $(${builder} ps -a -q -f name=${proxy})
 }
 
 builder=${1:-docker}
 array=( socat-soffia socat-xroad es-proxy )
 for proxy in "${array[@]}"
 do
-  stop_proxy "${proxy}" "${builder}"
+  stop_proxy "${proxy}" "${builder}" || true
 done
