@@ -72,6 +72,7 @@ import { useStatefulAnswers } from '../../hooks/useStatefulAnswers'
 import { getSelectOptionLabel } from '../../lib/parentalLeaveClientUtils'
 
 import * as styles from './Review.css'
+import { currentDateStartTime } from '../../lib/parentalLeaveTemplateUtils'
 
 type ValidOtherParentAnswer = typeof NO | typeof MANUAL | undefined
 
@@ -922,7 +923,7 @@ export const Review: FC<ReviewScreenProps> = ({
         isLast={true}
       >
         <SummaryTimeline application={application} />
-        {new Date(periods[0].startDate).getTime() < new Date().getTime() && <p style={{color: '#B30038', fontSize: '14px', fontWeight: '500'}}>{formatMessage(errorMessages.startDateInThePast)}</p>}
+        {new Date(periods[0].startDate).getTime() < currentDateStartTime() && <p style={{color: '#B30038', fontSize: '14px', fontWeight: '500'}}>{formatMessage(errorMessages.startDateInThePast)}</p>}
       </ReviewGroup>
 
       {/**
