@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
+
 import { Text, Box } from '@island.is/island-ui/core'
 import {
   getNextPeriod,
@@ -62,10 +63,8 @@ const SummaryForm = ({
     setBeforeSubmitCallback &&
       setBeforeSubmitCallback(async () => {
         const response = await sendSpouseEmail()
-        if (response) {
-          return [true, null]
-        }
-        return [false, 'Failed to send emails']
+        application.answers.spouseEmailSuccess = response
+        return [true, null]
       })
   }
 

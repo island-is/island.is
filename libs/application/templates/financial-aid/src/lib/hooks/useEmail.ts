@@ -21,25 +21,28 @@ export const useEmail = (application: FAApplication) => {
 
   const sendSpouseEmail = async () => {
     try {
-      return (
-        await spouseEmail({
-          variables: {
-            input: {
-              name: externalData.nationalRegistry.data.applicant.fullName,
-              email: answers.contactInfo.email,
-              spouseName:
-                externalData.nationalRegistry.data.applicant.spouse?.name,
-              spouseEmail:
-                answers.spouse?.email ||
-                answers.relationshipStatus?.spouseEmail,
-              municipalityCode:
-                externalData.nationalRegistry.data.municipality.municipalityId,
-              created: application.created,
-              applicationSystemId: id,
+      return Boolean(
+        (
+          await spouseEmail({
+            variables: {
+              input: {
+                name: externalData.nationalRegistry.data.applicant.fullName,
+                email: answers.contactInfo.email,
+                spouseName:
+                  externalData.nationalRegistry.data.applicant.spouse?.name,
+                spouseEmail:
+                  answers.spouse?.email ||
+                  answers.relationshipStatus?.spouseEmail,
+                municipalityCode:
+                  externalData.nationalRegistry.data.municipality
+                    .municipalityId,
+                created: application.created,
+                applicationSystemId: id,
+              },
             },
-          },
-        })
-      ).data?.sendMunicipalitiesFinancialAidSpouseEmail.success
+          })
+        ).data?.sendMunicipalitiesFinancialAidSpouseEmail.success,
+      )
     } catch {
       return false
     }
