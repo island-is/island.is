@@ -14,6 +14,7 @@ import {
   CreateSignedUrlInput,
   GetSignedUrlInput,
   MunicipalityInput,
+  SpouseEmailInput,
 } from './dto'
 import { ApplicationInput } from './dto/application.input'
 import { UpdateApplicationInput } from './dto/updateApplication.input'
@@ -125,5 +126,14 @@ export class MunicipalitiesFinancialAidService {
     return await this.fileApiWithAuth(auth).fileControllerCreateSignedUrlForId(
       id,
     )
+  }
+
+  async municipalitiesFinancialAidSpouseEmail(
+    auth: Auth,
+    data: SpouseEmailInput,
+  ) {
+    return await this.applicationApiWithAuth(
+      auth,
+    ).applicationControllerSendSpouseEmail({ spouseEmailDto: data })
   }
 }

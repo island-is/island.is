@@ -22,8 +22,10 @@ const ApplicantStatus = ({ application, goToScreen }: FAFieldBaseProps) => {
     application.externalData.veita.data.currentApplicationId,
   )
   const { nationalRegistry } = application.externalData
+  const isWaitingForSpouse = waitingForSpouse(application.state)
+
   const state =
-    !currentApplication && waitingForSpouse(application.state)
+    !currentApplication && isWaitingForSpouse
       ? ApplicationState.NEW
       : currentApplication?.state
 
@@ -31,7 +33,9 @@ const ApplicantStatus = ({ application, goToScreen }: FAFieldBaseProps) => {
     <Box paddingBottom={5} className={styles.container}>
       <Header state={state} />
 
-      {waitingForSpouse(application.state) && <SpouseAlert />}
+      {isWaitingForSpouse && (
+        <SpouseAlert showCopyUrl={!application.answers.spouseEmailSuccess} />
+      )}
 
       {state === ApplicationState.REJECTED && (
         <RejectionMessage
@@ -49,7 +53,9 @@ const ApplicantStatus = ({ application, goToScreen }: FAFieldBaseProps) => {
       {state !== ApplicationState.REJECTED && (
         <AidAmount
           application={application}
+          veitaApplication={currentApplication}
           state={state}
+          nationalRegistry={application.externalData.nationalRegistry}
           amount={currentApplication?.amount}
         />
       )}
@@ -58,10 +64,11 @@ const ApplicantStatus = ({ application, goToScreen }: FAFieldBaseProps) => {
         state={state}
         created={currentApplication?.created ?? application.created}
         modified={currentApplication?.modified ?? application.modified}
-        showSpouseStep={hasSpouse(
-          application.answers,
-          application.externalData,
-        )}
+        showSpouseStep={
+          isWaitingForSpouse
+            ? hasSpouse(application.answers, application.externalData)
+            : currentApplication?.spouseNationalId != null
+        }
       />
 
       <MoreActions

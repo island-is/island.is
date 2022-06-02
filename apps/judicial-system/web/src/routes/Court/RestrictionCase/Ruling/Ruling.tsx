@@ -6,6 +6,7 @@ import formatISO from 'date-fns/formatISO'
 import {
   Accordion,
   AccordionItem,
+  AlertMessage,
   Box,
   Checkbox,
   Input,
@@ -26,7 +27,6 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import {
   Case,
-  CaseCustodyRestrictions,
   CaseDecision,
   CaseType,
   completedCaseStates,
@@ -60,10 +60,10 @@ import {
 } from '@island.is/judicial-system/formatters'
 import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import * as Constants from '@island.is/judicial-system/consts'
 import SigningModal, {
   useRequestRulingSignature,
 } from '@island.is/judicial-system-web/src/components/SigningModal/SigningModal'
+import * as Constants from '@island.is/judicial-system/consts'
 
 export function getConclusionAutofill(
   formatMessage: IntlShape['formatMessage'],
@@ -214,10 +214,6 @@ export const Ruling: React.FC = () => {
             value: workingCase.demands,
           },
           {
-            key: 'isolationToDate',
-            value: workingCase.validToDate,
-          },
-          {
             key: 'courtCaseFacts',
             value: workingCase.caseFacts,
           },
@@ -236,19 +232,6 @@ export const Ruling: React.FC = () => {
               : undefined,
           },
           {
-            key: 'isCustodyIsolation',
-            value:
-              workingCase.type === CaseType.CUSTODY ||
-              workingCase.type === CaseType.ADMISSION_TO_FACILITY
-                ? workingCase.requestedCustodyRestrictions &&
-                  workingCase.requestedCustodyRestrictions.includes(
-                    CaseCustodyRestrictions.ISOLATION,
-                  )
-                  ? true
-                  : false
-                : undefined,
-          },
-          {
             key: 'conclusion',
             value:
               workingCase.decision &&
@@ -260,6 +243,8 @@ export const Ruling: React.FC = () => {
                     workingCase.decision,
                     workingCase.defendants[0],
                     workingCase.validToDate,
+                    workingCase.isCustodyIsolation,
+                    workingCase.isolationToDate,
                   )
                 : undefined,
           },
@@ -292,6 +277,15 @@ export const Ruling: React.FC = () => {
     >
       <PageHeader title={formatMessage(titles.court.restrictionCases.ruling)} />
       <FormContentContainer>
+        {isModifyingRuling && (
+          <Box marginBottom={3}>
+            <AlertMessage
+              type="warning"
+              title={formatMessage(m.sections.alertMessage.title)}
+              message={formatMessage(m.sections.alertMessage.message)}
+            />
+          </Box>
+        )}
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
             {formatMessage(m.title)}
@@ -510,7 +504,6 @@ export const Ruling: React.FC = () => {
           <RulingInput
             workingCase={workingCase}
             setWorkingCase={setWorkingCase}
-            isRequired
           />
         </Box>
         <Box component="section" marginBottom={5}>
@@ -593,6 +586,7 @@ export const Ruling: React.FC = () => {
                   setWorkingCase,
                 )
               }}
+              disabled={isModifyingRuling}
             />
           </Box>
         </Box>
@@ -636,6 +630,14 @@ export const Ruling: React.FC = () => {
                 selectedDate={workingCase.validToDate}
                 minDate={new Date()}
                 onChange={(date: Date | undefined, valid: boolean) => {
+                  const validToDate =
+                    date && valid ? formatISO(date) : undefined
+                  const isolationToDate =
+                    validToDate &&
+                    workingCase.isolationToDate &&
+                    validToDate < workingCase.isolationToDate
+                      ? validToDate
+                      : workingCase.isolationToDate
                   let conclusion = undefined
 
                   if (
@@ -653,9 +655,9 @@ export const Ruling: React.FC = () => {
                       workingCase,
                       workingCase.decision,
                       workingCase.defendants[0],
-                      formatISO(date),
+                      validToDate,
                       workingCase.isCustodyIsolation,
-                      workingCase.isolationToDate,
+                      isolationToDate,
                     )
                   }
 
@@ -663,7 +665,12 @@ export const Ruling: React.FC = () => {
                     [
                       {
                         key: 'validToDate',
-                        value: date && valid ? formatISO(date) : undefined,
+                        value: validToDate,
+                        force: true,
+                      },
+                      {
+                        key: 'isolationToDate',
+                        value: isolationToDate,
                         force: true,
                       },
                       {
@@ -676,6 +683,7 @@ export const Ruling: React.FC = () => {
                     setWorkingCase,
                   )
                 }}
+                disabled={isModifyingRuling}
                 required
               />
             </Box>
@@ -752,14 +760,10 @@ export const Ruling: React.FC = () => {
                 <DateTime
                   name="isolationToDate"
                   datepickerLabel="Einangrun til"
-                  disabled={!workingCase.isCustodyIsolation}
-                  selectedDate={
-                    workingCase.isolationToDate
-                      ? workingCase.isolationToDate
-                      : workingCase.validToDate
-                      ? workingCase.validToDate
-                      : undefined
+                  disabled={
+                    isModifyingRuling || !workingCase.isCustodyIsolation
                   }
+                  selectedDate={workingCase.isolationToDate}
                   // Isolation can never be set in the past.
                   minDate={new Date()}
                   maxDate={
@@ -768,6 +772,16 @@ export const Ruling: React.FC = () => {
                       : undefined
                   }
                   onChange={(date: Date | undefined, valid: boolean) => {
+                    let isolationToDate =
+                      date && valid ? formatISO(date) : undefined
+                    if (
+                      isolationToDate &&
+                      workingCase.validToDate &&
+                      isolationToDate > workingCase.validToDate
+                    ) {
+                      // Make sure the time component does not make the isolation to date larger than the valid to date.
+                      isolationToDate = workingCase.validToDate
+                    }
                     let conclusion = undefined
 
                     if (
@@ -795,7 +809,7 @@ export const Ruling: React.FC = () => {
                       [
                         {
                           key: 'isolationToDate',
-                          value: date && valid ? formatISO(date) : undefined,
+                          value: isolationToDate,
                           force: true,
                         },
                         {
@@ -849,6 +863,7 @@ export const Ruling: React.FC = () => {
             textarea
             rows={7}
             autoExpand={{ on: true, maxHeight: 300 }}
+            disabled={isModifyingRuling}
           />
         </Box>
         <Box marginBottom={10}>
@@ -865,11 +880,6 @@ export const Ruling: React.FC = () => {
             isModifyingRuling
               ? `${Constants.SIGNED_VERDICT_OVERVIEW}/${workingCase.id}`
               : `${Constants.HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`
-          }
-          previousButtonText={
-            isModifyingRuling
-              ? formatMessage(m.sections.formFooter.modifyRulingBackButtonLabel)
-              : undefined
           }
           nextIsLoading={
             isModifyingRuling ? isRequestingRulingSignature : false

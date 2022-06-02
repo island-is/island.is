@@ -35,6 +35,7 @@ import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader
 import {
   Accordion,
   AccordionItem,
+  AlertMessage,
   Box,
   Input,
   Text,
@@ -161,6 +162,15 @@ const Ruling = () => {
         title={formatMessage(titles.court.investigationCases.ruling)}
       />
       <FormContentContainer>
+        {isModifyingRuling && (
+          <Box marginBottom={3}>
+            <AlertMessage
+              type="warning"
+              title={formatMessage(m.sections.alertMessage.title)}
+              message={formatMessage(m.sections.alertMessage.message)}
+            />
+          </Box>
+        )}
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
             {formatMessage(m.title)}
@@ -380,7 +390,6 @@ const Ruling = () => {
           <RulingInput
             workingCase={workingCase}
             setWorkingCase={setWorkingCase}
-            isRequired
           />
         </Box>
         <Box component="section" marginBottom={5}>
@@ -398,6 +407,7 @@ const Ruling = () => {
                 m.sections.decision.partiallyAcceptLabel,
               )}
               dismissLabelText={formatMessage(m.sections.decision.dismissLabel)}
+              disabled={isModifyingRuling}
               onChange={(decision) => {
                 autofill(
                   [
@@ -454,6 +464,7 @@ const Ruling = () => {
             rows={7}
             autoExpand={{ on: true, maxHeight: 300 }}
             textarea
+            disabled={isModifyingRuling}
           />
         </Box>
         <Box marginBottom={10}>
@@ -461,6 +472,7 @@ const Ruling = () => {
             caseId={workingCase.id}
             title={formatMessage(core.pdfButtonRuling)}
             pdfType="ruling"
+            useSigned={!isModifyingRuling}
           />
         </Box>
       </FormContentContainer>
@@ -470,11 +482,6 @@ const Ruling = () => {
             isModifyingRuling
               ? `${SIGNED_VERDICT_OVERVIEW}/${workingCase.id}`
               : `${IC_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`
-          }
-          previousButtonText={
-            isModifyingRuling
-              ? formatMessage(m.sections.formFooter.modifyRulingBackButtonLabel)
-              : undefined
           }
           nextButtonText={
             isModifyingRuling

@@ -27,6 +27,7 @@ export const PrerequisitesSpouse: Form = buildForm({
           title: m.externalData.general.pageTitle,
           id: 'approveExternalDataSpouse',
           subTitle: m.externalData.general.subTitle,
+          description: m.externalData.general.description,
           checkboxLabel: m.externalData.general.checkboxLabel,
           dataProviders: [
             buildDataProviderItem({
@@ -36,10 +37,10 @@ export const PrerequisitesSpouse: Form = buildForm({
               subTitle: m.externalData.taxData.dataInfo,
             }),
             buildDataProviderItem({
-              id: 'text',
-              type: undefined,
+              id: 'veita',
+              type: DataProviderTypes.Veita,
               title: '',
-              subTitle: m.externalData.taxData.whyDataIsNeeded,
+              subTitle: undefined,
             }),
             buildDataProviderItem({
               id: 'moreTaxInfo',
