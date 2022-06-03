@@ -25,7 +25,6 @@
     "logform",
     "pg-native",
     "form-data",
-
     "bull",
     "ioredis",
     "p-map",
@@ -48,4 +47,3 @@
   ],
   "keepNames": true
 }
-
