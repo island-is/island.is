@@ -123,7 +123,9 @@ export const Complaint: FC<{ answers: DataProtectionComplaint }> = ({
                   x as keyof typeof subjectOfComplaintValueLabelMapper
                 ],
               )}${
-                x === 'other' && `: ${answers.subjectOfComplaint.somethingElse}`
+                x === 'other'
+                  ? `: ${answers.subjectOfComplaint.somethingElse}`
+                  : ''
               }`,
           )}
         />
