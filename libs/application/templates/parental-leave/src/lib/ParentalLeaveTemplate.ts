@@ -399,8 +399,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          // TODO: How does VMLST approve? Do we need a form like we have for employer approval?
-          // Or is it a webhook that sets the application as approved?
           [DefaultEvents.APPROVE]: { target: States.APPROVED },
           [DefaultEvents.REJECT]: { target: States.VINNUMALASTOFNUN_ACTION },
         },
@@ -445,13 +443,16 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   Promise.resolve(val.InReview),
                 ),
               read: 'all',
-              write: 'all',
+              // TODO: Maybe create new State where applicant has 'write' access
+              // write: 'all',
             },
           ],
         },
-        on: {
-          [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
-        },
+        // TODO: should enable for user to do changes
+        // after application got APPROVE from VMST?
+        // on: {
+        //   [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
+        // },
       },
       // Edit Flow States
       [States.EDIT_OR_ADD_PERIODS]: {
