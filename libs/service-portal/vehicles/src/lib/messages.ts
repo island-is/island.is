@@ -219,7 +219,7 @@ export const messages = defineMessages({
     defaultMessage: 'Bifreiðagjöld',
   },
   unpaidVehicleFee: {
-    id: 'sp.vehicles:vehicle-fee',
+    id: 'sp.vehicles:vehicle-fee-unpaid',
     defaultMessage: 'Ógreidd Bifreiðagjöld',
   },
   unpaidVehicleFeeText: {
