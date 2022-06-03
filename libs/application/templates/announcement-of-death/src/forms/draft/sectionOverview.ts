@@ -16,7 +16,7 @@ import { format as formatNationalId } from 'kennitala'
 import { m } from '../../lib/messages'
 import { formatPhoneNumber } from '../../utils/index'
 import format from 'date-fns/format'
-import { Asset, Answers as AODAnswers } from '../../types'
+import { Asset, Answers as AODAnswers, OtherPropertiesEnum } from '../../types'
 import { FormatMessage } from '@island.is/localization'
 import { getFileRecipientName } from '../../lib/utils'
 
@@ -111,6 +111,65 @@ const testament: Field[] = [
         : m.testamentKnowledgeOfOtherTestamentNo,
   }),
 ]
+
+const extraInfo: Field[] = [
+  buildDividerField({}),
+  buildDescriptionField({
+    id: 'otherProperties',
+    title: m.otherPropertiesTitle,
+    marginBottom: 2,
+    titleVariant: 'h3',
+  }),
+  buildKeyValueField({
+    label: m.otherPropertiesAccounts,
+    width: 'half',
+    value: ({ answers }) =>
+      answers?.otherProperties
+        ? (answers.otherProperties as string[]).includes(
+            OtherPropertiesEnum.ACCOUNTS,
+          )
+          ? m.testamentKnowledgeOfOtherTestamentYes
+          : m.testamentKnowledgeOfOtherTestamentNo
+        : m.testamentKnowledgeOfOtherTestamentNo,
+  }),
+  buildKeyValueField({
+    label: m.otherPropertiesOwnBusiness,
+    width: 'half',
+    value: ({ answers }) =>
+      answers?.otherProperties
+        ? (answers.otherProperties as string[]).includes(
+            OtherPropertiesEnum.OWN_BUSINESS,
+          )
+          ? m.testamentKnowledgeOfOtherTestamentYes
+          : m.testamentKnowledgeOfOtherTestamentNo
+        : m.testamentKnowledgeOfOtherTestamentNo,
+  }),
+  buildKeyValueField({
+    label: m.otherPropertiesResidence,
+    width: 'half',
+    value: ({ answers }) =>
+      answers?.otherProperties
+        ? (answers.otherProperties as string[]).includes(
+            OtherPropertiesEnum.RESIDENCE,
+          )
+          ? m.testamentKnowledgeOfOtherTestamentYes
+          : m.testamentKnowledgeOfOtherTestamentNo
+        : m.testamentKnowledgeOfOtherTestamentNo,
+  }),
+  buildKeyValueField({
+    label: m.otherPropertiesAssetsAbroad,
+    width: 'half',
+    value: ({ answers }) =>
+      answers?.otherProperties
+        ? (answers.otherProperties as string[]).includes(
+            OtherPropertiesEnum.ASSETS_ABROAD,
+          )
+          ? m.testamentKnowledgeOfOtherTestamentYes
+          : m.testamentKnowledgeOfOtherTestamentNo
+        : m.testamentKnowledgeOfOtherTestamentNo,
+  }),
+]
+
 const inheritance: Field[] = [
   buildDividerField({
     condition: (application) =>
@@ -290,6 +349,7 @@ export const sectionOverview = buildSection({
         ...inheritance,
         ...properties,
         ...files,
+        ...extraInfo,
         ...additionalInfo,
         buildSubmitField({
           id: 'submit',
