@@ -798,6 +798,11 @@ describe('Application system API', () => {
       .expect(201)
     const answers = {
       employer: { isSelfEmployed: 'no' },
+      periods: [
+        {
+          startDate: '3000-01-01',
+        },
+      ],
     }
 
     await server
