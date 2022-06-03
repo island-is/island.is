@@ -1,7 +1,6 @@
 import { Inject } from '@nestjs/common'
 import { DataSourceConfig } from 'apollo-datasource'
 import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
-import { Base64 } from 'js-base64'
 import {
   Conditions,
   DebtSchedules,
