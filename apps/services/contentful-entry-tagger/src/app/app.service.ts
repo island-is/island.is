@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common'
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { Entry } from './types'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import type { Entry } from './types'
 import { AppRepository } from './app.repository'
 import slugify from '@sindresorhus/slugify'
 
