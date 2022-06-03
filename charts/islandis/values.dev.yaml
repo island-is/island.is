@@ -1277,8 +1277,8 @@ namespaces:
     - 'github-actions-cache'
     - 'user-notification'
     - 'external-contracts-tests'
-    - 'contentful-entry-tagger'
     - 'regulations-admin'
+    - 'contentful-entry-tagger'
 regulations-admin-backend:
   enabled: true
   env:
