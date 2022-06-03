@@ -17,9 +17,9 @@ import {
 import { Case } from './models/case.model'
 import { CaseArchive } from './models/caseArchive.model'
 import { CaseController } from './case.controller'
-import { RestrictedCaseController } from './restrictedCase.controller'
+import { LimitedAccessCaseController } from './limitedAccessCase.controller'
 import { CaseService } from './case.service'
-import { RestrictedCaseService } from './restrictedCase.service'
+import { LimitedAccessCaseService } from './limitedAccessCase.service'
 
 @Module({
   imports: [
@@ -34,8 +34,8 @@ import { RestrictedCaseService } from './restrictedCase.service'
     forwardRef(() => EventModule),
     SequelizeModule.forFeature([Case, CaseArchive]),
   ],
-  providers: [CaseService, RestrictedCaseService],
-  controllers: [CaseController, RestrictedCaseController],
+  providers: [CaseService, LimitedAccessCaseService],
+  controllers: [CaseController, LimitedAccessCaseController],
   exports: [CaseService],
 })
 export class CaseModule {}

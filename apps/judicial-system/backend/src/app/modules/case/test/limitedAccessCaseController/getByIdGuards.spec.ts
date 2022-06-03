@@ -2,19 +2,19 @@ import { CanActivate } from '@nestjs/common'
 
 import { JwtAuthGuard, RolesGuard } from '@island.is/judicial-system/auth'
 
-import { RestrictedCaseExistsGuard } from '../../guards/restrictedCaseExists.guard'
+import { LimitedAccessCaseExistsGuard } from '../../guards/limitedAccessCaseExists.guard'
 import { CaseScheduledGuard } from '../../guards/caseScheduled.guard'
 import { CaseDefenderGuard } from '../../guards/caseDefender.guard'
-import { RestrictedCaseController } from '../../restrictedCase.controller'
+import { LimitedAccessCaseController } from '../../limitedAccessCase.controller'
 
-describe('RestrictedCaseController - Get request pdf guards', () => {
+describe('LimitedAccessCaseController - Get by id guards', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let guards: any[]
 
   beforeEach(() => {
     guards = Reflect.getMetadata(
       '__guards__',
-      RestrictedCaseController.prototype.getRequestPdf,
+      LimitedAccessCaseController.prototype.getById,
     )
   })
 
@@ -47,15 +47,15 @@ describe('RestrictedCaseController - Get request pdf guards', () => {
     })
   })
 
-  describe('RestrictedCaseExistsGuard', () => {
+  describe('LimitedAccessCaseExistsGuard', () => {
     let guard: CanActivate
 
     beforeEach(() => {
       guard = new guards[2]()
     })
 
-    it('should have RestrictedCaseExistsGuard as quard 3', () => {
-      expect(guard).toBeInstanceOf(RestrictedCaseExistsGuard)
+    it('should have LimitedAccessCaseExistsGuard as quard 3', () => {
+      expect(guard).toBeInstanceOf(LimitedAccessCaseExistsGuard)
     })
   })
 

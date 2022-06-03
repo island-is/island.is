@@ -13,6 +13,7 @@
   "chromeWebSecurity": false,
   "viewportWidth": 1024,
   "viewportHeight": 768,
+  "baseUrl": "http://localhost:4200",
   "projectId": "xw5cuj",
   "retries": {
     "runMode": 2,

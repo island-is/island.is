@@ -25,6 +25,15 @@
     "logform",
     "pg-native",
     "form-data",
+
+    "bull",
+    "ioredis",
+    "p-map",
+    "lru-cache",
+    "pdfkit",
+    "tslib",
+    "sequelize",
+    "configcat-node",
     "@protobufjs/aspromise",
     "@protobufjs/base64",
     "@protobufjs/codegen",
@@ -39,3 +48,4 @@
   ],
   "keepNames": true
 }
+
