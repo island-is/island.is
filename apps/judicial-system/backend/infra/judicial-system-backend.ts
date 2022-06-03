@@ -54,6 +54,10 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
         staging: 'https://judicial-system.staging01.devland.is/verjandi/',
         prod: 'https://rettarvorslugatt.island.is/verjandi/',
       },
+      SQS_QUEUE_NAME: 'sqs-judicial-system',
+      SQS_DEAD_LETTER_QUEUE_NAME: 'sqs-judicial-system-dlq',
+      SQS_REGION: 'eu-west-1',
+      SQS_ENABLED: { dev: 'true', staging: 'false', prod: 'false' },
     })
     .xroad(Base, JudicialSystem)
     .secrets({

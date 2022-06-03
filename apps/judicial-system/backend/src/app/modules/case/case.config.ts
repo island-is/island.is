@@ -25,5 +25,15 @@ export const caseModuleConfig = defineConfig({
       'ARCHIVE_ENCRYPTION_KEY',
       'secret-archive-encryption-key',
     ),
+    sqs: {
+      enabled: env.requiredJSON('SQS_ENABLED', true),
+      queueName: env.required('SQS_QUEUE_NAME', 'message-queue'),
+      deadLetterQueueName: env.required(
+        'SQS_DEAD_LETTER_QUEUE_NAME',
+        'dead-letter-queue',
+      ),
+      endpoint: env.optional('SQS_ENDPOINT', 'http://localhost:4566'),
+      region: env.optional('SQS_REGION', 'eu-west-1'),
+    },
   }),
 })

@@ -7,7 +7,6 @@ async function bootstrap() {
   app.enableShutdownHooks()
   const service = app.get(AppService)
   await service.run()
-  await app.close()
 }
 
 bootstrap()

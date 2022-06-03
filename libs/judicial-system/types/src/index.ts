@@ -71,3 +71,6 @@ export type {
 } from './lib/policeFile'
 
 export type { CourtDocument } from './lib/courtDocument'
+
+export { MessageType } from './lib/message'
+export type { Message, CaseCompletedMessage } from './lib/message'
