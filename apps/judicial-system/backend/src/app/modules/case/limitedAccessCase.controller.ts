@@ -25,45 +25,45 @@ import type { User as TUser } from '@island.is/judicial-system/types'
 
 import { defenderRule } from '../../guards'
 import { User } from '../user'
-import { RestrictedCaseExistsGuard } from './guards/restrictedCaseExists.guard'
+import { LimitedAccessCaseExistsGuard } from './guards/limitedAccessCaseExists.guard'
 import { CaseCompletedGuard } from './guards/caseCompleted.guard'
 import { CaseScheduledGuard } from './guards/caseScheduled.guard'
 import { CaseDefenderGuard } from './guards/caseDefender.guard'
 import { CurrentCase } from './guards/case.decorator'
 import { Case } from './models/case.model'
 import { CaseService } from './case.service'
-import { RestrictedCaseService } from './restrictedCase.service'
+import { LimitedAccessCaseService } from './limitedAccessCase.service'
 
 @Controller('api/case/:caseId')
-@ApiTags('restricted cases')
-export class RestrictedCaseController {
+@ApiTags('limitedAccess cases')
+export class LimitedAccessCaseController {
   constructor(
     private readonly caseService: CaseService,
-    private readonly restrictedCaseService: RestrictedCaseService,
+    private readonly limitedAccessCaseService: LimitedAccessCaseService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
   @UseGuards(
     new JwtAuthGuard(true),
     RolesGuard,
-    RestrictedCaseExistsGuard,
+    LimitedAccessCaseExistsGuard,
     CaseScheduledGuard,
     CaseDefenderGuard,
   )
   @RolesRules(defenderRule)
-  @Get('restricted')
+  @Get('limitedAccess')
   @ApiOkResponse({
     type: Case,
     description: 'Gets a limited set of properties of an existing case',
   })
   getById(@Param('caseId') caseId: string, @CurrentCase() theCase: Case): Case {
-    this.logger.debug(`Getting restricted case ${caseId} by id`)
+    this.logger.debug(`Getting limitedAccess case ${caseId} by id`)
 
     return theCase
   }
 
-  @UseGuards(TokenGuard, RestrictedCaseExistsGuard)
-  @Get('defender/restricted')
+  @UseGuards(TokenGuard, LimitedAccessCaseExistsGuard)
+  @Get('defender/limitedAccess')
   @ApiOkResponse({
     type: User,
     description: 'Gets a case defender by national id',
@@ -75,7 +75,7 @@ export class RestrictedCaseController {
   ): User {
     this.logger.debug(`Getting a defender by national id from case ${caseId}`)
 
-    return this.restrictedCaseService.findDefenderNationalId(
+    return this.limitedAccessCaseService.findDefenderNationalId(
       theCase,
       nationalId,
     )
@@ -84,12 +84,12 @@ export class RestrictedCaseController {
   @UseGuards(
     new JwtAuthGuard(true),
     RolesGuard,
-    RestrictedCaseExistsGuard,
+    LimitedAccessCaseExistsGuard,
     CaseScheduledGuard,
     CaseDefenderGuard,
   )
   @RolesRules(defenderRule)
-  @Get('request/restricted')
+  @Get('request/limitedAccess')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
     content: { 'application/pdf': {} },
@@ -112,12 +112,12 @@ export class RestrictedCaseController {
   @UseGuards(
     new JwtAuthGuard(true),
     RolesGuard,
-    RestrictedCaseExistsGuard,
+    LimitedAccessCaseExistsGuard,
     CaseCompletedGuard,
     CaseDefenderGuard,
   )
   @RolesRules(defenderRule)
-  @Get('courtRecord/restricted')
+  @Get('courtRecord/limitedAccess')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
     content: { 'application/pdf': {} },
@@ -141,12 +141,12 @@ export class RestrictedCaseController {
   @UseGuards(
     new JwtAuthGuard(true),
     RolesGuard,
-    RestrictedCaseExistsGuard,
+    LimitedAccessCaseExistsGuard,
     CaseCompletedGuard,
     CaseDefenderGuard,
   )
   @RolesRules(defenderRule)
-  @Get('ruling/restricted')
+  @Get('ruling/limitedAccess')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
     content: { 'application/pdf': {} },
