@@ -33,6 +33,7 @@ import { parentalLeaveFormMessages, statesMessages } from './messages'
 import {
   hasEmployer,
   needsOtherParentApproval,
+  startDateInTheFuture,
 } from './parentalLeaveTemplateUtils'
 import {
   getApplicationAnswers,
@@ -151,6 +152,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             { target: States.EMPLOYER_WAITING_TO_ASSIGN, cond: hasEmployer },
             {
               target: States.VINNUMALASTOFNUN_APPROVAL,
+              cond: startDateInTheFuture,
             },
           ],
         },
@@ -189,6 +191,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   'requestRights',
                   'usePersonalAllowanceFromSpouse',
                   'personalAllowanceFromSpouse',
+                  'periods',
                 ],
               },
             },
@@ -212,6 +215,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             },
             {
               target: States.VINNUMALASTOFNUN_APPROVAL,
+              cond: startDateInTheFuture,
             },
           ],
           [DefaultEvents.EDIT]: { target: States.DRAFT },
@@ -334,6 +338,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           [DefaultEvents.APPROVE]: [
             {
               target: States.VINNUMALASTOFNUN_APPROVAL,
+              cond: startDateInTheFuture,
             },
           ],
           [DefaultEvents.REJECT]: { target: States.EMPLOYER_ACTION },
