@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common'
 
 import { FileController } from './file.controller'
-import { RestrictedFileController } from './restrictedFile.controller'
+import { LimitedAccessFileController } from './limitedAccessFile.controller'
 import { FileResolver } from './file.resolver'
 import { FileService } from './file.service'
 
 @Module({
-  controllers: [FileController, RestrictedFileController],
+  controllers: [FileController, LimitedAccessFileController],
   providers: [FileResolver, FileService],
 })
 export class FileModule {}

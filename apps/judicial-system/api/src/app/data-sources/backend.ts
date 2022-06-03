@@ -241,8 +241,8 @@ export class BackendApi extends DataSource<{ req: Request }> {
     return this.delete(`case/${caseId}/defendant/${defendantId}`)
   }
 
-  getRestrictedCase(id: string): Promise<Case> {
-    return this.get(`case/${id}/restricted`)
+  getLimitedAccessCase(id: string): Promise<Case> {
+    return this.get(`case/${id}/limitedAccess`)
   }
 }
 
