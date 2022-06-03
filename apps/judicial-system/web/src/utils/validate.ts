@@ -214,20 +214,28 @@ export const isReceptionAndAssignmentStepValidIC = (workingCase: Case) => {
   )
 }
 
-export const isCourtHearingArrangemenstStepValidRC = (workingCase: Case) => {
+export const isCourtHearingArrangemenstStepValidRC = (
+  workingCase: Case,
+  courtDate?: string,
+) => {
+  const date = courtDate || workingCase.courtDate
   return (
     validate(workingCase.defenderEmail || '', 'email-format').isValid &&
     validate(workingCase.defenderPhoneNumber || '', 'phonenumber').isValid &&
-    validate(workingCase.courtDate || '', 'empty').isValid &&
-    validate(workingCase.courtDate || '', 'date-format').isValid
+    validate(date || '', 'empty').isValid &&
+    validate(date || '', 'date-format').isValid
   )
 }
 
-export const isCourtHearingArrangementsStepValidIC = (workingCase: Case) => {
+export const isCourtHearingArrangementsStepValidIC = (
+  workingCase: Case,
+  courtDate?: string,
+) => {
+  const date = courtDate || workingCase.courtDate
   return (
     workingCase.sessionArrangements &&
-    validate(workingCase.courtDate || '', 'empty').isValid &&
-    validate(workingCase.courtDate || '', 'date-format').isValid &&
+    validate(date || '', 'empty').isValid &&
+    validate(date || '', 'date-format').isValid &&
     validate(workingCase.defenderEmail || '', 'email-format').isValid &&
     validate(workingCase.defenderPhoneNumber || '', 'phonenumber').isValid
   )
@@ -237,8 +245,7 @@ export const isRulingValidRC = (workingCase: Case) => {
   return (
     validate(workingCase.prosecutorDemands || '', 'empty').isValid &&
     validate(workingCase.courtCaseFacts || '', 'empty').isValid &&
-    validate(workingCase.courtLegalArguments || '', 'empty').isValid &&
-    validate(workingCase.ruling || '', 'empty').isValid
+    validate(workingCase.courtLegalArguments || '', 'empty').isValid
   )
 }
 
@@ -246,8 +253,7 @@ export const isRulingValidIC = (workingCase: Case) => {
   return (
     validate(workingCase.prosecutorDemands || '', 'empty').isValid &&
     validate(workingCase.courtCaseFacts || '', 'empty').isValid &&
-    validate(workingCase.courtLegalArguments || '', 'empty').isValid &&
-    validate(workingCase.ruling || '', 'empty').isValid
+    validate(workingCase.courtLegalArguments || '', 'empty').isValid
   )
 }
 
@@ -262,7 +268,8 @@ export const isCourtRecordStepValidRC = (workingCase: Case) => {
     validate(workingCase.courtEndTime || '', 'empty').isValid &&
     validate(workingCase.courtEndTime || '', 'date-format').isValid &&
     validate(workingCase.decision || '', 'empty').isValid &&
-    validate(workingCase.conclusion || '', 'empty').isValid
+    validate(workingCase.conclusion || '', 'empty').isValid &&
+    validate(workingCase.ruling || '', 'empty').isValid
   )
 }
 
@@ -277,7 +284,8 @@ export const isCourtRecordStepValidIC = (workingCase: Case) => {
     validate(workingCase.courtEndTime || '', 'empty').isValid &&
     validate(workingCase.courtEndTime || '', 'date-format').isValid &&
     validate(workingCase.decision || '', 'empty').isValid &&
-    validate(workingCase.conclusion || '', 'empty').isValid
+    validate(workingCase.conclusion || '', 'empty').isValid &&
+    validate(workingCase.ruling || '', 'empty').isValid
   )
 }
 

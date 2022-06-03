@@ -60,6 +60,7 @@ if (userMocked) {
       ApiScope.company,
       RegulationsAdminScope.create,
       RegulationsAdminScope.manage,
+      ApiScope.vehicles,
     ],
     post_logout_redirect_uri: `${window.location.origin}`,
     userStorePrefix: 'sp.',

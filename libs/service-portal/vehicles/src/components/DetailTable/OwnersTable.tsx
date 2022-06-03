@@ -19,32 +19,34 @@ const OwnersTable = ({ data, title }: PropTypes) => {
       </Text>
       <T.Table>
         <T.Head>
-          <T.HeadData>
-            <Text variant="small" fontWeight="semiBold">
-              {'#'}
-            </Text>
-          </T.HeadData>
-          <T.HeadData>
-            <Text variant="small" fontWeight="semiBold">
-              {formatMessage(messages.name)}
-            </Text>
-          </T.HeadData>
-          <T.HeadData>
-            <Text variant="small" fontWeight="semiBold">
-              {formatMessage(messages.address)}
-            </Text>
-          </T.HeadData>
-          <T.HeadData>
-            <Text variant="small" fontWeight="semiBold">
-              {formatMessage(messages.purchaseDate)}
-            </Text>
-          </T.HeadData>
+          <T.Row>
+            <T.HeadData>
+              <Text variant="small" fontWeight="semiBold">
+                #
+              </Text>
+            </T.HeadData>
+            <T.HeadData>
+              <Text variant="small" fontWeight="semiBold">
+                {formatMessage(messages.name)}
+              </Text>
+            </T.HeadData>
+            <T.HeadData>
+              <Text variant="small" fontWeight="semiBold">
+                {formatMessage(messages.address)}
+              </Text>
+            </T.HeadData>
+            <T.HeadData>
+              <Text variant="small" fontWeight="semiBold">
+                {formatMessage(messages.purchaseDate)}
+              </Text>
+            </T.HeadData>
+          </T.Row>
         </T.Head>
         <T.Body>
           {data?.map((owner: VehiclesOwners | null, index: number) => {
             return (
               <T.Row key={index + 'owners table'}>
-                <T.Data>{index + 1}</T.Data>
+                <T.Data>{data.length - index}</T.Data>
                 <T.Data>{owner?.name}</T.Data>
                 <T.Data>{owner?.address}</T.Data>
                 <T.Data>

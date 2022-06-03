@@ -16,6 +16,7 @@ interface ModalProps {
   handlePrimaryButtonClick?: () => void
   isPrimaryButtonLoading?: boolean
   isPrimaryButtonDisabled?: boolean
+  errorMessage?: string
   children?: ReactNode
 }
 
@@ -29,6 +30,7 @@ const Modal: React.FC<ModalProps> = ({
   handlePrimaryButtonClick,
   isPrimaryButtonLoading,
   isPrimaryButtonDisabled,
+  errorMessage,
   children,
 }: ModalProps) => {
   const modalVariants = {
@@ -42,6 +44,7 @@ const Modal: React.FC<ModalProps> = ({
       transition: { duration: 0.2 },
     },
   }
+
   return (
     <motion.div
       key="modal"
@@ -100,6 +103,13 @@ const Modal: React.FC<ModalProps> = ({
             </Button>
           )}
         </Box>
+        {errorMessage && (
+          <Box marginTop={1} data-testid="modalErrorMessage">
+            <Text variant="eyebrow" color="red600">
+              {errorMessage}
+            </Text>
+          </Box>
+        )}
       </motion.div>
     </motion.div>
   )
@@ -115,6 +125,7 @@ const ModalPortal = ({
   handlePrimaryButtonClick,
   isPrimaryButtonLoading,
   isPrimaryButtonDisabled,
+  errorMessage,
   children,
 }: ModalProps) => {
   const modalRoot =
@@ -131,6 +142,7 @@ const ModalPortal = ({
       handlePrimaryButtonClick={handlePrimaryButtonClick}
       isPrimaryButtonLoading={isPrimaryButtonLoading}
       isPrimaryButtonDisabled={isPrimaryButtonDisabled}
+      errorMessage={errorMessage}
       children={children}
     />,
     modalRoot,

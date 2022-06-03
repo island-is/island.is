@@ -2,6 +2,7 @@
   "implicitDependencies": {
     "workspace.json": "*",
     "package.json": {
+      "version": "*",
       "dependencies": "*",
       "devDependencies": "*",
       "resolutions": "*"
@@ -246,6 +247,9 @@
       "tags": []
     },
     "application-templates-financial-aid": {
+      "tags": []
+    },
+    "application-templates-financial-statements-inao": {
       "tags": []
     },
     "application-templates-funding-government-projects": {
@@ -710,6 +714,9 @@
       "tags": []
     },
     "services-auth-public-api": {
+      "tags": []
+    },
+    "services-contentful-entry-tagger": {
       "tags": []
     },
     "services-documents": {

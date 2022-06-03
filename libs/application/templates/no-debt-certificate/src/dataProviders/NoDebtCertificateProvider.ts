@@ -1,9 +1,8 @@
 import {
   BasicDataProvider,
-  Application,
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
-  StaticText,
+  ProviderErrorReason,
 } from '@island.is/application/core'
 import { m } from '../lib/messages'
 import { DebtLessCertificateModel } from '../types/schema'
@@ -52,9 +51,12 @@ export class NoDebtCertificateProvider extends BasicDataProvider {
       if (
         !response.data.getDebtLessCertificate.debtLessCertificateResult.debtLess
       ) {
-        // todo add title to error
         return Promise.reject({
-          reason: m.missingCertificate,
+          reason: {
+            title: m.missingCertificateTitle,
+            summary: m.missingCertificateSummary,
+          },
+          statusCode: 404,
         })
       }
 
@@ -62,12 +64,16 @@ export class NoDebtCertificateProvider extends BasicDataProvider {
     })
   }
 
-  onProvideError(error?: { reason?: StaticText }): FailedDataProviderResult {
+  onProvideError(error: {
+    reason: ProviderErrorReason
+    statusCode?: number
+  }): FailedDataProviderResult {
     return {
       date: new Date(),
+      data: {},
       reason: error?.reason ?? m.errorDataProvider,
       status: 'failure',
-      data: {},
+      statusCode: error.statusCode,
     }
   }
 

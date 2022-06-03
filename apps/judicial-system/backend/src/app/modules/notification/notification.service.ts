@@ -44,6 +44,7 @@ import {
   formatCourtResubmittedToCourtSmsNotification,
   getCourtRecordPdfAsString,
   formatProsecutorReadyForCourtEmailNotification,
+  formatPrisonAdministrationRulingNotification,
 } from '../../formatters'
 import { notifications } from '../../messages'
 import { Case } from '../case'
@@ -193,6 +194,25 @@ export class NotificationService {
       })
     } catch (error) {
       this.logger.error('Failed to send email', { error })
+
+      this.eventService.postErrorEvent(
+        'Failed to send email',
+        {
+          subject,
+          to: `${recipientName} (${recipientEmail})`,
+          attachments:
+            attachments && attachments.length > 0
+              ? attachments.reduce(
+                  (acc, attachment, index) =>
+                    index > 0
+                      ? `${acc}, ${attachment.filename}`
+                      : `${attachment.filename}`,
+                  '',
+                )
+              : undefined,
+        },
+        error as Error,
+      )
 
       return {
         address: recipientEmail,
@@ -710,23 +730,18 @@ export class NotificationService {
 
   private async sendRulingEmailNotificationToPrisonAdministration(
     theCase: Case,
-    courtRecordPdf: string,
   ): Promise<Recipient> {
+    const { subject, body } = formatPrisonAdministrationRulingNotification(
+      this.formatMessage,
+      theCase.courtCaseNumber,
+      theCase.court?.name,
+      `${environment.deepLinks.completedCaseOverviewUrl}/${theCase.id}`,
+    )
     return this.sendEmail(
-      theCase.courtCaseNumber ?? '',
-      'Sjá viðhengi',
+      subject,
+      body,
       'Fangelsismálastofnun',
       environment.notifications.prisonAdminEmail,
-      [
-        {
-          filename: this.formatMessage(
-            notifications.signedRuling.courtRecordAttachment,
-            { courtCaseNumber: theCase.courtCaseNumber },
-          ),
-          content: courtRecordPdf,
-          encoding: 'binary',
-        },
-      ],
     )
   }
 
@@ -745,10 +760,7 @@ export class NotificationService {
     )
 
     const recipients = [
-      await this.sendRulingEmailNotificationToPrisonAdministration(
-        theCase,
-        courtRecordPdf,
-      ),
+      await this.sendRulingEmailNotificationToPrisonAdministration(theCase),
     ]
 
     if (
@@ -779,30 +791,29 @@ export class NotificationService {
       courtCaseNumber: theCase.courtCaseNumber,
       caseType: theCase.type,
     })
-    const html = `${
-      theCase.isCustodyIsolation
-        ? this.formatMessage(notifications.modified.isolationHtml, {
-            caseType: theCase.type,
-            actorInstitution: user.institution?.name,
-            actorName: user.name,
-            actorTitle: user.title,
-            courtCaseNumber: theCase.courtCaseNumber,
-            linkStart: `<a href="${environment.deepLinks.completedCaseOverviewUrl}${theCase.id}">`,
-            linkEnd: '</a>',
-            validToDate: formatDate(theCase.validToDate, 'PPPp'),
-            isolationToDate: formatDate(theCase.isolationToDate, 'PPPp'),
-          })
-        : this.formatMessage(notifications.modified.html, {
-            caseType: theCase.type,
-            actorInstitution: user.institution?.name,
-            actorName: user.name,
-            actorTitle: user.title,
-            courtCaseNumber: theCase.courtCaseNumber,
-            linkStart: `<a href="${environment.deepLinks.completedCaseOverviewUrl}${theCase.id}">`,
-            linkEnd: '</a>',
-            validToDate: formatDate(theCase.validToDate, 'PPPp'),
-          })
-    }`
+    const html = theCase.isCustodyIsolation
+      ? this.formatMessage(notifications.modified.isolationHtml, {
+          caseType: theCase.type,
+          actorInstitution: user.institution?.name,
+          actorName: user.name,
+          actorTitle: user.title,
+          courtCaseNumber: theCase.courtCaseNumber,
+          linkStart: `<a href="${environment.deepLinks.completedCaseOverviewUrl}${theCase.id}">`,
+          linkEnd: '</a>',
+          validToDate: formatDate(theCase.validToDate, 'PPPp'),
+          isolationToDate: formatDate(theCase.isolationToDate, 'PPPp'),
+        })
+      : this.formatMessage(notifications.modified.html, {
+          caseType: theCase.type,
+          actorInstitution: user.institution?.name,
+          actorName: user.name,
+          actorTitle: user.title,
+          courtCaseNumber: theCase.courtCaseNumber,
+          linkStart: `<a href="${environment.deepLinks.completedCaseOverviewUrl}${theCase.id}">`,
+          linkEnd: '</a>',
+          validToDate: formatDate(theCase.validToDate, 'PPPp'),
+        })
+
     const custodyNoticePdf = await getCustodyNoticePdfAsString(
       theCase,
       this.formatMessage,
