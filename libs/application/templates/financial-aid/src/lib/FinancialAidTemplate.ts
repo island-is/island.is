@@ -112,6 +112,7 @@ const FinancialAidTemplate: ApplicationTemplate<
                   'bankInfo',
                   'contactInfo',
                   'formComment',
+                  'spouseEmailSuccess',
                 ],
               },
             },
