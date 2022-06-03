@@ -46,7 +46,7 @@ const attributes: (keyof Case)[] = [
 ]
 
 @Injectable()
-export class RestrictedCaseService {
+export class LimitedAccessCaseService {
   constructor(@InjectModel(Case) private readonly caseModel: typeof Case) {}
 
   async findById(caseId: string): Promise<Case> {
