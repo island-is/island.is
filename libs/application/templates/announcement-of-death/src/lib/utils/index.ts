@@ -1,4 +1,6 @@
 import { RelationEnum, Answers } from '../../types'
+import { Answer } from '@island.is/application/core'
+import { YES } from '../constants'
 
 export const getRelationOptions = (): Record<
   keyof typeof RelationEnum,
@@ -24,4 +26,16 @@ export const getFileRecipientName = (
     (estateMember) => estateMember.nationalId === recipient,
   )
   return estateMember?.name || answers.applicantName.toString()
+}
+
+export const hasYes = (answer: any) => {
+  if (Array.isArray(answer)) {
+    return answer.includes(YES)
+  }
+
+  if (answer instanceof Object) {
+    return Object.values(answer).includes(YES)
+  }
+
+  return answer === YES
 }

@@ -9,6 +9,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import {
   CheckboxController,
+  DatePickerController,
   InputController,
   SelectController,
 } from '@island.is/shared/form-fields'
@@ -29,6 +30,8 @@ import { IdentityInput, Query } from '@island.is/api/schema'
 import { IDENTITY_QUERY } from '../../graphql/'
 import * as kennitala from 'kennitala'
 import { m } from '../../lib/messages'
+import { getValueViaPath } from '../../../../../core/src/lib/formUtils'
+import { hasYes } from '../../lib/utils'
 
 export const EstateMemberRepeater: FC<FieldBaseProps<Answers>> = ({
   application,
@@ -145,7 +148,7 @@ const Item = ({
   const name = useWatch({ name: nameField, defaultValue: '' })
   const foreignCitizenship = useWatch({
     name: foreignCitizenshipField,
-    defaultValue: '',
+    defaultValue: hasYes(field.foreignCitizenship) ? ['yes'] : '',
   })
 
   const { control, setValue } = useFormContext()
@@ -175,6 +178,7 @@ const Item = ({
       setValue(nameField, '')
     }
   }, [getIdentity, name, nameField, nationalIdInput, setValue])
+
 
   return (
     <Box position="relative" key={field.id} marginTop={2}>
@@ -265,14 +269,21 @@ const Item = ({
               />
             </GridColumn>
             <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-              <InputController
-                key={dateOfBirthField}
-                id={dateOfBirthField}
-                name={dateOfBirthField}
-                backgroundColor="blue"
-                defaultValue={field.dateOfBirth}
-                error={error?.dateOfBirth ?? undefined}
+              <DatePickerController
                 label={formatMessage(m.inheritanceDayOfBirthLabel)}
+                placeholder={formatMessage(
+                  m.inheritanceDayOfBirthLabel,
+                )}
+                id={dateOfBirthField}
+                key={dateOfBirthField}
+                name={dateOfBirthField}
+                locale="is"
+                maxDate={new Date()}
+                backgroundColor="white"
+                onChange={(d) => {
+                  setValue(dateOfBirthField, d)
+                }}
+                error={error?.dateOfBirth ?? undefined}
               />
             </GridColumn>
           </>
