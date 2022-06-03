@@ -25,36 +25,8 @@ import { RequestRulingSignatureMutation } from './requestRulingSignatureGql'
 import { RequestCourtRecordSignatureMutation } from './requestCourtRecordSignatureGql'
 import { ExtendCaseMutation } from './extendCaseGql'
 
-type autofillProperties = Pick<
-  Case,
-  | 'conclusion'
-  | 'courtAttendees'
-  | 'courtCaseFacts'
-  | 'courtDate'
-  | 'courtDate'
-  | 'courtLegalArguments'
-  | 'courtLocation'
-  | 'courtStartDate'
-  | 'decision'
-  | 'demands'
-  | 'endOfSessionBookings'
-  | 'introduction'
-  | 'isCustodyIsolation'
-  | 'isolationToDate'
-  | 'prosecutorDemands'
-  | 'prosecutorOnlySessionRequest'
-  | 'requestedCustodyRestrictions'
-  | 'requestedOtherRestrictions'
-  | 'requestedValidToDate'
-  | 'ruling'
-  | 'sessionArrangements'
-  | 'sessionBookings'
-  | 'type'
-  | 'validToDate'
->
-
 export type autofillEntry = {
-  key: keyof autofillProperties
+  key: keyof Case
   value?: string | boolean | SessionArrangements | CaseCustodyRestrictions[]
   force?: boolean
 }

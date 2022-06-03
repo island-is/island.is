@@ -47,7 +47,6 @@ import {
   setAndSendDateToServer,
   removeTabsValidateAndSet,
   validateAndSendToServer,
-  setAndSendToServer,
   validateAndSetTime,
   validateAndSendTimeToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
@@ -308,12 +307,16 @@ const CourtRecord = () => {
               text={formatMessage(closedCourt.text)}
               isHidden={workingCase.isClosedCourtHidden}
               onToggleVisibility={(isVisible: boolean) =>
-                setAndSendToServer(
-                  'isClosedCourtHidden',
-                  isVisible,
+                autofill(
+                  [
+                    {
+                      key: 'isClosedCourtHidden',
+                      value: isVisible,
+                      force: true,
+                    },
+                  ],
                   workingCase,
                   setWorkingCase,
-                  updateCase,
                 )
               }
               tooltip={formatMessage(closedCourt.tooltip)}

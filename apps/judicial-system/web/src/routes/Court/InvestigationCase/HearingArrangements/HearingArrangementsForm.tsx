@@ -25,7 +25,6 @@ import {
 } from '@island.is/judicial-system/types'
 import {
   removeTabsValidateAndSet,
-  setAndSendToServer,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -136,13 +135,17 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                   SessionArrangements.ALL_PRESENT
                 }
                 onChange={() => {
-                  setWorkingCase({
-                    ...workingCase,
-                    sessionArrangements: SessionArrangements.ALL_PRESENT,
-                  })
-                  updateCase(workingCase.id, {
-                    sessionArrangements: SessionArrangements.ALL_PRESENT,
-                  })
+                  autofill(
+                    [
+                      {
+                        key: 'sessionArrangements',
+                        value: SessionArrangements.ALL_PRESENT,
+                        force: true,
+                      },
+                    ],
+                    workingCase,
+                    setWorkingCase,
+                  )
                 }}
                 large
                 backgroundColor="white"
@@ -160,15 +163,17 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                   SessionArrangements.ALL_PRESENT_SPOKESPERSON
                 }
                 onChange={() => {
-                  setWorkingCase({
-                    ...workingCase,
-                    sessionArrangements:
-                      SessionArrangements.ALL_PRESENT_SPOKESPERSON,
-                  })
-                  updateCase(workingCase.id, {
-                    sessionArrangements:
-                      SessionArrangements.ALL_PRESENT_SPOKESPERSON,
-                  })
+                  autofill(
+                    [
+                      {
+                        key: 'sessionArrangements',
+                        value: SessionArrangements.ALL_PRESENT_SPOKESPERSON,
+                        force: true,
+                      },
+                    ],
+                    workingCase,
+                    setWorkingCase,
+                  )
                 }}
                 large
                 backgroundColor="white"
@@ -185,12 +190,16 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                 SessionArrangements.PROSECUTOR_PRESENT
               }
               onChange={() => {
-                setAndSendToServer(
-                  'sessionArrangements',
-                  SessionArrangements.PROSECUTOR_PRESENT,
+                autofill(
+                  [
+                    {
+                      key: 'sessionArrangements',
+                      value: SessionArrangements.PROSECUTOR_PRESENT,
+                      force: true,
+                    },
+                  ],
                   workingCase,
                   setWorkingCase,
-                  updateCase,
                 )
               }}
               large
