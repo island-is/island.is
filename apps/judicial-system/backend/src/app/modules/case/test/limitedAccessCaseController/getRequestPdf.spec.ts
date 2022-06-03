@@ -17,17 +17,17 @@ type GivenWhenThen = (
   res: Response,
 ) => Promise<Then>
 
-describe('RestrictedCaseController - Get request pdf', () => {
+describe('LimitedAccessCaseController - Get request pdf', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { restrictedCaseController } = await createTestingCaseModule()
+    const { limitedAccessCaseController } = await createTestingCaseModule()
 
     givenWhenThen = async (caseId: string, theCase: Case, res: Response) => {
       const then = {} as Then
 
       try {
-        await restrictedCaseController.getRequestPdf(caseId, theCase, res)
+        await limitedAccessCaseController.getRequestPdf(caseId, theCase, res)
       } catch (error) {
         then.error = error as Error
       }

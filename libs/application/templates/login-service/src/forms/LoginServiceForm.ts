@@ -6,7 +6,6 @@ import {
   buildCustomField,
   buildMultiField,
   buildTextField,
-  buildSelectField,
   buildSubmitField,
   DefaultEvents,
   buildCheckboxField,
@@ -20,7 +19,7 @@ import {
   overview,
   submitted,
 } from '../lib/messages'
-import { TYPE_OF_OPERATION, YES } from '../shared/constants'
+import { YES } from '../shared/constants'
 
 export const LoginServiceForm: Form = buildForm({
   id: 'LoginServiceForm',
@@ -58,7 +57,7 @@ export const LoginServiceForm: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'applicant',
+      id: 'applicantSection',
       title: section.applicant,
       children: [
         buildMultiField({
@@ -72,29 +71,10 @@ export const LoginServiceForm: Form = buildForm({
               doesNotRequireAnswer: true,
               component: 'FieldTitle',
             }),
-            buildTextField({
-              id: 'applicant.name',
-              title: applicant.labels.name,
-              backgroundColor: 'blue',
-              width: 'half',
-              required: true,
-            }),
-            buildTextField({
-              id: 'applicant.nationalId',
-              title: applicant.labels.nationalId,
-              format: '######-####',
-              backgroundColor: 'blue',
-              width: 'half',
-              required: true,
-            }),
-            buildSelectField({
-              id: 'applicant.typeOfOperation',
-              title: applicant.labels.typeOfOperation,
-              backgroundColor: 'blue',
-              options: TYPE_OF_OPERATION.map((value) => ({
-                label: value,
-                value: value,
-              })),
+            buildCustomField({
+              id: 'applicant',
+              title: '',
+              component: 'InformationAboutApplication',
             }),
             buildCustomField(
               {
