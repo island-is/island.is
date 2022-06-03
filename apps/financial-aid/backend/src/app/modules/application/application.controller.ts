@@ -19,6 +19,7 @@ import {
   UpdateApplicationTableResponse,
   SpouseResponse,
   FilterApplicationsResponse,
+  SpouseEmailResponse,
 } from './models'
 
 import {
@@ -31,6 +32,7 @@ import {
   UpdateApplicationDto,
   CreateApplicationEventDto,
   FilterApplicationsDto,
+  SpouseEmailDto,
 } from './dto'
 
 import {
@@ -370,5 +372,22 @@ export class ApplicationController {
   ): Promise<FilterApplicationsResponse> {
     this.logger.debug('Application controller: Filter applications')
     return this.applicationService.filter(filters, staff.municipalityIds)
+  }
+
+  @Scopes(
+    MunicipalitiesFinancialAidScope.read,
+    MunicipalitiesFinancialAidScope.applicant,
+  )
+  @Post('sendSpouseEmail')
+  @ApiOkResponse({
+    type: SpouseEmailResponse,
+    description:
+      'Sends email to applicant and spouse to inform that the application is waiting for the spouse',
+  })
+  async sendSpouseEmail(
+    @Body() data: SpouseEmailDto,
+  ): Promise<SpouseEmailResponse> {
+    this.logger.debug('Application controller: sending spouse email')
+    return this.applicationService.sendSpouseEmail(data)
   }
 }

@@ -25,6 +25,11 @@ export const applicant = {
       defaultMessage: 'Lögaðili sem sækir um innskráningarþjónustu',
       description: 'Applicant name label description',
     },
+    nameAndNationalId: {
+      id: `ls.application:section.applicant.nameAndNationalId`,
+      defaultMessage: 'Leitaðu eftir nafni eða kennitölu hjá opinberum aðila',
+      description: 'Applicant name and national id label',
+    },
     nationalId: {
       id: `ls.application:section.applicant.nationalId`,
       defaultMessage: 'Kennitala lögaðila',
@@ -34,6 +39,12 @@ export const applicant = {
       id: `ls.application:section.applicant.typeOfOperation`,
       defaultMessage: 'Rekstrartegund',
       description: 'Applicant type of operation label',
+    },
+    typeOfOperationNotValid: {
+      id: `ls.application:section.applicant.typeOfOperationNotValid`,
+      defaultMessage:
+        'Innskráningarþjónusta Ísland.is er einungis aðgengileg opinberum aðilum að svo stöddu.',
+      description: 'Type of operation is not valid',
     },
     responsiblePartyTitle: {
       id: `ls.application:section.applicant.responsiblePartyTitle`,

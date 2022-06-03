@@ -882,7 +882,7 @@ const CourtRecord = () => {
             !workingCase.decision ||
             !workingCase.conclusion ||
             !workingCase.ruling
-              ? formatMessage(m.nextButtonInfo)
+              ? formatMessage(m.sections.nextButtonInfo.text)
               : ''
           }
         />
