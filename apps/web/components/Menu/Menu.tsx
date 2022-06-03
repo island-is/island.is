@@ -15,6 +15,7 @@ import { LanguageToggler } from '../LanguageToggler'
 interface MegaMenuLink {
   href: LinkResolverResponse
   text: string
+  dataTestId: string
   sub?: [MegaMenuLink]
 }
 
@@ -40,7 +41,10 @@ export const Menu = ({
   return (
     <MenuUI
       baseId="Menu"
-      mainLinks={mainLinks}
+      mainLinks={mainLinks.map((item) => ({
+        ...item,
+        dataTestId: 'mega-menu-link',
+      }))}
       asideTopLinks={asideTopLinks}
       asideBottomLinks={asideBottomLinks}
       mainTitle={t.serviceCategories}

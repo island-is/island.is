@@ -6,6 +6,7 @@
   "pluginsFile": "./src/plugins/index",
   "supportFile": "./src/support/index.ts",
   "video": false,
+  "defaultCommandTimeout": 10000,
   "pageLoadTimeout": 240000,
   "responseTimeout": 120000,
   "videosFolder": "../../dist/cypress/apps/web-e2e/videos",

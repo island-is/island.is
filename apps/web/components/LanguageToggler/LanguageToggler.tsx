@@ -194,6 +194,7 @@ const ButtonElement: FC<ButtonElementProps & ButtonProps> = ({
   <Button
     colorScheme={buttonColorScheme}
     variant="utility"
+    data-testid="language-toggler"
     onClick={onClick}
     aria-label={otherLanguageAria}
     lang={otherLanguage === 'en' ? 'en' : 'is'}

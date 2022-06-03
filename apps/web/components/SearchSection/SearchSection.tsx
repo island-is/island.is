@@ -102,6 +102,7 @@ export const SearchSection = ({
                               ),
                             }
                           : { href: cardUrl.href })}
+                        data-testid="featured-link"
                         variant="blue"
                         attention={attention}
                       >

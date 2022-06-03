@@ -15,20 +15,19 @@ import { GridRow } from '../Grid/GridRow/GridRow'
 import { GridColumn } from '../Grid/GridColumn/GridColumn'
 import { useBoxStyles } from '../Box/useBoxStyles'
 
-type RenderLinkObj = {
+type LinkBase = {
+  text: string
+  href: any
+  dataTestId?: string
+}
+
+type RenderLinkObj = LinkBase & {
   className: string
-  text: string
-  href: any
 }
 
-type Link = {
-  text: string
-  href: any
-}
+type Link = LinkBase
 
-type LinkWithSub = {
-  text: string
-  href: any
+type LinkWithSub = LinkBase & {
   sub?: Link[]
 }
 
@@ -101,8 +100,13 @@ export interface MenuProps {
   renderDisclosure?: ModalBaseProps['renderDisclosure']
 }
 
-const defaultRenderLinks = ({ text, href, className }: RenderLinkObj) => (
-  <a href={href} className={className}>
+const defaultRenderLinks = ({
+  text,
+  href,
+  className,
+  dataTestId,
+}: RenderLinkObj) => (
+  <a href={href} className={className} data-test-id={dataTestId}>
     {text}
   </a>
 )
@@ -199,13 +203,14 @@ export const Menu = ({
     </Button>,
   )
   const mainLinksRender = (closeModal: () => void) =>
-    mainLinks.map(({ text, href }, index) => (
+    mainLinks.map(({ text, href, dataTestId }, index) => (
       <div className={styles.mainLinkOuter} key={index}>
         {renderLink(
           {
             className: cn(getTextStyles({}), styles.mainLink),
             text: text,
             href: href,
+            dataTestId: dataTestId,
           },
           closeModal,
         )}
