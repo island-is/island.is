@@ -32,7 +32,7 @@ const LOG_CATEGORY = 'userprofile-service'
 // eslint-disable-next-line
 const handleError = (error: any) => {
   logger.error('Userprofile error', {
-    exception: JSON.stringify(error),
+    error: JSON.stringify(error),
     category: LOG_CATEGORY,
   })
   throw new ApolloError('Failed to resolve request', error.status)

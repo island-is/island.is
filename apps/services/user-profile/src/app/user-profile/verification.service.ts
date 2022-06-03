@@ -134,13 +134,21 @@ export class VerificationService {
       }
     }
 
-    await this.emailVerificationModel.update(
-      { confirmed: true },
-      {
-        where: { nationalId },
-        returning: true,
-      },
-    )
+    try {
+      await this.emailVerificationModel.update(
+        { confirmed: true },
+        {
+          where: { nationalId },
+          returning: true,
+        },
+      )
+    } catch (e) {
+      this.logger.error(e)
+      return {
+        message: 'Unable to update email verification',
+        confirmed: false,
+      }
+    }
 
     return {
       message: 'Email confirmed',
@@ -191,13 +199,22 @@ export class VerificationService {
       }
     }
 
-    await this.smsVerificationModel.update(
-      { confirmed: true },
-      {
-        where: { nationalId },
-        returning: true,
-      },
-    )
+    try {
+      await this.smsVerificationModel.update(
+        { confirmed: true },
+        {
+          where: { nationalId },
+          returning: true,
+        },
+      )
+    } catch (e) {
+      this.logger.error(e)
+      return {
+        message: 'Unable to update sms verification',
+        confirmed: false,
+      }
+    }
+
     return {
       message: 'SMS confirmed',
       confirmed: true,
