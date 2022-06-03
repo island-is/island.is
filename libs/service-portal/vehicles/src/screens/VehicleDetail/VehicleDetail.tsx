@@ -47,8 +47,8 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
   const { data, loading, error } = useQuery<Query>(GET_USERS_VEHICLE_DETAIL, {
     variables: {
       input: {
-        regno: id,
-        permno: '',
+        regno: '',
+        permno: id,
         vin: '',
       },
     },
