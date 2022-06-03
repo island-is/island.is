@@ -70,7 +70,6 @@ export const useS3Upload = () => {
     file: UploadFile,
   ): Promise<PresignedPost> => {
     try {
-      console.log(`name: ${file?.name} type: ${file?.type}`)
       const post = await createNewPresignedPost({
         variables: {
           input: {
@@ -121,9 +120,7 @@ export const useS3Upload = () => {
       body: formData,
       method: 'DELETE',
       mode: 'cors',
-    })
-    console.log(presignedPost)
-    console.log(res)*/
+    })*/
   }
 
   const onChange = async (newFiles: File[]) => {

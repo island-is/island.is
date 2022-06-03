@@ -3,7 +3,7 @@ import { Field, InputType } from '@nestjs/graphql'
 @InputType()
 export class CreatePresignedPostInput {
   @Field()
-  fileName!: string
+  readonly fileName!: string
   @Field()
-  type!: string
+  readonly type!: string
 }
