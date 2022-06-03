@@ -3246,6 +3246,9 @@ export interface ITwoColumnTextFields {
 
   /** Right Link */
   rightLink?: ILink | undefined
+
+  /** Divider On Top */
+  dividerOnTop?: boolean | undefined
 }
 
 export interface ITwoColumnText extends Entry<ITwoColumnTextFields> {
