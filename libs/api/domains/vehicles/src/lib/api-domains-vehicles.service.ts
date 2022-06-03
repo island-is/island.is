@@ -7,12 +7,14 @@ import {
   BasicVehicleInformationGetRequest,
   BasicVehicleInformationTechnicalMass,
   BasicVehicleInformationTechnicalAxle,
-  BasicVehicleInformationTechnicalTyre,
   PersidnoLookup,
 } from '@island.is/clients/vehicles'
 import { VehiclesAxle, VehiclesDetail } from '../models/getVehicleDetail.model'
 import { ApolloError } from 'apollo-server-express'
 import { FetchError } from '@island.is/clients/middlewares'
+
+// 1kW equals 1.359622 metric horsepower.
+const KW_TO_METRIC_HP = 1.359622
 
 @Injectable()
 export class VehiclesService {
@@ -61,7 +63,7 @@ export class VehiclesService {
       })
       const { data } = res
 
-      if (!data) return {}
+      if (!data) return null
       const newestInspection = data.inspections?.sort((a, b) => {
         if (a && b && a.date && b.date)
           return new Date(b.date).getTime() - new Date(a.date).getTime()
@@ -114,8 +116,22 @@ export class VehiclesService {
         (data.firstregdate ? new Date(data?.firstregdate).getFullYear() : null)
 
       const operators = data.operators?.filter((x) => x.current)
-
       const coOwners = data.owners?.find((x) => x.current)?.coOwners
+      const owner = data.owners?.find((x) => x.current === true)
+
+      const userNationalId = input.clientPersidno
+      const isOwner = userNationalId === owner?.persidno
+      const isCoOwner = coOwners?.some(
+        (person) => person.persidno === userNationalId,
+      )
+      const isOperator = operators?.some(
+        (person) => person.persidno === userNationalId,
+      )
+
+      if ((!isOwner && !isCoOwner && !isOperator) || !userNationalId) {
+        this.logger.warn('No match for user ID in vehicle response')
+        return null
+      }
 
       const response: VehiclesDetail = {
         mainInfo: {
@@ -123,7 +139,10 @@ export class VehiclesService {
           subModel: data.vehcom ?? '' + data.speccom ?? '',
           regno: data.regno,
           year: year,
-          co2: null,
+          co2: data?.techincal?.co2,
+          weightedCo2: data?.techincal?.weightedCo2,
+          co2Wltp: data?.techincal?.co2Wltp,
+          weightedCo2Wltp: data?.techincal?.weightedco2Wltp,
           cubicCapacity: data.techincal?.capacity,
           trailerWithBrakesWeight: data.techincal?.tMassoftrbr,
           trailerWithoutBrakesWeight: data.techincal?.tMassoftrunbr,
@@ -151,25 +170,27 @@ export class VehiclesService {
               ? data.plates[0].reggroup
               : null
             : null,
+          reggroupName: data.plates?.[0]?.reggroupname ?? null,
           passengers: data.techincal?.pass,
           useGroup: data.usegroup,
           driversPassengers: data.techincal?.passbydr,
           standingPassengers: data.techincal?.standingno,
+          plateLocation: data.platestoragelocation,
+          specialName: data.speccom,
+          plateStatus: data.platestatus,
         },
         currentOwnerInfo: {
-          owner: data.owners?.find((x) => x.current === true)?.fullname,
-          nationalId: data.owners?.find((x) => x.current === true)?.persidno,
-          address: data.owners?.find((x) => x.current === true)?.address,
-          postalcode: data.owners?.find((x) => x.current === true)?.postalcode,
-          city: data.owners?.find((x) => x.current === true)?.city,
-          dateOfPurchase: data.owners?.find((x) => x.current === true)
-            ?.purchasedate,
+          owner: owner?.fullname,
+          nationalId: owner?.persidno,
+          address: owner?.address,
+          postalcode: owner?.postalcode,
+          city: owner?.city,
+          dateOfPurchase: owner?.purchasedate,
         },
         inspectionInfo: {
           type: newestInspection?.type,
           date: newestInspection?.date,
           result: newestInspection?.result,
-          plateStatus: data.platestatus,
           nextInspectionDate: data.nextinspectiondate,
           lastInspectionDate: data.inspections
             ? data.inspections[0]?.date
@@ -183,12 +204,14 @@ export class VehiclesService {
           engine: data.techincal?.engine,
           totalWeight: data.techincal?.mass?.massladen,
           cubicCapacity: data.techincal?.capacity,
-          capacityWeight: data.techincal?.mass?.masscapacity,
+          capacityWeight: data.techincal?.mass?.massofcomb,
           length: data.techincal?.size?.length,
           vehicleWeight: data.techincal?.mass?.massinro,
           width: data.techincal?.size?.width,
           trailerWithoutBrakesWeight: data.techincal?.tMassoftrunbr,
-          horsepower: null,
+          horsepower: data.techincal?.maxNetPower
+            ? Math.round(data.techincal.maxNetPower * KW_TO_METRIC_HP * 10) / 10
+            : null,
           trailerWithBrakesWeight: data.techincal?.tMassoftrbr,
           carryingCapacity: data.techincal?.mass?.masscapacity,
           axleTotalWeight: axleMaxWeight,

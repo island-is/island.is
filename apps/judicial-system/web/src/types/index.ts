@@ -55,8 +55,8 @@ export interface CaseData {
   case?: Case
 }
 
-export interface RestrictedCaseData {
-  restrictedCase?: Case
+export interface LimitedAccessCaseData {
+  limitedAccessCase?: Case
 }
 
 export interface UserData {

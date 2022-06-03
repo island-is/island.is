@@ -9,13 +9,16 @@ import {
   Stack,
   Text,
   LoadingDots,
+  AlertMessage,
 } from '@island.is/island-ui/core'
 import {
   NotFound,
   ServicePortalModuleComponent,
   UserInfoLine,
 } from '@island.is/service-portal/core'
+import isNumber from 'lodash/isNumber'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import { amountFormat } from '@island.is/service-portal/core'
 import { useQuery } from '@apollo/client'
 import { useParams } from 'react-router-dom'
 import { GET_USERS_VEHICLE_DETAIL } from '../../queries/getUsersVehicleDetail'
@@ -33,8 +36,10 @@ import TechnicalInfoItem from '../../components/DetailTable/TechnicalInfoItem'
 import OwnersTable from '../../components/DetailTable/OwnersTable'
 import OperatorInfoItem from '../../components/DetailTable/OperatorInfoItem'
 import CoOwnerInfoItem from '../../components/DetailTable/CoOwnerInfoItem'
+import FeeInfoItem from '../../components/DetailTable/FeeInfoItem'
+import { displayWithUnit } from '../../utils/displayWithUnit'
 
-const VehicleDetail: ServicePortalModuleComponent = ({ userInfo }) => {
+const VehicleDetail: ServicePortalModuleComponent = () => {
   useNamespaces('sp.vehicles')
   const { formatMessage } = useLocale()
   const { id }: { id: string | undefined } = useParams()
@@ -42,8 +47,8 @@ const VehicleDetail: ServicePortalModuleComponent = ({ userInfo }) => {
   const { data, loading, error } = useQuery<Query>(GET_USERS_VEHICLE_DETAIL, {
     variables: {
       input: {
-        regno: id,
-        permno: '',
+        regno: '',
+        permno: id,
         vin: '',
       },
     },
@@ -61,11 +66,14 @@ const VehicleDetail: ServicePortalModuleComponent = ({ userInfo }) => {
     coOwners,
   } = data?.vehiclesDetail || {}
 
-  const year = mainInfo?.year ? '(' + mainInfo.year + ')' : ''
+  const year = mainInfo?.year ? `(${mainInfo.year})` : ''
+  const color = registrationInfo?.color ? `- ${registrationInfo.color}` : ''
+  const noInfo = data?.vehiclesDetail === null
 
-  if (error && !loading) {
+  if ((error || noInfo) && !loading) {
     return <NotFound title={formatMessage(messages.notFound)} />
   }
+
   return (
     <>
       <Box marginBottom={6}>
@@ -76,63 +84,120 @@ const VehicleDetail: ServicePortalModuleComponent = ({ userInfo }) => {
                 {loading ? (
                   <LoadingDots />
                 ) : (
-                  mainInfo?.model + ' ' + mainInfo?.subModel + ' ' + year
+                  [mainInfo?.model, mainInfo?.subModel, year, color]
+                    .filter(Boolean)
+                    .join(' ')
                 )}
               </Text>
             </Stack>
+            {inspectionInfo?.inspectionFine &&
+            inspectionInfo.inspectionFine > 0 ? (
+              <Box marginTop={5}>
+                <AlertMessage
+                  type="warning"
+                  title={formatMessage(messages.negligence)}
+                  message={formatMessage(messages.negligenceText)}
+                />
+              </Box>
+            ) : null}
           </GridColumn>
         </GridRow>
       </Box>
       <Stack space={2}>
-        <UserInfoLine
-          label={formatMessage(messages.type)}
-          content={mainInfo?.model ?? ''}
-          loading={loading}
-        />
-        <Divider />
-        <UserInfoLine
-          label={formatMessage(messages.subType)}
-          content={mainInfo?.subModel ?? ''}
-          loading={loading}
-        />
-        <Divider />
         <UserInfoLine
           label={formatMessage(messages.numberPlate)}
           content={mainInfo?.regno ?? ''}
           loading={loading}
         />
         <Divider />
-
-        <UserInfoLine
-          label={formatMessage(messages.capacity)}
-          content={
-            mainInfo?.cubicCapacity
-              ? mainInfo.cubicCapacity.toString() + ' cc.'
-              : ''
-          }
-          loading={loading}
-        />
-        <Divider />
         <UserInfoLine
           label={formatMessage(messages.trailerWithBrakes)}
-          content={
-            mainInfo?.trailerWithBrakesWeight
-              ? mainInfo.trailerWithBrakesWeight.toString() + ' kg.'
-              : ''
-          }
+          content={displayWithUnit(
+            mainInfo?.trailerWithBrakesWeight?.toString(),
+            'kg',
+          )}
           loading={loading}
         />
         <Divider />
         <UserInfoLine
           label={formatMessage(messages.trailerWithoutBrakes)}
-          content={
-            mainInfo?.trailerWithoutBrakesWeight
-              ? mainInfo.trailerWithoutBrakesWeight.toString() + ' kg.'
-              : ''
-          }
+          content={displayWithUnit(
+            mainInfo?.trailerWithoutBrakesWeight?.toString(),
+            'kg',
+          )}
           loading={loading}
         />
         <Divider />
+
+        <UserInfoLine
+          label={formatMessage(messages.insured)}
+          content={
+            inspectionInfo?.insuranceStatus === true
+              ? formatMessage(messages.yes)
+              : inspectionInfo?.insuranceStatus === false
+              ? formatMessage(messages.no)
+              : ''
+          }
+          warning={inspectionInfo?.insuranceStatus === false}
+          loading={loading}
+        />
+        <Divider />
+
+        <UserInfoLine
+          label={formatMessage(messages.unpaidVehicleFee)}
+          content={
+            isNumber(inspectionInfo?.carTax)
+              ? amountFormat(Number(inspectionInfo?.carTax))
+              : ''
+          }
+          loading={loading}
+          tooltip={formatMessage(messages.unpaidVehicleFeeText)}
+        />
+        <Divider />
+
+        {mainInfo?.co2 && (
+          <>
+            <UserInfoLine
+              label={formatMessage(messages.nedc)}
+              content={String(mainInfo.co2)}
+              loading={loading}
+            />
+            <Divider />
+          </>
+        )}
+
+        {mainInfo?.weightedCo2 && (
+          <>
+            <UserInfoLine
+              label={formatMessage(messages.nedcWeighted)}
+              content={String(mainInfo.weightedCo2)}
+              loading={loading}
+            />
+            <Divider />
+          </>
+        )}
+
+        {mainInfo?.co2Wltp && (
+          <>
+            <UserInfoLine
+              label={formatMessage(messages.wltp)}
+              content={String(mainInfo.co2Wltp)}
+              loading={loading}
+            />
+            <Divider />
+          </>
+        )}
+
+        {mainInfo?.weightedCo2Wltp && (
+          <>
+            <UserInfoLine
+              label={formatMessage(messages.wltpWeighted)}
+              content={String(mainInfo.weightedCo2Wltp)}
+              loading={loading}
+            />
+            <Divider />
+          </>
+        )}
       </Stack>
       <Box marginBottom={5} />
       {basicInfo && <BaseInfoItem data={basicInfo} />}
@@ -144,6 +209,7 @@ const VehicleDetail: ServicePortalModuleComponent = ({ userInfo }) => {
           <CoOwnerInfoItem key={index} data={owner} />
         ))}
       {inspectionInfo && <InspectionInfoItem data={inspectionInfo} />}
+      {inspectionInfo && <FeeInfoItem data={inspectionInfo} />}
       {technicalInfo && <TechnicalInfoItem data={technicalInfo} />}
       {operators &&
         operators.length > 0 &&
