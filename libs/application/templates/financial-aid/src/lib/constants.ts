@@ -18,7 +18,7 @@ export const ONE_DAY = 24 * 3600 * 1000
 export enum Routes {
   ACCECPTCONTRACT = 'acceptContract',
   INRELATIONSHIP = 'inRelationship',
-  UNKNOWNRELATIONSHIP = 'UnknownRelationship',
+  UNKNOWNRELATIONSHIP = 'unknownRelationship',
   HOMECIRCUMSTANCES = 'homeCircumstances',
   STUDENT = 'student',
   EMPLOYMENT = 'employment',
