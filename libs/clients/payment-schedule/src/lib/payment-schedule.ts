@@ -83,7 +83,7 @@ export class PaymentScheduleAPI extends RESTDataSource {
     queryParams.append('totalAmount', totalAmount.toString())
 
     if (monthAmount)
-      queryParams.append('monthAmount', Math.ceil(monthAmount).toString())
+      queryParams.append('monthAmount', Math.floor(monthAmount).toString())
     if (monthCount) queryParams.append('monthCount', monthCount.toString())
 
     const response = await this.get<PaymentDistributionResponse>(
