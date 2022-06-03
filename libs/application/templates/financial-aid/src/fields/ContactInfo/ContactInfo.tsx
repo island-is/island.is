@@ -49,6 +49,7 @@ const ContactInfo = ({ field, errors, application }: FAFieldBaseProps) => {
           id={phonePath}
           name={phonePath}
           backgroundColor="blue"
+          format="#######"
           type="tel"
           label={formatMessage(contactInfo.phoneInput.label)}
           placeholder={formatMessage(contactInfo.phoneInput.placeholder)}
