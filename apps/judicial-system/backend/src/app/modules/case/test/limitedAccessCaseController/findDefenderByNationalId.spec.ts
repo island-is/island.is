@@ -19,17 +19,17 @@ interface Then {
 
 type GivenWhenThen = (caseId: string, theCase: Case, nationalId: string) => Then
 
-describe('RestrictedCaseController - Find defender by national id', () => {
+describe('LimitedAccessCaseController - Find defender by national id', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { restrictedCaseController } = await createTestingCaseModule()
+    const { limitedAccessCaseController } = await createTestingCaseModule()
 
     givenWhenThen = (caseId: string, theCase: Case, nationalId: string) => {
       const then = {} as Then
 
       try {
-        then.result = restrictedCaseController.findDefenderByNationalId(
+        then.result = limitedAccessCaseController.findDefenderByNationalId(
           caseId,
           theCase,
           nationalId,
