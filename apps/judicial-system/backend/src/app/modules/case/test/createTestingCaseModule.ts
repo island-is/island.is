@@ -21,9 +21,9 @@ import { Case } from '../models/case.model'
 import { CaseArchive } from '../models/caseArchive.model'
 import { caseModuleConfig } from '../case.config'
 import { CaseService } from '../case.service'
-import { RestrictedCaseService } from '../restrictedCase.service'
+import { LimitedAccessCaseService } from '../limitedAccessCase.service'
 import { CaseController } from '../case.controller'
-import { RestrictedCaseController } from '../restrictedCase.controller'
+import { LimitedAccessCaseController } from '../limitedAccessCase.controller'
 
 jest.mock('@island.is/dokobit-signing')
 jest.mock('@island.is/email-service')
@@ -42,7 +42,7 @@ export const createTestingCaseModule = async () => {
         secretToken: environment.auth.secretToken,
       }),
     ],
-    controllers: [CaseController, RestrictedCaseController],
+    controllers: [CaseController, LimitedAccessCaseController],
     providers: [
       CourtService,
       UserService,
@@ -81,7 +81,7 @@ export const createTestingCaseModule = async () => {
       },
       { provide: caseModuleConfig.KEY, useValue: caseModuleConfig() },
       CaseService,
-      RestrictedCaseService,
+      LimitedAccessCaseService,
     ],
   }).compile()
 
@@ -111,14 +111,14 @@ export const createTestingCaseModule = async () => {
 
   const caseService = caseModule.get<CaseService>(CaseService)
 
-  const restrictedCaseService = caseModule.get<RestrictedCaseService>(
-    RestrictedCaseService,
+  const limitedAccessCaseService = caseModule.get<LimitedAccessCaseService>(
+    LimitedAccessCaseService,
   )
 
   const caseController = caseModule.get<CaseController>(CaseController)
 
-  const restrictedCaseController = caseModule.get<RestrictedCaseController>(
-    RestrictedCaseController,
+  const limitedAccessCaseController = caseModule.get<LimitedAccessCaseController>(
+    LimitedAccessCaseController,
   )
 
   return {
@@ -133,8 +133,8 @@ export const createTestingCaseModule = async () => {
     caseArchiveModel,
     caseConfig,
     caseService,
-    restrictedCaseService,
+    limitedAccessCaseService,
     caseController,
-    restrictedCaseController,
+    limitedAccessCaseController,
   }
 }
