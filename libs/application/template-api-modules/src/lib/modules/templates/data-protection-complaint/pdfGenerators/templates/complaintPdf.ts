@@ -1,8 +1,9 @@
-import { ComplaintPDF } from '../../models'
+import { ComplaintPDF, ExternalDataMessages, Information } from '../../models'
 
 import { Application } from '@island.is/application/core'
 import { applicationToComplaintPDF } from '../../data-protection-utils'
 import { generatePdf } from '../pdfGenerator'
+import { messages } from '@island.is/application/templates/data-protection-complaint'
 import {
   addformFieldAndValue,
   addHeader,
@@ -54,7 +55,7 @@ function dpcApplicationPdf(
     addformFieldAndValue('Nafn', c.name, doc, PdfConstants.SMALL_LINE_GAP)
     if (c.nationalId) {
       addformFieldAndValue(
-        'Kt.',
+        'Kennitala',
         formatSsn(c.nationalId),
         doc,
         PdfConstants.SMALL_LINE_GAP,
@@ -72,53 +73,121 @@ function dpcApplicationPdf(
       'Starfsemi innan Evrópu?',
       operatesWithinEuropeAnswer,
       doc,
-      PdfConstants.LARGE_LINE_GAP,
+      PdfConstants.SMALL_LINE_GAP,
     )
+    doc.moveDown()
+    if (c.operatesWithinEurope === 'yes') {
+      addValue(
+        messages.complaint.labels.complaineeOperatesWithinEuropeMessage
+          .defaultMessage,
+        doc,
+        PdfConstants.NORMAL_FONT,
+      )
+      doc.moveDown(2)
+    }
   })
 
-  addSubheader('Efni kvörtunar', doc)
-  const subjects = complaint.complaintCategories
-    .map((c) => c)
-    .filter((x) => x !== '')
-    .join(', ')
+  if (complaint.complaintCategories.length !== 0) {
+    addSubheader('Efni kvörtunar', doc)
 
-  addValue(
-    subjects,
-    doc,
-    PdfConstants.NORMAL_FONT,
-    complaint.somethingElse
-      ? PdfConstants.SMALL_LINE_GAP
-      : PdfConstants.LARGE_LINE_GAP,
-  )
-  if (complaint.somethingElse) {
-    addValue(
-      `Annað hvað? : ${complaint.somethingElse}`,
-      doc,
-      PdfConstants.NORMAL_FONT,
-      PdfConstants.LARGE_LINE_GAP,
-    )
+    complaint.complaintCategories.map((c, index) => {
+      return addValue(
+        complaint.complaintCategories.length === index + 1
+          ? complaint.somethingElse
+            ? `• ${c}: ${complaint.somethingElse}`
+            : `• ${c}`
+          : `• ${c}`,
+        doc,
+      )
+    })
+    doc.moveDown()
   }
 
   addSubheader('Yfir hverju er kvartað í meginatriðum?', doc)
-  addValue(
-    complaint.description,
-    doc,
-    PdfConstants.NORMAL_FONT,
-    PdfConstants.SMALL_LINE_GAP,
-  )
+  addValue(complaint.description, doc, PdfConstants.NORMAL_FONT)
   doc.moveDown()
   if (complaint.attachments.length > 0) {
     addSubheader('Fylgiskjöl', doc)
 
-    addValue(
-      complaint.attachments.join(),
-      doc,
-      PdfConstants.NORMAL_FONT,
-      PdfConstants.LARGE_LINE_GAP,
-    )
+    complaint.attachments.map((attachment) => {
+      return addValue(attachment, doc, PdfConstants.NORMAL_FONT)
+    })
+
+    doc.moveDown()
   }
+  doc.moveDown()
+
+  renderExternalDataMessages(complaint.messages.externalData, doc)
+  renderInformationMessages(complaint.messages.information, doc)
 
   doc.end()
+}
+
+function renderExternalDataMessages(
+  externalData: ExternalDataMessages,
+  doc: PDFKit.PDFDocument,
+): void {
+  addHeader(externalData.title, doc)
+  addValue(externalData.subtitle, doc, PdfConstants.BOLD_FONT)
+  addValue(externalData.description, doc)
+  doc.moveDown()
+  addValue(externalData.nationalRegistryTitle, doc, PdfConstants.BOLD_FONT)
+  addValue(
+    externalData.nationalRegistryDescription,
+    doc,
+    PdfConstants.NORMAL_FONT,
+  )
+  doc.moveDown()
+  addValue(externalData.userProfileTitle, doc, PdfConstants.BOLD_FONT)
+  addValue(externalData.userProfileDescription, doc, PdfConstants.NORMAL_FONT)
+  doc.moveDown()
+  addValue(externalData.checkboxText, doc, PdfConstants.BOLD_FONT)
+  addValue('Já', doc, PdfConstants.NORMAL_FONT)
+  doc.moveDown()
+}
+
+function renderInformationMessages(
+  information: Information,
+  doc: PDFKit.PDFDocument,
+): void {
+  addHeader(information.title, doc)
+
+  const bulletsList = [
+    information.bullets.bulletOne,
+    information.bullets.bulletTwo,
+    information.bullets.bulletThree,
+    information.bullets.bulletFour,
+    information.bullets.bulletFive,
+    information.bullets.bulletSix,
+    information.bullets.bulletSeven,
+    information.bullets.bulletEight,
+  ]
+
+  bulletsList.map(({ bullet, link, linkText }) => {
+    const splitBullet = bullet.split('{link}')
+    if (splitBullet.length === 2) {
+      return doc
+        .font(PdfConstants.NORMAL_FONT)
+        .fontSize(PdfConstants.VALUE_FONT_SIZE)
+        .lineGap(PdfConstants.NORMAL_LINE_GAP)
+        .text('• ', { continued: true })
+        .text(splitBullet[0], { continued: true })
+        .fillColor('blue')
+        .text(linkText, {
+          continued: true,
+          link: link,
+        })
+        .fillColor('black')
+        .text(splitBullet[1], { paragraphGap: 10 })
+    } else {
+      return doc
+        .font(PdfConstants.NORMAL_FONT)
+        .fontSize(PdfConstants.VALUE_FONT_SIZE)
+        .lineGap(PdfConstants.NORMAL_LINE_GAP)
+        .text('• ', { continued: true })
+        .text(bullet, { paragraphGap: 10 })
+    }
+  })
 }
 
 function renderContactsAndComplainees(
@@ -127,17 +196,21 @@ function renderContactsAndComplainees(
 ): void {
   const contactHeading =
     complaint.onBehalf === OnBehalf.MYSELF ||
-    OnBehalf.ORGANIZATION_OR_INSTITUTION
+    complaint.onBehalf === OnBehalf.ORGANIZATION_OR_INSTITUTION ||
+    (complaint.onBehalf === OnBehalf.OTHERS &&
+      complaint.agency?.persons &&
+      complaint.agency.persons.length === 1)
       ? 'Kvartandi'
       : 'Kvartendur'
-  addSubheader(contactHeading, doc)
-
-  renderAgencyComplainees(complaint, doc)
 
   if (
-    complaint.onBehalf !== OnBehalf.MYSELF ||
-    OnBehalf.ORGANIZATION_OR_INSTITUTION
+    complaint.onBehalf == OnBehalf.ORGANIZATION_OR_INSTITUTION ||
+    complaint.onBehalf !== OnBehalf.OTHERS
   ) {
+    addSubheader(contactHeading, doc)
+  }
+
+  if (complaint.onBehalf === OnBehalf.OTHERS) {
     addSubheader('Tengiliður', doc)
   }
 
@@ -148,7 +221,7 @@ function renderContactsAndComplainees(
     PdfConstants.SMALL_LINE_GAP,
   )
   addformFieldAndValue(
-    'Kt.',
+    'Kennitala',
     complaint.contactInfo.nationalId,
     doc,
     PdfConstants.SMALL_LINE_GAP,
@@ -161,44 +234,55 @@ function renderContactsAndComplainees(
     PdfConstants.SMALL_LINE_GAP,
   )
 
-  addformFieldAndValue(
-    'Sími',
-    complaint.contactInfo.phone,
-    doc,
-    PdfConstants.SMALL_LINE_GAP,
-  )
+  complaint.contactInfo.phone &&
+    addformFieldAndValue(
+      'Sími',
+      complaint.contactInfo.phone,
+      doc,
+      PdfConstants.SMALL_LINE_GAP,
+    )
 
-  addformFieldAndValue(
-    'Netfang',
-    complaint.contactInfo.email,
-    doc,
-    PdfConstants.LARGE_LINE_GAP,
-  )
+  complaint.contactInfo.email &&
+    addformFieldAndValue(
+      'Netfang',
+      complaint.contactInfo.email,
+      doc,
+      PdfConstants.SMALL_LINE_GAP,
+    )
+
+  doc.moveDown()
+
+  if (complaint.onBehalf === OnBehalf.OTHERS) {
+    addSubheader(contactHeading, doc)
+  }
+
+  renderAgencyComplainees(complaint, doc)
 }
 
 function renderAgencyComplainees(
   complaint: ComplaintPDF,
   doc: PDFKit.PDFDocument,
 ): void {
-  if (complaint.onBehalf === OnBehalf.MYSELF_AND_OR_OTHERS) {
-    complaint.agency?.persons.push({
-      name: complaint.contactInfo.name,
-      nationalId: complaint.contactInfo.nationalId,
-    })
-  }
-
-  if (complaint.agency?.persons?.length) {
-    complaint.agency.persons.map((person, i, persons) => {
-      const linegap =
-        i === persons.length - 1
-          ? PdfConstants.LARGE_LINE_GAP
-          : PdfConstants.SMALL_LINE_GAP
-      addValue(
-        `${person.name} kt. ${person.nationalId}`,
+  if (
+    complaint.agency?.persons?.length &&
+    complaint.onBehalf !== OnBehalf.ORGANIZATION_OR_INSTITUTION &&
+    complaint.onBehalf !== OnBehalf.MYSELF
+  ) {
+    complaint.agency.persons.map((person) => {
+      addformFieldAndValue(
+        'Nafn',
+        person.name,
         doc,
-        PdfConstants.NORMAL_FONT,
-        linegap,
+        PdfConstants.SMALL_LINE_GAP,
       )
+      addformFieldAndValue(
+        'Kennitala',
+        person.nationalId,
+        doc,
+        PdfConstants.SMALL_LINE_GAP,
+      )
+
+      doc.moveDown()
     })
   }
 }

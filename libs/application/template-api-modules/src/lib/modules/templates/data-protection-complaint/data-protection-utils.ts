@@ -1,6 +1,7 @@
 import get from 'lodash/get'
 import {
   Agency,
+  ApplicationMessages,
   ComplaintPDF,
   ContactInfo,
   ContactRole,
@@ -11,6 +12,7 @@ import {
   SubjectOfComplaint,
   DataProtectionComplaint,
   yesNoValueLabelMapper,
+  messages,
 } from '@island.is/application/templates/data-protection-complaint'
 import { Application } from '@island.is/application/core'
 import * as kennitala from 'kennitala'
@@ -69,6 +71,20 @@ export const getAndFormatSubjectsOfComplaint = (
   }, [])
 
   return [...new Set(categories)]
+}
+
+export const getAndFormatSubjectsOfComplaintForPdf = (
+  answers: DataProtectionComplaint,
+): string[] => {
+  const values = extractAnswer<SubjectOfComplaint[]>(
+    answers,
+    'subjectOfComplaint.values',
+  )
+
+  const categories = values.map((val) => {
+    return messages.complaint.labels[val].defaultMessage
+  })
+  return categories
 }
 
 export const gatherContacts = (
@@ -201,13 +217,38 @@ export const applicationToComplaintPDF = (
     },
     contactInfo: getContactInfo(answers),
     targetsOfComplaint: getComplaintTargets(answers),
-    complaintCategories: getAndFormatSubjectsOfComplaint(answers),
+    complaintCategories: getAndFormatSubjectsOfComplaintForPdf(answers),
     somethingElse: answers.subjectOfComplaint.somethingElse ?? '',
     description: extractAnswer(application.answers, 'complaint.description'),
     submitDate: timestamp,
     attachments: attachedFiles
       .map((x) => x.fileName ?? '')
       .filter((x) => x !== ''),
+    messages: getMessages(answers),
+  }
+}
+
+export const getMessages = (
+  answers: DataProtectionComplaint,
+): ApplicationMessages => {
+  return {
+    externalData: {
+      title: answers.overview.externalDataMessage.title,
+      subtitle: answers.overview.externalDataMessage.subtitle,
+      description: answers.overview.externalDataMessage.description,
+      nationalRegistryTitle:
+        answers.overview.externalDataMessage.nationalRegistryTitle,
+      nationalRegistryDescription:
+        answers.overview.externalDataMessage.nationalRegistryDescription,
+      userProfileTitle: answers.overview.externalDataMessage.userProfileTitle,
+      userProfileDescription:
+        answers.overview.externalDataMessage.userProfileDescription,
+      checkboxText: answers.overview.externalDataMessage.checkboxText,
+    },
+    information: {
+      title: answers.overview.informationMessage.title,
+      bullets: answers.overview.informationMessage.bullets,
+    },
   }
 }
 
