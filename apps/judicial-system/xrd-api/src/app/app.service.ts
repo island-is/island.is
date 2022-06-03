@@ -7,6 +7,7 @@ import {
   Injectable,
 } from '@nestjs/common'
 
+import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { CaseOrigin } from '@island.is/judicial-system/types'
 import {
   AuditedAction,
@@ -49,6 +50,7 @@ export class AppService {
     @Inject(appModuleConfig.KEY)
     private readonly config: ConfigType<typeof appModuleConfig>,
     private readonly auditTrailService: AuditTrailService,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
   private async createCase(caseToCreate: CreateCaseDto): Promise<Case> {

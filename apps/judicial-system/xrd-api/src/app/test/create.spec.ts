@@ -5,9 +5,9 @@ import { BadGatewayException, BadRequestException } from '@nestjs/common'
 
 import { Case as TCase } from '@island.is/judicial-system/types'
 
-import { environment } from '../../environments'
 import { CreateCaseDto } from '../app.dto'
 import { Case } from '../app.model'
+import appModuleConfig from '../app.config'
 import { createTestingAppModule } from './createTestingAppModule'
 
 jest.mock('isomorphic-fetch')
@@ -19,6 +19,7 @@ interface Then {
 
 type GivenWhenThen = (caseToCreate: CreateCaseDto) => Promise<Then>
 
+let config = appModuleConfig()
 describe('AppController - Greate', () => {
   let givenWhenThen: GivenWhenThen
 
@@ -46,12 +47,12 @@ describe('AppController - Greate', () => {
 
     it('should initiate case creation', () => {
       expect(fetch).toHaveBeenCalledWith(
-        `${environment.backend.url}/api/internal/case/`,
+        `${config.backend.url}/api/internal/case/`,
         {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            authorization: `Bearer ${environment.auth.secretToken}`,
+            authorization: `Bearer ${config.backend.accessToken}`,
           },
           body: JSON.stringify(caseToCreate),
         },
