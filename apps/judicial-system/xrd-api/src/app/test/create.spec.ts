@@ -19,7 +19,7 @@ interface Then {
 
 type GivenWhenThen = (caseToCreate: CreateCaseDto) => Promise<Then>
 
-let config = appModuleConfig()
+const config = appModuleConfig()
 describe('AppController - Greate', () => {
   let givenWhenThen: GivenWhenThen
 

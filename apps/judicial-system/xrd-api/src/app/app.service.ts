@@ -7,7 +7,8 @@ import {
   Injectable,
 } from '@nestjs/common'
 
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 import { CaseOrigin } from '@island.is/judicial-system/types'
 import {
   AuditedAction,
