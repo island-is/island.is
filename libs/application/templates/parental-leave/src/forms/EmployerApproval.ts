@@ -13,7 +13,11 @@ import {
 } from '@island.is/application/core'
 
 import Logo from '../assets/Logo'
-import { employerFormMessages, otherParentApprovalFormMessages, parentalLeaveFormMessages } from '../lib/messages'
+import {
+  employerFormMessages,
+  otherParentApprovalFormMessages,
+  parentalLeaveFormMessages,
+} from '../lib/messages'
 import { currentDateStartTime } from '../lib/parentalLeaveTemplateUtils'
 import { getApplicationAnswers } from '../lib/parentalLeaveUtils'
 
