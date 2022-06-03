@@ -15,7 +15,7 @@ const PdfButton: React.FC<Props> = ({
   title,
   pdfType,
   disabled,
-  useSigned = false,
+  useSigned = true,
 }) => {
   return (
     <Button
