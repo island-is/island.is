@@ -2,17 +2,17 @@ import { CanActivate } from '@nestjs/common'
 
 import { TokenGuard } from '@island.is/judicial-system/auth'
 
-import { RestrictedCaseExistsGuard } from '../../guards/restrictedCaseExists.guard'
-import { RestrictedCaseController } from '../../restrictedCase.controller'
+import { LimitedAccessCaseExistsGuard } from '../../guards/limitedAccessCaseExists.guard'
+import { LimitedAccessCaseController } from '../../limitedAccessCase.controller'
 
-describe('RestrictedCaseController - Find defender by national id guards', () => {
+describe('LimitedAccessCaseController - Find defender by national id guards', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let guards: any[]
 
   beforeEach(() => {
     guards = Reflect.getMetadata(
       '__guards__',
-      RestrictedCaseController.prototype.findDefenderByNationalId,
+      LimitedAccessCaseController.prototype.findDefenderByNationalId,
     )
   })
 
@@ -32,15 +32,15 @@ describe('RestrictedCaseController - Find defender by national id guards', () =>
     })
   })
 
-  describe('RestrictedCaseExistsGuard', () => {
+  describe('LimitedAccessCaseExistsGuard', () => {
     let guard: CanActivate
 
     beforeEach(() => {
       guard = new guards[1]()
     })
 
-    it('should have RestrictedCaseExistsGuard as quard 2', () => {
-      expect(guard).toBeInstanceOf(RestrictedCaseExistsGuard)
+    it('should have LimitedAccessCaseExistsGuard as quard 2', () => {
+      expect(guard).toBeInstanceOf(LimitedAccessCaseExistsGuard)
     })
   })
 })

@@ -31,9 +31,9 @@ export const MOCK_USER = {
 } as User
 
 export const XROAD_BASE_PATH = 'http://localhost:8081'
-export const DRIVING_LICENSE_XROAD_PATH =
+export const XROAD_DRIVING_LICENSE_PATH =
   'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v1'
-export const DRIVING_LICENSE_XROAD_PATH_V2 =
+export const XROAD_DRIVING_LICENSE_V2_PATH =
   'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v2'
 
 const url = (path: string) => {
@@ -42,21 +42,21 @@ const url = (path: string) => {
 
 export const requestHandlers = [
   rest.get(
-    url(`${DRIVING_LICENSE_XROAD_PATH}/api/okuskirteini/embaetti`),
+    url(`${XROAD_DRIVING_LICENSE_PATH}/api/okuskirteini/embaetti`),
     (req, res, ctx) => {
       return res(ctx.status(200), ctx.json(Juristictions))
     },
   ),
 
   rest.get(
-    url(`${DRIVING_LICENSE_XROAD_PATH}/api/okuskirteini/okukennarar`),
+    url(`${XROAD_DRIVING_LICENSE_PATH}/api/okuskirteini/okukennarar`),
     (req, res, ctx) => {
       return res(ctx.status(200), ctx.json(Teachers))
     },
   ),
 
   rest.get(
-    url(`${DRIVING_LICENSE_XROAD_PATH}/api/okuskirteini/:nationalId/all`),
+    url(`${XROAD_DRIVING_LICENSE_PATH}/api/okuskirteini/:nationalId/all`),
     (req, res, ctx) => {
       const response =
         req.params.nationalId === MOCK_NATIONAL_ID_EXPIRED
@@ -67,7 +67,7 @@ export const requestHandlers = [
   ),
   rest.get(
     url(
-      `${DRIVING_LICENSE_XROAD_PATH}/api/okuskirteini/hasteachingrights/:nationalId`,
+      `${XROAD_DRIVING_LICENSE_PATH}/api/okuskirteini/hasteachingrights/:nationalId`,
     ),
     (req, res, ctx) => {
       const hasTeachingRights =
@@ -79,7 +79,7 @@ export const requestHandlers = [
 
   rest.get(
     url(
-      `${DRIVING_LICENSE_XROAD_PATH}/api/okuskirteini/saekjaakstursmat/:nationalId`,
+      `${XROAD_DRIVING_LICENSE_PATH}/api/okuskirteini/saekjaakstursmat/:nationalId`,
     ),
     (req, res, ctx) => {
       const isFound = req.params.nationalId !== MOCK_NATIONAL_ID_NO_ASSESSMENT
@@ -93,7 +93,7 @@ export const requestHandlers = [
 
   rest.get(
     url(
-      `${DRIVING_LICENSE_XROAD_PATH}/api/okuskirteini/:nationalId/finishedokugerdi`,
+      `${XROAD_DRIVING_LICENSE_PATH}/api/okuskirteini/:nationalId/finishedokugerdi`,
     ),
     (req, res, ctx) => {
       const isFound = req.params.nationalId !== MOCK_NATIONAL_ID_EXPIRED
@@ -107,7 +107,7 @@ export const requestHandlers = [
 
   rest.get(
     url(
-      `${DRIVING_LICENSE_XROAD_PATH_V2}/api/okuskirteini/:nationalId/canapplyfor/B/full`,
+      `${XROAD_DRIVING_LICENSE_V2_PATH}/api/okuskirteini/:nationalId/canapplyfor/B/full`,
     ),
     (req, res, ctx) => {
       const canApply = req.params.nationalId === MOCK_NATIONAL_ID
@@ -121,7 +121,7 @@ export const requestHandlers = [
 
   rest.get(
     url(
-      `${DRIVING_LICENSE_XROAD_PATH}/api/okuskirteini/:nationalId/canapplyfor/temporary`,
+      `${XROAD_DRIVING_LICENSE_PATH}/api/okuskirteini/:nationalId/canapplyfor/temporary`,
     ),
     (req, res, ctx) => {
       const canApply = req.params.nationalId === MOCK_NATIONAL_ID
@@ -134,7 +134,7 @@ export const requestHandlers = [
   ),
 
   rest.post(
-    url(`${DRIVING_LICENSE_XROAD_PATH}/api/okuskirteini/new/drivingassesment`),
+    url(`${XROAD_DRIVING_LICENSE_PATH}/api/okuskirteini/new/drivingassesment`),
     (req, res, ctx) => {
       const body = req.body as any
       const isSubmittedByTeacher =
@@ -149,7 +149,7 @@ export const requestHandlers = [
   ),
 
   rest.post(
-    url(`${DRIVING_LICENSE_XROAD_PATH_V2}/api/okuskirteini/applications/new/B`),
+    url(`${XROAD_DRIVING_LICENSE_V2_PATH}/api/okuskirteini/applications/new/B`),
     (req, res, ctx) => {
       const body = req.body as any
       const canApply = body.personIdNumber !== MOCK_NATIONAL_ID_NO_ASSESSMENT
@@ -164,7 +164,7 @@ export const requestHandlers = [
 
   rest.post(
     url(
-      `${DRIVING_LICENSE_XROAD_PATH_V2}/api/okuskirteini/applications/new/temporary`,
+      `${XROAD_DRIVING_LICENSE_V2_PATH}/api/okuskirteini/applications/new/temporary`,
     ),
     (req, res, ctx) => {
       const body = req.body as any
@@ -186,7 +186,7 @@ export const requestHandlers = [
   ),
 
   rest.get(
-    url(`${DRIVING_LICENSE_XROAD_PATH_V2}/api/okuskirteini/:nationalId`),
+    url(`${XROAD_DRIVING_LICENSE_V2_PATH}/api/okuskirteini/:nationalId`),
     (req, res, ctx) => {
       const isExpired = req.params.nationalId === MOCK_NATIONAL_ID_EXPIRED
       return res(
@@ -201,7 +201,7 @@ export const requestHandlers = [
   ),
 
   rest.get(
-    url(`${DRIVING_LICENSE_XROAD_PATH}/einstaklingar/:nationalId/buseta`),
+    url(`${XROAD_DRIVING_LICENSE_PATH}/einstaklingar/:nationalId/buseta`),
     (req, res, ctx) => {
       const isExpired = req.params.nationalId === MOCK_NATIONAL_ID_EXPIRED
       return res(

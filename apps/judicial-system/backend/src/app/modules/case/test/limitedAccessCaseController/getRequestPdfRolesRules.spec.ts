@@ -1,14 +1,14 @@
 import { defenderRule } from '../../../../guards'
-import { RestrictedCaseController } from '../../restrictedCase.controller'
+import { LimitedAccessCaseController } from '../../limitedAccessCase.controller'
 
-describe('RestrictedCaseController - Get court record pdf rules', () => {
+describe('LimitedAccessCaseController - Get request pdf rules', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let rules: any[]
 
   beforeEach(() => {
     rules = Reflect.getMetadata(
       'roles-rules',
-      RestrictedCaseController.prototype.getCourtRecordPdf,
+      LimitedAccessCaseController.prototype.getRequestPdf,
     )
   })
 

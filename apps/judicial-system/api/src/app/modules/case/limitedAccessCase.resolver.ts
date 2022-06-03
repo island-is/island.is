@@ -20,7 +20,7 @@ import { Case } from './models/case.model'
 
 @UseGuards(new JwtGraphQlAuthGuard(true))
 @Resolver(() => Case)
-export class RestrictedCaseResolver {
+export class LimitedAccessCaseResolver {
   constructor(
     private readonly auditTrailService: AuditTrailService,
     @Inject(LOGGER_PROVIDER)
@@ -29,7 +29,7 @@ export class RestrictedCaseResolver {
 
   @Query(() => Case, { nullable: true })
   @UseInterceptors(CaseInterceptor)
-  async restrictedCase(
+  async limitedAccessCase(
     @Args('input', { type: () => CaseQueryInput })
     input: CaseQueryInput,
     @CurrentGraphQlUser() user: User,
@@ -40,7 +40,7 @@ export class RestrictedCaseResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.GET_CASE,
-      backendApi.getRestrictedCase(input.id),
+      backendApi.getLimitedAccessCase(input.id),
       input.id,
     )
   }
