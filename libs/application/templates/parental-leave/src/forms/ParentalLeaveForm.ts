@@ -56,6 +56,7 @@ import {
   GetPrivatePensionFundsQuery,
   GetUnionsQuery,
 } from '../types/schema'
+import { currentDateStartTime } from '../lib/parentalLeaveTemplateUtils'
 
 export const ParentalLeaveForm: Form = buildForm({
   id: 'ParentalLeaveDraft',
@@ -832,6 +833,32 @@ export const ParentalLeaveForm: Form = buildForm({
             }),
           ],
         }),
+      ],
+    }),
+    buildSection({
+      title: '',
+      condition: (answers) =>
+        getApplicationAnswers(answers).periods.length > 0 &&
+        new Date(
+          getApplicationAnswers(answers).periods[0].startDate,
+        ).getTime() < currentDateStartTime(),
+      children: [
+        buildSubmitField({
+          id: 'reject',
+          placement: 'footer',
+          title: parentalLeaveFormMessages.finalScreen.startDateInThePast,
+          actions: [],
+        }),
+      ],
+    }),
+    buildSection({
+      title: '',
+      condition: (answers) =>
+        getApplicationAnswers(answers).periods.length > 0 &&
+        new Date(
+          getApplicationAnswers(answers).periods[0].startDate,
+        ).getTime() >= currentDateStartTime(),
+      children: [
         buildCustomField({
           id: 'thankYou',
           title: parentalLeaveFormMessages.finalScreen.title,

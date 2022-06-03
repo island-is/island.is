@@ -33,6 +33,7 @@ import { parentalLeaveFormMessages, statesMessages } from './messages'
 import {
   hasEmployer,
   needsOtherParentApproval,
+  startDateInTheFuture,
 } from './parentalLeaveTemplateUtils'
 import {
   getApplicationAnswers,
@@ -151,13 +152,14 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             { target: States.EMPLOYER_WAITING_TO_ASSIGN, cond: hasEmployer },
             {
               target: States.VINNUMALASTOFNUN_APPROVAL,
+              cond: startDateInTheFuture,
             },
           ],
         },
       },
       [States.OTHER_PARENT_APPROVAL]: {
         entry: 'assignToOtherParent',
-        exit: ['clearAssignees', 'removePeriodsOrAllowanceOnSpouseRejection'],
+        exit: ['clearAssignees'],
         meta: {
           name: States.OTHER_PARENT_APPROVAL,
           actionCard: {
@@ -189,6 +191,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   'requestRights',
                   'usePersonalAllowanceFromSpouse',
                   'personalAllowanceFromSpouse',
+                  'periods',
                 ],
               },
             },
@@ -212,6 +215,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             },
             {
               target: States.VINNUMALASTOFNUN_APPROVAL,
+              cond: startDateInTheFuture,
             },
           ],
           [DefaultEvents.EDIT]: { target: States.DRAFT },
@@ -219,6 +223,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.OTHER_PARENT_ACTION]: {
+        entry: 'removePeriodsOrAllowanceOnSpouseRejection',
         meta: {
           name: States.OTHER_PARENT_ACTION,
           actionCard: {
@@ -333,6 +338,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           [DefaultEvents.APPROVE]: [
             {
               target: States.VINNUMALASTOFNUN_APPROVAL,
+              cond: startDateInTheFuture,
             },
           ],
           [DefaultEvents.REJECT]: { target: States.EMPLOYER_ACTION },
