@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, useEffect } from 'react'
 import { FieldBaseProps } from '@island.is/application/core'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -17,10 +17,30 @@ import {
   Complaint,
   OrganizationOrInstitution,
 } from './Sections'
+import { useFormContext } from 'react-hook-form'
+import { getBullets, getExternalData } from './messagesUtils'
 
-export const ComplaintOverview: FC<FieldBaseProps> = ({ application }) => {
+export type Bullet = {
+  bullet: string
+  link: string
+  linkText: string
+}
+
+export const ComplaintOverview: FC<FieldBaseProps> = ({
+  application,
+  field,
+}) => {
   const { formatMessage } = useLocale()
+  const { setValue } = useFormContext()
+  const { id } = field
   const answers = (application as any).answers as DataProtectionComplaint
+  useEffect(() => {
+    // Send message from Contentful to make sure that information on
+    // PDF is the same as in the form.
+    setValue(`${id}.externalDataMessage`, getExternalData(formatMessage))
+    setValue(`${id}.informationMessage.title`, formatMessage(section.agreement))
+    setValue(`${id}.informationMessage.bullets`, getBullets(formatMessage))
+  }, [setValue])
 
   return (
     <Box>

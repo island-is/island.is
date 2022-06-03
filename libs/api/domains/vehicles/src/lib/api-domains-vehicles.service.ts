@@ -63,7 +63,7 @@ export class VehiclesService {
       })
       const { data } = res
 
-      if (!data) return {}
+      if (!data) return null
       const newestInspection = data.inspections?.sort((a, b) => {
         if (a && b && a.date && b.date)
           return new Date(b.date).getTime() - new Date(a.date).getTime()
@@ -116,8 +116,22 @@ export class VehiclesService {
         (data.firstregdate ? new Date(data?.firstregdate).getFullYear() : null)
 
       const operators = data.operators?.filter((x) => x.current)
-
       const coOwners = data.owners?.find((x) => x.current)?.coOwners
+      const owner = data.owners?.find((x) => x.current === true)
+
+      const userNationalId = input.clientPersidno
+      const isOwner = userNationalId === owner?.persidno
+      const isCoOwner = coOwners?.some(
+        (person) => person.persidno === userNationalId,
+      )
+      const isOperator = operators?.some(
+        (person) => person.persidno === userNationalId,
+      )
+
+      if ((!isOwner && !isCoOwner && !isOperator) || !userNationalId) {
+        this.logger.warn('No match for user ID in vehicle response')
+        return null
+      }
 
       const response: VehiclesDetail = {
         mainInfo: {
@@ -166,13 +180,12 @@ export class VehiclesService {
           plateStatus: data.platestatus,
         },
         currentOwnerInfo: {
-          owner: data.owners?.find((x) => x.current === true)?.fullname,
-          nationalId: data.owners?.find((x) => x.current === true)?.persidno,
-          address: data.owners?.find((x) => x.current === true)?.address,
-          postalcode: data.owners?.find((x) => x.current === true)?.postalcode,
-          city: data.owners?.find((x) => x.current === true)?.city,
-          dateOfPurchase: data.owners?.find((x) => x.current === true)
-            ?.purchasedate,
+          owner: owner?.fullname,
+          nationalId: owner?.persidno,
+          address: owner?.address,
+          postalcode: owner?.postalcode,
+          city: owner?.city,
+          dateOfPurchase: owner?.purchasedate,
         },
         inspectionInfo: {
           type: newestInspection?.type,

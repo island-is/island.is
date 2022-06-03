@@ -18,7 +18,6 @@ import { errors } from '@island.is/judicial-system-web/messages'
 
 export const useS3Upload = (workingCase: Case) => {
   const [files, setFiles] = useState<UploadFile[]>([])
-  const [uploadErrorMessage, setUploadErrorMessage] = useState<string>()
   const [allFilesUploaded, setAllFilesUploaded] = useState<boolean>(true)
   const filesRef = useRef<UploadFile[]>(files)
   const { formatMessage } = useIntl()
@@ -40,12 +39,20 @@ export const useS3Upload = (workingCase: Case) => {
     )
   }, [files])
 
-  const [uploadPoliceCaseFileMutation] = useMutation(
-    UploadPoliceCaseFileMutation,
+  const [
+    uploadPoliceCaseFileMutation,
+    { error: uploadPoliceCaseFileFailed },
+  ] = useMutation(UploadPoliceCaseFileMutation)
+  const [
+    createPresignedPostMutation,
+    { error: createPresignedPostFailed },
+  ] = useMutation(CreatePresignedPostMutation)
+  const [createFileMutation, { error: createFileFailed }] = useMutation(
+    CreateFileMutation,
   )
-  const [createPresignedPostMutation] = useMutation(CreatePresignedPostMutation)
-  const [createFileMutation] = useMutation(CreateFileMutation)
-  const [deleteFileMutation] = useMutation(DeleteFileMutation)
+  const [deleteFileMutation, { error: deleteFileFailed }] = useMutation(
+    DeleteFileMutation,
+  )
 
   // File upload spesific functions
   const uploadPoliceCaseFile = async (
@@ -67,14 +74,12 @@ export const useS3Upload = (workingCase: Case) => {
 
       return uploadPoliceCaseFileData?.uploadPoliceCaseFile
     } catch (error) {
-      setUploadErrorMessage(formatMessage(errors.general))
-
       return { key: '', size: -1 }
     }
   }
 
   const createPresignedPost = async (
-    filename: string,
+    fileName: string,
     type: string,
   ): Promise<PresignedPost> => {
     try {
@@ -82,7 +87,7 @@ export const useS3Upload = (workingCase: Case) => {
         variables: {
           input: {
             caseId: workingCase.id,
-            fileName: filename,
+            fileName,
             type,
           },
         },
@@ -90,8 +95,6 @@ export const useS3Upload = (workingCase: Case) => {
 
       return presignedPostData?.createPresignedPost
     } catch (error) {
-      setUploadErrorMessage(formatMessage(errors.general))
-
       return { url: '', fields: {} }
     }
   }
@@ -216,14 +219,12 @@ export const useS3Upload = (workingCase: Case) => {
         })
         .catch(() => {
           // TODO: Log to sentry
-          setUploadErrorMessage(formatMessage(errors.general))
         })
     }
   }
 
   // Event handlers
   const onChange = (newFiles: File[], isRetry?: boolean) => {
-    setUploadErrorMessage(undefined)
     const newUploadFiles = newFiles as UploadFile[]
 
     if (!isRetry) {
@@ -234,9 +235,13 @@ export const useS3Upload = (workingCase: Case) => {
       const presignedPost = await createPresignedPost(
         file.name.normalize(),
         file.type ?? '',
-      ).catch(() => setUploadErrorMessage(formatMessage(errors.general)))
+      )
 
-      if (!presignedPost) {
+      if (presignedPost.url === '') {
+        file.status = 'error'
+        file.percent = 0
+        updateFile(file)
+
         return
       }
 
@@ -248,8 +253,6 @@ export const useS3Upload = (workingCase: Case) => {
   }
 
   const onRemove = (file: UploadFile) => {
-    setUploadErrorMessage(undefined)
-
     if (workingCase) {
       deleteFileMutation({
         variables: {
@@ -269,19 +272,23 @@ export const useS3Upload = (workingCase: Case) => {
         })
         .catch(() => {
           // TODO: Log to Sentry and display an error message.
-          setUploadErrorMessage(formatMessage(errors.general))
         })
     }
   }
 
   const onRetry = (file: UploadFile) => {
-    setUploadErrorMessage(undefined)
     onChange([file as File], true)
   }
 
   return {
     files,
-    uploadErrorMessage,
+    uploadErrorMessage:
+      uploadPoliceCaseFileFailed ||
+      createFileFailed ||
+      deleteFileFailed ||
+      createPresignedPostFailed
+        ? formatMessage(errors.general)
+        : undefined,
     allFilesUploaded,
     uploadPoliceCaseFile,
     addFileToCase,

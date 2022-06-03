@@ -158,7 +158,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       },
       [States.OTHER_PARENT_APPROVAL]: {
         entry: 'assignToOtherParent',
-        exit: ['clearAssignees', 'removePeriodsOrAllowanceOnSpouseRejection'],
+        exit: ['clearAssignees'],
         meta: {
           name: States.OTHER_PARENT_APPROVAL,
           actionCard: {
@@ -220,6 +220,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.OTHER_PARENT_ACTION]: {
+        entry: 'removePeriodsOrAllowanceOnSpouseRejection',
         meta: {
           name: States.OTHER_PARENT_ACTION,
           actionCard: {
