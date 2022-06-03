@@ -4,9 +4,10 @@ import { AppController } from './app.controller'
 import { AppMiddleware } from './app.middleware'
 import { AppRepository } from './app.repository'
 import { AppService } from './app.service'
+import { HealthController } from './health.controller'
 
 @Module({
-  imports: [LoggingModule],
+  imports: [LoggingModule, HealthController],
   controllers: [AppController],
   providers: [AppService, AppRepository],
 })
