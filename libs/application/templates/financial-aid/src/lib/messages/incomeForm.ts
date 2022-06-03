@@ -53,4 +53,16 @@ export const incomeForm = {
         'Answer showed in summary when applicant answers no he has no income',
     },
   }),
+  options: defineMessages({
+    yes: {
+      id: 'fa.application:section.incomeForm.options.yes',
+      defaultMessage: 'Já, ég hef fengið tekjur',
+      description: 'Yes option for income question',
+    },
+    no: {
+      id: 'fa.application:section.incomeForm.options.no',
+      defaultMessage: 'Nei, engar tekjur',
+      description: 'No option for income question',
+    },
+  }),
 }

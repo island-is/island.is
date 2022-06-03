@@ -107,7 +107,7 @@ judicial-system-backend:
     DB_NAME: 'judicial_system'
     DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
     DB_USER: 'judicial_system'
-    DEFENDER_COMPLETED_CASE_OVERVIEW_URL: 'https://judicial-system.dev01.devland.is/verjandi/'
+    DEFENDER_CASE_OVERVIEW_URL: 'https://judicial-system.dev01.devland.is/verjandi/'
     DOKOBIT_URL: 'https://developers.dokobit.com'
     EMAIL_REGION: 'eu-west-1'
     NODE_OPTIONS: '--max-old-space-size=464'
