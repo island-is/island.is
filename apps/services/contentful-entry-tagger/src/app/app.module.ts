@@ -7,8 +7,8 @@ import { AppService } from './app.service'
 import { HealthController } from './health.controller'
 
 @Module({
-  imports: [LoggingModule, HealthController],
-  controllers: [AppController],
+  imports: [LoggingModule],
+  controllers: [AppController, HealthController],
   providers: [AppService, AppRepository],
 })
 export class AppModule implements NestModule {
