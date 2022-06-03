@@ -16,16 +16,12 @@ const ENTRY_CREATED_PATH = '/api/entry-created'
 export class AppMiddleware {
   use(req: Request, _res: Response, next: NextFunction) {
     try {
-      const requestIsSigned = verifyRequest(
-        REQUEST_TOKEN,
-        ({
-          path: ENTRY_CREATED_PATH,
-          headers: req.headers,
-          method: req.method,
-          body: JSON.stringify(req.body),
-        } as unknown) as VerifiableRequest,
-        0,
-      )
+      const requestIsSigned = verifyRequest(REQUEST_TOKEN, ({
+        path: ENTRY_CREATED_PATH,
+        headers: req.headers,
+        method: req.method,
+        body: JSON.stringify(req.body),
+      } as unknown) as VerifiableRequest)
       if (!requestIsSigned) {
         logger.info(
           `Request was received from an unauthorized source and will be ignored`,
@@ -34,8 +30,9 @@ export class AppMiddleware {
       }
       next()
     } catch (error) {
-      logger.info(
+      logger.error(
         `Request signature could not be parsed, request will be ignored`,
+        error,
       )
       throw new HttpException(
         'Unauthorized, signature could not be parsed',
