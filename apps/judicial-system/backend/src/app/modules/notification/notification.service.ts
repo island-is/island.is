@@ -609,7 +609,7 @@ export class NotificationService {
       theCase.sessionArrangements,
       theCase.sendRequestToDefender,
       theCase.defenderNationalId &&
-        `${environment.deepLinks.defenderCompletedCaseOverviewUrl}${theCase.id}`,
+        `${environment.deepLinks.defenderCaseOverviewUrl}${theCase.id}`,
     )
     const calendarInvite = this.createICalAttachment(theCase)
     const attachments: Attachment[] = calendarInvite ? [calendarInvite] : []

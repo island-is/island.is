@@ -14,9 +14,9 @@ interface Props {
     | 'courtRecord'
     | 'request'
     | 'custodyNotice'
-    | 'ruling/restricted'
-    | 'courtRecord/restricted'
-    | 'request/restricted'
+    | 'ruling/limitedAccess'
+    | 'courtRecord/limitedAccess'
+    | 'request/limitedAccess'
 }
 
 const PdfRow: React.FC<Props> = ({ children, caseId, title, pdfType }) => {
