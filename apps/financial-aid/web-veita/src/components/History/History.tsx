@@ -8,12 +8,14 @@ import { ApplicationEvent } from '@island.is/financial-aid/shared/lib'
 
 import {
   ChatElement,
+  EmailElement,
   TimeLineContainer,
 } from '@island.is/financial-aid-web/veita/src/components'
 
 interface Props {
   className?: string
   applicantName: string
+  applicantEmail: string
   applicationEvents?: ApplicationEvent[]
   spouseName: string
 }
@@ -21,6 +23,7 @@ interface Props {
 const History = ({
   className,
   applicantName,
+  applicantEmail,
   spouseName,
   applicationEvents,
 }: Props) => {
@@ -54,7 +57,10 @@ const History = ({
               applicantName={applicantName}
               spouseName={spouseName}
             >
-              <ChatElement comment={item.comment} />
+              <Box paddingLeft={3}>
+                <ChatElement comment={item.comment} />
+                <EmailElement email={applicantEmail} event={item.eventType} />
+              </Box>
             </TimeLineContainer>
           )
         })}
