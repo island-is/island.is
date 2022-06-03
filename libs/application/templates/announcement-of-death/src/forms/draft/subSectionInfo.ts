@@ -51,6 +51,12 @@ export const subSectionInfo = buildSubSection({
           title: m.applicantsRelation,
           placeholder: m.applicantsRelationPlaceholder,
           width: 'half',
+          defaultValue: (application: Application) => {
+            const applicantRelation = application.externalData?.syslumennOnEntry?.data?.estates[0]?.estateMembers?.find(
+              (em: any) => em.nationalId === application.applicant,
+            )
+            return applicantRelation?.relation ?? ''
+          },
           options: ({
             externalData: {
               syslumennOnEntry: { data },
