@@ -63,7 +63,13 @@ const args = argv
         .option('profile', {
           description: 'AWS profile to use',
         })
-        .demandOption('service', 'Name of the Kubernetes service'),
+        .demandOption('service', 'Name of the Kubernetes service')
+        .check(function (argv) {
+          if (!['docker', 'podman'].includes(argv.builder)) {
+            throw new Error('Only docker or podman allowed')
+          }
+          return true
+        }),
     async (args) => {
       const credentials = await getCredentials(args.profile)
       const dockerBuild = `proxy-${args.service}`
