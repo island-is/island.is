@@ -62,6 +62,11 @@ export const EstateMemberRepeater: FC<FieldBaseProps<Answers>> = ({
     <Box marginTop={2}>
       <GridRow>
         {fields.reduce((acc, member, index) => {
+          if (member.nationalId === application.applicant) {
+            if (application.answers.applicantRelation !== member.relation) {
+              member.relation = application.answers.applicantRelation
+            }
+          }
           if (!member.initial) {
             return acc
           }

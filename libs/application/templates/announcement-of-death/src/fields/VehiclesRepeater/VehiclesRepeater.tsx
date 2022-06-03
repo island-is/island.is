@@ -106,6 +106,7 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({ field }) => {
                   name={vehicleTypeField}
                   label={formatMessage(m.vehicleTypeLabel)}
                   defaultValue={field.description}
+                  placeholder={formatMessage(m.vehiclesPlaceholder)}
                   //Make readOnly again when Vehicle Registry query is available
                   //readOnly
                 />

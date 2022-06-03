@@ -297,6 +297,11 @@ Ef ekkert á við sem hér að ofan er talið rennur arfur í ríkissjóð. Nán
     defaultMessage: 'Til dæmis bifreiðar, flugvélar og bátar.',
     description: 'Vehicles description',
   },
+  vehiclesPlaceholder: {
+    id: 'aod.application:vehiclesPlaceholder',
+    defaultMessage: 't.d. Toyota Yaris',
+    description: 'Placeholder for vehicles type',
+  },
   otherPropertiesTitle: {
     id: 'aod.application:otherPropertiesTitle',
     defaultMessage: 'Aðrar eignir',

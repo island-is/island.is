@@ -19,25 +19,6 @@ export class NationalRegistryProvider extends BasicDataProvider {
               postalCode
               city
             }
-            children {
-              nationalId
-              fullName
-              livesWithApplicant
-              livesWithBothParents
-              otherParent {
-                nationalId
-                fullName
-                address {
-                  streetName
-                  postalCode
-                  city
-                }
-              }
-            }
-            spouse {
-                nationalId
-                name
-            }
           }
         }
       `
