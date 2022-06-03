@@ -26,9 +26,15 @@ import { DataStatus } from './types/dataStatus.enum'
 
 export const MAX_OUT_OF_DATE_MONTHS = 6
 
+/** Category to attach each log message to */
+const LOG_CATEGORY = 'userprofile-service'
+
 // eslint-disable-next-line
 const handleError = (error: any) => {
-  logger.error(JSON.stringify(error))
+  logger.error('Userprofile error', {
+    exception: JSON.stringify(error),
+    category: LOG_CATEGORY,
+  })
   throw new ApolloError('Failed to resolve request', error.status)
 }
 
