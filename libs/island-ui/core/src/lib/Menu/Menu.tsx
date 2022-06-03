@@ -18,14 +18,13 @@ import { useBoxStyles } from '../Box/useBoxStyles'
 type LinkBase = {
   text: string
   href: any
-  dataTestId?: string
 }
 
 type RenderLinkObj = LinkBase & {
   className: string
 }
 
-type Link = LinkBase
+type Link = LinkBase & { dataTestId?: string }
 
 type LinkWithSub = LinkBase & {
   sub?: Link[]
@@ -100,16 +99,13 @@ export interface MenuProps {
   renderDisclosure?: ModalBaseProps['renderDisclosure']
 }
 
-const defaultRenderLinks = ({
-  text,
-  href,
-  className,
-  dataTestId,
-}: RenderLinkObj) => (
-  <a href={href} className={className} data-test-id={dataTestId}>
-    {text}
-  </a>
-)
+const defaultRenderLinks = ({ text, href, className }: RenderLinkObj) => {
+  return (
+    <a href={href} className={className}>
+      {text}
+    </a>
+  )
+}
 
 const defaultRenderLogo: MenuProps['renderLogo'] = (logo) => logo
 const defaultRenderSearch: MenuProps['renderSearch'] = (search) => search
@@ -203,19 +199,24 @@ export const Menu = ({
     </Button>,
   )
   const mainLinksRender = (closeModal: () => void) =>
-    mainLinks.map(({ text, href, dataTestId }, index) => (
-      <div className={styles.mainLinkOuter} key={index}>
-        {renderLink(
-          {
-            className: cn(getTextStyles({}), styles.mainLink),
-            text: text,
-            href: href,
-            dataTestId: dataTestId,
-          },
-          closeModal,
-        )}
-      </div>
-    ))
+    mainLinks.map(({ text, href, dataTestId }, index) => {
+      return (
+        <div
+          className={styles.mainLinkOuter}
+          key={index}
+          data-testid={dataTestId}
+        >
+          {renderLink(
+            {
+              className: cn(getTextStyles({}), styles.mainLink),
+              text: text,
+              href: href,
+            },
+            closeModal,
+          )}
+        </div>
+      )
+    })
   return (
     <ModalBase
       baseId={baseId}
@@ -462,7 +463,7 @@ export const Menu = ({
                             }),
                             styles.asideLink,
                           ),
-                          ...link,
+                          ...{ ...link, dataTestId: 'foobar' },
                         },
                         closeModal,
                       )}

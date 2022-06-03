@@ -87,7 +87,12 @@ export const Menu = ({
         </Link>
       )}
       menuButton={
-        <Button variant="utility" icon="menu" colorScheme={buttonColorScheme}>
+        <Button
+          variant="utility"
+          icon="menu"
+          colorScheme={buttonColorScheme}
+          data-testid="frontpage-burger-button"
+        >
           {t.menuCaption}
         </Button>
       }
