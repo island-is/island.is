@@ -81,7 +81,6 @@ const fullWidthSlices = [
   'LogoListSlice',
   'MailingListSignupSlice',
 ]
-const slicesWithContainer = ['LatestNewsSlice']
 
 const renderSlice = (slice, namespace, organizationPageSlug) => {
   switch (slice.__typename) {
@@ -133,11 +132,11 @@ export const OrganizationSlice = ({
   fullWidth = false,
   organizationPageSlug = '',
 }: OrganizationSliceProps) => {
-  return !(fullWidth && slicesWithContainer.includes(slice.__typename)) ? (
+  return !fullWidth ? (
     <GridContainer>
       <GridRow>
         <GridColumn
-          paddingTop={6}
+          paddingTop={4}
           span={
             fullWidthSlices.includes(slice.__typename) || fullWidth
               ? '9/9'
