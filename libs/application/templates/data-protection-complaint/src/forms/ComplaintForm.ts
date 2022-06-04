@@ -513,7 +513,7 @@ export const ComplaintForm: Form = buildForm({
           component: 'ComplaineeRepeater',
         }),
         buildSubSection({
-          id: 'subjectOfComplaint',
+          id: 'subjectOfComplaintSection',
           title: section.subjectOfComplaint,
           children: [
             buildMultiField({
@@ -523,7 +523,8 @@ export const ComplaintForm: Form = buildForm({
               children: [
                 buildCustomField({
                   component: 'ReasonsForComplaint',
-                  id: 'subjectOfComplaint.checkboxAndInput',
+                  id: 'subjectOfComplaint',
+                  doesNotRequireAnswer: true,
                   title: '',
                 }),
               ],
@@ -579,7 +580,7 @@ export const ComplaintForm: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'overview',
+      id: 'overviewSection',
       title: section.overview,
       children: [
         buildMultiField({
@@ -587,7 +588,7 @@ export const ComplaintForm: Form = buildForm({
           title: overview.general.pageTitle,
           children: [
             buildCustomField({
-              id: 'overviewComplaintOverview',
+              id: 'overview',
               title: overview.general.pageTitle,
               doesNotRequireAnswer: true,
               component: 'ComplaintOverview',
