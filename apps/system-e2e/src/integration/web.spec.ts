@@ -12,4 +12,11 @@ describe('web', () => {
       .should('have.length.at.least', 3)
       .each((link) => cy.visit(link.attr('href')!))
   })
+
+  it('should have highlighted articles', () => {
+    cy.visit('/')
+    cy.get('[data-testid="highlighted-articles"]')
+      .should('have.length.at.least', 3)
+      .each((link) => cy.visit(link.attr('href')!))
+  })
 })

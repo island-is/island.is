@@ -103,6 +103,7 @@ export const SearchSection = ({
                             }
                           : { href: cardUrl.href })}
                         variant="blue"
+                        data-testid={'highlighted-articles'}
                         attention={attention}
                       >
                         {title}
