@@ -12,17 +12,17 @@ import { richText, SliceType } from '@island.is/island-ui/contentful'
 
 interface SliceProps {
   slice: OneColumnText
-  boxProps?: BoxProps
 }
 
-export const OneColumnTextSlice: React.FC<SliceProps> = ({
-  slice,
-  boxProps = {
-    borderTopWidth: 'standard',
-    borderColor: 'standard',
-    paddingTop: 4,
-  },
-}) => {
+export const OneColumnTextSlice: React.FC<SliceProps> = ({ slice }) => {
+  const boxProps: BoxProps = slice.dividerOnTop
+    ? {
+        borderTopWidth: 'standard',
+        borderColor: 'standard',
+        paddingTop: 4,
+      }
+    : {}
+
   return (
     <section key={slice.id} aria-labelledby={'sliceTitle-' + slice.id}>
       <GridContainer>

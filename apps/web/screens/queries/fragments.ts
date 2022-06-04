@@ -401,6 +401,7 @@ export const slices = gql`
     content {
       ...HtmlFields
     }
+    dividerOnTop
   }
 
   fragment AccordionSliceFields on AccordionSlice {
