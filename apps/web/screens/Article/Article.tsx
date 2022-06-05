@@ -661,7 +661,7 @@ ArticleScreen.getInitialProps = async ({ apolloClient, query, locale }) => {
         query: GET_NAMESPACE_QUERY,
         variables: {
           input: {
-            namespace: 'StepperFSM',
+            namespace: 'Stepper',
             lang: locale,
           },
         },

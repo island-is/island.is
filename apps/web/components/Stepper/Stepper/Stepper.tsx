@@ -271,23 +271,24 @@ const Stepper = ({
           className={styles.answerRowContainer}
         >
           <Box marginRight={2}>
-            <Text variant="h4">{question}</Text>
+            <Text variant="h4" color="purple600">
+              {question}
+            </Text>
           </Box>
           <Box marginRight={2}>
-            <Text>{answer}</Text>
+            <Text color="purple600">{answer}</Text>
           </Box>
-          <Box>
+          <Box textAlign="right">
             <Link
-              underline="small"
-              underlineVisibility="always"
-              color="blue400"
               shallow={true}
               href={{
                 pathname: urlWithoutQueryParams,
                 query: query,
               }}
             >
-              {n('changeSelection', 'Breyta')}
+              <Button variant="text" icon="pencil" size="small" nowrap={true}>
+                {n('changeSelection', 'Breyta')}
+              </Button>
             </Link>
           </Box>
         </Box>
@@ -440,22 +441,24 @@ const Stepper = ({
       {stepOptions?.length > 0 && <ContinueButton />}
 
       {!isOnFirstStep && (
-        <Box marginTop={10}>
-          <Text variant="h3" marginBottom={2}>
-            {n('yourAnswers', 'Svörin þín')}
-          </Text>
-          <Box marginBottom={3}>
-            <Link
-              shallow={true}
-              underline="small"
-              underlineVisibility="always"
-              color="blue400"
-              href={router.asPath.split('?')[0]}
-            >
-              {n('startAgain', 'Byrja aftur')}
-            </Link>
+        <Box
+          marginTop={10}
+          background="purple100"
+          borderRadius="large"
+          padding="containerGutter"
+        >
+          <Box display="flex" alignItems="center" justifyContent="spaceBetween">
+            <Text variant="h3" marginBottom={2} color="purple600">
+              {n('yourAnswers', 'Svörin þín')}
+            </Text>
+            <Box marginBottom={3} textAlign="right">
+              <Link shallow={true} href={router.asPath.split('?')[0]}>
+                <Button variant="text" icon="reload" size="small" nowrap={true}>
+                  {n('startAgain', 'Byrja aftur')}
+                </Button>
+              </Link>
+            </Box>
           </Box>
-
           {renderQuestionsAndAnswers(
             questionsAndAnswers,
             router.asPath.split('?')[0],
