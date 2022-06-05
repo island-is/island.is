@@ -44,7 +44,8 @@
     "@protobufjs/path",
     "@protobufjs/pool",
     "@protobufjs/utf8",
-    "pseudomap"
+    "pseudomap",
+    "p-cancelable"
   ],
   "keepNames": true
 }
