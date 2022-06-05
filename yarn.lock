@@ -13494,29 +13494,24 @@ config-chain@^1.1.12:
     ini "^1.3.4"
     proto-list "~1.2.1"
 
-configcat-common@4.4.2, configcat-common@^4.4.0:
-  version "4.4.2"
-  resolved "https://registry.yarnpkg.com/configcat-common/-/configcat-common-4.4.2.tgz#12740536e3fe965f09d10b954e53d960f553b247"
-  integrity sha512-QTNZ0vz/PAyJ5r/EBThybKSexy+SYOMqcA5qdv97JUuk67kX8gtAibtSrlcOxYOThBiF+YJaAeiKSk/43+StVQ==
+configcat-common@^6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/configcat-common/-/configcat-common-6.0.0.tgz#ccdb9bdafcb6a89144cac17faaab60ac960fed2a"
+  integrity sha512-C/lCeTKiFk9kPElRF3f4zIkvVCLKgPJuzrKbIMHCru89mvfH5t4//hZ9TW8wPJOAje6xB6ZALutDiIxggwUvWA==
 
-configcat-common@^4.6.0:
-  version "4.6.1"
-  resolved "https://registry.yarnpkg.com/configcat-common/-/configcat-common-4.6.1.tgz#72c757f11a0d316f41327bb049052a78944fd602"
-  integrity sha512-4E+FEsndbyGCEopf5Sd3Si+Z2yYTLdLse5eljva2jCpvOBEH4LOs77pVNT9YV78l7g6OwaqGZe1YoFr/LI+MCA==
-
-configcat-js@5.4.0:
-  version "5.4.0"
-  resolved "https://registry.yarnpkg.com/configcat-js/-/configcat-js-5.4.0.tgz#673632761589a7c84ee53fdeef797561cd393ddd"
-  integrity sha512-JYjI0Dwo9yrhgZn7vOQ/5RNnasrXm64eRwwRzFAzBeK+Y1ajD2iyf4qS/E7g4gyy0sNF9meTviUTQZKnXFw6wA==
+configcat-js@6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/configcat-js/-/configcat-js-6.0.0.tgz#99b783238b46d0eebeec3305584c783d29253ebc"
+  integrity sha512-bwzvcKyUFjooxetK49ivcV1cGc0fSLc7mUyY0yKTdnxIW9lkf+uua+vqPR1yRhAjAxUl8SgvyU8hqHkYMbPk/g==
   dependencies:
-    configcat-common "^4.4.0"
+    configcat-common "^6.0.0"
 
-configcat-node@6.7.0:
-  version "6.7.0"
-  resolved "https://registry.yarnpkg.com/configcat-node/-/configcat-node-6.7.0.tgz#638b9a7b5ac9b704bc7996c04e54aa4cd4ac442e"
-  integrity sha512-YWDa8raa4rTxLr5I5U4HcIfryUpWSdtX8KtjfgYt9IBzMCgkXbQdZO69wNC4CidjSPkqGz+Irzhugbn6boGkpA==
+configcat-node@7.0.0:
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/configcat-node/-/configcat-node-7.0.0.tgz#50dc0f8fc866d7017e93fa3d478b7a3fe08ec815"
+  integrity sha512-zPU+6d/uHP4SxpBgdduI5AiPetAByGnBrF+Chpg+CuC2EmY6N4qKe5f8eWaot3NE+X4m5ylq1OMy6Li9ePIb6w==
   dependencies:
-    configcat-common "^4.6.0"
+    configcat-common "^6.0.0"
     got "^9.6.0"
     tunnel "0.0.6"
 
