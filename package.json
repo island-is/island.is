@@ -130,8 +130,8 @@
     "class-transformer": "0.5.1",
     "class-validator": "0.13.2",
     "classnames": "2.2.6",
-    "configcat-js": "6.0.0",
-    "configcat-node": "7.0.0",
+    "configcat-js": "5.4.0",
+    "configcat-node": "6.7.0",
     "contentful": "7.14.6",
     "contentful-management": "6.0.5",
     "contentful-ui-extensions-sdk": "3.32.0",
@@ -433,6 +433,7 @@
     "**/rollup-plugin-postcss/**/postcss": "8.2.10",
     "**/autoprefixer/**/postcss": "npm:@island.is/postcss@107.0.37",
     "**/@ampproject/toolbox-optimizer/**/postcss": "npm:@island.is/postcss@107.0.37",
+    "**/configcat-js/**/configcat-common": "4.4.2",
     "**/css-loader/**/postcss": "npm:@island.is/postcss@107.0.37",
     "**/cssnano-simple/**/postcss": "npm:@island.is/postcss@107.0.37",
     "**/cssnano/**/postcss": "npm:@island.is/postcss@107.0.37",
@@ -463,8 +464,5 @@
     "@npmcli/git": "2.0.8",
     "url-parse": "1.5.2",
     "path-parse": "1.0.7"
-  },
-  "volta": {
-    "node": "14.17.6"
   }
 }
