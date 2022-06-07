@@ -19,9 +19,9 @@ export const MOCK_USER = {
   nationalId: '0',
   scope: ['test-scope-1'],
   client_id: 'test-client',
+  delegationType: ['Custom'],
   actor: {
     nationalId: '1',
-    delegationType: 'Custom',
     scope: ['test-scope-2'],
   },
   authorization: '',
