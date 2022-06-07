@@ -18,6 +18,7 @@ export enum API_MODULE_ACTIONS {
   assignEmployer = 'assignEmployer',
   sendApplication = 'sendApplication',
   notifyApplicantOfRejectionFromOtherParent = 'notifyApplicantOfRejectionFromOtherParent',
+  sendDummyApplication = 'sendDummyApplication',
 }
 
 export enum StartDateOptions {

@@ -210,6 +210,7 @@ export const transformApplicationToParentalLeaveDTO = (
   application: Application,
   periods: Period[],
   attachments?: Attachment[],
+  testData?: string
 ): ParentalLeave => {
   const selectedChild = getSelectedChild(
     application.answers,
@@ -254,7 +255,7 @@ export const transformApplicationToParentalLeaveDTO = (
     status: 'In Progress',
     rightsCode: getRightsCode(application),
     attachments,
-    testData: 'TRUE'
+    testData,
   }
 }
 

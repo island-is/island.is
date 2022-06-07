@@ -31,6 +31,7 @@ import {
   getRatio,
 } from './parental-leave.utils'
 import { apiConstants } from './constants'
+import { FamilyMemberResolver } from 'libs/api/domains/national-registry/src/lib/graphql'
 
 interface VMSTError {
   type: string
@@ -333,6 +334,7 @@ export class ParentalLeaveService {
         application,
         periods,
         attachments,
+        'FALSE' // put false in testData as this is not dummy application
       )
 
       const response = await this.parentalLeaveApi.parentalLeaveSetParentalLeave(
@@ -341,8 +343,6 @@ export class ParentalLeaveService {
           parentalLeave: parentalLeaveDTO,
         },
       )
-
-      console.log('respone set parental leave: ', response)
 
       if (!response.id) {
         throw new Error(
@@ -372,5 +372,35 @@ export class ParentalLeaveService {
       this.logger.error('Failed to send the parental leave application', e)
       throw this.parseErrors(e)
     }
+  }
+
+  async sendDummyApplication({ application }: TemplateApiModuleActionProps) {
+    const nationalRegistryId = application.applicant
+    const attachments = await this.getAttachments(application)
+
+    const periods = await this.createPeriodsDTO(
+      application,
+      nationalRegistryId,
+    )
+
+    const parentalLeaveDTO = transformApplicationToParentalLeaveDTO(
+      application,
+      periods,
+      attachments,
+      'TRUE'
+    )
+
+    console.log('dummy API request: ', parentalLeaveDTO)
+
+    // call SetParentalLeave API with testData: TRUE as this is a dummy application 
+    // for validation purposes
+    // const response = await this.parentalLeaveApi.parentalLeaveSetParentalLeave(
+    //   {
+    //     nationalRegistryId,
+    //     parentalLeave: parentalLeaveDTO,
+    //   },
+    // )
+
+    return
   }
 }
