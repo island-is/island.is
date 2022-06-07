@@ -1,4 +1,5 @@
 import { buildCustomField, buildForm, Form } from '@island.is/application/core'
+import { Routes } from '../lib/constants'
 
 import * as m from '../lib/messages'
 
@@ -7,7 +8,7 @@ export const MuncipalityNotRegistered: Form = buildForm({
   title: '',
   children: [
     buildCustomField({
-      id: 'serviceCenter',
+      id: Routes.SERVICECENTER,
       title: m.serviceCenter.general.pageTitle,
       component: 'ServiceCenter',
     }),

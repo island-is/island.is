@@ -1,5 +1,5 @@
 import fetch from 'isomorphic-fetch'
-
+import { ConfigType } from '@nestjs/config'
 import {
   BadGatewayException,
   BadRequestException,
@@ -9,28 +9,57 @@ import {
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { CaseOrigin } from '@island.is/judicial-system/types'
 import {
   AuditedAction,
   AuditTrailService,
 } from '@island.is/judicial-system/audit-trail'
+import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
 
-import { environment } from '../environments'
 import { CreateCaseDto } from './app.dto'
 import { Case } from './app.model'
+import appModuleConfig from './app.config'
+
+function reportError(
+  url: string,
+  title: { title: string; emoji: string },
+  info?: string,
+  error?: unknown,
+) {
+  return fetch(url, {
+    method: 'POST',
+    headers: { 'Content-type': 'application/json' },
+    body: JSON.stringify({
+      blocks: [
+        {
+          type: 'section',
+          text: {
+            type: 'mrkdwn',
+            text: `${title.emoji} *${title.title}*\n${info}${
+              error ? `\n>${JSON.stringify(error)}` : ''
+            }`,
+          },
+        },
+      ],
+    }),
+  })
+}
 
 @Injectable()
 export class AppService {
   constructor(
+    @Inject(appModuleConfig.KEY)
+    private readonly config: ConfigType<typeof appModuleConfig>,
     private readonly auditTrailService: AuditTrailService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
   private async createCase(caseToCreate: CreateCaseDto): Promise<Case> {
-    return fetch(`${environment.backend.url}/api/internal/case/`, {
+    return fetch(`${this.config.backend.url}/api/internal/case/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        authorization: `Bearer ${environment.auth.secretToken}`,
+        authorization: `Bearer ${this.config.backend.accessToken}`,
       },
       body: JSON.stringify(caseToCreate),
     })
@@ -60,11 +89,27 @@ export class AppService {
   }
 
   async create(caseToCreate: CreateCaseDto): Promise<Case> {
-    return this.auditTrailService.audit(
-      'xrd-api',
-      AuditedAction.CREATE_CASE,
-      this.createCase(caseToCreate),
-      (theCase) => theCase.id,
-    )
+    return this.auditTrailService
+      .audit(
+        'xrd-api',
+        AuditedAction.CREATE_CASE,
+        this.createCase(caseToCreate),
+        (theCase) => theCase.id,
+      )
+      .catch((reason) => {
+        reportError(
+          this.config.errorReportUrl,
+          {
+            title: 'Ekki tókst að stofna mál í gegnum Strauminn',
+            emoji: ':broken_heart:',
+          },
+          `${capitalize(caseTypes[caseToCreate.type])}: ${
+            caseToCreate.policeCaseNumber
+          }\nOrigin: ${CaseOrigin.LOKE}`,
+          reason,
+        )
+
+        throw reason
+      })
   }
 }

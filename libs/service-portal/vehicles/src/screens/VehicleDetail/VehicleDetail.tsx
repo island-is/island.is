@@ -47,8 +47,8 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
   const { data, loading, error } = useQuery<Query>(GET_USERS_VEHICLE_DETAIL, {
     variables: {
       input: {
-        regno: id,
-        permno: '',
+        regno: '',
+        permno: id,
         vin: '',
       },
     },
@@ -68,8 +68,9 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
 
   const year = mainInfo?.year ? `(${mainInfo.year})` : ''
   const color = registrationInfo?.color ? `- ${registrationInfo.color}` : ''
+  const noInfo = data?.vehiclesDetail === null
 
-  if (error && !loading) {
+  if ((error || noInfo) && !loading) {
     return <NotFound title={formatMessage(messages.notFound)} />
   }
 

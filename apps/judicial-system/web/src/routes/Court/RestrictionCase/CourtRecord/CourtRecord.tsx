@@ -994,7 +994,7 @@ export const CourtRecord: React.FC = () => {
             !workingCase.decision ||
             !workingCase.conclusion ||
             !workingCase.ruling
-              ? formatMessage(m.nextButtonInfo)
+              ? formatMessage(m.sections.nextButtonInfo.text)
               : ''
           }
         />
