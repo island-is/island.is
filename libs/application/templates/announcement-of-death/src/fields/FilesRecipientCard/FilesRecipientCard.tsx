@@ -6,7 +6,6 @@ import {
   FieldBaseProps,
   formatText,
   FormText,
-  FormValue,
 } from '@island.is/application/core'
 import { Box, Tag, Text } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'

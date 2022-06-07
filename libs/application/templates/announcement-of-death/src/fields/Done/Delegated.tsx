@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, Stack, Text } from '@island.is/island-ui/core'
+import { Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FieldBaseProps, formatText } from '@island.is/application/core'
 import { m } from '../../lib/messages'

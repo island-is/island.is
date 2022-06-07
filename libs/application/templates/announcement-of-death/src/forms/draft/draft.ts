@@ -3,15 +3,12 @@ import {
   buildSection,
   Form,
   FormModes,
-  FormValue,
-  getValueViaPath,
 } from '@island.is/application/core'
 import { subSectionInfo } from './subSectionInfo'
 import { subSectionInheritance } from './subSectionInheritance'
 import { subSectionWillAndTrade } from './subSectionWillAndTrade'
 import { subSectionProperties } from './subSectionProperties'
 import { m } from '../../lib/messages'
-import { RoleConfirmationEnum } from '../../types'
 import CoatOfArms from '../../assets/CoatOfArms'
 import { subSectionFiles } from './subSectionFiles'
 import { sectionOverview } from './sectionOverview'

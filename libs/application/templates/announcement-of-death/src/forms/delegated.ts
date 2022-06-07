@@ -4,7 +4,6 @@ import {
   Form,
   FormModes,
   buildMultiField,
-  buildSubmitField,
 } from '@island.is/application/core'
 import CoatOfArms from '../assets/CoatOfArms'
 import { m } from '../lib/messages'

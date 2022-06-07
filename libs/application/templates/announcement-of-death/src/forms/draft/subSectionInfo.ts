@@ -5,7 +5,6 @@ import {
   buildSubSection,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import { RelationEnum } from '../../types'
 import { Application } from '../../types/schema'
 
 export const subSectionInfo = buildSubSection({

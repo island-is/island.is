@@ -20,7 +20,6 @@ import {
   GridRow,
   Button,
   ProfileCard,
-  Text,
 } from '@island.is/island-ui/core'
 import { Answers, EstateMember } from '../../types'
 import { format as formatNationalId } from 'kennitala'
@@ -30,7 +29,6 @@ import { IdentityInput, Query } from '@island.is/api/schema'
 import { IDENTITY_QUERY } from '../../graphql/'
 import * as kennitala from 'kennitala'
 import { m } from '../../lib/messages'
-import { getValueViaPath } from '../../../../../core/src/lib/formUtils'
 import { hasYes } from '../../lib/utils'
 
 export const EstateMemberRepeater: FC<FieldBaseProps<Answers>> = ({

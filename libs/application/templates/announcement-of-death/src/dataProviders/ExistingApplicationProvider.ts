@@ -26,7 +26,7 @@ export class ExistingApplicationProvider extends BasicDataProvider {
       .map<ApplicationInfo>(
         ({ externalData, ...partialApplication }) => partialApplication,
       )
-      .filter(({ id, answers }) => id !== application.id)
+      .filter(({ id }) => id !== application.id)
       .sort(({ created: a }, { created: b }) => b.getTime() - a.getTime())
 
     return existingApplications

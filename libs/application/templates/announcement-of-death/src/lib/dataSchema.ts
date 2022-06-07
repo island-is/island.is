@@ -6,9 +6,6 @@ import { RoleConfirmationEnum } from '../types'
 
 import { customZodError } from './utils/customZodError'
 
-const emailRegex = /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
-const isValidEmail = (value: string) => emailRegex.test(value)
-
 const isValidPhoneNumber = (phoneNumber: string) => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
   return phone && phone.isValid()

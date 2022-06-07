@@ -18,7 +18,7 @@ export class DeathNoticeProvider extends BasicDataProvider {
       application.externalData?.syslumennOnEntry?.data
     if (
       !applicationData?.estates?.length ||
-      applicationData.estates.length == 0
+      applicationData.estates.length === 0
     ) {
       return Promise.reject({
         message: m.dataCollectionNoEstatesError,
@@ -27,7 +27,7 @@ export class DeathNoticeProvider extends BasicDataProvider {
     return true
   }
 
-  handleError(error: any) {
+  handleError(_error: any) {
     return Promise.reject({})
   }
 
@@ -39,7 +39,7 @@ export class DeathNoticeProvider extends BasicDataProvider {
     }
   }
 
-  onProvideSuccess(result: object): SuccessfulDataProviderResult {
+  onProvideSuccess(result: any): SuccessfulDataProviderResult {
     return { date: new Date(), status: 'success', data: result }
   }
 }

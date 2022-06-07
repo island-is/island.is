@@ -1,5 +1,4 @@
 import { RelationEnum, Answers } from '../../types'
-import { Answer } from '@island.is/application/core'
 import { YES } from '../constants'
 
 export const getRelationOptions = (): Record<

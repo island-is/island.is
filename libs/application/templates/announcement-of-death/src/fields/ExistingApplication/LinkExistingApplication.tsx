@@ -75,6 +75,7 @@ export const LinkExistingApplication: FC<FieldBaseProps> = ({
       if (continueConf) {
         switch (continueConf.action) {
           case ACTION.EXISTING:
+            // eslint-disable-next-line
             {
               // delete current application
               await deleteApplication(application.id)
@@ -85,6 +86,7 @@ export const LinkExistingApplication: FC<FieldBaseProps> = ({
             }
             break
           case ACTION.NEW:
+            // eslint-disable-next-line
             {
               // get estate from casenumber in url
               const estate = getNewEstateFromUrl(continueConf.url)

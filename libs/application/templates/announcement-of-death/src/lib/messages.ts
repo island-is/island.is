@@ -479,7 +479,7 @@ Ef ekkert á við sem hér að ofan er talið rennur arfur í ríkissjóð. Nán
   errorAssetNumber: {
     id: 'aod.application:error.errorAssetNumber',
     defaultMessage:
-      'Fasteignanúmer þarf að vera bókstafurinn F og 7 tölustafir',
+      'Fasteignanúmer þarf að vera bókstafurinn F og sjö tölustafir',
     description: 'Invalid asset number error message',
   },
 

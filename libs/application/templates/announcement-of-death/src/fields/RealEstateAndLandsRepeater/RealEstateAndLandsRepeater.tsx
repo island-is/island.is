@@ -133,7 +133,7 @@ const Item = ({
 
   const [
     getProperty,
-    { loading: queryLoading, error: queryError },
+    { loading: _queryLoading, error: _queryError },
   ] = useLazyQuery<Query, { input: SearchForPropertyInput }>(
     SEARCH_FOR_PROPERTY_QUERY,
     {
