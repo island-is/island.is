@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client'
 
-export const RestrictedCaseQuery = gql`
-  query RestrictedCaseQuery($input: CaseQueryInput!) {
-    restrictedCase(input: $input) {
+export const LimitedAccessCaseQuery = gql`
+  query LimitedAccessCaseQuery($input: CaseQueryInput!) {
+    limitedAccessCase(input: $input) {
       id
       origin
       type

@@ -5,11 +5,11 @@ import {
   BadRequestException,
 } from '@nestjs/common'
 
-import { RestrictedCaseService } from '../restrictedCase.service'
+import { LimitedAccessCaseService } from '../limitedAccessCase.service'
 
 @Injectable()
-export class RestrictedCaseExistsGuard implements CanActivate {
-  constructor(private restrictedCaseService: RestrictedCaseService) {}
+export class LimitedAccessCaseExistsGuard implements CanActivate {
+  constructor(private limitedAccessCaseService: LimitedAccessCaseService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest()
@@ -20,7 +20,7 @@ export class RestrictedCaseExistsGuard implements CanActivate {
       throw new BadRequestException('Missing case id')
     }
 
-    request.case = await this.restrictedCaseService.findById(caseId)
+    request.case = await this.limitedAccessCaseService.findById(caseId)
 
     return true
   }

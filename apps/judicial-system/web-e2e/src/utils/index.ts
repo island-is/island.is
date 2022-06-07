@@ -17,12 +17,12 @@ import {
 
 export enum Operation {
   CaseQuery = 'CaseQuery',
-  RestrictedCaseQuery = 'RestrictedCaseQuery',
   UploadFileToCourtMutation = 'UploadFileToCourtMutation',
   UpdateCaseMutation = 'UpdateCaseMutation',
   SendNotificationMutation = 'SendNotificationMutation',
   CreatePresignedPostMutation = 'CreatePresignedPostMutation',
   CreateFileMutation = 'CreateFileMutation',
+  LimitedAccessCaseQuery = 'LimitedAccessCaseQuery',
 }
 
 export const intercept = (res: Case, forceFail?: Operation) => {
@@ -34,11 +34,11 @@ export const intercept = (res: Case, forceFail?: Operation) => {
           case: res,
         },
       })
-    } else if (hasOperationName(req, Operation.RestrictedCaseQuery)) {
+    } else if (hasOperationName(req, Operation.LimitedAccessCaseQuery)) {
       req.alias = 'gqlCaseQuery'
       req.reply({
         data: {
-          restrictedCase: res,
+          limitedAccessCase: res,
         },
       })
     } else if (hasOperationName(req, Operation.UploadFileToCourtMutation)) {
