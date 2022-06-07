@@ -8,9 +8,10 @@ import * as styles from '../History/History.css'
 interface Props {
   email: string
   event: ApplicationEventType
+  emailSent?: boolean
 }
 
-const EmailElement = ({ email, event }: Props) => {
+const EmailElement = ({ email, event, emailSent }: Props) => {
   if (
     event !== ApplicationEventType.REJECTED &&
     event !== ApplicationEventType.APPROVED
@@ -21,7 +22,11 @@ const EmailElement = ({ email, event }: Props) => {
   return (
     <Box marginBottom={2} className={styles.timelineMessages}>
       <Icon icon="mail" type="outline" color="blue400" />
-      <Text>{`Tölvupóstur var sendur á netfangið ${email}`}</Text>
+      <Text>
+        {emailSent
+          ? `Tölvupóstur var sendur á netfangið ${email}`
+          : `Ekki tókst að senda tölvupóst á netfangið ${email}`}
+      </Text>
     </Box>
   )
 }

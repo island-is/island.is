@@ -59,7 +59,11 @@ const History = ({
             >
               <Box paddingLeft={3}>
                 <ChatElement comment={item.comment} />
-                <EmailElement email={applicantEmail} event={item.eventType} />
+                <EmailElement
+                  email={applicantEmail}
+                  event={item.eventType}
+                  emailSent={item.emailSent}
+                />
               </Box>
             </TimeLineContainer>
           )
