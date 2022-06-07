@@ -11,7 +11,7 @@ export interface JwtPayload {
   client_id: string
   act?: JwtAct
   client_nationalId?: string
-  delegationTypes?: JwtDelegationType[]
+  delegationType?: JwtDelegationType[]
   actor?: {
     nationalId: string
     scope?: string | string[]

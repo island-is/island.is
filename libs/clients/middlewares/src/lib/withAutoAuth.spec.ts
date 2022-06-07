@@ -321,7 +321,7 @@ describe('EnhancedFetch#withAutoAuth', () => {
     it('should request token exchange if requestActorToken and delegation', async () => {
       // Arrange
       const auth = createCurrentUser({ scope })
-      auth.delegationTypes = ['Custom']
+      auth.delegationType = ['Custom']
       auth.actor = {
         nationalId: auth.nationalId,
         scope: [],

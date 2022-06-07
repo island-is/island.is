@@ -423,7 +423,7 @@ export class ResourcesService {
   }
 
   private filterScopeForCustomDelegation(scope: string[], user: User) {
-    const delegationTypes = user.delegationTypes ?? []
+    const delegationTypes = user.delegationType ?? []
 
     return scope.filter((scopeName) => {
       for (const rule of this.delegationConfig.customScopeRules) {

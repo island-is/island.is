@@ -173,7 +173,7 @@ describe('ScopesController', () => {
     const app = await setupWithAuth({
       user: {
         ...user,
-        delegationTypes: ['ProcurationHolder'],
+        delegationType: ['ProcurationHolder'],
         actor: {
           nationalId: user.nationalId,
           scope: [],
@@ -203,7 +203,7 @@ describe('ScopesController', () => {
     const app = await setupWithAuth({
       user: {
         ...user,
-        delegationTypes: ['ProcurationHolder', 'LegalGuardian'],
+        delegationType: ['ProcurationHolder', 'LegalGuardian'],
         actor: {
           nationalId: user.nationalId,
           scope: [],
@@ -234,7 +234,7 @@ describe('ScopesController', () => {
     const app = await setupWithAuth({
       user: {
         ...user,
-        delegationTypes: ['ProcurationHolder', 'Custom'],
+        delegationType: ['ProcurationHolder', 'Custom'],
         actor: {
           nationalId: user.nationalId,
           scope: [],
@@ -265,7 +265,7 @@ describe('ScopesController', () => {
     const app = await setupWithAuth({
       user: {
         ...user,
-        delegationTypes: ['Custom'],
+        delegationType: ['Custom'],
         actor: {
           nationalId: user.nationalId,
           scope: [],

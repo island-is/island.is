@@ -25,7 +25,7 @@ describe('JwtStrategy#validate', () => {
       nationalId: '1234567890',
       scope: ['test-scope-1'],
       client_id: 'test-client',
-      delegationTypes: ['Custom'],
+      delegationType: ['Custom'],
       actor: {
         nationalId: '1234564321',
         scope: ['test-scope-2'],
@@ -77,7 +77,7 @@ describe('JwtStrategy#validate', () => {
       nationalId: '1234567890',
       scope: ['test-scope-1'],
       client_id: 'test-client',
-      delegationTypes: ['Custom'],
+      delegationType: ['Custom'],
       actor: {
         nationalId: '1234565555',
         scope: ['test-scope-2'],
@@ -119,7 +119,7 @@ describe('JwtStrategy#validate', () => {
       nationalId: '1234567890',
       scope: ['test-scope-1'],
       client_id: 'test-client',
-      delegationTypes: ['Custom'],
+      delegationType: ['Custom'],
       actor: {
         nationalId: '1234564321',
         scope: ['test-scope-2'],
