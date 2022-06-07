@@ -114,6 +114,7 @@ export const Review: FC<ReviewScreenProps> = ({
       spouseUseAsMuchAsPossible,
       spouseUsage,
       employerEmail,
+      employerPhoneNumber,
     },
     setStateful,
   ] = useStatefulAnswers(application)
@@ -886,6 +887,16 @@ export const Review: FC<ReviewScreenProps> = ({
               )}
               value={isSelfEmployed}
             />
+            {isSelfEmployed === NO && employerPhoneNumber && (
+              <Box paddingTop={2}>
+                <DataValue
+                  label={formatMessage(
+                    parentalLeaveFormMessages.employer.phoneNumber,
+                  )}
+                  value={employerPhoneNumber}
+                />
+              </Box>
+            )}
           </GridColumn>
 
           <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>

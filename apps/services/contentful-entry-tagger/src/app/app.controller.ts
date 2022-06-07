@@ -6,7 +6,7 @@ import type { Entry } from './types'
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
-  @Post('entry-created')
+  @Post('/api/entry-created')
   async onEntryCreation(@Body() entry: Entry) {
     const result = await this.appService.handleEntryCreation(entry)
     return result
