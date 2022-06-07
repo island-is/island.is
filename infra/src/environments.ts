@@ -7,7 +7,7 @@ const dev01: EnvironmentConfig = {
     'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com',
   domain: 'dev01.devland.is',
   type: 'dev',
-  featuresOn: [],
+  featuresOn: ['judicial-system-sqs'],
   defaultMaxReplicas: 3,
   defaultMinReplicas: 2,
   releaseName: 'web',

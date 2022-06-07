@@ -26,7 +26,6 @@ export const caseModuleConfig = defineConfig({
       'secret-archive-encryption-key',
     ),
     sqs: {
-      enabled: env.requiredJSON('SQS_ENABLED', true),
       queueName: env.required('SQS_QUEUE_NAME', 'message-queue'),
       deadLetterQueueName: env.required(
         'SQS_DEAD_LETTER_QUEUE_NAME',

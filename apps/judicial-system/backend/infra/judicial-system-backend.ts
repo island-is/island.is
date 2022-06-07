@@ -1,5 +1,6 @@
 import { Base, JudicialSystem } from '../../../../infra/src/dsl/xroad'
 import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
+import { MissingSetting } from '../../../../infra/src/dsl/types/input-types'
 
 const postgresInfo = {
   passwordSecret: '/k8s/judicial-system/DB_PASSWORD',
@@ -54,10 +55,6 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
         staging: 'https://judicial-system.staging01.devland.is/verjandi/',
         prod: 'https://rettarvorslugatt.island.is/verjandi/',
       },
-      SQS_QUEUE_NAME: 'sqs-judicial-system',
-      SQS_DEAD_LETTER_QUEUE_NAME: 'sqs-judicial-system-dlq',
-      SQS_REGION: 'eu-west-1',
-      SQS_ENABLED: { dev: 'true', staging: 'false', prod: 'false' },
     })
     .xroad(Base, JudicialSystem)
     .secrets({
@@ -83,6 +80,28 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
     .initContainer({
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
       postgres: postgresInfo,
+    })
+    .features({
+      'judicial-system-sqs': {
+        env: {
+          SQS_QUEUE_NAME: {
+            dev: 'sqs-judicial-system',
+            staging: MissingSetting,
+            prod: MissingSetting,
+          },
+          SQS_DEAD_LETTER_QUEUE_NAME: {
+            dev: 'sqs-judicial-system-dlq',
+            staging: MissingSetting,
+            prod: MissingSetting,
+          },
+          SQS_REGION: {
+            dev: 'eu-west-1',
+            staging: MissingSetting,
+            prod: MissingSetting,
+          },
+        },
+        secrets: {},
+      },
     })
     .liveness('/liveness')
     .readiness('/liveness')
