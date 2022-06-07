@@ -218,7 +218,7 @@ export const spouseApproved = defineMessages({
 
 export const approvedAlert = defineMessages({
   title: {
-    id: 'fa.application:section.acceptedAlert.title',
+    id: 'fa.application:section.approvedAlert.title',
     defaultMessage: 'Skýring frá vinnsluaðila',
     description: 'Title of accepted alert box',
   },
