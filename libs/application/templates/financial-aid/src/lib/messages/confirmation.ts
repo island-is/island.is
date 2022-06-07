@@ -97,7 +97,15 @@ export const confirmation = {
         'fa.application:section.confirmation.alertMessagesInRelationship.dataNeededText',
       defaultMessage:
         'Maki fær sendan hlekk á umsókn til að hlaða upp gögnum svo hægt sé að vinna umsóknina',
-      description: 'Alert message when files are needed for the application',
+      description: 'Alert message when spouse gets email to send in files.',
+    },
+    dataNeededAlternativeText: {
+      id:
+        'fa.application:section.confirmation.alertMessagesInRelationship.dataNeededAlternativeText',
+      defaultMessage:
+        'Maki þarf að fylgja hlekknum hér að neðan til að hlaða upp gögnum svo hægt sé að vinna umsóknina',
+      description:
+        'Alert message when spouse does not get email to send in files.',
     },
   }),
   sharedLink: defineMessages({
