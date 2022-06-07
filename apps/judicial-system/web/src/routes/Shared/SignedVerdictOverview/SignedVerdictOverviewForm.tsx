@@ -417,23 +417,22 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
                   signatory={workingCase.judge?.name}
                   signingDate={workingCase.rulingDate}
                 />
-                {user?.role === UserRole.JUDGE &&
-                  features.includes(Feature.MODIFY_RULING) && (
-                    <Button
-                      variant="ghost"
-                      data-testid="modifyRulingButton"
-                      onClick={(event) => {
-                        event.stopPropagation()
-                        router.push(
-                          isRestrictionCase(workingCase.type)
-                            ? `${Constants.MODIFY_RULING_ROUTE}/${workingCase.id}`
-                            : `${Constants.IC_MODIFY_RULING_ROUTE}/${workingCase.id}`,
-                        )
-                      }}
-                    >
-                      {capitalize(formatMessage(core.modify))}
-                    </Button>
-                  )}
+                {user?.role === UserRole.JUDGE && (
+                  <Button
+                    variant="ghost"
+                    data-testid="modifyRulingButton"
+                    onClick={(event) => {
+                      event.stopPropagation()
+                      router.push(
+                        isRestrictionCase(workingCase.type)
+                          ? `${Constants.MODIFY_RULING_ROUTE}/${workingCase.id}`
+                          : `${Constants.IC_MODIFY_RULING_ROUTE}/${workingCase.id}`,
+                      )
+                    }}
+                  >
+                    {capitalize(formatMessage(core.modify))}
+                  </Button>
+                )}
               </PdfRow>
             )}
           </Stack>
