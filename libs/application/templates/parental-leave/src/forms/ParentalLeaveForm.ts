@@ -456,6 +456,11 @@ export const ParentalLeaveForm: Form = buildForm({
                   width: 'full',
                   id: 'employer.email',
                 }),
+                buildTextField({
+                  title: parentalLeaveFormMessages.employer.phoneNumber,
+                  width: 'full',
+                  id: 'employerPhoneNumber',
+                }),
               ],
             }),
           ],
