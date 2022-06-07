@@ -12,7 +12,7 @@ const jsApi = jsApiSetup({ backend: jsBack })
 const jsWeb = jsWebSetup({ api: jsApi })
 const jsXrdApi = jsXrdApiSetup({ backend: jsBack })
 const jsScheduler = jsSchedulerSetup({ backend: jsBack })
-const jsMessageHndler = jsMessageHandlerSetup({ backend: jsBack })
+const jsMessageHandler = jsMessageHandlerSetup({ backend: jsBack })
 
 export const Services: EnvironmentServices = {
   prod: [jsApi, jsBack, jsWeb, jsXrdApi, jsScheduler],
