@@ -883,4 +883,15 @@ export class Case extends Model<Case> {
   })
   @ApiProperty()
   isArchived?: boolean
+
+  /**********
+   * The date and time of when when the defender in a case opened the case
+   **********/
+  @Column({
+    type: DataType.DATE,
+    allowNull: false,
+    defaultValue: false,
+  })
+  @ApiProperty()
+  seenByDefender?: Date
 }
