@@ -57,6 +57,17 @@ export const dataSchema = z.object({
     .refine((n) => n && kennitala.isValid(n), {
       params: errorMessages.employerNationalRegistryId,
     }),
+  employerPhoneNumber: z
+    .string()
+    .refine(
+      (p) => {
+        const phoneNumber = parsePhoneNumberFromString(p, 'IS')
+        if (phoneNumber) return phoneNumber.isValid()
+        else return true
+      },
+      { params: errorMessages.phoneNumber },
+    )
+    .optional(),
   requestRights: z.object({
     isRequestingRights: z.enum([YES, NO]),
     requestDays: z
