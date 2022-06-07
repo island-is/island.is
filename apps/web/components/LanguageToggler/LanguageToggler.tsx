@@ -71,40 +71,32 @@ export const LanguageToggler = ({
 
     const responses = await Promise.all(queries)
 
+    const secondContentSlug = responses[1]?.data?.getContentSlug
+
+    // We need to have a special case for subArticles since they've got a url field instead of a slug field
+    if (secondContentSlug?.type === 'subArticle') {
+      const urls = secondContentSlug.url[otherLanguage].split('/')
+
+      if (!secondContentSlug?.title?.[otherLanguage] || urls.length < 2) {
+        return setShowDialog(true)
+      }
+      return goToOtherLanguagePage(
+        linkResolver('subarticle', urls, otherLanguage).href,
+      )
+    }
+
     const slugs = []
     let title: TextFieldLocales = { is: '', en: '' }
     let type = ''
 
-    const secondContentSlug = responses[1]?.data?.getContentSlug
-
-    // A subArticle has a url field instead of a slug field and the url field contains slashes
-    if (secondContentSlug?.type === 'subArticle') {
-      const url = secondContentSlug?.url
-      if (url) {
-        title = secondContentSlug.title
-        type = secondContentSlug.type
-        const slugsIS = url.is.split('/')
-        const slugsEN = url.en.split('/')
-        for (let i = 0; i < slugsIS.length; i += 1) {
-          slugs.push({
-            is: slugsIS[i],
-            en: slugsEN[i] ?? '',
-          })
-        }
+    for (const res of responses) {
+      const slug = res.data?.getContentSlug?.slug
+      if (!slug) {
+        break
       }
-    }
-
-    if (slugs.length === 0) {
-      for (let i = 0; i < responses.length; i += 1) {
-        const res = responses[i]
-        const slug = res.data?.getContentSlug?.slug
-        if (!slug) {
-          break
-        }
-        slugs.push(slug)
-        title = res.data?.getContentSlug?.title
-        type = res.data?.getContentSlug?.type as LinkType
-      }
+      slugs.push(slug)
+      title = res.data?.getContentSlug?.title
+      type = res.data?.getContentSlug?.type as LinkType
     }
 
     if (resolveLinkTypeLocally) {
