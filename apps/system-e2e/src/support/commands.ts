@@ -1,11 +1,12 @@
 const authDomain = 'identity-server.dev01.devland.is/'
-const testEnvironnment = Cypress.env('testEnvironment')
+const testEnvironment = Cypress.env('testEnvironment')
 
 Cypress.Commands.add(
   'login',
   ({ cognitoUsername, cognitoPassword, phoneNumber }) => {
     cy.session([cognitoUsername, cognitoPassword, phoneNumber], () => {
-      if (testEnvironnment !== 'prod') {
+      if (testEnvironment !== 'prod' && testEnvironment !== 'dev') {
+        cy.log("Expecting cognito; testEnvironment:", testEnvironment)
         cy.session([cognitoUsername, cognitoPassword], () => {
           cy.visit('/innskraning')
 
