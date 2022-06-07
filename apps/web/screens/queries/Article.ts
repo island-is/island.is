@@ -14,6 +14,21 @@ export const GET_ARTICLE_QUERY = gql`
       body {
         ...AllSlices
       }
+      stepper {
+        id
+        title
+        steps {
+          id
+          title
+          slug
+          stepType
+          subtitle {
+            ...HtmlFields
+          }
+          config
+        }
+        config
+      }
       processEntry {
         id
         type
@@ -94,21 +109,6 @@ export const GET_ARTICLE_QUERY = gql`
           ...AllSlices
         }
         showTableOfContents
-        stepper {
-          id
-          title
-          steps {
-            id
-            title
-            slug
-            stepType
-            subtitle {
-              ...HtmlFields
-            }
-            config
-          }
-          config
-        }
       }
       featuredImage {
         url

@@ -383,6 +383,36 @@ const ArticleScreen: Screen<ArticleProps> = ({
   const organizationTitle = article.organization[0]?.title
   const organizationShortTitle = article.organization[0]?.shortTitle
 
+  const inStepperView = true && article.stepper
+
+  const breadcrumbItems = useMemo(
+    () =>
+      inStepperView
+        ? []
+        : [
+            {
+              title: 'Ísland.is',
+              typename: 'homepage',
+              href: '/',
+            },
+            !!article.category && {
+              title: article.category.title,
+              typename: 'articlecategory',
+              slug: [article.category.slug],
+            },
+            !!article.group && {
+              isTag: true,
+              title: article.group.title,
+              typename: 'articlecategory',
+              slug: [
+                article.category.slug +
+                  (article.group?.slug ? `#${article.group.slug}` : ''),
+              ],
+            },
+          ],
+    [article.category, article.group, inStepperView],
+  )
+
   return (
     <>
       <HeadWithSocialSharing
@@ -410,27 +440,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
           printHidden
         >
           <Breadcrumbs
-            items={[
-              {
-                title: 'Ísland.is',
-                typename: 'homepage',
-                href: '/',
-              },
-              !!article.category && {
-                title: article.category.title,
-                typename: 'articlecategory',
-                slug: [article.category.slug],
-              },
-              !!article.group && {
-                isTag: true,
-                title: article.group.title,
-                typename: 'articlecategory',
-                slug: [
-                  article.category.slug +
-                    (article.group?.slug ? `#${article.group.slug}` : ''),
-                ],
-              },
-            ]}
+            items={breadcrumbItems}
             renderLink={(link, { typename, slug }) => {
               return (
                 <NextLink
