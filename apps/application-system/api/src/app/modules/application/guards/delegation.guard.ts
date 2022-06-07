@@ -55,12 +55,12 @@ export class DelegationGuard implements CanActivate {
       // Get the delegation types the application type supports
       if (typeId) {
         const applicationTemplate = await getApplicationTemplateByTypeId(typeId)
+        const intersection =
+          applicationTemplate.allowedDelegations?.filter((delegation) =>
+            user.delegationType?.includes(delegation),
+          ) || []
         // returns true if the actors delegation type for the subject is allowed for this type of application
-        if (
-          applicationTemplate.allowedDelegations?.includes(
-            user.actor.delegationType,
-          )
-        ) {
+        if (intersection.length > 0) {
           return true
         } else {
           // throw bad subject with no fields,
