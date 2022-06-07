@@ -47,7 +47,7 @@ const sendMail = () => ({
 })
 
 const sendSms = () => ({
-  message: 'some message'
+  message: 'some message',
 })
 
 class MockEmailService {
