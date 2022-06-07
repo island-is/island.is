@@ -192,7 +192,10 @@ export class ApplicationService {
             eventType: {
               [Op.in]: isEmployee
                 ? Object.values(ApplicationEventType)
-                : [ApplicationEventType.DATANEEDED],
+                : [
+                    ApplicationEventType.DATANEEDED,
+                    ApplicationEventType.APPROVED,
+                  ],
             },
           },
           order: [['created', 'DESC']],
