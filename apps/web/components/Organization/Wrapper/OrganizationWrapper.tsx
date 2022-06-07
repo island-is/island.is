@@ -387,7 +387,10 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                       title={card.title}
                       description={card.content}
                       link={card.link}
-                      image="https://images.ctfassets.net/8k0h54kbe6bj/6jpT5mePCNk02nVrzVLzt2/6adca7c10cc927d25597452d59c2a873/bitmap.png"
+                      image={
+                        card.image?.url ||
+                        'https://images.ctfassets.net/8k0h54kbe6bj/6jpT5mePCNk02nVrzVLzt2/6adca7c10cc927d25597452d59c2a873/bitmap.png'
+                      }
                       size="small"
                     />
                   ))}
