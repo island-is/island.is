@@ -222,9 +222,7 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
         <MannaudstorgFooter
           title={organization.title}
           logoSrc={organization.logo?.url}
-          phone={organization.phone}
-          contactLink={organization.link}
-          telephoneText={n('telephone', 'Sími')}
+          footerItems={organization.footerItems}
         />
       )
       break
