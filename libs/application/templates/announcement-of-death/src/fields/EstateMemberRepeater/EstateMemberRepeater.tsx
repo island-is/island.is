@@ -38,7 +38,6 @@ export const EstateMemberRepeater: FC<FieldBaseProps<Answers>> = ({
   field,
   error,
 }) => {
-  const errors: any = error
   const relations =
     (application.externalData.syslumennOnEntry?.data as {
       relationOptions: string[]
@@ -107,7 +106,7 @@ export const EstateMemberRepeater: FC<FieldBaseProps<Answers>> = ({
             index={index}
             relationOptions={relations}
             remove={remove}
-            error={errors && errors[index] ? errors[index] : null}
+            error={error && error[index] ? error[index] : null}
           />
         </Box>
       ))}
@@ -183,7 +182,6 @@ const Item = ({
       setValue(nameField, '')
     }
   }, [getIdentity, name, nameField, nationalIdInput, setValue])
-
 
   return (
     <Box position="relative" key={field.id} marginTop={2}>
@@ -276,9 +274,7 @@ const Item = ({
             <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
               <DatePickerController
                 label={formatMessage(m.inheritanceDayOfBirthLabel)}
-                placeholder={formatMessage(
-                  m.inheritanceDayOfBirthLabel,
-                )}
+                placeholder={formatMessage(m.inheritanceDayOfBirthLabel)}
                 id={dateOfBirthField}
                 key={dateOfBirthField}
                 name={dateOfBirthField}

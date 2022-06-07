@@ -26,6 +26,7 @@ import { Query, SearchForPropertyInput } from '@island.is/api/schema'
 
 export const RealEstateAndLandsRepeater: FC<FieldBaseProps<Answers>> = ({
   field,
+  error,
 }) => {
   const { id } = field
   const { formatMessage } = useLocale()
@@ -86,6 +87,7 @@ export const RealEstateAndLandsRepeater: FC<FieldBaseProps<Answers>> = ({
             fieldName={id ?? index.toString()}
             remove={handleRemoveProperty}
             index={index}
+            error={error && error[index] ? error[index] : null}
           />
         </Box>
       ))}
@@ -109,11 +111,13 @@ const Item = ({
   index,
   remove,
   fieldName,
+  error,
 }: {
   field: Partial<ArrayField<Asset, 'id'>>
   fieldName: string
   index: number
   remove: (index: number) => void
+  error: any
 }) => {
   const fieldIndex = `${fieldName}[${index}]`
   const propertyNumberField = `${fieldIndex}.assetNumber`
@@ -185,6 +189,7 @@ const Item = ({
             label={formatMessage(m.propertyNumber)}
             backgroundColor="blue"
             defaultValue={field.assetNumber}
+            error={error?.assetNumber ?? undefined}
           />
         </GridColumn>
         <GridColumn span={['1/1', '1/2']} paddingBottom={2}>

@@ -89,8 +89,12 @@ export const prerequisite = (): Form => {
               }),
               buildKeyValueField({
                 label: m.deceasedDate,
-                value: ({ answers }) =>
-                  format(new Date(answers.dateOfDeath as string), 'dd.MM.yyyy'),
+                value: ({ answers }) => {
+                  return format(
+                    new Date(answers.dateOfDeath as string),
+                    'dd.MM.yyyy',
+                  )
+                },
                 colSpan: ['1/1', '1/1', '1/3'],
               }),
               buildDescriptionField({

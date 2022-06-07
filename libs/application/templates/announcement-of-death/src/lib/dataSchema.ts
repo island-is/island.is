@@ -18,7 +18,7 @@ const asset = z.object({
   share: z.number().optional(),
   initial: z.boolean().optional(),
   assetNumber: z.string().nonempty(),
-  description: z.string().nonempty(),
+  description: z.string().optional(),
 })
 
 // todo: set message strings for the error messages
@@ -88,7 +88,20 @@ export const dataSchema = z.object({
   }),
   applicantEmail: customZodError(z.string().email(), m.errorEmail),
   applicantRelation: customZodError(z.string().nonempty(), m.errorRelation),
-  assets: asset.partial().array(),
+  assets: z
+    .object({
+      assetNumber: z.string().refine(
+        (v) => {
+          return /^[fF]{0,1}\d{7}$/.test(v)
+        },
+        { params: m.errorAssetNumber },
+      ),
+      share: z.number().optional(),
+      initial: z.boolean().optional(),
+      description: z.string().optional(),
+    })
+    .partial()
+    .array(),
   estateMembers: z
     .object({
       initial: z.boolean().optional(),
