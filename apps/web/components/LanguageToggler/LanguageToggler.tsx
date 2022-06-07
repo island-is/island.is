@@ -75,18 +75,20 @@ export const LanguageToggler = ({
     let title: TextFieldLocales = { is: '', en: '' }
     let type = ''
 
+    const secondContentSlug = responses[1]?.data?.getContentSlug
+
     // A subArticle has a url field instead of a slug field and the url field contains slashes
-    if (responses?.[1]?.data?.getContentSlug?.type === 'subArticle') {
-      const slug = responses[1].data.getContentSlug?.url
-      if (slug) {
-        title = responses[1].data.getContentSlug.title
-        type = responses[1].data.getContentSlug.type
-        const slugsIS = slug.is.split('/')
-        const slugsEN = slug.en.split('/')
-        for (let i = 0; i < slugsIS.length && i < slugsEN.length; i += 1) {
+    if (secondContentSlug?.type === 'subArticle') {
+      const url = secondContentSlug?.url
+      if (url) {
+        title = secondContentSlug.title
+        type = secondContentSlug.type
+        const slugsIS = url.is.split('/')
+        const slugsEN = url.en.split('/')
+        for (let i = 0; i < slugsIS.length; i += 1) {
           slugs.push({
             is: slugsIS[i],
-            en: slugsEN[i],
+            en: slugsEN[i] ?? '',
           })
         }
       }
