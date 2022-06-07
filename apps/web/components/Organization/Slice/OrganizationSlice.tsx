@@ -136,7 +136,7 @@ export const OrganizationSlice = ({
     <GridContainer>
       <GridRow>
         <GridColumn
-          paddingTop={4}
+          paddingTop={6}
           span={
             fullWidthSlices.includes(slice.__typename) || fullWidth
               ? '9/9'
