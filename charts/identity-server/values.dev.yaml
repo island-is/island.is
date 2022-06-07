@@ -34,7 +34,7 @@ identity-server:
     NODE_OPTIONS: '--max-old-space-size=208'
     PersistenceSettings__BaseAddress: 'http://web-services-auth-api'
     PersistenceSettings__UserProfileBaseAddress: 'http://web-service-portal-api.service-portal.svc.cluster.local'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'judicial-system-sqs'
   files:
     - 'ids-signing.pfx'
   grantNamespaces: []

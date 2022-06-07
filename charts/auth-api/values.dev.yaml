@@ -6,7 +6,7 @@ auth-admin-web:
     NEXTAUTH_URL: 'https://identity-server.dev01.devland.is/admin/api/auth'
     NEXT_PUBLIC_BACKEND_URL: '/backend'
     NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'judicial-system-sqs'
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:
@@ -83,7 +83,7 @@ services-auth-admin-api:
     DB_USER: 'servicesauth'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'judicial-system-sqs'
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:
@@ -143,7 +143,7 @@ services-auth-api:
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=208'
     PUBLIC_URL: 'https://identity-server.dev01.devland.is/api'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'judicial-system-sqs'
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
     XROAD_CLIENT_ID: 'IS-DEV/GOV/10000/island-is-client'
@@ -209,7 +209,7 @@ services-auth-api:
       DB_NAME: 'servicesauth'
       DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
       DB_USER: 'servicesauth'
-      SERVERSIDE_FEATURES_ON: ''
+      SERVERSIDE_FEATURES_ON: 'judicial-system-sqs'
     secrets:
       DB_PASS: '/k8s/services-auth/api/DB_PASSWORD'
   namespace: 'identity-server'
@@ -243,7 +243,7 @@ services-auth-public-api:
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=208'
     PUBLIC_URL: 'https://identity-server.dev01.devland.is/api'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'judicial-system-sqs'
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
     XROAD_CLIENT_ID: 'IS-DEV/GOV/10000/island-is-client'
@@ -315,7 +315,7 @@ services-personal-representative:
   env:
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'judicial-system-sqs'
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:
@@ -375,7 +375,7 @@ services-personal-representative-public:
     DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'judicial-system-sqs'
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:

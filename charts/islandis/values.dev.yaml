@@ -7,7 +7,7 @@ air-discount-scheme-api:
     ELASTIC_NODE: 'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=464'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'judicial-system-sqs'
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:
@@ -79,7 +79,7 @@ air-discount-scheme-backend:
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=464'
     REDIS_URL_NODE_01: 'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'judicial-system-sqs'
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
     XROAD_CLIENT_ID: 'IS-DEV/GOV/10000/island-is-client'
@@ -143,7 +143,7 @@ air-discount-scheme-backend:
       DB_NAME: 'air_discount_scheme_backend'
       DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
       DB_USER: 'air_discount_scheme_backend'
-      SERVERSIDE_FEATURES_ON: ''
+      SERVERSIDE_FEATURES_ON: 'judicial-system-sqs'
     secrets:
       DB_PASS: '/k8s/air-discount-scheme/backend/DB_PASSWORD'
   namespace: 'air-discount-scheme'
@@ -179,7 +179,7 @@ air-discount-scheme-web:
     IDENTITY_SERVER_ISSUER_DOMAIN: 'identity-server.dev01.devland.is'
     NEXTAUTH_URL: 'https://loftbru.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'judicial-system-sqs'
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:
@@ -268,7 +268,7 @@ api:
     NODE_OPTIONS: '--max-old-space-size=464'
     PAYMENT_SCHEDULE_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10021/FJS-Public'
     SEND_FROM_EMAIL: 'development@island.is'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'judicial-system-sqs'
     SERVICE_DOCUMENTS_BASEPATH: 'http://web-services-documents.services-documents.svc.cluster.local'
     SERVICE_USER_PROFILE_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
     SYSLUMENN_TIMEOUT: '30000'
@@ -442,7 +442,7 @@ application-system-api:
     NOVA_USERNAME: 'IslandIs_User_Development'
     PAYMENT_SCHEDULE_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10021/FJS-Public'
     REDIS_URL_NODE_01: 'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'judicial-system-sqs'
     SERVICE_DOCUMENTS_BASEPATH: 'http://web-services-documents.services-documents.svc.cluster.local'
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
@@ -517,7 +517,7 @@ application-system-api:
       DB_NAME: 'application_system_api'
       DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
       DB_USER: 'application_system_api'
-      SERVERSIDE_FEATURES_ON: ''
+      SERVERSIDE_FEATURES_ON: 'judicial-system-sqs'
     secrets:
       DB_PASS: '/k8s/application-system/api/DB_PASSWORD'
   namespace: 'application-system'
@@ -593,7 +593,7 @@ application-system-api-worker:
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=208'
     REDIS_URL_NODE_01: 'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'judicial-system-sqs'
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
     XROAD_CLIENT_ID: 'IS-DEV/GOV/10000/island-is-client'
@@ -660,7 +660,7 @@ application-system-form:
   env:
     BASEPATH: '/umsoknir'
     NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'judicial-system-sqs'
     SI_PUBLIC_ENVIRONMENT: 'dev'
     SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
   grantNamespaces:
@@ -720,7 +720,7 @@ contentful-entry-tagger-service:
   enabled: true
   env:
     NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'judicial-system-sqs'
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:
@@ -781,7 +781,7 @@ contentful-translation-extension:
   enabled: true
   env:
     NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'judicial-system-sqs'
   grantNamespaces:
     - 'nginx-ingress-external'
   grantNamespacesEnabled: true
@@ -836,7 +836,7 @@ download-service:
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/download-service'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=464'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'judicial-system-sqs'
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
     XROAD_CLIENT_ID: 'IS-DEV/GOV/10000/island-is-client'
@@ -913,7 +913,7 @@ endorsement-system-api:
     EMAIL_REGION: 'eu-west-1'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'judicial-system-sqs'
   grantNamespaces:
     - 'islandis'
     - 'application-system'
@@ -957,7 +957,7 @@ endorsement-system-api:
       DB_NAME: 'services_endorsements_api'
       DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
       DB_USER: 'services_endorsements_api'
-      SERVERSIDE_FEATURES_ON: ''
+      SERVERSIDE_FEATURES_ON: 'judicial-system-sqs'
     secrets:
       DB_PASS: '/k8s/services-endorsements-api/DB_PASSWORD'
   namespace: 'endorsement-system'
@@ -993,7 +993,7 @@ external-contracts-tests:
   enabled: true
   env:
     NODE_OPTIONS: '--max-old-space-size=976'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'judicial-system-sqs'
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
     XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
@@ -1055,7 +1055,7 @@ github-actions-cache:
   env:
     NODE_OPTIONS: '--max-old-space-size=464'
     REDIS_NODES: 'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'judicial-system-sqs'
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:
@@ -1130,7 +1130,7 @@ icelandic-names-registry-backend:
     DB_USER: 'icelandic_names_registry_backend'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'judicial-system-sqs'
   grantNamespaces:
     - 'islandis'
   grantNamespacesEnabled: true
@@ -1186,7 +1186,7 @@ icelandic-names-registry-backend:
       DB_NAME: 'icelandic_names_registry_backend'
       DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
       DB_USER: 'icelandic_names_registry_backend'
-      SERVERSIDE_FEATURES_ON: ''
+      SERVERSIDE_FEATURES_ON: 'judicial-system-sqs'
     secrets:
       DB_PASS: '/k8s/icelandic-names-registry-backend/DB_PASSWORD'
   namespace: 'icelandic-names-registry'
@@ -1212,7 +1212,7 @@ island-ui-storybook:
   enabled: true
   env:
     NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'judicial-system-sqs'
   grantNamespaces:
     - 'nginx-ingress-external'
   grantNamespacesEnabled: true
@@ -1291,7 +1291,7 @@ search-indexer-service:
     ELASTIC_INDEX: 'island-is'
     ELASTIC_NODE: 'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com'
     NODE_OPTIONS: '--max-old-space-size=976'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'judicial-system-sqs'
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:
@@ -1369,7 +1369,7 @@ search-indexer-service:
       ELASTIC_INDEX: 'island-is'
       ELASTIC_NODE: 'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com'
       S3_BUCKET: 'dev-es-custom-packages'
-      SERVERSIDE_FEATURES_ON: ''
+      SERVERSIDE_FEATURES_ON: 'judicial-system-sqs'
     secrets:
       CONTENTFUL_ACCESS_TOKEN: '/k8s/search-indexer/CONTENTFUL_ACCESS_TOKEN'
   namespace: 'search-indexer'
@@ -1403,7 +1403,7 @@ service-portal:
   env:
     BASEPATH: '/minarsidur'
     NODE_OPTIONS: '--max-old-space-size=464'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'judicial-system-sqs'
     SI_PUBLIC_ENVIRONMENT: 'dev'
     SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
   grantNamespaces:
@@ -1471,7 +1471,7 @@ service-portal-api:
     EMAIL_REGION: 'eu-west-1'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=976'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'judicial-system-sqs'
     SERVICE_PORTAL_BASE_URL: 'https://beta.dev01.devland.is/minarsidur'
   grantNamespaces:
     - 'nginx-ingress-internal'
@@ -1525,7 +1525,7 @@ service-portal-api:
       DB_NAME: 'service_portal_api'
       DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
       DB_USER: 'service_portal_api'
-      SERVERSIDE_FEATURES_ON: ''
+      SERVERSIDE_FEATURES_ON: 'judicial-system-sqs'
     secrets:
       DB_PASS: '/k8s/service-portal/api/DB_PASSWORD'
   namespace: 'service-portal'
@@ -1569,7 +1569,7 @@ services-documents:
     DB_USER: 'services_documents'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'judicial-system-sqs'
   grantNamespaces:
     - 'islandis'
     - 'application-system'
@@ -1612,7 +1612,7 @@ services-documents:
       DB_NAME: 'services_documents'
       DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
       DB_USER: 'services_documents'
-      SERVERSIDE_FEATURES_ON: ''
+      SERVERSIDE_FEATURES_ON: 'judicial-system-sqs'
     secrets:
       DB_PASS: '/k8s/services-documents/DB_PASSWORD'
   namespace: 'services-documents'
@@ -1639,7 +1639,7 @@ skilavottord-web:
     API_URL: 'http://web-skilavottord-ws'
     ENVIRONMENT: 'dev'
     NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'judicial-system-sqs'
   grantNamespaces:
     - 'nginx-ingress-external'
   grantNamespacesEnabled: true
@@ -1704,7 +1704,7 @@ skilavottord-ws:
     DB_USER: 'skilavottord'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'judicial-system-sqs'
   grantNamespaces:
     - 'nginx-ingress-external'
   grantNamespacesEnabled: true
@@ -1754,7 +1754,7 @@ skilavottord-ws:
       DB_NAME: 'skilavottord'
       DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
       DB_USER: 'skilavottord'
-      SERVERSIDE_FEATURES_ON: ''
+      SERVERSIDE_FEATURES_ON: 'judicial-system-sqs'
     secrets:
       DB_PASS: '/k8s/skilavottord/DB_PASSWORD'
   namespace: 'skilavottord'
@@ -1795,7 +1795,7 @@ user-notification:
     DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
     MAIN_QUEUE_NAME: 'user-notification'
     NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'judicial-system-sqs'
   grantNamespaces:
     - 'nginx-ingress-internal'
   grantNamespacesEnabled: true
@@ -1866,7 +1866,7 @@ user-notification-worker:
     IDENTITY_SERVER_PATH: 'https://identity-server.dev01.devland.is'
     MAIN_QUEUE_NAME: 'user-notification'
     NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'judicial-system-sqs'
     SERVICE_USER_PROFILE_BASEPATH: 'http://web-service-portal-api.service-portal.svc.cluster.local'
     USER_NOTIFICATION_APP_PROTOCOL: 'is.island.app.dev'
   grantNamespaces:
@@ -1928,7 +1928,7 @@ web:
     DISABLE_SYSLUMENN_PAGE: 'false'
     ENVIRONMENT: 'dev'
     NODE_OPTIONS: '--max-old-space-size=464'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'judicial-system-sqs'
     TRACKING_DOMAIN: 'beta.dev01.devland.is'
   grantNamespaces:
     - 'nginx-ingress-external'
@@ -1994,7 +1994,7 @@ xroad-collector:
     ELASTIC_NODE: 'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com'
     NODE_OPTIONS: '--max-old-space-size=208'
     NODE_TLS_REJECT_UNAUTHORIZED: '0'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'judicial-system-sqs'
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
     XROAD_CLIENT_ID: 'IS-DEV/GOV/10000/island-is-client'
