@@ -35,12 +35,11 @@ export const Prerequisites: Form = buildForm({
               subTitle: 'Another Refernence Data',
             }),
             buildDataProviderItem({
-              id: 'anotherReference',
+              id: 'nationalRegistryFamily',
               type:
-                ReferenceApplicationDataProviders.anotherReferenceProvider
-                  .dataProviderType,
-              title: 'getAnotherReferenceData',
-              subTitle: 'Another Refernence Data',
+                SharedDataProviders.familyRelationsProvider.dataProviderType,
+              title: 'Upplýsingar um fjölskyldumeðlimi',
+              subTitle: 'Upplýsingar um fjölskyldumeðlimi upp úr Þjóðskrá.',
             }),
             buildDataProviderItem({
               id: 'reference',
@@ -55,7 +54,7 @@ export const Prerequisites: Form = buildForm({
               type:
                 SharedDataProviders.nationalRegistryProvider.dataProviderType,
               title: 'Þjóðskrá',
-              subTitle: 'Náum í national registry dót',
+              subTitle: 'Upplýsingar um þig í Þjóðskrá.',
             }),
           ],
         }),

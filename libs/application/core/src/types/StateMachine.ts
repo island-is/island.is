@@ -76,13 +76,18 @@ export interface ApplicationTemplateAPIAction {
   namespace?: string
 
   //Error messages to be displayed to the user
-  errorReasons?: [
-    {
-      reason: ProviderErrorReason | StaticText
-      problemType: ProblemType
-      statusCode: number
-    },
-  ]
+  errorReasons?: ErrorReasonException[]
+
+  //Conditonal error message for to override a valid response
+  exceptionHandler?: (
+    result: PerformActionResult,
+  ) => never | ErrorReasonException
+}
+
+export interface ErrorReasonException {
+  reason: ProviderErrorReason | StaticText
+  problemType: ProblemType
+  statusCode: number
 }
 
 export type StateLifeCycle =

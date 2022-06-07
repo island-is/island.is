@@ -9,14 +9,17 @@ import {
   DefaultStateLifeCycle,
   ApplicationConfigurations,
   SharedDataProviders,
+  PerformActionResult,
 } from '@island.is/application/core'
 import * as z from 'zod'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { Features } from '@island.is/feature-flags'
 
+import { ProblemType } from '@island.is/shared/problem'
 import { ApiActions, ReferenceApplicationDataProviders } from '../shared'
 import { m } from './messages'
+import { DataSync } from 'aws-sdk'
 const States = {
   prerequisites: 'prerequisites',
   draft: 'draft',
@@ -117,6 +120,9 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
                   useMockData: true,
                 },
                 {
+                  ...SharedDataProviders.familyRelationsProvider,
+                },
+                {
                   ...SharedDataProviders.nationalRegistryProvider,
                   useMockData: (application: Application) => {
                     return false
@@ -126,9 +132,25 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
                 {
                   ...ReferenceApplicationDataProviders.referenceProvider,
                   order: 1,
+                  useMockData: true,
+                  exceptionHandler: (data: PerformActionResult) => {
+                    if (data.success) {
+                      const s = data.response
+                      return {
+                        reason: {
+                          message: 'no fives please',
+                          tite: 'Þú hefur valið 5',
+                        },
+                        ProblemType: ProblemTypes.INVALID_DATA,
+                        StatusCode: 404,
+                      }
+                    }
+                  },
                 },
+
                 {
                   ...ReferenceApplicationDataProviders.anotherReferenceProvider,
+                  useMockData: true,
                 },
               ],
               delete: true,

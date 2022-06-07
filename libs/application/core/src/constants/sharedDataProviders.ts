@@ -5,8 +5,8 @@ import { PerformActionResult } from '../types/TemplateApiModuleTypes'
 
 export const SharedDataProviders = {
   nationalRegistryProvider: {
-    dataProviderType: 'nationalRegistryProvider',
-    apiModuleAction: 'nationalRegistry',
+    dataProviderType: 'nationalRegistryUserProvider',
+    apiModuleAction: 'getUser',
     namespace: 'nationalRegistry',
     mockData: (application: Application): PerformActionResult => {
       return {
@@ -40,11 +40,10 @@ export const SharedDataProviders = {
       },
     ],
   },
-  nationalRegistryUserProvider: {
-    apiModuleAction: 'nationalRegistryUser',
+  familyRelationsProvider: {
+    apiModuleAction: 'getFamily',
     namespace: 'nationalRegistry',
-    externalDataId: 'nationalRegistryUser',
-    shouldPersistToExternalData: true,
+    dataProviderType: 'nationalRegistryFamilyProvider',
   },
   userProfileProvider: {
     apiModuleAction: 'getUserProfile',
@@ -65,4 +64,5 @@ export const SharedDataProviders = {
 export interface AvailableSharedDataProviders {
   nationalRegistryProvider: ApplicationTemplateAPIAction
   userProfileProvider: ApplicationTemplateAPIAction
+  familyRelationsProvider: ApplicationTemplateAPIAction
 }
