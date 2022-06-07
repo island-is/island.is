@@ -15,7 +15,7 @@ const ChatElement = ({ comment }: Props) => {
   return (
     <Box paddingLeft={3} marginBottom={2} className={styles.timelineMessages}>
       <Icon icon="chatbubble" type="outline" />{' '}
-      <Text marginBottom={2}>„{comment}“</Text>
+      <Text marginBottom={2} whiteSpace="breakSpaces">„{comment}“</Text>
     </Box>
   )
 }
