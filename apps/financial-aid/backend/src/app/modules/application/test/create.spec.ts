@@ -232,6 +232,7 @@ describe('ApplicationController - Create', () => {
       expect(mockApplicationEventService.create).toHaveBeenCalledWith({
         applicationId: id,
         eventType: 'New',
+        emailSent: true,
       })
     })
 

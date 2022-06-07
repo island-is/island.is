@@ -57,6 +57,7 @@ export const ApplicationQuery = gql`
         created
         staffName
         staffNationalId
+        emailSent
       }
       amount {
         aidAmount
