@@ -16,6 +16,7 @@ const config = appModuleConfig()
         name: config.sqsQueueName,
         queueName: config.sqsQueueName,
         deadLetterQueue: { queueName: config.sqsDeadLetterQueueName },
+        maxConcurrentJobs: 1,
       },
       client: {
         endpoint: config.sqsEndpoint,

@@ -26,6 +26,11 @@ export const caseModuleConfig = defineConfig({
       'secret-archive-encryption-key',
     ),
     sqs: {
+      isEnabled: (
+        env.optional('SERVERSIDE_FEATURES_ON', 'judicial-system-sqs') ?? ''
+      )
+        .split(',')
+        .includes('judicial-system-sqs'),
       queueName: env.required('SQS_QUEUE_NAME', 'message-queue'),
       deadLetterQueueName: env.required(
         'SQS_DEAD_LETTER_QUEUE_NAME',

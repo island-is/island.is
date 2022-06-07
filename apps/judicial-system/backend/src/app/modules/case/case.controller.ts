@@ -25,7 +25,6 @@ import {
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
 import { InjectQueue, QueueService } from '@island.is/message-queue'
-import { ServerSideFeatureClient } from '@island.is/feature-flags'
 import type { ConfigType } from '@island.is/nest/config'
 import {
   CaseState,
@@ -238,7 +237,7 @@ export class CaseController {
     if (
       updatedCase &&
       completedCaseStates.includes(updatedCase.state) &&
-      ServerSideFeatureClient.isOn('judicial-system-sqs')
+      this.config.sqs.isEnabled
     ) {
       this.logger.info(`Writing case ${caseId} to queue`)
       this.queue.add({ type: MessageType.CASE_COMPLETED, caseId })
