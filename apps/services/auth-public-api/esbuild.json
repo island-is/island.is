@@ -41,7 +41,18 @@
     "@protobufjs/path",
     "@protobufjs/pool",
     "@protobufjs/utf8",
-    "pseudomap"
+    "pseudomap",
+    "p-cancelable",
+    "@sindresorhus/is",
+    "@szmarczak/http-timer",
+    "cacheable-request",
+    "decompress-response",
+    "duplexer3",
+    "get-stream",
+    "lowercase-keys",
+    "mimic-response",
+    "to-readable-stream",
+    "url-parse-lax"
   ],
   "keepNames": true
 }
