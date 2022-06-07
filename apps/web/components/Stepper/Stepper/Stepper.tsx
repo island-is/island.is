@@ -448,7 +448,7 @@ const Stepper = ({
           padding="containerGutter"
         >
           <Box display="flex" alignItems="center" justifyContent="spaceBetween">
-            <Text variant="h3" marginBottom={2} color="purple600">
+            <Text variant="h3" marginBottom={3} color="purple600">
               {n('yourAnswers', 'Svörin þín')}
             </Text>
             <Box marginBottom={3} textAlign="right">
