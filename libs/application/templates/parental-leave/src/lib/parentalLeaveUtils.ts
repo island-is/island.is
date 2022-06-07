@@ -475,6 +475,11 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   const employerEmail = getValueViaPath(answers, 'employer.email') as string
 
+  const employerPhoneNumber = getValueViaPath(
+    answers,
+    'employerPhoneNumber',
+  ) as string
+
   const employerNationalRegistryId = getValueViaPath(
     answers,
     'employerNationalRegistryId',
@@ -551,6 +556,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     spouseUseAsMuchAsPossible,
     spouseUsage,
     employerEmail,
+    employerPhoneNumber,
     employerNationalRegistryId,
     shareInformationWithOtherParent,
     selectedChild,
