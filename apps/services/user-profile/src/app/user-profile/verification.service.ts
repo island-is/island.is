@@ -17,6 +17,9 @@ import { CreateSmsVerificationDto } from './dto/createSmsVerificationDto'
 import { ConfirmSmsDto } from './dto/confirmSmsDto'
 import { ConfirmationDtoResponse } from './dto/confirmationResponseDto'
 
+/** Category to attach each log message to */
+const LOG_CATEGORY = 'verification-service'
+
 export const SMS_VERIFICATION_MAX_AGE = 5 * 60 * 1000
 export const SMS_VERIFICATION_MAX_TRIES = 5
 
@@ -106,6 +109,7 @@ export class VerificationService {
   ): Promise<ConfirmationDtoResponse> {
     const verification = await this.emailVerificationModel.findOne({
       where: { nationalId },
+      order: [['created', 'DESC']],
     })
 
     if (!verification) {
@@ -143,13 +147,24 @@ export class VerificationService {
         },
       )
     } catch (e) {
-      this.logger.error(e)
+      this.logger.error('Unable to update email verification', {
+        error: JSON.stringify(e),
+        category: LOG_CATEGORY,
+      })
       return {
         message: 'Unable to update email verification',
         confirmed: false,
       }
     }
 
+    try {
+      await this.removeEmailVerification(nationalId)
+    } catch (e) {
+      this.logger.error('Email verification removal error', {
+        error: JSON.stringify(e),
+        category: LOG_CATEGORY,
+      })
+    }
     return {
       message: 'Email confirmed',
       confirmed: true,
@@ -208,11 +223,23 @@ export class VerificationService {
         },
       )
     } catch (e) {
-      this.logger.error(e)
+      this.logger.error('Unable to update sms verification', {
+        error: JSON.stringify(e),
+        category: LOG_CATEGORY,
+      })
       return {
         message: 'Unable to update sms verification',
         confirmed: false,
       }
+    }
+
+    try {
+      await this.removeSmsVerification(nationalId)
+    } catch (e) {
+      this.logger.error('SMS verification removal error', {
+        error: JSON.stringify(e),
+        category: LOG_CATEGORY,
+      })
     }
 
     return {

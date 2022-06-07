@@ -122,9 +122,6 @@ export class UserProfileController {
       )
 
       if (emailVerified.confirmed) {
-        await this.verificationService.removeEmailVerification(
-          userProfileDto.nationalId,
-        )
         userProfileDto = {
           ...userProfileDto,
           emailStatus: DataStatus.VERIFIED,
@@ -144,10 +141,6 @@ export class UserProfileController {
       )
 
       if (phoneVerified.confirmed) {
-        await this.verificationService.removeSmsVerification(
-          userProfileDto.nationalId,
-        )
-
         userProfileDto = {
           ...userProfileDto,
           emailStatus: DataStatus.VERIFIED,
