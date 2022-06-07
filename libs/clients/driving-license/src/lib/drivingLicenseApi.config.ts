@@ -21,11 +21,11 @@ export const DrivingLicenseApiConfig = defineConfig<z.infer<typeof schema>>({
       ),
       secret: env.required('XROAD_DRIVING_LICENSE_SECRET', ''),
       xroadPathV1: env.required(
-        'DRIVING_LICENSE_XROAD_PATH',
+        'XROAD_DRIVING_LICENSE_PATH',
         'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v1',
       ),
       xroadPathV2: env.required(
-        'DRIVING_LICENSE_XROAD_PATH_V2',
+        'XROAD_DRIVING_LICENSE_V2_PATH',
         'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v2',
       ),
     }
