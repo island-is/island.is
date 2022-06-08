@@ -130,10 +130,14 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
                     'Hér er að finna hreyfingar fyrir valin skilyrði. Hreyfingar geta verið gjöld, greiðslur, skuldajöfnuður o.fl.',
                 })}
               </Text>
-            </GridColumn>
-            {recordsDataArray.length > 0 ? (
-              <Box display="flex" marginLeft="auto" marginTop={1} printHidden>
-                <GridColumn>
+              {recordsDataArray.length > 0 ? (
+                <Box
+                  display="flex"
+                  marginLeft="auto"
+                  marginTop={1}
+                  paddingRight={2}
+                  printHidden
+                >
                   <Button
                     colorScheme="default"
                     icon="print"
@@ -146,8 +150,6 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
                   >
                     {formatMessage(m.print)}
                   </Button>
-                </GridColumn>
-                <GridColumn>
                   <DropdownExport
                     onGetCSV={() =>
                       exportHreyfingarFile(recordsDataArray, 'csv')
@@ -156,9 +158,9 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
                       exportHreyfingarFile(recordsDataArray, 'xlsx')
                     }
                   />
-                </GridColumn>
-              </Box>
-            ) : null}
+                </Box>
+              ) : null}
+            </GridColumn>
           </GridRow>
           <Hidden print={true}>
             <Box marginTop={[1, 1, 2, 2, 5]}>
