@@ -376,12 +376,13 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
               />
               {showSecondaryMenu && (
                 <>
-                  {organizationPage.secondaryMenu && (
-                    <SecondaryMenu
-                      title={organizationPage.secondaryMenu.name}
-                      items={secondaryNavList}
-                    />
-                  )}
+                  {organizationPage.secondaryMenu &&
+                    secondaryNavList.length > 0 && (
+                      <SecondaryMenu
+                        title={organizationPage.secondaryMenu.name}
+                        items={secondaryNavList}
+                      />
+                    )}
                   {organizationPage.sidebarCards.map((card) => (
                     <ProfileCard
                       title={card.title}
