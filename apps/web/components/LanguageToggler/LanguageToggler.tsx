@@ -15,6 +15,7 @@ import { GlobalContext } from '@island.is/web/context'
 import {
   GetContentSlugQuery,
   GetContentSlugQueryVariables,
+  TextFieldLocales,
 } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver, LinkType } from '@island.is/web/hooks/useLinkResolver'
@@ -70,45 +71,54 @@ export const LanguageToggler = ({
 
     const responses = await Promise.all(queries)
 
+    const secondContentSlug = responses[1]?.data?.getContentSlug
+
+    // We need to have a special case for subArticles since they've got a url field instead of a slug field
+    if (secondContentSlug?.type === 'subArticle') {
+      const urls = secondContentSlug.url[otherLanguage].split('/')
+
+      // Show dialog when either there is no title or there aren't at least 2 urls (for example, a valid url would be on the format: 'parental-leave/payments')
+      if (!secondContentSlug?.title?.[otherLanguage] || urls.length < 2) {
+        return setShowDialog(true)
+      }
+      return goToOtherLanguagePage(
+        linkResolver('subarticle', urls, otherLanguage).href,
+      )
+    }
+
     const slugs = []
-    let index = 0
+    let title: TextFieldLocales = { is: '', en: '' }
+    let type = ''
 
     for (const res of responses) {
       const slug = res.data?.getContentSlug?.slug
-
       if (!slug) {
         break
       }
-
       slugs.push(slug)
+      title = res.data?.getContentSlug?.title
+      type = res.data?.getContentSlug?.type as LinkType
+    }
 
-      index += 1
-      const atLastResponse = index === responses.length
-      if (!atLastResponse) continue
+    if (resolveLinkTypeLocally) {
+      type = typeResolver(pathWithoutQueryParams).type
+    }
 
-      const title = res.data?.getContentSlug?.title
-      let type = res.data?.getContentSlug?.type as LinkType
-
-      if (resolveLinkTypeLocally) {
-        type = typeResolver(pathWithoutQueryParams).type
-      }
-
-      // Some content models are set up such that a slug is generated from the title
-      // Unfortunately, Contentful generates slug for both locales which frequently
-      // results in bogus english content. Therefore we check whether the other language has a title as well.
-      if (
-        type &&
-        slugs.every((s) => s?.[otherLanguage]) &&
-        title?.[otherLanguage]
-      ) {
-        return goToOtherLanguagePage(
-          linkResolver(
-            type,
-            slugs.map((s) => s[otherLanguage]),
-            otherLanguage,
-          ).href,
-        )
-      }
+    // Some content models are set up such that a slug is generated from the title
+    // Unfortunately, Contentful generates slug for both locales which frequently
+    // results in bogus english content. Therefore we check whether the other language has a title as well.
+    if (
+      type &&
+      slugs.every((s) => s?.[otherLanguage]) &&
+      title?.[otherLanguage]
+    ) {
+      return goToOtherLanguagePage(
+        linkResolver(
+          type as LinkType,
+          slugs.map((s) => s[otherLanguage]),
+          otherLanguage,
+        ).href,
+      )
     }
 
     setShowDialog(true)

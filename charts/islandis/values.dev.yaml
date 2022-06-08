@@ -206,6 +206,8 @@ air-discount-scheme-web:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/configuration-snippet: 'rewrite /$ https://beta.dev01.devland.is/loftbru; rewrite /en$ https://beta.dev01.devland.is/en/lower-airfares-for-residents-in-rural-areas;'
+        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
+        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
       hosts:
         - host: 'loftbru.dev01.devland.is'
           paths:
@@ -489,6 +491,8 @@ application-system-api:
     primary-alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-internal-alb'
+        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
+        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
       hosts:
         - host: 'application-payment-callback-xrd.internal.dev01.devland.is'
           paths:
@@ -686,6 +690,8 @@ application-system-form:
     primary-alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
+        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
+        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
       hosts:
         - host: 'beta.dev01.devland.is'
           paths:
@@ -720,11 +726,11 @@ contentful-entry-tagger-service:
   healthCheck:
     liveness:
       initialDelaySeconds: 3
-      path: '/'
+      path: '/liveness'
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: '/'
+      path: '/readiness'
       timeoutSeconds: 3
   hpa:
     scaling:
@@ -1429,6 +1435,8 @@ service-portal:
     primary-alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
+        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
+        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
       hosts:
         - host: 'beta.dev01.devland.is'
           paths:
@@ -1658,6 +1666,8 @@ skilavottord-web:
     primary-alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
+        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
+        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
       hosts:
         - host: 'beta.dev01.devland.is'
           paths:
@@ -1812,6 +1822,8 @@ user-notification:
     primary-alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-internal-alb'
+        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
+        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
       hosts:
         - host: 'user-notification-xrd.internal.dev01.devland.is'
           paths:
@@ -1946,6 +1958,8 @@ web:
     primary-alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
+        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
+        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
       hosts:
         - host: 'beta.dev01.devland.is'
           paths:
