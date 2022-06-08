@@ -21,7 +21,8 @@ import { GetRegulationsLawChaptersInput } from './dto/getRegulationsLawChapters.
 import { GetRegulationsMinistriesInput } from './dto/getRegulationsMinistriesInput.input'
 import { GetRegulationsSearchInput } from './dto/getRegulationsSearch.input'
 import { CreatePresignedPostInput } from './dto/createPresignedPost.input'
-import { PresignedPost } from '@island.is/regulations/admin'
+import { ImageSourceMap, PresignedPost } from '@island.is/regulations/admin'
+import { UploadImageUrlsInput } from './dto/uploadImageUrls.input'
 
 const validPage = (page: number | undefined) => (page && page >= 1 ? page : 1)
 
@@ -29,13 +30,22 @@ const validPage = (page: number | undefined) => (page && page >= 1 ? page : 1)
 export class RegulationsResolver {
   constructor(private regulationsService: RegulationsService) {}
 
+  @Query(() => graphqlTypeJson)
+  uploadImageUrls(
+    @Args('input') input: UploadImageUrlsInput,
+  ): Promise<ImageSourceMap | null> {
+    console.log(input)
+    return this.regulationsService.uploadImageUrls(input.regId, input.urls)
+  }
+
   @Mutation(() => graphqlTypeJson)
   createPresignedPost(
     @Args('input') input: CreatePresignedPostInput,
   ): Promise<PresignedPost | null> {
     return this.regulationsService.createPresignedPost(
       input.fileName,
-      input.type,
+      input.regId,
+      input.hash,
     )
   }
 

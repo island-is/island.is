@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import * as s from './EditBasics.css'
 import {
   Box,
@@ -15,6 +15,8 @@ import { Appendixes } from './Appendixes'
 import { MagicTextarea } from './MagicTextarea'
 import { useDraftingState } from '../state/useDraftingState'
 import { cleanTitle } from '@island.is/regulations-tools/cleanTitle'
+import { HTMLText } from '@island.is/regulations-tools/types'
+import { useUploadImageUrls } from '../utils/dataHooks'
 
 export const EditBasics = () => {
   const t = useLocale().formatMessage
@@ -24,12 +26,21 @@ export const EditBasics = () => {
   const { text, appendixes } = draft
   const { updateState } = actions
 
+  const { uploadImageUrls, UploadErrorMessage } = useUploadImageUrls()
+
   const startTextExpanded =
     !text.value || appendixes.length === 0 || !!text.error
 
   const regType =
     draft.type.value &&
-    t(draft.type.value === 'amending' ? msg.type_amending : msg.type_base)
+    (draft.type.value === 'amending' ? msg.type_amending : msg.type_base)
+
+  const updateDraftText = (newText: HTMLText) => {
+    const sources = newText.match(/<img [^>]*src="[^"]*"[^>]*>/gm) ?? []
+    const imgSources = sources.map((x) => x.replace(/.*src="([^"]*)".*/, '$1'))
+
+    uploadImageUrls(imgSources, draft.id)
+  }
 
   return (
     <>
@@ -107,7 +118,7 @@ export const EditBasics = () => {
                 hiddenLabel
                 draftId={draft.id}
                 value={text.value}
-                onChange={(value) => updateState('text', value)}
+                onChange={updateDraftText}
                 error={text.showError && text.error && t(text.error)}
               />
             </Box>

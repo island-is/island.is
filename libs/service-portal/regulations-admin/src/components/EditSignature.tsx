@@ -1,6 +1,4 @@
-import * as s from '../utils/styles.css'
-
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import {
   AlertMessage,
   Box,
@@ -12,8 +10,6 @@ import {
   Inline,
   Input,
   InputFileUpload,
-  fileToObject,
-  UploadFile,
   Text,
   Divider,
 } from '@island.is/island-ui/core'
@@ -21,21 +17,12 @@ import { useDraftingState } from '../state/useDraftingState'
 import { editorMsgs as msg } from '../messages'
 import { getMinPublishDate } from '../utils'
 
-import { RegDraftForm } from '../state/types'
 import { EditorInput } from './EditorInput'
-import {
-  HTMLText,
-  PlainText,
-  URLString,
-  useShortState,
-} from '@island.is/regulations'
-import { produce } from 'immer'
+import { HTMLText, PlainText, URLString } from '@island.is/regulations'
 import { downloadUrl } from '../utils/files'
 import { DownloadDraftButton } from './DownloadDraftButton'
-import { useAuth } from '@island.is/auth/react'
 import { useLocale } from '@island.is/localization'
 import { useS3Upload } from '../utils/dataHooks'
-import { PresignedPost } from '@island.is/regulations/admin'
 
 // ---------------------------------------------------------------------------
 
@@ -102,6 +89,14 @@ export const EditSignature = () => {
     onRetry,
     onRemove,
   } = useS3Upload()
+
+  useEffect(() => {
+    if (uploadLocation) {
+      console.log('upload location')
+      //updateState('signedDocumentUrl', uploadLocation as URLString)
+    }
+  }, [uploadLocation, updateState])
+
   return (
     <Box marginBottom={6}>
       <Box marginBottom={4}>
@@ -116,9 +111,9 @@ export const EditSignature = () => {
             t(msg.signedDocumentUploadDescr).replace(/^\s+$/, '') || undefined
           }
           buttonLabel={t(msg.signedDocumentUpload)}
-          onChange={onChange}
-          onRetry={onRetry}
-          onRemove={onRemove}
+          onChange={(files) => onChange(files, draft.id)}
+          onRetry={() => onRetry(draft.id)}
+          onRemove={() => onRemove(uploadFile, draft.id)}
           errorMessage={uploadErrorMessage}
           accept=".pdf"
           multiple={false}
@@ -171,7 +166,9 @@ export const EditSignature = () => {
               </Button>
 
               <Button
-                onClick={uploadFile ? () => onRemove(uploadFile) : undefined}
+                onClick={
+                  uploadFile ? () => onRemove(uploadFile, draft.id) : undefined
+                }
                 variant="text"
                 size="small"
                 as="button"
