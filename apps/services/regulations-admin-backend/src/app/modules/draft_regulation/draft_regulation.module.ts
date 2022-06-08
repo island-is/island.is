@@ -28,7 +28,9 @@ import { DraftAuthorModule } from '../draft_author'
     {
       provide: NationalRegistryApi,
       useFactory: async () =>
-        NationalRegistryApi.instantiateClass(environment.nationalRegistry),
+        await NationalRegistryApi.instantiateClass(
+          environment.nationalRegistry,
+        ),
     },
   ],
   controllers: [DraftRegulationController],

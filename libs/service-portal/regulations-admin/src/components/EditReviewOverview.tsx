@@ -112,8 +112,13 @@ export const EditReviewOverview = (props: EditReviewOverviewProps) => {
     signedDocument: false,
     PDF: false,
   })
-  const flagAsClick = (key: keyof typeof clicked) =>
+  const flagAsClick = (key: keyof typeof clicked) => {
     setClicked({ ...clicked, [key]: true })
+
+    setTimeout(() => {
+      setClicked({ ...clicked, [key]: false })
+    }, 1500)
+  }
 
   const formatDate = (date?: Date, format?: string) =>
     date ? formatDateFns(date, format || 'd. MMMM yyyy') : ''
