@@ -27,12 +27,11 @@ import {
   icConfirmation as m,
 } from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { Accordion, AlertMessage, Box, Text } from '@island.is/island-ui/core'
+import { Accordion, Box, Text } from '@island.is/island-ui/core'
 import {
   CaseDecision,
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
-import { formatDate } from '@island.is/judicial-system/formatters'
 import * as constants from '@island.is/judicial-system/consts'
 
 const Confirmation = () => {
@@ -69,17 +68,6 @@ const Confirmation = () => {
       {user && (
         <>
           <FormContentContainer>
-            {workingCase.seenByDefender && (
-              <Box marginBottom={5}>
-                <AlertMessage
-                  title={formatMessage(m.sections.seenByDefenderAlert.title)}
-                  message={formatMessage(m.sections.seenByDefenderAlert.text, {
-                    when: formatDate(workingCase.seenByDefender, 'PPPp'),
-                  })}
-                  type="info"
-                />
-              </Box>
-            )}
             <Box marginBottom={7}>
               <Text as="h1" variant="h1">
                 Yfirlit úrskurðar

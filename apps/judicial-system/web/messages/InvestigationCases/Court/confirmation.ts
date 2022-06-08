@@ -10,23 +10,6 @@ export const icConfirmation = {
           'Notaður sem titill fyrir "Úrskurðarorð" hlutanum á úrskurðar skrefi í rannsóknarheimildum.',
       },
     }),
-    seenByDefenderAlert: defineMessages({
-      title: {
-        id:
-          'judicial.system.investigation_cases:confirmation.sections.seen_by_defender_alert.title',
-        defaultMessage: 'Krafa sótt af verjanda',
-        description:
-          'Notaður sem titill fyrir "Krafa sótt af verjanda" hluta á staðfestingar í rannsóknarheimildum.',
-      },
-      text: {
-        id:
-          'judicial.system.investigation_cases:confirmation.sections.seen_by_defender_alert.text',
-        defaultMessage:
-          'Verjandi skráði sig inn til að sækja kröfuskjal {when}.',
-        description:
-          'Notaður sem titill fyrir "Krafa sótt af verjanda" hluta á staðfestingar í rannsóknarheimildum.',
-      },
-    }),
   },
   modal: defineMessages({
     text: {
