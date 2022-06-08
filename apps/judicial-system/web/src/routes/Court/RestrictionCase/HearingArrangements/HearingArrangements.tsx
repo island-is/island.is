@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState, useCallback } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 import formatISO from 'date-fns/formatISO'
+import compareAsc from 'date-fns/compareAsc'
 
 import { Box, Input, Text, AlertMessage } from '@island.is/island-ui/core'
 import {
@@ -63,6 +64,7 @@ export const HearingArrangements: React.FC = () => {
   const { formatMessage } = useIntl()
 
   const [courtDate, setCourtDate] = useState(workingCase.courtDate)
+  const [courtDateHasChanged, setCourtDateHasChanged] = useState(false)
 
   useEffect(() => {
     if (isCaseUpToDate && !initialAutoFillDone) {
@@ -115,27 +117,28 @@ export const HearingArrangements: React.FC = () => {
   ])
 
   const handleNextButtonClick = useCallback(() => {
+    const hasSentNotification = workingCase?.notifications?.find(
+      (notification) => notification.type === NotificationType.COURT_DATE,
+    )
+
     autofill(
       [{ key: 'courtDate', value: courtDate, force: true }],
       workingCase,
       setWorkingCase,
     )
-    if (
-      workingCase?.notifications?.find(
-        (notification) => notification.type === NotificationType.COURT_DATE,
-      )
-    ) {
+
+    if (hasSentNotification && !courtDateHasChanged) {
       router.push(`${Constants.RULING_ROUTE}/${workingCase.id}`)
     } else {
       setModalVisible(true)
     }
   }, [
+    workingCase,
     autofill,
     courtDate,
-    router,
-    setModalVisible,
-    workingCase,
     setWorkingCase,
+    courtDateHasChanged,
+    router,
   ])
 
   return (
@@ -184,6 +187,13 @@ export const HearingArrangements: React.FC = () => {
                   minDate={new Date()}
                   onChange={(date: Date | undefined, valid: boolean) => {
                     if (date && valid) {
+                      if (
+                        workingCase.courtDate &&
+                        compareAsc(date, new Date(workingCase.courtDate)) !== 0
+                      ) {
+                        setCourtDateHasChanged(true)
+                      }
+
                       setCourtDate(
                         formatISO(date, { representation: 'complete' }),
                       )
@@ -252,6 +262,9 @@ export const HearingArrangements: React.FC = () => {
               workingCase.type === CaseType.ADMISSION_TO_FACILITY
               ? m.modal.custodyCases.text
               : m.modal.travelBanCases.text,
+            {
+              courtDateHasChanged,
+            },
           )}
           isPrimaryButtonLoading={isSendingNotification}
           handleSecondaryButtonClick={() => {
