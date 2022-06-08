@@ -244,9 +244,6 @@ export class SyslumennService {
         throw e
       })
 
-    console.log({
-      assetSponse: response,
-    })
     return response.map(assetMapper)
   }
 

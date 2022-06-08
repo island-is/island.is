@@ -173,16 +173,9 @@ export const MORTGAGE_CERTIFICATE_MESSAGE_NO_KMARKING =
   'Ekki hægt að afgreiða vedbokarvottord'
 
 export const REAL_ESTATE_ADDRESS_NAME = 'Hvergiland'
-export const VEHICLE_TYPE_NAME = 'WolfVagon'
 
 export const REAL_ESTATE_ADDRESS: Array<AssetName> = [
   {
     name: REAL_ESTATE_ADDRESS_NAME,
-  },
-]
-
-export const VEHICLE_TYPE: Array<AssetName> = [
-  {
-    name: VEHICLE_TYPE_NAME,
   },
 ]

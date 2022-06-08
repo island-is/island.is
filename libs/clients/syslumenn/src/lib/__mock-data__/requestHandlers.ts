@@ -12,7 +12,6 @@ import {
   MORTGAGE_CERTIFICATE_CONTENT_OK,
   MORTGAGE_CERTIFICATE_CONTENT_NO_KMARKING,
   MORTGAGE_CERTIFICATE_MESSAGE_NO_KMARKING,
-  VEHICLE_TYPE_NAME,
   REAL_ESTATE_ADDRESS_NAME,
   ESTATE_REGISTRANT_RESPONSE,
 } from './responses'
@@ -96,13 +95,6 @@ export const requestHandlers = [
       case AssetType.RealEstate: {
         if (!/f?\d+/.test(assetId)) return res(ctx.status(404), ctx.json([]))
         response[0].heiti = REAL_ESTATE_ADDRESS_NAME
-        return res(ctx.status(200), ctx.json(response))
-      }
-      case AssetType.Vehicle: {
-        // This test will break if tested with Icelandic private license plates, even though they are legal
-        if (!/^[A-Z0-9]{2,6}$/.test(assetId.toUpperCase()))
-          return res(ctx.status(404), ctx.json([]))
-        response[0].heiti = VEHICLE_TYPE_NAME
         return res(ctx.status(200), ctx.json(response))
       }
       default: {
