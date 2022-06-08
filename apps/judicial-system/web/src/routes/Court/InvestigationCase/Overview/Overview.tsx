@@ -99,7 +99,7 @@ const Overview = () => {
       />
       <FormContentContainer>
         {workingCase.caseResentExplanation && (
-          <Box marginBottom={5}>
+          <Box marginBottom={workingCase.seenByDefender ? 3 : 5}>
             <AlertMessage
               title={formatMessage(
                 icCourtOverview.sections.caseResentExplanation.title,
@@ -111,6 +111,22 @@ const Overview = () => {
                 />
               }
               type="warning"
+            />
+          </Box>
+        )}
+        {workingCase.seenByDefender && (
+          <Box marginBottom={5}>
+            <AlertMessage
+              title={formatMessage(
+                icCourtOverview.sections.seenByDefenderAlert.title,
+              )}
+              message={formatMessage(
+                icCourtOverview.sections.seenByDefenderAlert.text,
+                {
+                  when: formatDate(workingCase.seenByDefender, 'PPPp'),
+                },
+              )}
+              type="info"
             />
           </Box>
         )}
