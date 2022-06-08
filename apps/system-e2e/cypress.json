@@ -19,8 +19,5 @@
   "retries": {
     "runMode": 2,
     "openMode": 0
-  },
-  "env": {
-    "testEnvironment": "dev"
   }
 }

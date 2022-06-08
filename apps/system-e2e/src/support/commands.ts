@@ -1,12 +1,11 @@
-const authDomain = 'identity-server.dev01.devland.is/'
-const testEnvironment = Cypress.env('testEnvironment')
+const authDomain = Cypress.env('AUTH_DOMAIN')
+const testEnvironment = Cypress.env('TEST_ENVIRONMENT')
 
 Cypress.Commands.add(
   'login',
   ({ cognitoUsername, cognitoPassword, phoneNumber }) => {
     cy.session([cognitoUsername, cognitoPassword, phoneNumber], () => {
       if (testEnvironment !== 'prod' && testEnvironment !== 'dev') {
-        cy.log("Expecting cognito; testEnvironment:", testEnvironment)
         cy.session([cognitoUsername, cognitoPassword], () => {
           cy.visit('/innskraning')
 
@@ -36,10 +35,7 @@ Cypress.Commands.add(
         cy.get('button[id="submitPhoneNumber"]').click()
       })
 
-      cy.url().should(
-        'match',
-        new RegExp(`${Cypress.config().baseUrl}/minarsidur/?`),
-      )
+      cy.url().should('eq', `${Cypress.config().baseUrl}/minarsidur/`)
     })
   },
 )
