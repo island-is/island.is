@@ -51,7 +51,6 @@ import {
   SIGNED_VERDICT_OVERVIEW,
   IC_MODIFY_RULING_ROUTE,
   IC_COURT_RECORD_ROUTE,
-  IC_HEARING_ARRANGEMENTS_ROUTE,
   IC_COURT_HEARING_ARRANGEMENTS_ROUTE,
 } from '@island.is/judicial-system/consts'
 import SigningModal, {
