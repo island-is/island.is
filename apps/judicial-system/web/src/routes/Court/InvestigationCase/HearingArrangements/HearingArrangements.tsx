@@ -1,12 +1,12 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
-import formatISO from 'date-fns/formatISO'
 import router from 'next/router'
+import formatISO from 'date-fns/formatISO'
+import compareAsc from 'date-fns/compareAsc'
 
 import {
   BlueBox,
   CaseInfo,
-  DateTime,
   FormContentContainer,
   FormFooter,
   Modal,
@@ -35,15 +35,11 @@ import {
   Box,
   Tooltip,
   Text,
-  Input,
 } from '@island.is/island-ui/core'
 import DefenderInfo from '@island.is/judicial-system-web/src/components/DefenderInfo/DefenderInfo'
-import {
-  setAndSendToServer,
-  removeTabsValidateAndSet,
-  validateAndSendToServer,
-} from '@island.is/judicial-system-web/src/utils/formHelper'
+import { setAndSendToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { isCourtHearingArrangementsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
+import CourtArrangements from '@island.is/judicial-system-web/src/components/CourtArrangements'
 import * as constants from '@island.is/judicial-system/consts'
 
 const HearingArrangements = () => {
@@ -68,6 +64,7 @@ const HearingArrangements = () => {
   const [courtDate, setCourtDate] = useState<Case['courtDate']>(
     workingCase.courtDate || workingCase.requestedCourtDate,
   )
+  const [courtDateHasChanged, setCourtDateHasChanged] = useState(false)
 
   useEffect(() => {
     if (isCaseUpToDate && !initialAutoFillDone) {
@@ -95,21 +92,35 @@ const HearingArrangements = () => {
   ])
 
   const handleNextButtonClick = useCallback(() => {
+    const hasSentNotification = workingCase?.notifications?.find(
+      (notification) => notification.type === NotificationType.COURT_DATE,
+    )
+
     autofill(
       [{ key: 'courtDate', value: courtDate, force: true }],
       workingCase,
       setWorkingCase,
     )
-    if (
-      workingCase.notifications?.find(
-        (notification) => notification.type === NotificationType.COURT_DATE,
-      )
-    ) {
-      router.push(`${constants.IC_RULING_ROUTE}/${workingCase.id}`)
+
+    if (hasSentNotification && !courtDateHasChanged) {
+      router.push(`${constants.RULING_ROUTE}/${workingCase.id}`)
     } else {
       setModalVisible(true)
     }
-  }, [autofill, courtDate, workingCase, setWorkingCase, setModalVisible])
+  }, [workingCase, autofill, courtDate, setWorkingCase, courtDateHasChanged])
+
+  const handleCourtDateChange = (date: Date | undefined, valid: boolean) => {
+    if (date && valid) {
+      if (
+        workingCase.courtDate &&
+        compareAsc(date, new Date(workingCase.courtDate)) !== 0
+      ) {
+        setCourtDateHasChanged(true)
+      }
+
+      setCourtDate(formatISO(date, { representation: 'complete' }))
+    }
+  }
 
   return (
     <PageLayout
@@ -251,50 +262,12 @@ const HearingArrangements = () => {
                 </Text>
               </Box>
               <Box marginBottom={2}>
-                <BlueBox>
-                  <Box marginBottom={2}>
-                    <DateTime
-                      name="courtDate"
-                      selectedDate={courtDate}
-                      minDate={new Date()}
-                      onChange={(date: Date | undefined, valid: boolean) => {
-                        if (date && valid) {
-                          setCourtDate(
-                            formatISO(date, { representation: 'complete' }),
-                          )
-                        }
-                      }}
-                      blueBox={false}
-                      required
-                    />
-                  </Box>
-                  <Input
-                    data-testid="courtroom"
-                    name="courtroom"
-                    label="Dómsalur"
-                    value={workingCase.courtRoom || ''}
-                    placeholder="Skráðu inn dómsal"
-                    autoComplete="off"
-                    onChange={(event) =>
-                      removeTabsValidateAndSet(
-                        'courtRoom',
-                        event.target.value,
-                        [],
-                        workingCase,
-                        setWorkingCase,
-                      )
-                    }
-                    onBlur={(event) =>
-                      validateAndSendToServer(
-                        'courtRoom',
-                        event.target.value,
-                        [],
-                        workingCase,
-                        updateCase,
-                      )
-                    }
-                  />
-                </BlueBox>
+                <CourtArrangements
+                  workingCase={workingCase}
+                  setWorkingCase={setWorkingCase}
+                  handleCourtDateChange={handleCourtDateChange}
+                  selectedCourtDate={courtDate}
+                />
               </Box>
             </Box>
             {(workingCase.sessionArrangements ===
@@ -330,6 +303,7 @@ const HearingArrangements = () => {
                     SessionArrangements.ALL_PRESENT_SPOKESPERSON
                   ? m.modal.allPresentSpokespersonText
                   : m.modal.prosecutorPresentText,
+                { courtDateHasChanged },
               )}
               handlePrimaryButtonClick={async () => {
                 const notificationSent = await sendNotification(
