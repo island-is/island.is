@@ -150,6 +150,15 @@ export const UserDropdown = ({
             <UserProfileInfo onClick={() => onClose()} />
           )}
           {/* End of user settings */}
+          {/* Logout */}
+          <Box paddingTop={[1, 2]}>
+            <UserDropdownItem
+              text={formatMessage(sharedMessages.logout)}
+              icon={{ type: 'outline', icon: 'logOut' }}
+              onClick={onLogout}
+            />
+          </Box>
+          {/* End of Logout */}
         </Box>
         <Hidden below="md">{closeButton}</Hidden>
       </Box>

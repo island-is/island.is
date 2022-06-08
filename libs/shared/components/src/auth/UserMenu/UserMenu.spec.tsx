@@ -152,6 +152,18 @@ describe('UserMenu', () => {
     // Assert
     expect(screen.queryByRole('dialog', { name: /útskráning/i })).toBeNull()
   })
+  it('can log out user', async () => {
+    // Arrange
+    renderAuthenticated(<UserMenu />, { user: {} })
+    await openMenu()
+
+    // Act
+    fireEvent.click(screen.getByRole('button', { name: 'Útskrá' }))
+
+    // Assert
+    expect(screen.queryByRole('dialog', { name: /útskráning/i })).toBeNull()
+    expect(signOut).toHaveBeenCalled()
+  })
 
   it('can switch languages using selectbox', async () => {
     // Arrange
