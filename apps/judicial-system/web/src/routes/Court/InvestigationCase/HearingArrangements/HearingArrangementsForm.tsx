@@ -33,7 +33,7 @@ import { isCourtHearingArrangementsStepValidIC } from '@island.is/judicial-syste
 import DefenderInfo from '@island.is/judicial-system-web/src/components/DefenderInfo/DefenderInfo'
 import { icHearingArrangements as m } from '@island.is/judicial-system-web/messages'
 import type { Case, User } from '@island.is/judicial-system/types'
-import * as Constants from '@island.is/judicial-system/consts'
+import * as constants from '@island.is/judicial-system/consts'
 
 interface Props {
   workingCase: Case
@@ -68,7 +68,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
         (notification) => notification.type === NotificationType.COURT_DATE,
       )
     ) {
-      router.push(`${Constants.IC_RULING_ROUTE}/${workingCase.id}`)
+      router.push(`${constants.IC_RULING_ROUTE}/${workingCase.id}`)
     } else {
       setModalVisible(true)
     }
@@ -264,7 +264,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${Constants.IC_OVERVIEW_ROUTE}/${workingCase.id}`}
+          previousUrl={`${constants.IC_OVERVIEW_ROUTE}/${workingCase.id}`}
           onNextButtonClick={handleNextButtonClick}
           nextIsDisabled={
             !isCourtHearingArrangementsStepValidIC(workingCase, courtDate)
@@ -290,13 +290,13 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
             )
 
             if (notificationSent) {
-              router.push(`${Constants.IC_RULING_ROUTE}/${workingCase.id}`)
+              router.push(`${constants.IC_RULING_ROUTE}/${workingCase.id}`)
             }
           }}
           handleSecondaryButtonClick={() => {
             sendNotification(workingCase.id, NotificationType.COURT_DATE, true)
 
-            router.push(`${Constants.IC_RULING_ROUTE}/${workingCase.id}`)
+            router.push(`${constants.IC_RULING_ROUTE}/${workingCase.id}`)
           }}
           primaryButtonText={formatMessage(m.modal.primaryButtonText)}
           secondaryButtonText={formatMessage(m.modal.secondaryButtonText)}

@@ -24,7 +24,7 @@ import type {
   UpdateCase,
   User,
 } from '@island.is/judicial-system/types'
-import * as Constants from '@island.is/judicial-system/consts'
+import * as constants from '@island.is/judicial-system/consts'
 import SelectProsecutor from '../../SharedComponents/SelectProsecutor/SelectProsecutor'
 import SelectCourt from '../../SharedComponents/SelectCourt/SelectCourt'
 import RequestCourtDate from '../../SharedComponents/RequestCourtDate/RequestCourtDate'
@@ -172,7 +172,7 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${Constants.IC_DEFENDANT_ROUTE}/${workingCase.id}`}
+          previousUrl={`${constants.IC_DEFENDANT_ROUTE}/${workingCase.id}`}
           onNextButtonClick={async () => await onNextButtonClick()}
           nextIsDisabled={!isHearingArrangementsStepValidIC(workingCase)}
           nextIsLoading={isLoading}

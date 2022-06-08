@@ -33,7 +33,7 @@ import {
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import * as Constants from '@island.is/judicial-system/consts'
+import * as constants from '@island.is/judicial-system/consts'
 
 const Confirmation = () => {
   const {
@@ -129,8 +129,8 @@ const Confirmation = () => {
           </FormContentContainer>
           <FormContentContainer isFooter>
             <FormFooter
-              previousUrl={`${Constants.IC_COURT_RECORD_ROUTE}/${workingCase.id}`}
-              nextUrl={Constants.CASE_LIST_ROUTE}
+              previousUrl={`${constants.IC_COURT_RECORD_ROUTE}/${workingCase.id}`}
+              nextUrl={constants.CASE_LIST_ROUTE}
               nextIsLoading={isRequestingRulingSignature}
               nextButtonText={formatMessage(
                 workingCase.decision === CaseDecision.ACCEPTING

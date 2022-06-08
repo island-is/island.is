@@ -36,7 +36,7 @@ import {
   titles,
 } from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import * as Constants from '@island.is/judicial-system/consts'
+import * as constants from '@island.is/judicial-system/consts'
 
 export const HearingArrangements: React.FC = () => {
   const {
@@ -125,7 +125,7 @@ export const HearingArrangements: React.FC = () => {
         (notification) => notification.type === NotificationType.COURT_DATE,
       )
     ) {
-      router.push(`${Constants.RULING_ROUTE}/${workingCase.id}`)
+      router.push(`${constants.RULING_ROUTE}/${workingCase.id}`)
     } else {
       setModalVisible(true)
     }
@@ -231,7 +231,7 @@ export const HearingArrangements: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${Constants.OVERVIEW_ROUTE}/${workingCase.id}`}
+          previousUrl={`${constants.OVERVIEW_ROUTE}/${workingCase.id}`}
           onNextButtonClick={handleNextButtonClick}
           nextButtonText={formatMessage(m.continueButton.label)}
           nextIsDisabled={
@@ -257,7 +257,7 @@ export const HearingArrangements: React.FC = () => {
           handleSecondaryButtonClick={() => {
             sendNotification(workingCase.id, NotificationType.COURT_DATE, true)
 
-            router.push(`${Constants.RULING_ROUTE}/${id}`)
+            router.push(`${constants.RULING_ROUTE}/${id}`)
           }}
           handlePrimaryButtonClick={async () => {
             const notificationSent = await sendNotification(
@@ -266,7 +266,7 @@ export const HearingArrangements: React.FC = () => {
             )
 
             if (notificationSent) {
-              router.push(`${Constants.RULING_ROUTE}/${id}`)
+              router.push(`${constants.RULING_ROUTE}/${id}`)
             }
           }}
           primaryButtonText={formatMessage(m.modal.shared.primaryButtonText)}

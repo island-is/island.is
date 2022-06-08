@@ -50,7 +50,7 @@ import {
 } from '@island.is/judicial-system-web/messages'
 import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
-import * as Constants from '@island.is/judicial-system/consts'
+import * as constants from '@island.is/judicial-system/consts'
 import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 import AppealSection from './Components/AppealSection/AppealSection'
 import { SignedDocument } from '@island.is/judicial-system-web/src/components/SignedDocument/SignedDocument'
@@ -173,7 +173,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
           <Button
             variant="text"
             preTextIcon="arrowBack"
-            onClick={() => router.push(Constants.CASE_LIST_ROUTE)}
+            onClick={() => router.push(constants.CASE_LIST_ROUTE)}
           >
             Til baka
           </Button>
@@ -426,8 +426,8 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
                         event.stopPropagation()
                         router.push(
                           isRestrictionCase(workingCase.type)
-                            ? `${Constants.MODIFY_RULING_ROUTE}/${workingCase.id}`
-                            : `${Constants.IC_MODIFY_RULING_ROUTE}/${workingCase.id}`,
+                            ? `${constants.MODIFY_RULING_ROUTE}/${workingCase.id}`
+                            : `${constants.IC_MODIFY_RULING_ROUTE}/${workingCase.id}`,
                         )
                       }}
                     >

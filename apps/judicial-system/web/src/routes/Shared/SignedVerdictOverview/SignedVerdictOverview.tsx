@@ -39,7 +39,7 @@ import {
 } from '@island.is/judicial-system-web/messages'
 import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import * as Constants from '@island.is/judicial-system/consts'
+import * as constants from '@island.is/judicial-system/consts'
 
 import { CourtRecordSignatureConfirmationQuery } from './courtRecordSignatureConfirmationGql'
 import SignedVerdictOverviewForm from './SignedVerdictOverviewForm'
@@ -185,19 +185,19 @@ export const SignedVerdictOverview: React.FC = () => {
     if (workingCase) {
       if (workingCase.childCase) {
         if (isRestrictionCase(workingCase.type)) {
-          router.push(`${Constants.STEP_ONE_ROUTE}/${workingCase.childCase.id}`)
+          router.push(`${constants.STEP_ONE_ROUTE}/${workingCase.childCase.id}`)
         } else {
           router.push(
-            `${Constants.IC_DEFENDANT_ROUTE}/${workingCase.childCase.id}`,
+            `${constants.IC_DEFENDANT_ROUTE}/${workingCase.childCase.id}`,
           )
         }
       } else {
         await extendCase(workingCase.id).then((extendedCase) => {
           if (extendedCase) {
             if (isRestrictionCase(extendedCase.type)) {
-              router.push(`${Constants.STEP_ONE_ROUTE}/${extendedCase.id}`)
+              router.push(`${constants.STEP_ONE_ROUTE}/${extendedCase.id}`)
             } else {
-              router.push(`${Constants.IC_DEFENDANT_ROUTE}/${extendedCase.id}`)
+              router.push(`${constants.IC_DEFENDANT_ROUTE}/${extendedCase.id}`)
             }
           }
         })
@@ -272,7 +272,7 @@ export const SignedVerdictOverview: React.FC = () => {
             'dagsins',
           )} kl. ${formatDate(
             modifiedValidToDate?.value,
-            Constants.TIME_FORMAT,
+            constants.TIME_FORMAT,
           )}`,
         },
       )
@@ -287,7 +287,7 @@ export const SignedVerdictOverview: React.FC = () => {
               'dagsins',
             )} kl. ${formatDate(
               modifiedValidToDate?.value,
-              Constants.TIME_FORMAT,
+              constants.TIME_FORMAT,
             )}`,
           },
         )
@@ -302,7 +302,7 @@ export const SignedVerdictOverview: React.FC = () => {
               'PPPP',
             )?.replace('dagur,', 'dagsins')} kl. ${formatDate(
               modifiedIsolationToDate?.value,
-              Constants.TIME_FORMAT,
+              constants.TIME_FORMAT,
             )}`,
           },
         )
@@ -526,7 +526,7 @@ export const SignedVerdictOverview: React.FC = () => {
       workingCase.caseModifiedExplanation ? '<br/><br/>' : ''
     }${capitalize(formatDate(now, 'PPPP', true) || '')} kl. ${formatDate(
       now,
-      Constants.TIME_FORMAT,
+      constants.TIME_FORMAT,
     )} - ${user?.name} ${user?.title}, ${
       user?.institution?.name
     }<br/>Ástæða: ${reason}`
@@ -588,7 +588,7 @@ export const SignedVerdictOverview: React.FC = () => {
       />
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={Constants.CASE_LIST_ROUTE}
+          previousUrl={constants.CASE_LIST_ROUTE}
           hideNextButton={
             user?.role !== UserRole.PROSECUTOR ||
             workingCase.decision ===

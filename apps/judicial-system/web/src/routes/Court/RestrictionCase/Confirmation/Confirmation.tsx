@@ -32,7 +32,7 @@ import {
   rcConfirmation as m,
   titles,
 } from '@island.is/judicial-system-web/messages'
-import * as Constants from '@island.is/judicial-system/consts'
+import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 
 export const Confirmation: React.FC = () => {
@@ -127,8 +127,8 @@ export const Confirmation: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${Constants.COURT_RECORD_ROUTE}/${workingCase.id}`}
-          nextUrl={Constants.CASE_LIST_ROUTE}
+          previousUrl={`${constants.COURT_RECORD_ROUTE}/${workingCase.id}`}
+          nextUrl={constants.CASE_LIST_ROUTE}
           nextButtonText={formatMessage(
             workingCase.decision === CaseDecision.ACCEPTING
               ? m.footer.accepting.continueButtonText

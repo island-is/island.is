@@ -1,4 +1,4 @@
-import { Case, CaseDecision, UserRole } from '@island.is/judicial-system/types'
+import { Case, UserRole } from '@island.is/judicial-system/types'
 import { IC_CONFIRMATION_ROUTE } from '@island.is/judicial-system/consts'
 
 import { makeInvestigationCase, intercept } from '../../../utils'

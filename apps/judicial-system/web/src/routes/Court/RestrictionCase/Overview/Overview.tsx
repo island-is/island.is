@@ -48,7 +48,7 @@ import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-w
 import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
-import * as Constants from '@island.is/judicial-system/consts'
+import * as constants from '@island.is/judicial-system/consts'
 
 import DraftConclusionModal from '../../SharedComponents/DraftConclusionModal/DraftConclusionModal'
 
@@ -156,7 +156,7 @@ export const JudgeOverview: React.FC = () => {
                     '',
                 )} eftir kl. ${formatDate(
                   workingCase.requestedCourtDate,
-                  Constants.TIME_FORMAT,
+                  constants.TIME_FORMAT,
                 )}`,
               },
               {
@@ -178,14 +178,14 @@ export const JudgeOverview: React.FC = () => {
                       ) ?? '',
                     )} kl. ${formatDate(
                       workingCase.parentCase.validToDate,
-                      Constants.TIME_FORMAT,
+                      constants.TIME_FORMAT,
                     )}`
                   : workingCase.arrestDate
                   ? `${capitalize(
                       formatDate(workingCase.arrestDate, 'PPPP', true) ?? '',
                     )} kl. ${formatDate(
                       workingCase.arrestDate,
-                      Constants.TIME_FORMAT,
+                      constants.TIME_FORMAT,
                     )}`
                   : 'Var ekki skráður',
               },
@@ -322,8 +322,8 @@ export const JudgeOverview: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${Constants.RECEPTION_AND_ASSIGNMENT_ROUTE}/${id}`}
-          nextUrl={`${Constants.HEARING_ARRANGEMENTS_ROUTE}/${id}`}
+          previousUrl={`${constants.RECEPTION_AND_ASSIGNMENT_ROUTE}/${id}`}
+          nextUrl={`${constants.HEARING_ARRANGEMENTS_ROUTE}/${id}`}
           nextIsDisabled={uploadState === UploadState.UPLOADING}
           nextButtonText={formatMessage(rcCourtOverview.continueButton.label)}
         />
