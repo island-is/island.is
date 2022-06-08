@@ -61,13 +61,17 @@ const HearingArrangements = () => {
 
   const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
   const [modalVisible, setModalVisible] = useState(false)
-  const [courtDate, setCourtDate] = useState<Case['courtDate']>(
-    workingCase.courtDate || workingCase.requestedCourtDate,
-  )
+  const [courtDate, setCourtDate] = useState(workingCase.courtDate)
   const [courtDateHasChanged, setCourtDateHasChanged] = useState(false)
 
   useEffect(() => {
     if (isCaseUpToDate && !initialAutoFillDone) {
+      if (!workingCase.courtDate) {
+        setCourtDate(workingCase.requestedCourtDate)
+
+        setInitialAutoFillDone(true)
+      }
+
       autofill(
         [
           {
