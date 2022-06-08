@@ -410,7 +410,7 @@ export const Draft: Form = buildForm({
       children: [
         buildMultiField({
           id: 'payment',
-          title: 'Greiðsla',
+          title: m.paymentSectionTitle,
           children: [
             buildCustomField({
               id: 'paymentCharge',
