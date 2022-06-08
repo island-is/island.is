@@ -24,12 +24,15 @@ export const dataSchema = z.object({
       .string()
       .min(7)
       .refine((v) => isValidPhoneNumber(v), { params: error.invalidValue }),
-    isPassportLost: z.array(z.string()),
+    isPassportLost: z.array(z.string()).optional(),
   }),
   service: z.object({
     type: z.enum([Services.REGULAR, Services.EXPRESS]),
     dropLocation: z.string().nonempty(),
     authentication: z.string().nonempty(),
+  }),
+  overview: z.object({
+    willBringPassport: z.array(z.string()).optional(),
   }),
 })
 

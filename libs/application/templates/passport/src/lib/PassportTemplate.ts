@@ -39,6 +39,11 @@ const PassportTemplate: ApplicationTemplate<
                 ),
               actions: [
                 {
+                  event: DefaultEvents.SUBMIT,
+                  name: m.confirm.defaultMessage,
+                  type: 'primary',
+                },
+                {
                   event: DefaultEvents.PAYMENT,
                   name: m.confirm.defaultMessage,
                   type: 'primary',
@@ -50,6 +55,7 @@ const PassportTemplate: ApplicationTemplate<
           ],
         },
         on: {
+          [DefaultEvents.SUBMIT]: { target: States.DRAFT },
           [DefaultEvents.PAYMENT]: { target: States.PAYMENT },
         },
       },

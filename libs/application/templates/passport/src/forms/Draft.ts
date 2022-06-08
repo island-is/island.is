@@ -25,7 +25,6 @@ import {
   Service,
   DistrictCommissionerAgencies,
   YES,
-  NO,
 } from '../lib/constants'
 import { DefaultEvents } from '@island.is/application/core'
 
@@ -139,7 +138,7 @@ export const Draft: Form = buildForm({
               title: '',
               large: false,
               backgroundColor: 'white',
-              defaultValue: [NO],
+              defaultValue: [],
               options: [
                 {
                   value: YES,
@@ -168,13 +167,15 @@ export const Draft: Form = buildForm({
               options: [
                 {
                   value: Services.REGULAR,
-                  label: m.regularService,
-                  subLabel: m.regularServiceSublabel.defaultMessage,
+                  label:
+                    m.serviceTypeRegular + ' - ' + m.serviceTypeRegularPrice,
+                  subLabel: m.serviceTypeRegularSublabel.defaultMessage,
                 },
                 {
                   value: Services.EXPRESS,
-                  label: m.expressService,
-                  subLabel: m.expressServiceSublabel.defaultMessage,
+                  label:
+                    m.serviceTypeExpress + ' - ' + m.serviceTypeExpressPrice,
+                  subLabel: m.serviceTypeExpressSublabel.defaultMessage,
                 },
               ],
             }),
@@ -368,11 +369,23 @@ export const Draft: Form = buildForm({
               title: '',
               large: false,
               backgroundColor: 'white',
-              defaultValue: [NO],
+              defaultValue: [],
               options: [
                 {
                   value: YES,
                   label: m.willBringPassport,
+                },
+              ],
+            }),
+            buildSubmitField({
+              id: 'confirmOverview',
+              placement: 'footer',
+              title: '',
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: m.confirm,
+                  type: 'primary',
                 },
               ],
             }),
@@ -386,30 +399,27 @@ export const Draft: Form = buildForm({
       children: [
         buildMultiField({
           id: 'payment',
-          title: 'Yfirlit yfir greiðslu',
+          title: 'Greiðsla',
           children: [
-            /*
-             * TODO Finish payment section when payment connection is ready
-             */
+            buildCustomField({
+              id: 'paymentCharge',
+              title: '',
+              component: 'PaymentCharge',
+            }),
             buildSubmitField({
               id: 'payment',
               placement: 'footer',
-              title: 'sick',
+              title: '',
               refetchApplicationAfterSubmit: true,
               actions: [
                 {
                   event: DefaultEvents.PAYMENT,
-                  name: 'Greiða',
+                  name: m.proceedToPayment,
                   type: 'primary',
                 },
               ],
             }),
           ],
-        }),
-        buildDescriptionField({
-          id: 'final',
-          title: 'Takk',
-          description: 'Umsókn þín er samþykkt',
         }),
       ],
     }),

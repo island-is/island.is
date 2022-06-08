@@ -33,7 +33,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.PASSPORT]: {
     slug: 'vegabref',
-    translation: 'pp.application',
+    translation: 'pa.application',
   },
   [ApplicationTypes.DRIVING_LICENSE]: {
     slug: 'okuskirteini',

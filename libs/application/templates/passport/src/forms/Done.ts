@@ -1,20 +1,36 @@
 import {
-  buildForm,
   buildDescriptionField,
+  buildDividerField,
+  buildForm,
+  buildKeyValueField,
+  buildMultiField,
   Form,
   FormModes,
 } from '@island.is/application/core'
+import { m } from '../lib/messages'
 
 export const Done: Form = buildForm({
-  id: 'ApprovedPassportApplication',
-  title: 'Samþykkt',
+  id: 'PassportApplicationComplete',
+  title: '',
   mode: FormModes.APPROVED,
   children: [
-    buildDescriptionField({
-      id: 'approved',
-      title: 'Til hamingju!',
-      description:
-        'Umsókn þín um nýtt vegabréf hefur verið samþykkt! Það er mikið gleðiefni.',
+    buildMultiField({
+      id: 'done',
+      title: m.applicationComplete,
+      description: m.applicationCompleteDescription,
+      children: [
+        buildKeyValueField({
+          label: m.applicationCompleteNumber,
+          value: 'xxxxxx',
+        }),
+        buildDividerField({ title: ' ' }),
+        buildDescriptionField({
+          id: 'nextStepsDescription',
+          title: m.applicationCompleteNextSteps,
+          titleVariant: 'h3',
+          description: m.applicationCompleteNextStepsDescription,
+        }),
+      ],
     }),
   ],
 })
