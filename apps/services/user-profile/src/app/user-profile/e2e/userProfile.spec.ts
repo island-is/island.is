@@ -22,6 +22,7 @@ const mockProfile = {
   email: 'email@example.com',
   mobilePhoneNumber: '9876543',
 }
+const { email, mobilePhoneNumber, ...mockProfileNoEmailNoPhone } = mockProfile
 
 const mockDeviceToken = {
   id: 'b3f99e48-57e6-4d30-a933-1304dad40c62',
@@ -54,26 +55,13 @@ beforeAll(async () => {
 
 describe('User profile API', () => {
   describe('POST /userProfile', () => {
-    it('POST /userProfile should register userProfile with no phonenumber', async () => {
+    it('POST /userProfile should register userProfile with no phonenumber or email', async () => {
       // Arrange
-      const { mobilePhoneNumber, ...sutProfile } = mockProfile
 
       // Act
       const response = await request(app.getHttpServer())
         .post('/userProfile')
-        .send(sutProfile)
-        .expect(201)
-      expect(response.body.id).toBeTruthy()
-    })
-
-    it('POST /userProfile should register userProfile with no email', async () => {
-      // Arrange
-      const { email, ...sutProfile } = mockProfile
-
-      // Act
-      const response = await request(app.getHttpServer())
-        .post('/userProfile')
-        .send(sutProfile)
+        .send(mockProfileNoEmailNoPhone)
         .expect(201)
       expect(response.body.id).toBeTruthy()
     })
@@ -91,13 +79,17 @@ describe('User profile API', () => {
       const verification = await EmailVerification.findOne({
         where: { nationalId: mockProfile.nationalId },
       })
+      const sutProfile = {
+        ...mockProfileNoEmailNoPhone,
+        email,
+      }
 
       const spy = jest
         .spyOn(emailService, 'sendEmail')
         .mockImplementation(() => Promise.resolve('user'))
       const response = await request(app.getHttpServer())
         .post('/userProfile')
-        .send({ ...mockProfile, emailCode: verification.hash })
+        .send({ ...sutProfile, emailCode: verification.hash })
         .expect(201)
       expect(spy).toHaveBeenCalled()
       expect(response.body.id).toBeTruthy()
@@ -117,12 +109,12 @@ describe('User profile API', () => {
       // Act
       await request(app.getHttpServer())
         .post('/userProfile')
-        .send(mockProfile)
+        .send(mockProfileNoEmailNoPhone)
         .expect(201)
 
       const conflictResponse = await request(app.getHttpServer())
         .post('/userProfile')
-        .send(mockProfile)
+        .send(mockProfileNoEmailNoPhone)
         .expect(409)
 
       // Assert
@@ -179,7 +171,9 @@ describe('User profile API', () => {
 
     it('GET /userProfile should return profile', async () => {
       // Arrange
-      await request(app.getHttpServer()).post('/userProfile').send(mockProfile)
+      await request(app.getHttpServer())
+        .post('/userProfile')
+        .send(mockProfileNoEmailNoPhone)
 
       // Act
       const getResponse = await request(app.getHttpServer())
@@ -192,9 +186,6 @@ describe('User profile API', () => {
       )
       expect(getResponse.body).toEqual(
         expect.objectContaining({ locale: mockProfile.locale }),
-      )
-      expect(getResponse.body).toEqual(
-        expect.objectContaining({ email: mockProfile.email }),
       )
     })
 
@@ -259,14 +250,11 @@ describe('User profile API', () => {
 
   describe('POST /emailVerification/:nationalId', () => {
     it('POST /emailVerification/:nationalId re-creates an email verfication in db', async () => {
+      const sutProfile = {
+        ...mockProfileNoEmailNoPhone,
+        email,
+      }
       // Arrange
-      const spy = jest
-        .spyOn(emailService, 'sendEmail')
-        .mockImplementation(() => Promise.resolve(''))
-      await request(app.getHttpServer())
-        .post('/userProfile')
-        .send(mockProfile)
-        .expect(201)
 
       await request(app.getHttpServer())
         .post('/emailVerification/')
@@ -280,6 +268,14 @@ describe('User profile API', () => {
         where: { nationalId: mockProfile.nationalId },
         order: [['created', 'DESC']],
       })
+
+      const spy = jest
+        .spyOn(emailService, 'sendEmail')
+        .mockImplementation(() => Promise.resolve(''))
+      await request(app.getHttpServer())
+        .post('/userProfile')
+        .send({ ...sutProfile, emailCode: oldVerification.hash })
+        .expect(201)
 
       // Act
       await request(app.getHttpServer())
@@ -321,7 +317,7 @@ describe('User profile API', () => {
       const invalidNationalId = '0987654321'
       await request(app.getHttpServer())
         .post('/userProfile')
-        .send(mockProfile)
+        .send(mockProfileNoEmailNoPhone)
         .expect(201)
 
       // Act
@@ -358,11 +354,6 @@ describe('User profile API', () => {
     it('POST /confirmEmail/ marks as confirmed', async () => {
       //Arrange
       await request(app.getHttpServer())
-        .post('/userProfile')
-        .send(mockProfile)
-        .expect(201)
-
-      await request(app.getHttpServer())
         .post('/emailVerification/')
         .send({
           nationalId: mockProfile.nationalId,
@@ -373,6 +364,16 @@ describe('User profile API', () => {
       const verification = await EmailVerification.findOne({
         where: { nationalId: mockProfile.nationalId },
       })
+
+      /**
+       * Omitting email as input to bypass the email confirmation within userprofile controller.
+       * Otherwise this test will always fail as confirmEmail/ would be called, and it will delete
+       * the verification before it can be checked by this test.
+       */
+      await request(app.getHttpServer())
+        .post('/userProfile')
+        .send({ ...mockProfileNoEmailNoPhone, emailCode: verification.hash })
+        .expect(201)
 
       // Act
       const response = await request(app.getHttpServer())
@@ -391,10 +392,6 @@ describe('User profile API', () => {
     it('POST /confirmEmail/ returns 403 forbidden for invalid authentication', async () => {
       //Arrange
       const invalidNationalId = '0987654321'
-      await request(app.getHttpServer())
-        .post('/userProfile')
-        .send(mockProfile)
-        .expect(201)
 
       await request(app.getHttpServer())
         .post('/emailVerification/')
@@ -407,6 +404,11 @@ describe('User profile API', () => {
       const verification = await EmailVerification.findOne({
         where: { nationalId: mockProfile.nationalId },
       })
+
+      await request(app.getHttpServer())
+        .post('/userProfile')
+        .send({ ...mockProfileNoEmailNoPhone, emailCode: verification.hash })
+        .expect(201)
 
       // Act
       await request(app.getHttpServer())
