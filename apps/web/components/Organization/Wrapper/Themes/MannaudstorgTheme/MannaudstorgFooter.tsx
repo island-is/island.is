@@ -7,34 +7,25 @@ import {
   Hidden,
   Text,
   Logo,
-  Stack,
-  LinkContext,
-  Link,
-  Inline,
   Hyphen,
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
+import { FooterItem } from '@island.is/web/graphql/schema'
+import { richText, SliceType } from '@island.is/island-ui/contentful'
+import { BLOCKS } from '@contentful/rich-text-types'
 
 import * as styles from './MannaudstorgFooter.css'
 
 interface Props {
   title: string
   logoSrc?: string
-  contactLink?: string
-  phone?: string
-  headerText?: string
-  linkText?: string
-  telephoneText?: string
+  footerItems: FooterItem[]
 }
 
 export const MannaudstorgFooter: FC<Props> = ({
   title,
   logoSrc,
-  contactLink,
-  phone,
-  headerText = 'Ertu með ábendingu eða spurningu?',
-  linkText = 'Sendu okkur línu',
-  telephoneText = 'Sími',
+  footerItems,
 }) => {
   const { activeLocale } = useI18n()
 
@@ -50,8 +41,8 @@ export const MannaudstorgFooter: FC<Props> = ({
                     display="flex"
                     flexDirection={['column', 'column', 'row']}
                     alignItems={['flexStart', 'flexStart', 'center']}
-                    paddingBottom={5}
-                    marginBottom={5}
+                    paddingBottom={3}
+                    marginBottom={3}
                     borderColor="blueberry300"
                     borderBottomWidth="standard"
                   >
@@ -68,65 +59,25 @@ export const MannaudstorgFooter: FC<Props> = ({
                   </Box>
                 </GridColumn>
               </GridRow>
-              {(contactLink || phone) && (
+              {footerItems.map((item) => (
                 <GridRow>
-                  <GridColumn
-                    span={['12/12', '12/12', '7/12']}
-                    paddingBottom={6}
-                  >
-                    <Stack space={2}>
-                      {contactLink && (
-                        <>
-                          <Text variant="h4" color="white">
-                            {headerText}
-                          </Text>
-                          <LinkContext.Provider
-                            value={{
-                              linkRenderer: (href, children) => (
-                                <Link
-                                  href={href}
-                                  color="white"
-                                  underline="normal"
-                                  underlineVisibility="always"
-                                >
-                                  {children}
-                                </Link>
-                              ),
-                            }}
+                  <GridColumn>
+                    {richText(item.serviceWebContent as SliceType[], {
+                      renderNode: {
+                        [BLOCKS.PARAGRAPH]: (_node, children) => (
+                          <Text
+                            marginBottom={2}
+                            fontWeight="regular"
+                            color="white"
                           >
-                            <Text color={'blue600'}>
-                              <a href={contactLink}>{linkText}</a>
-                            </Text>
-                          </LinkContext.Provider>
-                        </>
-                      )}
-                      {phone && (
-                        <LinkContext.Provider
-                          value={{
-                            linkRenderer: (href, children) => (
-                              <Link
-                                href={href}
-                                color="white"
-                                underline="normal"
-                                underlineVisibility="always"
-                              >
-                                {children}
-                              </Link>
-                            ),
-                          }}
-                        >
-                          <Inline space={1}>
-                            <Text color="white">{telephoneText}:</Text>
-                            <Text>
-                              <a href={`tel:${phone}`}>{phone}</a>
-                            </Text>
-                          </Inline>
-                        </LinkContext.Provider>
-                      )}
-                    </Stack>
+                            {children}
+                          </Text>
+                        ),
+                      },
+                    })}
                   </GridColumn>
                 </GridRow>
-              )}
+              ))}
             </GridColumn>
           </GridRow>
         </GridContainer>
