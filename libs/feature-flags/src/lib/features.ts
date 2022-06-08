@@ -10,7 +10,6 @@ export enum Features {
   companyDelegations = 'identityserverCompanyDelegations',
   legalGuardianDelegations = 'identityserverLegalGuardianDelegations',
   personalRepresentativeDelegations = 'identityserverPersonalRepresentative',
-  personalInformation = 'isServicePortalPersonalInformationModuleEnabled',
 
   // Application visibility flags
   exampleApplication = 'isExampleApplicationEnabled',
@@ -18,4 +17,5 @@ export enum Features {
   noDebtCertificate = 'applicationTemplateNoDebtCertificateEnabled',
   drivingInstructorRegistrations = 'isDrivingInstructorRegistrationsEnabled',
   drivingSchoolConfirmations = 'isDrivingSchoolConfirmationsEnabled',
+  financialStatementInao = 'financialStatementInao',
 }

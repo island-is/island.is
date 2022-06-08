@@ -232,6 +232,7 @@ describe('ApplicationController - Create', () => {
       expect(mockApplicationEventService.create).toHaveBeenCalledWith({
         applicationId: id,
         eventType: 'New',
+        emailSent: true,
       })
     })
 
@@ -313,7 +314,7 @@ describe('ApplicationController - Create', () => {
       employmentCustom: '',
       directTaxPayments: [],
       hasFetchedDirectTaxPayment: false,
-      applicationSystemId: '',
+      applicationSystemId: null,
       nationalId: user.nationalId,
       spouseHasFetchedDirectTaxPayment: false,
     }
