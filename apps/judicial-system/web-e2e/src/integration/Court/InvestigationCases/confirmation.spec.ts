@@ -7,6 +7,7 @@ import { makeInvestigationCase, intercept } from '../../../utils'
 
 describe(`${IC_CONFIRMATION_ROUTE}/:id`, () => {
   const ruling = faker.lorem.sentence()
+  const conclusion = faker.lorem.sentence()
 
   beforeEach(() => {
     cy.login(UserRole.JUDGE)
@@ -18,8 +19,7 @@ describe(`${IC_CONFIRMATION_ROUTE}/:id`, () => {
     const caseData = makeInvestigationCase()
     const caseDataAddition: Case = {
       ...caseData,
-      conclusion:
-        'Kærða, Donald Duck kt. 000000-0000, skal sæta gæsluvarðhaldi, þó ekki lengur en til miðvikudagsins 16. september 2020, kl. 19:50.',
+      conclusion,
       ruling,
     }
 
