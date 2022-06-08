@@ -17,5 +17,6 @@ import { FinancialStatementsInaoService } from './financialStatementsInao.servic
     FinancialStatementsInaoService,
     DataverseClient,
   ],
+  exports: [FinancialStatementsInaoService],
 })
 export class FinancialStatementsInaoModule {}
