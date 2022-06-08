@@ -65,6 +65,12 @@ export const Draft: Form = buildForm({
               subTitle: m.dataCollectionNationalRegistrySubtitle,
             }),
             buildDataProviderItem({
+              id: 'identityDoucment',
+              type: 'IdentityDocumentProvider',
+              title: m.dataCollectionIdentityDocumentTitle,
+              subTitle: m.dataCollectionIdentityDocumentSubtitle,
+            }),
+            buildDataProviderItem({
               id: 'payment',
               type: 'FeeInfoProvider',
               title: '',

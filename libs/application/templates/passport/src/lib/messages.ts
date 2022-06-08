@@ -49,6 +49,17 @@ export const m = defineMessages({
       'Til þess að auðvelda umsóknarferlið er gott að hafa fyllt út netfang og símanúmer á mínum síðum.',
     description: 'Some description',
   },
+  dataCollectionIdentityDocumentTitle: {
+    id: 'cr.application:dataCollection.identityDocumentTitle',
+    defaultMessage: 'Skilríkjaskrá',
+    description: 'Identity document provider title',
+  },
+  dataCollectionIdentityDocumentSubtitle: {
+    id: 'pa.application:dataCollection.identityDocumentSubtitle',
+    defaultMessage:
+      'Upplýsingar frá skilríkjaskrá hjá Þjóðskrá um einstaklinga úr þinni forsjá.',
+    description: 'Identity document provider subtitle',
+  },
   formName: {
     id: 'pa.application:form.name',
     defaultMessage: 'Umsókn um vegabréf',
