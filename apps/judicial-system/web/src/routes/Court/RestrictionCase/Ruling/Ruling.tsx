@@ -714,6 +714,7 @@ export const Ruling: React.FC = () => {
                       }),
                     )}
                     checked={workingCase.isCustodyIsolation}
+                    disabled={isModifyingRuling}
                     onChange={() => {
                       let conclusion = undefined
 
@@ -871,6 +872,7 @@ export const Ruling: React.FC = () => {
             caseId={workingCase.id}
             title={formatMessage(core.pdfButtonRuling)}
             pdfType="ruling"
+            useSigned={!isModifyingRuling}
           />
         </Box>
       </FormContentContainer>
