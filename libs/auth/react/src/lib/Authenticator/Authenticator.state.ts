@@ -43,7 +43,6 @@ export type AuthDispatch = Dispatch<Action>
 // Add dateOfBirth Date object to user profile
 // Add delegationType array to user profile
 const formatUser = (payload: User): User | null => {
-  const delegationType = payload.profile.delegationType
   const dateOfBirth = getBirthday(payload?.profile?.nationalId)
 
   return {
@@ -52,11 +51,6 @@ const formatUser = (payload: User): User | null => {
     profile: {
       ...payload.profile,
       dateOfBirth: dateOfBirth,
-      delegationType: Array.isArray(delegationType)
-        ? delegationType
-        : delegationType
-        ? [delegationType]
-        : undefined,
     },
   }
 }
