@@ -6,6 +6,7 @@ import {
   CustomTemplateFindQuery,
   StaticText,
 } from '@island.is/application/core'
+import { States } from '../lib/constants'
 import { m } from '../lib/messages'
 
 type ApplicationInfo = Omit<Application, 'externalData'>
@@ -26,7 +27,17 @@ export class ExistingApplicationProvider extends BasicDataProvider {
       .map<ApplicationInfo>(
         ({ externalData, ...partialApplication }) => partialApplication,
       )
-      .filter(({ id }) => id !== application.id)
+      // The casenumber is mapped to answers on application entry in the initial state (see service.syslumennOnEntry)
+      // It is therefore the case that a correctly formed application will have the casenumber
+      // in the answers. A malformed application will not be considered.
+
+      // The prerequisites states are not listed and will be pruned anyways
+      .filter(
+        ({ id, state, answers }) =>
+          id !== application.id &&
+          state !== States.PREREQUISITES &&
+          answers?.caseNumber === application.answers?.caseNumber,
+      )
       .sort(({ created: a }, { created: b }) => b.getTime() - a.getTime())
 
     return existingApplications
