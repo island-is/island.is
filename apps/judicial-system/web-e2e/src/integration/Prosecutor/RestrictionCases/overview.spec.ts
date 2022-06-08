@@ -22,6 +22,18 @@ describe(`${STEP_SIX_ROUTE}/:id`, () => {
     cy.visit(`${STEP_SIX_ROUTE}/test_id_stadfesta`)
   })
 
+  it('should let the user know if the assigned defender has viewed the case', () => {
+    const caseData = makeRestrictionCase()
+    const caseDataAddition: Case = {
+      ...caseData,
+      seenByDefender: '2020-09-16T19:50:08.033Z',
+    }
+
+    intercept(caseDataAddition)
+
+    cy.getByTestid('alertMessage').should('not.match', ':empty')
+  })
+
   it('should have a info panel about how to resend a case if the case has been received', () => {
     const caseDataAddition: Case = {
       ...caseData,

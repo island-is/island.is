@@ -128,8 +128,8 @@ export const Overview: React.FC = () => {
       />
       <FormContentContainer>
         {workingCase.state === CaseState.RECEIVED && (
-          <div
-            className={styles.resendInfoPanelContainer}
+          <Box
+            marginBottom={workingCase.seenByDefender ? 3 : 5}
             data-testid="rc-overview-info-panel"
           >
             <AlertMessage
@@ -137,7 +137,18 @@ export const Overview: React.FC = () => {
               message={formatMessage(rcOverview.receivedAlert.message)}
               type="info"
             />
-          </div>
+          </Box>
+        )}
+        {workingCase.seenByDefender && (
+          <Box marginBottom={5}>
+            <AlertMessage
+              title={formatMessage(rcOverview.seenByDefenderAlert.title)}
+              message={formatMessage(rcOverview.seenByDefenderAlert.text, {
+                when: formatDate(workingCase.seenByDefender, 'PPPp'),
+              })}
+              type="info"
+            />
+          </Box>
         )}
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
