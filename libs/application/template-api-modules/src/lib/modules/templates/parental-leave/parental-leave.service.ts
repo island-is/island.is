@@ -31,7 +31,6 @@ import {
   getRatio,
 } from './parental-leave.utils'
 import { apiConstants } from './constants'
-import { FamilyMemberResolver } from 'libs/api/domains/national-registry/src/lib/graphql'
 
 interface VMSTError {
   type: string
@@ -188,7 +187,7 @@ export class ParentalLeaveService {
       const numberOfDaysSpentAfterPeriod =
         numberOfDaysAlreadySpent + periodLength
 
-      if (numberOfDaysSpentAfterPeriod > maximumDaysToSpend) {
+        if (numberOfDaysSpentAfterPeriod > maximumDaysToSpend) {
         throw new Error(
           `Period from ${period.startDate} to ${period.endDate} will exceed rights (${numberOfDaysSpentAfterPeriod} > ${maximumDaysToSpend})`,
         )
@@ -198,7 +197,6 @@ export class ParentalLeaveService {
         numberOfDaysAlreadySpent > maximumPersonalDaysToSpend
       const willStartToUseTransferredRightsWithPeriod =
         numberOfDaysSpentAfterPeriod > maximumPersonalDaysToSpend
-
       if (
         !isUsingTransferredRights &&
         !willStartToUseTransferredRightsWithPeriod
@@ -334,7 +332,7 @@ export class ParentalLeaveService {
         application,
         periods,
         attachments,
-        'FALSE' // put false in testData as this is not dummy application
+        'FALSE', // put false in testData as this is not dummy application
       )
 
       const response = await this.parentalLeaveApi.parentalLeaveSetParentalLeave(
@@ -387,19 +385,21 @@ export class ParentalLeaveService {
       application,
       periods,
       attachments,
-      'TRUE'
+      'TRUE',
     )
 
     console.log('dummy API request: ', parentalLeaveDTO)
 
     // call SetParentalLeave API with testData: TRUE as this is a dummy application 
     // for validation purposes
-    // const response = await this.parentalLeaveApi.parentalLeaveSetParentalLeave(
-    //   {
-    //     nationalRegistryId,
-    //     parentalLeave: parentalLeaveDTO,
-    //   },
-    // )
+    const response = await this.parentalLeaveApi.parentalLeaveSetParentalLeave(
+      {
+        nationalRegistryId,
+        parentalLeave: parentalLeaveDTO,
+      },
+    )
+
+    console.log('dummy API response: ', response)
 
     return
   }
