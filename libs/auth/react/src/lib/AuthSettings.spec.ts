@@ -12,6 +12,7 @@ describe('mergeAuthSettings', () => {
     expect(settings).toMatchInlineSnapshot(`
       Object {
         "authority": "https://innskra.island.is",
+        "automaticSilentRenew": false,
         "baseUrl": "http://localhost",
         "checkSessionPath": "/connect/sessioninfo",
         "client_id": "test-client",

@@ -46,3 +46,22 @@ export const ValueLine: FC<{
     </>
   )
 }
+
+export const ValueList: FC<{
+  label: string | MessageDescriptor
+  list: string[]
+}> = ({ label, list }) => {
+  const { formatMessage } = useLocale()
+
+  return (
+    <>
+      <Text variant="h5">{formatMessage(label)}</Text>
+      {list?.map((value, index) => (
+        <Text key={`${index}-value-list`}>{value}</Text>
+      ))}
+      <Box paddingY={3}>
+        <Divider />
+      </Box>
+    </>
+  )
+}
