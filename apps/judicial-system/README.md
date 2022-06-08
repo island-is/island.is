@@ -176,7 +176,8 @@ yarn nx e2e judicial-system-web-e2e --watch
 
 ### Message Extraction from Contentful
 
-Running yarn nx extract-strings judicial-system-{namespace} in the root folder /island.is will extract messages from the project and create or update a Namespace entry in Contentful.
+Running `yarn nx extract-strings judicial-system-{namespace}` in the root folder `/island.is` will extract messages from the project and create or update a Namespace entry in Contentful.
+Make sure you have the env `CONTENTFUL_ENVIRONMENT=test` to update the strings against `dev` and `staging` and `CONTENTFUL_ENVIRONMENT=master` to update against `prod`.
 
 #### Example for namespaces in web:
 
