@@ -16,6 +16,12 @@ const FileSchema = z.object({
   url: z.string().optional(),
 })
 
+const Bullet = z.object({
+  bullet: z.string(),
+  link: z.string(),
+  linkText: z.string(),
+})
+
 // Validation on optional field: https://github.com/colinhacks/zod/issues/310
 const optionalEmail = z.string().email().optional().or(z.literal(''))
 
@@ -93,6 +99,8 @@ export const DataProtectionComplaintSchema = z.object({
     city: z.string().refine((x) => !!x, { params: error.required }),
     email: optionalEmail,
     phoneNumber: z.string().optional(),
+    contactName: z.string().optional(),
+    contactEmail: z.string().optional(),
   }),
   commissions: z.object({
     documents: z.array(FileSchema).nonempty(),
@@ -113,7 +121,9 @@ export const DataProtectionComplaintSchema = z.object({
       address: z.string().refine((x) => !!x, { params: error.required }),
       nationalId: z.string().optional(),
       operatesWithinEurope: z.enum([YES, NO]),
-      countryOfOperation: z.string().optional(),
+      countryOfOperation: z
+        .string()
+        .refine((x) => !!x, { params: error.required }),
     }),
   ),
   subjectOfComplaint: z.object({
@@ -133,6 +143,31 @@ export const DataProtectionComplaintSchema = z.object({
       }),
 
     documents: z.array(FileSchema),
+  }),
+  overview: z.object({
+    externalDataMessage: z.object({
+      title: z.string(),
+      subtitle: z.string(),
+      description: z.string(),
+      nationalRegistryTitle: z.string(),
+      nationalRegistryDescription: z.string(),
+      userProfileTitle: z.string(),
+      userProfileDescription: z.string(),
+      checkboxText: z.string(),
+    }),
+    informationMessage: z.object({
+      title: z.string(),
+      bullets: z.object({
+        bulletOne: Bullet,
+        bulletTwo: Bullet,
+        bulletThree: Bullet,
+        bulletFour: Bullet,
+        bulletFive: Bullet,
+        bulletSix: Bullet,
+        bulletSeven: Bullet,
+        bulletEight: Bullet,
+      }),
+    }),
   }),
 })
 

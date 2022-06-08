@@ -18,4 +18,5 @@ export enum Features {
   drivingInstructorRegistrations = 'isDrivingInstructorRegistrationsEnabled',
   drivingSchoolConfirmations = 'isDrivingSchoolConfirmationsEnabled',
   passportApplication = 'isPassportApplicationEnabled',
+  financialStatementInao = 'financialStatementInao',
 }

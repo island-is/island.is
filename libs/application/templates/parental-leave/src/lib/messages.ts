@@ -1028,6 +1028,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Netfang vinnuveitanda',
       description: 'Employer email',
     },
+    phoneNumber: {
+      id: 'pl.application:employer.phone.number',
+      defaultMessage: 'Farsími vinnuveitanda (mælum með skráningu)',
+      description: 'Employer’s mobile phone (we recommend registration)',
+    },
     emailConfirm: {
       id: 'pl.application:employer.email.confirm',
       defaultMessage: 'Staðfestu netfang vinnuveitanda',

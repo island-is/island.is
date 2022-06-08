@@ -90,11 +90,6 @@ describe(`${OVERVIEW_ROUTE}/:id`, () => {
     cy.getByTestid('modal')
       .getByTestid('ruling')
       .contains('héraðsdómari kveður upp úrskurð þennan.')
-      .clear()
-    cy.clickOutside()
-    cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
-    cy.getByTestid('ruling').type('lorem')
-    cy.getByTestid('inputErrorMessage').should('not.exist')
   })
 
   it('should navigate to the next step when all input data is valid and the continue button is clicked', () => {
