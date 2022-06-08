@@ -18,6 +18,7 @@ judicial-system-api:
     AUDIT_TRAIL_USE_GENERIC_LOGGER: 'false'
     AUTH_AUDIENCE: 'rettarvorslugatt.island.is'
     BACKEND_URL: 'http://web-judicial-system-backend'
+    CONTENTFUL_ENVIRONMENT: 'master'
     CONTENTFUL_HOST: 'cdn.contentful.com'
     HIDDEN_FEATURES: 'MODIFY_RULING'
     NODE_OPTIONS: '--max-old-space-size=208'
