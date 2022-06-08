@@ -43,12 +43,17 @@ describe(`${OVERVIEW_ROUTE}/:id`, () => {
       defenderEmail,
       defenderPhoneNumber,
       sessionArrangements: SessionArrangements.ALL_PRESENT_SPOKESPERSON,
+      seenByDefender: '2020-09-16T19:50:08.033Z',
     }
 
     cy.stubAPIResponses()
     cy.visit(`${OVERVIEW_ROUTE}/test_id_stadfest`)
 
     intercept(caseDataAddition)
+  })
+
+  it('should let the user know if the assigned defender has viewed the case', () => {
+    cy.getByTestid('alertMessage').should('not.match', ':empty')
   })
 
   it('should have an overview of the current case', () => {
