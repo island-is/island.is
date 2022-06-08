@@ -167,6 +167,17 @@ export const Applications: FC = () => {
                 refetch={refetch}
               />
             )}
+
+            <Box
+              marginTop={5}
+              marginBottom={5}
+              display="flex"
+              justifyContent="flexEnd"
+            >
+              <Button onClick={createApplication} data-testid="new">
+                {formatMessage(coreMessages.newApplication)}
+              </Button>
+            </Box>
           </Box>
         )}
       </GridContainer>

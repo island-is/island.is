@@ -327,6 +327,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
             onClick={cta.onClick}
             icon={cta.icon}
             size={cta.size}
+            data-testid='continue'
           >
             {cta.label}
           </Button>
