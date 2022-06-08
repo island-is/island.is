@@ -3,7 +3,6 @@ import { IdTokenClaims, User as OidcUser } from 'oidc-client-ts'
 interface IdsAuthClaims {
   nationalId: string
   name: string
-  nat: string
   idp: string
   actor?: {
     nationalId: string

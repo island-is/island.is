@@ -73,4 +73,11 @@ export class ApplicationEventModel extends Model<ApplicationEvent> {
   })
   @ApiProperty()
   staffNationalId?: string
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+  })
+  @ApiProperty()
+  emailSent: boolean
 }
