@@ -340,6 +340,7 @@ const AcceptModal = ({
           placeholder="Sláðu inn skýringu ef þarf"
           id="comment"
           name="comment"
+          textarea
           value={state.comment}
           onChange={(e) => {
             setState({
