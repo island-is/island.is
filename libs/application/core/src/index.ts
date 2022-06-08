@@ -25,3 +25,5 @@ export * from './lib/constants'
 
 export * from './validation/validators'
 export * from './validation/AnswerValidator'
+
+export * from './types/providerModels/NationalRegistryUser'

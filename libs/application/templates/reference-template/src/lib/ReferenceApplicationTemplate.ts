@@ -10,6 +10,7 @@ import {
   ApplicationConfigurations,
   SharedDataProviders,
   PerformActionResult,
+  NationalRegistryUser,
 } from '@island.is/application/core'
 import * as z from 'zod'
 import * as kennitala from 'kennitala'
@@ -19,7 +20,7 @@ import { Features } from '@island.is/feature-flags'
 import { ProblemType } from '@island.is/shared/problem'
 import { ApiActions, ReferenceApplicationDataProviders } from '../shared'
 import { m } from './messages'
-import { DataSync } from 'aws-sdk'
+
 const States = {
   prerequisites: 'prerequisites',
   draft: 'draft',
@@ -127,27 +128,29 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
                   useMockData: (application: Application) => {
                     return false
                   },
+                  errorReasonHandler: (data: PerformActionResult) => {
+                    if (data.success) {
+                      const s = data.response as NationalRegistryUser
+
+                      if (s.age < 18) {
+                        return {
+                          reason: {
+                            summary:
+                              'Þú hefur ekki náð 18 ára aldri. Vinsamlegast hinkrið í nokkur ár.',
+                            title: 'Þessi umsókn er ekki við hæfi ungra barna',
+                          },
+                          problemType: ProblemType.VALIDATION_FAILED,
+                          statusCode: 400,
+                        }
+                      }
+                    }
+                  },
                   order: 3,
                 },
                 {
                   ...ReferenceApplicationDataProviders.referenceProvider,
                   order: 1,
-                  useMockData: true,
-                  exceptionHandler: (data: PerformActionResult) => {
-                    if (data.success) {
-                      const s = data.response
-                      return {
-                        reason: {
-                          message: 'no fives please',
-                          tite: 'Þú hefur valið 5',
-                        },
-                        ProblemType: ProblemTypes.INVALID_DATA,
-                        StatusCode: 404,
-                      }
-                    }
-                  },
                 },
-
                 {
                   ...ReferenceApplicationDataProviders.anotherReferenceProvider,
                   useMockData: true,

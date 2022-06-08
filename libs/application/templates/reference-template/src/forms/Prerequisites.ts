@@ -29,30 +29,26 @@ export const Prerequisites: Form = buildForm({
           title: 'Utanaðkomandi gögn',
           dataProviders: [
             buildDataProviderItem({
-              id: 'anotherReference',
-              type: SharedDataProviders.userProfileProvider.dataProviderType,
+              id: 'approveDataProvider',
+              provider: SharedDataProviders.userProfileProvider,
               title: 'getAnotherReferenceData',
               subTitle: 'Another Refernence Data',
             }),
             buildDataProviderItem({
-              id: 'nationalRegistryFamily',
-              type:
-                SharedDataProviders.familyRelationsProvider.dataProviderType,
+              id: 'approveDataProvider1',
+              provider: SharedDataProviders.familyRelationsProvider,
               title: 'Upplýsingar um fjölskyldumeðlimi',
               subTitle: 'Upplýsingar um fjölskyldumeðlimi upp úr Þjóðskrá.',
             }),
             buildDataProviderItem({
-              id: 'reference',
-              type:
-                ReferenceApplicationDataProviders.referenceProvider
-                  .dataProviderType,
+              id: 'approveDataProvider2',
+              provider: ReferenceApplicationDataProviders.referenceProvider,
               title: 'getReferenceData',
               subTitle: 'Reference data',
             }),
             buildDataProviderItem({
-              id: 'nationalRegistry',
-              type:
-                SharedDataProviders.nationalRegistryProvider.dataProviderType,
+              id: 'approveDataProvider3',
+              provider: SharedDataProviders.nationalRegistryProvider,
               title: 'Þjóðskrá',
               subTitle: 'Upplýsingar um þig í Þjóðskrá.',
             }),

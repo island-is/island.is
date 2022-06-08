@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../..'
 import { TemplateApiModuleActionProps } from '../../../../types'
-import { NationalRegistryUser } from './models/nationalRegistryUser'
 import * as kennitala from 'kennitala'
 
 import { ProblemError } from '@island.is/nest/problem'
@@ -10,6 +9,7 @@ import {
   NationalRegistryApi,
   ISLFjolskyldan,
 } from '@island.is/clients/national-registry-v1'
+import { NationalRegistryUser } from '@island.is/application/core'
 
 export enum FamilyRelation {
   CHILD = 'child',

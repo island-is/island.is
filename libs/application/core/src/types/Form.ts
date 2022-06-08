@@ -128,6 +128,20 @@ export interface DataProviderItem {
   readonly source?: string
 }
 
+export interface DataProviderBuilderItem {
+  id: string
+  type?: string
+  title: StaticText
+  subTitle?: StaticText
+  source?: string
+  provider?: Provider
+}
+export interface Provider {
+  externalDataId?: string
+  apiModuleAction: string
+  dataProviderType?: string
+}
+
 export type DataProviderPermissionItem = Omit<
   DataProviderItem,
   'type' | 'source' | 'parameters'

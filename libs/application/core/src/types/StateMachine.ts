@@ -75,13 +75,13 @@ export interface ApplicationTemplateAPIAction {
   // Shared data providers namspace
   namespace?: string
 
-  //Error messages to be displayed to the user
+  //Error messages to be displayed to the user. Maps to the ProblemType enum thrown by the Service
   errorReasons?: ErrorReasonException[]
 
-  //Conditonal error message for to override a valid response
-  exceptionHandler?: (
+  //Conditonally  return an error reason from a valid response from the provider
+  errorReasonHandler?: (
     result: PerformActionResult,
-  ) => never | ErrorReasonException
+  ) => ErrorReasonException | void
 }
 
 export interface ErrorReasonException {

@@ -167,6 +167,21 @@ export class TemplateApiActionRunner {
       }
     }
 
+    if (typeof action.errorReasonHandler === 'function') {
+      const exceptionHandlerResult = action.errorReasonHandler(actionResult)
+      if (exceptionHandlerResult) {
+        return {
+          [externalDataId || apiModuleAction]: {
+            status: 'failure',
+            date: new Date(),
+            data: {},
+            reason: exceptionHandlerResult.reason,
+            statusCode: exceptionHandlerResult.statusCode,
+          },
+        }
+      }
+    }
+
     return {
       [externalDataId || apiModuleAction]: {
         status: actionResult.success ? 'success' : 'failure',
