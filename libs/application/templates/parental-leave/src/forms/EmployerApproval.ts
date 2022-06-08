@@ -16,7 +16,6 @@ import Logo from '../assets/Logo'
 import {
   employerFormMessages,
   otherParentApprovalFormMessages,
-  parentalLeaveFormMessages,
 } from '../lib/messages'
 import { currentDateStartTime } from '../lib/parentalLeaveTemplateUtils'
 import { getApplicationAnswers } from '../lib/parentalLeaveUtils'
@@ -54,6 +53,59 @@ export const EmployerApproval: Form = buildForm({
             buildMultiField({
               id: 'multi',
               title: employerFormMessages.reviewMultiTitle,
+              condition: (answers) =>
+            new Date(
+              getApplicationAnswers(answers).periods[0].startDate,
+            ).getTime() < currentDateStartTime(),
+              children: [
+                buildCustomField(
+                  {
+                    id: 'timeline',
+                    title: employerFormMessages.reviewMultiTitle,
+                    component: 'PeriodsRepeater',
+                  },
+                  {
+                    editable: false,
+                    showDescription: false,
+                  },
+                ),
+                buildCustomField({
+                  id: 'unionAndPensionInfo',
+                  title: '',
+                  component: 'EmployerApprovalExtraInformation',
+                }),
+                buildDescriptionField({
+                  id: 'final',
+                  title: otherParentApprovalFormMessages.warning,
+                  titleVariant: 'h4',
+                  description:
+                    otherParentApprovalFormMessages.startDateInThePast,
+                  condition: (answers) =>
+                    new Date(
+                      getApplicationAnswers(answers).periods[0].startDate,
+                    ).getTime() < currentDateStartTime(),
+                }),
+                buildSubmitField({
+                  id: 'submit',
+                  title: coreMessages.buttonSubmit,
+                  placement: 'footer',
+                  actions: [
+                    {
+                      name: employerFormMessages.buttonReject,
+                      type: 'subtle',
+                      event: 'REJECT',
+                    },
+                  ],
+                }),
+              ],
+            }),
+            buildMultiField({
+              id: 'multi',
+              title: employerFormMessages.reviewMultiTitle,
+              condition: (answers) =>
+            new Date(
+              getApplicationAnswers(answers).periods[0].startDate,
+            ).getTime() >= currentDateStartTime(),
               children: [
                 buildCustomField(
                   {
@@ -103,35 +155,40 @@ export const EmployerApproval: Form = buildForm({
             }),
           ],
         }),
-        buildSubSection({
-          title: '',
-          condition: (answers) =>
-            new Date(
-              getApplicationAnswers(answers).periods[0].startDate,
-            ).getTime() < currentDateStartTime(),
-          children: [
-            buildSubmitField({
-              id: 'reject',
-              placement: 'footer',
-              title: parentalLeaveFormMessages.finalScreen.startDateInThePast,
-              actions: [],
-            }),
-          ],
+        buildDescriptionField({
+          id: 'final.approve',
+          title: coreMessages.thanks,
+          description: coreMessages.thanksDescription,
         }),
-        buildSubSection({
-          title: '',
-          condition: (answers) =>
-            new Date(
-              getApplicationAnswers(answers).periods[0].startDate,
-            ).getTime() >= currentDateStartTime(),
-          children: [
-            buildDescriptionField({
-              id: 'final.approve',
-              title: coreMessages.thanks,
-              description: coreMessages.thanksDescription,
-            }),
-          ],
-        }),
+        // buildSubSection({
+        //   title: '',
+        //   condition: (answers) =>
+        //     new Date(
+        //       getApplicationAnswers(answers).periods[0].startDate,
+        //     ).getTime() < currentDateStartTime(),
+        //   children: [
+        //     buildSubmitField({
+        //       id: 'reject',
+        //       placement: 'footer',
+        //       title: parentalLeaveFormMessages.finalScreen.startDateInThePast,
+        //       actions: [],
+        //     }),
+        //   ],
+        // }),
+        // buildSubSection({
+        //   title: '',
+        //   condition: (answers) =>
+        //     new Date(
+        //       getApplicationAnswers(answers).periods[0].startDate,
+        //     ).getTime() >= currentDateStartTime(),
+        //   children: [
+        //     buildDescriptionField({
+        //       id: 'final.approve',
+        //       title: coreMessages.thanks,
+        //       description: coreMessages.thanksDescription,
+        //     }),
+        //   ],
+        // }),
       ],
     }),
   ],
