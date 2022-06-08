@@ -8,7 +8,7 @@ import {
 } from '@island.is/application/core'
 
 export const payment: Form = buildForm({
-  id: 'DrivingLicenseApplicationPaymentForm',
+  id: 'PassportApplicationPaymentForm',
   title: '',
   mode: FormModes.APPLYING,
   renderLastScreenButton: false,
@@ -18,7 +18,7 @@ export const payment: Form = buildForm({
       title: m.payment,
       children: [
         buildCustomField({
-          component: 'PaymentPendingScreen',
+          component: 'PaymentPending',
           id: 'paymentPendingField',
           title: '',
         }),

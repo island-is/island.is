@@ -78,7 +78,7 @@ const PassportTemplate: ApplicationTemplate<
                   Promise.resolve(val.payment),
                 ),
               actions: [
-                { event: DefaultEvents.SUBMIT, name: 'Panta', type: 'primary' },
+                { event: DefaultEvents.SUBMIT, name: '', type: 'primary' },
               ],
               write: 'all',
             },

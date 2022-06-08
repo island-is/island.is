@@ -27,6 +27,7 @@ import {
   YES,
 } from '../lib/constants'
 import { DefaultEvents } from '@island.is/application/core'
+import { formatPhoneNumber } from '@island.is/application/ui-components'
 
 export const Draft: Form = buildForm({
   id: 'PassportApplicationDraftForm',
@@ -168,13 +169,17 @@ export const Draft: Form = buildForm({
                 {
                   value: Services.REGULAR,
                   label:
-                    m.serviceTypeRegular + ' - ' + m.serviceTypeRegularPrice,
+                    m.serviceTypeRegular.defaultMessage +
+                    ' - ' +
+                    m.serviceTypeRegularPrice.defaultMessage,
                   subLabel: m.serviceTypeRegularSublabel.defaultMessage,
                 },
                 {
                   value: Services.EXPRESS,
                   label:
-                    m.serviceTypeExpress + ' - ' + m.serviceTypeExpressPrice,
+                    m.serviceTypeExpress.defaultMessage +
+                    ' - ' +
+                    m.serviceTypeExpressPrice.defaultMessage,
                   subLabel: m.serviceTypeExpressSublabel.defaultMessage,
                 },
               ],
@@ -221,7 +226,7 @@ export const Draft: Form = buildForm({
             buildCustomField({
               id: 'service.warning',
               title: '',
-              component: 'AuthenticationWarning',
+              component: 'AuthWarning',
               condition: (answers) =>
                 (answers.service as Service)?.authentication === 'none',
             }),
@@ -285,10 +290,13 @@ export const Draft: Form = buildForm({
             buildKeyValueField({
               label: m.phoneNumber,
               width: 'half',
-              value: (application: Application) =>
-                (application.answers.personalInfo as {
+              value: (application: Application) => {
+                const phone = (application.answers.personalInfo as {
                   phoneNumber?: string
-                })?.phoneNumber,
+                })?.phoneNumber
+
+                return formatPhoneNumber(phone as string)
+              },
             }),
             buildDescriptionField({
               id: 'overview.space2',
@@ -325,7 +333,10 @@ export const Draft: Form = buildForm({
               label: m.serviceTypeTitle,
               width: 'half',
               value: (application: Application) =>
-                (application.answers.service as Service).type,
+                (application.answers.service as Service).type ===
+                Services.REGULAR
+                  ? m.serviceTypeRegular
+                  : m.serviceTypeExpress,
             }),
             buildKeyValueField({
               label: m.dropLocation,

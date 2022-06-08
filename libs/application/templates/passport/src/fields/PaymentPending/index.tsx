@@ -1,13 +1,13 @@
 import React, { FC } from 'react'
 import { DefaultEvents, FieldBaseProps } from '@island.is/application/core'
-import { PaymentPending } from '@island.is/application/ui-components'
+import { PaymentPending as Payment } from '@island.is/application/ui-components'
 
-export const PaymentPendingScreen: FC<FieldBaseProps> = ({
+export const PaymentPending: FC<FieldBaseProps> = ({
   application,
   refetch,
 }) => {
   return (
-    <PaymentPending
+    <Payment
       application={application}
       refetch={refetch}
       targetEvent={DefaultEvents.SUBMIT}

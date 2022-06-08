@@ -3,7 +3,7 @@ import { AlertBanner, Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 
-const AuthenticationWarning = () => {
+export const AuthWarning = () => {
   const { formatMessage } = useLocale()
 
   return (
@@ -15,5 +15,3 @@ const AuthenticationWarning = () => {
     </Box>
   )
 }
-
-export default AuthenticationWarning
