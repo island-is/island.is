@@ -17,6 +17,7 @@ import { useDeleteApplication } from './hooks/useDeleteApplication'
 import { EstateRegistrant } from '@island.is/clients/syslumenn'
 import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
+import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
 
 enum ACTION {
   EXISTING = 'existing',
@@ -38,6 +39,10 @@ export const LinkExistingApplication: FC<FieldBaseProps> = ({
   const history = useHistory()
   const [continueConf, setContinueConf] = useState<IContinueConf>()
   const [updateApplication, { loading }] = useMutation(UPDATE_APPLICATION)
+  const [
+    updateApplicationExternalData,
+    { loading: _externalDataLoading },
+  ] = useMutation(UPDATE_APPLICATION_EXTERNAL_DATA)
 
   const { deleteApplication, loading: deleteLoading } = useDeleteApplication()
 
@@ -77,8 +82,33 @@ export const LinkExistingApplication: FC<FieldBaseProps> = ({
           case ACTION.EXISTING:
             // eslint-disable-next-line
             {
-              // delete current application
+              const navigationApplicationId = continueConf.url.split('/').pop()
+              // Delete other casenumber applications
+              // These are assigned to the same caseNumber in the ExistingApplicationProvider
+              for (const existingApplication of existing) {
+                if (existingApplication.id !== navigationApplicationId) {
+                  await deleteApplication(existingApplication.id)
+                }
+              }
+
               await deleteApplication(application.id)
+
+              // Upon deleting other applications we re-apply the
+              // ExistingApplication provider to the
+              await updateApplicationExternalData({
+                variables: {
+                  input: {
+                    id: navigationApplicationId,
+                    dataProviders: [
+                      {
+                        id: 'existingApplication',
+                        type: 'ExistingApplicationProvider',
+                      },
+                    ],
+                  },
+                  locale,
+                },
+              })
               if (!deleteLoading) {
                 // push to existing application
                 history.push(`../../${continueConf.url}`)
