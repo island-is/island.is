@@ -165,11 +165,7 @@ export class VehiclesService {
           newRegistrationDate: data.newregdate ?? data.firstregdate,
           vehicleGroup: data.techincal?.vehgroup,
           color: data.color,
-          reggroup: data.plates
-            ? data.plates.length > 0
-              ? data.plates[0].reggroup
-              : null
-            : null,
+          reggroup: data.plates?.[0].reggroup ?? null,
           reggroupName: data.plates?.[0]?.reggroupname ?? null,
           passengers: data.techincal?.pass,
           useGroup: data.usegroup,
@@ -192,9 +188,7 @@ export class VehiclesService {
           date: newestInspection?.date,
           result: newestInspection?.result,
           nextInspectionDate: data.nextinspectiondate,
-          lastInspectionDate: data.inspections
-            ? data.inspections[0]?.date
-            : null,
+          lastInspectionDate: data.inspections?.[0]?.date ?? null,
           insuranceStatus: data.insurancestatus,
           mortages: data?.fees?.hasEncumbrances,
           carTax: data?.fees?.gjold?.bifreidagjald,
