@@ -1,12 +1,18 @@
 import { LoggingModule } from '@island.is/logging'
-import { Module } from '@nestjs/common'
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common'
 import { AppController } from './app.controller'
+import { AppMiddleware } from './app.middleware'
 import { AppRepository } from './app.repository'
 import { AppService } from './app.service'
+import { HealthController } from './health.controller'
 
 @Module({
   imports: [LoggingModule],
-  controllers: [AppController],
+  controllers: [AppController, HealthController],
   providers: [AppService, AppRepository],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(AppMiddleware).forRoutes('entry-created')
+  }
+}
