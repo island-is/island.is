@@ -149,7 +149,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               target: States.OTHER_PARENT_APPROVAL,
               cond: needsOtherParentApproval,
             },
-            { target: States.EMPLOYER_WAITING_TO_ASSIGN, cond: hasEmployer },
+            { target: States.EMPLOYER_WAITING_TO_ASSIGN,
+              cond: hasEmployer,
+            },
             {
               target: States.VINNUMALASTOFNUN_APPROVAL,
               cond: startDateInTheFuture,
@@ -481,6 +483,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             },
             {
               target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
+              cond: startDateInTheFuture
             },
           ],
           [DefaultEvents.ABORT]: [
@@ -546,6 +549,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           [DefaultEvents.APPROVE]: [
             {
               target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
+              cond: startDateInTheFuture
             },
           ],
           [DefaultEvents.REJECT]: { target: States.EMPLOYER_EDITS_ACTION },
