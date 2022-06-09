@@ -32,6 +32,8 @@ export interface ContactInfo {
   phone: string
   postalCode: string
   city: string
+  contactName: string
+  contactEmail: string
 }
 
 export interface ApplicationMessages {

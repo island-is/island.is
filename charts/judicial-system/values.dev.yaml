@@ -440,6 +440,7 @@ judicial-system-xrd-api:
   secrets:
     BACKEND_ACCESS_TOKEN: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    ERROR_EVENT_URL: '/k8s/judicial-system/ERROR_EVENT_URL'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
