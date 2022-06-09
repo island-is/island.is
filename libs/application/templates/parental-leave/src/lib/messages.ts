@@ -168,7 +168,7 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     otherParentEmailTitle: {
       id: 'pl.application:otherParentEmail.title',
-      defaultMessage: 'Hvert er netfang hins foreldrisins?',
+      defaultMessage: 'Hvert er netfang og símanúmer hins foreldrisins?',
       description: 'Asking about the email address of the other parent',
     },
     otherParentEmailDescription: {
