@@ -6,11 +6,24 @@ export const headerBg = style({
   marginTop: -130,
   paddingTop: 130,
   backgroundRepeat: 'no-repeat',
-  backgroundPositionX: '35%',
+  backgroundPositionX: '80%',
   backgroundPositionY: '500%',
-  backgroundImage:
-    "url('https://images.ctfassets.net/8k0h54kbe6bj/2bVBDkDpsHFiOKCM1NgyJD/15c75aeb1c1ac8348e76a24aa2de3e3f/Folk_Saman.png')",
   borderBottom: `8px solid ${theme.color.blue600}`,
+  ...themeUtils.responsiveStyle({
+    md: {
+      backgroundPositionX: '95%',
+      backgroundImage:
+        "url('https://images.ctfassets.net/8k0h54kbe6bj/2bVBDkDpsHFiOKCM1NgyJD/15c75aeb1c1ac8348e76a24aa2de3e3f/Folk_Saman.png')",
+    },
+    lg: {
+      backgroundImage:
+        "url('https://images.ctfassets.net/8k0h54kbe6bj/2bVBDkDpsHFiOKCM1NgyJD/15c75aeb1c1ac8348e76a24aa2de3e3f/Folk_Saman.png')",
+    },
+    xl: {
+      backgroundImage:
+        "url('https://images.ctfassets.net/8k0h54kbe6bj/2bVBDkDpsHFiOKCM1NgyJD/15c75aeb1c1ac8348e76a24aa2de3e3f/Folk_Saman.png')",
+    },
+  }),
 })
 
 export const iconCircle = style({
@@ -66,6 +79,20 @@ export const navigation = style({
       paddingLeft: 24,
       paddingRight: 24,
       paddingTop: 32,
+    },
+  }),
+})
+
+export const title = style({
+  ...themeUtils.responsiveStyle({
+    md: {
+      marginLeft: -300,
+    },
+    lg: {
+      marginLeft: -300,
+    },
+    xl: {
+      marginLeft: -180,
     },
   }),
 })

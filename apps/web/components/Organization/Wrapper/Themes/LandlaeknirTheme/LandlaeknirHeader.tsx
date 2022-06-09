@@ -29,7 +29,7 @@ export const LandlaeknirHeader: React.FC<HeaderProps> = ({
                 <img
                   src={organizationPage.organization.logo.url}
                   className={styles.headerLogo}
-                  alt="fiskistofa-logo"
+                  alt="landlaeknir-logo"
                 />
               </Link>
             )
@@ -46,18 +46,21 @@ export const LandlaeknirHeader: React.FC<HeaderProps> = ({
                 <img
                   src={organizationPage.organization.logo.url}
                   className={styles.headerLogo}
-                  alt=""
+                  alt="landlaeknir-logo"
                 />
               </Link>
             </Hidden>
           )}
-          <Box marginTop={[2, 2, 6]} textAlign={['center', 'center', 'right']}>
+          <Box
+            className={styles.title}
+            textAlign={['center', 'center', 'left']}
+          >
             <Link
               href={
                 linkResolver('organizationpage', [organizationPage.slug]).href
               }
             >
-              <Text variant="h1" as="h1" color="blue600" fontWeight="semiBold">
+              <Text variant="h1" as="h1" color="blue600">
                 {organizationPage.title}
               </Text>
             </Link>
