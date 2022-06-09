@@ -27,7 +27,7 @@ interface Then {
 
 type GivenWhenThen = () => Promise<Then>
 
-describe('CaseController - Archive', () => {
+describe('InternalCaseController - Archive', () => {
   let mockFileService: FileService
   let mockDefendantService: DefendantService
   let mockCaseModel: typeof Case

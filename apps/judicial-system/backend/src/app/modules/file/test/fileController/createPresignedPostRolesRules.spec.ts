@@ -1,5 +1,5 @@
-import { prosecutorRule } from '../../../guards'
-import { FileController } from '../file.controller'
+import { prosecutorRule } from '../../../../guards'
+import { FileController } from '../../file.controller'
 
 describe('FileController - Create presigned post rules', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -1,8 +1,12 @@
 import { CanActivate } from '@nestjs/common'
 
-import { CaseExistsGuard, CaseReceivedGuard, CaseWriteGuard } from '../../case'
-import { CaseFileExistsGuard } from '../guards/caseFileExists.guard'
-import { FileController } from '../file.controller'
+import {
+  CaseExistsGuard,
+  CaseReceivedGuard,
+  CaseWriteGuard,
+} from '../../../case'
+import { CaseFileExistsGuard } from '../../guards/caseFileExists.guard'
+import { FileController } from '../../file.controller'
 
 describe('FileController - Upload case file to court guards', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -3,8 +3,8 @@ import { uuid } from 'uuidv4'
 
 import { CaseFileState } from '@island.is/judicial-system/types'
 
-import { CaseFile } from '../models/file.model'
-import { createTestingFileModule } from './createTestingFileModule'
+import { CaseFile } from '../../models/file.model'
+import { createTestingFileModule } from '../createTestingFileModule'
 
 interface Then {
   result: CaseFile[]

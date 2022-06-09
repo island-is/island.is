@@ -1,5 +1,5 @@
-import { judgeRule, prosecutorRule, registrarRule } from '../../../guards'
-import { FileController } from '../file.controller'
+import { judgeRule, prosecutorRule, registrarRule } from '../../../../guards'
+import { FileController } from '../../file.controller'
 
 describe('FileController - Get case file signed url rules', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

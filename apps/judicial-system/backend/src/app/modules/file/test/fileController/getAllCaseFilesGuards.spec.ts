@@ -1,7 +1,7 @@
 import { CanActivate } from '@nestjs/common'
 
-import { CaseExistsGuard, CaseReadGuard } from '../../case'
-import { FileController } from '../file.controller'
+import { CaseExistsGuard, CaseReadGuard } from '../../../case'
+import { FileController } from '../../file.controller'
 
 describe('FileController - Get all case files guards', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

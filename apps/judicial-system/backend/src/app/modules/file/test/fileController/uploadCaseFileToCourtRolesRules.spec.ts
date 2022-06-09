@@ -1,5 +1,5 @@
-import { judgeRule, registrarRule } from '../../../guards'
-import { FileController } from '../file.controller'
+import { judgeRule, registrarRule } from '../../../../guards'
+import { FileController } from '../../file.controller'
 
 describe('FileController - Update case file to court rules', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
