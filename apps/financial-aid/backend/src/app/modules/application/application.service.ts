@@ -287,10 +287,14 @@ export class ApplicationService {
       }
     }
 
-    const appModel = await this.applicationModel.create({
+    const newApplication = {
       ...application,
       nationalId: application.nationalId || user.nationalId,
-    })
+    }
+    if (application.created) {
+      newApplication.created = application.created
+    }
+    const appModel = await this.applicationModel.create(newApplication)
 
     await Promise.all([
       application.directTaxPayments.map((d) => {

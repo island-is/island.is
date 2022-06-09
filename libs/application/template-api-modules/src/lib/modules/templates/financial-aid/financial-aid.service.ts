@@ -143,6 +143,7 @@ export class FinancialAidService {
         externalData?.taxDataFetchSpouse?.data?.municipalitiesDirectTaxPayments
           ?.success,
       applicationSystemId: id,
+      created: application.created,
     }
 
     return await this.applicationApiWithAuth(auth)

@@ -227,6 +227,7 @@ export interface CreateApplication {
   municipalityCode: string
   applicationSystemId?: string
   hasFetchedDirectTaxPayment: boolean
+  created?: Date
 }
 
 export interface ApplicantEmailData {

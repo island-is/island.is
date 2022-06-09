@@ -6,9 +6,11 @@ import {
   IsArray,
   IsNumber,
   IsUUID,
+  IsDate,
 } from 'class-validator'
 
 import { ApiProperty } from '@nestjs/swagger'
+import { Type } from 'class-transformer'
 
 import {
   HomeCircumstances,
@@ -187,4 +189,10 @@ export class CreateApplicationDto {
   @IsBoolean()
   @ApiProperty()
   readonly spouseHasFetchedDirectTaxPayment: boolean
+
+  @IsOptional()
+  @IsDate()
+  @Type(() => Date)
+  @ApiProperty({ type: Date })
+  readonly created: Date
 }
