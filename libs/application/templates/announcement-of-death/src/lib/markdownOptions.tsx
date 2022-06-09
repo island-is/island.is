@@ -25,6 +25,12 @@ const markdownOverrides: MarkdownToJSX.Overrides = {
       variant: 'h3',
     },
   },
+  p: {
+    component: Text,
+    props: {
+      fontWeight: 'light',
+    },
+  },
 }
 
 export const markdownOptions: MarkdownToJSX.Options = {
