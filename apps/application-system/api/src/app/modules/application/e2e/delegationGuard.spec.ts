@@ -13,7 +13,8 @@ import { FeatureFlagService } from '@island.is/nest/feature-flags'
 import { MockFeatureFlagService } from './mockFeatureFlagService'
 import * as uuid from 'uuidv4'
 
-import { getRequestMethod, TestEndpointOptions } from './utils'
+import { getRequestMethod, TestEndpointOptions } from '@island.is/testing/nest'
+import { createNationalId } from '@island.is/testing/fixtures'
 
 let app: INestApplication
 
@@ -54,13 +55,13 @@ class MockContentfulRepository {
 
 let server: request.SuperTest<request.Test>
 // eslint-disable-next-line local-rules/disallow-kennitalas
-const nationalId = '1234564321'
+const nationalId = createNationalId()
 const mockAuthGuard = new MockAuthGuard({
   nationalId,
   delegationType: ['LegalGuardian'],
   scope: [ApplicationScope.read, ApplicationScope.write],
   actor: {
-    nationalId: '1234567890',
+    nationalId: createNationalId(),
     scope: [],
   },
 })
@@ -184,9 +185,7 @@ describe('Application system API delegation guard', () => {
     async ({ method, endpoint, send }: TestEndpointOptions) => {
       // Act
       const res = await getRequestMethod(server, method)(endpoint).send(send)
-      if (res.status === 404) {
-        console.log(res.body)
-      }
+
       // Assert
       expect(res.status).toEqual(403)
       expect(res.body).toMatchObject({

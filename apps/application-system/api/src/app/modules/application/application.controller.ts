@@ -94,7 +94,7 @@ import { Documentation } from '@island.is/nest/swagger'
 import { DelegationGuard } from './guards/delegation.guard'
 import { isNewActor } from './utils/delegationUtils'
 
-@UseGuards(IdsUserGuard, ScopesGuard)
+@UseGuards(IdsUserGuard, ScopesGuard, DelegationGuard)
 @ApiTags('applications')
 @ApiHeader({
   name: 'authorization',
@@ -118,7 +118,6 @@ export class ApplicationController {
   ) {}
 
   @Scopes(ApplicationScope.read)
-  @UseGuards(DelegationGuard)
   @Get('applications/:id')
   @ApiOkResponse({ type: ApplicationResponseDto })
   @UseInterceptors(ApplicationSerializer)
@@ -143,7 +142,6 @@ export class ApplicationController {
   }
 
   @Scopes(ApplicationScope.read)
-  @UseGuards(DelegationGuard)
   @Get('users/:nationalId/applications')
   @ApiParam({
     name: 'nationalId',
@@ -218,7 +216,6 @@ export class ApplicationController {
   }
 
   @Scopes(ApplicationScope.write)
-  @UseGuards(DelegationGuard)
   @Post('applications')
   @ApiCreatedResponse({ type: ApplicationResponseDto })
   @UseInterceptors(ApplicationSerializer)
@@ -329,7 +326,6 @@ export class ApplicationController {
   }
 
   @Scopes(ApplicationScope.write)
-  @UseGuards(DelegationGuard)
   @Put('applications/assign')
   @ApiOkResponse({ type: ApplicationResponseDto })
   @UseInterceptors(ApplicationSerializer)
@@ -425,7 +421,6 @@ export class ApplicationController {
   }
 
   @Scopes(ApplicationScope.write)
-  @UseGuards(DelegationGuard)
   @Put('applications/:id')
   @ApiParam({
     name: 'id',
@@ -491,7 +486,6 @@ export class ApplicationController {
   }
 
   @Scopes(ApplicationScope.write)
-  @UseGuards(DelegationGuard)
   @Put('applications/:id/externalData')
   @ApiParam({
     name: 'id',
@@ -559,7 +553,6 @@ export class ApplicationController {
   }
 
   @Scopes(ApplicationScope.write)
-  @UseGuards(DelegationGuard)
   @Put('applications/:id/submit')
   @ApiParam({
     name: 'id',
@@ -834,7 +827,6 @@ export class ApplicationController {
   }
 
   @Scopes(ApplicationScope.write)
-  @UseGuards(DelegationGuard)
   @Put('applications/:id/attachments')
   @ApiParam({
     name: 'id',
@@ -880,7 +872,6 @@ export class ApplicationController {
   }
 
   @Scopes(ApplicationScope.write)
-  @UseGuards(DelegationGuard)
   @Delete('applications/:id/attachments')
   @ApiParam({
     name: 'id',
@@ -922,7 +913,6 @@ export class ApplicationController {
   }
 
   @Scopes(ApplicationScope.write)
-  @UseGuards(DelegationGuard)
   @Put('applications/:id/generatePdf')
   @ApiParam({
     name: 'id',
@@ -957,7 +947,6 @@ export class ApplicationController {
   }
 
   @Scopes(ApplicationScope.write)
-  @UseGuards(DelegationGuard)
   @Put('applications/:id/requestFileSignature')
   @ApiParam({
     name: 'id',
@@ -996,7 +985,6 @@ export class ApplicationController {
   }
 
   @Scopes(ApplicationScope.write)
-  @UseGuards(DelegationGuard)
   @Put('applications/:id/uploadSignedFile')
   @ApiParam({
     name: 'id',
@@ -1035,7 +1023,6 @@ export class ApplicationController {
   }
 
   @Scopes(ApplicationScope.read)
-  @UseGuards(DelegationGuard)
   @Get('applications/:id/:pdfType/presignedUrl')
   @ApiParam({
     name: 'id',
@@ -1071,7 +1058,6 @@ export class ApplicationController {
 
   @Get('applications/:id/attachments/:attachmentKey/presigned-url')
   @Scopes(ApplicationScope.read)
-  @UseGuards(DelegationGuard)
   @Documentation({
     description: 'Gets a presigned url for attachments',
     response: { status: 200, type: PresignedUrlResponseDto },

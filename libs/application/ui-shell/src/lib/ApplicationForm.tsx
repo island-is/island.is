@@ -66,7 +66,7 @@ const ApplicationLoader: FC<{
   }
 
   if (!applicationId || error) {
-    const foundError = findProblemInApolloError(error as any, [
+    const foundError = findProblemInApolloError(error, [
       ProblemType.BAD_SUBJECT,
     ])
     if (
