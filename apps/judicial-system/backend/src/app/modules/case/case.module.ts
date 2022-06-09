@@ -18,6 +18,7 @@ import {
 import { Case } from './models/case.model'
 import { CaseArchive } from './models/caseArchive.model'
 import { CaseController } from './case.controller'
+import { InternalCaseController } from './internalCase.controller'
 import { LimitedAccessCaseController } from './limitedAccessCase.controller'
 import { CaseService } from './case.service'
 import { LimitedAccessCaseService } from './limitedAccessCase.service'
@@ -50,7 +51,11 @@ const config = caseModuleConfig()
     SequelizeModule.forFeature([Case, CaseArchive]),
   ],
   providers: [CaseService, LimitedAccessCaseService],
-  controllers: [CaseController, LimitedAccessCaseController],
+  controllers: [
+    CaseController,
+    InternalCaseController,
+    LimitedAccessCaseController,
+  ],
   exports: [CaseService],
 })
 export class CaseModule {}

@@ -215,8 +215,8 @@ export class CourtService {
           'Failed to create a court document',
           {
             caseId,
-            actor: user.name,
-            institution: user.institution?.name,
+            actor: user?.name ?? 'RVG',
+            institution: user?.institution?.name ?? 'RVG',
             courtId,
             courtCaseNumber,
             subject,
