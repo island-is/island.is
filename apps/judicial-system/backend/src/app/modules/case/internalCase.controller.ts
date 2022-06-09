@@ -18,7 +18,6 @@ import { caseModuleConfig } from './case.config'
 @UseGuards(TokenGuard)
 export class InternalCaseController {
   constructor(
-    @Inject(caseModuleConfig.KEY)
     private readonly caseService: CaseService,
     private readonly eventService: EventService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
@@ -27,9 +26,7 @@ export class InternalCaseController {
 
   @Post('case')
   @ApiCreatedResponse({ type: Case, description: 'Creates a new case' })
-  async internalCreate(
-    @Body() caseToCreate: InternalCreateCaseDto,
-  ): Promise<Case> {
+  async create(@Body() caseToCreate: InternalCreateCaseDto): Promise<Case> {
     this.logger.debug('Creating a new case')
 
     const createdCase = await this.caseService.internalCreate(caseToCreate)

@@ -24,6 +24,7 @@ import { caseModuleConfig } from '../case.config'
 import { CaseService } from '../case.service'
 import { LimitedAccessCaseService } from '../limitedAccessCase.service'
 import { CaseController } from '../case.controller'
+import { InternalCaseController } from '../internalCase.controller'
 import { LimitedAccessCaseController } from '../limitedAccessCase.controller'
 
 jest.mock('@island.is/dokobit-signing')
@@ -56,7 +57,11 @@ export const createTestingCaseModule = async () => {
         secretToken: environment.auth.secretToken,
       }),
     ],
-    controllers: [CaseController, LimitedAccessCaseController],
+    controllers: [
+      CaseController,
+      InternalCaseController,
+      LimitedAccessCaseController,
+    ],
     providers: [
       CourtService,
       UserService,
@@ -131,6 +136,10 @@ export const createTestingCaseModule = async () => {
 
   const caseController = caseModule.get<CaseController>(CaseController)
 
+  const internalCaseController = caseModule.get<InternalCaseController>(
+    InternalCaseController,
+  )
+
   const limitedAccessCaseController = caseModule.get<LimitedAccessCaseController>(
     LimitedAccessCaseController,
   )
@@ -149,6 +158,7 @@ export const createTestingCaseModule = async () => {
     caseService,
     limitedAccessCaseService,
     caseController,
+    internalCaseController,
     limitedAccessCaseController,
   }
 }

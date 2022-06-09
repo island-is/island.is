@@ -44,7 +44,7 @@ describe('CaseController - Archive', () => {
       caseModel,
       caseArchiveModel,
       caseConfig,
-      caseController,
+      internalCaseController,
     } = await createTestingCaseModule()
 
     mockFileService = fileService
@@ -62,7 +62,7 @@ describe('CaseController - Archive', () => {
     givenWhenThen = async () => {
       const then = {} as Then
 
-      await caseController
+      await internalCaseController
         .archive()
         .then((res) => (then.result = res))
         .catch((error) => (then.error = error))

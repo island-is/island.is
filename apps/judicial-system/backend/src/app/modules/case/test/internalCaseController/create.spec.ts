@@ -40,7 +40,7 @@ describe('CaseController - Internal create', () => {
       defendantService,
       sequelize,
       caseModel,
-      caseController,
+      internalCaseController,
     } = await createTestingCaseModule()
 
     mockUserService = userService
@@ -57,7 +57,7 @@ describe('CaseController - Internal create', () => {
       const then = {} as Then
 
       try {
-        then.result = await caseController.internalCreate(caseToCreate)
+        then.result = await internalCaseController.create(caseToCreate)
       } catch (error) {
         then.error = error as Error
       }

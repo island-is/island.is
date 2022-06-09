@@ -3,8 +3,7 @@ import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { CurrentHttpUser, TokenGuard } from '@island.is/judicial-system/auth'
-import type { User } from '@island.is/judicial-system/types'
+import { TokenGuard } from '@island.is/judicial-system/auth'
 
 import { Case, CurrentCase, CaseExistsGuard, CaseReceivedGuard } from '../case'
 import { CaseFileExistsGuard } from './guards/caseFileExists.guard'
@@ -50,7 +49,6 @@ export class InternalFileController {
     this.logger.debug(`Uploading file ${fileId} of case ${caseId} to court`)
 
     return this.fileService.uploadCaseFileToCourt(
-      user,
       caseFile,
       caseId,
       theCase.courtId,

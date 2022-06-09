@@ -310,7 +310,6 @@ export class CaseService {
         const buffer = Buffer.from(caseFilesPdf, 'binary')
 
         await this.courtService.createDocument(
-          user,
           theCase.id,
           theCase.courtId ?? '',
           theCase.courtCaseNumber ?? '',
@@ -318,6 +317,7 @@ export class CaseService {
           'Rannsóknargögn.pdf',
           'application/pdf',
           buffer,
+          user,
         )
       }
     } catch (error) {
@@ -614,7 +614,9 @@ export class CaseService {
 
       if (!prosecutor || prosecutor.role !== UserRole.PROSECUTOR) {
         throw new BadRequestException(
-          `User ${prosecutor.id} is not registered as a prosecutor`,
+          `User ${
+            prosecutor?.id ?? 'unknown'
+          } is not registered as a prosecutor`,
         )
       }
 

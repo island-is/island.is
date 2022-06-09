@@ -2,16 +2,16 @@ import { CanActivate } from '@nestjs/common'
 
 import { TokenGuard } from '@island.is/judicial-system/auth'
 
-import { CaseController } from '../../case.controller'
+import { InternalCaseController } from '../../internalCase.controller'
 
-describe('CaseController - Internal create guards', () => {
+describe('InternalCaseController - Archive guards', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let guards: any[]
 
   beforeEach(() => {
     guards = Reflect.getMetadata(
       '__guards__',
-      CaseController.prototype.internalCreate,
+      InternalCaseController.prototype.archive,
     )
   })
 

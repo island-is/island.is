@@ -38,7 +38,6 @@ import {
   JwtAuthGuard,
   RolesRules,
   RolesGuard,
-  TokenGuard,
 } from '@island.is/judicial-system/auth'
 
 import {
@@ -62,12 +61,10 @@ import {
   registrarUpdateRule,
 } from './guards/rolesRules'
 import { CreateCaseDto } from './dto/createCase.dto'
-import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { TransitionCaseDto } from './dto/transitionCase.dto'
 import { UpdateCaseDto } from './dto/updateCase.dto'
 import { Case } from './models/case.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
-import { ArchiveResponse } from './models/archive.response'
 import { transitionCase } from './state/case.state'
 import { CaseService } from './case.service'
 import { caseModuleConfig } from './case.config'
@@ -101,21 +98,6 @@ export class CaseController {
         `User ${assignedUserId} belongs to the wrong institution`,
       )
     }
-  }
-
-  @UseGuards(TokenGuard)
-  @Post('internal/case')
-  @ApiCreatedResponse({ type: Case, description: 'Creates a new case' })
-  async internalCreate(
-    @Body() caseToCreate: InternalCreateCaseDto,
-  ): Promise<Case> {
-    this.logger.debug('Creating a new case')
-
-    const createdCase = await this.caseService.internalCreate(caseToCreate)
-
-    this.eventService.postEvent(CaseEvent.CREATE_XRD, createdCase as Case)
-
-    return createdCase
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -550,17 +532,5 @@ export class CaseController {
     this.logger.debug(`Creating a court case for case ${caseId}`)
 
     return this.caseService.createCourtCase(theCase, user)
-  }
-
-  @UseGuards(TokenGuard)
-  @Post('internal/cases/archive')
-  @ApiOkResponse({
-    type: ArchiveResponse,
-    description: 'Archives a single case if any case is ready to be archived',
-  })
-  archive(): Promise<ArchiveResponse> {
-    this.logger.debug('Archiving a case')
-
-    return this.caseService.archive()
   }
 }
