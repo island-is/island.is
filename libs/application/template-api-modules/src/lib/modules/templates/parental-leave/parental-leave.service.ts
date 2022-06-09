@@ -332,7 +332,7 @@ export class ParentalLeaveService {
         application,
         periods,
         attachments,
-        'FALSE', // put false in testData as this is not dummy application
+        'FALSE', // put false in testData as this is not dummy request
       )
 
       const response = await this.parentalLeaveApi.parentalLeaveSetParentalLeave(
@@ -376,31 +376,44 @@ export class ParentalLeaveService {
     const nationalRegistryId = application.applicant
     const attachments = await this.getAttachments(application)
 
-    const periods = await this.createPeriodsDTO(
-      application,
-      nationalRegistryId,
-    )
-
-    const parentalLeaveDTO = transformApplicationToParentalLeaveDTO(
-      application,
-      periods,
-      attachments,
-      'TRUE',
-    )
-
-    console.log('dummy API request: ', parentalLeaveDTO)
-
-    // call SetParentalLeave API with testData: TRUE as this is a dummy application 
-    // for validation purposes
-    const response = await this.parentalLeaveApi.parentalLeaveSetParentalLeave(
-      {
+    try {
+      const periods = await this.createPeriodsDTO(
+        application,
         nationalRegistryId,
-        parentalLeave: parentalLeaveDTO,
-      },
-    )
+      )
 
-    console.log('dummy API response: ', response)
+      console.log('dummy periods: ', periods)
 
-    return
+      const parentalLeaveDTO = transformApplicationToParentalLeaveDTO(
+        application,
+        periods,
+        attachments,
+        'TRUE',
+      )
+
+      console.log('dummy API request: ', parentalLeaveDTO)
+
+      // call SetParentalLeave API with testData: TRUE as this is a dummy request 
+      // for validation purposes
+      const response = await this.parentalLeaveApi.parentalLeaveSetParentalLeave(
+        {
+          nationalRegistryId,
+          parentalLeave: parentalLeaveDTO,
+        },
+      )
+
+      console.log('dummy API response: ', response)
+
+      if (!response.id) {
+        throw new Error(
+          `Failed to validate the parental leave application, no response.id from VMST API: ${response}`,
+        )
+      }
+
+      return response
+    } catch(e) {
+      this.logger.error('Failed to validate the parental leave application', e)
+      throw this.parseErrors(e)
+    }
   }
 }
