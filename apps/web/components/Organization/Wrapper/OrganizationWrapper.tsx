@@ -43,8 +43,8 @@ import { useNamespace } from '@island.is/web/hooks'
 import { watsonConfig } from './config'
 import { WatsonChatPanel } from '@island.is/web/components'
 import LandlaeknirFooter from './Themes/LandlaeknirTheme/LandlaeknirFooter'
-import * as styles from './OrganizationWrapper.css'
 import { FiskistofaHeader } from './FiskistofaTheme/FiskistofaHeader'
+import * as styles from './OrganizationWrapper.css'
 
 interface NavigationData {
   title: string
