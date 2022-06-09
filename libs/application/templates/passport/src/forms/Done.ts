@@ -23,11 +23,9 @@ export const Done: Form = buildForm({
       children: [
         buildKeyValueField({
           label: m.applicationCompleteNumber,
-          value: (application: Application) => {
-            console.log(application)
-            return (application.externalData.submitPassportApplication
-              ?.data as SubmitResponse)?.orderId
-          },
+          value: (application: Application) =>
+            (application.externalData.submitPassportApplication
+              ?.data as SubmitResponse)?.orderId,
         }),
         buildDividerField({ title: ' ' }),
         buildDescriptionField({
