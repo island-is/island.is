@@ -43,6 +43,7 @@ import { useNamespace } from '@island.is/web/hooks'
 import { watsonConfig } from './config'
 import { WatsonChatPanel } from '@island.is/web/components'
 import LandlaeknirFooter from './Themes/LandlaeknirTheme/LandlaeknirFooter'
+import { LandlaeknirHeader } from './Themes/LandlaeknirTheme/LandlaeknirHeader'
 import * as styles from './OrganizationWrapper.css'
 
 interface NavigationData {
@@ -71,7 +72,7 @@ interface HeaderProps {
   organizationPage: OrganizationPage
 }
 
-export const lightThemes = ['digital_iceland', 'default']
+export const lightThemes = ['digital_iceland', 'default', 'landlaeknir']
 export const footerEnabled = [
   'syslumenn',
   'district-commissioner',
@@ -129,6 +130,8 @@ const OrganizationHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
       return <UtlendingastofnunHeader organizationPage={organizationPage} />
     case 'digital_iceland':
       return <DigitalIcelandHeader organizationPage={organizationPage} />
+    case 'landlaeknir':
+      return <LandlaeknirHeader organizationPage={organizationPage} />
     default:
       return <DefaultHeader organizationPage={organizationPage} />
   }
