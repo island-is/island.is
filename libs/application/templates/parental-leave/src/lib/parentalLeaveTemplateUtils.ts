@@ -17,3 +17,8 @@ export function needsOtherParentApproval(context: ApplicationContext) {
     context.application.externalData,
   )
 }
+
+export function currentDateStartTime() {
+  const date = new Date().toDateString()
+  return new Date(date).getTime()
+}
