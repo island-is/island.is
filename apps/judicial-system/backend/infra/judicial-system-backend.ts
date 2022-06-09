@@ -55,6 +55,9 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
         staging: 'https://judicial-system.staging01.devland.is/verjandi/',
         prod: 'https://rettarvorslugatt.island.is/verjandi/',
       },
+      SQS_QUEUE_NAME: 'sqs-judicial-system',
+      SQS_DEAD_LETTER_QUEUE_NAME: 'sqs-judicial-system-dlq',
+      SQS_REGION: 'eu-west-1',
     })
     .xroad(Base, JudicialSystem)
     .secrets({
@@ -80,28 +83,6 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
     .initContainer({
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
       postgres: postgresInfo,
-    })
-    .features({
-      'judicial-system-sqs': {
-        env: {
-          SQS_QUEUE_NAME: {
-            dev: 'sqs-judicial-system',
-            staging: MissingSetting,
-            prod: MissingSetting,
-          },
-          SQS_DEAD_LETTER_QUEUE_NAME: {
-            dev: 'sqs-judicial-system-dlq',
-            staging: MissingSetting,
-            prod: MissingSetting,
-          },
-          SQS_REGION: {
-            dev: 'eu-west-1',
-            staging: MissingSetting,
-            prod: MissingSetting,
-          },
-        },
-        secrets: {},
-      },
     })
     .liveness('/liveness')
     .readiness('/liveness')

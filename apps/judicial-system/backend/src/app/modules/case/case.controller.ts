@@ -25,7 +25,6 @@ import {
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
 import { InjectQueue, QueueService } from '@island.is/message-queue'
-import type { ConfigType } from '@island.is/nest/config'
 import {
   CaseState,
   CaseType,
@@ -77,8 +76,6 @@ import { caseModuleConfig } from './case.config'
 @ApiTags('cases')
 export class CaseController {
   constructor(
-    @Inject(caseModuleConfig.KEY)
-    private readonly config: ConfigType<typeof caseModuleConfig>,
     private readonly caseService: CaseService,
     private readonly userService: UserService,
     private readonly eventService: EventService,
@@ -234,11 +231,7 @@ export class CaseController {
       state !== CaseState.DELETED,
     )
 
-    if (
-      updatedCase &&
-      completedCaseStates.includes(updatedCase.state) &&
-      this.config.sqs.isEnabled
-    ) {
+    if (updatedCase && completedCaseStates.includes(updatedCase.state)) {
       this.logger.info(`Writing case ${caseId} to queue`)
       this.queue.add({ type: MessageType.CASE_COMPLETED, caseId })
     }
