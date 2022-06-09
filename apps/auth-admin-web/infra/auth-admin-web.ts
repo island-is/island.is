@@ -67,7 +67,7 @@ export const serviceSetup = (): ServiceBuilder<'auth-admin-web'> => {
     .liveness('/liveness')
     .extraAttributes({
       dev: { progressDeadlineSeconds: 1200 },
-      staging: { progressDeadlineSeconds: 1200},
-      prod: { progressDeadlineSeconds: 1200}
+      staging: { progressDeadlineSeconds: 1200 },
+      prod: { progressDeadlineSeconds: 1200 },
     })
 }
