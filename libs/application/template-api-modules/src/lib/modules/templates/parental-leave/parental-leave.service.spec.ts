@@ -37,13 +37,17 @@ import {
   ParentalLeaveService,
 } from './parental-leave.service'
 import { apiConstants } from './constants'
-import { transformApplicationToParentalLeaveDTO } from './parental-leave.utils'
+import { SmsService } from '@island.is/nova-sms'
 
 const nationalId = '1234564321'
 let id = 0
 
 const sendMail = () => ({
   messageId: 'some id',
+})
+
+const sendSms = () => ({
+  message: 'some message',
 })
 
 class MockEmailService {
@@ -53,6 +57,12 @@ class MockEmailService {
 
   sendEmail() {
     return sendMail()
+  }
+}
+
+class MockSmsService {
+  sendSms() {
+    return sendSms()
   }
 }
 
@@ -192,6 +202,10 @@ describe('ParentalLeaveService', () => {
         {
           provide: EmailService,
           useClass: MockEmailService,
+        },
+        {
+          provide: SmsService,
+          useClass: MockSmsService,
         },
         {
           provide: BaseTemplateApiApplicationService,

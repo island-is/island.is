@@ -1,3 +1,4 @@
+import jwt from 'jsonwebtoken'
 import { join } from 'path'
 import get from 'lodash/get'
 
@@ -275,3 +276,20 @@ export const getRatio = (
   length: string,
   shouldUseLength: boolean,
 ) => (shouldUseLength ? `D${length}` : `${ratio}`)
+
+export const createAssignTokenWithoutNonce = (
+  application: Application,
+  secret: string,
+  expiresIn: number,
+) => {
+  const token = jwt.sign(
+    {
+      applicationId: application.id,
+      state: application.state,
+    },
+    secret,
+    { expiresIn },
+  )
+
+  return token
+}

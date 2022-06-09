@@ -15,10 +15,14 @@ import {
   getAvailablePersonalRightsInDays,
   YES,
   StartDateOptions,
+  getApplicationExternalData,
 } from '@island.is/application/templates/parental-leave'
 
 import { SharedTemplateApiService } from '../../shared'
-import { TemplateApiModuleActionProps } from '../../../types'
+import {
+  BaseTemplateAPIModuleConfig,
+  TemplateApiModuleActionProps,
+} from '../../../types'
 import {
   generateAssignOtherParentApplicationEmail,
   generateAssignEmployerApplicationEmail,
@@ -29,8 +33,12 @@ import {
 import {
   transformApplicationToParentalLeaveDTO,
   getRatio,
+  createAssignTokenWithoutNonce,
 } from './parental-leave.utils'
 import { apiConstants } from './constants'
+import { SmsService } from '@island.is/nova-sms'
+import { ConfigService } from '@nestjs/config'
+import { getConfigValue } from '../../shared/shared.utils'
 
 interface VMSTError {
   type: string
@@ -54,6 +62,8 @@ export class ParentalLeaveService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     @Inject(APPLICATION_ATTACHMENT_BUCKET)
     private readonly attachmentBucket: string,
+    private readonly smsService: SmsService,
+    private readonly configService: ConfigService<BaseTemplateAPIModuleConfig>,
   ) {}
 
   private parseErrors(e: Error | VMSTError) {
@@ -83,11 +93,40 @@ export class ParentalLeaveService {
   }
 
   async assignEmployer({ application }: TemplateApiModuleActionProps) {
+    const { employerPhoneNumber } = getApplicationAnswers(application.answers)
+    const { applicantName } = getApplicationExternalData(
+      application.externalData,
+    )
+    const applicantId = application.applicant
+
     await this.sharedTemplateAPIService.assignApplicationThroughEmail(
       generateAssignEmployerApplicationEmail,
       application,
       SIX_MONTHS_IN_SECONDS_EXPIRES,
     )
+
+    const token = createAssignTokenWithoutNonce(
+      application,
+      getConfigValue(this.configService, 'jwtSecret'),
+      SIX_MONTHS_IN_SECONDS_EXPIRES,
+    )
+
+    const clientLocationOrigin = getConfigValue(
+      this.configService,
+      'clientLocationOrigin',
+    ) as string
+
+    const assignLink = `${clientLocationOrigin}/tengjast-umsokn?token=${token}`
+
+    // send confirmation sms to employer
+    if (employerPhoneNumber) {
+      await this.smsService.sendSms(
+        employerPhoneNumber,
+        `Umsækjandi ${applicantName} kt: ${applicantId} hefur skráð þig sem atvinnuveitanda í umsókn sinni um fæðingarorlof.
+        Ef þú áttir von á þessari beiðni máttu smella á linkinn hér fyrir neðan. Kveðja, Fæðingarorlofssjóður
+        ${assignLink}`,
+      )
+    }
   }
 
   async getSelfEmployedPdf(application: Application) {
