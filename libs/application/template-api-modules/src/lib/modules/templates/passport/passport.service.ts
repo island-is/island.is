@@ -41,10 +41,13 @@ export class PassportService {
     return response
   }
 
-  async submitApplication({
+  async submitPassportApplication({
     application,
     auth,
-  }: TemplateApiModuleActionProps): Promise<{ success: boolean }> {
+  }: TemplateApiModuleActionProps): Promise<{
+    success: boolean
+    orderId?: string
+  }> {
     const { answers } = application
 
     const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
@@ -81,6 +84,7 @@ export class PassportService {
 
     return {
       success: true,
+      orderId: 'PÖNTUN12345',
     }
   }
 

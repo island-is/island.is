@@ -93,6 +93,9 @@ const PassportTemplate: ApplicationTemplate<
           name: 'Done',
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
+          onEntry: {
+            apiModuleAction: ApiActions.submitPassportApplication,
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -100,6 +103,9 @@ const PassportTemplate: ApplicationTemplate<
                 import('../forms/Done').then((val) =>
                   Promise.resolve(val.Done),
                 ),
+              read: {
+                externalData: ['submitPassportApplication'],
+              },
             },
           ],
         },

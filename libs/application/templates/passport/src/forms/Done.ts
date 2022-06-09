@@ -1,4 +1,5 @@
 import {
+  Application,
   buildDescriptionField,
   buildDividerField,
   buildForm,
@@ -7,6 +8,7 @@ import {
   Form,
   FormModes,
 } from '@island.is/application/core'
+import { SubmitResponse } from '../lib/constants'
 import { m } from '../lib/messages'
 
 export const Done: Form = buildForm({
@@ -21,7 +23,11 @@ export const Done: Form = buildForm({
       children: [
         buildKeyValueField({
           label: m.applicationCompleteNumber,
-          value: 'xxxxxx',
+          value: (application: Application) => {
+            console.log(application)
+            return (application.externalData.submitPassportApplication
+              ?.data as SubmitResponse)?.orderId
+          },
         }),
         buildDividerField({ title: ' ' }),
         buildDescriptionField({

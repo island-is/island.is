@@ -21,6 +21,7 @@ export enum Services {
 export enum ApiActions {
   submitApplication = 'submitApplication',
   createCharge = 'createCharge',
+  submitPassportApplication = 'submitPassportApplication',
 }
 
 export const AUTH_TYPES = [
@@ -44,4 +45,9 @@ export type DistrictCommissionerAgencies = {
   place: string
   address: string
   id: string
+}
+
+export type SubmitResponse = {
+  success: boolean
+  orderId?: string
 }
