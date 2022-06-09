@@ -36,23 +36,9 @@ const Greeting: FC<{}> = () => {
           <Text variant="h1" as="h1" marginBottom={1}>
             {userInfo?.profile.name}
           </Text>
-          <Text marginBottom={2}>{formatMessage(m.greetingIntro)}</Text>
-          <div>
-            <a
-              href={LEGACY_MY_PAGES_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Button
-                variant="text"
-                icon="open"
-                iconType="outline"
-                size="small"
-              >
-                {formatMessage(m.olderVersion)}
-              </Button>
-            </a>
-          </div>
+          <Text marginBottom={2} id="greeting-text">
+            {formatMessage(m.greetingIntro)}
+          </Text>
         </Box>
       </GridColumn>
       <GridColumn span={['12/12', '5/12']}>
