@@ -17,11 +17,15 @@ export class DelegationGuard implements CanActivate {
     if (!id) {
       return null
     }
-    const application = await this.applicationService.findOneById(
-      id,
-      user.nationalId,
-    )
-    return application?.typeId || null
+    try {
+      const application = await this.applicationService.findOneById(
+        id,
+        user.nationalId,
+      )
+      return application?.typeId || null
+    } catch {
+      return null
+    }
   }
 
   async getTypeIdFromToken(token: string, user: User): Promise<string | null> {
