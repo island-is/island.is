@@ -296,7 +296,7 @@
     "@nestjs/schematics": "7.3.1",
     "@nestjs/testing": "7.4.4",
     "@nrwl/cli": "11.4.0",
-    "@nrwl/cypress": "13.3.2",
+    "@nrwl/cypress": "11.4.0",
     "@nrwl/eslint-plugin-nx": "11.4.0",
     "@nrwl/express": "11.4.0",
     "@nrwl/jest": "11.4.0",
@@ -464,5 +464,8 @@
     "@npmcli/git": "2.0.8",
     "url-parse": "1.5.2",
     "path-parse": "1.0.7"
+  },
+  "volta": {
+    "node": "14.17.6"
   }
 }
