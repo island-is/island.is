@@ -5,7 +5,7 @@ Cypress.Commands.add(
   'login',
   ({ cognitoUsername, cognitoPassword, phoneNumber }) => {
     cy.session([cognitoUsername, cognitoPassword, phoneNumber], () => {
-      if (testEnvironment !== 'prod' && testEnvironment !== 'dev') {
+      if (testEnvironment === 'staging' || testEnvironment === 'dev') {
         cy.session([cognitoUsername, cognitoPassword], () => {
           cy.visit('/innskraning')
 
