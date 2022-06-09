@@ -5,8 +5,8 @@ This problem is different from `403 Forbidden` in that it indicates that the use
 
 ### `alternativeSubjects`
 
-A optional field. If it is not returned it can be used as a hint that the resource trying to be accessed does not support delegations. It is used this way when users enter applications as a subject in applicaitons that do not support delegations.
-When alternativeSubjects is returned it is an array of objects containing nationalIds of users that that have access to the resource. This is only returned if the user is marked as an actor on the resource being requested or has delegation rights to the alternative subject being hinted at.
+An optional field. If it is not returned it can be used as a hint that the resource trying to be accessed does not support delegations. It is used this way when users enter applications as a subject in applications that do not support delegations.
+When alternativeSubjects is returned it is an array of objects containing nationalIds of users that have access to the resource. This is only returned if the user is marked as an actor on the resource being requested or has delegation rights to the alternative subject being hinted at.
 
 ## Example
 
