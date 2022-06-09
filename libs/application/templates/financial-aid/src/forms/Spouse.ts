@@ -19,7 +19,7 @@ export const Spouse: Form = buildForm({
   mode: FormModes.APPLYING,
   children: [
     buildSection({
-      id: 'incomeForm',
+      id: Routes.SPOUSEINCOME,
       title: m.incomeForm.general.sectionTitle,
       children: [
         buildCustomField({
@@ -31,7 +31,7 @@ export const Spouse: Form = buildForm({
     }),
     buildSection({
       condition: (answers) => answers.spouseIncome === ApproveOptions.Yes,
-      id: 'incomeFilesForm',
+      id: Routes.SPOUSEINCOMEFILES,
       title: m.incomeFilesForm.general.sectionTitle,
       children: [
         buildCustomField({
@@ -47,7 +47,7 @@ export const Spouse: Form = buildForm({
           ?.municipalitiesDirectTaxPayments?.success === false ||
         ((externalData as unknown) as ExternalData)?.taxDataFetchSpouse?.data
           ?.municipalitiesPersonalTaxReturn?.personalTaxReturn == null,
-      id: 'taxReturnFilesForm',
+      id: Routes.SPOUSETAXRETURNFILES,
       title: m.taxReturnForm.general.sectionTitle,
       children: [
         buildCustomField({
@@ -58,7 +58,7 @@ export const Spouse: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'contactInfoForm',
+      id: Routes.SPOUSECONTACTINFO,
       title: m.contactInfo.general.sectionTitle,
       children: [
         buildCustomField({
@@ -69,15 +69,15 @@ export const Spouse: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'summaryForm',
+      id: Routes.SPOUSESUMMARY,
       title: m.summaryForm.general.sectionTitle,
       children: [
         buildMultiField({
-          id: 'summaryForm',
+          id: Routes.SPOUSESUMMARY,
           title: m.summaryForm.general.pageTitle,
           children: [
             buildCustomField({
-              id: 'spouseSummaryForm',
+              id: Routes.SPOUSESUMMARY,
               title: m.summaryForm.general.pageTitle,
               component: 'SpouseSummaryForm',
             }),
@@ -97,11 +97,11 @@ export const Spouse: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'confirmation',
+      id: Routes.SPOUSECONFIRMATION,
       title: m.confirmation.general.sectionTitle,
       children: [
         buildCustomField({
-          id: 'spouseConfirmation',
+          id: Routes.SPOUSECONFIRMATION,
           title: m.confirmation.general.pageTitle,
           component: 'SpouseConfirmation',
         }),
