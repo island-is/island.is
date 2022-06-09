@@ -56,6 +56,7 @@ import {
   GetPrivatePensionFundsQuery,
   GetUnionsQuery,
 } from '../types/schema'
+import { currentDateStartTime } from '../lib/parentalLeaveTemplateUtils'
 
 export const ParentalLeaveForm: Form = buildForm({
   id: 'ParentalLeaveDraft',
@@ -808,31 +809,74 @@ export const ParentalLeaveForm: Form = buildForm({
       id: 'confirmation',
       title: parentalLeaveFormMessages.confirmation.section,
       children: [
-        buildMultiField({
-          id: 'confirmation',
-          title: parentalLeaveFormMessages.confirmation.title,
-          description: parentalLeaveFormMessages.confirmation.description,
+        buildSubSection({
+          title: '',
+          condition: (answers) =>
+            getApplicationAnswers(answers).periods.length > 0 &&
+            new Date(
+              getApplicationAnswers(answers).periods[0].startDate,
+            ).getTime() >= currentDateStartTime(),
           children: [
-            buildCustomField(
-              {
-                id: 'confirmationScreen',
-                title: '',
-                component: 'Review',
-              },
-              {
-                editable: true,
-              },
-            ),
-            buildSubmitField({
-              id: 'submit',
-              placement: 'footer',
+            buildMultiField({
+              id: 'confirmation',
               title: parentalLeaveFormMessages.confirmation.title,
-              actions: [
-                {
-                  event: 'SUBMIT',
-                  name: parentalLeaveFormMessages.confirmation.title,
-                  type: 'primary',
-                },
+              description: parentalLeaveFormMessages.confirmation.description,
+              children: [
+                buildCustomField(
+                  {
+                    id: 'confirmationScreen',
+                    title: '',
+                    component: 'Review',
+                  },
+                  {
+                    editable: true,
+                  },
+                ),
+                buildSubmitField({
+                  id: 'submit',
+                  placement: 'footer',
+                  title: parentalLeaveFormMessages.confirmation.title,
+                  actions: [
+                    {
+                      event: 'SUBMIT',
+                      name: parentalLeaveFormMessages.confirmation.title,
+                      type: 'primary',
+                    },
+                  ],
+                }),
+              ],
+            }),
+          ],
+        }),
+        buildSubSection({
+          title: '',
+          condition: (answers) =>
+            getApplicationAnswers(answers).periods.length > 0 &&
+            new Date(
+              getApplicationAnswers(answers).periods[0].startDate,
+            ).getTime() < currentDateStartTime(),
+          children: [
+            buildMultiField({
+              id: 'confirmation',
+              title: parentalLeaveFormMessages.confirmation.title,
+              description: parentalLeaveFormMessages.confirmation.description,
+              children: [
+                buildCustomField(
+                  {
+                    id: 'confirmationScreen',
+                    title: '',
+                    component: 'Review',
+                  },
+                  {
+                    editable: true,
+                  },
+                ),
+                buildSubmitField({
+                  id: 'submit',
+                  placement: 'footer',
+                  title: parentalLeaveFormMessages.confirmation.title,
+                  actions: [],
+                }),
               ],
             }),
           ],
