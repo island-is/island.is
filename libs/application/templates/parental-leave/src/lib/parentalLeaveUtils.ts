@@ -429,10 +429,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'otherParent.otherParentName',
   ) as string
 
-  const otherParentId = getValueViaPath(
-    answers,
-    'otherParentId',
-  ) as string
+  const otherParentId = getValueViaPath(answers, 'otherParentId') as string
 
   const otherParentEmail = getValueViaPath(
     answers,
@@ -441,7 +438,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   const otherParentPhoneNumber = getValueViaPath(
     answers,
-    'otherParentPhoneNumber'
+    'otherParentPhoneNumber',
   ) as string
 
   const bank = getValueViaPath(answers, 'payments.bank') as string

@@ -142,12 +142,12 @@ export class ParentalLeaveService {
         getConfigValue(this.configService, 'jwtSecret'),
         SIX_MONTHS_IN_SECONDS_EXPIRES,
       )
-  
+
       const clientLocationOrigin = getConfigValue(
         this.configService,
         'clientLocationOrigin',
       ) as string
-  
+
       const assignLink = `${clientLocationOrigin}/tengjast-umsokn?token=${token}`
 
       await this.smsService.sendSms(
