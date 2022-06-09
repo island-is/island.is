@@ -246,6 +246,7 @@ export class GenericDrivingLicenseApi
       this.logger.info('License is not valid for pkpass generation', {
         category: LOG_CATEGORY,
       })
+      return null
     }
 
     const payload = this.drivingLicenseToPkpassPayload(license)
@@ -283,6 +284,7 @@ export class GenericDrivingLicenseApi
       this.logger.info('License is not valid for pkpass generation', {
         category: LOG_CATEGORY,
       })
+      return null
     }
 
     const payload = this.drivingLicenseToPkpassPayload(license)

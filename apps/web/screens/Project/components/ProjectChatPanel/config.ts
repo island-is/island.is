@@ -12,9 +12,6 @@ export const watsonConfig: Record<string, WatsonChatPanelProps> = {
     serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
     showLauncher: false,
     carbonTheme: 'g10',
-    cssVariables: {
-      'BASE-font-family': '"IBM Plex Sans", "Open Sans", Arial, sans-serif',
-    },
     namespaceKey: 'default',
   },
 }

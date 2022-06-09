@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { Box } from '@island.is/island-ui/core'
+import { useAuth } from '@island.is/auth/react'
 
 import * as m from '../../lib/messages'
 import {
@@ -30,15 +31,19 @@ const SpouseSummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
     externalData?.nationalRegistry?.data?.applicant?.spouse?.nationalId ||
     answers?.relationshipStatus?.spouseNationalId
 
+  const { userInfo } = useAuth()
+  useEffect(() => {
+    application.answers.spouseName = userInfo?.profile.name
+  }, [])
+
   return (
     <>
       <Box>
         <DescriptionText text={m.summaryForm.general.calculationsOverview} />
       </Box>
 
-      {/* TODO get name of spouse if unregistred */}
       <UserInfo
-        name={externalData?.nationalRegistry?.data?.applicant?.spouse?.name}
+        name={userInfo?.profile.name}
         nationalId={nationalId}
         address={formatAddress(externalData?.nationalRegistry?.data?.applicant)}
       />

@@ -25,11 +25,7 @@ import {
   Button,
   Inline,
 } from '@island.is/island-ui/core'
-import {
-  HeadWithSocialSharing,
-  Sticky,
-  BoostChatPanel,
-} from '@island.is/web/components'
+import { HeadWithSocialSharing, Sticky } from '@island.is/web/components'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { SyslumennHeader, SyslumennFooter } from './Themes/SyslumennTheme'
 import {
@@ -208,11 +204,7 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
     case 'sjukratryggingar':
     case 'icelandic-health-insurance':
       OrganizationFooterComponent = (
-        <SjukratryggingarFooter
-          title={organization.title}
-          logo={organization.logo?.url}
-          footerItems={organization.footerItems}
-        />
+        <SjukratryggingarFooter footerItems={organization.footerItems} />
       )
       break
     case 'utlendingastofnun':
@@ -230,9 +222,7 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
         <MannaudstorgFooter
           title={organization.title}
           logoSrc={organization.logo?.url}
-          phone={organization.phone}
-          contactLink={organization.link}
-          telephoneText={n('telephone', 'Sími')}
+          footerItems={organization.footerItems}
         />
       )
       break
@@ -386,18 +376,22 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
               />
               {showSecondaryMenu && (
                 <>
-                  {organizationPage.secondaryMenu && (
-                    <SecondaryMenu
-                      title={organizationPage.secondaryMenu.name}
-                      items={secondaryNavList}
-                    />
-                  )}
+                  {organizationPage.secondaryMenu &&
+                    secondaryNavList.length > 0 && (
+                      <SecondaryMenu
+                        title={organizationPage.secondaryMenu.name}
+                        items={secondaryNavList}
+                      />
+                    )}
                   {organizationPage.sidebarCards.map((card) => (
                     <ProfileCard
                       title={card.title}
                       description={card.content}
                       link={card.link}
-                      image="https://images.ctfassets.net/8k0h54kbe6bj/6jpT5mePCNk02nVrzVLzt2/6adca7c10cc927d25597452d59c2a873/bitmap.png"
+                      image={
+                        card.image?.url ||
+                        'https://images.ctfassets.net/8k0h54kbe6bj/6jpT5mePCNk02nVrzVLzt2/6adca7c10cc927d25597452d59c2a873/bitmap.png'
+                      }
                       size="small"
                     />
                   ))}

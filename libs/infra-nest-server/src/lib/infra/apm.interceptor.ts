@@ -16,7 +16,7 @@ export class ApmInterceptor implements NestInterceptor {
         {
           resource: `${handlerClass.name}#${handlerFn.name}`,
         },
-        (span) => lastValueFrom(next.handle()),
+        () => lastValueFrom(next.handle()),
       ),
     )
   }

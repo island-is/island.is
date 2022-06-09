@@ -389,8 +389,8 @@ export function getApplicationExternalData(
 export function getApplicationAnswers(answers: Application['answers']) {
   const otherParent = getValueViaPath(
     answers,
-    'otherParent',
-  ) as SchemaFormValues['otherParent']
+    'otherParent.chooseOtherParent',
+  ) as string
 
   const otherParentRightOfAccess = getValueViaPath(
     answers,
@@ -424,9 +424,15 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'employer.isSelfEmployed',
   ) as YesOrNo
 
-  const otherParentName = getValueViaPath(answers, 'otherParentName') as string
+  const otherParentName = getValueViaPath(
+    answers,
+    'otherParent.otherParentName',
+  ) as string
 
-  const otherParentId = getValueViaPath(answers, 'otherParentId') as string
+  const otherParentId = getValueViaPath(
+    answers,
+    'otherParent.otherParentId',
+  ) as string
 
   const otherParentEmail = getValueViaPath(
     answers,
@@ -468,6 +474,11 @@ export function getApplicationAnswers(answers: Application['answers']) {
   ) as string
 
   const employerEmail = getValueViaPath(answers, 'employer.email') as string
+
+  const employerPhoneNumber = getValueViaPath(
+    answers,
+    'employerPhoneNumber',
+  ) as string
 
   const employerNationalRegistryId = getValueViaPath(
     answers,
@@ -545,6 +556,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     spouseUseAsMuchAsPossible,
     spouseUsage,
     employerEmail,
+    employerPhoneNumber,
     employerNationalRegistryId,
     shareInformationWithOtherParent,
     selectedChild,

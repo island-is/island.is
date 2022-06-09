@@ -20,6 +20,8 @@ export class PersonalRepresentativeService {
     private personalRepresentativeModel: typeof PersonalRepresentative,
     @InjectModel(PersonalRepresentativeRight)
     private personalRepresentativeRightModel: typeof PersonalRepresentativeRight,
+    @InjectModel(PersonalRepresentativeRightType)
+    private personalRepresentativeRightTypeModel: typeof PersonalRepresentativeRightType,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private sequelize: Sequelize,
@@ -206,9 +208,9 @@ export class PersonalRepresentativeService {
     personalRepresentative: PersonalRepresentativeCreateDTO,
   ): Promise<PersonalRepresentativeDTO | null> {
     // Create new personal representative connection
-    let prId = ''
+
     try {
-      await this.sequelize.transaction(async (t) => {
+      return await this.sequelize.transaction(async (t) => {
         const newPr = await this.personalRepresentativeModel.create(
           { ...personalRepresentative },
           { transaction: t },
@@ -226,20 +228,17 @@ export class PersonalRepresentativeService {
         await this.personalRepresentativeRightModel.bulkCreate(rightCodes, {
           transaction: t,
         })
-        prId = newPr.id
-      })
 
-      const result = await this.personalRepresentativeModel.findByPk(prId, {
-        include: [
+        /** To tackle replication we need to generate new object without selecting it from database */
+        const result = newPr.toDTO()
+        const rightTypes = await this.personalRepresentativeRightTypeModel.findAll(
           {
-            model: PersonalRepresentativeRight,
-            required: true,
-            include: [PersonalRepresentativeRightType],
+            where: { code: rightCodes.map((rc) => rc.rightTypeCode) },
           },
-        ],
+        )
+        result.rights = rightTypes.map((rt) => rt.toDTO())
+        return result
       })
-
-      return result ? result.toDTO() : null
     } catch (err) {
       throw new BadRequestException(
         `Error creating personal representative: ${err}`,

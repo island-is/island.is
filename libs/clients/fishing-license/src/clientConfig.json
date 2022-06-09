@@ -259,6 +259,23 @@
         "additionalProperties": false,
         "description": "Hvort haffæri skips sé í gildi eða ekki."
       },
+      "OuppfylltVeidileyfi": {
+        "type": "object",
+        "properties": {
+          "veidileyfi": {
+            "$ref": "#/components/schemas/Veidileyfi"
+          },
+          "astaedur": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Astaeda"
+            },
+            "description": "Listi af ástæðum af hverju notandi getur ekki sótt um veiðleyfi.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "Skip": {
         "required": ["einkenni", "heimahofn", "skipanafn", "sviptingar"],
         "type": "object",
@@ -307,6 +324,18 @@
               "$ref": "#/components/schemas/Veidileyfi"
             },
             "description": "Listi af veiðileyfum.",
+            "nullable": true
+          },
+          "uppfyllirEkkertVeidileyfi": {
+            "type": "boolean",
+            "description": "Segir til um hvort skip uppfyllir skilyrði fyrir ekkert veiðileyfi."
+          },
+          "ouppfylltSkilyrdiVeidileyfa": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OuppfylltVeidileyfi"
+            },
+            "description": "Listi af veiðileyfum ásamt þeim skilyrðum sem skip uppfyllir ekki.",
             "nullable": true
           }
         },

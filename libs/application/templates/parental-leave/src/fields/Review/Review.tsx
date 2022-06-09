@@ -1,4 +1,4 @@
-import React, { FC, useMemo } from 'react'
+import React, { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useMutation } from '@apollo/client'
 import get from 'lodash/get'
@@ -7,7 +7,6 @@ import has from 'lodash/has'
 import { format as formatKennitala } from 'kennitala'
 import {
   Application,
-  buildFieldOptions,
   RecordObject,
   Field,
   coreErrorMessages,
@@ -41,7 +40,6 @@ import {
 } from '@island.is/shared/problem'
 
 import {
-  getOtherParentOptions,
   getSelectedChild,
   requiresOtherParentApproval,
   getApplicationExternalData,
@@ -71,8 +69,6 @@ import { useStatefulAnswers } from '../../hooks/useStatefulAnswers'
 import { getSelectOptionLabel } from '../../lib/parentalLeaveClientUtils'
 
 import * as styles from './Review.css'
-
-type ValidOtherParentAnswer = typeof NO | typeof MANUAL | undefined
 
 interface ReviewScreenProps {
   application: Application
@@ -118,6 +114,7 @@ export const Review: FC<ReviewScreenProps> = ({
       spouseUseAsMuchAsPossible,
       spouseUsage,
       employerEmail,
+      employerPhoneNumber,
     },
     setStateful,
   ] = useStatefulAnswers(application)
@@ -145,12 +142,6 @@ export const Review: FC<ReviewScreenProps> = ({
   )
   const isPrimaryParent =
     selectedChild?.parentalRelation === ParentalRelations.primary
-
-  const otherParentOptions = useMemo(
-    () =>
-      buildFieldOptions(getOtherParentOptions(application), application, field),
-    [application],
-  )
 
   const hasSelectedOtherParent = otherParent !== NO
 
@@ -355,7 +346,7 @@ export const Review: FC<ReviewScreenProps> = ({
                 label={formatMessage(
                   parentalLeaveFormMessages.shared.otherParentID,
                 )}
-                value={otherParentId}
+                value={formatKennitala(otherParentId!)}
               />
             </GridColumn>
           </GridRow>
@@ -896,6 +887,16 @@ export const Review: FC<ReviewScreenProps> = ({
               )}
               value={isSelfEmployed}
             />
+            {isSelfEmployed === NO && employerPhoneNumber && (
+              <Box paddingTop={2}>
+                <DataValue
+                  label={formatMessage(
+                    parentalLeaveFormMessages.employer.phoneNumber,
+                  )}
+                  value={employerPhoneNumber}
+                />
+              </Box>
+            )}
           </GridColumn>
 
           <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>

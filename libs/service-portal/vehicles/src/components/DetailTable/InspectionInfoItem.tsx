@@ -16,35 +16,13 @@ const InspectionInfoItem = ({ data }: PropTypes) => {
       <HeaderRow>{messages.inspectionTitle}</HeaderRow>
       <Row>
         <Column label={messages.inspectionType} value={data.type} />
-
+        <Column label={messages.result} value={data.result} />
+      </Row>
+      <Row>
         <Column
           label={messages.date}
           value={data.date && new Date(data.date).toLocaleDateString()}
         />
-      </Row>
-      <Row>
-        <Column label={messages.result} value={data.result} />
-        <Column label={messages.plateStatus} value={data.plateStatus} />
-      </Row>
-      <Row>
-        <Column label={messages.vehicleFee} value={null} />
-
-        <Column
-          label={messages.insured}
-          value={
-            null
-            // ? {
-            //     id: 'sp.vehicles:insp-insured-yes',
-            //     defaultMessage: 'Já',
-            //   })
-            // : {
-            //     id: 'sp.vehicles:insp-insured-no',
-            //     defaultMessage: 'Nei',
-            //   })
-          }
-        />
-      </Row>
-      <Row>
         <Column
           label={messages.nextInspection}
           value={
@@ -52,20 +30,6 @@ const InspectionInfoItem = ({ data }: PropTypes) => {
             new Date(data.nextInspectionDate).toLocaleDateString()
           }
         />
-        <Column
-          label={messages.lastInspection}
-          value={
-            data.lastInspectionDate &&
-            new Date(data.lastInspectionDate).toLocaleDateString()
-          }
-        />
-      </Row>
-      <Row>
-        <Column label={messages.mortages} value={null} />
-        <Column label={messages.negligence} value={null} />
-      </Row>
-      <Row>
-        <Column label={messages.plateLocation} value={null} />
       </Row>
     </Box>
   )

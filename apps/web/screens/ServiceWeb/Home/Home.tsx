@@ -110,6 +110,7 @@ const Home: Screen<HomeProps> = ({
       )}
       searchTags={searchTags}
       showLogoTitle={!institutionSlugBelongsToMannaudstorg}
+      indexableBySearchEngine={institutionSlugBelongsToMannaudstorg}
     >
       {hasContent && (
         <ServiceWebContext.Consumer>

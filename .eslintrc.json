@@ -55,8 +55,8 @@
           "warn",
           {
             "ignoreRestSiblings": true,
-            "argsIgnorePattern": "^_([0-9])?$",
-            "varsIgnorePattern": "^_([0-9])?$"
+            "argsIgnorePattern": "^_[a-zA-Z0-9]*$",
+            "varsIgnorePattern": "^_[a-zA-Z0-9]*$"
           }
         ],
         "@typescript-eslint/naming-convention": [
@@ -67,7 +67,19 @@
           },
           {
             "selector": "variable",
-            "format": ["camelCase", "PascalCase", "UPPER_CASE"]
+            "format": [],
+            "custom": {
+              "regex": "^_[a-zA-Z0-9]*$",
+              "match": true
+            }
+          },
+          {
+            "selector": "variable",
+            "format": ["camelCase", "PascalCase", "UPPER_CASE"],
+            "filter": {
+              "regex": "^_[a-zA-Z0-9]*$",
+              "match": false
+            }
           },
           {
             "selector": "variable",

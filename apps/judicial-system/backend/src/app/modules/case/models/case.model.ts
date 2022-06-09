@@ -854,6 +854,16 @@ export class Case extends Model {
   caseModifiedExplanation?: string
 
   /**********
+   * The history on when a case's ruling was modified
+   **********/
+  @Column({
+    type: DataType.TEXT,
+    allowNull: true,
+  })
+  @ApiProperty()
+  rulingModifiedHistory?: string
+
+  /**********
    * The explanation given for the extension of a case
    **********/
   @Column({
