@@ -57,8 +57,6 @@ auth-admin-web:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-  service:
-    targetPort: 4200
 global:
   env:
     AUDIT_GROUP_NAME: '/identity-server/audit-log'
