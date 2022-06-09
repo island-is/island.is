@@ -32,9 +32,7 @@ const PdfButton: React.FC<Props> = ({
 }) => {
   const handleClick = () => {
     window.open(
-      `${api.apiUrl}/api/case/${caseId}/${pdfType}${
-        useSigned ? '?useSigned=true' : ''
-      }`,
+      `${api.apiUrl}/api/case/${caseId}/${pdfType}?useSigned=${useSigned}`,
       '_blank',
     )
   }
