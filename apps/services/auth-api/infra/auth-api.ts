@@ -30,9 +30,10 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-api'> => {
       },
       USER_PROFILE_CLIENT_URL: {
         dev: 'http://web-service-portal-api.service-portal.svc.cluster.local',
-        staging: 'http://web-service-portal-api.service-portal.svc.cluster.local',
+        staging:
+          'http://web-service-portal-api.service-portal.svc.cluster.local',
         prod: 'https://service-portal-api.internal.island.is',
-      }
+      },
     })
     .xroad(Base, Client, RskProcuring, NationalRegistry, RskCompanyInfo)
     .readiness('/liveness')
