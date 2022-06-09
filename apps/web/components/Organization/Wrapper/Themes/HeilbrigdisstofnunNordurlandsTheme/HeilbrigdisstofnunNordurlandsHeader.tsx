@@ -3,19 +3,28 @@ import React from 'react'
 import { Box, Hidden, Link, Text } from '@island.is/island-ui/core'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import * as styles from './SyslumennHeader.css'
+import * as styles from './HeilbrigdisstofnunNordurlandsHeader.css'
 
 interface HeaderProps {
   organizationPage: OrganizationPage
 }
 
-export const SyslumennHeader: React.FC<HeaderProps> = ({
+export const HeilbrigdisstofnunNordurlandsHeader: React.FC<HeaderProps> = ({
   organizationPage,
 }) => {
   const { linkResolver } = useLinkResolver()
 
+  const backgroundImageSource =
+    organizationPage.themeHeaderImage?.url ||
+    'url(https://images.ctfassets.net/8k0h54kbe6bj/4v20729OMrRYkktuaCTWRi/675807c8c848895833c4a6a162f2813a/hsn-header-icon.svg)'
+
   return (
-    <Box className={styles.headerBg}>
+    <Box
+      className={styles.headerBg}
+      style={{
+        backgroundImage: backgroundImageSource,
+      }}
+    >
       <Box className={styles.headerWrapper}>
         <SidebarLayout
           sidebarContent={
