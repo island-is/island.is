@@ -40,6 +40,7 @@ auth-admin-web:
           paths:
             - '/admin'
   namespace: 'identity-server-admin'
+  progressDeadlineSeconds: 1200
   replicaCount:
     default: 2
     max: 10
