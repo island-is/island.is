@@ -1,6 +1,7 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { ISidebarCard } from '../generated/contentfulTypes'
 import { Link, mapLink } from './link.model'
+import { Image, mapImage } from './image.model'
 
 @ObjectType()
 export class SidebarCard {
@@ -18,6 +19,9 @@ export class SidebarCard {
 
   @Field(() => Link, { nullable: true })
   link!: Link | null
+
+  @Field(() => Image, { nullable: true })
+  image?: Image | null
 }
 
 export const mapSidebarCard = ({ sys, fields }: ISidebarCard): SidebarCard => ({
@@ -26,4 +30,5 @@ export const mapSidebarCard = ({ sys, fields }: ISidebarCard): SidebarCard => ({
   title: fields.title ?? '',
   content: fields.content ?? '',
   link: fields.link ? mapLink(fields.link) : null,
+  image: fields.image ? mapImage(fields.image) : null,
 })
