@@ -2,7 +2,7 @@ import { uuid } from 'uuidv4'
 
 import { BadRequestException, NotFoundException } from '@nestjs/common'
 
-import { CaseFileState, User } from '@island.is/judicial-system/types'
+import { CaseFileState } from '@island.is/judicial-system/types'
 
 import { CourtService } from '../../../court'
 import { Case } from '../../../case'

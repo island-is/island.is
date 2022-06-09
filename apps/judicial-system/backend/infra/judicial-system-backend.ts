@@ -1,6 +1,5 @@
 import { Base, JudicialSystem } from '../../../../infra/src/dsl/xroad'
 import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
-import { MissingSetting } from '../../../../infra/src/dsl/types/input-types'
 
 const postgresInfo = {
   passwordSecret: '/k8s/judicial-system/DB_PASSWORD',
