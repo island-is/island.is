@@ -14,7 +14,7 @@ export const UserProfileInfo = ({ onClick }: UserProfileInfoProps) => {
   const baseUrl = `${origin}/minarsidur/stillingar`
 
   return (
-    <Box paddingTop={3}>
+    <Box paddingY={2}>
       <Box marginBottom={1}>
         <Text variant="small">{formatMessage(m.settings)}</Text>
       </Box>

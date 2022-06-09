@@ -106,6 +106,7 @@ export const UserDropdown = ({
             flexWrap="nowrap"
             alignItems="center"
             paddingBottom={3}
+            paddingTop={2}
           >
             {isDelegationCompany ? (
               <Box
@@ -147,7 +148,10 @@ export const UserDropdown = ({
           {/* End of user delegations */}
           {/* User settings */}
           {(!isDelegation || isDelegationCompany) && showDelegations && (
-            <UserProfileInfo onClick={() => onClose()} />
+            <>
+              <UserProfileInfo onClick={() => onClose()} />
+              <Divider />
+            </>
           )}
           {/* End of user settings */}
           {/* Logout */}
