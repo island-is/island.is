@@ -14,17 +14,8 @@ export const HeilbrigdisstofnunNordurlandsHeader: React.FC<HeaderProps> = ({
 }) => {
   const { linkResolver } = useLinkResolver()
 
-  const backgroundImageSource =
-    organizationPage.themeHeaderImage?.url ||
-    'url(https://images.ctfassets.net/8k0h54kbe6bj/4v20729OMrRYkktuaCTWRi/675807c8c848895833c4a6a162f2813a/hsn-header-icon.svg)'
-
   return (
-    <Box
-      className={styles.headerBg}
-      style={{
-        backgroundImage: backgroundImageSource,
-      }}
-    >
+    <Box className={styles.headerBg}>
       <Box className={styles.headerWrapper}>
         <SidebarLayout
           sidebarContent={
