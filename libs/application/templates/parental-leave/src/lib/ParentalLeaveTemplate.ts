@@ -33,7 +33,6 @@ import { parentalLeaveFormMessages, statesMessages } from './messages'
 import {
   hasEmployer,
   needsOtherParentApproval,
-  startDateInTheFuture,
 } from './parentalLeaveTemplateUtils'
 import {
   getApplicationAnswers,
@@ -154,7 +153,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             },
             {
               target: States.VINNUMALASTOFNUN_APPROVAL,
-              cond: startDateInTheFuture,
             },
           ],
         },
@@ -217,7 +215,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             },
             {
               target: States.VINNUMALASTOFNUN_APPROVAL,
-              cond: startDateInTheFuture,
             },
           ],
           [DefaultEvents.EDIT]: { target: States.DRAFT },
@@ -340,7 +337,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           [DefaultEvents.APPROVE]: [
             {
               target: States.VINNUMALASTOFNUN_APPROVAL,
-              cond: startDateInTheFuture,
             },
           ],
           [DefaultEvents.REJECT]: { target: States.EMPLOYER_ACTION },
@@ -483,7 +479,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             },
             {
               target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
-              cond: startDateInTheFuture
             },
           ],
           [DefaultEvents.ABORT]: [
@@ -549,7 +544,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           [DefaultEvents.APPROVE]: [
             {
               target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
-              cond: startDateInTheFuture
             },
           ],
           [DefaultEvents.REJECT]: { target: States.EMPLOYER_EDITS_ACTION },

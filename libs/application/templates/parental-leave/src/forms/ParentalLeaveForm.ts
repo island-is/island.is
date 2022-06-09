@@ -888,21 +888,5 @@ export const ParentalLeaveForm: Form = buildForm({
         }),
       ],
     }),
-    // buildSection({
-    //   title: '',
-    //   condition: (answers) =>
-    //     getApplicationAnswers(answers).periods.length > 0 &&
-    //     new Date(
-    //       getApplicationAnswers(answers).periods[0].startDate,
-    //     ).getTime() < currentDateStartTime(),
-    //   children: [
-    //     buildSubmitField({
-    //       id: 'reject',
-    //       placement: 'footer',
-    //       title: parentalLeaveFormMessages.finalScreen.startDateInThePast,
-    //       actions: [],
-    //     }),
-    //   ],
-    // }),
   ],
 })

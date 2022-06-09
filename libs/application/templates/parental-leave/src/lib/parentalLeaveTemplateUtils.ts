@@ -9,8 +9,7 @@ export function hasEmployer(context: ApplicationContext) {
   }
 
   return (
-    currentApplicationAnswers.employer.isSelfEmployed === NO &&
-    startDateInTheFuture(context)
+    currentApplicationAnswers.employer.isSelfEmployed === NO
   )
 }
 
@@ -19,18 +18,7 @@ export function needsOtherParentApproval(context: ApplicationContext) {
     requiresOtherParentApproval(
       context.application.answers,
       context.application.externalData,
-    ) && startDateInTheFuture(context)
-  )
-}
-
-export function startDateInTheFuture(context: ApplicationContext) {
-  const currentApplicationAnswers = context.application.answers as {
-    periods: [{ startDate: string }]
-  }
-  return (
-    currentApplicationAnswers.periods &&
-    new Date(currentApplicationAnswers.periods[0].startDate).getTime() >=
-      currentDateStartTime()
+    )
   )
 }
 

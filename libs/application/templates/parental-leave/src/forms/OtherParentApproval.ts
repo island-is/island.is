@@ -10,7 +10,6 @@ import {
   Application,
   buildKeyValueField,
   getValueViaPath,
-  buildSubSection,
 } from '@island.is/application/core'
 
 import Logo from '../assets/Logo'
@@ -256,30 +255,5 @@ export const OtherParentApproval: Form = buildForm({
         }),
       ],
     }),
-    // buildSection({
-    //   title: '',
-    //   children: [
-    //     buildDescriptionField({
-    //       id: 'final',
-    //       title: coreMessages.thanks,
-    //       description: coreMessages.thanksDescription,
-    //     }),
-    //   ],
-    // }),
-    // buildSection({
-    //   title: '',
-    //   condition: (answers) =>
-    //     new Date(
-    //       getApplicationAnswers(answers).periods[0].startDate,
-    //     ).getTime() < currentDateStartTime(),
-    //   children: [
-    //     buildSubmitField({
-    //       id: 'reject',
-    //       placement: 'footer',
-    //       title: parentalLeaveFormMessages.finalScreen.startDateInThePast,
-    //       actions: [],
-    //     }),
-    //   ],
-    // }),
   ],
 })

@@ -160,35 +160,6 @@ export const EmployerApproval: Form = buildForm({
           title: coreMessages.thanks,
           description: coreMessages.thanksDescription,
         }),
-        // buildSubSection({
-        //   title: '',
-        //   condition: (answers) =>
-        //     new Date(
-        //       getApplicationAnswers(answers).periods[0].startDate,
-        //     ).getTime() < currentDateStartTime(),
-        //   children: [
-        //     buildSubmitField({
-        //       id: 'reject',
-        //       placement: 'footer',
-        //       title: parentalLeaveFormMessages.finalScreen.startDateInThePast,
-        //       actions: [],
-        //     }),
-        //   ],
-        // }),
-        // buildSubSection({
-        //   title: '',
-        //   condition: (answers) =>
-        //     new Date(
-        //       getApplicationAnswers(answers).periods[0].startDate,
-        //     ).getTime() >= currentDateStartTime(),
-        //   children: [
-        //     buildDescriptionField({
-        //       id: 'final.approve',
-        //       title: coreMessages.thanks,
-        //       description: coreMessages.thanksDescription,
-        //     }),
-        //   ],
-        // }),
       ],
     }),
   ],
