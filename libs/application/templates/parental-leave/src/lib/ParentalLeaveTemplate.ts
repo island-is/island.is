@@ -148,9 +148,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               target: States.OTHER_PARENT_APPROVAL,
               cond: needsOtherParentApproval,
             },
-            { target: States.EMPLOYER_WAITING_TO_ASSIGN,
-              cond: hasEmployer,
-            },
+            { target: States.EMPLOYER_WAITING_TO_ASSIGN, cond: hasEmployer },
             {
               target: States.VINNUMALASTOFNUN_APPROVAL,
             },

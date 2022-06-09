@@ -54,9 +54,9 @@ export const EmployerApproval: Form = buildForm({
               id: 'multi',
               title: employerFormMessages.reviewMultiTitle,
               condition: (answers) =>
-            new Date(
-              getApplicationAnswers(answers).periods[0].startDate,
-            ).getTime() < currentDateStartTime(),
+                new Date(
+                  getApplicationAnswers(answers).periods[0].startDate,
+                ).getTime() < currentDateStartTime(),
               children: [
                 buildCustomField(
                   {
@@ -103,9 +103,9 @@ export const EmployerApproval: Form = buildForm({
               id: 'multi',
               title: employerFormMessages.reviewMultiTitle,
               condition: (answers) =>
-            new Date(
-              getApplicationAnswers(answers).periods[0].startDate,
-            ).getTime() >= currentDateStartTime(),
+                new Date(
+                  getApplicationAnswers(answers).periods[0].startDate,
+                ).getTime() >= currentDateStartTime(),
               children: [
                 buildCustomField(
                   {

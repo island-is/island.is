@@ -8,17 +8,13 @@ export function hasEmployer(context: ApplicationContext) {
     employer: { isSelfEmployed: typeof YES | typeof NO }
   }
 
-  return (
-    currentApplicationAnswers.employer.isSelfEmployed === NO
-  )
+  return currentApplicationAnswers.employer.isSelfEmployed === NO
 }
 
 export function needsOtherParentApproval(context: ApplicationContext) {
-  return (
-    requiresOtherParentApproval(
-      context.application.answers,
-      context.application.externalData,
-    )
+  return requiresOtherParentApproval(
+    context.application.answers,
+    context.application.externalData,
   )
 }
 

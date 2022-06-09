@@ -14,9 +14,7 @@ import {
 
 import Logo from '../assets/Logo'
 import { YES } from '../constants'
-import {
-  otherParentApprovalFormMessages,
-} from '../lib/messages'
+import { otherParentApprovalFormMessages } from '../lib/messages'
 import { currentDateStartTime } from '../lib/parentalLeaveTemplateUtils'
 import { getApplicationAnswers } from '../lib/parentalLeaveUtils'
 import { YesOrNo } from '../types'
