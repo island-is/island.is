@@ -1,8 +1,3 @@
-Cypress.config(
-  'baseUrl',
-  `https://beta.${Cypress.env('testEnvironment')}01.devland.is`,
-)
-
 describe('web', () => {
   before(() => {
     cy.ensureLoggedIn({ url: '/' })
@@ -10,5 +5,11 @@ describe('web', () => {
   it('should navigate homepage', () => {
     cy.visit('/')
     cy.contains('Að eignast barn')
+  })
+  it('should have life events', () => {
+    cy.visit('/')
+    cy.get('a:has([data-testid="lifeevent-card"])')
+      .should('have.length.at.least', 3)
+      .each((link) => cy.visit(link.attr('href')!))
   })
 })

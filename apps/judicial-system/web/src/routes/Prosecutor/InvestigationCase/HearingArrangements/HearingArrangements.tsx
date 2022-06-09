@@ -28,6 +28,7 @@ import {
 import { setAndSendToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import {
+  errors,
   icRequestedHearingArrangements as m,
   titles,
 } from '@island.is/judicial-system-web/messages'
@@ -51,6 +52,7 @@ const HearingArrangements = () => {
   const {
     sendNotification,
     isSendingNotification,
+    sendNotificationError,
     transitionCase,
     isTransitioningCase,
     updateCase,
@@ -227,6 +229,11 @@ const HearingArrangements = () => {
                 }
               }}
               isPrimaryButtonLoading={isSendingNotification}
+              errorMessage={
+                sendNotificationError
+                  ? formatMessage(errors.sendNotification)
+                  : undefined
+              }
             />
           )}
           {isProsecutorAccessModalVisible && (

@@ -64,7 +64,11 @@ export const messages = defineMessages({
   },
   inspectionTitle: {
     id: 'sp.vehicles:insp-title',
-    defaultMessage: 'Skoðun og gjöld',
+    defaultMessage: 'Síðasta skoðun ökutækis',
+  },
+  feeTitle: {
+    id: 'sp.vehicles:fee-title',
+    defaultMessage: 'Gjöld',
   },
   regTitle: {
     id: 'sp.vehicles:reg-title',
@@ -133,6 +137,10 @@ export const messages = defineMessages({
   passengers: {
     id: 'sp.vehicles:passengers',
     defaultMessage: 'Farþegar',
+  },
+  specialName: {
+    id: 'sp.vehicles:special-name',
+    defaultMessage: 'Sérheiti',
   },
   driversPassengers: {
     id: 'sp.vehicles:drivers-passengers',
@@ -204,11 +212,36 @@ export const messages = defineMessages({
   },
   plateLocation: {
     id: 'sp.vehicles:plate-location',
-    defaultMessage: 'Geymslustaður',
+    defaultMessage: 'Geymslustaður plötu',
   },
   vehicleFee: {
     id: 'sp.vehicles:vehicle-fee',
     defaultMessage: 'Bifreiðagjöld',
+  },
+  unpaidVehicleFee: {
+    id: 'sp.vehicles:vehicle-fee-unpaid',
+    defaultMessage: 'Ógreidd Bifreiðagjöld',
+  },
+  unpaidVehicleFeeText: {
+    id: 'sp.vehicles:vehicle-fee-text',
+    defaultMessage:
+      'Fjárhæð bifreiðagjalds fer eftir eigin þyngd bifreiðar og losun koltvísýrings, svokallað CO2. Séu upplýsingar um CO2 ekki tiltækar í Ökutækjaskrá Samgöngustofu miðast bifreiðagjald eingöngu við eigin þyngd.',
+  },
+  nedc: {
+    id: 'sp.vehicles:nedc',
+    defaultMessage: 'Útblástursgildi (NEDC)',
+  },
+  nedcWeighted: {
+    id: 'sp.vehicles:nedc-weighted',
+    defaultMessage: 'Vegið útblástursgildi (NEDC)',
+  },
+  wltp: {
+    id: 'sp.vehicles:wltp',
+    defaultMessage: 'Útblástursgildi (WLTP)',
+  },
+  wltpWeighted: {
+    id: 'sp.vehicles:wltp-weighted',
+    defaultMessage: 'Vegið útblástursgildi (WLTP)',
   },
   insured: {
     id: 'sp.vehicles:insured',
@@ -217,6 +250,10 @@ export const messages = defineMessages({
   nextInspection: {
     id: 'sp.vehicles:next-insp',
     defaultMessage: 'Næsta aðalskoðun',
+  },
+  nextAnyInspection: {
+    id: 'sp.vehicles:next-any-insp',
+    defaultMessage: 'Næsta skoðun',
   },
   lastInspection: {
     id: 'sp.vehicles:last-insp',
@@ -229,6 +266,11 @@ export const messages = defineMessages({
   negligence: {
     id: 'sp.vehicles:negligence',
     defaultMessage: 'Vanrækslugjald',
+  },
+  negligenceText: {
+    id: 'sp.vehicles:negligence-text',
+    defaultMessage:
+      'Vinsamlegast athugið, á þessu ökutæki hvíla vanrækslugjöld.',
   },
   engineType: {
     id: 'sp.vehicles:engine',

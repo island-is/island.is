@@ -14,21 +14,26 @@ export const yesNoValueLabelMapper = {
 }
 
 export const subjectOfComplaintValueLabelMapper = {
-  [SubjectOfComplaint.WITH_AUTHORITIES]: complaint.labels.subjectAuthorities,
+  [SubjectOfComplaint.WITH_AUTHORITIES]:
+    complaint.labels[SubjectOfComplaint.WITH_AUTHORITIES],
   [SubjectOfComplaint.LACK_OF_EDUCATION]:
-    complaint.labels.subjectLackOfEducation,
-  [SubjectOfComplaint.SOCIAL_MEDIA]: complaint.labels.subjectSocialMedia,
+    complaint.labels[SubjectOfComplaint.LACK_OF_EDUCATION],
+  [SubjectOfComplaint.SOCIAL_MEDIA]:
+    complaint.labels[SubjectOfComplaint.SOCIAL_MEDIA],
   [SubjectOfComplaint.REQUEST_FOR_ACCESS]:
-    complaint.labels.subjectRequestForAccess,
+    complaint.labels[SubjectOfComplaint.REQUEST_FOR_ACCESS],
   [SubjectOfComplaint.RIGHTS_OF_OBJECTION]:
-    complaint.labels.subjectRightOfObjection,
-  [SubjectOfComplaint.EMAIL]: complaint.labels.subjectEmail,
-  [SubjectOfComplaint.NATIONAL_ID]: complaint.labels.subjectNationalId,
+    complaint.labels[SubjectOfComplaint.RIGHTS_OF_OBJECTION],
+  [SubjectOfComplaint.EMAIL]: complaint.labels[SubjectOfComplaint.EMAIL],
+  [SubjectOfComplaint.NATIONAL_ID]:
+    complaint.labels[SubjectOfComplaint.NATIONAL_ID],
   [SubjectOfComplaint.EMAIL_IN_WORKPLACE]:
-    complaint.labels.subjectEmailInWorkplace,
+    complaint.labels[SubjectOfComplaint.EMAIL_IN_WORKPLACE],
   [SubjectOfComplaint.UNAUTHORIZED_PUBLICATION]:
-    complaint.labels.subjectUnauthorizedPublication,
-  [SubjectOfComplaint.VANSKILASKRA]: complaint.labels.subjectVanskilaskra,
-  [SubjectOfComplaint.VIDEO_RECORDINGS]: complaint.labels.subjectVideoRecording,
-  [SubjectOfComplaint.OTHER]: complaint.labels.subjectOther,
+    complaint.labels[SubjectOfComplaint.UNAUTHORIZED_PUBLICATION],
+  [SubjectOfComplaint.VANSKILASKRA]:
+    complaint.labels[SubjectOfComplaint.VANSKILASKRA],
+  [SubjectOfComplaint.VIDEO_RECORDINGS]:
+    complaint.labels[SubjectOfComplaint.VIDEO_RECORDINGS],
+  [SubjectOfComplaint.OTHER]: complaint.labels[SubjectOfComplaint.OTHER],
 }

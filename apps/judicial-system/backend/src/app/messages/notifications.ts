@@ -178,28 +178,28 @@ export const notifications = {
       id: 'judicial.system.backend:notifications.signed_ruling.subject',
       defaultMessage: 'Úrskurður í máli {courtCaseNumber}',
       description:
-        'Notaður sem titill í pósti til hagaðila vegna undirritunar úrskúrðar',
+        'Notaður sem titill í pósti til hagaðila vegna undirritunar úrskurðar',
     },
     subjectV2: {
       id: 'judicial.system.backend:notifications.signed_ruling.subject_v2',
       defaultMessage:
         'Úrskurður í máli {courtCaseNumber}{isModifyingRuling, select, true { leiðrétt} other {}}',
       description:
-        'Notaður sem titill í pósti til hagaðila vegna undirritunar úrskúrðar',
+        'Notaður sem titill í pósti til hagaðila vegna undirritunar úrskurðar',
     },
     rulingAttachment: {
       id:
         'judicial.system.backend:notifications.signed_ruling.ruling_attachment',
       defaultMessage: 'Úrskurður {courtCaseNumber}.pdf',
       description:
-        'Notaður sem nafn á úrskurðarviðhengi í pósti til hagaðila vegna undirritunar úrskúrðar',
+        'Notaður sem nafn á úrskurðarviðhengi í pósti til hagaðila vegna undirritunar úrskurðar',
     },
     courtRecordAttachment: {
       id:
         'judicial.system.backend:notifications.signed_ruling.court_record_attachment',
       defaultMessage: 'Þingbók {courtCaseNumber}.pdf',
       description:
-        'Notaður sem nafn á þingbókarviðhengi í pósti til hagaðila vegna undirritunar úrskúrðar',
+        'Notaður sem nafn á þingbókarviðhengi í pósti til hagaðila vegna undirritunar úrskurðar',
     },
     prosecutorBodyS3: {
       id:
@@ -207,7 +207,7 @@ export const notifications = {
       defaultMessage:
         'Dómari hefur undirritað og staðfest úrskurð í máli {courtCaseNumber} hjá {courtName}.<br /><br />Skjöl málsins eru aðengileg á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.',
       description:
-        'Notaður sem texti í pósti til sækjanda vegna undirritunar úrskúrðar ef tókst að vista úrskurð í AWS S3',
+        'Notaður sem texti í pósti til sækjanda vegna undirritunar úrskurðar ef tókst að vista úrskurð í AWS S3',
     },
     prosecutorBodyS3V2: {
       id:
@@ -215,7 +215,7 @@ export const notifications = {
       defaultMessage:
         'Dómari hefur {isModifyingRuling, select, true {leiðrétt} other {undirritað og staðfest}} úrskurð í máli {courtCaseNumber} hjá {courtName}.<br /><br />Skjöl málsins eru aðengileg á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.',
       description:
-        'Notaður sem texti í pósti til sækjanda vegna undirritunar úrskúrðar ef tókst að vista úrskurð í AWS S3',
+        'Notaður sem texti í pósti til sækjanda vegna undirritunar úrskurðar ef tókst að vista úrskurð í AWS S3',
     },
     // TODO: remove this unused contentful string
     prosecutorBodyAttachment: {
@@ -224,14 +224,14 @@ export const notifications = {
       defaultMessage:
         '{courtName} hefur sent þér endurrit úr þingbók í máli {courtCaseNumber} ásamt úrskurði dómara í heild sinni í meðfylgjandi viðhengi.<br /><br />Skjöl málsins eru aðengileg á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.',
       description:
-        'Notaður sem texti í pósti til sækjanda vegna undirritunar úrskúrðar ef ekki tókst að vista úrskurð í AWS S3',
+        'Notaður sem texti í pósti til sækjanda vegna undirritunar úrskurðar ef ekki tókst að vista úrskurð í AWS S3',
     },
     courtBody: {
       id: 'judicial.system.backend:notifications.signed_ruling.court_body',
       defaultMessage:
         'Ekki tókst að vista þingbók og/eða úrskurð í máli {courtCaseNumber} í Auði.<br /><br />Skjöl málsins eru aðengileg á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.',
       description:
-        'Notaður sem texti í pósti til dómara og dómritara vegna undirritunar úrskúrðar ef ekki tókst að vista þingbók eða úrskurð í Auði',
+        'Notaður sem texti í pósti til dómara og dómritara vegna undirritunar úrskurðar ef ekki tókst að vista þingbók eða úrskurð í Auði',
     },
     defenderBodyAttachment: {
       // TODO: Remove this message
@@ -240,14 +240,14 @@ export const notifications = {
       defaultMessage:
         '{courtName} hefur sent þér endurrit úr þingbók í máli {courtCaseNumber} ásamt úrskurði dómara í heild sinni í meðfylgjandi viðhengi.',
       description:
-        'Notaður sem texti í pósti til verjanda/talsmanns vegna undirritunar úrskúrðar',
+        'Notaður sem texti í pósti til verjanda/talsmanns vegna undirritunar úrskurðar',
     },
     defenderBody: {
       id: 'judicial.system.backend:notifications.signed_ruling.defender_body',
       defaultMessage:
         'Dómari hefur undirritað og staðfest úrskurð í máli {courtCaseNumber} hjá {courtName}.<br /><br />{defenderHasAccessToRvg, select, FALSE {Þú getur nálgast gögn málsins hjá {courtName} ef þau hafa ekki þegar verið afhent} other {{signedVerdictAvailableInS3, select, FALSE {Þú getur nálgast undirritaðan úrskurð hjá {courtName} ef upp koma vandamál við að sækja hann í {linkStart}Réttarvörslugátt{linkEnd}} other {Þú getur nálgast gögn málsins í {linkStart}Réttarvörslugátt{linkEnd} með rafrænum skilríkjum}}}}.',
       description:
-        'Notaður sem texti í pósti til verjanda/talsmanns vegna undirritunar úrskúrðar',
+        'Notaður sem texti í pósti til verjanda/talsmanns vegna undirritunar úrskurðar',
     },
     defenderBodyV2: {
       id:
@@ -255,7 +255,15 @@ export const notifications = {
       defaultMessage:
         'Dómari hefur {isModifyingRuling, select, true {leiðrétt} other {undirritað og staðfest}} úrskurð í máli {courtCaseNumber} hjá {courtName}.<br /><br />{defenderHasAccessToRvg, select, false {Þú getur nálgast gögn málsins hjá {courtName} ef þau hafa ekki þegar verið afhent} other {{signedVerdictAvailableInS3, select, false {Þú getur nálgast undirritaðan úrskurð hjá {courtName} ef upp koma vandamál við að sækja hann í {linkStart}Réttarvörslugátt{linkEnd}} other {Þú getur nálgast gögn málsins í {linkStart}Réttarvörslugátt{linkEnd} með rafrænum skilríkjum}}}}.',
       description:
-        'Notaður sem texti í pósti til verjanda/talsmanns vegna undirritunar úrskúrðar',
+        'Notaður sem texti í pósti til verjanda/talsmanns vegna undirritunar úrskurðar',
+    },
+    prisonAdminBody: {
+      id:
+        'judicial.system.backend:notifications.signed_ruling.prison_admin_body',
+      defaultMessage:
+        'Dómari hefur undirritað og staðfest úrskurð í máli {courtCaseNumber} hjá {courtName}.<br /><br />Skjöl málsins eru aðgengileg á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.',
+      description:
+        'Notaður sem texti í pósti til Fangelsismálastofnun vegna undirritunar úrskurðar',
     },
   }),
   prisonCourtDateEmail: defineMessages({

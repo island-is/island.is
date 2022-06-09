@@ -237,6 +237,7 @@ services-auth-api:
     NODE_OPTIONS: '--max-old-space-size=208'
     PUBLIC_URL: 'https://innskra.island.is/api'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
+    USER_PROFILE_CLIENT_URL: 'https://service-portal-api.internal.island.is'
     XROAD_BASE_PATH: 'http://securityserver.island.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.island.is/r1/IS'
     XROAD_CLIENT_ID: 'IS/GOV/5501692829/island-is-client'
@@ -502,7 +503,7 @@ services-personal-representative-public:
       annotations:
         kubernetes.io/ingress.class: 'nginx-internal-alb'
       hosts:
-        - host: 'personal-representative-xrd.internal.innskra.island.is'
+        - host: 'personal-representative-public-xrd.internal.innskra.island.is'
           paths:
             - '/'
   namespace: 'personal-representative'
