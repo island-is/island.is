@@ -73,11 +73,6 @@ describe('Parental Leave Application Template', () => {
               otherParentId,
             },
             selectedChild: '0',
-            periods: [
-              {
-                startDate: '3000-01-01',
-              },
-            ],
           },
         }),
         ParentalLeaveTemplate,
@@ -104,11 +99,6 @@ describe('Parental Leave Application Template', () => {
             employer: {
               isSelfEmployed: 'no',
             },
-            periods: [
-              {
-                startDate: '3000-01-01',
-              },
-            ],
           },
         }),
         ParentalLeaveTemplate,
@@ -138,11 +128,6 @@ describe('Parental Leave Application Template', () => {
               isSelfEmployed: 'no',
             },
             selectedChild: '0',
-            periods: [
-              {
-                startDate: '3000-01-01',
-              },
-            ],
           },
         }),
         ParentalLeaveTemplate,
@@ -185,11 +170,6 @@ describe('Parental Leave Application Template', () => {
               isSelfEmployed: 'yes',
             },
             selectedChild: '0',
-            periods: [
-              {
-                startDate: '3000-01-01',
-              },
-            ],
           },
         }),
         ParentalLeaveTemplate,
@@ -243,11 +223,6 @@ describe('Parental Leave Application Template', () => {
                   email: 'selfemployed@test.test',
                   isSelfEmployed: YES,
                 },
-                periods: [
-                  {
-                    startDate: '3000-01-01',
-                  },
-                ],
               },
             }),
             ParentalLeaveTemplate,
@@ -275,11 +250,6 @@ describe('Parental Leave Application Template', () => {
               employer: {
                 isSelfEmployed: 'no',
               },
-              periods: [
-                {
-                  startDate: '3000-01-01',
-                },
-              ],
             },
           }),
           ParentalLeaveTemplate,
@@ -305,11 +275,6 @@ describe('Parental Leave Application Template', () => {
               employer: {
                 isSelfEmployed: 'no',
               },
-              periods: [
-                {
-                  startDate: '3000-01-01',
-                },
-              ],
             },
           }),
           ParentalLeaveTemplate,
@@ -333,11 +298,6 @@ describe('Parental Leave Application Template', () => {
               employer: {
                 isSelfEmployed: 'no',
               },
-              periods: [
-                {
-                  startDate: '3000-01-01',
-                },
-              ],
             },
           }),
           ParentalLeaveTemplate,
@@ -368,11 +328,6 @@ describe('Parental Leave Application Template', () => {
               employer: {
                 isSelfEmployed: 'no',
               },
-              periods: [
-                {
-                  startDate: '3000-01-01',
-                },
-              ],
             },
           }),
           ParentalLeaveTemplate,
@@ -410,11 +365,6 @@ describe('Parental Leave Application Template', () => {
               employer: {
                 isSelfEmployed: 'no',
               },
-              periods: [
-                {
-                  startDate: '3000-01-01',
-                },
-              ],
             },
           }),
           ParentalLeaveTemplate,
@@ -453,11 +403,6 @@ describe('Parental Leave Application Template', () => {
               employer: {
                 isSelfEmployed: 'no',
               },
-              periods: [
-                {
-                  startDate: '3000-01-01',
-                },
-              ],
             },
           }),
           ParentalLeaveTemplate,
@@ -550,11 +495,6 @@ describe('Parental Leave Application Template', () => {
             employer: {
               isSelfEmployed: 'no',
             },
-            periods: [
-              {
-                startDate: '3000-01-01',
-              },
-            ],
           },
           state: ApplicationStates.EDIT_OR_ADD_PERIODS,
         }),
