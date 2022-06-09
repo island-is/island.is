@@ -29,7 +29,7 @@ export const FiskistofaHeader: React.FC<HeaderProps> = ({
                 <img
                   src={organizationPage.organization.logo.url}
                   className={styles.headerLogo}
-                  alt=""
+                  alt="fiskistofa-logo"
                 />
               </Link>
             )
@@ -57,8 +57,10 @@ export const FiskistofaHeader: React.FC<HeaderProps> = ({
                 linkResolver('organizationpage', [organizationPage.slug]).href
               }
             >
-              <Text variant="h1" as="h1" color="white">
-                {organizationPage.title}
+              <Text variant="h1" as="h1" color="blue600" fontWeight="semiBold">
+                <span style={{ color: '#007489' }}>
+                  {organizationPage.title}
+                </span>
               </Text>
             </Link>
           </Box>

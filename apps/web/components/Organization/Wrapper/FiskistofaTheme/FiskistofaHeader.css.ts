@@ -6,10 +6,18 @@ export const headerBg = style({
   marginTop: -130,
   paddingTop: 130,
   backgroundRepeat: 'no-repeat',
-  backgroundPositionX: '110%',
+  backgroundPositionX: '52%',
   backgroundPositionY: '30%',
-  background:
-    "linear-gradient(180deg, #E6F2FB 21.56%, #90D9E3 239.74%), url('https://images.ctfassets.net/8k0h54kbe6bj/7otUOlYNXerZwr0fRxkQA8/580fa8074fdb790a21e34c203658aad1/Fiskistofa-header-image.png')",
+  ...themeUtils.responsiveStyle({
+    xs: {
+      backgroundImage:
+        'linear-gradient(180deg, #E6F2FB 21.56%, #90D9E3 239.74%)',
+    },
+    md: {
+      backgroundImage:
+        "url('https://images.ctfassets.net/8k0h54kbe6bj/7otUOlYNXerZwr0fRxkQA8/580fa8074fdb790a21e34c203658aad1/Fiskistofa-header-image.png'), linear-gradient(180deg, #E6F2FB 21.56%, #90D9E3 239.74%)",
+    },
+  }),
 })
 
 export const iconCircle = style({
