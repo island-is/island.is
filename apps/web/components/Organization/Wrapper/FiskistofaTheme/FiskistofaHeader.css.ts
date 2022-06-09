@@ -76,3 +76,7 @@ export const navigation = style({
     },
   }),
 })
+
+export const title = style({
+  color: '#007489',
+})

@@ -58,9 +58,7 @@ export const FiskistofaHeader: React.FC<HeaderProps> = ({
               }
             >
               <Text variant="h1" as="h1" color="blue600" fontWeight="semiBold">
-                <span style={{ color: '#007489' }}>
-                  {organizationPage.title}
-                </span>
+                <span className={styles.title}>{organizationPage.title}</span>
               </Text>
             </Link>
           </Box>
