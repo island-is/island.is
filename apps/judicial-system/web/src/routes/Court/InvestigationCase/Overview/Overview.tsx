@@ -127,7 +127,7 @@ const Overview = () => {
                 },
               )}
               type="info"
-              testid="alertMessageRulingModified"
+              testid="alertMessageSeenByDefender"
             />
           </Box>
         )}
