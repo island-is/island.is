@@ -6,6 +6,7 @@ import type { Case, UpdateCase } from '@island.is/judicial-system/types'
 
 import { padTimeWithZero, parseTime, replaceTabs } from './formatters'
 import { validate, Validation } from './validate'
+import { compareAsc } from 'date-fns'
 
 export const removeTabsValidateAndSet = (
   field: keyof UpdateCase,
@@ -251,4 +252,16 @@ export const setCheckboxAndSendToServer = (
 
 export const getTimeFromDate = (date: string | undefined) => {
   return date?.includes('T') ? formatDate(date, TIME_FORMAT) : undefined
+}
+
+export const hasDateChanged = (
+  currentDate: string | null | undefined,
+  newDate: Date | undefined,
+) => {
+  if (!currentDate && newDate) return true
+
+  if (currentDate && newDate) {
+    return compareAsc(newDate, new Date(currentDate)) !== 0
+  }
+  return false
 }

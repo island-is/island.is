@@ -16,6 +16,7 @@ import * as constants from '@island.is/judicial-system/consts'
 import { compareAsc } from 'date-fns'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import { hasDateChanged } from '@island.is/judicial-system-web/src/utils/formHelper'
 
 interface DateTime {
   value?: Date
@@ -28,18 +29,6 @@ interface Props {
   isSendingNotification: boolean
   isUpdatingCase: boolean
   setIsModifyingDates: React.Dispatch<React.SetStateAction<boolean>>
-}
-
-const hasDateChanged = (
-  originalDate: string | null | undefined,
-  newDate: Date | undefined,
-) => {
-  if (!originalDate && newDate) return true
-
-  if (originalDate && newDate) {
-    return compareAsc(newDate, new Date(originalDate)) !== 0
-  }
-  return false
 }
 
 const createCaseModifiedExplanation = (
