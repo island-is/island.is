@@ -117,10 +117,19 @@ export class ParentalLeaveService {
   async notifyApplicantOfRejectionFromOtherParent({
     application,
   }: TemplateApiModuleActionProps) {
+    const { applicantPhoneNumber } = getApplicationAnswers(application.answers)
+
     await this.sharedTemplateAPIService.sendEmail(
       generateOtherParentRejected,
       application,
     )
+
+    if (applicantPhoneNumber) {
+      await this.smsService.sendSms(
+        applicantPhoneNumber,
+        `Your application was rejected by the other parent.`,
+      )
+    }
   }
 
   async notifyApplicantOfRejectionFromEmployer({
