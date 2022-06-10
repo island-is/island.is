@@ -31,7 +31,7 @@ describe(`${STEP_SIX_ROUTE}/:id`, () => {
 
     intercept(caseDataAddition)
 
-    cy.getByTestid('alertMessage').should('not.match', ':empty')
+    cy.getByTestid('alertMessageSeenByDefender').should('not.match', ':empty')
   })
 
   it('should have a info panel about how to resend a case if the case has been received', () => {

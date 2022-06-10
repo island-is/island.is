@@ -53,7 +53,7 @@ describe(`${OVERVIEW_ROUTE}/:id`, () => {
   })
 
   it('should let the user know if the assigned defender has viewed the case', () => {
-    cy.getByTestid('alertMessage').should('not.match', ':empty')
+    cy.getByTestid('alertMessageRulingModified').should('not.match', ':empty')
   })
 
   it('should have an overview of the current case', () => {

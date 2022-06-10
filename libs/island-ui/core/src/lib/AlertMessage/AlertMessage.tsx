@@ -48,6 +48,7 @@ const variantStyles: VariantStyles = {
 
 export interface AlertMessageProps {
   type: AlertMessageType
+  testid?: string
 }
 
 type TitleAndOrMessage =
@@ -68,6 +69,7 @@ export const AlertMessage: React.FC<AlertMessageProps & TitleAndOrMessage> = ({
   type,
   title,
   message,
+  testid,
 }) => {
   const variant = variantStyles[type]
 
@@ -78,7 +80,7 @@ export const AlertMessage: React.FC<AlertMessageProps & TitleAndOrMessage> = ({
       background={variant.background}
       borderColor={variant.borderColor}
       borderWidth="standard"
-      data-testid="alertMessage"
+      data-testid={testid ?? 'alertMessage'}
     >
       <Box display="flex">
         <Box display="flex" marginRight={[1, 1, 2]}>

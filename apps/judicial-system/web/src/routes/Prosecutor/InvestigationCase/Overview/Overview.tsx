@@ -146,6 +146,7 @@ export const Overview: React.FC = () => {
                 when: formatDate(workingCase.seenByDefender, 'PPPp'),
               })}
               type="info"
+              testid="alertMessageSeenByDefender"
             />
           </Box>
         )}
