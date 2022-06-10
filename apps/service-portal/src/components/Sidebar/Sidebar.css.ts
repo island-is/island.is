@@ -1,4 +1,4 @@
-import { style } from '@vanilla-extract/css'
+import { globalStyle, style } from '@vanilla-extract/css'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 import {
   SERVICE_PORTAL_SIDEBAR_WIDTH,
@@ -54,4 +54,16 @@ export const navIcon = style({
   ':hover': {
     cursor: 'pointer',
   },
+})
+
+export const itemWrapper = style({})
+
+globalStyle(`${itemWrapper}:hover #sub-nav-model`, {
+  display: 'flex',
+  position: 'absolute',
+  top: 0,
+  left: 28,
+  width: 220,
+  height: 'max-content',
+  zIndex: 10,
 })
