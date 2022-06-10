@@ -3,15 +3,19 @@ import { defineMessage } from 'react-intl'
 import { useNamespaces, useLocale } from '@island.is/localization'
 import { gql, useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
-import { Box, AlertBanner } from '@island.is/island-ui/core'
+import {
+  Box,
+  Text,
+  Button,
+  GridColumn,
+  GridRow,
+} from '@island.is/island-ui/core'
 import {
   ServicePortalModuleComponent,
-  IntroHeader,
   m,
   EmptyState,
 } from '@island.is/service-portal/core'
 import AssetListCards from '../../components/AssetListCards'
-import AssetDisclaimer from '../../components/AssetDisclaimer'
 import { AssetCardLoader } from '../../components/AssetCardLoader'
 import { DEFAULT_PAGING_ITEMS } from '../../utils/const'
 
@@ -85,19 +89,50 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
 
   return (
     <>
-      <Box marginBottom={[3, 4, 5]}>
-        <IntroHeader
-          title={defineMessage({
-            id: 'sp.assets:title',
-            defaultMessage: 'Fasteignir',
-          })}
-          intro={defineMessage({
-            id: 'sp.assets:intro',
-            defaultMessage:
-              'Hér birtast upplýsingar úr fasteignaskrá Þjóðskrár um fasteignir þínar, lönd og lóðir sem þú ert þinglýstur eigandi að.',
-          })}
-        />
-      </Box>
+      <Text variant="h3" as="h1">
+        {formatMessage({
+          id: 'sp.assets:title',
+          defaultMessage: 'Fasteignir',
+        })}
+      </Text>
+      <GridRow marginBottom={7}>
+        <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+          <Text variant="default" paddingTop={2}>
+            {formatMessage({
+              id: 'sp.assets:intro',
+              defaultMessage:
+                'Hér birtast upplýsingar úr fasteignaskrá Þjóðskrár um fasteignir þínar, lönd og lóðir sem þú ert þinglýstur eigandi að.',
+            })}
+          </Text>
+        </GridColumn>
+        <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+          <Box
+            display="flex"
+            justifyContent="flexEnd"
+            alignItems="flexEnd"
+            marginTop={2}
+            printHidden
+            height="full"
+          >
+            <a
+              href="/umsoknir/vedbokarvottord/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <Button
+                colorScheme="default"
+                icon="document"
+                iconType="filled"
+                size="default"
+                type="button"
+                variant="utility"
+              >
+                {formatMessage(m.mortageCertificate)}
+              </Button>
+            </a>
+          </Box>
+        </GridColumn>
+      </GridRow>
       {loading && <AssetCardLoader />}
       {data && (
         <AssetListCards paginateCallback={paginate} assets={assetData} />

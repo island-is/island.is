@@ -22,7 +22,7 @@ const Greeting: FC<{}> = () => {
   return (
     <GridRow>
       <GridColumn span={['12/12', '7/12']}>
-        <Box marginTop={[2, 3, 4]}>
+        <Box marginTop={[2, 3, 4]} data-testid="greeting">
           <Text
             variant="eyebrow"
             marginBottom={2}
@@ -36,9 +36,7 @@ const Greeting: FC<{}> = () => {
           <Text variant="h1" as="h1" marginBottom={1}>
             {userInfo?.profile.name}
           </Text>
-          <Text marginBottom={2} id="greeting-text">
-            {formatMessage(m.greetingIntro)}
-          </Text>
+          <Text marginBottom={2}>{formatMessage(m.greetingIntro)}</Text>
         </Box>
       </GridColumn>
       <GridColumn span={['12/12', '5/12']}>
