@@ -4,7 +4,14 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { getValueViaPath } from '@island.is/application/core'
-import { PASSPORT_CHARGE_CODES } from './constants'
+import {
+  PASSPORT_CHARGE_CODES,
+  YES,
+  NO,
+  YesOrNo,
+  DiscountCheck,
+} from './constants'
+import * as kennitala from 'kennitala'
 
 @Injectable()
 export class PassportService {
@@ -41,11 +48,29 @@ export class PassportService {
     return response
   }
 
-  async checkForDiscount({ application, auth }: TemplateApiModuleActionProps) {
-    //TODO:
-
-    return {
-      hasDisabilityDiscount: true,
+  async checkForDiscount({
+    application: { answers, externalData },
+    auth,
+  }: TemplateApiModuleActionProps) {
+    if (
+      !(externalData.checkForDiscount?.data as DiscountCheck)
+        ?.hasDisabilityDiscount
+    ) {
+      const age = kennitala.info(auth.nationalId).age
+      if (age < 18 || age >= 60) {
+        return {
+          hasDisabilityDiscount: true,
+        }
+      }
+      const check = getValueViaPath<YesOrNo>(
+        answers,
+        'personalInfo.hasDisabilityDiscount',
+      )
+      if (check?.includes(YES)) {
+        return {
+          hasDisabilityDiscount: true,
+        }
+      }
     }
   }
 
