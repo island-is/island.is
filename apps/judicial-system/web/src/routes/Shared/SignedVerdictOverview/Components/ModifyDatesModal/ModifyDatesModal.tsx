@@ -32,6 +32,7 @@ interface Props {
 }
 
 export const createCaseModifiedExplanation = (
+  formatMessage: IntlShape['formatMessage'],
   previousExplaination: string | null | undefined,
   nextExplanation: string,
   userName?: string,
@@ -42,11 +43,15 @@ export const createCaseModifiedExplanation = (
   const history = previousExplaination
     ? `${previousExplaination}<br/><br/>`
     : ''
-  const date = `${capitalize(
-    formatDate(now, 'PPPP', true) || '',
-  )} kl. ${formatDate(now, constants.TIME_FORMAT)}`
 
-  return `${history}${date} - ${userName} ${userTitle}, ${institutionName}<br/>Ástæða: ${nextExplanation}`
+  return `${history}${formatMessage(m.sections.modifyDatesInfo.explanation, {
+    date: capitalize(formatDate(now, 'PPPP', true) || ''),
+    time: formatDate(now, constants.TIME_FORMAT),
+    userName: userName ?? '',
+    userTitle: userTitle ?? '',
+    institutionName: institutionName ?? '',
+    explanation: nextExplanation,
+  })}`
 }
 
 const getModificationSuccessText = (
@@ -172,6 +177,7 @@ const ModifyDatesModal: React.FC<Props> = ({
       validToDate: formattedValidToDate,
       isolationToDate: formattedIsolationToDate,
       caseModifiedExplanation: createCaseModifiedExplanation(
+        formatMessage,
         workingCase.caseModifiedExplanation,
         caseModifiedExplanation,
         user?.name,

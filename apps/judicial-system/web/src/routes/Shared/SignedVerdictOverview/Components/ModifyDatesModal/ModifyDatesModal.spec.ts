@@ -1,6 +1,10 @@
+import { createIntl } from 'react-intl'
+
 import { createCaseModifiedExplanation } from './ModifyDatesModal'
 
 describe('createCaseModifiedExplanation', () => {
+  const formatMessage = createIntl({ locale: 'is', onError: jest.fn() })
+    .formatMessage
   beforeAll(() => jest.useFakeTimers('modern'))
 
   it('should append nextExplainantion', () => {
@@ -14,6 +18,7 @@ describe('createCaseModifiedExplanation', () => {
     jest.setSystemTime(new Date('2022-06-13T13:37:00Z'))
 
     const res = createCaseModifiedExplanation(
+      formatMessage,
       previousExplaination,
       nextExplainantion,
       userName,
@@ -36,6 +41,7 @@ describe('createCaseModifiedExplanation', () => {
     jest.setSystemTime(new Date('2022-06-13T13:37:00Z'))
 
     const res = createCaseModifiedExplanation(
+      formatMessage,
       previousExplaination,
       nextExplainantion,
       userName,
