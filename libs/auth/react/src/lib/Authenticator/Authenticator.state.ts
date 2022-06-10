@@ -41,7 +41,6 @@ export const initialState: AuthReducerState = {
 export type AuthDispatch = Dispatch<Action>
 
 // Add dateOfBirth Date object to user profile
-// Add delegationType array to user profile
 const formatUser = (payload: User): User | null => {
   const dateOfBirth = getBirthday(payload?.profile?.nationalId)
 
