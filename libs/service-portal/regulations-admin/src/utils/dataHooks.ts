@@ -81,7 +81,9 @@ export const useUploadImageUrls = () => {
 
 // ---------------------------------------------------------------------------
 const CreatePresignedPostMutation = gql`
-  3
+  mutation CreatePresignedPostMutation($input: CreatePresignedPostInput!) {
+    createPresignedPost(input: $input)
+  }
 `
 
 export const useS3Upload = () => {
