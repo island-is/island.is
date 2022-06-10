@@ -241,10 +241,6 @@ export const m = defineMessages({
       'Á Mínum síðum Ísland.is er markmiðið að auka þægindi og gegnsæi upplýsinga fyrir einstaklinga og fyrirtæki. Hér má finna sundurliðun skulda hjá ríkissjóði, upplýsingar úr fasteignaskrá, upplýsingar úr ökutækjaskrá og fleira sem nálgast má í valmyndinni hér til hliðar.',
     id: 'service.portal:greeting-intro',
   },
-  olderVersion: {
-    defaultMessage: 'Eldri útgáfa',
-    id: 'service.portal:older-version',
-  },
   menu: {
     defaultMessage: 'Valmynd',
     id: 'service.portal:menu',
@@ -672,5 +668,9 @@ export const m = defineMessages({
   yourLicenses: {
     id: 'service.portal:your-licenses',
     defaultMessage: 'Þín skírteini',
+  },
+  mortageCertificate: {
+    id: 'service.portal:mortage-certificate',
+    defaultMessage: 'Veðbókarvottorð',
   },
 })
