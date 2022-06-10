@@ -1,11 +1,12 @@
 import {
+  buildCustomField,
   buildMultiField,
   buildSection,
   buildSubSection,
   buildTextField,
   getValueViaPath,
 } from '@island.is/application/core'
-import { GREATER } from '../../../../lib/constants'
+import { GREATER, OPERATIONIDS } from '../../../../lib/constants'
 import { m } from '../../../../lib/messages'
 
 export const keyNumbersSection = buildSection({
@@ -17,50 +18,45 @@ export const keyNumbersSection = buildSection({
   children: [
     buildSubSection({
       id: 'keynumbers.incomeAndExpenses',
-      title: m.expenses,
+      title: m.expensesIncome,
       children: [
-        buildMultiField({
-          id: 'incomeAndExpenses',
-          title: m.keyNumbersExpenses,
+        buildCustomField({
+          id: 'incomeAndExpenses.income',
+          title: m.keyNumbersIncomeAndExpenses,
           description: m.fillOutAppopriate,
-          children: [
-            buildTextField({
-              id: 'incomeAndExpenses.donations',
-              title: m.donations,
-              variant: 'currency',
-              width: 'half',
-            }),
-            buildTextField({
-              id: 'incomeAndExpenses.personal',
-              title: m.personalIncome,
-              variant: 'currency',
-              width: 'half',
-            }),
-            buildTextField({
-              id: 'incomeAndExpenses.capitalIncome',
-              title: m.capitalIncome,
-              variant: 'currency',
-              width: 'half',
-            }),
-            buildTextField({
-              id: 'incomeAndExpenses.partyRunning',
-              title: m.keyNumbersParty,
-              variant: 'currency',
-              width: 'half',
-            }),
-            buildTextField({
-              id: 'incomeAndExpenses.capital',
-              title: m.financeCost,
-              variant: 'currency',
-              width: 'half',
-            }),
-          ],
+          component: 'PersonalElectionOperatingIncome',
+          childInputIds: Object.values(OPERATIONIDS) ,
         }),
+        // buildTextField({
+        //   id: 'incomeAndExpenses.personal',
+        //   title: m.personalIncome,
+        //   variant: 'currency',
+        //   width: 'half',
+        // }),
+        // buildTextField({
+        //   id: 'incomeAndExpenses.capitalIncome',
+        //   title: m.capitalIncome,
+        //   variant: 'currency',
+        //   width: 'half',
+        // }),
+        // buildTextField({
+        //   id: 'incomeAndExpenses.partyRunning',
+        //   title: m.keyNumbersParty,
+        //   variant: 'currency',
+        //   width: 'half',
+        // }),
+        // buildTextField({
+        //   id: 'incomeAndExpenses.capital',
+        //   title: m.financeCost,
+        //   variant: 'currency',
+        //   width: 'half',
+        // }),
       ],
     }),
+
     buildSubSection({
       id: 'keyNumbers.propertiesAndDebts',
-      title: m.properties,
+      title: m.keyNumbersProperty,
       children: [
         buildMultiField({
           id: 'propertiesAndDebts',

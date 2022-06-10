@@ -6,12 +6,14 @@ import {
   buildFileUploadField,
   buildExternalDataProvider,
   buildDataProviderItem,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { clientInfoSection } from './personalElection/clientInfoSection'
 import { m } from '../../lib/messages'
 import { keyNumbersSection } from './shared/keyNumbers/keyNumbersSection'
 import { overviewSection } from './shared/overviewSection'
 import { Logo } from '../../components'
+import { GREATER } from '../../lib/constants'
 
 export const getApplication = (): Form => {
   return buildForm({
@@ -43,6 +45,18 @@ export const getApplication = (): Form => {
                 title: m.dataCollectionUserProfileTitle,
                 subTitle: m.dataCollectionUserProfileSubtitle,
               }),
+              buildDataProviderItem({
+                id: 'currentUserType',
+                type: 'CurrentUserTypeProvider',
+                title: '',
+                subTitle: '',
+              }),
+              buildDataProviderItem({
+                id: 'clientTypes',
+                type: 'ClientTypesProvider',
+                title: '',
+                subTitle: '',
+              }),
             ],
           }),
         ],
@@ -52,6 +66,8 @@ export const getApplication = (): Form => {
       buildSection({
         id: 'documents',
         title: m.financialStatement,
+        condition: (answers) =>
+        getValueViaPath(answers, 'electionInfo.incomeLimit') === GREATER,
         children: [
           buildFileUploadField({
             id: 'attachment.file',

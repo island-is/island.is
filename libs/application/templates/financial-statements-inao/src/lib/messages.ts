@@ -176,8 +176,13 @@ export const m = defineMessages({
   },
   keyNumbersExpenses: {
     id: 'fsn.application:keyNumbers.keyNumbersExpenses',
-    defaultMessage: 'Lykiltölur - Gjöld',
+    defaultMessage: 'Lykiltölur - Tekjur og gjöld',
     description: 'expenses',
+  },
+  expensesIncome: {
+    id: 'fsn.application:keyNumbers.expensesIncome',
+    defaultMessage: 'Tekjur og gjöld',
+    description: 'Expenses and income',
   },
   expenses: {
     id: 'fsn.application:keyNumbers.expenses',
@@ -234,6 +239,26 @@ export const m = defineMessages({
     defaultMessage: 'Framlög lögaðila',
     description: 'Donations',
   },
+  corporateDonation: {
+    id: 'fsn.application:income.corporateDonation',
+    defaultMessage: 'Framlög lögaðila',
+    description: 'Corporate donation',
+  },
+  individualDonations: {
+    id: 'fsn.application:income.individualDonations',
+    defaultMessage: 'Framlög einstaklinga',
+    description: 'Corporate donation',
+  },
+  otherIncome: {
+    id: 'fsn.application:income.other',
+    defaultMessage: 'Aðrar tekjur',
+    description: 'Other income',
+  },
+  personalDonations: {
+    id: 'fsn.application:income.personalDonations',
+    defaultMessage: 'Eigin framlög frambjóðenda',
+    description: 'Candiates own donation',
+  },
   personalIncome: {
     id: 'fsn.application:income.personal',
     defaultMessage: 'Eigin tekjur',
@@ -243,6 +268,11 @@ export const m = defineMessages({
     id: 'fsn.application:income.capital',
     defaultMessage: 'Fjármagnstekjur',
     description: 'capital income',
+  },
+  totalIncome: {
+    id: 'fsn.application:income.totalIncome',
+    defaultMessage: 'Tekjur samtals:',
+    description: 'Total income',
   },
   financialStatement: {
     id: 'fsn.application:financial.statment',
@@ -301,7 +331,7 @@ export const m = defineMessages({
   },
   dataCollectionCheckboxLabel: {
     id: 'fsn.application:dataCollectionCheckboxLabel',
-    defaultMessage: 'Ég samþykki að láta sækja gögn',
+    defaultMessage: 'Ég skil að ofangreindra gagna verður aflað við vinnslu innsendingarinnar',
     description: 'Checkbox label for data collection section',
   },
   dataSchemePhoneNumber: {

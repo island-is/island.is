@@ -10,7 +10,7 @@ import {
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
 import { m } from './messages'
-import { Events, States, Roles } from './constants'
+import { ApiActions, Events, States, Roles } from './constants'
 import { dataSchema } from './utils/dataSchema'
 import { Features } from '@island.is/feature-flags'
 
@@ -35,7 +35,6 @@ const FinancialStatementInaoApplication: ApplicationTemplate<
           },
           progress: 0.4,
           lifecycle: EphemeralStateLifeCycle,
-
           roles: [
             {
               id: Roles.APPLICANT,
