@@ -17,4 +17,14 @@ export const m = defineMessages({
     defaultMessage: 'Tókst ekki að sækja umsóknir, eitthvað fór úrskeiðis',
     description: 'General error message',
   },
+  searchLabel: {
+    id: 'sp.applications:search.label',
+    defaultMessage: 'Leit',
+    description: 'Title for application search box',
+  },
+  searchPlaceholder: {
+    id: 'sp.applications:search.placeholder',
+    defaultMessage: 'Leita af umsókn',
+    description: 'Placeholder for application search box',
+  },
 })

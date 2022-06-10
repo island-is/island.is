@@ -1,4 +1,151 @@
 import { defineMessages } from 'react-intl'
+import { ApplicationTypes } from '../types/ApplicationTypes'
+
+export const coreInstitutionMessages = defineMessages({
+  [ApplicationTypes.EXAMPLE]: {
+    id: 'application.system:applicationTypes.example',
+    defaultMessage: 'Stafrænt Ísland',
+    description: 'Institution name for applicationTypes.example',
+  },
+  [ApplicationTypes.PASSPORT]: {
+    id: 'application.system:applicationTypes.passport',
+    defaultMessage: 'INSTITUTION_MISSING',
+    description: 'Institution name for applicationTypes.passport',
+  },
+  [ApplicationTypes.DRIVING_LICENSE]: {
+    id: 'application.system:applicationTypes.driving_license',
+    defaultMessage: 'Ríkislögreglustjóri',
+    description: 'Institution name for applicationTypes.driving_license',
+  },
+  [ApplicationTypes.DRIVING_ASSESSMENT_APPROVAL]: {
+    id: 'application.system:applicationTypes.driving_assessment_approval',
+    defaultMessage: 'Sýslumenn',
+    description:
+      'Institution name for applicationTypes.driving_assessment_approval',
+  },
+  [ApplicationTypes.PARENTAL_LEAVE]: {
+    id: 'application.system:applicationTypes.parental_leave',
+    defaultMessage: 'Vinnumálastofnun',
+    description: 'Institution name for applicationTypes.parental_leave',
+  },
+  [ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING]: {
+    id: 'application.system:applicationTypes.document_provider_onboarding',
+    defaultMessage: 'INSTITUTION_MISSING',
+    description:
+      'Institution name for applicationTypes.document_provider_onboarding',
+  },
+  [ApplicationTypes.HEALTH_INSURANCE]: {
+    id: 'application.system:applicationTypes.health_insurance',
+    defaultMessage: 'Sjúkratryggingar Íslands',
+    description: 'Institution name for applicationTypes.health_insurance',
+  },
+  [ApplicationTypes.CHILDREN_RESIDENCE_CHANGE]: {
+    id: 'application.system:applicationTypes.children_residence_change',
+    defaultMessage: 'Sýslumenn',
+    description:
+      'Institution name for applicationTypes.children_residence_change',
+  },
+  [ApplicationTypes.DATA_PROTECTION_AUTHORITY_COMPLAINT]: {
+    id:
+      'application.system:applicationTypes.data_protection_authority_complaint',
+    defaultMessage: 'Persónuvernd',
+    description:
+      'Institution name for applicationTypes.data_protection_authority_complaint',
+  },
+  [ApplicationTypes.LOGIN_SERVICE]: {
+    id: 'application.system:applicationTypes.login_service',
+    defaultMessage: 'Stafrænt Ísland',
+    description: 'Institution name for applicationTypes.login_service',
+  },
+  [ApplicationTypes.INSTITUTION_COLLABORATION]: {
+    id: 'application.system:applicationTypes.institution_collaboration',
+    defaultMessage: 'Stafrænt Ísland',
+    description:
+      'Institution name for applicationTypes.institution_collaboration',
+  },
+  [ApplicationTypes.FUNDING_GOVERNMENT_PROJECTS]: {
+    id: 'application.system:applicationTypes.funding_government_projects',
+    defaultMessage: 'Fjármála- og Efnahagsráðuneytið',
+    description:
+      'Institution name for applicationTypes.funding_government_projects',
+  },
+  [ApplicationTypes.PUBLIC_DEBT_PAYMENT_PLAN]: {
+    id: 'application.system:applicationTypes.public_debt_payment_plan',
+    defaultMessage: 'Innheimtumaður',
+    description:
+      'Institution name for applicationTypes.public_debt_payment_plan',
+  },
+  [ApplicationTypes.COMPLAINTS_TO_ALTHINGI_OMBUDSMAN]: {
+    id: 'application.system:applicationTypes.complaints_to_althingi_ombudsman',
+    defaultMessage: 'Umboðsmaður Alþingis',
+    description:
+      'Institution name for applicationTypes.complaints_to_althingi_ombudsman',
+  },
+  [ApplicationTypes.ACCIDENT_NOTIFICATION]: {
+    id: 'application.system:applicationTypes.accident_notification',
+    defaultMessage: 'Sjúkratryggingar Íslands',
+    description: 'Institution name for applicationTypes.accident_notification',
+  },
+  [ApplicationTypes.GENERAL_PETITION]: {
+    id: 'application.system:applicationTypes.general_petition',
+    defaultMessage: 'INSTITUTION_MISSING',
+    description: 'Institution name for applicationTypes.general_petition',
+  },
+  [ApplicationTypes.GENERAL_FISHING_LICENSE]: {
+    id: 'application.system:applicationTypes.general_fishing_license',
+    defaultMessage: 'Fiskistofa',
+    description:
+      'Institution name for applicationTypes.general_fishing_license',
+  },
+  [ApplicationTypes.P_SIGN]: {
+    id: 'application.system:applicationTypes.p_sign',
+    defaultMessage: 'Sýslumenn',
+    description: 'Institution name for applicationTypes.p_sign',
+  },
+  [ApplicationTypes.CRIMINAL_RECORD]: {
+    id: 'application.system:applicationTypes.criminal_record',
+    defaultMessage: 'Sýslumenn',
+    description: 'Institution name for applicationTypes.criminal_record',
+  },
+  [ApplicationTypes.FINANCIAL_AID]: {
+    id: 'application.system:applicationTypes.financial_aid',
+    defaultMessage: 'INSTITUTION_MISSING',
+    description: 'Institution name for applicationTypes.financial_aid',
+  },
+  [ApplicationTypes.DRIVING_INSTRUCTOR_REGISTRATIONS]: {
+    id: 'application.system:applicationTypes.driving_instructor_regisrations',
+    defaultMessage: 'Sýslumenn',
+    description:
+      'Institution name for applicationTypes.driving_instructor_regisrations',
+  },
+  [ApplicationTypes.EXAMPLE_PAYMENT]: {
+    id: 'application.system:applicationTypes.example_payment',
+    defaultMessage: 'Stafrænt Ísland',
+    description: 'Institution name for applicationTypes.example_payment',
+  },
+  [ApplicationTypes.DRIVING_SCHOOL_CONFIRMATION]: {
+    id: 'application.system:applicationTypes.driving_school_confirmation',
+    defaultMessage: 'INSTITUTION_MISSING',
+    description:
+      'Institution name for applicationTypes.driving_school_confirmation',
+  },
+  [ApplicationTypes.MORTGAGE_CERTIFICATE]: {
+    id: 'application.system:applicationTypes.mortage_certificate',
+    defaultMessage: 'Sýslumenn',
+    description: 'Institution name for applicationTypes.mortage_certificate',
+  },
+  [ApplicationTypes.NO_DEBT_CERTIFICATE]: {
+    id: 'application.system:applicationTypes.no_debt_certificate',
+    defaultMessage: 'Fjárslýsla ríkisins',
+    description: 'Institution name for applicationTypes.no_debt_certificate',
+  },
+  [ApplicationTypes.FINANCIAL_STATEMENTS_INAO]: {
+    id: 'application.system:applicationTypes.financial_statements_inao',
+    defaultMessage: 'Ríkisendurskoðun',
+    description:
+      'Institution name for applicationTypes.financial_statements_inao',
+  },
+})
 
 export const coreMessages = defineMessages({
   buttonNext: {
