@@ -68,30 +68,43 @@ export const EditChange = (props: EditChangeProp) => {
     UPDATE_DRAFT_REGULATION_CHANGE,
   )
 
+  const { data: regulationBase } = useGetRegulationFromApiQuery(change.name)
   const { data: regulation } = useGetRegulationFromApiQuery(
     change.name,
     toISODate(minDate),
   )
   useEffect(() => {
-    setActiveRegulation(regulation)
+    if (
+      regulation &&
+      regulation.publishedDate !== activeRegulation?.publishedDate
+    ) {
+      setActiveRegulation(regulation)
+    }
   }, [regulation])
   const { data: draftImpacts } = useGetRegulationImpactsQuery(change.name)
 
   const { allFutureEffects, hasImpactMismatch } = useGetRegulationHistory(
-    regulation,
+    regulationBase,
     activeChange,
     draftImpacts,
     draft.id,
-    minDate,
   )
 
   useEffect(() => {
     const lastDay = allFutureEffects.slice(-1)?.[0]?.date
-    setMinDate(lastDay ? new Date(lastDay) : today)
+    const minDateDate = lastDay ? new Date(lastDay) : today
+    if (minDateDate !== minDate) {
+      setMinDate(minDateDate)
+    }
   }, [allFutureEffects])
 
   useEffect(() => {
-    if (!change.id && !activeChange.title.value && activeRegulation) {
+    if (
+      !change.id &&
+      activeRegulation &&
+      !activeChange.title.value &&
+      !activeChange.text.value
+    ) {
       setActiveChange({
         ...activeChange,
         text: fHtml(activeRegulation.text, true),
@@ -308,92 +321,96 @@ export const EditChange = (props: EditChangeProp) => {
             )}
           </GridColumn>
         </GridRow>
-        <GridRow>
-          <GridColumn
-            span={['12/12', '12/12', '12/12', '10/12', '8/12']}
-            offset={['0', '0', '0', '1/12', '2/12']}
-          >
-            <Box marginBottom={3}>
-              <MagicTextarea
-                label="Titill reglugerðar"
-                name="title"
-                value={activeChange.title.value}
-                onChange={(newValue) => changeRegulationTitle(newValue)}
-                required
-                readOnly={readOnly}
-                error={undefined}
-              />
-              {activeChange.title.value !== activeRegulation?.title && (
-                <MiniDiff
-                  older={activeRegulation?.title || ''}
-                  newer={activeChange.title.value}
-                />
-              )}
-            </Box>
-            <Box marginBottom={4} position="relative">
-              <Text fontWeight="semiBold" paddingBottom="p2">
-                Uppfærður texti
-              </Text>
-              <EditorInput
-                label=""
-                baseText={activeRegulation?.text}
-                value={activeChange.text.value}
-                onChange={(newValue) => changeRegulationText(newValue)}
-                draftId={draft.id}
-                isImpact={true}
-                error={undefined}
-                readOnly={readOnly}
-              />
-            </Box>
-          </GridColumn>
-          <GridColumn
-            span={['12/12', '12/12', '12/12', '10/12', '8/12']}
-            offset={['0', '0', '0', '1/12', '2/12']}
-          >
-            <Text fontWeight="semiBold" paddingBottom="p2">
-              Viðaukar
-            </Text>
-            <Appendixes
-              draftId={draft.id}
-              appendixes={activeChange.appendixes}
-              actions={localActions}
-            />
-          </GridColumn>
-        </GridRow>
-        <GridRow>
-          <GridColumn
-            span={['12/12', '12/12', '12/12', '10/12', '8/12']}
-            offset={['0', '0', '0', '1/12', '2/12']}
-          >
-            <Box paddingY={5}>
-              <Divider />
-            </Box>
-            <Box
-              display="flex"
-              justifyContent="spaceBetween"
-              alignItems="center"
-            >
-              <Button
-                onClick={() => closeModal()}
-                variant="text"
-                size="small"
-                preTextIcon="arrowBack"
+        {activeChange.text.value && activeRegulation && (
+          <>
+            <GridRow>
+              <GridColumn
+                span={['12/12', '12/12', '12/12', '10/12', '8/12']}
+                offset={['0', '0', '0', '1/12', '2/12']}
               >
-                Til baka
-              </Button>
-              {!readOnly && (
-                <Button
-                  onClick={saveChange}
-                  size="small"
-                  icon="arrowForward"
-                  disabled={hasImpactMismatch || readOnly}
+                <Box marginBottom={3}>
+                  <MagicTextarea
+                    label="Titill reglugerðar"
+                    name="title"
+                    value={activeChange.title.value}
+                    onChange={(newValue) => changeRegulationTitle(newValue)}
+                    required
+                    readOnly={readOnly}
+                    error={undefined}
+                  />
+                  {activeChange.title.value !== activeRegulation?.title && (
+                    <MiniDiff
+                      older={activeRegulation?.title || ''}
+                      newer={activeChange.title.value}
+                    />
+                  )}
+                </Box>
+                <Box marginBottom={4} position="relative">
+                  <Text fontWeight="semiBold" paddingBottom="p2">
+                    Uppfærður texti
+                  </Text>
+                  <EditorInput
+                    label=""
+                    baseText={activeRegulation.text}
+                    value={activeChange.text.value}
+                    onChange={(newValue) => changeRegulationText(newValue)}
+                    draftId={draft.id}
+                    isImpact={true}
+                    error={undefined}
+                    readOnly={readOnly}
+                  />
+                </Box>
+              </GridColumn>
+              <GridColumn
+                span={['12/12', '12/12', '12/12', '10/12', '8/12']}
+                offset={['0', '0', '0', '1/12', '2/12']}
+              >
+                <Text fontWeight="semiBold" paddingBottom="p2">
+                  Viðaukar
+                </Text>
+                <Appendixes
+                  draftId={draft.id}
+                  appendixes={activeChange.appendixes}
+                  actions={localActions}
+                />
+              </GridColumn>
+            </GridRow>
+            <GridRow>
+              <GridColumn
+                span={['12/12', '12/12', '12/12', '10/12', '8/12']}
+                offset={['0', '0', '0', '1/12', '2/12']}
+              >
+                <Box paddingY={5}>
+                  <Divider />
+                </Box>
+                <Box
+                  display="flex"
+                  justifyContent="spaceBetween"
+                  alignItems="center"
                 >
-                  Vista textabreytingu
-                </Button>
-              )}
-            </Box>
-          </GridColumn>
-        </GridRow>
+                  <Button
+                    onClick={() => closeModal()}
+                    variant="text"
+                    size="small"
+                    preTextIcon="arrowBack"
+                  >
+                    Til baka
+                  </Button>
+                  {!readOnly && (
+                    <Button
+                      onClick={saveChange}
+                      size="small"
+                      icon="arrowForward"
+                      disabled={hasImpactMismatch || readOnly}
+                    >
+                      Vista textabreytingu
+                    </Button>
+                  )}
+                </Box>
+              </GridColumn>
+            </GridRow>
+          </>
+        )}
       </GridContainer>
     </LayoverModal>
   )

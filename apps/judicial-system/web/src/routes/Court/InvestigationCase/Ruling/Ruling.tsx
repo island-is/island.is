@@ -51,7 +51,7 @@ import {
   SIGNED_VERDICT_OVERVIEW,
   IC_MODIFY_RULING_ROUTE,
   IC_COURT_RECORD_ROUTE,
-  IC_HEARING_ARRANGEMENTS_ROUTE,
+  IC_COURT_HEARING_ARRANGEMENTS_ROUTE,
 } from '@island.is/judicial-system/consts'
 import SigningModal, {
   useRequestRulingSignature,
@@ -481,7 +481,7 @@ const Ruling = () => {
           previousUrl={
             isModifyingRuling
               ? `${SIGNED_VERDICT_OVERVIEW}/${workingCase.id}`
-              : `${IC_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`
+              : `${IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`
           }
           nextButtonText={
             isModifyingRuling
