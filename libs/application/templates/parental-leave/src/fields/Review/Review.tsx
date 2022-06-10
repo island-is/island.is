@@ -103,6 +103,7 @@ export const Review: FC<ReviewScreenProps> = ({
       applicantPhoneNumber,
       otherParent,
       otherParentEmail,
+      otherParentPhoneNumber,
       pensionFund,
       useUnion,
       union,
@@ -383,7 +384,7 @@ export const Review: FC<ReviewScreenProps> = ({
         )}
         {otherParentWillApprove && (
           <GridRow marginTop={3}>
-            <GridColumn>
+            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
               <DataValue
                 label={formatMessage(
                   parentalLeaveFormMessages.shared.otherParentEmailSubSection,
@@ -391,6 +392,17 @@ export const Review: FC<ReviewScreenProps> = ({
                 value={otherParentEmail}
               />
             </GridColumn>
+            {otherParentPhoneNumber && (
+              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+                <DataValue
+                  label={formatMessage(
+                    parentalLeaveFormMessages.shared
+                      .otherParentPhoneNumberSubSection,
+                  )}
+                  value={otherParentPhoneNumber}
+                />
+              </GridColumn>
+            )}
           </GridRow>
         )}
       </ReviewGroup>
