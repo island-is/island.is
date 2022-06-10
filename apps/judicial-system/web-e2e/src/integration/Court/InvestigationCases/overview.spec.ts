@@ -62,7 +62,7 @@ describe(`${IC_OVERVIEW_ROUTE}/:id`, () => {
   })
 
   it('should let the user know if the assigned defender has viewed the case', () => {
-    cy.getByTestid('alertMessageRulingModified').should('not.match', ':empty')
+    cy.getByTestid('alertMessageSeenByDefender').should('not.match', ':empty')
   })
 
   it('should display information about the case in an info card', () => {
