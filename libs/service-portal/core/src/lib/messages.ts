@@ -669,4 +669,8 @@ export const m = defineMessages({
     id: 'service.portal:your-licenses',
     defaultMessage: 'Þín skírteini',
   },
+  mortageCertificate: {
+    id: 'service.portal:mortage-certificate',
+    defaultMessage: 'Veðbókarvottorð',
+  },
 })
