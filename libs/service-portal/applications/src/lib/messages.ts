@@ -27,4 +27,9 @@ export const m = defineMessages({
     defaultMessage: 'Leita af umsókn',
     description: 'Placeholder for application search box',
   },
+  searchInstitutiontLabel: {
+    id: 'sp.applications:institution-label',
+    defaultMessage: 'Stofnun',
+    description: 'Label for application institution dropdown search',
+  },
 })

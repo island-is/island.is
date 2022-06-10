@@ -28,15 +28,15 @@ const isLocalhost = window.location.origin.includes('localhost')
 const isDev = window.location.origin.includes('beta.dev01.devland.is')
 const isStaging = window.location.origin.includes('beta.staging01.devland.is')
 
-const defaultCategory = { label: 'Allar stofnanir', value: '' }
+const defaultInstitution = { label: 'Allar stofnanir', value: '' }
 
 type FilterValues = {
-  activeCategory: Option
+  activeInstitution: Option
   searchQuery: string
 }
 
 const defaultFilterValues: FilterValues = {
-  activeCategory: defaultCategory,
+  activeInstitution: defaultInstitution,
   searchQuery: '',
 }
 
@@ -59,7 +59,9 @@ const ApplicationList: ServicePortalModuleComponent = () => {
   const [filteredApplications, setFilteredApplications] = useState<
     Application[]
   >(applications)
-  const [categories, setCategories] = useState<Option[]>([defaultCategory])
+  const [institutions, setInstitutions] = useState<Option[]>([
+    defaultInstitution,
+  ])
   const [filterValue, setFilterValue] = useState<FilterValues>(
     defaultFilterValues,
   )
@@ -80,7 +82,7 @@ const ApplicationList: ServicePortalModuleComponent = () => {
     const apps: Application[] = applications
     let institutions: Option[] = []
     apps.map((elem, idx) => {
-      const inst = mapper.get(elem.typeId) ?? 'INSTITUTION_MISSING'
+      const inst = mapper[elem.typeId] ?? 'INSTITUTION_MISSING'
       institutions.push({
         value: inst,
         label: inst,
@@ -93,14 +95,14 @@ const ApplicationList: ServicePortalModuleComponent = () => {
     )
     // Sort alphabetically
     institutions.sort((a, b) => a.label.localeCompare(b.label))
-    setCategories([defaultCategory, ...institutions])
+    setInstitutions([defaultInstitution, ...institutions])
   }
 
   // Search applications and add the results into filteredApplications
   const searchApplications = () => {
     const mapper = getInstitutionMapper(formatMessage)
     const searchQuery = filterValue.searchQuery
-    const activeCategory = filterValue.activeCategory.value
+    const activeInstitution = filterValue.activeInstitution.value
     const filteredApps = applications.filter(
       (application: Application) =>
         // Search in name and description
@@ -108,10 +110,10 @@ const ApplicationList: ServicePortalModuleComponent = () => {
           application.actionCard?.description
             ?.toLowerCase()
             .includes(searchQuery.toLowerCase())) &&
-        // Search in active category, if value is empty then "Allar stofnanir" is selected so it does not filter.
+        // Search in active institution, if value is empty then "Allar stofnanir" is selected so it does not filter.
         // otherwise it filters it.
-        (activeCategory !== ''
-          ? mapper.get(application.typeId) === activeCategory
+        (activeInstitution !== ''
+          ? mapper[application.typeId] === activeInstitution
           : true),
     )
     setFilteredApplications(filteredApps)
@@ -124,12 +126,15 @@ const ApplicationList: ServicePortalModuleComponent = () => {
     }))
   }, [])
 
-  const handleCategoryChange = useCallback((newCategory: ValueType<Option>) => {
-    setFilterValue((oldFilter) => ({
-      ...oldFilter,
-      activeCategory: newCategory as Option,
-    }))
-  }, [])
+  const handleInstitutionChange = useCallback(
+    (newInstitution: ValueType<Option>) => {
+      setFilterValue((oldFilter) => ({
+        ...oldFilter,
+        activeInstitution: newInstitution as Option,
+      }))
+    },
+    [],
+  )
 
   return (
     <>
@@ -184,17 +189,14 @@ const ApplicationList: ServicePortalModuleComponent = () => {
               <GridColumn paddingTop={[2, 0]} span={['1/1', '1/2']}>
                 <Box height="full">
                   <Select
-                    name="categories"
+                    name="institutions"
                     backgroundColor="blue"
                     size="xs"
-                    defaultValue={categories[0]}
-                    options={categories}
-                    value={filterValue.activeCategory}
-                    onChange={handleCategoryChange}
-                    label={formatMessage({
-                      id: 'sp.applications:institution-label',
-                      defaultMessage: 'Stofnun',
-                    })}
+                    defaultValue={institutions[0]}
+                    options={institutions}
+                    value={filterValue.activeInstitution}
+                    onChange={handleInstitutionChange}
+                    label={formatMessage(m.searchInstitutiontLabel)}
                   />
                 </Box>
               </GridColumn>
