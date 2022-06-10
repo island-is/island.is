@@ -22,6 +22,7 @@ export enum ApiActions {
   submitApplication = 'submitApplication',
   createCharge = 'createCharge',
   submitPassportApplication = 'submitPassportApplication',
+  checkForDiscount = 'checkForDiscount',
 }
 
 export const AUTH_TYPES = [

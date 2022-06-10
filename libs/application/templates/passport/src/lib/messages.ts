@@ -56,8 +56,7 @@ export const m = defineMessages({
   },
   dataCollectionIdentityDocumentSubtitle: {
     id: 'pa.application:dataCollection.identityDocumentSubtitle',
-    defaultMessage:
-      'Upplýsingar frá skilríkjaskrá hjá Þjóðskrá um einstaklinga úr þinni forsjá.',
+    defaultMessage: 'Upplýsingar frá skilríkjaskrá hjá Þjóðskrá.',
     description: 'Identity document provider subtitle',
   },
   formName: {

@@ -41,6 +41,10 @@ export class PassportService {
     return response
   }
 
+  async checkForDiscount({ application, auth }: TemplateApiModuleActionProps) {
+    console.log(application.answers)
+  }
+
   async submitPassportApplication({
     application,
     auth,
