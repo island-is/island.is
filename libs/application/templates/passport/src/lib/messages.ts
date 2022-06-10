@@ -206,7 +206,7 @@ export const m = defineMessages({
   },
   proceedToPayment: {
     id: 'pa.application:payment.proceedToPayment',
-    defaultMessage: 'Áfram í greiðslu',
+    defaultMessage: 'Greiða',
     description: 'Some description',
   },
   paymentSection: {
@@ -272,7 +272,8 @@ export const m = defineMessages({
   applicationCompleteNextStepsDescription: {
     id: 'pa.application:complete.nextSteps.description#markdown',
     defaultMessage:
-      'Fara í myndatöku á næsta afgreiðslustað sýslumanns. Þú færð senda tilkynningu á Mínar síður þegar vegabréfið er tilbúið og hægt er að sækja það á þann afhendingarstað sem þú valdir.',
+    `* Fara í myndatöku á næsta afgreiðslustað sýslumanns.\\n\\n
+    * Þú færð senda tilkynningu á Mínar síður þegar vegabréfið er tilbúið og hægt er að sækja það á þann afhendingarstað sem þú valdir.`,
     description: 'Some description',
   },
 })

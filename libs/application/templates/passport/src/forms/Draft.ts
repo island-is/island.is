@@ -154,7 +154,7 @@ export const Draft: Form = buildForm({
               space: 'gutter',
             }),
             buildCheckboxField({
-              id: 'personalInfo.isPassportLost',
+              id: 'personalInfo.hasDisabilityDiscount',
               title: '',
               large: false,
               backgroundColor: 'white',
@@ -403,37 +403,6 @@ export const Draft: Form = buildForm({
                     o.value ===
                     (application.answers.service as Service).authentication,
                 )?.label,
-            }),
-            buildDescriptionField({
-              id: 'overview.space6',
-              title: '',
-              description: '',
-              space: 'gutter',
-            }),
-            buildCheckboxField({
-              id: 'overview.willBringPassport',
-              title: '',
-              large: false,
-              backgroundColor: 'white',
-              defaultValue: [],
-              options: [
-                {
-                  value: YES,
-                  label: m.willBringPassport,
-                },
-              ],
-            }),
-            buildSubmitField({
-              id: 'confirmOverview',
-              placement: 'footer',
-              title: '',
-              actions: [
-                {
-                  event: DefaultEvents.SUBMIT,
-                  name: m.confirm,
-                  type: 'primary',
-                },
-              ],
             }),
           ],
         }),

@@ -30,7 +30,7 @@ const PassportTemplate: ApplicationTemplate<
           name: m.formName.defaultMessage,
           progress: 0.33,
           lifecycle: DefaultStateLifeCycle,
-          onEntry: {
+          onExit: {
             apiModuleAction: ApiActions.checkForDiscount,
           },
           roles: [

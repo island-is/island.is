@@ -42,7 +42,11 @@ export class PassportService {
   }
 
   async checkForDiscount({ application, auth }: TemplateApiModuleActionProps) {
-    console.log(application.answers)
+    //TODO:
+
+    return {
+      hasDisabilityDiscount: true,
+    }
   }
 
   async submitPassportApplication({
