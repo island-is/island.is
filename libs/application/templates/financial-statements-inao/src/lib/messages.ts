@@ -269,6 +269,31 @@ export const m = defineMessages({
     defaultMessage: 'Fjármagnstekjur',
     description: 'capital income',
   },
+  electionOffice: {
+    id: 'fsn.application:income.electionOffice',
+    defaultMessage: 'Kosningaskrifstofa',
+    description: 'electionOffice',
+  },
+  advertisements: {
+    id: 'fsn.application:income.advertisements',
+    defaultMessage: 'Auglýsingar og kynningar',
+    description: 'Advertisements costs',
+  },
+  travelCost: {
+    id: 'fsn.application:income.travelCost',
+    defaultMessage: 'Fundir ferðakostnaður',
+    description: 'Meeting and travel cost',
+  },
+  otherCost: {
+    id: 'fsn.application:income.otherCost',
+    defaultMessage: 'Annar kostnaður',
+    description: 'Other costs',
+  },
+  capitalCost: {
+    id: 'fsn.application:income.capitalCost',
+    defaultMessage: 'Fjármagnsgjöld',
+    description: 'capital costs',
+  },
   totalIncome: {
     id: 'fsn.application:income.totalIncome',
     defaultMessage: 'Tekjur samtals:',

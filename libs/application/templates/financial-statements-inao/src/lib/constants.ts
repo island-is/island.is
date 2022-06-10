@@ -24,6 +24,9 @@ export const OPERATIONIDS = {
   otherIncome: 'income.other',
   personal: 'income.personal',
   capitalIncome: 'income.capitalIncome',
-  capital: 'incomeAndExpenses.capital',
-  partyRunning: 'expenses.partyRunning',
+  electionOffice: 'expense.electionOffice',
+  advertisements: 'expense.advertisements',
+  travelCost: 'expense.travelCost',
+  otherCost: 'expense.otherCost',
+  capitalCost: 'expense.capitalCost'
 }
