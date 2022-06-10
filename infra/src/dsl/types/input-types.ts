@@ -55,7 +55,6 @@ export type ServiceDefinition = {
   liveness: HealthProbe
   readiness: HealthProbe
   healthPort?: number
-  progressDeadline?: number
   port?: number
   initContainers?: InitContainers
   env: EnvironmentVariables
