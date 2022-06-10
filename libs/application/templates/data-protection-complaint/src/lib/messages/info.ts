@@ -123,10 +123,20 @@ export const info = {
       defaultMessage: 'Símanúmer',
       description: 'Telephone number',
     },
+    contactName: {
+      id: 'dpac.application:section.info.contactName',
+      defaultMessage: 'Nafn',
+      description: 'Contact name',
+    },
     organizationOrInstitutionName: {
       id: 'dpac.application:section.info.organizationOrInstitutionName',
       defaultMessage: 'Nafn stofnunar/samtaka/félags',
       description: 'Organization or institution name',
+    },
+    contactTitle: {
+      id: 'dpac.application:section.info.contactTitle',
+      defaultMessage: 'Tengiliður',
+      description: 'Contact title',
     },
     commissionDocuments: {
       id: 'dpac.application:section.info.commissionDocuments',
