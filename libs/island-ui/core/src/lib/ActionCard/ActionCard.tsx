@@ -21,6 +21,7 @@ type ActionCardProps = {
   headingVariant?: 'h3' | 'h4'
   text?: string
   eyebrow?: string
+  logo?: React.FC
   backgroundColor?: 'white' | 'blue' | 'red'
   tag?: {
     label: string
@@ -114,6 +115,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
   progressMeter: _progressMeter,
   deleteButton: _delete,
   avatar,
+  logo,
 }) => {
   const cta = { ...defaultCta, ..._cta }
   const progressMeter = { ...defaultProgressMeter, ..._progressMeter }
@@ -324,6 +326,16 @@ export const ActionCard: React.FC<ActionCardProps> = ({
     )
   }
 
+  const renderLogo = () => {
+    if (!logo) return null
+    const Logo = logo
+    return (
+      <Box marginRight={1}>
+        <Logo />
+      </Box>
+    )
+  }
+
   return (
     <Box
       display="flex"
@@ -358,12 +370,17 @@ export const ActionCard: React.FC<ActionCardProps> = ({
               justifyContent="spaceBetween"
               alignItems={['flexStart', 'flexStart', 'flexEnd']}
             >
-              <Text
-                variant={headingVariant}
-                color={backgroundColor === 'blue' ? 'blue600' : 'currentColor'}
-              >
-                {heading}
-              </Text>
+              <Box display="flex" flexDirection="row" alignItems="center">
+                {renderLogo()}
+                <Text
+                  variant={headingVariant}
+                  color={
+                    backgroundColor === 'blue' ? 'blue600' : 'currentColor'
+                  }
+                >
+                  {heading}
+                </Text>
+              </Box>
               <Hidden above="xs">
                 <Box>{!date && !eyebrow && renderTag()}</Box>
               </Hidden>
