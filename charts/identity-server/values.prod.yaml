@@ -88,6 +88,7 @@ identity-server:
     DD_DOTNET_TRACER_HOME: '/opt/datadog'
     DD_INTEGRATIONS: '/opt/datadog/integrations.json'
     Datadog__Metrics__Port: '5003'
+    IDS_ISSUER: 'https://audkenniv2-identity-server.dev01.devland.is/'
     IdentityServer__EnableFakeLogin: 'true'
     IdentityServer__EnableFeatureDeploymentWildcards: 'false'
     IdentityServer__SigningCertificate__Path: '/etc/config/ids-signing.pfx'

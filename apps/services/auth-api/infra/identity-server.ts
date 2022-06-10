@@ -11,6 +11,7 @@ export const serviceSetup = (services: {
     .image('identity-server')
     .env({
       AudkenniSettings__Url: "https://tqd75.audkenni.is:443/sso/",
+      IDS_ISSUER: "https://audkenniv2-identity-server.dev01.devland.is/",
       AWS__CloudWatch__AuditLogGroup: '/identity-server/audit-log',
       ASPNETCORE_URLS: 'http://*:5000',
       CORECLR_ENABLE_PROFILING: '1',
