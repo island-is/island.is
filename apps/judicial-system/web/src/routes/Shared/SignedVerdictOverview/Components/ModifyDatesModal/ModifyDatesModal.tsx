@@ -243,8 +243,6 @@ const ModifyDatesModal: React.FC<Props> = ({
     value: Date | undefined,
     valid: boolean,
   ) => {
-    console.log('value', value)
-    console.log('modifiedValidToDate', modifiedValidToDate?.value)
     const validToDate = value ?? modifiedValidToDate?.value
 
     if (
@@ -257,23 +255,12 @@ const ModifyDatesModal: React.FC<Props> = ({
         value: validToDate,
         isValid: valid,
       })
-
-      // setIsolationToDateChanged(
-      //   !workingCase.isolationToDate ||
-      //     compareAsc(validToDate, new Date(workingCase.isolationToDate)) !== 0,
-      // )
     }
 
     setModifiedValidToDate({
       value: validToDate,
       isValid: valid,
     })
-
-    // setValidToDateChanged(
-    //   value &&
-    //     (!workingCase.validToDate ||
-    //       compareAsc(value, new Date(workingCase.validToDate)) !== 0),
-    // )
   }
 
   const [
@@ -440,15 +427,6 @@ const ModifyDatesModal: React.FC<Props> = ({
                       value: value ?? modifiedIsolationToDate?.value,
                       isValid: valid,
                     })
-
-                    // setIsolationToDateChanged(
-                    //   value !== undefined &&
-                    //     workingCase.isolationToDate !== undefined &&
-                    //     compareAsc(
-                    //       new Date(workingCase.isolationToDate),
-                    //       value,
-                    //     ) !== 0,
-                    // )
                   }}
                   minDate={
                     workingCase.rulingDate
