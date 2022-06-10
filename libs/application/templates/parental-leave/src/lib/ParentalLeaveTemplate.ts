@@ -395,7 +395,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               write: 'all',
             },
             {
-              // TODO: Will applicant get notification about status changing?
               id: Roles.ORGINISATION_REVIEWER,
               formLoader: () =>
                 import('../forms/InReview').then((val) =>
@@ -450,8 +449,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   Promise.resolve(val.InReview),
                 ),
               read: 'all',
-              // TODO: Maybe create new State where applicant has 'write' access?
-              // write: 'all',
             },
           ],
         },
@@ -966,9 +963,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       return Roles.ASSIGNEE
     }
 
-    // TODO: add VMST's id
     if (id === VMST_ID) {
-      // The nationalId added as claim in the Ids earlier.
       return Roles.ORGINISATION_REVIEWER
     }
 
