@@ -21,7 +21,6 @@ import { format as formatKennitala } from 'kennitala'
 import { useLocale } from '@island.is/localization'
 import { useHistory } from 'react-router-dom'
 import { ScreenType, DelegationsScreenDataType, Delegation } from '../types'
-import { ErrorShell } from './ErrorShell'
 import { FeatureFlagClient, Features } from '@island.is/feature-flags'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 interface DelegationsScreenProps {
