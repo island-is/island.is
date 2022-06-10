@@ -8,9 +8,6 @@ const getBoostForType = (type: string, defaultBoost: string | number = 1) => {
   if (type === 'webArticle') {
     return 40
   }
-  if (type === 'webSubArticle') {
-    return 30
-  }
   return defaultBoost
 }
 
