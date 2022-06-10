@@ -31,13 +31,13 @@ interface Props {
   setIsModifyingDates: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const createCaseModifiedExplanation = (
+export const createCaseModifiedExplanation = (
   previousExplaination: string | null | undefined,
   nextExplanation: string,
   userName?: string,
   userTitle?: string,
   institutionName?: string,
-) => {
+): string => {
   const now = new Date()
   const history = previousExplaination
     ? `${previousExplaination}<br/><br/>`
