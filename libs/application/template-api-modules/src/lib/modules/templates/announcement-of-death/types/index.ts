@@ -17,14 +17,6 @@ export interface NationalRegistry {
 
 export interface RealEstateAddress {
   address: string
-  /*
-  addressNumber: number
-  landNumber: number
-  postalCode: number
-  municipality: string
-  display: string
-  displayShort: string
-  */
 }
 
 export type PickRole = {

@@ -90,10 +90,10 @@ export class NationalRegistryXRoadResolver {
     nullable: true,
   })
   @Audit()
-  async resolveFamily(
+  async nationalRegistryFamily(
     @Context('req') { user }: { user: User },
     @Args('nationalId') nationalId: string,
   ): Promise<NationalRegistryFamilyMemberInfo[] | null> {
-    return await this.nationalRegistryXRoadService.getFamily(user, nationalId)
+    return this.nationalRegistryXRoadService.getFamily(user, nationalId)
   }
 }

@@ -8,12 +8,25 @@ import {
   Application,
   DefaultEvents,
   EphemeralStateLifeCycle,
+  StateLifeCycle,
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
 import { m } from '../lib/messages'
 import { ApiActions } from './constants'
 import { Features } from '@island.is/feature-flags'
+
+const HalfYearLifeCycle: StateLifeCycle = {
+  shouldBeListed: true,
+  shouldBePruned: true,
+  whenToPrune: 1000 * 3600 * 24 * 182, // 6 months
+}
+
+const DayLifeCycle: StateLifeCycle = {
+  shouldBeListed: true,
+  shouldBePruned: true,
+  whenToPrune: 1000 * 3600 * 24,
+}
 
 const AnnouncementOfDeathTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -76,7 +89,7 @@ const AnnouncementOfDeathTemplate: ApplicationTemplate<
             title: m.applicationTitle,
           },
           progress: 0.5,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: HalfYearLifeCycle,
           onExit: {
             apiModuleAction: ApiActions.submitApplication,
             shouldPersistToExternalData: true,
@@ -108,7 +121,7 @@ const AnnouncementOfDeathTemplate: ApplicationTemplate<
         meta: {
           name: 'Done',
           progress: 1,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: HalfYearLifeCycle,
 
           roles: [
             {
@@ -124,7 +137,7 @@ const AnnouncementOfDeathTemplate: ApplicationTemplate<
         meta: {
           name: 'Delegated',
           progress: 1,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: DayLifeCycle,
           onEntry: {
             apiModuleAction: ApiActions.assignElectedPerson,
             shouldPersistToExternalData: false,
