@@ -46,6 +46,7 @@ export const DelegationsScreen = ({
 
   // Check for user delegations if application supports delegations
   const { data: delegations, error } = useQuery(ACTOR_DELEGATIONS, {
+    variables: { input: { delegationTypes: screenData.allowedDelegations } },
     skip: !alternativeSubjects && !screenData.allowedDelegations,
   })
   // if error with fetching delegations set handle like application that does not support delegations
