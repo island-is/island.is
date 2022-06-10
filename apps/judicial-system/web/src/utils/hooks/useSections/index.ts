@@ -1,5 +1,5 @@
 import { useIntl } from 'react-intl'
-import router from 'next/router'
+import { useRouter } from 'next/router'
 
 import {
   Case,
@@ -45,6 +45,7 @@ interface Section {
 
 const useSections = () => {
   const { formatMessage } = useIntl()
+  const router = useRouter()
 
   const findLastValidStep = (section: Section) => {
     const filterValidSteps = section.children.filter((c) => c.href)
