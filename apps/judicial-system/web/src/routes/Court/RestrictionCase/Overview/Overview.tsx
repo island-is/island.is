@@ -132,7 +132,7 @@ export const JudgeOverview: React.FC = () => {
                 { when: formatDate(workingCase.seenByDefender, 'PPPp') },
               )}
               type="info"
-              testid="alertMessageRulingModified"
+              testid="alertMessageSeenByDefender"
             />
           </Box>
         )}
