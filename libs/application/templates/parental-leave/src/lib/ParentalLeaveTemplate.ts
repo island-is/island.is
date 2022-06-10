@@ -97,7 +97,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
-            }
+            },
           ],
         },
         on: {
@@ -331,7 +331,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               read: 'all',
               write: 'all',
               delete: true,
-            }
+            },
           ],
         },
         on: {
@@ -398,11 +398,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               // TODO: Will applicant get notification about status changing?
               id: Roles.ORGINISATION_REVIEWER,
               formLoader: () =>
-              import('../forms/InReview').then((val) =>
+                import('../forms/InReview').then((val) =>
                   Promise.resolve(val.InReview),
-              ),
+                ),
               write: 'all',
-          },
+            },
           ],
         },
         on: {
@@ -450,7 +450,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   Promise.resolve(val.InReview),
                 ),
               read: 'all',
-              // TODO: Maybe create new State where applicant has 'write' access? 
+              // TODO: Maybe create new State where applicant has 'write' access?
               // write: 'all',
             },
           ],
@@ -967,7 +967,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
     }
 
     // TODO: add VMST's id
-    if (id === VMST_ID) { // The nationalId added as claim in the Ids earlier.
+    if (id === VMST_ID) {
+      // The nationalId added as claim in the Ids earlier.
       return Roles.ORGINISATION_REVIEWER
     }
 
