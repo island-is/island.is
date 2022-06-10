@@ -4,15 +4,12 @@ import { TokenGuard } from '@island.is/judicial-system/auth'
 
 import { InternalCaseController } from '../../internalCase.controller'
 
-describe('InternalCaseController - Internal create guards', () => {
+describe('InternalCaseController - guards', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let guards: any[]
 
   beforeEach(() => {
-    guards = Reflect.getMetadata(
-      '__guards__',
-      InternalCaseController.prototype.create,
-    )
+    guards = Reflect.getMetadata('__guards__', InternalCaseController)
   })
 
   it('should have one guard', () => {

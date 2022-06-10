@@ -36,7 +36,6 @@ export class InternalCaseController {
     return createdCase
   }
 
-  @UseGuards(TokenGuard)
   @Post('cases/archive')
   @ApiOkResponse({
     type: ArchiveResponse,
