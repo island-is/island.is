@@ -579,11 +579,22 @@ export const ParentalLeaveForm: Form = buildForm({
           condition: (answers, externalData) =>
             requiresOtherParentApproval(answers, externalData),
           children: [
-            buildTextField({
-              id: 'otherParentEmail',
+            buildMultiField({
+              id: 'otherParentContactInfo',
               title: parentalLeaveFormMessages.shared.otherParentEmailTitle,
-              description:
-                parentalLeaveFormMessages.shared.otherParentEmailDescription,
+              children: [
+                buildTextField({
+                  id: 'otherParentEmail',
+                  title: parentalLeaveFormMessages.applicant.email,
+                  description:
+                    parentalLeaveFormMessages.shared
+                      .otherParentEmailDescription,
+                }),
+                buildTextField({
+                  id: 'otherParentPhoneNumber',
+                  title: parentalLeaveFormMessages.applicant.phoneNumber,
+                }),
+              ],
             }),
           ],
         }),
