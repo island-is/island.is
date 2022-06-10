@@ -13,7 +13,12 @@ import {
 } from '@island.is/application/core'
 
 import Logo from '../assets/Logo'
-import { employerFormMessages } from '../lib/messages'
+import {
+  employerFormMessages,
+  otherParentApprovalFormMessages,
+} from '../lib/messages'
+import { currentDateStartTime } from '../lib/parentalLeaveTemplateUtils'
+import { getApplicationAnswers } from '../lib/parentalLeaveUtils'
 
 export const EmployerApproval: Form = buildForm({
   id: 'EmployerApprovalForParentalLeave',
@@ -48,6 +53,10 @@ export const EmployerApproval: Form = buildForm({
             buildMultiField({
               id: 'multi',
               title: employerFormMessages.reviewMultiTitle,
+              condition: (answers) =>
+                new Date(
+                  getApplicationAnswers(answers).periods[0].startDate,
+                ).getTime() < currentDateStartTime(),
               children: [
                 buildCustomField(
                   {
@@ -64,6 +73,66 @@ export const EmployerApproval: Form = buildForm({
                   id: 'unionAndPensionInfo',
                   title: '',
                   component: 'EmployerApprovalExtraInformation',
+                }),
+                buildDescriptionField({
+                  id: 'final',
+                  title: otherParentApprovalFormMessages.warning,
+                  titleVariant: 'h4',
+                  description:
+                    otherParentApprovalFormMessages.startDateInThePast,
+                  condition: (answers) =>
+                    new Date(
+                      getApplicationAnswers(answers).periods[0].startDate,
+                    ).getTime() < currentDateStartTime(),
+                }),
+                buildSubmitField({
+                  id: 'submit',
+                  title: coreMessages.buttonSubmit,
+                  placement: 'footer',
+                  actions: [
+                    {
+                      name: employerFormMessages.buttonReject,
+                      type: 'subtle',
+                      event: 'REJECT',
+                    },
+                  ],
+                }),
+              ],
+            }),
+            buildMultiField({
+              id: 'multi',
+              title: employerFormMessages.reviewMultiTitle,
+              condition: (answers) =>
+                new Date(
+                  getApplicationAnswers(answers).periods[0].startDate,
+                ).getTime() >= currentDateStartTime(),
+              children: [
+                buildCustomField(
+                  {
+                    id: 'timeline',
+                    title: employerFormMessages.reviewMultiTitle,
+                    component: 'PeriodsRepeater',
+                  },
+                  {
+                    editable: false,
+                    showDescription: false,
+                  },
+                ),
+                buildCustomField({
+                  id: 'unionAndPensionInfo',
+                  title: '',
+                  component: 'EmployerApprovalExtraInformation',
+                }),
+                buildDescriptionField({
+                  id: 'final',
+                  title: otherParentApprovalFormMessages.warning,
+                  titleVariant: 'h4',
+                  description:
+                    otherParentApprovalFormMessages.startDateInThePast,
+                  condition: (answers) =>
+                    new Date(
+                      getApplicationAnswers(answers).periods[0].startDate,
+                    ).getTime() < currentDateStartTime(),
                 }),
                 buildSubmitField({
                   id: 'submit',
@@ -84,12 +153,12 @@ export const EmployerApproval: Form = buildForm({
                 }),
               ],
             }),
-            buildDescriptionField({
-              id: 'final.approve',
-              title: coreMessages.thanks,
-              description: coreMessages.thanksDescription,
-            }),
           ],
+        }),
+        buildDescriptionField({
+          id: 'final.approve',
+          title: coreMessages.thanks,
+          description: coreMessages.thanksDescription,
         }),
       ],
     }),
