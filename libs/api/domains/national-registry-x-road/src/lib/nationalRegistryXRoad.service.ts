@@ -157,28 +157,21 @@ export class NationalRegistryXRoadService {
   async getFamily(
     user: User,
     nationalId: string,
-  ): Promise<NationalRegistryFamilyMemberInfo[] | null> {
+  ): Promise<NationalRegistryFamilyMemberInfo[]> {
     const family = await this.nationalRegistryApiWithAuth(user)
       .einstaklingarGetFjolskyldumedlimir({ id: nationalId })
       .catch(this.handle404)
 
-    if (family?.einstaklingar) {
-      return family.einstaklingar.map((member) => {
-        return (
-          member && {
-            nationalId: member.kennitala,
-            fullName: member.fulltNafn ?? '',
-            genderCode: member.kynkodi.toString(),
-            address: {
-              streetName: member.adsetur?.heiti ?? '',
-              postalCode: member.adsetur?.postnumer ?? '',
-              city: member.adsetur?.stadur ?? '',
-              municipalityCode: null,
-            },
-          }
-        )
-      })
-    }
-    return null
+    return (family?.einstaklingar || []).map((member) => ({
+      nationalId: member.kennitala,
+      fullName: member.fulltNafn ?? '',
+      genderCode: member.kynkodi.toString(),
+      address: {
+        streetName: member.adsetur?.heiti ?? '',
+        postalCode: member.adsetur?.postnumer ?? '',
+        city: member.adsetur?.stadur ?? '',
+        municipalityCode: null,
+      },
+    }))
   }
 }
