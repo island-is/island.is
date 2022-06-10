@@ -2,14 +2,27 @@ import React from 'react'
 import { defineMessage } from 'react-intl'
 
 import { Box } from '@island.is/island-ui/core'
-import { IntroHeader, m } from '@island.is/service-portal/core'
+import {
+  AccessDenied,
+  IntroHeader,
+  m,
+  ServicePortalModuleComponent,
+} from '@island.is/service-portal/core'
 
 import { Accesses } from '../../components'
 import { useNamespaces } from '@island.is/localization'
 
-function AccessControl(): JSX.Element {
+const AccessControl: ServicePortalModuleComponent = ({ userInfo, client }) => {
   useNamespaces('sp.settings-access-control')
 
+  const actor = userInfo.profile.actor
+  const isDelegation = Boolean(actor)
+
+  const isCompany = userInfo.profile.subjectType === 'legalEntity'
+
+  if (isCompany || isDelegation) {
+    return <AccessDenied userInfo={userInfo} client={client} />
+  }
   return (
     <Box>
       <IntroHeader
