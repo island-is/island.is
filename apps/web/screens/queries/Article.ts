@@ -133,6 +133,10 @@ export const GET_CONTENT_SLUG = gql`
         en
         is
       }
+      url {
+        en
+        is
+      }
       type
     }
   }

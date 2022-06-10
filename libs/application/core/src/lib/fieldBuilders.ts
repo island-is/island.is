@@ -24,6 +24,7 @@ import {
   RecordObject,
   Field,
   CompanySearchField,
+  RedirectToServicePortalField,
 } from '../types/Fields'
 import { CallToAction } from '../types/StateMachine'
 import { FormText, FormTextArray } from '../types/Form'
@@ -345,4 +346,18 @@ export function buildFieldOptions(
   }
 
   return maybeOptions
+}
+
+export function buildRedirectToServicePortalField(data: {
+  id: string
+  title: FormText
+}): RedirectToServicePortalField {
+  const { id, title } = data
+  return {
+    children: undefined,
+    id,
+    title,
+    type: FieldTypes.REDIRECT_TO_SERVICE_PORTAL,
+    component: FieldComponents.REDIRECT_TO_SERVICE_PORTAL,
+  }
 }

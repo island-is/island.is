@@ -477,6 +477,8 @@ export class NotificationService {
     recipients?: string,
   ): Promise<void> {
     try {
+      return // Temporarily stop trying to upload emails to court
+
       await this.courtService.createEmail(
         user,
         theCase.id,
@@ -609,7 +611,7 @@ export class NotificationService {
       theCase.sessionArrangements,
       theCase.sendRequestToDefender,
       theCase.defenderNationalId &&
-        `${environment.deepLinks.defenderCompletedCaseOverviewUrl}${theCase.id}`,
+        `${environment.deepLinks.defenderCaseOverviewUrl}${theCase.id}`,
     )
     const calendarInvite = this.createICalAttachment(theCase)
     const attachments: Attachment[] = calendarInvite ? [calendarInvite] : []
