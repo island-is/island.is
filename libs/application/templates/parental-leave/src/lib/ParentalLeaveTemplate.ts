@@ -55,6 +55,8 @@ enum Roles {
   ORGINISATION_REVIEWER = 'vmst',
 }
 
+const VMST_ID = process.env.VMST_ID ?? ''
+
 const ParentalLeaveTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
@@ -95,7 +97,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
-            },
+            }
           ],
         },
         on: {
@@ -328,7 +330,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               read: 'all',
               write: 'all',
               delete: true,
-            },
+            }
           ],
         },
         on: {
@@ -367,6 +369,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.VINNUMALASTOFNUN_APPROVAL]: {
+        entry: 'assignToVMST',
+        exit: 'clearAssignees',
         meta: {
           name: States.VINNUMALASTOFNUN_APPROVAL,
           actionCard: {
@@ -390,6 +394,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               write: 'all',
             },
             {
+              // TODO: Will applicant get notification about status changing?
               id: Roles.ORGINISATION_REVIEWER,
               formLoader: () =>
               import('../forms/InReview').then((val) =>
@@ -444,13 +449,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   Promise.resolve(val.InReview),
                 ),
               read: 'all',
-              // TODO: Maybe create new State where applicant has 'write' access
+              // TODO: Maybe create new State where applicant has 'write' access? 
               // write: 'all',
             },
           ],
         },
-        // TODO: should enable for user to do changes
-        // after application got APPROVE from VMST?
+        // TODO: enable for user to do changes after application got APPROVE from VMST?
         // on: {
         //   [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
         // },
@@ -821,6 +825,13 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
         return context
       }),
+      assignToVMST: assign((context) => {
+        const { application } = context
+
+        set(application, 'assignees', [VMST_ID])
+
+        return context
+      }),
       setEmployerReviewerNationalRegistryId: assign((context, event) => {
         // Only set if employer gets assigned
         if (event.type !== DefaultEvents.ASSIGN) {
@@ -955,7 +966,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
     }
 
     // TODO: add VMST's id
-    if (id === 'xxxxxx-xxxx') { // The nationalId added as claim in the Ids earlier.
+    if (id === VMST_ID) { // The nationalId added as claim in the Ids earlier.
       return Roles.ORGINISATION_REVIEWER
     }
 
