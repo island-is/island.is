@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Accordion, AlertMessage, Box, Text } from '@island.is/island-ui/core'
+import { Accordion, Box, Text } from '@island.is/island-ui/core'
 import {
   FormFooter,
   PoliceRequestAccordionItem,
@@ -33,7 +33,6 @@ import {
   titles,
 } from '@island.is/judicial-system-web/messages'
 import * as constants from '@island.is/judicial-system/consts'
-import { formatDate } from '@island.is/judicial-system/formatters'
 
 export const Confirmation: React.FC = () => {
   const {
@@ -67,17 +66,6 @@ export const Confirmation: React.FC = () => {
         title={formatMessage(titles.court.restrictionCases.conclusion)}
       />
       <FormContentContainer>
-        {workingCase.seenByDefender && (
-          <Box marginBottom={5}>
-            <AlertMessage
-              title={formatMessage(m.sections.seenByDefenderAlert.title)}
-              message={formatMessage(m.sections.seenByDefenderAlert.text, {
-                when: formatDate(workingCase.seenByDefender, 'PPPp'),
-              })}
-              type="info"
-            />
-          </Box>
-        )}
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
             Yfirlit úrskurðar

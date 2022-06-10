@@ -1,46 +1,30 @@
+import faker from 'faker'
+
 import { Case, UserRole } from '@island.is/judicial-system/types'
 import { IC_CONFIRMATION_ROUTE } from '@island.is/judicial-system/consts'
 
 import { makeInvestigationCase, intercept } from '../../../utils'
 
 describe(`${IC_CONFIRMATION_ROUTE}/:id`, () => {
+  const ruling = faker.lorem.sentence()
+  const conclusion = faker.lorem.sentence()
+
   beforeEach(() => {
     cy.login(UserRole.JUDGE)
     cy.stubAPIResponses()
     cy.visit(`${IC_CONFIRMATION_ROUTE}/test_id_stadfesting`)
   })
 
-  it('should display the ruling statement', () => {
-    const caseData = makeInvestigationCase()
-    const caseDataAddition: Case = {
-      ...caseData,
-      conclusion:
-        'Kærða, Donald Duck kt. 000000-0000, skal sæta gæsluvarðhaldi, þó ekki lengur en til miðvikudagsins 16. september 2020, kl. 19:50.',
-      ruling:
-        'Samkvæmt framangreindu og rannsóknargögnum málsins og með vísan til þess sem fram kemur í greinargerð sóknaraðila er fallist á það með lögreglustjóra að varnaraðili sé undir rökstuddum grun um saknæma aðild að háttsemi sem fangelsisrefsing er lögð við. Fyrir liggur að rannsókn málsins beinist að [..] óljóst er hversu margir aðilar kunni að tengjast. Telur dómurinn að fullnægt sé skilyrðum a-liðar 1. mgr. 95. gr. laga nr. 88/2008 um meðferð sakamála til þess að varnaraðila verði gert að sæta gæsluvarðhaldi. Þá þykja ekki efni til að marka gæsluvarðhaldi skemmri tíma en krafist er. Að virtum þeim rannsóknarhagsmunum sem málið varða samkvæmt framangreindu er fallist á að nauðsynlegt sé að varnaraðili sæti einangrun á meðan á gæsluvarðhaldsvistinni stendur, skv. 2. mgr. 98. gr., sbr. b-lið 99. gr. laga nr. 88/2008. Með vísan til þessa er fallist á kröfuna eins og nánar greinir í úrskurðarorði. Kristín Gunnarsdóttir héraðsdómari kveður upp úrskurðinn.',
-    }
-
-    intercept(caseDataAddition)
-
-    cy.contains(
-      'Kærða, Donald Duck kt. 000000-0000, skal sæta gæsluvarðhaldi, þó ekki lengur en til miðvikudagsins 16. september 2020, kl. 19:50.',
-    )
-  })
-
   it('should display the ruling', () => {
     const caseData = makeInvestigationCase()
     const caseDataAddition: Case = {
       ...caseData,
-      conclusion:
-        'Kærða, Donald Duck kt. 000000-0000, skal sæta gæsluvarðhaldi, þó ekki lengur en til miðvikudagsins 16. september 2020, kl. 19:50.',
-      ruling:
-        'Samkvæmt framangreindu og rannsóknargögnum málsins og með vísan til þess sem fram kemur í greinargerð sóknaraðila er fallist á það með lögreglustjóra að varnaraðili sé undir rökstuddum grun um saknæma aðild að háttsemi sem fangelsisrefsing er lögð við. Fyrir liggur að rannsókn málsins beinist að [..] óljóst er hversu margir aðilar kunni að tengjast. Telur dómurinn að fullnægt sé skilyrðum a-liðar 1. mgr. 95. gr. laga nr. 88/2008 um meðferð sakamála til þess að varnaraðila verði gert að sæta gæsluvarðhaldi. Þá þykja ekki efni til að marka gæsluvarðhaldi skemmri tíma en krafist er. Að virtum þeim rannsóknarhagsmunum sem málið varða samkvæmt framangreindu er fallist á að nauðsynlegt sé að varnaraðili sæti einangrun á meðan á gæsluvarðhaldsvistinni stendur, skv. 2. mgr. 98. gr., sbr. b-lið 99. gr. laga nr. 88/2008. Með vísan til þessa er fallist á kröfuna eins og nánar greinir í úrskurðarorði. Kristín Gunnarsdóttir héraðsdómari kveður upp úrskurðinn.',
+      conclusion,
+      ruling,
     }
 
     intercept(caseDataAddition)
 
-    cy.contains(
-      'Samkvæmt framangreindu og rannsóknargögnum málsins og með vísan til þess sem fram kemur í greinargerð sóknaraðila er fallist á það með lögreglustjóra að varnaraðili sé undir rökstuddum grun um saknæma aðild að háttsemi sem fangelsisrefsing er lögð við. Fyrir liggur að rannsókn málsins beinist að [..] óljóst er hversu margir aðilar kunni að tengjast. Telur dómurinn að fullnægt sé skilyrðum a-liðar 1. mgr. 95. gr. laga nr. 88/2008 um meðferð sakamála til þess að varnaraðila verði gert að sæta gæsluvarðhaldi. Þá þykja ekki efni til að marka gæsluvarðhaldi skemmri tíma en krafist er. Að virtum þeim rannsóknarhagsmunum sem málið varða samkvæmt framangreindu er fallist á að nauðsynlegt sé að varnaraðili sæti einangrun á meðan á gæsluvarðhaldsvistinni stendur, skv. 2. mgr. 98. gr., sbr. b-lið 99. gr. laga nr. 88/2008. Með vísan til þessa er fallist á kröfuna eins og nánar greinir í úrskurðarorði. Kristín Gunnarsdóttir héraðsdómari kveður upp úrskurðinn.',
-    )
+    cy.contains(ruling)
   })
 })
