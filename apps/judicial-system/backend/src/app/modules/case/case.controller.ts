@@ -312,7 +312,7 @@ export class CaseController {
     @Param('caseId') caseId: string,
     @CurrentCase() theCase: Case,
     @Res() res: Response,
-    @Query('useSigned', ParseBoolPipe) useSigned: boolean,
+    @Query('useSigned', ParseBoolPipe) useSigned = true,
   ): Promise<void> {
     this.logger.debug(`Getting the ruling for case ${caseId} as a pdf document`)
 
