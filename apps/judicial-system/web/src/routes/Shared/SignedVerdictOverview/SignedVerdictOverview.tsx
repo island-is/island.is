@@ -1,16 +1,9 @@
-import React, {
-  ReactNode,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
+import React, { ReactNode, useCallback, useContext, useState } from 'react'
+import { AnimatePresence } from 'framer-motion'
 import { useLazyQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
 import { ValueType } from 'react-select/src/types'
 import { IntlShape, useIntl } from 'react-intl'
-import compareAsc from 'date-fns/compareAsc'
 import formatISO from 'date-fns/formatISO'
 
 import {
@@ -27,12 +20,12 @@ import {
   UserRole,
   CaseAppealDecision,
   isAcceptingCaseDecision,
+  UpdateCase,
 } from '@island.is/judicial-system/types'
 import {
   FormFooter,
   PageLayout,
   Modal,
-  DateTime,
   BlueBox,
   InfoCard,
   PdfButton,
@@ -51,7 +44,6 @@ import {
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import {
   Box,
-  Input,
   Text,
   Accordion,
   Button,
@@ -67,7 +59,6 @@ import {
   formatDate,
   caseTypes,
 } from '@island.is/judicial-system/formatters'
-import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import * as constants from '@island.is/judicial-system/consts'
@@ -82,16 +73,12 @@ import RestrictionTags from '@island.is/judicial-system-web/src/components/Restr
 
 import AppealSection from './Components/AppealSection/AppealSection'
 import { CourtRecordSignatureConfirmationQuery } from './courtRecordSignatureConfirmationGql'
+import ModifyDatesModal from './Components/ModifyDatesModal/ModifyDatesModal'
 
 interface ModalControls {
   open: boolean
   title: string
   text: ReactNode
-}
-
-interface DateTime {
-  value?: Date
-  isValid: boolean
 }
 
 function showCustodyNotice(
@@ -109,28 +96,6 @@ function showCustodyNotice(
 export const SignedVerdictOverview: React.FC = () => {
   // Date modification state
   const [isModifyingDates, setIsModifyingDates] = useState<boolean>(false)
-  const [modifiedValidToDate, setModifiedValidToDate] = useState<DateTime>()
-  const [
-    caseModifiedExplanation,
-    setCaseModifiedExplanation,
-  ] = useState<string>()
-  const [
-    caseModifiedExplanationErrorMessage,
-    setCaseModifiedExplanationErrorMessage,
-  ] = useState<string>('')
-  const [
-    isCaseModificationConfirmed,
-    setIsCaseModificationConfirmed,
-  ] = useState<boolean>(false)
-  const [validToDateChanged, setValidToDateChanged] = useState<boolean>()
-  const [
-    isolationToDateChanged,
-    setIsolationToDateChanged,
-  ] = useState<boolean>()
-  const [
-    modifiedIsolationToDate,
-    setModifiedIsolationToDate,
-  ] = useState<DateTime>()
 
   // Case sharing state
   const [shareCaseModal, setSharedCaseModal] = useState<ModalControls>()
@@ -248,22 +213,6 @@ export const SignedVerdictOverview: React.FC = () => {
     },
   )
 
-  useEffect(() => {
-    if (workingCase.validToDate) {
-      setModifiedValidToDate({
-        value: new Date(workingCase.validToDate),
-        isValid: true,
-      })
-    }
-
-    if (workingCase.isolationToDate) {
-      setModifiedIsolationToDate({
-        value: new Date(workingCase.isolationToDate),
-        isValid: true,
-      })
-    }
-  }, [workingCase.validToDate, workingCase.isolationToDate])
-
   const handleRequestCourtRecordSignature = async () => {
     if (!workingCase) {
       return
@@ -353,78 +302,6 @@ export const SignedVerdictOverview: React.FC = () => {
           caseType: workingCase.type,
           rejectReason,
         })
-  }
-
-  const getModificationSuccessText = () => {
-    let modification = ''
-
-    const validToDateAndIsolationToDateAreTheSame =
-      modifiedValidToDate &&
-      modifiedValidToDate.value &&
-      workingCase.validToDate &&
-      modifiedIsolationToDate &&
-      modifiedIsolationToDate.value &&
-      workingCase.isolationToDate &&
-      compareAsc(modifiedValidToDate?.value, modifiedIsolationToDate?.value) ===
-        0
-
-    if (validToDateAndIsolationToDateAreTheSame) {
-      modification = formatMessage(
-        m.sections.modifyDatesModal.validToDateAndIsolationToDateAreTheSame,
-        {
-          caseType: workingCase.type,
-          date: `${formatDate(modifiedValidToDate?.value, 'PPPP')?.replace(
-            'dagur,',
-            'dagsins',
-          )} kl. ${formatDate(
-            modifiedValidToDate?.value,
-            constants.TIME_FORMAT,
-          )}`,
-        },
-      )
-    } else if (validToDateChanged || isolationToDateChanged) {
-      if (validToDateChanged) {
-        modification = formatMessage(
-          m.sections.modifyDatesModal.validToDateChanged,
-          {
-            caseType: workingCase.type,
-            date: `${formatDate(modifiedValidToDate?.value, 'PPPP')?.replace(
-              'dagur,',
-              'dagsins',
-            )} kl. ${formatDate(
-              modifiedValidToDate?.value,
-              constants.TIME_FORMAT,
-            )}`,
-          },
-        )
-      }
-
-      if (isolationToDateChanged) {
-        const isolationText = formatMessage(
-          m.sections.modifyDatesModal.isolationDateChanged,
-          {
-            date: `${formatDate(
-              modifiedIsolationToDate?.value,
-              'PPPP',
-            )?.replace('dagur,', 'dagsins')} kl. ${formatDate(
-              modifiedIsolationToDate?.value,
-              constants.TIME_FORMAT,
-            )}`,
-          },
-        )
-        modification = modification
-          ? `${modification} ${isolationText}`
-          : isolationText
-      }
-    }
-
-    return formatMessage(m.sections.modifyDatesModal.successText, {
-      modification,
-      courtOrProsecutor:
-        user?.role === UserRole.PROSECUTOR
-          ? 'héraðsdómstól'
-          : 'saksóknaraembætti',
-    })
   }
 
   const setAccusedAppealDate = (date?: Date) => {
@@ -548,124 +425,17 @@ export const SignedVerdictOverview: React.FC = () => {
     }
   }
 
-  const handleValidToDateModification = (
-    value: Date | undefined,
-    valid: boolean,
-  ) => {
-    const validToDate = value ?? modifiedValidToDate?.value
+  const onModifyDatesSubmit = async (update: UpdateCase) => {
+    const updatedCase = await updateCase(workingCase.id, { ...update })
 
-    if (
-      validToDate &&
-      workingCase.isCustodyIsolation &&
-      (!modifiedIsolationToDate?.value ||
-        compareAsc(validToDate, new Date(modifiedIsolationToDate.value)) === -1)
-    ) {
-      setModifiedIsolationToDate({
-        value: validToDate,
-        isValid: valid,
-      })
-
-      setIsolationToDateChanged(
-        !workingCase.isolationToDate ||
-          compareAsc(validToDate, new Date(workingCase.isolationToDate)) !== 0,
-      )
+    if (updatedCase) {
+      await sendNotification(workingCase.id, NotificationType.MODIFIED)
     }
 
-    setModifiedValidToDate({
-      value: validToDate,
-      isValid: valid,
+    setWorkingCase({
+      ...workingCase,
+      ...(update as Case),
     })
-
-    setValidToDateChanged(
-      value &&
-        (!workingCase.validToDate ||
-          compareAsc(value, new Date(workingCase.validToDate)) !== 0),
-    )
-  }
-
-  const handleDateModification = async () => {
-    if (!caseModifiedExplanation) {
-      return
-    }
-
-    if (modifiedValidToDate?.value && modifiedIsolationToDate?.value) {
-      const formattedValidToDate = formatISO(modifiedValidToDate.value, {
-        representation: 'complete',
-      })
-
-      const formattedIsolationToDate = formatISO(
-        modifiedIsolationToDate.value,
-        {
-          representation: 'complete',
-        },
-      )
-
-      const update = {
-        validToDate: formattedValidToDate,
-        isolationToDate: formattedIsolationToDate,
-        caseModifiedExplanation: `${
-          workingCase.caseModifiedExplanation
-            ? workingCase.caseModifiedExplanation
-            : ''
-        }${createCaseModifiedExplanation(caseModifiedExplanation)}`,
-      }
-
-      const updatedCase = await updateCase(workingCase.id, { ...update })
-
-      if (updatedCase) {
-        await sendNotification(workingCase.id, NotificationType.MODIFIED)
-      }
-
-      setWorkingCase({
-        ...workingCase,
-        ...update,
-      })
-
-      setIsCaseModificationConfirmed(true)
-    }
-  }
-
-  const createCaseModifiedExplanation = (reason?: string) => {
-    const now = new Date()
-
-    return `${
-      workingCase.caseModifiedExplanation ? '<br/><br/>' : ''
-    }${capitalize(formatDate(now, 'PPPP', true) || '')} kl. ${formatDate(
-      now,
-      constants.TIME_FORMAT,
-    )} - ${user?.name} ${user?.title}, ${
-      user?.institution?.name
-    }<br/>Ástæða: ${reason}`
-  }
-
-  const handleCaseModifiedExplanationChange = (reason: string) => {
-    const { isValid } = validate(reason, 'empty')
-
-    setCaseModifiedExplanation(reason)
-
-    if (isValid) {
-      setCaseModifiedExplanationErrorMessage('')
-    }
-  }
-
-  const handleCaseModifiedExplanationBlur = (reason: string) => {
-    const { isValid, errorMessage } = validate(reason, 'empty')
-
-    if (isValid) {
-      setCaseModifiedExplanation(reason)
-    } else {
-      setCaseModifiedExplanationErrorMessage(errorMessage)
-    }
-  }
-
-  const isCaseModificationInvalid = () => {
-    return (
-      !caseModifiedExplanation ||
-      !caseModifiedExplanation.trim() ||
-      !modifiedValidToDate?.isValid ||
-      (workingCase.isCustodyIsolation && !modifiedIsolationToDate?.isValid) ||
-      (!validToDateChanged && !isolationToDateChanged)
-    )
   }
 
   return (
@@ -1065,170 +835,15 @@ export const SignedVerdictOverview: React.FC = () => {
         />
       )}
       <AnimatePresence exitBeforeEnter>
-        {isModifyingDates &&
-          (!isCaseModificationConfirmed ? (
-            <motion.div
-              key="dateModifyingModal"
-              animate={{ opacity: 1, y: 0 }}
-              initial={{ opacity: 0, y: 20 }}
-              exit={{ opacity: 0, y: 20 }}
-              transition={{ duration: 0.5 }}
-            >
-              <Modal
-                title={formatMessage(m.sections.modifyDatesModal.titleV2, {
-                  caseType: workingCase.type,
-                })}
-                text={formatMessage(m.sections.modifyDatesModal.textV2, {
-                  caseType: workingCase.type,
-                })}
-                primaryButtonText={formatMessage(
-                  m.sections.modifyDatesModal.primaryButtonText,
-                )}
-                isPrimaryButtonDisabled={isCaseModificationInvalid()}
-                handlePrimaryButtonClick={() => handleDateModification()}
-                isPrimaryButtonLoading={isSendingNotification || isUpdatingCase}
-                secondaryButtonText={formatMessage(
-                  m.sections.modifyDatesModal.secondaryButtonText,
-                )}
-                handleSecondaryButtonClick={() => {
-                  setCaseModifiedExplanation(undefined)
-
-                  if (workingCase.validToDate) {
-                    setModifiedValidToDate({
-                      value: new Date(workingCase.validToDate),
-                      isValid: true,
-                    })
-                  }
-
-                  if (workingCase.isolationToDate) {
-                    setModifiedIsolationToDate({
-                      value: new Date(workingCase.isolationToDate),
-                      isValid: true,
-                    })
-                  }
-                  setIsModifyingDates(false)
-                }}
-              >
-                <Box marginBottom={5}>
-                  <Box marginBottom={3}>
-                    <Text variant="h3" as="h2">
-                      {formatMessage(
-                        m.sections.modifyDatesModal.reasonForChangeTitle,
-                      )}
-                    </Text>
-                  </Box>
-                  <Input
-                    name="reason"
-                    label={formatMessage(
-                      m.sections.modifyDatesModal.reasonForChangeLabel,
-                    )}
-                    placeholder={formatMessage(
-                      m.sections.modifyDatesModal.reasonForChangePlaceholderV2,
-                      { caseType: workingCase.type },
-                    )}
-                    onChange={(event) => {
-                      handleCaseModifiedExplanationChange(event.target.value)
-                    }}
-                    onBlur={(event) =>
-                      handleCaseModifiedExplanationBlur(event.target.value)
-                    }
-                    hasError={caseModifiedExplanationErrorMessage !== ''}
-                    errorMessage={caseModifiedExplanationErrorMessage}
-                    textarea
-                    rows={9}
-                    required
-                  />
-                </Box>
-                <Box marginBottom={6}>
-                  <BlueBox>
-                    <DateTime
-                      name="modifiedValidToDate"
-                      size="sm"
-                      datepickerLabel={formatMessage(
-                        m.sections.modifyDatesModal.modifiedValidToDateLabelV2,
-                        {
-                          caseType: workingCase.type,
-                        },
-                      )}
-                      selectedDate={modifiedValidToDate?.value}
-                      onChange={(value, valid) => {
-                        handleValidToDateModification(value, valid)
-                      }}
-                      minDate={
-                        workingCase.rulingDate
-                          ? new Date(workingCase.rulingDate)
-                          : undefined
-                      }
-                      blueBox={false}
-                      required
-                    />
-                    {workingCase.isCustodyIsolation && (
-                      <Box marginTop={2}>
-                        <DateTime
-                          name="modifiedIsolationToDate"
-                          size="sm"
-                          datepickerLabel={formatMessage(
-                            m.sections.modifyDatesModal
-                              .modifiedIsolationToDateLabel,
-                          )}
-                          selectedDate={modifiedIsolationToDate?.value}
-                          onChange={(value, valid) => {
-                            setModifiedIsolationToDate({
-                              value: value ?? modifiedIsolationToDate?.value,
-                              isValid: valid,
-                            })
-
-                            setIsolationToDateChanged(
-                              value !== undefined &&
-                                workingCase.isolationToDate !== undefined &&
-                                compareAsc(
-                                  new Date(workingCase.isolationToDate),
-                                  value,
-                                ) !== 0,
-                            )
-                          }}
-                          minDate={
-                            workingCase.rulingDate
-                              ? new Date(workingCase.rulingDate)
-                              : undefined
-                          }
-                          maxDate={modifiedValidToDate?.value}
-                          blueBox={false}
-                          required
-                        />
-                      </Box>
-                    )}
-                  </BlueBox>
-                </Box>
-              </Modal>
-            </motion.div>
-          ) : (
-            <motion.div
-              key="dateModifyingModalSuccess"
-              animate={{ opacity: 1, y: 0 }}
-              initial={{ opacity: 0, y: 20 }}
-              exit={{ opacity: 0, y: 20 }}
-              transition={{ duration: 0.5 }}
-            >
-              <Modal
-                title={formatMessage(
-                  m.sections.modifyDatesModal.successTitleV2,
-                  { caseType: workingCase.type },
-                )}
-                text={getModificationSuccessText()}
-                secondaryButtonText={formatMessage(
-                  m.sections.modifyDatesModal.secondaryButtonTextSuccess,
-                )}
-                handleSecondaryButtonClick={() => {
-                  setCaseModifiedExplanation(undefined)
-                  setValidToDateChanged(undefined)
-                  setIsolationToDateChanged(undefined)
-                  setIsModifyingDates(false)
-                  setIsCaseModificationConfirmed(false)
-                }}
-              />
-            </motion.div>
-          ))}
+        {isModifyingDates && (
+          <ModifyDatesModal
+            workingCase={workingCase}
+            onSubmit={onModifyDatesSubmit}
+            isSendingNotification={isSendingNotification}
+            isUpdatingCase={isUpdatingCase}
+            setIsModifyingDates={setIsModifyingDates}
+          />
+        )}
       </AnimatePresence>
       {requestCourtRecordSignatureResponse && (
         <Modal
