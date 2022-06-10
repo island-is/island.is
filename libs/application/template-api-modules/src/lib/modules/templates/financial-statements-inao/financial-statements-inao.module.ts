@@ -7,6 +7,7 @@ import { DynamicModule } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { BaseTemplateAPIModuleConfig } from '../../../types'
 import { SharedTemplateAPIModule } from '../../shared'
+import { FinancialStatementsInaoTemplateService } from './financial-statements-inao.service'
 
 export class FinancialStatementsInaoTemplateModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
@@ -20,7 +21,7 @@ export class FinancialStatementsInaoTemplateModule {
         FinancialStatementsInaoClientModule,
       ],
       providers: [FinancialStatementsInaoClientService],
-      exports: [FinancialStatementsInaoClientService],
+      exports: [FinancialStatementsInaoTemplateService],
     }
   }
 }
