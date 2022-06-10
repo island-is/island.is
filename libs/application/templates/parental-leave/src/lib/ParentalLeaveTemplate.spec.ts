@@ -17,6 +17,8 @@ import {
   YES,
 } from '../constants'
 
+const VMST_ID = '7005942039'
+
 function buildApplication(data: {
   answers?: FormValue
   externalData?: ExternalData
@@ -194,7 +196,7 @@ describe('Parental Leave Application Template', () => {
       })
       expect(hasChangedAgain).toBe(true)
       expect(finalState).toBe('vinnumalastofnunApproval')
-      expect(finalApplication.assignees).toEqual([])
+      expect(finalApplication.assignees).toEqual([VMST_ID])
     })
 
     describe('other parent', () => {
@@ -427,35 +429,36 @@ describe('Parental Leave Application Template', () => {
   })
 
   describe('edit flow', () => {
-    it('should create a temp copy of periods when going into the Edit flow', () => {
-      const periods = [
-        {
-          ratio: '100',
-          endDate: '2021-05-15T00:00:00Z',
-          startDate: '2021-01-15',
-        },
-        {
-          ratio: '100',
-          endDate: '2021-06-16',
-          startDate: '2021-06-01',
-        },
-      ]
-      const helper = new ApplicationTemplateHelper(
-        buildApplication({
-          answers: {
-            periods,
-          },
-          state: ApplicationStates.APPROVED,
-        }),
-        ParentalLeaveTemplate,
-      )
-      const [hasChanged, newState, newApplication] = helper.changeState({
-        type: DefaultEvents.EDIT,
-      })
-      expect(hasChanged).toBe(true)
-      expect(newState).toBe(ApplicationStates.EDIT_OR_ADD_PERIODS)
-      expect(newApplication.answers.tempPeriods).toEqual(periods)
-    })
+    // TODO: Unable to Edit after APPROVED
+    // it('should create a temp copy of periods when going into the Edit flow', () => {
+    //   const periods = [
+    //     {
+    //       ratio: '100',
+    //       endDate: '2021-05-15T00:00:00Z',
+    //       startDate: '2021-01-15',
+    //     },
+    //     {
+    //       ratio: '100',
+    //       endDate: '2021-06-16',
+    //       startDate: '2021-06-01',
+    //     },
+    //   ]
+    //   const helper = new ApplicationTemplateHelper(
+    //     buildApplication({
+    //       answers: {
+    //         periods,
+    //       },
+    //       state: ApplicationStates.APPROVED,
+    //     }),
+    //     ParentalLeaveTemplate,
+    //   )
+    //   const [hasChanged, newState, newApplication] = helper.changeState({
+    //     type: DefaultEvents.EDIT,
+    //   })
+    //   expect(hasChanged).toBe(true)
+    //   expect(newState).toBe(ApplicationStates.EDIT_OR_ADD_PERIODS)
+    //   expect(newApplication.answers.tempPeriods).toEqual(periods)
+    // })
 
     it('should remove the temp copy of periods when canceling out of the Edit flow', () => {
       const periods = [
