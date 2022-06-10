@@ -37,12 +37,12 @@ export const coreMessages = defineMessages({
     description: 'Edit button for review screen and so on',
   },
   cardButtonInProgress: {
-    id: 'application:card.button.inProgress',
+    id: 'application.system:card.button.inProgress',
     defaultMessage: 'Opna umsókn',
     description: 'Button label when application is in progress',
   },
   cardButtonComplete: {
-    id: 'application:card.button.complete',
+    id: 'application.system:card.button.complete',
     defaultMessage: 'Skoða yfirlit',
     description: 'Button label when application is complete',
   },
