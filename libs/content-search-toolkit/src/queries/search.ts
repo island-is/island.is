@@ -4,6 +4,16 @@ import { TagQuery, tagQuery } from './tagQuery'
 import { typeAggregationQuery } from './typeAggregation'
 import { processAggregationQuery } from './processAggregation'
 
+const getBoostForType = (type: string, defaultBoost: string | number = 1) => {
+  if (type === 'webArticle') {
+    return 40
+  }
+  if (type === 'webSubArticle') {
+    return 30
+  }
+  return defaultBoost
+}
+
 export const searchQuery = (
   {
     queryString,
@@ -37,11 +47,12 @@ export const searchQuery = (
 
     types.forEach((type) => {
       const [value, boost = 1] = type.split('^')
+
       should.push({
         term: {
           type: {
             value,
-            boost,
+            boost: getBoostForType(value, boost),
           },
         },
       })
