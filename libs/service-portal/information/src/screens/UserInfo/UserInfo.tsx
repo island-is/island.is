@@ -33,7 +33,7 @@ const dataNotFoundMessage = defineMessage({
 
 const changeInNationalReg = defineMessage({
   id: 'sp.family:change-in-national-registry',
-  defaultMessage: 'Breyta í þjóðskrá',
+  defaultMessage: 'Breyta hjá Þjóðskrá',
 })
 
 const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
