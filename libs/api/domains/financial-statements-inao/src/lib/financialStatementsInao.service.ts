@@ -1,11 +1,10 @@
+import { FinancialStatementsInaoClientService } from '@island.is/clients/financial-statements-inao'
 import { Injectable } from '@nestjs/common'
 import * as kennitala from 'kennitala'
 
-import { DataverseClient } from './client/dataverseClient'
-
 @Injectable()
 export class FinancialStatementsInaoService {
-  constructor(private dataverseClient: DataverseClient) {}
+  constructor(private dataverseClient: FinancialStatementsInaoClientService) {}
 
   async getClientTypes() {
     return this.dataverseClient.getClientTypes()

@@ -1,8 +1,10 @@
 import {
-  FinancialStatementsInaoModule,
-  FinancialStatementsInaoService,
-} from '@island.is/api/domains/financial-statements-inao'
+  FinancialStatementsInaoClientConfig,
+  FinancialStatementsInaoClientModule,
+  FinancialStatementsInaoClientService,
+} from '@island.is/clients/financial-statements-inao'
 import { DynamicModule } from '@nestjs/common'
+import { ConfigModule } from '@nestjs/config'
 import { BaseTemplateAPIModuleConfig } from '../../../types'
 import { SharedTemplateAPIModule } from '../../shared'
 
@@ -12,10 +14,13 @@ export class FinancialStatementsInaoTemplateModule {
       module: FinancialStatementsInaoTemplateModule,
       imports: [
         SharedTemplateAPIModule.register(config),
-        FinancialStatementsInaoModule,
+        ConfigModule.forRoot({
+          load: [FinancialStatementsInaoClientConfig],
+        }),
+        FinancialStatementsInaoClientModule,
       ],
-      providers: [FinancialStatementsInaoService],
-      exports: [FinancialStatementsInaoService],
+      providers: [FinancialStatementsInaoClientService],
+      exports: [FinancialStatementsInaoClientService],
     }
   }
 }

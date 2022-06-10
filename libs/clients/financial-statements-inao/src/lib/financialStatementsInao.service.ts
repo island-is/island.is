@@ -3,15 +3,15 @@ import type { ConfigType } from '@island.is/nest/config'
 
 import { Inject, Injectable } from '@nestjs/common'
 
-import { dataverseClientConfig } from './dataverseClient.config'
-import { ClientType } from '../models/clientType.model'
-import { Election } from '../models/election.model'
+import { FinancialStatementsInaoClientConfig } from './financialStatementsInao.config'
+import { ClientType } from './models/ClientType'
+import { Election } from './models/Election'
 
 @Injectable()
-export class DataverseClient {
+export class FinancialStatementsInaoClientService {
   constructor(
-    @Inject(dataverseClientConfig.KEY)
-    private config: ConfigType<typeof dataverseClientConfig>,
+    @Inject(FinancialStatementsInaoClientConfig.KEY)
+    private config: ConfigType<typeof FinancialStatementsInaoClientConfig>,
   ) {}
 
   basePath = this.config.basePath

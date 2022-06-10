@@ -14,8 +14,8 @@ import { FinancialStatementsInaoService } from './financialStatementsInao.servic
 import { Election } from './models/election.model'
 import { ClientType } from './models/clientType.model'
 
-@UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(ApiScope.internal)
+// @UseGuards(IdsUserGuard, ScopesGuard)
+// @Scopes(ApiScope.internal)
 @Resolver()
 export class FinancialStatementsInaoResolver {
   constructor(
