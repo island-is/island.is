@@ -34,17 +34,6 @@ export const subSectionFiles = buildSubSection({
         ),
         buildCustomField(
           {
-            title: m.financesDataCollectionPermissionTitle,
-            description: m.financesDataCollectionPermissionDescription,
-            id: 'financesDataCollectionPermission',
-            component: 'FilesRecipientCard',
-          },
-          {
-            placeholder: m.financesDataCollectionPermissionPlaceholder,
-          },
-        ),
-        buildCustomField(
-          {
             title: m.authorizationForFuneralExpensesTitle,
             description: m.authorizationForFuneralExpensesDescription,
             id: 'authorizationForFuneralExpenses',
@@ -52,6 +41,17 @@ export const subSectionFiles = buildSubSection({
           },
           {
             placeholder: m.authorizationForFuneralExpensesPlaceholder,
+          },
+        ),
+        buildCustomField(
+          {
+            title: m.financesDataCollectionPermissionTitle,
+            description: m.financesDataCollectionPermissionDescription,
+            id: 'financesDataCollectionPermission',
+            component: 'FilesRecipientCard',
+          },
+          {
+            placeholder: m.financesDataCollectionPermissionPlaceholder,
           },
         ),
       ],

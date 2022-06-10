@@ -10,6 +10,7 @@ import {
 import { Box, Tag, Text } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { Answers as AODAnswers } from '../../types'
+import { isPerson } from 'kennitala'
 
 type FilesRecipientCardProps = {
   field: {
@@ -25,6 +26,31 @@ export const FilesRecipientCard: FC<
   FieldBaseProps<AODAnswers> & FilesRecipientCardProps
 > = ({ application, field }) => {
   const { formatMessage } = useLocale()
+  let options =
+    application.answers?.estateMembers.length !== 0
+      ? application.answers?.estateMembers?.map((estateMember) => ({
+          label: estateMember.name,
+          value: estateMember.nationalId,
+        }))
+      : [
+          {
+            label: application.answers.applicantName,
+            value: application.applicant,
+          },
+        ]
+
+  // Notifier is not allowed to give finances permission
+  if (field.id === 'financesDataCollectionPermission') {
+    options = options.filter((member) => member.value !== application.applicant)
+  }
+  options = options.filter((member) => isPerson(member.value))
+
+  // Add the option for selecting noone
+  options.push({
+    label: formatMessage(m.selectOptionNobody),
+    value: '',
+  })
+
   return (
     <Box
       marginTop={2}
@@ -62,19 +88,7 @@ export const FilesRecipientCard: FC<
                   )
                 : ''
             }
-            options={
-              application.answers?.estateMembers.length !== 0
-                ? application.answers?.estateMembers?.map((estateMember) => ({
-                    label: estateMember.name,
-                    value: estateMember.nationalId,
-                  }))
-                : [
-                    {
-                      label: application.answers.applicantName,
-                      value: application.applicant,
-                    },
-                  ]
-            }
+            options={options}
           />
         </Box>
       )}

@@ -438,6 +438,12 @@ Ef ekkert á við sem hér að ofan er talið rennur arfur í ríkissjóð. Nán
     defaultMessage: 'Veldu erfingja sem á að fá sent skjal',
     description: 'Authorization for funeral expenses placeholder',
   },
+  selectOptionNobody: {
+    id: 'aod.application:selectOptionNobody',
+    defaultMessage: 'Enginn viðtakandi valinn',
+    description:
+      'Text for the option of choosing nobody as a file recipient in the file step',
+  },
 
   /* Validation */
   errorRoleConfirmation: {

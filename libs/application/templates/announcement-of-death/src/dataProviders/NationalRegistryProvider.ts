@@ -38,8 +38,8 @@ export class NationalRegistryProvider extends BasicDataProvider {
       })
   }
   handleError(error: Error | unknown) {
-    console.error('Provider.ChildrenResidenceChange.Children:', error)
-    return Promise.reject('Failed to fetch children')
+    console.error('Provider.NationalRegistryProvider:', error)
+    return Promise.reject('Failed to fetch national registry data')
   }
   onProvideError(result: { message: string }): FailedDataProviderResult {
     return {

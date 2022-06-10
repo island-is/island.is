@@ -21,7 +21,6 @@ export enum OtherPropertiesEnum {
 
 export type Asset = Partial<EstateAsset & { initial: boolean }>
 
-// TODO: WIP
 export type Answers = {
   additionalInfo: string
   applicantEmail: string
