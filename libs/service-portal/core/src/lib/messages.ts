@@ -465,7 +465,7 @@ export const m = defineMessages({
   },
   accessDenied: {
     id: 'service.portal:accessDenied',
-    defaultMessage: 'Aðgangur læstur',
+    defaultMessage: 'Ekki með aðgang',
   },
 
   accessNeeded: {
@@ -668,5 +668,9 @@ export const m = defineMessages({
   yourLicenses: {
     id: 'service.portal:your-licenses',
     defaultMessage: 'Þín skírteini',
+  },
+  mortageCertificate: {
+    id: 'service.portal:mortage-certificate',
+    defaultMessage: 'Veðbókarvottorð',
   },
 })
