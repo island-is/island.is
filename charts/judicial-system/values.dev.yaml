@@ -22,7 +22,7 @@ judicial-system-api:
     HIDDEN_FEATURES: ''
     NODE_OPTIONS: '--max-old-space-size=208'
     SAML_ENTRY_POINT: 'https://innskraning.island.is/?id=judicial-system.dev'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'INAO_Client'
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
     XROAD_CLIENT_ID: 'IS-DEV/GOV/10014/Rettarvorslugatt-Client'
@@ -117,7 +117,7 @@ judicial-system-backend:
     S3_REGION: 'eu-west-1'
     S3_TIME_TO_LIVE_GET: '5'
     S3_TIME_TO_LIVE_POST: '15'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'INAO_Client'
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
     XROAD_CLIENT_ID: 'IS-DEV/GOV/10014/Rettarvorslugatt-Client'
@@ -168,7 +168,7 @@ judicial-system-backend:
       DB_NAME: 'judicial_system'
       DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
       DB_USER: 'judicial_system'
-      SERVERSIDE_FEATURES_ON: ''
+      SERVERSIDE_FEATURES_ON: 'INAO_Client'
     secrets:
       DB_PASS: '/k8s/judicial-system/DB_PASSWORD'
   namespace: 'judicial-system'
@@ -227,7 +227,7 @@ judicial-system-scheduler:
   env:
     BACKEND_URL: 'http://web-judicial-system-backend'
     NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'INAO_Client'
     TIME_TO_LIVE_MINUTES: '30'
   grantNamespaces:
     - 'nginx-ingress-external'
@@ -276,7 +276,7 @@ judicial-system-web:
     API_URL: 'https://judicial-system.dev01.devland.is'
     INTERNAL_API_URL: 'http://web-judicial-system-api'
     NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'INAO_Client'
   grantNamespaces:
     - 'nginx-ingress-external'
   grantNamespacesEnabled: true
@@ -336,7 +336,7 @@ judicial-system-xrd-api:
     AUDIT_TRAIL_USE_GENERIC_LOGGER: 'false'
     BACKEND_URL: 'http://web-judicial-system-backend'
     NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'INAO_Client'
   grantNamespaces:
     - 'nginx-ingress-internal'
   grantNamespacesEnabled: true
@@ -384,6 +384,7 @@ judicial-system-xrd-api:
   secrets:
     BACKEND_ACCESS_TOKEN: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    ERROR_EVENT_URL: '/k8s/judicial-system/ERROR_EVENT_URL'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false

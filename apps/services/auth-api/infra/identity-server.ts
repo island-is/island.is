@@ -68,11 +68,7 @@ export const serviceSetup = (services: {
       ),
       PersistenceSettings__UserProfileBaseAddress:
         'http://web-service-portal-api.service-portal.svc.cluster.local',
-      Application__MinCompletionPortThreads: {
-        dev: '',
-        staging: '',
-        prod: '10',
-      },
+      Application__MinCompletionPortThreads: '10',
     })
     .secrets({
       AudkenniSettings__ClientId: '/k8s/identity-server/AudkenniClientId',
