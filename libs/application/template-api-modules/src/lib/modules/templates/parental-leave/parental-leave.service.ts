@@ -39,6 +39,7 @@ import { apiConstants } from './constants'
 import { SmsService } from '@island.is/nova-sms'
 import { ConfigService } from '@nestjs/config'
 import { getConfigValue } from '../../shared/shared.utils'
+import { generateEmployerRejected } from './emailGenerators/employerRejectedEmail'
 
 interface VMSTError {
   type: string
@@ -88,6 +89,15 @@ export class ParentalLeaveService {
   }: TemplateApiModuleActionProps) {
     await this.sharedTemplateAPIService.sendEmail(
       generateOtherParentRejected,
+      application,
+    )
+  }
+
+  async notifyApplicantOfRejectionFromEmployer({
+    application,
+  }: TemplateApiModuleActionProps) {
+    await this.sharedTemplateAPIService.sendEmail(
+      generateEmployerRejected,
       application,
     )
   }

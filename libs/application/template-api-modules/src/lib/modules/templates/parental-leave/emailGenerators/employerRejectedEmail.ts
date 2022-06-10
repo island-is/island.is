@@ -6,7 +6,7 @@ import { EmailTemplateGenerator } from '../../../../types'
 import { pathToAsset } from '../parental-leave.utils'
 
 // TODO handle translations
-export const generateOtherParentRejected: EmailTemplateGenerator = (props) => {
+export const generateEmployerRejected: EmailTemplateGenerator = (props) => {
   const {
     application,
     options: { email, clientLocationOrigin },
