@@ -1,6 +1,22 @@
 import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
+  introTitle: {
+    id: 'pa.application:intro.title',
+    defaultMessage: 'Inngangur',
+    description: 'Some description',
+  },
+  introSectionTitle: {
+    id: 'pa.application:introSection.title',
+    defaultMessage: 'Vegabréf',
+    description: 'Some description',
+  },
+  introSectionDescription: {
+    id: 'pa.application:intro.introSection.description#markdown',
+    defaultMessage:
+      'Í þessari umsókn getur þú sótt um vegabréf fyrir þig eða einstaklinga í þinni forsjá. Eftir þetta ferli þarf að mæta í myndatöku hjá næsta sýslumanni til þess að vegabréfið geti farið í framleiðslu. Þegar vegabréfið er tilbúið þá getur þú sótt það hjá því sýslumannsembætti sem hentar þér best. Umsókn um nýtt vegabréf kostar 13.000 kr. fyrir 18 ára og eldri og 5.600 kr. fyrir börn, aldraða og öryrkja og greiðist í lok þessa ferlis. Athugið að endurtaka þarf þetta ferli fyrir hvern einstakling sem þarf á nýju vegabréfi að halda. Þetta ferli vistast sjálfkrafa á Mínar síður á Ísland.is. Þar getur þú einnig fylgst með stöðu umsóknar eftir að öll gögn hafa verið send inn.',
+    description: 'Some description',
+  },
   dataCollectionTitle: {
     id: 'pa.application:dataCollection.title',
     defaultMessage: 'Gagnaöflun',
@@ -95,9 +111,10 @@ export const m = defineMessages({
     defaultMessage: 'Netfang',
     description: 'Some description',
   },
-  isCurrentPassportLost: {
-    id: 'pa.application:personalInfo.isCurrentPassportLost',
-    defaultMessage: 'Merktu hér ef vegabréfi hefur verið glatað',
+  hasDisabilityDiscount: {
+    id: 'pa.application:personalInfo.hasDisabilityDiscount',
+    defaultMessage:
+      'Ég vil láta fletta mér upp í öryrkjaskrá hjá Tryggingastofnun fyrir lægra gjald á vegabréfi',
     description: 'Some description',
   },
   serviceTitle: {

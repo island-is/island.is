@@ -38,13 +38,12 @@ export const Draft: Form = buildForm({
   children: [
     buildSection({
       id: 'intro',
-      title: 'Inngangur',
+      title: m.infoTitle,
       children: [
         buildMultiField({
           id: 'intro',
-          title: 'Vegabréf',
-          description:
-            'Í þessari umsókn getur þú sótt um vegabréf fyrir þig eða einstaklinga í þinni forsjá. Eftir þetta ferli þarf að mæta í myndatöku hjá næsta sýslumanni til þess að vegabréfið geti farið í framleiðslu. Þegar vegabréfið er tilbúið þá getur þú sótt það hjá því sýslumannsembætti sem hentar þér best. Umsókn um nýtt vegabréf kostar 13.000 kr. fyrir 18 ára og eldri og 5.600 kr. fyrir börn, aldraða og öryrkja og greiðist í lok þessa ferlis. Athugið að endurtaka þarf þetta ferli fyrir hvern einstakling sem þarf á nýju vegabréfi að halda. Þetta ferli vistast sjálfkrafa á Mínar síður á Ísland.is. Þar getur þú einnig fylgst með stöðu umsóknar eftir að öll gögn hafa verið send inn. ',
+          title: m.introSectionTitle,
+          description: m.introSectionDescription,
           children: [buildDividerField({ title: ' ' })],
         }),
       ],
@@ -162,8 +161,7 @@ export const Draft: Form = buildForm({
               options: [
                 {
                   value: YES,
-                  label:
-                    'Ég vil láta fletta mér upp í öryrkjaskrá hjá Tryggingastofnun fyrir lægra gjald á vegabréfi',
+                  label: m.hasDisabilityDiscount,
                 },
               ],
             }),

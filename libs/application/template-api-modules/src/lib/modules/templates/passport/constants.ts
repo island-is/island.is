@@ -8,5 +8,5 @@ export const NO = 'no'
 export type YesOrNo = 'yes' | 'no'
 
 export type DiscountCheck = {
-  hasDisabilityDiscount: boolean
+  hasDiscount: boolean
 }

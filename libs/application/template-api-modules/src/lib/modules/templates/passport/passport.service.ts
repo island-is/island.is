@@ -48,27 +48,25 @@ export class PassportService {
     return response
   }
 
-  async checkForDiscount({
-    application: { answers, externalData },
-    auth,
-  }: TemplateApiModuleActionProps) {
-    if (
-      !(externalData.checkForDiscount?.data as DiscountCheck)
-        ?.hasDisabilityDiscount
-    ) {
+  async checkForDiscount({ application, auth }: TemplateApiModuleActionProps) {
+    const { answers, externalData } = application
+
+    if (!(externalData.checkForDiscount?.data as DiscountCheck)?.hasDiscount) {
       const age = kennitala.info(auth.nationalId).age
       if (age < 18 || age >= 60) {
         return {
-          hasDisabilityDiscount: true,
+          hasDiscount: true,
         }
       }
-      const check = getValueViaPath<YesOrNo>(
+      const disabilityCheck = getValueViaPath<YesOrNo>(
         answers,
         'personalInfo.hasDisabilityDiscount',
       )
-      if (check?.includes(YES)) {
+
+      //TODO: implement check with Tryggingastofnun
+      if (disabilityCheck?.includes(YES)) {
         return {
-          hasDisabilityDiscount: true,
+          hasDiscount: true,
         }
       }
     }
