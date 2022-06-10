@@ -10,6 +10,7 @@ export const serviceSetup = (services: {
     .namespace('identity-server')
     .image('identity-server')
     .env({
+      AudkenniSettings__Url: "https://tqd75.audkenni.is:443/sso/",
       AWS__CloudWatch__AuditLogGroup: '/identity-server/audit-log',
       ASPNETCORE_URLS: 'http://*:5000',
       CORECLR_ENABLE_PROFILING: '1',
@@ -71,9 +72,8 @@ export const serviceSetup = (services: {
       Application__MinCompletionPortThreads: '10',
     })
     .secrets({
-      AudkenniSettings__ClientId: '/k8s/identity-server/AudkenniClientId',
-      AudkenniSettings__ClientSecret:
-        '/k8s/identity-server/AudkenniClientSecret',
+      AudkenniSettings__ClientId: "/k8s/identity-server-audkenni/AudkenniClientId",
+      AudkenniSettings__ClientSecret: "/k8s/identity-server-audkenni/AudkenniClientSecret",
       IdentityServer__FakePersons: '/k8s/identity-server/FakePersons',
       IdentityServer__SigningCertificate__Passphrase:
         '/k8s/identity-server/SigningCertificatePassphrase',

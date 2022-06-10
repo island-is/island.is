@@ -76,6 +76,7 @@ identity-server:
     AWS__SystemsManager__ParameterStore__DataProtectionPrefix: '/k8s/identity-server/DataProtectionSecret'
     Application__MinCompletionPortThreads: '10'
     AudkenniSettings__Retries: '24'
+    AudkenniSettings__Url: 'https://tqd75.audkenni.is:443/sso/'
     CORECLR_ENABLE_PROFILING: '1'
     CORECLR_PROFILER: '{846F5F1C-F9AE-4B07-969E-05C26BC060D8}'
     CORECLR_PROFILER_PATH: '/opt/datadog/Datadog.Trace.ClrProfiler.Native.so'
@@ -144,8 +145,8 @@ identity-server:
       cpu: '100m'
       memory: '128Mi'
   secrets:
-    AudkenniSettings__ClientId: '/k8s/identity-server/AudkenniClientId'
-    AudkenniSettings__ClientSecret: '/k8s/identity-server/AudkenniClientSecret'
+    AudkenniSettings__ClientId: '/k8s/identity-server-audkenni/AudkenniClientId'
+    AudkenniSettings__ClientSecret: '/k8s/identity-server-audkenni/AudkenniClientSecret'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     FeatureFlags__ConfigCatSdkKey: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     IdentityServer__FakePersons: '/k8s/identity-server/FakePersons'
