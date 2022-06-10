@@ -39,6 +39,7 @@ auth-admin-web:
           paths:
             - '/admin'
   namespace: 'identity-server-admin'
+  progressDeadlineSeconds: 1200
   replicaCount:
     default: 2
     max: 10
@@ -55,8 +56,6 @@ auth-admin-web:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-  service:
-    targetPort: 4200
 global:
   env:
     AUDIT_GROUP_NAME: '/identity-server/audit-log'
@@ -233,6 +232,7 @@ services-auth-api:
     DB_NAME: 'servicesauth'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'servicesauth'
+    IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     NODE_OPTIONS: '--max-old-space-size=208'
     PUBLIC_URL: 'https://innskra.island.is/api'
@@ -321,6 +321,7 @@ services-auth-api:
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/services-auth/api/DB_PASSWORD'
+    IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET'
     RSK_PASSWORD: '/k8s/xroad/client/RSK/PASSWORD'
     RSK_USERNAME: '/k8s/xroad/client/RSK/USERNAME'
   securityContext:
