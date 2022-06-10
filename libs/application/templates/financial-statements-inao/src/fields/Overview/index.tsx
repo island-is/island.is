@@ -18,7 +18,6 @@ export const Overview = ({ application }: FieldBaseProps) => {
   const { formatMessage } = useLocale()
 
   const answers = application.answers as FinancialStatementsInao
-
   return (
     <Box marginBottom={2}>
       <Divider />
@@ -72,7 +71,7 @@ export const Overview = ({ application }: FieldBaseProps) => {
       </Box>
       <Box paddingY={2}>
         <GridRow>
-          <GridColumn span={['12/12', '6/12']}>
+          {/* <GridColumn span={['12/12', '6/12']}>
             <ValueLine
               label={m.capitalIncome}
               value={answers.incomeAndExpenses?.capital}
@@ -83,32 +82,32 @@ export const Overview = ({ application }: FieldBaseProps) => {
               label={m.personalIncome}
               value={answers.incomeAndExpenses?.personal}
             />
-          </GridColumn>
+          </GridColumn> */}
         </GridRow>
       </Box>
       <Box paddingY={2}>
         <GridRow>
           <GridColumn span={['12/12', '6/12']}>
-            <ValueLine
+            {/* <ValueLine
               label={m.donations}
               value={answers.incomeAndExpenses?.donations}
-            />
+            /> */}
           </GridColumn>
           <GridColumn span={['12/12', '6/12']}>
-            <ValueLine
+            {/* <ValueLine
               label={m.capitalIncome}
               value={answers.incomeAndExpenses?.capitalIncome}
-            />
+            /> */}
           </GridColumn>
         </GridRow>
       </Box>
       <Box paddingY={2}>
         <GridRow>
           <GridColumn span={['12/12', '6/12']}>
-            <ValueLine
+            {/* <ValueLine
               label={m.keyNumbersParty}
               value={answers.incomeAndExpenses?.partyRunning}
-            />
+            /> */}
           </GridColumn>
         </GridRow>
       </Box>
