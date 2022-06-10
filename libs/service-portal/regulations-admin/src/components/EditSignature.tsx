@@ -85,17 +85,19 @@ export const EditSignature = () => {
     uploadFile,
     uploadErrorMessage,
     uploadLocation,
+    resetUploadLocation,
     onChange,
     onRetry,
-    onRemove,
   } = useS3Upload()
 
+  const onRemove = () => {
+    resetUploadLocation()
+  }
+
   useEffect(() => {
-    if (uploadLocation) {
-      console.log('upload location')
-      //updateState('signedDocumentUrl', uploadLocation as URLString)
-    }
-  }, [uploadLocation, updateState])
+    updateState('signedDocumentUrl', uploadLocation as URLString)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [uploadLocation])
 
   return (
     <Box marginBottom={6}>
@@ -103,9 +105,31 @@ export const EditSignature = () => {
         <DownloadDraftButton draftId={draft.id} />
       </Box>
 
+      {/*
+        <Box marginBottom={4}>
+        <InputFileUpload
+          fileList={uploadStatus.file || []}
+          header={t(msg.signedDocumentUploadDragPrompt)}
+          description={
+            t(msg.signedDocumentUploadDescr).replace(/^\s+$/, '') || undefined
+          }
+          buttonLabel={t(msg.signedDocumentUpload)}
+          onChange={uploadSignedPDF}
+          onRetry={retryUpload}
+          onRemove={cancelUpload}
+          errorMessage={uploadStatus.error}
+          accept=".pdf"
+          multiple={false}
+        />
+        {uploadStatus.error && (
+          <AlertMessage type="error" title={uploadStatus.error} />
+        )}
+      </Box>
+    */}
+
       <Box marginBottom={4}>
         <InputFileUpload
-          fileList={uploadFile ? [uploadFile] : []}
+          fileList={[]}
           header={t(msg.signedDocumentUploadDragPrompt)}
           description={
             t(msg.signedDocumentUploadDescr).replace(/^\s+$/, '') || undefined
@@ -113,7 +137,9 @@ export const EditSignature = () => {
           buttonLabel={t(msg.signedDocumentUpload)}
           onChange={(files) => onChange(files, draft.id)}
           onRetry={() => onRetry(draft.id)}
-          onRemove={() => onRemove(uploadFile, draft.id)}
+          onRemove={() => {
+            console.log('remove file')
+          }}
           errorMessage={uploadErrorMessage}
           accept=".pdf"
           multiple={false}
@@ -166,9 +192,7 @@ export const EditSignature = () => {
               </Button>
 
               <Button
-                onClick={
-                  uploadFile ? () => onRemove(uploadFile, draft.id) : undefined
-                }
+                onClick={onRemove}
                 variant="text"
                 size="small"
                 as="button"

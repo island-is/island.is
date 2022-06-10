@@ -169,15 +169,9 @@ export const useS3Upload = () => {
     )
   }
 
-  const deleteFromS3 = async (presignedPost: PresignedPost) => {
-    console.log('not implemented')
-    /*const formData = createFormData(presignedPost)
-    const res = await fetch(presignedPost.url, {
-      body: formData,
-      method: 'DELETE',
-      mode: 'cors',
-    })*/
-  }
+  const resetUploadLocation = () => setUploadLocation(undefined)
+
+  //const deleteFromS3 = async (presignedPost: PresignedPost) => {}
 
   const onChange = async (newFiles?: File[], regId?: string) => {
     setUploadErrorMessage(undefined)
@@ -205,8 +199,9 @@ export const useS3Upload = () => {
     onChange([uploadFile as File], regId)
   }
 
+  /*
   const onRemove = async (file?: UploadFile, regId?: string) => {
-    /*setUploadErrorMessage(undefined)
+    setUploadErrorMessage(undefined)
 
     if (!file || !regId) {
       return
@@ -220,14 +215,16 @@ export const useS3Upload = () => {
       return
     }
 
-    deleteFromS3(presignedPost)*/
+    deleteFromS3(presignedPost)
   }
+  */
+
   return {
     uploadFile,
     uploadErrorMessage,
     uploadLocation,
+    resetUploadLocation,
     onChange,
-    onRemove,
     onRetry,
   }
 }
