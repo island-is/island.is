@@ -15,6 +15,7 @@ import {
   BadRequestException,
   HttpException,
   Inject,
+  ParseBoolPipe,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
@@ -307,7 +308,7 @@ export class CaseController {
     @Param('caseId') caseId: string,
     @CurrentCase() theCase: Case,
     @Res() res: Response,
-    @Query('useSigned') useSigned = true,
+    @Query('useSigned', ParseBoolPipe) useSigned: boolean,
   ): Promise<void> {
     this.logger.debug(`Getting the ruling for case ${caseId} as a pdf document`)
 
