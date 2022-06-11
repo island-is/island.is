@@ -28,4 +28,12 @@ describe('web', () => {
           .should('equal', '/'),
       )
   })
+  it.only('should have search results for common words', () => {
+    cy.visit('/')
+      .get('[data-testid="search-box"]')
+      .click()
+      .type('covid{enter}')
+      .get('[data-testid="search-result"]', { timeout: 15000 })
+      .should('have.length.at.least', 10)
+  })
 })
