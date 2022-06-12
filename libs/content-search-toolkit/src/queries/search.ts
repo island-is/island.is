@@ -6,7 +6,7 @@ import { processAggregationQuery } from './processAggregation'
 
 const getBoostForType = (type: string, defaultBoost: string | number = 1) => {
   if (type === 'webArticle') {
-    return 60
+    return 55
   }
   return defaultBoost
 }
