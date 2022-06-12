@@ -220,15 +220,27 @@ const ProjectPage: Screen<PageProps> = ({
           </Box>
         )}
         {!renderSlicesAsTabs &&
-          (subpage ?? projectPage).slices.map((slice) => (
-            <OrganizationSlice
-              key={slice.id}
-              slice={slice}
-              namespace={namespace}
-              fullWidth={true}
-              organizationPageSlug={projectPage.slug}
-            />
-          ))}
+          (subpage ?? projectPage).slices.map((slice) =>
+            slice.__typename === 'OneColumnText' ? (
+              <Box marginTop={6}>
+                <OrganizationSlice
+                  key={slice.id}
+                  slice={slice}
+                  namespace={namespace}
+                  fullWidth={true}
+                  organizationPageSlug={projectPage.slug}
+                />
+              </Box>
+            ) : (
+              <OrganizationSlice
+                key={slice.id}
+                slice={slice}
+                namespace={namespace}
+                fullWidth={true}
+                organizationPageSlug={projectPage.slug}
+              />
+            ),
+          )}
       </ProjectWrapper>
       {!subpage && !!projectPage.newsTag && (
         <div style={{ overflow: 'hidden' }}>
