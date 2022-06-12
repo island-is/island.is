@@ -28,12 +28,22 @@ describe('web', () => {
           .should('equal', '/'),
       )
   })
-  it.only('should have search results for common words', () => {
+  it('should have search results for common words', function () {
     cy.visit('/')
       .get('[data-testid="search-box"]')
       .click()
       .type('covid{enter}')
       .get('[data-testid="search-result"]', { timeout: 15000 })
+      .as('test-results')
       .should('have.length.at.least', 10)
+      .location('pathname', { timeout: 5000 })
+      .as('searchPath')
+      .get('@test-results')
+      .first()
+      .click()
+      .location('pathname', { timeout: 5000 })
+      .should((currentPath) => {
+        expect(currentPath).to.not.eq(this.searchPath)
+      })
   })
 })
