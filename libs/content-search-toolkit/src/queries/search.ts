@@ -6,7 +6,7 @@ import { processAggregationQuery } from './processAggregation'
 
 const getBoostForType = (type: string, defaultBoost: string | number = 1) => {
   if (type === 'webArticle') {
-    return 40
+    return 60
   }
   return defaultBoost
 }
@@ -44,7 +44,6 @@ export const searchQuery = (
 
     types.forEach((type) => {
       const [value, boost = 1] = type.split('^')
-
       should.push({
         term: {
           type: {
