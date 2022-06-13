@@ -73,10 +73,10 @@ export class FileService {
 
   private async throttleUploadStream(
     file: CaseFile,
-    user: User,
     caseId: string,
     courtId?: string,
     courtCaseNumber?: string,
+    user?: User,
   ): Promise<string> {
     await this.throttle.catch((reason) => {
       this.logger.info('Previous upload failed', { reason })
@@ -89,7 +89,6 @@ export class FileService {
     }
 
     return this.courtService.createDocument(
-      user,
       caseId,
       courtId ?? '',
       courtCaseNumber ?? '',
@@ -97,6 +96,7 @@ export class FileService {
       file.name,
       file.type,
       content,
+      user,
     )
   }
 
@@ -184,11 +184,11 @@ export class FileService {
   }
 
   async uploadCaseFileToCourt(
-    user: User,
     file: CaseFile,
     caseId: string,
     courtId?: string,
     courtCaseNumber?: string,
+    user?: User,
   ): Promise<UploadFileToCourtResponse> {
     if (file.state === CaseFileState.STORED_IN_COURT) {
       throw new BadRequestException(
@@ -211,10 +211,10 @@ export class FileService {
 
     this.throttle = this.throttleUploadStream(
       file,
-      user,
       caseId,
       courtId,
       courtCaseNumber,
+      user,
     )
 
     await this.throttle

@@ -247,13 +247,7 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
     case 'landlaeknir':
     case 'directorate-of-health':
       OrganizationFooterComponent = (
-        <LandlaeknirFooter
-          footerItems={organization.footerItems}
-          phone={organization.phone}
-          email={organization.email}
-          phoneLabel={n('telephone', 'Sími')}
-          emailLabel={n('email,', 'Tölvupóstur')}
-        />
+        <LandlaeknirFooter footerItems={organization.footerItems} />
       )
       break
   }
