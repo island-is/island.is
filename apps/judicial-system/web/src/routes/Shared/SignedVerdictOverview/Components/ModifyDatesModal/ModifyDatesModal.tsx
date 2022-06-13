@@ -293,6 +293,7 @@ const ModifyDatesModal: React.FC<Props> = ({
   return isCaseModificationConfirmed ? (
     <motion.div
       key="dateModifyingModalSuccess"
+      data-testid="dateModifyingModalSuccess"
       animate={{ opacity: 1, y: 0 }}
       initial={{ opacity: 0, y: 20 }}
       exit={{ opacity: 0, y: 20 }}
