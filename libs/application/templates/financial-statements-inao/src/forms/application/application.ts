@@ -4,6 +4,10 @@ import {
   buildFileUploadField,
   buildExternalDataProvider,
   buildDataProviderItem,
+  buildDescriptionField,
+  buildMultiField,
+  buildRadioField,
+  buildSelectField,
   getValueViaPath,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
@@ -12,7 +16,7 @@ import { m } from '../../lib/messages'
 import { keyNumbersSection } from './shared/keyNumbers/keyNumbersSection'
 import { overviewSection } from './shared/overviewSection'
 import { Logo } from '../../components'
-import { GREATER } from '../../lib/constants'
+import { GREATER, LESS } from '../../lib/constants'
 
 export const getApplication = (): Form => {
   return buildForm({
@@ -61,12 +65,58 @@ export const getApplication = (): Form => {
         ],
       }),
       clientInfoSection,
+      buildSection({
+        id: 'electionInfo',
+        title: m.election,
+        children: [
+          buildMultiField({
+            id: 'election',
+            title: m.election,
+            description: m.fillOutAppopriate,
+            children: [
+              buildSelectField({
+                id: 'election.selectElection',
+                title: m.election,
+                width: 'half',
+                placeholder: m.pickElectionType,
+                options: [
+                  {
+                    label: m.presidentalElection,
+                    value: 'Forsetakosningar',
+                  },
+                  {
+                    label: m.parliamentaryElection,
+                    value: 'Alþingiskosningar',
+                  },
+                ],
+              }),
+              buildDescriptionField({
+                id: 'election.electionDescription',
+                title: m.campaignCost,
+                titleVariant: 'h3',
+                description: m.pleaseSelect,
+                space: 5,
+              }),
+              buildRadioField({
+                id: 'election.incomeLimit',
+                title: '',
+                options: [
+                  { value: LESS, label: m.lessThanLimit },
+                  { value: GREATER, label: m.moreThanLimit },
+                ],
+                width: 'full',
+                largeButtons: true,
+              }),
+            ],
+          }),
+        ],
+      }),
       keyNumbersSection,
       buildSection({
         id: 'documents',
         title: m.financialStatement,
         condition: (answers) =>
-        getValueViaPath(answers, 'electionInfo.incomeLimit') === GREATER,
+          getValueViaPath(answers, 'election.incomeLimit') === GREATER,
         children: [
           buildFileUploadField({
             id: 'attachment.file',

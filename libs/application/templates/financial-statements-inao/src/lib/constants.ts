@@ -22,7 +22,6 @@ export const OPERATIONIDS = {
   individualDonations: 'income.individualDonations',
   personalDonations: 'income.personalDonations',
   otherIncome: 'income.other',
-  personal: 'income.personal',
   capitalIncome: 'income.capitalIncome',
   electionOffice: 'expense.electionOffice',
   advertisements: 'expense.advertisements',

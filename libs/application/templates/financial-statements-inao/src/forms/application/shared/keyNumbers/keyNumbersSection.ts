@@ -13,7 +13,7 @@ export const keyNumbersSection = buildSection({
   id: 'keyNumbers',
   title: m.keyNumbers,
   condition: (answers) => {
-    return getValueViaPath(answers, 'electionInfo.incomeLimit') === GREATER
+    return getValueViaPath(answers, 'election.incomeLimit') === GREATER
   },
   children: [
     buildSubSection({
@@ -27,33 +27,8 @@ export const keyNumbersSection = buildSection({
           component: 'PersonalElectionOperatingIncome',
           childInputIds: Object.values(OPERATIONIDS) ,
         }),
-        // buildTextField({
-        //   id: 'incomeAndExpenses.personal',
-        //   title: m.personalIncome,
-        //   variant: 'currency',
-        //   width: 'half',
-        // }),
-        // buildTextField({
-        //   id: 'incomeAndExpenses.capitalIncome',
-        //   title: m.capitalIncome,
-        //   variant: 'currency',
-        //   width: 'half',
-        // }),
-        // buildTextField({
-        //   id: 'incomeAndExpenses.partyRunning',
-        //   title: m.keyNumbersParty,
-        //   variant: 'currency',
-        //   width: 'half',
-        // }),
-        // buildTextField({
-        //   id: 'incomeAndExpenses.capital',
-        //   title: m.financeCost,
-        //   variant: 'currency',
-        //   width: 'half',
-        // }),
       ],
     }),
-
     buildSubSection({
       id: 'keyNumbers.propertiesAndDebts',
       title: m.keyNumbersProperty,

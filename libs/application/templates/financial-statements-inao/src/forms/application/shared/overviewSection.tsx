@@ -15,23 +15,23 @@ export const overviewSection = buildSection({
   children: [
     buildMultiField({
       id: 'overview',
-
-      title: (application) =>
-        getValueViaPath(application.answers, 'electionInfo.incomeLimit') ===
-        GREATER
+      title: (application) => {
+        console.log(application)
+        return getValueViaPath(application.answers, 'election.incomeLimit') ===
+          GREATER
           ? m.overviewTitle
-          : m.statement,
+          : m.statement
+      },
       description: (application) =>
-        getValueViaPath(application.answers, 'electionInfo.incomeLimit') ===
-        GREATER
+        getValueViaPath(application.answers, 'election.incomeLimit') === GREATER
           ? m.overviewDescription
-          : m.electionStatement,
+          : `${m.electionStatement.defaultMessage} ${getValueViaPath(application.answers, 'election.selectElection')}`,
       children: [
         buildCustomField({
           id: 'overviewCustomField',
           title: '',
           condition: (answers) =>
-            getValueViaPath(answers, 'electionInfo.incomeLimit') === GREATER,
+            getValueViaPath(answers, 'election.incomeLimit') === GREATER,
           doesNotRequireAnswer: true,
           component: 'Overview',
         }),
@@ -39,7 +39,7 @@ export const overviewSection = buildSection({
           id: 'overviewStatementField',
           title: '',
           condition: (answers) =>
-            getValueViaPath(answers, 'electionInfo.incomeLimit') === LESS,
+            getValueViaPath(answers, 'election.incomeLimit') === LESS,
           doesNotRequireAnswer: true,
           component: 'ElectionStatement',
         }),

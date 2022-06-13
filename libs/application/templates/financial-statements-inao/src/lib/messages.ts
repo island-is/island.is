@@ -3,7 +3,7 @@ import { defineMessages } from 'react-intl'
 export const m = defineMessages({
   applicationTitle: {
     id: 'fsn.application:applicationTitle',
-    defaultMessage: 'Stafræn skil ársreikninga',
+    defaultMessage: 'Skil á upplýsingum',
     description: 'Application for Digital',
   },
   inao: {
@@ -70,8 +70,13 @@ export const m = defineMessages({
   },
   about: {
     id: 'fsn.application:about',
-    defaultMessage: 'Viðskiptavinur',
+    defaultMessage: 'Upplýsingar',
     description: 'about',
+  },
+  reviewContact: {
+    id: 'fsn.application:reviewContact',
+    defaultMessage: 'Vinsamlegast yfirfarið tengiliðaupplýsingar hér að neðan',
+    description: 'Review contact info',
   },
   fullName: {
     id: 'fsn.application:fullName',
@@ -95,13 +100,18 @@ export const m = defineMessages({
   },
   electionType: {
     id: 'fsn.application:electionType',
-    defaultMessage: 'Tegund Kosninga',
+    defaultMessage: 'Veldu þær kosningar sem skila á upplýsingum fyrir',
     description: 'Election Campaign',
   },
   selectElectionType: {
     id: 'fsn.application:selectElectionType',
-    defaultMessage: 'Vinsamlegast veldu þá tegund kosningar sem við á',
+    defaultMessage: 'Veldu þær kosningar sem skila á upplýsingum fyrir',
     description: 'Select election type',
+  },
+  selectElection: {
+    id: 'fsn.application:selectElection',
+    defaultMessage: 'Veldu þær kosningar sem skila á upplýsingum fyrir',
+    description: 'Select election',
   },
   election: {
     id: 'fsn.application:election',
@@ -110,7 +120,7 @@ export const m = defineMessages({
   },
   pickElectionType: {
     id: 'fsn.application:SelectElectionType',
-    defaultMessage: 'Veldu Tegund',
+    defaultMessage: 'Veldu kosningar',
     description: 'Select election type',
   },
   statement: {
@@ -120,13 +130,13 @@ export const m = defineMessages({
   },
   electionStatement: {
     id: 'fsn.application:electionStatement',
-    defaultMessage: 'Yfirlýsing frambjóðanda í heiti kosninga',
+    defaultMessage: 'Yfirlýsing frambjóðanda vegna',
     description: 'statement',
   },
   elctionStatementLaw: {
     id: 'fsn.application:elctionStatementLaw',
     defaultMessage:
-      'Með vísan í 3. mgr. 10. gr. laga nr. 162/2006, um starfsemi stjórnmálasamtaka, á því undanþága á uppgjörsskyldu vegna prófkjörs við.',
+      'Það staðfestist hér með að heildartekjur eða -kostnaður vegna framboðsins voru ekki umfram þau fjárhæðarmörk sem tilgreind eru í 3. mgr. 10. gr. laga nr. 162/2006, um starfsemi stjórnmálasamtaka, og er framboðið því undanþegið uppgjörsskyldu.',
     description: 'statement',
   },
   nationalId: {
@@ -188,6 +198,11 @@ export const m = defineMessages({
     id: 'fsn.application:keyNumbers.expenses',
     defaultMessage: 'Gjöld',
     description: 'expenses',
+  },
+  operatingCost: {
+    id: 'fsn.application:keyNumbers.operatingCost',
+    defaultMessage: 'Rekstrarniðurstaða',
+    description: 'Operating Cost',
   },
   keyNumbersParty: {
     id: 'fsn.application:keyNumbers.party',
@@ -299,6 +314,16 @@ export const m = defineMessages({
     defaultMessage: 'Tekjur samtals:',
     description: 'Total income',
   },
+  totalExpenses: {
+    id: 'fsn.application:income.totalExpenses',
+    defaultMessage: 'Gjöld samtals:',
+    description: 'Total expenses',
+  },
+  attachment: {
+    id: 'fsn.application:financial.attachment',
+    defaultMessage: 'Fylgiskjal',
+    description: 'attachment', 
+  },
   financialStatement: {
     id: 'fsn.application:financial.statment',
     defaultMessage: 'Ársreikningur',
@@ -329,6 +354,11 @@ export const m = defineMessages({
     defaultMessage: 'Senda umsókn',
     description: 'Send application',
   },
+  participated: {
+    id: 'fsn.application:overview.participated',
+    defaultMessage: 'tók þátt í kjöri',
+    description: 'Participated in election',
+  },
   overviewSectionTitle: {
     id: 'fsn.application:overview.general.sectionTitle',
     defaultMessage: 'Yfirlit',
@@ -356,7 +386,8 @@ export const m = defineMessages({
   },
   dataCollectionCheckboxLabel: {
     id: 'fsn.application:dataCollectionCheckboxLabel',
-    defaultMessage: 'Ég skil að ofangreindra gagna verður aflað við vinnslu innsendingarinnar',
+    defaultMessage:
+      'Ég skil að ofangreindra gagna verður aflað við vinnslu innsendingarinnar',
     description: 'Checkbox label for data collection section',
   },
   dataSchemePhoneNumber: {
@@ -367,13 +398,13 @@ export const m = defineMessages({
   lessThanLimit: {
     id: 'fsn.application:lessThanLimit',
     defaultMessage:
-      'Heildartekjur eða heildarkostnað við kosningabaráttuna var minni en 550 þúsund krónum.',
+      'Heildartekjur og heildarkostnað við kosningabaráttuna var minni en 550 þúsund krónum.',
     description: 'Spending was less than a specific limit',
   },
   moreThanLimit: {
     id: 'fsn.application:moreThanLimit',
     defaultMessage:
-      'Heildartekjur eða heildarkostnað við kosningabaráttuna var meira en 550 þúsund krónum.',
+      'Heildartekjur og heildarkostnað við kosningabaráttuna var meira en 550 þúsund krónum.',
     description: 'Spending was more than a specific limit',
   },
   campaignCost: {
