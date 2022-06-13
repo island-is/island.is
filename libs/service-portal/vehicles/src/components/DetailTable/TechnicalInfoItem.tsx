@@ -3,8 +3,13 @@ import HeaderRow from './HeaderRow'
 import Column from './Column'
 import Row from './Row'
 import { Box } from '@island.is/island-ui/core'
-import { VehiclesAxle, VehiclesTechnicalInfo } from '@island.is/api/schema'
+import {
+  VehiclesAxle,
+  VehiclesTechnicalInfo,
+  Tyres,
+} from '@island.is/api/schema'
 import { messages } from '../../lib/messages'
+import { displayWithUnit } from '../../utils/displayWithUnit'
 
 interface PropTypes {
   data: VehiclesTechnicalInfo
@@ -18,55 +23,82 @@ const TechnicalInfoItem = ({ data }: PropTypes) => {
         <Column label={messages.engineType} value={data.engine} />
         <Column
           label={messages.vehicleWeight}
-          value={data.vehicleWeight + ' kg'}
+          value={displayWithUnit(data.vehicleWeight?.toString(), 'kg')}
         />
       </Row>
       <Row>
-        <Column label={messages.capacity} value={data.cubicCapacity + ' cc.'} />
+        <Column
+          label={messages.capacity}
+          value={displayWithUnit(data.cubicCapacity?.toString(), 'cc')}
+        />
 
         <Column
-          label={messages.vehicleWeight}
-          value={data.capacityWeight + ' kg'}
+          label={messages.capacityWeight}
+          value={
+            data.capacityWeight
+              ? displayWithUnit(data.capacityWeight?.toString(), 'kg')
+              : ''
+          }
         />
       </Row>
       <Row>
-        <Column label={messages.length} value={data.length + ' mm'} />
-        <Column label={messages.totalWeight} value={data.totalWeight + ' kg'} />
+        <Column
+          label={messages.length}
+          value={displayWithUnit(data.length?.toString(), 'mm')}
+        />
+        <Column
+          label={messages.totalWeight}
+          value={displayWithUnit(data.totalWeight?.toString(), 'kg')}
+        />
       </Row>
       <Row>
-        <Column label={messages.width} value={data.width + ' mm'} />
+        <Column
+          label={messages.width}
+          value={displayWithUnit(data.width?.toString(), 'mm')}
+        />
         <Column
           label={messages.trailerWithoutBrakes}
-          value={data.trailerWithoutBrakesWeight + ' kg'}
+          value={displayWithUnit(
+            data.trailerWithoutBrakesWeight?.toString(),
+            'kg',
+          )}
         />
       </Row>
       <Row>
         <Column
           label={messages.horsePower}
-          value={data.horsepower && data.horsepower + ' hö'}
+          value={displayWithUnit(data.horsepower?.toString(), 'hö')}
         />
         <Column
           label={messages.trailerWithBrakes}
-          value={data.trailerWithBrakesWeight + ' kg'}
+          value={displayWithUnit(
+            data.trailerWithBrakesWeight?.toString(),
+            'kg',
+          )}
         />
       </Row>
       <Row>
         <Column
           label={messages.carryingCapacity}
-          value={data.carryingCapacity + ' kg'}
+          value={displayWithUnit(data.carryingCapacity?.toString(), 'kg')}
         />
         <Column
           label={messages.axleTotalWeight}
-          value={data.axleTotalWeight ? data.axleTotalWeight + ' kg' : ''}
+          value={
+            data.axleTotalWeight
+              ? displayWithUnit(data.axleTotalWeight?.toString(), 'kg')
+              : ''
+          }
         />
       </Row>
-      {data.axle?.map((item: VehiclesAxle | null, index: number) => {
+      {data.axles?.map((item: VehiclesAxle | null, index: number) => {
         const axleTitle = messages.axle
         const axleWheel = messages.axleWheel
+        const axleNr = `axle${index + 1}` as keyof Tyres
         return (
           <Row key={'Axle: ' + index}>
             <Column label={axleTitle} value={index + 1} />
-            <Column label={axleWheel} value={item?.wheelAxle} />
+            <Column label={axleWheel} value={data.tyres?.[axleNr]} />
           </Row>
         )
       })}

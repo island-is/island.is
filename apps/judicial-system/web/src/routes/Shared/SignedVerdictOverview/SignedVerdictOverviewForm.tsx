@@ -19,7 +19,7 @@ import {
   CourtRecordAccordionItem,
   FormContentContainer,
   InfoCard,
-  PdfRow,
+  PdfButton,
   PoliceRequestAccordionItem,
   RulingAccordionItem,
   CommentsAccordionItem,
@@ -228,6 +228,20 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
           />
         </Box>
       )}
+      {workingCase.rulingModifiedHistory && (
+        <Box marginBottom={5}>
+          <AlertMessage
+            type="info"
+            title={formatMessage(m.sections.modifyRulingInfo.title)}
+            message={
+              <MarkdownWrapper
+                markdown={workingCase.rulingModifiedHistory}
+                textProps={{ variant: 'small' }}
+              />
+            }
+          />
+        </Box>
+      )}
       <Box marginBottom={6}>
         <InfoCard
           data={[
@@ -346,7 +360,8 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
         <Box marginBottom={2}>
           <Stack space={2} dividers>
             {user?.role !== UserRole.STAFF && (
-              <PdfRow
+              <PdfButton
+                renderAs="row"
                 caseId={workingCase.id}
                 title={formatMessage(core.pdfButtonRequest)}
                 pdfType={'request'}
@@ -357,13 +372,15 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
               workingCase.state,
               workingCase.decision,
             ) && (
-              <PdfRow
+              <PdfButton
+                renderAs="row"
                 caseId={workingCase.id}
                 title={formatMessage(core.pdfButtonCustodyNotice)}
                 pdfType="custodyNotice"
               />
             )}
-            <PdfRow
+            <PdfButton
+              renderAs="row"
               caseId={workingCase.id}
               title={formatMessage(core.pdfButtonRulingShortVersion)}
               pdfType={'courtRecord'}
@@ -376,6 +393,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
               ) : user?.role === UserRole.JUDGE ||
                 user?.role === UserRole.REGISTRAR ? (
                 <Button
+                  variant="ghost"
                   loading={isRequestingCourtRecordSignature}
                   onClick={(event) => {
                     event.stopPropagation()
@@ -387,9 +405,10 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
               ) : (
                 <Text>{formatMessage(m.unsignedDocument)}</Text>
               )}
-            </PdfRow>
+            </PdfButton>
             {user?.role !== UserRole.STAFF && (
-              <PdfRow
+              <PdfButton
+                renderAs="row"
                 caseId={workingCase.id}
                 title={formatMessage(core.pdfButtonRuling)}
                 pdfType={'ruling'}
@@ -398,7 +417,23 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
                   signatory={workingCase.judge?.name}
                   signingDate={workingCase.rulingDate}
                 />
-              </PdfRow>
+                {user?.role === UserRole.JUDGE && (
+                  <Button
+                    variant="ghost"
+                    data-testid="modifyRulingButton"
+                    onClick={(event) => {
+                      event.stopPropagation()
+                      router.push(
+                        isRestrictionCase(workingCase.type)
+                          ? `${Constants.MODIFY_RULING_ROUTE}/${workingCase.id}`
+                          : `${Constants.IC_MODIFY_RULING_ROUTE}/${workingCase.id}`,
+                      )
+                    }}
+                  >
+                    {capitalize(formatMessage(core.modify))}
+                  </Button>
+                )}
+              </PdfButton>
             )}
           </Stack>
         </Box>

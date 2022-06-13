@@ -1,5 +1,4 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { isNullableType } from 'graphql'
 import {
   Column,
   DataType,

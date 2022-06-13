@@ -166,9 +166,14 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Netfang hins foreldris',
       description: 'Other parent email',
     },
+    otherParentPhoneNumberSubSection: {
+      id: 'pl.application:otherParentPhoneNumber.subSection',
+      defaultMessage: 'Símanúmer hins foreldris',
+      description: 'Other parent phone number',
+    },
     otherParentEmailTitle: {
       id: 'pl.application:otherParentEmail.title',
-      defaultMessage: 'Hvert er netfang hins foreldrisins?',
+      defaultMessage: 'Hvert er netfang og símanúmer hins foreldrisins?',
       description: 'Asking about the email address of the other parent',
     },
     otherParentEmailDescription: {
@@ -216,7 +221,7 @@ export const parentalLeaveFormMessages: MessageDir = {
         'Note that by choosing no, you will lose your earned rights with your union.',
     },
     asyncSelectSearchableHint: {
-      id: 'application.system:placeholder.searchable.hint',
+      id: 'pl.application:placeholder.searchable.hint',
       defaultMessage: 'Skrifaðu hér til að leita',
       description: 'Let user know they can search by typing',
     },
@@ -1028,6 +1033,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Netfang vinnuveitanda',
       description: 'Employer email',
     },
+    phoneNumber: {
+      id: 'pl.application:employer.phone.number',
+      defaultMessage: 'Farsími vinnuveitanda (mælum með skráningu)',
+      description: 'Employer’s mobile phone (we recommend registration)',
+    },
     emailConfirm: {
       id: 'pl.application:employer.email.confirm',
       defaultMessage: 'Staðfestu netfang vinnuveitanda',
@@ -1470,6 +1480,13 @@ export const parentalLeaveFormMessages: MessageDir = {
       description:
         'Finally, the application goes to the Parental Leave Fund, where its final processing takes place.',
     },
+    startDateInThePast: {
+      id: 'pl.application:finalscreen.start.date.in.the.past',
+      defaultMessage:
+        'icel-trans: "Parental leave starting date is in the past, please correct this date"',
+      description:
+        'Parental leave starting date is in the past, please correct this date',
+    },
   }),
 }
 
@@ -1542,42 +1559,44 @@ export const otherParentApprovalFormMessages = defineMessages({
   requestRights: {
     id: 'pl.application:otherParent.requestRights',
     defaultMessage:
-      'Viltu gefa hinu foreldrinu 45 dagar af fæðingarorlofsrétti þínum?',
+      'Viltu gefa hinu foreldrinu daga af fæðingarorlofsrétti þínum?',
     description:
-      'Do you allow the transfer of 45 days of your parental leave rights to the other parent?',
+      'Do you want to give the other parent days of your parental leave?',
   },
   requestAllowance: {
     id: 'pl.application:otherParent.requestAllowance',
     defaultMessage:
-      'Leyfir þú að flytja persónuafslátt þinn yfir á hitt foreldrið?',
+      'Viltu gefa hinu foreldrinu leyfi til þess að nýta persónuafsláttinn þinn?',
     description:
-      'Do you allow the transfer of your personal discount to the other parent?',
+      'Do you want to give the other parent permission to use your personal allowance?',
   },
   requestBoth: {
     id: 'pl.application:otherParent.requestBoth',
     defaultMessage:
-      'Leyfir þú þér að flytja 45 daga af foreldraorlofsréttindum þínum og persónulegum afslætti þínum til hins foreldrisins?',
+      'Viltu gefa hinu foreldrinu daga af fæðingarorlofsrétti þínum? Viltu gefa hinu foreldrinu leyfi til þess að nýta persónuafsláttinn þinn?',
     description:
-      'Do you allow the transfer of 45 days of your parental leave rights and of your personal discount to the other parent?',
+      'Do you want to give the other parent days of your parental leave? Do you want to give the other parent permission to use your personal allowance?',
   },
   introDescriptionRights: {
     id: 'pl.application:otherParent.introDescriptionRights',
     defaultMessage:
-      'Í umsókn um fæðingarorlof hefur hitt foreldrið óskað eftir yfirfærslu á 45 dagar af réttindum þínum til fæðingarorlofs. Réttindi þín verða þá í mesta lagi 4.5 mánuðir. Samþykkir þú beiðnina?',
+      'Í umsókn um fæðingarorlof hefur hitt foreldrið óskað eftir yfirfærslu á dögum af þínum réttindum til fæðingarorlofs. Það þýðir að þinn réttur til fæðingarorlofs fækkar um umbeðna daga. Samþykkir þú beiðnina?',
     description:
-      'When applying for the parental leave the other parent has requested a transfer of 45 days of your rights to parental leave. That means your rights will at most be 4.5 months. Do you approve the request?',
+      'In the application for parental leave, the other parent has requested a transfer in days of your rights to parental leave. This means that your right to parental leave is reduced by the requested days. Do you approve the request?',
   },
   introDescriptionAllowance: {
     id: 'pl.application:otherParent.introDescriptionAllowance',
     defaultMessage:
-      'Þegar þú sækir um foreldraorlof hefur hitt foreldrið óskað eftir flutningi persónuafsláttar þíns. Það þýðir að þú munt ekki geta notað persónulegan afslátt þinn. Samþykkir þú beiðnina?',
-    description: `When applying for the parental leave the other parent has requested a transfer of your personal discount. That means you won't be able to use your personal discount. Do you approve the request?`,
+      'Í umsókn um fæðingarorlof hefur hitt foreldrið óskað eftir að nýta persónuafslátt frá þér. Það þýðir að þú munt ekki geta notað hlutfall af umbeðnum persónuafslætti á meðan. Samþykkir þú beiðnina?',
+    description:
+      'In the application for parental leave, the other parent has requested to take advantage of a personal allowance from you. This means you will not be able to use the requested personal allowance rate for a while. Do you approve the request?',
   },
   introDescriptionBoth: {
     id: 'pl.application:otherParent.introDescriptionBoth',
     defaultMessage:
-      'Þegar þú sækir um foreldraorlof hefur hitt foreldrið óskað eftir flutningi persónuafsláttar þíns og 45 daga af réttindum þínum til foreldraorlofs. Það þýðir að réttindi þín verða í mesta lagi 4,5 mánuðir og geta ekki notað persónulegan afslátt þinn. Samþykkir þú beiðnina?',
-    description: `When applying for the parental leave the other parent has requested a transfer of your personal discount and of 45 days of your rights to parental leave. That means your rights will at most be 4.5 months and won't be able to use your personal discount. Do you approve the request?`,
+      'Í umsókn um fæðingarorlof hefur hitt foreldrið óskað eftir yfirfærslu á dögum af þínum réttindum til fæðingarorlofs ásamt beiðni um að nýta persónuafslátt frá þér. Það þýðir að þinn réttur til fæðingarorlofs fækkar um umbeðna daga og þú getur ekki nýtt hlutfall af umbeðnum persónuafslætti á meðan. Samþykkir þú beiðnina?',
+    description:
+      'In the application for parental leave, the other parent has requested a transfer in days of your rights to parental leave as well as a request to take advantage of a personal allowance from you. This means that your right to parental leave will decrease on the requested days and you will not be able to use the requested personal allowance rate in the meantime.  Do you approve the request?',
   },
   labelDays: {
     id: 'pl.application:otherParent.label.days',
@@ -1593,6 +1612,18 @@ export const otherParentApprovalFormMessages = defineMessages({
     id: 'pl.application:otherParent.final.title',
     defaultMessage: 'Takk fyrir',
     description: 'Thank you',
+  },
+  warning: {
+    id: 'pl.application:otherParent.warning',
+    defaultMessage: 'icel-trans: "Warning!"',
+    description: 'Warning!',
+  },
+  startDateInThePast: {
+    id: 'pl.application:otherParent.start.date.in.the.past',
+    defaultMessage:
+      'icel-trans: "Application will not be processsed! Parental leave starting date has already passed!"',
+    description:
+      'Application will not be processsed! Parental leave starting date has already passed!',
   },
 })
 
@@ -1837,6 +1868,12 @@ export const errorMessages = defineMessages({
       'Villa kom upp við útreikning á tímabilum, veldu annað tímabil eða hafðu samband við okkur til að fá stuðning.',
     description:
       'An error happened while calculating your periods, choose another period or contact us for support.',
+  },
+  startDateInThePast: {
+    id: 'pl.application:errors.start.date.in.the.past',
+    defaultMessage:
+      'icel-trans: "Start date is in the past. The form will not be sent!"',
+    description: 'Start date is in the past. The form will not be sent!',
   },
 })
 

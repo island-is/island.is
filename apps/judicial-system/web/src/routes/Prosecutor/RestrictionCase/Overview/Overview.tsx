@@ -42,14 +42,15 @@ import {
   requestCourtDate,
   restrictionsV2,
   titles,
+  errors,
 } from '@island.is/judicial-system-web/messages'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import CommentsAccordionItem from '@island.is/judicial-system-web/src/components/AccordionItems/CommentsAccordionItem/CommentsAccordionItem'
 import { createCaseResentExplanation } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
 import type { CaseLegalProvisions } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system/consts'
-import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
 
 import * as styles from './Overview.css'
 
@@ -70,6 +71,7 @@ export const Overview: React.FC = () => {
     transitionCase,
     sendNotification,
     isSendingNotification,
+    sendNotificationError,
     updateCase,
   } = useCase()
   const { user } = useContext(UserContext)
@@ -263,7 +265,7 @@ export const Overview: React.FC = () => {
           </Box>
           <Text>{workingCase.demands}</Text>
         </Box>
-        <Box component="section" marginBottom={10}>
+        <Box component="section" marginBottom={7}>
           <Accordion>
             <AccordionItem
               labelVariant="h3"
@@ -407,6 +409,11 @@ export const Overview: React.FC = () => {
             handlePrimaryButtonClick={() => {
               handleNextButtonClick()
             }}
+            errorMessage={
+              sendNotificationError
+                ? formatMessage(errors.sendNotification)
+                : undefined
+            }
             isPrimaryButtonLoading={isSendingNotification}
             isPrimaryButtonDisabled={!caseResentExplanation}
           >
@@ -442,6 +449,11 @@ export const Overview: React.FC = () => {
             handleSecondaryButtonClick={() => {
               router.push(Constants.CASE_LIST_ROUTE)
             }}
+            errorMessage={
+              sendNotificationError
+                ? formatMessage(errors.sendNotification)
+                : undefined
+            }
             primaryButtonText="Senda ábendingu"
             secondaryButtonText="Loka glugga"
           />

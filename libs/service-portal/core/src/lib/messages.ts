@@ -238,12 +238,8 @@ export const m = defineMessages({
   },
   greetingIntro: {
     defaultMessage:
-      'Síðan er í þróun með þarfir notanda að leiðarljósi. Ef þú finnur ekki þá þjónustu sem var á eldri Mínum síðum getur þú fundið þær upplýsingar á eldri útgáfu.',
+      'Á Mínum síðum Ísland.is er markmiðið að auka þægindi og gegnsæi upplýsinga fyrir einstaklinga og fyrirtæki. Hér má finna sundurliðun skulda hjá ríkissjóði, upplýsingar úr fasteignaskrá, upplýsingar úr ökutækjaskrá og fleira sem nálgast má í valmyndinni hér til hliðar.',
     id: 'service.portal:greeting-intro',
-  },
-  olderVersion: {
-    defaultMessage: 'Eldri útgáfa',
-    id: 'service.portal:older-version',
   },
   menu: {
     defaultMessage: 'Valmynd',
@@ -469,7 +465,7 @@ export const m = defineMessages({
   },
   accessDenied: {
     id: 'service.portal:accessDenied',
-    defaultMessage: 'Aðgangur læstur',
+    defaultMessage: 'Ekki með aðgang',
   },
 
   accessNeeded: {
@@ -544,7 +540,12 @@ export const m = defineMessages({
   },
   noDataFound: {
     id: 'service.portal:no-data-found',
-    defaultMessage: 'Engin gögn fundust',
+    defaultMessage: 'Engin gögn fundust fyrir þig',
+  },
+  noDataFoundDetail: {
+    id: 'service.portal:no-data-found-detail',
+    defaultMessage:
+      'Ef þú telur þig eiga gögn sem ættu að birtast hér, vinsamlegast hafðu samband við þjónustuaðila.',
   },
   noDataPresent: {
     id: 'service.portal:no-data-present',
@@ -667,5 +668,9 @@ export const m = defineMessages({
   yourLicenses: {
     id: 'service.portal:your-licenses',
     defaultMessage: 'Þín skírteini',
+  },
+  mortageCertificate: {
+    id: 'service.portal:mortage-certificate',
+    defaultMessage: 'Veðbókarvottorð',
   },
 })

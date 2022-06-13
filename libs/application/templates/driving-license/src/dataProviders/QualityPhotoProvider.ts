@@ -1,5 +1,4 @@
 import {
-  BasicDataProvider,
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
   Application,

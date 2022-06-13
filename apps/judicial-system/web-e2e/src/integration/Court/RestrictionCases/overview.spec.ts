@@ -12,7 +12,7 @@ import {
   OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
 
-import { makeCustodyCase, makeProsecutor, intercept } from '../../../utils'
+import { makeRestrictionCase, makeProsecutor, intercept } from '../../../utils'
 
 describe(`${OVERVIEW_ROUTE}/:id`, () => {
   const demands = faker.lorem.paragraph()
@@ -23,7 +23,7 @@ describe(`${OVERVIEW_ROUTE}/:id`, () => {
   const defenderPhoneNumber = faker.phone.phoneNumber()
 
   beforeEach(() => {
-    const caseData = makeCustodyCase()
+    const caseData = makeRestrictionCase()
     const caseDataAddition: Case = {
       ...caseData,
       creatingProsecutor: makeProsecutor(),
@@ -90,11 +90,6 @@ describe(`${OVERVIEW_ROUTE}/:id`, () => {
     cy.getByTestid('modal')
       .getByTestid('ruling')
       .contains('héraðsdómari kveður upp úrskurð þennan.')
-      .clear()
-    cy.clickOutside()
-    cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
-    cy.getByTestid('ruling').type('lorem')
-    cy.getByTestid('inputErrorMessage').should('not.exist')
   })
 
   it('should navigate to the next step when all input data is valid and the continue button is clicked', () => {

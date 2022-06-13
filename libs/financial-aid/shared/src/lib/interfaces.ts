@@ -29,6 +29,7 @@ export interface SignedUrl {
 
 export interface CreateFilesResponse {
   success: boolean
+  files?: ApplicationFile[]
 }
 
 export interface Staff {
@@ -146,6 +147,7 @@ export interface ApplicationEvent {
   comment?: string
   staffNationalId?: string
   staffName?: string
+  emailSent?: boolean
 }
 
 export interface UpdateAdmin {

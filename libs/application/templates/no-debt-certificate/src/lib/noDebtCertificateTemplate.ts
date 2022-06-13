@@ -8,7 +8,6 @@ import {
   DefaultEvents,
   ApplicationConfigurations,
 } from '@island.is/application/core'
-import { Features } from '@island.is/feature-flags'
 import { Events, States, Roles } from './constants'
 import * as z from 'zod'
 import { m } from './messages'
@@ -29,7 +28,7 @@ const template: ApplicationTemplate<
     ApplicationConfigurations.NoDebtCertificate.translation,
   ],
   dataSchema: NoDebtCertificateSchema,
-  featureFlag: Features.noDebtCertificate,
+  readyForProduction: true,
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {

@@ -7,9 +7,9 @@ export interface Auth {
   scope: string[]
   authorization: string
   client: string
+  delegationType?: AuthDelegationType[]
   actor?: {
     nationalId: string
-    delegationType: AuthDelegationType
     scope: string[]
   }
   act?: JwtAct

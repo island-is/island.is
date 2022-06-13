@@ -21,8 +21,9 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
     version = 'latest',
     showLauncher = true,
     cssVariables,
-    languagePack,
+    namespaceKey,
     onLoad,
+    pushUp = false,
   } = props
 
   const { data } = useQuery<Query, QueryGetNamespaceArgs>(GET_NAMESPACE_QUERY, {
@@ -45,6 +46,14 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
   const [isButtonVisible, setIsButtonVisible] = useState(false)
 
   useEffect(() => {
+    if (Object.keys(namespace).length === 0) {
+      return () => {
+        watsonInstance?.current?.destroy()
+      }
+    }
+
+    const languagePack = namespace?.[namespaceKey]
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const windowObject: any = window
     windowObject.watsonAssistantChatOptions = {
@@ -73,15 +82,19 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
       watsonInstance?.current?.destroy()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [namespace])
 
-  if (showLauncher) return null
+  // Hide the chat bubble for other than 'is' locales for now since the translations have not been set up yet
+  const shouldShowChatBubble = activeLocale === 'is'
+
+  if (showLauncher || !shouldShowChatBubble) return null
 
   return (
     <ChatBubble
       text={n('chatBubbleText', 'Hæ, get ég aðstoðað?')}
       isVisible={isButtonVisible}
       onClick={watsonInstance.current?.openWindow}
+      pushUp={pushUp}
     />
   )
 }

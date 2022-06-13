@@ -96,14 +96,9 @@ describe(`${IC_OVERVIEW_ROUTE}/:id`, () => {
     cy.getByTestid('modal')
       .getByTestid('ruling')
       .contains('héraðsdómari kveður upp úrskurð þennan.')
-      .clear()
-    cy.clickOutside()
-    cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
-    cy.getByTestid('ruling').type('lorem')
-    cy.getByTestid('inputErrorMessage').should('not.exist')
   })
 
-  it.only('should upload files to court', () => {
+  it('should upload files to court', () => {
     cy.get('button[aria-controls="caseFilesAccordionItem"]').click()
     cy.getByTestid('upload-to-court-button').click()
 

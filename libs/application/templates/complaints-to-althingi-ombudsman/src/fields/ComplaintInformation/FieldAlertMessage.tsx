@@ -1,7 +1,6 @@
 import {
   AlertMessage,
   Button,
-  Inline,
   Link,
   ResponsiveSpace,
 } from '@island.is/island-ui/core'

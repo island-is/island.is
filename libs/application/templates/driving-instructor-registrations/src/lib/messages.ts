@@ -34,6 +34,17 @@ export const m = defineMessages({
       'Við munum sækja skráningu þína úr ökuskírteinaskrá til að athuga hvort þú hafir sannarlega ökukennararéttindi.',
     description: 'Data provider subtitle',
   },
+  dataCollectionNoRightsError: {
+    id: 'dir.application:dataCollectionNoRightsError',
+    defaultMessage:
+      'Þú hefur ekki ökukennararéttindi í ökuskírteinaskrá. Vinsamlega hafðu samband við næsta sýslumannsembætti ef þú telur um villu vera að ræða',
+    description: 'Data provider no teaching rights error',
+  },
+  dataCollectionNoConnection: {
+    id: 'dir.application:dataCollectionNoConnection',
+    defaultMessage: 'Náði ekki sambandi við vefþjónustu',
+    description: 'Data provider no connection',
+  },
 
   /* Students Overview Table Section */
   studentsOverviewSideTitle: {
@@ -58,7 +69,7 @@ export const m = defineMessages({
   },
   studentsOverviewTableHeaderCol1: {
     id: 'dir.application:studentsOverviewTableHeaderCol1',
-    defaultMessage: 'Nemandi',
+    defaultMessage: 'Ökunemi',
     description: 'Table header 1',
   },
   studentsOverviewTableHeaderCol2: {
@@ -88,7 +99,7 @@ export const m = defineMessages({
   },
   studentsOverviewOtherStudentIdModalDescription: {
     id: 'dir.application:studentsOverviewOtherStudentIdDecription',
-    defaultMessage: 'Sláðu inn kennitölu nemanda',
+    defaultMessage: 'Sláðu inn kennitölu ökunema',
     description: 'Modal description',
   },
   studentsOverviewOtherStudentInputLabel: {
@@ -98,16 +109,21 @@ export const m = defineMessages({
   },
   studentsOverviewNoStudentFound: {
     id: 'dir.application:studentsOverviewNoStudentFound',
-    defaultMessage: 'Enginn nemandi fannst',
+    defaultMessage: 'Enginn ökunemi fannst',
     description: 'No students',
   },
   studentsOverviewNoStudentFoundInModal: {
     id: 'dir.application:studentsOverviewNoStudentFoundInModal',
-    defaultMessage: 'Enginn nemandi skráður á eftirfarandi kennitölu',
+    defaultMessage: 'Enginn ökunemi skráður á eftirfarandi kennitölu',
     description: 'No students error in modal',
   },
 
   /* View Single Student Section */
+  viewStudentTitle: {
+    id: 'dir.application:viewStudentTitle',
+    defaultMessage: 'Skrá ökutíma',
+    description: 'Registration page title',
+  },
   viewStudentName: {
     id: 'dir.application:viewStudentName',
     defaultMessage: 'Ökunemi',

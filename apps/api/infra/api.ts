@@ -32,6 +32,17 @@ export const serviceSetup = (services: {
     .serviceAccount()
     .command('node')
     .args('--tls-min-v1.0', 'main.js')
+    .features({
+      INAO_Client: {
+        env: {},
+        secrets: {
+          FINANCIAL_STATEMENTS_INAO_CLIENT_ID:
+            '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_ID',
+          FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET:
+            '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET',
+        },
+      },
+    })
 
     .env({
       APPLICATION_SYSTEM_API_URL: ref(
@@ -108,6 +119,7 @@ export const serviceSetup = (services: {
       XROAD_PROPERTIES_TIMEOUT: '20000',
       SYSLUMENN_TIMEOUT: '30000',
       XROAD_DRIVING_LICENSE_BOOK_TIMEOUT: '20000',
+      XROAD_FINANCES_TIMEOUT: '20000',
       IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',
@@ -170,10 +182,6 @@ export const serviceSetup = (services: {
       ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE',
       ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH',
       IDENTITY_SERVER_CLIENT_SECRET: '/k8s/api/IDENTITY_SERVER_CLIENT_SECRET',
-      FINANCIAL_STATEMENTS_INAO_CLIENT_ID:
-        '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_ID',
-      FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET:
-        '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET',
     })
     .xroad(
       Base,

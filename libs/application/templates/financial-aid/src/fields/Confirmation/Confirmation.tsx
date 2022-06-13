@@ -11,6 +11,7 @@ interface Props {
   firstStepText?: MessageDescriptor
   missingIncomeFiles: boolean
   hasSpouse?: boolean
+  spouseEmailSuccess?: boolean
   municipalityHomepage?: string
 }
 
@@ -18,6 +19,7 @@ const Confirmation = ({
   firstStepText,
   missingIncomeFiles,
   hasSpouse,
+  spouseEmailSuccess,
   municipalityHomepage,
 }: Props) => {
   const { formatMessage } = useIntl()
@@ -51,7 +53,10 @@ const Confirmation = ({
                 confirmation.alertMessagesInRelationship.dataNeeded,
               )}
               message={formatMessage(
-                confirmation.alertMessagesInRelationship.dataNeededText,
+                spouseEmailSuccess
+                  ? confirmation.alertMessagesInRelationship.dataNeededText
+                  : confirmation.alertMessagesInRelationship
+                      .dataNeededAlternativeText,
               )}
             />
           </Box>
@@ -62,15 +67,13 @@ const Confirmation = ({
         {formatMessage(confirmation.nextSteps.title)}
       </Text>
       <Box marginTop={2}>
-        <DescriptionText text={confirmation.nextSteps.content} />
-      </Box>
-
-      {firstStepText && <DescriptionText text={firstStepText} />}
-      <Box marginTop={2}>
-        <DescriptionText
-          text={confirmation.nextSteps.content}
-          format={{ nextMonth: getNextPeriod.month }}
-        />
+        {firstStepText && <DescriptionText text={firstStepText} />}
+        <Box marginTop={2}>
+          <DescriptionText
+            text={confirmation.nextSteps.content}
+            format={{ nextMonth: getNextPeriod.month }}
+          />
+        </Box>
       </Box>
 
       {hasSpouse && (

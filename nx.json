@@ -2,6 +2,7 @@
   "implicitDependencies": {
     "workspace.json": "*",
     "package.json": {
+      "version": "*",
       "dependencies": "*",
       "devDependencies": "*",
       "resolutions": "*"
@@ -243,6 +244,9 @@
       "tags": []
     },
     "application-templates-financial-aid": {
+      "tags": []
+    },
+    "application-templates-financial-statements-inao": {
       "tags": []
     },
     "application-templates-funding-government-projects": {
@@ -539,6 +543,9 @@
     "judicial-system-formatters": {
       "tags": []
     },
+    "judicial-system-message-handler": {
+      "tags": []
+    },
     "judicial-system-scheduler": {
       "tags": []
     },
@@ -661,9 +668,6 @@
     "service-portal-endorsements": {
       "tags": []
     },
-    "service-portal-family": {
-      "tags": []
-    },
     "service-portal-finance": {
       "tags": []
     },
@@ -679,6 +683,9 @@
     "service-portal-icelandic-names-registry": {
       "tags": []
     },
+    "service-portal-information": {
+      "tags": []
+    },
     "service-portal-licenses": {
       "tags": []
     },
@@ -691,9 +698,6 @@
     "service-portal-vehicles": {
       "tags": []
     },
-    "service-portal-wip": {
-      "tags": []
-    },
     "services-auth-admin-api": {
       "tags": []
     },
@@ -701,6 +705,9 @@
       "tags": []
     },
     "services-auth-public-api": {
+      "tags": []
+    },
+    "services-contentful-entry-tagger": {
       "tags": []
     },
     "services-documents": {
