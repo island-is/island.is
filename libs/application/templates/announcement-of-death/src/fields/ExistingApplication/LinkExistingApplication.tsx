@@ -80,7 +80,6 @@ export const LinkExistingApplication: FC<FieldBaseProps> = ({
       if (continueConf) {
         switch (continueConf.action) {
           case ACTION.EXISTING:
-            // eslint-disable-next-line
             {
               const navigationApplicationId = continueConf.url.split('/').pop()
               // Delete other casenumber applications
@@ -116,7 +115,6 @@ export const LinkExistingApplication: FC<FieldBaseProps> = ({
             }
             break
           case ACTION.NEW:
-            // eslint-disable-next-line
             {
               // get estate from casenumber in url
               const estate = getNewEstateFromUrl(continueConf.url)
