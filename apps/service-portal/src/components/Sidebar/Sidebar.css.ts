@@ -58,6 +58,14 @@ export const navIcon = style({
 
 export const itemWrapper = style({})
 
+globalStyle(`${itemWrapper}:hover svg`, {
+  color: theme.color.blue400,
+})
+
+globalStyle(`${itemWrapper}:hover .collapsed`, {
+  backgroundColor: theme.color.blue100,
+})
+
 globalStyle(`${itemWrapper}:hover #sub-nav-model`, {
   display: 'flex',
   position: 'absolute',

@@ -10,21 +10,8 @@ export const navItem = style({
   ':hover': {
     color: theme.color.blue400,
     backgroundColor: theme.color.blue100,
+    borderLeft: `4px solid ${theme.color.blue100}`,
   },
-})
-
-globalStyle(`${navItem}:hover svg`, {
-  color: theme.color.blue400,
-})
-
-globalStyle(`${navItem}:hover #sub-nav-model`, {
-  display: 'flex',
-  position: 'absolute',
-  top: 0,
-  left: 28,
-  width: 220,
-  height: 'max-content',
-  zIndex: 10,
 })
 
 export const inner = style({
@@ -45,6 +32,9 @@ export const navItemActive = styleVariants({
         paddingLeft: theme.spacing[3],
       },
     }),
+    ':hover': {
+      borderLeft: `4px solid ${theme.color.blue400}`,
+    },
   },
   inactive: {
     paddingLeft: theme.spacing[2],
@@ -59,7 +49,7 @@ export const navItemActive = styleVariants({
   activeCollapsed: {
     backgroundColor: theme.color.blue100,
     border: `1px solid ${theme.color.blue100}`,
-    borderRadius: '8px',
+    borderRadius: theme.border.radius.large,
     ...themeUtils.responsiveStyle({
       md: {
         color: theme.color.blue400,
@@ -67,14 +57,21 @@ export const navItemActive = styleVariants({
         paddingLeft: theme.spacing[1],
       },
     }),
+    ':hover': {
+      borderLeft: 'none',
+    },
   },
   inactiveCollapsed: {
+    borderRadius: theme.border.radius.large,
     ...themeUtils.responsiveStyle({
       md: {
         color: theme.color.blue600,
         paddingLeft: theme.spacing[1],
       },
     }),
+    ':hover': {
+      borderLeft: 'none',
+    },
   },
 })
 
@@ -174,6 +171,7 @@ export const subLink = style({
   color: theme.color.blue600,
   ':hover': {
     color: theme.color.blue400,
+    background: 'none',
   },
 })
 

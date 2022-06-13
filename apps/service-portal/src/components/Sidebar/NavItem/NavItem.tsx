@@ -17,11 +17,11 @@ interface Props {
   enabled?: boolean
   expanded?: boolean
   external?: boolean
-  variant?: 'blue' | 'blueberry'
   hasArray?: boolean
+  badge?: boolean
+  variant?: 'blue' | 'blueberry'
   onClick?: () => void
   onChevronClick?: () => void
-  badge?: boolean
 }
 
 const NavItemContent: FC<Props> = ({
@@ -51,7 +51,11 @@ const NavItemContent: FC<Props> = ({
 
   return (
     <Box
-      className={[styles.navItem, styles.navItemActive[navItemActive]]}
+      className={[
+        styles.navItem,
+        styles.navItemActive[navItemActive],
+        collapsed && 'collapsed',
+      ]}
       display="flex"
       alignItems="center"
       justifyContent={collapsed ? 'center' : 'spaceBetween'}
