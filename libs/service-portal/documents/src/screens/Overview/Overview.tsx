@@ -148,8 +148,9 @@ const getFilteredDocuments = (
   return filteredDocuments
 }
 
-const getSortDirection = (direction: SortDirectionType) => {
-  return direction === 'asc' ? 'desc' : 'asc'
+const getSortDirection = (currentDirection: SortDirectionType) => {
+  const reverseDirection = currentDirection === 'asc' ? 'desc' : 'asc'
+  return reverseDirection
 }
 
 export const ServicePortalDocuments: ServicePortalModuleComponent = ({
@@ -313,9 +314,6 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   const { data: orgData } = useQuery(GET_ORGANIZATIONS_QUERY)
   const organizations = orgData?.getOrganizations?.items || {}
 
-  console.log('categories', categories)
-  console.log('filterValue.activeCategories', filterValue.activeCategories)
-  console.log('groupData', groupData)
   return (
     <Box marginBottom={[4, 4, 6, 10]}>
       <Stack space={3}>
@@ -339,14 +337,24 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
         <Box marginTop={[1, 1, 2, 2, 6]}>
           <Filter
             resultCount={0}
-            variant={'popover'}
+            variant="popover"
             align="right"
-            labelClear={'Hreinsa síu'}
-            labelClearAll={'Hreinsa allar síur'}
-            labelOpen={'Opna síu'}
-            labelClose={'Loka síu'}
-            labelResult={'Skoða niðurstöður'}
-            labelTitle={'Sía útgefið efni'}
+            labelClear={formatMessage({
+              id: 'sp.documents:clear-filter',
+              defaultMessage: 'Hreinsa síu',
+            })}
+            labelClearAll={formatMessage({
+              id: 'sp.documents:clear-all-filter',
+              defaultMessage: 'Hreinsa allar síur',
+            })}
+            labelOpen={formatMessage({
+              id: 'sp.documents:open-filter',
+              defaultMessage: 'Opna síu',
+            })}
+            labelClose={formatMessage({
+              id: 'sp.documents:close-filter',
+              defaultMessage: 'Loka síu',
+            })}
             filterInput={
               <FilterInput
                 placeholder={formatMessage(m.searchPlaceholder)}
@@ -368,7 +376,10 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
               <Box paddingY={3}>
                 <Checkbox
                   id="show-unread"
-                  label="Sýna einungis ólesið"
+                  label={formatMessage({
+                    id: 'sp.documents:only-show-unread',
+                    defaultMessage: 'Sýna einungis ólesið',
+                  })}
                   checked={filterValue.showUnread}
                   onChange={handleShowUnread}
                 />
@@ -380,7 +391,10 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
               />
             </Box>
             <FilterMultiChoice
-              labelClear="Hreinsa val"
+              labelClear={formatMessage({
+                id: 'sp.documents:clear-selected',
+                defaultMessage: 'Hreinsa val',
+              })}
               singleExpand={false}
               onChange={({ categoryId, selected }) => {
                 if (categoryId === 'institution') {
@@ -419,7 +433,10 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                   },
                   {
                     id: 'group',
-                    label: 'Flokkur',
+                    label: formatMessage({
+                      id: 'sp.documents:group-label',
+                      defaultMessage: 'Flokkur',
+                    }),
                     selected: [...filterValue.activeGroups],
                     filters: Array.isArray(groupsAvailable)
                       ? groupsAvailable
@@ -443,9 +460,12 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                   singleExpand={false}
                 >
                   <AccordionItem
-                    key={'category.id'}
-                    id={'category.id'}
-                    label="Dagsetningar"
+                    key="date-accordion-item"
+                    id="date-accordion-item"
+                    label={formatMessage({
+                      id: 'sp.documents:dates-label',
+                      defaultMessage: 'Dagsetningar',
+                    })}
                     labelUse="h5"
                     labelVariant="h5"
                     iconVariant="small"
