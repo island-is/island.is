@@ -4,12 +4,12 @@ import {
   Box,
   GridColumn,
   GridRow,
-  Link,
   Text,
-  Icon,
   ContentBlock,
   Button,
   Hidden,
+  BulletList,
+  Bullet,
 } from '@island.is/island-ui/core'
 import { SvgLogin } from '@island.is/web/components'
 import { LoginPageTexts } from '@island.is/web/components'
@@ -50,6 +50,23 @@ const LoginPage: Screen<LoginProps> = ({ namespace }) => {
     }
   }
 
+  const nyjarSidurText = n(
+    'nyjuSidurText',
+    'Nýjar Mínar síður hafa verið uppfærðar með því markmiði að auka þægindi, aðgengi og gagnsæi einstaklinga og fyrirtækja að upplýsingum hjá ríkinu.',
+  )
+
+  const nyjarSidurSubText = n(
+    'nyjuSidurSubText',
+    'Eldri Mínar síður (hlekkur á á https://innskraning.island.is/?id=minarsidur.island.is) eru fyrir einstaklinga sem eru ekki með rafræn skilríki. Rafræn skilríki eru öruggari og munu taka alfarið við Íslykli í komandi framtíð.',
+  )
+
+  const nyjarSidurBullets = n('nyjuSidurBullets', [
+    'Einstaklingar skrá sig inn með rafrænum skilríkjum.',
+    'Einstaklingar með prókúru fyrirtækis skrá sig inn með sínum rafrænu skilríkjum en hægt er að skipta yfir á fyrirtæki eða önnur umboð.',
+    'Ef fyrirtækið birtist ekki þarf að athuga skráningu prókúrhafa hjá Skattinum. ',
+  ])
+
+  console.log(nyjarSidurText)
   return (
     <ContentBlock>
       <Box paddingX={[0, 4, 4, 12]} paddingY={[2, 2, 10]} id="main-content">
@@ -57,23 +74,29 @@ const LoginPage: Screen<LoginProps> = ({ namespace }) => {
           <GridRow>
             <GridColumn
               span={['12/12', '12/12', '6/12']}
-              paddingBottom={[3, 3, 4]}
+              paddingBottom={[3, 0]}
             >
               <Text as="h2" variant="h1" marginBottom="p3" marginTop="p1">
-                {n('nyjuSidurTitle', 'Mínar síður Ísland.is')}
-              </Text>
-              <Text as="p" variant="default" marginBottom="p5">
                 {n(
-                  'nyjuSidurText',
-                  'Gefnar hafa verið út nýjar Mínar síður sem eru hannaðar með þarfir notanda að leiðarljósi og aukið öryggi í innskráningu. Þessi nýja útgáfa er fyrsta skrefið í átt að betri þjónustu og aðgengi notenda að gögnum frá hinu opinbera.',
+                  'nyjuSidurTitle',
+                  'Mínar síður fyrir einstaklinga og fyrirtæki',
                 )}
               </Text>
-              <Text as="p" variant="default" marginBottom={5}>
-                {n(
-                  'nyjuSidurSubText',
-                  'Eldri útgáfa af Mínum síðum er enn aðgengileg fyrir notendur Íslykils.',
+              {nyjarSidurText && (
+                <Text as="p" variant="default" marginBottom={4}>
+                  {nyjarSidurText}
+                </Text>
+              )}
+              <Box marginBottom={3}>
+                {nyjarSidurBullets?.length > 0 && (
+                  <BulletList type="ul" space={2}>
+                    {nyjarSidurBullets.map((x, index) => {
+                      return <Bullet key={index}>{x}</Bullet>
+                    })}
+                  </BulletList>
                 )}
-              </Text>
+              </Box>
+
               <div>
                 <a
                   tabIndex={-1}
@@ -83,31 +106,45 @@ const LoginPage: Screen<LoginProps> = ({ namespace }) => {
                 >
                   <Button as="span">{n('nyjuSidurLink', 'Innskráning')}</Button>
                 </a>
-                <Link
-                  href="//minarsidur.island.is/"
-                  color="blue400"
-                  onClick={() => webLoginButtonSelect('Old')}
-                  newTab
-                >
-                  <Button variant="text" icon="open" iconType="outline">
-                    {n('gomluSidurLink', 'Innskráning með Íslykli')}
-                  </Button>
-                </Link>
               </div>
             </GridColumn>
-            <GridColumn
-              span={['12/12', '12/12', '6/12']}
-              paddingBottom={[3, 4, 5]}
-            >
+            <GridColumn span={['12/12', '12/12', '6/12']}>
               <Hidden below="md">
-                <Box
-                  display="flex"
-                  justifyContent="flexEnd"
-                  alignItems="flexStart"
-                >
+                <Box display="flex" justifyContent="center" alignItems="center">
                   <SvgLogin />
                 </Box>
               </Hidden>
+            </GridColumn>
+          </GridRow>
+          <GridRow>
+            <GridColumn span={['12/12', '6/12', '6/12']}>
+              {nyjarSidurSubText && (
+                <>
+                  <a
+                    href="//minarsidur.island.is/"
+                    color="blue400"
+                    onClick={() => webLoginButtonSelect('Old')}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Button
+                      variant="text"
+                      size="small"
+                      icon="open"
+                      iconType="outline"
+                    >
+                      {n('gomluSidurTitle', 'Gömlu Mínar síður')}
+                    </Button>
+                  </a>
+                  <Text as="span" variant="small">
+                    {' '}
+                    {n(
+                      'gomluSidurText',
+                      'eru fyrir einstaklinga sem eru ekki með rafræn skilríki. Rafræn skilríki eru öruggari og munu taka alfarið við Íslykli í komandi framtíð.',
+                    )}
+                  </Text>
+                </>
+              )}
             </GridColumn>
           </GridRow>
         </GridContainer>
