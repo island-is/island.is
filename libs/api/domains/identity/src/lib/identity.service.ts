@@ -1,26 +1,52 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import * as kennitala from 'kennitala'
 
-import { User } from '@island.is/auth-nest-tools'
 import { RskCompanyInfoService } from '@island.is/api/domains/company-registry'
 import { NationalRegistryXRoadService } from '@island.is/api/domains/national-registry-x-road'
+import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 import { IdentityType } from './identity.type'
 import { Identity } from './models'
+
+type FallbackIdentity = Partial<Omit<Identity, 'nationalId' | 'type'>>
 
 @Injectable()
 export class IdentityService {
   constructor(
     private nationalRegistryXRoadService: NationalRegistryXRoadService,
     private rskCompanyInfoService: RskCompanyInfoService,
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
   ) {}
 
-  async getIdentity(nationalId: string, user: User): Promise<Identity | null> {
+  async getIdentity(nationalId: string): Promise<Identity | null> {
     if (kennitala.isCompany(nationalId)) {
       return this.getCompanyIdentity(nationalId)
     } else {
-      return this.getPersonIdentity(nationalId, user)
+      return this.getPersonIdentity(nationalId)
     }
+  }
+
+  async getIdentityWithFallback(
+    nationalId: string,
+    fallbackIdentity: FallbackIdentity,
+  ): Promise<Identity> {
+    let identity: Identity | null = null
+    try {
+      identity = await this.getIdentity(nationalId)
+    } catch (error) {
+      this.logger.error(error)
+    }
+
+    return (
+      identity ?? {
+        nationalId,
+        type: kennitala.isCompany(nationalId)
+          ? IdentityType.Company
+          : IdentityType.Person,
+        name: fallbackIdentity.name ?? kennitala.format(nationalId),
+        address: fallbackIdentity.address,
+      }
+    )
   }
 
   private async getCompanyIdentity(
@@ -43,10 +69,8 @@ export class IdentityService {
 
   private async getPersonIdentity(
     nationalId: string,
-    user: User,
   ): Promise<Identity | null> {
     const person = await this.nationalRegistryXRoadService.getNationalRegistryPerson(
-      user,
       nationalId,
     )
 

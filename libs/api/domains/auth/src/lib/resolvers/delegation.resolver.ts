@@ -108,16 +108,11 @@ export class DelegationResolver {
     @Parent() delegation: DelegationDTO,
     @CurrentUser() user: User,
   ): Promise<Identity> {
-    const identity = await this.identityService.getIdentity(
+    return this.identityService.getIdentityWithFallback(
       delegation.toNationalId,
-      user,
-    )
-    return (
-      identity ??
-      DelegationResolver.fallbackIdentity(
-        delegation.toNationalId,
-        delegation.toName,
-      )
+      {
+        name: delegation.toName ?? undefined,
+      },
     )
   }
 
@@ -126,30 +121,12 @@ export class DelegationResolver {
     @Parent() delegation: DelegationDTO,
     @CurrentUser() user: User,
   ): Promise<Identity> {
-    const identity = await this.identityService.getIdentity(
+    return this.identityService.getIdentityWithFallback(
       delegation.fromNationalId,
-      user,
+      {
+        name: delegation.fromName ?? undefined,
+      },
     )
-    return (
-      identity ??
-      DelegationResolver.fallbackIdentity(
-        delegation.fromNationalId,
-        delegation.fromName,
-      )
-    )
-  }
-
-  private static fallbackIdentity(
-    nationalId: string,
-    name?: string | null,
-  ): Identity {
-    return {
-      nationalId: nationalId,
-      name: name ?? kennitala.format(nationalId),
-      type: kennitala.isCompany(nationalId)
-        ? IdentityType.Company
-        : IdentityType.Person,
-    }
   }
 
   @ResolveField('validTo', () => Date, { nullable: true })
