@@ -27,10 +27,6 @@ export class DeathNoticeProvider extends BasicDataProvider {
     return true
   }
 
-  handleError(_error: any) {
-    return Promise.reject({})
-  }
-
   onProvideError(result: { message: string }): FailedDataProviderResult {
     return {
       date: new Date(),
