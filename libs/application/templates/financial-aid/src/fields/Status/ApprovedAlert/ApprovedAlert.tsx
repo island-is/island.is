@@ -21,7 +21,10 @@ const ApprovedAlert = ({ events }: Props) => {
       return events.find((el) => el.eventType === ApplicationEventType.APPROVED)
         ?.comment
     }
-  }, [events])?.split('\n')[1]
+  }, [events])
+    ?.split('\n')
+    .slice(1)
+    .join('\n')
 
   if (!approvedComment) {
     return null
