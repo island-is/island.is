@@ -1,19 +1,20 @@
 import React, { useState, useCallback, useEffect, useContext } from 'react'
-import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages'
-import { Case } from '@island.is/judicial-system-web/src/graphql/schema'
+import compareAsc from 'date-fns/compareAsc'
+import formatISO from 'date-fns/formatISO'
 import { useIntl, IntlShape } from 'react-intl'
 import { motion } from 'framer-motion'
+
+import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages'
+import { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   BlueBox,
   DateTime,
   Modal,
 } from '@island.is/judicial-system-web/src/components'
 import { Box, Input, Text } from '@island.is/island-ui/core'
-import formatISO from 'date-fns/formatISO'
 import { UpdateCase, UserRole } from '@island.is/judicial-system/types'
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import * as constants from '@island.is/judicial-system/consts'
-import { compareAsc } from 'date-fns'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { hasDateChanged } from '@island.is/judicial-system-web/src/utils/formHelper'
@@ -203,6 +204,12 @@ const ModifyDatesModal: React.FC<Props> = ({
     modifiedValidToDate?.value,
     modifiedIsolationToDate?.value,
     onSubmit,
+    setSuccessText,
+    formatMessage,
+    modificationSuccessText,
+    user?.institution?.name,
+    user?.name,
+    user?.title,
   ])
 
   useEffect(() => {

@@ -1,4 +1,5 @@
 import formatISO from 'date-fns/formatISO'
+import compareAsc from 'date-fns/compareAsc'
 
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { TIME_FORMAT } from '@island.is/judicial-system/consts'
@@ -6,7 +7,6 @@ import type { Case, UpdateCase } from '@island.is/judicial-system/types'
 
 import { padTimeWithZero, parseTime, replaceTabs } from './formatters'
 import { validate, Validation } from './validate'
-import { compareAsc } from 'date-fns'
 
 export const removeTabsValidateAndSet = (
   field: keyof UpdateCase,
