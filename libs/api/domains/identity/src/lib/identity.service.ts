@@ -34,7 +34,10 @@ export class IdentityService {
     try {
       identity = await this.getIdentity(nationalId)
     } catch (error) {
-      this.logger.error(error)
+      this.logger.error(
+        'Failed getting identity, providing fallback value',
+        error,
+      )
     }
 
     return (
