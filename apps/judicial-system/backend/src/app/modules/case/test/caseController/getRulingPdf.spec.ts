@@ -144,7 +144,7 @@ describe('CaseController - Get ruling pdf', () => {
       const mockGetObject = mockAwsS3Service.getObject as jest.Mock
       mockGetObject.mockRejectedValueOnce(new Error('Some ignored error'))
 
-      await givenWhenThen(caseId, theCase, res, true)
+      await givenWhenThen(caseId, theCase, res, useSigned)
     })
 
     it('should generate pdf', () => {

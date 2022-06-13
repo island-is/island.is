@@ -1,8 +1,6 @@
 import React, { useContext, useEffect, useState, useCallback } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
-import formatISO from 'date-fns/formatISO'
-import compareAsc from 'date-fns/compareAsc'
 
 import { Box, Text, AlertMessage } from '@island.is/island-ui/core'
 import {

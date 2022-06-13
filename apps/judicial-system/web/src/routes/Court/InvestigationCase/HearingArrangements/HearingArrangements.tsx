@@ -1,8 +1,6 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
-import formatISO from 'date-fns/formatISO'
-import compareAsc from 'date-fns/compareAsc'
 
 import {
   BlueBox,
@@ -13,7 +11,6 @@ import {
   PageLayout,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  Case,
   NotificationType,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
