@@ -962,6 +962,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       return Roles.ASSIGNEE
     }
 
+    const VMST_ID = process.env.VMST_ID
     if (id === VMST_ID) {
       return Roles.ORGINISATION_REVIEWER
     }
