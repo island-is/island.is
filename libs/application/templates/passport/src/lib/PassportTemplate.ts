@@ -2,16 +2,25 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   ApplicationContext,
-  ApplicationRole,
   ApplicationStateSchema,
   Application,
-  DefaultStateLifeCycle,
   DefaultEvents,
 } from '@island.is/application/core'
 import { dataSchema } from './dataSchema'
 import { Roles, States, Events, ApiActions } from './constants'
 import { Features } from '@island.is/feature-flags'
 import { m } from '../lib/messages'
+
+const oneDay = 24 * 3600 * 1000
+const thirtyDays = 24 * 3600 * 1000 * 30
+
+const pruneAfter = (time: number) => {
+  return {
+    shouldBeListed: true,
+    shouldBePruned: true,
+    whenToPrune: time,
+  }
+}
 
 const PassportTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -29,11 +38,7 @@ const PassportTemplate: ApplicationTemplate<
         meta: {
           name: m.formName.defaultMessage,
           progress: 0.33,
-          lifecycle: {
-            shouldBeListed: false,
-            shouldBePruned: true,
-            whenToPrune: 24 * 3600 * 1000,
-          },
+          lifecycle: pruneAfter(oneDay),
           onExit: {
             apiModuleAction: ApiActions.checkForDiscount,
           },
@@ -73,7 +78,7 @@ const PassportTemplate: ApplicationTemplate<
             description: m.payment,
           },
           progress: 0.9,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: pruneAfter(thirtyDays),
           onEntry: {
             apiModuleAction: ApiActions.createCharge,
           },
@@ -99,7 +104,7 @@ const PassportTemplate: ApplicationTemplate<
         meta: {
           name: 'Done',
           progress: 1,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: pruneAfter(thirtyDays),
           onEntry: {
             apiModuleAction: ApiActions.submitPassportApplication,
           },
@@ -120,8 +125,10 @@ const PassportTemplate: ApplicationTemplate<
       },
     },
   },
-  mapUserToRole(_id: string, _application: Application): ApplicationRole {
-    return Roles.APPLICANT
+  mapUserToRole(nationalId: string, application: Application) {
+    if (application.applicant === nationalId) {
+      return Roles.APPLICANT
+    }
   },
 }
 
