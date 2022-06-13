@@ -180,9 +180,6 @@ const Item = ({
     getIdentity,
     { loading: queryLoading, error: queryError },
   ] = useLazyQuery<Query, { input: IdentityInput }>(IDENTITY_QUERY, {
-    onError: (error: unknown) => {
-      console.log('getIdentity error:', error)
-    },
     onCompleted: (data) => {
       setValue(nameField, data.identity?.name ?? '')
     },
