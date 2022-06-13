@@ -152,7 +152,6 @@ describe('UserMenu', () => {
     // Assert
     expect(screen.queryByRole('dialog', { name: /útskráning/i })).toBeNull()
   })
-
   it('can log out user', async () => {
     // Arrange
     renderAuthenticated(<UserMenu />, { user: {} })

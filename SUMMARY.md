@@ -234,6 +234,7 @@
 ## Reference
 
 - [Problems](handbook/reference/problems/README.md)
+  - [403 Bad Subject](handbook/reference/problems/bad-subject.md)
   - [400 Validation Failed](handbook/reference/problems/validation-failed.md)
 
 ## Misc
