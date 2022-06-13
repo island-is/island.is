@@ -3,13 +3,13 @@ import React from 'react'
 import { Box, Hidden, Link, Text } from '@island.is/island-ui/core'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import * as styles from './SyslumennHeader.css'
+import * as styles from './HeilbrigdisstofnunNordurlandsHeader.css'
 
 interface HeaderProps {
   organizationPage: OrganizationPage
 }
 
-export const SyslumennHeader: React.FC<HeaderProps> = ({
+export const HeilbrigdisstofnunNordurlandsHeader: React.FC<HeaderProps> = ({
   organizationPage,
 }) => {
   const { linkResolver } = useLinkResolver()

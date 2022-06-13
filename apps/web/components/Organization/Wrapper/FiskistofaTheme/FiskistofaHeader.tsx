@@ -3,13 +3,13 @@ import React from 'react'
 import { Box, Hidden, Link, Text } from '@island.is/island-ui/core'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import * as styles from './SyslumennHeader.css'
+import * as styles from './FiskistofaHeader.css'
 
 interface HeaderProps {
   organizationPage: OrganizationPage
 }
 
-export const SyslumennHeader: React.FC<HeaderProps> = ({
+export const FiskistofaHeader: React.FC<HeaderProps> = ({
   organizationPage,
 }) => {
   const { linkResolver } = useLinkResolver()
@@ -29,7 +29,7 @@ export const SyslumennHeader: React.FC<HeaderProps> = ({
                 <img
                   src={organizationPage.organization.logo.url}
                   className={styles.headerLogo}
-                  alt=""
+                  alt="fiskistofa-logo"
                 />
               </Link>
             )
@@ -57,8 +57,8 @@ export const SyslumennHeader: React.FC<HeaderProps> = ({
                 linkResolver('organizationpage', [organizationPage.slug]).href
               }
             >
-              <Text variant="h1" as="h1" color="white">
-                {organizationPage.title}
+              <Text variant="h1" as="h1" color="blue600" fontWeight="semiBold">
+                <span className={styles.title}>{organizationPage.title}</span>
               </Text>
             </Link>
           </Box>

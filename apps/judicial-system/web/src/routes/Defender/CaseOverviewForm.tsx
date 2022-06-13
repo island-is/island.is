@@ -12,7 +12,7 @@ import {
   BlueBox,
   FormContentContainer,
   InfoCard,
-  PdfRow,
+  PdfButton,
 } from '@island.is/judicial-system-web/src/components'
 import {
   Case,
@@ -225,14 +225,16 @@ const CaseOverviewForm: React.FC<Props> = (props) => {
         </Text>
         <Box marginBottom={2}>
           <Stack space={2} dividers>
-            <PdfRow
+            <PdfButton
+              renderAs="row"
               caseId={workingCase.id}
               title={formatMessage(core.pdfButtonRequest)}
               pdfType={'request/limitedAccess'}
             />
             {completedCaseStates.includes(workingCase.state) && (
               <>
-                <PdfRow
+                <PdfButton
+                  renderAs="row"
                   caseId={workingCase.id}
                   title={formatMessage(core.pdfButtonRulingShortVersion)}
                   pdfType={'courtRecord/limitedAccess'}
@@ -247,8 +249,9 @@ const CaseOverviewForm: React.FC<Props> = (props) => {
                       {formatMessage(defenderCaseOverview.unsignedDocument)}
                     </Text>
                   )}
-                </PdfRow>
-                <PdfRow
+                </PdfButton>
+                <PdfButton
+                  renderAs="row"
                   caseId={workingCase.id}
                   title={formatMessage(core.pdfButtonRuling)}
                   pdfType={'ruling/limitedAccess'}
@@ -257,7 +260,7 @@ const CaseOverviewForm: React.FC<Props> = (props) => {
                     signatory={workingCase.judge?.name}
                     signingDate={workingCase.rulingDate}
                   />
-                </PdfRow>
+                </PdfButton>
               </>
             )}
           </Stack>
