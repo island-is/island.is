@@ -17,7 +17,7 @@ export const editorMsgs = defineMessages({
   stepSignatureIntro: {
     id: 'ap.regulations-admin:draft-step_signature-intro',
     defaultMessage:
-      'Hér hlaða upp eintaki af reglugerðinni með undirritun ráðherra. Það skjal verður að lokum framsent til Stjórnartíðinda.',
+      'Hér skal hlaða upp eintaki af reglugerðinni með undirritun ráðherra. Það skjal verður að lokum framsent til Stjórnartíðinda.',
   },
   stepImpactHeadline: {
     id: 'ap.regulations-admin:draft-step_impacts-headline',
