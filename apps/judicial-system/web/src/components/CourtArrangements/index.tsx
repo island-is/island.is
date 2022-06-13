@@ -1,4 +1,6 @@
-import React from 'react'
+import React, { useState } from 'react'
+import compareAsc from 'date-fns/compareAsc'
+import formatISO from 'date-fns/formatISO'
 
 import { Box, Input } from '@island.is/island-ui/core'
 import { Case } from '@island.is/judicial-system/types'
@@ -17,6 +19,32 @@ interface Props {
   handleCourtDateChange: (date: Date | undefined, valid: boolean) => void
   selectedCourtDate?: string
 }
+
+export const useCourtArrangements = (workingCase: Case) => {
+  const [courtDate, setCourtDate] = useState(workingCase.courtDate)
+  const [courtDateHasChanged, setCourtDateHasChanged] = useState(false)
+
+  const handleCourtDateChange = (date: Date | undefined, valid: boolean) => {
+    if (date && valid) {
+      if (
+        workingCase.courtDate &&
+        compareAsc(date, new Date(workingCase.courtDate)) !== 0
+      ) {
+        setCourtDateHasChanged(true)
+      }
+
+      setCourtDate(formatISO(date, { representation: 'complete' }))
+    }
+  }
+
+  return {
+    courtDate,
+    setCourtDate,
+    courtDateHasChanged,
+    handleCourtDateChange,
+  }
+}
+
 const CourtArrangements: React.FC<Props> = (props) => {
   const {
     workingCase,

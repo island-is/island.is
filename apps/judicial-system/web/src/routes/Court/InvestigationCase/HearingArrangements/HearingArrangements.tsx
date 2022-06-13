@@ -39,7 +39,9 @@ import {
 import DefenderInfo from '@island.is/judicial-system-web/src/components/DefenderInfo/DefenderInfo'
 import { setAndSendToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { isCourtHearingArrangementsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
-import CourtArrangements from '@island.is/judicial-system-web/src/components/CourtArrangements'
+import CourtArrangements, {
+  useCourtArrangements,
+} from '@island.is/judicial-system-web/src/components/CourtArrangements'
 import * as constants from '@island.is/judicial-system/consts'
 
 const HearingArrangements = () => {
@@ -58,11 +60,15 @@ const HearingArrangements = () => {
     sendNotification,
     isSendingNotification,
   } = useCase()
+  const {
+    courtDate,
+    setCourtDate,
+    courtDateHasChanged,
+    handleCourtDateChange,
+  } = useCourtArrangements(workingCase)
 
   const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
   const [modalVisible, setModalVisible] = useState(false)
-  const [courtDate, setCourtDate] = useState(workingCase.courtDate)
-  const [courtDateHasChanged, setCourtDateHasChanged] = useState(false)
 
   useEffect(() => {
     if (isCaseUpToDate && !initialAutoFillDone) {
@@ -91,6 +97,7 @@ const HearingArrangements = () => {
     autofill,
     initialAutoFillDone,
     isCaseUpToDate,
+    setCourtDate,
     setWorkingCase,
     workingCase,
   ])
@@ -112,19 +119,6 @@ const HearingArrangements = () => {
       setModalVisible(true)
     }
   }, [workingCase, autofill, courtDate, setWorkingCase, courtDateHasChanged])
-
-  const handleCourtDateChange = (date: Date | undefined, valid: boolean) => {
-    if (date && valid) {
-      if (
-        workingCase.courtDate &&
-        compareAsc(date, new Date(workingCase.courtDate)) !== 0
-      ) {
-        setCourtDateHasChanged(true)
-      }
-
-      setCourtDate(formatISO(date, { representation: 'complete' }))
-    }
-  }
 
   return (
     <PageLayout
