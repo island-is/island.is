@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useEffect, useState, useCallback } from 'react'
 import { useQuery } from '@apollo/client'
 import * as Sentry from '@sentry/react'
 
@@ -9,6 +9,7 @@ import {
   Form,
   Schema,
   coreMessages,
+  getTypeFromSlug,
 } from '@island.is/application/core'
 import {
   getApplicationTemplateByTypeId,
@@ -23,11 +24,25 @@ import { LoadingShell } from '../components/LoadingShell'
 import { useApplicationNamespaces } from '../hooks/useApplicationNamespaces'
 import { FormShell } from './FormShell'
 import { ErrorShell } from '../components/ErrorShell'
+import {
+  ProblemType,
+  findProblemInApolloError,
+} from '@island.is/shared/problem'
+import { DelegationsScreen } from '../components/DelegationsScreen'
 
 const ApplicationLoader: FC<{
   applicationId: string
   nationalRegistryId: string
-}> = ({ applicationId, nationalRegistryId }) => {
+  slug: string
+}> = ({ applicationId, nationalRegistryId, slug }) => {
+  const type = getTypeFromSlug(slug)
+  const [delegationsChecked, setDelegationsChecked] = useState(
+    type ? false : true,
+  )
+  const checkDelegation = useCallback(() => {
+    setDelegationsChecked((d) => !d)
+  }, [])
+
   const { lang: locale } = useLocale()
   const { data, error, loading, refetch } = useQuery(APPLICATION_APPLICATION, {
     variables: {
@@ -43,6 +58,7 @@ const ApplicationLoader: FC<{
     notifyOnNetworkStatusChange: true,
     skip: !applicationId,
   })
+
   const application = data?.applicationApplication
 
   if (loading) {
@@ -50,6 +66,22 @@ const ApplicationLoader: FC<{
   }
 
   if (!applicationId || error) {
+    const foundError = findProblemInApolloError(error, [
+      ProblemType.BAD_SUBJECT,
+    ])
+    if (
+      foundError?.type === ProblemType.BAD_SUBJECT &&
+      type &&
+      !delegationsChecked
+    ) {
+      return (
+        <DelegationsScreen
+          slug={slug}
+          alternativeSubjects={foundError.alternativeSubjects}
+          checkDelegation={checkDelegation}
+        />
+      )
+    }
     return <ErrorShell />
   }
 
@@ -146,7 +178,8 @@ const ShellWrapper: FC<{
 export const ApplicationForm: FC<{
   applicationId: string
   nationalRegistryId: string
-}> = ({ applicationId, nationalRegistryId }) => {
+  slug: string
+}> = ({ applicationId, nationalRegistryId, slug }) => {
   const { formatMessage } = useLocale()
 
   return (
@@ -167,6 +200,7 @@ export const ApplicationForm: FC<{
         <ApplicationLoader
           applicationId={applicationId}
           nationalRegistryId={nationalRegistryId}
+          slug={slug}
         />
       </FieldProvider>
     </Sentry.ErrorBoundary>
