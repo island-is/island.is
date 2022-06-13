@@ -15,7 +15,7 @@ export const generateEmployerRejected: EmailTemplateGenerator = (props) => {
   const to =
     get(application.answers, 'applicant.email') ||
     get(application.externalData, 'userProfile.data.email')
-  const subject = 'Beiðni um tilfærslu réttinda hafnað um fæðingarorlof'
+  const subject = 'Beiðni þín um samþykki fæðingarorlofs hafnað'
 
   return {
     from: {
@@ -42,24 +42,24 @@ export const generateEmployerRejected: EmailTemplateGenerator = (props) => {
         {
           component: 'Image',
           context: {
-            src: pathToAsset('child.jpg'),
+            src: pathToAsset('reject.jpg'),
             alt: 'Barn myndskreyting',
           },
         },
         { component: 'Heading', context: { copy: subject } },
-        { component: 'Copy', context: { copy: 'Góðan dag.' } },
+        { component: 'Copy', context: { copy: 'Góðan dag / Good day,' } },
         {
           component: 'Copy',
           context: {
             copy:
-              'Beiðni þinni um tilfærslu réttinda hefur verið hafnað af hinu foreldrinu.',
+              'Vinnuveitandi hefur hafnað beiðni þinni um samþykki fæðingarorlofs. Þú þarft því að breyta umsókn þinni.',
           },
         },
         {
           component: 'Copy',
           context: {
             copy:
-              'TEST EMPLOYER REJ...Til þess að skoða umsókn þína getur þú smellt á takkann hér fyrir neðan.',
+              'Your employer has denied your request. You therefore need to modify your application.',
           },
         },
         {
