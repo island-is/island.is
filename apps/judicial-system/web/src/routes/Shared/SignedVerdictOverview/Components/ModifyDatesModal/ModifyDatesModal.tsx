@@ -155,10 +155,21 @@ const ModifyDatesModal: React.FC<Props> = ({
     caseModifiedExplanation,
     setCaseModifiedExplanation,
   ] = useState<string>()
-  const [
-    isCaseModificationConfirmed,
-    setIsCaseModificationConfirmed,
-  ] = useState<boolean>(false)
+
+  const { formatMessage } = useIntl()
+  const { user } = useContext(UserContext)
+
+  const modificationSuccessText = getModificationSuccessText(
+    workingCase,
+    modifiedValidToDate,
+    modifiedIsolationToDate,
+    formatMessage,
+    user?.role,
+  )
+
+  const [modificationConfirmedText, setModificationConfirmedText] = useState<
+    string | undefined
+  >(undefined)
 
   const handleDateModification = useCallback(async () => {
     if (!caseModifiedExplanation) return
@@ -187,7 +198,7 @@ const ModifyDatesModal: React.FC<Props> = ({
     }
 
     onSubmit(update)
-    setIsCaseModificationConfirmed(true)
+    setModificationConfirmedText(modificationSuccessText)
   }, [
     caseModifiedExplanation,
     workingCase.caseModifiedExplanation,
@@ -216,8 +227,6 @@ const ModifyDatesModal: React.FC<Props> = ({
     setModifiedValidToDate,
     setModifiedIsolationToDate,
   ])
-
-  const { formatMessage } = useIntl()
 
   const validToDateChanged = hasDateChanged(
     workingCase.validToDate,
@@ -288,9 +297,7 @@ const ModifyDatesModal: React.FC<Props> = ({
     }
   }
 
-  const { user } = useContext(UserContext)
-
-  return isCaseModificationConfirmed ? (
+  return modificationConfirmedText ? (
     <motion.div
       key="dateModifyingModalSuccess"
       data-testid="dateModifyingModalSuccess"
@@ -303,20 +310,14 @@ const ModifyDatesModal: React.FC<Props> = ({
         title={formatMessage(m.sections.modifyDatesModal.successTitleV2, {
           caseType: workingCase.type,
         })}
-        text={getModificationSuccessText(
-          workingCase,
-          modifiedValidToDate,
-          modifiedIsolationToDate,
-          formatMessage,
-          user?.role,
-        )}
+        text={modificationConfirmedText}
         secondaryButtonText={formatMessage(
           m.sections.modifyDatesModal.secondaryButtonTextSuccess,
         )}
         handleSecondaryButtonClick={() => {
           setCaseModifiedExplanation(undefined)
           setIsModifyingDates(false)
-          setIsCaseModificationConfirmed(false)
+          setModificationConfirmedText(undefined)
         }}
       />
     </motion.div>
