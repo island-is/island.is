@@ -17,7 +17,8 @@ import {
   YES,
 } from '../constants'
 
-const VMST_ID = '7005942039'
+import * as kennitala from 'kennitala'
+import { environment } from '../../../../../../apps/application-system/api/src/environments'
 
 function buildApplication(data: {
   answers?: FormValue
@@ -159,6 +160,8 @@ describe('Parental Leave Application Template', () => {
 
     it('should assign the application to the other parent approval and then to VMST when the applicant is self employed', () => {
       const otherParentId = '0987654321'
+      environment.environment = 'production'
+
       const helper = new ApplicationTemplateHelper(
         buildApplication({
           answers: {
@@ -194,9 +197,11 @@ describe('Parental Leave Application Template', () => {
       ] = finalHelper.changeState({
         type: DefaultEvents.APPROVE,
       })
+
       expect(hasChangedAgain).toBe(true)
       expect(finalState).toBe('vinnumalastofnunApproval')
-      expect(finalApplication.assignees).toEqual([VMST_ID])
+      // TODO: rewrite when there is a way to test VMST ID
+      expect(kennitala.isCompany(finalApplication.assignees[0])).toBe(true)
     })
 
     describe('other parent', () => {

@@ -452,7 +452,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             },
           ],
         },
-        // TODO: enable for user to do changes after application got APPROVE from VMST?
+        // TODO: Applicant could not Edit APPROVED application for now. Maybe change after more discussion?
         // on: {
         //   [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
         // },
