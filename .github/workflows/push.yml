@@ -675,7 +675,7 @@ jobs:
           SPINNAKER_WEBHOOK_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_TOKEN }}
           GH_PRIVATE_REPO_TOKEN: ${{secrets.GH_PRIVATE_REPO_TOKEN}}
         run: |
-          read -d "\n" IDENTITY_SERVER_HEAD_SHA IDENTITY_SERVER_RUN_NUMBER <<<$(curl -H "Authorization: token $GH_PRIVATE_REPO_TOKEN" -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/island-is/identity-server.web/actions/workflows/build.yml/runs\?branch\=main\&status\=success\&per_page\=1\&event\=push | jq '.workflow_runs[] | .head_sha, .run_number' | tr -d \")
+          if read -d "\n" IDENTITY_SERVER_HEAD_SHA IDENTITY_SERVER_RUN_NUMBER; then :; fi <<<$(curl -H "Authorization: token $GH_PRIVATE_REPO_TOKEN" -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/island-is/identity-server.web/actions/workflows/build.yml/runs\?branch\=main\&status\=success\&per_page\=1\&event\=push | jq '.workflow_runs[] | .head_sha, .run_number' | tr -d \")
           export IDENTITY_SERVER_DOCKER_TAG=${IDENTITY_SERVER_RUN_NUMBER}_main_${IDENTITY_SERVER_HEAD_SHA:0:7}
           echo "Deploying with identity-server docker tag: '$IDENTITY_SERVER_DOCKER_TAG'"
           echo "Sending webhook with branch: '$GIT_BRANCH_DEPLOY'"
