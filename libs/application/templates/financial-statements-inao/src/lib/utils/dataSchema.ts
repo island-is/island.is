@@ -13,9 +13,8 @@ const FileSchema = z.object({
   url: z.string().optional(),
 })
 
-const electionInfo = z.object({
-  electionType: z.string().optional(),
-  selectElectionType: z.string().optional(),
+const election = z.object({
+  selectElection: z.string().optional(),
   electionDescription: z.string().optional(),
   incomeLimit: z.string().optional(),
 })
@@ -42,14 +41,6 @@ const propertiesAndDebts = z.object({
   longTermDebt: z.string().optional(),
 })
 
-const incomeAndExpenses = z.object({
-  // capital: z.string().optional(),
-  partyRunning: z.string().optional(),
-  donations: z.string().optional(),
-  // personal: z.string().optional(),
-  // capitalIncome: z.string().optional(),
-})
-
 const income = z.object({
   individualDonations: z.string().optional(),
   corporateDonations: z.string().optional(),
@@ -59,16 +50,19 @@ const income = z.object({
 })
 
 const expenses = z.object({
-  partyRunning: z.string().optional(),
+  capitalCost: z.string().optional(),
+  electionOffice: z.string().optional(),
+  advertisements: z.string().optional(),
+  otherCost: z.string().optional(),
+  travelCost: z.string().optional(),
 })
-
 
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   about,
-  electionInfo,
-  expenses,
+  election,
   income,
+  expenses,
   propertiesAndDebts,
   attachment: z
     .object({
