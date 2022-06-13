@@ -53,7 +53,10 @@ export const Header: FC<HeaderProps> = ({
             <GridColumn span="12/12" paddingTop={4} paddingBottom={4}>
               <Columns alignY="center" space={2}>
                 <Column width="content">
-                  <FocusableBox href={english ? '/en' : '/'}>
+                  <FocusableBox
+                    href={english ? '/en' : '/'}
+                    data-testid="link-back-home"
+                  >
                     <Hidden above="md">
                       <Logo
                         id="header-logo-icon"
