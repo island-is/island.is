@@ -5,6 +5,7 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
+  ApplicationRole,
 } from '@island.is/application/core'
 import { dataSchema } from './dataSchema'
 import { Roles, States, Events, ApiActions } from './constants'
@@ -125,10 +126,14 @@ const PassportTemplate: ApplicationTemplate<
       },
     },
   },
-  mapUserToRole(nationalId: string, application: Application) {
-    if (application.applicant === nationalId) {
+  mapUserToRole(
+    nationalId: string,
+    application: Application,
+  ): ApplicationRole | undefined {
+    if (nationalId === application.applicant) {
       return Roles.APPLICANT
     }
+    return undefined
   },
 }
 
