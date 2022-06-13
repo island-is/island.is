@@ -85,6 +85,7 @@ import { GetSupportCategoriesInput } from './dto/getSupportCategories.input'
 import { GetSupportCategoriesInOrganizationInput } from './dto/getSupportCategoriesInOrganization.input'
 import { GetPublishedMaterialInput } from './dto/getPublishedMaterial.input'
 import { EnhancedAssetSearchResult } from './models/enhancedAssetSearchResult.model'
+import { Locale } from '@island.is/shared/types'
 
 const { cacheTime } = environment
 
@@ -347,13 +348,15 @@ export class CmsResolver {
 
   @Directive(cacheControlDirective())
   @Query(() => Article, { nullable: true })
-  getSingleArticle(
-    @Args('input') { lang, slug }: GetSingleArticleInput,
-  ): Promise<Article | null> {
-    return this.cmsElasticsearchService.getSingleDocumentTypeBySlug<Article>(
+  async getSingleArticle(@Args('input') { lang, slug }: GetSingleArticleInput) {
+    const article: Article | null = await this.cmsElasticsearchService.getSingleDocumentTypeBySlug<Article>(
       getElasticsearchIndex(lang),
       { type: 'webArticle', slug },
     )
+    return {
+      ...article,
+      lang,
+    }
   }
 
   @Directive(cacheControlDirective())
@@ -497,7 +500,10 @@ export class ArticleResolver {
 
   @Directive(cacheControlDirective())
   @ResolveField(() => [Article])
-  async relatedArticles(@Parent() article: Article) {
-    return this.cmsContentfulService.getRelatedArticles(article.slug, 'is')
+  async relatedArticles(@Parent() article: Article & { lang?: Locale }) {
+    return this.cmsContentfulService.getRelatedArticles(
+      article.slug,
+      article?.lang ?? 'is',
+    )
   }
 }
