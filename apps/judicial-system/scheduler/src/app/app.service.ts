@@ -57,8 +57,6 @@ export class AppService {
       minutesBetween(startTime, now()) < this.config.timeToLiveMinutes
     )
 
-    // Do someting
-
     logger.info('Scheduler done')
   }
 }
