@@ -55,5 +55,10 @@ export const icon = style({
 })
 
 export const linkWrapper = style({
-  backgroundColor: theme.color.blueberry100,
+  backgroundColor: 'unset',
+  ...themeUtils.responsiveStyle({
+    sm: {
+      backgroundColor: theme.color.blueberry100,
+    },
+  }),
 })
