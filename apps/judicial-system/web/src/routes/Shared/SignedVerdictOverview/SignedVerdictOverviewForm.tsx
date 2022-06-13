@@ -19,7 +19,7 @@ import {
   CourtRecordAccordionItem,
   FormContentContainer,
   InfoCard,
-  PdfRow,
+  PdfButton,
   PoliceRequestAccordionItem,
   RulingAccordionItem,
   CommentsAccordionItem,
@@ -360,7 +360,8 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
         <Box marginBottom={2}>
           <Stack space={2} dividers>
             {user?.role !== UserRole.STAFF && (
-              <PdfRow
+              <PdfButton
+                renderAs="row"
                 caseId={workingCase.id}
                 title={formatMessage(core.pdfButtonRequest)}
                 pdfType={'request'}
@@ -371,13 +372,15 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
               workingCase.state,
               workingCase.decision,
             ) && (
-              <PdfRow
+              <PdfButton
+                renderAs="row"
                 caseId={workingCase.id}
                 title={formatMessage(core.pdfButtonCustodyNotice)}
                 pdfType="custodyNotice"
               />
             )}
-            <PdfRow
+            <PdfButton
+              renderAs="row"
               caseId={workingCase.id}
               title={formatMessage(core.pdfButtonRulingShortVersion)}
               pdfType={'courtRecord'}
@@ -402,9 +405,10 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
               ) : (
                 <Text>{formatMessage(m.unsignedDocument)}</Text>
               )}
-            </PdfRow>
+            </PdfButton>
             {user?.role !== UserRole.STAFF && (
-              <PdfRow
+              <PdfButton
+                renderAs="row"
                 caseId={workingCase.id}
                 title={formatMessage(core.pdfButtonRuling)}
                 pdfType={'ruling'}
@@ -429,7 +433,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
                     {capitalize(formatMessage(core.modify))}
                   </Button>
                 )}
-              </PdfRow>
+              </PdfButton>
             )}
           </Stack>
         </Box>
