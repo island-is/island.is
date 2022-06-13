@@ -4,14 +4,8 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { getValueViaPath } from '@island.is/application/core'
-import {
-  PASSPORT_CHARGE_CODES,
-  YES,
-  NO,
-  YesOrNo,
-  DiscountCheck,
-} from './constants'
-import * as kennitala from 'kennitala'
+import { PASSPORT_CHARGE_CODES, YES, YesOrNo, DiscountCheck } from './constants'
+import { info } from 'kennitala'
 
 @Injectable()
 export class PassportService {
@@ -52,7 +46,8 @@ export class PassportService {
     const { answers, externalData } = application
 
     if (!(externalData.checkForDiscount?.data as DiscountCheck)?.hasDiscount) {
-      const age = kennitala.info(auth.nationalId).age
+      const { age } = info(auth.nationalId)
+
       if (age < 18 || age >= 60) {
         return {
           hasDiscount: true,

@@ -29,7 +29,11 @@ const PassportTemplate: ApplicationTemplate<
         meta: {
           name: m.formName.defaultMessage,
           progress: 0.33,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: {
+            shouldBeListed: false,
+            shouldBePruned: true,
+            whenToPrune: 24 * 3600 * 1000,
+          },
           onExit: {
             apiModuleAction: ApiActions.checkForDiscount,
           },

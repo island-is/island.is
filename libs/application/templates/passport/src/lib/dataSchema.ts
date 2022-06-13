@@ -18,7 +18,6 @@ export const dataSchema = z.object({
     nationalId: z.string().refine((x) => (x ? nationalIdRegex.test(x) : false)),
     email: z
       .string()
-      .email()
       .refine((v) => isValidEmail(v), { params: error.invalidValue }),
     phoneNumber: z
       .string()
