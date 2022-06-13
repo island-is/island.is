@@ -125,9 +125,18 @@ export class ParentalLeaveService {
     )
 
     if (applicantPhoneNumber) {
+      const clientLocationOrigin = getConfigValue(
+        this.configService,
+        'clientLocationOrigin',
+      ) as string
+
+      const link = `${clientLocationOrigin}/faedingarorlof/${application.id}`
+
       await this.smsService.sendSms(
         applicantPhoneNumber,
-        `Your application was rejected by the other parent.`,
+        `Hitt foreldrið hefur hafnað beiðni þinni um yfirfærslu á réttindum. Þú þarft því að breyta umsókn þinni.
+        The other parent has denied your request for transfer of rights. You therefore need to modify your application.
+        ${link}`,
       )
     }
   }
@@ -407,7 +416,9 @@ export class ParentalLeaveService {
   }
 
   async sendApplication({ application }: TemplateApiModuleActionProps) {
-    const { isSelfEmployed } = getApplicationAnswers(application.answers)
+    const { isSelfEmployed } = getApplicationAnswers(
+      application.answers,
+    )
     const nationalRegistryId = application.applicant
     const attachments = await this.getAttachments(application)
 
