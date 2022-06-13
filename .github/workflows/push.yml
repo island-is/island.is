@@ -685,9 +685,6 @@ jobs:
             "parameters": {
               "dependency_docker_tag": "$DOCKER_TAG"
               "docker_tag": "$IDENTITY_SERVER_DOCKER_TAG",
-              "feature_name": "$FEATURE_NAME",
-              "images": "$IMAGES",
-              "pull_request_number": "$(echo $GITHUB_REF | cut -d'/' -f3)"
             }
           }
           BODY
