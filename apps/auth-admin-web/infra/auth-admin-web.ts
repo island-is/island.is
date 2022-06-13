@@ -63,7 +63,11 @@ export const serviceSetup = (): ServiceBuilder<'auth-admin-web'> => {
         memory: '128Mi',
       },
     })
-    .targetPort(4200)
     .readiness('/liveness')
     .liveness('/liveness')
+    .extraAttributes({
+      dev: { progressDeadlineSeconds: 1200 },
+      staging: { progressDeadlineSeconds: 1200 },
+      prod: { progressDeadlineSeconds: 1200 },
+    })
 }
