@@ -174,8 +174,8 @@ const useMakeDraftingState = (inputs: StateInputs) => {
           }
         : undefined,
 
-      goToStep: (stepName: Step) => {
-        actions.saveStatus(true)
+      goToStep: async (stepName: Step) => {
+        await actions.saveStatus(true)
         history.push(getEditUrl(draft.id, stepName))
       },
 
@@ -249,12 +249,12 @@ const useMakeDraftingState = (inputs: StateInputs) => {
         }
       },
 
-      saveStatus: (silent?: boolean) => {
+      saveStatus: async (silent?: boolean) => {
         if (isDraftLocked(draft)) {
           return false
         }
         dispatch({ type: 'SAVING_STATUS' })
-        saveDraftStatus().then(({ success, error }) => {
+        await saveDraftStatus().then(({ success, error }) => {
           if (success && !silent) {
             toast.success(t(buttonsMsgs.saveSuccess))
           }
