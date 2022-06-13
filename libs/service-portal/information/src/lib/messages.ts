@@ -54,7 +54,7 @@ export const spmm = {
     },
     maritalStatusMarried: {
       id: 'sp.family:marital-status-married',
-      defaultMessage: 'Gift (kvæntur) eða staðfest samvist',
+      defaultMessage: 'Gift/ur eða staðfest samvist',
     },
     maritalStatusMarriedLivingSep: {
       id: 'sp.family:marital-status-living-sep',
@@ -75,7 +75,7 @@ export const spmm = {
     },
     maritalStatusUnmarried: {
       id: 'sp.family:marital-status-unmarried',
-      defaultMessage: 'Ógift (ókvæntur)',
+      defaultMessage: 'Ógift/ur',
     },
     maritalStatusWidowed: {
       id: 'sp.family:marital-status-widowed',

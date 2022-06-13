@@ -111,6 +111,15 @@ const ChildView: FC<Props> = ({
           label={defineMessage(m.legalResidence)}
           content={person?.legalResidence || ''}
           loading={loading}
+          editLink={
+            !isChild
+              ? {
+                  title: editLink,
+                  external: true,
+                  url: 'https://skra.is/folk/flutningur/flutningur-barna/',
+                }
+              : undefined
+          }
         />
         <Divider />
         <Box marginY={3} />
