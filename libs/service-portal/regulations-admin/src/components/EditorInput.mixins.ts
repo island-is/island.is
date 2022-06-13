@@ -13,7 +13,7 @@ export const label = {
   fontSize: mobileLabelFontSize,
   lineHeight: 1.3333333333,
   transition: 'color 0.1s',
-  padding: '0 8px',
+  padding: '8px 8px 0',
   marginBottom: 6,
   ...themeUtils.responsiveStyle({
     md: {
@@ -28,13 +28,15 @@ export const container = {
   backgroundColor: theme.color.white,
   width: '100%',
   boxShadow: `inset 0 0 0 1px ${theme.color.blue200}`,
-  borderRadius: inputBorderRadius,
+  borderBottomRightRadius: inputBorderRadius,
+  borderBottomLeftRadius: inputBorderRadius,
+  fooBoo: 'foo',
   cursor: 'text',
   transition: 'box-shadow 0.3s',
-  padding: '8px 0 16px 0',
+  padding: '0 0 16px 0',
   ...themeUtils.responsiveStyle({
     md: {
-      padding: '8px 0 14px 0',
+      padding: '0 0 14px 0',
     },
   }),
 }
