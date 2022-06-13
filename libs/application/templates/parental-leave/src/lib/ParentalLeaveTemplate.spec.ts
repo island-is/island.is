@@ -63,8 +63,8 @@ function buildApplication(data: {
 
 describe('Parental Leave Application Template', () => {
   describe('state transitions', () => {
+    const otherParentId = createNationalId('person')
     it('should transition from draft to other parent if applicant is asking for shared rights', () => {
-      const otherParentId = '0987654321'
       const helper = new ApplicationTemplateHelper(
         buildApplication({
           answers: {
@@ -88,7 +88,6 @@ describe('Parental Leave Application Template', () => {
     })
 
     it('should transition from draft to employer approval if applicant is not asking for shared rights', () => {
-      const otherParentId = '0987654321'
       const helper = new ApplicationTemplateHelper(
         buildApplication({
           answers: {
@@ -115,7 +114,6 @@ describe('Parental Leave Application Template', () => {
     })
 
     it('should assign the application to the employer when transitioning to employer approval from other parent approval', () => {
-      const otherParentId = '0987654321'
       const helper = new ApplicationTemplateHelper(
         buildApplication({
           state: 'draft',
@@ -158,7 +156,6 @@ describe('Parental Leave Application Template', () => {
     })
 
     it('should assign the application to the other parent approval and then to VMST when the applicant is self employed', () => {
-      const otherParentId = '0987654321'
       process.env.VMST_ID = createNationalId('company')
 
       const helper = new ApplicationTemplateHelper(
@@ -207,7 +204,6 @@ describe('Parental Leave Application Template', () => {
     describe('other parent', () => {
       describe('when spouse is selected', () => {
         it('should assign their national registry id from external data to answers.otherParentId when transitioning from draft', () => {
-          const otherParentId = '1234567890'
           const helper = new ApplicationTemplateHelper(
             buildApplication({
               externalData: {
