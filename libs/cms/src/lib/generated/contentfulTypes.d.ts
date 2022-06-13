@@ -2447,6 +2447,9 @@ export interface ISidebarCardFields {
 
   /** Link */
   link?: ILink | undefined
+
+  /** Image */
+  image?: Asset | undefined
 }
 
 export interface ISidebarCard extends Entry<ISidebarCardFields> {

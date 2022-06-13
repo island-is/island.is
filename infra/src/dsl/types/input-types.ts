@@ -131,4 +131,4 @@ export interface Context {
   env: EnvironmentConfig
 }
 
-export type ExtraValues = { [idx in OpsEnv]: Hash | MissingSettingType }
+export type ExtraValues = { [idx in OpsEnv]: Hash | MissingSettingType | any }

@@ -166,9 +166,14 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Netfang hins foreldris',
       description: 'Other parent email',
     },
+    otherParentPhoneNumberSubSection: {
+      id: 'pl.application:otherParentPhoneNumber.subSection',
+      defaultMessage: 'Símanúmer hins foreldris',
+      description: 'Other parent phone number',
+    },
     otherParentEmailTitle: {
       id: 'pl.application:otherParentEmail.title',
-      defaultMessage: 'Hvert er netfang hins foreldrisins?',
+      defaultMessage: 'Hvert er netfang og símanúmer hins foreldrisins?',
       description: 'Asking about the email address of the other parent',
     },
     otherParentEmailDescription: {
@@ -216,7 +221,7 @@ export const parentalLeaveFormMessages: MessageDir = {
         'Note that by choosing no, you will lose your earned rights with your union.',
     },
     asyncSelectSearchableHint: {
-      id: 'application.system:placeholder.searchable.hint',
+      id: 'pl.application:placeholder.searchable.hint',
       defaultMessage: 'Skrifaðu hér til að leita',
       description: 'Let user know they can search by typing',
     },
@@ -1475,6 +1480,13 @@ export const parentalLeaveFormMessages: MessageDir = {
       description:
         'Finally, the application goes to the Parental Leave Fund, where its final processing takes place.',
     },
+    startDateInThePast: {
+      id: 'pl.application:finalscreen.start.date.in.the.past',
+      defaultMessage:
+        'icel-trans: "Parental leave starting date is in the past, please correct this date"',
+      description:
+        'Parental leave starting date is in the past, please correct this date',
+    },
   }),
 }
 
@@ -1600,6 +1612,18 @@ export const otherParentApprovalFormMessages = defineMessages({
     id: 'pl.application:otherParent.final.title',
     defaultMessage: 'Takk fyrir',
     description: 'Thank you',
+  },
+  warning: {
+    id: 'pl.application:otherParent.warning',
+    defaultMessage: 'icel-trans: "Warning!"',
+    description: 'Warning!',
+  },
+  startDateInThePast: {
+    id: 'pl.application:otherParent.start.date.in.the.past',
+    defaultMessage:
+      'icel-trans: "Application will not be processsed! Parental leave starting date has already passed!"',
+    description:
+      'Application will not be processsed! Parental leave starting date has already passed!',
   },
 })
 
@@ -1844,6 +1868,12 @@ export const errorMessages = defineMessages({
       'Villa kom upp við útreikning á tímabilum, veldu annað tímabil eða hafðu samband við okkur til að fá stuðning.',
     description:
       'An error happened while calculating your periods, choose another period or contact us for support.',
+  },
+  startDateInThePast: {
+    id: 'pl.application:errors.start.date.in.the.past',
+    defaultMessage:
+      'icel-trans: "Start date is in the past. The form will not be sent!"',
+    description: 'Start date is in the past. The form will not be sent!',
   },
 })
 

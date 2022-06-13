@@ -78,6 +78,7 @@ export enum FieldTypes {
   ASYNC_SELECT = 'ASYNC_SELECT',
   PAYMENT_PENDING = 'PAYMENT_PENDING',
   COMPANY_SEARCH = 'COMPANY_SEARCH',
+  REDIRECT_TO_SERVICE_PORTAL = 'REDIRECT_TO_SERVICE_PORTAL',
 }
 
 export enum FieldComponents {
@@ -94,6 +95,7 @@ export enum FieldComponents {
   ASYNC_SELECT = 'AsyncSelectFormField',
   PAYMENT_PENDING = 'PaymentPendingField',
   COMPANY_SEARCH = 'CompanySearchFormField',
+  REDIRECT_TO_SERVICE_PORTAL = 'RedirectToServicePortalFormField',
 }
 
 export interface CheckboxField extends BaseField {
@@ -224,6 +226,11 @@ export interface CustomField extends BaseField {
   childInputIds?: string[]
 }
 
+export interface RedirectToServicePortalField extends BaseField {
+  readonly type: FieldTypes.REDIRECT_TO_SERVICE_PORTAL
+  component: FieldComponents.REDIRECT_TO_SERVICE_PORTAL
+}
+
 export type Field =
   | CheckboxField
   | CustomField
@@ -238,3 +245,4 @@ export type Field =
   | SubmitField
   | AsyncSelectField
   | CompanySearchField
+  | RedirectToServicePortalField
