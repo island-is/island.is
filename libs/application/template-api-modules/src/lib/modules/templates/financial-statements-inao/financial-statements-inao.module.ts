@@ -20,7 +20,10 @@ export class FinancialStatementsInaoTemplateModule {
         }),
         FinancialStatementsInaoClientModule,
       ],
-      providers: [FinancialStatementsInaoClientService],
+      providers: [
+        FinancialStatementsInaoClientService,
+        FinancialStatementsInaoTemplateService,
+      ],
       exports: [FinancialStatementsInaoTemplateService],
     }
   }
