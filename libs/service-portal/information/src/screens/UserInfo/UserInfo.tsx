@@ -31,6 +31,11 @@ const dataNotFoundMessage = defineMessage({
   defaultMessage: 'Gögn fundust ekki',
 })
 
+const changeInNationalReg = defineMessage({
+  id: 'sp.family:change-in-national-registry',
+  defaultMessage: 'Breyta hjá Þjóðskrá',
+})
+
 const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
@@ -65,10 +70,7 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           content={userInfo.profile.name}
           editLink={{
             external: true,
-            title: defineMessage({
-              id: 'sp.family:change-in-national-registry',
-              defaultMessage: 'Breyta í þjóðskrá',
-            }),
+            title: changeInNationalReg,
             url:
               'https://www.skra.is/umsoknir/eydublod-umsoknir-og-vottord/stok-vara/?productid=5c55d7a6-089b-11e6-943d-005056851dd2',
           }}
@@ -90,10 +92,7 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           loading={loading}
           editLink={{
             external: true,
-            title: defineMessage({
-              id: 'sp.family:change-in-national-registry',
-              defaultMessage: 'Breyta í þjóðskrá',
-            }),
+            title: changeInNationalReg,
             url:
               'https://www.skra.is/umsoknir/rafraen-skil/flutningstilkynning/',
           }}
@@ -119,6 +118,11 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
               : nationalRegistryUser?.familyNr || ''
           }
           loading={loading}
+          tooltip={formatMessage({
+            id: 'sp.family:family-number-tooltip',
+            defaultMessage:
+              'Fjölskyldunúmer er samtenging á milli einstaklinga á lögheimili, en veitir ekki upplýsingar um hverjir eru foreldrar barns eða forsjáraðilar.',
+          })}
         />
         <Divider />
         <UserInfoLine
@@ -148,10 +152,7 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           loading={loading}
           editLink={{
             external: true,
-            title: defineMessage({
-              id: 'sp.family:change-in-national-registry',
-              defaultMessage: 'Breyta í þjóðskrá',
-            }),
+            title: changeInNationalReg,
             url:
               'https://www.skra.is/umsoknir/rafraen-skil/tru-og-lifsskodunarfelag',
           }}
@@ -178,6 +179,11 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
               'Bannmerktir einstaklingar koma t.d. ekki fram á úrtakslistum úr þjóðskrá og öðrum úrtökum í markaðssetningarskyni.',
           })}
           loading={loading}
+          editLink={{
+            external: true,
+            title: changeInNationalReg,
+            url: 'https://www.skra.is/umsoknir/rafraen-skil/bannmerking/',
+          }}
         />
         <Divider />
         <UserInfoLine

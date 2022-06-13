@@ -28,6 +28,17 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-api'> => {
         staging: 'https://identity-server.staging01.devland.is/api',
         prod: 'https://innskra.island.is/api',
       },
+      USER_PROFILE_CLIENT_URL: {
+        dev: 'http://web-service-portal-api.service-portal.svc.cluster.local',
+        staging:
+          'http://web-service-portal-api.service-portal.svc.cluster.local',
+        prod: 'https://service-portal-api.internal.island.is',
+      },
+      IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api',
+    })
+    .secrets({
+      IDENTITY_SERVER_CLIENT_SECRET:
+        '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET',
     })
     .xroad(Base, Client, RskProcuring, NationalRegistry, RskCompanyInfo)
     .readiness('/liveness')

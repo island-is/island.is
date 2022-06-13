@@ -456,7 +456,7 @@ export class CaseService {
         courtCaseNumber: theCase.courtCaseNumber,
         courtName: theCase.court?.name?.replace('dómur', 'dómi'),
         defenderHasAccessToRvg: Boolean(theCase.defenderNationalId),
-        linkStart: `<a href="${this.config.deepLinks.defenderCompletedCaseOverviewUrl}${theCase.id}">`,
+        linkStart: `<a href="${this.config.deepLinks.defenderCaseOverviewUrl}${theCase.id}">`,
         linkEnd: '</a>',
         signedVerdictAvailableInS3: rulingUploadedToS3,
       }),
@@ -471,6 +471,7 @@ export class CaseService {
     let rulingUploadedToS3 = false
     let rulingUploadedToCourt = false
     let courtRecordUploadedToCourt = false
+    const isModifyingRuling = Boolean(theCase.rulingDate)
 
     const uploadPromises = [
       this.uploadSignedRulingPdfToS3(theCase, signedRulingPdf).then((res) => {
@@ -479,37 +480,36 @@ export class CaseService {
     ]
 
     if (theCase.courtId && theCase.courtCaseNumber) {
-      const isModifyingRuling = Boolean(theCase.rulingDate)
-
       uploadPromises.push(
         this.uploadSignedRulingPdfToCourt(theCase, user, signedRulingPdf).then(
           (res) => {
             rulingUploadedToCourt = res
           },
         ),
-        isModifyingRuling
-          ? this.uploadCaseFilesPdfToCourt(theCase, user)
-          : Promise.resolve(),
-        isModifyingRuling
-          ? getCourtRecordPdfAsString(theCase, this.formatMessage)
-              .then((courtRecordPdf) => {
-                return this.uploadCourtRecordPdfToCourt(
-                  theCase,
-                  user,
-                  courtRecordPdf,
-                ).then((res) => {
-                  courtRecordUploadedToCourt = res
-                })
-              })
-              .catch((reason) => {
-                // Log and ignore this error. The court record can be uploaded manually.
-                this.logger.error(
-                  `Failed to generate court record pdf for case ${theCase.id}`,
-                  { reason },
-                )
-              })
-          : Promise.resolve(),
       )
+
+      if (!isModifyingRuling) {
+        uploadPromises.push(
+          this.uploadCaseFilesPdfToCourt(theCase, user),
+          getCourtRecordPdfAsString(theCase, this.formatMessage)
+            .then(async (courtRecordPdf) => {
+              return this.uploadCourtRecordPdfToCourt(
+                theCase,
+                user,
+                courtRecordPdf,
+              ).then((res) => {
+                courtRecordUploadedToCourt = res
+              })
+            })
+            .catch((reason) => {
+              // Log and ignore this error. The court record can be uploaded manually.
+              this.logger.error(
+                `Failed to generate court record pdf for case ${theCase.id}`,
+                { reason },
+              )
+            }),
+        )
+      }
     }
 
     await Promise.all(uploadPromises)
@@ -526,7 +526,10 @@ export class CaseService {
       this.sendEmailToProsecutor(theCase, rulingUploadedToS3, rulingAttachment),
     ]
 
-    if (!rulingUploadedToCourt || !courtRecordUploadedToCourt) {
+    if (
+      !rulingUploadedToCourt ||
+      (!isModifyingRuling && !courtRecordUploadedToCourt)
+    ) {
       emailPromises.push(
         this.sendEmailToCourt(theCase, rulingUploadedToS3, rulingAttachment),
       )

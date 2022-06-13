@@ -43,6 +43,9 @@ import { useNamespace } from '@island.is/web/hooks'
 import { watsonConfig } from './config'
 import { WatsonChatPanel } from '@island.is/web/components'
 import LandlaeknirFooter from './Themes/LandlaeknirTheme/LandlaeknirFooter'
+import { HeilbrigdisstofnunNordurlandsHeader } from './Themes/HeilbrigdisstofnunNordurlandsTheme/HeilbrigdisstofnunNordurlandsHeader'
+import { LandlaeknirHeader } from './Themes/LandlaeknirTheme/LandlaeknirHeader'
+import { FiskistofaHeader } from './FiskistofaTheme/FiskistofaHeader'
 import * as styles from './OrganizationWrapper.css'
 
 interface NavigationData {
@@ -71,7 +74,12 @@ interface HeaderProps {
   organizationPage: OrganizationPage
 }
 
-export const lightThemes = ['digital_iceland', 'default']
+export const lightThemes = [
+  'digital_iceland',
+  'default',
+  'landlaeknir',
+  'fiskistofa',
+]
 export const footerEnabled = [
   'syslumenn',
   'district-commissioner',
@@ -129,6 +137,16 @@ const OrganizationHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
       return <UtlendingastofnunHeader organizationPage={organizationPage} />
     case 'digital_iceland':
       return <DigitalIcelandHeader organizationPage={organizationPage} />
+    case 'hsn':
+      return (
+        <HeilbrigdisstofnunNordurlandsHeader
+          organizationPage={organizationPage}
+        />
+      )
+    case 'landlaeknir':
+      return <LandlaeknirHeader organizationPage={organizationPage} />
+    case 'fiskistofa':
+      return <FiskistofaHeader organizationPage={organizationPage} />
     default:
       return <DefaultHeader organizationPage={organizationPage} />
   }
@@ -222,9 +240,7 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
         <MannaudstorgFooter
           title={organization.title}
           logoSrc={organization.logo?.url}
-          phone={organization.phone}
-          contactLink={organization.link}
-          telephoneText={n('telephone', 'Sími')}
+          footerItems={organization.footerItems}
         />
       )
       break
@@ -378,18 +394,22 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
               />
               {showSecondaryMenu && (
                 <>
-                  {organizationPage.secondaryMenu && (
-                    <SecondaryMenu
-                      title={organizationPage.secondaryMenu.name}
-                      items={secondaryNavList}
-                    />
-                  )}
+                  {organizationPage.secondaryMenu &&
+                    secondaryNavList.length > 0 && (
+                      <SecondaryMenu
+                        title={organizationPage.secondaryMenu.name}
+                        items={secondaryNavList}
+                      />
+                    )}
                   {organizationPage.sidebarCards.map((card) => (
                     <ProfileCard
                       title={card.title}
                       description={card.content}
                       link={card.link}
-                      image="https://images.ctfassets.net/8k0h54kbe6bj/6jpT5mePCNk02nVrzVLzt2/6adca7c10cc927d25597452d59c2a873/bitmap.png"
+                      image={
+                        card.image?.url ||
+                        'https://images.ctfassets.net/8k0h54kbe6bj/6jpT5mePCNk02nVrzVLzt2/6adca7c10cc927d25597452d59c2a873/bitmap.png'
+                      }
                       size="small"
                     />
                   ))}

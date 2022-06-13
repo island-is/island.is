@@ -8,6 +8,7 @@ import {
   makeInvestigationCase,
   makeProsecutor,
   intercept,
+  Operation,
 } from '../../../utils'
 
 describe(`${IC_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
@@ -54,6 +55,26 @@ describe(`${IC_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
 
   it('should set the default court as Héraðsdómur Reykjavíkur when a case is created', () => {
     cy.getByTestid('select-court').contains('Héraðsdómur Reykjavíkur')
+  })
+
+  it('should show an error message if sending a notification failed', () => {
+    const caseData = makeInvestigationCase()
+    const caseDataAddition = {
+      ...caseData,
+      prosecutor: makeProsecutor(),
+      court: makeCourt(),
+    }
+    const forceFail = Operation.SendNotificationMutation
+
+    intercept(caseDataAddition, forceFail)
+
+    cy.getByTestid('datepicker').type('01.01.2020')
+    cy.getByTestid('datepickerIncreaseMonth').dblclick()
+    cy.contains('15').click()
+    cy.getByTestid('reqCourtDate-time').clear().type('1333')
+    cy.getByTestid('continueButton').click()
+    cy.getByTestid('modalPrimaryButton').click()
+    cy.getByTestid('modalErrorMessage').should('exist')
   })
 
   it('should navigate to the next step when all input data is valid and the continue button is clicked', () => {
