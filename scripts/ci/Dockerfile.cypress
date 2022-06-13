@@ -7,7 +7,7 @@
 #
 ARG DOCKER_IMAGE_REGISTRY=public.ecr.aws
 
-FROM $DOCKER_IMAGE_REGISTRY/docker/library/buildpack-deps:focal as node-base
+FROM $DOCKER_IMAGE_REGISTRY/docker/library/buildpack-deps:kinetic-curl as node-base
 
 RUN apt-get update \
   && apt-get install -y nodejs npm \
@@ -16,7 +16,7 @@ RUN apt-get update \
 RUN npm install -g n yarn
 RUN n install 14.17.0
 
-# https://github.com/cypress-io/cypress-docker-images/blob/master/base/12.19.0/Dockerfile
+# https://github.com/cypress-io/cypress-docker-images/blob/master/base/14.19.0/Dockerfile
 FROM node-base as cypress-base
 
 RUN apt-get update && \
@@ -49,7 +49,8 @@ RUN apt-get update && \
   ttf-wqy-microhei \
   xfonts-wqy \
   # clean up
-  && rm -rf /var/lib/apt/lists/*
+  && rm -rf /var/lib/apt/lists/* \
+  && apt-get clean
 
 RUN npm --version
 
@@ -77,44 +78,51 @@ RUN echo  " node version:    $(node -v) \n" \
   "debian version:  $(cat /etc/debian_version) \n" \
   "user:            $(whoami) \n"
 
-# https://github.com/cypress-io/cypress-docker-images/blob/master/browsers/node12.18.3-chrome89-ff86/Dockerfile
+# https://github.com/cypress-io/cypress-docker-images/blob/master/browsers/node14.19.0-chrome100-ff99-edge/Dockerfile
 FROM cypress-base as cypress-browser
 
 USER root
 
 RUN node --version
-RUN echo "force new chrome here!"
 
-# Chrome dependencies
-RUN apt-get update
-RUN apt-get install -y fonts-liberation libappindicator3-1 xdg-utils
+# Install dependencies
+RUN apt-get update && \
+  apt-get install -y \
+  fonts-liberation \
+  git \
+  libcurl4 \
+  libcurl3-gnutls \
+  libcurl3-nss \
+  xdg-utils \
+  wget \
+  curl \
+  # firefox dependencies
+  bzip2 \
+  # add codecs needed for video playback in firefox
+  # https://github.com/cypress-io/cypress-docker-images/issues/150
+  mplayer \
+  # edge dependencies
+  gnupg \
+  dirmngr \
+  # clean up
+  && rm -rf /var/lib/apt/lists/* \
+  && apt-get clean
+
+# install libappindicator3-1 - not included with Debian 11
+RUN wget --no-verbose /usr/src/libappindicator3-1_0.4.92-7_amd64.deb "http://ftp.us.debian.org/debian/pool/main/liba/libappindicator/libappindicator3-1_0.4.92-7_amd64.deb" && \
+  dpkg -i /usr/src/libappindicator3-1_0.4.92-7_amd64.deb ; \
+  apt-get install -f -y && \
+  rm -f /usr/src/libappindicator3-1_0.4.92-7_amd64.deb
 
 # install Chrome browser
-# check https://chromium.cypress.io/
-ENV CHROME_VERSION 87.0.4280.66
-RUN wget -O /usr/src/google-chrome-stable_current_amd64.deb "http://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_${CHROME_VERSION}-1_amd64.deb" && \
+RUN wget --no-verbose -O /usr/src/google-chrome-stable_current_amd64.deb "http://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_100.0.4896.88-1_amd64.deb" && \
   dpkg -i /usr/src/google-chrome-stable_current_amd64.deb ; \
   apt-get install -f -y && \
   rm -f /usr/src/google-chrome-stable_current_amd64.deb
-RUN google-chrome --version
 
 # "fake" dbus address to prevent errors
 # https://github.com/SeleniumHQ/docker-selenium/issues/87
 ENV DBUS_SESSION_BUS_ADDRESS=/dev/null
-
-# Add zip utility - it comes in very handy
-RUN apt-get update && apt-get install -y zip
-
-# add codecs needed for video playback in firefox
-# https://github.com/cypress-io/cypress-docker-images/issues/150
-RUN apt-get install mplayer -y
-
-# install Firefox browser
-ARG FIREFOX_VERSION=82.0
-RUN wget --no-verbose -O /tmp/firefox.tar.bz2 https://download-installer.cdn.mozilla.net/pub/firefox/releases/$FIREFOX_VERSION/linux-x86_64/en-US/firefox-$FIREFOX_VERSION.tar.bz2 \
-  && tar -C /opt -xjf /tmp/firefox.tar.bz2 \
-  && rm /tmp/firefox.tar.bz2 \
-  && ln -fs /opt/firefox/firefox /usr/bin/firefox
 
 # versions of local tools
 RUN echo  " node version:    $(node -v) \n" \
@@ -122,75 +130,66 @@ RUN echo  " node version:    $(node -v) \n" \
   "yarn version:    $(yarn -v) \n" \
   "debian version:  $(cat /etc/debian_version) \n" \
   "Chrome version:  $(google-chrome --version) \n" \
-  "Firefox version: $(firefox --version) \n" \
   "git version:     $(git --version) \n" \
   "whoami:          $(whoami) \n"
 
 # a few environment variables to make NPM installs easier
 # good colors for most applications
-ENV TERM xterm
+ENV TERM=xterm
 # avoid million NPM install messages
-ENV npm_config_loglevel warn
+ENV npm_config_loglevel=warn
 # allow installing when the main user is root
-ENV npm_config_unsafe_perm true
+ENV npm_config_unsafe_perm=true
 
-# https://github.com/cypress-io/cypress-docker-images/blob/master/included/6.5.0/Dockerfile
+# https://github.com/cypress-io/cypress-docker-images/blob/master/included/9.7.0/Dockerfile
 FROM cypress-browser as cypress-included
 
 # avoid too many progress messages
 # https://github.com/cypress-io/cypress/issues/1243
-ENV CI=1
-
+ENV CI=1 \
 # disable shared memory X11 affecting Cypress v4 and Chrome
 # https://github.com/cypress-io/cypress-docker-images/issues/270
-ENV QT_X11_NO_MITSHM=1
-ENV _X11_NO_MITSHM=1
-ENV _MITSHM=0
+  QT_X11_NO_MITSHM=1 \
+  _X11_NO_MITSHM=1 \
+  _MITSHM=0 \
+  # point Cypress at the /root/cache no matter what user account is used
+  # see https://on.cypress.io/caching
+  CYPRESS_CACHE_FOLDER=/root/.cache/Cypress
 
 # should be root user
-RUN echo "whoami: $(whoami)"
-RUN npm config -g set user $(whoami)
-
-# command "id" should print:
-# uid=0(root) gid=0(root) groups=0(root)
-# which means the current user is root
-RUN id
-
-# point Cypress at the /root/cache no matter what user account is used
-# see https://on.cypress.io/caching
-ENV CYPRESS_CACHE_FOLDER=/root/.cache/Cypress
-# TODO: keep an eye on https://github.com/cypress-io/cypress/issues/19102
-# and remove this once that's fixed
-RUN npm install -g har-validator
-RUN npm install -g "cypress@6.5.0"
-RUN cypress verify
-
-# Cypress cache and installed version
-# should be in the root user's home folder
-RUN cypress cache path
-RUN cypress cache list
-RUN cypress info
-RUN cypress version
-
-# give every user read access to the "/root" folder where the binary is cached
-# we really only need to worry about the top folder, fortunately
-RUN ls -la /root
-RUN chmod 755 /root
-
-# always grab the latest NPM and Yarn
-# otherwise the base image might have old versions
-RUN npm i -g yarn@latest npm@latest
-
-# should print Cypress version
-# plus Electron and bundled Node versions
-RUN cypress version
-RUN echo  " node version:    $(node -v) \n" \
-  "npm version:     $(npm -v) \n" \
-  "yarn version:    $(yarn -v) \n" \
-  "debian version:  $(cat /etc/debian_version) \n" \
-  "user:            $(whoami) \n" \
-  "chrome:          $(google-chrome --version || true) \n" \
-  "firefox:         $(firefox --version || true) \n"
+RUN echo "whoami: $(whoami)" \
+  && npm config -g set user $(whoami) \
+  # command "id" should print:
+  # uid=0(root) gid=0(root) groups=0(root)
+  # which means the current user is root
+  && id \
+  && npm install -g "cypress@9.7.0" \
+  && cypress verify \
+  # Cypress cache and installed version
+  # should be in the root user's home folder
+  && cypress cache path \
+  && cypress cache list \
+  && cypress info \
+  && cypress version \
+  # give every user read access to the "/root" folder where the binary is cached
+  # we really only need to worry about the top folder, fortunately
+  && ls -la /root \
+  && chmod 755 /root \
+  # always grab the latest Yarn
+  # otherwise the base image might have old versions
+  # NPM does not need to be installed as it is already included with Node.
+  && npm i -g yarn@latest \
+  # Show where Node loads required modules from
+  && node -p 'module.paths' \
+  # should print Cypress version
+  # plus Electron and bundled Node versions
+  && cypress version \
+  && echo  " node version:    $(node -v) \n" \
+    "npm version:     $(npm -v) \n" \
+    "yarn version:    $(yarn -v) \n" \
+    "debian version:  $(cat /etc/debian_version) \n" \
+    "user:            $(whoami) \n" \
+    "chrome:          $(google-chrome --version || true) \n"
 
 ENTRYPOINT ["cypress", "run"]
 
