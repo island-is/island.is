@@ -56,7 +56,6 @@ export const EditCancellation = (props: EditCancellationProp) => {
     activeCancellation,
     draftImpacts,
     draft.id,
-    minDate,
   )
 
   useEffect(() => {
