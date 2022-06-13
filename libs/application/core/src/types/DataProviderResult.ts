@@ -4,6 +4,7 @@ export interface DataProviderResult {
   data?: object | string | boolean | number
   date: Date
   reason?: ProviderErrorReason | StaticText
+  hideSubmitError?: boolean
   status: 'failure' | 'success'
   statusCode?: number
 }
@@ -20,4 +21,5 @@ export interface SuccessfulDataProviderResult extends DataProviderResult {
 export interface ProviderErrorReason {
   title: StaticText
   summary: StaticText
+  hideSubmitError?: boolean
 }
