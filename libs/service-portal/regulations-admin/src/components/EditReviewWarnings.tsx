@@ -8,7 +8,6 @@ import { isDraftErrorFree } from '../state/validations'
 import { Step } from '../types'
 import { useLocale } from '@island.is/localization'
 import { getEditUrl } from '../utils/routing'
-import { appendix } from './Appendixes.css'
 
 type ReviewMessage = {
   label: string
@@ -167,16 +166,14 @@ export const JumpToStep = (props: { step: Step; label: string }) => {
   const jumpLabel = t(reviewMessagse.jumpToStepButton)
 
   return (
-    <div>
-      <Button
-        variant="text"
-        size="small"
-        onClick={() => history.push(getEditUrl(props.step))}
-        aria-label={jumpLabel + ': ' + props.label}
-      >
-        {jumpLabel}
-      </Button>
-    </div>
+    <Button
+      variant="text"
+      size="small"
+      onClick={() => history.push(getEditUrl(props.step))}
+      aria-label={jumpLabel + ': ' + props.label}
+    >
+      {jumpLabel}
+    </Button>
   )
 }
 
@@ -207,10 +204,9 @@ export const EditReviewWarnings = (props: EditReviewWarningsProps) => {
             type="error"
             title={m.label}
             message={
-              <>
-                <JumpToStep step={m.step} label={m.label} />
-                {m.error}
-              </>
+              <div>
+                {m.error}. <JumpToStep step={m.step} label={m.label} />
+              </div>
             }
           />
         </Box>
