@@ -6,6 +6,7 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
+  SharedDataProviders,
 } from '@island.is/application/core'
 import { DataProtectionComplaintSchema } from './dataSchema'
 import { application } from './messages'
@@ -48,6 +49,13 @@ const DataProtectionComplaintTemplate: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
+              api: [
+                {
+                  ...SharedDataProviders.userProfileProvider,
+                  useMockData: true,
+                },
+                SharedDataProviders.nationalRegistryProvider,
+              ],
             },
           ],
         },

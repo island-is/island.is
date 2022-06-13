@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import {
   ApplicationTypes,
   PerformActionResult,
@@ -30,6 +30,8 @@ import {
 import { SharedDataProviderService, SharedServiceType } from './shared'
 import { ProblemError } from '@island.is/nest/problem'
 import { ProblemType } from '@island.is/shared/problem'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 
 interface ApplicationApiAction {
   templateId: string
@@ -41,6 +43,7 @@ interface ApplicationApiAction {
 @Injectable()
 export class TemplateAPIService {
   constructor(
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedServicesProvider: SharedDataProviderService,
     private readonly parentalLeaveService: ParentalLeaveService,
     private readonly referenceTemplateService: ReferenceTemplateService,
@@ -63,7 +66,9 @@ export class TemplateAPIService {
     private readonly mortgageCertificateSubmissionService: MortgageCertificateSubmissionService,
     private readonly financialAidService: FinancialAidService,
     private readonly drivingSchoolConfirmationService: DrivingSchoolConfirmationService,
-  ) {}
+  ) {
+    this.logger = logger.child({ context: 'TemplateAPIService' })
+  }
 
   private async tryRunningActionOnService(
     service:
@@ -107,10 +112,11 @@ export class TemplateAPIService {
           response,
         }
       } catch (e) {
+        this.logger.error(e)
         return {
           success: false,
           error: (e as Error).message,
-          problemType: (e as ProblemError).problem.type,
+          problemType: (e as ProblemError)?.problem?.type,
         }
       }
     }

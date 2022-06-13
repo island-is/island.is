@@ -530,7 +530,6 @@ export class ApplicationController {
       )
 
       if (found) {
-        console.log({ found })
         listOfProviders.push(found)
       } else {
         throw new BadRequestException(

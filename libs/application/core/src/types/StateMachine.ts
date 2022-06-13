@@ -82,6 +82,8 @@ export interface ApplicationTemplateAPIAction {
   errorReasonHandler?: (
     result: PerformActionResult,
   ) => ErrorReasonException | void
+
+  params?: { [key: string]: unknown }
 }
 
 export interface ErrorReasonException {

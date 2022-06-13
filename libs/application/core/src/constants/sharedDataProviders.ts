@@ -1,5 +1,6 @@
 import { ProblemType } from '@island.is/shared/problem'
 import { Application } from '../types/Application'
+import { NationalRegistryUser } from '../types/data-provider-models/NationalRegistryUser'
 import { ApplicationTemplateAPIAction } from '../types/StateMachine'
 import { PerformActionResult } from '../types/TemplateApiModuleTypes'
 
@@ -25,7 +26,7 @@ export const SharedDataProviders = {
             city: 'Reykjavík',
             postalCode: '111',
           },
-        },
+        } as NationalRegistryUser,
         success: true,
       }
     },

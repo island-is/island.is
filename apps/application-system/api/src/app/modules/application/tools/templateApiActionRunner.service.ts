@@ -40,6 +40,7 @@ export class TemplateApiActionRunner {
     actions: ApplicationTemplateAPIAction[],
     auth: User,
   ): Promise<ApplicationWithAttachments> {
+    console.log({ actions })
     this.application = application
     this.auth = auth
     this.oldExternalData = application.externalData
@@ -112,14 +113,22 @@ export class TemplateApiActionRunner {
   }
 
   async callProvider(action: ApplicationTemplateAPIAction) {
-    const { apiModuleAction, externalDataId, mockData, namespace } = action
+    const {
+      apiModuleAction,
+      externalDataId,
+      mockData,
+      namespace,
+      params,
+    } = action
     let actionResult: PerformActionResult | undefined
 
     const useMocks =
       typeof action.useMockData === 'function'
         ? action.useMockData(this.application)
         : action.useMockData === true
-
+    console.log(
+      `apiModuleAction: ${apiModuleAction}, params ${JSON.stringify(params)}`,
+    )
     if (useMocks) {
       actionResult =
         typeof mockData === 'function' ? mockData(this.application) : mockData
@@ -131,6 +140,7 @@ export class TemplateApiActionRunner {
         props: {
           application: this.application,
           auth: this.auth,
+          params,
         },
       })
     }

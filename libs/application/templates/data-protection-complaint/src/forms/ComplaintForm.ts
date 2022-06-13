@@ -14,6 +14,7 @@ import {
   Form,
   FormModes,
   FormValue,
+  SharedDataProviders,
 } from '@island.is/application/core'
 import { DataProtectionComplaint, OnBehalf } from '../lib/dataSchema'
 import {
@@ -50,13 +51,13 @@ export const ComplaintForm: Form = buildForm({
           dataProviders: [
             buildDataProviderItem({
               id: 'nationalRegistry',
-              type: 'NationalRegistryProvider',
+              provider: SharedDataProviders.nationalRegistryProvider,
               title: externalData.labels.nationalRegistryTitle,
               subTitle: externalData.labels.nationalRegistrySubTitle,
             }),
             buildDataProviderItem({
               id: 'userProfile',
-              type: 'UserProfileProvider',
+              provider: SharedDataProviders.userProfileProvider,
               title: externalData.labels.userProfileTitle,
               subTitle: externalData.labels.userProfileSubTitle,
             }),
