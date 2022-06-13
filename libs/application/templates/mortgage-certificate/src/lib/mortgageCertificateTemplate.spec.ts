@@ -22,6 +22,7 @@ function buildApplication(
     assignees: [],
     applicant: MOCK_APPLICANT_NATIONAL_ID,
     typeId: ApplicationTypes.MORTGAGE_CERTIFICATE,
+    applicantActors: [],
     created: new Date(),
     modified: new Date(),
     answers: {},

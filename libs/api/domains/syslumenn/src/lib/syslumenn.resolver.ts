@@ -56,7 +56,6 @@ export class SyslumennResolver {
   }
 
   @Query(() => CertificateInfoResponse)
-  @Scopes(ApiScope.internal)
   getSyslumennCertificateInfo(
     @CurrentUser() user: User,
   ): Promise<CertificateInfoResponse | null> {
