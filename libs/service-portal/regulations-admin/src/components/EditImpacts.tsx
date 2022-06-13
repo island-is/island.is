@@ -195,7 +195,7 @@ export const EditImpacts = () => {
           <Text variant="h4" as="h4" marginBottom={[2, 2, 3, 4]}>
             {t(impactMsgs.chooseType)}
           </Text>
-          {!selRegOption.migrated ? (
+          {!selRegOption.migrated && selRegOption.value !== 'self' ? (
             <Inline align="center">
               <h3>
                 Villa:{' '}
