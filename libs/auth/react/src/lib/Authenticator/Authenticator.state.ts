@@ -49,7 +49,7 @@ const formatUser = (payload: User): User | null => {
     scopes: payload.scopes || [],
     profile: {
       ...payload.profile,
-      dateOfBirth: dateOfBirth,
+      dateOfBirth,
     },
   }
 }
