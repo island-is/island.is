@@ -167,9 +167,7 @@ const ModifyDatesModal: React.FC<Props> = ({
     user?.role,
   )
 
-  const [modificationConfirmedText, setModificationConfirmedText] = useState<
-    string | undefined
-  >(undefined)
+  const [successText, setSuccessText] = useState<string | undefined>(undefined)
 
   const handleDateModification = useCallback(async () => {
     if (!caseModifiedExplanation) return
@@ -198,7 +196,7 @@ const ModifyDatesModal: React.FC<Props> = ({
     }
 
     onSubmit(update)
-    setModificationConfirmedText(modificationSuccessText)
+    setSuccessText(modificationSuccessText)
   }, [
     caseModifiedExplanation,
     workingCase.caseModifiedExplanation,
@@ -297,7 +295,7 @@ const ModifyDatesModal: React.FC<Props> = ({
     }
   }
 
-  return modificationConfirmedText ? (
+  return successText ? (
     <motion.div
       key="dateModifyingModalSuccess"
       data-testid="dateModifyingModalSuccess"
@@ -310,14 +308,14 @@ const ModifyDatesModal: React.FC<Props> = ({
         title={formatMessage(m.sections.modifyDatesModal.successTitleV2, {
           caseType: workingCase.type,
         })}
-        text={modificationConfirmedText}
+        text={successText}
         secondaryButtonText={formatMessage(
           m.sections.modifyDatesModal.secondaryButtonTextSuccess,
         )}
         handleSecondaryButtonClick={() => {
           setCaseModifiedExplanation(undefined)
           setIsModifyingDates(false)
-          setModificationConfirmedText(undefined)
+          setSuccessText(undefined)
         }}
       />
     </motion.div>
