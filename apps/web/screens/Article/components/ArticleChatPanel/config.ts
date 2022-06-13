@@ -56,6 +56,23 @@ const setupOneScreenWatsonChatBot = (
 }
 
 export const watsonConfig: Record<string, WatsonChatPanelProps> = {
+  // Evrópska sjúkratryggingarkortið
+  // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/1AKWfq2dh9YnEyiG1yNeR8
+  '1AKWfq2dh9YnEyiG1yNeR8': {
+    integrationID: 'b1a80e76-da12-4333-8872-936b08246eaa',
+    region: 'eu-gb',
+    serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+    showLauncher: false,
+    carbonTheme: 'g10',
+    namespaceKey: 'default',
+    onLoad: (instance) =>
+      setupOneScreenWatsonChatBot(
+        instance,
+        'eusjukratryggingakort',
+        'b1a80e76-da12-4333-8872-936b08246eaa',
+      ),
+  },
+
   // Rafræn skilríki
   // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/4lkmXszsB5q5kJkXqhW5Ex
   '4lkmXszsB5q5kJkXqhW5Ex': {
