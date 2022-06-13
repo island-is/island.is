@@ -19,7 +19,6 @@ import { cleanTitle } from '@island.is/regulations-tools/cleanTitle'
 export const EditBasics = () => {
   const t = useLocale().formatMessage
   const { draft, actions } = useDraftingState()
-  const [pristineTitle, setPristineTitle] = useState(true)
 
   const { text, appendixes } = draft
   const { updateState } = actions
@@ -34,7 +33,7 @@ export const EditBasics = () => {
   return (
     <>
       <Box marginBottom={3}>
-        {!draft.title.value && pristineTitle && (
+        {!draft.title.value && (
           <Box className={s.shortcuts} marginBottom={[2, 2, 3]}>
             Flýtileiðir:
             <Box className={s.shortcutsButton}>
@@ -77,10 +76,11 @@ export const EditBasics = () => {
           label={t(msg.title)}
           name="title"
           defaultValue={draft.title.value}
+          value={draft.title.value}
+          onChange={(value) => {
+            updateState('title', value)
+          }}
           onBlur={(value) => {
-            if (pristineTitle) {
-              setPristineTitle(false)
-            }
             updateState('title', cleanTitle(value))
           }}
           error={
@@ -115,7 +115,7 @@ export const EditBasics = () => {
               <Divider />
               {' '}
             </Box>
-            {draft.signedDocumentUrl && (
+            {draft.signedDocumentUrl.value && (
               <Box marginBottom={[4, 4, 6]}>
                 <EditorInput
                   label={t(msg.signatureText)}

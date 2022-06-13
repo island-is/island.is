@@ -213,6 +213,10 @@ const useMakeDraftingState = (inputs: StateInputs) => {
         dispatch({ type: 'APPENDIX_MOVE_UP', idx })
       },
 
+      moveAppendixDown: (idx: number) => {
+        dispatch({ type: 'APPENDIX_MOVE_DOWN', idx })
+      },
+
       addAppendix: () => {
         dispatch({ type: 'APPENDIX_ADD' })
       },

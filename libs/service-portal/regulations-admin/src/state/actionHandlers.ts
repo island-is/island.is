@@ -99,6 +99,17 @@ export const actionHandlers: {
     }
   },
 
+  APPENDIX_MOVE_DOWN: (state, { idx }) => {
+    const nextIdx = idx + 1
+    const { appendixes } = state.draft
+    const appendix = appendixes[idx]
+    const nextAppendix = appendixes[nextIdx]
+    if (appendix && nextAppendix) {
+      appendixes[nextIdx] = appendix
+      appendixes[idx] = nextAppendix
+    }
+  },
+
   UPDATE_LAWCHAPTER_PROP: (state, { action, value }) => {
     const lawChaptersField = state.draft.lawChapters
     const lawChapters = lawChaptersField.value

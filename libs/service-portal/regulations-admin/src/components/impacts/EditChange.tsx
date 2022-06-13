@@ -209,6 +209,22 @@ export const EditChange = (props: EditChangeProp) => {
       }
     },
 
+    moveAppendixDown: (idx: number) => {
+      const appendixes = activeChange.appendixes
+      const nextIdx = idx + 1
+      const appendix = appendixes[idx]
+      const nextAppendix = appendixes[nextIdx]
+      if (appendix && nextAppendix) {
+        appendixes[nextIdx] = appendix
+        appendixes[idx] = nextAppendix
+
+        setActiveChange({
+          ...activeChange,
+          appendixes: appendixes,
+        })
+      }
+    },
+
     setAppendixProp: <Prop extends AppendixFormSimpleProps>(
       idx: number,
       name: Prop,

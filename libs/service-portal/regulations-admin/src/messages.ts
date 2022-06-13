@@ -119,9 +119,17 @@ export const editorMsgs = defineMessages({
     id: 'ap.regulations-admin:draft-btn-appendix-shiftup',
     defaultMessage: 'Færa viðauka {idx} framar í röðinni',
   },
+  appendix_shiftdown: {
+    id: 'ap.regulations-admin:draft-btn-appendix-shiftdown',
+    defaultMessage: 'Færa viðauka {idx} neðar í röðinni',
+  },
   appendix_shiftup_short: {
     id: 'ap.regulations-admin:draft-btn-appendix-shiftup-short',
     defaultMessage: 'Færa upp',
+  },
+  appendix_shiftdown_short: {
+    id: 'ap.regulations-admin:draft-btn-appendix-shiftdown-short',
+    defaultMessage: 'Færa niður',
   },
 
   comments: {

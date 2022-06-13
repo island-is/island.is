@@ -231,6 +231,10 @@ export type Action =
       idx: number
     }
   | {
+      type: 'APPENDIX_MOVE_DOWN'
+      idx: number
+    }
+  | {
       type: 'APPENDIX_DELETE'
       idx: number
     }

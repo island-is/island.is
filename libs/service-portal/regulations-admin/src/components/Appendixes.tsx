@@ -24,6 +24,7 @@ type AppendixEditingProps = {
   baseAppendix?: Appendix
   idx: number
   moveUpable: boolean
+  moveDownable: boolean
   isImpact: boolean
 } & Pick<AppendixesProps, 'actions' | 'draftId'>
 
@@ -32,6 +33,7 @@ const AppendixEditing = (props: AppendixEditingProps) => {
     appendix,
     baseAppendix,
     moveUpable,
+    moveDownable,
     idx,
     actions,
     draftId,
@@ -80,6 +82,7 @@ const AppendixEditing = (props: AppendixEditingProps) => {
       actions.setAppendixProp(idx, 'title', defaultTitle)
     }
   }
+  handleFocus()
 
   return (
     <AccordionItem
@@ -148,6 +151,20 @@ const AppendixEditing = (props: AppendixEditingProps) => {
                 {t(msg.appendix_shiftup_short)}
               </Button>
             )}{' '}
+            {moveDownable && (
+              <Button
+                size="small"
+                variant="text"
+                preTextIcon="arrowDown"
+                // circle
+                // variant="ghost"
+                // icon="arrowUp"
+                onClick={() => actions.moveAppendixDown(idx)}
+                title={t(msg.appendix_shiftdown, { idx: idx + 1 })}
+              >
+                {t(msg.appendix_shiftdown_short)}
+              </Button>
+            )}{' '}
             <Button
               size="small"
               variant="text"
@@ -191,6 +208,7 @@ type AppendixesProps = {
     | 'deleteAppendix'
     | 'revokeAppendix'
     | 'moveAppendixUp'
+    | 'moveAppendixDown'
   >
 }
 
@@ -202,7 +220,7 @@ export const Appendixes = (props: AppendixesProps) => {
 
   return (
     <>
-      {props.appendixes.length > 0 && (
+      {appendixes.length > 0 && (
         <Accordion singleExpand={false} dividerOnTop={false}>
           {appendixes.map((appendix, i) => {
             const baseAppendix = baseAppendixes[i]
@@ -223,6 +241,7 @@ export const Appendixes = (props: AppendixesProps) => {
                 actions={actions}
                 draftId={draftId}
                 moveUpable={i > 0 && !baseAppendixes[i - 1]}
+                moveDownable={i !== appendixes.length - 1}
                 isImpact={isImpact}
               />
             )
