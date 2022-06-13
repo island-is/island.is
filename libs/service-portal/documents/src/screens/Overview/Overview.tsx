@@ -27,11 +27,11 @@ import {
 } from '@island.is/service-portal/core'
 import { Document, Query } from '@island.is/api/schema'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { defineMessage } from 'react-intl'
 import { documentsSearchDocumentsInitialized } from '@island.is/plausible'
 import { useLocation } from 'react-router-dom'
 import { GET_ORGANIZATIONS_QUERY } from '@island.is/service-portal/graphql'
 import { m } from '@island.is/service-portal/core'
+import { messages } from '../../utils/messages'
 import DocumentLine from '../../components/DocumentLine/DocumentLine'
 import getOrganizationLogoUrl from '../../utils/getOrganizationLogoUrl'
 import HeaderArrow from '../../components/HeaderArrow/HeaderArrow'
@@ -302,14 +302,8 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   const documentsFoundText = () =>
     filteredDocuments.length === 1 ||
     (lang === 'is' && filteredDocuments.length % 10 === 1)
-      ? defineMessage({
-          id: 'sp.documents:found-singular',
-          defaultMessage: 'skjal fannst',
-        })
-      : defineMessage({
-          id: 'sp.documents:found',
-          defaultMessage: 'skjöl fundust',
-        })
+      ? messages.foundSingular
+      : messages.found
 
   const { data: orgData } = useQuery(GET_ORGANIZATIONS_QUERY)
   const organizations = orgData?.getOrganizations?.items || {}
@@ -318,20 +312,11 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
     <Box marginBottom={[4, 4, 6, 10]}>
       <Stack space={3}>
         <Text variant="h3" as="h1">
-          {formatMessage({
-            id: 'sp.documents:title',
-            defaultMessage: 'Pósthólf',
-          })}
+          {formatMessage(messages.title)}
         </Text>
         <Columns collapseBelow="sm">
           <Column width="7/12">
-            <Text variant="default">
-              {formatMessage({
-                id: 'sp.documents:intro',
-                defaultMessage:
-                  'Hér getur þú fundið skjöl sem send hafa verið til þín frá opinberum aðilum.',
-              })}
-            </Text>
+            <Text variant="default">{formatMessage(messages.intro)}</Text>
           </Column>
         </Columns>
         <Box marginTop={[1, 1, 2, 2, 6]}>
@@ -339,22 +324,10 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
             resultCount={0}
             variant="popover"
             align="right"
-            labelClear={formatMessage({
-              id: 'sp.documents:clear-filter',
-              defaultMessage: 'Hreinsa síu',
-            })}
-            labelClearAll={formatMessage({
-              id: 'sp.documents:clear-all-filter',
-              defaultMessage: 'Hreinsa allar síur',
-            })}
-            labelOpen={formatMessage({
-              id: 'sp.documents:open-filter',
-              defaultMessage: 'Opna síu',
-            })}
-            labelClose={formatMessage({
-              id: 'sp.documents:close-filter',
-              defaultMessage: 'Loka síu',
-            })}
+            labelClear={formatMessage(messages.clearFilter)}
+            labelClearAll={formatMessage(messages.clearAllFilters)}
+            labelOpen={formatMessage(messages.openFilter)}
+            labelClose={formatMessage(messages.closeFilter)}
             filterInput={
               <FilterInput
                 placeholder={formatMessage(m.searchPlaceholder)}
@@ -376,10 +349,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
               <Box paddingY={3}>
                 <Checkbox
                   id="show-unread"
-                  label={formatMessage({
-                    id: 'sp.documents:only-show-unread',
-                    defaultMessage: 'Sýna einungis ólesið',
-                  })}
+                  label={formatMessage(messages.onlyShowUnread)}
                   checked={filterValue.showUnread}
                   onChange={handleShowUnread}
                 />
@@ -391,10 +361,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
               />
             </Box>
             <FilterMultiChoice
-              labelClear={formatMessage({
-                id: 'sp.documents:clear-selected',
-                defaultMessage: 'Hreinsa val',
-              })}
+              labelClear={formatMessage(messages.clearSelected)}
               singleExpand={false}
               onChange={({ categoryId, selected }) => {
                 if (categoryId === 'institution') {
@@ -422,10 +389,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                 [
                   {
                     id: 'institution',
-                    label: formatMessage({
-                      id: 'sp.documents:institution-label',
-                      defaultMessage: 'Stofnun',
-                    }),
+                    label: formatMessage(messages.institutionLabel),
                     selected: [...filterValue.activeCategories],
                     filters: categories,
                     inline: false,
@@ -433,10 +397,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                   },
                   {
                     id: 'group',
-                    label: formatMessage({
-                      id: 'sp.documents:group-label',
-                      defaultMessage: 'Flokkur',
-                    }),
+                    label: formatMessage(messages.groupLabel),
                     selected: [...filterValue.activeGroups],
                     filters: Array.isArray(groupsAvailable)
                       ? groupsAvailable
@@ -462,24 +423,15 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                   <AccordionItem
                     key="date-accordion-item"
                     id="date-accordion-item"
-                    label={formatMessage({
-                      id: 'sp.documents:dates-label',
-                      defaultMessage: 'Dagsetningar',
-                    })}
+                    label={formatMessage(messages.datesLabel)}
                     labelUse="h5"
                     labelVariant="h5"
                     iconVariant="small"
                   >
                     <Box display="flex" flexDirection="column">
                       <DatePicker
-                        label={formatMessage({
-                          id: 'sp.documents:datepicker-dateFrom-label',
-                          defaultMessage: 'Dagsetning frá',
-                        })}
-                        placeholderText={formatMessage({
-                          id: 'sp.documents:datepicker-dateFrom-placeholder',
-                          defaultMessage: 'Veldu dagsetningu',
-                        })}
+                        label={formatMessage(messages.datepickerFromLabel)}
+                        placeholderText={formatMessage(messages.datepickLabel)}
                         locale="is"
                         backgroundColor="blue"
                         size="xs"
@@ -488,14 +440,10 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                       />
                       <Box marginTop={3}>
                         <DatePicker
-                          label={formatMessage({
-                            id: 'sp.documents:datepicker-dateTo-label',
-                            defaultMessage: 'Dagsetning til',
-                          })}
-                          placeholderText={formatMessage({
-                            id: 'sp.documents:datepicker-dateTo-placeholder',
-                            defaultMessage: 'Veldu dagsetningu',
-                          })}
+                          label={formatMessage(messages.datepickerToLabel)}
+                          placeholderText={formatMessage(
+                            messages.datepickLabel,
+                          )}
                           locale="is"
                           backgroundColor="blue"
                           size="xs"
@@ -523,10 +471,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                   } ${formatMessage(documentsFoundText())}`}</Text>
                   <div>
                     <Button variant="text" onClick={handleClearFilters}>
-                      {formatMessage({
-                        id: 'sp.documents:clear-filters',
-                        defaultMessage: 'Hreinsa filter',
-                      })}
+                      {formatMessage(messages.clearAllFilters)}
                     </Button>
                   </div>
                 </Box>
@@ -546,10 +491,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                       <HeaderArrow
                         active={sortState?.key === 'date'}
                         direction={sortState?.direction}
-                        title={formatMessage({
-                          id: 'sp.documents:table-header-date',
-                          defaultMessage: 'Dagsetning',
-                        })}
+                        title={formatMessage(messages.tableHeaderDate)}
                         onClick={() =>
                           setSortState({
                             direction: getSortDirection(sortState?.direction),
@@ -564,10 +506,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                       <HeaderArrow
                         active={sortState?.key === 'subject'}
                         direction={sortState?.direction}
-                        title={formatMessage({
-                          id: 'sp.documents:table-header-information',
-                          defaultMessage: 'Upplýsingar',
-                        })}
+                        title={formatMessage(messages.tableHeaderInformation)}
                         onClick={() =>
                           setSortState({
                             direction: getSortDirection(sortState?.direction),
@@ -582,10 +521,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                       <HeaderArrow
                         active={sortState?.key === 'senderName'}
                         direction={sortState?.direction}
-                        title={formatMessage({
-                          id: 'sp.documents:table-header-institution',
-                          defaultMessage: 'Stofnun',
-                        })}
+                        title={formatMessage(messages.tableHeaderInstitution)}
                         onClick={() =>
                           setSortState({
                             direction: getSortDirection(sortState?.direction),
@@ -606,22 +542,14 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
             {!loading && !error && filteredDocuments?.length === 0 && (
               <Box display="flex" justifyContent="center" margin={[3, 3, 3, 6]}>
                 <Text variant="h3" as="h3">
-                  {formatMessage({
-                    id: 'sp.documents:not-found',
-                    defaultMessage:
-                      'Engin skjöl fundust fyrir gefin leitarskilyrði.',
-                  })}
+                  {formatMessage(messages.notFound)}
                 </Text>
               </Box>
             )}
             {error && (
               <Box display="flex" justifyContent="center" margin={[3, 3, 3, 6]}>
                 <Text variant="h3" as="h3">
-                  {formatMessage({
-                    id: 'sp.documents:error',
-                    defaultMessage:
-                      'Tókst ekki að sækja rafræn skjöl, eitthvað fór úrskeiðis.',
-                  })}
+                  {formatMessage(messages.error)}
                 </Text>
               </Box>
             )}
