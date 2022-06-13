@@ -16,6 +16,7 @@ import {
   useVerifySms,
   useUpdateOrCreateUserProfile,
   useDeleteIslykillValue,
+  useUserProfile,
 } from '@island.is/service-portal/graphql'
 import { sharedMessages } from '@island.is/shared/translations'
 import { parseFullNumber } from '../../../../../utils/phoneHelper'
@@ -52,6 +53,7 @@ export const InputPhone: FC<Props> = ({
   } = useDeleteIslykillValue()
   const { formatMessage } = useLocale()
   const { createSmsVerification, createLoading } = useVerifySms()
+  const { refetch, loading: fetchLoading } = useUserProfile()
   const [telInternal, setTelInternal] = useState(mobile)
   const [telToVerify, setTelToVerify] = useState(mobile)
 
@@ -159,9 +161,11 @@ export const InputPhone: FC<Props> = ({
       await deleteIslykillValue({
         mobilePhoneNumber: true,
       })
+      await refetch()
 
       setVerificationValid(true)
       setInputPristine(true)
+      setTelInternal(undefined)
       setErrors({ ...formErrors, code: undefined })
     } catch (err) {
       setErrors({ ...formErrors, code: emailError })
@@ -249,7 +253,7 @@ export const InputPhone: FC<Props> = ({
             flexDirection="column"
             paddingTop={2}
           >
-            {!createLoading && !deleteLoading && (
+            {!createLoading && !deleteLoading && !fetchLoading && (
               <>
                 {telVerifyCreated ? (
                   <FormButton
@@ -289,7 +293,9 @@ export const InputPhone: FC<Props> = ({
                 )}
               </>
             )}
-            {(createLoading || deleteLoading) && <LoadingDots />}
+            {(createLoading || deleteLoading || fetchLoading) && (
+              <LoadingDots />
+            )}
           </Box>
         </Box>
       </form>

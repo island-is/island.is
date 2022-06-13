@@ -6,6 +6,8 @@ import { processAggregationQuery } from './processAggregation'
 
 const getBoostForType = (type: string, defaultBoost: string | number = 1) => {
   if (type === 'webArticle') {
+    // The number 55 was chosen since it was the threshold between the highest scoring news and the highest scoring article in search results
+    // The test that determined this boost was to type in "Umsókn um fæðingarorlof" and compare the news and article scores
     return 55
   }
   return defaultBoost
