@@ -16,6 +16,7 @@ export enum Features {
   accidentNotification = 'isAccidentNotificationEnabled',
   drivingInstructorRegistrations = 'isDrivingInstructorRegistrationsEnabled',
   drivingSchoolConfirmations = 'isDrivingSchoolConfirmationsEnabled',
+  passportApplication = 'isPassportApplicationEnabled',
   financialStatementInao = 'financialStatementInao',
 
   // Application System Delegations active
