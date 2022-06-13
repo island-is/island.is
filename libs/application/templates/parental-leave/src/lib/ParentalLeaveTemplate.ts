@@ -55,8 +55,6 @@ enum Roles {
   ORGINISATION_REVIEWER = 'vmst',
 }
 
-const VMST_ID = process.env.VMST_ID ?? ''
-
 const ParentalLeaveTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
@@ -825,6 +823,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       }),
       assignToVMST: assign((context) => {
         const { application } = context
+        const VMST_ID = process.env.VMST_ID ?? ''
 
         set(application, 'assignees', [VMST_ID])
 

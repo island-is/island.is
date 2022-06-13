@@ -17,6 +17,8 @@ import {
   YES,
 } from '../constants'
 
+import { createNationalId } from '@island.is/testing/fixtures'
+
 function buildApplication(data: {
   answers?: FormValue
   externalData?: ExternalData
@@ -157,6 +159,7 @@ describe('Parental Leave Application Template', () => {
 
     it('should assign the application to the other parent approval and then to VMST when the applicant is self employed', () => {
       const otherParentId = '0987654321'
+      process.env.VMST_ID = createNationalId('company')
 
       const helper = new ApplicationTemplateHelper(
         buildApplication({
@@ -186,14 +189,19 @@ describe('Parental Leave Application Template', () => {
         newApplication,
         ParentalLeaveTemplate,
       )
-      const [hasChangedAgain, finalState] = finalHelper.changeState({
+
+      const VMST_ID = process.env.VMST_ID
+      const [
+        hasChangedAgain,
+        finalState,
+        finalApplication,
+      ] = finalHelper.changeState({
         type: DefaultEvents.APPROVE,
       })
 
       expect(hasChangedAgain).toBe(true)
       expect(finalState).toBe('vinnumalastofnunApproval')
-      // TODO: rewrite when there is a way to test VMST ID
-      // expect(finalApplication.assignees)).toEqual([VMST_ID])
+      expect(finalApplication.assignees).toEqual([VMST_ID])
     })
 
     describe('other parent', () => {
