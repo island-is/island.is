@@ -35,7 +35,6 @@ export class NationalRegistryProvider extends BasicDataProvider {
 
     return this.useGraphqlGateway(query).then(async (res: Response) => {
       const response = await res.json()
-      return Promise.reject({})
       if (response.errors) {
         console.error(
           `graphql error in ${this.type}: ${response.errors[0].message}`,

@@ -30,7 +30,6 @@ export function hideSubmitErrorExternalData(
   externalData: ExternalData,
   dataProviders: DataProviderItem[],
 ): boolean {
-  console.log(externalData)
   for (let i = 0; i < dataProviders.length; i++) {
     const { id } = dataProviders[i]
     const dataProviderResult = externalData[id]
