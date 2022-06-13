@@ -21,7 +21,7 @@ export const getFileRecipientName = (
     return ''
   }
   const { estateMembers } = answers
-  const estateMember = estateMembers?.find(
+  const estateMember = estateMembers?.members.find(
     (estateMember) => estateMember.nationalId === recipient,
   )
   return estateMember?.name || answers.applicantName.toString()

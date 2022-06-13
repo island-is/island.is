@@ -4,36 +4,24 @@ import type { Logger } from '@island.is/logging'
 import { TemplateApiModuleActionProps } from '../../../types'
 import {
   DataUploadResponse,
-  EstateRegistrant,
   Person,
   PersonType,
   SyslumennService,
 } from '@island.is/clients/syslumenn'
-import { Answers as aodAnswers } from '@island.is/application/templates/announcement-of-death/types'
-import { FasteignirApi } from '@island.is/clients/assets'
+import {
+  Answers as aodAnswers,
+  OtherPropertiesEnum,
+} from '@island.is/application/templates/announcement-of-death/types'
 import { NationalRegistry, RoleConfirmationEnum, PickRole } from './types'
-import { SharedTemplateApiService } from '../../shared'
-import { EinstaklingarApi } from '@island.is/clients/national-registry-v2'
 import { baseMapper } from './announcement-of-death-utils'
 
 import { isPerson } from 'kennitala'
-
-const UPDATE_APPLICATION = `
-mutation UpdateApplication($input: UpdateApplicationInput!) {
-  updateApplication(input: $input) {
-    id
-  }
-}
-`
 
 @Injectable()
 export class AnnouncementOfDeathService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
-    private readonly nationalRegistryPersonApi: EinstaklingarApi,
     private readonly syslumennService: SyslumennService,
-    private readonly sharedTemplateAPIService: SharedTemplateApiService,
-    private readonly fasteignirApi: FasteignirApi,
   ) {}
 
   async syslumennOnEntry({ application, auth }: TemplateApiModuleActionProps) {
@@ -50,10 +38,16 @@ export class AnnouncementOfDeathService {
       }
     }
 
-    // TODO IMPORTANT: Address edge cases for multiple deceased familiy members in
-    //                 the next iteration before feature flag is lifted
-    if (estates.length === 1) {
-      await this.updateEstateAnswer({ application, auth }, estates[0])
+    for (const estate in estates) {
+      estates[estate].assets = estates[estate].assets.map(baseMapper)
+      estates[estate].vehicles = [
+        ...estates[estate].vehicles,
+        ...estates[estate].ships,
+        ...estates[estate].flyers,
+      ].map(baseMapper)
+      estates[estate].estateMembers = estates[estate].estateMembers.map(
+        baseMapper,
+      )
     }
 
     const relationOptions = (await this.syslumennService.getEstateRelations())
@@ -61,47 +55,8 @@ export class AnnouncementOfDeathService {
 
     return {
       success: true,
-      estates,
+      estate: estates[0], // TODO: selector will be implemented in next iteration
       relationOptions,
-    }
-  }
-
-  async updateEstateAnswer(
-    { application, auth }: TemplateApiModuleActionProps,
-    estate: EstateRegistrant,
-  ) {
-    // Mark answer state
-    estate.assets = estate.assets.map(baseMapper)
-    estate.vehicles = [
-      ...estate.vehicles,
-      ...estate.ships,
-      ...estate.flyers,
-    ].map(baseMapper)
-    estate.estateMembers = estate.estateMembers.map(baseMapper)
-
-    // TODO: Move this to some other function that happens on a transition from
-    // a selection of a deceased relative.
-    // That is: if multiple deceased relatives exist have some selection.
-    // OR: think about a way to select from the mapper.
-    const updatedAnswers = {
-      ...application.answers,
-      ...estate,
-    }
-
-    const updateApplicationResponse = await this.sharedTemplateAPIService
-      .makeGraphqlQuery(auth.authorization, UPDATE_APPLICATION, {
-        input: {
-          id: application.id,
-          answers: updatedAnswers,
-        },
-      })
-      .then((response) => response.json())
-
-    if ('errors' in updateApplicationResponse) {
-      this.logger.error(
-        'Failed to insert Syslumenn Data into answers',
-        updateApplicationResponse,
-      )
     }
   }
 
@@ -121,7 +76,7 @@ export class AnnouncementOfDeathService {
     const changeEstateParams = {
       from: application.applicant,
       to: electPersonNationalId,
-      caseNumber: syslumennOnEntryData?.data?.malsnumer ?? '',
+      caseNumber: syslumennOnEntryData?.data?.estate?.caseNumber ?? '',
     }
     try {
       await this.syslumennService.changeEstateRegistrant(
@@ -186,6 +141,8 @@ export class AnnouncementOfDeathService {
 
       const answers = (application.answers as unknown) as aodAnswers
 
+      const otherProperties = answers?.otherProperties ?? []
+
       const extraData = {
         caseNumber: answers.caseNumber,
         notifier: JSON.stringify({
@@ -196,13 +153,29 @@ export class AnnouncementOfDeathService {
           relation: answers.applicantRelation,
         }),
         knowledgeOfOtherWill: answers.knowledgeOfOtherWills,
-        estateMembers: JSON.stringify(answers.estateMembers),
-        assets: JSON.stringify(answers.assets),
-        vehicles: JSON.stringify(answers.vehicles),
-        bankcodeSecuritiesOrShares: answers.bankStockOrShares.toString(),
-        selfOperatedCompany: answers.ownBusinessManagement.toString(),
-        occupationRightViaCondominium: answers.occupationRightViaCondominium.toString(),
-        assetsAbroad: answers.assetsAbroad.toString(),
+        estateMembers: JSON.stringify(answers.estateMembers.members),
+        assets: JSON.stringify(answers.assets.assets),
+        vehicles: JSON.stringify(answers.vehicles.vehicles),
+        bankcodeSecuritiesOrShares: otherProperties.includes(
+          OtherPropertiesEnum.ACCOUNTS,
+        )
+          ? 'true'
+          : 'false',
+        selfOperatedCompany: otherProperties.includes(
+          OtherPropertiesEnum.OWN_BUSINESS,
+        )
+          ? 'true'
+          : 'false',
+        occupationRightViaCondominium: otherProperties.includes(
+          OtherPropertiesEnum.RESIDENCE,
+        )
+          ? 'true'
+          : 'false',
+        assetsAbroad: otherProperties.includes(
+          OtherPropertiesEnum.ASSETS_ABROAD,
+        )
+          ? 'true'
+          : 'false',
         districtCommissionerHasWill: answers.districtCommissionerHasWill.toString(),
         prenuptialAgreement: answers.marriageSettlement.toString(),
         certificateOfDeathAnnouncement: answers.certificateOfDeathAnnouncement,

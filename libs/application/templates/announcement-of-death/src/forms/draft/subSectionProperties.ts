@@ -28,6 +28,7 @@ export const subSectionProperties = buildSubSection({
           title: 'realEstateAndLandsRepeater',
           id: 'assets',
           component: 'RealEstateAndLandsRepeater',
+          childInputIds: ['assets.assets', 'assets.encountered'],
         }),
         buildDescriptionField({
           id: 'vehiclesTitle',
@@ -40,6 +41,7 @@ export const subSectionProperties = buildSubSection({
           title: 'Vehicles!',
           id: 'vehicles',
           component: 'VehiclesRepeater',
+          childInputIds: ['vehicles.vehicles', 'vehicles.encountered'],
         }),
         buildDescriptionField({
           id: 'otherPropertiesTitle',

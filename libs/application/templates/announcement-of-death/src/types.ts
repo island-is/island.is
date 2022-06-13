@@ -28,14 +28,20 @@ export type Answers = {
   applicantPhone: string
   applicantRelation: RelationEnum
   approveExternalData: true
-  assets: Asset[]
+  assets: {
+    assets: Asset[]
+    encountered?: boolean
+  }
   assetsAbroad: boolean
   authorizationForFuneralExpenses?: boolean
   bankStockOrShares: boolean
   caseNumber: string
   certificateOfDeathAnnouncement: string
   districtCommissionerHasWill: boolean
-  estateMembers: EstateMember[]
+  estateMembers: {
+    members: EstateMember[]
+    encountered?: boolean
+  }
   financesDataCollectionPermission?: boolean
   knowledgeOfOtherWills: 'yes' | 'no'
   marriageSettlement: boolean
@@ -43,7 +49,10 @@ export type Answers = {
   otherProperties: OtherPropertiesEnum
   ownBusinessManagement: boolean
   roleConfirmation: RoleConfirmationEnum
-  vehicles: Asset[]
+  vehicles: {
+    vehicles: Asset[]
+    encountered?: boolean
+  }
 } & FormValue
 
 export interface ElectPersonType {

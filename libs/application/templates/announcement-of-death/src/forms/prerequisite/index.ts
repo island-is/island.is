@@ -20,6 +20,7 @@ import CoatOfArms from '../../assets/CoatOfArms'
 import { sectionExistingApplication } from './sectionExistingApplication'
 import kennitala from 'kennitala'
 import format from 'date-fns/format'
+import { EstateRegistrant } from '@island.is/clients/syslumenn'
 
 export const prerequisite = (): Form => {
   return buildForm({
@@ -78,20 +79,40 @@ export const prerequisite = (): Form => {
             children: [
               buildKeyValueField({
                 label: m.deceasedName,
-                value: ({ answers }) => answers.nameOfDeceased as string,
+                value: ({
+                  externalData: {
+                    syslumennOnEntry: { data },
+                  },
+                }) =>
+                  (data as { estate: EstateRegistrant }).estate
+                    .nameOfDeceased as string,
                 colSpan: ['1/2', '1/2', '1/3'],
               }),
               buildKeyValueField({
                 label: m.deceasedNationalId,
-                value: ({ answers }) =>
-                  kennitala.format(answers.nationalIdOfDeceased as string),
+                value: ({
+                  externalData: {
+                    syslumennOnEntry: { data },
+                  },
+                }) =>
+                  kennitala.format(
+                    (data as { estate: EstateRegistrant }).estate
+                      .nationalIdOfDeceased as string,
+                  ),
                 colSpan: ['1/2', '1/2', '1/3'],
               }),
               buildKeyValueField({
                 label: m.deceasedDate,
-                value: ({ answers }) => {
+                value: ({
+                  externalData: {
+                    syslumennOnEntry: { data },
+                  },
+                }) => {
                   return format(
-                    new Date(answers.dateOfDeath as string),
+                    new Date(
+                      ((data as { estate: EstateRegistrant }).estate
+                        .dateOfDeath as unknown) as string,
+                    ),
                     'dd.MM.yyyy',
                   )
                 },
@@ -123,6 +144,12 @@ export const prerequisite = (): Form => {
                   },
                 ],
                 width: 'full',
+              }),
+              buildCustomField({
+                title: '',
+                id: 'misc',
+                component: 'AnswerPopulator',
+                childInputIds: ['caseNumber'],
               }),
               buildCustomField({
                 title: '',

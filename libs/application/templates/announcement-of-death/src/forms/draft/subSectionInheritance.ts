@@ -28,6 +28,7 @@ export const subSectionInheritance = buildSubSection({
           title: '',
           id: 'estateMembers',
           component: 'EstateMemberRepeater',
+          childInputIds: ['estateMembers.encountered', 'estateMembers.members'],
         }),
       ],
     }),

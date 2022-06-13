@@ -142,21 +142,33 @@ export const LinkExistingApplication: FC<FieldBaseProps> = ({
       'existingApplication.data',
     ) ?? []
 
-  const estates =
-    getValueViaPath<EstateRegistrant[]>(
-      application.externalData,
-      'syslumennOnEntry.data.estates',
-      [],
-    ) ?? []
+  // TODO: a future implementation will keep an array of estates
+  // in external data for a selector.
+  // For now the first application from Sysla is selected into 'estate'.
+  // In the case of multiple available announcements the user will progress
+  // through them in order but in the future (next iteration) will have a choice.
+  // This will happen before the feature flag is lifted.
+  // As such the processing logic acts as if an array of estates is available.
+  const estate = getValueViaPath<EstateRegistrant>(
+    application.externalData,
+    'syslumennOnEntry.data.estate',
+    undefined,
+  )
+  const estates = estate ? [estate] : []
 
   const caseNumbers: string[] = []
 
   const mappedExisting = existing.map((app) => {
     const name =
-      getValueViaPath<Application[]>(app.answers, 'nameOfDeceased') ?? ''
+      getValueViaPath<Application[]>(
+        app.externalData,
+        'syslumennOnEntry.data.estate.nameOfDeceased',
+      ) ?? ''
     caseNumbers[caseNumbers.length] =
-      getValueViaPath<Application[]>(app.answers, 'caseNumber')?.toString() ??
-      ''
+      getValueViaPath<Application[]>(
+        app.externalData,
+        'syslumennOnEntry.data.estate.caseNumber',
+      )?.toString() ?? ''
     return {
       ...app,
       name: `${formatText(

@@ -23,14 +23,39 @@ import { m } from '../../lib/messages'
 import { useLazyQuery } from '@apollo/client'
 import { SEARCH_FOR_PROPERTY_QUERY } from '../../graphql'
 import { Query, SearchForPropertyInput } from '@island.is/api/schema'
+import { EstateAsset } from '@island.is/clients/syslumenn'
 
 export const RealEstateAndLandsRepeater: FC<FieldBaseProps<Answers>> = ({
+  application,
   field,
-  error,
+  errors,
 }) => {
+  const error = (errors as any)?.assets?.assets
+
   const { id } = field
   const { formatMessage } = useLocale()
-  const { fields, append, remove } = useFieldArray<Asset>({ name: id })
+  const { fields, append, remove } = useFieldArray<Asset>({
+    name: `${id}.assets`,
+  })
+  const { setValue } = useFormContext()
+
+  const externalData = application.externalData.syslumennOnEntry?.data as {
+    estate: { assets: EstateAsset[] }
+  }
+
+  useEffect(() => {
+    if (
+      fields.length === 0 &&
+      (!application.answers.assets ||
+        !application.answers.assets?.encountered) &&
+      externalData.estate.assets
+    ) {
+      for (const asset of externalData.estate.assets) {
+        fields.push(asset)
+      }
+      setValue('assets.encountered', true)
+    }
+  }, [])
 
   const handleAddProperty = () =>
     append({
@@ -84,7 +109,7 @@ export const RealEstateAndLandsRepeater: FC<FieldBaseProps<Answers>> = ({
         <Box key={field.id} hidden={field.initial}>
           <Item
             field={field}
-            fieldName={id ?? index.toString()}
+            fieldName={`${id}.assets`}
             remove={handleRemoveProperty}
             index={index}
             error={error && error[index] ? error[index] : null}

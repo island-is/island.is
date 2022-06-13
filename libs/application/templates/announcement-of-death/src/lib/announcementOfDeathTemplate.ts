@@ -4,7 +4,6 @@ import {
   ApplicationStateSchema,
   ApplicationTypes,
   ApplicationRole,
-  DefaultStateLifeCycle,
   Application,
   DefaultEvents,
   EphemeralStateLifeCycle,

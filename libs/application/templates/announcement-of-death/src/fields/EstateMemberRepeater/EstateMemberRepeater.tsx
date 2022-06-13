@@ -30,24 +30,45 @@ import { IDENTITY_QUERY } from '../../graphql/'
 import * as kennitala from 'kennitala'
 import { m } from '../../lib/messages'
 import { hasYes } from '../../lib/utils'
+import { EstateRegistrant } from '@island.is/clients/syslumenn'
 
 export const EstateMemberRepeater: FC<FieldBaseProps<Answers>> = ({
   application,
   field,
-  error,
+  errors,
 }) => {
+  const error = (errors as any)?.estateMembers?.members
+  const externalData = application.externalData.syslumennOnEntry?.data as {
+    relationOptions: string[]
+    estate: EstateRegistrant
+  }
+  const { setValue } = useFormContext()
+
   const relations =
-    (application.externalData.syslumennOnEntry?.data as {
-      relationOptions: string[]
-    }).relationOptions.map((relation) => ({
+    externalData.relationOptions.map((relation) => ({
       value: relation,
       label: relation,
     })) || []
   const { id } = field
   const { formatMessage } = useLocale()
   const { fields, append, remove } = useFieldArray<EstateMember>({
-    name: id,
+    name: `${id}.members`,
   })
+
+  useEffect(() => {
+    if (
+      fields.length === 0 &&
+      (!application.answers.estateMembers ||
+        !application.answers.estateMembers?.encountered) &&
+      externalData.estate.estateMembers
+    ) {
+      for (const estateMember of externalData.estate.estateMembers) {
+        fields.push(estateMember)
+      }
+      setValue('estateMembers.encountered', true)
+    }
+  }, [])
+
   const handleAddMember = () =>
     append({
       nationalId: '',
@@ -100,7 +121,7 @@ export const EstateMemberRepeater: FC<FieldBaseProps<Answers>> = ({
         <Box key={member.id} hidden={member.initial}>
           <Item
             field={member}
-            fieldName={id}
+            fieldName={`${id}.members`}
             index={index}
             relationOptions={relations}
             remove={remove}

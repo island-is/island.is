@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, useEffect } from 'react'
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
@@ -12,14 +12,38 @@ import {
 } from '@island.is/island-ui/core'
 import { Answers, Asset } from '../../types'
 
+import { EstateAsset } from '@island.is/clients/syslumenn'
+
 import * as styles from './VehiclesRepeater.css'
 import { m } from '../../lib/messages'
 
-export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({ field }) => {
+export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
+  application,
+  field,
+}) => {
   const { id } = field
   const { formatMessage } = useLocale()
-  const { fields, append, remove } = useFieldArray<Asset>({ name: id })
-  const { control } = useFormContext()
+  const { fields, append, remove } = useFieldArray<Asset>({
+    name: `${id}.vehicles`,
+  })
+  const { control, setValue } = useFormContext()
+  const externalData = application.externalData.syslumennOnEntry?.data as {
+    estate: { vehicles: EstateAsset[] }
+  }
+
+  useEffect(() => {
+    if (
+      fields.length === 0 &&
+      (!application.answers.vehicles ||
+        !application.answers.vehicles?.encountered) &&
+      externalData.estate.vehicles
+    ) {
+      for (const vehicle of externalData.estate.vehicles) {
+        fields.push(vehicle)
+      }
+      setValue('vehicles.encountered', true)
+    }
+  }, [])
 
   const handleAddVehicle = () =>
     append({
@@ -64,7 +88,7 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({ field }) => {
         }, [] as JSX.Element[])}
       </GridRow>
       {fields.map((field, index) => {
-        const fieldIndex = `${id}[${index}]`
+        const fieldIndex = `${id}.vehicles[${index}]`
         const vehicleNumberField = `${fieldIndex}.assetNumber`
         const vehicleTypeField = `${fieldIndex}.description`
         const initialField = `${fieldIndex}.initial`

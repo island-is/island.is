@@ -19,6 +19,7 @@ import format from 'date-fns/format'
 import { Asset, Answers as AODAnswers, OtherPropertiesEnum } from '../../types'
 import { FormatMessage } from '@island.is/localization'
 import { getFileRecipientName } from '../../lib/utils'
+import { EstateRegistrant } from '@island.is/clients/syslumenn'
 
 const theDeceased: Field[] = [
   buildDividerField({}),
@@ -31,19 +32,42 @@ const theDeceased: Field[] = [
   buildKeyValueField({
     label: m.deceasedName,
     width: 'half',
-    value: ({ answers }) => (answers.nameOfDeceased as string) || '',
+    value: ({
+      externalData: {
+        syslumennOnEntry: { data },
+      },
+    }) =>
+      ((data as { estate: EstateRegistrant }).estate
+        .nameOfDeceased as string) || '',
   }),
   buildKeyValueField({
     label: m.deceasedNationalId,
     width: 'half',
-    value: ({ answers }) =>
-      formatNationalId(answers.nationalIdOfDeceased as string) || '',
+    value: ({
+      externalData: {
+        syslumennOnEntry: { data },
+      },
+    }) =>
+      formatNationalId(
+        (data as { estate: EstateRegistrant }).estate
+          .nationalIdOfDeceased as string,
+      ) || '',
   }),
   buildKeyValueField({
     label: m.deceasedDate,
     width: 'half',
-    value: ({ answers }) =>
-      format(new Date(answers.dateOfDeath as string), 'dd.MM.yy') || '',
+    value: ({
+      externalData: {
+        syslumennOnEntry: { data },
+      },
+    }) =>
+      format(
+        new Date(
+          ((data as { estate: EstateRegistrant }).estate
+            .dateOfDeath as unknown) as string,
+        ),
+        'dd.MM.yy',
+      ) || '',
   }),
 ]
 
@@ -218,11 +242,12 @@ const properties: Field[] = [
       id: 'assets',
       component: 'InfoCard',
       width: 'full',
-      condition: (application) => (application?.assets as Asset[])?.length > 0,
+      condition: (application) =>
+        (application?.assets as { assets: Asset[] })?.assets?.length > 0,
     },
     {
       cards: ({ answers }: Application) =>
-        (answers?.assets as Asset[]).map((property) => ({
+        (answers?.assets as { assets: Asset[] }).assets.map((property) => ({
           title: property.description,
           description: (formatMessage: FormatMessage) => [
             `${formatMessage(m.propertyNumber)}: ${property.assetNumber}`,
@@ -247,14 +272,16 @@ const properties: Field[] = [
       component: 'InfoCard',
       width: 'full',
       condition: (application) =>
-        (application?.vehicles as Asset[])?.length > 0,
+        (application?.vehicles as { vehicles: Asset[] })?.vehicles.length > 0,
     },
     {
       cards: ({ answers }: Application) =>
-        (answers?.vehicles as Asset[]).map((vehicle) => ({
-          title: vehicle.assetNumber,
-          description: [vehicle.description],
-        })),
+        (answers?.vehicles as { vehicles: Asset[] })?.vehicles.map(
+          (vehicle) => ({
+            title: vehicle.assetNumber,
+            description: [vehicle.description],
+          }),
+        ),
     },
   ),
 ]

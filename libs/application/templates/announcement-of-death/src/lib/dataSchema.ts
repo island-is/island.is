@@ -85,32 +85,41 @@ export const dataSchema = z.object({
   }),
   applicantEmail: customZodError(z.string().email(), m.errorEmail),
   applicantRelation: customZodError(z.string().nonempty(), m.errorRelation),
-  assets: z
-    .object({
-      assetNumber: z.string().refine(
-        (v) => {
-          return /^[fF]{0,1}\d{7}$/.test(v)
-        },
-        { params: m.errorAssetNumber },
-      ),
-      share: z.number().optional(),
-      initial: z.boolean().optional(),
-      description: z.string().optional(),
-    })
-    .partial()
-    .array(),
-  estateMembers: z
-    .object({
-      initial: z.boolean().optional(),
-      name: z.string().nonempty(),
-      relation: customZodError(z.string().nonempty(), m.errorRelation),
-      nationalId: z.string().optional(),
-      custodian: z.string().length(10).optional(),
-      foreignCitizenship: z.string().array().min(0).max(1).optional(),
-      dateOfBirth: z.string().nonempty().optional(),
-    })
-    .array(),
+  assets: z.object({
+    assets: z
+      .object({
+        assetNumber: z.string().refine(
+          (v) => {
+            return /^[fF]{0,1}\d{7}$/.test(v)
+          },
+          { params: m.errorAssetNumber },
+        ),
+        share: z.number().optional(),
+        initial: z.boolean().optional(),
+        description: z.string().optional(),
+      })
+      .partial()
+      .array(),
+    encountered: z.boolean().optional(),
+  }),
+  estateMembers: z.object({
+    members: z
+      .object({
+        initial: z.boolean().optional(),
+        name: z.string().nonempty(),
+        relation: customZodError(z.string().nonempty(), m.errorRelation),
+        nationalId: z.string().optional(),
+        custodian: z.string().length(10).optional(),
+        foreignCitizenship: z.string().array().min(0).max(1).optional(),
+        dateOfBirth: z.string().nonempty().optional(),
+      })
+      .array(),
+    encountered: z.boolean().optional(),
+  }),
   flyers: asset.partial().array(),
   ships: asset.partial().array(),
-  vehicles: asset.partial().array(),
+  vehicles: z.object({
+    vehicles: asset.partial().array(),
+    encountered: z.boolean().optional(),
+  }),
 })

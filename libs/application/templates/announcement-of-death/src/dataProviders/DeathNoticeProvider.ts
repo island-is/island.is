@@ -17,8 +17,8 @@ export class DeathNoticeProvider extends BasicDataProvider {
     const applicationData: any =
       application.externalData?.syslumennOnEntry?.data
     if (
-      !applicationData?.estates?.length ||
-      applicationData.estates.length === 0
+      !applicationData?.estate?.caseNumber?.length ||
+      applicationData.estate?.caseNumber.length === 0
     ) {
       return Promise.reject({
         message: m.dataCollectionNoEstatesError,
