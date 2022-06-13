@@ -76,6 +76,11 @@ export class ApplicationResponseDto {
 
   @ApiProperty()
   @Expose()
+  @IsArray()
+  applicantActors!: string[]
+
+  @ApiProperty()
+  @Expose()
   @IsString()
   state!: string
 

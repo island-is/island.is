@@ -1,5 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 
+import { BadSubject } from '@island.is/nest/problem'
+import { User } from '@island.is/auth-nest-tools'
+
 import {
   Application as BaseApplication,
   ApplicationService,
@@ -14,13 +17,25 @@ import { getApplicationTemplateByTypeId } from '@island.is/application/template-
 export class ApplicationAccessService {
   constructor(private readonly applicationService: ApplicationService) {}
 
-  async findOneByIdAndNationalId(id: string, nationalId: string) {
+  async findOneByIdAndNationalId(id: string, user: User) {
     const existingApplication = await this.applicationService.findOneById(
       id,
-      nationalId,
+      user.nationalId,
     )
 
     if (!existingApplication) {
+      const actorNationalId = user.actor
+        ? user.actor.nationalId
+        : user.nationalId
+      const actorApplication = await this.applicationService.findByApplicantActor(
+        id,
+        actorNationalId,
+      )
+
+      if (actorApplication) {
+        throw new BadSubject([{ nationalId: actorApplication.applicant }])
+      }
+
       throw new NotFoundException(
         `An application with the id ${id} does not exist`,
       )
