@@ -34,7 +34,6 @@ export class NationalRegistryXRoadResolver {
     @CurrentUser() user: User,
   ): Promise<NationalRegistryPerson | undefined> {
     return this.nationalRegistryXRoadService.getNationalRegistryPerson(
-      user,
       user.nationalId,
     )
   }
