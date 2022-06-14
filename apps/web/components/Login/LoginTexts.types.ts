@@ -14,6 +14,7 @@ export type LoginPageTexts = Partial<
     | 'nyjuSidurListTitle', // 'Á nýjum mínum síðum'
     string
   > & {
+    nyjuSidurBullets: string[] // 'Bullets
     gomluSidurList: string[]
     nyjuSidurList: string[]
   }
