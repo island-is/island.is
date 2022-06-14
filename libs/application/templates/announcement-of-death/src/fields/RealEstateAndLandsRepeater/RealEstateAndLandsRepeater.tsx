@@ -200,7 +200,7 @@ const Item = ({
           size="small"
           circle
           icon="remove"
-          onClick={remove.bind(null, index)}
+          onClick={() => remove(index)}
         />
       </Box>
       <GridRow>
