@@ -66,7 +66,6 @@ const LoginPage: Screen<LoginProps> = ({ namespace }) => {
     'Ef fyrirtækið birtist ekki þarf að athuga skráningu prókúrhafa hjá Skattinum. ',
   ])
 
-  console.log(nyjarSidurText)
   return (
     <ContentBlock>
       <Box paddingX={[0, 4, 4, 12]} paddingY={[2, 2, 10]} id="main-content">
