@@ -8,7 +8,11 @@ import type { Attachment, Period } from '@island.is/clients/vmst'
 import { ParentalLeaveApi } from '@island.is/clients/vmst'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { Application, getValueViaPath } from '@island.is/application/core'
+import {
+  Application,
+  ApplicationConfigurations,
+  getValueViaPath,
+} from '@island.is/application/core'
 import {
   getApplicationAnswers,
   getAvailableRightsInDays,
@@ -130,7 +134,7 @@ export class ParentalLeaveService {
         'clientLocationOrigin',
       ) as string
 
-      const link = `${clientLocationOrigin}/faedingarorlof/${application.id}`
+      const link = `${clientLocationOrigin}/${ApplicationConfigurations.ParentalLeave.slug}/${application.id}`
 
       await this.smsService.sendSms(
         applicantPhoneNumber,
