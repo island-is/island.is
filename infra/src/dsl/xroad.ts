@@ -86,16 +86,14 @@ export const JudicialSystem = new XroadConf({
 export const DrivingLicense = new XroadConf({
   env: {
     XROAD_DRIVING_LICENSE_PATH: {
-      dev: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v1',
-      staging:
-        'r1/IS/GOV/5309672079/Logreglan-Protected/RafraentOkuskirteini-v1',
-      prod: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v1',
+      dev: '/k8s/api/XROAD_DRIVING_LICENSE_PATH',
+      staging: '/k8s/api/XROAD_DRIVING_LICENSE_PATH',
+      prod: '/k8s/api/XROAD_DRIVING_LICENSE_PATH',
     },
     XROAD_DRIVING_LICENSE_V2_PATH: {
-      dev: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v2',
-      staging:
-        'r1/IS/GOV/5309672079/Logreglan-Protected/RafraentOkuskirteini-v2',
-      prod: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v2',
+      dev: '/k8s/api/XROAD_DRIVING_LICENSE_V2_PATH',
+      staging: '/k8s/api/XROAD_DRIVING_LICENSE_V2_PATH',
+      prod: '/k8s/api/XROAD_DRIVING_LICENSE_V2_PATH',
     },
   },
   secrets: {
