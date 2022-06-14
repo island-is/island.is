@@ -350,6 +350,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           lifecycle: DefaultStateLifeCycle,
           progress: 0.5,
+          onEntry: {
+            apiModuleAction:
+              API_MODULE_ACTIONS.notifyApplicantOfRejectionFromEmployer,
+            throwOnError: true,
+          },
           roles: [
             {
               id: Roles.APPLICANT,

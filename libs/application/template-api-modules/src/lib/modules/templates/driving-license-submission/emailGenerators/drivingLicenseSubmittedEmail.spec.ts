@@ -31,6 +31,7 @@ const application = createApplication({
   },
   applicant: user.nationalId,
   assignees: [],
+  applicantActors: [],
   attachments: {},
   created: new Date(),
   modified: new Date(),
