@@ -58,8 +58,6 @@ export const workerSetup = (): ServiceBuilder<'application-system-api-worker'> =
         '/k8s/application-system-api/DRIVING_LICENSE_BOOK_USERNAME',
       DRIVING_LICENSE_BOOK_PASSWORD:
         '/k8s/application-system-api/DRIVING_LICENSE_BOOK_PASSWORD',
-      XROAD_DRIVING_LICENSE_PATH: '/k8s/api/XROAD_DRIVING_LICENSE_PATH',
-      XROAD_DRIVING_LICENSE_V2_PATH: '/k8s/api/XROAD_DRIVING_LICENSE_V2_PATH',
     })
     .args('main.js', '--job', 'worker')
     .command('node')
@@ -199,6 +197,8 @@ export const serviceSetup = (services: {
         '/k8s/application-system-api/DRIVING_LICENSE_BOOK_PASSWORD',
       NOVA_PASSWORD: '/k8s/application-system/api/NOVA_PASSWORD',
       ARK_BASE_URL: '/k8s/application-system-api/ARK_BASE_URL',
+      XROAD_DRIVING_LICENSE_PATH: '/k8s/api/XROAD_DRIVING_LICENSE_PATH',
+      XROAD_DRIVING_LICENSE_V2_PATH: '/k8s/api/XROAD_DRIVING_LICENSE_V2_PATH',
     })
     .initContainer({
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
