@@ -80,10 +80,6 @@ export const EmployerApproval: Form = buildForm({
                   titleVariant: 'h4',
                   description:
                     otherParentApprovalFormMessages.startDateInThePast,
-                  condition: (answers) =>
-                    new Date(
-                      getApplicationAnswers(answers).periods[0].startDate,
-                    ).getTime() < currentDateStartTime(),
                 }),
                 buildSubmitField({
                   id: 'submit',
@@ -122,17 +118,6 @@ export const EmployerApproval: Form = buildForm({
                   id: 'unionAndPensionInfo',
                   title: '',
                   component: 'EmployerApprovalExtraInformation',
-                }),
-                buildDescriptionField({
-                  id: 'final',
-                  title: otherParentApprovalFormMessages.warning,
-                  titleVariant: 'h4',
-                  description:
-                    otherParentApprovalFormMessages.startDateInThePast,
-                  condition: (answers) =>
-                    new Date(
-                      getApplicationAnswers(answers).periods[0].startDate,
-                    ).getTime() < currentDateStartTime(),
                 }),
                 buildSubmitField({
                   id: 'submit',

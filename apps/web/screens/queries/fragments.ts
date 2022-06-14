@@ -370,6 +370,7 @@ export const slices = gql`
       text
       url
     }
+    dividerOnTop
   }
 
   fragment MultipleStatisticsFields on MultipleStatistics {
@@ -400,6 +401,7 @@ export const slices = gql`
     content {
       ...HtmlFields
     }
+    dividerOnTop
   }
 
   fragment AccordionSliceFields on AccordionSlice {
