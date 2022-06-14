@@ -6132,6 +6132,35 @@
         }
       }
     },
+    "judicial-system-message": {
+      "root": "libs/judicial-system/message",
+      "sourceRoot": "libs/judicial-system/message/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/judicial-system/message/tsconfig.lib.json",
+              "libs/judicial-system/message/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/judicial-system/message/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/judicial-system/message"],
+          "options": {
+            "jestConfig": "libs/judicial-system/message/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "judicial-system-message-handler": {
       "root": "apps/judicial-system/message-handler",
       "sourceRoot": "apps/judicial-system/message-handler/src",
@@ -6249,7 +6278,6 @@
       "root": "libs/judicial-system/types",
       "sourceRoot": "libs/judicial-system/types/src",
       "projectType": "library",
-      "schematics": {},
       "architect": {
         "lint": {
           "builder": "@nrwl/linter:lint",
