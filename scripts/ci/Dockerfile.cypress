@@ -195,7 +195,11 @@ ENTRYPOINT ["cypress", "run"]
 
 FROM cypress-included as output-cypress
 
-RUN apt-get install jq -y
+RUN apt-get update && apt-get install jq -y \
+  # clean up
+  && rm -rf /var/lib/apt/lists/* \
+  && apt-get clean
+
 RUN addgroup runners && adduser runner && adduser runner runners
 RUN mkdir /out && chown runner /out
 ENV CYPRESS_VIDEOS_FOLDER=/out/videos
