@@ -112,6 +112,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
                 ),
               read: 'all',
               write: 'all',
+              shouldBeListedForRole: false,
             },
           ],
         },
@@ -164,6 +165,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
                 ),
               read: 'all',
               write: 'all',
+              shouldBeListedForRole: false,
             },
           ],
         },
@@ -212,6 +214,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
                 ),
               read: 'all',
               write: 'all',
+              shouldBeListedForRole: false,
             },
           ],
         },
@@ -259,9 +262,9 @@ const AccidentNotificationTemplate: ApplicationTemplate<
   mapUserToRole(
     id: string,
     application: Application,
-  ): ApplicationRole | undefined {
+  ): ApplicationRole | ApplicationRole[] | undefined {
     if (id === application.applicant && application.assignees.includes(id)) {
-      return Roles.ASSIGNEE
+      return [Roles.ASSIGNEE, Roles.APPLICANT]
     }
 
     if (id === application.applicant) {

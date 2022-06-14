@@ -203,9 +203,9 @@ export class ApplicationController {
     for (const application of applications) {
       // We've already checked an application with this type and it is ready
       // now we just need to check if it should be displayed for the user
-      // todo figure out a better way for us to check if the template is present, should never be sent undefined
       if (
         templateTypeToIsReady[application.typeId] &&
+        templates[application.typeId] !== undefined &&
         (await this.applicationAccessService.shouldShowApplicationOnOverview(
           application as BaseApplication,
           nationalId,

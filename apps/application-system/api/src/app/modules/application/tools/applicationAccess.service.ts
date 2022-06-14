@@ -74,7 +74,6 @@ export class ApplicationAccessService {
     return true
   }
 
-  // todo check whether application template type is defined somewhere
   async shouldShowApplicationOnOverview(
     application: Application,
     nationalId: string,
@@ -85,7 +84,7 @@ export class ApplicationAccessService {
     >,
   ): Promise<boolean> {
     if (template === undefined) {
-      return true
+      return false
     }
 
     const currentUserRoles = template.mapUserToRole(nationalId, application)
