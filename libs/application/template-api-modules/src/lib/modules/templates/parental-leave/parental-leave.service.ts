@@ -482,7 +482,7 @@ export class ParentalLeaveService {
       return response
     } catch(e) {
       this.logger.error('Failed to validate the parental leave application', e)
-      throw this.parseErrors(e)
+      throw this.parseErrors(e as VMSTError)
     }
   }
 }
