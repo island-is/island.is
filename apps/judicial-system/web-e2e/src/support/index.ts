@@ -40,7 +40,7 @@ declare global {
        * Custom command to get by test-id
        * @example cy.getByTestid('some-testid')
        */
-      getByTestid(selector: string): Chainable<Element>
+      getByTestid(selector: string): Chainable<JQuery<Element>>
 
       /**
        * Custom command to set the csfr token. This authenticates a user
@@ -52,7 +52,7 @@ declare global {
        * Custom command to click outside a selected element
        * @example cy.clickOutside()
        */
-      clickOutside(): Chainable<Element>
+      clickOutside(): Chainable<JQuery<HTMLBodyElement>>
     }
   }
 }
