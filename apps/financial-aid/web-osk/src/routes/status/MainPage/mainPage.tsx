@@ -55,6 +55,7 @@ const MainPage = () => {
               isStateVisible={myApplication.state === ApplicationState.APPROVED}
               state={myApplication.state}
               amount={myApplication.amount}
+              events={myApplication.applicationEvents}
               isApplicant={!isUserSpouse}
             />
 
