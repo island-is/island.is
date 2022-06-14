@@ -13,3 +13,4 @@ This reference lists the custom [problem types](../../technical-overview/api-des
 ## Custom problems
 
 - [400 Validation Failed](./validation-failed.md)
+- [403 Bad Subject](./bad-subject.md)

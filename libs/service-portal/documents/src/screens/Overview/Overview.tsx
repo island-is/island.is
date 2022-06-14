@@ -1,5 +1,5 @@
-import React, { useState, useCallback } from 'react'
-import { useQuery } from '@apollo/client'
+import React, { useState, useCallback, useEffect } from 'react'
+import { useQuery, gql } from '@apollo/client'
 import {
   Text,
   Box,
@@ -7,41 +7,54 @@ import {
   Columns,
   Column,
   Button,
-  Select,
   Pagination,
-  Option,
   DatePicker,
-  Input,
   GridRow,
   GridColumn,
   LoadingDots,
   Hidden,
+  Checkbox,
+  Filter,
+  FilterInput,
+  FilterMultiChoice,
+  AccordionItem,
+  Accordion,
 } from '@island.is/island-ui/core'
 import { useListDocuments } from '@island.is/service-portal/graphql'
 import {
   useScrollToRefOnUpdate,
   ServicePortalModuleComponent,
 } from '@island.is/service-portal/core'
-import { Document } from '@island.is/api/schema'
+import { Document, Query } from '@island.is/api/schema'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { ValueType } from 'react-select'
-import { defineMessage } from 'react-intl'
 import { documentsSearchDocumentsInitialized } from '@island.is/plausible'
 import { useLocation } from 'react-router-dom'
 import { GET_ORGANIZATIONS_QUERY } from '@island.is/service-portal/graphql'
 import { m } from '@island.is/service-portal/core'
-import AnimateHeight from 'react-animate-height'
+import { messages } from '../../utils/messages'
 import DocumentLine from '../../components/DocumentLine/DocumentLine'
 import getOrganizationLogoUrl from '../../utils/getOrganizationLogoUrl'
+import HeaderArrow from '../../components/HeaderArrow/HeaderArrow'
 import isAfter from 'date-fns/isAfter'
 import isBefore from 'date-fns/isBefore'
 import isEqual from 'lodash/isEqual'
 import isWithinInterval from 'date-fns/isWithinInterval'
 import addMonths from 'date-fns/addMonths'
+import orderBy from 'lodash/orderBy'
 import * as Sentry from '@sentry/react'
 import * as styles from './Overview.css'
 
-const defaultCategory = { label: 'Allar stofnanir', value: '' }
+const GET_DOCUMENT_CATEGORIES = gql`
+  query documentCategories {
+    getDocumentCategories {
+      id
+      name
+    }
+  }
+`
+
+const NO_GROUPS_AVAILABLE = 'NO_GROUPS_AVAILABLE'
+
 const pageSize = 15
 const defaultStartDate = null
 const defaultEndDate = null
@@ -49,22 +62,59 @@ const defaultEndDate = null
 const defaultFilterValues = {
   dateFrom: defaultStartDate,
   dateTo: defaultEndDate,
-  activeCategory: defaultCategory,
+  activeCategories: [],
+  activeGroups: [],
   searchQuery: '',
+  showUnread: false,
 }
+
+type SortKeyType = 'date' | 'subject' | 'senderName'
+type SortDirectionType = 'asc' | 'desc'
 
 type FilterValues = {
   dateFrom: Date | null
   dateTo: Date | null
-  activeCategory: Option
   searchQuery: string
+  showUnread: boolean
+  activeCategories: string[]
+  activeGroups: string[]
+}
+
+type GroupsValue = {
+  value: string
+  label: string
+}
+
+type FilterCategory = {
+  /** Id for the category. */
+  id: string
+  /** The category label to display on screen. */
+  label: string
+  /** The array of currently selected active filters. */
+  selected: Array<string>
+  /** Array of available filters in this category. */
+  filters: {
+    value: string
+    label: string
+  }[]
+  /** Display checkboxes inline */
+  inline?: boolean
+  /** Allow only one option at a time */
+  singleOption?: boolean
 }
 
 const getFilteredDocuments = (
   documents: Document[],
   filterValues: FilterValues,
 ): Document[] => {
-  const { dateFrom, dateTo, activeCategory, searchQuery } = filterValues
+  const {
+    dateFrom,
+    dateTo,
+    searchQuery,
+    showUnread,
+    activeCategories,
+    activeGroups,
+  } = filterValues
   let filteredDocuments = documents.filter((document) => {
     const minDate = dateFrom || new Date('1900-01-01')
     const maxDate = dateTo || addMonths(new Date(), 3)
@@ -74,18 +124,33 @@ const getFilteredDocuments = (
     })
   })
 
-  if (activeCategory.value) {
-    filteredDocuments = filteredDocuments.filter(
-      (document) => document.senderNatReg === activeCategory.value,
+  if (activeCategories && activeCategories.length > 0) {
+    filteredDocuments = filteredDocuments.filter((document) =>
+      activeCategories.includes(document.senderNatReg),
     )
   }
 
+  if (activeGroups && activeGroups.length > 0) {
+    filteredDocuments = filteredDocuments.filter((document) =>
+      activeGroups.includes(document?.categoryId || 'NO_ID'),
+    )
+  }
+
+  if (showUnread) {
+    filteredDocuments = filteredDocuments.filter((x) => !x.opened)
+  }
+
   if (searchQuery) {
-    return filteredDocuments.filter((x) =>
+    filteredDocuments = filteredDocuments.filter((x) =>
       x.subject.toLowerCase().includes(searchQuery.toLowerCase()),
     )
   }
   return filteredDocuments
+}
+
+const getSortDirection = (currentDirection: SortDirectionType) => {
+  const reverseDirection = currentDirection === 'asc' ? 'desc' : 'asc'
+  return reverseDirection
 }
 
 export const ServicePortalDocuments: ServicePortalModuleComponent = ({
@@ -98,7 +163,13 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
 
   const { formatMessage, lang } = useLocale()
   const [page, setPage] = useState(1)
-  const [isDateRangeOpen, setIsDateRangeOpen] = useState(false)
+  const [sortState, setSortState] = useState<{
+    direction: SortDirectionType
+    key: SortKeyType
+  }>({
+    direction: 'desc',
+    key: 'date',
+  })
   const [searchInteractionEventSent, setSearchInteractionEventSent] = useState(
     false,
   )
@@ -108,9 +179,56 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   const [filterValue, setFilterValue] = useState<FilterValues>(
     defaultFilterValues,
   )
+
+  const [groupsAvailable, setGroupsAvailable] = useState<
+    GroupsValue[] | typeof NO_GROUPS_AVAILABLE
+  >([])
   const { data, loading, error } = useListDocuments(userInfo.profile.nationalId)
-  const categories = [defaultCategory, ...data.categories]
-  const filteredDocuments = getFilteredDocuments(data.documents, filterValue)
+  const { data: groupData } = useQuery<Query>(GET_DOCUMENT_CATEGORIES)
+
+  useEffect(() => {
+    const groupArray = groupData?.getDocumentCategories ?? []
+    const docs = data.documents ?? []
+    if (
+      groupArray.length > 0 &&
+      docs.length > 0 &&
+      groupsAvailable !== NO_GROUPS_AVAILABLE &&
+      groupsAvailable.length === 0
+    ) {
+      const filteredGroups = groupArray
+        .filter((itemGroup) =>
+          docs.some((doc) => doc.categoryId === itemGroup.id),
+        )
+        .map((group) => ({
+          value: group.id,
+          label: group.name,
+        }))
+
+      const groups =
+        filteredGroups.length > 0 ? [...filteredGroups] : NO_GROUPS_AVAILABLE
+      setGroupsAvailable(groups)
+    }
+  }, [groupData, data])
+
+  const getFilteredSorted = (
+    documents: Document[],
+    filterValues: FilterValues,
+  ): Document[] => {
+    const filteredArray = getFilteredDocuments(documents, filterValues)
+    const sortedFiltered =
+      sortState?.key && sortState?.direction
+        ? orderBy(
+            filteredArray,
+            sortState.key === 'date'
+              ? (item) => new Date(item[sortState.key])
+              : sortState.key,
+            sortState.direction,
+          )
+        : filteredArray
+    return sortedFiltered
+  }
+  const categories = data.categories
+  const filteredDocuments = getFilteredSorted(data.documents, filterValue)
   const pagedDocuments = {
     from: (page - 1) * pageSize,
     to: pageSize * page,
@@ -137,17 +255,29 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   }, [])
 
   const handlePageChange = useCallback((page: number) => setPage(page), [])
-  const handleCategoryChange = useCallback((newCategory: ValueType<Option>) => {
+
+  const handleCategoriesChange = useCallback((selected: string[]) => {
     setPage(1)
     setFilterValue((oldFilter) => ({
       ...oldFilter,
-      activeCategory: newCategory as Option,
+      activeCategories: [...selected],
+    }))
+  }, [])
+
+  const handleGroupChange = useCallback((selected: string[]) => {
+    setPage(1)
+    setFilterValue((oldFilter) => ({
+      ...oldFilter,
+      activeGroups: [...selected],
     }))
   }, [])
 
   const handleSearchChange = useCallback((value: string) => {
     setPage(1)
-    setFilterValue({ ...defaultFilterValues, searchQuery: value })
+    setFilterValue((prevFilter) => ({
+      ...prevFilter,
+      searchQuery: value,
+    }))
     if (!searchInteractionEventSent) {
       documentsSearchDocumentsInitialized(pathname)
       setSearchInteractionEventSent(true)
@@ -159,21 +289,21 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
     setFilterValue({ ...defaultFilterValues })
   }, [])
 
-  const handleDateRangeButtonClick = () => setIsDateRangeOpen(!isDateRangeOpen)
+  const handleShowUnread = useCallback((eh) => {
+    setPage(1)
+    setFilterValue((prevFilter) => ({
+      ...prevFilter,
+      showUnread: eh.target.checked,
+    }))
+  }, [])
 
   const hasActiveFilters = () => !isEqual(filterValue, defaultFilterValues)
 
   const documentsFoundText = () =>
     filteredDocuments.length === 1 ||
     (lang === 'is' && filteredDocuments.length % 10 === 1)
-      ? defineMessage({
-          id: 'sp.documents:found-singular',
-          defaultMessage: 'skjal fannst',
-        })
-      : defineMessage({
-          id: 'sp.documents:found',
-          defaultMessage: 'skjöl fundust',
-        })
+      ? messages.foundSingular
+      : messages.found
 
   const { data: orgData } = useQuery(GET_ORGANIZATIONS_QUERY)
   const organizations = orgData?.getOrganizations?.items || {}
@@ -182,124 +312,153 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
     <Box marginBottom={[4, 4, 6, 10]}>
       <Stack space={3}>
         <Text variant="h3" as="h1">
-          {formatMessage({
-            id: 'sp.documents:title',
-            defaultMessage: 'Pósthólf',
-          })}
+          {formatMessage(messages.title)}
         </Text>
         <Columns collapseBelow="sm">
           <Column width="7/12">
-            <Text variant="default">
-              {formatMessage({
-                id: 'sp.documents:intro',
-                defaultMessage:
-                  'Hér getur þú fundið skjöl sem send hafa verið til þín frá opinberum aðilum.',
-              })}
-            </Text>
+            <Text variant="default">{formatMessage(messages.intro)}</Text>
           </Column>
         </Columns>
         <Box marginTop={[1, 1, 2, 2, 6]}>
-          <Hidden print>
-            <GridRow alignItems="flexEnd">
-              <GridColumn paddingBottom={[1, 0]} span={['1/1', '3/8']}>
-                <Box height="full">
-                  <Input
-                    icon="search"
-                    backgroundColor="blue"
-                    size="xs"
-                    value={filterValue.searchQuery}
-                    onChange={(ev) => handleSearchChange(ev.target.value)}
-                    name="rafraen-skjol-leit"
-                    label={formatMessage(m.searchLabel)}
-                    placeholder={formatMessage(m.searchPlaceholder)}
-                  />
-                </Box>
-              </GridColumn>
-              <GridColumn span={['1/1', '3/8']}>
-                <Hidden below="sm">
-                  <Select
-                    name="categories"
-                    backgroundColor="blue"
-                    size="xs"
-                    defaultValue={categories[0]}
-                    options={categories}
-                    value={filterValue.activeCategory}
-                    onChange={handleCategoryChange}
-                    label={formatMessage({
-                      id: 'sp.documents:institution-label',
-                      defaultMessage: 'Stofnun',
-                    })}
-                  />
-                </Hidden>
-              </GridColumn>
-              <GridColumn span="2/8">
-                <Hidden below="sm">
-                  <Button
-                    variant="ghost"
-                    fluid
-                    icon={isDateRangeOpen ? 'close' : 'filter'}
-                    iconType="outline"
-                    size="small"
-                    onClick={handleDateRangeButtonClick}
+          <Filter
+            resultCount={0}
+            variant="popover"
+            align="right"
+            labelClear={formatMessage(messages.clearFilter)}
+            labelClearAll={formatMessage(messages.clearAllFilters)}
+            labelOpen={formatMessage(messages.openFilter)}
+            labelClose={formatMessage(messages.closeFilter)}
+            filterInput={
+              <FilterInput
+                placeholder={formatMessage(m.searchPlaceholder)}
+                name="rafraen-skjol-input"
+                value={filterValue.searchQuery}
+                onChange={(value) => handleSearchChange(value)}
+                backgroundColor="blue"
+              />
+            }
+            onFilterClear={handleClearFilters}
+          >
+            <Box
+              display="flex"
+              flexDirection="column"
+              justifyContent="spaceBetween"
+              paddingX={3}
+              className={styles.unreadFilter}
+            >
+              <Box paddingY={3}>
+                <Checkbox
+                  id="show-unread"
+                  label={formatMessage(messages.onlyShowUnread)}
+                  checked={filterValue.showUnread}
+                  onChange={handleShowUnread}
+                />
+              </Box>
+              <Box
+                borderBottomWidth="standard"
+                borderColor="blue200"
+                width="full"
+              />
+            </Box>
+            <FilterMultiChoice
+              labelClear={formatMessage(messages.clearSelected)}
+              singleExpand={false}
+              onChange={({ categoryId, selected }) => {
+                if (categoryId === 'institution') {
+                  handleCategoriesChange(selected)
+                }
+                if (categoryId === 'group') {
+                  handleGroupChange(selected)
+                }
+              }}
+              onClear={(categoryId) => {
+                if (categoryId === 'institution') {
+                  setFilterValue((oldFilter) => ({
+                    ...oldFilter,
+                    activeCategories: [],
+                  }))
+                }
+                if (categoryId === 'group') {
+                  setFilterValue((oldFilter) => ({
+                    ...oldFilter,
+                    activeGroups: [],
+                  }))
+                }
+              }}
+              categories={
+                [
+                  {
+                    id: 'institution',
+                    label: formatMessage(messages.institutionLabel),
+                    selected: [...filterValue.activeCategories],
+                    filters: categories,
+                    inline: false,
+                    singleOption: false,
+                  },
+                  {
+                    id: 'group',
+                    label: formatMessage(messages.groupLabel),
+                    selected: [...filterValue.activeGroups],
+                    filters: Array.isArray(groupsAvailable)
+                      ? groupsAvailable
+                      : [],
+                    inline: false,
+                    singleOption: false,
+                  },
+                ] as FilterCategory[]
+              }
+            ></FilterMultiChoice>
+            <Box className={styles.dateFilter} paddingX={3}>
+              <Box
+                borderBottomWidth="standard"
+                borderColor="blue200"
+                width="full"
+              />
+              <Box marginTop={1}>
+                <Accordion
+                  dividerOnBottom={false}
+                  dividerOnTop={false}
+                  singleExpand={false}
+                >
+                  <AccordionItem
+                    key="date-accordion-item"
+                    id="date-accordion-item"
+                    label={formatMessage(messages.datesLabel)}
+                    labelUse="h5"
+                    labelVariant="h5"
+                    iconVariant="small"
                   >
-                    {formatMessage({
-                      id: 'sp.documents:select-range',
-                      defaultMessage: 'Tímabil',
-                    })}
-                  </Button>
-                </Hidden>
-              </GridColumn>
-            </GridRow>
-            <Hidden below="sm">
-              <AnimateHeight
-                duration={400}
-                height={isDateRangeOpen ? 'auto' : 0}
-              >
-                <Box marginTop={[1, 3]}>
-                  <GridRow>
-                    <GridColumn
-                      paddingBottom={[1, 0]}
-                      span={['1/1', '4/8', '3/8']}
-                    >
+                    <Box display="flex" flexDirection="column">
                       <DatePicker
-                        label={formatMessage({
-                          id: 'sp.documents:datepicker-dateFrom-label',
-                          defaultMessage: 'Dagsetning frá',
-                        })}
-                        placeholderText={formatMessage({
-                          id: 'sp.documents:datepicker-dateFrom-placeholder',
-                          defaultMessage: 'Veldu dagsetningu',
-                        })}
+                        label={formatMessage(messages.datepickerFromLabel)}
+                        placeholderText={formatMessage(messages.datepickLabel)}
                         locale="is"
                         backgroundColor="blue"
                         size="xs"
                         selected={filterValue.dateFrom}
                         handleChange={handleDateFromInput}
                       />
-                    </GridColumn>
-                    <GridColumn span={['1/1', '4/8', '3/8']}>
-                      <DatePicker
-                        label={formatMessage({
-                          id: 'sp.documents:datepicker-dateTo-label',
-                          defaultMessage: 'Dagsetning til',
-                        })}
-                        placeholderText={formatMessage({
-                          id: 'sp.documents:datepicker-dateTo-placeholder',
-                          defaultMessage: 'Veldu dagsetningu',
-                        })}
-                        locale="is"
-                        backgroundColor="blue"
-                        size="xs"
-                        selected={filterValue.dateTo}
-                        handleChange={handleDateToInput}
-                        minDate={filterValue.dateFrom || undefined}
-                      />
-                    </GridColumn>
-                  </GridRow>
-                </Box>
-              </AnimateHeight>
-            </Hidden>
-
+                      <Box marginTop={3}>
+                        <DatePicker
+                          label={formatMessage(messages.datepickerToLabel)}
+                          placeholderText={formatMessage(
+                            messages.datepickLabel,
+                          )}
+                          locale="is"
+                          backgroundColor="blue"
+                          size="xs"
+                          selected={filterValue.dateTo}
+                          handleChange={handleDateToInput}
+                          minDate={filterValue.dateFrom || undefined}
+                        />
+                      </Box>
+                    </Box>
+                  </AccordionItem>
+                </Accordion>
+              </Box>
+            </Box>
+          </Filter>
+          <Hidden print>
             {hasActiveFilters() && (
               <Box marginTop={4}>
                 <Box
@@ -312,10 +471,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                   } ${formatMessage(documentsFoundText())}`}</Text>
                   <div>
                     <Button variant="text" onClick={handleClearFilters}>
-                      {formatMessage({
-                        id: 'sp.documents:clear-filters',
-                        defaultMessage: 'Hreinsa filter',
-                      })}
+                      {formatMessage(messages.clearAllFilters)}
                     </Button>
                   </div>
                 </Box>
@@ -332,32 +488,47 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                 <GridRow>
                   <GridColumn span={['1/1', '2/12']}>
                     <Box paddingX={2}>
-                      <Text fontWeight="semiBold" variant="medium">
-                        {formatMessage({
-                          id: 'sp.documents:table-header-date',
-                          defaultMessage: 'Dagsetning',
-                        })}
-                      </Text>
+                      <HeaderArrow
+                        active={sortState?.key === 'date'}
+                        direction={sortState?.direction}
+                        title={formatMessage(messages.tableHeaderDate)}
+                        onClick={() =>
+                          setSortState({
+                            direction: getSortDirection(sortState?.direction),
+                            key: 'date',
+                          })
+                        }
+                      />
                     </Box>
                   </GridColumn>
                   <GridColumn span={['1/1', '6/12', '6/12', '6/12', '7/12']}>
                     <Box paddingX={2}>
-                      <Text fontWeight="semiBold" variant="medium">
-                        {formatMessage({
-                          id: 'sp.documents:table-header-information',
-                          defaultMessage: 'Upplýsingar',
-                        })}
-                      </Text>
+                      <HeaderArrow
+                        active={sortState?.key === 'subject'}
+                        direction={sortState?.direction}
+                        title={formatMessage(messages.tableHeaderInformation)}
+                        onClick={() =>
+                          setSortState({
+                            direction: getSortDirection(sortState?.direction),
+                            key: 'subject',
+                          })
+                        }
+                      />
                     </Box>
                   </GridColumn>
                   <GridColumn span={['1/1', '4/12', '4/12', '4/12', '3/12']}>
                     <Box paddingX={2}>
-                      <Text fontWeight="semiBold" variant="medium">
-                        {formatMessage({
-                          id: 'sp.documents:table-header-institution',
-                          defaultMessage: 'Stofnun',
-                        })}
-                      </Text>
+                      <HeaderArrow
+                        active={sortState?.key === 'senderName'}
+                        direction={sortState?.direction}
+                        title={formatMessage(messages.tableHeaderInstitution)}
+                        onClick={() =>
+                          setSortState({
+                            direction: getSortDirection(sortState?.direction),
+                            key: 'senderName',
+                          })
+                        }
+                      />
                     </Box>
                   </GridColumn>
                 </GridRow>
@@ -371,22 +542,14 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
             {!loading && !error && filteredDocuments?.length === 0 && (
               <Box display="flex" justifyContent="center" margin={[3, 3, 3, 6]}>
                 <Text variant="h3" as="h3">
-                  {formatMessage({
-                    id: 'sp.documents:not-found',
-                    defaultMessage:
-                      'Engin skjöl fundust fyrir gefin leitarskilyrði.',
-                  })}
+                  {formatMessage(messages.notFound)}
                 </Text>
               </Box>
             )}
             {error && (
               <Box display="flex" justifyContent="center" margin={[3, 3, 3, 6]}>
                 <Text variant="h3" as="h3">
-                  {formatMessage({
-                    id: 'sp.documents:error',
-                    defaultMessage:
-                      'Tókst ekki að sækja rafræn skjöl, eitthvað fór úrskeiðis.',
-                  })}
+                  {formatMessage(messages.error)}
                 </Text>
               </Box>
             )}

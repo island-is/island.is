@@ -50,7 +50,7 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { Text } from '@island.is/island-ui/core'
-import * as Constants from '@island.is/judicial-system/consts'
+import * as constants from '@island.is/judicial-system/consts'
 
 import * as styles from './Overview.css'
 
@@ -127,8 +127,8 @@ export const Overview: React.FC = () => {
       />
       <FormContentContainer>
         {workingCase.state === CaseState.RECEIVED && (
-          <div
-            className={styles.resendInfoPanelContainer}
+          <Box
+            marginBottom={workingCase.seenByDefender ? 3 : 5}
             data-testid="ic-overview-info-panel"
           >
             <AlertMessage
@@ -136,7 +136,19 @@ export const Overview: React.FC = () => {
               message={formatMessage(icOverview.receivedAlert.message)}
               type="info"
             />
-          </div>
+          </Box>
+        )}
+        {workingCase.seenByDefender && (
+          <Box marginBottom={5}>
+            <AlertMessage
+              title={formatMessage(m.seenByDefenderAlert.title)}
+              message={formatMessage(m.seenByDefenderAlert.text, {
+                when: formatDate(workingCase.seenByDefender, 'PPPp'),
+              })}
+              type="info"
+              testid="alertMessageSeenByDefender"
+            />
+          </Box>
         )}
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
@@ -188,7 +200,7 @@ export const Overview: React.FC = () => {
                     '',
                 )} eftir kl. ${formatDate(
                   workingCase.requestedCourtDate,
-                  Constants.TIME_FORMAT,
+                  constants.TIME_FORMAT,
                 )}`,
               },
               ...(workingCase.registrar
@@ -215,7 +227,7 @@ export const Overview: React.FC = () => {
                         formatDate(workingCase.courtDate, 'PPPP', true) ?? '',
                       )} kl. ${formatDate(
                         workingCase.courtDate,
-                        Constants.TIME_FORMAT,
+                        constants.TIME_FORMAT,
                       )}`,
                     },
                   ]
@@ -329,7 +341,7 @@ export const Overview: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${Constants.IC_CASE_FILES_ROUTE}/${workingCase.id}`}
+          previousUrl={`${constants.IC_CASE_FILES_ROUTE}/${workingCase.id}`}
           nextButtonText={
             workingCase.state === CaseState.NEW ||
             workingCase.state === CaseState.DRAFT
@@ -392,13 +404,13 @@ export const Overview: React.FC = () => {
           <Modal
             title={formatMessage(m.sections.modal.heading)}
             text={modalText}
-            handleClose={() => router.push(Constants.CASE_LIST_ROUTE)}
+            handleClose={() => router.push(constants.CASE_LIST_ROUTE)}
             handlePrimaryButtonClick={() => {
-              window.open(Constants.FEEDBACK_FORM_URL, '_blank')
-              router.push(Constants.CASE_LIST_ROUTE)
+              window.open(constants.FEEDBACK_FORM_URL, '_blank')
+              router.push(constants.CASE_LIST_ROUTE)
             }}
             handleSecondaryButtonClick={() => {
-              router.push(Constants.CASE_LIST_ROUTE)
+              router.push(constants.CASE_LIST_ROUTE)
             }}
             primaryButtonText="Senda ábendingu"
             secondaryButtonText="Loka glugga"

@@ -16,7 +16,7 @@ import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDef
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { titles } from '@island.is/judicial-system-web/messages'
 import type { Case, UpdateDefendant } from '@island.is/judicial-system/types'
-import * as Constants from '@island.is/judicial-system/consts'
+import * as constants from '@island.is/judicial-system/consts'
 
 import { StepOneForm } from './StepOneForm'
 
@@ -54,10 +54,10 @@ export const StepOne: React.FC = () => {
           citizenship: theCase.defendants[0].citizenship,
         })
 
-        router.push(`${Constants.STEP_TWO_ROUTE}/${createdCase.id}`)
+        router.push(`${constants.STEP_TWO_ROUTE}/${createdCase.id}`)
       }
     } else {
-      router.push(`${Constants.STEP_TWO_ROUTE}/${theCase.id}`)
+      router.push(`${constants.STEP_TWO_ROUTE}/${theCase.id}`)
     }
   }
 

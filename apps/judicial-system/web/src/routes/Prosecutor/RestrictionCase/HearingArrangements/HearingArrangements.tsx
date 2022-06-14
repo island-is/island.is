@@ -45,7 +45,7 @@ import { FormContext } from '@island.is/judicial-system-web/src/components/FormP
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { isHearingArrangementsStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import type { User } from '@island.is/judicial-system/types'
-import * as Constants from '@island.is/judicial-system/consts'
+import * as constants from '@island.is/judicial-system/consts'
 
 import SelectCourt from '../../SharedComponents/SelectCourt/SelectCourt'
 import ArrestDate from './ArrestDate'
@@ -116,7 +116,7 @@ export const HearingArrangements: React.FC = () => {
           (notification) => notification.type === NotificationType.HEADS_UP,
         )
       ) {
-        router.push(`${Constants.STEP_THREE_ROUTE}/${workingCase.id}`)
+        router.push(`${constants.STEP_THREE_ROUTE}/${workingCase.id}`)
       } else {
         setModalVisible(true)
       }
@@ -314,7 +314,7 @@ export const HearingArrangements: React.FC = () => {
           </FormContentContainer>
           <FormContentContainer isFooter>
             <FormFooter
-              previousUrl={`${Constants.STEP_ONE_ROUTE}/${workingCase.id}`}
+              previousUrl={`${constants.STEP_ONE_ROUTE}/${workingCase.id}`}
               onNextButtonClick={async () => await handleNextButtonClick()}
               nextIsDisabled={
                 !isHearingArrangementsStepValidRC(workingCase) ||
@@ -335,7 +335,7 @@ export const HearingArrangements: React.FC = () => {
               secondaryButtonText="Halda áfram með kröfu"
               handleClose={() => setModalVisible(false)}
               handleSecondaryButtonClick={() =>
-                router.push(`${Constants.STEP_THREE_ROUTE}/${workingCase.id}`)
+                router.push(`${constants.STEP_THREE_ROUTE}/${workingCase.id}`)
               }
               errorMessage={
                 sendNotificationError
@@ -349,7 +349,7 @@ export const HearingArrangements: React.FC = () => {
                 )
 
                 if (notificationSent) {
-                  router.push(`${Constants.STEP_THREE_ROUTE}/${workingCase.id}`)
+                  router.push(`${constants.STEP_THREE_ROUTE}/${workingCase.id}`)
                 }
               }}
               isPrimaryButtonLoading={isSendingNotification}
@@ -374,7 +374,7 @@ export const HearingArrangements: React.FC = () => {
               handlePrimaryButtonClick={async () => {
                 if (substituteProsecutorId) {
                   await setProsecutor(substituteProsecutorId)
-                  router.push(Constants.CASE_LIST_ROUTE)
+                  router.push(constants.CASE_LIST_ROUTE)
                 }
               }}
               handleSecondaryButtonClick={() => {
