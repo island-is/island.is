@@ -31,3 +31,4 @@ export { default as DataGatheringHeader } from './DataGathering/DataGatheringHea
 export { default as DirectTaxPaymentsModal } from './DirectTaxPaymentsModal/DirectTaxPaymentModal'
 export * from './Summary'
 export { default as MoreActions } from './MoreActions/MoreActions'
+export { default as ApprovedAlert } from './ApprovedAlert/ApprovedAlert'
