@@ -110,7 +110,7 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
   }
 
   //This is because of animation on select doesnt work stand alone
-  const rulesAndMultiSelectContent = [
+  const navAndMultiSelectContent = [
     {
       headline: 'Veldu sveitarfélag til að breyta stillingum',
       component: (
@@ -122,28 +122,6 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
         />
       ),
     },
-    {
-      headline: `Reglur um fjárhagsaðstoð ${state.name}`,
-      smallText:
-        'Þegar umsóknum er synjað er hlekkur á slóð um reglur um fjárhagsaðstoð sveitarfélagsins birtur í tölvupósti sem er sendur á umsækjanda.',
-      component: (
-        <Input
-          label="Slóð"
-          name="financialAidRules"
-          value={state.rulesHomepage ?? ''}
-          backgroundColor="blue"
-          onChange={(event) =>
-            setState({
-              ...state,
-              rulesHomepage: event.currentTarget.value,
-            })
-          }
-        />
-      ),
-    },
-  ]
-
-  const EmailSiteAidContent = [
     {
       headline: 'Tenging við ytri kerfi',
       smallText:
@@ -179,6 +157,28 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
           />
         </>
 
+      ),
+    },
+  ]
+
+  const EmailSiteAidContent = [
+    {
+      headline: `Reglur um fjárhagsaðstoð ${state.name}`,
+      smallText:
+        'Þegar umsóknum er synjað er hlekkur á slóð um reglur um fjárhagsaðstoð sveitarfélagsins birtur í tölvupósti sem er sendur á umsækjanda.',
+      component: (
+        <Input
+          label="Slóð"
+          name="financialAidRules"
+          value={state.rulesHomepage ?? ''}
+          backgroundColor="blue"
+          onChange={(event) =>
+            setState({
+              ...state,
+              rulesHomepage: event.currentTarget.value,
+            })
+          }
+        />
       ),
     },
     {
@@ -283,7 +283,7 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
       </Box>
 
       <Box className={`contentUp delay-25`}>
-        {rulesAndMultiSelectContent.map((el, index) => {
+        {navAndMultiSelectContent.map((el, index) => {
           return (
             <Box
               marginBottom={[2, 2, 7]}
