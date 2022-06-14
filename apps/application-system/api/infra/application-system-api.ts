@@ -189,8 +189,8 @@ export const serviceSetup = (services: {
         '/k8s/application-system/api/DOCUMENT_PROVIDER_ONBOARDING_REVIEWER',
       SYSLUMENN_USERNAME: '/k8s/application-system/api/SYSLUMENN_USERNAME',
       SYSLUMENN_PASSWORD: '/k8s/application-system/api/SYSLUMENN_PASSWORD',
-      DRIVING_LICENSE_BOOK_XROAD_PATH:
-        '/k8s/application-system-api/DRIVING_LICENSE_BOOK_XROAD_PATH',
+      XROAD_DRIVING_LICENSE_PATH: '/k8s/api/XROAD_DRIVING_LICENSE_PATH',
+      XROAD_DRIVING_LICENSE_V2_PATH: '/k8s/api/XROAD_DRIVING_LICENSE_V2_PATH',
       DRIVING_LICENSE_BOOK_USERNAME:
         '/k8s/application-system-api/DRIVING_LICENSE_BOOK_USERNAME',
       DRIVING_LICENSE_BOOK_PASSWORD:
