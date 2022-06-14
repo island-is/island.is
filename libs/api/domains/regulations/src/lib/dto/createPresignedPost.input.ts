@@ -10,6 +10,5 @@ export class CreatePresignedPostInput {
   @IsString()
   readonly regId!: string
   @Field()
-  @IsString()
-  readonly hash!: string
+  readonly hash?: string
 }

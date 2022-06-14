@@ -82,9 +82,8 @@ export const EditSignature = () => {
   const { updateState } = actions
 
   const {
-    uploadFile,
-    uploadErrorMessage,
     uploadLocation,
+    uploadStatus,
     resetUploadLocation,
     onChange,
     onRetry,
@@ -136,16 +135,13 @@ export const EditSignature = () => {
           }
           buttonLabel={t(msg.signedDocumentUpload)}
           onChange={(files) => onChange(files, draft.id)}
-          onRetry={() => onRetry(draft.id)}
-          onRemove={() => {
-            console.log('remove file')
-          }}
-          errorMessage={uploadErrorMessage}
+          onRetry={(file) => onRetry(file as File, draft.id)}
+          onRemove={resetUploadLocation}
           accept=".pdf"
           multiple={false}
         />
-        {uploadErrorMessage && (
-          <AlertMessage type="error" title={uploadErrorMessage} />
+        {uploadStatus.error && (
+          <AlertMessage type="error" title={uploadStatus.error} />
         )}
       </Box>
 
@@ -198,7 +194,7 @@ export const EditSignature = () => {
                 as="button"
                 iconType="outline"
                 icon="close"
-                disabled={uploadFile?.status === 'uploading'}
+                disabled={uploadStatus.uploading}
                 title={t(msg.signedDocumentClearLong)}
                 aria-label={t(msg.signedDocumentClearLong)}
               >

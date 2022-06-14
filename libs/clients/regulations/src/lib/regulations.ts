@@ -25,7 +25,6 @@ import {
   RegulationYears,
 } from '@island.is/regulations/web'
 import {
-  ImageSourceMap,
   PresignedPost,
   RegulationPdf,
   RegulationPdfInput,
@@ -56,22 +55,6 @@ export class RegulationsService extends RESTDataSource {
     // updates are live when editing and viewing
     this.memoizedResults.clear()
     request.headers.set('Content-Type', 'application/json')
-  }
-
-  async uploadImageUrls(
-    regId: string,
-    urls?: Array<string>,
-  ): Promise<ImageSourceMap | null> {
-    const response = await this.post<ImageSourceMap | null>(
-      `file-upload?scope=${regId}`,
-      JSON.stringify(urls),
-      {
-        headers: {
-          'X-ApiKey': process.env.FILE_UPLOAD_KEY_DRAFT ?? '',
-        },
-      },
-    )
-    return response
   }
 
   async createPresignedPost(

@@ -30,14 +30,6 @@ const validPage = (page: number | undefined) => (page && page >= 1 ? page : 1)
 export class RegulationsResolver {
   constructor(private regulationsService: RegulationsService) {}
 
-  @Query(() => graphqlTypeJson)
-  uploadImageUrls(
-    @Args('input') input: UploadImageUrlsInput,
-  ): Promise<ImageSourceMap | null> {
-    console.log(input)
-    return this.regulationsService.uploadImageUrls(input.regId, input.urls)
-  }
-
   @Mutation(() => graphqlTypeJson)
   createPresignedPost(
     @Args('input') input: CreatePresignedPostInput,
