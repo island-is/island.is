@@ -4,7 +4,7 @@ describe('web', () => {
   })
   it('should navigate homepage', () => {
     cy.visit('/')
-    cy.contains('Að eignast barn')
+    cy.contains('Eignast barn')
   })
   it('should have life events', () => {
     cy.visit('/')
@@ -28,6 +28,7 @@ describe('web', () => {
           .should('equal', '/'),
       )
   })
+
   it('should have search results for common words', function () {
     cy.visit('/')
       .get('[data-testid="search-box"]')
@@ -45,5 +46,14 @@ describe('web', () => {
       .should((currentPath) => {
         expect(currentPath).to.not.eq(this.searchPath)
       })
+  })
+
+  it('should have no search results for long bogus search words', function () {
+    cy.visit('/')
+      .get('[data-testid="search-box"]')
+      .click()
+      .type('abcdefhijklmnopqrstuvwxyz1234567890{enter}')
+      .get('[data-testid="search-result"]', { timeout: 5000 })
+      .should('have.length', 0)
   })
 })
