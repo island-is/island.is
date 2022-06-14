@@ -9,7 +9,7 @@ export const coreInstitutionMessages = defineMessages({
   },
   [ApplicationTypes.PASSPORT]: {
     id: 'application.system:applicationTypes.passport',
-    defaultMessage: 'INSTITUTION_MISSING',
+    defaultMessage: 'Sýslumenn',
     description: 'Institution name for applicationTypes.passport',
   },
   [ApplicationTypes.DRIVING_LICENSE]: {
@@ -19,7 +19,7 @@ export const coreInstitutionMessages = defineMessages({
   },
   [ApplicationTypes.DRIVING_ASSESSMENT_APPROVAL]: {
     id: 'application.system:applicationTypes.driving_assessment_approval',
-    defaultMessage: 'Sýslumenn',
+    defaultMessage: 'Samgöngustofa',
     description:
       'Institution name for applicationTypes.driving_assessment_approval',
   },
@@ -30,7 +30,7 @@ export const coreInstitutionMessages = defineMessages({
   },
   [ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING]: {
     id: 'application.system:applicationTypes.document_provider_onboarding',
-    defaultMessage: 'INSTITUTION_MISSING',
+    defaultMessage: 'Stafrænt Ísland',
     description:
       'Institution name for applicationTypes.document_provider_onboarding',
   },
@@ -88,7 +88,7 @@ export const coreInstitutionMessages = defineMessages({
   },
   [ApplicationTypes.GENERAL_PETITION]: {
     id: 'application.system:applicationTypes.general_petition',
-    defaultMessage: 'INSTITUTION_MISSING',
+    defaultMessage: 'Þjóðskrá',
     description: 'Institution name for applicationTypes.general_petition',
   },
   [ApplicationTypes.GENERAL_FISHING_LICENSE]: {
@@ -109,12 +109,12 @@ export const coreInstitutionMessages = defineMessages({
   },
   [ApplicationTypes.FINANCIAL_AID]: {
     id: 'application.system:applicationTypes.financial_aid',
-    defaultMessage: 'INSTITUTION_MISSING',
+    defaultMessage: 'Samband sveitarfélaga',
     description: 'Institution name for applicationTypes.financial_aid',
   },
   [ApplicationTypes.DRIVING_INSTRUCTOR_REGISTRATIONS]: {
     id: 'application.system:applicationTypes.driving_instructor_regisrations',
-    defaultMessage: 'Sýslumenn',
+    defaultMessage: 'Samgöngustofa',
     description:
       'Institution name for applicationTypes.driving_instructor_regisrations',
   },
@@ -125,7 +125,7 @@ export const coreInstitutionMessages = defineMessages({
   },
   [ApplicationTypes.DRIVING_SCHOOL_CONFIRMATION]: {
     id: 'application.system:applicationTypes.driving_school_confirmation',
-    defaultMessage: 'INSTITUTION_MISSING',
+    defaultMessage: 'Samgöngustofa',
     description:
       'Institution name for applicationTypes.driving_school_confirmation',
   },
