@@ -29,6 +29,7 @@ import {
   formatCustodyRestrictions,
   formatRulingModifiedHistory,
   formatCourtUploadRulingTitle,
+  formatPrisonAdministrationRulingNotification,
 } from './formatters'
 
 export const makeProsecutor = (): User => {
@@ -1877,5 +1878,34 @@ describe('formatCourtUploadRulingTitle', () => {
     const r = fn(courtCaseNumber, isModifyingRuling)
 
     expect(r).toEqual('Úrskurður 12345 leiðrétt')
+  })
+})
+
+describe('formatPrisonAdministrationRulingNotification', () => {
+  const formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
+    .formatMessage
+  const fn = (
+    courtCaseNumber: string | undefined,
+    courtName: string | undefined,
+    overviewUrl: string,
+  ) =>
+    formatPrisonAdministrationRulingNotification(
+      formatMessage,
+      courtCaseNumber,
+      courtName,
+      overviewUrl,
+    )
+
+  it('should format prison adminstration ruling notification', () => {
+    const courtCaseNumber = '007-2022-06546'
+    const courtName = 'Héraðsdómur'
+    const overviewUrl = 'some url'
+
+    const result = fn(courtCaseNumber, courtName, overviewUrl)
+
+    expect(result.subject).toBe('Úrskurður í máli 007-2022-06546')
+    expect(result.body).toBe(
+      'Dómari hefur undirritað og staðfest úrskurð í máli 007-2022-06546 hjá Héraðsdómi.<br /><br />Skjöl málsins eru aðgengileg á <a href="some url">yfirlitssíðu málsins í Réttarvörslugátt</a>.',
+    )
   })
 })

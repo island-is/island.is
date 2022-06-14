@@ -376,6 +376,7 @@
     "csstype": "2.6.13",
     "csv-parse": "4.16.0",
     "cypress": "8.4.1",
+    "cypress-file-upload": "5.0.8",
     "dotenv": "14.3.2",
     "esbuild": "0.12.1",
     "eslint": "7.21.0",
@@ -463,5 +464,9 @@
     "@npmcli/git": "2.0.8",
     "url-parse": "1.5.2",
     "path-parse": "1.0.7"
+  },
+  "volta": {
+    "node": "14.17.6",
+    "yarn": "1.22.19"
   }
 }

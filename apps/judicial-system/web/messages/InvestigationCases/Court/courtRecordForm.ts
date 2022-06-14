@@ -344,12 +344,15 @@ export const icCourtRecord = {
           'Notaður sem placeholder fyrir "Tilhögun gæslu og aðrar bókanir" innsláttarsvæði á þingbókar skrefi í rannsóknarheimildum.',
       },
     }),
-  },
-  nextButtonInfo: {
-    id: 'judicial.system.investigation_cases:court_record.next_button_info',
-    defaultMessage:
-      'Til að halda áfram þarf að skrá lyktir máls og skrifa úrskurðarorð á skjánum Úrskurður.',
-    description:
-      'Notaður sem texti í info panel sem kemur í staðinn fyrir Áfram takk þegar ekki er búið að setja lyktir máls eða úrskurðarorð',
+    nextButtonInfo: defineMessages({
+      text: {
+        id:
+          'judicial.system.investigation_cases:court_record.next_button_info_v2.text',
+        defaultMessage:
+          'Til að halda áfram þarf að skrá lyktir máls og skrifa úrskurðarorð á skjánum Úrskurður.',
+        description:
+          'Notaður sem texti í info panel sem kemur í staðinn fyrir Áfram takk þegar ekki er búið að setja lyktir máls eða úrskurðarorð',
+      },
+    }),
   },
 }

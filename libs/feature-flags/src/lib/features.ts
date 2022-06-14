@@ -14,7 +14,11 @@ export enum Features {
   // Application visibility flags
   exampleApplication = 'isExampleApplicationEnabled',
   accidentNotification = 'isAccidentNotificationEnabled',
-  noDebtCertificate = 'applicationTemplateNoDebtCertificateEnabled',
   drivingInstructorRegistrations = 'isDrivingInstructorRegistrationsEnabled',
   drivingSchoolConfirmations = 'isDrivingSchoolConfirmationsEnabled',
+  passportApplication = 'isPassportApplicationEnabled',
+  financialStatementInao = 'financialStatementInao',
+
+  // Application System Delegations active
+  applicationSystemDelegations = 'applicationSystemDelegations',
 }

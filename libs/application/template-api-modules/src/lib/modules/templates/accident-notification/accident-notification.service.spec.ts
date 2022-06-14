@@ -50,6 +50,7 @@ const createApplication = (): Application => ({
   },
   applicant: nationalId,
   assignees: [],
+  applicantActors: [],
   attachments: {
     attachment1: 'somattachment',
   },

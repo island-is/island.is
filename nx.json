@@ -246,6 +246,9 @@
     "application-templates-financial-aid": {
       "tags": []
     },
+    "application-templates-financial-statements-inao": {
+      "tags": []
+    },
     "application-templates-funding-government-projects": {
       "tags": []
     },
@@ -538,6 +541,9 @@
       "tags": []
     },
     "judicial-system-formatters": {
+      "tags": []
+    },
+    "judicial-system-message-handler": {
       "tags": []
     },
     "judicial-system-scheduler": {
