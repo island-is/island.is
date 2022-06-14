@@ -13,19 +13,3 @@ export const customZodError = (
   }
   return zodValidation
 }
-
-/* Examples for attrinbutes in dataschema
-    import { m } from './messages'
-    ...
-    
-    //Singular
-    name: customZodError(z.string().nonempty(), m.errorName)
-
-    ...
-
-    //Multiple
-    email: z.intersection(
-        customZodError(z.string().nonempty(), m.errorEmailEmpty),
-        customZodError(z.string().max(25), m.errorEmailTooLong),
-    )
-*/
