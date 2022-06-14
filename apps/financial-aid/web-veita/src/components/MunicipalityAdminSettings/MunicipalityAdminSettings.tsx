@@ -6,6 +6,7 @@ import {
   Button,
   toast,
   ToastContainer,
+  Checkbox,
 } from '@island.is/island-ui/core'
 
 import {
@@ -26,6 +27,8 @@ interface Props {
 }
 const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
   const [state, setState] = useState(currentMunicipality)
+
+  const [hasNavError, setHasNavError] = useState(false)
   const [hasAidError, setHasAidError] = useState(false)
   const [updateMunicipalityMutation, { loading }] = useMutation(
     UpdateMunicipalityMutation,
@@ -42,21 +45,34 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
     )
 
     if (firstErrorAid === undefined) {
-      return false
+      return ''
     }
 
     setHasAidError(true)
-    scrollToId(`${prefix}${firstErrorAid[0]}`)
-    return true
+    return `${prefix}${firstErrorAid[0]}`
   }
 
+
+  const errorCheckNav = () => {
+    if (state.usingNav && !state.navUrl) {
+      setHasNavError(true)
+      return "navSettings"
+    }
+
+    setHasNavError(false)
+    return ''
+  }
+
+
   const submit = () => {
-    if (
-      errorCheck(state.individualAid, INDIVIDUAL) ||
-      errorCheck(state.cohabitationAid, COHABITATION)
-    ) {
+    const errorNav = errorCheckNav()
+    const errorAid = errorCheck(state.individualAid, INDIVIDUAL) || errorCheck(state.cohabitationAid, COHABITATION)
+
+    if (errorNav || errorAid) {
+      scrollToId(errorNav || errorAid)
       return
     }
+
     updateMunicipality()
   }
 
@@ -75,6 +91,8 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
           rulesHomepage: state.rulesHomepage,
           email: state.email,
           municipalityId: state.municipalityId,
+          usingNav: state.usingNav,
+          navUrl: state.navUrl,
         },
       },
     })
@@ -126,6 +144,43 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
   ]
 
   const EmailSiteAidContent = [
+    {
+      headline: 'Tenging við ytri kerfi',
+      smallText:
+        'Þetta er slóð á vefþjónustu Navision sem þið fáið frá Wise þegar vefþjónustan hefur verið sett upp fyrir sveitafélagið.',
+      component: (
+        <>
+          <Box marginBottom={2} id="navSettings">
+            <Checkbox
+              name="usingNav"
+              label="Sjálfvirk tenging við Navision"
+              checked={state.usingNav}
+              onChange={(event) =>
+                setState({
+                  ...state,
+                  usingNav: event.target.checked,
+                })
+              }
+            />
+          </Box>
+          <Input
+            label="Slóð"
+            name="navUrl"
+            value={state.navUrl ?? ''}
+            backgroundColor="blue"
+            hasError={hasNavError}
+            disabled={!state.usingNav}
+            onChange={(event) =>
+              setState({
+                ...state,
+                navUrl: event.currentTarget.value,
+              })
+            }
+          />
+        </>
+
+      ),
+    },
     {
       headline: 'Almennt netfang sveitarfélagsins (félagsþjónusta)',
       smallText:
