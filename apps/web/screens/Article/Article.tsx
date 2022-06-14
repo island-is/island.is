@@ -61,7 +61,6 @@ import { useScrollPosition } from '../../hooks/useScrollPosition'
 import { scrollTo } from '../../hooks/useScrollSpy'
 
 import { ArticleChatPanel } from './components/ArticleChatPanel'
-import * as styles from './Article.css'
 
 type Article = GetSingleArticleQuery['getSingleArticle']
 type SubArticle = GetSingleArticleQuery['getSingleArticle']['subArticles'][0]
@@ -435,26 +434,35 @@ const ArticleScreen: Screen<ArticleProps> = ({
         }
       >
         <Box
-          paddingBottom={[2, 2, 4]}
+          paddingBottom={inStepperView ? undefined : [2, 2, 4]}
           display={['none', 'none', 'block']}
-          printHidden
+          printHidden={!inStepperView}
         >
-          <Breadcrumbs
-            items={breadcrumbItems}
-            renderLink={(link, { typename, slug }) => {
-              return (
-                <NextLink
-                  {...linkResolver(typename as LinkType, slug)}
-                  passHref
-                >
-                  {link}
-                </NextLink>
-              )
-            }}
-          />
+          <Box>
+            <Text color="blueberry600" variant="eyebrow" as="h2">
+              <span id={slugify(article.title)} className="rs_read">
+                {article.title}
+              </span>
+            </Text>
+          </Box>
+          {!inStepperView && (
+            <Breadcrumbs
+              items={breadcrumbItems}
+              renderLink={(link, { typename, slug }) => {
+                return (
+                  <NextLink
+                    {...linkResolver(typename as LinkType, slug)}
+                    passHref
+                  >
+                    {link}
+                  </NextLink>
+                )
+              }}
+            />
+          )}
         </Box>
         <Box
-          paddingBottom={[2, 2, 4]}
+          paddingBottom={inStepperView ? undefined : [2, 2, 4]}
           display={['flex', 'flex', 'none']}
           justifyContent="spaceBetween"
           alignItems="center"
@@ -493,12 +501,24 @@ const ArticleScreen: Screen<ArticleProps> = ({
           )}
         </Box>
         <Box>
-          <Text variant="h1" as="h1">
-            <span id={slugify(article.title)} className="rs_read">
-              {article.title}
-            </span>
-          </Text>
-          <Webreader readId={null} readClass="rs_read" />
+          {!inStepperView && (
+            <Text variant="h1" as="h1">
+              <span id={slugify(article.title)} className="rs_read">
+                {article.title}
+              </span>
+            </Text>
+          )}
+
+          {inStepperView && (
+            <Stepper
+              namespace={stepperNamespace}
+              optionsFromNamespace={stepOptionsFromNamespace}
+              stepper={article.stepper}
+              showWebReader={true}
+              webReaderClassName="rs_read"
+            />
+          )}
+          {!inStepperView && <Webreader readId={null} readClass="rs_read" />}
           <Box marginTop={3} display={['block', 'block', 'none']} printHidden>
             <ArticleNavigation
               article={article}
@@ -529,46 +549,26 @@ const ArticleScreen: Screen<ArticleProps> = ({
               </GridColumn>
             </GridRow>
           )}
-          {subArticle && !subArticle.stepper && (
+          {subArticle && (
             <Text variant="h2" as="h2" paddingTop={7}>
               <span id={slugify(subArticle.title)} className="rs_read">
                 {subArticle.title}
               </span>
             </Text>
           )}
-          {subArticle && subArticle.stepper && (
-            <Box className={styles.stepperSubArticleTitle}>
-              <Text
-                color="blueberry600"
-                variant="eyebrow"
-                as="h2"
-                paddingTop={3}
-              >
-                <span id={slugify(subArticle.title)} className="rs_read">
-                  {subArticle.title}
-                </span>
-              </Text>
+        </Box>
+        <Box paddingTop={subArticle ? 2 : 4}>
+          {!inStepperView && (
+            <Box className="rs_read">
+              {richText(
+                (subArticle ?? article).body as SliceType[],
+                undefined,
+                activeLocale,
+              )}
+              <AppendedArticleComponents article={article} />
             </Box>
           )}
-        </Box>
-        <Box
-          paddingTop={subArticle && subArticle.stepper ? 0 : subArticle ? 2 : 4}
-        >
-          <Box className="rs_read">
-            {richText(
-              (subArticle ?? article).body as SliceType[],
-              undefined,
-              activeLocale,
-            )}
-            {subArticle && subArticle.stepper && (
-              <Stepper
-                stepper={subArticle.stepper}
-                optionsFromNamespace={stepOptionsFromNamespace}
-                namespace={stepperNamespace}
-              />
-            )}
-            <AppendedArticleComponents article={article} />
-          </Box>
+
           <Box
             id="processRef"
             display={['block', 'block', 'none']}

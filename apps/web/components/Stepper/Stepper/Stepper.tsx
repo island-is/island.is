@@ -14,6 +14,7 @@ import {
   GridRow,
   GridContainer,
 } from '@island.is/island-ui/core'
+import { Webreader } from '@island.is/web/components'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
 import { useI18n } from '@island.is/web/i18n'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
@@ -55,6 +56,8 @@ interface StepperProps {
   optionsFromNamespace: { slug: string; data: Record<string, any>[] }[]
   scrollUpWhenNextStepAppears?: boolean
   namespace: GetNamespaceQuery['getNamespace']
+  showWebReader?: boolean
+  webReaderClassName?: string
 }
 
 interface StepOptionSelectItem {
@@ -155,6 +158,8 @@ const Stepper = ({
   optionsFromNamespace,
   namespace,
   scrollUpWhenNextStepAppears = true,
+  showWebReader = false,
+  webReaderClassName = 'rs_read',
 }: StepperProps) => {
   const router = useRouter()
   const { activeLocale } = useI18n()
@@ -428,9 +433,14 @@ const Stepper = ({
       )
   }
 
+  // TODO: add webReaderClassName to things
+
   return (
     <Box className={styles.container}>
       {currentStep && <QuestionTitle />}
+      {showWebReader && (
+        <Webreader readId={null} readClass={webReaderClassName} />
+      )}
 
       {renderCurrentStepOptions()}
       {transitionErrorMessage && (
