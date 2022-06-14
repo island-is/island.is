@@ -1,4 +1,4 @@
-describe('web', () => {
+describe('Home page', () => {
   before(() => {
     cy.ensureLoggedIn({ url: '/' })
   })

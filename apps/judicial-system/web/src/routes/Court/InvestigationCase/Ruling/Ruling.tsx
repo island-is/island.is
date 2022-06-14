@@ -165,6 +165,7 @@ const Ruling = () => {
               type="warning"
               title={formatMessage(m.sections.alertMessage.title)}
               message={formatMessage(m.sections.alertMessage.message)}
+              testid="alertMessageModifyingRuling"
             />
           </Box>
         )}
