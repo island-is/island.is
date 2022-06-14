@@ -125,6 +125,7 @@ export enum PersonType {
   Child,
   CriminalRecordApplicant,
   MortgageCertificateApplicant,
+  AnnouncerOfDeathCertificate,
 }
 
 export interface MortgageCertificate {
@@ -137,4 +138,55 @@ export interface MortgageCertificateValidation {
   isFromSearch?: boolean
   exists: boolean
   hasKMarking: boolean
+}
+
+export enum AssetType {
+  RealEstate = 0,
+  Vehicle = 1,
+  Ship = 2,
+  Cash = 3,
+  Flyer = 4,
+}
+
+export type AssetName = {
+  name: string
+}
+
+export type EstateMember = {
+  name: string
+  nationalId: string
+  relation: string
+}
+
+export type EstateAsset = {
+  description: string
+  assetNumber: string
+  share: number
+}
+
+export type EstateRegistrant = {
+  applicantEmail: string
+  applicantPhone: string
+  knowledgeOfOtherWills: 'yes' | 'no'
+  assets: EstateAsset[]
+  vehicles: EstateAsset[]
+  ships: EstateAsset[]
+  cash: EstateAsset[]
+  flyers: EstateAsset[]
+  estateMembers: EstateMember[]
+  marriageSettlement: boolean
+  office: string
+  caseNumber: string
+  dateOfDeath: Date
+  nameOfDeceased: string
+  nationalIdOfDeceased: string
+  ownBusinessManagement: boolean
+  assetsAbroad: boolean
+  occupationRightViaCondominium: boolean
+  bankStockOrShares: boolean
+  districtCommissionerHasWill: boolean
+}
+
+export type EstateRelations = {
+  relations: string[]
 }
