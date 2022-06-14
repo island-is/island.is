@@ -19,7 +19,7 @@ import { isPoliceDemandsStepValidIC } from '@island.is/judicial-system-web/src/u
 import { icDemands, core } from '@island.is/judicial-system-web/messages'
 import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
-import * as Constants from '@island.is/judicial-system/consts'
+import * as constants from '@island.is/judicial-system/consts'
 import { enumerate } from '@island.is/judicial-system-web/src/utils/formatters'
 
 const courtClaimPrefill: Partial<
@@ -316,8 +316,8 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${Constants.IC_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
-          nextUrl={`${Constants.IC_POLICE_REPORT_ROUTE}/${workingCase.id}`}
+          previousUrl={`${constants.IC_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
+          nextUrl={`${constants.IC_POLICE_REPORT_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!isPoliceDemandsStepValidIC(workingCase)}
           nextIsLoading={isLoading}
         />
