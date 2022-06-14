@@ -16,7 +16,6 @@ export enum ActionType {
   SetUserMenuState = 'setUserMenuState',
   SetRoutesFulfilled = 'setRoutesFulfilled',
   SetSidebarMenuState = 'setSidebarMenuState',
-  UpdateFulfilledRoutes = 'updateFulfilledRoutes',
   SetModulesList = 'setModulesList',
 }
 
@@ -37,10 +36,6 @@ export type Action =
     }
   | {
       type: ActionType.SetRoutesFulfilled
-      payload: ServicePortalRoute[]
-    }
-  | {
-      type: ActionType.UpdateFulfilledRoutes
       payload: ServicePortalRoute[]
     }
   | {

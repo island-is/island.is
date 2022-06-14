@@ -22,7 +22,7 @@ const Greeting: FC<{}> = () => {
   return (
     <GridRow>
       <GridColumn span={['12/12', '7/12']}>
-        <Box marginTop={[2, 3, 4]}>
+        <Box marginTop={[2, 3, 4]} data-testid="greeting">
           <Text
             variant="eyebrow"
             marginBottom={2}
@@ -37,22 +37,6 @@ const Greeting: FC<{}> = () => {
             {userInfo?.profile.name}
           </Text>
           <Text marginBottom={2}>{formatMessage(m.greetingIntro)}</Text>
-          <div>
-            <a
-              href={LEGACY_MY_PAGES_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Button
-                variant="text"
-                icon="open"
-                iconType="outline"
-                size="small"
-              >
-                {formatMessage(m.olderVersion)}
-              </Button>
-            </a>
-          </div>
         </Box>
       </GridColumn>
       <GridColumn span={['12/12', '5/12']}>

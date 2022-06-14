@@ -854,6 +854,16 @@ export class Case extends Model<Case> {
   caseModifiedExplanation?: string
 
   /**********
+   * The history on when a case's ruling was modified
+   **********/
+  @Column({
+    type: DataType.TEXT,
+    allowNull: true,
+  })
+  @ApiProperty()
+  rulingModifiedHistory?: string
+
+  /**********
    * The explanation given for the extension of a case
    **********/
   @Column({
@@ -873,4 +883,14 @@ export class Case extends Model<Case> {
   })
   @ApiProperty()
   isArchived?: boolean
+
+  /**********
+   * The date and time of when when the defender in a case opened the case
+   **********/
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  @ApiProperty()
+  seenByDefender?: Date
 }

@@ -14,13 +14,13 @@ export const m = defineMessages({
   },
   dataCollectionSubtitle: {
     id: 'ps.application:dataCollectionSubtitle',
-    defaultMessage: 'Eftirfarandi gögn verða sótt rafrænt með þínu samþykki',
+    defaultMessage: 'Eftirfarandi gögn verða sótt rafrænt',
     description: 'Subtitle for data collection section',
   },
   dataCollectionDescription: {
     id: 'ps.application:dataCollectionDescription',
     defaultMessage:
-      'Til þess að geta hafið umsókn þína fyrir stæðiskort þarf að sækja eftirfarandi gögn með þínu samþykki.',
+      'Til þess að geta hafið umsókn þína fyrir stæðiskort þarf að sækja eftirfarandi gögn',
     description: 'Description for data collection section',
   },
   dataCollectionCheckboxLabel: {

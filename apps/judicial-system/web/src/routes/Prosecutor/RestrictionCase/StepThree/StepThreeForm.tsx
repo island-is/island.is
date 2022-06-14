@@ -50,7 +50,7 @@ import {
   rcReportForm,
   core,
 } from '@island.is/judicial-system-web/messages'
-import * as Constants from '@island.is/judicial-system/consts'
+import * as constants from '@island.is/judicial-system/consts'
 
 import * as styles from './StepThree.css'
 
@@ -391,48 +391,56 @@ const StepThreeForm: React.FC<Props> = (props) => {
             />
           </BlueBox>
         </Box>
-        {workingCase.type === CaseType.CUSTODY ||
-          (workingCase.type === CaseType.ADMISSION_TO_FACILITY && (
-            <Box component="section" marginBottom={10}>
-              <Box marginBottom={3}>
-                <Box marginBottom={1}>
-                  <Text as="h3" variant="h3">
-                    {formatMessage(
-                      rcDemands.sections.custodyRestrictions.headingV2,
-                      {
-                        caseType: workingCase.type,
-                      },
-                    )}
-                  </Text>
-                </Box>
-                <Text>
+        {(workingCase.type === CaseType.CUSTODY ||
+          workingCase.type === CaseType.ADMISSION_TO_FACILITY) && (
+          <Box
+            component="section"
+            marginBottom={10}
+            data-testid="custodyRestrictions"
+          >
+            <Box marginBottom={3}>
+              <Box marginBottom={1}>
+                <Text as="h3" variant="h3">
                   {formatMessage(
-                    rcDemands.sections.custodyRestrictions.subHeadingV2,
+                    rcDemands.sections.custodyRestrictions.headingV2,
                     {
                       caseType: workingCase.type,
                     },
                   )}
                 </Text>
               </Box>
-              <BlueBox>
-                <CheckboxList
-                  checkboxes={restrictionsCheckboxes}
-                  selected={workingCase.requestedCustodyRestrictions}
-                  onChange={(id) =>
-                    setCheckboxAndSendToServer(
-                      'requestedCustodyRestrictions',
-                      id,
-                      workingCase,
-                      setWorkingCase,
-                      updateCase,
-                    )
-                  }
-                />
-              </BlueBox>
+              <Text>
+                {formatMessage(
+                  rcDemands.sections.custodyRestrictions.subHeadingV2,
+                  {
+                    caseType: workingCase.type,
+                  },
+                )}
+              </Text>
             </Box>
-          ))}
+            <BlueBox>
+              <CheckboxList
+                checkboxes={restrictionsCheckboxes}
+                selected={workingCase.requestedCustodyRestrictions}
+                onChange={(id) =>
+                  setCheckboxAndSendToServer(
+                    'requestedCustodyRestrictions',
+                    id,
+                    workingCase,
+                    setWorkingCase,
+                    updateCase,
+                  )
+                }
+              />
+            </BlueBox>
+          </Box>
+        )}
         {workingCase.type === CaseType.TRAVEL_BAN && (
-          <Box component="section" marginBottom={4}>
+          <Box
+            component="section"
+            marginBottom={4}
+            data-testid="travelBanRestrictions"
+          >
             <Box marginBottom={3}>
               <Text as="h3" variant="h3">
                 {formatMessage(
@@ -506,8 +514,8 @@ const StepThreeForm: React.FC<Props> = (props) => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${Constants.STEP_TWO_ROUTE}/${workingCase.id}`}
-          nextUrl={`${Constants.STEP_FOUR_ROUTE}/${workingCase.id}`}
+          previousUrl={`${constants.STEP_TWO_ROUTE}/${workingCase.id}`}
+          nextUrl={`${constants.STEP_FOUR_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!isPoliceDemandsStepValidRC(workingCase)}
         />
       </FormContentContainer>

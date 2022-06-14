@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React from 'react'
 
 import { BulletList, Bullet } from '@island.is/island-ui/core'
 import { formatText, Application } from '@island.is/application/core'
@@ -11,6 +11,7 @@ interface BulletsData {
 
 const Bullets = ({ application }: BulletsData) => {
   const { formatMessage } = useLocale()
+  console.log('bla', application)
   return (
     <BulletList>
       <Bullet>

@@ -76,9 +76,14 @@ export class ApplicationSerializer
       const roleInState = helper.getRoleInState(userRole)
       canUserDelete = roleInState?.delete ?? false
     }
+
+    const actors =
+      application.applicant === nationalId ? application.applicantActors : []
+
     const dto = plainToInstance(ApplicationResponseDto, {
       ...application,
       ...helper.getReadableAnswersAndExternalData(userRole),
+      applicationActors: actors,
       actionCard: {
         title: actionCardMeta.title
           ? intl.formatMessage(actionCardMeta.title)

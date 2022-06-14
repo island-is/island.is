@@ -60,7 +60,7 @@ import { FormContext } from '@island.is/judicial-system-web/src/components/FormP
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import * as Constants from '@island.is/judicial-system/consts'
+import * as constants from '@island.is/judicial-system/consts'
 
 import { isCourtRecordStepValidRC } from '../../../../utils/validate'
 import { formatCustodyRestrictions } from '../../../../utils/restrictions'
@@ -192,22 +192,26 @@ export const CourtRecord: React.FC = () => {
           isAcceptingCaseDecision(workingCase.decision) ||
           workingCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
         ) {
+          if (isAcceptingCaseDecision(workingCase.decision)) {
+            const formattedRestrictions = formatCustodyRestrictions(
+              formatMessage,
+              workingCase.type,
+              workingCase.requestedCustodyRestrictions,
+            )
+
+            if (formattedRestrictions) {
+              endOfSessionBookings.push(formattedRestrictions, '\n\n')
+            }
+          }
+
           endOfSessionBookings.push(
-            `${
-              isAcceptingCaseDecision(workingCase.decision)
-                ? `${formatCustodyRestrictions(
-                    formatMessage,
-                    workingCase.type,
-                    workingCase.requestedCustodyRestrictions,
-                  )}\n\n`
-                : ''
-            }${formatMessage(m.sections.custodyRestrictions.disclaimerV2, {
+            formatMessage(m.sections.custodyRestrictions.disclaimerV2, {
               caseType:
                 workingCase.decision ===
                 CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
                   ? CaseType.TRAVEL_BAN
                   : workingCase.type,
-            })}`,
+            }),
           )
         }
       } else if (workingCase.type === CaseType.TRAVEL_BAN) {
@@ -957,7 +961,7 @@ export const CourtRecord: React.FC = () => {
                     autoComplete="off"
                     defaultValue={formatDate(
                       workingCase.courtEndTime,
-                      Constants.TIME_FORMAT,
+                      constants.TIME_FORMAT,
                     )}
                     errorMessage={courtDocumentEndErrorMessage}
                     hasError={courtDocumentEndErrorMessage !== ''}
@@ -978,13 +982,19 @@ export const CourtRecord: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${Constants.RULING_ROUTE}/${workingCase.id}`}
-          nextUrl={`${Constants.CONFIRMATION_ROUTE}/${id}`}
+          previousUrl={`${constants.RULING_ROUTE}/${workingCase.id}`}
+          nextUrl={`${constants.CONFIRMATION_ROUTE}/${id}`}
           nextIsDisabled={!isCourtRecordStepValidRC(workingCase)}
-          hideNextButton={!workingCase.decision || !workingCase.conclusion}
+          hideNextButton={
+            !workingCase.decision ||
+            !workingCase.conclusion ||
+            !workingCase.ruling
+          }
           infoBoxText={
-            !workingCase.decision || !workingCase.conclusion
-              ? formatMessage(m.nextButtonInfo)
+            !workingCase.decision ||
+            !workingCase.conclusion ||
+            !workingCase.ruling
+              ? formatMessage(m.sections.nextButtonInfo.text)
               : ''
           }
         />

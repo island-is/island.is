@@ -64,6 +64,9 @@
 /libs/application/templates/driving-instructor-registrations/                                       @island-is/juni
 /libs/api/domains/driving-license-book/                                                             @island-is/juni
 /libs/clients/driving-license-book/                                                                 @island-is/juni
+/libs/application/template-api-modules/src/lib/modules/templates/passport                           @island-is/juni
+/libs/application/templates/passport/                                                               @island-is/juni
+/libs/application/template-api-modules/src/lib/modules/templates/driving-school-confirmation/       @island-is/juni
 
 /libs/clients/auth-public-api/                                                                      @island-is/aranja
 /libs/clients/middlewares/                                                                          @island-is/aranja
@@ -84,7 +87,7 @@
 /libs/application/templates/financial-aid/                                                          @island-is/kolibri-robin-hood
 /libs/api/domains/municipalities-financial-aid                                                      @island-is/kolibri-robin-hood
 /libs/clients/municipalities-financial-aid                                                          @island-is/kolibri-robin-hood
-
+/libs/application/template-api-modules/src/lib/modules/templates/financial-aid                      @island-is/kolibri-robin-hood
 
 /apps/download-service/                                                                             @island-is/hugsmidjan
 /apps/service-portal*/                                                                              @island-is/hugsmidjan
@@ -129,6 +132,8 @@
 /libs/api/domains/company-registry                                                                  @island-is/sendiradid
 /libs/clients/health-insurance-v2/                                                                  @island-is/sendiradid
 /libs/clients/data-protection-complaint/                                                            @island-is/sendiradid
+/libs/clients/fishing-license/                                                                      @island-is/sendiradid
+/libs/api/domains/fishing-license/                                                                  @island-is/sendiradid
 /libs/application/templates/general-fishing-license/                                                @island-is/sendiradid
 /libs/application/template-api-modules/src/lib/modules/templates/general-fishing-license/           @island-is/sendiradid
 /libs/application/template-api-modules/src/lib/modules/templates/data-protection-complaint/         @island-is/sendiradid
@@ -136,6 +141,7 @@
 /libs/api/domains/application/                                                                      @island-is/sendiradid-applications
 
 /apps/services/search-indexer/                                                                      @island-is/stefna @island-is/juni
+/apps/services/contentful-entry-tagger/                                                             @island-is/stefna
 /apps/web/screens/Organization/                                                                     @island-is/stefna
 /apps/web/components/Organization/                                                                  @island-is/stefna
 /libs/content-search-toolkit/                                                                       @island-is/stefna @island-is/juni
@@ -147,18 +153,6 @@
 /libs/clients/syslumenn/                                                                            @island-is/stefna @island-is/juni
 
 /libs/island-ui/                                                                                    @island-is/island-ui
-
-/.github/actions/                                                                                   @island-is/devops
-/.github/workflows/                                                                                 @island-is/devops
-/apps/reference-backend/                                                                            @island-is/devops
-/apps/github-actions-cache/                                                                         @island-is/devops
-/libs/infra*/                                                                                       @island-is/devops
-/libs/logging/                                                                                      @island-is/devops
-/scripts/                                                                                           @island-is/devops
-/scripts/postinstall.js                                                                             @island-is/devops @island-is/core
-/scripts/schemas.js                                                                                 @island-is/devops @island-is/core
-infra/                                                                                              @island-is/devops
-/charts                                                                                             @island-is/devops
 
 /apps/skilavottord/                                                                                 @island-is/deloitte
 /libs/skilavottord/                                                                                 @island-is/deloitte
@@ -176,6 +170,7 @@ infra/                                                                          
 /apps/services/personal-representative/                                                             @island-is/programm
 /apps/services/personal-representative-public/                                                      @island-is/programm
 /libs/api/domains/financial-statements-inao/                                                        @island-is/programm
+/libs/application/templates/financial-statements-inao/                                              @island-is/programm
 
 /libs/application/templates/criminal-record/                                                        @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/criminal-record-submission         @island-is/origo
@@ -187,3 +182,16 @@ infra/                                                                          
 /libs/api/domains/mortgage-certificate/                                                             @island-is/origo
 
 /libs/application/templates/no-debt-certificate/                                                    @island-is/origo
+
+# DevOps
+/.github/actions/                                                                                   @island-is/devops
+/.github/workflows/                                                                                 @island-is/devops
+/apps/reference-backend/                                                                            @island-is/devops
+/apps/github-actions-cache/                                                                         @island-is/devops
+/libs/infra*/                                                                                       @island-is/devops
+/libs/logging/                                                                                      @island-is/devops
+/scripts/                                                                                           @island-is/devops
+/scripts/postinstall.js                                                                             @island-is/devops @island-is/core
+/scripts/schemas.js                                                                                 @island-is/devops @island-is/core
+infra/                                                                                              @island-is/devops
+/charts                                                                                             @island-is/devops

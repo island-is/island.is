@@ -52,12 +52,17 @@ describe(`${IC_OVERVIEW_ROUTE}/:id`, () => {
       state: CaseState.RECEIVED,
       sessionArrangements: SessionArrangements.ALL_PRESENT,
       caseFiles: [makeCaseFile()],
+      seenByDefender: '2020-09-20T19:50:08.033Z',
     }
 
     cy.stubAPIResponses()
     cy.visit('/domur/rannsoknarheimild/yfirlit/test_id')
 
     intercept(caseDataAddition)
+  })
+
+  it('should let the user know if the assigned defender has viewed the case', () => {
+    cy.getByTestid('alertMessageSeenByDefender').should('not.match', ':empty')
   })
 
   it('should display information about the case in an info card', () => {
@@ -96,14 +101,9 @@ describe(`${IC_OVERVIEW_ROUTE}/:id`, () => {
     cy.getByTestid('modal')
       .getByTestid('ruling')
       .contains('héraðsdómari kveður upp úrskurð þennan.')
-      .clear()
-    cy.clickOutside()
-    cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
-    cy.getByTestid('ruling').type('lorem')
-    cy.getByTestid('inputErrorMessage').should('not.exist')
   })
 
-  it.only('should upload files to court', () => {
+  it('should upload files to court', () => {
     cy.get('button[aria-controls="caseFilesAccordionItem"]').click()
     cy.getByTestid('upload-to-court-button').click()
 

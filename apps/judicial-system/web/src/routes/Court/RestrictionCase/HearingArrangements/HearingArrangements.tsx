@@ -1,28 +1,25 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState, useCallback } from 'react'
 import { useIntl } from 'react-intl'
-import { useRouter } from 'next/router'
+import router from 'next/router'
 
-import { Box, Input, Text, AlertMessage } from '@island.is/island-ui/core'
+import { Box, Text, AlertMessage } from '@island.is/island-ui/core'
 import {
   FormFooter,
   PageLayout,
   CaseInfo,
-  BlueBox,
   FormContentContainer,
   Modal,
 } from '@island.is/judicial-system-web/src/components'
 import { isCourtHearingArrangemenstStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
-import { CaseType, NotificationType } from '@island.is/judicial-system/types'
+import {
+  CaseCustodyRestrictions,
+  CaseType,
+  NotificationType,
+} from '@island.is/judicial-system/types'
 import {
   CourtSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import {
-  validateAndSendToServer,
-  removeTabsValidateAndSet,
-  setAndSendDateToServer,
-} from '@island.is/judicial-system-web/src/utils/formHelper'
-import { DateTime } from '@island.is/judicial-system-web/src/components'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import DefenderInfo from '@island.is/judicial-system-web/src/components/DefenderInfo/DefenderInfo'
@@ -32,7 +29,10 @@ import {
   titles,
 } from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import * as Constants from '@island.is/judicial-system/consts'
+import CourtArrangements, {
+  useCourtArrangements,
+} from '@island.is/judicial-system-web/src/components/CourtArrangements'
+import * as constants from '@island.is/judicial-system/consts'
 
 export const HearingArrangements: React.FC = () => {
   const {
@@ -46,47 +46,84 @@ export const HearingArrangements: React.FC = () => {
 
   const [modalVisible, setModalVisible] = useState(false)
 
-  const router = useRouter()
-  const id = router.query.id
-
   const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
-  const {
-    updateCase,
-    autofill,
-    sendNotification,
-    isSendingNotification,
-  } = useCase()
+  const { autofill, sendNotification, isSendingNotification } = useCase()
   const { formatMessage } = useIntl()
+  const {
+    courtDate,
+    setCourtDate,
+    courtDateHasChanged,
+    handleCourtDateChange,
+  } = useCourtArrangements(workingCase)
 
   useEffect(() => {
     if (isCaseUpToDate && !initialAutoFillDone) {
+      if (!workingCase.courtDate) {
+        setCourtDate(workingCase.requestedCourtDate)
+
+        setInitialAutoFillDone(true)
+      }
+
       autofill(
-        [{ key: 'courtDate', value: workingCase.requestedCourtDate }],
+        [
+          // validToDate, isolationToDate and isCustodyIsolation are autofilled here
+          // so they are ready for conclusion autofill later
+          {
+            key: 'validToDate',
+            value: workingCase.requestedValidToDate,
+          },
+          {
+            key: 'isolationToDate',
+            value:
+              workingCase.type === CaseType.CUSTODY ||
+              workingCase.type === CaseType.ADMISSION_TO_FACILITY
+                ? workingCase.requestedValidToDate
+                : undefined,
+          },
+          {
+            key: 'isCustodyIsolation',
+            value:
+              workingCase.type === CaseType.CUSTODY ||
+              workingCase.type === CaseType.ADMISSION_TO_FACILITY
+                ? workingCase.requestedCustodyRestrictions &&
+                  workingCase.requestedCustodyRestrictions.includes(
+                    CaseCustodyRestrictions.ISOLATION,
+                  )
+                  ? true
+                  : false
+                : undefined,
+          },
+        ],
         workingCase,
         setWorkingCase,
       )
-
-      setInitialAutoFillDone(true)
     }
   }, [
     autofill,
     initialAutoFillDone,
     isCaseUpToDate,
+    setCourtDate,
     setWorkingCase,
     workingCase,
   ])
 
-  const handleNextButtonClick = () => {
-    if (
-      workingCase?.notifications?.find(
-        (notification) => notification.type === NotificationType.COURT_DATE,
-      )
-    ) {
-      router.push(`${Constants.RULING_ROUTE}/${workingCase.id}`)
+  const handleNextButtonClick = useCallback(() => {
+    const hasSentNotification = workingCase?.notifications?.find(
+      (notification) => notification.type === NotificationType.COURT_DATE,
+    )
+
+    autofill(
+      [{ key: 'courtDate', value: courtDate, force: true }],
+      workingCase,
+      setWorkingCase,
+    )
+
+    if (hasSentNotification && !courtDateHasChanged) {
+      router.push(`${constants.RULING_ROUTE}/${workingCase.id}`)
     } else {
       setModalVisible(true)
     }
-  }
+  }, [workingCase, autofill, courtDate, setWorkingCase, courtDateHasChanged])
 
   return (
     <PageLayout
@@ -126,53 +163,12 @@ export const HearingArrangements: React.FC = () => {
             </Text>
           </Box>
           <Box marginBottom={3}>
-            <BlueBox>
-              <Box marginBottom={2}>
-                <DateTime
-                  name="courtDate"
-                  selectedDate={workingCase.courtDate}
-                  minDate={new Date()}
-                  onChange={(date: Date | undefined, valid: boolean) => {
-                    setAndSendDateToServer(
-                      'courtDate',
-                      date,
-                      valid,
-                      workingCase,
-                      setWorkingCase,
-                      updateCase,
-                    )
-                  }}
-                  blueBox={false}
-                  required
-                />
-              </Box>
-              <Input
-                data-testid="courtroom"
-                name="courtroom"
-                label="Dómsalur"
-                autoComplete="off"
-                value={workingCase.courtRoom || ''}
-                placeholder="Skráðu inn dómsal"
-                onChange={(event) =>
-                  removeTabsValidateAndSet(
-                    'courtRoom',
-                    event.target.value,
-                    [],
-                    workingCase,
-                    setWorkingCase,
-                  )
-                }
-                onBlur={(event) =>
-                  validateAndSendToServer(
-                    'courtRoom',
-                    event.target.value,
-                    [],
-                    workingCase,
-                    updateCase,
-                  )
-                }
-              />
-            </BlueBox>
+            <CourtArrangements
+              workingCase={workingCase}
+              setWorkingCase={setWorkingCase}
+              handleCourtDateChange={handleCourtDateChange}
+              selectedCourtDate={courtDate}
+            />
           </Box>
         </Box>
         <Box component="section" marginBottom={8}>
@@ -184,9 +180,12 @@ export const HearingArrangements: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${Constants.OVERVIEW_ROUTE}/${workingCase.id}`}
+          previousUrl={`${constants.OVERVIEW_ROUTE}/${workingCase.id}`}
           onNextButtonClick={handleNextButtonClick}
-          nextIsDisabled={!isCourtHearingArrangemenstStepValidRC(workingCase)}
+          nextButtonText={formatMessage(m.continueButton.label)}
+          nextIsDisabled={
+            !isCourtHearingArrangemenstStepValidRC(workingCase, courtDate)
+          }
         />
       </FormContentContainer>
       {modalVisible && (
@@ -202,12 +201,15 @@ export const HearingArrangements: React.FC = () => {
               workingCase.type === CaseType.ADMISSION_TO_FACILITY
               ? m.modal.custodyCases.text
               : m.modal.travelBanCases.text,
+            {
+              courtDateHasChanged,
+            },
           )}
           isPrimaryButtonLoading={isSendingNotification}
           handleSecondaryButtonClick={() => {
             sendNotification(workingCase.id, NotificationType.COURT_DATE, true)
 
-            router.push(`${Constants.RULING_ROUTE}/${id}`)
+            router.push(`${constants.RULING_ROUTE}/${workingCase.id}`)
           }}
           handlePrimaryButtonClick={async () => {
             const notificationSent = await sendNotification(
@@ -216,7 +218,7 @@ export const HearingArrangements: React.FC = () => {
             )
 
             if (notificationSent) {
-              router.push(`${Constants.RULING_ROUTE}/${id}`)
+              router.push(`${constants.RULING_ROUTE}/${workingCase.id}`)
             }
           }}
           primaryButtonText={formatMessage(m.modal.shared.primaryButtonText)}

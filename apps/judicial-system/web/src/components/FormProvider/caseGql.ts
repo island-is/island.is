@@ -141,8 +141,10 @@ export const CaseQuery = gql`
       isAppealDeadlineExpired
       isAppealGracePeriodExpired
       caseModifiedExplanation
+      rulingModifiedHistory
       caseResentExplanation
       origin
+      seenByDefender
     }
   }
 `

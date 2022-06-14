@@ -36,7 +36,7 @@ import { removeTabsValidateAndSet } from '@island.is/judicial-system-web/src/uti
 import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
 import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import { rcCaseFiles as m } from '@island.is/judicial-system-web/messages'
-import * as Constants from '@island.is/judicial-system/consts'
+import * as constants from '@island.is/judicial-system/consts'
 
 import { PoliceCaseFilesData } from './StepFive'
 import { PoliceCaseFilesMessageBox } from '../../SharedComponents/PoliceCaseFilesMessageBox/PoliceCaseFilesMessageBox'
@@ -340,6 +340,7 @@ export const StepFiveForm: React.FC<Props> = (props) => {
         <Box marginBottom={5}>
           <ContentBlock>
             <InputFileUpload
+              name="fileUpload"
               fileList={files}
               header={formatMessage(m.sections.files.label)}
               buttonLabel={formatMessage(m.sections.files.buttonLabel)}
@@ -398,8 +399,8 @@ export const StepFiveForm: React.FC<Props> = (props) => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${Constants.STEP_FOUR_ROUTE}/${workingCase.id}`}
-          nextUrl={`${Constants.STEP_SIX_ROUTE}/${workingCase.id}`}
+          previousUrl={`${constants.STEP_FOUR_ROUTE}/${workingCase.id}`}
+          nextUrl={`${constants.STEP_SIX_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!allFilesUploaded || isUploading}
         />
       </FormContentContainer>

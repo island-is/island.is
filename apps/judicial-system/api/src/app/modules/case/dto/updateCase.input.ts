@@ -262,5 +262,13 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field({ nullable: true })
+  readonly rulingModifiedHistory?: string
+
+  @Allow()
+  @Field({ nullable: true })
   readonly caseResentExplanation?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly seenByDefender?: string
 }

@@ -42,12 +42,9 @@ export const ServiceInformation = ({
       value: x.environment,
     }
   })
-  const [
-    selectedEnviromentOption,
-    setSelectedEnviromentOption,
-  ] = useState<Option>(enviromentOptions[0])
+  const [selectedEnviromentOption, _1] = useState<Option>(enviromentOptions[0])
 
-  const [versionOptions, setVersionOptions] = useState<Option[]>(
+  const [versionOptions, _2] = useState<Option[]>(
     service.environments[0].details.map((x) => {
       return {
         label: x.version,
@@ -71,25 +68,6 @@ export const ServiceInformation = ({
 
     setServiceDetail(tempServiceDetail)
     setSelectedVersionOption(versionOption)
-    onSelectChange(tempServiceDetail)
-  }
-
-  const onSelectEnviroment = (enviromentOption: Option) => {
-    const tempServiceDetail = service.environments
-      .find((e) => e.environment === enviromentOption.value)
-      .details.find((e) => e.version === selectedVersionOption.value)
-    setServiceDetail(tempServiceDetail)
-    setSelectedEnviromentOption(enviromentOption)
-    setVersionOptions(
-      service.environments
-        .find((e) => e.environment === enviromentOption.value)
-        .details.map((x) => {
-          return {
-            label: x.version,
-            value: x.version,
-          }
-        }),
-    )
     onSelectChange(tempServiceDetail)
   }
 

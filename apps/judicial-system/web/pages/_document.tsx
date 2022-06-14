@@ -7,12 +7,7 @@ export default class MyDocument extends Document {
     return (
       <Html lang="is">
         <SkipToContent />
-        <Head>
-          <meta
-            name="viewport"
-            content="initial-scale=1.0, width=device-width"
-          />
-        </Head>
+        <Head></Head>
         <body>
           <div id="main">
             <Main />

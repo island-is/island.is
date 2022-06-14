@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { useMutation } from '@apollo/client'
 import { useIntl } from 'react-intl'
 
@@ -25,35 +25,8 @@ import { RequestRulingSignatureMutation } from './requestRulingSignatureGql'
 import { RequestCourtRecordSignatureMutation } from './requestCourtRecordSignatureGql'
 import { ExtendCaseMutation } from './extendCaseGql'
 
-type autofillProperties = Pick<
-  Case,
-  | 'conclusion'
-  | 'courtAttendees'
-  | 'courtCaseFacts'
-  | 'courtDate'
-  | 'courtLegalArguments'
-  | 'courtLocation'
-  | 'courtStartDate'
-  | 'decision'
-  | 'demands'
-  | 'endOfSessionBookings'
-  | 'introduction'
-  | 'isCustodyIsolation'
-  | 'isolationToDate'
-  | 'prosecutorDemands'
-  | 'prosecutorOnlySessionRequest'
-  | 'requestedCustodyRestrictions'
-  | 'requestedOtherRestrictions'
-  | 'requestedValidToDate'
-  | 'ruling'
-  | 'sessionArrangements'
-  | 'sessionBookings'
-  | 'type'
-  | 'validToDate'
->
-
 export type autofillEntry = {
-  key: keyof autofillProperties
+  key: keyof Case
   value?: string | boolean | SessionArrangements | CaseCustodyRestrictions[]
   force?: boolean
 }
@@ -116,6 +89,7 @@ const useCase = () => {
   ] = useMutation<TransitionCaseMutationResponse>(TransitionCaseMutation)
   const [
     sendNotificationMutation,
+    { loading: isSendingNotification, error: sendNotificationError },
   ] = useMutation<SendNotificationMutationResponse>(SendNotificationMutation)
   const [
     requestRulingSignatureMutation,
@@ -259,7 +233,6 @@ const useCase = () => {
     [formatMessage, transitionCaseMutation],
   )
 
-  const [isSendingNotification, setIsSendingNotification] = useState(false)
   const sendNotification = useMemo(
     () => async (
       id: string,
@@ -267,9 +240,6 @@ const useCase = () => {
       eventOnly?: boolean,
     ): Promise<boolean> => {
       try {
-        if (!eventOnly) {
-          setIsSendingNotification(true)
-        }
         const { data } = await sendNotificationMutation({
           variables: {
             input: {
@@ -279,15 +249,13 @@ const useCase = () => {
             },
           },
         })
-        setIsSendingNotification(false)
+
         return Boolean(data?.sendNotification?.notificationSent)
       } catch (e) {
-        setIsSendingNotification(false)
-        toast.error(formatMessage(errors.sendNotification))
         return false
       }
     },
-    [formatMessage, sendNotificationMutation],
+    [sendNotificationMutation],
   )
 
   const requestRulingSignature = useMemo(
@@ -369,6 +337,7 @@ const useCase = () => {
     isTransitioningCase,
     sendNotification,
     isSendingNotification,
+    sendNotificationError,
     requestRulingSignature,
     isRequestingRulingSignature,
     requestCourtRecordSignature,
