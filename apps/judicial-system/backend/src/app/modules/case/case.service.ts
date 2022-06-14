@@ -43,6 +43,8 @@ import {
   stripHtmlTags,
   getCourtRecordPdfAsBuffer,
   getCourtRecordPdfAsString,
+  formatCourtUploadRulingTitle,
+  formatRulingModifiedHistory,
 } from '../../formatters'
 import { courtUpload, notifications as m } from '../../messages'
 import { CaseFile, FileService } from '../file'
@@ -233,9 +235,11 @@ export class CaseService {
         theCase.id,
         theCase.courtId ?? '',
         theCase.courtCaseNumber ?? '',
-        this.formatMessage(courtUpload.ruling, {
-          courtCaseNumber: theCase.courtCaseNumber,
-        }),
+        formatCourtUploadRulingTitle(
+          this.formatMessage,
+          theCase.courtCaseNumber,
+          Boolean(theCase.rulingDate),
+        ),
         buffer,
       )
 
@@ -306,7 +310,6 @@ export class CaseService {
         const buffer = Buffer.from(caseFilesPdf, 'binary')
 
         await this.courtService.createDocument(
-          user,
           theCase.id,
           theCase.courtId ?? '',
           theCase.courtCaseNumber ?? '',
@@ -314,6 +317,7 @@ export class CaseService {
           'Rannsóknargögn.pdf',
           'application/pdf',
           buffer,
+          user,
         )
       }
     } catch (error) {
@@ -327,8 +331,8 @@ export class CaseService {
 
   private async sendEmail(
     to: Recipient | Recipient[],
+    subject: string,
     body: string,
-    courtCaseNumber?: string,
     attachments?: Attachment[],
   ) {
     try {
@@ -342,15 +346,40 @@ export class CaseService {
           address: this.config.email.replyToEmail,
         },
         to,
-        subject: this.formatMessage(m.signedRuling.subject, {
-          courtCaseNumber,
-        }),
+        subject,
         text: stripHtmlTags(body),
         html: body,
         attachments,
       })
     } catch (error) {
       this.logger.error('Failed to send email', { error })
+
+      this.eventService.postErrorEvent(
+        'Failed to send email',
+        {
+          subject,
+          to: Array.isArray(to)
+            ? to.reduce(
+                (acc, recipient, index) =>
+                  index > 0
+                    ? `${acc}, ${recipient.name} (${recipient.address})`
+                    : `${recipient.name} (${recipient.address})`,
+                '',
+              )
+            : `${to.name} (${to.address})`,
+          attachments:
+            attachments && attachments.length > 0
+              ? attachments.reduce(
+                  (acc, attachment, index) =>
+                    index > 0
+                      ? `${acc}, ${attachment.filename}`
+                      : `${attachment.filename}`,
+                  '',
+                )
+              : undefined,
+        },
+        error as Error,
+      )
     }
   }
 
@@ -364,20 +393,17 @@ export class CaseService {
         name: theCase.prosecutor?.name ?? '',
         address: theCase.prosecutor?.email ?? '',
       },
-      rulingUploadedToS3
-        ? this.formatMessage(m.signedRuling.prosecutorBodyS3, {
-            courtCaseNumber: theCase.courtCaseNumber,
-            courtName: theCase.court?.name?.replace('dómur', 'dómi'),
-            linkStart: `<a href="${this.config.deepLinks.completedCaseOverviewUrl}${theCase.id}">`,
-            linkEnd: '</a>',
-          })
-        : this.formatMessage(m.signedRuling.prosecutorBodyAttachment, {
-            courtName: theCase.court?.name,
-            courtCaseNumber: theCase.courtCaseNumber,
-            linkStart: `<a href="${this.config.deepLinks.completedCaseOverviewUrl}${theCase.id}">`,
-            linkEnd: '</a>',
-          }),
-      theCase.courtCaseNumber,
+      this.formatMessage(m.signedRuling.subjectV2, {
+        courtCaseNumber: theCase.courtCaseNumber,
+        isModifyingRuling: Boolean(theCase.rulingDate),
+      }),
+      this.formatMessage(m.signedRuling.prosecutorBodyS3V2, {
+        courtCaseNumber: theCase.courtCaseNumber,
+        courtName: theCase.court?.name?.replace('dómur', 'dómi'),
+        linkStart: `<a href="${this.config.deepLinks.completedCaseOverviewUrl}${theCase.id}">`,
+        linkEnd: '</a>',
+        isModifyingRuling: Boolean(theCase.rulingDate),
+      }),
       rulingUploadedToS3 ? undefined : [rulingAttachment],
     )
   }
@@ -402,12 +428,15 @@ export class CaseService {
 
     return this.sendEmail(
       recipients,
+      this.formatMessage(m.signedRuling.subjectV2, {
+        courtCaseNumber: theCase.courtCaseNumber,
+        isModifyingRuling: Boolean(theCase.rulingDate),
+      }),
       this.formatMessage(m.signedRuling.courtBody, {
         courtCaseNumber: theCase.courtCaseNumber,
         linkStart: `<a href="${this.config.deepLinks.completedCaseOverviewUrl}${theCase.id}">`,
         linkEnd: '</a>',
       }),
-      theCase.courtCaseNumber,
       rulingUploadedToS3 ? undefined : [rulingAttachment],
     )
   }
@@ -418,15 +447,19 @@ export class CaseService {
         name: theCase.defenderName ?? '',
         address: theCase.defenderEmail ?? '',
       },
-      this.formatMessage(m.signedRuling.defenderBody, {
+      this.formatMessage(m.signedRuling.subjectV2, {
+        courtCaseNumber: theCase.courtCaseNumber,
+        isModifyingRuling: Boolean(theCase.rulingDate),
+      }),
+      this.formatMessage(m.signedRuling.defenderBodyV2, {
+        isModifyingRuling: Boolean(theCase.rulingDate),
         courtCaseNumber: theCase.courtCaseNumber,
         courtName: theCase.court?.name?.replace('dómur', 'dómi'),
-        defenderHasAccessToRvg: theCase.defenderNationalId,
-        linkStart: `<a href="${this.config.deepLinks.defenderCompletedCaseOverviewUrl}${theCase.id}">`,
+        defenderHasAccessToRvg: Boolean(theCase.defenderNationalId),
+        linkStart: `<a href="${this.config.deepLinks.defenderCaseOverviewUrl}${theCase.id}">`,
         linkEnd: '</a>',
-        signedVerdictAvailableInS3: rulingUploadedToS3 ? 'TRUE' : 'FALSE',
+        signedVerdictAvailableInS3: rulingUploadedToS3,
       }),
-      theCase.courtCaseNumber,
     )
   }
 
@@ -438,6 +471,7 @@ export class CaseService {
     let rulingUploadedToS3 = false
     let rulingUploadedToCourt = false
     let courtRecordUploadedToCourt = false
+    const isModifyingRuling = Boolean(theCase.rulingDate)
 
     const uploadPromises = [
       this.uploadSignedRulingPdfToS3(theCase, signedRulingPdf).then((res) => {
@@ -452,25 +486,30 @@ export class CaseService {
             rulingUploadedToCourt = res
           },
         ),
-        this.uploadCaseFilesPdfToCourt(theCase, user),
-        getCourtRecordPdfAsString(theCase, this.formatMessage)
-          .then((courtRecordPdf) => {
-            return this.uploadCourtRecordPdfToCourt(
-              theCase,
-              user,
-              courtRecordPdf,
-            ).then((res) => {
-              courtRecordUploadedToCourt = res
-            })
-          })
-          .catch((reason) => {
-            // Log and ignore this error. The court record can be uploaded manually.
-            this.logger.error(
-              `Failed to generate court record pdf for case ${theCase.id}`,
-              { reason },
-            )
-          }),
       )
+
+      if (!isModifyingRuling) {
+        uploadPromises.push(
+          this.uploadCaseFilesPdfToCourt(theCase, user),
+          getCourtRecordPdfAsString(theCase, this.formatMessage)
+            .then(async (courtRecordPdf) => {
+              return this.uploadCourtRecordPdfToCourt(
+                theCase,
+                user,
+                courtRecordPdf,
+              ).then((res) => {
+                courtRecordUploadedToCourt = res
+              })
+            })
+            .catch((reason) => {
+              // Log and ignore this error. The court record can be uploaded manually.
+              this.logger.error(
+                `Failed to generate court record pdf for case ${theCase.id}`,
+                { reason },
+              )
+            }),
+        )
+      }
     }
 
     await Promise.all(uploadPromises)
@@ -487,7 +526,10 @@ export class CaseService {
       this.sendEmailToProsecutor(theCase, rulingUploadedToS3, rulingAttachment),
     ]
 
-    if (!rulingUploadedToCourt || !courtRecordUploadedToCourt) {
+    if (
+      !rulingUploadedToCourt ||
+      (!isModifyingRuling && !courtRecordUploadedToCourt)
+    ) {
       emailPromises.push(
         this.sendEmailToCourt(theCase, rulingUploadedToS3, rulingAttachment),
       )
@@ -574,7 +616,9 @@ export class CaseService {
 
       if (!prosecutor || prosecutor.role !== UserRole.PROSECUTOR) {
         throw new BadRequestException(
-          `User ${prosecutor.id} is not registered as a prosecutor`,
+          `User ${
+            prosecutor?.id ?? 'unknown'
+          } is not registered as a prosecutor`,
         )
       }
 
@@ -686,16 +730,18 @@ export class CaseService {
     return getCourtRecordPdfAsBuffer(theCase, user, this.formatMessage)
   }
 
-  async getRulingPdf(theCase: Case): Promise<Buffer> {
-    try {
-      return await this.awsS3Service.getObject(
-        `generated/${theCase.id}/ruling.pdf`,
-      )
-    } catch (error) {
-      this.logger.info(
-        `The ruling for case ${theCase.id} was not found in AWS S3`,
-        { error },
-      )
+  async getRulingPdf(theCase: Case, useSigned = true): Promise<Buffer> {
+    if (useSigned) {
+      try {
+        return await this.awsS3Service.getObject(
+          `generated/${theCase.id}/ruling.pdf`,
+        )
+      } catch (error) {
+        this.logger.info(
+          `The ruling for case ${theCase.id} was not found in AWS S3`,
+          { error },
+        )
+      }
     }
 
     await this.refreshFormatMessage()
@@ -890,10 +936,21 @@ export class CaseService {
     }
 
     // TODO: UpdateCaseDto does not contain rulingDate - create a new type for CaseService.update
+    const newRulingDate = nowFactory()
     await this.update(
       theCase.id,
       {
-        rulingDate: nowFactory(),
+        rulingDate: newRulingDate,
+        ...(!theCase.rulingDate
+          ? {}
+          : {
+              rulingModifiedHistory: formatRulingModifiedHistory(
+                theCase.rulingModifiedHistory,
+                newRulingDate,
+                theCase.judge?.name,
+                theCase.judge?.title,
+              ),
+            }),
       } as UpdateCaseDto,
       false,
     )

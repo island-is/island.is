@@ -99,15 +99,12 @@ export const VehiclesOverview: ServicePortalModuleComponent = () => {
       </Box>
       {error && (
         <Box>
-          <AlertBanner
-            description={formatMessage(m.errorFetch)}
-            variant="error"
-          />
+          <EmptyState description={m.errorFetch} />
         </Box>
       )}
       {!loading && !error && vehicles.length === 0 && (
         <Box marginTop={8}>
-          <EmptyState title={m.noDataFound} />
+          <EmptyState />
         </Box>
       )}
       <Stack space={2}>

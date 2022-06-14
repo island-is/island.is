@@ -1,9 +1,11 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 
-import { Box, Icon, Text } from '@island.is/island-ui/core'
+import { Icon, Text } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { signedDocument } from '@island.is/judicial-system-web/messages'
+
+import * as styles from './SignedDocument.css'
 
 interface Props {
   signatory?: string
@@ -15,8 +17,8 @@ export const SignedDocument = (props: Props) => {
   const { signatory, signingDate } = props
 
   return (
-    <Box display="flex" alignItems="center">
-      <Box textAlign="right" marginX="gutter">
+    <div className={styles.container}>
+      <div className={styles.textContainer}>
         <Text>
           {formatMessage(signedDocument, {
             date: formatDate(signingDate, 'dd.MM.yyyy'),
@@ -24,8 +26,8 @@ export const SignedDocument = (props: Props) => {
           })}
         </Text>
         <Text variant="small">{signatory}</Text>
-      </Box>
+      </div>
       <Icon icon="checkmark" size="large" color="mint600"></Icon>
-    </Box>
+    </div>
   )
 }

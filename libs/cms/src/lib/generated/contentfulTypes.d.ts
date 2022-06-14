@@ -1755,6 +1755,9 @@ export interface IOneColumnTextFields {
 
   /** Link */
   link?: ILink | undefined
+
+  /** Divider On Top */
+  dividerOnTop?: boolean | undefined
 }
 
 export interface IOneColumnText extends Entry<IOneColumnTextFields> {
@@ -2447,6 +2450,9 @@ export interface ISidebarCardFields {
 
   /** Link */
   link?: ILink | undefined
+
+  /** Image */
+  image?: Asset | undefined
 }
 
 export interface ISidebarCard extends Entry<ISidebarCardFields> {
@@ -3246,6 +3252,9 @@ export interface ITwoColumnTextFields {
 
   /** Right Link */
   rightLink?: ILink | undefined
+
+  /** Divider On Top */
+  dividerOnTop?: boolean | undefined
 }
 
 export interface ITwoColumnText extends Entry<ITwoColumnTextFields> {

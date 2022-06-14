@@ -122,14 +122,15 @@ export class UserProfileController {
       )
 
       if (emailVerified.confirmed) {
-        await this.verificationService.removeEmailVerification(
-          userProfileDto.nationalId,
-        )
         userProfileDto = {
           ...userProfileDto,
           emailStatus: DataStatus.VERIFIED,
           emailVerified: emailVerified.confirmed,
         }
+      } else {
+        throw new BadRequestException(
+          `Email not confirmed in create. Message: ${emailVerified.message}`,
+        )
       }
     }
 
@@ -140,15 +141,15 @@ export class UserProfileController {
       )
 
       if (phoneVerified.confirmed) {
-        await this.verificationService.removeSmsVerification(
-          userProfileDto.nationalId,
-        )
-
         userProfileDto = {
           ...userProfileDto,
           emailStatus: DataStatus.VERIFIED,
           mobilePhoneNumberVerified: phoneVerified.confirmed,
         }
+      } else {
+        throw new BadRequestException(
+          `Phone not confirmed in create. Message: ${phoneVerified.message}`,
+        )
       }
     }
 
@@ -224,7 +225,9 @@ export class UserProfileController {
           mobilePhoneNumberVerified: phoneVerified.confirmed,
         }
       } else {
-        throw new ForbiddenException()
+        throw new BadRequestException(
+          `Phone not confirmed in update. Message: ${phoneVerified.message}`,
+        )
       }
     }
 
@@ -241,7 +244,9 @@ export class UserProfileController {
           emailVerified: emailVerified.confirmed,
         }
       } else {
-        throw new ForbiddenException()
+        throw new BadRequestException(
+          `Email not confirmed in update. Message: ${emailVerified.message}`,
+        )
       }
     }
 

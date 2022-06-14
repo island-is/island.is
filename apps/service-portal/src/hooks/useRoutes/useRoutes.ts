@@ -1,4 +1,5 @@
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
+import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 import flatten from 'lodash/flatten'
 import { useLayoutEffect } from 'react'
 

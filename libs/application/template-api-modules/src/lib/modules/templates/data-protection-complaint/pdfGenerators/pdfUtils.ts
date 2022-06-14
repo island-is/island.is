@@ -44,7 +44,7 @@ export const addValue = (
   text: string,
   doc: PDFKit.PDFDocument,
   weight = PdfConstants.NORMAL_FONT,
-  lineGap = PdfConstants.NO_LINE_GAP,
+  lineGap = PdfConstants.NORMAL_LINE_GAP,
 ) => {
   addToDoc(weight, PdfConstants.VALUE_FONT_SIZE, lineGap, text, doc)
 }

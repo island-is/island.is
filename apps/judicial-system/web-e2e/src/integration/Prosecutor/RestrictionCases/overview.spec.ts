@@ -4,14 +4,15 @@ import { Case, CaseState, Defendant } from '@island.is/judicial-system/types'
 import { STEP_SIX_ROUTE } from '@island.is/judicial-system/consts'
 
 import {
-  makeCustodyCase,
+  makeRestrictionCase,
   makeCourt,
   makeProsecutor,
   intercept,
+  Operation,
 } from '../../../utils'
 
 describe(`${STEP_SIX_ROUTE}/:id`, () => {
-  const caseData = makeCustodyCase()
+  const caseData = makeRestrictionCase()
   const defenderName = faker.name.findName()
   const defenderEmail = faker.internet.email()
   const defenderPhoneNumber = faker.phone.phoneNumber()
@@ -95,5 +96,20 @@ describe(`${STEP_SIX_ROUTE}/:id`, () => {
      * way presents itself.
      */
     cy.getByTestid('tdTag').should('contain', 'Krafa móttekin')
+  })
+
+  it('should show an error message if sending a notification failed', () => {
+    const caseData = makeRestrictionCase()
+    const caseDataAddition = {
+      ...caseData,
+      prosecutor: makeProsecutor(),
+      court: makeCourt(),
+    }
+    const forceFail = Operation.SendNotificationMutation
+
+    intercept(caseDataAddition, forceFail)
+
+    cy.getByTestid('continueButton').click()
+    cy.getByTestid('modalErrorMessage').should('exist')
   })
 })

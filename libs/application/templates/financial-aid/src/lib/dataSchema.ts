@@ -134,6 +134,7 @@ export const dataSchema = z.object({
     }),
   }),
   spouseFormComment: z.string().optional(),
+  spouseName: z.string().optional(),
 })
 
 export type answersSchema = z.infer<typeof dataSchema>

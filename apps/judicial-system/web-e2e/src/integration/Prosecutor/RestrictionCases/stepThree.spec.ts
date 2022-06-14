@@ -4,11 +4,11 @@ import {
 } from '@island.is/judicial-system/consts'
 import { CaseType } from '@island.is/judicial-system/types'
 
-import { makeCustodyCase, intercept } from '../../../utils'
+import { makeRestrictionCase, intercept } from '../../../utils'
 
 describe(`${STEP_THREE_ROUTE}/:id`, () => {
   beforeEach(() => {
-    const caseData = makeCustodyCase()
+    const caseData = makeRestrictionCase()
 
     cy.stubAPIResponses()
     cy.visit(`${STEP_THREE_ROUTE}/test_id`)
@@ -75,7 +75,7 @@ describe(`${STEP_THREE_ROUTE}/:id`, () => {
 describe(`${STEP_THREE_ROUTE}/:id - Admission to Facility`, () => {
   beforeEach(() => {
     const caseData = {
-      ...makeCustodyCase(),
+      ...makeRestrictionCase(),
       type: CaseType.ADMISSION_TO_FACILITY,
     }
 
@@ -93,7 +93,7 @@ describe(`${STEP_THREE_ROUTE}/:id - Admission to Facility`, () => {
 describe(`${STEP_THREE_ROUTE}/:id - Travel Ban`, () => {
   beforeEach(() => {
     const caseData = {
-      ...makeCustodyCase(),
+      ...makeRestrictionCase(),
       type: CaseType.TRAVEL_BAN,
     }
 

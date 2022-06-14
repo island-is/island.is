@@ -54,7 +54,7 @@ export const spmm = {
     },
     maritalStatusMarried: {
       id: 'sp.family:marital-status-married',
-      defaultMessage: 'Gift (kvæntur) eða staðfest samvist',
+      defaultMessage: 'Gift/ur eða staðfest samvist',
     },
     maritalStatusMarriedLivingSep: {
       id: 'sp.family:marital-status-living-sep',
@@ -75,7 +75,7 @@ export const spmm = {
     },
     maritalStatusUnmarried: {
       id: 'sp.family:marital-status-unmarried',
-      defaultMessage: 'Ógift (ókvæntur)',
+      defaultMessage: 'Ógift/ur',
     },
     maritalStatusWidowed: {
       id: 'sp.family:marital-status-widowed',
@@ -95,7 +95,7 @@ export const spmm = {
     subtitle: {
       id: 'sp.company:company-subtitle',
       defaultMessage:
-        'Hér fyrir neðan eru þín gögn sem hafa verið sótt frá Ríkisskattstjóra.',
+        'Hér má nálgast upplýsingar úr fyrirtækjaskrá hjá Skattinum.',
     },
     name: {
       id: 'sp.company:name',

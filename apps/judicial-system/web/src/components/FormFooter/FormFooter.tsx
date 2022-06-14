@@ -1,6 +1,7 @@
 import React from 'react'
 import { useRouter } from 'next/router'
 import { useWindowSize } from 'react-use'
+import { useIntl } from 'react-intl'
 
 import {
   Box,
@@ -9,6 +10,7 @@ import {
   IconMapIcon,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
+import { core } from '@island.is/judicial-system-web/messages'
 
 import InfoBox from '../InfoBox/InfoBox'
 import * as styles from './FormFooter.css'
@@ -16,6 +18,7 @@ import * as styles from './FormFooter.css'
 interface Props {
   previousUrl?: string
   previousIsDisabled?: boolean
+  previousButtonText?: string
   nextUrl?: string
   nextIsDisabled?: boolean
   nextIsLoading?: boolean
@@ -29,11 +32,17 @@ interface Props {
 
 const FormFooter: React.FC<Props> = (props: Props) => {
   const router = useRouter()
+  const { formatMessage } = useIntl()
   const { width } = useWindowSize()
   const isMobile = width <= theme.breakpoints.md
 
   return (
-    <Box display="flex" justifyContent="spaceBetween" alignItems="center">
+    <Box
+      display="flex"
+      justifyContent="spaceBetween"
+      alignItems="center"
+      data-testid="formFooter"
+    >
       <Box className={styles.footerItem}>
         <Button
           variant="ghost"
@@ -43,9 +52,9 @@ const FormFooter: React.FC<Props> = (props: Props) => {
           }}
           icon={isMobile ? 'arrowBack' : undefined}
           circle={isMobile}
-          aria-label="Til baka"
+          aria-label={props.previousButtonText || formatMessage(core.back)}
         >
-          {!isMobile && 'Til baka'}
+          {!isMobile && (props.previousButtonText || formatMessage(core.back))}
         </Button>
       </Box>
       <Box
@@ -68,7 +77,7 @@ const FormFooter: React.FC<Props> = (props: Props) => {
               }
             }}
           >
-            {props.nextButtonText ?? 'Halda áfram'}
+            {props.nextButtonText ?? formatMessage(core.continue)}
           </Button>
         )}
         {props.infoBoxText && <InfoBox text={props.infoBoxText} />}

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, GridColumn, Text } from '@island.is/island-ui/core'
+import { Box, GridColumn } from '@island.is/island-ui/core'
 import * as styles from './DetailTable.css'
 import { MessageDescriptor } from '@formatjs/intl'
 import { useLocale, useNamespaces } from '@island.is/localization'
