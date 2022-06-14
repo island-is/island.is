@@ -22,7 +22,11 @@ import * as Sentry from '@sentry/react'
 
 import { m } from '../../lib/messages'
 import { ValueType } from 'react-select'
-import { Application, getInstitutionMapper } from '@island.is/application/core'
+import {
+  Application,
+  ApplicationStatus,
+  getInstitutionMapper,
+} from '@island.is/application/core'
 
 const isLocalhost = window.location.origin.includes('localhost')
 const isDev = window.location.origin.includes('beta.dev01.devland.is')
@@ -56,7 +60,14 @@ const ApplicationList: ServicePortalModuleComponent = () => {
 
   const { formatMessage } = useLocale()
   const { data: applications, loading, error, refetch } = useApplications()
-  const [filteredApplications, setFilteredApplications] = useState<
+
+  const [incompleteApplications, setIncompleteApplications] = useState<
+    Application[]
+  >(applications)
+  const [inProcessApplications, setInProcessApplications] = useState<
+    Application[]
+  >(applications)
+  const [finishedApplications, setFinishedApplications] = useState<
     Application[]
   >(applications)
   const [institutions, setInstitutions] = useState<Option[]>([
@@ -73,7 +84,7 @@ const ApplicationList: ServicePortalModuleComponent = () => {
 
   useEffect(() => {
     setApplicationTypes()
-    setFilteredApplications(applications)
+    setAllApplications(applications)
   }, [applications])
 
   // Set all types for institutions
@@ -103,7 +114,7 @@ const ApplicationList: ServicePortalModuleComponent = () => {
     const mapper = getInstitutionMapper(formatMessage)
     const searchQuery = filterValue.searchQuery
     const activeInstitution = filterValue.activeInstitution.value
-    const filteredApps = applications.filter(
+    const filteredApps = (applications as Application[]).filter(
       (application: Application) =>
         // Search in name and description
         (application.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -116,7 +127,30 @@ const ApplicationList: ServicePortalModuleComponent = () => {
           ? mapper[application.typeId] === activeInstitution
           : true),
     )
-    setFilteredApplications(filteredApps)
+
+    setAllApplications(filteredApps)
+  }
+
+  const setAllApplications = (apps: Application[]) => {
+    const incomplete: Application[] = []
+    const inProgress: Application[] = []
+    const finished: Application[] = []
+
+    apps.map((application) => {
+      if (
+        application.state === 'draft' ||
+        application.state === 'prerequisites'
+      ) {
+        incomplete.push(application)
+      } else if (application.status === ApplicationStatus.IN_PROGRESS) {
+        inProgress.push(application)
+      } else {
+        finished.push(application)
+      }
+    })
+    setIncompleteApplications(incomplete)
+    setInProcessApplications(inProgress)
+    setFinishedApplications(finished)
   }
 
   const handleSearchChange = useCallback((value: string) => {
@@ -202,13 +236,51 @@ const ApplicationList: ServicePortalModuleComponent = () => {
               </GridColumn>
             </GridRow>
           </Box>
-          <List
-            applications={filteredApplications}
-            onClick={(applicationUrl) =>
-              window.open(`${baseUrlForm}/${applicationUrl}`)
-            }
-            refetch={refetch}
-          />
+
+          {incompleteApplications?.length > 0 && (
+            <>
+              <Text paddingBottom={3} variant="eyebrow">
+                {formatMessage(m.incopmleteApplications)}
+              </Text>
+              <List
+                applications={incompleteApplications}
+                onClick={(applicationUrl) =>
+                  window.open(`${baseUrlForm}/${applicationUrl}`)
+                }
+                refetch={refetch}
+              />
+            </>
+          )}
+
+          {inProcessApplications?.length > 0 && (
+            <>
+              <Text paddingTop={2} paddingBottom={3} variant="eyebrow">
+                {formatMessage(m.inProgressApplications)}
+              </Text>
+              <List
+                applications={inProcessApplications}
+                onClick={(applicationUrl) =>
+                  window.open(`${baseUrlForm}/${applicationUrl}`)
+                }
+                refetch={refetch}
+              />
+            </>
+          )}
+
+          {finishedApplications?.length > 0 && (
+            <>
+              <Text paddingTop={2} paddingBottom={3} variant="eyebrow">
+                {formatMessage(m.finishedApplications)}
+              </Text>
+              <List
+                applications={finishedApplications}
+                onClick={(applicationUrl) =>
+                  window.open(`${baseUrlForm}/${applicationUrl}`)
+                }
+                refetch={refetch}
+              />
+            </>
+          )}
         </>
       )}
     </>

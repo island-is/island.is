@@ -32,4 +32,19 @@ export const m = defineMessages({
     defaultMessage: 'Stofnun',
     description: 'Label for application institution dropdown search',
   },
+  incopmleteApplications: {
+    id: 'sp.applications:incompleteApplications-label',
+    defaultMessage: 'Ókláraðar umsóknir',
+    description: 'Label for incomplete application list',
+  },
+  inProgressApplications: {
+    id: 'sp.applications:inProgressApplications-label',
+    defaultMessage: 'Umsóknir í vinnslu',
+    description: 'Label for in progress application list',
+  },
+  finishedApplications: {
+    id: 'sp.applications:finishedApplications-label',
+    defaultMessage: 'Eldri umsóknir',
+    description: 'Label for finished application list',
+  },
 })
