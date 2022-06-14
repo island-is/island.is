@@ -39,6 +39,10 @@ export const m = defineMessages({
     id: 'sp.license:valid-until',
     defaultMessage: 'Í gildi til ',
   },
+  licenseNumber: {
+    id: 'sp.license:license-number',
+    defaultMessage: 'Númer skírteinis',
+  },
   drivingLicenseNumber: {
     id: 'sp.license:driving-license-number',
     defaultMessage: 'Númer ökuskírteinis',

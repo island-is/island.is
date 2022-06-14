@@ -11,12 +11,12 @@ import {
 import LicenseCards from '../../components/LicenseCards/LicenseCards'
 import { LicenseLoader } from '../../components/LicenseLoader/LicenseLoader'
 import { m } from '../../lib/messages'
+import { useHistory } from 'react-router-dom'
 import {
   GenericLicenseType,
   GenericUserLicenseFetchStatus,
   useLicenses,
 } from '@island.is/service-portal/graphql'
-import { useHistory } from 'react-router-dom'
 
 export const LicensesOverview: ServicePortalModuleComponent = () => {
   useNamespaces('sp.license')
