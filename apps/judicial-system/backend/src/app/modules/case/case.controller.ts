@@ -15,6 +15,7 @@ import {
   BadRequestException,
   HttpException,
   Inject,
+  ParseBoolPipe,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
@@ -24,14 +25,20 @@ import {
   DokobitError,
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
-import { CaseState, CaseType, UserRole } from '@island.is/judicial-system/types'
+import { InjectQueue, QueueService } from '@island.is/message-queue'
+import {
+  CaseState,
+  CaseType,
+  completedCaseStates,
+  MessageType,
+  UserRole,
+} from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 import {
   CurrentHttpUser,
   JwtAuthGuard,
   RolesRules,
   RolesGuard,
-  TokenGuard,
 } from '@island.is/judicial-system/auth'
 
 import {
@@ -55,14 +62,13 @@ import {
   registrarUpdateRule,
 } from './guards/rolesRules'
 import { CreateCaseDto } from './dto/createCase.dto'
-import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { TransitionCaseDto } from './dto/transitionCase.dto'
 import { UpdateCaseDto } from './dto/updateCase.dto'
 import { Case } from './models/case.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
-import { ArchiveResponse } from './models/archive.response'
 import { transitionCase } from './state/case.state'
 import { CaseService } from './case.service'
+import { caseModuleConfig } from './case.config'
 
 @Controller('api')
 @ApiTags('cases')
@@ -72,6 +78,7 @@ export class CaseController {
     private readonly userService: UserService,
     private readonly eventService: EventService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+    @InjectQueue(caseModuleConfig().sqs.queueName) private queue: QueueService,
   ) {}
 
   private async validateAssignedUser(
@@ -92,21 +99,6 @@ export class CaseController {
         `User ${assignedUserId} belongs to the wrong institution`,
       )
     }
-  }
-
-  @UseGuards(TokenGuard)
-  @Post('internal/case')
-  @ApiCreatedResponse({ type: Case, description: 'Creates a new case' })
-  async internalCreate(
-    @Body() caseToCreate: InternalCreateCaseDto,
-  ): Promise<Case> {
-    this.logger.debug('Creating a new case')
-
-    const createdCase = await this.caseService.internalCreate(caseToCreate)
-
-    this.eventService.postEvent(CaseEvent.CREATE_XRD, createdCase as Case)
-
-    return createdCase
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -222,6 +214,12 @@ export class CaseController {
       state !== CaseState.DELETED,
     )
 
+    // if (updatedCase && completedCaseStates.includes(updatedCase.state)) {
+    //   this.logger.info(`Writing case ${caseId} to queue`)
+
+    //   this.queue.add({ type: MessageType.CASE_COMPLETED, caseId })
+    // }
+
     this.eventService.postEvent(
       (transition.transition as unknown) as CaseEvent,
       updatedCase ?? theCase,
@@ -311,7 +309,7 @@ export class CaseController {
     @Param('caseId') caseId: string,
     @CurrentCase() theCase: Case,
     @Res() res: Response,
-    @Query('useSigned') useSigned = true,
+    @Query('useSigned', ParseBoolPipe) useSigned: boolean,
   ): Promise<void> {
     this.logger.debug(`Getting the ruling for case ${caseId} as a pdf document`)
 
@@ -536,17 +534,5 @@ export class CaseController {
     this.logger.debug(`Creating a court case for case ${caseId}`)
 
     return this.caseService.createCourtCase(theCase, user)
-  }
-
-  @UseGuards(TokenGuard)
-  @Post('internal/cases/archive')
-  @ApiOkResponse({
-    type: ArchiveResponse,
-    description: 'Archives a single case if any case is ready to be archived',
-  })
-  archive(): Promise<ArchiveResponse> {
-    this.logger.debug('Archiving a case')
-
-    return this.caseService.archive()
   }
 }

@@ -1952,7 +1952,7 @@
           },
           "configurations": {
             "production": {
-              "optimization": true,
+              "optimization": false,
               "outputHashing": "all",
               "sourceMap": false,
               "extractCss": true,
@@ -2145,6 +2145,40 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/accident-notification/src/lib/messages/*.ts'"
+          }
+        }
+      }
+    },
+    "application-templates-announcement-of-death": {
+      "root": "libs/application/templates/announcement-of-death",
+      "sourceRoot": "libs/application/templates/announcement-of-death/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/announcement-of-death/tsconfig.lib.json",
+              "libs/application/templates/announcement-of-death/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/announcement-of-death/**/*"
+            ]
+          }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/announcement-of-death/src/lib/messages.ts"
+          }
+        },
+        "schemas/codegen": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "graphql-codegen --config libs/application/templates/announcement-of-death/codegen.yml"
           }
         }
       }
@@ -4184,7 +4218,7 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
-              "curl https://api.syslumenn.is/Test/swagger/v1/swagger.json -H 'Accept: application/json' > src/clientConfig.json",
+              "curl https://api.syslumenn.is/dev/swagger/v1/swagger.json -H 'Accept: application/json' > src/clientConfig.json",
               "jq '.paths[][].tags = [\"Syslumenn\"]' src/clientConfig.json > _.tmp && mv _.tmp src/clientConfig.json"
             ],
             "parallel": false,
@@ -6098,6 +6132,65 @@
         }
       }
     },
+    "judicial-system-message-handler": {
+      "root": "apps/judicial-system/message-handler",
+      "sourceRoot": "apps/judicial-system/message-handler/src",
+      "projectType": "application",
+      "prefix": "judicial-system-message-handler",
+      "architect": {
+        "build": {
+          "builder": "@irdnis/esbuildnx:build",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/apps/judicial-system/message-handler",
+            "main": "apps/judicial-system/message-handler/src/main.ts",
+            "tsConfig": "apps/judicial-system/message-handler/tsconfig.app.json",
+            "maxWorkers": 2
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/judicial-system/message-handler/src/environments/environment.ts",
+                  "with": "apps/judicial-system/message-handler/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "judicial-system-message-handler:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["apps/judicial-system/message-handler/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/apps/judicial-system/message-handler"],
+          "options": {
+            "jestConfig": "apps/judicial-system/message-handler/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "dev-services": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "docker-compose up -d",
+            "cwd": "apps/judicial-system/message-handler"
+          }
+        },
+        "docker-express": {}
+      }
+    },
     "judicial-system-scheduler": {
       "root": "apps/judicial-system/scheduler",
       "sourceRoot": "apps/judicial-system/scheduler/src",
@@ -7876,6 +7969,12 @@
             "jestConfig": "libs/service-portal/vehicles/jest.config.js",
             "passWithNoTests": true
           }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/service-portal/vehicles/src/{lib,components,screens}/**/*.{js,ts,tsx}'"
+          }
         }
       }
     },
@@ -8129,7 +8228,7 @@
       "prefix": "services-contentful-entry-tagger",
       "architect": {
         "build": {
-          "builder": "@nrwl/node:build",
+          "builder": "@irdnis/esbuildnx:build",
           "outputs": ["{options.outputPath}"],
           "options": {
             "outputPath": "dist/apps/services/contentful-entry-tagger",

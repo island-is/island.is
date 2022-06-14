@@ -1,3 +1,62 @@
+auth-admin-web:
+  enabled: true
+  env:
+    BASE_URL: 'https://identity-server.staging01.devland.is/admin'
+    IDENTITYSERVER_DOMAIN: 'identity-server.staging01.devland.is'
+    NEXTAUTH_URL: 'https://identity-server.staging01.devland.is/admin/api/auth'
+    NEXT_PUBLIC_BACKEND_URL: '/backend'
+    NODE_OPTIONS: '--max-old-space-size=208'
+    SERVERSIDE_FEATURES_ON: 'INAO_Client'
+  grantNamespaces: []
+  grantNamespacesEnabled: false
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: '/liveness'
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: '/liveness'
+      timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 2
+      replicas:
+        max: 10
+        min: 2
+  image:
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/auth-admin-web'
+  ingress:
+    primary-alb:
+      annotations:
+        kubernetes.io/ingress.class: 'nginx-external-alb'
+        nginx.ingress.kubernetes.io/enable-global-auth: 'false'
+        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
+        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
+      hosts:
+        - host: 'identity-server.staging01.devland.is'
+          paths:
+            - '/admin'
+  namespace: 'identity-server-admin'
+  progressDeadlineSeconds: 1200
+  replicaCount:
+    default: 2
+    max: 10
+    min: 2
+  resources:
+    limits:
+      cpu: '400m'
+      memory: '256Mi'
+    requests:
+      cpu: '200m'
+      memory: '128Mi'
+  secrets:
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
 global:
   env:
     AUDIT_GROUP_NAME: '/identity-server/audit-log'
@@ -15,7 +74,7 @@ identity-server:
     ASPNETCORE_URLS: 'http://*:5000'
     AWS__CloudWatch__AuditLogGroup: '/identity-server/audit-log'
     AWS__SystemsManager__ParameterStore__DataProtectionPrefix: '/k8s/identity-server/DataProtectionSecret'
-    Application__MinCompletionPortThreads: ''
+    Application__MinCompletionPortThreads: '10'
     AudkenniSettings__Retries: '24'
     CORECLR_ENABLE_PROFILING: '1'
     CORECLR_PROFILER: '{846F5F1C-F9AE-4B07-969E-05C26BC060D8}'
@@ -34,7 +93,7 @@ identity-server:
     NODE_OPTIONS: '--max-old-space-size=208'
     PersistenceSettings__BaseAddress: 'http://web-services-auth-api'
     PersistenceSettings__UserProfileBaseAddress: 'http://web-service-portal-api.service-portal.svc.cluster.local'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'INAO_Client'
   files:
     - 'ids-signing.pfx'
   grantNamespaces: []
@@ -107,3 +166,364 @@ namespaces:
   labels: {}
   namespaces:
     - 'identity-server'
+    - 'identity-server-admin'
+    - 'personal-representative'
+services-auth-admin-api:
+  enabled: true
+  env:
+    DB_HOST: 'postgres-applications.internal'
+    DB_NAME: 'servicesauth'
+    DB_REPLICAS_HOST: 'postgres-applications.internal'
+    DB_USER: 'servicesauth'
+    IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
+    NODE_OPTIONS: '--max-old-space-size=208'
+    SERVERSIDE_FEATURES_ON: 'INAO_Client'
+  grantNamespaces: []
+  grantNamespacesEnabled: false
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: '/liveness'
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: '/liveness'
+      timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 2
+      replicas:
+        max: 10
+        min: 2
+  image:
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-admin-api'
+  ingress:
+    primary-alb:
+      annotations:
+        kubernetes.io/ingress.class: 'nginx-external-alb'
+      hosts:
+        - host: 'identity-server.staging01.devland.is'
+          paths:
+            - '/backend'
+  namespace: 'identity-server-admin'
+  replicaCount:
+    default: 2
+    max: 10
+    min: 2
+  resources:
+    limits:
+      cpu: '400m'
+      memory: '256Mi'
+    requests:
+      cpu: '100m'
+      memory: '128Mi'
+  secrets:
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    DB_PASS: '/k8s/services-auth/api/DB_PASSWORD'
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
+services-auth-api:
+  enabled: true
+  env:
+    COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
+    COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS-TEST/GOV/5402696029/Skatturinn/ft-v1'
+    DB_HOST: 'postgres-applications.internal'
+    DB_NAME: 'servicesauth'
+    DB_REPLICAS_HOST: 'postgres-applications.internal'
+    DB_USER: 'servicesauth'
+    IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api'
+    IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
+    NODE_OPTIONS: '--max-old-space-size=208'
+    PUBLIC_URL: 'https://identity-server.staging01.devland.is/api'
+    SERVERSIDE_FEATURES_ON: 'INAO_Client'
+    USER_PROFILE_CLIENT_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
+    XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
+    XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
+    XROAD_CLIENT_ID: 'IS-TEST/GOV/5501692829/island-is-client'
+    XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
+    XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1'
+    XROAD_RSK_PROCURING_PATH: 'IS-TEST/GOV/5402696029/Skatturinn/prokura-v1'
+    XROAD_RSK_PROCURING_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
+    XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1'
+    XROAD_TJODSKRA_MEMBER_CODE: '6503760649'
+    XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
+    XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
+  grantNamespaces: []
+  grantNamespacesEnabled: false
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: '/liveness'
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: '/liveness'
+      timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 2
+      replicas:
+        max: 10
+        min: 2
+  image:
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-api'
+  initContainer:
+    containers:
+      - args:
+          - 'sequelize-cli'
+          - 'db:migrate'
+        command:
+          - 'npx'
+        name: 'migrations'
+        resources:
+          limits:
+            cpu: '200m'
+            memory: '256Mi'
+          requests:
+            cpu: '100m'
+            memory: '128Mi'
+      - args:
+          - 'sequelize-cli'
+          - 'db:seed:all'
+        command:
+          - 'npx'
+        name: 'seed'
+        resources:
+          limits:
+            cpu: '200m'
+            memory: '256Mi'
+          requests:
+            cpu: '100m'
+            memory: '128Mi'
+    env:
+      DB_HOST: 'postgres-applications.internal'
+      DB_NAME: 'servicesauth'
+      DB_REPLICAS_HOST: 'postgres-applications.internal'
+      DB_USER: 'servicesauth'
+      SERVERSIDE_FEATURES_ON: 'INAO_Client'
+    secrets:
+      DB_PASS: '/k8s/services-auth/api/DB_PASSWORD'
+  namespace: 'identity-server'
+  replicaCount:
+    default: 2
+    max: 10
+    min: 2
+  resources:
+    limits:
+      cpu: '400m'
+      memory: '256Mi'
+    requests:
+      cpu: '100m'
+      memory: '128Mi'
+  secrets:
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    DB_PASS: '/k8s/services-auth/api/DB_PASSWORD'
+    IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET'
+    RSK_PASSWORD: '/k8s/xroad/client/RSK/PASSWORD'
+    RSK_USERNAME: '/k8s/xroad/client/RSK/USERNAME'
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
+services-auth-public-api:
+  enabled: true
+  env:
+    DB_HOST: 'postgres-applications.internal'
+    DB_NAME: 'servicesauth'
+    DB_REPLICAS_HOST: 'postgres-applications.internal'
+    DB_USER: 'servicesauth'
+    IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api'
+    IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
+    NODE_OPTIONS: '--max-old-space-size=208'
+    PUBLIC_URL: 'https://identity-server.staging01.devland.is/api'
+    SERVERSIDE_FEATURES_ON: 'INAO_Client'
+    XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
+    XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
+    XROAD_CLIENT_ID: 'IS-TEST/GOV/5501692829/island-is-client'
+    XROAD_NATIONAL_REGISTRY_ACTOR_TOKEN: 'true'
+    XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
+    XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1'
+    XROAD_RSK_PROCURING_PATH: 'IS-TEST/GOV/5402696029/Skatturinn/prokura-v1'
+    XROAD_RSK_PROCURING_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
+    XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1'
+    XROAD_TJODSKRA_MEMBER_CODE: '6503760649'
+    XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
+    XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
+  grantNamespaces: []
+  grantNamespacesEnabled: false
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: '/liveness'
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: '/liveness'
+      timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 2
+      replicas:
+        max: 10
+        min: 2
+  image:
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-public-api'
+  ingress:
+    primary-alb:
+      annotations:
+        kubernetes.io/ingress.class: 'nginx-external-alb'
+        nginx.ingress.kubernetes.io/enable-global-auth: 'false'
+        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
+        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
+        nginx.ingress.kubernetes.io/rewrite-target: '/$2'
+      hosts:
+        - host: 'identity-server.staging01.devland.is'
+          paths:
+            - '/api(/|$)(.*)'
+  namespace: 'identity-server-admin'
+  replicaCount:
+    default: 2
+    max: 10
+    min: 2
+  resources:
+    limits:
+      cpu: '400m'
+      memory: '256Mi'
+    requests:
+      cpu: '100m'
+      memory: '128Mi'
+  secrets:
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    DB_PASS: '/k8s/services-auth/api/DB_PASSWORD'
+    IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET'
+    NATIONAL_REGISTRY_IDS_CLIENT_SECRET: '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET'
+    RSK_PASSWORD: '/k8s/xroad/client/RSK/PASSWORD'
+    RSK_USERNAME: '/k8s/xroad/client/RSK/USERNAME'
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
+services-personal-representative:
+  enabled: true
+  env:
+    IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
+    NODE_OPTIONS: '--max-old-space-size=208'
+    SERVERSIDE_FEATURES_ON: 'INAO_Client'
+  grantNamespaces: []
+  grantNamespacesEnabled: false
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: '/liveness'
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: '/liveness'
+      timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 2
+      replicas:
+        max: 10
+        min: 2
+  image:
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-personal-representative'
+  ingress:
+    demo-alb:
+      annotations:
+        kubernetes.io/ingress.class: 'nginx-external-alb'
+      hosts:
+        - host: 'staging01.devland.is'
+          paths:
+            - '/'
+    primary-alb:
+      annotations:
+        kubernetes.io/ingress.class: 'nginx-internal-alb'
+      hosts:
+        - host: 'personal-representative-xrd.internal.staging01.devland.is'
+          paths:
+            - '/'
+  namespace: 'personal-representative'
+  replicaCount:
+    default: 2
+    max: 10
+    min: 2
+  resources:
+    limits:
+      cpu: '400m'
+      memory: '256Mi'
+    requests:
+      cpu: '100m'
+      memory: '128Mi'
+  secrets:
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
+services-personal-representative-public:
+  enabled: true
+  env:
+    DB_REPLICAS_HOST: ''
+    IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
+    NODE_OPTIONS: '--max-old-space-size=208'
+    SERVERSIDE_FEATURES_ON: 'INAO_Client'
+  grantNamespaces: []
+  grantNamespacesEnabled: false
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: '/liveness'
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: '/liveness'
+      timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 2
+      replicas:
+        max: 10
+        min: 2
+  image:
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-personal-representative-public'
+  ingress:
+    demo-alb:
+      annotations:
+        kubernetes.io/ingress.class: 'nginx-external-alb'
+      hosts:
+        - host: 'staging01.devland.is'
+          paths:
+            - '/'
+    primary-alb:
+      annotations:
+        kubernetes.io/ingress.class: 'nginx-internal-alb'
+      hosts:
+        - host: 'personal-representative-public-xrd.internal.staging01.devland.is'
+          paths:
+            - '/'
+  namespace: 'personal-representative'
+  replicaCount:
+    default: 2
+    max: 10
+    min: 2
+  resources:
+    limits:
+      cpu: '400m'
+      memory: '256Mi'
+    requests:
+      cpu: '100m'
+      memory: '128Mi'
+  secrets:
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false

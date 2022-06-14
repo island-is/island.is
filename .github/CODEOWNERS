@@ -64,6 +64,8 @@
 /libs/application/templates/driving-instructor-registrations/                                       @island-is/juni
 /libs/api/domains/driving-license-book/                                                             @island-is/juni
 /libs/clients/driving-license-book/                                                                 @island-is/juni
+/libs/application/template-api-modules/src/lib/modules/templates/passport                           @island-is/juni
+/libs/application/templates/passport/                                                               @island-is/juni
 /libs/application/template-api-modules/src/lib/modules/templates/driving-school-confirmation/       @island-is/juni
 
 /libs/clients/auth-public-api/                                                                      @island-is/aranja
@@ -152,18 +154,6 @@
 
 /libs/island-ui/                                                                                    @island-is/island-ui
 
-/.github/actions/                                                                                   @island-is/devops
-/.github/workflows/                                                                                 @island-is/devops
-/apps/reference-backend/                                                                            @island-is/devops
-/apps/github-actions-cache/                                                                         @island-is/devops
-/libs/infra*/                                                                                       @island-is/devops
-/libs/logging/                                                                                      @island-is/devops
-/scripts/                                                                                           @island-is/devops
-/scripts/postinstall.js                                                                             @island-is/devops @island-is/core
-/scripts/schemas.js                                                                                 @island-is/devops @island-is/core
-infra/                                                                                              @island-is/devops
-/charts                                                                                             @island-is/devops
-
 /apps/skilavottord/                                                                                 @island-is/deloitte
 /libs/skilavottord/                                                                                 @island-is/deloitte
 /libs/application/templates/parental-leave/                                                         @island-is/deloitte
@@ -192,3 +182,16 @@ infra/                                                                          
 /libs/api/domains/mortgage-certificate/                                                             @island-is/origo
 
 /libs/application/templates/no-debt-certificate/                                                    @island-is/origo
+
+# DevOps
+/.github/actions/                                                                                   @island-is/devops
+/.github/workflows/                                                                                 @island-is/devops
+/apps/reference-backend/                                                                            @island-is/devops
+/apps/github-actions-cache/                                                                         @island-is/devops
+/libs/infra*/                                                                                       @island-is/devops
+/libs/logging/                                                                                      @island-is/devops
+/scripts/                                                                                           @island-is/devops
+/scripts/postinstall.js                                                                             @island-is/devops @island-is/core
+/scripts/schemas.js                                                                                 @island-is/devops @island-is/core
+infra/                                                                                              @island-is/devops
+/charts                                                                                             @island-is/devops

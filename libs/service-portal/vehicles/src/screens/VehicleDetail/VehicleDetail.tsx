@@ -47,8 +47,8 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
   const { data, loading, error } = useQuery<Query>(GET_USERS_VEHICLE_DETAIL, {
     variables: {
       input: {
-        regno: id,
-        permno: '',
+        regno: '',
+        permno: id,
         vin: '',
       },
     },
@@ -129,7 +129,7 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
         />
         <Divider />
 
-        <UserInfoLine
+        {/* <UserInfoLine
           label={formatMessage(messages.insured)}
           content={
             inspectionInfo?.insuranceStatus === true
@@ -141,7 +141,7 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
           warning={inspectionInfo?.insuranceStatus === false}
           loading={loading}
         />
-        <Divider />
+        <Divider /> */}
 
         <UserInfoLine
           label={formatMessage(messages.unpaidVehicleFee)}

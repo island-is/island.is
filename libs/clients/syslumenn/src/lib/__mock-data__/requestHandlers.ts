@@ -1,4 +1,6 @@
+import { VedbandayfirlitSkeyti } from '../../../gen/fetch'
 import { rest } from 'msw'
+import { AssetType } from '../syslumennClient.types'
 import {
   VHSUCCESS,
   VHFAIL,
@@ -6,9 +8,12 @@ import {
   DATA_UPLOAD,
   OPERATING_LICENSE_SERVICE_RES,
   OPERATING_LICENSE_PAGINATION_INFO_SERVICE_RES,
+  VEDBANDAYFIRLRIT_REGLUVERKI_RESPONSE,
   MORTGAGE_CERTIFICATE_CONTENT_OK,
   MORTGAGE_CERTIFICATE_CONTENT_NO_KMARKING,
   MORTGAGE_CERTIFICATE_MESSAGE_NO_KMARKING,
+  REAL_ESTATE_ADDRESS_NAME,
+  ESTATE_REGISTRANT_RESPONSE,
 } from './responses'
 
 export const MOCK_PROPERTY_NUMBER_OK = 'F2003292'
@@ -65,8 +70,38 @@ export const requestHandlers = [
       return res(ctx.status(401), ctx.json(VHFAIL))
     }
   }),
+  rest.get(
+    url('/api/SkraningaradiliDanarbus/:nationalid/:id'),
+    (req, res, ctx) => {
+      const success =
+        req.params.nationalid && req.params.nationalid === '0101302399'
+
+      if (success) {
+        return res(ctx.status(200), ctx.json(ESTATE_REGISTRANT_RESPONSE))
+      } else {
+        // TODO: get confirmation from Syslumenn, currently returns 500
+        return res(ctx.status(404))
+      }
+    },
+  ),
   rest.post(url('/api/v1/SyslMottakaGogn'), (req, res, ctx) => {
     return res(ctx.status(200), ctx.json(DATA_UPLOAD))
+  }),
+  rest.post(url('/api/VedbokavottordRegluverki'), (req, res, ctx) => {
+    const body = req.body as VedbandayfirlitSkeyti
+    const assetId = body.fastanumer ?? ''
+    const response = VEDBANDAYFIRLRIT_REGLUVERKI_RESPONSE
+    switch ((body.tegundAndlags as number) ?? -1) {
+      case AssetType.RealEstate: {
+        if (!/f?\d+/.test(assetId)) return res(ctx.status(404), ctx.json([]))
+        response[0].heiti = REAL_ESTATE_ADDRESS_NAME
+        return res(ctx.status(200), ctx.json(response))
+      }
+      default: {
+        response[0].heiti = 'INVALIDE'
+        return res(ctx.status(200), ctx.json(response))
+      }
+    }
   }),
   rest.post(url('/api/Vedbokarvottord'), (req, res, ctx) => {
     const { fastanumer } = req.body as {

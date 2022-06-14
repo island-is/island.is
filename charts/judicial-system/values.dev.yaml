@@ -22,7 +22,7 @@ judicial-system-api:
     HIDDEN_FEATURES: ''
     NODE_OPTIONS: '--max-old-space-size=208'
     SAML_ENTRY_POINT: 'https://innskraning.island.is/?id=judicial-system.dev'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'INAO_Client'
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
     XROAD_CLIENT_ID: 'IS-DEV/GOV/10014/Rettarvorslugatt-Client'
@@ -58,6 +58,8 @@ judicial-system-api:
     primary-alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
+        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
+        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
       hosts:
         - host: 'judicial-system.dev01.devland.is'
           paths:
@@ -115,7 +117,10 @@ judicial-system-backend:
     S3_REGION: 'eu-west-1'
     S3_TIME_TO_LIVE_GET: '5'
     S3_TIME_TO_LIVE_POST: '15'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'INAO_Client'
+    SQS_DEAD_LETTER_QUEUE_NAME: 'sqs-judicial-system-dlq'
+    SQS_QUEUE_NAME: 'sqs-judicial-system'
+    SQS_REGION: 'eu-west-1'
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
     XROAD_CLIENT_ID: 'IS-DEV/GOV/10014/Rettarvorslugatt-Client'
@@ -166,7 +171,7 @@ judicial-system-backend:
       DB_NAME: 'judicial_system'
       DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
       DB_USER: 'judicial_system'
-      SERVERSIDE_FEATURES_ON: ''
+      SERVERSIDE_FEATURES_ON: 'INAO_Client'
     secrets:
       DB_PASS: '/k8s/judicial-system/DB_PASSWORD'
   namespace: 'judicial-system'
@@ -216,6 +221,59 @@ judicial-system-backend:
       eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/judicial-system-backend'
     create: true
     name: 'judicial-system-backend'
+judicial-system-message-handler:
+  args:
+    - 'main.js'
+  command:
+    - 'node'
+  enabled: true
+  env:
+    BACKEND_URL: 'http://web-judicial-system-backend'
+    NODE_OPTIONS: '--max-old-space-size=208'
+    SERVERSIDE_FEATURES_ON: 'INAO_Client'
+    SQS_DEAD_LETTER_QUEUE_NAME: 'sqs-judicial-system-dlq'
+    SQS_QUEUE_NAME: 'sqs-judicial-system'
+    SQS_REGION: 'eu-west-1'
+  grantNamespaces:
+    - 'nginx-ingress-external'
+  grantNamespacesEnabled: true
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: '/'
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: '/'
+      timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 2
+      replicas:
+        max: 3
+        min: 2
+  image:
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-message-handler'
+  namespace: 'judicial-system'
+  replicaCount:
+    default: 2
+    max: 3
+    min: 2
+  resources:
+    limits:
+      cpu: '200m'
+      memory: '256Mi'
+    requests:
+      cpu: '100m'
+      memory: '128Mi'
+  secrets:
+    BACKEND_ACCESS_TOKEN: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN'
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
 judicial-system-scheduler:
   args:
     - 'main.js'
@@ -225,7 +283,7 @@ judicial-system-scheduler:
   env:
     BACKEND_URL: 'http://web-judicial-system-backend'
     NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'INAO_Client'
     TIME_TO_LIVE_MINUTES: '30'
   grantNamespaces:
     - 'nginx-ingress-external'
@@ -274,7 +332,7 @@ judicial-system-web:
     API_URL: 'https://judicial-system.dev01.devland.is'
     INTERNAL_API_URL: 'http://web-judicial-system-api'
     NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'INAO_Client'
   grantNamespaces:
     - 'nginx-ingress-external'
   grantNamespacesEnabled: true
@@ -301,6 +359,8 @@ judicial-system-web:
     primary-alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
+        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
+        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
       hosts:
         - host: 'judicial-system.dev01.devland.is'
           paths:
@@ -332,7 +392,7 @@ judicial-system-xrd-api:
     AUDIT_TRAIL_USE_GENERIC_LOGGER: 'false'
     BACKEND_URL: 'http://web-judicial-system-backend'
     NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'INAO_Client'
   grantNamespaces:
     - 'nginx-ingress-internal'
   grantNamespacesEnabled: true
@@ -380,6 +440,7 @@ judicial-system-xrd-api:
   secrets:
     BACKEND_ACCESS_TOKEN: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    ERROR_EVENT_URL: '/k8s/judicial-system/ERROR_EVENT_URL'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false

@@ -52,6 +52,7 @@ type Events =
 enum Roles {
   APPLICANT = 'applicant',
   ASSIGNEE = 'assignee',
+  ORGINISATION_REVIEWER = 'vmst',
 }
 
 const ParentalLeaveTemplate: ApplicationTemplate<
@@ -157,7 +158,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       },
       [States.OTHER_PARENT_APPROVAL]: {
         entry: 'assignToOtherParent',
-        exit: ['clearAssignees', 'removePeriodsOrAllowanceOnSpouseRejection'],
+        exit: ['clearAssignees'],
         meta: {
           name: States.OTHER_PARENT_APPROVAL,
           actionCard: {
@@ -189,6 +190,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   'requestRights',
                   'usePersonalAllowanceFromSpouse',
                   'personalAllowanceFromSpouse',
+                  'periods',
                 ],
               },
             },
@@ -219,6 +221,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.OTHER_PARENT_ACTION]: {
+        entry: 'removePeriodsOrAllowanceOnSpouseRejection',
         meta: {
           name: States.OTHER_PARENT_ACTION,
           actionCard: {
@@ -347,6 +350,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           lifecycle: DefaultStateLifeCycle,
           progress: 0.5,
+          onEntry: {
+            apiModuleAction:
+              API_MODULE_ACTIONS.notifyApplicantOfRejectionFromEmployer,
+            throwOnError: true,
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -365,6 +373,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.VINNUMALASTOFNUN_APPROVAL]: {
+        entry: 'assignToVMST',
+        exit: 'clearAssignees',
         meta: {
           name: States.VINNUMALASTOFNUN_APPROVAL,
           actionCard: {
@@ -387,11 +397,17 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               read: 'all',
               write: 'all',
             },
+            {
+              id: Roles.ORGINISATION_REVIEWER,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              write: 'all',
+            },
           ],
         },
         on: {
-          // TODO: How does VMLST approve? Do we need a form like we have for employer approval?
-          // Or is it a webhook that sets the application as approved?
           [DefaultEvents.APPROVE]: { target: States.APPROVED },
           [DefaultEvents.REJECT]: { target: States.VINNUMALASTOFNUN_ACTION },
         },
@@ -436,13 +452,13 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   Promise.resolve(val.InReview),
                 ),
               read: 'all',
-              write: 'all',
             },
           ],
         },
-        on: {
-          [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
-        },
+        // TODO: Applicant could not Edit APPROVED application for now. Maybe change after more discussion?
+        // on: {
+        //   [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
+        // },
       },
       // Edit Flow States
       [States.EDIT_OR_ADD_PERIODS]: {
@@ -810,6 +826,14 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
         return context
       }),
+      assignToVMST: assign((context) => {
+        const { application } = context
+        const VMST_ID = process.env.VMST_ID ?? ''
+
+        set(application, 'assignees', [VMST_ID])
+
+        return context
+      }),
       setEmployerReviewerNationalRegistryId: assign((context, event) => {
         // Only set if employer gets assigned
         if (event.type !== DefaultEvents.ASSIGN) {
@@ -941,6 +965,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
     if (application.assignees.includes(id)) {
       return Roles.ASSIGNEE
+    }
+
+    const VMST_ID = process.env.VMST_ID
+    if (id === VMST_ID) {
+      return Roles.ORGINISATION_REVIEWER
     }
 
     return undefined

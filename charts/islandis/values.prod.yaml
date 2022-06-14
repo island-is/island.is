@@ -201,6 +201,8 @@ air-discount-scheme-web:
         kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/configuration-snippet: 'rewrite /$ https://island.is/loftbru; rewrite /en$ https://island.is/en/lower-airfares-for-residents-in-rural-areas;'
         nginx.ingress.kubernetes.io/enable-global-auth: 'false'
+        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
+        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
       hosts:
         - host: 'loftbru.island.is'
           paths:
@@ -271,6 +273,7 @@ api:
     XROAD_DRIVING_LICENSE_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v1'
     XROAD_DRIVING_LICENSE_V2_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v2'
     XROAD_FINANCES_PATH: 'IS/GOV/5402697509/FJS-Public/financeIsland'
+    XROAD_FINANCES_TIMEOUT: '20000'
     XROAD_FINANCIAL_AID_BACKEND_PATH: 'IS/MUN/5502694739/samband-sveitarfelaga/financial-aid-backend'
     XROAD_HEALTH_INSURANCE_ID: 'IS/GOV/4804080550/SJUKRA-Protected'
     XROAD_HEALTH_INSURANCE_WSDLURL: 'https://huld.sjukra.is/islandrg?wsdl'
@@ -359,8 +362,6 @@ api:
     DRIVING_LICENSE_BOOK_PASSWORD: '/k8s/api/DRIVING_LICENSE_BOOK_PASSWORD'
     DRIVING_LICENSE_BOOK_USERNAME: '/k8s/api/DRIVING_LICENSE_BOOK_USERNAME'
     DRIVING_LICENSE_BOOK_XROAD_PATH: '/k8s/api/DRIVING_LICENSE_BOOK_XROAD_PATH'
-    FINANCIAL_STATEMENTS_INAO_CLIENT_ID: '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_ID'
-    FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET: '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/api/IDENTITY_SERVER_CLIENT_SECRET'
     ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH'
     ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE'
@@ -481,6 +482,8 @@ application-system-api:
     primary-alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-internal-alb'
+        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
+        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
       hosts:
         - host: 'application-payment-callback-xrd.internal.island.is'
           paths:
@@ -678,6 +681,8 @@ application-system-form:
     primary-alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
+        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
+        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
       hosts:
         - host: 'island.is'
           paths:
@@ -702,6 +707,7 @@ application-system-form:
     SI_PUBLIC_CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     SI_PUBLIC_DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID'
     SI_PUBLIC_DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN'
+    VMST_ID: '/k8s/application-system/VMST_ID'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -1237,6 +1243,8 @@ service-portal:
     primary-alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
+        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
+        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
       hosts:
         - host: 'island.is'
           paths:
@@ -1469,6 +1477,8 @@ skilavottord-web:
     primary-alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
+        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
+        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
       hosts:
         - host: 'island.is'
           paths:
@@ -1629,6 +1639,8 @@ user-notification:
     primary-alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-internal-alb'
+        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
+        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
       hosts:
         - host: 'user-notification-xrd.internal.island.is'
           paths:
@@ -1764,6 +1776,8 @@ web:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/enable-global-auth: 'false'
+        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
+        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
       hosts:
         - host: 'island.is'
           paths:

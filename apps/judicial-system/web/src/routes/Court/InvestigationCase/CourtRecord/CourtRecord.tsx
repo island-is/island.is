@@ -55,7 +55,7 @@ import {
   formatRequestCaseType,
   formatDate,
 } from '@island.is/judicial-system/formatters'
-import * as Constants from '@island.is/judicial-system/consts'
+import * as constants from '@island.is/judicial-system/consts'
 
 const getSessionBookingsAutofill = (
   formatMessage: IntlShape['formatMessage'],
@@ -851,7 +851,7 @@ const CourtRecord = () => {
                     autoComplete="off"
                     defaultValue={formatDate(
                       workingCase.courtEndTime,
-                      Constants.TIME_FORMAT,
+                      constants.TIME_FORMAT,
                     )}
                     errorMessage={courtDocumentEndEM}
                     hasError={courtDocumentEndEM !== ''}
@@ -872,9 +872,9 @@ const CourtRecord = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${Constants.IC_RULING_ROUTE}/${workingCase.id}`}
+          previousUrl={`${constants.IC_RULING_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoadingWorkingCase}
-          nextUrl={`${Constants.IC_CONFIRMATION_ROUTE}/${workingCase.id}`}
+          nextUrl={`${constants.IC_CONFIRMATION_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!isCourtRecordStepValidIC(workingCase)}
           hideNextButton={
             !workingCase.decision ||

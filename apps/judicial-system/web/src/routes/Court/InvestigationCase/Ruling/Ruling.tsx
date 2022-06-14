@@ -47,15 +47,10 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { isRulingValidIC } from '@island.is/judicial-system-web/src/utils/validate'
-import {
-  SIGNED_VERDICT_OVERVIEW,
-  IC_MODIFY_RULING_ROUTE,
-  IC_COURT_RECORD_ROUTE,
-  IC_HEARING_ARRANGEMENTS_ROUTE,
-} from '@island.is/judicial-system/consts'
 import SigningModal, {
   useRequestRulingSignature,
 } from '@island.is/judicial-system-web/src/components/SigningModal/SigningModal'
+import * as constants from '@island.is/judicial-system/consts'
 
 const Ruling = () => {
   const {
@@ -86,7 +81,9 @@ const Ruling = () => {
   } = useRequestRulingSignature(workingCase.id, () =>
     setModalVisible('SigningModal'),
   )
-  const isModifyingRuling = router.pathname.includes(IC_MODIFY_RULING_ROUTE)
+  const isModifyingRuling = router.pathname.includes(
+    constants.IC_MODIFY_RULING_ROUTE,
+  )
 
   useDeb(workingCase, 'prosecutorDemands')
   useDeb(workingCase, 'courtCaseFacts')
@@ -168,6 +165,7 @@ const Ruling = () => {
               type="warning"
               title={formatMessage(m.sections.alertMessage.title)}
               message={formatMessage(m.sections.alertMessage.message)}
+              testid="alertMessageModifyingRuling"
             />
           </Box>
         )}
@@ -480,8 +478,8 @@ const Ruling = () => {
         <FormFooter
           previousUrl={
             isModifyingRuling
-              ? `${SIGNED_VERDICT_OVERVIEW}/${workingCase.id}`
-              : `${IC_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`
+              ? `${constants.SIGNED_VERDICT_OVERVIEW}/${workingCase.id}`
+              : `${constants.IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`
           }
           nextButtonText={
             isModifyingRuling
@@ -493,13 +491,15 @@ const Ruling = () => {
               ? isRequestingRulingSignature || isLoadingWorkingCase
               : isLoadingWorkingCase
           }
-          nextUrl={`${IC_COURT_RECORD_ROUTE}/${workingCase.id}`}
+          nextUrl={`${constants.IC_COURT_RECORD_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!isRulingValidIC(workingCase)}
           onNextButtonClick={() => {
             if (isModifyingRuling) {
               requestRulingSignature()
             } else {
-              router.push(`${IC_COURT_RECORD_ROUTE}/${workingCase.id}`)
+              router.push(
+                `${constants.IC_COURT_RECORD_ROUTE}/${workingCase.id}`,
+              )
             }
           }}
         />
