@@ -20,15 +20,6 @@ export const serviceSetup = (): ServiceBuilder<'services-personal-representative
         paths: ['/'],
         public: false,
       },
-      demo: {
-        host: {
-          dev: 'personal-representative-xrd.dev01.devland.is',
-          staging: '',
-          prod: '',
-        },
-        paths: ['/'],
-        public: true,
-      },
     })
     .readiness('/liveness')
     .liveness('/liveness')
