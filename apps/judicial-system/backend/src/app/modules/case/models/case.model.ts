@@ -889,8 +889,7 @@ export class Case extends Model<Case> {
    **********/
   @Column({
     type: DataType.DATE,
-    allowNull: false,
-    defaultValue: false,
+    allowNull: true,
   })
   @ApiProperty()
   seenByDefender?: Date
