@@ -149,7 +149,6 @@ export const prerequisite = (): Form => {
                 title: '',
                 id: 'misc',
                 component: 'AnswerPopulator',
-                childInputIds: ['caseNumber'],
               }),
               buildCustomField({
                 title: '',
