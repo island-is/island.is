@@ -7,8 +7,12 @@ import {
   DataUploadResponse,
   Person,
   Attachment,
+  AssetType,
   MortgageCertificate,
   MortgageCertificateValidation,
+  AssetName,
+  EstateRegistrant,
+  EstateRelations,
 } from './syslumennClient.types'
 import {
   mapSyslumennAuction,
@@ -18,6 +22,8 @@ import {
   mapDistrictCommissionersAgenciesResponse,
   mapDataUploadResponse,
   constructUploadDataObject,
+  mapAssetName,
+  mapEstateRegistrant,
 } from './syslumennClient.utils'
 import { Injectable, Inject } from '@nestjs/common'
 import {
@@ -26,6 +32,7 @@ import {
   Configuration,
   VirkLeyfiGetRequest,
   TegundAndlags,
+  VedbandayfirlitReguverkiSvarSkeyti,
 } from '../../gen/fetch'
 import { SyslumennClientConfig } from './syslumennClient.config'
 import type { ConfigType } from '@island.is/nest/config'
@@ -215,6 +222,38 @@ export class SyslumennService {
     return response.map(mapDistrictCommissionersAgenciesResponse)
   }
 
+  async getAsset(
+    assetId: string,
+    assetType: AssetType,
+    assetMapper: (res: VedbandayfirlitReguverkiSvarSkeyti) => AssetName,
+  ): Promise<Array<AssetName>> {
+    const { id, api } = await this.createApi()
+    const response = await api
+      .vedbokavottordRegluverkiPost({
+        skilabod: {
+          audkenni: id,
+          fastanumer: assetId,
+          tegundAndlags: assetType as number,
+        },
+      })
+      .catch((e) => {
+        if ((e as { status: number })?.status === 404) {
+          return []
+        }
+        throw e
+      })
+
+    return response.map(assetMapper)
+  }
+
+  async getRealEstateAddress(realEstateId: string): Promise<Array<AssetName>> {
+    return await this.getAsset(realEstateId, AssetType.RealEstate, mapAssetName)
+  }
+
+  async getVehicleType(vehicleId: string): Promise<Array<AssetName>> {
+    return await this.getAsset(vehicleId, AssetType.Vehicle, mapAssetName)
+  }
+
   async getMortgageCertificate(
     propertyNumber: string,
   ): Promise<MortgageCertificate> {
@@ -301,5 +340,75 @@ export class SyslumennService {
     } else {
       throw new Error()
     }
+  }
+
+  async getEstateRegistrant(
+    registrantNationalId: string,
+  ): Promise<Array<EstateRegistrant>> {
+    const { id, api } = await this.createApi()
+
+    const res = await api.skraningaradiliDanarbusGet({
+      audkenni: id,
+      kennitala: registrantNationalId,
+    })
+
+    if (res.length > 0) {
+      return res.map(mapEstateRegistrant)
+    }
+    return []
+  }
+
+  async getEstateRelations(): Promise<EstateRelations> {
+    const { id, api } = await this.createApi()
+    const res = await api.danarbuAlgengTengslGet({
+      audkenni: id,
+    })
+    //return res TODO: change when generated api is fixed
+    return {
+      relations: [
+        'Systir',
+        'Bróðir',
+        'Móðir',
+        'Faðir',
+        'Dóttir',
+        'Sonur',
+        'Dótturdóttir',
+        'Dóttursonur',
+        'Sonardóttir',
+        'Sonarsonur',
+        'Maki',
+        'Bréferfingi',
+        'Systkinabarn',
+        'Systkinabarnabarn',
+        'Afi',
+        'Amma',
+        'Stjúpdóttir',
+        'Stjúpsonur',
+        'Fósturdóttir',
+        'Fóstursonur',
+        'Útfararþjónusta',
+        'Skv. erfðaskrá',
+        'Annað',
+        'Dóttir látins maka',
+        'Sonur látins maka',
+      ],
+    }
+  }
+
+  async changeEstateRegistrant(
+    currentRegistrantNationalId: string,
+    newRegistrantNationalId: string,
+    caseNumber: string,
+  ): Promise<unknown> {
+    const { id, api } = await this.createApi()
+    const res = await api.skiptaUmSkraningaradilaDanarbusPost({
+      payload: {
+        audkenni: id,
+        kennitalaFra: currentRegistrantNationalId,
+        kennitalaTil: newRegistrantNationalId,
+        malsnumer: caseNumber,
+      },
+    })
+    return res
   }
 }

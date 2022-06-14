@@ -17,6 +17,7 @@ export enum ApplicationTypes {
   GENERAL_PETITION = 'GeneralPetitionService',
   GENERAL_FISHING_LICENSE = 'GeneralFishingLicense',
   P_SIGN = 'PSign',
+  ANNOUNCEMENT_OF_DEATH = 'AnnouncementOfDeath',
   CRIMINAL_RECORD = 'CriminalRecord',
   FINANCIAL_AID = 'FinancialAid',
   DRIVING_INSTRUCTOR_REGISTRATIONS = 'DrivingInstructorRegistrations',
@@ -34,7 +35,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.PASSPORT]: {
     slug: 'vegabref',
-    translation: 'pp.application',
+    translation: 'pa.application',
   },
   [ApplicationTypes.DRIVING_LICENSE]: {
     slug: 'okuskirteini',
@@ -99,6 +100,10 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.P_SIGN]: {
     slug: 'p-merki',
     translation: 'ps.application',
+  },
+  [ApplicationTypes.ANNOUNCEMENT_OF_DEATH]: {
+    slug: 'andlatstilkynningar',
+    translation: 'aod.application',
   },
   [ApplicationTypes.CRIMINAL_RECORD]: {
     slug: 'sakavottord',

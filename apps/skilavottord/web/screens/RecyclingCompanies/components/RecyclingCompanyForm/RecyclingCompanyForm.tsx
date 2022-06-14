@@ -222,16 +222,8 @@ const RecyclingCompanyForm: FC<RecyclingCompanyForm> = ({
               <InputController
                 id="website"
                 control={control}
-                required
                 label={t.recyclingCompany.form.inputs.website.label}
                 placeholder={t.recyclingCompany.form.inputs.website.placeholder}
-                rules={{
-                  required: {
-                    value: true,
-                    message:
-                      t.recyclingCompany.form.inputs.website.rules?.required,
-                  },
-                }}
                 error={errors?.website?.message}
                 backgroundColor="blue"
               />

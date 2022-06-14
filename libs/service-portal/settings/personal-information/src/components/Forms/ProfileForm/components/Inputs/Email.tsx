@@ -9,13 +9,14 @@ import {
   useVerifyEmail,
   useUpdateOrCreateUserProfile,
   useDeleteIslykillValue,
+  useUserProfile,
 } from '@island.is/service-portal/graphql'
 import { FormButton } from '../FormButton'
 import * as styles from './ProfileForms.css'
 
 interface Props {
   buttonText: string
-  email: string
+  email?: string
   emailDirty: (isDirty: boolean) => void
   disabled?: boolean
 }
@@ -43,6 +44,7 @@ export const InputEmail: FC<Props> = ({
   } = useDeleteIslykillValue()
   const { formatMessage } = useLocale()
   const { createEmailVerification, createLoading } = useVerifyEmail()
+  const { refetch, loading: fetchLoading } = useUserProfile()
   const [emailInternal, setEmailInternal] = useState(email)
   const [emailToVerify, setEmailToVerify] = useState(email)
 
@@ -155,9 +157,10 @@ export const InputEmail: FC<Props> = ({
       await deleteIslykillValue({
         email: true,
       })
-
+      await refetch()
       setVerificationValid(true)
       setInputPristine(true)
+      setEmailInternal(undefined)
       setErrors({ ...formErrors, code: undefined })
     } catch (err) {
       setErrors({ ...formErrors, code: emailError })
@@ -221,7 +224,7 @@ export const InputEmail: FC<Props> = ({
             flexDirection="column"
             paddingTop={2}
           >
-            {!createLoading && !deleteLoading && (
+            {!createLoading && !deleteLoading && !fetchLoading && (
               <>
                 {emailVerifyCreated ? (
                   <FormButton
@@ -261,7 +264,9 @@ export const InputEmail: FC<Props> = ({
                 )}
               </>
             )}
-            {(createLoading || deleteLoading) && <LoadingDots />}
+            {(createLoading || deleteLoading || fetchLoading) && (
+              <LoadingDots />
+            )}
           </Box>
         </Box>
       </form>
