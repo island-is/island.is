@@ -78,7 +78,7 @@ describe('Ingress definitions', () => {
       },
     })
   })
-  it('MissingSetting works for ingress', () => {
+  it('MissingSetting value for ingress host skips rendering it', () => {
     const sut = service('api').ingress({
       primary: {
         host: {
@@ -108,8 +108,7 @@ describe('Ingress definitions', () => {
           'kubernetes.io/ingress.class': 'nginx-external-alb',
         },
         hosts: [{ host: 'notmissing-staging01.devland.is', paths: ['/api'] }],
-        'secondary-alb': undefined,
-      },
+      }
     })
   })
   it('Internal ingress basic', () => {
