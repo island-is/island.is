@@ -39,7 +39,7 @@ import {
   errors,
   icCaseFiles as m,
 } from '@island.is/judicial-system-web/messages'
-import * as Constants from '@island.is/judicial-system/consts'
+import * as constants from '@island.is/judicial-system/consts'
 
 import { PoliceCaseFilesMessageBox } from '../../SharedComponents/PoliceCaseFilesMessageBox/PoliceCaseFilesMessageBox'
 import { PoliceCaseFilesData } from './CaseFiles'
@@ -395,8 +395,8 @@ const CaseFilesForm: React.FC<Props> = (props) => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${Constants.IC_POLICE_REPORT_ROUTE}/${workingCase.id}`}
-          nextUrl={`${Constants.IC_POLICE_CONFIRMATION_ROUTE}/${workingCase.id}`}
+          previousUrl={`${constants.IC_POLICE_REPORT_ROUTE}/${workingCase.id}`}
+          nextUrl={`${constants.IC_POLICE_CONFIRMATION_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!allFilesUploaded || isUploading}
           nextIsLoading={isLoading}
         />

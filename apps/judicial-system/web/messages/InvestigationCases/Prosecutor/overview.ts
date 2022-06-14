@@ -16,6 +16,22 @@ export const icOverview = {
         'Notaður sem skilaboð í upplýsingarboxi á yfirlits skrefi í rannsóknarheimildum.',
     },
   }),
+  seenByDefenderAlert: defineMessages({
+    title: {
+      id:
+        'judicial.system.investigation_cases:overview.sections.seen_by_defender_alert.title',
+      defaultMessage: 'Krafa sótt af verjanda',
+      description:
+        'Notaður sem titill fyrir "Krafa sótt af verjanda" hluta á yfirlitsskrefi í rannsóknarheimildum.',
+    },
+    text: {
+      id:
+        'judicial.system.investigation_cases:overview.sections.seen_by_defender_alert.text',
+      defaultMessage: 'Verjandi skráði sig inn til að sækja kröfuskjal {when}.',
+      description:
+        'Notaður sem titill fyrir "Krafa sótt af verjanda" hluta á yfirlitsskrefi í rannsóknarheimildum.',
+    },
+  }),
   heading: defineMessage({
     id: 'judicial.system.investigation_cases:overview.heading',
     defaultMessage: 'Yfirlit kröfu um rannsóknarheimild',
