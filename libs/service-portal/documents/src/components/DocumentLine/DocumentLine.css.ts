@@ -49,3 +49,16 @@ export const image = style({
   height: 30,
   marginRight: theme.spacing[2],
 })
+
+export const icon = style({
+  marginLeft: 6,
+})
+
+export const linkWrapper = style({
+  backgroundColor: 'unset',
+  ...themeUtils.responsiveStyle({
+    sm: {
+      backgroundColor: theme.color.blueberry100,
+    },
+  }),
+})

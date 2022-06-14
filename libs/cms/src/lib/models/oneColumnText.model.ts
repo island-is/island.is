@@ -19,6 +19,9 @@ export class OneColumnText {
 
   @Field(() => [SliceUnion], { nullable: true })
   content?: Array<typeof SliceUnion>
+
+  @Field(() => Boolean, { nullable: true })
+  dividerOnTop?: boolean
 }
 
 export const mapOneColumnText = ({
@@ -32,4 +35,5 @@ export const mapOneColumnText = ({
   content: fields.content
     ? mapDocument(fields.content, sys.id + ':content')
     : [],
+  dividerOnTop: fields.dividerOnTop ?? true,
 })

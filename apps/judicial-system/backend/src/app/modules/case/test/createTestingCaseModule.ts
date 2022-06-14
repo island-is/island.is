@@ -3,6 +3,7 @@ import { Sequelize } from 'sequelize-typescript'
 import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
+import { QueueModule } from '@island.is/message-queue'
 import { ConfigType } from '@island.is/nest/config'
 import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 import { IntlService } from '@island.is/cms-translations'
@@ -21,9 +22,10 @@ import { Case } from '../models/case.model'
 import { CaseArchive } from '../models/caseArchive.model'
 import { caseModuleConfig } from '../case.config'
 import { CaseService } from '../case.service'
-import { RestrictedCaseService } from '../restrictedCase.service'
+import { LimitedAccessCaseService } from '../limitedAccessCase.service'
 import { CaseController } from '../case.controller'
-import { RestrictedCaseController } from '../restrictedCase.controller'
+import { InternalCaseController } from '../internalCase.controller'
+import { LimitedAccessCaseController } from '../limitedAccessCase.controller'
 
 jest.mock('@island.is/dokobit-signing')
 jest.mock('@island.is/email-service')
@@ -34,15 +36,32 @@ jest.mock('../../file/file.service')
 jest.mock('../../aws-s3/awsS3.service')
 jest.mock('../../defendant/defendant.service')
 
+const config = caseModuleConfig()
+
 export const createTestingCaseModule = async () => {
   const caseModule = await Test.createTestingModule({
     imports: [
+      QueueModule.register({
+        queue: {
+          name: config.sqs.queueName,
+          queueName: config.sqs.queueName,
+          deadLetterQueue: { queueName: config.sqs.deadLetterQueueName },
+        },
+        client: {
+          endpoint: config.sqs.endpoint,
+          region: config.sqs.region,
+        },
+      }),
       SharedAuthModule.register({
         jwtSecret: environment.auth.jwtSecret,
         secretToken: environment.auth.secretToken,
       }),
     ],
-    controllers: [CaseController, RestrictedCaseController],
+    controllers: [
+      CaseController,
+      InternalCaseController,
+      LimitedAccessCaseController,
+    ],
     providers: [
       CourtService,
       UserService,
@@ -58,14 +77,7 @@ export const createTestingCaseModule = async () => {
           useIntl: async () => ({}),
         },
       },
-      {
-        provide: LOGGER_PROVIDER,
-        useValue: {
-          debug: jest.fn(),
-          info: jest.fn(),
-          error: jest.fn(),
-        },
-      },
+
       { provide: Sequelize, useValue: { transaction: jest.fn() } },
       {
         provide: getModelToken(Case),
@@ -81,9 +93,16 @@ export const createTestingCaseModule = async () => {
       },
       { provide: caseModuleConfig.KEY, useValue: caseModuleConfig() },
       CaseService,
-      RestrictedCaseService,
+      LimitedAccessCaseService,
     ],
-  }).compile()
+  })
+    .overrideProvider(LOGGER_PROVIDER)
+    .useValue({
+      debug: jest.fn(),
+      info: jest.fn(),
+      error: jest.fn(),
+    })
+    .compile()
 
   const courtService = caseModule.get<CourtService>(CourtService)
 
@@ -111,14 +130,18 @@ export const createTestingCaseModule = async () => {
 
   const caseService = caseModule.get<CaseService>(CaseService)
 
-  const restrictedCaseService = caseModule.get<RestrictedCaseService>(
-    RestrictedCaseService,
+  const limitedAccessCaseService = caseModule.get<LimitedAccessCaseService>(
+    LimitedAccessCaseService,
   )
 
   const caseController = caseModule.get<CaseController>(CaseController)
 
-  const restrictedCaseController = caseModule.get<RestrictedCaseController>(
-    RestrictedCaseController,
+  const internalCaseController = caseModule.get<InternalCaseController>(
+    InternalCaseController,
+  )
+
+  const limitedAccessCaseController = caseModule.get<LimitedAccessCaseController>(
+    LimitedAccessCaseController,
   )
 
   return {
@@ -133,8 +156,9 @@ export const createTestingCaseModule = async () => {
     caseArchiveModel,
     caseConfig,
     caseService,
-    restrictedCaseService,
+    limitedAccessCaseService,
     caseController,
-    restrictedCaseController,
+    internalCaseController,
+    limitedAccessCaseController,
   }
 }

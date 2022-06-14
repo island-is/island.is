@@ -144,6 +144,17 @@ describe('Validate email format', () => {
     // Assert
     expect(validation.isValid).toEqual(true)
   })
+
+  test('should be valid if email contains + characters', () => {
+    // Arrange
+    const validEmail = 'garfield+test@garfield.io'
+
+    // Act
+    const validation = validate(validEmail, 'email-format')
+
+    // Assert
+    expect(validation.isValid).toEqual(true)
+  })
 })
 
 describe('Validate phonenumber format', () => {

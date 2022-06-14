@@ -157,7 +157,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       },
       [States.OTHER_PARENT_APPROVAL]: {
         entry: 'assignToOtherParent',
-        exit: ['clearAssignees', 'removePeriodsOrAllowanceOnSpouseRejection'],
+        exit: ['clearAssignees'],
         meta: {
           name: States.OTHER_PARENT_APPROVAL,
           actionCard: {
@@ -189,6 +189,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   'requestRights',
                   'usePersonalAllowanceFromSpouse',
                   'personalAllowanceFromSpouse',
+                  'periods',
                 ],
               },
             },
@@ -219,6 +220,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.OTHER_PARENT_ACTION]: {
+        entry: 'removePeriodsOrAllowanceOnSpouseRejection',
         meta: {
           name: States.OTHER_PARENT_ACTION,
           actionCard: {
@@ -347,6 +349,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           lifecycle: DefaultStateLifeCycle,
           progress: 0.5,
+          onEntry: {
+            apiModuleAction:
+              API_MODULE_ACTIONS.notifyApplicantOfRejectionFromEmployer,
+            throwOnError: true,
+          },
           roles: [
             {
               id: Roles.APPLICANT,

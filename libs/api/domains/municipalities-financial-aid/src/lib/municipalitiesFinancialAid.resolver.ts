@@ -15,6 +15,7 @@ import {
   MunicipalityModel,
   PersonalTaxReturnResponse,
   SignedUrlModel,
+  SpouseEmailResponse,
 } from './models'
 import {
   CreateSignedUrlInput,
@@ -24,6 +25,7 @@ import {
   ApplicationFilesInput,
   UpdateApplicationInput,
   GetSignedUrlInput,
+  SpouseEmailInput,
 } from './dto'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -132,6 +134,18 @@ export class MunicipalitiesFinancialAidResolver {
     @CurrentUser() user: User,
   ): Promise<SignedUrlModel> {
     return await this.municipalitiesFinancialAidService.municipalitiesFinancialAidGetSignedUrl(
+      user,
+      input,
+    )
+  }
+
+  @Mutation(() => SpouseEmailResponse)
+  async sendMunicipalitiesFinancialAidSpouseEmail(
+    @Args('input', { type: () => SpouseEmailInput })
+    input: SpouseEmailInput,
+    @CurrentUser() user: User,
+  ): Promise<SpouseEmailResponse> {
+    return await this.municipalitiesFinancialAidService.municipalitiesFinancialAidSpouseEmail(
       user,
       input,
     )
