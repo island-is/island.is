@@ -1,10 +1,6 @@
 import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 import { json } from '../../../../infra/src/dsl/dsl'
-import {
-  Base,
-  Client,
-  RskProcuring,
-} from '../../../../infra/src/dsl/xroad'
+import { Base, Client, RskProcuring } from '../../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (): ServiceBuilder<'services-auth-public-api'> => {
   return service('services-auth-public-api')
