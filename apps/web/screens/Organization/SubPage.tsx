@@ -40,12 +40,6 @@ import { richText, SliceType } from '@island.is/island-ui/contentful'
 import { ParsedUrlQuery } from 'querystring'
 import { useRouter } from 'next/router'
 
-// const getPathname = (url: string) => {
-//   const doubleSlash = url.indexOf('//')
-//   if ()
-//   return url.substring(firstSlash).split('#')[0]
-// }
-
 interface SubPageProps {
   organizationPage: Query['getOrganizationPage']
   subpage: Query['getOrganizationSubpage']
