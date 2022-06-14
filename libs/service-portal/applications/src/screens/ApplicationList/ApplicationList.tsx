@@ -254,7 +254,7 @@ const ApplicationList: ServicePortalModuleComponent = () => {
 
           {inProcessApplications?.length > 0 && (
             <>
-              <Text paddingTop={2} paddingBottom={3} variant="eyebrow">
+              <Text paddingTop={4} paddingBottom={3} variant="eyebrow">
                 {formatMessage(m.inProgressApplications)}
               </Text>
               <List
@@ -269,7 +269,7 @@ const ApplicationList: ServicePortalModuleComponent = () => {
 
           {finishedApplications?.length > 0 && (
             <>
-              <Text paddingTop={2} paddingBottom={3} variant="eyebrow">
+              <Text paddingTop={4} paddingBottom={3} variant="eyebrow">
                 {formatMessage(m.finishedApplications)}
               </Text>
               <List
