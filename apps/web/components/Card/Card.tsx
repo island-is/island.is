@@ -162,7 +162,6 @@ export const Card = ({
   )
 
   if (link?.href) {
-    console.log(`yess${dataTestId}`)
     return (
       <FocusableBox
         href={link.href}
