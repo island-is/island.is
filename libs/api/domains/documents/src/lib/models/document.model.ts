@@ -27,6 +27,9 @@ export class Document {
   @Field(() => String)
   url!: string
 
+  @Field(() => String, { nullable: true })
+  categoryId?: string
+
   static fromDocumentInfo(docInfo: DocumentInfoDTO): Document {
     const doc = new Document()
     doc.date = new Date(docInfo.documentDate)
@@ -35,6 +38,7 @@ export class Document {
     doc.senderName = docInfo.senderName
     doc.subject = docInfo.subject
     doc.senderNatReg = docInfo.senderKennitala
+    doc.categoryId = docInfo.categoryId
 
     return doc
   }
