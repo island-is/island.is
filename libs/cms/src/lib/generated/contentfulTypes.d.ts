@@ -1755,6 +1755,9 @@ export interface IOneColumnTextFields {
 
   /** Link */
   link?: ILink | undefined
+
+  /** Divider On Top */
+  dividerOnTop?: boolean | undefined
 }
 
 export interface IOneColumnText extends Entry<IOneColumnTextFields> {
@@ -3249,6 +3252,9 @@ export interface ITwoColumnTextFields {
 
   /** Right Link */
   rightLink?: ILink | undefined
+
+  /** Divider On Top */
+  dividerOnTop?: boolean | undefined
 }
 
 export interface ITwoColumnText extends Entry<ITwoColumnTextFields> {
