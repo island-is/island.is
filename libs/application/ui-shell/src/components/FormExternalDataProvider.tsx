@@ -187,7 +187,7 @@ const FormExternalDataProvider: FC<{
           return [true, null]
         }
 
-        var showSubmitError =
+        const showSubmitError =
           response.data &&
           !hideSubmitErrorExternalData(
             getExternalDataFromResponse(response.data),
