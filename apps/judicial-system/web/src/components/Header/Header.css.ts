@@ -1,19 +1,10 @@
 import { style } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
 
-export const header = style({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  height: 112,
-  borderBottom: `1px solid ${theme.color.blue200}`,
-  padding: `0 ${theme.spacing[3]}px`,
-
-  '@media': {
-    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
-      padding: `0 ${theme.spacing[6]}px`,
-    },
-  },
+export const container = style({
+  maxWidth: '1440px',
+  padding: `0 ${theme.spacing[6]}px`,
+  margin: '0 auto',
 })
 
 export const logoContainer = style({
@@ -45,16 +36,6 @@ export const logoContainerRvgName = style({
       width: '2px',
       backgroundColor: theme.color.dark200,
       margin: `5px ${theme.spacing[3]}px 0 ${theme.spacing[3]}px`,
-    },
-  },
-})
-
-export const link = style({
-  color: theme.color.blue400,
-
-  selectors: {
-    '&:hover': {
-      textDecoration: 'underline',
     },
   },
 })
