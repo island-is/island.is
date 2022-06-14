@@ -45,7 +45,7 @@ import {
   capitalize,
 } from '@island.is/judicial-system/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
-import * as Constants from '@island.is/judicial-system/consts'
+import * as constants from '@island.is/judicial-system/consts'
 
 import DraftConclusionModal from '../../SharedComponents/DraftConclusionModal/DraftConclusionModal'
 
@@ -99,7 +99,7 @@ const Overview = () => {
       />
       <FormContentContainer>
         {workingCase.caseResentExplanation && (
-          <Box marginBottom={5}>
+          <Box marginBottom={workingCase.seenByDefender ? 3 : 5}>
             <AlertMessage
               title={formatMessage(
                 icCourtOverview.sections.caseResentExplanation.title,
@@ -111,6 +111,23 @@ const Overview = () => {
                 />
               }
               type="warning"
+            />
+          </Box>
+        )}
+        {workingCase.seenByDefender && (
+          <Box marginBottom={5}>
+            <AlertMessage
+              title={formatMessage(
+                icCourtOverview.sections.seenByDefenderAlert.title,
+              )}
+              message={formatMessage(
+                icCourtOverview.sections.seenByDefenderAlert.text,
+                {
+                  when: formatDate(workingCase.seenByDefender, 'PPPp'),
+                },
+              )}
+              type="info"
+              testid="alertMessageSeenByDefender"
             />
           </Box>
         )}
@@ -137,7 +154,7 @@ const Overview = () => {
                     '',
                 )} eftir kl. ${formatDate(
                   workingCase.requestedCourtDate,
-                  Constants.TIME_FORMAT,
+                  constants.TIME_FORMAT,
                 )}`,
               },
               {
@@ -258,9 +275,9 @@ const Overview = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${Constants.IC_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`}
+          previousUrl={`${constants.IC_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoadingWorkingCase}
-          nextUrl={`${Constants.IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
+          nextUrl={`${constants.IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
           nextIsDisabled={uploadState === UploadState.UPLOADING}
           nextButtonText={formatMessage(icCourtOverview.continueButton.label)}
         />

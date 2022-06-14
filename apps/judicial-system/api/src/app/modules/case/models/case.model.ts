@@ -262,4 +262,7 @@ export class Case implements TCase {
 
   @Field({ nullable: true })
   readonly caseResentExplanation?: string
+
+  @Field({ nullable: true })
+  readonly seenByDefender?: string
 }
