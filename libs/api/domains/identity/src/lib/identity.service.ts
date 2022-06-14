@@ -3,7 +3,8 @@ import * as kennitala from 'kennitala'
 
 import { RskCompanyInfoService } from '@island.is/api/domains/company-registry'
 import { NationalRegistryXRoadService } from '@island.is/api/domains/national-registry-x-road'
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 
 import { IdentityType } from './identity.type'
 import { Identity } from './models'
