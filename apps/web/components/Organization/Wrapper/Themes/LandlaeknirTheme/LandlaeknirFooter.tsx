@@ -34,19 +34,9 @@ const renderParagraphs = (
 
 interface LandLaeknirFooterProps {
   footerItems: Array<FooterItem>
-  phoneLabel?: string
-  emailLabel?: string
-  phone?: string
-  email?: string
 }
 
-export const LandLaeknirFooter = ({
-  footerItems,
-  phoneLabel = 'Sími',
-  emailLabel = 'Tölvupóstur',
-  phone,
-  email,
-}: LandLaeknirFooterProps) => {
+export const LandLaeknirFooter = ({ footerItems }: LandLaeknirFooterProps) => {
   return (
     <footer aria-labelledby="organizationFooterTitle">
       <Box className={styles.container}>
@@ -99,24 +89,6 @@ export const LandLaeknirFooter = ({
                     {renderParagraphs(item.content)}
                   </Box>
                 ))}
-                <Box marginTop={3} marginBottom={3}>
-                  {phone && (
-                    <Box marginBottom={1}>
-                      <Text as="span">{phoneLabel}:</Text>{' '}
-                      <Text as="span" fontWeight="semiBold">
-                        {phone}
-                      </Text>
-                    </Box>
-                  )}
-                  {email && (
-                    <Box>
-                      <Text as="span">{emailLabel}:</Text>{' '}
-                      <Text as="span" fontWeight="semiBold">
-                        {email}
-                      </Text>
-                    </Box>
-                  )}
-                </Box>
               </GridColumn>
             </GridRow>
 

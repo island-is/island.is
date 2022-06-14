@@ -165,11 +165,11 @@ export class FileController {
     this.logger.debug(`Uploading file ${fileId} of case ${caseId} to court`)
 
     return this.fileService.uploadCaseFileToCourt(
-      user,
       caseFile,
       caseId,
       theCase.courtId,
       theCase.courtCaseNumber,
+      user,
     )
   }
 }

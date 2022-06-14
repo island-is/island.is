@@ -292,3 +292,64 @@ export const coreErrorMessages = defineMessages({
     description: 'Error Message when no company search result is found',
   },
 })
+
+export const coreDelegationsMessages = defineMessages({
+  delegationScreenTitle: {
+    id: 'application.system:core.delegations.delegationScreenTitle',
+    defaultMessage: 'Umsóknaraðili',
+    description: 'Delegations screen title',
+  },
+  delegationScreenSubtitle: {
+    id: 'application.system:core.delegations.delegationScreenSubtitle',
+    defaultMessage:
+      'Hér getur þú valið fyrir hvaða einstakling þú vilt hefja umsókn fyrir.',
+    description: 'Delegations screen subtitle for new application',
+  },
+  delegationActionCardText: {
+    id: 'application.system:core.delegations.delegationActionCardText',
+    defaultMessage: 'Kennitala: ',
+    description: 'Delegations Screen Card Text',
+  },
+  delegationActionCardButton: {
+    id: 'application.system:core.delegations.delegationActionCardButton',
+    defaultMessage: 'Hefja umsókn',
+    description: 'Delegations Screen Card Button/Link',
+  },
+  delegationScreenTitleForOngoingApplication: {
+    id:
+      'application.system:core.delegations.delegationScreenTitleForOngoingApplication',
+    defaultMessage: 'Umsókn um stæðiskort',
+    description: 'Delegations screen title for ongoing application',
+  },
+  delegationScreenSubtitleForOngoingApplication: {
+    id:
+      'application.system:core.delegations.delegationScreenSubtitleForOngoingApplication',
+    defaultMessage:
+      'Hér getur þú haldið áfram umsókn fyrir viðkomandi aðila. Ef þú þarft að breyta umsóknaraðila skaltu hefja nýja umsókn.',
+    description: 'Delegations screen subtitle for ongoing application',
+  },
+  delegationScreenNationalId: {
+    id: 'application.system:core.delegations.delegationScreenNationalId',
+    defaultMessage: 'Kennitala: ',
+    description: 'Delegations screen national Id',
+  },
+  delegationScreenTitleApplicationNoDelegationSupport: {
+    id:
+      'application.system:core.delegations.delegationScreenTitleApplicationNoDelegationSupport',
+    defaultMessage: 'Umsókn styður ekki umboð',
+    description:
+      'Delegations error application does not support delegations title',
+  },
+  delegationScreenSubtitleApplicationNoDelegationSupport: {
+    id:
+      'application.system:core.delegations.delegationScreenSubtitleApplicationNoDelegationSupport',
+    defaultMessage: 'Vinsamlegast skiptu um notanda til að halda áfram.',
+    description:
+      'Delegations error application does not support delegations title',
+  },
+  delegationErrorButton: {
+    id: 'application.system:core.delegations.delegationErrorButton',
+    defaultMessage: 'Skipta um notanda',
+    description: 'Delegations Screen Card Button/Link',
+  },
+})

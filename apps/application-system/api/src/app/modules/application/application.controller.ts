@@ -91,8 +91,10 @@ import { ApplicationAccessService } from './tools/applicationAccess.service'
 import { CurrentLocale } from './utils/currentLocale'
 import { Application } from '@island.is/application/api/core'
 import { Documentation } from '@island.is/nest/swagger'
+import { DelegationGuard } from './guards/delegation.guard'
+import { isNewActor } from './utils/delegationUtils'
 
-@UseGuards(IdsUserGuard, ScopesGuard)
+@UseGuards(IdsUserGuard, ScopesGuard, DelegationGuard)
 @ApiTags('applications')
 @ApiHeader({
   name: 'authorization',
@@ -128,7 +130,7 @@ export class ApplicationController {
   ): Promise<ApplicationResponseDto> {
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
-      user.nationalId,
+      user,
     )
 
     await this.validationService.validateThatApplicationIsReady(
@@ -182,7 +184,6 @@ export class ApplicationController {
       typeId,
       status,
     )
-
     const templateTypeToIsReady: Partial<Record<ApplicationTypes, boolean>> = {}
     const filteredApplications: Application[] = []
 
@@ -251,6 +252,7 @@ export class ApplicationController {
       | 'answers'
       | 'applicant'
       | 'assignees'
+      | 'applicantActors'
       | 'attachments'
       | 'state'
       | 'status'
@@ -259,6 +261,7 @@ export class ApplicationController {
       answers: {},
       applicant: user.nationalId,
       assignees: [],
+      applicantActors: user.actor ? [user.actor.nationalId] : [],
       attachments: {},
       state: initialState,
       status: ApplicationStatus.IN_PROGRESS,
@@ -436,7 +439,7 @@ export class ApplicationController {
   ): Promise<ApplicationResponseDto> {
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
-      user.nationalId,
+      user,
     )
     const namespaces = await getApplicationTranslationNamespaces(
       existingApplication as BaseApplication,
@@ -460,10 +463,16 @@ export class ApplicationController {
     )
 
     const mergedAnswers = mergeAnswers(existingApplication.answers, newAnswers)
+    const applicantActors: string[] =
+      isNewActor(existingApplication, user) && !!user.actor?.nationalId
+        ? [...existingApplication.applicantActors, user.actor.nationalId]
+        : existingApplication.applicantActors
+
     const { updatedApplication } = await this.applicationService.update(
       existingApplication.id,
       {
         answers: mergedAnswers,
+        applicantActors: applicantActors,
       },
     )
 
@@ -495,7 +504,7 @@ export class ApplicationController {
   ): Promise<ApplicationResponseDto> {
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
-      user.nationalId,
+      user,
     )
 
     await this.validationService.validateIncomingExternalDataProviders(
@@ -562,7 +571,7 @@ export class ApplicationController {
   ): Promise<ApplicationResponseDto> {
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
-      user.nationalId,
+      user,
     )
     const templateId = existingApplication.typeId as ApplicationTypes
     const template = await getApplicationTemplateByTypeId(templateId)
@@ -880,7 +889,7 @@ export class ApplicationController {
   ): Promise<ApplicationResponseDto> {
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
-      user.nationalId,
+      user,
     )
     const { key } = input
 
@@ -920,7 +929,7 @@ export class ApplicationController {
   ): Promise<PresignedUrlResponseDto> {
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
-      user.nationalId,
+      user,
     )
     const url = await this.fileService.generatePdf(
       existingApplication,
@@ -955,7 +964,7 @@ export class ApplicationController {
   ): Promise<RequestFileSignatureResponseDto> {
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
-      user.nationalId,
+      user,
     )
     const {
       controlCode,
@@ -992,7 +1001,7 @@ export class ApplicationController {
   ): Promise<UploadSignedFileResponseDto> {
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
-      user.nationalId,
+      user,
     )
 
     await this.fileService.uploadSignedFile(
@@ -1030,7 +1039,7 @@ export class ApplicationController {
   ): Promise<PresignedUrlResponseDto> {
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
-      user.nationalId,
+      user,
     )
     const url = await this.fileService.getPresignedUrl(
       existingApplication,
@@ -1075,7 +1084,7 @@ export class ApplicationController {
   ): Promise<PresignedUrlResponseDto> {
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
-      user.nationalId,
+      user,
     )
 
     if (!existingApplication.attachments) {
@@ -1107,7 +1116,7 @@ export class ApplicationController {
     const { nationalId } = user
     const existingApplication = (await this.applicationAccessService.findOneByIdAndNationalId(
       id,
-      nationalId,
+      user,
     )) as BaseApplication
     const canDelete = await this.applicationAccessService.canDeleteApplication(
       existingApplication,
