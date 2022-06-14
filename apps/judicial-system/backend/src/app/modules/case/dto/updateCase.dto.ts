@@ -329,4 +329,9 @@ export class UpdateCaseDto {
   @IsString()
   @ApiPropertyOptional()
   readonly caseResentExplanation?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly seenByDefender?: Date
 }

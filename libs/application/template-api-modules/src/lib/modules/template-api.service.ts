@@ -18,11 +18,13 @@ import {
   GeneralFishingLicenseService,
   DataProtectionComplaintService,
   PSignSubmissionService,
+  AnnouncementOfDeathService,
   ExamplePaymentActionsService,
   ComplaintsToAlthingiOmbudsmanTemplateService,
   MortgageCertificateSubmissionService,
   FinancialAidService,
   DrivingSchoolConfirmationService,
+  PassportService,
 } from './templates'
 
 interface ApplicationApiAction {
@@ -60,11 +62,13 @@ export class TemplateAPIService {
     private readonly generalFishingLicenseService: GeneralFishingLicenseService,
     private readonly dataProtectionComplaintService: DataProtectionComplaintService,
     private readonly pSignSubmissionService: PSignSubmissionService,
+    private readonly announcementOfDeathService: AnnouncementOfDeathService,
     private readonly examplePaymentActionsService: ExamplePaymentActionsService,
     private readonly complaintsToAlthingiOmbudsman: ComplaintsToAlthingiOmbudsmanTemplateService,
     private readonly mortgageCertificateSubmissionService: MortgageCertificateSubmissionService,
     private readonly financialAidService: FinancialAidService,
     private readonly drivingSchoolConfirmationService: DrivingSchoolConfirmationService,
+    private readonly passportService: PassportService,
   ) {}
 
   private async tryRunningActionOnService(
@@ -85,12 +89,14 @@ export class TemplateAPIService {
       | GeneralFishingLicenseService
       | DataProtectionComplaintService
       | PSignSubmissionService
+      | AnnouncementOfDeathService
       | ExamplePaymentActionsService
       | ComplaintsToAlthingiOmbudsmanTemplateService
       | MortgageCertificateSubmissionService
       | FinancialAidService
       | DrivingSchoolConfirmationService
-      | MortgageCertificateSubmissionService,
+      | MortgageCertificateSubmissionService
+      | PassportService,
     action: ApplicationApiAction,
   ): Promise<PerformActionResult> {
     // No index signature with a parameter of type 'string' was found on type
@@ -204,6 +210,11 @@ export class TemplateAPIService {
           this.pSignSubmissionService,
           action,
         )
+      case ApplicationTypes.ANNOUNCEMENT_OF_DEATH:
+        return this.tryRunningActionOnService(
+          this.announcementOfDeathService,
+          action,
+        )
       case ApplicationTypes.EXAMPLE_PAYMENT:
         return this.tryRunningActionOnService(
           this.examplePaymentActionsService,
@@ -226,6 +237,8 @@ export class TemplateAPIService {
           this.drivingSchoolConfirmationService,
           action,
         )
+      case ApplicationTypes.PASSPORT:
+        return this.tryRunningActionOnService(this.passportService, action)
     }
 
     return {
