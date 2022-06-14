@@ -295,7 +295,7 @@ export class ParentalLeaveService {
       }
 
       const isUsingTransferredRights =
-        numberOfDaysAlreadySpent > maximumPersonalDaysToSpend
+        numberOfDaysAlreadySpent >= maximumPersonalDaysToSpend
       const willStartToUseTransferredRightsWithPeriod =
         numberOfDaysSpentAfterPeriod > maximumPersonalDaysToSpend
 
