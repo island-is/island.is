@@ -1,5 +1,4 @@
 import * as z from 'zod'
-import set from 'lodash/set'
 
 import {
   Application,
@@ -8,7 +7,6 @@ import {
   ApplicationStateSchema,
   ApplicationStatus,
   ApplicationTemplate,
-  ApplicationTemplateHelper,
   ApplicationTypes,
   buildForm,
   DefaultStateLifeCycle,
@@ -17,7 +15,6 @@ import {
 } from '@island.is/application/core'
 import { ApplicationAccessService } from '../tools/applicationAccess.service'
 import { Test } from '@nestjs/testing'
-import { LoggingModule } from '@island.is/logging'
 import { EventObject } from 'xstate'
 import { ApplicationService } from '@island.is/application/api/core'
 
@@ -39,6 +36,7 @@ const createMockApplication = (
   answers: data.answers || {},
   externalData: data.externalData || {},
   status: ApplicationStatus.IN_PROGRESS,
+  applicantActors: [],
 })
 
 const createTestApplicationTemplate = (): ApplicationTemplate<
