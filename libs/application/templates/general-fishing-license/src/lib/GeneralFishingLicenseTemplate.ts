@@ -7,11 +7,13 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   DefaultEvents,
+  SharedDataProviders,
 } from '@island.is/application/core'
 import { Events, States, Roles } from '../constants'
 import { GeneralFishingLicenseSchema } from './dataSchema'
 import { application } from './messages'
 import { ApiActions } from '../shared'
+import { FishingLicenceDataProviders } from '../dataProviders'
 
 const pruneAtMidnight = () => {
   const date = new Date()
@@ -65,6 +67,18 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
                   event: DefaultEvents.SUBMIT,
                   name: 'Submit',
                   type: 'primary',
+                },
+              ],
+              api: [
+                FishingLicenceDataProviders.generalFishingLicenceProvider,
+                {
+                  ...SharedDataProviders.nationalRegistryProvider,
+                },
+                {
+                  ...SharedDataProviders.paymentCatalogProvider,
+                  params: {
+                    organizationId: '6608922069',
+                  },
                 },
               ],
               write: 'all',

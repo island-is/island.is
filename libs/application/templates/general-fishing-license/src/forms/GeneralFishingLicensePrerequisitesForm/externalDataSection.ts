@@ -5,9 +5,10 @@ import {
   buildMultiField,
   buildSection,
   buildSubmitField,
+  SharedDataProviders,
 } from '@island.is/application/core'
+import { FishingLicenceDataProviders } from '../../dataProviders'
 import { externalData } from '../../lib/messages'
-import { DataProviderTypes } from '../../types'
 
 export const externalDataSection = buildSection({
   id: 'ExternalDataSection',
@@ -22,19 +23,19 @@ export const externalDataSection = buildSection({
       dataProviders: [
         buildDataProviderItem({
           id: 'nationalRegistry',
-          type: DataProviderTypes.NationalRegistry,
+          provider: SharedDataProviders.nationalRegistryProvider,
           title: externalData.nationalRegistry.title,
           subTitle: externalData.nationalRegistry.description,
         }),
         buildDataProviderItem({
           id: 'directoryOfFisheries',
-          type: 'GeneralFishingLicenseProvider',
+          provider: FishingLicenceDataProviders.generalFishingLicenceProvider,
           title: externalData.directoryOfFisheries.title,
           subTitle: externalData.directoryOfFisheries.description,
         }),
         buildDataProviderItem({
           id: 'feeInfoProvider',
-          type: 'FeeInfoProvider',
+          provider: SharedDataProviders.paymentCatalogProvider,
           title: externalData.userProfile.title,
           subTitle: externalData.userProfile.description,
         }),

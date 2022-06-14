@@ -5,6 +5,7 @@ import { GeneralFishingLicenseAnswers } from '@island.is/application/templates/g
 import { getValueViaPath } from '@island.is/application/core'
 import {
   FishingLicenseCodeType,
+  FishingLicenseService,
   UmsoknirApi,
 } from '@island.is/clients/fishing-license'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -16,6 +17,7 @@ export class GeneralFishingLicenseService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
+    private readonly fishingLicenceApi: FishingLicenseService,
     private readonly umsoknirApi: UmsoknirApi,
   ) {}
 
@@ -110,5 +112,9 @@ export class GeneralFishingLicenseService {
       )
       throw new Error('Villa kom upp við skil á umsókn.')
     }
+  }
+
+  async getShips({ application, auth }: TemplateApiModuleActionProps) {
+    return this.fishingLicenceApi.getShips(auth.nationalId, auth)
   }
 }

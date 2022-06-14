@@ -60,10 +60,22 @@ export const SharedDataProviders = {
       }
     },
   },
+  paymentCatalogProvider: {
+    apiModuleAction: 'paymentCatalog',
+    namespace: 'paymentCatalog',
+    dataProviderType: 'paymentCatalogProvider',
+  },
 } as AvailableSharedDataProviders
 
 export interface AvailableSharedDataProviders {
   nationalRegistryProvider: ApplicationTemplateAPIAction
   userProfileProvider: ApplicationTemplateAPIAction
   familyRelationsProvider: ApplicationTemplateAPIAction
+  /**
+   * Available params
+   * params: {
+   *  organizationId: 'xxxxxxxxxx',
+   * }
+   *  */
+  paymentCatalogProvider: ApplicationTemplateAPIAction
 }
