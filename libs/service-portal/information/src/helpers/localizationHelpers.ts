@@ -6,29 +6,29 @@ export const natRegGenderMessageDescriptorRecord: Record<
   Gender,
   MessageDescriptor
 > = {
-  FEMALE: spmm.family.genderFemale,
-  FEMALE_MINOR: spmm.family.genderFemaleMinor,
-  MALE: spmm.family.genderMale,
-  MALE_MINOR: spmm.family.genderMaleMinor,
-  TRANSGENDER: spmm.family.genderTransgender,
-  TRANSGENDER_MINOR: spmm.family.genderTransgender,
-  UNKNOWN: spmm.family.genderUnknown,
+  FEMALE: spmm.genderFemale,
+  FEMALE_MINOR: spmm.genderFemaleMinor,
+  MALE: spmm.genderMale,
+  MALE_MINOR: spmm.genderMaleMinor,
+  TRANSGENDER: spmm.genderTransgender,
+  TRANSGENDER_MINOR: spmm.genderTransgender,
+  UNKNOWN: spmm.genderUnknown,
 }
 
 export const natRegMaritalStatusMessageDescriptorRecord: Record<
   MaritalStatus,
   MessageDescriptor
 > = {
-  DIVORCED: spmm.family.maritalStatusDivorced,
+  DIVORCED: spmm.maritalStatusDivorced,
   FOREIGN_RESIDENCE_MARRIED_TO_UNREGISTERED_PERSON:
-    spmm.family.maritalStatusForeignResidence,
+    spmm.maritalStatusForeignResidence,
   ICELANDIC_RESIDENCE_MARRIED_TO_UNREGISTERED_PERSON:
-    spmm.family.maritalStatusIcelandicResidence,
-  MARRIED: spmm.family.maritalStatusMarried,
-  MARRIED_LIVING_SEPARATELY: spmm.family.maritalStatusMarriedLivingSep,
-  MARRIED_TO_FOREIGN_LAW_PERSON: spmm.family.maritalStatusMarriedToForeign,
-  SEPARATED: spmm.family.maritalStatusSeparated,
-  UNKNOWN: spmm.family.maritalStatusUnknown,
-  UNMARRIED: spmm.family.maritalStatusUnmarried,
-  WIDOWED: spmm.family.maritalStatusWidowed,
+    spmm.maritalStatusIcelandicResidence,
+  MARRIED: spmm.maritalStatusMarried,
+  MARRIED_LIVING_SEPARATELY: spmm.maritalStatusMarriedLivingSep,
+  MARRIED_TO_FOREIGN_LAW_PERSON: spmm.maritalStatusMarriedToForeign,
+  SEPARATED: spmm.maritalStatusSeparated,
+  UNKNOWN: spmm.maritalStatusUnknown,
+  UNMARRIED: spmm.maritalStatusUnmarried,
+  WIDOWED: spmm.maritalStatusWidowed,
 }

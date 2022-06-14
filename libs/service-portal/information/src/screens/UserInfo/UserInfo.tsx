@@ -57,7 +57,7 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
                 {userInfo.profile.name}
               </Text>
               <Text as="p" variant="default">
-                {formatMessage(spmm.family.userInfoDesc)}
+                {formatMessage(spmm.userInfoDesc)}
               </Text>
             </Stack>
           </GridColumn>
@@ -214,7 +214,7 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
         <Divider />
         <Box marginY={3} />
         <UserInfoLine
-          title={formatMessage(spmm.family.userFamilyMembersOnNumber)}
+          title={formatMessage(spmm.userFamilyMembersOnNumber)}
           label={userInfo.profile.name}
           content={formatNationalId(userInfo.profile.nationalId)}
           loading={loading || familyLoading}

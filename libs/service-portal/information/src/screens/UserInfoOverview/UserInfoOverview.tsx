@@ -72,7 +72,7 @@ const UserInfoOverview: ServicePortalModuleComponent = ({ userInfo }) => {
                 {formatMessage(m.myInfo)}
               </Text>
               <Text as="p" variant="default">
-                {formatMessage(spmm.family.userInfoDesc)}
+                {formatMessage(spmm.userInfoDesc)}
               </Text>
             </Stack>
           </GridColumn>
