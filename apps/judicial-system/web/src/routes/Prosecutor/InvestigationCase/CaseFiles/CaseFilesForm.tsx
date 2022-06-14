@@ -30,6 +30,7 @@ import {
   CaseInfo,
   FormContentContainer,
   FormFooter,
+  ParentCaseFiles,
 } from '@island.is/judicial-system-web/src/components'
 import { removeTabsValidateAndSet } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
@@ -182,6 +183,10 @@ const CaseFilesForm: React.FC<Props> = (props) => {
           />
         </Box>
         <Box marginBottom={5}>
+          <ParentCaseFiles
+            caseType={workingCase.type}
+            files={workingCase.parentCase?.caseFiles}
+          />
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
               {formatMessage(m.sections.description.heading)}
