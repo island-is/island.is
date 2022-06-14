@@ -93,24 +93,30 @@ export const ScreenFooter: FC<FooterProps> = ({
       )
     }
 
-    return submitField?.actions.map(({ event, type, name }) => {
-      const buttonConfig = submitButtonConfig[type]
-
-      return (
-        <Box key={`cta-${event}`} marginX={1}>
-          <Button
-            type="submit"
-            loading={!canProceed || loading}
-            colorScheme={buttonConfig.colorScheme as any}
-            id={typeof event === 'object' ? event.type : event}
-            variant={buttonConfig.variant}
-            icon={buttonConfig.icon}
-          >
-            {formatText(name, application, formatMessage)}
-          </Button>
-        </Box>
+    return submitField?.actions
+      .filter(({ condition }) =>
+        typeof condition === 'function'
+          ? condition(application.answers, application.externalData)
+          : true,
       )
-    })
+      .map(({ event, type, name }) => {
+        const buttonConfig = submitButtonConfig[type]
+
+        return (
+          <Box key={`cta-${event}`}>
+            <Button
+              type="submit"
+              loading={!canProceed || loading}
+              colorScheme={buttonConfig.colorScheme as any}
+              id={typeof event === 'object' ? event.type : event}
+              variant={buttonConfig.variant}
+              icon={buttonConfig.icon}
+            >
+              {formatText(name, application, formatMessage)}
+            </Button>
+          </Box>
+        )
+      })
   }
 
   return (

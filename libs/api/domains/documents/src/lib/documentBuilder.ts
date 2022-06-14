@@ -28,10 +28,12 @@ export class DocumentBuilder {
   public buildDocument(documentDto: DocumentInfoDTO): Document {
     const builtDocument = Document.fromDocumentInfo(documentDto)
     const { url, fileType } = this.getTypeFilter(documentDto)
+    const hasOpened = fileType === FileType.URL ? true : builtDocument.opened // URL documents should not display as unopened as we do not have the ability to mark them as read.
     return {
       ...builtDocument,
       url,
       fileType,
+      opened: hasOpened,
     }
   }
 

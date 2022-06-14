@@ -15,3 +15,4 @@ export type {
 } from './src/lib/DatePicker/types'
 export type { ResponsiveProp } from './src/utils/responsiveProp'
 export type { GridColumns } from './src/lib/Grid/GridColumn/GridColumn.css'
+export type { SpanType } from './src/lib/Grid/GridColumn/GridColumn.css'
