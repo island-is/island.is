@@ -83,7 +83,7 @@ describe('Ingress definitions', () => {
       primary: {
         host: {
           dev: MissingSetting,
-          staging: "notmissing-staging01.devland.is",
+          staging: 'notmissing-staging01.devland.is',
           prod: MissingSetting,
         },
         paths: ['/api'],
@@ -107,9 +107,9 @@ describe('Ingress definitions', () => {
         annotations: {
           'kubernetes.io/ingress.class': 'nginx-external-alb',
         },
-        hosts:[{ host: 'notmissing-staging01.devland.is', paths: ['/api'] }],
-      'secondary-alb': undefined
-      }
+        hosts: [{ host: 'notmissing-staging01.devland.is', paths: ['/api'] }],
+        'secondary-alb': undefined,
+      },
     })
   })
   it('Internal ingress basic', () => {
