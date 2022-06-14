@@ -40,6 +40,12 @@ import { richText, SliceType } from '@island.is/island-ui/contentful'
 import { ParsedUrlQuery } from 'querystring'
 import { useRouter } from 'next/router'
 
+// const getPathname = (url: string) => {
+//   const doubleSlash = url.indexOf('//')
+//   if ()
+//   return url.substring(firstSlash).split('#')[0]
+// }
+
 interface SubPageProps {
   organizationPage: Query['getOrganizationPage']
   subpage: Query['getOrganizationSubpage']
@@ -58,17 +64,19 @@ const SubPage: Screen<SubPageProps> = ({
 
   useContentfulId(organizationPage.id, subpage.id)
 
+  const pathWithoutHash = router.asPath.split('#')[0]
+
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink.text,
       href: primaryLink.url,
       active:
-        primaryLink.url === router.asPath ||
-        childrenLinks.some((link) => link.url === router.asPath),
+        primaryLink.url === pathWithoutHash ||
+        childrenLinks.some((link) => link.url === pathWithoutHash),
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
         href: url,
-        active: url === router.asPath,
+        active: url === pathWithoutHash,
       })),
     }),
   )

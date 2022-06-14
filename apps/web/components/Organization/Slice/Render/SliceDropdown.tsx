@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Slice } from '@island.is/web/graphql/schema'
 import { OrganizationSlice } from '@island.is/web/components'
 import {
@@ -22,16 +22,19 @@ export const SliceDropdown: React.FC<SliceProps> = ({
 }) => {
   const Router = useRouter()
   const [selectedId, setSelectedId] = useState<string>('')
-  const options = []
-  for (const slice of slices) {
-    if (slice.__typename === 'OneColumnText') {
-      options.push({
-        label: slice.title,
-        value: slice.id,
-        slug: slugify(slice.title),
-      })
+  const options = useMemo(() => {
+    const options = []
+    for (const slice of slices) {
+      if (slice.__typename === 'OneColumnText') {
+        options.push({
+          label: slice.title,
+          value: slice.id,
+          slug: slugify(slice.title),
+        })
+      }
     }
-  }
+    return options
+  }, [slices])
 
   useEffect(() => {
     const hashString = window.location.hash.replace('#', '')
@@ -65,12 +68,13 @@ export const SliceDropdown: React.FC<SliceProps> = ({
               onChange={({ value }: Option) => {
                 const slug = options.find((x) => x.value === value).slug
                 setSelectedId(String(value))
-                Router.replace(
-                  window.location.protocol +
-                    '//' +
-                    window.location.host +
-                    window.location.pathname +
-                    `#${slug}`,
+                Router.push(
+                  {
+                    pathname: Router.asPath.split('#')[0],
+                    hash: slug,
+                  },
+                  undefined,
+                  { shallow: true },
                 )
               }}
             />
