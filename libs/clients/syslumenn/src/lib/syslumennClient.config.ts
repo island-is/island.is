@@ -15,7 +15,7 @@ export const SyslumennClientConfig = defineConfig({
   schema,
   load(env) {
     return {
-      url: env.required('SYSLUMENN_HOST', 'https://api.syslumenn.is/Test'),
+      url: env.required('SYSLUMENN_HOST', 'https://api.syslumenn.is/dev'),
       fetch: {
         timeout: env.optionalJSON('SYSLUMENN_TIMEOUT') ?? 10000,
       },

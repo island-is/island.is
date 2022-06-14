@@ -41,6 +41,11 @@ export const coreMessages = defineMessages({
     defaultMessage: 'Opna umsókn',
     description: 'Button label when application is in progress',
   },
+  cardButtonNotStarted: {
+    id: 'application:card.button.notStarted',
+    defaultMessage: 'Hefja umsókn',
+    description: 'Button label when application is not started',
+  },
   cardButtonComplete: {
     id: 'application.system:card.button.complete',
     defaultMessage: 'Skoða yfirlit',
