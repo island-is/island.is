@@ -48,3 +48,19 @@ export const logoContainerRvgName = style({
     },
   },
 })
+
+export const link = style({
+  color: theme.color.blue400,
+
+  selectors: {
+    '&:hover': {
+      textDecoration: 'underline',
+    },
+  },
+})
+
+export const dropdownItem = style({
+  display: 'flex',
+  borderTop: `2px solid ${theme.color.dark200}`,
+  paddingTop: `${theme.spacing[3]}px`,
+})

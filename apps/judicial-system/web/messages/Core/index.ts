@@ -203,4 +203,11 @@ export const core = defineMessages({
     defaultMessage: 'Halda áfram',
     description: 'Notað fyrir "Halda áfram" takka í öllum flæðum.',
   },
+  headerTipDisclaimer: {
+    id: 'judicial.system.core:header_tip_disclaimer',
+    defaultMessage:
+      'Erindi vegna aðgangs að Réttarvörslugátt sendast á {linkStart}{linkEnd}',
+    description:
+      'Notaður sem skilaboð sem segir hvert á að senda erindi vegna aðgangs í haus í öllum flæðum.',
+  },
 })

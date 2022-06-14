@@ -66,6 +66,21 @@ export const formatNationalId = (nationalId: string): string => {
   }
 }
 
+export const formatPhoneNumber = (phoneNumber?: string) => {
+  if (!phoneNumber) {
+    return
+  }
+
+  const value = phoneNumber.replace('-', '')
+
+  const splitAt = (index: number) => (x: string) => [
+    x.slice(0, index),
+    x.slice(index),
+  ]
+  if (value.length > 3) return splitAt(3)(value).join('-')
+  return value
+}
+
 export const laws = {
   _95_1_A: 'a-lið 1. mgr. 95. gr. sml.',
   _95_1_B: 'b-lið 1. mgr. 95. gr. sml.',
