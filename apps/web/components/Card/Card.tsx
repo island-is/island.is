@@ -18,6 +18,7 @@ import { BackgroundImage } from '@island.is/web/components'
 import { LinkResolverResponse } from '@island.is/web/hooks/useLinkResolver'
 
 import * as styles from './Card.css'
+import { TestSupport } from '@island.is/island-ui/utils'
 
 export type CardTagsProps = {
   tagProps?: Omit<TagProps, 'children'>
@@ -47,7 +48,8 @@ export const Card = ({
   description,
   tags = [],
   link,
-}: CardProps) => {
+  dataTestId,
+}: CardProps & TestSupport) => {
   const { colorScheme } = useContext(ColorSchemeContext)
   const [ref, { width }] = useMeasure()
 
@@ -167,6 +169,7 @@ export const Card = ({
         flexDirection="column"
         height="full"
         width="full"
+        data-testid={dataTestId}
         flexGrow={1}
         background="white"
         borderColor={borderColor}
