@@ -169,6 +169,8 @@ export interface Municipality {
   numberOfUsers?: number
   adminUsers?: Staff[]
   allAdminUsers?: UpdateAdmin[]
+  usingNav: boolean
+  navUrl?: string
 }
 
 export interface UpdateMunicipalityActivity {

@@ -16,6 +16,8 @@ const MunicipalityQuery = gql`
       municipalityId
       email
       rulesHomepage
+      usingNav
+      navUrl
       individualAid {
         ownPlace
         registeredRenting
