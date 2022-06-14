@@ -6,7 +6,7 @@ import { EmailTemplateGenerator } from '../../../../types'
 import { pathToAsset } from '../parental-leave.utils'
 
 // TODO handle translations
-export const generateOtherParentRejected: EmailTemplateGenerator = (props) => {
+export const generateEmployerRejected: EmailTemplateGenerator = (props) => {
   const {
     application,
     options: { email, clientLocationOrigin },
@@ -15,7 +15,7 @@ export const generateOtherParentRejected: EmailTemplateGenerator = (props) => {
   const to =
     get(application.answers, 'applicant.email') ||
     get(application.externalData, 'userProfile.data.email')
-  const subject = 'Beiðni þín um tilfærslu réttinda hafnað'
+  const subject = 'Beiðni þín um samþykki fæðingarorlofs hafnað'
 
   return {
     from: {
@@ -52,14 +52,14 @@ export const generateOtherParentRejected: EmailTemplateGenerator = (props) => {
           component: 'Copy',
           context: {
             copy:
-              'Hitt foreldrið hefur hafnað beiðni þinni um yfirfærslu á réttindum. Þú þarft því að breyta umsókn þinni.',
+              'Vinnuveitandi hefur hafnað beiðni þinni um samþykki fæðingarorlofs. Þú þarft því að breyta umsókn þinni.',
           },
         },
         {
           component: 'Copy',
           context: {
             copy:
-              'The other parent has denied your request to transfer rights. You therefore need to modify your application.',
+              'Your employer has denied your request. You therefore need to modify your application.',
           },
         },
         {
