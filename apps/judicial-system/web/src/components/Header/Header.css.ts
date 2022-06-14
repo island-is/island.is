@@ -42,6 +42,6 @@ export const logoContainerRvgName = style({
 
 export const dropdownItem = style({
   display: 'flex',
-  borderTop: `2px solid ${theme.color.dark200}`,
+  borderTop: `2px solid ${theme.color.blue200}`,
   paddingTop: `${theme.spacing[3]}px`,
 })

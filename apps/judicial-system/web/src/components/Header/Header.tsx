@@ -51,7 +51,7 @@ const HeaderContainer: React.FC = () => {
                       <Text>{formatPhoneNumber(user?.mobileNumber)}</Text>
                     </Box>
                     <Box>
-                      <Text as="span">{user?.email}</Text>
+                      <Text>{user?.email}</Text>
                     </Box>
                   </Box>
                 </div>
