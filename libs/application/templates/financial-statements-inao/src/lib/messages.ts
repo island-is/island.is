@@ -161,7 +161,7 @@ export const m = defineMessages({
   },
   keyNumbersProperty: {
     id: 'fsn.application:keyNumbers.property',
-    defaultMessage: 'Lykiltölur - Eignir',
+    defaultMessage: 'Eignir, skuldir og eigið fé',
     description: 'Statement property numbers',
   },
   debts: {
@@ -188,6 +188,26 @@ export const m = defineMessages({
     id: 'fsn.application:keyNumbers.keyNumbersExpenses',
     defaultMessage: 'Lykiltölur - Tekjur og gjöld',
     description: 'expenses',
+  },
+  currentAssets: {
+    id: 'fsn.application:keyNumbers.currentAssets',
+    defaultMessage: 'Fastafjármunir samtals',
+    description: 'Current assets',
+  },
+  tangibleAssets: {
+    id: 'fsn.application:keyNumbers.tangibleAssets',
+    defaultMessage: 'Veltufjármunir samtals',
+    description: 'Fixed tangible assets',
+  },
+  longTerm: {
+    id: 'fsn.application:keyNumbers.longTermdebt',
+    defaultMessage: 'Langtímaskuldir samtals',
+    description: 'Long term debt',
+  },
+  shortTerm: {
+    id: 'fsn.application:keyNumbers.shortTermDebt',
+    defaultMessage: 'Skammtímaskuldir samtals',
+    description: 'Short term debt',
   },
   expensesIncome: {
     id: 'fsn.application:keyNumbers.expensesIncome',
@@ -224,6 +244,11 @@ export const m = defineMessages({
     defaultMessage: 'Eignir',
     description: 'List of applicants properties',
   },
+  totalAssets: {
+    id: 'fsn.application:totalAssets',
+    defaultMessage: 'Eignir samtals',
+    description: 'Total assets',
+  },
   keyNumbersPropertiesAndDebts: {
     id: 'fsn.application:keyNumbersPropertiesAndDebts',
     defaultMessage: 'Lykiltölur - Tekjur og gjöld',
@@ -244,6 +269,7 @@ export const m = defineMessages({
     defaultMessage: 'Lykiltölur - Tekjur og gjöld',
     description: 'income and expenses of keynumbers',
   },
+
   income: {
     id: 'fsn.application:income',
     defaultMessage: 'Tekjur',
@@ -318,6 +344,16 @@ export const m = defineMessages({
     id: 'fsn.application:income.totalExpenses',
     defaultMessage: 'Gjöld samtals:',
     description: 'Total expenses',
+  },
+  totalLiabilities: {
+    id: 'fsn.application:keyNumbers.totalLiabilities',
+    defaultMessage: 'Skuldir samtals',
+    description: 'total liabilities',
+  },
+  equity: {
+    id: 'fsn.application:keyNumbers.equity',
+    defaultMessage: 'Eigið fé samtals',
+    description: 'total equity',
   },
   attachment: {
     id: 'fsn.application:financial.attachment',

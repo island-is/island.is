@@ -18,6 +18,7 @@ export const Overview = ({ application }: FieldBaseProps) => {
   const { formatMessage } = useLocale()
 
   const answers = application.answers as FinancialStatementsInao
+  console.log({ answers })
   return (
     <Box marginBottom={2}>
       <Divider />
@@ -71,43 +72,79 @@ export const Overview = ({ application }: FieldBaseProps) => {
       </Box>
       <Box paddingY={2}>
         <GridRow>
-          {/* <GridColumn span={['12/12', '6/12']}>
+          <GridColumn span={['12/12', '6/12']}>
             <ValueLine
               label={m.capitalIncome}
-              value={answers.incomeAndExpenses?.capital}
+              value={answers.income?.capitalIncome}
             />
           </GridColumn>
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
-              label={m.personalIncome}
-              value={answers.incomeAndExpenses?.personal}
+              label={m.corporateDonation}
+              value={answers.income?.corporateDonations}
             />
-          </GridColumn> */}
-        </GridRow>
-      </Box>
-      <Box paddingY={2}>
-        <GridRow>
-          <GridColumn span={['12/12', '6/12']}>
-            {/* <ValueLine
-              label={m.donations}
-              value={answers.incomeAndExpenses?.donations}
-            /> */}
-          </GridColumn>
-          <GridColumn span={['12/12', '6/12']}>
-            {/* <ValueLine
-              label={m.capitalIncome}
-              value={answers.incomeAndExpenses?.capitalIncome}
-            /> */}
           </GridColumn>
         </GridRow>
       </Box>
       <Box paddingY={2}>
         <GridRow>
           <GridColumn span={['12/12', '6/12']}>
-            {/* <ValueLine
-              label={m.keyNumbersParty}
-              value={answers.incomeAndExpenses?.partyRunning}
-            /> */}
+            <ValueLine
+              label={m.individualDonations}
+              value={answers.income?.individualDonations}
+            />
+          </GridColumn>
+          <GridColumn span={['12/12', '6/12']}>
+            <ValueLine
+              label={m.otherIncome}
+              value={answers.income?.otherIncome}
+            />
+          </GridColumn>
+        </GridRow>
+      </Box>
+      <Box paddingY={2}>
+        <GridRow>
+          <GridColumn span={['12/12', '6/12']}>
+            <ValueLine
+              label={m.personalDonations}
+              value={answers.income?.personalDonations}
+            />
+          </GridColumn>
+          <GridColumn span={['12/12', '6/12']}>
+            <ValueLine
+              label={m.expenses}
+              value={answers.expense?.electionOffice}
+            />
+          </GridColumn>
+        </GridRow>
+      </Box>
+      <Box paddingY={2}>
+        <GridRow>
+          <GridColumn span={['12/12', '6/12']}>
+            <ValueLine
+              label={m.travelCost}
+              value={answers.expense?.travelCost}
+            />
+          </GridColumn>
+          <GridColumn span={['12/12', '6/12']}>
+            <ValueLine
+              label={m.advertisements}
+              value={answers.expense?.advertisements}
+            />
+          </GridColumn>
+        </GridRow>
+        <GridRow>
+          <GridColumn span={['12/12', '6/12']}>
+            <ValueLine
+              label={m.capitalCost}
+              value={answers.expense?.capitalCost}
+            />
+          </GridColumn>
+          <GridColumn span={['12/12', '6/12']}>
+            <ValueLine
+              label={m.otherCost}
+              value={answers.expense?.otherCost}
+            />
           </GridColumn>
         </GridRow>
       </Box>
@@ -121,14 +158,14 @@ export const Overview = ({ application }: FieldBaseProps) => {
         <GridRow>
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
-              label={m.debtsShort}
-              value={answers.propertiesAndDebts?.debtsShort}
+              label={m.currentAssets}
+              value={answers.asset?.current}
             />
           </GridColumn>
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
-              label={m.debtsLong}
-              value={answers.propertiesAndDebts?.longTermDebt}
+              label={m.tangibleAssets}
+              value={answers.asset?.tangible}
             />
           </GridColumn>
         </GridRow>
@@ -137,14 +174,24 @@ export const Overview = ({ application }: FieldBaseProps) => {
         <GridRow>
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
-              label={m.propertiesCash}
-              value={answers.propertiesAndDebts?.propertiesCash}
+              label={m.shortTerm}
+              value={answers.liability?.shortTerm}
             />
           </GridColumn>
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
-              label={m.propertiesShort}
-              value={answers.propertiesAndDebts?.propertiesShort}
+              label={m.longTerm}
+              value={answers.liability?.longTerm}
+            />
+          </GridColumn>
+        </GridRow>
+      </Box>
+      <Box paddingY={2}>
+        <GridRow>
+          <GridColumn span={['12/12', '6/12']}>
+            <ValueLine
+              label={m.equity}
+              value={answers.equity?.totalEquity}
             />
           </GridColumn>
         </GridRow>
