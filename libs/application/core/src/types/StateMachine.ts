@@ -36,6 +36,7 @@ export interface RoleInState<T extends EventObject = AnyEventObject> {
   delete?: boolean
   formLoader?: FormLoader
   actions?: CallToAction<T>[]
+  shouldBeListedForRole?: boolean
 }
 
 export interface ApplicationContext {

@@ -38,6 +38,9 @@ import {
   PdfTypes,
   ApplicationStatus,
   CustomTemplateFindQuery,
+  ApplicationTemplate,
+  ApplicationContext,
+  ApplicationStateSchema,
 } from '@island.is/application/core'
 import type { Unwrap, Locale } from '@island.is/shared/types'
 import type { User } from '@island.is/auth-nest-tools'
@@ -91,6 +94,7 @@ import { ApplicationAccessService } from './tools/applicationAccess.service'
 import { CurrentLocale } from './utils/currentLocale'
 import { Application } from '@island.is/application/api/core'
 import { Documentation } from '@island.is/nest/swagger'
+import { EventObject } from 'xstate'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('applications')
@@ -183,12 +187,31 @@ export class ApplicationController {
       status,
     )
 
+    // keep all templates that have been fetched in order to avoid fetching them again
+    const templates: Partial<
+      Record<
+        ApplicationTypes,
+        ApplicationTemplate<
+          ApplicationContext,
+          ApplicationStateSchema<EventObject>,
+          EventObject
+        >
+      >
+    > = {}
     const templateTypeToIsReady: Partial<Record<ApplicationTypes, boolean>> = {}
     const filteredApplications: Application[] = []
-
     for (const application of applications) {
       // We've already checked an application with this type and it is ready
-      if (templateTypeToIsReady[application.typeId]) {
+      // now we just need to check if it should be displayed for the user
+      // todo figure out a better way for us to check if the template is present, should never be sent undefined
+      if (
+        templateTypeToIsReady[application.typeId] &&
+        (await this.applicationAccessService.shouldShowApplicationOnOverview(
+          application as BaseApplication,
+          nationalId,
+          templates[application.typeId],
+        ))
+      ) {
         filteredApplications.push(application)
         continue
       } else if (templateTypeToIsReady[application.typeId] === false) {
@@ -201,8 +224,19 @@ export class ApplicationController {
         application.typeId,
       )
 
+      // Add template to avoid fetching it again for the same types
+      templates[application.typeId] = applicationTemplate
+
       if (
-        await this.validationService.isTemplateReady(user, applicationTemplate)
+        (await this.validationService.isTemplateReady(
+          user,
+          applicationTemplate,
+        )) &&
+        (await this.applicationAccessService.shouldShowApplicationOnOverview(
+          application as BaseApplication,
+          nationalId,
+          applicationTemplate,
+        ))
       ) {
         templateTypeToIsReady[application.typeId] = true
         filteredApplications.push(application)
