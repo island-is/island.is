@@ -182,11 +182,6 @@ export class ApplicationTemplateHelper<
       externalData: {},
     }
     const { answers, externalData } = this.application
-    console.log(
-      `what does this return? ${JSON.stringify(
-        this.getWritableAnswersAndExternalData(roles),
-      )}`,
-    )
     if (typeof roles === 'string') {
       roles = [roles]
     }
@@ -200,7 +195,6 @@ export class ApplicationTemplateHelper<
       if (read === 'all' || write === 'all') {
         return { answers, externalData }
       }
-      // this.utility(roleInState, answers, externalData, returnValue)
 
       const answersToPick = [
         ...(write?.answers ?? []),
