@@ -84,19 +84,10 @@ export const JudicialSystem = new XroadConf({
 })
 
 export const DrivingLicense = new XroadConf({
-  env: {
-    XROAD_DRIVING_LICENSE_PATH: {
-      dev: '/k8s/api/XROAD_DRIVING_LICENSE_PATH',
-      staging: '/k8s/api/XROAD_DRIVING_LICENSE_PATH',
-      prod: '/k8s/api/XROAD_DRIVING_LICENSE_PATH',
-    },
-    XROAD_DRIVING_LICENSE_V2_PATH: {
-      dev: '/k8s/api/XROAD_DRIVING_LICENSE_V2_PATH',
-      staging: '/k8s/api/XROAD_DRIVING_LICENSE_V2_PATH',
-      prod: '/k8s/api/XROAD_DRIVING_LICENSE_V2_PATH',
-    },
-  },
+  env: {},
   secrets: {
+    XROAD_DRIVING_LICENSE_PATH: '/k8s/api/XROAD_DRIVING_LICENSE_PATH',
+    XROAD_DRIVING_LICENSE_V2_PATH: '/k8s/api/XROAD_DRIVING_LICENSE_V2_PATH',
     XROAD_DRIVING_LICENSE_SECRET: '/k8s/api/DRIVING_LICENSE_SECRET',
   },
 })
