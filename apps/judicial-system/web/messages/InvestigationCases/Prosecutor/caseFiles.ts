@@ -8,6 +8,15 @@ export const icCaseFiles = {
       'Notaður sem titill á rannsóknargagna skrefi í rannsóknarheimildum.',
   }),
   sections: {
+    parentCaseFiles: defineMessages({
+      heading: {
+        id:
+          'judicial.system.investigation_cases:case_files.parentCaseFiles.heading',
+        defaultMessage: 'Gögn send dómnum í fyrra máli',
+        description:
+          'Notaður sem titill fyrir gögn send dómnum í fyrra mál á rannsóknargagna skrefi í rannsóknarheimildum.',
+      },
+    }),
     description: defineMessages({
       heading: {
         id:

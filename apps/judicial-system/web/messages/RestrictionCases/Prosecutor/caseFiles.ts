@@ -8,6 +8,15 @@ export const rcCaseFiles = {
       'Notaður sem titill á rannsóknargagna skrefi í gæsluvarðhalds- og farbannsmálum.',
   }),
   sections: {
+    parentCaseFiles: defineMessages({
+      heading: {
+        id:
+          'judicial.system.restriction_cases:case_files.parentCaseFiles.heading',
+        defaultMessage: 'Gögn send dómnum í fyrra máli',
+        description:
+          'Notaður sem titill fyrir gögn send dómnum í fyrra mál á rannsóknargagna skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+    }),
     description: defineMessages({
       heading: {
         id: 'judicial.system.restriction_cases:case_files.description.heading',
