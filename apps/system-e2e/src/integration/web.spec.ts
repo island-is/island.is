@@ -4,7 +4,7 @@ describe('web', () => {
   })
   it('should navigate homepage', () => {
     cy.visit('/')
-    cy.contains('Eignast barn')
+    cy.contains('Að eignast barn')
   })
   it('should have life events', () => {
     cy.visit('/')
