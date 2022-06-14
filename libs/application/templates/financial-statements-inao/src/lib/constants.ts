@@ -21,11 +21,19 @@ export const OPERATIONIDS = {
   corporateDonations: 'income.corporateDonations',
   individualDonations: 'income.individualDonations',
   personalDonations: 'income.personalDonations',
-  otherIncome: 'income.other',
+  otherIncome: 'income.otherIncome',
   capitalIncome: 'income.capitalIncome',
   electionOffice: 'expense.electionOffice',
   advertisements: 'expense.advertisements',
   travelCost: 'expense.travelCost',
   otherCost: 'expense.otherCost',
   capitalCost: 'expense.capitalCost'
+}
+
+export const EQUITIESANDLIABILITIESIDS = {
+  tangible: 'asset.tangible',
+  current: 'asset.current',
+  longTerm: 'liability.longTerm',
+  shortTerm: 'liability.shortTerm',
+  equity: 'equity.totalEquity',
 }

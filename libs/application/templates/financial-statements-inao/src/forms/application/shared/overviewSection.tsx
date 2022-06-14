@@ -16,7 +16,6 @@ export const overviewSection = buildSection({
     buildMultiField({
       id: 'overview',
       title: (application) => {
-        console.log(application)
         return getValueViaPath(application.answers, 'election.incomeLimit') ===
           GREATER
           ? m.overviewTitle

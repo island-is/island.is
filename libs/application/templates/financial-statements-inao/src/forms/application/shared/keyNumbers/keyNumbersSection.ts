@@ -1,12 +1,10 @@
 import {
   buildCustomField,
-  buildMultiField,
   buildSection,
   buildSubSection,
-  buildTextField,
   getValueViaPath,
 } from '@island.is/application/core'
-import { GREATER, OPERATIONIDS } from '../../../../lib/constants'
+import { GREATER, OPERATIONIDS, EQUITIESANDLIABILITIESIDS } from '../../../../lib/constants'
 import { m } from '../../../../lib/messages'
 
 export const keyNumbersSection = buildSection({
@@ -17,11 +15,11 @@ export const keyNumbersSection = buildSection({
   },
   children: [
     buildSubSection({
-      id: 'keynumbers.incomeAndExpenses',
+      id: 'operatingCost',
       title: m.expensesIncome,
       children: [
         buildCustomField({
-          id: 'incomeAndExpenses.income',
+          id: 'income',
           title: m.keyNumbersIncomeAndExpenses,
           description: m.fillOutAppopriate,
           component: 'PersonalElectionOperatingIncome',
@@ -30,39 +28,15 @@ export const keyNumbersSection = buildSection({
       ],
     }),
     buildSubSection({
-      id: 'keyNumbers.propertiesAndDebts',
+      id: 'keyNumbers.equitiesAndLiabilities',
       title: m.keyNumbersProperty,
       children: [
-        buildMultiField({
-          id: 'propertiesAndDebts',
-          title: m.keyNumbersProperty,
+        buildCustomField({
+          id: 'equitiesAndLiabilities',
+          title: m.keyNumbersIncomeAndExpenses,
           description: m.fillOutAppopriate,
-          children: [
-            buildTextField({
-              id: 'propertiesAndDebts.propertiesShort',
-              title: m.propertiesShort,
-              variant: 'currency',
-              width: 'half',
-            }),
-            buildTextField({
-              id: 'propertiesAndDebts.propertiesCash',
-              title: m.propertiesCash,
-              variant: 'currency',
-              width: 'half',
-            }),
-            buildTextField({
-              id: 'propertiesAndDebts.debtsShort',
-              title: m.debtsShort,
-              variant: 'currency',
-              width: 'half',
-            }),
-            buildTextField({
-              id: 'propertiesAndDebts.longTermDebt',
-              title: m.debtsLong,
-              variant: 'currency',
-              width: 'half',
-            }),
-          ],
+          component: 'PersonalElectionEquities',
+          childInputIds: Object.values(EQUITIESANDLIABILITIESIDS) ,
         }),
       ],
     }),

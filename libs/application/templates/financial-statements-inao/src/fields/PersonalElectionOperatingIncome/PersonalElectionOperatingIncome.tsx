@@ -30,7 +30,7 @@ export const PersonalElectionOperatingIncome = (): JSX.Element => {
     const values = getValues()
     const totalExpense: number = getTotal(values, key)
     setTotalExpense(totalExpense)
-    return totalIncome
+    return totalExpense
   }
 
   return (

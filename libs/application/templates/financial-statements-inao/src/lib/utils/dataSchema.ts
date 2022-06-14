@@ -34,11 +34,18 @@ const about = z.object({
   email: z.string().email(),
 })
 
-const propertiesAndDebts = z.object({
-  propertiesShort: z.string().optional(),
-  propertiesCash: z.string().optional(),
-  debtsShort: z.string().optional(),
-  longTermDebt: z.string().optional(),
+const asset = z.object({
+  tangible: z.string().optional(),
+  current: z.string().optional(),
+})
+
+const equity = z.object({
+  totalEquity: z.string().optional(),
+})
+
+const liability = z.object({
+  longTerm: z.string().optional(),
+  shortTerm: z.string().optional(),
 })
 
 const income = z.object({
@@ -49,7 +56,7 @@ const income = z.object({
   capitalIncome: z.string().optional(),
 })
 
-const expenses = z.object({
+const expense = z.object({
   capitalCost: z.string().optional(),
   electionOffice: z.string().optional(),
   advertisements: z.string().optional(),
@@ -62,8 +69,10 @@ export const dataSchema = z.object({
   about,
   election,
   income,
-  expenses,
-  propertiesAndDebts,
+  expense,
+  asset,
+  equity,
+  liability,
   attachment: z
     .object({
       file: z.array(FileSchema),
