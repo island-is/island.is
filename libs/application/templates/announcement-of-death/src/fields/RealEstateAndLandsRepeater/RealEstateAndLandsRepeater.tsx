@@ -162,9 +162,6 @@ const Item = ({
   ] = useLazyQuery<Query, { input: SearchForPropertyInput }>(
     SEARCH_FOR_PROPERTY_QUERY,
     {
-      onError: (error: unknown) => {
-        console.log('getIdentity error:', error)
-      },
       onCompleted: (data) => {
         setValue(
           addressField,
