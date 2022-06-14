@@ -20,6 +20,7 @@ import { ComplaintsToAlthingiOmbudsmanTemplateModule } from './complaints-to-alt
 import { MortgageCertificateSubmissionModule } from './mortgage-certificate-submission/mortgage-certificate-submission.module'
 import { FinancialAidModule } from './financial-aid/financial-aid.module'
 import { DrivingSchoolConfirmationModule } from './driving-school-confirmation/driving-school-confirmation.module'
+import { PassportModule } from './passport/passport.module'
 
 export const modules = [
   ReferenceTemplateModule,
@@ -44,6 +45,7 @@ export const modules = [
   MortgageCertificateSubmissionModule,
   FinancialAidModule,
   DrivingSchoolConfirmationModule,
+  PassportModule,
 ]
 
 export { ReferenceTemplateService } from './reference-template/reference-template.service'
@@ -68,3 +70,4 @@ export { ComplaintsToAlthingiOmbudsmanTemplateService } from './complaints-to-al
 export { MortgageCertificateSubmissionService } from './mortgage-certificate-submission/mortgage-certificate-submission.service'
 export { FinancialAidService } from './financial-aid/financial-aid.service'
 export { DrivingSchoolConfirmationService } from './driving-school-confirmation/driving-school-confirmation.service'
+export { PassportService } from './passport/passport.service'

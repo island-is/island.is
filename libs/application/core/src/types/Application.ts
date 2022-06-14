@@ -36,6 +36,7 @@ export interface Application<TAnswers = FormValue> {
   actionCard?: ActionCardMetaData
   applicant: string
   assignees: string[]
+  applicantActors: string[]
   typeId: ApplicationTypes
   modified: Date
   created: Date

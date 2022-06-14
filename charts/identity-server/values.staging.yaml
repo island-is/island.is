@@ -6,7 +6,7 @@ auth-admin-web:
     NEXTAUTH_URL: 'https://identity-server.staging01.devland.is/admin/api/auth'
     NEXT_PUBLIC_BACKEND_URL: '/backend'
     NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'INAO_Client'
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:
@@ -40,6 +40,7 @@ auth-admin-web:
           paths:
             - '/admin'
   namespace: 'identity-server-admin'
+  progressDeadlineSeconds: 1200
   replicaCount:
     default: 2
     max: 10
@@ -56,8 +57,6 @@ auth-admin-web:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-  service:
-    targetPort: 4200
 global:
   env:
     AUDIT_GROUP_NAME: '/identity-server/audit-log'
@@ -94,7 +93,7 @@ identity-server:
     NODE_OPTIONS: '--max-old-space-size=208'
     PersistenceSettings__BaseAddress: 'http://web-services-auth-api'
     PersistenceSettings__UserProfileBaseAddress: 'http://web-service-portal-api.service-portal.svc.cluster.local'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'INAO_Client'
   files:
     - 'ids-signing.pfx'
   grantNamespaces: []
@@ -178,7 +177,7 @@ services-auth-admin-api:
     DB_USER: 'servicesauth'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'INAO_Client'
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:
@@ -235,10 +234,11 @@ services-auth-api:
     DB_NAME: 'servicesauth'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'servicesauth'
+    IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=208'
     PUBLIC_URL: 'https://identity-server.staging01.devland.is/api'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'INAO_Client'
     USER_PROFILE_CLIENT_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
     XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
@@ -305,7 +305,7 @@ services-auth-api:
       DB_NAME: 'servicesauth'
       DB_REPLICAS_HOST: 'postgres-applications.internal'
       DB_USER: 'servicesauth'
-      SERVERSIDE_FEATURES_ON: ''
+      SERVERSIDE_FEATURES_ON: 'INAO_Client'
     secrets:
       DB_PASS: '/k8s/services-auth/api/DB_PASSWORD'
   namespace: 'identity-server'
@@ -323,6 +323,7 @@ services-auth-api:
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/services-auth/api/DB_PASSWORD'
+    IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET'
     RSK_PASSWORD: '/k8s/xroad/client/RSK/PASSWORD'
     RSK_USERNAME: '/k8s/xroad/client/RSK/USERNAME'
   securityContext:
@@ -339,7 +340,7 @@ services-auth-public-api:
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=208'
     PUBLIC_URL: 'https://identity-server.staging01.devland.is/api'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'INAO_Client'
     XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
     XROAD_CLIENT_ID: 'IS-TEST/GOV/5501692829/island-is-client'
@@ -411,7 +412,7 @@ services-personal-representative:
   env:
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'INAO_Client'
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:
@@ -471,7 +472,7 @@ services-personal-representative-public:
     DB_REPLICAS_HOST: ''
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'INAO_Client'
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:

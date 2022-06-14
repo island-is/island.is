@@ -1952,7 +1952,7 @@
           },
           "configurations": {
             "production": {
-              "optimization": true,
+              "optimization": false,
               "outputHashing": "all",
               "sourceMap": false,
               "extractCss": true,
@@ -6130,6 +6130,65 @@
           },
           "outputs": ["coverage/libs/judicial-system/formatters"]
         }
+      }
+    },
+    "judicial-system-message-handler": {
+      "root": "apps/judicial-system/message-handler",
+      "sourceRoot": "apps/judicial-system/message-handler/src",
+      "projectType": "application",
+      "prefix": "judicial-system-message-handler",
+      "architect": {
+        "build": {
+          "builder": "@irdnis/esbuildnx:build",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/apps/judicial-system/message-handler",
+            "main": "apps/judicial-system/message-handler/src/main.ts",
+            "tsConfig": "apps/judicial-system/message-handler/tsconfig.app.json",
+            "maxWorkers": 2
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/judicial-system/message-handler/src/environments/environment.ts",
+                  "with": "apps/judicial-system/message-handler/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "judicial-system-message-handler:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["apps/judicial-system/message-handler/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/apps/judicial-system/message-handler"],
+          "options": {
+            "jestConfig": "apps/judicial-system/message-handler/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "dev-services": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "docker-compose up -d",
+            "cwd": "apps/judicial-system/message-handler"
+          }
+        },
+        "docker-express": {}
       }
     },
     "judicial-system-scheduler": {

@@ -32,6 +32,17 @@ export const serviceSetup = (services: {
     .serviceAccount()
     .command('node')
     .args('--tls-min-v1.0', 'main.js')
+    .features({
+      INAO_Client: {
+        env: {},
+        secrets: {
+          FINANCIAL_STATEMENTS_INAO_CLIENT_ID:
+            '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_ID',
+          FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET:
+            '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET',
+        },
+      },
+    })
 
     .env({
       APPLICATION_SYSTEM_API_URL: ref(
@@ -171,10 +182,6 @@ export const serviceSetup = (services: {
       ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE',
       ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH',
       IDENTITY_SERVER_CLIENT_SECRET: '/k8s/api/IDENTITY_SERVER_CLIENT_SECRET',
-      FINANCIAL_STATEMENTS_INAO_CLIENT_ID:
-        '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_ID',
-      FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET:
-        '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET',
     })
     .xroad(
       Base,

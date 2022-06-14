@@ -166,9 +166,14 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Netfang hins foreldris',
       description: 'Other parent email',
     },
+    otherParentPhoneNumberSubSection: {
+      id: 'pl.application:otherParentPhoneNumber.subSection',
+      defaultMessage: 'Símanúmer hins foreldris',
+      description: 'Other parent phone number',
+    },
     otherParentEmailTitle: {
       id: 'pl.application:otherParentEmail.title',
-      defaultMessage: 'Hvert er netfang hins foreldrisins?',
+      defaultMessage: 'Hvert er netfang og símanúmer hins foreldrisins?',
       description: 'Asking about the email address of the other parent',
     },
     otherParentEmailDescription: {
@@ -216,7 +221,7 @@ export const parentalLeaveFormMessages: MessageDir = {
         'Note that by choosing no, you will lose your earned rights with your union.',
     },
     asyncSelectSearchableHint: {
-      id: 'application.system:placeholder.searchable.hint',
+      id: 'pl.application:placeholder.searchable.hint',
       defaultMessage: 'Skrifaðu hér til að leita',
       description: 'Let user know they can search by typing',
     },
