@@ -235,7 +235,7 @@ describe('Parental Leave Application Template', () => {
           })
           expect(hasChanged).toBe(true)
           expect(newState).toBe('vinnumalastofnunApproval')
-          expect(newApplication.answers.otherParentId).toEqual(otherParentId)
+          expect(newApplication.answers.otherParent.otherParentId).toEqual(otherParentId)
         })
       })
     })
