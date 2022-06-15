@@ -211,7 +211,7 @@ export const transformApplicationToParentalLeaveDTO = (
   application: Application,
   periods: Period[],
   attachments?: Attachment[],
-  testData?: string
+  testData?: string,
 ): ParentalLeave => {
   const selectedChild = getSelectedChild(
     application.answers,

@@ -376,31 +376,4 @@ describe('ParentalLeaveService', () => {
       expect(mockedSendEmail.mock.calls.length).toBe(0)
     })
   })
-
-  describe('sendDummyApplication', () => {
-    it('should return testOk if no error in dummy request', async () => {
-      const application = createApplication()
-
-      const auth: TemplateApiModuleActionProps['auth'] = {
-        authorization: '',
-        client: '',
-        nationalId,
-        scope: [''],
-      }
-
-      const res = await parentalLeaveService.sendDummyApplication({ application, auth })
-
-    })
-  })
-  
-  
-  // Ef það eru engar upplýsingar um atvinnurekendur þá er það í lagi, 
-  // það er annars ekkert tékk á því hvort að einhver atvinnurekandi er skráður.  
-  // Ef hins vegar upplýsingar eru skráðar um atvinnurekendur þá eru þær athugaðar.  
-  
-  // Í umsókn þarf móðir ekki að gefa upplýsingar um hitt foreldrið, en ef þær eru 
-  // gefnar upp fer fram kennitölutékk.  
-  
-  // Hitt foreldri þarf alltaf að gefa upp kennitölu móður þar sem gengið er út frá 
-  // því að hún hafi þegar sent inn umsókn.
 })

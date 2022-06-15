@@ -288,7 +288,7 @@ export class ParentalLeaveService {
       const numberOfDaysSpentAfterPeriod =
         numberOfDaysAlreadySpent + periodLength
 
-        if (numberOfDaysSpentAfterPeriod > maximumDaysToSpend) {
+      if (numberOfDaysSpentAfterPeriod > maximumDaysToSpend) {
         throw new Error(
           `Period from ${period.startDate} to ${period.endDate} will exceed rights (${numberOfDaysSpentAfterPeriod} > ${maximumDaysToSpend})`,
         )
@@ -483,8 +483,6 @@ export class ParentalLeaveService {
         nationalRegistryId,
       )
 
-      console.log('dummy periods: ', periods)
-
       const parentalLeaveDTO = transformApplicationToParentalLeaveDTO(
         application,
         periods,
@@ -492,9 +490,7 @@ export class ParentalLeaveService {
         'TRUE',
       )
 
-      console.log('dummy API request: ', parentalLeaveDTO)
-
-      // call SetParentalLeave API with testData: TRUE as this is a dummy request 
+      // call SetParentalLeave API with testData: TRUE as this is a dummy request
       // for validation purposes
       const response = await this.parentalLeaveApi.parentalLeaveSetParentalLeave(
         {
@@ -503,16 +499,8 @@ export class ParentalLeaveService {
         },
       )
 
-      console.log('dummy API response: ', response)
-
-      if (!response.id) {
-        throw new Error(
-          `Failed to validate the parental leave application, no response.id from VMST API: ${response}`,
-        )
-      }
-
-      return response
-    } catch(e) {
+      return
+    } catch (e) {
       this.logger.error('Failed to validate the parental leave application', e)
       throw this.parseErrors(e as VMSTError)
     }
