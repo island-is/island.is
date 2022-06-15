@@ -40,24 +40,6 @@ export const useLicenses = (type?: GenericLicenseType): Props => {
   useEffect(() => {
     if (!loading && !error) {
       genericLicenses?.length && setLicenses(genericLicenses)
-      const parsedLicenses: Array<LicenseData> = []
-
-      console.log(genericLicenses)
-
-      genericLicenses?.map((license) => {
-        const licenseRaw =
-          license?.payload && JSON.parse(license?.payload?.rawData)
-        const licenseObject = licenseRaw && Object.assign(licenseRaw)
-
-        licenseObject &&
-          parsedLicenses.push({
-            data: licenseObject,
-            status: license.license.status,
-          })
-      })
-      console.log('parsed licenses')
-      console.log(parsedLicenses)
-      parsedLicenses.length && setLicenses(parsedLicenses)
     }
   }, [data, loading])
 

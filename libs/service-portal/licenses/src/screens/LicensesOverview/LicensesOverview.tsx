@@ -16,6 +16,7 @@ import {
   GenericUserLicenseFetchStatus,
   useLicenses,
 } from '@island.is/service-portal/graphql'
+import { useHistory } from 'react-router-dom'
 
 export const LicensesOverview: ServicePortalModuleComponent = () => {
   useNamespaces('sp.license')
