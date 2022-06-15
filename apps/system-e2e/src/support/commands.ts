@@ -37,7 +37,7 @@ Cypress.Commands.add('idsLogin', ({ phoneNumber }) => {
   })
 })
 
-Cypress.Commands.add('login', ({ cognitoUsername, cognitoPassword }) => {
+Cypress.Commands.add('cognitoLogin', ({ cognitoUsername, cognitoPassword }) => {
   cy.session([cognitoUsername, cognitoPassword], () => {
     if (testEnvironment === 'staging' || testEnvironment === 'dev') {
       cy.session([cognitoUsername, cognitoPassword], () => {
