@@ -38,27 +38,77 @@ export const m = defineMessages({
     description: 'Some description',
   },
   formName: {
-    id: 'ol.application:form.name',
+    id: 'ol.application:applicationInfo.name',
     defaultMessage: 'Umsókn um rekstarleyfi',
     description: 'Some description',
   },
   operationTitle: {
-    id: 'ol.application:personalInfo.operationTitle',
+    id: 'ol.application:applicationInfo.operationTitle',
     defaultMessage: 'Upplýsingar um umsókn',
     description: 'Some description',
   },
   operationSubtitle: {
-    id: 'ol.application:personalInfo.operationSubtitle',
+    id: 'ol.application:applicationInfo.operationSubtitle',
     defaultMessage: 'Veldu hvað er verið að sækja um fyrir',
     description: 'Some description',
   },
+  operationCategoryHotelTitle: {
+    id: 'ol.application:applicationInfo.operationCategoryHotel:Title',
+    defaultMessage: 'Vinsamlegast hakaðu við þá þjónustu sem er í boði',
+    description: 'Some description',
+  },
+  operationCategoryResturantTitle: {
+    id: 'ol.application:applicationInfo.operationCategoryResturant:Title',
+    defaultMessage: 'Veldu flokk veitingastaðar',
+    description: 'Some description',
+  },
+  operationCategoryResturantOne: {
+    id: 'ol.application:applicationInfo.operationCategoryResturant:one',
+    defaultMessage: 'Flokkur 2',
+    description: 'Some description',
+  },
+  operationCategoryResturantTwo: {
+    id: 'ol.application:applicationInfo.operationCategoryResturant:two',
+    defaultMessage: 'Flokkur 3',
+    description: 'Some description',
+  },
+  operationCategoryHotelOne: {
+    id: 'ol.application:applicationInfo.operationCategoryHotel:one',
+    defaultMessage: 'Veitingar',
+    description: 'Some description',
+  },
+  operationCategoryHotelTwo: {
+    id: 'ol.application:applicationInfo.operationCategoryHotel:two',
+    defaultMessage: 'Áfengi',
+    description: 'Some description',
+  },
+  operationTypeHotelTitle: {
+    id: 'ol.application:applicationInfo.operationTypeHotel:Title',
+    defaultMessage: 'Veldu tegund gististaðar',
+    description: 'Some description',
+  },
+  operationTypeResturantTitle: {
+    id: 'ol.application:applicationInfo.operationTypeResturant:Title',
+    defaultMessage: 'Tegund veitingastaðar',
+    description: 'Some description',
+  },
+  operationTypeHotelDescription: {
+    id: 'ol.application:applicationInfo.operationTypeHotel:Description',
+    defaultMessage: 'Veldu tegund gististaðar',
+    description: 'Some description',
+  },
+  operationTypeResturantDescription: {
+    id: 'ol.application:applicationInfo.operationTypeResturant:Description',
+    defaultMessage: 'Veldu tegund veitingastaðar',
+    description: 'Some description',
+  },
   operationHotel: {
-    id: 'ol.application:personalInfo.operationHotel',
+    id: 'ol.application:applicationInfo.operationHotel',
     defaultMessage: 'Gististaður',
     description: 'Some description',
   },
   operationResturant: {
-    id: 'ol.application:personalInfo.operationResturant',
+    id: 'ol.application:applicationInfo.operationResturant',
     defaultMessage: 'Veitingastaður',
     description: 'Some description',
   },
@@ -173,54 +223,6 @@ export const m = defineMessages({
     id: 'ol.application:complete.nextSteps.description#markdown',
     defaultMessage: `* Fara í myndatöku á næsta afgreiðslustað sýslumanns.\\n\\n
     * Þú færð senda tilkynningu á Mínar síður þegar vegabréfið er tilbúið og hægt er að sækja það á þann afhendingarstað sem þú valdir.`,
-    description: 'Some description',
-  },
-  hotelTypeHotel: {
-    id: 'ol.application.hotel.type:hotel',
-    defaultMessage:
-      'Gististaður þar sem gestamóttaka er aðgengileg allan sólarhringinn og veitingar að einhverju tagi framleiddar á staðnum. Fullbúin baðaðstaða skal vera með hverju herbergi.',
-    description: 'Some description',
-  },
-  hotelTypeBiggerHostel: {
-    id: 'ol.application.hotel.type:biggerHostel',
-    defaultMessage:
-      'Gististaður með takmarkaða þjónustu þar sem leigð eru út 6 herbergi eða fleiri eða rými fyrir fleiri en 10 einstaklinga. Handlaug skal vera í hverju herbergi og salerni nærliggjandi en gestir þurfa einnig að hafa aðgang að fullbúinni baðaðstöðu.',
-    description: 'Some description',
-  },
-  hotelTypeSmallerHostel: {
-    id: 'ol.application.hotel.type:smallerHostel',
-    defaultMessage:
-      'Gististaður með takmarkaða þjónustu þar sem leigð eru út 5 eða færri herbergi eða rými fyrir 10 einstaklinga eða færri. Þetta getur veirð gisting á einkaheimili. Ekki er gerð krafa um handlaug í herbergjum, en gestir skulu hafa aðgang að fullbúinni baðaðstöðu.',
-    description: 'Some description',
-  },
-  hotelTypeGuesthouse: {
-    id: 'ol.application.hotel.type:guesthouse',
-    defaultMessage:
-      'Gisting í herbergjum eða svefnskálum. Hér undir falla farfuglaheimili (hostel).',
-    description: 'Some description',
-  },
-  hotelTypeMountainResort: {
-    id: 'ol.application.hotel.type:mountainResort',
-    defaultMessage:
-      'Gisting í herbergjum eða í svefnskálum staðsettum utan alfaraleiðar og almenningur hefur aðgang að, svo sem skálar fyrir ferðamenn, veiðiskálar og sæluhús.',
-    description: 'Some description',
-  },
-  hotelTypeHomestay: {
-    id: 'ol.application.hotel.type:homestay',
-    defaultMessage:
-      'Gisting á lögheimili einstaklings eða einni annarri fasteign í hans eigu sem hann hefur persónuleg not af.',
-    description: 'Some description',
-  },
-  hotelTypeFlats: {
-    id: 'ol.application.hotel.type:flats',
-    defaultMessage:
-      'Íbúðarhúsnæði sérstaklega ætlað til útleigu til gesta til skamms tíma sem fellur ekki undir húsaleigulög. Hér undir falla starfsmannabústaðir og starfsmannabúðir þegar slíkar byggingar eru ekki leigðar út í tengslum við vinnusamning. Íbúðir félagasamtaka eru undanskyldar.',
-    description: 'Some description',
-  },
-  hotelTypeHolidayHome: {
-    id: 'ol.application.hotel.type:holidayHome',
-    defaultMessage:
-      'Hús utan þéttbýlis sem er nýtt til tímabundinnar dvalar. Orlofshús félagasamtaka, svo sem stéttarfélaga og starfsgreinafélaga eru undanskilin.',
     description: 'Some description',
   },
 })

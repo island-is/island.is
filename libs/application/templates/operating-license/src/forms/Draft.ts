@@ -20,14 +20,17 @@ import {
 import { m } from '../lib/messages'
 import { format as formatKennitala } from 'kennitala'
 import {
-  OPERATION_TYPES,
+  APPLICATION_TYPES,
   YES,
   NO,
   ResturantTypes,
   HotelTypes,
+  Operation,
+  OPERATION_CATEGORY,
 } from '../lib/constants'
-import { DefaultEvents } from '@island.is/application/core'
+import { DefaultEvents, Answer } from '@island.is/application/core'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
+import { useFormContext } from 'react-hook-form'
 
 export const Draft: Form = buildForm({
   id: 'OperatingLicenseApplicationDraftForm',
@@ -62,42 +65,89 @@ export const Draft: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'operation',
+      id: 'applicationInfo',
       title: m.operationTitle,
       children: [
         buildMultiField({
-          id: 'operation',
+          id: 'applicationInfo',
           title: m.operationTitle,
-          description: m.operationSubtitle,
+
           children: [
             buildRadioField({
-              id: 'operation',
+              id: 'applicationInfo.operation',
               title: '',
+              description: m.operationSubtitle,
               options: [
-                { value: OPERATION_TYPES.HOTEL, label: m.operationHotel },
+                { value: APPLICATION_TYPES.HOTEL, label: m.operationHotel },
                 {
-                  value: OPERATION_TYPES.RESTURANT,
+                  value: APPLICATION_TYPES.RESTURANT,
                   label: m.operationResturant,
                 },
               ],
               width: 'half',
               largeButtons: true,
             }),
-            buildSelectField({
-              id: 'operationType',
-              title: 'Veldu tegund gististaðar',
-              options: HotelTypes,
-              backgroundColor: 'blue',
-              condition: (formValue) =>
-                formValue.operation === OPERATION_TYPES.HOTEL,
+
+            buildCheckboxField({
+              id: 'hotel.category',
+              title: '',
+              description: m.operationCategoryHotelTitle,
+              backgroundColor: 'white',
+              doesNotRequireAnswer: true,
+              large: false,
+              options: [
+                {
+                  value: OPERATION_CATEGORY.ONE,
+                  label: m.operationCategoryHotelOne,
+                },
+                {
+                  value: OPERATION_CATEGORY.TWO,
+                  label: m.operationCategoryHotelTwo,
+                },
+              ],
+              condition: (answers) =>
+                (answers.applicationInfo as Operation)?.operation ===
+                APPLICATION_TYPES.HOTEL,
+            }),
+            buildRadioField({
+              id: 'resturant.category',
+              title: '',
+              description: m.operationCategoryResturantTitle,
+              options: [
+                {
+                  value: OPERATION_CATEGORY.ONE,
+                  label: m.operationCategoryResturantOne,
+                },
+                {
+                  value: OPERATION_CATEGORY.TWO,
+                  label: m.operationCategoryResturantTwo,
+                },
+              ],
+              width: 'half',
+              largeButtons: true,
+              condition: (answers) =>
+                (answers.applicationInfo as Operation)?.operation ===
+                APPLICATION_TYPES.RESTURANT,
             }),
             buildSelectField({
-              id: 'operationType',
-              title: 'Veldu tegund veitingastaðar',
+              id: 'hotel.type',
+              title: m.operationTypeHotelTitle,
+              description: m.operationTypeHotelDescription,
+              options: HotelTypes,
+              backgroundColor: 'blue',
+              condition: (answers) =>
+                (answers.applicationInfo as Operation)?.operation ===
+                APPLICATION_TYPES.HOTEL,
+            }),
+            buildSelectField({
+              id: 'resturant.type',
+              title: m.operationTypeResturantTitle,
+              description: m.operationTypeResturantDescription,
               backgroundColor: 'blue',
               options: ResturantTypes,
-              condition: (formValue) =>
-                formValue.operation === OPERATION_TYPES.RESTURANT,
+              condition: (answers) =>
+                (answers.applicationInfo as Operation)?.operation ===
+                APPLICATION_TYPES.RESTURANT,
             }),
           ],
         }),

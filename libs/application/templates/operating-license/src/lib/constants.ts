@@ -20,7 +20,7 @@ export enum ApiActions {
   submitPassportApplication = 'submitPassportApplication',
 }
 
-export enum OPERATION_TYPES {
+export enum APPLICATION_TYPES {
   HOTEL = 'hotel',
   RESTURANT = 'resturant',
 }
@@ -29,7 +29,7 @@ export const YES = 'yes'
 export const NO = 'no'
 
 export const ResturantTypes: Option[] = [
-  { value: 'Veitingahús', label: 'Veitingahús', tooltip: 'HALLLSS' },
+  { value: 'Veitingahús', label: 'Veitingahús' },
   { value: 'Skemmtistaður', label: 'Skemmtistaður' },
   {
     value: 'Veitingastofa og greiðasala',
@@ -45,32 +45,37 @@ export const ResturantTypes: Option[] = [
 ]
 
 export const HotelTypes: Option[] = [
-  { value: 'Hótel', label: 'Hótel', tooltip: m.hotelTypeHotel },
+  { value: 'Hótel', label: 'Hótel' },
   {
     value: 'Stærra gistiheimili',
     label: 'Stærra gistiheimili',
-    tooltip: m.hotelTypeBiggerHostel,
   },
   {
     value: 'Minna gistiheimili',
     label: 'Minna gistiheimili',
-    tooltip: m.hotelTypeSmallerHostel,
   },
-  { value: 'Gistiskáli', label: 'Gistiskáli', tooltip: m.hotelTypeGuesthouse },
+  { value: 'Gistiskáli', label: 'Gistiskáli' },
   {
     value: 'Fjallaskáli',
     label: 'Fjallaskáli',
-    tooltip: m.hotelTypeMountainResort,
   },
   {
     value: 'Heimagisting',
     label: 'Heimagisting',
-    tooltip: m.hotelTypeHomestay,
   },
-  { value: 'Íbúðir', label: 'Íbúðir', tooltip: m.hotelTypeFlats },
+  { value: 'Íbúðir', label: 'Íbúðir' },
   {
     value: 'Frístundahús',
     label: 'Frístundahús',
-    tooltip: m.hotelTypeHolidayHome,
   },
 ]
+
+export enum OPERATION_CATEGORY {
+  ONE = '1',
+  TWO = '2',
+}
+
+export type Operation = {
+  operation: APPLICATION_TYPES
+  category: OPERATION_CATEGORY | OPERATION_CATEGORY[] | undefined
+}

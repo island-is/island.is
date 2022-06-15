@@ -21,7 +21,6 @@ export const Done: Form = buildForm({
       title: m.applicationComplete,
       description: m.applicationCompleteDescription,
       children: [
-     
         buildDividerField({ title: ' ' }),
         buildDescriptionField({
           id: 'nextStepsDescription',
