@@ -264,6 +264,7 @@ const Stepper = ({
       const previouslyAccumulatedAnswers = [...accumulatedAnswers]
       accumulatedAnswers.push(slug)
       const query = {
+        ...router.query,
         answers: `${previouslyAccumulatedAnswers.join(ANSWER_DELIMITER)}`,
         previousAnswer: slug,
       }
@@ -333,6 +334,7 @@ const Stepper = ({
               .push({
                 pathname: pathnameWithoutQueryParams,
                 query: {
+                  ...router.query,
                   answers: `${previousAnswers}${selectedOption.slug}`,
                 },
               })
@@ -361,8 +363,13 @@ const Stepper = ({
     </Box>
   )
 
-  const QuestionTitle = () => (
+  const QuestionTitle = ({
+    containerClassName,
+  }: {
+    containerClassName: string
+  }) => (
     <Box
+      className={containerClassName}
       marginBottom={3}
       marginTop={1}
       onClick={(ev) => {
@@ -437,9 +444,14 @@ const Stepper = ({
 
   return (
     <Box className={styles.container}>
-      {currentStep && <QuestionTitle />}
+      {currentStepType !== STEP_TYPES.ANSWER && (
+        <QuestionTitle containerClassName={webReaderClassName} />
+      )}
       {showWebReader && (
         <Webreader readId={null} readClass={webReaderClassName} />
+      )}
+      {currentStepType === STEP_TYPES.ANSWER && (
+        <QuestionTitle containerClassName={webReaderClassName} />
       )}
 
       {renderCurrentStepOptions()}

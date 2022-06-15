@@ -2661,6 +2661,36 @@ export interface IStepper extends Entry<IStepperFields> {
   }
 }
 
+export interface IStepperSliceFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Stepper Article */
+  stepperArticle?: IArticle | undefined
+
+  /** Button Text */
+  buttonText?: string | undefined
+}
+
+/** A slice that you can embed into rich text that will create a link to a stepper on an article */
+
+export interface IStepperSlice extends Entry<IStepperSliceFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'stepperSlice'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IStoryFields {
   /** Title */
   title: string
@@ -3593,6 +3623,7 @@ export type CONTENT_TYPE =
   | 'statisticsCard'
   | 'step'
   | 'stepper'
+  | 'stepperSlice'
   | 'story'
   | 'storySection'
   | 'subArticle'

@@ -382,7 +382,10 @@ const ArticleScreen: Screen<ArticleProps> = ({
   const organizationTitle = article.organization[0]?.title
   const organizationShortTitle = article.organization[0]?.shortTitle
 
-  const inStepperView = true && article.stepper
+  const inStepperView = useMemo(
+    () => query.stepper === 'true' && !!article.stepper,
+    [query.stepper, article.stepper],
+  )
 
   const breadcrumbItems = useMemo(
     () =>
@@ -438,13 +441,14 @@ const ArticleScreen: Screen<ArticleProps> = ({
           display={['none', 'none', 'block']}
           printHidden={!inStepperView}
         >
-          <Box>
+          {inStepperView && (
             <Text color="blueberry600" variant="eyebrow" as="h2">
               <span id={slugify(article.title)} className="rs_read">
                 {article.title}
               </span>
             </Text>
-          </Box>
+          )}
+
           {!inStepperView && (
             <Breadcrumbs
               items={breadcrumbItems}
@@ -693,9 +697,9 @@ ArticleScreen.getInitialProps = async ({ apolloClient, query, locale }) => {
   // The stepper in the subArticle can have steps that need data from a namespace (UI configuration)
   let stepOptionsFromNamespace = []
 
-  if (subArticle && subArticle.stepper)
+  if (article.stepper)
     stepOptionsFromNamespace = await stepperUtils.getStepOptionsFromUIConfiguration(
-      subArticle.stepper,
+      article.stepper,
       apolloClient,
     )
 
