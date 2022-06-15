@@ -1,18 +1,20 @@
 import React, { FC, useEffect, useState } from 'react'
-import { Box, Stack, Logo, Icon, Button } from '@island.is/island-ui/core'
+import { Box, Stack, Logo, Icon } from '@island.is/island-ui/core'
 import { ActionType } from '../../store/actions'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import { Link } from 'react-router-dom'
 import { useStore } from '../../store/stateProvider'
-import ModuleNavigation from './ModuleNavigation'
-import useNavigation from '../../hooks/useNavigation/useNavigation'
-import * as styles from './Sidebar.css'
-import cn from 'classnames'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
 import { useListDocuments } from '@island.is/service-portal/graphql'
 import { useAuth } from '@island.is/auth/react'
-import LogOutItem from './NavItem/LogOutItem'
+import { useLocale } from '@island.is/localization'
+import { sharedMessages } from '@island.is/shared/translations'
+import ModuleNavigation from './ModuleNavigation'
+import NavItem from './NavItem/NavItem'
+import useNavigation from '../../hooks/useNavigation/useNavigation'
+import cn from 'classnames'
+import * as styles from './Sidebar.css'
 
 export const Sidebar: FC<{}> = () => {
   const navigation = useNavigation()
@@ -23,6 +25,7 @@ export const Sidebar: FC<{}> = () => {
   const isTablet = width < theme.breakpoints.lg && width >= theme.breakpoints.md
   const isMobile = width < theme.breakpoints.md
   const { unreadCounter } = useListDocuments('')
+  const { formatMessage } = useLocale()
 
   useEffect(() => {
     if (isTablet) {
@@ -114,7 +117,13 @@ export const Sidebar: FC<{}> = () => {
         ))}
       </Box>
       <Box marginTop={1}>
-        <LogOutItem onClick={() => signOut()} />
+        <NavItem
+          onClick={() => signOut()}
+          active={false}
+          icon={{ icon: 'logOut', type: 'outline' }}
+        >
+          {formatMessage(sharedMessages.logout)}
+        </NavItem>
       </Box>
     </aside>
   )
