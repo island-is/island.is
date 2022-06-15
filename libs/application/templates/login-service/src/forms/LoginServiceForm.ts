@@ -146,6 +146,12 @@ export const LoginServiceForm: Form = buildForm({
               title: applicant.labels.invalidIsat,
               doesNotRequireAnswer: true,
               component: 'IsatInvalid',
+              condition: (formValue) => {
+                const {
+                  searchField,
+                } = formValue.selectCompany as selectCompanySearchField
+                return searchField.isat.slice(0, 2) !== '84'
+              },
             }),
             buildCustomField(
               {
