@@ -11,7 +11,7 @@ export const rcCaseFiles = {
     parentCaseFiles: defineMessages({
       heading: {
         id:
-          'judicial.system.restriction_cases:case_files.parentCaseFiles.heading',
+          'judicial.system.restriction_cases:case_files.parent_case_files.heading',
         defaultMessage: 'Gögn send dómnum í fyrra máli',
         description:
           'Notaður sem titill fyrir gögn send dómnum í fyrra mál á rannsóknargagna skrefi í gæsluvarðhalds- og farbannsmálum.',

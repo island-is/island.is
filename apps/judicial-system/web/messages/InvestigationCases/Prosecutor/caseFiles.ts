@@ -11,7 +11,7 @@ export const icCaseFiles = {
     parentCaseFiles: defineMessages({
       heading: {
         id:
-          'judicial.system.investigation_cases:case_files.parentCaseFiles.heading',
+          'judicial.system.investigation_cases:case_files.parent_case_files.heading',
         defaultMessage: 'Gögn send dómnum í fyrra máli',
         description:
           'Notaður sem titill fyrir gögn send dómnum í fyrra mál á rannsóknargagna skrefi í rannsóknarheimildum.',
