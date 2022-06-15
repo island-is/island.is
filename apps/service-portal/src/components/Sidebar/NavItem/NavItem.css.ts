@@ -1,21 +1,25 @@
-import { style, styleVariants, keyframes } from '@vanilla-extract/css'
+import { style, styleVariants } from '@vanilla-extract/css'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
-
-const iconEaseIn = keyframes({
-  from: {
-    opacity: 0.8,
-  },
-  to: {
-    opacity: 1,
-  },
-})
 
 export const dotState = styleVariants({
   active: {},
   inactive: {},
 })
 
-export const navItem = style({})
+export const navItem = style({
+  ':hover': {
+    color: theme.color.blue400,
+    backgroundColor: theme.color.blue100,
+    borderLeft: `4px solid ${theme.color.blue100}`,
+  },
+})
+
+export const inner = style({
+  left: 64,
+  width: 183,
+  borderRadius: theme.border.radius.standard,
+  transition: 'all 250ms ease-in-out',
+})
 
 export const navItemActive = styleVariants({
   active: {
@@ -28,6 +32,9 @@ export const navItemActive = styleVariants({
         paddingLeft: theme.spacing[3],
       },
     }),
+    ':hover': {
+      borderLeft: `4px solid ${theme.color.blue400}`,
+    },
   },
   inactive: {
     paddingLeft: theme.spacing[2],
@@ -42,7 +49,7 @@ export const navItemActive = styleVariants({
   activeCollapsed: {
     backgroundColor: theme.color.blue100,
     border: `1px solid ${theme.color.blue100}`,
-    borderRadius: '8px',
+    borderRadius: theme.border.radius.large,
     ...themeUtils.responsiveStyle({
       md: {
         color: theme.color.blue400,
@@ -50,39 +57,24 @@ export const navItemActive = styleVariants({
         paddingLeft: theme.spacing[1],
       },
     }),
+    ':hover': {
+      borderLeft: 'none',
+    },
   },
   inactiveCollapsed: {
+    borderRadius: theme.border.radius.large,
     ...themeUtils.responsiveStyle({
       md: {
         color: theme.color.blue600,
         paddingLeft: theme.spacing[1],
       },
     }),
+    ':hover': {
+      borderLeft: 'none',
+    },
   },
 })
 
-export const navItemHover = styleVariants({
-  hoverActive: {
-    color: theme.color.blue400,
-    borderLeft: `4px solid ${theme.color.blue400}`,
-    textDecoration: 'none',
-  },
-  hoverInactive: {
-    backgroundColor: theme.color.blue100,
-    color: theme.color.blue400,
-    borderLeft: `4px solid ${theme.color.blue100}`,
-  },
-  hoverCollapsed: {
-    ...themeUtils.responsiveStyle({
-      lg: {
-        backgroundColor: theme.color.blue100,
-        color: theme.color.blue400,
-        borderRadius: '8px',
-      },
-    }),
-  },
-  none: {},
-})
 export const text = style({
   fontSize: 16,
   lineHeight: '26px',
@@ -179,6 +171,7 @@ export const subLink = style({
   color: theme.color.blue600,
   ':hover': {
     color: theme.color.blue400,
+    background: 'none',
   },
 })
 
