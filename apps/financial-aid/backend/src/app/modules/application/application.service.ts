@@ -447,7 +447,7 @@ export class ApplicationService {
     if (update.state && update.state === ApplicationState.NEW) {
       update.staffId = null
     }
-    if(update.state !== ApplicationState.APPROVED) {
+    if (update.state !== ApplicationState.APPROVED) {
       update.navSuccess = null
     }
 

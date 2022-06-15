@@ -178,8 +178,11 @@ const ApplicationProfile = ({
           >
             <AlertMessage
               type="warning"
-              title="Athuga sérstaklega"
-              message="Sjálfvirk yfirfærsla í Navision tóskt ekki."
+              message={
+                <Text variant="medium">
+                  Sjálfvirk yfirfærsla í Navision tóskt ekki.
+                </Text>
+              }
             />
           </Box>
         )}
