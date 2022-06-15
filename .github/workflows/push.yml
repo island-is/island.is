@@ -685,8 +685,8 @@ jobs:
             "token": "$SPINNAKER_WEBHOOK_TOKEN",
             "branch": "$GIT_BRANCH_DEPLOY",
             "parameters": {
-              "dependency_docker_tag": "$DOCKER_TAG"
-              "docker_tag": "$IDENTITY_SERVER_DOCKER_TAG",
+              "dependency_docker_tag": "$DOCKER_TAG",
+              "docker_tag": "$IDENTITY_SERVER_DOCKER_TAG"
             }
           }
           BODY
