@@ -26,7 +26,7 @@ describe(`${IC_CASE_FILES_ROUTE}/:id`, () => {
     cy.get('[name=fileUpload]').attachFile('lorem-ipsum.txt')
   })
 
-  it.only('should list of files for parent case', () => {
+  it('should list of files for parent case', () => {
     const file1 = makeCaseFile('file1', 'file1')
     const file2 = makeCaseFile('file2', 'file2')
     const caseData = makeRestrictionCase()
