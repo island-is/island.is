@@ -26,11 +26,11 @@ import {
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
 import { InjectQueue, QueueService } from '@island.is/message-queue'
-import { MessageType } from '@island.is/judicial-system/message'
+// import { MessageType } from '@island.is/judicial-system/message'
 import {
   CaseState,
   CaseType,
-  completedCaseStates,
+  // completedCaseStates,
   UserRole,
 } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
