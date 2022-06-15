@@ -3,7 +3,10 @@ import { m, ServicePortalModuleComponent } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 import { ErrorScreen } from '../ErrorScreen/ErrorScreen'
 import { useLocation } from 'react-router-dom'
-import { servicePortalMasterNavigation } from '@island.is/service-portal/core'
+import {
+  servicePortalMasterNavigation,
+  checkDelegation,
+} from '@island.is/service-portal/core'
 import { useAuth } from '@island.is/auth/react'
 
 export const AccessDenied: ServicePortalModuleComponent = () => {
@@ -14,8 +17,7 @@ export const AccessDenied: ServicePortalModuleComponent = () => {
   )
   const { userInfo: user } = useAuth()
 
-  const actor = user?.profile.actor
-  const isDelegation = Boolean(actor)
+  const isDelegation = user && checkDelegation(user)
 
   return (
     <ErrorScreen

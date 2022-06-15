@@ -4,6 +4,7 @@ import { User, Locale } from '@island.is/shared/types'
 import { useLocale } from '@island.is/localization'
 import { useUpdateUserProfileMutation } from '../../../gen/graphql'
 import { sharedMessages } from '@island.is/shared/translations'
+import { checkDelegation } from '@island.is/service-portal/core'
 
 export const UserLanguageSwitcher = ({
   user,
@@ -17,8 +18,8 @@ export const UserLanguageSwitcher = ({
 
   const handleLanguageChange = async () => {
     const locale = lang === 'en' ? 'is' : 'en'
-    const actor = user.profile.actor
-    const isDelegation = Boolean(actor)
+    const isDelegation = checkDelegation(user)
+
     changeLanguage(locale as Locale)
 
     if (user && !isDelegation) {

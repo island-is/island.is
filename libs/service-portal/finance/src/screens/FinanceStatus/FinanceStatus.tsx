@@ -24,6 +24,7 @@ import {
   formSubmit,
   m,
   ServicePortalModuleComponent,
+  checkDelegation,
 } from '@island.is/service-portal/core'
 
 import DropdownExport from '../../components/DropdownExport/DropdownExport'
@@ -55,8 +56,7 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.finance-status')
   const { formatMessage } = useLocale()
 
-  const actor = userInfo.profile.actor
-  const isDelegation = Boolean(actor)
+  const isDelegation = userInfo && checkDelegation(userInfo)
 
   const { loading, error, ...statusQuery } = useQuery<Query>(
     GetFinanceStatusQuery,
