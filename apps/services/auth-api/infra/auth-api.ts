@@ -1,11 +1,6 @@
 import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 import { json } from '../../../../infra/src/dsl/dsl'
-import {
-  Base,
-  Client,
-  RskCompanyInfo,
-  RskProcuring,
-} from '../../../../infra/src/dsl/xroad'
+import { Base, Client, RskProcuring } from '../../../../infra/src/dsl/xroad'
 
 const postgresInfo = {
   username: 'servicesauth',
@@ -51,6 +46,22 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-api'> => {
           'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379',
         ]),
       },
+      COMPANY_REGISTRY_REDIS_NODES: {
+        dev: json([
+          'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+        ]),
+        staging: json([
+          'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
+        ]),
+        prod: json([
+          'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379',
+        ]),
+      },
+      COMPANY_REGISTRY_XROAD_PROVIDER_ID: {
+        dev: 'IS-DEV/GOV/10006/Skatturinn/ft-v1',
+        staging: 'IS-TEST/GOV/5402696029/Skatturinn/ft-v1',
+        prod: 'IS/GOV/5402696029/Skatturinn/ft-v1',
+      },
       XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1',
       XROAD_TJODSKRA_MEMBER_CODE: {
         prod: '6503760649',
@@ -62,7 +73,7 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-api'> => {
       IDENTITY_SERVER_CLIENT_SECRET:
         '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET',
     })
-    .xroad(Base, Client, RskProcuring, RskCompanyInfo)
+    .xroad(Base, Client, RskProcuring)
     .readiness('/liveness')
     .liveness('/liveness')
     .initContainer({

@@ -54,6 +54,7 @@ auth-admin-web:
       memory: '128Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    IDENTITYSERVER_SECRET: '/k8s/auth-admin-web/IDENTITYSERVER_SECRET'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -69,6 +70,11 @@ global:
     env:
       AWS_REGION: 'eu-west-1'
 identity-server:
+  annotations:
+    ad.datadoghq.com/identity-server.check_names: '["openmetrics"]'
+    ad.datadoghq.com/identity-server.init_configs: '[{}]'
+    ad.datadoghq.com/identity-server.instances: '[{"prometheus_url": "http://%%host%%:5003/metrics","namespace": "identity-server","metrics":["*"]}]'
+    ad.datadoghq.com/identity-server.logs: '[{"service": "identity-server", "source": "csharp"}]'
   enabled: true
   env:
     ASPNETCORE_URLS: 'http://*:5000'
