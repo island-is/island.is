@@ -10,7 +10,10 @@ declare namespace Cypress {
      */
     getAllCookies(): Chainable<void>
     idsLogin({ phoneNumber: string }): Chainable<void>
-    cognitoLogin({ cognitoUsername: string, cognitoPassword: string }): Chainable<void>
+    cognitoLogin({
+      cognitoUsername: string,
+      cognitoPassword: string,
+    }): Chainable<void>
     patchSameSiteCookie(interceptUrl?: string): void
   }
 }
