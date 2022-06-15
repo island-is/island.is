@@ -88,6 +88,9 @@ export const getInstitutionMapper = (formatMessage: FormatMessage) => {
     [ApplicationTypes.FINANCIAL_STATEMENTS_INAO]: formatMessage(
       coreInstitutionMessages[ApplicationTypes.FINANCIAL_STATEMENTS_INAO],
     ),
+    [ApplicationTypes.ANNOUNCEMENT_OF_DEATH]: formatMessage(
+      coreInstitutionMessages[ApplicationTypes.ANNOUNCEMENT_OF_DEATH],
+    ),
   }
 
   return institutionMapper
