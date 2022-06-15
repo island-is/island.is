@@ -279,9 +279,7 @@ export class HealthInsuranceAPI {
       client[functionName](args, function (err: any, result: any) {
         if (err) {
           logger.error(
-            err.response.body.Fault.faultstring
-              ? err.response.body.Fault.faultstring
-              : 'Unknown error',
+            err?.response?.body?.Fault?.faultstring ?? 'Unknown error',
           )
           reject(err)
         } else {
