@@ -9,7 +9,11 @@ import {
 } from '@island.is/island-ui/core'
 import { rcCaseFiles } from '@island.is/judicial-system-web/messages'
 import { icCaseFiles } from '@island.is/judicial-system-web/messages'
-import { CaseFile } from '@island.is/judicial-system/types'
+import {
+  CaseFile,
+  CaseType,
+  isRestrictionCase,
+} from '@island.is/judicial-system/types'
 
 interface Props {
   files?: CaseFile[]
