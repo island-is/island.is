@@ -8,9 +8,10 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { FooterItem } from '@island.is/web/graphql/schema'
-import * as styles from './FiskistofaFooter.css'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
 import { BLOCKS } from '@contentful/rich-text-types'
+
+import * as styles from './FiskistofaFooter.css'
 
 interface FiskistofaFooterProps {
   footerItems: FooterItem[]
@@ -40,8 +41,9 @@ export const FiskistofaFooter = ({ footerItems }: FiskistofaFooterProps) => {
                   {richText(item.content as SliceType[])}
                 </GridColumn>
               ))}
+
               {footerItems[3] && (
-                <GridColumn>
+                <GridColumn className={styles.linkContainer}>
                   {richText(footerItems[3].content as SliceType[], {
                     renderNode: {
                       [BLOCKS.PARAGRAPH]: (_node, children) => (
@@ -49,10 +51,19 @@ export const FiskistofaFooter = ({ footerItems }: FiskistofaFooterProps) => {
                       ),
                     },
                   })}
-                  <img
-                    src="https://images.ctfassets.net/8k0h54kbe6bj/7076IkepUKnI8eKHbo69Ys/40d84cf75b177a8bef7beb1f6d45f6cd/fiskistofa-jafnlaunavottun.png"
-                    alt="jafnlaunavottun"
-                  />
+                  <Box className={styles.iconContainer}>
+                    <img
+                      src="https://images.ctfassets.net/8k0h54kbe6bj/7076IkepUKnI8eKHbo69Ys/40d84cf75b177a8bef7beb1f6d45f6cd/fiskistofa-jafnlaunavottun.png"
+                      alt="fiskistofa-jafnlaunavottun"
+                      width={100}
+                      height={100}
+                    />
+                    <img
+                      src="https://images.ctfassets.net/8k0h54kbe6bj/71f5kkbe52Y21n62JfdxlQ/bd5c7f87d582ab1cd74b6e6ca61d6890/fiskistofa-bsi.png"
+                      alt="fiskistofa-bsi"
+                      className={styles.bsiLogo}
+                    />
+                  </Box>
                 </GridColumn>
               )}
             </GridRow>
