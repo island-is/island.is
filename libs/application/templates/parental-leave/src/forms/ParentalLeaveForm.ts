@@ -109,7 +109,7 @@ export const ParentalLeaveForm: Form = buildForm({
           ],
         }),
         buildSubSection({
-          id: 'otherParent',
+          id: 'otherParentObj',
           title: parentalLeaveFormMessages.shared.otherParentSubSection,
           condition: (answers, externalData) => {
             const selectedChild = getSelectedChild(answers, externalData)
@@ -124,35 +124,35 @@ export const ParentalLeaveForm: Form = buildForm({
           },
           children: [
             buildMultiField({
-              id: 'otherParent',
+              id: 'otherParentObj',
               title: parentalLeaveFormMessages.shared.otherParentTitle,
               description:
                 parentalLeaveFormMessages.shared.otherParentDescription,
               children: [
                 buildCustomField({
                   component: 'OtherParent',
-                  id: 'otherParent.chooseOtherParent',
+                  id: 'otherParentObj.chooseOtherParent',
                   title: parentalLeaveFormMessages.shared.otherParentSubTitle,
                 }),
                 buildTextField({
-                  id: 'otherParent.otherParentName',
+                  id: 'otherParentObj.otherParentName',
                   condition: (answers) =>
                     (answers as {
-                      otherParent: {
+                      otherParentObj: {
                         chooseOtherParent: string
                       }
-                    })?.otherParent?.chooseOtherParent === MANUAL,
+                    })?.otherParentObj?.chooseOtherParent === MANUAL,
                   title: parentalLeaveFormMessages.shared.otherParentName,
                   width: 'half',
                 }),
                 buildTextField({
-                  id: 'otherParent.otherParentId',
+                  id: 'otherParentObj.otherParentId',
                   condition: (answers) =>
                     (answers as {
-                      otherParent: {
+                      otherParentObj: {
                         chooseOtherParent: string
                       }
-                    })?.otherParent?.chooseOtherParent === MANUAL,
+                    })?.otherParentObj?.chooseOtherParent === MANUAL,
                   title: parentalLeaveFormMessages.shared.otherParentID,
                   width: 'half',
                   format: '######-####',
@@ -164,10 +164,10 @@ export const ParentalLeaveForm: Form = buildForm({
               id: 'otherParentRightOfAccess',
               condition: (answers) =>
                 (answers as {
-                  otherParent: {
+                  otherParentObj: {
                     chooseOtherParent: string
                   }
-                })?.otherParent?.chooseOtherParent === MANUAL,
+                })?.otherParentObj?.chooseOtherParent === MANUAL,
               title: parentalLeaveFormMessages.rightOfAccess.title,
               description: parentalLeaveFormMessages.rightOfAccess.description,
               options: [
