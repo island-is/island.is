@@ -447,7 +447,17 @@ export class ApplicationService {
     if (update.state && update.state === ApplicationState.NEW) {
       update.staffId = null
     }
-    if (update.state !== ApplicationState.APPROVED) {
+
+    if (update.event === ApplicationEventType.APPROVED) {
+      update.navSuccess = await this.sendToNav(id)
+    } else if (
+      [
+        ApplicationEventType.NEW,
+        ApplicationEventType.INPROGRESS,
+        ApplicationEventType.DATANEEDED,
+        ApplicationEventType.REJECTED,
+      ].includes(update.event)
+    ) {
       update.navSuccess = null
     }
 
@@ -514,7 +524,6 @@ export class ApplicationService {
     }
 
     await Promise.all([events, files, directTaxPayments])
-    await this.sendToNav(id)
 
     return updatedApplication
   }
@@ -525,6 +534,7 @@ export class ApplicationService {
       const municipality = await this.municipalityService.findByMunicipalityId(
         application.municipalityCode,
       )
+
       const token = await fetch(
         new URL('Authentication/Login', municipality.navUrl).href,
         {
@@ -539,7 +549,7 @@ export class ApplicationService {
         },
       ).then((response) => response.text())
 
-      const request = await fetch(
+      return await fetch(
         new URL(
           'WebApplication/CreateFinancialAssistanceApplication',
           municipality.navUrl,
@@ -565,9 +575,9 @@ export class ApplicationService {
             housingCode: getHomeCircumstances[application.homeCircumstances],
           }),
         },
-      ).then((response) => response.text())
+      ).then((response) => response.ok)
     } catch {
-      console.log('faiiillll')
+      return false
     }
   }
 
