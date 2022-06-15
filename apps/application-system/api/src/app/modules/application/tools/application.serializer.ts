@@ -64,6 +64,7 @@ export class ApplicationSerializer
     const intl = await this.intlService.useIntl(namespaces, locale)
 
     const userRole = template.mapUserToRole(nationalId, application) ?? ''
+
     const roleInState = helper.getRoleInState(userRole)
     const actors =
       application.applicant === nationalId ? application.applicantActors : []
