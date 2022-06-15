@@ -8,6 +8,7 @@ export const SharedDataProviders = {
   nationalRegistryProvider: {
     dataProviderType: 'nationalRegistryUserProvider',
     apiModuleAction: 'getUser',
+    externalDataId: 'nationalRegistry',
     namespace: 'nationalRegistry',
     mockData: (application: Application): PerformActionResult => {
       return {

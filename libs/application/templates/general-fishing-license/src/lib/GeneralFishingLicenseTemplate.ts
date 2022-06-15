@@ -71,15 +71,8 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
               ],
               api: [
                 FishingLicenceDataProviders.generalFishingLicenceProvider,
-                {
-                  ...SharedDataProviders.nationalRegistryProvider,
-                },
-                {
-                  ...SharedDataProviders.paymentCatalogProvider,
-                  params: {
-                    organizationId: '6608922069',
-                  },
-                },
+                FishingLicenceDataProviders.nationalRegistryProvider,
+                FishingLicenceDataProviders.paymentCatalogProvider,
               ],
               write: 'all',
             },

@@ -23,7 +23,7 @@ export const externalDataSection = buildSection({
       dataProviders: [
         buildDataProviderItem({
           id: 'nationalRegistry',
-          provider: SharedDataProviders.nationalRegistryProvider,
+          provider: FishingLicenceDataProviders.nationalRegistryProvider,
           title: externalData.nationalRegistry.title,
           subTitle: externalData.nationalRegistry.description,
         }),
@@ -35,7 +35,7 @@ export const externalDataSection = buildSection({
         }),
         buildDataProviderItem({
           id: 'feeInfoProvider',
-          provider: SharedDataProviders.paymentCatalogProvider,
+          provider: FishingLicenceDataProviders.paymentCatalogProvider,
           title: externalData.userProfile.title,
           subTitle: externalData.userProfile.description,
         }),

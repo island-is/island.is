@@ -115,6 +115,7 @@ export class GeneralFishingLicenseService {
   }
 
   async getShips({ application, auth }: TemplateApiModuleActionProps) {
-    return this.fishingLicenceApi.getShips(auth.nationalId, auth)
+    const ships = await this.fishingLicenceApi.getShips(auth.nationalId, auth)
+    return { ships }
   }
 }
