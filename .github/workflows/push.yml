@@ -671,7 +671,7 @@ jobs:
           BODY
       - name: Trigger Deployment for IDS-Services
         env:
-          DOCKER_TAG: ${{ needs.pre-checks.outputs.DOCKER_TAG }}
+          DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG }}
           GIT_BRANCH_DEPLOY: ${{ needs.pre-checks.outputs.GIT_BRANCH_DEPLOY }}
           SPINNAKER_WEBHOOK_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_TOKEN }}
           GH_PRIVATE_REPO_TOKEN: ${{secrets.GH_PRIVATE_REPO_TOKEN}}
