@@ -108,7 +108,7 @@ describe('Ingress definitions', () => {
           'kubernetes.io/ingress.class': 'nginx-external-alb',
         },
         hosts: [{ host: 'notmissing-staging01.devland.is', paths: ['/api'] }],
-      }
+      },
     })
   })
   it('Internal ingress basic', () => {
