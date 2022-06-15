@@ -20,7 +20,6 @@ export * from './lib/ApplicationTemplateHelper'
 export * from './lib/messages'
 export * from './lib/configurationUtils'
 export * from './lib/constants'
-export * from './lib/institutionMapper'
 
 export * from './validation/validators'
 export * from './validation/AnswerValidator'
