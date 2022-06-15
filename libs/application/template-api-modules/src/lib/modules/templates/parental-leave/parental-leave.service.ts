@@ -508,17 +508,14 @@ export class ParentalLeaveService {
         'TRUE',
       )
 
-      console.log('dummy req: ', parentalLeaveDTO)
       // call SetParentalLeave API with testData: TRUE as this is a dummy request
       // for validation purposes
-      const response = await this.parentalLeaveApi.parentalLeaveSetParentalLeave(
+      await this.parentalLeaveApi.parentalLeaveSetParentalLeave(
         {
           nationalRegistryId,
           parentalLeave: parentalLeaveDTO,
         },
       )
-
-      console.log('dummy res: ', response)
 
       return
     } catch (e) {
