@@ -30,17 +30,13 @@ export const accessControlModule: ServicePortalModule = {
       {
         name: m.accessControlGrant,
         path: ServicePortalPath.SettingsAccessControlGrant,
-        enabled:
-          showDelegation &&
-          userInfo.scopes.includes(AuthScope.writeDelegations),
+        enabled: showDelegation,
         render: () => lazy(() => import('./screens/GrantAccess')),
       },
       {
         name: m.accessControlAccess,
         path: ServicePortalPath.SettingsAccessControlAccess,
-        enabled:
-          showDelegation &&
-          userInfo.scopes.includes(AuthScope.writeDelegations),
+        enabled: showDelegation,
         render: () => lazy(() => import('./screens/Access')),
       },
     ]
