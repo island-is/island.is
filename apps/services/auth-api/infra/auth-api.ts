@@ -36,12 +36,16 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-api'> => {
         prod: 'IS/GOV/5402696029/Skatturinn/ft-v1',
       },
       COMPANY_REGISTRY_REDIS_NODES: {
-        dev:
+        dev: json([
           'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
-        staging:
+        ]),
+        staging: json([
           'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
-        prod:
+        ]),
+
+        prod: json([
           'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379',
+        ]),
       },
       XROAD_NATIONAL_REGISTRY_SERVICE_PATH: {
         dev: 'IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1',
