@@ -3,34 +3,10 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { AsyncSearch, Box, AlertMessage } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { coreErrorMessages } from '@island.is/application/core'
-import { gql, useLazyQuery } from '@apollo/client'
 import debounce from 'lodash/debounce'
 import { CompanySearchItem } from './CompanySearchItem'
 import { debounceTime } from '@island.is/shared/constants'
-import { string } from 'zod'
-
-export const COMPANY_REGISTRY_COMPANIES = gql`
-  query SearchCompanies($input: RskCompanyInfoSearchInput!) {
-    companyRegistryCompanies(input: $input) {
-      data {
-        name
-        nationalId
-        companyInfo {
-          vat {
-            dateOfRegistration
-            dateOfDeregistration
-            classification {
-              type
-              classificationSystem
-              number
-              name
-            }
-          }
-        }
-      }
-    }
-  }
-`
+import { useSearchCompaniesLazyQuery } from '../../../gen/graphql'
 
 interface Props {
   id: string
@@ -64,7 +40,7 @@ export const CompanySearchController: FC<Props> = ({
 
   const [searchQuery, setSearchQuery] = useState('')
 
-  const [search, { loading, data }] = useLazyQuery(COMPANY_REGISTRY_COMPANIES)
+  const [search, { loading, data }] = useSearchCompaniesLazyQuery()
 
   const debouncer = useMemo(() => {
     return debounce(search, debounceTime.search)
