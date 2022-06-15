@@ -10,6 +10,7 @@ import { User } from '@island.is/shared/types'
 import { useLocale } from '@island.is/localization'
 import { userMessages } from '@island.is/shared/translations'
 import * as styles from './UserMenu.css'
+import { checkDelegation } from '@island.is/service-portal/core'
 
 interface UserButtonProps {
   user: User
@@ -17,12 +18,9 @@ interface UserButtonProps {
   onClick: () => void
 }
 
-export const UserButton = ({
-  onClick,
-  user: { profile },
-  small,
-}: UserButtonProps) => {
-  const isDelegation = Boolean(profile.actor)
+export const UserButton = ({ onClick, user, small }: UserButtonProps) => {
+  const isDelegation = checkDelegation(user)
+  const { profile } = user
   const { formatMessage } = useLocale()
   return (
     <>
