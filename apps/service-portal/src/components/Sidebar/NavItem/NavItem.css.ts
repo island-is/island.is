@@ -1,4 +1,4 @@
-import { style, styleVariants, globalStyle } from '@vanilla-extract/css'
+import { style, styleVariants } from '@vanilla-extract/css'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 export const dotState = styleVariants({
