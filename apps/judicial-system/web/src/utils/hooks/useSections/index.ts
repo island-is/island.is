@@ -10,7 +10,7 @@ import {
 import { core, sections } from '@island.is/judicial-system-web/messages'
 import { caseResult } from '@island.is/judicial-system-web/src/components/PageLayout/utils'
 import { capitalize } from '@island.is/judicial-system/formatters'
-import * as Constants from '@island.is/judicial-system/consts'
+import * as constants from '@island.is/judicial-system/consts'
 import {
   isDefendantStepValidForSidebarRC,
   isCourtHearingArrangemenstStepValidRC,
@@ -72,7 +72,7 @@ const useSections = () => {
                 name: capitalize(
                   formatMessage(core.defendant, { suffix: 'i' }),
                 ),
-                href: `${Constants.STEP_ONE_ROUTE}/${id}`,
+                href: `${constants.STEP_ONE_ROUTE}/${id}`,
               },
               {
                 type: 'SUB_SECTION',
@@ -82,7 +82,7 @@ const useSections = () => {
                 href:
                   (activeSubSection && activeSubSection > 1) ||
                   isDefendantStepValidForSidebarRC(workingCase)
-                    ? `${Constants.STEP_TWO_ROUTE}/${id}`
+                    ? `${constants.STEP_TWO_ROUTE}/${id}`
                     : undefined,
               },
               {
@@ -94,7 +94,7 @@ const useSections = () => {
                   (activeSubSection && activeSubSection > 2) ||
                   (isDefendantStepValidForSidebarRC(workingCase) &&
                     isHearingArrangementsStepValidRC(workingCase))
-                    ? `${Constants.STEP_THREE_ROUTE}/${id}`
+                    ? `${constants.STEP_THREE_ROUTE}/${id}`
                     : undefined,
               },
               {
@@ -107,7 +107,7 @@ const useSections = () => {
                   (isDefendantStepValidForSidebarRC(workingCase) &&
                     isHearingArrangementsStepValidRC(workingCase) &&
                     isPoliceDemandsStepValidRC(workingCase))
-                    ? `${Constants.STEP_FOUR_ROUTE}/${id}`
+                    ? `${constants.STEP_FOUR_ROUTE}/${id}`
                     : undefined,
               },
               {
@@ -121,7 +121,7 @@ const useSections = () => {
                     isHearingArrangementsStepValidRC(workingCase) &&
                     isPoliceDemandsStepValidRC(workingCase) &&
                     isPoliceReportStepValidRC(workingCase))
-                    ? `${Constants.STEP_FIVE_ROUTE}/${id}`
+                    ? `${constants.STEP_FIVE_ROUTE}/${id}`
                     : undefined,
               },
               {
@@ -134,7 +134,7 @@ const useSections = () => {
                   isHearingArrangementsStepValidRC(workingCase) &&
                   isPoliceDemandsStepValidRC(workingCase) &&
                   isPoliceReportStepValidRC(workingCase)
-                    ? `${Constants.STEP_SIX_ROUTE}/${id}`
+                    ? `${constants.STEP_SIX_ROUTE}/${id}`
                     : undefined,
               },
             ],
@@ -159,7 +159,7 @@ const useSections = () => {
                 name: capitalize(
                   formatMessage(core.defendant, { suffix: 'i' }),
                 ),
-                href: `${Constants.IC_DEFENDANT_ROUTE}/${id}`,
+                href: `${constants.IC_DEFENDANT_ROUTE}/${id}`,
               },
               {
                 type: 'SUB_SECTION',
@@ -170,7 +170,7 @@ const useSections = () => {
                 href:
                   (activeSubSection && activeSubSection > 1) ||
                   isDefendantStepValidForSidebarIC(workingCase)
-                    ? `${Constants.IC_HEARING_ARRANGEMENTS_ROUTE}/${id}`
+                    ? `${constants.IC_HEARING_ARRANGEMENTS_ROUTE}/${id}`
                     : undefined,
               },
               {
@@ -182,7 +182,7 @@ const useSections = () => {
                   (activeSubSection && activeSubSection > 2) ||
                   (isDefendantStepValidForSidebarIC(workingCase) &&
                     isHearingArrangementsStepValidIC(workingCase))
-                    ? `${Constants.IC_POLICE_DEMANDS_ROUTE}/${id}`
+                    ? `${constants.IC_POLICE_DEMANDS_ROUTE}/${id}`
                     : undefined,
               },
               {
@@ -195,7 +195,7 @@ const useSections = () => {
                   (isDefendantStepValidForSidebarIC(workingCase) &&
                     isHearingArrangementsStepValidIC(workingCase) &&
                     isPoliceDemandsStepValidIC(workingCase))
-                    ? `${Constants.IC_POLICE_REPORT_ROUTE}/${id}`
+                    ? `${constants.IC_POLICE_REPORT_ROUTE}/${id}`
                     : undefined,
               },
               {
@@ -208,7 +208,7 @@ const useSections = () => {
                   (isDefendantStepValidForSidebarIC(workingCase) &&
                     isHearingArrangementsStepValidIC(workingCase) &&
                     isPoliceDemandsStepValidIC(workingCase))
-                    ? `${Constants.IC_CASE_FILES_ROUTE}/${id}`
+                    ? `${constants.IC_CASE_FILES_ROUTE}/${id}`
                     : undefined,
               },
               {
@@ -220,7 +220,7 @@ const useSections = () => {
                   isDefendantStepValidForSidebarIC(workingCase) &&
                   isHearingArrangementsStepValidIC(workingCase) &&
                   isPoliceDemandsStepValidIC(workingCase)
-                    ? `${Constants.IC_POLICE_CONFIRMATION_ROUTE}/${id}`
+                    ? `${constants.IC_POLICE_CONFIRMATION_ROUTE}/${id}`
                     : undefined,
               },
             ],
@@ -248,7 +248,7 @@ const useSections = () => {
                 ),
                 href: isModifyingRuling
                   ? undefined
-                  : `${Constants.RECEPTION_AND_ASSIGNMENT_ROUTE}/${id}`,
+                  : `${constants.RECEPTION_AND_ASSIGNMENT_ROUTE}/${id}`,
               },
               {
                 type: 'SUB_SECTION',
@@ -257,7 +257,7 @@ const useSections = () => {
                   !isModifyingRuling &&
                   ((activeSubSection && activeSubSection > 1) ||
                     isReceptionAndAssignmentStepValidRC(workingCase))
-                    ? `${Constants.OVERVIEW_ROUTE}/${id}`
+                    ? `${constants.OVERVIEW_ROUTE}/${id}`
                     : undefined,
               },
               {
@@ -267,7 +267,7 @@ const useSections = () => {
                   !isModifyingRuling &&
                   ((activeSubSection && activeSubSection > 2) ||
                     isReceptionAndAssignmentStepValidRC(workingCase))
-                    ? `${Constants.HEARING_ARRANGEMENTS_ROUTE}/${id}`
+                    ? `${constants.HEARING_ARRANGEMENTS_ROUTE}/${id}`
                     : undefined,
               },
               {
@@ -278,7 +278,7 @@ const useSections = () => {
                   ((activeSubSection && activeSubSection > 3) ||
                     (isReceptionAndAssignmentStepValidRC(workingCase) &&
                       isCourtHearingArrangemenstStepValidRC(workingCase)))
-                    ? `${Constants.RULING_ROUTE}/${id}`
+                    ? `${constants.RULING_ROUTE}/${id}`
                     : undefined,
               },
               {
@@ -290,7 +290,7 @@ const useSections = () => {
                     (isReceptionAndAssignmentStepValidRC(workingCase) &&
                       isCourtHearingArrangemenstStepValidRC(workingCase) &&
                       isRulingValidRC(workingCase)))
-                    ? `${Constants.COURT_RECORD_ROUTE}/${id}`
+                    ? `${constants.COURT_RECORD_ROUTE}/${id}`
                     : undefined,
               },
               {
@@ -302,7 +302,7 @@ const useSections = () => {
                   isCourtHearingArrangemenstStepValidRC(workingCase) &&
                   isRulingValidRC(workingCase) &&
                   isCourtRecordStepValidRC(workingCase)
-                    ? `${Constants.CONFIRMATION_ROUTE}/${id}`
+                    ? `${constants.CONFIRMATION_ROUTE}/${id}`
                     : undefined,
               },
             ],
@@ -330,7 +330,7 @@ const useSections = () => {
                 ),
                 href: isModifyingRuling
                   ? undefined
-                  : `${Constants.IC_RECEPTION_AND_ASSIGNMENT_ROUTE}/${id}`,
+                  : `${constants.IC_RECEPTION_AND_ASSIGNMENT_ROUTE}/${id}`,
               },
               {
                 type: 'SUB_SECTION',
@@ -341,7 +341,7 @@ const useSections = () => {
                   !isModifyingRuling &&
                   ((activeSubSection && activeSubSection > 1) ||
                     isReceptionAndAssignmentStepValidIC(workingCase))
-                    ? `${Constants.IC_OVERVIEW_ROUTE}/${id}`
+                    ? `${constants.IC_OVERVIEW_ROUTE}/${id}`
                     : undefined,
               },
               {
@@ -353,7 +353,7 @@ const useSections = () => {
                   !isModifyingRuling &&
                   ((activeSubSection && activeSubSection > 2) ||
                     isReceptionAndAssignmentStepValidIC(workingCase))
-                    ? `${Constants.IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/${id}`
+                    ? `${constants.IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/${id}`
                     : undefined,
               },
               {
@@ -366,7 +366,7 @@ const useSections = () => {
                   ((activeSubSection && activeSubSection > 3) ||
                     (isReceptionAndAssignmentStepValidIC(workingCase) &&
                       isCourtHearingArrangementsStepValidIC(workingCase)))
-                    ? `${Constants.IC_RULING_ROUTE}/${id}`
+                    ? `${constants.IC_RULING_ROUTE}/${id}`
                     : undefined,
               },
               {
@@ -380,7 +380,7 @@ const useSections = () => {
                     (isReceptionAndAssignmentStepValidIC(workingCase) &&
                       isCourtHearingArrangementsStepValidIC(workingCase) &&
                       isRulingValidIC(workingCase)))
-                    ? `${Constants.IC_COURT_RECORD_ROUTE}/${id}`
+                    ? `${constants.IC_COURT_RECORD_ROUTE}/${id}`
                     : undefined,
               },
               {
@@ -394,7 +394,7 @@ const useSections = () => {
                   isCourtHearingArrangementsStepValidIC(workingCase) &&
                   isRulingValidIC(workingCase) &&
                   isCourtRecordStepValidIC(workingCase)
-                    ? `${Constants.IC_CONFIRMATION_ROUTE}/${id}`
+                    ? `${constants.IC_CONFIRMATION_ROUTE}/${id}`
                     : undefined,
               },
             ],
@@ -419,7 +419,7 @@ const useSections = () => {
                 name: capitalize(
                   formatMessage(core.defendant, { suffix: 'i' }),
                 ),
-                href: `${Constants.STEP_ONE_ROUTE}/${id}`,
+                href: `${constants.STEP_ONE_ROUTE}/${id}`,
               },
               {
                 type: 'SUB_SECTION',
@@ -429,7 +429,7 @@ const useSections = () => {
                 href:
                   (activeSubSection && activeSubSection > 1) ||
                   isDefendantStepValidForSidebarRC(workingCase)
-                    ? `${Constants.STEP_TWO_ROUTE}/${id}`
+                    ? `${constants.STEP_TWO_ROUTE}/${id}`
                     : undefined,
               },
               {
@@ -439,7 +439,7 @@ const useSections = () => {
                   (activeSubSection && activeSubSection > 2) ||
                   (isDefendantStepValidForSidebarRC(workingCase) &&
                     isHearingArrangementsStepValidRC(workingCase))
-                    ? `${Constants.STEP_THREE_ROUTE}/${id}`
+                    ? `${constants.STEP_THREE_ROUTE}/${id}`
                     : undefined,
               },
               {
@@ -450,7 +450,7 @@ const useSections = () => {
                   (isDefendantStepValidForSidebarRC(workingCase) &&
                     isHearingArrangementsStepValidRC(workingCase) &&
                     isPoliceDemandsStepValidRC(workingCase))
-                    ? `${Constants.STEP_FOUR_ROUTE}/${id}`
+                    ? `${constants.STEP_FOUR_ROUTE}/${id}`
                     : undefined,
               },
               {
@@ -462,7 +462,7 @@ const useSections = () => {
                     isHearingArrangementsStepValidRC(workingCase) &&
                     isPoliceDemandsStepValidRC(workingCase) &&
                     isPoliceReportStepValidRC(workingCase))
-                    ? `${Constants.STEP_FIVE_ROUTE}/${id}`
+                    ? `${constants.STEP_FIVE_ROUTE}/${id}`
                     : undefined,
               },
               {
@@ -473,7 +473,7 @@ const useSections = () => {
                   isHearingArrangementsStepValidRC(workingCase) &&
                   isPoliceDemandsStepValidRC(workingCase) &&
                   isPoliceReportStepValidRC(workingCase)
-                    ? `${Constants.STEP_SIX_ROUTE}/${id}`
+                    ? `${constants.STEP_SIX_ROUTE}/${id}`
                     : undefined,
               },
             ],
@@ -498,7 +498,7 @@ const useSections = () => {
                 name: capitalize(
                   formatMessage(core.defendant, { suffix: 'i' }),
                 ),
-                href: `${Constants.IC_DEFENDANT_ROUTE}/${id}`,
+                href: `${constants.IC_DEFENDANT_ROUTE}/${id}`,
               },
               {
                 type: 'SUB_SECTION',
@@ -509,7 +509,7 @@ const useSections = () => {
                 href:
                   (activeSubSection && activeSubSection > 1) ||
                   isDefendantStepValidForSidebarIC(workingCase)
-                    ? `${Constants.IC_HEARING_ARRANGEMENTS_ROUTE}/${id}`
+                    ? `${constants.IC_HEARING_ARRANGEMENTS_ROUTE}/${id}`
                     : undefined,
               },
               {
@@ -521,7 +521,7 @@ const useSections = () => {
                   (activeSubSection && activeSubSection > 2) ||
                   (isDefendantStepValidForSidebarIC(workingCase) &&
                     isHearingArrangementsStepValidIC(workingCase))
-                    ? `${Constants.IC_POLICE_DEMANDS_ROUTE}/${id}`
+                    ? `${constants.IC_POLICE_DEMANDS_ROUTE}/${id}`
                     : undefined,
               },
               {
@@ -534,7 +534,7 @@ const useSections = () => {
                   (isDefendantStepValidForSidebarIC(workingCase) &&
                     isHearingArrangementsStepValidIC(workingCase) &&
                     isPoliceDemandsStepValidIC(workingCase))
-                    ? `${Constants.IC_POLICE_REPORT_ROUTE}/${id}`
+                    ? `${constants.IC_POLICE_REPORT_ROUTE}/${id}`
                     : undefined,
               },
               {
@@ -548,7 +548,7 @@ const useSections = () => {
                     isHearingArrangementsStepValidIC(workingCase) &&
                     isPoliceDemandsStepValidIC(workingCase) &&
                     isPoliceReportStepValidIC(workingCase))
-                    ? `${Constants.IC_CASE_FILES_ROUTE}/${id}`
+                    ? `${constants.IC_CASE_FILES_ROUTE}/${id}`
                     : undefined,
               },
               {
@@ -561,7 +561,7 @@ const useSections = () => {
                   isHearingArrangementsStepValidIC(workingCase) &&
                   isPoliceDemandsStepValidIC(workingCase) &&
                   isPoliceReportStepValidIC(workingCase)
-                    ? `${Constants.IC_POLICE_CONFIRMATION_ROUTE}/${id}`
+                    ? `${constants.IC_POLICE_CONFIRMATION_ROUTE}/${id}`
                     : undefined,
               },
             ],

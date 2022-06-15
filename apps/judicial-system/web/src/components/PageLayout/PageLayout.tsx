@@ -11,7 +11,7 @@ import {
 } from '@island.is/island-ui/core'
 import { UserRole, Case } from '@island.is/judicial-system/types'
 import { Sections } from '@island.is/judicial-system-web/src/types'
-import * as Constants from '@island.is/judicial-system/consts'
+import * as constants from '@island.is/judicial-system/consts'
 import { sections, pageLayout } from '@island.is/judicial-system-web/messages'
 
 import { UserContext } from '../UserProvider/UserProvider'
@@ -73,8 +73,8 @@ const PageLayout: React.FC<PageProps> = ({
           : {
               href:
                 user?.role === UserRole.ADMIN
-                  ? Constants.USER_LIST_ROUTE
-                  : Constants.CASE_LIST_ROUTE,
+                  ? constants.USER_LIST_ROUTE
+                  : constants.CASE_LIST_ROUTE,
               title: 'Fara á yfirlitssíðu',
             }
       }
