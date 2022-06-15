@@ -311,6 +311,7 @@ export interface Application {
   hasFetchedDirectTaxPayment: boolean
   spouseHasFetchedDirectTaxPayment: boolean
   applicationSystemId?: string
+  navSuccess?: boolean
 }
 
 export interface GetSignedUrlForId {

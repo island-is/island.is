@@ -23,6 +23,15 @@ module.exports = {
           },
           { transaction: t },
         ),
+        queryInterface.addColumn(
+          'applications',
+          'nav_success',
+          {
+            type: Sequelize.BOOLEAN,
+            allowNull: true,
+          },
+          { transaction: t },
+        ),
       ]),
     )
   },
@@ -34,6 +43,9 @@ module.exports = {
           transaction: t,
         }),
         queryInterface.removeColumn('municipality', 'nav_url', {
+          transaction: t,
+        }),
+        queryInterface.removeColumn('applications', 'nav_success', {
           transaction: t,
         }),
       ]),
