@@ -92,6 +92,7 @@ function showCustodyNotice(
     isAcceptingCaseDecision(decision)
   )
 }
+
 export const titleForCase = (
   formatMessage: IntlShape['formatMessage'],
   theCase: Case,
@@ -123,6 +124,18 @@ export const titleForCase = (
     : formatMessage(m.restrictionActive, {
         caseType: isTravelBan ? CaseType.TRAVEL_BAN : theCase.type,
       })
+}
+
+export const rulingDateLabel = (
+  formatMessage: IntlShape['formatMessage'],
+  workingCase: Case,
+) => {
+  return formatMessage(m.rulingDateLabel, {
+    courtEndTime: `${formatDate(
+      workingCase.courtEndTime,
+      'PPP',
+    )} kl. ${formatDate(workingCase.courtEndTime, constants.TIME_FORMAT)}`,
+  })
 }
 
 export const SignedVerdictOverview: React.FC = () => {
@@ -474,15 +487,7 @@ export const SignedVerdictOverview: React.FC = () => {
               </Box>
               <Box>
                 <Text variant="h5">
-                  {formatMessage(m.rulingDateLabel, {
-                    courtEndTime: `${formatDate(
-                      workingCase.courtEndTime,
-                      'PPP',
-                    )} kl. ${formatDate(
-                      workingCase.courtEndTime,
-                      constants.TIME_FORMAT,
-                    )}`,
-                  })}
+                  {rulingDateLabel(formatMessage, workingCase)}
                 </Text>
               </Box>
             </Box>
