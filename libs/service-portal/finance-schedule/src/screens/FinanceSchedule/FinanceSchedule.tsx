@@ -2,6 +2,7 @@ import React from 'react'
 import {
   NoDataScreen,
   ServicePortalModuleComponent,
+  checkDelegation,
 } from '@island.is/service-portal/core'
 import { useQuery, gql } from '@apollo/client'
 import { PaymentSchedule, Query } from '@island.is/api/schema'
@@ -45,8 +46,7 @@ const FinanceSchedule: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.finance-schedule')
   const { formatMessage } = useLocale()
 
-  const actor = userInfo.profile.actor
-  const isDelegation = Boolean(actor)
+  const isDelegation = checkDelegation(userInfo)
 
   const {
     data: paymentSchedulesData,
