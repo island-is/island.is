@@ -7,4 +7,5 @@ module.exports = {
   coverageDirectory: '../../coverage/libs/dokobit-signing',
   globals: { 'ts-jest': { tsconfig: '<rootDir>/tsconfig.spec.json' } },
   displayName: 'dokobit-signing',
+  testEnvironment: 'node',
 }

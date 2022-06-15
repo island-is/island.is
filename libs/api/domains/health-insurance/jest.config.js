@@ -9,4 +9,5 @@ module.exports = {
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory: '../../../../coverage/libs/api/domains/health-insurance',
   displayName: 'api-domains-health-insurance',
+  testEnvironment: 'node',
 }

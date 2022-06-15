@@ -8,5 +8,4 @@ module.exports = {
   coverageDirectory: '../../../coverage/apps/air-discount-scheme/web',
   globals: { 'ts-jest': { tsconfig: '<rootDir>/tsconfig.spec.json' } },
   displayName: 'air-discount-scheme-web',
-  testEnvironment: 'node',
 }

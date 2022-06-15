@@ -10,4 +10,5 @@ module.exports = {
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'html'],
   displayName: 'external-contracts-tests',
   modulePathIgnorePatterns: ['<rootDir>/main.spec.ts'],
+  testEnvironment: 'node',
 }

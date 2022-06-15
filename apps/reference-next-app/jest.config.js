@@ -8,5 +8,4 @@ module.exports = {
   coverageDirectory: '../../coverage/apps/reference-next-app',
   globals: { 'ts-jest': { tsconfig: '<rootDir>/tsconfig.spec.json' } },
   displayName: 'reference-next-app',
-  testEnvironment: 'node',
 }

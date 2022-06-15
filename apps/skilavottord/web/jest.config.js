@@ -13,5 +13,4 @@ module.exports = {
   coverageDirectory: '../../../coverage/apps/skilavottord/web',
   globals: { 'ts-jest': { tsconfig: '<rootDir>/tsconfig.spec.json' } },
   displayName: 'skilavottord-web',
-  testEnvironment: 'node',
 }

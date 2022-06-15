@@ -9,4 +9,5 @@ module.exports = {
   displayName: 'message-queue',
   globalSetup: './test/globalSetup.ts',
   globalTeardown: './test/globalTeardown.ts',
+  testEnvironment: 'node',
 }

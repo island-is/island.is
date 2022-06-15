@@ -9,5 +9,4 @@ module.exports = {
   setupFilesAfterEnv: ['./jest.setup.ts'],
   globals: { 'ts-jest': { tsconfig: '<rootDir>/tsconfig.spec.json' } },
   displayName: 'financial-aid-web-veita',
-  testEnvironment: 'node',
 }

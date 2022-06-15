@@ -7,4 +7,5 @@ module.exports = {
   coverageDirectory: '../../coverage/libs/nova-sms',
   globals: { 'ts-jest': { tsconfig: '<rootDir>/tsconfig.spec.json' } },
   displayName: 'nova-sms',
+  testEnvironment: 'node',
 }
