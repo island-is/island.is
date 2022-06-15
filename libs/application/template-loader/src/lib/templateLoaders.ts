@@ -37,6 +37,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/general-fishing-license'),
   [ApplicationTypes.P_SIGN]: () =>
     import('@island.is/application/templates/p-sign'),
+  [ApplicationTypes.ANNOUNCEMENT_OF_DEATH]: () =>
+    import('@island.is/application/templates/announcement-of-death'),
   [ApplicationTypes.CRIMINAL_RECORD]: () =>
     import('@island.is/application/templates/criminal-record'),
   [ApplicationTypes.FINANCIAL_AID]: () =>

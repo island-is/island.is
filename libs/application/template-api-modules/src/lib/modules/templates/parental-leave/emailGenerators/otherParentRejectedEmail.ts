@@ -15,7 +15,7 @@ export const generateOtherParentRejected: EmailTemplateGenerator = (props) => {
   const to =
     get(application.answers, 'applicant.email') ||
     get(application.externalData, 'userProfile.data.email')
-  const subject = 'Beiðni um tilfærslu réttinda hafnað um fæðingarorlof'
+  const subject = 'Beiðni þín um tilfærslu réttinda hafnað'
 
   return {
     from: {
@@ -42,24 +42,24 @@ export const generateOtherParentRejected: EmailTemplateGenerator = (props) => {
         {
           component: 'Image',
           context: {
-            src: pathToAsset('child.jpg'),
+            src: pathToAsset('reject.jpg'),
             alt: 'Barn myndskreyting',
           },
         },
         { component: 'Heading', context: { copy: subject } },
-        { component: 'Copy', context: { copy: 'Góðan dag.' } },
+        { component: 'Copy', context: { copy: 'Góðan dag / Good day,' } },
         {
           component: 'Copy',
           context: {
             copy:
-              'Beiðni þinni um tilfærslu réttinda hefur verið hafnað af hinu foreldrinu.',
+              'Hitt foreldrið hefur hafnað beiðni þinni um yfirfærslu á réttindum. Þú þarft því að breyta umsókn þinni.',
           },
         },
         {
           component: 'Copy',
           context: {
             copy:
-              'Til þess að skoða umsókn þína getur þú smellt á takkann hér fyrir neðan.',
+              'The other parent has denied your request to transfer rights. You therefore need to modify your application.',
           },
         },
         {

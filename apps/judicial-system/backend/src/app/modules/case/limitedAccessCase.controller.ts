@@ -35,7 +35,7 @@ import { CaseService } from './case.service'
 import { LimitedAccessCaseService } from './limitedAccessCase.service'
 
 @Controller('api/case/:caseId')
-@ApiTags('limitedAccess cases')
+@ApiTags('limited access cases')
 export class LimitedAccessCaseController {
   constructor(
     private readonly caseService: CaseService,

@@ -18,7 +18,7 @@ import {
   errors as errorMessages,
 } from '@island.is/judicial-system-web/messages'
 import type { Case } from '@island.is/judicial-system/types'
-import * as Constants from '@island.is/judicial-system/consts'
+import * as constants from '@island.is/judicial-system/consts'
 import { RulingSignatureConfirmationQuery } from '../../utils/mutations'
 import { Modal } from '..'
 import { useCase } from '../../utils/hooks'
@@ -213,12 +213,12 @@ const SigningModal: React.FC<SigningModalProps> = ({
           : ''
       }
       handlePrimaryButtonClick={() => {
-        window.open(Constants.FEEDBACK_FORM_URL, '_blank')
-        router.push(`${Constants.SIGNED_VERDICT_OVERVIEW}/${workingCase.id}`)
+        window.open(constants.FEEDBACK_FORM_URL, '_blank')
+        router.push(`${constants.SIGNED_VERDICT_OVERVIEW}/${workingCase.id}`)
       }}
       handleSecondaryButtonClick={async () => {
         if (data?.rulingSignatureConfirmation?.documentSigned) {
-          router.push(`${Constants.SIGNED_VERDICT_OVERVIEW}/${workingCase.id}`)
+          router.push(`${constants.SIGNED_VERDICT_OVERVIEW}/${workingCase.id}`)
         } else {
           onClose()
         }

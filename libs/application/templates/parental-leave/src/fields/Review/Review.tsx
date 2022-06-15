@@ -399,7 +399,7 @@ export const Review: FC<ReviewScreenProps> = ({
                     parentalLeaveFormMessages.shared
                       .otherParentPhoneNumberSubSection,
                   )}
-                  value={otherParentPhoneNumber}
+                  value={formatPhoneNumber(otherParentPhoneNumber)}
                 />
               </GridColumn>
             )}
@@ -911,7 +911,7 @@ export const Review: FC<ReviewScreenProps> = ({
                   label={formatMessage(
                     parentalLeaveFormMessages.employer.phoneNumber,
                   )}
-                  value={employerPhoneNumber}
+                  value={formatPhoneNumber(employerPhoneNumber)}
                 />
               </Box>
             )}

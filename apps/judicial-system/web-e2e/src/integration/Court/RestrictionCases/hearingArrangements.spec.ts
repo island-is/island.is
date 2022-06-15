@@ -88,6 +88,6 @@ describe(`${HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
       .should('have.any.key', 'courtDate')
 
     cy.getByTestid('modalSecondaryButton').click()
-    cy.url().should('include', `${RULING_ROUTE}/test_id_stadfest`)
+    cy.url().should('include', `${RULING_ROUTE}/${caseData.id}`)
   })
 })
