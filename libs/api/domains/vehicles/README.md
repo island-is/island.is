@@ -2,11 +2,37 @@
 
 # API Domains Vehicles
 
-This library was generated with [Nx](https://nx.dev).
+This service utilises the VehicleSearchApi
+
+# How to use
+
+Start the api
+`yarn start api`
+
+X-road needs to be running
+
+```bash
+./scripts/run-xroad-proxy.sh
+```
+
+or
+
+```bash
+kubectl -n socat port-forward svc/socat-xroad 8081:80
+```
+
+VehiclesApiProvider should now be available to use.
 
 ## Running unit tests
 
 Run `nx test api-domains-vehicles` to execute the unit tests via [Jest](https://jestjs.io).
+
+# UI
+
+Example of usage can be found in: http://localhost:4200/minarsidur/okutaeki
+
+Service portal needs to be running.
+`yarn start service-portal`
 
 ## Data explained
 
