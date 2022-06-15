@@ -63,11 +63,6 @@ export const m = defineMessages({
     defaultMessage: 'Viðskiptavinur',
     description: 'Info',
   },
-  generalInfo: {
-    id: 'fsn.application:generalInfo',
-    defaultMessage: 'Upplýsingar',
-    description: `General info`,
-  },
   about: {
     id: 'fsn.application:about',
     defaultMessage: 'Upplýsingar',
@@ -83,11 +78,6 @@ export const m = defineMessages({
     defaultMessage: 'Fullt nafn',
     description: 'Full name',
   },
-  electionCampaign: {
-    id: 'fsn.application:electionCampaign',
-    defaultMessage: 'Kosningabarátta',
-    description: 'Election Campaign',
-  },
   presidentalElection: {
     id: 'fsn.application:presidentalElection',
     defaultMessage: 'Forsetakosningar',
@@ -102,11 +92,6 @@ export const m = defineMessages({
     id: 'fsn.application:electionType',
     defaultMessage: 'Veldu þær kosningar sem skila á upplýsingum fyrir',
     description: 'Election Campaign',
-  },
-  selectElectionType: {
-    id: 'fsn.application:selectElectionType',
-    defaultMessage: 'Veldu þær kosningar sem skila á upplýsingum fyrir',
-    description: 'Select election type',
   },
   selectElection: {
     id: 'fsn.application:selectElection',
@@ -164,30 +149,10 @@ export const m = defineMessages({
     defaultMessage: 'Eignir, skuldir og eigið fé',
     description: 'Statement property numbers',
   },
-  debts: {
-    id: 'fsn.application:keyNumbers.debts',
-    defaultMessage: 'Skuldir',
-    description: 'Keynumbers debt',
-  },
-  debtsLong: {
-    id: 'fsn.application:keyNumbers.debtsLong',
-    defaultMessage: 'Skammtíma',
-    description: 'Keynumbers short term debt',
-  },
-  debtsShort: {
-    id: 'fsn.application:keyNumbers.debtsShort',
-    defaultMessage: 'Langtíma',
-    description: 'Keynumbers long term debt',
-  },
   keyNumbersDebt: {
     id: 'fsn.application:keyNumbers.debt',
     defaultMessage: 'Lykiltölur - Skuldir, eignir og eigið fé',
     description: 'Statement debts',
-  },
-  keyNumbersExpenses: {
-    id: 'fsn.application:keyNumbers.keyNumbersExpenses',
-    defaultMessage: 'Lykiltölur - Tekjur og gjöld',
-    description: 'expenses',
   },
   currentAssets: {
     id: 'fsn.application:keyNumbers.currentAssets',
@@ -224,16 +189,6 @@ export const m = defineMessages({
     defaultMessage: 'Rekstrarniðurstaða',
     description: 'Operating Cost',
   },
-  keyNumbersParty: {
-    id: 'fsn.application:keyNumbers.party',
-    defaultMessage: 'Rekstur flokksins',
-    description: 'Party running cost',
-  },
-  financeCost: {
-    id: 'fsn.application:keyNumbers.financeCost',
-    defaultMessage: 'Fjármagnsgjöld',
-    description: 'finance Cost',
-  },
   fillOutAppopriate: {
     id: 'fsn.application:fillOutAppopriate',
     defaultMessage: 'Vinsamlegast fylltu út þá reiti sem eiga við',
@@ -249,27 +204,11 @@ export const m = defineMessages({
     defaultMessage: 'Eignir samtals',
     description: 'Total assets',
   },
-  keyNumbersPropertiesAndDebts: {
-    id: 'fsn.application:keyNumbersPropertiesAndDebts',
-    defaultMessage: 'Lykiltölur - Tekjur og gjöld',
-    description: 'properties and debts og key numbers',
-  },
-  propertiesShort: {
-    id: 'fsn.application:properties.short',
-    defaultMessage: 'Skammtímakröfur',
-    description: 'Short term',
-  },
-  propertiesCash: {
-    id: 'fsn.application:properties.cash',
-    defaultMessage: 'Bankainnistæður og sjóðir',
-    description: 'Cash is king',
-  },
   keyNumbersIncomeAndExpenses: {
     id: 'fsn.application:keyNumbersIncomeAndExpenses',
     defaultMessage: 'Lykiltölur - Tekjur og gjöld',
     description: 'income and expenses of keynumbers',
   },
-
   income: {
     id: 'fsn.application:income',
     defaultMessage: 'Tekjur',
@@ -344,6 +283,11 @@ export const m = defineMessages({
     id: 'fsn.application:income.totalExpenses',
     defaultMessage: 'Gjöld samtals:',
     description: 'Total expenses',
+  },
+  totalDebts: {
+    id: 'fsn.application:income.totalDebts',
+    defaultMessage: 'Skuldir samtals:',
+    description: 'Total debts',
   },
   totalLiabilities: {
     id: 'fsn.application:keyNumbers.totalLiabilities',

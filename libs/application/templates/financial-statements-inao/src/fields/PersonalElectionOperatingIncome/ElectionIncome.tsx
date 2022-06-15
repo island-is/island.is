@@ -1,12 +1,13 @@
 import React, { Fragment } from 'react'
-import { Controller, useFormContext } from 'react-hook-form'
-import { Box, Input } from '@island.is/island-ui/core'
+import { useFormContext } from 'react-hook-form'
+import { Box } from '@island.is/island-ui/core'
+import { InputController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { OPERATIONIDS } from '../../lib/constants'
 
 interface PropTypes {
-  getSum: (key: string) => void
+  getSum: () => void
 }
 
 export const Income = ({ getSum }: PropTypes): JSX.Element => {
@@ -17,108 +18,53 @@ export const Income = ({ getSum }: PropTypes): JSX.Element => {
   return (
     <Fragment>
       <Box paddingY={1}>
-        <Controller
+        <InputController
+          id={OPERATIONIDS.corporateDonations}
           name={OPERATIONIDS.corporateDonations}
-          render={({ value, onChange }) => {
-            return (
-              <Input
-                id={OPERATIONIDS.corporateDonations}
-                name={OPERATIONIDS.corporateDonations}
-                label={formatMessage(m.corporateDonation)}
-                value={value}
-                onBlur={() => getSum('income')}
-                backgroundColor="blue"
-                onChange={(e) => {
-                  clearErrors(OPERATIONIDS.corporateDonations)
-                  onChange(e.target.value)
-                }}
-              />
-            )
-          }}
+          label={formatMessage(m.corporateDonation)}
+          onBlur={() => getSum()}
+          backgroundColor="blue"
+          currency
         />
       </Box>
       <Box paddingY={1}>
-        <Controller
+        <InputController
+          id={OPERATIONIDS.individualDonations}
           name={OPERATIONIDS.individualDonations}
-          render={({ value, onChange }) => {
-            return (
-              <Input
-                id={OPERATIONIDS.individualDonations}
-                name={OPERATIONIDS.individualDonations}
-                label={formatMessage(m.individualDonations)}
-                value={value}
-                onBlur={() => getSum('income')}
-                backgroundColor="blue"
-                onChange={(e) => {
-                  clearErrors(OPERATIONIDS.individualDonations)
-                  onChange(e.target.value)
-                }}
-              />
-            )
-          }}
+          label={formatMessage(m.individualDonations)}
+          onBlur={() => getSum()}
+          backgroundColor="blue"
+          currency
         />
       </Box>
       <Box paddingY={1}>
-        <Controller
+        <InputController
+          id={OPERATIONIDS.personalDonations}
           name={OPERATIONIDS.personalDonations}
-          render={({ value, onChange }) => {
-            return (
-              <Input
-                id={OPERATIONIDS.personalDonations}
-                name={OPERATIONIDS.personalDonations}
-                label={formatMessage(m.personalDonations)}
-                value={value}
-                onBlur={() => getSum('income')}
-                backgroundColor="blue"
-                onChange={(e) => {
-                  clearErrors(OPERATIONIDS.personalDonations)
-                  onChange(e.target.value)
-                }}
-              />
-            )
-          }}
+          label={formatMessage(m.personalDonations)}
+          onBlur={() => getSum()}
+          backgroundColor="blue"
+          currency
         />
       </Box>
       <Box paddingY={1}>
-        <Controller
+        <InputController
+          id={OPERATIONIDS.otherIncome}
           name={OPERATIONIDS.otherIncome}
-          render={({ value, onChange }) => {
-            return (
-              <Input
-                id={OPERATIONIDS.otherIncome}
-                name={OPERATIONIDS.otherIncome}
-                label={formatMessage(m.otherIncome)}
-                value={value}
-                onBlur={() => getSum('income')}
-                backgroundColor="blue"
-                onChange={(e) => {
-                  clearErrors(OPERATIONIDS.otherIncome)
-                  onChange(e.target.value)
-                }}
-              />
-            )
-          }}
+          label={formatMessage(m.otherIncome)}
+          onBlur={() => getSum()}
+          backgroundColor="blue"
+          currency
         />
       </Box>
       <Box paddingY={1}>
-        <Controller
+        <InputController
+          id={OPERATIONIDS.capitalIncome}
           name={OPERATIONIDS.capitalIncome}
-          render={({ value, onChange }) => {
-            return (
-              <Input
-                id={OPERATIONIDS.capitalIncome}
-                name={OPERATIONIDS.capitalIncome}
-                label={formatMessage(m.capitalIncome)}
-                value={value}
-                onBlur={() => getSum('income')}
-                backgroundColor="blue"
-                onChange={(e) => {
-                  clearErrors(OPERATIONIDS.capitalIncome)
-                  onChange(e.target.value)
-                }}
-              />
-            )
-          }}
+          label={formatMessage(m.capitalIncome)}
+          onBlur={() => getSum()}
+          backgroundColor="blue"
+          currency
         />
       </Box>
     </Fragment>

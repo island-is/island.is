@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useCallback, useState, useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
 import {
   GridColumn,
@@ -19,19 +19,24 @@ export const PersonalElectionOperatingIncome = (): JSX.Element => {
   const [totalExpense, setTotalExpense] = useState(0)
   const { formatMessage } = useLocale()
 
-  const getTotalIncome = (key: string) => {
+  const getTotalIncome = useCallback(() => {
     const values = getValues()
-    const totalIncome: number = getTotal(values, key)
+    const totalIncome: number = getTotal(values, 'income')
     setTotalIncome(totalIncome)
     return totalIncome
-  }
+  }, [getValues])
 
-  const getTotalExpense = (key: string) => {
+  const getTotalExpense = useCallback(() => {
     const values = getValues()
-    const totalExpense: number = getTotal(values, key)
+    const totalExpense: number = getTotal(values, 'expense')
     setTotalExpense(totalExpense)
     return totalExpense
-  }
+  }, [getValues])
+
+  useEffect(() => {
+    getTotalExpense()
+    getTotalIncome()
+  }, [getTotalExpense, getTotalIncome])
 
   return (
     <GridContainer>
@@ -41,19 +46,20 @@ export const PersonalElectionOperatingIncome = (): JSX.Element => {
             {formatMessage(m.income)}
           </Text>
           <Income getSum={getTotalIncome} />
-          <Total total={totalIncome} label={formatMessage(m.totalIncome)} />
+          <Total name="income.total" total={totalIncome} label={formatMessage(m.totalIncome)} />
         </GridColumn>
         <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
           <Text paddingY={1} as="h2" variant="h4">
             {formatMessage(m.expenses)}
           </Text>
           <Expenses getSum={getTotalExpense} />
-          <Total total={totalExpense} label={formatMessage(m.totalExpenses)} />
+          <Total name="expense.total" total={totalExpense} label={formatMessage(m.totalExpenses)} />
         </GridColumn>
       </GridRow>
       <GridRow align="flexEnd">
         <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
           <Total
+            name="operatingCost.total"
             label={formatMessage(m.operatingCost)}
             title={formatMessage(m.operatingCost)}
             total={totalIncome - totalExpense}

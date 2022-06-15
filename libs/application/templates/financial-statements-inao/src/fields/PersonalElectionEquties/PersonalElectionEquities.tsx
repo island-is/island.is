@@ -1,46 +1,52 @@
-import React, { useState } from 'react'
-import { Controller, useFormContext } from 'react-hook-form'
+import React, { useCallback, useEffect, useState } from 'react'
+import { useFormContext } from 'react-hook-form'
 import {
   Box,
   GridColumn,
   GridContainer,
   GridRow,
-  Input,
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { InputController } from '@island.is/shared/form-fields'
 import { m } from '../../lib/messages'
 import { Total } from '../KeyNumbers'
 import { getTotal } from '../../lib/utils/helpers'
 import { EQUITIESANDLIABILITIESIDS } from '../../lib/constants'
 
 export const PersonalElectionEquities = (): JSX.Element => {
-  const { getValues, clearErrors } = useFormContext()
+  const { getValues } = useFormContext()
   const [totalAssets, setTotalAssets] = useState(0)
   const [totalEquity, setTotalEquity] = useState(0)
   const [totalLiabilities, setTotalLiabilities] = useState(0)
   const { formatMessage } = useLocale()
 
-  const getTotalEquity = () => {
+  const getTotalEquity = useCallback(() => {
     const values = getValues()
     const equity: number = getTotal(values, 'equity')
     setTotalEquity(equity)
     return equity
-  }
+  }, [getValues])
 
-  const getTotalAssets = () => {
+  const getTotalAssets = useCallback(() => {
     const values = getValues()
     const assets: number = getTotal(values, 'asset')
     setTotalAssets(assets)
     return assets
-  }
+  }, [getValues])
 
-  const getTotalLiabilities = () => {
+  const getTotalLiabilities = useCallback(() => {
     const values = getValues()
     const liabilities: number = getTotal(values, 'liability')
     setTotalLiabilities(liabilities)
     return liabilities
-  }
+  }, [getValues])
+
+  useEffect(() => {
+    getTotalEquity()
+    getTotalAssets()
+    getTotalLiabilities()
+  }, [getTotalEquity, getTotalAssets, getTotalLiabilities])
 
   return (
     <GridContainer>
@@ -50,118 +56,72 @@ export const PersonalElectionEquities = (): JSX.Element => {
             {formatMessage(m.properties)}
           </Text>
           <Box paddingY={1}>
-            <Controller
+            <InputController
+              id={EQUITIESANDLIABILITIESIDS.current}
               name={EQUITIESANDLIABILITIESIDS.current}
-              render={({ value, onChange }) => {
-                return (
-                  <Input
-                    id={EQUITIESANDLIABILITIESIDS.current}
-                    name={EQUITIESANDLIABILITIESIDS.current}
-                    label={formatMessage(m.currentAssets)}
-                    value={value}
-                    onBlur={() => getTotalAssets()}
-                    backgroundColor="blue"
-                    onChange={(e) => {
-                      clearErrors(EQUITIESANDLIABILITIESIDS.current)
-                      onChange(e.target.value)
-                    }}
-                  />
-                )
-              }}
+              label={formatMessage(m.currentAssets)}
+              onBlur={() => getTotalAssets()}
+              backgroundColor="blue"
+              currency
             />
           </Box>
           <Box paddingY={1}>
-            <Controller
+            <InputController
+              id={EQUITIESANDLIABILITIESIDS.tangible}
               name={EQUITIESANDLIABILITIESIDS.tangible}
-              render={({ value, onChange }) => {
-                return (
-                  <Input
-                    id={EQUITIESANDLIABILITIESIDS.tangible}
-                    name={EQUITIESANDLIABILITIESIDS.tangible}
-                    label={formatMessage(m.tangibleAssets)}
-                    value={value}
-                    onBlur={() => getTotalAssets()}
-                    backgroundColor="blue"
-                    onChange={(e) => {
-                      clearErrors(EQUITIESANDLIABILITIESIDS.tangible)
-                      onChange(e.target.value)
-                    }}
-                  />
-                )
-              }}
+              label={formatMessage(m.tangibleAssets)}
+              onBlur={() => getTotalAssets()}
+              backgroundColor="blue"
+              currency
             />
           </Box>
-          <Total total={totalAssets} label={formatMessage(m.totalAssets)} />
+          <Total
+            name="assets.total"
+            total={totalAssets}
+            label={formatMessage(m.totalAssets)}
+          />
         </GridColumn>
         <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
           <Text paddingY={1} as="h2" variant="h4">
             {formatMessage(m.expenses)}
           </Text>
           <Box paddingY={1}>
-            <Controller
+            <InputController
+              id={EQUITIESANDLIABILITIESIDS.longTerm}
               name={EQUITIESANDLIABILITIESIDS.longTerm}
-              render={({ value, onChange }) => {
-                return (
-                  <Input
-                    id={EQUITIESANDLIABILITIESIDS.longTerm}
-                    name={EQUITIESANDLIABILITIESIDS.longTerm}
-                    label={formatMessage(m.longTerm)}
-                    value={value}
-                    onBlur={() => getTotalLiabilities()}
-                    backgroundColor="blue"
-                    onChange={(e) => {
-                      clearErrors(EQUITIESANDLIABILITIESIDS.longTerm)
-                      onChange(e.target.value)
-                    }}
-                  />
-                )
-              }}
+              label={formatMessage(m.longTerm)}
+              onBlur={() => getTotalLiabilities()}
+              backgroundColor="blue"
+              currency
             />
           </Box>
           <Box paddingY={1}>
-            <Controller
+            <InputController
+              id={EQUITIESANDLIABILITIESIDS.shortTerm}
               name={EQUITIESANDLIABILITIESIDS.shortTerm}
-              render={({ value, onChange }) => {
-                return (
-                  <Input
-                    id={EQUITIESANDLIABILITIESIDS.shortTerm}
-                    name={EQUITIESANDLIABILITIESIDS.shortTerm}
-                    label={formatMessage(m.shortTerm)}
-                    value={value}
-                    onBlur={() => getTotalLiabilities()}
-                    backgroundColor="blue"
-                    onChange={(e) => {
-                      clearErrors(EQUITIESANDLIABILITIESIDS.shortTerm)
-                      onChange(e.target.value)
-                    }}
-                  />
-                )
-              }}
-            />
-          </Box>
-          <Total total={totalLiabilities} label={formatMessage(m.totalAssets)} />
-          <Box paddingY={1}>
-            <Controller
-              name={EQUITIESANDLIABILITIESIDS.equity}
-              render={({ value, onChange }) => {
-                return (
-                  <Input
-                    id={EQUITIESANDLIABILITIESIDS.equity}
-                    name={EQUITIESANDLIABILITIESIDS.equity}
-                    label={formatMessage(m.equity)}
-                    value={value}
-                    onBlur={() => getTotalEquity()}
-                    backgroundColor="blue"
-                    onChange={(e) => {
-                      clearErrors(EQUITIESANDLIABILITIESIDS.equity)
-                      onChange(e.target.value)
-                    }}
-                  />
-                )
-              }}
+              label={formatMessage(m.shortTerm)}
+              onBlur={() => getTotalLiabilities()}
+              backgroundColor="blue"
+              currency
             />
           </Box>
           <Total
+            name="liability.total"
+            total={totalLiabilities}
+            label={formatMessage(m.totalDebts)}
+          />
+          <Box paddingY={1}>
+            <InputController
+              id={EQUITIESANDLIABILITIESIDS.equity}
+              name={EQUITIESANDLIABILITIESIDS.equity}
+              label={formatMessage(m.equity)}
+              onBlur={() => getTotalEquity()}
+              backgroundColor="blue"
+              currency
+            />
+          </Box>
+          <Total
+            name="equity.total"
             total={totalEquity - totalLiabilities}
             label={formatMessage(m.totalExpenses)}
           />

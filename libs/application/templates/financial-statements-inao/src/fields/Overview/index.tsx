@@ -18,7 +18,6 @@ export const Overview = ({ application }: FieldBaseProps) => {
   const { formatMessage } = useLocale()
 
   const answers = application.answers as FinancialStatementsInao
-  console.log({ answers })
   return (
     <Box marginBottom={2}>
       <Divider />
