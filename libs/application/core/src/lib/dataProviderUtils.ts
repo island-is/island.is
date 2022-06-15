@@ -47,6 +47,7 @@ export const getErrorReasonIfPresent = (
       return {
         title: reason.title,
         summary: reason.summary,
+        hideSubmitError: reason.hideSubmitError,
       }
     }
     if (isTranslationObject(reason) || isString(reason)) {
@@ -85,7 +86,9 @@ function callProvider(
       return Promise.resolve(provider.onProvideSuccess(result))
     },
     (error) => {
-      const { title, summary } = getErrorReasonIfPresent(error.reason)
+      const { title, summary, hideSubmitError } = getErrorReasonIfPresent(
+        error.reason,
+      )
       return Promise.resolve(
         provider.onProvideError({
           ...error,
@@ -94,6 +97,7 @@ function callProvider(
               ? formatMessage(summary)
               : summary,
             title: isTranslationObject(title) ? formatMessage(title) : title,
+            hideSubmitError: hideSubmitError,
           },
         }),
       )
