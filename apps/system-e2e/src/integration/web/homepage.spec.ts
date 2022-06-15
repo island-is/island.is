@@ -1,6 +1,9 @@
 describe('Home page', () => {
-  before(() => {
-    cy.ensureLoggedIn({ url: '/' })
+  beforeEach(() => {
+    cy.cognitoLogin({
+      cognitoUsername: Cypress.env("COGNITO_USERNAME"),
+      cognitoPassword: Cypress.env("COGNITO_PASSWORD")
+    })
   })
   it('should navigate homepage', () => {
     cy.visit('/')
