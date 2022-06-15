@@ -50,6 +50,7 @@ export class IslykillApiModule {
                 basePath: config.basePath,
                 fetchApi: createEnhancedFetch({
                   name: 'clients-islykill',
+                  timeout: 20000,
                   clientCertificate: pfx && {
                     pfx,
                     passphrase,
