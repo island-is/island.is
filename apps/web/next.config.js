@@ -29,8 +29,6 @@ module.exports = withNx(
       ]
     },
     webpack: (config, { isServer }) => {
-      console.log(config.module.rules[3])
-
       if (!isServer) {
         config.resolve.alias['@sentry/node'] = '@sentry/browser'
       }
