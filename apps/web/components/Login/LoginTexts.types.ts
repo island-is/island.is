@@ -5,6 +5,7 @@ export type LoginPageTexts = Partial<
     | 'gomluSidurTitle' // 'Eitthvað um gömlu mínar síður'
     | 'gomluSidurText' // 'Einhver texti um nýja útgáfu á minna síðna á ísland.is...'
     | 'gomluSidurLink' // 'Fara á gömlu mínar síður'
+    | 'gomluSidurUrl'
     | 'gomluSidurListTitle' // 'Á nýjum mínum síðum'
     | 'gomluSidurUrl'
     | 'nyjuSidurTitle' // 'Ný útgáfa af mínum síðum á island.is'
