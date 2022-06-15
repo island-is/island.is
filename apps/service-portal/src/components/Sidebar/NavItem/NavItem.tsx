@@ -55,6 +55,7 @@ const NavItemContent: FC<Props> = ({
         styles.navItem,
         styles.navItemActive[navItemActive],
         collapsed && 'collapsed',
+        'navitem',
       ]}
       display="flex"
       alignItems="center"

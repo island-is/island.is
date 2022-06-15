@@ -62,8 +62,9 @@ globalStyle(`${itemWrapper}:hover svg`, {
   color: theme.color.blue400,
 })
 
-globalStyle(`${itemWrapper}:hover .collapsed`, {
+globalStyle(`${itemWrapper}:hover .navitem`, {
   backgroundColor: theme.color.blue100,
+  color: theme.color.blue400,
 })
 
 globalStyle(`${itemWrapper}:hover #sub-nav-model`, {
