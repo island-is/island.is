@@ -3,6 +3,7 @@ import { render, waitFor, screen } from '@testing-library/react'
 import { getByText } from '@testing-library/dom'
 import { MockedProvider, MockedResponse } from '@apollo/client/testing'
 import userEvent from '@testing-library/user-event'
+import { createIntl } from 'react-intl'
 
 import {
   mockCaseQueries,
@@ -17,8 +18,9 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 import { LocaleProvider } from '@island.is/localization'
 import FormProvider from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { TIME_FORMAT } from '@island.is/judicial-system/consts'
+import { Case, CaseState, CaseType } from '@island.is/judicial-system/types'
 
-import { SignedVerdictOverview } from './SignedVerdictOverview'
+import { SignedVerdictOverview, titleForCase } from './SignedVerdictOverview'
 
 window.scrollTo = jest.fn()
 
@@ -37,24 +39,6 @@ function renderSignedVerdictOverview(mocks: ReadonlyArray<MockedResponse>) {
 }
 
 describe('Rejected case', () => {
-  test('should have the correct title if case is not accepted', async () => {
-    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
-    useRouter.mockImplementation(() => ({
-      query: { id: 'test_id_2' },
-      pathname: '/krafa/test_id_2',
-    }))
-
-    renderSignedVerdictOverview([
-      ...mockCaseQueries,
-      ...mockJudgeQuery,
-      ...mockInstitutionsQuery,
-    ])
-
-    expect(
-      await screen.findByText('Kröfu hafnað', { selector: 'h1' }),
-    ).toBeInTheDocument()
-  })
-
   test('should have the correct subtitle if case is not accepted', async () => {
     const useRouter = jest.spyOn(require('next/router'), 'useRouter')
     useRouter.mockImplementation(() => ({
@@ -119,24 +103,6 @@ describe('Rejected case', () => {
 })
 
 describe('Dismissed case', () => {
-  test('should have the correct title', async () => {
-    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
-    useRouter.mockImplementation(() => ({
-      query: { id: 'test_id_12' },
-      pathname: '/krafa/test_id_2',
-    }))
-
-    renderSignedVerdictOverview([
-      ...mockCaseQueries,
-      ...mockJudgeQuery,
-      ...mockInstitutionsQuery,
-    ])
-
-    expect(
-      await screen.findByText('Kröfu vísað frá', { selector: 'h1' }),
-    ).toBeInTheDocument()
-  })
-
   test('should have the correct subtitle', async () => {
     const useRouter = jest.spyOn(require('next/router'), 'useRouter')
     useRouter.mockImplementation(() => ({
@@ -201,24 +167,6 @@ describe('Dismissed case', () => {
 })
 
 describe('Accepted case with active custody', () => {
-  test('should have the correct title', async () => {
-    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
-    useRouter.mockImplementation(() => ({
-      query: { id: 'test_id_5' },
-      pathname: '/krafa/test_id_2',
-    }))
-
-    renderSignedVerdictOverview([
-      ...mockCaseQueries,
-      ...mockJudgeQuery,
-      ...mockInstitutionsQuery,
-    ])
-
-    expect(
-      await screen.findByText('Gæsluvarðhald virkt', { selector: 'h1' }),
-    ).toBeInTheDocument()
-  })
-
   test('should have the correct subtitle', async () => {
     const validToDate = '2020-09-25T19:50:08.033Z'
     const courtEndTime = '2020-09-19T17:50:08.033Z'
@@ -373,24 +321,6 @@ describe('Accepted case with active custody', () => {
 
 describe('Accepted case with custody end time in the past', () => {
   describe('Court roles', () => {
-    test('should have the correct title', async () => {
-      const useRouter = jest.spyOn(require('next/router'), 'useRouter')
-      useRouter.mockImplementation(() => ({
-        query: { id: 'test_id_6' },
-        pathname: '/krafa/test_id_2',
-      }))
-
-      renderSignedVerdictOverview([
-        ...mockCaseQueries,
-        ...mockJudgeQuery,
-        ...mockInstitutionsQuery,
-      ])
-
-      expect(
-        await screen.findByText('Gæsluvarðhaldi lokið', { selector: 'h1' }),
-      ).toBeInTheDocument()
-    })
-
     test('should have the correct subtitle', async () => {
       const dateInPast = '2020-09-24T19:50:08.033Z'
       const courtEndTime = '2020-09-16T19:51:28.224Z'
@@ -540,24 +470,6 @@ describe('Accepted case with custody end time in the past', () => {
   })
 })
 describe('Accepted case with active travel ban', () => {
-  test('should have the correct title', async () => {
-    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
-    useRouter.mockImplementation(() => ({
-      query: { id: 'test_id_7' },
-      pathname: '/krafa/test_id_2',
-    }))
-
-    renderSignedVerdictOverview([
-      ...mockCaseQueries,
-      ...mockJudgeQuery,
-      ...mockInstitutionsQuery,
-    ])
-
-    expect(
-      await screen.findByText('Farbann virkt', { selector: 'h1' }),
-    ).toBeInTheDocument()
-  })
-
   test('should have the correct subtitle', async () => {
     const useRouter = jest.spyOn(require('next/router'), 'useRouter')
     useRouter.mockImplementation(() => ({
@@ -632,24 +544,6 @@ describe('Accepted case with active travel ban', () => {
 })
 
 describe('Accepted case with travel ban end time in the past', () => {
-  test('should have the correct title', async () => {
-    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
-    useRouter.mockImplementation(() => ({
-      query: { id: 'test_id_8' },
-      pathname: '/krafa/test_id_2',
-    }))
-
-    renderSignedVerdictOverview([
-      ...mockCaseQueries,
-      ...mockJudgeQuery,
-      ...mockInstitutionsQuery,
-    ])
-
-    expect(
-      await screen.findByText('Farbanni lokið', { selector: 'h1' }),
-    ).toBeInTheDocument()
-  })
-
   test('should have the correct subtitle', async () => {
     const dateInPast = '2020-09-24T19:50:08.033Z'
     const courtEndTime = '2020-09-16T19:51:28.224Z'
@@ -704,26 +598,6 @@ describe('Accepted case with travel ban end time in the past', () => {
 })
 
 describe('Accepted case with adission to facility with end time in the past', () => {
-  test('should have the correct title', async () => {
-    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
-    useRouter.mockImplementation(() => ({
-      query: { id: 'test_id_13' },
-      pathname: '/krafa/test_id_2',
-    }))
-
-    renderSignedVerdictOverview([
-      ...mockCaseQueries,
-      ...mockJudgeQuery,
-      ...mockInstitutionsQuery,
-    ])
-
-    expect(
-      await screen.findByText('Vistun á viðeigandi stofnun lokið', {
-        selector: 'h1',
-      }),
-    ).toBeInTheDocument()
-  })
-
   test('should have the correct subtitle', async () => {
     const useRouter = jest.spyOn(require('next/router'), 'useRouter')
     useRouter.mockImplementation(() => ({
@@ -745,5 +619,101 @@ describe('Accepted case with adission to facility with end time in the past', ()
     expect(
       getByText(caseDates, 'Vistun rann út 24. september 2020 kl. 19:50'),
     ).toBeTruthy()
+  })
+})
+
+describe('titleForCase', () => {
+  const formatMessage = createIntl({ locale: 'is', onError: jest.fn })
+    .formatMessage
+  const fn = (theCase: Case) => titleForCase(formatMessage, theCase)
+
+  test('should handle rejected investigation case', () => {
+    const theCase = {
+      state: CaseState.REJECTED,
+      type: CaseType.BODY_SEARCH,
+    } as Case
+    const res = fn(theCase)
+    expect(res).toEqual('Kröfu um rannsóknarheimild hafnað')
+  })
+
+  test('should handle rejected restriction case', () => {
+    const theCase = {
+      state: CaseState.REJECTED,
+      type: CaseType.CUSTODY,
+    } as Case
+    const res = fn(theCase)
+    expect(res).toEqual('Kröfu hafnað')
+  })
+
+  test('should handle dismissed case', () => {
+    const theCase = { state: CaseState.DISMISSED } as Case
+    const res = fn(theCase)
+    expect(res).toEqual('Kröfu vísað frá')
+  })
+
+  test('should handle custody case with valid to date in past', () => {
+    const theCase = {
+      state: CaseState.ACCEPTED,
+      type: CaseType.CUSTODY,
+      isValidToDateInThePast: true,
+    } as Case
+    const res = fn(theCase)
+    expect(res).toEqual('Gæsluvarðhaldi lokið')
+  })
+
+  test('should handle admission case with valid to date in past', () => {
+    const theCase = {
+      state: CaseState.ACCEPTED,
+      type: CaseType.ADMISSION_TO_FACILITY,
+      isValidToDateInThePast: true,
+    } as Case
+    const res = fn(theCase)
+    expect(res).toEqual('Vistun á viðeigandi stofnun lokið')
+  })
+
+  test('should handle travel ban case with valid to date in past', () => {
+    const theCase = {
+      state: CaseState.ACCEPTED,
+      type: CaseType.TRAVEL_BAN,
+      isValidToDateInThePast: true,
+    } as Case
+    const res = fn(theCase)
+    expect(res).toEqual('Farbanni lokið')
+  })
+
+  test('should handle accepted investigation case', () => {
+    const theCase = {
+      state: CaseState.ACCEPTED,
+      type: CaseType.SEARCH_WARRANT,
+    } as Case
+    const res = fn(theCase)
+    expect(res).toEqual('Krafa um rannsóknarheimild samþykkt')
+  })
+
+  test('should handle active custody case', () => {
+    const theCase = {
+      state: CaseState.ACCEPTED,
+      type: CaseType.CUSTODY,
+    } as Case
+    const res = fn(theCase)
+    expect(res).toEqual('Gæsluvarðhald virkt')
+  })
+
+  test('should handle active admission case', () => {
+    const theCase = {
+      state: CaseState.ACCEPTED,
+      type: CaseType.CUSTODY,
+    } as Case
+    const res = fn(theCase)
+    expect(res).toEqual('Vistun á viðeigandi stofnun virk')
+  })
+
+  test('should handle active travel case', () => {
+    const theCase = {
+      state: CaseState.ACCEPTED,
+      type: CaseType.TRAVEL_BAN,
+    } as Case
+    const res = fn(theCase)
+    expect(res).toEqual('Farbann virkt')
   })
 })

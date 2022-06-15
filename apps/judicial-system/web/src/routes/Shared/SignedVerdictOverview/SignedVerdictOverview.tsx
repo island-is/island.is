@@ -92,6 +92,38 @@ function showCustodyNotice(
     isAcceptingCaseDecision(decision)
   )
 }
+export const titleForCase = (
+  formatMessage: IntlShape['formatMessage'],
+  theCase: Case,
+) => {
+  const isTravelBan =
+    theCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
+    theCase.type === CaseType.TRAVEL_BAN
+
+  if (theCase.state === CaseState.REJECTED) {
+    if (isInvestigationCase(theCase.type)) {
+      return 'Kröfu um rannsóknarheimild hafnað'
+    } else {
+      return 'Kröfu hafnað'
+    }
+  }
+
+  if (theCase.state === CaseState.DISMISSED) {
+    return formatMessage(m.dismissedTitle)
+  }
+
+  if (theCase.isValidToDateInThePast) {
+    return formatMessage(m.validToDateInThePast, {
+      caseType: isTravelBan ? CaseType.TRAVEL_BAN : theCase.type,
+    })
+  }
+
+  return isInvestigationCase(theCase.type)
+    ? formatMessage(m.investigationAccepted)
+    : formatMessage(m.restrictionActive, {
+        caseType: isTravelBan ? CaseType.TRAVEL_BAN : theCase.type,
+      })
+}
 
 export const SignedVerdictOverview: React.FC = () => {
   // Date modification state
@@ -149,35 +181,6 @@ export const SignedVerdictOverview: React.FC = () => {
    * decided only accept an alternative travel ban and finally we
    * assume that the actual custody was accepted.
    */
-  const titleForCase = (theCase: Case) => {
-    const isTravelBan =
-      theCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
-      theCase.type === CaseType.TRAVEL_BAN
-
-    if (theCase.state === CaseState.REJECTED) {
-      if (isInvestigationCase(theCase.type)) {
-        return 'Kröfu um rannsóknarheimild hafnað'
-      } else {
-        return 'Kröfu hafnað'
-      }
-    }
-
-    if (theCase.state === CaseState.DISMISSED) {
-      return formatMessage(m.dismissedTitle)
-    }
-
-    if (theCase.isValidToDateInThePast) {
-      return formatMessage(m.validToDateInThePast, {
-        caseType: isTravelBan ? CaseType.TRAVEL_BAN : theCase.type,
-      })
-    }
-
-    return isInvestigationCase(theCase.type)
-      ? formatMessage(m.investigationAccepted)
-      : formatMessage(m.restrictionActive, {
-          caseType: isTravelBan ? CaseType.TRAVEL_BAN : theCase.type,
-        })
-  }
 
   const canModifyCaseDates = useCallback(() => {
     return (
@@ -466,7 +469,7 @@ export const SignedVerdictOverview: React.FC = () => {
             <Box>
               <Box marginBottom={1}>
                 <Text as="h1" variant="h1">
-                  {titleForCase(workingCase)}
+                  {titleForCase(formatMessage, workingCase)}
                 </Text>
               </Box>
               <Box>
