@@ -31,7 +31,6 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-api'> => {
           'http://web-service-portal-api.service-portal.svc.cluster.local',
         prod: 'https://service-portal-api.internal.island.is',
       },
-      IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api',
       COMPANY_REGISTRY_XROAD_PROVIDER_ID: {
         dev: 'IS-DEV/GOV/10006/Skatturinn/ft-v1',
         staging: 'IS-TEST/GOV/5402696029/Skatturinn/ft-v1',
@@ -49,6 +48,7 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-api'> => {
           'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379',
         ]),
       },
+    })
     .xroad(Base, Client, RskProcuring)
     .readiness('/liveness')
     .liveness('/liveness')
