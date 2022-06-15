@@ -56,6 +56,25 @@ export class RegulationsService extends RESTDataSource {
     this.memoizedResults.clear()
     request.headers.set('Content-Type', 'application/json')
   }
+
+  async createPresignedPost(
+    fileName: string,
+    regId: string,
+    hash?: string,
+  ): Promise<PresignedPost | null> {
+    const body = { fileName, hash }
+    const response = await this.post<PresignedPost | null>(
+      `http://localhost:3000/api/v1/file-presigned?scope=${regId}`,
+      JSON.stringify(body),
+      {
+        headers: {
+          'X-ApiKey': process.env.FILE_UPLOAD_KEY_PRESIGNED ?? '',
+        },
+      },
+    )
+    return response
+  }
+
   /*
   Example api routes for regulation
   regulation/[name]/current
@@ -65,23 +84,6 @@ export class RegulationsService extends RESTDataSource {
   regulation/[name]/d/[date]/diff
   regulation/[name]/d/[date]/diff/[earlierDate]
 */
-  async createPresignedPost(
-    fileName?: string,
-    type?: string,
-  ): Promise<PresignedPost | null> {
-    const body = { fileName, type }
-    const response = await this.post<PresignedPost | null>(
-      'http://localhost:3000/api/v1/file-presigned',
-      JSON.stringify(body),
-      {
-        headers: {
-          'X-ApiKey': process.env.REGULATIONS_API_KEY ?? '',
-        },
-      },
-    )
-    return response
-  }
-
   async getRegulation(
     viewType: RegulationViewTypes,
     name: RegQueryName,

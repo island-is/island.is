@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useHistory } from 'react-router'
 import { Query } from '@island.is/api/schema'
 import { gql, useQuery, useMutation, ApolloError } from '@apollo/client'
@@ -20,7 +20,7 @@ import {
 } from '@island.is/regulations'
 import { ShippedSummary } from '@island.is/regulations/admin'
 import { getEditUrl } from './routing'
-import { UploadFile } from '@island.is/island-ui/core'
+import { createHash } from 'crypto'
 
 type QueryResult<T> =
   | {
@@ -38,123 +38,143 @@ type QueryResult<T> =
       loading?: never
       error: ApolloError | Error
     }
+
 // ---------------------------------------------------------------------------
 
-const CreatePresignedPostMutation = gql`
+export const CreatePresignedPostMutation = gql`
   mutation CreatePresignedPostMutation($input: CreatePresignedPostInput!) {
     createPresignedPost(input: $input)
   }
 `
+export type UploadingState =
+  | { uploading: false; file?: never; error?: string }
+  | { uploading: false; file: File; error?: never }
+  | { uploading: true; file?: never; error?: never }
 
 export const useS3Upload = () => {
   const [createNewPresignedPost] = useMutation(CreatePresignedPostMutation)
-  const [uploadErrorMessage, setUploadErrorMessage] = useState<string>()
-  const [uploadFile, setUploadFile] = useState<UploadFile>()
   const [uploadLocation, setUploadLocation] = useState<string>()
+  const [uploadStatus, setUploadStatus] = useState<UploadingState>({
+    uploading: false,
+  })
 
   const createFormData = (
     presignedPost: PresignedPost,
-    file?: UploadFile,
+    file?: File,
   ): FormData => {
     const formData = new FormData()
     Object.keys(presignedPost.fields).forEach((key) => {
       formData.append(key, presignedPost.fields[key])
     })
     if (file) {
-      formData.append('file', file as File)
+      formData.append('file', file)
     }
     return formData
   }
 
+  const getHash = async (file: File) => {
+    const fileText = await file.text()
+    const hash = createHash('md5').update(fileText).digest('hex').slice(0, 8)
+    return hash
+  }
+
   const createPresignedPost = async (
-    file: UploadFile,
+    name: string,
+    regId: string,
+    hash?: string,
   ): Promise<PresignedPost> => {
     try {
       const post = await createNewPresignedPost({
         variables: {
           input: {
-            fileName: file?.name ?? 'default',
-            type: file?.type ?? 'multipart/form-data',
+            fileName: name,
+            regId: regId,
+            hash: hash ?? '',
           },
         },
       })
 
       return post.data?.createPresignedPost
     } catch (error) {
-      setUploadErrorMessage("Couldn't create presigned post!")
+      setUploadStatus({
+        uploading: false,
+        error: 'Presigned Post creation failed',
+      })
       return { url: '', fields: {} }
     }
   }
 
-  const uploadToS3 = async (file: UploadFile, presignedPost: PresignedPost) => {
+  const uploadToS3 = async (
+    file?: File,
+    key?: string,
+    presignedPost?: PresignedPost,
+  ) => {
+    if (!presignedPost || !file) {
+      return
+    }
+
     const formData = createFormData(presignedPost, file)
 
-    file.status = 'uploading'
-    setUploadFile(file)
+    setUploadStatus({ uploading: true })
 
-    return fetch(presignedPost.url, {
+    await fetch(presignedPost.url, {
       body: formData,
       method: 'POST',
       mode: 'cors',
       headers: {
         Accept: 'application/json',
       },
-    }).then(
-      () => {
-        file.status = 'done'
-        const loc = `${presignedPost.url}/${file.key}`
-        setUploadLocation(loc)
-        setUploadFile(file)
-      },
-      () => {
-        file.status = 'error'
-        setUploadFile(file)
-      },
-    )
+    }).then((res) => {
+      if (!res.ok) {
+        setUploadStatus({
+          uploading: false,
+          error: `Upload failed: ${res.statusText}`,
+        })
+        return
+      }
+      const location = `${presignedPost.url}/${key}`
+      setUploadLocation(location)
+      setUploadStatus({ uploading: false })
+    })
   }
 
-  const deleteFromS3 = async (presignedPost: PresignedPost) => {
-    console.log('not implemented')
-    /*const formData = createFormData(presignedPost)
-    const res = await fetch(presignedPost.url, {
-      body: formData,
-      method: 'DELETE',
-      mode: 'cors',
-    })*/
-  }
+  const resetUploadLocation = () => setUploadLocation(undefined)
 
-  const onChange = async (newFiles: File[]) => {
-    setUploadErrorMessage(undefined)
+  //const deleteFromS3 = async (presignedPost: PresignedPost) => {}
 
-    if (!newFiles.length) {
+  const onChange = async (newFiles: File[], regId: string) => {
+    setUploadStatus({ uploading: false })
+
+    if (!newFiles?.length) {
+      setUploadStatus({ uploading: false, error: 'No file provided' })
       return
     }
-
-    const file = newFiles[0] as UploadFile
-    const presignedPost = await createPresignedPost(file)
+    //There should be only one file!
+    const file = newFiles[0]
+    const hash = await getHash(file)
+    const presignedPost = await createPresignedPost(file.name, regId, hash)
 
     if (!presignedPost) {
       return
     }
-    file.key = presignedPost.fields.key
-    setUploadFile(file)
-
-    uploadToS3(file, presignedPost)
+    uploadToS3(file, presignedPost.fields.key, presignedPost)
   }
 
-  const onRetry = () => {
-    setUploadErrorMessage(undefined)
-    onChange([uploadFile as File])
+  const onRetry = (file: File, regId: string) => {
+    onChange([file], regId)
   }
 
-  const onRemove = async (file: UploadFile) => {
+  /*
+  const onRemove = async (file?: UploadFile, regId?: string) => {
     setUploadErrorMessage(undefined)
 
-    if (!file) {
+    if (!file || !regId) {
       return
     }
 
-    const presignedPost = await createPresignedPost(file)
+    const hash = await getHash(file)
+    const file = newFiles[0] as UploadFile
+    const presignedPost = await createPresignedPost(file.name, regId, hash)
 
     if (!presignedPost) {
       return
@@ -162,12 +182,16 @@ export const useS3Upload = () => {
 
     deleteFromS3(presignedPost)
   }
+  */
+
   return {
-    uploadFile,
-    uploadErrorMessage,
     uploadLocation,
+    uploadStatus,
+    createPresignedPost,
+    createFormData,
+    uploadToS3,
+    resetUploadLocation,
     onChange,
-    onRemove,
     onRetry,
   }
 }

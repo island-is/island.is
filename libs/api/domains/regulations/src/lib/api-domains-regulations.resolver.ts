@@ -21,7 +21,8 @@ import { GetRegulationsLawChaptersInput } from './dto/getRegulationsLawChapters.
 import { GetRegulationsMinistriesInput } from './dto/getRegulationsMinistriesInput.input'
 import { GetRegulationsSearchInput } from './dto/getRegulationsSearch.input'
 import { CreatePresignedPostInput } from './dto/createPresignedPost.input'
-import { PresignedPost } from '@island.is/regulations/admin'
+import { ImageSourceMap, PresignedPost } from '@island.is/regulations/admin'
+import { UploadImageUrlsInput } from './dto/uploadImageUrls.input'
 
 const validPage = (page: number | undefined) => (page && page >= 1 ? page : 1)
 
@@ -35,7 +36,8 @@ export class RegulationsResolver {
   ): Promise<PresignedPost | null> {
     return this.regulationsService.createPresignedPost(
       input.fileName,
-      input.type,
+      input.regId,
+      input.hash,
     )
   }
 

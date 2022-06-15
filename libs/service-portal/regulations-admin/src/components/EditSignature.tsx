@@ -1,6 +1,4 @@
-import * as s from '../utils/styles.css'
-
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import {
   AlertMessage,
   Box,
@@ -12,8 +10,6 @@ import {
   Inline,
   Input,
   InputFileUpload,
-  fileToObject,
-  UploadFile,
   Text,
   Divider,
 } from '@island.is/island-ui/core'
@@ -21,21 +17,12 @@ import { useDraftingState } from '../state/useDraftingState'
 import { editorMsgs as msg } from '../messages'
 import { getMinPublishDate } from '../utils'
 
-import { RegDraftForm } from '../state/types'
 import { EditorInput } from './EditorInput'
-import {
-  HTMLText,
-  PlainText,
-  URLString,
-  useShortState,
-} from '@island.is/regulations'
-import { produce } from 'immer'
+import { HTMLText, PlainText, URLString } from '@island.is/regulations'
 import { downloadUrl } from '../utils/files'
 import { DownloadDraftButton } from './DownloadDraftButton'
-import { useAuth } from '@island.is/auth/react'
 import { useLocale } from '@island.is/localization'
 import { useS3Upload } from '../utils/dataHooks'
-import { PresignedPost } from '@island.is/regulations/admin'
 
 // ---------------------------------------------------------------------------
 
@@ -95,36 +82,66 @@ export const EditSignature = () => {
   const { updateState } = actions
 
   const {
-    uploadFile,
-    uploadErrorMessage,
     uploadLocation,
+    uploadStatus,
+    resetUploadLocation,
     onChange,
     onRetry,
-    onRemove,
   } = useS3Upload()
+
+  const onRemove = () => {
+    resetUploadLocation()
+  }
+
+  useEffect(() => {
+    updateState('signedDocumentUrl', uploadLocation as URLString)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [uploadLocation])
+
   return (
     <Box marginBottom={6}>
       <Box marginBottom={4}>
         <DownloadDraftButton draftId={draft.id} />
       </Box>
 
-      <Box marginBottom={4}>
+      {/*
+        <Box marginBottom={4}>
         <InputFileUpload
-          fileList={uploadFile ? [uploadFile] : []}
+          fileList={uploadStatus.file || []}
           header={t(msg.signedDocumentUploadDragPrompt)}
           description={
             t(msg.signedDocumentUploadDescr).replace(/^\s+$/, '') || undefined
           }
           buttonLabel={t(msg.signedDocumentUpload)}
-          onChange={onChange}
-          onRetry={onRetry}
-          onRemove={onRemove}
-          errorMessage={uploadErrorMessage}
+          onChange={uploadSignedPDF}
+          onRetry={retryUpload}
+          onRemove={cancelUpload}
+          errorMessage={uploadStatus.error}
           accept=".pdf"
           multiple={false}
         />
-        {uploadErrorMessage && (
-          <AlertMessage type="error" title={uploadErrorMessage} />
+        {uploadStatus.error && (
+          <AlertMessage type="error" title={uploadStatus.error} />
+        )}
+      </Box>
+    */}
+
+      <Box marginBottom={4}>
+        <InputFileUpload
+          fileList={[]}
+          header={t(msg.signedDocumentUploadDragPrompt)}
+          description={
+            t(msg.signedDocumentUploadDescr).replace(/^\s+$/, '') || undefined
+          }
+          buttonLabel={t(msg.signedDocumentUpload)}
+          onChange={(files) => onChange(files, draft.id)}
+          onRetry={(file) => onRetry(file as File, draft.id)}
+          onRemove={resetUploadLocation}
+          accept=".pdf"
+          multiple={false}
+        />
+        {uploadStatus.error && (
+          <AlertMessage type="error" title={uploadStatus.error} />
         )}
       </Box>
 
@@ -171,13 +188,13 @@ export const EditSignature = () => {
               </Button>
 
               <Button
-                onClick={uploadFile ? () => onRemove(uploadFile) : undefined}
+                onClick={onRemove}
                 variant="text"
                 size="small"
                 as="button"
                 iconType="outline"
                 icon="close"
-                disabled={uploadFile?.status === 'uploading'}
+                disabled={uploadStatus.uploading}
                 title={t(msg.signedDocumentClearLong)}
                 aria-label={t(msg.signedDocumentClearLong)}
               >

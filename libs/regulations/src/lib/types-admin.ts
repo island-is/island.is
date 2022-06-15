@@ -66,6 +66,10 @@ export type Author = {
 
 // ---------------------------------------------------------------------------
 
+export type ImageSourceMap = Array<{ oldUrl: string; newUrl: string }>
+
+// ---------------------------------------------------------------------------
+
 export type PresignedPost = {
   url: string
   fields: { [key: string]: string }

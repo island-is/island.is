@@ -1,30 +1,18 @@
 import * as s from './EditorInput.css'
 import { classes } from './Editor.css'
 
-import React, { useMemo, useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { Box } from '@island.is/island-ui/core'
 import {
   Editor as RegulationsEditor,
   EditorProps,
-  EditorFileUploader,
 } from '@island.is/regulations-tools/Editor'
 import cn from 'classnames'
 import { HTMLText, useDomid } from '@island.is/regulations'
 import { RegulationDraftId } from '@island.is/regulations/admin'
+import { useFileUploader } from '../utils/fileUploader'
 
 const KB = 1024
-
-const _fileUploader = (draftId: RegulationDraftId): EditorFileUploader => (
-  blobInfo,
-  success,
-  failure,
-  progress,
-) => {
-  // TODO: Implement uploader
-  failure('TODO: Implement uploader for ' + blobInfo.filename())
-}
-
-// ===========================================================================
 
 export type EditorInputProps = Omit<
   EditorProps,
@@ -64,9 +52,7 @@ export const EditorInput = (props: EditorInputProps) => {
 
   const srOnlyClass = hiddenLabel ? ' ' + s.srOnly : ''
 
-  const fileUploader = useMemo(() => _fileUploader(props.draftId), [
-    props.draftId,
-  ])
+  const fileUploader = useFileUploader(props.draftId)
 
   // add warnings at the top of the editor for longer content.
   const warningsAbove = props.warningsAbove ?? value.length > 1 * KB
@@ -91,7 +77,7 @@ export const EditorInput = (props: EditorInputProps) => {
           {...editorProps}
           valueRef={valueRef}
           classes={classes}
-          fileUploader={fileUploader}
+          fileUploader={fileUploader()}
           baseText={baseText}
           onFocus={() => {
             setHasFocus(true)
