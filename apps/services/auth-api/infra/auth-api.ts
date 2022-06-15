@@ -1,11 +1,6 @@
 import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
-import {
-  Base,
-  Client,
-  NationalRegistry,
-  RskCompanyInfo,
-  RskProcuring,
-} from '../../../../infra/src/dsl/xroad'
+import { json } from '../../../../infra/src/dsl/dsl'
+import { Base, Client, RskProcuring } from '../../../../infra/src/dsl/xroad'
 
 const postgresInfo = {
   username: 'servicesauth',
@@ -35,12 +30,47 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-api'> => {
         prod: 'https://service-portal-api.internal.island.is',
       },
       IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api',
+      COMPANY_REGISTRY_XROAD_PROVIDER_ID: {
+        dev: 'IS-DEV/GOV/10006/Skatturinn/ft-v1',
+        staging: 'IS-TEST/GOV/5402696029/Skatturinn/ft-v1',
+        prod: 'IS/GOV/5402696029/Skatturinn/ft-v1',
+      },
+      COMPANY_REGISTRY_REDIS_NODES: {
+        dev:
+          'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+        staging:
+          'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
+        prod:
+          'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379',
+      },
+      XROAD_NATIONAL_REGISTRY_SERVICE_PATH: {
+        dev: 'IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1',
+        staging: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1',
+        prod: 'IS/GOV/6503760649/SKRA-Protected/Einstaklingar-v1',
+      },
+      XROAD_NATIONAL_REGISTRY_REDIS_NODES: {
+        dev: json([
+          'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+        ]),
+        staging: json([
+          'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
+        ]),
+        prod: json([
+          'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379',
+        ]),
+      },
+      XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1',
+      XROAD_TJODSKRA_MEMBER_CODE: {
+        prod: '6503760649',
+        dev: '10001',
+        staging: '6503760649',
+      },
     })
     .secrets({
       IDENTITY_SERVER_CLIENT_SECRET:
         '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET',
     })
-    .xroad(Base, Client, RskProcuring, NationalRegistry, RskCompanyInfo)
+    .xroad(Base, Client, RskProcuring)
     .readiness('/liveness')
     .liveness('/liveness')
     .initContainer({
