@@ -4,7 +4,6 @@ const cognitoPassword = Cypress.env('COGNITO_PASSWORD')
 describe('Home page', () => {
   before(() => {
     cy.cognitoLogin({ cognitoUsername, cognitoPassword })
-    // cy.ensureLoggedIn({ url: '/' })
   })
   it('should navigate homepage', () => {
     cy.visit('/')
