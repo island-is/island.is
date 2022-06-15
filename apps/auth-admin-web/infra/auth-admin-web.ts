@@ -22,6 +22,9 @@ export const serviceSetup = (): ServiceBuilder<'auth-admin-web'> => {
         prod: 'https://innskra.island.is/admin/api/auth',
       },
     })
+    .secrets({
+      IDENTITYSERVER_SECRET: '/k8s/auth-admin-web/IDENTITYSERVER_SECRET',
+    })
     .ingress({
       primary: {
         host: {
