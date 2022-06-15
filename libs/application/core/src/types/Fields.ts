@@ -158,6 +158,7 @@ export interface CompanySearchField extends BaseField {
   component: FieldComponents.COMPANY_SEARCH
   placeholder?: FormText
   setLabelToDataSchema?: boolean
+  shouldIncludeIsatNumber?: boolean
 }
 
 export interface AsyncSelectField extends BaseField {

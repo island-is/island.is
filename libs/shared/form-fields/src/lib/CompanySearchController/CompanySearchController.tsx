@@ -7,6 +7,7 @@ import { gql, useLazyQuery } from '@apollo/client'
 import debounce from 'lodash/debounce'
 import { CompanySearchItem } from './CompanySearchItem'
 import { debounceTime } from '@island.is/shared/constants'
+import { string } from 'zod'
 
 export const COMPANY_REGISTRY_COMPANIES = gql`
   query SearchCompanies($input: RskCompanyInfoSearchInput!) {
@@ -14,6 +15,18 @@ export const COMPANY_REGISTRY_COMPANIES = gql`
       data {
         name
         nationalId
+        companyInfo {
+          vat {
+            dateOfRegistration
+            dateOfDeregistration
+            classification {
+              type
+              classificationSystem
+              number
+              name
+            }
+          }
+        }
       }
     }
   }
@@ -29,12 +42,14 @@ interface Props {
   inputValue?: string
   colored?: boolean
   setLabelToDataSchema?: boolean
+  shouldIncludeIsatNumber?: boolean
   setNationalId?: (s: string) => void
 }
 
 export const CompanySearchController: FC<Props> = ({
   defaultValue,
   id,
+  shouldIncludeIsatNumber,
   name = id,
   label,
   placeholder,
@@ -75,7 +90,9 @@ export const CompanySearchController: FC<Props> = ({
 
   const getSearchOptions = (
     query: string,
-    response: { data: { name: string; nationalId: string }[] } = { data: [] },
+    response: {
+      data: { name: string; nationalId: string }[]
+    } = { data: [] },
   ) => {
     const { data } = response
     const options = data?.map(({ name, nationalId }) => ({
@@ -92,6 +109,34 @@ export const CompanySearchController: FC<Props> = ({
       ),
     }))
     return options || []
+  }
+
+  const getIsatNumbers = (nationalId: string) => {
+    if (!shouldIncludeIsatNumber) return ''
+
+    const companies: Array<any> = data?.companyRegistryCompanies?.data ?? []
+    if (companies.length === 0) return ''
+
+    const filteredCompany = companies.filter((company) => {
+      if (company.nationalId === nationalId) return true
+      return false
+    })
+
+    if (filteredCompany.length === 0) return ''
+    const vats: Array<any> = filteredCompany[0].companyInfo.vat
+    let isat = ''
+    vats?.map((v) => {
+      if (!v.dateOfDeregistration) {
+        ;(v.classification as Array<any>)?.map((c) => {
+          if (c.type === 'Aðal') {
+            isat = `${c.number} - ${c.name}`
+          }
+          return c
+        })
+      }
+      return v
+    })
+    return isat
   }
 
   return (
@@ -116,8 +161,8 @@ export const CompanySearchController: FC<Props> = ({
                 setValue(
                   id,
                   setLabelToDataSchema
-                    ? { nationalId: '', label: '' }
-                    : { nationalId: '' },
+                    ? { isat: '', nationalId: '', label: '' }
+                    : { isat: '', nationalId: '' },
                 )
                 clearErrors(id)
                 const inputValue = query?.trim() || ''
@@ -131,8 +176,12 @@ export const CompanySearchController: FC<Props> = ({
                   setValue(
                     id,
                     setLabelToDataSchema
-                      ? { nationalId: value, label }
-                      : { nationalId: value },
+                      ? {
+                          isat: getIsatNumbers(value),
+                          nationalId: value,
+                          label,
+                        }
+                      : { isat: getIsatNumbers(value), nationalId: value },
                   )
                 }
               }}
