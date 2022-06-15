@@ -26,7 +26,7 @@ import {
   selectCompany,
 } from '../lib/messages'
 import { YES } from '../shared/constants'
-import { selectCompanySearchField } from '../shared/types'
+import { selectCompanySearchField } from '@island.is/application/ui-components'
 
 export const LoginServiceForm: Form = buildForm({
   id: 'LoginServiceForm',

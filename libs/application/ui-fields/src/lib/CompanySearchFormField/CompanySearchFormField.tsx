@@ -7,14 +7,7 @@ import { Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React, { FC } from 'react'
 import { CompanySearchController } from '@island.is/shared/form-fields'
-
-type selectCompanySearchField = {
-  searchField: {
-    isat: string
-    nationalId: string
-    label: string
-  }
-}
+import { selectCompanySearchField } from '@island.is/application/ui-components'
 
 interface Props extends FieldBaseProps {
   field: CompanySearchField

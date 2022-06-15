@@ -111,31 +111,35 @@ export const CompanySearchController: FC<Props> = ({
     return options || []
   }
 
-  const getIsatNumbers = (nationalId: string) => {
-    if (!shouldIncludeIsatNumber) return ''
+  const getIsatNumber = (nationalId: string) => {
+    if (!shouldIncludeIsatNumber) {
+      return ''
+    }
 
     const companies: Array<any> = data?.companyRegistryCompanies?.data ?? []
     if (companies.length === 0) return ''
 
-    const filteredCompany = companies.filter((company) => {
-      if (company.nationalId === nationalId) return true
-      return false
-    })
+    const filteredCompany = companies.filter(
+      (company) => company.nationalId === nationalId,
+    )
 
-    if (filteredCompany.length === 0) return ''
+    if (filteredCompany.length === 0) {
+      return ''
+    }
+
     const vats: Array<any> = filteredCompany[0].companyInfo.vat
     let isat = ''
-    vats?.map((v) => {
+
+    for (let v of vats) {
       if (!v.dateOfDeregistration) {
-        ;(v.classification as Array<any>)?.map((c) => {
-          if (c.type === 'Aðal') {
-            isat = `${c.number} - ${c.name}`
-          }
-          return c
-        })
+        const c = (v.classification as Array<any>).find(
+          (c) => c.type === 'Aðal',
+        )
+        if (c) {
+          return `${c.number} - ${c.name}`
+        }
       }
-      return v
-    })
+    }
     return isat
   }
 
@@ -177,11 +181,11 @@ export const CompanySearchController: FC<Props> = ({
                     id,
                     setLabelToDataSchema
                       ? {
-                          isat: getIsatNumbers(value),
+                          isat: getIsatNumber(value),
                           nationalId: value,
                           label,
                         }
-                      : { isat: getIsatNumbers(value), nationalId: value },
+                      : { isat: getIsatNumber(value), nationalId: value },
                   )
                 }
               }}
