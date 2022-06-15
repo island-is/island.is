@@ -19,8 +19,6 @@ interface Props {
   error?: any
 }
 
-/* Collects only Driving License */
-// TODO: Generate hook for collecting all licenses when other services are ready
 export const useLicenses = (type?: GenericLicenseType): Props => {
   const { data: userProfile } = useUserProfile()
   const locale = (userProfile?.locale as Locale) ?? 'is'
@@ -33,7 +31,6 @@ export const useLicenses = (type?: GenericLicenseType): Props => {
       input: input,
     },
   })
-
   const [licenses, setLicenses] = useState<Array<GenericUserLicense>>()
   const { genericLicenses } = data ?? {}
 
@@ -49,6 +46,8 @@ export const useLicenses = (type?: GenericLicenseType): Props => {
     error,
   }
 }
+
+//TODO: remove
 interface GetLicenseProps {
   data?: DrivingLicenseType
   status: GenericUserLicenseStatus | ''

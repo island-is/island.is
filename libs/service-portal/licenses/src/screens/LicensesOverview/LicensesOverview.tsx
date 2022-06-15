@@ -40,11 +40,12 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
       {data && (
         <LicenseCards>
           {data.map((item, i) => {
+            console.log(item)
             if (item.license.status !== 'HasLicense') {
               return null
             }
 
-            const text = 'skírteinisnúmer'
+            const text = 'viðeigandi skírteinisnúmer'
             const tag = 'Placeholder'
             let title
 
