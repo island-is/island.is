@@ -1,7 +1,6 @@
 import faker from 'faker'
 
 import { NEW_IC_ROUTE } from '@island.is/judicial-system/consts'
-import { CaseType } from '@island.is/judicial-system/types'
 
 describe(NEW_IC_ROUTE, () => {
   beforeEach(() => {
