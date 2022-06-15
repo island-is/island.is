@@ -33,7 +33,7 @@ export const keyNumbersSection = buildSection({
       children: [
         buildCustomField({
           id: 'equitiesAndLiabilities',
-          title: m.keyNumbersIncomeAndExpenses,
+          title: m.keyNumbersDebt,
           description: m.fillOutAppopriate,
           component: 'PersonalElectionEquities',
           childInputIds: Object.values(EQUITIESANDLIABILITIESIDS) ,

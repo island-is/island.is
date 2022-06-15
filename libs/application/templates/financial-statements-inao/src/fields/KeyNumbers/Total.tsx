@@ -1,9 +1,9 @@
 import React from 'react'
 import { Box, Input, Text } from '@island.is/island-ui/core'
 
-type PropTypes = { total: number; label: string; title?: string }
+type PropTypes = { name: string, total: number; label: string; title?: string }
 
-export const Total = ({ total, label, title }: PropTypes) => {
+export const Total = ({ name, total, label, title }: PropTypes) => {
   return (
     <Box paddingY={3}>
       {title ? (
@@ -12,11 +12,12 @@ export const Total = ({ total, label, title }: PropTypes) => {
         </Text>
       ) : null}
       <Input
-        id="income.id"
-        name="income.total"
+        id={name}
+        name={name}
         value={total}
         label={label}
         readOnly
+        
       />
     </Box>
   )

@@ -17,6 +17,9 @@ interface Props {
   onChange?: (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => void
+  onBlur?: (
+    event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => void
   placeholder?: string
   textarea?: boolean
   backgroundColor?: InputBackgroundColor
@@ -58,6 +61,7 @@ export const InputController: FC<Props> = ({
   type = 'text',
   format,
   onChange: onInputChange,
+  onBlur: onInputBlur,
   suffix,
   rows,
   required,
@@ -68,7 +72,7 @@ export const InputController: FC<Props> = ({
   autoComplete,
 }) => {
   function renderChildInput(c: ChildParams) {
-    const { value, onChange, ...props } = c
+    const { value, onChange, onBlur, ...props } = c
     if (currency) {
       return (
         <NumberFormat
@@ -99,6 +103,7 @@ export const InputController: FC<Props> = ({
           onValueChange={({ value }) => {
             onChange(value)
           }}
+          onBlur={onInputBlur}
           hasError={error !== undefined}
           errorMessage={error}
           required={required}
@@ -133,6 +138,7 @@ export const InputController: FC<Props> = ({
           onValueChange={({ value }) => {
             onChange(value)
           }}
+          onBlur={onInputBlur}
           hasError={error !== undefined}
           errorMessage={error}
           required={required}
@@ -167,6 +173,7 @@ export const InputController: FC<Props> = ({
           onValueChange={({ value }) => {
             onChange(value)
           }}
+          onBlur={onInputBlur}
           hasError={error !== undefined}
           errorMessage={error}
           required={required}
@@ -199,6 +206,7 @@ export const InputController: FC<Props> = ({
               onInputChange(e)
             }
           }}
+          onBlur={onInputBlur}
           rows={rows}
           size={size}
           {...props}
