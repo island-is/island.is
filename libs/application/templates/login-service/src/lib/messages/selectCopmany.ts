@@ -4,7 +4,7 @@ export const selectCompany = {
   general: defineMessages({
     pageTitle: {
       id: `ls.application:section.selectCompany.pageTitle`,
-      defaultMessage: 'Upplýsingar um umsækjanda',
+      defaultMessage: 'Upplýsingar um fyrirtæki',
       description: 'Applicant page title',
     },
     pageDescription: {
