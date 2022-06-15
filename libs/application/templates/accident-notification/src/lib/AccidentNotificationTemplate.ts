@@ -262,9 +262,9 @@ const AccidentNotificationTemplate: ApplicationTemplate<
   mapUserToRole(
     id: string,
     application: Application,
-  ): ApplicationRole | ApplicationRole[] | undefined {
+  ): ApplicationRole | undefined {
     if (id === application.applicant && application.assignees.includes(id)) {
-      return [Roles.ASSIGNEE, Roles.APPLICANT]
+      return Roles.ASSIGNEE
     }
 
     if (id === application.applicant) {

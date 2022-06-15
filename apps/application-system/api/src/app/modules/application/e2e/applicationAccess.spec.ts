@@ -44,12 +44,9 @@ const createTestApplicationTemplate = (): ApplicationTemplate<
   ApplicationStateSchema<EventObject>,
   EventObject
 > => ({
-  mapUserToRole(nationalId: string): ApplicationRole | ApplicationRole[] {
+  mapUserToRole(nationalId: string): ApplicationRole {
     if (nationalId === '111111-3000') {
       return 'applicant'
-    }
-    if (nationalId === '111111-3002') {
-      return ['applicant', 'reviewer']
     }
     return 'reviewer'
   },
@@ -221,18 +218,6 @@ describe('ApplicationAccesService', () => {
       testApplicationTemplate,
     )
     expect(results).toBe(false)
-  })
-
-  it('should return true when application is in review and user is a reviewer and an applicant', async () => {
-    const applicationInReview = createMockApplication({
-      state: 'inReview',
-    })
-    const results = await applicationAccessService.shouldShowApplicationOnOverview(
-      applicationInReview,
-      '111111-3002',
-      testApplicationTemplate,
-    )
-    expect(results).toBe(true)
   })
 
   it('should return true when application is in rejected and should be listed is not defined for the role', async () => {

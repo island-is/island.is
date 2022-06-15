@@ -64,19 +64,7 @@ export class ApplicationSerializer
     const intl = await this.intlService.useIntl(namespaces, locale)
 
     const userRole = template.mapUserToRole(nationalId, application) ?? ''
-    let canUserDelete = false
-    if (Array.isArray(userRole)) {
-      for (const role in userRole) {
-        const roleInState = helper.getRoleInState(userRole[role])
-        if (roleInState?.delete) {
-          canUserDelete = true
-        }
-      }
-    } else {
-      const roleInState = helper.getRoleInState(userRole)
-      canUserDelete = roleInState?.delete ?? false
-    }
-
+    const roleInState = helper.getRoleInState(userRole)
     const actors =
       application.applicant === nationalId ? application.applicantActors : []
 
@@ -97,7 +85,7 @@ export class ApplicationSerializer
             ? intl.formatMessage(actionCardMeta.tag.label)
             : null,
         },
-        deleteButton: canUserDelete,
+        deleteButton: roleInState?.delete,
       },
       name: intl.formatMessage(template.name),
       institution: template.institution

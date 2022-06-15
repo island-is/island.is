@@ -40,6 +40,6 @@ export interface ApplicationTemplate<
   mapUserToRole(
     nationalId: string,
     application: Application,
-  ): ApplicationRole | undefined | ApplicationRole[]
+  ): ApplicationRole | undefined
   answerValidators?: Record<string, AnswerValidator>
 }

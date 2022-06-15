@@ -55,19 +55,9 @@ export class ApplicationAccessService {
     const templateId = application.typeId as ApplicationTypes
     const template = await getApplicationTemplateByTypeId(templateId)
     const helper = new ApplicationTemplateHelper(application, template)
-    const currentUserRoles =
+    const currentUserRole =
       template.mapUserToRole(nationalId, application) || ''
-
-    if (Array.isArray(currentUserRoles)) {
-      for (const role in currentUserRoles) {
-        const currentRole = helper.getRoleInState(currentUserRoles[role])
-        if (currentRole?.delete) {
-          return true
-        }
-      }
-      return false
-    }
-    const role = helper.getRoleInState(currentUserRoles)
+    const role = helper.getRoleInState(currentUserRole)
     return role?.delete ?? false
   }
 
@@ -102,22 +92,8 @@ export class ApplicationAccessService {
       return false
     }
 
-    const currentUserRoles = template.mapUserToRole(nationalId, application)
+    const currentUserRole = template.mapUserToRole(nationalId, application)
     const templateHelper = new ApplicationTemplateHelper(application, template)
-    if (Array.isArray(currentUserRoles)) {
-      for (const role in currentUserRoles) {
-        if (
-          await this.evaluateIfRoleShouldBeListed(
-            currentUserRoles[role],
-            templateHelper,
-          )
-        ) {
-          return true
-        }
-      }
-      // return false if true isn't returned from evaluateRole before
-      return false
-    }
-    return this.evaluateIfRoleShouldBeListed(currentUserRoles, templateHelper)
+    return this.evaluateIfRoleShouldBeListed(currentUserRole, templateHelper)
   }
 }

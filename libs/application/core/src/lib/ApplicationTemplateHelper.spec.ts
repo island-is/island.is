@@ -263,45 +263,6 @@ describe('ApplicationTemplate', () => {
           status: 'success',
         },
       })
-      expect(
-        helper.getWritableAnswersAndExternalData(['applicant', 'reviewer']),
-      ).toEqual({
-        answers: ['person', 'wantsInsurance'],
-        externalData: ['salary'],
-      })
-    })
-
-    it('should ONLY return the answers and externalData that the applicant and reviewer can read/write in closed state', () => {
-      const applicationWithAnswersAndExternalData = createMockApplication({
-        state: 'closed',
-        answers,
-        externalData,
-      })
-      const helper = new ApplicationTemplateHelper(
-        applicationWithAnswersAndExternalData,
-        testApplicationTemplate,
-      )
-      const result = helper.getReadableAnswersAndExternalData([
-        'applicant',
-        'reviewer',
-      ])
-      expect(result.answers).toEqual({
-        person: {
-          age: 25,
-          pets: [
-            { name: 'John', kind: 'dog' },
-            { name: 'Spot', kind: 'cat' },
-          ],
-        },
-        wantsCake: false,
-      })
-      expect(result.externalData).toEqual({
-        salary: {
-          data: 1000000,
-          date: externalData.salary.date,
-          status: 'success',
-        },
-      })
     })
 
     it('should return true', () => {
@@ -378,9 +339,6 @@ describe('ApplicationTemplate', () => {
         answers,
         externalData,
       })
-      expect(
-        helper.getWritableAnswersAndExternalData(['applicant', 'reviewer']),
-      ).toEqual('all')
     })
   })
 

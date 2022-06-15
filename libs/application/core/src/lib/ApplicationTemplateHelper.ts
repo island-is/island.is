@@ -175,99 +175,49 @@ export class ApplicationTemplateHelper<
   }
 
   getReadableAnswersAndExternalData(
-    roles: ApplicationRole | ApplicationRole[],
+    role: ApplicationRole,
   ): { answers: FormValue; externalData: ExternalData } {
     const returnValue: { answers: FormValue; externalData: ExternalData } = {
       answers: {},
       externalData: {},
     }
     const { answers, externalData } = this.application
-    if (typeof roles === 'string') {
-      roles = [roles]
+
+    const roleInState = this.getRoleInState(role)
+    if (!roleInState) {
+      return returnValue
     }
-    for (const role in roles) {
-      const roleInState = this.getRoleInState(roles[role])
-      if (!roleInState) {
-        continue
-      }
-      const { read, write } = roleInState
+    const { read, write } = roleInState
 
-      if (read === 'all' || write === 'all') {
-        return { answers, externalData }
-      }
-
-      const answersToPick = [
-        ...(write?.answers ?? []),
-        ...(read?.answers ?? []),
-      ]
-      answersToPick.forEach((answerKey) => {
-        // if answer already in return value skip it
-        if (!returnValue.answers[answerKey]) {
-          returnValue.answers[answerKey] = answers[answerKey]
-        }
-      })
-      const externalDataToPick = [
-        ...(write?.externalData ?? []),
-        ...(read?.externalData ?? []),
-      ]
-      externalDataToPick.forEach((dataKey) => {
-        // if data already in return value skip it
-        if (!returnValue.externalData[dataKey]) {
-          returnValue.externalData[dataKey] = externalData[dataKey]
-        }
-      })
+    if (read === 'all' || write === 'all') {
+      return { answers, externalData }
     }
 
+    const answersToPick = [...(write?.answers ?? []), ...(read?.answers ?? [])]
+    answersToPick.forEach((answerKey) => {
+      returnValue.answers[answerKey] = answers[answerKey]
+    })
+    const externalDataToPick = [
+      ...(write?.externalData ?? []),
+      ...(read?.externalData ?? []),
+    ]
+    externalDataToPick.forEach((dataKey) => {
+      returnValue.externalData[dataKey] = externalData[dataKey]
+    })
     return returnValue
   }
 
   getWritableAnswersAndExternalData(
-    roles?: ApplicationRole | ApplicationRole[],
+    role?: ApplicationRole,
   ): ReadWriteValues | undefined {
-    if (!roles) {
+    if (!role) {
       return undefined
     }
-    if (Array.isArray(roles)) {
-      const answerReturnValue: string[] = []
-      const externalDataReturnValue: string[] = []
-      for (const role in roles) {
-        const roleInState = this.getRoleInState(roles[role])
-        if (!roleInState) {
-          continue
-        }
-        const roleWrite = roleInState.write
-        if (!roleWrite) {
-          continue
-        }
-        if (roleWrite === 'all') {
-          return 'all'
-        }
-        if (roleWrite.answers) {
-          roleWrite.answers.forEach((answerKey) => {
-            if (!answerReturnValue.includes(answerKey)) {
-              answerReturnValue.push(answerKey)
-            }
-          })
-        }
-        if (roleWrite.externalData) {
-          roleWrite.externalData.forEach((externalDataKey) => {
-            if (!externalDataReturnValue.includes(externalDataKey)) {
-              externalDataReturnValue.push(externalDataKey)
-            }
-          })
-        }
-      }
-      return {
-        answers: answerReturnValue,
-        externalData: externalDataReturnValue,
-      }
-    } else {
-      const roleInState = this.getRoleInState(roles)
-      if (!roleInState) {
-        return undefined
-      }
-      return roleInState.write
+    const roleInState = this.getRoleInState(role)
+    if (!roleInState) {
+      return undefined
     }
+    return roleInState.write
   }
 
   getRoleInState(role: ApplicationRole): RoleInState<TEvents> | undefined {
