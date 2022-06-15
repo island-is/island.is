@@ -150,6 +150,7 @@
 - [Clients](libs/clients/README.md)
   - [Assets](libs/clients/assets/README.md)
   - [Auth Public API](libs/clients/auth-public-api/README.md)
+  - [Clients Charge Fjs V2](libs/clients/charge-fjs-v2/README.md)
   - [Criminal Record](libs/clients/criminal-record/README.md)
   - [Data Protection Complaint](libs/clients/data-protection-complaint/README.md)
   - [Document Provider](libs/clients/document-provider/README.md)

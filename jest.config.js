@@ -131,6 +131,7 @@ module.exports = {
     '<rootDir>/libs/auth/scopes',
     '<rootDir>/libs/clients/assets',
     '<rootDir>/libs/clients/auth-public-api',
+    '<rootDir>/libs/clients/charge-fjs-v2',
     '<rootDir>/libs/clients/criminal-record',
     '<rootDir>/libs/clients/data-protection-complaint',
     '<rootDir>/libs/clients/document-provider',

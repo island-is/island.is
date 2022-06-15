@@ -272,6 +272,9 @@
       "@island.is/clients/auth-public-api": [
         "libs/clients/auth-public-api/src/index.ts"
       ],
+      "@island.is/clients/charge-fjs-v2": [
+        "libs/clients/charge-fjs-v2/src/index.ts"
+      ],
       "@island.is/clients/criminal-record": [
         "libs/clients/criminal-record/src/index.ts"
       ],
