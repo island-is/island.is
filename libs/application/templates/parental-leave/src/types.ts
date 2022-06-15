@@ -55,6 +55,6 @@ export interface Payments {
 
 export interface OtherParent {
   chooseOtherParent: string
-  otherParentName: string
+  otherParentName?: string
   otherParentId: string
 }
