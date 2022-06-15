@@ -1,8 +1,8 @@
 describe('Home page', () => {
   beforeEach(() => {
     cy.cognitoLogin({
-      cognitoUsername: Cypress.env("COGNITO_USERNAME"),
-      cognitoPassword: Cypress.env("COGNITO_PASSWORD")
+      cognitoUsername: Cypress.env('COGNITO_USERNAME'),
+      cognitoPassword: Cypress.env('COGNITO_PASSWORD'),
     })
   })
   it('should navigate homepage', () => {
