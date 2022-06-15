@@ -144,6 +144,7 @@ export const CaseQuery = gql`
       rulingModifiedHistory
       caseResentExplanation
       origin
+      seenByDefender
     }
   }
 `
