@@ -18,7 +18,7 @@ export class InternalCaseController {
   constructor(
     private readonly caseService: CaseService,
     private readonly eventService: EventService,
-    @Inject(LOGGER_PROVIDER) private readonly logger: Logger, // @InjectQueue(caseModuleConfig().sqs.queueName) private queue: QueueService,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
   @Post('case')

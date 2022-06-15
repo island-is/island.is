@@ -25,7 +25,14 @@ import {
   DokobitError,
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
-import { CaseState, CaseType, UserRole } from '@island.is/judicial-system/types'
+// import { InjectQueue, QueueService } from '@island.is/message-queue'
+import {
+  CaseState,
+  CaseType,
+  // completedCaseStates,
+  // MessageType,
+  UserRole,
+} from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 import {
   CurrentHttpUser,
@@ -61,6 +68,7 @@ import { Case } from './models/case.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
 import { CaseService } from './case.service'
+// import { caseModuleConfig } from './case.config'
 
 @Controller('api')
 @ApiTags('cases')
