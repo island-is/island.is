@@ -68,7 +68,7 @@ export class RegulationsService extends RESTDataSource {
     let response: PresignedPost | null
     try {
       response = await this.post<PresignedPost | null>(
-        `http://localhost:3000/api/v1/file-presigned?scope=${regId}`,
+        `file-presigned?scope=${regId}`,
         JSON.stringify(body),
         {
           headers: {
