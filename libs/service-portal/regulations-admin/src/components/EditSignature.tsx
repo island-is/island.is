@@ -104,28 +104,6 @@ export const EditSignature = () => {
         <DownloadDraftButton draftId={draft.id} />
       </Box>
 
-      {/*
-        <Box marginBottom={4}>
-        <InputFileUpload
-          fileList={uploadStatus.file || []}
-          header={t(msg.signedDocumentUploadDragPrompt)}
-          description={
-            t(msg.signedDocumentUploadDescr).replace(/^\s+$/, '') || undefined
-          }
-          buttonLabel={t(msg.signedDocumentUpload)}
-          onChange={uploadSignedPDF}
-          onRetry={retryUpload}
-          onRemove={cancelUpload}
-          errorMessage={uploadStatus.error}
-          accept=".pdf"
-          multiple={false}
-        />
-        {uploadStatus.error && (
-          <AlertMessage type="error" title={uploadStatus.error} />
-        )}
-      </Box>
-    */}
-
       <Box marginBottom={4}>
         <InputFileUpload
           fileList={[]}
@@ -144,29 +122,6 @@ export const EditSignature = () => {
           <AlertMessage type="error" title={uploadStatus.error} />
         )}
       </Box>
-
-      {/*uploadLocation && (
-        <Box
-          marginBottom={3}
-          style={
-            {
-              '--fade-duration': 0.5 * undoPeriod,
-              '--fade-delay': 0.5 * undoPeriod,
-            } as React.CSSProperties
-          }
-          className={s.fadeOut}
-        >
-          <Button
-            onClick={undoClearSignedPDF}
-            variant="text"
-            as="button"
-            icon="reload"
-            disabled={uploadStatus.uploading}
-          >
-            {t(msg.signedDocumentClearUndo)}
-          </Button>
-        </Box>
-      )*/}
 
       {uploadLocation != null && (
         <>
