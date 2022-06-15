@@ -8,7 +8,11 @@ import type { Attachment, Period } from '@island.is/clients/vmst'
 import { ParentalLeaveApi } from '@island.is/clients/vmst'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { Application, getValueViaPath } from '@island.is/application/core'
+import {
+  Application,
+  ApplicationConfigurations,
+  getValueViaPath,
+} from '@island.is/application/core'
 import {
   getApplicationAnswers,
   getAvailableRightsInDays,
@@ -117,10 +121,28 @@ export class ParentalLeaveService {
   async notifyApplicantOfRejectionFromOtherParent({
     application,
   }: TemplateApiModuleActionProps) {
+    const { applicantPhoneNumber } = getApplicationAnswers(application.answers)
+
     await this.sharedTemplateAPIService.sendEmail(
       generateOtherParentRejected,
       application,
     )
+
+    if (applicantPhoneNumber) {
+      const clientLocationOrigin = getConfigValue(
+        this.configService,
+        'clientLocationOrigin',
+      ) as string
+
+      const link = `${clientLocationOrigin}/${ApplicationConfigurations.ParentalLeave.slug}/${application.id}`
+
+      await this.smsService.sendSms(
+        applicantPhoneNumber,
+        `Hitt foreldrið hefur hafnað beiðni þinni um yfirfærslu á réttindum. Þú þarft því að breyta umsókn þinni.
+        The other parent has denied your request for transfer of rights. You therefore need to modify your application.
+        ${link}`,
+      )
+    }
   }
 
   async notifyApplicantOfRejectionFromEmployer({
@@ -273,7 +295,7 @@ export class ParentalLeaveService {
       }
 
       const isUsingTransferredRights =
-        numberOfDaysAlreadySpent > maximumPersonalDaysToSpend
+        numberOfDaysAlreadySpent >= maximumPersonalDaysToSpend
       const willStartToUseTransferredRightsWithPeriod =
         numberOfDaysSpentAfterPeriod > maximumPersonalDaysToSpend
 

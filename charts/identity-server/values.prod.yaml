@@ -169,9 +169,9 @@ namespaces:
 services-auth-admin-api:
   enabled: true
   env:
-    DB_HOST: 'postgres-applications.internal'
+    DB_HOST: 'postgres-ids.internal'
     DB_NAME: 'servicesauth'
-    DB_REPLICAS_HOST: 'postgres-applications.internal'
+    DB_REPLICAS_HOST: 'postgres-ids.internal'
     DB_USER: 'servicesauth'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     NODE_OPTIONS: '--max-old-space-size=208'
@@ -228,9 +228,9 @@ services-auth-api:
   env:
     COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379"]'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS/GOV/5402696029/Skatturinn/ft-v1'
-    DB_HOST: 'postgres-applications.internal'
+    DB_HOST: 'postgres-ids.internal'
     DB_NAME: 'servicesauth'
-    DB_REPLICAS_HOST: 'postgres-applications.internal'
+    DB_REPLICAS_HOST: 'postgres-ids.internal'
     DB_USER: 'servicesauth'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
@@ -299,9 +299,9 @@ services-auth-api:
             cpu: '100m'
             memory: '128Mi'
     env:
-      DB_HOST: 'postgres-applications.internal'
+      DB_HOST: 'postgres-ids.internal'
       DB_NAME: 'servicesauth'
-      DB_REPLICAS_HOST: 'postgres-applications.internal'
+      DB_REPLICAS_HOST: 'postgres-ids.internal'
       DB_USER: 'servicesauth'
       SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     secrets:
@@ -330,9 +330,9 @@ services-auth-api:
 services-auth-public-api:
   enabled: true
   env:
-    DB_HOST: 'postgres-applications.internal'
+    DB_HOST: 'postgres-ids.internal'
     DB_NAME: 'servicesauth'
-    DB_REPLICAS_HOST: 'postgres-applications.internal'
+    DB_REPLICAS_HOST: 'postgres-ids.internal'
     DB_USER: 'servicesauth'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
@@ -343,7 +343,7 @@ services-auth-public-api:
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.island.is/r1/IS'
     XROAD_CLIENT_ID: 'IS/GOV/5501692829/island-is-client'
     XROAD_NATIONAL_REGISTRY_ACTOR_TOKEN: 'true'
-    XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
+    XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379"]'
     XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS/GOV/6503760649/SKRA-Protected/Einstaklingar-v1'
     XROAD_RSK_PROCURING_PATH: 'IS/GOV/5402696029/Skatturinn/prokura-v1'
     XROAD_RSK_PROCURING_REDIS_NODES: '["clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379"]'
@@ -379,6 +379,7 @@ services-auth-public-api:
         nginx.ingress.kubernetes.io/enable-global-auth: 'false'
         nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
         nginx.ingress.kubernetes.io/proxy-buffering: 'on'
+        nginx.ingress.kubernetes.io/rewrite-target: '/$2'
       hosts:
         - host: 'innskra.island.is'
           paths:

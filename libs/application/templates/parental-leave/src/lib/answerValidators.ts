@@ -86,8 +86,9 @@ export const answerValidators: Record<string, AnswerValidator> = {
 
     // If manual option is chosen then user have to insert name and national id
     if (otherParent.chooseOtherParent === MANUAL) {
-      if (isEmpty(otherParent.otherParentName))
-        return buildError(coreErrorMessages.missingAnswer, 'otherParentName')
+      // Secondary/father always use Manual as OtherParent without OtherParent name
+      // if (isEmpty(otherParent.otherParentName))
+      //   return buildError(coreErrorMessages.missingAnswer, 'otherParentName')
 
       if (isEmpty(otherParent.otherParentId))
         return buildError(coreErrorMessages.missingAnswer, 'otherParentId')
