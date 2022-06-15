@@ -210,6 +210,9 @@
     "application-templates-accident-notification": {
       "tags": []
     },
+    "application-templates-announcement-of-death": {
+      "tags": []
+    },
     "application-templates-children-residence-change": {
       "tags": []
     },

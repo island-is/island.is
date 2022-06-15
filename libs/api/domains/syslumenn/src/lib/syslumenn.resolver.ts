@@ -7,6 +7,7 @@ import { SyslumennService } from '@island.is/clients/syslumenn'
 import { PaginatedOperatingLicenses } from './models/paginatedOperatingLicenses'
 import { CertificateInfoResponse } from './models/certificateInfo'
 import { DistrictCommissionerAgencies } from './models/districtCommissionerAgencies'
+import { AssetName } from './models/assetName'
 import { UseGuards } from '@nestjs/common'
 import { ApiScope } from '@island.is/auth/scopes'
 import {
@@ -19,6 +20,7 @@ import {
 import type { User } from '@island.is/auth-nest-tools'
 import { PropertyDetail } from '@island.is/api/domains/assets'
 import { SearchForPropertyInput } from './dto/searchForProperty.input'
+import { EstateRelations } from './models/relations'
 
 const cacheTime = process.env.CACHE_TIME || 300
 
@@ -70,11 +72,33 @@ export class SyslumennResolver {
     return this.syslumennService.getDistrictCommissionersAgencies()
   }
 
+  @Query(() => [AssetName])
+  @BypassAuth()
+  getRealEstateAddress(
+    @Args('input') realEstateId: string,
+  ): Promise<Array<AssetName>> {
+    return this.syslumennService.getRealEstateAddress(realEstateId)
+  }
+
+  @Query(() => [AssetName])
+  @BypassAuth()
+  getVehicleType(
+    @Args('input') licenseNumber: string,
+  ): Promise<Array<AssetName>> {
+    return this.syslumennService.getVehicleType(licenseNumber)
+  }
+
   @Query(() => PropertyDetail, { nullable: true })
   @Scopes(ApiScope.assets)
   searchForProperty(
     @Args('input') input: SearchForPropertyInput,
   ): Promise<PropertyDetail> {
     return this.syslumennService.getPropertyDetails(input.propertyNumber)
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => EstateRelations)
+  getSyslumennEstateRelations(): Promise<EstateRelations> {
+    return this.syslumennService.getEstateRelations()
   }
 }
