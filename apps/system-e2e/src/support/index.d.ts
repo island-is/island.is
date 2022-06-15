@@ -9,11 +9,12 @@ declare namespace Cypress {
      * @example cy.login()
      */
     getAllCookies(): Chainable<void>
-    idsLogin({ phoneNumber: string }): Chainable<void>
+    idsLogin({ phoneNumber: string, authDomain: string }): Chainable<void>
     cognitoLogin({
       cognitoUsername: string,
       cognitoPassword: string,
     }): Chainable<void>
-    patchSameSiteCookie(interceptUrl?: string): void
+    ensureLoggedIn({ url: string }): Chainable<Response>
+    patchSameSiteCookie(interceptUrl: string): void
   }
 }

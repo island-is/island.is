@@ -1,37 +1,37 @@
-const testEnvironment = Cypress.env('TEST_ENVIRONMENT')
+const testEnvironment = Cypress.env('testEnvironment')
 
-Cypress.Commands.add(
-  'patchSameSiteCookie',
-  (interceptUrl = `${Cypress.env('AUTH_DOMAIN')}/login/app?*`) => {
-    cy.intercept(interceptUrl, (req) => {
-      req.on('response', (res) => {
-        if (!res.headers['set-cookie']) {
-          return
-        }
-        const disableSameSite = (headerContent: string): string => {
-          return headerContent.replace(
-            /samesite=(lax|strict)/gi,
-            'samesite=none',
-          )
-        }
-        if (Array.isArray(res.headers['set-cookie'])) {
-          res.headers['set-cookie'] = res.headers['set-cookie'].map(
-            disableSameSite,
-          )
-        } else {
-          res.headers['set-cookie'] = disableSameSite(res.headers['set-cookie'])
-        }
-      })
-    }).as('sameSitePatch')
-  },
-)
+const getAuthDomain = () => {
+  const { authDomain } = Cypress.env(testEnvironment)
+  return `https://${authDomain}`
+}
 
-Cypress.Commands.add('idsLogin', ({ phoneNumber }) => {
-  cy.patchSameSiteCookie()
+Cypress.Commands.add('patchSameSiteCookie', (interceptUrl) => {
+  cy.intercept(interceptUrl, (req) => {
+    req.on('response', (res) => {
+      if (!res.headers['set-cookie']) {
+        return
+      }
+      const disableSameSite = (headerContent: string): string => {
+        return headerContent.replace(/samesite=(lax|strict)/gi, 'samesite=none')
+      }
+      if (Array.isArray(res.headers['set-cookie'])) {
+        res.headers['set-cookie'] = res.headers['set-cookie'].map(
+          disableSameSite,
+        )
+      } else {
+        res.headers['set-cookie'] = disableSameSite(res.headers['set-cookie'])
+      }
+    })
+  }).as('sameSitePatch')
+})
+
+Cypress.Commands.add('idsLogin', ({ phoneNumber, authDomain }) => {
+  cy.log('testEnviron', testEnvironment)
+  cy.patchSameSiteCookie(`${getAuthDomain()}/login/app?*`)
   const sentArgs = {
     args: { phoneNumber: phoneNumber },
   }
-  cy.origin(Cypress.env('AUTH_DOMAIN'), sentArgs, ({ phoneNumber }) => {
+  cy.origin(authDomain, sentArgs, ({ phoneNumber }) => {
     cy.get('input[id="phoneUserIdentifier"]').type(phoneNumber)
     cy.get('button[id="submitPhoneNumber"]').click()
   })
