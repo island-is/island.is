@@ -424,9 +424,7 @@ function serializeIngress(
 ) {
   const ingress = ingressConf.host[env.type]
   if (ingress === MissingSetting) {
-    throw new Error(
-      `Missing ingress host info for service:${serviceDef.name}, ingress:${ingressName} in env:${env.type}`,
-    )
+    return
   }
   const hosts = (typeof ingress === 'string'
     ? [ingressConf.host[env.type] as string]
