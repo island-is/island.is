@@ -116,10 +116,6 @@ export const OtherParentApproval: Form = buildForm({
               title: otherParentApprovalFormMessages.warning,
               titleVariant: 'h4',
               description: otherParentApprovalFormMessages.startDateInThePast,
-              condition: (answers) =>
-                new Date(
-                  getApplicationAnswers(answers).periods[0].startDate,
-                ).getTime() < currentDateStartTime(),
             }),
             buildSubmitField({
               id: 'submit',
@@ -216,16 +212,6 @@ export const OtherParentApproval: Form = buildForm({
 
                 return `${spouseUsage}%`
               },
-            }),
-            buildDescriptionField({
-              id: 'final',
-              title: otherParentApprovalFormMessages.warning,
-              titleVariant: 'h4',
-              description: otherParentApprovalFormMessages.startDateInThePast,
-              condition: (answers) =>
-                new Date(
-                  getApplicationAnswers(answers).periods[0].startDate,
-                ).getTime() < currentDateStartTime(),
             }),
             buildSubmitField({
               id: 'submit',

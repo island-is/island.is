@@ -18,6 +18,23 @@ export const rcCourtOverview = {
           'Notaður sem titill fyrir athugasemdir vegna endursendingar hluta á yfirlitssíðu í gæsluvarðhalds- og farbannsmálum.',
       },
     }),
+    seenByDefenderAlert: defineMessages({
+      title: {
+        id:
+          'judicial.system.restriction_cases:court_overview.sections.seen_by_defender_alert.title',
+        defaultMessage: 'Krafa sótt af verjanda',
+        description:
+          'Notaður sem titill fyrir "Krafa sótt af verjanda" hluta á yfirlitssíðu í gæsluvarðhalds- og farbannsmálum.',
+      },
+      text: {
+        id:
+          'judicial.system.restriction_cases:court_overview.sections.seen_by_defender_alert.text',
+        defaultMessage:
+          'Verjandi skráði sig inn til að sækja kröfuskjal {when}.',
+        description:
+          'Notaður sem titill fyrir "Krafa sótt af verjanda" hluta á yfirlitssíðu í gæsluvarðhalds- og farbannsmálum.',
+      },
+    }),
   },
   continueButton: defineMessages({
     label: {
