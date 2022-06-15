@@ -145,6 +145,11 @@ export const coreInstitutionMessages = defineMessages({
     description:
       'Institution name for applicationTypes.financial_statements_inao',
   },
+  [ApplicationTypes.ANNOUNCEMENT_OF_DEATH]: {
+    id: 'application.system:applicationTypes.announcement_of_death',
+    defaultMessage: 'Sýslumenn',
+    description: 'Institution name for applicationTypes.announcement_of_death',
+  },
 })
 
 export const coreMessages = defineMessages({
