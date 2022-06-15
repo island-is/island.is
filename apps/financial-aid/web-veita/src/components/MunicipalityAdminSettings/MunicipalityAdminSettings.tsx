@@ -52,21 +52,21 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
     return `${prefix}${firstErrorAid[0]}`
   }
 
-
   const errorCheckNav = () => {
     if (state.usingNav && !state.navUrl) {
       setHasNavError(true)
-      return "navSettings"
+      return 'navSettings'
     }
 
     setHasNavError(false)
     return ''
   }
 
-
   const submit = () => {
     const errorNav = errorCheckNav()
-    const errorAid = errorCheck(state.individualAid, INDIVIDUAL) || errorCheck(state.cohabitationAid, COHABITATION)
+    const errorAid =
+      errorCheck(state.individualAid, INDIVIDUAL) ||
+      errorCheck(state.cohabitationAid, COHABITATION)
 
     if (errorNav || errorAid) {
       scrollToId(errorNav || errorAid)
@@ -156,7 +156,6 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
             }
           />
         </>
-
       ),
     },
   ]

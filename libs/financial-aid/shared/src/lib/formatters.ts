@@ -473,3 +473,10 @@ export const aidDescriptionFromName: KeyMapping<AidName, string> = {
   livesWithParents: 'Býr hjá foreldrum',
   unknown: 'Annað',
 }
+
+export const getNavEmploymentStatus: KeyMapping<Employment, number> = {
+  Working: 1,
+  Unemployed: 4,
+  CannotWork: 6,
+  Other: 10,
+}

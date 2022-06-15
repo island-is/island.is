@@ -1,7 +1,7 @@
 import { months } from './const'
 
 import React from 'react'
-import { DirectTaxPayment, NationalRegistryData } from './interfaces'
+import { Amount, DirectTaxPayment, NationalRegistryData } from './interfaces'
 import { StaffRole, UserType } from './enums'
 
 export const getFileType = (fileName: string) => {
@@ -120,4 +120,13 @@ export const addUserTypeDirectPayments = (
       userType,
     }
   })
+}
+
+export const calculateNavAmount = (amount: Amount) => {
+  return amount.deductionFactors
+    ?.map((d) => d.amount ?? 0)
+    .reduce(
+      (previousValue, currentValue) => previousValue - currentValue,
+      amount.aidAmount - (amount.income ?? 0),
+    )
 }

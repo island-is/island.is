@@ -34,6 +34,9 @@ import {
   UserType,
   applicationPageSize,
   Routes,
+  getNavEmploymentStatus,
+  getHomeCircumstances,
+  calculateNavAmount,
 } from '@island.is/financial-aid/shared/lib'
 import { FileService } from '../file'
 import {
@@ -508,8 +511,61 @@ export class ApplicationService {
     }
 
     await Promise.all([events, files, directTaxPayments])
+    await this.sendToNav(id)
 
     return updatedApplication
+  }
+
+  async sendToNav(applicationId: string) {
+    try {
+      const application = await this.findById(applicationId, true)
+      const municipality = await this.municipalityService.findByMunicipalityId(
+        application.municipalityCode,
+      )
+      const token = await fetch(
+        new URL('Authentication/Login', municipality.navUrl).href,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            username: 'sis_user',
+            password: 'K4sdgrt3p',
+          }),
+        },
+      ).then((response) => response.text())
+
+      const request = await fetch(
+        new URL(
+          'WebApplication/CreateFinancialAssistanceApplication',
+          municipality.navUrl,
+        ).href,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            type: 'FJST',
+            status: 'Umsókn',
+            id: application.nationalId,
+            phoneNo: application.phoneNumber,
+            email: application.email,
+            bankAccount: `${application.bankNumber}${application.ledger}${application.accountNumber}`,
+            grantAmount: calculateNavAmount(application.amount),
+            // description: "string",
+            // referenceNo: "string",
+            employmentStatus: getNavEmploymentStatus[application.employment],
+            personalTaxCredit: application.amount.personalTaxCredit,
+            housingCode: getHomeCircumstances[application.homeCircumstances],
+          }),
+        },
+      ).then((response) => response.text())
+    } catch {
+      console.log('faiiillll')
+    }
   }
 
   async filter(
