@@ -55,6 +55,7 @@ export class NoDebtCertificateProvider extends BasicDataProvider {
           reason: {
             title: m.missingCertificateTitle,
             summary: m.missingCertificateSummary,
+            hideSubmitError: true,
           },
           statusCode: 404,
         })
@@ -72,6 +73,7 @@ export class NoDebtCertificateProvider extends BasicDataProvider {
       date: new Date(),
       data: {},
       reason: error?.reason ?? m.errorDataProvider,
+      hideSubmitError: error?.reason?.hideSubmitError,
       status: 'failure',
       statusCode: error.statusCode,
     }

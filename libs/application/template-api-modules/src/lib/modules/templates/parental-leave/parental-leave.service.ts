@@ -148,10 +148,28 @@ export class ParentalLeaveService {
   async notifyApplicantOfRejectionFromEmployer({
     application,
   }: TemplateApiModuleActionProps) {
+    const { applicantPhoneNumber } = getApplicationAnswers(application.answers)
+
     await this.sharedTemplateAPIService.sendEmail(
       generateEmployerRejected,
       application,
     )
+
+    if (applicantPhoneNumber) {
+      const clientLocationOrigin = getConfigValue(
+        this.configService,
+        'clientLocationOrigin',
+      ) as string
+
+      const link = `${clientLocationOrigin}/${ApplicationConfigurations.ParentalLeave.slug}/${application.id}`
+
+      await this.smsService.sendSms(
+        applicantPhoneNumber,
+        `Vinnuveitandi hefur hafnað beiðni þinni um samþykki fæðingarorlofs. Þú þarft því að breyta umsókn þinni.
+        Your employer has denied your request. You therefore need to modify your application.
+        ${link}`,
+      )
+    }
   }
 
   async assignEmployer({ application }: TemplateApiModuleActionProps) {
