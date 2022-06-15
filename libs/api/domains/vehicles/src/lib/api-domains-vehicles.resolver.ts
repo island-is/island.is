@@ -17,6 +17,7 @@ import { VehiclesDetail } from '../models/getVehicleDetail.model'
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.vehicles)
 @Resolver()
+@Audit({ namespace: '@island.is/api/vehicles' })
 export class VehiclesResolver {
   constructor(private readonly vehiclesService: VehiclesService) {}
 
