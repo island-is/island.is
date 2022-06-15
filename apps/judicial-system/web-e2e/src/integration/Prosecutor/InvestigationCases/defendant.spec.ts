@@ -117,7 +117,7 @@ describe(NEW_IC_ROUTE, () => {
     cy.getByTestid('defenderNotFound').should('exist')
   })
 
-  it.only('should have a button for deleting defendants', () => {
+  it('should have a button for deleting defendants', () => {
     cy.getByTestid('deleteDefendantButton').should('not.exist')
     cy.getByTestid('select-type').click()
     cy.get('[id="react-select-type-option-1"]').click()
