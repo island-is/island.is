@@ -1,4 +1,5 @@
 import { useQuery } from '@apollo/client'
+<<<<<<< HEAD
 import {
   GenericLicenseType,
   GenericUserLicense,
@@ -15,12 +16,32 @@ import {
 } from '../../lib/queries/getLicenses'
 interface Props {
   data?: Array<GenericUserLicense>
+=======
+import { GenericUserLicenseStatus, Query } from '@island.is/api/schema'
+import { Locale } from 'locale'
+import { useEffect, useState } from 'react'
+import { useUserProfile } from '../..'
+import { GET_GENERIC_LICENSES } from '../../lib/queries/getDrivingLicense'
+import {
+  AdrLicenseType,
+  DrivingLicenseType,
+} from '@island.is/service-portal/core'
+
+export interface LicenseData {
+  data?: DrivingLicenseType | AdrLicenseType
+  status?: GenericUserLicenseStatus
+}
+
+interface GetLicenseProps {
+  data?: Array<LicenseData>
+>>>>>>> 932a196f8 (wip: ADR license integration)
   loading?: boolean
   error?: any
 }
 
 /* Collects only Driving License */
 // TODO: Generate hook for collecting all licenses when other services are ready
+<<<<<<< HEAD
 export const useLicenses = (type?: GenericLicenseType): Props => {
   const { data: userProfile } = useUserProfile()
   const locale = (userProfile?.locale as Locale) ?? 'is'
@@ -35,11 +56,45 @@ export const useLicenses = (type?: GenericLicenseType): Props => {
   })
 
   const [licenses, setLicenses] = useState<Array<GenericUserLicense>>()
+=======
+export const useLicenses = (): GetLicenseProps => {
+  const { data: userProfile } = useUserProfile()
+  const locale = (userProfile?.locale as Locale) ?? 'is'
+  const { data, loading, error } = useQuery<Query>(GET_GENERIC_LICENSES, {
+    variables: {
+      locale,
+      input: { includedTypes: ['DriversLicense', 'AdrLicense'] },
+    },
+  })
+
+  const [licenses, setLicenses] = useState<Array<LicenseData>>()
+>>>>>>> 932a196f8 (wip: ADR license integration)
   const { genericLicenses } = data ?? {}
 
   useEffect(() => {
     if (!loading && !error) {
+<<<<<<< HEAD
       genericLicenses?.length && setLicenses(genericLicenses)
+=======
+      const parsedLicenses: Array<LicenseData> = []
+
+      console.log(genericLicenses)
+
+      genericLicenses?.map((license) => {
+        const licenseRaw =
+          license?.payload && JSON.parse(license?.payload?.rawData)
+        const licenseObject = licenseRaw && Object.assign(licenseRaw)
+
+        licenseObject &&
+          parsedLicenses.push({
+            data: licenseObject,
+            status: license.license.status,
+          })
+      })
+      console.log('parsed licenses')
+      console.log(parsedLicenses)
+      parsedLicenses.length && setLicenses(parsedLicenses)
+>>>>>>> 932a196f8 (wip: ADR license integration)
     }
   }, [data, loading])
 
@@ -49,6 +104,7 @@ export const useLicenses = (type?: GenericLicenseType): Props => {
     error,
   }
 }
+<<<<<<< HEAD
 interface GetLicenseProps {
   data?: DrivingLicenseType
   status: GenericUserLicenseStatus | ''
@@ -91,3 +147,5 @@ export const useDriversLicense = (
     error,
   }
 }
+=======
+>>>>>>> 932a196f8 (wip: ADR license integration)

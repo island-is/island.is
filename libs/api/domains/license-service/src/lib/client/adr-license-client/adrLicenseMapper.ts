@@ -5,43 +5,6 @@ import {
 } from '../../licenceService.type'
 import { GenericAdrLicenseResponse } from './genrericAdrLicense.type'
 
-/*
-export interface GenericAdrLicenseResponse {
-  id?: number
-  kennitala?: string
-  fulltNafn?: string
-  skirteinisNumber?: number
-  faedingardagur?: string
-  rikisfang?: string
-  gildirTil?: string
-  adrRettindi?: {
-    flokkur?: number
-    grunn?: boolean
-    tankar: boolean
-  }[]
-}
-
-export type GenericLicenseDataField = {
-  type: GenericLicenseDataFieldType
-  name?: string
-  label?: string
-  value?: string
-  fields?: Array<GenericLicenseDataField>
-}
-
-export type GenericUserLicensePayload = {
-  data: Array<GenericLicenseDataField>
-  rawData: unknown
-}
-
-export enum GenericLicenseDataFieldType {
-  Group = 'Group',
-  Category = 'Category',
-  Value = 'Value',
-}
-
-*/
-
 export const parseAdrLicensePayload = (
   license: GenericAdrLicenseResponse,
 ): GenericUserLicensePayload | null => {
@@ -80,7 +43,7 @@ export const parseAdrLicensePayload = (
         .filter((field) => field.tankar)
         .map((field) => ({
           type: GenericLicenseDataFieldType.Value,
-          value: field.flokkur,
+          value: (field.flokkur ?? '').toString(),
         })),
     },
     {
@@ -90,7 +53,7 @@ export const parseAdrLicensePayload = (
         .filter((field) => !field.tankar)
         .map((field) => ({
           type: GenericLicenseDataFieldType.Value,
-          value: field.flokkur,
+          value: (field.flokkur ?? '').toString(),
         })),
     },
   ]

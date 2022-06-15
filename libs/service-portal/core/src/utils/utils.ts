@@ -54,3 +54,20 @@ export type DrivingLicenseType = {
   undirskrift: string
   svipting: Array<DrivingLicenseSuspended>
 }
+
+export type AdrLicenseCategoryType = {
+  flokkur?: number
+  grunn?: boolean
+  tankar?: boolean
+}
+
+export type AdrLicenseType = {
+  id?: number
+  kennitala?: string
+  fulltNafn?: string
+  skirteinisNumber?: number
+  faedingardagur?: string
+  rikisfang?: string
+  gildirTil?: string
+  adrRettindi?: Array<AdrLicenseCategoryType>
+}

@@ -10,6 +10,10 @@ import {
 } from '@island.is/service-portal/core'
 import LicenseCards from '../../components/LicenseCards/LicenseCards'
 import { LicenseLoader } from '../../components/LicenseLoader/LicenseLoader'
+<<<<<<< HEAD
+=======
+import { useLicenses } from '@island.is/service-portal/graphql'
+>>>>>>> 932a196f8 (wip: ADR license integration)
 import { m } from '../../lib/messages'
 import { useHistory } from 'react-router-dom'
 import {
@@ -22,11 +26,17 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
   useNamespaces('sp.license')
   const { formatMessage } = useLocale()
   const { data, loading, error } = useLicenses()
+<<<<<<< HEAD
   const history = useHistory()
 
   const isError = data?.every(
     (item) => item.fetch.status === GenericUserLicenseFetchStatus.Error,
   )
+=======
+
+  console.log('data')
+  console.log(data)
+>>>>>>> 932a196f8 (wip: ADR license integration)
 
   return (
     <>
@@ -44,6 +54,7 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
               return null
             }
 
+<<<<<<< HEAD
             const text = 'skírteinisnúmer'
             const tag = 'Placeholder'
             let title
@@ -82,6 +93,9 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
       )}
 
       {(error || isError) && (
+=======
+      {error && (
+>>>>>>> 932a196f8 (wip: ADR license integration)
         <Box>
           <AlertBanner
             description={formatMessage(m.errorFetch)}

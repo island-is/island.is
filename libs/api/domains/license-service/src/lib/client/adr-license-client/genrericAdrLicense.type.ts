@@ -9,6 +9,6 @@ export interface GenericAdrLicenseResponse {
   adrRettindi?: {
     flokkur?: number
     grunn?: boolean
-    tankar: boolean
+    tankar?: boolean
   }[]
 }

@@ -24,5 +24,9 @@ export * from './hooks/profile/useVerifyEmail'
 export * from './hooks/profile/useResendEmailVerification'
 export * from './hooks/profile/useUpdateOrCreateUserProfile'
 export * from './hooks/profile/useDeleteIslykillValue'
+<<<<<<< HEAD
+=======
+export * from './hooks/licenses/useDrivingLicense'
+>>>>>>> 932a196f8 (wip: ADR license integration)
 export * from './hooks/licenses/useLicenses'
 export * from './schema'

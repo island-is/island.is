@@ -14,6 +14,14 @@ export const m = defineMessages({
     id: 'sp.license:license',
     defaultMessage: 'Ökuréttindi',
   },
+  adrLicense: {
+    id: 'sp.license:adr-license',
+    defaultMessage: 'ADR skírteini',
+  },
+  adrLicenseDescription: {
+    id: 'sp.license:adr-license-description',
+    defaultMessage: 'Hér birtast upplýsingar um ADR réttindin þín',
+  },
   yourDrivingLicense: {
     id: 'sp.license:your-driving-license',
     defaultMessage: 'Ökuréttindin þín',
