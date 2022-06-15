@@ -37,6 +37,7 @@ import { useCase, useLawyers } from '../../utils/hooks'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
+  setAndSendToServer,
 } from '../../utils/formHelper'
 import { UserContext } from '../UserProvider/UserProvider'
 
@@ -48,7 +49,7 @@ interface Props {
 const DefenderInfo: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase } = props
   const { formatMessage } = useIntl()
-  const { updateCase, autofill } = useCase()
+  const { updateCase } = useCase()
   const { user } = useContext(UserContext)
 
   const [
@@ -384,16 +385,12 @@ const DefenderInfo: React.FC<Props> = (props) => {
             }
             checked={workingCase.sendRequestToDefender}
             onChange={(event) => {
-              autofill(
-                [
-                  {
-                    key: 'sendRequestToDefender',
-                    value: event.target.checked,
-                    force: true,
-                  },
-                ],
+              setAndSendToServer(
+                'sendRequestToDefender',
+                event.target.checked,
                 workingCase,
                 setWorkingCase,
+                updateCase,
               )
             }}
             large

@@ -95,7 +95,7 @@ export const DrivingLicense = new XroadConf({
       dev: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v2',
       staging:
         'r1/IS/GOV/5309672079/Logreglan-Protected/RafraentOkuskirteini-v2',
-      prod: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v1',
+      prod: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v2',
     },
   },
   secrets: {

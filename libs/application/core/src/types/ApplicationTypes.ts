@@ -26,6 +26,7 @@ export enum ApplicationTypes {
   MORTGAGE_CERTIFICATE = 'MortgageCertificate',
   NO_DEBT_CERTIFICATE = 'NoDebtCertificate',
   FINANCIAL_STATEMENTS_INAO = 'FinancialStatementsInao',
+  OPERATING_LCENSE = 'OperatingLicense',
 }
 
 export const ApplicationConfigurations = {
@@ -136,5 +137,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.FINANCIAL_STATEMENTS_INAO]: {
     slug: 'skilarsreikninga',
     translation: 'fsn.application',
+  },
+  [ApplicationTypes.OPERATING_LCENSE]: {
+    slug: 'rekstarleyfi',
+    translation: 'ol.application',
   },
 }

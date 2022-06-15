@@ -214,11 +214,10 @@ export class CaseController {
       state !== CaseState.DELETED,
     )
 
-    // if (updatedCase && completedCaseStates.includes(updatedCase.state)) {
-    //   this.logger.info(`Writing case ${caseId} to queue`)
-
-    //   this.queue.add({ type: MessageType.CASE_COMPLETED, caseId })
-    // }
+    if (updatedCase && completedCaseStates.includes(updatedCase.state)) {
+      this.logger.info(`Writing case ${caseId} to queue`)
+      this.queue.add({ type: MessageType.CASE_COMPLETED, caseId })
+    }
 
     this.eventService.postEvent(
       (transition.transition as unknown) as CaseEvent,

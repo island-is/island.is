@@ -242,6 +242,9 @@
       "@island.is/application/templates/no-debt-certificate": [
         "libs/application/templates/no-debt-certificate/src/index.ts"
       ],
+      "@island.is/application/templates/operating-license": [
+        "libs/application/templates/operating-license/src/index.ts"
+      ],
       "@island.is/application/templates/p-sign": [
         "libs/application/templates/p-sign/src/index.ts"
       ],
