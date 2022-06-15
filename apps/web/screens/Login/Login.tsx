@@ -120,10 +120,7 @@ const LoginPage: Screen<LoginProps> = ({ namespace }) => {
               {nyjarSidurSubText && (
                 <>
                   <a
-                    href={n(
-                      'gomluSidurUrl',
-                      '//innskraning.island.is/?id=minarsidur.island.is',
-                    )}
+                    href="//minarsidur.island.is/"
                     color="blue400"
                     onClick={() => webLoginButtonSelect('Old')}
                     target="_blank"
