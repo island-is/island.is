@@ -93,8 +93,7 @@ export const useS3Upload = () => {
           },
         },
       })
-
-      return post.data?.createPresignedPost
+      return post.data?.createPresignedPost.data
     } catch (error) {
       setUploadStatus({
         uploading: false,

@@ -26,6 +26,7 @@ import {
 } from '@island.is/regulations/web'
 import {
   PresignedPost,
+  PresignedPostResults,
   RegulationPdf,
   RegulationPdfInput,
   RegulationPdfResponse,
@@ -61,18 +62,34 @@ export class RegulationsService extends RESTDataSource {
     fileName: string,
     regId: string,
     hash?: string,
-  ): Promise<PresignedPost | null> {
+  ): Promise<PresignedPostResults | null> {
     const body = { fileName, hash }
-    const response = await this.post<PresignedPost | null>(
-      `http://localhost:3000/api/v1/file-presigned?scope=${regId}`,
-      JSON.stringify(body),
-      {
-        headers: {
-          'X-ApiKey': process.env.FILE_UPLOAD_KEY_PRESIGNED ?? '',
+
+    let response: PresignedPost | null
+    try {
+      response = await this.post<PresignedPost | null>(
+        `http://localhost:3000/api/v1/file-presigned?scope=${regId}`,
+        JSON.stringify(body),
+        {
+          headers: {
+            'X-ApiKey': process.env.FILE_UPLOAD_KEY_PRESIGNED ?? '',
+          },
         },
-      },
-    )
-    return response
+      )
+    } catch (e) {
+      const error = e as Error
+      console.error(error.message)
+      return {
+        error: 'Presigned Post creation failed',
+      }
+    }
+
+    if (!response) {
+      return {
+        error: 'Presigned post contains no data',
+      }
+    }
+    return { data: response }
   }
 
   /*

@@ -69,6 +69,16 @@ export type Author = {
 export type ImageSourceMap = Array<{ oldUrl: string; newUrl: string }>
 
 // ---------------------------------------------------------------------------
+/** Container for an API request for a Presigned Post, either data or error */
+export type PresignedPostResults =
+  | {
+      data: PresignedPost
+      error?: never
+    }
+  | {
+      data?: never
+      error: string
+    }
 
 export type PresignedPost = {
   url: string
