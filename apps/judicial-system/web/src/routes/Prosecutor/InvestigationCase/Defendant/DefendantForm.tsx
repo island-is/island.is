@@ -282,6 +282,7 @@ const DefendantForm: React.FC<Props> = (props) => {
                       !defendant.address ||
                       (!defendant.noNationalId && !defendant.nationalId),
                   )}
+                  data-testid="addDefendantButton"
                 >
                   {formatMessage(
                     m.sections.defendantInfo.addDefendantButtonText,

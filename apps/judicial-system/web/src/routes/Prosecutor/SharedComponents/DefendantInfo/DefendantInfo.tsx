@@ -139,6 +139,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
             colorScheme="destructive"
             variant="text"
             size="small"
+            data-testid="deleteDefendantButton"
           >
             {formatMessage(defendantMessages.sections.defendantInfo.delete)}
           </Button>
