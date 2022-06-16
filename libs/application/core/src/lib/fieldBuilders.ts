@@ -258,6 +258,7 @@ export function buildFileUploadField(
     uploadMultiple,
     uploadAccept,
     maxSize,
+    maxSizeErrorText,
     forImageUpload,
   } = data
   return {
@@ -270,6 +271,7 @@ export function buildFileUploadField(
     uploadMultiple,
     uploadAccept,
     maxSize,
+    maxSizeErrorText,
     forImageUpload,
     type: FieldTypes.FILEUPLOAD,
     component: FieldComponents.FILEUPLOAD,
