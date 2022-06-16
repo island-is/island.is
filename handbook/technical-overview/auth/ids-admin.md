@@ -7,7 +7,7 @@ When users want to start using IAS they are provided with a document to fill out
 An application making protected resource requests on behalf of a resource owner (such as a user). The clients represent applications that can request tokens from the IAS.
 ### Creating clients
 To create a client we need the following information: 
- - Your application domain (such as example.com)
+ - Your application domain (such as _island.is_)
  - Name of the application
 	 - The name and domain are used to determine the client id. The name is also what users see when they are using the authentication service.
  - Callback URLs
