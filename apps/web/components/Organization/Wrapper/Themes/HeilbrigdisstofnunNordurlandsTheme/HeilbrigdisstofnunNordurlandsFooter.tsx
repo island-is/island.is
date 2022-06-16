@@ -20,13 +20,12 @@ interface HeilbrigdisstofnunNordurlandsFooterProps {
 export const HeilbrigdisstofnunNordurlandsFooter = ({
   footerItems,
 }: HeilbrigdisstofnunNordurlandsFooterProps) => {
-  console.log(footerItems)
   const renderColumn = (column: FooterItem[]) => {
     if (column.length <= 0) return null
     return (
       <GridColumn span={['6/12', '4/12', '2/12']}>
-        {column.map((item) => (
-          <Box key={item.id} marginBottom={2}>
+        {column.map((item, index) => (
+          <Box key={`${item.id}-${index}`} marginBottom={2}>
             <Text fontWeight="semiBold" color="white" marginBottom={1}>
               <Hyphen>{item.title}</Hyphen>
             </Text>

@@ -260,6 +260,8 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
         <HeilbrigdisstofnunNordurlandsFooter
           footerItems={organization.footerItems}
         />
+      )
+      break
     case 'fiskistofa':
     case 'directorate-of-fisheries':
       OrganizationFooterComponent = (
