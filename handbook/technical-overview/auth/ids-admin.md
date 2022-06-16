@@ -35,6 +35,7 @@ When we have this information we create the client and then give you the clientI
 Usually, we create a client and then resources and scopes if needed and grant the client access to them.
 Sometimes you might only want resources and scopes created for you and don´t need a client. An example use case is when you want to use [island.is](http://island.is/) app to log in and when the user is logged in there they will be able to access your API. Regardless, the process is the same. We need:
 
+ - Domain, nationalId and email for the government agency responsible for the web service
  - Name of the web service
  - Whether the web service is requires access control by nationalId (kennitölu stýringu)
  - If the scope should add national id (kennitala) of the user to the access_token
