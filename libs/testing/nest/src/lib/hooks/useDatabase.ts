@@ -37,8 +37,8 @@ const config: Record<Database, SequelizeModuleOptions> = {
     username: 'test_db',
     password: 'test_db',
     database: 'test_db',
-    host: 'localhost',
-    port: 5433,
+    host: process.env.DB_HOST ?? 'localhost',
+    port: process.env.DB_PORT ? parseInt(process.env.DB_PORT) : 5433,
     ...sharedConfig,
   },
 }
