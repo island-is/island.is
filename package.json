@@ -439,7 +439,7 @@
     "@jeremybarbet/contentful-extension-scripts/parcel-bundler/node-forge": "1.2.1",
     "**/configcat-js/**/configcat-common": "4.4.2",
     "browserslist": "4.16.6",
-    "ws": "7.4.6 ",
+    "ws": "8.8.0",
     "css-what": "5.0.1",
     "glob-parent": "5.1.2",
     "trim-newlines": "3.0.1",
