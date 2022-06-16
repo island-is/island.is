@@ -510,12 +510,10 @@ export class ParentalLeaveService {
 
       // call SetParentalLeave API with testData: TRUE as this is a dummy request
       // for validation purposes
-      await this.parentalLeaveApi.parentalLeaveSetParentalLeave(
-        {
-          nationalRegistryId,
-          parentalLeave: parentalLeaveDTO,
-        },
-      )
+      await this.parentalLeaveApi.parentalLeaveSetParentalLeave({
+        nationalRegistryId,
+        parentalLeave: parentalLeaveDTO,
+      })
 
       return
     } catch (e) {
