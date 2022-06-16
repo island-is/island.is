@@ -56,11 +56,6 @@ describe('Rejected case', () => {
       ...mockInstitutionsQuery,
     ])
 
-    expect(
-      await waitFor(() =>
-        screen.queryByText('Heimsóknarbann', { selector: 'span' }),
-      ),
-    ).not.toBeInTheDocument()
   })
 
   test('should not show a button for extension', async () => {
@@ -102,11 +97,6 @@ describe('Dismissed case', () => {
       ...mockInstitutionsQuery,
     ])
 
-    expect(
-      await waitFor(() =>
-        screen.queryByText('Heimsóknarbann', { selector: 'span' }),
-      ),
-    ).not.toBeInTheDocument()
   })
 
   test('should not show a button for extension', async () => {
@@ -173,9 +163,6 @@ describe('Accepted case with active custody', () => {
       ...mockInstitutionsQuery,
     ])
 
-    expect(
-      await screen.findByText('Fjölmiðlabann', { selector: 'span' }),
-    ).toBeInTheDocument()
   })
 
   test('should not show a button for extension because the user is a judge', async () => {
@@ -278,7 +265,7 @@ describe('Accepted case with active custody', () => {
 })
 
 describe('Accepted case with custody end time in the past', () => {
-  describe('Court roles', () => {
+ describe('Court roles', () => {
     test('should have the correct subtitle', async () => {
       const dateInPast = '2020-09-24T19:50:08.033Z'
 
@@ -316,11 +303,6 @@ describe('Accepted case with custody end time in the past', () => {
         ...mockJudgeQuery,
         ...mockInstitutionsQuery,
       ])
-
-      expect(
-        await screen.findByText('Heimsóknarbann', { selector: 'span' }),
-      ).toBeInTheDocument()
-    })
 
     test('should not show a button for extension', async () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
@@ -484,7 +466,6 @@ describe('Accepted case with active travel ban', () => {
 describe('Accepted case with travel ban end time in the past', () => {
   test('should have the correct subtitle', async () => {
     const dateInPast = '2020-09-24T19:50:08.033Z'
-    const courtEndTime = '2020-09-16T19:51:28.224Z'
     const useRouter = jest.spyOn(require('next/router'), 'useRouter')
     useRouter.mockImplementation(() => ({
       query: { id: 'test_id_8' },
@@ -628,7 +609,7 @@ describe('titleForCase', () => {
   test('should handle active admission case', () => {
     const theCase = {
       state: CaseState.ACCEPTED,
-      type: CaseType.CUSTODY,
+      type: CaseType.ADMISSION_TO_FACILITY,
     } as Case
     const res = fn(theCase)
     expect(res).toEqual('Vistun á viðeigandi stofnun virk')
