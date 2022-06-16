@@ -4,7 +4,7 @@ import { logoKeyFromMunicipalityCode } from '@island.is/financial-aid/shared/lib
 import { Box } from '@island.is/island-ui/core'
 
 import { FAFieldBaseProps } from '../../lib/types'
-import * as styles from './FileList.css'
+import * as styles from './Logo.css'
 
 const withLogo = (Component: React.ComponentType<FAFieldBaseProps>) => (
   props: FAFieldBaseProps,
