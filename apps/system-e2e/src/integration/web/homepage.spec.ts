@@ -1,9 +1,12 @@
-const cognitoUsername = Cypress.env('COGNITO_USERNAME')
-const cognitoPassword = Cypress.env('COGNITO_PASSWORD')
-
 describe('Home page', () => {
-  before(() => {
-    cy.cognitoLogin({ cognitoUsername, cognitoPassword })
+  beforeEach(() => {
+    cy.log(`testEnvironment: ${Cypress.env('testEnvironment')}`)
+    cy.log(`baseUrl: ${Cypress.config().baseUrl}`)
+
+    cy.cognitoLogin({
+      cognitoUsername: Cypress.env('cognitoUsername'),
+      cognitoPassword: Cypress.env('cognitoPassword'),
+    })
   })
 
   it('has expected sections', () => {
