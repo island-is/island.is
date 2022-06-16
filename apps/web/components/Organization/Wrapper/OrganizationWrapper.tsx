@@ -46,8 +46,8 @@ import LandlaeknirFooter from './Themes/LandlaeknirTheme/LandlaeknirFooter'
 import { HeilbrigdisstofnunNordurlandsHeader } from './Themes/HeilbrigdisstofnunNordurlandsTheme/HeilbrigdisstofnunNordurlandsHeader'
 import { LandlaeknirHeader } from './Themes/LandlaeknirTheme/LandlaeknirHeader'
 import { FiskistofaHeader } from './Themes/FiskistofaTheme/FiskistofaHeader'
-import * as styles from './OrganizationWrapper.css'
 import FiskistofaFooter from './Themes/FiskistofaTheme/FiskistofaFooter'
+import * as styles from './OrganizationWrapper.css'
 
 interface NavigationData {
   title: string
