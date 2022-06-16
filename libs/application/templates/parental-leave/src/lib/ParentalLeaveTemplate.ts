@@ -125,7 +125,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           },
           progress: 0.25,
           onExit: {
-            apiModuleAction: API_MODULE_ACTIONS.sendDummyApplication,
+            apiModuleAction: API_MODULE_ACTIONS.validateApplication,
             throwOnError: true,
           },
           roles: [

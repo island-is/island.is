@@ -451,7 +451,7 @@ export class ParentalLeaveService {
         application,
         periods,
         attachments,
-        'FALSE', // put false in testData as this is not dummy request
+        false, // put false in testData as this is not dummy request
       )
 
       const response = await this.parentalLeaveApi.parentalLeaveSetParentalLeave(
@@ -491,7 +491,7 @@ export class ParentalLeaveService {
     }
   }
 
-  async sendDummyApplication({ application }: TemplateApiModuleActionProps) {
+  async validateApplication({ application }: TemplateApiModuleActionProps) {
     const nationalRegistryId = application.applicant
     const attachments = await this.getAttachments(application)
 
@@ -505,7 +505,7 @@ export class ParentalLeaveService {
         application,
         periods,
         attachments,
-        'TRUE',
+        true,
       )
 
       // call SetParentalLeave API with testData: TRUE as this is a dummy request
