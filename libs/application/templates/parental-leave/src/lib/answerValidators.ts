@@ -13,7 +13,7 @@ import {
   AnswerValidationError,
 } from '@island.is/application/core'
 
-import { Period, Payments, OtherParent } from '../types'
+import { Period, Payments, OtherParentObj } from '../types'
 import {
   MANUAL,
   NO,
@@ -33,7 +33,7 @@ import { validatePeriod } from './answerValidator-utils'
 
 const EMPLOYER = 'employer'
 const PAYMENTS = 'payments'
-const OTHER_PARENT = 'otherParent'
+const OTHER_PARENT = 'otherParentObj'
 // When attempting to continue from the periods repeater main screen
 // this validator will get called to validate all of the periods
 export const VALIDATE_PERIODS = 'validatedPeriods'
@@ -79,18 +79,14 @@ export const answerValidators: Record<string, AnswerValidator> = {
     return undefined
   },
   [OTHER_PARENT]: (newAnswer: unknown, application: Application) => {
-    const otherParent = newAnswer as OtherParent
+    const otherParentObj = newAnswer as OtherParentObj
 
     const buildError = (message: StaticText, path: string) =>
       buildValidationError(`${OTHER_PARENT}.${path}`)(message)
 
     // If manual option is chosen then user have to insert name and national id
-    if (otherParent.chooseOtherParent === MANUAL) {
-      // Secondary/father always use Manual as OtherParent without OtherParent name
-      // if (isEmpty(otherParent.otherParentName))
-      //   return buildError(coreErrorMessages.missingAnswer, 'otherParentName')
-
-      if (isEmpty(otherParent.otherParentId))
+    if (otherParentObj.chooseOtherParent === MANUAL) {
+      if (isEmpty(otherParentObj.otherParentId))
         return buildError(coreErrorMessages.missingAnswer, 'otherParentId')
     }
 
