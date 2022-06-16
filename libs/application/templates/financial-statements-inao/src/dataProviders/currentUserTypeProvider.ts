@@ -25,7 +25,9 @@ export class CurrentUserTypeProvider extends BasicDataProvider {
         if (response.errors?.length > 0) {
           return this.handleError(response.errors[0])
         }
-        return Promise.resolve(response.data.financialStatementsInaoCurrentUserClientType)
+        return Promise.resolve(
+          response.data.financialStatementsInaoCurrentUserClientType,
+        )
       })
       .catch((error) => this.handleError(error))
   }
@@ -44,7 +46,9 @@ export class CurrentUserTypeProvider extends BasicDataProvider {
     }
   }
 
-  onProvideSuccess(result: Record<string, unknown>): SuccessfulDataProviderResult {
+  onProvideSuccess(
+    result: Record<string, unknown>,
+  ): SuccessfulDataProviderResult {
     return { date: new Date(), status: 'success', data: result }
   }
 }

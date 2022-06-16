@@ -25,21 +25,18 @@ export const PersonalElectionEquities = (): JSX.Element => {
     const values = getValues()
     const equity: number = getTotal(values, 'equity')
     setTotalEquity(equity)
-    return equity
   }, [getValues])
 
   const getTotalAssets = useCallback(() => {
     const values = getValues()
     const assets: number = getTotal(values, 'asset')
     setTotalAssets(assets)
-    return assets
   }, [getValues])
 
   const getTotalLiabilities = useCallback(() => {
     const values = getValues()
     const liabilities: number = getTotal(values, 'liability')
     setTotalLiabilities(liabilities)
-    return liabilities
   }, [getValues])
 
   useEffect(() => {

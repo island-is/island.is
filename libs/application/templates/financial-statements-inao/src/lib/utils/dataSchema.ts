@@ -3,7 +3,7 @@ import { m } from '../../lib/messages'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import {
   Override,
-  NestedType
+  NestedType,
 } from '@island.is/application/templates/family-matters-core/types'
 import { FieldBaseProps } from '@island.is/application/core'
 

@@ -4,7 +4,11 @@ import {
   buildSubSection,
   getValueViaPath,
 } from '@island.is/application/core'
-import { GREATER, OPERATIONIDS, EQUITIESANDLIABILITIESIDS } from '../../../../lib/constants'
+import {
+  GREATER,
+  OPERATIONIDS,
+  EQUITIESANDLIABILITIESIDS,
+} from '../../../../lib/constants'
 import { m } from '../../../../lib/messages'
 
 export const keyNumbersSection = buildSection({
@@ -23,7 +27,7 @@ export const keyNumbersSection = buildSection({
           title: m.keyNumbersIncomeAndExpenses,
           description: m.fillOutAppopriate,
           component: 'PersonalElectionOperatingIncome',
-          childInputIds: Object.values(OPERATIONIDS) ,
+          childInputIds: Object.values(OPERATIONIDS),
         }),
       ],
     }),
@@ -36,7 +40,7 @@ export const keyNumbersSection = buildSection({
           title: m.keyNumbersDebt,
           description: m.fillOutAppopriate,
           component: 'PersonalElectionEquities',
-          childInputIds: Object.values(EQUITIESANDLIABILITIESIDS) ,
+          childInputIds: Object.values(EQUITIESANDLIABILITIESIDS),
         }),
       ],
     }),

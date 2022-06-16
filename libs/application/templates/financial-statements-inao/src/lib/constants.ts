@@ -27,7 +27,7 @@ export const OPERATIONIDS = {
   advertisements: 'expense.advertisements',
   travelCost: 'expense.travelCost',
   otherCost: 'expense.otherCost',
-  capitalCost: 'expense.capitalCost'
+  capitalCost: 'expense.capitalCost',
 }
 
 export const EQUITIESANDLIABILITIESIDS = {

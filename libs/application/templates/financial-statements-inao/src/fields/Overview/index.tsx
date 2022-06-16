@@ -140,10 +140,7 @@ export const Overview = ({ application }: FieldBaseProps) => {
             />
           </GridColumn>
           <GridColumn span={['12/12', '6/12']}>
-            <ValueLine
-              label={m.otherCost}
-              value={answers.expense?.otherCost}
-            />
+            <ValueLine label={m.otherCost} value={answers.expense?.otherCost} />
           </GridColumn>
         </GridRow>
       </Box>
@@ -156,10 +153,7 @@ export const Overview = ({ application }: FieldBaseProps) => {
       <Box paddingY={2}>
         <GridRow>
           <GridColumn span={['12/12', '6/12']}>
-            <ValueLine
-              label={m.currentAssets}
-              value={answers.asset?.current}
-            />
+            <ValueLine label={m.currentAssets} value={answers.asset?.current} />
           </GridColumn>
           <GridColumn span={['12/12', '6/12']}>
             <ValueLine
@@ -178,20 +172,14 @@ export const Overview = ({ application }: FieldBaseProps) => {
             />
           </GridColumn>
           <GridColumn span={['12/12', '6/12']}>
-            <ValueLine
-              label={m.longTerm}
-              value={answers.liability?.longTerm}
-            />
+            <ValueLine label={m.longTerm} value={answers.liability?.longTerm} />
           </GridColumn>
         </GridRow>
       </Box>
       <Box paddingY={2}>
         <GridRow>
           <GridColumn span={['12/12', '6/12']}>
-            <ValueLine
-              label={m.equity}
-              value={answers.equity?.totalEquity}
-            />
+            <ValueLine label={m.equity} value={answers.equity?.totalEquity} />
           </GridColumn>
         </GridRow>
       </Box>

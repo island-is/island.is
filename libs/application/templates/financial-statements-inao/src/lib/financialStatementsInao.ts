@@ -10,7 +10,7 @@ import {
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
 import { m } from './messages'
-import { ApiActions, Events, States, Roles } from './constants'
+import { Events, States, Roles } from './constants'
 import { dataSchema } from './utils/dataSchema'
 import { Features } from '@island.is/feature-flags'
 
