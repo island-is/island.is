@@ -90,7 +90,7 @@ export class MainResolver {
     @Args('input', { nullable: true }) input?: GetGenericLicensesInput,
   ) {
     const licenses = await this.licenseServiceService.getAllLicenses(
-      user.nationalId,
+      user,
       locale,
       {
         includedTypes: input?.includedTypes,

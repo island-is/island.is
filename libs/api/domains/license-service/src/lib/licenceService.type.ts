@@ -1,3 +1,5 @@
+import { User } from '@island.is/auth-nest-tools'
+
 export enum GenericLicenseType {
   DriversLicense = 'DriversLicense',
   HuntingLicense = 'HuntingLicense',
@@ -149,24 +151,16 @@ export type PkPassVerification = {
  */
 export interface GenericLicenseClient<LicenseType> {
   // This might be cached
-  getLicense: (
-    nationalId: string,
-  ) => Promise<GenericLicenseUserdataExternal | null>
+  getLicense: (user: User) => Promise<GenericLicenseUserdataExternal | null>
 
   // This will never be cached
   getLicenseDetail: (
-    nationalId: string,
+    user: User,
   ) => Promise<GenericLicenseUserdataExternal | null>
 
-  getPkPassUrl: (
-    nationalId: string,
-    data?: LicenseType,
-  ) => Promise<string | null>
+  getPkPassUrl: (user: User, data?: LicenseType) => Promise<string | null>
 
-  getPkPassQRCode: (
-    nationalId: string,
-    data?: LicenseType,
-  ) => Promise<string | null>
+  getPkPassQRCode: (user: User, data?: LicenseType) => Promise<string | null>
 
   verifyPkPass: (data: string) => Promise<PkPassVerification | null>
 }

@@ -39,6 +39,7 @@ export class LicenseServiceService {
     private genericLicenseFactory: (
       type: GenericLicenseType,
       cacheManager: CacheManager,
+      use: User,
     ) => Promise<GenericLicenseClient<unknown> | null>,
     @Inject(CACHE_MANAGER) private cacheManager: CacheManager,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
@@ -115,7 +116,7 @@ export class LicenseServiceService {
   }
 
   async getAllLicenses(
-    nationalId: User['nationalId'],
+    user: User,
     locale: Locale,
     {
       includedTypes,
@@ -140,6 +141,7 @@ export class LicenseServiceService {
         const licenseService = await this.genericLicenseFactory(
           license.type,
           this.cacheManager,
+          user,
         )
 
         if (!licenseService) {
@@ -150,8 +152,8 @@ export class LicenseServiceService {
         } else {
           licenseDataFromService = await this.getCachedOrCache(
             license,
-            nationalId,
-            async () => await licenseService.getLicense(nationalId),
+            user.nationalId,
+            async () => await licenseService.getLicense(user),
             force ? 0 : license.timeout,
           )
 
@@ -174,7 +176,7 @@ export class LicenseServiceService {
         updated: new Date(),
       }
       const combined: GenericUserLicense = {
-        nationalId,
+        nationalId: user.nationalId,
         license: {
           ...license,
           ...licenseUserdata,
@@ -188,7 +190,7 @@ export class LicenseServiceService {
   }
 
   async getLicense(
-    nationalId: User['nationalId'],
+    user: User,
     locale: Locale,
     licenseType: GenericLicenseType,
   ): Promise<GenericUserLicense> {
@@ -198,6 +200,7 @@ export class LicenseServiceService {
     const licenseService = await this.genericLicenseFactory(
       licenseType,
       this.cacheManager,
+      user,
     )
 
     if (license && licenseService) {

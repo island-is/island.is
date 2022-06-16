@@ -19,6 +19,7 @@ import {
   GENERIC_LICENSE_FACTORY,
 } from './licenceService.type'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
+import { User } from '@island.is/auth-nest-tools'
 
 export interface Config {
   xroad: {
@@ -89,6 +90,7 @@ export class LicenseServiceModule {
           useFactory: () => async (
             type: GenericLicenseType,
             cacheManager: CacheManager,
+            user: User,
           ): Promise<GenericLicenseClient<unknown> | null> => {
             switch (type) {
               case GenericLicenseType.DriversLicense:
