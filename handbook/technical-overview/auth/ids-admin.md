@@ -13,7 +13,7 @@ To create a client we need the following information:
  - Callback URLs
 	 - IAS compares these URLs with the callback URL sent with the request to the authorize endpoint. The callback URL sent with the request needs to match the URLs registered in IAS.
  - Post logout redirect URLs
-	 - These URLs are compared with the post-logout redirect URLs sent when ending a session. The URL in the request must match the URLs registered in IAS. The post logout redirect URL is the URL the user will be redirected to after signing out.
+	 - These URLs are compared with the `post_logout_redirect_uri` sent when client ends a session. The URL in the request must match the URLs registered in IAS. The post logout redirect URL is the URL the user will be redirected to after signing out.
  - The application's technical stack
  - Whether the authentication is done client or server-side
  - If the stack supports PKCE
