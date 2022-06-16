@@ -50,6 +50,7 @@ if (userMocked) {
       EndorsementsScope.admin,
       ApiScope.assets,
       ApiScope.education,
+      ApiScope.educationLicense,
       ApiScope.financeOverview,
       ApiScope.financeSalary,
       ApiScope.financeSchedule,
