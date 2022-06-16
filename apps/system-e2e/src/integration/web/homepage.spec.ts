@@ -12,10 +12,13 @@ describe('Home page', () => {
 
   it('should have life events', () => {
     cy.visit('/')
-    cy.get('[data-testid="lifeevent-card"]')
+    cy.get('a:has([data-testid="lifeevent-card"])')
       .should('have.length.at.least', 3)
-      .each((link) => cy.visit(link.prop('href')))
+      .each((link) => {
+        cy.visit(link.prop('href'))
+      })
   })
+
   it('should navigate to featured link', () => {
     cy.visit('/')
     cy.get('[data-testid="featured-link"]')
@@ -30,12 +33,10 @@ describe('Home page', () => {
       .should('have.length.at.least', 3)
       .each((link) => {
         cy.visit(link.prop('href'))
-          .location('pathname', locationOptions)
-          .should('not.equal', '/')
-          .get('[data-testid="link-back-home"]')
-          .click()
-          .location('pathname', locationOptions)
-          .should('equal', '/')
+        cy.location('pathname', locationOptions).should('not.equal', '/')
+        cy.get('[data-testid="link-back-home"]').click()
+        cy.location('pathname', locationOptions)
+        cy.should('equal', '/')
       })
   })
 })
