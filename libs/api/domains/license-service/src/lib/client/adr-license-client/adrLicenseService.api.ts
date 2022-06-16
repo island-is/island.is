@@ -11,7 +11,6 @@ import {
 } from '../../licenceService.type'
 import { GenericAdrLicenseResponse } from './genericAdrLicense.type'
 import { User } from '@island.is/auth-nest-tools'
-import { AdrApi, Configuration } from '@island.is/clients/aosh'
 import { parseAdrLicensePayload } from './adrLicenseMapper'
 
 /** Category to attach each log message to */
@@ -51,9 +50,7 @@ export class GenericAdrLicenseApi
     return license as GenericAdrLicenseResponse
   }
 
-  async getLicense(
-    nationalId: User['nationalId'],
-  ): Promise<GenericLicenseUserdataExternal | null> {
+  async getLicense(user: User): Promise<GenericLicenseUserdataExternal | null> {
     const license = await this.fetchLicense(nationalId)
 
     if (!license) {
@@ -72,7 +69,7 @@ export class GenericAdrLicenseApi
   }
 
   async getLicenseDetail(
-    nationalId: User['nationalId'],
+    user: User,
   ): Promise<GenericLicenseUserdataExternal | null> {
     return this.getLicense(nationalId)
   }
