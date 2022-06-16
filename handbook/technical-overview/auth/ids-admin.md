@@ -36,7 +36,7 @@ Usually, we create a client and then resources and scopes if needed and attach t
 Sometimes you might only want resources and scopes created for you and don´t need a client. An example use case is when you want to use [island.is](http://island.is/) app to log in and when the user is logged in there they will be able to access your API. Regardless, the process is the same. We need:
 
  - Name of the web service
- - Whether the web service is requires kennitolustyring
+ - Whether the web service is requires access control by nationalId (kennitölu stýringu)
  - If the scope should add national id (kennitala) and name of the user to the access_token
  - If you have multiple access types for your web service you´ll need to provide them all with a description of what they do. We´ll also need your domain, national id (kennitala) and contact email.
 
