@@ -50,7 +50,7 @@ import {
   rcReportForm,
   core,
 } from '@island.is/judicial-system-web/messages'
-import * as Constants from '@island.is/judicial-system/consts'
+import * as constants from '@island.is/judicial-system/consts'
 
 import * as styles from './StepThree.css'
 
@@ -514,8 +514,8 @@ const StepThreeForm: React.FC<Props> = (props) => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${Constants.STEP_TWO_ROUTE}/${workingCase.id}`}
-          nextUrl={`${Constants.STEP_FOUR_ROUTE}/${workingCase.id}`}
+          previousUrl={`${constants.STEP_TWO_ROUTE}/${workingCase.id}`}
+          nextUrl={`${constants.STEP_FOUR_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!isPoliceDemandsStepValidRC(workingCase)}
         />
       </FormContentContainer>

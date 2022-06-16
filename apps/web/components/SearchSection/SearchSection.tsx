@@ -83,6 +83,7 @@ export const SearchSection = ({
                   quickContentLabel={quickContentLabel}
                   placeholder={placeholder}
                   openOnFocus
+                  dataTestId="search-box"
                   colored
                 />
                 <Inline space={2}>

@@ -56,7 +56,7 @@ export const SelectFormField: FC<Props> = ({ application, error, field }) => {
           error={error}
           id={id}
           backgroundColor={backgroundColor}
-          options={finalOptions.map(({ label, tooltip, ...o }) => ({
+          options={finalOptions?.map(({ label, tooltip, ...o }) => ({
             ...o,
             label: formatText(label, application, formatMessage),
             ...(tooltip && {

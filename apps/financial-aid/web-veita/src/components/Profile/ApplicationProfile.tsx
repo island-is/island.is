@@ -244,6 +244,7 @@ const ApplicationProfile = ({
 
         <History
           applicantName={application.name}
+          applicantEmail={application.email}
           applicationEvents={application.applicationEvents}
           spouseName={application.spouseName ?? ''}
         />

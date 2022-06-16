@@ -30,3 +30,5 @@ export const serviceSetup = (): ServiceBuilder<'contentful-entry-tagger-service'
         },
       },
     })
+    .liveness('/liveness')
+    .readiness('/readiness')

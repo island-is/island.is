@@ -215,3 +215,11 @@ export const spouseApproved = defineMessages({
     description: 'Message for spouse when application is apporoved',
   },
 })
+
+export const approvedAlert = defineMessages({
+  title: {
+    id: 'fa.application:section.approvedAlert.title',
+    defaultMessage: 'Skýring frá vinnsluaðila',
+    description: 'Title of accepted alert box',
+  },
+})

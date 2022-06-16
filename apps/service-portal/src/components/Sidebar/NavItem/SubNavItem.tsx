@@ -1,4 +1,4 @@
-import { Box, Icon, Text } from '@island.is/island-ui/core'
+import { Box, Icon } from '@island.is/island-ui/core'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import React, { FC } from 'react'
 import { Link } from 'react-router-dom'

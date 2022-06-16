@@ -13,6 +13,7 @@ import {
 import { DataProviderTypes } from '../lib/types'
 
 import * as m from '../lib/messages'
+import { Routes } from '../lib/constants'
 
 export const PrerequisitesSpouse: Form = buildForm({
   id: 'FinancialAidApplication',
@@ -53,15 +54,15 @@ export const PrerequisitesSpouse: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'aboutSpouseForm',
+      id: Routes.SPOUSEACCECPTCONTRACT,
       title: m.aboutSpouseForm.general.sectionTitle,
       children: [
         buildMultiField({
-          id: 'acceptContract',
+          id: Routes.SPOUSEACCECPTCONTRACT,
           title: m.aboutForm.general.pageTitle,
           children: [
             buildCustomField({
-              id: 'acceptContract',
+              id: Routes.SPOUSEACCECPTCONTRACT,
               title: m.aboutSpouseForm.general.pageTitle,
               component: 'AboutSpouseForm',
             }),

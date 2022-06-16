@@ -58,6 +58,7 @@ export const mergeAuthSettings = (settings: AuthSettings): AuthSettings => {
     baseUrl,
     redirectPath,
     redirectPathSilent,
+    automaticSilentRenew: false,
     checkSessionPath: '/connect/sessioninfo',
     silent_redirect_uri: `${baseUrl}${redirectPathSilent}`,
     post_logout_redirect_uri: baseUrl,

@@ -477,6 +477,8 @@ export class NotificationService {
     recipients?: string,
   ): Promise<void> {
     try {
+      return // Temporarily stop trying to upload emails to court
+
       await this.courtService.createEmail(
         user,
         theCase.id,

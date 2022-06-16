@@ -423,12 +423,15 @@ export class ResourcesService {
   }
 
   private filterScopeForCustomDelegation(scope: string[], user: User) {
-    const delegationType = user.actor?.delegationType ?? 'Self'
+    const delegationTypes = user.delegationType ?? []
+
     return scope.filter((scopeName) => {
       for (const rule of this.delegationConfig.customScopeRules) {
         if (
           rule.scopeName === scopeName &&
-          rule.onlyForDelegationType.includes(delegationType) === false
+          rule.onlyForDelegationType.some((delType: any) =>
+            delegationTypes.includes(delType),
+          ) === false
         ) {
           return false
         }

@@ -66,10 +66,6 @@ function Accesses(): JSX.Element {
           <Stack space={3}>
             {loading ? (
               <SkeletonLoader width="100%" height={206} />
-            ) : authDelegations.length === 0 ? (
-              <Box marginTop={4}>
-                <EmptyImage width="100%" />
-              </Box>
             ) : (
               authDelegations.map((delegation) =>
                 delegation.to ? (

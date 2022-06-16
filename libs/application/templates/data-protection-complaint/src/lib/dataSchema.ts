@@ -99,6 +99,8 @@ export const DataProtectionComplaintSchema = z.object({
     city: z.string().refine((x) => !!x, { params: error.required }),
     email: optionalEmail,
     phoneNumber: z.string().optional(),
+    contactName: z.string().optional(),
+    contactEmail: z.string().optional(),
   }),
   commissions: z.object({
     documents: z.array(FileSchema).nonempty(),

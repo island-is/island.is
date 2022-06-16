@@ -601,6 +601,7 @@ const Search: Screen<CategoryProps> = ({
                       <Card
                         key={index}
                         tags={tags}
+                        dataTestId="search-result"
                         image={thumbnail ? thumbnail : image}
                         subTitle={parentTitle}
                         {...rest}

@@ -192,7 +192,10 @@ export class ApplicationService {
             eventType: {
               [Op.in]: isEmployee
                 ? Object.values(ApplicationEventType)
-                : [ApplicationEventType.DATANEEDED],
+                : [
+                    ApplicationEventType.DATANEEDED,
+                    ApplicationEventType.APPROVED,
+                  ],
             },
           },
           order: [['created', 'DESC']],
@@ -305,10 +308,10 @@ export class ApplicationService {
           type: f.type,
         })
       }),
-      this.createApplicationEmails(application, appModel),
       this.applicationEventService.create({
         applicationId: appModel.id,
         eventType: ApplicationEventType[appModel.state.toUpperCase()],
+        emailSent: await this.createApplicationEmails(application, appModel),
       }),
     ])
 
@@ -330,55 +333,60 @@ export class ApplicationService {
     application: CreateApplicationDto,
     appModel: ApplicationModel,
   ) {
-    const municipality = await this.municipalityService.findByMunicipalityId(
-      application.municipalityCode,
-    )
-    const isApplicationSystem = application.applicationSystemId != null
+    try {
+      const municipality = await this.municipalityService.findByMunicipalityId(
+        application.municipalityCode,
+      )
+      const isApplicationSystem = application.applicationSystemId != null
 
-    const emailData = getApplicantEmailDataFromEventType(
-      ApplicationEventType.NEW,
-      isApplicationSystem
-        ? linkToApplicationSystem(application.applicationSystemId)
-        : linkToStatusPage(appModel.id),
-      application.email,
-      municipality,
-      appModel.created,
-    )
-
-    const emailPromises: Promise<void>[] = []
-
-    emailPromises.push(
-      this.sendEmail(
-        {
-          name: application.name,
-          address: appModel.email,
-        },
-        emailData.subject,
-        ApplicantEmailTemplate(emailData.data),
-      ),
-    )
-
-    if (application.spouseNationalId && !isApplicationSystem) {
       const emailData = getApplicantEmailDataFromEventType(
-        'SPOUSE',
-        environment.oskBaseUrl,
-        appModel.spouseEmail,
+        ApplicationEventType.NEW,
+        isApplicationSystem
+          ? linkToApplicationSystem(application.applicationSystemId)
+          : linkToStatusPage(appModel.id),
+        application.email,
         municipality,
         appModel.created,
       )
+
+      const emailPromises: Promise<void>[] = []
+
       emailPromises.push(
         this.sendEmail(
           {
-            name: appModel.spouseName,
-            address: appModel.spouseEmail,
+            name: application.name,
+            address: appModel.email,
           },
           emailData.subject,
           ApplicantEmailTemplate(emailData.data),
         ),
       )
-    }
 
-    await Promise.all(emailPromises)
+      if (application.spouseNationalId && !isApplicationSystem) {
+        const emailData = getApplicantEmailDataFromEventType(
+          'SPOUSE',
+          environment.oskBaseUrl,
+          appModel.spouseEmail,
+          municipality,
+          appModel.created,
+        )
+        emailPromises.push(
+          this.sendEmail(
+            {
+              name: appModel.spouseName,
+              address: appModel.spouseEmail,
+            },
+            emailData.subject,
+            ApplicantEmailTemplate(emailData.data),
+          ),
+        )
+      }
+
+      await Promise.all(emailPromises)
+      return true
+    } catch {
+      return false
+    }
   }
 
   async sendSpouseEmail(data: SpouseEmailDto) {
@@ -455,6 +463,10 @@ export class ApplicationService {
       comment: update?.rejection || update?.comment,
       staffName: staff?.name,
       staffNationalId: staff?.nationalId,
+      emailSent: await this.sendApplicationUpdateEmail(
+        update,
+        updatedApplication,
+      ),
     })
 
     if (update.amount) {
@@ -495,12 +507,7 @@ export class ApplicationService {
       ])
     }
 
-    await Promise.all([
-      events,
-      files,
-      this.sendApplicationUpdateEmail(update, updatedApplication),
-      directTaxPayments,
-    ])
+    await Promise.all([events, files, directTaxPayments])
 
     return updatedApplication
   }
@@ -566,36 +573,44 @@ export class ApplicationService {
       update.event === ApplicationEventType.REJECTED ||
       update.event === ApplicationEventType.APPROVED
     ) {
-      const municipality = await this.municipalityService.findByMunicipalityId(
-        updatedApplication.municipalityCode,
-      )
-      const isApplicationSystem = updatedApplication.applicationSystemId != null
+      try {
+        const municipality = await this.municipalityService.findByMunicipalityId(
+          updatedApplication.municipalityCode,
+        )
+        const isApplicationSystem =
+          updatedApplication.applicationSystemId != null
 
-      const emailData = getApplicantEmailDataFromEventType(
-        update.event,
-        isApplicationSystem
-          ? linkToApplicationSystem(updatedApplication.applicationSystemId)
-          : linkToStatusPage(updatedApplication.id),
-        updatedApplication.email,
-        municipality,
-        updatedApplication.created,
-        update.event === ApplicationEventType.DATANEEDED
-          ? update?.comment
-          : undefined,
-        update.event === ApplicationEventType.REJECTED
-          ? update?.rejection
-          : undefined,
-      )
+        const emailData = getApplicantEmailDataFromEventType(
+          update.event,
+          isApplicationSystem
+            ? linkToApplicationSystem(updatedApplication.applicationSystemId)
+            : linkToStatusPage(updatedApplication.id),
+          updatedApplication.email,
+          municipality,
+          updatedApplication.created,
+          update.event === ApplicationEventType.DATANEEDED
+            ? update?.comment
+            : undefined,
+          update.event === ApplicationEventType.REJECTED
+            ? update?.rejection
+            : undefined,
+        )
 
-      await this.sendEmail(
-        {
-          name: updatedApplication.name,
-          address: updatedApplication.email,
-        },
-        emailData.subject,
-        ApplicantEmailTemplate(emailData.data),
-      )
+        await this.sendEmail(
+          {
+            name: updatedApplication.name,
+            address: updatedApplication.email,
+          },
+          emailData.subject,
+          ApplicantEmailTemplate(emailData.data),
+        )
+        return true
+      } catch {
+        return false
+      }
     }
+
+    return null
   }
 
   private async sendEmail(
