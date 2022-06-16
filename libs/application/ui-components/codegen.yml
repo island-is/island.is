@@ -1,9 +1,9 @@
 schema:
   - apps/api/src/api.graphql
 documents:
-  - libs/shared/form-fields/src/**/*.graphql.ts
+  - libs/application/ui-components/src/**/*.graphql.ts
 generates:
-  libs/shared/form-fields/gen/graphql.ts:
+  libs/application/ui-components/gen/graphql.ts:
     plugins:
       - typescript
       - typescript-operations
