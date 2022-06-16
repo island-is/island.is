@@ -92,24 +92,22 @@ export const CompanySearchController: FC<Props> = ({
       return ''
     }
 
-    const companies: Array<any> = data?.companyRegistryCompanies?.data ?? []
+    const companies = data?.companyRegistryCompanies?.data ?? []
     if (companies.length === 0) return ''
 
-    const filteredCompany = companies.filter(
+    const filteredCompany = companies.find(
       (company) => company.nationalId === nationalId,
     )
 
-    if (filteredCompany.length === 0) {
+    if (!filteredCompany?.companyInfo) {
       return ''
     }
 
-    const vats: Array<any> = filteredCompany[0].companyInfo.vat
+    const vats = filteredCompany.companyInfo.vat
 
     for (const v of vats) {
-      if (!v.dateOfDeregistration) {
-        const c = (v.classification as Array<any>).find(
-          (c) => c.type === 'Aðal',
-        )
+      if (!v.dateOfDeregistration && v.classification) {
+        const c = v.classification.find((c) => c.type === 'Aðal')
         if (c) {
           return `${c.number} - ${c.name}`
         }
