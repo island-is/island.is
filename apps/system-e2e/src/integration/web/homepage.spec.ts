@@ -2,10 +2,14 @@ describe('Home page', () => {
   before(() => {
     cy.ensureLoggedIn({ url: '/' })
   })
-  it('should navigate homepage', () => {
+
+  it('has expected sections', () => {
     cy.visit('/')
-    cy.contains('Að eignast barn')
+    cy.get('[data-testid="home-banner"]').should('have.length', 1)
+    cy.get('[data-testid="home-heading"]').should('have.length', 1)
+    cy.get('[data-testid="home-news"]').should('have.length', 1)
   })
+
   it('should have life events', () => {
     cy.visit('/')
     cy.get('a:has([data-testid="lifeevent-card"])')
@@ -17,15 +21,12 @@ describe('Home page', () => {
     cy.visit('/')
     cy.get('a:has([data-testid="lifeevent-card"])')
       .should('have.length.at.least', 3)
-      .each((link) =>
-        cy
-          .visit(link.attr('href')!)
-          .location('pathname', { timeout: 5000 })
-          .should('not.equal', '/')
-          .get('[data-testid="link-back-home"]')
-          .click()
-          .location('pathname', { timeout: 5000 })
-          .should('equal', '/'),
-      )
+      .each((link) => {
+        cy.visit(link.attr('href')!)
+        cy.location('pathname', { timeout: 7000 }).should('not.equal', '/')
+
+        cy.get('[data-testid="link-back-home"]').click()
+        cy.location('pathname', { timeout: 7000 }).should('equal', '/')
+      })
   })
 })
