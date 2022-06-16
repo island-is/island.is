@@ -1,5 +1,5 @@
 import { SIGNED_VERDICT_OVERVIEW } from '@island.is/judicial-system/consts'
-import { Case } from '@island.is/judicial-system/types'
+import { Case, CaseState } from '@island.is/judicial-system/types'
 
 import { intercept, makeRestrictionCase, makeProsecutor } from '../../../utils'
 
@@ -9,6 +9,8 @@ describe('Signed verdict overview - Prosecutor - Restriction cases', () => {
     const caseDataAddition: Case = {
       ...caseData,
       prosecutor: makeProsecutor(),
+      state: CaseState.ACCEPTED,
+      validToDate: '2022-06-16T19:51:39.466Z',
     }
 
     cy.stubAPIResponses()
@@ -16,7 +18,8 @@ describe('Signed verdict overview - Prosecutor - Restriction cases', () => {
     intercept(caseDataAddition)
   })
 
-  it('should not have a button for modifying the ruling', () => {
-    cy.get('[data-testid="modifyRulingButton"]').should('not.exist')
+  it('should display appropriate components on the page', () => {
+    cy.getByTestid('caseDates').should('exist')
+    cy.get('[data-testid="modfyRulingButton"]').should('not.exist')
   })
 })
