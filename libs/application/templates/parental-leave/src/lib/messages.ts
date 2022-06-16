@@ -1022,11 +1022,12 @@ export const parentalLeaveFormMessages: MessageDir = {
     description: {
       id: 'pl.application:employer.description',
       defaultMessage:
-        'Vinnuveitandinn þinn þarf að samþykkja tilhögun fæðingarorlofsins þíns. ' +
-        'Þegar þú hefur sent umsóknina inn mun verða sendur vefpóstur á þetta netfang hér fyrir neðan. ' +
-        'Viðtakandi vefpóstsins mun fá aðgang að umsókninni, en einungis sjá upplýsingar sem varða tilhögun fæðingarorlofs.' +
-        'Ef vinnuveitandinn þinn hafnar umsókninni, þá fer umsóknin aftur á ákveðinn byrjunarreit, þar sem þú getur sótt um aftur.',
-      description: 'Add translation',
+        'Vinnuveitandi þarf að samþykkja tilhögun fæðingarorlofsins (ef þú hefur marga vinnuveitendur skal velja hæsta starfshlutfall). ' +
+        'Þegar þú hefur sent umsóknina verður sendur tölvupóstur og sms til vinnuveitanda. ' +
+        ' Viðtakandi fær aðgang að umsókninni, en getur einungis séð upplýsingar sem varða tilhögun fæðingarorlofs.' +
+        'Ef vinnuveitandi hafnar umsókninni þarft þú að gera viðeigandi breytingar á henni.',
+      description:
+        'Your employer is required to approve your parental leave arrangement. Once you have submitted your application, an email and sms will be sent to your employer. The recipient will get access to the application, but will only be able to see the timing arrangement. If your employer rejects the timing arrangement, you will need to change your application.',
     },
     email: {
       id: 'pl.application:employer.email',

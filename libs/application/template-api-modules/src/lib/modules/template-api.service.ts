@@ -18,6 +18,7 @@ import {
   GeneralFishingLicenseService,
   DataProtectionComplaintService,
   PSignSubmissionService,
+  AnnouncementOfDeathService,
   ExamplePaymentActionsService,
   ComplaintsToAlthingiOmbudsmanTemplateService,
   MortgageCertificateSubmissionService,
@@ -61,6 +62,7 @@ export class TemplateAPIService {
     private readonly generalFishingLicenseService: GeneralFishingLicenseService,
     private readonly dataProtectionComplaintService: DataProtectionComplaintService,
     private readonly pSignSubmissionService: PSignSubmissionService,
+    private readonly announcementOfDeathService: AnnouncementOfDeathService,
     private readonly examplePaymentActionsService: ExamplePaymentActionsService,
     private readonly complaintsToAlthingiOmbudsman: ComplaintsToAlthingiOmbudsmanTemplateService,
     private readonly mortgageCertificateSubmissionService: MortgageCertificateSubmissionService,
@@ -87,6 +89,7 @@ export class TemplateAPIService {
       | GeneralFishingLicenseService
       | DataProtectionComplaintService
       | PSignSubmissionService
+      | AnnouncementOfDeathService
       | ExamplePaymentActionsService
       | ComplaintsToAlthingiOmbudsmanTemplateService
       | MortgageCertificateSubmissionService
@@ -205,6 +208,11 @@ export class TemplateAPIService {
       case ApplicationTypes.P_SIGN:
         return this.tryRunningActionOnService(
           this.pSignSubmissionService,
+          action,
+        )
+      case ApplicationTypes.ANNOUNCEMENT_OF_DEATH:
+        return this.tryRunningActionOnService(
+          this.announcementOfDeathService,
           action,
         )
       case ApplicationTypes.EXAMPLE_PAYMENT:
