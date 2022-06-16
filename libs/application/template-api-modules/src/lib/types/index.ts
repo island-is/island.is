@@ -7,6 +7,8 @@ import { Config as CriminalRecordConfig } from '@island.is/api/domains/criminal-
 import { PaymentServiceOptions } from '@island.is/clients/payment'
 import { Message } from '@island.is/email-service'
 import { User } from '@island.is/auth-nest-tools'
+import { IslykillApiModuleConfig } from '@island.is/clients/islykill'
+
 import { PaymentScheduleServiceOptions } from '@island.is/clients/payment-schedule'
 import { HealthInsuranceV2Options } from '@island.is/clients/health-insurance-v2'
 import { DataProtectionComplaintClientConfig } from '@island.is/clients/data-protection-complaint'
@@ -54,6 +56,7 @@ export interface BaseTemplateAPIModuleConfig {
     password: string
     host: string
   }
+  islykill: IslykillApiModuleConfig
 }
 
 export interface TemplateApiModuleActionProps {
