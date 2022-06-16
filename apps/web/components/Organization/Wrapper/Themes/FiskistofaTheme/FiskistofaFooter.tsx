@@ -18,7 +18,6 @@ interface FiskistofaFooterProps {
 }
 
 export const FiskistofaFooter = ({ footerItems }: FiskistofaFooterProps) => {
-  console.log('HERE')
   return (
     <footer aria-labelledby="fiskistofa-footer">
       <Box className={styles.container}>
