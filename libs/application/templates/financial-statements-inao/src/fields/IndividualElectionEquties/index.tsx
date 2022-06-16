@@ -14,7 +14,7 @@ import { Total } from '../KeyNumbers'
 import { getTotal } from '../../lib/utils/helpers'
 import { EQUITIESANDLIABILITIESIDS } from '../../lib/constants'
 
-export const PersonalElectionEquities = (): JSX.Element => {
+export const IndividualElectionEquities = (): JSX.Element => {
   const { getValues } = useFormContext()
   const [totalAssets, setTotalAssets] = useState(0)
   const [totalEquity, setTotalEquity] = useState(0)

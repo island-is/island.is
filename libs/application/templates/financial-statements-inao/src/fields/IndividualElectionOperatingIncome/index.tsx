@@ -8,12 +8,12 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
-import { Income } from './ElectionIncome'
-import { Expenses } from './ElectionExpenses'
+import { Income } from './income'
+import { Expenses } from './expenses'
 import { Total } from '../KeyNumbers'
 import { getTotal } from '../../lib/utils/helpers'
 
-export const PersonalElectionOperatingIncome = (): JSX.Element => {
+export const IndividualElectionOperatingIncome = (): JSX.Element => {
   const { getValues } = useFormContext()
   const [totalIncome, setTotalIncome] = useState(0)
   const [totalExpense, setTotalExpense] = useState(0)
