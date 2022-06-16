@@ -387,10 +387,12 @@ export function getApplicationExternalData(
 }
 
 export function getApplicationAnswers(answers: Application['answers']) {
-  const otherParent = getValueViaPath(
+  let otherParent = getValueViaPath(
     answers,
-    'otherParent.chooseOtherParent',
+    'otherParentObj.chooseOtherParent',
   ) as string
+  if (!otherParent)
+    otherParent = getValueViaPath(answers, 'otherParent') as string
 
   const otherParentRightOfAccess = getValueViaPath(
     answers,
@@ -424,15 +426,21 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'employer.isSelfEmployed',
   ) as YesOrNo
 
-  const otherParentName = getValueViaPath(
+  let otherParentName = getValueViaPath(
     answers,
-    'otherParent.otherParentName',
+    'otherParentObj.otherParentName',
   ) as string
+  if (!otherParentName) {
+    otherParentName = getValueViaPath(answers, 'otherParentName') as string
+  }
 
-  const otherParentId = getValueViaPath(
+  let otherParentId = getValueViaPath(
     answers,
-    'otherParent.otherParentId',
+    'otherParentObj.otherParentId',
   ) as string
+  if (!otherParentId) {
+    otherParentId = getValueViaPath(answers, 'otherParentId') as string
+  }
 
   const otherParentEmail = getValueViaPath(
     answers,
