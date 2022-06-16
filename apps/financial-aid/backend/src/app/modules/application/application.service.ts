@@ -35,8 +35,7 @@ import {
   applicationPageSize,
   Routes,
   getNavEmploymentStatus,
-  getHomeCircumstances,
-  calculateNavAmount,
+  calculatePersonalTaxAllowanceFromAmount,
 } from '@island.is/financial-aid/shared/lib'
 import { FileService } from '../file'
 import {
@@ -52,7 +51,7 @@ import { environment } from '../../../environments'
 import { ApplicantEmailTemplate } from './emailTemplates/applicantEmailTemplate'
 import { MunicipalityService } from '../municipality'
 import { logger } from '@island.is/logging'
-import { AmountModel, AmountService } from '../amount'
+import { AmountModel, AmountService, CreateAmountDto } from '../amount'
 import { DeductionFactorsModel } from '../deductionFactors'
 import { DirectTaxPaymentService } from '../directTaxPayment'
 import { DirectTaxPaymentModel } from '../directTaxPayment/models'
@@ -449,7 +448,7 @@ export class ApplicationService {
     }
 
     if (update.event === ApplicationEventType.APPROVED) {
-      update.navSuccess = await this.sendToNav(id)
+      update.navSuccess = await this.sendToNav(id, update.amount)
     } else if (
       [
         ApplicationEventType.NEW,
@@ -528,14 +527,14 @@ export class ApplicationService {
     return updatedApplication
   }
 
-  async sendToNav(applicationId: string) {
+  async sendToNav(applicationId: string, amount: CreateAmountDto) {
     try {
       const application = await this.findById(applicationId, true)
       const municipality = await this.municipalityService.findByMunicipalityId(
         application.municipalityCode,
       )
 
-      if(!municipality.usingNav) {
+      if (!municipality.usingNav) {
         return null
       }
 
@@ -571,18 +570,30 @@ export class ApplicationService {
             phoneNo: application.phoneNumber,
             email: application.email,
             bankAccount: `${application.bankNumber}${application.ledger}${application.accountNumber}`,
-            grantAmount: calculateNavAmount(application.amount),
-            // description: "string",
-            // referenceNo: "string",
+            grantAmount: this.calculateNavAmount(amount),
+            referenceNo: application.nationalId, //TODO: change to apllicationID
             employmentStatus: getNavEmploymentStatus[application.employment],
-            personalTaxCredit: application.amount.personalTaxCredit,
-            housingCode: getHomeCircumstances[application.homeCircumstances],
+            personalTaxCredit: calculatePersonalTaxAllowanceFromAmount(
+              amount.tax,
+              amount.personalTaxCredit,
+              amount.spousePersonalTaxCredit,
+            ),
+            housingCode: application.homeCircumstances,
           }),
         },
       ).then((response) => response.ok)
     } catch {
       return false
     }
+  }
+
+  private calculateNavAmount(amount: CreateAmountDto) {
+    return amount.deductionFactors
+      ?.map((d) => d.amount)
+      .reduce(
+        (previousValue, currentValue) => previousValue - currentValue,
+        amount.aidAmount - (amount.income ?? 0),
+      )
   }
 
   async filter(
