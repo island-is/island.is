@@ -17,6 +17,7 @@ import {
   strikethrough as strikethroughStyle,
   whiteSpace as whiteSpaceStyle,
 } from './Text.css'
+import { TestSupport } from '@island.is/island-ui/utils'
 
 type TextElements =
   | 'h1'
@@ -88,7 +89,7 @@ export const getTextStyles = ({
     [whiteSpaceStyle[whiteSpace!]]: whiteSpace,
   })
 
-export const Text = forwardRef<HTMLElement, TextProps>(
+export const Text = forwardRef<HTMLElement, TextProps & TestSupport>(
   (
     {
       id,
@@ -108,6 +109,7 @@ export const Text = forwardRef<HTMLElement, TextProps>(
       as = 'p',
       strikethrough,
       whiteSpace,
+      dataTestId,
     },
     ref,
   ) => {
@@ -122,6 +124,7 @@ export const Text = forwardRef<HTMLElement, TextProps>(
         paddingTop={paddingTop}
         paddingBottom={paddingBottom}
         paddingY={paddingY}
+        data-testid={dataTestId}
         className={getTextStyles({
           color,
           truncate,
