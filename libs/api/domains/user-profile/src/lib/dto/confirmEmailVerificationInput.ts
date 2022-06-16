@@ -9,5 +9,5 @@ export class ConfirmEmailVerificationInput {
 
   @Field(() => String)
   @IsString()
-  email?: string
+  email!: string
 }

@@ -9,5 +9,5 @@ export class ConfirmSmsVerificationInput {
 
   @Field(() => String)
   @IsString()
-  mobilePhoneNumber?: string
+  mobilePhoneNumber!: string
 }
