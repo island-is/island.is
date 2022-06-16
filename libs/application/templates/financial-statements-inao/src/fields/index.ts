@@ -1,5 +1,5 @@
 export { Success } from './Done'
 export { Overview } from './Overview'
 export { ElectionStatement } from './ElectionStatement'
-export { PersonalElectionOperatingIncome } from './PersonalElectionOperatingIncome'
-export { PersonalElectionEquities } from './PersonalElectionEquties'
+export { IndividualElectionOperatingIncome } from './IndividualElectionOperatingIncome'
+export { IndividualElectionEquities } from './IndividualElectionEquties'
