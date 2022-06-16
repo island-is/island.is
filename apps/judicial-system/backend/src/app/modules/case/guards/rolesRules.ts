@@ -87,6 +87,12 @@ const courtFields: (keyof UpdateCase)[] = [
   'rulingModifiedHistory',
 ]
 
+const adminFields: (keyof UpdateCase)[] = [
+  'validToDate',
+  'isolationToDate',
+  'caseModifiedExplanation',
+]
+
 // Allows judges to update a specific set of fields
 export const judgeUpdateRule = {
   role: UserRole.JUDGE,
@@ -99,6 +105,13 @@ export const registrarUpdateRule = {
   role: UserRole.REGISTRAR,
   type: RulesType.FIELD,
   dtoFields: courtFields,
+} as RolesRule
+
+// Allows prison admins to update a specific set of fields
+export const adminUpdateRule = {
+  role: UserRole.STAFF,
+  type: RulesType.FIELD,
+  dtoFields: adminFields,
 } as RolesRule
 
 // Allows prosecutors to open, submit and delete cases
