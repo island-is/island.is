@@ -38,6 +38,6 @@ Sometimes you might only want resources and scopes created for you and don´t ne
  - Name of the web service
  - Whether the web service is requires access control by nationalId (kennitölu stýringu)
  - If the scope should add national id (kennitala) and name of the user to the access_token
- - If you have multiple access types for your web service you´ll need to provide them all with a description of what they do. We´ll also need your domain, national id (kennitala) and contact email.
+ - If you have multiple access levels for your web service, you´ll need to provide them all with a description of what they do.
 
 An example of how to use scopes can be found [here](https://docs.devland.is/technical-overview/auth/configuration#example-authentication).
