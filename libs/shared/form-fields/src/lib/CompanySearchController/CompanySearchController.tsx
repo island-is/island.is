@@ -104,9 +104,8 @@ export const CompanySearchController: FC<Props> = ({
     }
 
     const vats: Array<any> = filteredCompany[0].companyInfo.vat
-    let isat = ''
 
-    for (let v of vats) {
+    for (const v of vats) {
       if (!v.dateOfDeregistration) {
         const c = (v.classification as Array<any>).find(
           (c) => c.type === 'Aðal',
@@ -116,7 +115,7 @@ export const CompanySearchController: FC<Props> = ({
         }
       }
     }
-    return isat
+    return ''
   }
 
   return (
