@@ -10,11 +10,8 @@ import {
   DefaultEvents,
   buildCheckboxField,
   buildCompanySearchField,
-  getValueViaPath,
   Application,
 } from '@island.is/application/core'
-import { title } from 'process'
-import { useFormContext } from 'react-hook-form'
 import {
   section,
   application,
