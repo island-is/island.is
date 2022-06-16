@@ -5,6 +5,7 @@ describe('Home page', () => {
   before(() => {
     cy.cognitoLogin({ cognitoUsername, cognitoPassword })
   })
+
   it('should navigate homepage', () => {
     cy.visit('/')
     cy.contains('Öll opinber þjónusta á einum stað')
