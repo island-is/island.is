@@ -101,6 +101,7 @@ export interface LayoutProps {
   namespace: Record<string, string | string[]>
   alertBannerContent?: GetAlertBannerQuery['getAlertBanner']
   organizationAlertBannerContent?: GetAlertBannerQuery['getAlertBanner']
+  articleAlertBannerContent?: GetAlertBannerQuery['getAlertBanner']
   footerVersion?: 'default' | 'organization'
   respOrigin
   megaMenuData
@@ -156,6 +157,7 @@ const Layout: NextComponentType<
   namespace,
   alertBannerContent,
   organizationAlertBannerContent,
+  articleAlertBannerContent,
   footerVersion = 'default',
   respOrigin,
   children,
@@ -225,11 +227,21 @@ const Layout: NextComponentType<
           )}`,
           ...organizationAlertBannerContent,
         },
+        {
+          bannerId: `article-alert-${stringHash(
+            JSON.stringify(articleAlertBannerContent ?? {}),
+          )}`,
+          ...articleAlertBannerContent,
+        },
       ].filter(
         (banner) => !Cookies.get(banner.bannerId) && banner?.showAlertBanner,
       ),
     )
-  }, [alertBannerContent, organizationAlertBannerContent])
+  }, [
+    alertBannerContent,
+    articleAlertBannerContent,
+    organizationAlertBannerContent,
+  ])
 
   const preloadedFonts = [
     '/fonts/ibm-plex-sans-v7-latin-300.woff2',
@@ -655,12 +667,18 @@ export const withMainLayout = <T,>(
         ? componentProps['organizationPage']['alertBanner']
         : undefined
 
+    const articleAlertBannerContent: GetAlertBannerQuery['getAlertBanner'] =
+      'article' in componentProps
+        ? componentProps['article']['alertBanner']
+        : undefined
+
     return {
       layoutProps: {
         ...layoutProps,
         ...layoutConfig,
         ...themeConfig,
         organizationAlertBannerContent,
+        articleAlertBannerContent,
       },
       componentProps,
     }
