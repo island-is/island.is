@@ -23,6 +23,17 @@ describe(`${IC_POLICE_CONFIRMATION_ROUTE}/:id`, () => {
     cy.visit(`${IC_POLICE_CONFIRMATION_ROUTE}/test_id`)
   })
 
+  it('should let the user know if the assigned defender has viewed the case', () => {
+    const caseDataAddition: Case = {
+      ...caseData,
+      seenByDefender: '2020-09-16T19:50:08.033Z',
+    }
+
+    intercept(caseDataAddition)
+
+    cy.getByTestid('alertMessageSeenByDefender').should('not.match', ':empty')
+  })
+
   it('should have a info panel about how to resend a case if the case has been received', () => {
     const caseDataAddition: Case = {
       ...caseData,
