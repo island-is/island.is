@@ -1,8 +1,5 @@
 describe('Home page', () => {
   beforeEach(() => {
-    cy.log(`testEnvironment: ${Cypress.env('testEnvironment')}`)
-    cy.log(`baseUrl: ${Cypress.config().baseUrl}`)
-
     cy.cognitoLogin({
       cognitoUsername: Cypress.env('cognitoUsername'),
       cognitoPassword: Cypress.env('cognitoPassword'),

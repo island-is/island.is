@@ -36,6 +36,9 @@ Cypress.Commands.add('idsLogin', ({ phoneNumber, authDomain }) => {
 })
 
 Cypress.Commands.add('cognitoLogin', ({ cognitoUsername, cognitoPassword }) => {
+  cy.log(`testEnvironment: ${Cypress.env('testEnvironment')}`)
+  cy.log(`baseUrl: ${Cypress.config().baseUrl}`)
+
   if (testEnvironment === 'staging' || testEnvironment === 'dev') {
     cy.session([cognitoUsername, cognitoPassword], () => {
       cy.visit('/innskraning')
