@@ -46,6 +46,7 @@ import LandlaeknirFooter from './Themes/LandlaeknirTheme/LandlaeknirFooter'
 import { HeilbrigdisstofnunNordurlandsHeader } from './Themes/HeilbrigdisstofnunNordurlandsTheme/HeilbrigdisstofnunNordurlandsHeader'
 import { LandlaeknirHeader } from './Themes/LandlaeknirTheme/LandlaeknirHeader'
 import { FiskistofaHeader } from './FiskistofaTheme/FiskistofaHeader'
+import HeilbrigdisstofnunNordurlandsFooter from './Themes/HeilbrigdisstofnunNordurlandsTheme/HeilbrigdisstofnunNordurlandsFooter'
 import * as styles from './OrganizationWrapper.css'
 
 interface NavigationData {
@@ -248,6 +249,13 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
     case 'directorate-of-health':
       OrganizationFooterComponent = (
         <LandlaeknirFooter footerItems={organization.footerItems} />
+      )
+      break
+    case 'hsn':
+      OrganizationFooterComponent = (
+        <HeilbrigdisstofnunNordurlandsFooter
+          footerItems={organization.footerItems}
+        />
       )
       break
   }
