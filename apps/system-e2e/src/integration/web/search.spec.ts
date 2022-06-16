@@ -1,6 +1,9 @@
 describe('Search feature', () => {
-  before(() => {
-    cy.ensureLoggedIn({ url: '/' })
+  beforeEach(() => {
+    cy.cognitoLogin({
+      cognitoUsername: Cypress.env('COGNITO_USERNAME'),
+      cognitoPassword: Cypress.env('COGNITO_PASSWORD'),
+    })
   })
 
   it('should have search results for common words', function () {
