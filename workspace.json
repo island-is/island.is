@@ -135,6 +135,7 @@
           "builder": "@nrwl/jest:jest",
           "options": {
             "jestConfig": "apps/air-discount-scheme/backend/jest.config.js",
+            "runInBand": true,
             "passWithNoTests": true
           },
           "outputs": ["coverage/apps/air-discount-scheme/backend"]
