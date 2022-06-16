@@ -1,13 +1,26 @@
 import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
+import router from 'next/router'
+import Link from 'next/link'
 
-import { Text, Box, Header, UserMenu, Icon } from '@island.is/island-ui/core'
+import {
+  Text,
+  Box,
+  Header,
+  UserMenu,
+  Icon,
+  GridContainer,
+  GridRow,
+  GridColumn,
+} from '@island.is/island-ui/core'
 import { api } from '@island.is/judicial-system-web/src/services'
 import {
   capitalize,
   formatPhoneNumber,
 } from '@island.is/judicial-system/formatters'
 import { core } from '@island.is/judicial-system-web/messages'
+import { UserRole } from '@island.is/judicial-system/types'
+import * as constants from '@island.is/judicial-system/consts'
 
 import { UserContext } from '../UserProvider/UserProvider'
 import MarkdownWrapper from '../MarkdownWrapper/MarkdownWrapper'
@@ -16,6 +29,14 @@ import * as styles from './Header.css'
 const HeaderContainer: React.FC = () => {
   const { formatMessage } = useIntl()
   const { isAuthenticated, user } = useContext(UserContext)
+  const logoHref =
+    !user || !isAuthenticated
+      ? '/'
+      : user.role === UserRole.DEFENDER
+      ? `${constants.DEFENDER_ROUTE}/${router.query.id}`
+      : user.role === UserRole.ADMIN
+      ? constants.USER_LIST_ROUTE
+      : constants.CASE_LIST_ROUTE
 
   const handleLogout = async () => {
     await api.logout()
@@ -23,63 +44,74 @@ const HeaderContainer: React.FC = () => {
   }
 
   return (
-    <div className={styles.container}>
-      <Header
-        info={{
-          title: 'Dómsmálaráðuneytið',
-          description: 'Réttarvörslugátt',
-        }}
-        headerItems={
-          <UserMenu
-            language="is"
-            authenticated={isAuthenticated}
-            username={user?.name}
-            dropdownItems={
-              <>
-                <div className={styles.dropdownItem}>
-                  <Box marginRight={2}>
-                    <Icon icon="person" type="outline" color="blue400" />
-                  </Box>
-                  <Box>
-                    <Box marginBottom={2}>
-                      <Text>{capitalize(user?.title || '')}</Text>
-                    </Box>
-                    <Box marginBottom={2}>
-                      <Text>{user?.institution?.name}</Text>
-                    </Box>
-                    <Box marginBottom={2}>
-                      <Text>{formatPhoneNumber(user?.mobileNumber)}</Text>
-                    </Box>
-                    <Box>
-                      <Text>{user?.email}</Text>
-                    </Box>
-                  </Box>
-                </div>
-                <div className={styles.dropdownItem}>
-                  <Box marginRight={2}>
-                    <Icon
-                      icon="informationCircle"
-                      type="outline"
-                      color="blue400"
-                    />
-                  </Box>
-                  <Box>
-                    <MarkdownWrapper
-                      markdown={formatMessage(core.headerTipDisclaimer, {
-                        linkStart:
-                          '<a href="mailto:gudlaug.thorhallsdottir@dmr.is" rel="noopener noreferrer nofollow" target="_blank">gudlaug.thorhallsdottir@dmr.is',
-                        linkEnd: '</a>',
-                      })}
-                    />
-                  </Box>
-                </div>
-              </>
-            }
-            onLogout={handleLogout}
-          />
-        }
-      />
-    </div>
+    <Box paddingX={[0, 0, 4]}>
+      <GridContainer className={styles.container}>
+        <GridRow>
+          <GridColumn span="12/12">
+            <Header
+              info={{
+                title: 'Dómsmálaráðuneytið',
+                description: 'Réttarvörslugátt',
+              }}
+              logoRender={(logo) => (
+                <Link href={logoHref}>
+                  <a href={logoHref}>{logo}</a>
+                </Link>
+              )}
+              headerItems={
+                <UserMenu
+                  language="is"
+                  authenticated={isAuthenticated}
+                  username={user?.name}
+                  dropdownItems={
+                    <>
+                      <div className={styles.dropdownItem}>
+                        <Box marginRight={2}>
+                          <Icon icon="person" type="outline" color="blue400" />
+                        </Box>
+                        <Box>
+                          <Box marginBottom={2}>
+                            <Text>{capitalize(user?.title || '')}</Text>
+                          </Box>
+                          <Box marginBottom={2}>
+                            <Text>{user?.institution?.name}</Text>
+                          </Box>
+                          <Box marginBottom={2}>
+                            <Text>{formatPhoneNumber(user?.mobileNumber)}</Text>
+                          </Box>
+                          <Box>
+                            <Text>{user?.email}</Text>
+                          </Box>
+                        </Box>
+                      </div>
+                      <div className={styles.dropdownItem}>
+                        <Box marginRight={2}>
+                          <Icon
+                            icon="informationCircle"
+                            type="outline"
+                            color="blue400"
+                          />
+                        </Box>
+                        <Box>
+                          <MarkdownWrapper
+                            markdown={formatMessage(core.headerTipDisclaimer, {
+                              linkStart:
+                                '<a href="mailto:gudlaug.thorhallsdottir@dmr.is" rel="noopener noreferrer nofollow" target="_blank">gudlaug.thorhallsdottir@dmr.is',
+                              linkEnd: '</a>',
+                            })}
+                          />
+                        </Box>
+                      </div>
+                    </>
+                  }
+                  onLogout={handleLogout}
+                />
+              }
+            />
+          </GridColumn>
+        </GridRow>
+      </GridContainer>
+    </Box>
   )
 }
 

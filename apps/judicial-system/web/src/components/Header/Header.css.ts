@@ -2,9 +2,7 @@ import { style } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
 
 export const container = style({
-  maxWidth: '1440px',
-  padding: `0 ${theme.spacing[6]}px`,
-  margin: '0 auto',
+  padding: `0`,
 })
 
 export const logoContainer = style({
