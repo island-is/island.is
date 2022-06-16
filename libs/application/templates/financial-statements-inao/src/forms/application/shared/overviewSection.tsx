@@ -24,7 +24,10 @@ export const overviewSection = buildSection({
       description: (application) =>
         getValueViaPath(application.answers, 'election.incomeLimit') === GREATER
           ? m.overviewDescription
-          : `${m.electionStatement.defaultMessage} ${getValueViaPath(application.answers, 'election.selectElection')}`,
+          : `${m.electionStatement.defaultMessage} ${getValueViaPath(
+              application.answers,
+              'election.selectElection',
+            )}`,
       children: [
         buildCustomField({
           id: 'overviewCustomField',

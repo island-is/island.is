@@ -25,9 +25,7 @@ export class ClientTypesProvider extends BasicDataProvider {
         if (response.errors?.length > 0) {
           return this.handleError(response.errors[0])
         }
-        return Promise.resolve(
-          response.data. financialStatementsInaoClientTypes,
-        )
+        return Promise.resolve(response.data.financialStatementsInaoClientTypes)
       })
       .catch((error) => this.handleError(error))
   }

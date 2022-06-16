@@ -15,8 +15,8 @@ export const ElectionStatement = ({ application }: FieldBaseProps) => {
       <Box paddingBottom={2}>
         <Text>
           {`${answers.about.fullName},
-        ${formatMessage(m.nationalId)}, ${formatMessage(m.participated)} 
-        ${answers.election.selectElection}`}
+          ${formatMessage(m.nationalId)}, ${formatMessage(m.participated)} 
+          ${answers.election.selectElection}`}
         </Text>
       </Box>
       <Box paddingY={2}>

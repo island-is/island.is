@@ -302,7 +302,7 @@ export const m = defineMessages({
   attachment: {
     id: 'fsn.application:financial.attachment',
     defaultMessage: 'Fylgiskjal',
-    description: 'attachment', 
+    description: 'attachment',
   },
   financialStatement: {
     id: 'fsn.application:financial.statment',

@@ -23,14 +23,12 @@ export const PersonalElectionOperatingIncome = (): JSX.Element => {
     const values = getValues()
     const totalIncome: number = getTotal(values, 'income')
     setTotalIncome(totalIncome)
-    return totalIncome
   }, [getValues])
 
   const getTotalExpense = useCallback(() => {
     const values = getValues()
     const totalExpense: number = getTotal(values, 'expense')
     setTotalExpense(totalExpense)
-    return totalExpense
   }, [getValues])
 
   useEffect(() => {
@@ -46,14 +44,22 @@ export const PersonalElectionOperatingIncome = (): JSX.Element => {
             {formatMessage(m.income)}
           </Text>
           <Income getSum={getTotalIncome} />
-          <Total name="income.total" total={totalIncome} label={formatMessage(m.totalIncome)} />
+          <Total
+            name="income.total"
+            total={totalIncome}
+            label={formatMessage(m.totalIncome)}
+          />
         </GridColumn>
         <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
           <Text paddingY={1} as="h2" variant="h4">
             {formatMessage(m.expenses)}
           </Text>
           <Expenses getSum={getTotalExpense} />
-          <Total name="expense.total" total={totalExpense} label={formatMessage(m.totalExpenses)} />
+          <Total
+            name="expense.total"
+            total={totalExpense}
+            label={formatMessage(m.totalExpenses)}
+          />
         </GridColumn>
       </GridRow>
       <GridRow align="flexEnd">

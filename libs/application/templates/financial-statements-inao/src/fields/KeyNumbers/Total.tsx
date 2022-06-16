@@ -1,7 +1,7 @@
 import React from 'react'
 import { Box, Input, Text } from '@island.is/island-ui/core'
 
-type PropTypes = { name: string, total: number; label: string; title?: string }
+type PropTypes = { name: string; total: number; label: string; title?: string }
 
 export const Total = ({ name, total, label, title }: PropTypes) => {
   return (
@@ -14,10 +14,9 @@ export const Total = ({ name, total, label, title }: PropTypes) => {
       <Input
         id={name}
         name={name}
-        value={total}
+        value={`${total} kr.`}
         label={label}
         readOnly
-        
       />
     </Box>
   )

@@ -1,5 +1,4 @@
 import React, { Fragment } from 'react'
-import { useFormContext } from 'react-hook-form'
 import { Box } from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
@@ -11,8 +10,6 @@ interface PropTypes {
 }
 
 export const Income = ({ getSum }: PropTypes): JSX.Element => {
-  const { clearErrors } = useFormContext()
-
   const { formatMessage } = useLocale()
 
   return (
