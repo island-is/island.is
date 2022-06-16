@@ -32,7 +32,7 @@ When we have this information we create the client and then give you the clientI
 
 ### Creating resources and scopes
 
-Usually, we create a client and then resources and scopes if needed and attach them to the client.
+Usually, we create a client and then resources and scopes if needed and grant the client access to them.
 Sometimes you might only want resources and scopes created for you and don´t need a client. An example use case is when you want to use [island.is](http://island.is/) app to log in and when the user is logged in there they will be able to access your API. Regardless, the process is the same. We need:
 
  - Name of the web service
