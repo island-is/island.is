@@ -26,7 +26,7 @@ When we have this information we create the client and then give you the clientI
 ## Resources and Scopes
 
  - Scope
-	 - Scopes are used to limit access to the resources such as API endpoints. An example of scope is a scope called calendar that represents access to calendar API. Scopes can be even more specific for example calendar.read and calendar.write where calendar.read is more restricted.
+	 - Scopes are used to limit access to the resources such as API endpoints. An example of scope is `@myorg.is/documents` that represents access to documents from a Document API. Scopes can be even more specific for example `@myorg.is/documents:read` and `@myorg.is/documents:write` which grant access to either read or write documents in a Document API.
  - Resource
 	 - A resource is something you want to protect with IAS (such as API) and has one or more scopes. Only one scope is needed when the API access is always the same. An example of that is the resource calendar with the scope calendar. An example of a resource with multiple scopes is a calendar resource with scopes calendar.read and calendar.write. These two scopes represent different levels of access to the calendar API and are grouped together by the resource.
 
