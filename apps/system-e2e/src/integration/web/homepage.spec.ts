@@ -6,9 +6,12 @@ describe('Home page', () => {
     cy.cognitoLogin({ cognitoUsername, cognitoPassword })
   })
 
-  it('should navigate homepage', () => {
+  it('has expected sections', () => {
     cy.visit('/')
     cy.contains('Öll opinber þjónusta á einum stað')
+    cy.get('[data-testid="home-banner"]').should('have.length', 1)
+    cy.get('[data-testid="home-heading"]').should('have.length', 1)
+    cy.get('[data-testid="home-news"]').should('have.length', 1)
   })
 
   it('should have life events', () => {
@@ -28,16 +31,16 @@ describe('Home page', () => {
   })
 
   it('should have link on life events pages to navigate back to the main page', () => {
-    const locationOptions = { log: true, timeout: 10000 }
+    const locationOptions = { log: true, timeout: 7000 }
     cy.visit('/')
     cy.get('[data-testid="lifeevent-card"]')
       .should('have.length.at.least', 3)
       .each((link) => {
         cy.visit(link.prop('href'))
         cy.location('pathname', locationOptions).should('not.equal', '/')
+
         cy.get('[data-testid="link-back-home"]').click()
-        cy.location('pathname', locationOptions)
-        cy.should('equal', '/')
+        cy.location('pathname', locationOptions).should('equal', '/')
       })
   })
 })
