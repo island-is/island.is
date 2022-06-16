@@ -1,6 +1,6 @@
 import yargs from 'yargs'
 import { featureSpecificServiceDef } from '../infra/src/dsl/serialize-to-yaml'
-import { charts } from '../infra/src/uber-charts/all-charts'
+import { Charts } from '../infra/src/uber-charts/all-charts'
 import { Client } from 'pg'
 import { SSM } from 'aws-sdk'
 import { branchNameToFeatureName } from './_common'
@@ -29,9 +29,9 @@ const argv = yargs(process.argv.slice(2))
 void (async function () {
   const featureName = branchNameToFeatureName(argv.argv['feature-branch-name'])
   const serviceName = argv.argv['service-name']
-  const chart = argv.argv.chart as keyof typeof charts
+  const chart = argv.argv.chart as keyof typeof Charts
 
-  const habitat = charts[chart].dev
+  const habitat = Charts[chart].dev
   const target = habitat.filter(
     (service) => service.serviceDef.name === serviceName,
   )

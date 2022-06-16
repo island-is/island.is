@@ -37,6 +37,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/general-fishing-license'),
   [ApplicationTypes.P_SIGN]: () =>
     import('@island.is/application/templates/p-sign'),
+  [ApplicationTypes.ANNOUNCEMENT_OF_DEATH]: () =>
+    import('@island.is/application/templates/announcement-of-death'),
   [ApplicationTypes.CRIMINAL_RECORD]: () =>
     import('@island.is/application/templates/criminal-record'),
   [ApplicationTypes.FINANCIAL_AID]: () =>
@@ -51,6 +53,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/mortgage-certificate'),
   [ApplicationTypes.NO_DEBT_CERTIFICATE]: () =>
     import('@island.is/application/templates/no-debt-certificate'),
+  [ApplicationTypes.FINANCIAL_STATEMENTS_INAO]: () =>
+    import('@island.is/application/templates/financial-statements-inao'),
 }
 
 export default templates

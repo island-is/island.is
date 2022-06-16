@@ -20,6 +20,7 @@ import { Icon } from '../IconRC/Icon'
 import { ColorSchemeContext } from '../context'
 
 import * as styles from './AsyncSearch.css'
+import { TestSupport } from '@island.is/island-ui/utils'
 
 export type AsyncSearchSizes = 'medium' | 'large'
 
@@ -272,7 +273,7 @@ export interface AsyncSearchInputProps {
 
 export const AsyncSearchInput = forwardRef<
   HTMLInputElement,
-  AsyncSearchInputProps
+  AsyncSearchInputProps & TestSupport
 >(
   (
     {
@@ -287,6 +288,7 @@ export const AsyncSearchInput = forwardRef<
       menuProps = {},
       children,
       skipContext,
+      dataTestId,
     },
     ref,
   ) => {
@@ -322,7 +324,13 @@ export const AsyncSearchInput = forwardRef<
           [styles.white]: whiteColorScheme,
         })}
       >
-        <Input {...inputProps} color={inputColor} isOpen={isOpen} ref={ref} />
+        <Input
+          {...inputProps}
+          data-testid={dataTestId}
+          color={inputColor}
+          isOpen={isOpen}
+          ref={ref}
+        />
         {!loading ? (
           <button
             className={cn(styles.icon, styles.iconSizes[size], {

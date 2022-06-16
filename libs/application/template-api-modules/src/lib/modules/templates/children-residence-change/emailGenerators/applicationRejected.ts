@@ -21,7 +21,6 @@ export const applicationRejectedEmail: EmailTemplateGenerator = (props) => {
   )
   const otherParent = selectedChildren[0].otherParent
   const newApplicationLink = 'https://island.is/umsoknir/breytt-logheimili-barn'
-  const interviewLink = 'https://www.syslumenn.is/timabokanir'
   const requestLink =
     'https://www.syslumenn.is/media/malefni-barna/Beidni-foreldris-med-sameiginlega-forsja-um-breytt-logheimili-barns.pdf'
 

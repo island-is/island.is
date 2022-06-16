@@ -10,7 +10,6 @@ import {
   FormValue,
   ExternalData,
   buildSubmitField,
-  buildDescriptionField,
 } from '@island.is/application/core'
 import { m } from './messages'
 import Logo from '../assets/Logo'

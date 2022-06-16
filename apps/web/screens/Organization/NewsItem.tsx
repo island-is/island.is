@@ -133,7 +133,7 @@ const NewsItem: Screen<NewsItemProps> = ({
           items: navList,
         }}
       >
-        <NewsArticle newsItem={newsItem} namespace={namespace} />
+        <NewsArticle newsItem={newsItem} />
       </OrganizationWrapper>
       <HeadWithSocialSharing
         title={`${newsItem.title} | ${organizationPage.title}`}

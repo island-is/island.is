@@ -4,7 +4,7 @@ import {
   UtgerdirApi,
   FishingLicenseCodeType,
 } from '@island.is/clients/fishing-license'
-import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
+import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
@@ -51,6 +51,28 @@ export class FishingLicenseService {
               name: v.nafn ?? '',
               chargeType: v.vorunumerfjs ?? '',
             })) ?? [],
+          doesNotFulfillFishingLicenses:
+            ship.uppfyllirEkkertVeidileyfi ?? false,
+          unfulfilledLicenses:
+            ship.ouppfylltSkilyrdiVeidileyfa
+              ?.filter((o) => o.astaedur && o.astaedur?.length > 0)
+              ?.map((o) => ({
+                fishingLicense: {
+                  code:
+                    o.veidileyfi?.kodi === '1'
+                      ? FishingLicenseCodeType.catchMark
+                      : o.veidileyfi?.kodi === '32'
+                      ? FishingLicenseCodeType.hookCatchLimit
+                      : FishingLicenseCodeType.unknown,
+                  name: o.veidileyfi?.nafn || '',
+                  chargeType: o.veidileyfi?.vorunumerfjs ?? '',
+                },
+                reasons:
+                  o.astaedur?.map((x) => ({
+                    description: x.lysing ?? '',
+                    directions: x.leidbeining ?? '',
+                  })) ?? [],
+              })) ?? [],
         })) ?? []
       )
     } catch (error) {

@@ -3,11 +3,11 @@ import {
   STEP_FOUR_ROUTE,
 } from '@island.is/judicial-system/consts'
 
-import { makeCustodyCase, intercept } from '../../../utils'
+import { makeRestrictionCase, intercept } from '../../../utils'
 
 describe(`${STEP_FOUR_ROUTE}/:id`, () => {
   beforeEach(() => {
-    const caseData = makeCustodyCase()
+    const caseData = makeRestrictionCase()
 
     cy.stubAPIResponses()
     cy.visit(`${STEP_FOUR_ROUTE}/test_id`)

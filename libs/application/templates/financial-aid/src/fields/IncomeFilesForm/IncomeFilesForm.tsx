@@ -7,12 +7,17 @@ import { Files } from '..'
 
 const IncomeFilesForm = ({ field, application }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
-  const { id, answers } = application
+  const { id, answers, externalData } = application
 
   return (
     <>
       <Text marginTop={2} marginBottom={[3, 3, 5]}>
-        {formatMessage(incomeFilesForm.general.description)}
+        {formatMessage(
+          externalData?.taxDataFetch?.data?.municipalitiesDirectTaxPayments
+            ?.success
+            ? incomeFilesForm.general.descriptionTaxSuccess
+            : incomeFilesForm.general.description,
+        )}
       </Text>
       <Files
         fileKey={field.id as UploadFileType}

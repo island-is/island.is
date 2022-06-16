@@ -11,9 +11,9 @@ import {
 } from '@island.is/judicial-system/types'
 import { DEFENDER_ROUTE } from '@island.is/judicial-system/consts'
 
-import { CaseData, RestrictedCaseData } from '../../types'
+import { CaseData, LimitedAccessCaseData } from '../../types'
 import { CaseQuery } from './caseGql'
-import { RestrictedCaseQuery } from './restrictedCaseGql'
+import { LimitedAccessCaseQuery } from './limitedAccessCaseGql'
 
 type ProviderState =
   | 'fetch'
@@ -59,7 +59,7 @@ export const FormContext = createContext<FormProvider>({
 
 const FormProvider = ({ children }: Props) => {
   const router = useRouter()
-  const restricted = router.pathname.includes(DEFENDER_ROUTE)
+  const limitedAccess = router.pathname.includes(DEFENDER_ROUTE)
   const id = router.query.id
 
   const caseType = router.pathname.includes('farbann')
@@ -99,10 +99,10 @@ const FormProvider = ({ children }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.query.id, router.pathname])
 
-  const caseQuery = restricted ? RestrictedCaseQuery : CaseQuery
-  const resultProperty = restricted ? 'restrictedCase' : 'case'
+  const caseQuery = limitedAccess ? LimitedAccessCaseQuery : CaseQuery
+  const resultProperty = limitedAccess ? 'limitedAccessCase' : 'case'
 
-  const [getCase] = useLazyQuery<CaseData & RestrictedCaseData>(caseQuery, {
+  const [getCase] = useLazyQuery<CaseData & LimitedAccessCaseData>(caseQuery, {
     fetchPolicy: 'no-cache',
     onCompleted: (caseData) => {
       if (caseData && caseData[resultProperty]) {

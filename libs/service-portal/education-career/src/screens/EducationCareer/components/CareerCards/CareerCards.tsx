@@ -92,9 +92,9 @@ const CareerCards = () => {
 
 const LoadingTemplate = () => (
   <>
-    <Text variant="h3" marginBottom={3}>
+    <Box marginBottom={3}>
       <SkeletonLoader width={300} />
-    </Text>
+    </Box>
     <SkeletonLoader height={158} />
   </>
 )

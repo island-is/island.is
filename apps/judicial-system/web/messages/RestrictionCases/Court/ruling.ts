@@ -8,6 +8,23 @@ export const rcRuling = {
       'Notaður sem titill á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
   }),
   sections: {
+    alertMessage: defineMessages({
+      title: {
+        id:
+          'judicial.system.restriction_cases:ruling.sections.alert_message.title',
+        defaultMessage: 'Athugið',
+        description:
+          'Notaður sem titill í viðvörunarboxi þegar verið er að leiðrétta úrskurð',
+      },
+      message: {
+        id:
+          'judicial.system.restriction_cases:ruling.sections.alert_message.message',
+        defaultMessage:
+          'Allar breytingar á textum verða sýnilegar í yfirliti málsins, hvort sem nýr úrskurður er undirritaður eða ekki.',
+        description:
+          'Notaður sem texti í viðvörunarboxi þegar verið er að leiðrétta úrskurð',
+      },
+    }),
     introduction: defineMessages({
       title: {
         id:
@@ -275,6 +292,22 @@ export const rcRuling = {
           '{genderedAccused}, {accusedName}{accusedNationalId}skal sæta {isExtended, select, yes {áframhaldandi } other {}}{caseType, select, TRAVEL_BAN {farbanni} ADMISSION_TO_FACILITY {vistun á viðeigandi stofnun} other {gæsluvarðhaldi}}, þó ekki lengur en til {validToDate}.{hasIsolation, select, yes { {genderedAccused} skal sæta einangrun {isolationEndsBeforeValidToDate, select, yes {ekki lengur en til {isolationToDate}} other {á meðan á {caseType, select, ADMISSION_TO_FACILITY {vistunni} other {gæsluvarðhaldinu}} stendur}}.} other {}}',
         description:
           'Notaður sem sjálfgefinn texti í "Úrskurðarorð" textaboxi þegar krafa er samþykkt á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+    }),
+    formFooter: defineMessages({
+      modifyRulingButtonLabel: {
+        id:
+          'judicial.system.restriction_cases:ruling.form_footer.modify_ruling_button_label',
+        defaultMessage: 'Undirrita nýjan úrskurð',
+        description:
+          'Notaður sem label á hnappinn "Halda áfram" í úrskurðar skrefi þegar úrskuður er leiðréttur.',
+      },
+      modifyRulingBackButtonLabel: {
+        id:
+          'judicial.system.restriction_cases:ruling.form_footer.modify_ruling_back_button_label',
+        defaultMessage: 'Hætta við',
+        description:
+          'Notaður sem label á hnappinn "til baka" í úrskurðar skrefi þegar úrskuður er leiðréttur.',
       },
     }),
   },

@@ -1,15 +1,10 @@
 import {
-  Application,
   BasicDataProvider,
   FailedDataProviderResult,
   SuccessfulDataProviderResult,
 } from '@island.is/application/core'
-import {
-  DirectTaxPayment,
-  Municipality,
-  PersonalTaxReturn,
-} from '@island.is/financial-aid/shared/lib'
-import { DataProviderTypes, Applicant, TaxData } from '../lib/types'
+import { Municipality } from '@island.is/financial-aid/shared/lib'
+import { DataProviderTypes, Applicant } from '../lib/types'
 
 const nationalRegistryQuery = `
 query NationalRegistryUserQuery {

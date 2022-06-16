@@ -21,10 +21,7 @@ export const generateApplicationEmail: ApplicationEmail = (
   applicationRecipientName,
   applicationRecipientEmail,
 ): SendMailOptions => {
-  const {
-    application,
-    options: { locale },
-  } = props
+  const { application } = props
   const name = getValueViaPath(application.answers, 'applicant.name')
 
   const subject = `Umsókn um innskráningarþjónustu fyrir ${name}`

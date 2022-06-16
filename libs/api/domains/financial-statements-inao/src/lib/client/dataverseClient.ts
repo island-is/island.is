@@ -46,7 +46,47 @@ export class DataverseClient {
       }
     })
 
-    console.log(clientTypes)
+    if (clientTypes.length > 0) {
+      return clientTypes[0]
+    }
+    return null
+  }
+
+  async getClientTypes() {
+    const url = `${this.basePath}/new_clienttypes`
+    const response = await this.fetch(url)
+    const data = await response.json()
+
+    if (!data || !data.value) return null
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const clientTypes: ClientType[] = data.value.map((x: any) => {
+      return <ClientType>{
+        clientTypeId: x.new_clienttypeid,
+        code: x.new_code,
+        name: x.new_name,
+      }
+    })
+
+    return clientTypes
+  }
+
+  async getClientType(typeCode: string) {
+    const filter = `$filter=new_code eq '${typeCode}'`
+    const url = `${this.basePath}/new_clienttypes?${filter}`
+    const response = await this.fetch(url)
+    const data = await response.json()
+
+    if (!data || !data.value) return null
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const clientTypes: ClientType[] = data.value.map((x: any) => {
+      return <ClientType>{
+        clientTypeId: x.new_clienttypeid,
+        code: x.new_code,
+        name: x.new_name,
+      }
+    })
 
     if (clientTypes.length > 0) {
       return clientTypes[0]
@@ -64,31 +104,12 @@ export class DataverseClient {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const elections: Election[] = data.value.map((x: any) => {
       return <Election>{
+        electionId: x.new_electionid,
         name: x.new_name,
-        month: x.new_month,
-        year: x.new_year,
-        ageLimit: x.new_age_limit,
+        electionDate: new Date(x.new_electiondate),
       }
     })
 
     return elections
-  }
-
-  async getClientTypes() {
-    const url = `${this.basePath}/new_clienttypes`
-    const response = await this.fetch(url)
-    const data = await response.json()
-
-    if (!data || !data.value) return null
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const clientTypes: ClientType[] = data.value.map((x: any) => {
-      return <ClientType>{
-        code: x.new_code,
-        name: x.new_name,
-      }
-    })
-
-    return clientTypes
   }
 }

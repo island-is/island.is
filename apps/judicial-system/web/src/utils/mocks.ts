@@ -1179,7 +1179,7 @@ export const mockUpdateCaseMutation = (updateCases: UpdateCase[], id: string) =>
     }
   })
 
-export const makeCustodyCase = (): Case => {
+export const makeRestrictionCase = (): Case => {
   return {
     id: 'test_id',
     created: '2020-09-16T19:50:08.033Z',

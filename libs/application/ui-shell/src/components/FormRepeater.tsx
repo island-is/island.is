@@ -1,5 +1,4 @@
 import React, { FC } from 'react'
-import { GraphQLError } from 'graphql'
 import {
   RepeaterProps,
   getValueViaPath,

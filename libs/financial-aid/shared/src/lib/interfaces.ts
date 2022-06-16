@@ -147,6 +147,7 @@ export interface ApplicationEvent {
   comment?: string
   staffNationalId?: string
   staffName?: string
+  emailSent?: boolean
 }
 
 export interface UpdateAdmin {

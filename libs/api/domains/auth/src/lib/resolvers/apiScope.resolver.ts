@@ -28,7 +28,7 @@ export class ApiScopeResolver {
   }
 
   @ResolveField('type')
-  resolveType(@Parent() apiScope: IApiScope): string {
+  resolveType(): string {
     // TODO: waiting on implementation
     return 'ApiScope'
   }

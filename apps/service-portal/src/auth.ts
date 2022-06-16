@@ -57,6 +57,7 @@ if (userMocked) {
       ApiScope.meDetails,
       ApiScope.licensesVerify,
       ApiScope.company,
+      ApiScope.vehicles,
     ],
     post_logout_redirect_uri: `${window.location.origin}`,
     userStorePrefix: 'sp.',

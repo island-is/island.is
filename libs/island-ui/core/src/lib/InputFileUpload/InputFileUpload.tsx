@@ -324,9 +324,8 @@ export const InputFileUpload = ({
 
       <Box width="full" paddingX={[2, 2, 12]}>
         {fileList.map((file, index) => (
-          <Box marginBottom={2}>
+          <Box marginBottom={2} key={index}>
             <UploadedFile
-              key={index}
               file={file}
               showFileSize={showFileSize}
               defaultBackgroundColor={defaultFileBackgroundColor}

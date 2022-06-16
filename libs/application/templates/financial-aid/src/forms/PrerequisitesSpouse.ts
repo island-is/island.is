@@ -13,6 +13,7 @@ import {
 import { DataProviderTypes } from '../lib/types'
 
 import * as m from '../lib/messages'
+import { Routes } from '../lib/constants'
 
 export const PrerequisitesSpouse: Form = buildForm({
   id: 'FinancialAidApplication',
@@ -27,6 +28,7 @@ export const PrerequisitesSpouse: Form = buildForm({
           title: m.externalData.general.pageTitle,
           id: 'approveExternalDataSpouse',
           subTitle: m.externalData.general.subTitle,
+          description: m.externalData.general.description,
           checkboxLabel: m.externalData.general.checkboxLabel,
           dataProviders: [
             buildDataProviderItem({
@@ -36,10 +38,10 @@ export const PrerequisitesSpouse: Form = buildForm({
               subTitle: m.externalData.taxData.dataInfo,
             }),
             buildDataProviderItem({
-              id: 'text',
-              type: undefined,
+              id: 'veita',
+              type: DataProviderTypes.Veita,
               title: '',
-              subTitle: m.externalData.taxData.whyDataIsNeeded,
+              subTitle: undefined,
             }),
             buildDataProviderItem({
               id: 'moreTaxInfo',
@@ -52,15 +54,15 @@ export const PrerequisitesSpouse: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'aboutSpouseForm',
+      id: Routes.SPOUSEACCECPTCONTRACT,
       title: m.aboutSpouseForm.general.sectionTitle,
       children: [
         buildMultiField({
-          id: 'acceptContract',
+          id: Routes.SPOUSEACCECPTCONTRACT,
           title: m.aboutForm.general.pageTitle,
           children: [
             buildCustomField({
-              id: 'acceptContract',
+              id: Routes.SPOUSEACCECPTCONTRACT,
               title: m.aboutSpouseForm.general.pageTitle,
               component: 'AboutSpouseForm',
             }),

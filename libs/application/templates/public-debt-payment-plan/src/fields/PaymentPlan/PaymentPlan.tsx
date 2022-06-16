@@ -1,6 +1,5 @@
 import {
   GetScheduleDistributionInput,
-  PaymentScheduleDebts,
   PaymentScheduleDistribution,
 } from '@island.is/api/schema'
 import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
@@ -28,7 +27,6 @@ import {
   PaymentModeState,
   PaymentPlans,
   PrerequisitesResult,
-  PublicDebtPaymentPlan,
 } from '../../types'
 import { PaymentPlanTable } from '../components/PaymentPlanTable/PaymentPlanTable'
 import { PlanSlider } from '../components/PlanSlider/PlanSlider'
@@ -302,7 +300,7 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
         <Box marginTop={5}>
           <AccordionItem
             id="payment-plan-table"
-            label="Greiðsluáætlun skuldar"
+            label={formatMessage(paymentPlan.labels.distributionDataMainTitle)}
             visibleContent={formatMessage(
               paymentPlan.labels.distributionDataTitle,
             )}

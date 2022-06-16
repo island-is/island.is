@@ -171,10 +171,10 @@ export const MailingListSignup: React.FC<MailingListSignupProps> = ({
         onSubmit={formik.handleSubmit}
         value={formik.values.email}
         errorMessage={parseErrorMessage(
-          status.type == 'error' ? status.message : '',
+          status.type === 'error' ? status.message : '',
         )}
         successTitle={n('formSuccessTitle', 'Skráning tókst')}
-        successMessage={status.type == 'success' ? status.message : ''}
+        successMessage={status.type === 'success' ? status.message : ''}
         state={status.type}
       />
     </Box>

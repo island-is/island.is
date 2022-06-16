@@ -27,6 +27,9 @@ import {
   formatCourtResubmittedToCourtSmsNotification,
   formatProsecutorReadyForCourtEmailNotification,
   formatCustodyRestrictions,
+  formatRulingModifiedHistory,
+  formatCourtUploadRulingTitle,
+  formatPrisonAdministrationRulingNotification,
 } from './formatters'
 
 export const makeProsecutor = (): User => {
@@ -1811,6 +1814,98 @@ describe('formatCustodyRestrictions', () => {
     // Assert
     expect(res).toBe(
       'Sækjandi tekur fram að gæsluvarðhaldið verði með banni við útvegun persónulegra nauðsynja, bréfaskoðun og símabanni og vinnubanni skv. 99. gr. laga nr. 88/2008.',
+    )
+  })
+})
+
+describe('formatRulingModifiedHistory', () => {
+  const fn = formatRulingModifiedHistory
+
+  test('should format ruling modified history', () => {
+    const rulingModifiedHistory = undefined
+    const newRulingDate = new Date('2020-01-01')
+    const judgeName = 'Test Judge'
+    const judgeTitle = 'Title'
+
+    const r = fn(rulingModifiedHistory, newRulingDate, judgeName, judgeTitle)
+
+    expect(r).toEqual(
+      'Miðvikudagur, 1. janúar 2020 kl. 00:00 - Test Judge Title',
+    )
+  })
+
+  test('should append to existing history', () => {
+    const rulingModifiedHistory = 'Some history'
+    const newRulingDate = new Date('2020-01-01')
+    const judgeName = 'Test Judge'
+    const judgeTitle = 'Title'
+
+    const r = fn(rulingModifiedHistory, newRulingDate, judgeName, judgeTitle)
+
+    expect(r).toEqual(
+      'Some history\n\nMiðvikudagur, 1. janúar 2020 kl. 00:00 - Test Judge Title',
+    )
+  })
+})
+
+describe('formatCourtUploadRulingTitle', () => {
+  const formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
+    .formatMessage
+
+  const fn = (
+    courtCaseNumber: string | undefined,
+    isModifyingRuling: boolean,
+  ) =>
+    formatCourtUploadRulingTitle(
+      formatMessage,
+      courtCaseNumber,
+      isModifyingRuling,
+    )
+
+  test('should format court upload ruling', () => {
+    const courtCaseNumber = '12345'
+    const isModifyingRuling = false
+
+    const r = fn(courtCaseNumber, isModifyingRuling)
+
+    expect(r).toEqual('Úrskurður 12345')
+  })
+
+  test('should format court upload ruling when modifying ruling', () => {
+    const courtCaseNumber = '12345'
+    const isModifyingRuling = true
+
+    const r = fn(courtCaseNumber, isModifyingRuling)
+
+    expect(r).toEqual('Úrskurður 12345 leiðrétt')
+  })
+})
+
+describe('formatPrisonAdministrationRulingNotification', () => {
+  const formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
+    .formatMessage
+  const fn = (
+    courtCaseNumber: string | undefined,
+    courtName: string | undefined,
+    overviewUrl: string,
+  ) =>
+    formatPrisonAdministrationRulingNotification(
+      formatMessage,
+      courtCaseNumber,
+      courtName,
+      overviewUrl,
+    )
+
+  it('should format prison adminstration ruling notification', () => {
+    const courtCaseNumber = '007-2022-06546'
+    const courtName = 'Héraðsdómur'
+    const overviewUrl = 'some url'
+
+    const result = fn(courtCaseNumber, courtName, overviewUrl)
+
+    expect(result.subject).toBe('Úrskurður í máli 007-2022-06546')
+    expect(result.body).toBe(
+      'Dómari hefur undirritað og staðfest úrskurð í máli 007-2022-06546 hjá Héraðsdómi.<br /><br />Skjöl málsins eru aðgengileg á <a href="some url">yfirlitssíðu málsins í Réttarvörslugátt</a>.',
     )
   })
 })

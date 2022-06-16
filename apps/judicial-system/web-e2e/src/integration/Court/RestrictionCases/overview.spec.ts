@@ -12,7 +12,7 @@ import {
   OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
 
-import { makeCustodyCase, makeProsecutor, intercept } from '../../../utils'
+import { makeRestrictionCase, makeProsecutor, intercept } from '../../../utils'
 
 describe(`${OVERVIEW_ROUTE}/:id`, () => {
   const demands = faker.lorem.paragraph()
@@ -23,7 +23,7 @@ describe(`${OVERVIEW_ROUTE}/:id`, () => {
   const defenderPhoneNumber = faker.phone.phoneNumber()
 
   beforeEach(() => {
-    const caseData = makeCustodyCase()
+    const caseData = makeRestrictionCase()
     const caseDataAddition: Case = {
       ...caseData,
       creatingProsecutor: makeProsecutor(),
@@ -43,12 +43,17 @@ describe(`${OVERVIEW_ROUTE}/:id`, () => {
       defenderEmail,
       defenderPhoneNumber,
       sessionArrangements: SessionArrangements.ALL_PRESENT_SPOKESPERSON,
+      seenByDefender: '2020-09-16T19:50:08.033Z',
     }
 
     cy.stubAPIResponses()
     cy.visit(`${OVERVIEW_ROUTE}/test_id_stadfest`)
 
     intercept(caseDataAddition)
+  })
+
+  it('should let the user know if the assigned defender has viewed the case', () => {
+    cy.getByTestid('alertMessageSeenByDefender').should('not.match', ':empty')
   })
 
   it('should have an overview of the current case', () => {
@@ -90,11 +95,6 @@ describe(`${OVERVIEW_ROUTE}/:id`, () => {
     cy.getByTestid('modal')
       .getByTestid('ruling')
       .contains('héraðsdómari kveður upp úrskurð þennan.')
-      .clear()
-    cy.clickOutside()
-    cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
-    cy.getByTestid('ruling').type('lorem')
-    cy.getByTestid('inputErrorMessage').should('not.exist')
   })
 
   it('should navigate to the next step when all input data is valid and the continue button is clicked', () => {

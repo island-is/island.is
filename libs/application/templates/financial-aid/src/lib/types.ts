@@ -59,6 +59,7 @@ export interface OverrideAnswerSchema extends answersSchema {
   taxReturnFiles: UploadFile[]
   spouseIncomeFiles: UploadFile[]
   spouseTaxReturnFiles: UploadFile[]
+  spouseEmailSuccess: boolean
 }
 
 export type FAApplication = Override<

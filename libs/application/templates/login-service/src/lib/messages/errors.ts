@@ -11,4 +11,14 @@ export const errorMessages = defineMessages({
     defaultMessage: 'Skylda er að fylla út þennan reit',
     description: 'Required default error message',
   },
+  nationalId: {
+    id: `ls.application:errors.nationalId`,
+    defaultMessage: 'Kennitala þarf að vera gild',
+    description: 'National ID error message',
+  },
+  invalidIsatNumber: {
+    id: `ls.application:errors.invalidIsatNumber`,
+    defaultMessage: 'ÍSAT númer verður að byrja á 84',
+    description: 'Invalid ÍSAT number error message',
+  },
 })

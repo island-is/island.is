@@ -7,9 +7,13 @@ import { DataverseClient } from './client/dataverseClient'
 export class FinancialStatementsInaoService {
   constructor(private dataverseClient: DataverseClient) {}
 
+  async getClientTypes() {
+    return this.dataverseClient.getClientTypes()
+  }
+
   async getUserClientType(nationalId: string) {
     if (kennitala.isPerson(nationalId)) {
-      return { code: 'individual', name: 'Einstaklingur' }
+      return this.dataverseClient.getClientType('individual')
     } else {
       return this.dataverseClient.getUserClientType(nationalId)
     }
@@ -17,9 +21,5 @@ export class FinancialStatementsInaoService {
 
   async getElections() {
     return this.dataverseClient.getElections()
-  }
-
-  async getClientTypes() {
-    return this.dataverseClient.getClientTypes()
   }
 }

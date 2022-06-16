@@ -387,10 +387,12 @@ export function getApplicationExternalData(
 }
 
 export function getApplicationAnswers(answers: Application['answers']) {
-  const otherParent = getValueViaPath(
+  let otherParent = getValueViaPath(
     answers,
-    'otherParent',
-  ) as SchemaFormValues['otherParent']
+    'otherParentObj.chooseOtherParent',
+  ) as string
+  if (!otherParent)
+    otherParent = getValueViaPath(answers, 'otherParent') as string
 
   const otherParentRightOfAccess = getValueViaPath(
     answers,
@@ -424,13 +426,30 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'employer.isSelfEmployed',
   ) as YesOrNo
 
-  const otherParentName = getValueViaPath(answers, 'otherParentName') as string
+  let otherParentName = getValueViaPath(
+    answers,
+    'otherParentObj.otherParentName',
+  ) as string
+  if (!otherParentName) {
+    otherParentName = getValueViaPath(answers, 'otherParentName') as string
+  }
 
-  const otherParentId = getValueViaPath(answers, 'otherParentId') as string
+  let otherParentId = getValueViaPath(
+    answers,
+    'otherParentObj.otherParentId',
+  ) as string
+  if (!otherParentId) {
+    otherParentId = getValueViaPath(answers, 'otherParentId') as string
+  }
 
   const otherParentEmail = getValueViaPath(
     answers,
     'otherParentEmail',
+  ) as string
+
+  const otherParentPhoneNumber = getValueViaPath(
+    answers,
+    'otherParentPhoneNumber',
   ) as string
 
   const bank = getValueViaPath(answers, 'payments.bank') as string
@@ -468,6 +487,11 @@ export function getApplicationAnswers(answers: Application['answers']) {
   ) as string
 
   const employerEmail = getValueViaPath(answers, 'employer.email') as string
+
+  const employerPhoneNumber = getValueViaPath(
+    answers,
+    'employerPhoneNumber',
+  ) as string
 
   const employerNationalRegistryId = getValueViaPath(
     answers,
@@ -537,6 +561,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     otherParentName,
     otherParentId,
     otherParentEmail,
+    otherParentPhoneNumber,
     bank,
     usePersonalAllowance,
     usePersonalAllowanceFromSpouse,
@@ -545,6 +570,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     spouseUseAsMuchAsPossible,
     spouseUsage,
     employerEmail,
+    employerPhoneNumber,
     employerNationalRegistryId,
     shareInformationWithOtherParent,
     selectedChild,

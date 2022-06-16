@@ -29,6 +29,7 @@ interface Props {
   inputValue?: string
   colored?: boolean
   setLabelToDataSchema?: boolean
+  setNationalId?: (s: string) => void
 }
 
 export const CompanySearchController: FC<Props> = ({
@@ -41,6 +42,7 @@ export const CompanySearchController: FC<Props> = ({
   inputValue = '',
   colored = true,
   setLabelToDataSchema = true,
+  setNationalId,
 }) => {
   const { clearErrors, setValue } = useFormContext()
   const { formatMessage } = useLocale()
@@ -125,6 +127,7 @@ export const CompanySearchController: FC<Props> = ({
               onChange={(selection) => {
                 const { value, label } = selection || {}
                 if (value && label) {
+                  setNationalId && setNationalId(value)
                   setValue(
                     id,
                     setLabelToDataSchema

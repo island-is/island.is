@@ -5,7 +5,6 @@ import {
   buildAsyncSelectField,
   buildCustomField,
   buildDateField,
-  buildDescriptionField,
   buildFileUploadField,
   buildForm,
   buildMultiField,
@@ -24,7 +23,6 @@ import {
 import { parentalLeaveFormMessages } from '../lib/messages'
 import {
   getExpectedDateOfBirth,
-  getOtherParentOptions,
   getAllPeriodDates,
   getSelectedChild,
   requiresOtherParentApproval,
@@ -58,6 +56,7 @@ import {
   GetPrivatePensionFundsQuery,
   GetUnionsQuery,
 } from '../types/schema'
+import { currentDateStartTime } from '../lib/parentalLeaveTemplateUtils'
 
 export const ParentalLeaveForm: Form = buildForm({
   id: 'ParentalLeaveDraft',
@@ -110,7 +109,7 @@ export const ParentalLeaveForm: Form = buildForm({
           ],
         }),
         buildSubSection({
-          id: 'otherParent',
+          id: 'otherParentObj',
           title: parentalLeaveFormMessages.shared.otherParentSubSection,
           condition: (answers, externalData) => {
             const selectedChild = getSelectedChild(answers, externalData)
@@ -125,25 +124,35 @@ export const ParentalLeaveForm: Form = buildForm({
           },
           children: [
             buildMultiField({
-              id: 'otherParent',
+              id: 'otherParentObj',
               title: parentalLeaveFormMessages.shared.otherParentTitle,
               description:
                 parentalLeaveFormMessages.shared.otherParentDescription,
               children: [
-                buildRadioField({
-                  id: 'otherParent',
+                buildCustomField({
+                  component: 'OtherParent',
+                  id: 'otherParentObj.chooseOtherParent',
                   title: parentalLeaveFormMessages.shared.otherParentSubTitle,
-                  options: (application) => getOtherParentOptions(application),
                 }),
                 buildTextField({
-                  id: 'otherParentName',
-                  condition: (answers) => answers.otherParent === MANUAL,
+                  id: 'otherParentObj.otherParentName',
+                  condition: (answers) =>
+                    (answers as {
+                      otherParentObj: {
+                        chooseOtherParent: string
+                      }
+                    })?.otherParentObj?.chooseOtherParent === MANUAL,
                   title: parentalLeaveFormMessages.shared.otherParentName,
                   width: 'half',
                 }),
                 buildTextField({
-                  id: 'otherParentId',
-                  condition: (answers) => answers.otherParent === MANUAL,
+                  id: 'otherParentObj.otherParentId',
+                  condition: (answers) =>
+                    (answers as {
+                      otherParentObj: {
+                        chooseOtherParent: string
+                      }
+                    })?.otherParentObj?.chooseOtherParent === MANUAL,
                   title: parentalLeaveFormMessages.shared.otherParentID,
                   width: 'half',
                   format: '######-####',
@@ -153,7 +162,12 @@ export const ParentalLeaveForm: Form = buildForm({
             }),
             buildRadioField({
               id: 'otherParentRightOfAccess',
-              condition: (answers) => answers.otherParent === MANUAL,
+              condition: (answers) =>
+                (answers as {
+                  otherParentObj: {
+                    chooseOtherParent: string
+                  }
+                })?.otherParentObj?.chooseOtherParent === MANUAL,
               title: parentalLeaveFormMessages.rightOfAccess.title,
               description: parentalLeaveFormMessages.rightOfAccess.description,
               options: [
@@ -443,6 +457,14 @@ export const ParentalLeaveForm: Form = buildForm({
                   width: 'full',
                   id: 'employer.email',
                 }),
+                buildTextField({
+                  title: parentalLeaveFormMessages.employer.phoneNumber,
+                  width: 'full',
+                  id: 'employerPhoneNumber',
+                  variant: 'tel',
+                  format: '###-####',
+                  placeholder: '000-0000',
+                }),
               ],
             }),
           ],
@@ -560,11 +582,25 @@ export const ParentalLeaveForm: Form = buildForm({
           condition: (answers, externalData) =>
             requiresOtherParentApproval(answers, externalData),
           children: [
-            buildTextField({
-              id: 'otherParentEmail',
+            buildMultiField({
+              id: 'otherParentContactInfo',
               title: parentalLeaveFormMessages.shared.otherParentEmailTitle,
-              description:
-                parentalLeaveFormMessages.shared.otherParentEmailDescription,
+              children: [
+                buildTextField({
+                  id: 'otherParentEmail',
+                  title: parentalLeaveFormMessages.applicant.email,
+                  description:
+                    parentalLeaveFormMessages.shared
+                      .otherParentEmailDescription,
+                }),
+                buildTextField({
+                  id: 'otherParentPhoneNumber',
+                  title: parentalLeaveFormMessages.applicant.phoneNumber,
+                  variant: 'tel',
+                  format: '###-####',
+                  placeholder: '000-0000',
+                }),
+              ],
             }),
           ],
         }),
@@ -790,31 +826,74 @@ export const ParentalLeaveForm: Form = buildForm({
       id: 'confirmation',
       title: parentalLeaveFormMessages.confirmation.section,
       children: [
-        buildMultiField({
-          id: 'confirmation',
-          title: parentalLeaveFormMessages.confirmation.title,
-          description: parentalLeaveFormMessages.confirmation.description,
+        buildSubSection({
+          title: '',
+          condition: (answers) =>
+            getApplicationAnswers(answers).periods.length > 0 &&
+            new Date(
+              getApplicationAnswers(answers).periods[0].startDate,
+            ).getTime() >= currentDateStartTime(),
           children: [
-            buildCustomField(
-              {
-                id: 'confirmationScreen',
-                title: '',
-                component: 'Review',
-              },
-              {
-                editable: true,
-              },
-            ),
-            buildSubmitField({
-              id: 'submit',
-              placement: 'footer',
+            buildMultiField({
+              id: 'confirmation',
               title: parentalLeaveFormMessages.confirmation.title,
-              actions: [
-                {
-                  event: 'SUBMIT',
-                  name: parentalLeaveFormMessages.confirmation.title,
-                  type: 'primary',
-                },
+              description: parentalLeaveFormMessages.confirmation.description,
+              children: [
+                buildCustomField(
+                  {
+                    id: 'confirmationScreen',
+                    title: '',
+                    component: 'Review',
+                  },
+                  {
+                    editable: true,
+                  },
+                ),
+                buildSubmitField({
+                  id: 'submit',
+                  placement: 'footer',
+                  title: parentalLeaveFormMessages.confirmation.title,
+                  actions: [
+                    {
+                      event: 'SUBMIT',
+                      name: parentalLeaveFormMessages.confirmation.title,
+                      type: 'primary',
+                    },
+                  ],
+                }),
+              ],
+            }),
+          ],
+        }),
+        buildSubSection({
+          title: '',
+          condition: (answers) =>
+            getApplicationAnswers(answers).periods.length > 0 &&
+            new Date(
+              getApplicationAnswers(answers).periods[0].startDate,
+            ).getTime() < currentDateStartTime(),
+          children: [
+            buildMultiField({
+              id: 'confirmation',
+              title: parentalLeaveFormMessages.confirmation.title,
+              description: parentalLeaveFormMessages.confirmation.description,
+              children: [
+                buildCustomField(
+                  {
+                    id: 'confirmationScreen',
+                    title: '',
+                    component: 'Review',
+                  },
+                  {
+                    editable: true,
+                  },
+                ),
+                buildSubmitField({
+                  id: 'submit',
+                  placement: 'footer',
+                  title: parentalLeaveFormMessages.confirmation.title,
+                  actions: [],
+                }),
               ],
             }),
           ],

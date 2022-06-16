@@ -31,7 +31,7 @@ export interface GenericDrivingLicenseResponse {
     gaedi?: number
     forrit?: number
     tegund?: number
-  }
+  } | null
   undirskrift?: {
     id?: number
     kennitala?: string

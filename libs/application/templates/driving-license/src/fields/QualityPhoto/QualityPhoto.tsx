@@ -40,7 +40,7 @@ const Photo: FC<QualityPhotoData> = ({
 }
 
 const QualityPhoto: FC<FieldBaseProps> = ({ application }) => {
-  const { qualityPhoto, loading, error } = useQualityPhoto(application)
+  const { qualityPhoto } = useQualityPhoto(application)
   // TODO: skeleton load when image is loading
   const { formatMessage } = useLocale()
   const img = Photo({ qualityPhoto, application })

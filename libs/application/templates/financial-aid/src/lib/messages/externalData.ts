@@ -64,13 +64,6 @@ export const externalData = {
         'Afrit af skattframtali og upplýsingar um staðgreiðslu í staðgreiðsluskrá.',
       description: 'What data is retrived from the tax',
     },
-    whyDataIsNeeded: {
-      id:
-        'fa.application:section.backgroundInformation.externalData.whyDataIsNeeded.',
-      defaultMessage:
-        'Við þurfum að afla þessara gagna til að staðfesta hjá hvaða sveitarfélagi þú eigir að sækja um fjárhagsaðstoð, einfalda umsóknar- og vinnsluferlið og staðfesta réttleika upplýsinga.',
-      description: 'Why we need the tax data',
-    },
     process: {
       id: 'fa.application:section.backgroundInformation.externalData.process.',
       defaultMessage:

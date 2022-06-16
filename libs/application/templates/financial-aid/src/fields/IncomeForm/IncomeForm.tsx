@@ -7,7 +7,7 @@ import {
   ErrorSchema,
 } from '../../lib/types'
 import { useIntl } from 'react-intl'
-import { incomeForm, approveOptions } from '../../lib/messages'
+import { incomeForm } from '../../lib/messages'
 import { RadioController } from '@island.is/shared/form-fields'
 import DescriptionText from '../DescriptionText/DescriptionText'
 
@@ -24,12 +24,12 @@ const IncomeForm = ({ field, errors, application }: FAFieldBaseProps) => {
           defaultValue={answers[field.id as keyof OverrideAnswerSchema]}
           options={[
             {
-              value: ApproveOptions.No,
-              label: formatMessage(approveOptions.no),
+              value: ApproveOptions.Yes,
+              label: formatMessage(incomeForm.options.yes),
             },
             {
-              value: ApproveOptions.Yes,
-              label: formatMessage(approveOptions.yes),
+              value: ApproveOptions.No,
+              label: formatMessage(incomeForm.options.no),
             },
           ]}
           largeButtons

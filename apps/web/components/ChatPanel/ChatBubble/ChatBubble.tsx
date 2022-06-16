@@ -12,9 +12,9 @@ interface ChatBubbleProps {
 
 export const ChatBubble = ({
   text,
-  pushUp = false,
   isVisible = true,
   onClick,
+  pushUp = false,
 }: ChatBubbleProps) => {
   return (
     <div className={cn(styles.root, { [styles.hidden]: !isVisible })}>

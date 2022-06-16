@@ -20,7 +20,7 @@ class BackendAPI extends RESTDataSource {
     this.baseURL = `${this.options.backendUrl}/api/icelandic-names-registry`
   }
 
-  willSendRequest(request: RequestOptions) {
+  willSendRequest(_request: RequestOptions) {
     this.memoizedResults.clear()
   }
 

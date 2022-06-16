@@ -46,6 +46,7 @@ export class FinanceClientService {
             scope: this.config.tokenExchangeScope,
           }
         : undefined,
+      timeout: this.config.fetchTimeout,
     })
   }
 

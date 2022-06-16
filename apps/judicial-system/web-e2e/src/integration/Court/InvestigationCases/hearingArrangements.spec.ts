@@ -61,7 +61,7 @@ describe(`${IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
     cy.get('[name="defenderPhoneNumber"]').should('not.exist')
   })
 
-  it.only('should autofill form correctly and allow court to confirm court date and send notification', () => {
+  it('should autofill form correctly and allow court to confirm court date and send notification', () => {
     const caseData = makeInvestigationCase()
     const caseDataAddition: Case = {
       ...caseData,

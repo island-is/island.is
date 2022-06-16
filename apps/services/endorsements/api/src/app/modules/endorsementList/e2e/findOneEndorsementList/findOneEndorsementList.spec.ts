@@ -87,7 +87,7 @@ describe('EndorsementList', () => {
       nationalId: authNationalId,
       scope: [EndorsementsScope.main],
     })
-    const response = await request(app.getHttpServer())
+    await request(app.getHttpServer())
       .get(
         `/endorsement-list/general-petition-list/9c0b4106-4213-43be-a6b2-ff324f4ba016`,
       )

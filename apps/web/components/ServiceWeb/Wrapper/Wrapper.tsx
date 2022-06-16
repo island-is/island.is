@@ -2,7 +2,7 @@ import React, { FC, useEffect, useState, createContext } from 'react'
 import Head from 'next/head'
 import { Box } from '@island.is/island-ui/core'
 
-import { Organization, Tag, Image } from '@island.is/web/graphql/schema'
+import { Organization, Tag } from '@island.is/web/graphql/schema'
 import {
   ServiceWebSearchSection,
   ServiceWebHeader,

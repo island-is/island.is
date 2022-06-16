@@ -1,7 +1,5 @@
 import { defineMessages } from 'react-intl'
 
-const t = 'pdpp.application'
-
 // Global string for the application
 export const externalData = {
   general: defineMessages({
@@ -80,7 +78,7 @@ export const externalData = {
       description: 'External data section payment plan title',
     },
     externalDataSuccessSubmitFieldTitle: {
-      id: 'hi.application:externalDataSuccessTitle',
+      id: 'pdpp.application:externalDataSuccessTitle',
       defaultMessage: 'Hefja umsókn',
       description: 'Start application button text',
     },

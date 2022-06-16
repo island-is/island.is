@@ -6,14 +6,6 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { UserProfileApi } from '@island.is/clients/user-profile'
 import { NotificationDispatchService } from './notificationDispatch.service'
 import { MessageProcessorService } from './messageProcessor.service'
-import { FetchError } from '@island.is/clients/middlewares'
-
-const notFoundHandler = (e: unknown) => {
-  if (e instanceof FetchError && e.status === 404) {
-    return null
-  }
-  throw e
-}
 
 export const IS_RUNNING_AS_WORKER = Symbol('IS_NOTIFICATION_WORKER')
 
@@ -43,11 +35,11 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
         const messageId = job.id
         this.logger.info('Message received by worker', { messageId })
 
-        const profile = await this.userProfileApi
-          .userTokenControllerFindOneByNationalId({
+        const profile = await this.userProfileApi.userTokenControllerFindOneByNationalId(
+          {
             nationalId: message.recipient,
-          })
-          .catch(notFoundHandler)
+          },
+        )
 
         // can't send message if user has no user profile
         if (!profile) {

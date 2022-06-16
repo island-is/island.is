@@ -288,6 +288,97 @@ const Category: Screen<CategoryProps> = ({
       : a.importance === b.importance && a.title.localeCompare(b.title, 'is'),
   )
 
+  const ArticleGroupComponent = ({
+    groupSlug,
+    index,
+  }: {
+    groupSlug: string
+    index: number
+  }) => {
+    const { title, description, articles } = groups[groupSlug]
+
+    const { articlesBySubgroup } = groupArticlesBySubgroup(articles, groupSlug)
+
+    const sortedSubgroupKeys = sortSubgroups(articlesBySubgroup)
+    const expanded = hashArray.includes(groupSlug)
+
+    return (
+      <div id={groupSlug} ref={(el) => (itemsRef.current[index] = el)}>
+        <AccordionCard
+          id={`accordion-item-${groupSlug}`}
+          label={title}
+          labelUse="h2"
+          labelVariant="h3"
+          expanded={expanded}
+          visibleContent={description}
+          onToggle={() => {
+            handleAccordionClick(groupSlug)
+          }}
+        >
+          <Box paddingTop={2}>
+            {sortedSubgroupKeys.map((subgroup, index) => {
+              const { sortedArticles } = sortArticles(
+                articlesBySubgroup[subgroup],
+              )
+
+              // Articles with 1 subgroup only have the "other" group and don't get a heading.
+              const hasSubgroups = sortedSubgroupKeys.length > 1
+
+              const noSubgroupNameKeys = ['unknown', 'undefined', 'null']
+
+              // Rename unknown group to 'Other'
+              const subgroupName =
+                noSubgroupNameKeys.indexOf(subgroup) !== -1 || !subgroup
+                  ? n('other')
+                  : subgroup
+
+              const heading = hasSubgroups ? subgroupName : ''
+
+              return (
+                <React.Fragment key={subgroup}>
+                  {heading && (
+                    <Text
+                      variant="h5"
+                      as="h3"
+                      paddingBottom={3}
+                      paddingTop={index === 0 ? 0 : 3}
+                    >
+                      {heading}
+                    </Text>
+                  )}
+                  <Stack space={2}>
+                    {sortedArticles.map(
+                      ({ __typename: typename, title, slug, processEntry }) => {
+                        return (
+                          <FocusableBox key={slug} borderRadius="large">
+                            <TopicCard
+                              href={
+                                linkResolver(
+                                  typename.toLowerCase() as LinkType,
+                                  [slug],
+                                ).href
+                              }
+                              tag={
+                                !!processEntry &&
+                                n('applicationProcess', 'Umsókn')
+                              }
+                            >
+                              {title}
+                            </TopicCard>
+                          </FocusableBox>
+                        )
+                      },
+                    )}
+                  </Stack>
+                </React.Fragment>
+              )
+            })}
+          </Box>
+        </AccordionCard>
+      </div>
+    )
+  }
+
   return (
     <>
       <Head>
@@ -404,106 +495,13 @@ const Category: Screen<CategoryProps> = ({
           </Text>
         </Box>
         <Stack space={2}>
-          {sortedGroups.map(({ groupSlug }, index) => {
-            const { title, description, articles } = groups[groupSlug]
-
-            const { articlesBySubgroup } = groupArticlesBySubgroup(
-              articles,
-              groupSlug,
-            )
-
-            const sortedSubgroupKeys = sortSubgroups(articlesBySubgroup)
-            const expanded = hashArray.includes(groupSlug)
-
-            return (
-              <div
-                key={index}
-                id={groupSlug}
-                ref={(el) => (itemsRef.current[index] = el)}
-              >
-                <AccordionCard
-                  id={`accordion-item-${groupSlug}`}
-                  label={title}
-                  labelUse="h2"
-                  labelVariant="h3"
-                  expanded={expanded}
-                  visibleContent={description}
-                  onToggle={() => {
-                    handleAccordionClick(groupSlug)
-                  }}
-                >
-                  <Box paddingTop={2}>
-                    {sortedSubgroupKeys.map((subgroup, index) => {
-                      const { sortedArticles } = sortArticles(
-                        articlesBySubgroup[subgroup],
-                      )
-
-                      // Articles with 1 subgroup only have the "other" group and don't get a heading.
-                      const hasSubgroups = sortedSubgroupKeys.length > 1
-
-                      const noSubgroupNameKeys = [
-                        'unknown',
-                        'undefined',
-                        'null',
-                      ]
-
-                      // Rename unknown group to 'Other'
-                      const subgroupName =
-                        noSubgroupNameKeys.indexOf(subgroup) !== -1 || !subgroup
-                          ? n('other')
-                          : subgroup
-
-                      const heading = hasSubgroups ? subgroupName : ''
-
-                      return (
-                        <React.Fragment key={subgroup}>
-                          {heading && (
-                            <Text
-                              variant="h5"
-                              as="h3"
-                              paddingBottom={3}
-                              paddingTop={index === 0 ? 0 : 3}
-                            >
-                              {heading}
-                            </Text>
-                          )}
-                          <Stack space={2}>
-                            {sortedArticles.map(
-                              ({
-                                __typename: typename,
-                                title,
-                                slug,
-                                processEntry,
-                              }) => {
-                                return (
-                                  <FocusableBox key={slug} borderRadius="large">
-                                    <TopicCard
-                                      href={
-                                        linkResolver(
-                                          typename.toLowerCase() as LinkType,
-                                          [slug],
-                                        ).href
-                                      }
-                                      tag={
-                                        !!processEntry &&
-                                        n('applicationProcess', 'Umsókn')
-                                      }
-                                    >
-                                      {title}
-                                    </TopicCard>
-                                  </FocusableBox>
-                                )
-                              },
-                            )}
-                          </Stack>
-                        </React.Fragment>
-                      )
-                    })}
-                  </Box>
-                </AccordionCard>
-              </div>
-            )
-          })}
+          {sortedGroups.map(({ groupSlug }, index) => (
+            <ArticleGroupComponent
+              groupSlug={groupSlug}
+              index={index}
+              key={index}
+            />
+          ))}
           {lifeEvents.map(
             (
               { __typename: typename, title, slug, intro, thumbnail, image },

@@ -6,7 +6,7 @@ import { m } from '../../forms/messages'
 import Markdown from 'markdown-to-jsx'
 import ManOnBenchIllustration from '../../assets/ManOnBenchIllustration'
 
-const ConfirmationScreen: FC<FieldBaseProps> = ({ field, application }) => {
+const ConfirmationScreen: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
 
   return (

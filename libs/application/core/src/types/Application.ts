@@ -2,6 +2,7 @@ import { ApplicationTypes } from './ApplicationTypes'
 import { DataProviderResult } from './DataProviderResult'
 
 export enum ApplicationStatus {
+  NOT_STARTED = 'notstarted',
   IN_PROGRESS = 'inprogress',
   COMPLETED = 'completed',
   REJECTED = 'rejected',
@@ -29,16 +30,17 @@ export interface ActionCardMetaData {
   deleteButton?: boolean
 }
 
-export interface Application {
+export interface Application<TAnswers = FormValue> {
   id: string
   state: string
   actionCard?: ActionCardMetaData
   applicant: string
   assignees: string[]
+  applicantActors: string[]
   typeId: ApplicationTypes
   modified: Date
   created: Date
-  answers: FormValue
+  answers: TAnswers
   externalData: ExternalData
   name?: string
   institution?: string

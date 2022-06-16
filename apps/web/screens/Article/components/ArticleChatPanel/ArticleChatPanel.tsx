@@ -28,12 +28,16 @@ export const ArticleChatPanel = ({
   }
   // Watson
   else if (article.id in watsonConfig) {
-    Component = <WatsonChatPanel {...watsonConfig[article.id]} />
+    Component = (
+      <WatsonChatPanel {...watsonConfig[article.id]} pushUp={pushUp} />
+    )
   } else if (article.organization?.some((o) => o.id in watsonConfig)) {
     const organizationId = article.organization.find(
       (o) => o.id in watsonConfig,
     ).id
-    Component = <WatsonChatPanel {...watsonConfig[organizationId]} />
+    Component = (
+      <WatsonChatPanel {...watsonConfig[organizationId]} pushUp={pushUp} />
+    )
   }
   // Boost
   else if (article.organization?.some((o) => o.id in boostChatPanelEndpoints)) {
@@ -44,7 +48,7 @@ export const ArticleChatPanel = ({
   }
   // If none of the above then use the default watson chat bot
   else {
-    Component = <WatsonChatPanel {...defaultWatsonConfig} />
+    Component = <WatsonChatPanel {...defaultWatsonConfig} pushUp={pushUp} />
   }
 
   return Component

@@ -1,4 +1,5 @@
 import { Test } from '@nestjs/testing'
+import { ConfigModule } from '@nestjs/config'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
@@ -8,9 +9,13 @@ import {
 
 import { AppService } from '../app.service'
 import { AppController } from '../app.controller'
+import appConfigModule from '../app.config'
 
 export const createTestingAppModule = async () => {
   const appModule = await Test.createTestingModule({
+    imports: [
+      ConfigModule.forRoot({ isGlobal: true, load: [appConfigModule] }),
+    ],
     controllers: [AppController],
     providers: [
       {

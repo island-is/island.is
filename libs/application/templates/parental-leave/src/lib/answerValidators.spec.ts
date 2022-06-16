@@ -8,7 +8,7 @@ import addDays from 'date-fns/addDays'
 import format from 'date-fns/format'
 
 import { minimumPeriodStartBeforeExpectedDateOfBirth } from '../config'
-import { ParentalRelations } from '../constants'
+import { MANUAL, ParentalRelations } from '../constants'
 import { answerValidators, VALIDATE_LATEST_PERIOD } from './answerValidators'
 import { errorMessages } from './messages'
 import { NO, StartDateOptions } from '../constants'
@@ -91,6 +91,24 @@ describe('answerValidators', () => {
       message: errorMessages.periodsPeriodRange,
       path: 'periods[0].startDate',
       values: { usageMaxMonths: 23.5 },
+    })
+  })
+
+  describe('otherParentObj', () => {
+    it('should return error if MANUAL selected and nation id empty', () => {
+      const newAnswer = {
+        chooseOtherParent: MANUAL,
+        otherParentName: 'Spouse Spousson',
+        otherParentId: '',
+      }
+
+      expect(
+        answerValidators['otherParentObj'](newAnswer, application),
+      ).toStrictEqual({
+        message: coreErrorMessages.missingAnswer,
+        path: 'otherParentObj.otherParentId',
+        values: undefined,
+      })
     })
   })
 

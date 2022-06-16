@@ -46,8 +46,8 @@ import { PaginatedEndorsementDto } from '../endorsement/dto/paginatedEndorsement
 import { SearchQueryDto } from './dto/searchQuery.dto'
 import { EndorsementListInterceptor } from './interceptors/endorsementList.interceptor'
 import { EndorsementListsInterceptor } from './interceptors/endorsementLists.interceptor'
-import { emailDto } from './dto/email.dto'
-import { sendPdfEmailResponse } from './dto/sendPdfEmail.response'
+import { EmailDto } from './dto/email.dto'
+import { SendPdfEmailResponse } from './dto/sendPdfEmail.response'
 
 export class FindTagPaginationComboDto extends IntersectionType(
   FindEndorsementListByTagsDto,
@@ -349,7 +349,7 @@ export class EndorsementListController {
   @Scopes(EndorsementsScope.main)
   @HasAccessGroup(AccessGroup.Owner)
   @ApiParam({ name: 'listId', type: String })
-  @ApiOkResponse({ type: sendPdfEmailResponse })
+  @ApiOkResponse({ type: SendPdfEmailResponse })
   @Post(':listId/email-pdf')
   async emailEndorsementsPDF(
     @Param(
@@ -358,8 +358,8 @@ export class EndorsementListController {
       EndorsementListByIdPipe,
     )
     endorsementList: EndorsementList,
-    @Query() query: emailDto,
-  ): Promise<sendPdfEmailResponse> {
+    @Query() query: EmailDto,
+  ): Promise<SendPdfEmailResponse> {
     return this.endorsementListService.emailPDF(
       endorsementList.id,
       query.emailAddress,

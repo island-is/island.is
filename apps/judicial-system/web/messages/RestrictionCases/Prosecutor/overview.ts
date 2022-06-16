@@ -16,6 +16,22 @@ export const rcOverview = {
         'Notaður sem skilaboð í upplýsingarboxi á yfirlits skrefi í gæsluvarðhalds- og farbannsmálum.',
     },
   }),
+  seenByDefenderAlert: defineMessages({
+    title: {
+      id:
+        'judicial.system.restriction_cases:overview.seen_by_defender_alert.title',
+      defaultMessage: 'Krafa sótt af verjanda',
+      description:
+        'Notaður sem titill fyrir "Krafa sótt af verjanda" hluta á yfirlitssíðu í gæsluvarðhalds- og farbannsmálum.',
+    },
+    text: {
+      id:
+        'judicial.system.restriction_cases:overview.seen_by_defender_alert.text',
+      defaultMessage: 'Verjandi skráði sig inn til að sækja kröfuskjal {when}.',
+      description:
+        'Notaður sem titill fyrir "Krafa sótt af verjanda" hluta á yfirlitssíðu í gæsluvarðhalds- og farbannsmálum.',
+    },
+  }),
   headingV2: defineMessage({
     id: 'judicial.system.restriction_cases:overview.heading_v2',
     defaultMessage:

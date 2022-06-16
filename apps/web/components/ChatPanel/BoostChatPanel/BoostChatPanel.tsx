@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { config, boostChatPanelEndpoints } from './config'
-import { useWindowSize } from 'react-use'
 import { ChatBubble } from '../ChatBubble'
 import { BoostChatPanelProps } from '../types'
 
@@ -17,7 +16,6 @@ export const BoostChatPanel: React.FC<BoostChatPanelProps> = ({
   endpoint,
   pushUp = false,
 }) => {
-  const { width } = useWindowSize()
   const [showButton, setShowButton] = useState(Boolean(window.boost)) // we show button when chat already loaded
 
   useEffect(() => {
@@ -73,7 +71,6 @@ export const BoostChatPanel: React.FC<BoostChatPanelProps> = ({
     <ChatBubble
       text={'Hæ, get ég aðstoðað?'}
       onClick={() => window.boost.chatPanel.show()}
-      pushUp={pushUp}
       isVisible={showButton}
     />
   )
