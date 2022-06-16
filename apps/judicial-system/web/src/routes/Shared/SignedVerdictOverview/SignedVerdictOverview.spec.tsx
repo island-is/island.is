@@ -1,6 +1,5 @@
 import React from 'react'
 import { render, waitFor, screen } from '@testing-library/react'
-import { getByText } from '@testing-library/dom'
 import { MockedProvider, MockedResponse } from '@apollo/client/testing'
 import userEvent from '@testing-library/user-event'
 import { createIntl } from 'react-intl'
@@ -14,10 +13,8 @@ import {
   mockProsecutorWonderWomanQuery,
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { UserProvider } from '@island.is/judicial-system-web/src/components'
-import { formatDate } from '@island.is/judicial-system/formatters'
 import { LocaleProvider } from '@island.is/localization'
 import FormProvider from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
-import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 import { Case, CaseState, CaseType } from '@island.is/judicial-system/types'
 
 import {
@@ -43,21 +40,6 @@ function renderSignedVerdictOverview(mocks: ReadonlyArray<MockedResponse>) {
 }
 
 describe('Rejected case', () => {
-  test('should not show restrictions tag if case is rejected event though there are restrictions', async () => {
-    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
-    useRouter.mockImplementation(() => ({
-      query: { id: 'test_id_2' },
-      pathname: '/krafa/test_id_2',
-    }))
-
-    renderSignedVerdictOverview([
-      ...mockCaseQueries,
-      ...mockJudgeQuery,
-      ...mockInstitutionsQuery,
-    ])
-
-  })
-
   test('should not show a button for extension', async () => {
     const useRouter = jest.spyOn(require('next/router'), 'useRouter')
     useRouter.mockImplementation(() => ({
@@ -84,21 +66,6 @@ describe('Rejected case', () => {
 })
 
 describe('Dismissed case', () => {
-  test('should not show restrictions tag event though there are restrictions', async () => {
-    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
-    useRouter.mockImplementation(() => ({
-      query: { id: 'test_id_12' },
-      pathname: '/krafa/test_id_2',
-    }))
-
-    renderSignedVerdictOverview([
-      ...mockCaseQueries,
-      ...mockJudgeQuery,
-      ...mockInstitutionsQuery,
-    ])
-
-  })
-
   test('should not show a button for extension', async () => {
     const useRouter = jest.spyOn(require('next/router'), 'useRouter')
     useRouter.mockImplementation(() => ({
@@ -125,46 +92,6 @@ describe('Dismissed case', () => {
 })
 
 describe('Accepted case with active custody', () => {
-  test('should have the correct subtitle', async () => {
-    const validToDate = '2020-09-25T19:50:08.033Z'
-
-    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
-    useRouter.mockImplementation(() => ({
-      query: { id: 'test_id_5' },
-      pathname: '/krafa/test_id_2',
-    }))
-
-    renderSignedVerdictOverview([
-      ...mockCaseQueries,
-      ...mockJudgeQuery,
-      ...mockInstitutionsQuery,
-    ])
-
-    expect(
-      await screen.findByText(
-        `Gæsla til ${formatDate(validToDate, 'PPP')} kl. ${formatDate(
-          validToDate,
-          TIME_FORMAT,
-        )}`,
-      ),
-    ).toBeInTheDocument()
-  })
-
-  test('should show restrictions tag if there are restrictions', async () => {
-    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
-    useRouter.mockImplementation(() => ({
-      query: { id: 'test_id' },
-      pathname: '/krafa/test_id_2',
-    }))
-
-    renderSignedVerdictOverview([
-      ...mockCaseQueries,
-      ...mockJudgeQuery,
-      ...mockInstitutionsQuery,
-    ])
-
-  })
-
   test('should not show a button for extension because the user is a judge', async () => {
     const useRouter = jest.spyOn(require('next/router'), 'useRouter')
     useRouter.mockImplementation(() => ({
@@ -265,32 +192,7 @@ describe('Accepted case with active custody', () => {
 })
 
 describe('Accepted case with custody end time in the past', () => {
- describe('Court roles', () => {
-    test('should have the correct subtitle', async () => {
-      const dateInPast = '2020-09-24T19:50:08.033Z'
-
-      const useRouter = jest.spyOn(require('next/router'), 'useRouter')
-      useRouter.mockImplementation(() => ({
-        query: { id: 'test_id_6' },
-        pathname: '/krafa/test_id_2',
-      }))
-
-      renderSignedVerdictOverview([
-        ...mockCaseQueries,
-        ...mockJudgeQuery,
-        ...mockInstitutionsQuery,
-      ])
-
-      expect(
-        await screen.findByText(
-          `Gæsla rann út ${formatDate(dateInPast, 'PPP')} kl. ${formatDate(
-            dateInPast,
-            TIME_FORMAT,
-          )}`,
-        ),
-      ).toBeInTheDocument()
-    })
-
+  describe('Court roles', () => {
     test('should display restriction tags if the prosecutor requested restrictions', async () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
@@ -304,126 +206,104 @@ describe('Accepted case with custody end time in the past', () => {
         ...mockInstitutionsQuery,
       ])
 
-    test('should not show a button for extension', async () => {
-      const useRouter = jest.spyOn(require('next/router'), 'useRouter')
-      useRouter.mockImplementation(() => ({
-        query: { id: 'test_id' },
-        pathname: '/krafa/test_id_2',
-      }))
+      test('should not show a button for extension', async () => {
+        const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+        useRouter.mockImplementation(() => ({
+          query: { id: 'test_id' },
+          pathname: '/krafa/test_id_2',
+        }))
 
-      renderSignedVerdictOverview([
-        ...mockCaseQueries,
-        ...mockJudgeQuery,
-        ...mockInstitutionsQuery,
-      ])
+        renderSignedVerdictOverview([
+          ...mockCaseQueries,
+          ...mockJudgeQuery,
+          ...mockInstitutionsQuery,
+        ])
 
-      expect(
-        await waitFor(() =>
-          screen.queryByRole('button', { name: 'Framlengja gæslu' }),
-        ),
-      ).not.toBeInTheDocument()
-    })
-  })
-
-  describe('Prosecutor role', () => {
-    test('should display an indicator that the case cannot be extended', async () => {
-      const useRouter = jest.spyOn(require('next/router'), 'useRouter')
-      useRouter.mockImplementation(() => ({
-        query: { id: 'test_id_8' },
-        pathname: '/krafa/test_id_2',
-      }))
-
-      renderSignedVerdictOverview([
-        ...mockCaseQueries,
-        ...mockProsecutorQuery,
-        ...mockInstitutionsQuery,
-      ])
-
-      expect(await screen.findByTestId('infobox')).toHaveTextContent(
-        'Ekki hægt að framlengja gæsluvarðhald þegar dómari hefur úrskurðað um annað en dómkröfur sögðu til um.',
-      )
-    })
-  })
-
-  describe('Staff role', () => {
-    test('should not show any accordion items', () => {
-      const useRouter = jest.spyOn(require('next/router'), 'useRouter')
-      useRouter.mockImplementation(() => ({
-        query: { id: 'test_id_7' },
-        pathname: '/krafa/test_id_2',
-      }))
-
-      render(
-        <MockedProvider
-          mocks={[
-            ...mockCaseQueries,
-            ...mockPrisonUserQuery,
-            ...mockInstitutionsQuery,
-          ]}
-          addTypename={false}
-        >
-          <UserProvider authenticated>
-            <LocaleProvider locale="is" messages={{}}>
-              <FormProvider>
-                <SignedVerdictOverview />
-              </FormProvider>
-            </LocaleProvider>
-          </UserProvider>
-        </MockedProvider>,
-      )
-
-      expect(screen.queryByTestId('accordionItems')).not.toBeInTheDocument()
+        expect(
+          await waitFor(() =>
+            screen.queryByRole('button', { name: 'Framlengja gæslu' }),
+          ),
+        ).not.toBeInTheDocument()
+      })
     })
 
-    test('should only have a button for the short version ruling and custody notice PDFs', async () => {
-      const useRouter = jest.spyOn(require('next/router'), 'useRouter')
-      useRouter.mockImplementation(() => ({
-        query: { id: 'test_id' },
-        pathname: '/krafa/test_id_2',
-      }))
+    describe('Prosecutor role', () => {
+      test('should display an indicator that the case cannot be extended', async () => {
+        const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+        useRouter.mockImplementation(() => ({
+          query: { id: 'test_id_8' },
+          pathname: '/krafa/test_id_2',
+        }))
 
-      renderSignedVerdictOverview([
-        ...mockCaseQueries,
-        ...mockPrisonUserQuery,
-        ...mockInstitutionsQuery,
-      ])
+        renderSignedVerdictOverview([
+          ...mockCaseQueries,
+          ...mockProsecutorQuery,
+          ...mockInstitutionsQuery,
+        ])
 
-      expect(screen.queryByTestId('requestPDFButton')).not.toBeInTheDocument()
-      expect(screen.queryByTestId('rulingPDFButton')).not.toBeInTheDocument()
-      expect(
-        await screen.findByTestId('courtRecordPDFButton'),
-      ).toBeInTheDocument()
-      expect(
-        await screen.findByTestId('custodyNoticePDFButton'),
-      ).toBeInTheDocument()
+        expect(await screen.findByTestId('infobox')).toHaveTextContent(
+          'Ekki hægt að framlengja gæsluvarðhald þegar dómari hefur úrskurðað um annað en dómkröfur sögðu til um.',
+        )
+      })
+    })
+
+    describe('Staff role', () => {
+      test('should not show any accordion items', () => {
+        const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+        useRouter.mockImplementation(() => ({
+          query: { id: 'test_id_7' },
+          pathname: '/krafa/test_id_2',
+        }))
+
+        render(
+          <MockedProvider
+            mocks={[
+              ...mockCaseQueries,
+              ...mockPrisonUserQuery,
+              ...mockInstitutionsQuery,
+            ]}
+            addTypename={false}
+          >
+            <UserProvider authenticated>
+              <LocaleProvider locale="is" messages={{}}>
+                <FormProvider>
+                  <SignedVerdictOverview />
+                </FormProvider>
+              </LocaleProvider>
+            </UserProvider>
+          </MockedProvider>,
+        )
+
+        expect(screen.queryByTestId('accordionItems')).not.toBeInTheDocument()
+      })
+
+      test('should only have a button for the short version ruling and custody notice PDFs', async () => {
+        const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+        useRouter.mockImplementation(() => ({
+          query: { id: 'test_id' },
+          pathname: '/krafa/test_id_2',
+        }))
+
+        renderSignedVerdictOverview([
+          ...mockCaseQueries,
+          ...mockPrisonUserQuery,
+          ...mockInstitutionsQuery,
+        ])
+
+        expect(screen.queryByTestId('requestPDFButton')).not.toBeInTheDocument()
+        expect(screen.queryByTestId('rulingPDFButton')).not.toBeInTheDocument()
+        expect(
+          await screen.findByTestId('courtRecordPDFButton'),
+        ).toBeInTheDocument()
+        expect(
+          await screen.findByTestId('custodyNoticePDFButton'),
+        ).toBeInTheDocument()
+      })
     })
   })
 })
+
 describe('Accepted case with active travel ban', () => {
-  test('should have the correct subtitle', async () => {
-    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
-    useRouter.mockImplementation(() => ({
-      query: { id: 'test_id_7' },
-      pathname: '/krafa/test_id_2',
-    }))
-    const date = '2020-09-25T19:50:08.033Z'
-
-    renderSignedVerdictOverview([
-      ...mockCaseQueries,
-      ...mockJudgeQuery,
-      ...mockInstitutionsQuery,
-    ])
-
-    expect(
-      await screen.findByText(
-        `Farbann til ${formatDate(date, 'PPP')} kl. ${formatDate(
-          date,
-          TIME_FORMAT,
-        )}`,
-      ),
-    ).toBeInTheDocument()
-  })
-
   test('should not show a button for extension because the user is a judge', async () => {
     const useRouter = jest.spyOn(require('next/router'), 'useRouter')
     useRouter.mockImplementation(() => ({
@@ -464,30 +344,6 @@ describe('Accepted case with active travel ban', () => {
 })
 
 describe('Accepted case with travel ban end time in the past', () => {
-  test('should have the correct subtitle', async () => {
-    const dateInPast = '2020-09-24T19:50:08.033Z'
-    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
-    useRouter.mockImplementation(() => ({
-      query: { id: 'test_id_8' },
-      pathname: '/krafa/test_id_2',
-    }))
-
-    renderSignedVerdictOverview([
-      ...mockCaseQueries,
-      ...mockJudgeQuery,
-      ...mockInstitutionsQuery,
-    ])
-
-    expect(
-      await screen.findByText(
-        `Farbann rann út ${formatDate(dateInPast, 'PPP')} kl. ${formatDate(
-          dateInPast,
-          TIME_FORMAT,
-        )}`,
-      ),
-    ).toBeInTheDocument()
-  })
-
   test('should show a button for extension because the user is a prosecutor', async () => {
     const useRouter = jest.spyOn(require('next/router'), 'useRouter')
     useRouter.mockImplementation(() => ({
@@ -504,28 +360,6 @@ describe('Accepted case with travel ban end time in the past', () => {
     expect(
       await screen.findByRole('button', { name: 'Framlengja gæslu' }),
     ).toBeInTheDocument()
-  })
-})
-
-describe('Accepted case with adission to facility with end time in the past', () => {
-  test('should have the correct subtitle', async () => {
-    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
-    useRouter.mockImplementation(() => ({
-      query: { id: 'test_id_13' },
-      pathname: '/krafa/test_id_2',
-    }))
-
-    renderSignedVerdictOverview([
-      ...mockCaseQueries,
-      ...mockJudgeQuery,
-      ...mockInstitutionsQuery,
-    ])
-
-    const caseDates = await screen.findByTestId('caseDates')
-
-    expect(
-      getByText(caseDates, 'Vistun rann út 24. september 2020 kl. 19:50'),
-    ).toBeTruthy()
   })
 })
 
