@@ -1,9 +1,8 @@
 #!/bin/bash
 set -euo pipefail
-
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-CYPRESS_BIN=$(realpath "${DIR}/../node_modules/.bin/cypress")
-ENV_FILE="$(realpath "$DIR"/../.env.secret)"
+PROJECT_DIR=$(git rev-parse --show-toplevel)
+CYPRESS_BIN="$PROJECT_DIR/node_modules/.bin/cypress"
+ENV_FILE="$PROJECT_DIR/.env.secret"
 
 # shellcheck disable=SC1091,SC1090
 source "$ENV_FILE"
