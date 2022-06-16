@@ -535,6 +535,10 @@ export class ApplicationService {
         application.municipalityCode,
       )
 
+      if(!municipality.usingNav) {
+        return null
+      }
+
       const token = await fetch(
         new URL('Authentication/Login', municipality.navUrl).href,
         {
