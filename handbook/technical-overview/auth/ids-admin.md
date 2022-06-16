@@ -11,7 +11,7 @@ To create a client we need the following information:
  - Name of the application
 	 - The name and domain are used to determine the client id. The name is also what users see when they are using the authentication service.
  - Callback URLs
-	 - IAS compares these URLs with the callback URL sent with the request to the authorize endpoint. The callback URL sent with the request needs to match the URLs registered in IAS
+	 - IAS compares these URLs with the callback URL sent with the request to the authorize endpoint. The callback URL sent with the request needs to match the URLs registered in IAS.
  - Post logout redirect URLs
 	 - These URLs are compared with the post-logout redirect URLs sent when ending a session. The URL in the request must match the URLs registered in IAS. The post logout redirect URL is the URL the user will be redirected to after signing out.
  - The application's technical stack
