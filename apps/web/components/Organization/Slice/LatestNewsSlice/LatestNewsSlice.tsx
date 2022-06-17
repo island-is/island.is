@@ -14,8 +14,6 @@ export const LatestNewsSlice: React.FC<SliceProps> = ({
 }) => {
   return (
     <Box
-      width="full"
-      overflow="hidden"
       component="section"
       background="purple100"
       paddingTop={[5, 5, 8]}
@@ -31,6 +29,7 @@ export const LatestNewsSlice: React.FC<SliceProps> = ({
           linkType="organizationnews"
           overview="organizationnewsoverview"
           parameters={[organizationPageSlug]}
+          seeMoreHref={slice.readMoreLink?.url}
         />
       </GridContainer>
     </Box>

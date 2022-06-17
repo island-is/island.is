@@ -95,6 +95,9 @@ export const slices = gql`
       }
     }
     readMoreText
+    readMoreLink {
+      url
+    }
   }
 
   fragment LinkCardFields on LinkCardSlice {

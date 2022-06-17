@@ -11,6 +11,7 @@ import { GridItems } from '@island.is/web/components'
 import { GetNewsQuery } from '@island.is/web/graphql/schema'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import Item from './Item'
+import * as styles from './NewsItems.css'
 
 interface NewsItemsProps {
   heading: string
@@ -20,6 +21,7 @@ interface NewsItemsProps {
   linkType?: LinkType
   overview?: LinkType
   parameters?: Array<string>
+  seeMoreHref?: string
 }
 
 export const NewsItems = ({
@@ -30,18 +32,23 @@ export const NewsItems = ({
   linkType,
   overview = 'newsoverview',
   parameters = [],
+  seeMoreHref,
 }: NewsItemsProps) => {
   const { linkResolver } = useLinkResolver()
 
+  const linkProps = seeMoreHref
+    ? { href: seeMoreHref }
+    : linkResolver(overview, parameters)
+
   return (
     <>
-      <GridContainer>
+      <Box className={styles.container}>
         <Box display="flex" flexDirection="row" justifyContent="spaceBetween">
           <Text variant="h3" as="h2" id={headingTitle} dataTestId="home-news">
             {heading}
           </Text>
           <Box display={['none', 'none', 'block']}>
-            <Link {...linkResolver(overview, parameters)} skipTab>
+            <Link {...linkProps} skipTab>
               <Button
                 icon="arrowForward"
                 iconType="filled"
@@ -53,7 +60,7 @@ export const NewsItems = ({
             </Link>
           </Box>
         </Box>
-      </GridContainer>
+      </Box>
       <GridItems
         mobileItemsRows={1}
         mobileItemWidth={270}
@@ -102,7 +109,7 @@ export const NewsItems = ({
             justifyContent="center"
             alignItems="center"
           >
-            <Link {...linkResolver('newsoverview', [])} skipTab>
+            <Link {...linkProps} skipTab>
               <Button
                 icon="arrowForward"
                 iconType="filled"

@@ -1146,6 +1146,9 @@ export interface ILatestNewsSliceFields {
 
   /** Read more text */
   readMoreText?: string | undefined
+
+  /** Read more link */
+  readMoreLink?: ILink | undefined
 }
 
 /** Slice to show latest news entries */
