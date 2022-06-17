@@ -414,7 +414,6 @@ const ArticleScreen: Screen<ArticleProps> = ({
           ],
     [article.category, article.group, inStepperView],
   )
-  console.log(article)
 
   return (
     <>
