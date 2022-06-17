@@ -210,6 +210,9 @@
     "application-templates-accident-notification": {
       "tags": []
     },
+    "application-templates-announcement-of-death": {
+      "tags": []
+    },
     "application-templates-children-residence-change": {
       "tags": []
     },
@@ -541,6 +544,9 @@
       "tags": []
     },
     "judicial-system-formatters": {
+      "tags": []
+    },
+    "judicial-system-message-handler": {
       "tags": []
     },
     "judicial-system-scheduler": {

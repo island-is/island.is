@@ -52,12 +52,17 @@ describe(`${IC_OVERVIEW_ROUTE}/:id`, () => {
       state: CaseState.RECEIVED,
       sessionArrangements: SessionArrangements.ALL_PRESENT,
       caseFiles: [makeCaseFile()],
+      seenByDefender: '2020-09-20T19:50:08.033Z',
     }
 
     cy.stubAPIResponses()
     cy.visit('/domur/rannsoknarheimild/yfirlit/test_id')
 
     intercept(caseDataAddition)
+  })
+
+  it('should let the user know if the assigned defender has viewed the case', () => {
+    cy.getByTestid('alertMessageSeenByDefender').should('not.match', ':empty')
   })
 
   it('should display information about the case in an info card', () => {

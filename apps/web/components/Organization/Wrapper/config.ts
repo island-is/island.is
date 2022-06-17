@@ -10,6 +10,11 @@ export const watsonConfig: Record<string, WatsonChatPanelProps> = {
     showLauncher: false,
     carbonTheme: 'g10',
     namespaceKey: 'default',
+    onLoad: () => {
+      if (sessionStorage.getItem('0c96e8fb-d4dc-420e-97db-18b0f8bb4e3f')) {
+        sessionStorage.clear()
+      }
+    },
   },
 
   // Digital Iceland (Stafrænt Ísland) - Organization
@@ -21,5 +26,10 @@ export const watsonConfig: Record<string, WatsonChatPanelProps> = {
     showLauncher: false,
     carbonTheme: 'g10',
     namespaceKey: 'default',
+    onLoad: () => {
+      if (sessionStorage.getItem('b1a80e76-da12-4333-8872-936b08246eaa')) {
+        sessionStorage.clear()
+      }
+    },
   },
 }

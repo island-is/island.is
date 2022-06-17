@@ -191,7 +191,6 @@ export class CourtService {
   }
 
   async createDocument(
-    user: User,
     caseId: string,
     courtId: string,
     courtCaseNumber: string,
@@ -199,6 +198,7 @@ export class CourtService {
     fileName: string,
     fileType: string,
     content: Buffer,
+    user?: User,
   ): Promise<string> {
     return this.uploadStream(courtId, fileName, fileType, content)
       .then((streamId) =>
@@ -215,8 +215,8 @@ export class CourtService {
           'Failed to create a court document',
           {
             caseId,
-            actor: user.name,
-            institution: user.institution?.name,
+            actor: user?.name ?? 'RVG',
+            institution: user?.institution?.name ?? 'RVG',
             courtId,
             courtCaseNumber,
             subject,

@@ -310,7 +310,6 @@ export class CaseService {
         const buffer = Buffer.from(caseFilesPdf, 'binary')
 
         await this.courtService.createDocument(
-          user,
           theCase.id,
           theCase.courtId ?? '',
           theCase.courtCaseNumber ?? '',
@@ -318,6 +317,7 @@ export class CaseService {
           'Rannsóknargögn.pdf',
           'application/pdf',
           buffer,
+          user,
         )
       }
     } catch (error) {
@@ -471,6 +471,7 @@ export class CaseService {
     let rulingUploadedToS3 = false
     let rulingUploadedToCourt = false
     let courtRecordUploadedToCourt = false
+    const isModifyingRuling = Boolean(theCase.rulingDate)
 
     const uploadPromises = [
       this.uploadSignedRulingPdfToS3(theCase, signedRulingPdf).then((res) => {
@@ -486,8 +487,6 @@ export class CaseService {
           },
         ),
       )
-
-      const isModifyingRuling = Boolean(theCase.rulingDate)
 
       if (!isModifyingRuling) {
         uploadPromises.push(
@@ -527,7 +526,10 @@ export class CaseService {
       this.sendEmailToProsecutor(theCase, rulingUploadedToS3, rulingAttachment),
     ]
 
-    if (!rulingUploadedToCourt || !courtRecordUploadedToCourt) {
+    if (
+      !rulingUploadedToCourt ||
+      (!isModifyingRuling && !courtRecordUploadedToCourt)
+    ) {
       emailPromises.push(
         this.sendEmailToCourt(theCase, rulingUploadedToS3, rulingAttachment),
       )
@@ -614,7 +616,9 @@ export class CaseService {
 
       if (!prosecutor || prosecutor.role !== UserRole.PROSECUTOR) {
         throw new BadRequestException(
-          `User ${prosecutor.id} is not registered as a prosecutor`,
+          `User ${
+            prosecutor?.id ?? 'unknown'
+          } is not registered as a prosecutor`,
         )
       }
 

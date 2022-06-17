@@ -173,7 +173,7 @@ const StateModal = ({
           <AcceptModal
             isModalVisable={selected === ApplicationState.APPROVED}
             onCancel={onClickCancel}
-            onSaveApplication={(amount: Amount) => {
+            onSaveApplication={(amount: Amount, comment: string) => {
               if (!selected) {
                 return
               }
@@ -183,7 +183,7 @@ const StateModal = ({
                 undefined,
                 `Samþykkt upphæð: kr. ${amount?.finalAmount.toLocaleString(
                   'de-DE',
-                )}.-`,
+                )}.-${comment ? '\n' + comment : comment}`,
                 amount,
               )
             }}

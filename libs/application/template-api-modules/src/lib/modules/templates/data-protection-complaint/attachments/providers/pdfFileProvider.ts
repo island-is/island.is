@@ -15,6 +15,7 @@ export class PdfFileProvider {
       content: buffer.toString('base64'),
       fileName: `${filename}.pdf`,
       type: 'Kvörtun',
+      subject: 'Kvörtun',
     } as DocumentInfo
     return { ...doc, fileBuffer: buffer }
   }

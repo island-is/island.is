@@ -456,6 +456,23 @@ export const ComplaintForm: Form = buildForm({
                   variant: 'tel',
                   backgroundColor: 'blue',
                 }),
+                buildCustomField({
+                  id: 'contactTitle',
+                  title: info.labels.contactTitle,
+                  component: 'FieldLabel',
+                }),
+                buildTextField({
+                  id: 'organizationOrInstitution.contactName',
+                  title: info.labels.contactName,
+                  backgroundColor: 'blue',
+                  width: 'half',
+                }),
+                buildTextField({
+                  id: 'organizationOrInstitution.contactEmail',
+                  title: info.labels.email,
+                  backgroundColor: 'blue',
+                  width: 'half',
+                }),
               ],
             }),
           ],

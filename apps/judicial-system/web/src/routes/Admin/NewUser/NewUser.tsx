@@ -11,7 +11,7 @@ import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { titles } from '@island.is/judicial-system-web/messages'
 import type { User } from '@island.is/judicial-system/types'
-import * as Constants from '@island.is/judicial-system/consts'
+import * as constants from '@island.is/judicial-system/consts'
 
 import UserForm from '../UserForm/UserForm'
 
@@ -63,7 +63,7 @@ export const NewUser: React.FC = () => {
       })
     }
 
-    router.push(Constants.USER_LIST_ROUTE)
+    router.push(constants.USER_LIST_ROUTE)
   }
 
   return (

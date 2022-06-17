@@ -7,7 +7,7 @@ import {
   ErrorSchema,
 } from '../../lib/types'
 import { useIntl } from 'react-intl'
-import { incomeForm, approveOptions } from '../../lib/messages'
+import { incomeForm } from '../../lib/messages'
 import { RadioController } from '@island.is/shared/form-fields'
 import DescriptionText from '../DescriptionText/DescriptionText'
 

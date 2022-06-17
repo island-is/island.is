@@ -187,6 +187,7 @@ export interface Case {
   caseModifiedExplanation?: string
   rulingModifiedHistory?: string
   caseResentExplanation?: string
+  seenByDefender?: string
 }
 
 export interface CreateCase {
@@ -265,6 +266,7 @@ export interface UpdateCase {
   caseModifiedExplanation?: string
   rulingModifiedHistory?: string
   caseResentExplanation?: string
+  seenByDefender?: string
 }
 
 export interface TransitionCase {

@@ -3,8 +3,6 @@ import * as React from 'react'
 export function EmptyImageSmall(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
-      width="183"
-      height="229"
       viewBox="0 0 183 229"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

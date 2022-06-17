@@ -78,6 +78,10 @@ export const Scopes: ScopeSetupOptions[] = [
     // Scope for another org
     name: '@otherorg.is/scope5',
   },
+  {
+    // Only allowed for legal guardian, one level deep
+    name: '@island.is/scope6',
+  },
 ]
 
 const delegationConfig: ConfigType<typeof DelegationConfig> = {
@@ -86,6 +90,10 @@ const delegationConfig: ConfigType<typeof DelegationConfig> = {
     {
       scopeName: '@island.is/scope3',
       onlyForDelegationType: ['ProcurationHolder'],
+    },
+    {
+      scopeName: '@island.is/scope6',
+      onlyForDelegationType: ['LegalGuardian'],
     },
   ],
 }

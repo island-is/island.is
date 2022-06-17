@@ -7,6 +7,7 @@ import { FAFieldBaseProps } from '../../lib/types'
 import { hasSpouse, waitingForSpouse } from '../../lib/utils'
 import {
   AidAmount,
+  ApprovedAlert,
   Header,
   MissingFilesCard,
   MoreActions,
@@ -35,6 +36,10 @@ const ApplicantStatus = ({ application, goToScreen }: FAFieldBaseProps) => {
 
       {isWaitingForSpouse && (
         <SpouseAlert showCopyUrl={!application.answers.spouseEmailSuccess} />
+      )}
+
+      {state === ApplicationState.APPROVED && (
+        <ApprovedAlert events={currentApplication?.applicationEvents} />
       )}
 
       {state === ApplicationState.REJECTED && (

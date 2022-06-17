@@ -264,7 +264,7 @@ describe('getOtherParentId', () => {
   })
 
   it('should return undefined if NO parent is selected', () => {
-    application.answers.otherParent = {
+    application.answers.otherParentObj = {
       chooseOtherParent: NO,
     }
 
@@ -274,7 +274,7 @@ describe('getOtherParentId', () => {
   it('should return answers.otherParentId if manual is selected', () => {
     const expectedId = '1234567899'
 
-    application.answers.otherParent = {
+    application.answers.otherParentObj = {
       chooseOtherParent: MANUAL,
       otherParentId: expectedId,
     }
@@ -295,7 +295,7 @@ describe('getOtherParentId', () => {
       date: new Date(),
       status: 'success',
     }
-    application.answers.otherParent = {
+    application.answers.otherParentObj = {
       chooseOtherParent: 'spouse',
     }
 
@@ -326,7 +326,7 @@ describe('getOtherParentName', () => {
   })
 
   it('should return undefined if NO parent is selected', () => {
-    application.answers.otherParent = {
+    application.answers.otherParentObj = {
       chooseOtherParent: NO,
     }
 
@@ -336,7 +336,7 @@ describe('getOtherParentName', () => {
   it('should return answers.otherParentName if manual is selected', () => {
     const expectedName = '1234567899'
 
-    application.answers.otherParent = {
+    application.answers.otherParentObj = {
       chooseOtherParent: MANUAL,
       otherParentName: expectedName,
     }
@@ -357,7 +357,7 @@ describe('getOtherParentName', () => {
       date: new Date(),
       status: 'success',
     }
-    application.answers.otherParent = {
+    application.answers.otherParentObj = {
       chooseOtherParent: 'spouse',
     }
 

@@ -270,5 +270,13 @@ export const getContactInfo = (
     phone: contact.phoneNumber ?? '',
     postalCode: contact.postalCode,
     city: contact.city,
+    contactName:
+      onBehalf === OnBehalf.ORGANIZATION_OR_INSTITUTION
+        ? answers.organizationOrInstitution.contactName ?? ''
+        : '',
+    contactEmail:
+      onBehalf === OnBehalf.ORGANIZATION_OR_INSTITUTION
+        ? answers.organizationOrInstitution.contactEmail ?? ''
+        : '',
   }
 }

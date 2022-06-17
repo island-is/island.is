@@ -203,15 +203,38 @@ function renderContactsAndComplainees(
       ? 'Kvartandi'
       : 'Kvartendur'
 
+  if (complaint.onBehalf === OnBehalf.OTHERS) {
+    addSubheader('Tengiliður', doc)
+  }
+
+  /* Contact if complaint is for the hand of company/organization, it's optional to fill out */
   if (
-    complaint.onBehalf == OnBehalf.ORGANIZATION_OR_INSTITUTION ||
+    complaint.contactInfo.contactName.length > 0 ||
+    complaint.contactInfo.contactEmail.length > 0
+  ) {
+    addSubheader('Tengiliður', doc)
+    complaint.contactInfo.contactName.length > 0 &&
+      addformFieldAndValue(
+        'Nafn',
+        complaint.contactInfo.contactName,
+        doc,
+        PdfConstants.SMALL_LINE_GAP,
+      )
+    complaint.contactInfo.contactEmail.length > 0 &&
+      addformFieldAndValue(
+        'Netfang',
+        complaint.contactInfo.contactEmail,
+        doc,
+        PdfConstants.SMALL_LINE_GAP,
+      )
+    doc.moveDown()
+  }
+
+  if (
+    complaint.onBehalf === OnBehalf.ORGANIZATION_OR_INSTITUTION ||
     complaint.onBehalf !== OnBehalf.OTHERS
   ) {
     addSubheader(contactHeading, doc)
-  }
-
-  if (complaint.onBehalf === OnBehalf.OTHERS) {
-    addSubheader('Tengiliður', doc)
   }
 
   addformFieldAndValue(
