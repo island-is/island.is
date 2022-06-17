@@ -11,6 +11,7 @@ export const GET_ARTICLE_QUERY = gql`
       intro
       importance
       showTableOfContents
+      processEntryButtonText
       body {
         ...AllSlices
       }

@@ -201,6 +201,7 @@ export const GET_ORGANIZATION_SERVICES_QUERY = gql`
     getArticles(input: $input) {
       title
       slug
+      processEntryButtonText
       processEntry {
         id
       }

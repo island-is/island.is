@@ -37,6 +37,8 @@ export interface ProcessEntryProps {
    * render process entry fixed to bottom of screen in a react portal
    */
   fixed?: boolean
+
+  newTab?: boolean
 }
 
 export const ProcessEntryLinkButton: FC<
@@ -46,6 +48,7 @@ export const ProcessEntryLinkButton: FC<
   buttonText,
   processLink,
   openLinkInModal,
+  newTab = true,
   ...buttonProps
 }) => {
   const button = (
@@ -62,7 +65,7 @@ export const ProcessEntryLinkButton: FC<
       src={processLink}
     />
   ) : (
-    <Link href={processLink} newTab skipTab>
+    <Link href={processLink} newTab={newTab} skipTab>
       {button}
     </Link>
   )
@@ -74,6 +77,7 @@ export const ProcessEntry: FC<ProcessEntryProps> = ({
   openLinkInModal,
   buttonText,
   fixed,
+  newTab = true,
 }) => {
   const fixedProps: BoxProps = {
     position: 'fixed',
@@ -109,6 +113,7 @@ export const ProcessEntry: FC<ProcessEntryProps> = ({
         processLink={processLink}
         openLinkInModal={openLinkInModal}
         buttonText={buttonText}
+        newTab={newTab}
       />
     </Box>
   )

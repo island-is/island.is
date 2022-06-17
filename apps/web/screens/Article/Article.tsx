@@ -320,7 +320,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
     setMounted(true)
   }, [])
   const n = useNamespace(namespace)
-  const { query } = useRouter()
+  const { query, asPath } = useRouter()
   const { linkResolver } = useLinkResolver()
 
   const subArticle = article.subArticles.find((sub) => {
@@ -414,6 +414,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
           ],
     [article.category, article.group, inStepperView],
   )
+  console.log(article)
 
   return (
     <>
@@ -539,6 +540,19 @@ const ArticleScreen: Screen<ArticleProps> = ({
               className="rs_read"
             >
               <ProcessEntry {...processEntry} />
+            </Box>
+          )}
+          {article.stepper?.title && !inStepperView && (
+            <Box marginTop={3} printHidden className="rs_read">
+              <ProcessEntry
+                buttonText={n(
+                  article.processEntryButtonText || 'application',
+                  '',
+                )}
+                processLink={asPath.split('?')[0].concat('?stepper=true')}
+                processTitle={article.stepper.title}
+                newTab={false}
+              />
             </Box>
           )}
           {(subArticle

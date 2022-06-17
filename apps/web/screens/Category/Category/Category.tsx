@@ -474,6 +474,7 @@ const Category: Screen<CategoryProps> = ({
                                 title,
                                 slug,
                                 processEntry,
+                                processEntryButtonText,
                               }) => {
                                 return (
                                   <FocusableBox key={slug} borderRadius="large">
@@ -485,8 +486,13 @@ const Category: Screen<CategoryProps> = ({
                                         ).href
                                       }
                                       tag={
-                                        !!processEntry &&
-                                        n('applicationProcess', 'Umsókn')
+                                        (!!processEntry ||
+                                          processEntryButtonText) &&
+                                        n(
+                                          processEntryButtonText ||
+                                            'application',
+                                          'Umsókn',
+                                        )
                                       }
                                     >
                                       {title}

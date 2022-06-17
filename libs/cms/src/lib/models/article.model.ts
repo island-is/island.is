@@ -81,7 +81,10 @@ export class Article {
   showTableOfContents?: boolean
 
   @Field(() => Stepper, { nullable: true })
-  stepper!: Stepper | null
+  stepper?: Stepper | null
+
+  @Field({ nullable: true })
+  processEntryButtonText?: string
 }
 
 export const mapArticle = ({
@@ -130,4 +133,5 @@ export const mapArticle = ({
   featuredImage: fields.featuredImage ? mapImage(fields.featuredImage) : null,
   showTableOfContents: fields.showTableOfContents ?? false,
   stepper: fields.stepper ? mapStepper(fields.stepper) : null,
+  processEntryButtonText: fields.processEntryButtonText ?? '',
 })
