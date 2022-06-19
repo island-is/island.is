@@ -107,7 +107,6 @@ export interface MultiField extends FormItem {
   children: Field[]
   isPartOfRepeater?: boolean
   readonly description?: FormText
-  descriptionMarkdownOptions?: MarkdownToJSX.Options
   space?: BoxProps['paddingTop']
 }
 
