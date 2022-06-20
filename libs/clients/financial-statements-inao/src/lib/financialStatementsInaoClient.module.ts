@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common'
 import { ConfigModule } from '@island.is/nest/config'
 
 import { FinancialStatementsInaoClientConfig } from './financialStatementsInao.config'
-import { FinancialStatementsInaoClientService } from './financialStatementsInao.service'
+import { FinancialStatementsInaoClientService } from './financialStatementsInaoClient.service'
 
 @Module({
   imports: [

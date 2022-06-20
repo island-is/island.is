@@ -4,8 +4,7 @@ import type { ConfigType } from '@island.is/nest/config'
 import { Inject, Injectable } from '@nestjs/common'
 
 import { FinancialStatementsInaoClientConfig } from './financialStatementsInao.config'
-import { ClientType } from './models/ClientType'
-import { Election } from './models/Election'
+import type { Client, Election } from './types'
 
 @Injectable()
 export class FinancialStatementsInaoClientService {
@@ -39,8 +38,8 @@ export class FinancialStatementsInaoClientService {
     if (!data || !data.value) return null
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const clientTypes: ClientType[] = data.value.map((x: any) => {
-      return <ClientType>{
+    const clientTypes: Client[] = data.value.map((x: any) => {
+      return {
         code: x.star_ClientType.star_code,
         name: x.star_ClientType.star_name,
       }
@@ -60,8 +59,8 @@ export class FinancialStatementsInaoClientService {
     if (!data || !data.value) return null
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const clientTypes: ClientType[] = data.value.map((x: any) => {
-      return <ClientType>{
+    const clientTypes: Client[] = data.value.map((x: any) => {
+      return {
         clientTypeId: x.star_clienttypeid,
         code: x.star_code,
         name: x.star_name,
@@ -80,8 +79,8 @@ export class FinancialStatementsInaoClientService {
     if (!data || !data.value) return null
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const clientTypes: ClientType[] = data.value.map((x: any) => {
-      return <ClientType>{
+    const clientTypes: Client[] = data.value.map((x: any) => {
+      return {
         clientTypeId: x.star_clienttypeid,
         code: x.star_code,
         name: x.star_name,
