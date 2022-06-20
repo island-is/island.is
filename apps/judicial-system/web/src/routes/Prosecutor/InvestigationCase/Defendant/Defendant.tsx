@@ -24,7 +24,6 @@ import { titles, defendant as m } from '@island.is/judicial-system-web/messages'
 import {
   Case,
   CaseType,
-  isCaseTypeWithMultipleDefendantsSupport,
   Defendant,
   UpdateDefendant,
 } from '@island.is/judicial-system/types'
@@ -329,27 +328,22 @@ const Defendant = () => {
                   </motion.div>
                 ))}
             </AnimatePresence>
-            {isCaseTypeWithMultipleDefendantsSupport(workingCase.type) && (
-              <Box display="flex" justifyContent="flexEnd" marginTop={3}>
-                <Button
-                  variant="ghost"
-                  icon="add"
-                  onClick={handleCreateDefendantClick}
-                  disabled={workingCase.defendants?.some(
-                    (defendant) =>
-                      (!isBusiness(defendant.nationalId) &&
-                        !defendant.gender) ||
-                      !defendant.name ||
-                      !defendant.address ||
-                      (!defendant.noNationalId && !defendant.nationalId),
-                  )}
-                >
-                  {formatMessage(
-                    m.sections.defendantInfo.addDefendantButtonText,
-                  )}
-                </Button>
-              </Box>
-            )}
+            <Box display="flex" justifyContent="flexEnd" marginTop={3}>
+              <Button
+                variant="ghost"
+                icon="add"
+                onClick={handleCreateDefendantClick}
+                disabled={workingCase.defendants?.some(
+                  (defendant) =>
+                    (!isBusiness(defendant.nationalId) && !defendant.gender) ||
+                    !defendant.name ||
+                    !defendant.address ||
+                    (!defendant.noNationalId && !defendant.nationalId),
+                )}
+              >
+                {formatMessage(m.sections.defendantInfo.addDefendantButtonText)}
+              </Button>
+            </Box>
           </Box>
           <AnimatePresence>
             {[
