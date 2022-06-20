@@ -24,6 +24,24 @@ module.exports = {
           { transaction: t },
         ),
         queryInterface.addColumn(
+          'municipality',
+          'nav_username',
+          {
+            type: Sequelize.STRING,
+            allowNull: true,
+          },
+          { transaction: t },
+        ),
+        queryInterface.addColumn(
+          'municipality',
+          'nav_password',
+          {
+            type: Sequelize.STRING,
+            allowNull: true,
+          },
+          { transaction: t },
+        ),
+        queryInterface.addColumn(
           'applications',
           'nav_success',
           {
@@ -43,6 +61,12 @@ module.exports = {
           transaction: t,
         }),
         queryInterface.removeColumn('municipality', 'nav_url', {
+          transaction: t,
+        }),
+        queryInterface.removeColumn('municipality', 'nav_username', {
+          transaction: t,
+        }),
+        queryInterface.removeColumn('municipality', 'nav_password', {
           transaction: t,
         }),
         queryInterface.removeColumn('applications', 'nav_success', {

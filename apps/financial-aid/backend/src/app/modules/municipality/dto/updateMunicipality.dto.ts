@@ -39,6 +39,16 @@ export class UpdateMunicipalityDto {
   @ApiProperty()
   readonly navUrl?: string
 
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  readonly navUsername?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  readonly navPassword?: string
+
   @IsString()
   @ApiProperty()
   readonly municipalityId: string

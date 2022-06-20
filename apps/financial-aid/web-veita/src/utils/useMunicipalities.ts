@@ -18,6 +18,8 @@ const MunicipalityQuery = gql`
       rulesHomepage
       usingNav
       navUrl
+      navUsername
+      navPassword
       individualAid {
         ownPlace
         registeredRenting

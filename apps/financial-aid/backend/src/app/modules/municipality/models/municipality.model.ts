@@ -118,4 +118,18 @@ export class MunicipalityModel extends Model<Municipality> {
   })
   @ApiProperty()
   navUrl?: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  navUsername?: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  navPassword?: string
 }

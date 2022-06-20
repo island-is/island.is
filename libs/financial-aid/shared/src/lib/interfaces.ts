@@ -171,6 +171,8 @@ export interface Municipality {
   allAdminUsers?: UpdateAdmin[]
   usingNav: boolean
   navUrl?: string
+  navUsername?: string
+  navPassword?: string
 }
 
 export interface UpdateMunicipalityActivity {

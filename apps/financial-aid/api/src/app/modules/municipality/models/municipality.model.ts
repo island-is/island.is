@@ -48,4 +48,10 @@ export class MunicipalityModel implements Municipality {
 
   @Field({ nullable: true })
   readonly navUrl?: string
+
+  @Field({ nullable: true })
+  readonly navUsername?: string
+
+  @Field({ nullable: true })
+  readonly navPassword?: string
 }

@@ -53,7 +53,10 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
   }
 
   const errorCheckNav = () => {
-    if (state.usingNav && !state.navUrl) {
+    if (
+      state.usingNav &&
+      (!state.navUrl || !state.navUsername || !state.navPassword)
+    ) {
       setHasNavError(true)
       return 'navSettings'
     }
@@ -81,6 +84,11 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
     update()
   }
 
+  const navChangeHandler = (update: () => void) => {
+    setHasNavError(false)
+    update()
+  }
+
   const updateMunicipality = async () => {
     await updateMunicipalityMutation({
       variables: {
@@ -93,6 +101,8 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
           municipalityId: state.municipalityId,
           usingNav: state.usingNav,
           navUrl: state.navUrl,
+          navUsername: state.navUsername,
+          navPassword: state.navPassword,
         },
       },
     })
@@ -124,19 +134,19 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
     },
     {
       headline: 'Tenging við ytri kerfi',
-      smallText:
-        'Þetta er slóð á vefþjónustu Navision sem þið fáið frá Wise þegar vefþjónustan hefur verið sett upp fyrir sveitafélagið.',
       component: (
         <>
-          <Box marginBottom={2} id="navSettings">
+          <Box marginBottom={3} id="navSettings">
             <Checkbox
               name="usingNav"
               label="Sjálfvirk tenging við Navision"
               checked={state.usingNav}
               onChange={(event) =>
-                setState({
-                  ...state,
-                  usingNav: event.target.checked,
+                navChangeHandler(() => {
+                  setState({
+                    ...state,
+                    usingNav: event.target.checked,
+                  })
                 })
               }
             />
@@ -146,15 +156,61 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
             name="navUrl"
             value={state.navUrl ?? ''}
             backgroundColor="blue"
-            hasError={hasNavError}
+            hasError={hasNavError && !state.navUrl}
             disabled={!state.usingNav}
             onChange={(event) =>
-              setState({
-                ...state,
-                navUrl: event.currentTarget.value,
+              navChangeHandler(() => {
+                setState({
+                  ...state,
+                  navUrl: event.currentTarget.value,
+                })
               })
             }
           />
+          <Text marginTop={1} marginBottom={3} variant="small">
+            Þetta er slóð á vefþjónustu Navision sem þið fáið frá Wise þegar
+            vefþjónustan hefur verið sett upp fyrir sveitafélagið.
+          </Text>
+          <Input
+            label="Notendanafn"
+            name="navUsername"
+            value={state.navUsername ?? ''}
+            backgroundColor="blue"
+            hasError={hasNavError && !state.navUsername}
+            disabled={!state.usingNav}
+            onChange={(event) =>
+              navChangeHandler(() => {
+                setState({
+                  ...state,
+                  navUsername: event.currentTarget.value,
+                })
+              })
+            }
+          />
+          <Text marginTop={1} marginBottom={3} variant="small">
+            Þetta er notendanafn að Navision vefþjónustunni sem þið fáið frá
+            Wise þegar vefþjónustan hefur verið sett upp fyrir sveitarfélagið.
+          </Text>
+          <Input
+            label="Lykilorð"
+            name="navPassword"
+            value={state.navPassword ?? ''}
+            backgroundColor="blue"
+            hasError={hasNavError && !state.navPassword}
+            disabled={!state.usingNav}
+            onChange={(event) =>
+              navChangeHandler(() => {
+                setState({
+                  ...state,
+                  navPassword: event.currentTarget.value,
+                })
+              })
+            }
+          />
+          <Text marginTop={1} marginBottom={3} variant="small">
+            Þetta er lykilorð að Navision vefþjónustunni sem þið fáið frá Wise
+            þegar vefþjónustan hefur verið sett upp fyrir sveitarfélagið.
+          </Text>
         </>
       ),
     },
@@ -297,12 +353,6 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
                 {el.headline}
               </Text>
               {el.component}
-
-              {el.smallText && (
-                <Text marginTop={1} variant="small">
-                  {el.smallText}
-                </Text>
-              )}
             </Box>
           )
         })}
