@@ -5,9 +5,16 @@
 declare namespace Cypress {
   interface Chainable {
     /**
-     * Custom command to log in using cognito
-     * @example cy.loginViaCognito()
+     * Custom command to log in using cognito and island.is SSO
+     * @example cy.login()
      */
-    ensureLoggedIn({ url: string }): Chainable<Element>
+    getAllCookies(): Chainable<void>
+    idsLogin({ phoneNumber: string, authDomain: string }): Chainable<void>
+    cognitoLogin({
+      cognitoUsername: string,
+      cognitoPassword: string,
+    }): Chainable<void>
+    ensureLoggedIn({ url: string }): Chainable<Response>
+    patchSameSiteCookie(interceptUrl: string): void
   }
 }

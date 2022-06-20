@@ -1,4 +1,5 @@
 {
+  "experimentalSessionAndOrigin": true,
   "fileServerFolder": ".",
   "fixturesFolder": "./src/fixtures",
   "integrationFolder": "./src/integration",
