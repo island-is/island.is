@@ -124,7 +124,7 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
           </Text>
           <GridRow>
             <GridColumn span={['11/12', '6/12']}>
-              <Text variant="default">
+              <Text variant="default" marginBottom={6}>
                 {formatMessage({
                   id: 'sp.finance-transactions:intro',
                   defaultMessage:
@@ -135,22 +135,23 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
                 <Box
                   display="flex"
                   marginLeft="auto"
-                  marginTop={1}
                   paddingRight={2}
                   printHidden
                 >
-                  <Button
-                    colorScheme="default"
-                    icon="print"
-                    iconType="filled"
-                    onClick={() => window.print()}
-                    preTextIconType="filled"
-                    size="default"
-                    type="button"
-                    variant="utility"
-                  >
-                    {formatMessage(m.print)}
-                  </Button>
+                  <Box paddingRight={2}>
+                    <Button
+                      colorScheme="default"
+                      icon="print"
+                      iconType="filled"
+                      onClick={() => window.print()}
+                      preTextIconType="filled"
+                      size="default"
+                      type="button"
+                      variant="utility"
+                    >
+                      {formatMessage(m.print)}
+                    </Button>
+                  </Box>
                   <DropdownExport
                     onGetCSV={() =>
                       exportHreyfingarFile(recordsDataArray, 'csv')

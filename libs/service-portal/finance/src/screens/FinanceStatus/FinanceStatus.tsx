@@ -197,7 +197,7 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
             ) : null}
           </GridColumn>
         </GridRow>
-        <Box marginTop={[3, 4, 4, 4, 5]}>
+        <Box marginTop={2}>
           {loading && (
             <Box padding={3}>
               <SkeletonLoader space={1} height={40} repeat={5} />
