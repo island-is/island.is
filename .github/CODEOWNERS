@@ -184,6 +184,9 @@
 
 /libs/application/templates/no-debt-certificate/                                                    @island-is/origo
 
+# Temporary assignment while the QA bootstrap project is in progress
+/apps/system-e2e/                                                                                   @island-is/qa
+
 # DevOps
 /.github/actions/                                                                                   @island-is/devops
 /.github/workflows/                                                                                 @island-is/devops
