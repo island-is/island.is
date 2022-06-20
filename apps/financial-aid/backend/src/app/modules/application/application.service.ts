@@ -34,8 +34,8 @@ import {
   UserType,
   applicationPageSize,
   Routes,
-  getNavEmploymentStatus,
   calculatePersonalTaxAllowanceFromAmount,
+  getNavEmploymentStatus,
 } from '@island.is/financial-aid/shared/lib'
 import { FileService } from '../file'
 import {
@@ -538,6 +538,15 @@ export class ApplicationService {
         return null
       }
 
+      const calculateNavAmount = (amount: CreateAmountDto) => {
+        return amount.deductionFactors
+          ?.map((d) => d.amount)
+          .reduce(
+            (previousValue, currentValue) => previousValue - currentValue,
+            amount.aidAmount - (amount.income ?? 0),
+          )
+      }
+
       const token = await fetch(
         new URL('Authentication/Login', municipality.navUrl).href,
         {
@@ -546,12 +555,13 @@ export class ApplicationService {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            username: 'sis_user',
-            password: 'K4sdgrt3p',
+            username: municipality.navUsername,
+            password: municipality.navPassword,
           }),
         },
       ).then((response) => response.text())
 
+      const now = new Date()
       return await fetch(
         new URL(
           'WebApplication/CreateFinancialAssistanceApplication',
@@ -570,8 +580,8 @@ export class ApplicationService {
             phoneNo: application.phoneNumber,
             email: application.email,
             bankAccount: `${application.bankNumber}${application.ledger}${application.accountNumber}`,
-            grantAmount: this.calculateNavAmount(amount),
-            referenceNo: application.nationalId, //TODO: change to apllicationID
+            grantAmount: calculateNavAmount(amount),
+            referenceNo: application.id,
             employmentStatus: getNavEmploymentStatus[application.employment],
             personalTaxCredit: calculatePersonalTaxAllowanceFromAmount(
               amount.tax,
@@ -579,21 +589,14 @@ export class ApplicationService {
               amount.spousePersonalTaxCredit,
             ),
             housingCode: application.homeCircumstances,
+            dateFrom: new Date(now.getFullYear(), now.getMonth(), 1), // First day of current month
+            dateTo: new Date(now.getFullYear(), now.getMonth() + 1, 0), // Last day of current month
           }),
         },
       ).then((response) => response.ok)
     } catch {
       return false
     }
-  }
-
-  private calculateNavAmount(amount: CreateAmountDto) {
-    return amount.deductionFactors
-      ?.map((d) => d.amount)
-      .reduce(
-        (previousValue, currentValue) => previousValue - currentValue,
-        amount.aidAmount - (amount.income ?? 0),
-      )
   }
 
   async filter(

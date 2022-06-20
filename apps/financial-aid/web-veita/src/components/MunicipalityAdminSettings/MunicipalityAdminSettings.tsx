@@ -198,6 +198,7 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
             backgroundColor="blue"
             hasError={hasNavError && !state.navPassword}
             disabled={!state.usingNav}
+            autoComplete="off"
             onChange={(event) =>
               navChangeHandler(() => {
                 setState({
