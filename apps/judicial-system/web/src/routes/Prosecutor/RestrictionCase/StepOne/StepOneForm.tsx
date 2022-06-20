@@ -17,7 +17,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import type { Case } from '@island.is/judicial-system/types'
-import * as Constants from '@island.is/judicial-system/consts'
+import * as constants from '@island.is/judicial-system/consts'
 
 import LokeCaseNumber from '../../SharedComponents/LokeCaseNumber/LokeCaseNumber'
 import DefendantInfo from '../../SharedComponents/DefendantInfo/DefendantInfo'
@@ -150,7 +150,7 @@ export const StepOneForm: React.FC<Props> = (props) => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={Constants.CASE_LIST_ROUTE}
+          previousUrl={constants.CASE_LIST_ROUTE}
           onNextButtonClick={() => handleNextButtonClick(workingCase)}
           nextIsLoading={loading}
           nextIsDisabled={!isDefendantStepValidRC(workingCase)}

@@ -137,8 +137,7 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
                       <Button
                         colorScheme="default"
                         icon="receipt"
-                        iconType="outline"
-                        preTextIconType="outline"
+                        iconType="filled"
                         size="default"
                         type="button"
                         variant="utility"

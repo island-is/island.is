@@ -5,6 +5,8 @@ import format from 'date-fns/format'
 import { ActionCard, Stack } from '@island.is/island-ui/core'
 import {
   Application,
+  Answer,
+  FormValue,
   ApplicationStatus,
   coreMessages,
   getSlugFromType,
@@ -64,10 +66,25 @@ const DefaultData: Record<ApplicationStatus, DefaultStateData> = {
       label: coreMessages.cardButtonInProgress,
     },
   },
+  [ApplicationStatus.NOT_STARTED]: {
+    tag: {
+      variant: 'blueberry',
+      label: coreMessages.newApplication,
+    },
+    progress: {
+      variant: 'blue',
+    },
+    cta: {
+      label: coreMessages.cardButtonNotStarted,
+    },
+  },
 }
 
 interface Props {
-  applications: Application[]
+  applications: Pick<
+    Application,
+    'actionCard' | 'id' | 'typeId' | 'status' | 'modified' | 'name' | 'progress'
+  >[]
   onClick: (id: string) => void
   refetch?: (() => void) | undefined
 }

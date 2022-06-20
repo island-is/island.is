@@ -18,7 +18,7 @@ import { isPoliceReportStepValidIC } from '@island.is/judicial-system-web/src/ut
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import type { Case } from '@island.is/judicial-system/types'
-import * as Constants from '@island.is/judicial-system/consts'
+import * as constants from '@island.is/judicial-system/consts'
 
 interface Props {
   workingCase: Case
@@ -277,8 +277,8 @@ const PoliceReportForm: React.FC<Props> = (props) => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${Constants.IC_POLICE_DEMANDS_ROUTE}/${workingCase.id}`}
-          nextUrl={`${Constants.IC_CASE_FILES_ROUTE}/${workingCase.id}`}
+          previousUrl={`${constants.IC_POLICE_DEMANDS_ROUTE}/${workingCase.id}`}
+          nextUrl={`${constants.IC_CASE_FILES_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!isPoliceReportStepValidIC(workingCase)}
           nextIsLoading={isLoading}
         />

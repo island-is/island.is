@@ -26,9 +26,15 @@ import { DataStatus } from './types/dataStatus.enum'
 
 export const MAX_OUT_OF_DATE_MONTHS = 6
 
+/** Category to attach each log message to */
+const LOG_CATEGORY = 'userprofile-service'
+
 // eslint-disable-next-line
 const handleError = (error: any) => {
-  logger.error(JSON.stringify(error))
+  logger.error('Userprofile error', {
+    error: JSON.stringify(error),
+    category: LOG_CATEGORY,
+  })
   throw new ApolloError('Failed to resolve request', error.status)
 }
 
@@ -235,13 +241,13 @@ export class UserProfileService {
       updateUserProfileDto: updateUserDto,
     }
 
-    const updatedUserProfile = await this.userProfileApiWithAuth(user)
-      .userProfileControllerUpdate(request)
-      .catch(handleError)
-
     const islyklarData = await this.islyklarService.getIslykillSettings(
       user.nationalId,
     )
+
+    const updatedUserProfile = await this.userProfileApiWithAuth(user)
+      .userProfileControllerUpdate(request)
+      .catch(handleError)
 
     const emailVerified = updatedUserProfile.emailStatus === DataStatus.VERIFIED
     const mobileVerified =

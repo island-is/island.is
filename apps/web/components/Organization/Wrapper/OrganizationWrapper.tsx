@@ -43,6 +43,10 @@ import { useNamespace } from '@island.is/web/hooks'
 import { watsonConfig } from './config'
 import { WatsonChatPanel } from '@island.is/web/components'
 import LandlaeknirFooter from './Themes/LandlaeknirTheme/LandlaeknirFooter'
+import { HeilbrigdisstofnunNordurlandsHeader } from './Themes/HeilbrigdisstofnunNordurlandsTheme/HeilbrigdisstofnunNordurlandsHeader'
+import { LandlaeknirHeader } from './Themes/LandlaeknirTheme/LandlaeknirHeader'
+import { FiskistofaHeader } from './Themes/FiskistofaTheme/FiskistofaHeader'
+import FiskistofaFooter from './Themes/FiskistofaTheme/FiskistofaFooter'
 import * as styles from './OrganizationWrapper.css'
 
 interface NavigationData {
@@ -71,7 +75,12 @@ interface HeaderProps {
   organizationPage: OrganizationPage
 }
 
-export const lightThemes = ['digital_iceland', 'default']
+export const lightThemes = [
+  'digital_iceland',
+  'default',
+  'landlaeknir',
+  'fiskistofa',
+]
 export const footerEnabled = [
   'syslumenn',
   'district-commissioner',
@@ -86,6 +95,9 @@ export const footerEnabled = [
   'icelandic-health-insurance',
 
   'mannaudstorg',
+
+  'fiskistofa',
+  'directorate-of-fisheries',
 ]
 
 export const getThemeConfig = (
@@ -129,6 +141,16 @@ const OrganizationHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
       return <UtlendingastofnunHeader organizationPage={organizationPage} />
     case 'digital_iceland':
       return <DigitalIcelandHeader organizationPage={organizationPage} />
+    case 'hsn':
+      return (
+        <HeilbrigdisstofnunNordurlandsHeader
+          organizationPage={organizationPage}
+        />
+      )
+    case 'landlaeknir':
+      return <LandlaeknirHeader organizationPage={organizationPage} />
+    case 'fiskistofa':
+      return <FiskistofaHeader organizationPage={organizationPage} />
     default:
       return <DefaultHeader organizationPage={organizationPage} />
   }
@@ -229,13 +251,14 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
     case 'landlaeknir':
     case 'directorate-of-health':
       OrganizationFooterComponent = (
-        <LandlaeknirFooter
-          footerItems={organization.footerItems}
-          phone={organization.phone}
-          email={organization.email}
-          phoneLabel={n('telephone', 'Sími')}
-          emailLabel={n('email,', 'Tölvupóstur')}
-        />
+        <LandlaeknirFooter footerItems={organization.footerItems} />
+      )
+      break
+
+    case 'fiskistofa':
+    case 'directorate-of-fisheries':
+      OrganizationFooterComponent = (
+        <FiskistofaFooter footerItems={organization.footerItems} />
       )
       break
   }
@@ -376,18 +399,22 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
               />
               {showSecondaryMenu && (
                 <>
-                  {organizationPage.secondaryMenu && (
-                    <SecondaryMenu
-                      title={organizationPage.secondaryMenu.name}
-                      items={secondaryNavList}
-                    />
-                  )}
+                  {organizationPage.secondaryMenu &&
+                    secondaryNavList.length > 0 && (
+                      <SecondaryMenu
+                        title={organizationPage.secondaryMenu.name}
+                        items={secondaryNavList}
+                      />
+                    )}
                   {organizationPage.sidebarCards.map((card) => (
                     <ProfileCard
                       title={card.title}
                       description={card.content}
                       link={card.link}
-                      image="https://images.ctfassets.net/8k0h54kbe6bj/6jpT5mePCNk02nVrzVLzt2/6adca7c10cc927d25597452d59c2a873/bitmap.png"
+                      image={
+                        card.image?.url ||
+                        'https://images.ctfassets.net/8k0h54kbe6bj/6jpT5mePCNk02nVrzVLzt2/6adca7c10cc927d25597452d59c2a873/bitmap.png'
+                      }
                       size="small"
                     />
                   ))}

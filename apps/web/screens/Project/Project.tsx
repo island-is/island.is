@@ -18,7 +18,6 @@ import {
   OrganizationSlice,
   Section,
   HeadWithSocialSharing,
-  OneColumnTextSlice,
   NewsItems,
   Stepper,
   stepperUtils,
@@ -223,7 +222,15 @@ const ProjectPage: Screen<PageProps> = ({
         {!renderSlicesAsTabs &&
           (subpage ?? projectPage).slices.map((slice) =>
             slice.__typename === 'OneColumnText' ? (
-              <OneColumnTextSlice slice={slice} boxProps={{ marginTop: 8 }} />
+              <Box marginTop={6}>
+                <OrganizationSlice
+                  key={slice.id}
+                  slice={slice}
+                  namespace={namespace}
+                  fullWidth={true}
+                  organizationPageSlug={projectPage.slug}
+                />
+              </Box>
             ) : (
               <OrganizationSlice
                 key={slice.id}
