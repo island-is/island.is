@@ -17,14 +17,4 @@ describe('Home page', () => {
     cy.visit('/minarsidur/')
     cy.contains(fakeUsers[0].name)
   })
-
-  it('should have Pósthólf', () => {
-    cy.visit('/minarsidur/')
-    cy.contains('Pósthólf')
-  })
-
-  it('inbox should be non-empty', () => {
-    cy.get('svg[data-testid="icon-reader"]').click()
-    cy.get('div[data-testid="list-inbox"]').should('have.length.gt', 0)
-  })
 })
