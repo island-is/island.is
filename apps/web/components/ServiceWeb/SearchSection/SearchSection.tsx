@@ -60,9 +60,7 @@ export const SearchSection = ({
           </Box>
         </>
       )}
-      <ServiceWebSearchInput
-        placeholder={searchPlaceholder}
-      />
+      <ServiceWebSearchInput placeholder={searchPlaceholder} />
     </Box>
   )
 }

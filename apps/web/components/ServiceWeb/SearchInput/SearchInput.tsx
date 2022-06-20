@@ -15,7 +15,8 @@ import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import {
   GetSupportSearchResultsQuery,
   GetSupportSearchResultsQueryVariables,
-  SearchableContentTypes, SearchableTags,
+  SearchableContentTypes,
+  SearchableTags,
   SupportQna,
 } from '@island.is/web/graphql/schema'
 import { getSlugPart } from '@island.is/web/screens/ServiceWeb/utils'
@@ -70,8 +71,12 @@ export const SearchInput = ({
     },
   })
 
-  const institutionSlugBelongsToMannaudstorg = institutionSlug.includes('mannaudstorg')
-  const mannaudstorgTag = [{ key: 'mannaudstorg', type: SearchableTags.Organization }]
+  const institutionSlugBelongsToMannaudstorg = institutionSlug.includes(
+    'mannaudstorg',
+  )
+  const mannaudstorgTag = [
+    { key: 'mannaudstorg', type: SearchableTags.Organization },
+  ]
 
   useDebounce(
     () => {
@@ -86,7 +91,9 @@ export const SearchInput = ({
               query: {
                 queryString,
                 types: [SearchableContentTypes['WebQna']],
-                [institutionSlugBelongsToMannaudstorg ? 'tags' : 'excludedTags']: mannaudstorgTag,
+                [institutionSlugBelongsToMannaudstorg
+                  ? 'tags'
+                  : 'excludedTags']: mannaudstorgTag,
               },
             },
           })
