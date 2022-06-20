@@ -59,7 +59,9 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
           )
           return
         } else {
-          this.logger.info('User has notifications enabled this message type', { messageId })
+          this.logger.info('User has notifications enabled this message type', {
+            messageId,
+          })
         }
 
         const notification = await this.messageProcessor.convertToNotification(
