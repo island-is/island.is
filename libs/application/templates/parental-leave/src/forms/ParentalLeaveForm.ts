@@ -846,24 +846,24 @@ export const ParentalLeaveForm: Form = buildForm({
                   {
                     editable: true,
                   },
-                  ),
-                  buildSubmitField({
-                    id: 'submit',
-                    placement: 'footer',
-                    title: parentalLeaveFormMessages.confirmation.title,
-                    actions: [
-                      {
-                        event: 'SUBMIT',
-                        name: parentalLeaveFormMessages.confirmation.title,
-                        type: 'primary',
-                        condition: (answers) =>
-                          getApplicationAnswers(answers).periods.length > 0 &&
-                          new Date(
-                            getApplicationAnswers(answers).periods[0].startDate,
-                          ).getTime() >= currentDateStartTime(),
-                      },
-                    ],
-                  }),
+                ),
+                buildSubmitField({
+                  id: 'submit',
+                  placement: 'footer',
+                  title: parentalLeaveFormMessages.confirmation.title,
+                  actions: [
+                    {
+                      event: 'SUBMIT',
+                      name: parentalLeaveFormMessages.confirmation.title,
+                      type: 'primary',
+                      condition: (answers) =>
+                        getApplicationAnswers(answers).periods.length > 0 &&
+                        new Date(
+                          getApplicationAnswers(answers).periods[0].startDate,
+                        ).getTime() >= currentDateStartTime(),
+                    },
+                  ],
+                }),
               ],
             }),
           ],
