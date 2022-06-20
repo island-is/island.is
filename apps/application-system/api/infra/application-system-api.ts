@@ -74,6 +74,17 @@ export const serviceSetup = (services: {
   service('application-system-api')
     .namespace(namespace)
     .serviceAccount(serviceAccount)
+    .features({
+      INAO_Client: {
+        env: {},
+        secrets: {
+          FINANCIAL_STATEMENTS_INAO_CLIENT_ID:
+            '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_ID',
+          FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET:
+            '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET',
+        },
+      },
+    })
     .env({
       EMAIL_REGION: 'eu-west-1',
       IDENTITY_SERVER_ISSUER_URL: {
@@ -205,10 +216,6 @@ export const serviceSetup = (services: {
         '/k8s/application-system-api/DRIVING_LICENSE_BOOK_PASSWORD',
       NOVA_PASSWORD: '/k8s/application-system/api/NOVA_PASSWORD',
       ARK_BASE_URL: '/k8s/application-system-api/ARK_BASE_URL',
-      FINANCIAL_STATEMENTS_INAO_CLIENT_ID:
-        '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_ID',
-      FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET:
-        '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET',
     })
     .initContainer({
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
