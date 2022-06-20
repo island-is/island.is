@@ -1,15 +1,18 @@
 describe('Search feature', () => {
   beforeEach(() => {
     cy.cognitoLogin({
-      cognitoUsername: Cypress.env('COGNITO_USERNAME'),
-      cognitoPassword: Cypress.env('COGNITO_PASSWORD'),
+      cognitoUsername: Cypress.env('cognitoUsername'),
+      cognitoPassword: Cypress.env('cognitoPassword'),
     })
+  })
+
+  beforeEach(() => {
+    cy.visit('/').get('[data-testid="chatbot"]')
   })
 
   it('should have search results for common words', function () {
     const testPhrase = 'umsókn'
-    cy.visit('/')
-      .get('[data-testid="search-box"]')
+    cy.get('[data-testid="search-box"]')
       .click()
       .type(`${testPhrase}{enter}`)
       .get('[data-testid="search-result"]', { timeout: 15000 })
@@ -27,8 +30,7 @@ describe('Search feature', () => {
   })
 
   it('should have no search results for long bogus search words', function () {
-    cy.visit('/')
-      .get('[data-testid="search-box"]')
+    cy.get('[data-testid="search-box"]')
       .click()
       .type('abcdefhijklmnopqrstuvwxyz1234567890{enter}')
       .get('[data-testid="search-result"]', { timeout: 5000 })
