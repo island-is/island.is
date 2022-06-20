@@ -6,6 +6,7 @@ import { useIntl } from 'react-intl'
 import { currentMonth } from '@island.is/financial-aid/shared/lib'
 import { DescriptionText, PrivacyPolicyAccordion } from '..'
 import { FAFieldBaseProps } from '../../lib/types'
+import withLogo from '../Logo/Logo'
 
 const AboutForm = ({ application }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
@@ -31,4 +32,4 @@ const AboutForm = ({ application }: FAFieldBaseProps) => {
   )
 }
 
-export default AboutForm
+export default withLogo(AboutForm)
