@@ -132,10 +132,10 @@ export const is = {
     'Notendum er bent á að kynna sér stefnu Stafræns Íslands um meðferð persónuupplýsinga á',
 
   // inbox
-  'inbox.screenTitle': 'Skjöl',
-  'inbox.bottomTabText': 'Skjöl',
-  'inbox.searchPlaceholder': 'Leita að skjölum...',
-  'inbox.loadingText': 'Leita í skjölum...',
+  'inbox.screenTitle': 'Pósthólf',
+  'inbox.bottomTabText': 'Pósthólf',
+  'inbox.searchPlaceholder': 'Sláðu inn leitarorð...',
+  'inbox.loadingText': 'Leita í pósthólfi...',
   'inbox.resultText': 'niðurstöður fundust',
   'inbox.singleResultText': 'niðurstaða fannst',
   'inbox.noResultText': 'Engar niðurstöður fundust',
