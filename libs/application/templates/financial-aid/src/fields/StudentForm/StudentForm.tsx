@@ -7,6 +7,7 @@ import * as styles from '../Shared.css'
 import cn from 'classnames'
 import { InputController, RadioController } from '@island.is/shared/form-fields'
 import { useFormContext } from 'react-hook-form'
+import withLogo from '../Logo/Logo'
 
 const StudentForm = ({ errors, application }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
@@ -69,4 +70,4 @@ const StudentForm = ({ errors, application }: FAFieldBaseProps) => {
   )
 }
 
-export default StudentForm
+export default withLogo(StudentForm)

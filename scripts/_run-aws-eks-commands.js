@@ -24,12 +24,12 @@ const error = (errorMessage) => {
   process.exit(1)
 }
 
-function buildDockerImage(dockerImage, target) {
+function buildDockerImage(containerImage, builder, target) {
   console.log(
     `Preparing docker image for restarting deployments - \uD83D\uDE48`,
   )
   execSync(
-    `docker build -f ${__dirname}/Dockerfile.proxy --target ${target} -t ${dockerImage} ${__dirname}`,
+    `${builder} build -f ${__dirname}/Dockerfile.proxy --target ${target} -t ${containerImage} ${__dirname}`,
   )
 }
 
@@ -52,6 +52,10 @@ const args = argv
           description: 'Name of Kubernetes cluster',
           default: 'dev-cluster01',
         })
+        .option('builder', {
+          description: 'docker or podman',
+          default: 'docker',
+        })
         .demandOption(
           'namespace',
           'Name of the Kubernetes namespace the service is part of',
@@ -59,17 +63,23 @@ const args = argv
         .option('profile', {
           description: 'AWS profile to use',
         })
-        .demandOption('service', 'Name of the Kubernetes service'),
+        .demandOption('service', 'Name of the Kubernetes service')
+        .check(function (argv) {
+          if (!['docker', 'podman'].includes(argv.builder)) {
+            throw new Error('Only docker or podman allowed')
+          }
+          return true
+        }),
     async (args) => {
       const credentials = await getCredentials(args.profile)
       const dockerBuild = `proxy-${args.service}`
-      buildDockerImage(dockerBuild, 'proxy')
+      buildDockerImage(dockerBuild, args.builder, 'proxy')
       console.log(`Now running the proxy - \uD83D\uDE31`)
       console.log(
         `Proxy will be listening on http://localhost:${args['proxy-port']} - \uD83D\uDC42`,
       )
       execSync(
-        `docker run --rm -e AWS_ACCESS_KEY_ID=${credentials.accessKeyId} -e AWS_SECRET_ACCESS_KEY=${credentials.secretAccessKey} -e AWS_SESSION_TOKEN="${credentials.sessionToken}" -e CLUSTER=${args.cluster} -e TARGET_SVC=${args.service} -e TARGET_NAMESPACE=${args.namespace} -e TARGET_PORT=${args.port} -p ${args['proxy-port']}:8080 ${dockerBuild}`,
+        `${args.builder} run --name ${args.service} --rm -e AWS_ACCESS_KEY_ID=${credentials.accessKeyId} -e AWS_SECRET_ACCESS_KEY=${credentials.secretAccessKey} -e AWS_SESSION_TOKEN="${credentials.sessionToken}" -e CLUSTER=${args.cluster} -e TARGET_SVC=${args.service} -e TARGET_NAMESPACE=${args.namespace} -e TARGET_PORT=${args.port} -p ${args['proxy-port']}:8080 ${dockerBuild}`,
         { stdio: 'inherit' },
       )
     },
@@ -86,6 +96,10 @@ const args = argv
         .option('profile', {
           description: 'AWS profile to use',
         })
+        .option('builder', {
+          description: 'docker or podman',
+          default: 'docker',
+        })
         .demandOption(
           'namespace',
           'Name of the Kubernetes namespace the service is part of',
@@ -93,11 +107,11 @@ const args = argv
         .demandOption('service', 'Name of the Kubernetes service'),
     async (args) => {
       const credentials = await getCredentials(args.profile)
-      let dockerImage = `restart-${args.service}`
-      buildDockerImage(dockerImage, `restart-deployment`)
+      let containerImage = `restart-${args.service}`
+      buildDockerImage(containerImage, `restart-deployment`)
       console.log(`Now running the restart - \uD83D\uDE31`)
       execSync(
-        `docker run --rm -e AWS_ACCESS_KEY_ID=${credentials.accessKeyId} -e AWS_SECRET_ACCESS_KEY=${credentials.secretAccessKey} -e AWS_SESSION_TOKEN=${credentials.sessionToken} -e CLUSTER=${args.cluster} -e TARGET_SVC=${args.service} -e TARGET_NAMESPACE=${args.namespace} ${dockerImage}`,
+        `${args.builder} run --rm --name ${args.service} -e AWS_ACCESS_KEY_ID=${credentials.accessKeyId} -e AWS_SECRET_ACCESS_KEY=${credentials.secretAccessKey} -e AWS_SESSION_TOKEN=${credentials.sessionToken} -e CLUSTER=${args.cluster} -e TARGET_SVC=${args.service} -e TARGET_NAMESPACE=${args.namespace} ${containerImage}`,
         { stdio: 'inherit' },
       )
     },
