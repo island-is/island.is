@@ -54,7 +54,7 @@ export class ClientsDataProtectionComplaintModule {
                 fetchApi: createEnhancedFetch({
                   name: 'data-protection-complaint-client',
                   logErrorResponseBody: true,
-                  timeout: 60 * 10000, // 60 sec
+                  timeout: 60 * 1000, // 60 sec
                 }),
                 basePath: basePath,
                 headers: {
