@@ -8,6 +8,7 @@ import { Box } from '@island.is/island-ui/core'
 import { aboutSpouseForm } from '../../lib/messages'
 import { DescriptionText, PrivacyPolicyAccordion } from '..'
 import { FAFieldBaseProps } from '../../lib/types'
+import withLogo from '../Logo/Logo'
 
 const AboutSpouseForm = ({ application }: FAFieldBaseProps) => {
   const { nationalRegistry } = application.externalData
@@ -32,4 +33,4 @@ const AboutSpouseForm = ({ application }: FAFieldBaseProps) => {
   )
 }
 
-export default AboutSpouseForm
+export default withLogo(AboutSpouseForm)

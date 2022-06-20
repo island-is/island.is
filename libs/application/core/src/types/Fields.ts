@@ -158,6 +158,7 @@ export interface CompanySearchField extends BaseField {
   component: FieldComponents.COMPANY_SEARCH
   placeholder?: FormText
   setLabelToDataSchema?: boolean
+  shouldIncludeIsatNumber?: boolean
 }
 
 export interface AsyncSelectField extends BaseField {
@@ -199,6 +200,7 @@ export interface FileUploadField extends BaseField {
   readonly uploadMultiple?: boolean
   readonly uploadAccept?: string
   readonly maxSize?: number
+  readonly maxSizeErrorText?: FormText
   readonly forImageUpload?: boolean
 }
 

@@ -241,13 +241,13 @@ export class UserProfileService {
       updateUserProfileDto: updateUserDto,
     }
 
-    const updatedUserProfile = await this.userProfileApiWithAuth(user)
-      .userProfileControllerUpdate(request)
-      .catch(handleError)
-
     const islyklarData = await this.islyklarService.getIslykillSettings(
       user.nationalId,
     )
+
+    const updatedUserProfile = await this.userProfileApiWithAuth(user)
+      .userProfileControllerUpdate(request)
+      .catch(handleError)
 
     const emailVerified = updatedUserProfile.emailStatus === DataStatus.VERIFIED
     const mobileVerified =
