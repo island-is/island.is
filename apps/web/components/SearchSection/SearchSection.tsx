@@ -103,7 +103,12 @@ export const SearchSection = ({
                         {...(cardUrl.href.startsWith('/')
                           ? {
                               CustomLink: ({ children, ...props }) => (
-                                <Link key={title} {...props} {...cardUrl}>
+                                <Link
+                                  key={title}
+                                  {...props}
+                                  {...cardUrl}
+                                  dataTestId="featured-link"
+                                >
                                   {children}
                                 </Link>
                               ),

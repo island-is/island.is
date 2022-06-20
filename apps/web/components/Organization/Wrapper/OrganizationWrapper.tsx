@@ -45,7 +45,9 @@ import { WatsonChatPanel } from '@island.is/web/components'
 import LandlaeknirFooter from './Themes/LandlaeknirTheme/LandlaeknirFooter'
 import { HeilbrigdisstofnunNordurlandsHeader } from './Themes/HeilbrigdisstofnunNordurlandsTheme/HeilbrigdisstofnunNordurlandsHeader'
 import { LandlaeknirHeader } from './Themes/LandlaeknirTheme/LandlaeknirHeader'
-import { FiskistofaHeader } from './FiskistofaTheme/FiskistofaHeader'
+import HeilbrigdisstofnunNordurlandsFooter from './Themes/HeilbrigdisstofnunNordurlandsTheme/HeilbrigdisstofnunNordurlandsFooter'
+import { FiskistofaHeader } from './Themes/FiskistofaTheme/FiskistofaHeader'
+import FiskistofaFooter from './Themes/FiskistofaTheme/FiskistofaFooter'
 import * as styles from './OrganizationWrapper.css'
 
 interface NavigationData {
@@ -94,6 +96,9 @@ export const footerEnabled = [
   'icelandic-health-insurance',
 
   'mannaudstorg',
+
+  'fiskistofa',
+  'directorate-of-fisheries',
 ]
 
 export const getThemeConfig = (
@@ -248,6 +253,19 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
     case 'directorate-of-health':
       OrganizationFooterComponent = (
         <LandlaeknirFooter footerItems={organization.footerItems} />
+      )
+      break
+    case 'hsn':
+      OrganizationFooterComponent = (
+        <HeilbrigdisstofnunNordurlandsFooter
+          footerItems={organization.footerItems}
+        />
+      )
+      break
+    case 'fiskistofa':
+    case 'directorate-of-fisheries':
+      OrganizationFooterComponent = (
+        <FiskistofaFooter footerItems={organization.footerItems} />
       )
       break
   }
