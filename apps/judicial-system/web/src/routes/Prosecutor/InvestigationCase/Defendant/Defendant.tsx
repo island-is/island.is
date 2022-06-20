@@ -24,7 +24,7 @@ import { titles, defendant as m } from '@island.is/judicial-system-web/messages'
 import {
   Case,
   CaseType,
-  Defendant as D,
+  Defendant as TDefendant,
   UpdateDefendant,
 } from '@island.is/judicial-system/types'
 import { Box, Button, Input, Select, Text } from '@island.is/island-ui/core'
@@ -129,7 +129,7 @@ const Defendant = () => {
     }
   }
 
-  const handleDeleteDefendant = async (defendant: D) => {
+  const handleDeleteDefendant = async (defendant: TDefendant) => {
     if (workingCase.defendants && workingCase.defendants.length > 1) {
       if (workingCase.id) {
         const defendantDeleted = await deleteDefendant(
@@ -148,7 +148,7 @@ const Defendant = () => {
     }
   }
 
-  const removeDefendantFromState = (defendant: D) => {
+  const removeDefendantFromState = (defendant: TDefendant) => {
     if (workingCase.defendants && workingCase.defendants?.length > 1) {
       setWorkingCase({
         ...workingCase,
@@ -190,7 +190,7 @@ const Defendant = () => {
             nationalId: '',
             address: '',
             citizenship: '',
-          } as D,
+          } as TDefendant,
         ],
       })
     }
