@@ -6,13 +6,17 @@ export const container = style({
 
 export const mainColumn = style({
   paddingTop: '30px',
-  paddingBottom: '40px',
+  paddingBottom: '24px',
 })
 
 export const line = style({
   borderTop: '1px solid white',
   borderBottom: '1px solid white',
-  paddingBottom: '32px',
-  marginTop: '32px',
-  paddingTop: '32px',
+  paddingBottom: '16px',
+  marginTop: '16px',
+  paddingTop: '48px',
+})
+
+export const locationBox = style({
+  minHeight: '100px',
 })
