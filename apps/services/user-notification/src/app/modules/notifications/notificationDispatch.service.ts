@@ -61,6 +61,8 @@ export class NotificationDispatchService {
         messageId,
       })
       return
+    } else {
+      this.logger.info(`Found user push-notification tokens (${ tokens.length })`, { messageId })
     }
 
     const {
@@ -88,6 +90,8 @@ export class NotificationDispatchService {
       .map((r) => r.error)
       .filter(isDefined)
       .filter((e) => !isTokenError(e))
+
+    this.logger.info(`Firebase responses for message (${ messageId })`, { responses })
 
     // throw if unsuccessful and there are unexpected errors
     if (successCount === 0 && errors.length > 0) {
