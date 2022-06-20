@@ -1,3 +1,3 @@
-export { AuthWarning } from './AuthWarning'
+export { IntroInfo } from './IntroInfo'
 export { PaymentPending } from './PaymentPending'
 export { PaymentCharge } from './PaymentCharge'

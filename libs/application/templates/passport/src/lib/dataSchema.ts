@@ -28,7 +28,6 @@ export const dataSchema = z.object({
   service: z.object({
     type: z.enum([Services.REGULAR, Services.EXPRESS]),
     dropLocation: z.string().nonempty(),
-    authentication: z.string().nonempty(),
   }),
 })
 

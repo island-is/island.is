@@ -21,13 +21,14 @@ import { m } from '../lib/messages'
 import { format as formatKennitala } from 'kennitala'
 import {
   Services,
-  AUTH_TYPES,
   Service,
   DistrictCommissionerAgencies,
   YES,
 } from '../lib/constants'
 import { DefaultEvents } from '@island.is/application/core'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
+import { markdownOptions } from '../lib/markdownOptions'
+import format from 'date-fns/format'
 
 export const Draft: Form = buildForm({
   id: 'PassportApplicationDraftForm',
@@ -44,7 +45,15 @@ export const Draft: Form = buildForm({
           id: 'intro',
           title: m.introSectionTitle,
           description: m.introSectionDescription,
-          children: [buildDividerField({ title: ' ' })],
+          descriptionMarkdownOptions: markdownOptions,
+          children: [
+            buildCustomField({
+              id: 'introInfo',
+              title: '',
+              component: 'IntroInfo',
+              doesNotRequireAnswer: true,
+            }),
+          ],
         }),
       ],
     }),
@@ -59,22 +68,16 @@ export const Draft: Form = buildForm({
           checkboxLabel: m.dataCollectionCheckboxLabel,
           dataProviders: [
             buildDataProviderItem({
-              id: 'districtCommissioners',
-              type: 'DistrictsProvider',
-              title: m.dataCollectionDistrictCommissionersTitle,
-              subTitle: m.dataCollectionDistrictCommissionersSubitle,
+              id: 'nationalRegistry',
+              type: 'NationalRegistryProvider',
+              title: m.dataCollectionNationalRegistryTitle,
+              subTitle: m.dataCollectionNationalRegistrySubtitle,
             }),
             buildDataProviderItem({
               id: 'userProfile',
               type: 'UserProfileProvider',
               title: m.dataCollectionUserProfileTitle,
               subTitle: m.dataCollectionUserProfileSubtitle,
-            }),
-            buildDataProviderItem({
-              id: 'nationalRegistry',
-              type: 'NationalRegistryProvider',
-              title: m.dataCollectionNationalRegistryTitle,
-              subTitle: m.dataCollectionNationalRegistrySubtitle,
             }),
             buildDataProviderItem({
               id: 'identityDocument',
@@ -85,6 +88,11 @@ export const Draft: Form = buildForm({
             buildDataProviderItem({
               id: 'payment',
               type: 'FeeInfoProvider',
+              title: '',
+            }),
+            buildDataProviderItem({
+              id: 'districtCommissioners',
+              type: 'DistrictsProvider',
               title: '',
             }),
           ],
@@ -188,8 +196,13 @@ export const Draft: Form = buildForm({
         buildMultiField({
           id: 'service',
           title: m.serviceTitle,
-          description: m.serviceType,
           children: [
+            buildDescriptionField({
+              id: 'service.dropTypeDescription',
+              title: m.serviceTypeTitle,
+              titleVariant: 'h3',
+              description: m.serviceTypeDescription,
+            }),
             buildRadioField({
               id: 'service.type',
               title: '',
@@ -221,6 +234,12 @@ export const Draft: Form = buildForm({
               space: 2,
               description: m.dropLocationDescription,
             }),
+            buildDescriptionField({
+              id: 'service.space',
+              title: '',
+              description: '',
+              space: 'gutter',
+            }),
             buildSelectField({
               id: 'service.dropLocation',
               title: m.dropLocation,
@@ -238,27 +257,6 @@ export const Draft: Form = buildForm({
                   }),
                 )
               },
-            }),
-            buildDescriptionField({
-              id: 'service.dropLocationAuthenticationDescription',
-              title: m.dropLocationAuthentication,
-              titleVariant: 'h3',
-              space: 4,
-              description: m.dropLocationAuthenticationDescription,
-            }),
-            buildRadioField({
-              id: 'service.authentication',
-              backgroundColor: 'white',
-              title: '',
-              largeButtons: false,
-              options: AUTH_TYPES,
-            }),
-            buildCustomField({
-              id: 'service.warning',
-              title: '',
-              component: 'AuthWarning',
-              condition: (answers) =>
-                (answers.service as Service)?.authentication === 'none',
             }),
           ],
         }),
@@ -337,10 +335,18 @@ export const Draft: Form = buildForm({
             buildKeyValueField({
               label: m.currentPassportStatus,
               width: 'half',
-              value: (application: Application) =>
-                (application.externalData.identityDocument?.data as {
-                  status?: string
-                }).status,
+              value: (application: Application) => {
+                const date = (application.externalData.identityDocument
+                  ?.data as {
+                  expirationDate?: string
+                })?.expirationDate
+
+                return (
+                  m.currentPassportExpiration.defaultMessage +
+                  ' ' +
+                  format(new Date(date as string), 'dd.MM.yy')
+                )
+              },
             }),
             buildDescriptionField({
               id: 'overview.space3',
@@ -351,7 +357,7 @@ export const Draft: Form = buildForm({
             buildDividerField({}),
             buildDescriptionField({
               id: 'overview.dropLocationTitle',
-              title: m.serviceTitle,
+              title: m.serviceTypeTitle,
               titleVariant: 'h3',
               description: '',
               space: 'gutter',
@@ -386,22 +392,6 @@ export const Draft: Form = buildForm({
                 return `${district?.name}, ${district?.place}`
               },
             }),
-            buildDescriptionField({
-              id: 'overview.space5',
-              title: '',
-              description: '',
-              space: 'gutter',
-            }),
-            buildKeyValueField({
-              label: m.authenticationType,
-              width: 'half',
-              value: (application: Application) =>
-                AUTH_TYPES.find(
-                  (o) =>
-                    o.value ===
-                    (application.answers.service as Service).authentication,
-                )?.label,
-            }),
           ],
         }),
       ],
@@ -418,6 +408,7 @@ export const Draft: Form = buildForm({
               id: 'paymentCharge',
               title: '',
               component: 'PaymentCharge',
+              doesNotRequireAnswer: true,
             }),
             buildSubmitField({
               id: 'payment',
