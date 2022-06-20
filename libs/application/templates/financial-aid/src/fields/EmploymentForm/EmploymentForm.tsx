@@ -9,6 +9,7 @@ import { Employment } from '@island.is/financial-aid/shared/lib'
 import * as styles from '../Shared.css'
 import cn from 'classnames'
 import { FAFieldBaseProps, InputTypes } from '../../lib/types'
+import withLogo from '../Logo/Logo'
 
 const EmploymentForm = ({ application, errors }: FAFieldBaseProps) => {
   const typeInput = {
@@ -93,4 +94,4 @@ const EmploymentForm = ({ application, errors }: FAFieldBaseProps) => {
   )
 }
 
-export default EmploymentForm
+export default withLogo(EmploymentForm)

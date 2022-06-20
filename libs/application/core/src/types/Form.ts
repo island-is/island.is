@@ -2,12 +2,13 @@ import { Dispatch, SetStateAction } from 'react'
 import { GraphQLError } from 'graphql'
 import { ZodObject } from 'zod'
 import { MessageDescriptor } from 'react-intl'
+import { MarkdownToJSX } from 'markdown-to-jsx'
 
 import type { BoxProps } from '@island.is/island-ui/core/types'
 import { Field, RecordObject } from '@island.is/application/core'
 
 import { Condition } from './Condition'
-import { Application } from './Application'
+import { Application, FormValue } from './Application'
 
 export type BeforeSubmitCallback = () => Promise<[true, null] | [false, string]>
 
@@ -106,6 +107,7 @@ export interface MultiField extends FormItem {
   children: Field[]
   isPartOfRepeater?: boolean
   readonly description?: FormText
+  descriptionMarkdownOptions?: MarkdownToJSX.Options
   space?: BoxProps['paddingTop']
 }
 
@@ -133,12 +135,12 @@ export type DataProviderPermissionItem = Omit<
   DataProviderItem,
   'type' | 'source' | 'parameters'
 >
-export interface FieldBaseProps {
+export interface FieldBaseProps<TAnswers = FormValue> {
   autoFocus?: boolean
   error?: string
   errors?: RecordObject
   field: Field
-  application: Application
+  application: Application<TAnswers>
   showFieldName?: boolean
   goToScreen?: (id: string) => void
   refetch?: () => void
