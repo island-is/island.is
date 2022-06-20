@@ -50,47 +50,47 @@ export const EmployerApproval: Form = buildForm({
           id: 'review.confirmation',
           title: employerFormMessages.confirmationSubSection,
           children: [
-            buildMultiField({
-              id: 'multi',
+                  buildMultiField({
+                    id: 'multi',
               title: employerFormMessages.reviewMultiTitle,
-              children: [
-                buildCustomField(
-                  {
-                    id: 'timeline',
-                    title: employerFormMessages.reviewMultiTitle,
-                    component: 'PeriodsRepeater',
-                  },
-                  {
-                    editable: false,
-                    showDescription: false,
-                  },
-                ),
-                buildCustomField({
-                  id: 'unionAndPensionInfo',
-                  title: '',
-                  component: 'EmployerApprovalExtraInformation',
-                }),
-                buildDescriptionField({
-                  id: 'final',
-                  title: otherParentApprovalFormMessages.warning,
-                  titleVariant: 'h4',
-                  description:
-                    otherParentApprovalFormMessages.startDateInThePast,
-                  condition: (answers) =>
-                    new Date(
-                      getApplicationAnswers(answers).periods[0].startDate,
-                    ).getTime() < currentDateStartTime(),
-                }),
-                buildSubmitField({
-                  id: 'submit',
-                  title: coreMessages.buttonSubmit,
-                  placement: 'footer',
-                  actions: [
+                children: [
+                  buildCustomField(
                     {
-                      name: employerFormMessages.buttonReject,
-                      type: 'subtle',
-                      event: 'REJECT',
+                      id: 'timeline',
+                      title: employerFormMessages.reviewMultiTitle,
+                      component: 'PeriodsRepeater',
                     },
+                    {
+                      editable: false,
+                      showDescription: false,
+                    },
+                    ),
+                    buildCustomField({
+                      id: 'unionAndPensionInfo',
+                      title: '',
+                      component: 'EmployerApprovalExtraInformation',
+                    }),
+                    buildDescriptionField({
+                      id: 'final',
+                      title: otherParentApprovalFormMessages.warning,
+                      titleVariant: 'h4',
+                      description:
+                        otherParentApprovalFormMessages.startDateInThePast,
+                      condition: (answers) =>
+                      new Date(
+                        getApplicationAnswers(answers).periods[0].startDate,
+                        ).getTime() < currentDateStartTime(),
+                    }),
+                    buildSubmitField({
+                      id: 'submit',
+                      title: coreMessages.buttonSubmit,
+                      placement: 'footer',
+                      actions: [
+                        {
+                          name: employerFormMessages.buttonReject,
+                          type: 'subtle',
+                          event: 'REJECT',
+                        },
                     {
                       name: coreMessages.buttonApprove,
                       type: 'primary',
