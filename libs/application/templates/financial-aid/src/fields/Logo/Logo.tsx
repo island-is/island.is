@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { logoKeyFromMunicipalityCode } from '@island.is/financial-aid/shared/lib'
 import { Box } from '@island.is/island-ui/core'
@@ -9,10 +9,22 @@ import * as styles from './Logo.css'
 const withLogo = (Component: React.ComponentType<FAFieldBaseProps>) => (
   props: FAFieldBaseProps,
 ) => {
+  const [logo, setLogo] = useState<string>()
   const { municipality } = props.application.externalData.nationalRegistry?.data
-  const svg = require(`../../svg/${
-    logoKeyFromMunicipalityCode[municipality ? municipality.municipalityId : '']
-  }`).default
+
+  useEffect(() => {
+    const getLogo = async () => {
+      const svgLogo = await import(
+        `../../svg/${
+          logoKeyFromMunicipalityCode[
+            municipality ? municipality.municipalityId : ''
+          ]
+        }`
+      )
+      setLogo(svgLogo.default)
+    }
+    getLogo()
+  }, [])
 
   return (
     <>
@@ -24,7 +36,7 @@ const withLogo = (Component: React.ComponentType<FAFieldBaseProps>) => (
           rel="noreferrer noopener"
           className={styles.logo}
         >
-          <img src={svg} alt="" />
+          <img src={logo} alt="" />
         </a>
       </Box>
     </>
