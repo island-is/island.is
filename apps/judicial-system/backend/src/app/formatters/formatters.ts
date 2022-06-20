@@ -318,8 +318,6 @@ export function formatDefenderCourtDateEmailNotification(
   prosecutorName?: string,
   prosecutorInstitution?: string,
   sessionArrangements?: SessionArrangements,
-  sendRequestToDefender?: boolean,
-  overviewUrl?: string,
 ): string {
   /** contentful strings */
   const cf = notifications.defenderCourtDateEmail
@@ -353,7 +351,7 @@ export function formatDefenderCourtDateEmailNotification(
     prosecutorInstitution: prosecutorInstitution,
   })
 
-  const body = formatMessage(cf.body, {
+  return formatMessage(cf.body, {
     courtCaseNumberText,
     courtDateText,
     courtRoomText,
@@ -361,6 +359,19 @@ export function formatDefenderCourtDateEmailNotification(
     prosecutorText,
     registrarText: registrarText || 'NONE',
     sessionArrangementsText,
+  })
+}
+
+export function formatDefenderCourtDateLinkEmailNotification(
+  formatMessage: FormatMessage,
+  sendRequestToDefender?: boolean,
+  overviewUrl?: string,
+  court?: string,
+  courtCaseNumber?: string,
+): string {
+  const cf = notifications.defenderCourtDateEmail
+  const body = formatMessage(cf.linkBody, {
+    courtCaseNumber,
   })
 
   const link = sendRequestToDefender

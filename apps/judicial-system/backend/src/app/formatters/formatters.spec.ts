@@ -30,6 +30,7 @@ import {
   formatRulingModifiedHistory,
   formatCourtUploadRulingTitle,
   formatPrisonAdministrationRulingNotification,
+  formatDefenderCourtDateLinkEmailNotification,
 } from './formatters'
 
 export const makeProsecutor = (): User => {
@@ -1120,7 +1121,6 @@ describe('formatDefenderCourtDateEmailNotification', () => {
     const registrarName = 'Robin'
     const prosecutor = makeProsecutor()
     const sessionArrangements = SessionArrangements.ALL_PRESENT
-    const sendRequestToDefender = false
 
     // Act
     const res = formatDefenderCourtDateEmailNotification(
@@ -1134,7 +1134,6 @@ describe('formatDefenderCourtDateEmailNotification', () => {
       prosecutor.name,
       prosecutor.institution?.name,
       sessionArrangements,
-      sendRequestToDefender,
     )
 
     // Assert
@@ -1153,8 +1152,6 @@ describe('formatDefenderCourtDateEmailNotification', () => {
     const registrarName = 'Robin'
     const prosecutor = makeProsecutor()
     const sessionArrangements = SessionArrangements.ALL_PRESENT
-    const sendRequestToDefender = true
-    const overviewUrl = 'https://www.rvg.is/verjandi/case-id'
 
     // Act
     const res = formatDefenderCourtDateEmailNotification(
@@ -1168,8 +1165,6 @@ describe('formatDefenderCourtDateEmailNotification', () => {
       prosecutor.name,
       prosecutor.institution?.name,
       sessionArrangements,
-      sendRequestToDefender,
-      overviewUrl,
     )
 
     // Assert
@@ -1188,7 +1183,6 @@ describe('formatDefenderCourtDateEmailNotification', () => {
     const registrarName = 'Robin'
     const prosecutor = makeProsecutor()
     const sessionArrangements = SessionArrangements.ALL_PRESENT
-    const sendRequestToDefender = true
 
     // Act
     const res = formatDefenderCourtDateEmailNotification(
@@ -1202,7 +1196,6 @@ describe('formatDefenderCourtDateEmailNotification', () => {
       prosecutor.name,
       prosecutor.institution?.name,
       sessionArrangements,
-      sendRequestToDefender,
     )
 
     // Assert
@@ -1300,6 +1293,36 @@ describe('formatDefenderCourtDateEmailNotification', () => {
     // Assert
     expect(res).toBe(
       'Héraðsdómur Norðurlands hefur boðað þig í fyrirtöku sem verjanda sakbornings.<br /><br />Fyrirtaka mun fara fram laugardaginn 19. desember 2020, kl. 10:19.<br /><br />Málsnúmer: R-77/2021.<br /><br />Dómsalur hefur ekki verið skráður.<br /><br />Dómari: Judy.<br /><br />Sækjandi: Áki Ákærandi (Lögreglan á Höfuðborgarsvæðinu).',
+    )
+  })
+})
+
+describe('formatDefenderCourtDateLinkEmailNotification', () => {
+  let formatMessage: FormatMessage
+  beforeAll(() => {
+    formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
+      .formatMessage
+  })
+
+  test('should format defender court date link notification with RVG link', () => {
+    // Arrange
+    const court = 'Héraðsdómur Norðurlands'
+    const courtCaseNumber = 'R-77/2021'
+    const sendRequestToDefender = true
+    const overviewUrl = 'https://example.com/overview'
+
+    // Act
+    const res = formatDefenderCourtDateLinkEmailNotification(
+      formatMessage,
+      sendRequestToDefender,
+      overviewUrl,
+      court,
+      courtCaseNumber,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Sækjandi hefur valið að deila kröfu með þér sem verjanda sakbornings í máli R-77/2021.<br /><br />Þú getur nálgast gögn málsins í <a href="https://example.com/overview">Réttarvörslugátt</a> með rafrænum skilríkjum.',
     )
   })
 })

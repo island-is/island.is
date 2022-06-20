@@ -53,6 +53,7 @@ import { CaseEvent, EventService } from '../event'
 import { SendNotificationDto } from './dto/sendNotification.dto'
 import { Notification } from './models/notification.model'
 import { SendNotificationResponse } from './models/sendNotification.resopnse'
+import { formatDefenderCourtDateLinkEmailNotification } from '../../formatters/formatters'
 
 interface Recipient {
   address?: string
@@ -598,6 +599,7 @@ export class NotificationService {
     user: User,
   ): Promise<Recipient> {
     const subject = `Fyrirtaka í máli ${theCase.courtCaseNumber}`
+    const linkSubject = `Gögn í máli ${theCase.courtCaseNumber}`
     const html = formatDefenderCourtDateEmailNotification(
       this.formatMessage,
       theCase.court?.name,
@@ -609,9 +611,13 @@ export class NotificationService {
       theCase.prosecutor?.name,
       theCase.creatingProsecutor?.institution?.name,
       theCase.sessionArrangements,
+    )
+    const linkHtml = formatDefenderCourtDateLinkEmailNotification(
+      this.formatMessage,
       theCase.sendRequestToDefender,
       theCase.defenderNationalId &&
         `${environment.deepLinks.defenderCaseOverviewUrl}${theCase.id}`,
+      theCase.court?.name,
     )
     const calendarInvite = this.createICalAttachment(theCase)
     const attachments: Attachment[] = calendarInvite ? [calendarInvite] : []
@@ -624,13 +630,28 @@ export class NotificationService {
       attachments,
     )
 
-    if (recipient.success) {
+    const linkSent = await this.sendEmail(
+      linkSubject,
+      linkHtml,
+      theCase.defenderName,
+      theCase.defenderEmail,
+    )
+
+    if (recipient.success && linkSent.success) {
       // No need to wait
       this.uploadEmailToCourt(
         theCase,
         user,
         subject,
         html,
+        theCase.defenderEmail,
+      )
+
+      this.uploadEmailToCourt(
+        theCase,
+        user,
+        linkSubject,
+        linkHtml,
         theCase.defenderEmail,
       )
     }

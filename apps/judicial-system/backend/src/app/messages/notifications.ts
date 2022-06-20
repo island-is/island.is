@@ -421,6 +421,14 @@ export const notifications = {
       description:
         'Notaður sem beinagrind á pósti til verjanda/talsmanns þegar dómstóll boðar í fyrirtöku',
     },
+    linkBody: {
+      id:
+        'judicial.system.backend:notifications.defender_court_date_email.link_body',
+      defaultMessage:
+        'Sækjandi hefur valið að deila kröfu með þér sem verjanda sakbornings í máli {courtCaseNumber}.',
+      description:
+        'Notaður sem beinagrind á pósti til verjanda/talsmanns þegar dómstóll boðar í fyrirtöku',
+    },
     link: {
       id:
         'judicial.system.backend:notifications.defender_court_date_email.link',
