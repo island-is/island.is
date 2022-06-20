@@ -6,7 +6,7 @@ auth-admin-web:
     NEXTAUTH_URL: 'https://identity-server.dev01.devland.is/admin/api/auth'
     NEXT_PUBLIC_BACKEND_URL: '/backend'
     NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'INAO_Client'
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:
@@ -39,6 +39,7 @@ auth-admin-web:
           paths:
             - '/admin'
   namespace: 'identity-server-admin'
+  progressDeadlineSeconds: 1200
   replicaCount:
     default: 2
     max: 10
@@ -52,11 +53,10 @@ auth-admin-web:
       memory: '128Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    IDENTITYSERVER_SECRET: '/k8s/auth-admin-web/IDENTITYSERVER_SECRET'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-  service:
-    targetPort: 4200
 global:
   env:
     AUDIT_GROUP_NAME: '/identity-server/audit-log'
@@ -69,12 +69,17 @@ global:
     env:
       AWS_REGION: 'eu-west-1'
 identity-server:
+  annotations:
+    ad.datadoghq.com/identity-server.check_names: '["openmetrics"]'
+    ad.datadoghq.com/identity-server.init_configs: '[{}]'
+    ad.datadoghq.com/identity-server.instances: '[{"prometheus_url": "http://%%host%%:5003/metrics","namespace": "identity-server","metrics":["*"]}]'
+    ad.datadoghq.com/identity-server.logs: '[{"service": "identity-server", "source": "csharp"}]'
   enabled: true
   env:
     ASPNETCORE_URLS: 'http://*:5000'
     AWS__CloudWatch__AuditLogGroup: '/identity-server/audit-log'
     AWS__SystemsManager__ParameterStore__DataProtectionPrefix: '/k8s/identity-server/DataProtectionSecret'
-    Application__MinCompletionPortThreads: ''
+    Application__MinCompletionPortThreads: '10'
     AudkenniSettings__Retries: '24'
     CORECLR_ENABLE_PROFILING: '1'
     CORECLR_PROFILER: '{846F5F1C-F9AE-4B07-969E-05C26BC060D8}'
@@ -93,7 +98,7 @@ identity-server:
     NODE_OPTIONS: '--max-old-space-size=208'
     PersistenceSettings__BaseAddress: 'http://web-services-auth-api'
     PersistenceSettings__UserProfileBaseAddress: 'http://web-service-portal-api.service-portal.svc.cluster.local'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'INAO_Client'
   files:
     - 'ids-signing.pfx'
   grantNamespaces: []
@@ -177,7 +182,7 @@ services-auth-admin-api:
     DB_USER: 'servicesauth'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'INAO_Client'
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:
@@ -234,10 +239,12 @@ services-auth-api:
     DB_NAME: 'servicesauth'
     DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
     DB_USER: 'servicesauth'
+    IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
-    NODE_OPTIONS: '--max-old-space-size=208'
+    NODE_OPTIONS: '--max-old-space-size=464'
     PUBLIC_URL: 'https://identity-server.dev01.devland.is/api'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'INAO_Client'
+    USER_PROFILE_CLIENT_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
     XROAD_CLIENT_ID: 'IS-DEV/GOV/10000/island-is-client'
@@ -266,7 +273,7 @@ services-auth-api:
         cpuAverageUtilization: 70
         nginxRequestsIrate: 2
       replicas:
-        max: 10
+        max: 15
         min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-api'
@@ -303,24 +310,25 @@ services-auth-api:
       DB_NAME: 'servicesauth'
       DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
       DB_USER: 'servicesauth'
-      SERVERSIDE_FEATURES_ON: ''
+      SERVERSIDE_FEATURES_ON: 'INAO_Client'
     secrets:
       DB_PASS: '/k8s/services-auth/api/DB_PASSWORD'
   namespace: 'identity-server'
   replicaCount:
     default: 2
-    max: 10
+    max: 15
     min: 2
   resources:
     limits:
-      cpu: '400m'
-      memory: '256Mi'
+      cpu: '800m'
+      memory: '512Mi'
     requests:
       cpu: '100m'
-      memory: '128Mi'
+      memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/services-auth/api/DB_PASSWORD'
+    IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET'
     RSK_PASSWORD: '/k8s/xroad/client/RSK/PASSWORD'
     RSK_USERNAME: '/k8s/xroad/client/RSK/USERNAME'
   securityContext:
@@ -337,7 +345,7 @@ services-auth-public-api:
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=208'
     PUBLIC_URL: 'https://identity-server.dev01.devland.is/api'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'INAO_Client'
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
     XROAD_CLIENT_ID: 'IS-DEV/GOV/10000/island-is-client'
@@ -378,6 +386,7 @@ services-auth-public-api:
         nginx.ingress.kubernetes.io/enable-global-auth: 'false'
         nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
         nginx.ingress.kubernetes.io/proxy-buffering: 'on'
+        nginx.ingress.kubernetes.io/rewrite-target: '/$2'
       hosts:
         - host: 'identity-server.dev01.devland.is'
           paths:
@@ -409,7 +418,7 @@ services-personal-representative:
   env:
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'INAO_Client'
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:
@@ -443,7 +452,7 @@ services-personal-representative:
       annotations:
         kubernetes.io/ingress.class: 'nginx-internal-alb'
       hosts:
-        - host: 'personal-representative-public-xrd.internal.dev01.devland.is'
+        - host: 'personal-representative-xrd.internal.dev01.devland.is'
           paths:
             - '/'
   namespace: 'personal-representative'
@@ -469,7 +478,7 @@ services-personal-representative-public:
     DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=208'
-    SERVERSIDE_FEATURES_ON: ''
+    SERVERSIDE_FEATURES_ON: 'INAO_Client'
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:
@@ -496,14 +505,14 @@ services-personal-representative-public:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
       hosts:
-        - host: 'personal-representative-xrd.dev01.devland.is'
+        - host: 'personal-representative-public-xrd.dev01.devland.is'
           paths:
             - '/'
     primary-alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-internal-alb'
       hosts:
-        - host: 'personal-representative-xrd.internal.dev01.devland.is'
+        - host: 'personal-representative-public-xrd.internal.dev01.devland.is'
           paths:
             - '/'
   namespace: 'personal-representative'

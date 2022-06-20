@@ -37,7 +37,12 @@ const FormFooter: React.FC<Props> = (props: Props) => {
   const isMobile = width <= theme.breakpoints.md
 
   return (
-    <Box display="flex" justifyContent="spaceBetween" alignItems="center">
+    <Box
+      display="flex"
+      justifyContent="spaceBetween"
+      alignItems="center"
+      data-testid="formFooter"
+    >
       <Box className={styles.footerItem}>
         <Button
           variant="ghost"

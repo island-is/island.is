@@ -393,13 +393,11 @@
             "nullable": true
           },
           "btGjald1": {
-            "type": "number",
-            "format": "double",
+            "type": "string",
             "nullable": true
           },
           "bkGjald1": {
-            "type": "number",
-            "format": "double",
+            "type": "string",
             "nullable": true
           },
           "timabil2": {
@@ -407,13 +405,11 @@
             "nullable": true
           },
           "btGjald2": {
-            "type": "number",
-            "format": "double",
+            "type": "string",
             "nullable": true
           },
           "bkGjald2": {
-            "type": "number",
-            "format": "double",
+            "type": "string",
             "nullable": true
           }
         },
@@ -1450,6 +1446,11 @@
             "format": "int32",
             "nullable": true
           },
+          "maxNetPower": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
           "atmin": {
             "type": "integer",
             "format": "int32",
@@ -2080,6 +2081,22 @@
         },
         "additionalProperties": false
       },
+      "SGSVehiNextInsp": {
+        "type": "object",
+        "properties": {
+          "nextinspectiondate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "nextinspectiondateIfPassedInspectionToday": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "Vehicle": {
         "type": "object",
         "properties": {
@@ -2167,6 +2184,9 @@
           "plateStatus": {
             "type": "string",
             "nullable": true
+          },
+          "nextInspection": {
+            "$ref": "#/components/schemas/SGSVehiNextInsp"
           }
         },
         "additionalProperties": false
@@ -2201,6 +2221,9 @@
           "latestregistration": {
             "type": "string",
             "nullable": true
+          },
+          "nextInspection": {
+            "$ref": "#/components/schemas/SGSVehiNextInsp"
           }
         },
         "additionalProperties": false

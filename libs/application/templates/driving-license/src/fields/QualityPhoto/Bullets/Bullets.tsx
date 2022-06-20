@@ -11,6 +11,7 @@ interface BulletsData {
 
 const Bullets = ({ application }: BulletsData) => {
   const { formatMessage } = useLocale()
+  console.log('bla', application)
   return (
     <BulletList>
       <Bullet>

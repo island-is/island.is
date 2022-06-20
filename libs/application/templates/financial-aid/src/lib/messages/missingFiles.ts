@@ -55,7 +55,7 @@ export const missingFiles = {
       description: 'Title of the error',
     },
     message: {
-      id: 'fa.application:section.missingFiles.error.message#markup',
+      id: 'fa.application:section.missingFiles.error.message#markdown',
       defaultMessage:
         'Þú getur reynt aftur síðar eða sent gögnin með tölvupósti á [{email}]({email}). Gættu þess að láta kennitölu þína fylgja með gögnunum ef þú sendir þau með tölvupósti.',
       description: 'Message of the error',

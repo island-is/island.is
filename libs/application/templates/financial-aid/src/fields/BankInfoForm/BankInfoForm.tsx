@@ -4,6 +4,7 @@ import { FAFieldBaseProps } from '../../lib/types'
 import { useIntl } from 'react-intl'
 import { bankInfoForm } from '../../lib/messages'
 import { InputController } from '@island.is/shared/form-fields'
+import withLogo from '../Logo/Logo'
 
 const BankInfoForm = ({ field, application }: FAFieldBaseProps) => {
   const { id } = field
@@ -27,6 +28,9 @@ const BankInfoForm = ({ field, application }: FAFieldBaseProps) => {
               name={bankNumberId}
               defaultValue={answers?.bankInfo?.bankNumber}
               label={formatMessage(bankInfoForm.inputsLabels.bankNumber)}
+              placeholder={formatMessage(
+                bankInfoForm.inputsPlaceholders.bankNumber,
+              )}
               format="####"
               backgroundColor="blue"
               autoFocus
@@ -40,6 +44,9 @@ const BankInfoForm = ({ field, application }: FAFieldBaseProps) => {
               name={ledgerId}
               defaultValue={answers?.bankInfo?.ledger}
               label={formatMessage(bankInfoForm.inputsLabels.ledger)}
+              placeholder={formatMessage(
+                bankInfoForm.inputsPlaceholders.ledger,
+              )}
               format="##"
               backgroundColor="blue"
             />
@@ -52,6 +59,9 @@ const BankInfoForm = ({ field, application }: FAFieldBaseProps) => {
               name={accountNumberId}
               defaultValue={answers?.bankInfo?.accountNumber}
               label={formatMessage(bankInfoForm.inputsLabels.accountNumber)}
+              placeholder={formatMessage(
+                bankInfoForm.inputsPlaceholders.accountNumber,
+              )}
               format="######"
               backgroundColor="blue"
             />
@@ -69,4 +79,4 @@ const BankInfoForm = ({ field, application }: FAFieldBaseProps) => {
   )
 }
 
-export default BankInfoForm
+export default withLogo(BankInfoForm)

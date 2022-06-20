@@ -4,8 +4,6 @@ import { useIntl } from 'react-intl'
 import { Text, Box } from '@island.is/island-ui/core'
 import {
   aidCalculator,
-  MartialStatusType,
-  martialStatusTypeFromMartialCode,
   estimatedBreakDown,
   showSpouseData,
   Application,
@@ -33,19 +31,9 @@ export const Estimation = ({
   const { formatMessage } = useIntl()
 
   const getAidType = () => {
-    switch (true) {
-      case nationalRegistry?.data?.applicant?.spouse?.maritalStatus !=
-        undefined:
-        return (
-          martialStatusTypeFromMartialCode(
-            nationalRegistry?.data?.applicant?.spouse?.maritalStatus,
-          ) === MartialStatusType.SINGLE
-        )
-      default:
-        return !showSpouseData[
-          findFamilyStatus(application.answers, application.externalData)
-        ]
-    }
+    return !showSpouseData[
+      findFamilyStatus(application.answers, application.externalData)
+    ]
   }
 
   const aidAmount = useMemo(() => {
@@ -95,19 +83,10 @@ export const VeitaEstimation = ({
 
   const getAidType = () => {
     switch (true) {
-      case nationalRegistry?.data?.applicant?.spouse?.maritalStatus !=
-        undefined:
-        return (
-          martialStatusTypeFromMartialCode(
-            nationalRegistry?.data?.applicant?.spouse?.maritalStatus,
-          ) === MartialStatusType.SINGLE
-        )
       case application.familyStatus != undefined:
         return !showSpouseData[application.familyStatus]
-      case application.spouseNationalId != undefined:
-        return false
-      case !nationalRegistry?.data?.applicant?.spouse:
-        return true
+      default:
+        return application.spouseNationalId == null
     }
   }
 

@@ -24,6 +24,10 @@ export class ContentSlug {
   @Field(() => TextFieldLocales, { nullable: true })
   title: TextFieldLocales = {}
 
+  @IsObject()
+  @Field(() => TextFieldLocales, { nullable: true })
+  url: TextFieldLocales = {}
+
   @Field()
   type: string = ''
 }

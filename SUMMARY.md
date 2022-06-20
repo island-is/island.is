@@ -106,6 +106,7 @@
 - [Services](apps/services/README.md)
   - [Auth Admin API](apps/services/auth-admin-api/README.md)
   - [Auth API](apps/services/auth-api/README.md)
+  - [Contentful Entry Tagger](apps/services/contentful-entry-tagger/README.md)
   - [Documents](apps/services/documents/README.md)
     - [Endorsements API](apps/services/endorsements/api/README.md)
   - [Personal Representative](apps/services/personal-representative/README.md)
@@ -233,6 +234,7 @@
 ## Reference
 
 - [Problems](handbook/reference/problems/README.md)
+  - [403 Bad Subject](handbook/reference/problems/bad-subject.md)
   - [400 Validation Failed](handbook/reference/problems/validation-failed.md)
 
 ## Misc

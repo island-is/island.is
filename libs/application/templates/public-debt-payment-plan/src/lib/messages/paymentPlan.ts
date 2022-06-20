@@ -125,12 +125,19 @@ export const paymentPlan = {
       `,
       description: `Slider descriptor`,
     },
+    distributionDataMainTitle: {
+      id: `pdpp.application:section.paymentPlan.distributionDataMainTitle`,
+      defaultMessage: `
+      Greiðsluáætlun skuldar
+      `,
+      description: `Total distribution plan title`,
+    },
     distributionDataTitle: {
       id: `pdpp.application:section.paymentPlan.distributionDataTitle`,
       defaultMessage: `
       Hér má sjá sundurliðun greiðsluáætlunar. Athugið að vextir uppfærast daglega og sýnir áætlunin stöðu þeirra þann dag sem greiðsluáætlunin er gerð.
       `,
-      description: `Total distribution plan`,
+      description: `Total distribution plan description`,
     },
     infoTitle: {
       id: `pdpp.application:section.paymentPlan.infoTitle`,

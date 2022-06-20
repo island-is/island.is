@@ -8,7 +8,6 @@ import { CurrentApplication, DataProviderTypes } from '../lib/types'
 export class VeitaProvider extends BasicDataProvider {
   readonly type = DataProviderTypes.Veita
   async provide(): Promise<CurrentApplication> {
-    // TODO: We probably need application system id and current Veita id here
     const query = `
         query MunicipalitiesFinancialAidCurrentApplicationQuery {
           municipalitiesFinancialAidCurrentApplication

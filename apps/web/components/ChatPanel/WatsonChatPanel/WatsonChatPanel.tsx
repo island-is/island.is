@@ -84,7 +84,10 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [namespace])
 
-  if (showLauncher) return null
+  // Hide the chat bubble for other than 'is' locales for now since the translations have not been set up yet
+  const shouldShowChatBubble = activeLocale === 'is'
+
+  if (showLauncher || !shouldShowChatBubble) return null
 
   return (
     <ChatBubble

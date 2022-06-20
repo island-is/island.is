@@ -111,7 +111,7 @@ const FinanceSchedule: ServicePortalModuleComponent = ({ userInfo }) => {
               {formatMessage({
                 id: 'sp.finance-schedule:intro-text',
                 defaultMessage:
-                  'Hér getur þú gert greiðsluáætlun í allt að 12 mánuði ef þú vilt dreifa greiðslum á skuld þinni við ríkissjóð og stofnanir. Hér getur þú einnig séð eldri greiðsluáætlanir. Ef Greiðsluáætlunin er greidd hraðar niður en áætlunin segir til um, munu greiðsluseðlar ekki berast þegar hún er upp greidd og engar eftirstöðvar eftir.',
+                  'Hér getur þú gert greiðsluáætlun ef þú vilt dreifa greiðslum á skuld þinni við ríkissjóð og stofnanir. Hér getur þú einnig séð eldri greiðsluáætlanir. Ef Greiðsluáætlunin er greidd hraðar niður en áætlunin segir til um, munu greiðsluseðlar ekki berast þegar hún er upp greidd og engar eftirstöðvar eftir.',
               })}
             </Text>
           </GridColumn>

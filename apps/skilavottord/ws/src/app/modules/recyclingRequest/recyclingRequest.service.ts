@@ -122,7 +122,10 @@ export class RecyclingRequestService {
   }
 
   // Find all a vehicle's requests
-  async getVehicleInfoToDeregistered(permno: string): Promise<VehicleModel> {
+  async getVehicleInfoToDeregistered(
+    user: User,
+    permno: string,
+  ): Promise<VehicleModel> {
     try {
       // Check 'pendingRecycle' status
       const resRequestType = await this.findAllWithPermno(permno)
@@ -150,7 +153,7 @@ export class RecyclingRequestService {
       return res
     } catch (err) {
       throw new Error(
-        `Failed on getVehicleInfoToDeregistered request with error: ${err}`,
+        `Failed on getVehicleInfoToDeregistered request ${user.name} with error: ${err}`,
       )
     }
   }

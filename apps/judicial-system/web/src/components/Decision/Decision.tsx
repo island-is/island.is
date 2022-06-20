@@ -11,19 +11,19 @@ interface Props {
   dismissLabelText: string
   acceptingAlternativeTravelBanLabelText?: string
   onChange: (decision: CaseDecision) => void
+  disabled?: boolean
 }
 
-const Decision: React.FC<Props> = (props) => {
-  const {
-    workingCase,
-    acceptedLabelText,
-    acceptingAlternativeTravelBanLabelText,
-    rejectedLabelText,
-    partiallyAcceptedLabelText,
-    dismissLabelText,
-    onChange,
-  } = props
-
+const Decision: React.FC<Props> = ({
+  workingCase,
+  acceptedLabelText,
+  acceptingAlternativeTravelBanLabelText,
+  rejectedLabelText,
+  partiallyAcceptedLabelText,
+  dismissLabelText,
+  onChange,
+  disabled = false,
+}) => {
   return (
     <BlueBox>
       <Box marginBottom={2}>
@@ -37,6 +37,7 @@ const Decision: React.FC<Props> = (props) => {
           }}
           large
           backgroundColor="white"
+          disabled={disabled}
         />
       </Box>
       {workingCase.type !== CaseType.TRAVEL_BAN && (
@@ -51,6 +52,7 @@ const Decision: React.FC<Props> = (props) => {
             }}
             large
             backgroundColor="white"
+            disabled={disabled}
           />
         </Box>
       )}
@@ -65,6 +67,7 @@ const Decision: React.FC<Props> = (props) => {
           }}
           large
           backgroundColor="white"
+          disabled={disabled}
         />
       </Box>
       {(workingCase.type === CaseType.CUSTODY ||
@@ -83,6 +86,7 @@ const Decision: React.FC<Props> = (props) => {
             }}
             large
             backgroundColor="white"
+            disabled={disabled}
           />
         </Box>
       )}
@@ -97,6 +101,7 @@ const Decision: React.FC<Props> = (props) => {
           }}
           large
           backgroundColor="white"
+          disabled={disabled}
         />
       </Box>
     </BlueBox>

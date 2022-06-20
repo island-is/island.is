@@ -6,10 +6,11 @@ import {
   buildCustomField,
   buildMultiField,
   buildTextField,
-  buildSelectField,
   buildSubmitField,
   DefaultEvents,
   buildCheckboxField,
+  buildCompanySearchField,
+  Application,
 } from '@island.is/application/core'
 import {
   section,
@@ -19,8 +20,10 @@ import {
   technicalAnnouncements,
   overview,
   submitted,
+  selectCompany,
 } from '../lib/messages'
-import { TYPE_OF_OPERATION, YES } from '../shared/constants'
+import { YES } from '../shared/constants'
+import { selectCompanySearchField } from '@island.is/application/ui-components'
 
 export const LoginServiceForm: Form = buildForm({
   id: 'LoginServiceForm',
@@ -58,7 +61,31 @@ export const LoginServiceForm: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'applicant',
+      id: 'selectCompany',
+      title: section.selectCompany,
+      children: [
+        buildMultiField({
+          id: 'selectCompanyMultiField',
+          title: selectCompany.general.pageTitle,
+          description: selectCompany.general.pageDescription,
+          children: [
+            buildCustomField({
+              id: 'selectCompany.nameFieldTitle',
+              title: selectCompany.labels.nameDescription,
+              doesNotRequireAnswer: true,
+              component: 'FieldTitle',
+            }),
+            buildCompanySearchField({
+              id: 'selectCompany.searchField',
+              title: selectCompany.labels.nameAndNationalId,
+              shouldIncludeIsatNumber: true,
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'applicantSection',
       title: section.applicant,
       children: [
         buildMultiField({
@@ -78,23 +105,50 @@ export const LoginServiceForm: Form = buildForm({
               backgroundColor: 'blue',
               width: 'half',
               required: true,
+              disabled: true,
+              defaultValue: (application: Application) => {
+                const { searchField } = application.answers
+                  .selectCompany as selectCompanySearchField
+                return searchField.label
+              },
             }),
             buildTextField({
               id: 'applicant.nationalId',
               title: applicant.labels.nationalId,
-              format: '######-####',
               backgroundColor: 'blue',
               width: 'half',
+              format: '######-####',
               required: true,
+              disabled: true,
+              defaultValue: (application: Application) => {
+                const { searchField } = application.answers
+                  .selectCompany as selectCompanySearchField
+                return searchField.nationalId
+              },
             }),
-            buildSelectField({
+            buildTextField({
               id: 'applicant.typeOfOperation',
               title: applicant.labels.typeOfOperation,
               backgroundColor: 'blue',
-              options: TYPE_OF_OPERATION.map((value) => ({
-                label: value,
-                value: value,
-              })),
+              required: true,
+              disabled: true,
+              defaultValue: (application: Application) => {
+                const { searchField } = application.answers
+                  .selectCompany as selectCompanySearchField
+                return searchField.isat
+              },
+            }),
+            buildCustomField({
+              id: 'applicant.invalidIsat',
+              title: applicant.labels.invalidIsat,
+              doesNotRequireAnswer: true,
+              component: 'IsatInvalid',
+              condition: (formValue) => {
+                const {
+                  searchField,
+                } = formValue.selectCompany as selectCompanySearchField
+                return searchField.isat.slice(0, 2) !== '84'
+              },
             }),
             buildCustomField(
               {

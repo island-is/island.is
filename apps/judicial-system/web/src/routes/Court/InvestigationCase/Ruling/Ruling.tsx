@@ -35,6 +35,7 @@ import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader
 import {
   Accordion,
   AccordionItem,
+  AlertMessage,
   Box,
   Input,
   Text,
@@ -46,15 +47,10 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { isRulingValidIC } from '@island.is/judicial-system-web/src/utils/validate'
-import {
-  SIGNED_VERDICT_OVERVIEW,
-  IC_MODIFY_RULING_ROUTE,
-  IC_COURT_RECORD_ROUTE,
-  IC_HEARING_ARRANGEMENTS_ROUTE,
-} from '@island.is/judicial-system/consts'
 import SigningModal, {
   useRequestRulingSignature,
 } from '@island.is/judicial-system-web/src/components/SigningModal/SigningModal'
+import * as constants from '@island.is/judicial-system/consts'
 
 const Ruling = () => {
   const {
@@ -85,7 +81,9 @@ const Ruling = () => {
   } = useRequestRulingSignature(workingCase.id, () =>
     setModalVisible('SigningModal'),
   )
-  const isModifyingRuling = router.pathname.includes(IC_MODIFY_RULING_ROUTE)
+  const isModifyingRuling = router.pathname.includes(
+    constants.IC_MODIFY_RULING_ROUTE,
+  )
 
   useDeb(workingCase, 'prosecutorDemands')
   useDeb(workingCase, 'courtCaseFacts')
@@ -161,6 +159,16 @@ const Ruling = () => {
         title={formatMessage(titles.court.investigationCases.ruling)}
       />
       <FormContentContainer>
+        {isModifyingRuling && (
+          <Box marginBottom={3}>
+            <AlertMessage
+              type="warning"
+              title={formatMessage(m.sections.alertMessage.title)}
+              message={formatMessage(m.sections.alertMessage.message)}
+              testid="alertMessageModifyingRuling"
+            />
+          </Box>
+        )}
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
             {formatMessage(m.title)}
@@ -380,7 +388,6 @@ const Ruling = () => {
           <RulingInput
             workingCase={workingCase}
             setWorkingCase={setWorkingCase}
-            isRequired
           />
         </Box>
         <Box component="section" marginBottom={5}>
@@ -398,6 +405,7 @@ const Ruling = () => {
                 m.sections.decision.partiallyAcceptLabel,
               )}
               dismissLabelText={formatMessage(m.sections.decision.dismissLabel)}
+              disabled={isModifyingRuling}
               onChange={(decision) => {
                 autofill(
                   [
@@ -454,6 +462,7 @@ const Ruling = () => {
             rows={7}
             autoExpand={{ on: true, maxHeight: 300 }}
             textarea
+            disabled={isModifyingRuling}
           />
         </Box>
         <Box marginBottom={10}>
@@ -461,6 +470,7 @@ const Ruling = () => {
             caseId={workingCase.id}
             title={formatMessage(core.pdfButtonRuling)}
             pdfType="ruling"
+            useSigned={!isModifyingRuling}
           />
         </Box>
       </FormContentContainer>
@@ -468,13 +478,8 @@ const Ruling = () => {
         <FormFooter
           previousUrl={
             isModifyingRuling
-              ? `${SIGNED_VERDICT_OVERVIEW}/${workingCase.id}`
-              : `${IC_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`
-          }
-          previousButtonText={
-            isModifyingRuling
-              ? formatMessage(m.sections.formFooter.modifyRulingBackButtonLabel)
-              : undefined
+              ? `${constants.SIGNED_VERDICT_OVERVIEW}/${workingCase.id}`
+              : `${constants.IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`
           }
           nextButtonText={
             isModifyingRuling
@@ -486,13 +491,15 @@ const Ruling = () => {
               ? isRequestingRulingSignature || isLoadingWorkingCase
               : isLoadingWorkingCase
           }
-          nextUrl={`${IC_COURT_RECORD_ROUTE}/${workingCase.id}`}
+          nextUrl={`${constants.IC_COURT_RECORD_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!isRulingValidIC(workingCase)}
           onNextButtonClick={() => {
             if (isModifyingRuling) {
               requestRulingSignature()
             } else {
-              router.push(`${IC_COURT_RECORD_ROUTE}/${workingCase.id}`)
+              router.push(
+                `${constants.IC_COURT_RECORD_ROUTE}/${workingCase.id}`,
+              )
             }
           }}
         />

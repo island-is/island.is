@@ -2,11 +2,11 @@ import { Field, InputType } from '@nestjs/graphql'
 
 @InputType()
 export class GetVehicleDetailInput {
-  @Field({ nullable: true })
-  permno?: string
-
   @Field()
-  regno!: string
+  permno!: string
+
+  @Field({ nullable: true })
+  regno?: string
 
   @Field({ nullable: true })
   vin?: string

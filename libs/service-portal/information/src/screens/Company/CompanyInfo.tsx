@@ -21,6 +21,7 @@ import {
   ServicePortalModuleComponent,
   UserInfoLine,
   m,
+  EmptyState,
 } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 
@@ -71,6 +72,7 @@ const CompanyInfo: ServicePortalModuleComponent = ({ userInfo }) => {
       ? `${data?.companyInfo?.vat?.[0]?.classification?.[0]?.number} ${data?.companyInfo?.vat?.[0]?.classification?.[0]?.name}`
       : ''
 
+  const emptyData = data === null
   return (
     <>
       <Box marginBottom={5}>
@@ -87,74 +89,79 @@ const CompanyInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           </GridColumn>
         </GridRow>
       </Box>
-      <Stack space={2}>
-        <UserInfoLine
-          title={formatMessage(m.info)}
-          label={formatMessage(spmm.company.name)}
-          content={
-            error ? formatMessage(dataNotFoundMessage) : data?.name || ''
-          }
-          loading={loading}
-        />
-        <Divider />
-        <UserInfoLine
-          label={formatMessage(spmm.company.registration)}
-          content={
-            error
-              ? formatMessage(dataNotFoundMessage)
-              : data?.dateOfRegistration
-              ? format(new Date(data.dateOfRegistration), dateFormat.is)
-              : ''
-          }
-          loading={loading}
-        />
+      {emptyData && <EmptyState />}
+      {!emptyData && (
+        <Stack space={2}>
+          <UserInfoLine
+            title={formatMessage(m.info)}
+            label={formatMessage(spmm.company.name)}
+            content={
+              error ? formatMessage(dataNotFoundMessage) : data?.name || ''
+            }
+            loading={loading}
+          />
+          <Divider />
+          <UserInfoLine
+            label={formatMessage(spmm.company.registration)}
+            content={
+              error
+                ? formatMessage(dataNotFoundMessage)
+                : data?.dateOfRegistration
+                ? format(new Date(data.dateOfRegistration), dateFormat.is)
+                : ''
+            }
+            loading={loading}
+          />
 
-        <Divider />
-        <UserInfoLine
-          label={defineMessage(m.natreg)}
-          content={
-            error
-              ? formatMessage(dataNotFoundMessage)
-              : data?.nationalId
-              ? formatNationalId(data.nationalId)
-              : ''
-          }
-          loading={loading}
-        />
-        <Divider />
-        <UserInfoLine
-          label={m.address}
-          content={error ? formatMessage(dataNotFoundMessage) : companyAddress}
-          loading={loading}
-        />
-        <Divider />
-        <UserInfoLine
-          label={formatMessage(spmm.company.taxNr)}
-          content={
-            error
-              ? formatMessage(dataNotFoundMessage)
-              : data?.companyInfo?.vat?.[0]?.vatNumber || ''
-          }
-          loading={loading}
-        />
-        <Divider />
-        <UserInfoLine
-          label={formatMessage(spmm.company.operationForm)}
-          content={
-            error ? formatMessage(dataNotFoundMessage) : companyOperation
-          }
-          loading={loading}
-        />
-        <Divider />
-        <UserInfoLine
-          label={formatMessage(spmm.company.industryClass)}
-          content={
-            error ? formatMessage(dataNotFoundMessage) : vatClassification
-          }
-          loading={loading}
-        />
-        <Divider />
-      </Stack>
+          <Divider />
+          <UserInfoLine
+            label={defineMessage(m.natreg)}
+            content={
+              error
+                ? formatMessage(dataNotFoundMessage)
+                : data?.nationalId
+                ? formatNationalId(data.nationalId)
+                : ''
+            }
+            loading={loading}
+          />
+          <Divider />
+          <UserInfoLine
+            label={m.address}
+            content={
+              error ? formatMessage(dataNotFoundMessage) : companyAddress
+            }
+            loading={loading}
+          />
+          <Divider />
+          <UserInfoLine
+            label={formatMessage(spmm.company.taxNr)}
+            content={
+              error
+                ? formatMessage(dataNotFoundMessage)
+                : data?.companyInfo?.vat?.[0]?.vatNumber || ''
+            }
+            loading={loading}
+          />
+          <Divider />
+          <UserInfoLine
+            label={formatMessage(spmm.company.operationForm)}
+            content={
+              error ? formatMessage(dataNotFoundMessage) : companyOperation
+            }
+            loading={loading}
+          />
+          <Divider />
+          <UserInfoLine
+            label={formatMessage(spmm.company.industryClass)}
+            content={
+              error ? formatMessage(dataNotFoundMessage) : vatClassification
+            }
+            loading={loading}
+          />
+          <Divider />
+        </Stack>
+      )}
     </>
   )
 }

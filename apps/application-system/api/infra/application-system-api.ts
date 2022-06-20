@@ -223,6 +223,20 @@ export const serviceSetup = (services: {
         },
         paths: ['/application-payment', '/applications'],
         public: false,
+        extraAnnotations: {
+          dev: {
+            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
+          },
+          staging: {
+            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
+          },
+          prod: {
+            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
+          },
+        },
       },
     })
     .grantNamespaces('nginx-ingress-internal', 'islandis')

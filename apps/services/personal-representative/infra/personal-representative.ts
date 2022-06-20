@@ -1,5 +1,5 @@
 import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
-
+import { MissingSetting } from '../../../../infra/src/dsl/types/input-types'
 export const serviceSetup = (): ServiceBuilder<'services-personal-representative'> => {
   return service('services-personal-representative')
     .namespace('personal-representative')
@@ -13,7 +13,7 @@ export const serviceSetup = (): ServiceBuilder<'services-personal-representative
     .ingress({
       primary: {
         host: {
-          dev: 'personal-representative-public-xrd.internal.dev01.devland.is',
+          dev: 'personal-representative-xrd.internal.dev01.devland.is',
           staging: 'personal-representative-xrd.internal.staging01.devland.is',
           prod: 'personal-representative-xrd.internal.innskra.island.is',
         },
@@ -23,8 +23,8 @@ export const serviceSetup = (): ServiceBuilder<'services-personal-representative
       demo: {
         host: {
           dev: 'personal-representative-xrd.dev01.devland.is',
-          staging: '',
-          prod: '',
+          staging: MissingSetting,
+          prod: MissingSetting,
         },
         paths: ['/'],
         public: true,

@@ -6,6 +6,7 @@ import formatISO from 'date-fns/formatISO'
 import {
   Accordion,
   AccordionItem,
+  AlertMessage,
   Box,
   Checkbox,
   Input,
@@ -59,10 +60,10 @@ import {
 } from '@island.is/judicial-system/formatters'
 import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import * as Constants from '@island.is/judicial-system/consts'
 import SigningModal, {
   useRequestRulingSignature,
 } from '@island.is/judicial-system-web/src/components/SigningModal/SigningModal'
+import * as constants from '@island.is/judicial-system/consts'
 
 export function getConclusionAutofill(
   formatMessage: IntlShape['formatMessage'],
@@ -176,7 +177,7 @@ export const Ruling: React.FC = () => {
   const router = useRouter()
 
   const isModifyingRuling = router.pathname.includes(
-    Constants.MODIFY_RULING_ROUTE,
+    constants.MODIFY_RULING_ROUTE,
   )
   const [modalVisible, setModalVisible] = useState<availableModals>('NoModal')
 
@@ -276,6 +277,16 @@ export const Ruling: React.FC = () => {
     >
       <PageHeader title={formatMessage(titles.court.restrictionCases.ruling)} />
       <FormContentContainer>
+        {isModifyingRuling && (
+          <Box marginBottom={3}>
+            <AlertMessage
+              type="warning"
+              title={formatMessage(m.sections.alertMessage.title)}
+              message={formatMessage(m.sections.alertMessage.message)}
+              testid="alertMessageModifyingRuling"
+            />
+          </Box>
+        )}
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
             {formatMessage(m.title)}
@@ -494,7 +505,6 @@ export const Ruling: React.FC = () => {
           <RulingInput
             workingCase={workingCase}
             setWorkingCase={setWorkingCase}
-            isRequired
           />
         </Box>
         <Box component="section" marginBottom={5}>
@@ -577,6 +587,7 @@ export const Ruling: React.FC = () => {
                   setWorkingCase,
                 )
               }}
+              disabled={isModifyingRuling}
             />
           </Box>
         </Box>
@@ -673,6 +684,7 @@ export const Ruling: React.FC = () => {
                     setWorkingCase,
                   )
                 }}
+                disabled={isModifyingRuling}
                 required
               />
             </Box>
@@ -703,6 +715,7 @@ export const Ruling: React.FC = () => {
                       }),
                     )}
                     checked={workingCase.isCustodyIsolation}
+                    disabled={isModifyingRuling}
                     onChange={() => {
                       let conclusion = undefined
 
@@ -749,7 +762,9 @@ export const Ruling: React.FC = () => {
                 <DateTime
                   name="isolationToDate"
                   datepickerLabel="Einangrun til"
-                  disabled={!workingCase.isCustodyIsolation}
+                  disabled={
+                    isModifyingRuling || !workingCase.isCustodyIsolation
+                  }
                   selectedDate={workingCase.isolationToDate}
                   // Isolation can never be set in the past.
                   minDate={new Date()}
@@ -850,6 +865,7 @@ export const Ruling: React.FC = () => {
             textarea
             rows={7}
             autoExpand={{ on: true, maxHeight: 300 }}
+            disabled={isModifyingRuling}
           />
         </Box>
         <Box marginBottom={10}>
@@ -857,6 +873,7 @@ export const Ruling: React.FC = () => {
             caseId={workingCase.id}
             title={formatMessage(core.pdfButtonRuling)}
             pdfType="ruling"
+            useSigned={!isModifyingRuling}
           />
         </Box>
       </FormContentContainer>
@@ -864,13 +881,8 @@ export const Ruling: React.FC = () => {
         <FormFooter
           previousUrl={
             isModifyingRuling
-              ? `${Constants.SIGNED_VERDICT_OVERVIEW}/${workingCase.id}`
-              : `${Constants.HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`
-          }
-          previousButtonText={
-            isModifyingRuling
-              ? formatMessage(m.sections.formFooter.modifyRulingBackButtonLabel)
-              : undefined
+              ? `${constants.SIGNED_VERDICT_OVERVIEW}/${workingCase.id}`
+              : `${constants.HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`
           }
           nextIsLoading={
             isModifyingRuling ? isRequestingRulingSignature : false
@@ -879,7 +891,7 @@ export const Ruling: React.FC = () => {
             if (isModifyingRuling) {
               requestRulingSignature()
             } else {
-              router.push(`${Constants.COURT_RECORD_ROUTE}/${workingCase.id}`)
+              router.push(`${constants.COURT_RECORD_ROUTE}/${workingCase.id}`)
             }
           }}
           nextIsDisabled={!isRulingValidRC(workingCase)}

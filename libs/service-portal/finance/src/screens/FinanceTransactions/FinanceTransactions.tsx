@@ -32,6 +32,7 @@ import {
 import { exportHreyfingarFile } from '../../utils/filesHreyfingar'
 import { transactionFilter } from '../../utils/simpleFilter'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import * as styles from '../Finance.css'
 
 const ALL_CHARGE_TYPES = 'ALL_CHARGE_TYPES'
 
@@ -181,6 +182,7 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
                 <GridColumn
                   paddingTop={[2, 2, 2, 2, 0]}
                   span={['1/1', '6/12', '6/12', '6/12', '4/12']}
+                  className={styles.dateColumn}
                 >
                   <DatePicker
                     backgroundColor="blue"
@@ -197,6 +199,7 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
                 <GridColumn
                   paddingTop={[2, 2, 2, 2, 0]}
                   span={['1/1', '6/12', '6/12', '6/12', '4/12']}
+                  className={styles.dateColumn}
                 >
                   <DatePicker
                     backgroundColor="blue"
