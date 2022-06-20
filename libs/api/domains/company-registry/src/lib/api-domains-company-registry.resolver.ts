@@ -27,6 +27,7 @@ export class CompanyRegistryResolver {
     name: 'companyRegistryCompany',
     nullable: true,
   })
+  @Audit()
   async companyInformation(
     @Args('input', { type: () => RskCompanyInfoInput })
     input: RskCompanyInfoInput,
@@ -45,6 +46,7 @@ export class CompanyRegistryResolver {
   @Query(() => RskCompanySearchItems, {
     name: 'companyRegistryCompanies',
   })
+  @Audit()
   async companyInformationSearch(
     @Args('input', { type: () => RskCompanyInfoSearchInput })
     input: RskCompanyInfoSearchInput,
@@ -58,6 +60,7 @@ export class CompanyRegistryResolver {
   }
 
   @ResolveField(() => RskCompanyInfo)
+  @Audit()
   async companyInfo(
     @Parent() rskCompanyItem: RskCompany,
   ): Promise<RskCompanyInfo | undefined> {
