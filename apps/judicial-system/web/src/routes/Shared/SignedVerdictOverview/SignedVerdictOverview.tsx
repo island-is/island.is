@@ -21,6 +21,7 @@ import {
   CaseAppealDecision,
   isAcceptingCaseDecision,
   UpdateCase,
+  User,
 } from '@island.is/judicial-system/types'
 import {
   FormFooter,
@@ -136,6 +137,59 @@ export const rulingDateLabel = (
       'PPP',
     )} kl. ${formatDate(workingCase.courtEndTime, constants.TIME_FORMAT)}`,
   })
+}
+
+export const shouldHideNextButton = (workingCase: Case, user?: User) =>
+  user?.role !== UserRole.PROSECUTOR ||
+  workingCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
+  workingCase.state === CaseState.REJECTED ||
+  workingCase.state === CaseState.DISMISSED ||
+  workingCase.isValidToDateInThePast ||
+  Boolean(workingCase.childCase)
+
+export const getExtensionInfoText = (
+  formatMessage: IntlShape['formatMessage'],
+  workingCase: Case,
+  user?: User,
+): string | undefined => {
+  if (user?.role !== UserRole.PROSECUTOR) {
+    // Only prosecutors should see the explanation.
+    return undefined
+  }
+
+  let rejectReason:
+    | 'rejected'
+    | 'dismissed'
+    | 'isValidToDateInThePast'
+    | 'acceptingAlternativeTravelBan'
+    | 'hasChildCase'
+    | 'none' = 'none'
+
+  if (workingCase.state === CaseState.REJECTED) {
+    rejectReason = 'rejected'
+  } else if (workingCase.state === CaseState.DISMISSED) {
+    rejectReason = 'dismissed'
+  } else if (
+    workingCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+  ) {
+    rejectReason = 'acceptingAlternativeTravelBan'
+  } else if (workingCase.childCase) {
+    rejectReason = 'hasChildCase'
+  } else if (workingCase.isValidToDateInThePast) {
+    // This must be after the rejected and alternatice decision cases as the custody
+    // end date only applies to cases that were accepted by the judge. This must also
+    // be after the already extended case as the custody end date may expire after
+    // the case has been extended.
+    rejectReason = 'isValidToDateInThePast'
+  }
+
+  return rejectReason === 'none'
+    ? undefined
+    : formatMessage(m.sections.caseExtension.extensionInfo, {
+        hasChildCase: workingCase.childCase ? 'yes' : 'no',
+        caseType: workingCase.type,
+        rejectReason,
+      })
 }
 
 export const SignedVerdictOverview: React.FC = () => {
@@ -275,50 +329,6 @@ export const SignedVerdictOverview: React.FC = () => {
         })
       }
     }
-  }
-
-  const getExtensionInfoText = (
-    workingCase: Case,
-    formatMessage: IntlShape['formatMessage'],
-  ): string | undefined => {
-    if (user?.role !== UserRole.PROSECUTOR) {
-      // Only prosecutors should see the explanation.
-      return undefined
-    }
-
-    let rejectReason:
-      | 'rejected'
-      | 'dismissed'
-      | 'isValidToDateInThePast'
-      | 'acceptingAlternativeTravelBan'
-      | 'hasChildCase'
-      | 'none' = 'none'
-
-    if (workingCase.state === CaseState.REJECTED) {
-      rejectReason = 'rejected'
-    } else if (workingCase.state === CaseState.DISMISSED) {
-      rejectReason = 'dismissed'
-    } else if (
-      workingCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-    ) {
-      rejectReason = 'acceptingAlternativeTravelBan'
-    } else if (workingCase.childCase) {
-      rejectReason = 'hasChildCase'
-    } else if (workingCase.isValidToDateInThePast) {
-      // This must be after the rejected and alternatice decision cases as the custody
-      // end date only applies to cases that were accepted by the judge. This must also
-      // be after the already extended case as the custody end date may expire after
-      // the case has been extended.
-      rejectReason = 'isValidToDateInThePast'
-    }
-
-    return rejectReason === 'none'
-      ? undefined
-      : formatMessage(m.sections.caseExtension.extensionInfo, {
-          hasChildCase: workingCase.childCase ? 'yes' : 'no',
-          caseType: workingCase.type,
-          rejectReason,
-        })
   }
 
   const setAccusedAppealDate = (date?: Date) => {
@@ -820,21 +830,13 @@ export const SignedVerdictOverview: React.FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={constants.CASE_LIST_ROUTE}
-          hideNextButton={
-            user?.role !== UserRole.PROSECUTOR ||
-            workingCase.decision ===
-              CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
-            workingCase.state === CaseState.REJECTED ||
-            workingCase.state === CaseState.DISMISSED ||
-            workingCase.isValidToDateInThePast ||
-            Boolean(workingCase.childCase)
-          }
+          hideNextButton={shouldHideNextButton(workingCase, user)}
           nextButtonText={formatMessage(m.sections.caseExtension.buttonLabel, {
             caseType: workingCase.type,
           })}
           onNextButtonClick={() => handleCaseExtension()}
           nextIsLoading={isExtendingCase}
-          infoBoxText={getExtensionInfoText(workingCase, formatMessage)}
+          infoBoxText={getExtensionInfoText(formatMessage, workingCase, user)}
         />
       </FormContentContainer>
       {shareCaseModal?.open && (
