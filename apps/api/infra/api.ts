@@ -131,13 +131,13 @@ export const serviceSetup = (services: {
         prod: 'http://web-financial-aid-backend',
       },
       FINANCIAL_STATEMENTS_INAO_BASE_PATH:
-        'https://org2ecc07a8.crm4.dynamics.com/api/data/v9.1',
+        'https://dev-re.crm4.dynamics.com/api/data/v9.1',
       FINANCIAL_STATEMENTS_INAO_ISSUER:
-        'https://login.microsoftonline.com/2e211aa5-00d0-47b0-9100-94c6888248a4/v2.0',
+        'https://login.microsoftonline.com/05a20268-aaea-4bb5-bb78-960b0462185e/v2.0',
       FINANCIAL_STATEMENTS_INAO_SCOPE:
-        'https://org2ecc07a8.crm4.dynamics.com/.default',
+        'https://dev-re.crm4.dynamics.com/.default',
       FINANCIAL_STATEMENTS_INAO_TOKEN_ENDPOINT:
-        'https://login.microsoftonline.com/2e211aa5-00d0-47b0-9100-94c6888248a4/oauth2/v2.0/token',
+        'https://login.microsoftonline.com/05a20268-aaea-4bb5-bb78-960b0462185e/oauth2/v2.0/token',
     })
 
     .secrets({
