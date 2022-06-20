@@ -29,10 +29,10 @@ export class FinancialStatementsInaoClientService {
   })
 
   async getUserClientType(nationalId: string) {
-    const select = '$select=new_nationalid'
-    const expand = '$expand=new_ClientType($select=new_name,new_code)'
-    const filter = `$filter=new_nationalid eq '${nationalId}'`
-    const url = `${this.basePath}/new_clients?${select}&${expand}&${filter}`
+    const select = '$select=star_nationalid'
+    const expand = '$expand=star_ClientType($select=star_name,star_code)'
+    const filter = `$filter=star_nationalid eq '${nationalId}'`
+    const url = `${this.basePath}/star_clients?${select}&${expand}&${filter}`
     const response = await this.fetch(url)
     const data = await response.json()
 
@@ -41,8 +41,8 @@ export class FinancialStatementsInaoClientService {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const clientTypes: ClientType[] = data.value.map((x: any) => {
       return <ClientType>{
-        code: x.new_ClientType.new_code,
-        name: x.new_ClientType.new_name,
+        code: x.star_ClientType.star_code,
+        name: x.star_ClientType.star_name,
       }
     })
 
@@ -53,7 +53,7 @@ export class FinancialStatementsInaoClientService {
   }
 
   async getClientTypes() {
-    const url = `${this.basePath}/new_clienttypes`
+    const url = `${this.basePath}/star_clienttypes`
     const response = await this.fetch(url)
     const data = await response.json()
 
@@ -62,9 +62,9 @@ export class FinancialStatementsInaoClientService {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const clientTypes: ClientType[] = data.value.map((x: any) => {
       return <ClientType>{
-        clientTypeId: x.new_clienttypeid,
-        code: x.new_code,
-        name: x.new_name,
+        clientTypeId: x.star_clienttypeid,
+        code: x.star_code,
+        name: x.star_name,
       }
     })
 
@@ -72,8 +72,8 @@ export class FinancialStatementsInaoClientService {
   }
 
   async getClientType(typeCode: string) {
-    const filter = `$filter=new_code eq '${typeCode}'`
-    const url = `${this.basePath}/new_clienttypes?${filter}`
+    const filter = `$filter=star_code eq '${typeCode}'`
+    const url = `${this.basePath}/star_clienttypes?${filter}`
     const response = await this.fetch(url)
     const data = await response.json()
 
@@ -82,9 +82,9 @@ export class FinancialStatementsInaoClientService {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const clientTypes: ClientType[] = data.value.map((x: any) => {
       return <ClientType>{
-        clientTypeId: x.new_clienttypeid,
-        code: x.new_code,
-        name: x.new_name,
+        clientTypeId: x.star_clienttypeid,
+        code: x.star_code,
+        name: x.star_name,
       }
     })
 
@@ -95,7 +95,7 @@ export class FinancialStatementsInaoClientService {
   }
 
   async getElections() {
-    const url = `${this.basePath}/new_elections`
+    const url = `${this.basePath}/star_elections`
     const response = await this.fetch(url)
     const data = await response.json()
 
@@ -104,9 +104,9 @@ export class FinancialStatementsInaoClientService {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const elections: Election[] = data.value.map((x: any) => {
       return <Election>{
-        electionId: x.new_electionid,
-        name: x.new_name,
-        electionDate: new Date(x.new_electiondate),
+        electionId: x.star_electionid,
+        name: x.star_name,
+        electionDate: new Date(x.star_electiondate),
       }
     })
 
