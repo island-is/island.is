@@ -2,6 +2,13 @@ const { fakeUsers } = Cypress.env()
 const { authDomain } = Cypress.env(Cypress.env('testEnvironment'))
 
 describe('Home page', () => {
+  beforeEach(() => {
+    cy.cognitoLogin({
+      cognitoUsername: Cypress.env('cognitoUsername'),
+      cognitoPassword: Cypress.env('cognitoPassword'),
+    })
+  })
+
   it('should navigate serviceportal', () => {
     cy.log('fakeUsers', fakeUsers)
     cy.log('authDomain', authDomain)
@@ -11,7 +18,9 @@ describe('Home page', () => {
       phoneNumber: fakeUsers['Ameríka'].phoneNumber,
       authDomain: `https://${authDomain}`,
     })
-    cy.contains('Pósthólf')
-    cy.contains(fakeUsers[0].name)
+    cy.contains(fakeUsers['Ameríka'].name)
+    cy.get('svg[data-testid="icon-reader"]').parentsUntil('a').as('inboxnav')
+    cy.get('@inboxnav').contains('Pósthólf').click()
+    cy.get('div[data-testid="inbox-items"]').should('have.length.greaterThan', 1)
   })
 })
