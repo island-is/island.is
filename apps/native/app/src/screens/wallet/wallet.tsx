@@ -3,6 +3,7 @@ import {
   Alert,
   EmptyList,
   LicenceCard,
+  LicenseCardType,
   Skeleton,
   TopLine,
 } from '@island.is/island-ui-native'
@@ -112,15 +113,13 @@ const WalletItem = React.memo(({ item }: { item: IGenericUserLicense }) => {
         <SafeAreaView>
           <LicenceCard
             nativeID={`license-${item.license.type}_source`}
-            title={item.license.type}
-            type={item.license.type as LicenseType}
+            type={item.license.type as LicenseCardType}
             date={new Date(Number(item.fetch.updated))}
             status={
               item.license.status === GenericUserLicenseStatus.HasLicense
                 ? LicenseStatus.VALID
                 : LicenseStatus.NOT_VALID
             }
-            agencyLogo={agencyLogo}
           />
         </SafeAreaView>
       </TouchableHighlight>

@@ -7,6 +7,7 @@ import {
   FieldLabel,
   FieldRow,
   LicenceCard,
+  LicenseCardType,
 } from '@island.is/island-ui-native'
 import React from 'react'
 import {
@@ -200,6 +201,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
         })
         if (Platform.OS === 'android') {
           const pkPassUri =
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             FileSystem.documentDirectory! + Date.now() + '.pkpass'
           await FileSystem.downloadAsync(
             data.generatePkPass.pkpassUrl,
@@ -217,11 +219,13 @@ export const WalletPassScreen: NavigationFunctionComponent<{
         const reader = new FileReader()
         reader.readAsDataURL(blob)
         reader.onloadend = () => {
-          const passData = reader.result?.toString()!
-          if (passData.includes('text/html')) {
-            throw new Error('Pass has expired')
+          const passData = reader.result?.toString()
+          if (passData) {
+            if (passData.includes('text/html')) {
+              throw new Error('Pass has expired')
+            }
+            addPass(passData.substr(41), 'com.snjallveskid')
           }
-          addPass(passData.substr(41), 'com.snjallveskid')
           setAddingToWallet(false)
         }
       } catch (err) {
@@ -276,7 +280,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
         <LicenceCard
           nativeID={`license-${data?.license?.type}_destination`}
           title={data?.license.type}
-          type={data?.license.type as any}
+          type={data?.license.type as LicenseCardType}
           date={new Date(Number(data?.fetch.updated))}
           status={
             data.license.status === GenericUserLicenseStatus.HasLicense
