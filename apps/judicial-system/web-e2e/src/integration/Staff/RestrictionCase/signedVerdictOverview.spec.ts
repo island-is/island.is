@@ -9,7 +9,7 @@ import {
   makeCaseFile,
 } from '../../../utils'
 
-describe('Signed verdict overview - Court - Investigation case', () => {
+describe('Signed verdict overview - Staff - Restriction case', () => {
   const conclusion = faker.lorem.paragraph(1)
   const caseFile = makeCaseFile('caseId', 'caseFileName')
 
