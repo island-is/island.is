@@ -6,7 +6,7 @@ import React, {
   ReactNode,
 } from 'react'
 import { useMutation, gql } from '@apollo/client'
-import { LawChapterSlug } from '@island.is/regulations'
+import { LawChapterSlug, toISODate } from '@island.is/regulations'
 import { useHistory } from 'react-router-dom'
 import { Step } from '../types'
 import { useLocale } from '@island.is/localization'
@@ -128,12 +128,12 @@ const useMakeDraftingState = (inputs: StateInputs) => {
               comments: '', // TODO: remove this field from the database. It's never used!
               ministry: draft.ministry.value,
               draftingNotes: draft.draftingNotes.value,
-              idealPublishDate: draft.idealPublishDate?.value,
+              idealPublishDate: toISODate(draft.idealPublishDate?.value),
               fastTrack: draft.fastTrack.value,
               lawChapters: draft.lawChapters.value,
-              signatureDate: draft.signatureDate.value,
+              signatureDate: toISODate(draft.signatureDate.value),
               signatureText: draft.signatureText.value,
-              effectiveDate: draft.effectiveDate.value,
+              effectiveDate: toISODate(draft.effectiveDate.value),
               type: draft.type.value,
               draftingStatus: newStatus || draft.draftingStatus,
               signedDocumentUrl: draft.signedDocumentUrl.value,

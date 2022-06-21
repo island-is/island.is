@@ -60,7 +60,7 @@ export const EditCancellation = (props: EditCancellationProp) => {
   )
 
   useEffect(() => {
-    const lastDay = allFutureEffects.slice(-2)?.[0]?.date
+    const lastDay = allFutureEffects.slice(-1)?.[0]?.date
     const minDateDate = lastDay ? new Date(lastDay) : today
     if (minDateDate !== minDate) {
       setMinDate(minDateDate)
@@ -74,6 +74,13 @@ export const EditCancellation = (props: EditCancellationProp) => {
       date: { value: newDate },
     })
   }
+
+  useEffect(() => {
+    if (activeCancellation && !activeCancellation.id) {
+      changeCancelDate(minDate)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeCancellation])
 
   const saveCancellation = async () => {
     if (!cancellation.id) {

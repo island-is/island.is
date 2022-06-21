@@ -22,7 +22,6 @@ import {
   DELETE_DRAFT_REGULATION_CANCEL,
   DELETE_DRAFT_REGULATION_CHANGE,
 } from './impactQueries'
-import ConfirmModal from '../ConfirmModal/ConfirmModal'
 
 // ---------------------------------------------------------------------------
 
@@ -43,11 +42,6 @@ export const ImpactList = (props: ImpactListProps) => {
     impact: DraftImpactForm | undefined
     readonly: boolean
   }>()
-  const [impactToDelete, setImpactToDelete] = useState<
-    DraftImpactForm | undefined
-  >()
-
-  const [isConfirmationVisible, setIsConfirmationVisible] = useState(false)
 
   const [deleteDraftRegulationCancel] = useMutation(
     DELETE_DRAFT_REGULATION_CANCEL,
@@ -77,8 +71,7 @@ export const ImpactList = (props: ImpactListProps) => {
     }
   }
 
-  const deleteImpact = async () => {
-    const impact = impactToDelete
+  const deleteImpact = async (impact: DraftImpactForm) => {
     if (impact) {
       if (impact.type === 'amend') {
         await deleteDraftRegulationChange({
@@ -168,13 +161,27 @@ export const ImpactList = (props: ImpactListProps) => {
                           })
                         },
                       }}
-                      secondaryCta={{
+                      deleteButton={{
                         icon: 'trash',
-                        label: formatMessage(impactMsgs.impactListDeleteButton),
+                        visible: idx === impactGroup.length - 1,
+                        dialogTitle: formatMessage(
+                          impactMsgs.impactListDeleteButton,
+                        ),
+                        dialogDescription: formatMessage(
+                          impactMsgs.deleteConfirmation,
+                        ),
+                        dialogConfirmLabel: formatMessage(
+                          impactMsgs.impactListDeleteButton,
+                        ),
+                        dialogCancelLabel: formatMessage(
+                          impactMsgs.cancelButton,
+                        ),
                         disabled: idx !== impactGroup.length - 1,
                         onClick: () => {
-                          setImpactToDelete(impact)
-                          setIsConfirmationVisible(true)
+                          deleteImpact(impact)
+                          setTimeout(() => {
+                            document.location.reload()
+                          }, 250)
                         },
                       }}
                       text={
@@ -205,19 +212,6 @@ export const ImpactList = (props: ImpactListProps) => {
               closeModal={closeModal}
             />
           )}
-
-          <ConfirmModal
-            isVisible={isConfirmationVisible}
-            message={`${formatMessage(impactMsgs.deleteConfirmation)}`}
-            onConfirm={deleteImpact}
-            onVisibilityChange={(visibility: boolean) => {
-              if (!visibility) {
-                closeModal()
-              }
-
-              setIsConfirmationVisible(visibility)
-            }}
-          />
         </Stack>
       )}
     </>

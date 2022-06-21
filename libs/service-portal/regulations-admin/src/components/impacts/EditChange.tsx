@@ -37,7 +37,12 @@ import { MiniDiff } from '../MiniDiff'
 import { EditorInput } from '../EditorInput'
 import * as s from './Impacts.css'
 import { ReferenceText } from './ReferenceText'
-import { fHtml, fText, makeDraftAppendixForm } from '../../state/makeFields'
+import {
+  fDate,
+  fHtml,
+  fText,
+  makeDraftAppendixForm,
+} from '../../state/makeFields'
 import { ImpactHistory } from './ImpactHistory'
 import { Appendixes } from '../Appendixes'
 import { tidyUp, updateFieldValue } from '../../state/validations'
@@ -93,7 +98,7 @@ export const EditChange = (props: EditChangeProp) => {
   )
 
   useEffect(() => {
-    const lastDay = allFutureEffects.slice(-2)?.[0]?.date
+    const lastDay = allFutureEffects.slice(-1)?.[0]?.date
     const minDateDate = lastDay ? new Date(lastDay) : today
     if (minDateDate !== minDate) {
       setMinDate(minDateDate)
@@ -123,9 +128,16 @@ export const EditChange = (props: EditChangeProp) => {
   const changeDate = (newDate: Date | undefined) => {
     setActiveChange({
       ...activeChange,
-      date: { value: newDate },
+      date: fDate(newDate, true, { min: minDate }),
     })
   }
+
+  useEffect(() => {
+    if (toISODate(minDate) !== toISODate(activeChange.date.value)) {
+      changeDate(minDate)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [minDate])
 
   const changeRegulationTitle = (newTitle: PlainText) => {
     setActiveChange({

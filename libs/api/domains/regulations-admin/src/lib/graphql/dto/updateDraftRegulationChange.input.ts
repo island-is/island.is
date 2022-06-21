@@ -24,7 +24,7 @@ export class UpdateDraftRegulationChangeInput {
   @Field(() => String, { nullable: true })
   title!: PlainText
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => String, { nullable: true })
   date!: ISODate
 
   @Field(() => String, { nullable: true })
