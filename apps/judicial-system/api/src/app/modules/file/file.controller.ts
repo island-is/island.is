@@ -6,6 +6,7 @@ import {
   Header,
   Inject,
   Param,
+  ParseBoolPipe,
   Query,
   Req,
   Res,
@@ -78,7 +79,7 @@ export class FileController {
   @Header('Content-Type', 'application/pdf')
   async getRulingPdf(
     @Param('id') id: string,
-    @Query('useSigned') useSigned: boolean,
+    @Query('useSigned', ParseBoolPipe) useSigned: boolean,
     @CurrentHttpUser() user: User,
     @Req() req: Request,
     @Res() res: Response,

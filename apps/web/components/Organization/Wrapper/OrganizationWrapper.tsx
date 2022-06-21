@@ -43,7 +43,11 @@ import { useNamespace } from '@island.is/web/hooks'
 import { watsonConfig } from './config'
 import { WatsonChatPanel } from '@island.is/web/components'
 import LandlaeknirFooter from './Themes/LandlaeknirTheme/LandlaeknirFooter'
-import { FiskistofaHeader } from './FiskistofaTheme/FiskistofaHeader'
+import { HeilbrigdisstofnunNordurlandsHeader } from './Themes/HeilbrigdisstofnunNordurlandsTheme/HeilbrigdisstofnunNordurlandsHeader'
+import { LandlaeknirHeader } from './Themes/LandlaeknirTheme/LandlaeknirHeader'
+import HeilbrigdisstofnunNordurlandsFooter from './Themes/HeilbrigdisstofnunNordurlandsTheme/HeilbrigdisstofnunNordurlandsFooter'
+import { FiskistofaHeader } from './Themes/FiskistofaTheme/FiskistofaHeader'
+import FiskistofaFooter from './Themes/FiskistofaTheme/FiskistofaFooter'
 import * as styles from './OrganizationWrapper.css'
 
 interface NavigationData {
@@ -72,7 +76,12 @@ interface HeaderProps {
   organizationPage: OrganizationPage
 }
 
-export const lightThemes = ['digital_iceland', 'default', 'fiskistofa']
+export const lightThemes = [
+  'digital_iceland',
+  'default',
+  'landlaeknir',
+  'fiskistofa',
+]
 export const footerEnabled = [
   'syslumenn',
   'district-commissioner',
@@ -87,6 +96,9 @@ export const footerEnabled = [
   'icelandic-health-insurance',
 
   'mannaudstorg',
+
+  'fiskistofa',
+  'directorate-of-fisheries',
 ]
 
 export const getThemeConfig = (
@@ -130,6 +142,14 @@ const OrganizationHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
       return <UtlendingastofnunHeader organizationPage={organizationPage} />
     case 'digital_iceland':
       return <DigitalIcelandHeader organizationPage={organizationPage} />
+    case 'hsn':
+      return (
+        <HeilbrigdisstofnunNordurlandsHeader
+          organizationPage={organizationPage}
+        />
+      )
+    case 'landlaeknir':
+      return <LandlaeknirHeader organizationPage={organizationPage} />
     case 'fiskistofa':
       return <FiskistofaHeader organizationPage={organizationPage} />
     default:
@@ -232,13 +252,20 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
     case 'landlaeknir':
     case 'directorate-of-health':
       OrganizationFooterComponent = (
-        <LandlaeknirFooter
+        <LandlaeknirFooter footerItems={organization.footerItems} />
+      )
+      break
+    case 'hsn':
+      OrganizationFooterComponent = (
+        <HeilbrigdisstofnunNordurlandsFooter
           footerItems={organization.footerItems}
-          phone={organization.phone}
-          email={organization.email}
-          phoneLabel={n('telephone', 'Sími')}
-          emailLabel={n('email,', 'Tölvupóstur')}
         />
+      )
+      break
+    case 'fiskistofa':
+    case 'directorate-of-fisheries':
+      OrganizationFooterComponent = (
+        <FiskistofaFooter footerItems={organization.footerItems} />
       )
       break
   }

@@ -27,6 +27,7 @@ const createApplicationBase = (): Application => ({
   answers: {},
   applicant: '',
   assignees: [],
+  applicantActors: [],
   attachments: {},
   created: new Date(),
   modified: new Date(),

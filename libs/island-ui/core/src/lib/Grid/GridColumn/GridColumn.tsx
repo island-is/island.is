@@ -14,10 +14,9 @@ import { resolveResponsiveRangeProps } from '../../../utils/responsiveRangeProps
 type Breakpoint = keyof typeof theme['breakpoints']
 type position = 'relative' | 'fixed' | 'absolute' | 'static'
 
-export type SpanType = ResponsiveProp<styles.GridColumns>
 export interface GridColumnProps {
-  span?: ResponsiveProp<styles.GridColumns>
-  offset?: ResponsiveProp<styles.GridColumns>
+  span?: styles.SpanType
+  offset?: styles.SpanType
   order?: ResponsiveProp<styles.Order>
   paddingBottom?: ResponsiveSpace
   paddingTop?: ResponsiveSpace

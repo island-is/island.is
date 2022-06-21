@@ -7,7 +7,7 @@
     "version": "v1"
   },
   "host": "api.syslumenn.is",
-  "basePath": "/test",
+  "basePath": "/dev",
   "schemes": ["https"],
   "produces": ["text/plain", "application/json", "text/json"],
   "paths": {
@@ -650,6 +650,177 @@
         ]
       }
     },
+    "/api/DanarbuAlgengTengsl/{audkenni}": {
+      "get": {
+        "tags": ["Syslumenn"],
+        "operationId": "DanarbuAlgengTengsl_Get",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "audkenni",
+            "in": "path",
+            "required": true,
+            "x-nullable": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AlgengTengsl"
+              }
+            }
+          },
+          "404": {
+            "x-nullable": false,
+            "description": "Not found",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "x-nullable": false,
+            "description": "Bad request",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "401": {
+            "x-nullable": false,
+            "description": "Unauthorized",
+            "schema": {
+              "type": "string"
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
+      }
+    },
+    "/api/SkiptaUmSkraningaradilaDanarbus": {
+      "post": {
+        "tags": ["Syslumenn"],
+        "operationId": "SkiptaUmSkraningaradilaDanarbus_Post",
+        "consumes": [
+          "application/json-patch+json",
+          "application/json",
+          "text/json",
+          "application/*+json"
+        ],
+        "parameters": [
+          {
+            "name": "payload",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SkiptaUmSkraningaradili"
+            },
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/SkiptaUmSkraningaradiliSkeyti"
+            }
+          },
+          "404": {
+            "x-nullable": false,
+            "description": "Not found",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          },
+          "400": {
+            "x-nullable": false,
+            "description": "Bad request",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          },
+          "401": {
+            "x-nullable": false,
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
+      }
+    },
+    "/api/SkraningaradiliDanarbus/{kennitala}/{audkenni}": {
+      "get": {
+        "tags": ["Syslumenn"],
+        "operationId": "SkraningaradiliDanarbus_Get",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "kennitala",
+            "in": "path",
+            "required": true,
+            "x-nullable": true
+          },
+          {
+            "type": "string",
+            "name": "audkenni",
+            "in": "path",
+            "required": true,
+            "x-nullable": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/SkraningaradiliDanarbusSkeyti"
+              }
+            }
+          },
+          "404": {
+            "x-nullable": false,
+            "description": "Not found",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          },
+          "400": {
+            "x-nullable": false,
+            "description": "Bad request",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          },
+          "401": {
+            "x-nullable": false,
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
+      }
+    },
     "/v1/Danarbu/YfirlitUmFramvinduSkipta": {
       "post": {
         "tags": ["Syslumenn"],
@@ -754,6 +925,63 @@
         ]
       }
     },
+    "/api/ErfdarskraJaNei/{kennitala}/{audkenni}": {
+      "get": {
+        "tags": ["Syslumenn"],
+        "operationId": "ErfdarskraJaNei_Get",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "kennitala",
+            "in": "path",
+            "required": true,
+            "x-nullable": true
+          },
+          {
+            "type": "string",
+            "name": "audkenni",
+            "in": "path",
+            "required": true,
+            "x-nullable": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/ErfdarskraSkeyti"
+            }
+          },
+          "404": {
+            "x-nullable": false,
+            "description": "Not found",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          },
+          "400": {
+            "x-nullable": false,
+            "description": "Bad request",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          },
+          "401": {
+            "x-nullable": false,
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
+      }
+    },
     "/api/FaVottordUpplysingar/{audkenni}/{kennitala}": {
       "get": {
         "tags": ["Syslumenn"],
@@ -817,6 +1045,63 @@
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/SvarSkeyti"
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
+      }
+    },
+    "/api/KaupmaliJaNei/{kennitala}/{audkenni}": {
+      "get": {
+        "tags": ["Syslumenn"],
+        "operationId": "KaupmaliJaNei_Get",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "kennitala",
+            "in": "path",
+            "required": true,
+            "x-nullable": true
+          },
+          {
+            "type": "string",
+            "name": "audkenni",
+            "in": "path",
+            "required": true,
+            "x-nullable": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/KaupmaliSkeyti"
+            }
+          },
+          "404": {
+            "x-nullable": false,
+            "description": "Not found",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          },
+          "400": {
+            "x-nullable": false,
+            "description": "Bad request",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          },
+          "401": {
+            "x-nullable": false,
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
             }
           }
         },
@@ -1582,6 +1867,154 @@
         }
       }
     },
+    "AlgengTengsl": {
+      "type": "object",
+      "properties": {
+        "heiti": {
+          "type": "string"
+        }
+      }
+    },
+    "SkiptaUmSkraningaradiliSkeyti": {
+      "type": "object",
+      "properties": {
+        "stada": {
+          "type": "string"
+        }
+      }
+    },
+    "SkiptaUmSkraningaradili": {
+      "type": "object",
+      "properties": {
+        "audkenni": {
+          "type": "string"
+        },
+        "kennitalaFra": {
+          "type": "string"
+        },
+        "kennitalaTil": {
+          "type": "string"
+        },
+        "malsnumer": {
+          "type": "string"
+        }
+      }
+    },
+    "SkraningaradiliDanarbusSkeyti": {
+      "type": "object",
+      "required": [
+        "danardagur",
+        "kaupmaili",
+        "erfdaskraIVorsluSyslumanns",
+        "vitneskjaUmAdraErfdaskra",
+        "bankareikningarVerdbrefEdaHlutabref",
+        "eiginRekstur",
+        "buseturetturVegnaKaupleiguIbuda",
+        "eignirErlendis"
+      ],
+      "properties": {
+        "adilarDanarbus": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AdiliDanarbus"
+          }
+        },
+        "eignir": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/EignirDanarbus"
+          }
+        },
+        "kennitalaSkreningaradila": {
+          "type": "string"
+        },
+        "simiSkraningaradila": {
+          "type": "string"
+        },
+        "tolvuposturSkreningaradila": {
+          "type": "string"
+        },
+        "kennitalaLatins": {
+          "type": "string"
+        },
+        "nafnLatins": {
+          "type": "string"
+        },
+        "danardagur": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "malsnumer": {
+          "type": "string"
+        },
+        "embaetti": {
+          "type": "string"
+        },
+        "kaupmaili": {
+          "type": "boolean"
+        },
+        "erfdaskraIVorsluSyslumanns": {
+          "type": "boolean"
+        },
+        "vitneskjaUmAdraErfdaskra": {
+          "type": "boolean"
+        },
+        "bankareikningarVerdbrefEdaHlutabref": {
+          "type": "boolean"
+        },
+        "eiginRekstur": {
+          "type": "boolean"
+        },
+        "buseturetturVegnaKaupleiguIbuda": {
+          "type": "boolean"
+        },
+        "eignirErlendis": {
+          "type": "boolean"
+        },
+        "vidbotarupplysingar": {
+          "type": "string"
+        }
+      }
+    },
+    "AdiliDanarbus": {
+      "type": "object",
+      "properties": {
+        "kennitala": {
+          "type": "string"
+        },
+        "nafn": {
+          "type": "string"
+        },
+        "tegundTengsla": {
+          "type": "string"
+        }
+      }
+    },
+    "EignirDanarbus": {
+      "type": "object",
+      "required": ["tegundAngalgs", "eignarhlutfall"],
+      "properties": {
+        "tegundAngalgs": {
+          "$ref": "#/definitions/TegundAndlags"
+        },
+        "fastanumer": {
+          "type": "string"
+        },
+        "lysing": {
+          "type": "string"
+        },
+        "eignarhlutfall": {
+          "type": "number",
+          "format": "double"
+        }
+      }
+    },
+    "TegundAndlags": {
+      "type": "integer",
+      "description": "0 = Fasteign\n1 = Okutaeki\n2 = Skip\n3 = Lausafe\n4 = Loftfar",
+      "x-enumNames": ["Fasteign", "Okutaeki", "Skip", "Lausafe", "Loftfar"],
+      "enum": [0, 1, 2, 3, 4]
+    },
     "Fyrirspurn": {
       "type": "object",
       "properties": {
@@ -1589,6 +2022,14 @@
           "type": "string"
         },
         "kennitala": {
+          "type": "string"
+        }
+      }
+    },
+    "ErfdarskraSkeyti": {
+      "type": "object",
+      "properties": {
+        "stada": {
           "type": "string"
         }
       }
@@ -1631,6 +2072,14 @@
           "type": "string"
         },
         "skjal": {
+          "type": "string"
+        }
+      }
+    },
+    "KaupmaliSkeyti": {
+      "type": "object",
+      "properties": {
+        "stada": {
           "type": "string"
         }
       }
@@ -1914,12 +2363,6 @@
           "$ref": "#/definitions/TegundAndlags"
         }
       }
-    },
-    "TegundAndlags": {
-      "type": "integer",
-      "description": "0 = Fasteign\n1 = Okutaeki\n2 = Skip\n3 = Lausafe\n4 = Loftfar",
-      "x-enumNames": ["Fasteign", "Okutaeki", "Skip", "Lausafe", "Loftfar"],
-      "enum": [0, 1, 2, 3, 4]
     },
     "VedbandayfirlitReguverkiSvarSkeyti": {
       "type": "object",

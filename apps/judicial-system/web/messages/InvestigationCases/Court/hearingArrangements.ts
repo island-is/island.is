@@ -153,24 +153,25 @@ export const icHearingArrangements = {
     },
     allPresentText: {
       id:
-        'judicial.system.investigation_cases:hearing_arrangements.modal.all_present_text',
+        'judicial.system.investigation_cases:hearing_arrangements.modal.all_present_text_v2',
       defaultMessage:
-        'Tilkynning um fyrirtöku verður send á saksóknara og verjanda, hafi verjandi verið skráður.',
+        '{courtDateHasChanged, select, true {Fyrirtökutíma hefur verið breytt. } other {}}Tilkynning um fyrirtöku verður send á saksóknara og verjanda, hafi verjandi verið skráður.',
       description:
         'Notaður sem texti í tilkynningaglugganum á fyrirtöku skrefi í rannsóknarheimildum ef fulltrúi ákæruvalds og verjandi mæta.',
     },
     allPresentSpokespersonText: {
       id:
-        'judicial.system.investigation_cases:hearing_arrangements.modal.all_present_spokesperson_text',
+        'judicial.system.investigation_cases:hearing_arrangements.modal.all_present_spokesperson_text_v2',
       defaultMessage:
-        'Tilkynning um fyrirtöku verður send á saksóknara og talsmann, hafi talsmaður verið skráður.',
+        '{courtDateHasChanged, select, true {Fyrirtökutíma hefur verið breytt. } other {}}Tilkynning um fyrirtöku verður send á saksóknara og talsmann, hafi talsmaður verið skráður.',
       description:
         'Notaður sem texti í tilkynningaglugganum á fyrirtöku skrefi í rannsóknarheimildum ef fulltrúi ákæruvalds mætir og dómari kallar til talsmann.',
     },
     prosecutorPresentText: {
       id:
-        'judicial.system.investigation_cases:hearing_arrangements.modal.prosecutor_present_text',
-      defaultMessage: 'Tilkynning um fyrirtöku verður send á saksóknara.',
+        'judicial.system.investigation_cases:hearing_arrangements.modal.prosecutor_present_text_v2',
+      defaultMessage:
+        '{courtDateHasChanged, select, true {Fyrirtökutíma hefur verið breytt. } other {}}Tilkynning um fyrirtöku verður send á saksóknara.',
       description:
         'Notaður sem texti í tilkynningaglugganum á fyrirtöku skrefi í rannsóknarheimildum ef fulltrúi ákæruvalds mætir.',
     },

@@ -317,6 +317,7 @@ export const UpdateApplicationMutation = gql`
         created
         staffName
         staffNationalId
+        emailSent
       }
       staff {
         name

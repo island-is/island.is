@@ -94,23 +94,7 @@ describe('answerValidators', () => {
     })
   })
 
-  describe('otherParent', () => {
-    it('should return error if MANUAL selected and name empty', () => {
-      const newAnswer = {
-        chooseOtherParent: MANUAL,
-        otherParentName: '',
-        otherParentId: '',
-      }
-
-      expect(
-        answerValidators['otherParent'](newAnswer, application),
-      ).toStrictEqual({
-        message: coreErrorMessages.missingAnswer,
-        path: 'otherParent.otherParentName',
-        values: undefined,
-      })
-    })
-
+  describe('otherParentObj', () => {
     it('should return error if MANUAL selected and nation id empty', () => {
       const newAnswer = {
         chooseOtherParent: MANUAL,
@@ -119,10 +103,10 @@ describe('answerValidators', () => {
       }
 
       expect(
-        answerValidators['otherParent'](newAnswer, application),
+        answerValidators['otherParentObj'](newAnswer, application),
       ).toStrictEqual({
         message: coreErrorMessages.missingAnswer,
-        path: 'otherParent.otherParentId',
+        path: 'otherParentObj.otherParentId',
         values: undefined,
       })
     })

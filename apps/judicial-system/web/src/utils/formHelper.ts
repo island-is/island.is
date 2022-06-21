@@ -1,4 +1,5 @@
 import formatISO from 'date-fns/formatISO'
+import compareAsc from 'date-fns/compareAsc'
 
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { TIME_FORMAT } from '@island.is/judicial-system/consts'
@@ -251,4 +252,16 @@ export const setCheckboxAndSendToServer = (
 
 export const getTimeFromDate = (date: string | undefined) => {
   return date?.includes('T') ? formatDate(date, TIME_FORMAT) : undefined
+}
+
+export const hasDateChanged = (
+  currentDate: string | null | undefined,
+  newDate: Date | undefined,
+) => {
+  if (!currentDate && newDate) return true
+
+  if (currentDate && newDate) {
+    return compareAsc(newDate, new Date(currentDate)) !== 0
+  }
+  return false
 }

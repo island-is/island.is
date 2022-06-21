@@ -21,6 +21,7 @@ function buildApplication(
     id: '12345',
     assignees: [],
     applicant: MOCK_APPLICANT_NATIONAL_ID,
+    applicantActors: [],
     typeId: ApplicationTypes.NO_DEBT_CERTIFICATE,
     created: new Date(),
     modified: new Date(),
