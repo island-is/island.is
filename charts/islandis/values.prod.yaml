@@ -425,7 +425,7 @@ application-system-api:
     GRAPHQL_API_URL: 'http://web-api.islandis.svc.cluster.local'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/application-system'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
-    INSTITUTION_APPLICATION_RECIPIENT_EMAIL_ADDRESS: 'island@island.is'
+    INSTITUTION_APPLICATION_RECIPIENT_EMAIL_ADDRESS: 'stafraentisland@fjr.is'
     INSTITUTION_APPLICATION_RECIPIENT_NAME: 'Stafrænt Ísland'
     LOGIN_SERVICE_APPLICATION_RECIPIENT_EMAIL_ADDRESS: 'island@island.is'
     LOGIN_SERVICE_APPLICATION_RECIPIENT_NAME: 'Stafrænt Ísland'
