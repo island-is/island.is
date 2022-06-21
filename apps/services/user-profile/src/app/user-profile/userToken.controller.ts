@@ -47,7 +47,15 @@ export class UserTokenController {
   async findOneByNationalId(
     @Param('nationalId')
     nationalId: string,
-  ): Promise<UserProfile | null> {
-    return await this.userProfileService.findByNationalId(nationalId)
+  ): Promise<UserProfile> {
+    const userProfile = await this.userProfileService.findByNationalId(
+      nationalId,
+    )
+    if (!userProfile) {
+      throw new NotFoundException(
+        `A user profile with nationalId ${nationalId} does not exist`,
+      )
+    }
+    return userProfile
   }
 }

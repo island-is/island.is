@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react'
-import { useDropzone } from 'react-dropzone'
+import { FileRejection, useDropzone } from 'react-dropzone'
 import { useMeasure } from 'react-use'
 import cn from 'classnames'
 
@@ -69,7 +69,7 @@ export type StatusColor = {
 interface UploadedFileProps {
   file: UploadFile
   showFileSize: boolean
-  onRemoveClick: (file: UploadFile) => void
+  onRemoveClick?: (file: UploadFile) => void
   onRetryClick?: (file: UploadFile) => void
   onOpenFile?: (file: UploadFile) => void
   defaultBackgroundColor?: StatusColor
@@ -204,7 +204,7 @@ export const UploadedFile = ({
               type={'button'}
               onClick={(e) => {
                 e.stopPropagation()
-                if (!isUploading) {
+                if (!isUploading && onRemoveClick) {
                   onRemoveClick(file)
                 }
               }}
@@ -238,6 +238,7 @@ export interface InputFileUploadProps {
   onRemove: (file: UploadFile) => void
   onRetry?: (file: UploadFile) => void
   onChange?: (files: File[]) => void
+  onUploadRejection?: (files: FileRejection[]) => void
   errorMessage?: string
   defaultFileBackgroundColor?: StatusColor
   doneIcon?: IconTypes
@@ -259,12 +260,17 @@ export const InputFileUpload = ({
   onChange,
   onRemove,
   onRetry,
+  onUploadRejection,
   errorMessage,
   defaultFileBackgroundColor,
   doneIcon,
   hideIcons = false,
 }: InputFileUploadProps) => {
-  const onDrop = (acceptedFiles: File[]) => {
+  const onDrop = (acceptedFiles: File[], fileRejections: FileRejection[]) => {
+    if (fileRejections.length !== 0 && onUploadRejection) {
+      onUploadRejection(fileRejections)
+    }
+
     if (acceptedFiles.length === 0 || !onChange) return
 
     if (!multiple) {
