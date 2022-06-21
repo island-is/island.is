@@ -55,8 +55,9 @@ import * as constants from '@island.is/judicial-system/consts'
 import * as styles from './Overview.css'
 
 export const Overview: React.FC = () => {
-  const [modalVisible, setModalVisible] = useState(false)
-  const [resendCaseModalVisible, setResendCaseModalVisible] = useState(false)
+  const [modal, setModal] = useState<
+    'noModal' | 'resendCaseModal' | 'caseSentModal'
+  >('noModal')
   const [caseResentExplanation, setCaseResentExplanation] = useState('')
   const [modalText, setModalText] = useState('')
   const {
@@ -107,10 +108,10 @@ export const Overview: React.FC = () => {
         ),
       })
 
-      setResendCaseModalVisible(false)
+      setModal('noModal')
     }
 
-    setModalVisible(true)
+    setModal('caseSentModal')
   }
 
   return (
@@ -397,18 +398,18 @@ export const Overview: React.FC = () => {
           onNextButtonClick={
             workingCase.state === CaseState.RECEIVED
               ? () => {
-                  setResendCaseModalVisible(true)
+                  setModal('resendCaseModal')
                 }
               : handleNextButtonClick
           }
         />
       </FormContentContainer>
       <AnimatePresence>
-        {resendCaseModalVisible && (
+        {modal === 'resendCaseModal' && (
           <Modal
             title={formatMessage(rcOverview.sections.caseResentModal.heading)}
             text={formatMessage(rcOverview.sections.caseResentModal.text)}
-            handleClose={() => setResendCaseModalVisible(false)}
+            handleClose={() => setModal('noModal')}
             primaryButtonText={formatMessage(
               rcOverview.sections.caseResentModal.primaryButtonText,
             )}
@@ -416,7 +417,7 @@ export const Overview: React.FC = () => {
               rcOverview.sections.caseResentModal.secondaryButtonText,
             )}
             handleSecondaryButtonClick={() => {
-              setResendCaseModalVisible(false)
+              setModal('noModal')
             }}
             handlePrimaryButtonClick={() => {
               handleNextButtonClick()
@@ -447,7 +448,7 @@ export const Overview: React.FC = () => {
         )}
       </AnimatePresence>
       <AnimatePresence>
-        {modalVisible && (
+        {modal === 'caseSentModal' && (
           <Modal
             title={formatMessage(rcOverview.sections.modal.headingV2, {
               caseType: workingCase.type,
