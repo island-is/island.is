@@ -1,5 +1,4 @@
 import { lazy } from 'react'
-// import { defineMessage } from 'react-intl'
 
 import {
   ServicePortalModule,

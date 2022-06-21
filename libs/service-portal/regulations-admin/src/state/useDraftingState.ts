@@ -6,19 +6,11 @@ import React, {
   ReactNode,
 } from 'react'
 import { useMutation, gql } from '@apollo/client'
-import {
-  LawChapter,
-  LawChapterSlug,
-  MinistryList,
-} from '@island.is/regulations'
+import { LawChapterSlug } from '@island.is/regulations'
 import { useHistory } from 'react-router-dom'
 import { Step } from '../types'
 import { useLocale } from '@island.is/localization'
-import {
-  DraftImpactId,
-  DraftingStatus,
-  RegulationDraft,
-} from '@island.is/regulations/admin'
+import { DraftingStatus } from '@island.is/regulations/admin'
 import {
   RegDraftForm,
   DraftingState,
@@ -44,6 +36,16 @@ export const ensureStepName = (cand: unknown) => {
   if (typeof cand === 'string' && cand in steps) {
     return cand as Step
   }
+}
+
+const isDraftEmpty = (draft: RegDraftForm): boolean => {
+  const someContent =
+    draft.title.value ||
+    draft.text.value ||
+    draft.appendixes.some(({ text, title }) => title.value || text.value) ||
+    draft.impacts.length
+
+  return !someContent
 }
 
 // ---------------------------------------------------------------------------
@@ -175,7 +177,9 @@ const useMakeDraftingState = (inputs: StateInputs) => {
         : undefined,
 
       goToStep: async (stepName: Step) => {
-        await actions.saveStatus(true)
+        if (!isDraftEmpty(draft)) {
+          await actions.saveStatus(true)
+        }
         history.push(getEditUrl(draft.id, stepName))
       },
 
