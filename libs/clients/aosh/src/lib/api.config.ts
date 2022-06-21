@@ -5,7 +5,6 @@ import {
   LazyDuringDevScope,
   XRoadConfig,
 } from '@island.is/nest/config'
-import { Provider } from '@nestjs/common'
 import { Configuration } from '../../gen/fetch'
 import { AoshClientConfig } from './aosh.config'
 

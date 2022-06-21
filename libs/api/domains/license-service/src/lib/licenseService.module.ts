@@ -17,13 +17,7 @@ import {
   GENERIC_LICENSE_FACTORY,
 } from './licenceService.type'
 import { User } from '@island.is/auth-nest-tools'
-import {
-  AdrApi,
-  VinnuvelaApi,
-  AdrApiProvider,
-  AoshClientModule,
-  MachineApiProvider,
-} from '@island.is/clients/aosh'
+import { AdrApi, VinnuvelaApi, AoshClientModule } from '@island.is/clients/aosh'
 import { GenericMachineLicenseApi } from './client/machine-license-client'
 
 export interface Config {
