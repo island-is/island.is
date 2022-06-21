@@ -8,7 +8,7 @@ describe(NEW_IC_ROUTE, () => {
     cy.visit(NEW_IC_ROUTE)
   })
 
-  it('should require a valid police case number', () => {
+  it.only('should require a valid police case number', () => {
     // Police case number
     cy.getByTestid('policeCaseNumber').type('0').blur()
     cy.getByTestid('inputErrorMessage').contains('Dæmi: 012-3456-7890')
@@ -34,13 +34,13 @@ describe(NEW_IC_ROUTE, () => {
     cy.getByTestid('inputErrorMessage').should('not.exist')
 
     // Address
-    cy.getByTestid('accusedAddress').click().blur()
+    cy.getByTestid('accusedAddress').clear().blur()
     cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
     cy.getByTestid('accusedAddress').clear().type('Sidwellssongata 300')
     cy.getByTestid('inputErrorMessage').should('not.exist')
 
     // Name
-    cy.getByTestid('accusedName').click().blur()
+    cy.getByTestid('accusedName').clear().blur()
     cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
     cy.getByTestid('accusedName').clear().type('Sidwell Sidwellsson')
     cy.getByTestid('inputErrorMessage').should('not.exist')
