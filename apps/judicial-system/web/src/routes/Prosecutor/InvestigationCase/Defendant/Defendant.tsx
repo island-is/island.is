@@ -330,6 +330,7 @@ const Defendant = () => {
             </AnimatePresence>
             <Box display="flex" justifyContent="flexEnd" marginTop={3}>
               <Button
+                data-testid="addDefendantButton"
                 variant="ghost"
                 icon="add"
                 onClick={handleCreateDefendantClick}
