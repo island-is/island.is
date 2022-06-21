@@ -37,7 +37,7 @@ Sometimes you might only want resources and scopes created for you and don´t ne
 
  - Domain, nationalId and email for the government agency responsible for the web service
  - Name of the web service
- - Whether the web service is requires access control by nationalId (kennitölu stýringu)
+ - Whether the web service requires access control by nationalId (kennitölu stýringu)
  - If the scope should add national id (kennitala) of the user to the access_token
  - If you have multiple access levels for your web service, you´ll need to provide them all with a description of what they do.
 
