@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react'
-import { useIntl } from 'react-intl'
+import { IntlShape, useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 import { AnimatePresence } from 'framer-motion'
 
@@ -15,6 +15,7 @@ import {
   CaseState,
   CaseTransition,
   completedCaseStates,
+  Case,
 } from '@island.is/judicial-system/types'
 import {
   AccordionListItem,
@@ -54,6 +55,16 @@ import * as constants from '@island.is/judicial-system/consts'
 
 import * as styles from './Overview.css'
 
+export const getCaseResubmittedText = (
+  formatMessage: IntlShape['formatMessage'],
+  workingCase: Case,
+) =>
+  formatMessage(icOverview.sections.caseResentModal.textV2, {
+    sendRequestToDefender: Boolean(
+      workingCase.sendRequestToDefender && workingCase.courtDate,
+    ),
+  })
+
 export const Overview: React.FC = () => {
   const router = useRouter()
   const {
@@ -71,9 +82,10 @@ export const Overview: React.FC = () => {
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
 
-  const [modalVisible, setModalVisible] = useState<boolean>(false)
+  const [modal, setModal] = useState<
+    'noModal' | 'caseSubmittedModal' | 'caseResubmitModal'
+  >('noModal')
   const [modalText, setModalText] = useState('')
-  const [resendCaseModalVisible, setResendCaseModalVisible] = useState(false)
   const [caseResentExplanation, setCaseResentExplanation] = useState('')
 
   const handleNextButtonClick = async () => {
@@ -105,11 +117,9 @@ export const Overview: React.FC = () => {
           caseResentExplanation,
         ),
       })
-
-      setResendCaseModalVisible(false)
     }
 
-    setModalVisible(true)
+    setModal('caseSubmittedModal')
   }
 
   return (
@@ -355,18 +365,22 @@ export const Overview: React.FC = () => {
           onNextButtonClick={
             workingCase.state === CaseState.RECEIVED
               ? () => {
-                  setResendCaseModalVisible(true)
+                  setModal('caseResubmitModal')
                 }
               : handleNextButtonClick
           }
         />
       </FormContentContainer>
       <AnimatePresence>
-        {resendCaseModalVisible && (
+        {modal === 'caseResubmitModal' && (
           <Modal
             title={formatMessage(icOverview.sections.caseResentModal.heading)}
-            text={formatMessage(icOverview.sections.caseResentModal.text)}
-            handleClose={() => setResendCaseModalVisible(false)}
+            text={formatMessage(icOverview.sections.caseResentModal.textV2, {
+              sendRequestToDefender: Boolean(
+                workingCase.sendRequestToDefender && workingCase.courtDate,
+              ),
+            })}
+            handleClose={() => setModal('noModal')}
             primaryButtonText={formatMessage(
               icOverview.sections.caseResentModal.primaryButtonText,
             )}
@@ -374,7 +388,7 @@ export const Overview: React.FC = () => {
               icOverview.sections.caseResentModal.secondaryButtonText,
             )}
             handleSecondaryButtonClick={() => {
-              setResendCaseModalVisible(false)
+              setModal('noModal')
             }}
             handlePrimaryButtonClick={() => {
               handleNextButtonClick()
@@ -400,7 +414,7 @@ export const Overview: React.FC = () => {
         )}
       </AnimatePresence>
       <AnimatePresence>
-        {modalVisible && (
+        {modal === 'caseSubmittedModal' && (
           <Modal
             title={formatMessage(m.sections.modal.heading)}
             text={modalText}

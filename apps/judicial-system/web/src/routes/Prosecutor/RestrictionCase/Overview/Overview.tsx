@@ -56,7 +56,7 @@ import * as styles from './Overview.css'
 
 export const Overview: React.FC = () => {
   const [modal, setModal] = useState<
-    'noModal' | 'resendCaseModal' | 'caseSentModal'
+    'noModal' | 'caseResubmitModal' | 'caseSubmittedModal'
   >('noModal')
   const [caseResentExplanation, setCaseResentExplanation] = useState('')
   const [modalText, setModalText] = useState('')
@@ -107,11 +107,9 @@ export const Overview: React.FC = () => {
           caseResentExplanation,
         ),
       })
-
-      setModal('noModal')
     }
 
-    setModal('caseSentModal')
+    setModal('caseSubmittedModal')
   }
 
   return (
@@ -398,17 +396,20 @@ export const Overview: React.FC = () => {
           onNextButtonClick={
             workingCase.state === CaseState.RECEIVED
               ? () => {
-                  setModal('resendCaseModal')
+                  setModal('caseResubmitModal')
                 }
               : handleNextButtonClick
           }
         />
       </FormContentContainer>
       <AnimatePresence>
-        {modal === 'resendCaseModal' && (
+        {modal === 'caseResubmitModal' && (
           <Modal
             title={formatMessage(rcOverview.sections.caseResentModal.heading)}
-            text={formatMessage(rcOverview.sections.caseResentModal.text)}
+            text={formatMessage(rcOverview.sections.caseResentModal.textV2, {
+              sendRequestToDefender:
+                workingCase.sendRequestToDefender && workingCase.courtDate,
+            })}
             handleClose={() => setModal('noModal')}
             primaryButtonText={formatMessage(
               rcOverview.sections.caseResentModal.primaryButtonText,
@@ -448,7 +449,7 @@ export const Overview: React.FC = () => {
         )}
       </AnimatePresence>
       <AnimatePresence>
-        {modal === 'caseSentModal' && (
+        {modal === 'caseSubmittedModal' && (
           <Modal
             title={formatMessage(rcOverview.sections.modal.headingV2, {
               caseType: workingCase.type,
