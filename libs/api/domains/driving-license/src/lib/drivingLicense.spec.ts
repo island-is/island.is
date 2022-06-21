@@ -195,6 +195,10 @@ describe('DrivingLicenseService', () => {
             requirementMet: true,
           },
           {
+            key: 'LocalResidency',
+            requirementMet: true,
+          },
+          {
             key: 'DeniedByService',
             requirementMet: true,
           },
@@ -241,6 +245,10 @@ describe('DrivingLicenseService', () => {
           {
             key: 'DrivingSchoolMissing',
             requirementMet: false,
+          },
+          {
+            key: 'LocalResidency',
+            requirementMet: true,
           },
           {
             key: 'DeniedByService',
