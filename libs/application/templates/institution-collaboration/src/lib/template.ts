@@ -31,7 +31,10 @@ const contactSchema = z.object({
 
 const dataSchema = z.object({
   applicant: z.object({
-    institution: z.string().nonempty(),
+    institution: z.object({
+      nationalId: z.string().nonempty(),
+      label: z.string().nonempty(),
+    }),
   }),
   contact: contactSchema,
   hasSecondaryContact: z.enum([YES, NO]),
