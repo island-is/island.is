@@ -465,6 +465,7 @@ services-personal-representative:
       memory: '128Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    DB_PASS: '/k8s/services-auth/api/DB_PASSWORD'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -528,6 +529,7 @@ services-personal-representative-public:
       memory: '128Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    DB_PASS: '/k8s/services-auth/api/DB_PASSWORD'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
