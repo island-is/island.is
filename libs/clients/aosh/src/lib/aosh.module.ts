@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common'
-import { AdrApiProvider } from './providers/adrProvider'
-import { MachineApiProvider } from './providers/machineProvider'
+import { ApiConfig } from './api.config'
+import { exportedApis } from './providers'
 
 @Module({
-  providers: [MachineApiProvider, AdrApiProvider],
-  exports: [MachineApiProvider, AdrApiProvider],
+  providers: [ApiConfig, ...exportedApis],
+  exports: exportedApis,
 })
 export class AoshClientModule {}

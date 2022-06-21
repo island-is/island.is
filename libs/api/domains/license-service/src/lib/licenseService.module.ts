@@ -72,6 +72,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     timeout: 100,
   },
 ]
+
 @Module({})
 export class LicenseServiceModule {
   static register(config: Config): DynamicModule {
@@ -90,19 +91,10 @@ export class LicenseServiceModule {
           useValue: config,
         },
         {
-          provide: 'adrProvider',
-          useValue: AdrApiProvider,
-        },
-        {
-          provide: 'machineProvider',
-          useValue: MachineApiProvider,
-        },
-        {
           provide: GENERIC_LICENSE_FACTORY,
-          useFactory: () => async (
+          useFactory: (adrApi: AdrApi, machineApi: VinnuvelaApi) => async (
             type: GenericLicenseType,
             cacheManager: CacheManager,
-            user: User,
           ): Promise<GenericLicenseClient<unknown> | null> => {
             switch (type) {
               case GenericLicenseType.DriversLicense:
@@ -112,22 +104,14 @@ export class LicenseServiceModule {
                   cacheManager,
                 )
               case GenericLicenseType.AdrLicense:
-                return new GenericAdrLicenseApi(
-                  logger,
-                  AdrApiProvider,
-                  cacheManager,
-                )
-              /*case GenericLicenseType.MachineLicense:
-                return new GenericMachineLicenseApi(
-                  logger,
-                  machineApi,
-                  cacheManager,
-                )*/
+                return new GenericAdrLicenseApi(logger, adrApi)
+              case GenericLicenseType.MachineLicense:
+                return new GenericMachineLicenseApi(logger, machineApi)
               default:
                 return null
             }
           },
-          inject: [AdrApiProvider, VinnuvelaApi],
+          inject: [AdrApi, VinnuvelaApi],
         },
       ],
       exports: [LicenseServiceService],

@@ -16,7 +16,7 @@ export const AoshClientConfig = defineConfig<z.infer<typeof schema>>({
   load: (env) => ({
     xRoadServicePath: env.required(
       'XROAD_ADR_MACHINE_SERVICE_PATH',
-      'IS-DEV/GOV/10013/Vinnueftirlitid-Protected',
+      'IS-DEV/GOV/10013/Vinnueftirlitid-Protected/rettindi-v1',
     ),
     fetch: {
       timeout: 10000,

@@ -23,10 +23,7 @@ export class GenericMachineLicenseApi
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private machineApi: VinnuvelaApi,
-    private cacheManager?: CacheManager | null,
-  ) {
-    this.cacheManager = cacheManager
-  }
+  ) {}
 
   async fetchLicense(user: User) {
     let license: unknown

@@ -22,7 +22,6 @@ import {
 import { Locale } from '@island.is/shared/types'
 
 import { AVAILABLE_LICENSES } from './licenseService.module'
-
 const CACHE_KEY = 'licenseService'
 
 export type GetGenericLicenseOptions = {
@@ -142,8 +141,6 @@ export class LicenseServiceService {
           this.cacheManager,
           user,
         )
-
-        console.log(this.genericLicenseFactory)
 
         if (!licenseService) {
           this.logger.warn('No license service from generic license factory', {

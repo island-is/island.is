@@ -22,12 +22,8 @@ export class GenericAdrLicenseApi
   implements GenericLicenseClient<GenericAdrLicenseResponse> {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
-    @Inject('adrProvider')
     private adrApi: AdrApi,
-    private cacheManager?: CacheManager | null,
-  ) {
-    this.cacheManager = cacheManager
-  }
+  ) {}
 
   async fetchLicense(user: User) {
     let license: unknown
