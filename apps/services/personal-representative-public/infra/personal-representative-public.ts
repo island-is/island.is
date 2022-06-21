@@ -3,6 +3,12 @@ import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 export const serviceSetup = (): ServiceBuilder<'services-personal-representative-public'> => {
   return service('services-personal-representative-public')
     .namespace('personal-representative')
+    .image('services-personal-representative-public')
+    .postgres({
+      username: 'servicesauth',
+      name: 'servicesauth',
+      passwordSecret: '/k8s/services-auth/api/DB_PASSWORD',
+    })
     .env({
       IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
