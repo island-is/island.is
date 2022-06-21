@@ -23,7 +23,6 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
   errors,
 }) => {
   const error = (errors as any)?.vehicles?.vehicles
-  console.log(errors)
   const { id } = field
   const { formatMessage } = useLocale()
   const { fields, append, remove } = useFieldArray<Asset>({

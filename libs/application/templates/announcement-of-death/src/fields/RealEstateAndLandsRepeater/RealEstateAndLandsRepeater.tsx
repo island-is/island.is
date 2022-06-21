@@ -50,9 +50,7 @@ export const RealEstateAndLandsRepeater: FC<FieldBaseProps<Answers>> = ({
         !application.answers.assets?.encountered) &&
       externalData.estate.assets
     ) {
-      for (const asset of externalData.estate.assets) {
-        fields.push(asset)
-      }
+      append(externalData.estate.assets)
       setValue('assets.encountered', true)
     }
   }, [])
@@ -158,7 +156,7 @@ const Item = ({
 
   const [
     getProperty,
-    { loading: _queryLoading, error: _queryError },
+    { loading: queryLoading, error: _queryError },
   ] = useLazyQuery<Query, { input: SearchForPropertyInput }>(
     SEARCH_FOR_PROPERTY_QUERY,
     {
@@ -168,6 +166,7 @@ const Item = ({
           data.searchForProperty?.defaultAddress?.display ?? '',
         )
       },
+      fetchPolicy: 'network-only',
     },
   )
 
@@ -184,6 +183,8 @@ const Item = ({
           },
         },
       })
+    } else {
+      setValue(addressField, '')
     }
   }, [getProperty, address, addressField, propertyNumberInput, setValue])
 
@@ -219,6 +220,7 @@ const Item = ({
             id={addressField}
             name={addressField}
             label={formatMessage(m.address)}
+            loading={queryLoading}
             readOnly
             defaultValue={field.description}
           />
