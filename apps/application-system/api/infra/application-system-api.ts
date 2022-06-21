@@ -118,7 +118,7 @@ export const serviceSetup = (services: {
       INSTITUTION_APPLICATION_RECIPIENT_EMAIL_ADDRESS: {
         dev: 'gunnar.ingi@fjr.is',
         staging: 'gunnar.ingi@fjr.is',
-        prod: 'island@island.is',
+        prod: 'stafraentisland@fjr.is',
       },
       INSTITUTION_APPLICATION_RECIPIENT_NAME: {
         dev: 'Gunnar Ingi',
