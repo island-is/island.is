@@ -16,7 +16,7 @@ To create a client we need the following information:
 	 - These URLs are compared with the `post_logout_redirect_uri` sent when client ends a session. The URL in the request must match the URLs registered in IAS. The post logout redirect URL is the URL the user will be redirected to after signing out.
  - The application's technical stack
  - Whether the authentication is done client or server-side
- - If the stack supports PKCE
+ - If the stack supports PKCE since PKCE support is required
 	 - PKCE stands for Proof key for code exchange. It is an extension of the authorization code flow to prevent CSRF and injection attacks.
  - Whether you want national id (kennitala) and name in the id_token or fetch it through /connect/userinfo endpoint or some other way.
  - If you have any web services that need island.is authentication.
