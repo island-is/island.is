@@ -39,6 +39,7 @@ import {
 
 import * as styles from './SearchInput.css'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { TestSupport } from '@island.is/island-ui/utils'
 
 const DEBOUNCE_TIMER = 150
 const STACK_WIDTH = 400
@@ -220,7 +221,10 @@ interface SearchInputProps {
   quickContentLabel?: string
 }
 
-export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
+export const SearchInput = forwardRef<
+  HTMLInputElement,
+  SearchInputProps & TestSupport
+>(
   (
     {
       placeholder = '',
@@ -236,6 +240,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
       onRouting,
       skipContext,
       quickContentLabel,
+      dataTestId,
     },
     ref,
   ) => {
@@ -306,6 +311,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
             white={white}
             hasFocus={hasFocus}
             loading={search.isLoading}
+            dataTestId={dataTestId}
             skipContext={skipContext}
             rootProps={{
               'aria-controls': id + '-menu',
@@ -488,6 +494,7 @@ const Results = ({
                       }}
                       color="blue400"
                       underline="normal"
+                      dataTestId="search-result"
                       pureChildren
                       underlineVisibility={
                         search.suggestions.length + i === highlightedIndex

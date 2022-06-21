@@ -61,7 +61,6 @@ import {
 } from '@island.is/judicial-system/formatters'
 import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import * as constants from '@island.is/judicial-system/consts'
 import {
   core,
   signedVerdictOverview as m,
@@ -70,6 +69,7 @@ import {
 import { SignedDocument } from '@island.is/judicial-system-web/src/components/SignedDocument/SignedDocument'
 import CaseDates from '@island.is/judicial-system-web/src/components/CaseDates/CaseDates'
 import RestrictionTags from '@island.is/judicial-system-web/src/components/RestrictionTags/RestrictionTags'
+import * as constants from '@island.is/judicial-system/consts'
 
 import AppealSection from './Components/AppealSection/AppealSection'
 import { CourtRecordSignatureConfirmationQuery } from './courtRecordSignatureConfirmationGql'
@@ -182,9 +182,10 @@ export const SignedVerdictOverview: React.FC = () => {
   const canModifyCaseDates = useCallback(() => {
     return (
       user &&
-      [UserRole.JUDGE, UserRole.REGISTRAR, UserRole.PROSECUTOR].includes(
+      ([UserRole.JUDGE, UserRole.REGISTRAR, UserRole.PROSECUTOR].includes(
         user.role,
-      ) &&
+      ) ||
+        user.institution?.type === InstitutionType.PRISON_ADMIN) &&
       (workingCase.type === CaseType.CUSTODY ||
         workingCase.type === CaseType.ADMISSION_TO_FACILITY)
     )
@@ -428,14 +429,18 @@ export const SignedVerdictOverview: React.FC = () => {
   const onModifyDatesSubmit = async (update: UpdateCase) => {
     const updatedCase = await updateCase(workingCase.id, { ...update })
 
-    if (updatedCase) {
-      await sendNotification(workingCase.id, NotificationType.MODIFIED)
+    if (!updatedCase) {
+      return false
     }
+
+    await sendNotification(workingCase.id, NotificationType.MODIFIED)
 
     setWorkingCase({
       ...workingCase,
       ...(update as Case),
     })
+
+    return true
   }
 
   return (

@@ -17,7 +17,7 @@ describe(`${IC_MODIFY_RULING_ROUTE}/:id`, () => {
     cy.visit(`${IC_MODIFY_RULING_ROUTE}/test_id_stadfest`)
     intercept(caseData)
 
-    cy.getByTestid('alertMessage').should('exist')
+    cy.getByTestid('alertMessageModifyingRuling').should('exist')
   })
 
   it('should not allow changes to certain inputs', () => {

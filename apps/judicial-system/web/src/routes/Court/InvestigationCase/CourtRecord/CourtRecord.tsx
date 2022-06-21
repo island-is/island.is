@@ -47,7 +47,6 @@ import {
   setAndSendDateToServer,
   removeTabsValidateAndSet,
   validateAndSendToServer,
-  setAndSendToServer,
   validateAndSetTime,
   validateAndSendTimeToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
@@ -56,7 +55,7 @@ import {
   formatRequestCaseType,
   formatDate,
 } from '@island.is/judicial-system/formatters'
-import * as Constants from '@island.is/judicial-system/consts'
+import * as constants from '@island.is/judicial-system/consts'
 
 const getSessionBookingsAutofill = (
   formatMessage: IntlShape['formatMessage'],
@@ -308,12 +307,16 @@ const CourtRecord = () => {
               text={formatMessage(closedCourt.text)}
               isHidden={workingCase.isClosedCourtHidden}
               onToggleVisibility={(isVisible: boolean) =>
-                setAndSendToServer(
-                  'isClosedCourtHidden',
-                  isVisible,
+                autofill(
+                  [
+                    {
+                      key: 'isClosedCourtHidden',
+                      value: isVisible,
+                      force: true,
+                    },
+                  ],
                   workingCase,
                   setWorkingCase,
-                  updateCase,
                 )
               }
               tooltip={formatMessage(closedCourt.tooltip)}
@@ -848,7 +851,7 @@ const CourtRecord = () => {
                     autoComplete="off"
                     defaultValue={formatDate(
                       workingCase.courtEndTime,
-                      Constants.TIME_FORMAT,
+                      constants.TIME_FORMAT,
                     )}
                     errorMessage={courtDocumentEndEM}
                     hasError={courtDocumentEndEM !== ''}
@@ -869,9 +872,9 @@ const CourtRecord = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${Constants.IC_RULING_ROUTE}/${workingCase.id}`}
+          previousUrl={`${constants.IC_RULING_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoadingWorkingCase}
-          nextUrl={`${Constants.IC_CONFIRMATION_ROUTE}/${workingCase.id}`}
+          nextUrl={`${constants.IC_CONFIRMATION_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!isCourtRecordStepValidIC(workingCase)}
           hideNextButton={
             !workingCase.decision ||
