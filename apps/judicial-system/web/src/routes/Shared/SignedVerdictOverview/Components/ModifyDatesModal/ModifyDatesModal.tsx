@@ -26,7 +26,7 @@ interface DateTime {
 
 interface Props {
   workingCase: Case
-  onSubmit: (updateCase: UpdateCase) => void
+  onSubmit: (updateCase: UpdateCase) => Promise<boolean>
   isSendingNotification: boolean
   isUpdatingCase: boolean
   setIsModifyingDates: React.Dispatch<React.SetStateAction<boolean>>
@@ -196,8 +196,11 @@ const ModifyDatesModal: React.FC<Props> = ({
       ),
     }
 
-    onSubmit(update)
-    setSuccessText(modificationSuccessText)
+    const updated = await onSubmit(update)
+
+    if (updated) {
+      setSuccessText(modificationSuccessText)
+    }
   }, [
     caseModifiedExplanation,
     workingCase.caseModifiedExplanation,
