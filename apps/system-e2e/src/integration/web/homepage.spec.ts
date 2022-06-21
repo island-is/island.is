@@ -47,7 +47,9 @@ describe('Front page', () => {
   it.only('should change welcome message on language toggle', () => {
     cy.visit('/')
     cy.get('h1[data-testid="home-heading"]').then((previousHeading) => {
-      cy.get('button[data-testid="language-toggler"]:visible').click().as('clicked')
+      cy.get('button[data-testid="language-toggler"]:visible')
+        .click()
+        .as('clicked')
       cy.waitFor('@clicked')
       cy.get('h1[data-testid="home-heading"]').should(
         'not.have.text',
