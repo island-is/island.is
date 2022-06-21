@@ -73,7 +73,8 @@ const devConfig = {
   audit: {
     defaultNamespace: '@samband.is/financial-backend',
   },
-  navEncryptionKey: process.env.NAV_ENCRYPTION_KEY ?? 'secret-nav-encryption-key',
+  navEncryptionKey:
+    process.env.NAV_ENCRYPTION_KEY,
 }
 
 export default process.env.NODE_ENV === 'production' ? prodConfig : devConfig
