@@ -272,7 +272,7 @@ const properties: Field[] = [
       component: 'InfoCard',
       width: 'full',
       condition: (application) =>
-        (application?.vehicles as { vehicles: Asset[] })?.vehicles.length > 0,
+        (application?.vehicles as { vehicles: Asset[] })?.vehicles?.length > 0,
     },
     {
       cards: ({ answers }: Application) =>

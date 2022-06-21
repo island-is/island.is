@@ -27,7 +27,8 @@ export const FilesRecipientCard: FC<
 > = ({ application, field }) => {
   const { formatMessage } = useLocale()
   let options =
-    application.answers?.estateMembers.members.length !== 0
+    application.answers?.estateMembers?.members?.length &&
+    application.answers.estateMembers.members.length !== 0
       ? application.answers?.estateMembers?.members.map((estateMember) => ({
           label: estateMember.name,
           value: estateMember.nationalId,
