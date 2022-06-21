@@ -8,7 +8,7 @@ export const logo = style({
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
       width: '250px',
-      left: '44px',
+      left: '46px',
     },
   },
 })
