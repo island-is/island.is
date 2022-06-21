@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useEffect, useMemo } from 'react'
 
 import { Box, Inline, Option, Select, Tag } from '@island.is/island-ui/core'
 import { editorMsgs as msg } from '../messages'
@@ -7,6 +7,7 @@ import { LawChapter, LawChapterSlug } from '@island.is/regulations'
 import { emptyOption } from '../utils'
 import { useDraftingState } from '../state/useDraftingState'
 import { useLocale } from '@island.is/localization'
+import { useRegulationListQuery } from '../utils/dataHooks'
 
 const useLawChapterOptions = (
   lawChapters: Array<LawChapter>,
@@ -35,11 +36,27 @@ export const LawChaptersSelect = () => {
   const chaptersField = draft.lawChapters
   const activeChapters = chaptersField.value
 
+  const {
+    data: mentionedList /*, loading  , error */,
+  } = useRegulationListQuery(draft.mentioned)
+
   const lawChaptersOptions = useLawChapterOptions(
     lawChapters.list,
     activeChapters,
     t(msg.lawChapterPlaceholder),
   )
+
+  // Auto fill lawChapters if there are mentions and no lawchapters present
+  useEffect(() => {
+    if (mentionedList?.length && !draft.lawChapters.value.length) {
+      mentionedList.forEach((mention) => {
+        mention.lawChapters?.forEach((ch) => {
+          actions.updateLawChapterProp('add', ch.slug)
+        })
+      })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mentionedList])
 
   return (
     <Box>
