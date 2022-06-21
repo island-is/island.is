@@ -37,7 +37,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
 
       // Company
       {
-        name: 'Um fyriræki',
+        name: m.companyTitle,
         path: ServicePortalPath.Company,
         icon: {
           icon: 'business',

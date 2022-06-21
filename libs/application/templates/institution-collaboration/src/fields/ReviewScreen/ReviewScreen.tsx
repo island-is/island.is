@@ -80,7 +80,7 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
               {
                 getValueViaPath(
                   application.answers,
-                  'applicant.institution',
+                  'applicant.institution.label',
                 ) as string
               }
             </Text>
