@@ -242,10 +242,10 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
     setFilterValue((oldState) => {
       const { dateTo } = oldState
       const dateToValue = () => {
-        if (value) {
-          return dateTo ? (isAfter(value, dateTo) ? value : dateTo) : dateTo
+        if (!value) {
+          return dateTo
         }
-        return null
+        return dateTo ? (isAfter(value, dateTo) ? value : dateTo) : dateTo
       }
       return {
         ...oldState,
@@ -298,11 +298,11 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
     setFilterValue({ ...defaultFilterValues })
   }, [])
 
-  const handleShowUnread = useCallback((eh) => {
+  const handleShowUnread = useCallback((showUnread: boolean) => {
     setPage(1)
     setFilterValue((prevFilter) => ({
       ...prevFilter,
-      showUnread: eh.target.checked,
+      showUnread,
     }))
   }, [])
 
@@ -374,7 +374,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                   id="show-unread"
                   label={formatMessage(messages.onlyShowUnread)}
                   checked={filterValue.showUnread}
-                  onChange={handleShowUnread}
+                  onChange={(e) => handleShowUnread(e.target.checked)}
                 />
               </Box>
               <Box
@@ -533,6 +533,12 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                           title={`${formatMessage(
                             messages.datepickerToLabel,
                           )} - ${format(filterValue.dateTo, dateFormat.is)}`}
+                        />
+                      )}
+                      {filterValue.showUnread && (
+                        <FilterTag
+                          onClick={() => handleShowUnread(false)}
+                          title={formatMessage(messages.onlyShowUnreadShort)}
                         />
                       )}
                     </Box>

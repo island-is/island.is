@@ -38,6 +38,10 @@ export const messages = defineMessages({
     id: 'sp.documents:only-show-unread',
     defaultMessage: 'Sýna einungis ólesið',
   },
+  onlyShowUnreadShort: {
+    id: 'sp.documents:only-show-unread-short',
+    defaultMessage: 'Sýna ólesið',
+  },
   clearSelected: {
     id: 'sp.documents:clear-selected',
     defaultMessage: 'Hreinsa val',
