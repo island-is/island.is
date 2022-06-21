@@ -1,6 +1,5 @@
 import React, { FC, useCallback, useEffect, useMemo, useReducer } from 'react'
 import { Route, Switch, useHistory } from 'react-router-dom'
-import { CompatRoute } from 'react-router-dom-v5-compat'
 import type { History } from 'history'
 import type { User } from 'oidc-client-ts'
 
@@ -189,23 +188,23 @@ export const Authenticator: FC<Props> = ({ children, autoLogin = true }) => {
   return (
     <AuthContext.Provider value={context}>
       <Switch>
-        <CompatRoute
+        <Route
           exact
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           path={authSettings.redirectPath!}
           render={() => <OidcSignIn authDispatch={dispatch} />}
         />
-        <CompatRoute
+        <Route
           exact
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           path={authSettings.redirectPathSilent!}
           component={OidcSilentSignIn}
         />
-        <CompatRoute>
+        <Route>
           <CheckAuth checkLogin={checkLogin} autoLogin={autoLogin}>
             {children}
           </CheckAuth>
-        </CompatRoute>
+        </Route>
       </Switch>
     </AuthContext.Provider>
   )
