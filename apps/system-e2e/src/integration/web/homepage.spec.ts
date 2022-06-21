@@ -26,7 +26,7 @@ describe('Home page', () => {
   it('should navigate to featured link', () => {
     cy.visit('/')
     cy.get('[data-testid="featured-link"]')
-      .should('have.length.at.least', 8)
+      .should('have.length.at.least', 3)
       .each((link) => cy.visit(link.prop('href')))
   })
 
