@@ -87,7 +87,7 @@ const courtFields: (keyof UpdateCase)[] = [
   'rulingModifiedHistory',
 ]
 
-const adminFields: (keyof UpdateCase)[] = [
+const staffFields: (keyof UpdateCase)[] = [
   'validToDate',
   'isolationToDate',
   'caseModifiedExplanation',
@@ -107,11 +107,13 @@ export const registrarUpdateRule = {
   dtoFields: courtFields,
 } as RolesRule
 
-// Allows prison admins to update a specific set of fields
-export const adminUpdateRule = {
+// Allows staff to update a specific set of fields
+// In practice, only prison admins will be able to update these fields,
+// as write access is blocked for other staff roles
+export const staffUpdateRule = {
   role: UserRole.STAFF,
   type: RulesType.FIELD,
-  dtoFields: adminFields,
+  dtoFields: staffFields,
 } as RolesRule
 
 // Allows prosecutors to open, submit and delete cases

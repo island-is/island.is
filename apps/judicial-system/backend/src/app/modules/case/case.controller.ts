@@ -54,7 +54,7 @@ import { CaseReadGuard } from './guards/caseRead.guard'
 import { CaseWriteGuard } from './guards/caseWrite.guard'
 import { CurrentCase } from './guards/case.decorator'
 import {
-  adminUpdateRule,
+  staffUpdateRule,
   judgeTransitionRule,
   judgeUpdateRule,
   prosecutorTransitionRule,
@@ -123,7 +123,7 @@ export class CaseController {
     prosecutorUpdateRule,
     judgeUpdateRule,
     registrarUpdateRule,
-    adminUpdateRule,
+    staffUpdateRule,
   )
   @Put('case/:caseId')
   @ApiOkResponse({ type: Case, description: 'Updates an existing case' })
