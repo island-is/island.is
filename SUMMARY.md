@@ -46,7 +46,7 @@
   - [Configuration](handbook/technical-overview/auth/configuration.md)
   - [Delegations (BETA)](handbook/technical-overview/auth/delegations.md)
   - [Environments](handbook/technical-overview/auth/environments.md)
-  - [IAS Admin Interface](handbook/technical-overview/auth/ids-admin.md)
+  - [IAS Onboarding Questionnaire](handbook/technical-overview/auth/ias-onboarding-questionnaire .md)
   - [Tools and Examples](handbook/technical-overview/auth/integration-guidance.md)
   - [Integration Options](handbook/technical-overview/auth/integration-options.md)
   - [Integrate IAS in Postman](handbook/technical-overview/auth/postman-test.md)
