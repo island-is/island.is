@@ -165,6 +165,7 @@ module.exports = {
     '<rootDir>/libs/judicial-system/consts',
     '<rootDir>/libs/judicial-system/court-client',
     '<rootDir>/libs/judicial-system/formatters',
+    '<rootDir>/libs/judicial-system/message',
     '<rootDir>/libs/judicial-system/types',
     '<rootDir>/libs/nest/audit',
     '<rootDir>/libs/nest/aws',
@@ -208,6 +209,5 @@ module.exports = {
     '<rootDir>/libs/testing/containers',
     '<rootDir>/libs/testing/fixtures',
     '<rootDir>/libs/testing/nest',
-    '<rootDir>/libs/judicial-system/message',
   ],
 }
