@@ -4,6 +4,7 @@ import { Text, UploadFile } from '@island.is/island-ui/core'
 import { incomeFilesForm } from '../../lib/messages'
 import { FAFieldBaseProps, OverrideAnswerSchema, UploadFileType } from '../..'
 import { Files } from '..'
+import withLogo from '../Logo/Logo'
 
 const IncomeFilesForm = ({ field, application }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
@@ -30,4 +31,4 @@ const IncomeFilesForm = ({ field, application }: FAFieldBaseProps) => {
   )
 }
 
-export default IncomeFilesForm
+export default withLogo(IncomeFilesForm)
