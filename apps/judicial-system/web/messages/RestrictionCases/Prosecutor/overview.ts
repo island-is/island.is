@@ -70,6 +70,7 @@ export const rcOverview = {
           'Notaður sem texti í modal þegar ekki tókst að senda tilkynningu til dómara og dómritara á vakt',
       },
     }),
+    // TODO: remove this 'caseResentModal' section
     caseResentModal: {
       heading: defineMessage({
         id:
@@ -78,19 +79,10 @@ export const rcOverview = {
         description:
           'Notaður sem titill á modal sem birtist þegar móttekin krafa er endursend',
       }),
-      // TODO: remove this 'text' property
       text: defineMessage({
         id: 'judicial.system.restriction_cases:overview.case_resent_modal.text',
         defaultMessage:
           'Hér er hægt að senda skilaboð til dómstólsins með upplýsingum um hverju var breytt eða bætt við kröfuna áður en hún er send aftur.',
-        description:
-          'Notaður sem texti í modal þegar móttekin krafa er endursend',
-      }),
-      textV2: defineMessage({
-        id:
-          'judicial.system.restriction_cases:overview.case_resent_modal.textV2',
-        defaultMessage:
-          'Hér er hægt að senda skilaboð til dómstólsins með upplýsingum um hverju var breytt eða bætt við kröfuna áður en hún er send aftur.{sendRequestToDefender, select, true { Bæði dómari og verjandi munu fá tilkynningu um að krafa hafi verið send aftur.} other {}}',
         description:
           'Notaður sem texti í modal þegar móttekin krafa er endursend',
       }),
