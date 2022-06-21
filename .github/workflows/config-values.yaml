@@ -40,7 +40,8 @@ jobs:
         id: select_envs
         run: |
           GIT_BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF/refs\/heads\//}}"
-          ENVS=("dev" "staging")
+          # ENVS=("dev" "staging")
+          ENVS=("dev" "staging" "prod" "ids")
           if [[ $GIT_BRANCH =~ ^release\/ ]]; then
             echo "Adding prod environments to test set"
             ENVS+=("prod")
