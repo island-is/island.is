@@ -82,6 +82,10 @@ export const messages = defineMessages({
     id: 'sp.documents:table-header-institution',
     defaultMessage: 'Stofnun',
   },
+  tableHeaderGroup: {
+    id: 'sp.documents:table-header-group',
+    defaultMessage: 'Flokkur',
+  },
   notFound: {
     id: 'sp.documents:not-found',
     defaultMessage: 'Engin skjöl fundust fyrir gefin leitarskilyrði.',
