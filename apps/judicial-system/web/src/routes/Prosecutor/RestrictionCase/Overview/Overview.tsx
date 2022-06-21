@@ -53,12 +53,12 @@ import type { CaseLegalProvisions } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
 
 import * as styles from './Overview.css'
+import CaseResubmitModal from '@island.is/judicial-system-web/src/components/CaseResubmitModal/CaseResubmitModal'
 
 export const Overview: React.FC = () => {
   const [modal, setModal] = useState<
     'noModal' | 'caseResubmitModal' | 'caseSubmittedModal'
   >('noModal')
-  const [caseResentExplanation, setCaseResentExplanation] = useState('')
   const [modalText, setModalText] = useState('')
   const {
     workingCase,
@@ -78,7 +78,7 @@ export const Overview: React.FC = () => {
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
 
-  const handleNextButtonClick = async () => {
+  const handleNextButtonClick = async (caseResentExplanation?: string) => {
     if (!workingCase) {
       return
     }
@@ -404,48 +404,12 @@ export const Overview: React.FC = () => {
       </FormContentContainer>
       <AnimatePresence>
         {modal === 'caseResubmitModal' && (
-          <Modal
-            title={formatMessage(rcOverview.sections.caseResentModal.heading)}
-            text={formatMessage(rcOverview.sections.caseResentModal.textV2, {
-              sendRequestToDefender:
-                workingCase.sendRequestToDefender && workingCase.courtDate,
-            })}
-            handleClose={() => setModal('noModal')}
-            primaryButtonText={formatMessage(
-              rcOverview.sections.caseResentModal.primaryButtonText,
-            )}
-            secondaryButtonText={formatMessage(
-              rcOverview.sections.caseResentModal.secondaryButtonText,
-            )}
-            handleSecondaryButtonClick={() => {
-              setModal('noModal')
-            }}
-            handlePrimaryButtonClick={() => {
-              handleNextButtonClick()
-            }}
-            errorMessage={
-              sendNotificationError
-                ? formatMessage(errors.sendNotification)
-                : undefined
-            }
-            isPrimaryButtonLoading={isSendingNotification}
-            isPrimaryButtonDisabled={!caseResentExplanation}
-          >
-            <Box marginBottom={10}>
-              <Input
-                name="caseResentExplanation"
-                label={formatMessage(
-                  rcOverview.sections.caseResentModal.input.label,
-                )}
-                placeholder={formatMessage(
-                  rcOverview.sections.caseResentModal.input.placeholder,
-                )}
-                onChange={(evt) => setCaseResentExplanation(evt.target.value)}
-                textarea
-                rows={7}
-              />
-            </Box>
-          </Modal>
+          <CaseResubmitModal
+            workingCase={workingCase}
+            isLoading={isSendingNotification}
+            onClose={() => setModal('noModal')}
+            onContinue={(explaination) => handleNextButtonClick(explaination)}
+          />
         )}
       </AnimatePresence>
       <AnimatePresence>
