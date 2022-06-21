@@ -11,7 +11,9 @@ import {
 } from '@island.is/clients/vehicles'
 import { VehiclesAxle, VehiclesDetail } from '../models/getVehicleDetail.model'
 import { ApolloError } from 'apollo-server-express'
-import { FetchError } from '@island.is/clients/middlewares'
+
+/** Category to attach each log message to */
+const LOG_CATEGORY = 'vehicles-service'
 
 // 1kW equals 1.359622 metric horsepower.
 const KW_TO_METRIC_HP = 1.359622
@@ -24,14 +26,19 @@ export class VehiclesService {
     private vehiclesApi: VehicleSearchApi,
   ) {}
 
-  private handle4xx(error: FetchError): ApolloError | null {
+  handleError(error: any, detail?: string): ApolloError | null {
+    this.logger.error(detail || 'Vehicles error', {
+      error: JSON.stringify(error),
+      category: LOG_CATEGORY,
+    })
+    throw new ApolloError('Failed to resolve request', error.status)
+  }
+
+  private handle4xx(error: any, detail?: string): ApolloError | null {
     if (error.status === 403 || error.status === 404) {
       return null
     }
-    throw new ApolloError(
-      'Failed to resolve request',
-      error?.message || error?.status.toString(),
-    )
+    return this.handleError(error, detail)
   }
 
   async getVehiclesForUser(
@@ -45,9 +52,7 @@ export class VehiclesService {
       if (!data) return {}
       return data
     } catch (e) {
-      const errMsg = 'Failed to get vehicle list'
-      this.logger.error(errMsg, { e })
-      return this.handle4xx(e)
+      return this.handle4xx(e, 'Failed to get vehicle list')
     }
   }
 
@@ -257,9 +262,7 @@ export class VehiclesService {
       }
       return response
     } catch (e) {
-      const errMsg = 'Failed to get vehicle details'
-      this.logger.error(errMsg, { e })
-      return this.handle4xx(e)
+      return this.handle4xx(e, 'Failed to get vehicle details')
     }
   }
 }

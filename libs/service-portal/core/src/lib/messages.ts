@@ -681,4 +681,8 @@ export const m = defineMessages({
     id: 'service.portal:mortage-certificate',
     defaultMessage: 'Veðbókarvottorð',
   },
+  companyTitle: {
+    id: 'service.portal:company-title',
+    defaultMessage: 'Um fyrirtæki',
+  },
 })

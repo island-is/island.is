@@ -182,9 +182,10 @@ export const SignedVerdictOverview: React.FC = () => {
   const canModifyCaseDates = useCallback(() => {
     return (
       user &&
-      [UserRole.JUDGE, UserRole.REGISTRAR, UserRole.PROSECUTOR].includes(
+      ([UserRole.JUDGE, UserRole.REGISTRAR, UserRole.PROSECUTOR].includes(
         user.role,
-      ) &&
+      ) ||
+        user.institution?.type === InstitutionType.PRISON_ADMIN) &&
       (workingCase.type === CaseType.CUSTODY ||
         workingCase.type === CaseType.ADMISSION_TO_FACILITY)
     )
@@ -428,14 +429,18 @@ export const SignedVerdictOverview: React.FC = () => {
   const onModifyDatesSubmit = async (update: UpdateCase) => {
     const updatedCase = await updateCase(workingCase.id, { ...update })
 
-    if (updatedCase) {
-      await sendNotification(workingCase.id, NotificationType.MODIFIED)
+    if (!updatedCase) {
+      return false
     }
+
+    await sendNotification(workingCase.id, NotificationType.MODIFIED)
 
     setWorkingCase({
       ...workingCase,
       ...(update as Case),
     })
+
+    return true
   }
 
   return (

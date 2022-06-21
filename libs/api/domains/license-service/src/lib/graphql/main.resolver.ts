@@ -75,7 +75,7 @@ export class VerifyPkPassInput {
 }
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(ApiScope.internal)
+@Scopes(ApiScope.internal, ApiScope.licenses)
 @Resolver()
 @Audit({ namespace: '@island.is/api/license-service' })
 export class MainResolver {

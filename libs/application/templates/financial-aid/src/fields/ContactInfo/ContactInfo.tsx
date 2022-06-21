@@ -8,6 +8,7 @@ import { useFormContext } from 'react-hook-form'
 import { getValueViaPath } from '@island.is/application/core'
 import { answersSchema } from '../../lib/dataSchema'
 import { Routes } from '../../lib/constants'
+import withLogo from '../Logo/Logo'
 
 const ContactInfo = ({ field, errors, application }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
@@ -64,4 +65,4 @@ const ContactInfo = ({ field, errors, application }: FAFieldBaseProps) => {
   )
 }
 
-export default ContactInfo
+export default withLogo(ContactInfo)
