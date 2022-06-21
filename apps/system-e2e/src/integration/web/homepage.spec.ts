@@ -1,4 +1,4 @@
-describe('Home page', () => {
+describe('Front page', () => {
   beforeEach(() => {
     cy.cognitoLogin({
       cognitoUsername: Cypress.env('cognitoUsername'),
@@ -42,5 +42,12 @@ describe('Home page', () => {
         cy.get('[data-testid="link-back-home"]').click()
         cy.location('pathname', locationOptions).should('equal', '/')
       })
+  })
+
+  it('should change welcome message on language toggle', () => {
+    cy.visit('/')
+    cy.get('h1[data-testid="home-heading"]').as('welcome')
+    cy.get('button[data-testid="language-toggler"]').click()
+    cy.get('h1[data-testid="home-heading"]').should('not.eq', '@welcome')
   })
 })
