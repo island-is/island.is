@@ -1,5 +1,5 @@
 
-# IAS Admin interface
+# IAS Admin Interface
 When users want to start using IAS they are provided with a document to fill out. We use this information to create clients and/or scopes and resources in the admin interface. Below are descriptions of these terms so you can provide us with accurate information along with what information we need and why.
 
 ## Client
