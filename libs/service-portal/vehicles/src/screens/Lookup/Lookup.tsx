@@ -1,5 +1,9 @@
-import React from 'react'
-import { ServicePortalModuleComponent, m } from '@island.is/service-portal/core'
+import React, { useState } from 'react'
+import {
+  ServicePortalModuleComponent,
+  m,
+  EmptyState,
+} from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 
 import {
@@ -12,13 +16,34 @@ import {
   Button,
   Divider,
 } from '@island.is/island-ui/core'
+import { messages } from '../../lib/messages'
+import { useQuery } from '@apollo/client'
+import { Query } from '@island.is/api/schema'
+import { GET_USERS_VEHICLES_SEARCH_LIMIT } from '../../queries/getUsersVehicleSearchLimit'
 
 export const Lookup: ServicePortalModuleComponent = () => {
   useNamespaces('sp.vehicles')
   const { formatMessage } = useLocale()
+  const [termsAccepted, setTermsAccepted] = useState(false)
+  const [limit, setLimit] = useState<number>()
+  const [searchValue, setSearchValue] = useState('')
 
-  // const { data, loading, error, called } = useQuery<Query>()
-  // const vehicles = data?.getVehiclesForUser?.vehicleList || []
+  const { data: searchLimitData, loading, error } = useQuery<Query>(
+    GET_USERS_VEHICLES_SEARCH_LIMIT,
+  )
+
+  if (!loading && searchLimitData && !limit) {
+    const limit = searchLimitData.vehiclesSearchLimit || 0
+    setLimit(limit)
+  }
+
+  if (error) {
+    return (
+      <Box>
+        <EmptyState description={m.errorFetch} />
+      </Box>
+    )
+  }
 
   return (
     <>
@@ -27,10 +52,7 @@ export const Lookup: ServicePortalModuleComponent = () => {
           <GridColumn span={['12/12', '12/12', '6/8', '6/8']}>
             <Stack space={3}>
               <Text variant="h3" as="h1">
-                {formatMessage({
-                  id: 'sp.vehicles:vehicles-lookup-title',
-                  defaultMessage: 'Uppfletting í ökutækjaskrá',
-                })}
+                {formatMessage(messages.vehiclesLookup)}
               </Text>
               <Text as="p" variant="default">
                 {formatMessage({
@@ -38,6 +60,7 @@ export const Lookup: ServicePortalModuleComponent = () => {
                   defaultMessage: `Þú getur flett upp allt að 5 ökutækjum á dag.`,
                 })}
               </Text>
+
               <Text variant="h5">
                 {formatMessage({
                   id: 'sp.vehicles:vehicles-lookup-terms-title',
@@ -54,13 +77,23 @@ export const Lookup: ServicePortalModuleComponent = () => {
                   Sá er flettir upp er aðeins heimilt að nota upplýsingarnar í eigin þágu. Óheimilt er að miðla upplýsingum úr ökutækjaskrá til þriðja aðila eða birta þær opinberlega nema að því leyti sem það getur talist eðlilegur þáttur í starfsemi viðtakanda. Persónuupplýsingar má þó aldrei birta opinberlega.`,
                 })}
               </Text>
-              <Button size="small">
+              <Button
+                size="small"
+                onClick={() => setTermsAccepted(true)}
+                icon={termsAccepted ? 'checkmark' : undefined}
+              >
                 {' '}
-                {formatMessage({
-                  id: 'sp.vehicles:vehicles-lookup-terms-button',
-                  defaultMessage: `Samþykkja skilmála`,
-                })}
+                {!termsAccepted
+                  ? formatMessage({
+                      id: 'sp.vehicles:vehicles-lookup-terms-button',
+                      defaultMessage: `Samþykkja skilmála`,
+                    })
+                  : formatMessage({
+                      id: 'sp.vehicles:vehicles-lookup-terms-accepted',
+                      defaultMessage: `Þú hefur samþykkt skilmála`,
+                    })}
               </Button>
+
               <Divider />
             </Stack>
           </GridColumn>
@@ -68,14 +101,18 @@ export const Lookup: ServicePortalModuleComponent = () => {
       </Box>
       <Stack space={2}>
         <GridRow>
-          <GridColumn span={['12/12', '12/12', '4/12', '4/12', '4/12']}>
-            <Stack space={2}>
+          <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+            <Box
+              display="flex"
+              flexDirection={['column', 'column', 'row']}
+              alignItems={['flexStart', 'flexStart', 'flexEnd']}
+            >
               <Input
                 icon="search"
                 backgroundColor="blue"
                 size="xs"
-                value={''}
-                onChange={(ev) => console.log(ev.target.value)}
+                value={searchValue}
+                onChange={(ev) => setSearchValue(ev.target.value)}
                 name="uppfletting-okutaekjaskra-leit"
                 label={formatMessage({
                   id: 'sp.vehicles:vehicles-lookup-label',
@@ -83,10 +120,27 @@ export const Lookup: ServicePortalModuleComponent = () => {
                 })}
                 placeholder={formatMessage({
                   id: 'sp.vehicles:vehicles-lookup-placeholder',
-                  defaultMessage: `Leitaðu eftir VIN / Fastanr / Skráningarnr.`,
+                  defaultMessage: `Leita.`,
                 })}
+                disabled={!termsAccepted}
               />
-            </Stack>
+              <Box marginLeft={[0, 0, 3]} marginTop={[2, 2, 0]}>
+                <Button
+                  disabled={!termsAccepted}
+                  variant="ghost"
+                  size="small"
+                  onClick={() => console.log('search')}
+                >
+                  {formatMessage({
+                    id: 'sp.vehicles:vehicles-lookup-search',
+                    defaultMessage: `Leita`,
+                  })}{' '}
+                  {' ('}
+                  {limit}
+                  {')'}
+                </Button>
+              </Box>
+            </Box>
           </GridColumn>
         </GridRow>
       </Stack>

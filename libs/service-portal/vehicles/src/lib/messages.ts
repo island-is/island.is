@@ -13,6 +13,10 @@ export const messages = defineMessages({
     id: 'sp.vehicles:vehicles-title',
     defaultMessage: 'Ökutæki',
   },
+  historyTitle: {
+    id: 'sp.vehicles:vehicles-history-title',
+    defaultMessage: 'Ökutækjaferill',
+  },
   intro: {
     id: 'sp.vehicles:vehicles-intro',
     defaultMessage: `Hér má nálgast upplýsingar um þín ökutæki úr ökutækjaskrá Samgöngustofu.`,
@@ -323,5 +327,42 @@ export const messages = defineMessages({
   no: {
     id: 'sp.vehicles:no',
     defaultMessage: 'Nei',
+  },
+  baught: {
+    id: 'sp.vehicles:baught',
+    defaultMessage: 'Keypt',
+  },
+  sold: {
+    id: 'sp.vehicles:sold',
+    defaultMessage: 'Selt',
+  },
+  innlogn: {
+    id: 'sp.vehicles:innlogn',
+    defaultMessage: 'Innlögn',
+  },
+  status: {
+    id: 'sp.vehicles:status',
+    defaultMessage: 'Staða',
+  },
+  ownersHistory: {
+    id: 'sp.vehicles:owners-history',
+    defaultMessage: 'Eignarferill',
+  },
+  operatorHistory: {
+    id: 'sp.vehicles:operator-history',
+    defaultMessage: 'Umráðaferill',
+  },
+  coOwnerHistory: {
+    id: 'sp.vehicles:co-owner-history',
+    defaultMessage: 'Meðeigendaferill',
+  },
+
+  vehiclesLookup: {
+    id: 'sp.vehicles:vehicles-lookup',
+    defaultMessage: 'Uppfletting í ökutækjaskrá',
+  },
+  showDeregistered: {
+    id: 'sp.vehicles:show-deregistered',
+    defaultMessage: 'Sýna afskráð ökutæki',
   },
 })

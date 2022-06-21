@@ -24,6 +24,35 @@
     }
   ],
   "paths": {
+    "/SearchesRemaining": {
+      "get": {
+        "tags": ["VehicleSearch"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "OAuth2": ["OAuth2"]
+          }
+        ]
+      }
+    },
     "/VehicleSearch": {
       "get": {
         "tags": ["VehicleSearch"],
@@ -2187,6 +2216,10 @@
           },
           "nextInspection": {
             "$ref": "#/components/schemas/SGSVehiNextInsp"
+          },
+          "deregistrationDate": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
