@@ -69,7 +69,7 @@ export type StatusColor = {
 interface UploadedFileProps {
   file: UploadFile
   showFileSize: boolean
-  onRemoveClick: (file: UploadFile) => void
+  onRemoveClick?: (file: UploadFile) => void
   onRetryClick?: (file: UploadFile) => void
   onOpenFile?: (file: UploadFile) => void
   defaultBackgroundColor?: StatusColor
@@ -204,7 +204,7 @@ export const UploadedFile = ({
               type={'button'}
               onClick={(e) => {
                 e.stopPropagation()
-                if (!isUploading) {
+                if (!isUploading && onRemoveClick) {
                   onRemoveClick(file)
                 }
               }}
