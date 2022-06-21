@@ -31,22 +31,39 @@ export const FiskistofaFooter = ({ footerItems }: FiskistofaFooterProps) => {
                 />
               </Box>
             </GridRow>
-            <GridRow marginTop={2}>
-              {footerItems.slice(0, 3).map((item) => (
-                <GridColumn>
+            <GridRow marginTop={2} className={styles.linkRow}>
+              {footerItems.slice(0, 3).map((item, idx) => (
+                <GridColumn span={['10/10', '10/10', '5/10', '2/10']}>
                   <Text fontWeight="semiBold" marginBottom={2}>
                     <Hyphen>{item.title}</Hyphen>
                   </Text>
-                  {richText(item.content as SliceType[])}
+                  {richText(item.content as SliceType[], {
+                    renderNode: {
+                      [BLOCKS.PARAGRAPH]: (_node, children) => (
+                        <Text
+                          variant={'medium'}
+                          marginBottom={1}
+                          lineHeight={'lg'}
+                        >
+                          {children}
+                        </Text>
+                      ),
+                    },
+                  })}
                 </GridColumn>
               ))}
 
               {footerItems[3] && (
-                <GridColumn className={styles.linkContainer}>
+                <GridColumn
+                  className={styles.linkContainer}
+                  paddingTop={[2, 2, 0]}
+                >
                   {richText(footerItems[3].content as SliceType[], {
                     renderNode: {
                       [BLOCKS.PARAGRAPH]: (_node, children) => (
-                        <Text>{children}</Text>
+                        <Text variant={'eyebrow'} fontWeight={'medium'}>
+                          {children}
+                        </Text>
                       ),
                     },
                   })}
@@ -54,8 +71,8 @@ export const FiskistofaFooter = ({ footerItems }: FiskistofaFooterProps) => {
                     <img
                       src="https://images.ctfassets.net/8k0h54kbe6bj/7076IkepUKnI8eKHbo69Ys/40d84cf75b177a8bef7beb1f6d45f6cd/fiskistofa-jafnlaunavottun.png"
                       alt="fiskistofa-jafnlaunavottun"
-                      width={100}
-                      height={100}
+                      width={80}
+                      height={80}
                     />
                     <img
                       src="https://images.ctfassets.net/8k0h54kbe6bj/71f5kkbe52Y21n62JfdxlQ/bd5c7f87d582ab1cd74b6e6ca61d6890/fiskistofa-bsi.png"
