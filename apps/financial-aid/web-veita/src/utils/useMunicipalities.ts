@@ -43,9 +43,7 @@ const MunicipalityQuery = gql`
 `
 
 export const useMunicipalities = () => {
-  const storageKey = 'currentMunicipalities'
-
-  const [municipality, setScopedMunicipality] = useState<Municipality[]>([])
+  const [municipality, setMunicipality] = useState<Municipality[]>([])
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<Error | undefined>(undefined)
@@ -55,30 +53,15 @@ export const useMunicipalities = () => {
   }>(MunicipalityQuery)
 
   useEffect(() => {
-    if (sessionStorage.getItem(storageKey)) {
-      setScopedMunicipality(
-        JSON.parse(sessionStorage.getItem(storageKey) as string),
-      )
-      return
-    }
     setMunicipalityById()
   }, [])
-
-  const setMunicipality = (municipality: Municipality[]) => {
-    setScopedMunicipality(municipality)
-    sessionStorage.setItem(storageKey, JSON.stringify(municipality))
-  }
 
   const setMunicipalityById = async () => {
     try {
       setError(undefined)
       setLoading(true)
       return await getMunicipality({}).then((res) => {
-        setScopedMunicipality(res.data?.municipalityByIds ?? [])
-        sessionStorage.setItem(
-          storageKey,
-          JSON.stringify(res.data?.municipalityByIds),
-        )
+        setMunicipality(res.data?.municipalityByIds ?? [])
         setLoading(false)
         return res.data?.municipalityByIds ?? []
       })

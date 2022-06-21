@@ -47,7 +47,7 @@ export class UpdateMunicipalityDto {
   @IsOptional()
   @IsString()
   @ApiProperty()
-  readonly navPassword?: string
+  navPassword?: string
 
   @IsString()
   @ApiProperty()
