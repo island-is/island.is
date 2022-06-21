@@ -373,7 +373,7 @@ export class NotificationService {
     const { body, subject } = formatDefenderResubmittedToCourtEmailNotification(
       this.formatMessage,
       theCase.policeCaseNumber || '',
-      '',
+      `${environment.deepLinks.defenderCaseOverviewUrl}${theCase.id}`,
       theCase.court?.name,
     )
 
