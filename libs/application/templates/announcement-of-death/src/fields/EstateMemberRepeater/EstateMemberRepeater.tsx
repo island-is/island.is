@@ -183,6 +183,7 @@ const Item = ({
     onCompleted: (data) => {
       setValue(nameField, data.identity?.name ?? '')
     },
+    fetchPolicy: 'network-only',
   })
 
   useEffect(() => {
@@ -194,7 +195,10 @@ const Item = ({
           },
         },
       })
-    } else if (name !== '' && !foreignCitizenship) {
+    } else if (
+      name !== '' &&
+      (!foreignCitizenship || foreignCitizenship.length == 0)
+    ) {
       setValue(nameField, '')
     }
   }, [getIdentity, name, nameField, nationalIdInput, setValue])
