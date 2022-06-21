@@ -28,12 +28,12 @@ describe('ApplicationAccesService', () => {
   })
 
   it('should return true when application is in draft and user is an applicant', async () => {
-    const applicationInReview = createApplication({
+    const applicationInDraft = createApplication({
       state: 'draft',
       applicant: '111111-3000',
     })
     const results = await applicationAccessService.canDeleteApplication(
-      applicationInReview,
+      applicationInDraft,
       '111111-3000',
     )
     expect(results).toBe(true)
@@ -51,7 +51,7 @@ describe('ApplicationAccesService', () => {
     expect(results).toBe(false)
   })
 
-  it('should return true when application is in draft and has both shouldBeListedForRole set as true and not set = undefined', async () => {
+  it('should return true when application is in draft and has both shouldBeListedForRole set as true for applicant and undefined for reviewer', async () => {
     const applicationInDraft = createApplication({
       state: 'draft',
       applicant: '111111-3000',
@@ -72,7 +72,7 @@ describe('ApplicationAccesService', () => {
     expect(results2).toBe(true)
   })
 
-  it('should return false when application is in review and user is a reviewer and template dictactes it should be hidden in overview', async () => {
+  it('should return correct ', async () => {
     const applicationInReview = createApplication({
       state: 'inReview',
       applicant: '111111-3000',
@@ -83,15 +83,22 @@ describe('ApplicationAccesService', () => {
       testApplicationTemplate,
     )
     expect(results).toBe(false)
+
+    const results2 = await applicationAccessService.shouldShowApplicationOnOverview(
+      applicationInReview,
+      '111111-3001',
+      testApplicationTemplate,
+    )
+    expect(results2).toBe(true)
   })
 
   it('should return true when application is in rejected and should be listed is not defined for the role', async () => {
-    const applicationInReview = createApplication({
+    const applicationInRejected = createApplication({
       state: 'rejected',
       applicant: '111111-3000',
     })
     const results = await applicationAccessService.shouldShowApplicationOnOverview(
-      applicationInReview,
+      applicationInRejected,
       '111111-3000',
       testApplicationTemplate,
     )
