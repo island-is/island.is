@@ -21,7 +21,7 @@ To create a client we need the following information:
  - Whether you want national id (kennitala) and name in the id_token or fetch it through /connect/userinfo endpoint or some other way.
  - If you have any web services that need island.is authentication.
 	 - If you need island.is authentication for your web services a resource and scopes are required.
-When we have this information we create the client and then give you the clientId and secret (the secret is not always used).
+When we have this information we create the client and then give you the clientId and secret (except when the client is used in native apps, then it does not use a client secret).
 
 ## Resources and Scopes
 
