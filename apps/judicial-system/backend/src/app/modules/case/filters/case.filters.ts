@@ -65,27 +65,33 @@ function getBlockedTypes(
   forUpdate: boolean,
   institutionType?: InstitutionType,
 ): CaseType[] {
-  const blocketTypes: CaseType[] = []
+  const blockedTypes: CaseType[] = []
 
   if (role !== UserRole.STAFF) {
-    return blocketTypes
+    return blockedTypes
   }
 
-  blocketTypes.push(...investigationCases)
+  blockedTypes.push(...investigationCases)
+
+  const isPrisonAdmin = institutionType === InstitutionType.PRISON_ADMIN
 
   if (forUpdate) {
-    blocketTypes.push(...restrictionCases)
+    if (isPrisonAdmin) {
+      blockedTypes.push(CaseType.TRAVEL_BAN)
+    } else {
+      blockedTypes.push(...restrictionCases)
+    }
 
-    return blocketTypes
+    return blockedTypes
   }
 
-  if (institutionType === InstitutionType.PRISON_ADMIN) {
-    return blocketTypes
+  if (isPrisonAdmin) {
+    return blockedTypes
   }
 
-  blocketTypes.push(CaseType.TRAVEL_BAN)
+  blockedTypes.push(CaseType.TRAVEL_BAN)
 
-  return blocketTypes
+  return blockedTypes
 }
 
 function isTypeHiddenFromRole(

@@ -54,6 +54,7 @@ import { CaseReadGuard } from './guards/caseRead.guard'
 import { CaseWriteGuard } from './guards/caseWrite.guard'
 import { CurrentCase } from './guards/case.decorator'
 import {
+  staffUpdateRule,
   judgeTransitionRule,
   judgeUpdateRule,
   prosecutorTransitionRule,
@@ -118,7 +119,12 @@ export class CaseController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
-  @RolesRules(prosecutorUpdateRule, judgeUpdateRule, registrarUpdateRule)
+  @RolesRules(
+    prosecutorUpdateRule,
+    judgeUpdateRule,
+    registrarUpdateRule,
+    staffUpdateRule,
+  )
   @Put('case/:caseId')
   @ApiOkResponse({ type: Case, description: 'Updates an existing case' })
   async update(
