@@ -60,9 +60,11 @@ export const EditCancellation = (props: EditCancellationProp) => {
   )
 
   useEffect(() => {
-    const lastDay = allFutureEffects.slice(-1)?.[0]?.date
+    const lastDay = allFutureEffects
+      .filter((eff) => eff.origin !== 'self')
+      .slice(-1)?.[0]?.date
     const minDateDate = lastDay ? new Date(lastDay) : today
-    if (minDateDate !== minDate) {
+    if (toISODate(minDateDate) !== toISODate(minDate)) {
       setMinDate(minDateDate)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -80,7 +82,7 @@ export const EditCancellation = (props: EditCancellationProp) => {
       changeCancelDate(minDate)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeCancellation])
+  }, [minDate])
 
   const saveCancellation = async () => {
     if (!cancellation.id) {

@@ -63,9 +63,9 @@ export const ImpactHistory = (props: ImpactHistoryProps) => {
           justifyContent="flexStart"
           className={s.history}
         >
-          {allFutureEffects.map((effect) => (
+          {allFutureEffects.map((effect, i) => (
             <ImpactListItem
-              key={targetName + '_' + effect.date}
+              key={targetName + '_' + effect.date + '_' + i}
               effect={effect}
               idMismatch={hasMismatchId(effect)}
               activeName={targetName}
