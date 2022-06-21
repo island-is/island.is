@@ -1,4 +1,4 @@
-import { HTMLText, ISODate, PlainText, RegName } from '@island.is/regulations'
+import { HTMLText, ISODate, PlainText } from '@island.is/regulations'
 import { Field, InputType } from '@nestjs/graphql'
 
 @InputType()
