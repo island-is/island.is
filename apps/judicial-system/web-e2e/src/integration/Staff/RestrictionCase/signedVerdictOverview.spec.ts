@@ -1,6 +1,11 @@
 import faker from 'faker'
 import { SIGNED_VERDICT_OVERVIEW } from '@island.is/judicial-system/consts'
-import { Case, CaseState, UserRole } from '@island.is/judicial-system/types'
+import {
+  Case,
+  CaseDecision,
+  CaseState,
+  UserRole,
+} from '@island.is/judicial-system/types'
 
 import {
   intercept,
@@ -19,6 +24,7 @@ describe('Signed verdict overview - Staff - Restriction case', () => {
       ...caseData,
       state: CaseState.ACCEPTED,
       court: makeCourt(),
+      decision: CaseDecision.ACCEPTING,
       conclusion,
       caseFiles: [caseFile],
     }
