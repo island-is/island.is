@@ -5,7 +5,13 @@
       "name": "Fangelsa Yfirvaldadóttir",
       "title": "Fangavörður",
       "role": "STAFF",
-      "institution": "Rangelsismálastofnun ríkisins",
+      "institution": {
+        "id": "",
+        "name": "Fangelsismálastofnun ríkisins",
+        "type": "PRISON_ADMIN",
+        "active": true,
+        "__typename": "Institution"
+      },
       "__typename": "User"
     }
   }
