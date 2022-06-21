@@ -4,6 +4,7 @@ import { FAFieldBaseProps } from '../../lib/types'
 import { useIntl } from 'react-intl'
 import { bankInfoForm } from '../../lib/messages'
 import { InputController } from '@island.is/shared/form-fields'
+import withLogo from '../Logo/Logo'
 
 const BankInfoForm = ({ field, application }: FAFieldBaseProps) => {
   const { id } = field
@@ -78,4 +79,4 @@ const BankInfoForm = ({ field, application }: FAFieldBaseProps) => {
   )
 }
 
-export default BankInfoForm
+export default withLogo(BankInfoForm)

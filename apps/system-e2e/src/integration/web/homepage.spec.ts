@@ -1,10 +1,14 @@
-describe('Home page', () => {
-  before(() => {
-    cy.ensureLoggedIn({ url: '/' })
+describe('Front page', () => {
+  beforeEach(() => {
+    cy.cognitoLogin({
+      cognitoUsername: Cypress.env('cognitoUsername'),
+      cognitoPassword: Cypress.env('cognitoPassword'),
+    })
   })
 
   it('has expected sections', () => {
     cy.visit('/')
+    cy.contains('Öll opinber þjónusta á einum stað')
     cy.get('[data-testid="home-banner"]').should('have.length', 1)
     cy.get('[data-testid="home-heading"]').should('have.length', 1)
     cy.get('[data-testid="home-news"]').should('have.length', 1)
@@ -12,21 +16,45 @@ describe('Home page', () => {
 
   it('should have life events', () => {
     cy.visit('/')
-    cy.get('a:has([data-testid="lifeevent-card"])')
+    cy.get('[data-testid="lifeevent-card"]')
       .should('have.length.at.least', 3)
-      .each((link) => cy.visit(link.attr('href')!))
+      .each((link) => {
+        cy.visit(link.prop('href'))
+      })
+  })
+
+  it('should navigate to featured link', () => {
+    cy.visit('/')
+    cy.get('[data-testid="featured-link"]')
+      .should('have.length.at.least', 3)
+      .each((link) => cy.visit(link.prop('href')))
   })
 
   it('should have link on life events pages to navigate back to the main page', () => {
+    const locationOptions = { log: true, timeout: 7000 }
     cy.visit('/')
-    cy.get('a:has([data-testid="lifeevent-card"])')
+    cy.get('[data-testid="lifeevent-card"]')
       .should('have.length.at.least', 3)
       .each((link) => {
-        cy.visit(link.attr('href')!)
-        cy.location('pathname', { timeout: 7000 }).should('not.equal', '/')
+        cy.visit(link.prop('href'))
+        cy.location('pathname', locationOptions).should('not.equal', '/')
 
         cy.get('[data-testid="link-back-home"]').click()
-        cy.location('pathname', { timeout: 7000 }).should('equal', '/')
+        cy.location('pathname', locationOptions).should('equal', '/')
       })
+  })
+
+  it.only('should change welcome message on language toggle', () => {
+    cy.visit('/')
+    cy.get('h1[data-testid="home-heading"]').then((previousHeading) => {
+      cy.get('button[data-testid="language-toggler"]:visible')
+        .click()
+        .as('clicked')
+      cy.waitFor('@clicked')
+      cy.get('h1[data-testid="home-heading"]').should(
+        'not.have.text',
+        previousHeading.text(),
+      )
+    })
   })
 })

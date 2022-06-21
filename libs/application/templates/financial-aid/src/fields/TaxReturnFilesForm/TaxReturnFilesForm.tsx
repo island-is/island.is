@@ -7,6 +7,7 @@ import { FAFieldBaseProps, OverrideAnswerSchema, UploadFileType } from '../..'
 
 import { Files } from '..'
 import { getTaxFormContent } from './taxFormContent'
+import withLogo from '../Logo/Logo'
 
 const TaxReturnFilesForm = ({ field, application }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
@@ -59,4 +60,4 @@ const TaxReturnFilesForm = ({ field, application }: FAFieldBaseProps) => {
   )
 }
 
-export default TaxReturnFilesForm
+export default withLogo(TaxReturnFilesForm)
