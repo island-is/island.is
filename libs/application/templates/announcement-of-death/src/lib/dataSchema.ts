@@ -15,12 +15,11 @@ const asset = z
   .object({
     share: z.number().optional(),
     initial: z.boolean().optional(),
-    assetNumber: z.string().nonempty(),
+    assetNumber: customZodError(z.string().nonempty(), m.errorNumberEmpty),
     description: z.string().optional(),
   })
   .partial()
   .array()
-  .optional()
 
 // todo: set message strings for the error messages
 export const dataSchema = z.object({
@@ -102,9 +101,7 @@ export const dataSchema = z.object({
         initial: z.boolean().optional(),
         description: z.string().optional(),
       })
-      .partial()
-      .array()
-      .optional(),
+      .array(),
     encountered: z.boolean().optional(),
   }),
   estateMembers: z.object({
@@ -118,9 +115,7 @@ export const dataSchema = z.object({
         foreignCitizenship: z.string().array().min(0).max(1).optional(),
         dateOfBirth: z.string().nonempty().optional(),
       })
-      .partial()
-      .array()
-      .optional(),
+      .array(),
     encountered: z.boolean().optional(),
   }),
   flyers: asset,

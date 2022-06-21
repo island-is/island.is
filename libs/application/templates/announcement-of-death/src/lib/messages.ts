@@ -488,6 +488,11 @@ Ef ekkert á við sem hér að ofan er talið rennur arfur í ríkissjóð. Nán
       'Fasteignanúmer þarf að vera bókstafurinn F og sjö tölustafir',
     description: 'Invalid asset number error message',
   },
+  errorNumberEmpty: {
+    id: 'aod.application:error.errorNumberEmpty',
+    defaultMessage: 'Númer má ekki vera tómt',
+    description: 'Invalid general asset number error message',
+  },
 
   /* Announcement */
   announcementTitle: {

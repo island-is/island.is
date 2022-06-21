@@ -20,7 +20,10 @@ import { m } from '../../lib/messages'
 export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
   application,
   field,
+  errors,
 }) => {
+  const error = (errors as any)?.vehicles?.vehicles
+  console.log(errors)
   const { id } = field
   const { formatMessage } = useLocale()
   const { fields, append, remove } = useFieldArray<Asset>({
@@ -92,6 +95,7 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
         const vehicleNumberField = `${fieldIndex}.assetNumber`
         const vehicleTypeField = `${fieldIndex}.description`
         const initialField = `${fieldIndex}.initial`
+        const fieldError = error && error[index] ? error[index] : null
 
         return (
           <Box
@@ -122,6 +126,7 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
                   label={formatMessage(m.vehicleNumberLabel)}
                   backgroundColor="blue"
                   defaultValue={field.assetNumber}
+                  error={fieldError?.assetNumber}
                 />
               </GridColumn>
               <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
