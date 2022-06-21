@@ -607,7 +607,13 @@ describe('EnhancedFetch#withCache', () => {
     jest.useRealTimers()
     const cacheManager = caching({ store: 'memory', ttl: 0 })
     env = setupTestEnv({
-      cache: { cacheManager, overrideCacheControl: buildCacheControl({ maxAge: 1, staleWhileRevalidate: 100 }) },
+      cache: {
+        cacheManager,
+        overrideCacheControl: buildCacheControl({
+          maxAge: 1,
+          staleWhileRevalidate: 100,
+        }),
+      },
     })
     env.fetch
       .mockResolvedValueOnce(fakeResponse('Response 1'))
