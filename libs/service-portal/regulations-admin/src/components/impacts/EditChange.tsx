@@ -80,6 +80,7 @@ export const EditChange = (props: EditChangeProp) => {
     ) {
       setActiveRegulation(regulation)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [regulation])
   const { data: draftImpacts } = useGetRegulationImpactsQuery(change.name)
 
@@ -88,20 +89,22 @@ export const EditChange = (props: EditChangeProp) => {
     activeChange,
     draftImpacts,
     draft.id,
+    minDate,
   )
 
   useEffect(() => {
-    const lastDay = allFutureEffects.slice(-1)?.[0]?.date
+    const lastDay = allFutureEffects.slice(-2)?.[0]?.date
     const minDateDate = lastDay ? new Date(lastDay) : today
     if (minDateDate !== minDate) {
       setMinDate(minDateDate)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allFutureEffects])
 
   useEffect(() => {
     if (
-      !change.id &&
       activeRegulation &&
+      !change.id &&
       !activeChange.title.value &&
       !activeChange.text.value
     ) {
@@ -114,6 +117,7 @@ export const EditChange = (props: EditChangeProp) => {
         ),
       })
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeRegulation])
 
   const changeDate = (newDate: Date | undefined) => {

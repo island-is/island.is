@@ -22,6 +22,7 @@ export const useGetRegulationHistory = (
   activeImpact?: DraftImpactForm,
   draftImpacts?: DraftImpact[],
   draftId?: RegulationDraftId,
+  minDate?: Date,
 ) => {
   const targetName = activeImpact?.name as RegName
   const activeImpactDate = activeImpact?.date?.value
@@ -63,7 +64,9 @@ export const useGetRegulationHistory = (
 
     if (!draftImpactsArray.find((i) => i.id === activeImpact.id)) {
       futureEffectArray.push({
-        date: toISODate(activeImpactDate ? activeImpactDate : new Date()),
+        date: toISODate(
+          activeImpactDate ? activeImpactDate : minDate ? minDate : new Date(),
+        ),
         name: targetName,
         title: 'active',
         effect: 'repeal',
@@ -79,6 +82,7 @@ export const useGetRegulationHistory = (
     targetName,
     draftImpacts,
     effects?.future,
+    minDate,
   ])
 
   const hasImpactMismatch = !!draftImpacts?.filter(

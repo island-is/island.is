@@ -30,7 +30,6 @@ export const container = {
   boxShadow: `inset 0 0 0 1px ${theme.color.blue200}`,
   borderBottomRightRadius: inputBorderRadius,
   borderBottomLeftRadius: inputBorderRadius,
-  fooBoo: 'foo',
   cursor: 'text',
   transition: 'box-shadow 0.3s',
   padding: '0 0 16px 0',
