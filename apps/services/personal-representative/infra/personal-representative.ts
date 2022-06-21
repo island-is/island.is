@@ -3,6 +3,12 @@ import { MissingSetting } from '../../../../infra/src/dsl/types/input-types'
 export const serviceSetup = (): ServiceBuilder<'services-personal-representative'> => {
   return service('services-personal-representative')
     .namespace('personal-representative')
+    .image('services-personal-representative')
+    .postgres({
+      username: 'servicesauth',
+      name: 'servicesauth',
+      passwordSecret: '/k8s/services-auth/api/DB_PASSWORD',
+    })
     .env({
       IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
