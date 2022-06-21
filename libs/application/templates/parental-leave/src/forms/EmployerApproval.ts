@@ -53,10 +53,6 @@ export const EmployerApproval: Form = buildForm({
             buildMultiField({
               id: 'multi',
               title: employerFormMessages.reviewMultiTitle,
-              condition: (answers) =>
-                new Date(
-                  getApplicationAnswers(answers).periods[0].startDate,
-                ).getTime() < currentDateStartTime(),
               children: [
                 buildCustomField(
                   {
@@ -80,44 +76,10 @@ export const EmployerApproval: Form = buildForm({
                   titleVariant: 'h4',
                   description:
                     otherParentApprovalFormMessages.startDateInThePast,
-                }),
-                buildSubmitField({
-                  id: 'submit',
-                  title: coreMessages.buttonSubmit,
-                  placement: 'footer',
-                  actions: [
-                    {
-                      name: employerFormMessages.buttonReject,
-                      type: 'subtle',
-                      event: 'REJECT',
-                    },
-                  ],
-                }),
-              ],
-            }),
-            buildMultiField({
-              id: 'multi',
-              title: employerFormMessages.reviewMultiTitle,
-              condition: (answers) =>
-                new Date(
-                  getApplicationAnswers(answers).periods[0].startDate,
-                ).getTime() >= currentDateStartTime(),
-              children: [
-                buildCustomField(
-                  {
-                    id: 'timeline',
-                    title: employerFormMessages.reviewMultiTitle,
-                    component: 'PeriodsRepeater',
-                  },
-                  {
-                    editable: false,
-                    showDescription: false,
-                  },
-                ),
-                buildCustomField({
-                  id: 'unionAndPensionInfo',
-                  title: '',
-                  component: 'EmployerApprovalExtraInformation',
+                  condition: (answers) =>
+                    new Date(
+                      getApplicationAnswers(answers).periods[0].startDate,
+                    ).getTime() < currentDateStartTime(),
                 }),
                 buildSubmitField({
                   id: 'submit',
@@ -133,6 +95,10 @@ export const EmployerApproval: Form = buildForm({
                       name: coreMessages.buttonApprove,
                       type: 'primary',
                       event: 'APPROVE',
+                      condition: (answers) =>
+                        new Date(
+                          getApplicationAnswers(answers).periods[0].startDate,
+                        ).getTime() >= currentDateStartTime(),
                     },
                   ],
                 }),
