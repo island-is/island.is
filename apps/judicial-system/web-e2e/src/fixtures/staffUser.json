@@ -1,0 +1,12 @@
+{
+  "data": {
+    "currentUser": {
+      "id": "20a82fd1-e00f-4ccb-baef-389dd2079c09",
+      "name": "Fangelsa Yfirvaldadóttir",
+      "title": "Fangavörður",
+      "role": "STAFF",
+      "institution": "Rangelsismálastofnun ríkisins",
+      "__typename": "User"
+    }
+  }
+}

@@ -1,14 +1,11 @@
 import faker from 'faker'
-import {
-  IC_MODIFY_RULING_ROUTE,
-  SIGNED_VERDICT_OVERVIEW,
-} from '@island.is/judicial-system/consts'
+import { SIGNED_VERDICT_OVERVIEW } from '@island.is/judicial-system/consts'
 import { Case, CaseState, UserRole } from '@island.is/judicial-system/types'
 
 import {
   intercept,
   makeCourt,
-  makeInvestigationCase,
+  makeRestrictionCase,
   makeCaseFile,
 } from '../../../utils'
 
@@ -17,7 +14,7 @@ describe('Signed verdict overview - Court - Investigation case', () => {
   const caseFile = makeCaseFile('caseId', 'caseFileName')
 
   beforeEach(() => {
-    const caseData = makeInvestigationCase()
+    const caseData = makeRestrictionCase()
     const caseDataAddition: Case = {
       ...caseData,
       state: CaseState.ACCEPTED,
@@ -26,23 +23,17 @@ describe('Signed verdict overview - Court - Investigation case', () => {
       caseFiles: [caseFile],
     }
 
-    cy.login(UserRole.JUDGE)
+    cy.login(UserRole.STAFF)
     cy.stubAPIResponses()
     cy.visit(`${SIGNED_VERDICT_OVERVIEW}/test_id`)
     intercept(caseDataAddition)
   })
 
   it('should display appropriate components on the page', () => {
-    cy.get('[aria-controls="caseFilesAccordionItem"]').click()
-    cy.get('#caseFilesAccordionItem').within(() => {
-      cy.get(`[aria-label="Opna ${caseFile.name}"]`)
-    })
-    cy.contains('Úrskurðarorð')
-    cy.contains(conclusion)
-  })
-
-  it('should have a button for modifying the ruling that navigates to a modify ruling page', () => {
-    cy.get('[data-testid="modifyRulingButton"]').should('exist').click()
-    cy.url().should('include', IC_MODIFY_RULING_ROUTE)
+    cy.getByTestid('courtRecordPDFButton')
+    cy.getByTestid('custodyNoticePDFButton')
+    cy.getByTestid('accordionItems').should('not.exist')
+    cy.getByTestid('requestPDFButton').should('not.exist')
+    cy.getByTestid('rulingPDFButton').should('not.exist')
   })
 })
