@@ -220,13 +220,11 @@ export const en: TranslatedMessages = {
   // cards
   'applicationStatusCard.openButtonLabel': 'Open application',
   'applicationStatusCard.seeMoreApplications': 'View applications',
-  'applicationStatusCard.state': `{
+  'applicationStatusCard.status': `{
     state,
     select,
-    draft {Draft}
-    missingInfo {Missing info}
-    inReview {In review}
-    approved {Approved}
+    inprogress {In progress}
+    completed {Completed}
     rejected {Rejected}
     other {Unknown status}
   }`,
