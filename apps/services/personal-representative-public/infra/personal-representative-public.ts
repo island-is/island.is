@@ -15,12 +15,6 @@ export const serviceSetup = (): ServiceBuilder<'services-personal-representative
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
-      DB_REPLICAS_HOST: {
-        dev:
-          'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com',
-        staging: '',
-        prod: '',
-      },
     })
     .ingress({
       primary: {
