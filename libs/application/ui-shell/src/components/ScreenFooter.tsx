@@ -99,11 +99,11 @@ export const ScreenFooter: FC<FooterProps> = ({
           ? condition(application.answers, application.externalData)
           : true,
       )
-      .map(({ event, type, name }) => {
+      .map(({ event, type, name }, idx) => {
         const buttonConfig = submitButtonConfig[type]
 
         return (
-          <Box key={`cta-${event}`}>
+          <Box key={`cta-${event}`} marginLeft={idx === 0 ? 0 : 2}>
             <Button
               type="submit"
               loading={!canProceed || loading}
