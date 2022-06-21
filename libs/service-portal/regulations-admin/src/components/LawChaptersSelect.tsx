@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo } from 'react'
 
-import { Box, Inline, Option, Select, Tag } from '@island.is/island-ui/core'
+import { Box, Inline, Option, Select } from '@island.is/island-ui/core'
 import { editorMsgs as msg } from '../messages'
 
 import { LawChapter, LawChapterSlug } from '@island.is/regulations'
@@ -8,6 +8,7 @@ import { emptyOption } from '../utils'
 import { useDraftingState } from '../state/useDraftingState'
 import { useLocale } from '@island.is/localization'
 import { useRegulationListQuery } from '../utils/dataHooks'
+import { RegulationTag } from './RegulationTag'
 
 const useLawChapterOptions = (
   lawChapters: Array<LawChapter>,
@@ -83,13 +84,13 @@ export const LawChaptersSelect = () => {
         <Box marginTop={2}>
           <Inline space={2}>
             {activeChapters.map((slug) => (
-              <Tag
+              <RegulationTag
                 key={slug}
                 onClick={() => actions.updateLawChapterProp('delete', slug)}
                 removable
               >
                 {lawChapters.bySlug[slug]}
-              </Tag>
+              </RegulationTag>
             ))}
           </Inline>
         </Box>
