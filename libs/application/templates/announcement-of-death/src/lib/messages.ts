@@ -474,8 +474,8 @@ Ef ekkert á við sem hér að ofan er talið rennur arfur í ríkissjóð. Nán
   },
   errorRelation: {
     id: 'aod.application:error.errorRelation',
-    defaultMessage: 'Netfang virðist ekki vera rétt',
-    description: 'Email is invalid',
+    defaultMessage: 'Tengsl virðast ekki vera rétt',
+    description: 'Relation is invalid',
   },
   errorAge: {
     id: 'aod.application:error.errorAge',
