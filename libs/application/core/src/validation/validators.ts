@@ -92,10 +92,21 @@ function partialSchemaValidation(
           try {
             trimmedSchema.parse({ [key]: [el] })
           } catch (e) {
+            let schemaShape = trimmedSchema?.shape[key]?._def?.type
+
+            // z.array().optional() has array type inside options inside _def
+            // Therefore we need to extract further down for cases when arrays are allowed to be undefined
+            if (!schemaShape && trimmedSchema?.shape[key]?._def?.options) {
+              const arrayOption = trimmedSchema.shape[key]._def.options.find(
+                (opt: any) => opt?._def?.t === 'array',
+              )
+              schemaShape = arrayOption?._def?.type
+            }
+
             if (el !== null && typeof el === 'object') {
               partialSchemaValidation(
                 el as FormValue,
-                trimmedSchema?.shape[key]?._def?.type,
+                schemaShape,
                 error,
                 `${constructedErrorPath}[${index}]`,
                 true,
