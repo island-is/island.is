@@ -12,7 +12,6 @@ import {
   GenericLicenseType,
   GenericLicenseClient,
   GenericLicenseMetadata,
-  GenericLicenseUserdata,
   GenericUserLicenseFetchStatus,
   GenericUserLicenseStatus,
   GenericLicenseCached,
@@ -39,7 +38,7 @@ export class LicenseServiceService {
     private genericLicenseFactory: (
       type: GenericLicenseType,
       cacheManager: CacheManager,
-      use: User,
+      user: User,
     ) => Promise<GenericLicenseClient<unknown> | null>,
     @Inject(CACHE_MANAGER) private cacheManager: CacheManager,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
@@ -67,7 +66,7 @@ export class LicenseServiceService {
             data.fetch.status = GenericUserLicenseFetchStatus.Stale
           }
         } catch (e) {
-          this.logger.warn('Unable to parse cached data for license', {
+          this.logger.warn('Unable to parsde cached data for license', {
             license,
           })
           // fall through to actual fetch of fresh fresh data
@@ -144,6 +143,8 @@ export class LicenseServiceService {
           user,
         )
 
+        console.log(this.genericLicenseFactory)
+
         if (!licenseService) {
           this.logger.warn('No license service from generic license factory', {
             type: license.type,
@@ -204,13 +205,13 @@ export class LicenseServiceService {
     )
 
     if (license && licenseService) {
-      licenseUserdata = await licenseService.getLicenseDetail(nationalId)
+      licenseUserdata = await licenseService.getLicenseDetail(user)
     } else {
       throw new Error(`${licenseType} not supported`)
     }
 
     return {
-      nationalId,
+      nationalId: user.nationalId,
       license: {
         ...license,
         status: licenseUserdata?.status ?? GenericUserLicenseStatus.Unknown,
@@ -229,7 +230,7 @@ export class LicenseServiceService {
   }
 
   async generatePkPass(
-    nationalId: User['nationalId'],
+    user: User,
     locale: Locale,
     licenseType: GenericLicenseType,
   ) {
@@ -238,24 +239,25 @@ export class LicenseServiceService {
     const licenseService = await this.genericLicenseFactory(
       licenseType,
       this.cacheManager,
+      user,
     )
 
     if (licenseService) {
-      pkpassUrl = await licenseService.getPkPassUrl(nationalId)
+      pkpassUrl = await licenseService.getPkPassUrl(user)
     } else {
       throw new Error(`${licenseType} not supported`)
     }
 
     if (!pkpassUrl) {
       throw new Error(
-        `Unable to get pkpass url for ${licenseType} for nationalId ${nationalId}`,
+        `Unable to get pkpass url for ${licenseType} for nationalId ${user.nationalId}`,
       )
     }
     return { pkpassUrl }
   }
 
   async generatePkPassQrCode(
-    nationalId: User['nationalId'],
+    user: User,
     locale: Locale,
     licenseType: GenericLicenseType,
   ) {
@@ -264,16 +266,17 @@ export class LicenseServiceService {
     const licenseService = await this.genericLicenseFactory(
       licenseType,
       this.cacheManager,
+      user,
     )
 
     if (licenseService) {
-      pkpassQRCode = await licenseService.getPkPassQRCode(nationalId)
+      pkpassQRCode = await licenseService.getPkPassQRCode(user)
     } else {
       throw new Error(`${licenseType} not supported`)
     }
     if (!pkpassQRCode) {
       throw new Error(
-        `Unable to get pkpass qr code for ${licenseType} for nationalId ${nationalId}`,
+        `Unable to get pkpass qr code for ${licenseType} for nationalId ${user.nationalId}`,
       )
     }
 
@@ -281,7 +284,7 @@ export class LicenseServiceService {
   }
 
   async verifyPkPass(
-    nationalId: User['nationalId'],
+    user: User,
     locale: Locale,
     licenseType: GenericLicenseType,
     data: string,
@@ -291,6 +294,7 @@ export class LicenseServiceService {
     const licenseService = await this.genericLicenseFactory(
       licenseType,
       this.cacheManager,
+      user,
     )
 
     if (licenseService) {
@@ -301,7 +305,7 @@ export class LicenseServiceService {
 
     if (!verification) {
       throw new Error(
-        `Unable to verify pkpass for ${licenseType} for nationalId ${nationalId}`,
+        `Unable to verify pkpass for ${licenseType} for nationalId ${user.nationalId}`,
       )
     }
 

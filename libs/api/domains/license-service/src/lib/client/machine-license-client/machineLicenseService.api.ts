@@ -9,8 +9,8 @@ import {
   GenericUserLicenseStatus,
   PkPassVerification,
 } from '../../licenceService.type'
-import { User } from '@island.is/auth-nest-tools'
-import { Configuration, VinnuvelaApi } from '@island.is/clients/aosh'
+import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
+import { VinnuvelaApi } from '@island.is/clients/aosh'
 import { parseMachineLicensePayload } from './machineLicenseMappers'
 import { GenericMachineLicenseResponse } from './genericMachineLicense.type'
 
@@ -20,23 +20,21 @@ const LOG_CATEGORY = 'machinelicense-service'
 @Injectable()
 export class GenericMachineLicenseApi
   implements GenericLicenseClient<GenericMachineLicenseResponse> {
-  private readonly machineApi: VinnuvelaApi
   constructor(
-    private config: Configuration,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
+    private machineApi: VinnuvelaApi,
     private cacheManager?: CacheManager | null,
   ) {
     this.cacheManager = cacheManager
-    this.machineApi = new VinnuvelaApi(config)
   }
 
-  async fetchLicense(nationalId: string) {
+  async fetchLicense(user: User) {
     let license: unknown
 
     try {
-      license = await this.machineApi.getVinnuvela({
-        kennitala: nationalId,
-      })
+      license = await this.machineApi
+        .withMiddleware(new AuthMiddleware(user as Auth))
+        .getVinnuvela()
     } catch (e) {
       this.logger.error('Machine license fetch failed', {
         exception: e,
@@ -48,10 +46,8 @@ export class GenericMachineLicenseApi
     return license as GenericMachineLicenseResponse
   }
 
-  async getLicense(
-    nationalId: User['nationalId'],
-  ): Promise<GenericLicenseUserdataExternal | null> {
-    const license = await this.fetchLicense(nationalId)
+  async getLicense(user: User): Promise<GenericLicenseUserdataExternal | null> {
+    const license = await this.fetchLicense(user)
 
     if (!license) {
       this.logger.warn('Missing machine license, null from api', {
@@ -70,14 +66,14 @@ export class GenericMachineLicenseApi
   }
 
   async getLicenseDetail(
-    nationalId: string,
+    user: User,
   ): Promise<GenericLicenseUserdataExternal | null> {
-    return this.getLicense(nationalId)
+    return this.getLicense(user)
   }
-  async getPkPassUrl(nationalId: string): Promise<string | null> {
+  async getPkPassUrl(user: User): Promise<string | null> {
     return null
   }
-  async getPkPassQRCode(nationalId: string): Promise<string | null> {
+  async getPkPassQRCode(user: User): Promise<string | null> {
     return null
   }
   async verifyPkPass(data: string): Promise<PkPassVerification | null> {

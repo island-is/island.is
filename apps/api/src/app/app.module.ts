@@ -62,6 +62,7 @@ import { DrivingLicenseApiConfig } from '@island.is/clients/driving-license'
 import { VehiclesClientConfig } from '@island.is/clients/vehicles'
 import { FishingLicenseClientConfig } from '@island.is/clients/fishing-license'
 import { FinancialStatementsInaoModule } from '@island.is/api/domains/financial-statements-inao'
+import { AoshClientConfig } from '@island.is/clients/aosh'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -247,6 +248,7 @@ const autoSchemaFile = environment.production
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
+        AoshClientConfig,
         AssetsClientConfig,
         VehiclesClientConfig,
         AuthPublicApiClientConfig,

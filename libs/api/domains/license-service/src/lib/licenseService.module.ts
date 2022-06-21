@@ -1,6 +1,5 @@
 import { Cache as CacheManager } from 'cache-manager'
 import { Module, DynamicModule, CacheModule } from '@nestjs/common'
-import { Configuration } from '@island.is/clients/aosh'
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 import { LicenseServiceService } from './licenseService.service'
@@ -9,7 +8,6 @@ import { MainResolver } from './graphql/main.resolver'
 
 import { GenericDrivingLicenseApi } from './client/driving-license-client'
 import { GenericAdrLicenseApi } from './client/adr-license-client/adrLicenseService.api'
-import { GenericMachineLicenseApi } from './client/machine-license-client'
 import {
   CONFIG_PROVIDER,
   GenericLicenseClient,
@@ -18,8 +16,15 @@ import {
   GenericLicenseType,
   GENERIC_LICENSE_FACTORY,
 } from './licenceService.type'
-import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { User } from '@island.is/auth-nest-tools'
+import {
+  AdrApi,
+  VinnuvelaApi,
+  AdrApiProvider,
+  AoshClientModule,
+  MachineApiProvider,
+} from '@island.is/clients/aosh'
+import { GenericMachineLicenseApi } from './client/machine-license-client'
 
 export interface Config {
   xroad: {
@@ -67,13 +72,12 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     timeout: 100,
   },
 ]
-
 @Module({})
 export class LicenseServiceModule {
   static register(config: Config): DynamicModule {
     return {
       module: LicenseServiceModule,
-      imports: [CacheModule.register()],
+      imports: [CacheModule.register(), AoshClientModule],
       providers: [
         MainResolver,
         LicenseServiceService,
@@ -84,6 +88,14 @@ export class LicenseServiceModule {
         {
           provide: CONFIG_PROVIDER,
           useValue: config,
+        },
+        {
+          provide: 'adrProvider',
+          useValue: AdrApiProvider,
+        },
+        {
+          provide: 'machineProvider',
+          useValue: MachineApiProvider,
         },
         {
           provide: GENERIC_LICENSE_FACTORY,
@@ -101,30 +113,21 @@ export class LicenseServiceModule {
                 )
               case GenericLicenseType.AdrLicense:
                 return new GenericAdrLicenseApi(
-                  new Configuration({
-                    basePath: `https://ws.ver.is/rettindi`,
-                    fetchApi: createEnhancedFetch({
-                      name: 'clients-adr',
-                    }),
-                  }),
                   logger,
+                  AdrApiProvider,
                   cacheManager,
                 )
-              case GenericLicenseType.MachineLicense:
+              /*case GenericLicenseType.MachineLicense:
                 return new GenericMachineLicenseApi(
-                  new Configuration({
-                    basePath: `https://ws.ver.is/rettindi`,
-                    fetchApi: createEnhancedFetch({
-                      name: 'clients-vinnuvela',
-                    }),
-                  }),
                   logger,
+                  machineApi,
                   cacheManager,
-                )
+                )*/
               default:
                 return null
             }
           },
+          inject: [AdrApiProvider, VinnuvelaApi],
         },
       ],
       exports: [LicenseServiceService],

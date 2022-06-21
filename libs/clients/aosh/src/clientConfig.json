@@ -19,15 +19,6 @@
       "get": {
         "tags": ["Adr"],
         "operationId": "GetAdr",
-        "parameters": [
-          {
-            "name": "kennitala",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -61,31 +52,44 @@
           },
           "500": {
             "description": "Server Error"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
           }
-        }
+        },
+        "security": [
+          {
+            "OAuth2": ["OAuth2"]
+          }
+        ]
       },
       "options": {
         "tags": ["Adr"],
         "responses": {
           "200": {
             "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
           }
-        }
+        },
+        "security": [
+          {
+            "OAuth2": ["OAuth2"]
+          }
+        ]
       }
     },
     "/api/Vinnuvela": {
       "get": {
         "tags": ["Vinnuvela"],
         "operationId": "GetVinnuvela",
-        "parameters": [
-          {
-            "name": "kennitala",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -119,16 +123,38 @@
           },
           "500": {
             "description": "Server Error"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
           }
-        }
+        },
+        "security": [
+          {
+            "OAuth2": ["OAuth2"]
+          }
+        ]
       },
       "options": {
         "tags": ["Vinnuvela"],
         "responses": {
           "200": {
             "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
           }
-        }
+        },
+        "security": [
+          {
+            "OAuth2": ["OAuth2"]
+          }
+        ]
       }
     }
   },
@@ -203,8 +229,7 @@
             "items": {
               "$ref": "#/components/schemas/AdrHeitiDto"
             },
-            "nullable": true,
-            "readOnly": true
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -294,16 +319,28 @@
           },
           "fulltHeiti": {
             "type": "string",
-            "nullable": true,
-            "readOnly": true
+            "nullable": true
           },
           "stuttHeiti": {
             "type": "string",
-            "nullable": true,
-            "readOnly": true
+            "nullable": true
           }
         },
         "additionalProperties": false
+      }
+    },
+    "securitySchemes": {
+      "OAuth2": {
+        "type": "oauth2",
+        "flows": {
+          "authorizationCode": {
+            "authorizationUrl": "https://identity-server.dev01.devland.is//connect/authorize",
+            "tokenUrl": "https://identity-server.dev01.devland.is//connect/token",
+            "scopes": {
+              "@ver.is/rettindaskra": "Sækir OpenId, Profile og claimið sem þarf"
+            }
+          }
+        }
       }
     }
   }

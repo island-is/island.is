@@ -10,8 +10,9 @@ import {
   PkPassVerification,
 } from '../../licenceService.type'
 import { GenericAdrLicenseResponse } from './genericAdrLicense.type'
-import { User } from '@island.is/auth-nest-tools'
+import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { parseAdrLicensePayload } from './adrLicenseMapper'
+import { AdrApi } from '@island.is/clients/aosh'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'adrlicense-service'
@@ -19,27 +20,24 @@ const LOG_CATEGORY = 'adrlicense-service'
 @Injectable()
 export class GenericAdrLicenseApi
   implements GenericLicenseClient<GenericAdrLicenseResponse> {
-  private readonly adrApi: AdrApi
-
   constructor(
-    private config: Configuration,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
+    @Inject('adrProvider')
+    private adrApi: AdrApi,
     private cacheManager?: CacheManager | null,
   ) {
     this.cacheManager = cacheManager
-    this.adrApi = new AdrApi(config)
-    this.logger = logger
   }
 
-  async fetchLicense(nationalId: string) {
+  async fetchLicense(user: User) {
     let license: unknown
 
     try {
-      license = await this.adrApi.getAdr({
-        kennitala: nationalId,
-      })
-      const k = license
+      license = await this.adrApi
+        .withMiddleware(new AuthMiddleware(user as Auth))
+        .getAdr()
     } catch (e) {
+      console.log(e)
       this.logger.error('ADR license fetch failed', {
         exception: e,
         category: LOG_CATEGORY,
@@ -51,7 +49,7 @@ export class GenericAdrLicenseApi
   }
 
   async getLicense(user: User): Promise<GenericLicenseUserdataExternal | null> {
-    const license = await this.fetchLicense(nationalId)
+    const license = await this.fetchLicense(user)
 
     if (!license) {
       this.logger.warn('Missing ADR license, null from api', {
@@ -71,14 +69,12 @@ export class GenericAdrLicenseApi
   async getLicenseDetail(
     user: User,
   ): Promise<GenericLicenseUserdataExternal | null> {
-    return this.getLicense(nationalId)
+    return this.getLicense(user)
   }
-  async getPkPassUrl(nationalId: User['nationalId']): Promise<string | null> {
+  async getPkPassUrl(user: User): Promise<string | null> {
     return null
   }
-  async getPkPassQRCode(
-    nationalId: User['nationalId'],
-  ): Promise<string | null> {
+  async getPkPassQRCode(user: User): Promise<string | null> {
     return null
   }
   async verifyPkPass(data: string): Promise<PkPassVerification | null> {
