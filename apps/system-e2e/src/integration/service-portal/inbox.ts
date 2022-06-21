@@ -8,7 +8,7 @@ describe('Home page', () => {
     cy.visit('/minarsidur/')
 
     cy.idsLogin({
-      phoneNumber: fakeUsers[0].phoneNumber,
+      phoneNumber: fakeUsers['Ameríka'].phoneNumber,
       authDomain: `https://${authDomain}`,
     })
     cy.contains('Pósthólf')

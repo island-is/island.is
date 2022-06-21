@@ -8,13 +8,10 @@ describe('Home page', () => {
     cy.log('authUrl', authUrl)
     cy.log('testEnvironment', testEnvironment)
     cy.idsLogin({
-      phoneNumber: fakeUsers[0].phoneNumber,
-      url: '/minarsidur/',
+      phoneNumber: fakeUsers['María'].phoneNumber,
+      authDomain: `https://${authDomain}`,
     })
-  })
-
-  it(`should have user ${fakeUsers[0].name} logged in`, () => {
-    cy.visit('/minarsidur/')
-    cy.contains(fakeUsers[0].name)
+    cy.contains('Pósthólf')
+    cy.contains(fakeUsers['María'].name)
   })
 })
