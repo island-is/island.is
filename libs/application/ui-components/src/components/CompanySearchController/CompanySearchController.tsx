@@ -3,21 +3,10 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { AsyncSearch, Box, AlertMessage } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { coreErrorMessages } from '@island.is/application/core'
-import { gql, useLazyQuery } from '@apollo/client'
 import debounce from 'lodash/debounce'
 import { CompanySearchItem } from './CompanySearchItem'
 import { debounceTime } from '@island.is/shared/constants'
-
-export const COMPANY_REGISTRY_COMPANIES = gql`
-  query SearchCompanies($input: RskCompanyInfoSearchInput!) {
-    companyRegistryCompanies(input: $input) {
-      data {
-        name
-        nationalId
-      }
-    }
-  }
-`
+import { useSearchCompaniesLazyQuery } from '../../../gen/graphql'
 
 interface Props {
   id: string
@@ -29,12 +18,14 @@ interface Props {
   inputValue?: string
   colored?: boolean
   setLabelToDataSchema?: boolean
+  shouldIncludeIsatNumber?: boolean
   setNationalId?: (s: string) => void
 }
 
 export const CompanySearchController: FC<Props> = ({
   defaultValue,
   id,
+  shouldIncludeIsatNumber,
   name = id,
   label,
   placeholder,
@@ -49,7 +40,7 @@ export const CompanySearchController: FC<Props> = ({
 
   const [searchQuery, setSearchQuery] = useState('')
 
-  const [search, { loading, data }] = useLazyQuery(COMPANY_REGISTRY_COMPANIES)
+  const [search, { loading, data }] = useSearchCompaniesLazyQuery()
 
   const debouncer = useMemo(() => {
     return debounce(search, debounceTime.search)
@@ -75,7 +66,9 @@ export const CompanySearchController: FC<Props> = ({
 
   const getSearchOptions = (
     query: string,
-    response: { data: { name: string; nationalId: string }[] } = { data: [] },
+    response: {
+      data: { name: string; nationalId: string }[]
+    } = { data: [] },
   ) => {
     const { data } = response
     const options = data?.map(({ name, nationalId }) => ({
@@ -92,6 +85,35 @@ export const CompanySearchController: FC<Props> = ({
       ),
     }))
     return options || []
+  }
+
+  const getIsatNumber = (nationalId: string) => {
+    if (!shouldIncludeIsatNumber) {
+      return ''
+    }
+
+    const companies = data?.companyRegistryCompanies?.data ?? []
+    if (companies.length === 0) return ''
+
+    const filteredCompany = companies.find(
+      (company) => company.nationalId === nationalId,
+    )
+
+    if (!filteredCompany?.companyInfo) {
+      return ''
+    }
+
+    const vats = filteredCompany.companyInfo.vat
+
+    for (const v of vats) {
+      if (!v.dateOfDeregistration && v.classification) {
+        const c = v.classification.find((c) => c.type === 'Aðal')
+        if (c) {
+          return `${c.number} - ${c.name}`
+        }
+      }
+    }
+    return ''
   }
 
   return (
@@ -116,8 +138,8 @@ export const CompanySearchController: FC<Props> = ({
                 setValue(
                   id,
                   setLabelToDataSchema
-                    ? { nationalId: '', label: '' }
-                    : { nationalId: '' },
+                    ? { isat: '', nationalId: '', label: '' }
+                    : { isat: '', nationalId: '' },
                 )
                 clearErrors(id)
                 const inputValue = query?.trim() || ''
@@ -131,8 +153,12 @@ export const CompanySearchController: FC<Props> = ({
                   setValue(
                     id,
                     setLabelToDataSchema
-                      ? { nationalId: value, label }
-                      : { nationalId: value },
+                      ? {
+                          isat: getIsatNumber(value),
+                          nationalId: value,
+                          label,
+                        }
+                      : { isat: getIsatNumber(value), nationalId: value },
                   )
                 }
               }}

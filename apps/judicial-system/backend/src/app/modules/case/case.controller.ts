@@ -25,12 +25,12 @@ import {
   DokobitError,
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
-import { InjectQueue, QueueService } from '@island.is/message-queue'
+// import { InjectQueue, QueueService } from '@island.is/message-queue'
 import {
   CaseState,
   CaseType,
-  completedCaseStates,
-  MessageType,
+  // completedCaseStates,
+  // MessageType,
   UserRole,
 } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
@@ -68,7 +68,7 @@ import { Case } from './models/case.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
 import { CaseService } from './case.service'
-import { caseModuleConfig } from './case.config'
+// import { caseModuleConfig } from './case.config'
 
 @Controller('api')
 @ApiTags('cases')
@@ -77,8 +77,7 @@ export class CaseController {
     private readonly caseService: CaseService,
     private readonly userService: UserService,
     private readonly eventService: EventService,
-    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
-    @InjectQueue(caseModuleConfig().sqs.queueName) private queue: QueueService,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger, // @InjectQueue(caseModuleConfig().sqs.queueName) private queue: QueueService,
   ) {}
 
   private async validateAssignedUser(
@@ -214,10 +213,11 @@ export class CaseController {
       state !== CaseState.DELETED,
     )
 
-    if (updatedCase && completedCaseStates.includes(updatedCase.state)) {
-      this.logger.info(`Writing case ${caseId} to queue`)
-      this.queue.add({ type: MessageType.CASE_COMPLETED, caseId })
-    }
+    // if (updatedCase && completedCaseStates.includes(updatedCase.state)) {
+    //   this.logger.info(`Writing case ${caseId} to queue`)
+
+    //   this.queue.add({ type: MessageType.CASE_COMPLETED, caseId })
+    // }
 
     this.eventService.postEvent(
       (transition.transition as unknown) as CaseEvent,
