@@ -154,11 +154,7 @@ export const isDefendantStepValidRC = (workingCase: Case) => {
         value: workingCase.defenderPhoneNumber,
         validations: ['phonenumber'],
       },
-      {
-        value: workingCase.leadInvestigator,
-        validations: ['empty'],
-      },
-      ...(workingCase.type === CaseType.TRAVEL_BAN
+      ...(workingCase.type === CaseType.CUSTODY
         ? [
             {
               value: workingCase.leadInvestigator,
@@ -195,22 +191,6 @@ export const isDefendantStepValidForSidebarIC = (workingCase: Case) => {
 }
 
 export const isHearingArrangementsStepValidRC = (workingCase: Case) => {
-  console.log(
-    validate([
-      {
-        value: workingCase.requestedCourtDate,
-        validations: ['empty', 'date-format'],
-      },
-      ...(workingCase.type !== CaseType.TRAVEL_BAN && !workingCase.parentCase
-        ? [
-            {
-              value: workingCase.arrestDate,
-              validations: ['empty', 'date-format'],
-            } as ValidationItem,
-          ]
-        : []),
-    ]),
-  )
   return (
     (workingCase.prosecutor ||
       ((workingCase as unknown) as { prosecutorId: string }).prosecutorId) &&

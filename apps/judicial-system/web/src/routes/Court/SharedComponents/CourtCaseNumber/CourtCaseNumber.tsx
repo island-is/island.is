@@ -11,6 +11,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { courtCaseNumber } from '@island.is/judicial-system-web/messages'
+import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 
 import * as styles from './CourtCaseNumber.css'
 
@@ -42,6 +43,18 @@ const CourtCaseNumber: React.FC<Props> = (props) => {
   const { formatMessage } = useIntl()
 
   const updateAndReceiveCase = async (id: string, update: UpdateCase) => {
+    const isValid =
+      validate([
+        {
+          value: update.courtCaseNumber,
+          validations: ['empty', 'court-case-number'],
+        },
+      ]).length === 0
+
+    if (!isValid) {
+      return
+    }
+
     await updateCase(id, update)
     if (update.courtCaseNumber) {
       receiveCase(workingCase, update.courtCaseNumber)
