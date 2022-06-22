@@ -1,4 +1,6 @@
 import { ZodSuberror } from 'zod/lib/src/ZodError'
+import { ZodUnion } from 'zod/lib/src/types/union'
+import { ZodTypeAny } from 'zod/lib/src/types/base'
 import isNumber from 'lodash/isNumber'
 import has from 'lodash/has'
 import set from 'lodash/set'
@@ -94,12 +96,11 @@ function partialSchemaValidation(
           } catch (e) {
             let schemaShape = trimmedSchema?.shape[key]?._def?.type
 
-            // z.array().optional() has array type inside options inside _def
-            // Therefore we need to extract further down for cases when arrays are allowed to be undefined
+            // z.array().optional(), f.x, is a union type rather than a simple array type
             if (!schemaShape && trimmedSchema?.shape[key]?._def?.options) {
-              const arrayOption = trimmedSchema.shape[key]._def.options.find(
-                (opt: any) => opt?._def?.t === 'array',
-              )
+              const arrayOption = (trimmedSchema.shape[key] as ZodUnion<
+                [ZodTypeAny, ZodTypeAny]
+              >)._def.options.find((opt) => opt?._def?.t === 'array')
               schemaShape = arrayOption?._def?.type
             }
 
