@@ -15,7 +15,6 @@ export const useGetLawyers = (): Lawyer[] => {
   )
 
   if (error) {
-    console.log(error)
     toast.error(formatMessage(errorMessages.fetchLawyers))
     return []
   }
