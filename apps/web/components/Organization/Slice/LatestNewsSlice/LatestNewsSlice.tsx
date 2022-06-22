@@ -17,7 +17,7 @@ export const LatestNewsSlice: React.FC<SliceProps> = ({
   return (
     <Box
       component="section"
-      background="purple100"
+      background={renderedOnOrganizationSubpage ? undefined : 'purple100'}
       paddingTop={[5, 5, 8]}
       paddingBottom={[2, 2, 5]}
       aria-labelledby="news-items-title"
