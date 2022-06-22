@@ -720,14 +720,22 @@ describe('User profile API', () => {
         },
       })
 
-      // Assert
+      // Act
       const response = await request(app.getHttpServer())
         .post(`/confirmSms/${mockProfile.nationalId}`)
         .send({
           code: verification.smsCode,
-          mobilePhoneNumber: mockProfile.mobilePhoneNumber,
+          mobilePhoneNumber: '1234567',
         })
         .expect(200)
+
+      // Assert
+      expect(response.body).toMatchInlineSnapshot(`
+          Object {
+            "confirmed": false,
+            "message": "Sms verification does not exist for this user",
+          }
+        `)
     })
   })
 
