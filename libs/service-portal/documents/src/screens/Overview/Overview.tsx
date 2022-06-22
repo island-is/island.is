@@ -345,8 +345,8 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
           <Filter
             resultCount={0}
             variant="popover"
-            reverse
             align="left"
+            reverse
             labelClear={formatMessage(messages.clearFilter)}
             labelClearAll={formatMessage(messages.clearAllFilters)}
             labelOpen={formatMessage(messages.openFilter)}
@@ -560,7 +560,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
               </Box>
             )}
           </Hidden>
-          <Box marginTop={[0, 4]}>
+          <Box marginTop={[0, 3]}>
             <Hidden below="sm">
               <Box
                 className={styles.tableHeading}
