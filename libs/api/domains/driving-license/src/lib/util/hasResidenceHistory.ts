@@ -1,9 +1,8 @@
 import {
   computeCountryResidence,
   Residence,
-  Address,
 } from '@island.is/residence-history'
-import { compareDesc } from 'date-fns'
+import compareDesc from 'date-fns/compareDesc'
 
 interface NationalRegistryResidence {
   address: NationalRegistryAddress
