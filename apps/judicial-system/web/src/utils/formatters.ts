@@ -10,7 +10,7 @@ export const parseTime = (date: string, time: string) => {
 
   const dateHours = setHours(
     new Date(date),
-    parseInt(timeWithoutColon.substr(0, 2)),
+    parseInt(timeWithoutColon.slice(0, 2)),
   )
 
   /**
@@ -19,8 +19,8 @@ export const parseTime = (date: string, time: string) => {
    * a date.
    * */
   if (
-    validate(time, 'empty').isValid &&
-    validate(time, 'time-format').isValid
+    validate([{ value: time, validations: ['empty', 'time-format'] }])
+      .length === 0
   ) {
     const dateMinutes = formatISO(
       setSeconds(

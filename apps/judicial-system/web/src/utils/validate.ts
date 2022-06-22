@@ -77,7 +77,7 @@ const getRegexByValidation = (validation: Validation) => {
 export const validate = (
   items: ValidationItem[],
 ): { isValid: boolean; errorMessage: string }[] => {
-  return items
+  const validations = items
     .map((item) => {
       if (!item.value) {
         if (item.validations.some((validation) => validation === 'empty')) {
@@ -101,6 +101,8 @@ export const validate = (
       }
     })
     .flat()
+
+  return validations.filter((item) => !item.isValid)
 }
 
 const someDefendantIsInvalid = (workingCase: Case) => {
@@ -152,6 +154,10 @@ export const isDefendantStepValidRC = (workingCase: Case) => {
         value: workingCase.defenderPhoneNumber,
         validations: ['phonenumber'],
       },
+      {
+        value: workingCase.leadInvestigator,
+        validations: ['empty'],
+      },
       ...(workingCase.type === CaseType.TRAVEL_BAN
         ? [
             {
@@ -189,6 +195,22 @@ export const isDefendantStepValidForSidebarIC = (workingCase: Case) => {
 }
 
 export const isHearingArrangementsStepValidRC = (workingCase: Case) => {
+  console.log(
+    validate([
+      {
+        value: workingCase.requestedCourtDate,
+        validations: ['empty', 'date-format'],
+      },
+      ...(workingCase.type !== CaseType.TRAVEL_BAN && !workingCase.parentCase
+        ? [
+            {
+              value: workingCase.arrestDate,
+              validations: ['empty', 'date-format'],
+            } as ValidationItem,
+          ]
+        : []),
+    ]),
+  )
   return (
     (workingCase.prosecutor ||
       ((workingCase as unknown) as { prosecutorId: string }).prosecutorId) &&
