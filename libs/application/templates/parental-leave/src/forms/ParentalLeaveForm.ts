@@ -98,7 +98,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   defaultValue: (application: Application) =>
                     (application.externalData.userProfile?.data as {
                       mobilePhoneNumber?: string
-                    })?.mobilePhoneNumber,
+                    })?.mobilePhoneNumber?.slice(4),
                   id: 'applicant.phoneNumber',
                   variant: 'tel',
                   format: '###-####',
