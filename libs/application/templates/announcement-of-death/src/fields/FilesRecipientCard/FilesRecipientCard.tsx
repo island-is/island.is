@@ -33,17 +33,8 @@ export const FilesRecipientCard: FC<
           label: estateMember.name,
           value: estateMember.nationalId,
         }))
-      : [
-          {
-            label: application.answers.applicantName,
-            value: application.applicant,
-          },
-        ]
+      : []
 
-  // Notifier is not allowed to give finances permission
-  if (field.id === 'financesDataCollectionPermission') {
-    options = options.filter((member) => member.value !== application.applicant)
-  }
   options = options.filter((member) => isPerson(member.value))
 
   // Add the option for selecting noone
