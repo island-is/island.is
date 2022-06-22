@@ -210,4 +210,9 @@ export const core = defineMessages({
     description:
       'Notaður sem skilaboð sem segir hvert á að senda erindi vegna aðgangs í haus í öllum flæðum.',
   },
+  defender: {
+    id: 'judicial.system.core:defender',
+    defaultMessage: 'lögmaður',
+    description: 'Notað fyrir orðið Lögmaður í öllum flæðum.',
+  },
 })

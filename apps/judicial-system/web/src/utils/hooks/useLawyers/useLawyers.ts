@@ -5,7 +5,7 @@ import { toast } from '@island.is/island-ui/core'
 import type { Lawyer } from '@island.is/judicial-system-web/src/types'
 import { errors as errorMessages } from '@island.is/judicial-system-web/messages'
 
-const useLawyers = (): Lawyer[] => {
+export const useGetLawyers = (): Lawyer[] => {
   const { formatMessage } = useIntl()
 
   const { data, error } = useSWR<Lawyer[]>(
@@ -22,4 +22,20 @@ const useLawyers = (): Lawyer[] => {
   return data || []
 }
 
-export default useLawyers
+export const useGetLawyer = (nationalId: string): Lawyer => {
+  const { data } = useSWR<Lawyer>(
+    `/api/lawyer/${nationalId}`,
+    (url: string) => fetch(url).then((res) => res.json()),
+    { revalidateOnMount: true, errorRetryCount: 2 },
+  )
+
+  return (
+    data || {
+      name: '',
+      practice: '',
+      email: '',
+      phoneNr: '',
+      nationalId: '',
+    }
+  )
+}

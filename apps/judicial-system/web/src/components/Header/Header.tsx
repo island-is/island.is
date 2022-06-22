@@ -25,10 +25,12 @@ import * as constants from '@island.is/judicial-system/consts'
 import { UserContext } from '../UserProvider/UserProvider'
 import MarkdownWrapper from '../MarkdownWrapper/MarkdownWrapper'
 import * as styles from './Header.css'
+import { useGetLawyer } from '../../utils/hooks'
 
 const HeaderContainer: React.FC = () => {
   const { formatMessage } = useIntl()
   const { isAuthenticated, user } = useContext(UserContext)
+
   const logoHref =
     !user || !isAuthenticated
       ? '/'
@@ -42,6 +44,8 @@ const HeaderContainer: React.FC = () => {
     await api.logout()
     window.location.assign('/')
   }
+
+  const { name } = useGetLawyer('1905547599')
 
   return (
     <Box paddingX={[0, 0, 4]}>
@@ -59,53 +63,76 @@ const HeaderContainer: React.FC = () => {
                 </Link>
               )}
               headerItems={
-                <UserMenu
-                  language="is"
-                  authenticated={isAuthenticated}
-                  username={user?.name}
-                  dropdownItems={
-                    <>
-                      <div className={styles.dropdownItem}>
-                        <Box marginRight={2}>
-                          <Icon icon="person" type="outline" color="blue400" />
-                        </Box>
-                        <Box>
-                          <Box marginBottom={2}>
-                            <Text>{capitalize(user?.title || '')}</Text>
-                          </Box>
-                          <Box marginBottom={2}>
-                            <Text>{user?.institution?.name}</Text>
-                          </Box>
-                          <Box marginBottom={2}>
-                            <Text>{formatPhoneNumber(user?.mobileNumber)}</Text>
+                user && (
+                  <UserMenu
+                    language="is"
+                    authenticated={isAuthenticated}
+                    username={user.name}
+                    dropdownItems={
+                      <>
+                        <div className={styles.dropdownItem}>
+                          <Box marginRight={2}>
+                            <Icon
+                              icon="person"
+                              type="outline"
+                              color="blue400"
+                            />
                           </Box>
                           <Box>
-                            <Text>{user?.email}</Text>
+                            <Box marginBottom={2}>
+                              <Text>
+                                {capitalize(
+                                  user.role === UserRole.DEFENDER
+                                    ? formatMessage(core.defender)
+                                    : user.title,
+                                )}
+                              </Text>
+                            </Box>
+                            <Box marginBottom={2}>
+                              <Text>
+                                {capitalize(
+                                  user.role === UserRole.DEFENDER
+                                    ? user.institution?.name
+                                    : '',
+                                )}
+                              </Text>
+                            </Box>
+                            <Box marginBottom={2}>
+                              <Text>
+                                {formatPhoneNumber(user.mobileNumber)}
+                              </Text>
+                            </Box>
+                            <Box>
+                              <Text>{user.email}</Text>
+                            </Box>
                           </Box>
-                        </Box>
-                      </div>
-                      <div className={styles.dropdownItem}>
-                        <Box marginRight={2}>
-                          <Icon
-                            icon="informationCircle"
-                            type="outline"
-                            color="blue400"
-                          />
-                        </Box>
-                        <Box>
-                          <MarkdownWrapper
-                            markdown={formatMessage(core.headerTipDisclaimer, {
-                              linkStart:
-                                '<a href="mailto:gudlaug.thorhallsdottir@dmr.is" rel="noopener noreferrer nofollow" target="_blank">gudlaug.thorhallsdottir@dmr.is',
-                              linkEnd: '</a>',
-                            })}
-                          />
-                        </Box>
-                      </div>
-                    </>
-                  }
-                  onLogout={handleLogout}
-                />
+                        </div>
+                        <div className={styles.dropdownItem}>
+                          <Box marginRight={2}>
+                            <Icon
+                              icon="informationCircle"
+                              type="outline"
+                              color="blue400"
+                            />
+                          </Box>
+                          <Box>
+                            <MarkdownWrapper
+                              markdown={formatMessage(
+                                core.headerTipDisclaimer,
+                                {
+                                  linkStart:
+                                    '<a href="mailto:gudlaug.thorhallsdottir@dmr.is" rel="noopener noreferrer nofollow" target="_blank">gudlaug.thorhallsdottir@dmr.is',
+                                  linkEnd: '</a>',
+                                },
+                              )}
+                            />
+                          </Box>
+                        </div>
+                      </>
+                    }
+                    onLogout={handleLogout}
+                  />
+                )
               }
             />
           </GridColumn>
