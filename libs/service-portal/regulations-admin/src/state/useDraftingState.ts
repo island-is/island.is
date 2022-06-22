@@ -6,19 +6,11 @@ import React, {
   ReactNode,
 } from 'react'
 import { useMutation, gql } from '@apollo/client'
-import {
-  LawChapter,
-  LawChapterSlug,
-  MinistryList,
-} from '@island.is/regulations'
+import { LawChapterSlug, toISODate } from '@island.is/regulations'
 import { useHistory } from 'react-router-dom'
 import { Step } from '../types'
 import { useLocale } from '@island.is/localization'
-import {
-  DraftImpactId,
-  DraftingStatus,
-  RegulationDraft,
-} from '@island.is/regulations/admin'
+import { DraftingStatus } from '@island.is/regulations/admin'
 import {
   RegDraftForm,
   DraftingState,
@@ -44,6 +36,16 @@ export const ensureStepName = (cand: unknown) => {
   if (typeof cand === 'string' && cand in steps) {
     return cand as Step
   }
+}
+
+const isDraftEmpty = (draft: RegDraftForm): boolean => {
+  const someContent =
+    draft.title.value ||
+    draft.text.value ||
+    draft.appendixes.some(({ text, title }) => title.value || text.value) ||
+    draft.impacts.length
+
+  return !someContent
 }
 
 // ---------------------------------------------------------------------------
@@ -126,12 +128,12 @@ const useMakeDraftingState = (inputs: StateInputs) => {
               comments: '', // TODO: remove this field from the database. It's never used!
               ministry: draft.ministry.value,
               draftingNotes: draft.draftingNotes.value,
-              idealPublishDate: draft.idealPublishDate?.value,
+              idealPublishDate: toISODate(draft.idealPublishDate?.value),
               fastTrack: draft.fastTrack.value,
               lawChapters: draft.lawChapters.value,
-              signatureDate: draft.signatureDate.value,
+              signatureDate: toISODate(draft.signatureDate.value),
               signatureText: draft.signatureText.value,
-              effectiveDate: draft.effectiveDate.value,
+              effectiveDate: toISODate(draft.effectiveDate.value),
               type: draft.type.value,
               draftingStatus: newStatus || draft.draftingStatus,
               signedDocumentUrl: draft.signedDocumentUrl.value,
@@ -175,7 +177,9 @@ const useMakeDraftingState = (inputs: StateInputs) => {
         : undefined,
 
       goToStep: async (stepName: Step) => {
-        await actions.saveStatus(true)
+        if (!isDraftEmpty(draft)) {
+          await actions.saveStatus(true)
+        }
         history.push(getEditUrl(draft.id, stepName))
       },
 

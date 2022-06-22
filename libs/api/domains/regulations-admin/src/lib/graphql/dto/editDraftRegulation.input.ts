@@ -44,16 +44,16 @@ export class EditDraftBody {
   @Field(() => String, { nullable: true })
   ministry?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => String, { nullable: true })
   idealPublishDate?: ISODate
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => String, { nullable: true })
   signatureDate?: ISODate
 
   @Field(() => String, { nullable: true })
   signatureText?: HTMLText
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => String, { nullable: true })
   effectiveDate?: ISODate
 
   @Field(() => String, { nullable: true })

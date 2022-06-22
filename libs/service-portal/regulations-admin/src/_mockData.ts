@@ -1,7 +1,6 @@
 import { MinistrySlug, MinistryList } from '@island.is/regulations'
 import { useEffect, useRef, useState } from 'react'
 import { RegulationDraft } from '@island.is/regulations/admin'
-// import { } from './utils'
 
 export const useMockQuery = <T>(data: T, skip?: boolean) => {
   const [loading, setLoading] = useState(!skip)

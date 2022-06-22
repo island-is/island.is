@@ -1,4 +1,4 @@
-import { HTMLText, ISODate, PlainText, RegName } from '@island.is/regulations'
+import { HTMLText, ISODate, PlainText } from '@island.is/regulations'
 import { Field, InputType } from '@nestjs/graphql'
 
 @InputType()
@@ -24,7 +24,7 @@ export class UpdateDraftRegulationChangeInput {
   @Field(() => String, { nullable: true })
   title!: PlainText
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => String, { nullable: true })
   date!: ISODate
 
   @Field(() => String, { nullable: true })

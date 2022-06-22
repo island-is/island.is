@@ -3,19 +3,8 @@ import { Box, Button } from '@island.is/island-ui/core'
 import React, { useState } from 'react'
 import { buttonsMsgs, buttonsMsgs as msg } from '../messages'
 import { useLocale } from '@island.is/localization'
-import { RegDraftForm } from '../state/types'
 import { useDraftingState } from '../state/useDraftingState'
 import ConfirmModal from './ConfirmModal/ConfirmModal'
-
-const isDraftEmpty = (draft: RegDraftForm): boolean => {
-  const someContent =
-    draft.title.value ||
-    draft.text.value ||
-    draft.appendixes.some(({ text, title }) => title.value || text.value) ||
-    draft.impacts.length
-
-  return !someContent
-}
 
 // ===========================================================================
 
@@ -34,7 +23,7 @@ export const SaveDeleteButtons = (props: SaveDeleteButtonsProps) => {
   const { wrap, classes = s } = props
 
   const t = useLocale().formatMessage
-  const { draft, saving, actions } = useDraftingState()
+  const { saving, actions } = useDraftingState()
   const { saveStatus, deleteDraft, propose } = actions
   const [isConfirmationVisible, setIsConfirmationVisible] = useState(false)
   const { formatMessage } = useLocale()

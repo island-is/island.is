@@ -26,7 +26,7 @@ export class CreateDraftRegulationChangeInput {
   @Field(() => [CreateChangeAppendixInput], { nullable: true })
   appendixes?: CreateChangeAppendixInput[]
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => String, { nullable: true })
   date!: ISODate
 
   @Field(() => String, { nullable: true })

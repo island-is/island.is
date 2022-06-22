@@ -477,7 +477,7 @@ const GetRegulationFromApiQuery = gql`
 export const useGetRegulationFromApiQuery = (
   regulation: RegName | DraftImpactName,
   date?: ISODate,
-): QueryResult<Regulation> => {
+): QueryResult<Regulation | undefined> => {
   const { loading, error, data } = useQuery<Query>(GetRegulationFromApiQuery, {
     variables: { input: { regulation, date } },
   })
@@ -490,13 +490,16 @@ export const useGetRegulationFromApiQuery = (
       error: error || new Error(`Error fetching regulation`),
     }
   }
+  const regulationFromApi = (data.getRegulationFromApi ?? undefined) as
+    | Regulation
+    | undefined
   // TODO: handle RegulationRedirect?
-  if ('redirectUrl' in data.getRegulationFromApi) {
+  if (regulationFromApi && 'redirectUrl' in regulationFromApi) {
     return {
       error: new Error(`redirect`),
     }
   }
   return {
-    data: data.getRegulationFromApi as Regulation,
+    data: regulationFromApi,
   }
 }

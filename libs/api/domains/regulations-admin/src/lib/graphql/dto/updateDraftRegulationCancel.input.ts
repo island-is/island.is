@@ -1,13 +1,13 @@
 import { ISODate } from '@island.is/regulations'
 import { Field, InputType } from '@nestjs/graphql'
-import { IsDate, IsOptional } from 'class-validator'
+import { IsOptional } from 'class-validator'
 
 @InputType()
 export class UpdateDraftRegulationCancelInput {
   @Field(() => String)
   id!: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => String, { nullable: true })
   @IsOptional()
   date?: ISODate
 }

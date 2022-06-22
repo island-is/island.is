@@ -6,12 +6,10 @@ import {
   Stack,
 } from '@island.is/island-ui/core'
 import { ministryMessages as msg } from '../messages'
-import { useHistory } from 'react-router'
 import { useMinistriesQuery } from '../utils/dataHooks'
 import { useLocale } from '@island.is/localization'
 
 export const MinistryList = () => {
-  const history = useHistory()
   const t = useLocale().formatMessage
   const ministries = useMinistriesQuery()
 

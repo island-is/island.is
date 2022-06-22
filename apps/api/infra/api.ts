@@ -228,8 +228,8 @@ export const serviceSetup = (services: {
     .readiness('/health')
     .liveness('/liveness')
     .resources({
-      limits: { cpu: '400m', memory: '512Mi' },
-      requests: { cpu: '100m', memory: '256Mi' },
+      limits: { cpu: '800m', memory: '1024Mi' },
+      requests: { cpu: '200m', memory: '512Mi' },
     })
     .grantNamespaces(
       'nginx-ingress-external',

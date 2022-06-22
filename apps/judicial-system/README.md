@@ -66,28 +66,6 @@ Finally, you can enable communication with the court system via xRoad by providi
 yarn test judicial-system-backend
 ```
 
-## API
-
-### Running locally
-
-You can serve this service locally by running:
-
-```bash
-yarn start judicial-system-api
-```
-
-You can enable communication with the court system via xRoad by providing appropriate values for the environment variables specified in the `xRoad` and `courtClientOptions` sections in `environment.ts`.
-
-To get latest texts from Contentful you need to provide an appropriate value for the environment variable `CONTENTFUL_ACCESS_TOKEN`.
-
-### Graphql playground
-
-Visit
-
-```text
-localhost:3333/api/graphql
-```
-
 ### OpenApi and Swagger
 
 Visit
@@ -115,6 +93,28 @@ To run the migrations on the local database run:
 yarn nx run judicial-system-backend:migrate
 # for DOWN migrations
 yarn nx run judicial-system-backend:migrate/undo
+```
+
+## API
+
+### Running locally
+
+You can serve this service locally by running:
+
+```bash
+yarn start judicial-system-api
+```
+
+You can enable communication with the court system via xRoad by providing appropriate values for the environment variables specified in the `xRoad` and `courtClientOptions` sections in `environment.ts`.
+
+To get latest texts from Contentful you need to provide an appropriate value for the environment variable `CONTENTFUL_ACCESS_TOKEN`.
+
+### Graphql playground
+
+Visit
+
+```text
+localhost:3333/api/graphql
 ```
 
 ## Web
@@ -162,23 +162,17 @@ This project uses two types of automated tests, unit tests and e2e tests. We use
 yarn test judicial-system-web
 ```
 
-##### Lib tests
-
-```bash
-yarn test judicial-system-formatters
-```
-
 ##### e2e tests
 
 ```bash
 yarn nx e2e judicial-system-web-e2e --watch
 ```
 
-### Message Extraction from Contentful
+## Message Extraction from Contentful
 
 Running yarn nx extract-strings judicial-system-{namespace} in the root folder /island.is will extract messages from the project and create or update a Namespace entry in Contentful.
 
-#### Example for namespaces in web:
+### Example for namespaces in web:
 
 ```
 yarn nx extract-strings judicial-system-web
@@ -190,7 +184,7 @@ will update namespaces:
 - judicial.system.restriction_cases
 - judicial.system.investigation_cases
 
-#### For backend:
+### For backend:
 
 ```
 yarn nx extract-strings judicial-system-backend

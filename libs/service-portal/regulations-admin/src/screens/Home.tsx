@@ -6,13 +6,11 @@ import {
   Box,
   Button,
   Text,
-  Tabs,
   GridColumn,
   GridRow,
 } from '@island.is/island-ui/core'
 import { useNamespaces } from '@island.is/localization'
-import { TaskList } from '../components/TaskList'
-import { ShippedRegulations } from '../components/ShippedRegulations'
+
 import { homeMessages as msg } from '../messages'
 import { useLocale } from '@island.is/localization'
 import { useCreateRegulationDraft } from '../utils/dataHooks'
@@ -42,7 +40,6 @@ const Home = () => {
           </Box>
         </GridColumn>
         <GridColumn span={['12/12', '12/12', '12/12', '4/12']}>
-          {/* <IntroHeader title={msg.title} intro={msg.intro} /> */}
           <Box
             marginBottom={3}
             marginLeft={[0, 0, 2]}

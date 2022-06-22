@@ -56,12 +56,19 @@ export const EditCancellation = (props: EditCancellationProp) => {
     activeCancellation,
     draftImpacts,
     draft.id,
+    minDate,
   )
 
   useEffect(() => {
-    const lastDay = allFutureEffects.slice(-1)?.[0]?.date
-    setMinDate(lastDay ? new Date(lastDay) : today)
-  }, [allFutureEffects, today])
+    const lastDay = allFutureEffects
+      .filter((eff) => eff.origin !== 'self')
+      .slice(-1)?.[0]?.date
+    const minDateDate = lastDay ? new Date(lastDay) : today
+    if (toISODate(minDateDate) !== toISODate(minDate)) {
+      setMinDate(minDateDate)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allFutureEffects])
 
   const changeCancelDate = (newDate: Date | undefined) => {
     setActiveCancellation({
@@ -69,6 +76,13 @@ export const EditCancellation = (props: EditCancellationProp) => {
       date: { value: newDate },
     })
   }
+
+  useEffect(() => {
+    if (activeCancellation && !activeCancellation.id) {
+      changeCancelDate(minDate)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [minDate])
 
   const saveCancellation = async () => {
     if (!cancellation.id) {

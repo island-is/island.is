@@ -30,6 +30,7 @@ import {
 import { DirectTaxPaymentsModal } from '..'
 import { findFamilyStatus, hasSpouse } from '../../lib/utils'
 import { useEmail } from '../../lib/hooks/useEmail'
+import withLogo from '../Logo/Logo'
 
 const SummaryForm = ({
   application,
@@ -169,4 +170,4 @@ const SummaryForm = ({
   )
 }
 
-export default SummaryForm
+export default withLogo(SummaryForm)

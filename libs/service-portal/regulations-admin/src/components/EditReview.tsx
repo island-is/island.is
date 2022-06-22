@@ -10,7 +10,7 @@ export const EditReview = () => {
   const t = useLocale().formatMessage
   const state = useDraftingState()
   const { actions } = state
-  const { ship, propose } = actions
+  const { ship /* , propose */ } = actions
 
   const messages = useCollectMessages(state, t)
   const [confirmed, setConfirmed] = useState(false)

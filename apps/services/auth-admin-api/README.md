@@ -22,6 +22,7 @@ To run the API locally, you first need to start the database container:
 
 ```bash
 yarn dev-services services-auth-admin-api
+yarn dev-services services-auth-api
 ```
 
 Then run the migration and seed scripts:

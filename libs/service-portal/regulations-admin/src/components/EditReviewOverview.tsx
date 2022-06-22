@@ -8,10 +8,8 @@ import { Step } from '../types'
 import { JumpToStep } from './EditReviewWarnings'
 import { RegDraftForm } from '../state/types'
 import {
-  prettyName,
   combineTextAppendixesComments,
   toISODate,
-  RegName,
 } from '@island.is/regulations'
 import copyToClipboard from 'copy-to-clipboard'
 

@@ -280,6 +280,7 @@ export const EditImpacts = () => {
                 id: '' as DraftRegulationChangeId, // no ID available at this stage
                 name: selRegOption.value as DraftImpactName,
                 regTitle: selRegOption.label,
+                date: undefined,
                 title: '',
                 text: '',
                 appendixes: [],

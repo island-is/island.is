@@ -13,7 +13,7 @@ import { RegulationsAdminApi } from '../client'
 import { RegulationsAdminClientService } from '@island.is/clients/regulations-admin'
 import { ConfigType } from '@nestjs/config'
 import { RegulationViewTypes } from '@island.is/regulations/web'
-import { nameToSlug } from '@island.is/regulations'
+import { ensureRegName, nameToSlug } from '@island.is/regulations'
 import {
   CreateDraftRegulationCancelInput,
   DeleteDraftRegulationInput,
@@ -67,10 +67,12 @@ export class RegulationsAdminResolver {
     @Args('input') input: GetRegulationImpactsInput,
     @CurrentUser() user: User,
   ) {
-    return await this.regulationsAdminApiService.getImpactsByName(
-      input.regulation,
-      user.authorization,
-    )
+    return ensureRegName(input.regulation)
+      ? await this.regulationsAdminApiService.getImpactsByName(
+          input.regulation,
+          user.authorization,
+        )
+      : null
   }
 
   @Query(() => [DraftRegulationShippedModel])
@@ -127,12 +129,14 @@ export class RegulationsAdminResolver {
   }
 
   @Query(() => graphqlTypeJson)
-  getRegulationFromApi(@Args('input') input: GetRegulationFromApiInput) {
-    return this.regulationsService.getRegulationOnDate(
-      input.date ? RegulationViewTypes.d : RegulationViewTypes.current,
-      nameToSlug(input.regulation),
-      input.date,
-    )
+  async getRegulationFromApi(@Args('input') input: GetRegulationFromApiInput) {
+    return ensureRegName(input.regulation)
+      ? await this.regulationsService.getRegulationOnDate(
+          input.date ? RegulationViewTypes.d : RegulationViewTypes.current,
+          nameToSlug(input.regulation),
+          input.date,
+        )
+      : null
   }
 
   @Query(() => graphqlTypeJson)

@@ -37,7 +37,12 @@ import { MiniDiff } from '../MiniDiff'
 import { EditorInput } from '../EditorInput'
 import * as s from './Impacts.css'
 import { ReferenceText } from './ReferenceText'
-import { fHtml, fText, makeDraftAppendixForm } from '../../state/makeFields'
+import {
+  fDate,
+  fHtml,
+  fText,
+  makeDraftAppendixForm,
+} from '../../state/makeFields'
 import { ImpactHistory } from './ImpactHistory'
 import { Appendixes } from '../Appendixes'
 import { tidyUp, updateFieldValue } from '../../state/validations'
@@ -80,6 +85,7 @@ export const EditChange = (props: EditChangeProp) => {
     ) {
       setActiveRegulation(regulation)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [regulation])
   const { data: draftImpacts } = useGetRegulationImpactsQuery(change.name)
 
@@ -88,20 +94,24 @@ export const EditChange = (props: EditChangeProp) => {
     activeChange,
     draftImpacts,
     draft.id,
+    minDate,
   )
 
   useEffect(() => {
-    const lastDay = allFutureEffects.slice(-1)?.[0]?.date
+    const lastDay = allFutureEffects
+      .filter((eff) => eff.origin !== 'self')
+      .slice(-1)?.[0]?.date
     const minDateDate = lastDay ? new Date(lastDay) : today
-    if (minDateDate !== minDate) {
+    if (toISODate(minDateDate) !== toISODate(minDate)) {
       setMinDate(minDateDate)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allFutureEffects])
 
   useEffect(() => {
     if (
-      !change.id &&
       activeRegulation &&
+      !change.id &&
       !activeChange.title.value &&
       !activeChange.text.value
     ) {
@@ -114,14 +124,22 @@ export const EditChange = (props: EditChangeProp) => {
         ),
       })
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeRegulation])
 
   const changeDate = (newDate: Date | undefined) => {
     setActiveChange({
       ...activeChange,
-      date: { value: newDate },
+      date: fDate(newDate, true, { min: minDate }),
     })
   }
+
+  useEffect(() => {
+    if (toISODate(minDate) !== toISODate(activeChange.date.value)) {
+      changeDate(minDate)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [minDate])
 
   const changeRegulationTitle = (newTitle: PlainText) => {
     setActiveChange({

@@ -1,8 +1,9 @@
 import React from 'react'
-import { Box, Button, Tag, Text } from '@island.is/island-ui/core'
+import { Box, Button, Text } from '@island.is/island-ui/core'
 import { DraftImpactForm } from '../../state/types'
 import { nameToSlug, RegName } from '@island.is/regulations'
 import { ImpactDate } from './ImpactDate'
+import { RegulationTag } from '../RegulationTag'
 
 // ---------------------------------------------------------------------------
 
@@ -42,10 +43,10 @@ export const ImpactModalTitle = (props: ImpactModalTitleProps) => {
       >
         {tag?.first && (
           <Box marginRight={2}>
-            <Tag disabled>{tag.first}</Tag>
+            <RegulationTag disabled>{tag.first}</RegulationTag>
           </Box>
         )}
-        {tag?.second && <Tag disabled>{tag.second}</Tag>}
+        {tag?.second && <RegulationTag disabled>{tag.second}</RegulationTag>}
       </Box>
       <Text variant="h3" as="h3" marginBottom={[2, 2, 3, 4]}>
         {type === 'cancel' ? 'Fella á brott ' : 'Textabreyting á '} {title}
