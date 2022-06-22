@@ -5,8 +5,6 @@ import { toast } from '@island.is/island-ui/core'
 import type { Lawyer } from '@island.is/judicial-system-web/src/types'
 import { errors as errorMessages } from '@island.is/judicial-system-web/messages'
 
-import { validate } from '../../validate'
-
 export const useGetLawyers = (): Lawyer[] => {
   const { formatMessage } = useIntl()
 
@@ -29,14 +27,11 @@ export const useGetLawyer = (
   nationalId?: string,
   shouldFetch?: boolean,
 ): Lawyer => {
-  const isValidNationalId = validate(nationalId ?? '', 'national-id').isValid
   const fetchWithNationalId = (url: string, nationalId: string) =>
     fetch(`${url}?nationalId=${nationalId}`).then((res) => res.json())
 
   const { data } = useSWR<Lawyer>(
-    nationalId && isValidNationalId && shouldFetch
-      ? [`/api/lawyers/getLawyer`, nationalId]
-      : null,
+    nationalId && shouldFetch ? [`/api/lawyers/getLawyer`, nationalId] : null,
     fetchWithNationalId,
     { revalidateOnMount: true, errorRetryCount: 2 },
   )

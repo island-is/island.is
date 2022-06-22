@@ -3,8 +3,14 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import type { Lawyer } from '@island.is/judicial-system-web/src/types'
 
 import { mapToLawyer } from '../utils'
+import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 
 async function getLawyer(nationalId: string): Promise<Lawyer> {
+  const isValid = validate(nationalId || '', 'national-id')
+  if (!isValid) {
+    throw new Error('Invalid national id')
+  }
+
   const response = await fetch(`https://lmfi.is/api/lawyer/${nationalId}`, {
     headers: {
       Authorization: `Basic ${process.env.LAWYERS_ICELAND_API_KEY}`,
