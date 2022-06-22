@@ -89,7 +89,7 @@ interface LicenceCardProps {
   nativeID?: string
   style?: StyleProp<ViewStyle>
   type?: LicenseCardType
-  agencyLogo?: ImageSourcePropType
+  logo?: ImageSourcePropType
   backgroundImage?: ImageSourcePropType
   backgroundColor?: string
 }
@@ -154,7 +154,7 @@ const LicenseCardPresets = {
   },
   CovidCertificate: {
     title: 'Bólusetningarvottorð',
-    logo: LogoEnvironmentAgency,
+    logo: LogoCoatOfArms,
     backgroundImage: BackgroundCovidCertificate,
     backgroundColor: '#D6CFD6',
   },
@@ -177,7 +177,7 @@ export function LicenceCard({
     ? LicenseCardPresets[type]
     : LicenseCardPresets.DriversLicense
   const title = props.title ?? preset?.title
-  const logo = props.agencyLogo ?? preset?.logo
+  const logo = props.logo ?? preset?.logo
   const backgroundImage = props.backgroundImage ?? preset?.backgroundImage
   const backgroundColor = props.backgroundColor ?? preset?.backgroundColor
   const textColor = theme.shades.light.foreground
@@ -210,7 +210,11 @@ export function LicenceCard({
           </TimeStamp>
         )}
       </Content>
-      <ImgWrap>{logo}</ImgWrap>
+      {logo && (
+        <ImgWrap>
+          <Image source={logo} />
+        </ImgWrap>
+      )}
     </Host>
   )
 }

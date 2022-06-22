@@ -287,7 +287,6 @@ export const WalletPassScreen: NavigationFunctionComponent<{
               ? LicenseStatus.VALID
               : LicenseStatus.NOT_VALID
           }
-          agencyLogo={agencyLogo}
         />
       </SafeAreaView>
       {hasPkpass && hasValidPkpass && (
