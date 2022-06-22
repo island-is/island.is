@@ -123,6 +123,14 @@ export const CaseQuery = gql`
         decision
         courtCaseNumber
         ruling
+        caseFiles {
+          id
+          name
+          size
+          created
+          state
+          key
+        }
       }
       childCase {
         id

@@ -8,7 +8,6 @@ import {
   AccordionItem,
   AlertMessage,
   Box,
-  Input,
 } from '@island.is/island-ui/core'
 import {
   NotificationType,
@@ -53,6 +52,7 @@ import { Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 
 import * as styles from './Overview.css'
+import CaseResubmitModal from '@island.is/judicial-system-web/src/components/CaseResubmitModal/CaseResubmitModal'
 
 export const Overview: React.FC = () => {
   const router = useRouter()
@@ -71,12 +71,12 @@ export const Overview: React.FC = () => {
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
 
-  const [modalVisible, setModalVisible] = useState<boolean>(false)
+  const [modal, setModal] = useState<
+    'noModal' | 'caseSubmittedModal' | 'caseResubmitModal'
+  >('noModal')
   const [modalText, setModalText] = useState('')
-  const [resendCaseModalVisible, setResendCaseModalVisible] = useState(false)
-  const [caseResentExplanation, setCaseResentExplanation] = useState('')
 
-  const handleNextButtonClick = async () => {
+  const handleNextButtonClick = async (caseResentExplanation?: string) => {
     if (!workingCase) {
       return
     }
@@ -105,11 +105,9 @@ export const Overview: React.FC = () => {
           caseResentExplanation,
         ),
       })
-
-      setResendCaseModalVisible(false)
     }
 
-    setModalVisible(true)
+    setModal('caseSubmittedModal')
   }
 
   return (
@@ -355,52 +353,24 @@ export const Overview: React.FC = () => {
           onNextButtonClick={
             workingCase.state === CaseState.RECEIVED
               ? () => {
-                  setResendCaseModalVisible(true)
+                  setModal('caseResubmitModal')
                 }
               : handleNextButtonClick
           }
         />
       </FormContentContainer>
       <AnimatePresence>
-        {resendCaseModalVisible && (
-          <Modal
-            title={formatMessage(icOverview.sections.caseResentModal.heading)}
-            text={formatMessage(icOverview.sections.caseResentModal.text)}
-            handleClose={() => setResendCaseModalVisible(false)}
-            primaryButtonText={formatMessage(
-              icOverview.sections.caseResentModal.primaryButtonText,
-            )}
-            secondaryButtonText={formatMessage(
-              icOverview.sections.caseResentModal.secondaryButtonText,
-            )}
-            handleSecondaryButtonClick={() => {
-              setResendCaseModalVisible(false)
-            }}
-            handlePrimaryButtonClick={() => {
-              handleNextButtonClick()
-            }}
-            isPrimaryButtonLoading={isSendingNotification}
-            isPrimaryButtonDisabled={!caseResentExplanation}
-          >
-            <Box marginBottom={10}>
-              <Input
-                name="caseResentExplanation"
-                label={formatMessage(
-                  icOverview.sections.caseResentModal.input.label,
-                )}
-                placeholder={formatMessage(
-                  icOverview.sections.caseResentModal.input.placeholder,
-                )}
-                onChange={(evt) => setCaseResentExplanation(evt.target.value)}
-                textarea
-                rows={7}
-              />
-            </Box>
-          </Modal>
+        {modal === 'caseResubmitModal' && (
+          <CaseResubmitModal
+            workingCase={workingCase}
+            isLoading={isSendingNotification}
+            onClose={() => setModal('noModal')}
+            onContinue={(explaination) => handleNextButtonClick(explaination)}
+          />
         )}
       </AnimatePresence>
       <AnimatePresence>
-        {modalVisible && (
+        {modal === 'caseSubmittedModal' && (
           <Modal
             title={formatMessage(m.sections.modal.heading)}
             text={modalText}
