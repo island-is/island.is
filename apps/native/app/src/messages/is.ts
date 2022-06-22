@@ -217,13 +217,11 @@ export const is = {
   // cards
   'applicationStatusCard.openButtonLabel': 'Opna umsókn',
   'applicationStatusCard.seeMoreApplications': 'Skoða umsóknir',
-  'applicationStatusCard.state': `{
+  'applicationStatusCard.status': `{
     state,
     select,
-    draft {Drög}
-    missingInfo {Vantar gögn}
-    inReview {Í vinnslu}
-    approved {Samþykkt}
+    inprogress {Í ferli}
+    completed {Lokið}
     rejected {Hafnað}
     other {Staða óþekkt}
   }`,

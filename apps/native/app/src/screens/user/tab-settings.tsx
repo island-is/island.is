@@ -105,6 +105,8 @@ export function TabSettings() {
     client,
   });
 
+  const [documentNotifications, setDocumentNotifications] = useState(userProfile.data?.getUserProfile?.documentNotifications);
+
   const onLanguagePress = () => {
     showPicker({
       type: 'radio',
@@ -139,6 +141,43 @@ export function TabSettings() {
     }, 330)
   }, [])
 
+  function updateDocumentNotifications(value: boolean) {
+    client.mutate({
+      mutation: gql`
+        mutation updateProfile($input: UpdateUserProfileInput!) {
+          updateProfile(input: $input) {
+            nationalId
+            locale
+            documentNotifications
+          }
+        }
+      `,
+      update(cache, { data: { updateProfile } }) {
+        cache.modify({
+          fields: {
+            getUserProfile: (existing) => {
+              return { ...existing, ...updateProfile };
+            },
+          }
+        });
+      },
+      variables: {
+        input: {
+          documentNotifications: value,
+        }
+      }
+    }).catch((err) => {
+      console.log(JSON.stringify(err));
+      alert(err.message)
+    })
+  }
+
+  useEffect(() => {
+    if (userProfile) {
+      setDocumentNotifications(userProfile.data?.getUserProfile?.documentNotifications)
+    }
+  }, [userProfile])
+
   return (
     <ScrollView style={{ flex: 1 }} testID={testIDs.USER_SCREEN_SETTINGS}>
       <Alert
@@ -161,37 +200,12 @@ export function TabSettings() {
           accessory={
             <Switch
               onValueChange={(value) => {
-                client.mutate({
-                  mutation: gql`
-                    mutation updateProfile($input: UpdateUserProfileInput!) {
-                      updateProfile(input: $input) {
-                        nationalId
-                        locale
-                        documentNotifications
-                      }
-                    }
-                  `,
-                  update(cache, { data: { updateProfile } }) {
-                    cache.modify({
-                      fields: {
-                        getUserProfile: (existing) => {
-                          return { ...existing, ...updateProfile };
-                        },
-                      }
-                    });
-                  },
-                  variables: {
-                    input: {
-                      documentNotifications: value,
-                    }
-                  }
-                }).catch((err) => {
-                  console.log(JSON.stringify(err));
-                  alert(err.message)
-                })
-              }}
+                updateDocumentNotifications(value)
+                setDocumentNotifications(value)
+              }
+              }
               disabled={userProfile.loading && !userProfile.data}
-              value={userProfile.data?.getUserProfile?.documentNotifications}
+              value={documentNotifications}
               thumbColor={Platform.select({ android: theme.color.dark100 })}
               trackColor={{
                 false: theme.color.dark200,

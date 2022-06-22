@@ -5,7 +5,6 @@ import { ScrollView, View } from 'react-native'
 import { client } from '../../graphql/client'
 import { NATION_REGISTRY_USER_QUERY } from '../../graphql/queries/national-registry-user.query'
 import { useIntl } from 'react-intl'
-import { useAuthStore } from '../../stores/auth-store'
 import { usePreferencesStore } from '../../stores/preferences-store'
 import { testIDs } from '../../utils/test-ids'
 
@@ -14,7 +13,6 @@ function formatNationalId(str: string = '') {
 }
 
 export function TabPersonalInfo() {
-  const authStore = useAuthStore()
   const intl = useIntl()
   const { dismiss, dismissed } = usePreferencesStore()
   const natRegRes = useQuery(NATION_REGISTRY_USER_QUERY, { client, fetchPolicy: 'cache-first' })
@@ -95,8 +93,9 @@ export function TabPersonalInfo() {
       </InputRow>
       <Input
         loading={loadingNatReg}
+        error={errorNatReg}
         label={intl.formatMessage({ id: 'user.natreg.citizenship' })}
-        value={authStore.userInfo?.nat}
+        value={natRegData?.citizenship?.name}
       />
       <Input
         loading={loadingNatReg}

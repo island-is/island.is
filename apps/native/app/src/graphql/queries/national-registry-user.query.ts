@@ -15,6 +15,9 @@ export const NATION_REGISTRY_USER_QUERY = gql`
       address {
         code
       }
+      citizenship {
+        name
+      }
     }
   }
 `;
