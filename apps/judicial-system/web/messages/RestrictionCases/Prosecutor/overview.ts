@@ -70,6 +70,7 @@ export const rcOverview = {
           'Notaður sem texti í modal þegar ekki tókst að senda tilkynningu til dómara og dómritara á vakt',
       },
     }),
+    // TODO: remove this 'caseResentModal' section
     caseResentModal: {
       heading: defineMessage({
         id:
