@@ -79,7 +79,7 @@ export let Envs: EnvironmentConfigs = {
     auroraHost: 'postgres-applications.internal',
     domain: 'island.is',
     type: 'prod',
-    featuresOn: ['driving-license-use-v1-endpoint-for-v2-comms','INAO_Client'],
+    featuresOn: ['driving-license-use-v1-endpoint-for-v2-comms', 'INAO_Client'],
     defaultMaxReplicas: 10,
     defaultMinReplicas: 3,
     releaseName: 'web',
