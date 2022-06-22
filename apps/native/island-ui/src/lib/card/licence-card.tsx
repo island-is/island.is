@@ -1,17 +1,25 @@
 import React from 'react'
 import { FormattedDate, useIntl } from 'react-intl'
-import { Image, ImageSourcePropType } from 'react-native'
+import { Image, ImageSourcePropType, StyleProp, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
-import danger from '../../assets/card/danger.png'
-import isVerifiedLogo from '../../assets/card/is-verified.png'
-import driverLicence from '../../assets/card/okuskirteini.png'
-import weaponLicense from '../../assets/card/skotvopnaleyfi.png'
-import ust from '../../assets/card/ust.png'
-import fishingCard from '../../assets/card/veidikort.png'
+import IconStatusNonVerified from '../../assets/card/danger.png'
+import IconStatusVerified from '../../assets/card/is-verified.png'
+import BackgroundCovidCertificate from '../../assets/card/covid.png'
+import BackgroundDriversLicense from '../../assets/card/okuskirteini.png'
+import BackgroundWeaponLicense from '../../assets/card/skotvopnaleyfi.png'
+import BackgroundHuntingCard from '../../assets/card/veidikort.png'
+import BackgroundADR from '../../assets/card/adr-bg.png'
+import BackgroundVinnuvelar from '../../assets/card/vinnuvelar-bg.png'
+import BackgroundPassport from '../../assets/card/passport-bg.png'
+import LogoCoatOfArms from '../../assets/card/agency-logo.png'
+import LogoEnvironmentAgency from '../../assets/card/ust.png'
+import LogoAOSH from '../../assets/card/vinnueftirlitid-logo.png'
+import LogoRegistersIceland from '../../assets/card/thjodskra-logo.png'
 import { dynamicColor } from '../../utils'
 import { font } from '../../utils/font'
 
 const Host = styled.View`
+  padding-top: 1px;
   padding: 16px 24px;
   min-height: 112px;
   flex-flow: row nowrap;
@@ -20,7 +28,7 @@ const Host = styled.View`
   overflow: hidden;
 `
 
-const BackgroundImage = styled.ImageBackground<{ color: any }>`
+const BackgroundImage = styled.ImageBackground<{ color: string }>`
   position: absolute;
   left: 0;
   top: 0;
@@ -36,7 +44,7 @@ const Content = styled.View`
   justify-content: center;
 `
 
-const Title = styled.Text<{ color: any }>`
+const Title = styled.Text<{ color: string }>`
   margin-bottom: 8px;
 
   ${font({
@@ -51,7 +59,7 @@ const ValidationWrap = styled.View`
   margin-bottom: 4px;
 `
 
-const Validation = styled.Text<{ color: any }>`
+const Validation = styled.Text<{ color: string }>`
   ${font({
     fontWeight: '600',
     fontSize: 13,
@@ -60,7 +68,7 @@ const Validation = styled.Text<{ color: any }>`
   })}
 `
 
-const TimeStamp = styled.Text<{ color: any }>`
+const TimeStamp = styled.Text<{ color: string }>`
   ${font({
     fontSize: 13,
     color: (props) => props.color,
@@ -72,23 +80,18 @@ const ImgWrap = styled.View`
   align-content: center;
   justify-content: center;
 `
-
-type CardType =
-  | 'DriversLicense'
-  | 'IDENTIDY_CARD'
-  | 'PASSPORT'
-  | 'FISHING_CARD'
-  | 'WEAPON_LICENSE'
 type CardStatus = 'NOT_VALID' | 'VALID'
 
 interface LicenceCardProps {
-  title: string
   status: CardStatus
+  title?: string
   date?: Date | string
-  agencyLogo: ImageSourcePropType
-  type: CardType
   nativeID?: string
-  style?: any
+  style?: StyleProp<ViewStyle>
+  type?: LicenseCardType
+  agencyLogo?: ImageSourcePropType
+  backgroundImage?: ImageSourcePropType
+  backgroundColor?: string
 }
 
 type StatusStyle = {
@@ -104,69 +107,87 @@ type StatusStyles = {
 const statusIcon: StatusStyles = {
   NOT_VALID: {
     text: 'Ekki í gildi',
-    icon: danger,
+    icon: IconStatusNonVerified,
   },
   VALID: {
     text: 'Í gildi',
-    icon: isVerifiedLogo,
+    icon: IconStatusVerified,
   },
 }
 
+const LicenseCardPresets = {
+  DriversLicense: {
+    title: 'Ökuskírteini (IS)',
+    logo: LogoCoatOfArms,
+    backgroundImage: BackgroundDriversLicense,
+    backgroundColor: '#F5E4EC',
+  },
+  AdrLicense: {
+    title: 'ADR skírteini',
+    logo: LogoAOSH,
+    backgroundImage: BackgroundADR,
+    backgroundColor: '#F2FAEC',
+  },
+  MachineLicense: {
+    title: 'Vinnuvélaskírteini',
+    logo: LogoAOSH,
+    backgroundImage: BackgroundVinnuvelar,
+    backgroundColor: '#C5E6AF',
+  },
+  GeneralPassport: {
+    title: 'Almennt vegabréf',
+    logo: LogoRegistersIceland,
+    backgroundImage: BackgroundPassport,
+    backgroundColor: '#CDD1E6',
+  },
+  WeaponLicense: {
+    title: 'Skotvopnaleyfi',
+    logo: LogoCoatOfArms,
+    backgroundImage: BackgroundWeaponLicense,
+    backgroundColor: '#EBEBF2',
+  },
+  HuntingCard: {
+    title: 'Veiðikort',
+    logo: LogoEnvironmentAgency,
+    backgroundImage: BackgroundHuntingCard,
+    backgroundColor: '#E2EDFF',
+  },
+  CovidCertificate: {
+    title: 'Bólusetningarvottorð',
+    logo: LogoEnvironmentAgency,
+    backgroundImage: BackgroundCovidCertificate,
+    backgroundColor: '#D6CFD6',
+  },
+}
+
+export type LicenseCardType = keyof typeof LicenseCardPresets
+
 export function LicenceCard({
-  title,
-  type,
-  agencyLogo,
   nativeID,
   style,
   date,
   status,
+  type,
+  ...props
 }: LicenceCardProps) {
   const theme = useTheme()
   const intl = useIntl()
   const variant = statusIcon[status]
-  let titleString = title
-  let textColor = {
-    dark: theme.shades.dark.foreground,
-    light: theme.shades.light.foreground,
-  }
-  let backgroundColor = {
-    dark: theme.shades.dark.shade400,
-    light: theme.shades.light.shade400,
-  }
-  let backgroundImage = null
-  let logo = <Image source={agencyLogo} style={{ width: 68, height: 87 }} />
-  switch (type) {
-    case 'DriversLicense':
-      titleString = 'Ökuskírteini (IS)'
-      textColor = { dark: '#000000', light: '#000000' }
-      backgroundColor = { dark: '#5F414E', light: '#f5e4ec' }
-      backgroundImage = driverLicence
-      break
-    case 'IDENTIDY_CARD':
-      backgroundColor = { dark: '#403E3B', light: '#fff7e7' }
-      break
-    case 'PASSPORT':
-      backgroundColor = { dark: '#283139', light: '#ddefff' }
-      break
-    case 'FISHING_CARD':
-      textColor = { dark: '#000000', light: '#000000' }
-      backgroundColor = { dark: '#283139', light: '#ddefff' }
-      backgroundImage = fishingCard
-      logo = <Image source={ust} style={{ width: 58, height: 41 }} />
-      break
-    case 'WEAPON_LICENSE':
-      textColor = { dark: '#000000', light: '#000000' }
-      backgroundColor = { dark: '#474421', light: '#fffce0' }
-      backgroundImage = weaponLicense
-      break
-  }
+  const preset = type
+    ? LicenseCardPresets[type]
+    : LicenseCardPresets.DriversLicense
+  const title = props.title ?? preset?.title
+  const logo = props.agencyLogo ?? preset?.logo
+  const backgroundImage = props.backgroundImage ?? preset?.backgroundImage
+  const backgroundColor = props.backgroundColor ?? preset?.backgroundColor
+  const textColor = theme.shades.light.foreground
 
   return (
     <Host nativeID={nativeID} style={style}>
       <BackgroundImage source={backgroundImage} color={backgroundColor} />
       <Content>
         <Title numberOfLines={1} ellipsizeMode="tail" color={textColor}>
-          {titleString}
+          {title}
         </Title>
         {variant && (
           <ValidationWrap>
@@ -182,7 +203,10 @@ export function LicenceCard({
           <TimeStamp color={textColor}>
             {intl.formatMessage({ id: 'walletPass.lastUpdate' })}
             {': '}
-            <FormattedDate dateStyle="short" timeStyle="short" value={date} />
+            <FormattedDate
+              value={date}
+              {...{ dateStyle: 'short', timeStyle: 'short' }}
+            />
           </TimeStamp>
         )}
       </Content>

@@ -1,5 +1,11 @@
 import { theme } from '../../utils/theme'
-import { boolean, number, text, withKnobs, select } from '@storybook/addon-knobs'
+import {
+  boolean,
+  number,
+  text,
+  withKnobs,
+  select,
+} from '@storybook/addon-knobs'
 import { storiesOf } from '@storybook/react-native'
 import React from 'react'
 import { ImageSourcePropType, View } from 'react-native'
@@ -45,15 +51,30 @@ storiesOf('Cards', module)
     )
   })
   .add('Licence Card', () => {
-    const type = select('Licence Card Type', ['DRIVERS_LICENSE', 'IDENTIDY_CARD', 'PASSPORT', 'FISHING_CARD', 'WEAPON_LICENSE'], 'DRIVERS_LICENSE');
-    const status = select('Licence Card Status', ['VALID', 'NOT_VALID'], 'VALID');
+    const type = select(
+      'Licence Card Type',
+      [
+        'DriversLicense',
+        'AdrLicense',
+        'MachineLicense',
+        'GeneralPassport',
+        'WeaponLicense',
+        'HuntingCard',
+        'CovidCertificate',
+      ],
+      'DriversLicense',
+    )
+    const status = select(
+      'Licence Card Status',
+      ['VALID', 'NOT_VALID'],
+      'VALID',
+    )
     const title = text('Licence Card Title', 'Ökuskýrteini')
     return (
       <LicenceCard
         title={title}
         status={status}
         date={new Date()}
-        agencyLogo={agencyLogo as ImageSourcePropType}
         type={type}
       />
     )

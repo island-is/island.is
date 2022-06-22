@@ -53,19 +53,10 @@ export interface IGenericLicenseDataField {
   name: string;
   label: string;
   value: string;
-  fields: Array<{
-    type: string;
-    name: string;
-    label: string;
-    value: string;
-    fields: Array<{
-      type: string;
-      name: string;
-      label: string;
-      value: string;
-    }>
-  }>
+  fields: IGenericLicenseDataField[];
 }
+
+
 
 export enum GenericUserLicenseStatus {
   Unknown = 'Unknown',
