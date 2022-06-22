@@ -141,7 +141,7 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
           <Box marginBottom={3} id="navSettings">
             <Checkbox
               name="usingNav"
-              label="Sjálfvirk tenging við Navision"
+              label="Virkja tengingu við Navision"
               checked={state.usingNav}
               onChange={(event) =>
                 navChangeHandler(() => {
@@ -345,7 +345,7 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
           return (
             <Box
               marginBottom={[2, 2, 7]}
-              key={`rulesAndMultiSelectContent-${index}`}
+              key={`navAndMultiSelectContent-${index}`}
             >
               <Text
                 as="h3"
