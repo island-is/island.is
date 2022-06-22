@@ -139,6 +139,29 @@ export function formatCourtResubmittedToCourtSmsNotification(
   })
 }
 
+export function formatDefenderResubmittedToCourtEmailNotification(
+  formatMessage: FormatMessage,
+  policeCaseNumber: string,
+  overviewUrl: string,
+  courtName?: string,
+) {
+  const subject = formatMessage(
+    notifications.defenderResubmittedToCourt.subject,
+    {
+      policeCaseNumber,
+    },
+  )
+
+  const body = formatMessage(notifications.defenderResubmittedToCourt.body, {
+    policeCaseNumber,
+    court: courtName?.replace('dómur', 'dómi') || '',
+    linkStart: `<a href="${overviewUrl}">`,
+    linkEnd: '</a>',
+  })
+
+  return { body, subject }
+}
+
 export function formatProsecutorReadyForCourtEmailNotification(
   formatMessage: FormatMessage,
   caseType?: CaseType,

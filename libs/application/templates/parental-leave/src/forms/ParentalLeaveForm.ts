@@ -831,11 +831,6 @@ export const ParentalLeaveForm: Form = buildForm({
       children: [
         buildSubSection({
           title: '',
-          condition: (answers) =>
-            getApplicationAnswers(answers).periods.length > 0 &&
-            new Date(
-              getApplicationAnswers(answers).periods[0].startDate,
-            ).getTime() >= currentDateStartTime(),
           children: [
             buildMultiField({
               id: 'confirmation',
@@ -861,41 +856,13 @@ export const ParentalLeaveForm: Form = buildForm({
                       event: 'SUBMIT',
                       name: parentalLeaveFormMessages.confirmation.title,
                       type: 'primary',
+                      condition: (answers) =>
+                        getApplicationAnswers(answers).periods.length > 0 &&
+                        new Date(
+                          getApplicationAnswers(answers).periods[0].startDate,
+                        ).getTime() >= currentDateStartTime(),
                     },
                   ],
-                }),
-              ],
-            }),
-          ],
-        }),
-        buildSubSection({
-          title: '',
-          condition: (answers) =>
-            getApplicationAnswers(answers).periods.length > 0 &&
-            new Date(
-              getApplicationAnswers(answers).periods[0].startDate,
-            ).getTime() < currentDateStartTime(),
-          children: [
-            buildMultiField({
-              id: 'confirmation',
-              title: parentalLeaveFormMessages.confirmation.title,
-              description: parentalLeaveFormMessages.confirmation.description,
-              children: [
-                buildCustomField(
-                  {
-                    id: 'confirmationScreen',
-                    title: '',
-                    component: 'Review',
-                  },
-                  {
-                    editable: true,
-                  },
-                ),
-                buildSubmitField({
-                  id: 'submit',
-                  placement: 'footer',
-                  title: parentalLeaveFormMessages.confirmation.title,
-                  actions: [],
                 }),
               ],
             }),

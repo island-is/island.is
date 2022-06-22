@@ -45,6 +45,8 @@ import {
   getCourtRecordPdfAsString,
   formatProsecutorReadyForCourtEmailNotification,
   formatPrisonAdministrationRulingNotification,
+  formatDefenderCourtDateLinkEmailNotification,
+  formatDefenderResubmittedToCourtEmailNotification,
 } from '../../formatters'
 import { notifications } from '../../messages'
 import { Case } from '../case'
@@ -53,7 +55,6 @@ import { CaseEvent, EventService } from '../event'
 import { SendNotificationDto } from './dto/sendNotification.dto'
 import { Notification } from './models/notification.model'
 import { SendNotificationResponse } from './models/sendNotification.resopnse'
-import { formatDefenderCourtDateLinkEmailNotification } from '../../formatters/formatters'
 
 interface Recipient {
   address?: string
@@ -367,6 +368,24 @@ export class NotificationService {
     return this.sendSms(smsText, this.getCourtMobileNumbers(theCase.courtId))
   }
 
+  private sendResubmittedToCourtEmailToDefender(
+    theCase: Case,
+  ): Promise<Recipient> {
+    const { body, subject } = formatDefenderResubmittedToCourtEmailNotification(
+      this.formatMessage,
+      theCase.policeCaseNumber || '',
+      `${environment.deepLinks.defenderCaseOverviewUrl}${theCase.id}`,
+      theCase.court?.name,
+    )
+
+    return this.sendEmail(
+      subject,
+      body,
+      theCase.defenderName,
+      theCase.defenderEmail,
+    )
+  }
+
   private async sendReadyForCourtEmailNotificationToProsecutor(
     theCase: Case,
   ): Promise<Recipient> {
@@ -423,6 +442,14 @@ export class NotificationService {
         promises.push(
           this.sendResubmittedToCourtSmsNotificationToCourt(theCase),
         )
+        if (
+          theCase.courtDate &&
+          theCase.sendRequestToDefender &&
+          theCase.defenderName &&
+          theCase.defenderEmail
+        ) {
+          promises.push(this.sendResubmittedToCourtEmailToDefender(theCase))
+        }
       }
 
       this.eventService.postEvent(CaseEvent.RESUBMIT, theCase)

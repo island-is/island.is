@@ -31,6 +31,7 @@ import {
   formatCourtUploadRulingTitle,
   formatPrisonAdministrationRulingNotification,
   formatDefenderCourtDateLinkEmailNotification,
+  formatDefenderResubmittedToCourtEmailNotification,
 } from './formatters'
 
 export const makeProsecutor = (): User => {
@@ -1930,5 +1931,35 @@ describe('formatPrisonAdministrationRulingNotification', () => {
     expect(result.body).toBe(
       'Dómari hefur undirritað og staðfest úrskurð í máli 007-2022-06546 hjá Héraðsdómi.<br /><br />Skjöl málsins eru aðgengileg á <a href="some url">yfirlitssíðu málsins í Réttarvörslugátt</a>.',
     )
+  })
+})
+
+describe('formatDefenderResubmittedToCourtEmailNotification', () => {
+  const formatMessage = createTestIntl({ locale: 'is', onError: jest.fn() })
+    .formatMessage
+
+  const fn = (
+    policeCaseNumber: string,
+    overviewUrl: string,
+    courtName?: string,
+  ) =>
+    formatDefenderResubmittedToCourtEmailNotification(
+      formatMessage,
+      policeCaseNumber,
+      overviewUrl,
+      courtName,
+    )
+
+  it('should format email', () => {
+    const policeCaseNumber = 'R-123/2022'
+    const overviewUrl = 'https://rettarvorslugatt.island.is/overviewUrl'
+    const courtName = 'Héraðsdómur Reykjavíkur'
+
+    const result = fn(policeCaseNumber, overviewUrl, courtName)
+
+    expect(result.body).toEqual(
+      'Sækjandi í máli R-123/2022 hjá Héraðsdómi Reykjavíkur hefur sent kröfuna aftur á dóminn. <a href="https://rettarvorslugatt.island.is/overviewUrl">Uppfærð útgáfa er aðgengileg í Réttarvörslugátt.</a>',
+    )
+    expect(result.subject).toEqual('Krafa í máli R-123/2022 send aftur')
   })
 })
