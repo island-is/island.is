@@ -1,3 +1,3 @@
-import { SignedVerdictOverview } from '@island.is/judicial-system-web/src/routes/Shared/SignedVerdictOverview/SignedVerdictOverview'
+import { CaseOverview } from '@island.is/judicial-system-web/src/routes/Defender/CaseOverview'
 
-export default SignedVerdictOverview
+export default CaseOverview

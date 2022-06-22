@@ -35,6 +35,15 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         },
       },
 
+      // Company
+      {
+        name: m.companyTitle,
+        path: ServicePortalPath.Company,
+        icon: {
+          icon: 'business',
+        },
+      },
+
       // Min Gogn
       {
         name: m.userInfo,
@@ -214,11 +223,20 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
       // Ökutæki
       {
         name: m.vehicles,
-        path: ServicePortalPath.AssetsVehicles,
-        systemRoute: true,
+        path: ServicePortalPath.AssetsMyVehicles,
         icon: {
           icon: 'car',
         },
+        // children: [
+        //   {
+        //     name: 'Ökutækin mín',
+        //     path: ServicePortalPath.AssetsMyVehicles,
+        //   },
+        // {
+        //   name: 'Uppfletting í ökutækjaskrá',
+        //   path: ServicePortalPath.AssetsVehiclesLookup,
+        // },
+        // ],
       },
       // Stillingar - hidden from nav
       {
@@ -258,6 +276,13 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             path: ServicePortalPath.SettingsPersonalInformationEditLanguage,
           },
         ],
+      },
+      {
+        name: m.accessControl,
+        path: ServicePortalPath.SettingsAccessControl,
+        icon: {
+          icon: 'people',
+        },
       },
     ],
   },

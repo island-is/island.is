@@ -91,7 +91,7 @@ export class TranslationService {
   /** Adds a new Language */
   async createLanguage(language: LanguageDTO): Promise<Language | undefined> {
     try {
-      return this.sequelize.transaction((t) => {
+      return this.sequelize.transaction((_) => {
         return this.langugeModel.create(language)
       })
     } catch {
@@ -140,7 +140,7 @@ export class TranslationService {
   ): Promise<Translation | undefined> {
     this.logger.debug(`Creating translation for id - ${translation.key}`)
     try {
-      return this.sequelize.transaction((t) => {
+      return this.sequelize.transaction((_) => {
         return this.translationModel.create(translation)
       })
     } catch {

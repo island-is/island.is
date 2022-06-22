@@ -45,7 +45,7 @@ import { MenuTabsContext } from '../context/MenuTabsContext/MenuTabsContext'
 import { useI18n } from '../i18n'
 import { GET_ALERT_BANNER_QUERY } from '../screens/queries/AlertBanner'
 import { environment } from '../environments'
-import { useNamespace } from '../hooks'
+import { useFeatureFlag, useNamespace } from '../hooks'
 import {
   formatMegaMenuCategoryLinks,
   formatMegaMenuLinks,
@@ -66,8 +66,6 @@ const { publicRuntimeConfig = {} } = getConfig() ?? {}
 
 const IS_MOCK =
   process.env.NODE_ENV !== 'production' && process.env.API_MOCKS === 'true'
-
-const SHOULD_LINK_TO_SERVICE_WEB = false
 
 const absoluteUrl = (req, setLocalhost) => {
   let protocol = 'https:'
@@ -169,6 +167,11 @@ const Layout: NextComponentType<
   const { route, pathname, query, asPath } = useRouter()
   const fullUrl = `${respOrigin}${asPath}`
 
+  const { value: isWebFooterLinkingToSupportPage } = useFeatureFlag(
+    'iswebfooterlinkingtosupportpage',
+    false,
+  )
+
   Sentry.configureScope((scope) => {
     scope.setExtra('lang', activeLocale)
 
@@ -239,11 +242,7 @@ const Layout: NextComponentType<
   const isServiceWeb = pathIsRoute(asPath, 'serviceweb')
 
   return (
-    <GlobalContextProvider
-      namespace={namespace}
-      shouldLinkToServiceWeb={SHOULD_LINK_TO_SERVICE_WEB}
-      isServiceWeb={isServiceWeb}
-    >
+    <GlobalContextProvider namespace={namespace} isServiceWeb={isServiceWeb}>
       <Page component="div">
         <Head>
           {preloadedFonts.map((href, index) => {
@@ -384,7 +383,7 @@ const Layout: NextComponentType<
                   topLinks={footerUpperInfo}
                   {...(activeLocale === 'is'
                     ? {
-                        linkToHelpWeb: SHOULD_LINK_TO_SERVICE_WEB
+                        linkToHelpWeb: isWebFooterLinkingToSupportPage
                           ? linkResolver('serviceweb').href
                           : '',
                       }
@@ -396,6 +395,13 @@ const Layout: NextComponentType<
                   languageSwitchLink={{
                     title: activeLocale === 'en' ? 'Íslenska' : 'English',
                     href: activeLocale === 'en' ? '/' : '/en',
+                  }}
+                  privacyPolicyLink={{
+                    title: n('privacyPolicyTitle', 'Persónuverndarstefna'),
+                    href: n(
+                      'privacyPolicyHref',
+                      '/personuverndarstefna-stafraent-islands',
+                    ),
                   }}
                   showMiddleLinks
                 />

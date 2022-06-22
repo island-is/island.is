@@ -123,3 +123,21 @@ export const familystatus = defineMessages({
     description: 'Family status when applicant is in not cohabitation',
   },
 })
+
+export const stateDescriptions = defineMessages({
+  draft: {
+    id: 'fa.application:stateDescriptions.draft',
+    defaultMessage: 'Drög að umsókn',
+    description: 'Description for the draft state',
+  },
+  spouse: {
+    id: 'fa.application:stateDescriptions.spouse',
+    defaultMessage: 'Umsókn hjá maka',
+    description: 'Description for the spouse state',
+  },
+  submitted: {
+    id: 'fa.application:stateDescriptions.submitted',
+    defaultMessage: 'Umsókn móttekin hjá sveitarfélagi',
+    description: 'Description for the submitted state',
+  },
+})

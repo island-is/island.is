@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { useMutation } from '@apollo/client'
 import { useIntl } from 'react-intl'
 
@@ -11,6 +11,7 @@ import type {
   UpdateCase,
   SessionArrangements,
   CreateCase,
+  CaseCustodyRestrictions,
 } from '@island.is/judicial-system/types'
 import { toast } from '@island.is/island-ui/core'
 import { errors } from '@island.is/judicial-system-web/messages'
@@ -24,35 +25,16 @@ import { RequestRulingSignatureMutation } from './requestRulingSignatureGql'
 import { RequestCourtRecordSignatureMutation } from './requestCourtRecordSignatureGql'
 import { ExtendCaseMutation } from './extendCaseGql'
 
-type autofillProperties = Pick<
-  Case,
-  | 'demands'
-  | 'courtAttendees'
-  | 'prosecutorDemands'
-  | 'courtStartDate'
-  | 'courtCaseFacts'
-  | 'courtLegalArguments'
-  | 'validToDate'
-  | 'isolationToDate'
-  | 'prosecutorOnlySessionRequest'
-  | 'conclusion'
-  | 'courtDate'
-  | 'courtLocation'
-  | 'sessionBookings'
-  | 'ruling'
-  | 'endOfSessionBookings'
-  | 'introduction'
-  | 'requestedOtherRestrictions'
->
-
-type autofillSessionArrangementProperties = Pick<Case, 'sessionArrangements'>
-
-type autofillBooleanProperties = Pick<Case, 'isCustodyIsolation'>
+export type autofillEntry = {
+  key: keyof Case
+  value?: string | boolean | SessionArrangements | CaseCustodyRestrictions[]
+  force?: boolean
+}
 
 export type autofillFunc = (
-  key: keyof autofillProperties,
-  value: string,
+  entries: Array<autofillEntry>,
   workingCase: Case,
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
 ) => void
 
 interface CreateCaseMutationResponse {
@@ -107,6 +89,7 @@ const useCase = () => {
   ] = useMutation<TransitionCaseMutationResponse>(TransitionCaseMutation)
   const [
     sendNotificationMutation,
+    { loading: isSendingNotification, error: sendNotificationError },
   ] = useMutation<SendNotificationMutationResponse>(SendNotificationMutation)
   const [
     requestRulingSignatureMutation,
@@ -250,7 +233,6 @@ const useCase = () => {
     [formatMessage, transitionCaseMutation],
   )
 
-  const [isSendingNotification, setIsSendingNotification] = useState(false)
   const sendNotification = useMemo(
     () => async (
       id: string,
@@ -258,9 +240,6 @@ const useCase = () => {
       eventOnly?: boolean,
     ): Promise<boolean> => {
       try {
-        if (!eventOnly) {
-          setIsSendingNotification(true)
-        }
         const { data } = await sendNotificationMutation({
           variables: {
             input: {
@@ -270,15 +249,13 @@ const useCase = () => {
             },
           },
         })
-        setIsSendingNotification(false)
+
         return Boolean(data?.sendNotification?.notificationSent)
       } catch (e) {
-        setIsSendingNotification(false)
-        toast.error(formatMessage(errors.sendNotification))
         return false
       }
     },
-    [formatMessage, sendNotificationMutation],
+    [sendNotificationMutation],
   )
 
   const requestRulingSignature = useMemo(
@@ -326,50 +303,28 @@ const useCase = () => {
     [extendCaseMutation, formatMessage],
   )
 
-  const autofill: autofillFunc = useMemo(
-    () => (key, value, workingCase) => {
-      if (workingCase[key] === undefined || workingCase[key] === null) {
-        workingCase[key] = value
+  const autofill: autofillFunc = (entries, workingCase, setWorkingCase) => {
+    const validEntries = entries.filter(
+      (item) =>
+        item.value !== undefined &&
+        item.value !== null &&
+        (item.force ||
+          workingCase[item.key] === undefined ||
+          workingCase[item.key] === null),
+    )
 
-        if (workingCase[key]) {
-          updateCase(workingCase.id, { [key]: value })
-        }
-      }
-    },
-    [updateCase],
-  )
+    const flatEntries = Object.assign(
+      {},
+      ...validEntries.map((entry) => ({ [entry.key]: entry.value })),
+    )
 
-  const autofillSessionArrangements = useMemo(
-    () => (
-      key: keyof autofillSessionArrangementProperties,
-      value: SessionArrangements,
-      workingCase: Case,
-    ) => {
-      if (!workingCase[key]) {
-        workingCase[key] = value
+    if (Object.keys(flatEntries).length === 0) {
+      return
+    }
 
-        if (workingCase[key]) {
-          updateCase(workingCase.id, { [key]: value })
-        }
-      }
-    },
-    [updateCase],
-  )
-
-  const autofillBoolean = useMemo(
-    () => (
-      key: keyof autofillBooleanProperties,
-      value: boolean,
-      workingCase: Case,
-    ) => {
-      if (workingCase[key] === undefined || workingCase[key] === null) {
-        workingCase[key] = value
-
-        updateCase(workingCase.id, { [key]: value })
-      }
-    },
-    [updateCase],
-  )
+    setWorkingCase({ ...workingCase, ...flatEntries })
+    updateCase(workingCase.id, flatEntries)
+  }
 
   return {
     createCase,
@@ -382,6 +337,7 @@ const useCase = () => {
     isTransitioningCase,
     sendNotification,
     isSendingNotification,
+    sendNotificationError,
     requestRulingSignature,
     isRequestingRulingSignature,
     requestCourtRecordSignature,
@@ -389,8 +345,6 @@ const useCase = () => {
     extendCase,
     isExtendingCase,
     autofill,
-    autofillSessionArrangements,
-    autofillBoolean,
   }
 }
 

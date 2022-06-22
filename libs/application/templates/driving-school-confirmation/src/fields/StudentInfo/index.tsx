@@ -38,6 +38,16 @@ const ViewStudent: FC<FieldBaseProps> = ({ application }) => {
 
   const student = data?.drivingLicenseBookStudent
 
+  //complete schools with no duplicates
+  const completeSchools = [
+    ...new Map(
+      student?.book?.drivingSchoolExams.map((item: any) => [
+        JSON.stringify(item),
+        item,
+      ]),
+    ).values(),
+  ]
+
   return (
     <GridContainer>
       {!loading && !error && Object.entries(student).length > 0 ? (
@@ -72,16 +82,14 @@ const ViewStudent: FC<FieldBaseProps> = ({ application }) => {
               <Text variant="h4">
                 {formatMessage(m.confirmationSectionCompleteSchools)}
               </Text>
-              {student.book?.drivingSchoolExams.length ? (
-                student.book?.drivingSchoolExams.map(
-                  (school: any, key: any) => {
-                    return (
-                      <Text key={key} variant="default">
-                        {school.schoolTypeName}
-                      </Text>
-                    )
-                  },
-                )
+              {completeSchools.length ? (
+                completeSchools.map((school: any, key: any) => {
+                  return (
+                    <Text key={key} variant="default">
+                      {school.schoolTypeName}
+                    </Text>
+                  )
+                })
               ) : (
                 <Text variant="default">{'-'}</Text>
               )}

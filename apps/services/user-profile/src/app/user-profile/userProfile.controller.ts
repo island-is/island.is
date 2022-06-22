@@ -117,38 +117,42 @@ export class UserProfileController {
 
     if (userProfileDto.email) {
       const emailVerified = await this.verificationService.confirmEmail(
-        { hash: userProfileDto.emailCode },
+        { hash: userProfileDto.emailCode, email: userProfileDto.email },
         user.nationalId,
       )
 
       if (emailVerified.confirmed) {
-        await this.verificationService.removeEmailVerification(
-          userProfileDto.nationalId,
-        )
         userProfileDto = {
           ...userProfileDto,
           emailStatus: DataStatus.VERIFIED,
           emailVerified: emailVerified.confirmed,
         }
+      } else {
+        throw new BadRequestException(
+          `Email not confirmed in create. Message: ${emailVerified.message}`,
+        )
       }
     }
 
     if (userProfileDto.mobilePhoneNumber) {
       const phoneVerified = await this.verificationService.confirmSms(
-        { code: userProfileDto.smsCode },
+        {
+          code: userProfileDto.smsCode,
+          mobilePhoneNumber: userProfileDto.mobilePhoneNumber,
+        },
         user.nationalId,
       )
 
       if (phoneVerified.confirmed) {
-        await this.verificationService.removeSmsVerification(
-          userProfileDto.nationalId,
-        )
-
         userProfileDto = {
           ...userProfileDto,
           emailStatus: DataStatus.VERIFIED,
           mobilePhoneNumberVerified: phoneVerified.confirmed,
         }
+      } else {
+        throw new BadRequestException(
+          `Phone not confirmed in create. Message: ${phoneVerified.message}`,
+        )
       }
     }
 
@@ -213,7 +217,10 @@ export class UserProfileController {
 
     if (userProfileToUpdate.mobilePhoneNumber) {
       const phoneVerified = await this.verificationService.confirmSms(
-        { code: userProfileToUpdate.smsCode },
+        {
+          code: userProfileToUpdate.smsCode,
+          mobilePhoneNumber: userProfileToUpdate.mobilePhoneNumber,
+        },
         user.nationalId,
       )
 
@@ -224,13 +231,18 @@ export class UserProfileController {
           mobilePhoneNumberVerified: phoneVerified.confirmed,
         }
       } else {
-        throw new ForbiddenException()
+        throw new BadRequestException(
+          `Phone not confirmed in update. Message: ${phoneVerified.message}`,
+        )
       }
     }
 
     if (userProfileToUpdate.email) {
       const emailVerified = await this.verificationService.confirmEmail(
-        { hash: userProfileToUpdate.emailCode },
+        {
+          hash: userProfileToUpdate.emailCode,
+          email: userProfileToUpdate.email,
+        },
         user.nationalId,
       )
 
@@ -241,7 +253,9 @@ export class UserProfileController {
           emailVerified: emailVerified.confirmed,
         }
       } else {
-        throw new ForbiddenException()
+        throw new BadRequestException(
+          `Email not confirmed in update. Message: ${emailVerified.message}`,
+        )
       }
     }
 

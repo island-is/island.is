@@ -27,12 +27,13 @@ export class ApplicationAttachmentProvider {
       application,
       attachmentAnswers,
     )
-    return files.map((file) => {
+    return files.map((file, index) => {
+      const type = this.mapAnswerToType(file.answerKey)
       return {
-        subject: 'Kvörtun',
+        subject: `${type} ${index + 1}`,
         content: file.fileContent,
         fileName: file.fileName,
-        type: this.mapAnswerToType(file.answerKey),
+        type: type,
       }
     })
   }

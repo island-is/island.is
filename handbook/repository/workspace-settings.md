@@ -146,4 +146,3 @@ yarn nx run web-e2e:e2e-ci
 ### E2E in CI
 
 This task is executed as part of our GitHub CI pipeline via the `40_e2e.sh`.
-This script adds the `-c` option to enable Cypress recording.

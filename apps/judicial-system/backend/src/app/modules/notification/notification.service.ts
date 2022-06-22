@@ -32,7 +32,6 @@ import {
   formatCourtHeadsUpSmsNotification,
   formatPrisonCourtDateEmailNotification,
   formatCourtReadyForCourtSmsNotification,
-  getRequestPdfAsString,
   formatDefenderCourtDateEmailNotification,
   stripHtmlTags,
   formatPrisonRulingEmailNotification,
@@ -45,6 +44,7 @@ import {
   formatCourtResubmittedToCourtSmsNotification,
   getCourtRecordPdfAsString,
   formatProsecutorReadyForCourtEmailNotification,
+  formatPrisonAdministrationRulingNotification,
 } from '../../formatters'
 import { notifications } from '../../messages'
 import { Case } from '../case'
@@ -53,6 +53,7 @@ import { CaseEvent, EventService } from '../event'
 import { SendNotificationDto } from './dto/sendNotification.dto'
 import { Notification } from './models/notification.model'
 import { SendNotificationResponse } from './models/sendNotification.resopnse'
+import { formatDefenderResubmittedToCourtEmailNotification } from '../../formatters/formatters'
 
 interface Recipient {
   address?: string
@@ -194,6 +195,25 @@ export class NotificationService {
       })
     } catch (error) {
       this.logger.error('Failed to send email', { error })
+
+      this.eventService.postErrorEvent(
+        'Failed to send email',
+        {
+          subject,
+          to: `${recipientName} (${recipientEmail})`,
+          attachments:
+            attachments && attachments.length > 0
+              ? attachments.reduce(
+                  (acc, attachment, index) =>
+                    index > 0
+                      ? `${acc}, ${attachment.filename}`
+                      : `${attachment.filename}`,
+                  '',
+                )
+              : undefined,
+        },
+        error as Error,
+      )
 
       return {
         address: recipientEmail,
@@ -347,6 +367,24 @@ export class NotificationService {
     return this.sendSms(smsText, this.getCourtMobileNumbers(theCase.courtId))
   }
 
+  private sendResubmittedToCourtEmailToDefender(
+    theCase: Case,
+  ): Promise<Recipient> {
+    const { body, subject } = formatDefenderResubmittedToCourtEmailNotification(
+      this.formatMessage,
+      theCase.policeCaseNumber || '',
+      `${environment.deepLinks.defenderCaseOverviewUrl}${theCase.id}`,
+      theCase.court?.name,
+    )
+
+    return this.sendEmail(
+      subject,
+      body,
+      theCase.defenderName,
+      theCase.defenderEmail,
+    )
+  }
+
   private async sendReadyForCourtEmailNotificationToProsecutor(
     theCase: Case,
   ): Promise<Recipient> {
@@ -403,6 +441,14 @@ export class NotificationService {
         promises.push(
           this.sendResubmittedToCourtSmsNotificationToCourt(theCase),
         )
+        if (
+          theCase.courtDate &&
+          theCase.sendRequestToDefender &&
+          theCase.defenderName &&
+          theCase.defenderEmail
+        ) {
+          promises.push(this.sendResubmittedToCourtEmailToDefender(theCase))
+        }
       }
 
       this.eventService.postEvent(CaseEvent.RESUBMIT, theCase)
@@ -458,6 +504,8 @@ export class NotificationService {
     recipients?: string,
   ): Promise<void> {
     try {
+      return // Temporarily stop trying to upload emails to court
+
       await this.courtService.createEmail(
         user,
         theCase.id,
@@ -587,19 +635,13 @@ export class NotificationService {
       theCase.registrar?.name,
       theCase.prosecutor?.name,
       theCase.creatingProsecutor?.institution?.name,
+      theCase.sessionArrangements,
+      theCase.sendRequestToDefender,
+      theCase.defenderNationalId &&
+        `${environment.deepLinks.defenderCaseOverviewUrl}${theCase.id}`,
     )
     const calendarInvite = this.createICalAttachment(theCase)
     const attachments: Attachment[] = calendarInvite ? [calendarInvite] : []
-
-    if (theCase.sendRequestToDefender) {
-      const pdf = await getRequestPdfAsString(theCase, this.formatMessage)
-
-      attachments.push({
-        filename: `${theCase.policeCaseNumber}.pdf`,
-        content: pdf,
-        encoding: 'binary',
-      })
-    }
 
     const recipient = await this.sendEmail(
       subject,
@@ -717,23 +759,18 @@ export class NotificationService {
 
   private async sendRulingEmailNotificationToPrisonAdministration(
     theCase: Case,
-    courtRecordPdf: string,
   ): Promise<Recipient> {
+    const { subject, body } = formatPrisonAdministrationRulingNotification(
+      this.formatMessage,
+      theCase.courtCaseNumber,
+      theCase.court?.name,
+      `${environment.deepLinks.completedCaseOverviewUrl}/${theCase.id}`,
+    )
     return this.sendEmail(
-      theCase.courtCaseNumber ?? '',
-      'Sjá viðhengi',
+      subject,
+      body,
       'Fangelsismálastofnun',
       environment.notifications.prisonAdminEmail,
-      [
-        {
-          filename: this.formatMessage(
-            notifications.signedRuling.courtRecordAttachment,
-            { courtCaseNumber: theCase.courtCaseNumber },
-          ),
-          content: courtRecordPdf,
-          encoding: 'binary',
-        },
-      ],
     )
   }
 
@@ -752,10 +789,7 @@ export class NotificationService {
     )
 
     const recipients = [
-      await this.sendRulingEmailNotificationToPrisonAdministration(
-        theCase,
-        courtRecordPdf,
-      ),
+      await this.sendRulingEmailNotificationToPrisonAdministration(theCase),
     ]
 
     if (
@@ -786,30 +820,41 @@ export class NotificationService {
       courtCaseNumber: theCase.courtCaseNumber,
       caseType: theCase.type,
     })
-    const html = `${
-      theCase.isCustodyIsolation
-        ? this.formatMessage(notifications.modified.isolationHtml, {
-            caseType: theCase.type,
-            actorInstitution: user.institution?.name,
-            actorName: user.name,
-            actorTitle: user.title,
-            courtCaseNumber: theCase.courtCaseNumber,
-            linkStart: `<a href="${environment.deepLinks.completedCaseOverviewUrl}${theCase.id}">`,
-            linkEnd: '</a>',
-            validToDate: formatDate(theCase.validToDate, 'PPPp'),
-            isolationToDate: formatDate(theCase.isolationToDate, 'PPPp'),
-          })
-        : this.formatMessage(notifications.modified.html, {
-            caseType: theCase.type,
-            actorInstitution: user.institution?.name,
-            actorName: user.name,
-            actorTitle: user.title,
-            courtCaseNumber: theCase.courtCaseNumber,
-            linkStart: `<a href="${environment.deepLinks.completedCaseOverviewUrl}${theCase.id}">`,
-            linkEnd: '</a>',
-            validToDate: formatDate(theCase.validToDate, 'PPPp'),
-          })
-    }`
+    const html = theCase.isCustodyIsolation
+      ? this.formatMessage(notifications.modified.isolationHtml, {
+          caseType: theCase.type,
+          actorInstitution: user.institution?.name,
+          actorName: user.name,
+          actorTitle: user.title,
+          courtCaseNumber: theCase.courtCaseNumber,
+          linkStart: `<a href="${environment.deepLinks.completedCaseOverviewUrl}${theCase.id}">`,
+          linkEnd: '</a>',
+          validToDate: formatDate(theCase.validToDate, 'PPPp'),
+          isolationToDate: formatDate(theCase.isolationToDate, 'PPPp'),
+        })
+      : this.formatMessage(notifications.modified.html, {
+          caseType: theCase.type,
+          actorInstitution: user.institution?.name,
+          actorName: user.name,
+          actorTitle: user.title,
+          courtCaseNumber: theCase.courtCaseNumber,
+          linkStart: `<a href="${environment.deepLinks.completedCaseOverviewUrl}${theCase.id}">`,
+          linkEnd: '</a>',
+          validToDate: formatDate(theCase.validToDate, 'PPPp'),
+        })
+
+    const custodyNoticePdf = await getCustodyNoticePdfAsString(
+      theCase,
+      this.formatMessage,
+    )
+
+    const attachments = [
+      {
+        filename: `Vistunarseðill ${theCase.courtCaseNumber}.pdf`,
+        content: custodyNoticePdf,
+        encoding: 'binary',
+      },
+    ]
 
     const recipients = [
       await this.sendEmail(
@@ -823,6 +868,7 @@ export class NotificationService {
         html,
         'Gæsluvarðhaldsfangelsi',
         environment.notifications.prisonEmail,
+        attachments,
       ),
     ]
 

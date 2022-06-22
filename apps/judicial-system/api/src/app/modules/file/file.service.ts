@@ -23,6 +23,7 @@ export class FileService {
 
   private async getPdf(
     id: string,
+    useSigned: boolean,
     route: string,
     req: Request,
     res: Response,
@@ -33,7 +34,7 @@ export class FileService {
     headers.set('cookie', req.headers.cookie as string)
 
     const result = await fetch(
-      `${this.config.backendUrl}/api/case/${id}/${route}`,
+      `${this.config.backendUrl}/api/case/${id}/${route}?useSigned=${useSigned}`,
       { headers },
     ).then(async (res) => {
       if (res.ok) {
@@ -59,12 +60,13 @@ export class FileService {
     route: string,
     req: Request,
     res: Response,
+    useSigned = true,
   ): Promise<Response> {
     try {
       return this.auditTrailService.audit(
         userId,
         auditAction,
-        this.getPdf(id, route, req, res),
+        this.getPdf(id, useSigned, route, req, res),
         id,
       )
     } catch (error) {

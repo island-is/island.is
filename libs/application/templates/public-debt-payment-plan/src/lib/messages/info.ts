@@ -1,7 +1,5 @@
 import { defineMessages } from 'react-intl'
 
-const t = 'pdpp.application'
-
 export const info = {
   general: defineMessages({
     pageTitle: {

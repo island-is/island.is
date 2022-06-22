@@ -1,7 +1,5 @@
 import { defineMessages } from 'react-intl'
 
-const t = 'pdpp.application'
-
 export const employer = {
   general: defineMessages({
     pageTitle: {
@@ -83,7 +81,7 @@ export const employer = {
     minimumMonthlyPaymentDescription: {
       id: `pdpp.application:application.employer.labels.minimumMonthlyPaymentDescription`,
       defaultMessage: `
-      Í sjálfsafgreiðsluferlinu er miðað við að lágmarksgreiðsla á skuld sé {percent} af ráðstöfunartekjum þínum. Ef þú telur þessa fjárhæð of háa miðað við framfærslukostnað þinn þá skaltu hafa samband við innheimtumann ríkissjóðs. 
+      Í sjálfsafgreiðsluferlinu er miðað við að lágmarksgreiðsla á skuld sé {percent} af ráðstöfunartekjum þínum. Ef þú telur þessa fjárhæð of háa miðað við framfærslukostnað þinn þá skaltu hafa samband við innheimtumann ríkissjóðs.
       `,
       description: 'Minimum monthly payment description',
     },

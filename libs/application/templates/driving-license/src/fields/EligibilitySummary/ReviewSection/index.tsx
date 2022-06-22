@@ -32,7 +32,6 @@ type ReviewSectionProps = {
 
 const ReviewSection: FC<ReviewSectionProps> = ({
   application,
-  index,
   step: { state, description, title },
 }) => {
   const { formatMessage } = useLocale()

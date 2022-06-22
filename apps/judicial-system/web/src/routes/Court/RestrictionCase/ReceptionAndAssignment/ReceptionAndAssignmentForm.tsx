@@ -8,7 +8,7 @@ import { Case, User, UserRole } from '@island.is/judicial-system/types'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { setAndSendToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { rcReceptionAndAssignment as m } from '@island.is/judicial-system-web/messages/RestrictionCases/Court/receptionAndAssignment'
+import { rcReceptionAndAssignment as m } from '@island.is/judicial-system-web/messages'
 
 import CourtCaseNumber from '../../SharedComponents/CourtCaseNumber/CourtCaseNumber'
 

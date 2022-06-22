@@ -183,7 +183,7 @@ export const frontPageSlider = factory<FrontpageSlider>({
 
 export const featured = factory<Featured>({
   thing: () => referenceLink(),
-  title: ({ thing }) => title(),
+  title: (_) => title(),
   attention: () => faker.datatype.boolean(),
 })
 

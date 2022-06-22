@@ -27,6 +27,7 @@ import {
 import { Delegation } from '../models'
 import { MeDelegationsService } from '../meDelegations.service'
 import { ActorDelegationsService } from '../actorDelegations.service'
+import { ActorDelegationInput } from '../dto/actorDelegation.input'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => Delegation)
@@ -38,8 +39,15 @@ export class DelegationResolver {
   ) {}
 
   @Query(() => [Delegation], { name: 'authActorDelegations' })
-  getActorDelegations(@CurrentUser() user: User): Promise<DelegationDTO[]> {
-    return this.actorDelegationsService.getActorDelegations(user)
+  getActorDelegations(
+    @CurrentUser() user: User,
+    @Args('input', { type: () => ActorDelegationInput, nullable: true })
+    input?: ActorDelegationInput,
+  ): Promise<DelegationDTO[]> {
+    return this.actorDelegationsService.getActorDelegations(
+      user,
+      input?.delegationTypes,
+    )
   }
 
   @Query(() => [Delegation], { name: 'authDelegations' })
@@ -100,16 +108,11 @@ export class DelegationResolver {
     @Parent() delegation: DelegationDTO,
     @CurrentUser() user: User,
   ): Promise<Identity> {
-    const identity = await this.identityService.getIdentity(
+    return this.identityService.getIdentityWithFallback(
       delegation.toNationalId,
-      user,
-    )
-    return (
-      identity ??
-      DelegationResolver.fallbackIdentity(
-        delegation.toNationalId,
-        delegation.toName,
-      )
+      {
+        name: delegation.toName ?? undefined,
+      },
     )
   }
 
@@ -118,30 +121,12 @@ export class DelegationResolver {
     @Parent() delegation: DelegationDTO,
     @CurrentUser() user: User,
   ): Promise<Identity> {
-    const identity = await this.identityService.getIdentity(
+    return this.identityService.getIdentityWithFallback(
       delegation.fromNationalId,
-      user,
+      {
+        name: delegation.fromName ?? undefined,
+      },
     )
-    return (
-      identity ??
-      DelegationResolver.fallbackIdentity(
-        delegation.fromNationalId,
-        delegation.fromName,
-      )
-    )
-  }
-
-  private static fallbackIdentity(
-    nationalId: string,
-    name?: string | null,
-  ): Identity {
-    return {
-      nationalId: nationalId,
-      name: name ?? kennitala.format(nationalId),
-      type: kennitala.isCompany(nationalId)
-        ? IdentityType.Company
-        : IdentityType.Person,
-    }
   }
 
   @ResolveField('validTo', () => Date, { nullable: true })

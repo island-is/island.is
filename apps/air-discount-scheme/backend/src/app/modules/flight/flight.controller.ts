@@ -171,7 +171,6 @@ export class PublicFlightController {
   async checkFlightStatus(
     @Param() params: CheckFlightParams,
     @Body() body: CheckFlightBody,
-    @Req() request: HttpRequest,
   ): Promise<void> {
     const discount = await this.discountService.getDiscountByDiscountCode(
       params.discountCode,

@@ -92,6 +92,7 @@ In both modes you specify these options:
 - `clientId: string` - the client id to use in the client credential or token exchange grant.
 - `clientSecret: string` - the client secret to use in the client credential or token exchange grant.
 - `scope: string[]` - which scopes to request.
+- `tokenEndpoint: string` - (optional) if the [Token Endpoint](https://datatracker.ietf.org/doc/html/rfc6749#section-3.2) doesn't match the `${issuer}/connect/token` pattern, the token endpoint URL can be overwritten.
 
 #### Token mode
 

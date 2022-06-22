@@ -21,14 +21,13 @@ import { UserContext } from '@island.is/judicial-system-web/src/components/UserP
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { CaseData } from '@island.is/judicial-system-web/src/types'
-import { requests as m } from '@island.is/judicial-system-web/messages/Core/requests'
+import { requests as m, titles } from '@island.is/judicial-system-web/messages'
 import useSections from '@island.is/judicial-system-web/src/utils/hooks/useSections'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
+import { CaseQuery } from '@island.is/judicial-system-web/src/components/FormProvider/caseGql'
 import type { Case } from '@island.is/judicial-system/types'
-import * as Constants from '@island.is/judicial-system/consts'
+import * as constants from '@island.is/judicial-system/consts'
 
-import { CaseQuery } from './caseGql'
 import ActiveCases from './ActiveCases'
 import PastCases from './PastCases'
 import TableSkeleton from './TableSkeleton'
@@ -42,7 +41,7 @@ export const Cases: React.FC = () => {
   const { user } = useContext(UserContext)
   const {
     findLastValidStep,
-    getCourtSections,
+    getRestrictionCaseCourtSections,
     getInvestigationCaseCourtSections,
     getRestrictionCaseProsecutorSection,
     getInvestigationCaseProsecutorSection,
@@ -139,10 +138,12 @@ export const Cases: React.FC = () => {
       caseToOpen.state === CaseState.REJECTED ||
       caseToOpen.state === CaseState.DISMISSED
     ) {
-      routeTo = `${Constants.SIGNED_VERDICT_OVERVIEW}/${caseToOpen.id}`
+      routeTo = `${constants.SIGNED_VERDICT_OVERVIEW}/${caseToOpen.id}`
     } else if (role === UserRole.JUDGE || role === UserRole.REGISTRAR) {
       if (isRestrictionCase(caseToOpen.type)) {
-        routeTo = findLastValidStep(getCourtSections(caseToOpen, user)).href
+        routeTo = findLastValidStep(
+          getRestrictionCaseCourtSections(caseToOpen, user),
+        ).href
       } else {
         routeTo = findLastValidStep(
           getInvestigationCaseCourtSections(caseToOpen, user),
@@ -151,11 +152,11 @@ export const Cases: React.FC = () => {
     } else {
       if (isRestrictionCase(caseToOpen.type)) {
         routeTo = findLastValidStep(
-          getRestrictionCaseProsecutorSection(caseToOpen),
+          getRestrictionCaseProsecutorSection(caseToOpen, user),
         ).href
       } else {
         routeTo = findLastValidStep(
-          getInvestigationCaseProsecutorSection(caseToOpen),
+          getInvestigationCaseProsecutorSection(caseToOpen, user),
         ).href
       }
     }
@@ -178,15 +179,15 @@ export const Cases: React.FC = () => {
                 icon="add"
                 items={[
                   {
-                    href: Constants.STEP_ONE_CUSTODY_REQUEST_ROUTE,
+                    href: constants.STEP_ONE_CUSTODY_REQUEST_ROUTE,
                     title: 'Gæsluvarðhald',
                   },
                   {
-                    href: Constants.STEP_ONE_NEW_TRAVEL_BAN_ROUTE,
+                    href: constants.STEP_ONE_NEW_TRAVEL_BAN_ROUTE,
                     title: 'Farbann',
                   },
                   {
-                    href: Constants.NEW_IC_ROUTE,
+                    href: constants.NEW_IC_ROUTE,
                     title: 'Rannsóknarheimild',
                   },
                 ]}

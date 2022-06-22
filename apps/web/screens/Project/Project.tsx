@@ -18,8 +18,9 @@ import {
   OrganizationSlice,
   Section,
   HeadWithSocialSharing,
-  OneColumnTextSlice,
   NewsItems,
+  Stepper,
+  stepperUtils,
 } from '@island.is/web/components'
 import {
   Box,
@@ -33,8 +34,6 @@ import { QueryGetNewsArgs } from '@island.is/api/schema'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 import slugify from '@sindresorhus/slugify'
-import { getStepOptionsFromUIConfiguration } from '../../components/StepperFSM/StepperFSMUtils'
-import StepperFSM from '../../components/StepperFSM/StepperFSM'
 import {
   assignNavigationActive,
   convertLinkGroupsToNavigationItems,
@@ -212,7 +211,7 @@ const ProjectPage: Screen<PageProps> = ({
         {content && richText(content)}
         {!subpage && projectPage.stepper && (
           <Box marginTop={6}>
-            <StepperFSM
+            <Stepper
               scrollUpWhenNextStepAppears={false}
               stepper={projectPage.stepper}
               optionsFromNamespace={stepOptionsFromNamespace}
@@ -223,7 +222,15 @@ const ProjectPage: Screen<PageProps> = ({
         {!renderSlicesAsTabs &&
           (subpage ?? projectPage).slices.map((slice) =>
             slice.__typename === 'OneColumnText' ? (
-              <OneColumnTextSlice slice={slice} boxProps={{ marginTop: 8 }} />
+              <Box marginTop={6}>
+                <OrganizationSlice
+                  key={slice.id}
+                  slice={slice}
+                  namespace={namespace}
+                  fullWidth={true}
+                  organizationPageSlug={projectPage.slug}
+                />
+              </Box>
             ) : (
               <OrganizationSlice
                 key={slice.id}
@@ -293,7 +300,7 @@ ProjectPage.getInitialProps = async ({ apolloClient, locale, query }) => {
         query: GET_NAMESPACE_QUERY,
         variables: {
           input: {
-            namespace: 'StepperFSM',
+            namespace: 'Stepper',
             lang: locale,
           },
         },
@@ -328,11 +335,12 @@ ProjectPage.getInitialProps = async ({ apolloClient, locale, query }) => {
 
   let stepOptionsFromNamespace = []
 
-  if (getProjectPage.stepper)
-    stepOptionsFromNamespace = await getStepOptionsFromUIConfiguration(
+  if (getProjectPage.stepper) {
+    stepOptionsFromNamespace = await stepperUtils.getStepOptionsFromUIConfiguration(
       getProjectPage.stepper,
       apolloClient,
     )
+  }
 
   return {
     projectPage: getProjectPage,

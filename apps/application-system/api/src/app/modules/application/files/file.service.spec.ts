@@ -1,12 +1,17 @@
 import { Test } from '@nestjs/testing'
 import { FileService } from './file.service'
-import { SigningModule, SigningService } from '@island.is/dokobit-signing'
+import {
+  SigningModule,
+  signingModuleConfig,
+  SigningService,
+} from '@island.is/dokobit-signing'
 import { AwsService } from '@island.is/nest/aws'
 import * as pdf from './pdfGenerators'
 import { Application } from '@island.is/application/api/core'
 import { ApplicationTypes, PdfTypes } from '@island.is/application/core'
 import { LoggingModule } from '@island.is/logging'
 import { NotFoundException } from '@nestjs/common'
+import { ConfigModule } from '@island.is/nest/config'
 import {
   APPLICATION_CONFIG,
   ApplicationConfig,
@@ -97,9 +102,10 @@ describe('FileService', () => {
     const module = await Test.createTestingModule({
       imports: [
         LoggingModule,
-        SigningModule.register({
-          url: 'Test Url',
-          accessToken: 'Test Access Token',
+        SigningModule,
+        ConfigModule.forRoot({
+          isGlobal: true,
+          load: [signingModuleConfig],
         }),
       ],
       providers: [

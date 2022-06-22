@@ -54,6 +54,7 @@ export type MountedFile = { filename: string; env: string }
 export type ServiceDefinition = {
   liveness: HealthProbe
   readiness: HealthProbe
+  healthPort?: number
   port?: number
   initContainers?: InitContainers
   env: EnvironmentVariables
@@ -130,4 +131,4 @@ export interface Context {
   env: EnvironmentConfig
 }
 
-export type ExtraValues = { [idx in OpsEnv]: Hash | MissingSettingType }
+export type ExtraValues = { [idx in OpsEnv]: Hash | MissingSettingType | any }

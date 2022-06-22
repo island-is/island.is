@@ -3,7 +3,6 @@ import {
   buildCheckboxField,
   buildCustomField,
   buildRadioField,
-  FormValue,
   buildSubSection,
   getValueViaPath,
 } from '@island.is/application/core'

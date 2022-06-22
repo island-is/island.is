@@ -2,6 +2,7 @@ import { Field, ObjectType } from '@nestjs/graphql'
 import { FishingLicenseDeprivation } from './fishing-license-deprivation.model'
 import { FishingLicenseInfo } from './fishing-license-info.model'
 import { FishingLicenseSeaworthiness } from './fishing-license-seaworthiness.model'
+import { FishingLicenseUnfulfilledLicense } from './fishing-license-unfulfilled-license.model'
 
 @ObjectType()
 export class FishingLicenseShip {
@@ -23,4 +24,8 @@ export class FishingLicenseShip {
   deprivations!: FishingLicenseDeprivation[]
   @Field(() => [FishingLicenseInfo])
   fishingLicenses!: FishingLicenseInfo[]
+  @Field(() => Boolean)
+  doesNotFulfillFishingLicenses!: boolean
+  @Field(() => [FishingLicenseUnfulfilledLicense])
+  unfulfilledLicenses!: FishingLicenseUnfulfilledLicense[]
 }

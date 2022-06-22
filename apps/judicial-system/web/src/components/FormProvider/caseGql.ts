@@ -123,6 +123,14 @@ export const CaseQuery = gql`
         decision
         courtCaseNumber
         ruling
+        caseFiles {
+          id
+          name
+          size
+          created
+          state
+          key
+        }
       }
       childCase {
         id
@@ -141,8 +149,10 @@ export const CaseQuery = gql`
       isAppealDeadlineExpired
       isAppealGracePeriodExpired
       caseModifiedExplanation
+      rulingModifiedHistory
       caseResentExplanation
       origin
+      seenByDefender
     }
   }
 `

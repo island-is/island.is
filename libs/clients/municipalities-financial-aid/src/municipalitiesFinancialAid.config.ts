@@ -2,7 +2,7 @@ import { defineConfig } from '@island.is/nest/config'
 import * as z from 'zod'
 
 const schema = z.object({
-  baseApiUrl: z.string(),
+  xRoadServicePath: z.string(),
 })
 
 export const MunicipalitiesFinancialAidConfig = defineConfig({
@@ -10,9 +10,9 @@ export const MunicipalitiesFinancialAidConfig = defineConfig({
   schema,
   load(env) {
     return {
-      baseApiUrl: env.required(
-        'MUNICIPALITIES_FINANCIAL_AID_BACKEND_URL',
-        'http://localhost:3344',
+      xRoadServicePath: env.required(
+        'XROAD_FINANCIAL_AID_BACKEND_PATH',
+        'IS-DEV/MUN/10023/samband-sveitarfelaga/financial-aid-backend',
       ),
     }
   },

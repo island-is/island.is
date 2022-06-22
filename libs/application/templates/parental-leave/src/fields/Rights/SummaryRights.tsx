@@ -9,7 +9,6 @@ import { parentalLeaveFormMessages } from '../../lib/messages'
 import {
   getAvailablePersonalRightsInMonths,
   getAvailableRightsInMonths,
-  getSelectedChild,
 } from '../../lib/parentalLeaveUtils'
 import { daysToMonths } from '../../lib/directorateOfLabour.utils'
 import { YES } from '../../constants'

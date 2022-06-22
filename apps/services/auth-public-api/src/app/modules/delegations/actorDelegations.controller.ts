@@ -11,6 +11,7 @@ import {
   DelegationDirection,
   DelegationDTO,
   DelegationsService,
+  DelegationType,
 } from '@island.is/auth-api-lib'
 import {
   ActorScopes,
@@ -47,6 +48,28 @@ export class ActorDelegationsController {
             default: 'incoming',
           },
         },
+        delegationTypes: {
+          required: false,
+          schema: {
+            type: 'array',
+            items: {
+              type: 'string',
+              enum: [
+                DelegationType.LegalGuardian,
+                DelegationType.ProcurationHolder,
+                DelegationType.PersonalRepresentative,
+                DelegationType.Custom,
+              ],
+              example: [
+                [
+                  DelegationType.LegalGuardian,
+                  DelegationType.ProcurationHolder,
+                ],
+                DelegationType.Custom,
+              ],
+            },
+          },
+        },
       },
     },
   })
@@ -57,6 +80,7 @@ export class ActorDelegationsController {
   async findAll(
     @CurrentActor() actor: User,
     @Query('direction') direction: DelegationDirection.INCOMING,
+    @Query('delegationTypes') delegationTypes?: Array<DelegationType>,
   ): Promise<DelegationDTO[]> {
     if (direction != DelegationDirection.INCOMING) {
       throw new BadRequestException(
@@ -64,6 +88,6 @@ export class ActorDelegationsController {
       )
     }
 
-    return this.delegationsService.findAllIncoming(actor)
+    return this.delegationsService.findAllIncoming(actor, delegationTypes)
   }
 }

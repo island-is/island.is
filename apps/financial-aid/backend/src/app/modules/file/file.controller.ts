@@ -32,11 +32,7 @@ export class FileController {
     )
   }
 
-  @Scopes(
-    MunicipalitiesFinancialAidScope.read,
-    MunicipalitiesFinancialAidScope.employee,
-  )
-  @UseGuards(StaffGuard)
+  @Scopes(MunicipalitiesFinancialAidScope.read)
   @Get('url/:id')
   @ApiCreatedResponse({
     type: SignedUrlModel,

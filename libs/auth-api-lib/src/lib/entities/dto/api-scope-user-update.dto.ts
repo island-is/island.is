@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator'
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator'
 import { ApiScopeUserAccessDTO } from './api-scope-user-access.dto'
 
 export class ApiScopeUserUpdateDTO {

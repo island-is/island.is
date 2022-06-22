@@ -11,6 +11,9 @@ export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v, {
     params: error.validation.dataGathering,
   }),
+  approveExternalDataSpouse: z.boolean().refine((v) => v, {
+    params: error.validation.dataGathering,
+  }),
   spouse: z.object({
     email: z.string().refine((v) => isValidEmail(v), {
       params: error.validation.email,
@@ -131,6 +134,7 @@ export const dataSchema = z.object({
     }),
   }),
   spouseFormComment: z.string().optional(),
+  spouseName: z.string().optional(),
 })
 
 export type answersSchema = z.infer<typeof dataSchema>

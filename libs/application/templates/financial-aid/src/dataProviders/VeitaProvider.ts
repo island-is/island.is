@@ -6,15 +6,13 @@ import {
 import { CurrentApplication, DataProviderTypes } from '../lib/types'
 
 export class VeitaProvider extends BasicDataProvider {
-  readonly type = DataProviderTypes.NationalRegistry
+  readonly type = DataProviderTypes.Veita
   async provide(): Promise<CurrentApplication> {
-    // TODO: We probably need application system id and current Veita id here
     const query = `
         query MunicipalitiesFinancialAidCurrentApplicationQuery {
           municipalitiesFinancialAidCurrentApplication
         }
       `
-
     return this.useGraphqlGateway<CurrentApplication>(query)
       .then(async (res: Response) => {
         const response = await res.json()
@@ -24,7 +22,9 @@ export class VeitaProvider extends BasicDataProvider {
         const returnObject =
           response.data.municipalitiesFinancialAidCurrentApplication
 
-        return Promise.resolve({ currentApplicationId: returnObject })
+        return Promise.resolve({
+          currentApplicationId: returnObject,
+        })
       })
       .catch((error) => {
         return this.handleError(error)

@@ -2,6 +2,7 @@ import React, { FC, useContext } from 'react'
 import { FooterItem } from '@island.is/web/graphql/schema'
 import {
   Box,
+  Button,
   GridColumn,
   GridContainer,
   GridRow,
@@ -11,7 +12,7 @@ import {
   LinkProps,
   Text,
 } from '@island.is/island-ui/core'
-import { LinkType, useLinkResolver } from '@island.is/web/hooks'
+import { LinkType, useFeatureFlag, useLinkResolver } from '@island.is/web/hooks'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
 import { GlobalContext } from '@island.is/web/context'
 import { BLOCKS } from '@contentful/rich-text-types'
@@ -22,14 +23,23 @@ interface FooterProps {
   title: string
   logo?: string
   footerItems: Array<FooterItem>
+  questionsAndAnswersText?: string
+  canWeHelpText?: string
 }
 
 export const SyslumennFooter: React.FC<FooterProps> = ({
   title,
   logo,
   footerItems,
+  questionsAndAnswersText = 'Spurningar og svör',
+  canWeHelpText = 'Getum við aðstoðað?',
 }) => {
-  const { isServiceWeb, shouldLinkToServiceWeb } = useContext(GlobalContext)
+  const { isServiceWeb } = useContext(GlobalContext)
+  const { linkResolver } = useLinkResolver()
+  const { value: isSyslumennFooterLinkingToSupportPage } = useFeatureFlag(
+    'isSyslumennFooterLinkingToSupportPage',
+    false,
+  )
 
   const items = footerItems.map((item, index) => (
     <GridColumn
@@ -95,7 +105,7 @@ export const SyslumennFooter: React.FC<FooterProps> = ({
             </div>
           </Box>
           <GridRow>
-            {!shouldLinkToServiceWeb || isServiceWeb ? (
+            {!isSyslumennFooterLinkingToSupportPage || isServiceWeb ? (
               items
             ) : (
               <>
@@ -104,8 +114,27 @@ export const SyslumennFooter: React.FC<FooterProps> = ({
                     linkType="serviceweborganization"
                     slug="syslumenn"
                   >
-                    Spurningar og svör
+                    {questionsAndAnswersText}
                   </HeaderLink>
+                  <Box marginTop={3}>
+                    <Link
+                      href={
+                        linkResolver('serviceweborganization', ['syslumenn'])
+                          ?.href
+                      }
+                      skipTab
+                    >
+                      <Button
+                        size="small"
+                        colorScheme="negative"
+                        icon="arrowForward"
+                        variant="text"
+                        as="span"
+                      >
+                        {canWeHelpText}
+                      </Button>
+                    </Link>
+                  </Box>
                 </GridColumn>
                 <GridColumn span={['12/12', '12/12', '4/5']}>
                   <GridContainer>

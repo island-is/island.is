@@ -17,7 +17,7 @@ interface Then {
 
 type GivenWhenThen = () => Then
 
-describe('Case Not Completed Guard', () => {
+describe('Case Completed Guard', () => {
   const mockRequest = jest.fn()
   let givenWhenThen: GivenWhenThen
 

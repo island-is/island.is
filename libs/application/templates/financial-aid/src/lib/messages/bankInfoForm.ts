@@ -47,4 +47,22 @@ export const bankInfoForm = {
       description: 'Bank info form input label for account number',
     },
   }),
+  inputsPlaceholders: defineMessages({
+    bankNumber: {
+      id: 'fa.application:section.bankInfoForm.inputsPlaceholders.bankNumber',
+      defaultMessage: '0000',
+      description: 'Placeholder for bank number input',
+    },
+    ledger: {
+      id: 'fa.application:section.bankInfoForm.inputsPlaceholders.ledger',
+      defaultMessage: '00',
+      description: 'Placeholder for ledger input',
+    },
+    accountNumber: {
+      id:
+        'fa.application:section.bankInfoForm.inputsPlaceholders.accountNumber',
+      defaultMessage: '000000',
+      description: 'Placeholder for account number input',
+    },
+  }),
 }

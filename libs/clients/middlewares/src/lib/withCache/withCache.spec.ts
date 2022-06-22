@@ -602,6 +602,46 @@ describe('EnhancedFetch#withCache', () => {
     await expect(response2.text()).resolves.toEqual('')
   })
 
+  it('supports 304 responses', async () => {
+    // Arrange
+    jest.useRealTimers()
+    const cacheManager = caching({ store: 'memory', ttl: 0 })
+    env = setupTestEnv({
+      cache: {
+        cacheManager,
+        overrideCacheControl: buildCacheControl({
+          maxAge: 1,
+          staleWhileRevalidate: 100,
+        }),
+      },
+    })
+    env.fetch
+      .mockResolvedValueOnce(fakeResponse('Response 1'))
+      .mockResolvedValueOnce(fakeResponse('', { status: 304 }))
+
+    // Act. Unfortunately can't use fake timers since the revalidate runs in an un-awaited promise.
+    await env.enhancedFetch(testUrl)
+
+    // Wait until stale.
+    await sleep(2000)
+    const response1 = await env.enhancedFetch(testUrl)
+
+    // Wait until revalidated.
+    await sleep(10)
+    const response2 = await env.enhancedFetch(testUrl)
+
+    // Assert
+    expect(env.fetch).toHaveBeenCalledTimes(2)
+    await expect(response1.text()).resolves.toEqual('Response 1')
+    await expect(response2.text()).resolves.toEqual('Response 1')
+    expect(response1.headers.get('cache-status')).toEqual(
+      'EnhancedFetch; hit; ttl=-1',
+    )
+    expect(response2.headers.get('cache-status')).toEqual(
+      'EnhancedFetch; hit; ttl=1',
+    )
+  })
+
   // REGRESSION TEST: Passed in headers were deleted when combining Cache with Auth or AutoAuth.
   it('keeps all passed in headers', async () => {
     // Arrange

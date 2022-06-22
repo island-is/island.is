@@ -20,6 +20,7 @@ import { Icon } from '../IconRC/Icon'
 import { ColorSchemeContext } from '../context'
 
 import * as styles from './AsyncSearch.css'
+import { TestSupport } from '@island.is/island-ui/utils'
 
 export type AsyncSearchSizes = 'medium' | 'large'
 
@@ -167,6 +168,13 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
             }
           }
 
+          let inputColor: InputProps['color'] | undefined = undefined
+          if (whiteColorScheme) {
+            inputColor = 'white'
+          } else if (colorScheme === 'blueberry') {
+            inputColor = 'blueberry'
+          }
+
           return (
             <AsyncSearchInput
               hasFocus={focused}
@@ -189,7 +197,7 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
                 colored,
                 hasLabel,
                 placeholder,
-                white: whiteColorScheme,
+                color: inputColor,
               }}
               buttonProps={{
                 onFocus,
@@ -265,7 +273,7 @@ export interface AsyncSearchInputProps {
 
 export const AsyncSearchInput = forwardRef<
   HTMLInputElement,
-  AsyncSearchInputProps
+  AsyncSearchInputProps & TestSupport
 >(
   (
     {
@@ -280,6 +288,7 @@ export const AsyncSearchInput = forwardRef<
       menuProps = {},
       children,
       skipContext,
+      dataTestId,
     },
     ref,
   ) => {
@@ -298,6 +307,14 @@ export const AsyncSearchInput = forwardRef<
 
     const iconColor = getIconColor(whiteColorScheme, blueberryColorScheme)
 
+    let inputColor: InputProps['color'] | undefined = undefined
+
+    if (whiteColorScheme) {
+      inputColor = 'white'
+    } else if (blueberryColorScheme) {
+      inputColor = 'blueberry'
+    }
+
     return (
       <div
         {...rootProps}
@@ -309,8 +326,8 @@ export const AsyncSearchInput = forwardRef<
       >
         <Input
           {...inputProps}
-          white={whiteColorScheme}
-          blueberry={blueberryColorScheme}
+          data-testid={dataTestId}
+          color={inputColor}
           isOpen={isOpen}
           ref={ref}
         />

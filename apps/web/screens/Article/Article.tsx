@@ -30,6 +30,8 @@ import {
   Webreader,
   AppendedArticleComponents,
   footerEnabled,
+  Stepper,
+  stepperUtils,
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from '../queries'
@@ -57,8 +59,7 @@ import {
 import { Locale } from '@island.is/shared/types'
 import { useScrollPosition } from '../../hooks/useScrollPosition'
 import { scrollTo } from '../../hooks/useScrollSpy'
-import StepperFSM from '../../components/StepperFSM/StepperFSM'
-import { getStepOptionsFromUIConfiguration } from '../../components/StepperFSM/StepperFSMUtils'
+
 import { ArticleChatPanel } from './components/ArticleChatPanel'
 import * as styles from './Article.css'
 
@@ -550,7 +551,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
               activeLocale,
             )}
             {subArticle && subArticle.stepper && (
-              <StepperFSM
+              <Stepper
                 stepper={subArticle.stepper}
                 optionsFromNamespace={stepOptionsFromNamespace}
                 namespace={stepperNamespace}
@@ -683,7 +684,7 @@ ArticleScreen.getInitialProps = async ({ apolloClient, query, locale }) => {
   let stepOptionsFromNamespace = []
 
   if (subArticle && subArticle.stepper)
-    stepOptionsFromNamespace = await getStepOptionsFromUIConfiguration(
+    stepOptionsFromNamespace = await stepperUtils.getStepOptionsFromUIConfiguration(
       subArticle.stepper,
       apolloClient,
     )

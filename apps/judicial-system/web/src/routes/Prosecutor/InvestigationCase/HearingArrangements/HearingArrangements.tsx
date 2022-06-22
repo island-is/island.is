@@ -27,11 +27,14 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { setAndSendToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
-import { icRequestedHearingArrangements as m } from '@island.is/judicial-system-web/messages'
+import {
+  errors,
+  icRequestedHearingArrangements as m,
+  titles,
+} from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
 import type { User } from '@island.is/judicial-system/types'
-import * as Constants from '@island.is/judicial-system/consts'
+import * as constants from '@island.is/judicial-system/consts'
 
 import HearingArrangementsForms from './HearingArrangementsForm'
 
@@ -49,6 +52,7 @@ const HearingArrangements = () => {
   const {
     sendNotification,
     isSendingNotification,
+    sendNotificationError,
     transitionCase,
     isTransitioningCase,
     updateCase,
@@ -107,7 +111,7 @@ const HearingArrangements = () => {
           (notification) => notification.type === NotificationType.HEADS_UP,
         )
       ) {
-        router.push(`${Constants.IC_POLICE_DEMANDS_ROUTE}/${workingCase.id}`)
+        router.push(`${constants.IC_POLICE_DEMANDS_ROUTE}/${workingCase.id}`)
       } else {
         setIsNotificationModalVisible(true)
       }
@@ -209,7 +213,7 @@ const HearingArrangements = () => {
               handleClose={() => setIsNotificationModalVisible(false)}
               handleSecondaryButtonClick={() =>
                 router.push(
-                  `${Constants.IC_POLICE_DEMANDS_ROUTE}/${workingCase.id}`,
+                  `${constants.IC_POLICE_DEMANDS_ROUTE}/${workingCase.id}`,
                 )
               }
               handlePrimaryButtonClick={async () => {
@@ -220,11 +224,16 @@ const HearingArrangements = () => {
 
                 if (notificationSent) {
                   router.push(
-                    `${Constants.IC_POLICE_DEMANDS_ROUTE}/${workingCase.id}`,
+                    `${constants.IC_POLICE_DEMANDS_ROUTE}/${workingCase.id}`,
                   )
                 }
               }}
               isPrimaryButtonLoading={isSendingNotification}
+              errorMessage={
+                sendNotificationError
+                  ? formatMessage(errors.sendNotification)
+                  : undefined
+              }
             />
           )}
           {isProsecutorAccessModalVisible && (
@@ -240,7 +249,7 @@ const HearingArrangements = () => {
               handlePrimaryButtonClick={async () => {
                 if (substituteProsecutorId) {
                   await setProsecutor(substituteProsecutorId)
-                  router.push(Constants.CASE_LIST_ROUTE)
+                  router.push(constants.CASE_LIST_ROUTE)
                 }
               }}
               handleSecondaryButtonClick={() => {

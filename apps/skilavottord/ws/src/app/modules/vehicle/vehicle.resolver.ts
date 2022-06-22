@@ -39,7 +39,7 @@ export class VehicleResolver {
   }
 
   @Authorize({
-    roles: [Role.developer, Role.recyclingCompany],
+    roles: [Role.developer, Role.recyclingCompany, Role.recyclingCompanyAdmin],
   })
   @Query(() => VehicleConnection)
   async skilavottordRecyclingPartnerVehicles(

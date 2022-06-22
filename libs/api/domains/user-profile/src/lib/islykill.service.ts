@@ -110,10 +110,10 @@ export class IslykillService {
   }
 
   /*
-    THIS SERVICE IS NOT AVAILABLE YET. 
+    THIS SERVICE IS NOT AVAILABLE YET.
     KEEPING IN WHILE THIS IS STILL BEING DEVELOPED.
    */
-  async deleteIslykillSettings(nationalId: User['nationalId']) {
+  async deleteIslykillSettings(_nationalId: User['nationalId']) {
     // try {
     //   await this.islyklarApi.islyklarDelete({ ssn: nationalId })
     // } catch (e) {

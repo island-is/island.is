@@ -8,7 +8,7 @@ import {
 export class JuristictionProvider extends BasicDataProvider {
   type = 'JuristictionProvider'
 
-  async provide(application: Application) {
+  async provide(_application: Application) {
     const query = `
       query DrivingLicenseEntitlementTypes {
         drivingLicenseListOfJuristictions {

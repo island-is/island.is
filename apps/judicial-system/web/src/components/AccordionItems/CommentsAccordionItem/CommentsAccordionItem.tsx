@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 
 import { AccordionItem, Box, Text } from '@island.is/island-ui/core'
 import { Case } from '@island.is/judicial-system/types'
-import { commentsAccordion } from '@island.is/judicial-system-web/messages/Core/commentsAccordion'
+import { commentsAccordion } from '@island.is/judicial-system-web/messages'
 
 import MarkdownWrapper from '../../MarkdownWrapper/MarkdownWrapper'
 

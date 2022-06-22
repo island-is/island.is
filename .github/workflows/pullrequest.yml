@@ -185,7 +185,7 @@ jobs:
           if [[ $CHUNKS != "[]" ]]; then
             echo "::set-output name=CHUNKS::{\"projects\":$CHUNKS}"
           fi
-          echo "::set-output name=BUILD_ID::$GITHUB_RUN_ID-$GITHUB_RUN_NUMBER-$GITHUB_RUN_ATTEMPT-$(uuidgen)"
+          echo "::set-output name=BUILD_ID::$GITHUB_RUN_ID-$GITHUB_RUN_NUMBER-$(uuidgen)"
 
       - name: Prepare build targets
         id: build_projects
@@ -269,7 +269,7 @@ jobs:
       CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
       API_MOCKS: 'true'
       NODE_OPTIONS: --max-old-space-size=4096
-      E2E_BUILD_ID: ${{needs.prepare.outputs.E2E_BUILD_ID}}
+      E2E_BUILD_ID: '${{ needs.prepare.outputs.E2E_BUILD_ID }}-${{ github.run_attempt }}'
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.E2E_CHUNKS) }}

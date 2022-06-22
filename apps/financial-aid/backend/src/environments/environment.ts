@@ -32,6 +32,7 @@ const prodConfig = {
     },
   },
   oskBaseUrl: process.env.OSK_BASE_URL,
+  applicationSystemBaseUrl: process.env.APPLICATION_SYSTEM_BASE_URL,
   veitaBaseUrl: process.env.VEITA_BASE_URL,
   audit: {
     defaultNamespace: '@samband.is/financial-aid',
@@ -64,6 +65,9 @@ const devConfig = {
     },
   },
   oskBaseUrl: process.env.OSK_BASE_URL ?? 'http://localhost:4200',
+  applicationSystemBaseUrl:
+    process.env.APPLICATION_SYSTEM_BASE_URL ??
+    'http://localhost:4242/umsoknir/fjarhagsadstod',
   veitaBaseUrl: process.env.VEITA_BASE_URL ?? 'http://localhost:4200',
   audit: {
     defaultNamespace: '@samband.is/financial-backend',

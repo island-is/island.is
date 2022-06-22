@@ -13,6 +13,7 @@ import {
 import { DataProviderTypes } from '../lib/types'
 
 import * as m from '../lib/messages'
+import { Routes } from '../lib/constants'
 
 export const Prerequisites: Form = buildForm({
   id: 'FinancialAidApplication',
@@ -42,20 +43,32 @@ export const Prerequisites: Form = buildForm({
               title: '',
               subTitle: undefined,
             }),
+            buildDataProviderItem({
+              id: 'taxDataFetch',
+              type: DataProviderTypes.TaxDataFetch,
+              title: m.externalData.taxData.title,
+              subTitle: m.externalData.taxData.dataInfo,
+            }),
+            buildDataProviderItem({
+              id: 'moreTaxInfo',
+              type: undefined,
+              title: '',
+              subTitle: m.externalData.taxData.process,
+            }),
           ],
         }),
       ],
     }),
     buildSection({
-      id: 'aboutForm',
+      id: Routes.ACCECPTCONTRACT,
       title: m.aboutForm.general.sectionTitle,
       children: [
         buildMultiField({
-          id: 'acceptContract',
+          id: Routes.ACCECPTCONTRACT,
           title: m.aboutForm.general.pageTitle,
           children: [
             buildCustomField({
-              id: 'acceptContract',
+              id: Routes.ACCECPTCONTRACT,
               title: m.aboutForm.general.pageTitle,
               component: 'AboutForm',
             }),

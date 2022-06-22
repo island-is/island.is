@@ -16,6 +16,15 @@ export class CreateAccessControlInput {
 
   @Field({ nullable: true })
   partnerId?: string
+
+  @Field()
+  email?: string
+
+  @Field()
+  phone!: string
+
+  @Field({ nullable: true })
+  recyclingLocation?: string
 }
 
 @InputType()
@@ -31,6 +40,15 @@ export class UpdateAccessControlInput {
 
   @Field({ nullable: true })
   partnerId?: string
+
+  @Field()
+  email?: string
+
+  @Field()
+  phone!: string
+
+  @Field({ nullable: true })
+  recyclingLocation?: string
 }
 
 @InputType()

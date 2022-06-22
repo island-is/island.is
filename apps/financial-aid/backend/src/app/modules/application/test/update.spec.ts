@@ -180,6 +180,7 @@ describe('ApplicationController - Update', () => {
         comment: undefined,
         staffName: undefined,
         staffNationalId: undefined,
+        emailSent: null,
       })
     })
 

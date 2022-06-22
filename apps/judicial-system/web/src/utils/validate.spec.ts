@@ -144,6 +144,17 @@ describe('Validate email format', () => {
     // Assert
     expect(validation.isValid).toEqual(true)
   })
+
+  test('should be valid if email contains + characters', () => {
+    // Arrange
+    const validEmail = 'garfield+test@garfield.io'
+
+    // Act
+    const validation = validate(validEmail, 'email-format')
+
+    // Assert
+    expect(validation.isValid).toEqual(true)
+  })
 })
 
 describe('Validate phonenumber format', () => {
@@ -185,6 +196,7 @@ describe('Validate court case number', () => {
     ${'R-22/2022'}
     ${'R-7536/1993'}
     ${'R-333/3333'}
+    ${'R-12345/2014'}
   `(
     'should pass when case as correct format $courtCaseNumber',
     ({ courtCaseNumber }) => {
@@ -204,7 +216,6 @@ describe('Validate court case number', () => {
     ${'R-1-2019'}
     ${'R-1/201'}
     ${'R-1/201'}
-    ${'R-12345/2014'}
   `(
     'should fail if case number as wrong format $courtCaseNumber',
     ({ courtCaseNumber }) => {

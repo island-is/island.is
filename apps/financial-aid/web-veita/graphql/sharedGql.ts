@@ -57,6 +57,7 @@ export const ApplicationQuery = gql`
         created
         staffName
         staffNationalId
+        emailSent
       }
       amount {
         aidAmount
@@ -316,6 +317,7 @@ export const UpdateApplicationMutation = gql`
         created
         staffName
         staffNationalId
+        emailSent
       }
       staff {
         name

@@ -20,6 +20,9 @@ import {
   CSRF_COOKIE_NAME,
   ACCESS_TOKEN_COOKIE_NAME,
   EXPIRES_IN_MILLISECONDS,
+  DEFENDER_ROUTE,
+  CASE_LIST_ROUTE,
+  USER_LIST_ROUTE,
 } from '@island.is/judicial-system/consts'
 import { UserRole } from '@island.is/judicial-system/types'
 import { SharedAuthService } from '@island.is/judicial-system/auth'
@@ -175,10 +178,10 @@ export class AuthController {
         redirectRoute: requestedRedirectRoute
           ? requestedRedirectRoute
           : user.role === UserRole.ADMIN
-          ? '/notendur'
-          : '/krofur',
+          ? USER_LIST_ROUTE
+          : CASE_LIST_ROUTE,
       }
-    } else if (requestedRedirectRoute?.startsWith('/verjandi/')) {
+    } else if (requestedRedirectRoute?.startsWith(`${DEFENDER_ROUTE}/`)) {
       const defender = await this.authService.findDefender(
         requestedRedirectRoute.substring(10),
         authUser.nationalId,

@@ -212,7 +212,8 @@ export const getApplicantEmailDataFromEventType = (
     | ApplicationEventType.DATANEEDED
     | ApplicationEventType.REJECTED
     | ApplicationEventType.APPROVED
-    | 'SPOUSE',
+    | 'SPOUSE'
+    | 'WAITINGSPOUSE',
   applicationLink: string,
   applicantEmail: string,
   municipality: Municipality,
@@ -230,8 +231,8 @@ export const getApplicantEmailDataFromEventType = (
         subject: 'Umsókn fyrir fjárhagsaðstoð móttekin',
         data: {
           title: 'Fjárhagsaðstoð Umsókn móttekin',
-          header: `Umsókn þín fyrir ${getPeriod.month} er móttekin og er nú í vinnslu`,
-          content: `Umsóknin verður afgreidd eins fljótt og hægt er. Þú færð annan tölvupóst þegar vinnsla klárast eða ef okkur vantar einhver gögn frá þér.<br><br>Þú getur fylgst með stöðu umsóknarinnar á <a href="${applicationLink}" target="_blank"> <b>stöðusíðu umsóknarinnar</b></a>.`,
+          header: `Umsókn þín fyrir ${getPeriod.month} er móttekin`,
+          content: `Umsóknin verður afgreidd eins fljótt og hægt er. Þú færð annan tölvupóst þegar vinnsla klárast eða ef okkur vantar einhver frekari gögn frá þér.<br><br>Þú getur fylgst með stöðu umsóknarinnar á <a href="${applicationLink}" target="_blank"> <b>stöðusíðu umsóknarinnar</b></a>.`,
           applicationLinkText: 'Skoða stöðu umsóknar',
           applicationChange: 'Umsókn móttekin og í vinnslu',
           applicationMonth: getPeriod.month,
@@ -302,6 +303,23 @@ export const getApplicantEmailDataFromEventType = (
           header: `Þú þarft að skila inn gögnum fyrir umsókn maka þíns um fjárhagsaðstoð`,
           content: `Maki þinn hefur sótt um fjárhagsaðstoð fyrir ${getPeriod.month}. Svo hægt sé að reikna út fjárhagsaðstoðina og klára umsóknina þarft þú að <a href="${applicationLink}" target="_blank">senda okkur tekju- og skattagögn.</a>`,
           applicationLinkText: 'Bæta við gögnum',
+          applicationChange: 'Umsókn bíður eftir gögnum frá maka',
+          applicationMonth: getPeriod.month,
+          applicationYear: getPeriod.year,
+          applicationLink,
+          applicantEmail,
+          municipality,
+        },
+      }
+
+    case 'WAITINGSPOUSE':
+      return {
+        subject: `Umsókn þín fyrir ${getPeriod.month} bíður gagna frá maka`,
+        data: {
+          title: 'Fjárhagsaðstoð Beðið eftir maka',
+          header: `Umsókn þín fyrir ${getPeriod.month} bíður gagna frá maka`,
+          content: `Maki þinn hefur fengið sendan tölvupóst með hlekk til að hlaða upp gögnum. Umsóknin verður tekin til úrvinnslu þegar maki hefur skilað inn gögnunum. Þú færð tölvupóst þegar vinnsla klárast eða ef okkur vantar einhver frekari gögn.<br><br>Þú getur fylgst með stöðu umsóknarinnar á <a href="${applicationLink}" target="_blank">stöðusíðu umsóknarinnar</a>.`,
+          applicationLinkText: 'Skoða stöðu umsóknar',
           applicationChange: 'Umsókn bíður eftir gögnum frá maka',
           applicationMonth: getPeriod.month,
           applicationYear: getPeriod.year,

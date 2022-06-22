@@ -9,7 +9,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { CaseType } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
-import { formatNationalId } from '@island.is/judicial-system/formatters'
+import { formatDOB } from '@island.is/judicial-system/formatters'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
@@ -19,7 +19,7 @@ import { isPoliceDemandsStepValidIC } from '@island.is/judicial-system-web/src/u
 import { icDemands, core } from '@island.is/judicial-system-web/messages'
 import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
-import * as Constants from '@island.is/judicial-system/consts'
+import * as constants from '@island.is/judicial-system/consts'
 import { enumerate } from '@island.is/judicial-system-web/src/utils/formatters'
 
 const courtClaimPrefill: Partial<
@@ -115,11 +115,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
 
   useEffect(() => {
     if (isCaseUpToDate && !initialAutoFillDone) {
-      if (
-        workingCase &&
-        workingCase.defendants &&
-        workingCase.defendants.length > 0
-      ) {
+      if (workingCase.defendants && workingCase.defendants.length > 0) {
         const courtClaim = courtClaimPrefill[workingCase.type]
         const courtClaimText = courtClaim
           ? formatMessage(courtClaim.text, {
@@ -127,15 +123,10 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
                 accused: enumerate(
                   workingCase.defendants.map(
                     (defendant) =>
-                      `${defendant.name}${
-                        defendant.noNationalId
-                          ? defendant.nationalId
-                            ? ` fd. ${defendant.nationalId}`
-                            : ''
-                          : ` kt. ${formatNationalId(
-                              defendant.nationalId ?? '',
-                            )}`
-                      }`,
+                      `${defendant.name}${` ${formatDOB(
+                        defendant.nationalId,
+                        defendant.noNationalId,
+                      )}`}`,
                   ),
                   formatMessage(core.and),
                 ),
@@ -158,11 +149,13 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
                 year: new Date().getFullYear(),
               }),
             })
-          : ''
+          : undefined
 
-        autofill('demands', courtClaimText, workingCase)
-
-        setWorkingCase({ ...workingCase })
+        autofill(
+          [{ key: 'demands', value: courtClaimText }],
+          workingCase,
+          setWorkingCase,
+        )
       }
 
       setInitialAutoFillDone(true)
@@ -323,8 +316,8 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${Constants.IC_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
-          nextUrl={`${Constants.IC_POLICE_REPORT_ROUTE}/${workingCase.id}`}
+          previousUrl={`${constants.IC_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
+          nextUrl={`${constants.IC_POLICE_REPORT_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!isPoliceDemandsStepValidIC(workingCase)}
           nextIsLoading={isLoading}
         />

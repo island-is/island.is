@@ -7,7 +7,7 @@ export default class MyDocument extends Document {
     return (
       <Html lang="is">
         <SkipToContent />
-        <Head />
+        <Head></Head>
         <body>
           <div id="main">
             <Main />

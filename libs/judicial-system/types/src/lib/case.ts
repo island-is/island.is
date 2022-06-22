@@ -26,19 +26,11 @@ export enum CaseType {
   BODY_SEARCH = 'BODY_SEARCH',
   INTERNET_USAGE = 'INTERNET_USAGE',
   RESTRAINING_ORDER = 'RESTRAINING_ORDER',
+  EXPULSION_FROM_HOME = 'EXPULSION_FROM_HOME',
   ELECTRONIC_DATA_DISCOVERY_INVESTIGATION = 'ELECTRONIC_DATA_DISCOVERY_INVESTIGATION',
   VIDEO_RECORDING_EQUIPMENT = 'VIDEO_RECORDING_EQUIPMENT',
   OTHER = 'OTHER',
 }
-
-export const caseTypesWithMultipleDefendants = [
-  CaseType.SEARCH_WARRANT,
-  CaseType.BANKING_SECRECY_WAIVER,
-  CaseType.SOUND_RECORDING_EQUIPMENT,
-  CaseType.PHONE_TAPPING,
-  CaseType.TRACKING_EQUIPMENT,
-  CaseType.VIDEO_RECORDING_EQUIPMENT,
-]
 
 export enum CaseState {
   NEW = 'NEW',
@@ -184,7 +176,9 @@ export interface Case {
   notifications?: Notification[]
   caseFiles?: CaseFile[]
   caseModifiedExplanation?: string
+  rulingModifiedHistory?: string
   caseResentExplanation?: string
+  seenByDefender?: string
 }
 
 export interface CreateCase {
@@ -261,7 +255,9 @@ export interface UpdateCase {
   registrarId?: string
   judgeId?: string
   caseModifiedExplanation?: string
+  rulingModifiedHistory?: string
   caseResentExplanation?: string
+  seenByDefender?: string
 }
 
 export interface TransitionCase {
@@ -298,6 +294,7 @@ export const investigationCases = [
   CaseType.BODY_SEARCH,
   CaseType.INTERNET_USAGE,
   CaseType.RESTRAINING_ORDER,
+  CaseType.EXPULSION_FROM_HOME,
   CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION,
   CaseType.VIDEO_RECORDING_EQUIPMENT,
   CaseType.OTHER,
@@ -313,10 +310,6 @@ export function isInvestigationCase(type?: CaseType): boolean {
 
 export function isAcceptingCaseDecision(decision?: CaseDecision): boolean {
   return Boolean(decision && acceptedCaseDecisions.includes(decision))
-}
-
-export function isCaseTypeWithMultipleDefendantsSupport(caseType: CaseType) {
-  return caseTypesWithMultipleDefendants.includes(caseType)
 }
 
 export const completedCaseStates = [

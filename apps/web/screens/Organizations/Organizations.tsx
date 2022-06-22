@@ -300,7 +300,12 @@ OrganizationPage.getInitialProps = async ({ apolloClient, locale }) => {
   }
 
   return {
-    organizations: getOrganizations,
+    organizations: {
+      __typename: getOrganizations.__typename,
+      items: getOrganizations.items.filter(
+        (o) => o.showsUpOnTheOrganizationsPage,
+      ),
+    },
     tags: getOrganizationTags,
     namespace,
   }

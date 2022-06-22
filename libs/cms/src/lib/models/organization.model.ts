@@ -55,6 +55,9 @@ export class Organization {
 
   @Field(() => [GenericTag])
   publishedMaterialSearchFilterGenericTags!: GenericTag[]
+
+  @Field(() => Boolean, { nullable: true })
+  showsUpOnTheOrganizationsPage?: boolean
 }
 
 export const mapOrganization = ({
@@ -82,5 +85,6 @@ export const mapOrganization = ({
     publishedMaterialSearchFilterGenericTags: fields.publishedMaterialSearchFilterGenericTags
       ? fields.publishedMaterialSearchFilterGenericTags.map(mapGenericTag)
       : [],
+    showsUpOnTheOrganizationsPage: fields.showsUpOnTheOrganizationsPage ?? true,
   }
 }

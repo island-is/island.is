@@ -30,6 +30,7 @@ export const FileUploadFormField: FC<Props> = ({
     uploadMultiple,
     uploadAccept,
     maxSize,
+    maxSizeErrorText,
     forImageUpload,
   } = field
 
@@ -62,6 +63,10 @@ export const FileUploadFormField: FC<Props> = ({
           multiple={uploadMultiple}
           accept={uploadAccept}
           maxSize={maxSize}
+          maxSizeErrorText={
+            maxSizeErrorText &&
+            formatText(maxSizeErrorText, application, formatMessage)
+          }
           forImageUpload={forImageUpload}
         />
       </Box>

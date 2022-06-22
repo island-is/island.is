@@ -71,6 +71,7 @@ describe('CourtService - Create court case', () => {
 
   each`
     type
+    ${CaseType.ADMISSION_TO_FACILITY}
     ${CaseType.SEARCH_WARRANT}
     ${CaseType.BANKING_SECRECY_WAIVER}
     ${CaseType.PHONE_TAPPING}
@@ -82,6 +83,7 @@ describe('CourtService - Create court case', () => {
     ${CaseType.BODY_SEARCH}
     ${CaseType.INTERNET_USAGE}
     ${CaseType.RESTRAINING_ORDER}
+    ${CaseType.EXPULSION_FROM_HOME}
     ${CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION}
     ${CaseType.VIDEO_RECORDING_EQUIPMENT}
     ${CaseType.OTHER}
@@ -119,7 +121,6 @@ describe('CourtService - Create court case', () => {
     type
     ${CaseType.CUSTODY}
     ${CaseType.TRAVEL_BAN}
-    ${CaseType.ADMISSION_TO_FACILITY}
   `.describe('extendable court case created for $type', ({ type }) => {
     const user = {} as User
     const caseId = uuid()
@@ -154,7 +155,6 @@ describe('CourtService - Create court case', () => {
     type
     ${CaseType.CUSTODY}
     ${CaseType.TRAVEL_BAN}
-    ${CaseType.ADMISSION_TO_FACILITY}
   `.describe('extended court case created for $type', ({ type }) => {
     const user = {} as User
     const caseId = uuid()

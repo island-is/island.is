@@ -9,7 +9,7 @@ import {
   BasicDataProvider,
   FailedDataProviderResult,
   getValueViaPath,
-  StaticText,
+  ProviderErrorReason,
   SuccessfulDataProviderResult,
 } from '@island.is/application/core'
 import {
@@ -143,7 +143,11 @@ export class PaymentPlanPrerequisitesProvider extends BasicDataProvider {
       paymentScheduleDebts.length <= 0
     ) {
       return Promise.reject({
-        reason: errorModal.noDebts.summary,
+        reason: {
+          title: errorModal.noDebts.title,
+          summary: errorModal.noDebts.summary,
+        },
+        statusCode: 404,
       })
     }
 
@@ -165,12 +169,16 @@ export class PaymentPlanPrerequisitesProvider extends BasicDataProvider {
     }
   }
 
-  onProvideError(error: { reason: StaticText }): FailedDataProviderResult {
+  onProvideError(error: {
+    reason: ProviderErrorReason
+    statusCode?: number
+  }): FailedDataProviderResult {
     return {
       date: new Date(),
       data: {},
       reason: error.reason,
       status: 'failure',
+      statusCode: error.statusCode,
     }
   }
 

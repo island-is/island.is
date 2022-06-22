@@ -2,10 +2,13 @@ import React from 'react'
 import { TwoColumnText } from '@island.is/web/graphql/schema'
 import {
   Box,
+  BoxProps,
+  Button,
   GridColumn,
   GridContainer,
   GridRow,
   Hidden,
+  Link,
   Text,
 } from '@island.is/island-ui/core'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
@@ -16,16 +19,13 @@ interface SliceProps {
 
 export const TwoColumnTextSlice: React.FC<SliceProps> = ({ slice }) => {
   const labelId = 'sliceTitle-' + slice.id
-
+  const boxProps: BoxProps = slice.dividerOnTop
+    ? { borderTopWidth: 'standard', borderColor: 'standard', paddingTop: 4 }
+    : {}
   return (
     <section key={slice.id} aria-labelledby={labelId}>
       <GridContainer>
-        <Box
-          borderTopWidth="standard"
-          borderColor="standard"
-          paddingTop={[4, 4, 6]}
-          paddingBottom={[4, 5, 10]}
-        >
+        <Box {...boxProps}>
           <GridRow>
             <GridColumn
               span={['12/12', '12/12', '6/12']}
@@ -58,6 +58,18 @@ export const TwoColumnTextSlice: React.FC<SliceProps> = ({ slice }) => {
                 </Hidden>
               )}
               {richText(slice.leftContent as SliceType[])}
+              {slice.leftLink && slice.leftLink.url && (
+                <Link href={slice.leftLink.url}>
+                  <Button
+                    icon="arrowForward"
+                    iconType="filled"
+                    type="button"
+                    variant="text"
+                  >
+                    {slice.leftLink.text}
+                  </Button>
+                </Link>
+              )}
             </GridColumn>
             <GridColumn
               span={['12/12', '12/12', '6/12']}
@@ -71,6 +83,18 @@ export const TwoColumnTextSlice: React.FC<SliceProps> = ({ slice }) => {
                 </Hidden>
               )}
               {richText(slice.rightContent as SliceType[])}
+              {slice.rightLink && slice.rightLink.url && (
+                <Link href={slice.rightLink.url}>
+                  <Button
+                    icon="arrowForward"
+                    iconType="filled"
+                    type="button"
+                    variant="text"
+                  >
+                    {slice.rightLink.text}
+                  </Button>
+                </Link>
+              )}
             </GridColumn>
           </GridRow>
         </Box>

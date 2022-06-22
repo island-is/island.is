@@ -25,11 +25,7 @@ import {
   Button,
   Inline,
 } from '@island.is/island-ui/core'
-import {
-  HeadWithSocialSharing,
-  Sticky,
-  BoostChatPanel,
-} from '@island.is/web/components'
+import { HeadWithSocialSharing, Sticky } from '@island.is/web/components'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { SyslumennHeader, SyslumennFooter } from './Themes/SyslumennTheme'
 import {
@@ -42,12 +38,16 @@ import {
   UtlendingastofnunFooter,
   UtlendingastofnunHeader,
 } from './Themes/UtlendingastofnunTheme'
-import { boostChatPanelEndpoints } from '@island.is/web/components'
 import MannaudstorgFooter from './Themes/MannaudstorgTheme/MannaudstorgFooter'
-import { useFeatureFlag, useNamespaceStrict } from '@island.is/web/hooks'
+import { useNamespace } from '@island.is/web/hooks'
 import { watsonConfig } from './config'
 import { WatsonChatPanel } from '@island.is/web/components'
 import LandlaeknirFooter from './Themes/LandlaeknirTheme/LandlaeknirFooter'
+import { HeilbrigdisstofnunNordurlandsHeader } from './Themes/HeilbrigdisstofnunNordurlandsTheme/HeilbrigdisstofnunNordurlandsHeader'
+import { LandlaeknirHeader } from './Themes/LandlaeknirTheme/LandlaeknirHeader'
+import HeilbrigdisstofnunNordurlandsFooter from './Themes/HeilbrigdisstofnunNordurlandsTheme/HeilbrigdisstofnunNordurlandsFooter'
+import { FiskistofaHeader } from './Themes/FiskistofaTheme/FiskistofaHeader'
+import FiskistofaFooter from './Themes/FiskistofaTheme/FiskistofaFooter'
 import * as styles from './OrganizationWrapper.css'
 
 interface NavigationData {
@@ -76,7 +76,12 @@ interface HeaderProps {
   organizationPage: OrganizationPage
 }
 
-export const lightThemes = ['digital_iceland', 'utlendingastofnun', 'default']
+export const lightThemes = [
+  'digital_iceland',
+  'default',
+  'landlaeknir',
+  'fiskistofa',
+]
 export const footerEnabled = [
   'syslumenn',
   'district-commissioner',
@@ -91,6 +96,9 @@ export const footerEnabled = [
   'icelandic-health-insurance',
 
   'mannaudstorg',
+
+  'fiskistofa',
+  'directorate-of-fisheries',
 ]
 
 export const getThemeConfig = (
@@ -134,6 +142,16 @@ const OrganizationHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
       return <UtlendingastofnunHeader organizationPage={organizationPage} />
     case 'digital_iceland':
       return <DigitalIcelandHeader organizationPage={organizationPage} />
+    case 'hsn':
+      return (
+        <HeilbrigdisstofnunNordurlandsHeader
+          organizationPage={organizationPage}
+        />
+      )
+    case 'landlaeknir':
+      return <LandlaeknirHeader organizationPage={organizationPage} />
+    case 'fiskistofa':
+      return <FiskistofaHeader organizationPage={organizationPage} />
     default:
       return <DefaultHeader organizationPage={organizationPage} />
   }
@@ -186,7 +204,7 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
     ? organizations[0]
     : organizations.find((x) => footerEnabled.includes(x.slug))
 
-  const n = useNamespaceStrict(organization?.namespace)
+  const n = useNamespace(organization?.namespace ?? {})
 
   let OrganizationFooterComponent = null
 
@@ -198,17 +216,18 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
           title={organization.title}
           logo={organization.logo?.url}
           footerItems={organization.footerItems}
+          questionsAndAnswersText={n(
+            'questionsAndAnswers',
+            'Spurningar og svör',
+          )}
+          canWeHelpText={n('canWeHelp', 'Getum við aðstoðað?')}
         />
       )
       break
     case 'sjukratryggingar':
     case 'icelandic-health-insurance':
       OrganizationFooterComponent = (
-        <SjukratryggingarFooter
-          title={organization.title}
-          logo={organization.logo?.url}
-          footerItems={organization.footerItems}
-        />
+        <SjukratryggingarFooter footerItems={organization.footerItems} />
       )
       break
     case 'utlendingastofnun':
@@ -226,22 +245,27 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
         <MannaudstorgFooter
           title={organization.title}
           logoSrc={organization.logo?.url}
-          phone={organization.phone}
-          contactLink={organization.link}
-          telephoneText={n('telephone', 'Sími')}
+          footerItems={organization.footerItems}
         />
       )
       break
     case 'landlaeknir':
     case 'directorate-of-health':
       OrganizationFooterComponent = (
-        <LandlaeknirFooter
+        <LandlaeknirFooter footerItems={organization.footerItems} />
+      )
+      break
+    case 'hsn':
+      OrganizationFooterComponent = (
+        <HeilbrigdisstofnunNordurlandsFooter
           footerItems={organization.footerItems}
-          phone={organization.phone}
-          email={organization.email}
-          phoneLabel={n('telephone', 'Sími')}
-          emailLabel={n('email,', 'Tölvupóstur')}
         />
+      )
+      break
+    case 'fiskistofa':
+    case 'directorate-of-fisheries':
+      OrganizationFooterComponent = (
+        <FiskistofaFooter footerItems={organization.footerItems} />
       )
       break
   }
@@ -251,33 +275,14 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
 
 export const OrganizationChatPanel = ({
   organizationIds,
-  pushUp = false,
 }: {
   organizationIds: string[]
   pushUp?: boolean
 }) => {
-  const { loading, value: isWatsonChatPanelEnabled } = useFeatureFlag(
-    'isWatsonChatPanelEnabled',
-    false,
-  )
-
-  if (loading) return null
-
   const id = organizationIds.find((id) => {
-    if (!isWatsonChatPanelEnabled) return id in boostChatPanelEndpoints
     return id in watsonConfig
   })
-
-  if (!isWatsonChatPanelEnabled) {
-    return id ? (
-      <BoostChatPanel
-        endpoint={id as keyof typeof boostChatPanelEndpoints}
-        pushUp={pushUp}
-      />
-    ) : null
-  }
-
-  return id in watsonConfig ? <WatsonChatPanel {...watsonConfig[id]} /> : null
+  return id ? <WatsonChatPanel {...watsonConfig[id]} /> : null
 }
 
 const SecondaryMenu = ({
@@ -401,18 +406,22 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
               />
               {showSecondaryMenu && (
                 <>
-                  {organizationPage.secondaryMenu && (
-                    <SecondaryMenu
-                      title={organizationPage.secondaryMenu.name}
-                      items={secondaryNavList}
-                    />
-                  )}
+                  {organizationPage.secondaryMenu &&
+                    secondaryNavList.length > 0 && (
+                      <SecondaryMenu
+                        title={organizationPage.secondaryMenu.name}
+                        items={secondaryNavList}
+                      />
+                    )}
                   {organizationPage.sidebarCards.map((card) => (
                     <ProfileCard
                       title={card.title}
                       description={card.content}
                       link={card.link}
-                      image="https://images.ctfassets.net/8k0h54kbe6bj/6jpT5mePCNk02nVrzVLzt2/6adca7c10cc927d25597452d59c2a873/bitmap.png"
+                      image={
+                        card.image?.url ||
+                        'https://images.ctfassets.net/8k0h54kbe6bj/6jpT5mePCNk02nVrzVLzt2/6adca7c10cc927d25597452d59c2a873/bitmap.png'
+                      }
                       size="small"
                     />
                   ))}

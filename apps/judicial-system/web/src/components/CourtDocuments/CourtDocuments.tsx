@@ -105,6 +105,7 @@ const CourtDocuments: React.FC<CourtDocumentsProps> = ({
   const whoFiledOptions = [
     { value: UserRole.PROSECUTOR, label: formatMessage(m.whoFiled.prosecutor) },
     { value: UserRole.DEFENDER, label: formatMessage(m.whoFiled.defendant) },
+    { value: UserRole.JUDGE, label: formatMessage(m.whoFiled.court) },
   ]
 
   const DropdownIndicator = (props: IndicatorProps<ReactSelectOption>) => {

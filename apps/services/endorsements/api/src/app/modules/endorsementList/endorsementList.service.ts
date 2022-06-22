@@ -43,7 +43,7 @@ export class EndorsementListService {
   ) {}
 
   async hasAdminScope(user: User): Promise<boolean> {
-    for (const [key, value] of Object.entries(user.scope)) {
+    for (const [_, value] of Object.entries(user.scope)) {
       if (value == EndorsementsScope.admin) {
         return true
       }
@@ -206,12 +206,12 @@ export class EndorsementListService {
 
   // generic get open lists
   async findOpenListsTaggedGeneralPetition(query: any) {
-    const date_ob = new Date()
+    const dateOb = new Date()
     try {
       const where = {
         tags: { [Op.eq]: ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS },
-        openedDate: { [Op.lt]: date_ob },
-        closedDate: { [Op.gt]: date_ob },
+        openedDate: { [Op.lt]: dateOb },
+        closedDate: { [Op.gt]: dateOb },
         adminLock: false,
       }
       return await this.findListsGenericQuery(query, where)
@@ -223,13 +223,13 @@ export class EndorsementListService {
   async findSingleOpenListTaggedGeneralPetition(
     listId: string,
   ): Promise<EndorsementList | null> {
-    const date_ob = new Date()
+    const dateOb = new Date()
     const result = await this.endorsementListModel.findOne({
       where: {
         id: listId,
         tags: ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS,
-        openedDate: { [Op.lt]: date_ob },
-        closedDate: { [Op.gt]: date_ob },
+        openedDate: { [Op.lt]: dateOb },
+        closedDate: { [Op.gt]: dateOb },
         adminLock: false,
       },
     })
@@ -391,7 +391,7 @@ export class EndorsementListService {
             {
               component: 'Copy',
               context: {
-                copy: `Meðfylgjandi er meðmælendalisti "${endorsementList?.title}", 
+                copy: `Meðfylgjandi er meðmælendalisti "${endorsementList?.title}",
                 sem ${ownerName} er skráður ábyrgðarmaður fyrir.`,
                 small: true,
               },

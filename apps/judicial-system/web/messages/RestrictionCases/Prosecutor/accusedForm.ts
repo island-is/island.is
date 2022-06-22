@@ -7,21 +7,6 @@ export const accused = {
     description:
       'Notaður sem titill á sakbornings skrefi í gæsluvarðhalds- og farbannsmálum.',
   }),
-  receivedAlert: defineMessages({
-    title: {
-      id: 'judicial.system.restriction_cases:accused.received_alert.title',
-      defaultMessage: 'Athugið',
-      description:
-        'Notaður sem titill í upplýsingarboxi á sakbornings skrefi í gæsluvarðhalds- og farbannsmálum.',
-    },
-    message: {
-      id: 'judicial.system.restriction_cases:accused.received_alert.message',
-      defaultMessage:
-        'Hægt er að breyta efni kröfunnar og bæta við rannsóknargögnum eftir að hún hefur verið send dómstól en til að breytingar skili sér í dómskjalið sem verður til hliðsjónar í þinghaldinu þarf að smella á Endursenda kröfu á skjánum Yfirlit kröfu.',
-      description:
-        'Notaður sem skilaboð í upplýsingarboxi á sakbornings skrefi í gæsluvarðhalds- og farbannsmálum.',
-    },
-  }),
   sections: {
     accusedInfo: {
       heading: defineMessage({

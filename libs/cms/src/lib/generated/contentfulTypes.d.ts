@@ -1755,6 +1755,9 @@ export interface IOneColumnTextFields {
 
   /** Link */
   link?: ILink | undefined
+
+  /** Divider On Top */
+  dividerOnTop?: boolean | undefined
 }
 
 export interface IOneColumnText extends Entry<IOneColumnTextFields> {
@@ -1918,6 +1921,9 @@ export interface IOrganizationFields {
 
   /** Published Material Search Filter Generic Tags */
   publishedMaterialSearchFilterGenericTags?: IGenericTag[] | undefined
+
+  /** Shows up on the organizations page */
+  showsUpOnTheOrganizationsPage?: boolean | undefined
 }
 
 export interface IOrganization extends Entry<IOrganizationFields> {
@@ -2018,11 +2024,11 @@ export interface IOrganizationPageFields {
   /** External Links */
   externalLinks?: ILink[] | undefined
 
-  /** Alert Banner */
-  alertBanner?: IAlertBanner | undefined
-
   /** Default Header Image */
   defaultHeaderImage?: Asset | undefined
+
+  /** Alert Banner */
+  alertBanner?: IAlertBanner | undefined
 }
 
 export interface IOrganizationPage extends Entry<IOrganizationPageFields> {
@@ -2444,6 +2450,9 @@ export interface ISidebarCardFields {
 
   /** Link */
   link?: ILink | undefined
+
+  /** Image */
+  image?: Asset | undefined
 }
 
 export interface ISidebarCard extends Entry<ISidebarCardFields> {
@@ -3243,6 +3252,9 @@ export interface ITwoColumnTextFields {
 
   /** Right Link */
   rightLink?: ILink | undefined
+
+  /** Divider On Top */
+  dividerOnTop?: boolean | undefined
 }
 
 export interface ITwoColumnText extends Entry<ITwoColumnTextFields> {

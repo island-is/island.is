@@ -46,5 +46,11 @@ export const courtDocuments = {
       description:
         'Notaður sem text fyrir "Hver lagði fram?" í dómskjala upphlöðun þegar varnaraðili leggur fram dómsskjal',
     }),
+    court: defineMessage({
+      id: 'judicial.system.core:court_documents.who_filed.court',
+      defaultMessage: 'Dómurinn lagði fram',
+      description:
+        'Notaður sem text fyrir "Hver lagði fram?" í dómskjala upphlöðun þegar dómurinn leggur fram dómsskjal',
+    }),
   },
 }

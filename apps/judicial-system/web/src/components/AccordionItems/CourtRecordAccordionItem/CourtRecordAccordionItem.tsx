@@ -12,9 +12,12 @@ import {
   isRestrictionCase,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
-import { closedCourt, core } from '@island.is/judicial-system-web/messages'
+import {
+  closedCourt,
+  core,
+  courtRecordAccordion as m,
+} from '@island.is/judicial-system-web/messages'
 import { TIME_FORMAT } from '@island.is/judicial-system/consts'
-import { courtRecordAccordion as m } from '@island.is/judicial-system-web/messages/Core/courtRecordAccordion'
 import type { Case } from '@island.is/judicial-system/types'
 
 import AccordionListItem from '../../AccordionListItem/AccordionListItem'

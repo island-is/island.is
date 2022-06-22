@@ -2,6 +2,7 @@
   "implicitDependencies": {
     "workspace.json": "*",
     "package.json": {
+      "version": "*",
       "dependencies": "*",
       "devDependencies": "*",
       "resolutions": "*"
@@ -169,6 +170,9 @@
     "api-domains-user-profile": {
       "tags": []
     },
+    "api-domains-vehicles": {
+      "tags": []
+    },
     "api-mocks": {
       "tags": []
     },
@@ -204,6 +208,9 @@
       "tags": []
     },
     "application-templates-accident-notification": {
+      "tags": []
+    },
+    "application-templates-announcement-of-death": {
       "tags": []
     },
     "application-templates-children-residence-change": {
@@ -242,6 +249,9 @@
     "application-templates-financial-aid": {
       "tags": []
     },
+    "application-templates-financial-statements-inao": {
+      "tags": []
+    },
     "application-templates-funding-government-projects": {
       "tags": []
     },
@@ -261,6 +271,9 @@
       "tags": []
     },
     "application-templates-mortgage-certificate": {
+      "tags": []
+    },
+    "application-templates-no-debt-certificate": {
       "tags": []
     },
     "application-templates-p-sign": {
@@ -385,6 +398,9 @@
     "clients-user-profile": {
       "tags": [],
       "implicitDependencies": ["services-user-profile"]
+    },
+    "clients-vehicles": {
+      "tags": []
     },
     "clients-vmst": {
       "tags": []
@@ -530,6 +546,12 @@
     "judicial-system-formatters": {
       "tags": []
     },
+    "judicial-system-message": {
+      "tags": []
+    },
+    "judicial-system-message-handler": {
+      "tags": []
+    },
     "judicial-system-scheduler": {
       "tags": []
     },
@@ -652,9 +674,6 @@
     "service-portal-endorsements": {
       "tags": []
     },
-    "service-portal-family": {
-      "tags": []
-    },
     "service-portal-finance": {
       "tags": []
     },
@@ -670,6 +689,9 @@
     "service-portal-icelandic-names-registry": {
       "tags": []
     },
+    "service-portal-information": {
+      "tags": []
+    },
     "service-portal-licenses": {
       "tags": []
     },
@@ -679,7 +701,7 @@
     "service-portal-settings-personal-information": {
       "tags": []
     },
-    "service-portal-wip": {
+    "service-portal-vehicles": {
       "tags": []
     },
     "services-auth-admin-api": {
@@ -689,6 +711,9 @@
       "tags": []
     },
     "services-auth-public-api": {
+      "tags": []
+    },
+    "services-contentful-entry-tagger": {
       "tags": []
     },
     "services-documents": {

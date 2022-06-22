@@ -2,9 +2,9 @@ import {
   BasicDataProvider,
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
-  coreErrorMessages,
 } from '@island.is/application/core'
 import { DrivingLicenseBookSchool } from '@island.is/api/schema'
+import { m } from '../lib/messages'
 
 export class EmployeeProvider extends BasicDataProvider {
   type = 'EmployeeProvider'
@@ -46,7 +46,7 @@ export class EmployeeProvider extends BasicDataProvider {
   onProvideError(): FailedDataProviderResult {
     return {
       date: new Date(),
-      reason: coreErrorMessages.errorDataProvider,
+      reason: m.dataCollectionNoRightsError,
       status: 'failure',
       data: {},
     }

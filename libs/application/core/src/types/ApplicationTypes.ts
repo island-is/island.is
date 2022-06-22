@@ -17,12 +17,15 @@ export enum ApplicationTypes {
   GENERAL_PETITION = 'GeneralPetitionService',
   GENERAL_FISHING_LICENSE = 'GeneralFishingLicense',
   P_SIGN = 'PSign',
+  ANNOUNCEMENT_OF_DEATH = 'AnnouncementOfDeath',
   CRIMINAL_RECORD = 'CriminalRecord',
   FINANCIAL_AID = 'FinancialAid',
   DRIVING_INSTRUCTOR_REGISTRATIONS = 'DrivingInstructorRegistrations',
   EXAMPLE_PAYMENT = 'ExamplePayment',
   DRIVING_SCHOOL_CONFIRMATION = 'DrivingSchoolConfirmation',
   MORTGAGE_CERTIFICATE = 'MortgageCertificate',
+  NO_DEBT_CERTIFICATE = 'NoDebtCertificate',
+  FINANCIAL_STATEMENTS_INAO = 'FinancialStatementsInao',
 }
 
 export const ApplicationConfigurations = {
@@ -32,7 +35,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.PASSPORT]: {
     slug: 'vegabref',
-    translation: 'pp.application',
+    translation: 'pa.application',
   },
   [ApplicationTypes.DRIVING_LICENSE]: {
     slug: 'okuskirteini',
@@ -98,6 +101,10 @@ export const ApplicationConfigurations = {
     slug: 'p-merki',
     translation: 'ps.application',
   },
+  [ApplicationTypes.ANNOUNCEMENT_OF_DEATH]: {
+    slug: 'andlatstilkynningar',
+    translation: 'aod.application',
+  },
   [ApplicationTypes.CRIMINAL_RECORD]: {
     slug: 'sakavottord',
     translation: 'cr.application',
@@ -121,5 +128,13 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.MORTGAGE_CERTIFICATE]: {
     slug: 'vedbokarvottord',
     translation: 'mc.application',
+  },
+  [ApplicationTypes.NO_DEBT_CERTIFICATE]: {
+    slug: 'skuldleysisvottord',
+    translation: 'ndc.application',
+  },
+  [ApplicationTypes.FINANCIAL_STATEMENTS_INAO]: {
+    slug: 'skilarsreikninga',
+    translation: 'fsn.application',
   },
 }

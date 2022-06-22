@@ -12,14 +12,15 @@ interface ChatBubbleProps {
 
 export const ChatBubble = ({
   text,
-  pushUp = false,
   isVisible = true,
   onClick,
+  pushUp = false,
 }: ChatBubbleProps) => {
   return (
     <div className={cn(styles.root, { [styles.hidden]: !isVisible })}>
       <FocusableBox
         component="button"
+        data-testid="chatbot"
         tabIndex={0}
         className={cn(styles.message, pushUp && styles.messagePushUp)}
         onClick={onClick}

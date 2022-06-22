@@ -9,6 +9,7 @@ import { AnyEventObject, MachineOptions, StateMachine } from 'xstate/lib/types'
 
 import { FormLoader, FormText, StaticText } from './Form'
 import { Application, ActionCardTag } from './Application'
+import { Condition } from './Condition'
 
 export type ApplicationRole = 'applicant' | 'assignee' | string
 
@@ -46,6 +47,7 @@ export type CallToAction<T extends EventObject = AnyEventObject> = {
   event: Event<T> | string
   name: FormText
   type: 'primary' | 'subtle' | 'reject' | 'sign'
+  condition?: Condition
 }
 
 export interface ApplicationTemplateAPIAction {

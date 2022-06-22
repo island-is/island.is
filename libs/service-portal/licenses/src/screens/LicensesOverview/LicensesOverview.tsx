@@ -33,16 +33,13 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
         !error &&
         (status === 'Unknown' || status === 'NotAvailable') && (
           <Box marginTop={8}>
-            <EmptyState title={m.errorNoData} />
+            <EmptyState />
           </Box>
         )}
 
       {error && (
         <Box>
-          <AlertBanner
-            description={formatMessage(m.errorFetch)}
-            variant="error"
-          />
+          <EmptyState description={m.errorFetch} />
         </Box>
       )}
     </>

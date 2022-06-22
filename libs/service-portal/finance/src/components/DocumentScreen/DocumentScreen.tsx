@@ -29,6 +29,7 @@ import { dateFormat } from '@island.is/shared/constants'
 
 import { billsFilter } from '../../utils/simpleFilter'
 import { DocumentsListItemTypes } from './DocumentScreen.types'
+import * as styles from '../../screens/Finance.css'
 
 const ITEMS_ON_PAGE = 20
 
@@ -154,6 +155,7 @@ const DocumentScreen: FC<Props> = ({
               <GridColumn
                 span={['1/1', '8/12', '6/12', '6/12', '4/12']}
                 order={[1, 1, 1, 1, 1]}
+                className={styles.dateColumn}
               >
                 <DatePicker
                   backgroundColor="blue"
@@ -171,6 +173,7 @@ const DocumentScreen: FC<Props> = ({
                 span={['1/1', '8/12', '6/12', '6/12', '4/12']}
                 paddingTop={[2, 2, 0, 0, 0]}
                 order={[2, 2, 2, 2, 2]}
+                className={styles.dateColumn}
               >
                 <DatePicker
                   backgroundColor="blue"

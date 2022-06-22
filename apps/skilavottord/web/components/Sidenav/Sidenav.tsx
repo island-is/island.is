@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FC } from 'react'
 import {
   Box,
   Divider,
@@ -29,28 +29,31 @@ export const Sidenav = ({ title, sections, activeSection }: SidenavProps) => (
         {title}
       </Text>
       <Stack space={3}>
-        {sections.map((section, index) => (
-          <FocusableBox
-            key={index}
-            display="flex"
-            href={section.link}
-            alignItems="center"
-          >
-            <Box paddingRight={2} display="flex" alignItems="center">
-              <Icon
-                icon={section.icon as SidenavIcon}
-                type="outline"
-                color={index === activeSection ? 'blue600' : 'blue300'}
-              />
-            </Box>
-            <Text
-              color="blue600"
-              fontWeight={index === activeSection ? 'semiBold' : 'regular'}
+        {sections.map((section, index) => {
+          if (!section?.title) return null
+          return (
+            <FocusableBox
+              key={index}
+              display="flex"
+              href={section.link}
+              alignItems="center"
             >
-              {section.title}
-            </Text>
-          </FocusableBox>
-        ))}
+              <Box paddingRight={2} display="flex" alignItems="center">
+                <Icon
+                  icon={section.icon as SidenavIcon}
+                  type="outline"
+                  color={index === activeSection ? 'blue600' : 'blue300'}
+                />
+              </Box>
+              <Text
+                color="blue600"
+                fontWeight={index === activeSection ? 'semiBold' : 'regular'}
+              >
+                {section.title}
+              </Text>
+            </FocusableBox>
+          )
+        })}
       </Stack>
     </Stack>
   </Box>

@@ -22,7 +22,7 @@ export const subTypes: SubTypes = {
   // 'Frestur',
   CUSTODY: ['Gæsluvarðhald', 'Framlenging gæsluvarðhalds'],
   // TODO: replace with appropriate type when it has been created in the court system
-  ADMISSION_TO_FACILITY: ['Gæsluvarðhald', 'Framlenging gæsluvarðhalds'],
+  ADMISSION_TO_FACILITY: 'Vistun á viðeigandi stofnun',
   PSYCHIATRIC_EXAMINATION: 'Geðrannsókn',
   // 'Handtaka',
   SOUND_RECORDING_EQUIPMENT: 'Hljóðupptökubúnaði komið fyrir',
@@ -32,6 +32,7 @@ export const subTypes: SubTypes = {
   BODY_SEARCH: 'Leit og líkamsrannsókn',
   // 'Lögmæti rannsóknarathafna',
   RESTRAINING_ORDER: 'Nálgunarbann',
+  EXPULSION_FROM_HOME: 'Nálgunarbann og brottvísun af heimili',
   // 'Réttarstaða afplánunarfanga',
   // 'Réttarstaða gæsluvarðhaldsfanga',
   // 'Rof á reynslulausn',
@@ -190,7 +191,6 @@ export class CourtService {
   }
 
   async createDocument(
-    user: User,
     caseId: string,
     courtId: string,
     courtCaseNumber: string,
@@ -198,6 +198,7 @@ export class CourtService {
     fileName: string,
     fileType: string,
     content: Buffer,
+    user?: User,
   ): Promise<string> {
     return this.uploadStream(courtId, fileName, fileType, content)
       .then((streamId) =>
@@ -214,8 +215,8 @@ export class CourtService {
           'Failed to create a court document',
           {
             caseId,
-            actor: user.name,
-            institution: user.institution?.name,
+            actor: user?.name ?? 'RVG',
+            institution: user?.institution?.name ?? 'RVG',
             courtId,
             courtCaseNumber,
             subject,

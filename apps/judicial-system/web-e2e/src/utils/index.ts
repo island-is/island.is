@@ -11,18 +11,74 @@ import {
   User,
   UserRole,
   CaseOrigin,
+  CaseFile,
+  CaseFileState,
 } from '@island.is/judicial-system/types'
 
-export const intercept = (res: Case) => {
+export enum Operation {
+  CaseQuery = 'CaseQuery',
+  UploadFileToCourtMutation = 'UploadFileToCourtMutation',
+  UpdateCaseMutation = 'UpdateCaseMutation',
+  SendNotificationMutation = 'SendNotificationMutation',
+  CreatePresignedPostMutation = 'CreatePresignedPostMutation',
+  CreateFileMutation = 'CreateFileMutation',
+  LimitedAccessCaseQuery = 'LimitedAccessCaseQuery',
+}
+
+export const intercept = (res: Case, forceFail?: Operation) => {
   cy.intercept('POST', '**/api/graphql', (req) => {
-    if (hasOperationName(req, 'CaseQuery')) {
+    if (hasOperationName(req, Operation.CaseQuery)) {
+      req.alias = 'gqlCaseQuery'
       req.reply({
         data: {
           case: res,
         },
       })
+    } else if (hasOperationName(req, Operation.LimitedAccessCaseQuery)) {
+      req.alias = 'gqlCaseQuery'
+      req.reply({
+        data: {
+          limitedAccessCase: res,
+        },
+      })
+    } else if (hasOperationName(req, Operation.UploadFileToCourtMutation)) {
+      req.alias = 'UploadFileToCourtMutation'
+      req.reply({
+        data: {
+          uploadFileToCourt: {
+            success: true,
+            __typename: 'UploadFileToCourtResponse',
+          },
+        },
+      })
+    } else if (hasOperationName(req, Operation.UpdateCaseMutation)) {
+      const { body } = req
+      req.alias = 'UpdateCaseMutation'
+      req.reply({
+        data: {
+          updateCase: { ...body.variables?.input, __typename: 'Case' },
+        },
+      })
+    } else if (hasOperationName(req, Operation.SendNotificationMutation)) {
+      req.alias = 'SendNotificationMutation'
+      req.reply({
+        fixture:
+          forceFail === Operation.SendNotificationMutation
+            ? 'sendNotificationFailedMutationResponse'
+            : 'sendNotificationMutationResponse',
+      })
+    } else if (hasOperationName(req, Operation.CreatePresignedPostMutation)) {
+      req.alias = 'CreatePresignedPostMutation'
+      req.reply({
+        fixture: 'createPresignedPostMutationResponse',
+      })
+    } else if (hasOperationName(req, Operation.CreateFileMutation)) {
+      req.alias = 'CreateFileMutation'
+      req.reply({
+        fixture: 'createFileMutationResponse',
+      })
     }
-  }).as('gqlCaseQuery')
+  })
 }
 
 export const hasOperationName = (
@@ -58,7 +114,7 @@ export const aliasMutation = (
 export const investigationCaseAccusedName = `${faker.name.firstName()} ${faker.name.lastName()}`
 export const investigationCaseAccusedAddress = faker.address.streetAddress()
 
-export const makeCustodyCase = (): Case => {
+export const makeRestrictionCase = (): Case => {
   return {
     id: 'test_id',
     created: '2020-09-16T19:50:08.033Z',
@@ -128,7 +184,7 @@ export const makeProsecutor = (): User => {
     active: true,
     title: 'aðstoðarsaksóknari',
     institution: {
-      id: '',
+      id: '53581d7b-0591-45e5-9cbe-c96b2f82da85',
       created: '',
       modified: '',
       type: InstitutionType.PROSECUTORS_OFFICE,
@@ -146,5 +202,26 @@ export const makeCourt = (): Institution => {
     type: InstitutionType.COURT,
     name: 'Héraðsdómur Reykjavíkur',
     active: true,
+  }
+}
+
+export const makeCaseFile = (
+  caseId = 'test_id',
+  name = 'test_file_name',
+  type = 'pdf',
+  state = CaseFileState.STORED_IN_RVG,
+  key = 'test_id',
+  size = 100,
+): CaseFile => {
+  return {
+    id: 'test_case_file_id',
+    created: '2020-09-16T19:50:08.033Z',
+    modified: '2020-09-16T19:50:08.033Z',
+    caseId,
+    type,
+    name,
+    state,
+    key,
+    size,
   }
 }

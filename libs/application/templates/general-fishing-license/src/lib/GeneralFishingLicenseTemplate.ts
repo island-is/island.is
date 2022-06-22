@@ -96,6 +96,7 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
+              delete: true,
             },
           ],
         },
@@ -113,7 +114,12 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
             description: application.labels.actionCardPayment,
           },
           progress: 0.9,
-          lifecycle: pruneAtMidnight(),
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            // Applications that stay in this state for 24 hours will be pruned automatically
+            whenToPrune: 24 * 3600 * 1000,
+          },
           onEntry: {
             apiModuleAction: ApiActions.createCharge,
           },
@@ -145,7 +151,10 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
         meta: {
           name: application.general.name.defaultMessage,
           progress: 1,
-          lifecycle: pruneAtMidnight(),
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: false,
+          },
           onEntry: {
             apiModuleAction: ApiActions.submitApplication,
           },
@@ -167,7 +176,10 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
         meta: {
           name: 'Declined',
           progress: 1,
-          lifecycle: pruneAtMidnight(),
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: false,
+          },
           roles: [
             {
               id: Roles.APPLICANT,

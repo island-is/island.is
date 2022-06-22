@@ -10,7 +10,7 @@ import {
 } from '@island.is/application/core'
 
 import * as m from '../lib/messages'
-import { ApproveOptions } from '../lib/types'
+import { ApproveOptions, ExternalData } from '../lib/types'
 import { Routes } from '../lib/constants'
 
 export const Spouse: Form = buildForm({
@@ -19,19 +19,7 @@ export const Spouse: Form = buildForm({
   mode: FormModes.APPLYING,
   children: [
     buildSection({
-      id: 'aboutSpouseForm',
-      title: m.aboutSpouseForm.general.sectionTitle,
-      children: [
-        buildCustomField({
-          id: 'aboutSpouseForm',
-          title: m.aboutSpouseForm.general.pageTitle,
-          component: 'AboutSpouseForm',
-        }),
-      ],
-    }),
-    // TODO: check if reusing components will work for the summary page
-    buildSection({
-      id: 'incomeForm',
+      id: Routes.SPOUSEINCOME,
       title: m.incomeForm.general.sectionTitle,
       children: [
         buildCustomField({
@@ -43,7 +31,7 @@ export const Spouse: Form = buildForm({
     }),
     buildSection({
       condition: (answers) => answers.spouseIncome === ApproveOptions.Yes,
-      id: 'incomeFilesForm',
+      id: Routes.SPOUSEINCOMEFILES,
       title: m.incomeFilesForm.general.sectionTitle,
       children: [
         buildCustomField({
@@ -54,7 +42,12 @@ export const Spouse: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'taxReturnFilesForm',
+      condition: (_, externalData) =>
+        ((externalData as unknown) as ExternalData)?.taxDataFetchSpouse?.data
+          ?.municipalitiesDirectTaxPayments?.success === false ||
+        ((externalData as unknown) as ExternalData)?.taxDataFetchSpouse?.data
+          ?.municipalitiesPersonalTaxReturn?.personalTaxReturn == null,
+      id: Routes.SPOUSETAXRETURNFILES,
       title: m.taxReturnForm.general.sectionTitle,
       children: [
         buildCustomField({
@@ -65,7 +58,7 @@ export const Spouse: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'contactInfoForm',
+      id: Routes.SPOUSECONTACTINFO,
       title: m.contactInfo.general.sectionTitle,
       children: [
         buildCustomField({
@@ -76,15 +69,15 @@ export const Spouse: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'summaryForm',
+      id: Routes.SPOUSESUMMARY,
       title: m.summaryForm.general.sectionTitle,
       children: [
         buildMultiField({
-          id: 'summaryForm',
+          id: Routes.SPOUSESUMMARY,
           title: m.summaryForm.general.pageTitle,
           children: [
             buildCustomField({
-              id: 'spouseSummaryForm',
+              id: Routes.SPOUSESUMMARY,
               title: m.summaryForm.general.pageTitle,
               component: 'SpouseSummaryForm',
             }),
@@ -104,11 +97,11 @@ export const Spouse: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'confirmation',
+      id: Routes.SPOUSECONFIRMATION,
       title: m.confirmation.general.sectionTitle,
       children: [
         buildCustomField({
-          id: 'spouseConfirmation',
+          id: Routes.SPOUSECONFIRMATION,
           title: m.confirmation.general.pageTitle,
           component: 'SpouseConfirmation',
         }),

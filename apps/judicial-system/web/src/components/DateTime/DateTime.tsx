@@ -142,7 +142,7 @@ const DateTime: React.FC<Props> = (props) => {
     const isValid = isValidDateTime(date, time, required)
 
     if (isValid && date && time) {
-      const dateToSend = new Date(date.getTime())
+      let dateToSend = new Date(date.getTime())
 
       const timeParts = time.split(':')
 
@@ -150,6 +150,12 @@ const DateTime: React.FC<Props> = (props) => {
       const minutes = parseInt(timeParts[1])
 
       dateToSend.setHours(hours, minutes)
+
+      // Make sure the time component does not make the date larger than the max date.
+      if (maxDate && dateToSend > maxDate) {
+        dateToSend = maxDate
+        setCurrentTime(getTimeFromDate(maxDate))
+      }
 
       onChange(dateToSend, isValid)
     } else {
