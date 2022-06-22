@@ -4,7 +4,6 @@ import { theme } from '@island.is/island-ui/theme'
 export const casesContainer = style({
   maxWidth: '1440px',
   margin: `${theme.spacing[12]}px auto`,
-  padding: `0 ${theme.spacing[6]}px`,
 })
 
 export const logoContainer = style({
