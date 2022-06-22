@@ -12,16 +12,15 @@ export function baseMapper<T>(entity: T): T {
 
 export const dummyAsset: Asset = {
   dummy: true,
-  initial: true,
+  initial: false,
   description: '',
-  assetNumber: '',
-  share: 0,
+  assetNumber: 'F1234567',
 }
 
 export const dummyMember: EstateMember = {
-  name: '',
-  nationalId: '',
-  relation: '',
+  name: 'Stúfur Mack',
+  nationalId: '2222222229',
+  relation: 'Sonur',
   initial: false,
   dummy: true,
 }

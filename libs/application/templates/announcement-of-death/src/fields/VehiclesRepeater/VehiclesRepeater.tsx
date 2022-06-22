@@ -40,9 +40,7 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
         !application.answers.vehicles?.encountered) &&
       externalData.estate.vehicles
     ) {
-      for (const vehicle of externalData.estate.vehicles) {
-        fields.push(vehicle)
-      }
+      append(externalData.estate.vehicles)
       setValue('vehicles.encountered', true)
     }
   }, [])
@@ -94,6 +92,7 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
         const vehicleNumberField = `${fieldIndex}.assetNumber`
         const vehicleTypeField = `${fieldIndex}.description`
         const initialField = `${fieldIndex}.initial`
+        const dummyField = `${fieldIndex}.dummy`
         const fieldError = error && error[index] ? error[index] : null
 
         return (
@@ -101,13 +100,19 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
             position="relative"
             key={field.id}
             marginTop={2}
-            hidden={field.initial}
+            hidden={field.initial || field?.dummy}
           >
             <Controller
               name={initialField}
               control={control}
               defaultValue={field.initial || false}
             />
+            <Controller
+              name={dummyField}
+              control={control}
+              defaultValue={field.dummy || false}
+            />
+
             <Box position="absolute" className={styles.removeFieldButton}>
               <Button
                 variant="ghost"

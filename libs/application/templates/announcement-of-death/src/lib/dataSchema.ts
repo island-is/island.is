@@ -100,6 +100,7 @@ export const dataSchema = z.object({
         ),
         share: z.number().optional(),
         initial: z.boolean().optional(),
+        dummy: z.boolean().optional(),
         description: z.string().optional(),
       })
       .array()

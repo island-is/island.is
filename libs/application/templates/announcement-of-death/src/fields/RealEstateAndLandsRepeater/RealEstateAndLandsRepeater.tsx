@@ -104,7 +104,7 @@ export const RealEstateAndLandsRepeater: FC<FieldBaseProps<Answers>> = ({
         }, [] as JSX.Element[])}
       </GridRow>
       {fields.map((field, index) => (
-        <Box key={field.id} hidden={field.initial}>
+        <Box key={field.id} hidden={field.initial || field?.dummy}>
           <Item
             field={field}
             fieldName={`${id}.assets`}
@@ -151,6 +151,7 @@ const Item = ({
   const addressField = `${fieldIndex}.description`
   const address = useWatch({ name: addressField, defaultValue: '' })
   const initialField = `${fieldIndex}.initial`
+  const dummyField = `${fieldIndex}.dummy`
   const { control, setValue } = useFormContext()
   const { formatMessage } = useLocale()
 
@@ -194,6 +195,11 @@ const Item = ({
         name={initialField}
         control={control}
         defaultValue={field.initial || false}
+      />
+      <Controller
+        name={dummyField}
+        control={control}
+        defaultValue={field.dummy || false}
       />
       <Box position="absolute" className={styles.removeFieldButton}>
         <Button
