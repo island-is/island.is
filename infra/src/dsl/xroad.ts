@@ -194,6 +194,16 @@ export const Properties = new XroadConf({
   },
 })
 
+export const AdrAndMachine = new XroadConf({
+  env: {
+    XROAD_ADR_MACHINE_LICENSE_PATH: {
+      dev: 'IS-DEV/GOV/10013/Vinnueftirlitid-Protected/rettindi-v1',
+      staging: 'IS-DEV/GOV/10013/Vinnueftirlitid-Protected/rettindi-v1',
+      prod: 'IS-DEV/GOV/10013/Vinnueftirlitid-Protected/rettindi-v1',
+    },
+  },
+})
+
 export const Education = new XroadConf({
   env: {
     XROAD_MMS_LICENSE_SERVICE_ID: {
