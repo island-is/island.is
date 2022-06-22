@@ -65,10 +65,13 @@ export const companyModules: ModuleKeys[] = [
   'information',
   'vehicles',
   'personalInformation',
+  'accessControl',
 
   // TODO: Next in:
   // 'licenses',
 ]
+
+export const featureFlaggedCompanyModules: ModuleKeys[] = ['accessControl']
 
 export const modules: Record<ModuleKeys, ServicePortalModule> = {
   documentProvider: documentProviderModule,
