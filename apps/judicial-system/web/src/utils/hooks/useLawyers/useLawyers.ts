@@ -26,7 +26,7 @@ export const useGetLawyers = (): Lawyer[] => {
 export const useGetLawyer = (
   nationalId?: string,
   shouldFetch?: boolean,
-): Lawyer => {
+): Lawyer | undefined => {
   const fetchWithNationalId = (url: string, nationalId: string) =>
     fetch(`${url}?nationalId=${nationalId}`).then((res) => res.json())
 
@@ -36,13 +36,5 @@ export const useGetLawyer = (
     { revalidateOnMount: true, errorRetryCount: 2 },
   )
 
-  return (
-    data || {
-      name: '',
-      practice: '',
-      email: '',
-      phoneNr: '',
-      nationalId: '',
-    }
-  )
+  return data
 }

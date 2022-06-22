@@ -45,10 +45,8 @@ const HeaderContainer: React.FC = () => {
     window.location.assign('/')
   }
 
-  const { practice, email, phoneNr } = useGetLawyer(
-    user?.nationalId,
-    user?.role === UserRole.DEFENDER,
-  )
+  const { practice, email, phoneNr } =
+    useGetLawyer(user?.nationalId, user?.role === UserRole.DEFENDER) ?? {}
 
   return (
     <Box paddingX={[0, 0, 4]}>
