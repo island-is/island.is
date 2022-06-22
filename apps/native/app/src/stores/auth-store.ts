@@ -24,7 +24,6 @@ interface UserInfo {
   sub: string
   nationalId: string
   name: string
-  nat: string
 }
 
 interface AuthStore extends State {
