@@ -9,7 +9,7 @@ import { caseDates } from '@island.is/judicial-system-web/messages'
 import * as styles from './CaseDates.css'
 import { useIntl } from 'react-intl'
 
-interface Props {
+export interface Props {
   workingCase: Case
   button?: {
     label: string

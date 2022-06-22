@@ -108,9 +108,6 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
   const institutionSlugBelongsToMannaudstorg = institutionSlug.includes(
     'mannaudstorg',
   )
-  const searchTags = institutionSlugBelongsToMannaudstorg
-    ? [{ key: 'mannaudstorg', type: SearchableTags.Organization }]
-    : undefined
 
   const breadcrumbItems = [
     institutionSlugBelongsToMannaudstorg
@@ -139,7 +136,6 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
       institutionSlug={institutionSlug}
       organization={organization}
       smallBackground
-      searchTags={searchTags}
       searchPlaceholder={o(
         'serviceWebSearchPlaceholder',
         'Leitaðu á þjónustuvefnum',
@@ -210,7 +206,6 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
                     'serviceWebSearchPlaceholder',
                     'Leitaðu á þjónustuvefnum',
                   )}
-                  tags={searchTags}
                 />
 
                 {!!q &&
@@ -327,10 +322,9 @@ ServiceSearch.getInitialProps = async ({ apolloClient, locale, query }) => {
   const queryString = ServiceWebModifySearchTerms(q)
 
   const institutionSlugBelongsToMannaudstorg = slug.includes('mannaudstorg')
-
-  const searchTags = institutionSlugBelongsToMannaudstorg
-    ? [{ key: 'mannaudstorg', type: SearchableTags.Organization }]
-    : undefined
+  const mannaudstorgTag = [
+    { key: 'mannaudstorg', type: SearchableTags.Organization },
+  ]
 
   const [
     organization,
@@ -356,7 +350,9 @@ ServiceSearch.getInitialProps = async ({ apolloClient, locale, query }) => {
           language: locale as ContentLanguage,
           queryString,
           types,
-          tags: searchTags,
+          [institutionSlugBelongsToMannaudstorg
+            ? 'tags'
+            : 'excludedTags']: mannaudstorgTag,
           size: PERPAGE,
           page,
         },

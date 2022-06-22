@@ -1,3 +1,4 @@
+console.log(`Cypress config env: ${JSON.stringify(Cypress.env())}`)
 const testEnvironment = Cypress.env('testEnvironment')
 const getAuthDomain = () => {
   const { authDomain } = Cypress.env(testEnvironment)
