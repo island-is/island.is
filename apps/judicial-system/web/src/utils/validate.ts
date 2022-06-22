@@ -80,7 +80,7 @@ const getRegexByValidation = (validation: Validation) => {
     }
     case 'court-case-number': {
       return {
-        regex: new RegExp(/^R-[0-9]{1,4}\/[0-9]{4}$/),
+        regex: new RegExp(/^R-[0-9]{1,5}\/[0-9]{4}$/),
         errorMessage: `Dæmi: R-1234/${new Date().getFullYear()}`,
       }
     }
