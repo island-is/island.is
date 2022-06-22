@@ -10,4 +10,4 @@ echo "Current test environment: ${TEST_ENVIRONMENT}"
 echo "Using this configuration:"
 cat cypress.json
 
-cypress run "$@"
+DEBUG="cypress:*"  cypress run "$@"

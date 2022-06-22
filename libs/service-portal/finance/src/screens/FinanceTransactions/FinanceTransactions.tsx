@@ -124,31 +124,34 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
           </Text>
           <GridRow>
             <GridColumn span={['11/12', '6/12']}>
-              <Text variant="default">
+              <Text variant="default" marginBottom={6}>
                 {formatMessage({
                   id: 'sp.finance-transactions:intro',
                   defaultMessage:
                     'Hér er að finna hreyfingar fyrir valin skilyrði. Hreyfingar geta verið gjöld, greiðslur, skuldajöfnuður o.fl.',
                 })}
               </Text>
-            </GridColumn>
-            {recordsDataArray.length > 0 ? (
-              <Box display="flex" marginLeft="auto" marginTop={1} printHidden>
-                <GridColumn>
-                  <Button
-                    colorScheme="default"
-                    icon="print"
-                    iconType="filled"
-                    onClick={() => window.print()}
-                    preTextIconType="filled"
-                    size="default"
-                    type="button"
-                    variant="utility"
-                  >
-                    {formatMessage(m.print)}
-                  </Button>
-                </GridColumn>
-                <GridColumn>
+              {recordsDataArray.length > 0 ? (
+                <Box
+                  display="flex"
+                  marginLeft="auto"
+                  paddingRight={2}
+                  printHidden
+                >
+                  <Box paddingRight={2}>
+                    <Button
+                      colorScheme="default"
+                      icon="print"
+                      iconType="filled"
+                      onClick={() => window.print()}
+                      preTextIconType="filled"
+                      size="default"
+                      type="button"
+                      variant="utility"
+                    >
+                      {formatMessage(m.print)}
+                    </Button>
+                  </Box>
                   <DropdownExport
                     onGetCSV={() =>
                       exportHreyfingarFile(recordsDataArray, 'csv')
@@ -157,9 +160,9 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
                       exportHreyfingarFile(recordsDataArray, 'xlsx')
                     }
                   />
-                </GridColumn>
-              </Box>
-            ) : null}
+                </Box>
+              ) : null}
+            </GridColumn>
           </GridRow>
           <Hidden print={true}>
             <Box marginTop={[1, 1, 2, 2, 5]}>
