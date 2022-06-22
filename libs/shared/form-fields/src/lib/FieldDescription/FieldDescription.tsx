@@ -1,20 +1,15 @@
 import React, { FC } from 'react'
-import { Text } from '@island.is/island-ui/core'
-import Markdown, { MarkdownToJSX } from 'markdown-to-jsx'
-
+import { Box } from '@island.is/island-ui/core'
+import { Markdown } from '@island.is/application/ui-components'
 interface Props {
   description: string
-  markdownOptions?: MarkdownToJSX.Options
 }
 
-export const FieldDescription: FC<Props> = ({
-  description,
-  markdownOptions,
-}) => {
+export const FieldDescription: FC<Props> = ({ description }) => {
   return (
-    <Text marginTop={1} marginBottom={1} as="div">
-      <Markdown options={markdownOptions}>{description}</Markdown>
-    </Text>
+    <Box marginTop={1} marginBottom={1}>
+      <Markdown>{description}</Markdown>
+    </Box>
   )
 }
 
