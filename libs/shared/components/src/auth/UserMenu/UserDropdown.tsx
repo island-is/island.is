@@ -62,6 +62,7 @@ export const UserDropdown = ({
     skip: !showDelegations,
     errorPolicy: 'all', // Return partial data, ignoring failed national registry lookups.
   })
+
   const hasDelegationsData = data && data.authActorDelegations?.length > 0
   const [isMobile, setIsMobile] = useState(false)
   const { width } = useWindowSize()
@@ -105,26 +106,22 @@ export const UserDropdown = ({
             flexWrap="nowrap"
             alignItems="center"
             paddingBottom={3}
+            paddingTop={2}
           >
-            {/* Check if actor is company - display company icon
-             * kennitala function is buggy - temp removal
-             */}
-            {/* {isDelegationCompany ? (
-            <Box
-              borderRadius="circle"
-              background="blue100"
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-              className={styles.companyIconSize}
+            {isDelegationCompany ? (
+              <Box
+                borderRadius="circle"
+                background="blue100"
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                className={styles.companyIconSize}
               >
-              <Icon icon="business" type="filled" color="blue400" />
+                <Icon icon="business" type="filled" color="blue400" />
               </Box>
-              ) : (
-                <UserAvatar username={isDelegation ? actorName : userName} />
-          )} */}
-            <UserAvatar username={isDelegation ? actorName : userName} />
-
+            ) : (
+              <UserAvatar username={isDelegation ? actorName : userName} />
+            )}
             <Box marginLeft={1} marginRight={4}>
               <Text variant="h4" as="h4">
                 {userName}
@@ -132,7 +129,6 @@ export const UserDropdown = ({
               {isDelegation && <Text variant="small">{actorName}</Text>}
             </Box>
           </Box>
-          {/* <Divider /> */}
           {showDropdownLanguage && (
             <Hidden above="sm">
               {<UserLanguageSwitcher user={user} dropdown />}
@@ -153,15 +149,11 @@ export const UserDropdown = ({
           {/* User settings */}
           {(!isDelegation || isDelegationCompany) && showDelegations && (
             <>
-              <UserProfileInfo
-                isCompany={isDelegationCompany}
-                onClick={() => onClose()}
-              />
+              <UserProfileInfo onClick={() => onClose()} />
               <Divider />
             </>
           )}
           {/* End of user settings */}
-
           {/* Logout */}
           <Box paddingTop={[1, 2]}>
             <UserDropdownItem

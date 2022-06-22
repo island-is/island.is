@@ -1,7 +1,7 @@
 import React from 'react'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
-import { Text, Box, Columns, Column } from '@island.is/island-ui/core'
+import { Text, Box, GridColumn, GridRow } from '@island.is/island-ui/core'
 import { m } from '@island.is/service-portal/core'
 import EmptyImageSmall from './EmptyImgSmall'
 
@@ -13,19 +13,27 @@ interface Props {
 export const EmptyState = ({ title, description }: Props) => {
   const { formatMessage } = useLocale()
   return (
-    <Box paddingTop={3}>
-      <Columns>
-        <Column width="3/12">
-          <Box paddingLeft="containerGutter">
-            <EmptyImageSmall />
+    <Box paddingTop={[0, 3]}>
+      <GridRow>
+        <GridColumn
+          span={['12/12', '4/12', '4/12', '3/12', '3/12']}
+          order={[2, 1]}
+        >
+          <Box marginTop={[3, 0]} paddingLeft="containerGutter">
+            <EmptyImageSmall style={{ maxHeight: 229 }} />
           </Box>
-        </Column>
-        <Column width="6/12">
+        </GridColumn>
+        <GridColumn
+          span={['10/12', '4/12']}
+          offset={['0', '1/12', '1/12', '1/12', '0']}
+          order={[1, 2]}
+        >
           <Box
             height="full"
             display="flex"
             justifyContent="center"
             flexDirection="column"
+            paddingTop={[3, 0]}
           >
             <Text marginBottom={1} variant="h3">
               {title ? formatMessage(title) : formatMessage(m.noDataFound)}
@@ -36,8 +44,8 @@ export const EmptyState = ({ title, description }: Props) => {
                 : formatMessage(m.noDataFoundDetail)}
             </Text>
           </Box>
-        </Column>
-      </Columns>
+        </GridColumn>
+      </GridRow>
     </Box>
   )
 }

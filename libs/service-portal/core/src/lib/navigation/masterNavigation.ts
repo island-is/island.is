@@ -37,7 +37,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
 
       // Company
       {
-        name: 'Um fyriræki',
+        name: m.companyTitle,
         path: ServicePortalPath.Company,
         icon: {
           icon: 'business',
@@ -276,6 +276,13 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             path: ServicePortalPath.SettingsPersonalInformationEditLanguage,
           },
         ],
+      },
+      {
+        name: m.accessControl,
+        path: ServicePortalPath.SettingsAccessControl,
+        icon: {
+          icon: 'people',
+        },
       },
     ],
   },

@@ -8,7 +8,7 @@ import { api } from '@island.is/judicial-system-web/src/services'
 import { UserContext } from '../UserProvider/UserProvider'
 import { UserRole } from '@island.is/judicial-system/types'
 import { theme } from '@island.is/island-ui/theme'
-import * as Constants from '@island.is/judicial-system/consts'
+import * as constants from '@island.is/judicial-system/consts'
 
 import * as styles from './Header.css'
 
@@ -25,10 +25,10 @@ const Header: React.FC = () => {
           !user || !isAuthenticated
             ? '/'
             : user.role === UserRole.DEFENDER
-            ? `${Constants.DEFENDER_ROUTE}/${router.query.id}`
+            ? `${constants.DEFENDER_ROUTE}/${router.query.id}`
             : user.role === UserRole.ADMIN
-            ? Constants.USER_LIST_ROUTE
-            : Constants.CASE_LIST_ROUTE
+            ? constants.USER_LIST_ROUTE
+            : constants.CASE_LIST_ROUTE
         }
         data-testid="link-to-home"
       >

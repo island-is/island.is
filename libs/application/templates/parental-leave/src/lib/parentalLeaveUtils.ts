@@ -387,10 +387,10 @@ export function getApplicationExternalData(
 }
 
 export function getApplicationAnswers(answers: Application['answers']) {
-  const otherParent = getValueViaPath(
+  const otherParent = (getValueViaPath(
     answers,
-    'otherParent.chooseOtherParent',
-  ) as string
+    'otherParentObj.chooseOtherParent',
+  ) ?? getValueViaPath(answers, 'otherParent')) as string
 
   const otherParentRightOfAccess = getValueViaPath(
     answers,
@@ -424,19 +424,24 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'employer.isSelfEmployed',
   ) as YesOrNo
 
-  const otherParentName = getValueViaPath(
+  const otherParentName = (getValueViaPath(
     answers,
-    'otherParent.otherParentName',
-  ) as string
+    'otherParentObj.otherParentName',
+  ) ?? getValueViaPath(answers, 'otherParentName')) as string
 
-  const otherParentId = getValueViaPath(
+  const otherParentId = (getValueViaPath(
     answers,
-    'otherParent.otherParentId',
-  ) as string
+    'otherParentObj.otherParentId',
+  ) ?? getValueViaPath(answers, 'otherParentId')) as string
 
   const otherParentEmail = getValueViaPath(
     answers,
     'otherParentEmail',
+  ) as string
+
+  const otherParentPhoneNumber = getValueViaPath(
+    answers,
+    'otherParentPhoneNumber',
   ) as string
 
   const bank = getValueViaPath(answers, 'payments.bank') as string
@@ -548,6 +553,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     otherParentName,
     otherParentId,
     otherParentEmail,
+    otherParentPhoneNumber,
     bank,
     usePersonalAllowance,
     usePersonalAllowanceFromSpouse,

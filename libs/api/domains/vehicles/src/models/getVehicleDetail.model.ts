@@ -6,178 +6,178 @@ export class VehiclesMainInfo {
   model?: string | null
 
   @Field(() => String, { nullable: true })
-  subModel?: string | null // vehcom + speccom
+  subModel?: string | null
 
   @Field(() => String, { nullable: true })
   regno?: string | null
 
   @Field(() => Number, { nullable: true })
-  year?: number | null // modelYear || currentYear ?? null
+  year?: number | null
 
   @Field(() => Number, { nullable: true })
-  co2?: number | null // NEDC
+  co2?: number | null
 
   @Field(() => Number, { nullable: true })
-  weightedCo2?: number | null // Weighted NEDC
+  weightedCo2?: number | null
 
   @Field(() => Number, { nullable: true })
-  co2Wltp?: number | null // WLTP
+  co2Wltp?: number | null
 
   @Field(() => Number, { nullable: true })
-  weightedCo2Wltp?: number | null // Weighted WLTP
+  weightedCo2Wltp?: number | null
 
   @Field(() => Number, { nullable: true })
-  cubicCapacity?: number | null // Slagrými ?? technical -> capacity
+  cubicCapacity?: number | null
 
   @Field(() => Number, { nullable: true })
-  trailerWithBrakesWeight?: number | null // technical -> mass -> tMassoftrbr
+  trailerWithBrakesWeight?: number | null
 
   @Field(() => Number, { nullable: true })
-  trailerWithoutBrakesWeight?: number | null // technical -> tMassoftrunbr
+  trailerWithoutBrakesWeight?: number | null
 }
 
 @ObjectType()
 export class VehiclesAxle {
   @Field(() => Number, { nullable: true })
-  axleMaxWeight?: number | null // technical -> mass -> `massdaxle${i}` ??
+  axleMaxWeight?: number | null
 
   @Field(() => String, { nullable: true })
-  wheelAxle?: string | null // technical -> axle -> `wheelaxle${i}`
+  wheelAxle?: string | null
 }
 
 @ObjectType()
 export class Tyres {
   @Field(() => String, { nullable: true })
-  axle1?: string | null // technical -> tyre -> `tyreaxle1`
+  axle1?: string | null
 
   @Field(() => String, { nullable: true })
-  axle2?: string | null // technical -> tyre -> `tyreaxle2`
+  axle2?: string | null
 
   @Field(() => String, { nullable: true })
-  axle3?: string | null // technical -> tyre -> `tyreaxle3`
+  axle3?: string | null
 
   @Field(() => String, { nullable: true })
-  axle4?: string | null // technical -> tyre -> `tyreaxle4`
+  axle4?: string | null
 
   @Field(() => String, { nullable: true })
-  axle5?: string | null // technical -> tyre -> `tyreaxle5`
+  axle5?: string | null
 }
 
 @ObjectType()
 export class VehiclesBasicInfo {
   @Field(() => String, { nullable: true })
-  model?: string | null // make
+  model?: string | null
 
   @Field(() => String, { nullable: true })
-  regno?: string | null // regno
+  regno?: string | null
 
   @Field(() => String, { nullable: true })
-  subModel?: string | null // vehcom + speccom
+  subModel?: string | null
 
   @Field(() => String, { nullable: true })
-  permno?: string | null // permno // fastanúmer
+  permno?: string | null
 
   @Field(() => String, { nullable: true })
-  verno?: string | null // vin // verksmiðjunúmer
+  verno?: string | null
 
   @Field(() => Number, { nullable: true })
-  year?: number | null // modelYear || currentYear ?? null
+  year?: number | null
 
   @Field(() => String, { nullable: true })
-  country?: string | null // country
+  country?: string | null
 
   @Field(() => String, { nullable: true })
-  preregDateYear?: string | null // preregdate -> year
+  preregDateYear?: string | null
 
   @Field(() => String, { nullable: true })
-  formerCountry?: string | null // formercountry
+  formerCountry?: string | null
 
   @Field(() => String, { nullable: true })
-  importStatus?: string | null // import
+  importStatus?: string | null
 }
 
 @ObjectType()
 export class VehiclesRegistrationInfo {
   @Field(() => String, { nullable: true })
-  firstRegistrationDate?: string | null // firstregdate
+  firstRegistrationDate?: string | null
 
   @Field(() => String, { nullable: true })
-  preRegistrationDate?: string | null // preregdate
+  preRegistrationDate?: string | null
 
   @Field(() => String, { nullable: true })
-  newRegistrationDate?: string | null // newregdate
+  newRegistrationDate?: string | null
 
   @Field(() => String, { nullable: true })
-  specialName?: string | null // Sérheiti - speccom
+  specialName?: string | null
 
   @Field(() => String, { nullable: true })
-  vehicleGroup?: string | null // technical -> vehgroup // ökutækisflokkur
+  vehicleGroup?: string | null
 
   @Field(() => String, { nullable: true })
   color?: string | null
 
   @Field(() => String, { nullable: true })
-  reggroup?: string | null // Skráningarflokkur // plates -> reggroup
+  reggroup?: string | null
 
   @Field(() => String, { nullable: true })
-  reggroupName?: string | null // Skráningarflokkur // plates -> reggroupname
+  reggroupName?: string | null
 
   @Field(() => String, { nullable: true })
-  plateLocation?: string | null // Geymslustaður plötu
+  plateLocation?: string | null
 
   @Field(() => String, { nullable: true })
-  plateStatus?: string | null // platestatus
+  plateStatus?: string | null
 
   @Field(() => Number, { nullable: true })
   passengers?: number | null
 
   @Field(() => String, { nullable: true })
-  useGroup?: string | null // usegroup
+  useGroup?: string | null
 
   @Field(() => Boolean, { nullable: true })
-  driversPassengers?: boolean | null // passbydr
+  driversPassengers?: boolean | null
 
   @Field(() => Number, { nullable: true })
-  standingPassengers?: number | null // standingno
+  standingPassengers?: number | null
 }
 
 @ObjectType()
 export class VehiclesCurrentOwnerInfo {
   @Field(() => String, { nullable: true })
-  owner?: string | null // owners -> current -> fullname
+  owner?: string | null
 
   @Field(() => String, { nullable: true })
-  nationalId?: string | null // owners -> current -> persidno
+  nationalId?: string | null
 
   @Field(() => String, { nullable: true })
-  address?: string | null // owners -> current -> address
+  address?: string | null
 
   @Field(() => String, { nullable: true })
-  postalcode?: string | null // owners -> current -> postalcode
+  postalcode?: string | null
 
   @Field(() => String, { nullable: true })
-  city?: string | null // owners -> current -> city
+  city?: string | null
 
   @Field(() => String, { nullable: true })
-  dateOfPurchase?: string | null // owners -> current -> purchasedate
+  dateOfPurchase?: string | null
 }
 
 @ObjectType()
 export class VehiclesInspectionInfo {
   @Field(() => String, { nullable: true })
-  type?: string | null // inspections[0] -> type
+  type?: string | null
 
   @Field(() => String, { nullable: true })
-  date?: string | null // inspections[0] -> date
+  date?: string | null
 
   @Field(() => String, { nullable: true })
-  result?: string | null // inspections[0] -> result
+  result?: string | null
 
   @Field(() => String, { nullable: true })
-  nextInspectionDate?: string | null // nextinspectiondate
+  nextInspectionDate?: string | null
 
   @Field(() => String, { nullable: true })
-  lastInspectionDate?: string | null // inspections[1] -> date // EF LENGTH > 1
+  lastInspectionDate?: string | null
 
   @Field(() => Boolean, { nullable: true })
   insuranceStatus?: boolean | null
@@ -195,40 +195,40 @@ export class VehiclesInspectionInfo {
 @ObjectType()
 export class VehiclesTechnicalInfo {
   @Field(() => String, { nullable: true })
-  engine?: string | null // technical -> engine
+  engine?: string | null
 
   @Field(() => String, { nullable: true })
-  totalWeight?: number | null // technical -> mass -> massladen
+  totalWeight?: number | null
 
   @Field(() => String, { nullable: true })
-  cubicCapacity?: number | null // technical -> capacity
+  cubicCapacity?: number | null
 
   @Field(() => Number, { nullable: true })
-  capacityWeight?: number | null // technical -> mass -> massofcomb (þyngd vagnlestar)
+  capacityWeight?: number | null
 
   @Field(() => Number, { nullable: true })
-  length?: number | null // technical -> size -> length
+  length?: number | null
 
   @Field(() => Number, { nullable: true })
-  vehicleWeight?: number | null // technical -> mass -> massinro
+  vehicleWeight?: number | null
 
   @Field(() => Number, { nullable: true })
-  width?: number | null // technical -> size -> width
+  width?: number | null
 
   @Field(() => Number, { nullable: true })
-  trailerWithoutBrakesWeight?: number | null // technical -> tMassoftrunbr
+  trailerWithoutBrakesWeight?: number | null
 
   @Field(() => Number, { nullable: true })
-  horsepower?: number | null // maxNetPower * 1.359622 // Metric horsepower (hp(M))
+  horsepower?: number | null
 
   @Field(() => Number, { nullable: true })
-  trailerWithBrakesWeight?: number | null // technical -> mass -> tMassoftrbr
+  trailerWithBrakesWeight?: number | null
 
   @Field(() => Number, { nullable: true })
-  carryingCapacity?: number | null // technical -> mass -> masscapacity
+  carryingCapacity?: number | null
 
   @Field(() => Number, { nullable: true })
-  axleTotalWeight?: number | null // technical -> mass -> // massmaxle1 + massmaxle2 + massmaxle3 + massmaxle4 + massmaxle5
+  axleTotalWeight?: number | null
 
   @Field(() => [VehiclesAxle], { nullable: true })
   axles?: VehiclesAxle[]
@@ -240,40 +240,39 @@ export class VehiclesTechnicalInfo {
 @ObjectType()
 export class VehiclesOwners {
   @Field(() => String, { nullable: true })
-  nationalId?: string | null // owners -> persidno
+  nationalId?: string | null
 
   @Field(() => String, { nullable: true })
-  name?: string | null // owners -> name
+  name?: string | null
 
   @Field(() => String, { nullable: true })
-  address?: string | null // owners -> address + city
+  address?: string | null
 
   @Field(() => String, { nullable: true })
-  dateOfPurchase?: string | null // owners -> purchasedate
+  dateOfPurchase?: string | null
 }
 
 @ObjectType()
 export class VehiclesOperator {
   @Field(() => String, { nullable: true })
-  nationalId?: string | null // owners -> persidno
+  nationalId?: string | null
 
   @Field(() => String, { nullable: true })
-  name?: string | null // owners -> name
+  name?: string | null
+  @Field(() => String, { nullable: true })
+  address?: string | null
 
   @Field(() => String, { nullable: true })
-  address?: string | null // owners -> address + city
+  postalcode?: string | null
 
   @Field(() => String, { nullable: true })
-  postalcode?: string | null // owners -> address + city
+  city?: string | null
 
   @Field(() => String, { nullable: true })
-  city?: string | null // owners -> address + city
+  startDate?: string | null
 
   @Field(() => String, { nullable: true })
-  startDate?: string | null // owners -> coOwner(current) -> startdate
-
-  @Field(() => String, { nullable: true })
-  endDate?: string | null // owners -> coOwner(current) -> enddate
+  endDate?: string | null
 }
 
 @ObjectType()

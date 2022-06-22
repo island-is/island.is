@@ -8,7 +8,6 @@ import {
   Text,
   Accordion,
   AccordionItem,
-  Input,
   AlertMessage,
 } from '@island.is/island-ui/core'
 import {
@@ -50,14 +49,15 @@ import { createCaseResentExplanation } from '@island.is/judicial-system-web/src/
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
 import type { CaseLegalProvisions } from '@island.is/judicial-system/types'
-import * as Constants from '@island.is/judicial-system/consts'
+import * as constants from '@island.is/judicial-system/consts'
 
 import * as styles from './Overview.css'
+import CaseResubmitModal from '@island.is/judicial-system-web/src/components/CaseResubmitModal/CaseResubmitModal'
 
 export const Overview: React.FC = () => {
-  const [modalVisible, setModalVisible] = useState(false)
-  const [resendCaseModalVisible, setResendCaseModalVisible] = useState(false)
-  const [caseResentExplanation, setCaseResentExplanation] = useState('')
+  const [modal, setModal] = useState<
+    'noModal' | 'caseResubmitModal' | 'caseSubmittedModal'
+  >('noModal')
   const [modalText, setModalText] = useState('')
   const {
     workingCase,
@@ -77,7 +77,7 @@ export const Overview: React.FC = () => {
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
 
-  const handleNextButtonClick = async () => {
+  const handleNextButtonClick = async (caseResentExplanation?: string) => {
     if (!workingCase) {
       return
     }
@@ -106,11 +106,9 @@ export const Overview: React.FC = () => {
           caseResentExplanation,
         ),
       })
-
-      setResendCaseModalVisible(false)
     }
 
-    setModalVisible(true)
+    setModal('caseSubmittedModal')
   }
 
   return (
@@ -128,8 +126,8 @@ export const Overview: React.FC = () => {
       />
       <FormContentContainer>
         {workingCase.state === CaseState.RECEIVED && (
-          <div
-            className={styles.resendInfoPanelContainer}
+          <Box
+            marginBottom={workingCase.seenByDefender ? 3 : 5}
             data-testid="rc-overview-info-panel"
           >
             <AlertMessage
@@ -137,7 +135,19 @@ export const Overview: React.FC = () => {
               message={formatMessage(rcOverview.receivedAlert.message)}
               type="info"
             />
-          </div>
+          </Box>
+        )}
+        {workingCase.seenByDefender && (
+          <Box marginBottom={5}>
+            <AlertMessage
+              title={formatMessage(rcOverview.seenByDefenderAlert.title)}
+              message={formatMessage(rcOverview.seenByDefenderAlert.text, {
+                when: formatDate(workingCase.seenByDefender, 'PPPp'),
+              })}
+              type="info"
+              testid="alertMessageSeenByDefender"
+            />
+          </Box>
         )}
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
@@ -192,7 +202,7 @@ export const Overview: React.FC = () => {
                     '',
                 )} eftir kl. ${formatDate(
                   workingCase.requestedCourtDate,
-                  Constants.TIME_FORMAT,
+                  constants.TIME_FORMAT,
                 )}`,
               },
               ...(workingCase.registrar
@@ -222,14 +232,14 @@ export const Overview: React.FC = () => {
                       ) ?? '',
                     )} kl. ${formatDate(
                       workingCase.parentCase.validToDate,
-                      Constants.TIME_FORMAT,
+                      constants.TIME_FORMAT,
                     )}`
                   : workingCase.arrestDate
                   ? `${capitalize(
                       formatDate(workingCase.arrestDate, 'PPPP', true) ?? '',
                     )} kl. ${formatDate(
                       workingCase.arrestDate,
-                      Constants.TIME_FORMAT,
+                      constants.TIME_FORMAT,
                     )}`
                   : 'Var ekki skráður',
               },
@@ -241,7 +251,7 @@ export const Overview: React.FC = () => {
                         formatDate(workingCase.courtDate, 'PPPP', true) ?? '',
                       )} kl. ${formatDate(
                         workingCase.courtDate,
-                        Constants.TIME_FORMAT,
+                        constants.TIME_FORMAT,
                       )}`,
                     },
                   ]
@@ -372,7 +382,7 @@ export const Overview: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${Constants.STEP_FIVE_ROUTE}/${workingCase.id}`}
+          previousUrl={`${constants.STEP_FIVE_ROUTE}/${workingCase.id}`}
           nextButtonText={
             workingCase.state === CaseState.NEW ||
             workingCase.state === CaseState.DRAFT
@@ -385,69 +395,36 @@ export const Overview: React.FC = () => {
           onNextButtonClick={
             workingCase.state === CaseState.RECEIVED
               ? () => {
-                  setResendCaseModalVisible(true)
+                  setModal('caseResubmitModal')
                 }
               : handleNextButtonClick
           }
         />
       </FormContentContainer>
       <AnimatePresence>
-        {resendCaseModalVisible && (
-          <Modal
-            title={formatMessage(rcOverview.sections.caseResentModal.heading)}
-            text={formatMessage(rcOverview.sections.caseResentModal.text)}
-            handleClose={() => setResendCaseModalVisible(false)}
-            primaryButtonText={formatMessage(
-              rcOverview.sections.caseResentModal.primaryButtonText,
-            )}
-            secondaryButtonText={formatMessage(
-              rcOverview.sections.caseResentModal.secondaryButtonText,
-            )}
-            handleSecondaryButtonClick={() => {
-              setResendCaseModalVisible(false)
-            }}
-            handlePrimaryButtonClick={() => {
-              handleNextButtonClick()
-            }}
-            errorMessage={
-              sendNotificationError
-                ? formatMessage(errors.sendNotification)
-                : undefined
-            }
-            isPrimaryButtonLoading={isSendingNotification}
-            isPrimaryButtonDisabled={!caseResentExplanation}
-          >
-            <Box marginBottom={10}>
-              <Input
-                name="caseResentExplanation"
-                label={formatMessage(
-                  rcOverview.sections.caseResentModal.input.label,
-                )}
-                placeholder={formatMessage(
-                  rcOverview.sections.caseResentModal.input.placeholder,
-                )}
-                onChange={(evt) => setCaseResentExplanation(evt.target.value)}
-                textarea
-                rows={7}
-              />
-            </Box>
-          </Modal>
+        {modal === 'caseResubmitModal' && (
+          <CaseResubmitModal
+            workingCase={workingCase}
+            isLoading={isSendingNotification}
+            onClose={() => setModal('noModal')}
+            onContinue={(explaination) => handleNextButtonClick(explaination)}
+          />
         )}
       </AnimatePresence>
       <AnimatePresence>
-        {modalVisible && (
+        {modal === 'caseSubmittedModal' && (
           <Modal
             title={formatMessage(rcOverview.sections.modal.headingV2, {
               caseType: workingCase.type,
             })}
             text={modalText}
-            handleClose={() => router.push(Constants.CASE_LIST_ROUTE)}
+            handleClose={() => router.push(constants.CASE_LIST_ROUTE)}
             handlePrimaryButtonClick={() => {
-              window.open(Constants.FEEDBACK_FORM_URL, '_blank')
-              router.push(Constants.CASE_LIST_ROUTE)
+              window.open(constants.FEEDBACK_FORM_URL, '_blank')
+              router.push(constants.CASE_LIST_ROUTE)
             }}
             handleSecondaryButtonClick={() => {
-              router.push(Constants.CASE_LIST_ROUTE)
+              router.push(constants.CASE_LIST_ROUTE)
             }}
             errorMessage={
               sendNotificationError

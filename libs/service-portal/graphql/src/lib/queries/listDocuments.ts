@@ -11,6 +11,7 @@ export const LIST_DOCUMENTS = gql`
       fileType
       url
       opened
+      categoryId
     }
   }
 `
