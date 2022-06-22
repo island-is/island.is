@@ -18,11 +18,11 @@ export default defineConfig({
   e2e: {
     specPattern: './src/integration/**/*.ts',
     supportFile: './src/support/index.ts',
-    setupNodeEvents(on, config) {
-      // See: https://github.com/cypress-io/cypress/issues/9571
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      on('file:preprocessor', () => preprocessTypescript(config))
-    },
+    // setupNodeEvents(on, config) {
+    //   // See: https://github.com/cypress-io/cypress/issues/9571
+    //   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    //   // @ts-ignore
+    //   on('file:preprocessor', () => preprocessTypescript(config))
+    // },
   },
 })
