@@ -594,10 +594,10 @@ export class NotificationService {
     return recipient
   }
 
-  private async sendCourtDateEmailNotificationToDefender(
+  private sendCourtDateEmailNotificationToDefender(
     theCase: Case,
     user: User,
-  ): Promise<Recipient> {
+  ): [Promise<Recipient>, Promise<Recipient>] {
     const subject = `Fyrirtaka í máli ${theCase.courtCaseNumber}`
     const linkSubject = `Gögn í máli ${theCase.courtCaseNumber}`
     const html = formatDefenderCourtDateEmailNotification(
@@ -622,41 +622,46 @@ export class NotificationService {
     const calendarInvite = this.createICalAttachment(theCase)
     const attachments: Attachment[] = calendarInvite ? [calendarInvite] : []
 
-    const recipient = await this.sendEmail(
+    const courtDateEmail = this.sendEmail(
       subject,
       html,
       theCase.defenderName,
       theCase.defenderEmail,
       attachments,
-    )
+    ).then((recipient) => {
+      if (recipient.success) {
+        // No need to wait
+        this.uploadEmailToCourt(
+          theCase,
+          user,
+          subject,
+          html,
+          theCase.defenderEmail,
+        )
+      }
+      return recipient
+    })
 
-    const linkSent = await this.sendEmail(
+    const linkEmail = this.sendEmail(
       linkSubject,
       linkHtml,
       theCase.defenderName,
       theCase.defenderEmail,
-    )
+    ).then((recipient) => {
+      if (recipient.success) {
+        // No need to wait
+        this.uploadEmailToCourt(
+          theCase,
+          user,
+          linkSubject,
+          linkHtml,
+          theCase.defenderEmail,
+        )
+      }
+      return recipient
+    })
 
-    if (recipient.success && linkSent.success) {
-      // No need to wait
-      this.uploadEmailToCourt(
-        theCase,
-        user,
-        subject,
-        html,
-        theCase.defenderEmail,
-      )
-
-      this.uploadEmailToCourt(
-        theCase,
-        user,
-        linkSubject,
-        linkHtml,
-        theCase.defenderEmail,
-      )
-    }
-
-    return recipient
+    return [courtDateEmail, linkEmail]
   }
 
   private async sendCourtDateNotifications(
@@ -681,9 +686,12 @@ export class NotificationService {
           SessionArrangements.ALL_PRESENT_SPOKESPERSON) &&
       theCase.defenderEmail
     ) {
-      promises.push(
-        this.sendCourtDateEmailNotificationToDefender(theCase, user),
-      )
+      const [
+        courtDateEmail,
+        linkEmail,
+      ] = this.sendCourtDateEmailNotificationToDefender(theCase, user)
+      promises.push(courtDateEmail)
+      promises.push(linkEmail)
     }
 
     if (
