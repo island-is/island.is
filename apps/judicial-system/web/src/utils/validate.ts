@@ -77,32 +77,24 @@ const getRegexByValidation = (validation: Validation) => {
 export const validate = (
   items: ValidationItem[],
 ): { isValid: boolean; errorMessage: string }[] => {
-  const validations = items
-    .map((item) => {
-      if (!item.value) {
-        if (item.validations.some((validation) => validation === 'empty')) {
-          return [{ isValid: false, errorMessage: 'Reitur má ekki vera tómur' }]
-        } else {
-          return [{ isValid: true, errorMessage: '' }]
-        }
+  const returnValue = items.map((item) => {
+    const validatedItems = item.validations.map((validation) => {
+      if (item.value) {
+        const v = getRegexByValidation(validation)
+        const isValid = v.regex.test(item.value)
+
+        return { isValid, errorMessage: isValid ? '' : v.errorMessage }
+      } else if (validation === 'empty') {
+        return { isValid: false, errorMessage: 'Reitur má ekki vera tómur' }
       } else {
-        const invalidItems = item.validations.map((validation) => {
-          if (item.value) {
-            const v = getRegexByValidation(validation)
-
-            const isValid = v.regex.test(item.value)
-            return { isValid, errorMessage: isValid ? '' : v.errorMessage }
-          }
-
-          return { isValid: true, errorMessage: '' }
-        })
-
-        return invalidItems
+        return { isValid: true, errorMessage: '' }
       }
     })
-    .flat()
 
-  return validations.filter((item) => !item.isValid)
+    return validatedItems.filter((item) => !item.isValid)
+  })
+
+  return returnValue.flat()
 }
 
 const someDefendantIsInvalid = (workingCase: Case) => {
