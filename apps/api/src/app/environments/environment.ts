@@ -9,9 +9,6 @@ const prodConfig = () => ({
   applicationSystem: {
     baseApiUrl: process.env.APPLICATION_SYSTEM_API_URL,
   },
-  aosh: {
-    xroadPath: process.env.XROAD_ADR_MACHINE_LICENSE_PATH,
-  },
   drivingLicense: {
     secret: process.env.XROAD_DRIVING_LICENSE_SECRET,
     v1: {
@@ -144,11 +141,6 @@ const devConfig = () => ({
   },
   applicationSystem: {
     baseApiUrl: 'http://localhost:3333',
-  },
-  aosh: {
-    xroadPath:
-      process.env.XROAD_ADR_MACHINE_LICENSE_PATH ??
-      'IS-DEV/GOV/10013/Vinnueftirlitid-Protected/rettindi-v1',
   },
   drivingLicense: {
     secret: process.env.XROAD_DRIVING_LICENSE_SECRET,
