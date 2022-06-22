@@ -1,6 +1,6 @@
 import { Lawyer } from '@island.is/judicial-system-web/src/types'
 
-export type LawyerFull = {
+type LawyerFull = {
   Id: number
   Name: string
   Title: string
