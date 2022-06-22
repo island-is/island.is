@@ -7,11 +7,10 @@ import { validate } from './validate'
 
 export const parseTime = (date: string, time: string) => {
   const timeWithoutColon = time.replace(':', '')
+  const hours = timeWithoutColon.slice(0, 2)
+  const minutes = timeWithoutColon.slice(2, 4)
 
-  const dateHours = setHours(
-    new Date(date),
-    parseInt(timeWithoutColon.slice(0, 2)),
-  )
+  const dateHours = setHours(new Date(date), parseInt(hours))
 
   /**
    * We are not validating date because we are assuming the date can't be invalid.
@@ -23,10 +22,7 @@ export const parseTime = (date: string, time: string) => {
       .length === 0
   ) {
     const dateMinutes = formatISO(
-      setSeconds(
-        setMinutes(dateHours, parseInt(timeWithoutColon.substr(2, 4))),
-        0,
-      ),
+      setSeconds(setMinutes(dateHours, parseInt(minutes)), 0),
     )
 
     return dateMinutes
