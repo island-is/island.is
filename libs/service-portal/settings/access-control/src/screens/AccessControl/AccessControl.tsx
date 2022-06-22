@@ -32,7 +32,6 @@ const AccessControl: ServicePortalModuleComponent = ({ userInfo, client }) => {
           defaultMessage:
             'Hérna kemur listi yfir þau umboð sem þú hefur gefið öðrum. Þú getur eytt umboðum eða bætt við nýjum.',
         })}
-        img="./assets/images/educationDegree.svg"
       />
       <Accesses />
     </Box>

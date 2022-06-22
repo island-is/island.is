@@ -16,7 +16,6 @@ import * as styles from './UserMenu.css'
 import { UserDelegations } from './UserDelegations'
 import { UserDropdownItem } from './UserDropdownItem'
 import { UserProfileInfo } from './UserProfileInfo'
-import { Features, useFeatureFlag } from '@island.is/react/feature-flags'
 import { useActorDelegationsQuery } from '../../../gen/graphql'
 import { QueryResult } from '@apollo/client'
 import { UserLanguageSwitcher } from './UserLanguageSwitcher'
@@ -55,11 +54,7 @@ export const UserDropdown = ({
   const actorName = actor?.name
   const isDelegationCompany = user.profile.subjectType === 'legalEntity'
 
-  const showDelegations =
-    useFeatureFlag(Features.delegationsEnabled, false).value || Boolean(actor)
-
   const { data, error, loading } = useActorDelegationsQuery({
-    skip: !showDelegations,
     errorPolicy: 'all', // Return partial data, ignoring failed national registry lookups.
   })
 
@@ -100,7 +95,6 @@ export const UserDropdown = ({
         )}
       >
         <Box display="flex" flexDirection="column" className={styles.wrapper}>
-          {/* Current User */}
           <Box
             display="flex"
             flexWrap="nowrap"
@@ -136,38 +130,35 @@ export const UserDropdown = ({
           )}
 
           <Divider />
-          {/* End of current User */}
-          {/* User delegations */}
+
           {hasDelegationsData && (
-            <UserDelegations
-              user={user}
-              onSwitchUser={onSwitchUser}
-              data={{ data, error, loading } as QueryResult}
-            />
+            <Box paddingTop={2}>
+              <UserDelegations
+                user={user}
+                onSwitchUser={onSwitchUser}
+                data={{ data, error, loading } as QueryResult}
+              />
+            </Box>
           )}
-          {/* End of user delegations */}
-          {/* User settings */}
-          {(!isDelegation || isDelegationCompany) && showDelegations && (
-            <>
+
+          {(!isDelegation || isDelegationCompany) && (
+            <Box paddingTop={1}>
               <UserProfileInfo onClick={() => onClose()} />
-              <Divider />
-            </>
+            </Box>
           )}
-          {/* End of user settings */}
-          {/* Logout */}
-          <Box paddingTop={[1, 2]}>
+          <Box paddingTop={1}>
             <UserDropdownItem
               text={formatMessage(sharedMessages.logout)}
               icon={{ type: 'outline', icon: 'logOut' }}
               onClick={onLogout}
             />
           </Box>
-          {/* End of Logout */}
         </Box>
         <Hidden below="md">{closeButton}</Hidden>
       </Box>
     </Box>
   )
+
   return isMobile ? (
     <Box display={isVisible ? 'flex' : 'none'} height="full">
       {content}
