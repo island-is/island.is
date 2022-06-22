@@ -91,7 +91,7 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
           linkResolver('servicewebcategory', [
             item.organization.slug,
             item.category.slug,
-          ]).href + `?&q=${item.slug}`,
+          ]).href + `/${item.slug}`,
       },
       categorySlug: item.category.slug,
       category: item.category.title,
