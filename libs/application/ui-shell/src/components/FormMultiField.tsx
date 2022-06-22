@@ -38,12 +38,7 @@ const FormMultiField: FC<{
   setBeforeSubmitCallback,
   setFieldLoadingState,
 }) => {
-  const {
-    description,
-    descriptionMarkdownOptions,
-    children,
-    space = 0,
-  } = multiField
+  const { description, children, space = 0 } = multiField
   const { formatMessage } = useLocale()
   return (
     <GridRow>
@@ -58,7 +53,6 @@ const FormMultiField: FC<{
         <GridColumn>
           <FieldDescription
             description={formatText(description, application, formatMessage)}
-            markdownOptions={descriptionMarkdownOptions}
           />
         </GridColumn>
       )}
