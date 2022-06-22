@@ -46,13 +46,14 @@ NOVA_PASSWORD=<SMS password> COURTS_MOBILE_NUMBERS='{ <court-id>: mobileNumbers:
 
 Similarly, you can enable electronic signatures of judge rulings by providing a Dokobit access token: `DOKOBIT_ACCESS_TOKEN=<Dokobit access token>`
 
-To enable email sending via AWS SES turn off email test account and provide an email region:
+In local development you can preview emails with ethereal nodemailer previews by following the urls in the logs. 
+Alternatively, you can enable email sending via AWS SES turn off email test account and provide an email region:
 
 ```bash
 EMAIL_USE_TEST_ACCOUNT=false EMAIL_REGION=eu-west-1 yarn start judicial-system-backend
 ```
 
-You need to be authenticated against AWS for this to work. Alternatively, you can view ethereal nodemailer messages by following the urls shown in the logs.
+You need to be authenticated against AWS for this to work.
 
 To enable prison and prison administration email notifications provide email addresses: `PRISON_EMAIL=<prison email> PRISON_ADMIN_EMAIL=<prison administration email>`
 
