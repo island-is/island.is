@@ -47,16 +47,14 @@ export const useLicenses = (type?: GenericLicenseType): Props => {
   }
 }
 
-//TODO: remove
+//Still used by the "fancy" driving license UI.
+// TODO: Remove when generic display is ready.
 interface GetLicenseProps {
   data?: DrivingLicenseType
   status: GenericUserLicenseStatus | ''
   loading?: boolean
   error?: any
 }
-
-/* Collects only Driving License */
-// TODO: Generate hook for collecting all licenses when other services are ready
 export const useDriversLicense = (
   licenseType: GenericLicenseType,
 ): GetLicenseProps => {

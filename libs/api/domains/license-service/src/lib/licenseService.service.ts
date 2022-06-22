@@ -59,13 +59,11 @@ export class LicenseServiceService {
           const data = JSON.parse(cachedData as string) as GenericLicenseCached
 
           const cacheMaxAge = add(data.fetch.updated, { seconds: ttl })
-          console.log(typeof cacheMaxAge)
-          console.log(cacheMaxAge)
           if (compareAsc(cacheMaxAge, new Date()) < 0) {
             data.fetch.status = GenericUserLicenseFetchStatus.Stale
           }
         } catch (e) {
-          this.logger.warn('Unable to parsde cached data for license', {
+          this.logger.warn('Unable to parse cached data for license', {
             license,
           })
           // fall through to actual fetch of fresh fresh data

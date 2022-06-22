@@ -19,12 +19,8 @@ export const m = defineMessages({
     defaultMessage: 'ADR skírteini',
   },
   machineLicense: {
-    id: 'sp.license:adr-license',
+    id: 'sp.license:machine-license',
     defaultMessage: 'Vinnuvélaréttindi',
-  },
-  adrLicenseDescription: {
-    id: 'sp.license:adr-license-description',
-    defaultMessage: 'Hér birtast upplýsingar um ADR réttindin þín',
   },
   yourDrivingLicense: {
     id: 'sp.license:your-driving-license',
