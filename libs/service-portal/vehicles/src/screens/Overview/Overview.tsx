@@ -16,7 +16,6 @@ import {
   GridRow,
   Input,
   Button,
-  AlertBanner,
 } from '@island.is/island-ui/core'
 import isEqual from 'lodash/isEqual'
 import { VehicleCard } from '../../components/VehicleCard'
