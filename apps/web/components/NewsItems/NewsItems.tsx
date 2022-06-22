@@ -37,7 +37,7 @@ export const NewsItems = ({
     <>
       <GridContainer>
         <Box display="flex" flexDirection="row" justifyContent="spaceBetween">
-          <Text variant="h3" as="h2" id={headingTitle}>
+          <Text variant="h3" as="h2" id={headingTitle} dataTestId="home-news">
             {heading}
           </Text>
           <Box display={['none', 'none', 'block']}>

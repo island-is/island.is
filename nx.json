@@ -546,6 +546,9 @@
     "judicial-system-formatters": {
       "tags": []
     },
+    "judicial-system-message": {
+      "tags": []
+    },
     "judicial-system-message-handler": {
       "tags": []
     },
