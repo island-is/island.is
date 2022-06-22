@@ -6,7 +6,6 @@ const schema = z.object({
   fetch: z.object({
     timeout: z.number().int(),
     scope: z.array(z.string()),
-    clientId: z.string(),
   }),
 })
 
@@ -15,13 +14,12 @@ export const AoshClientConfig = defineConfig<z.infer<typeof schema>>({
   schema,
   load: (env) => ({
     xRoadServicePath: env.required(
-      'XROAD_ADR_MACHINE_SERVICE_PATH',
+      'XROAD_ADR_MACHINE_LICENSE_PATH',
       'IS-DEV/GOV/10013/Vinnueftirlitid-Protected/rettindi-v1',
     ),
     fetch: {
       timeout: 10000,
       scope: ['@ver.is/rettindaskra'],
-      clientId: '@ver.is/clients/test-client',
     },
   }),
 })
