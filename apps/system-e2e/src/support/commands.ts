@@ -1,5 +1,5 @@
+console.log(`Cypress config env: ${JSON.stringify(Cypress.env())}`)
 const testEnvironment = Cypress.env('testEnvironment')
-
 const getAuthDomain = () => {
   const { authDomain } = Cypress.env(testEnvironment)
   return `https://${authDomain}`
@@ -26,7 +26,6 @@ Cypress.Commands.add('patchSameSiteCookie', (interceptUrl) => {
 })
 
 Cypress.Commands.add('idsLogin', ({ phoneNumber, authDomain }) => {
-  cy.log('testEnviron', testEnvironment)
   cy.patchSameSiteCookie(`${getAuthDomain()}/login/app?*`)
   const sentArgs = {
     args: { phoneNumber: phoneNumber },
@@ -38,24 +37,25 @@ Cypress.Commands.add('idsLogin', ({ phoneNumber, authDomain }) => {
 })
 
 Cypress.Commands.add('cognitoLogin', ({ cognitoUsername, cognitoPassword }) => {
-  cy.session([cognitoUsername, cognitoPassword], () => {
-    if (testEnvironment === 'staging' || testEnvironment === 'dev') {
-      cy.session([cognitoUsername, cognitoPassword], () => {
-        cy.visit('/innskraning')
-        cy.get('form[name="cognitoSignInForm"]').as('cognito')
-        cy.get('@cognito')
-          .get('input[id="signInFormUsername"]')
-          .filter(':visible')
-          .type(cognitoUsername)
-        cy.get('@cognito')
-          .get('input[id="signInFormPassword"]')
-          .filter(':visible')
-          .type(cognitoPassword)
-        cy.get('@cognito')
-          .get('input[name="signInSubmitButton"]')
-          .filter(':visible')
-          .click()
-      })
-    }
-  })
+  cy.log(`testEnvironment: ${Cypress.env('testEnvironment')}`)
+  cy.log(`baseUrl: ${Cypress.config().baseUrl}`)
+
+  if (testEnvironment === 'staging' || testEnvironment === 'dev') {
+    cy.session([cognitoUsername, cognitoPassword], () => {
+      cy.visit('/innskraning')
+      cy.get('form[name="cognitoSignInForm"]').as('cognito')
+      cy.get('@cognito')
+        .get('input[id="signInFormUsername"]')
+        .filter(':visible')
+        .type(cognitoUsername)
+      cy.get('@cognito')
+        .get('input[id="signInFormPassword"]')
+        .filter(':visible')
+        .type(cognitoPassword)
+      cy.get('@cognito')
+        .get('input[name="signInSubmitButton"]')
+        .filter(':visible')
+        .click()
+    })
+  }
 })
