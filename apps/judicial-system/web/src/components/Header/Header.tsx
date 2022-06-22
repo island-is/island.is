@@ -24,8 +24,8 @@ import * as constants from '@island.is/judicial-system/consts'
 
 import { UserContext } from '../UserProvider/UserProvider'
 import MarkdownWrapper from '../MarkdownWrapper/MarkdownWrapper'
-import * as styles from './Header.css'
 import { useGetLawyer } from '../../utils/hooks'
+import * as styles from './Header.css'
 
 const HeaderContainer: React.FC = () => {
   const { formatMessage } = useIntl()
