@@ -54,11 +54,6 @@ export const UserDropdown = ({
   const actorName = actor?.name
   const isDelegationCompany = user.profile.subjectType === 'legalEntity'
 
-  const { data, error, loading } = useActorDelegationsQuery({
-    errorPolicy: 'all', // Return partial data, ignoring failed national registry lookups.
-  })
-
-  const hasDelegationsData = data && data.authActorDelegations?.length > 0
   const [isMobile, setIsMobile] = useState(false)
   const { width } = useWindowSize()
 
@@ -131,15 +126,9 @@ export const UserDropdown = ({
 
           <Divider />
 
-          {hasDelegationsData && (
-            <Box paddingTop={2}>
-              <UserDelegations
-                user={user}
-                onSwitchUser={onSwitchUser}
-                data={{ data, error, loading } as QueryResult}
-              />
-            </Box>
-          )}
+          <Box paddingTop={2}>
+            <UserDelegations user={user} onSwitchUser={onSwitchUser} />
+          </Box>
 
           {(!isDelegation || isDelegationCompany) && (
             <Box paddingTop={1}>
