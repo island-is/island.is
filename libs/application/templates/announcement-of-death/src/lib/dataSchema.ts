@@ -15,6 +15,7 @@ const asset = z
   .object({
     share: z.number().optional(),
     initial: z.boolean().optional(),
+    dummy: z.boolean().optional(),
     assetNumber: customZodError(z.string().nonempty(), m.errorNumberEmpty),
     description: z.string().optional(),
   })
@@ -115,6 +116,7 @@ export const dataSchema = z.object({
         custodian: z.string().length(10).optional(),
         foreignCitizenship: z.string().array().min(0).max(1).optional(),
         dateOfBirth: z.string().nonempty().optional(),
+        dummy: z.boolean().optional(),
       })
       .array()
       .optional(),
