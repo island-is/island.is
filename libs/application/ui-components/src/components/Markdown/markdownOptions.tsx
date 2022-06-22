@@ -7,6 +7,7 @@ import {
 } from '@island.is/island-ui/core'
 import { MarkdownToJSX } from 'markdown-to-jsx'
 import React from 'react'
+import * as styles from './Markdown.css'
 
 const markdownOverrides: MarkdownToJSX.Overrides = {
   ul: BulletList,
@@ -25,15 +26,17 @@ const markdownOverrides: MarkdownToJSX.Overrides = {
       variant: 'h3',
     },
   },
-  p: {
-    component: Text,
-    props: {
-      fontWeight: 'light',
-    },
-  },
 }
 
 export const markdownOptions: MarkdownToJSX.Options = {
   overrides: markdownOverrides,
-  wrapper: ({ children }) => <Stack space={1}>{children}</Stack>,
+  wrapper: ({ children }) => (
+    //TODO: Currently overriding the default p in markdown is removing link styles, we need to override global styles until we have a solution for overriding p with the Text component
+    <div className={styles.container}>
+      <Stack space={1}>{children}</Stack>
+    </div>
+  ),
+  forceBlock: true,
+  forceWrapper: true,
+  disableParsingRawHTML: true,
 }
