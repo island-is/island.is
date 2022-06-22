@@ -38,6 +38,10 @@ export const messages = defineMessages({
     id: 'sp.documents:only-show-unread',
     defaultMessage: 'Sýna einungis ólesið',
   },
+  onlyShowUnreadShort: {
+    id: 'sp.documents:only-show-unread-short',
+    defaultMessage: 'Sýna ólesið',
+  },
   clearSelected: {
     id: 'sp.documents:clear-selected',
     defaultMessage: 'Hreinsa val',
@@ -81,6 +85,10 @@ export const messages = defineMessages({
   tableHeaderInstitution: {
     id: 'sp.documents:table-header-institution',
     defaultMessage: 'Stofnun',
+  },
+  tableHeaderGroup: {
+    id: 'sp.documents:table-header-group',
+    defaultMessage: 'Flokkur',
   },
   notFound: {
     id: 'sp.documents:not-found',
