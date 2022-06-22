@@ -210,6 +210,12 @@ export const core = defineMessages({
     description:
       'Notaður sem skilaboð sem segir hvert á að senda erindi vegna aðgangs í haus í öllum flæðum.',
   },
+  headerTipDisclaimerDefenders: {
+    id: 'judicial.system.core:header_tip_disclaimer_defenders',
+    defaultMessage: 'Ofangreindar upplýsingar eru sóttar í félagatal LMFÍ',
+    description:
+      'Notaður sem skilaboð sem segir hvaðan upplýsingar í haus eru sóttar í öllum flæðum.',
+  },
   defender: {
     id: 'judicial.system.core:defender',
     defaultMessage: 'lögmaður',

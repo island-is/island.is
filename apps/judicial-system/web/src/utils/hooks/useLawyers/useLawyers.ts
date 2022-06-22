@@ -1,4 +1,4 @@
-import useSWR from 'swr'
+import useSWR, { Fetcher } from 'swr'
 import { useIntl } from 'react-intl'
 
 import { toast } from '@island.is/island-ui/core'
@@ -9,12 +9,13 @@ export const useGetLawyers = (): Lawyer[] => {
   const { formatMessage } = useIntl()
 
   const { data, error } = useSWR<Lawyer[]>(
-    '/api/lawyers',
+    '/api/lawyers/getLawyers',
     (url: string) => fetch(url).then((res) => res.json()),
     { revalidateOnMount: true, errorRetryCount: 2 },
   )
 
   if (error) {
+    console.log(error)
     toast.error(formatMessage(errorMessages.fetchLawyers))
     return []
   }
@@ -22,10 +23,16 @@ export const useGetLawyers = (): Lawyer[] => {
   return data || []
 }
 
-export const useGetLawyer = (nationalId: string): Lawyer => {
+export const useGetLawyer = (
+  nationalId?: string,
+  shouldFetch?: boolean,
+): Lawyer => {
+  const fetchWithNationalId = (url: string, nationalId: string) =>
+    fetch(`${url}?nationalId=${nationalId}`).then((res) => res.json())
+
   const { data } = useSWR<Lawyer>(
-    `/api/lawyer/${nationalId}`,
-    (url: string) => fetch(url).then((res) => res.json()),
+    nationalId && shouldFetch ? [`/api/lawyers/getLawyer`, nationalId] : null,
+    fetchWithNationalId,
     { revalidateOnMount: true, errorRetryCount: 2 },
   )
 

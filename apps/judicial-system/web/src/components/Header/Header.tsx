@@ -45,7 +45,10 @@ const HeaderContainer: React.FC = () => {
     window.location.assign('/')
   }
 
-  const { name } = useGetLawyer('1905547599')
+  const { practice, email, phoneNr } = useGetLawyer(
+    user?.nationalId,
+    user?.role === UserRole.DEFENDER,
+  )
 
   return (
     <Box paddingX={[0, 0, 4]}>
@@ -92,18 +95,26 @@ const HeaderContainer: React.FC = () => {
                               <Text>
                                 {capitalize(
                                   user.role === UserRole.DEFENDER
-                                    ? user.institution?.name
-                                    : '',
+                                    ? practice
+                                    : user.institution?.name,
                                 )}
                               </Text>
                             </Box>
                             <Box marginBottom={2}>
                               <Text>
-                                {formatPhoneNumber(user.mobileNumber)}
+                                {formatPhoneNumber(
+                                  user.role === UserRole.DEFENDER
+                                    ? phoneNr
+                                    : user.mobileNumber,
+                                )}
                               </Text>
                             </Box>
                             <Box>
-                              <Text>{user.email}</Text>
+                              <Text>
+                                {user.role === UserRole.DEFENDER
+                                  ? email
+                                  : user.email}
+                              </Text>
                             </Box>
                           </Box>
                         </div>
@@ -116,16 +127,24 @@ const HeaderContainer: React.FC = () => {
                             />
                           </Box>
                           <Box>
-                            <MarkdownWrapper
-                              markdown={formatMessage(
-                                core.headerTipDisclaimer,
-                                {
-                                  linkStart:
-                                    '<a href="mailto:gudlaug.thorhallsdottir@dmr.is" rel="noopener noreferrer nofollow" target="_blank">gudlaug.thorhallsdottir@dmr.is',
-                                  linkEnd: '</a>',
-                                },
-                              )}
-                            />
+                            {user.role === UserRole.DEFENDER ? (
+                              <Text>
+                                {formatMessage(
+                                  core.headerTipDisclaimerDefenders,
+                                )}
+                              </Text>
+                            ) : (
+                              <MarkdownWrapper
+                                markdown={formatMessage(
+                                  core.headerTipDisclaimer,
+                                  {
+                                    linkStart:
+                                      '<a href="mailto:gudlaug.thorhallsdottir@dmr.is" rel="noopener noreferrer nofollow" target="_blank">gudlaug.thorhallsdottir@dmr.is',
+                                    linkEnd: '</a>',
+                                  },
+                                )}
+                              />
+                            )}
                           </Box>
                         </div>
                       </>

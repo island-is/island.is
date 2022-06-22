@@ -1,6 +1,41 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import type { Lawyer } from '@island.is/judicial-system-web/src/types'
-import type { LawyerFull } from './index'
+
+export type LawyerFull = {
+  Id: number
+  Name: string
+  Title: string
+  Phone: string
+  Address: string
+  City: string
+  PostNumber: string
+  Email: string
+  Practice: string
+  Education: string
+  WebPage: string
+  CaseCategories: []
+  FirstName: string
+  MiddleName: string
+  SurName: string
+  SSN: string
+  MailBox: string
+  Fax: string
+  GSM: string
+  HomePhone: string
+  DirectPhone: string
+  NonIcelandicPhone: string
+  PracticeResponsible: string
+  LawyerRepresentative: string
+  Sex: string
+  HdlLicense: string | null
+  HrlLicense: string | null
+  Insurance: string
+  Country: string
+  IsPracticing: boolean
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  Languages: null | any
+  InternationConnection: string
+}
 
 function mapToLawyer(lawyer: LawyerFull): Lawyer {
   return {
@@ -22,7 +57,9 @@ async function getLawyer(nationalId: string): Promise<Lawyer> {
 
   if (response.ok) {
     const lawyer = await response.json()
-    const lawyerMapped = (lawyer || {}).map(mapToLawyer)
+    const lawyerMapped = {
+      ...mapToLawyer(lawyer),
+    }
     return lawyerMapped
   }
 
@@ -35,7 +72,9 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  const laywer = await getLawyer(req.body.nationalId)
+  const { nationalId } = req.query
+
+  const laywer = await getLawyer(nationalId as string)
 
   /* Max age is 30 minutes, revalided if repeated within 30 sec*/
   res.setHeader(
