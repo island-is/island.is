@@ -39,7 +39,7 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
   const COHABITATION = 'cohabitation'
   const aidNames = Object.values(AidName).map(String)
 
-  const errorCheck = (aid: Aid, prefix: string, scrollToError: boolean) => {
+  const errorCheckAid = (aid: Aid, prefix: string, scrollToError: boolean) => {
     const firstErrorAid = Object.entries(aid).find(
       (a) => aidNames.includes(a[0]) && a[1] <= 0,
     )
@@ -71,8 +71,8 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
   const submit = () => {
     const errorNav = errorCheckNav()
     const errorAid =
-      errorCheck(state.individualAid, INDIVIDUAL, !errorNav) ||
-      errorCheck(state.cohabitationAid, COHABITATION, !errorNav)
+      errorCheckAid(state.individualAid, INDIVIDUAL, !errorNav) ||
+      errorCheckAid(state.cohabitationAid, COHABITATION, !errorNav)
 
     if (errorNav || errorAid) {
       return
