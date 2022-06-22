@@ -8,7 +8,6 @@ import {
   Text,
   Accordion,
   AccordionItem,
-  Input,
   AlertMessage,
 } from '@island.is/island-ui/core'
 import {
