@@ -3,14 +3,14 @@ import { validate } from './validate'
 describe('Validate police casenumber format', () => {
   test('should fail if not in correct form', () => {
     // Arrange
-    const LOKE = 'INCORRECT FORMAT'
+    const value = 'INCORRECT FORMAT'
 
     // Act
-    const r = validate(LOKE, 'police-casenumber-format')
+    const r = validate([{ value, validations: ['police-casenumber-format'] }])
 
     // Assert
-    expect(r.isValid).toEqual(false)
-    expect(r.errorMessage).toEqual('Dæmi: 012-3456-7890')
+    expect(r[0].isValid).toEqual(false)
+    expect(r[0].errorMessage).toEqual('Dæmi: 012-3456-7890')
   })
 })
 
@@ -20,11 +20,11 @@ describe('Validate time format', () => {
     const time = '99:00'
 
     // Act
-    const r = validate(time, 'time-format')
+    const r = validate([{ value: time, validations: ['time-format'] }])
 
     // Assert
-    expect(r.isValid).toEqual(false)
-    expect(r.errorMessage).toEqual('Dæmi: 12:34 eða 1:23')
+    expect(r[0].isValid).toEqual(false)
+    expect(r[0].errorMessage).toEqual('Dæmi: 12:34 eða 1:23')
   })
 
   test('should be valid if with the hour part is one digit within the 24 hour clock', () => {
@@ -32,10 +32,10 @@ describe('Validate time format', () => {
     const time = '1:00'
 
     // Act
-    const r = validate(time, 'time-format')
+    const r = validate([{ value: time, validations: ['time-format'] }])
 
     // Assert
-    expect(r.isValid).toEqual(true)
+    expect(r[0].isValid).toEqual(true)
   })
 })
 
@@ -45,10 +45,10 @@ describe('Validate national id format', () => {
     const nid = '999999-9999'
 
     // Act
-    const r = validate(nid, 'national-id')
+    const r = validate([{ value: nid, validations: ['national-id'] }])
 
     // Assert
-    expect(r.isValid).toEqual(true)
+    expect(r[0].isValid).toEqual(true)
   })
 
   test('should be valid given just the first six digits', () => {
@@ -56,11 +56,11 @@ describe('Validate national id format', () => {
     const nid = '010101'
 
     // Act
-    const r = validate(nid, 'national-id')
+    const r = validate([{ value: nid, validations: ['national-id'] }])
 
     // Assert
-    expect(r.isValid).toEqual(true)
-    expect(r.errorMessage).toEqual('')
+    expect(r[0].isValid).toEqual(true)
+    expect(r[0].errorMessage).toEqual('')
   })
 
   test('should not be valid given too few digits', () => {
@@ -68,11 +68,11 @@ describe('Validate national id format', () => {
     const nid = '99120'
 
     // Act
-    const r = validate(nid, 'national-id')
+    const r = validate([{ value: nid, validations: ['national-id'] }])
 
     // Assert
-    expect(r.isValid).toEqual(false)
-    expect(r.errorMessage).toEqual('Dæmi: 000000-0000')
+    expect(r[0].isValid).toEqual(false)
+    expect(r[0].errorMessage).toEqual('Dæmi: 000000-0000')
   })
 
   test('should not be valid given invalid number of digits', () => {
@@ -80,11 +80,11 @@ describe('Validate national id format', () => {
     const nid = '991201-22'
 
     // Act
-    const r = validate(nid, 'national-id')
+    const r = validate([{ value: nid, validations: ['national-id'] }])
 
     // Assert
-    expect(r.isValid).toEqual(false)
-    expect(r.errorMessage).toEqual('Dæmi: 000000-0000')
+    expect(r[0].isValid).toEqual(false)
+    expect(r[0].errorMessage).toEqual('Dæmi: 000000-0000')
   })
 })
 
@@ -94,11 +94,13 @@ describe('Validate email format', () => {
     const invalidEmail = 'testATtest.is'
 
     // Act
-    const validation = validate(invalidEmail, 'email-format')
+    const validation = validate([
+      { value: invalidEmail, validations: ['email-format'] },
+    ])
 
     // Assert
-    expect(validation.isValid).toEqual(false)
-    expect(validation.errorMessage).toEqual('Netfang ekki á réttu formi')
+    expect(validation[0].isValid).toEqual(false)
+    expect(validation[0].errorMessage).toEqual('Netfang ekki á réttu formi')
   })
 
   test('should not be valid if the ending is less than two characters', () => {
@@ -106,21 +108,23 @@ describe('Validate email format', () => {
     const invalidEmail = 'testATtest.i'
 
     // Act
-    const validation = validate(invalidEmail, 'email-format')
+    const validation = validate([
+      { value: invalidEmail, validations: ['email-format'] },
+    ])
 
     // Assert
-    expect(validation.isValid).toEqual(false)
-    expect(validation.errorMessage).toEqual('Netfang ekki á réttu formi')
+    expect(validation[0].isValid).toEqual(false)
+    expect(validation[0].errorMessage).toEqual('Netfang ekki á réttu formi')
   })
 
   test('should be valid if email is empty', () => {
     // Arrange
 
     // Act
-    const validation = validate('', 'email-format')
+    const validation = validate([{ value: '', validations: ['email-format'] }])
 
     // Assert
-    expect(validation.isValid).toEqual(true)
+    expect(validation[0].isValid).toEqual(true)
   })
 
   test('should be valid if email contains - and . characters', () => {
@@ -128,10 +132,12 @@ describe('Validate email format', () => {
     const validEmail = 'garfield.lasagne-lover@garfield.io'
 
     // Act
-    const validation = validate(validEmail, 'email-format')
+    const validation = validate([
+      { value: validEmail, validations: ['email-format'] },
+    ])
 
     // Assert
-    expect(validation.isValid).toEqual(true)
+    expect(validation[0].isValid).toEqual(true)
   })
 
   test('should be valid if email is valid', () => {
@@ -139,10 +145,12 @@ describe('Validate email format', () => {
     const validEmail = 'garfield@garfield.io'
 
     // Act
-    const validation = validate(validEmail, 'email-format')
+    const validation = validate([
+      { value: validEmail, validations: ['email-format'] },
+    ])
 
     // Assert
-    expect(validation.isValid).toEqual(true)
+    expect(validation[0].isValid).toEqual(true)
   })
 
   test('should be valid if email contains + characters', () => {
@@ -150,10 +158,12 @@ describe('Validate email format', () => {
     const validEmail = 'garfield+test@garfield.io'
 
     // Act
-    const validation = validate(validEmail, 'email-format')
+    const validation = validate([
+      { value: validEmail, validations: ['email-format'] },
+    ])
 
     // Assert
-    expect(validation.isValid).toEqual(true)
+    expect(validation[0].isValid).toEqual(true)
   })
 })
 
@@ -163,11 +173,11 @@ describe('Validate phonenumber format', () => {
     const phonenumber = '00292'
 
     // Act
-    const r = validate(phonenumber, 'phonenumber')
+    const r = validate([{ value: phonenumber, validations: ['phonenumber'] }])
 
     // Assert
-    expect(r.isValid).toEqual(false)
-    expect(r.errorMessage).toEqual('Dæmi: 555-5555')
+    expect(r[0].isValid).toEqual(false)
+    expect(r[0].errorMessage).toEqual('Dæmi: 555-5555')
   })
 
   test('should pass if in correct form', () => {
@@ -175,10 +185,10 @@ describe('Validate phonenumber format', () => {
     const phonenumber = '555-5555'
 
     // Act
-    const r = validate(phonenumber, 'phonenumber')
+    const r = validate([{ value: phonenumber, validations: ['phonenumber'] }])
 
     // Assert
-    expect(r.isValid).toEqual(true)
+    expect(r[0].isValid).toEqual(true)
   })
 })
 
@@ -200,8 +210,10 @@ describe('Validate court case number', () => {
   `(
     'should pass when case as correct format $courtCaseNumber',
     ({ courtCaseNumber }) => {
-      const result = validate(courtCaseNumber, 'court-case-number')
-      expect(result.isValid).toEqual(true)
+      const result = validate([
+        { value: courtCaseNumber, validations: ['court-case-number'] },
+      ])
+      expect(result[0].isValid).toEqual(true)
     },
   )
 
@@ -219,9 +231,11 @@ describe('Validate court case number', () => {
   `(
     'should fail if case number as wrong format $courtCaseNumber',
     ({ courtCaseNumber }) => {
-      const result = validate(courtCaseNumber, 'court-case-number')
-      expect(result.isValid).toEqual(false)
-      expect(result.errorMessage).toEqual('Dæmi: R-1234/2020')
+      const result = validate([
+        { value: courtCaseNumber, validations: ['court-case-number'] },
+      ])
+      expect(result[0].isValid).toEqual(false)
+      expect(result[0].errorMessage).toEqual('Dæmi: R-1234/2020')
     },
   )
 })
