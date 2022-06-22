@@ -108,7 +108,7 @@ export class VerificationService {
     nationalId: string,
   ): Promise<ConfirmationDtoResponse> {
     const verification = await this.emailVerificationModel.findOne({
-      where: { nationalId },
+      where: { nationalId, email: confirmEmailDto.email },
       order: [['created', 'DESC']],
     })
 
@@ -176,7 +176,8 @@ export class VerificationService {
     nationalId: string,
   ): Promise<ConfirmationDtoResponse> {
     const verification = await this.smsVerificationModel.findOne({
-      where: { nationalId },
+      where: { nationalId, mobilePhoneNumber: confirmSmsDto.mobilePhoneNumber },
+      order: [['created', 'DESC']],
     })
 
     if (!verification) {
