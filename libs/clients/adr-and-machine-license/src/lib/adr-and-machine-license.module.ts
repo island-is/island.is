@@ -6,4 +6,4 @@ import { exportedApis } from './providers'
   providers: [ApiConfig, ...exportedApis],
   exports: exportedApis,
 })
-export class AoshClientModule {}
+export class AdrAndMachineLicenseClientModule {}

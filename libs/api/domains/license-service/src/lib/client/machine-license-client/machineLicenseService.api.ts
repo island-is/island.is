@@ -1,6 +1,5 @@
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { Cache as CacheManager } from 'cache-manager'
 import { Inject, Injectable } from '@nestjs/common'
 import {
   GenericLicenseClient,
@@ -10,7 +9,7 @@ import {
   PkPassVerification,
 } from '../../licenceService.type'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
-import { VinnuvelaApi } from '@island.is/clients/aosh'
+import { VinnuvelaApi } from '@island.is/clients/adr-and-machine-license'
 import { parseMachineLicensePayload } from './machineLicenseMappers'
 import { GenericMachineLicenseResponse } from './genericMachineLicense.type'
 

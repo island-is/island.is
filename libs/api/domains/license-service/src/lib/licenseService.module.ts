@@ -17,7 +17,11 @@ import {
   GENERIC_LICENSE_FACTORY,
 } from './licenceService.type'
 import { User } from '@island.is/auth-nest-tools'
-import { AdrApi, VinnuvelaApi, AoshClientModule } from '@island.is/clients/aosh'
+import {
+  AdrApi,
+  VinnuvelaApi,
+  AdrAndMachineLicenseClientModule,
+} from '@island.is/clients/adr-and-machine-license'
 import { GenericMachineLicenseApi } from './client/machine-license-client'
 
 export interface Config {
@@ -50,7 +54,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
   {
     type: GenericLicenseType.AdrLicense,
     provider: {
-      id: GenericLicenseProviderId.AOSH,
+      id: GenericLicenseProviderId.AdministrationOfOccupationsSafetyAndHealth,
     },
     pkpass: false,
     pkpassVerify: false,
@@ -59,7 +63,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
   {
     type: GenericLicenseType.MachineLicense,
     provider: {
-      id: GenericLicenseProviderId.AOSH,
+      id: GenericLicenseProviderId.AdministrationOfOccupationsSafetyAndHealth,
     },
     pkpass: false,
     pkpassVerify: false,
@@ -72,7 +76,7 @@ export class LicenseServiceModule {
   static register(config: Config): DynamicModule {
     return {
       module: LicenseServiceModule,
-      imports: [CacheModule.register(), AoshClientModule],
+      imports: [CacheModule.register(), AdrAndMachineLicenseClientModule],
       providers: [
         MainResolver,
         LicenseServiceService,

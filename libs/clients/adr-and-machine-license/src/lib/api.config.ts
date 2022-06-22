@@ -6,19 +6,19 @@ import {
   XRoadConfig,
 } from '@island.is/nest/config'
 import { Configuration } from '../../gen/fetch'
-import { AoshClientConfig } from './aosh.config'
+import { AdrAndMachineLicenseClientConfig } from './adr-and-machine-license.config'
 
 export const ApiConfig = {
-  provide: 'AoshClientProviderConfiguration',
+  provide: 'AdrAndMachineClientProviderConfiguration',
   scope: LazyDuringDevScope,
   useFactory: (
     xroadConfig: ConfigType<typeof XRoadConfig>,
-    config: ConfigType<typeof AoshClientConfig>,
+    config: ConfigType<typeof AdrAndMachineLicenseClientConfig>,
     idsClientConfig: ConfigType<typeof IdsClientConfig>,
   ) =>
     new Configuration({
       fetchApi: createEnhancedFetch({
-        name: 'clients-aosh',
+        name: 'clients-adr-and-machine-license',
         logErrorResponseBody: true,
         autoAuth: idsClientConfig.isConfigured
           ? {
@@ -37,5 +37,9 @@ export const ApiConfig = {
         Accept: 'application/json',
       },
     }),
-  inject: [XRoadConfig.KEY, AoshClientConfig.KEY, IdsClientConfig.KEY],
+  inject: [
+    XRoadConfig.KEY,
+    AdrAndMachineLicenseClientConfig.KEY,
+    IdsClientConfig.KEY,
+  ],
 }

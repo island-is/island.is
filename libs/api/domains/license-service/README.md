@@ -14,9 +14,9 @@ Uses RLS API via xroad to get drivers licenses by national id.
 
 Uses [SmartSolution API](https://smartsolutions.gitbook.io/smart-solutions-drivers-license/) to generate pkpass for digital drivers licenses.
 
-### ADR License
+### ADR and Machine Licenses
 
-### Machine License
+Uses Vinnueftirlitið API via XRoad to fetch both an Adr License and a Machine License by national id that's retrieved through the User Profile.
 
 #### Digital
 

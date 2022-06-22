@@ -1,5 +1,5 @@
 module.exports = {
-  displayName: 'clients-aosh',
+  displayName: 'clients-adr-and-machine-license',
   preset: '../../../jest.preset.js',
   globals: {
     'ts-jest': {
@@ -10,5 +10,5 @@ module.exports = {
     '^.+\\.[tj]sx?$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../../coverage/libs/clients/aosh',
+  coverageDirectory: '../../../coverage/libs/clients/adr-and-machine-license',
 }

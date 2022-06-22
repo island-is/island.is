@@ -9,8 +9,10 @@ const schema = z.object({
   }),
 })
 
-export const AoshClientConfig = defineConfig<z.infer<typeof schema>>({
-  name: 'AoshClient',
+export const AdrAndMachineLicenseClientConfig = defineConfig<
+  z.infer<typeof schema>
+>({
+  name: 'AdrAndMachineLicenseClient',
   schema,
   load: (env) => ({
     xRoadServicePath: env.required(

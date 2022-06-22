@@ -12,7 +12,7 @@ export type GenericLicenseTypeType = keyof typeof GenericLicenseType
 export enum GenericLicenseProviderId {
   NationalPoliceCommissioner = 'NationalPoliceCommissioner',
   EnvironmentAgency = 'EnvironmentAgency',
-  AOSH = 'AdministrationOfOccupationsSafetyAndHealth',
+  AdministrationOfOccupationsSafetyAndHealth = 'AdministrationOfOccupationsSafetyAndHealth',
 }
 export type GenericLicenseProviderIdType = keyof typeof GenericLicenseProviderId
 

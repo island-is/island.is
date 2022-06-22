@@ -1,6 +1,5 @@
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { Cache as CacheManager } from 'cache-manager'
 import { Inject, Injectable } from '@nestjs/common'
 import {
   GenericLicenseClient,
@@ -12,7 +11,7 @@ import {
 import { GenericAdrLicenseResponse } from './genericAdrLicense.type'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { parseAdrLicensePayload } from './adrLicenseMapper'
-import { AdrApi } from '@island.is/clients/aosh'
+import { AdrApi } from '@island.is/clients/adr-and-machine-license'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'adrlicense-service'
