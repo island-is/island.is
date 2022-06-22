@@ -23,6 +23,7 @@ import { useRouter } from 'next/router'
 import {
   Header,
   Main,
+  MobileAppBanner,
   PageLoader,
   SkipToMainContent,
 } from '@island.is/web/components'
@@ -324,7 +325,9 @@ const Layout: NextComponentType<
         <SkipToMainContent
           title={n('skipToMainContent', 'Fara beint í efnið')}
         />
-
+        <Hidden above="sm">
+          <MobileAppBanner />
+        </Hidden>
         {alertBanners.map((banner) => (
           <AlertBanner
             key={banner.bannerId}
