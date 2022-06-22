@@ -16,7 +16,7 @@ Uses [SmartSolution API](https://smartsolutions.gitbook.io/smart-solutions-drive
 
 ### ADR and Machine Licenses
 
-Uses Vinnueftirlitið API via XRoad to fetch both an Adr License and a Machine License by national id that's retrieved through the User Profile.
+Uses Vinnueftirlitið API via XRoad to fetch both an Adr License and a Machine License. Uses the national id of the currently logged in user to retreive the correct licenses.
 
 #### Digital
 
