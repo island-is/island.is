@@ -100,7 +100,9 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
           email: state.email,
           municipalityId: state.municipalityId,
           usingNav: state.usingNav,
-          navUrl: state.navUrl,
+          navUrl: state.navUrl
+            ? `${state.navUrl}${state.navUrl.endsWith('/') ? '' : '/'}`
+            : state.navUrl,
           navUsername: state.navUsername,
           navPassword: state.navPassword,
         },
