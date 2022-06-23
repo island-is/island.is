@@ -5,7 +5,6 @@ import {
   buildMultiField,
   buildSection,
   buildSubmitField,
-  SharedDataProviders,
 } from '@island.is/application/core'
 import { FishingLicenceDataProviders } from '../../dataProviders'
 import { externalData } from '../../lib/messages'
@@ -22,19 +21,18 @@ export const externalDataSection = buildSection({
       checkboxLabel: externalData.dataProvider.checkboxLabel,
       dataProviders: [
         buildDataProviderItem({
-          id: 'nationalRegistry',
+          //id: 'nationalRegistry',
           provider: FishingLicenceDataProviders.nationalRegistryProvider,
           title: externalData.nationalRegistry.title,
           subTitle: externalData.nationalRegistry.description,
         }),
         buildDataProviderItem({
-          id: 'directoryOfFisheries',
           provider: FishingLicenceDataProviders.generalFishingLicenceProvider,
           title: externalData.directoryOfFisheries.title,
           subTitle: externalData.directoryOfFisheries.description,
         }),
         buildDataProviderItem({
-          id: 'feeInfoProvider',
+          // id: 'feeInfoProvider',
           provider: FishingLicenceDataProviders.paymentCatalogProvider,
           title: externalData.userProfile.title,
           subTitle: externalData.userProfile.description,

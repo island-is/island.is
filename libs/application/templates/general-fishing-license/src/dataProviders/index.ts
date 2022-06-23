@@ -2,19 +2,14 @@ import {
   ApplicationTemplateAPIAction,
   SharedDataProviders,
 } from '@island.is/application/core'
+import { ApiActions } from '../shared'
 
-export {
-  NationalRegistryProvider,
-  UserProfileProvider,
-} from '@island.is/application/data-providers'
 export { SharedDataProviders } from '@island.is/application/core'
-export * from './FeeInfoProvider'
-export * from './generalFishingLicenseProvider'
 
 export const FishingLicenceDataProviders = {
   generalFishingLicenceProvider: {
     dataProviderType: 'generalFishingLicenceProvider',
-    apiModuleAction: 'getShips',
+    apiModuleAction: ApiActions.getShips,
     externalDataId: 'directoryOfFisheries',
   },
   nationalRegistryProvider: SharedDataProviders.nationalRegistryProvider,

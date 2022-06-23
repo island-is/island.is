@@ -51,7 +51,7 @@ export function buildDataProviderItem(
     id:
       data.provider?.externalDataId ||
       data.provider?.apiModuleAction ||
-      data.id,
+      'not found',
     type: data.provider?.dataProviderType || data.type,
     title: data.title,
     subTitle: data.subTitle,

@@ -129,7 +129,7 @@ export interface DataProviderItem {
 }
 
 export interface DataProviderBuilderItem {
-  id: string
+  id?: string
   type?: string
   title: StaticText
   subTitle?: StaticText
