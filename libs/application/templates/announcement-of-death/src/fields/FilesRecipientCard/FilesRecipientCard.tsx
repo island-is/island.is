@@ -45,6 +45,13 @@ export const FilesRecipientCard: FC<
     value: '',
   })
 
+  if (field.id !== 'financesDataCollectionPermission') {
+    options.push({
+      label: application.answers.applicantName,
+      value: application.applicant,
+    })
+  }
+
   return (
     <Box
       marginTop={2}
