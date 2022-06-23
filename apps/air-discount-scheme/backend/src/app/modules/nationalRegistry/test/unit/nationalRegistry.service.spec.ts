@@ -12,7 +12,6 @@ import {
 } from '../../nationalRegistry.service'
 import {
   NationalRegistryGeneralLookupResponse,
-  NationalRegistryFamilyLookupResponse,
   NationalRegistryUser,
 } from '../../nationalRegistry.types'
 
@@ -38,59 +37,8 @@ const nationalRegistryGeneralLookupResponse: NationalRegistryGeneralLookupRespon
   error: '',
 }
 
-const nationalRegistryFamilyLookupResponse: NationalRegistryFamilyLookupResponse = {
-  source: 'Þjóðskrá',
-  familyssn: '1306886513',
-  results: [
-    {
-      name: 'Jón Gunnar Jónsson',
-      ssn: '1306886513',
-      gender: '1',
-      address: 'Bessastaðir 1',
-      postalcode: '225',
-      towncode: 1300,
-      city: 'Álftanes',
-    },
-    {
-      name: 'Guðrún Jónsdóttir',
-      ssn: '0409084390',
-      gender: '3',
-      address: 'Bessastaðir 1',
-      postalcode: '225',
-      towncode: 1300,
-      city: 'Álftanes',
-    },
-    {
-      name: 'Atli Jónsson',
-      ssn: '1201204330',
-      gender: '4',
-      address: 'Bessastaðir 1',
-      postalcode: '225',
-      towncode: 1300,
-      city: 'Álftanes',
-    },
-    {
-      name: 'Friðrik Jónsson',
-      ssn: '0101932149',
-      gender: '2',
-      address: 'Bessastaðir 1',
-      postalcode: '225',
-      towncode: 1300,
-      city: 'Álftanes',
-    },
-  ],
-}
-
 const axiosGeneralLookupResponse: AxiosResponse = {
   data: [nationalRegistryGeneralLookupResponse],
-  status: 200,
-  statusText: 'OK',
-  headers: {},
-  config: {},
-}
-
-const axiosFamilyLookupResponse: AxiosResponse = {
-  data: [nationalRegistryFamilyLookupResponse],
   status: 200,
   statusText: 'OK',
   headers: {},
@@ -107,11 +55,6 @@ const user: NationalRegistryUser = {
   postalcode: 225,
   city: 'Álftanes',
 }
-
-const children: string[] = [
-  nationalRegistryFamilyLookupResponse.results[1].ssn,
-  nationalRegistryFamilyLookupResponse.results[2].ssn,
-]
 
 const auth: AuthUser = {
   nationalId: '1326487905',

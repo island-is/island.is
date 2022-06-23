@@ -233,7 +233,6 @@ const TEST_USERS: NationalRegistryUser[] = [
 @Injectable()
 export class NationalRegistryService {
   constructor(
-    private httpService: HttpService,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     @Inject(CACHE_MANAGER) private readonly cacheManager: CacheManager,
     private nationalRegistryIndividualsApi: EinstaklingarApi,
