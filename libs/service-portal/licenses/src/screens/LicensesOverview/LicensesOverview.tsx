@@ -1,33 +1,23 @@
 import React from 'react'
 import { defineMessage } from 'react-intl'
 
-import { ActionCard, AlertBanner, Box } from '@island.is/island-ui/core'
-import { useLocale, useNamespaces } from '@island.is/localization'
+import { Box } from '@island.is/island-ui/core'
+import { useNamespaces } from '@island.is/localization'
 import {
+  EmptyState,
   IntroHeader,
   ServicePortalModuleComponent,
-  ServicePortalPath,
 } from '@island.is/service-portal/core'
 import LicenseCards from '../../components/LicenseCards/LicenseCards'
 import { LicenseLoader } from '../../components/LicenseLoader/LicenseLoader'
 import { m } from '../../lib/messages'
-import {
-  GenericLicenseType,
-  GenericUserLicenseFetchStatus,
-  useLicenses,
-} from '@island.is/service-portal/graphql'
-import { useHistory } from 'react-router-dom'
+import { useDrivingLicense } from '@island.is/service-portal/graphql'
 
 export const LicensesOverview: ServicePortalModuleComponent = () => {
   useNamespaces('sp.license')
-  const { formatMessage } = useLocale()
-  const { data, loading, error } = useLicenses()
-  const history = useHistory()
+  const { data, status, loading, error } = useDrivingLicense()
 
-  const isError = data?.every(
-    (item) => item.fetch.status === GenericUserLicenseFetchStatus.Error,
-  )
-
+  console.log(data)
   return (
     <>
       <Box marginBottom={[3, 4, 5]}>
@@ -37,65 +27,19 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
         />
       </Box>
       {loading && <LicenseLoader />}
-      {data && (
-        <LicenseCards>
-          {data.map((item, i) => {
-            if (item.license.status !== 'HasLicense') {
-              return null
-            }
+      {data && <LicenseCards data={data} />}
 
-            const text = 'viðeigandi skírteinisnúmer'
-            const tag = 'Placeholder'
-            let title
+      {!loading &&
+        !error &&
+        (status === 'Unknown' || status === 'NotAvailable') && (
+          <Box marginTop={8}>
+            <EmptyState />
+          </Box>
+        )}
 
-            switch (item.license.type) {
-              case 'DriversLicense':
-                title = m.drivingLicense.defaultMessage
-                break
-              case 'AdrLicense':
-                title = m.adrLicense.defaultMessage
-                break
-              case 'MachineLicense':
-                title = m.machineLicense.defaultMessage
-                break
-            }
-
-            let servicePortalPath: ServicePortalPath
-
-            switch (item.license.type) {
-              case GenericLicenseType.AdrLicense:
-                servicePortalPath = ServicePortalPath.LicensesAdrDetail
-                break
-              case GenericLicenseType.MachineLicense:
-                servicePortalPath = ServicePortalPath.LicensesMachineDetail
-                break
-              case GenericLicenseType.DriversLicense:
-                servicePortalPath = ServicePortalPath.LicensesDrivingDetail
-                break
-            }
-
-            return (
-              <ActionCard
-                key={i}
-                heading={title}
-                text={`${m.licenseNumber.defaultMessage} - ${text}`}
-                tag={{ label: tag }}
-                cta={{
-                  label: 'Skoða nánar',
-                  onClick: () => history.push(servicePortalPath),
-                }}
-              />
-            )
-          })}
-        </LicenseCards>
-      )}
-
-      {(error || isError) && (
+      {error && (
         <Box>
-          <AlertBanner
-            description={formatMessage(m.errorFetch)}
-            variant="error"
-          />
+          <EmptyState description={m.errorFetch} />
         </Box>
       )}
     </>

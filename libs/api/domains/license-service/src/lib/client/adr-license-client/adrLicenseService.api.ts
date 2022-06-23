@@ -8,17 +8,15 @@ import {
   GenericUserLicenseStatus,
   PkPassVerification,
 } from '../../licenceService.type'
-import { GenericAdrLicenseResponse } from './genericAdrLicense.type'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { parseAdrLicensePayload } from './adrLicenseMapper'
-import { AdrApi } from '@island.is/clients/adr-and-machine-license'
+import { AdrApi, AdrDto } from '@island.is/clients/adr-and-machine-license'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'adrlicense-service'
 
 @Injectable()
-export class GenericAdrLicenseApi
-  implements GenericLicenseClient<GenericAdrLicenseResponse> {
+export class GenericAdrLicenseApi implements GenericLicenseClient<AdrDto> {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private adrApi: AdrApi,
@@ -40,7 +38,7 @@ export class GenericAdrLicenseApi
       return null
     }
 
-    return license as GenericAdrLicenseResponse
+    return license
   }
 
   async getLicense(user: User): Promise<GenericLicenseUserdataExternal | null> {

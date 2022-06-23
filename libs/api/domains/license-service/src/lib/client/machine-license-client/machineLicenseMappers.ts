@@ -1,11 +1,11 @@
+import { VinnuvelaDto } from '@island.is/clients/adr-and-machine-license'
 import {
   GenericLicenseDataFieldType,
   GenericUserLicensePayload,
 } from '../../licenceService.type'
-import { GenericMachineLicenseResponse } from './genericMachineLicense.type'
 
 export const parseMachineLicensePayload = (
-  license: GenericMachineLicenseResponse,
+  license: VinnuvelaDto,
 ): GenericUserLicensePayload | null => {
   if (!license) return null
   const data = [
@@ -17,17 +17,17 @@ export const parseMachineLicensePayload = (
     {
       type: GenericLicenseDataFieldType.Value,
       label: '1. Fullt nafn',
-      value: license?.fulltNafn,
+      value: license?.fulltNafn ?? '',
     },
     {
       type: GenericLicenseDataFieldType.Value,
       label: '2. Kennitala',
-      value: license.kennitala,
+      value: license.kennitala ?? '',
     },
     {
       type: GenericLicenseDataFieldType.Value,
       label: '3. Útgáfustaður',
-      value: license.utgafuStadur,
+      value: license.utgafuStadur ?? '',
     },
     {
       type: GenericLicenseDataFieldType.Value,
@@ -37,30 +37,30 @@ export const parseMachineLicensePayload = (
     {
       type: GenericLicenseDataFieldType.Value,
       label: '6. Ökuskírteini nr.',
-      value: license.okuskirteinisNumer,
+      value: license.okuskirteinisNumer ?? '',
     },
     {
       type: GenericLicenseDataFieldType.Value,
       label: '7. Útgáfustaður',
-      value: license.utgafuLand,
+      value: license.utgafuLand ?? '',
     },
     {
       type: GenericLicenseDataFieldType.Group,
       label: 'Vinnuvélaréttindi',
       fields: (license.vinnuvelaRettindi ?? []).map((field) => ({
         type: GenericLicenseDataFieldType.Category,
-        name: field.flokkur,
-        label: field.fulltHeiti ?? field.stuttHeiti,
+        name: field.flokkur ?? '',
+        label: field.fulltHeiti ?? field.stuttHeiti ?? '',
         fields: [
           {
             type: GenericLicenseDataFieldType.Value,
             label: 'Stjórna',
-            value: field.stjorna,
+            value: field.stjorna ?? '',
           },
           {
             type: GenericLicenseDataFieldType.Value,
             label: 'Kenna',
-            value: field.kenna,
+            value: field.kenna ?? '',
           },
         ],
       })),

@@ -12,6 +12,7 @@ import {
   GenericLicenseType,
   GenericLicenseClient,
   GenericLicenseMetadata,
+  GenericLicenseUserdata,
   GenericUserLicenseFetchStatus,
   GenericUserLicenseStatus,
   GenericLicenseCached,
@@ -22,6 +23,7 @@ import {
 import { Locale } from '@island.is/shared/types'
 
 import { AVAILABLE_LICENSES } from './licenseService.module'
+
 const CACHE_KEY = 'licenseService'
 
 export type GetGenericLicenseOptions = {
@@ -37,7 +39,6 @@ export class LicenseServiceService {
     private genericLicenseFactory: (
       type: GenericLicenseType,
       cacheManager: CacheManager,
-      user: User,
     ) => Promise<GenericLicenseClient<unknown> | null>,
     @Inject(CACHE_MANAGER) private cacheManager: CacheManager,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
@@ -45,11 +46,11 @@ export class LicenseServiceService {
 
   private async getCachedOrCache(
     license: GenericLicenseMetadata,
-    nationalId: string,
-    fetch: () => Promise<GenericLicenseUserdataExternal | null>,
+    user: User,
+    fetch: () => Promise<GenericLicenseUserdata | null>,
     ttl = 0,
   ): Promise<GenericLicenseCached> {
-    const cacheKey = `${CACHE_KEY}_${license.type}_${nationalId}`
+    const cacheKey = `${CACHE_KEY}_${license.type}_${user.nationalId}`
 
     if (ttl > 0) {
       const cachedData = await this.cacheManager.get(cacheKey)
@@ -71,9 +72,9 @@ export class LicenseServiceService {
       }
     }
 
-    const fetchedData = await fetch()
+    const data = await fetch()
 
-    if (!fetchedData) {
+    if (!data) {
       this.logger.warn('No data for generic license returned', {
         license,
       })
@@ -83,25 +84,19 @@ export class LicenseServiceService {
           status: GenericUserLicenseFetchStatus.Error,
           updated: new Date(),
         },
-        payload: undefined,
       }
     }
 
-    const { payload, ...userData } = fetchedData
-
     const dataWithFetch: GenericLicenseCached = {
-      data: userData,
+      data,
       fetch: {
         status: GenericUserLicenseFetchStatus.Fetched,
         updated: new Date(),
       },
-      payload: payload ?? undefined,
     }
 
     try {
-      await this.cacheManager.set(cacheKey, JSON.stringify(dataWithFetch), {
-        ttl,
-      })
+      await this.cacheManager.set(cacheKey, JSON.stringify(data), { ttl })
     } catch (e) {
       this.logger.warn('Unable to cache data for license', {
         license,
@@ -137,7 +132,6 @@ export class LicenseServiceService {
         const licenseService = await this.genericLicenseFactory(
           license.type,
           this.cacheManager,
-          user,
         )
 
         if (!licenseService) {
@@ -148,7 +142,7 @@ export class LicenseServiceService {
         } else {
           licenseDataFromService = await this.getCachedOrCache(
             license,
-            user.nationalId,
+            user,
             async () => await licenseService.getLicense(user),
             force ? 0 : license.timeout,
           )
@@ -178,10 +172,11 @@ export class LicenseServiceService {
           ...licenseUserdata,
         },
         fetch,
-        payload: licenseDataFromService?.payload ?? undefined,
       }
+
       licenses.push(combined)
     }
+
     return licenses
   }
 
@@ -196,7 +191,6 @@ export class LicenseServiceService {
     const licenseService = await this.genericLicenseFactory(
       licenseType,
       this.cacheManager,
-      user,
     )
 
     if (license && licenseService) {
@@ -234,7 +228,6 @@ export class LicenseServiceService {
     const licenseService = await this.genericLicenseFactory(
       licenseType,
       this.cacheManager,
-      user,
     )
 
     if (licenseService) {
@@ -261,7 +254,6 @@ export class LicenseServiceService {
     const licenseService = await this.genericLicenseFactory(
       licenseType,
       this.cacheManager,
-      user,
     )
 
     if (licenseService) {
@@ -289,7 +281,6 @@ export class LicenseServiceService {
     const licenseService = await this.genericLicenseFactory(
       licenseType,
       this.cacheManager,
-      user,
     )
 
     if (licenseService) {

@@ -1,38 +1,19 @@
-import { utimesSync } from 'fs'
+import { AdrDto } from '@island.is/clients/adr-and-machine-license'
 import {
   GenericLicenseDataFieldType,
   GenericUserLicensePayload,
 } from '../../licenceService.type'
-import { GenericAdrLicenseResponse } from './genericAdrLicense.type'
-
-interface AugmentedAdrLicenseResponse {
-  id?: number
-  kennitala?: string
-  fulltNafn?: string
-  skirteinisNumer?: number
-  faedingarDagur?: string
-  rikisfang?: string
-  gildirTil?: string
-  adrRettindi?: {
-    flokkur?: string
-    grunn?: boolean
-    tankar?: boolean
-    heiti?: string
-  }[]
-}
+import { FlattenedAdrDto } from './genericAdrLicense.type'
 
 export const parseAdrLicensePayload = (
-  license: GenericAdrLicenseResponse,
+  license: AdrDto,
 ): GenericUserLicensePayload | null => {
   if (!license) return null
 
   const parseAdrLicenseResponse = () => {
     const { adrRettindi, ...rest } = license
 
-    const augmentedAdrRettindi: AugmentedAdrLicenseResponse = {
-      ...rest,
-      adrRettindi: [],
-    }
+    const flattenedAdr: FlattenedAdrDto = { ...rest, adrRettindi: [] }
 
     adrRettindi?.forEach((field) => {
       const heiti =
@@ -43,7 +24,7 @@ export const parseAdrLicensePayload = (
               heiti: '',
             }))
       heiti?.forEach((item) => {
-        augmentedAdrRettindi.adrRettindi?.push({
+        flattenedAdr.adrRettindi?.push({
           flokkur: item.flokkur,
           grunn: field.grunn,
           tankar: field.tankar,
@@ -51,7 +32,7 @@ export const parseAdrLicensePayload = (
         })
       })
     })
-    return augmentedAdrRettindi
+    return flattenedAdr
   }
 
   const parsedResponse = parseAdrLicenseResponse()
@@ -65,22 +46,22 @@ export const parseAdrLicensePayload = (
     {
       type: GenericLicenseDataFieldType.Value,
       label: '2. 3.',
-      value: parsedResponse.fulltNafn,
+      value: parsedResponse.fulltNafn ?? '',
     },
     {
       type: GenericLicenseDataFieldType.Value,
       label: '4',
-      value: parsedResponse.faedingarDagur,
+      value: parsedResponse.faedingarDagur ?? '',
     },
     {
       type: GenericLicenseDataFieldType.Value,
       label: '5.',
-      value: parsedResponse.rikisfang,
+      value: parsedResponse.rikisfang ?? '',
     },
     {
       type: GenericLicenseDataFieldType.Value,
       label: '8. Gildir til: ',
-      value: parsedResponse.gildirTil,
+      value: parsedResponse.gildirTil ?? '',
     },
     {
       type: GenericLicenseDataFieldType.Group,
@@ -89,8 +70,8 @@ export const parseAdrLicensePayload = (
         .filter((field) => field.tankar)
         .map((field) => ({
           type: GenericLicenseDataFieldType.Category,
-          name: field.flokkur,
-          label: field.heiti,
+          name: field.flokkur ?? '',
+          label: field.heiti ?? '',
           fields: [
             {
               type: GenericLicenseDataFieldType.Value,
@@ -107,8 +88,8 @@ export const parseAdrLicensePayload = (
         .filter((field) => !field.tankar)
         .map((field) => ({
           type: GenericLicenseDataFieldType.Category,
-          name: field.flokkur,
-          label: field.heiti,
+          name: field.flokkur ?? '',
+          label: field.heiti ?? '',
           fields: [
             {
               type: GenericLicenseDataFieldType.Value,

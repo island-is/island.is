@@ -1,18 +1,16 @@
-export interface GenericAdrLicenseResponse {
-  id?: number
-  kennitala?: string
-  fulltNafn?: string
-  skirteinisNumer?: number
-  faedingarDagur?: string
-  rikisfang?: string
-  gildirTil?: string
-  adrRettindi?: {
-    flokkur?: string
-    grunn?: boolean
-    tankar?: boolean
-    heiti?: {
-      flokkur?: string
-      heiti?: string
-    }[]
-  }[]
+export interface FlattenedAdrDto {
+  kennitala?: string | null
+  fulltNafn?: string | null
+  skirteinisNumer?: string | null
+  faedingarDagur?: string | null
+  rikisfang?: string | null
+  gildirTil?: string | null
+  adrRettindi?:
+    | {
+        flokkur?: string | null
+        grunn?: boolean | null
+        tankar?: boolean | null
+        heiti?: string | null
+      }[]
+    | null
 }

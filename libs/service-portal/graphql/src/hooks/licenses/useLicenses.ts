@@ -47,25 +47,23 @@ export const useLicenses = (type?: GenericLicenseType): Props => {
   }
 }
 
-//Still used by the "fancy" driving license UI.
-// TODO: Remove when generic display is ready.
-interface GetLicenseProps {
+interface GetDrivingLicenseProps {
   data?: DrivingLicenseType
   status: GenericUserLicenseStatus | ''
   loading?: boolean
   error?: any
 }
-export const useDriversLicense = (
-  licenseType: GenericLicenseType,
-): GetLicenseProps => {
+
+/* Collects only Driving License */
+// TODO: Remove when the Generic License UI interface is ready
+export const useDrivingLicense = (): GetDrivingLicenseProps => {
   const { data: userProfile } = useUserProfile()
   const locale = (userProfile?.locale as Locale) ?? 'is'
   const { data, loading, error } = useQuery<Query>(GET_GENERIC_LICENSE, {
     variables: {
       locale,
       input: {
-        //CHANGE THIS BACK!
-        licenseType,
+        licenseType: 'DriversLicense',
       },
     },
   })

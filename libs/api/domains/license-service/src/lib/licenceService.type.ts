@@ -3,8 +3,6 @@ import { User } from '@island.is/auth-nest-tools'
 export enum GenericLicenseType {
   DriversLicense = 'DriversLicense',
   HuntingLicense = 'HuntingLicense',
-  AdrLicense = 'AdrLicense',
-  MachineLicense = 'MachineLicense',
 }
 export type GenericLicenseTypeType = keyof typeof GenericLicenseType
 
