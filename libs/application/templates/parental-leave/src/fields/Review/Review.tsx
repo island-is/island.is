@@ -327,7 +327,7 @@ export const Review: FC<ReviewScreenProps> = ({
 
       <ReviewGroup
         isEditable={editable && isPrimaryParent}
-        editAction={() => goToScreen?.('otherParent')}
+        editAction={() => goToScreen?.('otherParentObj')}
       >
         {otherParent === NO && (
           <RadioValue
