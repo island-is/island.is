@@ -2,7 +2,6 @@ import React from 'react'
 import {
   NoDataScreen,
   ServicePortalModuleComponent,
-  checkDelegation,
 } from '@island.is/service-portal/core'
 import { useQuery, gql } from '@apollo/client'
 import { PaymentSchedule, Query } from '@island.is/api/schema'
@@ -18,6 +17,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import FinanceScheduleTable from '../../components/FinanceScheduleTable/FinanceScheduleTable'
+import { checkDelegation } from '@island.is/shared/utils'
 
 export const GET_FINANCE_PAYMENT_SCHEDULES = gql`
   query getPaymentSchedulesQuery {

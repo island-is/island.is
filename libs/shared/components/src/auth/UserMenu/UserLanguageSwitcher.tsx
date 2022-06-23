@@ -4,7 +4,7 @@ import { User, Locale } from '@island.is/shared/types'
 import { useLocale } from '@island.is/localization'
 import { useUpdateUserProfileMutation } from '../../../gen/graphql'
 import { sharedMessages } from '@island.is/shared/translations'
-import { checkDelegation } from '@island.is/service-portal/core'
+import { checkDelegation } from '@island.is/shared/utils'
 
 export const UserLanguageSwitcher = ({
   user,

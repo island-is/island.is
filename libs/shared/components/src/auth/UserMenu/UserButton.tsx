@@ -10,7 +10,7 @@ import { User } from '@island.is/shared/types'
 import { useLocale } from '@island.is/localization'
 import { userMessages } from '@island.is/shared/translations'
 import * as styles from './UserMenu.css'
-import { checkDelegation } from '@island.is/service-portal/core'
+import { checkDelegation } from '@island.is/shared/utils'
 
 interface UserButtonProps {
   user: User

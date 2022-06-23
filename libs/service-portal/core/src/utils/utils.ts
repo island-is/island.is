@@ -1,5 +1,3 @@
-import { User } from '@island.is/shared/types'
-
 export const getNameAbbreviation = (name: string) => {
   const names = name.split(' ')
   let initials = names[0].substring(0, 1).toUpperCase()
@@ -55,8 +53,4 @@ export type DrivingLicenseType = {
   mynd: string
   undirskrift: string
   svipting: Array<DrivingLicenseSuspended>
-}
-
-export const checkDelegation = (user: User) => {
-  return Boolean(user?.profile.actor)
 }
