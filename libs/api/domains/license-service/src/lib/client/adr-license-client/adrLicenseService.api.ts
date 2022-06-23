@@ -43,8 +43,6 @@ export class GenericAdrLicenseApi implements GenericLicenseClient<AdrDto> {
   async getLicense(user: User): Promise<GenericLicenseUserdataExternal | null> {
     const license = await this.fetchLicense(user)
 
-    console.log(license)
-
     if (!license) {
       this.logger.warn('Missing ADR license, null from api', {
         category: LOG_CATEGORY,
