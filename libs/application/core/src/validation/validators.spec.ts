@@ -1,6 +1,6 @@
 import * as z from 'zod'
 import { buildValidationError, validateAnswers } from './validators'
-import { Answer, FormValue } from '@island.is/application/core'
+import { FormValue } from '@island.is/application/core'
 import { StaticText } from '../types/Form'
 import { coreErrorMessages } from '../lib/messages'
 
@@ -398,7 +398,6 @@ describe('validateAnswers', () => {
         answers: badFormValue,
         formatMessage,
       })
-
       expect(firstError).toEqual({
         person: [
           {
@@ -411,7 +410,6 @@ describe('validateAnswers', () => {
       const anotherBadFormValue = {
         person: [{}, {}, {}],
       }
-
       const secondError = validateAnswers({
         dataSchema: optionalArraySchema,
         answers: anotherBadFormValue,
