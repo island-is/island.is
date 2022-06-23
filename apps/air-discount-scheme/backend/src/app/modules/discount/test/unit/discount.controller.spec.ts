@@ -10,6 +10,13 @@ import {
 import { FlightService } from '../../../flight'
 import { Fund, User } from '@island.is/air-discount-scheme/types'
 import type { User as AuthUser } from '@island.is/auth-nest-tools'
+import { UserService } from '../../../user/user.service'
+import {
+  NationalRegistryClientConfig,
+  NationalRegistryClientModule,
+} from '@island.is/clients/national-registry-v2'
+import { CACHE_MANAGER } from '@nestjs/common'
+import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
 
 function createTestUser(
   postalCode: number = 600,
@@ -25,7 +32,7 @@ function createTestUser(
     address: 'Testvík 2',
     city: 'Prufuborg',
     firstName: 'Prófi',
-    fund: fund,
+    fund,
     gender: 'kk',
     lastName: 'Prófsson',
     middleName: 'Júnitt',
@@ -44,11 +51,27 @@ describe('DiscountController', () => {
   let privateDiscountController: PrivateDiscountController
   let discountService: DiscountService
   let nationalRegistryService: NationalRegistryService
+  let userService: UserService
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
+      imports: [
+        ConfigModule.forRoot({
+          isGlobal: true,
+          load: [XRoadConfig, NationalRegistryClientConfig],
+        }),
+        NationalRegistryClientModule,
+      ],
       providers: [
         PrivateDiscountController,
+        UserService,
+        {
+          provide: CACHE_MANAGER,
+          useClass: jest.fn(() => ({
+            get: () => ({}),
+            set: () => ({}),
+          })),
+        },
         {
           provide: DiscountService,
           useClass: jest.fn(() => ({
@@ -79,6 +102,7 @@ describe('DiscountController', () => {
     nationalRegistryService = moduleRef.get<NationalRegistryService>(
       NationalRegistryService,
     )
+    userService = moduleRef.get<UserService>(UserService)
   })
 
   describe('getCurrentDiscountByNationalId', () => {
@@ -109,13 +133,8 @@ describe('DiscountController', () => {
     it('should return discount', async () => {
       const nationalId = '1234567890'
       const discountCode = 'ABCDEFG'
-      const discount = new Discount(
-        createTestUser(),
-        discountCode,
-        [],
-        nationalId,
-        0,
-      )
+      const testUser = createTestUser()
+      const discount = new Discount(testUser, discountCode, [], nationalId, 0)
       const user: NationalRegistryUser = {
         nationalId,
         firstName: 'Jón',
@@ -126,12 +145,15 @@ describe('DiscountController', () => {
         postalcode: 225,
         city: 'Álftanes',
       }
-      const getUserSpy = jest
-        .spyOn(nationalRegistryService, 'getUser')
-        .mockImplementation(() => Promise.resolve(user))
+      //const getUserSpy = jest
+      //  .spyOn(nationalRegistryService, 'getUser')
+      //  .mockImplementation(() => Promise.resolve(user))
       const createDiscountCodeSpy = jest
         .spyOn(discountService, 'createDiscountCode')
         .mockImplementation(() => Promise.resolve(discount))
+      const getUserInfoByNationalIdSpy = jest
+        .spyOn(userService, 'getUserInfoByNationalId')
+        .mockImplementation(() => Promise.resolve(testUser))
 
       const result = await privateDiscountController.createDiscountCode(
         {
@@ -140,8 +162,12 @@ describe('DiscountController', () => {
         auth,
       )
 
-      expect(getUserSpy).toHaveBeenCalledWith(nationalId)
-      expect(createDiscountCodeSpy).toHaveBeenCalledWith(nationalId, 0)
+      expect(getUserInfoByNationalIdSpy).toHaveBeenCalledWith(nationalId, auth)
+      expect(createDiscountCodeSpy).toHaveBeenCalledWith(
+        testUser,
+        nationalId,
+        0,
+      )
       expect(result).toEqual(discount)
     })
 
@@ -163,8 +189,8 @@ describe('DiscountController', () => {
           auth,
         )
         expect('This should not happen').toEqual('')
-      } catch (e) {
-        expect(getUserSpy).toHaveBeenCalledWith(nationalId)
+      } catch (e: any) {
+        expect(getUserSpy).toHaveBeenCalledWith(nationalId, auth)
         expect(createDiscountCodeSpy).not.toHaveBeenCalled()
         expect(e.response).toEqual({
           statusCode: 404,
