@@ -21,7 +21,6 @@ export const regulationsAdminModule: ServicePortalModule = {
 
     return [
       {
-        // TODO: Figure out if (and then how) these names are ever used anywhere...
         name: 'Reglugerðir — vinnslusvæði',
         path: ServicePortalPath.RegulationsAdminRoot,
         enabled: mayCreate,

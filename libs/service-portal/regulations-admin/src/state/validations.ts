@@ -38,8 +38,8 @@ const draftRootProps = Object.keys(
 // ---------------------------------------------------------------------------
 
 export const validateImpact = (
-  state: DraftingState,
   impact: DraftImpactForm,
+  state?: DraftingState,
 ) => {
   // TODO: perform more validations, such as date boundry checks, etc.
   validateFieldValue(impact.date, true)
@@ -72,7 +72,7 @@ export const validateState = (state: DraftingState) => {
   })
   Object.entries(draft.impacts).forEach(([key, impactsList]) => {
     impactsList.forEach((impact) => {
-      validateImpact(state, impact)
+      validateImpact(impact, state)
     })
   })
 }

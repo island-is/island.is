@@ -45,9 +45,16 @@ import {
 } from '../../state/makeFields'
 import { ImpactHistory } from './ImpactHistory'
 import { Appendixes } from '../Appendixes'
-import { tidyUp, updateFieldValue } from '../../state/validations'
+import {
+  tidyUp,
+  updateFieldValue,
+  validateImpact,
+} from '../../state/validations'
 import { useGetRegulationHistory } from '../../utils/hooks'
 import { DraftRegulationChange } from '@island.is/regulations/admin'
+import { useLocale } from '@island.is/localization'
+import { cleanTitle } from '@island.is/regulations-tools/cleanTitle'
+import { errorMsgs as msg } from '../../messages'
 
 /* ---------------------------------------------------------------------------------------------------------------- */
 
@@ -59,10 +66,12 @@ type EditChangeProp = {
 }
 
 export const EditChange = (props: EditChangeProp) => {
+  const t = useLocale().formatMessage
   const { draft, change, closeModal, readOnly } = props
   const [activeChange, setActiveChange] = useState(change) // Áhrifafærslan sem er verið að breyta
   const today = useMemo(() => new Date(), [])
   const [minDate, setMinDate] = useState<Date | undefined>()
+  const [showChangeForm, setShowChangeForm] = useState(false)
 
   // Target regulation for impact
   const [activeRegulation, setActiveRegulation] = useState<
@@ -166,11 +175,14 @@ export const EditChange = (props: EditChangeProp) => {
       setActiveChange({
         ...activeChange,
         text: fHtml(activeRegulation.text, true),
-        title: fText(activeRegulation.title),
+        title: fText(activeRegulation.title, true),
         appendixes: activeRegulation.appendixes.map((a, i) =>
           makeDraftAppendixForm(a, String(i)),
         ),
       })
+      setShowChangeForm(true)
+    } else if (change.id) {
+      setShowChangeForm(true)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeRegulation])
@@ -196,7 +208,7 @@ export const EditChange = (props: EditChangeProp) => {
   const changeRegulationTitle = (newTitle: PlainText) => {
     setActiveChange({
       ...activeChange,
-      title: fText(newTitle),
+      title: fText(cleanTitle(newTitle), true),
     })
   }
 
@@ -206,6 +218,11 @@ export const EditChange = (props: EditChangeProp) => {
       text: fHtml(newText, true),
     })
   }
+
+  useEffect(() => {
+    validateImpact(activeChange)
+  }, [activeChange])
+
   const saveChange = async () => {
     if (!activeChange.id) {
       await createDraftRegulationChange({
@@ -354,6 +371,17 @@ export const EditChange = (props: EditChangeProp) => {
     revokeAppendix: (idx: number, revoked: boolean) => undefined,
   }
 
+  const isValidImpact = () => {
+    return (
+      activeChange.date?.value &&
+      activeChange.title?.value &&
+      activeChange.text?.value &&
+      activeChange.appendixes.every(
+        (apx) => apx.title?.value && apx.text?.value,
+      )
+    )
+  }
+
   return (
     <LayoverModal closeModal={closeModal} id="EditChangeModal">
       {draft && (
@@ -407,7 +435,7 @@ export const EditChange = (props: EditChangeProp) => {
             />
           </GridColumn>
         </GridRow>
-        {activeRegulation && activeChange.text.value && (
+        {activeRegulation && showChangeForm && (
           <>
             <GridRow>
               <GridColumn
@@ -422,7 +450,11 @@ export const EditChange = (props: EditChangeProp) => {
                     onChange={(newValue) => changeRegulationTitle(newValue)}
                     required
                     readOnly={readOnly}
-                    error={undefined}
+                    error={
+                      !activeChange.title.value
+                        ? t(msg.fieldRequired)
+                        : undefined
+                    }
                   />
                   {activeChange.title.value !== previousRegulation?.title && (
                     <MiniDiff
@@ -442,7 +474,11 @@ export const EditChange = (props: EditChangeProp) => {
                     onChange={(newValue) => changeRegulationText(newValue)}
                     draftId={draft.id}
                     isImpact={true}
-                    error={undefined}
+                    error={
+                      !activeChange.text.value
+                        ? t(msg.fieldRequired)
+                        : undefined
+                    }
                     readOnly={readOnly}
                   />
                 </Box>
@@ -488,7 +524,9 @@ export const EditChange = (props: EditChangeProp) => {
                       onClick={saveChange}
                       size="small"
                       icon="arrowForward"
-                      disabled={hasImpactMismatch || readOnly}
+                      disabled={
+                        hasImpactMismatch || readOnly || !isValidImpact()
+                      }
                     >
                       Vista textabreytingu
                     </Button>

@@ -52,7 +52,7 @@ export const ImpactHistory = (props: ImpactHistoryProps) => {
             rel="noreferrer"
           >
             <Text variant="h5" color="blueberry600">
-              Nýjasta útgáfan
+              Sjá núgildandi
             </Text>
           </a>
         )}

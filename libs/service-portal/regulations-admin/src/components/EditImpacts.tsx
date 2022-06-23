@@ -114,22 +114,6 @@ export const EditImpacts = () => {
     t(impactMsgs.regSelect_mentionedRepealed),
   )
 
-  /*
-    TODO: Fetch (when activeImpact is defined)
-    The target (base) regulation and its future
-    impacts (both incoming and outgoing)
-
-    What we need to decide is how best to
-    fetch and keep updated all the different impacts,
-    how/where to group them by baseRegulation, etc. etc.
-
-    DECIDE: if this should perhaps be fetched at the (root-)level
-    in EditApp (in "../screens/Edit.tsx") and injected into the
-    App-level state.
-  */
-
-  // const baseRegulationInfo = useBaseRegulationQuery(impactId)
-
   const [selRegOption, setSelRegOption] = useState<SelRegOption | undefined>()
   const [chooseType, setChooseType] = useState<
     'cancel' | 'change' | undefined

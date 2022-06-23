@@ -30,7 +30,6 @@ export const ImpactListItem = (props: ImpactListItemProps) => {
   }
 
   if (idMismatch) {
-    // TODO: This needs design.
     return (
       <div>
         <DateText date={effect.date as string} color="red600" />

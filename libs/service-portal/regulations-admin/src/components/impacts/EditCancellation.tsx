@@ -22,6 +22,7 @@ import {
   UPDATE_DRAFT_REGULATION_CANCEL,
 } from './impactQueries'
 import { useGetRegulationHistory } from '../../utils/hooks'
+import { fDate } from '../../state/makeFields'
 
 type EditCancellationProp = {
   draft: RegDraftForm
@@ -72,7 +73,7 @@ export const EditCancellation = (props: EditCancellationProp) => {
   const changeCancelDate = (newDate: Date | undefined) => {
     setActiveCancellation({
       ...activeCancellation,
-      date: { value: newDate },
+      date: fDate(newDate, true, { min: minDate }),
     })
   }
 
@@ -123,6 +124,10 @@ export const EditCancellation = (props: EditCancellationProp) => {
         })
     }
     closeModal(true)
+  }
+
+  const isValidImpact = () => {
+    return activeCancellation.date?.value
   }
 
   return (
@@ -191,7 +196,7 @@ export const EditCancellation = (props: EditCancellationProp) => {
                 onClick={saveCancellation}
                 size="small"
                 icon="arrowForward"
-                disabled={hasImpactMismatch}
+                disabled={hasImpactMismatch || !isValidImpact()}
               >
                 Vista brottfellingu
               </Button>

@@ -238,14 +238,6 @@ export type Action =
       type: 'APPENDIX_DELETE'
       idx: number
     }
-
-  // TODO: Implement appendix actions for DraftChanges
-  // TODO: Also Implement revocation action for DraftChange appendixes
-  // | {
-  //     type: 'APPENDIX_REVOKE'
-  //     idx: number
-  //     revoked: boolean
-  //   }
   | {
       type: 'SET_IMPACT'
       impactId: DraftImpactId | undefined
