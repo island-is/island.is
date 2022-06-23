@@ -14,6 +14,13 @@ describe('Parental leave', () => {
     cy.idsLogin({
       phoneNumber: fakeUsers[0].phoneNumber,
       authDomain: `https://${authDomain}`,
-    }).then((_) => cy.wait(2000).get("[data-testid='mockdata-no']").click())
+    }).then((_) => {
+      cy.wait(2000)
+      cy.get("[data-testid='mockdata-no']").click()
+      cy.get('[data-testid="proceed"]').click()
+
+      cy.get("[data-testid='agree-to-data-providers']").click()
+      cy.get('[data-testid="proceed"]').click()
+    })
   })
 })
