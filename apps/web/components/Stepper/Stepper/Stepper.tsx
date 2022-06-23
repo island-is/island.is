@@ -440,8 +440,6 @@ const Stepper = ({
       )
   }
 
-  // TODO: add webReaderClassName to things
-
   return (
     <Box className={styles.container}>
       {currentStepType !== STEP_TYPES.ANSWER && (
