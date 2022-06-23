@@ -27,10 +27,9 @@ const ModuleNavigation: FC<Props> = ({ nav, onItemClick, badge }) => {
   const navChildren = nav?.children?.filter((child) => !child.navHide)
   const hasEnabledChildren = navChildren?.some((item) => item.enabled)
   const navArray = Array.isArray(navChildren) && navChildren.length > 0
-  const enabledNav =
-    navArray && navChildren?.some((item) => item.dynamic)
-      ? nav.enabled && hasEnabledChildren !== false
-      : nav.enabled
+  const enabledNav = navArray
+    ? nav.enabled && hasEnabledChildren !== false
+    : nav.enabled
   const collapsed = sidebarState === 'closed'
 
   const isModuleActive =

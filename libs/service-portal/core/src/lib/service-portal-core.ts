@@ -24,11 +24,6 @@ export interface ServicePortalNavigationItem {
    */
   navHide?: boolean
 
-  /**
-   * Represents a navigation item for a dynamic page.
-   */
-  dynamic?: boolean
-
   // These two fields are used for the MVP version of the service portal where
   // the routes are pretty uniform, this will most likely be removed in the future
   // Optional header to be displayed above the nav item in the sidebar

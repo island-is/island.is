@@ -52,9 +52,6 @@ const filterNavigationTree = (
   // Hides item from navigation
   item.navHide = (routeItem?.navHide ?? item.navHide) || hideDynamicPath
 
-  // Is item dynamic
-  item.dynamic = routeItem?.dynamic
-
   return included || onlyDescendantsIncluded
 }
 
