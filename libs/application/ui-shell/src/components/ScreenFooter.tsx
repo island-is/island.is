@@ -85,6 +85,7 @@ export const ScreenFooter: FC<FooterProps> = ({
       return (
         <Button
           icon="checkmarkCircle"
+          data-testid={submitField?.dataTestId}
           loading={!canProceed || loading}
           type="submit"
         >
@@ -99,7 +100,7 @@ export const ScreenFooter: FC<FooterProps> = ({
           ? condition(application.answers, application.externalData)
           : true,
       )
-      .map(({ event, type, name }, idx) => {
+      .map(({ event, type, name, dataTestId }, idx) => {
         const buttonConfig = submitButtonConfig[type]
 
         return (
@@ -108,6 +109,7 @@ export const ScreenFooter: FC<FooterProps> = ({
               type="submit"
               loading={!canProceed || loading}
               colorScheme={buttonConfig.colorScheme as any}
+              data-testid={dataTestId}
               id={typeof event === 'object' ? event.type : event}
               variant={buttonConfig.variant}
               icon={buttonConfig.icon}
@@ -141,6 +143,7 @@ export const ScreenFooter: FC<FooterProps> = ({
                   loading={loading}
                   onClick={() => history.push('/minarsidur')}
                   icon="arrowForward"
+                  data-testid="applications-home"
                   type="button"
                 >
                   {formatMessage({
@@ -155,6 +158,7 @@ export const ScreenFooter: FC<FooterProps> = ({
                 <Button
                   loading={!canProceed || loading}
                   icon="arrowForward"
+                  data-testid="proceed"
                   type="submit"
                 >
                   {formatMessage(coreMessages.buttonNext)}
@@ -166,6 +170,7 @@ export const ScreenFooter: FC<FooterProps> = ({
             {showGoBack && (
               <Button
                 variant="ghost"
+                data-testid="step-back"
                 onClick={goBack}
                 disabled={!canProceed || loading}
               >
@@ -177,6 +182,7 @@ export const ScreenFooter: FC<FooterProps> = ({
             {showGoBack && (
               <Button
                 circle
+                data-testid="step-back"
                 variant="ghost"
                 icon="arrowBack"
                 onClick={goBack}

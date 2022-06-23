@@ -21,6 +21,9 @@ describe('Parental leave', () => {
 
       cy.get("[data-testid='agree-to-data-providers']").click()
       cy.get('[data-testid="proceed"]').click()
+
+      cy.get("[data-testid='child-0']").click()
+      cy.get('[data-testid="select-child"]').click()
     })
   })
 })
