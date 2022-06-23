@@ -8,7 +8,7 @@ import {
   FailedDataProviderResult,
   SuccessfulDataProviderResult,
 } from './DataProviderResult'
-import { coreErrorMessages } from '../lib/messages'
+import { coreErrorMessages } from '../../../core/src/lib/messages'
 
 export type CustomTemplateFindQuery = (where: {
   [key: string]: string

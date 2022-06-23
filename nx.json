@@ -291,6 +291,9 @@
     "application-templates-reference-template": {
       "tags": []
     },
+    "application-types": {
+      "tags": []
+    },
     "application-ui-components": {
       "tags": []
     },

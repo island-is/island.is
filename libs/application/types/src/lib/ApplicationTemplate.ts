@@ -9,7 +9,7 @@ import {
 } from './StateMachine'
 import { ApplicationTypes } from './ApplicationTypes'
 import { Schema, StaticText } from './Form'
-import { AnswerValidator } from '../validation/AnswerValidator'
+import { AnswerValidator } from '../../../core/src/validation/AnswerValidator'
 import { Features } from '@island.is/feature-flags'
 import { AuthDelegationType } from '@island.is/auth-nest-tools'
 
