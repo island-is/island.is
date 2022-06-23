@@ -13,6 +13,19 @@ const isValidPhoneNumber = (phoneNumber: string) => {
 
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
+  passport: z
+    .object({
+      userPassport: z.string(),
+      childPassport: z.string(),
+    })
+    .partial()
+    .refine(
+      ({ userPassport, childPassport }) => userPassport || childPassport,
+      {
+        message: 'Verður að velja fyrir hvern þú ætlar að sækja um',
+        path: ['userPassport'],
+      },
+    ),
   personalInfo: z.object({
     name: z.string().nonempty(),
     nationalId: z.string().refine((x) => (x ? nationalIdRegex.test(x) : false)),
@@ -24,6 +37,31 @@ export const dataSchema = z.object({
       .min(7)
       .refine((v) => isValidPhoneNumber(v), { params: error.invalidValue }),
     hasDisabilityDiscount: z.array(z.string()).optional(),
+  }),
+  childsPersonalInfo: z.object({
+    name: z.string().nonempty(),
+    nationalId: z.string().refine((x) => (x ? nationalIdRegex.test(x) : false)),
+    hasDisabilityDiscount: z.array(z.string()).optional(),
+    guardian1: z.object({
+      name: z.string().nonempty(),
+      email: z
+        .string()
+        .refine((v) => isValidEmail(v), { params: error.invalidValue }),
+      phoneNumber: z
+        .string()
+        .min(7)
+        .refine((v) => isValidPhoneNumber(v), { params: error.invalidValue }),
+    }),
+    guardian2: z.object({
+      name: z.string().nonempty(),
+      email: z
+        .string()
+        .refine((v) => isValidEmail(v), { params: error.invalidValue }),
+      phoneNumber: z
+        .string()
+        .min(7)
+        .refine((v) => isValidPhoneNumber(v), { params: error.invalidValue }),
+    }),
   }),
   service: z.object({
     type: z.enum([Services.REGULAR, Services.EXPRESS]),

@@ -1,6 +1,5 @@
 import {
   Application,
-  buildCustomField,
   buildDescriptionField,
   buildDividerField,
   buildForm,
@@ -10,7 +9,6 @@ import {
   FormModes,
 } from '@island.is/application/core'
 import { SubmitResponse } from '../lib/constants'
-import { markdownOptions } from '../lib/markdownOptions'
 import { m } from '../lib/messages'
 
 export const Done: Form = buildForm({
@@ -22,7 +20,6 @@ export const Done: Form = buildForm({
       id: 'done',
       title: m.applicationComplete,
       description: m.applicationCompleteDescription,
-      descriptionMarkdownOptions: markdownOptions,
       children: [
         buildKeyValueField({
           label: m.applicationCompleteNumber,
