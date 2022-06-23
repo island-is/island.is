@@ -22,7 +22,7 @@ import { UserLanguageSwitcher } from './UserLanguageSwitcher'
 import cn from 'classnames'
 import { theme } from '@island.is/island-ui/theme'
 import { useWindowSize } from 'react-use'
-import { checkDelegation } from '@island.is/service-portal/core'
+import { checkDelegation } from '@island.is/shared/utils'
 
 interface UserDropdownProps {
   user: User

@@ -3,7 +3,6 @@ import subYears from 'date-fns/subYears'
 import flatten from 'lodash/flatten'
 import React from 'react'
 import { defineMessage } from 'react-intl'
-
 import { Query } from '@island.is/api/schema'
 import {
   AlertBanner,
@@ -24,9 +23,8 @@ import {
   formSubmit,
   m,
   ServicePortalModuleComponent,
-  checkDelegation,
 } from '@island.is/service-portal/core'
-
+import { checkDelegation } from '@island.is/shared/utils'
 import DropdownExport from '../../components/DropdownExport/DropdownExport'
 import FinanceStatusTableRow from '../../components/FinanceStatusTableRow/FinanceStatusTableRow'
 import { exportGreidslustadaFile } from '../../utils/filesGreidslustada'
