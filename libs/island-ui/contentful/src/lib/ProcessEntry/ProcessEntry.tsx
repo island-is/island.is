@@ -37,7 +37,6 @@ export interface ProcessEntryProps {
    * render process entry fixed to bottom of screen in a react portal
    */
   fixed?: boolean
-
   newTab?: boolean
 }
 
