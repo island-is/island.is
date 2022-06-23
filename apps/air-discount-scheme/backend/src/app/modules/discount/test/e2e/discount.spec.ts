@@ -5,12 +5,13 @@ import {
   NationalRegistryService,
   NationalRegistryUser,
 } from '../../../nationalRegistry'
+import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
 
 let app: INestApplication
 let cacheManager: CacheManager
 let nationalRegistryService: NationalRegistryService
 const user: NationalRegistryUser = {
-  nationalId: '1234567890',
+  nationalId: '1326487905',
   firstName: 'Jón',
   gender: 'kk',
   lastName: 'Jónsson',
@@ -20,8 +21,16 @@ const user: NationalRegistryUser = {
   city: 'Vestmannaeyjar',
 }
 
+const mockAuthGuard = new MockAuthGuard({
+  nationalId: '1326487905',
+  scope: ['@vegagerdin.is/air-discount-scheme-scope'],
+})
+
 beforeAll(async () => {
-  app = await setup()
+  app = await setup({
+    override: (builder) =>
+      builder.overrideGuard(IdsUserGuard).useValue(mockAuthGuard),
+  })
   cacheManager = app.get<CacheManager>(CACHE_MANAGER)
   cacheManager.ttl = () => Promise.resolve('')
   nationalRegistryService = app.get<NationalRegistryService>(
@@ -47,6 +56,14 @@ describe('Create DiscountCode', () => {
       discountCode: expect.any(String),
       expiresIn: 86400,
       nationalId,
+      user: {
+        ...user,
+        fund: {
+          credit: expect.any(Number),
+          total: expect.any(Number),
+          used: expect.any(Number),
+        },
+      },
     })
     expect(spy).toHaveBeenCalled()
   })
