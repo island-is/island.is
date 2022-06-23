@@ -38,10 +38,29 @@ In the Application template map the orginasation's nationalId like so
 
 For the org to be able to interact we need to add the role permission to a relevant state for the them to interact with the application.
 
-Example approve/reject state from an orginisation:
+Add an entry action:
+
+```typescript
+stateMachineOptions: {
+  actions: {
+    assignToInstitution: assign((context) => {
+      const { application } = context
+      const institution_ID = 'xxxxxx-xxxx'
+
+      set(application, 'assignees', [institution_ID])
+
+      return context
+    })
+  }
+}
+```
+
+An example of an approve/reject state from an orginisation. Add your state with entry and exit that handles the assign of the institution
 
 ```typescript
   [States.ORGINISATION_APPROVAL]: {
+    entry: 'assignToInstitution',
+    exit: ['clearAssignees'], //ideally you would clear the assignees here
     meta: {
         name: States.ORGINISATION_APPROVAL,
         ...
@@ -69,7 +88,7 @@ Example approve/reject state from an orginisation:
 
 To invoke a state change the machine client would for approving make a PUT request like so:
 
-```
+```c
 curl --location -g --request PUT '{{baseUrl}}/applications/{applicationId}/submit' \
 --header 'authorization: xxx' \
 --header 'Content-Type: application/x-www-form-urlencoded' \
@@ -79,3 +98,15 @@ curl --location -g --request PUT '{{baseUrl}}/applications/{applicationId}/submi
   "message": ""
 }'
 ```
+
+#### Postman local testing setup
+
+Log in to the admin panel https://identity-server.dev01.devland.is/admin
+With 010-7789 og and chose Gervimaður Útlönd and fetch the secret from the client created earlier
+Create an new secret and copy to your clipboard
+
+![image](https://user-images.githubusercontent.com/2643113/175304337-82ce024c-4215-4de1-a09e-e28cce2082b9.png)
+
+Chose Oauth 2.0 and use the settings below. Insert your Client id, client secret and the Scope should be `@island.is/applications:read @island.is/applications:write` press "Get New Access Token" and you have your token.
+
+![image](https://user-images.githubusercontent.com/2643113/175303853-67c0e573-8ddf-4026-893d-d351fdf09432.png)
