@@ -165,7 +165,7 @@ RUN addgroup runners && adduser runner && adduser runner runners
 RUN mkdir /out && chown runner /out
 ENV CYPRESS_VIDEOS_FOLDER=/out/videos
 ENV CYPRESS_SCREENSHOTS_FOLDER=/out/screenshots
-
+ENV PATH=./node_modules/.bin:${PATH}
 USER runner
 
 WORKDIR /app
