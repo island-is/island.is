@@ -72,7 +72,6 @@ const getRegexByValidation = (validation: Validation) => {
   }
 }
 
-<<<<<<< HEAD
 export const validate = (items: ValidateItem[]): IsValid => {
   const returnValue = items
     .map((item) => {
@@ -106,29 +105,6 @@ export const validate = (items: ValidateItem[]): IsValid => {
   return returnValue.length > 0
     ? returnValue[0]
     : { isValid: true, errorMessage: '' }
-=======
-export const validate = (
-  items: ValidationItem[],
-): { isValid: boolean; errorMessage: string }[] => {
-  const returnValue = items.map((item) => {
-    const validatedItems = item.validations.map((validation) => {
-      if (item.value) {
-        const v = getRegexByValidation(validation)
-        const isValid = v.regex.test(item.value)
-
-        return { isValid, errorMessage: isValid ? '' : v.errorMessage }
-      } else if (validation === 'empty') {
-        return { isValid: false, errorMessage: 'Reitur má ekki vera tómur' }
-      } else {
-        return { isValid: true, errorMessage: '' }
-      }
-    })
-
-    return validatedItems.filter((item) => !item.isValid)
-  })
-
-  return returnValue.flat()
->>>>>>> 93b2bf64520fe827bf40bd98c43d728273d9ad97
 }
 
 const someDefendantIsInvalid = (workingCase: Case) => {
@@ -156,7 +132,6 @@ export const isDefendantStepValidRC = (workingCase: Case) => {
   return (
     !someDefendantIsInvalid(workingCase) &&
     validate([
-<<<<<<< HEAD
       [workingCase.policeCaseNumber, ['empty', 'police-casenumber-format']],
       [workingCase.defenderEmail, ['email-format']],
       [workingCase.defenderPhoneNumber, ['phonenumber']],
@@ -164,33 +139,6 @@ export const isDefendantStepValidRC = (workingCase: Case) => {
         ? 'valid'
         : [workingCase.leadInvestigator, ['empty']],
     ]).isValid
-=======
-      {
-        value: workingCase.policeCaseNumber,
-        validations: ['empty'],
-      },
-      {
-        value: workingCase.policeCaseNumber,
-        validations: ['police-casenumber-format'],
-      },
-      {
-        value: workingCase.defenderEmail,
-        validations: ['email-format'],
-      },
-      {
-        value: workingCase.defenderPhoneNumber,
-        validations: ['phonenumber'],
-      },
-      ...(workingCase.type === CaseType.CUSTODY
-        ? [
-            {
-              value: workingCase.leadInvestigator,
-              validations: ['empty'],
-            } as ValidationItem,
-          ]
-        : []),
-    ]).length === 0
->>>>>>> 93b2bf64520fe827bf40bd98c43d728273d9ad97
   )
 }
 
@@ -221,19 +169,11 @@ export const isHearingArrangementsStepValidRC = (workingCase: Case) => {
     (workingCase.court ||
       ((workingCase as unknown) as { courtId: string }).courtId) &&
     validate([
-      {
-        value: workingCase.requestedCourtDate,
-        validations: ['empty', 'date-format'],
-      },
-      ...(workingCase.type !== CaseType.TRAVEL_BAN && !workingCase.parentCase
-        ? [
-            {
-              value: workingCase.arrestDate,
-              validations: ['empty', 'date-format'],
-            } as ValidationItem,
-          ]
-        : []),
-    ]).length === 0
+      [workingCase.requestedCourtDate, ['empty', 'date-format']],
+      workingCase.type !== CaseType.TRAVEL_BAN && !workingCase.parentCase
+        ? [workingCase.arrestDate, ['empty', 'date-format']]
+        : 'valid',
+    ]).isValid
   )
 }
 
