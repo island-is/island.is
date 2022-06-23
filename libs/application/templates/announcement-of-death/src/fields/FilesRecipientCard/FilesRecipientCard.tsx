@@ -29,10 +29,12 @@ export const FilesRecipientCard: FC<
   let options =
     application.answers?.estateMembers?.members?.length &&
     application.answers.estateMembers.members.length !== 0
-      ? application.answers?.estateMembers?.members.map((estateMember) => ({
-          label: estateMember.name,
-          value: estateMember.nationalId,
-        }))
+      ? application.answers?.estateMembers?.members
+          .filter((member) => !member?.dummy)
+          .map((estateMember) => ({
+            label: estateMember.name,
+            value: estateMember.nationalId,
+          }))
       : []
 
   options = options.filter((member) => isPerson(member.value))
