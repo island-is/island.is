@@ -63,7 +63,7 @@ const CMD = {
   EXTRACT_ENV: `scripts/dockerfile-assets/bash/extract-environment.sh ${argv.dist}`,
   SERVE_NEXT: [ `${argv.dist}/main.js` ],
   SERVE_REACT: ['scripts/static-serve.js', '-p', argv.port, '-d', argv.dist, '-b', argv['base-path']],
-  TEST: `yarn nx run ${argv.name}:e2e:production --headless --production ${
+  TEST: `yarn nx run ${argv.name}:e2e:production --browser /usr/bin/google-chrome --headless --production ${
     argv.ci ? `--record --group=${argv.name}` : ''}${
     argv['skip-cache'] ? ' --skip-nx-cache' : ''} ${process.env.E2E_BUILD_ID ? `--ciBuildId=${process.env.E2E_BUILD_ID}` : ''}`
 }
