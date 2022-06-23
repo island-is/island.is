@@ -46,7 +46,7 @@ NOVA_PASSWORD=<SMS password> COURTS_MOBILE_NUMBERS='{ <court-id>: mobileNumbers:
 
 Similarly, you can enable electronic signatures of judge rulings by providing a Dokobit access token: `DOKOBIT_ACCESS_TOKEN=<Dokobit access token>`
 
-In local development you can preview emails with ethereal nodemailer previews by following the urls in the logs. 
+In local development you can preview emails with ethereal nodemailer previews by following the urls in the logs.
 Alternatively, you can enable email sending via AWS SES turn off email test account and provide an email region:
 
 ```bash
