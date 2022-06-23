@@ -105,6 +105,6 @@ Log in to the [IDS admin panel](https://beta.dev01.devland.is/admin) on dev usin
 
 ![image](https://user-images.githubusercontent.com/2643113/175304337-82ce024c-4215-4de1-a09e-e28cce2082b9.png)
 
-Chose Oauth 2.0 and use the settings below. Insert your Client id, client secret and the Scope should be `@island.is/applications:read @island.is/applications:write` press "Get New Access Token" and you have your token.
+Choose Oauth 2.0 and use the settings below. Insert your Client id, client secret and the Scope should be `@island.is/applications:read @island.is/applications:write` press "Get New Access Token" and you have your token.
 
 ![image](https://user-images.githubusercontent.com/2643113/175303853-67c0e573-8ddf-4026-893d-d351fdf09432.png)
