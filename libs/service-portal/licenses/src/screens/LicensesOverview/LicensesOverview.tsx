@@ -17,7 +17,6 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
   useNamespaces('sp.license')
   const { data, status, loading, error } = useDrivingLicense()
 
-  console.log(data)
   return (
     <>
       <Box marginBottom={[3, 4, 5]}>
