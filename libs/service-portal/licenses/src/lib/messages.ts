@@ -14,14 +14,6 @@ export const m = defineMessages({
     id: 'sp.license:driving-license',
     defaultMessage: 'Ökuréttindi',
   },
-  adrLicense: {
-    id: 'sp.license:adr-license',
-    defaultMessage: 'ADR skírteini',
-  },
-  machineLicense: {
-    id: 'sp.license:machine-license',
-    defaultMessage: 'Vinnuvélaréttindi',
-  },
   yourDrivingLicense: {
     id: 'sp.license:your-driving-license',
     defaultMessage: 'Ökuréttindin þín',
@@ -46,10 +38,6 @@ export const m = defineMessages({
   validUntil: {
     id: 'sp.license:valid-until',
     defaultMessage: 'Í gildi til ',
-  },
-  licenseNumber: {
-    id: 'sp.license:license-number',
-    defaultMessage: 'Númer skírteinis',
   },
   drivingLicenseNumber: {
     id: 'sp.license:driving-license-number',
