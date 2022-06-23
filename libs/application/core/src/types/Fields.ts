@@ -11,6 +11,7 @@ import { Condition } from './Condition'
 import { CallToAction } from './StateMachine'
 import { Application } from './Application'
 import { FormatInputValueFunction } from 'react-number-format'
+import { TestSupport } from '@island.is/island-ui/utils'
 
 export type RecordObject<T = unknown> = Record<string, T>
 export type MaybeWithApplicationAndField<T> =
@@ -32,7 +33,7 @@ export type Context = {
   apolloClient: ApolloClient<object>
 }
 
-export interface Option {
+export interface Option extends TestSupport {
   value: string
   label: FormText
   subLabel?: string
