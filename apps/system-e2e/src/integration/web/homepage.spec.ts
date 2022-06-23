@@ -1,9 +1,6 @@
 describe('Front page', () => {
   beforeEach(() => {
-    cy.cognitoLogin({
-      cognitoUsername: Cypress.env('cognitoUsername'),
-      cognitoPassword: Cypress.env('cognitoPassword'),
-    })
+    cy.cognitoLogin()
   })
 
   it('has expected sections', () => {
