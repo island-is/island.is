@@ -28,6 +28,11 @@ export class CreateCaseDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
+  readonly defenderNationalId?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
   readonly defenderEmail?: string
 
   @IsOptional()
@@ -39,12 +44,6 @@ export class CreateCaseDto {
   @IsBoolean()
   @ApiPropertyOptional()
   readonly sendRequestToDefender?: boolean
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  readonly courtId?: string
-
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()

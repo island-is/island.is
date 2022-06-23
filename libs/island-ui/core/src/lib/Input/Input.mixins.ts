@@ -67,7 +67,7 @@ export const containerSizes = {
     padding: 8,
     ...themeUtils.responsiveStyle({
       md: {
-        padding: `${theme.spacing[1]}px ${theme.spacing[2]}px ${theme.spacing[1]}px ${theme.spacing[1]}px`,
+        padding: `${theme.spacing[1]}px ${theme.spacing[2]}px ${theme.spacing[1]}px ${theme.spacing[0]}px`,
       },
     }),
   },

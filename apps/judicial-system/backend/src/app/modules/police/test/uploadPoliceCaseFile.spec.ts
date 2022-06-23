@@ -4,6 +4,8 @@ import { Base64 } from 'js-base64'
 
 import { BadGatewayException, NotFoundException } from '@nestjs/common'
 
+import { User } from '@island.is/judicial-system/types'
+
 import { AwsS3Service } from '../../aws-s3'
 import { UploadPoliceCaseFileResponse } from '../models/uploadPoliceCaseFile.response'
 import { createTestingPoliceModule } from './createTestingPoliceModule'
@@ -18,6 +20,7 @@ interface Then {
 
 type GivenWhenThen = (
   caseId: string,
+  user: User,
   uploadPoliceCaseFile: UploadPoliceCaseFileDto,
 ) => Promise<Then>
 
@@ -32,12 +35,13 @@ describe('PoliceController - Upload police case file', () => {
 
     givenWhenThen = async (
       caseId: string,
+      user: User,
       uploadPoliceCaseFile: UploadPoliceCaseFileDto,
     ): Promise<Then> => {
       const then = {} as Then
 
       await policeController
-        .uploadPoliceCaseFile(caseId, uploadPoliceCaseFile)
+        .uploadPoliceCaseFile(caseId, user, uploadPoliceCaseFile)
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 
@@ -47,13 +51,14 @@ describe('PoliceController - Upload police case file', () => {
 
   describe('remote police call', () => {
     const caseId = uuid()
+    const user = {} as User
     const policeFileId = uuid()
     const uploadPoliceCaseFile = {
       id: policeFileId,
     } as UploadPoliceCaseFileDto
 
     beforeEach(async () => {
-      await givenWhenThen(caseId, uploadPoliceCaseFile)
+      await givenWhenThen(caseId, user, uploadPoliceCaseFile)
     })
 
     it('should get the police file', () => {
@@ -68,6 +73,7 @@ describe('PoliceController - Upload police case file', () => {
 
   describe('remote AWS S3 call', () => {
     const caseId = uuid()
+    const user = {} as User
     const policeFileId = uuid()
     const fileName = 'test.txt'
     const uploadPoliceCaseFile = {
@@ -84,7 +90,7 @@ describe('PoliceController - Upload police case file', () => {
         json: () => Base64.btoa('Test content'),
       })
 
-      await givenWhenThen(caseId, uploadPoliceCaseFile)
+      await givenWhenThen(caseId, user, uploadPoliceCaseFile)
     })
 
     it('should updload the file to ASW S3', () => {
@@ -97,6 +103,7 @@ describe('PoliceController - Upload police case file', () => {
 
   describe('file uploaded to AWS S3', () => {
     const caseId = uuid()
+    const user = {} as User
     const policeFileId = uuid()
     const fileName = 'test.txt'
     const uploadPoliceCaseFile = {
@@ -112,7 +119,7 @@ describe('PoliceController - Upload police case file', () => {
         json: () => Base64.btoa('Test content'),
       })
 
-      then = await givenWhenThen(caseId, uploadPoliceCaseFile)
+      then = await givenWhenThen(caseId, user, uploadPoliceCaseFile)
     })
 
     it('should updload the file to ASW S3', () => {
@@ -127,6 +134,7 @@ describe('PoliceController - Upload police case file', () => {
 
   describe('remote police call fails', () => {
     const caseId = uuid()
+    const user = {} as User
     const policeFileId = uuid()
     const uploadPoliceCaseFile = {
       id: policeFileId,
@@ -137,7 +145,7 @@ describe('PoliceController - Upload police case file', () => {
       const mockFetch = fetch as jest.Mock
       mockFetch.mockRejectedValueOnce(new Error('Some error'))
 
-      then = await givenWhenThen(caseId, uploadPoliceCaseFile)
+      then = await givenWhenThen(caseId, user, uploadPoliceCaseFile)
     })
 
     it('should throw bad gateway exception', () => {
@@ -150,6 +158,7 @@ describe('PoliceController - Upload police case file', () => {
 
   describe('police file not found', () => {
     const caseId = uuid()
+    const user = {} as User
     const policeFileId = uuid()
     const policeCaseFile = {
       id: policeFileId,
@@ -158,9 +167,9 @@ describe('PoliceController - Upload police case file', () => {
 
     beforeEach(async () => {
       const mockFetch = fetch as jest.Mock
-      mockFetch.mockResolvedValueOnce({ ok: false })
+      mockFetch.mockResolvedValueOnce({ ok: false, text: () => 'Some error' })
 
-      then = await givenWhenThen(caseId, policeCaseFile)
+      then = await givenWhenThen(caseId, user, policeCaseFile)
     })
 
     it('should throw not found exception', () => {
@@ -173,6 +182,7 @@ describe('PoliceController - Upload police case file', () => {
 
   describe('remote AWS S3 call fails', () => {
     const caseId = uuid()
+    const user = {} as User
     const policeFileId = uuid()
     const uploadPoliceCaseFile = {
       id: policeFileId,
@@ -188,7 +198,7 @@ describe('PoliceController - Upload police case file', () => {
       const mockPutObject = mockAwsS3Service.putObject as jest.Mock
       mockPutObject.mockRejectedValueOnce(new Error('Some error'))
 
-      then = await givenWhenThen(caseId, uploadPoliceCaseFile)
+      then = await givenWhenThen(caseId, user, uploadPoliceCaseFile)
     })
 
     it('should throw error', () => {

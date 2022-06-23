@@ -10,7 +10,6 @@ import {
   Application,
   ExternalData,
   Field,
-  FormatMessage,
   FormValue,
   getValueViaPath,
   Option,
@@ -39,6 +38,7 @@ import {
   ChildrenAndExistingApplications,
 } from '../dataProviders/Children/types'
 import { YesOrNo, Period, PersonInformation } from '../types'
+import { FormatMessage } from '@island.is/localization'
 
 export function getExpectedDateOfBirth(
   application: Application,
@@ -387,10 +387,10 @@ export function getApplicationExternalData(
 }
 
 export function getApplicationAnswers(answers: Application['answers']) {
-  const otherParent = getValueViaPath(
+  const otherParent = (getValueViaPath(
     answers,
-    'otherParent',
-  ) as SchemaFormValues['otherParent']
+    'otherParentObj.chooseOtherParent',
+  ) ?? getValueViaPath(answers, 'otherParent')) as string
 
   const otherParentRightOfAccess = getValueViaPath(
     answers,
@@ -398,6 +398,8 @@ export function getApplicationAnswers(answers: Application['answers']) {
   ) as SchemaFormValues['otherParentRightOfAccess']
 
   const pensionFund = getValueViaPath(answers, 'payments.pensionFund') as string
+
+  const useUnion = getValueViaPath(answers, 'useUnion') as YesOrNo
 
   const union = getValueViaPath(answers, 'payments.union') as string
 
@@ -422,13 +424,24 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'employer.isSelfEmployed',
   ) as YesOrNo
 
-  const otherParentName = getValueViaPath(answers, 'otherParentName') as string
+  const otherParentName = (getValueViaPath(
+    answers,
+    'otherParentObj.otherParentName',
+  ) ?? getValueViaPath(answers, 'otherParentName')) as string
 
-  const otherParentId = getValueViaPath(answers, 'otherParentId') as string
+  const otherParentId = (getValueViaPath(
+    answers,
+    'otherParentObj.otherParentId',
+  ) ?? getValueViaPath(answers, 'otherParentId')) as string
 
   const otherParentEmail = getValueViaPath(
     answers,
     'otherParentEmail',
+  ) as string
+
+  const otherParentPhoneNumber = getValueViaPath(
+    answers,
+    'otherParentPhoneNumber',
   ) as string
 
   const bank = getValueViaPath(answers, 'payments.bank') as string
@@ -466,6 +479,11 @@ export function getApplicationAnswers(answers: Application['answers']) {
   ) as string
 
   const employerEmail = getValueViaPath(answers, 'employer.email') as string
+
+  const employerPhoneNumber = getValueViaPath(
+    answers,
+    'employerPhoneNumber',
+  ) as string
 
   const employerNationalRegistryId = getValueViaPath(
     answers,
@@ -526,6 +544,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     otherParent,
     otherParentRightOfAccess,
     pensionFund,
+    useUnion,
     union,
     usePrivatePensionFund,
     privatePensionFund,
@@ -534,6 +553,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     otherParentName,
     otherParentId,
     otherParentEmail,
+    otherParentPhoneNumber,
     bank,
     usePersonalAllowance,
     usePersonalAllowanceFromSpouse,
@@ -542,6 +562,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     spouseUseAsMuchAsPossible,
     spouseUsage,
     employerEmail,
+    employerPhoneNumber,
     employerNationalRegistryId,
     shareInformationWithOtherParent,
     selectedChild,
@@ -644,6 +665,21 @@ export const getOtherParentName = (
 
     if (!spouse || !spouse.name) {
       return undefined
+    }
+
+    return spouse.name
+  }
+
+  // Second parent always has otherParent marks 'manual'
+  const selectedChild = getSelectedChild(
+    application.answers,
+    application.externalData,
+  )
+  if (selectedChild?.parentalRelation === ParentalRelations.secondary) {
+    const spouse = getSpouse(application)
+
+    if (!spouse || !spouse.name) {
+      return otherParentName
     }
 
     return spouse.name

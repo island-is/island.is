@@ -18,3 +18,7 @@ export const linkWithoutDecorations = style({
     textDecoration: 'none',
   },
 })
+
+export const displayNone = style({
+  display: 'none',
+})

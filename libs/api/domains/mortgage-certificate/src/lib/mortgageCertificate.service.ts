@@ -17,9 +17,11 @@ export class MortgageCertificateService {
 
   async validateMortgageCertificate(
     propertyNumber: string,
+    isFromSearch: boolean | undefined,
   ): Promise<MortgageCertificateValidation> {
     return await this.syslumennService.validateMortgageCertificate(
       propertyNumber,
+      isFromSearch,
     )
   }
 }

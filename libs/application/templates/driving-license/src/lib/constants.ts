@@ -1,4 +1,4 @@
-import { DefaultEvents, StateLifeCycle } from '@island.is/application/core'
+import { DefaultEvents } from '@island.is/application/core'
 
 export type Events =
   | { type: DefaultEvents.SUBMIT }
@@ -29,4 +29,5 @@ export interface DrivingLicenseFakeData {
   useFakeData?: YesOrNo
   qualityPhoto?: YesOrNo
   currentLicense?: FakeCurrentLicense
+  healthRemarks?: YesOrNo
 }

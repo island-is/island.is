@@ -5,25 +5,25 @@ import {
   CaseLegalProvisions,
   CaseCustodyRestrictions,
   CaseState,
+  SessionArrangements,
 } from '@island.is/judicial-system/types'
-import {
-  makeCustodyCase,
-  makeProsecutor,
-} from '@island.is/judicial-system/formatters'
 import {
   HEARING_ARRANGEMENTS_ROUTE,
   OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
 
-import { intercept } from '../../../utils'
+import { makeRestrictionCase, makeProsecutor, intercept } from '../../../utils'
 
 describe(`${OVERVIEW_ROUTE}/:id`, () => {
   const demands = faker.lorem.paragraph()
   const lawsBroken = faker.lorem.words(5)
   const legalBasis = faker.lorem.words(5)
+  const defenderName = faker.name.findName()
+  const defenderEmail = faker.internet.email()
+  const defenderPhoneNumber = faker.phone.phoneNumber()
 
   beforeEach(() => {
-    const caseData = makeCustodyCase()
+    const caseData = makeRestrictionCase()
     const caseDataAddition: Case = {
       ...caseData,
       creatingProsecutor: makeProsecutor(),
@@ -39,6 +39,11 @@ describe(`${OVERVIEW_ROUTE}/:id`, () => {
         CaseCustodyRestrictions.ISOLATION,
         CaseCustodyRestrictions.MEDIA,
       ],
+      defenderName,
+      defenderEmail,
+      defenderPhoneNumber,
+      sessionArrangements: SessionArrangements.ALL_PRESENT_SPOKESPERSON,
+      seenByDefender: '2020-09-16T19:50:08.033Z',
     }
 
     cy.stubAPIResponses()
@@ -47,9 +52,18 @@ describe(`${OVERVIEW_ROUTE}/:id`, () => {
     intercept(caseDataAddition)
   })
 
+  it('should let the user know if the assigned defender has viewed the case', () => {
+    cy.getByTestid('alertMessageSeenByDefender').should('not.match', ':empty')
+  })
+
   it('should have an overview of the current case', () => {
     cy.getByTestid('infoCard').contains(
       'Donald Duck, kt. 000000-0000, Batcave 1337',
+    )
+
+    cy.getByTestid('infoCard').contains('Talsmaður')
+    cy.getByTestid('infoCard').contains(
+      `${defenderName}, ${defenderEmail}, s. ${defenderPhoneNumber}`,
     )
     cy.getByTestid('infoCardDataContainer0').contains(
       'Lögreglan á Höfuðborgarsvæðinu',
@@ -81,11 +95,6 @@ describe(`${OVERVIEW_ROUTE}/:id`, () => {
     cy.getByTestid('modal')
       .getByTestid('ruling')
       .contains('héraðsdómari kveður upp úrskurð þennan.')
-      .clear()
-    cy.clickOutside()
-    cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
-    cy.getByTestid('ruling').type('lorem')
-    cy.getByTestid('inputErrorMessage').should('not.exist')
   })
 
   it('should navigate to the next step when all input data is valid and the continue button is clicked', () => {

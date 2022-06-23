@@ -61,7 +61,6 @@ describe('StaffController - Get supervisors', () => {
         municipalityId: '01',
         roles: [StaffRole.SUPERADMIN],
         active: true,
-        municipalityName: 'here',
       },
       {
         id: '2',
@@ -70,7 +69,6 @@ describe('StaffController - Get supervisors', () => {
         municipalityId: '02',
         roles: [StaffRole.SUPERADMIN],
         active: true,
-        municipalityName: 'here',
       },
     ]
     let mockGetSupervisors: jest.Mock

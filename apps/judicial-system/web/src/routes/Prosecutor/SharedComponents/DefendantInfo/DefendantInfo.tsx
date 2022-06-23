@@ -11,11 +11,11 @@ import {
 import { BlueBox } from '@island.is/judicial-system-web/src/components'
 import {
   Box,
+  Button,
   Checkbox,
   GridColumn,
   GridContainer,
   GridRow,
-  Icon,
   Input,
   Select,
   Text,
@@ -134,12 +134,15 @@ const DefendantInfo: React.FC<Props> = (props) => {
     <BlueBox>
       <Box marginBottom={2} display="flex" justifyContent="flexEnd">
         {onDelete && (
-          <button
+          <Button
             onClick={() => onDelete(defendant)}
-            aria-label="Remove defendant"
+            colorScheme="destructive"
+            variant="text"
+            size="small"
+            data-testid="deleteDefendantButton"
           >
-            <Icon icon="close" color="blue400" />
-          </button>
+            {formatMessage(defendantMessages.sections.defendantInfo.delete)}
+          </Button>
         )}
       </Box>
       <Box marginBottom={2}>
@@ -151,6 +154,9 @@ const DefendantInfo: React.FC<Props> = (props) => {
           )}
           checked={defendant.noNationalId}
           onChange={() => {
+            setNationalIdNotFound(false)
+            setNationalIdErrorMessage('')
+
             updateDefendantState(defendant.id, {
               noNationalId: !defendant.noNationalId,
               nationalId: undefined,
@@ -171,11 +177,10 @@ const DefendantInfo: React.FC<Props> = (props) => {
           maskPlaceholder={null}
           value={defendant.nationalId ?? ''}
           onChange={(evt) => {
-            setNationalIdErrorMessage('')
             setNationalIdNotFound(false)
             removeErrorMessageIfValid(
               defendant.noNationalId
-                ? ['empty', 'date-of-birth']
+                ? ['date-of-birth']
                 : ['empty', 'national-id'],
               evt.target.value,
               nationalIdErrorMessage,
@@ -189,7 +194,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
           onBlur={async (evt) => {
             validateAndSetErrorMessage(
               defendant.noNationalId
-                ? ['empty', 'date-of-birth']
+                ? ['date-of-birth']
                 : ['empty', 'national-id'],
               evt.target.value,
               setNationalIdErrorMessage,
@@ -212,7 +217,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
             )}
             errorMessage={nationalIdErrorMessage}
             hasError={nationalIdErrorMessage !== ''}
-            required
+            required={!defendant.noNationalId}
           />
         </InputMask>
         {defendant.nationalId?.length === 11 && nationalIdNotFound && (

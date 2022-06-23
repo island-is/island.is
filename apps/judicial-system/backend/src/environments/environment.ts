@@ -2,7 +2,7 @@ const devConfig = {
   production: false,
   auth: {
     jwtSecret: 'jwt-secret',
-    secretToken: 'secret-token',
+    secretToken: 'secret-backend-api-token',
   },
   notifications: {
     prisonEmail: process.env.PRISON_EMAIL,
@@ -15,18 +15,14 @@ const devConfig = {
   },
   email: {
     fromEmail: 'ben10@omnitrix.is',
-    fromName: 'Guðjón Guðjónsson',
+    fromName: 'Réttarvörslugátt',
     replyToEmail: 'ben10@omnitrix.is',
-    replyToName: 'Guðjón Guðjónsson',
+    replyToName: 'Réttarvörslugátt',
   },
   smsOptions: {
     url: 'https://smsapi.devnova.is',
     username: 'IslandIs_User_Development',
     password: process.env.NOVA_PASSWORD ?? '',
-  },
-  signingOptions: {
-    url: 'https://developers.dokobit.com',
-    accessToken: process.env.DOKOBIT_ACCESS_TOKEN ?? '',
   },
   emailOptions: {
     useTestAccount: (process.env.EMAIL_USE_TEST_ACCOUNT ?? 'true') === 'true',
@@ -65,6 +61,7 @@ const devConfig = {
       'http://localhost:4200/krafa/stadfesta/',
     prosecutorInvestigationCaseOverviewUrl:
       'http://localhost:4200/krafa/rannsoknarheimild/stadfesta/',
+    defenderCaseOverviewUrl: 'http://localhost:4200/verjandi/',
   },
 }
 
@@ -72,8 +69,8 @@ if (process.env.NODE_ENV === 'production') {
   if (!process.env.AUTH_JWT_SECRET) {
     throw new Error('Missing AUTH_JWT_SECRET environment.')
   }
-  if (!process.env.SECRET_TOKEN) {
-    throw new Error('Missing SECRET_TOKEN environment.')
+  if (!process.env.BACKEND_ACCESS_TOKEN) {
+    throw new Error('Missing BACKEND_ACCESS_TOKEN environment.')
   }
   if (!process.env.COURTS_MOBILE_NUMBERS) {
     throw new Error('Missing COURTS_MOBILE_NUMBERS environment.')
@@ -104,12 +101,6 @@ if (process.env.NODE_ENV === 'production') {
   }
   if (!process.env.NOVA_PASSWORD) {
     throw new Error('Missing NOVA_PASSWORD environment.')
-  }
-  if (!process.env.DOKOBIT_URL) {
-    throw new Error('Missing DOKOBIT_URL environment.')
-  }
-  if (!process.env.DOKOBIT_ACCESS_TOKEN) {
-    throw new Error('Missing DOKOBIT_ACCESS_TOKEN environment.')
   }
   if (!process.env.EMAIL_REGION) {
     throw new Error('Missing EMAIL_REGION environment.')
@@ -169,7 +160,7 @@ const prodConfig = {
   production: true,
   auth: {
     jwtSecret: process.env.AUTH_JWT_SECRET ?? '',
-    secretToken: process.env.SECRET_TOKEN ?? '',
+    secretToken: process.env.BACKEND_ACCESS_TOKEN ?? '',
   },
   notifications: {
     courtsMobileNumbers: JSON.parse(
@@ -190,10 +181,6 @@ const prodConfig = {
     url: process.env.NOVA_URL ?? '',
     username: process.env.NOVA_USERNAME ?? '',
     password: process.env.NOVA_PASSWORD ?? '',
-  },
-  signingOptions: {
-    url: process.env.DOKOBIT_URL ?? '',
-    accessToken: process.env.DOKOBIT_ACCESS_TOKEN ?? '',
   },
   emailOptions: {
     useTestAccount: false,
@@ -231,6 +218,7 @@ const prodConfig = {
       process.env.PROSECUTOR_RESTRICTION_CASE_OVERVIEW_URL,
     prosecutorInvestigationCaseOverviewUrl:
       process.env.PROSECUTOR_INVESTIGATION_CASE_OVERVIEW_URL,
+    defenderCaseOverviewUrl: process.env.DEFENDER_CASE_OVERVIEW_URL,
   },
 }
 

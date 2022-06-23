@@ -56,7 +56,7 @@ const CommentSection = ({ className, setApplication }: Props) => {
     <Box marginBottom={3} className={`${className} `}>
       <Box marginBottom={3}>
         <Button
-          icon={showInput ? 'close' : 'open'}
+          icon={showInput ? 'close' : 'pencil'}
           size="small"
           iconType="outline"
           onClick={() => {

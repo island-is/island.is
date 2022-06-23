@@ -2,11 +2,10 @@ import React, { FC, useState } from 'react'
 import format from 'date-fns/format'
 import { Table as T, Box, Pagination } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { m } from '@island.is/service-portal/core'
+import { m, amountFormat } from '@island.is/service-portal/core'
 import sortBy from 'lodash/sortBy'
 import { dateFormat } from '@island.is/shared/constants'
-import amountFormat from '../../utils/amountFormat'
-import { ExpandRow, ExpandHeader } from '../../components/ExpandableTable'
+import { ExpandRow, ExpandHeader } from '@island.is/service-portal/core'
 import { CustomerRecordsDetails } from '../../screens/FinanceTransactions/FinanceTransactionsData.types'
 import FinanceTransactionsDetail from '../FinanceTransactionsDetail/FinanceTransactionsDetail'
 
@@ -29,6 +28,7 @@ const FinanceTransactionsTable: FC<Props> = ({ recordsArray }) => {
       <T.Table>
         <ExpandHeader
           data={[
+            { value: '', printHidden: true },
             { value: formatMessage(m.date) },
             { value: formatMessage(m.chargeType) },
             { value: formatMessage(m.feeItem) },

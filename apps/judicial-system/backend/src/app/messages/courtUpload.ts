@@ -11,4 +11,10 @@ export const courtUpload = {
     defaultMessage: 'Úrskurður {courtCaseNumber}',
     description: 'Notaður sem nafn á úrskurði í Auði.',
   }),
+  rulingV2: defineMessage({
+    id: 'judicial.system.backend:court_upload.ruling_v2',
+    defaultMessage:
+      'Úrskurður {courtCaseNumber}{isModifyingRuling, select, true { leiðrétt} other {}}',
+    description: 'Notaður sem nafn á úrskurði í Auði.',
+  }),
 }

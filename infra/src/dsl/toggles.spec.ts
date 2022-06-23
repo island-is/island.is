@@ -11,6 +11,7 @@ const Staging: EnvironmentConfig = {
   type: 'staging',
   featuresOn: [],
   defaultMaxReplicas: 3,
+  defaultMinReplicas: 3,
   releaseName: 'web',
   awsAccountId: '111111',
   awsAccountRegion: 'eu-west-1',
@@ -22,6 +23,7 @@ const Prod: EnvironmentConfig = {
   type: 'prod',
   featuresOn: [],
   defaultMaxReplicas: 3,
+  defaultMinReplicas: 3,
   releaseName: 'web',
   awsAccountId: '111111',
   awsAccountRegion: 'eu-west-1',
@@ -193,8 +195,8 @@ describe('Server-side toggles', () => {
     it('should result in serialization errors when feature is turned on', () => {
       expect(prod.errors).toStrictEqual([
         'Missing settings for service api in env prod. Keys of missing settings: B',
-        'Collisions for environment or secrets for key C',
-        'Collisions for environment or secrets for key B',
+        'Collisions in api for environment or secrets for key C',
+        'Collisions in api for environment or secrets for key B',
       ])
     })
     it('should not affect serialization when feature is not turned on', () => {

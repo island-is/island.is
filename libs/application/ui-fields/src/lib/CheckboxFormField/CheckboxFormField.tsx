@@ -75,7 +75,7 @@ export const CheckboxFormField: FC<Props> = ({
           }
           strong={strong}
           error={error}
-          options={finalOptions.map(({ label, tooltip, ...o }) => ({
+          options={finalOptions?.map(({ label, tooltip, ...o }) => ({
             ...o,
             label: HtmlParser(formatText(label, application, formatMessage)),
             ...(tooltip && {

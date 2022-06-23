@@ -16,8 +16,10 @@ import {
   GetSupportSearchResultsQuery,
   GetSupportSearchResultsQueryVariables,
   SearchableContentTypes,
+  SearchableTags,
   SupportQna,
 } from '@island.is/web/graphql/schema'
+import { getSlugPart } from '@island.is/web/screens/ServiceWeb/utils'
 
 interface SearchInputProps {
   title?: string
@@ -58,6 +60,8 @@ export const SearchInput = ({
   const { linkResolver } = useLinkResolver()
   const Router = useRouter()
 
+  const institutionSlug = getSlugPart(Router.asPath, 2)
+
   const [fetch, { loading, data }] = useLazyQuery<
     GetSupportSearchResultsQuery,
     GetSupportSearchResultsQueryVariables
@@ -66,6 +70,13 @@ export const SearchInput = ({
       updateOptions()
     },
   })
+
+  const institutionSlugBelongsToMannaudstorg = institutionSlug.includes(
+    'mannaudstorg',
+  )
+  const mannaudstorgTag = [
+    { key: 'mannaudstorg', type: SearchableTags.Organization },
+  ]
 
   useDebounce(
     () => {
@@ -80,6 +91,9 @@ export const SearchInput = ({
               query: {
                 queryString,
                 types: [SearchableContentTypes['WebQna']],
+                [institutionSlugBelongsToMannaudstorg
+                  ? 'tags'
+                  : 'excludedTags']: mannaudstorgTag,
               },
             },
           })
@@ -183,8 +197,10 @@ export const SearchInput = ({
       initialInputValue={initialInputValue}
       inputValue={searchTerms}
       onInputValueChange={(value) => {
-        setIsLoading(true)
-        setSearchTerms(value)
+        setSearchTerms((prevValue) => {
+          setIsLoading(value !== prevValue)
+          return value
+        })
       }}
       closeMenuOnSubmit
       onSubmit={(value, selectedOption) => {
@@ -194,8 +210,12 @@ export const SearchInput = ({
           return onSelect(activeItem)
         }
 
+        const pathname = `${linkResolver('serviceweb').href}${
+          institutionSlug ? `/${institutionSlug}` : ''
+        }/leit`
+
         Router.push({
-          pathname: linkResolver('servicewebsearch').href,
+          pathname,
           query: { q: value },
         })
       }}

@@ -131,5 +131,11 @@ export class ApplicationModel implements Application {
   readonly directTaxPayments!: DirectTaxPaymentModel[]
 
   @Field({ nullable: true })
+  readonly hasFetchedDirectTaxPayment!: boolean
+
+  @Field({ nullable: true })
+  readonly spouseHasFetchedDirectTaxPayment!: boolean
+
+  @Field({ nullable: true })
   readonly applicationSystemId?: string
 }

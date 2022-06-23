@@ -869,6 +869,31 @@ describe('MeDelegationsController', () => {
         })
       })
 
+      it("should return 400 Bad Request when scopes don't have validTo set", async () => {
+        // Arrange
+        const model = {
+          toNationalId: nationalRegistryUser.kennitala,
+          scopes: [
+            {
+              name: Scopes[0].name,
+              type: ScopeType.ApiScope,
+            },
+          ],
+        }
+
+        // Act
+        const res = await server.post(path).send(model)
+
+        // Assert
+        expect(res.status).toEqual(400)
+        expect(res.body).toMatchObject({
+          status: 400,
+          type: 'https://httpstatuses.com/400',
+          title: 'Bad Request',
+          detail: ['0.validTo must be a Date instance'],
+        })
+      })
+
       it('should return 400 Bad Request when scopes have a invalid type', async () => {
         // Arrange
         const model = {
@@ -1259,14 +1284,17 @@ describe('MeDelegationsController', () => {
   })
 
   interface DelegationEachType {
-    delegationType: string
+    delegationType?: AuthDelegationType[]
     shouldWork: boolean
   }
   describe.each`
-    delegationType         | shouldWork
-    ${'None'}              | ${false}
-    ${'ProcurationHolder'} | ${true}
-    ${'Custom'}            | ${false}
+    delegationType                     | shouldWork
+    ${[]}                              | ${false}
+    ${['ProcurationHolder']}           | ${true}
+    ${['ProcurationHolder', 'Custom']} | ${true}
+    ${['LegalGuard', 'Custom']}        | ${false}
+    ${['Custom']}                      | ${false}
+    ${undefined}                       | ${false}
   `(
     'with auth (delegation=$delegationType)',
     ({ delegationType, shouldWork }: DelegationEachType) => {
@@ -1277,13 +1305,13 @@ describe('MeDelegationsController', () => {
       beforeAll(async () => {
         // TestApp setup with auth and database
         const testUser =
-          delegationType === 'None'
+          delegationType === []
             ? user
             : {
                 ...user,
+                delegationType,
                 actor: {
                   nationalId: user.nationalId,
-                  delegationType: delegationType as AuthDelegationType,
                   scope: [],
                 },
               }

@@ -151,6 +151,13 @@ export const core = defineMessages({
     defaultMessage: 'Tegund kröfu',
     description: 'Notað fyrir orðið Tegund Kröfu í öllum flæðum.',
   },
+  pastRestrictionCase: {
+    id: 'judicial.system.core:past_restriction_case',
+    defaultMessage:
+      '{caseType, select, ADMISSION_TO_FACILITY {Fyrri vistun} TRAVEL_BAN {Fyrra farbann} other {Fyrri gæsla}}',
+    description: 'Notað fyrir fyrri mál í öllum flæðum.',
+  },
+  // TODO: remove pastCustody and pastTravelBan, use pastRestrictionCase instead
   pastCustody: {
     id: 'judicial.system.core:past_custody',
     defaultMessage: 'Fyrri gæsla',
@@ -175,5 +182,43 @@ export const core = defineMessages({
     id: 'judicial.system.core:update',
     defaultMessage: 'Uppfæra',
     description: 'Notað fyrir orðið Uppfæra í öllum flæðum.',
+  },
+  and: {
+    id: 'judicial.system.core:and',
+    defaultMessage: 'og',
+    description: 'Notað fyrir orðið og',
+  },
+  modify: {
+    id: 'judicial.system.core:modify',
+    defaultMessage: 'leiðrétta',
+    description: 'Notað fyrir orðið "leiðrétta" í öllum flæðum.',
+  },
+  back: {
+    id: 'judicial.system.core:back',
+    defaultMessage: 'Til baka',
+    description: 'Notað fyrir "Til baka" takka í öllum flæðum.',
+  },
+  continue: {
+    id: 'judicial.system.core:continue',
+    defaultMessage: 'Halda áfram',
+    description: 'Notað fyrir "Halda áfram" takka í öllum flæðum.',
+  },
+  headerTipDisclaimer: {
+    id: 'judicial.system.core:header_tip_disclaimer',
+    defaultMessage:
+      'Erindi vegna aðgangs að Réttarvörslugátt sendast á {linkStart}{linkEnd}',
+    description:
+      'Notaður sem skilaboð sem segir hvert á að senda erindi vegna aðgangs í haus í öllum flæðum.',
+  },
+  headerTipDisclaimerDefenders: {
+    id: 'judicial.system.core:header_tip_disclaimer_defenders',
+    defaultMessage: 'Ofangreindar upplýsingar eru sóttar í félagatal LMFÍ',
+    description:
+      'Notaður sem skilaboð sem segir hvaðan upplýsingar í haus eru sóttar í öllum flæðum.',
+  },
+  defender: {
+    id: 'judicial.system.core:defender',
+    defaultMessage: 'lögmaður',
+    description: 'Notað fyrir orðið Lögmaður í öllum flæðum.',
   },
 })

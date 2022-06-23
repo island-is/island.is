@@ -3,6 +3,7 @@ import type {
   DatePickerBackgroundColor,
   InputBackgroundColor,
   BoxProps,
+  SpanType,
 } from '@island.is/island-ui/core/types'
 import { ApolloClient } from '@apollo/client'
 import { FormText, FormTextArray, FormItem } from './Form'
@@ -54,6 +55,7 @@ export interface BaseField extends FormItem {
   readonly children: undefined
   disabled?: boolean
   width?: FieldWidth
+  colSpan?: SpanType
   condition?: Condition
   isPartOfRepeater?: boolean
   defaultValue?: MaybeWithApplicationAndField<unknown>
@@ -77,6 +79,8 @@ export enum FieldTypes {
   KEY_VALUE = 'KEY_VALUE',
   ASYNC_SELECT = 'ASYNC_SELECT',
   PAYMENT_PENDING = 'PAYMENT_PENDING',
+  COMPANY_SEARCH = 'COMPANY_SEARCH',
+  REDIRECT_TO_SERVICE_PORTAL = 'REDIRECT_TO_SERVICE_PORTAL',
 }
 
 export enum FieldComponents {
@@ -92,6 +96,8 @@ export enum FieldComponents {
   SUBMIT = 'SubmitFormField',
   ASYNC_SELECT = 'AsyncSelectFormField',
   PAYMENT_PENDING = 'PaymentPendingField',
+  COMPANY_SEARCH = 'CompanySearchFormField',
+  REDIRECT_TO_SERVICE_PORTAL = 'RedirectToServicePortalFormField',
 }
 
 export interface CheckboxField extends BaseField {
@@ -119,9 +125,11 @@ export interface DateField extends BaseField {
 export interface DescriptionField extends BaseField {
   readonly type: FieldTypes.DESCRIPTION
   component: FieldComponents.DESCRIPTION
-  readonly description: FormText
+  readonly description?: FormText
   tooltip?: FormText
+  titleTooltip?: FormText
   space?: BoxProps['paddingTop']
+  marginBottom?: BoxProps['marginBottom']
   titleVariant?: TitleVariants
 }
 
@@ -142,6 +150,15 @@ export interface SelectField extends BaseField {
   onSelect?(s: SelectOption, cb: (t: unknown) => void): void
   placeholder?: FormText
   backgroundColor?: InputBackgroundColor
+  required?: boolean
+}
+
+export interface CompanySearchField extends BaseField {
+  readonly type: FieldTypes.COMPANY_SEARCH
+  component: FieldComponents.COMPANY_SEARCH
+  placeholder?: FormText
+  setLabelToDataSchema?: boolean
+  shouldIncludeIsatNumber?: boolean
 }
 
 export interface AsyncSelectField extends BaseField {
@@ -153,6 +170,7 @@ export interface AsyncSelectField extends BaseField {
   loadingError?: FormText
   backgroundColor?: InputBackgroundColor
   isSearchable?: boolean
+  required?: boolean
 }
 
 export interface TextField extends BaseField {
@@ -182,6 +200,7 @@ export interface FileUploadField extends BaseField {
   readonly uploadMultiple?: boolean
   readonly uploadAccept?: string
   readonly maxSize?: number
+  readonly maxSizeErrorText?: FormText
   readonly forImageUpload?: boolean
 }
 
@@ -213,6 +232,11 @@ export interface CustomField extends BaseField {
   childInputIds?: string[]
 }
 
+export interface RedirectToServicePortalField extends BaseField {
+  readonly type: FieldTypes.REDIRECT_TO_SERVICE_PORTAL
+  component: FieldComponents.REDIRECT_TO_SERVICE_PORTAL
+}
+
 export type Field =
   | CheckboxField
   | CustomField
@@ -226,3 +250,5 @@ export type Field =
   | DividerField
   | SubmitField
   | AsyncSelectField
+  | CompanySearchField
+  | RedirectToServicePortalField

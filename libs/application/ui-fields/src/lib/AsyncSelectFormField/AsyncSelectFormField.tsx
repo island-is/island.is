@@ -36,6 +36,7 @@ export const AsyncSelectFormField: FC<Props> = ({
     onSelect,
     backgroundColor,
     isSearchable,
+    required = false,
   } = field
   const { formatMessage } = useLocale()
   const apolloClient = useApolloClient()
@@ -66,6 +67,7 @@ export const AsyncSelectFormField: FC<Props> = ({
 
       <Box paddingTop={2}>
         <SelectController
+          required={required}
           defaultValue={getDefaultValue(field, application)}
           label={formatText(title, application, formatMessage)}
           name={id}

@@ -33,3 +33,8 @@ export const code = style({
   minWidth: 180,
   height: 180,
 })
+
+export const loader = style({
+  minHeight: 24,
+  minWidth: 24,
+})

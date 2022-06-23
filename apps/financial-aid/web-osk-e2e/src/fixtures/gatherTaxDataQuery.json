@@ -4,7 +4,8 @@
       "personalTaxReturn": null
     },
     "municipalitiesDirectTaxPayments": {
-      "directTaxPayments": []
+      "directTaxPayments": [],
+      "success": true
     }
   }
 }

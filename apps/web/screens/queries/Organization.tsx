@@ -9,6 +9,7 @@ export const GET_ORGANIZATIONS_QUERY = gql`
         slug
         title
         description
+        showsUpOnTheOrganizationsPage
         logo {
           title
           url
@@ -28,10 +29,22 @@ export const GET_ORGANIZATION_QUERY = gql`
     getOrganization(input: $input) {
       id
       slug
+      email
+      phone
       title
       logo {
         title
         url
+      }
+      publishedMaterialSearchFilterGenericTags {
+        id
+        title
+        slug
+        genericTagGroup {
+          id
+          title
+          slug
+        }
       }
       link
       tag {
@@ -39,6 +52,9 @@ export const GET_ORGANIZATION_QUERY = gql`
         title
       }
       description
+      namespace {
+        fields
+      }
     }
   }
 `
@@ -50,6 +66,12 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
       slug
       title
       description
+      defaultHeaderImage {
+        url
+        contentType
+        width
+        height
+      }
       alertBanner {
         showAlertBanner
         bannerVariant
@@ -81,8 +103,11 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
         }
       }
       organization {
+        id
         title
         slug
+        email
+        phone
         logo {
           url
         }
@@ -121,6 +146,12 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
         title
         content
         type
+        image {
+          url
+          title
+          width
+          height
+        }
         link {
           text
           url
@@ -130,6 +161,8 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
       themeProperties {
         gradientStartColor
         gradientEndColor
+        backgroundColor
+        darkText
       }
       externalLinks {
         text
@@ -158,7 +191,6 @@ export const GET_ORGANIZATION_SUBPAGE_QUERY = gql`
       }
       sliceCustomRenderer
       sliceExtraText
-      parentSubpage
       featuredImage {
         url
         title

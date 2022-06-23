@@ -7,7 +7,7 @@ import { m } from '../../../../lib/messages'
 import { PropertyTableRow } from '../PropertyTableRow'
 
 interface PropertyTableProps {
-  myProperties: [PropertyDetail]
+  myProperties: [PropertyDetail] | undefined
   selectHandler: (property: PropertyDetail | undefined) => void
   selectedPropertyNumber: string | undefined
 }
@@ -45,8 +45,8 @@ export const PropertyTable: FC<
             </T.Row>
           </T.Head>
           <T.Body>
-            {myProperties.map((p: PropertyDetail) => {
-              return (
+            {myProperties &&
+              myProperties.map((p: PropertyDetail) => (
                 <PropertyTableRow
                   application={application}
                   field={field}
@@ -55,8 +55,7 @@ export const PropertyTable: FC<
                   propertyInfo={p}
                   selectedPropertyNumber={selectedPropertyNumber}
                 />
-              )
-            })}
+              ))}
           </T.Body>
         </T.Table>
       </Box>

@@ -181,7 +181,7 @@ const fromDir = async (startPath, res = [], readmeAsRoot = false) => {
       const navigationTitle = updateAndReturnNavigationOverride(lines) ?? title
 
       if (!navigationTitle) {
-        throw new Error(`Could not find a title in ${orderedFiles[file]}`)
+        throw new Error(`Could not find a title in ${filename}`)
       }
 
       const updatedFile = lines.join('\n')

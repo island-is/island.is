@@ -1,7 +1,7 @@
-import { RolesRule, StaffRole } from '@island.is/financial-aid/shared/lib'
+import { MunicipalitiesFinancialAidScope } from '@island.is/auth/scopes'
+import { StaffRole } from '@island.is/financial-aid/shared/lib'
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
-import { getUserFromContext } from '../lib'
 import { StaffService } from '../modules/staff'
 
 @Injectable()
@@ -11,10 +11,13 @@ export class StaffGuard implements CanActivate {
     private reflector: Reflector,
   ) {}
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const user = getUserFromContext(context)
     const request = context.switchToHttp().getRequest()
+    const user = request.user
 
-    if (!user || user.service !== RolesRule.VEITA) {
+    if (
+      !user ||
+      !user.scope.includes(MunicipalitiesFinancialAidScope.employee)
+    ) {
       return false
     }
 

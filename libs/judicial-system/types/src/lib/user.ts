@@ -4,8 +4,9 @@ export enum UserRole {
   PROSECUTOR = 'PROSECUTOR',
   REGISTRAR = 'REGISTRAR',
   JUDGE = 'JUDGE',
-  ADMIN = 'ADMIN',
+  ADMIN = 'ADMIN', // Does not exist in the database
   STAFF = 'STAFF',
+  DEFENDER = 'DEFENDER', // Does not exist in the database
 }
 
 export interface User {
@@ -44,3 +45,7 @@ export interface UpdateUser {
 }
 
 export const courtRoles = [UserRole.JUDGE, UserRole.REGISTRAR]
+
+export function isCourtRole(role: UserRole): boolean {
+  return courtRoles.includes(role)
+}

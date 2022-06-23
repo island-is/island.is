@@ -75,7 +75,7 @@ export class VerifyPkPassInput {
 }
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(ApiScope.internal)
+@Scopes(ApiScope.internal, ApiScope.licenses)
 @Resolver()
 @Audit({ namespace: '@island.is/api/license-service' })
 export class MainResolver {
@@ -154,6 +154,7 @@ export class MainResolver {
     return { pkpassQRCode }
   }
 
+  @Scopes(ApiScope.internal, ApiScope.licensesVerify)
   @Mutation(() => GenericPkPassVerification)
   @Audit()
   async verifyPkPass(

@@ -74,8 +74,7 @@ describe('StaffController - Get staff by id', () => {
       id,
       name: 'Staff Tester',
       nationalId: '0000000000',
-      municipalityId: '0',
-      municipalityName: 'Someplace',
+      municipalityIds: ['0'],
       roles: [StaffRole.EMPLOYEE],
       active: true,
     } as StaffModel

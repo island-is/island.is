@@ -1,18 +1,11 @@
 import formatISO from 'date-fns/formatISO'
+import compareAsc from 'date-fns/compareAsc'
 
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 import type { Case, UpdateCase } from '@island.is/judicial-system/types'
 
-import {
-  padTimeWithZero,
-  parseArray,
-  parseBoolean,
-  parseNull,
-  parseString,
-  parseTime,
-  replaceTabs,
-} from './formatters'
+import { padTimeWithZero, parseTime, replaceTabs } from './formatters'
 import { validate, Validation } from './validate'
 
 export const removeTabsValidateAndSet = (
@@ -165,7 +158,7 @@ export const validateAndSendToServer = (
   validateAndSetErrorMessage(validations, value, setErrorMessage)
 
   if (theCase.id !== '') {
-    updateCase(theCase.id, parseString(field, value))
+    updateCase(theCase.id, { [field]: value })
   }
 }
 
@@ -193,7 +186,7 @@ export const validateAndSendTimeToServer = (
     const dateMinutes = parseTime(currentValue, paddedTime)
 
     if (theCase.id !== '') {
-      updateCase(theCase.id, parseString(field, dateMinutes))
+      updateCase(theCase.id, { [field]: dateMinutes })
     }
   }
 }
@@ -205,19 +198,29 @@ export const setAndSendToServer = (
   setCase: (value: React.SetStateAction<Case>) => void,
   updateCase: (id: string, updateCase: UpdateCase) => void,
 ) => {
-  setCase({
-    ...theCase,
-    [field]: value,
-  })
+  const newCase = { ...theCase, [field]: value }
+  setCase(newCase)
+
   if (theCase.id !== '') {
-    if (typeof value === 'string') {
-      return updateCase(theCase.id, parseString(field, value))
-    } else if (typeof value === 'boolean') {
-      return updateCase(theCase.id, parseBoolean(field, value))
+    if (typeof value === 'string' || typeof value === 'boolean') {
+      updateCase(theCase.id, { [field]: value })
+      return newCase
     } else {
-      return updateCase(theCase.id, parseNull(field))
+      updateCase(newCase.id, { [field]: null })
+      return newCase
     }
   }
+}
+
+/**If entry is included in values then it is removed
+ * otherwise it is appended
+ */
+export function toggleInArray<T>(values: T[] | undefined, entry: T) {
+  if (!values) return [entry]
+
+  return values.includes(entry)
+    ? values.filter((x) => x !== entry)
+    : [...values, entry]
 }
 
 export const setCheckboxAndSendToServer = (
@@ -243,10 +246,22 @@ export const setCheckboxAndSendToServer = (
   })
 
   if (theCase.id !== '') {
-    updateCase(theCase.id, parseArray(field, checks))
+    updateCase(theCase.id, { [field]: checks })
   }
 }
 
 export const getTimeFromDate = (date: string | undefined) => {
   return date?.includes('T') ? formatDate(date, TIME_FORMAT) : undefined
+}
+
+export const hasDateChanged = (
+  currentDate: string | null | undefined,
+  newDate: Date | undefined,
+) => {
+  if (!currentDate && newDate) return true
+
+  if (currentDate && newDate) {
+    return compareAsc(newDate, new Date(currentDate)) !== 0
+  }
+  return false
 }

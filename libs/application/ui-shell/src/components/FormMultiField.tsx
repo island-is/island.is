@@ -50,7 +50,7 @@ const FormMultiField: FC<{
       />
 
       {description && (
-        <GridColumn span={['1/1', '1/1', '1/1']}>
+        <GridColumn>
           <FieldDescription
             description={formatText(description, application, formatMessage)}
           />
@@ -74,7 +74,7 @@ const FormMultiField: FC<{
         return (
           <GridColumn
             key={field.id || index}
-            span={['1/1', '1/1', span]}
+            span={field?.colSpan ? field?.colSpan : ['1/1', '1/1', span]}
             paddingBottom={index === children.length - 1 ? 0 : space}
           >
             <Box>

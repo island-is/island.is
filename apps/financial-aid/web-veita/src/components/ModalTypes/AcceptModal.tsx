@@ -1,11 +1,10 @@
-import React, { useContext, useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 
 import {
   InputModal,
   NumberInput,
 } from '@island.is/financial-aid-web/veita/src/components'
-
-import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
+import { useRouter } from 'next/router'
 import {
   aidCalculator,
   Amount,
@@ -13,20 +12,21 @@ import {
   calculateTaxOfAmount,
   FamilyStatus,
   HomeCircumstances,
+  Municipality,
   showSpouseData,
 } from '@island.is/financial-aid/shared/lib'
 import { Box, Button, Input, Text } from '@island.is/island-ui/core'
 import cn from 'classnames'
 
 import * as modalStyles from './ModalTypes.css'
-import { useRouter } from 'next/router'
 
 interface Props {
   onCancel: (event: React.MouseEvent<HTMLButtonElement>) => void
-  onSaveApplication: (amount: Amount) => void
+  onSaveApplication: (amount: Amount, comment: string) => void
   isModalVisable: boolean
   homeCircumstances: HomeCircumstances
   familyStatus: FamilyStatus
+  applicationMunicipality: Municipality
 }
 
 interface calculationsState {
@@ -38,6 +38,7 @@ interface calculationsState {
   hasError: boolean
   hasSubmitError: boolean
   deductionFactor: Array<{ description: string; amount: number }>
+  comment: string
 }
 
 const AcceptModal = ({
@@ -46,29 +47,32 @@ const AcceptModal = ({
   isModalVisable,
   homeCircumstances,
   familyStatus,
+  applicationMunicipality,
 }: Props) => {
   const router = useRouter()
 
   const maximumInputLength = 6
 
-  const { municipality } = useContext(AdminContext)
-
   const aidAmount = useMemo(() => {
-    if (municipality && homeCircumstances) {
+    if (applicationMunicipality && homeCircumstances) {
       return aidCalculator(
         homeCircumstances,
         showSpouseData[familyStatus]
-          ? municipality.cohabitationAid
-          : municipality.individualAid,
+          ? applicationMunicipality.cohabitationAid
+          : applicationMunicipality.individualAid,
       )
     }
-  }, [homeCircumstances, municipality])
+  }, [homeCircumstances, applicationMunicipality])
 
   if (!aidAmount) {
     return (
-      <Text color="red400">
-        Útreikingur fyrir aðstoð misstókst, vinsamlegast reyndu aftur
-      </Text>
+      <>
+        {isModalVisable && (
+          <Text color="red400">
+            Útreikingur fyrir aðstoð misstókst, vinsamlegast reyndu aftur
+          </Text>
+        )}
+      </>
     )
   }
 
@@ -81,6 +85,7 @@ const AcceptModal = ({
     deductionFactor: [],
     hasError: false,
     hasSubmitError: false,
+    comment: '',
   })
 
   const sumValues = state.deductionFactor.reduce(
@@ -112,16 +117,19 @@ const AcceptModal = ({
       return
     }
 
-    onSaveApplication({
-      applicationId: router.query.id as string,
-      aidAmount: state.amount,
-      income: state.income,
-      personalTaxCredit: state.personalTaxCreditPercentage ?? 0,
-      spousePersonalTaxCredit: state.secondPersonalTaxCredit,
-      tax: taxAmount,
-      finalAmount: finalAmount,
-      deductionFactors: state.deductionFactor,
-    })
+    onSaveApplication(
+      {
+        applicationId: router.query.id as string,
+        aidAmount: state.amount,
+        income: state.income,
+        personalTaxCredit: state.personalTaxCreditPercentage ?? 0,
+        spousePersonalTaxCredit: state.secondPersonalTaxCredit,
+        tax: taxAmount,
+        finalAmount: finalAmount,
+        deductionFactors: state.deductionFactor,
+      },
+      state.comment,
+    )
   }
 
   return (
@@ -311,18 +319,36 @@ const AcceptModal = ({
           variant="text"
         >
           {state.showSecondPersonalTaxCredit
-            ? 'Fjarlægðu skattkorti'
-            : 'Bættu við skattkorti'}
+            ? 'Fjarlægja persónuafslátt'
+            : 'Nýta persónuafslátt maka'}
         </Button>
       </Box>
 
-      <Box marginBottom={[3, 3, 5]}>
+      <Box marginBottom={3}>
         <Input
           label="Skattur "
           id="tax"
           name="tax"
           value={taxAmount.toLocaleString('de-DE')}
           readOnly={true}
+        />
+      </Box>
+
+      <Box marginBottom={[3, 3, 5]}>
+        <Input
+          label="Skýring"
+          placeholder="Sláðu inn skýringu ef þarf"
+          id="comment"
+          name="comment"
+          textarea
+          value={state.comment}
+          onChange={(e) => {
+            setState({
+              ...state,
+              comment: e.target.value,
+            })
+          }}
+          backgroundColor="blue"
         />
       </Box>
 
@@ -344,6 +370,7 @@ const AcceptModal = ({
       <Box
         display="flex"
         justifyContent="spaceBetween"
+        alignItems="center"
         background="blue100"
         borderTopWidth="standard"
         borderBottomWidth="standard"

@@ -1,5 +1,5 @@
 import { Input } from '@island.is/island-ui/core'
-import React, { useState, useCallback, ChangeEvent } from 'react'
+import React, { useState, useCallback, ChangeEvent, useEffect } from 'react'
 
 interface Props {
   id: string
@@ -13,7 +13,7 @@ interface Props {
   errorMessage?: string
 }
 
-export default function NumberInput({
+export const NumberInput = ({
   maximumInputLength,
   onUpdate,
   id,
@@ -23,11 +23,17 @@ export default function NumberInput({
   value,
   hasError = false,
   errorMessage,
-}: Props) {
+}: Props) => {
   const sanitizeNumber = (n: string) => n.replace(/[^\d]/g, '')
   const formatNumber = (n?: string) =>
     n ? Number(n).toLocaleString('de-DE') : ''
   const [text, setText] = useState<string>(formatNumber(value))
+
+  useEffect(() => {
+    if (value) {
+      setText(formatNumber(value))
+    }
+  }, [value])
 
   const handleChange = useCallback(
     (ev: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -57,3 +63,5 @@ export default function NumberInput({
     />
   )
 }
+
+export default NumberInput

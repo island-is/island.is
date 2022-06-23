@@ -90989,7 +90989,7 @@ class LocalRunner {
         });
     }
     getLastGoodBranchBuildRun(branch, workflowId, candidateCommits) {
-        var e_1, _a;
+        var e_1, _a, e_2, _b;
         return __awaiter(this, void 0, void 0, function* () {
             const branchName = branch.replace('origin/', '');
             app(`Getting last good branch (push) build for branch ${branchName} with workflow ${workflowId}`);
@@ -91017,6 +91017,33 @@ class LocalRunner {
                     if (runsIterator_1_1 && !runsIterator_1_1.done && (_a = runsIterator_1.return)) yield _a.call(runsIterator_1);
                 }
                 finally { if (e_1) throw e_1.error; }
+            }
+            if (workflowRuns.length === 0) {
+                // Attempting to use the create event if no push events. Necessary for release branches.
+                const runsIteratorForCreateEvents = this.octokit.paginate.iterator('GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}/runs', {
+                    owner,
+                    repo,
+                    branch: branchName,
+                    workflow_id: `${workflowId}.yml`,
+                    event: 'create',
+                    status: 'success',
+                });
+                try {
+                    for (var runsIteratorForCreateEvents_1 = __asyncValues(runsIteratorForCreateEvents), runsIteratorForCreateEvents_1_1; runsIteratorForCreateEvents_1_1 = yield runsIteratorForCreateEvents_1.next(), !runsIteratorForCreateEvents_1_1.done;) {
+                        const workflow_runs = runsIteratorForCreateEvents_1_1.value;
+                        app(`Retrieved ${workflow_runs.data.length} workflow runs`);
+                        workflowRuns.push(...workflow_runs.data.filter((run) => candidateCommits.includes(run.head_sha.slice(0, 7))));
+                        if (workflowRuns.length > 10)
+                            break;
+                    }
+                }
+                catch (e_2_1) { e_2 = { error: e_2_1 }; }
+                finally {
+                    try {
+                        if (runsIteratorForCreateEvents_1_1 && !runsIteratorForCreateEvents_1_1.done && (_b = runsIteratorForCreateEvents_1.return)) yield _b.call(runsIteratorForCreateEvents_1);
+                    }
+                    finally { if (e_2) throw e_2.error; }
+                }
             }
             app(`Got GHA information for ${workflowRuns.length} workflows`);
             let sortedWorkflowRuns = workflowRuns
@@ -91053,7 +91080,7 @@ class LocalRunner {
         }
     }
     getLastGoodPRRun(branch, workflowId, commits) {
-        var e_2, _a;
+        var e_3, _a;
         return __awaiter(this, void 0, void 0, function* () {
             const branchName = branch.replace('origin/', '');
             app(`Getting last good PR (pull_request) run for branch ${branchName} with workflow ${workflowId}`);
@@ -91075,12 +91102,12 @@ class LocalRunner {
                         break;
                 }
             }
-            catch (e_2_1) { e_2 = { error: e_2_1 }; }
+            catch (e_3_1) { e_3 = { error: e_3_1 }; }
             finally {
                 try {
                     if (runsIterator_2_1 && !runsIterator_2_1.done && (_a = runsIterator_2.return)) yield _a.call(runsIterator_2);
                 }
-                finally { if (e_2) throw e_2.error; }
+                finally { if (e_3) throw e_3.error; }
             }
             app(`Got GHA information for ${workflowRuns.length} workflows`);
             let sortedWorkflowRuns = workflowRuns
@@ -91143,7 +91170,7 @@ class LocalRunner {
         });
     }
     getJobs(jobs_url) {
-        var e_3, _a;
+        var e_4, _a;
         return __awaiter(this, void 0, void 0, function* () {
             const runs = [];
             const runsIterator = this.octokit.paginate.iterator(jobs_url, {});
@@ -91154,12 +91181,12 @@ class LocalRunner {
                     runs.push(...jobs.data);
                 }
             }
-            catch (e_3_1) { e_3 = { error: e_3_1 }; }
+            catch (e_4_1) { e_4 = { error: e_4_1 }; }
             finally {
                 try {
                     if (runsIterator_3_1 && !runsIterator_3_1.done && (_a = runsIterator_3.return)) yield _a.call(runsIterator_3);
                 }
-                finally { if (e_3) throw e_3.error; }
+                finally { if (e_4) throw e_4.error; }
             }
             return runs;
         });

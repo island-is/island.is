@@ -16,7 +16,7 @@ describe('General petition application template', () => {
         GeneralPetitionApplicationTemplate,
       )
 
-      const [hasChanged, newState, newApplication] = helper.changeState({
+      const [hasChanged, newState, _] = helper.changeState({
         type: DefaultEvents.SUBMIT,
       })
 

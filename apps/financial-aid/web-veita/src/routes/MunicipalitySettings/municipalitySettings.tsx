@@ -5,18 +5,18 @@ import {
   MunicipalityAdminSettings,
 } from '@island.is/financial-aid-web/veita/src/components'
 
-import { useMunicipality } from '@island.is/financial-aid/shared/components'
+import { useMunicipalities } from '@island.is/financial-aid-web/veita/src/utils/useMunicipalities'
 
 export const MunicipalitySettings = () => {
-  const { municipality, error, loading } = useMunicipality()
+  const { municipality, error, loading } = useMunicipalities()
 
   return (
     <LoadingContainer
       isLoading={loading}
       loader={<ApplicationOverviewSkeleton />}
     >
-      {municipality && (
-        <MunicipalityAdminSettings municipality={municipality} />
+      {municipality.length > 0 && (
+        <MunicipalityAdminSettings currentMunicipality={municipality[0]} />
       )}
 
       {error && (

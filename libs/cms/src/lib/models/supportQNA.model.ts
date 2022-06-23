@@ -1,7 +1,8 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 
-import { ISupportQna } from '../generated/contentfulTypes'
+import { ILink, ISupportQna } from '../generated/contentfulTypes'
 import { mapDocument, SliceUnion } from '../unions/slice.union'
+import { Link, mapLink } from './link.model'
 
 import { mapOrganization, Organization } from './organization.model'
 import { mapSupportCategory, SupportCategory } from './supportCategory.model'
@@ -35,6 +36,12 @@ export class SupportQNA {
 
   @Field()
   importance!: number
+
+  @Field(() => [Link])
+  relatedLinks?: Link[]
+
+  @Field()
+  contactLink?: string
 }
 
 export const mapSupportQNA = ({ fields, sys }: ISupportQna): SupportQNA => ({
@@ -50,4 +57,35 @@ export const mapSupportQNA = ({ fields, sys }: ISupportQna): SupportQNA => ({
     ? mapSupportSubCategory(fields.subCategory)
     : null,
   importance: fields.importance ?? 0,
+  relatedLinks: fields.relatedLinks
+    ? fields.relatedLinks.map((link) => {
+        if (link.sys?.contentType?.sys?.id === 'link') {
+          return mapLink(link as ILink)
+        }
+        const supportQnA = link as ISupportQna
+        return mapLink(convertSupportQnAToLink(supportQnA))
+      })
+    : [],
+  contactLink: fields.contactLink ?? '',
 })
+
+const convertSupportQnAToLink = (supportQnA: ISupportQna) => {
+  return {
+    sys: {
+      ...supportQnA.sys,
+      contentType: {
+        sys: {
+          id: 'link',
+          linkType: 'ContentType',
+          type: 'Link',
+        },
+      },
+    },
+    fields: {
+      text: supportQnA.fields.question,
+      url: `/adstod/${supportQnA.fields.organization?.fields?.slug ?? ''}/${
+        supportQnA.fields.category?.fields?.slug ?? ''
+      }?q=${supportQnA.fields?.slug ?? ''}`,
+    },
+  } as ILink
+}

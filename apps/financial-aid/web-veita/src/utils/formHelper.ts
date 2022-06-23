@@ -3,7 +3,6 @@ import differenceInHours from 'date-fns/differenceInHours'
 import differenceInDays from 'date-fns/differenceInDays'
 import differenceInYears from 'date-fns/differenceInYears'
 import differenceInWeeks from 'date-fns/differenceInWeeks'
-
 import { ApplicationState } from '@island.is/financial-aid/shared/lib'
 
 export const isPluralInIcelandic = (value: number): boolean =>

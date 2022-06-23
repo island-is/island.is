@@ -10,6 +10,7 @@ interface SearchSectionProps {
   logoTitle?: string
   logoUrl?: string
   textMode?: TextModes
+  searchPlaceholder?: string
 }
 
 export const SearchSection = ({
@@ -17,6 +18,7 @@ export const SearchSection = ({
   logoTitle = '',
   logoUrl,
   textMode,
+  searchPlaceholder,
 }: SearchSectionProps) => {
   const dark = textMode === 'dark'
 
@@ -58,7 +60,7 @@ export const SearchSection = ({
           </Box>
         </>
       )}
-      <ServiceWebSearchInput />
+      <ServiceWebSearchInput placeholder={searchPlaceholder} />
     </Box>
   )
 }

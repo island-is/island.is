@@ -1,11 +1,18 @@
 import { months } from './const'
 
 import React from 'react'
-import { NationalRegistryData } from './interfaces'
-import { StaffRole } from './enums'
+import { DirectTaxPayment, NationalRegistryData } from './interfaces'
+import { StaffRole, UserType } from './enums'
 
 export const getFileType = (fileName: string) => {
   return fileName?.substring(fileName.lastIndexOf('.') + 1)
+}
+export const isImage = (filename: string): boolean => {
+  const imagesFileExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp']
+
+  const extension = filename.split('.').pop()?.toLowerCase() || ''
+
+  return imagesFileExtensions.includes(extension)
 }
 
 export const encodeFilename = (filename: string) =>
@@ -93,5 +100,24 @@ export const scrollToId = (id: string) => {
   const element = document.getElementById(id)
   element?.scrollIntoView({
     behavior: 'smooth',
+  })
+}
+
+export const capitalizeFirstLetter = (text: string) => {
+  return text.charAt(0).toUpperCase() + text.slice(1)
+}
+
+export const addUserTypeDirectPayments = (
+  userType: UserType,
+  directTaxPayments?: DirectTaxPayment[],
+) => {
+  if (!directTaxPayments) {
+    return []
+  }
+  return directTaxPayments.map((el) => {
+    return {
+      ...el,
+      userType,
+    }
   })
 }

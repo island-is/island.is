@@ -31,7 +31,7 @@ export const EducationOverview: ServicePortalModuleComponent = () => {
             defaultMessage:
               'Hér getur þú fundið yfirlit yfir leyfisbréf og vottorð til starfsréttinda.',
           }),
-          image: './assets/images/educationLicense.svg',
+          image: './assets/images/education.svg',
           link: {
             title: defineMessage({
               id: 'sp.education:license-link-title',

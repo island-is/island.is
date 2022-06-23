@@ -3,10 +3,18 @@ import type { Institution } from './institution'
 import type { Notification } from './notification'
 import type { CaseFile } from './file'
 import type { User } from './user'
+import type { CourtDocument } from './courtDocument'
+
+export enum CaseOrigin {
+  UNKNOWN = 'UNKNOWN',
+  RVG = 'RVG',
+  LOKE = 'LOKE',
+}
 
 export enum CaseType {
   CUSTODY = 'CUSTODY',
   TRAVEL_BAN = 'TRAVEL_BAN',
+  ADMISSION_TO_FACILITY = 'ADMISSION_TO_FACILITY',
   SEARCH_WARRANT = 'SEARCH_WARRANT',
   BANKING_SECRECY_WAIVER = 'BANKING_SECRECY_WAIVER',
   PHONE_TAPPING = 'PHONE_TAPPING',
@@ -18,19 +26,11 @@ export enum CaseType {
   BODY_SEARCH = 'BODY_SEARCH',
   INTERNET_USAGE = 'INTERNET_USAGE',
   RESTRAINING_ORDER = 'RESTRAINING_ORDER',
+  EXPULSION_FROM_HOME = 'EXPULSION_FROM_HOME',
   ELECTRONIC_DATA_DISCOVERY_INVESTIGATION = 'ELECTRONIC_DATA_DISCOVERY_INVESTIGATION',
   VIDEO_RECORDING_EQUIPMENT = 'VIDEO_RECORDING_EQUIPMENT',
   OTHER = 'OTHER',
 }
-
-export const caseTypesWithMultipleDefendants = [
-  CaseType.SEARCH_WARRANT,
-  CaseType.BANKING_SECRECY_WAIVER,
-  CaseType.SOUND_RECORDING_EQUIPMENT,
-  CaseType.PHONE_TAPPING,
-  CaseType.TRACKING_EQUIPMENT,
-  CaseType.VIDEO_RECORDING_EQUIPMENT,
-]
 
 export enum CaseState {
   NEW = 'NEW',
@@ -72,7 +72,6 @@ export enum CaseCustodyRestrictions {
   COMMUNICATION = 'COMMUNICATION',
   MEDIA = 'MEDIA',
   ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION = 'ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION',
-  ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT = 'ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT',
   WORKBAN = 'WORKBAN',
 }
 
@@ -101,12 +100,14 @@ export interface Case {
   id: string
   created: string
   modified: string
+  origin: CaseOrigin
   type: CaseType
   description?: string
   state: CaseState
   policeCaseNumber: string
   defendants?: Defendant[]
   defenderName?: string
+  defenderNationalId?: string
   defenderEmail?: string
   defenderPhoneNumber?: string
   sendRequestToDefender?: boolean
@@ -143,7 +144,7 @@ export interface Case {
   isClosedCourtHidden?: boolean
   courtAttendees?: string
   prosecutorDemands?: string
-  courtDocuments?: string[]
+  courtDocuments?: CourtDocument[]
   sessionBookings?: string
   courtCaseFacts?: string
   introduction?: string
@@ -175,6 +176,9 @@ export interface Case {
   notifications?: Notification[]
   caseFiles?: CaseFile[]
   caseModifiedExplanation?: string
+  rulingModifiedHistory?: string
+  caseResentExplanation?: string
+  seenByDefender?: string
 }
 
 export interface CreateCase {
@@ -182,10 +186,10 @@ export interface CreateCase {
   description?: string
   policeCaseNumber: string
   defenderName?: string
+  defenderNationalId?: string
   defenderEmail?: string
   defenderPhoneNumber?: string
   sendRequestToDefender?: boolean
-  courtId?: string
   leadInvestigator?: string
 }
 
@@ -194,6 +198,7 @@ export interface UpdateCase {
   description?: string
   policeCaseNumber?: string
   defenderName?: string
+  defenderNationalId?: string
   defenderEmail?: string
   defenderPhoneNumber?: string
   sendRequestToDefender?: boolean
@@ -226,9 +231,10 @@ export interface UpdateCase {
   courtRoom?: string
   courtStartDate?: string
   courtEndTime?: string
+  isClosedCourtHidden?: boolean
   courtAttendees?: string
   prosecutorDemands?: string
-  courtDocuments?: string[]
+  courtDocuments?: CourtDocument[]
   sessionBookings?: string
   courtCaseFacts?: string
   introduction?: string
@@ -249,6 +255,9 @@ export interface UpdateCase {
   registrarId?: string
   judgeId?: string
   caseModifiedExplanation?: string
+  rulingModifiedHistory?: string
+  caseResentExplanation?: string
+  seenByDefender?: string
 }
 
 export interface TransitionCase {
@@ -267,7 +276,11 @@ export interface SignatureConfirmationResponse {
   message?: string
 }
 
-export const restrictionCases = [CaseType.CUSTODY, CaseType.TRAVEL_BAN]
+export const restrictionCases = [
+  CaseType.CUSTODY,
+  CaseType.TRAVEL_BAN,
+  CaseType.ADMISSION_TO_FACILITY,
+]
 
 export const investigationCases = [
   CaseType.SEARCH_WARRANT,
@@ -281,6 +294,7 @@ export const investigationCases = [
   CaseType.BODY_SEARCH,
   CaseType.INTERNET_USAGE,
   CaseType.RESTRAINING_ORDER,
+  CaseType.EXPULSION_FROM_HOME,
   CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION,
   CaseType.VIDEO_RECORDING_EQUIPMENT,
   CaseType.OTHER,
@@ -296,10 +310,6 @@ export function isInvestigationCase(type?: CaseType): boolean {
 
 export function isAcceptingCaseDecision(decision?: CaseDecision): boolean {
   return Boolean(decision && acceptedCaseDecisions.includes(decision))
-}
-
-export function isCaseTypeWithMultipleDefendantsSupport(caseType: CaseType) {
-  return caseTypesWithMultipleDefendants.includes(caseType)
 }
 
 export const completedCaseStates = [

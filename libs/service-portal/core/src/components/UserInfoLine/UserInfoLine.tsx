@@ -29,6 +29,7 @@ interface Props {
   content?: string | JSX.Element
   renderContent?: () => JSX.Element
   loading?: boolean
+  warning?: boolean
   labelColumnSpan?: GridColumnProps['span']
   valueColumnSpan?: GridColumnProps['span']
   editColumnSpan?: GridColumnProps['span']
@@ -54,6 +55,7 @@ export const UserInfoLine: FC<Props> = ({
   tooltip,
   paddingY = 2,
   paddingBottom,
+  warning,
 }) => {
   const trackExternalLinkClick = () => {
     servicePortalOutboundLink()
@@ -68,7 +70,7 @@ export const UserInfoLine: FC<Props> = ({
       paddingRight={4}
     >
       {title && (
-        <Text variant="eyebrow" paddingBottom={titlePadding}>
+        <Text variant="eyebrow" color="purple400" paddingBottom={titlePadding}>
           {title}
         </Text>
       )}
@@ -100,7 +102,9 @@ export const UserInfoLine: FC<Props> = ({
             ) : renderContent ? (
               renderContent()
             ) : (
-              <Text variant="default">{content}</Text>
+              <Text color={warning ? 'red600' : undefined} variant="default">
+                {content}
+              </Text>
             )}
           </Box>
         </GridColumn>

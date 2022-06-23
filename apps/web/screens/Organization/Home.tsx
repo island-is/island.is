@@ -18,10 +18,7 @@ import {
   SearchBox,
 } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
-import getConfig from 'next/config'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
-
-const { publicRuntimeConfig } = getConfig()
 
 interface HomeProps {
   organizationPage: Query['getOrganizationPage']
@@ -40,11 +37,6 @@ const WITH_SEARCH = [
 ]
 
 const Home: Screen<HomeProps> = ({ organizationPage, namespace }) => {
-  const { disableSyslumennPage: disablePage } = publicRuntimeConfig
-  if (disablePage === 'true') {
-    throw new CustomNextError(404, 'Not found')
-  }
-
   const n = useNamespace(namespace)
   useContentfulId(organizationPage.id)
 
@@ -132,7 +124,7 @@ Home.getInitialProps = async ({ apolloClient, locale, query }) => {
         query: GET_NAMESPACE_QUERY,
         variables: {
           input: {
-            namespace: 'Syslumenn',
+            namespace: 'OrganizationPages',
             lang: locale,
           },
         },
@@ -152,7 +144,7 @@ Home.getInitialProps = async ({ apolloClient, locale, query }) => {
     organizationPage: getOrganizationPage,
     namespace,
     showSearchInHeader: false,
-    ...getThemeConfig(getOrganizationPage.theme),
+    ...getThemeConfig(getOrganizationPage.theme, getOrganizationPage.slug),
   }
 }
 

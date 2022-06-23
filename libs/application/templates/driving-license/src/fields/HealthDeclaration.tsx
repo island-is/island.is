@@ -2,13 +2,7 @@ import React from 'react'
 
 import { RadioController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
-import {
-  Box,
-  Stack,
-  Text,
-  GridRow,
-  GridColumn,
-} from '@island.is/island-ui/core'
+import { Box, Text, GridRow, GridColumn } from '@island.is/island-ui/core'
 import {
   CustomField,
   FieldBaseProps,
@@ -21,11 +15,7 @@ interface PropTypes extends FieldBaseProps {
   field: CustomField
 }
 
-function HealthDeclaration({
-  error,
-  field,
-  application,
-}: PropTypes): JSX.Element {
+function HealthDeclaration({ field, application }: PropTypes): JSX.Element {
   const { formatMessage } = useLocale()
   const props = field.props as { title?: string; label: string }
 

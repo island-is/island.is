@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react'
-import { useDropzone } from 'react-dropzone'
+import { FileRejection, useDropzone } from 'react-dropzone'
 import { useMeasure } from 'react-use'
 import cn from 'classnames'
 
@@ -61,13 +61,18 @@ const UploadingIndicator = (
   )
 }
 
+export type StatusColor = {
+  background: Colors
+  border: Colors
+}
+
 interface UploadedFileProps {
   file: UploadFile
   showFileSize: boolean
-  onRemoveClick: (file: UploadFile) => void
+  onRemoveClick?: (file: UploadFile) => void
   onRetryClick?: (file: UploadFile) => void
   onOpenFile?: (file: UploadFile) => void
-  defaultBackgroundColor?: Colors
+  defaultBackgroundColor?: StatusColor
   doneIcon?: IconTypes
   hideIcons?: boolean
 }
@@ -84,16 +89,24 @@ export const UploadedFile = ({
 }: UploadedFileProps) => {
   const [ref, { width }] = useMeasure()
 
-  const statusColor = (status?: UploadFileStatus): Colors => {
-    switch (status) {
+  const statusColor: StatusColor = useMemo<StatusColor>(() => {
+    switch (file.status) {
       case 'error':
-        return 'red100'
+        return { background: 'red100', border: 'red200' }
       case 'done':
-        return 'blue100'
+        return {
+          background: 'blue100',
+          border: 'blue200',
+        }
       default:
-        return defaultBackgroundColor ?? 'transparent'
+        return (
+          defaultBackgroundColor ?? {
+            background: 'transparent',
+            border: 'blue200',
+          }
+        )
     }
-  }
+  }, [file.status, defaultBackgroundColor])
 
   const statusIcon = (status?: UploadFileStatus): IconTypes => {
     switch (status) {
@@ -130,10 +143,12 @@ export const UploadedFile = ({
       alignItems="center"
       justifyContent="spaceBetween"
       borderRadius="large"
-      background={statusColor(file.status)}
+      borderStyle={'solid'}
+      borderWidth={'standard'}
+      borderColor={statusColor.border}
+      background={statusColor.background}
       paddingX={2}
       paddingY={1}
-      marginBottom={2}
       width="full"
       position="relative"
       title={file.name}
@@ -182,14 +197,14 @@ export const UploadedFile = ({
               }}
               aria-label="Reyna aftur"
             >
-              <Icon color="blue400" icon="reload" />
+              <Icon color="red600" icon="reload" />
             </button>
           ) : (
             <button
               type={'button'}
               onClick={(e) => {
                 e.stopPropagation()
-                if (!isUploading) {
+                if (!isUploading && onRemoveClick) {
                   onRemoveClick(file)
                 }
               }}
@@ -223,8 +238,9 @@ export interface InputFileUploadProps {
   onRemove: (file: UploadFile) => void
   onRetry?: (file: UploadFile) => void
   onChange?: (files: File[]) => void
+  onUploadRejection?: (files: FileRejection[]) => void
   errorMessage?: string
-  defaultFileBackgroundColor?: Colors
+  defaultFileBackgroundColor?: StatusColor
   doneIcon?: IconTypes
   hideIcons?: boolean
 }
@@ -244,12 +260,17 @@ export const InputFileUpload = ({
   onChange,
   onRemove,
   onRetry,
+  onUploadRejection,
   errorMessage,
   defaultFileBackgroundColor,
   doneIcon,
   hideIcons = false,
 }: InputFileUploadProps) => {
-  const onDrop = (acceptedFiles: File[]) => {
+  const onDrop = (acceptedFiles: File[], fileRejections: FileRejection[]) => {
+    if (fileRejections.length !== 0 && onUploadRejection) {
+      onUploadRejection(fileRejections)
+    }
+
     if (acceptedFiles.length === 0 || !onChange) return
 
     if (!multiple) {
@@ -303,16 +324,17 @@ export const InputFileUpload = ({
 
       <Box width="full" paddingX={[2, 2, 12]}>
         {fileList.map((file, index) => (
-          <UploadedFile
-            key={index}
-            file={file}
-            showFileSize={showFileSize}
-            defaultBackgroundColor={defaultFileBackgroundColor}
-            doneIcon={doneIcon}
-            onRemoveClick={onRemove}
-            onRetryClick={onRetry}
-            hideIcons={hideIcons}
-          />
+          <Box marginBottom={2} key={index}>
+            <UploadedFile
+              file={file}
+              showFileSize={showFileSize}
+              defaultBackgroundColor={defaultFileBackgroundColor}
+              doneIcon={doneIcon}
+              onRemoveClick={onRemove}
+              onRetryClick={onRetry}
+              hideIcons={hideIcons}
+            />
+          </Box>
         ))}
       </Box>
 

@@ -21,6 +21,7 @@ import {
   Teacher,
 } from './models'
 import { AuditService } from '@island.is/nest/audit'
+import { DrivingInstructorGuard } from './guards/drivingInstructor.guard'
 
 const namespace = '@island.is/api/driving-license'
 
@@ -64,6 +65,7 @@ export class MainResolver {
     )
   }
 
+  @UseGuards(DrivingInstructorGuard)
   @Query(() => StudentInformationResult)
   async drivingLicenseStudentInformation(
     @Args('nationalId') nationalId: string,

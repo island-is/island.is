@@ -36,6 +36,14 @@ type HasQualityPhotoData = {
   }
 }
 
+type Photo = {
+  qualityPhoto: string
+  attachments: Array<{
+    key: string
+    name: string
+  }>
+}
+
 const YES = 'yes'
 @Injectable()
 export class PSignSubmissionService {
@@ -49,7 +57,7 @@ export class PSignSubmissionService {
 
   async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
     const content: string =
-      application.answers.qualityPhoto === YES &&
+      (application.answers.photo as Photo)?.qualityPhoto === YES &&
       (application.externalData.qualityPhoto as HasQualityPhotoData)?.data
         ?.hasQualityPhoto
         ? ((
@@ -126,7 +134,7 @@ export class PSignSubmissionService {
   }: TemplateApiModuleActionProps): Promise<string> {
     const attachments = getValueViaPath(
       application.answers,
-      'attachments',
+      'photo.attachments',
     ) as Array<{ key: string; name: string }>
     const hasAttachments = attachments && attachments?.length > 0
 

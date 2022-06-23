@@ -13,15 +13,9 @@ export const PoliceCaseFilesMessageBox: React.FC<Props> = (props) => {
   const { icon, iconColor, message } = props
 
   return (
-    <Box
-      display="flex"
-      alignItems="center"
-      paddingY={2}
-      paddingX={3}
-      marginBottom={2}
-    >
+    <Box display="flex" paddingY={2} paddingX={3} marginBottom={2}>
       <Box display="flex" marginRight={2}>
-        <Icon icon={icon} color={iconColor} />
+        <Icon icon={icon} color={iconColor} size="large" />
       </Box>
       <Text variant="h5">{message}</Text>
     </Box>

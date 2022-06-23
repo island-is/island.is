@@ -15,3 +15,6 @@ export const staffRule = UserRole.STAFF as RolesRule
 
 // Allows admins to perform any action
 export const adminRule = UserRole.ADMIN as RolesRule
+
+// Allows defenders to perform any action
+export const defenderRule = UserRole.DEFENDER as RolesRule

@@ -1,4 +1,3 @@
-import { m } from '../../lib/messages'
 import { Application, getValueViaPath } from '@island.is/application/core'
 import { ApplicationEligibility } from '../../types/schema'
 import { useQuery, gql } from '@apollo/client'

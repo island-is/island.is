@@ -4,8 +4,8 @@ import { IFeaturedArticles } from '../generated/contentfulTypes'
 
 import { SystemMetadata } from 'api-cms-domain'
 import { Image, mapImage } from './image.model'
-import { Article, mapArticle } from './article.model'
 import { Link, mapLink } from './link.model'
+import { ArticleReference, mapArticleReference } from './articleReference'
 
 @ObjectType()
 export class FeaturedArticles {
@@ -18,8 +18,8 @@ export class FeaturedArticles {
   @Field(() => Image, { nullable: true })
   image?: Image | null
 
-  @Field(() => [Article])
-  articles?: Array<Article>
+  @Field(() => [ArticleReference])
+  articles?: Array<ArticleReference>
 
   @Field(() => Link, { nullable: true })
   link?: Link | null
@@ -33,6 +33,6 @@ export const mapFeaturedArticles = ({
   id: sys.id,
   title: fields.title ?? '',
   image: fields.image ? mapImage(fields.image) : null,
-  articles: (fields.articles ?? []).map(mapArticle),
+  articles: (fields.articles ?? []).map(mapArticleReference),
   link: fields.link ? mapLink(fields.link) : null,
 })

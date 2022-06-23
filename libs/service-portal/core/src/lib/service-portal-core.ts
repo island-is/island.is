@@ -1,9 +1,11 @@
-import { LazyExoticComponent, FC } from 'react'
-import { User } from 'oidc-client'
-import { ServicePortalPath } from './navigation/paths'
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
+import { FC, LazyExoticComponent } from 'react'
 import { MessageDescriptor } from 'react-intl'
+
 import { IconProps } from '@island.is/island-ui/core'
+import { User } from '@island.is/shared/types'
+
+import { ServicePortalPath } from './navigation/paths'
 
 /**
  * A navigational item used by the service portal
@@ -79,6 +81,10 @@ export type ServicePortalRoute = {
    */
   navHide?: boolean
   /**
+   * Dynamic routes that might have a slow response time will be loaded after inital routes.
+   */
+  dynamic?: boolean
+  /**
    * The render value of this component
    */
   render?: (props: ServicePortalModuleProps) => ServicePortalModuleRenderValue
@@ -135,11 +141,11 @@ export interface ServicePortalModule {
    */
   routes: (props: ServicePortalModuleProps) => ServicePortalRoute[]
   /**
-   * Dynamic routes that might have a slow response time will be loaded after inital routes.
+   * Works the same way as routes.
+   * The key difference is that if there are company routes present when
+   * the logged in user is a company SSN only the company routes will be rendered.
    */
-  dynamicRoutes?: (
-    props: ServicePortalModuleProps,
-  ) => Promise<ServicePortalRoute[]>
+  companyRoutes?: (props: ServicePortalModuleProps) => ServicePortalRoute[]
   /**
    * Global components will always be rendered by default
    * These are usually utility components that prompt the user about certain

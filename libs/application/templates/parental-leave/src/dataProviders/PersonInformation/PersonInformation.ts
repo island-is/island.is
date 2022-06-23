@@ -39,7 +39,7 @@ export class PersonInformationProvider extends BasicDataProvider {
           ...response.data.nationalRegistryUserV2,
         })
       })
-      .catch((e) => {
+      .catch(() => {
         return this.handleError()
       })
   }

@@ -67,12 +67,14 @@ export class AccessService {
         offset: offset,
         distinct: true,
         where: { nationalId: searchString },
+        order: ['nationalId'],
       })
     } else {
       return this.apiScopeUser.findAndCountAll({
         limit: count,
         offset: offset,
         distinct: true,
+        order: ['nationalId'],
       })
     }
   }

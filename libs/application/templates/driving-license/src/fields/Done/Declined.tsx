@@ -13,17 +13,30 @@ export const Declined = ({ application }: FieldBaseProps): JSX.Element => {
     <>
       <Box paddingTop={2}>
         <Text>
-          {formatText(m.declinedHelpText, application, formatMessage)}
+          {formatText(
+            m.declinedOtherCountryHelpText,
+            application,
+            formatMessage,
+          )}
         </Text>
       </Box>
       <Box marginTop={5} marginBottom={8}>
         <WarningSection
           application={application}
           step={{
-            title: m.declinedOtherCountryTitle,
+            title: m.declinedOtherEESCountryTitle,
             key: 'key',
             state: false,
-            description: m.declinedOtherCountryDescription,
+            description: m.declinedOtherEESCountryDescription,
+          }}
+        />
+        <WarningSection
+          application={application}
+          step={{
+            title: m.declinedOtherNonEESCountryTitle,
+            key: 'key',
+            state: false,
+            description: m.declinedOtherNonEESCountryDescription,
           }}
         />
       </Box>

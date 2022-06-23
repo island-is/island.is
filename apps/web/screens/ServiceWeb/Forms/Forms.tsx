@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import NextLink from 'next/link'
 import { useMutation } from '@apollo/client'
 
@@ -34,6 +34,7 @@ import {
   SupportCategory,
   Organization,
   QueryGetOrganizationsArgs,
+  SearchableTags,
 } from '@island.is/web/graphql/schema'
 import {
   GET_NAMESPACE_QUERY,
@@ -43,6 +44,7 @@ import {
   SERVICE_WEB_FORMS_MUTATION,
 } from '../../queries'
 import { Screen } from '../../../types'
+import { CustomNextError } from '@island.is/web/units/errors'
 
 interface ServiceWebFormsPageProps {
   syslumenn?: Organizations['items']
@@ -65,6 +67,11 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
     ServiceWebFormsMutation,
     ServiceWebFormsMutationVariables
   >(SERVICE_WEB_FORMS_MUTATION)
+
+  const organizationNamespace = useMemo(
+    () => JSON.parse(organization?.namespace?.fields ?? '{}'),
+    [organization?.namespace],
+  )
 
   const errorMessage = 'Villa kom upp við að senda fyrirspurn.'
 
@@ -96,6 +103,23 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
       : ''
   }${headerTitle}`
 
+  const breadcrumbItems = [
+    {
+      title: n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is'),
+      typename: 'serviceweb',
+      href: linkResolver('serviceweb').href,
+    },
+    {
+      title: organization.title,
+      typename: 'serviceweb',
+      href: `${linkResolver('serviceweb').href}/${institutionSlug}`,
+    },
+    {
+      title: 'Hafðu samband',
+      isTag: true,
+    },
+  ]
+
   return (
     <ServiceWebWrapper
       pageTitle={pageTitle}
@@ -117,27 +141,7 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
                   <GridColumn span="12/12" paddingBottom={[2, 2, 4]}>
                     <Box display={['none', 'none', 'block']} printHidden>
                       <Breadcrumbs
-                        items={[
-                          {
-                            title: n(
-                              'assistanceForIslandIs',
-                              'Aðstoð fyrir Ísland.is',
-                            ),
-                            typename: 'serviceweb',
-                            href: linkResolver('serviceweb').href,
-                          },
-                          {
-                            title: organization.title,
-                            typename: 'serviceweb',
-                            href: `${
-                              linkResolver('serviceweb').href
-                            }/${institutionSlug}`,
-                          },
-                          {
-                            title: 'Hafðu samband',
-                            isTag: true,
-                          },
-                        ]}
+                        items={breadcrumbItems}
                         renderLink={(link, { href }) => {
                           return (
                             <NextLink href={href} passHref>
@@ -206,6 +210,7 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
                   </Box>
                 ) : (
                   <ServiceWebStandardForm
+                    namespace={organizationNamespace}
                     institutionSlug={institutionSlug}
                     supportCategories={supportCategories}
                     syslumenn={syslumenn}
@@ -285,6 +290,10 @@ ServiceWebFormsPage.getInitialProps = async ({
       ),
   ])
 
+  if (slug === 'mannaudstorg') {
+    throw new CustomNextError(404, 'Mannaudstorg does not have a contact page')
+  }
+
   return {
     syslumenn: organizations?.data?.getOrganizations?.items?.filter((x) =>
       x.slug.startsWith('syslumadurinn'),
@@ -299,5 +308,5 @@ ServiceWebFormsPage.getInitialProps = async ({
 
 export default withMainLayout(ServiceWebFormsPage, {
   showHeader: false,
-  showFooter: false,
+  footerVersion: 'organization',
 })

@@ -10,7 +10,6 @@ import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
 import { Link } from 'react-router-dom'
 import * as styles from './NavigationOverviewScreen.css'
-import { m } from '@island.is/service-portal/core'
 
 interface Props {
   title: MessageDescriptor
@@ -63,10 +62,7 @@ export const NavigationOverviewScreen: FC<Props> = ({
               marginLeft={[4, 0]}
               className={styles.image}
             >
-              <img
-                src={nav.image}
-                alt={`${formatMessage(m.altText)} ${title}`}
-              />
+              <img src={nav.image} alt="" />
             </Box>
           </GridColumn>
         </GridRow>

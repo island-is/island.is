@@ -12,6 +12,7 @@ import {
   ParentalLeaveService,
   APPLICATION_ATTACHMENT_BUCKET,
 } from './parental-leave.service'
+import { SmsModule } from '@island.is/nova-sms'
 
 const XROAD_VMST_MEMBER_CODE = process.env.XROAD_VMST_MEMBER_CODE ?? ''
 const XROAD_VMST_API_PATH = process.env.XROAD_VMST_API_PATH ?? ''
@@ -34,6 +35,7 @@ export class ParentalLeaveModule {
           apiKey: XROAD_VMST_API_KEY,
         }),
         SharedTemplateAPIModule.register(config),
+        SmsModule.register(config.smsOptions),
       ],
       providers: [
         ParentalLeaveService,

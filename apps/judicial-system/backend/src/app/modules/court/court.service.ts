@@ -5,11 +5,13 @@ import { Injectable } from '@nestjs/common'
 import { CourtClientService } from '@island.is/judicial-system/court-client'
 import type { CaseType, User } from '@island.is/judicial-system/types'
 
-import { now } from '../../factories'
+import { nowFactory } from '../../factories'
 import { EventService } from '../event'
 
+type SubTypes = { [c in CaseType]: string | [string, string] }
+//
 // Maps case types to sub types in the court system
-export const subTypes = {
+export const subTypes: SubTypes = {
   // 'Afhending gagna',
   // 'Afturköllun á skipun verjanda',
   OTHER: 'Annað',
@@ -19,6 +21,8 @@ export const subTypes = {
   // 'Framsalsmál',
   // 'Frestur',
   CUSTODY: ['Gæsluvarðhald', 'Framlenging gæsluvarðhalds'],
+  // TODO: replace with appropriate type when it has been created in the court system
+  ADMISSION_TO_FACILITY: 'Vistun á viðeigandi stofnun',
   PSYCHIATRIC_EXAMINATION: 'Geðrannsókn',
   // 'Handtaka',
   SOUND_RECORDING_EQUIPMENT: 'Hljóðupptökubúnaði komið fyrir',
@@ -28,6 +32,7 @@ export const subTypes = {
   BODY_SEARCH: 'Leit og líkamsrannsókn',
   // 'Lögmæti rannsóknarathafna',
   RESTRAINING_ORDER: 'Nálgunarbann',
+  EXPULSION_FROM_HOME: 'Nálgunarbann og brottvísun af heimili',
   // 'Réttarstaða afplánunarfanga',
   // 'Réttarstaða gæsluvarðhaldsfanga',
   // 'Rof á reynslulausn',
@@ -41,6 +46,7 @@ export const subTypes = {
   TELECOMMUNICATIONS: 'Upplýsingar um fjarskiptasamskipti',
   INTERNET_USAGE: 'Upplýsingar um vefnotkun',
   ELECTRONIC_DATA_DISCOVERY_INVESTIGATION: 'Rannsókn á rafrænum gögnum',
+  // TODO: replace with appropriate type when it has been created in the court system
   VIDEO_RECORDING_EQUIPMENT: 'Annað',
 }
 
@@ -68,14 +74,20 @@ export class CourtService {
     caseId: string,
     courtId: string,
     courtCaseNumber: string,
+    fileName: string,
     content: Buffer,
   ): Promise<string> {
-    return this.uploadStream(courtId, 'Krafa.pdf', 'application/pdf', content)
+    return this.uploadStream(
+      courtId,
+      `${fileName}.pdf`,
+      'application/pdf',
+      content,
+    )
       .then((streamId) =>
         this.courtClientService.createDocument(courtId, {
           caseNumber: courtCaseNumber,
-          subject: 'Krafa',
-          fileName: 'Krafa.pdf',
+          subject: fileName,
+          fileName: `${fileName}.pdf`,
           streamID: streamId,
           caseFolder: 'Krafa og greinargerð',
         }),
@@ -179,7 +191,6 @@ export class CourtService {
   }
 
   async createDocument(
-    user: User,
     caseId: string,
     courtId: string,
     courtCaseNumber: string,
@@ -187,6 +198,7 @@ export class CourtService {
     fileName: string,
     fileType: string,
     content: Buffer,
+    user?: User,
   ): Promise<string> {
     return this.uploadStream(courtId, fileName, fileType, content)
       .then((streamId) =>
@@ -203,8 +215,8 @@ export class CourtService {
           'Failed to create a court document',
           {
             caseId,
-            actor: user.name,
-            institution: user.institution?.name,
+            actor: user?.name ?? 'RVG',
+            institution: user?.institution?.name ?? 'RVG',
             courtId,
             courtCaseNumber,
             subject,
@@ -236,7 +248,7 @@ export class CourtService {
         caseType: 'R - Rannsóknarmál',
         subtype: subType,
         status: 'Skráð',
-        receivalDate: formatISO(now(), { representation: 'date' }),
+        receivalDate: formatISO(nowFactory(), { representation: 'date' }),
         basedOn: 'Rannsóknarhagsmunir',
         sourceNumber: policeCaseNumber,
       })
@@ -251,6 +263,48 @@ export class CourtService {
             type,
             policeCaseNumber,
             isExtension,
+          },
+          reason,
+        )
+
+        throw reason
+      })
+  }
+
+  async createEmail(
+    user: User,
+    caseId: string,
+    courtId: string,
+    courtCaseNumber: string,
+    subject: string,
+    body: string,
+    recipients: string,
+    fromEmail: string,
+    fromName: string,
+  ): Promise<string> {
+    return this.courtClientService
+      .createEmail(courtId, {
+        caseNumber: courtCaseNumber,
+        subject,
+        body,
+        recipients,
+        fromEmail,
+        fromName,
+      })
+      .catch((reason) => {
+        this.eventService.postErrorEvent(
+          'Failed to create an email',
+          {
+            caseId,
+            actor: user.name,
+            institution: user.institution?.name,
+            courtId,
+            courtCaseNumber,
+            subject,
+            body,
+            recipients,
+            fromEmail,
+            fromName,
           },
           reason,
         )

@@ -1,12 +1,14 @@
+import { Module } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import * as z from 'zod'
+
 import {
   ServerSideFeatureClient,
   ServerSideFeatureNames,
 } from '@island.is/feature-flags'
 import { logger } from '@island.is/logging'
 
-import { defineConfig, ConfigModule, ConfigType, ConfigFactory } from '../..'
+import { ConfigFactory, ConfigModule, ConfigType, defineConfig } from '../..'
 
 async function testInjection<T extends ConfigFactory>(config: T) {
   const moduleRef = await Test.createTestingModule({
@@ -261,6 +263,77 @@ describe('Config definitions', () => {
       )
     })
 
+    it('should work if globally optional', () => {
+      // Arrange
+      const config = defineConfig({
+        name: 'test',
+        optional: true,
+        load: () => ({
+          test: 'value',
+        }),
+      })
+
+      // Act
+      const result = testInjection(config)
+
+      // Assert
+      return expect(result).resolves.toEqual({
+        isConfigured: true,
+        test: 'value',
+      })
+    })
+
+    it('should work if registered optional', async () => {
+      // Arrange
+      const config = defineConfig({
+        name: 'test',
+        load: () => ({
+          test: 'value',
+        }),
+      })
+
+      // Act
+      const moduleRef = await Test.createTestingModule({
+        imports: [
+          ConfigModule.forRoot({ isGlobal: true, load: [] }),
+          config.registerOptional(),
+        ],
+      }).compile()
+
+      // Assert
+      expect(moduleRef.get<ConfigType<typeof config>>(config.KEY)).toEqual({
+        isConfigured: true,
+        test: 'value',
+      })
+    })
+
+    it('should throw an error if optional config is used not fully provided', async () => {
+      // Arrange
+      const config = defineConfig({
+        name: 'test',
+        load: (env) => ({
+          test: env.required('CONFIG_TEST'),
+        }),
+      })
+
+      // Act
+      const moduleRef = await Test.createTestingModule({
+        imports: [
+          ConfigModule.forRoot({ isGlobal: true, load: [config.optional()] }),
+        ],
+      }).compile()
+
+      // Assert
+      expect(() => {
+        const conf = moduleRef.get<ConfigType<typeof config>>(config.KEY)
+
+        // Accessing the property cause the error to be thrown
+        conf.test
+      }).toThrow(
+        'Failed loading configuration for test:\n- CONFIG_TEST missing',
+      )
+    })
+
     it('should throw a friendly error if validation fails', async () => {
       // Arrange
       process.env.CONFIG_TEST1 = 'asdf'
@@ -452,6 +525,67 @@ describe('Config definitions', () => {
 
         // Assert
         return expect(result).rejects.toThrow(
+          'Failed loading configuration for test:\n- CONFIG_TEST missing',
+        )
+      })
+
+      it('should throw an error when required in root and optional in nested module and not provided', async () => {
+        // Arrange
+        const config = defineConfig({
+          name: 'test',
+          load: (env) => ({
+            test: env.required('CONFIG_TEST'),
+          }),
+        })
+
+        @Module({
+          imports: [config.registerOptional()],
+        })
+        class NestedModule {}
+
+        // Act
+        const act = () =>
+          Test.createTestingModule({
+            imports: [
+              ConfigModule.forRoot({ isGlobal: true, load: [config] }),
+              NestedModule,
+            ],
+          }).compile()
+
+        // Assert
+        return expect(act).rejects.toThrow(
+          'Failed loading configuration for test:\n- CONFIG_TEST missing',
+        )
+      })
+
+      it('should throw an error when optional in root and required in nested module and not provided', async () => {
+        // Arrange
+        const config = defineConfig({
+          name: 'test',
+          load: (env) => ({
+            test: env.required('CONFIG_TEST'),
+          }),
+        })
+
+        @Module({
+          imports: [ConfigModule.forFeature(config)],
+        })
+        class NestedModule {}
+
+        // Act
+        const act = () =>
+          Test.createTestingModule({
+            imports: [
+              ConfigModule.forRoot({
+                isGlobal: true,
+                load: [config.optional()],
+              }),
+              NestedModule,
+            ],
+          }).compile()
+
+        // Assert
+        return expect(act).rejects.toThrow(
           'Failed loading configuration for test:\n- CONFIG_TEST missing',
         )
       })

@@ -123,7 +123,8 @@ const SummaryForm = () => {
         setIsLoading(false)
         setFormError({
           status: true,
-          message: 'Obbobbob eitthvað fór úrskeiðis',
+          message:
+            'Ekki tókst að senda inn umsókn. Vinsamlegast reyndu aftur síðar eða hafðu samband við þitt sveitafélag',
         })
 
         const findErrorInFormInfo = formInfoOverview.find(
@@ -155,6 +156,7 @@ const SummaryForm = () => {
             <Estimation
               usePersonalTaxCredit={form.usePersonalTaxCredit}
               homeCircumstances={form.homeCircumstances}
+              familyStatus={form.familyStatus}
               aboutText={
                 <Text marginBottom={[2, 2, 3]}>
                   Athugaðu að þessi útreikningur er eingöngu til viðmiðunar og{' '}
@@ -176,6 +178,7 @@ const SummaryForm = () => {
 
         <DirectTaxPaymentCell
           setIsModalOpen={setIsModalOpen}
+          hasFetchedPayments={form?.hasFetchedPayments}
           directTaxPayments={form?.directTaxPayments}
         />
         <ContactInfo

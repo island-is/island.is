@@ -5,12 +5,12 @@ import set from 'lodash/set'
 import merge from 'lodash/merge'
 
 import {
-  FormatMessage,
   Schema,
   StaticText,
   StaticTextObject,
   ValidationRecord,
 } from '../types/Form'
+import { FormatMessage } from '../types/external'
 import { Answer, FormValue } from '../types/Application'
 import { coreErrorMessages } from '../lib/messages'
 import { AnswerValidationError } from './AnswerValidator'

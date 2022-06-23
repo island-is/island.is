@@ -33,10 +33,11 @@ export type {
   CreateFile,
 } from './lib/file'
 
-export { UserRole, courtRoles } from './lib/user'
+export { UserRole, courtRoles, isCourtRole } from './lib/user'
 export type { User, CreateUser, UpdateUser } from './lib/user'
 
 export {
+  CaseOrigin,
   CaseType,
   CaseState,
   CaseTransition,
@@ -52,7 +53,6 @@ export {
   isAcceptingCaseDecision,
   completedCaseStates,
   hasCaseBeenAppealed,
-  isCaseTypeWithMultipleDefendantsSupport,
 } from './lib/case'
 export type {
   Case,
@@ -68,3 +68,5 @@ export type {
   UploadPoliceCaseFile,
   UploadPoliceCaseFileResponse,
 } from './lib/policeFile'
+
+export type { CourtDocument } from './lib/courtDocument'

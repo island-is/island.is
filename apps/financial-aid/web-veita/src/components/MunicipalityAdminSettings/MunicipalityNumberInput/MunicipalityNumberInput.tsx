@@ -13,7 +13,7 @@ interface Props {
   update: (value: number) => void
 }
 
-const MunicipalityAdminInput = ({ id, aid, prefix, error, update }: Props) => {
+const MunicipalityNumberInput = ({ id, aid, prefix, error, update }: Props) => {
   return (
     <Box id={`${prefix}${id}`} marginBottom={[1, 1, 3]}>
       <NumberInput
@@ -30,4 +30,4 @@ const MunicipalityAdminInput = ({ id, aid, prefix, error, update }: Props) => {
   )
 }
 
-export default MunicipalityAdminInput
+export default MunicipalityNumberInput

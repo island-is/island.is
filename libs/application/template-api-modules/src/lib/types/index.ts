@@ -2,7 +2,6 @@ import {
   Application,
   ApplicationWithAttachments,
 } from '@island.is/application/core'
-import { Config as DrivingLicenseApiConfig } from '@island.is/api/domains/driving-license'
 import { Config as CriminalRecordConfig } from '@island.is/api/domains/criminal-record'
 import { PaymentServiceOptions } from '@island.is/clients/payment'
 import { Message } from '@island.is/email-service'
@@ -33,7 +32,6 @@ export interface BaseTemplateAPIModuleConfig {
     username: string
     password: string
   }
-  drivingLicense: DrivingLicenseApiConfig
   criminalRecord: CriminalRecordConfig
   attachmentBucket: string
   presignBucket: string
@@ -87,5 +85,13 @@ export abstract class BaseTemplateApiApplicationService {
       ContentDisposition?: string
       ContentEncoding?: string
     },
+  ): Promise<string>
+
+  abstract storeNonceForApplication(application: Application): Promise<string>
+
+  abstract createAssignToken(
+    application: Application,
+    secret: string,
+    expiresIn: number,
   ): Promise<string>
 }

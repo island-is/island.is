@@ -30,11 +30,13 @@ export enum ServicePortalPath {
 
   // Family
   FamilyRoot = '/min-gogn/fjolskyldan',
+  Child = '/min-gogn/fjolskyldan/barn/:nationalId',
   FamilyMember = '/min-gogn/fjolskyldan/:nationalId',
   Spouse = '/min-gogn/fjolskyldan/maki/:nationalId',
   MyInfoRoot = '/min-gogn',
   UserInfo = '/min-gogn/minar-upplysingar',
   Endorsements = '/min-gogn/medmaeli',
+  Company = '/fyrirtaeki',
 
   // General Petitions
   Petitions = '/min-gogn/medmaeli',
@@ -54,7 +56,7 @@ export enum ServicePortalPath {
   FinanceVehicles = 'https://mitt.samgongustofa.is/',
   FinancePayments = '/greidslur',
   FinanceExternal = 'https://minarsidur.island.is/minar-sidur/fjarmal/fjarmal-stada-vid-rikissjod-og-stofnanir/',
-
+  FinanceSchedule = '/fjarmal/greidsluaetlanir',
   // Electronic Documents
   ElectronicDocumentsRoot = '/postholf',
   ElectronicDocumentsFileDownload = '/postholf/:id',
@@ -76,6 +78,9 @@ export enum ServicePortalPath {
   AssetsRoot = '/fasteignir',
   AssetsRealEstateDetail = '/fasteignir/:id',
   AssetsVehicles = '/okutaeki',
+  AssetsMyVehicles = '/okutaeki/min-okutaeki',
+  AssetsVehiclesDetail = '/okutaeki/min-okutaeki/:id',
+  AssetsVehiclesLookup = '/okutaeki/leit',
 
   // Messages
   MessagesRoot = '/skilabod',

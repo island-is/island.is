@@ -22,8 +22,8 @@ const getOrganizationLogoUrl = (
     const c = match?.logo?.url
     const url =
       c ??
-      '//images.ctfassets.net/8k0h54kbe6bj/6XhCz5Ss17OVLxpXNVDxAO/d3d6716bdb9ecdc5041e6baf68b92ba6/coat_of_arms.svg'
-    const uri = `https:${url}?w=60&h=60&fit=pad&bg=white&fm=png`
+      'https://images.ctfassets.net/8k0h54kbe6bj/6XhCz5Ss17OVLxpXNVDxAO/d3d6716bdb9ecdc5041e6baf68b92ba6/coat_of_arms.svg'
+    const uri = `${url}?w=60&h=60&fit=pad&bg=white&fm=png`
     return uri
   }
   return ''

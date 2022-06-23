@@ -9,6 +9,7 @@ export const GET_PROJECT_PAGE_QUERY = gql`
       slug
       theme
       sidebar
+      featuredDescription
       sidebarLinks {
         primaryLink {
           text
@@ -35,11 +36,6 @@ export const GET_PROJECT_PAGE_QUERY = gql`
           subtitle {
             ...HtmlFields
           }
-          text {
-            ...HtmlFields
-          }
-          isAnswer
-          options
           config
         }
         config
@@ -70,6 +66,13 @@ export const GET_PROJECT_PAGE_QUERY = gql`
         width
         height
       }
+      defaultHeaderImage {
+        url
+        contentType
+        width
+        height
+      }
+      defaultHeaderBackgroundColor
     }
   }
   ${slices}

@@ -1,33 +1,35 @@
-import React, { useState, useEffect, FC } from 'react'
 import { gql, useLazyQuery } from '@apollo/client'
-import { dateFormat } from '@island.is/shared/constants'
 import format from 'date-fns/format'
 import sub from 'date-fns/sub'
-import { Table as T } from '@island.is/island-ui/core'
+import React, { FC, useEffect, useState } from 'react'
+
 import {
-  Box,
-  Text,
-  Columns,
-  Column,
-  Stack,
-  GridRow,
-  GridColumn,
-  DatePicker,
-  Button,
   AlertBanner,
-  SkeletonLoader,
-  Pagination,
-  Input,
+  Box,
+  Button,
+  DatePicker,
+  GridColumn,
+  GridRow,
   Hidden,
+  Input,
+  Pagination,
+  SkeletonLoader,
+  Stack,
+  Table as T,
+  Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { m } from '@island.is/service-portal/core'
-import { DocumentsListItemTypes } from './DocumentScreen.types'
-import amountFormat from '../../utils/amountFormat'
+import {
+  amountFormat,
+  formSubmit,
+  m,
+  tableStyles,
+} from '@island.is/service-portal/core'
+import { dateFormat } from '@island.is/shared/constants'
+
 import { billsFilter } from '../../utils/simpleFilter'
-import { formSubmit } from '../../utils/documentFormSubmission'
-import { User } from 'oidc-client'
-import { tableStyles } from '@island.is/service-portal/core'
+import { DocumentsListItemTypes } from './DocumentScreen.types'
+import * as styles from '../../screens/Finance.css'
 
 const ITEMS_ON_PAGE = 20
 
@@ -36,7 +38,6 @@ interface Props {
   intro: string
   listPath: string
   defaultDateRangeMonths?: number
-  userInfo: User
 }
 
 const getFinanceDocumentsListQuery = gql`
@@ -61,7 +62,6 @@ const DocumentScreen: FC<Props> = ({
   intro,
   listPath,
   defaultDateRangeMonths = 3,
-  userInfo,
 }) => {
   const { formatMessage } = useLocale()
 
@@ -112,11 +112,13 @@ const DocumentScreen: FC<Props> = ({
         <Text variant="h3" as="h1">
           {title}
         </Text>
-        <GridRow>
+        <GridRow marginBottom={4}>
           <GridColumn span={['12/12', '8/12']}>
             <Text variant="default">{intro}</Text>
           </GridColumn>
-          <Box display="flex" marginLeft="auto" marginTop={1}>
+        </GridRow>
+        <GridRow>
+          <Box display="flex" printHidden padding={0}>
             <GridColumn>
               <Button
                 colorScheme="default"
@@ -134,7 +136,7 @@ const DocumentScreen: FC<Props> = ({
           </Box>
         </GridRow>
         <Hidden print={true}>
-          <Box marginTop={[1, 1, 2, 2, 5]}>
+          <Box marginTop={[1, 1, 2, 4]}>
             <GridRow>
               <GridColumn
                 span={['1/1', '8/12', '6/12', '6/12', '4/12']}
@@ -155,6 +157,7 @@ const DocumentScreen: FC<Props> = ({
               <GridColumn
                 span={['1/1', '8/12', '6/12', '6/12', '4/12']}
                 order={[1, 1, 1, 1, 1]}
+                className={styles.dateColumn}
               >
                 <DatePicker
                   backgroundColor="blue"
@@ -172,6 +175,7 @@ const DocumentScreen: FC<Props> = ({
                 span={['1/1', '8/12', '6/12', '6/12', '4/12']}
                 paddingTop={[2, 2, 0, 0, 0]}
                 order={[2, 2, 2, 2, 2]}
+                className={styles.dateColumn}
               >
                 <DatePicker
                   backgroundColor="blue"

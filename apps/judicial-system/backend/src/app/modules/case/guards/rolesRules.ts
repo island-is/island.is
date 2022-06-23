@@ -1,50 +1,58 @@
 import { RolesRule, RulesType } from '@island.is/judicial-system/auth'
-import { CaseTransition, UserRole } from '@island.is/judicial-system/types'
+import {
+  CaseTransition,
+  UserRole,
+  UpdateCase,
+} from '@island.is/judicial-system/types'
+
+const prosecutorFields: (keyof UpdateCase)[] = [
+  'type',
+  'description',
+  'policeCaseNumber',
+  'defenderName',
+  'defenderNationalId',
+  'defenderEmail',
+  'defenderPhoneNumber',
+  'sendRequestToDefender',
+  'isHeightenedSecurityLevel',
+  'courtId',
+  'leadInvestigator',
+  'arrestDate',
+  'requestedCourtDate',
+  'translator',
+  'requestedValidToDate',
+  'validToDate',
+  'demands',
+  'lawsBroken',
+  'legalBasis',
+  'legalProvisions',
+  'requestedCustodyRestrictions',
+  'requestedOtherRestrictions',
+  'caseFacts',
+  'legalArguments',
+  'requestProsecutorOnlySession',
+  'prosecutorOnlySessionRequest',
+  'comments',
+  'caseFilesComments',
+  'prosecutorId',
+  'sharedWithProsecutorsOfficeId',
+  'caseModifiedExplanation',
+  'isolationToDate',
+  'caseResentExplanation',
+]
 
 // Allows prosecutors to update a specific set of fields
 export const prosecutorUpdateRule = {
   role: UserRole.PROSECUTOR,
   type: RulesType.FIELD,
-  dtoFields: [
-    'type',
-    'description',
-    'policeCaseNumber',
-    'defenderName',
-    'defenderEmail',
-    'defenderPhoneNumber',
-    'sendRequestToDefender',
-    'isHeightenedSecurityLevel',
-    'courtId',
-    'leadInvestigator',
-    'arrestDate',
-    'requestedCourtDate',
-    'translator',
-    'requestedValidToDate',
-    'validToDate',
-    'demands',
-    'lawsBroken',
-    'legalBasis',
-    'legalProvisions',
-    'requestedCustodyRestrictions',
-    'requestedOtherRestrictions',
-    'caseFacts',
-    'legalArguments',
-    'requestProsecutorOnlySession',
-    'prosecutorOnlySessionRequest',
-    'comments',
-    'caseFilesComments',
-    'prosecutorId',
-    'sharedWithProsecutorsOfficeId',
-    'caseModifiedExplanation',
-    'isolationToDate',
-  ],
+  dtoFields: prosecutorFields,
 } as RolesRule
 
-const courtFields = [
+const courtFields: (keyof UpdateCase)[] = [
   'defenderName',
+  'defenderNationalId',
   'defenderEmail',
   'defenderPhoneNumber',
-  'defenderIsSpokesperson',
   'courtCaseNumber',
   'sessionArrangements',
   'courtDate',
@@ -76,6 +84,13 @@ const courtFields = [
   'judgeId',
   'registrarId',
   'caseModifiedExplanation',
+  'rulingModifiedHistory',
+]
+
+const staffFields: (keyof UpdateCase)[] = [
+  'validToDate',
+  'isolationToDate',
+  'caseModifiedExplanation',
 ]
 
 // Allows judges to update a specific set of fields
@@ -90,6 +105,15 @@ export const registrarUpdateRule = {
   role: UserRole.REGISTRAR,
   type: RulesType.FIELD,
   dtoFields: courtFields,
+} as RolesRule
+
+// Allows staff to update a specific set of fields
+// In practice, only prison admins will be able to update these fields,
+// as write access is blocked for other staff roles
+export const staffUpdateRule = {
+  role: UserRole.STAFF,
+  type: RulesType.FIELD,
+  dtoFields: staffFields,
 } as RolesRule
 
 // Allows prosecutors to open, submit and delete cases

@@ -16,8 +16,8 @@ const ApiParam = 'ApiParam'
 const ApiQuery = 'ApiQuery'
 const ApiUnauthorizedResponse = 'ApiUnauthorizedResponse'
 
-const getDefaultDecorators = (httpStatus: number) => [
-  HttpCode(httpStatus),
+const getDefaultDecorators = (httpStatus?: number) => [
+  HttpCode(httpStatus ?? 200),
   ApiInternalServerErrorResponse,
   ApiBadRequestResponse,
 ]
@@ -65,7 +65,7 @@ describe('Documentation decorator', () => {
 
     // Assert
     expect(applyDecorators).toHaveBeenCalledWith(
-      ...getDefaultDecorators(options.response.status),
+      ...getDefaultDecorators(options.response?.status),
       ApiOkResponse,
     )
   })
@@ -84,7 +84,7 @@ describe('Documentation decorator', () => {
 
     // Assert
     expect(applyDecorators).toHaveBeenCalledWith(
-      ...getDefaultDecorators(options.response.status),
+      ...getDefaultDecorators(options.response?.status),
       ApiCreatedResponse,
       ApiConflictResponse,
     )
@@ -104,7 +104,7 @@ describe('Documentation decorator', () => {
 
     // Assert
     expect(applyDecorators).toHaveBeenCalledWith(
-      ...getDefaultDecorators(options.response.status),
+      ...getDefaultDecorators(options.response?.status),
       ApiNoContentResponse,
     )
   })
@@ -122,7 +122,7 @@ describe('Documentation decorator', () => {
 
     // Assert
     expect(applyDecorators).toHaveBeenCalledWith(
-      ...getDefaultDecorators(options.response.status),
+      ...getDefaultDecorators(options.response?.status),
       ApiOkResponse,
       ApiUnauthorizedResponse,
       ApiForbiddenResponse,
@@ -144,7 +144,7 @@ describe('Documentation decorator', () => {
 
     // Assert
     expect(applyDecorators).toHaveBeenCalledWith(
-      ...getDefaultDecorators(options.response.status),
+      ...getDefaultDecorators(options.response?.status),
       ApiOkResponse,
       ApiOperation,
     )
@@ -165,7 +165,28 @@ describe('Documentation decorator', () => {
 
     // Assert
     expect(applyDecorators).toHaveBeenCalledWith(
-      ...getDefaultDecorators(options.response.status),
+      ...getDefaultDecorators(options.response?.status),
+      ApiOkResponse,
+      ApiOperation,
+    )
+  })
+
+  it('should apply ApiOperation decorator for deprecated', () => {
+    // Arrange
+    const options: Options = {
+      response: {
+        status: 200,
+      },
+      isAuthorized: false,
+      deprecated: true,
+    }
+
+    // Act
+    Documentation(options)
+
+    // Assert
+    expect(applyDecorators).toHaveBeenCalledWith(
+      ...getDefaultDecorators(options.response?.status),
       ApiOkResponse,
       ApiOperation,
     )
@@ -193,7 +214,7 @@ describe('Documentation decorator', () => {
 
     // Assert
     expect(applyDecorators).toHaveBeenCalledWith(
-      ...getDefaultDecorators(options.response.status),
+      ...getDefaultDecorators(options.response?.status),
       ApiOkResponse,
       ApiQuery,
       ApiQuery,
@@ -224,13 +245,29 @@ describe('Documentation decorator', () => {
 
     // Assert
     expect(applyDecorators).toHaveBeenCalledWith(
-      ...getDefaultDecorators(options.response.status),
+      ...getDefaultDecorators(options.response?.status),
       ApiOkResponse,
       ApiNotFoundResponse,
       ApiParam,
       ApiParam,
       ApiParam,
       ApiParam,
+    )
+  })
+
+  it('should default to 200 response', () => {
+    // Arrange
+    const options: Options = {
+      isAuthorized: false,
+    }
+
+    // Act
+    Documentation(options)
+
+    // Assert
+    expect(applyDecorators).toHaveBeenCalledWith(
+      ...getDefaultDecorators(options.response?.status),
+      ApiOkResponse,
     )
   })
 })

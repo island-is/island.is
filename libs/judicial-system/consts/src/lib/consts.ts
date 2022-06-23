@@ -7,11 +7,6 @@ export const CSRF_COOKIE_NAME = 'judicial-system.csrf'
 
 export const ACCESS_TOKEN_COOKIE_NAME = 'judicial-system.token'
 
-export const IntegratedCourts = [
-  'd1e6e06f-dcfd-45e0-9a24-2fdabc2cc8bf', // Héraðsdómur Reykjavíkur
-  'c9a51c9a-c0e3-4c1f-a9a2-828a3af05d1d', // Héraðsdómur Reykjaness
-]
-
 export const ICaseTypes = [
   {
     label: 'Húsleit',
@@ -61,6 +56,10 @@ export const ICaseTypes = [
         value: CaseType.RESTRAINING_ORDER,
       },
       {
+        label: 'Brottvísun af heimili',
+        value: CaseType.EXPULSION_FROM_HOME,
+      },
+      {
         label: 'Rannsókn á rafrænum gögnum',
         value: CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION,
       },
@@ -80,7 +79,7 @@ export const ICaseTypes = [
 export const TIME_FORMAT = 'HH:mm'
 
 // Routes
-export const REQUEST_LIST_ROUTE = '/krofur'
+export const CASE_LIST_ROUTE = '/krofur'
 export const USER_LIST_ROUTE = '/notendur'
 export const USER_NEW_ROUTE = '/notendur/nyr'
 export const USER_CHANGE_ROUTE = '/notendur/breyta'
@@ -106,14 +105,6 @@ export const IC_POLICE_DEMANDS_ROUTE =
 export const IC_POLICE_REPORT_ROUTE = '/krafa/rannsoknarheimild/greinargerd'
 export const IC_CASE_FILES_ROUTE = '/krafa/rannsoknarheimild/rannsoknargogn'
 export const IC_POLICE_CONFIRMATION_ROUTE = '/krafa/rannsoknarheimild/stadfesta'
-export const IC_RECEPTION_AND_ASSIGNMENT_ROUTE =
-  '/domur/rannsoknarheimild/mottaka'
-export const IC_OVERVIEW_ROUTE = '/domur/rannsoknarheimild/yfirlit'
-export const IC_COURT_HEARING_ARRANGEMENTS_ROUTE =
-  '/domur/rannsoknarheimild/fyrirtaka'
-export const IC_COURT_RECORD_ROUTE = '/domur/rannsoknarheimild/thingbok'
-export const IC_RULING_ROUTE = '/domur/rannsoknarheimild/urskurdur'
-export const IC_CONFIRMATION_ROUTE = '/domur/rannsoknarheimild/stadfesta'
 
 // Court
 export const RECEPTION_AND_ASSIGNMENT_ROUTE = '/domur/mottaka'
@@ -122,8 +113,24 @@ export const HEARING_ARRANGEMENTS_ROUTE = '/domur/fyrirtokutimi'
 export const COURT_RECORD_ROUTE = '/domur/thingbok'
 export const RULING_ROUTE = '/domur/urskurdur'
 export const CONFIRMATION_ROUTE = '/domur/stadfesta'
+export const MODIFY_RULING_ROUTE = '/domur/urskurdur/leidretta'
+
+// Investigation cases - court
+export const IC_RECEPTION_AND_ASSIGNMENT_ROUTE =
+  '/domur/rannsoknarheimild/mottaka'
+export const IC_OVERVIEW_ROUTE = '/domur/rannsoknarheimild/yfirlit'
+export const IC_COURT_HEARING_ARRANGEMENTS_ROUTE =
+  '/domur/rannsoknarheimild/fyrirtaka'
+export const IC_COURT_RECORD_ROUTE = '/domur/rannsoknarheimild/thingbok'
+export const IC_RULING_ROUTE = '/domur/rannsoknarheimild/urskurdur'
+export const IC_MODIFY_RULING_ROUTE =
+  '/domur/rannsoknarheimild/urskurdur/leidretta'
+export const IC_CONFIRMATION_ROUTE = '/domur/rannsoknarheimild/stadfesta'
 
 // Feedback
 export const FEEDBACK_FORM_ROUTE = '/feedback-from'
 export const FEEDBACK_FORM_URL =
   'https://form.asana.com?k=45fPB_e65kYFDjvG-18f0w&d=203394141643832'
+
+// Defender
+export const DEFENDER_ROUTE = '/verjandi'

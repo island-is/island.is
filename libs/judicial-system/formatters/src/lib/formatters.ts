@@ -41,7 +41,7 @@ export function formatDate(
 }
 
 // Credit: https://dzone.com/articles/capitalize-first-letter-string-javascript
-export const capitalize = (text: string): string => {
+export const capitalize = (text?: string): string => {
   if (!text) {
     return ''
   }
@@ -58,11 +58,27 @@ export const lowercase = (text?: string): string => {
 }
 
 export const formatNationalId = (nationalId: string): string => {
-  if (nationalId?.length === 10) {
+  const regex = new RegExp(/^\d{10}$/)
+  if (regex.test(nationalId)) {
     return `${nationalId.slice(0, 6)}-${nationalId.slice(6)}`
   } else {
     return nationalId
   }
+}
+
+export const formatPhoneNumber = (phoneNumber?: string) => {
+  if (!phoneNumber) {
+    return
+  }
+
+  const value = phoneNumber.replace('-', '')
+
+  const splitAt = (index: number) => (x: string) => [
+    x.slice(0, index),
+    x.slice(index),
+  ]
+  if (value.length > 3) return splitAt(3)(value).join('-')
+  return value
 }
 
 export const laws = {
@@ -75,9 +91,11 @@ export const laws = {
   _100_1: '1. mgr. 100. gr. sml.',
 }
 
-export const caseTypes = {
+type CaseTypes = { [c in CaseType]: string }
+export const caseTypes: CaseTypes = {
   CUSTODY: 'gæsluvarðhald',
   TRAVEL_BAN: 'farbann',
+  ADMISSION_TO_FACILITY: 'vistun á viðeigandi stofnun',
   SEARCH_WARRANT: 'húsleit',
   BANKING_SECRECY_WAIVER: 'rof bankaleyndar',
   PHONE_TAPPING: 'símhlustun',
@@ -89,30 +107,10 @@ export const caseTypes = {
   BODY_SEARCH: 'leit og líkamsrannsókn',
   INTERNET_USAGE: 'upplýsingar um vefnotkun',
   RESTRAINING_ORDER: 'nálgunarbann',
+  EXPULSION_FROM_HOME: 'brottvísun af heimili',
   ELECTRONIC_DATA_DISCOVERY_INVESTIGATION: 'rannsókn á rafrænum gögnum',
   VIDEO_RECORDING_EQUIPMENT: 'myndupptökubúnaði komið fyrir',
   OTHER: 'annað',
-}
-
-const getRestrictionByValue = (value: CaseCustodyRestrictions) => {
-  switch (value) {
-    case CaseCustodyRestrictions.COMMUNICATION:
-      return 'D - Bréfskoðun, símabann'
-    case CaseCustodyRestrictions.ISOLATION:
-      return 'B - Einangrun'
-    case CaseCustodyRestrictions.MEDIA:
-      return 'E - Fjölmiðlabann'
-    case CaseCustodyRestrictions.VISITAION:
-      return 'C - Heimsóknarbann'
-    case CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION:
-      return 'Tilkynningaskylda'
-    case CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT:
-      return 'Afhending vegabréfs'
-    case CaseCustodyRestrictions.NECESSITIES:
-      return 'A - Eigin nauðsynjar'
-    case CaseCustodyRestrictions.WORKBAN:
-      return 'F - Vinnubann'
-  }
 }
 
 export const getShortRestrictionByValue = (value: CaseCustodyRestrictions) => {
@@ -127,8 +125,6 @@ export const getShortRestrictionByValue = (value: CaseCustodyRestrictions) => {
       return 'Heimsóknarbann'
     case CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION:
       return 'Tilkynningarskylda'
-    case CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT:
-      return 'Afhending vegabréfs'
     case CaseCustodyRestrictions.NECESSITIES:
       return 'Eigin nauðsynjar'
     case CaseCustodyRestrictions.WORKBAN:
@@ -136,177 +132,46 @@ export const getShortRestrictionByValue = (value: CaseCustodyRestrictions) => {
   }
 }
 
-// Formats prefilled restrictions
-// Note that only the predetermined list of restrictions is relevant here
-export function formatCustodyRestrictions(
-  requestedCustodyRestrictions?: CaseCustodyRestrictions[],
-  isCustodyIsolation?: boolean,
-  isRuling?: boolean,
-): string {
-  const caseCustodyRestrictions = [
-    {
-      id: 'a',
-      type: CaseCustodyRestrictions.NECESSITIES,
-      shortText: 'banni við útvegun persónulegra nauðsynja',
-    },
-    {
-      id: 'c',
-      type: CaseCustodyRestrictions.VISITAION,
-      shortText: 'heimsóknarbanni',
-    },
-    {
-      id: 'd',
-      type: CaseCustodyRestrictions.COMMUNICATION,
-      shortText: 'bréfaskoðun og símabanni',
-    },
-    {
-      id: 'e',
-      type: CaseCustodyRestrictions.MEDIA,
-      shortText: 'fjölmiðlabanni',
-    },
-    {
-      id: 'f',
-      type: CaseCustodyRestrictions.WORKBAN,
-      shortText: 'vinnubanni',
-    },
-  ]
-
-  const relevantCustodyRestrictions = caseCustodyRestrictions
-    .filter((restriction) =>
-      requestedCustodyRestrictions?.includes(restriction.type),
-    )
-    .sort((a, b) => {
-      return a.id > b.id ? 1 : -1
-    })
-
-  if (
-    !(relevantCustodyRestrictions && relevantCustodyRestrictions.length > 0)
-  ) {
-    return !isRuling
-      ? isCustodyIsolation
-        ? 'Sækjandi tekur fram að gæsluvarðhaldið verði án annarra takmarkana.'
-        : 'Sækjandi tekur fram að gæsluvarðhaldið verði án takmarkana.'
-      : ''
-  }
-
-  const custodyRestrictionSuffix = (index: number): string => {
-    const isNextLast = index === relevantCustodyRestrictions.length - 2
-    const isLast = index === relevantCustodyRestrictions.length - 1
-    const isOnly = relevantCustodyRestrictions.length === 1
-
-    return isRuling && isOnly
-      ? 'lið '
-      : isRuling && isLast
-      ? 'liðum '
-      : isLast
-      ? ' '
-      : isNextLast && !isOnly
-      ? ' og '
-      : ', '
-  }
-
-  const filteredCustodyRestrictionsAsString = relevantCustodyRestrictions.reduce(
-    (res, custodyRestriction, index) => {
-      const { id, shortText } = custodyRestriction
-      const suffix = custodyRestrictionSuffix(index)
-
-      return (res += isRuling ? `${id}-${suffix}` : `${shortText}${suffix}`)
-    },
-    '',
-  )
-
-  return isRuling
-    ? `Sækjandi kynnir kærða tilhögun gæsluvarðhaldsins, sem sé með takmörkunum skv. ${filteredCustodyRestrictionsAsString}1. mgr. 99. gr. laga nr. 88/2008.`
-    : `Sækjandi tekur fram að gæsluvarðhaldið verði með ${filteredCustodyRestrictionsAsString}skv. 99. gr. laga nr. 88/2008.`
+/**
+ * Enumerates a list of string, f.x
+ * enumerate(['alice', 'bob', 'paul'], 'and'), returns "alice, bob and paul"
+ * @param values list of strings to enumerate
+ * @param endWord the word before last value is enumerated
+ */
+export function enumerate(values: string[], endWord: string): string {
+  return values.join(', ').replace(/, ([^,]*)$/, ` ${endWord} $1`)
 }
 
-// Fromats the prefilled restrictions for travel ban
-export const formatTravelBanRestrictions = (
-  accusedGender?: Gender,
-  requestedCustodyRestrictions?: CaseCustodyRestrictions[],
-  requestedOtherRestrictions?: string,
-): string => {
-  const relevantCustodyRestrictions = requestedCustodyRestrictions?.filter(
-    (restriction) =>
-      [
-        CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION,
-        CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT,
-      ].includes(restriction),
-  )
-
-  const hasTravelBanRestrictions =
-    relevantCustodyRestrictions && relevantCustodyRestrictions?.length > 0
-  const hasOtherRestrictions =
-    requestedOtherRestrictions && requestedOtherRestrictions.length > 0
-
-  // No restrictions
-  if (!hasTravelBanRestrictions && !hasOtherRestrictions) {
-    return ''
-  }
-
-  const accusedGenderText = accusedGender === Gender.MALE ? 'kærða' : 'kærðu'
-
-  const travelBanRestrictionsText = hasTravelBanRestrictions
-    ? `Sækjandi tekur fram að farbannið verði með takmörkunum.${
-        relevantCustodyRestrictions?.includes(
-          CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION,
-        )
-          ? ` Að ${accusedGenderText} verði gert að tilkynna sig.`
-          : ''
-      }${
-        relevantCustodyRestrictions?.includes(
-          CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT,
-        )
-          ? ` Að ${accusedGenderText} verði gert að afhenda vegabréfið sitt.`
-          : ''
-      }`
-    : ''
-
-  const paragraphBreak =
-    hasTravelBanRestrictions && hasOtherRestrictions ? '\n' : ''
-
-  const otherRestrictionsText = hasOtherRestrictions
-    ? requestedOtherRestrictions
-    : ''
-
-  return `${travelBanRestrictionsText}${paragraphBreak}${otherRestrictionsText}`
+type SupportedCaseCustodyRestriction = {
+  id: string
+  type:
+    | CaseCustodyRestrictions.NECESSITIES
+    | CaseCustodyRestrictions.VISITAION
+    | CaseCustodyRestrictions.COMMUNICATION
+    | CaseCustodyRestrictions.MEDIA
+    | CaseCustodyRestrictions.WORKBAN
 }
 
-// Formats the requested restrictions from the prosecutor
-export const formatRequestedCustodyRestrictions = (
-  type: CaseType,
-  requestedCustodyRestrictions?: CaseCustodyRestrictions[],
-  requestedOtherRestrictions?: string,
-) => {
-  const hasRequestedCustodyRestrictions =
-    requestedCustodyRestrictions && requestedCustodyRestrictions?.length > 0
-  const hasRequestedOtherRestrictions =
-    requestedOtherRestrictions && requestedOtherRestrictions?.length > 0
+const supportedCaseCustodyRestrictions: SupportedCaseCustodyRestriction[] = [
+  { id: 'a', type: CaseCustodyRestrictions.NECESSITIES },
+  { id: 'c', type: CaseCustodyRestrictions.VISITAION },
+  { id: 'd', type: CaseCustodyRestrictions.COMMUNICATION },
+  { id: 'e', type: CaseCustodyRestrictions.MEDIA },
+  { id: 'f', type: CaseCustodyRestrictions.WORKBAN },
+]
 
-  // No restrictions
-  if (!hasRequestedCustodyRestrictions && !hasRequestedOtherRestrictions) {
-    return `Ekki er farið fram á takmarkanir á ${
-      type === CaseType.CUSTODY ? 'gæslu' : 'farbanni'
-    }.`
+export function getSupportedCaseCustodyRestrictions(
+  requestedRestrictions?: CaseCustodyRestrictions[],
+): SupportedCaseCustodyRestriction[] {
+  const restrictions = supportedCaseCustodyRestrictions.filter((restriction) =>
+    requestedRestrictions?.includes(restriction.type),
+  )
+
+  if (!restrictions || restrictions.length === 0) {
+    return [] as SupportedCaseCustodyRestriction[]
   }
 
-  const requestedCustodyRestrictionsText = hasRequestedCustodyRestrictions
-    ? requestedCustodyRestrictions &&
-      requestedCustodyRestrictions.reduce(
-        (acc, restriction, index) =>
-          `${acc}${index > 0 ? '\n' : ''}${getRestrictionByValue(restriction)}`,
-        '',
-      )
-    : ''
-
-  const paragraphBreak =
-    hasRequestedCustodyRestrictions && hasRequestedOtherRestrictions ? '\n' : ''
-
-  const requestedOtherRestrictionsText = hasRequestedOtherRestrictions
-    ? requestedOtherRestrictions
-    : ''
-
-  return `${requestedCustodyRestrictionsText}${paragraphBreak}${requestedOtherRestrictionsText}`
+  return restrictions.sort((a, b) => (a.id > b.id ? 1 : -1))
 }
 
 export function formatGender(gender?: Gender): string {
@@ -352,7 +217,18 @@ export function formatAppeal(
 export function formatRequestCaseType(type: CaseType): string {
   return isRestrictionCase(type) ||
     type === CaseType.RESTRAINING_ORDER ||
+    type === CaseType.EXPULSION_FROM_HOME ||
     type === CaseType.PSYCHIATRIC_EXAMINATION
     ? caseTypes[type]
     : 'rannsóknarheimild'
+}
+
+export const formatDOB = (nationalId?: string, noNationalId?: boolean) => {
+  if (!nationalId) {
+    return '-'
+  }
+
+  return noNationalId
+    ? `fd. ${nationalId}`
+    : `kt. ${formatNationalId(nationalId)}`
 }

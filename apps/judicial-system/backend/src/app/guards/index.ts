@@ -4,4 +4,5 @@ export {
   registrarRule,
   staffRule,
   adminRule,
+  defenderRule,
 } from './rolesRules'

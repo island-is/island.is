@@ -28,19 +28,20 @@ export interface Options {
     params?: Record<string, ExtendedOmit<ApiParamOptions, 'name'>>
     query?: Record<string, ExtendedOmit<ApiQueryOptions, 'name'>>
   }
-  response: {
-    status: 200 | 201 | 204
+  response?: {
+    status?: 200 | 201 | 204
     type?: ApiResponseMetadata['type']
   }
   isAuthorized?: boolean
   description?: string
   summary?: string
+  deprecated?: boolean
 }
 
 const getResponseDecorators = (
   response: Options['response'],
 ): MethodDecorator[] => {
-  switch (response.status) {
+  switch (response?.status ?? 200) {
     case 200:
       return [ApiOkResponse(response)]
     case 201:
@@ -81,6 +82,7 @@ const getExtraDecorators = ({
   isAuthorized = true,
   description,
   summary,
+  deprecated,
 }: Omit<Options, 'response' | 'request'>): MethodDecorator[] => {
   let decorators: MethodDecorator[] = []
   if (isAuthorized) {
@@ -91,8 +93,11 @@ const getExtraDecorators = ({
     ]
   }
 
-  if (description || summary) {
-    decorators = [...decorators, ApiOperation({ description, summary })]
+  if (description || summary || deprecated) {
+    decorators = [
+      ...decorators,
+      ApiOperation({ description, summary, deprecated }),
+    ]
   }
 
   return decorators
@@ -105,7 +110,7 @@ export const Documentation = ({
 }: Options): MethodDecorator =>
   applyDecorators(
     /* BEGIN DEFAULT DECORATORS */
-    HttpCode(response.status),
+    HttpCode(response?.status ?? 200),
     ApiInternalServerErrorResponse({ type: HttpProblemResponse }),
     ApiBadRequestResponse({ type: HttpProblemResponse }),
     /* END DEFAULT DECORATORS */

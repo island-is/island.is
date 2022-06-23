@@ -42,15 +42,17 @@ export class FileService {
       }),
     )
     return await Promise.all(promises)
-      .then(() => {
+      .then((values) => {
         return {
+          files: values,
           success: true,
-        }
+        } as CreateFilesModel
       })
       .catch(() => {
         return {
+          files: [],
           success: false,
-        }
+        } as CreateFilesModel
       })
   }
 
@@ -58,7 +60,6 @@ export class FileService {
     applicationId: string,
   ): Promise<ApplicationFileModel[]> {
     this.logger.debug(`Getting all files for case ${applicationId}`)
-
     return this.fileModel.findAll({
       where: { applicationId },
       order: [['created', 'DESC']],
@@ -104,5 +105,24 @@ export class FileService {
       key: file.key,
       url: signedUrl,
     }
+  }
+
+  async createSignedUrlForAllFilesId(
+    applicationId: string,
+  ): Promise<SignedUrlModel[]> {
+    const allFiles = await this.fileModel.findAll({
+      where: { applicationId },
+    })
+
+    return await Promise.all(
+      allFiles.map((file) => {
+        const fileUrl = `${environment.files.fileBaseUrl}/${file.key}`
+        const signedUrl = this.cloudFrontService.createPresignedPost(fileUrl)
+        return {
+          key: file.key,
+          url: signedUrl,
+        }
+      }),
+    )
   }
 }

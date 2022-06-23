@@ -23,28 +23,28 @@ import {
   Query,
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
+  QueryGetOrganizationSubpageArgs,
   SyslumennAuction,
 } from '@island.is/web/graphql/schema'
 import {
   GET_NAMESPACE_QUERY,
   GET_ORGANIZATION_PAGE_QUERY,
+  GET_ORGANIZATION_SUBPAGE_QUERY,
   GET_SYSLUMENN_AUCTIONS_QUERY,
 } from '../../queries'
 import { Screen } from '../../../types'
 import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { OrganizationWrapper } from '@island.is/web/components'
-import { CustomNextError } from '@island.is/web/units/errors'
-import getConfig from 'next/config'
 import { useQuery } from '@apollo/client'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { useRouter } from 'next/router'
 import { theme } from '@island.is/island-ui/theme'
-
-const { publicRuntimeConfig } = getConfig()
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
 
 interface AuctionsProps {
   organizationPage: Query['getOrganizationPage']
+  subpage: Query['getOrganizationSubpage']
   syslumennAuctions: Query['getSyslumennAuctions']
   namespace: Query['getNamespace']
 }
@@ -395,17 +395,15 @@ const Auctions: Screen<AuctionsProps> = ({
   organizationPage,
   syslumennAuctions,
   namespace,
+  subpage,
 }) => {
-  const { disableSyslumennPage: disablePage } = publicRuntimeConfig
-  if (disablePage === 'true') {
-    throw new CustomNextError(404, 'Not found')
-  }
-
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
   const { format } = useDateUtils()
   const Router = useRouter()
   const auctionDataFetched = new Date()
+
+  useContentfulId(organizationPage.id, subpage.id)
 
   const pageUrl = Router.pathname
 
@@ -638,7 +636,7 @@ const Auctions: Screen<AuctionsProps> = ({
 
   return (
     <OrganizationWrapper
-      pageTitle={n('auctions', 'Uppboð')}
+      pageTitle={subpage?.title ?? n('auctions', 'Uppboð')}
       organizationPage={organizationPage}
       breadcrumbItems={[
         {
@@ -657,7 +655,7 @@ const Auctions: Screen<AuctionsProps> = ({
     >
       <Box marginBottom={6}>
         <Text variant="h1" as="h2">
-          {n('auction', 'Uppboð')}
+          {subpage?.title ?? n('auctions', 'Uppboð')}
         </Text>
       </Box>
       <GridContainer>
@@ -959,10 +957,17 @@ const LotLink = ({
   </LinkContext.Provider>
 )
 
-Auctions.getInitialProps = async ({ apolloClient, locale, query }) => {
+Auctions.getInitialProps = async ({ apolloClient, locale, pathname }) => {
+  const path = pathname?.split('/') ?? []
+  const slug = path?.[path.length - 2] ?? 'syslumenn'
+  const subSlug = path.pop() ?? 'uppbod'
+
   const [
     {
       data: { getOrganizationPage },
+    },
+    {
+      data: { getOrganizationSubpage },
     },
     {
       data: { getSyslumennAuctions },
@@ -973,7 +978,17 @@ Auctions.getInitialProps = async ({ apolloClient, locale, query }) => {
       query: GET_ORGANIZATION_PAGE_QUERY,
       variables: {
         input: {
-          slug: 'syslumenn',
+          slug: slug,
+          lang: locale as ContentLanguage,
+        },
+      },
+    }),
+    apolloClient.query<Query, QueryGetOrganizationSubpageArgs>({
+      query: GET_ORGANIZATION_SUBPAGE_QUERY,
+      variables: {
+        input: {
+          organizationSlug: slug,
+          slug: subSlug,
           lang: locale as ContentLanguage,
         },
       },
@@ -1000,6 +1015,7 @@ Auctions.getInitialProps = async ({ apolloClient, locale, query }) => {
 
   return {
     organizationPage: getOrganizationPage,
+    subpage: getOrganizationSubpage,
     syslumennAuctions: getSyslumennAuctions,
     namespace,
     showSearchInHeader: false,
@@ -1009,4 +1025,5 @@ Auctions.getInitialProps = async ({ apolloClient, locale, query }) => {
 export default withMainLayout(Auctions, {
   headerButtonColorScheme: 'negative',
   headerColorScheme: 'white',
+  footerVersion: 'organization',
 })

@@ -86,6 +86,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
       >
         <ReactDatePicker
           popperClassName={cn(styles.popper, {
+            [styles.popperXsmall]: size === 'xs',
             [styles.popperSmall]: size === 'sm',
             [styles.popperSmallWithoutLabel]: size === 'sm' && !label,
             [styles.popperWithoutLabel]: size === 'md' && !label,
@@ -102,7 +103,11 @@ export const DatePicker: React.FC<DatePickerProps> = ({
           popperPlacement="bottom-start"
           popperModifiers={{
             flip: {
-              enabled: false,
+              enabled: true,
+              behavior: 'flip',
+            },
+            offset: {
+              enabled: true,
             },
             preventOverflow: {
               enabled: true,
@@ -209,7 +214,9 @@ const CustomHeader = ({
   const years =
     minYear && maxYear && minYear < maxYear && range(minYear, maxYear + 1)
   return (
-    <div className={styles.customHeaderContainer}>
+    <div
+      className={cn(styles.customHeaderContainer, 'date-picker-custom-header')}
+    >
       <button
         type="button"
         onClick={decreaseMonth}

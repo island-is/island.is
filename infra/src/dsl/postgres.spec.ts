@@ -10,6 +10,7 @@ const Staging: EnvironmentConfig = {
   type: 'staging',
   featuresOn: [],
   defaultMaxReplicas: 3,
+  defaultMinReplicas: 2,
   releaseName: 'web',
   awsAccountId: '111111',
   awsAccountRegion: 'eu-west-1',
@@ -47,10 +48,10 @@ describe('Postgres', () => {
 
     it('Env and secret variables already defined', () => {
       expect(result.errors).toEqual([
-        'Collisions for environment or secrets for key DB_USER',
-        'Collisions for environment or secrets for key DB_NAME',
-        'Collisions for environment or secrets for key DB_HOST',
-        'Collisions for environment or secrets for key DB_PASS',
+        'Collisions in service-portal-api for environment or secrets for key DB_USER',
+        'Collisions in service-portal-api for environment or secrets for key DB_NAME',
+        'Collisions in service-portal-api for environment or secrets for key DB_HOST',
+        'Collisions in service-portal-api for environment or secrets for key DB_PASS',
       ])
     })
   })

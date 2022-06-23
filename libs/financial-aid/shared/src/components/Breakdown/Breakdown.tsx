@@ -18,6 +18,7 @@ const Breakdown = ({ calculations }: Props) => {
             <Box
               display="flex"
               justifyContent="spaceBetween"
+              alignItems="center"
               paddingY={2}
               paddingX={3}
               borderTopWidth="standard"

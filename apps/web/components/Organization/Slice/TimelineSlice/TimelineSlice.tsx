@@ -21,7 +21,7 @@ import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import Link from 'next/link'
 import ReactDOM from 'react-dom'
 import { renderSlices, SliceType } from '@island.is/island-ui/contentful'
-import { flatten } from '@nestjs/common'
+import flatten from 'lodash/flatten'
 
 function setDefault<K, V>(map: Map<K, V>, key: K, value: V): V {
   if (!map.has(key)) map.set(key, value)
@@ -60,7 +60,6 @@ const getTimeline = (
   let i = 0
   let offset = 50
   let lastTimestamp = 0
-  let lastYear = 0
 
   let currentMonth = 0
 
@@ -86,7 +85,6 @@ const getTimeline = (
           offset={offset}
         />,
       )
-      lastYear = year
       monthEvents.map((event, idx) => {
         // we increase the space between items if they are far apart in time
         const timestamp = new Date(event.date).getTime()

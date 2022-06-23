@@ -40,6 +40,7 @@ export const useStaff = () => {
     email?: string,
     usePseudoName?: boolean,
     updateAdmin?: boolean,
+    municipalityIds?: string[],
   ) => {
     try {
       await updateStaff({
@@ -51,6 +52,7 @@ export const useStaff = () => {
             nickname,
             email,
             usePseudoName,
+            municipalityIds,
           },
         },
       }).then((res) => {

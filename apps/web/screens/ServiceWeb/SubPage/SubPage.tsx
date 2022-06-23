@@ -8,12 +8,15 @@ import {
   Query,
   QueryGetNamespaceArgs,
   QueryGetOrganizationArgs,
+  QueryGetSingleSupportQnaArgs,
   QueryGetSupportQnAsInCategoryArgs,
+  SearchableTags,
   SupportQna,
 } from '@island.is/web/graphql/schema'
 import {
   GET_NAMESPACE_QUERY,
   GET_SERVICE_WEB_ORGANIZATION,
+  GET_SINGLE_SUPPORT_QNA,
   GET_SUPPORT_QNAS_IN_CATEGORY,
 } from '../../queries'
 import { Screen } from '../../../types'
@@ -39,6 +42,7 @@ import { getSlugPart } from '../utils'
 import ContactBanner from '../ContactBanner/ContactBanner'
 import groupBy from 'lodash/groupBy'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
+import OrganizationContactBanner from '../ContactBanner/OrganizationContactBanner'
 
 export interface Dictionary<T> {
   [index: string]: T
@@ -48,22 +52,25 @@ interface SubPageProps {
   organization?: Organization
   namespace: Query['getNamespace']
   supportQNAs: Query['getSupportQNAsInCategory']
+  singleSupportQNA: Query['getSingleSupportQNA']
   questionSlug: string
+  organizationNamespace: Record<string, string>
 }
 
 const SubPage: Screen<SubPageProps> = ({
   organization,
   supportQNAs,
+  singleSupportQNA,
   questionSlug,
   namespace,
+  organizationNamespace,
 }) => {
   const Router = useRouter()
   const n = useNamespace(namespace)
+  const o = useNamespace(organizationNamespace)
   const { linkResolver } = useLinkResolver()
   const organizationSlug = organization.slug
-  const question = supportQNAs.find(
-    (supportQNA) => supportQNA.slug === questionSlug,
-  )
+  const question = singleSupportQNA
 
   const institutionSlug = getSlugPart(Router.asPath, 2)
 
@@ -81,9 +88,9 @@ const SubPage: Screen<SubPageProps> = ({
   )
 
   const organizationTitle = (organization && organization.title) || 'Ísland.is'
-  const pageTitle = `${categoryTitle ? categoryTitle + ' | ' : ''}${n(
-    'assistanceForIslandIs',
-    'Aðstoð fyrir Ísland.is',
+  const pageTitle = `${categoryTitle ? categoryTitle + ' | ' : ''}${o(
+    'serviceWebSubpageTitleSuffix',
+    n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is'),
   )}`
 
   const mobileBackButtonText = questionSlug
@@ -94,14 +101,54 @@ const SubPage: Screen<SubPageProps> = ({
     linkResolver('serviceweb').href
   }/${organizationSlug}${questionSlug ? `/${categorySlug}` : ''}`
 
+  const institutionSlugBelongsToMannaudstorg = institutionSlug.includes(
+    'mannaudstorg',
+  )
+
+  const breadcrumbItems = [
+    {
+      title: n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is'),
+      typename: 'serviceweb',
+      href: linkResolver('serviceweb').href,
+    },
+    {
+      title: organization.title,
+      typename: 'serviceweb',
+      href: `${linkResolver('serviceweb').href}/${organizationSlug}`,
+    },
+    {
+      title: `${categoryTitle}`,
+      typename: 'serviceweb',
+      isTag: true,
+      ...(questionSlug && {
+        href: `${
+          linkResolver('serviceweb').href
+        }/${organizationSlug}/${categorySlug}`,
+      }),
+    },
+  ]
+
+  const searchTags = institutionSlugBelongsToMannaudstorg
+    ? [{ key: 'mannaudstorg', type: SearchableTags.Organization }]
+    : undefined
+
   return (
     <ServiceWebWrapper
       pageTitle={pageTitle}
-      headerTitle={n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is')}
+      pageDescription={o('serviceWebFeaturedDescription', '')}
+      headerTitle={o(
+        'serviceWebHeaderTitle',
+        n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is'),
+      )}
       institutionSlug={institutionSlug}
       organization={organization}
       organizationTitle={organizationTitle}
       smallBackground
+      searchPlaceholder={o(
+        'serviceWebSearchPlaceholder',
+        'Leitaðu á þjónustuvefnum',
+      )}
+      searchTags={searchTags}
     >
       <Box marginY={[3, 3, 10]}>
         <GridContainer>
@@ -115,33 +162,9 @@ const SubPage: Screen<SubPageProps> = ({
                   <GridColumn span="12/12" paddingBottom={[2, 2, 4]}>
                     <Box display={['none', 'none', 'block']} printHidden>
                       <Breadcrumbs
-                        items={[
-                          {
-                            title: n(
-                              'assistanceForIslandIs',
-                              'Aðstoð fyrir Ísland.is',
-                            ),
-                            typename: 'serviceweb',
-                            href: linkResolver('serviceweb').href,
-                          },
-                          {
-                            title: organization.title,
-                            typename: 'serviceweb',
-                            href: `${
-                              linkResolver('serviceweb').href
-                            }/${organizationSlug}`,
-                          },
-                          {
-                            title: `${categoryTitle}`,
-                            typename: 'serviceweb',
-                            isTag: true,
-                            ...(questionSlug && {
-                              href: `${
-                                linkResolver('serviceweb').href
-                              }/${organizationSlug}/${categorySlug}`,
-                            }),
-                          },
-                        ]}
+                        items={breadcrumbItems.slice(
+                          institutionSlugBelongsToMannaudstorg ? 1 : 0,
+                        )}
                         renderLink={(link, { href }) => {
                           return (
                             <NextLink href={href} passHref>
@@ -204,10 +227,62 @@ const SubPage: Screen<SubPageProps> = ({
                         <Text variant="h2" as="h2">
                           {question.title}
                         </Text>
-
                         <Box>
                           {richText(question.answer as SliceType[], undefined)}
                         </Box>
+                        <>
+                          {question.relatedLinks?.length > 0 && (
+                            <Box
+                              background="purple100"
+                              borderRadius="large"
+                              padding={4}
+                              marginTop={6}
+                              marginBottom={2}
+                            >
+                              <Stack space={[1, 1, 2]}>
+                                <Text variant="eyebrow" as="h3">
+                                  {o(
+                                    'serviceWebRelatedMaterialHeaderTitle',
+                                    'Tengt efni',
+                                  )}
+                                </Text>
+                                {(question.relatedLinks ?? []).map(
+                                  ({ text, url }, index) => (
+                                    <Link
+                                      key={index}
+                                      href={url}
+                                      underline="normal"
+                                    >
+                                      <Text key={url} as="span">
+                                        {text}
+                                      </Text>
+                                    </Link>
+                                  ),
+                                )}
+                              </Stack>
+                            </Box>
+                          )}
+                          {question.contactLink && (
+                            <Box
+                              marginTop={
+                                question.relatedLinks?.length > 0 ? 0 : 4
+                              }
+                            >
+                              <OrganizationContactBanner
+                                organizationLogoUrl={organization.logo?.url}
+                                contactLink={question.contactLink}
+                                headerText={o(
+                                  'serviceWebOrganizationContactBannerHeaderTitle',
+                                  'Finnurðu ekki það sem þig vantar?',
+                                )}
+                                linkText={o(
+                                  'serviceWebOrganizationContactBannerLinkTitle',
+                                  'Hafa samband',
+                                )}
+                              />
+                            </Box>
+                          )}
+                        </>
                       </>
                     )}
 
@@ -240,7 +315,7 @@ const SubPage: Screen<SubPageProps> = ({
                                         return (
                                           <Box key={index}>
                                             <TopicCard
-                                              href={`/adstod/${organizationSlug}/${categorySlug}?&q=${slug}`}
+                                              href={`/adstod/${organizationSlug}/${categorySlug}/${slug}`}
                                             >
                                               {title}
                                             </TopicCard>
@@ -259,9 +334,11 @@ const SubPage: Screen<SubPageProps> = ({
                   </GridColumn>
                 </GridRow>
               </GridContainer>
-              <Box marginTop={[10, 10, 20]}>
-                <ContactBanner slug={institutionSlug} />
-              </Box>
+              {!institutionSlugBelongsToMannaudstorg && (
+                <Box marginTop={[10, 10, 20]}>
+                  <ContactBanner slug={institutionSlug} />
+                </Box>
+              )}
             </GridColumn>
           </GridRow>
         </GridContainer>
@@ -272,13 +349,29 @@ const SubPage: Screen<SubPageProps> = ({
 
 const single = <T,>(x: T | T[]): T => (Array.isArray(x) ? x[0] : x)
 
-SubPage.getInitialProps = async ({ apolloClient, locale, query }) => {
+SubPage.getInitialProps = async ({ apolloClient, locale, query, res }) => {
   const slugs = query.slugs as string
   const organizationSlug = slugs[0]
   const categorySlug = slugs[1]
-  const questionSlug = single(query.q) ?? undefined
+  const questionSlug = slugs[2] ?? undefined
 
-  const [organization, namespace, supportQNAs] = await Promise.all([
+  if (single(query.q)) {
+    if (res) {
+      res.writeHead(302, {
+        Location: `/adstod/${organizationSlug}/${categorySlug}/${single(
+          query.q,
+        )}`,
+      })
+      res.end()
+    }
+  }
+
+  const [
+    organization,
+    namespace,
+    supportQNAs,
+    singleSupportQNA,
+  ] = await Promise.all([
     !!organizationSlug &&
       apolloClient.query<Query, QueryGetOrganizationArgs>({
         query: GET_SERVICE_WEB_ORGANIZATION,
@@ -314,12 +407,28 @@ SubPage.getInitialProps = async ({ apolloClient, locale, query }) => {
           },
         },
       }),
+    !!questionSlug &&
+      apolloClient.query<Query, QueryGetSingleSupportQnaArgs>({
+        query: GET_SINGLE_SUPPORT_QNA,
+        variables: {
+          input: {
+            lang: locale as ContentLanguage,
+            slug: questionSlug,
+          },
+        },
+      }),
   ])
+
+  const organizationNamespace = JSON.parse(
+    organization?.data?.getOrganization?.namespace?.fields ?? '{}',
+  )
 
   return {
     namespace,
+    organizationNamespace,
     organization: organization?.data?.getOrganization,
     supportQNAs: supportQNAs?.data?.getSupportQNAsInCategory,
+    singleSupportQNA: singleSupportQNA?.data?.getSingleSupportQNA,
     questionSlug,
   }
 }
@@ -347,5 +456,5 @@ const getSortedSupportSubCategoryTitles = (
 
 export default withMainLayout(SubPage, {
   showHeader: false,
-  showFooter: false,
+  footerVersion: 'organization',
 })

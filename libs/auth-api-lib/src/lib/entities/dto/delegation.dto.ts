@@ -47,6 +47,7 @@ export class DelegationDTO {
   @ApiPropertyOptional({ nullable: true })
   toName?: string | null
 
+  @IsOptional()
   @IsDateString()
   @ApiPropertyOptional({ nullable: true })
   validTo?: Date | null

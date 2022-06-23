@@ -97,6 +97,41 @@ export const AccessControlModal: FC<AccessControlModalProps> = ({
             error={errors?.name?.message}
             backgroundColor="blue"
           />
+          <InputController
+            id="email"
+            control={control}
+            required
+            label={t.modal.inputs.email.label}
+            placeholder={t.modal.inputs.email.placeholder}
+            rules={{
+              required: {
+                value: true,
+                message: t.modal.inputs.email.rules?.required,
+              },
+              pattern: {
+                value: /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i,
+                message: t.modal.inputs.email.rules?.validate,
+              },
+            }}
+            error={errors?.email?.message}
+            backgroundColor="blue"
+          />
+          <InputController
+            id="phone"
+            control={control}
+            required
+            label={t.modal.inputs.phone.label}
+            placeholder={t.modal.inputs.phone.placeholder}
+            rules={{
+              required: {
+                value: true,
+                message: t.modal.inputs.phone.rules?.required,
+              },
+            }}
+            type="tel"
+            error={errors?.phone?.message}
+            backgroundColor="blue"
+          />
           <Controller
             name="role"
             control={control}

@@ -13,10 +13,12 @@ import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import {
+  CurrentHttpUser,
   JwtAuthGuard,
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
+import type { User } from '@island.is/judicial-system/types'
 
 import { prosecutorRule } from '../../guards'
 import {
@@ -57,11 +59,12 @@ export class PoliceController {
   })
   getAll(
     @Param('caseId') caseId: string,
+    @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
   ): Promise<PoliceCaseFile[]> {
     this.logger.debug(`Getting all police files for case ${caseId}`)
 
-    return this.policeService.getAllPoliceCaseFiles(theCase.id)
+    return this.policeService.getAllPoliceCaseFiles(theCase.id, user)
   }
 
   @RolesRules(prosecutorRule)
@@ -72,12 +75,17 @@ export class PoliceController {
   })
   uploadPoliceCaseFile(
     @Param('caseId') caseId: string,
+    @CurrentHttpUser() user: User,
     @Body() uploadPoliceCaseFile: UploadPoliceCaseFileDto,
   ): Promise<UploadPoliceCaseFileResponse> {
     this.logger.debug(
       `Uploading police file ${uploadPoliceCaseFile.id} of case ${caseId} to AWS S3`,
     )
 
-    return this.policeService.uploadPoliceCaseFile(caseId, uploadPoliceCaseFile)
+    return this.policeService.uploadPoliceCaseFile(
+      caseId,
+      uploadPoliceCaseFile,
+      user,
+    )
   }
 }

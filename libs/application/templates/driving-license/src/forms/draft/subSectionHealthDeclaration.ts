@@ -5,6 +5,7 @@ import {
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { hasNoDrivingLicenseInOtherCountry } from '../../lib/utils'
+import { hasHealthRemarks } from '../../lib/utils/formUtils'
 
 export const subSectionHealthDeclaration = buildSubSection({
   id: 'healthDeclaration',
@@ -16,6 +17,12 @@ export const subSectionHealthDeclaration = buildSubSection({
       title: m.healthDeclarationMultiFieldTitle,
       space: 1,
       children: [
+        buildCustomField({
+          id: 'remarks',
+          title: '',
+          component: 'HealthRemarks',
+          condition: (_, externalData) => hasHealthRemarks(externalData),
+        }),
         buildCustomField(
           {
             id: 'healthDeclaration.usesContactGlasses',

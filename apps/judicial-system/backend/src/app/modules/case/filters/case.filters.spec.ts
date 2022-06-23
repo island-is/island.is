@@ -1,4 +1,4 @@
-import { literal, Op } from 'sequelize'
+import { Op } from 'sequelize'
 import each from 'jest-each'
 
 import {
@@ -7,7 +7,6 @@ import {
   CaseState,
   CaseType,
   InstitutionType,
-  restrictionCases,
   UserRole,
 } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
@@ -467,6 +466,7 @@ describe('isCaseBlockedFromUser', () => {
     ${CaseType.BODY_SEARCH}
     ${CaseType.INTERNET_USAGE}
     ${CaseType.RESTRAINING_ORDER}
+    ${CaseType.EXPULSION_FROM_HOME}
     ${CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION}
     ${CaseType.VIDEO_RECORDING_EQUIPMENT}
     ${CaseType.OTHER}
@@ -499,7 +499,7 @@ describe('isCaseBlockedFromUser', () => {
     )
   })
 
-  it('it should block an accepted travel ban case from prison staff', () => {
+  it('should block an accepted travel ban case from prison staff', () => {
     // Arrange
     const theCase = {
       type: CaseType.TRAVEL_BAN,
@@ -519,7 +519,7 @@ describe('isCaseBlockedFromUser', () => {
     expect(isReadBlocked).toBe(true)
   })
 
-  it('it should not read block an accepted travel ban case from prison admin staff', () => {
+  it('should not read block an accepted travel ban case from prison admin staff', () => {
     // Arrange
     const theCase = {
       type: CaseType.TRAVEL_BAN,
@@ -581,10 +581,52 @@ describe('isCaseBlockedFromUser', () => {
     expect(isReadBlocked).toBe(false)
   })
 
+  it('should not read block an accepted admission to facility case from prison staff', () => {
+    // Arrange
+    const theCase = {
+      type: CaseType.ADMISSION_TO_FACILITY,
+      state: CaseState.ACCEPTED,
+      decision: CaseDecision.ACCEPTING,
+    } as Case
+    const user = {
+      role: UserRole.STAFF,
+      institution: { type: InstitutionType.PRISON },
+    } as User
+
+    // Act
+    const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
+    const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+
+    // Assert
+    expect(isWriteBlocked).toBe(true)
+    expect(isReadBlocked).toBe(false)
+  })
+
   it('should not read block a partially accepted custody case from prison staff', () => {
     // Arrange
     const theCase = {
       type: CaseType.CUSTODY,
+      state: CaseState.ACCEPTED,
+      decision: CaseDecision.ACCEPTING_PARTIALLY,
+    } as Case
+    const user = {
+      role: UserRole.STAFF,
+      institution: { type: InstitutionType.PRISON },
+    } as User
+
+    // Act
+    const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
+    const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+
+    // Assert
+    expect(isWriteBlocked).toBe(true)
+    expect(isReadBlocked).toBe(false)
+  })
+
+  it('should not read block a partially accepted admission to facility case from prison staff', () => {
+    // Arrange
+    const theCase = {
+      type: CaseType.ADMISSION_TO_FACILITY,
       state: CaseState.ACCEPTED,
       decision: CaseDecision.ACCEPTING_PARTIALLY,
     } as Case
@@ -618,7 +660,27 @@ describe('isCaseBlockedFromUser', () => {
     const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
 
     // Assert
-    expect(isWriteBlocked).toBe(true)
+    expect(isWriteBlocked).toBe(false)
+    expect(isReadBlocked).toBe(false)
+  })
+
+  it('should not read block an accepted admission to facility case from prison admin staff', () => {
+    // Arrange
+    const theCase = {
+      type: CaseType.ADMISSION_TO_FACILITY,
+      state: CaseState.ACCEPTED,
+    } as Case
+    const user = {
+      role: UserRole.STAFF,
+      institution: { type: InstitutionType.PRISON_ADMIN },
+    } as User
+
+    // Act
+    const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
+    const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+
+    // Assert
+    expect(isWriteBlocked).toBe(false)
     expect(isReadBlocked).toBe(false)
   })
 })
@@ -641,48 +703,8 @@ describe('getCasesQueryFilter', () => {
     // Assert
     expect(res).toStrictEqual({
       [Op.and]: [
+        { isArchived: false },
         { [Op.not]: { state: [CaseState.DELETED] } },
-        {
-          [Op.not]: {
-            [Op.and]: [
-              { state: [CaseState.REJECTED, CaseState.DISMISSED] },
-              { ruling_date: { [Op.lt]: literal('current_date - 90') } },
-            ],
-          },
-        },
-        {
-          [Op.not]: {
-            [Op.and]: [
-              {
-                state: [
-                  CaseState.NEW,
-                  CaseState.DRAFT,
-                  CaseState.SUBMITTED,
-                  CaseState.RECEIVED,
-                ],
-              },
-              { created: { [Op.lt]: literal('current_date - 90') } },
-            ],
-          },
-        },
-        {
-          [Op.not]: {
-            [Op.and]: [
-              { type: restrictionCases },
-              { state: CaseState.ACCEPTED },
-              { valid_to_date: { [Op.lt]: literal('current_date - 90') } },
-            ],
-          },
-        },
-        {
-          [Op.not]: {
-            [Op.and]: [
-              { [Op.not]: { type: restrictionCases } },
-              { state: CaseState.ACCEPTED },
-              { ruling_date: { [Op.lt]: literal('current_date - 90') } },
-            ],
-          },
-        },
         {
           [Op.or]: [
             { creating_prosecutor_id: { [Op.is]: null } },
@@ -707,7 +729,7 @@ describe('getCasesQueryFilter', () => {
     ${UserRole.REGISTRAR}
     ${UserRole.JUDGE}
   `.describe('given $role role', ({ role }) => {
-    it(`should get ${role} filter for`, () => {
+    it(`should get ${role} filter`, () => {
       // Arrange
       const user = {
         role,
@@ -720,48 +742,8 @@ describe('getCasesQueryFilter', () => {
       // Assert
       expect(res).toStrictEqual({
         [Op.and]: [
+          { isArchived: false },
           { [Op.not]: { state: [CaseState.DELETED, CaseState.NEW] } },
-          {
-            [Op.not]: {
-              [Op.and]: [
-                { state: [CaseState.REJECTED, CaseState.DISMISSED] },
-                { ruling_date: { [Op.lt]: literal('current_date - 90') } },
-              ],
-            },
-          },
-          {
-            [Op.not]: {
-              [Op.and]: [
-                {
-                  state: [
-                    CaseState.NEW,
-                    CaseState.DRAFT,
-                    CaseState.SUBMITTED,
-                    CaseState.RECEIVED,
-                  ],
-                },
-                { created: { [Op.lt]: literal('current_date - 90') } },
-              ],
-            },
-          },
-          {
-            [Op.not]: {
-              [Op.and]: [
-                { type: restrictionCases },
-                { state: CaseState.ACCEPTED },
-                { valid_to_date: { [Op.lt]: literal('current_date - 90') } },
-              ],
-            },
-          },
-          {
-            [Op.not]: {
-              [Op.and]: [
-                { [Op.not]: { type: restrictionCases } },
-                { state: CaseState.ACCEPTED },
-                { ruling_date: { [Op.lt]: literal('current_date - 90') } },
-              ],
-            },
-          },
           {
             [Op.or]: [
               { court_id: { [Op.is]: null } },
@@ -785,6 +767,7 @@ describe('getCasesQueryFilter', () => {
       // Assert
       expect(res).toStrictEqual({
         [Op.and]: [
+          { isArchived: false },
           {
             [Op.not]: {
               state: [
@@ -797,53 +780,12 @@ describe('getCasesQueryFilter', () => {
             },
           },
           {
-            [Op.not]: {
-              [Op.and]: [
-                { state: [CaseState.REJECTED, CaseState.DISMISSED] },
-                { ruling_date: { [Op.lt]: literal('current_date - 90') } },
-              ],
-            },
-          },
-          {
-            [Op.not]: {
-              [Op.and]: [
-                {
-                  state: [
-                    CaseState.NEW,
-                    CaseState.DRAFT,
-                    CaseState.SUBMITTED,
-                    CaseState.RECEIVED,
-                  ],
-                },
-                { created: { [Op.lt]: literal('current_date - 90') } },
-              ],
-            },
-          },
-          {
-            [Op.not]: {
-              [Op.and]: [
-                { type: restrictionCases },
-                { state: CaseState.ACCEPTED },
-                { valid_to_date: { [Op.lt]: literal('current_date - 90') } },
-              ],
-            },
-          },
-          {
-            [Op.not]: {
-              [Op.and]: [
-                { [Op.not]: { type: restrictionCases } },
-                { state: CaseState.ACCEPTED },
-                { ruling_date: { [Op.lt]: literal('current_date - 90') } },
-              ],
-            },
-          },
-          {
-            [Op.or]: {
-              accused_appeal_decision: CaseAppealDecision.APPEAL,
-              prosecutor_appeal_decision: CaseAppealDecision.APPEAL,
-              accused_postponed_appeal_date: { [Op.not]: null },
-              prosecutor_postponed_appeal_date: { [Op.not]: null },
-            },
+            [Op.or]: [
+              { accused_appeal_decision: CaseAppealDecision.APPEAL },
+              { prosecutor_appeal_decision: CaseAppealDecision.APPEAL },
+              { accused_postponed_appeal_date: { [Op.not]: null } },
+              { prosecutor_postponed_appeal_date: { [Op.not]: null } },
+            ],
           },
         ],
       })
@@ -867,12 +809,12 @@ describe('getCasesQueryFilter', () => {
     // Assert
     expect(res).toStrictEqual({
       [Op.and]: [
+        { isArchived: false },
         { state: CaseState.ACCEPTED },
-        { type: CaseType.CUSTODY },
+        { type: [CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY] },
         {
           decision: [CaseDecision.ACCEPTING, CaseDecision.ACCEPTING_PARTIALLY],
         },
-        { valid_to_date: { [Op.gt]: literal('current_date - 90') } },
       ],
     })
   })
@@ -894,9 +836,15 @@ describe('getCasesQueryFilter', () => {
     // Assert
     expect(res).toStrictEqual({
       [Op.and]: [
+        { isArchived: false },
         { state: CaseState.ACCEPTED },
-        { type: [CaseType.CUSTODY, CaseType.TRAVEL_BAN] },
-        { valid_to_date: { [Op.gt]: literal('current_date - 90') } },
+        {
+          type: [
+            CaseType.ADMISSION_TO_FACILITY,
+            CaseType.CUSTODY,
+            CaseType.TRAVEL_BAN,
+          ],
+        },
       ],
     })
   })

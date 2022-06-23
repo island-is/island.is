@@ -1,7 +1,6 @@
 import type { AuthConfig, User } from '@island.is/auth-nest-tools'
 import {
   BadRequestException,
-  ConflictException,
   Inject,
   Injectable,
   InternalServerErrorException,
@@ -13,19 +12,12 @@ import uniqBy from 'lodash/uniqBy'
 import { Op, WhereOptions } from 'sequelize'
 import { uuid } from 'uuidv4'
 
-import {
-  AuthMiddleware,
-  AuthMiddlewareOptions,
-} from '@island.is/auth-nest-tools'
+import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import {
   createEnhancedFetch,
   EnhancedFetchAPI,
 } from '@island.is/clients/middlewares'
 import { EinstaklingarApi } from '@island.is/clients/national-registry-v2'
-import type {
-  EinstaklingarGetEinstaklingurRequest,
-  EinstaklingarGetForsjaRequest,
-} from '@island.is/clients/national-registry-v2'
 import { RskProcuringClient } from '@island.is/clients/rsk/procuring'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
@@ -90,15 +82,12 @@ export class DelegationsService {
   /**
    *
    * @param user The user that is giving the delegation to other user
-   * @param delegation The delegation to create
-   * @param xRoadClient
-   * @param authMiddlewareOptions
+   * @param createDelegation The delegation to create
    * @returns
    */
   async create(
     user: User,
     createDelegation: CreateDelegationDTO,
-    authMiddlewareOptions: AuthMiddlewareOptions,
   ): Promise<DelegationDTO | null> {
     if (createDelegation.toNationalId === user.nationalId) {
       throw new BadRequestException(`Can not create delegation to self.`)
@@ -124,11 +113,7 @@ export class DelegationsService {
     if (!delegation) {
       const [fromDisplayName, toName] = await Promise.all([
         this.getUserName(user),
-        this.getPersonName(
-          createDelegation.toNationalId,
-          user,
-          authMiddlewareOptions,
-        ),
+        this.getPersonName(createDelegation.toNationalId),
       ])
 
       delegation = await this.delegationModel.create({
@@ -152,7 +137,7 @@ export class DelegationsService {
 
   /**
    * Updates a delegation between two users
-   * @param fromNationalId Id of the user that is granting the delegation
+   * @param user Authenticated user
    * @param input Scopes that the delegation should be updated with
    * @param delegationId Id of the delegation
    * @returns
@@ -257,7 +242,7 @@ export class DelegationsService {
 
   /**
    * Finds all delegations a user has created.
-   * @param nationalId The id of the user to find all delegations from
+   * @param user Authenticated user
    * @param validity Enum values to indicate the validity of the scopes
    * @param otherUser The id of a user to find a specific delegation given to
    * @returns
@@ -332,33 +317,46 @@ export class DelegationsService {
    * Includes custom delegations and natural delegations from
    * NationalRegistry and CompanyRegistry.
    * @param user
-   * @param xRoadClient
-   * @param authMiddlewareOptions
    * @returns
    */
   async findAllIncoming(
     user: User,
-    authMiddlewareOptions: AuthMiddlewareOptions,
+    delegationTypes?: DelegationType[],
   ): Promise<DelegationDTO[]> {
     const client = await this.getClientDelegationInfo(user)
 
     const delegationPromises = []
 
-    if (!client || client.supportsLegalGuardians) {
-      delegationPromises.push(
-        this.findAllWardsIncoming(user, authMiddlewareOptions),
-      )
+    const hasDelegationTypeFilter =
+      delegationTypes && delegationTypes.length > 0
+
+    if (
+      (!client || client.supportsLegalGuardians) &&
+      (!hasDelegationTypeFilter ||
+        delegationTypes?.includes(DelegationType.LegalGuardian))
+    ) {
+      delegationPromises.push(this.findAllWardsIncoming(user))
     }
-    if (!client || client.supportsProcuringHolders) {
+    if (
+      (!client || client.supportsProcuringHolders) &&
+      (!hasDelegationTypeFilter ||
+        delegationTypes?.includes(DelegationType.ProcurationHolder))
+    ) {
       delegationPromises.push(this.findAllCompaniesIncoming(user))
     }
-    if (!client || client.supportsDelegation) {
+    if (
+      (!client || client.supportsDelegation) &&
+      (!hasDelegationTypeFilter ||
+        delegationTypes?.includes(DelegationType.Custom))
+    ) {
       delegationPromises.push(this.findAllValidCustomIncoming(user))
     }
-    if (!client || client.supportsPersonalRepresentatives) {
-      delegationPromises.push(
-        this.findAllRepresentedPersonsIncoming(user, authMiddlewareOptions),
-      )
+    if (
+      (!client || client.supportsPersonalRepresentatives) &&
+      (!hasDelegationTypeFilter ||
+        delegationTypes?.includes(DelegationType.PersonalRepresentative))
+    ) {
+      delegationPromises.push(this.findAllRepresentedPersonsIncoming(user))
     }
     const delegationSets = await Promise.all(delegationPromises)
 
@@ -370,7 +368,7 @@ export class DelegationsService {
 
   /**
    * Finds a delegation by relationship of two users
-   * @param fromNationalId
+   * @param user Authenticated user that has given the delegation
    * @param toNationalId
    * @returns
    */
@@ -410,14 +408,9 @@ export class DelegationsService {
   /**
    * Find all wards for the user from NationalRegistry
    * @param user
-   * @param xRoadClient
-   * @param authMiddlewareOptions
    * @returns
    */
-  private async findAllWardsIncoming(
-    user: User,
-    authMiddlewareOptions: AuthMiddlewareOptions,
-  ): Promise<DelegationDTO[]> {
+  private async findAllWardsIncoming(user: User): Promise<DelegationDTO[]> {
     try {
       const supported = await this.featureFlagService.getValue(
         Features.legalGuardianDelegations,
@@ -429,8 +422,8 @@ export class DelegationsService {
       }
 
       const response = await this.personApi
-        .withMiddleware(new AuthMiddleware(user, authMiddlewareOptions))
-        .einstaklingarGetForsja(<EinstaklingarGetForsjaRequest>{
+        .withMiddleware(new AuthMiddleware(user))
+        .einstaklingarGetForsja({
           id: user.nationalId,
         })
 
@@ -439,11 +432,9 @@ export class DelegationsService {
       )
 
       const resultPromises = distinct.map(async (nationalId) =>
-        this.personApi
-          .withMiddleware(new AuthMiddleware(user, authMiddlewareOptions))
-          .einstaklingarGetEinstaklingur(<EinstaklingarGetEinstaklingurRequest>{
-            id: nationalId,
-          }),
+        this.personApi.einstaklingarGetEinstaklingur({
+          id: nationalId,
+        }),
       )
 
       const result = await Promise.all(resultPromises)
@@ -509,7 +500,6 @@ export class DelegationsService {
    */
   private async findAllRepresentedPersonsIncoming(
     user: User,
-    authMiddlewareOptions: AuthMiddlewareOptions,
   ): Promise<DelegationDTO[]> {
     try {
       const feature = await this.featureFlagService.getValue(
@@ -539,8 +529,7 @@ export class DelegationsService {
 
       const resultPromises = rp.map(async (representative) =>
         this.personApi
-          .withMiddleware(new AuthMiddleware(user, authMiddlewareOptions))
-          .einstaklingarGetEinstaklingur(<EinstaklingarGetEinstaklingurRequest>{
+          .einstaklingarGetEinstaklingur({
             id: representative.nationalIdRepresentedPerson,
           })
           .then(
@@ -664,7 +653,7 @@ export class DelegationsService {
     )
   }
 
-  private getClientDelegationInfo(
+  private async getClientDelegationInfo(
     user: User,
   ): Promise<ClientDelegationInfo | null> {
     return this.clientModel.findByPk(user.client, {
@@ -700,20 +689,10 @@ export class DelegationsService {
     return userinfo.name
   }
 
-  private async getPersonName(
-    nationalId: string,
-    user: User,
-    authMiddlewareOptions: AuthMiddlewareOptions,
-  ) {
-    const person = await this.personApi
-      .withMiddleware(
-        new AuthMiddleware(user, {
-          forwardUserInfo: authMiddlewareOptions.forwardUserInfo,
-        }),
-      )
-      .einstaklingarGetEinstaklingur({
-        id: nationalId,
-      })
+  private async getPersonName(nationalId: string) {
+    const person = await this.personApi.einstaklingarGetEinstaklingur({
+      id: nationalId,
+    })
     if (!person) {
       throw new BadRequestException(
         `A person with nationalId<${nationalId}> could not be found`,
@@ -762,9 +741,9 @@ export class DelegationsService {
     }
 
     const startOfToday = startOfDay(new Date())
-    // validTo can be null or undefined or it needs to be the current day or in the future
+    // validTo needs to be the current day or in the future
     return scopes.every(
-      (scope) => !scope.validTo || new Date(scope.validTo) >= startOfToday,
+      (scope) => scope.validTo && new Date(scope.validTo) >= startOfToday,
     )
   }
 }

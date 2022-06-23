@@ -14,7 +14,7 @@ import { useDrivingLicense } from '@island.is/service-portal/graphql'
 import { m } from '../../lib/messages'
 
 export const LicensesOverview: ServicePortalModuleComponent = () => {
-  useNamespaces('sp.licenses')
+  useNamespaces('sp.license')
   const { formatMessage } = useLocale()
   const { data, status, loading, error } = useDrivingLicense()
 
@@ -33,16 +33,13 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
         !error &&
         (status === 'Unknown' || status === 'NotAvailable') && (
           <Box marginTop={8}>
-            <EmptyState title={m.errorNoData} />
+            <EmptyState />
           </Box>
         )}
 
       {error && (
         <Box>
-          <AlertBanner
-            description={formatMessage(m.errorFetch)}
-            variant="error"
-          />
+          <EmptyState description={m.errorFetch} />
         </Box>
       )}
     </>

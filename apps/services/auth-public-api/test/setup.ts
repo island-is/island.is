@@ -18,6 +18,7 @@ import {
   ClientAllowedScope,
   DelegationConfig,
   DelegationsService,
+  Language,
   SequelizeConfigService,
 } from '@island.is/auth-api-lib'
 
@@ -77,6 +78,10 @@ export const Scopes: ScopeSetupOptions[] = [
     // Scope for another org
     name: '@otherorg.is/scope5',
   },
+  {
+    // Only allowed for legal guardian, one level deep
+    name: '@island.is/scope6',
+  },
 ]
 
 const delegationConfig: ConfigType<typeof DelegationConfig> = {
@@ -85,6 +90,10 @@ const delegationConfig: ConfigType<typeof DelegationConfig> = {
     {
       scopeName: '@island.is/scope3',
       onlyForDelegationType: ['ProcurationHolder'],
+    },
+    {
+      scopeName: '@island.is/scope6',
+      onlyForDelegationType: ['LegalGuardian'],
     },
   ],
 }
@@ -118,6 +127,14 @@ export const setupWithAuth = async ({
   // Add scopes in the "system" to use for delegation setup
   const apiScopeModel = app.get<typeof ApiScope>(getModelToken(ApiScope))
   await apiScopeModel.bulkCreate(scopes.map((scope) => createApiScope(scope)))
+
+  // Add language for translations.
+  const languageModel = app.get<typeof Language>(getModelToken(Language))
+  await languageModel.create({
+    isoKey: 'en',
+    description: 'Enska',
+    englishDescription: 'English',
+  })
 
   if (client) {
     const clientModel = app.get<typeof Client>(getModelToken(Client))

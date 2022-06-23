@@ -27,6 +27,7 @@ import {
   IdentityResource,
   IdentityResourceUserClaim,
   ResourcesService,
+  TranslationModule,
 } from '@island.is/auth-api-lib'
 import {
   PersonalRepresentative,
@@ -79,6 +80,7 @@ const delegationAuthConfig: AuthConfig = environment.auth
     RskProcuringClientModule,
     NationalRegistryClientModule,
     FeatureFlagModule,
+    TranslationModule,
   ],
   controllers: [DelegationsController],
   providers: [

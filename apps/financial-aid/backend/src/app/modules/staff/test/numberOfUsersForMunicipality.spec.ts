@@ -2,6 +2,8 @@ import { StaffModel } from '../models/staff.model'
 import { uuid } from 'uuidv4'
 
 import { createTestingStaffModule } from './createTestingStaffModule'
+import { Op } from 'sequelize'
+import { StaffRole } from '@island.is/financial-aid/shared/lib'
 
 interface Then {
   result: Number
@@ -44,7 +46,8 @@ describe('StaffController - Get number of users for municipality', () => {
     it('should run database query', () => {
       expect(mockNumberOfUsers).toHaveBeenCalledWith({
         where: {
-          municipalityId,
+          municipalityIds: { [Op.contains]: [municipalityId] },
+          roles: { [Op.contains]: [StaffRole.ADMIN] },
         },
       })
     })

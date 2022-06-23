@@ -7,6 +7,7 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   DefaultEvents,
+  EphemeralStateLifeCycle,
 } from '@island.is/application/core'
 import { PublicDebtPaymentPlanSchema } from './dataSchema'
 import { application } from './messages'
@@ -15,6 +16,7 @@ const States = {
   draft: 'draft',
   submitted: 'submitted',
   closed: 'closed',
+  prerequisites: 'prerequisites',
 }
 export enum API_MODULE_ACTIONS {
   sendApplication = 'sendApplication',
@@ -43,8 +45,39 @@ const PublicDebtPaymentPlanTemplate: ApplicationTemplate<
   ],
   dataSchema: PublicDebtPaymentPlanSchema,
   stateMachineConfig: {
-    initial: States.draft,
+    initial: States.prerequisites,
     states: {
+      [States.prerequisites]: {
+        meta: {
+          name: States.prerequisites,
+          actionCard: {
+            title: application.name,
+            description: application.description,
+          },
+          progress: 0.5,
+          lifecycle: EphemeralStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/PrerequisitesForm').then((module) =>
+                  Promise.resolve(module.PrerequisitesForm),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Hefja umsókn',
+                  type: 'primary',
+                },
+              ],
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          SUBMIT: { target: States.draft },
+        },
+      },
       [States.draft]: {
         meta: {
           name: States.draft,

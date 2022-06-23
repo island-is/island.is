@@ -16,16 +16,22 @@ import {
   ToastContainer,
   toast,
 } from '@island.is/island-ui/core'
-import * as tableStyles from '../../sharedStyles/Table.css'
-import * as headerStyles from '../../sharedStyles/Header.css'
-import cn from 'classnames'
 
-import { Municipality, Routes } from '@island.is/financial-aid/shared/lib'
+import {
+  Municipality,
+  Routes,
+  UpdateAdmin,
+} from '@island.is/financial-aid/shared/lib'
 import {
   MunicipalityActivityMutation,
   MunicipalitiesQuery,
+  AllAdminsQuery,
 } from '@island.is/financial-aid-web/veita/graphql'
 import { useRouter } from 'next/router'
+
+import * as tableStyles from '../../sharedStyles/Table.css'
+import * as headerStyles from '../../sharedStyles/Header.css'
+import cn from 'classnames'
 
 export const Municipalities = () => {
   const [getMunicipalities, { data, error, loading }] = useLazyQuery<{
@@ -35,9 +41,18 @@ export const Municipalities = () => {
     errorPolicy: 'all',
   })
 
+  const [
+    getAdmins,
+    { data: dataAdmins, error: errorAdmins, loading: loadingAdmins },
+  ] = useLazyQuery<{
+    admins: UpdateAdmin[]
+  }>(AllAdminsQuery, {
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
+  })
+
   const [isModalVisible, setIsModalVisible] = useState(false)
   const router = useRouter()
-
   useEffect(() => {
     getMunicipalities()
   }, [])
@@ -93,7 +108,12 @@ export const Municipalities = () => {
           size="small"
           icon="add"
           variant="ghost"
-          onClick={() => setIsModalVisible(true)}
+          onClick={() => {
+            setIsModalVisible(true)
+            if (!dataAdmins?.admins) {
+              getAdmins()
+            }
+          }}
         >
           Nýtt sveitarfélag
         </Button>
@@ -174,6 +194,8 @@ export const Municipalities = () => {
           parseInt(el.municipalityId),
         )}
         onMunicipalityCreated={refreshList}
+        allAdmins={dataAdmins?.admins}
+        loadingAdmins={loadingAdmins}
       />
     </LoadingContainer>
   )

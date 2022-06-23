@@ -43,10 +43,10 @@ export class StaffService {
     })
   }
 
-  async findByMunicipalityId(municipalityId: string): Promise<StaffModel[]> {
+  async findByMunicipalityId(municipalityIds: string[]): Promise<StaffModel[]> {
     return await this.staffModel.findAll({
       where: {
-        municipalityId,
+        municipalityIds: { [Op.overlap]: municipalityIds },
       },
       order: [
         ['active', 'DESC'],
@@ -75,10 +75,11 @@ export class StaffService {
 
   private async sendEmail(
     input: CreateStaffDto,
-    municipalityName: string,
-    user: Staff,
+    municipalityNames: string[],
     isFirstStaffForMunicipality: boolean,
   ) {
+    const municipalityName = municipalityNames.map((muni) => muni).join(', ')
+
     const contact = {
       from: {
         name: 'Samband íslenskra sveitarfélaga',
@@ -134,8 +135,7 @@ export class StaffService {
 
   async createStaff(
     input: CreateStaffDto,
-    municipality: CreateStaffMunicipality,
-    user: Staff,
+    municipality?: CreateStaffMunicipality,
     t?: Transaction,
     isFirstStaffForMunicipality: boolean = false,
   ): Promise<StaffModel> {
@@ -144,12 +144,12 @@ export class StaffService {
         {
           nationalId: input.nationalId,
           name: input.name,
-          municipalityId: municipality.municipalityId,
+          municipalityIds: isFirstStaffForMunicipality
+            ? [municipality?.municipalityId]
+            : input.municipalityIds,
           email: input.email,
           roles: input.roles,
           active: true,
-          municipalityName: municipality.municipalityName,
-          municipalityHomepage: municipality.municipalityHomepage,
         },
         { transaction: t },
       )
@@ -159,8 +159,9 @@ export class StaffService {
 
     await this.sendEmail(
       input,
-      municipality.municipalityName,
-      user,
+      isFirstStaffForMunicipality
+        ? [municipality.municipalityName]
+        : input.municipalityNames,
       isFirstStaffForMunicipality,
     )
 
@@ -170,7 +171,8 @@ export class StaffService {
   async numberOfUsersForMunicipality(municipalityId: string): Promise<number> {
     return await this.staffModel.count({
       where: {
-        municipalityId,
+        municipalityIds: { [Op.contains]: [municipalityId] },
+        roles: { [Op.contains]: [StaffRole.ADMIN] },
       },
     })
   }
@@ -178,7 +180,28 @@ export class StaffService {
   async getUsers(municipalityId: string): Promise<StaffModel[]> {
     return await this.staffModel.findAll({
       where: {
-        municipalityId,
+        municipalityIds: { [Op.contains]: [municipalityId] },
+        roles: { [Op.contains]: [StaffRole.ADMIN] },
+      },
+    })
+  }
+
+  async allAdminUsers(municipalityId: string): Promise<StaffModel[]> {
+    return await this.staffModel.findAll({
+      where: {
+        [Op.not]: {
+          municipalityIds: {
+            [Op.contains]: [municipalityId],
+          },
+        },
+        roles: { [Op.contains]: [StaffRole.ADMIN] },
+      },
+    })
+  }
+
+  async getAdmins(): Promise<StaffModel[]> {
+    return await this.staffModel.findAll({
+      where: {
         roles: { [Op.contains]: [StaffRole.ADMIN] },
       },
     })

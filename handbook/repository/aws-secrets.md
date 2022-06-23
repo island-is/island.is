@@ -185,6 +185,10 @@ AWS_PROFILE=<profile-name> create-secret
 yarn create-secret
 ```
 
+{% hint style="warning" %}
+Only alphanumeric characters, `/` and `-` are allowed. The length of the _secret name_ should be from 6-128 characters long.
+{% endhint %}
+
 You will be asked for a _secret name_ that will be added to the `/k8s/` secrets namespace, a _secret value_ and the _secret type_ (`SecureString` or `String`).
 
 ### Example
@@ -230,9 +234,18 @@ AWS_PROFILE=islandis-prod yarn create-secret
 
 {% endhint %}
 
-{% hint style="warning" %}
-Only alphanumeric characters, `/` and `-` are allowed. The length of the _secret name_ should be from 6-128 characters long.
-{% endhint %}
+### Finalizing creating secrets
+
+In order to use the secrets in your app you need to add it to its `infra` configuration.
+
+1. Add the new secret to `your-app/infra/your-app.ts`
+2. Generate helm charts for your app with
+
+```
+yarn charts islandis
+```
+
+3. Follow the documentation on [Config Module](/libs/nest/config)
 
 ## Making dev secrets available locally
 

@@ -17,7 +17,7 @@ export class NationalRegistryModule {
       module: NationalRegistryModule,
       imports: [
         HttpModule.register({
-          timeout: 15000,
+          timeout: 20000,
         }),
       ],
       providers: [

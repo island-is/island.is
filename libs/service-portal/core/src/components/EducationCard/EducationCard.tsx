@@ -33,13 +33,7 @@ export const EducationCard = ({
       borderRadius="large"
     >
       <Box display="flex" alignItems="center">
-        {img && (
-          <img
-            src={img}
-            alt={`${formatMessage(m.altText)} ${title}`}
-            className={styles.img}
-          />
-        )}
+        {img && <img src={img} alt="" className={styles.img} />}
         {imgPlaceholder && !img && (
           <Box
             display="flex"

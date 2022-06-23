@@ -35,7 +35,7 @@ describe('PersonalTaxReturnController - Municipalities direct tax payments', () 
   })
 
   describe('Personal Tax Return Api fails', () => {
-    const user = { nationalId: '0', folder: '' } as User
+    const user = { nationalId: '0' } as User
     let personalTaxReturnApi: jest.Mock
     let then: Then
 
@@ -73,12 +73,12 @@ describe('PersonalTaxReturnController - Municipalities direct tax payments', () 
     })
 
     it('should return empty array', () => {
-      expect(then.result).toEqual({ directTaxPayments: [] })
+      expect(then.result).toEqual({ directTaxPayments: [], success: false })
     })
   })
 
   describe('Personal Tax Return Api succeeds', () => {
-    const user = { nationalId: '0', folder: '' } as User
+    const user = { nationalId: '0' } as User
     let personalTaxReturn: jest.Mock
     let then: Then
     const today = new Date()
@@ -129,6 +129,7 @@ describe('PersonalTaxReturnController - Municipalities direct tax payments', () 
           year: 2022,
         },
       ],
+      success: undefined,
     }
 
     beforeEach(async () => {

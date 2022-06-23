@@ -4,12 +4,11 @@ import { useIntl } from 'react-intl'
 
 import {
   capitalize,
-  formatRequestedCustodyRestrictions,
   formatDate,
   formatRequestCaseType,
   formatNationalId,
 } from '@island.is/judicial-system/formatters'
-import { CaseType, isRestrictionCase } from '@island.is/judicial-system/types'
+import { isRestrictionCase } from '@island.is/judicial-system/types'
 import type {
   Case,
   CaseLegalProvisions,
@@ -18,8 +17,10 @@ import {
   requestCourtDate,
   core,
   laws,
+  restrictionsV2,
 } from '@island.is/judicial-system-web/messages'
 import { TIME_FORMAT } from '@island.is/judicial-system/consts'
+import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
 
 import AccordionListItem from '../../AccordionListItem/AccordionListItem'
 import * as styles from './PoliceRequestAccordionItem.css'
@@ -52,17 +53,21 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
         {workingCase.defendants &&
           workingCase.defendants.map((defendant, index) => (
             <Box key={index}>
-              <Box marginBottom={1}>
-                <Text>
-                  {`${formatMessage(
-                    defendant.noNationalId ? core.dateOfBirth : core.nationalId,
-                  )}: ${
-                    defendant.noNationalId
-                      ? defendant.nationalId
-                      : formatNationalId(defendant.nationalId ?? '')
-                  }`}
-                </Text>
-              </Box>
+              {(!defendant.noNationalId || defendant.nationalId) && (
+                <Box marginBottom={1}>
+                  <Text>
+                    {`${formatMessage(
+                      defendant.noNationalId
+                        ? core.dateOfBirth
+                        : core.nationalId,
+                    )}: ${
+                      defendant.noNationalId
+                        ? defendant.nationalId
+                        : formatNationalId(defendant.nationalId ?? '')
+                    }`}
+                  </Text>
+                </Box>
+              )}
               <Box marginBottom={1}>
                 <Text>{`${formatMessage(core.fullName)}: ${
                   defendant.name
@@ -122,12 +127,13 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
       </AccordionListItem>
       {isRestrictionCase(workingCase.type) && (
         <AccordionListItem
-          title={`Takmarkanir og tilhögun ${
-            workingCase.type === CaseType.CUSTODY ? 'gæslu' : 'farbanns'
-          }`}
+          title={formatMessage(restrictionsV2.title, {
+            caseType: workingCase.type,
+          })}
         >
           <Text>
             {formatRequestedCustodyRestrictions(
+              formatMessage,
               workingCase.type,
               workingCase.requestedCustodyRestrictions,
               workingCase.requestedOtherRestrictions,

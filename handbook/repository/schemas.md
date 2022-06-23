@@ -23,7 +23,6 @@ apps/air-discount-scheme/web/i18n/withLocale.tsx
 apps/air-discount-scheme/web/components/AppLayout/AppLayout.tsx
 apps/air-discount-scheme/web/components/Header/Header.tsx
 apps/air-discount-scheme/web/screens/**.tsx
-apps/gjafakort/api/src/**.typeDefs.ts
 apps/**/codegen.yml
 libs/**/codegen.yml
 apps/**/*.model.ts

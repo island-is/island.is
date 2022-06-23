@@ -5,18 +5,15 @@ import * as styles from './ProfileUnit.css'
 import cn from 'classnames'
 import AnimateHeight from 'react-animate-height'
 import Unit from './Unit'
+import ProfileUnit from './ProfileUnit'
+import { ApplicationProfileInfo } from '@island.is/financial-aid/shared/lib'
 
 interface Props {
   heading: string
-  info: {
-    title: string
-    content?: string
-    link?: string
-    onclick?: () => void
-    other?: string
-  }[]
+  info: ApplicationProfileInfo[]
   className?: string
   children?: ReactNode
+  isPrint?: boolean
 }
 
 const CollapsibleProfileUnit = ({
@@ -24,8 +21,23 @@ const CollapsibleProfileUnit = ({
   info,
   className,
   children,
+  isPrint = false,
 }: Props) => {
   const [toggle, setToggle] = useState<boolean>(true)
+
+  if (isPrint) {
+    return (
+      <ProfileUnit
+        heading={heading}
+        info={info}
+        className={cn({
+          [`${className}`]: className,
+        })}
+      >
+        {children}
+      </ProfileUnit>
+    )
+  }
 
   return (
     <>
@@ -43,7 +55,7 @@ const CollapsibleProfileUnit = ({
             justifyContent="center"
             alignItems="center"
             className={cn({
-              [`${styles.iconContainer}`]: true,
+              [`${styles.iconContainer} `]: true,
               [`${styles.rotate}`]: toggle,
             })}
           >
@@ -64,7 +76,7 @@ const CollapsibleProfileUnit = ({
           [`${className}`]: className,
         })}
       >
-        <Unit info={info} />
+        {info.length > 0 && <Unit info={info} />}
         {children && children}
       </AnimateHeight>
       <Box

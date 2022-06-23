@@ -10,7 +10,7 @@ import {
 } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
 
-import { parentalLeaveFormMessages, errorMessages } from '../../lib/messages'
+import { parentalLeaveFormMessages } from '../../lib/messages'
 import { getApplicationAnswers } from '../../lib/parentalLeaveUtils'
 import { maxDaysToGiveOrReceive } from '../../config'
 import { YES, NO, TransferRightsOption } from '../../constants'

@@ -2,15 +2,11 @@ import faker from 'faker'
 
 import { Case, CaseDecision, CaseType } from '@island.is/judicial-system/types'
 import {
-  makeCustodyCase,
-  makeProsecutor,
-} from '@island.is/judicial-system/formatters'
-import {
   CONFIRMATION_ROUTE,
   COURT_RECORD_ROUTE,
 } from '@island.is/judicial-system/consts'
 
-import { intercept } from '../../../utils'
+import { makeRestrictionCase, makeProsecutor, intercept } from '../../../utils'
 
 describe(`${COURT_RECORD_ROUTE}/:id`, () => {
   beforeEach(() => {
@@ -18,7 +14,7 @@ describe(`${COURT_RECORD_ROUTE}/:id`, () => {
   })
 
   it('should autofill court attendees', () => {
-    const caseData = makeCustodyCase()
+    const caseData = makeRestrictionCase()
 
     const caseDataAddition: Case = {
       ...caseData,
@@ -36,7 +32,7 @@ describe(`${COURT_RECORD_ROUTE}/:id`, () => {
   })
 
   it('should autofill sessionBookings in custody cases', () => {
-    const caseData = makeCustodyCase()
+    const caseData = makeRestrictionCase()
 
     const caseDataAddition: Case = {
       ...caseData,
@@ -52,7 +48,7 @@ describe(`${COURT_RECORD_ROUTE}/:id`, () => {
   })
 
   it('should autofill endOfSessionBookings in accepted custody cases', () => {
-    const caseData = makeCustodyCase()
+    const caseData = makeRestrictionCase()
 
     const caseDataAddition: Case = {
       ...caseData,
@@ -68,7 +64,7 @@ describe(`${COURT_RECORD_ROUTE}/:id`, () => {
   })
 
   it('should autofill sessionBookings in travel ban cases', () => {
-    const caseData = makeCustodyCase()
+    const caseData = makeRestrictionCase()
 
     const caseDataAddition: Case = {
       ...caseData,
@@ -84,25 +80,26 @@ describe(`${COURT_RECORD_ROUTE}/:id`, () => {
     cy.getByTestid('sessionBookings').should('not.match', ':empty')
   })
 
-  it('should autofill endOfSessionBookings in accepted travel ban cases', () => {
-    const caseData = makeCustodyCase()
+  it('should autofill endOfSessionBookings with requestedOtherRestrictions in accepted travel ban cases', () => {
+    const caseData = makeRestrictionCase()
 
     const caseDataAddition: Case = {
       ...caseData,
       type: CaseType.TRAVEL_BAN,
       prosecutor: makeProsecutor(),
       decision: CaseDecision.ACCEPTING,
+      requestedOtherRestrictions: 'other restrictions',
     }
 
     cy.visit(`${COURT_RECORD_ROUTE}/test_id_stadfest`)
 
     intercept(caseDataAddition)
 
-    cy.getByTestid('endOfSessionBookings').should('not.match', ':empty')
+    cy.getByTestid('endOfSessionBookings').contains('other restrictions')
   })
 
   it('should require a accused and prosecutor appeal decisions to be made', () => {
-    const caseData = makeCustodyCase()
+    const caseData = makeRestrictionCase()
 
     const caseDataAddition: Case = {
       ...caseData,
@@ -110,6 +107,7 @@ describe(`${COURT_RECORD_ROUTE}/:id`, () => {
       decision: CaseDecision.ACCEPTING,
       courtDate: '2020-09-16T19:50:08.033Z',
       conclusion: faker.lorem.words(5),
+      ruling: faker.lorem.words(5),
     }
 
     cy.visit(`${COURT_RECORD_ROUTE}/test_id_stadfest`)
@@ -126,13 +124,14 @@ describe(`${COURT_RECORD_ROUTE}/:id`, () => {
   })
 
   it('should not allow users to continue if conclusion is not set', () => {
-    const caseData = makeCustodyCase()
+    const caseData = makeRestrictionCase()
 
     const caseDataAddition: Case = {
       ...caseData,
       prosecutor: makeProsecutor(),
       courtDate: '2021-12-16T10:50:04.033Z',
       decision: CaseDecision.ACCEPTING,
+      conclusion: undefined,
     }
 
     cy.stubAPIResponses()
@@ -140,17 +139,21 @@ describe(`${COURT_RECORD_ROUTE}/:id`, () => {
 
     intercept(caseDataAddition)
 
-    cy.getByTestid('continueButton').should('not.exist')
+    cy.getByTestid('formFooter')
+      .children()
+      .getByTestid('infobox')
+      .should('exist')
   })
 
   it('should not allow users to continue if decision is not set', () => {
-    const caseData = makeCustodyCase()
+    const caseData = makeRestrictionCase()
 
     const caseDataAddition: Case = {
       ...caseData,
       prosecutor: makeProsecutor(),
       courtDate: '2021-12-16T10:50:04.033Z',
       conclusion: faker.lorem.words(5),
+      decision: undefined,
     }
 
     cy.stubAPIResponses()
@@ -158,11 +161,34 @@ describe(`${COURT_RECORD_ROUTE}/:id`, () => {
 
     intercept(caseDataAddition)
 
-    cy.getByTestid('continueButton').should('not.exist')
+    cy.getByTestid('formFooter')
+      .children()
+      .getByTestid('infobox')
+      .should('exist')
+  })
+
+  it('should not allow users to continue if ruling is not set', () => {
+    const caseData = makeRestrictionCase()
+    const caseDataAddition: Case = {
+      ...caseData,
+      prosecutor: makeProsecutor(),
+      courtDate: '2021-12-16T10:50:04.033Z',
+      conclusion: faker.lorem.words(5),
+      decision: CaseDecision.ACCEPTING,
+      ruling: undefined,
+    }
+
+    cy.visit(`${COURT_RECORD_ROUTE}/test_id_stadfest`)
+    intercept(caseDataAddition)
+
+    cy.getByTestid('formFooter')
+      .children()
+      .getByTestid('infobox')
+      .should('exist')
   })
 
   it('should navigate to the next step when all input data is valid and the continue button is clicked', () => {
-    const caseData = makeCustodyCase()
+    const caseData = makeRestrictionCase()
 
     const caseDataAddition: Case = {
       ...caseData,
@@ -170,6 +196,7 @@ describe(`${COURT_RECORD_ROUTE}/:id`, () => {
       decision: CaseDecision.ACCEPTING,
       courtDate: '2020-09-16T19:50:08.033Z',
       conclusion: faker.lorem.words(5),
+      ruling: faker.lorem.words(5),
     }
 
     cy.visit(`${COURT_RECORD_ROUTE}/test_id_stadfest`)

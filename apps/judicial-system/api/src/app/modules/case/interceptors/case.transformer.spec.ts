@@ -23,17 +23,6 @@ describe('transformCase', () => {
         expect(res.sendRequestToDefender).toBe(transformedValue)
       })
 
-      it(`should transform ${originalValue} defenderIsSpokesperson to ${transformedValue}`, () => {
-        // Arrange
-        const theCase = { defenderIsSpokesperson: originalValue } as Case
-
-        // Act
-        const res = transformCase(theCase)
-
-        // Assert
-        expect(res.defenderIsSpokesperson).toBe(transformedValue)
-      })
-
       it(`should transform ${originalValue} requestProsecutorOnlySession to ${transformedValue}`, () => {
         // Arrange
         const theCase = { requestProsecutorOnlySession: originalValue } as Case

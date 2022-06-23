@@ -3,7 +3,6 @@ import React, { FC } from 'react'
 import { useLocale } from '@island.is/localization'
 import { FieldBaseProps, formatText } from '@island.is/application/core'
 import { Box } from '@island.is/island-ui/core'
-import * as styles from './descriptionWithLink.css'
 
 type DescriptionLinkProps = {
   field: {

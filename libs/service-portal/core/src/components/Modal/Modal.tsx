@@ -4,7 +4,7 @@ import { Box, ModalBase, Button } from '@island.is/island-ui/core'
 
 interface Props {
   id: string
-  onCloseModal: () => void
+  onCloseModal?: () => void
   toggleClose?: boolean
 }
 
@@ -15,7 +15,7 @@ export const Modal: FC<Props> = ({
   onCloseModal,
 }) => {
   const handleOnVisibilityChange = (isVisible: boolean) => {
-    !isVisible && onCloseModal()
+    !isVisible && onCloseModal && onCloseModal()
   }
   return (
     <ModalBase

@@ -1,4 +1,4 @@
-import { keyframes, style } from '@vanilla-extract/css'
+import { style } from '@vanilla-extract/css'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 export const unopenedWrapper = style({
@@ -6,17 +6,6 @@ export const unopenedWrapper = style({
   ...themeUtils.responsiveStyle({
     sm: {
       backgroundColor: '#FBFBFC',
-    },
-  }),
-})
-
-export const modalButtonWrapper = style({
-  ...themeUtils.responsiveStyle({
-    sm: {
-      width: '100%',
-    },
-    lg: {
-      width: 'fit-content',
     },
   }),
 })
@@ -55,33 +44,26 @@ export const sender = style({
   }),
 })
 
-export const date = style({
-  ...themeUtils.responsiveStyle({
-    sm: {
-      paddingBottom: 0,
-      color: theme.color.dark400,
-      fontWeight: theme.typography.light,
-      fontSize: 16,
-    },
-  }),
-})
-
-export const isLoadingContainer = style({
-  opacity: 0.85,
-  animationName: keyframes({
-    from: {
-      opacity: 0,
-    },
-    to: {
-      opacity: 0.85,
-    },
-  }),
-  animationTimingFunction: 'ease-out',
-  animationDuration: '0.25s',
-})
-
 export const image = style({
   width: 30,
   height: 30,
   marginRight: theme.spacing[2],
+})
+
+export const icon = style({
+  marginLeft: 6,
+})
+
+export const imageContainer = style({
+  minWidth: 30,
+  minHeight: 30,
+})
+
+export const linkWrapper = style({
+  backgroundColor: 'unset',
+  ...themeUtils.responsiveStyle({
+    sm: {
+      backgroundColor: theme.color.blueberry100,
+    },
+  }),
 })

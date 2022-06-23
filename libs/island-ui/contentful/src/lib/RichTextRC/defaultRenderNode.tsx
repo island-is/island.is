@@ -147,9 +147,17 @@ export const defaultRenderNode: RenderNode = {
   ),
   [INLINES.ASSET_HYPERLINK]: (node, children) => {
     const asset = (node.data.target as unknown) as Asset
-    return asset.fields.file?.url ? (
-      <Hyperlink href={asset.fields.file.url}>{children}</Hyperlink>
-    ) : null
+    // The url might not contain a protocol that's why we prepend https:
+    // https://www.contentful.com/developers/docs/concepts/images/
+    let url: string
+    if (asset?.fields?.file?.url) {
+      url = asset.fields.file.url.startsWith('//')
+        ? `https:${asset.fields.file.url}`
+        : asset.fields.file.url
+    } else {
+      url = ''
+    }
+    return url ? <Hyperlink href={url}>{children}</Hyperlink> : null
   },
   [INLINES.ENTRY_HYPERLINK]: (node, children) => {
     const entry = node.data.target

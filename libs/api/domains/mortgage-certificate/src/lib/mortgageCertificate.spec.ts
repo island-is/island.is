@@ -5,8 +5,7 @@ import {
   SyslumennClientModule,
 } from '@island.is/clients/syslumenn'
 import {
-  MOCK_REAL_ESTATE_NUMBER,
-  MOCK_REAL_ESTATE_NUMBER_NOT_EXISTS,
+  MOCK_PROPERTY_NUMBER_OK,
   requestHandlers,
 } from './__mock-data__/requestHandlers'
 import { startMocking } from '@island.is/shared/mocking'
@@ -50,36 +49,28 @@ describe('MortgageCertificateService', () => {
   describe('getMortgageCertificate', () => {
     it('should return a result', async () => {
       const response = await service.getMortgageCertificate(
-        MOCK_REAL_ESTATE_NUMBER,
+        MOCK_PROPERTY_NUMBER_OK,
       )
 
       expect(response.contentBase64).toBeTruthy()
     })
-
-    it('should throw an error', async () => {
-      return await service
-        .getMortgageCertificate(MOCK_REAL_ESTATE_NUMBER_NOT_EXISTS)
-        .catch((e) => {
-          expect(e).toBeTruthy()
-          expect.assertions(1)
-        })
-    })
   })
 
   describe('validateMortgageCertificate', () => {
-    it('should not throw an error', async () => {
-      expect(async () => {
-        await service.validateMortgageCertificate(MOCK_REAL_ESTATE_NUMBER)
-      }).not.toThrowError()
+    it('exists should be true', async () => {
+      const res = await service.validateMortgageCertificate(
+        MOCK_PROPERTY_NUMBER_OK,
+        undefined,
+      )
+      expect(res.exists).toStrictEqual(true)
     })
 
-    it('should throw an error', async () => {
-      return await service
-        .validateMortgageCertificate(MOCK_REAL_ESTATE_NUMBER_NOT_EXISTS)
-        .catch((e) => {
-          expect(e).toBeTruthy()
-          expect.assertions(1)
-        })
+    it('hasKMarking should be true', async () => {
+      const res = await service.validateMortgageCertificate(
+        MOCK_PROPERTY_NUMBER_OK,
+        undefined,
+      )
+      expect(res.hasKMarking).toStrictEqual(true)
     })
   })
 })

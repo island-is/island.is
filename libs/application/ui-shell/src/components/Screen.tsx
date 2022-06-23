@@ -130,6 +130,7 @@ const Screen: FC<ScreenProps> = ({
     },
   )
   const { handleSubmit, errors: formErrors, reset } = hookFormData
+
   const submitField = useMemo(() => findSubmitField(screen), [screen])
 
   const [beforeSubmitError, setBeforeSubmitError] = useState({})

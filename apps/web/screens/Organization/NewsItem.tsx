@@ -133,7 +133,7 @@ const NewsItem: Screen<NewsItemProps> = ({
           items: navList,
         }}
       >
-        <NewsArticle newsItem={newsItem} namespace={namespace} />
+        <NewsArticle newsItem={newsItem} />
       </OrganizationWrapper>
       <HeadWithSocialSharing
         title={`${newsItem.title} | ${organizationPage.title}`}
@@ -199,7 +199,7 @@ NewsItem.getInitialProps = async ({ apolloClient, locale, query }) => {
     organizationPage: getOrganizationPage,
     newsItem,
     namespace,
-    ...getThemeConfig(getOrganizationPage.theme),
+    ...getThemeConfig(getOrganizationPage.theme, getOrganizationPage.slug),
   }
 }
 

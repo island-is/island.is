@@ -5,6 +5,7 @@ const devConfig = {
   environment: 'local',
   name: 'local',
   baseApiUrl: 'http://localhost:4444',
+  sentryDsn: '',
   redis: {
     urls: (
       process.env.REDIS_NODES ??
@@ -36,17 +37,6 @@ const devConfig = {
       url: 'https://smsapi.devnova.is',
       username: 'IslandIs_User_Development',
       password: process.env.NOVA_PASSWORD,
-    },
-    drivingLicense: {
-      clientConfig: {
-        secret: process.env.XROAD_DRIVING_LICENSE_SECRET,
-        xroadClientId: 'IS-DEV/GOV/10000/island-is-client',
-        xroadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8081',
-        xroadPathV1:
-          'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v1',
-        xroadPathV2:
-          'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v2',
-      },
     },
     criminalRecord: {
       clientConfig: {
@@ -112,10 +102,6 @@ const devConfig = {
   fileStorage: {
     uploadBucket: process.env.FILE_STORAGE_UPLOAD_BUCKET,
   },
-  signingOptions: {
-    url: 'https://developers.dokobit.com',
-    accessToken: process.env.DOKOBIT_ACCESS_TOKEN,
-  },
   contentful: {
     accessToken: process.env.CONTENTFUL_ACCESS_TOKEN,
   },
@@ -124,6 +110,8 @@ const devConfig = {
 const prodConfig = {
   production: true,
   environment: process.env.ENVIRONMENT,
+  sentryDsn:
+    'https://22093678b2b24a0cad25111c1806a8d7@o406638.ingest.sentry.io/5530607',
   name: process.env.name,
   baseApiUrl: process.env.GRAPHQL_API_URL,
   redis: {
@@ -163,15 +151,6 @@ const prodConfig = {
     },
     presignBucket: process.env.FILE_SERVICE_PRESIGN_BUCKET,
     attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,
-    drivingLicense: {
-      clientConfig: {
-        secret: process.env.XROAD_DRIVING_LICENSE_SECRET,
-        xroadClientId: process.env.XROAD_CLIENT_ID,
-        xroadBaseUrl: process.env.XROAD_BASE_PATH,
-        xroadPathV1: process.env.XROAD_DRIVING_LICENSE_PATH,
-        xroadPathV2: process.env.XROAD_DRIVING_LICENSE_PATH,
-      },
-    },
     criminalRecord: {
       clientConfig: {
         xroadClientId: process.env.XROAD_CLIENT_ID,
@@ -220,10 +199,6 @@ const prodConfig = {
   },
   fileStorage: {
     uploadBucket: process.env.FILE_STORAGE_UPLOAD_BUCKET,
-  },
-  signingOptions: {
-    url: process.env.DOKOBIT_URL,
-    accessToken: process.env.DOKOBIT_ACCESS_TOKEN,
   },
   contentful: {
     accessToken: process.env.CONTENTFUL_ACCESS_TOKEN,

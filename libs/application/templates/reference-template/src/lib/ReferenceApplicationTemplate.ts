@@ -12,7 +12,7 @@ import {
 import * as z from 'zod'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
-
+import { Features } from '@island.is/feature-flags'
 import { ApiActions } from '../shared'
 import { m } from './messages'
 
@@ -84,6 +84,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
   institution: m.institutionName,
   translationNamespaces: [ApplicationConfigurations.ExampleForm.translation],
   dataSchema: ExampleSchema,
+  featureFlag: Features.exampleApplication,
   stateMachineConfig: {
     initial: States.prerequisites,
     states: {
@@ -108,6 +109,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
               ],
               write: 'all',
+              delete: true,
             },
           ],
         },
@@ -137,6 +139,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
               ],
               write: 'all',
+              delete: true,
             },
           ],
         },

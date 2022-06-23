@@ -23,6 +23,7 @@ export const GET_ARTICLE_QUERY = gql`
         buttonText
       }
       organization {
+        id
         title
         shortTitle
         slug
@@ -104,11 +105,6 @@ export const GET_ARTICLE_QUERY = gql`
             subtitle {
               ...HtmlFields
             }
-            text {
-              ...HtmlFields
-            }
-            isAnswer
-            options
             config
           }
           config
@@ -134,6 +130,10 @@ export const GET_CONTENT_SLUG = gql`
         is
       }
       slug {
+        en
+        is
+      }
+      url {
         en
         is
       }

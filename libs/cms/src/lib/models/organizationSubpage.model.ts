@@ -42,9 +42,6 @@ export class OrganizationSubpage {
   @Field({ nullable: true })
   sliceExtraText?: string
 
-  @Field({ nullable: true })
-  parentSubpage?: string
-
   @Field(() => OrganizationPage)
   organizationPage!: OrganizationPage | null
 
@@ -68,7 +65,6 @@ export const mapOrganizationSubpage = ({
   slices: (fields.slices ?? []).map(safelyMapSliceUnion),
   sliceCustomRenderer: fields.sliceCustomRenderer ?? '',
   sliceExtraText: fields.sliceExtraText ?? '',
-  parentSubpage: fields.parentSubpage?.fields.slug,
   organizationPage: fields.organizationPage
     ? mapOrganizationPage(fields.organizationPage)
     : null,

@@ -12,7 +12,7 @@ export const startPostgres = async () => {
     .withEnv('POSTGRES_USER', name)
     .withEnv('POSTGRES_PASSWORD', name)
     .withHealthCheck({
-      test: `pg_isready -U ${name}`,
+      test: `PGPASSWORD=${name} psql -U ${name} -d ${name} -c 'SELECT 1'`,
       interval: 1000,
       timeout: 3000,
       retries: 5,
@@ -24,6 +24,7 @@ export const startPostgres = async () => {
 
   const port = postgresContainer.getMappedPort(5432)
   process.env.DB_PORT = `${port}`
+  process.env.DB_HOST = postgresContainer.getHost()
 }
 
 export const stopPostgres = () => {

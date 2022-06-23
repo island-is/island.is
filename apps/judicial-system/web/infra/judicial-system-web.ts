@@ -16,6 +16,7 @@ export const serviceSetup = (services: {
     .secrets({
       NATIONAL_REGISTRY_API_KEY:
         '/k8s/judicial-system/NATIONAL_REGISTRY_API_KEY',
+      LAWYERS_ICELAND_API_KEY: '/k8s/judicial-system/LAWYERS_ICELAND_API_KEY',
     })
     .liveness('/liveness')
     .readiness('/readiness')
@@ -27,5 +28,19 @@ export const serviceSetup = (services: {
           prod: 'rettarvorslugatt.island.is',
         },
         paths: ['/'],
+        extraAnnotations: {
+          dev: {
+            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
+          },
+          staging: {
+            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
+          },
+          prod: {
+            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
+          },
+        },
       },
     })

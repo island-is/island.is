@@ -2,7 +2,6 @@ import React, { FC } from 'react'
 import { Table as T, RadioButton } from '@island.is/island-ui/core'
 import { FieldBaseProps } from '@island.is/application/core'
 import { PropertyDetail } from '../../../../types/schema'
-import { useLocale } from '@island.is/localization'
 
 interface PropertyTableRowProps {
   selectHandler: (property: PropertyDetail | undefined) => void
@@ -12,15 +11,7 @@ interface PropertyTableRowProps {
 
 export const PropertyTableRow: FC<
   FieldBaseProps & PropertyTableRowProps & PropertyDetail
-> = ({
-  application,
-  field,
-  selectHandler,
-  propertyInfo,
-  selectedPropertyNumber,
-}) => {
-  const { id } = field
-
+> = ({ selectHandler, propertyInfo, selectedPropertyNumber }) => {
   const unitOfUse = (propertyInfo?.unitsOfUse?.unitsOfUse || [])[0]
 
   const propertyNumber = propertyInfo?.propertyNumber || ''

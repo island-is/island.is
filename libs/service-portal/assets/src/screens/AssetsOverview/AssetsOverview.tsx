@@ -3,15 +3,19 @@ import { defineMessage } from 'react-intl'
 import { useNamespaces, useLocale } from '@island.is/localization'
 import { gql, useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
-import { Box, AlertBanner } from '@island.is/island-ui/core'
+import {
+  Box,
+  Text,
+  Button,
+  GridColumn,
+  GridRow,
+} from '@island.is/island-ui/core'
 import {
   ServicePortalModuleComponent,
-  IntroHeader,
   m,
   EmptyState,
 } from '@island.is/service-portal/core'
 import AssetListCards from '../../components/AssetListCards'
-import AssetDisclaimer from '../../components/AssetDisclaimer'
 import { AssetCardLoader } from '../../components/AssetCardLoader'
 import { DEFAULT_PAGING_ITEMS } from '../../utils/const'
 
@@ -85,22 +89,57 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
 
   return (
     <>
-      <Box marginBottom={[3, 4, 5]}>
-        <IntroHeader
-          title={defineMessage({
-            id: 'sp.assets:title',
-            defaultMessage: 'Fasteignir',
-          })}
-          intro={defineMessage({
-            id: 'sp.assets:intro',
-            defaultMessage:
-              'Hér birtast upplýsingar úr fasteignaskrá Þjóðskrár um fasteignir þínar, lönd og lóðir sem þú ert þinglýstur eigandi að.',
-          })}
-        />
-      </Box>
+      <Text variant="h3" as="h1">
+        {formatMessage({
+          id: 'sp.assets:title',
+          defaultMessage: 'Fasteignir',
+        })}
+      </Text>
+      <GridRow marginBottom={6}>
+        <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+          <Text variant="default" paddingTop={2}>
+            {formatMessage({
+              id: 'sp.assets:intro',
+              defaultMessage:
+                'Hér birtast upplýsingar úr fasteignaskrá Þjóðskrár um fasteignir þínar, lönd og lóðir sem þú ert þinglýstur eigandi að.',
+            })}
+          </Text>
+        </GridColumn>
+      </GridRow>
+
       {loading && <AssetCardLoader />}
-      {data && (
-        <AssetListCards paginateCallback={paginate} assets={assetData} />
+      {assetData?.properties && assetData?.properties?.length > 0 && (
+        <>
+          <GridRow>
+            <GridColumn span="1/1">
+              <Box
+                display="flex"
+                justifyContent="flexStart"
+                printHidden
+                height="full"
+                marginBottom={4}
+              >
+                <a
+                  href="/umsoknir/vedbokarvottord/"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <Button
+                    colorScheme="default"
+                    icon="document"
+                    iconType="filled"
+                    size="default"
+                    type="button"
+                    variant="utility"
+                  >
+                    {formatMessage(m.mortageCertificate)}
+                  </Button>
+                </a>
+              </Box>
+            </GridColumn>
+          </GridRow>
+          <AssetListCards paginateCallback={paginate} assets={assetData} />
+        </>
       )}
 
       {!loading &&
@@ -108,15 +147,18 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
         assetData?.properties &&
         assetData?.properties?.length === 0 && (
           <Box marginTop={8}>
-            <EmptyState title={m.noDataFound} />
+            <EmptyState />
           </Box>
         )}
 
       {error && (
         <Box>
-          <AlertBanner
-            description={formatMessage(m.errorFetch)}
-            variant="error"
+          <EmptyState
+            description={defineMessage({
+              id: 'sp.assets:error-message',
+              defaultMessage:
+                'Ekki tókst að sækja upplýsingar úr fasteignaskrá.',
+            })}
           />
         </Box>
       )}

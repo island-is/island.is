@@ -41,6 +41,10 @@ export const routesTemplate = {
     is: '/leit',
     en: '/en/search',
   },
+  articlecategories: {
+    is: '/flokkur',
+    en: '/en/category',
+  },
   articlecategory: {
     is: '/flokkur/[slug]',
     en: '/en/category/[slug]',
@@ -56,6 +60,10 @@ export const routesTemplate = {
   organizationservices: {
     is: '/s/[slug]/thjonusta',
     en: '/en/o/[slug]/services',
+  },
+  organizationpublishedmaterial: {
+    is: '/s/[slug]/utgefid-efni',
+    en: '/en/o/[slug]/published-material',
   },
   auctions: {
     is: '/s/syslumenn/uppbod',

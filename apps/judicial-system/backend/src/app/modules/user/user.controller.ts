@@ -39,10 +39,7 @@ export class UserController {
   @RolesRules(adminRule)
   @Post('user')
   @ApiCreatedResponse({ type: User, description: 'Creates a new user' })
-  create(
-    @Body()
-    userToCreate: CreateUserDto,
-  ): Promise<User> {
+  create(@Body() userToCreate: CreateUserDto): Promise<User> {
     this.logger.debug('Creating a new user')
 
     return this.userService.create(userToCreate)

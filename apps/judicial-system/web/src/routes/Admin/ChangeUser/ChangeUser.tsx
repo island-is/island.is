@@ -1,4 +1,6 @@
-import React, { useEffect } from 'react'
+import React from 'react'
+import { useIntl } from 'react-intl'
+
 import { useMutation, useQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
 
@@ -8,8 +10,10 @@ import {
   UserQuery,
 } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
+import { titles } from '@island.is/judicial-system-web/messages'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import type { User } from '@island.is/judicial-system/types'
-import * as Constants from '@island.is/judicial-system/consts'
+import * as constants from '@island.is/judicial-system/consts'
 
 import UserForm from '../UserForm/UserForm'
 
@@ -24,7 +28,7 @@ interface SaveData {
 export const ChangeUser: React.FC = () => {
   const router = useRouter()
   const id = router.query.id
-
+  const { formatMessage } = useIntl()
   const { data: userData, loading: userLoading } = useQuery<UserData>(
     UserQuery,
     {
@@ -46,10 +50,6 @@ export const ChangeUser: React.FC = () => {
     UpdateUserMutation,
   )
 
-  useEffect(() => {
-    document.title = 'Breyta notanda - Réttarvörslugátt'
-  }, [])
-
   const saveUser = async (user: User) => {
     if (saveLoading === false && user) {
       await updateUserMutation({
@@ -68,7 +68,7 @@ export const ChangeUser: React.FC = () => {
       })
     }
 
-    router.push(Constants.USER_LIST_ROUTE)
+    router.push(constants.USER_LIST_ROUTE)
   }
 
   return (
@@ -77,6 +77,7 @@ export const ChangeUser: React.FC = () => {
       isLoading={userLoading || institutionLoading}
       notFound={!userData?.user || !institutionLoaded}
     >
+      <PageHeader title={formatMessage(titles.admin.changeUser)} />
       {userData?.user && institutionLoaded && (
         <UserForm
           user={userData?.user}

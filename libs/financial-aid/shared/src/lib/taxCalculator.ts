@@ -73,6 +73,7 @@ export const calculatePersonalTaxAllowanceUsed = (
 }
 
 export const calculatePersonalTaxAllowanceFromAmount = (
+  tax: number,
   personalTaxCreditPercentage = 0,
   spousedPersonalTaxCreditPercentage = 0,
 ): number => {
@@ -87,7 +88,7 @@ export const calculatePersonalTaxAllowanceFromAmount = (
     taxInfo.personalTaxAllowance * (spousedPersonalTaxCreditPercentage / 100),
   )
 
-  return Math.floor(personalTaxAllowance + spouseTaxAllowance)
+  return Math.min(Math.floor(personalTaxAllowance + spouseTaxAllowance), tax)
 }
 
 export const calculateAcceptedAidFinalAmount = (
@@ -160,11 +161,11 @@ export const acceptedAmountBreakDown = (amount?: Amount): Calculations[] => {
     return []
   }
 
-  const isPos =
-    calculatePersonalTaxAllowanceFromAmount(
-      amount?.personalTaxCredit,
-      amount?.spousePersonalTaxCredit,
-    ) > 0
+  const personalTaxAllowance = calculatePersonalTaxAllowanceFromAmount(
+    amount.tax,
+    amount.personalTaxCredit,
+    amount.spousePersonalTaxCredit,
+  )
 
   const deductionFactors =
     amount?.deductionFactors?.map((deductionFactor) => {
@@ -195,11 +196,8 @@ export const acceptedAmountBreakDown = (amount?: Amount): Calculations[] => {
     {
       title: 'Persónuafsláttur',
       calculation: `${
-        isPos ? '+' : ''
-      } ${calculatePersonalTaxAllowanceFromAmount(
-        amount.personalTaxCredit,
-        amount.spousePersonalTaxCredit,
-      ).toLocaleString('de-DE')} kr.`,
+        personalTaxAllowance > 0 ? '+' : ''
+      } ${personalTaxAllowance.toLocaleString('de-DE')} kr.`,
     },
     {
       title: 'Aðstoð',

@@ -1,19 +1,19 @@
+import { Controller, Get, Query, UseGuards } from '@nestjs/common'
+import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
+
 import {
-  DelegationsService,
   DelegationDTO,
-  DelegationType,
   DelegationScopeService,
+  DelegationsService,
+  DelegationType,
 } from '@island.is/auth-api-lib'
-import type { User } from '@island.is/auth-nest-tools'
 import {
+  CurrentUser,
   IdsUserGuard,
   Scopes,
   ScopesGuard,
-  CurrentUser,
 } from '@island.is/auth-nest-tools'
-import { Controller, Get, Query, UseGuards } from '@nestjs/common'
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
-import { environment } from '../../../environments'
+import type { User } from '@island.is/auth-nest-tools'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('delegations')
@@ -28,10 +28,7 @@ export class DelegationsController {
   @Get()
   @ApiOkResponse({ isArray: true })
   async findAllTo(@CurrentUser() user: User): Promise<DelegationDTO[]> {
-    return this.delegationsService.findAllIncoming(
-      user,
-      environment.nationalRegistry.authMiddlewareOptions,
-    )
+    return this.delegationsService.findAllIncoming(user)
   }
 
   @Scopes('@identityserver.api/authentication')

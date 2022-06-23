@@ -61,7 +61,7 @@ export const applicationOverviewTemplate = (
     <p>
       <b>${messages.project.labels.attachmentsTitle.defaultMessage}</b> </br>
       ${answers.project.attachments?.map(
-        (attachment, index) => `
+        (attachment) => `
         ${attachment.name}
       `,
       )}

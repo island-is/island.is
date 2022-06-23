@@ -14,7 +14,7 @@ import { FamilyIllustration } from '../../assets'
 import { conclusion, betaTest } from '../../lib/messages'
 import * as styles from '../DescriptionWithLink/descriptionWithLink.css'
 
-export const FormConclusion: FC<FieldBaseProps> = ({ application, field }) => {
+export const FormConclusion: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
 
   return (

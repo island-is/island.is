@@ -7,7 +7,6 @@ import {
   ApplicationEventType,
   ApplicationStateUrl,
   FileType,
-  RolesRule,
   FamilyStatus,
   MartialStatusType,
 } from './enums'
@@ -55,14 +54,6 @@ export const getStateFromUrl: KeyMapping<
   InProgress: [ApplicationState.INPROGRESS, ApplicationState.DATANEEDED],
   MyCases: [ApplicationState.INPROGRESS, ApplicationState.DATANEEDED],
   Processed: [ApplicationState.REJECTED, ApplicationState.APPROVED],
-}
-
-export const getEventTypesFromService: KeyMapping<
-  RolesRule,
-  ApplicationEventType[]
-> = {
-  osk: [ApplicationEventType.DATANEEDED],
-  veita: Object.values(ApplicationEventType),
 }
 
 export const getStateUrlFromRoute: KeyMapping<string, ApplicationStateUrl> = {
@@ -221,7 +212,8 @@ export const getApplicantEmailDataFromEventType = (
     | ApplicationEventType.DATANEEDED
     | ApplicationEventType.REJECTED
     | ApplicationEventType.APPROVED
-    | 'SPOUSE',
+    | 'SPOUSE'
+    | 'WAITINGSPOUSE',
   applicationLink: string,
   applicantEmail: string,
   municipality: Municipality,
@@ -239,8 +231,8 @@ export const getApplicantEmailDataFromEventType = (
         subject: 'Umsókn fyrir fjárhagsaðstoð móttekin',
         data: {
           title: 'Fjárhagsaðstoð Umsókn móttekin',
-          header: `Umsókn þín fyrir ${getPeriod.month} er móttekin og er nú í vinnslu`,
-          content: `Umsóknin verður afgreidd eins fljótt og hægt er. Þú færð annan tölvupóst þegar vinnsla klárast eða ef okkur vantar einhver gögn frá þér.<br><br>Þú getur fylgst með stöðu umsóknarinnar á <a href="${applicationLink}" target="_blank"> <b>stöðusíðu umsóknarinnar</b></a>.`,
+          header: `Umsókn þín fyrir ${getPeriod.month} er móttekin`,
+          content: `Umsóknin verður afgreidd eins fljótt og hægt er. Þú færð annan tölvupóst þegar vinnsla klárast eða ef okkur vantar einhver frekari gögn frá þér.<br><br>Þú getur fylgst með stöðu umsóknarinnar á <a href="${applicationLink}" target="_blank"> <b>stöðusíðu umsóknarinnar</b></a>.`,
           applicationLinkText: 'Skoða stöðu umsóknar',
           applicationChange: 'Umsókn móttekin og í vinnslu',
           applicationMonth: getPeriod.month,
@@ -258,7 +250,7 @@ export const getApplicantEmailDataFromEventType = (
         data: {
           title: 'Fjárhagsaðstoð Umsókn vantar gögn',
           header: `Þú þarft að skila gögnum svo hægt sé að klára að vinna umsóknina`,
-          content: `Til að klára umsóknina verður þú að senda okkur <strong>${typeOfDataNeeded}</strong>. Þú getur sent okkur gögnin á <a href="${applicationLink}" target="_blank">þinni stöðusíðu</a>`,
+          content: `Til þess að hægt sé að meta umsóknina þarft þú að senda okkur <strong>${typeOfDataNeeded}</strong>. Þú getur sent okkur gögnin á <a href="${applicationLink}" target="_blank">þinni stöðusíðu</a>`,
           applicationLinkText: 'Bæta við gögnum',
           applicationChange: 'Umsóknin bíður eftir gögnum',
           applicationMonth: getPeriod.month,
@@ -275,7 +267,7 @@ export const getApplicantEmailDataFromEventType = (
         data: {
           title: 'Fjárhagsaðstoð Umsókn synjað',
           header: 'Umsókn þinni um aðstoð hefur verið synjað',
-          content: `Umsókn þinni um fjárhagsaðstoð í ${getPeriod.month} hefur verið synjað <b>${rejectionComment}</b>. Þú getur kynnt þér nánar <a href="${municipality.rulesHomepage}" target="_blank">reglur um fjárhagsaðstoð.</a>`,
+          content: `Umsókn þinni um fjárhagsaðstoð í ${getPeriod.month} hefur verið synjað <b>${rejectionComment}</b>. Þú getur kynnt þér nánar <a href="${municipality.rulesHomepage}" target="_blank">reglur um fjárhagsaðstoð.</a> <br><br> <b>Málskot</b> <br> Bent skal á að unnt er að skjóta ákvörðun þessari til áfrýjunarnefndar þíns sveitarfélags. Skal það gert skriflega og innan fjögurra vikna. Fyrir frekari upplýsingar um málskot hafðu samband með tölvupósti á netfangið <a href="mailto:${municipality.email}">${municipality.email}</a>. <br><br> Ákvörðun ráðsins má síðan skjóta til úrskurðarnefndar velferðarmála, Katrínartúni 2, 105 Reykjavík innan þriggja mánaða.`,
           applicationLinkText: 'Opna stöðusíðu',
           applicationChange: 'Umsókn synjað',
           applicationMonth: getPeriod.month,
@@ -311,6 +303,23 @@ export const getApplicantEmailDataFromEventType = (
           header: `Þú þarft að skila inn gögnum fyrir umsókn maka þíns um fjárhagsaðstoð`,
           content: `Maki þinn hefur sótt um fjárhagsaðstoð fyrir ${getPeriod.month}. Svo hægt sé að reikna út fjárhagsaðstoðina og klára umsóknina þarft þú að <a href="${applicationLink}" target="_blank">senda okkur tekju- og skattagögn.</a>`,
           applicationLinkText: 'Bæta við gögnum',
+          applicationChange: 'Umsókn bíður eftir gögnum frá maka',
+          applicationMonth: getPeriod.month,
+          applicationYear: getPeriod.year,
+          applicationLink,
+          applicantEmail,
+          municipality,
+        },
+      }
+
+    case 'WAITINGSPOUSE':
+      return {
+        subject: `Umsókn þín fyrir ${getPeriod.month} bíður gagna frá maka`,
+        data: {
+          title: 'Fjárhagsaðstoð Beðið eftir maka',
+          header: `Umsókn þín fyrir ${getPeriod.month} bíður gagna frá maka`,
+          content: `Maki þinn hefur fengið sendan tölvupóst með hlekk til að hlaða upp gögnum. Umsóknin verður tekin til úrvinnslu þegar maki hefur skilað inn gögnunum. Þú færð tölvupóst þegar vinnsla klárast eða ef okkur vantar einhver frekari gögn.<br><br>Þú getur fylgst með stöðu umsóknarinnar á <a href="${applicationLink}" target="_blank">stöðusíðu umsóknarinnar</a>.`,
+          applicationLinkText: 'Skoða stöðu umsóknar',
           applicationChange: 'Umsókn bíður eftir gögnum frá maka',
           applicationMonth: getPeriod.month,
           applicationYear: getPeriod.year,

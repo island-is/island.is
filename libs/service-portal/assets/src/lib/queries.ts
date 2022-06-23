@@ -31,6 +31,13 @@ export const GET_SINGLE_PROPERTY_QUERY = gql`
           grantDisplay
         }
       }
+      land {
+        landNumber
+        landAppraisal
+        useDisplay
+        area
+        areaUnit
+      }
       unitsOfUse {
         unitsOfUse {
           propertyNumber

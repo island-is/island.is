@@ -15,6 +15,7 @@ import {
   BadRequestException,
   HttpException,
   Inject,
+  ParseBoolPipe,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
@@ -24,15 +25,20 @@ import {
   DokobitError,
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
-import { IntegratedCourts } from '@island.is/judicial-system/consts'
-import { CaseState, CaseType, UserRole } from '@island.is/judicial-system/types'
+// import { InjectQueue, QueueService } from '@island.is/message-queue'
+// import { MessageType } from '@island.is/judicial-system/message'
+import {
+  CaseState,
+  CaseType,
+  // completedCaseStates,
+  UserRole,
+} from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 import {
   CurrentHttpUser,
   JwtAuthGuard,
   RolesRules,
   RolesGuard,
-  TokenGuard,
 } from '@island.is/judicial-system/auth'
 
 import {
@@ -48,6 +54,7 @@ import { CaseReadGuard } from './guards/caseRead.guard'
 import { CaseWriteGuard } from './guards/caseWrite.guard'
 import { CurrentCase } from './guards/case.decorator'
 import {
+  staffUpdateRule,
   judgeTransitionRule,
   judgeUpdateRule,
   prosecutorTransitionRule,
@@ -56,13 +63,13 @@ import {
   registrarUpdateRule,
 } from './guards/rolesRules'
 import { CreateCaseDto } from './dto/createCase.dto'
-import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { TransitionCaseDto } from './dto/transitionCase.dto'
 import { UpdateCaseDto } from './dto/updateCase.dto'
 import { Case } from './models/case.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
 import { CaseService } from './case.service'
+// import { caseModuleConfig } from './case.config'
 
 @Controller('api')
 @ApiTags('cases')
@@ -71,7 +78,7 @@ export class CaseController {
     private readonly caseService: CaseService,
     private readonly userService: UserService,
     private readonly eventService: EventService,
-    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger, // @InjectQueue(caseModuleConfig().sqs.queueName) private queue: QueueService,
   ) {}
 
   private async validateAssignedUser(
@@ -94,21 +101,6 @@ export class CaseController {
     }
   }
 
-  @UseGuards(TokenGuard)
-  @Post('internal/case')
-  @ApiCreatedResponse({ type: Case, description: 'Creates a new case' })
-  async internalCreate(
-    @Body() caseToCreate: InternalCreateCaseDto,
-  ): Promise<Case> {
-    this.logger.debug('Creating a new case')
-
-    const createdCase = await this.caseService.internalCreate(caseToCreate)
-
-    this.eventService.postEvent(CaseEvent.CREATE_XRD, createdCase as Case)
-
-    return createdCase
-  }
-
   @UseGuards(JwtAuthGuard, RolesGuard)
   @RolesRules(prosecutorRule)
   @Post('case')
@@ -119,7 +111,7 @@ export class CaseController {
   ): Promise<Case> {
     this.logger.debug('Creating a new case')
 
-    const createdCase = await this.caseService.create(caseToCreate, user.id)
+    const createdCase = await this.caseService.create(caseToCreate, user)
 
     this.eventService.postEvent(CaseEvent.CREATE, createdCase as Case)
 
@@ -127,7 +119,12 @@ export class CaseController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
-  @RolesRules(prosecutorUpdateRule, judgeUpdateRule, registrarUpdateRule)
+  @RolesRules(
+    prosecutorUpdateRule,
+    judgeUpdateRule,
+    registrarUpdateRule,
+    staffUpdateRule,
+  )
   @Put('case/:caseId')
   @ApiOkResponse({ type: Case, description: 'Updates an existing case' })
   async update(
@@ -146,7 +143,7 @@ export class CaseController {
         theCase.creatingProsecutor?.institutionId,
       )
 
-      // If the case was created via xRoad, then there is no creating prosecutor
+      // If the case was created via xRoad, then there may not have been a creating prosecutor
       if (!theCase.creatingProsecutor) {
         caseToUpdate = {
           ...caseToUpdate,
@@ -177,13 +174,11 @@ export class CaseController {
     )) as Case
 
     if (
-      theCase.courtId &&
-      IntegratedCourts.includes(theCase.courtId) &&
-      Boolean(caseToUpdate.courtCaseNumber) &&
-      caseToUpdate.courtCaseNumber !== theCase.courtCaseNumber
+      updatedCase.courtCaseNumber &&
+      updatedCase.courtCaseNumber !== theCase.courtCaseNumber
     ) {
-      // TODO: Find a better place for this
-      // No need to wait for the upload
+      // The court case number has changed, so the request must be uploaded to the new court case
+      // No need to wait
       this.caseService.uploadRequestPdfToCourt(updatedCase, user)
     }
 
@@ -205,7 +200,7 @@ export class CaseController {
     @Param('caseId') caseId: string,
     @CurrentCase() theCase: Case,
     @Body() transition: TransitionCaseDto,
-  ): Promise<Case | null> {
+  ): Promise<Case> {
     this.logger.debug(`Transitioning case ${caseId}`)
 
     // Use theCase.modified when client is ready to send last modified timestamp with all updates
@@ -218,17 +213,24 @@ export class CaseController {
       update.parentCaseId = null
     }
 
-    const updatedCase = (await this.caseService.update(
+    const updatedCase = await this.caseService.update(
       caseId,
       update as UpdateCaseDto,
-    )) as Case
+      state !== CaseState.DELETED,
+    )
+
+    // if (updatedCase && completedCaseStates.includes(updatedCase.state)) {
+    //   this.logger.info(`Writing case ${caseId} to queue`)
+
+    //   this.queue.add({ type: MessageType.CASE_COMPLETED, caseId })
+    // }
 
     this.eventService.postEvent(
       (transition.transition as unknown) as CaseEvent,
-      updatedCase,
+      updatedCase ?? theCase,
     )
 
-    return updatedCase
+    return updatedCase ?? theCase
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -312,10 +314,11 @@ export class CaseController {
     @Param('caseId') caseId: string,
     @CurrentCase() theCase: Case,
     @Res() res: Response,
+    @Query('useSigned', ParseBoolPipe) useSigned: boolean,
   ): Promise<void> {
     this.logger.debug(`Getting the ruling for case ${caseId} as a pdf document`)
 
-    const pdf = await this.caseService.getRulingPdf(theCase)
+    const pdf = await this.caseService.getRulingPdf(theCase, useSigned)
 
     res.end(pdf)
   }
@@ -338,7 +341,10 @@ export class CaseController {
       `Getting the custody notice for case ${caseId} as a pdf document`,
     )
 
-    if (theCase.type !== CaseType.CUSTODY) {
+    if (
+      theCase.type !== CaseType.CUSTODY &&
+      theCase.type !== CaseType.ADMISSION_TO_FACILITY
+    ) {
       throw new BadRequestException(
         `Cannot generate a custody notice for ${theCase.type} cases`,
       )

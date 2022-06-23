@@ -5,7 +5,6 @@ import { ZendeskService } from '@island.is/clients/zendesk'
 import { ContentfulRepository, localeMap } from '@island.is/cms'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { SendMailOptions } from 'nodemailer'
 import { ContactUsInput } from './dto/contactUs.input'
 import { TellUsAStoryInput } from './dto/tellUsAStory.input'
 import {

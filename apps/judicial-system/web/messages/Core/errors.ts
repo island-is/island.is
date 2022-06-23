@@ -70,4 +70,10 @@ export const errors = defineMessages({
     description:
       'Notaður sem villuskilaboð þegar ekki gengur að sækja gögn frá Þjóðskrá',
   },
+  fetchLawyers: {
+    id: 'judicial.system.core:errors.fetch_lawyers',
+    defaultMessage: 'Upp kom villa við að sækja lögmanna skrá',
+    description:
+      'Notaður sem villuskilaboð þegar ekki gengur að sækja lögmanna skrá',
+  },
 })

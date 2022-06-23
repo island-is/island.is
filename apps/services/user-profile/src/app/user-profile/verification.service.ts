@@ -17,6 +17,9 @@ import { CreateSmsVerificationDto } from './dto/createSmsVerificationDto'
 import { ConfirmSmsDto } from './dto/confirmSmsDto'
 import { ConfirmationDtoResponse } from './dto/confirmationResponseDto'
 
+/** Category to attach each log message to */
+const LOG_CATEGORY = 'verification-service'
+
 export const SMS_VERIFICATION_MAX_AGE = 5 * 60 * 1000
 export const SMS_VERIFICATION_MAX_TRIES = 5
 
@@ -105,7 +108,8 @@ export class VerificationService {
     nationalId: string,
   ): Promise<ConfirmationDtoResponse> {
     const verification = await this.emailVerificationModel.findOne({
-      where: { nationalId },
+      where: { nationalId, email: confirmEmailDto.email },
+      order: [['created', 'DESC']],
     })
 
     if (!verification) {
@@ -134,14 +138,33 @@ export class VerificationService {
       }
     }
 
-    await this.emailVerificationModel.update(
-      { confirmed: true },
-      {
-        where: { nationalId },
-        returning: true,
-      },
-    )
+    try {
+      await this.emailVerificationModel.update(
+        { confirmed: true },
+        {
+          where: { nationalId },
+          returning: true,
+        },
+      )
+    } catch (e) {
+      this.logger.error('Unable to update email verification', {
+        error: JSON.stringify(e),
+        category: LOG_CATEGORY,
+      })
+      return {
+        message: 'Unable to update email verification',
+        confirmed: false,
+      }
+    }
 
+    try {
+      await this.removeEmailVerification(nationalId)
+    } catch (e) {
+      this.logger.error('Email verification removal error', {
+        error: JSON.stringify(e),
+        category: LOG_CATEGORY,
+      })
+    }
     return {
       message: 'Email confirmed',
       confirmed: true,
@@ -153,7 +176,8 @@ export class VerificationService {
     nationalId: string,
   ): Promise<ConfirmationDtoResponse> {
     const verification = await this.smsVerificationModel.findOne({
-      where: { nationalId },
+      where: { nationalId, mobilePhoneNumber: confirmSmsDto.mobilePhoneNumber },
+      order: [['created', 'DESC']],
     })
 
     if (!verification) {
@@ -191,13 +215,34 @@ export class VerificationService {
       }
     }
 
-    await this.smsVerificationModel.update(
-      { confirmed: true },
-      {
-        where: { nationalId },
-        returning: true,
-      },
-    )
+    try {
+      await this.smsVerificationModel.update(
+        { confirmed: true },
+        {
+          where: { nationalId },
+          returning: true,
+        },
+      )
+    } catch (e) {
+      this.logger.error('Unable to update sms verification', {
+        error: JSON.stringify(e),
+        category: LOG_CATEGORY,
+      })
+      return {
+        message: 'Unable to update sms verification',
+        confirmed: false,
+      }
+    }
+
+    try {
+      await this.removeSmsVerification(nationalId)
+    } catch (e) {
+      this.logger.error('SMS verification removal error', {
+        error: JSON.stringify(e),
+        category: LOG_CATEGORY,
+      })
+    }
+
     return {
       message: 'SMS confirmed',
       confirmed: true,
@@ -224,7 +269,7 @@ export class VerificationService {
             {
               component: 'Image',
               context: {
-                src: join(__dirname, `./assets/images/islandis.jpg`),
+                src: join(__dirname, `./assets/images/logois.jpg`),
                 alt: 'Ísland.is logo',
               },
             },
@@ -244,7 +289,7 @@ export class VerificationService {
               component: 'Copy',
               context: {
                 copy:
-                  'Þetta er öryggiskóðinn þinn til staðfestingar á netfangi. Hann eyðist sjálfkrafa eftir 5mín, eftir þann tíma þarftu að láta senda nýjan í sama ferli og þú varst að fara gegnum.',
+                  'Þetta er öryggiskóðinn þinn til staðfestingar á netfangi. Hann eyðist sjálfkrafa eftir 5 mínútur, eftir þann tíma þarftu að láta senda nýjan í sama ferli og þú varst að fara gegnum.',
               },
             },
             {

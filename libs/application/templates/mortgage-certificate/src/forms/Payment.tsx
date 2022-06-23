@@ -95,7 +95,6 @@ export const Payment: Form = buildForm({
           component: 'PaymentPending',
           title: m.confirmation,
           condition: () => {
-            console.log(!!window.document.location.href.match(/\?done$/))
             return !!window.document.location.href.match(/\?done$/)
           },
         }),

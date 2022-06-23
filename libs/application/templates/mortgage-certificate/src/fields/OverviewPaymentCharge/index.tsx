@@ -12,8 +12,10 @@ export const OverviewPaymentCharge: FC<FieldBaseProps> = ({ application }) => {
     chargeItemName: string
   }
 
-  const selectedProperty = externalData.getPropertyDetails
-    ?.data as PropertyDetail
+  const { propertyDetails } = externalData.validateMortgageCertificate
+    ?.data as {
+    propertyDetails: PropertyDetail
+  }
 
   return (
     <Box paddingTop="smallGutter">
@@ -26,8 +28,9 @@ export const OverviewPaymentCharge: FC<FieldBaseProps> = ({ application }) => {
       >
         <Text fontWeight="semiBold">Til greiðslu vegna fasteignar</Text>
         <Text>
-          {selectedProperty?.propertyNumber}{' '}
-          {selectedProperty?.defaultAddress?.display}
+          {propertyDetails?.propertyNumber}
+          {' - '}
+          {propertyDetails?.defaultAddress?.display}
         </Text>
       </Box>
       <Columns alignY="bottom" space="gutter">

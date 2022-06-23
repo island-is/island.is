@@ -53,14 +53,20 @@ export class DefendantService {
     caseId: string,
     defendantId: string,
     update: UpdateDefendantDto,
+    transaction?: Transaction,
   ): Promise<Defendant> {
-    const [numberOfAffectedRows, defendants] = await this.defendantModel.update(
-      update,
-      {
-        where: { id: defendantId, caseId },
-        returning: true,
-      },
-    )
+    const promisedUpdate = transaction
+      ? this.defendantModel.update(update, {
+          where: { id: defendantId, caseId },
+          returning: true,
+          transaction,
+        })
+      : this.defendantModel.update(update, {
+          where: { id: defendantId, caseId },
+          returning: true,
+        })
+
+    const [numberOfAffectedRows, defendants] = await promisedUpdate
 
     if (numberOfAffectedRows > 1) {
       // Tolerate failure, but log error

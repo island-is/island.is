@@ -76,7 +76,7 @@ const getRedisClusterOptions = (
   }
   return {
     keyPrefix: options.noPrefix ? undefined : `${options.name}:`,
-    slotsRefreshTimeout: 2000,
+    slotsRefreshTimeout: 3000,
     slotsRefreshInterval: 10000,
     connectTimeout: 5000,
     // https://www.npmjs.com/package/ioredis#special-note-aws-elasticache-clusters-with-tls

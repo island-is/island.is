@@ -1,4 +1,3 @@
-import { Query } from '@island.is/api/schema'
 import { ApiScope } from '@island.is/auth/scopes'
 import {
   ServicePortalModule,
@@ -6,30 +5,7 @@ import {
   ServicePortalRoute,
   m,
 } from '@island.is/service-portal/core'
-import { GET_TAPS_QUERY } from '@island.is/service-portal/graphql'
-import * as Sentry from '@sentry/react'
 import { lazy } from 'react'
-
-const tabRoutes = {
-  transactions: {
-    name: m.financeTransactions,
-    path: ServicePortalPath.FinanceTransactions,
-    render: () => lazy(() => import('./screens/FinanceTransactions')),
-    navHide: true,
-  },
-  employeeClaims: {
-    name: m.financeEmployeeClaims,
-    path: ServicePortalPath.FinanceEmployeeClaims,
-    render: () => lazy(() => import('./screens/FinanceEmployeeClaims')),
-    navHide: true,
-  },
-  localTax: {
-    name: m.financeLocalTax,
-    path: ServicePortalPath.FinanceLocalTax,
-    render: () => lazy(() => import('./screens/FinanceLocalTax')),
-    navHide: true,
-  },
-}
 
 export const financeModule: ServicePortalModule = {
   name: 'Fjármál',
@@ -39,7 +15,13 @@ export const financeModule: ServicePortalModule = {
       {
         name: m.finance,
         path: ServicePortalPath.FinanceRoot,
-        enabled: userInfo.scopes.includes(ApiScope.financeOverview),
+        enabled: [
+          ApiScope.financeOverview,
+          ApiScope.financeSalary,
+          // The finance schedule module is nested under the Finance Root menu item,
+          // but it is a separate module: libs/service-portal/finance-schedule
+          ApiScope.financeSchedule,
+        ].some((scope) => userInfo.scopes.includes(scope)),
         render: () =>
           lazy(() => import('./screens/FinanceOverview/FinanceOverview')),
       },
@@ -56,84 +38,27 @@ export const financeModule: ServicePortalModule = {
         render: () => lazy(() => import('./screens/FinanceBills')),
       },
       {
-        ...tabRoutes.transactions,
+        name: m.financeTransactions,
+        path: ServicePortalPath.FinanceTransactions,
+        render: () => lazy(() => import('./screens/FinanceTransactions')),
         enabled: userInfo.scopes.includes(ApiScope.financeOverview),
+        dynamic: true,
       },
       {
-        ...tabRoutes.employeeClaims,
+        name: m.financeEmployeeClaims,
+        path: ServicePortalPath.FinanceEmployeeClaims,
+        render: () => lazy(() => import('./screens/FinanceEmployeeClaims')),
         enabled: userInfo.scopes.includes(ApiScope.financeSalary),
+        dynamic: true,
       },
       {
-        ...tabRoutes.localTax,
+        name: m.financeLocalTax,
+        path: ServicePortalPath.FinanceLocalTax,
+        render: () => lazy(() => import('./screens/FinanceLocalTax')),
         enabled: userInfo.scopes.includes(ApiScope.financeOverview),
+        dynamic: true,
       },
     ]
-    return routes
-  },
-
-  dynamicRoutes: async ({ userInfo, client }) => {
-    const routes: ServicePortalRoute[] = []
-
-    try {
-      const { data } = await client.query<Query>({
-        query: GET_TAPS_QUERY,
-      })
-
-      const tabData = data?.getCustomerTapControl
-      if (tabData?.RecordsTap) {
-        routes.push({
-          ...tabRoutes.transactions,
-          enabled: userInfo.scopes.includes(ApiScope.financeOverview),
-          navHide: false,
-        })
-      } else {
-        routes.push({
-          ...tabRoutes.transactions,
-          enabled: userInfo.scopes.includes(ApiScope.financeOverview),
-          render: () =>
-            lazy(() =>
-              import('../../core/src/screens/AccessDenied/AccessDenied'),
-            ),
-        })
-      }
-
-      if (tabData?.employeeClaimsTap) {
-        routes.push({
-          ...tabRoutes.employeeClaims,
-          enabled: userInfo.scopes.includes(ApiScope.financeSalary),
-          navHide: false,
-        })
-      } else {
-        routes.push({
-          ...tabRoutes.employeeClaims,
-          enabled: userInfo.scopes.includes(ApiScope.financeSalary),
-          render: () =>
-            lazy(() =>
-              import('../../core/src/screens/AccessDenied/AccessDenied'),
-            ),
-        })
-      }
-
-      if (tabData?.localTaxTap) {
-        routes.push({
-          ...tabRoutes.localTax,
-          enabled: userInfo.scopes.includes(ApiScope.financeOverview),
-          navHide: false,
-        })
-      } else {
-        routes.push({
-          ...tabRoutes.localTax,
-          enabled: userInfo.scopes.includes(ApiScope.financeOverview),
-          render: () =>
-            lazy(() =>
-              import('../../core/src/screens/AccessDenied/AccessDenied'),
-            ),
-        })
-      }
-    } catch (error) {
-      Sentry.captureException(error)
-    }
-
     return routes
   },
 }

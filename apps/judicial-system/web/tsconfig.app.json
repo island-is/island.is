@@ -3,7 +3,5 @@
   "compilerOptions": {
     "outDir": "../../../dist/out-tsc",
     "types": ["node", "jest"]
-  },
-  "exclude": ["**/*.spec.ts", "**/*.spec.tsx"],
-  "include": ["**/*.ts", "**/*.tsx", "next-env.d.ts"]
+  }
 }

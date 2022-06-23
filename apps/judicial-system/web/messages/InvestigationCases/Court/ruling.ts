@@ -7,6 +7,23 @@ export const icRuling = {
     description: 'Notaður sem titill á úrskurðar skrefi í rannsóknarheimildum.',
   }),
   sections: {
+    alertMessage: defineMessages({
+      title: {
+        id:
+          'judicial.system.investigation_cases:ruling.sections.alert_message.title',
+        defaultMessage: 'Athugið',
+        description:
+          'Notaður sem titill í viðvörunarboxi þegar verið er að leiðrétta úrskurð',
+      },
+      message: {
+        id:
+          'judicial.system.investigation_cases:ruling.sections.alert_message.message',
+        defaultMessage:
+          'Allar breytingar á textum verða sýnilegar í yfirliti málsins, hvort sem nýr úrskurður er undirritaður eða ekki.',
+        description:
+          'Notaður sem texti í viðvörunarboxi þegar verið er að leiðrétta úrskurð',
+      },
+    }),
     introduction: defineMessages({
       title: {
         id:
@@ -180,6 +197,23 @@ export const icRuling = {
         defaultMessage: 'Hver eru úrskurðarorðin',
         description:
           'Notaður sem placeholder fyrir "Úrskurðarorð" innsláttarsvæði á úrskurðar skrefi í rannsóknarheimildum.',
+      },
+    }),
+    formFooter: defineMessages({
+      modifyRulingButtonLabel: {
+        id:
+          'judicial.system.investigation_cases:ruling.form_footer.modify_ruling_button_label',
+        defaultMessage: 'Undirrita nýjan úrskurð',
+        description:
+          'Notaður sem label á hnappinn "Halda áfram" í úrskurðar skrefi þegar úrskuður er leiðréttur.',
+      },
+      // TODO: remove
+      modifyRulingBackButtonLabel: {
+        id:
+          'judicial.system.investigation_cases:ruling.form_footer.modify_ruling_back_button_label',
+        defaultMessage: 'Hætta við',
+        description:
+          'Notaður sem label á hnappinn "til baka" í úrskurðar skrefi þegar úrskuður er leiðréttur.',
       },
     }),
   },

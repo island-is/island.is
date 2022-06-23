@@ -13,6 +13,7 @@ export interface EnvironmentConfig {
   domain: string
   releaseName: string
   defaultMaxReplicas: number
+  defaultMinReplicas: number
   type: OpsEnv
   featuresOn: FeatureNames[]
   awsAccountRegion: 'eu-west-1' | 'us-east-1'
@@ -21,6 +22,14 @@ export interface EnvironmentConfig {
   global: any
 }
 
+export type OpsEnvName =
+  | 'dev01'
+  | 'devIds'
+  | 'staging01'
+  | 'stagingIds'
+  | 'prod'
+  | 'prod-ids'
+
 export type EnvironmentServices = { [name in OpsEnv]: Service[] }
 
-export type EnvironmentConfigs = { [name in OpsEnv]: EnvironmentConfig }
+export type EnvironmentConfigs = { [name in OpsEnvName]: EnvironmentConfig }

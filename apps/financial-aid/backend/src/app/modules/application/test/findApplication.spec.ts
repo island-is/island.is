@@ -46,8 +46,8 @@ describe('ApplicationController - find application', () => {
 
   describe('database query', () => {
     const nationalId = '0000000000'
-    const municipalityCode = '0'
-    const staff = { municipalityId: municipalityCode } as Staff
+    const municipalityCodes = ['0']
+    const staff = { municipalityIds: municipalityCodes } as Staff
     const user = {} as User
     let mockFindApplication: jest.Mock
 
@@ -63,11 +63,11 @@ describe('ApplicationController - find application', () => {
           [Op.or]: [
             {
               nationalId,
-              municipalityCode,
+              municipalityCode: { [Op.in]: municipalityCodes },
             },
             {
               spouseNationalId: nationalId,
-              municipalityCode,
+              municipalityCode: { [Op.in]: municipalityCodes },
             },
           ],
         },
@@ -88,7 +88,7 @@ describe('ApplicationController - find application', () => {
     let then: Then
     const nationalId = '0000000000'
     const municipalityCode = '0'
-    const staff = { municipalityId: municipalityCode } as Staff
+    const staff = { municipalityIds: [municipalityCode] } as Staff
     const user = {} as User
     const expected = []
 
@@ -112,7 +112,7 @@ describe('ApplicationController - find application', () => {
     let then: Then
     const nationalId = '0000000000'
     const municipalityCode = '0'
-    const staff = { municipalityId: municipalityCode } as Staff
+    const staff = { municipalityIds: [municipalityCode] } as Staff
     const user = {} as User
     const expected = [
       { id: '1' } as ApplicationModel,
@@ -139,7 +139,7 @@ describe('ApplicationController - find application', () => {
     let then: Then
     const nationalId = '0000000000'
     const municipalityCode = '0'
-    const staff = { municipalityId: municipalityCode } as Staff
+    const staff = { municipalityIds: [municipalityCode] } as Staff
     const user = {} as User
 
     beforeEach(async () => {

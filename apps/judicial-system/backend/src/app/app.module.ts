@@ -3,11 +3,13 @@ import { SequelizeModule } from '@nestjs/sequelize'
 
 import { ProblemModule } from '@island.is/nest/problem'
 import { ConfigModule } from '@island.is/nest/config'
+import { signingModuleConfig } from '@island.is/dokobit-signing'
 import { courtClientModuleConfig } from '@island.is/judicial-system/court-client'
 import { SharedAuthModule } from '@island.is/judicial-system/auth'
 
 import { environment } from '../environments'
 import {
+  caseModuleConfig,
   CaseModule,
   DefendantModule,
   UserModule,
@@ -43,7 +45,7 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
     ProblemModule.forRoot({ logAllErrors: true }),
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [courtClientModuleConfig],
+      load: [signingModuleConfig, courtClientModuleConfig, caseModuleConfig],
     }),
   ],
 })

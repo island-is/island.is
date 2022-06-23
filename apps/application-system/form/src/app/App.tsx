@@ -14,6 +14,7 @@ import { AssignApplication } from '../routes/AssignApplication'
 import { Layout } from '../components/Layout/Layout'
 import { environment } from '../environments'
 import { FeatureFlagProvider } from '@island.is/react/feature-flags'
+import { UserProfileLocale } from '@island.is/shared/components'
 
 export const App = () => (
   <ApolloProvider client={initializeClient(environment.baseApiUrl)}>
@@ -22,6 +23,7 @@ export const App = () => (
         <Authenticator>
           <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
             <HeaderInfoProvider>
+              <UserProfileLocale />
               <Layout>
                 <Switch>
                   <Route

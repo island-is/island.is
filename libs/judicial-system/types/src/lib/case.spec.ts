@@ -15,6 +15,7 @@ describe('Case Type', () => {
     type
     ${CaseType.CUSTODY}
     ${CaseType.TRAVEL_BAN}
+    ${CaseType.ADMISSION_TO_FACILITY}
   `.it('should categorize $type as a restriction case', ({ type }) => {
     expect(isRestrictionCase(type)).toBe(true)
     expect(isInvestigationCase(type)).toBe(false)
@@ -33,6 +34,7 @@ describe('Case Type', () => {
     ${CaseType.BODY_SEARCH}
     ${CaseType.INTERNET_USAGE}
     ${CaseType.RESTRAINING_ORDER}
+    ${CaseType.EXPULSION_FROM_HOME}
     ${CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION}
     ${CaseType.VIDEO_RECORDING_EQUIPMENT}
     ${CaseType.OTHER}

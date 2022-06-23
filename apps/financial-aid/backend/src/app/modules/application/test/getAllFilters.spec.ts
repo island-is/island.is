@@ -40,7 +40,7 @@ describe('ApplicationController - Get all filters', () => {
   })
 
   describe('database query', () => {
-    const staff = { id: uuid(), municipalityId: '10' } as Staff
+    const staff = { id: uuid(), municipalityIds: ['10'] } as Staff
     let mockGetAllFilters: jest.Mock
 
     beforeEach(async () => {
@@ -53,7 +53,7 @@ describe('ApplicationController - Get all filters', () => {
       expect(mockGetAllFilters).toHaveBeenCalledWith({
         where: {
           state: ApplicationState.NEW,
-          municipalityCode: staff.municipalityId,
+          municipalityCode: { [Op.in]: staff.municipalityIds },
         },
       })
     })
@@ -62,7 +62,7 @@ describe('ApplicationController - Get all filters', () => {
       expect(mockGetAllFilters).toHaveBeenCalledWith({
         where: {
           state: ApplicationState.INPROGRESS,
-          municipalityCode: staff.municipalityId,
+          municipalityCode: { [Op.in]: staff.municipalityIds },
         },
       })
     })
@@ -71,7 +71,7 @@ describe('ApplicationController - Get all filters', () => {
       expect(mockGetAllFilters).toHaveBeenCalledWith({
         where: {
           state: ApplicationState.DATANEEDED,
-          municipalityCode: staff.municipalityId,
+          municipalityCode: { [Op.in]: staff.municipalityIds },
         },
       })
     })
@@ -80,7 +80,7 @@ describe('ApplicationController - Get all filters', () => {
       expect(mockGetAllFilters).toHaveBeenCalledWith({
         where: {
           state: ApplicationState.REJECTED,
-          municipalityCode: staff.municipalityId,
+          municipalityCode: { [Op.in]: staff.municipalityIds },
         },
       })
     })
@@ -89,7 +89,7 @@ describe('ApplicationController - Get all filters', () => {
       expect(mockGetAllFilters).toHaveBeenCalledWith({
         where: {
           state: ApplicationState.APPROVED,
-          municipalityCode: staff.municipalityId,
+          municipalityCode: { [Op.in]: staff.municipalityIds },
         },
       })
     })
@@ -98,7 +98,7 @@ describe('ApplicationController - Get all filters', () => {
       expect(mockGetAllFilters).toHaveBeenCalledWith({
         where: {
           staffId: staff.id,
-          municipalityCode: staff.municipalityId,
+          municipalityCode: { [Op.in]: staff.municipalityIds },
           state: {
             [Op.or]: [ApplicationState.INPROGRESS, ApplicationState.DATANEEDED],
           },
@@ -110,7 +110,7 @@ describe('ApplicationController - Get all filters', () => {
   describe('get filters', () => {
     let then: Then
     const expectedValue = 10
-    const staff = { id: uuid(), municipalityId: '10' } as Staff
+    const staff = { id: uuid(), municipalityIds: ['10'] } as Staff
 
     beforeEach(async () => {
       const mockFindById = mockApplicationModel.count as jest.Mock
@@ -157,7 +157,7 @@ describe('ApplicationController - Get all filters', () => {
 
   describe('database query fails', () => {
     let then: Then
-    const staff = { id: uuid(), municipalityId: '10' } as Staff
+    const staff = { id: uuid(), municipalityIds: ['10'] } as Staff
 
     beforeEach(async () => {
       const mockGetAllFilters = mockApplicationModel.count as jest.Mock

@@ -5,15 +5,10 @@ import {
   Section,
   SubSection,
 } from '@island.is/application/core'
-import { MessageDescriptor } from 'react-intl'
+import { FormatMessage } from '@island.is/localization'
 
 import { ApplicationUIState } from '../reducer/ReducerTypes'
 import { useDocumentTitle } from './useDocumentTitle'
-
-type FormatMessage = (
-  descriptor: MessageDescriptor | string,
-  values?: any,
-) => string
 
 export const getApplicationTitle = (
   state: ApplicationUIState,

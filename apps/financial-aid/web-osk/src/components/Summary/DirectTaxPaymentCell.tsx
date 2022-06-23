@@ -4,11 +4,18 @@ import { DirectTaxPayment } from '@island.is/financial-aid/shared/lib'
 
 interface Props {
   directTaxPayments: DirectTaxPayment[]
+  hasFetchedPayments: boolean
   setIsModalOpen: (open: boolean) => void
 }
 
-const DirectTaxPaymentCell = ({ directTaxPayments, setIsModalOpen }: Props) => {
-  if (directTaxPayments.length === 0) {
+const DirectTaxPaymentCell = ({
+  directTaxPayments,
+  hasFetchedPayments,
+  setIsModalOpen,
+}: Props) => {
+  const fetchFailed = directTaxPayments.length === 0 && !hasFetchedPayments
+
+  if (fetchFailed) {
     return null
   }
   return (
@@ -27,14 +34,18 @@ const DirectTaxPaymentCell = ({ directTaxPayments, setIsModalOpen }: Props) => {
           <Text>Staðgreiðsluskrá sótt</Text>
         </Box>
 
-        <Button
-          onClick={() => setIsModalOpen(true)}
-          icon="open"
-          iconType="outline"
-          variant="utility"
-        >
-          Opna sundurliðun
-        </Button>
+        {directTaxPayments.length === 0 ? (
+          <Text marginTop={3}>Engin staðgreiðsla</Text>
+        ) : (
+          <Button
+            onClick={() => setIsModalOpen(true)}
+            icon="open"
+            iconType="outline"
+            variant="utility"
+          >
+            Opna sundurliðun
+          </Button>
+        )}
       </Box>
     </>
   )

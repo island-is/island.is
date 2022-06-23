@@ -1,7 +1,7 @@
 export enum ApiActions {
   createCharge = 'createCharge',
   submitApplication = 'submitApplication',
-  getPropertyDetails = 'getPropertyDetails',
+  validateMortgageCertificate = 'validateMortgageCertificate',
   getMortgageCertificate = 'getMortgageCertificate',
   submitRequestToSyslumenn = 'submitRequestToSyslumenn',
 }

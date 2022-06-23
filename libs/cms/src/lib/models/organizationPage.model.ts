@@ -67,6 +67,9 @@ export class OrganizationPage {
 
   @Field(() => AlertBanner, { nullable: true })
   alertBanner?: AlertBanner
+
+  @Field(() => Image, { nullable: true })
+  defaultHeaderImage?: Image
 }
 
 export const mapOrganizationPage = ({
@@ -95,5 +98,8 @@ export const mapOrganizationPage = ({
   externalLinks: (fields.externalLinks ?? []).map(mapLink),
   alertBanner: fields.alertBanner
     ? mapAlertBanner(fields.alertBanner)
+    : undefined,
+  defaultHeaderImage: fields.defaultHeaderImage
+    ? mapImage(fields.defaultHeaderImage)
     : undefined,
 })

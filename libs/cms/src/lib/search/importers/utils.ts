@@ -115,17 +115,3 @@ export const removeEntryHyperlinkFields = (node: any) => {
     }
   }
 }
-
-export const removeField = (node: any, fieldToRemove: string) => {
-  if (!node || typeof node !== 'object') {
-    return
-  }
-
-  for (const field of Object.keys(node)) {
-    if (field === fieldToRemove) {
-      delete node[field]
-    } else {
-      removeField(node[field], fieldToRemove)
-    }
-  }
-}

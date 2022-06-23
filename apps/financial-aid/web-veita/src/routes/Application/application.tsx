@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 
 import { useRouter } from 'next/router'
 
 import { useQuery } from '@apollo/client'
 import { ApplicationQuery } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
 
-import { Application } from '@island.is/financial-aid/shared/lib'
+import { Application, Municipality } from '@island.is/financial-aid/shared/lib'
 
 import {
   ApplicationSkeleton,
@@ -13,6 +13,8 @@ import {
   ProfileNotFound,
   ApplicationProfile,
 } from '@island.is/financial-aid-web/veita/src/components'
+
+import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
 
 interface ApplicantData {
   application: Application
@@ -28,12 +30,22 @@ const UserApplication = () => {
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
+  const { municipality } = useContext(AdminContext)
 
   const [application, setApplication] = useState<Application>()
+  const [
+    applicationMunicipality,
+    setApplicationMunicipality,
+  ] = useState<Municipality>()
 
   useEffect(() => {
     if (data?.application) {
       setApplication(data.application)
+      setApplicationMunicipality(
+        municipality?.find(
+          (muni) => muni.municipalityId === data.application.municipalityCode,
+        ),
+      )
     }
   }, [data])
 
@@ -42,11 +54,12 @@ const UserApplication = () => {
       isLoading={loading || isLoading}
       loader={<ApplicationSkeleton />}
     >
-      {application ? (
+      {application && applicationMunicipality ? (
         <ApplicationProfile
           application={application}
           setApplication={setApplication}
           setIsLoading={setIsLoading}
+          applicationMunicipality={applicationMunicipality}
         />
       ) : (
         <ProfileNotFound backButtonHref="/nymal" />

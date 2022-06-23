@@ -1,5 +1,4 @@
 import React from 'react'
-import { PlausiblePageviewDetail } from '@island.is/service-portal/core'
 import { useParams } from 'react-router-dom'
 import { defineMessage } from 'react-intl'
 import { useQuery, useLazyQuery } from '@apollo/client'
@@ -8,8 +7,6 @@ import { useNamespaces, useLocale } from '@island.is/localization'
 import { Box } from '@island.is/island-ui/core'
 import {
   ServicePortalModuleComponent,
-  ServicePortalPath,
-  IntroHeader,
   NotFound,
 } from '@island.is/service-portal/core'
 import TableUnits from '../../components/TableUnits'
@@ -25,15 +22,12 @@ import {
 } from '../../lib/queries'
 import DetailHeader from '../../components/DetailHeader'
 import { DEFAULT_PAGING_ITEMS } from '../../utils/const'
+import TableGrid from '../../components/TableGrid/TableGrid'
 
 export const AssetsOverview: ServicePortalModuleComponent = () => {
   useNamespaces('sp.assets')
   const { formatMessage } = useLocale()
   const { id }: { id: string | undefined } = useParams()
-
-  PlausiblePageviewDetail(
-    ServicePortalPath.AssetsRealEstateDetail.replace(':id', 'detail'),
-  )
 
   const { loading, error, data } = useQuery<Query>(GET_SINGLE_PROPERTY_QUERY, {
     variables: {
@@ -89,11 +83,11 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
     return <AssetLoader />
   }
 
-  if (!id || error) {
+  if (!id || error || (!loading && data?.assetsDetail === null)) {
     return (
       <NotFound
         title={defineMessage({
-          id: 'sp.assets',
+          id: 'sp.assets:not-found',
           defaultMessage: 'Fasteign fannst ekki',
         })}
       />
@@ -147,6 +141,38 @@ export const AssetsOverview: ServicePortalModuleComponent = () => {
           ]}
         />
       </Box>
+      {assetData.land?.landNumber ? (
+        <TableGrid
+          title={formatMessage(messages.land)}
+          mt
+          dataArray={[
+            [
+              {
+                title: formatMessage(messages.usage),
+                value: assetData.land?.useDisplay ?? '',
+              },
+              {
+                title: formatMessage(messages.landSize),
+                value: assetData.land?.area
+                  ? `${assetData.land?.area} ${assetData.land?.areaUnit}`
+                  : '',
+              },
+            ],
+            [
+              {
+                title: formatMessage(messages.landNumber),
+                value: assetData.land?.landNumber,
+              },
+              {
+                title: formatMessage(messages.landAppraisal),
+                value: assetData.land?.landAppraisal
+                  ? amountFormat(assetData.land?.landAppraisal)
+                  : '',
+              },
+            ],
+          ]}
+        />
+      ) : null}
       <Box marginTop={7}>
         {assetData?.unitsOfUse?.unitsOfUse &&
         assetData?.unitsOfUse?.unitsOfUse?.length > 0 ? (

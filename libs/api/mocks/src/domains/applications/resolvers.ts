@@ -23,9 +23,6 @@ export const resolvers: Resolvers = {
     nationalRegistryFamily: () => {
       return store.familyMembers
     },
-    rskCurrentUserCompanies: () => {
-      return store.userCompanies
-    },
   },
   Mutation: {
     createApplication: (parent, args) => {

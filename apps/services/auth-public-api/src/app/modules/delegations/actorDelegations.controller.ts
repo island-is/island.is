@@ -8,24 +8,22 @@ import {
 import { ApiTags } from '@nestjs/swagger'
 
 import {
+  DelegationDirection,
+  DelegationDTO,
+  DelegationsService,
+  DelegationType,
+} from '@island.is/auth-api-lib'
+import {
   ActorScopes,
-  AuthMiddlewareOptions,
   CurrentActor,
   IdsUserGuard,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
-import type { User } from '@island.is/auth-nest-tools'
-import { Audit } from '@island.is/nest/audit'
-import {
-  DelegationDirection,
-  DelegationDTO,
-  DelegationsService,
-} from '@island.is/auth-api-lib'
 import { AuthScope } from '@island.is/auth/scopes'
-
-import { environment } from '../../../environments'
+import { Audit } from '@island.is/nest/audit'
 import { Documentation } from '@island.is/nest/swagger'
 
+import type { User } from '@island.is/auth-nest-tools'
 const namespace = '@island.is/auth-public-api/actor/delegations'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -50,6 +48,28 @@ export class ActorDelegationsController {
             default: 'incoming',
           },
         },
+        delegationTypes: {
+          required: false,
+          schema: {
+            type: 'array',
+            items: {
+              type: 'string',
+              enum: [
+                DelegationType.LegalGuardian,
+                DelegationType.ProcurationHolder,
+                DelegationType.PersonalRepresentative,
+                DelegationType.Custom,
+              ],
+              example: [
+                [
+                  DelegationType.LegalGuardian,
+                  DelegationType.ProcurationHolder,
+                ],
+                DelegationType.Custom,
+              ],
+            },
+          },
+        },
       },
     },
   })
@@ -60,6 +80,7 @@ export class ActorDelegationsController {
   async findAll(
     @CurrentActor() actor: User,
     @Query('direction') direction: DelegationDirection.INCOMING,
+    @Query('delegationTypes') delegationTypes?: Array<DelegationType>,
   ): Promise<DelegationDTO[]> {
     if (direction != DelegationDirection.INCOMING) {
       throw new BadRequestException(
@@ -67,10 +88,6 @@ export class ActorDelegationsController {
       )
     }
 
-    return this.delegationsService.findAllIncoming(
-      actor,
-      environment.nationalRegistry
-        .authMiddlewareOptions as AuthMiddlewareOptions,
-    )
+    return this.delegationsService.findAllIncoming(actor, delegationTypes)
   }
 }

@@ -1,3 +1,23 @@
+interface SalaryBreakdown {
+  'b:_Tharaf_gr_sereignarsparnadur': number
+  'b:_ar': number
+  'b:_bifreidahlunnindi': undefined | string
+  'b:_dagpeningar': number
+  'b:_dagsetningSundurlidunar': string
+  'b:_faersludagsetning': string
+  'b:_fradr_gr_lifeyrissj': number
+  'b:_grunnlaun': number
+  'b:_heildarlaun': number
+  'b:_isat': string
+  'b:_kennitalaLaunagreidanda': number
+  'b:_okutaekjastyrkur': number
+  'b:_personuafslattur': number
+  'b:_personuafslattur_maka': number
+  'b:_stadgreidsla': number
+  'b:_starfshlutfall': number
+  'b:_timabil': number
+}
+
 export interface DirectTaxPaymentResponse {
   's:Envelope': {
     's:Body': {
@@ -11,29 +31,8 @@ export interface DirectTaxPaymentResponse {
           'b:_launasundurlidanir':
             | undefined
             | {
-                'b:Launasundurlidun': [
-                  {
-                    'b:_Tharaf_gr_sereignarsparnadur': number
-                    'b:_ar': number
-                    'b:_bifreidahlunnindi': undefined | string
-                    'b:_dagpeningar': number
-                    'b:_dagsetningSundurlidunar': string
-                    'b:_faersludagsetning': string
-                    'b:_fradr_gr_lifeyrissj': number
-                    'b:_grunnlaun': number
-                    'b:_heildarlaun': number
-                    'b:_isat': string
-                    'b:_kennitalaLaunagreidanda': number
-                    'b:_okutaekjastyrkur': number
-                    'b:_personuafslattur': number
-                    'b:_personuafslattur_maka': number
-                    'b:_stadgreidsla': number
-                    'b:_starfshlutfall': number
-                    'b:_timabil': number
-                  },
-                ]
+                'b:Launasundurlidun': SalaryBreakdown[] | SalaryBreakdown
               }
-
           'b:_saekjaGognTokst': boolean
           'b:_timastimpill': undefined | string
           'b:_villubod': undefined | string

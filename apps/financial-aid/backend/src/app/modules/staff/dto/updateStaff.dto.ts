@@ -30,6 +30,11 @@ export class UpdateStaffDto {
   readonly roles: StaffRole[]
 
   @IsOptional()
+  @IsArray()
+  @ApiProperty()
+  readonly municipalityIds: string[]
+
+  @IsOptional()
   @IsString()
   @ApiProperty()
   readonly email: string

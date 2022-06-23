@@ -15,6 +15,7 @@ export const PendingRejectedTryAgain: Form = buildForm({
   id: 'PendingForm',
   title: 'Pending',
   mode: FormModes.APPLYING,
+  renderLastScreenButton: true,
   children: [
     buildSection({
       id: 'externalData',
@@ -48,7 +49,7 @@ export const PendingRejectedTryAgain: Form = buildForm({
               refetchApplicationAfterSubmit: true,
               actions: [
                 {
-                  event: DefaultEvents.PAYMENT,
+                  event: DefaultEvents.SUBMIT,
                   name: m.continue,
                   type: 'primary',
                 },

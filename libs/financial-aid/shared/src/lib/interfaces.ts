@@ -4,7 +4,6 @@ import {
   FileType,
   Employment,
   ApplicationEventType,
-  RolesRule,
   StaffRole,
   ApplicationStateUrl,
   FamilyStatus,
@@ -13,7 +12,14 @@ import {
 } from './enums'
 
 export interface GetSignedUrl {
+  folder: string
   fileName: string
+}
+
+export type ReactSelectOption = { label: string; value: string | number }
+
+export interface GetSignedUrlForAllFiles {
+  getSignedUrlForAllFilesId: SignedUrl[]
 }
 
 export interface SignedUrl {
@@ -23,18 +29,17 @@ export interface SignedUrl {
 
 export interface CreateFilesResponse {
   success: boolean
+  files?: ApplicationFile[]
 }
 
 export interface Staff {
   id: string
   nationalId: string
   name: string
-  municipalityId: string
+  municipalityIds: string[]
   roles: StaffRole[]
   active: boolean
-  municipalityName: string
   phoneNumber?: string
-  municipalityHomepage?: string
   nickname?: string
   email?: string
   usePseudoName?: boolean
@@ -94,8 +99,6 @@ export interface User {
   nationalId: string
   name: string
   phoneNumber?: string
-  folder: string
-  service: RolesRule
   currentApplicationId?: string
   spouse?: Spouse
   staff?: Staff
@@ -144,6 +147,13 @@ export interface ApplicationEvent {
   comment?: string
   staffNationalId?: string
   staffName?: string
+  emailSent?: boolean
+}
+
+export interface UpdateAdmin {
+  id: string
+  name: string
+  municipalityIds: string[]
 }
 
 export interface Municipality {
@@ -158,6 +168,7 @@ export interface Municipality {
   rulesHomepage?: string
   numberOfUsers?: number
   adminUsers?: Staff[]
+  allAdminUsers?: UpdateAdmin[]
 }
 
 export interface UpdateMunicipalityActivity {
@@ -215,6 +226,7 @@ export interface CreateApplication {
   city?: string
   municipalityCode: string
   applicationSystemId?: string
+  hasFetchedDirectTaxPayment: boolean
 }
 
 export interface ApplicantEmailData {
@@ -252,7 +264,7 @@ export interface DirectTaxPayment {
   withheldAtSource: number
   month: number
   year: number
-  userType?: UserType
+  userType: UserType
 }
 
 export interface Application {
@@ -294,6 +306,8 @@ export interface Application {
   city?: string
   municipalityCode: string
   directTaxPayments: DirectTaxPayment[]
+  hasFetchedDirectTaxPayment: boolean
+  spouseHasFetchedDirectTaxPayment: boolean
   applicationSystemId?: string
 }
 
@@ -355,8 +369,8 @@ export interface CreateStaff {
   email: string
   nationalId: string
   roles: StaffRole[]
-  municipalityName?: string
-  municipalityId?: string
+  municipalityNames?: string[]
+  municipalityIds?: string[]
 }
 
 export interface CreateStaffMunicipality {
@@ -368,4 +382,18 @@ export interface CreateStaffMunicipality {
 export interface Calculations {
   title: string
   calculation: string
+}
+
+export interface ApplicationProfileInfo {
+  title: string
+  content?: string
+  link?: string
+  onclick?: () => void
+  other?: string
+  fullWidth?: boolean
+}
+
+export interface ApplicationPagination {
+  applications: Application[]
+  totalCount: number
 }

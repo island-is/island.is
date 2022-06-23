@@ -4,7 +4,12 @@ import { OpsEnv } from './dsl/types/input-types'
 import { UberChart } from './dsl/uber-chart'
 import { Envs } from './environments'
 import { serializeService } from './dsl/map-to-values'
-import { charts, OpsEnvNames } from './uber-charts/all-charts'
+import {
+  ChartName,
+  Charts,
+  Deployments,
+  OpsEnvNames,
+} from './uber-charts/all-charts'
 const { hideBin } = require('yargs/helpers')
 
 interface GetArguments {
@@ -30,22 +35,26 @@ yargs(hideBin(process.argv))
     'get all required secrets from all charts',
     { env: { type: 'string', demand: true, choices: OpsEnvNames } },
     (p) => {
-      console.log(
-        Object.values(charts)
-          .map((chart) => chart[p.env as OpsEnv])
-          .flatMap((services) =>
-            services.map((s) =>
-              serializeService(s, new UberChart(Envs[p.env as OpsEnv])),
+      const secrets = Object.entries(Charts)
+        .map(([chartName, chart]) => ({
+          services: chart[p.env as OpsEnv],
+          chartName: chartName as ChartName,
+        }))
+        .flatMap(({ services, chartName }) =>
+          services.map((s) =>
+            serializeService(
+              s,
+              new UberChart(Envs[Deployments[chartName][p.env as OpsEnv]]),
             ),
-          )
-          .flatMap((s) => {
-            if (s.type === 'success') {
-              return Object.values(s.serviceDef.secrets!)
-            }
-            return [`serialize errors: ${s.errors.join(', ')}`]
-          })
-          .join('\n'),
-      )
+          ),
+        )
+        .flatMap((s) => {
+          if (s.type === 'success') {
+            return Object.values(s.serviceDef.secrets!)
+          }
+          return [`serialize errors: ${s.errors.join(', ')}`]
+        })
+      console.log([...new Set(secrets)].join('\n'))
     },
   )
   .command(
@@ -100,7 +109,7 @@ yargs(hideBin(process.argv))
           Parameters.map(({ Name }) =>
             Name
               ? ssm.deleteParameter({ Name }).promise()
-              : new Promise((resolve) => resolve()),
+              : new Promise((resolve) => resolve(true)),
           ),
         )
       }

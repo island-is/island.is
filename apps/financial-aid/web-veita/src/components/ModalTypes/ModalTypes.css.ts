@@ -34,18 +34,33 @@ export const deductionFactor = style({
 
 export const rejectionEditable = style({
   display: 'inline-block',
-  borderBottom: '2px solid',
+  position: 'relative',
   minWidth: '269px',
-  borderColor: theme.color.blue300,
+  textDecoration: 'underline',
+  textDecorationColor: theme.color.blue300,
+  textUnderlineOffset: '4px',
+  textDecorationThickness: '2px',
   fontSize: '20px',
   lineHeight: 1.5,
   fontWeight: 600,
   ':focus': {
     outline: 'none',
   },
+  '::before': {
+    content: '',
+    display: 'block',
+    width: 'calc(100% - 8px)',
+    position: 'absolute',
+    bottom: '0.5px',
+    backgroundColor: theme.color.blue300,
+    height: '2px',
+  },
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
       fontSize: theme.spacing[3],
+      '::before': {
+        bottom: '2px',
+      },
     },
   },
 })

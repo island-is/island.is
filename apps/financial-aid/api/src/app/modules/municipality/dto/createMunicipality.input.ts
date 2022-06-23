@@ -1,7 +1,7 @@
 import { Allow } from 'class-validator'
 
 import { Field, InputType } from '@nestjs/graphql'
-import { CreateStaffInput } from '../../staff'
+import { CreateStaffInput } from '../../staff/dto'
 
 @InputType()
 export class CreateMunicipalityInput {
@@ -14,6 +14,6 @@ export class CreateMunicipalityInput {
   readonly municipalityId!: string
 
   @Allow()
-  @Field()
-  readonly admin!: CreateStaffInput
+  @Field({ nullable: true })
+  readonly admin?: CreateStaffInput
 }

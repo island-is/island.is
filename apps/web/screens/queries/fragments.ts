@@ -158,6 +158,7 @@ export const slices = gql`
     __typename
     id
     title
+    showTitle
     questions {
       id
       question
@@ -369,6 +370,7 @@ export const slices = gql`
       text
       url
     }
+    dividerOnTop
   }
 
   fragment MultipleStatisticsFields on MultipleStatistics {
@@ -398,7 +400,9 @@ export const slices = gql`
     }
     content {
       ...HtmlFields
+      ...AssetFields
     }
+    dividerOnTop
   }
 
   fragment AccordionSliceFields on AccordionSlice {
@@ -411,6 +415,7 @@ export const slices = gql`
       title
       content {
         ...HtmlFields
+        ...AssetFields
       }
       link {
         url

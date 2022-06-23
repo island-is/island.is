@@ -2,12 +2,13 @@ import React, { FC, useEffect, useState, createContext } from 'react'
 import Head from 'next/head'
 import { Box } from '@island.is/island-ui/core'
 
-import { Organization } from '@island.is/web/graphql/schema'
+import { Organization, Tag } from '@island.is/web/graphql/schema'
 import {
   ServiceWebSearchSection,
   ServiceWebHeader,
   ServiceWebBackground,
   ServiceWebDynamicFooter,
+  HeadWithSocialSharing,
 } from '@island.is/web/components'
 import { BackgroundVariations, Options, TextModes } from '../types'
 import config from '../config'
@@ -35,6 +36,10 @@ interface WrapperProps {
   searchTitle?: string
   organizationTitle?: string
   smallBackground?: boolean
+  searchPlaceholder?: string
+  showLogoTitle?: boolean
+  pageDescription?: string
+  indexableBySearchEngine?: boolean
 }
 
 export const Wrapper: FC<WrapperProps> = ({
@@ -46,6 +51,10 @@ export const Wrapper: FC<WrapperProps> = ({
   searchTitle,
   organizationTitle,
   smallBackground,
+  searchPlaceholder,
+  showLogoTitle,
+  pageDescription,
+  indexableBySearchEngine = false,
   children,
 }) => {
   const [options, setOptions] = useState<Options>({
@@ -66,15 +75,25 @@ export const Wrapper: FC<WrapperProps> = ({
 
   return (
     <>
-      <Head>
-        <title>{pageTitle}</title>
-        <meta name="robots" content="noindex, nofollow" />
-      </Head>
+      <HeadWithSocialSharing
+        title={pageTitle}
+        description={pageDescription}
+        imageUrl={organization.serviceWebFeaturedImage?.url}
+        imageContentType={organization.serviceWebFeaturedImage?.contentType}
+        imageWidth={organization.serviceWebFeaturedImage?.width?.toString()}
+        imageHeight={organization.serviceWebFeaturedImage?.height?.toString()}
+      >
+        {!indexableBySearchEngine && (
+          <meta name="robots" content="noindex, nofollow" />
+        )}
+      </HeadWithSocialSharing>
+
       <ServiceWebContext.Provider value={{ textMode, institutionSlug }}>
         <ServiceWebHeader
           hideSearch={!smallBackground}
           title={headerTitle}
           textMode={textMode}
+          searchPlaceholder={searchPlaceholder}
         />
         <ServiceWebBackground
           variation={
@@ -87,10 +106,11 @@ export const Wrapper: FC<WrapperProps> = ({
         {!!showSearchSection && (
           <Box className={styles.searchSection}>
             <ServiceWebSearchSection
-              logoTitle={organizationTitle}
+              logoTitle={showLogoTitle ? organizationTitle : undefined}
               logoUrl={logoUrl}
               title={searchTitle}
               textMode={textMode}
+              searchPlaceholder={searchPlaceholder}
             />
           </Box>
         )}

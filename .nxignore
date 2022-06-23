@@ -9,12 +9,6 @@ libs/**/infra/*
 apps/skilavottord/codegen.yml
 apps/skilavottord/api.graphql
 
-# gjafakort
-apps/gjafakort/bin
-apps/gjafakort/codegen.yml
-apps/gjafakort/docker-compose.yml
-apps/gjafakort/Makefile
-
 # air-discount-scheme
 apps/air-discount-scheme/codegen.yml
 apps/air-discount-scheme/api.graphql

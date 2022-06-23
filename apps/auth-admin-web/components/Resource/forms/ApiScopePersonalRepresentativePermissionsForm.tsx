@@ -156,6 +156,12 @@ const ApiScopePersonalRepresentativePermissionsForm = (props: Props) => {
                     title={localization.buttons['add'].helpText}
                   />
                 </div>
+                <div className="personal-representative-permissions-form__selected__description">
+                  {
+                    permissionTypes?.find((pt) => pt.code === selectedItem)
+                      ?.description
+                  }
+                </div>
               </div>
             </form>
 
@@ -167,7 +173,10 @@ const ApiScopePersonalRepresentativePermissionsForm = (props: Props) => {
                     key={permission.rightTypeCode}
                     className="personal-representative-permissions-form__container__list__item"
                   >
-                    <div className="list-value">{permission.rightTypeCode}</div>
+                    <div className="list-name">{permission.rightTypeCode}</div>
+                    <div className="list-value">
+                      {permission.rightType.description}
+                    </div>
                     <div className="list-remove">
                       <button
                         onClick={() => deleteScopePermission(permission.id)}

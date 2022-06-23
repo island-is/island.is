@@ -1,18 +1,10 @@
 import { Module } from '@nestjs/common'
-import { GetCompanyApiProvider } from './GetCompanyApiProvider'
-import { SearchCompanyRegistryApiProvider } from './SearchCompanyRegistryApiProvider'
-import { ServiceInformationApiProvider } from './ServiceInformationApiProvider'
+import { ApiConfiguration } from './apiConfiguration'
+import { exportedApis } from './apis'
+import { CompanyRegistryClientService } from './company-registry-client.service'
 
 @Module({
-  providers: [
-    GetCompanyApiProvider,
-    SearchCompanyRegistryApiProvider,
-    ServiceInformationApiProvider,
-  ],
-  exports: [
-    GetCompanyApiProvider,
-    SearchCompanyRegistryApiProvider,
-    ServiceInformationApiProvider,
-  ],
+  providers: [ApiConfiguration, CompanyRegistryClientService, ...exportedApis],
+  exports: [CompanyRegistryClientService],
 })
 export class CompanyRegistryClientModule {}

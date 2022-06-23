@@ -237,6 +237,14 @@
     }
   }
 
+  &__selected__description {
+    flex-direction: row;
+    text-align: left;
+    align-items: flex-start;
+    width: 100%;
+    padding: 8px 8px 24px 8px;
+  }
+
   &__container__checkbox__field,
   &__container__radio__field {
     input[type='checkbox'],

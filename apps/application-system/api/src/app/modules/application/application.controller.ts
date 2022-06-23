@@ -6,7 +6,6 @@ import {
   Param,
   Post,
   Put,
-  Delete,
   ParseUUIDPipe,
   BadRequestException,
   UseInterceptors,
@@ -14,6 +13,8 @@ import {
   Query,
   UseGuards,
   UnauthorizedException,
+  Delete,
+  ForbiddenException,
 } from '@nestjs/common'
 import omit from 'lodash/omit'
 import { InjectQueue } from '@nestjs/bull'
@@ -71,14 +72,7 @@ import {
   buildDataProviders,
   buildExternalData,
 } from './utils/externalDataUtils'
-import {
-  validateApplicationSchema,
-  validateIncomingAnswers,
-  validateIncomingExternalDataProviders,
-  validateThatTemplateIsReady,
-  isTemplateReady,
-  validateThatApplicationIsReady,
-} from './utils/validationUtils'
+import { ApplicationValidationService } from './tools/applicationTemplateValidation.service'
 import { ApplicationSerializer } from './tools/application.serializer'
 import { UpdateApplicationStateDto } from './dto/updateApplicationState.dto'
 import { ApplicationResponseDto } from './dto/application.response.dto'
@@ -97,8 +91,10 @@ import { ApplicationAccessService } from './tools/applicationAccess.service'
 import { CurrentLocale } from './utils/currentLocale'
 import { Application } from '@island.is/application/api/core'
 import { Documentation } from '@island.is/nest/swagger'
+import { DelegationGuard } from './guards/delegation.guard'
+import { isNewActor } from './utils/delegationUtils'
 
-@UseGuards(IdsUserGuard, ScopesGuard)
+@UseGuards(IdsUserGuard, ScopesGuard, DelegationGuard)
 @ApiTags('applications')
 @ApiHeader({
   name: 'authorization',
@@ -115,6 +111,7 @@ export class ApplicationController {
     private readonly templateAPIService: TemplateAPIService,
     private readonly fileService: FileService,
     private readonly auditService: AuditService,
+    private readonly validationService: ApplicationValidationService,
     private readonly applicationAccessService: ApplicationAccessService,
     @Optional() @InjectQueue('upload') private readonly uploadQueue: Queue,
     private intlService: IntlService,
@@ -133,10 +130,13 @@ export class ApplicationController {
   ): Promise<ApplicationResponseDto> {
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
-      user.nationalId,
+      user,
     )
 
-    await validateThatApplicationIsReady(existingApplication as BaseApplication)
+    await this.validationService.validateThatApplicationIsReady(
+      existingApplication as BaseApplication,
+      user,
+    )
 
     return existingApplication
   }
@@ -184,7 +184,6 @@ export class ApplicationController {
       typeId,
       status,
     )
-
     const templateTypeToIsReady: Partial<Record<ApplicationTypes, boolean>> = {}
     const filteredApplications: Application[] = []
 
@@ -203,7 +202,9 @@ export class ApplicationController {
         application.typeId,
       )
 
-      if (isTemplateReady(applicationTemplate)) {
+      if (
+        await this.validationService.isTemplateReady(user, applicationTemplate)
+      ) {
         templateTypeToIsReady[application.typeId] = true
         filteredApplications.push(application)
       } else {
@@ -251,6 +252,7 @@ export class ApplicationController {
       | 'answers'
       | 'applicant'
       | 'assignees'
+      | 'applicantActors'
       | 'attachments'
       | 'state'
       | 'status'
@@ -259,6 +261,7 @@ export class ApplicationController {
       answers: {},
       applicant: user.nationalId,
       assignees: [],
+      applicantActors: user.actor ? [user.actor.nationalId] : [],
       attachments: {},
       state: initialState,
       status: ApplicationStatus.IN_PROGRESS,
@@ -288,6 +291,37 @@ export class ApplicationController {
       resources: updatedApplication.id,
       meta: { type: application.typeId },
     })
+
+    const actionDto: BaseApplication = {
+      ...applicationDto,
+      id: createdApplication.id,
+      modified: createdApplication.modified,
+      created: createdApplication.created,
+      answers: updatedApplication.answers as FormValue,
+      externalData: updatedApplication.externalData as ExternalData,
+      attachments: {},
+    }
+
+    // Trigger meta.onEntry for initial state on application creation
+    const onEnterStateAction = new ApplicationTemplateHelper(
+      actionDto,
+      template,
+    ).getOnEntryStateAPIAction(updatedApplication.state)
+
+    if (onEnterStateAction) {
+      const {
+        updatedApplication: withUpdatedExternalData,
+      } = await this.performActionOnApplication(
+        actionDto,
+        template,
+        user,
+        onEnterStateAction,
+      )
+
+      //Programmers responsible for handling failure status
+      updatedApplication.externalData = withUpdatedExternalData.externalData
+    }
+
     return updatedApplication
   }
 
@@ -326,13 +360,23 @@ export class ApplicationController {
       return existingApplication
     }
 
+    if (decodedToken.nonce) {
+      if (!existingApplication.assignNonces.includes(decodedToken.nonce)) {
+        throw new NotFoundException('Token no longer usable.')
+      }
+
+      await this.applicationService.removeNonce(
+        existingApplication,
+        decodedToken.nonce,
+      )
+    } else if (new Date((decodedToken.iat + 3628800) * 1000) < new Date()) {
+      //supporting legacy tokens but reducing the validity to 6 weeks from issue date
+      throw new BadRequestException('Token has expired.')
+    }
+
     if (existingApplication.state !== decodedToken.state) {
       throw new NotFoundException('Application no longer in assignable state')
     }
-
-    // TODO check if assignee is still the same?
-    // decodedToken.assignedEmail === get(existingApplication.answers, decodedToken.emailPath)
-    // throw new BadRequestException('Invalid token')
 
     const templateId = existingApplication.typeId as ApplicationTypes
     const template = await getApplicationTemplateByTypeId(templateId)
@@ -344,7 +388,7 @@ export class ApplicationController {
       )
     }
 
-    validateThatTemplateIsReady(template)
+    await this.validationService.validateThatTemplateIsReady(user, template)
 
     const assignees = [user.nationalId]
 
@@ -395,7 +439,7 @@ export class ApplicationController {
   ): Promise<ApplicationResponseDto> {
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
-      user.nationalId,
+      user,
     )
     const namespaces = await getApplicationTranslationNamespaces(
       existingApplication as BaseApplication,
@@ -403,7 +447,7 @@ export class ApplicationController {
     const newAnswers = application.answers as FormValue
     const intl = await this.intlService.useIntl(namespaces, locale)
 
-    await validateIncomingAnswers(
+    await this.validationService.validateIncomingAnswers(
       existingApplication as BaseApplication,
       newAnswers,
       user.nationalId,
@@ -411,17 +455,24 @@ export class ApplicationController {
       intl.formatMessage,
     )
 
-    await validateApplicationSchema(
+    await this.validationService.validateApplicationSchema(
       existingApplication,
       newAnswers,
       intl.formatMessage,
+      user,
     )
 
     const mergedAnswers = mergeAnswers(existingApplication.answers, newAnswers)
+    const applicantActors: string[] =
+      isNewActor(existingApplication, user) && !!user.actor?.nationalId
+        ? [...existingApplication.applicantActors, user.actor.nationalId]
+        : existingApplication.applicantActors
+
     const { updatedApplication } = await this.applicationService.update(
       existingApplication.id,
       {
         answers: mergedAnswers,
+        applicantActors: applicantActors,
       },
     )
 
@@ -453,10 +504,10 @@ export class ApplicationController {
   ): Promise<ApplicationResponseDto> {
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
-      user.nationalId,
+      user,
     )
 
-    await validateIncomingExternalDataProviders(
+    await this.validationService.validateIncomingExternalDataProviders(
       existingApplication as BaseApplication,
       externalDataDto,
       user.nationalId,
@@ -520,7 +571,7 @@ export class ApplicationController {
   ): Promise<ApplicationResponseDto> {
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
-      user.nationalId,
+      user,
     )
     const templateId = existingApplication.typeId as ApplicationTypes
     const template = await getApplicationTemplateByTypeId(templateId)
@@ -538,7 +589,7 @@ export class ApplicationController {
     )
     const intl = await this.intlService.useIntl(namespaces, locale)
 
-    const permittedAnswers = await validateIncomingAnswers(
+    const permittedAnswers = await this.validationService.validateIncomingAnswers(
       existingApplication as BaseApplication,
       newAnswers,
       user.nationalId,
@@ -546,10 +597,11 @@ export class ApplicationController {
       intl.formatMessage,
     )
 
-    await validateApplicationSchema(
+    await this.validationService.validateApplicationSchema(
       existingApplication as BaseApplication,
       permittedAnswers,
       intl.formatMessage,
+      user,
     )
 
     const mergedAnswers = mergeAnswers(
@@ -673,7 +725,7 @@ export class ApplicationController {
     const onExitStateAction = helper.getOnExitStateAPIAction(application.state)
     const status = helper.getApplicationStatus()
     let updatedApplication: BaseApplication = application
-
+    await this.applicationService.clearNonces(updatedApplication.id)
     if (onExitStateAction) {
       const {
         hasError,
@@ -837,7 +889,7 @@ export class ApplicationController {
   ): Promise<ApplicationResponseDto> {
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
-      user.nationalId,
+      user,
     )
     const { key } = input
 
@@ -877,7 +929,7 @@ export class ApplicationController {
   ): Promise<PresignedUrlResponseDto> {
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
-      user.nationalId,
+      user,
     )
     const url = await this.fileService.generatePdf(
       existingApplication,
@@ -912,7 +964,7 @@ export class ApplicationController {
   ): Promise<RequestFileSignatureResponseDto> {
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
-      user.nationalId,
+      user,
     )
     const {
       controlCode,
@@ -949,7 +1001,7 @@ export class ApplicationController {
   ): Promise<UploadSignedFileResponseDto> {
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
-      user.nationalId,
+      user,
     )
 
     await this.fileService.uploadSignedFile(
@@ -987,7 +1039,7 @@ export class ApplicationController {
   ): Promise<PresignedUrlResponseDto> {
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
-      user.nationalId,
+      user,
     )
     const url = await this.fileService.getPresignedUrl(
       existingApplication,
@@ -1032,7 +1084,7 @@ export class ApplicationController {
   ): Promise<PresignedUrlResponseDto> {
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
-      user.nationalId,
+      user,
     )
 
     if (!existingApplication.attachments) {
@@ -1046,5 +1098,36 @@ export class ApplicationController {
     } catch (error) {
       throw new NotFoundException('Attachment not found')
     }
+  }
+
+  @Scopes(ApplicationScope.write)
+  @Delete('applications/:id')
+  @ApiParam({
+    name: 'id',
+    type: String,
+    required: true,
+    description: 'The id of the application to delete.',
+    allowEmptyValue: false,
+  })
+  async delete(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @CurrentUser() user: User,
+  ) {
+    const { nationalId } = user
+    const existingApplication = (await this.applicationAccessService.findOneByIdAndNationalId(
+      id,
+      user,
+    )) as BaseApplication
+    const canDelete = await this.applicationAccessService.canDeleteApplication(
+      existingApplication,
+      nationalId,
+    )
+
+    if (!canDelete) {
+      throw new ForbiddenException(
+        'Users role does not have permission to delete this application in this state',
+      )
+    }
+    await this.applicationService.delete(existingApplication.id)
   }
 }

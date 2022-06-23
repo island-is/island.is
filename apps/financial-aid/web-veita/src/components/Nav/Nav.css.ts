@@ -48,9 +48,10 @@ export const showNavInMobile = style({
 })
 
 export const logoContainer = style({
-  marginBottom: theme.spacing[8],
   maxWidth: '160px',
-  display: 'flex',
+})
+export const textContainer = style({
+  maxWidth: '270px',
 })
 
 export const logoMunicipalityContainer = style({
@@ -62,7 +63,6 @@ export const logoMunicipalityContainer = style({
 
 export const logoMunicipality = style({
   width: theme.spacing[4],
-  height: theme.spacing[6],
 })
 
 export const personIcon = style({

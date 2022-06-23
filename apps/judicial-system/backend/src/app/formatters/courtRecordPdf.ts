@@ -18,7 +18,7 @@ import {
 
 import { environment } from '../../environments'
 import { Case } from '../modules/case'
-import { now } from '../factories'
+import { nowFactory } from '../factories'
 import { courtRecord } from '../messages'
 import {
   addFooter,
@@ -105,7 +105,8 @@ function constructRestrictionCourtRecordPdf(
   addNormalJustifiedText(
     doc,
     `${formatMessage(courtRecord.prosecutorIs)} ${
-      theCase.prosecutor?.institution?.name ?? courtRecord.missingDistrict
+      theCase.creatingProsecutor?.institution?.name ??
+      courtRecord.missingDistrict
     }.`,
   )
   addNormalJustifiedText(
@@ -148,22 +149,19 @@ function constructRestrictionCourtRecordPdf(
   addEmptyLines(doc)
   addNormalJustifiedText(
     doc,
-    formatMessage(courtRecord.courtDocuments.request, {
+    `${formatMessage(courtRecord.courtDocuments.request, {
       caseTypes: formatRequestCaseType(theCase.type),
-    }),
+    })} ${formatMessage(courtRecord.courtDocuments.announcement)}`,
     'Times-Roman',
   )
-  addNormalJustifiedText(
-    doc,
-    formatMessage(courtRecord.courtDocuments.announcement),
-  )
 
-  theCase.courtDocuments?.forEach((courttDocument, index) =>
+  theCase.courtDocuments?.forEach((courtDocument, index) =>
     addNormalJustifiedText(
       doc,
       formatMessage(courtRecord.courtDocuments.other, {
-        documentName: courttDocument,
+        documentName: courtDocument.name,
         documentNumber: index + 2,
+        submittedBy: courtDocument.submittedBy,
       }),
     ),
   )
@@ -267,8 +265,8 @@ function constructRestrictionCourtRecordPdf(
     completedCaseStates.includes(theCase.state) && user
       ? formatMessage(courtRecord.smallPrint, {
           actorName: user.name,
-          actorInstitution: user.institution?.name,
-          date: formatDate(now(), 'PPPp'),
+          actorInstitution: user.institution?.name ?? 'NONE',
+          date: formatDate(nowFactory(), 'PPPp'),
         })
       : undefined,
   )
@@ -349,7 +347,8 @@ function constructInvestigationCourtRecordPdf(
   addNormalJustifiedText(
     doc,
     `${formatMessage(courtRecord.prosecutorIs)} ${
-      theCase.prosecutor?.institution?.name ?? courtRecord.missingDistrict
+      theCase.creatingProsecutor?.institution?.name ??
+      courtRecord.missingDistrict
     }.`,
   )
   addNormalJustifiedText(
@@ -392,22 +391,19 @@ function constructInvestigationCourtRecordPdf(
   addEmptyLines(doc)
   addNormalJustifiedText(
     doc,
-    formatMessage(courtRecord.courtDocuments.request, {
+    `${formatMessage(courtRecord.courtDocuments.request, {
       caseTypes: formatRequestCaseType(theCase.type),
-    }),
+    })} ${formatMessage(courtRecord.courtDocuments.announcement)}`,
     'Times-Roman',
   )
-  addNormalJustifiedText(
-    doc,
-    formatMessage(courtRecord.courtDocuments.announcement),
-  )
 
-  theCase.courtDocuments?.forEach((courttDocument, index) =>
+  theCase.courtDocuments?.forEach((courtDocument, index) =>
     addNormalJustifiedText(
       doc,
       formatMessage(courtRecord.courtDocuments.other, {
-        documentName: courttDocument,
+        documentName: courtDocument.name,
         documentNumber: index + 2,
+        submittedBy: courtDocument.submittedBy,
       }),
     ),
   )
@@ -515,7 +511,7 @@ function constructInvestigationCourtRecordPdf(
       ? formatMessage(courtRecord.smallPrint, {
           actorName: user.name,
           actorInstitution: user.institution?.name,
-          date: formatDate(now(), 'PPPp'),
+          date: formatDate(nowFactory(), 'PPPp'),
         })
       : undefined,
   )

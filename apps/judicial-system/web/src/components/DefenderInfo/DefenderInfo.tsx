@@ -1,9 +1,10 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState, useCallback } from 'react'
 import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
 import { ValueType } from 'react-select/src/types'
 
 import {
+  AlertMessage,
   Box,
   Checkbox,
   Input,
@@ -11,26 +12,31 @@ import {
   Text,
   Tooltip,
 } from '@island.is/island-ui/core'
-import lawyers from '@island.is/judicial-system-web/src/utils/lawyerScraper/db.json'
-import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
+
+import {
+  ReactSelectOption,
+  Lawyer,
+} from '@island.is/judicial-system-web/src/types'
 import {
   Case,
-  CaseType,
   isInvestigationCase,
   isRestrictionCase,
+  SessionArrangements,
   UserRole,
 } from '@island.is/judicial-system/types'
-import { accused } from '@island.is/judicial-system-web/messages'
-import { defendant } from '@island.is/judicial-system-web/messages'
-import { rcHearingArrangements } from '@island.is/judicial-system-web/messages'
-import { icHearingArrangements } from '@island.is/judicial-system-web/messages'
+import {
+  accused,
+  defendant,
+  rcHearingArrangements,
+  icHearingArrangements,
+  defenderInfo,
+} from '@island.is/judicial-system-web/messages'
 
 import { BlueBox } from '..'
-import { useCase } from '../../utils/hooks'
+import { useCase, useGetLawyers } from '../../utils/hooks'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
-  setAndSendToServer,
 } from '../../utils/formHelper'
 import { UserContext } from '../UserProvider/UserProvider'
 
@@ -42,7 +48,7 @@ interface Props {
 const DefenderInfo: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase } = props
   const { formatMessage } = useIntl()
-  const { updateCase } = useCase()
+  const { updateCase, autofill } = useCase()
   const { user } = useContext(UserContext)
 
   const [
@@ -55,29 +61,45 @@ const DefenderInfo: React.FC<Props> = (props) => {
     setDefenderPhoneNumberErrorMessage,
   ] = useState<string>('')
 
-  const handleDefenderChange = async (
-    selectedOption: ValueType<ReactSelectOption>,
-  ) => {
-    let updatedLawyer = {
-      defenderName: '',
-      defenderEmail: '',
-      defenderPhoneNumber: '',
-    }
+  const [defenderNotFound, setDefenderNotFound] = useState<boolean>(false)
 
-    if (selectedOption) {
-      const { label, value } = selectedOption as ReactSelectOption
-      const lawyer = lawyers.lawyers.find((l) => l.email === (value as string))
+  const lawyers = useGetLawyers()
 
-      updatedLawyer = {
-        defenderName: lawyer ? lawyer.name : label,
-        defenderEmail: lawyer ? lawyer.email : '',
-        defenderPhoneNumber: lawyer ? lawyer.phoneNr : '',
+  const handleDefenderChange = useCallback(
+    async (selectedOption: ValueType<ReactSelectOption>) => {
+      let updatedLawyer = {
+        defenderName: '',
+        defenderNationalId: '',
+        defenderEmail: '',
+        defenderPhoneNumber: '',
       }
-    }
 
-    await updateCase(workingCase.id, updatedLawyer)
-    setWorkingCase({ ...workingCase, ...updatedLawyer })
-  }
+      if (selectedOption) {
+        const {
+          label,
+          value,
+          __isNew__: defenderNotFound,
+        } = selectedOption as ReactSelectOption
+
+        setDefenderNotFound(defenderNotFound || false)
+
+        const lawyer = lawyers.find(
+          (l: Lawyer) => l.email === (value as string),
+        )
+
+        updatedLawyer = {
+          defenderName: lawyer ? lawyer.name : label,
+          defenderNationalId: lawyer ? lawyer.nationalId : '',
+          defenderEmail: lawyer ? lawyer.email : '',
+          defenderPhoneNumber: lawyer ? lawyer.phoneNr : '',
+        }
+      }
+
+      await updateCase(workingCase.id, updatedLawyer)
+      setWorkingCase({ ...workingCase, ...updatedLawyer })
+    },
+    [lawyers, setWorkingCase, workingCase, updateCase],
+  )
 
   const getTranslations = () => {
     if (isRestrictionCase(workingCase.type)) {
@@ -175,9 +197,11 @@ const DefenderInfo: React.FC<Props> = (props) => {
       return (
         <Tooltip
           text={formatMessage(icHearingArrangements.sections.defender.tooltip, {
-            defenderType: workingCase.defenderIsSpokesperson
-              ? 'talsmaður'
-              : 'verjandi',
+            defenderType:
+              workingCase.sessionArrangements ===
+              SessionArrangements.ALL_PRESENT_SPOKESPERSON
+                ? 'talsmaður'
+                : 'verjandi',
           })}
         />
       )
@@ -196,28 +220,41 @@ const DefenderInfo: React.FC<Props> = (props) => {
       >
         <Text as="h3" variant="h3">
           {`${formatMessage(getTranslations().title, {
-            defenderType: workingCase.defenderIsSpokesperson
-              ? 'Talsmaður'
-              : 'Verjandi',
+            defenderType:
+              workingCase.sessionArrangements ===
+              SessionArrangements.ALL_PRESENT_SPOKESPERSON
+                ? 'Talsmaður'
+                : 'Verjandi',
           })} `}
           {renderTooltip()}
         </Text>
       </Box>
+      {defenderNotFound && (
+        <Box marginBottom={3} data-testid="defenderNotFound">
+          <AlertMessage
+            type="warning"
+            title={formatMessage(defenderInfo.defenderNotFound.title)}
+            message={formatMessage(defenderInfo.defenderNotFound.message)}
+          />
+        </Box>
+      )}
       <BlueBox>
         <Box marginBottom={2}>
           <Select
             name="defenderName"
             icon="search"
-            options={lawyers.lawyers.map((l) => {
+            options={lawyers.map((l: Lawyer) => {
               return {
                 label: `${l.name}${l.practice ? ` (${l.practice})` : ''}`,
                 value: l.email,
               }
             })}
             label={formatMessage(getTranslations().defenderName.label, {
-              defenderType: workingCase.defenderIsSpokesperson
-                ? 'talsmanns'
-                : 'verjanda',
+              defenderType:
+                workingCase.sessionArrangements ===
+                SessionArrangements.ALL_PRESENT_SPOKESPERSON
+                  ? 'talsmanns'
+                  : 'verjanda',
             })}
             placeholder={formatMessage(
               getTranslations().defenderName.placeholder,
@@ -241,9 +278,11 @@ const DefenderInfo: React.FC<Props> = (props) => {
             name="defenderEmail"
             autoComplete="off"
             label={formatMessage(getTranslations().defenderEmail.label, {
-              defenderType: workingCase.defenderIsSpokesperson
-                ? 'talsmanns'
-                : 'verjanda',
+              defenderType:
+                workingCase.sessionArrangements ===
+                SessionArrangements.ALL_PRESENT_SPOKESPERSON
+                  ? 'talsmanns'
+                  : 'verjanda',
             })}
             placeholder={formatMessage(
               getTranslations().defenderEmail.placeholder,
@@ -308,9 +347,11 @@ const DefenderInfo: React.FC<Props> = (props) => {
               label={formatMessage(
                 getTranslations().defenderPhoneNumber.label,
                 {
-                  defenderType: workingCase.defenderIsSpokesperson
-                    ? 'talsmanns'
-                    : 'verjanda',
+                  defenderType:
+                    workingCase.sessionArrangements ===
+                    SessionArrangements.ALL_PRESENT_SPOKESPERSON
+                      ? 'talsmanns'
+                      : 'verjanda',
                 },
               )}
               placeholder={formatMessage(
@@ -332,12 +373,9 @@ const DefenderInfo: React.FC<Props> = (props) => {
             tooltip={
               isRestrictionCase(workingCase.type)
                 ? formatMessage(
-                    accused.sections.defenderInfo.sendRequest.tooltip,
+                    accused.sections.defenderInfo.sendRequest.tooltipV2,
                     {
-                      caseType:
-                        workingCase.type === CaseType.CUSTODY
-                          ? 'gæsluvarðhaldskröfuna'
-                          : 'farbannskröfuna',
+                      caseType: workingCase.type,
                     },
                   )
                 : formatMessage(
@@ -346,12 +384,16 @@ const DefenderInfo: React.FC<Props> = (props) => {
             }
             checked={workingCase.sendRequestToDefender}
             onChange={(event) => {
-              setAndSendToServer(
-                'sendRequestToDefender',
-                event.target.checked,
+              autofill(
+                [
+                  {
+                    key: 'sendRequestToDefender',
+                    value: event.target.checked,
+                    force: true,
+                  },
+                ],
                 workingCase,
                 setWorkingCase,
-                updateCase,
               )
             }}
             large

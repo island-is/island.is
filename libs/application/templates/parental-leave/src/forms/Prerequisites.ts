@@ -38,30 +38,33 @@ export const PrerequisitesForm: Form = buildForm({
           ? [
               buildSubSection({
                 id: 'mockData',
-                title: 'Gervigögn',
+                title: parentalLeaveFormMessages.shared.mockDataTitle,
                 children: [
                   buildMultiField({
                     id: 'shouldMock',
-                    title: 'Gervigögn',
+                    title: parentalLeaveFormMessages.shared.mockDataTitle,
                     children: [
                       buildRadioField({
                         id: 'mock.useMockData',
-                        title: 'Viltu nota gervigögn?',
+                        title: parentalLeaveFormMessages.shared.mockDataUse,
                         width: 'half',
                         options: [
                           {
                             value: YES,
-                            label: 'Já',
+                            label:
+                              parentalLeaveFormMessages.shared.yesOptionLabel,
                           },
                           {
                             value: NO,
-                            label: 'Nei',
+                            label:
+                              parentalLeaveFormMessages.shared.noOptionLabel,
                           },
                         ],
                       }),
                       buildRadioField({
                         id: 'mock.useMockedParentalRelation',
-                        title: 'Tengsl við barn:',
+                        title:
+                          parentalLeaveFormMessages.shared.mockDataRelationship,
                         width: 'half',
                         condition: (answers) => {
                           const useMockData =
@@ -72,18 +75,22 @@ export const PrerequisitesForm: Form = buildForm({
                         options: [
                           {
                             value: ParentalRelations.primary,
-                            label: 'Móðir',
+                            label:
+                              parentalLeaveFormMessages.shared.mockDataMother,
                           },
                           {
                             value: ParentalRelations.secondary,
-                            label: 'Hitt foreldri',
+                            label:
+                              parentalLeaveFormMessages.shared
+                                .mockDataOtherParent,
                           },
                         ],
                       }),
                       buildRadioField({
                         id: 'mock.useMockedApplication',
                         title:
-                          'Use an existing application from primary parent',
+                          parentalLeaveFormMessages.shared
+                            .mockDataExistingApplication,
                         width: 'half',
                         condition: (answers) => {
                           const useMockData =
@@ -99,17 +106,21 @@ export const PrerequisitesForm: Form = buildForm({
                         options: [
                           {
                             value: YES,
-                            label: 'Yes',
+                            label:
+                              parentalLeaveFormMessages.shared.yesOptionLabel,
                           },
                           {
                             value: NO,
-                            label: 'No',
+                            label:
+                              parentalLeaveFormMessages.shared.noOptionLabel,
                           },
                         ],
                       }),
                       buildTextField({
                         id: 'mock.useMockedApplicationId',
-                        title: 'Application id from primary parent',
+                        title:
+                          parentalLeaveFormMessages.shared
+                            .mockDataApplicationID,
                         placeholder: 'bf1e5775-836c-4512-abae-bdbeb8709659',
                         condition: (answers) => {
                           const useMockData =
@@ -132,7 +143,9 @@ export const PrerequisitesForm: Form = buildForm({
                       }),
                       buildTextField({
                         id: 'mock.useMockedDateOfBirth',
-                        title: 'Áætlaður fæðingardagur:',
+                        title:
+                          parentalLeaveFormMessages.shared
+                            .mockDataEstimatedDateOfBirth,
                         condition: (answers) => {
                           const useMockData =
                             getValueViaPath(answers, 'mock.useMockData') === YES
@@ -158,7 +171,9 @@ export const PrerequisitesForm: Form = buildForm({
                       }),
                       buildTextField({
                         id: 'mock.useMockedPrimaryParentRights',
-                        title: 'Primary parent rights days (0 — 180)',
+                        title:
+                          parentalLeaveFormMessages.shared
+                            .mockDataPrimaryParentRights,
                         variant: 'number',
                         defaultValue: '180',
                         condition: (answers) => {
@@ -175,7 +190,9 @@ export const PrerequisitesForm: Form = buildForm({
                       }),
                       buildTextField({
                         id: 'mock.useMockedPrimaryParentNationalRegistryId',
-                        title: 'Kennitala móður:',
+                        title:
+                          parentalLeaveFormMessages.shared
+                            .mockDataPrimaryParentNationalID,
                         placeholder: '1234567-7890',
                         format: '######-####',
                         condition: (answers) => {
@@ -199,7 +216,9 @@ export const PrerequisitesForm: Form = buildForm({
                       }),
                       buildTextField({
                         id: 'mock.useMockedSecondaryParentRights',
-                        title: 'Secondary parent rights in days  (0 — 180)',
+                        title:
+                          parentalLeaveFormMessages.shared
+                            .mockDataSecondaryParentRights,
                         variant: 'number',
                         defaultValue: '180',
                         condition: (answers) => {

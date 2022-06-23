@@ -1,4 +1,4 @@
-import { Module, DynamicModule } from '@nestjs/common'
+import { Module } from '@nestjs/common'
 import { MainResolver } from './graphql'
 import { MortgageCertificateService } from './mortgageCertificate.service'
 import { SyslumennClientModule } from '@island.is/clients/syslumenn'

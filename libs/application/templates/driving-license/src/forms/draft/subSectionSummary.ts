@@ -8,8 +8,9 @@ import {
   DefaultEvents,
   StaticText,
   buildSubSection,
+  getValueViaPath,
 } from '@island.is/application/core'
-import { NationalRegistryUser, UserProfile } from '../../types/schema'
+import { NationalRegistryUser, Teacher } from '../../types/schema'
 import { m } from '../../lib/messages'
 import { format as formatKennitala } from 'kennitala'
 import { StudentAssessment } from '@island.is/api/schema'
@@ -17,7 +18,6 @@ import { YES } from '../../lib/constants'
 import { B_TEMP } from '../../shared/constants'
 import {
   hasNoDrivingLicenseInOtherCountry,
-  hasYes,
   needsHealthCertificateCondition,
 } from '../../lib/utils'
 
@@ -97,11 +97,25 @@ export const subSectionSummary = buildSubSection({
         buildKeyValueField({
           label: m.overviewTeacher,
           width: 'half',
-          value: ({ externalData: { studentAssessment } }) =>
-            (studentAssessment.data as StudentAssessment).teacherName,
+          value: ({
+            externalData: {
+              studentAssessment,
+              teachers: { data },
+            },
+            answers,
+          }) => {
+            if (answers.applicationFor === B_TEMP) {
+              const teacher = (data as Teacher[]).find(
+                ({ nationalId }) =>
+                  getValueViaPath(answers, 'drivingInstructor') === nationalId,
+              )
+              return teacher?.name
+            }
+            return (studentAssessment.data as StudentAssessment).teacherName
+          },
         }),
         buildDividerField({
-          condition: (answers) => hasYes(answers?.healthDeclaration || []),
+          condition: needsHealthCertificateCondition(YES),
         }),
         buildDescriptionField({
           id: 'bringalong',
@@ -122,7 +136,7 @@ export const subSectionSummary = buildSubSection({
               label: m.overviewBringCertificateData,
             },
           ],
-          condition: (answers) => hasYes(answers?.healthDeclaration || {}),
+          condition: needsHealthCertificateCondition(YES),
         }),
         buildDividerField({}),
         buildKeyValueField({

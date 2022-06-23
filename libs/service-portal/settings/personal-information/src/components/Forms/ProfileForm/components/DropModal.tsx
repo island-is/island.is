@@ -61,7 +61,7 @@ export const DropModal: FC<Props> = ({ onClose, onDrop, type, loading }) => {
             <Hidden below="sm">
               <img
                 src="assets/images/jobsGrid.svg"
-                alt="Skrautmynd"
+                alt=""
                 width="80%"
                 style={{ float: 'right' }}
               />

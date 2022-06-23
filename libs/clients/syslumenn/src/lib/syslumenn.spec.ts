@@ -1,18 +1,27 @@
 import { Test } from '@nestjs/testing'
 import { SyslumennService } from './syslumennClient.service'
 import { startMocking } from '@island.is/shared/mocking'
-import { requestHandlers } from './__mock-data__/requestHandlers'
+import {
+  requestHandlers,
+  MOCK_PROPERTY_NUMBER_OK,
+  MOCK_PROPERTY_NUMBER_NO_KMARKING,
+  MOCK_PROPERTY_NUMBER_NOT_EXISTS,
+} from './__mock-data__/requestHandlers'
 import {
   VHSUCCESS,
   OPERATING_LICENSE,
   OPERATING_LICENSE_PAGINATION_INFO_SERVICE_RES,
   DATA_UPLOAD,
+  REAL_ESTATE_ADDRESS,
+  MORTGAGE_CERTIFICATE_CONTENT_NO_KMARKING,
+  ESTATE_REGISTRANT_RESPONSE,
 } from './__mock-data__/responses'
 import {
   mapHomestay,
   mapSyslumennAuction,
   mapDataUploadResponse,
   mapPaginatedOperatingLicenses,
+  mapEstateRegistrant,
 } from './syslumennClient.utils'
 import { SYSLUMENN_AUCTION } from './__mock-data__/responses'
 import { PersonType } from './syslumennClient.types'
@@ -38,6 +47,9 @@ const ATTACHMENT = {
   name: 'attachment',
   content: 'content',
 }
+
+const VALID_ESTATE_APPLICANT = '0101302399'
+const INVALID_ESTATE_APPLICANT = '0101303019'
 
 const config = defineConfig({
   name: 'SyslumennApi',
@@ -118,6 +130,82 @@ describe('SyslumennService', () => {
         'Lögheimilisbreyting barns',
       )
       expect(response).toStrictEqual(mapDataUploadResponse(DATA_UPLOAD))
+    })
+  })
+
+  describe('getEstateRegistrant', () => {
+    it('should return estate registry for a valid nationalId', async () => {
+      const response = await service.getEstateRegistrant(VALID_ESTATE_APPLICANT)
+      expect(response).toStrictEqual(
+        ESTATE_REGISTRANT_RESPONSE.map(mapEstateRegistrant),
+      )
+    })
+  })
+
+  describe('getRealEstateAddress', () => {
+    it('should return address for valid realEstateId', async () => {
+      const response = await service.getRealEstateAddress('012345')
+      expect(response).toStrictEqual(REAL_ESTATE_ADDRESS)
+    })
+
+    it('should return error for invalid realEstateId', async () => {
+      const response = await service.getRealEstateAddress('abcdefg')
+      expect(response).toStrictEqual([])
+    })
+  })
+
+  describe('getMortgageCertificate', () => {
+    it('content should not be empty', async () => {
+      const response = await service.getMortgageCertificate(
+        MOCK_PROPERTY_NUMBER_OK,
+      )
+
+      expect(response.contentBase64).toBeTruthy()
+    })
+
+    it('content should be a specific error message', async () => {
+      const response = await service.getMortgageCertificate(
+        MOCK_PROPERTY_NUMBER_NO_KMARKING,
+      )
+
+      expect(response.contentBase64).toStrictEqual(
+        MORTGAGE_CERTIFICATE_CONTENT_NO_KMARKING,
+      )
+    })
+
+    it('should throw an error', async () => {
+      return await service
+        .getMortgageCertificate(MOCK_PROPERTY_NUMBER_NOT_EXISTS)
+        .catch((e) => {
+          expect(e).toBeTruthy()
+          expect.assertions(1)
+        })
+    })
+  })
+
+  describe('validateMortgageCertificate', () => {
+    it('hasKMarking should be true', async () => {
+      const res = await service.validateMortgageCertificate(
+        MOCK_PROPERTY_NUMBER_OK,
+        undefined,
+      )
+      expect(res.hasKMarking).toStrictEqual(true)
+    })
+
+    it('hasKMarking should be false', async () => {
+      const res = await service.validateMortgageCertificate(
+        MOCK_PROPERTY_NUMBER_NO_KMARKING,
+        undefined,
+      )
+      expect(res.hasKMarking).toStrictEqual(false)
+    })
+
+    it('exists should be false', async () => {
+      const res = await service.validateMortgageCertificate(
+        MOCK_PROPERTY_NUMBER_NOT_EXISTS,
+        undefined,
+      )
+      expect(res.exists).toStrictEqual(false)
     })
   })
 })

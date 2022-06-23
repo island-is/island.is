@@ -6,7 +6,6 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
-  DefaultStateLifeCycle,
 } from '@island.is/application/core'
 import { DataProtectionComplaintSchema } from './dataSchema'
 import { application } from './messages'
@@ -48,6 +47,7 @@ const DataProtectionComplaintTemplate: ApplicationTemplate<
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
               ],
               write: 'all',
+              delete: true,
             },
           ],
         },

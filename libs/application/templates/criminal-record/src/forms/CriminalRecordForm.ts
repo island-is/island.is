@@ -1,6 +1,5 @@
 import {
   buildForm,
-  buildDescriptionField,
   buildMultiField,
   buildSection,
   buildSubmitField,
@@ -17,6 +16,7 @@ export const CriminalRecordForm: Form = buildForm({
   id: 'CriminalRecordFormDraft',
   title: '',
   mode: FormModes.APPLYING,
+  renderLastScreenButton: true,
   children: [
     buildSection({
       id: 'externalData',
@@ -64,6 +64,11 @@ export const CriminalRecordForm: Form = buildForm({
           title: m.payment,
           space: 1,
           children: [
+            buildCustomField({
+              id: 'payment.over',
+              title: '',
+              component: 'OverviewPaymentCharge',
+            }),
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
@@ -77,21 +82,7 @@ export const CriminalRecordForm: Form = buildForm({
                 },
               ],
             }),
-            buildCustomField({
-              id: 'payment.over',
-              title: '',
-              component: 'OverviewPaymentCharge',
-            }),
           ],
-        }),
-        buildDescriptionField({
-          id: 'final',
-          title: 'Takk',
-          description: () => {
-            return {
-              ...m.outroMessage,
-            }
-          },
         }),
       ],
     }),

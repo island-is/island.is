@@ -8,3 +8,16 @@ export type QualityPhotoData = {
 }
 
 export type ConditionFn = (answer: FormValue) => boolean
+
+export type Photo = {
+  qualityPhoto: string
+  attachments: Array<{
+    key: string
+    name: string
+  }>
+}
+
+export type Delivery = {
+  deliveryMethod: string
+  district: string
+}

@@ -66,6 +66,35 @@ Finally, you can enable communication with the court system via xRoad by providi
 yarn test judicial-system-backend
 ```
 
+### OpenApi and Swagger
+
+Visit
+
+```bash
+localhost:3344/api/swagger
+```
+
+### Database changes
+
+Migrations need to be created by hand.
+
+#### Generate a empty migration file you can simply run:
+
+```
+npx sequelize-cli migration:generate --name update-case
+```
+
+this will generate a migration file with empty exports for up (Altering commands) and down (Reverting commands).
+
+To run the migrations on the local database run:
+
+```
+# for UP migrations
+yarn nx run judicial-system-backend:migrate
+# for DOWN migrations
+yarn nx run judicial-system-backend:migrate/undo
+```
+
 ## API
 
 ### Running locally
@@ -88,26 +117,6 @@ Visit
 localhost:3333/api/graphql
 ```
 
-### OpenApi and Swagger
-
-Visit
-
-```bash
-localhost:3344/api/swagger
-```
-
-### Database changes
-
-Migrations need to be created by hand.
-
-#### Generate a empty migration file you can simply run:
-
-```
-npx sequelize-cli migration:generate --name update-case
-```
-
-this will generate a migration file with empty exports for up (Altering commands) and down (Reverting commands).
-
 ## Web
 
 A platform for the exchange of data, information, formal decisions and notifications between parties in the Icelandic judicial system.
@@ -123,6 +132,8 @@ yarn start judicial-system-web
 ```
 
 Then the project should be running on https://localhost:4200/.
+
+To be able to fetch a list of lawyers you need to provide a value for the environment variable `LAWYERS_ICELAND_API_KEY`
 
 {% hint style="info" %}
 To skip authentication at innskraning.island.is navigate to `/api/auth/login?nationalId=<national_id>` in the web project where `<national_id>` is the national id of a known user.
@@ -151,23 +162,18 @@ This project uses two types of automated tests, unit tests and e2e tests. We use
 yarn test judicial-system-web
 ```
 
-##### Lib tests
-
-```bash
-yarn test judicial-system-formatters
-```
-
 ##### e2e tests
 
 ```bash
 yarn nx e2e judicial-system-web-e2e --watch
 ```
 
-### Message Extraction from Contentful
+## Message Extraction from Contentful
 
-Running yarn nx extract-strings judicial-system-{namespace} in the root folder /island.is will extract messages from the project and create or update a Namespace entry in Contentful.
+Running `yarn nx extract-strings judicial-system-{namespace}` in the root folder `/island.is` will extract messages from the project and create or update a Namespace entry in Contentful.
+Make sure you have the env `CONTENTFUL_ENVIRONMENT=test` to update the strings against `dev` and `staging` and `CONTENTFUL_ENVIRONMENT=master` to update against `prod`.
 
-#### Example for namespaces in web:
+### Example for namespaces in web:
 
 ```
 yarn nx extract-strings judicial-system-web
@@ -179,7 +185,7 @@ will update namespaces:
 - judicial.system.restriction_cases
 - judicial.system.investigation_cases
 
-#### For backend:
+### For backend:
 
 ```
 yarn nx extract-strings judicial-system-backend

@@ -39,7 +39,10 @@ const AllFiles = () => {
                   onClick={() =>
                     createSignedUrlMutation({
                       variables: {
-                        input: { fileName: encodeFilename(file.name) },
+                        input: {
+                          fileName: encodeFilename(file.name),
+                          folder: form.fileFolderId,
+                        },
                       },
                     }).then((response) => {
                       window.open(response.data?.getSignedUrl.url)

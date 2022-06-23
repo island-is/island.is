@@ -25,4 +25,8 @@ export class UpdateMunicipalityInput {
   @Allow()
   @Field({ nullable: true })
   readonly email?: string
+
+  @Allow()
+  @Field()
+  readonly municipalityId!: string
 }
