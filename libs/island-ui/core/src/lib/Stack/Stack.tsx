@@ -14,6 +14,7 @@ import {
 import { resolveResponsiveRangeProps } from '../../utils/responsiveRangeProps'
 import { useNegativeMarginTop } from '../../hooks/useNegativeMargin/useNegativeMargin'
 import { ReactNodeNoStrings } from '../private/ReactNodeNoStrings'
+import { TestSupport } from '@island.is/island-ui/utils'
 
 const alignToDisplay = {
   left: 'block',
@@ -80,7 +81,7 @@ const calculateHiddenStackItemProps = (
   }
 }
 
-export interface StackProps {
+export interface StackProps extends TestSupport {
   component?: typeof validStackComponents[number]
   children: ReactNodeNoStrings
   space: BoxProps['paddingTop']
@@ -94,6 +95,7 @@ export const Stack = ({
   space = 'none',
   align = 'left',
   dividers = false,
+  dataTestId,
 }: StackProps) => {
   if (
     process.env.NODE_ENV === 'development' &&
@@ -116,7 +118,11 @@ export const Stack = ({
   let firstItemOnXl: number | null = null
 
   return (
-    <Box component={component} className={negativeMarginTop}>
+    <Box
+      component={component}
+      className={negativeMarginTop}
+      dataTestId={dataTestId}
+    >
       {Children.map(stackItems, (child, index) => {
         if (
           process.env.NODE_ENV !== 'production' &&

@@ -640,7 +640,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                 </Text>
               </Box>
             )}
-            <Box marginTop={[2, 0]}>
+            <Box marginTop={[2, 0]} dataTestId="documents">
               {filteredDocuments
                 ?.slice(pagedDocuments.from, pagedDocuments.to)
                 .map((doc, index) => (
