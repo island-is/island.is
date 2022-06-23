@@ -17,18 +17,17 @@ import {
   LoadingDots,
   DatePicker,
   Checkbox,
+  Tabs,
 } from '@island.is/island-ui/core'
 import { messages } from '../../lib/messages'
 import { GET_USERS_VEHICLES_HISTORY } from '../../queries/getUsersVehicleHistory'
-import HistoryTableData from './HistoryTableData'
-import HistoryTableHeader from './HistoryTableHeader'
-import * as styles from './VehicleHistory.css'
+import TabContent from './TabContent'
 
 const getFilteredVehicles = (
   vehicles: VehiclesVehicle[],
   showDeregistered: boolean,
-  fromDate?: Date,
-  toDate?: Date,
+  fromDate?: Date | null,
+  toDate?: Date | null,
 ): VehiclesVehicle[] => {
   let filteredVehicles = showDeregistered
     ? vehicles
@@ -57,15 +56,13 @@ const getFilteredVehicles = (
 
 export const VehiclesHistory: ServicePortalModuleComponent = () => {
   useNamespaces('sp.vehicles')
-  const { formatMessage, lang } = useLocale()
-  const [page, setPage] = useState(1)
-  const [checkbox, setCheckbox] = useState(false)
-  const [fromDate, setFromDate] = useState<Date>()
-  const [toDate, setToDate] = useState<Date>()
+  const { formatMessage } = useLocale()
 
-  const { data, loading, error, called } = useQuery<Query>(
-    GET_USERS_VEHICLES_HISTORY,
-  )
+  const [checkbox, setCheckbox] = useState(false)
+  const [fromDate, setFromDate] = useState<Date | null>()
+  const [toDate, setToDate] = useState<Date | null>()
+
+  const { data, loading, error } = useQuery<Query>(GET_USERS_VEHICLES_HISTORY)
   const vehicles = data?.vehiclesHistoryList?.vehicleList || []
   const filteredVehicles = getFilteredVehicles(
     vehicles,
@@ -73,42 +70,33 @@ export const VehiclesHistory: ServicePortalModuleComponent = () => {
     fromDate,
     toDate,
   )
-
-  const headerLabels = [
-    {
-      value: formatMessage(messages.permno),
-    },
-    {
-      value: formatMessage(messages.type),
-    },
-    {
-      value: formatMessage(messages.firstReg),
-    },
-    {
-      value: formatMessage(messages.baught),
-    },
-    {
-      value: formatMessage(messages.sold),
-    },
-    {
-      value: formatMessage(messages.innlogn),
-    },
-    {
-      value: formatMessage(messages.status),
-    },
-  ]
-
-  const filteredOwner = filteredVehicles.filter(
+  const filteredOwnersVehicles = filteredVehicles.filter(
     (x: VehiclesVehicle) => x.role?.toLowerCase() === 'eigandi',
   )
 
-  const filteredOperator = filteredVehicles.filter(
+  const filteredOperatorVehicles = filteredVehicles.filter(
     (x: VehiclesVehicle) => x.role?.toLowerCase() === 'umráðamaður',
   )
 
-  const filteredCoOwner = filteredVehicles.filter(
+  const filteredCoOwnerVehicles = filteredVehicles.filter(
     (x: VehiclesVehicle) => x.role?.toLowerCase() === 'meðeigandi',
   )
+
+  const tabs = [
+    {
+      label: formatMessage(messages.ownersHistory),
+      content: <TabContent data={filteredOwnersVehicles} />,
+    },
+    {
+      label: formatMessage(messages.coOwnerHistory),
+      content: <TabContent data={filteredCoOwnerVehicles} />,
+    },
+    {
+      label: formatMessage(messages.operatorHistory),
+      content: <TabContent data={filteredOperatorVehicles} />,
+    },
+  ]
+
   return (
     <>
       <Box marginBottom={[2, 3, 5]}>
@@ -128,14 +116,11 @@ export const VehiclesHistory: ServicePortalModuleComponent = () => {
 
       <Stack space={2}>
         {!loading && !error && (
-          <GridRow>
-            <GridColumn
-              span={['1/1', '8/12', '8/12', '3/12']}
-              className={styles.dateColumn}
-            >
+          <GridRow marginTop={4}>
+            <GridColumn span={['1/1', '8/12', '8/12', '3/12']}>
               <DatePicker
                 backgroundColor="blue"
-                handleChange={(d) => setFromDate(d)}
+                handleChange={(d: Date) => setFromDate(d)}
                 icon="calendar"
                 iconType="outline"
                 size="xs"
@@ -149,11 +134,10 @@ export const VehiclesHistory: ServicePortalModuleComponent = () => {
               span={['1/1', '8/12', '8/12', '3/12']}
               offset={['0', '0', '0', '1/12', '0']}
               paddingTop={[2, 2, 2, 0, 0]}
-              className={styles.dateColumn}
             >
               <DatePicker
                 backgroundColor="blue"
-                handleChange={(d) => setToDate(d)}
+                handleChange={(d: Date) => setToDate(d)}
                 icon="calendar"
                 iconType="outline"
                 size="xs"
@@ -208,49 +192,15 @@ export const VehiclesHistory: ServicePortalModuleComponent = () => {
             <LoadingDots large />
           </Box>
         )}
-
-        {filteredOwner.length > 0 && (
-          <Box width="full">
-            <Text variant="h4" as="h2" marginBottom={2}>
-              {formatMessage(messages.ownersHistory)}
-            </Text>
-            <T.Table>
-              <HistoryTableHeader labels={headerLabels} />
-
-              {filteredOwner.map((item, index) => {
-                return <HistoryTableData key={index} vehicle={item} />
-              })}
-            </T.Table>
-          </Box>
-        )}
-
-        {filteredCoOwner.length > 0 && (
-          <Box width="full">
-            <Text variant="h4" as="h2">
-              {formatMessage(messages.coOwnerHistory)}
-            </Text>
-            <T.Table>
-              <HistoryTableHeader labels={headerLabels} />
-
-              {filteredCoOwner.map((item, index) => {
-                return <HistoryTableData key={index} vehicle={item} />
-              })}
-            </T.Table>
-          </Box>
-        )}
-
-        {filteredOperator.length > 0 && (
-          <Box width="full">
-            <Text variant="h4" as="h2">
-              {formatMessage(messages.operatorHistory)}
-            </Text>
-            <T.Table>
-              <HistoryTableHeader labels={headerLabels} />
-
-              {filteredOperator.map((item, index) => {
-                return <HistoryTableData key={index} vehicle={item} />
-              })}
-            </T.Table>
+        {!loading && !error && filteredVehicles.length > 0 && (
+          <Box marginTop={[0, 0, 5]}>
+            <Tabs
+              label={formatMessage(messages.chooseHistoryType)}
+              tabs={tabs}
+              contentBackground="transparent"
+              selected="0"
+              size="xs"
+            />
           </Box>
         )}
       </Stack>

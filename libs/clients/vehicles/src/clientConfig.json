@@ -58,21 +58,7 @@
         "tags": ["VehicleSearch"],
         "parameters": [
           {
-            "name": "permno",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "regno",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "vin",
+            "name": "search",
             "in": "query",
             "schema": {
               "type": "string"
@@ -2220,6 +2206,16 @@
           "deregistrationDate": {
             "type": "string",
             "nullable": true
+          },
+          "maxTrailerWeightBreaked": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "maxTrailerWeightUnbraked": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -2257,6 +2253,51 @@
           },
           "nextInspection": {
             "$ref": "#/components/schemas/SGSVehiNextInsp"
+          },
+          "currentOwner": {
+            "type": "string",
+            "nullable": true
+          },
+          "currentOwnerAddress": {
+            "type": "string",
+            "nullable": true
+          },
+          "useGroup": {
+            "type": "string",
+            "nullable": true
+          },
+          "regtype": {
+            "type": "string",
+            "nullable": true
+          },
+          "mass": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "massLaden": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "vehicleStatus": {
+            "type": "string",
+            "nullable": true
+          },
+          "co": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "co2Wltp": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "weightedco2Wltp": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
           }
         },
         "additionalProperties": false

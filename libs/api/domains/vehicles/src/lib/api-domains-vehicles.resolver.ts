@@ -13,6 +13,8 @@ import {
 } from '@island.is/auth-nest-tools'
 import { GetVehicleDetailInput } from '../dto/getVehicleDetailInput'
 import { VehiclesDetail } from '../models/getVehicleDetail.model'
+import { VehiclesVehicleSearch } from '../models/getVehicleSearch.model'
+import { GetVehicleSearchInput } from '../dto/getVehicleSearchInput'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.vehicles)
@@ -54,5 +56,17 @@ export class VehiclesResolver {
   @Audit()
   async getVehiclesSearchLimit(@CurrentUser() user: User) {
     return await this.vehiclesService.getSearchLimit(user)
+  }
+
+  @Query(() => VehiclesVehicleSearch, {
+    name: 'vehiclesSearch',
+    nullable: true,
+  })
+  @Audit()
+  async getVehicleSearch(
+    @Args('input') input: GetVehicleSearchInput,
+    @CurrentUser() user: User,
+  ) {
+    return await this.vehiclesService.getVehiclesSearch(user, input.search)
   }
 }

@@ -8,6 +8,7 @@ import {
   BasicVehicleInformationTechnicalMass,
   BasicVehicleInformationTechnicalAxle,
   PersidnoLookup,
+  VehicleSearch,
 } from '@island.is/clients/vehicles'
 import { VehiclesAxle, VehiclesDetail } from '../models/getVehicleDetail.model'
 import { ApolloError } from 'apollo-server-express'
@@ -63,6 +64,22 @@ export class VehiclesService {
       return data
     } catch (e) {
       return this.handle4xx(e, 'Failed to get vehicle list')
+    }
+  }
+
+  async getVehiclesSearch(
+    auth: User,
+    search: string,
+  ): Promise<VehicleSearch | null | ApolloError> {
+    try {
+      const res = await this.getVehiclesWithAuth(auth).vehicleSearchGet({
+        search,
+      })
+      const { data } = res
+      if (!data) return null
+      return data[0]
+    } catch (e) {
+      return this.handle4xx(e, 'Failed to get vehicle search')
     }
   }
 
