@@ -101,9 +101,7 @@ curl --location -g --request PUT '{{baseUrl}}/applications/{applicationId}/submi
 
 #### Postman local testing setup
 
-Log in to the admin panel https://identity-server.dev01.devland.is/admin
-With 010-7789 og and chose Gervimaður Útlönd and fetch the secret from the client created earlier
-Create an new secret and copy to your clipboard
+Log in to the [IDS admin panel](https://beta.dev01.devland.is/admin) on dev using Gervimaður Útlönd 010-7789. Find the client you created earlier, create a new secret and copy it to your clipboard:
 
 ![image](https://user-images.githubusercontent.com/2643113/175304337-82ce024c-4215-4de1-a09e-e28cce2082b9.png)
 
