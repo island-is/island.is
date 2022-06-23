@@ -40,7 +40,7 @@ export class GenericMachineLicenseApi
       })
       return null
     }
-    return license
+    return license as VinnuvelaDto
   }
 
   async getLicense(user: User): Promise<GenericLicenseUserdataExternal | null> {

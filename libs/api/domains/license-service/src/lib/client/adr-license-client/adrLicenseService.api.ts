@@ -37,7 +37,7 @@ export class GenericAdrLicenseApi implements GenericLicenseClient<AdrDto> {
       return null
     }
 
-    return license
+    return license as AdrDto
   }
 
   async getLicense(user: User): Promise<GenericLicenseUserdataExternal | null> {
