@@ -252,8 +252,9 @@ const devConfig = () => ({
     url:
       process.env.REGULATIONS_API_URL ??
       'https://reglugerdir-api.herokuapp.com/api/v1',
-    draftKey: process.env.FILE_UPLOAD_KEY_DRAFT,
-    presignedKey: process.env.FILE_UPLOAD_KEY_PRESIGNED,
+    publishKey: process.env.REGULATIONS_FILE_UPLOAD_KEY_PUBLISH,
+    draftKey: process.env.REGULATIONS_FILE_UPLOAD_KEY_DRAFT,
+    presignedKey: process.env.REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED,
   },
   regulationsAdmin: {
     baseApiUrl:
