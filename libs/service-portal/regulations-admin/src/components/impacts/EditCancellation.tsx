@@ -56,7 +56,6 @@ export const EditCancellation = (props: EditCancellationProp) => {
     activeCancellation,
     draftImpacts,
     draft.id,
-    minDate,
   )
 
   useEffect(() => {
@@ -158,13 +157,13 @@ export const EditCancellation = (props: EditCancellationProp) => {
             span={['12/12', '12/12', '12/12', '10/12', '8/12']}
             offset={['0', '0', '0', '1/12', '2/12']}
           >
-            {allFutureEffects && (
-              <ImpactHistory
-                allFutureEffects={allFutureEffects}
-                targetName={activeCancellation.name}
-                draftId={draft.id}
-              />
-            )}
+            <ImpactHistory
+              impactDate={activeCancellation.date.value}
+              allFutureEffects={allFutureEffects}
+              targetName={activeCancellation.name}
+              draftId={draft.id}
+              impactId={activeCancellation.id}
+            />
           </GridColumn>
         </GridRow>
         <GridRow>

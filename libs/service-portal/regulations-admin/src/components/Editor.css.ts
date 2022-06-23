@@ -9,7 +9,12 @@ import {
   diffStyling,
   regulationContentStyling,
 } from '@island.is/regulations/styling'
-import { hasFocus, containerDisabled, readOnly } from './EditorInput.css'
+import {
+  hasFocus,
+  containerDisabled,
+  isImpact,
+  readOnly,
+} from './EditorInput.css'
 
 const { color, typography, border } = theme
 
@@ -115,6 +120,10 @@ export const classes: EditorClasses = {
 
       [`${containerDisabled} &`]: {
         display: 'none',
+      },
+
+      [`${isImpact} &`]: {
+        top: 0,
       },
     },
   }),

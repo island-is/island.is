@@ -63,6 +63,7 @@ export const EditorInput = (props: EditorInputProps) => {
         background="white"
         className={cn(
           s.container,
+          isImpact && s.isImpact,
           hasError && s.hasError,
           hasFocus && s.hasFocus,
           editorProps.disabled && s.containerDisabled,

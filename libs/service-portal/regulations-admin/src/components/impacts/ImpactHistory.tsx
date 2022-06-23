@@ -1,8 +1,9 @@
 import React from 'react'
 import { Box, Text } from '@island.is/island-ui/core'
 import { ImpactListItem } from './ImpactListItem'
-import { nameToSlug, prettyName } from '@island.is/regulations'
+import { nameToSlug, prettyName, toISODate } from '@island.is/regulations'
 import {
+  DraftImpactId,
   DraftImpactName,
   RegulationDraftId,
   RegulationHistoryItemAdmin,
@@ -10,19 +11,21 @@ import {
 import * as s from './Impacts.css'
 
 export type ImpactHistoryProps = {
+  impactDate?: Date
   allFutureEffects: RegulationHistoryItemAdmin[]
   targetName: DraftImpactName
   draftId: RegulationDraftId
+  impactId?: DraftImpactId
 }
 
 export const ImpactHistory = (props: ImpactHistoryProps) => {
-  const { allFutureEffects, targetName, draftId } = props
+  const { impactDate, allFutureEffects, targetName, draftId, impactId } = props
 
   const hasMismatchId = (effect: RegulationHistoryItemAdmin) => {
     return !!(effect.changingId && draftId && effect.changingId !== draftId)
   }
 
-  if (!allFutureEffects?.length || !targetName) {
+  if (!impactDate || !targetName) {
     return null
   }
 
@@ -54,15 +57,15 @@ export const ImpactHistory = (props: ImpactHistoryProps) => {
           </a>
         )}
       </Box>
-      {/* <Divider /> */}
-      {allFutureEffects.length > 0 ? (
-        <Box
-          display="flex"
-          flexDirection="row"
-          flexWrap="wrap"
-          justifyContent="flexStart"
-          className={s.history}
-        >
+
+      <Box
+        display="flex"
+        flexDirection="row"
+        flexWrap="wrap"
+        justifyContent="flexStart"
+        className={s.history}
+      >
+        <>
           {allFutureEffects.map((effect, i) => (
             <ImpactListItem
               key={targetName + '_' + effect.date + '_' + i}
@@ -71,12 +74,23 @@ export const ImpactHistory = (props: ImpactHistoryProps) => {
               activeName={targetName}
             />
           ))}
-        </Box>
-      ) : (
-        <Text variant="h5" marginBottom={2}>
-          Engar breytingar framundan
-        </Text>
-      )}
+
+          {!allFutureEffects.find((i) => i.id === impactId) ? (
+            <ImpactListItem
+              effect={{
+                date: toISODate(impactDate),
+                name: targetName,
+                title: 'active',
+                effect: 'repeal',
+                origin: 'self',
+                id: 'self',
+              }}
+              idMismatch={false}
+              activeName={targetName}
+            />
+          ) : null}
+        </>
+      </Box>
     </Box>
   )
 }

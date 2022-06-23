@@ -9,6 +9,8 @@ export const containerDisabled = style({
   backgroundColor: 'transparent',
 })
 
+export const isImpact = style({})
+
 export const readOnly = style({
   backgroundColor: 'transparent',
 })

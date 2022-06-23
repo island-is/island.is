@@ -47,6 +47,7 @@ import { ImpactHistory } from './ImpactHistory'
 import { Appendixes } from '../Appendixes'
 import { tidyUp, updateFieldValue } from '../../state/validations'
 import { useGetRegulationHistory } from '../../utils/hooks'
+import { DraftRegulationChange } from '@island.is/regulations/admin'
 
 /* ---------------------------------------------------------------------------------------------------------------- */
 
@@ -60,11 +61,18 @@ type EditChangeProp = {
 export const EditChange = (props: EditChangeProp) => {
   const { draft, change, closeModal, readOnly } = props
   const [activeChange, setActiveChange] = useState(change) // Áhrifafærslan sem er verið að breyta
-  const [activeRegulation, setActiveRegulation] = useState<
-    Regulation | undefined
-  >() // Target reglugerðin sem á að breyta
   const today = useMemo(() => new Date(), [])
-  const [minDate, setMinDate] = useState(today)
+  const [minDate, setMinDate] = useState<Date | undefined>()
+
+  // Target regulation for impact
+  const [activeRegulation, setActiveRegulation] = useState<
+    Regulation | DraftRegulationChange | undefined
+  >()
+
+  // Previous regulation for diff viewer
+  const [previousRegulation, setPreviousRegulation] = useState<
+    Regulation | DraftRegulationChange | undefined
+  >()
 
   const [createDraftRegulationChange] = useMutation(
     CREATE_DRAFT_REGULATION_CHANGE,
@@ -73,45 +81,85 @@ export const EditChange = (props: EditChangeProp) => {
     UPDATE_DRAFT_REGULATION_CHANGE,
   )
 
+  // fetch base version of the regulation from api
   const { data: regulationBase } = useGetRegulationFromApiQuery(change.name)
-  const { data: regulation } = useGetRegulationFromApiQuery(
-    change.name,
-    toISODate(minDate),
-  )
-  useEffect(() => {
-    if (
-      regulation &&
-      regulation.publishedDate !== activeRegulation?.publishedDate
-    ) {
-      setActiveRegulation(regulation)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [regulation])
-  const { data: draftImpacts } = useGetRegulationImpactsQuery(change.name)
+
+  // fetch all regulation impacts
+  const {
+    data: draftImpacts,
+    loading: impactsLoading,
+  } = useGetRegulationImpactsQuery(change.name)
 
   const { allFutureEffects, hasImpactMismatch } = useGetRegulationHistory(
     regulationBase,
     activeChange,
     draftImpacts,
     draft.id,
-    minDate,
   )
+
+  // fetch regulation as it is on a specific date, there might be future effects that are not in regulationBase
+  const {
+    data: regulation,
+    loading: regulationLoading,
+  } = useGetRegulationFromApiQuery(
+    change.name,
+    minDate ? toISODate(minDate) : true,
+  )
+
+  // if there is draftimpacts, use them, otherwise use regulation
+  useEffect(() => {
+    if (!impactsLoading && !regulationLoading && minDate) {
+      const editDraft = draftImpacts?.find((i) => i.id === change.id)
+      const targetDraft = editDraft ? editDraft : draftImpacts?.slice(-1)[0]
+
+      // if drafts are present, base changes on latest drafts
+      if (targetDraft && 'text' in targetDraft) {
+        setActiveRegulation(targetDraft)
+        const draftIndex =
+          draftImpacts?.findIndex((i) => i.id === targetDraft.id) || 0
+
+        // for new impact, use latest impact if available
+        if (!editDraft && draftImpacts?.[draftIndex]) {
+          setPreviousRegulation(
+            draftImpacts[draftIndex] as DraftRegulationChange,
+          )
+        }
+        // if viewing, use previous impact if available
+        else if (editDraft && draftImpacts?.[draftIndex - 1]) {
+          setPreviousRegulation(
+            draftImpacts[draftIndex - 1] as DraftRegulationChange,
+          )
+        }
+        // otherwise use latest regulation version from api
+        else {
+          setPreviousRegulation(regulation)
+        }
+      }
+      // otherwise base changes on latest regulation version from api
+      else if (regulation) {
+        setActiveRegulation(regulation)
+        setPreviousRegulation(regulation)
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [regulation, regulationLoading, draftImpacts, impactsLoading, minDate])
 
   useEffect(() => {
     const lastDay = allFutureEffects
       .filter((eff) => eff.origin !== 'self')
       .slice(-1)?.[0]?.date
     const minDateDate = lastDay ? new Date(lastDay) : today
-    if (toISODate(minDateDate) !== toISODate(minDate)) {
+    if (!impactsLoading && toISODate(minDateDate) !== toISODate(minDate)) {
       setMinDate(minDateDate)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [allFutureEffects])
+  }, [impactsLoading, allFutureEffects])
 
+  // once correct activeRegulation has been found, set activeChange
   useEffect(() => {
     if (
-      activeRegulation &&
       !change.id &&
+      activeRegulation &&
       !activeChange.title.value &&
       !activeChange.text.value
     ) {
@@ -135,11 +183,15 @@ export const EditChange = (props: EditChangeProp) => {
   }
 
   useEffect(() => {
-    if (toISODate(minDate) !== toISODate(activeChange.date.value)) {
+    if (
+      !impactsLoading &&
+      !regulationLoading &&
+      toISODate(minDate) !== toISODate(activeChange.date.value)
+    ) {
       changeDate(minDate)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [minDate])
+  }, [minDate, impactsLoading, regulationLoading])
 
   const changeRegulationTitle = (newTitle: PlainText) => {
     setActiveChange({
@@ -331,7 +383,7 @@ export const EditChange = (props: EditChangeProp) => {
               title={activeChange.regTitle}
               name={activeChange.name}
               impact={activeChange}
-              minDate={minDate}
+              minDate={readOnly ? activeChange.date.value : minDate}
               onChangeDate={changeDate}
               readOnly={readOnly}
               tag={{
@@ -346,16 +398,16 @@ export const EditChange = (props: EditChangeProp) => {
             span={['12/12', '12/12', '12/12', '10/12', '8/12']}
             offset={['0', '0', '0', '1/12', '2/12']}
           >
-            {allFutureEffects.length && (
-              <ImpactHistory
-                allFutureEffects={allFutureEffects}
-                targetName={activeChange.name}
-                draftId={draft.id}
-              />
-            )}
+            <ImpactHistory
+              impactDate={activeChange.date.value}
+              allFutureEffects={allFutureEffects}
+              targetName={activeChange.name}
+              draftId={draft.id}
+              impactId={activeChange.id}
+            />
           </GridColumn>
         </GridRow>
-        {activeChange.text.value && activeRegulation && (
+        {activeRegulation && activeChange.text.value && (
           <>
             <GridRow>
               <GridColumn
@@ -372,9 +424,9 @@ export const EditChange = (props: EditChangeProp) => {
                     readOnly={readOnly}
                     error={undefined}
                   />
-                  {activeChange.title.value !== activeRegulation?.title && (
+                  {activeChange.title.value !== previousRegulation?.title && (
                     <MiniDiff
-                      older={activeRegulation?.title || ''}
+                      older={previousRegulation?.title || ''}
                       newer={activeChange.title.value}
                     />
                   )}
@@ -385,7 +437,7 @@ export const EditChange = (props: EditChangeProp) => {
                   </Text>
                   <EditorInput
                     label=""
-                    baseText={activeRegulation.text}
+                    baseText={previousRegulation?.text}
                     value={activeChange.text.value}
                     onChange={(newValue) => changeRegulationText(newValue)}
                     draftId={draft.id}
@@ -406,6 +458,7 @@ export const EditChange = (props: EditChangeProp) => {
                   draftId={draft.id}
                   appendixes={activeChange.appendixes}
                   actions={localActions}
+                  baseAppendixes={previousRegulation?.appendixes}
                 />
               </GridColumn>
             </GridRow>

@@ -476,14 +476,16 @@ const GetRegulationFromApiQuery = gql`
 
 export const useGetRegulationFromApiQuery = (
   regulation: RegName | DraftImpactName,
-  date?: ISODate,
+  date?: ISODate | true,
 ): QueryResult<Regulation | undefined> => {
   const { loading, error, data } = useQuery<Query>(GetRegulationFromApiQuery, {
-    variables: { input: { regulation, date } },
+    variables: {
+      input: { regulation, date: date === true ? undefined : date },
+    },
   })
 
-  if (loading) {
-    return { loading }
+  if (loading || date === true) {
+    return { loading: true }
   }
   if (!data) {
     return {

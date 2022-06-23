@@ -1,4 +1,4 @@
-import { RegName, Regulation, toISODate } from '@island.is/regulations'
+import { Regulation, toISODate } from '@island.is/regulations'
 import {
   DraftImpact,
   RegulationDraftId,
@@ -22,10 +22,7 @@ export const useGetRegulationHistory = (
   activeImpact?: DraftImpactForm,
   draftImpacts?: DraftImpact[],
   draftId?: RegulationDraftId,
-  minDate?: Date,
 ) => {
-  const targetName = activeImpact?.name as RegName
-  const activeImpactDate = activeImpact?.date?.value
   const today = useMemo(() => toISODate(new Date()), [])
 
   const { effects } = useMemo(() => {
@@ -62,28 +59,8 @@ export const useGetRegulationHistory = (
 
     const futureEffectArray = [...futureEffects, ...draftImpactsArray]
 
-    if (!draftImpactsArray.find((i) => i.id === activeImpact.id)) {
-      futureEffectArray.push({
-        date: toISODate(
-          activeImpactDate ? activeImpactDate : minDate ? minDate : new Date(),
-        ),
-        name: targetName,
-        title: 'active',
-        effect: 'repeal',
-        origin: 'self',
-        id: 'self',
-      })
-    }
-
     return sortBy(futureEffectArray, (o) => o.date)
-  }, [
-    activeImpact,
-    activeImpactDate,
-    targetName,
-    draftImpacts,
-    effects?.future,
-    minDate,
-  ])
+  }, [activeImpact, draftImpacts, effects?.future])
 
   const hasImpactMismatch = !!draftImpacts?.filter(
     (draftImpact) => draftImpact.changingId !== draftId,
