@@ -5,12 +5,13 @@ import { Query } from '@island.is/api/schema'
 import { Button, toast } from '@island.is/island-ui/core'
 
 import { useLocale } from '@island.is/localization'
-import { editorMsgs } from '../messages'
+import { editorMsgs, reviewMessagse } from '../messages'
 import type { RegulationDraftId } from '@island.is/regulations/admin'
 import { useAuth } from '@island.is/auth/react'
 
 type Props = {
   draftId: RegulationDraftId
+  reviewButton?: boolean
 }
 
 const DownloadRegulationDraftQuery = gql`
@@ -44,7 +45,7 @@ function formSubmit(url: string, token: string) {
   document.body.removeChild(form)
 }
 
-export function DownloadDraftButton({ draftId }: Props) {
+export function DownloadDraftButton({ draftId, reviewButton }: Props) {
   const userInfo = useAuth().userInfo
   const t = useLocale().formatMessage
   const [
@@ -80,6 +81,22 @@ export function DownloadDraftButton({ draftId }: Props) {
 
   const onClick = async () => {
     downloadRegulation()
+  }
+
+  if (reviewButton) {
+    return (
+      <Button
+        loading={loading}
+        as="button"
+        onClick={onClick}
+        icon="download"
+        variant="ghost"
+        size="small"
+        iconType="outline"
+      >
+        {t(reviewMessagse.downloadPDFVersion)}
+      </Button>
+    )
   }
 
   return (

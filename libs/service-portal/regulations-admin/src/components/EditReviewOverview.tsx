@@ -6,29 +6,12 @@ import { useLocale } from '@island.is/localization'
 import { downloadUrl } from '../utils/files'
 import { Step } from '../types'
 import { JumpToStep } from './EditReviewWarnings'
-import { RegDraftForm } from '../state/types'
 import {
   combineTextAppendixesComments,
   toISODate,
 } from '@island.is/regulations'
 import copyToClipboard from 'copy-to-clipboard'
-
-/** Mock PDF fetchher.
- *
- * TODO: Implement true POST action that generates a full PDF
- * (signatureText and all) and downloads it automatically
- */
-const generateAndDownloadPdf = (draft: RegDraftForm) => {
-  new Promise<{ success: boolean }>((resolve) => {
-    const fileName = draft.title.value + '.pdf'
-    // import { downloadUrl } from '../utils/files'
-    // downloadUrl (...)
-    setTimeout(() => {
-      alert(`Save your file "${fileName}"`)
-      resolve({ success: true })
-    }, 500)
-  })
-}
+import { DownloadDraftButton } from './DownloadDraftButton'
 
 // ---------------------------------------------------------------------------
 
@@ -306,15 +289,7 @@ export const EditReviewOverview = (props: EditReviewOverviewProps) => {
               }}
             />
 
-            <MicroAction
-              text={t(reviewMessagse.downloadPDFVersion)}
-              clicked={clicked.PDF}
-              icon="download"
-              onClick={() => {
-                flagAsClick('PDF')
-                generateAndDownloadPdf(draft)
-              }}
-            />
+            <DownloadDraftButton draftId={draft.id} reviewButton={true} />
           </Inline>
         </Box>
       )}
