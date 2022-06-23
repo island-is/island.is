@@ -387,12 +387,10 @@ export function getApplicationExternalData(
 }
 
 export function getApplicationAnswers(answers: Application['answers']) {
-  let otherParent = getValueViaPath(
+  const otherParent = (getValueViaPath(
     answers,
     'otherParentObj.chooseOtherParent',
-  ) as string
-  if (!otherParent)
-    otherParent = getValueViaPath(answers, 'otherParent') as string
+  ) ?? getValueViaPath(answers, 'otherParent')) as string
 
   const otherParentRightOfAccess = getValueViaPath(
     answers,
@@ -426,21 +424,15 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'employer.isSelfEmployed',
   ) as YesOrNo
 
-  let otherParentName = getValueViaPath(
+  const otherParentName = (getValueViaPath(
     answers,
     'otherParentObj.otherParentName',
-  ) as string
-  if (!otherParentName) {
-    otherParentName = getValueViaPath(answers, 'otherParentName') as string
-  }
+  ) ?? getValueViaPath(answers, 'otherParentName')) as string
 
-  let otherParentId = getValueViaPath(
+  const otherParentId = (getValueViaPath(
     answers,
     'otherParentObj.otherParentId',
-  ) as string
-  if (!otherParentId) {
-    otherParentId = getValueViaPath(answers, 'otherParentId') as string
-  }
+  ) ?? getValueViaPath(answers, 'otherParentId')) as string
 
   const otherParentEmail = getValueViaPath(
     answers,
@@ -788,4 +780,22 @@ export const calculatePeriodLengthInMonths = (
   const roundedDays = Math.min((diffDays / 28) * 100, 100) / 100
 
   return round(diffMonths + roundedDays, 1)
+}
+
+export const removeCountryCode = (application: Application) => {
+  return (application.externalData.userProfile?.data as {
+    mobilePhoneNumber?: string
+  })?.mobilePhoneNumber?.startsWith('+354')
+    ? (application.externalData.userProfile?.data as {
+        mobilePhoneNumber?: string
+      })?.mobilePhoneNumber?.slice(4)
+    : (application.externalData.userProfile?.data as {
+        mobilePhoneNumber?: string
+      })?.mobilePhoneNumber?.startsWith('00354')
+    ? (application.externalData.userProfile?.data as {
+        mobilePhoneNumber?: string
+      })?.mobilePhoneNumber?.slice(5)
+    : (application.externalData.userProfile?.data as {
+        mobilePhoneNumber?: string
+      })?.mobilePhoneNumber
 }

@@ -1,24 +1,24 @@
-const { fakeUsers } = Cypress.env()
-const { authDomain } = Cypress.env(Cypress.env('testEnvironment'))
-
 describe('Home page', () => {
-  before(() => {
-    cy.cognitoLogin({
-      cognitoUsername: Cypress.env('cognitoUsername'),
-      cognitoPassword: Cypress.env('cognitoPassword'),
+  const fakeUsers: FakeUser[] = Cypress.env('fakeUsers')
+  const testEnvironment: TestEnvironment = Cypress.env('testEnvironment')
+  const { authUrl }: Pick<TestConfig, 'authUrl'> = Cypress.env(testEnvironment)
+
+  beforeEach(() => {
+    cy.log('fakeUsers', fakeUsers)
+    cy.log('authUrl', authUrl)
+    cy.log('testEnvironment', testEnvironment)
+    cy.idsLogin({
+      phoneNumber: fakeUsers[0].phoneNumber,
     })
   })
 
-  it('should navigate serviceportal', () => {
-    cy.log('fakeUsers', fakeUsers)
-    cy.log('authDomain', authDomain)
+  it(`should have user ${fakeUsers[0].name} logged in`, () => {
     cy.visit('/minarsidur/')
-
-    cy.idsLogin({
-      phoneNumber: fakeUsers[0].phoneNumber,
-      authDomain: `https://${authDomain}`,
-    })
-    cy.contains('Pósthólf')
     cy.contains(fakeUsers[0].name)
+  })
+
+  it('should have Pósthólf', () => {
+    cy.visit('/minarsidur/')
+    cy.contains('Pósthólf')
   })
 })

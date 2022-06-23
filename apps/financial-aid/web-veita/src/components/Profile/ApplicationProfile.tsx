@@ -1,5 +1,8 @@
 import React, { useState, useMemo } from 'react'
-import { Box, Text } from '@island.is/island-ui/core'
+import cn from 'classnames'
+import format from 'date-fns/format'
+
+import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import {
   Application,
   ApplicationState,
@@ -14,8 +17,6 @@ import {
   Municipality,
   DirectTaxPayment,
 } from '@island.is/financial-aid/shared/lib'
-
-import format from 'date-fns/format'
 
 import {
   CollapsibleProfileUnit,
@@ -167,6 +168,24 @@ const ApplicationProfile = ({
           setIsLoading={setIsLoading}
           isPrint={isPrint}
         />
+
+        {application.navSuccess === false && (
+          <Box
+            className={cn({
+              [`${styles.widthFull} `]: true,
+            })}
+            marginBottom={[5, 5, 7]}
+          >
+            <AlertMessage
+              type="warning"
+              message={
+                <Text variant="medium">
+                  Sjálfvirk yfirfærsla í Navision tóskt ekki.
+                </Text>
+              }
+            />
+          </Box>
+        )}
 
         <ProfileUnit
           heading="Umsókn"

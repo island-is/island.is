@@ -141,6 +141,23 @@ export const notifications = {
     description:
       'Notaður sem texti í sms-i þegar sækjandi breytir kröfunni og sendir aftur á héraðsdómstól',
   },
+  defenderResubmittedToCourt: defineMessages({
+    subject: {
+      id:
+        'judicial.system.backend:notifications.defender_resubmitted_to_court.subject',
+      defaultMessage: 'Krafa í máli {policeCaseNumber} send aftur',
+      description:
+        'Notaður sem titil í pósti til verjanda þegar sækjandi breytir kröfunni og sendir aftur á héraðsdómstól',
+    },
+    body: {
+      id:
+        'judicial.system.backend:notifications.defender_resubmitted_to_court.body',
+      defaultMessage:
+        'Sækjandi í máli {policeCaseNumber} hjá {court} hefur sent kröfuna aftur á dóminn. {linkStart}Uppfærð útgáfa er aðgengileg í Réttarvörslugátt.{linkEnd}',
+      description:
+        'Notaður sem texti í pósti til verjanda þegar sækjandi breytir kröfunni og sendir aftur á héraðsdómstól',
+    },
+  }),
   prosecutorReceivedByCourt: {
     id: 'judicial.system.backend:notifications.prosecutor_received_by_court',
     defaultMessage:
@@ -418,6 +435,14 @@ export const notifications = {
         'judicial.system.backend:notifications.defender_court_date_email.body',
       defaultMessage:
         '{sessionArrangementsText}<br /><br />{courtDateText}<br /><br />{courtCaseNumberText}<br /><br />{courtRoomText}<br /><br />{judgeText}{registrarText, select, NONE {} other {<br /><br />{registrarText}}}<br /><br />{prosecutorText}',
+      description:
+        'Notaður sem beinagrind á pósti til verjanda/talsmanns þegar dómstóll boðar í fyrirtöku',
+    },
+    linkBody: {
+      id:
+        'judicial.system.backend:notifications.defender_court_date_email.link_body',
+      defaultMessage:
+        'Sækjandi hefur valið að deila kröfu með þér sem verjanda sakbornings í máli {courtCaseNumber}.',
       description:
         'Notaður sem beinagrind á pósti til verjanda/talsmanns þegar dómstóll boðar í fyrirtöku',
     },

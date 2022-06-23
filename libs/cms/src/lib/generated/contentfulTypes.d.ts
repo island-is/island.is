@@ -1922,6 +1922,9 @@ export interface IOrganizationFields {
   /** Service Web Featured Image */
   serviceWebFeaturedImage?: Asset | undefined
 
+  /** Service Web Popular Question Count */
+  serviceWebPopularQuestionCount?: number | undefined
+
   /** Published Material Search Filter Generic Tags */
   publishedMaterialSearchFilterGenericTags?: IGenericTag[] | undefined
 

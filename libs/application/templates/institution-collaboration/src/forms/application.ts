@@ -10,6 +10,7 @@ import {
   buildSubmitField,
   buildFileUploadField,
   Comparators,
+  buildCompanySearchField,
 } from '@island.is/application/core'
 import { institutionApplicationMessages as m } from '../lib/messages'
 import { YES, FILE_SIZE_LIMIT } from '../constants'
@@ -38,12 +39,10 @@ export const application: Form = buildForm({
                 subTitle: m.applicant.institutionSubtitle,
               },
             ),
-            buildTextField({
+            buildCompanySearchField({
               id: 'applicant.institution',
               title: m.applicant.institutionLabel,
-              backgroundColor: 'blue',
-              required: true,
-              defaultValue: '',
+              setLabelToDataSchema: true,
             }),
             buildCustomField(
               {

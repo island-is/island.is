@@ -19,8 +19,9 @@ const AccessControl: ServicePortalModuleComponent = ({ userInfo, client }) => {
   const isDelegation = Boolean(actor)
 
   const isCompany = userInfo.profile.subjectType === 'legalEntity'
+  const personDelegation = isDelegation && !isCompany
 
-  if (isCompany || isDelegation) {
+  if (personDelegation) {
     return <AccessDenied userInfo={userInfo} client={client} />
   }
   return (

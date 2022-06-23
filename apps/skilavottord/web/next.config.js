@@ -7,6 +7,10 @@ const {
   API_PATH = '/app/skilavottord/api',
   WEB_PUBLIC_URL = 'http://localhost:4200',
   SENTRY_DSN,
+  DD_RUM_APPLICATION_ID,
+  DD_RUM_CLIENT_TOKEN,
+  APP_VERSION,
+  ENVIRONMENT,
 } = process.env
 
 const graphqlPath = '/graphql'
@@ -24,6 +28,10 @@ module.exports = withVanillaExtract({
   publicRuntimeConfig: {
     graphqlEndpoint: `${API_PATH}${graphqlPath}`,
     SENTRY_DSN,
+    ddRumApplicationId: DD_RUM_APPLICATION_ID,
+    ddRumClientToken: DD_RUM_CLIENT_TOKEN,
+    appVersion: APP_VERSION,
+    environment: ENVIRONMENT,
   },
   env: {
     API_MOCKS: process.env.API_MOCKS || '',
