@@ -14,10 +14,8 @@ export type Validation =
   | 'date-format'
   | 'court-case-number'
 
-interface ValidationItem {
-  value: string | undefined
-  validations: Validation[]
-}
+type ValidateItem = 'valid' | [string | undefined, Validation[]]
+type IsValid = { isValid: boolean; errorMessage: string }
 
 const getRegexByValidation = (validation: Validation) => {
   switch (validation) {
@@ -74,35 +72,39 @@ const getRegexByValidation = (validation: Validation) => {
   }
 }
 
-export const validate = (
-  items: ValidationItem[],
-): { isValid: boolean; errorMessage: string }[] => {
-  const validations = items
+export const validate = (items: ValidateItem[]): IsValid => {
+  const returnValue = items
     .map((item) => {
-      if (!item.value) {
-        if (item.validations.some((validation) => validation === 'empty')) {
-          return [{ isValid: false, errorMessage: 'Reitur má ekki vera tómur' }]
-        } else {
-          return [{ isValid: true, errorMessage: '' }]
-        }
-      } else {
-        const invalidItems = item.validations.map((validation) => {
-          if (item.value) {
-            const v = getRegexByValidation(validation)
+      if (item === 'valid') {
+        return undefined
+      }
 
-            const isValid = v.regex.test(item.value)
-            return { isValid, errorMessage: isValid ? '' : v.errorMessage }
+      const [value, validations] = item
+
+      const result = validations
+        .map((validation) => {
+          if (!value && validation === 'empty') {
+            return { isValid: false, errorMessage: 'Reitur má ekki vera tómur' }
           }
 
-          return { isValid: true, errorMessage: '' }
+          if (!value) {
+            return undefined
+          }
+
+          const v = getRegexByValidation(validation)
+
+          const isValid = v.regex.test(value)
+          return isValid ? undefined : { isValid, errorMessage: v.errorMessage }
         })
+        .filter(Boolean) as IsValid[]
 
-        return invalidItems
-      }
+      return result[0]
     })
-    .flat()
+    .filter(Boolean) as IsValid[]
 
-  return validations.filter((item) => !item.isValid)
+  return returnValue.length > 0
+    ? returnValue[0]
+    : { isValid: true, errorMessage: '' }
 }
 
 const someDefendantIsInvalid = (workingCase: Case) => {
@@ -113,23 +115,15 @@ const someDefendantIsInvalid = (workingCase: Case) => {
       (defendant) =>
         (!isBusiness(defendant.nationalId) && !defendant.gender) ||
         validate([
-          {
-            value: defendant.nationalId,
-            validations: [
-              defendant.noNationalId ? 'date-of-birth' : 'national-id',
-            ],
-          },
-          { value: defendant.name, validations: ['empty'] },
-          { value: defendant.address, validations: ['empty'] },
-          ...(!defendant.noNationalId
-            ? [
-                {
-                  value: defendant.nationalId,
-                  validations: ['empty'],
-                } as ValidationItem,
-              ]
-            : []),
-        ]).length > 0,
+          [
+            defendant.nationalId,
+            [defendant.noNationalId ? 'date-of-birth' : 'national-id'],
+          ],
+          [defendant.name, ['empty']],
+          [defendant.address, ['empty']],
+          [defendant.address, ['empty']],
+          defendant.noNationalId ? 'valid' : [defendant.nationalId, ['empty']],
+        ]).isValid,
     )
   )
 }
@@ -138,35 +132,13 @@ export const isDefendantStepValidRC = (workingCase: Case) => {
   return (
     !someDefendantIsInvalid(workingCase) &&
     validate([
-      {
-        value: workingCase.policeCaseNumber,
-        validations: ['empty'],
-      },
-      {
-        value: workingCase.policeCaseNumber,
-        validations: ['police-casenumber-format'],
-      },
-      {
-        value: workingCase.defenderEmail,
-        validations: ['email-format'],
-      },
-      {
-        value: workingCase.defenderPhoneNumber,
-        validations: ['phonenumber'],
-      },
-      {
-        value: workingCase.leadInvestigator,
-        validations: ['empty'],
-      },
-      ...(workingCase.type === CaseType.TRAVEL_BAN
-        ? [
-            {
-              value: workingCase.leadInvestigator,
-              validations: ['empty'],
-            } as ValidationItem,
-          ]
-        : []),
-    ]).length === 0
+      [workingCase.policeCaseNumber, ['empty', 'police-casenumber-format']],
+      [workingCase.defenderEmail, ['email-format']],
+      [workingCase.defenderPhoneNumber, ['phonenumber']],
+      workingCase.type === CaseType.TRAVEL_BAN
+        ? 'valid'
+        : [workingCase.leadInvestigator, ['empty']],
+    ]).isValid
   )
 }
 
@@ -178,15 +150,11 @@ export const isDefendantStepValidIC = (workingCase: Case) => {
   return (
     !someDefendantIsInvalid(workingCase) &&
     validate([
-      { value: workingCase.type, validations: ['empty'] },
-      { value: workingCase.policeCaseNumber, validations: ['empty'] },
-      {
-        value: workingCase.policeCaseNumber,
-        validations: ['police-casenumber-format'],
-      },
-      { value: workingCase.defenderEmail, validations: ['email-format'] },
-      { value: workingCase.defenderPhoneNumber, validations: ['phonenumber'] },
-    ]).length === 0
+      [workingCase.type, ['empty']],
+      [workingCase.policeCaseNumber, ['empty', 'police-casenumber-format']],
+      [workingCase.defenderEmail, ['email-format']],
+      [workingCase.defenderPhoneNumber, ['phonenumber']],
+    ]).isValid
   )
 }
 
@@ -249,26 +217,13 @@ export const isHearingArrangementsStepValidIC = (workingCase: Case) => {
 }
 
 export const isPoliceDemandsStepValidRC = (workingCase: Case) => {
-  return (
-    validate([
-      {
-        value: workingCase.lawsBroken,
-        validations: ['empty'],
-      },
-      {
-        value: workingCase.requestedValidToDate,
-        validations: ['empty', 'date-format'],
-      },
-      ...(workingCase.legalProvisions && workingCase.legalProvisions.length > 0
-        ? []
-        : [
-            {
-              value: workingCase.legalBasis,
-              validations: ['empty'],
-            } as ValidationItem,
-          ]),
-    ]).length === 0
-  )
+  return validate([
+    [workingCase.lawsBroken, ['empty']],
+    [workingCase.requestedValidToDate, ['empty', 'date-format']],
+    workingCase.legalProvisions && workingCase.legalProvisions.length > 0
+      ? 'valid'
+      : [workingCase.lawsBroken, ['empty']],
+  ]).isValid
 }
 
 export const isPoliceDemandsStepValidIC = (workingCase: Case) => {
