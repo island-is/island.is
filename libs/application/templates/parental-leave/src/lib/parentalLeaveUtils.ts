@@ -781,3 +781,21 @@ export const calculatePeriodLengthInMonths = (
 
   return round(diffMonths + roundedDays, 1)
 }
+
+export const removeCountryCode = (application: Application) => {
+  return (application.externalData.userProfile?.data as {
+    mobilePhoneNumber?: string
+  })?.mobilePhoneNumber?.startsWith('+354')
+    ? (application.externalData.userProfile?.data as {
+        mobilePhoneNumber?: string
+      })?.mobilePhoneNumber?.slice(4)
+    : (application.externalData.userProfile?.data as {
+        mobilePhoneNumber?: string
+      })?.mobilePhoneNumber?.startsWith('00354')
+    ? (application.externalData.userProfile?.data as {
+        mobilePhoneNumber?: string
+      })?.mobilePhoneNumber?.slice(5)
+    : (application.externalData.userProfile?.data as {
+        mobilePhoneNumber?: string
+      })?.mobilePhoneNumber
+}
