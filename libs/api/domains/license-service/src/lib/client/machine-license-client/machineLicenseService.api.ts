@@ -40,7 +40,6 @@ export class GenericMachineLicenseApi
       })
       return null
     }
-
     return license
   }
 
@@ -68,12 +67,15 @@ export class GenericMachineLicenseApi
   ): Promise<GenericLicenseUserdataExternal | null> {
     return this.getLicense(user)
   }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async getPkPassUrl(user: User): Promise<string | null> {
     return null
   }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async getPkPassQRCode(user: User): Promise<string | null> {
     return null
   }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async verifyPkPass(data: string): Promise<PkPassVerification | null> {
     return null
   }

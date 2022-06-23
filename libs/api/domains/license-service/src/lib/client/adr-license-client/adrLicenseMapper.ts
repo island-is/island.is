@@ -15,6 +15,7 @@ export const parseAdrLicensePayload = (
 
     const flattenedAdr: FlattenedAdrDto = { ...rest, adrRettindi: [] }
 
+    //Flatten the AdrRettindi into a simple array to make it easier to work with
     adrRettindi?.forEach((field) => {
       const heiti =
         field.heiti && field.heiti.length

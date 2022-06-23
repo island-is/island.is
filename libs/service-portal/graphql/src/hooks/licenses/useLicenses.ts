@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/client'
+import { ApolloError, useQuery } from '@apollo/client'
 import {
   GenericLicenseType,
   GenericUserLicense,
@@ -13,10 +13,11 @@ import {
   GET_GENERIC_LICENSE,
   GET_GENERIC_LICENSES,
 } from '../../lib/queries/getLicenses'
+
 interface Props {
   data?: Array<GenericUserLicense>
   loading?: boolean
-  error?: any
+  error?: ApolloError | undefined
 }
 
 export const useLicenses = (type?: GenericLicenseType): Props => {
@@ -31,6 +32,7 @@ export const useLicenses = (type?: GenericLicenseType): Props => {
       input: input,
     },
   })
+
   const [licenses, setLicenses] = useState<Array<GenericUserLicense>>()
   const { genericLicenses } = data ?? {}
 
@@ -51,7 +53,7 @@ interface GetDrivingLicenseProps {
   data?: DrivingLicenseType
   status: GenericUserLicenseStatus | ''
   loading?: boolean
-  error?: any
+  error?: ApolloError | undefined
 }
 
 /* Collects only Driving License */
@@ -67,6 +69,7 @@ export const useDrivingLicense = (): GetDrivingLicenseProps => {
       },
     },
   })
+
   const [license, setLicense] = useState<DrivingLicenseType>()
   const { genericLicense } = data ?? {}
   const licenseStatus = genericLicense?.license.status ?? ''

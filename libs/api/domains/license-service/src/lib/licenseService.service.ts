@@ -12,7 +12,6 @@ import {
   GenericLicenseType,
   GenericLicenseClient,
   GenericLicenseMetadata,
-  GenericLicenseUserdata,
   GenericUserLicenseFetchStatus,
   GenericUserLicenseStatus,
   GenericLicenseCached,
@@ -47,7 +46,7 @@ export class LicenseServiceService {
   private async getCachedOrCache(
     license: GenericLicenseMetadata,
     user: User,
-    fetch: () => Promise<GenericLicenseUserdata | null>,
+    fetch: () => Promise<GenericLicenseUserdataExternal | null>,
     ttl = 0,
   ): Promise<GenericLicenseCached> {
     const cacheKey = `${CACHE_KEY}_${license.type}_${user.nationalId}`
@@ -72,9 +71,9 @@ export class LicenseServiceService {
       }
     }
 
-    const data = await fetch()
+    const fetchedData = await fetch()
 
-    if (!data) {
+    if (!fetchedData) {
       this.logger.warn('No data for generic license returned', {
         license,
       })
@@ -84,19 +83,25 @@ export class LicenseServiceService {
           status: GenericUserLicenseFetchStatus.Error,
           updated: new Date(),
         },
+        payload: undefined,
       }
     }
 
+    const { payload, ...userData } = fetchedData
+
     const dataWithFetch: GenericLicenseCached = {
-      data,
+      data: userData,
       fetch: {
         status: GenericUserLicenseFetchStatus.Fetched,
         updated: new Date(),
       },
+      payload: payload ?? undefined,
     }
 
     try {
-      await this.cacheManager.set(cacheKey, JSON.stringify(data), { ttl })
+      await this.cacheManager.set(cacheKey, JSON.stringify(dataWithFetch), {
+        ttl,
+      })
     } catch (e) {
       this.logger.warn('Unable to cache data for license', {
         license,
@@ -172,11 +177,10 @@ export class LicenseServiceService {
           ...licenseUserdata,
         },
         fetch,
+        payload: licenseDataFromService?.payload ?? undefined,
       }
-
       licenses.push(combined)
     }
-
     return licenses
   }
 

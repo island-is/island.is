@@ -30,7 +30,6 @@ export class GenericAdrLicenseApi implements GenericLicenseClient<AdrDto> {
         .withMiddleware(new AuthMiddleware(user as Auth))
         .getAdr()
     } catch (e) {
-      console.log(e)
       this.logger.error('ADR license fetch failed', {
         exception: e,
         category: LOG_CATEGORY,
@@ -43,6 +42,8 @@ export class GenericAdrLicenseApi implements GenericLicenseClient<AdrDto> {
 
   async getLicense(user: User): Promise<GenericLicenseUserdataExternal | null> {
     const license = await this.fetchLicense(user)
+
+    console.log(license)
 
     if (!license) {
       this.logger.warn('Missing ADR license, null from api', {
@@ -64,12 +65,15 @@ export class GenericAdrLicenseApi implements GenericLicenseClient<AdrDto> {
   ): Promise<GenericLicenseUserdataExternal | null> {
     return this.getLicense(user)
   }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async getPkPassUrl(user: User): Promise<string | null> {
     return null
   }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async getPkPassQRCode(user: User): Promise<string | null> {
     return null
   }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async verifyPkPass(data: string): Promise<PkPassVerification | null> {
     return null
   }
