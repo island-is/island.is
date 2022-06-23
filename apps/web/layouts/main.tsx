@@ -325,9 +325,6 @@ const Layout: NextComponentType<
         <SkipToMainContent
           title={n('skipToMainContent', 'Fara beint í efnið')}
         />
-        <Hidden above="sm">
-          <MobileAppBanner />
-        </Hidden>
         {alertBanners.map((banner) => (
           <AlertBanner
             key={banner.bannerId}
@@ -353,7 +350,9 @@ const Layout: NextComponentType<
             }}
           />
         ))}
-
+        <Hidden above="sm">
+          <MobileAppBanner namespace={namespace} />
+        </Hidden>
         <PageLoader />
         <MenuTabsContext.Provider
           value={{

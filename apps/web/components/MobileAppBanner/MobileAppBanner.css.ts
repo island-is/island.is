@@ -1,7 +1,8 @@
 import { globalStyle, style } from '@vanilla-extract/css'
-import { theme, themeUtils } from '@island.is/island-ui/theme'
+import { theme } from '@island.is/island-ui/theme'
 
 export const container = style({
+  position: 'relative',
   padding: '12px 24px',
   marginBottom: '-8px',
   boxShadow: '0px 4px 30px rgba(0, 97, 255, 0.16)',

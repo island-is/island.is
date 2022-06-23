@@ -3,14 +3,19 @@ import React, { useEffect, useState } from 'react'
 import { Box, Text, Button, Logo, Icon, Link } from '@island.is/island-ui/core'
 import * as style from './MobileAppBanner.css'
 import Cookies from 'js-cookie'
+import { useNamespace } from '@island.is/web/hooks'
 
-export const MobileAppBanner = () => {
+interface MobileAppBannerProps {
+  namespace: Record<string, string | string[]>
+}
+
+export const MobileAppBanner = ({ namespace }: MobileAppBannerProps) => {
   const COOKIE_NAME = 'island-mobile-app-banner'
 
-  const IOS_LINK =
-    'https://apps.apple.com/us/app/%C3%ADsland-is-stafr%C3%A6nt-%C3%ADsland/id1569828682?platform=iphone'
-  const ANDROID_LINK =
-    'https://play.google.com/store/apps/details?id=is.island.app'
+  const n = useNamespace(namespace)
+
+  const appleLink = n('mobileAppLinkApple')
+  const androidLink = n('mobileAppLinkAndroid')
 
   const [hidden, setHidden] = useState<boolean>(!!Cookies.get(COOKIE_NAME))
   const [isApple, setIsApple] = useState<boolean>(false)
@@ -27,7 +32,7 @@ export const MobileAppBanner = () => {
 
   useEffect(() => {
     setIsApple(getMobilePlatform() === 'apple')
-  })
+  }, [])
 
   return hidden ? null : (
     <Box
@@ -59,10 +64,10 @@ export const MobileAppBanner = () => {
       </Box>
       <Box flexGrow={1}>
         <Text color="white" variant="h5">
-          Ísland.is appið
+          {n('mobileAppTitle', 'Ísland.is appið')}
         </Text>
         <Text color="white" variant="small">
-          Með ríkið í vasanum
+          {n('mobileAppSubtitle', 'Með ríkið í vasanum')}
         </Text>
       </Box>
       <Box
@@ -71,9 +76,9 @@ export const MobileAppBanner = () => {
         flexGrow={1}
         className={style.buttonWrapper}
       >
-        <Link href={isApple ? IOS_LINK : ANDROID_LINK} newTab skipTab>
+        <Link href={isApple ? appleLink : androidLink} newTab skipTab>
           <Button variant="ghost" icon="open" iconType="outline">
-            Sækja
+            {n('mobileAppDownload', 'Sækja')}
           </Button>
         </Link>
       </Box>
