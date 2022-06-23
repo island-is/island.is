@@ -38,30 +38,37 @@ export const parseAdrLicensePayload = (
 
   const parsedResponse = parseAdrLicenseResponse()
 
+  //TODO: Null check fields and filter!
+
   const data = [
     {
       type: GenericLicenseDataFieldType.Value,
-      label: '1.',
-      value: (parsedResponse.skirteinisNumer ?? '').toString(),
+      label: '1. Númer skírteinis',
+      value: parsedResponse.skirteinisNumer?.toString(),
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: '2. 3.',
+      label: '2. 3. Fullt nafn',
       value: parsedResponse.fulltNafn ?? '',
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: '4',
+      label: '4. Fæðingardagur',
       value: parsedResponse.faedingarDagur ?? '',
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: '5.',
+      label: '5. Ríkisfang: ',
       value: parsedResponse.rikisfang ?? '',
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: '8. Gildir til: ',
+      label: '7. Útgefandi. ',
+      value: 'Vinnueftirliti ríkisins',
+    },
+    {
+      type: GenericLicenseDataFieldType.Value,
+      label: '8. Gildir til/Valid to',
       value: parsedResponse.gildirTil ?? '',
     },
     {
@@ -84,7 +91,7 @@ export const parseAdrLicensePayload = (
     },
     {
       type: GenericLicenseDataFieldType.Group,
-      label: '10. Annað en tankar ',
+      label: '10. Annað en í tanki ',
       fields: (parsedResponse.adrRettindi ?? [])
         .filter((field) => !field.tankar)
         .map((field) => ({
@@ -95,7 +102,7 @@ export const parseAdrLicensePayload = (
             {
               type: GenericLicenseDataFieldType.Value,
               label: 'Grunn',
-              value: String(field.grunn),
+              value: String(field.grunn) ?? '',
             },
           ],
         })),

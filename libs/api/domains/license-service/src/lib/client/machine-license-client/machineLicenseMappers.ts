@@ -8,10 +8,13 @@ export const parseMachineLicensePayload = (
   license: VinnuvelaDto,
 ): GenericUserLicensePayload | null => {
   if (!license) return null
+
+  //TODO: Null check fields and filter!
+
   const data = [
     {
       type: GenericLicenseDataFieldType.Value,
-      label: 'Vinnuvélaskírteini Nr: ',
+      label: 'Skírteini nr. ',
       value: license.skirteinisNumer?.toString(),
     },
     {
@@ -31,22 +34,22 @@ export const parseMachineLicensePayload = (
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: '4. Fyrsti útgáfustaður',
+      label: '4. Útgáfudagur',
       value: license.fyrstiUtgafuDagur?.toString(),
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: '6. Ökuskírteini nr.',
-      value: license.okuskirteinisNumer ?? '',
+      label: '5. Gildir til.',
+      value: 'Sjá réttindi',
     },
     {
       type: GenericLicenseDataFieldType.Value,
-      label: '7. Útgáfustaður',
-      value: license.utgafuLand ?? '',
+      label: '6. Ökuskírteini nr',
+      value: license.okuskirteinisNumer ?? '',
     },
     {
       type: GenericLicenseDataFieldType.Group,
-      label: 'Vinnuvélaréttindi',
+      label: 'Réttindaflokkar',
       fields: (license.vinnuvelaRettindi ?? []).map((field) => ({
         type: GenericLicenseDataFieldType.Category,
         name: field.flokkur ?? '',
