@@ -49,7 +49,7 @@ export class UserProfileProvider extends BasicDataProvider {
     if (isRunningOnEnvironment('local')) {
       return Promise.resolve({
         email: 'mockEmail@island.is',
-        mobilePhoneNumber: '+3549999999',
+        mobilePhoneNumber: '9999999',
       })
     }
 

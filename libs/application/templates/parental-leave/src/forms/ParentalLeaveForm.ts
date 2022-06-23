@@ -29,6 +29,7 @@ import {
   getApplicationAnswers,
   allowOtherParent,
   getLastValidPeriodEndDate,
+  removeCountryCode,
 } from '../lib/parentalLeaveUtils'
 import {
   GetPensionFunds,
@@ -96,9 +97,7 @@ export const ParentalLeaveForm: Form = buildForm({
                   width: 'half',
                   title: parentalLeaveFormMessages.applicant.phoneNumber,
                   defaultValue: (application: Application) =>
-                    (application.externalData.userProfile?.data as {
-                      mobilePhoneNumber?: string
-                    })?.mobilePhoneNumber?.slice(4),
+                    removeCountryCode(application),
                   id: 'applicant.phoneNumber',
                   variant: 'tel',
                   format: '###-####',
