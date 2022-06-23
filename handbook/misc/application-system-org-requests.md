@@ -88,7 +88,7 @@ An example of an approve/reject state from an orginisation. Add your state with 
 
 To invoke a state change the machine client would for approving make a PUT request like so:
 
-```c
+```bash
 curl --location -g --request PUT '{{baseUrl}}/applications/{applicationId}/submit' \
 --header 'authorization: xxx' \
 --header 'Content-Type: application/x-www-form-urlencoded' \
@@ -103,8 +103,8 @@ curl --location -g --request PUT '{{baseUrl}}/applications/{applicationId}/submi
 
 Log in to the [IDS admin panel](https://beta.dev01.devland.is/admin) on dev using Gervimaður Útlönd 010-7789. Find the client you created earlier, create a new secret and copy it to your clipboard:
 
-![image](https://user-images.githubusercontent.com/2643113/175304337-82ce024c-4215-4de1-a09e-e28cce2082b9.png)
+![image](./assets/client-secret.png)
 
 Choose Oauth 2.0 and use the settings below. Insert your Client id, client secret and the Scope should be `@island.is/applications:read @island.is/applications:write` press "Get New Access Token" and you have your token.
 
-![image](https://user-images.githubusercontent.com/2643113/175303853-67c0e573-8ddf-4026-893d-d351fdf09432.png)
+![image](./assets/postman.png)
