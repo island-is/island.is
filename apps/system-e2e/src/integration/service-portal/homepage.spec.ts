@@ -1,7 +1,10 @@
 describe('Home page', () => {
-  const fakeUsers: FakeUser[] = Cypress.env('fakeUsers')
-  const testEnvironment: TestEnvironment = Cypress.env('testEnvironment')
-  const { authUrl }: Pick<TestConfig, 'authUrl'> = Cypress.env(testEnvironment)
+  beforeEach(() => {
+    cy.cognitoLogin({
+      cognitoUsername: Cypress.env('cognitoUsername'),
+      cognitoPassword: Cypress.env('cognitoPassword'),
+    })
+  })
 
   beforeEach(() => {
     cy.log('fakeUsers', fakeUsers)
@@ -11,7 +14,10 @@ describe('Home page', () => {
       phoneNumber: fakeUsers['María'].phoneNumber,
       authDomain: `https://${authDomain}`,
     })
-    cy.contains('Pósthólf')
     cy.contains(fakeUsers['María'].name)
+    cy.get('div[data-testid=nav-*').each((el) => {
+      cy.click()
+      cy.url().should('eq', el)
+    })
   })
 })
