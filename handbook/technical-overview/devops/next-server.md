@@ -87,7 +87,7 @@ bootstrap({
 "e2e": {
   "builder": "@nrwl/cypress:cypress",
   "options": {
-    "cypressConfig": "apps/{{pathToAppDir}}-e2e/cypress.json",
+    "cypressConfig": "apps/{{pathToAppDir}}-e2e/cypress.config.ts",
     "tsConfig": "apps/{{pathToAppDir}}-e2e/tsconfig.e2e.json",
     "baseUrl": "http://localhost:4200",
     "devServerTarget": "{{projectName}}:serve"

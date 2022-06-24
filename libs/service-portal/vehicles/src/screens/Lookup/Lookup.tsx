@@ -1,7 +1,10 @@
-import React from 'react'
-import { ServicePortalModuleComponent, m } from '@island.is/service-portal/core'
+import React, { useEffect, useState } from 'react'
+import {
+  ServicePortalModuleComponent,
+  m,
+  EmptyState,
+} from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-
 import {
   Box,
   Stack,
@@ -10,86 +13,330 @@ import {
   GridRow,
   Input,
   Button,
-  Divider,
+  Accordion,
+  AccordionItem,
+  BulletList,
+  Bullet,
 } from '@island.is/island-ui/core'
+import { messages } from '../../lib/messages'
+import { useLazyQuery } from '@apollo/client'
+import { Query } from '@island.is/api/schema'
+import { GET_USERS_VEHICLES_SEARCH_LIMIT } from '../../queries/getUsersVehicleSearchLimit'
+import { GET_VEHICLES_SEARCH } from '../../queries/getVehiclesSearch'
+import { TableGrid } from '@island.is/service-portal/core'
 
 export const Lookup: ServicePortalModuleComponent = () => {
   useNamespaces('sp.vehicles')
   const { formatMessage } = useLocale()
+  const [termsAccepted, setTermsAccepted] = useState(false)
+  const [expanded, setExpanded] = useState(!termsAccepted)
+  const [limit, setLimit] = useState<number>()
+  const [limitExceeded, setLimitExceeded] = useState<boolean>(false)
+  const [searchValue, setSearchValue] = useState('')
+  const [
+    getUsersVehicleSearchLimit,
+    { loading, error, ...searchLimitData },
+  ] = useLazyQuery<Query>(GET_USERS_VEHICLES_SEARCH_LIMIT)
 
-  // const { data, loading, error, called } = useQuery<Query>()
-  // const vehicles = data?.getVehiclesForUser?.vehicleList || []
+  const [
+    getVehiclesSearch,
+    {
+      loading: infoLoading,
+      error: infoError,
+      called: infoCalled,
+      ...vehicleSearch
+    },
+  ] = useLazyQuery<Query>(GET_VEHICLES_SEARCH, {
+    variables: {
+      input: {
+        search: searchValue,
+      },
+    },
+  })
+
+  const {
+    permno,
+    regno,
+    vin,
+    type,
+    color,
+    firstRegDate,
+    nextInspection,
+    currentOwner,
+    currentOwnerAddress,
+    useGroup,
+    regType,
+    mass,
+    massLaden,
+    vehicleStatus,
+    co,
+    co2Wltp,
+    weightedco2Wltp,
+  } = vehicleSearch.data?.vehiclesSearch || {}
+
+  const noInfo =
+    vehicleSearch?.data?.vehiclesSearch === null ||
+    typeof vehicleSearch?.data?.vehiclesSearch === undefined
+
+  useEffect(() => {
+    getUsersVehicleSearchLimit()
+    const newLimit = searchLimitData?.data?.vehiclesSearchLimit || 0
+    setLimit(newLimit)
+    if (newLimit && newLimit < 5) setTermsAccepted(true)
+  }, [])
+
+  useEffect(() => {
+    const newLimit = searchLimitData?.data?.vehiclesSearchLimit
+    newLimit && setLimit(newLimit)
+    newLimit && newLimit <= 0 && setLimitExceeded(true)
+  }, [searchLimitData?.data?.vehiclesSearchLimit])
+
+  if (error) {
+    return (
+      <Box>
+        <EmptyState description={m.errorFetch} />
+      </Box>
+    )
+  }
+
+  const confirmSearch = () => {
+    getVehiclesSearch({
+      variables: {
+        input: {
+          search: searchValue,
+        },
+      },
+    })
+    getUsersVehicleSearchLimit()
+  }
 
   return (
     <>
       <Box marginBottom={[2, 3, 5]}>
         <GridRow>
-          <GridColumn span={['12/12', '12/12', '6/8', '6/8']}>
+          <GridColumn span={['1/1', '1/1', '1/2']}>
             <Stack space={3}>
               <Text variant="h3" as="h1">
-                {formatMessage({
-                  id: 'sp.vehicles:vehicles-lookup-title',
-                  defaultMessage: 'Uppfletting í ökutækjaskrá',
-                })}
+                {formatMessage(messages.vehiclesLookup)}
               </Text>
+
               <Text as="p" variant="default">
-                {formatMessage({
-                  id: 'sp.vehicles:vehicles-lookup-intro',
-                  defaultMessage: `Þú getur flett upp allt að 5 ökutækjum á dag.`,
-                })}
+                {formatMessage(messages.searchIntro)}
               </Text>
-              <Text variant="h5">
-                {formatMessage({
-                  id: 'sp.vehicles:vehicles-lookup-terms-title',
-                  defaultMessage: `Skilmálar fyrir leit í ökutækjaskrá`,
-                })}
-              </Text>
-              <Text as="p" variant="small">
-                {formatMessage({
-                  id: 'sp.vehicles:vehicles-lookup-terms-intro',
-                  defaultMessage: `Við uppflettingu í og vinnslu upplýsinga úr ökutækjaskrá skal farið eftir lögum um persónuvernd og meðferð persónuupplýsinga.
-                  Vakin er athygli á að uppflettingar upplýsinga í ökutækjaskrá eru færðar í aðgerðaskrár (log –skrár).
-                  Þeim er flettir upp er heimilt að skrá upplýsingar úr ökutækjaskrá í eigið kerfi eftir því sem við á en óheimilt að safna þeim í sérstakan gagnagrunn yfir ökutæki.
-                  Óheimilt er að breyta upplýsingum úr ökutækjaskrá.
-                  Sá er flettir upp er aðeins heimilt að nota upplýsingarnar í eigin þágu. Óheimilt er að miðla upplýsingum úr ökutækjaskrá til þriðja aðila eða birta þær opinberlega nema að því leyti sem það getur talist eðlilegur þáttur í starfsemi viðtakanda. Persónuupplýsingar má þó aldrei birta opinberlega.`,
-                })}
-              </Text>
-              <Button size="small">
-                {' '}
-                {formatMessage({
-                  id: 'sp.vehicles:vehicles-lookup-terms-button',
-                  defaultMessage: `Samþykkja skilmála`,
-                })}
-              </Button>
-              <Divider />
             </Stack>
           </GridColumn>
         </GridRow>
+        <GridRow marginTop={6}>
+          {!limitExceeded && (
+            <GridColumn span="1/1">
+              <Accordion dividerOnTop={false}>
+                <AccordionItem
+                  id="terms-1"
+                  label={formatMessage(messages.termsTitle)}
+                  labelUse="h5"
+                  expanded={expanded}
+                  onToggle={(expanded) => setExpanded(expanded)}
+                >
+                  <BulletList>
+                    <Bullet>
+                      <Text as="p" variant="small">
+                        {formatMessage(messages.termsBulletOne)}
+                      </Text>
+                    </Bullet>
+                    <Bullet>
+                      <Text as="p" variant="small">
+                        {formatMessage(messages.termsBulletTwo)}
+                      </Text>
+                    </Bullet>
+                    <Bullet>
+                      <Text as="p" variant="small">
+                        {formatMessage(messages.termsBulletThree)}
+                      </Text>
+                    </Bullet>
+                    <Bullet>
+                      <Text as="p" variant="small">
+                        {formatMessage(messages.termsBulletFour)}
+                      </Text>
+                    </Bullet>
+                    <Bullet>
+                      <Text as="p" variant="small">
+                        {formatMessage(messages.termsBulletFive)}
+                      </Text>
+                    </Bullet>
+                  </BulletList>
+                  <Box marginTop={3} marginBottom={4}>
+                    <Button
+                      size="small"
+                      variant="ghost"
+                      onClick={
+                        !termsAccepted
+                          ? () => {
+                              setTermsAccepted(true)
+                              setExpanded(false)
+                            }
+                          : undefined
+                      }
+                      icon={termsAccepted ? 'checkmark' : undefined}
+                    >
+                      {' '}
+                      {!termsAccepted
+                        ? formatMessage(messages.acceptTerms)
+                        : formatMessage(messages.termsAccepted)}
+                    </Button>
+                  </Box>
+                </AccordionItem>
+              </Accordion>
+            </GridColumn>
+          )}
+        </GridRow>
+
+        {limitExceeded && (
+          <Box marginTop={4}>
+            <EmptyState
+              title={messages.searchLimitExceededTitle}
+              description={messages.searchLimitExceeded}
+            />
+          </Box>
+        )}
       </Box>
-      <Stack space={2}>
-        <GridRow>
-          <GridColumn span={['12/12', '12/12', '4/12', '4/12', '4/12']}>
-            <Stack space={2}>
+      {!limitExceeded && (
+        <GridRow marginTop={2}>
+          <GridColumn span={['12/12', '12/12', '12/12']}>
+            <Box
+              display="flex"
+              flexDirection={['column', 'row']}
+              alignItems={['flexStart', 'flexEnd']}
+            >
               <Input
                 icon="search"
                 backgroundColor="blue"
                 size="xs"
-                value={''}
-                onChange={(ev) => console.log(ev.target.value)}
+                value={searchValue}
+                onChange={(ev) => setSearchValue(ev.target.value)}
                 name="uppfletting-okutaekjaskra-leit"
-                label={formatMessage({
-                  id: 'sp.vehicles:vehicles-lookup-label',
-                  defaultMessage: `Uppfletting ökutækis`,
-                })}
-                placeholder={formatMessage({
-                  id: 'sp.vehicles:vehicles-lookup-placeholder',
-                  defaultMessage: `Leitaðu eftir VIN / Fastanr / Skráningarnr.`,
-                })}
+                label={formatMessage(messages.searchLabel)}
+                placeholder={formatMessage(messages.searchPlaceholder)}
+                disabled={!termsAccepted || limitExceeded}
               />
-            </Stack>
+              <Box marginLeft={[0, 3]} marginTop={[2, 0]}>
+                <Button
+                  disabled={!termsAccepted || limitExceeded}
+                  variant="ghost"
+                  size="small"
+                  onClick={() => confirmSearch()}
+                  loading={infoLoading}
+                >
+                  {formatMessage(messages.search)} {' ('}
+                  {limit}
+                  {')'}
+                </Button>
+              </Box>
+            </Box>
           </GridColumn>
         </GridRow>
-      </Stack>
+      )}
+      {infoCalled && !infoError && !infoLoading && noInfo && (
+        <Box marginTop={4}>
+          <Text variant="h4" as="h3">
+            {formatMessage(messages.noVehicleFound)}
+          </Text>
+        </Box>
+      )}
+      {!limitExceeded && infoCalled && !infoLoading && !infoError && !noInfo && (
+        <>
+          <Text variant="h5" as="h3" marginTop={4} marginBottom={2}>
+            {formatMessage(messages.searchResults)}
+          </Text>
+          <TableGrid
+            title={type ?? ''}
+            dataArray={[
+              [
+                {
+                  title: formatMessage(messages.permno),
+                  value: permno ?? '',
+                },
+                {
+                  title: formatMessage(messages.regno),
+                  value: regno ?? '',
+                },
+              ],
+              [
+                {
+                  title: formatMessage(messages.verno),
+                  value: vin ?? '',
+                },
+                {
+                  title: formatMessage(messages.useGroup),
+                  value: useGroup ?? '',
+                },
+              ],
+
+              [
+                {
+                  title: formatMessage(messages.regType),
+                  value: regType ?? '',
+                },
+                {
+                  title: formatMessage(messages.owner),
+                  value: currentOwner ?? '',
+                },
+              ],
+              [
+                {
+                  title: formatMessage(messages.firstReg),
+                  value: firstRegDate ?? '',
+                },
+                {
+                  title: formatMessage(messages.address),
+                  value: currentOwnerAddress ?? '',
+                },
+              ],
+              [
+                {
+                  title: formatMessage(messages.vehicleStatus),
+                  value: vehicleStatus ?? '',
+                },
+                {
+                  title: formatMessage(messages.color),
+                  value: color ?? '',
+                },
+              ],
+              [
+                {
+                  title: formatMessage(messages.nextInspection),
+                  value: nextInspection
+                    ? nextInspection.nextinspectiondate
+                    : '',
+                },
+                {
+                  title: formatMessage(messages.co2),
+                  value: co ?? '',
+                },
+              ],
+              [
+                {
+                  title: formatMessage(messages.vehicleWeightLong),
+                  value: mass ?? '',
+                },
+                {
+                  title: formatMessage(messages.wltpWeighted),
+                  value: co2Wltp ?? '',
+                },
+              ],
+              [
+                {
+                  title: formatMessage(messages.vehicleTotalWeightLong),
+                  value: massLaden ?? '',
+                },
+                {
+                  title: formatMessage(messages.weightedWLTPCo2),
+                  value: weightedco2Wltp ?? '',
+                },
+              ],
+            ]}
+          />
+        </>
+      )}
     </>
   )
 }
