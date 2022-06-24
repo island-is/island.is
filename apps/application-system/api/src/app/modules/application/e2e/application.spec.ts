@@ -800,7 +800,7 @@ describe('Application system API', () => {
     ).toEqual({ id: 1337 })
   })
 
-  const mockParentalLeaveInAssignableState = async (
+  const mockExampleApplicationInAssignableState = async (
     includeNonce = true,
   ): Promise<{
     token: string
@@ -881,7 +881,7 @@ describe('Application system API', () => {
   }
 
   it('PUT applications/assign should work just once', async () => {
-    const { token } = await mockParentalLeaveInAssignableState()
+    const { token } = await mockExampleApplicationInAssignableState()
 
     await server
       .put('/applications/assign')
@@ -903,7 +903,10 @@ describe('Application system API', () => {
   })
 
   it('PUT applications/assign returns to draft and creates a new token. Old token should be invalid', async () => {
-    const { token, applicationId } = await mockParentalLeaveInAssignableState()
+    const {
+      token,
+      applicationId,
+    } = await mockExampleApplicationInAssignableState()
 
     await server
       .put(`/applications/${applicationId}/submit`)
@@ -928,7 +931,7 @@ describe('Application system API', () => {
   })
 
   it('PUT applications/assign supports legacy tokens', async () => {
-    const { token } = await mockParentalLeaveInAssignableState(false)
+    const { token } = await mockExampleApplicationInAssignableState(false)
 
     await server
       .put('/applications/assign')
