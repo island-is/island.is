@@ -38,9 +38,9 @@ export const REGULATIONS_OPTIONS = 'REGULATIONS_OPTIONS'
 
 export interface RegulationsServiceOptions {
   url: string
-  publishKey: string
-  draftKey: string
-  presignedKey: string
+  publishKey?: string
+  draftKey?: string
+  presignedKey?: string
 }
 
 @Injectable()

@@ -1,8 +1,7 @@
 export default {
   production: process.env.NODE_ENV === 'production',
   regulationsApiUrl:
-    process.env.REGULATIONS_API_URL ??
-    'https://reglugerdir-api.herokuapp.com/api/v1',
+    process.env.REGULATIONS_API_URL ?? 'http://localhost:3000/api/v1',
   audit: {
     defaultNamespace: '@island.is/services/regulations-admin-backend',
     groupName: process.env.AUDIT_GROUP_NAME,

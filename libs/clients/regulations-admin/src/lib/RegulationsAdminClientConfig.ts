@@ -16,7 +16,7 @@ export const RegulationsAdminClientConfig = defineConfig({
     ),
     regulationsApiUrl: env.required(
       'REGULATIONS_API_URL',
-      'https://reglugerdir-api.herokuapp.com/api/v1',
+      'http://localhost:3000/api/v1',
     ),
   }),
 })

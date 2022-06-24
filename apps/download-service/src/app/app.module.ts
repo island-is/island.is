@@ -58,6 +58,7 @@ import { environment } from '../environments'
       useFactory: async () =>
         new RegulationsService({
           url: environment.regulationsAdmin.regulationsApiUrl,
+          presignedKey: environment.regulationsAdmin.presignedKey,
         }),
     },
   ],

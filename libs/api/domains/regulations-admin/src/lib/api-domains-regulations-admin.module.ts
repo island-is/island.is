@@ -7,6 +7,9 @@ import { RegulationsAdminClientModule } from '@island.is/clients/regulations-adm
 export interface RegulationsAdminOptions {
   baseApiUrl?: string
   regulationsApiUrl: string
+  presignedKey: string
+  publishKey: string
+  draftKey: string
 }
 @Module({})
 export class RegulationsAdminModule {
@@ -22,10 +25,9 @@ export class RegulationsAdminModule {
           useFactory: async () =>
             new RegulationsService({
               url: config.regulationsApiUrl,
-              // Regulations admin does not need file uploads
-              publishKey: '',
-              draftKey: '',
-              presignedKey: '',
+              presignedKey: config.presignedKey,
+              publishKey: config.publishKey,
+              draftKey: config.draftKey,
             }),
         },
       ],
