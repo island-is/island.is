@@ -560,7 +560,7 @@ export class ApplicationService {
           }),
         },
       ).then((response) => response.text())
-      
+
       const createdDate = application.created
       return await fetch(
         new URL(
