@@ -13,6 +13,10 @@ export const messages = defineMessages({
     id: 'sp.vehicles:vehicles-title',
     defaultMessage: 'Ökutæki',
   },
+  historyTitle: {
+    id: 'sp.vehicles:vehicles-history-title',
+    defaultMessage: 'Ökutækjaferill',
+  },
   intro: {
     id: 'sp.vehicles:vehicles-intro',
     defaultMessage: `Hér má nálgast upplýsingar um þín ökutæki úr ökutækjaskrá Samgöngustofu.`,
@@ -323,5 +327,139 @@ export const messages = defineMessages({
   no: {
     id: 'sp.vehicles:no',
     defaultMessage: 'Nei',
+  },
+  baught: {
+    id: 'sp.vehicles:baught',
+    defaultMessage: 'Keypt',
+  },
+  sold: {
+    id: 'sp.vehicles:sold',
+    defaultMessage: 'Selt',
+  },
+  innlogn: {
+    id: 'sp.vehicles:innlogn',
+    defaultMessage: 'Innlögn',
+  },
+  status: {
+    id: 'sp.vehicles:status',
+    defaultMessage: 'Staða',
+  },
+  ownersHistory: {
+    id: 'sp.vehicles:owners-history',
+    defaultMessage: 'Eignarferill',
+  },
+  operatorHistory: {
+    id: 'sp.vehicles:operator-history',
+    defaultMessage: 'Umráðaferill',
+  },
+  coOwnerHistory: {
+    id: 'sp.vehicles:co-owner-history',
+    defaultMessage: 'Meðeigendaferill',
+  },
+
+  vehiclesLookup: {
+    id: 'sp.vehicles:vehicles-lookup',
+    defaultMessage: 'Uppfletting í ökutækjaskrá',
+  },
+  showDeregistered: {
+    id: 'sp.vehicles:show-deregistered',
+    defaultMessage: 'Sýna afskráð ökutæki',
+  },
+  search: {
+    id: 'sp.vehicles:search-button',
+    defaultMessage: 'Leita',
+  },
+  searchPlaceholder: {
+    id: 'sp.vehicles:search-placeholder',
+    defaultMessage: 'Leita',
+  },
+  searchLabel: {
+    id: 'sp.vehicles:search-label',
+    defaultMessage: `Uppfletting ökutækis`,
+  },
+  termsAccepted: {
+    id: 'sp.vehicles:terms-accepted',
+    defaultMessage: `Þú hefur samþykkt skilmála`,
+  },
+  acceptTerms: {
+    id: 'sp.vehicles:accept-terms',
+    defaultMessage: `Samþykkja skilmála`,
+  },
+  termsBulletOne: {
+    id: 'sp.vehicles:search-terms-intro-1',
+    defaultMessage: `Við uppflettingu í og vinnslu upplýsinga úr ökutækjaskrá skal farið eftir lögum um persónuvernd og meðferð persónuupplýsinga.`,
+  },
+  termsBulletTwo: {
+    id: 'sp.vehicles:search-terms-intro-2',
+    defaultMessage: `Vakin er athygli á að uppflettingar upplýsinga í ökutækjaskrá eru færðar í aðgerðaskrár (log –skrár).`,
+  },
+  termsBulletThree: {
+    id: 'sp.vehicles:search-terms-intro-3',
+    defaultMessage: `Þeim er flettir upp er heimilt að skrá upplýsingar úr ökutækjaskrá í eigið kerfi eftir því sem við á en óheimilt að safna þeim í sérstakan gagnagrunn yfir ökutæki.`,
+  },
+  termsBulletFour: {
+    id: 'sp.vehicles:search-terms-intro-4',
+    defaultMessage: `Óheimilt er að breyta upplýsingum úr ökutækjaskrá.`,
+  },
+  termsBulletFive: {
+    id: 'sp.vehicles:search-terms-intro-5',
+    defaultMessage: `Sá er flettir upp er aðeins heimilt að nota upplýsingarnar í eigin þágu. Óheimilt er að miðla upplýsingum úr ökutækjaskrá til þriðja aðila eða birta þær opinberlega nema að því leyti sem það getur talist eðlilegur þáttur í starfsemi viðtakanda. Persónuupplýsingar má þó aldrei birta opinberlega.`,
+  },
+  termsTitle: {
+    id: 'sp.vehicles:terms-title',
+    defaultMessage: `Skilmálar fyrir leit í ökutækjaskrá`,
+  },
+  searchIntro: {
+    id: 'sp.vehicles:search-intro',
+    defaultMessage: `Þú getur flett upp allt að 5 ökutækjum á dag.`,
+  },
+  searchLimitExceeded: {
+    id: 'sp.vehicles:search-limit-exceeded',
+    defaultMessage: `Þú ert búin(n) að nota öll leitartilvikin fyrir daginn í dag. Vinsamlegast reyndu aftur að sama tíma á morgun.`,
+  },
+
+  searchLimitExceededTitle: {
+    id: 'sp.vehicles:search-limit-exceeded-title',
+    defaultMessage: `Leitartilvik búin`,
+  },
+  co2: {
+    id: 'sp.vehicles:co2',
+    defaultMessage: `Co2`,
+  },
+  weightedWLTPCo2: {
+    id: 'sp.vehicles:weighted-wltp-co2',
+    defaultMessage: `Vegið WLTP Co2`,
+  },
+  WLTPCo2: {
+    id: 'sp.vehicles:wltp-co2',
+    defaultMessage: `WLTP Co2`,
+  },
+  vehicleWeightLong: {
+    id: 'sp.vehicles:vehicle-weight-long',
+    defaultMessage: `Þyngd ökutækis`,
+  },
+  vehicleTotalWeightLong: {
+    id: 'sp.vehicles:vehicle-total-weight-long',
+    defaultMessage: `Leyfð heildarþyngd ökut.`,
+  },
+  vehicleStatus: {
+    id: 'sp.vehicles:vehicle-status',
+    defaultMessage: `Skoðunarstaða ökutækis`,
+  },
+  searchResults: {
+    id: 'sp.vehicles:search-results',
+    defaultMessage: 'Eftirfarandi upplýsingar fundust um ökutækið',
+  },
+  chooseHistoryType: {
+    id: 'sp.vehicles:choose-history-type',
+    defaultMessage: 'Veldu feril',
+  },
+  noVehiclesFound: {
+    id: 'sp.vehicles:no-vehicles-found',
+    defaultMessage: 'Engin ökutæki fundust',
+  },
+  noVehicleFound: {
+    id: 'sp.vehicles:no-vehicle-found',
+    defaultMessage: 'Ekkert ökutæki fannst',
   },
 })
