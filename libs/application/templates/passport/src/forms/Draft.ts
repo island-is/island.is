@@ -8,26 +8,17 @@ import {
   buildSection,
   buildSelectField,
   buildSubmitField,
-  buildTextField,
   Form,
   FormModes,
-  Application,
   buildCustomField,
-  buildDividerField,
-  buildKeyValueField,
-  buildCheckboxField,
 } from '@island.is/application/core'
 import { m } from '../lib/messages'
-import { format as formatKennitala } from 'kennitala'
-import {
-  Services,
-  Service,
-  DistrictCommissionerAgencies,
-  YES,
-} from '../lib/constants'
+import { Services, DistrictCommissionerAgencies } from '../lib/constants'
 import { DefaultEvents } from '@island.is/application/core'
-import { formatPhoneNumber } from '@island.is/application/ui-components'
-import format from 'date-fns/format'
+import { personalInfo } from './infoSection/personalInfo'
+import { childsPersonalInfo } from './infoSection/childsPersonalInfo'
+import { personalOverview } from './overviewSection/personalOverview'
+import { childsOverview } from './overviewSection/childsOverview'
 
 export const Draft: Form = buildForm({
   id: 'PassportApplicationDraftForm',
@@ -37,7 +28,7 @@ export const Draft: Form = buildForm({
   renderLastScreenBackButton: true,
   children: [
     buildSection({
-      id: 'intro',
+      id: 'introSection',
       title: m.infoTitle,
       children: [
         buildMultiField({
@@ -56,7 +47,7 @@ export const Draft: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'externalData',
+      id: 'externalDataSection',
       title: m.dataCollectionTitle,
       children: [
         buildExternalDataProvider({
@@ -99,13 +90,12 @@ export const Draft: Form = buildForm({
     }),
     buildSection({
       id: 'passportSection',
-      title: 'Vegabréfin þín',
+      title: m.selectPassportSectionTitle,
       children: [
         buildMultiField({
           id: 'selectPassport',
-          title: 'Vegabréfin þín',
-          description:
-            'Þú getur sótt um nýtt vegabréf fyrir þig og eftirfarandi einstaklinga í þinni umsjón. Veldu þann einstakling sem þú vilt hefja umsókn fyrir og haltu síðan áfram í næsta skref.',
+          title: m.selectPassportSectionTitle,
+          description: m.selectPassportSectionDescription,
           children: [
             buildCustomField({
               id: 'passport',
@@ -117,211 +107,9 @@ export const Draft: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'personalInfo',
+      id: 'personalInfoSection',
       title: m.infoTitle,
-      children: [
-        buildMultiField({
-          id: 'personalInfo',
-          title: m.infoTitle,
-          description: m.personalInfoSubtitle,
-          condition: (answers) =>
-            (answers.passport as any)?.userPassport !== '',
-          children: [
-            buildTextField({
-              id: 'personalInfo.name',
-              title: m.name,
-              backgroundColor: 'white',
-              width: 'half',
-              readOnly: true,
-              defaultValue: (application: Application) =>
-                (application.externalData.nationalRegistry?.data as {
-                  fullName?: string
-                })?.fullName,
-            }),
-            buildTextField({
-              id: 'personalInfo.nationalId',
-              title: m.nationalId,
-              backgroundColor: 'white',
-              width: 'half',
-              readOnly: true,
-              defaultValue: (application: Application) => {
-                const nationalId =
-                  (application.externalData.nationalRegistry?.data as {
-                    nationalId?: string
-                  })?.nationalId ?? ''
-
-                return formatKennitala(nationalId)
-              },
-            }),
-            buildTextField({
-              id: 'personalInfo.email',
-              title: m.email,
-              width: 'half',
-              defaultValue: (application: Application) =>
-                (application.externalData.userProfile?.data as {
-                  email?: string
-                })?.email,
-            }),
-            buildTextField({
-              id: 'personalInfo.phoneNumber',
-              title: m.phoneNumber,
-              width: 'half',
-              variant: 'tel',
-              format: '###-####',
-              defaultValue: (application: Application) =>
-                (application.externalData.userProfile?.data as {
-                  mobilePhoneNumber?: string
-                })?.mobilePhoneNumber,
-            }),
-            buildDescriptionField({
-              id: 'personalInfo.space',
-              title: '',
-              description: '',
-              space: 'gutter',
-            }),
-            buildCheckboxField({
-              id: 'personalInfo.hasDisabilityDiscount',
-              title: '',
-              large: false,
-              backgroundColor: 'white',
-              defaultValue: [],
-              options: [
-                {
-                  value: YES,
-                  label: m.hasDisabilityDiscount,
-                },
-              ],
-            }),
-            buildSubmitField({
-              id: 'approveCheckForDisability',
-              placement: 'footer',
-              title: '',
-              actions: [
-                {
-                  event: DefaultEvents.SUBMIT,
-                  name: 'Staðfesta',
-                  type: 'primary',
-                },
-              ],
-            }),
-          ],
-        }),
-        buildMultiField({
-          id: 'childsPersonalInfo',
-          title: m.infoTitle,
-          description: m.personalInfoSubtitle,
-          condition: (answers) =>
-            (answers.passport as any)?.childPassport !== '',
-          children: [
-            buildTextField({
-              id: 'childsPersonalInfo.name',
-              title: m.name,
-              backgroundColor: 'white',
-              width: 'half',
-              readOnly: true,
-              defaultValue: 'Þitt Barn',
-            }),
-            buildTextField({
-              id: 'childsPersonalInfo.nationalId',
-              title: m.nationalId,
-              backgroundColor: 'white',
-              width: 'half',
-              readOnly: true,
-              defaultValue: '111111-1111',
-            }),
-            buildCheckboxField({
-              id: 'childsPersonalInfo.hasDisabilityDiscount',
-              title: '',
-              large: false,
-              backgroundColor: 'white',
-              defaultValue: [],
-              options: [
-                {
-                  value: YES,
-                  label: m.hasDisabilityDiscount,
-                },
-              ],
-            }),
-            buildDescriptionField({
-              id: 'childsPersonalInfo.guardian1',
-              title: 'Forráðamaður 1',
-              titleVariant: 'h3',
-              space: 'gutter',
-            }),
-            buildTextField({
-              id: 'childsPersonalInfo.guardian1.name',
-              title: m.name,
-              backgroundColor: 'blue',
-              width: 'half',
-              defaultValue: (application: Application) =>
-                (application.externalData.nationalRegistry?.data as {
-                  fullName?: string
-                })?.fullName,
-            }),
-            buildTextField({
-              id: 'childsPersonalInfo.guardian1.email',
-              title: m.email,
-              width: 'half',
-              defaultValue: (application: Application) =>
-                (application.externalData.userProfile?.data as {
-                  email?: string
-                })?.email,
-            }),
-            buildTextField({
-              id: 'childsPersonalInfo.guardian1.phoneNumber',
-              title: m.phoneNumber,
-              width: 'half',
-              variant: 'tel',
-              format: '###-####',
-              defaultValue: (application: Application) =>
-                (application.externalData.userProfile?.data as {
-                  mobilePhoneNumber?: string
-                })?.mobilePhoneNumber,
-            }),
-            buildDescriptionField({
-              id: 'childsPersonalInfo.guardian2',
-              title: 'Forráðamaður 2',
-              titleVariant: 'h3',
-              space: 'gutter',
-            }),
-            buildTextField({
-              id: 'childsPersonalInfo.guardian2.name',
-              title: m.name,
-              backgroundColor: 'blue',
-              width: 'half',
-              defaultValue: '',
-            }),
-            buildTextField({
-              id: 'childsPersonalInfo.guardian2.email',
-              title: m.email,
-              width: 'half',
-              defaultValue: '',
-              backgroundColor: 'blue',
-            }),
-            buildTextField({
-              id: 'childsPersonalInfo.guardian2.phoneNumber',
-              title: m.phoneNumber,
-              width: 'half',
-              variant: 'tel',
-              format: '###-####',
-              backgroundColor: 'blue',
-              defaultValue: '',
-            }),
-            buildSubmitField({
-              id: 'approveCheckForDisability',
-              placement: 'footer',
-              title: '',
-              actions: [
-                {
-                  event: DefaultEvents.SUBMIT,
-                  name: 'Staðfesta',
-                  type: 'primary',
-                },
-              ],
-            }),
-          ],
-        }),
-      ],
+      children: [personalInfo, childsPersonalInfo],
     }),
     buildSection({
       id: 'serviceSection',
@@ -397,323 +185,9 @@ export const Draft: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'overview',
+      id: 'overviewSection',
       title: m.overview,
-      children: [
-        buildMultiField({
-          id: 'overviewPersonalInfo',
-          title: m.overview,
-          description: m.overviewDescription,
-          condition: (answers) =>
-            (answers.passport as any)?.userPassport !== '',
-          children: [
-            buildDividerField({}),
-            buildDescriptionField({
-              id: 'overviewPI.infoTitle',
-              title: m.infoTitle,
-              titleVariant: 'h3',
-              description: '',
-              space: 'gutter',
-            }),
-            buildDescriptionField({
-              id: 'overview.space',
-              title: '',
-              description: '',
-              space: 'gutter',
-            }),
-            buildKeyValueField({
-              label: m.name,
-              width: 'half',
-              value: (application: Application) =>
-                (application.answers.personalInfo as {
-                  name?: string
-                })?.name,
-            }),
-            buildKeyValueField({
-              label: m.nationalId,
-              width: 'half',
-              value: (application: Application) =>
-                (application.answers.personalInfo as {
-                  nationalId?: string
-                })?.nationalId,
-            }),
-            buildDescriptionField({
-              id: 'overview.space1',
-              title: '',
-              description: '',
-              space: 'gutter',
-            }),
-            buildKeyValueField({
-              label: m.email,
-              width: 'half',
-              value: (application: Application) =>
-                (application.answers.personalInfo as {
-                  email?: string
-                })?.email,
-            }),
-            buildKeyValueField({
-              label: m.phoneNumber,
-              width: 'half',
-              value: (application: Application) => {
-                const phone = (application.answers.personalInfo as {
-                  phoneNumber?: string
-                })?.phoneNumber
-
-                return formatPhoneNumber(phone as string)
-              },
-            }),
-            buildDescriptionField({
-              id: 'overview.space2',
-              title: '',
-              description: '',
-              space: 'gutter',
-            }),
-            buildKeyValueField({
-              label: m.currentPassportStatus,
-              width: 'half',
-              value: (application: Application) => {
-                const date = (application.externalData.identityDocument
-                  ?.data as {
-                  expirationDate?: string
-                })?.expirationDate
-
-                return (
-                  m.currentPassportExpiration.defaultMessage +
-                  ' ' +
-                  format(new Date(date as string), 'dd.MM.yy')
-                )
-              },
-            }),
-            buildDescriptionField({
-              id: 'overview.space3',
-              title: '',
-              description: '',
-              space: 'gutter',
-            }),
-            buildDividerField({}),
-            buildDescriptionField({
-              id: 'overview.dropLocationTitle',
-              title: m.serviceTypeTitle,
-              titleVariant: 'h3',
-              description: '',
-              space: 'gutter',
-            }),
-            buildDescriptionField({
-              id: 'overview.space4',
-              title: '',
-              description: '',
-              space: 'gutter',
-            }),
-            buildKeyValueField({
-              label: m.serviceTypeTitle,
-              width: 'half',
-              value: (application: Application) =>
-                (application.answers.service as Service).type ===
-                Services.REGULAR
-                  ? m.serviceTypeRegular
-                  : m.serviceTypeExpress,
-            }),
-            buildKeyValueField({
-              label: m.dropLocation,
-              width: 'half',
-              value: ({
-                externalData: {
-                  districtCommissioners: { data },
-                },
-                answers,
-              }) => {
-                const district = (data as DistrictCommissionerAgencies[]).find(
-                  (d) => d.id === (answers.service as Service).dropLocation,
-                )
-                return `${district?.name}, ${district?.place}`
-              },
-            }),
-          ],
-        }),
-        buildMultiField({
-          id: 'overviewChildsInfo',
-          title: m.overview,
-          description: m.overviewDescription,
-          condition: (answers) =>
-            (answers.passport as any)?.childPassport !== '',
-          children: [
-            buildDividerField({}),
-            buildDescriptionField({
-              id: 'overviewChild.infoTitle',
-              title: m.infoTitle,
-              titleVariant: 'h3',
-              description: '',
-              space: 'gutter',
-            }),
-            buildDescriptionField({
-              id: 'overviewChild.space',
-              title: '',
-              description: '',
-              space: 'gutter',
-            }),
-            buildKeyValueField({
-              label: m.name,
-              width: 'half',
-              value: (application: Application) =>
-                (application.answers.childsPersonalInfo as {
-                  name?: string
-                })?.name,
-            }),
-            buildKeyValueField({
-              label: m.nationalId,
-              width: 'half',
-              value: (application: Application) =>
-                (application.answers.childsPersonalInfo as {
-                  nationalId?: string
-                })?.nationalId,
-            }),
-            buildDescriptionField({
-              id: 'overviewChild.space1',
-              title: '',
-              description: '',
-              space: 'gutter',
-            }),
-            buildDividerField({}),
-            buildDescriptionField({
-              id: 'overviewChild.infoTitle2',
-              title: 'Forráðamaður 1',
-              titleVariant: 'h3',
-              description: '',
-              space: 'gutter',
-            }),
-            buildKeyValueField({
-              label: m.name,
-              width: 'half',
-              value: (application: Application) =>
-                ((application.answers.childsPersonalInfo as any).guardian1 as {
-                  name?: string
-                })?.name,
-            }),
-            /*buildKeyValueField({
-              label: m.nationalId,
-              width: 'half',
-              value: (application: Application) =>
-                ((application.answers.childsPersonalInfo as any).guardian1 as {
-                  nationalId?: string
-                })?.nationalId,
-            }),*/
-            buildDescriptionField({
-              id: 'overviewChild.space2',
-              title: '',
-              description: '',
-              space: 'gutter',
-            }),
-            buildKeyValueField({
-              label: m.email,
-              width: 'half',
-              value: (application: Application) =>
-                ((application.answers.childsPersonalInfo as any).guardian1 as {
-                  email?: string
-                })?.email,
-            }),
-            buildKeyValueField({
-              label: m.phoneNumber,
-              width: 'half',
-              value: (application: Application) => {
-                const phone = ((application.answers.childsPersonalInfo as any)
-                  .guardian1 as {
-                  phoneNumber?: string
-                })?.phoneNumber
-
-                return formatPhoneNumber(phone as string)
-              },
-            }),
-            buildDividerField({}),
-            buildDescriptionField({
-              id: 'overviewChild.infoTitle3',
-              title: 'Forráðamaður 2',
-              titleVariant: 'h3',
-              description: '',
-              space: 'gutter',
-            }),
-            buildKeyValueField({
-              label: m.name,
-              width: 'half',
-              value: (application: Application) =>
-                ((application.answers.childsPersonalInfo as any).guardian2 as {
-                  name?: string
-                })?.name,
-            }),
-            /*buildKeyValueField({
-              label: m.nationalId,
-              width: 'half',
-              value: (application: Application) =>
-                ((application.answers.childsPersonalInfo as any).guardian2 as {
-                  nationalId?: string
-                })?.nationalId,
-            }),*/
-            buildDescriptionField({
-              id: 'overviewChild.space3',
-              title: '',
-              description: '',
-              space: 'gutter',
-            }),
-            buildKeyValueField({
-              label: m.email,
-              width: 'half',
-              value: (application: Application) =>
-                ((application.answers.childsPersonalInfo as any).guardian2 as {
-                  email?: string
-                })?.email,
-            }),
-            buildKeyValueField({
-              label: m.phoneNumber,
-              width: 'half',
-              value: (application: Application) => {
-                const phone = ((application.answers.childsPersonalInfo as any)
-                  .guardian2 as {
-                  phoneNumber?: string
-                })?.phoneNumber
-
-                return formatPhoneNumber(phone as string)
-              },
-            }),
-            buildDividerField({}),
-            buildDescriptionField({
-              id: 'overview.dropLocationTitle',
-              title: m.serviceTypeTitle,
-              titleVariant: 'h3',
-              description: '',
-              space: 'gutter',
-            }),
-            buildDescriptionField({
-              id: 'overview.space4',
-              title: '',
-              description: '',
-              space: 'gutter',
-            }),
-            buildKeyValueField({
-              label: m.serviceTypeTitle,
-              width: 'half',
-              value: (application: Application) =>
-                (application.answers.service as Service).type ===
-                Services.REGULAR
-                  ? m.serviceTypeRegular
-                  : m.serviceTypeExpress,
-            }),
-            buildKeyValueField({
-              label: m.dropLocation,
-              width: 'half',
-              value: ({
-                externalData: {
-                  districtCommissioners: { data },
-                },
-                answers,
-              }) => {
-                const district = (data as DistrictCommissionerAgencies[]).find(
-                  (d) => d.id === (answers.service as Service).dropLocation,
-                )
-                return `${district?.name}, ${district?.place}`
-              },
-            }),
-          ],
-        }),
-      ],
+      children: [personalOverview, childsOverview],
     }),
     buildSection({
       id: 'payment',

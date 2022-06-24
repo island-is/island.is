@@ -1,6 +1,7 @@
 import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
+  /* Intro section */
   introTitle: {
     id: 'pa.application:intro.title',
     defaultMessage: 'Inngangur',
@@ -21,6 +22,8 @@ export const m = defineMessages({
     defaultMessage: `Ef vegabréfi hefur verið glatað þarftu fyrst að tilkynna það áður en sótt er um nýtt.\\n\\n [Smelltu hér til að tilkynna glatað vegabréf.](https://island.is/stolidtynt-vegabref).`,
     description: 'Some description',
   },
+
+  /* Data collection section */
   dataCollectionTitle: {
     id: 'pa.application:dataCollection.title',
     defaultMessage: 'Gagnaöflun',
@@ -80,6 +83,46 @@ export const m = defineMessages({
       'Uppfletting í skilríkjaskrá hjá Þjóðskrá um einstaklinga úr þinni forsjá.',
     description: 'Identity document provider subtitle',
   },
+
+  /* Select passport section */
+  selectPassportSectionTitle: {
+    id: 'pa.application:selectPassport.title',
+    defaultMessage: 'Vegabréfin þín',
+    description: 'Some description',
+  },
+  selectPassportSectionDescription: {
+    id: 'pa.application:selectPassport.description',
+    defaultMessage:
+      'Þú getur sótt um nýtt vegabréf fyrir þig og eftirfarandi einstaklinga í þinni umsjón. Veldu þann einstakling sem þú vilt hefja umsókn fyrir og haltu síðan áfram í næsta skref.',
+    description: 'Some description',
+  },
+  passportNumber: {
+    id: 'pa.application:selectPassport.passportNumber',
+    defaultMessage: 'Vegabréfsnúmer: ',
+    description: 'Some description',
+  },
+  validTag: {
+    id: 'pa.application:selectPassport.validTag',
+    defaultMessage: 'Í gildi til ',
+    description: 'Some description',
+  },
+  noPassport: {
+    id: 'pa.application:selectPassport.noPassport',
+    defaultMessage: 'Vegabréf ekki til',
+    description: 'Some description',
+  },
+  expiredTag: {
+    id: 'pa.application:selectPassport.expiredTag',
+    defaultMessage: 'Útrunnið',
+    description: 'Some description',
+  },
+  orderedTag: {
+    id: 'pa.application:selectPassport.orderedTag',
+    defaultMessage: 'Í pöntun',
+    description: 'Some description',
+  },
+
+  /* Information Section */
   formName: {
     id: 'pa.application:form.name',
     defaultMessage: 'Umsókn um vegabréf',
@@ -122,6 +165,8 @@ export const m = defineMessages({
       'Ég vil láta fletta mér upp í öryrkjaskrá hjá Tryggingastofnun fyrir lægra gjald á vegabréfi',
     description: 'Some description',
   },
+
+  /* Service and delivery section */
   serviceTitle: {
     id: 'pa.application:service.title',
     defaultMessage: 'Gjaldskrá',
@@ -183,6 +228,8 @@ export const m = defineMessages({
     defaultMessage: 'Veldu afhendingarstað',
     description: 'Some description',
   },
+
+  /* Overview Section */
   overview: {
     id: 'pa.application:overview.title',
     defaultMessage: 'Yfirlit',
@@ -219,6 +266,8 @@ export const m = defineMessages({
     defaultMessage: 'Greiða',
     description: 'Some description',
   },
+
+  /* Payment Section */
   paymentSection: {
     id: 'pa.application:payment.section',
     defaultMessage: 'Staðfesting og greiðsla',
@@ -244,6 +293,8 @@ export const m = defineMessages({
     defaultMessage: 'Úps! Eitthvað fór úrskeiðis við að sækja gögnin',
     description: 'Oops! Something went wrong when fetching your data',
   },
+
+  /* Done Section */
   applicationCompleteTitle: {
     id: 'pa.application:complete.title',
     defaultMessage: 'Til greiðslu',

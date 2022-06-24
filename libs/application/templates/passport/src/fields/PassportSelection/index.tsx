@@ -23,8 +23,7 @@ export const PassportSelection: FC<FieldBaseProps> = ({
   const childPassportRadio = `${id}.childPassport`
   const fieldErros = getErrorViaPath(errors, userPassportRadio)
 
-  console.log(application.externalData)
-
+  /* TODO: replace all any with correct types when service is ready! */
   return (
     <Box>
       <RadioFormField
@@ -42,19 +41,23 @@ export const PassportSelection: FC<FieldBaseProps> = ({
             {
               label: (application.externalData.nationalRegistry.data as any)
                 ?.fullName,
-              subLabel:
-                'Vegabréfsnúmer: ' +
-                (application.externalData.identityDocument.data as any)
-                  ?.number +
-                ', í gildi til ' +
-                format(
-                  new Date(
-                    (application.externalData.identityDocument
-                      .data as any)?.expirationDate,
-                  ),
-                  'dd/MM/yy',
-                ),
               value: '1',
+              subLabel:
+                formatMessage(m.passportNumber) +
+                (application.externalData.identityDocument.data as any)?.number,
+              tag: {
+                variant: 'red',
+                label:
+                  formatMessage(m.validTag) +
+                  format(
+                    new Date(
+                      (application.externalData.identityDocument
+                        .data as any)?.expirationDate,
+                    ),
+                    'dd/MM/yy',
+                  ),
+                outlined: true,
+              },
             },
           ],
           onSelect: () => {
@@ -79,35 +82,48 @@ export const PassportSelection: FC<FieldBaseProps> = ({
             {
               label: 'Barn 1',
               subLabel:
-                'Vegabréfsnúmer: ' +
-                (application.externalData.identityDocument.data as any)
-                  ?.number +
-                ', útrunnið',
+                formatMessage(m.passportNumber) +
+                (application.externalData.identityDocument.data as any)?.number,
+              tag: {
+                variant: 'red',
+                outlined: true,
+                label: formatMessage(m.expiredTag),
+              },
               value: '1',
             },
             {
               label: 'Barn 2',
-              subLabel: 'Vegabréf ekki til',
               value: '2',
+              tag: {
+                variant: 'blue',
+                outlined: true,
+                label: formatMessage(m.noPassport),
+              },
             },
             {
               label: 'Barn 3',
               subLabel:
-                'Vegabréfsnúmer: ' +
-                (application.externalData.identityDocument.data as any)
-                  ?.number +
-                ', í pöntun',
+                formatMessage(m.passportNumber) +
+                (application.externalData.identityDocument.data as any)?.number,
               value: '3',
+              tag: {
+                variant: 'blue',
+                outlined: true,
+                label: formatMessage(m.orderedTag),
+              },
               disabled: true,
             },
             {
               label: 'Barn 4',
               subLabel:
-                'Vegabréfsnúmer: ' +
-                (application.externalData.identityDocument.data as any)
-                  ?.number +
-                ', gildir til 2025',
+                formatMessage(m.passportNumber) +
+                (application.externalData.identityDocument.data as any)?.number,
               value: '4',
+              tag: {
+                variant: 'mint',
+                outlined: true,
+                label: formatMessage(m.validTag) + ' 2025',
+              },
               disabled: true,
             },
           ],
