@@ -117,12 +117,12 @@ const someDefendantIsInvalid = (workingCase: Case) => {
         validate([
           [
             defendant.nationalId,
-            [defendant.noNationalId ? 'date-of-birth' : 'national-id'],
+            defendant.noNationalId
+              ? ['empty', 'date-of-birth']
+              : ['empty', 'national-id'],
           ],
           [defendant.name, ['empty']],
           [defendant.address, ['empty']],
-          [defendant.address, ['empty']],
-          defendant.noNationalId ? 'valid' : [defendant.nationalId, ['empty']],
         ]).isValid,
     )
   )
