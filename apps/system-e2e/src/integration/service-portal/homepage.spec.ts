@@ -15,8 +15,8 @@ describe('Home page', () => {
       authDomain: `https://${authDomain}`,
     })
     cy.contains(fakeUsers['María'].name)
-    cy.get('div[data-testid=nav-*').each((el) => {
-      cy.click()
+    cy.get('div[data-testid^="nav-"]').each((el) => {
+      el.click()
       cy.url().should('eq', el)
     })
   })

@@ -6,11 +6,12 @@ import { IconProps } from '@island.is/island-ui/core'
 import { User } from '@island.is/shared/types'
 
 import { ServicePortalPath } from './navigation/paths'
+import { TestSupport } from '@island.is/island-ui/utils'
 
 /**
  * A navigational item used by the service portal
  */
-export interface ServicePortalNavigationItem {
+export interface ServicePortalNavigationItem extends TestSupport {
   name: MessageDescriptor | string
   path?: ServicePortalPath
   external?: boolean

@@ -77,6 +77,7 @@ const ModuleNavigation: FC<Props> = ({ nav, onItemClick, badge }) => {
           setExpand(!expand)
         }}
         badge={badge}
+        dataTestId={nav.dataTestId}
       >
         {formatMessage(nav.name)}
       </NavItem>

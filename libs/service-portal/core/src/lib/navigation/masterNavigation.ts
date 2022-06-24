@@ -11,6 +11,17 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
       icon: 'home',
     },
     children: [
+      // Yfirlit
+      {
+        name: m.overview,
+        systemRoute: true,
+        path: ServicePortalPath.MinarSidurRoot,
+        icon: {
+          icon: 'home',
+        },
+        dataTestId: 'nav-overview'
+      },
+
       // Rafraen skjol
       {
         name: m.documents,
@@ -19,6 +30,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           icon: 'reader',
         },
         subscribesTo: 'documents',
+        dataTestId: 'nav-documents'
       },
 
       // Umsoknir
@@ -28,6 +40,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         icon: {
           icon: 'fileTrayFull',
         },
+      dataTestId: 'nav-applications'
       },
 
       // Company
@@ -37,6 +50,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         icon: {
           icon: 'business',
         },
+      dataTestId: 'nav-company'
       },
 
       // Min Gogn
@@ -96,6 +110,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             path: ServicePortalPath.LicensesDrivingDetail,
           },
         ],
+      dataTestId: 'nav-licenses'
       },
       // Starfsleyfi
       {
@@ -104,6 +119,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         icon: {
           icon: 'receipt',
         },
+      dataTestId: 'nav-educationLicense'
       },
       // Mín réttindi
       {
@@ -118,6 +134,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             path: ServicePortalPath.ParentalLeave,
           },
         ],
+      dataTestId: 'nav-delegation'
       },
       // Menntun
       {
@@ -126,6 +143,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         icon: {
           icon: 'school',
         },
+      dataTestId: 'nav-education'
       },
       {
         name: m.documentProvider,
