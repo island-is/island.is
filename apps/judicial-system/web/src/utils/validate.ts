@@ -114,11 +114,11 @@ const someDefendantIsInvalid = (workingCase: Case) => {
     workingCase.defendants.some(
       (defendant) =>
         (!isBusiness(defendant.nationalId) && !defendant.gender) ||
-        validate([
+        !validate([
           [
             defendant.nationalId,
             defendant.noNationalId
-              ? ['empty', 'date-of-birth']
+              ? ['date-of-birth']
               : ['empty', 'national-id'],
           ],
           [defendant.name, ['empty']],
