@@ -10,7 +10,7 @@ describe('Front page', () => {
     cy.get('[data-testid="home-heading"]').should('have.length', 1)
     cy.get('[data-testid="home-news"]').should('have.length', 1)
   })
-
+  // dummy change
   it('should have life events', () => {
     cy.visit('/')
     cy.get('[data-testid="lifeevent-card"]')
