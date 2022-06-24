@@ -743,6 +743,71 @@ export interface IFooterItem extends Entry<IFooterItemFields> {
   }
 }
 
+export interface IFormFields {
+  /** Title */
+  title: string
+
+  /** Intro */
+  intro?: string | undefined
+
+  /** Recipient */
+  recipient: string
+
+  /** Fields */
+  fields?: IFormField[] | undefined
+}
+
+export interface IForm extends Entry<IFormFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'form'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IFormFieldFields {
+  /** Title */
+  title: string
+
+  /** Placeholder */
+  placeholder?: string | undefined
+
+  /** Type */
+  type: 'input' | 'text' | 'dropdown' | 'radio' | 'acceptTerms'
+
+  /** Required */
+  required?: boolean | undefined
+
+  /** Options */
+  options?: string[] | undefined
+}
+
+export interface IFormField extends Entry<IFormFieldFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'formField'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IFrontpageFields {
   /** Title */
   title: string
@@ -3552,6 +3617,8 @@ export type CONTENT_TYPE =
   | 'featured'
   | 'featuredArticles'
   | 'footerItem'
+  | 'form'
+  | 'formField'
   | 'frontpage'
   | 'frontpageSlider'
   | 'genericOverviewPage'
