@@ -11,6 +11,19 @@ export const GET_ARTICLE_QUERY = gql`
       intro
       importance
       showTableOfContents
+      alertBanner {
+        showAlertBanner
+        bannerVariant
+        title
+        description
+        linkTitle
+        link {
+          slug
+          type
+        }
+        isDismissable
+        dismissedForDays
+      }
       body {
         ...AllSlices
       }
