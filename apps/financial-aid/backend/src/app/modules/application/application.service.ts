@@ -560,8 +560,8 @@ export class ApplicationService {
           }),
         },
       ).then((response) => response.text())
-
-      const now = new Date()
+      
+      const createdDate = application.created
       return await fetch(
         new URL(
           'WebApplication/CreateFinancialAssistanceApplication',
@@ -589,8 +589,16 @@ export class ApplicationService {
               amount.spousePersonalTaxCredit,
             ),
             housingCode: application.homeCircumstances,
-            dateFrom: new Date(now.getFullYear(), now.getMonth(), 1), // First day of current month
-            dateTo: new Date(now.getFullYear(), now.getMonth() + 1, 0), // Last day of current month
+            dateFrom: new Date(
+              createdDate.getFullYear(),
+              createdDate.getMonth(),
+              1,
+            ), // First day of created month
+            dateTo: new Date(
+              createdDate.getFullYear(),
+              createdDate.getMonth() + 1,
+              0,
+            ), // Last day of created month
           }),
         },
       ).then((response) => response.ok)
