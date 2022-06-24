@@ -21,6 +21,11 @@ export const sidebar = style({
   flexDirection: 'column',
   paddingBottom: theme.spacing['3'],
 })
+
+export const sidebarScroll = style({
+  overflowY: 'auto',
+})
+
 export const collapsed = style({
   width: SERVICE_PORTAL_SIDEBAR_WIDTH_COLLAPSED,
 })
@@ -74,5 +79,5 @@ globalStyle(`${itemWrapper}:hover #sub-nav-model`, {
   left: 28,
   width: 220,
   height: 'max-content',
-  zIndex: 10,
+  zIndex: 14,
 })

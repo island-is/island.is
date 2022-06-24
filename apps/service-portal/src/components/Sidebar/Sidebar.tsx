@@ -50,54 +50,51 @@ export const Sidebar: FC<{}> = () => {
   return (
     <aside className={cn(styles.sidebar, collapsed && styles.collapsed)}>
       <Box
+        className={collapsed && styles.logoCollapsed}
+        paddingTop={3}
+        paddingBottom={8}
+        paddingLeft={collapsed ? 0 : 4}
+      >
+        <Link to={ServicePortalPath.MinarSidurRoot}>
+          {collapsed ? (
+            <Logo width={24} height={22} iconOnly id="sidebar-collapsed" />
+          ) : (
+            <Logo width={136} height={22} id="sidebar" />
+          )}
+        </Link>
+      </Box>
+      <Box
+        className={styles.navIcon}
+        borderRadius="circle"
+        display="flex"
+        alignItems="center"
+        marginRight={2}
+        padding="smallGutter"
+        background="blue200"
+        onClick={() => {
+          dispatch({
+            type: ActionType.SetSidebarMenuState,
+            payload: collapsed ? 'open' : 'closed',
+          })
+          setCollapsed(!collapsed)
+        }}
+      >
+        <Icon
+          type="outline"
+          icon={collapsed ? 'chevronForward' : 'chevronBack'}
+          size="medium"
+          color="blue400"
+        />
+      </Box>
+
+      <Box
         display="flex"
         flexDirection="column"
         justifyContent="flexStart"
         paddingLeft={collapsed ? 6 : 0}
         paddingRight={collapsed ? 6 : 0}
-        paddingTop={3}
+        className={styles.sidebarScroll}
       >
-        <Box
-          className={collapsed && styles.logoCollapsed}
-          paddingBottom={8}
-          paddingTop={3}
-          height="full"
-          paddingLeft={collapsed ? 0 : 4}
-        >
-          <Link to={ServicePortalPath.MinarSidurRoot}>
-            {collapsed ? (
-              <Logo width={24} height={22} iconOnly id="sidebar-collapsed" />
-            ) : (
-              <Logo width={136} height={22} id="sidebar" />
-            )}
-          </Link>
-        </Box>
-        <Box>
-          <Box
-            className={styles.navIcon}
-            borderRadius="circle"
-            display="flex"
-            alignItems="center"
-            marginRight={2}
-            padding="smallGutter"
-            background="blue200"
-            onClick={() => {
-              dispatch({
-                type: ActionType.SetSidebarMenuState,
-                payload: collapsed ? 'open' : 'closed',
-              })
-              setCollapsed(!collapsed)
-            }}
-          >
-            <Icon
-              type="outline"
-              icon={collapsed ? 'chevronForward' : 'chevronBack'}
-              size="medium"
-              color="blue400"
-            />
-          </Box>
-        </Box>
-
         {navigation.map((rootItem, rootIndex) => (
           <Stack space={1} key={rootIndex}>
             {rootItem.children?.map(
