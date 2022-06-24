@@ -190,12 +190,13 @@ export function buildAsyncSelectField(
 export function buildCompanySearchField(
   data: Omit<CompanySearchField, 'type' | 'component' | 'children'>,
 ): CompanySearchField {
-  const { placeholder } = data
+  const { placeholder, shouldIncludeIsatNumber } = data
 
   return {
     ...extractCommonFields(data),
     children: undefined,
     placeholder,
+    shouldIncludeIsatNumber,
     type: FieldTypes.COMPANY_SEARCH,
     component: FieldComponents.COMPANY_SEARCH,
   }

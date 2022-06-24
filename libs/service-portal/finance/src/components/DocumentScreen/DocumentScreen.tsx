@@ -112,11 +112,13 @@ const DocumentScreen: FC<Props> = ({
         <Text variant="h3" as="h1">
           {title}
         </Text>
-        <GridRow>
+        <GridRow marginBottom={4}>
           <GridColumn span={['12/12', '8/12']}>
             <Text variant="default">{intro}</Text>
           </GridColumn>
-          <Box display="flex" marginLeft="auto" marginTop={1} printHidden>
+        </GridRow>
+        <GridRow>
+          <Box display="flex" printHidden padding={0}>
             <GridColumn>
               <Button
                 colorScheme="default"
@@ -134,7 +136,7 @@ const DocumentScreen: FC<Props> = ({
           </Box>
         </GridRow>
         <Hidden print={true}>
-          <Box marginTop={[1, 1, 2, 2, 5]}>
+          <Box marginTop={[1, 1, 2, 4]}>
             <GridRow>
               <GridColumn
                 span={['1/1', '8/12', '6/12', '6/12', '4/12']}

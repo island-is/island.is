@@ -1155,6 +1155,9 @@ export interface ILatestNewsSliceFields {
 
   /** Read more text */
   readMoreText?: string | undefined
+
+  /** Read more link */
+  readMoreLink?: ILink | undefined
 }
 
 /** Slice to show latest news entries */
@@ -1927,6 +1930,9 @@ export interface IOrganizationFields {
 
   /** Service Web Featured Image */
   serviceWebFeaturedImage?: Asset | undefined
+
+  /** Service Web Popular Question Count */
+  serviceWebPopularQuestionCount?: number | undefined
 
   /** Published Material Search Filter Generic Tags */
   publishedMaterialSearchFilterGenericTags?: IGenericTag[] | undefined
