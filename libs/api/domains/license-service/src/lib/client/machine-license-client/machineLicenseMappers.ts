@@ -2,7 +2,6 @@ import {
   VinnuvelaDto,
   VinnuvelaRettindiDto,
 } from '@island.is/clients/adr-and-machine-license'
-import { GenericLicense } from '../../graphql/genericLicense.model'
 import {
   GenericLicenseDataField,
   GenericLicenseDataFieldType,
