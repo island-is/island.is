@@ -166,6 +166,9 @@ export interface IArticleFields {
 
   /** Featured image */
   featuredImage?: Asset | undefined
+
+  /** Alert Banner */
+  alertBanner?: IAlertBanner | undefined
 }
 
 export interface IArticle extends Entry<IArticleFields> {
