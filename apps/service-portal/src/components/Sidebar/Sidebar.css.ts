@@ -17,7 +17,7 @@ export const sidebar = style({
   transition: 'all 250ms ease-in-out',
   width: SERVICE_PORTAL_SIDEBAR_WIDTH,
   display: 'flex',
-  justifyContent: 'space-between',
+  justifyContent: 'flex-start',
   flexDirection: 'column',
   paddingBottom: theme.spacing['3'],
 })

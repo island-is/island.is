@@ -51,8 +51,8 @@ export const Sidebar: FC<{}> = () => {
     <aside className={cn(styles.sidebar, collapsed && styles.collapsed)}>
       <Box
         className={collapsed && styles.logoCollapsed}
-        paddingTop={3}
-        paddingBottom={8}
+        paddingTop={6}
+        paddingBottom={3}
         paddingLeft={collapsed ? 0 : 4}
       >
         <Link to={ServicePortalPath.MinarSidurRoot}>
@@ -90,10 +90,13 @@ export const Sidebar: FC<{}> = () => {
       <Box
         display="flex"
         flexDirection="column"
-        justifyContent="flexStart"
+        justifyContent="spaceBetween"
         paddingLeft={collapsed ? 6 : 0}
         paddingRight={collapsed ? 6 : 0}
-        className={styles.sidebarScroll}
+        paddingBottom={4}
+        paddingTop={5}
+        height="full"
+        className={!collapsed && styles.sidebarScroll}
       >
         {navigation.map((rootItem, rootIndex) => (
           <Stack space={1} key={rootIndex}>
@@ -112,15 +115,16 @@ export const Sidebar: FC<{}> = () => {
             )}
           </Stack>
         ))}
-      </Box>
-      <Box marginTop={1}>
-        <NavItem
-          onClick={() => signOut()}
-          active={false}
-          icon={{ icon: 'logOut', type: 'outline' }}
-        >
-          {formatMessage(sharedMessages.logout)}
-        </NavItem>
+
+        <Box marginTop={1} background="white" width="full" paddingBottom={2}>
+          <NavItem
+            onClick={() => signOut()}
+            active={false}
+            icon={{ icon: 'logOut', type: 'outline' }}
+          >
+            {formatMessage(sharedMessages.logout)}
+          </NavItem>
+        </Box>
       </Box>
     </aside>
   )
