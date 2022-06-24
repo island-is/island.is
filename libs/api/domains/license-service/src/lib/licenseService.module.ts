@@ -53,7 +53,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
   {
     type: GenericLicenseType.AdrLicense,
     provider: {
-      id: GenericLicenseProviderId.AdministrationOfOccupationsSafetyAndHealth,
+      id: GenericLicenseProviderId.AdministrationOfOccupationalSafetyAndHealth,
     },
     pkpass: false,
     pkpassVerify: false,
@@ -62,7 +62,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
   {
     type: GenericLicenseType.MachineLicense,
     provider: {
-      id: GenericLicenseProviderId.AdministrationOfOccupationsSafetyAndHealth,
+      id: GenericLicenseProviderId.AdministrationOfOccupationalSafetyAndHealth,
     },
     pkpass: false,
     pkpassVerify: false,
