@@ -113,6 +113,7 @@ export const Sidebar: FC<{}> = () => {
           </Stack>
         ))}
       </Box>
+
       <Box marginTop={1}>
         <NavItem
           onClick={() => signOut()}
