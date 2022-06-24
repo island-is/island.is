@@ -93,6 +93,9 @@ const prodConfig = () => ({
   },
   regulationsDomain: {
     url: process.env.REGULATIONS_API_URL,
+    publishKey: process.env.REGULATIONS_FILE_UPLOAD_KEY_PUBLISH,
+    draftKey: process.env.REGULATIONS_FILE_UPLOAD_KEY_DRAFT,
+    presignedKey: process.env.REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED,
   },
   regulationsAdmin: {
     baseApiUrl: process.env.REGULATIONS_ADMIN_URL,
