@@ -7,6 +7,7 @@ import * as styles from './RadioButton.css'
 import { InputBackgroundColor } from '../Input/types'
 import { Box } from '../Box/Box'
 import { BoxProps } from '../Box/types'
+import { Tag, TagVariant } from '../Tag/Tag'
 
 export interface RadioButtonProps {
   name?: string
@@ -17,6 +18,11 @@ export interface RadioButtonProps {
   disabled?: boolean
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
   tooltip?: React.ReactNode
+  tag?: {
+    label: string
+    variant?: TagVariant
+    outlined?: boolean
+  }
   hasError?: boolean
   errorMessage?: string
   large?: boolean
@@ -47,6 +53,7 @@ export const RadioButton = ({
   disabled,
   onChange,
   tooltip,
+  tag,
   illustration: Illustration,
   hasError,
   errorMessage,
@@ -128,6 +135,17 @@ export const RadioButton = ({
           >
             <Tooltip text={tooltip} />
           </div>
+        )}
+        {tag && (
+          <Box
+            display="flex"
+            justifyContent="flexEnd"
+            style={{ width: '-webkit-fill-available' }}
+          >
+            <Tag outlined={tag.outlined} variant={tag.variant} disabled>
+              {tag.label}
+            </Tag>
+          </Box>
         )}
       </label>
       {hasError && errorMessage && (
