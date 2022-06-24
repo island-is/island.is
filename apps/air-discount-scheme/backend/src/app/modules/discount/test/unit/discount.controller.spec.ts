@@ -2,7 +2,10 @@ import { Test } from '@nestjs/testing'
 
 import { DiscountService } from '../../discount.service'
 import { Discount } from '../../discount.model'
-import { PrivateDiscountController } from '../../discount.controller'
+import {
+  PrivateDiscountController,
+  PublicDiscountController,
+} from '../../discount.controller'
 import {
   NationalRegistryService,
   NationalRegistryUser,
@@ -17,6 +20,7 @@ import {
 } from '@island.is/clients/national-registry-v2'
 import { CACHE_MANAGER } from '@nestjs/common'
 import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
+import { AirlineUser } from '../../../user/user.model'
 
 function createTestUser(
   postalCode: number = 600,
@@ -49,6 +53,7 @@ const auth: AuthUser = {
 
 describe('DiscountController', () => {
   let privateDiscountController: PrivateDiscountController
+  let publicDiscountController: PublicDiscountController
   let discountService: DiscountService
   let nationalRegistryService: NationalRegistryService
   let userService: UserService
@@ -64,6 +69,7 @@ describe('DiscountController', () => {
       ],
       providers: [
         PrivateDiscountController,
+        PublicDiscountController,
         UserService,
         {
           provide: CACHE_MANAGER,
@@ -77,6 +83,7 @@ describe('DiscountController', () => {
           useClass: jest.fn(() => ({
             getDiscountByNationalId: () => ({}),
             createDiscountCode: () => ({}),
+            getDiscountByDiscountCode: () => ({}),
           })),
         },
         {
@@ -95,6 +102,9 @@ describe('DiscountController', () => {
       ],
     }).compile()
 
+    publicDiscountController = moduleRef.get<PublicDiscountController>(
+      PublicDiscountController,
+    )
     privateDiscountController = moduleRef.get<PrivateDiscountController>(
       PrivateDiscountController,
     )
@@ -145,9 +155,6 @@ describe('DiscountController', () => {
         postalcode: 225,
         city: 'Álftanes',
       }
-      //const getUserSpy = jest
-      //  .spyOn(nationalRegistryService, 'getUser')
-      //  .mockImplementation(() => Promise.resolve(user))
       const createDiscountCodeSpy = jest
         .spyOn(discountService, 'createDiscountCode')
         .mockImplementation(() => Promise.resolve(discount))
@@ -196,6 +203,46 @@ describe('DiscountController', () => {
           statusCode: 404,
           error: 'Not Found',
           message: `User<${nationalId}> not found`,
+        })
+      }
+    })
+  })
+
+  describe('getUserByDiscountCode', () => {
+    it('should return a user', async () => {
+      const discountCode = 'ABCDEFG'
+      const testUser = createTestUser()
+      const airlineUser = new AirlineUser(testUser, testUser.fund)
+      const nationalId = testUser.nationalId
+      const discount = new Discount(testUser, discountCode, [], nationalId, 0)
+
+      const getDiscountByDiscountCodeSpy = jest
+        .spyOn(discountService, 'getDiscountByDiscountCode')
+        .mockImplementation(() => Promise.resolve(discount))
+
+      const result = await publicDiscountController.getUserByDiscountCode({
+        discountCode,
+      })
+
+      expect(getDiscountByDiscountCodeSpy).toHaveBeenCalledWith(discountCode)
+      expect(result).toStrictEqual(airlineUser)
+    })
+
+    it('should return not found error when discount code does is invalid', async () => {
+      const discountCode = 'ABCDEFG'
+
+      jest
+        .spyOn(discountService, 'getDiscountByDiscountCode')
+        .mockImplementation(() => Promise.resolve(null))
+
+      try {
+        await publicDiscountController.getUserByDiscountCode({ discountCode })
+        expect('This should not happen').toEqual('')
+      } catch (e: any) {
+        expect(e.response).toEqual({
+          statusCode: 400,
+          error: 'Bad Request',
+          message: `Discount code is invalid`,
         })
       }
     })

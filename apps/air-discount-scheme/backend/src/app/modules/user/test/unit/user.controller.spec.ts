@@ -17,7 +17,7 @@ const airlineUser: AirlineUser = {
   },
 }
 
-// AIRTODO: Move these tests to the public discounts controller
+// AIRTODO: go through the controller and determine if tests needed
 /*
 describe('PublicUserController', () => {
   let publicUserController: PublicUserController
@@ -51,51 +51,7 @@ describe('PublicUserController', () => {
     )
   })
 
-  describe('getUserByDiscountCode', () => {
-    it('should return a user', async () => {
-      const nationalId = '1326487905'
-      const discountCode = 'ABCDEFG'
-      const discount = new Discount(discountCode, [], nationalId, 0)
-
-      const getDiscountByDiscountCodeSpy = jest
-        .spyOn(discountService, 'getDiscountByDiscountCode')
-        .mockImplementation(() => Promise.resolve(discount))
-      const getAirlineUserInfoByNationalIdSpy = jest
-        .spyOn(userService, 'getAirlineUserInfoByNationalId')
-        .mockImplementation(() => Promise.resolve(airlineUser))
-
-      const result = await publicUserController.getUserByDiscountCode({
-        discountCode,
-      })
-
-      expect(getDiscountByDiscountCodeSpy).toHaveBeenCalledWith(discountCode)
-      expect(getAirlineUserInfoByNationalIdSpy).toHaveBeenCalledWith(nationalId)
-      expect(result).toBe(airlineUser)
-    })
-
-    it('should return not found error when user does not exist', async () => {
-      const nationalId = '1326487905'
-      const discountCode = 'ABCDEFG'
-      const discount = new Discount(discountCode, [], nationalId, 0)
-
-      jest
-        .spyOn(discountService, 'getDiscountByDiscountCode')
-        .mockImplementation(() => Promise.resolve(discount))
-      jest
-        .spyOn(userService, 'getAirlineUserInfoByNationalId')
-        .mockImplementation(() => Promise.resolve(null))
-
-      try {
-        await publicUserController.getUserByDiscountCode({ discountCode })
-        expect('This should not happen').toEqual('')
-      } catch (e) {
-        expect(e.response).toEqual({
-          statusCode: 404,
-          error: 'Not Found',
-          message: `User<${nationalId}> not found`,
-        })
-      }
-    })
-  })
+  
 })
+
 */
