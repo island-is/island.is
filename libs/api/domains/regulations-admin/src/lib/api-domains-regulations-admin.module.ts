@@ -20,7 +20,13 @@ export class RegulationsAdminModule {
         {
           provide: RegulationsService,
           useFactory: async () =>
-            new RegulationsService({ url: config.regulationsApiUrl }),
+            new RegulationsService({
+              url: config.regulationsApiUrl,
+              // Regulations admin does not need file uploads
+              publishKey: '',
+              draftKey: '',
+              presignedKey: '',
+            }),
         },
       ],
       exports: [RegulationsService, RegulationsAdminApi],
