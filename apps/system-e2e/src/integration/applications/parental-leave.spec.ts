@@ -16,6 +16,12 @@ describe('Parental leave', () => {
   it('should navigate serviceportal', () => {
     cy.visit('/umsoknir/faedingarorlof')
 
+    cy.get('body').then((body) => {
+      const newAppButton = body.find("[data-testid='create-new-application']")
+      if (newAppButton.length > 0) {
+        newAppButton.click()
+      }
+    })
     cy.get("[data-testid='mockdata-no']").click()
     cy.get('[data-testid="proceed"]').click()
 
