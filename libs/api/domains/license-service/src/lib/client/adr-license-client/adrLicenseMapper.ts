@@ -77,7 +77,7 @@ export const parseAdrLicensePayload = (
       fields: (parsedResponse.adrRettindi ?? [])
         .filter((field) => field.tankar && field.grunn)
         .map((field) => ({
-          type: GenericLicenseDataFieldType.Value,
+          type: GenericLicenseDataFieldType.Category,
           name: field.flokkur ?? '',
           label: field.heiti ?? '',
         })),
@@ -88,7 +88,7 @@ export const parseAdrLicensePayload = (
       fields: (parsedResponse.adrRettindi ?? [])
         .filter((field) => !field.tankar && field.grunn)
         .map((field) => ({
-          type: GenericLicenseDataFieldType.Value,
+          type: GenericLicenseDataFieldType.Category,
           name: field.flokkur ?? '',
           label: field.heiti ?? '',
         })),

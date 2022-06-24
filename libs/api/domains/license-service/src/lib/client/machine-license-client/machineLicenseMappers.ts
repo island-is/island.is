@@ -1,5 +1,10 @@
-import { VinnuvelaDto } from '@island.is/clients/adr-and-machine-license'
 import {
+  VinnuvelaDto,
+  VinnuvelaRettindiDto,
+} from '@island.is/clients/adr-and-machine-license'
+import { GenericLicense } from '../../graphql/genericLicense.model'
+import {
+  GenericLicenseDataField,
   GenericLicenseDataFieldType,
   GenericUserLicensePayload,
 } from '../../licenceService.type'
@@ -8,8 +13,6 @@ export const parseMachineLicensePayload = (
   license: VinnuvelaDto,
 ): GenericUserLicensePayload | null => {
   if (!license) return null
-
-  //TODO: Null check fields and filter!
 
   const data = [
     {
@@ -50,23 +53,14 @@ export const parseMachineLicensePayload = (
     {
       type: GenericLicenseDataFieldType.Group,
       label: 'Réttindaflokkar',
-      fields: (license.vinnuvelaRettindi ?? []).map((field) => ({
-        type: GenericLicenseDataFieldType.Category,
-        name: field.flokkur ?? '',
-        label: field.fulltHeiti ?? field.stuttHeiti ?? '',
-        fields: [
-          {
-            type: GenericLicenseDataFieldType.Value,
-            label: 'Stjórna',
-            value: field.stjorna ?? '',
-          },
-          {
-            type: GenericLicenseDataFieldType.Value,
-            label: 'Kenna',
-            value: field.kenna ?? '',
-          },
-        ],
-      })),
+      fields: (license.vinnuvelaRettindi ?? [])
+        .filter((field) => field.kenna || field.stjorna)
+        .map((field) => ({
+          type: GenericLicenseDataFieldType.Category,
+          name: field.flokkur ?? '',
+          label: field.fulltHeiti ?? field.stuttHeiti ?? '',
+          fields: parseVvrRights(field),
+        })),
     },
   ]
 
@@ -74,4 +68,27 @@ export const parseMachineLicensePayload = (
     data,
     rawData: JSON.stringify(license),
   }
+}
+
+const parseVvrRights = (
+  rights: VinnuvelaRettindiDto,
+): Array<GenericLicenseDataField> | undefined => {
+  const fields = new Array<GenericLicenseDataField>()
+
+  if (rights.stjorna) {
+    fields.push({
+      type: GenericLicenseDataFieldType.Value,
+      label: 'Stjórna',
+      value: rights.stjorna,
+    })
+  }
+  if (rights.kenna) {
+    fields.push({
+      type: GenericLicenseDataFieldType.Value,
+      label: 'Kenna',
+      value: rights.kenna,
+    })
+  }
+
+  return fields ?? undefined
 }
