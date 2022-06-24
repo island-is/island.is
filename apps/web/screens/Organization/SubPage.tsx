@@ -32,6 +32,7 @@ import {
   OrganizationSlice,
   OrganizationWrapper,
   SliceDropdown,
+  Form,
 } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { Namespace } from '@island.is/api/schema'
@@ -39,6 +40,7 @@ import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
 import { ParsedUrlQuery } from 'querystring'
 import { useRouter } from 'next/router'
+import { BLOCKS } from '@contentful/rich-text-types'
 
 interface SubPageProps {
   organizationPage: Query['getOrganizationPage']
@@ -126,7 +128,11 @@ const SubPage: Screen<SubPageProps> = ({
                       subpage.links.length ? '7/12' : '12/12',
                     ]}
                   >
-                    {richText(subpage.description as SliceType[])}
+                    {richText(subpage.description as SliceType[], {
+                      renderComponent: {
+                        Form: (slice) => <Form form={slice} />,
+                      },
+                    })}
                   </GridColumn>
                   {subpage.links.length > 0 && (
                     <GridColumn

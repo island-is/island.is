@@ -5,6 +5,7 @@ import { TellUsAStoryInput } from './dto/tellUsAStory.input'
 import { ServiceWebFormsInput } from './dto/serviceWebForms.input'
 
 import { CommunicationResponse } from './models/communicationResponse.model'
+import { GenericFormInput } from './dto/genericForm.input'
 
 @Resolver()
 export class CommunicationsResolver {
@@ -25,6 +26,16 @@ export class CommunicationsResolver {
     @Args('input') input: TellUsAStoryInput,
   ): Promise<CommunicationResponse> {
     await this.communicationsService.sendEmail(input)
+    return {
+      sent: true,
+    }
+  }
+
+  @Mutation(() => CommunicationResponse)
+  async genericForm(
+    @Args('input') input: GenericFormInput,
+  ): Promise<CommunicationResponse> {
+    console.log(input)
     return {
       sent: true,
     }
