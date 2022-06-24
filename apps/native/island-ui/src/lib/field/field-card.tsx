@@ -1,5 +1,4 @@
 import React from 'react'
-import { Image } from 'react-native'
 import styled from 'styled-components/native'
 import { dynamicColor } from '../../utils'
 import { font } from '../../utils/font'
@@ -10,6 +9,7 @@ import IconC from '../../assets/licenece-type/icon-c.png'
 import IconCE from '../../assets/licenece-type/icon-ce.png'
 import IconD from '../../assets/licenece-type/icon-d.png'
 import IconDE from '../../assets/licenece-type/icon-de.png'
+import { LicenseCardType } from '../card/licence-card'
 
 const Host = styled.View`
   border-width: ${({ theme }) => theme.border.width.standard}px;
@@ -70,47 +70,50 @@ interface FieldCardProps {
   code?: string
   title: string
   children: React.ReactNode
+  type: LicenseCardType
 }
 
 export function FieldCard(props: FieldCardProps) {
   let icon = null
 
-  switch (props.code) {
-    case 'A':
-      icon = (
-        <IconImage source={IconA} resizeMode="contain" height={24} width={24} />
-      )
-      break
-    case 'B':
-      icon = (
-        <IconImage source={IconB} resizeMode="contain" height={12} width={24} />
-      )
-      break
-    case 'BE':
-      icon = (
-        <IconImage source={IconBE} resizeMode="contain" height={15} width={42} />
-      )
-      break
-    case 'C':
-      icon = (
-        <IconImage source={IconC} resizeMode="contain" height={24} width={24} />
-      )
-      break
-    case 'CE':
-      icon = (
-        <IconImage source={IconCE} resizeMode="contain" height={15} width={40} />
-      )
-      break
-    case 'DE':
-      icon = (
-        <IconImage source={IconDE} resizeMode="contain" height={15} width={58} />
-      )
-      break
-    case 'D':
-      icon = (
-        <IconImage source={IconD} resizeMode="contain" height={24} width={24} />
-      )
-      break
+  if (props.type === 'DriversLicense') {
+    switch (props.code) {
+      case 'A':
+        icon = (
+          <IconImage source={IconA} resizeMode="contain" height={24} width={24} />
+        )
+        break
+      case 'B':
+        icon = (
+          <IconImage source={IconB} resizeMode="contain" height={12} width={24} />
+        )
+        break
+      case 'BE':
+        icon = (
+          <IconImage source={IconBE} resizeMode="contain" height={15} width={42} />
+        )
+        break
+      case 'C':
+        icon = (
+          <IconImage source={IconC} resizeMode="contain" height={24} width={24} />
+        )
+        break
+      case 'CE':
+        icon = (
+          <IconImage source={IconCE} resizeMode="contain" height={15} width={40} />
+        )
+        break
+      case 'DE':
+        icon = (
+          <IconImage source={IconDE} resizeMode="contain" height={15} width={58} />
+        )
+        break
+      case 'D':
+        icon = (
+          <IconImage source={IconD} resizeMode="contain" height={24} width={24} />
+        )
+        break
+    }
   }
   return (
     <Host>

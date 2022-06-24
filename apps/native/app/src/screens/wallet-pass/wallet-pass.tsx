@@ -97,7 +97,7 @@ const {
   },
 )
 
-const FieldRender = ({ data, level = 1 }: any) => {
+const FieldRender = ({ data, level = 1, licenseType }: any) => {
   return (
     <>
       {(data || []).map(
@@ -130,7 +130,7 @@ const FieldRender = ({ data, level = 1 }: any) => {
                 return (
                   <View key={key} style={{ marginTop: 24, paddingBottom: 4 }}>
                     <FieldLabel>{label}</FieldLabel>
-                    {FieldRender({ data: fields, level: 2 })}
+                    {FieldRender({ data: fields, level: 2, licenseType: licenseType })}
                   </View>
                 )
               }
@@ -142,7 +142,7 @@ const FieldRender = ({ data, level = 1 }: any) => {
 
             case 'Category':
               return (
-                <FieldCard key={key} code={name} title="">
+                <FieldCard key={key} code={name} title={label} type={licenseType}>
                   <FieldRow>{FieldRender({ data: fields, level: 3 })}</FieldRow>
                 </FieldCard>
               )
@@ -169,7 +169,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
       client,
       variables: {
         input: {
-          licenseType: GenericLicenseType.DriversLicense,
+          licenseType: item.license.type,
         },
       },
     },
@@ -261,7 +261,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
               style={{ marginTop: 32 }}
             />
           ) : (
-            <FieldRender data={fields} />
+            <FieldRender data={fields} licenseType={data?.license.type} />
           )}
         </SafeAreaView>
         {Platform.OS === 'android' && <Spacer />}
@@ -279,7 +279,6 @@ export const WalletPassScreen: NavigationFunctionComponent<{
       >
         <LicenceCard
           nativeID={`license-${data?.license?.type}_destination`}
-          title={data?.license.type}
           type={data?.license.type as LicenseCardType}
           date={new Date(Number(data?.fetch.updated))}
           status={

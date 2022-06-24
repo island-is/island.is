@@ -262,8 +262,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
   }))
   const alertItems = [{ id: '99', type: 'alert' }]
 
-  const isEmpty =
-    licenseItems.length === 0 || licenseItems?.[0]?.fetch?.status === 'Error'
+  const isEmpty = licenseItems.length === 0
 
   return (
     <>
