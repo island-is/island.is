@@ -38,6 +38,9 @@ export const REGULATIONS_OPTIONS = 'REGULATIONS_OPTIONS'
 
 export interface RegulationsServiceOptions {
   url: string
+  publishKey: string
+  draftKey: string
+  presignedKey: string
 }
 
 @Injectable()
@@ -72,7 +75,7 @@ export class RegulationsService extends RESTDataSource {
         JSON.stringify(body),
         {
           headers: {
-            'X-ApiKey': process.env.FILE_UPLOAD_KEY_PRESIGNED ?? '',
+            'X-ApiKey': this.options.presignedKey ?? '',
           },
         },
       )

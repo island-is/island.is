@@ -196,6 +196,9 @@ const autoSchemaFile = environment.production
     }),
     RegulationsModule.register({
       url: environment.regulationsDomain.url!,
+      publishKey: environment.regulationsDomain.publishKey!,
+      draftKey: environment.regulationsDomain.draftKey!,
+      presignedKey: environment.regulationsDomain.presignedKey!,
     }),
     RegulationsAdminModule.register({
       baseApiUrl: environment.regulationsAdmin.baseApiUrl!,
